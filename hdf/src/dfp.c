@@ -51,7 +51,7 @@ PRIVATE int32 DFPIopen
  USAGE
     intn DFPgetpal(filename,palette)
         char *filename;         IN: name of HDF file
-        VOIDP palette;          OUT: ptr to the buffer to store the palette in
+        void * palette;          OUT: ptr to the buffer to store the palette in
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -63,7 +63,7 @@ PRIVATE int32 DFPIopen
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFPgetpal(const char *filename, VOIDP palette)
+DFPgetpal(const char *filename, void * palette)
 {
   CONSTR(FUNC, "DFPgetpal");
   int32       file_id;
@@ -161,7 +161,7 @@ done:
  USAGE
     intn DFPputpal(filename,palette,overwrite,filemode)
         char *filename;         IN: name of HDF file
-        VOIDP palette;          IN: ptr to the buffer retrieve the palette from
+        void * palette;          IN: ptr to the buffer retrieve the palette from
         intn overwrite;         IN: whether to (1) overwrite last palette written,
                                     or (0) write it as a fresh palette
         char *filemode;         IN: if "a" append palette to file, "w" create
@@ -178,7 +178,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFPputpal(const char *filename, const VOIDP palette, intn overwrite, const char *filemode)
+DFPputpal(const char *filename, const void * palette, intn overwrite, const char *filemode)
 {
   CONSTR(FUNC, "DFPputpal");
   int32       file_id;
@@ -243,7 +243,7 @@ done:
  USAGE
     intn DFPaddpal(filename,palette)
         char *filename;         IN: name of HDF file
-        VOIDP palette;          IN: ptr to the buffer retrieve the palette from
+        void * palette;          IN: ptr to the buffer retrieve the palette from
  RETURNS
     SUCCEED on success, FAIL on failure.
  DESCRIPTION
@@ -254,7 +254,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DFPaddpal(const char *filename, const VOIDP palette)
+DFPaddpal(const char *filename, const void * palette)
 {
   intn ret_value;
 
@@ -373,7 +373,7 @@ DFPnpals(const char *filename)
             }   /* end for */
     }     /* end for */
 
-  HDfree((VOIDP) pal_off);   /* free offsets */
+  HDfree(pal_off);   /* free offsets */
 
   if (Hclose(file_id) == FAIL)
     HGOTO_ERROR(DFE_CANTCLOSE, FAIL);

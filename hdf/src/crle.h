@@ -52,10 +52,10 @@ extern      "C"
                  int16 *pspecial);
 
     extern int32 HCPcrle_read
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HCPcrle_write
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern intn HCPcrle_endaccess
                 (accrec_t * access_rec);

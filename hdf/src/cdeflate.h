@@ -55,10 +55,10 @@ extern      "C"
                  int16 *pspecial);
 
     extern int32 HCPcdeflate_read
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HCPcdeflate_write
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern intn HCPcdeflate_endaccess
                 (accrec_t * access_rec);
@@ -78,7 +78,7 @@ typedef struct
     int32       offset;         /* offset in the de-compressed array */
     intn        acc_init;       /* is access mode initialized? */
     int16       acc_mode;       /* access mode desired */
-    VOIDP       io_buf;         /* buffer for I/O with the file */
+    void *       io_buf;         /* buffer for I/O with the file */
     z_stream    deflate_context;    /* pointer to the deflation context for each byte in the element */
 }
 comp_coder_deflate_info_t;

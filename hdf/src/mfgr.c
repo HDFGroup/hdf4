@@ -79,11 +79,11 @@ int32 GRnametoindex(int32 grid,char *name)
     - Maps a RI name to an index which is returned.
 intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 dimsizes[2],int32 *n_attr)
     - Gets information about an RI which has been selected/created.
-intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
+intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
     - Writes image data to an RI.  Partial dataset writing and subsampling is
         allowed, but only with the dimensions of the dataset (ie. no UNLIMITED
         dimension support)
-intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
+intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
     - Read image data from an RI.  Partial reads and subsampling are allowed.
 intn GRendaccess(int32 riid)
     - End access to an RI.
@@ -116,9 +116,9 @@ uint16 GRluttoref(int32 lutid)
     - Maps a lutid to a reference # for annotating of including in a Vgroup.
 intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     - Gets information about a palette.
-intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
+intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void * data)
     - Writes out a palette for an RI.
-intn GRreadlut(int32 palid,VOIDP data)
+intn GRreadlut(int32 palid,void * data)
     - Reads a palette from an RI.
 
 Special Element Functions:
@@ -130,11 +130,11 @@ intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
     - Makes the image data of an RI into a compressed special element.
 
 Attribute Functions:
-intn GRsetattr(int32 dimid|riid|grid,char *name,int32 attr_nt,int32 count,VOIDP data)
+intn GRsetattr(int32 dimid|riid|grid,char *name,int32 attr_nt,int32 count,void * data)
     - Write an attribute for an object.
 int32 GRattrinfo(int32 dimid|riid|grid,int32 index,char *name,int32 *attr_nt,int32 *count)
     - Get attribute information for an object.
-intn GRgetattr(int32 dimid|riid|grid,int32 index,VOIDP data)
+intn GRgetattr(int32 dimid|riid|grid,int32 index,void * data)
     - Read an attribute for an object.
 int32 GRfindattr(int32 dimid|riid|grid,char *name)
     - Get the index of an attribute with a given name for an object.
@@ -147,7 +147,7 @@ Chunking Functions:
      GRsetchunkcache -- maximum number of chunks to cache 
 
 LOCAL ROUTINES
-intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
+intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
     - Copy a pixel buffer from one interlace to another.
 
@@ -195,7 +195,7 @@ PRIVATE intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
     Compare two B-tree keys for equality.
  USAGE
     intn rigcompare(k1, k2, cmparg)
-        VOIDP k1, k2;               IN: ptrs to the keys for the tree elements
+        void * k1, k2;               IN: ptrs to the keys for the tree elements
         intn cmparg;                IN/OUT: unused
  RETURNS
     Returns negative for k2>k1, positive for k2<k1 and 0 for k2=k1
@@ -210,7 +210,7 @@ PRIVATE intn GRIgetaid(ri_info_t *img_ptr, intn acc_perm);
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn rigcompare(VOIDP k1, VOIDP k2, intn cmparg)
+intn rigcompare(void * k1, void * k2, intn cmparg)
 {
     /* shut compiler up */
     cmparg = cmparg;
@@ -225,7 +225,7 @@ intn rigcompare(VOIDP k1, VOIDP k2, intn cmparg)
    *** Only called by B-tree routines, should _not_ be called externally ***
  */
 VOID
-GRIgrdestroynode(VOIDP n)
+GRIgrdestroynode(void * n)
 {
     gr_info_t      *gr_ptr=(gr_info_t *)n;
 
@@ -243,7 +243,7 @@ GRIgrdestroynode(VOIDP n)
     Frees B-Tree attribute nodes.
  USAGE
     VOID GRIattrdestroynode(n)
-        VOIDP n;               IN: ptr to the attr node to delete
+        void * n;               IN: ptr to the attr node to delete
  RETURNS
     none
  DESCRIPTION
@@ -257,7 +257,7 @@ GRIgrdestroynode(VOIDP n)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOID GRIattrdestroynode(VOIDP n)
+VOID GRIattrdestroynode(void * n)
 {
     at_info_t *at_ptr=(at_info_t *)n;
 
@@ -276,7 +276,7 @@ VOID GRIattrdestroynode(VOIDP n)
     Frees B-Tree raster-image nodes.
  USAGE
     VOID GRIridestroynode(n)
-        VOIDP n;               IN: ptr to the attr node to delete
+        void * n;               IN: ptr to the attr node to delete
  RETURNS
     none
  DESCRIPTION
@@ -290,7 +290,7 @@ VOID GRIattrdestroynode(VOIDP n)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOID GRIridestroynode(VOIDP n)
+VOID GRIridestroynode(void * n)
 {
     ri_info_t *ri_ptr=(ri_info_t *)n;
 
@@ -313,10 +313,10 @@ VOID GRIridestroynode(VOIDP n)
 PRIVATE gr_info_t *
 Get_grfile(HFILEID f)
 {
-    VOIDP *t;       /* vfile_t pointer from tree */
+    void * *t;       /* vfile_t pointer from tree */
     int32 key=(int32)f;
 
-    t = (VOIDP *) tbbtdfind(gr_tree, (VOIDP) &key, NULL);
+    t = (void **)tbbtdfind(gr_tree, &key, NULL);
     return((gr_info_t *)(t==NULL ? NULL : *t));
 } /* end Get_grfile() */
 
@@ -337,7 +337,7 @@ New_grfile(HFILEID f)
 
     /* Assign the file ID & insert into the tree */
     g->hdf_file_id=f;
-    tbbtdins(gr_tree, (VOIDP) g, NULL);    /* insert the vg instance in B-tree */
+    tbbtdins(gr_tree, g, NULL);    /* insert the vg instance in B-tree */
 
     return(g);
 } /* end New_grfile() */
@@ -525,7 +525,7 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
                                                 HDstrcpy(new_attr->name,fname);
                                               } /* end else */
                                                 
-                                            tbbtdins(gr_ptr->gattree, (VOIDP) new_attr, NULL);    /* insert the attr instance in B-tree */ 
+                                            tbbtdins(gr_ptr->gattree, new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                             VSdetach(at_key);
                                         } /* end if */
@@ -693,7 +693,7 @@ for (i = 0; i < curr_image; i++)
                             {
                                 if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                                   {
-                                    HDfree((VOIDP) img_info);   /* free offsets */
+                                    HDfree(img_info);   /* free offsets */
                                     Hclose(file_id);
                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                   } /* end if */
@@ -894,7 +894,7 @@ for (i = 0; i < curr_image; i++)
                                                             HDstrcpy(new_attr->name,fname);
                                                           } /* end else */
                                                 
-                                                        tbbtdins(new_image->lattree, (VOIDP) new_attr, NULL);    /* insert the attr instance in B-tree */ 
+                                                        tbbtdins(new_image->lattree, new_attr, NULL);    /* insert the attr instance in B-tree */ 
 
                                                         VSdetach(at_key);
                                                     } /* end if */
@@ -909,7 +909,7 @@ for (i = 0; i < curr_image; i++)
                                   } /* end for */
                               new_image->index=gr_ptr->gr_count;
                               new_image->gr_ptr=gr_ptr; /* point up the tree */
-                              tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
+                              tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
                               gr_ptr->gr_count++;
                               Vdetach(img_key);
                             } /* end if */
@@ -931,7 +931,7 @@ for (i = 0; i < curr_image; i++)
 
                           if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                             {
-                              HDfree((VOIDP) img_info);   /* free offsets */
+                              HDfree(img_info);   /* free offsets */
                               Hclose(file_id);
                               HGOTO_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
@@ -1079,7 +1079,7 @@ for (i = 0; i < curr_image; i++)
                             } /* end while */
                         new_image->index=gr_ptr->gr_count;
                         new_image->gr_ptr=gr_ptr; /* point up the tree */
-                        tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
+                        tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
                         gr_ptr->gr_count++;
                       } /* end case */
                       break;
@@ -1092,7 +1092,7 @@ for (i = 0; i < curr_image; i++)
 
                           if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                             {
-                              HDfree((VOIDP) img_info);   /* free offsets */
+                              HDfree(img_info);   /* free offsets */
                               Hclose(file_id);
                               HGOTO_ERROR(DFE_NOSPACE,FAIL);
                             } /* end if */
@@ -1167,7 +1167,7 @@ for (i = 0; i < curr_image; i++)
 
                         new_image->index=gr_ptr->gr_count;
                         new_image->gr_ptr=gr_ptr; /* point up the tree */
-                        tbbtdins(gr_ptr->grtree, (VOIDP) new_image, NULL);    /* insert the new image into B-tree */ 
+                        tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
                         gr_ptr->gr_count++;
                       } /* end case */
                       break;
@@ -1178,7 +1178,7 @@ for (i = 0; i < curr_image; i++)
             } /* end if */
       } /* end for */
 
-    HDfree((VOIDP) img_info);   /* free offsets */
+    HDfree(img_info);   /* free offsets */
 
 done:
   if(ret_value == FAIL)   
@@ -1198,9 +1198,9 @@ done:
     Convert a buffer from one interlace to another.
  USAGE
     intn GRIil_convert(inbuf,inil,outbuf,outil,dims,ncomp,nt)
-        const VOIDP inbuf;          IN: input buffer
+        const void * inbuf;          IN: input buffer
         gr_interlace_t inil;        IN: input buffer's interlace scheme
-        VOIDP outbuf;               IN: output buffer
+        void * outbuf;               IN: output buffer
         gr_interlace_t outil;       IN: output buffer's requested interlace scheme
         int32 dims[2];              IN: dimensions of the buffers
         int32 ncomp;                IN: both buffer's number of components per pixel
@@ -1222,15 +1222,15 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
+intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt)
 {
     CONSTR(FUNC, "GRIil_convert");    /* for HERROR */
     intn ret_value=SUCCEED;
     uintn pixel_size=(uintn)DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND))*(uintn)ncomp;
     uintn comp_size=(uintn)DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND));
-    VOIDP *in_comp_ptr=NULL;    /* an array of pointers to each input component */
-    VOIDP *out_comp_ptr=NULL;   /* an array of pointers to each output component */
+    const void * *in_comp_ptr=NULL;    /* an array of pointers to each input component */
+    void * *out_comp_ptr=NULL;   /* an array of pointers to each output component */
     int32 *in_pixel_add=NULL;   /* an array of increments for each input pixel moved */
     int32 *out_pixel_add=NULL;  /* an array of increments for each output pixel moved */
     int32 *in_line_add=NULL;    /* an array of increments for each input line moved */
@@ -1248,9 +1248,9 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
     else
       {
           /* allocate pixel pointer arrays */
-          if((in_comp_ptr=HDmalloc(sizeof(VOIDP)*(size_t)ncomp))==NULL)
+          if((in_comp_ptr=HDmalloc(sizeof(void *)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if((out_comp_ptr=HDmalloc(sizeof(VOIDP)*(size_t)ncomp))==NULL)
+          if((out_comp_ptr=HDmalloc(sizeof(void *)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* allocate pixel increment arrays */
@@ -1271,7 +1271,7 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_PIXEL:
                     for(i=0; i<ncomp; i++)
                       {
-                        in_comp_ptr[i]=((uint8 *)inbuf)+(size_t)i*comp_size;
+                        in_comp_ptr[i]=((const uint8 *)inbuf)+(size_t)i*comp_size;
                         in_pixel_add[i]=(int32)pixel_size;
                         in_line_add[i]=0;
                       } /* end for */
@@ -1280,7 +1280,7 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_LINE:
                     for(i=0; i<ncomp; i++)
                       {
-                        in_comp_ptr[i]=((uint8 *)inbuf)+(size_t)i*(size_t)dims[XDIM]*comp_size;
+                        in_comp_ptr[i]=((const uint8 *)inbuf)+(size_t)i*(size_t)dims[XDIM]*comp_size;
                         in_pixel_add[i]=(int32)comp_size;
                         in_line_add[i]=(int32)((size_t)(ncomp-1)*(size_t)dims[XDIM]*comp_size);
                       } /* end for */
@@ -1289,7 +1289,7 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_COMPONENT:
                     for(i=0; i<ncomp; i++)
                       {
-                        in_comp_ptr[i]=((uint8 *)inbuf)+(size_t)i*(size_t)dims[YDIM]*(size_t)dims[XDIM]*comp_size;
+                        in_comp_ptr[i]=((const uint8 *)inbuf)+(size_t)i*(size_t)dims[YDIM]*(size_t)dims[XDIM]*comp_size;
                         in_pixel_add[i]=(int32)comp_size;
                         in_line_add[i]=0;
                       } /* end for */
@@ -1349,7 +1349,7 @@ for(i=0; i<ncomp; i++)
                       {
                           HDmemcpy(out_comp_ptr[k],in_comp_ptr[k],comp_size);
                           out_comp_ptr[k]=((uint8 *)out_comp_ptr[k])+out_pixel_add[k];
-                          in_comp_ptr[k]=((uint8 *)in_comp_ptr[k])+in_pixel_add[k];
+                          in_comp_ptr[k]=((const uint8 *)in_comp_ptr[k])+in_pixel_add[k];
                       } /* end for */
                 } /* end for */
 
@@ -1359,7 +1359,7 @@ for(i=0; i<ncomp; i++)
                   for(k=0; k<ncomp; k++)
                     {
                         out_comp_ptr[k]=((uint8 *)out_comp_ptr[k])+out_line_add[k];
-                        in_comp_ptr[k]=((uint8 *)in_comp_ptr[k])+in_line_add[k];
+                        in_comp_ptr[k]=((const uint8 *)in_comp_ptr[k])+in_line_add[k];
                     } /* end for */
           } /* end for */
       } /* end else */
@@ -1966,7 +1966,7 @@ intn GRend(int32 grid)
     int32 GroupID;              /* VGroup ID for the GR group */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     filerec_t *file_rec;        /* File record */
-    VOIDP      *t1;
+    void *      *t1;
     intn   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -2015,13 +2015,13 @@ printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_pt
 #endif /* QAK */
         if(gr_ptr->gr_modified==TRUE && gr_ptr->gr_count>0)
           {
-              VOIDP      *t2;
+              void *      *t2;
               ri_info_t *img_ptr;   /* ptr to the image */
 
 #ifdef QAK
 printf("%s: gr_modified=%d, gr_count=%ld\n",FUNC,gr_ptr->gr_modified,(long)gr_ptr->gr_count);
 #endif /* QAK */
-              if (NULL == (t2 = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
+              if (NULL == (t2 = (void **)tbbtfirst((TBBT_NODE *) * (gr_ptr->grtree))))
                 {
                     HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                 } /* end if */
@@ -2056,10 +2056,10 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
                     /* check if the local attributes has been modified */
                     if(img_ptr->attr_modified==TRUE && img_ptr->lattr_count>0)
                       {
-                          VOIDP      *t3;
+                          void *      *t3;
                           at_info_t *attr_ptr;   /* ptr to the attribute */
 
-                          if (NULL == (t3 = (VOIDP *) tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
+                          if (NULL == (t3 = (void **)tbbtfirst((TBBT_NODE *) * (img_ptr->lattree))))
                             {
                                 HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                             } /* end if */
@@ -2095,7 +2095,7 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                                   } /* end if */
 
                                 /* get the next local attribute in the tree/list */
-                                if (NULL != (t3 = (VOIDP *) tbbtnext((TBBT_NODE *) t3)))     /* get the next node in the tree */
+                                if (NULL != (t3 = (void **)tbbtnext((TBBT_NODE *) t3)))     /* get the next node in the tree */
                                     attr_ptr = (at_info_t *) * t3;     /* get actual pointer to the at_info_t */
                             } /* end while */
                           img_ptr->attr_modified=FALSE;
@@ -2107,7 +2107,7 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                             HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
 
                     /* get the next image in the tree/list */
-                    if (NULL != (t2 = (VOIDP *) tbbtnext((TBBT_NODE *) t2)))     /* get the next node in the tree */
+                    if (NULL != (t2 = (void **)tbbtnext((TBBT_NODE *) t2)))     /* get the next node in the tree */
                         img_ptr = (ri_info_t *) * t2;     /* get actual pointer to the ri_info_t */
                 } /* end while */
           } /* end if */
@@ -2118,10 +2118,10 @@ printf("%s: gr_ptr=%p, gr_ptr->gattr_modified=%d, gr_ptr->gattr_count=%ld\n",FUN
         /* Write out the information for the global attributes which have been changed */
         if(gr_ptr->gattr_modified==TRUE && gr_ptr->gattr_count>0)
           {
-              VOIDP      *t2;
+              void *      *t2;
               at_info_t *attr_ptr;   /* ptr to the attribute */
 
-              if (NULL == (t2 = (VOIDP *) tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
+              if (NULL == (t2 = (void **)tbbtfirst((TBBT_NODE *) * (gr_ptr->gattree))))
                 {
                     HGOTO_ERROR(DFE_NOTINTABLE, FAIL);
                 } /* end if */
@@ -2160,7 +2160,7 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
                       } /* end if */
 
                     /* get the next global attribute in the tree/list */
-                    if (NULL != (t2 = (VOIDP *) tbbtnext((TBBT_NODE *) t2)))     /* get the next node in the tree */
+                    if (NULL != (t2 = (void **)tbbtnext((TBBT_NODE *) t2)))     /* get the next node in the tree */
                         attr_ptr = (at_info_t *) * t2;     /* get actual pointer to the at_info_t */
                 } /* end while */
             gr_ptr->gattr_modified=FALSE;
@@ -2177,7 +2177,7 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 
     /* Close down the entry for this file in the GR tree */
     /* Find the node in the tree */
-    if (( t1 = (VOIDP *) tbbtdfind(gr_tree, (VOIDP) &hdf_file_id, NULL)) == NULL)
+    if (( t1 = (void **)tbbtdfind(gr_tree, &hdf_file_id, NULL)) == NULL)
         HGOTO_DONE(FAIL);
 
     /* Delete the node and free the gr_info_t stucture */
@@ -2231,7 +2231,7 @@ int32 GRselect(int32 grid,int32 index)
     CONSTR(FUNC, "GRselect");   /* for HERROR */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     int32  ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -2252,7 +2252,7 @@ int32 GRselect(int32 grid,int32 index)
     if(!VALIDRIINDEX(index,gr_ptr))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+    if((t = (void **)tbbtdfind(gr_ptr->grtree, &index, NULL))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
@@ -2381,7 +2381,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ri_ptr->access++;
 
     /* insert the new image in the global image tree */
-    tbbtdins(gr_ptr->grtree, (VOIDP) ri_ptr, NULL);    /* insert the new image into B-tree */ 
+    tbbtdins(gr_ptr->grtree, ri_ptr, NULL);    /* insert the new image into B-tree */ 
 
     /* indicate that the GR info has changed */
     gr_ptr->gr_modified=TRUE;
@@ -2428,7 +2428,7 @@ int32 GRnametoindex(int32 grid,const char *name)
     CONSTR(FUNC, "GRnametoindex");   /* for HERROR */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     int32   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -2445,13 +2445,13 @@ int32 GRnametoindex(int32 grid,const char *name)
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)* (gr_ptr->grtree)))==NULL)
+    if((t = (void **)tbbtfirst((TBBT_NODE *)* (gr_ptr->grtree)))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
         if(ri_ptr!=NULL && HDstrcmp(ri_ptr->name,name)==0)  /* ie. the name matches */
             HGOTO_DONE(ri_ptr->index);
-    } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
+    } while((t= (void **)tbbtnext((TBBT_NODE *)t))!=NULL);
 
     ret_value = (FAIL);
 
@@ -2572,7 +2572,7 @@ done:
                                 writing contiguous data, stride of 2 means
                                 writing every other element out along an edge.
         int32 count[2];     IN: number of elements to write out along each edge.
-        VOIDP data;         IN: pointer to the data to write out.
+        void * data;         IN: pointer to the data to write out.
 
  RETURNS
     SUCCEED/FAIL
@@ -2589,7 +2589,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOIDP data)
+intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],void * data)
 {
     CONSTR(FUNC, "GRwriteimage");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID */
@@ -2598,7 +2598,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VO
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn solid_block=FALSE;     /* whether the image data is a solid block of data */
     intn whole_image=FALSE;     /* whether we are writing out the whole image */
-    VOIDP *img_data;            /* pointer to the converted image data to write */
+    void * *img_data;            /* pointer to the converted image data to write */
     uintn pixel_mem_size,       /* size of a pixel in memory */
         pixel_disk_size;        /* size of a pixel on disk */
     intn convert=FALSE;         /* true if machine NT != NT to be written */
@@ -2696,7 +2696,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
 
           if(switch_interlace==TRUE)
             {
-              VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+              void * pixel_buf;  /* buffer for the pixel interlaced data */
 
               /* Allocate space for the conversion buffer */
               if((pixel_buf=HDmalloc(pixel_mem_size*(size_t)count[XDIM]*(size_t)count[YDIM]))==NULL)
@@ -2774,12 +2774,12 @@ fprintf(stderr,"%s: check 5.5, img_tag=%d, img_ref=%d\n",FUNC,(int)ri_ptr->img_t
           else
             { /* write only part of the image out */
                 int32 img_offset; /* current offset in the image data */
-                VOIDP tmp_data;   /* temp. pointer to the image data to write */
+                void * tmp_data;   /* temp. pointer to the image data to write */
 #ifdef OLD_WAY
                 int32 aid;
 #endif /* OLD_WAY */
                 intn fill_image=FALSE;  /* whether to create fill values, etc. */
-                VOIDP fill_line=NULL;   /* array containing the fill pixels for an entire line of the image */
+                void * fill_line=NULL;   /* array containing the fill pixels for an entire line of the image */
                 int32 fill_lo_size=0,   /* number of bytes in the "low" block */
                     fill_hi_size=0,     /* number of bytes in the "high" block */
                     fill_line_size=0;   /* number of bytes in the "line" block */
@@ -2801,13 +2801,13 @@ printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fi
                 /* check if this is a new image, and if we need to write fill pixels */
                 if(new_image==TRUE && ri_ptr->fill_img==TRUE)
                   { /* create fill value arrays for various blocks */
-                      VOIDP fill_pixel; /* converted value for the filled pixel */
+                      void * fill_pixel; /* converted value for the filled pixel */
                       int32 at_index;   /* attribute index for the fill value */
 
 #ifdef QAK
 printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_value=%p, convert=%d\n",FUNC,ri_ptr->fill_value,(int)convert);
 #endif /* QAK */
-                      if((fill_pixel=(VOIDP)HDmalloc(pixel_disk_size))==NULL)
+                      if((fill_pixel=HDmalloc(pixel_disk_size))==NULL)
                           HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
                       /* create correct disk version of fill pixel */
@@ -2822,7 +2822,7 @@ printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_valu
                           /* Try to find a fill value attribute */
                           if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
                             { /* Found a fill value attribute */
-                                if((ri_ptr->fill_value=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
+                                if((ri_ptr->fill_value=HDmalloc(pixel_mem_size))==NULL)
                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                 if(GRgetattr(riid,at_index,ri_ptr->fill_value)==FAIL)
                                     HGOTO_ERROR(DFE_BADATTR,FAIL);
@@ -2853,7 +2853,7 @@ printf("%s: check 6.75, xdim=%ld, ydim=%ld, fill_lo_size=%ld, fill_hi_size=%ld\n
                       /* create the "line" pixel block */
                       /* allocate space for the "line" block */
                       fill_line_size=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
-                      if((fill_line=(VOIDP)HDmalloc(fill_line_size))==NULL)
+                      if((fill_line=HDmalloc(fill_line_size))==NULL)
                             HGOTO_ERROR(DFE_NOSPACE,FAIL);
                       HDmemfill(fill_line,fill_pixel,pixel_disk_size,(uint32)ri_ptr->img_dim.xdim);
 
@@ -2924,7 +2924,7 @@ printf("%s: *tmp_data=%u\n",FUNC,(unsigned)*(uint8 *)tmp_data);
                                           && i<(count[YDIM]-1))
                                       if(Hwrite(ri_ptr->img_aid,(fill_hi_size+fill_lo_size),fill_line)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
-                                  tmp_data=(VOIDP)((char *)tmp_data+pix_len);
+                                  tmp_data=(void *)((char *)tmp_data+pix_len);
                               } /* end for */
                             
 #ifdef QAK
@@ -2965,7 +2965,7 @@ printf("%s: check 12.5\n",FUNC);
                                   if(Hwrite(ri_ptr->img_aid,pix_len,tmp_data)==FAIL)
                                       HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                   img_offset+=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
-                                  tmp_data=(VOIDP)((char *)tmp_data+pix_len);
+                                  tmp_data=(void *)((char *)tmp_data+pix_len);
                               } /* end for */
                         } /* end else */
                   } /* end if */
@@ -3046,7 +3046,7 @@ printf("%s: check 14.63, writing fill_stride_size=%ld bytes\n",FUNC,(long)fill_s
                                           if(Hwrite(ri_ptr->img_aid,fill_stride_size,fill_line)==FAIL)
                                               HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                         } /* end if */
-                                      tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
+                                      tmp_data=(void *)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
   
                                   /* Fill in the y-dim stride lines */
@@ -3125,7 +3125,7 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
                                       if(Hwrite(ri_ptr->img_aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       local_offset+=stride_add;
-                                      tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
+                                      tmp_data=(void *)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
   
                                   img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*(int32)pixel_disk_size;
@@ -3183,7 +3183,7 @@ done:
                                 reading contiguous data, stride of 2 means
                                 reading every other element out along an edge.
         int32 count[2];     IN: number of elements to read in along each edge.
-        VOIDP data;         IN: pointer to the data to read in.
+        void * data;         IN: pointer to the data to read in.
 
  RETURNS
     SUCCEED/FAIL
@@ -3199,7 +3199,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOIDP data)
+intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],void * data)
 {
     CONSTR(FUNC, "GRreadimage");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID */
@@ -3208,7 +3208,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     int32 stride[2];            /* pointer to the stride array */
     intn solid_block=FALSE;     /* whether the image data is a solid block of data */
     intn whole_image=FALSE;     /* whether we are writing out the whole image */
-    VOIDP *img_data;            /* pointer to the converted image data to write */
+    void * *img_data;            /* pointer to the converted image data to write */
     uintn pixel_disk_size;      /* size of a pixel on disk */
     uintn pixel_mem_size;       /* size of a pixel in memory */
     intn convert;               /* true if machine NT != NT to be written */
@@ -3286,13 +3286,13 @@ fprintf(stderr,"%s: convert=%d\n",FUNC,(int)convert);
 #endif /* QAK */
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
       { /* Fake an image for the user by using the pixel fill value */
-          VOIDP fill_pixel;         /* converted value for the filled pixel */
+          void * fill_pixel;         /* converted value for the filled pixel */
           int32 at_index;
 
 #ifdef QAK
 fprintf(stderr,"%s: faking an image for the user\n",FUNC);
 #endif /* QAK */
-          if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
+          if((fill_pixel=HDmalloc(pixel_mem_size))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           /* Try to find a fill value attribute */
@@ -3343,7 +3343,7 @@ fprintf(stderr,"%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,
           else
             { /* read only part of the image in */
                 int32 img_offset; /* current offset in the image data */
-                VOIDP tmp_data;   /* temp. pointer to the image data read in */
+                void * tmp_data;   /* temp. pointer to the image data read in */
 #ifdef OLD_WAY
                 int32 aid;
 #endif /* OLD_WAY */
@@ -3384,7 +3384,7 @@ printf("%s: check 2\n",FUNC);
                             if(Hread(ri_ptr->img_aid,pix_len,tmp_data)==FAIL)
                                 HGOTO_ERROR(DFE_READERROR,FAIL);
                             img_offset+=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
-                            tmp_data=(VOIDP)((char *)tmp_data+pix_len);
+                            tmp_data=(void *)((char *)tmp_data+pix_len);
                         } /* end for */
                   } /* end if */
                 else
@@ -3409,7 +3409,7 @@ printf("%s: check 3\n",FUNC);
                                 if(Hread(ri_ptr->img_aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                     HGOTO_ERROR(DFE_READERROR,FAIL);
                                 local_offset+=stride_add;
-                                tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
+                                tmp_data=(void *)((char *)tmp_data+pixel_disk_size);
                               } /* end for */
 
                             img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*(int32)pixel_disk_size;
@@ -3441,7 +3441,7 @@ printf("%s: check 4\n",FUNC);
       /*        in a bit of a hurry right now - QAK */
       if(ri_ptr->im_il!=MFGR_INTERLACE_PIXEL)
         {
-          VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+          void * pixel_buf;  /* buffer for the pixel interlaced data */
 
           /* Allocate space for the conversion buffer */
           if((pixel_buf=HDmalloc(pixel_mem_size*(size_t)count[XDIM]*(size_t)count[YDIM]))==NULL)
@@ -3646,7 +3646,7 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     CONSTR(FUNC, "GRreftoindex");   /* for HERROR */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     int32   ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -3663,13 +3663,13 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    if((t = (VOIDP *) tbbtfirst((TBBT_NODE *) *(gr_ptr->grtree)))==NULL)
+    if((t = (void **)tbbtfirst((TBBT_NODE *) *(gr_ptr->grtree)))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         ri_ptr=(ri_info_t *)*t;
         if(ri_ptr!=NULL && ((ri_ptr->ri_ref==ref) || (ri_ptr->ri_ref==DFREF_WILDCARD && ri_ptr->rig_ref==ref)))  /* the ref matches */
             HGOTO_DONE(ri_ptr->index);
-    } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
+    } while((t= (void **)tbbtnext((TBBT_NODE *)t))!=NULL);
 
     ret_value = (FAIL);
 
@@ -4023,7 +4023,7 @@ done:
         int32 nt;           IN: number type of components
         int32 il;           IN: interlace of the LUT
         int32 nentries;     IN: the number of entries for the LUT
-        VOIDP data;         IN: LUT data to write out
+        void * data;         IN: LUT data to write out
 
  RETURNS
     SUCCEED/FAIL
@@ -4036,7 +4036,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
+intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void * data)
 {
     CONSTR(FUNC, "GRwritelut");   /* for HERROR */
     int32 hdf_file_id;          /* file ID from Hopen */
@@ -4119,7 +4119,7 @@ done:
  USAGE
     intn GRreadlut(lutid,data)
         int32 lutid;        IN: LUT ID from GRgetlutid
-        VOIDP data;         IN: buffer for LUT data read in
+        void * data;         IN: buffer for LUT data read in
 
  RETURNS
     SUCCEED/FAIL
@@ -4132,7 +4132,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRreadlut(int32 lutid,VOIDP data)
+intn GRreadlut(int32 lutid,void * data)
 {
     CONSTR(FUNC, "GRreadlut");   /* for HERROR */
     int32 hdf_file_id;          /* file ID from Hopen */
@@ -4164,7 +4164,7 @@ intn GRreadlut(int32 lutid,VOIDP data)
     if(ri_ptr->lut_il!=MFGR_INTERLACE_PIXEL)
       {
           uintn pixel_mem_size;       /* size of a pixel in memory */
-          VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+          void * pixel_buf;  /* buffer for the pixel interlaced data */
           int32 count[2];   /* "dimension" info */
 
           pixel_mem_size=(uintn)(ri_ptr->lut_dim.ncomps*DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
@@ -4428,7 +4428,7 @@ done:
         char *name;             IN: name of attribute
         int32 attr_nt;          IN: number-type of attribute
         int32 count;            IN: number of entries of the attribute
-        VOIDP data;             IN: attribute data to write
+        void * data;             IN: attribute data to write
 
  RETURNS
     SUCCEED/FAIL
@@ -4443,13 +4443,13 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const VOIDP data)
+intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * data)
 {
     CONSTR(FUNC, "GRsetattr");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID from Hopen */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr=NULL;     /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr=NULL;     /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
@@ -4528,7 +4528,7 @@ printf("%s: hdf_file_id=%lx\n",FUNC,(long unsigned)hdf_file_id);
 printf("%s: check 1, search_tree=%p\n",FUNC,search_tree);
 #endif /* QAK */
     /* Search for an attribute with the same name */
-    if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)*search_tree))!=NULL)
+    if((t = (void **)tbbtfirst((TBBT_NODE *)*search_tree))!=NULL)
       {
 #ifdef QAK
 printf("%s: t=%p\n",FUNC,t);
@@ -4552,7 +4552,7 @@ if(at_ptr!=NULL)
 #ifdef QAK
 printf("%s: check 1.9: found=%d\n",FUNC,found);
 #endif /* QAK */
-          } while((t= (VOIDP *)tbbtnext((TBBT_NODE *)t))!=NULL);
+          } while((t= (void **)tbbtnext((TBBT_NODE *)t))!=NULL);
       } /* end if */
 
 #ifdef QAK
@@ -4608,7 +4608,7 @@ printf("%s: found existing attribute\n",FUNC);
                   {
                       if(at_ptr->data!=NULL)
                           HDfree(at_ptr->data);
-                      if((at_ptr->data=(VOIDP)HDmalloc(new_at_size))==NULL)
+                      if((at_ptr->data=HDmalloc(new_at_size))==NULL)
                           HGOTO_ERROR(DFE_NOSPACE,FAIL);
                   } /* end if */
                 HDmemcpy(at_ptr->data,data,new_at_size);
@@ -4665,7 +4665,7 @@ printf("%s: hdf_file_id=%lx\n",FUNC,(long unsigned)hdf_file_id);
         at_ptr->new_at=TRUE;
 
         /* Add the attribute to the attribute tree */
-        if(tbbtdins(search_tree, (VOIDP)at_ptr, NULL)==NULL)
+        if(tbbtdins(search_tree, at_ptr, NULL)==NULL)
             HGOTO_ERROR(DFE_TBBTINS,FAIL);
 
         /* flag the attribute tree as being modified */
@@ -4732,7 +4732,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
     CONSTR(FUNC, "GRattrinfo");   /* for HERROR */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     intn   ret_value = SUCCEED;
@@ -4777,7 +4777,7 @@ printf("%s: found a RIID\n",FUNC);
     else    /* shouldn't get here, but what the heck... */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if((t = (VOIDP *) tbbtdfind(search_tree, (VOIDP) &index, NULL))==NULL)
+    if((t = (void **)tbbtdfind(search_tree, &index, NULL))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     at_ptr=(at_info_t *)*t;
 
@@ -4812,7 +4812,7 @@ done:
     intn GRgetattr(dimid|riid|grid,index,data)
         int32 dimid|riid|grid;  IN: DIM|RI|GR ID
         int32 index;            IN: index of the attribute for info
-        VOIDP data;             OUT: data read for attribute
+        void * data;             OUT: data read for attribute
 
  RETURNS
     SUCCEED/FAIL
@@ -4825,13 +4825,13 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn GRgetattr(int32 id,int32 index,VOIDP data)
+intn GRgetattr(int32 id,int32 index,void * data)
 {
     CONSTR(FUNC, "GRgetattr");   /* for HERROR */
     int32 hdf_file_id;          /* HDF file ID from Hopen */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 at_size;              /* size in bytes of the attribute data */
@@ -4874,7 +4874,7 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     hdf_file_id=gr_ptr->hdf_file_id;
-    if((t = (VOIDP *) tbbtdfind(search_tree, (VOIDP) &index, NULL))==NULL)
+    if((t = (void **)tbbtdfind(search_tree, &index, NULL))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     at_ptr=(at_info_t *)*t;
 
@@ -4954,7 +4954,7 @@ int32 GRfindattr(int32 id,const char *name)
     CONSTR(FUNC, "GRfindattr");   /* for HERROR */
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    VOIDP *t;                   /* temp. ptr to the image found */
+    void * *t;                   /* temp. ptr to the image found */
     TBBT_TREE *search_tree;     /* attribute tree to search through */
     at_info_t *at_ptr;          /* ptr to the attribute to work with */
     int32 ret_value = SUCCEED;
@@ -4988,13 +4988,13 @@ int32 GRfindattr(int32 id,const char *name)
     else    /* shouldn't get here, but what the heck... */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if((t = (VOIDP *) tbbtfirst((TBBT_NODE *)*search_tree))==NULL)
+    if((t = (void **)tbbtfirst((TBBT_NODE *)*search_tree))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     do {
         at_ptr=(at_info_t *)*t;
         if(at_ptr!=NULL && HDstrcmp(at_ptr->name,name)==0)  /* ie. the name matches */
             HGOTO_DONE(at_ptr->index);
-    } while((t= (VOIDP *) tbbtnext((TBBT_NODE *)t))!=NULL);
+    } while((t= (void **)tbbtnext((TBBT_NODE *)t))!=NULL);
 
     ret_value = (FAIL);
 
@@ -5299,7 +5299,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
     int32      *cdims    = NULL;     /* array of chunk lengths */
     uintn      pixel_mem_size;       /* size of a pixel in memory */
     uintn      pixel_disk_size;      /* size of a pixel on disk */
-    VOIDP      fill_pixel = NULL;    /* converted value for the filled pixel */
+    void *      fill_pixel = NULL;    /* converted value for the filled pixel */
     int32      at_index;             /* attribute index for the fill value */
     int32      ndims    = 0;         /* # dimensions i.e. rank */
     uint8      nlevels  = 1;         /* default # levels is 1 */
@@ -5455,7 +5455,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 #endif
 
     /* allocate space for fill pixel */
-    if((fill_pixel = (VOIDP)HDmalloc(pixel_disk_size)) == NULL)
+    if((fill_pixel = HDmalloc(pixel_disk_size)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
     /* create correct disk version of fill pixel */
@@ -5471,7 +5471,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           /* Try to find a fill value attribute */
           if((at_index = GRfindattr(riid,FILL_ATTR)) != FAIL)
             { /* Found a fill value attribute */
-                if((ri_ptr->fill_value = (VOIDP)HDmalloc(pixel_mem_size)) == NULL)
+                if((ri_ptr->fill_value = HDmalloc(pixel_mem_size)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
                 if(GRgetattr(riid,at_index,ri_ptr->fill_value) == FAIL)
                     HGOTO_ERROR(DFE_BADATTR,FAIL);
@@ -5809,7 +5809,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
 
                             if(switch_interlace == TRUE)
                               {
-                                  VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+                                  void * pixel_buf;  /* buffer for the pixel interlaced data */
 
                                   /* Allocate space for the conversion buffer */
                                   if((pixel_buf = HDmalloc(pixel_mem_size*csize)) == NULL)
@@ -6021,7 +6021,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                       /* I took this code from GRwrite() and put it here - GV */
                       if(ri_ptr->im_il != MFGR_INTERLACE_PIXEL)
                         {
-                            VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+                            void * pixel_buf;  /* buffer for the pixel interlaced data */
 
                             /* Allocate space for the conversion buffer */
                             if((pixel_buf = HDmalloc(pixel_mem_size*csize)) == NULL)

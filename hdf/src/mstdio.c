@@ -192,7 +192,7 @@ HCPmstdio_seek(accrec_t * access_rec, int32 offset, int origin)
     int32 HCPmstdio_read(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -207,7 +207,7 @@ HCPmstdio_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_read(accrec_t * access_rec, int32 length, VOIDP data)
+HCPmstdio_read(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPmstdio_read");
     compinfo_t *info;           /* information on the special element */
@@ -231,7 +231,7 @@ HCPmstdio_read(accrec_t * access_rec, int32 length, VOIDP data)
     int32 HCPwrite(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -245,7 +245,7 @@ HCPmstdio_read(accrec_t * access_rec, int32 length, VOIDP data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPmstdio_write(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPmstdio_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPmstdio_write");
     compinfo_t *info;           /* information on the special element */

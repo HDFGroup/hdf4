@@ -366,7 +366,7 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     access_rec->special_func = &linked_funcs;
-    access_rec->special_info = (VOIDP)info;
+    access_rec->special_info = (void *)info;
     access_rec->special      = SPECIAL_LINKED;
     access_rec->posn         = 0;
     access_rec->access       = DFACC_RDWR;
@@ -529,7 +529,7 @@ printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_bloc
     link_ref = Htagnewref(file_id,DFTAG_LINKED);
 
     /* allocates special info struct for linked blocks */
-    access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
+    access_rec->special_info = HDmalloc((uint32) sizeof(linkinfo_t));
     if (!access_rec->special_info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -720,11 +720,11 @@ HLIstaccess(accrec_t *access_rec,
                       {
                           next = t_link->next;
                           if(t_link->block_list!=NULL)
-                              HDfree((VOIDP) t_link->block_list);
-                          HDfree((VOIDP) t_link);
+                              HDfree(t_link->block_list);
+                          HDfree(t_link);
                       }
                   } /* end if */
-                HDfree((VOIDP) t_info);
+                HDfree(t_info);
                 access_rec->special_info = NULL;
             }
       }
@@ -755,7 +755,7 @@ HLIstaccess(accrec_t *access_rec,
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     /* allocate space for special information */
-    access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(linkinfo_t));
+    access_rec->special_info = HDmalloc((uint32) sizeof(linkinfo_t));
     info = (linkinfo_t *) access_rec->special_info;
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -782,7 +782,7 @@ HLIstaccess(accrec_t *access_rec,
                                        info->link->block_list[0].ref);
           if (info->first_length == FAIL)
             {
-                HDfree((VOIDP) info->link);
+                HDfree(info->link);
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
       }
@@ -803,8 +803,8 @@ HLIstaccess(accrec_t *access_rec,
                   {
                       next = l->next;
                       if (l->block_list)
-                          HDfree((VOIDP) l->block_list);
-                      HDfree((VOIDP) l);
+                          HDfree(l->block_list);
+                      HDfree(l);
                   }
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
@@ -929,7 +929,7 @@ HLIgetlink(int32  file_id,
     /* read block table into buffer */
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
-        Hread(access_id, 2 + 2 * number_blocks, (VOIDP)buffer) == FAIL)
+        Hread(access_id, 2 + 2 * number_blocks, buffer) == FAIL)
         HGOTO_ERROR(DFE_READERROR, NULL);
 
     /* decode block table information read from file */
@@ -1022,7 +1022,7 @@ USAGE
    int32 HLPseek(access_rec, length, data)
    access_t * access_rec;      IN: access record to mess with
    int32      length;          IN: number of bytes to read
-   VOIDP      data;            IN: buffer for data
+   void *      data;            IN: buffer for data
 RETURNS
    The number of bytes read or FAIL on error
 DESCRIPTION
@@ -1036,7 +1036,7 @@ DESCRIPTION
 int32
 HLPread(accrec_t *access_rec, 
         int32     length, 
-        VOIDP     datap)
+        void *     datap)
 {
     CONSTR(FUNC, "HLPread");    /* for HERROR */
     uint8      *data = (uint8 *) datap;
@@ -1134,7 +1134,7 @@ printf("%s: check 6\n",FUNC);
                 if (access_id == (int32) FAIL
                     || (relative_posn
                 && (int32) FAIL == Hseek(access_id, relative_posn, DF_START))
-                    || (int32) FAIL == (nbytes = Hread(access_id, remaining, (VOIDP)data)))
+                    || (int32) FAIL == (nbytes = Hread(access_id, remaining, data)))
                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
                 bytes_read += nbytes;
@@ -1189,10 +1189,10 @@ done:
 NAME
    HLPwrite -- write out some data to a linked block
 USAGE
-   int32 HLPseek(access_rec, length, data)
+   int32 HLPwrite(access_rec, length, data)
    access_t * access_rec;      IN: access record to mess with
-   int32      length;          IN: number of bytes to read
-   VOIDP      data;            IN: buffer for data
+   int32      length;          IN: number of bytes to write
+   void *      data;            IN: buffer for data
 RETURNS
    The number of bytes written or FAIL on error
 DESCRIPTION
@@ -1204,10 +1204,10 @@ DESCRIPTION
 int32
 HLPwrite(accrec_t   *access_rec, 
          int32       length, 
-         const VOIDP datap)
+         const void * datap)
 {
     CONSTR(FUNC, "HLPwrite");   /* for HERROR */
-    uint8      *data = (uint8 *) datap;
+    const uint8      *data = datap;
     filerec_t  *file_rec =      /* file record */
         HAatom_object(access_rec->file_id);
     int32       dd_aid;         /* AID for writing the special info */
@@ -1297,7 +1297,7 @@ printf("%s: num_links=%d\n",FUNC,num_links);
                         if (link_id == FAIL)
                             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                         UINT16ENCODE(p, t_link->nextref);
-                        if (Hwrite(link_id, 2, (VOIDP)local_ptbuf) == FAIL)
+                        if (Hwrite(link_id, 2, local_ptbuf) == FAIL)
                             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                         Hendaccess(link_id);
                     }   /* AA */
@@ -1350,7 +1350,7 @@ printf("%s: remaining=%d\n",FUNC,(int)remaining);
 
           if ((relative_posn &&
                (int32) FAIL == Hseek(access_id, relative_posn, DF_START)) ||
-              (int32) FAIL == (nbytes = Hwrite(access_id, remaining, (VOIDP)data)))
+              (int32) FAIL == (nbytes = Hwrite(access_id, remaining, data)))
             {
                 HGOTO_ERROR(DFE_WRITEERROR, FAIL);
             }
@@ -1373,7 +1373,7 @@ printf("%s: remaining=%d\n",FUNC,(int)remaining);
                 UINT16ENCODE(p, new_ref);
                 if (Hseek(link_id, 2 + 2 * block_idx, DF_START) == FAIL)
                     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-                if (Hwrite(link_id, 2, (VOIDP)local_ptbuf) == FAIL)
+                if (Hwrite(link_id, 2, local_ptbuf) == FAIL)
                     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                 Hendaccess(link_id);
 
@@ -1410,7 +1410,7 @@ printf("%s: remaining=%d\n",FUNC,(int)remaining);
                           if (link_id == FAIL)
                               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                           UINT16ENCODE(p, t_link->nextref);
-                          if (Hwrite(link_id, 2, (VOIDP)local_ptbuf) == FAIL)
+                          if (Hwrite(link_id, 2, local_ptbuf) == FAIL)
                               HGOTO_ERROR(DFE_WRITEERROR, FAIL);
                           Hendaccess(link_id);
                       }     /* BB */
@@ -1538,7 +1538,7 @@ HLInewlink(int32  file_id,
     }   /* CC */
 
     /* write the link */
-    if (Hwrite(link_id, 2 + 2 * number_blocks, (VOIDP)buf) == FAIL)
+    if (Hwrite(link_id, 2 + 2 * number_blocks, buf) == FAIL)
         HGOTO_ERROR(DFE_WRITEERROR, NULL);
 
     /* close down acces to this block */
@@ -1729,11 +1729,11 @@ HLPcloseAID(accrec_t * access_rec)
           for (t_link = info->link; t_link; t_link = next)
             {
                 next = t_link->next;
-                HDfree((VOIDP) t_link->block_list);
-                HDfree((VOIDP) t_link);
+                HDfree(t_link->block_list);
+                HDfree(t_link);
             }
 
-          HDfree((VOIDP) info);
+          HDfree(info);
           access_rec->special_info = NULL;
       }
 

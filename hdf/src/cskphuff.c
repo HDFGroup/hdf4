@@ -295,7 +295,7 @@ printf("bitcount=%d\n",++bitcount);
     int32 HCIcskphuff_encode(info,length,buf)
     compinfo_t *info;   IN: the info about the compressed element
     int32 length;       IN: number of bytes to store from the buffer
-    uint8 *buf;         OUT: buffer to get the bytes from
+    const uint8 *buf;         OUT: buffer to get the bytes from
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -309,7 +309,7 @@ printf("bitcount=%d\n",++bitcount);
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
+HCIcskphuff_encode(compinfo_t * info, int32 length, const uint8 *buf)
 {
     CONSTR(FUNC, "HCIcskphuff_encode");
     comp_coder_skphuff_info_t *skphuff_info;    /* ptr to skipping Huffman info */
@@ -637,7 +637,7 @@ HCPcskphuff_seek(accrec_t * access_rec, int32 offset, int origin)
     int32 HCPcskphuff_read(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -651,7 +651,7 @@ HCPcskphuff_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcskphuff_read(accrec_t * access_rec, int32 length, VOIDP data)
+HCPcskphuff_read(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPcskphuff_read");
     compinfo_t *info;           /* special element information */
@@ -672,7 +672,7 @@ HCPcskphuff_read(accrec_t * access_rec, int32 length, VOIDP data)
     int32 HCPcskphuff_write(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -686,7 +686,7 @@ HCPcskphuff_read(accrec_t * access_rec, int32 length, VOIDP data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcskphuff_write(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPcskphuff_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPcskphuff_write");
     compinfo_t *info;           /* special element information */

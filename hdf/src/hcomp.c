@@ -335,7 +335,7 @@ done:
     HCPencode_header -- Encode the compression header info to a memory buffer
  USAGE
     intn HCPencode_header(model_type, model_info, coder_type, coder_info)
-    VOIDP buf;               OUT: encoded compression info header
+    void * buf;               OUT: encoded compression info header
     comp_model_t model_type; IN: the type of modeling to use
     model_info *m_info;      IN: Information needed for the modeling type chosen
     comp_coder_t coder_type; IN: the type of encoding to use
@@ -426,7 +426,7 @@ done:
     HCPdecode_header -- Decode the compression header info from a memory buffer
  USAGE
     intn HCPdecode_header(model_type, model_info, coder_type, coder_info)
-    VOIDP buf;                  IN: encoded compression info header
+    void * buf;                  IN: encoded compression info header
     comp_model_t *model_type;   OUT: the type of modeling to use
     model_info *m_info;         OUT: Information needed for the modeling type chosen
     comp_coder_t *coder_type;   OUT: the type of encoding to use
@@ -736,7 +736,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     atom_t      data_id=FAIL;   /* dd ID of existing regular element */
     int32       data_len;		/* length of the data we are checking */
     uint16      special_tag;    /* special version of tag */
-    VOIDP       buf = NULL;      /* temporary buffer */
+    void *       buf = NULL;      /* temporary buffer */
     int32       ret_value=SUCCEED;
 
     /* clear error stack and validate args */
@@ -773,7 +773,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
             } /* end if */
 
-          if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
+          if ((buf = HDmalloc((uint32) data_len)) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
           if (Hgetelement(file_id, tag, ref, buf) == FAIL)
               HGOTO_ERROR(DFE_READERROR, FAIL);
@@ -785,7 +785,7 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
 
     /* set up the special element information and write it to file */
     info = (compinfo_t *) HDmalloc(sizeof(compinfo_t));
-    access_rec->special_info = (VOIDP) info;
+    access_rec->special_info = info;
     if (info == NULL)
           HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -838,12 +838,12 @@ done:
         if(access_rec!=NULL)
             HIrelease_accrec_node(access_rec);
         if(info!=NULL)
-            HDfree((VOIDP) info);
+            HDfree(info);
       } /* end if */
 
     /* Normal function cleanup */
     if (buf != NULL)
-        HDfree((VOIDP) buf);
+        HDfree(buf);
 
     return ret_value; 
 }   /* end HCcreate() */
@@ -886,7 +886,7 @@ HCIstaccess(accrec_t * access_rec, int16 acc_mode)
     access_rec->access = (uint32)(acc_mode|DFACC_READ);
 
     /* get the special info record */
-    access_rec->special_info = (VOIDP) HDmalloc(sizeof(compinfo_t));
+    access_rec->special_info = HDmalloc(sizeof(compinfo_t));
     info = (compinfo_t *) access_rec->special_info;
     if (info == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -907,7 +907,7 @@ done:
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
         if(info!=NULL)
-            HDfree((VOIDP) info);
+            HDfree(info);
       } /* end if */
 
     /* Normal function cleanup */
@@ -1049,7 +1049,7 @@ done:
     int32 HCPread(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
  RETURNS
     Returns the number of bytes read or FAIL
  DESCRIPTION
@@ -1061,7 +1061,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPread(accrec_t * access_rec, int32 length, VOIDP data)
+HCPread(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPread");    /* for HERROR */
     compinfo_t *info;           /* information on the special element */
@@ -1104,7 +1104,7 @@ done:
     int32 HCPwrite(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
  RETURNS
     Returns the number of bytes written or FAIL
  DESCRIPTION
@@ -1116,7 +1116,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPwrite(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPwrite");   /* for HERROR */
     compinfo_t *info;           /* information on the special element */

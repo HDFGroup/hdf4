@@ -197,6 +197,13 @@ extern      "C"
 
 /* Library Private */
 #ifdef _HCHUNKS_MAIN_
+    /* tbbt.h helper routines */
+    intn chkcompare(void * k1,   /* IN: first key */
+           void * k2,   /* IN: second key */
+           intn cmparg /* IN: not sure? */);
+    void chkfreekey(void * key /*IN: chunk key */ );
+    void chkdestroynode(void * n /* IN: chunk record */ );
+
 /* Private to 'hchunks.c' */
     extern int32 HMCPstread
         (accrec_t *access_rec  /* IN: access record to fill in */);
@@ -217,7 +224,7 @@ extern      "C"
     extern int32 HMCPread
         (accrec_t * access_rec, /* IN: access record to mess with */
          int32 length,          /* IN: number of bytes to read */
-         VOIDP data             /* OUT: buffer for data */);
+         void * data             /* OUT: buffer for data */);
 
     extern int32 HMCPchunkwrite
         (VOID  *cookie,    /* IN: access record to mess with */
@@ -227,7 +234,7 @@ extern      "C"
     extern int32 HMCPwrite
         (accrec_t *access_rec, /* IN: access record to mess with */
          int32 length,         /* IN: number of bytes to write */
-         const VOIDP data      /* IN: buffer for data */);
+         const void * data      /* IN: buffer for data */);
 
     extern intn HMCPendaccess
         (accrec_t *access_rec /* IN:  access record to close */);

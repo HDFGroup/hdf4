@@ -516,16 +516,16 @@ done:
     Returns pointer an atom's object if successful and NULL otherwise
 
 *******************************************************************************/
-VOIDP HAsearch_atom(group_t grp,        /* IN: Group to search for the object in */
+void * HAsearch_atom(group_t grp,        /* IN: Group to search for the object in */
     HAsearch_func_t func,               /* IN: Ptr to the comparison function */
-    const VOIDP key                     /* IN: pointer to key to compare against */
+    const void * key                     /* IN: pointer to key to compare against */
 )
 {
     CONSTR(FUNC, "HAsearch_atom");	/* for HERROR */
     atom_group_t *grp_ptr=NULL;     /* ptr to the atomic group */
     atom_info_t *atm_ptr=NULL;      /* ptr to the new atom */
     intn i;                         /* local counting variable */
-    VOIDP ret_value=NULL;
+    void * ret_value=NULL;
 
 #ifdef HAVE_PABLO
     TRACE_ON(HA_mask, ID_HAsearch_atom);

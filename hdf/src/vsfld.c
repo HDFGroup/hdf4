@@ -50,7 +50,7 @@ EXPORTED ROUTINES
    ** ==================================================================
    * */
 
-PRIVATE const SYMDEF rstab[] =
+static const SYMDEF rstab[] =
 {
     {"PX", DFNT_FLOAT32, SIZE_FLOAT32, 1},
     {"PY", DFNT_FLOAT32, SIZE_FLOAT32, 1},
@@ -351,7 +351,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
             }
           else
             {
-              if((tmp_sym=(SYMDEF *) HDrealloc((VOIDP)tmp_sym,sizeof(SYMDEF)*(size_t)(usymid+1)))==NULL)
+              if((tmp_sym=(SYMDEF *) HDrealloc(tmp_sym,sizeof(SYMDEF)*(size_t)(usymid+1)))==NULL)
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
             }
           vs->usym=tmp_sym;
@@ -743,7 +743,7 @@ NAME
               interlaced fields.
 USAGE
     intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
-         VOIDP buf, intn bufsz, intn n_records, char *fields, VOIDP fldbufpt[])
+         void * buf, intn bufsz, intn n_records, char *fields, void * fldbufpt[])
     int32 vsid; IN: vdata id.
     intn packtype; IN: 
          _HDF_VSPACK(0) -- pack field values into vdata buf;
@@ -751,14 +751,14 @@ USAGE
     char *fields_in_buf; IN: 
          fields in buf to write to or read from vdata. NULL 
          stands for all fields in the vdata.
-    VOIDP buf; IN: buffer for vdata values.
+    void * buf; IN: buffer for vdata values.
     intn bufsz; IN: buf size in byte.
     intn n_records; IN: number of records to pack or unpack.
     char *fields; IN: 
          names of the fields to be pack/unpack. It may be a 
          subset of the fields_in_buf. NULL stands for all 
          fields in buf. 
-    VOIDP fldbufpt[]; IN: array of pointers to field buffers.
+    void * fldbufpt[]; IN: array of pointers to field buffers.
 RETURNS
     SUCCEED(0) on success; FIAL(-1) otherwise.
 DESCRIPTION
@@ -777,7 +777,7 @@ DESCRIPTION
 /*---------------------------------------------------------*/
 
 intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
-         VOIDP buf, intn bufsz, intn n_records, char *fields, VOIDP fldbufpt[])
+         void * buf, intn bufsz, intn n_records, char *fields, void * fldbufpt[])
 {
     CONSTR(FUNC, "VSfpack");
 

@@ -36,7 +36,7 @@ static char RcsId[] = "@(#)$Revision$";
    int32 VHstoredata (f, field, buf, n, datatype, vsname, vsclass)
    HFILEID f;           IN: File id, returned from Hopen.
    char *  field;       IN: Name of the field.
-   uint8   buf[];       IN: Buffer of data to be stored in the field.
+   const uint8  *buf;       IN: Buffer of data to be stored in the field.
    int32   n;           IN: Number of elements in buf to be written.
    inter   datatype;    IN: Number type of the data to be written.
    char *  vsname;      IN: Name of the new vdata.
@@ -54,7 +54,7 @@ static char RcsId[] = "@(#)$Revision$";
    ------------------------------------------------------------------------- */
 
 int32
-VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
+VHstoredata(HFILEID f, char *field, const uint8 *buf, int32 n, int32 datatype,
             const char *vsname, const char *vsclass)
 
 {
@@ -101,7 +101,7 @@ VHstoredata(HFILEID f, char *field, uint8 buf[], int32 n, int32 datatype,
    --------------------------------------------------------------------------- */
 
 int32
-VHstoredatam(HFILEID f, const char *field, const uint8 buf[], int32 n, int32 datatype, const char *vsname, const char *vsclass, int32 order)
+VHstoredatam(HFILEID f, const char *field, const uint8 *buf, int32 n, int32 datatype, const char *vsname, const char *vsclass, int32 order)
 {
     CONSTR(FUNC, "VHstoredatam");
     int32       ref;

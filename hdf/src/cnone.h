@@ -51,10 +51,10 @@ extern      "C"
                  int16 *pspecial);
 
     extern int32 HCPcnone_read
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HCPcnone_write
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern intn HCPcnone_endaccess
                 (accrec_t * access_rec);

@@ -390,7 +390,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 #endif /* STDIO_BUF */
 	/* set up the newly created (and empty) file with
 	   the magic cookie and initial data descriptor records */
-          if (HP_write(file_rec, (const VOIDP)HDFMAGIC, MAGICLEN) == FAIL)
+          if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
           if (HI_FLUSH(file_rec->file) == FAIL)	/* flush the cookie */
@@ -1494,7 +1494,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 int32
-Hread(int32 access_id, int32 length, VOIDP data)
+Hread(int32 access_id, int32 length, void * data)
 {
   CONSTR(FUNC, "Hread");	/* for HERROR */
   filerec_t  *file_rec;		/* file record */
@@ -1590,7 +1590,7 @@ DESCRIPTION
 
 --------------------------------------------------------------------------*/
 int32
-Hwrite(int32 access_id, int32 length, const VOIDP data)
+Hwrite(int32 access_id, int32 length, const void * data)
 {
   CONSTR(FUNC, "Hwrite");		/* for HERROR */
   filerec_t  *file_rec;		/* file record */
@@ -1739,7 +1739,7 @@ HDgetc(int32 access_id)
   uint8       c=(uint8)FAIL;		     /* character read in */
   intn    ret_value = SUCCEED;
 
-  if (Hread(access_id, 1, (VOIDP) &c) == FAIL)
+  if (Hread(access_id, 1, &c) == FAIL)
     HGOTO_ERROR(DFE_READERROR, FAIL);
 
   ret_value = (intn)c;
@@ -1780,7 +1780,7 @@ HDputc(uint8 c, int32 access_id)
 #ifdef QAK
 printf("%s: c=%u\n",FUNC,(unsigned)c);
 #endif /* QAK */
-  if (Hwrite(access_id, 1, (VOIDP) &c) == FAIL)
+  if (Hwrite(access_id, 1, &c) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
   ret_value = (intn)c;
@@ -1906,7 +1906,7 @@ Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
   if (( access_id = Hstartread(file_id, tag, ref))== FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
-  if ((length = Hread(access_id, (int32) 0, (VOIDP) data)) == FAIL)
+  if ((length = Hread(access_id, (int32) 0, data)) == FAIL)
       HGOTO_ERROR(DFE_READERROR, FAIL);
 
   if(Hendaccess(access_id)==FAIL)
@@ -1966,7 +1966,7 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
   if (( access_id = Hstartwrite(file_id, (uint16) tag, (uint16) ref, length))== FAIL)
     HGOTO_ERROR(DFE_NOMATCH, FAIL);
 
-  if ((ret_value = Hwrite(access_id, length, (const VOIDP) data)) == FAIL)
+  if ((ret_value = Hwrite(access_id, length, data)) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
   if(Hendaccess(access_id)==FAIL)
@@ -2213,7 +2213,7 @@ done:
 #endif /* HAVE_PABLO */
 
   /* Search for a matching slot in the already open files. */
-  if(HAsearch_atom(FIDGROUP,HPcompare_filerec_path,(VOIDP)filename)!=NULL)
+  if(HAsearch_atom(FIDGROUP,HPcompare_filerec_path,filename)!=NULL)
       HGOTO_DONE(TRUE);
 
   fp = HI_OPEN(filename, DFACC_READ);
@@ -2748,10 +2748,10 @@ intn HPregister_term_func(hdf_termfunc_t term_func)
             HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
 #ifdef OLD_WAY
-    if(HULadd_node(cleanup_list,(VOIDP)term_func)==FAIL)
+    if(HULadd_node(cleanup_list,(void *)term_func)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 #else
-    if(HDGLadd_to_list(*cleanup_list,(VOIDP)term_func)==FAIL)
+    if(HDGLadd_to_list(*cleanup_list,(void *)term_func)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 #endif
 
@@ -2946,15 +2946,15 @@ GLOBALS
    Reads from the global access_records
 
 --------------------------------------------------------------------------*/
-VOIDP
+void *
 HIgetspinfo(accrec_t * access_rec)
 {
 #ifdef LATER
     CONSTR(FUNC, "HIgetspinfo");	/* for HERROR */
 #endif /* LATER */
-    VOIDP    ret_value = NULL; /* FAIL */
+    void *    ret_value = NULL; /* FAIL */
   
-    if((ret_value=HAsearch_atom(AIDGROUP,HPcompare_accrec_tagref,(VOIDP)access_rec))!=NULL)
+    if((ret_value=HAsearch_atom(AIDGROUP,HPcompare_accrec_tagref,access_rec))!=NULL)
         HGOTO_DONE(((accrec_t *)ret_value)->special_info);
 
 done:
@@ -3320,7 +3320,7 @@ HIget_filerec_node(const char *path)
     CONSTR(FUNC, "HIget_filerec_node");
     filerec_t  *ret_value=NULL;
 
-    if((ret_value=HAsearch_atom(FIDGROUP,HPcompare_filerec_path,(VOIDP)path))==NULL)
+    if((ret_value=HAsearch_atom(FIDGROUP,HPcompare_filerec_path,path))==NULL)
       {
         if((ret_value=(filerec_t *)HDcalloc(1,sizeof(filerec_t)))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,NULL);
@@ -3392,17 +3392,17 @@ done:
        HPcompare_filerec_path -- compare filerec objects for the atom API
  USAGE
        intn HPcompare_filerec_path(obj, key)
-       const VOIDP obj;             IN: pointer to the file record
-       const VOIDP key;             IN: pointer to the name of file
+       const void * obj;             IN: pointer to the file record
+       const void * key;             IN: pointer to the name of file
  RETURNS
        TRUE if the key matches the obj, FALSE otherwise
  DESCRIPTION
        Look inside the file record for the atom API and compare the the
        paths.
 --------------------------------------------------------------------------*/
-intn HPcompare_filerec_path(const VOIDP obj, const VOIDP key)
+intn HPcompare_filerec_path(const void * obj, const void * key)
 {
-    filerec_t  *frec  = obj;
+    const filerec_t  *frec  = obj;
     const char *fname = key;
     intn        ret_value = FALSE; /* set default as FALSE */
 #ifdef LATER
@@ -3442,15 +3442,15 @@ done:
        HPcompare_accrec_tagref -- compare accrec objects for the atom API
  USAGE
        intn HPcompare_accrec_tagref(obj, key)
-       const VOIDP rec1;            IN: pointer to the access record #1
-       const VOIDP rec2;            IN: pointer to the access record #2
+       const void * rec1;            IN: pointer to the access record #1
+       const void * rec2;            IN: pointer to the access record #2
  RETURNS
        TRUE if tag/ref of rec1 matches the tag/ref of rec2, FALSE otherwise
  DESCRIPTION
        Look inside the access record for the atom API and compare the the
        paths.
 --------------------------------------------------------------------------*/
-intn HPcompare_accrec_tagref(const VOIDP rec1, const VOIDP rec2)
+intn HPcompare_accrec_tagref(const void * rec1, const void * rec2)
 {
     CONSTR(FUNC, "HPcompare_accrec_tagref");
     uint16      tag1,ref1;      /* tag/ref of access record #1 */
@@ -3996,7 +3996,7 @@ Hdumpseek(void)
  USAGE
     intn HP_read(file_rec,buf,bytes)
         filerec_t * file_rec;   IN: Pointer to the HDF file record
-        VOIDP buf;              IN: Pointer to the buffer to read data into
+        void * buf;              IN: Pointer to the buffer to read data into
         int32 bytes;            IN: # of bytes to read
  RETURNS
     Returns SUCCEED/FAIL
@@ -4009,7 +4009,7 @@ Hdumpseek(void)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn 
-HP_read(filerec_t *file_rec,VOIDP buf,int32 bytes)
+HP_read(filerec_t *file_rec,void * buf,int32 bytes)
 {
   CONSTR(FUNC, "HP_read");
   intn     ret_value = SUCCEED;
@@ -4106,7 +4106,7 @@ done:
  USAGE
     intn HP_write(file_rec,buf,bytes)
         filerec_t * file_rec;   IN: Pointer to the HDF file record
-        VOIDP buf;              IN: Pointer to the buffer to write
+        void * buf;              IN: Pointer to the buffer to write
         int32 bytes;            IN: # of bytes to write
  RETURNS
     Returns SUCCEED/FAIL
@@ -4119,7 +4119,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn 
-HP_write(filerec_t *file_rec,const VOIDP buf,int32 bytes)
+HP_write(filerec_t *file_rec,const void * buf,int32 bytes)
 {
   CONSTR(FUNC, "HP_write");
   intn    ret_value = SUCCEED;

@@ -39,10 +39,10 @@ EXPORTED ROUTINES
     HDmemfill -- copy a chunk of memory repetitively into another chunk
 
  USAGE
-    VOIDP HDmemfill(dest,src,item_size,num_items)
-        VOIDP dest;         OUT: pointer to the chunk of memory to be filled
+    void * HDmemfill(dest,src,item_size,num_items)
+        void * dest;         OUT: pointer to the chunk of memory to be filled
                             with a pattern
-        VOIDP src;          IN: pointer to the pattern to copy
+        void * src;          IN: pointer to the pattern to copy
         uint32 item_size;   IN: size of the pattern to copy
         uint32 num_items;   IN: number of times to copy the pattern into the dest
                             buffer
@@ -62,8 +62,8 @@ EXPORTED ROUTINES
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP
-HDmemfill(VOIDP dest, const VOIDP src, uint32 item_size, uint32 num_items)
+void *
+HDmemfill(void * dest, const void * src, uint32 item_size, uint32 num_items)
 {
     uint32      copy_size;      /* size of the buffer to copy */
     uint32      copy_items;     /* number of items currently copying */
@@ -139,7 +139,7 @@ HIstrncpy(char *dest, const char *source, int32 len)
  NAME
     HDmalloc -- dynamicly allocates memory
  USAGE
-    VOIDP HDmalloc(qty)
+    void * HDmalloc(qty)
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the memory block.
  RETURNS
@@ -152,7 +152,7 @@ HIstrncpy(char *dest, const char *source, int32 len)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDmalloc(uint32 qty)
+void * HDmalloc(uint32 qty)
 {
     char FUNC[]="HDmalloc";
     char *p;
@@ -169,8 +169,8 @@ VOIDP HDmalloc(uint32 qty)
  NAME
     HDrealloc -- dynamicly resize (reallocate) memory
  USAGE
-    VOIDP HDrealloc(vfp,qty)
-        VOIDP vfp;          IN: pointer to the memory block to resize.
+    void * HDrealloc(vfp,qty)
+        void * vfp;          IN: pointer to the memory block to resize.
         uint32 qty;         IN: the (minimum) number of bytes to allocate in
                                 the new memory block.
  RETURNS
@@ -183,7 +183,7 @@ VOIDP HDmalloc(uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP HDrealloc(VOIDP where, uint32 qty)
+void * HDrealloc(void * where, uint32 qty)
 {
     char FUNC[]="HDrealloc";
     char *p;
@@ -201,7 +201,7 @@ VOIDP HDrealloc(VOIDP where, uint32 qty)
     HDfree -- free dynamicly allocated memory
  USAGE
     void HDfree(vfp)
-        VOIDP vfp;          IN: pointer to the memory block to free.
+        void * vfp;          IN: pointer to the memory block to free.
  RETURNS
     NULL?
  DESCRIPTION
@@ -212,7 +212,7 @@ VOIDP HDrealloc(VOIDP where, uint32 qty)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-void HDfree(VOIDP ptr)
+void HDfree(void * ptr)
 {
     if (ptr!=NULL)
         free(ptr);
@@ -222,7 +222,7 @@ void HDfree(VOIDP ptr)
  NAME
     HDcalloc -- dynamicly allocates memory and clears it to zero
  USAGE
-    VOIDP HDcalloc(n,size)
+    void * HDcalloc(n,size)
         uint32 n;         IN: the number of blocks to allocate
         uint32 size;      IN: the size of the block
  RETURNS
@@ -237,11 +237,11 @@ void HDfree(VOIDP ptr)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-VOIDP
+void *
 HDcalloc(uint32 n, uint32 size)
 {
     char        FUNC[] = "HDcalloc";
-    VOIDP       p;
+    void *       p;
 
     p = HDmalloc(n * size);
     if (p == NULL)

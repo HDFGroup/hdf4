@@ -206,7 +206,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     uint16      special_tag;    /* special version of tag */
     uint8       local_ptbuf[20 + MAX_PATH_LEN];     /* temp working buffer */
     char	   *fname=NULL;    /* filename built from external filename */
-    VOIDP       buf = NULL;      /* temporary buffer */
+    void *       buf = NULL;      /* temporary buffer */
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -280,16 +280,16 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     HDfree(fname);
 
     /* set up the special element information and write it to file */
-    access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
+    access_rec->special_info = HDmalloc((uint32) sizeof(extinfo_t));
     info = (extinfo_t *) access_rec->special_info;
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     if (data_id!=FAIL && data_len>0)
       {
-          if ((buf = (VOIDP) HDmalloc((uint32) data_len)) == NULL)
+          if ((buf = HDmalloc((uint32) data_len)) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if (Hgetelement(file_id, tag, ref, (VOIDP)buf) == FAIL)
+          if (Hgetelement(file_id, tag, ref, buf) == FAIL)
                 HGOTO_ERROR(DFE_READERROR, FAIL);
           if (HI_SEEK(file_external, offset) == FAIL)
                 HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -350,16 +350,16 @@ done:
         if(access_rec!=NULL)
             HIrelease_accrec_node(access_rec);
         if(info!=NULL)
-            HDfree((VOIDP) info);
+            HDfree(info);
         if(fname!=NULL)
-            HDfree((VOIDP) fname);
+            HDfree(fname);
         if(data_id!=FAIL)
             HTPendaccess(data_id);
     } /* end if */
 
   /* Normal function cleanup */
   if (buf != NULL)
-      HDfree((VOIDP) buf);
+      HDfree(buf);
 
 #ifdef HAVE_PABLO
     TRACE_OFF(H_mask, ID_HXcreate);
@@ -507,7 +507,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
           if (HP_read(file_rec, local_ptbuf, 12) == FAIL)
               HGOTO_ERROR(DFE_READERROR, FAIL);
 
-          access_rec->special_info = (VOIDP) HDmalloc((uint32) sizeof(extinfo_t));
+          access_rec->special_info = HDmalloc((uint32) sizeof(extinfo_t));
           info = (extinfo_t *) access_rec->special_info;
           if (info==NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -651,7 +651,7 @@ USAGE
    int32 HXPseek(access_rec, length, data)
    access_t * access_rec;      IN: access record to mess with
    int32      length;          IN: number of bytes to read
-   VOIDP      data;            IN: buffer for data
+   void *      data;            IN: buffer for data
 RETURNS
    The number of bytes read or FAIL on error
 DESCRIPTION
@@ -665,7 +665,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HXPread(accrec_t * access_rec, int32 length, VOIDP data)
+HXPread(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HXPread");    /* for HERROR */
     extinfo_t  *info =          /* information on the special element */
@@ -745,7 +745,7 @@ USAGE
    int32 HXPwrite(access_rec, length, data)
    access_t * access_rec;      IN: access record to mess with
    int32      length;          IN: number of bytes to read
-   VOIDP      data;            IN: buffer of data
+   void *      data;            IN: buffer of data
 RETURNS
    The number of bytes written or FAIL on error
 DESCRIPTION
@@ -756,7 +756,7 @@ DESCRIPTION
 
 ---------------------------------------------------------------------------*/
 int32
-HXPwrite(accrec_t * access_rec, int32 length, const VOIDP data)
+HXPwrite(accrec_t * access_rec, int32 length, const void * data)
 {
     uint8       local_ptbuf[4]; /* temp buffer */
     CONSTR(FUNC, "HXPwrite");   /* for HERROR */
@@ -1012,8 +1012,8 @@ HXPcloseAID(accrec_t * access_rec)
       {
           if (info->file_open)
               HI_CLOSE(info->file_external);
-          HDfree((VOIDP) info->extern_file_name);
-          HDfree((VOIDP) info);
+          HDfree(info->extern_file_name);
+          HDfree(info);
           access_rec->special_info=NULL;
       }
 
@@ -1312,7 +1312,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     static int	firstinvoked = 1;	/* true if invoked the first time */
 
     char	*finalpath = NULL;	/* Final pathname to return */
-    char	*fname = NULL;
+    const char	*fname = NULL;
 #if !(defined (MAC) || defined (macintosh) || defined(__MWERKS__) || defined (SYMANTEC_C))
     struct	stat filestat;	/* for checking pathname existence */
 #endif
@@ -1327,7 +1327,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
     if (!ext_fname)
         HGOTO_ERROR(DFE_ARGS, NULL);
-    fname = (char *) ext_fname;
+    fname = ext_fname;
 
     /* get the space for the final pathname */
     if (!(finalpath=HDmalloc(MAX_PATH_LEN)))
@@ -1382,7 +1382,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
             else if (!extdir && !HDFEXTDIR) {
                 HGOTO_ERROR(DFE_FNF, NULL);
             }
-            /* stripe the pathname component */
+            /* strip the pathname component */
             fname = HDstrrchr(fname, DIR_SEPC) + 1;
             fname_len = (int)HDstrlen(fname);
 

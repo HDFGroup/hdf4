@@ -1115,9 +1115,9 @@ correctly.
 *                   Conversion Routine Pointers
 ***************************************************************************/
 #    ifndef DFKMASTER
-extern int (*DFKnumin)(void * source, void * dest, uint32 num_elm,
+extern int (*DFKnumin)(const void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-extern int (*DFKnumout)(void * source, void * dest, uint32 num_elm,
+extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #     endif /* DFKMASTER */
 

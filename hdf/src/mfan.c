@@ -98,10 +98,10 @@ static char RcsId[] = "@(#)$Revision$";
 PRIVATE intn library_terminate = FALSE;
 
 /* Function Prototypes for fcns used by TBBT. Can not be PRIVATE. */
-extern VOID ANfreedata(VOIDP data);
-extern VOID ANfreekey(VOIDP key);
-extern VOID dumpentryKey(VOID *key, VOID *data);
-extern intn ANIanncmp(VOIDP i, VOIDP j, intn value);
+extern void ANfreedata(void * data);
+extern void ANfreekey(void * key);
+extern void dumpentryKey(void *key, void *data);
+extern intn ANIanncmp(void * i, void * j, intn value);
 
 /* private initialization routine */
 PRIVATE intn ANIstart(void);
@@ -112,15 +112,15 @@ PRIVATE intn ANIstart(void);
 
 /* ------------------------ Routines for TBBT ------------------------------*/
 /* free data - used by tbbt routines */
-VOID
-ANfreedata(VOIDP data)
+void
+ANfreedata(void * data)
 {
     HDfree(data);
 } /* ANfreekey() */
 
 /* free key - used by tbbt routines */
-VOID
-ANfreekey(VOIDP key)
+void
+ANfreekey(void * key)
 {
     HDfree(key);
 } /* ANfreekey() */
@@ -129,8 +129,8 @@ ANfreekey(VOIDP key)
 /* The following routine is used for debugging purposes to dump 
  * key/data pairs from the TBBT trees 
  * eg. tbbt_dump(tree, dumpentryKey, 0)*/
-VOID
-dumpentryKey(VOID *key, VOID *data)
+void
+dumpentryKey(void *key, void *data)
 {
     ANentry *node = NULL;
 
@@ -164,8 +164,8 @@ dumpentryKey(VOID *key, VOID *data)
     GeorgeV.
 --------------------------------------------------------------------------- */
 intn 
-ANIanncmp(VOIDP i,   /* IN: annotation key(tag,ref) */
-          VOIDP j,   /* IN: annotation key(tag,ref) */
+ANIanncmp(void * i,   /* IN: annotation key(tag,ref) */
+          void * j,   /* IN: annotation key(tag,ref) */
           intn value /* not used */)
 {
     /* shut compiler up */
@@ -1210,7 +1210,7 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
           printf("ANIwriteann: ann_len=%d, ann=%s\n", ann_len,ann);
 #endif
           /* then write the annotation itself */
-          if ((int32) FAIL == Hwrite(aid, ann_len, (const VOIDP)ann))
+          if ((int32) FAIL == Hwrite(aid, ann_len, ann))
               HE_REPORT_GOTO("Failed to write annotation",FAIL);
 
           /* end access to annotation */
@@ -1220,7 +1220,7 @@ ANIwriteann(int32 ann_id,    /* IN: annotation id */
     else /* file label/description */
       { 
          /* write out file label/description */
-          if (FAIL == Hputelement(file_id, ann_tag, ann_ref, (VOIDP)ann, ann_len))
+          if (FAIL == Hputelement(file_id, ann_tag, ann_ref, (const uint8 *)ann, ann_len))
               HE_REPORT_GOTO("Failed to write file annotation",FAIL);
 #ifdef AN_DEBUG
           printf("ANIwriteann: fann_len=%d, fann=%s\n", ann_len,ann);

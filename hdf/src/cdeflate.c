@@ -95,7 +95,7 @@ HCIcdeflate_init(accrec_t * access_rec)
     deflate_info->deflate_context.data_type=Z_BINARY;
 
     /* Allocate compression I/O buffer */
-    if ((deflate_info->io_buf= (VOIDP) HDmalloc(DEFLATE_BUF_SIZE)) == NULL)
+    if ((deflate_info->io_buf= HDmalloc(DEFLATE_BUF_SIZE)) == NULL)
         HRETURN_ERROR(DFE_NOSPACE, FAIL);
     
     return (SUCCEED);
@@ -191,7 +191,7 @@ if(t1!=deflate_info->deflate_context.avail_out ||
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcdeflate_encode(compinfo_t * info, int32 length, const VOIDP buf)
+HCIcdeflate_encode(compinfo_t * info, int32 length, void * buf)
 {
     CONSTR(FUNC, "HCIcdeflate_encode");
     comp_coder_deflate_info_t *deflate_info;    /* ptr to skipping Huffman info */
@@ -569,7 +569,7 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
     int32 HCPcdeflate_read(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -583,7 +583,7 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_read(accrec_t * access_rec, int32 length, VOIDP data)
+HCPcdeflate_read(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPcdeflate_read");
     compinfo_t *info;           /* special element information */
@@ -613,7 +613,7 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, VOIDP data)
     int32 HCPcdeflate_write(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -627,7 +627,7 @@ HCPcdeflate_read(accrec_t * access_rec, int32 length, VOIDP data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcdeflate_write(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPcdeflate_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPcdeflate_write");
     compinfo_t *info;           /* special element information */
@@ -650,7 +650,7 @@ HCPcdeflate_write(accrec_t * access_rec, int32 length, const VOIDP data)
             HRETURN_ERROR(DFE_CINIT, FAIL);
       } /* end if */
 
-    if ((length=HCIcdeflate_encode(info, length, data)) == FAIL)
+    if ((length=HCIcdeflate_encode(info, length, (void *)data)) == FAIL)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return (length);

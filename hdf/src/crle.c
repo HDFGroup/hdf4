@@ -63,7 +63,7 @@ PRIVATE int32 HCIcrle_decode
             (compinfo_t * info, int32 length, uint8 *buf);
 
 PRIVATE int32 HCIcrle_encode
-            (compinfo_t * info, int32 length, uint8 *buf);
+            (compinfo_t * info, int32 length, const uint8 *buf);
 
 PRIVATE int32 HCIcrle_term
             (compinfo_t * info);
@@ -202,7 +202,7 @@ printf("%s: c=%u\n",FUNC,(unsigned)c);
     int32 HCIcrle_encode(info,length,buf)
     compinfo_t *info;   IN: the info about the compressed element
     int32 length;       IN: number of bytes to store from the buffer
-    uint8 *buf;         OUT: buffer to get the bytes from
+    const uint8 *buf;         OUT: buffer to get the bytes from
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -216,7 +216,7 @@ printf("%s: c=%u\n",FUNC,(unsigned)c);
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcrle_encode(compinfo_t * info, int32 length, uint8 *buf)
+HCIcrle_encode(compinfo_t * info, int32 length, const uint8 *buf)
 {
     CONSTR(FUNC, "HCIcrle_encode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
@@ -584,7 +584,7 @@ HCPcrle_seek(accrec_t * access_rec, int32 offset, int origin)
     int32 HCPcrle_read(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -598,7 +598,7 @@ HCPcrle_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcrle_read(accrec_t * access_rec, int32 length, VOIDP data)
+HCPcrle_read(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPcrle_read");
     compinfo_t *info;           /* special element information */
@@ -622,7 +622,7 @@ printf("%s: *data=%u\n",FUNC,*(uint8 *)data);
     int32 HCPcrle_write(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -636,7 +636,7 @@ printf("%s: *data=%u\n",FUNC,*(uint8 *)data);
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcrle_write(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPcrle_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPcrle_write");
     compinfo_t *info;           /* special element information */

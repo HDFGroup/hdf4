@@ -403,7 +403,7 @@ typedef struct accrec_t
       int32       file_id;      /* id of attached file */
       atom_t      ddid;         /* DD id for the DD attached to */
       int32       posn;         /* seek position with respect to start of element */
-      VOIDP       special_info; /* special element info? */
+      void *       special_info; /* special element info? */
       struct funclist_t *special_func;  /* ptr to special function? */
       struct accrec_t *next;    /* for free-list linking */
   }
@@ -458,8 +458,8 @@ typedef struct funclist_t
                                  uint16 *ptag, uint16 *pref, int32 *plength,
                                int32 *poffset, int32 *pposn, int16 *paccess,
                                      int16 *pspecial);
-      int32       (*read) (accrec_t * access_rec, int32 length, VOIDP data);
-      int32       (*write) (accrec_t * access_rec, int32 length, const VOIDP data);
+      int32       (*read) (accrec_t * access_rec, int32 length, void * data);
+      int32       (*write) (accrec_t * access_rec, int32 length, const void * data);
       intn        (*endaccess) (accrec_t * access_rec);
       int32       (*info) (accrec_t * access_rec, sp_info_block_t * info);
       int32       (*reset) (accrec_t * access_rec, sp_info_block_t * info);
@@ -535,14 +535,14 @@ extern      "C"
 
     extern void HIrelease_accrec_node(accrec_t *acc);
 
-    extern VOIDP HIgetspinfo
+    extern void * HIgetspinfo
                 (accrec_t * access_rec);
 
     extern intn HPcompare_filerec_path
-                (const VOIDP obj, const VOIDP key);
+                (const void * obj, const void * key);
 
     extern intn HPcompare_accrec_tagref
-                (const VOIDP rec1, const VOIDP rec2);
+                (const void * rec1, const void * rec2);
 
     extern int32 HPgetdiskblock
                 (filerec_t * file_rec, int32 block_size, intn moveto);
@@ -554,19 +554,19 @@ extern      "C"
                 (int32 access_id, sp_info_block_t * info_block);
 
     extern intn HP_read
-                (filerec_t *file_rec,VOIDP buf,int32 bytes);
+                (filerec_t *file_rec,void * buf,int32 bytes);
 
     extern intn HPseek
                 (filerec_t *file_rec,int32 offset);
 
     extern intn HP_write
-                (filerec_t *file_rec,const VOIDP buf,int32 bytes);
+                (filerec_t *file_rec,const void * buf,int32 bytes);
 
     extern intn tagcompare
-                (VOIDP k1, VOIDP k2, intn cmparg);
+                (void * k1, void * k2, intn cmparg);
 
     extern VOID tagdestroynode
-                (VOIDP n);
+                (void * n);
 
 /*
    ** from hblocks.c
@@ -581,10 +581,10 @@ extern      "C"
                 (accrec_t * access_rec, int32 offset, int origin);
 
     extern int32 HLPread
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HLPwrite
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern int32 HLPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
@@ -613,10 +613,10 @@ extern      "C"
                 (accrec_t * access_rec, int32 offset, int origin);
 
     extern int32 HXPread
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HXPwrite
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern int32 HXPinquire
                 (accrec_t * access_rec, int32 *pfile_id, uint16 *ptag, uint16 *pref,
@@ -660,10 +660,10 @@ extern      "C"
                  int16 *pspecial);
 
     extern int32 HCPread
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HCPwrite
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern intn HCPendaccess
                 (accrec_t * access_rec);
@@ -693,10 +693,10 @@ extern      "C"
                  int16 *pspecial);
 
     extern int32 HVPread
-                (accrec_t * access_rec, int32 length, VOIDP data);
+                (accrec_t * access_rec, int32 length, void * data);
 
     extern int32 HVPwrite
-                (accrec_t * access_rec, int32 length, const VOIDP data);
+                (accrec_t * access_rec, int32 length, const void * data);
 
     extern intn HVPendaccess
                 (accrec_t * access_rec);

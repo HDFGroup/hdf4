@@ -77,7 +77,7 @@ PRIVATE int32 HCIcnbit_decode
             (compinfo_t * info, int32 length, uint8 *buf);
 
 PRIVATE int32 HCIcnbit_encode
-            (compinfo_t * info, int32 length, uint8 *buf);
+            (compinfo_t * info, int32 length, const uint8 *buf);
 
 PRIVATE int32 HCIcnbit_term
             (compinfo_t * info);
@@ -288,7 +288,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
                 rbuf = (uint8 *) nbit_info->buffer;     /* get a ptr to the buffer */
 
                 /* get initial copy of the mask */
-                HDmemfill(rbuf, (VOIDP)nbit_info->mask_buf, (uint32)nbit_info->nt_size, (uint32)buf_items);
+                HDmemfill(rbuf, nbit_info->mask_buf, (uint32)nbit_info->nt_size, (uint32)buf_items);
 
                 for (i = 0; i < buf_items; i++)
                   {
@@ -385,7 +385,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
     int32 HCIcnbit_encode(info,length,buf)
     compinfo_t *info;   IN: the info about the compressed element
     int32 length;       IN: number of bytes to store from the buffer
-    uint8 *buf;         OUT: buffer to get the bytes from
+    const uint8 *buf;         OUT: buffer to get the bytes from
 
  RETURNS
     Returns SUCCEED or FAIL
@@ -399,7 +399,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
  REVISION LOG
 --------------------------------------------------------------------------*/
 PRIVATE int32
-HCIcnbit_encode(compinfo_t * info, int32 length, uint8 *buf)
+HCIcnbit_encode(compinfo_t * info, int32 length, const uint8 *buf)
 {
 #ifdef LATER
     CONSTR(FUNC, "HCIcnbit_encode");
@@ -657,7 +657,7 @@ HCPcnbit_seek(accrec_t * access_rec, int32 offset, int origin)
     int32 HCPcnbit_read(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -671,7 +671,7 @@ HCPcnbit_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnbit_read(accrec_t * access_rec, int32 length, VOIDP data)
+HCPcnbit_read(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPcnbit_read");
     compinfo_t *info;           /* special element information */
@@ -692,7 +692,7 @@ HCPcnbit_read(accrec_t * access_rec, int32 length, VOIDP data)
     int32 HCPwrite(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -706,7 +706,7 @@ HCPcnbit_read(accrec_t * access_rec, int32 length, VOIDP data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnbit_write(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPcnbit_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPcnbit_write");
     compinfo_t *info;           /* special element information */

@@ -198,7 +198,7 @@ HCPcnone_seek(accrec_t * access_rec, int32 offset, int origin)
     int32 HCPcnone_read(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to read
-    VOIDP data;             OUT: the buffer to place the bytes read
+    void * data;             OUT: the buffer to place the bytes read
 
  RETURNS
     Returns the number of bytes read or FAIL
@@ -212,7 +212,7 @@ HCPcnone_seek(accrec_t * access_rec, int32 offset, int origin)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_read(accrec_t * access_rec, int32 length, VOIDP data)
+HCPcnone_read(accrec_t * access_rec, int32 length, void * data)
 {
     CONSTR(FUNC, "HCPcnone_read");
     compinfo_t *info;           /* special element information */
@@ -233,7 +233,7 @@ HCPcnone_read(accrec_t * access_rec, int32 length, VOIDP data)
     int32 HCPwrite(access_rec,length,data)
     accrec_t *access_rec;   IN: the access record of the data element
     int32 length;           IN: the number of bytes to write
-    VOIDP data;             IN: the buffer to retrieve the bytes written
+    void * data;             IN: the buffer to retrieve the bytes written
 
  RETURNS
     Returns the number of bytes written or FAIL
@@ -247,7 +247,7 @@ HCPcnone_read(accrec_t * access_rec, int32 length, VOIDP data)
  REVISION LOG
 --------------------------------------------------------------------------*/
 int32
-HCPcnone_write(accrec_t * access_rec, int32 length, const VOIDP data)
+HCPcnone_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPcnone_write");
     compinfo_t *info;           /* special element information */

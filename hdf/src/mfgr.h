@@ -117,7 +117,7 @@ typedef struct at_info {
     uintn data_modified;    /* flag to indicate whether the attribute data has been modified */
     uintn new_at;           /* flag to indicate whether the attribute was added to the Vgroup */
     char *name;             /* name of the attribute */
-    VOIDP data;             /* data for the attribute */
+    void * data;             /* data for the attribute */
 } at_info_t;
 
 typedef struct dim_info {
@@ -160,19 +160,19 @@ typedef struct ri_info {
     uintn acc_img;              /* whether to make image data a different access type */
     uintn acc_type;             /* type of access-mode to get image data with */
     uintn fill_img;             /* whether to fill image, or just store fill value */
-    VOIDP fill_value;           /* pointer to the fill value (NULL means use default fill value of 0) */
+    void * fill_value;           /* pointer to the fill value (NULL means use default fill value of 0) */
     uintn store_fill;           /* whether to add fill value attribute or not */
 } ri_info_t;
 
 /* Useful raster routines for generally private use */
-extern intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
+extern intn GRIil_convert(const void * inbuf,gr_interlace_t inil,void * outbuf,
         gr_interlace_t outil,int32 dims[2],int32 ncomp,int32 nt);
 
-extern VOID GRIgrdestroynode(VOIDP n);
+extern VOID GRIgrdestroynode(void * n);
 
-extern VOID GRIattrdestroynode(VOIDP n);
+extern VOID GRIattrdestroynode(void * n);
 
-extern VOID GRIridestroynode(VOIDP n);
+extern VOID GRIridestroynode(void * n);
 
 #endif /* MFGR_MASTER | MFGR_TESTER */
 

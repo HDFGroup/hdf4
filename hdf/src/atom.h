@@ -53,7 +53,7 @@ MAXGROUP                    /* Highest group in group_t (Invalid as true group) 
 typedef int32 atom_t;
 
 /* Type of the function to compare objects & keys */
-typedef intn (*HAsearch_func_t)(const VOIDP obj, const VOIDP key);
+typedef intn (*HAsearch_func_t)(const void * obj, const void * key);
 
 #if defined ATOM_MASTER | defined ATOM_TESTER
 
@@ -238,7 +238,7 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
 *******************************************************************************/
 VOIDP HAsearch_atom(group_t grp,        /* IN: Group to search for the object in */
     HAsearch_func_t func,               /* IN: Ptr to the comparison function */
-    const VOIDP key                     /* IN: pointer to key to compare against */
+    const void * key                     /* IN: pointer to key to compare against */
 );
 
 /******************************************************************************
