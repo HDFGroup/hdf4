@@ -240,8 +240,6 @@ write_test(int32 aid,intn num_timings)
                     CHECK(ret, FAIL, "Hseek");
 
                     ret=Hwrite(aid,1,&out_buf[i]);
-if(ret<0)
-    HEprint(stdout,0);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
                 end_time=clock();
