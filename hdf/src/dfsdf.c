@@ -92,13 +92,12 @@ FRETVAL(intf)
 ndsgdisc(intf * dim, intf * maxsize, VOIDP scale)
 {
     intn        rank, cdim;
-    intf        ret;
     intn        isndg;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg)
       {
-          ret = DFSDIgetrrank(&rank);
+          DFSDIgetrrank(&rank);
           if (rank < *dim)
               return FAIL;
           cdim = rank - (intn) *dim + 1;
@@ -141,7 +140,7 @@ ndssdims(intf * rank, intf dimsizes[])
     int32       i, *cdims, *p;
     intf        ret;
 
-    p = (int32 *) HDmalloc((uint32) ((*rank) * sizeof(int32)));
+    p = (int32 *) HDmalloc((size_t) (*rank) * sizeof(int32));
     if (p == NULL)
         return FAIL;
     cdims = p;
@@ -170,10 +169,10 @@ ndssdims(intf * rank, intf dimsizes[])
 FRETVAL(intf)
 ndssdisc(intf * dim, intf * dimsize, VOIDP scale)
 {
-    int         cdim, ret;
+    int         cdim;
     intn        rank;
 
-    ret = DFSDIgetwrank(&rank);
+    DFSDIgetwrank(&rank);
     if (rank < *dim)
         return FAIL;
     cdim = rank - (intn) *dim + 1;
@@ -328,11 +327,11 @@ ndspslc(intf windims[], VOIDP data, intf dims[])
     intf        ret;
 
     ret = DFSDIgetwrank(&rank);
-    wp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+    wp = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
     if (wp == NULL)
         return FAIL;
     cwindims = wp;
-    p = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+    p = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
     if (p == NULL){
 	HDfree((VOIDP) cwindims);
         return FAIL;
@@ -472,7 +471,7 @@ ndsigdat(_fcd filename, intf * rank, intf maxsizes[], VOIDP data, intf * fnlen)
     ret = DFSDIisndg(&isndg);
     if (isndg)
       {
-          p = (int32 *) HDmalloc((uint32) ((*rank) * sizeof(int32)));
+          p = (int32 *) HDmalloc((size_t) (*rank) * sizeof(int32));
           if (p == NULL)
               return FAIL;
           cmaxsizes = p;
@@ -512,7 +511,7 @@ ndsipdat(_fcd filename, intf * rank, intf dimsizes[], VOIDP data, intf * fnlen)
     intf        ret;
 
     /* reverse the dimsizes first  */
-    p = (int32 *) HDmalloc((uint32) ((*rank) * sizeof(int32)));
+    p = (int32 *) HDmalloc((size_t) (*rank) * sizeof(int32));
     if (p == NULL)
         return FAIL;
     cdims = p;
@@ -555,7 +554,7 @@ ndsiadat(_fcd filename, intf * rank, intf dimsizes[], VOIDP data, intf * fnlen)
     intf        ret;
 
     /* reverse the dimsizes first  */
-    p = (int32 *) HDmalloc((uint32) ((*rank) * sizeof(int32)));
+    p = (int32 *) HDmalloc((size_t) (*rank) * sizeof(int32));
     if (p == NULL)
         return FAIL;
     cdims = p;
@@ -614,15 +613,15 @@ ndsigslc(_fcd filename, intf winst[], intf windims[], VOIDP data, intf dims[],
     if (isndg)
       {
           ret = DFSDIgetrrank(&rank);
-          p = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          p = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (p == NULL)
               return FAIL;
           cdims = p;
-          wp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          wp = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (wp == NULL)
               return FAIL;
           cwindims = wp;
-          wsp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          wsp = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (wsp == NULL)
               return FAIL;
           cwinst = wsp;
@@ -711,7 +710,7 @@ ndsirref(_fcd filename, intf * ref, intf * fnlen)
 FRETVAL(intf)
 ndslref(void)
 {
-    return (DFSDlastref());
+    return ((intf)DFSDlastref());
 }
 
 /*-----------------------------------------------------------------------------
@@ -798,12 +797,11 @@ ndfsdgetdimstrs(intf * dim, _fcd label, _fcd unit, _fcd format)
 {
     intn        isndg;
     intn        rank, cdim;
-    intf        ret;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg)
       {
-          ret = DFSDIgetrrank(&rank);
+          DFSDIgetrrank(&rank);
           if (rank < *dim)
               return FAIL;
           cdim = rank - (intn) *dim + 1;
@@ -831,12 +829,12 @@ ndfsdgetdimscale(intf * dim, intf * maxsize, VOIDP scale)
 {
 
     intn        isndg;
-    intn        rank, cdim, ret;
+    intn        rank, cdim;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg)
       {
-          ret = DFSDIgetrrank(&rank);
+          DFSDIgetrrank(&rank);
           if (rank < *dim)
               return FAIL;
           cdim = rank - (intn) *dim + 1;
@@ -880,7 +878,7 @@ ndfsdsetdims(intf * rank, intf dimsizes[])
     int32       i, *cdims, *p;
     intf        ret;
 
-    p = (int32 *) HDmalloc((uint32) ((*rank) * sizeof(int32)));
+    p = (int32 *) HDmalloc((size_t) (*rank) * sizeof(int32));
     if (p == NULL)
         return FAIL;
     cdims = p;
@@ -910,9 +908,8 @@ FRETVAL(intf)
 ndfsdsetdimscale(intf * dim, intf * dimsize, VOIDP scale)
 {
     intn        rank, cdim;
-    intf        ret;
 
-    ret = DFSDIgetwrank(&rank);
+    DFSDIgetwrank(&rank);
     if (rank < *dim)
         return FAIL;
     cdim = rank - (intn) *dim + 1;
@@ -1068,11 +1065,11 @@ ndfsdputslice(intf windims[], VOIDP data, intf dims[])
     int32      *cdims, *cwindims, *p, *wp;
 
     ret = DFSDIgetwrank(&rank);
-    wp = (int32 *) HDmalloc((uint32) ((rank) * sizeof(int32)));
+    wp = (int32 *) HDmalloc((size_t) (rank) * sizeof(int32));
     if (wp == NULL)
         return FAIL;
     cwindims = wp;
-    p = (int32 *) HDmalloc((uint32) ((rank) * sizeof(int32)));
+    p = (int32 *) HDmalloc((size_t) (rank) * sizeof(int32));
     if (p == NULL)
         return FAIL;
     cdims = p;
@@ -1152,7 +1149,7 @@ ndfsdgetnt(intf * pnumbertype)
 FRETVAL(intf)
 ndfsdlastref(void)
 {
-    return (DFSDlastref());
+    return ((intf)DFSDlastref());
 }
 
 /*-----------------------------------------------------------------------------
@@ -1220,13 +1217,12 @@ ndsigdis(intf * dim, _fcd label, _fcd unit, _fcd format, intf * llabel,
 {
     char       *ilabel, *iunit, *iformat;
     intn        rank, cdim;
-    intf        ret;
     intn        isndg, status;
 
-    ret = DFSDIisndg(&isndg);
+    DFSDIisndg(&isndg);
     if (isndg)
       {
-          ret = DFSDIgetrrank(&rank);
+          DFSDIgetrrank(&rank);
           if (rank < *dim)
               return FAIL;
           cdim = rank - (intn) *dim + 1;
@@ -1237,11 +1233,11 @@ ndsigdis(intf * dim, _fcd label, _fcd unit, _fcd format, intf * llabel,
     iunit = ilabel = iformat = NULL;
 
     if (*llabel)
-        ilabel = (char *) HDmalloc((uint32) *llabel + 1);
+        ilabel = (char *) HDmalloc((size_t) *llabel + 1);
     if (*lunit)
-        iunit = (char *) HDmalloc((uint32) *lunit + 1);
+        iunit = (char *) HDmalloc((size_t) *lunit + 1);
     if (*lformat)
-        iformat = (char *) HDmalloc((uint32) *lformat + 1);
+        iformat = (char *) HDmalloc((size_t) *lformat + 1);
 
     status = DFSDgetdimstrs(cdim, ilabel, iunit, iformat);
 
@@ -1366,10 +1362,10 @@ ndsscal(float64 *cal, float64 *cal_err, float64 *ioff, float64 *ioff_err,
         intf * cal_type)
 {
     intf ret;
-    float64 dcal ;
-    float64 dcal_err ;
-    float64 dioff ;
-    float64 dioff_err ;
+    float64 dcal=0.0;
+    float64 dcal_err=0.0;
+    float64 dioff=0.0;
+    float64 dioff_err=0.0;
     
     HDmemcpy(&dcal, cal, sizeof(float64));
     HDmemcpy(&dcal_err, cal_err, sizeof(float64));
@@ -1519,7 +1515,7 @@ ndswslab(intf start[], intf stride[],
     if (ret == FAIL)
         return FAIL;
 
-    aptr = (int32 *) HDmalloc((uint32) (3 * rank * sizeof(int32)));
+    aptr = (int32 *) HDmalloc((size_t) (3 * rank) * sizeof(int32));
     if (aptr == NULL)
         return FAIL;
 
@@ -1598,19 +1594,19 @@ ndsirslab(_fcd filename, intf * fnlen, intf start[], intf slab_size[],
     if (isndg)
       {
           ret = DFSDIgetrrank(&rank);
-          p = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          p = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (p == NULL)
               return FAIL;
           lbuffer_size = p;
-          wp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          wp = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (wp == NULL)
               return FAIL;
           lslab_size = wp;
-          wsp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          wsp = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (wsp == NULL)
               return FAIL;
           lstart = wsp;
-          sp = (int32 *) HDmalloc((uint32) (rank * sizeof(int32)));
+          sp = (int32 *) HDmalloc((size_t) rank * sizeof(int32));
           if (sp == NULL)
               return FAIL;
           lstride = sp;

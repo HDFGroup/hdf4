@@ -524,9 +524,9 @@ VSsetname(int32 vkey, const char *vsname)
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
-    curr_len = HDstrlen(vs->vsname);
+    curr_len = (intn)HDstrlen(vs->vsname);
 
-    if ((slen = HDstrlen(vsname)) > VSNAMELENMAX)
+    if ((slen = (intn)HDstrlen(vsname)) > VSNAMELENMAX)
       {
           HDstrncpy(vs->vsname, vsname, VSNAMELENMAX);
           vs->vsname[VSNAMELENMAX] = '\0';
@@ -589,8 +589,8 @@ VSsetclass(int32 vkey, const char *vsclass)
     vs = w->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
-    curr_len = HDstrlen(vs->vsclass);
-    if ((slen = HDstrlen(vsclass)) > VSNAMELENMAX)
+    curr_len = (intn)HDstrlen(vs->vsclass);
+    if ((slen = (intn)HDstrlen(vsclass)) > VSNAMELENMAX)
       {
           HDstrncpy(vs->vsclass, vsclass, VSNAMELENMAX);
           vs->vsclass[VSNAMELENMAX] = '\0';
@@ -809,13 +809,13 @@ VSlone(HFILEID f, int32 *idarray, int32 asize)
 
     /* -- look for all vdatas in the file, and flag (1) each -- */
     vsid = -1;
-    while (-1L != (vsid = VSgetid(f, vsid)))    /* until no more vdatas */
+    while (FAIL != (vsid = VSgetid(f, vsid)))    /* until no more vdatas */
         lonevdata[vsid] = 1;
 
     /* -- Look through all vgs, searching for vdatas -- */
     /* -- increment its index in lonevdata if found -- */
     vgid = -1;
-    while (-1L != (vgid = Vgetid(f, vgid)))
+    while (FAIL != (vgid = Vgetid(f, vgid)))
       {     /* until no more vgroups */
         vkey = Vattach(f, vgid, "r");
         for (i = 0; i < Vntagrefs(vkey); i++)
@@ -892,13 +892,13 @@ Vlone(HFILEID f, int32 *idarray, int32 asize)
 
     /* -- look for all vgroups in the file, and flag (1) each -- */
     id = -1;
-    while (-1L != (id = Vgetid(f, id)))     /* until no more vgroups */
+    while (FAIL != (id = Vgetid(f, id)))     /* until no more vgroups */
         lonevg[id] = 1;
 
     /* -- Look through all vgs, searching for vgroups -- */
     /* -- increment its index in lonevg if found -- */
     vgid = -1;
-    while (-1L != (vgid = Vgetid(f, vgid)))
+    while (FAIL != (vgid = Vgetid(f, vgid)))
       {     /* until no more vgroups */
         vkey = Vattach(f, vgid, "r");
         id = -1;
@@ -966,7 +966,7 @@ Vfind(HFILEID f, const char *vgname)
   TRACE_ON(V_mask, ID_Vfind);
 #endif /* HAVE_PABLO */
 
-    while (-1L != (vgid = Vgetid(f, vgid)))
+    while (FAIL != (vgid = Vgetid(f, vgid)))
       {
         if((v=vginst(f,(uint16)vgid))==NULL)
             HGOTO_DONE(0);
@@ -1014,7 +1014,7 @@ VSfind(HFILEID f, const char *vsname)
   TRACE_ON(VS_mask, ID_VSfind);
 #endif /* HAVE_PABLO */
 
-    while (-1L != (vsid = VSgetid(f, vsid)))
+    while (FAIL != (vsid = VSgetid(f, vsid)))
       {
         if((v=vsinst(f,(uint16)vsid))==NULL)
             HGOTO_DONE(0);
@@ -1062,7 +1062,7 @@ Vfindclass(HFILEID f, const char *vgclass)
   TRACE_ON(V_mask, ID_Vfindclass);
 #endif /* HAVE_PABLO */
 
-    while (-1L != (vgid = Vgetid(f, vgid)))
+    while (FAIL != (vgid = Vgetid(f, vgid)))
       {
         if((v=vginst(f,(uint16)vgid))==NULL)
             HGOTO_DONE(0);
@@ -1109,7 +1109,7 @@ VSfindclass(HFILEID f, const char *vsclass)
   TRACE_ON(VS_mask, ID_VSfindclass);
 #endif /* HAVE_PABLO */
 
-    while (-1L != (vsid = VSgetid(f, vsid)))
+    while (FAIL != (vsid = VSgetid(f, vsid)))
       {
         if((v=vsinst(f,(uint16)vsid))==NULL)
             HGOTO_DONE(0);          /* error */

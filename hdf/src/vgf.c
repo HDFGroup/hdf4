@@ -40,7 +40,7 @@ trimendblanks(char *ss)
 {
     int32       i, n;
 
-    n = HDstrlen(ss);
+    n = (int32)HDstrlen(ss);
     for (i = n - 1; i >= 0; i--)
       {
           if (ss[i] != ' ')
@@ -1176,7 +1176,7 @@ nvadtrc(intf * vkey, intf * tag, intf * ref)
 FRETVAL(intf)
 nvsqfnelt(intf * vkey, intf * nelt)
 {
-    int32       ret_nelt;
+    int32       ret_nelt=0;
     intn        stat;
 
     stat = VSQuerycount((int32) *vkey, &ret_nelt);
@@ -1194,7 +1194,7 @@ nvsqfnelt(intf * vkey, intf * nelt)
 FRETVAL(intf)
 nvsqfintr(intf * vkey, intf * interlace)
 {
-    int32       ret_inter;
+    int32       ret_inter=0;
     intn        stat;
 
     stat = VSQueryinterlace((int32) *vkey, &ret_inter);
@@ -1232,7 +1232,7 @@ nvsqfldsc(intf * vkey, _fcd fields, intf *fieldslen)
 FRETVAL(intf)
 nvsqfvsiz(intf * vkey, intf * size)
 {
-    int32       ret_size;
+    int32       ret_size=0;
     intn        stat;
 
     stat = VSQueryvsize((int32) *vkey, &ret_size);

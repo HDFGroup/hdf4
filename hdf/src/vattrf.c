@@ -1,23 +1,14 @@
-/***********************************************************
- * NCSA HDF
-    *
- * Software Development Group
-    *
- * National Center for Supercomputing Applications
-    *
- * University of Illinois at Urbana-Champaign
-    *
- * 605 E. Springfield, Champaign IL 61820
-    *
- *
-    *
- * For conditions of distribution and use, see the accompanying
-    *
- * hdf/COPYING file.
-    *
- *
-    *
- ********************************************************/
+/****************************************************************
+ * NCSA HDF                                                     *
+ * Software Development Group                                   *
+ * National Center for Supercomputing Applications              *
+ * University of Illinois at Urbana-Champaign                   *
+ * 605 E. Springfield, Champaign IL 61820                       *
+ *                                                              *
+ * For conditions of distribution and use, see the accompanying *
+ * hdf/COPYING file.                                            *
+ *                                                              *
+ ****************************************************************/
 
 #ifdef RCSID
 static char RcsId[] = "@(#)$";
@@ -72,7 +63,7 @@ nvsfcsat(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
 
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1) ? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf )VSsetattr((int32) *vsid, (int32) cfindex, attrname,
               (int32) *dtype, (int32) *count, (VOIDP) values);
     HDfree(attrname);
@@ -95,7 +86,7 @@ nvsfcsca(intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
  
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf) VSsetattr((int32) *vsid, (int32) cfindex, attrname,
           (int32) *dtype, (int32) *count, (VOIDP) _fcdtocp(values));
     HDfree(attrname);
@@ -129,7 +120,7 @@ nvsffnat(intf *vsid, intf *findex)
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf) VSfnattrs((int32) *vsid, (int32) cfindex);
     return(ret);
 }
@@ -149,7 +140,7 @@ nvsfcfda(intf *vsid, intf *findex, _fcd attrnm, intf *attrnmlen)
 
     attrname = HDf2cstring(attrnm, (intn) *attrnmlen);
     if (!attrname) return(FAIL);
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     
     ret = (intf) VSfindattr((int32) *vsid, (int32) cfindex, attrname);
     HDfree(attrname);
@@ -168,7 +159,7 @@ nvsfainf(intf *vsid, intf *findex, intf *aindex, _fcd attrname,
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf) VSattrinfo((int32) *vsid, (int32) cfindex, (int32) *aindex,
           _fcdtocp(attrname), (int32 *) dtype, (int32 *) count, 
           (int32 *) size);
@@ -186,7 +177,7 @@ nvsfgat(intf *vsid, intf *findex, intf *aindex, intf *values)
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf) VSgetattr((int32) *vsid,(int32) cfindex,(int32) *aindex,
                            (VOIDP) values);
     return(ret);
@@ -203,7 +194,7 @@ nvsfgcat(intf *vsid, intf *findex, intf *aindex, _fcd *values)
     intf ret;
     int32 cfindex;
 
-    cfindex = (*findex == -1)? _HDF_ENTIRE_VDATA : *findex;
+    cfindex = (*findex == -1)? (int32)_HDF_ENTIRE_VDATA : *findex;
     ret = (intf )VSgetattr((int32) *vsid, (int32) cfindex, (int32) *aindex,
                     (VOIDP) _fcdtocp(values));
     return(ret);

@@ -655,7 +655,7 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
     /* set up some data in access record */
     access_rec->special = SPECIAL_LINKED;
     access_rec->posn = 0;
-    access_rec->access = acc_mode|DFACC_READ;
+    access_rec->access = (uint32)(acc_mode|DFACC_READ);
 
     /*
      * Lets free old special info first,if one exists,
@@ -824,7 +824,7 @@ HLPstwrite(accrec_t * access_rec)
 {
   int32  ret_value;
 
-  ret_value = HLIstaccess(access_rec, DFACC_WRITE);
+  ret_value = HLIstaccess(access_rec, (int16)DFACC_WRITE);
 
   return ret_value;
 }   /* HLPstwrite */
@@ -1551,7 +1551,7 @@ HLPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (paccess)
         *paccess = (int16)access_rec->access;
     if (pspecial)
-        *pspecial = access_rec->special;
+        *pspecial = (int16)access_rec->special;
 
 done:
   if(ret_value == FAIL)   

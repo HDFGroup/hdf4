@@ -197,12 +197,12 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 
     w = &(vs->wlist);
     r = &(vs->rlist);
-    hsize = vs->wlist.ivsize;   /* size as stored in HDF */
+    hsize = (intn)vs->wlist.ivsize;   /* size as stored in HDF */
 
     /* alloc space (Vtbuf) for reading in the raw data from vdata */
-    if (Vtbufsize < nelt * (uint32) hsize)
+    if (Vtbufsize < (size_t)nelt * (size_t) hsize)
       {
-          Vtbufsize = nelt * (uint32) hsize;
+          Vtbufsize = (size_t)nelt * (size_t) hsize;
           if (Vtbuf)
               HDfree((VOIDP) Vtbuf);
           if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
@@ -245,9 +245,9 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
       {
           b1 = buf;
           b2 = Vtbuf;
-          DFKsetNT(w->type[0]);
+          DFKsetNT((int32)w->type[0]);
 
-          DFKnumin(b2, b1, (uint32) w->order[0] * nelt, 0, 0);
+          DFKnumin(b2, b1, (uint32) w->order[0] * (uint32)nelt, 0, 0);
 
           HGOTO_DONE(nelt);
       }     /* case (e) */
@@ -260,11 +260,11 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
           for (j = 0; j < r->n; j++)
             {
                 i = r->item[j];
-                b2 = Vtbuf + w->off[i];
-                type = w->type[i];
-                isize = w->isize[i];
-                esize = w->esize[i];
-                order = w->order[i];
+                b2 = Vtbuf + (size_t)w->off[i];
+                type = (int32)w->type[i];
+                isize = (intn)w->isize[i];
+                esize = (intn)w->esize[i];
+                order = (intn)w->order[i];
 
                 DFKsetNT(type);
                 for (index = 0; index < order; index++)
@@ -285,11 +285,11 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
           for (j = 0; j < r->n; j++)
             {
                 i = r->item[j];
-                b2 = Vtbuf + w->off[i] * nelt;
-                type = w->type[i];
-                esize = w->esize[i];
-                isize = w->isize[i];
-                order = w->order[i];
+                b2 = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
+                type = (int32)w->type[i];
+                esize = (intn)w->esize[i];
+                isize = (intn)w->isize[i];
+                order = (intn)w->order[i];
 
                 DFKsetNT(type);
                 for (index = 0; index < order; index++)
@@ -314,11 +314,11 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
             {
                 i = r->item[j];
                 b1 = buf + offset;
-                b2 = Vtbuf + w->off[i];
-                type = w->type[r->item[j]];
-                esize = w->esize[i];
-                isize = w->isize[i];
-                order = w->order[i];
+                b2 = Vtbuf + (size_t)w->off[i];
+                type = (int32)w->type[r->item[j]];
+                esize = (intn)w->esize[i];
+                isize = (intn)w->isize[i];
+                order = (intn)w->order[i];
 
                 DFKsetNT(type);
                 for (index = 0; index < order; index++)
@@ -344,11 +344,11 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
             {
                 i = r->item[j];
                 b1 = buf + offset;
-                b2 = Vtbuf + w->off[i] * nelt;
-                type = w->type[i];
-                isize = w->isize[i];
-                esize = w->esize[i];
-                order = w->order[i];
+                b2 = Vtbuf + (size_t)w->off[i] * (size_t)nelt;
+                type = (int32)w->type[i];
+                isize = (intn)w->isize[i];
+                esize = (intn)w->esize[i];
+                order = (intn)w->order[i];
 
                 DFKsetNT(type);
                 for (index = 0; index < order; index++)
@@ -399,7 +399,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     uint8 *src, *dest, *Src;
 
     int32       j, type, offset;
-    int32       position, new_size;
+    int32       position=0, new_size;
     int32       status;
     int32       total_bytes;    /* total number of bytes that need to be written out */
     DYN_VWRITELIST *w;
@@ -431,7 +431,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     if (vs->access != 'w')
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
-    if (-1L == vexistvs(vs->f, vs->oref))
+    if (FAIL == vexistvs(vs->f, vs->oref))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     w = & vs->wlist;
@@ -445,7 +445,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    hdf_size = w->ivsize;   /* as stored in HDF file */
+    hdf_size = (intn)w->ivsize;   /* as stored in HDF file */
     total_bytes = hdf_size * nelt;
 
     /* make sure we have a valid AID */
@@ -544,7 +544,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
                 chunk = buf_size / hdf_size + 1;
 
                 /* get a buffer big enough to hold the values */
-                Vtbufsize = chunk * hdf_size;
+                Vtbufsize = (size_t)chunk * (size_t)hdf_size;
                 if (Vtbuf)
                     HDfree((VOIDP) Vtbuf);
                 if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
@@ -575,11 +575,11 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
                 for (j = 0; j < w->n; j++)
                   {
                       src = Src + offset;
-                      dest = Vtbuf + w->off[j];
-                      type = w->type[j];
-                      esize = w->esize[j];
-                      isize = w->isize[j];
-                      order = w->order[j];
+                      dest = Vtbuf + (size_t)w->off[j];
+                      type = (int32)w->type[j];
+                      esize = (intn)w->esize[j];
+                      isize = (intn)w->isize[j];
+                      order = (intn)w->order[j];
 
                       DFKsetNT(type);
                       for (index = 0; index < order; index++)
@@ -616,7 +616,7 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 	  /* alloc space (Vtbuf) for writing out the data */
 	  if (Vtbufsize < (uint32) total_bytes)
 	    {
-          Vtbufsize = total_bytes;
+          Vtbufsize = (uint32)total_bytes;
           if (Vtbuf)
               HDfree((VOIDP) Vtbuf);
           if ((Vtbuf = (uint8 *) HDmalloc(Vtbufsize)) == NULL)
@@ -631,11 +631,11 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 		src = buf;
 		for (j = 0; j < w->n; j++)
 		  {
-		      dest = Vtbuf + w->off[j];
-		      type = w->type[j];
-		      esize = w->esize[j];
-		      isize = w->isize[j];
-		      order = w->order[j];
+		      dest = Vtbuf + (size_t)w->off[j];
+		      type = (int32)w->type[j];
+		      esize = (intn)w->esize[j];
+		      isize = (intn)w->isize[j];
+		      order = (intn)w->order[j];
 
 		      DFKsetNT(type);
 		      for (index = 0; index < order; index++)
@@ -658,10 +658,10 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 		for (j = 0; j < w->n; j++)
 		  {
 		      dest = Vtbuf + w->off[j] * nelt;
-		      type = w->type[j];
-		      esize = w->esize[j];
-		      isize = w->isize[j];
-		      order = w->order[j];
+		      type = (int32)w->type[j];
+		      esize = (intn)w->esize[j];
+		      isize = (intn)w->isize[j];
+		      order = (intn)w->order[j];
 
 		      DFKsetNT(type);
 		      for (index = 0; index < order; index++)
@@ -684,10 +684,10 @@ VSwrite(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
 		  {
 		      src = buf + offset;
 		      dest = Vtbuf + w->off[j] * nelt;
-		      type = w->type[j];
-		      isize = w->isize[j];
-		      esize = w->esize[j];
-		      order = w->order[j];
+		      type = (int32)w->type[j];
+		      isize = (intn)w->isize[j];
+		      esize = (intn)w->esize[j];
+		      order = (intn)w->order[j];
 
 		      DFKsetNT(type);
 		      for (index = 0; index < order; index++)

@@ -87,14 +87,13 @@ HCPmstdio_stread(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPmstdio_stread");
     compinfo_t *info;           /* information on the special element */
-    int32       ret;
 
     info = (compinfo_t *) access_rec->special_info;
 
     /* set the offset */
     info->minfo.model_info.stdio_info.pos = 0;
 
-    if ((ret = (*(info->cinfo.coder_funcs.stread)) (access_rec)) == FAIL)
+    if ((*(info->cinfo.coder_funcs.stread)) (access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
     return (SUCCEED);
 }   /* HCPmstdio_stread() */
@@ -124,7 +123,6 @@ HCPmstdio_stwrite(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPmstdio_stwrite");
     compinfo_t *info;           /* information on the special element */
-    int32       ret;
 
     info = (compinfo_t *) access_rec->special_info;
 
@@ -137,7 +135,7 @@ HCPmstdio_stwrite(accrec_t * access_rec)
 #ifdef TESTING
     printf("HCPmstdio_stwrite(): before coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);
 #endif
-    if ((ret = (*(info->cinfo.coder_funcs.stwrite)) (access_rec)) == FAIL)
+    if ((*(info->cinfo.coder_funcs.stwrite)) (access_rec) == FAIL)
         HRETURN_ERROR(DFE_CODER, FAIL);
 #ifdef TESTING
     printf("HCPmstdio_stwrite(): after coder_funcs.write=%p\n", info->cinfo.coder_funcs.write);

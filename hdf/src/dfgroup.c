@@ -66,16 +66,16 @@ PRIVATE int32
 setgroupREC(DIlist_ptr list_rec)
 {
     CONSTR(FUNC, "setgroupREC");
-    int32       i;
+    uintn       i;
 
     for (i = 0; i < MAX_GROUPS; i++)
         if (Group_list[i]==NULL)
           {
               Group_list[i] = list_rec;
-              return GSLOT2ID(i);
+              return (int32)GSLOT2ID(i);
           }
 
-    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+    HRETURN_ERROR(DFE_INTERNAL, FAIL)
 }   /* setgroupREC */
 
 /*-----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
     if (!new_list->DIlist)
       {
           HDfree((VOIDP) new_list);
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL)
       }
 
     new_list->num = (intn) (length / 4);
@@ -126,7 +126,7 @@ DFdiread(int32 file_id, uint16 tag, uint16 ref)
       {
           HDfree((VOIDP) new_list->DIlist);
           HDfree((VOIDP) new_list);
-          HRETURN_ERROR(DFE_READERROR, FAIL);
+          HRETURN_ERROR(DFE_READERROR, FAIL)
       }
     return (int32) setgroupREC(new_list);
 }
@@ -222,7 +222,7 @@ DFdisetup(int maxsize)
     if (!new_list->DIlist)
       {
           HDfree((VOIDP) new_list);
-          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          HRETURN_ERROR(DFE_NOSPACE, FAIL)
       }
 
     new_list->num = maxsize;

@@ -275,7 +275,7 @@ atom_t HAregister_atom(group_t grp,     /* IN: Group to register the object in *
     atm_ptr->next=NULL;
 
     /* hash bucket already full, prepend to front of chain */
-    hash_loc=grp_ptr->nextid%grp_ptr->hash_size;
+    hash_loc=grp_ptr->nextid%(uintn)grp_ptr->hash_size;
     if(grp_ptr->atom_list[hash_loc]!=NULL)
         atm_ptr->next=grp_ptr->atom_list[hash_loc];
 
@@ -448,7 +448,7 @@ VOIDP HAremove_atom(atom_t atm   /* IN: Atom to remove */
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    hash_loc=ATOM_TO_LOC(atm,grp_ptr->hash_size);
+    hash_loc=(uintn)ATOM_TO_LOC(atm,grp_ptr->hash_size);
     curr_atm=grp_ptr->atom_list[hash_loc];
     if(curr_atm==NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);
@@ -596,7 +596,7 @@ static atom_info_t *HAIfind_atom(atom_t atm   /* IN: Atom to retrieve atom for *
         HGOTO_ERROR(DFE_INTERNAL, NULL);
 
     /* Get the location in which the atom is located */
-    hash_loc=ATOM_TO_LOC(atm,grp_ptr->hash_size);
+    hash_loc=(uintn)ATOM_TO_LOC(atm,grp_ptr->hash_size);
     atm_ptr=grp_ptr->atom_list[hash_loc];
     if(atm_ptr==NULL)
         HGOTO_ERROR(DFE_INTERNAL, NULL);

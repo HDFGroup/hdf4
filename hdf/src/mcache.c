@@ -208,6 +208,9 @@ mcache_open(
     intn          entry;         /* index into hash table */
     int32         pageno;
 
+    /* shut compiler up */
+    key=key;
+
     /* Set the pagesize and max # of pages to cache */
     if(pagesize == 0)
         pagesize = (int32)DEF_PAGESIZE;
@@ -321,8 +324,8 @@ RETURNS
 VOID
 mcache_filter( 
     MCACHE *mp,                                            /* IN: MCACHE cookie */
-    int32 (*pgin) (VOID *cookie, int32 pgno, VOID *page),  /* IN: page in filter */
-    int32 (*pgout) (VOID *cookie, int32 pgno, const VOID *page), /* IN: page out filter */
+    int32 (*pgin) (VOID * /* cookie */, int32 /* pgno */, VOID * /* page */),  /* IN: page in filter */
+    int32 (*pgout) (VOID * /* cookie */, int32 /* pgno */, const VOID * /*page */), /* IN: page out filter */
     VOID *pgcookie                                         /* IN: filter cookie */)
 {
     mp->pgin     = pgin;
@@ -487,8 +490,13 @@ mcache_get(
     BKT          *bp   = NULL;  /* bucket element */
     L_ELEM       *lp   = NULL;
     intn         ret_value   = RET_SUCCESS;
+#ifdef UNUSED
     int32        rpagesize;   /* pagesize to read */
+#endif /* UNUSED */
     intn         list_hit;    /* hit flag */
+
+    /* shut compiler up */
+    flags=flags;
 
 #ifdef MCACHE_DEBUG
     (VOID)fprintf(stderr,"mcache_get: entering \n");
@@ -600,7 +608,9 @@ mcache_get(
           ++mp->pageread;
 #endif
 
+#ifdef UNUSED
           rpagesize = mp->pagesize;
+#endif /* UNUSED */
 
           /* Run through the user's filter. 
              we use this fcn to read in the data chunk/page.
@@ -1020,7 +1030,7 @@ mcache_bkt(
           } /* end if bp->flags */
 
     /* create a new page */
-  new: if ((bp = (BKT *)HDmalloc(sizeof(BKT) + mp->pagesize)) == NULL)
+  new: if ((bp = (BKT *)HDmalloc(sizeof(BKT) + (uintn)mp->pagesize)) == NULL)
       HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef STATISTICS
@@ -1067,7 +1077,9 @@ mcache_write(
     struct _lhqh *lhead = NULL; /* head of an entry in list hash chain */
     L_ELEM       *lp   = NULL;
     intn          ret_value = RET_SUCCESS;
+#ifdef UNUSED
     int32         wpagesize;  /* page size to write */
+#endif /* UNUSED */
 
 
 #ifdef MCACHE_DEBUG
@@ -1117,7 +1129,9 @@ mcache_write(
     (VOID)fprintf(stderr,"mcache_write: npages=%u\n",mp->npages);
 #endif
 
+#ifdef UNUSED
     wpagesize = mp->pagesize;
+#endif /* UNUSED */
 
     /* mark page as clean */
     bp->flags &= ~MCACHE_DIRTY;

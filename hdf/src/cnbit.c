@@ -307,7 +307,7 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
                                     {   /* check if we need to read bits */
                                         Hbitread(info->aid, mask_info->length, &input_bits);
                                         input_bits <<= (mask_info->offset - mask_info->length) + 1;
-                                        *rbuf2 |= mask_info->mask & input_bits;
+                                        *rbuf2 |= (uint8)(mask_info->mask & (uint8)input_bits);
                                         if (j == sign_byte)     /* check if this is the sign byte */
                                             sign_bit = sign_mask & input_bits ? 1 : 0;
                                     }   /* end if */
@@ -325,13 +325,13 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
                                     {   /* fill with ones */
                                         for (j = 0; j < sign_byte; j++, rbuf2++)
                                             *rbuf2 = 0xff;
-                                        *rbuf2 |= sign_ext_mask;
+                                        *rbuf2 |= (uint8)sign_ext_mask;
                                     }   /* end if */
                                   else
                                     {   /* fill with zeroes */
                                         for (j = 0; j < sign_byte; j++, rbuf2++)
                                             *rbuf2 = 0x00;
-                                        *rbuf2 &= ~sign_ext_mask;
+                                        *rbuf2 &= (uint8)~sign_ext_mask;
                                     }   /* end else */
                               }     /* end if */
                             rbuf += nbit_info->nt_size;     /* increment buffer ptr */
@@ -350,8 +350,8 @@ HCIcnbit_decode(compinfo_t * info, int32 length, uint8 *buf)
 #ifdef TESTING
                                         printf("HCInbit_decode(): input_bits=%d\n", (int) input_bits);
 #endif
-                                        *rbuf |= mask_info->mask & (input_bits <<
-                                                                    ((mask_info->offset - mask_info->length) + 1));
+                                        *rbuf |= (uint8)(mask_info->mask & (uint8)(input_bits <<
+                                                                    ((mask_info->offset - mask_info->length) + 1)));
 #ifdef TESTING
                                         printf("HCInbit_decode(): j=%d, length=%d, *rbuf=%x\n", j, mask_info->length, (unsigned) *rbuf);
 #endif
@@ -427,8 +427,8 @@ HCIcnbit_encode(compinfo_t * info, int32 length, uint8 *buf)
 #endif
           if (mask_info->length > 0)
             {   /* check if we need to output bits */
-                output_bits = ((*buf) & (mask_info->mask)) >>
-                    ((mask_info->offset - mask_info->length) + 1);
+                output_bits = (uint32)(((*buf) & (mask_info->mask)) >>
+                    ((mask_info->offset - mask_info->length) + 1));
 #ifdef TESTING
                 printf("HCIcnbit_encode(): output_bits=%x\n", (unsigned) output_bits);
 #endif
@@ -797,13 +797,11 @@ HCPcnbit_endaccess(accrec_t * access_rec)
 {
     CONSTR(FUNC, "HCPcnbit_endaccess");
     compinfo_t *info;           /* special element information */
-    comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
 
 #ifdef TESTING
     printf("HCPcnbit_endaccess(): entering\n");
 #endif
     info = (compinfo_t *) access_rec->special_info;
-    nbit_info = &(info->cinfo.coder_info.nbit_info);
 
     /* flush out n-bit buffer */
     if (access_rec->access&DFACC_WRITE)

@@ -141,7 +141,7 @@ DFCIunrle(uint8 *buf, uint8 *bufto, int32 outlen, int resetsave)
         savestart = saveend = save;     /* all copied */
     while (q < endp)
       {
-          cnt = *p++;   /* count field */
+          cnt = (int)*p++;   /* count field */
           if (!(cnt & 128))
             {   /* is set of uniques */
                 while (cnt--)

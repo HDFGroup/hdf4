@@ -81,7 +81,7 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t * skphuff_info, uint8 plain)
 {
     uintn       a, b;           /* children of nodes to semi-rotate */
     uint8       c, d;           /* pair of nodes to semi-rotate */
-    uintn       skip_num;       /* the tree we are splaying */
+    intn        skip_num;       /* the tree we are splaying */
     uintn       *lleft,        /* local copy of the left pointer */
                 *lright;       /* local copy of the right pointer */
     uint8       *lup;          /* local copy of the up pointer */
@@ -93,36 +93,36 @@ HCIcskphuff_splay(comp_coder_skphuff_info_t * skphuff_info, uint8 plain)
     lright=skphuff_info->right[skip_num];
     lup=skphuff_info->up[skip_num];
 
-    a = plain + SUCCMAX;    /* get the index for this source code in the up array */
+    a = (uintn)plain + SUCCMAX;    /* get the index for this source code in the up array */
     do
       {     /* walk up the tree, semi-rotating pairs */
           c = lup[a];    /* find the parent of the node to semi-rotate around */
           if (c != ROOT)
             {   /* a pair remain above this node */
-                d = lup[c];  /* get the grand-parent of the node to semi-rotate around */
-                b = lleft[d];
+                d = lup[(int)c];  /* get the grand-parent of the node to semi-rotate around */
+                b = lleft[(int)d];
 
 /* Exchange the children of the pair */
-                if (c == b)
+                if ((uintn)c == b)
                   {
-                      b = lright[d];
-                      lright[d] = a;
+                      b = lright[(int)d];
+                      lright[(int)d] = a;
                   }     /* end if */
                 else
-                    lleft[d] = a;
+                    lleft[(int)d] = a;
 
-                if (a == lleft[c])
-                    lleft[c] = b;
+                if (a == lleft[(int)c])
+                    lleft[(int)c] = b;
                 else
-                    lright[c] = b;
+                    lright[(int)c] = b;
 
                 lup[a] = d;
                 lup[b] = c;
-                a = d;
+                a = (uintn)d;
             }   /* end if */
           else
             {   /* handle odd node at end */
-                a = c;
+                a = (uintn)c;
             }   /* end else */
       }
     while (a != ROOT);
@@ -176,11 +176,11 @@ HCIcskphuff_init(accrec_t * access_rec, uintn alloc_buf)
     if(alloc_buf==TRUE)
       {
         /* allocate pointers to the compression buffers */
-        if ((skphuff_info->left = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
+        if ((skphuff_info->left = (uintn **) HDmalloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) == NULL)
                         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->right = (uintn **) HDmalloc(sizeof(uintn *) * skphuff_info->skip_size)) == NULL)
+        if ((skphuff_info->right = (uintn **) HDmalloc(sizeof(uintn *) * (uintn)skphuff_info->skip_size)) == NULL)
                         HRETURN_ERROR(DFE_NOSPACE, FAIL);
-        if ((skphuff_info->up = (uint8 **) HDmalloc(sizeof(uint8 *) * skphuff_info->skip_size)) == NULL)
+        if ((skphuff_info->up = (uint8 **) HDmalloc(sizeof(uint8 *) * (uintn)skphuff_info->skip_size)) == NULL)
                         HRETURN_ERROR(DFE_NOSPACE, FAIL);
 
 #ifdef TESTING
@@ -207,12 +207,12 @@ HCIcskphuff_init(accrec_t * access_rec, uintn alloc_buf)
 #pragma novector
 #endif /* UNICOS */
           for (i = 0; i < TWICEMAX; i++)    /* initialize the up pointers to point to their parent in the tree */
-              skphuff_info->up[k][i] = i >> 1;
+              skphuff_info->up[k][i] = (uint8)(i >> 1);
 
           for (j = 0; j < SUCCMAX; j++)
             {   /* initialize the left & right pointers correctly */
-                skphuff_info->left[k][j] = j << 1;
-                skphuff_info->right[k][j] = (j << 1) + 1;
+                skphuff_info->left[k][j] = (uintn)(j << 1);
+                skphuff_info->right[k][j] = (uintn)((j << 1) + 1);
             }   /* end for */
       }     /* end for */
 
@@ -276,7 +276,7 @@ printf("bitcount=%d\n",++bitcount);
             }
           while (a <= SKPHUFF_MAX_CHAR);
 
-          plain = a - SUCCMAX;
+          plain = (uint8)(a - SUCCMAX);
           HCIcskphuff_splay(skphuff_info, plain);
           skphuff_info->skip_pos = (skphuff_info->skip_pos + 1) % skphuff_info->skip_size;
           *buf++ = plain;
@@ -330,7 +330,7 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
     orig_length = length;   /* save this for later */
     while (length > 0)
       {     /* encode until we stored all the bytes */
-          a = *buf + SUCCMAX;   /* find position in the up array */
+          a = (uintn)*buf + SUCCMAX;   /* find position in the up array */
 #ifdef OLD_WAY
           do
             {   /* walk up the tree, pushing bits */
@@ -356,7 +356,7 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
           do
             {   /* walk up the tree, pushing bits */
                 last_node=a; /* keep track of the current node */
-                a = skphuff_info->up[skphuff_info->skip_pos][a]; /* move the current node up one */
+                a = (uintn)skphuff_info->up[skphuff_info->skip_pos][a]; /* move the current node up one */
                 if(skphuff_info->right[skphuff_info->skip_pos][a] == last_node)
                     output_bits[stack_ptr]|=bit_mask; /* push a 1 if this is the right node */
                 bit_mask<<=1;   /* rotate bit mask over */
@@ -374,7 +374,7 @@ HCIcskphuff_encode(compinfo_t * info, int32 length, uint8 *buf)
           do {   /* output the bits we have */
                 if(bit_count[stack_ptr]>0)
                   {
-                    if(Hbitwrite(info->aid,bit_count[stack_ptr],output_bits[stack_ptr]) !=bit_count[stack_ptr])
+                    if(Hbitwrite(info->aid,(intn)bit_count[stack_ptr],output_bits[stack_ptr]) !=(intn)bit_count[stack_ptr])
                         HRETURN_ERROR(DFE_CENCODE, FAIL);
                   } /* end if */
                 stack_ptr--;
@@ -608,13 +608,13 @@ HCPcskphuff_seek(accrec_t * access_rec, int32 offset, int origin)
         if (HCIcskphuff_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
-              HRETURN_ERROR(DFE_CDECODE, FAIL);
+              HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
     if (skphuff_info->offset < offset)  /* grab the last chunk */
         if (HCIcskphuff_decode(info, offset - skphuff_info->offset, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
-              HRETURN_ERROR(DFE_CDECODE, FAIL);
+              HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
 
     HDfree(tmp_buf);

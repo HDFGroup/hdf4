@@ -205,7 +205,7 @@ DFR8setcompress(int32 type, comp_info * cinfo)
   if (type == COMP_JPEG)
   CompType = DFTAG_GREYJPEG5;
   else    /* otherwise, just use mapped tag */
-    CompType = compress_map[type];
+    CompType = (int32)compress_map[type];
   CompInfo = (*cinfo);
 
 done:
@@ -565,7 +565,7 @@ DFR8Iputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim,
               CompInfo.jpeg.force_baseline = TRUE;
             }     /* end if */
           else    /* otherwise, just use mapped tag */
-            CompType = compress_map[compress];
+            CompType = (int32)compress_map[compress];
         }   /* end if */
       if (!Writeref)
         if ((Writeref = Hnewref(file_id)) == 0)
@@ -1100,15 +1100,16 @@ DFR8nimages(const char *filename)
             {     /* just look for ID tags to get the number of components */
               if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
                 {
+                  uint16      temp16;   /* temporary holding variable */
                   int32       temp;   /* temporary holding variable */
-                  int32       ncomponents;    /* number of image components */
+                  int16       ncomponents;    /* number of image components */
                   uint8      *p;
 
                   p = GRtbuf;
                   INT32DECODE(p, temp);
                   INT32DECODE(p, temp);
-                  UINT16DECODE(p, temp);
-                  UINT16DECODE(p, temp);
+                  UINT16DECODE(p, temp16);
+                  UINT16DECODE(p, temp16);
                   INT16DECODE(p, ncomponents);
                   if (ncomponents == 1)   /* whew, all that work and we finally found an 8-bit image */
                     found_8bit = TRUE;
@@ -1376,7 +1377,7 @@ DFR8lastref(void)
   /* Perform global, one-time initialization */
   if (library_terminate == FALSE)
       if(DFR8Istart()==FAIL)
-          HGOTO_ERROR(DFE_CANTINIT, FAIL);
+          HGOTO_ERROR(DFE_CANTINIT, (uint16)FAIL);
 
   ret_value = Lastref;
 
@@ -1660,10 +1661,13 @@ DFR8Iriginfo(int32 file_id)
       if (Hgetelement(file_id, DFTAG_ID8, Readrig.image.ref, R8tbuf) != FAIL)
         {
           uint8      *p;
+          uint16      uint16var;
 
           p = R8tbuf;
-          UINT16DECODE(p, Readrig.descimage.xdim);
-          UINT16DECODE(p, Readrig.descimage.ydim);
+          UINT16DECODE(p, uint16var);
+          Readrig.descimage.xdim=(int32)uint16var;
+          UINT16DECODE(p, uint16var);
+          Readrig.descimage.ydim=(int32)uint16var;
         }   /* end if */
       else
         HGOTO_ERROR(DFE_GETELEM, FAIL);

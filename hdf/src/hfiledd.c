@@ -191,7 +191,7 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
         /* Decode the numbers. */
         p = &ddhead[0];
         INT16DECODE(p, ddcurr->ndds);
-        ndds = ddcurr->ndds;
+        ndds = (intn)ddcurr->ndds;
         if (ndds <= 0)		/* validity check */
           HGOTO_ERROR(DFE_CORRUPT, FAIL);
         INT32DECODE(p, ddcurr->nextoffset);
@@ -208,11 +208,11 @@ intn HTPstart(filerec_t *file_rec       /* IN:  File record to store info in */
           HGOTO_ERROR(DFE_NOSPACE, FAIL);
   
         /* Allocate memory for the temporary buffer also */
-        if(tbuf==NULL || (ndds*DD_SZ)>tbuf_size)
+        if(tbuf==NULL || ((uintn)ndds*DD_SZ)>tbuf_size)
           {
               if (tbuf!=(uint8 *)NULL)
                   HDfree(tbuf);
-              tbuf_size=ndds*DD_SZ;
+              tbuf_size=(uintn)ndds*DD_SZ;
               tbuf=(uint8 *)HDmalloc(tbuf_size);
               if (tbuf==(uint8 *)NULL)
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -359,7 +359,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     list[0].ref = 0;
     list[0].length = list[0].offset = 0;
     list[0].blk = block;
-    HDmemfill(&list[1],&list[0],sizeof(dd_t),(ndds-1));
+    HDmemfill(&list[1],&list[0],sizeof(dd_t),(uint32)(ndds-1));
 
     tbuf=(uint8 *)HDmalloc(ndds*DD_SZ);
     if (tbuf == NULL)	/* check for DD list */
@@ -371,7 +371,7 @@ intn HTPinit(filerec_t *file_rec,       /* IN: File record to store info in */
     UINT16ENCODE(p, (uint16) 0);
     INT32ENCODE(p, (int32) 0);
     INT32ENCODE(p, (int32) 0);
-    HDmemfill(p,tbuf,DD_SZ,(ndds-1));
+    HDmemfill(p,tbuf,DD_SZ,(uint32)(ndds-1));
 
     /* Write the NIL dd's out into the DD block on disk */
     if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
@@ -454,11 +454,11 @@ intn HTPsync(filerec_t *file_rec       /* IN:  File record to store info in */
       /* n is the maximum number of dd's in tbuf */
             ndds = block->ndds;
             /* Allocate memory for the temporary buffer also */
-            if(tbuf==NULL || (ndds*DD_SZ)>tbuf_size)
+            if(tbuf==NULL || ((uintn)ndds*DD_SZ)>tbuf_size)
               {
                   if (tbuf!=(uint8 *)NULL)
                       HDfree(tbuf);
-                  tbuf_size=ndds*DD_SZ;
+                  tbuf_size=(uintn)ndds*DD_SZ;
                   tbuf=(uint8 *)HDmalloc(tbuf_size);
                   if (tbuf==(uint8 *)NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -652,7 +652,7 @@ atom_t HTPselect(filerec_t *file_rec,   /* IN: File record to store info in */
         HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
     tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-    if((dd_ptr=DAget_elem(tinfo_ptr->d,ref))==NULL)
+    if((dd_ptr=DAget_elem(tinfo_ptr->d,(intn)ref))==NULL)
         HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
     /* Get the atom to return */
@@ -1135,7 +1135,7 @@ uint16 Htagnewref(int32 file_id,    /* IN: File ID the tag/refs are in */
     else
       {   /* found an existing tag */
           tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-          if((ret_value=bv_find(tinfo_ptr->b,-1,BV_FALSE))==(uint16)FAIL)
+          if((ret_value=(uint16)bv_find(tinfo_ptr->b,-1,BV_FALSE))==(uint16)FAIL)
               HGOTO_ERROR(DFE_BVFIND, 0);
       } /* end else */
 
@@ -1443,7 +1443,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
     /* allocate new dd block record and fill in data */
     if ((block = (ddblock_t *) HDmalloc(sizeof(ddblock_t))) == NULL)
       HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    block->ndds = ndds = file_rec->ddhead->ndds;    /* snarf from first block */
+    block->ndds = (int16)(ndds = (intn)file_rec->ddhead->ndds);    /* snarf from first block */
     block->next = (ddblock_t *) NULL;
     block->nextoffset = 0;
 
@@ -1454,7 +1454,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
     if ((nextoffset = HPgetdiskblock(file_rec, NDDS_SZ + OFFSET_SZ + (ndds * DD_SZ), TRUE)) == FAIL)
       HGOTO_ERROR(DFE_SEEKERROR, FAIL);
     block->myoffset = nextoffset;	/* set offset of new block */
-    block->dirty = file_rec->cache; /* if we're caching, wait to write DD block */
+    block->dirty = (uintn)file_rec->cache; /* if we're caching, wait to write DD block */
   
     if (file_rec->cache)	/* if we are caching, wait to update previous DD block */
       file_rec->dirty |= DDLIST_DIRTY;	/* indicate file needs to be flushed */
@@ -1478,7 +1478,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
     list[0].ref = 0;
     list[0].length = list[0].offset = 0;
     list[0].blk = block;
-    HDmemfill(&list[1],&list[0],sizeof(dd_t),ndds-1);
+    HDmemfill(&list[1],&list[0],sizeof(dd_t),(uint32)ndds-1);
   
     if (file_rec->cache!=0)
       {	/* if we are caching, wait to update previous DD block */
@@ -1493,7 +1493,7 @@ static intn HTInew_dd_block(filerec_t * file_rec)
         UINT16ENCODE(p, (uint16) 0);
         INT32ENCODE(p, (int32) 0);
         INT32ENCODE(p, (int32) 0);
-        HDmemfill(p,tbuf,DD_SZ,(ndds-1));
+        HDmemfill(p,tbuf,DD_SZ,(uint32)(ndds-1));
 
         if (HP_write(file_rec, tbuf, ndds * DD_SZ) == FAIL)
           HGOTO_ERROR(DFE_WRITEERROR, FAIL);
@@ -1587,7 +1587,7 @@ static intn HTIfind_dd(filerec_t * file_rec, uint16 look_tag, uint16 look_ref,
               HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
           tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-          if((dd_ptr=DAget_elem(tinfo_ptr->d,look_ref))==NULL)
+          if((dd_ptr=DAget_elem(tinfo_ptr->d,(intn)look_ref))==NULL)
               HGOTO_DONE(FAIL); /* Not an error, we just didn't find the object */
 
           *pdd=dd_ptr;
@@ -1960,7 +1960,7 @@ static intn HTIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
           case DFTAG_WILDCARD:
               for (block = file_rec->ddhead; block != NULL; block = block->next)
                 {
-                    t_all_cnt += block->ndds;
+                    t_all_cnt += (uintn)block->ndds;
 
                     dd_ptr = block->ddlist;
                     for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
@@ -1979,7 +1979,7 @@ static intn HTIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
           case DFTAG_FREE:
               for (block = file_rec->ddhead; block != NULL; block = block->next)
                 {
-                    t_all_cnt += block->ndds;
+                    t_all_cnt += (uintn)block->ndds;
 
                     dd_ptr = block->ddlist;
                     for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
@@ -1995,7 +1995,7 @@ static intn HTIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
                 {
                   for (block = file_rec->ddhead; block != NULL; block = block->next)
                     {
-                        t_all_cnt += block->ndds;
+                        t_all_cnt += (uintn)block->ndds;
 
                         dd_ptr = block->ddlist;
                         for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
@@ -2010,7 +2010,7 @@ static intn HTIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
                     {
                       for (block = file_rec->ddhead; block != NULL; block = block->next)
                         {
-                            t_all_cnt += block->ndds;
+                            t_all_cnt += (uintn)block->ndds;
 
                             idx=0;
                             dd_ptr = block->ddlist;
@@ -2036,7 +2036,7 @@ static intn HTIcount_dd(filerec_t * file_rec, uint16 cnt_tag, uint16 cnt_ref,
                     {
                       for (block = file_rec->ddhead; block != NULL; block = block->next)
                         {
-                            t_all_cnt += block->ndds;
+                            t_all_cnt += (uintn)block->ndds;
 
                             dd_ptr = block->ddlist;
                             for (idx = 0; idx < block->ndds; idx++, dd_ptr++)
@@ -2104,18 +2104,18 @@ HTIregister_tag_ref(filerec_t * file_rec, dd_t *dd_ptr)
         intn ref_bit;    /* bit of the ref # in the tag info */
 
         tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-        if((ref_bit=bv_get(tinfo_ptr->b,dd_ptr->ref))==FAIL)
+        if((ref_bit=bv_get(tinfo_ptr->b,(intn)dd_ptr->ref))==FAIL)
             HGOTO_ERROR(DFE_BVGET, FAIL);
         if(ref_bit==BV_TRUE)
             HGOTO_ERROR(DFE_DUPDD, FAIL);
     } /* end else */
 
   /* Set the bit in the bit-vector */
-  if(bv_set(tinfo_ptr->b,dd_ptr->ref,BV_TRUE)==FAIL)
+  if(bv_set(tinfo_ptr->b,(intn)dd_ptr->ref,BV_TRUE)==FAIL)
       HGOTO_ERROR(DFE_BVSET, FAIL);
 
   /* Insert the DD info into the dynarray for later use */
-  if(DAset_elem(tinfo_ptr->d,dd_ptr->ref,(VOIDP)dd_ptr)==FAIL)
+  if(DAset_elem(tinfo_ptr->d,(intn)dd_ptr->ref,(VOIDP)dd_ptr)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
@@ -2161,15 +2161,15 @@ static intn HTIunregister_tag_ref(filerec_t * file_rec, dd_t *dd_ptr)
         intn ref_bit;    /* bit of the ref # in the tag info */
 
         tinfo_ptr=*tip_ptr; /* get the pointer to the tag info */
-        if((ref_bit=bv_get(tinfo_ptr->b,dd_ptr->ref))==FAIL)
+        if((ref_bit=bv_get(tinfo_ptr->b,(intn)dd_ptr->ref))==FAIL)
             HGOTO_ERROR(DFE_BVGET, FAIL);
         if(ref_bit==BV_FALSE)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
-        if(bv_set(tinfo_ptr->b,dd_ptr->ref,BV_FALSE)==FAIL)
+        if(bv_set(tinfo_ptr->b,(intn)dd_ptr->ref,BV_FALSE)==FAIL)
             HGOTO_ERROR(DFE_BVSET, FAIL);
 
         /* Delete the DD info from the tag tree */
-        if(DAdel_elem(tinfo_ptr->d,dd_ptr->ref)==NULL)
+        if(DAdel_elem(tinfo_ptr->d,(intn)dd_ptr->ref)==NULL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* Delete the tag/ref from the file */

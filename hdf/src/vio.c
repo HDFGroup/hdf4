@@ -251,11 +251,13 @@ vpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     *size = (int32) (bb - buf) + 1;
     *bb = 0;
+#ifdef LATER
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
+#endif /* LATER */
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
@@ -279,6 +281,7 @@ vunpackvs(VDATA * vs, uint8 buf[], int32 len)
     uint8      *bb;
     int32       i;
     int16       int16var, temp;
+    uint16      uint16var;
     int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -293,8 +296,10 @@ vunpackvs(VDATA * vs, uint8 buf[], int32 len)
     /* get version number first -- this is different from version 3
        vdata interface */
     bb = &buf[len - 5];
-    UINT16DECODE(bb, vs->version); /* retrieve the vg's version field */
-    UINT16DECODE(bb, vs->more);     /* retrieve the vg's more field */
+    UINT16DECODE(bb, uint16var); /* retrieve the vg's version field */
+    vs->version=(int16)uint16var;
+    UINT16DECODE(bb, uint16var);     /* retrieve the vg's more field */
+    vs->more=(int16)uint16var;
     bb = &buf[0];
 
     if (vs->version <= 4)   { 
@@ -305,43 +310,44 @@ vunpackvs(VDATA * vs, uint8 buf[], int32 len)
        /* retrieve tore ivsize */
        UINT16DECODE(bb, vs->wlist.ivsize);
        /* retrieve nfields */
-       INT16DECODE(bb, vs->wlist.n);
+       INT16DECODE(bb, int16var);
+       vs->wlist.n=(intn)int16var;
        /* Can't really check for malloc failure... -QAK */
-       vs->wlist.type=HDmalloc(sizeof(int16)*vs->wlist.n);
+       vs->wlist.type=HDmalloc(sizeof(int16)*(size_t)vs->wlist.n);
        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
            INT16DECODE(bb, vs->wlist.type[i]);
-       vs->wlist.isize=HDmalloc(sizeof(uint16)*vs->wlist.n);
+       vs->wlist.isize=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
        for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
            UINT16DECODE(bb, vs->wlist.isize[i]);
 
-        vs->wlist.off=HDmalloc(sizeof(uint16)*vs->wlist.n);
+        vs->wlist.off=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
         for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
             UINT16DECODE(bb, vs->wlist.off[i]);
 
-        vs->wlist.order=HDmalloc(sizeof(uint16)*vs->wlist.n);
+        vs->wlist.order=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
         for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
             UINT16DECODE(bb, vs->wlist.order[i]);
 
         /* retrieve the field names (and each field name's length)  */
-        vs->wlist.name=HDmalloc(sizeof(char *)*vs->wlist.n);
+        vs->wlist.name=HDmalloc(sizeof(char *)*(size_t)vs->wlist.n);
         for (i = 0; i < vs->wlist.n; i++) {
             INT16DECODE(bb, int16var);    /* this gives the length */
             vs->wlist.name[i]=HDmalloc((int16var+1)*sizeof(char));
             HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
-            bb += int16var;
+            bb += (size_t)int16var;
         }
 
        /* retrieve the vsname (and vsnamelen)  */
        INT16DECODE(bb, int16var);  /* this gives the length */
 
        HIstrncpy(vs->vsname, (char *) bb, int16var + 1);
-       bb += int16var;
+       bb += (size_t)int16var;
 
        /* retrieve the vsclass (and vsclasslen)  */
        INT16DECODE(bb, int16var);  /* this gives the length */
 
        HIstrncpy(vs->vsclass, (char *) bb, int16var + 1);
-       bb += int16var;
+       bb += (size_t)int16var;
 
        /* retrieve the expansion tag and ref */
        UINT16DECODE(bb, vs->extag);
@@ -370,9 +376,9 @@ if (NULL==(vs->alist=(vs_attr_t *)HDmalloc(vs->nattrs*sizeof(vs_attr_t))))
        }   /* new version */
        if (vs->version <= VSET_OLD_TYPES)
           for (i = 0; i < vs->wlist.n; i++)   /* save the type */
-            vs->wlist.type[i] = map_from_old_types(vs->wlist.type[i]);
+            vs->wlist.type[i] = map_from_old_types((intn)vs->wlist.type[i]);
     /* --- EXTRA --- fill in the machine-dependent size fields */
-       vs->wlist.esize=HDmalloc(sizeof(uint16)*vs->wlist.n);
+       vs->wlist.esize=HDmalloc(sizeof(uint16)*(size_t)vs->wlist.n);
        for (i = 0; i < vs->wlist.n; i++)
            vs->wlist.esize[i] = (uint16) (vs->wlist.order[i] *
               DFKNTsize((int32) vs->wlist.type[i] | (int32) DFNT_NATIVE));
@@ -627,7 +633,7 @@ VSattach(HFILEID f, int32 vsid, const char *accesstype)
 
           vf->vstabn++;
           w->key = (int32) vs->oref;  /* set the key for the node */
-          w->ref = (intn) vs->oref;
+          w->ref = (uintn) vs->oref;
           w->vs = vs;
           w->nattach = 1;
           w->nvertices = 0;
@@ -767,7 +773,7 @@ VSdetach(int32 vkey)
     if (vs->marked)
       {	  /* if marked , write out vdata's VSDESC to file */
         if ((vspack = (uint8 *) HDmalloc(sizeof(VWRITELIST) + 
-           vs->nattrs*sizeof(vs_attr_t) + sizeof(VDATA) + 1)) == NULL)
+           (size_t)vs->nattrs*sizeof(vs_attr_t) + sizeof(VDATA) + 1)) == NULL)
             HGOTO_ERROR(DFE_NOSPACE, FAIL);
         if (FAIL == vpackvs(vs, vspack, &vspacksize))
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -821,7 +827,9 @@ done:
 int32 
 VSappendable(int32 vkey, int32 blk)
 {
-    int32       blksize, curr_size=0;
+#ifdef OLD_WAY
+    int32       blksize,curr_size=0;
+#endif /* OLD_WAY */
     vsinstance_t *w;
     VDATA      *vs;
     int32      ret_value = SUCCEED;
@@ -830,6 +838,9 @@ VSappendable(int32 vkey, int32 blk)
 #ifdef HAVE_PABLO
     TRACE_ON(VS_mask, ID_VSappendable);
 #endif /* HAVE_PABLO */
+
+    /* shut compiler up */
+    blk=blk;
 
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -842,6 +853,7 @@ VSappendable(int32 vkey, int32 blk)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+#ifdef OLD_WAY
     if(vs->nvertices!=0)
         curr_size = vs->nvertices * vs->wlist.ivsize;
 
@@ -852,7 +864,6 @@ VSappendable(int32 vkey, int32 blk)
     else
         blksize = VDEFAULTBLKSIZE;
 
-#ifdef OLD_WAY
     if(vs->aid!=0)
         Hendaccess(vs->aid);
 
@@ -916,7 +927,7 @@ VSgetid(HFILEID f, int32 vsid)
         else
           {
               w = (vsinstance_t *) * t;   /* get actual pointer to the vsinstance_t */
-              HGOTO_DONE(w->ref);    /* rets 1st vdata's ref */
+              HGOTO_DONE((int32)w->ref);    /* rets 1st vdata's ref */
           }   /* end else */
       }
 
@@ -930,7 +941,7 @@ VSgetid(HFILEID f, int32 vsid)
     else
       {
           w = (vsinstance_t *) * t;     /* get actual pointer to the vsinstance_t */
-          ret_value = (w->ref);  /* rets vdata's ref */
+          ret_value = (int32)w->ref;  /* rets vdata's ref */
       }     /* end else */
 
 done:
@@ -1076,7 +1087,7 @@ VSgetversion(int32 vkey)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
         HGOTO_ERROR(DFE_ARGS, 0);
 
-    ret_value = (vs->version);
+    ret_value = (int32)vs->version;
 
 done:
   if(ret_value == FAIL)   

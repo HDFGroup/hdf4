@@ -221,7 +221,7 @@ FRETVAL(intf)
 ndplref(void)
 {
 
-    return (DFPlastref());
+    return ((intf)DFPlastref());
 }
 
 /*-----------------------------------------------------------------------------
@@ -255,5 +255,5 @@ FRETVAL(intf)
 ndfplastref(void)
 {
 
-    return (DFPlastref());
+    return ((intf)DFPlastref());
 }

@@ -169,7 +169,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               break;
 
           default:      /* unknown compression scheme */
-              HRETURN_ERROR(DFE_BADSCHEME, FAIL);
+              HRETURN_ERROR(DFE_BADSCHEME, FAIL)
       }
     return ((intn) ret);
 }   /* end DFputcomp() */
@@ -212,7 +212,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
     /* put this call up here instead of in switch statement, to make the */
     /* code easier to follow */
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5)
-        return (DFCIunjpeg(file_id, tag, ref, (VOIDP) image, xdim, ydim, scheme));
+        return (DFCIunjpeg(file_id, tag, ref, (VOIDP) image, xdim, ydim, (int16)scheme));
 
     /* Only do this stuff for non-JPEG compressed images */
     aid = Hstartread(file_id, tag, ref);
@@ -234,7 +234,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                     if (!buffer)
                       {
                           Hendaccess(aid);
-                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                          HRETURN_ERROR(DFE_NOSPACE, FAIL)
                       }     /* end if */
                     buflen = crowsize;
                 }   /* end if */
@@ -247,7 +247,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                 {
                     HDfree((VOIDP) buffer);
                     Hendaccess(aid);
-                    HRETURN_ERROR(DFE_READERROR, FAIL);
+                    HRETURN_ERROR(DFE_READERROR, FAIL)
                 }   /* end if */
               totalread = n;
               bufleft = n;
@@ -267,7 +267,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                             {
                                 HDfree((VOIDP) buffer);
                                 Hendaccess(aid);
-                                HRETURN_ERROR(DFE_READERROR, FAIL);
+                                HRETURN_ERROR(DFE_READERROR, FAIL)
                             }   /* end if */
                           totalread += n;
                           bufleft += n;
@@ -288,7 +288,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                     if (!buffer)
                       {
                           Hendaccess(aid);
-                          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+                          HRETURN_ERROR(DFE_NOSPACE, FAIL)
                       }     /* end if */
                     buflen = crowsize;
                 }   /* end if */
@@ -300,7 +300,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                       {
                           HDfree((VOIDP) buffer);
                           Hendaccess(aid);
-                          HRETURN_ERROR(DFE_READERROR, FAIL);
+                          HRETURN_ERROR(DFE_READERROR, FAIL)
                       }     /* end if */
                     /* HDfree(buffer); */
                     Hendaccess(aid);
@@ -315,7 +315,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                 {
                     HDfree((VOIDP) buffer);
                     Hendaccess(aid);
-                    HRETURN_ERROR(DFE_READERROR, FAIL);
+                    HRETURN_ERROR(DFE_READERROR, FAIL)
                 }   /* end if */
               totalread = n;
               bufleft = n;
@@ -333,7 +333,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
                             {
                                 HDfree((VOIDP) buffer);
                                 Hendaccess(aid);
-                                HRETURN_ERROR(DFE_READERROR, FAIL);
+                                HRETURN_ERROR(DFE_READERROR, FAIL)
                             }   /* end if */
                           totalread += n;
                           bufleft += n;
@@ -345,7 +345,7 @@ DFgetcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               break;
 
           default:      /* unknown scheme */
-              HRETURN_ERROR(DFE_ARGS, FAIL);
+              HRETURN_ERROR(DFE_ARGS, FAIL)
       }     /* end switch */
 
     return SUCCEED;

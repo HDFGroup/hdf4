@@ -126,27 +126,27 @@ VSsetfields(int32 vkey, const char *fields)
               wlist->n = 0;
 
           /* allocate space for the internal WRITELIST structures */
-              if((wlist->type=HDmalloc(sizeof(int16)*ac))==NULL)
+              if((wlist->type=HDmalloc(sizeof(int16)*(size_t)ac))==NULL)
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
-              if((wlist->isize=HDmalloc(sizeof(uint16)*ac))==NULL)
+              if((wlist->isize=HDmalloc(sizeof(uint16)*(size_t)ac))==NULL)
                 {
                   HDfree(wlist->type);
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
                 } /* end if */
-              if((wlist->off=HDmalloc(sizeof(uint16)*ac))==NULL)
+              if((wlist->off=HDmalloc(sizeof(uint16)*(size_t)ac))==NULL)
                 {
                   HDfree(wlist->isize);
                   HDfree(wlist->type);
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
                 } /* end if */
-              if((wlist->order=HDmalloc(sizeof(uint16)*ac))==NULL)
+              if((wlist->order=HDmalloc(sizeof(uint16)*(size_t)ac))==NULL)
                 {
                   HDfree(wlist->off);
                   HDfree(wlist->isize);
                   HDfree(wlist->type);
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
                 } /* end if */
-              if((wlist->name=HDmalloc(sizeof(char *)*ac))==NULL)
+              if((wlist->name=HDmalloc(sizeof(char *)*(size_t)ac))==NULL)
                 {
                   HDfree(wlist->order);
                   HDfree(wlist->off);
@@ -154,7 +154,7 @@ VSsetfields(int32 vkey, const char *fields)
                   HDfree(wlist->type);
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
                 } /* end if */
-              if((wlist->esize=HDmalloc(sizeof(uint16)*ac))==NULL)
+              if((wlist->esize=HDmalloc(sizeof(uint16)*(size_t)ac))==NULL)
                 {
                   HDfree(wlist->name);
                   HDfree(wlist->order);
@@ -211,7 +211,7 @@ VSsetfields(int32 vkey, const char *fields)
                 /* --- now look in the reserved symbol table --- */
                     if (!found)
                       {
-                          for (j = 0; j < NRESERVED; j++)
+                          for (j = 0; j < (intn)NRESERVED; j++)
                               if (!HDstrcmp(av[i], rstab[j].name))
                                 {
                                     found = TRUE;
@@ -265,7 +265,7 @@ VSsetfields(int32 vkey, const char *fields)
           rlist->item=NULL;
 
           /* Allocate enough space for the read list */
-          if((rlist->item=(intn *)HDmalloc(sizeof(intn)*(ac)))==NULL)
+          if((rlist->item=(intn *)HDmalloc(sizeof(intn)*(size_t)(ac)))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < ac; i++)
             {
@@ -310,7 +310,8 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
     char      **av;
     int32       ac;
-    int16       isize, usymid, replacesym;
+    int16       isize, replacesym;
+    intn        usymid;
     intn j;
     vsinstance_t *w;
     VDATA      *vs;
@@ -336,7 +337,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     if (order < 1 || order > MAX_ORDER)
         HGOTO_ERROR(DFE_BADORDER, FAIL);
     /* don't forget to check for field size limit */
-    isize = DFKNTsize(localtype);
+    isize = (int16)DFKNTsize(localtype);
     if ( (isize == FAIL) || (isize * order) > MAX_FIELD_SIZE )
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
@@ -366,21 +367,21 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
           }
 
     if (replacesym)
-        usymid = (int16) j;     /* new definition will replace old at this index */
+        usymid = j;     /* new definition will replace old at this index */
     else
       {
           SYMDEF *tmp_sym=vs->usym;  /* temp. pointer to the new symdef list */
 
-          usymid = vs->nusym;
+          usymid = (intn)vs->nusym;
           /* use temporary pointer in case we run out of memory, so we don't loose original list */
           if (tmp_sym == NULL)
            {
-             if((tmp_sym=(SYMDEF *) HDmalloc(sizeof(SYMDEF)*(usymid+1)))==NULL)
+             if((tmp_sym=(SYMDEF *) HDmalloc(sizeof(SYMDEF)*(size_t)(usymid+1)))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
             }
           else
             {
-              if((tmp_sym=(SYMDEF *) HDrealloc((VOIDP)tmp_sym,sizeof(SYMDEF)*(usymid+1)))==NULL)
+              if((tmp_sym=(SYMDEF *) HDrealloc((VOIDP)tmp_sym,sizeof(SYMDEF)*(size_t)(usymid+1)))==NULL)
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
             }
           vs->usym=tmp_sym;
@@ -736,7 +737,7 @@ intn VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
     if (vs->access != 'w')
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
-    if (-1L == vexistvs(vs->f, vs->oref))
+    if (FAIL == vexistvs(vs->f, vs->oref))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if(!w->ref)
@@ -810,7 +811,6 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
 {
     CONSTR(FUNC, "VSfpack");
 
-    va_list ap;
     int32 ac;
     char **av, *s;
     uint8 *bufp = (uint8 *)buf;
@@ -849,8 +849,8 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
             HGOTO_ERROR(DFE_ARGS, FAIL);
     } 
     blist.n = ac;
-    blist.idx = (int32 *)HDmalloc(ac * sizeof(int32));
-    blist.offs = (int32 *)HDmalloc(ac * sizeof(int32));
+    blist.idx = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
+    blist.offs = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
     if ((blist.idx == NULL) || (blist.offs == NULL))
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
       /* fill arrays blist.msizes and blist.offs; calculate
@@ -905,11 +905,11 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
     else 
         ac = blist.n;
        /* fill array of fmsizes, foffs, fbufps */
-    if ((fmsizes=(int32 *)HDmalloc(ac*sizeof(int32))) == NULL) 
+    if ((fmsizes=(int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL) 
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((foffs = (int32 *)HDmalloc(ac*sizeof(int32))) == NULL) 
+    if ((foffs = (int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL) 
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((fbufps=(uint8 **)HDmalloc(ac*sizeof(uint8 *))) == NULL) 
+    if ((fbufps=(uint8 **)HDmalloc((size_t)ac*sizeof(uint8 *))) == NULL) 
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
     if (fields != NULL)  { /* a subset of buf fields */
         for (i=0; i<ac; i++) {
@@ -933,7 +933,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
             }     /* for */
             if (!found)
                 HGOTO_ERROR(DFE_BADFIELDS, FAIL); 
-            fmsizes[i] = w->esize[blist.idx[j]];
+            fmsizes[i] = (int32)w->esize[blist.idx[j]];
             foffs[i] = blist.offs[j];
 	    fbufps[i] = fldbufpt[i];
             if (fbufps[i] == NULL)  
@@ -943,7 +943,7 @@ intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
     else
     {     /* all buf fields */
         for (i=0; i < ac; i++)   {
-            fmsizes[i] = w->esize[blist.idx[i]];
+            fmsizes[i] = (int32)w->esize[blist.idx[i]];
             foffs[i] = blist.offs[i];
 	    fbufps[i] = fldbufpt[i];
             if (fbufps[i] == NULL)  

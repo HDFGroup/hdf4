@@ -585,7 +585,7 @@ nmgisxfil(intf * riid, _fcd filename, intf *offset, intf *nlen)
 FRETVAL(intf)
 nmgsactp(intf * riid, intf *accesstype)
 {
-    return((intf)GRsetaccesstype((int32)*riid,(int32)*accesstype));
+    return((intf)GRsetaccesstype((int32)*riid,(uintn)*accesstype));
 }   /* end mgsactp() */
 
 /*-----------------------------------------------------------------------------

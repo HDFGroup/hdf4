@@ -170,7 +170,7 @@ Load_vfile(HFILEID f)
     vginstance_t *v;
     vsinstance_t *w;
     int32       aid, ret;
-    uint16      tag, ref;
+    uint16      tag=DFTAG_NULL, ref=DFTAG_NULL;
     intn        ret_value = SUCCEED;
 
     HEclear();
@@ -213,7 +213,7 @@ Load_vfile(HFILEID f)
 
           vf->vgtabn++;
           v->key = (int32) ref;   /* set the key for the node */
-          v->ref = (intn) ref;
+          v->ref = (uintn) ref;
           v->vg = VPgetinfo(f,ref);  /* get the header information */
           v->nattach = 0;
           v->nentries = 0;
@@ -245,7 +245,7 @@ Load_vfile(HFILEID f)
 
           vf->vstabn++;
           w->key = (int32) ref;   /* set the key for the node */
-          w->ref = (intn) ref;
+          w->ref = (uintn)ref;
           w->vs = VSPgetinfo(f,ref);  /* get the header information */
           w->nattach = 0;
           w->nvertices = 0;
@@ -577,7 +577,7 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     CONSTR(FUNC, "vpackvg");
 /* #endif  */
 
-    uint16 i;
+    uintn  i;
     uint8 *bb;
     int32 ret_value = SUCCEED;
 
@@ -592,11 +592,11 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     UINT16ENCODE(bb, vg->nvelt);
 
     /* save all tags */
-    for (i = 0; i < vg->nvelt; i++)
+    for (i = 0; i < (uintn)vg->nvelt; i++)
         UINT16ENCODE(bb, vg->tag[i]);
 
     /* save all refs */
-    for (i = 0; i < vg->nvelt; i++)
+    for (i = 0; i < (uintn)vg->nvelt; i++)
         UINT16ENCODE(bb, vg->ref[i]);
 
     /* save the vgnamelen and vgname - omit the null */
@@ -621,7 +621,7 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
        UINT32ENCODE(bb, vg->flags);
        if (vg->flags & VG_ATTR_SET)  {   /* save the attrs */
           INT32ENCODE(bb, vg->nattrs);
-          for (i=0; i<(uint16)vg->nattrs; i++)  {
+          for (i=0; i<(uintn)vg->nattrs; i++)  {
               UINT16ENCODE(bb, vg->alist[i].atag);
               UINT16ENCODE(bb, vg->alist[i].aref);
           }
@@ -640,11 +640,13 @@ vpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     /* but since files have been created with */
     /* it there (and the size calc. wrong) it */
     /* has to be left alone -QAK */
+#ifdef LATER
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
+#endif /* LATER */
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
@@ -690,9 +692,11 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
     /* information is incorrectly calculated (in vpackvg() above) when the */
     /* info is written to the file and it's too late to change it now :-( */
     bb = &buf[len - 5];
-    UINT16DECODE(bb, vg->version);  /* retrieve the vg's version field */
+    UINT16DECODE(bb, uint16var);  /* retrieve the vg's version field */
+    vg->version=(int16)uint16var;
 
-    UINT16DECODE(bb, vg->more);     /* retrieve the vg's more field */
+    UINT16DECODE(bb, uint16var);     /* retrieve the vg's more field */
+    vg->more=(int16)uint16var;
 
     bb = &buf[0];
 
@@ -709,24 +713,24 @@ vunpackvg(VGROUP * vg, uint8 buf[], intn len)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* retrieve the tags */
-          for (u = 0; u < vg->nvelt; u++)
+          for (u = 0; u < (uintn)vg->nvelt; u++)
               UINT16DECODE(bb, vg->tag[u]);
 
           /* retrieve the refs */
-          for (u = 0; u < vg->nvelt; u++)
+          for (u = 0; u < (uintn)vg->nvelt; u++)
               UINT16DECODE(bb, vg->ref[u]);
 
           /* retrieve vgname (and its len)  */
           UINT16DECODE(bb, uint16var);
 
           HIstrncpy(vg->vgname, (char *) bb, (int32) uint16var + 1);
-          bb += uint16var;
+          bb += (size_t)uint16var;
 
           /* retrieve vgclass (and its len)  */
           UINT16DECODE(bb, uint16var);
 
           HIstrncpy(vg->vgclass, (char *) bb, (int32) uint16var + 1);
-          bb += uint16var;
+          bb += (size_t)uint16var;
 
           UINT16DECODE(bb, vg->extag);  /* retrieve the vg's expansion tag */
           UINT16DECODE(bb, vg->exref);  /* retrieve the vg's expansion ref */
@@ -910,7 +914,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           if (vg->oref == 0)
               HGOTO_ERROR(DFE_NOREF, FAIL);
 
-          vg->access = acc_mode;
+          vg->access = (intn)acc_mode;
 
           vg->marked = 1;
           vg->new_vg = 1;
@@ -929,7 +933,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 
           vf->vgtabn++;
           v->key = (int32) vg->oref;  /* set the key for the node */
-          v->ref = (intn) vg->oref;
+          v->ref = (uintn)vg->oref;
           v->vg = vg;
           v->nattach = 1;
           v->nentries = 0;
@@ -952,12 +956,12 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           else
             {
               vg=v->vg;
-              vg->access = acc_mode;
+              vg->access = (intn)acc_mode;
               vg->marked = 0;
 
               /* attach vg to file's vgtab at the vg instance v */
               v->nattach = 1;
-              v->nentries = vg->nvelt;
+              v->nentries = (int32)vg->nvelt;
             } /* end else */
 
           ret_value=HAregister_atom(VGIDGROUP,v);
@@ -1024,8 +1028,8 @@ Vdetach(int32 vkey)
       /* no reason to check for access... (I hope) -QAK */
       if (vg->marked == 1)
         {
-           if (NULL==(vgpack=(uint8 *)HDmalloc((uint32)sizeof(VGROUP)+
-                   vg->nvelt*4 + vg->nattrs*sizeof(vg_attr_t) + 1)))
+           if (NULL==(vgpack=(uint8 *)HDmalloc(sizeof(VGROUP)+
+                   (size_t)vg->nvelt*4 + (size_t)vg->nattrs*sizeof(vg_attr_t) + 1)))
                 HGOTO_ERROR(DFE_NOSPACE, FAIL);
             if (FAIL == vpackvg(vg, vgpack, &vgpacksize))
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1145,7 +1149,7 @@ Vinsert(int32 vkey, int32 insertkey)
         HGOTO_ERROR(DFE_DIFFFILES, FAIL);
 
     /* check and prevent duplicate links */
-    for (u = 0; u < vg->nvelt; u++)
+    for (u = 0; u < (uintn)vg->nvelt; u++)
         if ((vg->ref[u] == newref) && (vg->tag[u] == newtag))
             HGOTO_ERROR(DFE_DUPDD, FAIL);
 
@@ -1197,19 +1201,19 @@ Vflocate(int32 vkey, char *field)
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    for (u = 0; u < vg->nvelt; u++)
+    for (u = 0; u < (uintn)vg->nvelt; u++)
       {
           intn       s;
 
           if (vg->tag[u] != VSDESCTAG)
               continue;
-          vskey = VSattach(vg->f, vg->ref[u], "r");
+          vskey = VSattach(vg->f, (int32)vg->ref[u], "r");
           if (vskey == FAIL)
               HGOTO_DONE(FAIL);
           s = VSfexist(vskey, field);
           VSdetach(vskey);
           if (s == 1)
-              HGOTO_DONE(vg->ref[u]);  /* found. return vdata's ref */
+              HGOTO_DONE((int32)vg->ref[u]);  /* found. return vdata's ref */
       }
 
     ret_value = (FAIL);  /* field not found */
@@ -1260,7 +1264,7 @@ Vinqtagref(int32 vkey, int32 tag, int32 ref)
     ttag = (uint16) tag;
     rref = (uint16) ref;
 
-    for (u = 0; u < vg->nvelt; u++)
+    for (u = 0; u < (uintn)vg->nvelt; u++)
         if ((ttag == vg->tag[u]) && (rref == vg->ref[u]))
           HGOTO_DONE(TRUE);
 
@@ -1352,7 +1356,7 @@ Vnrefs(int32 vkey,int32 tag)
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    for (u = 0; u < vg->nvelt; u++)
+    for (u = 0; u < (uintn)vg->nvelt; u++)
         if (ttag == vg->tag[u])
             ret_value++;
 
@@ -1404,7 +1408,7 @@ Vgettagrefs(int32 vkey, int32 tagarray[], int32 refarray[], int32 n)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     if (n > (int32) vg->nvelt)
-        n = vg->nvelt;
+        n = (int32)vg->nvelt;
 
     for (i = 0; i < n; i++)
       {
@@ -1578,7 +1582,9 @@ Vaddtagref(int32 vkey, int32 tag, int32 ref)
     CONSTR(FUNC, "Vaddtagref");
     vginstance_t *v;
     VGROUP     *vg;
+#ifdef NO_DUPLICATES
     uintn        i;
+#endif /* NO_DUPLICATES */
     int32      ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -1636,7 +1642,7 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
     int32    ret_value = SUCCEED;
 
     HEclear();
-    if (vg->nvelt >= (uintn) vg->msize)
+    if (vg->nvelt >= vg->msize)
       {
           vg->msize *= 2;
           vg->tag = (uint16 *)
@@ -1647,8 +1653,8 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
           if ((vg->tag == NULL) || (vg->ref == NULL))
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
-    vg->tag[vg->nvelt] = tag;
-    vg->ref[vg->nvelt] = ref;
+    vg->tag[(uintn)vg->nvelt] = tag;
+    vg->ref[(uintn)vg->nvelt] = ref;
     vg->nvelt++;
 
     vg->marked = TRUE;
@@ -1689,7 +1695,7 @@ Ventries(HFILEID f, int32 vgid)
     if((v=vginst(f,(uint16)vgid))==NULL)
         HGOTO_ERROR(DFE_NOMATCH,FAIL);          /* error */
 
-    ret_value = (v->vg->nvelt);
+    ret_value = (int32)v->vg->nvelt;
 
 done:
   if(ret_value == FAIL)   
@@ -1837,7 +1843,7 @@ Visvg(int32 vkey, int32 id)
 
     ID = (uint16) id;
 
-    for (u = 0; u < vg->nvelt; u++)
+    for (u = 0; u < (uintn)vg->nvelt; u++)
         if (vg->ref[u] == ID &&     /* if the ids match, */
             vg->tag[u] == DFTAG_VG)     /* and it is a vgroup */
                 HGOTO_DONE(TRUE);
@@ -1882,7 +1888,7 @@ Visvs(int32 vkey, int32 id)
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FALSE);
 
-    i = vg->nvelt;
+    i = (intn)vg->nvelt;
     while (i)
         if (vg->ref[--i] == (uint16) id && vg->tag[i] == VSDESCTAG)
           HGOTO_DONE(TRUE);
@@ -1941,7 +1947,7 @@ Vgetid(HFILEID f, int32 vgid)
           else
             {
                 v = (vginstance_t *) * t;   /* get actual pointer to the vginstance_t */
-                HGOTO_DONE(v->ref); /* rets 1st vgroup's ref */
+                HGOTO_DONE((int32)v->ref); /* rets 1st vgroup's ref */
             }   /* end else */
       }     /* end if */
 
@@ -1957,7 +1963,7 @@ Vgetid(HFILEID f, int32 vgid)
     else
       {
           v = (vginstance_t *) * t;     /* get actual pointer to the vginstance_t */
-          ret_value = (v->ref);  /* rets next vgroup's ref */
+          ret_value = (int32)v->ref;  /* rets next vgroup's ref */
       }     /* end else */
 
 done:
@@ -2020,16 +2026,16 @@ Vgetnext(int32 vkey, int32 id)
     if (id == -1)
       {
           if ((vg->tag[0] == DFTAG_VG) || (vg->tag[0] == VSDESCTAG))
-              HGOTO_DONE(vg->ref[0]);  /* id of first entry */
+              HGOTO_DONE((int32)vg->ref[0]);  /* id of first entry */
       }     /* end if */
 
     /* look in vg for id */
-    for (u = 0; u < vg->nvelt; u++)
+    for (u = 0; u < (uintn)vg->nvelt; u++)
         if ((vg->tag[u] == DFTAG_VG) || (vg->tag[u] == VSDESCTAG))
           {
               if (vg->ref[u] == (uint16) id)
                 {
-                    if (u == (vg->nvelt - 1))
+                    if (u == (uintn)(vg->nvelt - 1))
                       {
                         HGOTO_DONE(FAIL);
                       } /* end if */
@@ -2037,7 +2043,7 @@ Vgetnext(int32 vkey, int32 id)
                       {
                           if ((vg->tag[u + 1] == DFTAG_VG) || (vg->tag[u + 1] == VSDESCTAG))
                             {
-                              HGOTO_DONE(vg->ref[u + 1]);  /* return the id of next entry */
+                              HGOTO_DONE((int32)vg->ref[u + 1]);  /* return the id of next entry */
                             }
                           else
                             {
@@ -2201,7 +2207,7 @@ Vinquire(int32 vkey, int32 *nentries, char *vgname)
     if (vgname != NULL)
         HDstrcpy(vgname, vg->vgname);
     if (nentries != NULL)
-        *nentries = vg->nvelt;
+        *nentries = (int32)vg->nvelt;
 
 done:
   if(ret_value == FAIL)   

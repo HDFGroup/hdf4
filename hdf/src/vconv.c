@@ -91,7 +91,7 @@ PRIVATE int16 local_sizetab[] =
 PRIVATE int16
 VSIZEOF(int16 x)
 {
-    if (x < 0 || x > LOCALSIZETAB_SIZE - 1)
+    if (x < 0 || x > (int16)(LOCALSIZETAB_SIZE - 1))
       {
           return (FAIL);
       }
@@ -191,11 +191,11 @@ vimakecompat(HFILEID f)
     VGROUP     *vg;
     VDATA      *vs;
     uint8      *buf = NULL;     /* to store an old vdata or vgroup descriptor  */
-    int32       old_bsize = 0, bsize;
+    int32       old_bsize = 0, bsize=0;
     int32       aid;
     int32       ret;
-    uint16      u;
-    uint16      tag, ref;
+    uintn       u;
+    uint16      tag=DFTAG_NULL, ref=DFTAG_NULL;
     CONSTR(FUNC, "vimakecompat");
 
     /* =============================================  */
@@ -221,7 +221,7 @@ vimakecompat(HFILEID f)
           if (ret == FAIL)
             {
                 HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_READERROR, 0);
+                HRETURN_ERROR(DFE_READERROR, 0)
             }   /* end if */
 
           oldunpackvg(vg, buf, &bsize);
@@ -232,7 +232,7 @@ vimakecompat(HFILEID f)
           vg->version = 2;  /* version 2 */
           vg->more = 0;
           /* inside each vgroup, change the old tags to new */
-          for (u = 0; u < vg->nvelt; u++)
+          for (u = 0; u < (uintn)vg->nvelt; u++)
               if (vg->tag[u] == OLD_VGDESCTAG)
                   vg->tag[u] = NEW_VGDESCTAG;
               else if (vg->tag[u] == OLD_VSDESCTAG)
@@ -278,7 +278,7 @@ vimakecompat(HFILEID f)
           if (ret == FAIL)
             {
                 HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_READERROR, 0);
+                HRETURN_ERROR(DFE_READERROR, 0)
             }   /* end if */
 
           oldunpackvs(vs, buf, &bsize);
@@ -295,7 +295,7 @@ vimakecompat(HFILEID f)
           if (ret == FAIL)
             {
                 HDfree((VOIDP) buf);
-                HRETURN_ERROR(DFE_WRITEERROR, 0);
+                HRETURN_ERROR(DFE_WRITEERROR, 0)
             }   /* end if */
 
           /* duplicate a tag to point to vdata data */
@@ -377,7 +377,8 @@ static void
 oldunpackvg(VGROUP * vg, uint8 buf[], int32 *size)
 {
     uint8      *bb;
-    uint32      i;
+    int16       int16var;
+    uintn       i;
 #ifdef LATER
     CONSTR(FUNC, "oldunpackvg");
 #endif
@@ -387,15 +388,16 @@ oldunpackvg(VGROUP * vg, uint8 buf[], int32 *size)
     bb = &buf[0];
 
     /* retrieve nvelt */
-    INT16DECODE(bb, vg->nvelt);
+    INT16DECODE(bb, int16var);
+    vg->nvelt=(uint16)int16var;
 
     /* retrieve the tags */
-    for (i = 0; i < vg->nvelt; i++)
-        INT16DECODE(bb, vg->tag[i]);
+    for (i = 0; i < (uintn)vg->nvelt; i++)
+        UINT16DECODE(bb, vg->tag[i]);
 
     /* retrieve the refs */
-    for (i = 0; i < vg->nvelt; i++)
-        INT16DECODE(bb, vg->ref[i]);
+    for (i = 0; i < (uintn)vg->nvelt; i++)
+        UINT16DECODE(bb, vg->ref[i]);
 
     /* retrieve vgname */
     HDstrcpy(vg->vgname, (char *) bb);
@@ -407,7 +409,8 @@ static void
 oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
 {
     uint8      *bb;
-    int16       i;
+    int16       int16var;
+    intn        i;
 #ifdef LATER
     CONSTR(FUNC, "oldunpackvs");
 #endif
@@ -422,7 +425,8 @@ oldunpackvs(VDATA * vs, uint8 buf[], int32 *size)
 
     UINT16DECODE(bb, vs->wlist.ivsize);
 
-    INT16DECODE(bb, vs->wlist.n);
+    INT16DECODE(bb, int16var);
+    vs->wlist.n=(intn)int16var;
 
     for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
         INT16DECODE(bb, vs->wlist.type[i]);

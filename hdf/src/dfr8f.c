@@ -307,7 +307,7 @@ nd8inims(_fcd filename, intf * fnlen)
 FRETVAL(intf)
 nd8lref(void)
 {
-    return (DFR8lastref());
+    return ((intf)DFR8lastref());
 }
 
 /*-----------------------------------------------------------------------------
@@ -371,7 +371,7 @@ nd8sjpeg(intf * quality, intf * force_baseline)
 FRETVAL(intf)
 ndfr8lastref(void)
 {
-    return (DFR8lastref());
+    return ((intf)DFR8lastref());
 }
 
 /*-----------------------------------------------------------------------------

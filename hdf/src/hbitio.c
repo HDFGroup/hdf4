@@ -129,7 +129,7 @@ Hstartbitread(int32 file_id, uint16 tag, uint16 ref)
           read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
           if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
               return (FAIL);    /* EOF? somebody pulled the rug out from under us! */
-          bitfile_rec->buf_read = (uintn) n;    /* keep track of the number of bytes in buffer */
+          bitfile_rec->buf_read = (intn) n;    /* keep track of the number of bytes in buffer */
           bitfile_rec->bytep = bitfile_rec->bytea;  /* set to the beginning of the buffer */
       }     /* end if */
     else
@@ -210,7 +210,7 @@ Hstartbitwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
                 read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
                 if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
                     HRETURN_ERROR(DFE_READERROR, FAIL);     /* EOF? somebody pulled the rug out from under us! */
-                bitfile_rec->buf_read = (uintn) n;  /* keep track of the number of bytes in buffer */
+                bitfile_rec->buf_read = (intn) n;  /* keep track of the number of bytes in buffer */
                 if (Hseek(bitfile_rec->acc_id, bitfile_rec->block_offset, DF_START) == FAIL)
                     HRETURN_ERROR(DFE_SEEKERROR, FAIL);
             }   /* end if */
@@ -321,8 +321,8 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     if (bitfile_rec->access != 'w')
         HRETURN_ERROR(DFE_BADACC, FAIL);
 
-    if (count > DATANUM)
-        count = DATANUM;
+    if (count > (intn)DATANUM)
+        count = (intn)DATANUM;
 
     /* change bitfile modes if necessary */
     if (bitfile_rec->mode == 'r')
@@ -334,12 +334,12 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     /* merge the new bits into the current bits buffer */
     if (count < bitfile_rec->count)
       {
-          bitfile_rec->bits |= data << (bitfile_rec->count -= count);
+          bitfile_rec->bits |= (uint8)(data << (bitfile_rec->count -= count));
           return (orig_count);
       }     /* end if */
 
     /* fill up the current bits buffer and output the byte */
-    *(bitfile_rec->bytep) = (uint8) (bitfile_rec->bits | data >> (count -= bitfile_rec->count));
+    *(bitfile_rec->bytep) = (uint8) (bitfile_rec->bits | (uint8)(data >> (count -= bitfile_rec->count)));
     bitfile_rec->byte_offset++;
     if (++bitfile_rec->bytep == bitfile_rec->bytez)
       {
@@ -360,16 +360,16 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
                 read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
                 if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
                     HRETURN_ERROR(DFE_READERROR, FAIL);     /* EOF? somebody pulled the rug out from under us! */
-                bitfile_rec->buf_read = (uintn) n;  /* keep track of the number of bytes in buffer */
+                bitfile_rec->buf_read = n;  /* keep track of the number of bytes in buffer */
                 if (Hseek(bitfile_rec->acc_id, bitfile_rec->block_offset, DF_START) == FAIL)
                     HRETURN_ERROR(DFE_SEEKERROR, FAIL);
             }   /* end if */
       }     /* end if */
 
     /* output any and all remaining whole bytes */
-    while (count >= BITNUM)
+    while (count >= (intn)BITNUM)
       {
-          *(bitfile_rec->bytep) = (uint8) (data >> (count -= BITNUM));
+          *(bitfile_rec->bytep) = (uint8) (data >> (count -= (intn)BITNUM));
           bitfile_rec->byte_offset++;
           if (++bitfile_rec->bytep == bitfile_rec->bytez)
             {
@@ -390,7 +390,7 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
                       read_size = MIN((bitfile_rec->max_offset - bitfile_rec->byte_offset), BITBUF_SIZE);
                       if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
                           HRETURN_ERROR(DFE_READERROR, FAIL);   /* EOF? somebody pulled the rug out from under us! */
-                      bitfile_rec->buf_read = (uintn) n;    /* keep track of the number of bytes in buffer */
+                      bitfile_rec->buf_read = n;    /* keep track of the number of bytes in buffer */
                       if (Hseek(bitfile_rec->acc_id, bitfile_rec->block_offset, DF_START) == FAIL)
                           HRETURN_ERROR(DFE_SEEKERROR, FAIL);
                   }     /* end if */
@@ -398,7 +398,7 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
       }     /* end while */
 
     /* put any remaining bits into the bits buffer */
-    if ((bitfile_rec->count = BITNUM - count) > 0)
+    if ((bitfile_rec->count = (intn)BITNUM - count) > 0)
         bitfile_rec->bits = (uint8) (data << bitfile_rec->count);
 
     /* Update the offset in the buffer */
@@ -439,7 +439,7 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     static bitrec_t   *bitfile_rec=NULL;    /* access record */
     uint32 l;
     uint32      b = 0;          /* bits to return */
-    uint16      orig_count;     /* the original number of bits to read in */
+    intn        orig_count;     /* the original number of bits to read in */
     int32       n;
 
     /* clear error stack and check validity of file id */
@@ -464,29 +464,29 @@ Hbitread(int32 bitid, intn count, uint32 *data)
     if (bitfile_rec->mode == 'w')
         HIwrite2read(bitfile_rec);
 
-    if (count > DATANUM)    /* truncate the count if it's too large */
+    if (count > (intn)DATANUM)    /* truncate the count if it's too large */
         count = DATANUM;
 
     /* if the request can be satisfied with just the */
     /* buffered bits then do the shift and return */
     if (count <= bitfile_rec->count)
       {
-          *data = (bitfile_rec->bits >> (bitfile_rec->count -= count) & (uint32) maskc[count]);
+          *data = (uint32)(bitfile_rec->bits >> (bitfile_rec->count -= count)) & (uint32) maskc[count];
           return (count);
       }     /* end if */
 
     /* keep track of the original number of bits to read in */
-    orig_count = (uint16) count;
+    orig_count = count;
 
     /* get all the buffered bits into the correct position first */
     if (bitfile_rec->count > 0)
       {
-          b = bitfile_rec->bits & maskc[bitfile_rec->count];
+          b = (uint32)(bitfile_rec->bits & maskc[bitfile_rec->count]);
           b <<= (count -= bitfile_rec->count);
       }     /* end if */
 
     /* bring in as many whole bytes as the request allows */
-    while (count >= BITNUM)
+    while (count >= (intn)BITNUM)
       {
           if (bitfile_rec->bytep == bitfile_rec->bytez)
             {
@@ -499,10 +499,10 @@ Hbitread(int32 bitid, intn count, uint32 *data)
                   }     /* end if */
                 bitfile_rec->block_offset += bitfile_rec->buf_read;     /* keep track of the number of bytes in buffer */
                 bitfile_rec->bytez = n + (bitfile_rec->bytep = bitfile_rec->bytea);
-                bitfile_rec->buf_read = (uintn) n;  /* keep track of the number of bytes in buffer */
+                bitfile_rec->buf_read = n;  /* keep track of the number of bytes in buffer */
             }   /* end if */
-          l = *bitfile_rec->bytep++;
-          b |= l << (count -= BITNUM);
+          l = (uint32) (*bitfile_rec->bytep++);
+          b |= (uint32)(l << (count -= (intn)BITNUM));
           bitfile_rec->byte_offset++;
           if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
               bitfile_rec->max_offset = bitfile_rec->byte_offset;
@@ -522,10 +522,10 @@ Hbitread(int32 bitid, intn count, uint32 *data)
                   }     /* end if */
                 bitfile_rec->block_offset += bitfile_rec->buf_read;     /* keep track of the number of bytes in buffer */
                 bitfile_rec->bytez = n + (bitfile_rec->bytep = bitfile_rec->bytea);
-                bitfile_rec->buf_read = (uintn) n;  /* keep track of the number of bytes in buffer */
+                bitfile_rec->buf_read = n;  /* keep track of the number of bytes in buffer */
             }   /* end if */
-          bitfile_rec->count = (BITNUM - count);
-          l = bitfile_rec->bits = *bitfile_rec->bytep++;
+          bitfile_rec->count = ((intn)BITNUM - count);
+          l = (uint32) (bitfile_rec->bits = *bitfile_rec->bytep++);
           b |= l >> bitfile_rec->count;
           bitfile_rec->byte_offset++;
           if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
@@ -575,7 +575,7 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
     /* clear error stack and check validity of file id */
     HEclear();
 
-    if (byte_offset < 0 || bit_offset < 0 || bit_offset > (BITNUM - 1)
+    if (byte_offset < 0 || bit_offset < 0 || bit_offset > ((intn)BITNUM - 1)
         || (bitfile_rec = HAatom_object(bitid)) == NULL
         || byte_offset > bitfile_rec->max_offset)
         HRETURN_ERROR(DFE_ARGS, FAIL);
@@ -598,7 +598,7 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
           if ((n = Hread(bitfile_rec->acc_id, read_size, bitfile_rec->bytea)) == FAIL)
               HRETURN_ERROR(DFE_READERROR, FAIL);   /* EOF? somebody pulled the rug out from under us! */
           bitfile_rec->bytez = n + (bitfile_rec->bytep = bitfile_rec->bytea);
-          bitfile_rec->buf_read = (uintn) n;    /* keep track of the number of bytes in buffer */
+          bitfile_rec->buf_read = n;    /* keep track of the number of bytes in buffer */
           bitfile_rec->block_offset = seek_pos;
           if (bitfile_rec->mode == 'w')     /* if writing, return the file offset to it's original position */
               if (Hseek(bitfile_rec->acc_id, seek_pos, DF_START) == FAIL)
@@ -611,7 +611,7 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
     bitfile_rec->bytep = bitfile_rec->bytea + (byte_offset - bitfile_rec->block_offset);
     if (bit_offset > 0)
       {
-          bitfile_rec->count = BITNUM - bit_offset;
+          bitfile_rec->count = ((intn)BITNUM - bit_offset);
           if (bitfile_rec->mode == 'w')
             {   /* if writing, mask off bits not yet written */
                 bitfile_rec->bits = *(bitfile_rec->bytep);
@@ -828,7 +828,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
     CONSTR(FUNC, "HIbitflush");
     intn        write_size;     /* number of bytes to write out */
 
-    if (bitfile_rec->count < BITNUM)
+    if (bitfile_rec->count < (intn)BITNUM)
       {     /* check if there are any */
           if (bitfile_rec->byte_offset >= bitfile_rec->max_offset)
             {
@@ -839,7 +839,7 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
           else
             {   /* we are in the middle of a dataset and need to integrate */
                 /* mask off a place for the new bits */
-                *(bitfile_rec->bytep) &= ~(maskc[BITNUM - bitfile_rec->count] << bitfile_rec->count);
+                *(bitfile_rec->bytep) &= (uint8)(~(maskc[(intn)BITNUM - bitfile_rec->count] << bitfile_rec->count));
 
                 /* merge in new bits */
                 *(bitfile_rec->bytep) |= bitfile_rec->bits;
@@ -899,7 +899,7 @@ HIread2write(bitrec_t * bitfile_rec)
 
     bitfile_rec->block_offset = (int32)LONG_MIN;    /* set to bogus value */
     bitfile_rec->mode = 'w';    /* change to write mode */
-    if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, (intn)(BITNUM - bitfile_rec->count)) == FAIL)
+    if (Hbitseek(bitfile_rec->bit_id, bitfile_rec->byte_offset, ((intn)BITNUM - bitfile_rec->count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return (SUCCEED);
 }   /* HIread2write */
@@ -925,15 +925,15 @@ PRIVATE intn
 HIwrite2read(bitrec_t * bitfile_rec)
 {
     CONSTR(FUNC, "HIwrite2read");
-    uintn       prev_count = bitfile_rec->count;    /* preserve this for later */
-    uint32      prev_offset = bitfile_rec->byte_offset;
+    intn       prev_count = bitfile_rec->count;    /* preserve this for later */
+    int32       prev_offset = bitfile_rec->byte_offset;
 
     if (HIbitflush(bitfile_rec, -1, TRUE) == FAIL)  /* flush any leftover bits */
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 
     bitfile_rec->block_offset = (int32)LONG_MIN;    /* set to bogus value */
     bitfile_rec->mode = 'r';    /* change to read mode */
-    if (Hbitseek(bitfile_rec->bit_id, (int32)prev_offset, (intn)(BITNUM - prev_count)) == FAIL)
+    if (Hbitseek(bitfile_rec->bit_id, prev_offset, ((intn)BITNUM - prev_count)) == FAIL)
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
     return (SUCCEED);
 }   /* HIwrite2read */

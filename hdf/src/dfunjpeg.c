@@ -112,7 +112,7 @@ hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr)
             if((num_read=Hread(src->aid,INPUT_BUF_SIZE,src->buffer))==FAIL)
                 ERREXIT(cinfo_ptr, JERR_FILE_READ);
 
-            src->pub.bytes_in_buffer = num_read;
+            src->pub.bytes_in_buffer = (size_t)num_read;
           } /* end if */
         else 
           {
@@ -135,7 +135,7 @@ hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr)
                     ERREXIT(cinfo_ptr, JERR_FILE_READ);
 
               } /* end if */
-            src->pub.bytes_in_buffer = num_read+num_read2;
+            src->pub.bytes_in_buffer = (size_t)(num_read+num_read2);
           } /* end else */
       } /* end if */
     else
@@ -143,7 +143,7 @@ hdf_fill_input_buffer(struct jpeg_decompress_struct *cinfo_ptr)
         if((num_read=Hread(src->aid,INPUT_BUF_SIZE,src->buffer))==FAIL)
             ERREXIT(cinfo_ptr, JERR_FILE_READ);
 
-        src->pub.bytes_in_buffer = num_read;
+        src->pub.bytes_in_buffer = (size_t)num_read;
       } /* end else */
 
     /* check if we are at the end of the input stream */
@@ -234,6 +234,9 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
 {
     CONSTR(FUNC, "jpeg_HDF_src");     /* for HERROR */
     hdf_src_ptr src;
+
+    /* shut compiler up */
+    image=image; xdim=xdim; ydim=ydim; scheme=scheme;
 
     if((src=HDmalloc(sizeof(hdf_source_mgr)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
@@ -350,7 +353,7 @@ DFCIunjpeg(int32 file_id, uint16 tag, uint16 ref, VOIDP image, int32 xdim,
         lines_read=jpeg_read_scanlines(cinfo_ptr,buffer,1);
         lines_left-=lines_read;
         image=(char *)image
-            +(cinfo_ptr->output_width*cinfo_ptr->output_components*lines_read);
+            +((size_t)cinfo_ptr->output_width*(size_t)cinfo_ptr->output_components*lines_read);
       } /* end while */
 
     /* Finish reading stuff in */

@@ -1,23 +1,14 @@
 /*******************************************************************
- * NCSA HDF
-    *
- * Software Development Group
-    *
- * National Center for Supercomputing Applications
-    *
- * University of Illinois at Urbana-Champaign
-    *
- * 605 E. Springfield, Champaign IL 61820
-    *
- *
-    *
- * For conditions of distribution and use, see the accompanying
-    *
- * hdf/COPYING file.
-    *
- *
-    *
- *****************************************************************/
+ * NCSA HDF                                                        *
+ * Software Development Group                                      *
+ * National Center for Supercomputing Applications                 *
+ * University of Illinois at Urbana-Champaign                      *
+ * 605 E. Springfield, Champaign IL 61820                          *
+ *                                                                 *
+ * For conditions of distribution and use, see the accompanying    *
+ * hdf/COPYING file.                                               *
+ *                                                                 *
+ *******************************************************************/
 
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
@@ -295,10 +286,9 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
      vsinstance_t *vs_inst, *attr_inst;
      VDATA    *vs, *attr_vs;
      DYN_VWRITELIST *w, *attr_w;
-     intn i, found, ret;
-     int32 nflds, nattrs, ret_value = SUCCEED;
+     intn i;
+     int32 nattrs, ret_value = SUCCEED;
      int32 attr_vs_ref, fid, attr_vsid;
-     char attr_vs_name[VSNAMELENMAX+1]; 
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_VSsetattr);
@@ -315,7 +305,7 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      w = &(vs->wlist);
      /* check field index */
-     if ((findex >= w->n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
+     if ((findex >= w->n || findex < 0) && (findex != (int32)_HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      /* if the attr already exist for this field, check data type
         and order */
@@ -324,7 +314,7 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
      if (nattrs && vs->alist != NULL)    {
         for (i=0; i<nattrs; i++)  {
             if (vs->alist[i].findex == findex) {
-               attr_vs_ref = vs->alist[i].aref;
+               attr_vs_ref = (int32)vs->alist[i].aref;
                attr_vsid = VSattach(fid, attr_vs_ref, "w");
                if (attr_vsid == FAIL)
                   HGOTO_ERROR(DFE_CANTATTACH, FAIL);
@@ -336,13 +326,13 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
                    attr_w = &attr_vs->wlist;
                    if (attr_w->n != 1 || datatype != attr_w->type[0] ||
                       count != attr_w->order[0])   {
-                         ret = VSdetach(attr_vsid);
+                         VSdetach(attr_vsid);
                          HGOTO_ERROR(DFE_BADATTR, FAIL);
                     }  /* type or order changed */
                    /* replace the values  */
                    if (1 != VSwrite(attr_vsid, (unsigned char *)values,
                             1, FULL_INTERLACE)) {
-                       ret = VSdetach(attr_vsid);
+                       VSdetach(attr_vsid);
                        HGOTO_ERROR(DFE_VSWRITE, FAIL);
                    }
                    if (FAIL == VSdetach(attr_vsid))
@@ -370,7 +360,7 @@ intn VSsetattr(int32 vsid, int32 findex, char *attrname,
            HGOTO_ERROR(DFE_NOSPACE, FAIL);
      vs->alist[vs->nattrs].findex = findex;
      vs->alist[vs->nattrs].atag = DFTAG_VH;
-     vs->alist[vs->nattrs].aref = attr_vs_ref; 
+     vs->alist[vs->nattrs].aref = (uint16)attr_vs_ref; 
      vs->nattrs++;
      /* set attr flag and  version number */
      vs->flags = vs->flags | VS_ATTR_SET;
@@ -461,7 +451,6 @@ intn VSfnattrs(int32 vsid, int32 findex)
     CONSTR(FUNC, "VSfnattrs");
     vsinstance_t *vs_inst;
     VDATA *vs;
-    DYN_VWRITELIST *w;
     int32 ret_value = SUCCEED;
     vs_attr_t *vs_alist;
     intn i, nattrs, t_attrs;
@@ -479,7 +468,7 @@ intn VSfnattrs(int32 vsid, int32 findex)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != (int32)_HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      t_attrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -544,7 +533,7 @@ intn VSfindattr(int32 vsid, int32 findex, char *attrname)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != (int32)_HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -630,7 +619,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
      VDATA *vs, *attr_vs;
      vs_attr_t *vs_alist;
      vsinstance_t *vs_inst, *attr_inst;
-     int32 fid, attr_vsid;
+     int32 attr_vsid;
      int32 ret_value = SUCCEED;
      intn i, nattrs, a_index, found;
      DYN_VWRITELIST *w;
@@ -648,7 +637,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != (int32)_HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)
@@ -657,7 +646,6 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
      if (nattrs == 0 || vs_alist == NULL)
           /* no attrs or bad attr list */
             HGOTO_ERROR(DFE_ARGS, FAIL);
-     fid = vs->f; /* assume attrs are in the same file */
     found = 0;
     a_index = -1; 
     for (i=0; i<nattrs; i++)  {
@@ -673,7 +661,7 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
     if (!found)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     /* found. get attr info */
-    if (FAIL == (attr_vsid = VSattach(vs->f, vs_alist->aref, "r")))
+    if (FAIL == (attr_vsid = VSattach(vs->f, (int32)vs_alist->aref, "r")))
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (NULL == (attr_inst = (vsinstance_t *)HAatom_object(attr_vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
@@ -690,9 +678,9 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
     if (w->n != 1 || HDstrcmp(fldname, ATTR_FIELD_NAME))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (datatype) 
-        *datatype =  w->type[0];
+        *datatype =  (int32)w->type[0];
     if (count)
-        *count = w->order[0];
+        *count = (int32)w->order[0];
     if (size)
         *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
     if (FAIL == VSdetach(attr_vsid))
@@ -737,7 +725,6 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
      int32 ret_value = SUCCEED;
      intn i, nattrs, a_index, found;
      int32 n_recs, il;
-     DYN_VWRITELIST *w;
      char fields[FIELDNAMELENMAX+1];
 
 #ifdef HAVE_PABLO
@@ -752,7 +739,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_ENTIRE_VDATA))
+     if ((findex >= vs->wlist.n || findex < 0) && (findex != (int32)_HDF_ENTIRE_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      nattrs = vs->nattrs;
      if (attrindex <0 || attrindex >= nattrs)
@@ -777,7 +764,7 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
     if (!found)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     /* found. get attr info */
-        if ((attr_vsid = VSattach(fid, vs_alist->aref, "r")) == FAIL)
+        if ((attr_vsid = VSattach(fid, (int32)vs_alist->aref, "r")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (HAatom_group(attr_vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -787,7 +774,6 @@ intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
     if (NULL == (attr_vs = attr_inst->vs) ||
           HDstrcmp(attr_vs->vsclass,  _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    w = &(attr_vs->wlist);
     if (FAIL == VSinquire(attr_vsid, &n_recs, &il, fields, NULL, NULL))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (HDstrcmp(fields, ATTR_FIELD_NAME) != 0)
@@ -897,8 +883,7 @@ intn Vsetattr(int32 vgid, char *attrname, int32 datatype,
     DYN_VWRITELIST *w;
     int32 ret_value = SUCCEED;
     int32 attr_vs_ref,fid, vsid;
-    intn ret, i;
-    char vsname[VSNAMELENMAX + 1];
+    intn i;
 
 #ifdef HAVE_PABLO
   TRACE_ON(V_mask, ID_Vsetattr);
@@ -941,13 +926,13 @@ intn Vsetattr(int32 vgid, char *attrname, int32 datatype,
                w = &vs->wlist;
                if (w->n != 1 || w->type[0] != datatype ||
                    w->order[0] != count)  {
-                        ret = VSdetach(vsid);
+                        VSdetach(vsid);
                         HGOTO_ERROR(DFE_BADATTR, FAIL);
                }  /* type or order changed */
                /* replace the values  */
                if (1 != VSwrite(vsid, (unsigned char *)values,
                         1, FULL_INTERLACE)) {
-                   ret = VSdetach(vsid);
+                   VSdetach(vsid);
                    HGOTO_ERROR(DFE_VSWRITE, FAIL);
                }
                if (FAIL == VSdetach(vsid))
@@ -975,7 +960,7 @@ intn Vsetattr(int32 vgid, char *attrname, int32 datatype,
     vg->flags = vg->flags | VG_ATTR_SET;
     vg->version = VSET_NEW_VERSION;
     vg->alist[vg->nattrs-1].atag = DFTAG_VH;
-    vg->alist[vg->nattrs-1].aref = attr_vs_ref; 
+    vg->alist[vg->nattrs-1].aref = (uint16)attr_vs_ref; 
     vg->marked = 1;
 done:
     if (ret_value == FAIL)
@@ -1117,12 +1102,9 @@ intn Vfindattr(int32 vgid, char *attrname)
     VDATA *vs;
     vginstance_t *v;
     vsinstance_t *vs_inst;
-    int32 fid, vsid, vsref;
+    int32 fid, vsid;
     int32 ret_value = FAIL;
-    intn ret, i, found;
-    
-    char vsname[VSNAMELENMAX + 1];
-    char classname[VSNAMELENMAX + 1];
+    intn i, found;
 
 #ifdef HAVE_PABLO
     TRACE_ON(V_mask, ID_Vfindattr);
@@ -1144,7 +1126,7 @@ intn Vfindattr(int32 vgid, char *attrname)
           /* no attrs or bad attr list */
             HGOTO_ERROR(DFE_ARGS, FAIL);
     found = 0;
-    for (i=0; found = 0, i<vg->nattrs; i++)  {
+    for (i=0; found == 0 && i<vg->nattrs; i++)  {
         if ((vsid = VSattach(fid, (int32)vg->alist[i].aref, "r")) == FAIL)
             HGOTO_ERROR(DFE_CANTATTACH, FAIL);
         if (HAatom_group(vsid) != VSIDGROUP)
@@ -1210,7 +1192,6 @@ intn Vattrinfo(int32 vgid, intn attrindex, char *name,
     vsinstance_t *vs_inst;
     int32 fid, vsid;
     int32 ret_value = SUCCEED;
-    intn ret, i;
 
 #ifdef HAVE_PABLO
     TRACE_ON(V_mask, ID_Vattrinfo);
@@ -1252,9 +1233,9 @@ intn Vattrinfo(int32 vgid, intn attrindex, char *name,
 /*    if (w->n != 1 )   */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (datatype)
-       *datatype =  w->type[0];
+       *datatype =  (int32)w->type[0];
     if (count)
-       *count = w->order[0];
+       *count = (int32)w->order[0];
     if (size)
        *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
     if (FAIL == VSdetach(vsid))
@@ -1295,7 +1276,6 @@ intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
     char fields[FIELDNAMELENMAX];
     vginstance_t *v;
     vsinstance_t *vs_inst;
-    DYN_VWRITELIST   *w;
     int32 fid, vsid;
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
@@ -1330,7 +1310,6 @@ intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
     if (NULL == (vs = vs_inst->vs) ||
           HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    w = &(vs->wlist);
     if (FAIL == VSinquire(vsid, &n_recs, &il, fields, NULL, NULL))
         HGOTO_ERROR(DFE_BADATTR, FAIL);  
 /*    if (HDstrcmp(fields, ATTR_FIELD_NAME) != 0)

@@ -423,7 +423,7 @@ ndferrno(void)
 FRETVAL(intf)
 ndfnewref(intf * dfile)
 {
-    return (DFnewref((DF *) * dfile));
+    return ((intf)DFnewref((DF *) * dfile));
 }
 
 /*-----------------------------------------------------------------------------

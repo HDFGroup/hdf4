@@ -55,7 +55,7 @@ HDc2fstr(char *str, intn len)
 {
     int         i;
 
-    i=HDstrlen(str)+1;
+    i=(int)HDstrlen(str)+1;
     for (; i < len; i++)
         str[i] = ' ';
     return SUCCEED;
@@ -86,7 +86,7 @@ HDf2cstring(_fcd fdesc, intn len)
 
     str = _fcdtocp(fdesc);
     /* This should be equivalent to the above test -QAK */
-    for(i=len-1; i>=0 && !isgraph(str[i]); i--)
+    for(i=len-1; i>=0 && !isgraph((int)str[i]); i--)
         /*EMPTY*/;
     cstr = (char *) HDmalloc((uint32) (i + 2));
     if (!cstr)
@@ -184,7 +184,7 @@ HDgettagdesc(uint16 tag)
 {
     intn        i;
 
-    for (i = 0; i < sizeof(tag_descriptions) / sizeof(tag_descript_t); i++)
+    for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag)
             return (tag_descriptions[i].desc);
     return (NULL);
@@ -214,7 +214,7 @@ HDgettagsname(uint16 tag)
     if (SPECIALTAG(tag))
         ret = (char *) HDstrdup("Special ");
     tag = BASETAG(tag);
-    for (i = 0; i < sizeof(tag_descriptions) / sizeof(tag_descript_t); i++)
+    for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (tag_descriptions[i].tag == tag)
           {
               if (ret == NULL)
@@ -228,7 +228,7 @@ HDgettagsname(uint16 tag)
                     if (t == NULL)
                       {
                           HDfree(ret);
-                          HRETURN_ERROR(DFE_NOSPACE, NULL);
+                          HRETURN_ERROR(DFE_NOSPACE, NULL)
                       }     /* end if */
                     HDstrcpy(t, ret);
                     HDstrcat(t, tag_descriptions[i].name);
@@ -257,9 +257,9 @@ HDgettagnum(const char *tag_name)
 {
     intn        i;
 
-    for (i = 0; i < sizeof(tag_descriptions) / sizeof(tag_descript_t); i++)
+    for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
         if (0 == HDstrcmp(tag_descriptions[i].name, tag_name))
-            return (tag_descriptions[i].tag);
+            return ((intn)tag_descriptions[i].tag);
     return (FAIL);
 } /* HDgettagnum */
 
@@ -292,7 +292,7 @@ HDgetNTdesc(int32 nt)
         ret_desc = (char *) HDstrdup((char *) nt_descriptions[2].desc);
 
     nt &= DFNT_MASK;    /* mask off unusual format types */
-    for (i = 3; i < sizeof(nt_descriptions) / sizeof(nt_descript_t); i++)
+    for (i = 3; i < (intn)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
         if (nt_descriptions[i].nt == nt)
           {
               if (ret_desc == NULL)
@@ -306,7 +306,7 @@ HDgetNTdesc(int32 nt)
                     if (t == NULL)
                       {
                           HDfree(ret_desc);
-                          HRETURN_ERROR(DFE_NOSPACE, NULL);
+                          HRETURN_ERROR(DFE_NOSPACE, NULL)
                       }     /* end if */
                     HDstrcpy(t, ret_desc);
                     HDstrcat(t, " ");

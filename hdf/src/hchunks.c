@@ -301,18 +301,18 @@ create_dim_recs(DIM_REC **dptr, /* OUT: dimension record pointers */
     int32 ret_value = SUCCEED;
 
     /* allocate space for demension records pointers */
-    if ((*dptr = (DIM_REC *)HDmalloc(sizeof(DIM_REC) * ndims)) == NULL)
+    if ((*dptr = (DIM_REC *)HDmalloc(sizeof(DIM_REC) * (size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* allocate space for seek chunk indices and chunk seek positions */
-    if ((*sbi = (int32 *)HDmalloc(sizeof(int32)*ndims)) == NULL)
+    if ((*sbi = (int32 *)HDmalloc(sizeof(int32)*(size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    if ((*spb = (int32 *)HDmalloc(sizeof(int32)*ndims)) == NULL)
+    if ((*spb = (int32 *)HDmalloc(sizeof(int32)*(size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* allocate space for user seek indicies */
-    if ((*sui = (int32 *)HDmalloc(sizeof(int32)*ndims)) == NULL)
+    if ((*sui = (int32 *)HDmalloc(sizeof(int32)*(size_t)ndims)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* for each dimension */
@@ -395,6 +395,7 @@ update_chunk_indicies_seek(int32 sloc,    /* IN: physical Seek loc in element */
 #endif 
 } /* update_chunk_indicies_seek()*/
 
+#ifdef UNUSED
 /* -------------------------------------------------------------------------
 NAME
     compute_chunk_to_seek -- translate chunk coordinates to chunk seek postion
@@ -458,6 +459,7 @@ compute_chunk_to_seek(int32 *chunk_seek, /* OUT: new physical chunk seek pos in 
     *chunk_seek = new_seek * nt_size;
 
 } /* compute_chunk_to_seek() */
+#endif /* UNUSED */
 
 #if 0 /* NOT USED */
 
@@ -941,7 +943,6 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     uint16      data_tag, data_ref;  /* Tag/ref of the data in the file */
     uint8       local_ptbuf[4];      /* 4 bytes for special header length */
     VOID       *c_sp_header = NULL;   /* special element header */
-    int32       nfields;             /* fields in Vdata */
     int32       interlace;           /* type of interlace */
     int32       vdata_size;          /* size of Vdata */
     int32       num_recs;            /* number of Vdatas */
@@ -968,7 +969,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     /* set up some data in access record */
     access_rec->special = SPECIAL_CHUNKED;
     access_rec->posn    = 0;
-    access_rec->access  = acc_mode|DFACC_READ;
+    access_rec->access  = (uint32)(acc_mode|DFACC_READ);
 
     /*
      * Lets free old special info first,if one exists,
@@ -1042,7 +1043,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
     else /* need to allocate a new special info and get it */
       {
           /* allocate space for specail chunk info */
-          if ((info = (VOIDP) HDmalloc((uint32) sizeof(chunkinfo_t))) == NULL)
+          if ((info = (VOIDP) HDmalloc(sizeof(chunkinfo_t))) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           info->seek_chunk_indices = NULL;
@@ -1148,7 +1149,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
               INT32DECODE(p,(info->fill_val_len));   /* 4 bytes */
 
               /* allocate space for fill value */
-              if ((info->fill_val = (VOID *) HDmalloc((uint32)info->fill_val_len ))==NULL)
+              if ((info->fill_val = (VOID *) HDmalloc((size_t)info->fill_val_len ))==NULL)
                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
               /* finally decode fill value */
@@ -1189,9 +1190,9 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
                 /* allocate compression special info  */
-                if (( info->cinfo = (comp_info *) HDmalloc((uint32)sizeof(comp_info)))==NULL)
+                if (( info->cinfo = (comp_info *) HDmalloc(sizeof(comp_info)))==NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                if (( info->minfo = (model_info *) HDmalloc((uint32)sizeof(model_info)))==NULL)
+                if (( info->minfo = (model_info *) HDmalloc(sizeof(model_info)))==NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Decode header */
@@ -1225,12 +1226,12 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
              else read access */
           if (access_rec->access & DFACC_WRITE)
             {
-                if((info->aid = VSattach(access_rec->file_id, info->chktbl_ref, "w")) == FAIL)
+                if((info->aid = VSattach(access_rec->file_id, (int32)info->chktbl_ref, "w")) == FAIL)
                     HGOTO_ERROR(DFE_CANTATTACH, FAIL);
             }
           else /* attach with read access only */
             {
-                if((info->aid = VSattach(access_rec->file_id, info->chktbl_ref, "r")) == FAIL)
+                if((info->aid = VSattach(access_rec->file_id, (int32)info->chktbl_ref, "r")) == FAIL)
                     HGOTO_ERROR(DFE_CANTATTACH, FAIL);
             }
 
@@ -1253,16 +1254,12 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
 
-          /* Get number of fields in Vdata */
-          if ((nfields = VFnfields(info->aid)) == FAIL)
-              HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
           /* Set the fields to read */
           if(VSsetfields(info->aid,_HDF_CHK_FIELD_NAMES)==FAIL)
               HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
           /* Allocate space for a single Vdata record */
-          if ((v_data = (VOIDP) HDmalloc(vdata_size)) == NULL)
+          if ((v_data = (VOIDP) HDmalloc((size_t)vdata_size)) == NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* for each record read it in and put into TBBT tree 
@@ -1289,7 +1286,7 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Allocate space for a origin in chunk record */
-                if ((chkptr->origin = (int32 *) HDmalloc(info->ndims*sizeof(int32))) == NULL)
+                if ((chkptr->origin = (int32 *) HDmalloc((size_t)info->ndims*sizeof(int32))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* allocate space for key */
@@ -1509,6 +1506,9 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     TRACE_ON(H_mask, ID_HMCcreate);
 #endif /* HAVE_PABLO */
 
+    /* shut compiler up */
+    nlevels=nlevels;
+
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = HAatom_object(file_id);
@@ -1560,7 +1560,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 #endif
 
     /* allocate and fill in special chunk info struct for CHUNKs */
-    if (( info = (chunkinfo_t *) HDmalloc((uint32) sizeof(chunkinfo_t)))==NULL)
+    if (( info = (chunkinfo_t *) HDmalloc(sizeof(chunkinfo_t)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     info->attached     = 1;
@@ -1585,7 +1585,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     info->num_recs       = 0;                   /* zero Vdata records to start */
     info->fill_val_len   = fill_val_len;        /* length of fill value */
     /* allocate space for fill value */
-    if (( info->fill_val = (VOID *) HDmalloc(fill_val_len))==NULL)
+    if (( info->fill_val = (VOID *) HDmalloc((uint32)fill_val_len))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     /* copy fill value over */
     HDmemcpy(info->fill_val, fill_val, info->fill_val_len); /* fill_val_len bytes */
@@ -1596,9 +1596,9 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
       case SPECIAL_COMP:
           /* set compression info */
           /* allocate compression special info  */
-          if (( info->cinfo = (comp_info *) HDmalloc((uint32)sizeof(comp_info)))==NULL)
+          if (( info->cinfo = (comp_info *) HDmalloc(sizeof(comp_info)))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if (( info->minfo = (model_info *) HDmalloc((uint32)sizeof(model_info)))==NULL)
+          if (( info->minfo = (model_info *) HDmalloc(sizeof(model_info)))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
           
           /* find compression header length */
@@ -1607,7 +1607,7 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
               (comp_coder_t)chk_array->comp_type, chk_array->cinfo);
 
           /* allocate space for compression header */
-          if (( info->comp_sp_tag_header = (VOID *) HDmalloc(info->comp_sp_tag_head_len))==NULL)
+          if (( info->comp_sp_tag_header = (VOID *) HDmalloc((size_t)info->comp_sp_tag_head_len))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* Encode header for storage */
@@ -1639,12 +1639,12 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
     /* get ref of Vdata */
-    chktbl_ref = VSQueryref(info->aid);
+    chktbl_ref = (uint16)VSQueryref(info->aid);
 
     info->chktbl_ref      = chktbl_ref; /* ref of chunk table */
 
     /* get tag of Vdata */
-    info->chktbl_tag = VSQuerytag(info->aid);
+    info->chktbl_tag = (uint16)VSQuerytag(info->aid);
 
     /* Define fields of chunk table i.e. Vdata */
 
@@ -1999,6 +1999,9 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
     TRACE_ON(H_mask, ID_HMCsetMaxcache);
 #endif /* HAVE_PABLO */
 
+    /* shut compiler up */
+    flags=flags;
+
     /* Check args */
     access_rec = HAatom_object(access_id);
     if (access_rec == NULL || maxcache < 1)
@@ -2198,7 +2201,6 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
     TBBT_NODE   *entry   = NULL; /* chunk node from TBBT */
     uint8       *bptr    = NULL; /* pointer to data buffer */
     int32       chk_id   = FAIL; /* chunk id */
-    int32       relative_posn = 0; /* relative position in chunk of data elt */
     int32       bytes_read = 0;    /* total # bytes read for this call of HMCIread */
     int32       read_len = 0;      /* length of bytes to read */
     int32       nitems = 1;        /* used in HDmemfill(), */
@@ -2215,7 +2217,6 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
     /* set inputs */
     bptr = (uint8 *) datap;
     info = (chunkinfo_t *) (access_rec->special_info);
-    relative_posn = access_rec->posn;
     bytes_read    = 0;
     read_len      = (info->chunk_size * info->nt_size); 
 
@@ -2229,7 +2230,7 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
           nitems = (info->chunk_size * info->nt_size) / info->fill_val_len;
 
           /* copy fill values into buffer and return */
-          if (HDmemfill(datap,info->fill_val, info->fill_val_len,nitems) == NULL)
+          if (HDmemfill(datap,info->fill_val, (uint32)info->fill_val_len,(uint32)nitems) == NULL)
               HE_REPORT_GOTO("HDmemfill failed to fill read chunk", FAIL);
       }
     else /* exists in TBBT */
@@ -2265,7 +2266,7 @@ HMCPchunkread(VOID  *cookie,    /* IN: access record to mess with */
                 nitems = (info->chunk_size * info->nt_size) / info->fill_val_len;
 
                 /* copy fill values into buffer and return */
-                if (HDmemfill(datap,info->fill_val, info->fill_val_len,nitems) == NULL)
+                if (HDmemfill(datap,info->fill_val, (uint32)info->fill_val_len,(uint32)nitems) == NULL)
                     HE_REPORT_GOTO("HDmemfill failed to fill read chunk", FAIL);
             }
           else /* not a valid chunk ref for now */
@@ -2319,7 +2320,9 @@ HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
 {
     CONSTR(FUNC, "HMCreadChunk");  /* for HERROR */
     accrec_t    *access_rec = NULL; /* access record */
+#ifdef UNUSED
     uint8       *data       = NULL; /* data buffer */
+#endif /* UNUSED */
     filerec_t   *file_rec   = NULL; /* file record */
     chunkinfo_t *info       = NULL; /* chunked element information record */
     uint8       *bptr       = NULL; /* data buffer pointer */
@@ -2360,7 +2363,9 @@ HMCreadChunk(int32 access_id,  /* IN: access aid to mess with */
     if (access_rec->special == SPECIAL_CHUNKED)
       {
           /* Set inputs */
+#ifdef UNUSED
           data     = (uint8 *) datap;
+#endif /* UNUSED */
           info     = (chunkinfo_t *) (access_rec->special_info);
           relative_posn = access_rec->posn;
           read_len      = (info->chunk_size * info->nt_size);
@@ -2486,7 +2491,9 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
          VOIDP datap            /* OUT: buffer for data */)
 {
     CONSTR(FUNC, "HMCPread");    /* for HERROR */
+#ifdef UNUSED
     uint8       *data = NULL;    /* data buffer */
+#endif /* UNUSED */
     chunkinfo_t *info = NULL;    /* information record for this special data elt */
     int32       relative_posn = 0; /* relative position in chunk of data elt */
     int32       bytes_read = 0;  /* total # bytes read for this call of HMCIread */
@@ -2514,7 +2521,9 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* set inputs */
+#ifdef UNUSED
     data = (uint8 *) datap;
+#endif /* UNUSED */
     info = (chunkinfo_t *) (access_rec->special_info);
     relative_posn = access_rec->posn; /* current seek postion in element */
 
@@ -2677,8 +2686,6 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
 {
     CONSTR(FUNC, "HMCPchunkwrite");   /* for HERROR */
     accrec_t * access_rec = (accrec_t *)cookie; /* access record */
-    uint8      *data     = NULL;  /* data buffer */
-    filerec_t  *file_rec = NULL;  /* file record */
     chunkinfo_t *info    = NULL;  /* chunked element information record */
     CHUNK_REC   *chk_rec = NULL;  /* current chunk */
     TBBT_NODE   *entry   = NULL;  /* node off of  chunk tree */
@@ -2686,7 +2693,10 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
     CHUNK_REC   *chkptr  = NULL;  /* Chunk record to inserted in TBBT  */
     VOID        *bptr    = NULL;  /* data buffer pointer */
     int32       chk_id   = FAIL ; /* chunkd accces id */
+#ifdef UNUSED
+    uint8      *data     = NULL;  /* data buffer */
     int32       relative_posn;     /* relative position in chunked element */
+#endif /* UNUSED */
     int32       bytes_written = 0; /* total #bytes written by HMCIwrite */
     int32       write_len = 0;     /* nbytes to write next */
     int32       ret_value = SUCCEED;
@@ -2701,10 +2711,11 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Set inputs */
-    data     = (uint8 *) datap;
-    file_rec =  HAatom_object(access_rec->file_id);
     info     = (chunkinfo_t *) (access_rec->special_info);
+#ifdef UNUSED
+    data     = (uint8 *) datap;
     relative_posn = access_rec->posn;
+#endif /* UNUSED */
     write_len     = (info->chunk_size * info->nt_size);
     bytes_written = 0;
     bptr          = (VOID *)datap;
@@ -2728,7 +2739,7 @@ HMCPchunkwrite(VOID  *cookie,    /* IN: access record to mess with */
           /* Allocate space for a single Chunk record in Vdata */
           if (v_data == NULL)
             {
-                if ((v_data = (VOIDP) HDmalloc((info->ndims*sizeof(int32))
+                if ((v_data = (VOIDP) HDmalloc(((size_t)info->ndims*sizeof(int32))
                                                + (2*sizeof(uint16)))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
@@ -2846,11 +2857,13 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
 {
     CONSTR(FUNC, "HMCwriteChunk");  /* for HERROR */
     accrec_t    *access_rec = NULL; /* access record */
+#ifdef UNUSED
     uint8       *data       = NULL; /* data buffer */
-    filerec_t   *file_rec   = NULL; /* file record */
-    chunkinfo_t *info       = NULL; /* chunked element information record */
     CHUNK_REC   *chk_rec    = NULL; /* current chunk */
     TBBT_NODE   *entry      = NULL; /* node off of  chunk tree */
+#endif /* UNUSED */
+    filerec_t   *file_rec   = NULL; /* file record */
+    chunkinfo_t *info       = NULL; /* chunked element information record */
     CHUNK_REC   *chkptr     = NULL; /* Chunk record to inserted in TBBT  */
     int32       *chk_key    = NULL; /* Chunk recored key for insertion in TBBT */
     uint8       *bptr       = NULL; /* data buffer pointer */
@@ -2893,7 +2906,9 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     if (access_rec->special == SPECIAL_CHUNKED)
       {
           /* Set inputs */
+#ifdef UNUSED
           data     = (uint8 *) datap;
+#endif /* UNUSED */
           info     = (chunkinfo_t *) (access_rec->special_info);
           relative_posn = access_rec->posn;
           write_len     = (info->chunk_size * info->nt_size);
@@ -2922,7 +2937,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
     printf("HMCwriteChunk called with chunk %d \n",chunk_num);
 #endif
           /* find chunk record in TBBT */
-          if ((entry = (tbbtdfind(info->chk_tree, &chunk_num, NULL))) == NULL)
+          if (tbbtdfind(info->chk_tree, &chunk_num, NULL) == NULL)
             { /* not in tree */
                 
                 /* so create a new chunk record */
@@ -2931,7 +2946,7 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Allocate space for a origin in chunk record */
-                if ((chkptr->origin = (int32 *) HDmalloc(info->ndims*sizeof(int32))) == NULL)
+                if ((chkptr->origin = (int32 *) HDmalloc((size_t)info->ndims*sizeof(int32))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* allocate space for key */
@@ -2965,15 +2980,19 @@ HMCwriteChunk(int32 access_id,  /* IN: access aid to mess with */
                 /* add to TBBT tree based on chunk number as the key */
                 tbbtdins(info->chk_tree, (VOIDP) chkptr , chk_key);   
 
+#ifdef UNUSED
                 /* assign over new chk */
                 chk_rec = chkptr;
+#endif /* UNUSED */
 
                 /* re-intialize ptrs to allow for error-failure check */
                 chkptr = NULL;
                 chk_key = NULL;
             }
+#ifdef UNUSED
           else /* already in TBBT tree */
               chk_rec = (CHUNK_REC *) entry->data; /* get file entry from node */
+#endif /* UNUSED */
 
           /* would be nice to get Chunk record from TBBT based on chunk number 
              and then get chunk data base on chunk vdata number but
@@ -3089,11 +3108,13 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
     CONSTR(FUNC, "HMCPwrite");    /* for HERROR */
     filerec_t   *file_rec = NULL; /* file record */
     chunkinfo_t *info     = NULL; /* chunked element information record */
+#ifdef UNUSED
     CHUNK_REC   *chk_rec  = NULL; /* current chunk */
+    uint8       *data     = NULL; /* data buffer */
     TBBT_NODE   *entry    = NULL; /* node off of  chunk tree */
+#endif /* UNUSED */
     CHUNK_REC   *chkptr   = NULL; /* Chunk record to inserted in TBBT  */
     int32       *chk_key  = NULL; /* Chunk recored key for insertion in TBBT */
-    uint8       *data     = NULL; /* data buffer */
     uint8       *bptr     = NULL; /* data buffer pointer */
     VOID        *chk_data = NULL; /* chunk data */
     uint8       *chk_dptr = NULL; /* chunk data pointer */
@@ -3121,7 +3142,9 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Set inputs */
+#ifdef UNUSED
     data     = (uint8 *) datap;
+#endif /* UNUSED */
     file_rec =  HAatom_object(access_rec->file_id);
     info     = (chunkinfo_t *) (access_rec->special_info);
     relative_posn = access_rec->posn;
@@ -3170,7 +3193,7 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
 #endif
 
           /* find chunk record in TBBT */
-          if ((entry = (tbbtdfind(info->chk_tree, &chunk_num, NULL))) == NULL)
+          if (tbbtdfind(info->chk_tree, &chunk_num, NULL) == NULL)
             { /* not in tree */
                 
                 /* so create a new chunk record */
@@ -3179,7 +3202,7 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* Allocate space for a origin in chunk record */
-                if ((chkptr->origin = (int32 *) HDmalloc(info->ndims*sizeof(int32))) == NULL)
+                if ((chkptr->origin = (int32 *) HDmalloc((size_t)info->ndims*sizeof(int32))) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
                 /* allocate space for key */
@@ -3211,15 +3234,19 @@ HMCPwrite(accrec_t * access_rec, /* IN: access record to mess with */
                 /* add to TBBT tree based on chunk number as the key */
                 tbbtdins(info->chk_tree, (VOIDP) chkptr , chk_key);   
 
+#ifdef UNUSED
                 /* assign over new chk */
                 chk_rec = chkptr;
+#endif /* UNUSED */
 
                 /* re-intialize ptrs to allow for error-failure check */
                 chkptr = NULL;
                 chk_key = NULL;
             }
+#ifdef UNUSED
           else /* already in TBBT tree */
               chk_rec = (CHUNK_REC *) entry->data; /* get file entry from node */
+#endif /* UNUSED */
 
           /* would be nice to get Chunk record from TBBT based on chunk number 
              and then get chunk data base on chunk vdata number but
@@ -3535,7 +3562,7 @@ HMCPinfo(accrec_t *access_rec,       /* IN: access record of access elemement */
       }
 
     /* allocate space for chunk lengths */
-    if (( info_chunk->cdims = (int32 *) HDmalloc(info->ndims*sizeof(int32)))==NULL)
+    if (( info_chunk->cdims = (int32 *) HDmalloc((size_t)info->ndims*sizeof(int32)))==NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* copy info over */
@@ -3621,7 +3648,7 @@ HMCPinquire(accrec_t *access_rec,  /* IN:  access record to return info about */
     if (paccess)
         *paccess = (int16)access_rec->access;
     if (pspecial)
-        *pspecial = access_rec->special;
+        *pspecial = (int16)access_rec->special;
 
   done:
     if(ret_value == FAIL)   

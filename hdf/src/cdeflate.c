@@ -131,7 +131,7 @@ HCIcdeflate_decode(compinfo_t * info, int32 length, uint8 *buf)
 
     /* Set up the deflation buffers to point to the user's buffer to fill */
     deflate_info->deflate_context.next_out=buf;
-    deflate_info->deflate_context.avail_out=length;
+    deflate_info->deflate_context.avail_out=(uInt)length;
     while(deflate_info->deflate_context.avail_out>0)
       {
           /* Get more bytes from the file, if we've run out */
@@ -142,14 +142,14 @@ HCIcdeflate_decode(compinfo_t * info, int32 length, uint8 *buf)
                 deflate_info->deflate_context.next_in=deflate_info->io_buf;
                 if((file_bytes=Hread(info->aid,DEFLATE_BUF_SIZE,deflate_info->deflate_context.next_in))==FAIL)
                     HRETURN_ERROR(DFE_READERROR,FAIL);
-                deflate_info->deflate_context.avail_in=file_bytes;
+                deflate_info->deflate_context.avail_in=(uInt)file_bytes;
             } /* end if */
 
           /* break out if we've reached the end of the compressed data somehow */
           if(inflate(&(deflate_info->deflate_context),Z_NO_FLUSH)==Z_STREAM_END)
               break;
       } /* end while */
-    bytes_read=length-deflate_info->deflate_context.avail_out;
+    bytes_read=(int32)length-(int32)deflate_info->deflate_context.avail_out;
     deflate_info->offset+=bytes_read;
 
     return(bytes_read);
@@ -187,7 +187,7 @@ HCIcdeflate_encode(compinfo_t * info, int32 length, const VOIDP buf)
 
     /* Set up the deflation buffers to point to the user's buffer to empty */
     deflate_info->deflate_context.next_in=buf;
-    deflate_info->deflate_context.avail_in=length;
+    deflate_info->deflate_context.avail_in=(uInt)length;
     while(deflate_info->deflate_context.avail_in>0)
       {
           /* Write more bytes from the file, if we've filled our buffer */
@@ -257,7 +257,7 @@ HCIcdeflate_term(compinfo_t * info,uint32 acc_mode)
           if(status!=Z_STREAM_END)
               HRETURN_ERROR(DFE_CENCODE,FAIL);
           if(deflate_info->deflate_context.avail_out<DEFLATE_BUF_SIZE)
-              if(Hwrite(info->aid,(DEFLATE_BUF_SIZE-deflate_info->deflate_context.avail_out),deflate_info->io_buf)==FAIL)
+              if(Hwrite(info->aid,(int32)(DEFLATE_BUF_SIZE-deflate_info->deflate_context.avail_out),deflate_info->io_buf)==FAIL)
                   HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
           /* Close down the deflation buffer */
@@ -469,13 +469,13 @@ HCPcdeflate_seek(accrec_t * access_rec, int32 offset, int origin)
         if (HCIcdeflate_decode(info, DEFLATE_TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
-              HRETURN_ERROR(DFE_CDECODE, FAIL);
+              HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
     if (deflate_info->offset < offset)  /* grab the last chunk */
         if (HCIcdeflate_decode(info, offset - deflate_info->offset, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
-              HRETURN_ERROR(DFE_CDECODE, FAIL);
+              HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
 
     HDfree(tmp_buf);

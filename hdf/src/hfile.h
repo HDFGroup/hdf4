@@ -83,9 +83,9 @@ typedef FILE *hdf_file_t;
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
 #endif /* !SUN w/ GNU CC */
 #endif /* VMS */
-#   define HI_READ(f, b, n)    (((n) == fread((b), 1, (size_t)(n), (f))) ? \
+#   define HI_READ(f, b, n)    (((size_t)(n) == (size_t)fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_WRITE(f, b, n)   (((n) == fwrite((b), 1, (size_t)(n), (f))) ? \
+#   define HI_WRITE(f, b, n)   (((size_t)(n) == (size_t)fwrite((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_CLOSE(f)   (fclose(f))
 #   define HI_FLUSH(f)   (fflush(f)==0 ? SUCCEED : FAIL)

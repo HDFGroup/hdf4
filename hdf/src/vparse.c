@@ -63,7 +63,7 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 
 {
     char *s, *s0, *ss;
-    intn slen, len;
+    intn len;
 #if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
     CONSTR(FUNC, "scanattrs");
 #endif
@@ -97,7 +97,6 @@ scanattrs(const char *attrs, int32 *attrc, char ***attrv)
 #endif /* macintosh */
 
     s = saved_string;
-    slen = HDstrlen(s);
     nsym = 0;
 
     s0 = s;

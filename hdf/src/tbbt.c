@@ -28,7 +28,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define   Free(x)           (HDfree((VOIDP)x))
 
 # define   KEYcmp(k1,k2,a)   (  (NULL!=compar) ? (*compar)( k1, k2, a)         \
-                             : HDmemcmp( k1, k2, 0<(a) ? (a) : HDstrlen(k1) )  )
+                             : HDmemcmp( k1, k2, 0<(a) ? (a) : (intn)HDstrlen(k1) )  )
 
 VOID        tbbt1dump
             (TBBT_NODE * node, intn method);
@@ -235,7 +235,7 @@ tbbtindx(TBBT_NODE * root, int32 indx)
       else if (HasChild(ptr, RIGHT))
         { /* subtract children count from leftchild plus current node when
              we descend into a right branch */
-          indx -= LeftCnt(ptr) + 1 ;  
+          indx -= (int32)(LeftCnt(ptr) + 1);  
           ptr = ptr->Rchild;
         }
       else
@@ -277,7 +277,7 @@ swapkid(TBBT_NODE ** root, TBBT_NODE * ptr, intn side)
     deep[2] = (deep[1] = 0) + Delta(kid, side);
     deep[0] = Max(0, deep[2]) + 1 - Delta(ptr, side);
     kid->Parent = ptr->Parent;
-    ptrflg = SetFlags(ptr, side, deep[0],
+    ptrflg = (TBBT_FLAG)SetFlags(ptr, side, deep[0],
                   HasChild(ptr, Other(side)) && HasChild(kid, Other(side)));
     plcnt = LeftCnt(ptr);
     prcnt = RightCnt(ptr);
@@ -311,7 +311,7 @@ swapkid(TBBT_NODE ** root, TBBT_NODE * ptr, intn side)
     kid->flags = SetFlags(kid, (1 + 2 - (side)),
                         deep[2] - 1 - Max(deep[0], 0), HasChild(kid, side));
 #else  /* !macintosh */
-    kid->flags = SetFlags(kid, Other(side),
+    kid->flags = (TBBT_FLAG)SetFlags(kid, Other(side),
                         deep[2] - 1 - Max(deep[0], 0), HasChild(kid, side));
 #endif /* !macintosh */
 
@@ -397,7 +397,7 @@ balance(TBBT_NODE ** root, TBBT_NODE * ptr, intn side, intn added)
                   {     /* Just became unbalanced: */
                       if (ptr->link[Other(side)] != NULL && ptr->link[Other(side)]->Parent == ptr)
                         {
-                            ptr->flags |= TBBT_HEAVY(Other(side));  /* Other side longer */
+                            ptr->flags |= (TBBT_FLAG)TBBT_HEAVY(Other(side));  /* Other side longer */
                             if (ptr->Parent)
                                 if (ptr->Parent->Rchild == ptr)     /* we're the right child */
                                     if (Heavy(ptr->Parent, RIGHT) && LeftCnt(ptr->Parent) == 1)
@@ -410,7 +410,7 @@ balance(TBBT_NODE ** root, TBBT_NODE * ptr, intn side, intn added)
                   }
                 else
                   {     /* Just became unbalanced: */
-                      ptr->flags |= TBBT_HEAVY(side);   /* 0<deeper: Our side longer */
+                      ptr->flags |= (TBBT_FLAG)TBBT_HEAVY(side);   /* 0<deeper: Our side longer */
                   }     /* end else */
             }
           if (ptr->Parent)
@@ -472,7 +472,7 @@ balance(TBBT_NODE ** root, TBBT_NODE * ptr, intn side, intn added)
 /* Returns pointer to inserted node (or NULL) */
 TBBT_NODE  *
 tbbtins(TBBT_NODE ** root, VOIDP item, VOIDP key, intn (*compar)
-        (VOIDP k1, VOIDP k2, intn arg), intn arg)
+        (VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg)
 {
     intn        cmp;
     TBBT_NODE  *ptr, *parent;
@@ -623,7 +623,7 @@ tbbtrem(TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp)
     if (!UnBal(leaf))
       {     /* Case 2: `leaf' has no children: */
           par->link[side] = leaf->link[side];
-          par->flags &= ~(TBBT_INTERN | TBBT_HEAVY(side));
+          par->flags &= (TBBT_FLAG)(~(TBBT_INTERN | TBBT_HEAVY(side)));
       }
     else
       {     /* Case 1: `leaf' has one child: */
@@ -659,7 +659,7 @@ tbbtrem(TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp)
 /* tbbtdmake - Allocate a new tree description record for an empty tree */
 /* Returns a pointer to the description record */
 TBBT_TREE  *
-tbbtdmake(intn (*cmp) (VOIDP k1, VOIDP k2, intn arg), intn arg)
+tbbtdmake(intn (*cmp) (VOIDP /* k1 */, VOIDP /* k2 */, intn /* arg */), intn arg)
 {
     TBBT_TREE  *tree = Alloc(1, TBBT_TREE);
 
@@ -706,7 +706,7 @@ tbbtfree(TBBT_NODE ** root, VOID(*fd) (VOIDP item), VOID(*fk) (VOIDP key))
 
 /* tbbtfree() - Free an entire tree not allocated with tbbtdmake(). */
 VOID
-tbbtfree(TBBT_NODE ** root, VOID(*fd) (VOIDP item), VOID(*fk) (VOIDP key))
+tbbtfree(TBBT_NODE ** root, VOID(*fd) (VOIDP /* item */), VOID(*fk) (VOIDP /* key */))
 {
     TBBT_NODE  *par, *node = *root;
 
@@ -881,7 +881,7 @@ tbbt_dump(TBBT_TREE *ptree, VOID (*key_dump)(VOID *,VOID *), intn method)
 
 /* Always returns NULL */
 TBBT_TREE  *
-tbbtdfree(TBBT_TREE * tree, VOID(*fd) (VOIDP item), VOID(*fk) (VOIDP key))
+tbbtdfree(TBBT_TREE * tree, VOID(*fd) (VOIDP /* item */), VOID(*fk) (VOIDP /* key */))
 {
     if (tree == NULL)
         return (NULL);
@@ -898,7 +898,7 @@ tbbtcount(TBBT_TREE * tree)
     if (tree == NULL)
         return (-1);
     else
-        return (tree->count);
+        return ((long)tree->count);
 }
 
 /******************************************************************************

@@ -413,7 +413,7 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
     /* Get space to store the image offsets */
     if ((img_info = (struct image_info *) HDmalloc(nimages * sizeof(struct image_info))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDmemset(img_info,0,nimages*sizeof(struct image_info));    
+    HDmemset(img_info,0,(size_t)nimages*sizeof(struct image_info));    
 
     /* search through the GR group for raster images & global attributes */
     curr_image = 0;
@@ -680,7 +680,7 @@ for (i = 0; i < curr_image; i++)
                           uint8 ntstring[4];        /* buffer to store NT info */
                           uint8 GRtbuf[64];         /* local buffer for reading RIG info */
 
-                          if((img_key=Vattach(file_id,img_info[i].grp_ref,"r"))!=FAIL)
+                          if((img_key=Vattach(file_id,(int32)img_info[i].grp_ref,"r"))!=FAIL)
                             {
                                 if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                                   {
@@ -747,6 +747,7 @@ for (i = 0; i < curr_image; i++)
                                           case DFTAG_LD:    /* Palette dimensions */
                                               if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
                                                 {
+                                                    int16       int16var;
                                                     uint8      *p;
 
                                                     p = GRtbuf;
@@ -754,7 +755,8 @@ for (i = 0; i < curr_image; i++)
                                                     INT32DECODE(p, new_image->lut_dim.ydim);
                                                     UINT16DECODE(p, new_image->lut_dim.nt_tag);
                                                     UINT16DECODE(p, new_image->lut_dim.nt_ref);
-                                                    INT16DECODE(p, new_image->lut_dim.ncomps);
+                                                    INT16DECODE(p, int16var);
+                                                    new_image->lut_dim.ncomps=(int32)int16var;
                                                     INT16DECODE(p, new_image->lut_dim.il);
                                                     UINT16DECODE(p, new_image->lut_dim.comp_tag);
                                                     UINT16DECODE(p, new_image->lut_dim.comp_ref);
@@ -781,15 +783,16 @@ for (i = 0; i < curr_image; i++)
                                               if (new_image->lut_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
                                                 {     /* if native or little endian */
                                                     if (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                        new_image->lut_dim.nt |= (uint32)DFNT_NATIVE;
+                                                        new_image->lut_dim.nt |= DFNT_NATIVE;
                                                     else  /* little endian */
-                                                        new_image->lut_dim.nt |= (uint32)DFNT_LITEND;
+                                                        new_image->lut_dim.nt |= DFNT_LITEND;
                                                 }     /* end if */
                                               break;
 
                                           case DFTAG_ID:    /* Image description info */
                                               if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
                                                 {
+                                                    int16       int16var;
                                                     uint8      *p;
 
                                                     p = GRtbuf;
@@ -797,7 +800,8 @@ for (i = 0; i < curr_image; i++)
                                                     INT32DECODE(p, new_image->img_dim.ydim);
                                                     UINT16DECODE(p, new_image->img_dim.nt_tag);
                                                     UINT16DECODE(p, new_image->img_dim.nt_ref);
-                                                    INT16DECODE(p, new_image->img_dim.ncomps);
+                                                    INT16DECODE(p, int16var);
+                                                    new_image->img_dim.ncomps=(int32)int16var;
                                                     INT16DECODE(p, new_image->img_dim.il);
                                                     UINT16DECODE(p, new_image->img_dim.comp_tag);
                                                     UINT16DECODE(p, new_image->img_dim.comp_ref);
@@ -824,9 +828,9 @@ for (i = 0; i < curr_image; i++)
                                               if (new_image->img_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
                                                 {     /* if native or little endian */
                                                     if (new_image->img_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                        new_image->img_dim.nt |= (uint32)DFNT_NATIVE;
+                                                        new_image->img_dim.nt |= DFNT_NATIVE;
                                                     else  /* little endian */
-                                                        new_image->img_dim.nt |= (uint32)DFNT_LITEND;
+                                                        new_image->img_dim.nt |= DFNT_LITEND;
                                                 }     /* end if */
                                               break;
 
@@ -973,6 +977,7 @@ for (i = 0; i < curr_image; i++)
                                       case DFTAG_LD:    /* Palette dimensions */
                                           if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
                                             {
+                                                int16       int16var;
                                                 uint8      *p;
 
                                                 p = GRtbuf;
@@ -980,7 +985,8 @@ for (i = 0; i < curr_image; i++)
                                                 INT32DECODE(p, new_image->lut_dim.ydim);
                                                 UINT16DECODE(p, new_image->lut_dim.nt_tag);
                                                 UINT16DECODE(p, new_image->lut_dim.nt_ref);
-                                                INT16DECODE(p, new_image->lut_dim.ncomps);
+                                                INT16DECODE(p, int16var);
+                                                new_image->lut_dim.ncomps=(int32)int16var;
                                                 INT16DECODE(p, new_image->lut_dim.il);
                                                 UINT16DECODE(p, new_image->lut_dim.comp_tag);
                                                 UINT16DECODE(p, new_image->lut_dim.comp_ref);
@@ -1007,15 +1013,16 @@ for (i = 0; i < curr_image; i++)
                                           if (new_image->lut_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
                                             {     /* if native or little endian */
                                                 if (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                    new_image->lut_dim.nt |= (uint32)DFNT_NATIVE;
+                                                    new_image->lut_dim.nt |= DFNT_NATIVE;
                                                 else  /* little endian */
-                                                    new_image->lut_dim.nt |= (uint32)DFNT_LITEND;
+                                                    new_image->lut_dim.nt |= DFNT_LITEND;
                                             }     /* end if */
                                           break;
 
                                         case DFTAG_ID:    /* Image description info */
                                             if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
                                               {
+                                                  int16       int16var;
                                                   uint8      *p;
 
                                                   p = GRtbuf;
@@ -1023,7 +1030,8 @@ for (i = 0; i < curr_image; i++)
                                                   INT32DECODE(p, new_image->img_dim.ydim);
                                                   UINT16DECODE(p, new_image->img_dim.nt_tag);
                                                   UINT16DECODE(p, new_image->img_dim.nt_ref);
-                                                  INT16DECODE(p, new_image->img_dim.ncomps);
+                                                  INT16DECODE(p, int16var);
+                                                  new_image->img_dim.ncomps=(int32)int16var;
                                                   INT16DECODE(p, new_image->img_dim.il);
                                                   UINT16DECODE(p, new_image->img_dim.comp_tag);
                                                   UINT16DECODE(p, new_image->img_dim.comp_ref);
@@ -1050,9 +1058,9 @@ for (i = 0; i < curr_image; i++)
                                             if (new_image->img_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
                                               {     /* if native or little endian */
                                                   if (new_image->img_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                      new_image->img_dim.nt |= (uint32)DFNT_NATIVE;
+                                                      new_image->img_dim.nt |= DFNT_NATIVE;
                                                   else  /* little endian */
-                                                      new_image->img_dim.nt |= (uint32)DFNT_LITEND;
+                                                      new_image->img_dim.nt |= DFNT_LITEND;
                                               }     /* end if */
                                             break;
 
@@ -1210,8 +1218,8 @@ intn GRIil_convert(const VOIDP inbuf,gr_interlace_t inil,VOIDP outbuf,
 {
     CONSTR(FUNC, "GRIil_convert");    /* for HERROR */
     intn ret_value=SUCCEED;
-    uintn pixel_size=DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND))*ncomp;
-    uintn comp_size=DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND));
+    uintn pixel_size=(uintn)DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND))*(uintn)ncomp;
+    uintn comp_size=(uintn)DFKNTsize((nt|DFNT_NATIVE)&(~DFNT_LITEND));
     VOIDP *in_comp_ptr=NULL;    /* an array of pointers to each input component */
     VOIDP *out_comp_ptr=NULL;   /* an array of pointers to each output component */
     int32 *in_pixel_add=NULL;   /* an array of increments for each input pixel moved */
@@ -1227,25 +1235,25 @@ printf("%s: ncomp=%d, nt=%d\n",FUNC,(int)ncomp,(int)nt);
 printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
 #endif /* QAK */
     if(inil==outil)     /* check for trivial input=output 'conversion' */
-        HDmemcpy(outbuf,inbuf,dims[XDIM]*dims[YDIM]*pixel_size);
+        HDmemcpy(outbuf,inbuf,(size_t)dims[XDIM]*(size_t)dims[YDIM]*(size_t)pixel_size);
     else
       {
           /* allocate pixel pointer arrays */
-          if((in_comp_ptr=HDmalloc(sizeof(VOIDP)*ncomp))==NULL)
+          if((in_comp_ptr=HDmalloc(sizeof(VOIDP)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if((out_comp_ptr=HDmalloc(sizeof(VOIDP)*ncomp))==NULL)
+          if((out_comp_ptr=HDmalloc(sizeof(VOIDP)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* allocate pixel increment arrays */
-          if((in_pixel_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+          if((in_pixel_add=HDmalloc(sizeof(int32)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if((out_pixel_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+          if((out_pixel_add=HDmalloc(sizeof(int32)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* allocate line increment arrays */
-          if((in_line_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+          if((in_line_add=HDmalloc(sizeof(int32)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
-          if((out_line_add=HDmalloc(sizeof(int32)*ncomp))==NULL)
+          if((out_line_add=HDmalloc(sizeof(int32)*(size_t)ncomp))==NULL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
           /* Set up the input buffer pointers and adders */
@@ -1254,8 +1262,8 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_PIXEL:
                     for(i=0; i<ncomp; i++)
                       {
-                        in_comp_ptr[i]=((uint8 *)inbuf)+i*comp_size;
-                        in_pixel_add[i]=pixel_size;
+                        in_comp_ptr[i]=((uint8 *)inbuf)+(size_t)i*comp_size;
+                        in_pixel_add[i]=(int32)pixel_size;
                         in_line_add[i]=0;
                       } /* end for */
                     break;
@@ -1263,17 +1271,17 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_LINE:
                     for(i=0; i<ncomp; i++)
                       {
-                        in_comp_ptr[i]=((uint8 *)inbuf)+i*dims[XDIM]*comp_size;
-                        in_pixel_add[i]=comp_size;
-                        in_line_add[i]=(ncomp-1)*dims[XDIM]*comp_size;
+                        in_comp_ptr[i]=((uint8 *)inbuf)+(size_t)i*(size_t)dims[XDIM]*comp_size;
+                        in_pixel_add[i]=(int32)comp_size;
+                        in_line_add[i]=(int32)((size_t)(ncomp-1)*(size_t)dims[XDIM]*comp_size);
                       } /* end for */
                     break;
 
                 case MFGR_INTERLACE_COMPONENT:
                     for(i=0; i<ncomp; i++)
                       {
-                        in_comp_ptr[i]=((uint8 *)inbuf)+i*dims[YDIM]*dims[XDIM]*comp_size;
-                        in_pixel_add[i]=comp_size;
+                        in_comp_ptr[i]=((uint8 *)inbuf)+(size_t)i*(size_t)dims[YDIM]*(size_t)dims[XDIM]*comp_size;
+                        in_pixel_add[i]=(int32)comp_size;
                         in_line_add[i]=0;
                       } /* end for */
                     break;
@@ -1288,8 +1296,8 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_PIXEL:
                     for(i=0; i<ncomp; i++)
                       {
-                        out_comp_ptr[i]=((uint8 *)outbuf)+i*comp_size;
-                        out_pixel_add[i]=pixel_size;
+                        out_comp_ptr[i]=((uint8 *)outbuf)+(size_t)i*comp_size;
+                        out_pixel_add[i]=(int32)pixel_size;
                         out_line_add[i]=0;
                       } /* end for */
                     break;
@@ -1297,17 +1305,17 @@ printf("%s: pixel_size=%d, comp_size=%d\n",FUNC,(int)pixel_size,(int)comp_size);
                 case MFGR_INTERLACE_LINE:
                     for(i=0; i<ncomp; i++)
                       {
-                        out_comp_ptr[i]=((uint8 *)outbuf)+i*dims[XDIM]*comp_size;
-                        out_pixel_add[i]=comp_size;
-                        out_line_add[i]=(ncomp-1)*dims[XDIM]*comp_size;
+                        out_comp_ptr[i]=((uint8 *)outbuf)+(size_t)i*(size_t)dims[XDIM]*comp_size;
+                        out_pixel_add[i]=(int32)comp_size;
+                        out_line_add[i]=(int32)((size_t)(ncomp-1)*(size_t)dims[XDIM]*comp_size);
                       } /* end for */
                     break;
 
                 case MFGR_INTERLACE_COMPONENT:
                     for(i=0; i<ncomp; i++)
                       {
-                        out_comp_ptr[i]=((uint8 *)outbuf)+i*dims[YDIM]*dims[XDIM]*comp_size;
-                        out_pixel_add[i]=comp_size;
+                        out_comp_ptr[i]=((uint8 *)outbuf)+(size_t)i*(size_t)dims[YDIM]*(size_t)dims[XDIM]*comp_size;
+                        out_pixel_add[i]=(int32)comp_size;
                         out_line_add[i]=0;
                       } /* end for */
                     break;
@@ -1585,7 +1593,7 @@ PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
     /* Write out the raster image's number-type record */
     ntstring[0] = DFNT_VERSION;     /* version */
     ntstring[1] = (uint8)img_ptr->img_dim.nt;       /* type */
-    ntstring[2] = DFKNTsize(img_ptr->img_dim.nt)*8; /* width: RIG data is 8-bit chars */
+    ntstring[2] = (uint8)(DFKNTsize(img_ptr->img_dim.nt)*8); /* width: RIG data is 8-bit chars */
     ntstring[3] = DFNTC_BYTE;       /* class: data are numeric values */
     if (Hputelement(hdf_file_id, img_ptr->img_dim.nt_tag,
             img_ptr->img_dim.nt_ref, ntstring, (int32) 4) == FAIL)
@@ -1813,7 +1821,7 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
         HGOTO_ERROR(DFE_BADVSNAME,FAIL);
 
     /* add image dimension tag/ref to RIG */
-    if (Vaddtagref(GroupID, DFTAG_ID, (uint16) img_ptr->img_dim.dim_ref) == FAIL)
+    if (Vaddtagref(GroupID, DFTAG_ID, (int32)img_ptr->img_dim.dim_ref) == FAIL)
         HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* If we don't have a tag for the image, just use DFTAG_RI for now */
@@ -1821,18 +1829,18 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
         img_ptr->img_tag=DFTAG_RI;
 
     /* add image data tag/ref to RIG */
-    if (Vaddtagref(GroupID, img_ptr->img_tag, img_ptr->img_ref) == FAIL)
+    if (Vaddtagref(GroupID, (int32)img_ptr->img_tag, (int32)img_ptr->img_ref) == FAIL)
         HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
     /* Check if we should write palette information */
     if(img_ptr->lut_ref>DFREF_WILDCARD)
       {
           /* add palette dimension tag/ref to RIG */
-          if (Vaddtagref(GroupID, DFTAG_LD, (uint16) img_ptr->lut_dim.dim_ref) == FAIL)
+          if (Vaddtagref(GroupID, DFTAG_LD, (int32)img_ptr->lut_dim.dim_ref) == FAIL)
               HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
 
           /* add palette data tag/ref to RIG */
-          if (Vaddtagref(GroupID, img_ptr->lut_tag, img_ptr->lut_ref) == FAIL)
+          if (Vaddtagref(GroupID, (int32)img_ptr->lut_tag, (int32)img_ptr->lut_ref) == FAIL)
               HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
       } /* end if */
 
@@ -1896,7 +1904,7 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
       {
         int32 AttrID;       /* attribute Vdata id */
 
-        if((AttrID=VSattach(hdf_file_id,attr_ptr->ref,"w"))==FAIL)
+        if((AttrID=VSattach(hdf_file_id,(int32)attr_ptr->ref,"w"))==FAIL)
             HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,attr_ptr->name)==FAIL)
           {
@@ -1988,7 +1996,7 @@ intn GRend(int32 grid)
           } /* end if */
         else
           {
-            if((GroupID=Vattach(gr_ptr->hdf_file_id,gr_ptr->gr_ref,"w"))==FAIL)
+            if((GroupID=Vattach(gr_ptr->hdf_file_id,(int32)gr_ptr->gr_ref,"w"))==FAIL)
                 HGOTO_ERROR(DFE_CANTATTACH,FAIL);
           } /* end else */
 
@@ -2068,9 +2076,9 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                                   {
                                       int32 lGroupID;  /* ID of the Vgroup */
 
-                                      if((lGroupID=Vattach(gr_ptr->hdf_file_id,img_ptr->ri_ref,"w"))==FAIL)
+                                      if((lGroupID=Vattach(gr_ptr->hdf_file_id,(int32)img_ptr->ri_ref,"w"))==FAIL)
                                           HGOTO_ERROR(DFE_CANTATTACH,FAIL);
-                                      if(Vaddtagref(lGroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                                      if(Vaddtagref(lGroupID,ATTR_TAG,(int32)attr_ptr->ref)==FAIL)
                                           HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
                                       if(Vdetach(lGroupID)==FAIL)
                                           HGOTO_ERROR(DFE_CANTDETACH,FAIL);
@@ -2085,8 +2093,8 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                       } /* end if */
 
                     /* Check if the RI is already in the GR, add it if not */
-                    if(Vinqtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FALSE)
-                        if(Vaddtagref(GroupID,RI_TAG,img_ptr->ri_ref)==FAIL)
+                    if(Vinqtagref(GroupID,RI_TAG,(int32)img_ptr->ri_ref)==FALSE)
+                        if(Vaddtagref(GroupID,RI_TAG,(int32)img_ptr->ri_ref)==FAIL)
                             HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
 
                     /* get the next image in the tree/list */
@@ -2136,7 +2144,7 @@ printf("%s: attr_ptr->new_at=%d\n",FUNC,attr_ptr->new_at);
 #ifdef QAK
 printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
-                            if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
+                            if(Vaddtagref(GroupID,ATTR_TAG,(int32)attr_ptr->ref)==FAIL)
                                 HGOTO_ERROR(DFE_CANTADDELEM,FAIL);
                             attr_ptr->new_at=FALSE;
                           } /* end if */
@@ -2339,7 +2347,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     ri_ptr->img_dim.ncomps=ncomp;
     ri_ptr->img_dim.nt=nt;
     ri_ptr->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-    ri_ptr->img_dim.il=il;
+    ri_ptr->img_dim.il=(gr_interlace_t)il;
     ri_ptr->img_dim.nt_tag=ri_ptr->img_dim.nt_ref=DFREF_WILDCARD;
     ri_ptr->img_dim.comp_tag=ri_ptr->img_dim.comp_ref=DFREF_WILDCARD;
     ri_ptr->img_tag=ri_ptr->img_ref=DFREF_WILDCARD;
@@ -2483,7 +2491,6 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     int32 dimsizes[2],int32 *n_attr)
 {
     CONSTR(FUNC, "GRgetiminfo");   /* for HERROR */
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     intn  ret_value = SUCCEED;
 
@@ -2500,7 +2507,6 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    gr_ptr=ri_ptr->gr_ptr;
 
     if(name!=NULL)
         HDstrcpy(name, ri_ptr->name);
@@ -2512,7 +2518,7 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
         *nt=ri_ptr->img_dim.nt;
 
     if(il!=NULL)
-        *il=ri_ptr->img_dim.il;
+        *il=(int32)ri_ptr->img_dim.il;
 
     if(dimsizes!=NULL)
       {
@@ -2659,11 +2665,11 @@ printf("%s: count[XDIM,YDIM]=%ld, %ld\n",FUNC,count[XDIM],count[YDIM]);
 printf("%s: check 3\n",FUNC);
 #endif /* QAK */
     /* Get the size of the pixels in memory and on disk */
-    pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
-    pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
+    pixel_mem_size=(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
+    pixel_disk_size=(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
 
     /* Get number-type and conversion information */
-    platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+    platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
 #ifdef QAK
 printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
 printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_size,(unsigned)pixel_disk_size);
@@ -2674,7 +2680,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     if(convert || switch_interlace==TRUE)
       {   /* convert image data to HDF disk format */
           /* Allocate space for the conversion buffer */
-          if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
+          if((img_data=HDmalloc(pixel_disk_size*(size_t)count[XDIM]*(size_t)count[YDIM]))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           if(switch_interlace==TRUE)
@@ -2682,7 +2688,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
               VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
 
               /* Allocate space for the conversion buffer */
-              if((pixel_buf=HDmalloc(pixel_mem_size*count[XDIM]*count[YDIM]))==NULL)
+              if((pixel_buf=HDmalloc(pixel_mem_size*(size_t)count[XDIM]*(size_t)count[YDIM]))==NULL)
                   HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
               GRIil_convert(data,ri_ptr->img_dim.il,pixel_buf,MFGR_INTERLACE_PIXEL,
@@ -2744,7 +2750,7 @@ fprintf(stderr,"%s: check 5.5, img_tag=%d, img_ref=%d\n",FUNC,(int)ri_ptr->img_t
           if(whole_image==TRUE)
             { /* write the whole image out */
                 if(Hputelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
-                        (uint8 *)img_data,pixel_disk_size*count[XDIM]*count[YDIM])==FAIL)
+                        (uint8 *)img_data,(int32)pixel_disk_size*count[XDIM]*count[YDIM])==FAIL)
                     HGOTO_ERROR(DFE_PUTELEM,FAIL);
             } /* end if */
           else
@@ -2765,7 +2771,7 @@ printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fi
                         DFACC_WRITE))==FAIL)
                     HGOTO_ERROR(DFE_BADAID,FAIL);
                   
-                img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*pixel_disk_size;
+                img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*(int32)pixel_disk_size;
 
                 /* check if this is a new image, and if we need to write fill pixels */
                 if(new_image==TRUE && ri_ptr->fill_img==TRUE)
@@ -2808,11 +2814,11 @@ printf("%s: check 6.6, found a fill value, nt=%d, ncomps=%d\n",FUNC,(int)ri_ptr-
 
                       /* check for "low" pixel runs */
                       if(start[XDIM]>0)
-                          fill_lo_size=pixel_disk_size*start[XDIM];
+                          fill_lo_size=(int32)pixel_disk_size*start[XDIM];
 
                       /* check for "high" pixel runs */
                       if((start[XDIM]+((count[XDIM]-1)*stride[XDIM])+1)<ri_ptr->img_dim.xdim)
-                          fill_hi_size=pixel_disk_size*(ri_ptr->img_dim.xdim-
+                          fill_hi_size=(int32)pixel_disk_size*(ri_ptr->img_dim.xdim-
                               (start[XDIM]+((count[XDIM]-1)*stride[XDIM])+1));
 
 #ifdef QAK
@@ -2821,10 +2827,10 @@ printf("%s: check 6.75, xdim=%ld, ydim=%ld, fill_lo_size=%ld, fill_hi_size=%ld\n
 
                       /* create the "line" pixel block */
                       /* allocate space for the "line" block */
-                      fill_line_size=pixel_disk_size*ri_ptr->img_dim.xdim;
+                      fill_line_size=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
                       if((fill_line=(VOIDP)HDmalloc(fill_line_size))==NULL)
                             HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                      HDmemfill(fill_line,fill_pixel,pixel_disk_size,ri_ptr->img_dim.xdim);
+                      HDmemfill(fill_line,fill_pixel,pixel_disk_size,(uint32)ri_ptr->img_dim.xdim);
 
                       fill_image=TRUE;  /* set flag to write out fill pixels */
                       ri_ptr->store_fill=TRUE;  /* set flag to store fill value attribute */
@@ -2845,7 +2851,7 @@ printf("%s: check 7, fill_image=%d\n",FUNC,fill_image);
                       int32 pix_len;    /* length of current row's pixel run */
                       intn i;           /* temporary loop variable */
 
-                      pix_len=pixel_disk_size*count[XDIM];
+                      pix_len=(int32)pixel_disk_size*count[XDIM];
                         
                       if(fill_image==TRUE)
                         {   /* surround the block to write with fill values */
@@ -2933,7 +2939,7 @@ printf("%s: check 12.5\n",FUNC);
                                       HGOTO_ERROR(DFE_SEEKERROR,FAIL);
                                   if(Hwrite(aid,pix_len,tmp_data)==FAIL)
                                       HGOTO_ERROR(DFE_WRITEERROR,FAIL);
-                                  img_offset+=pixel_disk_size*ri_ptr->img_dim.xdim;
+                                  img_offset+=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
                                   tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                               } /* end for */
                         } /* end else */
@@ -2954,7 +2960,7 @@ printf("%s: check 13\n",FUNC);
                             if(stride[XDIM]>1)
                               {
                                 /* allocate space for the "stride" block */
-                                fill_stride_size=pixel_disk_size*(stride[XDIM]-1);
+                                fill_stride_size=(int32)pixel_disk_size*(stride[XDIM]-1);
                                 fill_xdim=TRUE;
                               } /* end if */
                             if(stride[YDIM]>1)
@@ -3005,7 +3011,7 @@ printf("%s: check 14.61, count[YDIM]=%ld, count[XDIM]=%ld\n",FUNC,(long)count[YD
                               {
                                   for(j=0; j<count[XDIM]; j++)
                                     {
-                                      if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
+                                      if(Hwrite(aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       if(fill_xdim==TRUE && j<(count[XDIM]-1))
                                         {
@@ -3074,7 +3080,7 @@ printf("%s: check 14.81, i=%d\n",FUNC,i);
                         {   /* don't worry about fill values */
                           int32 stride_add; /* amount to add for stride amount */
 
-                          stride_add=pixel_disk_size*stride[XDIM];
+                          stride_add=(int32)pixel_disk_size*stride[XDIM];
 
 #ifdef QAK
 printf("%s: check 15, stride_add=%ld, img_offset=%ld\n",FUNC,(long)stride_add,(long)img_offset);
@@ -3091,13 +3097,13 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
                                     {
                                       if(Hseek(aid,local_offset,DF_START)==FAIL)
                                           HGOTO_ERROR(DFE_SEEKERROR,FAIL);
-                                      if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
+                                      if(Hwrite(aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                           HGOTO_ERROR(DFE_WRITEERROR,FAIL);
                                       local_offset+=stride_add;
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
   
-                                  img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*pixel_disk_size;
+                                  img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*(int32)pixel_disk_size;
                               } /* end for */
                         } /* end else */
                   } /* end else */
@@ -3230,11 +3236,11 @@ fprintf(stderr,"%s: data=%p\n",FUNC,data);
         solid_block=FALSE;
 
     /* Get the size of the pixels in memory and on disk */
-    pixel_disk_size=ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt);
-    pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
+    pixel_disk_size=(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+    pixel_mem_size=(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
 
     /* Get number-type and conversion information */
-    platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
+    platnumsubclass = (uint8)DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
 #ifdef QAK
 printf("%s: file_nt_subclass=%x, platnumsubclass=%x\n",FUNC,(unsigned)ri_ptr->img_dim.file_nt_subclass,(unsigned)platnumsubclass);
 printf("%s: pixel_disk_size=%u\n",FUNC,(unsigned)pixel_disk_size);
@@ -3275,7 +3281,7 @@ printf("%s: got the fill value\n",FUNC);
               HDmemset(fill_pixel,0,pixel_mem_size);
 
           /* Fill the user's buffer with the fill value */
-          HDmemfill(data,fill_pixel,pixel_mem_size,count[XDIM]*count[YDIM]);
+          HDmemfill(data,fill_pixel,pixel_mem_size,(uint32)(count[XDIM]*count[YDIM]));
           HDfree(fill_pixel);
       } /* end if */
     else
@@ -3286,7 +3292,7 @@ fprintf(stderr,"%s: image exists\n",FUNC);
           if(convert)
             {   /* convert image data to HDF disk format */
                 /* Allocate space for the conversion buffer */
-                if((img_data=HDmalloc(pixel_disk_size*count[XDIM]*count[YDIM]))==NULL)
+                if((img_data=HDmalloc(pixel_disk_size*(size_t)count[XDIM]*(size_t)count[YDIM]))==NULL)
                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
             } /* end if */
           else /* no conversion necessary, just use the user's buffer */
@@ -3317,7 +3323,7 @@ fprintf(stderr,"%s: check 1.5\n",FUNC);
                         DFACC_READ))==FAIL)
                     HGOTO_ERROR(DFE_BADAID,FAIL);
                   
-                img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*pixel_disk_size;
+                img_offset=((ri_ptr->img_dim.xdim*start[YDIM])+start[XDIM])*(int32)pixel_disk_size;
 
                 tmp_data=img_data;
                 if(solid_block==TRUE)
@@ -3328,7 +3334,7 @@ fprintf(stderr,"%s: check 1.5\n",FUNC);
 #ifdef QAK
 printf("%s: check 2\n",FUNC);
 #endif /* QAK */
-                      pix_len=pixel_disk_size*count[XDIM];
+                      pix_len=(int32)pixel_disk_size*count[XDIM];
                         
                       /* read in the block */
                       for(i=0; i<count[YDIM]; i++)
@@ -3337,7 +3343,7 @@ printf("%s: check 2\n",FUNC);
                                 HGOTO_ERROR(DFE_SEEKERROR,FAIL);
                             if(Hread(aid,pix_len,tmp_data)==FAIL)
                                 HGOTO_ERROR(DFE_READERROR,FAIL);
-                            img_offset+=pixel_disk_size*ri_ptr->img_dim.xdim;
+                            img_offset+=(int32)pixel_disk_size*ri_ptr->img_dim.xdim;
                             tmp_data=(VOIDP)((char *)tmp_data+pix_len);
                         } /* end for */
                   } /* end if */
@@ -3349,7 +3355,7 @@ printf("%s: check 2\n",FUNC);
 #ifdef QAK
 printf("%s: check 3\n",FUNC);
 #endif /* QAK */
-                      stride_add=pixel_disk_size*stride[XDIM];
+                      stride_add=(int32)pixel_disk_size*stride[XDIM];
 
                       for(i=0; i<count[YDIM]; i++)
                         {
@@ -3360,13 +3366,13 @@ printf("%s: check 3\n",FUNC);
                               {
                                 if(Hseek(aid,local_offset,DF_START)==FAIL)
                                     HGOTO_ERROR(DFE_SEEKERROR,FAIL);
-                                if(Hread(aid,pixel_disk_size,tmp_data)==FAIL)
+                                if(Hread(aid,(int32)pixel_disk_size,tmp_data)==FAIL)
                                     HGOTO_ERROR(DFE_READERROR,FAIL);
                                 local_offset+=stride_add;
                                 tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                               } /* end for */
 
-                            img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*pixel_disk_size;
+                            img_offset+=ri_ptr->img_dim.xdim*stride[YDIM]*(int32)pixel_disk_size;
                         } /* end for */
                   } /* end else */
                 if(Hendaccess(aid)==FAIL)
@@ -3396,13 +3402,13 @@ printf("%s: check 4\n",FUNC);
           VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
 
           /* Allocate space for the conversion buffer */
-          if((pixel_buf=HDmalloc(pixel_mem_size*count[XDIM]*count[YDIM]))==NULL)
+          if((pixel_buf=HDmalloc(pixel_mem_size*(size_t)count[XDIM]*(size_t)count[YDIM]))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           GRIil_convert(data,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->im_il,
               count,ri_ptr->img_dim.ncomps,ri_ptr->img_dim.nt);
 
-          HDmemcpy(data,pixel_buf,pixel_mem_size*count[XDIM]*count[YDIM]);
+          HDmemcpy(data,pixel_buf,pixel_mem_size*(size_t)count[XDIM]*(size_t)count[YDIM]);
 
           HDfree(pixel_buf);
         } /* end if */
@@ -3534,7 +3540,7 @@ uint16 GRidtoref(int32 riid)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, (uint16)FAIL);
 
 #ifdef OLD_WAY
     ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
@@ -3851,11 +3857,11 @@ uint16 GRluttoref(int32 lutid)
 
     /* check the validity of the RI ID */
     if (HAatom_group(lutid)!=RIIDGROUP)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, (uint16)FAIL);
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, (uint16)FAIL);
 
     ret_value=ri_ptr->lut_ref;
 
@@ -3936,7 +3942,7 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
           if(nt!=NULL)
               *nt=ri_ptr->lut_dim.nt;
           if(il!=NULL)
-              *il=ri_ptr->lut_dim.il;
+              *il=(int32)ri_ptr->lut_dim.il;
           if(nentries!=NULL)  /* xdim for LUTs is the number of entries */
               *nentries=ri_ptr->lut_dim.xdim;
       } /* end else */
@@ -4112,10 +4118,10 @@ intn GRreadlut(int32 lutid,VOIDP data)
           VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
           int32 count[2];   /* "dimension" info */
 
-          pixel_mem_size=ri_ptr->lut_dim.ncomps*DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
+          pixel_mem_size=(uintn)(ri_ptr->lut_dim.ncomps*DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND)));
 
           /* Allocate space for the conversion buffer */
-          if((pixel_buf=HDmalloc(pixel_mem_size*ri_ptr->lut_dim.xdim))==NULL)
+          if((pixel_buf=HDmalloc(pixel_mem_size*(size_t)ri_ptr->lut_dim.xdim))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
           count[XDIM]=1;
@@ -4123,7 +4129,7 @@ intn GRreadlut(int32 lutid,VOIDP data)
           GRIil_convert(data,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->lut_il,
               count,ri_ptr->lut_dim.ncomps,ri_ptr->lut_dim.nt);
 
-          HDmemcpy(data,pixel_buf,pixel_mem_size*ri_ptr->lut_dim.xdim);
+          HDmemcpy(data,pixel_buf,pixel_mem_size*(size_t)ri_ptr->lut_dim.xdim);
 
           HDfree(pixel_buf);
       } /* end if */
@@ -4511,12 +4517,12 @@ printf("%s: found existing attribute\n",FUNC);
           new_at_size=count*DFKNTsize((attr_nt | DFNT_NATIVE) & (~DFNT_LITEND));
           at_size=at_ptr->len*DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
-          if(new_at_size>gr_ptr->attr_cache)    /* check if data is cacheable */
+          if((uint32)new_at_size>gr_ptr->attr_cache)    /* check if data is cacheable */
             {   /* not cacheable, write directly out to disk and throw away old in-memory copy */
                 int32 AttrID;       /* attribute Vdata id */
 
                 /* Update data on disk */
-                if((AttrID=VSattach(hdf_file_id,at_ptr->ref,"w"))==FAIL)
+                if((AttrID=VSattach(hdf_file_id,(int32)at_ptr->ref,"w"))==FAIL)
                     HGOTO_ERROR(DFE_CANTATTACH,FAIL);
                 if(VSsetfields(AttrID,at_ptr->name)==FAIL)
                   {
@@ -4580,7 +4586,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
 
         /* calc. the attr size to see if it is worth caching */
         at_size=at_ptr->len*DFKNTsize((at_ptr->nt | DFNT_NATIVE) & (~DFNT_LITEND));
-        if(at_size<gr_ptr->attr_cache)
+        if((uint32)at_size<gr_ptr->attr_cache)
           { /* cacheable */
               /* allocate space for the attribute name & copy it */
               if((at_ptr->data=(char *)HDmalloc(at_size))==NULL)
@@ -4828,7 +4834,7 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
         if((at_ptr->data=HDmalloc(at_size))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,FAIL);
             
-        if((AttrID=VSattach(hdf_file_id,at_ptr->ref,"r"))==FAIL)
+        if((AttrID=VSattach(hdf_file_id,(int32)at_ptr->ref,"r"))==FAIL)
             HGOTO_ERROR(DFE_CANTATTACH,FAIL);
         if(VSsetfields(AttrID,at_ptr->name)==FAIL)
           {
@@ -4848,7 +4854,7 @@ intn GRgetattr(int32 id,int32 index,VOIDP data)
     HDmemcpy(data,at_ptr->data,at_size);
 
     /* If the attribute is too large to keep in memory, chuck it again */
-    if(at_size>gr_ptr->attr_cache)
+    if((uint32)at_size>gr_ptr->attr_cache)
         HDfreenclear(at_ptr->data);
 
 done:

@@ -168,8 +168,7 @@ DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
                         break;
 
                     default:    /* unsupported format */
-                        printf("Error : Unsupported Format \n");
-                        exit(1);
+                        break;
                 }   /* end of switch */
 
               blocks++;
@@ -312,8 +311,7 @@ init_global(int32 xdim, int32 ydim, VOIDP out, VOIDP out_pal)
 
     if (image == NULL || color_pt == NULL || new_pal == NULL)
       {
-          printf("Error : Out of Memory\n");
-          exit(1);
+          return; /* punt! */
       }
 
     /* initialize */
@@ -496,13 +494,13 @@ nearest_color(uint8 r, uint8 g, uint8 b)
     int         i, nearest;
     long int    min, error;
 
-    min = sqr((int16) (r - new_pal[0])) + sqr((int16) (g - new_pal[1])) +
-        sqr((int16) (b - new_pal[2]));
+    min = (long)(sqr((int16) (r - new_pal[0])) + sqr((int16) (g - new_pal[1])) +
+        sqr((int16) (b - new_pal[2])));
     nearest = 0;
     for (i = 1; i < PALSIZE; i++)
       {
-          error = sqr((int16) (r - new_pal[3 * i])) + sqr((int16) (g - new_pal[3 * i + 1])) +
-              sqr((int16) (b - new_pal[3 * i + 2]));
+          error = (long)(sqr((int16) (r - new_pal[3 * i])) + sqr((int16) (g - new_pal[3 * i + 1])) +
+              sqr((int16) (b - new_pal[3 * i + 2])));
           if (error < min)
             {
                 min = error;
@@ -526,7 +524,7 @@ nearest_color(uint8 r, uint8 g, uint8 b)
 PRIVATE uint32
 sqr(int16 x)
 {
-    return ((int32) x * (int32) x);
+    return ((uint32) x * (uint32) x);
 }
 
 /************************************************************************/
@@ -837,8 +835,7 @@ find_box(void)
 
     if (max == NULL)
       {
-          printf("Error : Number of color points < palette \n");
-          exit(1);
+          return(NULL); /* punt! */
       }
 
     return max;

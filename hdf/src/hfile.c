@@ -1266,7 +1266,7 @@ HPisappendable(int32 aid)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
   /* dataset at end? */
-  if ((uint32) data_len + (uint32) data_off == file_rec->f_end_off)	
+  if (data_len + data_off == file_rec->f_end_off)	
     ret_value = SUCCEED;
   else
     ret_value = FAIL;
@@ -1356,7 +1356,7 @@ Hseek(int32 access_id, int32 offset, intn origin)
   if (access_rec->appendable && offset >= data_len)
     {
       file_rec = HAatom_object(access_rec->file_id);
-      if ((uint32) data_len + (uint32) data_off != file_rec->f_end_off)
+      if (data_len + data_off != file_rec->f_end_off)
           {	/* dataset at end? */
             if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
               {
@@ -1607,7 +1607,7 @@ printf("%s: length=%ld\n",FUNC,(long)length);
 
   if (access_rec->appendable && length + access_rec->posn > data_len)
     {
-      if ((uint32) data_len + (uint32) data_off != file_rec->f_end_off)
+      if (data_len + data_off != file_rec->f_end_off)
         {	/* dataset at end? */
           if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
             {
@@ -1677,8 +1677,8 @@ DESCRIPTION
 intn
 HDgetc(int32 access_id)
 {
-  CONSTR(FUNC, "HDgetc");		/* for HERROR */
-  uint8       c;				/* character read in */
+  CONSTR(FUNC, "HDgetc");		 /* for HERROR */
+  uint8       c=(uint8)FAIL;		     /* character read in */
   intn    ret_value = SUCCEED;
 
   if (Hread(access_id, 1, (VOIDP) &c) == FAIL)
@@ -1991,8 +1991,7 @@ done:
 #else /* FASTER_BUT_DOESNT_WORK */
   CONSTR(FUNC, "Hlength");    /* for HERROR */
   int32       access_id;      /* access record id */
-  int32       length;         /* length of elt inquired */
-  int         ret;            /* return code */
+  int32       length=FAIL;    /* length of elt inquired */
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -2008,7 +2007,7 @@ done:
   if (access_id == FAIL)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
-  if ((ret = HQuerylength(access_id, &length)) == FAIL)
+  if ((ret_value = HQuerylength(access_id, &length)) == FAIL)
     HERROR(DFE_INTERNAL);
   
   if(Hendaccess(access_id)==FAIL)
@@ -2057,8 +2056,8 @@ int32
 Hoffset(int32 file_id, uint16 tag, uint16 ref)
 {
   CONSTR(FUNC, "Hoffset");	/* for HERROR */
-  int32       access_id;		/* access record id */
-  int32       offset;			/* offset of elt inquired */
+  int32       access_id;	/* access record id */
+  int32       offset=FAIL;	/* offset of elt inquired */
   int32       ret_value = SUCCEED;
 
 #ifdef HAVE_PABLO
@@ -2565,11 +2564,13 @@ intn HDdont_atexit(void)
     if(install_atexit == TRUE)
         install_atexit=FALSE;
 
+#ifdef LATER
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
+#endif /* LATER */
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
@@ -2819,6 +2820,7 @@ HIget_function_table(accrec_t * access_rec)
 {
   CONSTR(FUNC, "HIget_function_table");	/* for HERROR */
   filerec_t  *file_rec;		/* file record */
+  int16       spec_code;
   uint8       lbuf[4];      /* temporary buffer */
   uint8      *p;		/* tmp buf ptr */
   int32       data_off;		/* offset of the data we are checking */
@@ -2834,12 +2836,13 @@ HIget_function_table(accrec_t * access_rec)
 
   if (HPseek(file_rec, data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, NULL);
-  if (HP_read(file_rec, lbuf, 2) == FAIL)
+  if (HP_read(file_rec, lbuf, (int)2) == FAIL)
     HGOTO_ERROR(DFE_READERROR, NULL);
 
   /* using special code, look up function table in associative table */
   p = &lbuf[0];
-  INT16DECODE(p, access_rec->special);
+  INT16DECODE(p, spec_code);
+  access_rec->special=(intn)spec_code;
   for (i = 0; functab[i].key != 0; i++)
     {
       if (access_rec->special == functab[i].key)
@@ -3513,7 +3516,7 @@ HIupdate_version(int32 file_id)
     UINT32ENCODE(p, file_rec->version.minorv);
     UINT32ENCODE(p, file_rec->version.release);
     HIstrncpy((char *) p, file_rec->version.string, LIBVSTR_LEN);
-    i = HDstrlen((char *) p);
+    i = (int)HDstrlen((char *) p);
     HDmemset(&p[i],0,LIBVSTR_LEN-i);
   }
 

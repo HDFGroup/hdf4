@@ -86,7 +86,7 @@ typedef struct
       intn        buf_pos;      /* current offset in the expansion buffer */
       intn        mask_off,     /* offset of the bit to start masking with */
                   mask_len;     /* number of bits to mask */
-      uint32      offset;       /* offset in the file in terms of bytes */
+      int32       offset;       /* offset in the file in terms of bytes */
       uint8       mask_buf[NBIT_MASK_SIZE];     /* buffer to hold the bitmask */
       nbit_mask_info_t mask_info[NBIT_MASK_SIZE];   /* information about the mask */
       intn        nt_pos;       /* current byte to read or write */

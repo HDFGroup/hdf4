@@ -217,7 +217,7 @@ nd2first(void)
 FRETVAL(intf)
 nd2lref(void)
 {
-    return (DFGRIlastref());
+    return ((intf)DFGRIlastref());
 }
 
 /*-----------------------------------------------------------------------------

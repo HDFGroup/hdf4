@@ -312,17 +312,14 @@ nafwriteann(intf *ann_id,_fcd ann, intf *annlen)
 #endif /* LATER */
 
     char       *iann = NULL;
-    int32       cstr_len = 0;
     intf        status;
 
     /* Convert fortran string to C-String */
     iann = HDf2cstring(ann, (intn) *annlen);
     if (!iann)
         return(FAIL);
-    cstr_len = HDstrlen(iann); /* length of C-string */
 
-    status = ANwriteann((int32)*ann_id, (char *) _fcdtocp(ann), 
-                        (int32)*annlen);
+    status = ANwriteann((int32)*ann_id, (char *) _fcdtocp(ann), (int32)*annlen);
 
     HDfree(iann); /* free allocaed space by HDf2cstring */
 

@@ -293,7 +293,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
                 HGOTO_ERROR(DFE_READERROR, FAIL);
           if (HI_SEEK(file_external, offset) == FAIL)
                 HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-          if (HI_WRITE(file_external, buf, data_len) == FAIL)
+          if (HI_WRITE(file_external, buf, (int)data_len) == FAIL)
                 HGOTO_ERROR(DFE_WRITEERROR, FAIL);
           info->length = data_len;
       }
@@ -309,7 +309,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
       HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* Getting ready to write out special info struct */
-    info->length_file_name = HDstrlen(extern_file_name);
+    info->length_file_name = (int32)HDstrlen(extern_file_name);
     {
         uint8      *p = local_ptbuf;
     
@@ -487,7 +487,7 @@ HXIstaccess(accrec_t * access_rec, int16 acc_mode)
     /* intialize the access record */
     access_rec->special = SPECIAL_EXT;
     access_rec->posn = 0;
-    access_rec->access = acc_mode|DFACC_READ;
+    access_rec->access = (uint32)(acc_mode|DFACC_READ);
 
     /* Get the data's offset & length */
     if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,NULL)==FAIL)
@@ -912,7 +912,7 @@ HXPinquire(accrec_t * access_rec, int32 *pfile_id, uint16 *ptag,
     if (paccess)
         *paccess = (int16)access_rec->access;
     if (pspecial)
-        *pspecial = access_rec->special;
+        *pspecial = (int16)access_rec->special;
 
 done:
   if(ret_value == FAIL)   
@@ -1125,7 +1125,7 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
     info->extern_file_name = (char *) HDstrdup(info_block->path);
     if (!info->extern_file_name)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    info->length_file_name = HDstrlen(info->extern_file_name);
+    info->length_file_name = (int32)HDstrlen(info->extern_file_name);
 
     /*
      * delete the existing tag / ref object
@@ -1333,7 +1333,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
     if (!(finalpath=HDmalloc(MAX_PATH_LEN)))
         HGOTO_ERROR(DFE_NOSPACE, NULL);
 
-    fname_len = HDstrlen(fname);
+    fname_len = (int)HDstrlen(fname);
     
     switch (acc_mode){
     case DFACC_CREATE: {			/* Creating a new external element */
@@ -1345,7 +1345,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
             /* try function variable */
             if (extcreatedir) {
-                path_len = HDstrlen(extcreatedir);
+                path_len = (int)HDstrlen(extcreatedir);
 
                 if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN )
                     HGOTO_ERROR(DFE_NOSPACE, NULL);
@@ -1355,7 +1355,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
 
             /* try Envrironment Variable */
             if (HDFEXTCREATEDIR) {
-                path_len = HDstrlen(HDFEXTCREATEDIR);
+                path_len = (int)HDstrlen(HDFEXTCREATEDIR);
 
                 if (fname_len + 1 + path_len + 1 > MAX_PATH_LEN )
                     HGOTO_ERROR(DFE_NOSPACE, NULL);
@@ -1384,7 +1384,7 @@ HXIbuildfilename(const char *ext_fname, const intn acc_mode)
             }
             /* stripe the pathname component */
             fname = HDstrrchr(fname, DIR_SEPC) + 1;
-            fname_len = HDstrlen(fname);
+            fname_len = (int)HDstrlen(fname);
 
             /* continue to Relative Pathname */
         }

@@ -78,7 +78,7 @@ hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr)
         ERREXIT1(cinfo_ptr, JERR_OUT_OF_MEMORY, (int)1);
 
     /* Create empty JPEG5/GREYJPEG5 tag/ref to indicate the image */
-    if((temp_aid=Hstartwrite(dest->file_id,dest->scheme,dest->ref,0))==FAIL)
+    if((temp_aid=Hstartwrite(dest->file_id,(uint16)dest->scheme,dest->ref,0))==FAIL)
         ERREXIT(cinfo_ptr, JERR_FILE_WRITE);
     Hendaccess(temp_aid);
 
@@ -127,7 +127,7 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
 {
     hdf_dest_ptr dest=(hdf_dest_ptr)cinfo_ptr->dest;
     /* note that 'free_in_buffer' is size_t in the jpeg library */
-    int32 datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
+    int32 datacount = (int32)OUTPUT_BUF_SIZE - (int32)dest->pub.free_in_buffer;
 
     /* Write any data remaining in the buffer */
     if (datacount > 0) {
@@ -259,8 +259,8 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     jpeg_HDF_dest(cinfo_ptr,file_id,tag,ref,image,xdim,ydim,scheme);
 
     /* Set up default JPEG parameters in the cinfo data structure. */
-    cinfo_ptr->image_width=xdim;
-    cinfo_ptr->image_height=ydim;
+    cinfo_ptr->image_width=(JDIMENSION)xdim;
+    cinfo_ptr->image_height=(JDIMENSION)ydim;
     if((uint16)scheme==DFTAG_JPEG5) /* 24-bit image */
       {
         cinfo_ptr->input_components=3;
@@ -287,7 +287,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     /* write the whole image out at once */
     while (cinfo_ptr->next_scanline < cinfo_ptr->image_height)
       {
-        row_pointer[0]=&image_buffer[cinfo_ptr->next_scanline * row_stride];
+        row_pointer[0]=&image_buffer[(size_t)cinfo_ptr->next_scanline * (size_t)row_stride];
         jpeg_write_scanlines(cinfo_ptr,row_pointer,1);
       } /* end while */
 

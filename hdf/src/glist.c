@@ -283,7 +283,7 @@ return ret_value;
 *******************************************************************************/
 intn
 HDGLinitialize_sorted_list(Generic_list *list, 
-                       intn (*lt)(VOIDP a, VOIDP b))
+                       intn (*lt)(VOIDP /* a */, VOIDP /* b */))
 {
     intn ret_value = SUCCEED;
 
@@ -847,7 +847,7 @@ HDGLreset_to_end(Generic_list list)
 intn
 HDGLnum_of_objects(Generic_list list)
 {
-    return list.info->num_of_elements;
+    return (intn)list.info->num_of_elements;
 } /* HDGLnum_of_objects() */
 
 /******************************************************************************
@@ -951,7 +951,7 @@ done:
 *******************************************************************************/
 void
 HDGLperform_on_list(Generic_list list, 
-                void (*fn)(VOIDP pointer, VOIDP args),
+                void (*fn)(VOIDP /* pointer */, VOIDP /* args */),
                 VOIDP args)
 {
     Generic_list_element *element;
@@ -978,7 +978,7 @@ HDGLperform_on_list(Generic_list list,
 *******************************************************************************/
 VOIDP
 HDGLfirst_that(Generic_list list, 
-           intn (*fn)(VOIDP pointer, VOIDP args), 
+           intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
            VOIDP args)
 {
     Generic_list_element *element;
@@ -1011,7 +1011,7 @@ HDGLfirst_that(Generic_list list,
 *******************************************************************************/
 VOIDP
 HDGLnext_that(Generic_list list, 
-          intn (*fn)(VOIDP pointer, VOIDP args), 
+          intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
           VOIDP args)
 {
     Generic_list_element *element;
@@ -1044,7 +1044,7 @@ HDGLnext_that(Generic_list list,
 *******************************************************************************/
 VOIDP
 HDGLprevious_that(Generic_list list, 
-              intn (*fn)(VOIDP pointer, VOIDP args), 
+              intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
               VOIDP args)
 {
     Generic_list_element *element;
@@ -1076,7 +1076,7 @@ HDGLprevious_that(Generic_list list,
 *******************************************************************************/
 VOIDP
 HDGLlast_that(Generic_list list, 
-          intn (*fn)(VOIDP pointer, VOIDP args), 
+          intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
           VOIDP args)
 {
     Generic_list_element *element;
@@ -1108,7 +1108,7 @@ HDGLlast_that(Generic_list list,
 *******************************************************************************/
 Generic_list
 HDGLall_such_that(Generic_list list, 
-              intn (*fn)(VOIDP pointer, VOIDP args), 
+              intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
               VOIDP args)
 {
     Generic_list list_copy;
@@ -1166,7 +1166,7 @@ done:
 *******************************************************************************/
 void
 HDGLremove_all_such_that(Generic_list list, 
-                     intn (*fn)(VOIDP pointer, VOIDP args), 
+                     intn (*fn)(VOIDP /* pointer */, VOIDP /* args */), 
                      VOIDP args)
 {
     VOIDP obj;

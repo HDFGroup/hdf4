@@ -135,7 +135,7 @@ ndaclear(void)
  *          fnlen: length of filename
  * Returns: length of annotation on success, -1 on failure with DFerror set
  * Users:   HDF HLL users, utilities, other routines
- * Invokes: DFANIgetannlen, HDf2cstring, DFIgetspace, DFIfreespace
+ * Invokes: DFANIgetannlen, HDf2cstring, DFIfreespace
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
@@ -249,7 +249,7 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
     /* create reflist with true uint16s to maintain compatibility
        ** with machines that allocate more than 16 bits per uint16.
      */
-    tempreflist = (uint16 *) DFIgetspace((int32) (*listsize) * sizeof(uint16));
+    tempreflist = (uint16 *) HDmalloc((size_t) (*listsize) * sizeof(uint16));
     /* 1 for isfortran */
     nrefs = DFANIlablist(fn, (uint16) *tag, tempreflist,
                          (uint8 *) _fcdtocp(labellist),
@@ -259,7 +259,7 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
 
     /* move ref numbers into caller's reflist */
     for (i = 0; i < *listsize; i++)
-        reflist[i] = tempreflist[i];
+        reflist[i] = (intf)tempreflist[i];
 
     HDfree((VOIDP) fn);
     HDfree((VOIDP) tempreflist);
@@ -281,7 +281,7 @@ ndailist(_fcd filename, intf * tag, intf reflist[], _fcd labellist,
 FRETVAL(intf)
 ndalref(void)
 {
-    return (DFANlastref());
+    return ((intf)DFANlastref());
 }
 
 /*-----------------------------------------------------------------------------
@@ -298,7 +298,7 @@ ndalref(void)
 FRETVAL(intf)
 ndfanlastref(void)
 {
-    return (DFANlastref());
+    return ((intf)DFANlastref());
 }
 
 /*---------------------------------------------------------------------------

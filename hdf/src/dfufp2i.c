@@ -219,7 +219,7 @@ process(Input * in, Output * out)
         in->vscale = (float32 *) HDmalloc((uint32) (1 + in->vdim) * sizeof(float32));
     out->hres = (out->hres <= in->hdim) ? in->hdim : out->hres;
     out->vres = (out->vres <= in->vdim) ? in->vdim : out->vres;
-    out->image = (uint8 *) HDmalloc((uint32) out->hres * out->vres);
+    out->image = (uint8 *) HDmalloc((size_t) out->hres * (size_t)out->vres);
 
     /*
        *  if necessary, generate x and y scales
@@ -244,7 +244,7 @@ process(Input * in, Output * out)
     /*    printoutput(out); *//* for debugging */
 
     ret = DFR8addimage(out->outfile, (char *) out->image,
-                       out->hres, out->vres, (int16) out->compress);
+                       out->hres, out->vres, (uint16) out->compress);
     if (ret < 0)
         return ret;
     /*
@@ -400,25 +400,25 @@ convert_interp(Input * in, Output * out)
     range = in->max - in->min;
     xrange = *(in->hscale + in->hdim - 1) - *in->hscale;
     yrange = *(in->vscale + in->vdim - 1) - *in->vscale;
-    delx = xrange / out->hres;  /* x axis increment in image */
-    dely = yrange / out->vres;  /* y axis increment in image */
+    delx = xrange / (float32)out->hres;  /* x axis increment in image */
+    dely = yrange / (float32)out->vres;  /* y axis increment in image */
 
-    dxs = (float32 *) HDmalloc((uint32) sizeof(float32) * out->hres);
+    dxs = (float32 *) HDmalloc(sizeof(float32) * (size_t)out->hres);
     /* temp space for dx's */
-    dys = (float32 *) HDmalloc((uint32) sizeof(float32) * out->vres);
+    dys = (float32 *) HDmalloc(sizeof(float32) * (size_t)out->vres);
     /* temp space for dy's */
-    xinc = (uint8 *) HDmalloc((uint32) out->hres);
-    yoffs = (int32 *) HDmalloc((uint32) (out->vres + 1) * sizeof(int32));
+    xinc = (uint8 *) HDmalloc((size_t) out->hres);
+    yoffs = (int32 *) HDmalloc((size_t) (out->vres + 1) * sizeof(int32));
     yoffs[0] = 0;
 
-    if (range < 0)
+    if (range < (float32)0.0)
         range = -range;     /* max must be > min */
 
     f = dys;    /* beginning of dys to fill in */
     yv = in->vscale;    /* beginning and end of yvals */
     lim = in->vscale + in->vdim - 2;
 
-    if (yrange > 0)
+    if (yrange > (float32)0.0)
       {
           for (i = 0; i < out->vres; i++)
             {   /* fill in dy's */
@@ -457,7 +457,7 @@ convert_interp(Input * in, Output * out)
     xv = in->hscale;    /* beginning and end of xvals */
     lim = in->hscale + in->hdim - 2;
 
-    if (xrange > 0)
+    if (xrange > (float32)0.0)
       {
           for (i = 0; i < out->hres; i++)
             {   /* fill in dx's */
@@ -511,15 +511,15 @@ convert_interp(Input * in, Output * out)
           for (j = 0; j < (int) (out->hres); j++, xv++)
             {   /* for each target point */
 
-                z1 += xinc[j];  /* xinc == 0 when we don't need to shift */
-                z2 += xinc[j];
-                z3 += xinc[j];
-                z4 += xinc[j];
+                z1 += (size_t)xinc[j];  /* xinc == 0 when we don't need to shift */
+                z2 += (size_t)xinc[j];
+                z3 += (size_t)xinc[j];
+                z4 += (size_t)xinc[j];
 
                 z = (*z1 - *z3 - *z2 + *z4) * (*xv) * zy +  /* weighted sum */
                     (*z3 - *z4) * (*xv) + (*z2 - *z4) * zy + *z4;
 
-                theval = (int) (1.0 + 237.9 * (z - in->min) / range);   /* scaled value  */
+                theval = (int) ((float32)1.0 + (float32)237.9 * (z - in->min) / range);   /* scaled value  */
                 if (theval >= 240 || theval < 1)
                     *p++ = 0;
                 else
@@ -572,7 +572,7 @@ pixrep_scaled(Input * in, Output * out)
     image = (uint8 *) out->image;   /* space for image */
 
     range = in->max - in->min;
-    if (range < 0)
+    if (range < (float32)0.0)
         range = -range;     /* max must be > min */
 
     hoffsets = (int32 *) HDmalloc((uint32) (out->hres + 1) * sizeof(int32));
@@ -592,7 +592,7 @@ pixrep_scaled(Input * in, Output * out)
 
                 for (j = 0; j < in->hdim; j++)
                   {     /* compute vals for each data point */
-                      theval = (int) (1.5 + ratio * (*data++ - in->min));
+                      theval = (int) ((float32)1.5 + ratio * (*data++ - in->min));
                       if (theval >= 240 || theval < 1)
                           theval = 0;
                       pixvals[j] = (uint8) theval;
@@ -642,7 +642,7 @@ compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
     int32       i, j;
     float32    *midpt, pt, delta;
 
-    midpt = (float32 *) HDmalloc((uint32) sizeof(float32) * dim);
+    midpt = (float32 *) HDmalloc(sizeof(float32) * (size_t)dim);
 
     for (i = 0; i < dim - 1; i++)
       {     /* compute all midpoints */
@@ -651,7 +651,7 @@ compute_offsets(float32 *scale, int32 dim, int32 *offsets, int32 res)
       }
     midpt[i] = scale[i] + scale[i] - midpt[i - 1];  /* tack one onto end */
 
-    delta = (*(scale + dim - 1) - *scale) / (res - 1);  /* amt of change along scale */
+    delta = (*(scale + dim - 1) - *scale) / (float32)(res - 1);  /* amt of change along scale */
     /* per pixel position */
     offsets[0] = 0;
     pt = *scale;    /* base point has value of 1st scale item */
@@ -697,8 +697,8 @@ pixrep_simple(Input * in, Output * out)
     image = (uint8 *) out->image;
     in_buf = in->data;
 
-    delh = ((float32) out->hres) / in->hdim;    /* horiz block size */
-    delv = ((float32) out->vres) / in->vdim;    /* vert block size  */
+    delh = ((float32) out->hres) / (float32)in->hdim;    /* horiz block size */
+    delv = ((float32) out->vres) / (float32)in->vdim;    /* vert block size  */
 
 /*
    * Compute expanded image
@@ -717,7 +717,7 @@ pixrep_simple(Input * in, Output * out)
             {
 
                 raster_val = (uint8)
-                    (1.5 + ratio * (float32) (*in_row_ptr++ - in->min));
+                    ((float32)1.5 + ratio * (float32) (*in_row_ptr++ - in->min));
                 *image++ = raster_val;
 
                 for (; j < (int32) hblockend - 1; j++)  /* store vals for this blk of this row */

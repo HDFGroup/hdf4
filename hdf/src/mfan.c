@@ -205,6 +205,9 @@ ANIfidcmp(VOIDP i,   /* IN: annotation interfaced id (int32) */
           VOIDP j,   /* IN: annotation interfaced id (int32) */
           intn value)
 {
+    /* shut compiler up */
+    value=value;
+
     if (*(int32 *)i == *(int32 *)j) 
         return 0;
     if (*(int32 *)i > *(int32 *)j) 
@@ -232,6 +235,9 @@ ANIanncmp(VOIDP i,   /* IN: annotation key(tag,ref) */
           VOIDP j,   /* IN: annotation key(tag,ref) */
           intn value)
 {
+    /* shut compiler up */
+    value=value;
+
     if (*(int32 *)i == *(int32 *)j) 
         return 0;
     if (*(int32 *)i > *(int32 *)j) 
@@ -1470,7 +1476,6 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
 {
     CONSTR(FUNC, "ANstart");
     int32  *an_id    = NULL;
-    TBBT_NODE *entry = NULL;
     ANfile *file_entry = NULL;
     int32   ret_value = SUCCEED;
 
@@ -1491,7 +1496,7 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
         ANinit();
 
     /* Check to see if this file_id is already in file tree */
-    if ((entry = tbbtdfind(ANfilelist, &an_id, NULL)) == NULL)
+    if (tbbtdfind(ANfilelist, &an_id, NULL) == NULL)
       { /* file is not in file tree so create a new entry */
 
           /* allocate space for file handle */
@@ -2233,6 +2238,9 @@ ANendaccess(int32 ann_id /* IN: annotation id */)
 #ifdef HAVE_PABLO
     TRACE_OFF(AN_mask, ID_ANendaccess);
 #endif /* HAVE_PABLO */
+
+    /* shut compiler up */
+    ann_id=ann_id;
 
     return ret_value;
 } /* ANendaccess() */

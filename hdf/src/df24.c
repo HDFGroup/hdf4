@@ -502,15 +502,16 @@ DF24nimages(const char *filename)
             {     /* just look for ID tags to get the number of components */
               if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
                 {
+                  uint16      uint16var;
                   int32       temp;   /* temporary holding variable */
-                  int32       ncomponents;    /* number of image components */
+                  int16       ncomponents;    /* number of image components */
                   uint8      *p;
 
                   p = GRtbuf;
                   INT32DECODE(p, temp);
                   INT32DECODE(p, temp);
-                  UINT16DECODE(p, temp);
-                  UINT16DECODE(p, temp);
+                  UINT16DECODE(p, uint16var);
+                  UINT16DECODE(p, uint16var);
                   INT16DECODE(p, ncomponents);
                   if (ncomponents == 3)   /* whew, all that work and we finally found a 24-bit image */
                     nimages++;

@@ -312,7 +312,7 @@ DFGRsetcompress(int32 scheme, comp_info * cinfo)
     if (scheme == COMP_JPEG)
         Grcompr = DFTAG_JPEG5;   /* Set the compression scheme */
     else    /* otherwise, just use mapped tag */
-        Grcompr = compress_map[scheme];
+        Grcompr = (intn)compress_map[scheme];
     Grcinfo = (*cinfo);     /* Set the compression parameters */
 
 done:
@@ -549,6 +549,7 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                     type = (elt_tag == DFTAG_LD) ? LUT : IMAGE;
                     if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
                       {
+                          int16       int16var;
                           uint8      *p;
 
                           p = GRtbuf;
@@ -556,8 +557,10 @@ DFGRgetrig(int32 file_id, uint16 ref, DFGRrig * rig)
                           INT32DECODE(p, rig->datadesc[type].ydim);
                           UINT16DECODE(p, rig->datadesc[type].nt.tag);
                           UINT16DECODE(p, rig->datadesc[type].nt.ref);
-                          INT16DECODE(p, rig->datadesc[type].ncomponents);
-                          INT16DECODE(p, rig->datadesc[type].interlace);
+                          INT16DECODE(p, int16var);
+                          rig->datadesc[type].ncomponents=(intn)int16var;
+                          INT16DECODE(p, int16var);
+                          rig->datadesc[type].interlace=(intn)int16var;
                           UINT16DECODE(p, rig->datadesc[type].compr.tag);
                           UINT16DECODE(p, rig->datadesc[type].compr.ref);
                       }
@@ -634,7 +637,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig * rig)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
           rig->datadesc[IMAGE].nt.tag = DFTAG_NT;
           rig->datadesc[IMAGE].nt.ref = ref;
-          Ref.nt = ref;
+          Ref.nt = (intn)ref;
       }
 
     if (Ref.dims[IMAGE] == 0)
@@ -655,7 +658,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig * rig)
                           GRtbuf, (int32) (p - GRtbuf)) == FAIL)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
 
-          Ref.dims[IMAGE] = ref;
+          Ref.dims[IMAGE] = (int16)ref;
       }
     if (!Ref.lut)
       {     /* associated lut not written to this file */
@@ -668,7 +671,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig * rig)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
           rig->data[LUT].tag = DFTAG_LUT;
           rig->data[LUT].ref = ref;
-          Ref.lut = ref;
+          Ref.lut = (intn)ref;
       }
 
     if (Ref.dims[LUT] == 0)
@@ -686,7 +689,7 @@ DFGRaddrig(int32 file_id, uint16 ref, DFGRrig * rig)
           if (Hputelement(file_id, DFTAG_LD, ref,
                           GRtbuf, (int32) (p - GRtbuf)) == FAIL)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
-          Ref.dims[LUT] = ref;
+          Ref.dims[LUT] = (int16)ref;
       }
 
     /* prepare to start writing rig */
@@ -814,7 +817,7 @@ DFGRIriginfo(int32 file_id)
 {
     CONSTR(FUNC, "DFGRIriginfo");
     int         i, isfirst;
-    uint16      newref = 0, newtag = 0, gettag, getref, ref, dummy;
+    uint16      newref = 0, newtag = 0, gettag, getref, ref=0, dummy=0;
     struct
       {
           uint16      xdim;
@@ -886,6 +889,8 @@ DFGRIriginfo(int32 file_id)
       }
     else
       {
+          uint16    uint16var;
+
           Grread.data[IMAGE].ref = newref;
           Grread.data[IMAGE].tag = newtag;
           if (newtag == DFTAG_CI8)
@@ -896,8 +901,10 @@ DFGRIriginfo(int32 file_id)
           if (Hgetelement(file_id, DFTAG_ID8, newref, (uint8 *) &r8dims) == FAIL)
               HGOTO_ERROR(DFE_GETELEM, FAIL);
           p = (char *) &r8dims;
-          UINT16DECODE(p, Grread.datadesc[IMAGE].xdim);
-          UINT16DECODE(p, Grread.datadesc[IMAGE].ydim);
+          UINT16DECODE(p, uint16var);
+          Grread.datadesc[IMAGE].xdim=(int32)uint16var;
+          UINT16DECODE(p, uint16var);
+          Grread.datadesc[IMAGE].ydim=(int32)uint16var;
 
           aid = Hstartread(file_id, DFTAG_IP8, newref);
           if (aid != FAIL)
@@ -1501,7 +1508,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
       {
           if (Hputelement(file_id, DFTAG_LUT, wref, newlut, lutsize) == FAIL)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
-          Ref.lut = wref;
+          Ref.lut = (intn)wref;
       }
 
     if (( rigref = Htagnewref(file_id,DFTAG_RIG))==0)

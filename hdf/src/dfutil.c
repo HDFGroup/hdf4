@@ -55,7 +55,7 @@ uint16
 DFfindnextref(int32 file_id, uint16 tag, uint16 lref)
 {
     CONSTR(FUNC, "DFfindnextref");
-    uint16      newtag, newref;
+    uint16      newtag=DFTAG_NULL, newref=DFTAG_NULL;
     int32       aid;
 
     HEclear();

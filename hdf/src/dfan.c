@@ -876,7 +876,7 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
     /* Perform global, one-time initialization */
     if (library_terminate == FALSE)
         if(DFANIstart()==FAIL)
-            HGOTO_ERROR(DFE_CANTINIT, FAIL);
+            HGOTO_ERROR(DFE_CANTINIT, (uint16)FAIL);
 
   anntag = (uint16) ((type == DFAN_LABEL) ? DFTAG_DIL : DFTAG_DIA);
 
@@ -890,7 +890,7 @@ DFANIlocate(int32 file_id, int type, uint16 tag, uint16 ref)
       /* allocate directory space.  Note head struct includes 1 entry */
       DFANdir[type] = (DFANdirhead *)
         HDmalloc(((uint32) sizeof(DFANdirhead) +
-                  (nanns - 1) * sizeof(DFANdirentry)));
+                  (size_t)(nanns - 1) * sizeof(DFANdirentry)));
       if (DFANdir[type] == NULL)
         HGOTO_ERROR(DFE_NOSPACE, 0);
       DFANdir[type]->next = NULL;
@@ -1373,7 +1373,7 @@ DFANIlablist(const char *filename, uint16 tag, uint16 reflist[],
   int32       i;
   int         j, k;
   int32       file_id, aid, len;
-  uint16      ref;
+  uint16      ref=0;
   DFANdirhead *p;
   uint8      *lp;             /* pointer to label */
   intn        nrefs, nlabs;

@@ -407,7 +407,7 @@ DFKsetNT(int32 ntype)
               g_ntype = DFNT_CUSTOM;
               break;
           default:
-              HRETURN_ERROR(DFE_BADCONV,FAIL);
+              HRETURN_ERROR(DFE_BADCONV,FAIL)
       }
   return 0;
 }
@@ -418,10 +418,10 @@ DFKsetNT(int32 ntype)
  *****************************************************************************/
 int
 DFKsetcustom(
-  int         (*DFKcustin) (VOIDP source, VOIDP dest, uint32 num_elm,
-                                 uint32 source_stride, uint32 dest_stride),
- int         (*DFKcustout) (VOIDP source, VOIDP dest, uint32 num_elm,
-                                   uint32 source_stride, uint32 dest_stride)
+  int         (*DFKcustin) (VOIDP /* source */, VOIDP /* dest */, uint32 /* num_elm */,
+                                 uint32 /* source_stride */, uint32 /* dest_stride */),
+ int         (*DFKcustout) (VOIDP /* source */, VOIDP /* dest */, uint32 /* num_elm */,
+                                   uint32 /* source_stride */, uint32 /* dest_stride */)
 )
 {
     DFKnumin = DFKcustin;
@@ -500,7 +500,7 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype,
           return 0;
       }
 
-    num_elm = size / 4;
+    num_elm = (uint32)size / 4;
 
 /* Check to see if they want to covert numbers in from the disk */
     if (sourcetype == DFNTF_IEEE && (desttype == DFNTF_VAX ||

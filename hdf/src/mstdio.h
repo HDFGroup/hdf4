@@ -67,7 +67,7 @@ extern      "C"
 /* model information about stdio model */
 typedef struct
 {
-    uint32      pos;            /* postion ? */
+    int32      pos;            /* postion ? */
 }
 comp_model_stdio_info_t;
 

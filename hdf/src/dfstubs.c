@@ -125,7 +125,7 @@ DFopen(char *name, int acc_mode, int ndds)
 
     if (DFid == -1)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (NULL);
       }
     else
@@ -190,8 +190,7 @@ DFclose(DF * dfile)
       }
     else
       {
-HEprint(stderr,0);
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
       }
 
     return (ret);
@@ -235,7 +234,7 @@ DFdescriptors(DF * dfile, DFdesc ptr[], int begin, int num)
 
     if (aid == FAIL)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
 
@@ -245,7 +244,7 @@ DFdescriptors(DF * dfile, DFdesc ptr[], int begin, int num)
           if (ret == FAIL)
             {
                 Hendaccess(aid);
-                DFerror = HEvalue(1);
+                DFerror = (int)HEvalue(1);
                 return (-1);
             }
       }
@@ -485,7 +484,7 @@ DFaccess(DF * dfile, uint16 tag, uint16 ref, char *acc_mode)
               if (DFelsize <= 0)
                 {
                     DFIclearacc();
-                    DFerror = HEvalue(1);
+                    DFerror = (int)HEvalue(1);
                     return (-1);
                 }
               /* test
@@ -522,7 +521,7 @@ DFaccess(DF * dfile, uint16 tag, uint16 ref, char *acc_mode)
               if (DFelsize == FAIL)
                 {
                     DFIclearacc();
-                    DFerror = HEvalue(1);
+                    DFerror = (int)HEvalue(1);
                     return (-1);
                 }
               DFelseekpos = DFelsize;
@@ -607,7 +606,7 @@ DFread(DF * dfile, char *ptr, int32 len)
     if (ret == FAIL)
       {
           Hendaccess(DFaid);
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
 
@@ -616,7 +615,7 @@ DFread(DF * dfile, char *ptr, int32 len)
 
     if (ret == FAIL)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
     else
@@ -667,7 +666,7 @@ DFseek(DF * dfile, int32 offset)
           ret = Hseek(DFaid, offset, DF_START);
           if (ret == FAIL)
             {
-                DFerror = HEvalue(1);
+                DFerror = (int)HEvalue(1);
                 return (-1);
             }
           DFelseekpos = offset;
@@ -876,7 +875,7 @@ DFgetelement(DF * dfile, uint16 tag, uint16 ref, char *ptr)
 
     if (Hgetelement(DFid, tag, ref, (unsigned char *) ptr) == -1)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
     else
@@ -923,7 +922,7 @@ DFputelement(DF * dfile, uint16 tag, uint16 ref, char *ptr, int32 len)
 
     if (Hputelement(DFid, tag, ref, (unsigned char *) ptr, len) == FAIL)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
     else
@@ -962,7 +961,7 @@ DFdup(DF * dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref)
 
     if (Hdupdd(DFid, itag, iref, otag, oref) != SUCCEED)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
     else
@@ -1000,7 +999,7 @@ DFdel(DF * dfile, uint16 tag, uint16 ref)
 
     if (Hdeldd(DFid, tag, ref) != 0)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
     else
@@ -1038,7 +1037,7 @@ DFnewref(DF * dfile)
     ret = Hnewref(DFid);
     if (ret == 0xffff)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (0);
       }
 
@@ -1070,7 +1069,7 @@ DFishdf(char *filename)
     dummy = Hopen(filename, DFACC_READ, 0);
     if (dummy == -1)
       {
-          DFerror = HEvalue(1);
+          DFerror = (int)HEvalue(1);
           return (-1);
       }
     else
@@ -1450,7 +1449,7 @@ DFIgetspace(uint32 qty)
     void       *ret;
 
     ret = (void *) HDmalloc(qty);
-    DFerror = HEvalue(1);
+    DFerror = (int)HEvalue(1);
     return (ret);
 }
 

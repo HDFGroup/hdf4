@@ -91,7 +91,7 @@ HEstring(hdf_err_code_t error_code)
 #endif /* HAVE_PABLO */
 
     /* look for the error_code in error message table */
-    for (i = 0; i < ERRMESG_SZ; i++)
+    for (i = 0; i < (int)ERRMESG_SZ; i++)
         if (error_messages[i].error_code == error_code)
           {
 #ifdef HAVE_PABLO

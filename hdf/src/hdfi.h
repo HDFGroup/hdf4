@@ -1105,7 +1105,7 @@ correctly.
 { (i) = ((uint32)(*(p) & 0xff) << 24); (p)++; \
         (i) |= ((uint32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((uint32)(*(p) & 0xff) << 8); (p)++; \
-        (i) |= (*(p) & 0xff); (p)++; }
+        (i) |= (uint32)(*(p) & 0xff); (p)++; }
 
 /* Note! the NBYTEDECODE macro is backwards from the memcpy() routine, */
 /*      in the spirit of the other DECODE macros */
@@ -1229,7 +1229,7 @@ extern int (*DFKnumout)(void * source, void * dest, uint32 num_elm,
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* non-standard function, not defined on the following mahcines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined __SUNPRO_C)
+#if !(defined VMS || defined macintosh || defined MAC || defined __MWERKS__ || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | etc..) */
 

@@ -156,7 +156,7 @@ printf("%s: c=%u\n",FUNC,(unsigned)c);
                   {     /* run byte */
                       rle_info->rle_state = RLE_RUN;    /* set to run state */
                       rle_info->buf_length = (c & COUNT_MASK) + RLE_MIN_RUN;    /* run length */
-                      if ((rle_info->last_byte = HDgetc(info->aid)) == (uintn)FAIL)
+                      if ((rle_info->last_byte = (uintn)HDgetc(info->aid)) == (uintn)FAIL)
                           HRETURN_ERROR(DFE_READERROR, FAIL);
                   }     /* end if */
                 else
@@ -171,7 +171,7 @@ printf("%s: c=%u\n",FUNC,(unsigned)c);
 
             /* RUN or MIX states */
             if (length > rle_info->buf_length)  /* still need more data */
-                dec_len = rle_info->buf_length;
+                dec_len = (uintn)rle_info->buf_length;
             else    /* only grab "length" bytes */
                 dec_len = (uintn) length;
 
@@ -180,13 +180,13 @@ printf("%s: c=%u\n",FUNC,(unsigned)c);
             else
               {
                   HDmemcpy(buf, &(rle_info->buffer[rle_info->buf_pos]), dec_len);
-                  rle_info->buf_pos += dec_len;
+                  rle_info->buf_pos += (intn)dec_len;
               }     /* end else */
 
-            rle_info->buf_length -= dec_len;
+            rle_info->buf_length -= (intn)dec_len;
             if (rle_info->buf_length <= 0)  /* check for running out of bytes */
                 rle_info->rle_state = RLE_INIT;     /* get the next status byte */
-            length -= dec_len;  /* decrement the bytes to get */
+            length -= (int32)dec_len;  /* decrement the bytes to get */
             buf += dec_len;     /* in case we need more bytes */
       }     /* end while */
 
@@ -238,7 +238,7 @@ printf("length=%ld, state=%d, *buf=%u\n",(long)length, (int)rle_info->rle_state,
 printf("%s: RLE_INIT state\n",FUNC);
 #endif /* QAK */
                     rle_info->rle_state = RLE_MIX;  /* shift to MIX state */
-                    rle_info->last_byte = rle_info->buffer[0] = *buf;
+                    rle_info->last_byte = (uintn)(rle_info->buffer[0] = *buf);
                     rle_info->buf_length = 1;
                     rle_info->buf_pos = 1;
                     buf++;
@@ -250,7 +250,7 @@ printf("%s: RLE_INIT state\n",FUNC);
 printf("%s: RLE_RUN state\n",FUNC);
 #endif /* QAK */
                     /* check for end of run */
-                    if (*buf != rle_info->last_byte)
+                    if ((uintn)*buf != rle_info->last_byte)
                       {
                           rle_info->rle_state = RLE_MIX;
                           c = RUN_MASK | (rle_info->buf_length - RLE_MIN_RUN);
@@ -258,7 +258,7 @@ printf("%s: RLE_RUN state\n",FUNC);
                               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
                           if (HDputc((uint8) rle_info->last_byte, info->aid) == FAIL)
                               HRETURN_ERROR(DFE_WRITEERROR, FAIL);
-                          rle_info->last_byte = rle_info->buffer[0] = *buf;
+                          rle_info->last_byte = (uintn)(rle_info->buffer[0] = *buf);
                           rle_info->buf_length = 1;
                           rle_info->buf_pos = 1;
                       }     /* end if */
@@ -285,7 +285,7 @@ printf("%s: RLE_RUN state\n",FUNC);
 #ifdef QAK
 printf("%s: RLE_MIX state\n",FUNC);
 #endif /* QAK */
-                    if (*buf == rle_info->last_byte && *buf == rle_info->second_byte)
+                    if ((uintn)*buf == rle_info->last_byte && (uintn)*buf == rle_info->second_byte)
                       {
                           rle_info->rle_state = RLE_RUN;    /* shift to RUN state */
                           if (rle_info->buf_length > (RLE_MIN_RUN - 1))
@@ -300,7 +300,7 @@ printf("%s: RLE_MIX state\n",FUNC);
                     else
                       {     /* continue MIX */
                           rle_info->second_byte = rle_info->last_byte;
-                          rle_info->last_byte = rle_info->buffer[rle_info->buf_pos] = *buf;
+                          rle_info->last_byte = (uintn)(rle_info->buffer[rle_info->buf_pos] = *buf);
                           rle_info->buf_length++;
                           rle_info->buf_pos++;
                           if (rle_info->buf_length >= RLE_BUF_SIZE)
@@ -321,7 +321,7 @@ printf("%s: RLE_MIX state\n",FUNC);
 #ifdef QAK
 printf("%s: bad state!\n",FUNC);
 #endif /* QAK */
-                    HRETURN_ERROR(DFE_INTERNAL, FAIL);
+                    HRETURN_ERROR(DFE_INTERNAL, FAIL)
             }   /* end switch */
       }     /* end while */
 
@@ -387,7 +387,7 @@ printf("%s: check 1\n",FUNC);
               break;
 
           default:
-              HRETURN_ERROR(DFE_INTERNAL, FAIL);
+              HRETURN_ERROR(DFE_INTERNAL, FAIL)
       }     /* end switch */
     rle_info->rle_state = RLE_INIT;
     rle_info->second_byte = rle_info->last_byte = (uintn) RLE_NIL;
@@ -563,13 +563,13 @@ HCPcrle_seek(accrec_t * access_rec, int32 offset, int origin)
         if (HCIcrle_decode(info, TMP_BUF_SIZE, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
-              HRETURN_ERROR(DFE_CDECODE, FAIL);
+              HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
     if (rle_info->offset < offset)  /* grab the last chunk */
         if (HCIcrle_decode(info, offset - rle_info->offset, tmp_buf) == FAIL)
           {
               HDfree(tmp_buf);
-              HRETURN_ERROR(DFE_CDECODE, FAIL);
+              HRETURN_ERROR(DFE_CDECODE, FAIL)
           }     /* end if */
 
     HDfree(tmp_buf);
