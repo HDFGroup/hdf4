@@ -1966,8 +1966,63 @@ extern int32 ANreadann(int32 ann_id, uint8 *ann, int32 maxlen);
 
 extern intn  ANendaccess(int32 an_id);
 
+/* Multi-file Raster C-routines found in mfgr.c */
+extern int32 GRstart(int32 hdf_file_id);
+
+extern intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs);
+
+extern intn GRend(int32 grid);
+
+extern int32 GRselect(int32 grid,int32 index);
+
+extern int32 GRnametoindex(int32 grid,char *name);
+
+extern intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
+    int32 *dimsizes,int32 *n_attr);
+
+extern intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],
+    int32 count[2],VOIDP data);
+
+extern intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],
+    int32 count[2],VOIDP data);
+
+extern intn GRendaccess(int32 riid);
+
+extern uint16 GRidtoref(int32 riid);
+
+extern int32 GRreftoindex(int32 grid,uint16 ref);
+
+extern intn GRreqlutil(int32 riid,intn il);
+
+extern intn GRreqimageil(int32 riid,intn il);
+
+extern int32 GRgetlutid(int32 riid,int32 index);
+
+extern intn GRgetlutinfo(int32 riid,char *name,int32 *ncomp,int32 *nt,
+    int32 *il,int32 *nentries);
+
+extern intn GRwritelut(int32 riid,char *name,int32 ncomps,int32 nt,
+    int32 il,int32 nentries,VOIDP data);
+
+extern intn GRreadlut(int32 lutid,VOIDP data);
+
+extern intn GRsetexternalfile(int32 riid,char *filename,int32 offset);
+
+extern intn GRsetaccesstype(int32 riid,uintn accesstype);
+
+extern intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo);
+
+extern intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data);
+
+extern intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count);
+
+extern intn GRgetattr(int32 id,int32 index,VOIDP data);
+
+extern int32 GRfindattr(int32 id,char *name);
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif                          /* c_plusplus || __cplusplus */
 
 #endif                          /* _H_PROTO */
+

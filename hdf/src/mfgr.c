@@ -67,20 +67,20 @@ intn GRfileinfo(int32 grid, int32 *n_datasets, int32 *n_attrs)
 intn GRend(int32 grid)
     - Terminates multi-file GR access for a file.
 
-int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 *dimsizes)
+int32 GRcreate(int32 grid,char *name,int32 ncomp,int32 nt,int32 il,int32 dimsizes[2])
     - Defines a raster image in a file.  Returns a 'riid' to work with the new
         raster image.
 int32 GRselect(int32 grid,int32 index)
     - Selects an existing RI to operate on.
 int32 GRnametoindex(int32 grid,char *name)
     - Maps a RI name to an index which is returned.
-intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 *dimsizes,int32 *n_attr)
+intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 dimsizes[2],int32 *n_attr)
     - Gets information about an RI which has been selected/created.
-intn GRwriteimage(int32 riid,int32 *start,int32 *stride,int32 *edge,VOIDP data)
+intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
     - Writes image data to an RI.  Partial dataset writing and subsampling is
         allowed, but only with the dimensions of the dataset (ie. no UNLIMITED
         dimension support)
-intn GRreadimage(int32 riid,int32 *start,int32 *stride,int32 *edge,VOIDP data)
+intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
     - Read image data from an RI.  Partial reads and subsampling are allowed.
 intn GRendaccess(int32 riid)
     - End access to an RI.
@@ -1558,17 +1558,17 @@ int32 GRselect(int32 grid,int32 index)
     gr_idx=GRID2SLOT(grid);
     gr_ptr=gr_tab[gr_idx];
 
-    /* check the validity index range */
+    /* check the index range validity */
     if(index<0 || index>=gr_ptr->gr_count)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
         HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
-    ri_ptr=(ri_info_t *)t;
+    ri_ptr=(ri_info_t *)*t;
 
     ri_ptr->access++;
 
-    return(RISLOT2ID(gr_ptr->hdf_file_id,index));
+    return(RISLOT2ID(gr_idx,index));
 } /* end GRselect() */
 
 /*--------------------------------------------------------------------------
@@ -1622,3 +1622,1182 @@ int32 GRnametoindex(int32 grid,char *name)
     return(FAIL);
 } /* end GRnametoindex() */
 
+/*--------------------------------------------------------------------------
+ NAME
+    GRgetiminfo
+
+ PURPOSE
+    Gets information about a raster image.
+
+ USAGE
+    intn GRgetiminfo(riid,name,ncomp,nt,il,dimsizes,n_attr)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        char *name;         OUT: name of raster image
+        int32 *ncomp;       OUT: number of components in image
+        int32 *nt;          OUT: number type of components
+        int32 *il;          OUT: interlace of the image
+        int32 *dimsizes;    OUT: size of each dimension
+        int32 *n_attr;      OUT: the number of attributes for the image
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Looks up information about an image which has been selected or created
+    with the GR routines.  Each of the parameters can be NULL, in which case
+    that piece of information will not be retrieved.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
+    int32 *dimsizes,int32 *n_attr)
+{
+    CONSTR(FUNC, "GRgetiminfo");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+    if(name!=NULL)
+        HDstrcpy(name, ri_ptr->name);
+
+    if(ncomp!=NULL)
+        *ncomp=ri_ptr->img_dim.ncomps;
+
+    if(nt!=NULL)
+        *nt=ri_ptr->img_dim.nt;
+
+    if(il!=NULL)
+        *il=ri_ptr->img_dim.il;
+
+    if(dimsizes!=NULL)
+      {
+          dimsizes[0]=ri_ptr->img_dim.xdim;
+          dimsizes[1]=ri_ptr->img_dim.ydim;
+      } /* end if */
+
+    if(n_attr!=NULL)
+        *n_attr=ri_ptr->lattr_count;
+
+    return(SUCCEED);
+} /* end GRgetiminfo() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRwriteimage
+
+ PURPOSE
+    Writes raster data to an image
+
+ USAGE
+    intn GRwriteimage(riid,start,stride,edge,data)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        int32 start[2];     IN: array containing the offset in the image of the
+                                image data to write out
+        int32 stride[2];    IN: array containing interval of data being written
+                                along each edge.  strides of 0 are illegal
+                                (and generate an error)
+                                ie. stride of 1 in each dimension means
+                                writing contiguous data, stride of 2 means
+                                writing every other element out along an edge.
+        int32 count[2];     IN: number of elements to write out along each edge.
+        VOIDP data;         IN: pointer to the data to write out.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Writes image data to an RI.  Partial dataset writing and subsampling is
+        allowed, but only within the dimensions of the dataset (ie. no UNLIMITED
+        dimension support)
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    If the stride parameter is set to NULL, a stride of 1 will be assumed.
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
+{
+    CONSTR(FUNC, "GRwriteimage");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRwriteimage() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRreadimage
+
+ PURPOSE
+    Read raster data for an image
+
+ USAGE
+    intn GRreadimage(riid,start,stride,edge,data)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        int32 start[2];     IN: array containing the offset in the image of the
+                                image data to read in
+        int32 stride[2];    IN: array containing interval of data being read
+                                along each edge.  strides of 0 are illegal
+                                (and generate an error)
+                                ie. stride of 1 in each dimension means
+                                reading contiguous data, stride of 2 means
+                                reading every other element out along an edge.
+        int32 count[2];     IN: number of elements to read in along each edge.
+        VOIDP data;         IN: pointer to the data to read in.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Read image data from an RI.  Partial dataset reading and subsampling is
+        allowed.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    If the stride parameter is set to NULL, a stride of 1 will be assumed.
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRreadimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],VOIDP data)
+{
+    CONSTR(FUNC, "GRreadimage");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRreadimage() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRendaccess
+
+ PURPOSE
+    End access to an RI.
+
+ USAGE
+    intn GRendaccess(riid)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    End access to an RI.  Further attempts to access the RI ID will result in
+    an error.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRendaccess(int32 riid)
+{
+    CONSTR(FUNC, "GRendaccess");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRendaccess() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRidtoref
+
+ PURPOSE
+    Maps an RI ID to a reference # for annotating or including in a Vgroup.
+
+ USAGE
+    uint16 GRidtoref(riid)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+
+ RETURNS
+    A valid reference # on success or FAIL
+
+ DESCRIPTION
+    Maps an riid to a reference # for annotating or including in a Vgroup.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+uint16 GRidtoref(int32 riid)
+{
+    CONSTR(FUNC, "GRidtoref");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+    return(ri_ptr->ri_ref!=DFTAG_NULL ? ri_ptr->ri_ref : ri_ptr->rig_ref);
+} /* end GRidtoref() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRreftoindex
+
+ PURPOSE
+    Maps the reference # of an RI into an index which can be used with GRselect.
+
+ USAGE
+    int32 GRreftoindex(grid,ref)
+        int32 grid;         IN: GR ID from GRstart
+        uint16 ref;         IN: reference number of raster image to map to index
+
+ RETURNS
+    A valid index # on success or FAIL
+
+ DESCRIPTION
+    Maps the reference # of an RI into an index which can be used with GRselect.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+int32 GRreftoindex(int32 grid,uint16 ref)
+{
+    CONSTR(FUNC, "GRreftoindex");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(grid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=GRID2SLOT(grid);
+    gr_ptr=gr_tab[gr_idx];
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRreftoindex() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRreqlutil
+
+ PURPOSE
+    Request that the next LUT read from an RI have a particular interlace.
+
+ USAGE
+    intn GRreqlutil(riid,il)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        intn il;            IN: interlace for next LUT.  From the following
+                                values (found in mfgr.h): 
+                      MFGR_INTERLACE_PIXEL      - pixel interlacing
+                      MFGR_INTERLACE_LINE       - line interlacing
+                      MFGR_INTERLACE_COMPONENT  - component/plane interlacing
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Request that the next LUT read from an RI have a particular interlace.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRreqlutil(int32 riid,intn il)
+{
+    CONSTR(FUNC, "GRreqlutil");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRreqlutil() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRreqimageil
+
+ PURPOSE
+    Request that the image read from an RI have a particular interlace.
+
+ USAGE
+    intn GRreqimageil(riid,il)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        intn il;            IN: interlace for next RI.  From the following
+                                values (found in mfgr.h): 
+                      MFGR_INTERLACE_PIXEL      - pixel interlacing
+                      MFGR_INTERLACE_LINE       - line interlacing
+                      MFGR_INTERLACE_COMPONENT  - component/plane interlacing
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Request that the image read from an RI have a particular interlace.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRreqimageil(int32 riid,intn il)
+{
+    CONSTR(FUNC, "GRreqimageil");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRreqimageil() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRgetlutid
+
+ PURPOSE
+    Get a LUT id ('lutid') for an RI.
+
+ USAGE
+    int32 GRgetlutid(riid,index)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        int32 lut_index;    IN: Which LUT image to select (indexed from 0)
+
+ RETURNS
+    Valid LUT ID on success, FAIL on failure
+
+ DESCRIPTION
+    Get a LUT id ('lutid') for accessing LUTs in an RI.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+int32 GRgetlutid(int32 riid,int32 lut_index)
+{
+    CONSTR(FUNC, "GRgetlutid");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    index=RIID2SLOT(riid);
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRgetlutid() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRgetlutinfo
+
+ PURPOSE
+    Gets information about a LUT.
+
+ USAGE
+    intn GRgetlutinfo(lutid,name,ncomp,nt,il,nentries)
+        int32 lutid;        IN: LUT ID from GRgetlutid
+        char *name;         OUT: name of LUT image
+        int32 *ncomp;       OUT: number of components in LUT
+        int32 *nt;          OUT: number type of components
+        int32 *il;          OUT: interlace of the LUT
+        int32 *nentries;    OUT: the number of entries for the LUT
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Gets information about a LUT.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRgetlutinfo(int32 lutid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
+{
+    CONSTR(FUNC, "GRgetlutinfo");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRgetlutinfo() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRwritelut
+
+ PURPOSE
+    Writes out a LUT for an RI.
+
+ USAGE
+    intn GRwritelut(riid,name,ncomps,nt,il,nentries,data)
+        int32 lutid;        IN: LUT ID from GRgetlutid
+        char *name;         IN: name of LUT image
+        int32 ncomp;        IN: number of components in LUT
+        int32 nt;           IN: number type of components
+        int32 il;           IN: interlace of the LUT
+        int32 nentries;     IN: the number of entries for the LUT
+        VOIDP data;         IN: LUT data to write out
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Writes out a LUT for an RI.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRwritelut(int32 lutid,char *name,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
+{
+    CONSTR(FUNC, "GRwritelut");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRwritelut() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRreadlut
+
+ PURPOSE
+    Reads a LUT from an RI.
+
+ USAGE
+    intn GRreadlut(lutid,data)
+        int32 lutid;        IN: LUT ID from GRgetlutid
+        VOIDP data;         IN: buffer for LUT data read in
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Reads a LUT from an RI.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRreadlut(int32 lutid,VOIDP data)
+{
+    CONSTR(FUNC, "GRreadlut");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRreadlut() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRsetexternalfile
+
+ PURPOSE
+    Makes the image data of an RI into an external element special element.
+
+ USAGE
+    intn GRsetexternalfile(riid,filename,offset)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        char *filename;     IN: name of the external file
+        int32 offset;       IN: offset in the external file to store the image
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Makes the image data of an RI into an external element special element.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRsetexternalfile(int32 riid,char *filename,int32 offset)
+{
+    CONSTR(FUNC, "GRsetexternalfile");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRsetexternalfile() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRsetaccesstype
+
+ PURPOSE
+    Sets the access for an RI to be either serial or parallel I/O.
+
+ USAGE
+    intn GRsetaccesstype(riid,accesstype)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        uintn accesstype;   IN: access type for image data, from the following
+                                values:
+                                    DFACC_SERIAL - for serial access
+                                    DFACC_PARALLEL - for parallel access
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Sets the access for an RI to be either serial or parallel I/O.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRsetaccesstype(int32 riid,uintn accesstype)
+{
+    CONSTR(FUNC, "GRsetaccesstype");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRsetaccesstype() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRsetcompress
+
+ PURPOSE
+    Compressed the image data of an RI.
+
+ USAGE
+    intn GRsetcompress(riid,comp_type,cinfo)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+        int32 comp_type;    IN: type of compression, from list in hcomp.h
+        comp_info *cinfo;   IN: compression specific information
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Compressed the image data of an RI.
+    (Makes the image data of an RI into a compressed special element)
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRsetcompress(int32 riid,int32 comp_type,comp_info *cinfo)
+{
+    CONSTR(FUNC, "GRsetcompress");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRsetcompress() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRsetattr
+
+ PURPOSE
+    Write an attribute for an object.
+
+ USAGE
+    intn GRsetattr(dimid|riid|grid,name,attr_nt,count,data)
+        int32 dimid|riid|grid;  IN: DIM|RI|GR ID
+        char *name;             IN: name of attribute
+        int32 attr_nt;          IN: number-type of attribute
+        int32 count;            IN: number of entries of the attribute
+        VOIDP data;             IN: attribute data to write
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Write an attribute for an object (function will figure out ID type).
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRsetattr(int32 id,char *name,int32 attr_nt,int32 count,VOIDP data)
+{
+    CONSTR(FUNC, "GRsetattr");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(riid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRsetattr() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRattrinfo
+
+ PURPOSE
+    Get attribute information for an object.
+
+ USAGE
+    intn GRattrinfo(dimid|riid|grid,index,name,attr_nt,count)
+        int32 dimid|riid|grid;  IN: DIM|RI|GR ID
+        int32 index;            IN: index of the attribute for info
+        char *name;             OUT: name of attribute
+        int32 attr_nt;          OUT: number-type of attribute
+        int32 count;            OUT: number of entries of the attribute
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Get attribute information for an object.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
+{
+    CONSTR(FUNC, "GRattrinfo");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(grid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRattrinfo() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRgetattr
+
+ PURPOSE
+    Read an attribute for an object.
+
+ USAGE
+    intn GRgetattr(dimid|riid|grid,index,data)
+        int32 dimid|riid|grid;  IN: DIM|RI|GR ID
+        int32 index;            IN: index of the attribute for info
+        VOIDP data;             OUT: data read for attribute
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    Read an attribute for an object.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRgetattr(int32 id,int32 index,VOIDP data)
+{
+    CONSTR(FUNC, "GRgetattr");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(grid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRgetattr() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    GRfindattr
+
+ PURPOSE
+    Get the index of an attribute with a given name for an object.
+
+ USAGE
+    int32 GRfindattr(int32 dimid|riid|grid,char *name)
+        int32 dimid|riid|grid;  IN: DIM|RI|GR ID
+        char *name;             IN: name of attribute to search for
+
+ RETURNS
+    Valid index for an attribute on success, FAIL on failure
+
+ DESCRIPTION
+    Get the index of an attribute with a given name for an object.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+int32 GRfindattr(int32 id,char *name)
+{
+    CONSTR(FUNC, "GRfindattr");   /* for HERROR */
+    int32 gr_idx;               /* index into the gr_tab array */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    VOIDP *t;                   /* temp. ptr to the image found */
+    int32 index;                /* index of the RI in the GR */
+
+    /* clear error stack and check validity of args */
+    HEclear();
+
+#ifdef QAK
+    /* check the validity of the RI ID */
+    if(!VALIDRIID(grid))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get the array index for the grid */
+    gr_idx=RIID2GRID(riid);
+    gr_ptr=gr_tab[gr_idx];
+
+    /* check the index range validity */
+    if(index<0 || index>=gr_ptr->gr_count)
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    if((t = (VOIDP *) tbbtdfind(gr_ptr->grtree, (VOIDP) &index, NULL))==NULL)
+        HRETURN_ERROR(DFE_RINOTFOUND,FAIL);
+    ri_ptr=(ri_info_t *)*t;
+#endif /* QAK */
+
+/* QAK */
+
+    return(SUCCEED);
+} /* end GRfindattr() */
+
+/*
+
+API functions to finish:
+    GRwriteimage
+    GRreadimage
+    GRendaccess
+    GRreftoindex
+    GRreqlutil
+    GRreqimageil
+    GRgetlutid
+    GRgetlutinfo
+    GRwritelut
+    GRreadlut
+    GRsetexternalfile
+    GRsetaccesstype
+    GRsetcompress
+    GRsetattr
+    GRattrinfo
+    GRgetattr
+    GRfindattr
+
+Misc. stuff left to do:
+    Add in full support for multiple palettes with each RI.
+
+*/

@@ -75,11 +75,11 @@ gr_interlace_t;
 #define GRID2SLOT(i) (VALIDGRID(i) ? (uint32)(i) & 0xffff : -1)
 #define GRID2VFILE(i) (VALIDGRID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
 
-#define RISLOT2ID(f,s) ( (((uint32)f & 0xff) << 16) | \
+#define RISLOT2ID(g,s) ( (((uint32)g & 0xff) << 16) | \
                     (((uint32)RIIDTYPE & 0xff) << 24) | ((s) & 0xffff) )
 #define VALIDRIID(i) ((((uint32)(i) >> 24) & 0xff) == RIIDTYPE)
 #define RIID2SLOT(i) (VALIDRIID(i) ? (uint32)(i) & 0xffff : -1)
-#define RIID2VFILE(i) (VALIDRIID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
+#define RIID2GRID(i) (VALIDRIID(i) ? ((uint32)(i) >> 16) & 0xff : -1)
 
 
 /*
@@ -107,7 +107,7 @@ typedef struct gr_info {
 
 gr_info_t *gr_tab[MAX_GR_FILES]={0};
 
-typedef struct {
+typedef struct at_info {
     int32 index;            /* index of the attribute (needs to be first in the struct) */
     int32 nt;               /* number type of the attribute */
     int32 len;              /* length/order of the attribute */
