@@ -37,6 +37,20 @@ static char RcsId[] = "@(#)$Revision$";
         state of each layer at certain [convenient] times in order
         to increase performance during random I/O.
 
+ BUGS/LIMITATIONS
+        Currently the following design limitations are still in place:
+            1 - Cannot compress an existing data element (will be fixed
+                    before release)  [ I think this is done, but it needs
+                    testing]
+
+            2 - Statistic gathering from several types of compression
+                    is not implemented (should be fixed before release)
+            3 - "State caching" for improved performance in not implemented,
+                    although some data-structures allow for it. (should be
+                    fixed before release)
+            4 - Random writing in compressed data is not supported (unlikely
+                    to _ever_ be fixed)
+
  EXPORTED ROUTINES
         HCcreate - create or modify an existing data element to be compressed
 
@@ -44,7 +58,9 @@ static char RcsId[] = "@(#)$Revision$";
        Quincey Koziol
 
  MODIFICATION HISTORY
-    9/21/93     Starting writing specs & coding prototype
+    9/21/93 - Starting writing specs & coding prototype
+   10/09/93 - Finished initial testing.  First version with only stdio
+                modeling and RLE coding done.
 */
 
 /* General HDF includes */
@@ -66,10 +82,21 @@ PRIVATE int32 HCIstaccess
     PROTO((accrec_t *access_rec, int16 access));
 
 PRIVATE int32 HCIinit_coder
-    PROTO((comp_coder_info_t *cinfo,comp_coder_t coder_type));
+    PROTO((comp_coder_info_t *cinfo,comp_coder_t coder_type,
+            comp_info *coder_info));
+
+PRIVATE int32 HCIread_header
+    PROTO((filerec_t *file_rec,accrec_t *access_rec,
+        compinfo_t *info,dd_t *info_dd,comp_info *c_info,
+        model_info *m_info));
+
+PRIVATE int32 HCIwrite_header
+    PROTO((filerec_t *file_rec,accrec_t *access_rec,compinfo_t *info,dd_t *dd,
+            uint16 special_tag,uint16 ref));
 
 PRIVATE int32 HCIinit_model
-    PROTO((comp_model_info_t *minfo,comp_model_t model_type));
+    PROTO((comp_model_info_t *minfo,comp_model_t model_type,
+            model_info *model_info));
 
 /* comp_funcs -- struct of accessing functions for the compressed
    data element function modules.  The position of each function in
@@ -90,9 +117,10 @@ funclist_t comp_funcs={
     HCIinit_coder -- Set the coder function pointers
 
  USAGE
-    int32 HCIinit_coder(cinfo,coder_type)
+    int32 HCIinit_coder(cinfo,coder_type,coder_info)
     comp_coder_info_t *cinfo;   IN/OUT: pointer to coder information to modify
     comp_coder_t coder_type;    IN: the type of encoding to use
+    comp_info *coder_info;      IN: setup information for some encoding types
 
  RETURNS
     Return SUCCEED or FAIL
@@ -107,25 +135,36 @@ funclist_t comp_funcs={
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 HCIinit_coder(comp_coder_info_t *cinfo,comp_coder_t coder_type)
+PRIVATE int32 HCIinit_coder(comp_coder_info_t *cinfo,comp_coder_t coder_type,
+        comp_info *c_info)
 #else
-PRIVATE int32 HCIinit_coder(cinfo, coder_type)
+PRIVATE int32 HCIinit_coder(cinfo, coder_type, c_info)
     comp_coder_info_t *cinfo;   /* encoding information to modify */
-    comp_coder_t coder_type;     /* type of encoding to use */
+    comp_coder_t coder_type;    /* type of encoding to use */
+    comp_info *c_info;      /* encoding information */
 #endif
 {
     char *FUNC="HCIsetcoder_funcs";  /* for HERROR */
 
     switch(coder_type) {    /* determin the type of encoding */
         case COMP_CODE_RLE:           /* Run-length encoding */
-#ifdef TESTING
-printf("HCIinit_coder(): RLE coder type\n");
-#endif
             cinfo->coder_type=COMP_CODE_RLE;    /* set coding type */
             cinfo->coder_funcs=crle_funcs;      /* set the RLE func. ptrs */
-#ifdef QAK
-            HCPinit_crle(&(cinfo->coder_info.rle_info));  /* initialize the coder */
-#endif
+            break;
+
+        case COMP_CODE_NBIT:        /* N-bit encoding */
+            cinfo->coder_type=COMP_CODE_NBIT;   /* set the coding type */
+            cinfo->coder_funcs=cnbit_funcs;     /* set the N-bit func. ptrs */
+
+            /* copy coding info */
+            cinfo->coder_info.nbit_info.nt=c_info->nbit.nt;
+            cinfo->coder_info.nbit_info.sign_ext=c_info->nbit.sign_ext;
+            cinfo->coder_info.nbit_info.fill_one=c_info->nbit.fill_one;
+            cinfo->coder_info.nbit_info.mask_off=c_info->nbit.start_bit;
+            cinfo->coder_info.nbit_info.mask_len=c_info->nbit.bit_len;
+            if((cinfo->coder_info.nbit_info.nt_size
+                    =DFKNTsize(cinfo->coder_info.nbit_info.nt))==FAIL)
+                HRETURN_ERROR(DFE_BADNUMTYPE,FAIL);
             break;
 
         default:
@@ -139,9 +178,10 @@ printf("HCIinit_coder(): RLE coder type\n");
     HCIinit_model -- Set the model function pointers
 
  USAGE
-    int32 HCIinit_model(minfo,model_type)
+    int32 HCIinit_model(minfo,model_type,m_info)
     comp_model_info_t *minfo;   IN/OUT: pointer to model information to modify
     comp_model_t model_type;    IN: the type of encoding to use
+    model_info *m_info;         IN: modeling information
 
  RETURNS
     Return SUCCEED or FAIL
@@ -156,25 +196,21 @@ printf("HCIinit_coder(): RLE coder type\n");
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-PRIVATE int32 HCIinit_model(comp_model_info_t *minfo,comp_model_t model_type)
+PRIVATE int32 HCIinit_model(comp_model_info_t *minfo,comp_model_t model_type,
+        model_info *m_info)
 #else
-PRIVATE int32 HCIinit_model(minfo, model_type)
+PRIVATE int32 HCIinit_model(minfo, model_type, m_info)
     comp_model_info_t *minfo;   /* modeling information to modify */
     comp_model_t model_type;    /* type of modeling to use */
+    model_info *m_info;     /* modeling information */
 #endif
 {
     char *FUNC="HCIinit_model";  /* for HERROR */
 
     switch(model_type) {    /* determine the type of modeling */
         case COMP_MODEL_STDIO:        /* standard C stdio modeling */
-#ifdef TESTING
-printf("HCIinit_model(): stdio model type\n");
-#endif
             minfo->model_type=COMP_MODEL_STDIO;    /* set model type */
             minfo->model_funcs=mstdio_funcs;    /* set the stdio func. ptrs */
-#ifdef QAK
-            HCPinit_mstdio(&(minfo->model_info.stdio_info),0);  /* initialize the model */
-#endif
             break;
 
         default:
@@ -183,6 +219,202 @@ printf("HCIinit_model(): stdio model type\n");
 
     return(SUCCEED);
 }   /* end HCIinit_model() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCIwrite_header -- Write the compression header info to a file
+
+ USAGE
+    int32 HCIwrite_header(file_rec,access_rec,info,dd)
+        filerec_t *file_rec;    IN: ptr to the file record for the HDF file
+        accrec_t *access_rec;   IN: ptr to the access element record
+        compinfo_t *info;       IN: ptr the compression information
+        dd_t *dd;               IN: ptr to the DD info for the element
+        uint16 special_tag,ref; IN: the tag/ref of the compressed element
+
+ RETURNS
+    Return SUCCEED or FAIL
+
+ DESCRIPTION
+    Writes the compression information to a new block in the HDF file.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+PRIVATE int32 HCIwrite_header(filerec_t *file_rec,accrec_t *access_rec,
+        compinfo_t *info,dd_t *dd,uint16 special_tag,uint16 ref)
+#else
+PRIVATE int32 HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)
+    filerec_t *file_rec;    /* file record */
+    accrec_t *access_rec;   /* access element record */
+    compinfo_t *info;       /* special element information */
+    dd_t *dd;               /* the DD of the new element */
+    uint16 special_tag,ref; /* the tag/ref pair of the compressed element */
+#endif
+{
+    char *FUNC="HCIwrite_header";  /* for HERROR */
+    uint8 *p;       /* pointer to the temporary buffer */
+
+    /* write special element info to the file */
+    p=tbuf;
+    INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
+    UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
+    INT32ENCODE(p, info->length);           /* write length of un-comp. data */
+    UINT16ENCODE(p, (uint16)info->comp_ref);/* specify ref # of comp. data */
+    UINT16ENCODE(p, (uint16)info->minfo.model_type);    /* specify model type */
+    UINT16ENCODE(p, (uint16)info->cinfo.coder_type);    /* specify coder type */
+
+    /* write any additional information needed for modeling type */
+    switch(info->minfo.model_type) {
+        default:    /* no additional information needed */
+            break;
+      } /* end switch */
+
+    /* write any additional information needed for coding type */
+    switch(info->cinfo.coder_type) {
+        case COMP_CODE_NBIT:    /* N-bit coding needs info */
+            /* specify number-type of N-bit data */
+            INT32ENCODE(p, info->cinfo.coder_info.nbit_info.nt);
+            /* next is the flag to indicate whether to sign extend */
+            UINT16ENCODE(p, (uint16)info->cinfo.coder_info.nbit_info.sign_ext);
+            /* flag to fill with 1's or 0's */
+            UINT16ENCODE(p, (uint16)info->cinfo.coder_info.nbit_info.fill_one);
+            /* the offset of the bits extracted */
+            INT32ENCODE(p, (int32)info->cinfo.coder_info.nbit_info.mask_off);
+            /* the number of bits extracted */
+            INT32ENCODE(p, (int32)info->cinfo.coder_info.nbit_info.mask_len);
+            break;
+
+        default:    /* no additional information needed */
+            break;
+      } /* end switch */
+
+    if(HI_SEEKEND(file_rec->file)==FAIL) {
+       access_rec->used=FALSE;
+       HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+      } /* end if */
+
+    /* write compressed special element data to the file */
+    dd->offset=HI_TELL(file_rec->file);
+    dd->length=p-tbuf;      /* not a constant length */
+    dd->tag=special_tag;
+    dd->ref=ref;
+    if(HI_WRITE(file_rec->file, tbuf, dd->length)==FAIL) {
+        access_rec->used=FALSE;
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+      } /* end if */
+
+    /* update DD block in the file */
+    if(FAIL==HIupdate_dd(file_rec,access_rec->block,access_rec->idx,FUNC)) {
+        access_rec->used=FALSE;
+        HRETURN_ERROR(DFE_CANTUPDATE,FAIL);
+      } /* end if */
+
+    /* add new DD to hash table */
+    if(FAIL==HIadd_hash_dd(file_rec,dd->tag,dd->ref,access_rec->block,access_rec->idx)) {
+        access_rec->used=FALSE;
+        HRETURN_ERROR(DFE_CANTHASH,FAIL);
+      } /* end if */
+    return(SUCCEED);
+}   /* end HCIwrite_header() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCIread_header -- Read the compression header info from a file
+
+ USAGE
+    int32 HCIread_header(file_rec,access_rec,info,info_dd,comp_info,model_info)
+        filerec_t *file_rec;    IN: ptr to the file record for the HDF file
+        accrec_t *access_rec;   IN: ptr to the access element record
+        compinfo_t *info;       IN: ptr the compression information
+        dd_t *info_dd;          IN: ptr to the DD info for the element
+        comp_info *comp_info;   IN/OUT: ptr to encoding info
+        model_info *model_info; IN/OUT: ptr to modeling info
+
+ RETURNS
+    Return SUCCEED or FAIL
+
+ DESCRIPTION
+    Parses the compression header from a data element in an HDF file.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+PRIVATE int32 HCIread_header(filerec_t *file_rec,accrec_t *access_rec,
+        compinfo_t *info,dd_t *info_dd,comp_info *c_info,
+        model_info *m_info)
+#else
+PRIVATE int32 HCIread_header(file_rec,access_rec,info,info_dd,c_info,m_info)
+    filerec_t *file_rec;    /* file record */
+    accrec_t *access_rec;   /* access element record */
+    compinfo_t *info;       /* special element information */
+    dd_t *info_dd;          /* the DD of the new element */
+    comp_info *c_info;   /* ptr to compression information to fill in */
+    model_info *m_info; /* ptr to modeling information to fill in */
+#endif
+{
+    char *FUNC="HCIread_header";    /* for HERROR */
+    uint16 header_version;      /* version of the compression header */
+    uint16 mtype,ctype;         /* temporary variables for model and coder type */
+    uint8 *p;       /* pointer to the temporary buffer */
+
+    if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL)
+        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+    if(HI_READ(file_rec->file, tbuf, (COMP_HEADER_LENGTH-2))==FAIL)
+        HRETURN_ERROR(DFE_READERROR,FAIL);
+
+    p=tbuf;
+    UINT16DECODE(p, header_version);    /* get header length */
+    INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
+    UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
+    UINT16DECODE(p, mtype);             /* get model type */
+    info->minfo.model_type=(comp_model_t)mtype;
+    UINT16DECODE(p, ctype);            /* get encoding type */
+    info->cinfo.coder_type=(comp_coder_t)ctype;
+
+    /* read any additional information needed for modeling type */
+    switch(info->minfo.model_type) {
+        default:    /* no additional information needed */
+            break;
+      } /* end switch */
+
+    /* read any additional information needed for coding type */
+    switch(info->cinfo.coder_type) {
+        case COMP_CODE_NBIT:    /* N-bit coding needs info */
+            {
+                uint16 s_ext;               /* temp. var for sign extend */
+                uint16 f_one;               /* temp. var for fill one */
+                int32 m_off,m_len;          /* temp. var for mask offset and len */
+
+                /* specify number-type of N-bit data */
+                INT32DECODE(p, c_info->nbit.nt);
+                /* next is the flag to indicate whether to sign extend */
+                UINT16DECODE(p, s_ext);
+                c_info->nbit.sign_ext=(bool)s_ext;
+                /* the flag to indicate whether to fill with 1's or 0's */
+                UINT16DECODE(p, f_one);
+                c_info->nbit.fill_one=(bool)f_one;
+                /* the offset of the bits extracted */
+                INT32DECODE(p, m_off);
+                c_info->nbit.start_bit=(intn)m_off;
+                /* the number of bits extracted */
+                INT32DECODE(p, m_len);
+                c_info->nbit.bit_len=(intn)m_len;
+              } /* end case */
+            break;
+
+        default:    /* no additional information needed */
+            break;
+      } /* end switch */
+
+    return(SUCCEED);
+}   /* end HCIread_header() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -210,13 +442,16 @@ printf("HCIinit_model(): stdio model type\n");
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
 int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
-        comp_coder_t coder_type)
+        model_info *m_info, comp_coder_t coder_type,
+        comp_info *c_info)
 #else
-int32 HCcreate(file_id, tag, ref, model_type, coder_type)
+int32 HCcreate(file_id, tag, ref, model_type, m_info, coder_type, c_info)
     int32 file_id;      /* file record id */
     uint16 tag, ref;    /* tag/ref of the special data element to create */
     comp_model_t model_type;    /* type of modeling to use */
+    model_info *m_info;     /* modeling information */
     comp_coder_t coder_type;    /* type of encoding to use */
+    comp_info *c_info;      /* coding information */
 #endif
 {
     char *FUNC="HCcreate";  /* for HERROR */
@@ -229,9 +464,13 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     compinfo_t *info;       /* special element information */
     dd_t *data_dd;          /* dd of existing regular element */
     uint16 special_tag;     /* special version of tag */
+#ifdef OLD_WAY
     uint8 *p;               /* pointer into the temp. buffer */
+#endif
     int32 ret;
+#ifdef OLD_WAY
     uint16 ctype,mtype;     /* temp. storage for coder and model types */
+#endif
 
     /* clear error stack and validate args */
     HEclear();
@@ -285,60 +524,22 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     info=(compinfo_t *)HDgetspace(sizeof(compinfo_t));
     access_rec->special_info=(VOIDP)info;
     if(info==NULL) {
-       access_rec->used=FALSE;
-       HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        access_rec->used=FALSE;
+        HRETURN_ERROR(DFE_NOSPACE,FAIL);
       } /* end if */
 
-    if(data_dd!=NULL) {     /* compress existing data */
-#ifdef QAK
-       VOIDP buf;              /* temporary buffer */
-
-       buf=HDgetspace(data_dd->length);
-       if(!buf) {
-           HERROR(DFE_NOSPACE);
-           HDfreespace((VOIDP)info);
-           return FAIL;
-       }
-       if(HI_SEEK(file_rec->file, data_dd->offset)==FAIL) {
-           HERROR(DFE_SEEKERROR);
-           HDfreespace((VOIDP)info);
-           HDfreespace((VOIDP)buf);
-           return FAIL;
-       }
-       if(HI_READ(file_rec->file, buf, data_dd->length)==FAIL) {
-           HERROR(DFE_READERROR);
-           HDfreespace((VOIDP)info);
-           HDfreespace((VOIDP)buf);
-           return FAIL;
-       }
-       if(HI_SEEK(file_external, f_offset)==FAIL) {
-           HERROR(DFE_SEEKERROR);
-           HDfreespace((VOIDP)info);
-           HDfreespace((VOIDP)buf);
-           return FAIL;
-       }
-       if(HI_WRITE(file_external, buf, data_dd->length)==FAIL) {
-           HERROR(DFE_WRITEERROR);
-           HDfreespace((VOIDP)info);
-           HDfreespace((VOIDP)buf);
-           return FAIL;
-       }
-       HDfreespace((VOIDP)buf);
-       info->length=data_dd->length;
-#else
-        HRETURN_ERROR(DFE_UNSUPPORTED,FAIL);
-#endif
-      } /* end if */
-    else {  /* start new compressed data element */
+    if(data_dd!=NULL)       /* compress existing data */
+        info->length=data_dd->length;
+    else    /* start new compressed data element */
         info->length=COMP_START_BLOCK;
-      } /* end else */
 
     /* set up compressed special info structure */
     info->attached=1;
     info->comp_ref=Hnewref(file_id);         /* get the new reference # */
-    HCIinit_model(&(info->minfo),model_type);
-    HCIinit_coder(&(info->cinfo),coder_type);
+    HCIinit_model(&(info->minfo),model_type,m_info);
+    HCIinit_coder(&(info->cinfo),coder_type,c_info);
 
+#ifdef OLD_WAY
     /* write special element info to the file */
     p=tbuf;
     INT16ENCODE(p, SPECIAL_COMP);           /* specify special tag type */
@@ -375,18 +576,12 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
         access_rec->used=FALSE;
         HRETURN_ERROR(DFE_CANTHASH,FAIL);
       } /* end if */
-
-    /* get rid of the old DD, if there was one */
-    if(data_dd!=NULL) {
-        if(FAIL==Hdeldd(file_id, data_dd->tag, data_dd->ref)) {
-            access_rec->used=FALSE;
-            HRETURN_ERROR(DFE_CANTDELDD,FAIL);
-          } /* end if */
-        if(FAIL==HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref)) {
-            access_rec->used=FALSE;
-            HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
-          } /* end if */
+#else
+    if(HCIwrite_header(file_rec,access_rec,info,dd,special_tag,ref)==FAIL) {
+        access_rec->used=FALSE;
+        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
       } /* end if */
+#endif
 
     /* update access record and file record */
     access_rec->special_func=&comp_funcs;
@@ -402,8 +597,58 @@ int32 HCcreate(file_id, tag, ref, model_type, coder_type)
         file_rec->maxref=ref;
 
     /* propagate the initialization down to the modeling layer */
-    if((ret=(*(info->minfo.model_funcs.stwrite))(access_rec))==FAIL)
+    if((ret=(*(info->minfo.model_funcs.stwrite))(access_rec))==FAIL) {
+        access_rec->used=FALSE;
         HRETURN_ERROR(DFE_MODEL,FAIL);
+      } /* end if */
+
+    /* compress the old DD and get rid of it, if there was one */
+    if(data_dd!=NULL) {
+        VOIDP buf;              /* temporary buffer */
+
+        buf=HDgetspace(data_dd->length);
+        if(buf==NULL) {
+            access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+          } /* end if */
+        if(HI_SEEK(file_rec->file, data_dd->offset)==FAIL) {
+            access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
+            HDfreespace((VOIDP)buf);
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+          } /* end if */
+        if(HI_READ(file_rec->file, buf, data_dd->length)==FAIL) {
+            access_rec->used=FALSE;
+            HDfreespace((VOIDP)info);
+            HDfreespace((VOIDP)buf);
+            HRETURN_ERROR(DFE_READERROR,FAIL);
+          } /* end if */
+
+        /* write the data through to the compression layer */
+        if(HCPwrite(access_rec,data_dd->length,buf)==FAIL) {
+            access_rec->used=FALSE;
+            HRETURN_ERROR(DFE_MODEL,FAIL);
+          } /* end if */
+
+        /* seek back to the beginning of the data through to the compression layer */
+        if(HCPseek(access_rec,0,DF_START)==FAIL) {
+            access_rec->used=FALSE;
+            HRETURN_ERROR(DFE_MODEL,FAIL);
+          } /* end if */
+
+        HDfreespace((VOIDP)buf);
+
+        /* Delete the old DD from the file and memory hash table */
+        if(FAIL==Hdeldd(file_id, data_dd->tag, data_dd->ref)) {
+            access_rec->used=FALSE;
+            HRETURN_ERROR(DFE_CANTDELDD,FAIL);
+          } /* end if */
+        if(FAIL==HIdel_hash_dd(file_rec, data_dd->tag, data_dd->ref)) {
+            access_rec->used=FALSE;
+            HRETURN_ERROR(DFE_CANTDELHASH,FAIL);
+          } /* end if */
+      } /* end if */
 
     return(ASLOT2ID(slot));
 }   /* end HCcreate() */
@@ -440,11 +685,12 @@ PRIVATE int32 HCIstaccess(access_rec, access)
     dd_t *info_dd;              /* dd of the special information element */
     compinfo_t *info;           /* special element information */
     filerec_t *file_rec;        /* file record */
+#ifdef OLD_WAY
     uint16 header_version;      /* version of the compression header */
     uint16 mtype,ctype;         /* temporary variables for model and coder type */
-    comp_model_t model_type;    /* type of modeling to use */
-    comp_coder_t coder_type;    /* type of encoding to use */
-    int32 ret;
+#endif
+    comp_info c_info;       /* encoding information from the header */
+    model_info m_info;      /* modeling information from the header */
 
     /* get file record and validate */
     file_rec=FID2REC(access_rec->file_id);
@@ -469,6 +715,7 @@ PRIVATE int32 HCIstaccess(access_rec, access)
       } /* end if */
     else {  /* look for information in the file */
 #endif
+#ifdef OLD_WAY
         if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL) {
             access_rec->used=FALSE;
             HRETURN_ERROR(DFE_SEEKERROR,FAIL);
@@ -489,15 +736,36 @@ PRIVATE int32 HCIstaccess(access_rec, access)
             INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
             UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
             UINT16DECODE(p, mtype);             /* get model type */
-	    model_type=(comp_model_t)mtype;
+            model_type=(comp_model_t)mtype;
             UINT16DECODE(p, ctype);            /* get encoding type */
-	    coder_type=(comp_coder_t)ctype;
+            coder_type=(comp_coder_t)ctype;
         }
         info->attached=1;
         if(HCIinit_model(&(info->minfo),model_type)==FAIL)
-	    HRETURN_ERROR(DFE_MINIT,FAIL);
+            HRETURN_ERROR(DFE_MINIT,FAIL);
         if(HCIinit_coder(&(info->cinfo),coder_type)==FAIL)
-	    HRETURN_ERROR(DFE_CINIT,FAIL);
+            HRETURN_ERROR(DFE_CINIT,FAIL);
+#else
+        access_rec->special_info=(VOIDP)HDgetspace(sizeof(compinfo_t));
+        info=(compinfo_t *)access_rec->special_info;
+        if(info==NULL)
+            HRETURN_ERROR(DFE_NOSPACE,FAIL);
+
+        if(HCIread_header(file_rec,access_rec,info,info_dd,&c_info,
+                    &m_info)==FAIL) {
+            HDfreespace(info);
+            HRETURN_ERROR(DFE_COMPINFO,FAIL);
+          } /* end if */
+        info->attached=1;
+        if(HCIinit_model(&(info->minfo),info->minfo.model_type,&m_info)==FAIL) {
+            HDfreespace(info);
+            HRETURN_ERROR(DFE_MINIT,FAIL);
+          } /* end if */
+        if(HCIinit_coder(&(info->cinfo),info->cinfo.coder_type,&c_info)==FAIL) {
+            HDfreespace(info);
+            HRETURN_ERROR(DFE_CINIT,FAIL);
+          } /* end if */
+#endif
 #ifdef OLD_WAY
       } /* end else */
 #endif
@@ -538,11 +806,15 @@ int32 HCPstread(access_rec)
     int32 aid;                  /* AID to return */
     int32 ret;
 
-    if((aid=HCIstaccess(access_rec, DFACC_READ))==FAIL)
+    if((aid=HCIstaccess(access_rec, DFACC_READ))==FAIL) {
+        access_rec->used=FALSE;
         HRETURN_ERROR(DFE_DENIED,FAIL);
+      } /* end if */
     info=(compinfo_t *)access_rec->special_info;
-    if((ret=(*(info->minfo.model_funcs.stread))(access_rec))==FAIL)
+    if((ret=(*(info->minfo.model_funcs.stread))(access_rec))==FAIL) {
+        access_rec->used=FALSE;
         HRETURN_ERROR(DFE_MODEL,FAIL);
+      } /* end if */
     return(aid);
 }   /* end HCPstread() */
 
@@ -577,11 +849,15 @@ int32 HCPstwrite(access_rec)
     int32 aid;                  /* AID to return */
     int32 ret;
 
-    if((aid=HCIstaccess(access_rec, DFACC_WRITE))==FAIL)
+    if((aid=HCIstaccess(access_rec, DFACC_WRITE))==FAIL) {
+        access_rec->used=FALSE;
         HRETURN_ERROR(DFE_DENIED,FAIL);
+      } /* end if */
     info=(compinfo_t *)access_rec->special_info;
-    if((ret=(*(info->minfo.model_funcs.stwrite))(access_rec))==FAIL)
+    if((ret=(*(info->minfo.model_funcs.stwrite))(access_rec))==FAIL) {
+        access_rec->used=FALSE;
         HRETURN_ERROR(DFE_MODEL,FAIL);
+      } /* end if */
     return(aid);
 }   /* end HCPstwrite() */
 
@@ -678,12 +954,8 @@ int32 HCPread(access_rec, length, data)
     info=(compinfo_t *)access_rec->special_info;
 
     /* adjust length if it falls off the end of the element */
-    if(length==0) {
+    if(length==0)
         length=info->length-access_rec->posn;
-#ifdef QAK
-printf("length=%d, info->length=%d, access_rec->posn=%d\n",length,info->length,access_rec->posn);
-#endif
-      } /* end if */
     else
         if(length<0 || access_rec->posn+length>info->length)
            HRETURN_ERROR(DFE_RANGE,FAIL);
@@ -910,10 +1182,8 @@ int32 HCPcloseAID(access_rec)
         HRETURN_ERROR(DFE_MODEL,FAIL);
 
     /* Free the compression information */
-    if(--(info->attached)==0) {
+    if(--(info->attached)==0)
         HDfreespace(info);
-      } /* end if */
 
     return(SUCCEED);
 }   /* end HCPcloseAID() */
-

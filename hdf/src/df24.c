@@ -66,7 +66,7 @@ int DF24getdims(filename, pxdim, pydim, pil)
 
     do {
         if (DFGRIgetdims(filename, pxdim, pydim, &ncomps, pil, IMAGE)<0)
-            return FAIL;
+            return(FAIL);
     } while (ncomps!=3);
 
     last_xdim = *pxdim;
