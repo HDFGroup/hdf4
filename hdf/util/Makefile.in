@@ -106,7 +106,7 @@ UTILS = hdf24to8 hdfcomp hdfls hdfpack hdftopal hdftor8 paltohdf \
 HEOBJ = he_main.o he_cntrl.o he_disp.o he_file.o
 
 all: hdfed utils fp2hdf fptest
-	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
+#	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi
 #	-cp $(UTILS) hdfed $(HDFBIN)
 
 nofortran: hdfed utils fp2hdf fptest
