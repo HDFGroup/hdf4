@@ -4,7 +4,7 @@ COMPILING A PROGRAM
 Following are instructions for compiling an application program on the 
 platforms supported by HDF, using the binaries that we provide.  For
 Unix, the information on options to specify comes from the configuration 
-files (mh-*) in the HDF source code (under ../HDF4.1r3/config).   
+files (mh-*) in the HDF source code (under ../HDF4.1r4/config).   
 
 In general, you compile your program as shown below.  If your platform is 
 not specified in the section, "INSTRUCTIONS FOR SPECIFIC PLATFORMS", then 
@@ -104,8 +104,8 @@ FORTRAN:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
  
-HP-UX 10.2:
-----------
+HP-UX:
+-----
 C:
     cc -Ae -s -o <your program> <your program>.c \
        -I<path for hdf include directory> \
@@ -124,7 +124,7 @@ C:
        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 FORTRAN:
-    f77 -n32 -mips3 -O -s -o <your program> <your program>.f  \
+    f90 -n32 -mips3 -O -s -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 IRIX64 with 64-bit mode:
@@ -196,16 +196,6 @@ FORTRAN:
     f77 -O -o <your program> <your program>.f  \
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
-SunOS:
------
-C:
-    gcc -ansi -o <your program> <your program>.c \  
-        -I<path for hdf include directory> \
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
-
-FORTRAN:
-    f77 -f -o <your program> <your program>.f  \
-        -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 T3E:
 ---
@@ -220,26 +210,9 @@ FORTRAN:
         -L<path for hdf libraries> -lmfhdf -ldf -ljpeg -lz
 
 
-VAX OpenVMS:
------------
-   To compile your programs, prog.c and prog1.for, with the HDF library, 
-   mfhdf.olb, df.olb, and libz.olb are required.  The libjpeg.olb library 
-   is optional.
-
-   cc/DECC/STANDARD=VAXC/opt/nodebug/define=(HDF,VMS)/nolist/include=<dir for include> prog.c
-   fort prog1.for
-   link/nodebug/notraceback/exec=prog.exe  prog.obj, prog1.obj, -
-         <dir for lib>mfhdf/lib -
-         <dir for lib>df/lib, <dir for lib>libjpeg/lib,  -
-         <dir for lib>libz/lib, sys$library:deccrtl/lib
-
-   NOTE: The order of the libraries is important: mfhdf.olb first,
-   followed by df.olb then libjpeg.olb and libz.olb.
-
-
-Windows NT/95:
--------------
-Using Microsoft Visual C++ version 5.x:
+Windows NT/98/2000:
+------------------
+Using Microsoft Visual C++ version 6.x:
 
 Under Tools->Options, select the folder, Directories:
    Under "Show directories for", select "Include files".
@@ -253,11 +226,11 @@ Under "Show directories for", select "Library files":
 Under Project->Settings, select folder, Link:
    Add the following libraries to the beginning of the list of
    Object/Library Modules:
-         hd412.lib hm412.lib (single-threaded release version)
-         hd412d.lib hm412d.lib (single-threaded debug version)
+         hd414.lib hm414.lib (single-threaded release version)
+         hd414d.lib hm414d.lib (single-threaded debug version)
 
-         hd412m.lib hm412m.lib (multi-threaded release version)
-         hd412md.lib hm412md.lib (multi-threaded debug version)
+         hd414m.lib hm414m.lib (multi-threaded release version)
+         hd414md.lib hm414md.lib (multi-threaded debug version)
 
 
 
