@@ -31,4 +31,4 @@ hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS
 hdfimporttest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdfimporttest
-	sh testutil.sh
+	sh testutil.sh $(host)
