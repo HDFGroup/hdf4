@@ -60,7 +60,9 @@
  */
 
 #ifndef INCLUDES_ARE_ANSI	/* shouldn't need this if ANSI C */
+#ifndef I860
 #include <sys/types.h>
+#endif /* I860 */
 #endif
 #ifdef __SASC			/* Amiga SAS C provides it in stddef.h. */
 #include <stddef.h>

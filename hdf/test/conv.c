@@ -38,6 +38,12 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 #include <time.h>
+#ifdef I860
+#include <limits.h>
+typedef int clock_t;
+#define NO_TIMING
+#define UINT_MAX USI_MAX
+#endif /* I860 */
 
 /* Substitute bogus value if CLOCKS_PER_SEC is unavailable */
 #ifndef CLOCKS_PER_SEC
@@ -63,6 +69,10 @@ static char RcsId[] = "@(#)$Revision$";
 /* define aliases for random number generation */
 #define RAND rand
 #define SEED(a) srand(a)
+
+#ifdef NO_TIMING
+#define clock() (0)
+#endif
 
 extern int num_errs;
 extern int Verbocity;
