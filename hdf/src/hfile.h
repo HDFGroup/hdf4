@@ -22,7 +22,7 @@
 /* ------------------------------ Constants ------------------------------- */
 /* Maximum number of files (number of slots for file records) */
 #ifndef MAX_FILE
-#ifdef PC
+#if defined PC && !defined PC386
 #   define MAX_FILE 8
 #else /* !PC */
 #   define MAX_FILE 16
@@ -181,6 +181,23 @@ typedef HFILE hdf_file_t;
 #   define OPENERR(f)           ((f) == (HFILE)HFILE_ERROR)
 #endif /* FILELIB == WINIO */
 
+#if (FILELIB == WINNTIO)
+/* using special Windows NT functions to enable reading/writing large chunks */
+typedef HFILE hdf_file_t;
+#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
+                        _lopen((p), OF_READWRITE) : _lopen((p), OF_READ))
+#   define HI_CREATE(p)        (_lcreat((p), 0))
+#   define HI_READ(f, b, n)    (((int32)(n) == _hread((f), (b), (n))) ? \
+                                SUCCEED : FAIL)
+#   define HI_WRITE(f, b, n)   (((int32)(n) == _hwrite((f), (b), (n))) ? \
+                                SUCCEED : FAIL)
+#   define HI_CLOSE(f) (_lclose(f)==0 ? SUCCEED : FAIL)
+#   define HI_FLUSH(f) (0)
+#   define HI_SEEK(f, o)       (_llseek((f), (long)(o), 0))
+#   define HI_SEEKEND(f) (_llseek((f), (long)0, 2))
+#   define HI_TELL(f)  (_llseek((f),0l,1))
+#   define OPENERR(f)  ((f) == (HFILE)HFILE_ERROR)
+#endif /* FILELIB == WINNTIO */
 
 /* ----------------------- Internal Data Structures ----------------------- */
 /* The internal structure used to keep track of the files opened: an

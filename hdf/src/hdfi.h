@@ -218,8 +218,8 @@ Please check your Makefile.
 
 #   define BSD
 #ifndef PROTOTYPE
-#define PROTOTYPE		/* to invoke ANSI prototypes */
-#endif	/* PROTOTYPE */
+#define PROTOTYPE       /* to invoke ANSI prototypes */
+#endif  /* PROTOTYPE */
 
 #include <string.h>
 #ifndef __GNUC__
@@ -484,10 +484,10 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <stdlib.h>
 
-#define __STDC__					/* To invoke ANSI compilation */
+#define __STDC__                    /* To invoke ANSI compilation */
 #ifndef PROTOTYPE
-#define PROTOTYPE					/* to invoke ANSI prototypes */
-#endif	/* PROTOTYPE */
+#define PROTOTYPE                   /* to invoke ANSI prototypes */
+#endif  /* PROTOTYPE */
 
 /* For Convex machines with native format floats */
 #ifdef CONVEXNATIVE
@@ -635,11 +635,15 @@ void exit(int status);
 
 #endif /*MAC*/
 
-#if defined WIN3 || defined __WINDOWS__
+#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS || defined WINNT
+#ifdef WINNT
+#define PC386
+#else /* WINNT */
 #ifndef WIN3
 #define WIN3
 #endif  /* WIN3 */
 #define PC
+#endif /* WINNT */
 #endif  /* WIN3 */
 
 #if defined PC || defined MSDOS || defined M_I86 || defined M_I386 || defined PC386
@@ -657,6 +661,10 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
+#if !defined TEST_PC && !defined TEST_WIN
+#undef FAR
+#endif
+
 #include <fcntl.h>
 #include <sys\types.h>      /* for unbuffered file I/O */
 #include <sys\stat.h>
@@ -670,11 +678,11 @@ Please check your Makefile.
 #ifdef __WATCOMC__
 #include <stddef.h>         /* for the 'fortran' pragma */
 #endif
-#ifdef WIN3
+#if defined WIN3 || defined WINNT
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */
 #include <windows.h>        /* include the windows headers */
 #endif
-#endif /* WIN3 */
+#endif /* WIN3 || WINNT */
 
 #define DF_MT             DFMT_PC
 
@@ -721,6 +729,9 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 
 #define register    /* don't mess with the PC compiler's register allocation */
 
+#ifdef WINNT
+#define FILELIB WINNTIO
+#else
 #ifdef WIN3
 #define FILELIB WINIO
 #else /* ! WIN3 */
@@ -730,6 +741,7 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #define FILELIB PCIO
 #endif /* PC */
 #endif /* WIN3 */
+#endif /* WINNT */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1108,9 +1120,9 @@ extern uint8 FAR *DFtbuf;
 #endif /* ABSOFT */
 #endif
 
-#if defined(PC)   /* with MS Fortran */
-#   define FCALLKEYW    _fortran
-#   define FRETVAL(x)   x _fortran
+#if defined(PC) && !defined(PC386)   /* with MS Fortran */
+#   define FCALLKEYW    __fortran
+#   define FRETVAL(x)   x __fortran
 #endif
 
 #ifndef FRETVAL /* !MAC && !PC */
