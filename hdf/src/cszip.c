@@ -119,7 +119,7 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 	int bytes_per_pixel;
 	int32 bytes;
 
-#ifdef H4_HAVE_SZLIB
+#ifdef H4_HAVE_LIBSZ
 
     szip_info = &(info->cinfo.coder_info.szip_info);
 	if (szip_info->szip_state == SZIP_INIT)
@@ -189,11 +189,11 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_SZLIB */
+#else /* ifdef H4_HAVE_LIBSZ */
 
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);
 
-#endif /* H4_HAVE_SZLIB */
+#endif /* H4_HAVE_LIBSZ */
 
 }   /* end HCIcszip_decode() */
 
@@ -229,7 +229,7 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
 	int32 buffer_size;
 
-#ifdef H4_HAVE_SZLIB
+#ifdef H4_HAVE_LIBSZ
 
     szip_info = &(info->cinfo.coder_info.szip_info);
 	if (szip_info->szip_state == SZIP_INIT)
@@ -253,11 +253,11 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_SZLIB */
+#else /* ifdef H4_HAVE_LIBSZ */
 
     HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
 
-#endif /* H4_HAVE_SZLIB */
+#endif /* H4_HAVE_LIBSZ */
 
 }   /* end HCIcszip_encode() */
 
@@ -292,7 +292,7 @@ HCIcszip_term(compinfo_t * info)
 	int bytes_per_pixel;
 	int32 pixels;
 
-#ifdef H4_HAVE_SZLIB
+#ifdef H4_HAVE_LIBSZ
 
     szip_info = &(info->cinfo.coder_info.szip_info);
 	if (szip_info->szip_state != SZIP_RUN)
@@ -330,11 +330,11 @@ HCIcszip_term(compinfo_t * info)
 
     return (SUCCEED);
 
-#else /* H4_HAVE_SZLIB */
+#else /* H4_HAVE_LIBSZ */
 
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);
 
-#endif /* H4_HAVE_SZLIB */
+#endif /* H4_HAVE_LIBSZ */
 
 }   /* end HCIcszip_term() */
 
@@ -364,7 +364,7 @@ HCIcszip_staccess(accrec_t * access_rec, int16 acc_mode)
     CONSTR(FUNC, "HCIcszip_staccess");
     compinfo_t *info;           /* special element information */
 
-#ifdef H4_HAVE_SZLIB
+#ifdef H4_HAVE_LIBSZ
 
     info = (compinfo_t *) access_rec->special_info;
 
@@ -393,11 +393,11 @@ HCIcszip_staccess(accrec_t * access_rec, int16 acc_mode)
 #endif /* OLD_WAY */
     return (HCIcszip_init(access_rec));  /* initialize the SZIP info */
 
-#else /* H4_HAVE_SZLIB */
+#else /* H4_HAVE_LIBSZ */
 
     HRETURN_ERROR(DFE_DENIED, FAIL);
 
-#endif /* H4_HAVE_SZLIB */
+#endif /* H4_HAVE_LIBSZ */
 
 }   /* end HCIcszip_staccess() */
 

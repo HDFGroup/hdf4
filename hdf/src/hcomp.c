@@ -213,7 +213,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
                   cinfo->coder_info.deflate_info.deflate_level = c_info->deflate.level;
               break;
 
-#ifdef H4_HAVE_SZLIB
+#ifdef H4_HAVE_LIBSZ
            case COMP_CODE_SZIP:
               /* set the coding type and the szip func. ptrs */
               cinfo->coder_type = COMP_CODE_SZIP;
@@ -227,7 +227,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               cinfo->coder_info.szip_info.options_mask = c_info->szip.options_mask;
               break;
 
-#endif H4_HAVE_SZLIB
+#endif H4_HAVE_LIBSZ
 
           default:
               HRETURN_ERROR(DFE_BADCODER, FAIL)
