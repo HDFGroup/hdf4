@@ -163,7 +163,7 @@ VSsetfields(int32 vkey, const char *fields)
 
                               value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
                               if (value == FAIL)
-				  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                               wlist->esize[wlist->n] = (uint16) value;
 
                               value = order * vs->usym[j].isize;
@@ -173,7 +173,7 @@ VSsetfields(int32 vkey, const char *fields)
 
                               value = (int32) wlist->ivsize + (int32) (wlist->isize[wlist->n]);
                               if (value > MAX_FIELD_SIZE)
-				  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                               wlist->ivsize = (uint16) value;
 
                               wlist->n++;
@@ -198,8 +198,8 @@ VSsetfields(int32 vkey, const char *fields)
                                     wlist->type[wlist->n] = rstab[j].type;
                                     wlist->order[wlist->n] = order;
                                     value = order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
-				    if (value == FAIL)
-					  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                    if (value == FAIL)
+                                      HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                                     wlist->esize[wlist->n] = (uint16) value;
                                     wlist->isize[wlist->n] = (uint16) (order * rstab[j].isize);
                                     wlist->ivsize += (uint16) (wlist->isize[wlist->n]);
@@ -218,6 +218,9 @@ VSsetfields(int32 vkey, const char *fields)
                     wlist->off[i] = (uint16) uj;
                     uj += wlist->isize[i];
                 }
+
+              vs->marked = TRUE; /* mark vdata as being modified */
+              vs->new_h_sz = TRUE; /* mark vdata header size being changed */
 
               HGOTO_DONE(SUCCEED); /* OK */
           } /* if wlist->n == 0 */
@@ -460,6 +463,9 @@ VFfieldname(int32 vkey, int32 index)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
       HGOTO_ERROR(DFE_ARGS,NULL);
 
+    if (vs->wlist.n == 0)
+      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+
     ret_value = ((char *) vs->wlist.name[index]);
 
 done:
@@ -504,6 +510,9 @@ VFfieldtype(int32 vkey, int32 index)
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
       HGOTO_ERROR(DFE_ARGS,FAIL);
+
+    if (vs->wlist.n == 0)
+      HGOTO_ERROR(DFE_BADFIELDS,NULL);
 
     ret_value = ((int32) vs->wlist.type[index]);
 
@@ -551,6 +560,9 @@ VFfieldisize(int32 vkey, int32 index)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
+    if (vs->wlist.n == 0)
+      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+
     ret_value = ((int32) vs->wlist.isize[index]);
 
 done:
@@ -597,6 +609,9 @@ VFfieldesize(int32 vkey, int32 index)
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
+    if (vs->wlist.n == 0)
+      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+
     ret_value = ((int32) vs->wlist.esize[index]);
 
 done:
@@ -641,6 +656,9 @@ VFfieldorder(int32 vkey, int32 index)
     vs = w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG))
       HGOTO_ERROR(DFE_ARGS,FAIL);
+
+    if (vs->wlist.n == 0)
+      HGOTO_ERROR(DFE_BADFIELDS,NULL);
 
     ret_value = ((int32) vs->wlist.order[index]);
 
@@ -738,6 +756,7 @@ done:
 
     return ret_value;
 } /* VSsetexternalfile */
+
 /*----------------------------------------------------------------- 
 NAME
     VSfpack -- pack into or unpack from a buf the values of fully

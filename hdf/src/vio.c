@@ -435,28 +435,32 @@ vpackvs(VDATA * vs,  /* IN/OUT: */
     /* save nfields */
     INT16ENCODE(bb, vs->wlist.n);
 
-    for (i = 0; i < vs->wlist.n; i++)   /* save the type */
-        INT16ENCODE(bb, vs->wlist.type[i]);
+    /* Skip over all the "wheel-spinning" for 0-field vdatas */
+    if(vs->wlist.n>0)
+      { 
+        for (i = 0; i < vs->wlist.n; i++)   /* save the type */
+            INT16ENCODE(bb, vs->wlist.type[i]);
 
-    /* save the isize */
-    for (i = 0; i < vs->wlist.n; i++)
-        UINT16ENCODE(bb, vs->wlist.isize[i]);
+        /* save the isize */
+        for (i = 0; i < vs->wlist.n; i++)
+            UINT16ENCODE(bb, vs->wlist.isize[i]);
 
-    for (i = 0; i < vs->wlist.n; i++)   /* save the offset */
-        UINT16ENCODE(bb, vs->wlist.off[i]);
+        for (i = 0; i < vs->wlist.n; i++)   /* save the offset */
+            UINT16ENCODE(bb, vs->wlist.off[i]);
 
-    for (i = 0; i < vs->wlist.n; i++)   /* save the order */
-        UINT16ENCODE(bb, vs->wlist.order[i]);
+        for (i = 0; i < vs->wlist.n; i++)   /* save the order */
+            UINT16ENCODE(bb, vs->wlist.order[i]);
 
-    /* save each field length and name - omit the null */
-    for (i = 0; i < vs->wlist.n; i++)
-      {
-          slen = HDstrlen(vs->wlist.name[i]);
-          INT16ENCODE(bb, slen);
+        /* save each field length and name - omit the null */
+        for (i = 0; i < vs->wlist.n; i++)
+          {
+              slen = HDstrlen(vs->wlist.name[i]);
+              INT16ENCODE(bb, slen);
 
-          HDstrcpy((char *) bb, vs->wlist.name[i]);
-          bb += slen;
-      }
+              HDstrcpy((char *) bb, vs->wlist.name[i]);
+              bb += slen;
+          }
+      } /* end if */
 
     /* save the vsnamelen and vsname - omit the null */
     slen = HDstrlen(vs->vsname);
@@ -586,43 +590,58 @@ vunpackvs(VDATA * vs, /* IN/OUT: */
           INT16DECODE(bb, int16var);
           vs->wlist.n = (intn)int16var;
 
-          /* Allocate buffer to hold all the int16/uint16 arrays */
-          if(NULL==(vs->wlist.bptr = HDmalloc(sizeof(uint16)*(size_t)(vs->wlist.n*5))))
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+          if(vs->wlist.n==0)
+            {   /* Special case for Vdata with 0 fields defined */
+              /* Initialize buffer to NULL & carry over to other arrays */
+              vs->wlist.bptr = NULL;
+              vs->wlist.type = NULL;
+              vs->wlist.off = NULL;
+              vs->wlist.isize = NULL;
+              vs->wlist.order = NULL;
+              vs->wlist.esize = NULL;
 
-          /* Use buffer to support the other arrays */
-          vs->wlist.type = (int16 *)vs->wlist.bptr;
-          vs->wlist.off = (uint16 *)vs->wlist.type+vs->wlist.n;
-          vs->wlist.isize = vs->wlist.off+vs->wlist.n;
-          vs->wlist.order = vs->wlist.isize+vs->wlist.n;
-          vs->wlist.esize = vs->wlist.order+vs->wlist.n;
+              /* Initialize the array of pointers to field names to NULL also */
+              vs->wlist.name = NULL;
+            } /* end if */
+          else
+            { /* Allocate buffer to hold all the int16/uint16 arrays */
+              if(NULL==(vs->wlist.bptr = HDmalloc(sizeof(uint16)*(size_t)(vs->wlist.n*5))))
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-          for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
-              INT16DECODE(bb, vs->wlist.type[i]);
+              /* Use buffer to support the other arrays */
+              vs->wlist.type = (int16 *)vs->wlist.bptr;
+              vs->wlist.off = (uint16 *)vs->wlist.type+vs->wlist.n;
+              vs->wlist.isize = vs->wlist.off+vs->wlist.n;
+              vs->wlist.order = vs->wlist.isize+vs->wlist.n;
+              vs->wlist.esize = vs->wlist.order+vs->wlist.n;
 
-          for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
-              UINT16DECODE(bb, vs->wlist.isize[i]);
+              for (i = 0; i < vs->wlist.n; i++)   /* retrieve the type */
+                  INT16DECODE(bb, vs->wlist.type[i]);
 
-          for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
-              UINT16DECODE(bb, vs->wlist.off[i]);
+              for (i = 0; i < vs->wlist.n; i++)   /* retrieve the isize */
+                  UINT16DECODE(bb, vs->wlist.isize[i]);
 
-          for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
-              UINT16DECODE(bb, vs->wlist.order[i]);
+              for (i = 0; i < vs->wlist.n; i++)   /* retrieve the offset */
+                  UINT16DECODE(bb, vs->wlist.off[i]);
 
-          /* retrieve the field names (and each field name's length)  */
-          if(NULL==(vs->wlist.name = HDmalloc(sizeof(char *)*(size_t)vs->wlist.n)))
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
+              for (i = 0; i < vs->wlist.n; i++)   /* retrieve the order */
+                  UINT16DECODE(bb, vs->wlist.order[i]);
 
-          for (i = 0; i < vs->wlist.n; i++) 
-            {
-                INT16DECODE(bb, int16var);    /* this gives the length */
-                if(NULL==(vs->wlist.name[i] = HDmalloc((int16var+1)*sizeof(char))))
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+              /* retrieve the field names (and each field name's length)  */
+              if(NULL==(vs->wlist.name = HDmalloc(sizeof(char *)*(size_t)vs->wlist.n)))
+                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
+              for (i = 0; i < vs->wlist.n; i++) 
+                {
+                    INT16DECODE(bb, int16var);    /* this gives the length */
+                    if(NULL==(vs->wlist.name[i] = HDmalloc((int16var+1)*sizeof(char))))
+                        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                bb += (size_t)int16var;
-            }
+                    HIstrncpy(vs->wlist.name[i], (char *) bb, int16var + 1);
+
+                    bb += (size_t)int16var;
+                }
+            } /* end else */
 
           /* retrieve the vsname (and vsnamelen)  */
           INT16DECODE(bb, int16var);  /* this gives the length */
@@ -823,24 +842,24 @@ NAME
 DESCRIPTION
    NEW VSattach:
    (a)  if vsid == -1
-   if "r" access return error.
-   if "w" access
-   create a new vs in vg and attach it.
-   add to vsdir, set nattach= 1, nvertices = 0.
+       if "r" access return error.
+       if "w" access
+       create a new vs in vg and attach it.
+       add to vsdir, set nattach= 1, nvertices = 0.
 
    (b)  if (vsid > 0)
-   if "r" access => look in vsdir
-   if not found,
-   fetch  vs from file, add to vsdir,
-   set nattach= 1, nvertices = val from file.
-   if found,
-   check access of found vs
-   if "w" => being written, unstable! forbidden
-   if "r" => ok. incr nattach.
+       if "r" access => look in vsdir
+       if not found,
+       fetch  vs from file, add to vsdir,
+       set nattach= 1, nvertices = val from file.
+       if found,
+       check access of found vs
+       if "w" => being written, unstable! forbidden
+       if "r" => ok. incr nattach.
 
-   if "w" access => new data may be added BUT must be same format
-   as existing vdata.
-   (ie. VSsetfields must match old format exactly!!)
+       if "w" access => new data may be added BUT must be same format
+       as existing vdata.
+       (ie. VSsetfields must match old format exactly!!)
 
    Allows for seeks to write.
 

@@ -44,19 +44,6 @@ EXPORTED ROUTINES
 #define MIN(a,b)     ((a) < (b) ? (a) : (b))
 #endif /* MIN */
 
-#if 0
-/*
- * Private conversion buffer stuff
- * VDATA_BUFFER_MAX is the largest buffer that can be allocated for
- *   writing (haven't implemented reading yet).
- * Vtbuf is the buffer
- * Vtbufsize is the buffer size in bytes at any given time.
- * Vtbuf is increased in size as need be
- * BUG: the final Vtbuf never gets freed
- */
-#define VDATA_BUFFER_MAX 1000000
-#endif /* if 0 */
-
 PRIVATE uint32 Vtbufsize = 0;
 PRIVATE uint8 *Vtbuf = NULL;
 
@@ -139,12 +126,15 @@ VSseek(int32 vkey,   /* IN: vdata key */
     if ((vs == NULL) || (eltpos < 0))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* Don't allow seeks in 0-field vdatas */
+    if (vs->wlist.n<=0)
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+
     /* calculate offset of element in vdata */
     offset = eltpos * vs->wlist.ivsize;
 
     /* seek to element */
-    ret = Hseek(vs->aid, offset, DF_START);
-    if (ret == FAIL)
+    if (( ret = Hseek(vs->aid, offset, DF_START)) == FAIL)
         HGOTO_ERROR(DFE_BADSEEK, FAIL);
 
     ret_value = (eltpos);
@@ -224,6 +214,10 @@ VSread(int32 vkey,       /* IN: vdata key */
     /* check access id and number of vertices in vdata */
     if ((vs->aid == 0) || (vs->nvertices == 0))
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Don't allow reads in 0-field vdatas */
+    if (vs->wlist.n<=0)
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
 
     /* check if vdata exists in file */
     if (vexistvs(vs->f, vs->oref) == FAIL)

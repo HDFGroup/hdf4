@@ -469,7 +469,7 @@ intn VSfnattrs(int32 vsid, int32 findex)
         HGOTO_ERROR(DFE_NOVS, FAIL);
      if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != (int32)_HDF_VDATA))
+     if ((findex > vs->wlist.n || findex < 0) && (findex != (int32)_HDF_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
      t_attrs = vs->nattrs;
      vs_alist = vs->alist;
@@ -1031,6 +1031,7 @@ done:
   
   return ret_value;
 }  /* Vgetversion */
+
 /* ---------------- Vnattr ------------------------ 
 NAME
       Vnattrs  -- get number of attributes for a vgroup

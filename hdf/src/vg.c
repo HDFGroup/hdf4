@@ -304,9 +304,9 @@ VSgetfields(int32 vkey,   /* IN: vdata key */
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Got through Vdata and build the comman seperated string of 
-       field names */
+    /* Got through Vdata and build the comman seperated string of field names */
     fields[0] = '\0';
+    /* No special handling for 0-field vdatas, this algorithm should work fine. */
     for (i = 0; i < vs->wlist.n; i++)
       {   /* build the comma-separated string */
           HDstrcat(fields, vs->wlist.name[i]);
@@ -386,6 +386,7 @@ VSfexist(int32 vkey,  /* IN: vdata key */
       {
           found = 0;
           s = av[i];
+          /* No changes for 0-field Vdatas, this algorithm should work fine. */
           for (j = 0; j < w->n; j++)
             {
 #ifdef VDATA_FIELDS_ALL_UPPER
