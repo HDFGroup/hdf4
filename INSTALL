@@ -30,8 +30,9 @@
   2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
   2.5.7 Exemplar (HP-UX 9.03)
   2.5.8 SP2 Single node
-  2.5.9 T3D/T3E Single node
-  2.5.10 IRIX 6.2
+  2.5.9 T3E Single node
+  2.5.10a SGI IRIX 6.x
+  2.5.10b SGI IRIX64
   2.5.11 DEC Alpha(Digital Unix v4.0)
   2.5.12 Cray T90
 
@@ -81,10 +82,8 @@
   Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
   Sun4(Solaris 2.5)               CC SC4.0         f77 SC4.0            
   SGI-Indy(IRIX5.3)               CC 3.19          f77, g77 0.5.19
-  SGI-PowerChallenge(IRIX6.2_n32) CC 7.0           f77 7.0  
-  SGI-PowerChallenge(IRIX6.2_64)  CC 7.0           f77 7.0   
-  SGI-Origin(IRIX6.4_n32)         CC 7.1           f77 7.1      
-  SGI-Origin(IRIX6.4_64)          CC 7.1           f77 7.1     
+  SGI-Origin(IRIX64 v6.4-n32)     CC 7.20          f77 7.20     
+  SGI-Origin(IRIX64 v6.4-64)      CC 7.20          f77 7.20    
   HP9000/735(HP-UX 9.03)          CC A.09.84       f77 09.16  
   HP9000/755(HP-UX B.10.20)       CC A.10.32.03    f77       
   Exemplar(HP-UX A.09.03)         CC 6.5           fc 9.5        
@@ -105,7 +104,7 @@
   PowerPC(Mac-OS-7.6)               -                -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
   Windows NT/95                     -                -             
-  T3E (unicosmk 2.0.2.16)         CC 6.0.2.0       f90 3.0.2.0.2
+  T3E (unicosmk 2.0.2.16)         CC 6.0.2.0.5     f90 3.0.2.0
 
 
 2.2  Third Party Software Requirements:
@@ -560,14 +559,28 @@
     not support concurrent access of the same HDF file.
 
 
-    2.5.9 T3D/T3E Single node
+    2.5.9 T3E Single node
     -------------------------
-    T3E:
     HDF has been compiled and tested to run in a single node of the
     T3E system.  To use it in the parallel processing environment on
     the T3E system, you must run the HDF code in only one designated
     process since HDF does not support concurrent access to the same
     HDF file.
+
+    Prior to installing on the T3D, the following changes will have
+    to be made to ./hdf/test/tsdmmsf.f and ./hdf/test/tsdnmmsf.f:
+
+    Search on '-128'. You will find two instances of this in
+    each file.  The second instance looks as follows: 
+
+    C NOTE: If you get a compile error on the "char(-128)" line, substitute
+    C       the "char(0)" line.  Its not quite as thorough a test, but...
+    C      i8min = char(0)
+	  i8min = char(-128)
+
+    Replace the char(-128) line, as directed.
+
+
     NOTE: HDF is compiled with the f90 compiler starting this release.
     Cray has phased out the cf77 compiler.  The f90 compiler issues
     numerous warnings during the compiling of the Fortran API test
@@ -580,28 +593,39 @@
     function names declared in dffunc.inc file and they are not used
     in the testing.
 
-    T3D:
-    HDF no long supports the T3D platform due to the advance of the
-    T3E platform and the lack of appropriate fortran compiler in the
-    T3D platform.
+
+    2.5.10a SGI IRIX 6.x
+    --------------------------
+    IRIX is the traditional SGI 32-bit OS.  Starting in version 6.x,
+    it supports two classes of 32 bits compilers, the old 32 (-o32)
+    or the new 32-bits (-n32).  SGI is phasing out the -o32 compilers.
+    Continues maintenance is done on the -n32 class of compilers only.
+    HDF library configures to use the -n32 class of C and F77 compilers.
+    If you want to use different compiler options, you need to edit
+    config/mh-irix32 and then run configure.  Consult the section
+    of "General Configuration/Installation" for more information.
 
 
-    2.5.10 IRIX 6.2
-    ---------------
-    SGI supports IRIX 6.2 on all their new machines.  HDF version 4.1r1
-    was tested on various types of SGI machines running IRIX 6.2.
-    The configure script has been updated to work on three different
-    systems.
+    2.5.10b SGI IRIX64
+    --------------------------
+    IRIX64 supports multiple combinations of ABI (-64, -n32, -o32) and
+    instruction sets (-mips2, -mips3, -mips4).  Previous HDF
+    library releases had hard coded the MIPS settings by guessing what
+    might be the most reasonable combination.  This release no longer
+    sets the MIPS option but leaves it up to the local or users
+    default.  The configure still generates -64 code by default in
+    an IRIX64 system.  If -n32 code is desired, one may override it
+    by specifying 'irix6_32' during the configure step.
 
-    OS	   	ABI	Configure command	Code produced
-    --		--	-----------------	-------------
-    IRIX64	N64	./configure		-64  -mips4
-    IRIX64	N32	./configure irix6_32 -n32 -mips3
-    IRIX	O32	./configure		-32  -mips2
+    Configure command	    Code produced
+    -----------------	    -------------
+    ./configure		        -64
+    ./configure irix6_32        -n32
 
-    NOTE: Previously, "./configure irix6_32" produced -n32 -mips4 code.
-    However, SGI changed the compiler defaults in IRIX 6.2.  We decided
-    to change the setting for it too.
+    If you want to use different compiler options, you need to edit
+    config/mh-irix6 (for just configure) or config/mh-irix32 (for
+    configure irix6_32) and then run configure.  Consult the section
+    of "General Configuration/Installation" for more information.
 
 
     2.5.11 DEC Alpha(Digital Unix v4.0)
