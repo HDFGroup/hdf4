@@ -699,8 +699,8 @@ NC_var *vp;
     fprintf(stderr, "hdf_get_data I've been called\n");
 #endif
     
-    if(!handle) return FAIL;
-    if(!vp) return FAIL;
+    if(!handle) return FALSE;
+    if(!vp) return FALSE;
 
     /* 
      * if it is stored as NDGs we can't do any better than what was
@@ -712,7 +712,7 @@ NC_var *vp;
         /* attach to the variable's Vgroup */
         vg = Vattach(handle->hdf_file, vp->vgid, "r");
         if(vg == FAIL)
-            return FAIL;
+            return FALSE;
         
         /* loop through looking for a data storage object */
         n = Vntagrefs(vg);
@@ -727,7 +727,7 @@ NC_var *vp;
     }
     
     if(handle->hdf_mode == DFACC_RDONLY)
-        return FAIL;
+        return FALSE;
   
     /* 
      * create a new data storage object
@@ -779,7 +779,7 @@ NC_var *vp;
 #endif  
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, vp->len);
 
-    if(vp->aid == FAIL) return FAIL;
+    if(vp->aid == FAIL) return FALSE;
 
     /* make sure our tmp buffer is big enough to hold everything */
     if(tBuf_size < byte_count) {
@@ -800,7 +800,7 @@ NC_var *vp;
     done = 0;
     while(done != nvalues) {
         status = Hwrite(vp->aid, byte_count, (uint8 *) tBuf);
-        if(status != byte_count) return FAIL;
+        if(status != byte_count) return FALSE;
         done += to_do;
         if(nvalues - done < to_do) {
             to_do = nvalues - done;
@@ -808,7 +808,7 @@ NC_var *vp;
         }
     }
 
-    if(Hendaccess(vp->aid) == FAIL) return FAIL;
+    if(Hendaccess(vp->aid) == FAIL) return FALSE;
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
@@ -835,15 +835,15 @@ NC_var *vp;
 
         vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
 		BLOCK_COUNT);
-        if(vp->aid == FAIL) return FAIL;
-        if(Hendaccess(vp->aid) == FAIL) return FAIL;
+        if(vp->aid == FAIL) return FALSE;
+        if(Hendaccess(vp->aid) == FAIL) return FALSE;
     }
 
     if(vp->vgid) {
         /* attach to the variable's Vgroup */
         vg = Vattach(handle->hdf_file, vp->vgid, "w");
         if(vg == FAIL)
-            return FAIL;
+            return FALSE;
         
         /* add new Vdata to existing Vgroup */
         Vaddtagref(vg, (int32) DATA_TAG, (int32) vsid);
