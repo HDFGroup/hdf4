@@ -16,6 +16,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#define TESTMASTER
+
 #include "hdf.h"
 #include "tutils.h"
 #ifdef VMS
@@ -25,10 +27,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define NUMOFTESTS 16
 #define VERSION "0.2beta"
 #define BUILDDATE "Mon Feb 8 1993"
-
-int num_errs = 0;
-int Verbocity = 0;
-
 
 struct TestStruct {
   int  NumErrors;
@@ -91,7 +89,7 @@ int main (int argc, char *argv[])
   InitTest("stubs","tstubsf","");
 #endif
 
-  Verbocity = 4; /* Default Verbocity is Low */
+  Verbosity = 4; /* Default Verbosity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
   printf("\nFORTEST V%s Built on: %s \n", VERSION, BUILDDATE );
@@ -101,13 +99,13 @@ int main (int argc, char *argv[])
     if ((argc > CLLoop+1) && ((HDstrcmp(argv[CLLoop],"-verbose")==0) ||
         (HDstrcmp(argv[CLLoop],"-v")==0))) {
       if (argv[CLLoop+1][0] == 'l')
-        Verbocity = 4;
+        Verbosity = 4;
       else if (argv[CLLoop+1][0] == 'm')
-        Verbocity = 6;
+        Verbosity = 6;
       else if (argv[CLLoop+1][0] == 'h')
-        Verbocity = 10;
+        Verbosity = 10;
       else 
-        Verbocity = atoi(argv[CLLoop+1]); 
+        Verbosity = atoi(argv[CLLoop+1]); 
     }
     if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop],"-summary")==0) ||
         (HDstrcmp(argv[CLLoop],"-s")==0))) {
@@ -182,7 +180,7 @@ int main (int argc, char *argv[])
   }
 
 
-  /*  printf("The Verbocity is %d \n",Verbocity); */
+  /*  printf("The Verbosity is %d \n",Verbosity); */
 
   for (Loop = 0; Loop < NUMOFTESTS; Loop++) {
     if (Test[Loop].SkipFlag) {

@@ -26,18 +26,7 @@ static char RcsId[] = "$Id$";
 #include "hdf.h"
 #include "tutils.h"
 
-/* External variables */
-extern int num_errs;
-extern int Verbocity;
-
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 /* Internal variables */
-
 static int32 FAR rank = 3;
 
 static float64 FAR maxf64  = 123.0;

@@ -37,27 +37,18 @@ static char RcsId[] = "@(#)$Revision$";
  BUGS/LIMITATIONS
 
  EXPORTED ROUTINES/VARIABLES:
-        Two variables are exported: num_errs, and Verbocity.
+        Two variables are exported: num_errs, and Verbosity.
 
 */
 
 #define MAXNUMOFTESTS 25
-
-/* Exportable variables */
-int num_errs = 0;
-int Verbocity = 0;
+#define TESTMASTER
 
 /* Internal Variables */
 static int Index=0;
 
 /* ANY new test needs to have a prototype in tproto.h */
 #include "tproto.h"
-
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
 
 #ifdef TEST_PC
 FILE *dbg_file;
@@ -152,7 +143,7 @@ int main (int argc, char *argv[])
     InitTest("tbbt",test_tbbt,"Threaded Balanced Binary Trees");
     InitTest("vset",test_vsets,"VSET Interface Test");
 
-    Verbocity = 4; /* Default Verbocity is Low */
+    Verbosity = 4; /* Default Verbosity is Low */
     ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
     printf("\nFor help use: testhdf -help\n");
@@ -162,13 +153,13 @@ int main (int argc, char *argv[])
         if ((argc > CLLoop+1) && ((HDstrcmp(argv[CLLoop],"-verbose")==0) ||
                 (HDstrcmp(argv[CLLoop],"-v")==0))) {
             if (argv[CLLoop+1][0] == 'l')
-                Verbocity = 4;
+                Verbosity = 4;
             else if (argv[CLLoop+1][0] == 'm')
-                Verbocity = 6;
+                Verbosity = 6;
             else if (argv[CLLoop+1][0] == 'h')
-                Verbocity = 10;
+                Verbosity = 10;
             else
-                Verbocity = atoi(argv[CLLoop+1]);
+                Verbosity = atoi(argv[CLLoop+1]);
           } /* end if */
         if ((argc > CLLoop) && ((HDstrcmp(argv[CLLoop],"-summary")==0) ||
                 (HDstrcmp(argv[CLLoop],"-s")==0)))

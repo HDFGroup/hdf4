@@ -18,22 +18,12 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 
-/* External Variables */
-extern int num_errs;
-extern int Verbocity;
-
 /* Internal Variables */
 #define CDIM_X  7
 #define CDIM_Y  9
 
 #define FILENAME    "litend.dat"
 #define TMPFILE     "temp.hdf"
-
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
 
 static int8 FAR cdata_i8[CDIM_Y][CDIM_X];
 static uint8 FAR cdata_u8[CDIM_Y][CDIM_X];

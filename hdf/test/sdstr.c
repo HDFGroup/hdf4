@@ -28,10 +28,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 
-extern int num_errs;
-extern int Verbocity;
-
-int number_failed = 0;
+static int number_failed = 0;
 
 static VOID compare
     (const char *outstring, const char *instring);

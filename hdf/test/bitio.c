@@ -67,12 +67,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define BITIO_TAG_2     2500
 #define BITIO_REF_2     2500
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 static uint8 FAR outbuf[BUFSIZE],
     FAR inbuf[DATASIZE];
 
@@ -90,9 +84,6 @@ static uint32 FAR maskbuf[]={
     0x001fffff,0x003fffff,0x007fffff,0x00ffffff,
     0x01ffffff,0x03ffffff,0x07ffffff,0x0fffffff,
     0x1fffffff,0x3fffffff,0x7fffffff,0xffffffff};
-
-extern int num_errs;
-extern int Verbocity;
 
 void test_bitio_write()
 {

@@ -29,9 +29,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 
-extern int num_errs;
-extern int Verbocity;
-
 #define ISFIRST    (int)1
 #define NOTFIRST   (int)0
 #define MAXLEN_LAB     50

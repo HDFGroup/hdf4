@@ -129,15 +129,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_MASK12A 0x0000001f
 #define NBIT_MASK12B 0xffffffff
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
-extern int num_errs;
-extern int Verbocity;
-
 void test_nbit1(int32 fid)
 {
     int32 aid1;

@@ -21,17 +21,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define BUF_SIZE        4096
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 static uint8 FAR outbuf[BUF_SIZE],
     FAR inbuf[BUF_SIZE];
-
-extern int num_errs;
-extern int Verbocity;
 
 void test_hextelt()
 {

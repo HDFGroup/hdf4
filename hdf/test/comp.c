@@ -41,14 +41,20 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #include "tproto.h"
+
 #define TESTFILE_NAME "tcomp.hdf"
 
 #define BUFSIZE 4096
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
+#ifdef QAK
+/* different modeling layers to test */
+comp_model_t test_models[]={COMP_MODEL_STDIO};
+
+/* different compression layers to test */
+comp_coder_t test_coders[]={COMP_CODE_NONE,COMP_CODE_RLE,COMP_CODE_NBIT);
+
+#define NUM_OUTBUFS 1
+static uint8 FAR *outbuf[NUM_OUTBUFS];
 #endif
 
 static uint8 FAR outbuf[BUFSIZE],
@@ -56,9 +62,6 @@ static uint8 FAR outbuf[BUFSIZE],
 
 static uint8 FAR outbuf2[BUFSIZE],
     FAR inbuf2[BUFSIZE];
-
-extern int num_errs;
-extern int Verbocity;
 
 void test_comp()
 {

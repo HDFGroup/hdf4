@@ -12,8 +12,8 @@
 
 /* $Id$ */
 
-#ifndef TPROTO_H
-#define TPROTO_H
+#ifndef _TPROTO_H
+#define _TPROTO_H
 
 #include "hdf.h"
 #include "tutils.h"
@@ -40,4 +40,4 @@ void test_tbbt (void);
 void test_conv (void);
 void test_nbit (void);
 
-#endif
+#endif /* _TPROTO_H */

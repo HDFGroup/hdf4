@@ -24,9 +24,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "tproto.h"
 
-extern int Verbocity;
-extern int num_errs;
-
 #define VDATA_COUNT  1000 /* make this many Vdatas to check for memory leaks */
 
 #define FNAME0   "tvset.hdf"

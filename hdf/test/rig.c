@@ -22,18 +22,9 @@ static char RcsId[] = "@(#)$Revision$";
 #define YSIZE 15
 #define TESTFILE "tdf24.hdf"
  
-extern int num_errs;
-extern int Verbocity;
-
 #define JPEGX   46
 #define JPEGY   23
 #define JPEGFILE "tjpeg.hdf"
-
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
 
 static uint8 FAR jpeg_8bit_orig[JPEGY][JPEGX]={
 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,

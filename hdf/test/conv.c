@@ -78,9 +78,6 @@ typedef int clock_t;
 #define clock() (0)
 #endif
 
-extern int num_errs;
-extern int Verbocity;
-
 /* Local variables */
 static int32 test_type[]={0,DFNT_LITEND,DFNT_NATIVE};
 static const char *test_name[]={"Big-Endian","Little-Endian","Native"};
@@ -591,7 +588,7 @@ void test_conv()
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
 #ifdef UNICOS
-        if(Verbocity>9) {
+        if(Verbosity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float32,
 	        *u8_d=(uint8 *)dst_float32,
@@ -645,7 +642,7 @@ void test_conv()
 /* This amazing hack is because of the way the Cray converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
 #ifdef UNICOS
-        if(Verbocity>9) {
+        if(Verbosity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float32,
 	        *u8_d=(uint8 *)dst_float32,
@@ -715,7 +712,7 @@ void test_conv()
 /* This amazing hack is because of the way the VMS converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
 #ifdef VMS
-        if(Verbocity>9) {
+        if(Verbosity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float64,
 	        *u8_d=(uint8 *)dst_float64,
@@ -768,7 +765,7 @@ void test_conv()
 /* This amazing hack is because of the way the VMS converts numbers. */
 /*  The converted number are going to have to be checked by hand... */
 #ifdef VMS
-        if(Verbocity>9) {
+        if(Verbosity>9) {
             intn i;
             uint8 *u8_s=(uint8 *)src_float64,
 	        *u8_d=(uint8 *)dst_float64,

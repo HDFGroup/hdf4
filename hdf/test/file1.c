@@ -24,15 +24,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define BIG 600
 #define TESTFILE_NAME "thf"
 
-extern int Verbocity;
-extern int num_errs;
-
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 static int32 FAR files[BIG];
 static int32 FAR accs[BIG];
 

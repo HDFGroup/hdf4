@@ -21,17 +21,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define BUFSIZE 4096
 
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 static uint8 FAR outbuf[BUFSIZE],
     FAR inbuf[BUFSIZE];
-
-extern int num_errs;
-extern int Verbocity;
 
 void test_hblocks()
 {

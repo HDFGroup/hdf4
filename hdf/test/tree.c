@@ -45,9 +45,6 @@ static char RcsId[] = "@(#)$Revision$";
 #define SEED(s)      (srand(s))
 #define RandInt(a,b) ((rand()%(((b)-(a))+1))+(a))
 
-extern int num_errs;
-extern int Verbocity;
-
 PRIVATE VOID swap_arr
     (int32 *arr,intn a,intn b);
 
@@ -99,7 +96,7 @@ void test_tbbt(void)
 		swap_arr(rem_arr,i,t);
 	      } /* end for */
 
-	    if(Verbocity>9) {
+	    if(Verbosity>9) {
 	        printf("ins_arr: \n");
 	        for(i=0; i<test_size; i++)   /* print the arrays */
 	            printf("%d \n",(int)ins_arr[i]);

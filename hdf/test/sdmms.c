@@ -18,15 +18,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 
-extern int Verbocity;
-extern int num_errs;
-
-#ifdef TEST_PC
-#define FAR far
-#else
-#define FAR /* */
-#endif
-
 static float32 FAR f32[10][10], FAR tf32[10][10];
 static float32 FAR f32scale[10], FAR tf32scale[10];
 static float32 f32max = (float32)40.0, f32min = (float32)0.0;

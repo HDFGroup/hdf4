@@ -25,9 +25,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include <stdio.h>
 #include "tproto.h"
 
-extern int Verbocity;
-extern int num_errs;
-
 void test_vers(void)
 {
   int ret;
