@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -156,9 +168,16 @@ PRIVATE intn IsCal         = 0;   /* has calibration info been set?     */
 /*           userNT=DFNTF_IEEE ;	 default */
 
 PRIVATE uint16 Readref = 0;      /* ref of next SDG/NDG to be read? */
+#if 0
 PRIVATE char Lastfile[DF_MAXFNLEN] = "";	/* last file opened */
+#endif
+PRIVATE char *Lastfile = NULL;
 PRIVATE uint16 Lastref = 0;     /* Last ref to be read/written? */
 PRIVATE DFdi lastnsdg;		/* last read nsdg in nsdg_t */
+
+/* Private buffer */
+PRIVATE uint8 *ptbuf = NULL;
+
 
 /*-----------------------------------------------------------------------------
  * Name:    DFSDgetdims
@@ -1122,7 +1141,7 @@ intn DFSDrestart(void)
 intn DFSDrestart()
 #endif /* PROTOTYPE */
 {
-    Lastfile[0] = '\0';
+    Lastfile = NULL;
     Readref = 0;
     return SUCCEED;
 }
@@ -1634,6 +1653,14 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
     if (!HDvalidfid(file_id)) 
         HRETURN_ERROR(DFE_BADCALL, FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
 /* MMM:  Talk to Shiming and make sure the change made to the way ndgs
          and sdgs are handled is ok.
 */
@@ -1725,9 +1752,9 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
 
 	    if (found)	
               {    /* read in the tag/refs in the link element */
-                if (Hgetelement(file_id, di.tag, di.ref, DFtbuf) == (int32)FAIL)
+                if (Hgetelement(file_id, di.tag, di.ref, ptbuf) == (int32)FAIL)
                     return FAIL;
-                bufp = DFtbuf;
+                bufp = ptbuf;
                 UINT16DECODE(bufp, lnkdd[0].tag);
                 UINT16DECODE(bufp, lnkdd[0].ref);
                 UINT16DECODE(bufp, lnkdd[1].tag);
@@ -1781,9 +1808,9 @@ intn DFSDIsetnsdg_t(file_id,nsdghdr)
               }
 	    if (found)	
               {   /* read in the tag/refs in the link element */
-                if (Hgetelement(file_id,  di.tag, di.ref, DFtbuf)==(int32)FAIL)
+                if (Hgetelement(file_id,  di.tag, di.ref, ptbuf)==(int32)FAIL)
                     return FAIL;
-                bufp = DFtbuf;
+                bufp = ptbuf;
                 UINT16DECODE(bufp, lnkdd[0].tag);
                 UINT16DECODE(bufp, lnkdd[0].ref);
                 UINT16DECODE(bufp, lnkdd[1].tag);
@@ -1977,6 +2004,14 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
     if (!ref)
         HRETURN_ERROR(DFE_BADREF, FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* read NDG into memory */
     if ((GroupID = DFdiread(file_id, tag, ref)) < 0)
         return FAIL;
@@ -2007,12 +2042,12 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
                 return FAIL;
 
             /* read rank */
-            if (Hread(aid, (int32) 2, DFtbuf) == FAIL)
+            if (Hread(aid, (int32) 2, ptbuf) == FAIL)
               {
                 Hendaccess(aid);
                 return FAIL;
               }
-            p = DFtbuf;
+            p = ptbuf;
             INT16DECODE(p, sdg->rank);
 
             /* get space for dimensions */
@@ -2025,22 +2060,22 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
               }
 
             /* read dimension record */
-            if (Hread(aid, (int32) 4 * sdg->rank,DFtbuf) == FAIL)
+            if (Hread(aid, (int32) 4 * sdg->rank, ptbuf) == FAIL)
               {
                 Hendaccess(aid);
                 return FAIL;
               }
-            p = DFtbuf;
+            p = ptbuf;
             for (i=0; i<sdg->rank; i++)
                 INT32DECODE(p, sdg->dimsizes[i]);
             
             /* read tag/ref of NT */
-            if (Hread(aid,(int32) 4,  DFtbuf) == FAIL) 
+            if (Hread(aid,(int32) 4,  ptbuf) == FAIL) 
               {
                 Hendaccess(aid);
                 return FAIL;
               }
-            p = DFtbuf;
+            p = ptbuf;
             UINT16DECODE(p, nt.tag);
             UINT16DECODE(p, nt.ref);
             
@@ -2094,12 +2129,12 @@ intn DFSDIgetndg(file_id, tag, ref, sdg)
             /* read and check all scale NTs */
             for (i = 0; i < sdg->rank; i++) 
               {
-                if (Hread(aid, (int32) 4, DFtbuf) == FAIL) 
+                if (Hread(aid, (int32) 4, ptbuf) == FAIL) 
                   {
                     Hendaccess(aid);
                     return FAIL;
                   }
-                p = DFtbuf;
+                p = ptbuf;
                 UINT16DECODE(p, nt.tag);
                 UINT16DECODE(p, nt.ref);
                     
@@ -2520,6 +2555,14 @@ intn DFSDIputndg(file_id, ref, sdg)
     if (!ref)
       HRETURN_ERROR(DFE_BADREF, FAIL);
 
+    /* Check if temproray buffer has been allocated */
+    if (ptbuf == NULL)
+      {
+        ptbuf = (uint8 *)HDgetspace(TBUF_SZ * sizeof(uint8));
+        if (ptbuf == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, NULL);
+      }
+
     /* set number type and subclass	*/
     if (sdg->numbertype == DFNT_NONE)
         DFSDsetNT(DFNT_FLOAT32);     /* default is float32  */
@@ -2555,7 +2598,7 @@ intn DFSDIputndg(file_id, ref, sdg)
       {   /* new NDD; write rank, dims, data NT and scale NTs */
 
         /* put rank & dimensions in buffer */
-        bufp = DFtbuf;
+        bufp = ptbuf;
         UINT16ENCODE(bufp, sdg->rank);
         for (i=0; i<sdg->rank; i++)
             INT32ENCODE(bufp, sdg->dimsizes[i]);
@@ -2571,7 +2614,7 @@ intn DFSDIputndg(file_id, ref, sdg)
             UINT16ENCODE(bufp, nt.ref);
           }   
         /* write out NDD record */
-        ret = Hputelement(file_id,DFTAG_SDD, ref,DFtbuf,(int32) (bufp-DFtbuf));
+        ret = Hputelement(file_id,DFTAG_SDD, ref,ptbuf,(int32) (bufp-ptbuf));
         if (ret == FAIL)
             return FAIL;
         Ref.dims = ref;
@@ -2585,7 +2628,7 @@ intn DFSDIputndg(file_id, ref, sdg)
       {
         luftag = (uint16)((luf==LABEL) ? DFTAG_SDL :
                 (luf==UNIT) ? DFTAG_SDU : DFTAG_SDF);
-        bufp   = DFtbuf;
+        bufp   = ptbuf;
         /* this block of code checks if luf is NULL, else writes it */
         if (!Ref.luf[luf])
           {            /* if luf was set */
@@ -2618,7 +2661,7 @@ intn DFSDIputndg(file_id, ref, sdg)
               }   /* i loop   */
             Ref.luf[luf] = ref; /* remember ref */
             ret = Hputelement(file_id, luftag, (uint16)Ref.luf[luf],
-                              DFtbuf, (int32) (bufp-DFtbuf));
+                              ptbuf, (int32) (bufp-ptbuf));
             if (ret == FAIL)
               return FAIL;
           }  /* luf was set */
@@ -2889,7 +2932,7 @@ intn DFSDIputndg(file_id, ref, sdg)
         lnkdd[0].ref = ref;
         lnkdd[1].tag = DFTAG_SDG;
         lnkdd[1].ref = ref;
-        bufp = DFtbuf;
+        bufp = ptbuf;
 
         for (i = 0; i < 2; i++)
           {
@@ -2897,7 +2940,7 @@ intn DFSDIputndg(file_id, ref, sdg)
             UINT16ENCODE(bufp, lnkdd[i].ref);
           }
         ret = Hputelement(file_id, DFTAG_SDLNK, ref,
-                          DFtbuf,(int32) (bufp-DFtbuf));
+                          ptbuf,(int32) (bufp-ptbuf));
         if (ret == FAIL)
           return FAIL;
 
@@ -3036,6 +3079,14 @@ int32 DFSDIopen(filename, access)
 
     if (Sfile_id!=DF_NOFILE)      /* in the middle of a partial write */
         HRETURN_ERROR(DFE_ALROPEN, FAIL); 
+
+    /* Check if filename buffer has been allocated */
+    if (Lastfile == NULL)
+      {
+        Lastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+        if (Lastfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
     /* use reopen if same file as last time - more efficient */
     if ((HDstrcmp(Lastfile,filename)) || (access == DFACC_CREATE)) 
