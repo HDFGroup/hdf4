@@ -805,6 +805,17 @@ xdr_NC_var(xdrs, vpp)
 	if( xdrs->x_op == XDR_DECODE )
 		(*vpp)->begin = begin ;
 
+#ifdef HDF
+
+        if( xdrs->x_op == XDR_DECODE ) {
+            
+            (*vpp)->HDFtype = hdf_map_type((*vpp)->type);
+            (*vpp)->HDFsize = DFKNTsize((*vpp)->HDFtype);
+                
+        }
+
+#endif
+
 	return( TRUE ) ;
 }
 

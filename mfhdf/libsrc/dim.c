@@ -301,6 +301,13 @@ xdr_NC_dim(xdrs, dpp)
 		}
 	}
 
+#ifdef HDF
+
+        if( xdrs->x_op == XDR_DECODE )
+            (*dpp)->count = 0;
+
+#endif
+
 	if( !xdr_NC_string(xdrs, &((*dpp)->name)))
 		return(FALSE) ;
 	return( xdr_long(xdrs, &((*dpp)->size)) ) ;

@@ -302,6 +302,27 @@ static struct xdr_ops	xdrposix_ops = {
 	xdrposix_destroy	/* destroy stream */
 };
 
+
+/*
+ * Fake an XDR initialization for HDF files
+ */
+hdf_xdrfile_create(xdrs, ncop)
+     XDR *xdrs;
+     int ncop;
+{
+    biobuf *biop = new_biobuf(-1, 0) ;
+    
+    if(ncop & NC_CREAT)
+        xdrs->x_op = XDR_ENCODE;
+    else
+        xdrs->x_op = XDR_DECODE;
+        
+    xdrs->x_ops = &xdrposix_ops;
+    xdrs->x_private = (caddr_t) biop;
+    
+} /* hdf_xdrfile_create */
+
+
 /*
  * Initialize a posix xdr stream.
  * Sets the xdr stream handle xdrs for use on the file descriptor fd.
@@ -386,7 +407,8 @@ xdrposix_destroy(xdrs)
 	{
 		(void) wrbuf(biop) ;
 	}
-	(void) close(biop->fd) ;
+	if(biop->fd != -1) 
+            (void) close(biop->fd) ;
 	free_biobuf(biop);
 }
 
