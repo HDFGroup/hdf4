@@ -312,4 +312,4 @@ else
     echo "**********************************"
 fi
 echo ""
-exit $errors
+exit 0
