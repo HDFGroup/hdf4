@@ -728,5 +728,6 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
           }
       }  /*  attr */
    }  /* vgroup */
+   return SUCCEED;
 }                   
 /* ------------------------------------- */
