@@ -80,7 +80,7 @@
    Hputelement, Hread, Hseek, Hstartread, Hstartwrite, Hsync, Htrunc,
    Hwrite, HXcreate, HXsetcreatedir, HXsetdir, HLconvert, Hstartaccess,
    Hisappendable, Htell, Htagnewref, Hcache, Hsetaccesstype, Hexist,
-   Hsetlength, Hfidinquire */
+   Hsetlength, Hfidinquire, HDreuse_tagref */
 
 #define HE_mask		0x40
 /* HEclear, HEprint, HEpush, HEreport, HEstring */
@@ -101,7 +101,8 @@
 #define V_mask		0x200
 /* Vaddtagref, Vattach, Vdetach, Vgetclass, Vgetid, Vgetname,
    Vgettagref, Vgettagrefs, Vinqtagref, Vinquire, Vinsert, Vlone,
-   Vntagrefs, Vsetclass, Vsetname, Vinitialize, Vfinish, Vfind, Vfindclass */
+   Vntagrefs, Vsetclass, Vsetname, Vinitialize, Vfinish, Vfind, Vfindclass,
+   Vdeletetagref */
 
 #define VH_mask		0x400
 /* VHmakegroup, VHstoredata, VHstoredatam */
@@ -123,7 +124,8 @@
    GRsetdimname, GRdiminfo, GRidtoref, GRreftoindex, GRreqlutil,
    GRreqimageil, GRgetlutid, GRgetlutinfo, GRwritelut, GRreadlut,
    GRsetexternalfile, GRsetaccestype, GRsetcompress, GRsetattr, 
-   GRattrinfo, GRgetattr, GRfindattr */
+   GRattrinfo, GRgetattr, GRfindattr, GRsetchunk, GRgetchunkinfo,
+   GRsetchunkcache */
 
 #define HA_mask         0x4000
 /* HAinit_group, HAdestroy_group, HAregister_atom, HAatom_object,

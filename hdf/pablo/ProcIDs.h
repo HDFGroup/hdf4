@@ -211,6 +211,8 @@ extern uint16 procTrace;
 #define ID_HMCPinfo             656
 #define ID_HMCPinquire          657
 
+#define ID_HDreuse_tagref       658
+
 /* HDFclose and HDFopen are implemented as macros. */
 
 /* HE */
@@ -291,13 +293,13 @@ extern uint16 procTrace;
 #define ID_vpackvg		1022
 #define ID_vunpackvg		1023
 
-#define ID_Vsetattr		1024
+#define ID_Vsetattr		    1024
 #define ID_Vgetversion		1025
-#define ID_Vnattrs		1026
+#define ID_Vnattrs		    1026
 #define ID_Vfindattr		1027
 #define ID_Vattrinfo		1028
-#define ID_Vgetattr		1029
-
+#define ID_Vgetattr		    1029
+#define ID_Vdeletetagref	1030
 
 /* Vstart is implemented as a macro. */
 
@@ -385,6 +387,9 @@ extern uint16 procTrace;
 #define ID_GRgetattr            1426
 #define ID_GRfindattr           1427
 #define ID_GRluttoref           1428
+#define ID_GRsetchunk           1429
+#define ID_GRgetchunkinfo       1430
+#define ID_GRsetchunkcache      1431
 
 /* HA */
 #define ID_HAinit_group         1501
