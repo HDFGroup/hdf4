@@ -20,13 +20,13 @@ VERSION  = 4.0
 #
 # Compiliers:
 # For gcc version
-CC=gcc
-#CFLAGS=-ansi -Wall -pedantic -g
+#CC=gcc
+CFLAGS=-ansi -Wall -pedantic -g
 #CFLAGS=-ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic -O2
-CFLAGS=-ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wnested-externs -pedantic -O2
+#CFLAGS=-ansi -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wnested-externs -pedantic -O2
 #
 #Using ANSI compilier
-#CC=cc
+CC=cc
 #CFLAGS=
 
 # Fortran compilier
