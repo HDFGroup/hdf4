@@ -192,8 +192,8 @@ test:		FORCE
 	    echo 1>&2 "\`$@' not made because no FORTRAN compiler";; \
 	*) \
 	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
-	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) hdftest; \
-	    ./$(PROGRAM);; \
+	    ./$(PROGRAM); \
+	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) hdftest;; \
 	esac
 
 install::	FORCE
@@ -791,7 +791,7 @@ netcdf.inc:	common.inc fortc1.sed fortc2.sed common.m4 $(OS).m4
 $(PROGRAM).f:	fortc1.sed fortc2.sed common.m4 $(PROGRAM).src $(OS).m4
 	./fortc -L . -O $(OS) $(PROGRAM).src > $@
 
-hdftest:        hdftest.f $(LIBRARY)
+hdftest:        FORCE
 	$(FC) $(FFLAGS) hdftest.f $(LIBS) -o $@
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
 	./hdftest > hdfout.new
