@@ -35,22 +35,24 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
 
 2. UNIX and MacOSX configuration and build
    =======================================
-   0) The HDF4r2.0-Beta Library was tested on the following platforms
 
-      AIX 5.1 (32 and 64-bit versions)
-      SunOs 5.7 (32 and 64-bit versions) 
-      SunOS 5.8 (32 and 64-bit versions) 
-      HPUX 11.00
-      Linux 2.4 (Rh7,8)
-      IRIX64-6.5 (32 and 64-bit versions)
-      MacOSX
+   0)  The HDF4r2.0-Beta Library was tested on the following platforms
+
+       AIX 5.1 (32 and 64-bit versions)
+       SunOs 5.7 (32 and 64-bit versions) 
+       SunOS 5.8 (32 and 64-bit versions) 
+       HPUX 11.00
+       Linux 2.4 (Rh7,8)
+       IRIX64-6.5 (32 and 64-bit versions)
+       MacOSX
       
    Before you start:
  
-   1) Make sure that ZLIB and JPEG Libraries are installed on your system.
-   2) Optional: install SZIP Library. 
-   3) Extract source from the hdf4r2.0-Beta.tar file and change directory
-      to hdf4r2.0-Beta
+   1)  Make sure that ZLIB and JPEG Libraries are installed on your
+       system.
+   2)  Optional: install SZIP Library. 
+   3)  Extract source from the hdf4r2.0-Beta.tar file and change
+       directory to hdf4r2.0-Beta
 
    To Configure:
 
@@ -63,8 +65,9 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
 
        * Please note that when szlib option is not used, SZIP Library will not
          be configured in and SZIP compression will not be enabled.
-       * If your system has ZLIB and/or JPEG libraries installed under /use/lib,
-         configure will automatically find the library. In this case corresponding
+       * If your system has ZLIB and/or JPEG libraries installed under a
+         system library directory (such as /use/lib), configure will
+         automatically find the library. In this case, the corresponding
          configure flag may be ommitted.
 
     To Build and test:
@@ -72,7 +75,7 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
     5)  To build the library
 
         gmake >&gmake.out&
-        
+
     6)  To build and run the tests
 
         gmake check >&check.out&
@@ -83,18 +86,25 @@ This is a draft of the installation instructions for HDF4.2r0-Beta.
 
         gmake install
 
-    8) By default current configuration uses vendors compilers; to use another compiler
-       run the follwoing commands before running configure: 
+    8)  By default current configuration uses vendors compilers; to use
+        another compiler run the following commands before running
+        configure: 
+ 
+        setenv CC   "foo -flags"
+        setenv F77  "fffoo -flgas"
+ 
+        See the configure help page (configure --help) for a list of
+        environment variables that have an affect on building the
+        library.
 
-       setenv CC   "foo -flags"
-       setenv F77  "fffoo -flgas"
+    9)  You may build hdf4 in a directory other than hdf4r2.0-Beta by
+        using the "srcdir" option. Simply create a build directory and
+        type:
 
-     9) You may wish to use --srcdir configure option to build in the firectory other than
-        hdf4r2.0-Beta. 
+        <path_to_hdf4r2.0-Beta>/configure ...
+
+        where "..." are your configuration options.
  
     10) Report all problems to
-   
-       hdfhelp@ncsa.uiuc.edu
 
-
-   
+        hdfhelp@ncsa.uiuc.edu
