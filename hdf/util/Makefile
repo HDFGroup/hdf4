@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.10  1992/09/17 19:51:13  koziol
+# Revision 1.11  1992/10/09 20:58:15  chouck
+# Fixed problems passing down compiler name
+#
+# Revision 1.10  1992/09/17  19:51:13  koziol
 # Made changes for ANSI prototypes on the Convex
 #
 # Revision 1.9  1992/09/04  15:20:18  chouck
@@ -82,7 +85,7 @@ hdfed: he.h he_proto.h $(HEOBJ)
 	$(CC) $(CFLAGS) -I$(HDFINC) $(HEOBJ) $(HDFLIB)/libdf.a -o hdfed
 
 .c: $(HDFLIB)/libdf.a
-	cc $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
+	$(CC) $(CFLAGS) -I$(HDFINC) $< -o $@ $(HDFLIB)/libdf.a $(GLLIB)
 
 utils: $(UTILS)
 
