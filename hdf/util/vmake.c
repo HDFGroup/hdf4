@@ -55,6 +55,39 @@
 
 #endif
 
+/*
+ * Prototypes of local functions
+ */
+int32 vsetlink
+  PROTO((char *hfile, int32 vgid, int32 ids[], int32 n));
+
+int32 vgadd
+  PROTO((char *hfile, char *vgname));
+
+int32 inpdata 
+  PROTO((unsigned char**bp));
+
+void vsadd
+  PROTO((char *hfile, char *vsname, char *format));
+
+int32 scanit
+  PROTO((char *string, char ***fields, int32 **type, int32 **order));
+
+int32 savfld
+  PROTO((char *ss, int p1, int p2));
+
+int32 compact
+  PROTO((char *ss, char *dd));
+
+int32 savtype
+  PROTO((char *ss, int p1, int p2));
+
+int32 separate
+  PROTO((char *ss, char *fmt, int *num));
+
+/*
+ *  Main entry point
+ */
 main(ac,av) int ac; char**av; {
 
   char  *hfile, *vgname, *vsname, *fmt;
@@ -105,37 +138,41 @@ void showfmttypes() {
 
 int show_help_msg()  {
 
-    printf("\nvmake: creates vsets.\n");
-    printf("\nUSAGE:\n");
-
+  printf("\nvmake: creates vsets.\n");
+  printf("\nUSAGE:\n");
+  
   printf(" (1) vmake file vgname             (adds a new vgroup)\n");
   printf(" (2) vmake file vsname format      (adds a new vdata)\n");
   printf(" (3) vmake file -l vgref v1 .. vn  (links v1 v2 .. vn into vgref)\n");
-																										
-    printf("\nwhere\n");
-	 printf("  vgref is the ref of a vgroup\n");
-	 printf("  v1,..,vn are refs of vgroups and vdatas\n");
-    printf("  format is <field=fmt,field=fmt,..>\n");
-    printf("    field is any text string\n");
-    printf("    fmt is one of the following optionally preceded by a decimal.\n");
-	 showfmttypes();
-
-    printf("\nTo create a vdata, vmake reads ascii data from stdin\n");
-
-    printf("EXAMPLES:\n");
-	 printf("\t cat dat.txt | vmake hh.hdf \"triangles\" \"PLIST3=3d\"\n");
-	 printf("\t vmake abc.hdf \"xyvals\" \"X=d,Y=f\" < abc.dat\n");
-	 printf("\n");
-
-	 return (1);
-
- } /* show_help_msg */
+  
+  printf("\nwhere\n");
+  printf("  vgref is the ref of a vgroup\n");
+  printf("  v1,..,vn are refs of vgroups and vdatas\n");
+  printf("  format is <field=fmt,field=fmt,..>\n");
+  printf("    field is any text string\n");
+  printf("    fmt is one of the following optionally preceded by a decimal.\n");
+  showfmttypes();
+  
+  printf("\nTo create a vdata, vmake reads ascii data from stdin\n");
+  
+  printf("EXAMPLES:\n");
+  printf("\t cat dat.txt | vmake hh.hdf \"triangles\" \"PLIST3=3d\"\n");
+  printf("\t vmake abc.hdf \"xyvals\" \"X=d,Y=f\" < abc.dat\n");
+  printf("\n");
+  
+  return (1);
+  
+} /* show_help_msg */
 
 /* ------------------------------------------------------- */
 
-int32 vsetlink  (hfile,vgid,ids,n)
+#ifdef PROTOTYPE
+int32 vsetlink(char *hfile, int32 vgid, int32 ids[], int32 n)
+#else
+int32 vsetlink(hfile,vgid,ids,n)
 char * hfile;
 int32 vgid, n, ids[];
+#endif
 {
   HFILEID f;
   VGROUP * vgmain, *vg;
@@ -186,9 +223,13 @@ int32 vgid, n, ids[];
 add a (new) vgroup to the file 
 */
 
+#ifdef PROTOTYPE
+int32 vgadd (char *hfile, char *vgname) 
+#else
 int32 vgadd (hfile,vgname) 
 char * hfile;
 char * vgname;
+#endif
 {
   HFILEID f;
   int32 ref; 
@@ -217,11 +258,14 @@ char * vgname;
  Data will be ascii and will come in from stdin
  according to the format (c-style).
 */
-vsadd (hfile,vsname,format)
+#ifdef PROTOTYPE
+void vsadd (char *hfile, char *vsname, char *format)
+#else
+void vsadd (hfile,vsname,format)
 char * hfile;
 char * vsname;
 char * format;
-
+#endif
 {
   int32 stat, i,n, nwritten;
   unsigned char *buf;
@@ -283,7 +327,7 @@ printf("vsadd: ref is %d\n",ref);
 
   Hclose(f);
   fprintf(stderr,"%d\n",ref,nwritten);
-  return (1);
+  return;
 
 } /* vsadd */
 
@@ -313,7 +357,9 @@ static int32 inplong (x) long *x; { return(scanf ("%ld ",x)); }
 
 #define BUFSIZE 40000
 
-int32 inpdata (bp) unsigned char**bp; { 
+int32 inpdata (bp) 
+     unsigned char**bp; 
+{ 
   int32 totalsize, nread, t,i,j,k;
   unsigned char *b;
   int32 maxrec;
@@ -369,7 +415,8 @@ int32 inpdata (bp) unsigned char**bp; {
 
 } /* inpdata */
 
- int32 scanit (string,fields,type,order)
+
+int32 scanit (string,fields,type,order)
  char *   string;
  char *** fields;
  int32  **  type;
@@ -408,26 +455,45 @@ int32 inpdata (bp) unsigned char**bp; {
 	*fields =  fldptr;
    return (ntotal);
 
- } /* scanit */
+} /* scanit */
 
- int32 compact (ss,dd) char *ss, *dd; {
-    int i,t,n = DFIstrlen(ss);
-	for(t=0,i=0;i<n;i++) if(ss[i]!=' ') { dd[t++] = ss[i]; }
-	dd[t] = '\0';
-	return (1);
-	}
+#ifdef PROTOTYPE
+int32 compact (char *ss, char *dd) 
+#else
+int32 compact (ss,dd) 
+     char *ss, *dd; 
+#endif
+{
+  int i,t,n = DFIstrlen(ss);
+  for(t=0,i=0;i<n;i++) if(ss[i]!=' ') { dd[t++] = ss[i]; }
+  dd[t] = '\0';
+  return (1);
+}
 
 /* ------------------------------------------------------------------ */
-
-int32 savfld (ss,p1,p2) char *ss; int p1,p2; {
+#ifdef PROTOTYPE
+int32 savfld(char *ss, int p1, int p2)
+#else
+int32 savfld(ss,p1,p2) 
+     char *ss; 
+     int p1,p2; 
+#endif
+{
   int32 t=p2-p1+1;
   strncpy(flds[ntotal],&ss[p1],t);
   flds[ntotal][t] = '\0';
   return (1);
 
- } /* savfld */
+} /* savfld */
 
-int32 savtype (ss,p1,p2) char *ss; int p1,p2; {
+#ifdef PROTOTYPE
+int32 savtype (char *ss, int p1, int p2) 
+#else
+int32 savtype (ss,p1,p2) 
+     char *ss; 
+     int p1,p2; 
+#endif
+{
   char temp[20];
   int32 t=p2-p1+1;
   strncpy(temp,&ss[p1],p2-p1+1); temp[t] = '\0';
@@ -437,17 +503,25 @@ int32 savtype (ss,p1,p2) char *ss; int p1,p2; {
 
   }
 
-int32 separate(ss,fmt,num) char *ss; char *fmt; int*num; {
-	int32 i,n;
-	i=0;
-    n=DFIstrlen(ss);
-	while(i<n) {
-	  if(ss[i]<'0' ||  ss[i] >'9') break; 
-	  i++;
-	  }
-	if(i>0) sscanf(ss,"%d",num); else *num= 1;
-	*fmt  = ss[i];
-	return (1);
+#ifdef PROTOTYPE
+int32 separate(char *ss, char *fmt, int *num) 
+#else
+int32 separate(ss,fmt,num) 
+char *ss; 
+char *fmt; 
+int *num; 
+#endif
+{
+  int32 i,n;
+  i=0;
+  n=DFIstrlen(ss);
+  while(i<n) {
+    if(ss[i]<'0' ||  ss[i] >'9') break; 
+    i++;
   }
+  if(i>0) sscanf(ss,"%d",num); else *num= 1;
+  *fmt  = ss[i];
+  return (1);
+}
 
 /* ------------------------------------------------------------------ */
