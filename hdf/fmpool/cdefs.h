@@ -36,16 +36,21 @@
  *	@(#)cdefs.h	8.7 (Berkeley) 1/21/94
  */
 
-#if !defined(_CDEFS_H_) && !defined(_SYS_CDEFS_H)
+/*#if !defined(_CDEFS_H_) && !defined(_SYS_CDEFS_H) */
+#if !defined(_CDEFS_H_)
 #define	_CDEFS_H_
 
 #if defined(__cplusplus)
+#ifndef __BEGIN_DECLS   /* lets check this to be sure */
 #define	__BEGIN_DECLS	extern "C" {
 #define	__END_DECLS	};
+#endif
 #else
+#ifndef __BEGIN_DECLS   /* lets check this to be sure */
 #define	__BEGIN_DECLS
 #define	__END_DECLS
 #endif
+#endif /* __cplusplus */
 
 /*
  * The __CONCAT macro is used to concatenate parts of symbol names, e.g.
@@ -55,22 +60,47 @@
  * strings produced by the __STRING macro, but this only works with ANSI C.
  */
 #if defined(__STDC__) || defined(__cplusplus)
-#define	__P(protos)	protos		/* full-blown ANSI C */
-#define	__CONCAT(x,y)	x ## y
-#define	__STRING(x)	#x
 
+/* Some ANSI environments don't define all of these */
+#ifndef __P
+#define	__P(protos)	protos		/* full-blown ANSI C */
+#endif
+
+#ifndef __CONCAT
+#define	__CONCAT(x,y)	x ## y
+#endif
+
+#ifndef __STRING
+#define	__STRING(x)	#x
+#endif
+
+#ifndef __const
 #define	__const		const		/* define reserved names to standard */
+#endif
+
+#ifndef __signed
 #define	__signed	signed
+#endif
+
+#ifndef __volatile
 #define	__volatile	volatile
+#endif
 #if defined(__cplusplus)
+#ifndef __inline
 #define	__inline	inline		/* convert to C++ keyword */
+#endif
 #else
 #ifndef __GNUC__
+#ifndef __inline
 #define	__inline			/* delete GCC keyword */
+#endif
 #endif /* !__GNUC__ */
 #endif /* !__cplusplus */
 
 #else	/* !(__STDC__ || __cplusplus) */
+
+/* In Non-ANSI environments */
+
 #define	__P(protos)	()		/* traditional C preprocessor */
 #define	__CONCAT(x,y)	x/**/y
 #define	__STRING(x)	"x"
