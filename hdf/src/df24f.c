@@ -1,73 +1,29 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
-
-$Log$
-Revision 1.11  1993/04/26 22:43:04  koziol
-shortened the DF24setcompress and DFR8setcompress calls to make the Vax happy
-
- * Revision 1.10  1993/04/19  22:47:01  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.9  1993/04/14  21:38:58  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.8  1993/04/05  22:34:58  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.7  1993/03/29  16:47:13  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:54:00  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.3  1992/10/01  02:54:34  chouck
- * Added function DF24lastref()
- *
- * Revision 1.2  1992/09/11  14:15:04  koziol
- * Changed Fortran stubs' parameter passing to use a new typedef, intf,
- * which should be typed to the size of an INTEGER*4 in whatever Fortran
- * compiler the C functions need to be compatible with.  (This is mostly
- * for the PC and possibly for the Mac)
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
+/* $Id$ */
 
 /*-----------------------------------------------------------------------------
- * File:    df24F.c
- * Purpose: read and write 24-bit raster images
- * Invokes: dfgr.c df24.c
+ * File:     df24F.c
+ * Purpose:  read and write 24-bit raster images
+ * Invokes:  dfgr.c df24.c
  * Contents: 
- *  d2reqil: use this interlace when returning image
- *  df24reqil: use this interlace when returning image
- *  d2sdims: set dimensions of image
- *  df24setdims: set dimensions of image
- *  d2setil: set interlace for image
- *  df24setil: set interlace for image
- *  d2first: restart 24 bit raster
- *  df24restart: restart 24 bit raster
- *  d2igdim: get dimensions of image
- *  d2igimg: read in image
- *  d2iaimg: write out image
- *  d24lref: last ref number
- *  d2scomp: set compression to use (short name)
- *  df24setcompress: set compression to use (long name)
- *  d2sjpeg:  set JPEG parameters (short name)
- *  df24setJPEG: set JPEG parameters (long name)
+ *  d2reqil:     - use this interlace when returning image
+ *  df24reqil:   - use this interlace when returning image
+ *  d2sdims:     - set dimensions of image
+ *  df24setdims: - set dimensions of image
+ *  d2setil:     - set interlace for image
+ *  df24setil:   - set interlace for image
+ *  d2first:     - restart 24 bit raster
+ *  df24restart: - restart 24 bit raster
+ *  d2igdim:     - get dimensions of image
+ *  d2igimg:     - read in image
+ *  d2iaimg:     - write out image
+ *  d24lref:     - last ref number
+ *  d2scomp:     - set compression to use (short name)
+ *  df24setcompress: - set compression to use (long name)
+ *  d2sjpeg:         - set JPEG parameters (short name)
+ *  df24setJPEG:     - set JPEG parameters (long name)
  *
  * Remarks:A RIG specifies attributes associated with an image - lookup table, 
  *          dimension, compression, color compensation etc.

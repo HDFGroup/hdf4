@@ -1,51 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.11  1993/08/20 19:58:44  chouck
-Had some of the strides backwards in VSread()
+/* $Id$ */
 
- * Revision 1.10  1993/08/19  16:45:51  chouck
- * Added code and tests for multi-order Vdatas
- *
- * Revision 1.9  1993/08/16  21:46:47  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.8  1993/04/14  21:39:33  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.7  1993/04/06  17:23:48  chouck
- * Added Vset macros
- *
- * Revision 1.6  1993/03/29  16:50:51  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.5  1993/01/19  05:56:34  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.4  1992/12/02  22:32:27  chouck
- * Fixed a size problem in VSwrite() when calling QQQueryspecial()
- *
- * Revision 1.3  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.2  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /****************************************************************************e
 *
 * vrw.c

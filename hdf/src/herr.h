@@ -1,57 +1,21 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYRIGHT file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.11.2.1  1993/10/10 22:10:16  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
+/* $Id$ */
 
- * Revision 1.11  1993/10/06  20:27:40  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.10  1993/10/04  20:02:49  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.9  1993/10/01  20:01:05  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.8  1993/09/30  19:05:10  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.7  1993/09/28  18:04:29  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.6  1993/07/13  20:45:02  chouck
- * Fixed a few memory leaks
- *
- * Revision 1.5  1993/04/06  17:23:37  chouck
- * Added Vset macros
- *
- * Revision 1.4  1993/03/29  16:47:57  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.3  1993/02/18  04:23:21  georgev
- * Added new HCLOSE_RETURN_ERROR macro.
- *
- * Revision 1.2  1993/01/19  05:55:44  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
+/* 
+** herr.h
+** -header file for using error routines to be included by all ".c" files
 */
-/*+ herr.h
-***  header file for using error routines
-*** to be included by all ".c" files
-+*/
 
 #ifndef __HERR_H
 
@@ -191,7 +155,7 @@ typedef struct error_messages_t {
     char *str;
 } error_messages_t;
 
-PRIVATE const error_messages_t error_messages[] =
+PRIVATE const struct error_messages_t error_messages[] =
 {
 { DFE_NONE,         "No error"},
 { DFE_FNF,          "File not found"},
