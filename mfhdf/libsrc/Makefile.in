@@ -12,6 +12,7 @@ GARBAGE		= $(PROGRAM) test.cdf cdfout.new *.hdf \
 HEADERS		= netcdf.h mfhdf.h
 XDRFILE		= @XDRFILE@
 HDF_LIB         = @HDF_LIB@
+JPEG_LIB        = @JPEG_LIB@
 CSRCS		= array.c attr.c cdf.c dim.c error.c file.c \
 		  globdef.c iarray.c putget.c putgetg.c sharray.c string.c \
 		  var.c xdrposix.c xdrstdio.c hdfsds.c mfsd.c nssdc.c
@@ -30,7 +31,7 @@ PROFILEDLIBRARY	= netcdf_pg
 OBJS		= $(PROGRAM).o
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= libnetcdf.a
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB)
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
 prefix		= ../../..
 
 all::		library
