@@ -1,4 +1,4 @@
-$ hdp :== $ MRLXP4$DKA300:[FOLK.DEV.mfhdf.dumper]hdp.exe
+$ hdp :== $ MRLXP1$DKA200:[FOLK.DEV.mfhdf.dumper]hdp.exe
 $ hdp list tdata.hdf
 $ hdp list -l tdata.hdf
 $ hdp list -d tdata.hdf
@@ -31,7 +31,7 @@ $ hdp dumpvd -r 1238,1239,1251,1252 tvset.hdf
 $ hdp dumpvd -n "Multi-Order Vdata" tvset.hdf
 $ hdp dumpvd -n "Mixed Vdata","Integer Vdata" tvset.hdf
 $ hdp dumpvd -c "Test object","No class specified" tvset.hdf
-$ hdp dumpvd -f B tvset.hdf
+$ hdp dumpvd -f "B" tvset.hdf
 $ hdp dumpvd -f "STATION_NAME","FLOATS" tvset.hdf
 $ hdp dumpvd -f "STATION_NAME","FLOATS" -d tvset.hdf
 
@@ -47,17 +47,17 @@ $ hdp dumpvg -c "CDF0.0" tdata.hdf
 $ hdp dumpvg -c "Dim0.0","Var0.0" tdata.hdf
 $ hdp dumpvg -c "Dim0.0","Var0.0" -d tdata.hdf
 $!
-$ dumpgr grtdfui82.hdf
-$ dumpgr -i 0,1,3 grtdfui82.hdf
-$ dumpgr -i 0 grtdfui82.hdf
-$ dumpgr -n Image_array_5 grtdfui82.hdf
-$ dumpgr -r 6,2,3 grtdfui82.hdf
-$ dumpgr -r 6 -d  grtdfui82.hdf
-$ dumpgr -o my.dat grtdfui82.hdf
-$ dumpgr -o mybin.dat  -b grtdfui82.hdf
-$ dumpgr grtdfui83.hdf
-$ dumpgr grtdfui84.hdf
-$ dumpgr grtdfui162.hdf
-$ dumpgr grtdfi322.hdf
+$ hdp dumpgr grtdfui82.hdf
+$ hdp dumpgr -i 0,1,3 grtdfui82.hdf
+$ hdp dumpgr -i 0 grtdfui82.hdf
+$ hdp dumpgr -n "Image_array_5" grtdfui82.hdf
+$ hdp dumpgr -r 6,2,3 grtdfui82.hdf
+$ hdp dumpgr -r 6 -d  grtdfui82.hdf
+$ hdp dumpgr -o my.dat grtdfui82.hdf
+$ hdp dumpgr -o mybin.dat  -b grtdfui82.hdf
+$ hdp dumpgr grtdfui83.hdf
+$ hdp dumpgr grtdfui84.hdf
+$ hdp dumpgr grtdfui162.hdf
+$ hdp dumpgr grtdfi322.hdf
 $!
 ~
