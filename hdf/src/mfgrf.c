@@ -301,7 +301,7 @@ nmgwrimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nmgrcimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data)
+nmgrcimg(intf * riid, intf *start, intf *stride, intf *count, _fcd data)
 {
     return(nmgrdimg(riid, start, stride, count, _fcdtocp(data)));
 }   /* end mgrcimg() */
