@@ -34,8 +34,7 @@ TESTING() {
 # non-zero value.
 #
 TOOLTEST() {
-#   expect="$srcdir/testfiles/$1"
-   expect="testfiles/$1"
+   expect="$srcdir/testfiles/$1"
    actual="testfiles/`basename $1 .txt`.out"
    actual_err="testfiles/`basename $1 .txt`.err"
    shift
@@ -48,7 +47,7 @@ TOOLTEST() {
       echo "#############################"
       echo "Expected output for '$HDIFF $@'" 
       echo "#############################"
-      cd testfiles
+      cd $srcdir/testfiles
       if [ "`uname -s`" = "TFLOPS O/S" ]; then
         $RUNSERIAL $HDIFF_BIN $@
       else
@@ -57,11 +56,14 @@ TOOLTEST() {
    ) >$actual 2>$actual_err
    cat $actual_err >> $actual
 
-   if [ ! -f $expect ]; then
+ 
+   # Used only to create the output file; uncomment to create
+   #   if [ ! -f $expect ]; then
    # Create the expected file if it doesn't yet exist.
-      echo " CREATED"
-      cp $actual $expect
-   elif $CMP $expect $actual; then
+   #   echo " CREATED"
+   #   cp $actual $expect
+   #   elif
+   if $CMP $expect $actual; then
       echo " PASSED"
    else
       echo "*FAILED*"
@@ -71,9 +73,9 @@ TOOLTEST() {
    fi
 
    # Clean up output file
-     if test -z "$HDF5_NOCLEANUP"; then
-     rm -f $actual $actual_err
-     fi
+#     if test -z "$HDF5_NOCLEANUP"; then
+#     rm -f $actual $actual_err
+#     fi
 }
 
 
@@ -97,7 +99,7 @@ TOOLTEST hdiff_04.txt -d hdifftst1.hdf hdifftst2.hdf
 TOOLTEST hdiff_05.txt -D hdifftst1.hdf hdifftst2.hdf
 
 # Print statistics
-#TOOLTEST hdiff_06.txt -d -S hdifftst1.hdf hdifftst2.hdf
+TOOLTEST hdiff_06.txt -d -S hdifftst1.hdf hdifftst2.hdf
 
 # Compare SD data on variable(s)
 TOOLTEST hdiff_07.txt -d -v dset1 hdifftst1.hdf hdifftst2.hdf

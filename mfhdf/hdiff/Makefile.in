@@ -421,6 +421,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-noinstPROGRAMS \
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
+	-rm -rf testfiles
 
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
