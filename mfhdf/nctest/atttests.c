@@ -467,8 +467,6 @@ test_ncattget(path)
     static struct cdfatt vmax = /* attribute */
 	{___, "valid_max", NC_LONG, 1, (void *) &uumax};
 
-    extern void val_out();
-
     static char pname[] = "test_ncattget";
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
