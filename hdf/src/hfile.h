@@ -399,7 +399,8 @@ typedef struct accrec_t
       intn        appendable;   /* whether appends to the data are allowed */
       intn        special;      /* special element ? */
       intn        new_elem;     /* is a new element (i.e. no length set yet) */
-      
+      int32       block_size;   /* size of the blocks for linked-block element*/
+      int32       num_blocks;   /* number blocks in the linked-block element */
       uint32      access;       /* access codes */
       uintn       access_type;  /* I/O access type: serial/parallel/... */
       int32       file_id;      /* id of attached file */

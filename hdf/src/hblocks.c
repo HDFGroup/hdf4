@@ -1800,3 +1800,151 @@ done:
 
   return ret_value;
 }   /* HLPinfo */
+
+/*--------------------------------------------------------------------------
+NAME
+   Hsetblocksize -- set the block length of a linked-block element
+
+USAGE
+   intn Hsetblockinfo(
+   int32 aid		IN: access record id
+   int32 block_size	IN: length to be used for each linked-block 
+   int32 num_blocks	IN: number of blocks the element will have
+
+RETURNS
+   SUCCEED / FAIL
+
+DESCRIPTION
+   Hsetblocksize sets (accrec_t).block_size and (accrec_t).num_blocks
+   to block_size and num_blocks, respectively.  An error will occur, if
+   either of the parameters is a 0 or a negative number, that is not
+   -1, which is used to indicate that the respective field is not to be
+   changed.
+
+   In the library, this routine is used by:
+	VSsetblocksize 
+	VSsetnumblocks
+
+MODIFICATION
+   BMR - added in June 2001 to fix bug# 267
+
+--------------------------------------------------------------------------*/
+intn
+Hsetblockinfo(int32 aid,	/* access record id */
+              int32 block_size, /* length to be used for each linked-block */
+              int32 num_blocks) /* number of blocks the element will have */
+{
+    CONSTR(FUNC, "Hsetblockinfo");  	/* for HERROR */
+    accrec_t   *access_rec;               /* access record */
+    intn	ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask,ID_Hsetblockinfo);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* validate aid */
+    if (HAatom_group(aid)!=AIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* block_size and num_blocks should be either -1, to keep the original 
+       values, or positive values to change the block size and/or the 
+       number of blocks */ 
+    if ((block_size <= 0 && block_size != -1) || 
+        (num_blocks <= 0 && num_blocks != -1))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get the access record */
+    if ((access_rec = HAatom_object(aid)) == NULL)        
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* change the linked-block size if requested */
+    if (block_size != -1)
+        access_rec->block_size = block_size;
+
+    /* change the number of linked-blocks if requested */
+    if (num_blocks != -1)
+        access_rec->num_blocks = num_blocks;
+
+done:
+    if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(PABLO_mask, ID_Hsetblockinfo);
+#endif /* HAVE_PABLO */
+
+    return ret_value;
+}       /* end Hsetblockinfo */
+
+/*--------------------------------------------------------------------------
+NAME
+   Hgetblocksize -- get the block size and the number of blocks of a 
+		    linked-block element
+
+USAGE
+   intn Hgetblockinfo(aid, block_size, num_blocks)
+   int32  aid		IN: access record id
+   int32* block_size	OUT: the returned block size of each linked-block 
+   int32* num_blocks	OUT: the returned number of blocks of the element
+
+RETURNS
+   SUCCEED / FAIL
+
+DESCRIPTION
+   Hgetblocksize retrieves the values of (accrec_t).block_size and 
+   (accrec_t).num_blocks to block_size and num_blocks, respectively.  
+   A NULL can be passed in for an unwanted value.
+
+   In the library, this routine is used by:
+	VSgetblockinfo 
+
+MODIFICATION
+   BMR - added in June 2001 to fix bug# 267
+
+--------------------------------------------------------------------------*/
+intn
+Hgetblockinfo(int32 aid,	/* access record id */
+              int32* block_size, /* length being used for each linked-block */
+              int32* num_blocks) /* number of blocks the element will have */
+{
+    CONSTR(FUNC, "Hgetblockinfo");  /* for HERROR */
+    accrec_t   *access_rec;               /* access record */
+    intn	ret_value = SUCCEED;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask,ID_Hgetblockinfo);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* get the access record */
+    if ((access_rec = HAatom_object(aid)) == NULL)        
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get the linked-block size and the number of linked-blocks if requested */
+    if (block_size != NULL)
+        *block_size = access_rec->block_size;
+    if (num_blocks != NULL)
+        *num_blocks = access_rec->num_blocks;
+
+done:
+    if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(PABLO_mask, ID_Hgetblockinfo);
+#endif /* HAVE_PABLO */
+
+    return ret_value;
+}       /* end Hgetblockinfo */
+

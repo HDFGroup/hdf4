@@ -1033,7 +1033,13 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   if (flags & DFACC_APPENDABLE)
     access_rec->appendable = TRUE;	/* start data as appendable */
   else
-    access_rec->appendable = FALSE;		/* start data as non-appendable */
+    access_rec->appendable = FALSE;	/* start data as non-appendable */
+
+  /* set the default values for block size and number of blocks for use in */
+  /* linked-block creation/conversion; they can be changed by the user via */
+  /* VSsetblocksize and VSsetnumblocks - BMR (bug #267 - June 2001) */
+  access_rec->block_size = HDF_APPENDABLE_BLOCK_LEN;
+  access_rec->num_blocks = HDF_APPENDABLE_BLOCK_NUM;
 
   access_rec->special_info = NULL; /* reset */
 
@@ -1407,7 +1413,7 @@ printf("%s: check 2.0\n",FUNC);
       /* check if we are at end of file */
       if (data_len + data_off != file_rec->f_end_off)
           {	/* nope, so try to convert element into linked-block element */
-            if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
+            if (HLconvert(access_id, access_rec->block_size, access_rec->num_blocks) == FAIL)
               {
                 access_rec->appendable = FALSE;
                 HEreport("Tried to seek to %d (object length:  %d)", offset, data_len);
@@ -1682,7 +1688,7 @@ printf("%s: length=%ld, data_len=%ld, access_rec->posn=%ld\n",FUNC,(long)length,
       if (data_len + data_off != file_rec->f_end_off)
         {	/* nope, not at end of file. Try to promote to
                linked-block element. */
-          if (HLconvert(access_id, HDF_APPENDABLE_BLOCK_LEN, HDF_APPENDABLE_BLOCK_NUM) == FAIL)
+          if (HLconvert(access_id, access_rec->block_size, access_rec->num_blocks) == FAIL)
             {
               access_rec->appendable = FALSE;
               HGOTO_ERROR(DFE_BADSEEK, FAIL);

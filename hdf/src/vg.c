@@ -1295,6 +1295,218 @@ done:
   return ret_value;
 }   /* VSfindclass */
 
+/* ----------------------------------------------------------------- 
+NAME
+   VSsetblocksize -- sets the block size of the linked-block element.
+
+USAGE
+   intn VSsetblocksize(vkey, block_size)
+   int32 vkey;		IN: vdata key
+   int32 block_size	IN: length to be used for each linked-block
+   
+DESCRIPTION
+   Sets the size of the blocks, that are after the first block, of a 
+   linked-block element used for storing a vdata.  This routine is 
+   to be called before the first write to the vdata to change the block 
+   size from the default value HDF_APPENDABLE_BLOCK_LEN (4096).  Once the
+   linked-block element is created, the block size cannot be changed.
+
+RETURNS
+   Returns SUCCEED/FAIL
+
+MODIFICATION
+   BMR - added in June 2001 to fix bug# 267
+
+---------------------------------------------------------------------*/
+intn
+VSsetblocksize(	int32 vkey, /* IN: vdata key */
+		int32 block_size) /* length to be used for each linked-block */
+{
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "VSsetblocksize");
+
+#ifdef HAVE_PABLO
+        TRACE_ON(PABLO_mask, ID_VSsetblocksize);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* check if the given vdata id is part of vdata group */
+    if (HAatom_group(vkey) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get vdata instance */
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* get vdata itself and check it */
+    vs = w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+      HGOTO_ERROR(DFE_ARGS,FAIL);
+
+    /* internal routine handles the actual setting */
+    if (Hsetblockinfo(vs->aid, block_size, -1) == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+        TRACE_OFF(PABLO_mask, ID_VSsetblocksize);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}       /* VSsetblocksize */
+
+/* ----------------------------------------------------------------- 
+NAME
+   VSsetnumblocks -- sets the number of blocks for a linked-block element.
+
+USAGE
+   intn VSsetnumblocks(vkey, num_blocks)
+   int32 vkey;		IN: vdata key
+   int32 num_blocks	IN: number of blocks to be used for the linked-block
+			    element
+   
+DESCRIPTION
+   Sets the number of blocks of a linked-block element used for storing
+   a vdata.  This routine is to be called before the first write to the
+   vdata to change the number of blocks from the default value
+   HDF_APPENDABLE_BLOCK_NUM (16).  Once the linked-block element is
+   created, the number of blocks cannot be changed.
+
+RETURNS
+   Returns SUCCEED/FAIL
+
+MODIFICATION
+   BMR - added in June 2001 to fix bug# 267
+
+---------------------------------------------------------------------*/
+intn
+VSsetnumblocks( int32 vkey, /* IN: vdata key */
+		int32 num_blocks) /* number of blocks the element can have */
+{
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "VSsetnumblocks");
+
+#ifdef HAVE_PABLO
+        TRACE_ON(PABLO_mask, ID_VSsetnumblocks);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* check if the given vdata id is part of vdata group */
+    if (HAatom_group(vkey) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get vdata instance */
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* get vdata itself and check it */
+    vs = w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+      HGOTO_ERROR(DFE_ARGS,FAIL);
+
+    /* internal routine handles the actual setting */
+    if (Hsetblockinfo(vs->aid, -1, num_blocks) == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+        TRACE_OFF(PABLO_mask, ID_VSsetnumblocks);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}       /* VSsetnumblocks */
+
+/* ----------------------------------------------------------------- 
+NAME
+   VSgetblockinfo -- retrieves the block size and the number of blocks 
+		     of a linked-block element.
+
+USAGE
+   intn VSgetblockinfo(vkey, block_size, num_blocks)
+   int32 vkey		IN: vdata key
+   int32* block_size	OUT: the linked-block size
+   int32* num_blocks	OUT: the number of blocks the element has
+   
+DESCRIPTION
+   Retrieves the block size and the number of blocks of a linked-block
+   element used for storing a vdata.  A NULL can be passed in for
+   unwanted value.
+
+RETURNS
+   Returns SUCCEED/FAIL
+
+MODIFICATION
+   BMR - added in June 2001 to fix bug# 267
+
+---------------------------------------------------------------------*/
+intn
+VSgetblockinfo(int32 vkey, /* IN: vdata id */
+               int32* block_size, /* OUT: length used for each linked-block */
+               int32* num_blocks) /* OUT: number of blocks the element has */
+{
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    intn        ret_value = SUCCEED;
+    CONSTR(FUNC, "VSgetblockinfo");
+
+#ifdef HAVE_PABLO
+        TRACE_ON(PABLO_mask, ID_VSgetblockinfo);
+#endif /* HAVE_PABLO */
+
+    /* clear error stack */
+    HEclear();
+
+    /* check if vdata is part of vdata group */
+    if (HAatom_group(vkey) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get vdata instance */
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* get vdata itself and check it */
+    vs = w->vs;
+    if ((vs == NULL) || (vs->otag != VSDESCTAG))
+      HGOTO_ERROR(DFE_ARGS,FAIL);
+
+    /* internal routine handles the actual retrieval */
+    if (Hgetblockinfo(vs->aid, block_size, num_blocks) == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+        TRACE_OFF(PABLO_mask, ID_VSgetblockinfo);
+#endif /* HAVE_PABLO */
+
+  return ret_value;
+}       /* VSgetblockinfo */
+
 /* ------------------------------- Vsetzap -------------------------------- */
 /*
  * Vsetzap: Useless now. Maintained for back compatibility.
