@@ -30,7 +30,7 @@ to:
     CFLAGS="-O -32"
     FFLAGS="-O -32"
 
-For SOLARIS 5.2, you need to run ./configure and then edit
+For SOLARIS 2.3 (SunOS 5.2), you need to run ./configure and then edit
 the Makefile in the fortran/ subdirectory so that FFLAG = -xl.
 
 The INSTALL file in this directory and the README files in
