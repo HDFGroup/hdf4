@@ -27,7 +27,7 @@
   2.5.3 Solaris(2.5.1) on INTEL(x86)
   2.5.4 OpenVMS AXP and OpenVMS VAX
   2.5.5 Windows '95 or Windows NT
-  2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
+  2.5.6 PowerPC - Macintosh OS
   2.5.7 Exemplar (HP-UX 9.03)
   2.5.8 SP2 Single node
   2.5.9 T3E Single node
@@ -101,7 +101,8 @@
        Solarisx86 (2.5.1)         GCC 2.7.2.1        -                
        Linux (elf) (2.0.30)       GCC 2.7.2.1      fort77 (f2c) 2.7.2.1     
        FreeBSD (2.2.1)            GCC 2.7.2        f77 2.7.2.1
-  PowerPC(Mac-OS-7.6)               -                -              
+  PowerPC(Mac-OS-7.6)             MetroWerks
+                                  Codewarrior (CW8)  -              
   68k-far/4i/8d(Mac-OS-7.6)         -                -           
   Windows NT/95                     -                -             
   T3E (unicosmk 2.0.2.16)         CC 6.0.2.0.5     f90 3.0.2.0
@@ -388,9 +389,8 @@
     -------------------------------
     *** NOT AVAILABLE WITH THIS RELEASE ***
 
-    2.5.6 PowerPC/68k(far/4i/8d)- Macintosh OS
+    2.5.6 PowerPC - Macintosh OS
     ------------------------------------------
-    *** NOT AVAILABLE WITH THIS RELEASE ***
 
     The distribution was compiled/tested with MetroWerks Codewarrior(CW8).
     Only the base libraries{libdf.a,zlib.a,libjpeg.a,libmfhdf.a,libxdr.a}
@@ -413,77 +413,35 @@
 
     3. You need at least 8MB of memory to run most of the test programs.
 
-    2.5.6.2 Configuring the Distribution
-    ************************************
-    A. If you have access to a unix box.
 
-       1. Uncompress and untar the distribution.
-       2. Type './configure mac'. This will build the distribution
-          for the Macintosh. Specifically it will copy the correct
-          files to the correct location. For the Macintosh release
-          the two relevant files are the following: 
-
-          mfhdf/libsrc/config/netcdf-mac.h  -> copied to mfhdf/libsrc/netcdf.h
-          hdf/jpeg/config/jmac.h            -> copied to hdf/jpeg/jconfig.h
-
-       3. Re-tar this newly configured distribution and download it to
-          the Macintosh where any utility that understands the tar format
-          can be used to unpack it. If you do not have access to such a 
-          utility then you need to copy the files one by one.
-
-    B. Don't have access to a unix box and are using the 'tar.Z'/'tar.gz' 
-        version.
-       1. After you have downloaded the distribution to your Macintosh
-          you need to find a utility to uncompress and untar the
-          distribution.
-
-       2. You will need to copy the following files to the correct locations
-          with the new names(netcdf.h , jconfig.h).
-
-          mfhdf/libsrc/config/netcdf-mac.h  -> copied to mfhdf/libsrc/netcdf.h
-          hdf/jpeg/config/jmac.h            -> copied to hdf/jpeg/jconfig.h
-
-    C. If you are using the 'sit.hqx' version everything should have
-       been configured already. You just need to un-stuff and un-binhex
-       the distribution.
-
-    2.5.6.3 Building the Distribution
+    2.5.6.2 Building the Distribution
     *********************************
     The distribution needs to be built in the order specified below.
-    Both PowerPC and 68k Codewarrior Projects can be found in the 
-    following directories:
+    Codewarrior Projects with the targets for Power PC and 68K can be 
+    found in the following directories:
  
     $(toplevel)/
-                hdf/zlib/zlib.68k-project.hqx
-                         zlib.PPC-project.hqx
+                hdf/zlib/zlib.project.hqx
 
-                hdf/jpeg/jpeglib.68k-project.hqx
-                         jpeglib.PPC-project.hqx
+                hdf/jpeg/jpeglib.project.hqx
 
-                hdf/src/hdflib.68k-project.hqx
-                        hdflib.PPC-project.hqx
+                hdf/src/hdflib.project.hqx
 
-                hdf/test/testhdf.68k-project.hqx
-                         testhdf.68k-project.hqx
+                hdf/test/testhdf.project.hqx
 
                 hdf/test/testdir(need to create this if it does not exist)
     
-                mfhdf/xdr/xdrlib.68k-project.hqx
-                          xdrlib.PPC-project.hqx
-                          xdrtest.68k-project.hqx
-                          xdrtest.PPC-project.hqx
+                mfhdf/xdr/xdrlib.project.hqx
 
-                mfhdf/libsrc/mfhdflib.68k-project.hqx
-                             mfhdflib.PPC-project.hqx
-                             cdftest.68k-project.hqx
-                             cdftest.PPC-project.hqx
-                             hdftest.68k-project.hqx
-                             hdftest.PPC-project.hqx
+                mfhdf/libsrc/mfhdflib.project.hqx
+                             cdftest.project.hqx
+                             hdftest.project.hqx
 
-                mfhdf/nctest/nctest.68k-project.hqx
-                             nctest.PPC-project.hqx
+                mfhdf/nctest/nctest.project.hqx
 
-    2.5.6.4 Testing the Distribution
+    Note that only PPC version of the libraries are supported.
+
+    2.5.6.3 Testing the Distribution
     ********************************
     Run the tests in the following order
       
