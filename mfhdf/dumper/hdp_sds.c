@@ -605,7 +605,14 @@ dsd(dump_info_t *dumpsds_opts,
                             ret_value = FAIL;
                             goto done;
                         }
-
+                      isdimvar = (SDiscoordvar(sds_id)) ? 1 : 0;
+                      if (isdimvar) { /* use dim0 nt instead of dimvar nt,
+                                         because when no dim values dimvar nt
+                                         was set to float32 by default  */
+                          int32 temp, temp2;
+                          dim_id = SDgetdimid(sds_id, 0);
+                          ret = SDdiminfo(dim_id, NULL, &temp, &nt, &temp2);
+                      }                                                       
                       /* dump contents based on options */
                       switch (dumpsds_opts->contents)
                         {
@@ -623,7 +630,7 @@ dsd(dump_info_t *dumpsds_opts,
                             if (isdimvar)
                               {
                                   fprintf(fp, "\nDimension Variable Name = %s\n\t ", name);
-                                  fprintf(fp, "Index = %d\n\t Type= %s\n", i, nt_desc);
+                                  fprintf(fp, "Index = %d\n\t Scale Type= %s\n", i, nt_desc);
                               }
                             else
                               {
@@ -658,17 +665,7 @@ dsd(dump_info_t *dumpsds_opts,
                                         goto done;
                                     }
 
-                                  attr_nt_desc = HDgetNTdesc(dimNT[j]);
-                                  if (attr_nt_desc == NULL)
-                                    {
-                                        fprintf(stderr,"HDgetNTdesc failed for dim_id(%d) of sds_id(%d) in file %s\n", 
-                                                (int)dim_id,(int)sds_id,file_name);
-                                        ret_value = FAIL;
-                                        goto done;
-                                    }
-
                                   fprintf(fp, "\t Dim%d: Name=%s\n", (int) j, dim_nm);
-
                                   if (temp == 0)
                                     {
                                         fprintf(fp, "\t\t Size = UNLIMITED ");
@@ -677,12 +674,23 @@ dsd(dump_info_t *dumpsds_opts,
                                   else
                                       fprintf(fp, "\t\t Size = %d\n", (int) dimsizes[j]);
 
-                                  fprintf(fp, "\t\t Type = %s\n", attr_nt_desc);
+                                  if (isdimvar == 0) {  
+                                     /* don't print type and # of attrs for dim var */
+                                     attr_nt_desc = HDgetNTdesc(dimNT[j]);
+                                     if (attr_nt_desc == NULL)
+                                     {
+                                        fprintf(stderr,"HDgetNTdesc failed for dim_id(%d) of sds_id(%d) in file %s\n", 
+                                                (int)dim_id,(int)sds_id,file_name);
+                                        ret_value = FAIL;
+                                        goto done;
+                                     }
+                                     fprintf(fp, "\t\t Scale Type = %s\n", attr_nt_desc);
 
-                                  HDfree(attr_nt_desc);
-                                  attr_nt_desc = NULL; /* reset */
+                                     HDfree(attr_nt_desc);
+                                     attr_nt_desc = NULL; /* reset */
 
-                                  fprintf(fp, "\t\t Number of attributes = %d\n", (int) dimnattr[j]);
+                                     fprintf(fp, "\t\t Number of attributes = %d\n", (int) dimnattr[j]);
+                                  }
                               } /* end for dimension */
 
                             /* Print annotations */
@@ -767,7 +775,10 @@ dsd(dump_info_t *dumpsds_opts,
                                 fprintf(fp, "\t Data : \n");
 
                             if (rank > 0 && dimsizes[0] != 0)
-                              {
+                            {
+                               if (!isdimvar || nt != 0)
+                               { /* no dump if dimvar w/o scale values */
+
                                   intn        count;
 
                                   for (count = 0; count < 16; count++)
@@ -779,7 +790,8 @@ dsd(dump_info_t *dumpsds_opts,
                                         ret_value = FAIL;
                                         goto done;
                                     }
-                              }
+                                }
+                             }
 
                             break;
                         default:
