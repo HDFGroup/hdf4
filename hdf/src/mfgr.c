@@ -5841,6 +5841,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     intn       i;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
+    Boolean    free_img_data = false;
 
 #ifdef HAVE_PABLO
     HDF_TRACE_ON(ID_GRwritechunk);
@@ -5924,6 +5925,7 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
                             /* Allocate space for the conversion buffer */
                             if((img_data = HDmalloc(pixel_disk_size*csize)) == NULL)
                                 HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                            free_img_data = true;
 
                             if(switch_interlace == TRUE)
                               {
@@ -5975,8 +5977,8 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
-    /* free conversion buffers if any */
-    if (img_data != NULL)
+    /* free conversion buffers if we created them */
+    if ((img_data != NULL) && (free_img_data))
         HDfree(img_data);
 
 #ifdef HAVE_PABLO
