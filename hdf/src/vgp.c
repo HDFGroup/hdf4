@@ -1477,7 +1477,11 @@ done:
 /* ------------------------ Vaddtagref ---------------------------------- */
 /*
  * Inserts a tag/ref pair into the attached vgroup vg.
- * First checks that the tag/ref is unique.
+ * First checks that the tag/ref is unique. (6/20/96 Maybe the original
+ *  design required the uniqueness. However, the current code allows
+ *  duplication if NO_DUPLICATES is not defined. The SD interface needs
+ *  this feature to create SDS's with duplicated dimensions. For example
+ *  a 3D SDS has dimensions "time", "presure" and "presure".)
  * If error, returns FAIL or tag/ref is not inserted.
  * If OK, returns the total number of tag/refs in the vgroup (a +ve integer).
  * 28-MAR-91 Jason Ng NCSA.
@@ -1508,10 +1512,14 @@ Vaddtagref(int32 vkey, int32 tag, int32 ref)
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+#ifdef NO_DUPLICATES
+    /* SD interface needs duplication if two dims have the same name.
+       So, don't remove the ifdef/endif pair.   */
     /* make sure doesn't already exist in the Vgroup */
     for (i = 0; i < vg->nvelt; i++)
         if ((tag == vg->tag[i]) && (ref == vg->ref[i]))
-            HGOTO_DONE(vg->nvelt);
+            HGOTO_DONE(FAIL);
+#endif  /* NO_DUPLICATES  */
 
     ret_value = vinsertpair(vg, (uint16) tag, (uint16) ref);
 
