@@ -29,7 +29,7 @@ extern "C" {
 
 /* Print error message to stderr, don't exit */
 #ifndef MIPSEL /* punt */
-#ifndef NO_STRARG
+#ifndef NO_STDARG
 extern void error(char *fmt, ...);
 #else
 extern void error();

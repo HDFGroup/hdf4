@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #ifndef MIPSEL /* punt */
-#ifndef NO_STRARG
+#ifndef NO_STDARG
 extern void derror(char *fmt, ...);
 #else
 extern void derror();
