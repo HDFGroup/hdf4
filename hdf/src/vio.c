@@ -286,13 +286,10 @@ vunpackvs(VDATA * vs, uint8 buf[], int32 len)
 #endif /* HAVE_PABLO */
 
     HEclear();
-    /* '5' is a magic number, the exact amount of space for 2 uint16's *
-/
+    /* '5' is a magic number, the exact amount of space for 2 uint16's */
     /* the magic number _should_ be '4', but the size of the Vdata */
-    /* information is incorrectly calculated (in vpackvs() above) when t
-he */
-    /* info is written to the file and it's too late to change it now :-
-( */
+    /* information is incorrectly calculated (in vpackvs() above) when the */
+    /* info is written to the file and it's too late to change it now :- ( */
     /* get version number first -- this is different from version 3
        vdata interface */
     bb = &buf[len - 5];
