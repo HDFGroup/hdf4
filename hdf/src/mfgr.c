@@ -1445,15 +1445,13 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
  PURPOSE
     Terminate the GR*() interface for a given HDF file.
  USAGE
-    int32 GRend(grid)
+    intn GRend(grid)
         int32 grid;          IN: GR ID from GRstart
  RETURNS
     SUCCEED/FAIL
 
  DESCRIPTION
-    Initializes the GR*() interface to operate on the HDF file which was
-    specified by hdf_file_id.  This routine must be called before any further
-    GR*() routines are called for a file.
+    Terminates access to the GR*() interface for a specific file.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS

@@ -761,7 +761,9 @@ HDfidtoname(int32 file_id)
 --------------------------------------------------------------------------*/
 void HDFend(void)
 {
+#ifdef LATER
     CONSTR(FUNC, "HDFend");    /* for HERROR */
+#endif /* LATER */
 
     /* can't issue errors if you're free'ing the error stack. */
     VSPfreebuf();
