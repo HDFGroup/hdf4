@@ -1,0 +1,11 @@
+File: tdf24.hdf
+Version Descriptor  : (tag 30)
+	Ref nos: 1 
+Number type         : (tag 106)
+	Ref nos: 2 
+Image Dimensions    : (tag 300)
+	Ref nos: 2 3 4 
+Raster Image Data   : (tag 302)
+	Ref nos: 2 3 4 
+Raster Image Group  : (tag 306)
+	Ref nos: 2 3 4 

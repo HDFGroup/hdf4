@@ -1,0 +1,19 @@
+File: star.hdf
+Number type         : (tag 106)
+	Ref nos: 100 
+Machine type        : (tag 107)
+	Ref nos: 4369 
+Image Dimensions-8  : (tag 200)
+	Ref nos: 100 
+Image Palette-8     : (tag 201)
+	Ref nos: 100 
+Raster Image-8      : (tag 202)
+	Ref nos: 100 
+Image Dimensions    : (tag 300)
+	Ref nos: 100 
+Image Palette       : (tag 301)
+	Ref nos: 100 
+Raster Image Data   : (tag 302)
+	Ref nos: 100 
+Raster Image Group  : (tag 306)
+	Ref nos: 100 

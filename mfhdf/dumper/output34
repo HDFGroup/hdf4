@@ -1,0 +1,23 @@
+File: swi16.hdf
+Version Descriptor  : (tag 30)
+	Ref nos: 1 
+Number type         : (tag 106)
+	Ref nos: 2 
+SciData dimension record: (tag 701)
+	Ref nos: 2 
+Scientific Data     : (tag 702)
+	Ref nos: 2 
+SciData scales      : (tag 703)
+	Ref nos: 2 
+SciData labels      : (tag 704)
+	Ref nos: 2 
+SciData units       : (tag 705)
+	Ref nos: 2 
+SciData formats     : (tag 706)
+	Ref nos: 2 
+SciData max/min     : (tag 707)
+	Ref nos: 2 
+Numeric Data Group  : (tag 720)
+	Ref nos: 2 
+Fill value information: (tag 732)
+	Ref nos: 2 
