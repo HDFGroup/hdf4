@@ -6,10 +6,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1992/09/15 21:04:06  chouck
-Removed DFACC_CREATE problems.  Restored some other changes that had
-gotten over-written
+Revision 1.5  1992/10/01 20:46:10  chouck
+Fixed a Mac opening problem resulting from access change
 
+ * Revision 1.4  1992/09/15  21:04:06  chouck
+ * Removed DFACC_CREATE problems.  Restored some other changes that had
+ * gotten over-written
+ *
  * Revision 1.3  1992/09/11  16:43:24  chouck
  * Minor Mac fix
  *
@@ -3232,7 +3235,7 @@ mopen(char *name, intn flags)
 
     GetVol(NULL,&volref);
     
-    if (flags & DFACC_CREATE)   { /* we need to create it */
+    if (flags == DFACC_CREATE)   { /* we need to create it */
         
         result = getfinfo(name, volref, &fndrInfo);
         if (result != fnfErr)
