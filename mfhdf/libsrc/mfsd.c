@@ -275,6 +275,46 @@ done:
     return(ret_value);
 } /* end SDIstart() */
 
+
+/******************************************************************************
+ NAME
+	SDI_can_clobber -- check permission on the file
+
+ DESCRIPTION
+    Check the file permissions.  If OK to clobber the file, return 1,
+    else return 0. 
+    Called by SDstart.
+
+ RETURNS
+    1 if OK to clobber
+    0 if not OK to overwrite
+
+******************************************************************************/
+int SDI_can_clobber(const char *name)
+{
+int res;
+struct stat buf;
+FILE *ff;
+
+    res = stat(name, &buf);
+
+    if (res < 0) {
+        /* no such file, OK to try to create it */
+	return(1);
+    }
+
+    ff = HI_OPEN(name, DFACC_RDWR);
+
+    if (ff != NULL) {
+        /* OK to open for write, so OK to clobber it */
+        HI_CLOSE(ff);
+	return(1);
+    } 
+
+    /* no permission to write, don't do the create */
+    return(0);
+}
+
 /******************************************************************************
  NAME
 	SDstart -- open a file
@@ -318,6 +358,8 @@ SDstart(const char *name,   /* IN: file name to open */
 
     if(HDFmode & DFACC_CREATE) 
       { /* create file */
+        if(!SDI_can_clobber(name)) 
+            HGOTO_ERROR(DFE_DENIED, FAIL);
         cdfid = nccreate(name, NC_CLOBBER);
       } 
     else 

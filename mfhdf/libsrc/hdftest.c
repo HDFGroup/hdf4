@@ -201,6 +201,8 @@ static uint8  u8_data[2][3][4] =
 
 extern int test_szip_compression();
 extern int test_checkempty();
+extern int test_idtest();
+extern int test_sd();
 
 static intn
 test_chunk()
@@ -4055,6 +4057,8 @@ main(int argc, char *argv[])
    /*  printf("****** SD Szip test skipped *****\n"); */
 #endif /* H4_HAVE_LIBSZ */
 
+    status = test_sd();  /* defined in tsd.c */
+    num_errs = num_errs + status;
     printf("num_err == %d\n", num_errs);
 
     exit(num_errs);
