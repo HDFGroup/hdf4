@@ -1427,7 +1427,7 @@ intn HDputc(c,access_id)
  NAME
        Hendaccess -- to dispose of an access element
  USAGE
-       int32 Hendaccess(access_id)
+       intn Hendaccess(access_id)
        int32 access_id;          IN: id of access element to dispose of
  RETURNS
        returns SUCCEED (0) if successful, FAIL (-1) otherwise
@@ -1441,9 +1441,9 @@ intn HDputc(c,access_id)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 Hendaccess(int32 access_id)
+intn Hendaccess(int32 access_id)
 #else
-int32 Hendaccess(access_id)
+intn Hendaccess(access_id)
     int32 access_id;           /* access id */
 #endif
 {
@@ -1484,7 +1484,7 @@ int32 Hendaccess(access_id)
  NAME
        Hgetelement -- read in a data element
  USAGE
-       int Hgetelement(file_id, tag, ref, data)
+       int32 Hgetelement(file_id, tag, ref, data)
        int32 file_id;          IN: id of the file to read from
        int16 tag;              IN: tag of data element to read
        int16 ref;              IN: ref of data element to read
@@ -1692,7 +1692,7 @@ int32 Hoffset(file_id, tag, ref)
  NAME
        Hdupdd -- duplicate a data descriptor
  USAGE
-       int Hdupdd(file_id, tag, ref, old_tag, old_ref)
+       intn Hdupdd(file_id, tag, ref, old_tag, old_ref)
        int32 file_id;          IN: id of file
        uint16 tag;             IN: tag of new data descriptor
        uint16 ref;             IN: ref of new data descriptor
@@ -1702,14 +1702,15 @@ int32 Hoffset(file_id, tag, ref)
        returns SUCCEED (0) if successful, FAIL (-1) otherwise
  DESCRIPTION
        Duplicates a data descriptor so that the new tag/ref points to the
-       same data element pointed to by the old tag/ref.
+       same data element pointed to by the old tag/ref.  Return FAIL if
+       the given tag/ref are already in use.
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hdupdd(int32 file_id, uint16 tag, uint16 ref,
+intn Hdupdd(int32 file_id, uint16 tag, uint16 ref,
           uint16 old_tag, uint16 old_ref)
 #else
-int Hdupdd(file_id, tag, ref, old_tag, old_ref)
+intn Hdupdd(file_id, tag, ref, old_tag, old_ref)
     int32 file_id;             /* file id of dd's to duplicate */
     uint16 tag;                        /* tag of new duplicate dd */
     uint16 ref;                        /* ref of new duplicate dd */
@@ -1744,19 +1745,18 @@ int Hdupdd(file_id, tag, ref, old_tag, old_ref)
     new_block = file_rec->ddhead;
     new_idx = -1;
     if (HIlookup_dd(file_rec, (uint16)DFTAG_NULL, (uint16)DFTAG_WILDCARD,
-                 &file_rec->null_block, &file_rec->null_idx) == FAIL) {
-       if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL) {
-           HRETURN_ERROR(DFE_NOFREEDD,FAIL);
-	}
-       else {
-           new_block = file_rec->ddlast;
-           new_idx = 0;
-       }
+                    &file_rec->null_block, &file_rec->null_idx) == FAIL) {
+        if (HInew_dd_block(file_rec, FILE_NDDS(file_rec), FUNC) == FAIL) {
+            HRETURN_ERROR(DFE_NOFREEDD,FAIL);
+	} else {
+            new_block = file_rec->ddlast;
+            new_idx = 0;
+        }
     } else {
-      new_block = file_rec->null_block;
-      new_idx   = file_rec->null_idx;
+        new_block = file_rec->null_block;
+        new_idx   = file_rec->null_idx;
     }
-
+    
     /* fill in the new dd with details from old dd and update file with
        new dd */
 
@@ -1841,7 +1841,7 @@ int HIupdate_dd(file_rec, block, idx, FUNC)
  NAME
        Hdeldd -- delete a data descriptor
  USAGE
-       int Hdeldd(file_id, tag, ref)
+       intn Hdeldd(file_id, tag, ref)
        int32 file_id;            IN: id of file
        int16 tag;                IN: tag of data descriptor to delete
        int16 ref;                IN: ref of data descriptor to delete
@@ -1856,9 +1856,9 @@ int HIupdate_dd(file_rec, block, idx, FUNC)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hdeldd(int32 file_id, uint16 tag, uint16 ref)
+intn Hdeldd(int32 file_id, uint16 tag, uint16 ref)
 #else
-int Hdeldd(file_id, tag, ref)
+intn Hdeldd(file_id, tag, ref)
     int32 file_id;             /* file record id */
     uint16 tag;                        /* tag of dd to delete */
     uint16 ref;                        /* ref of dd to delete */
@@ -1958,7 +1958,7 @@ uint16 Hnewref(file_id)
  NAME
        Hishdf -- tells if a file is an HDF file
  USAGE
-       int32 Hishdf(path)
+       intn Hishdf(path)
        char *path;             IN: name of file
  RETURNS
        returns TRUE (non-zero) if file is HDF, FALSE (0) otherwise
@@ -1970,7 +1970,7 @@ uint16 Hnewref(file_id)
 
 --------------------------------------------------------------------------*/
 
-int32
+intn
 #ifdef PROTOTYPE
 Hishdf(char *filename)
 #else
@@ -2067,7 +2067,7 @@ int32 Htrunc(aid, trunc_len)
  NAME
        Hsync -- sync file with memory
  USAGE
-       int Hsync(file_id)
+       intn Hsync(file_id)
        int32 file_id;            IN: id of file
  RETURNS
        returns SUCCEED (0) if sucessful, FAIL (-1) otherwise
@@ -2080,9 +2080,9 @@ int32 Htrunc(aid, trunc_len)
 --------------------------------------------------------------------------*/
 /* ARGSUSED */
 #ifdef PROTOTYPE
-int Hsync(int32 file_id)
+intn Hsync(int32 file_id)
 #else
-int Hsync(file_id)
+intn Hsync(file_id)
     int32 file_id;
 #endif
 {
@@ -2499,7 +2499,7 @@ PRIVATE int HIunlock(file_id)
  NAME
        Hnumber -- determine number of objects of a given type
  USAGE
-       int Hnumber(fid, tag)
+       int32 Hnumber(fid, tag)
        int32 fid;               IN: file ID
        int16 tag;               IN: tag to look for
  RETURNS
@@ -2513,15 +2513,15 @@ PRIVATE int HIunlock(file_id)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hnumber(int32 file_id, uint16 tag)
+int32 Hnumber(int32 file_id, uint16 tag)
 #else
-int Hnumber(file_id, tag)
+int32 Hnumber(file_id, tag)
     int32 file_id;
     uint16 tag;
 #endif
 {
     char *FUNC="Hnumber";
-    int n = 0;
+    int32 n = 0;
     ddblock_t *block;
     int32 idx;
     filerec_t *file_rec = FID2REC(file_id);
@@ -2649,7 +2649,7 @@ uint16 HDbase_tag(tag)
  NAME
 	Hgetlibversion -- return version info for current HDF library
  USAGE
-	int Hgetlibversion(majorv, minorv, release, string)
+	intn Hgetlibversion(majorv, minorv, release, string)
 	uint32 *majorv;		OUT: majorv version number
 	uint32 *minorv;		OUT: minorv versoin number
 	uint32 *release;	OUT: release number
@@ -2661,9 +2661,9 @@ uint16 HDbase_tag(tag)
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char string[])
+intn Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char string[])
 #else
-int Hgetlibversion(majorv, minorv, releasev, string)
+intn Hgetlibversion(majorv, minorv, releasev, string)
 uint32 *majorv, *minorv, *releasev;
 char string[];
 #endif
@@ -2688,7 +2688,7 @@ char string[];
  NAME
 	Hgetfileversion -- return version info for HDF file
  USAGE
-	int Hgetfileversion(file_id, majorv, minorv, release, string)
+	intn Hgetfileversion(file_id, majorv, minorv, release, string)
 	int32 file_id;		IN: handle of file
 	uint32 *majorv;		OUT: majorv version number
 	uint32 *minorv;		OUT: minorv versoin number
@@ -2703,10 +2703,10 @@ char string[];
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
+intn Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
 		    uint32 *release, char string[])
 #else
-int Hgetfileversion(file_id, majorv, minorv, release, string)
+intn Hgetfileversion(file_id, majorv, minorv, release, string)
 int32 file_id;
 uint32 *majorv, *minorv, *release;
 char string[];
@@ -3465,10 +3465,11 @@ int32 file_id;
  NAME
 	Hfidinquire --- Inquire about a file ID
  USAGE
-	int Hfidinquire(file_id)
-	int32 file_id;		IN: handle of file
-        char  *path;            OUT: path of file
-        int32 mode;             OUT: mode file is opened with 
+	int Hfidinquire(file_id, fname, access, attach)
+	int32    file_id;        IN: handle of file
+        char  ** fname;          OUT: path of file
+        intn   * access;         OUT: mode file is opened with 
+        intn   * attach;         OUT: number of active AIDs
  RETURNS
 	returns SUCCEED (0) if successful and FAIL (-1) if failed.
  DESCRIPTION
