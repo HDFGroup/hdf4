@@ -141,11 +141,12 @@ parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
 						numItems++;
 
 					/* allocate space for the array */
-					if ((dumpvd_opts->filter_str = (char **) HDmalloc(sizeof(char *) * numItems)) == NULL)
+					if ((dumpvd_opts->filter_str = (char **) HDmalloc(sizeof(char *) * (numItems+1))) == NULL)
 					  {
 						  printf("Not enough memory!\n");
 						  exit(-1);
 					  }
+                                        dumpvd_opts->filter_str[numItems] = NULL;
 
 					ptr = argv[*curr_arg];
 					i = 0;
@@ -276,90 +277,103 @@ do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 }	/* end do_dumpvd() */
 
 void 
-choose_vd(dump_info_t * dumpvd_opts, int32 vd_chosen[MAXCHOICES],
+choose_vd(dump_info_t * dumpvd_opts, int32 **vd_chosen,
         int32 *num_vd_chosen, int32 file_id, int *index_error)
 {
-	int32       i, k = 0, index, find_ref, number;
+    int32       i;
+    int32 k = 0;
+    int32 index, find_ref, number;
 
-	switch (dumpvd_opts->filter)
-	  {		/* Determine which VDs have been chosen. */
-		  case DINDEX:
-			  for (i = 0; i<dumpvd_opts->num_chosen; i++)
-				{
-					vd_chosen[i] = dumpvd_opts->filter_num[i];
-                    k++;
-				}
-			  break;
+    switch (dumpvd_opts->filter)
+      {		/* Determine which VDs have been chosen. */
+      case DINDEX:
+          for (i = 0; i<dumpvd_opts->num_chosen; i++)
+            {
+                (*vd_chosen)[i] = dumpvd_opts->filter_num[i];
+                k++;
+            }
+          break;
           
-		  case DREFNUM:
-			  for (i = 0; i<dumpvd_opts->num_chosen; i++)
-				{
-					index = VSref_index(file_id, dumpvd_opts->filter_num[i]);
-					if (index == -1)
-					  {
-						  printf("Vdata with reference number %d: not found\n", dumpvd_opts->filter_num[i]);
-						  *index_error = 1;
-					  }
-					else
-					  {
-						  vd_chosen[k] = index;
-						  k++;
-					  }
-				}	/* for */
-			  break;
+      case DREFNUM:
+          for (i = 0; i<dumpvd_opts->num_chosen; i++)
+            {
+                index = VSref_index(file_id, dumpvd_opts->filter_num[i]);
+                if (index == -1)
+                  {
+                      printf("Vdata with reference number %d: not found\n", dumpvd_opts->filter_num[i]);
+                      *index_error = 1;
+                  }
+                else
+                  {
+                      (*vd_chosen)[k] = index;
+                      k++;
+                  }
+            }	/* for */
+          break;
 
-		  case DNAME:
-			  for (i = 0; i<dumpvd_opts->num_chosen; i++)
-				{
-					find_ref = -1;
-					number = 0;
-					index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 1, &find_ref, &number);
-					if (index == -1)
-					  {
-						  printf("Vdata with name %s: not found\n", dumpvd_opts->filter_str[i]);
-						  *index_error = 1;
-					  }
-					else
-					  {
-						  vd_chosen[k] = index;
-						  k++;
-					  }
-				}	/* for */
-			  break;
+      case DNAME:
+          for (i = 0; i<dumpvd_opts->num_chosen; i++)
+            {
+                find_ref = -1;
+                number = 0;
+                index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 1, &find_ref, &number);
+                if (index == -1)
+                  {
+                      printf("Vdata with name %s: not found\n", dumpvd_opts->filter_str[i]);
+                      *index_error = 1;
+                  }
+                else
+                  {
+                      (*vd_chosen)[k] = index;
+                      k++;
+                  }
+            }	/* for */
+          break;
 
-		  case DCLASS:
-			  for (i = 0; dumpvd_opts->filter_str[i] != NULL; i++)
-				{
-					int32       found = 0;
+      case DCLASS:
+          for (i = 0; dumpvd_opts->filter_str[i] != NULL; i++)
+            {
+                int32       found = 0;
 
-					find_ref = -1;
-					number = 0;
-					while ((index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 0,
-												&find_ref, &number)) != -1)
-					  {
-						  vd_chosen[k] = index;
-						  found = 1;
-						  k++;
-					  }
-					if (!found)
-					  {
-						  printf("Vdata with class %s: not found\n", dumpvd_opts->filter_str[i]);
-						  *index_error = 1;
-					  }
-				}	/* for */
-			  break;
+                find_ref = -1;
+                number = 0;
+                while ((index = VSstr_index(file_id, dumpvd_opts->filter_str[i], 0,
+                                            &find_ref, &number)) != -1)
+                  {
+                      if (k < (int32)(*num_vd_chosen))
+                          (*vd_chosen)[k] = index;
+                      else
+                        {
+                            if ((*vd_chosen = (int32 *) HDrealloc(*vd_chosen,sizeof(int32) * (*num_vd_chosen+1))) == NULL)
+                              {
+                                  printf("Memory re-allocation error\n");
+                                  exit(1);
+                              }		/* end if */
+                            (*vd_chosen)[k] = index;
+                            (*num_vd_chosen)++;
+                        }
+                      k++;
+                      found = 1;
+                  }
+                if (!found)
+                  {
+                      printf("Vdata with class %s: not found\n", dumpvd_opts->filter_str[i]);
+                      *index_error = 1;
+                  }
+            }	/* for */
+          break;
 
-		  case DFIELDS:	/* Don't have to worry about which chosen fields yet. */
-			  break;
+      case DFIELDS:	/* Don't have to worry about which chosen fields yet. */
+          break;
 
-		  case DALL:
-              k= -1;
-			  break;
+      case DALL:
+          k= -1;
+          break;
 
-		  default:
-			  printf("Unknown filter option\n");
-			  exit(1);
-	  }		/* switch */
+      default:
+          printf("Unknown filter option\n");
+          exit(1);
+      }		/* switch */
     *num_vd_chosen=k;
 }	/* choose_vd */
 
@@ -408,20 +422,20 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
 		  Vstart(file_id);
 
 		  /* Find out which VDs have been chosen. */
-		  choose_vd(dumpvd_opts, vd_chosen, &num_vd_chosen, file_id, &index_error);
+		  choose_vd(dumpvd_opts, &vd_chosen, &num_vd_chosen, file_id, &index_error);
 
 		  /* In case of index error, skip the current file. */
 		  if (index_error && num_vd_chosen==0)
-            {
-              if(vd_chosen!=NULL)
-                {
-                  HDfree(vd_chosen);
-                  vd_chosen=NULL;
-                } /* end if */
-              Vend(file_id);
-              Hclose(file_id);
-			  continue;
-            } /* end if */
+                    {
+                        if(vd_chosen!=NULL)
+                          {
+                              HDfree(vd_chosen);
+                              vd_chosen=NULL;
+                          } /* end if */
+                        Vend(file_id);
+                        Hclose(file_id);
+                        continue;
+                    } /* end if */
 
 		  /* Get output file name.  */
 		  if (dumpvd_opts->dump_to_file)
