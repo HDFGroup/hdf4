@@ -58,9 +58,13 @@
  * pool is handed an opaque MPOOL cookie which stores all of this information.
  */
 
-/* Current Hash table size. Page numbers start with 0 */
+/* Current Hash table size. Page numbers start with 0 
+* Going try start with 1 (i.e 0 will denote invalid page number) */
 #define	HASHSIZE	128
+#if 0
 #define	HASHKEY(pgno)	(pgno % HASHSIZE)
+#endif
+#define	HASHKEY(pgno)	((pgno -1) % HASHSIZE)
 
 /* Default pagesize and max # of pages to cache */
 #define DEF_PAGESIZE   8192

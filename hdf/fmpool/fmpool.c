@@ -187,7 +187,7 @@ mpool_open(key, fd, pagesize, maxcache)
   mp->fd = fd;
 
   /* Initialize list hash chain */
-  for (pageno = 0; pageno < mp->npages; ++pageno)
+  for (pageno = 1; pageno <= mp->npages; ++pageno)
     {
       lhead = &mp->lhqh[HASHKEY(pageno)];
       if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
@@ -358,8 +358,8 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
 
   if (!(flags & MPOOL_EXTEND))
     { /* we increase by one page */
-      *pgnoaddr = bp->pgno = mp->npages; /* page number */
       mp->npages++;                      /* number of pages */
+      *pgnoaddr = bp->pgno = mp->npages; /* page number */
     } 
   else 
     { /* we extend to *pgnoaddr pages */
@@ -372,7 +372,7 @@ mpool_new(mp, pgnoaddr, pagesize, flags)
       if (mp->pagesize != pagesize) 
         mp->lastpagesize = pagesize;
       bp->pgno = *pgnoaddr;      /* page number to create */
-      mp->npages= *pgnoaddr + 1; /* number of pages */
+      mp->npages= *pgnoaddr; /* number of pages */
     }
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"mpool_new: increasing #of pages to=%d\n",mp->npages);
@@ -476,8 +476,8 @@ mpool_get(mp, pgno, flags)
     }
 
   /* Check for attempting to retrieve a non-existent page. 
-  *  remember pages go from 0 ->npages -1 */
-  if (pgno >= mp->npages) 
+  *  remember pages go from 1 ->npages  */
+  if (pgno > mp->npages) 
     {
       errno = EINVAL;
       ret = RET_ERROR;
@@ -586,7 +586,7 @@ mpool_get(mp, pgno, flags)
 #endif
 
   /* Check to see if we are reading in last page */
-  if (pgno != (mp->npages -1)) 
+  if (pgno != mp->npages) 
     { /* regular page */
       rpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
@@ -602,7 +602,7 @@ mpool_get(mp, pgno, flags)
     }
 
   /* Get ready to read page */
-  off = mp->pagesize * pgno;
+  off = mp->pagesize * (pgno -1);
   if (FMPI_SEEK(mp->fd, off) == FAIL)
     {
       ret = RET_ERROR;
@@ -901,8 +901,8 @@ mpool_page_sync(mp, pgno, flags)
     }
 
   /* Check for attempting to sync a non-existent page. 
-  *  remember pages go from 0 ->npages -1 */
-  if (pgno >= mp->npages) 
+  *  remember pages go from 1 ->npages  */
+  if (pgno > mp->npages) 
     {
       errno = EINVAL;
       ret = RET_ERROR;
@@ -954,7 +954,7 @@ mpool_page_sync(mp, pgno, flags)
 #endif
 
       /* Check to see if we are writing last page */
-      if (bp->pgno != (mp->npages -1)) 
+      if (bp->pgno != mp->npages) 
         {
           wpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
@@ -972,7 +972,7 @@ mpool_page_sync(mp, pgno, flags)
         }
 
       /* seek to proper postion */
-      off = mp->pagesize * bp->pgno;
+      off = mp->pagesize * (bp->pgno - 1);
       if (FMPI_SEEK(mp->fd, off) == FAIL)
         {
 #ifdef MPOOL_DEBUG
@@ -1189,7 +1189,7 @@ mpool_write(mp, bp)
 #endif
 
   /* Check to see if we are writing last page */
-  if (bp->pgno != (mp->npages -1)) 
+  if (bp->pgno != mp->npages) 
     {
       wpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
@@ -1207,7 +1207,7 @@ mpool_write(mp, bp)
     }
 
   /* seek to proper postion */
-  off = mp->pagesize * bp->pgno;
+  off = mp->pagesize * (bp->pgno - 1);
   if (FMPI_SEEK(mp->fd, off) == FAIL)
     {
 #ifdef MPOOL_DEBUG
@@ -1290,7 +1290,7 @@ mpool_look(mp, pgno)
     }
 
   /* Check for attempt to look up a non-existent page. */
-  if (pgno >= mp->npages) 
+  if (pgno > mp->npages) 
     {
       errno = EINVAL;
       ret = RET_ERROR;
