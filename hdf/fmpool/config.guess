@@ -255,13 +255,13 @@ EOF
     C4*:ConvexOS:*:* | convex:ConvexOS:C4*:*)
 	echo c4-convex-bsd
         exit 0 ;;
-    CRAY*X-MP:UNICOS:*:*)
+    CRAY*X-MP:*:*:*)
 	echo xmp-cray-unicos
         exit 0 ;;
-    CRAY*Y-MP:UNICOS:*:*)
+    CRAY*Y-MP:*:*:*)
 	echo ymp-cray-unicos
         exit 0 ;;
-    CRAY-2:UNICOS:*:*)
+    CRAY-2:*:*:*)
 	echo cray2-cray-unicos
         exit 0 ;;
     CRAY*C90:c90:*:*)
