@@ -87,32 +87,26 @@
 
   Platform(OS)                    C-Compiler       Fortran-Compiler   
   ------------                    ----------       ---------------- 
-  Sun4(SunOS 4.1.4)               GCC 2.6.3        f77 SC1.0            
-  Sun4(Solaris 2.6)               CC               f77             
-  SGI-Indy(IRIX v6.5)             CC 7.2.1         f77 7.2.1
-  SGI-Origin(IRIX64 v6.5-n32)     CC 7.2.1.2m      f77 7.2.1.2m     
-  SGI-Origin(IRIX64 v6.5-64)      CC 7.2.1.2m      f77 7.2.1.2m    
-  HP9000/755(HP-UX B.10.20)       CC A.10.32.03    f77       
+  Sun4(Solaris 2.7)               WorkShop         WorkShop Compilers 5.0
+                                  Compilers C 5.0  FORTRAN 77 5.0         
+  Sun4(Solaris 2.6)               WorkShop         WorkShop Compilers 5.0
+                                  Compilers C 5.0  FORTRAN 77 5.0             
+  SGI-Indy(IRIX v6.5)             CC 7.30          f77 7.30
+  SGI-Origin(IRIX64 v6.5-n32)     CC 7.3.1m        f77 7.3.1m 
+  SGI-Origin(IRIX64 v6.5-64)      CC 7.3.1m        f77 7.3.1m    
+  HP9000/755(HP-UX B.11.00)       CC A.11.00.13    f77 B.11.00.01
   Exemplar(HP-UX B.10.01)         CC V2.0          f77 V1.2.6
-  Cray T90
-   CFP  (UNICOS 10.0.0eu u10.49)  CC 6.2.0.1       f90 3.2.0.1  
-   IEEE (UNICOS 10.0.0ev d10.161) CC 6.2.0.1       f90 3.2.0.1  
-  Cray J90 (bob.0 10.0.0.3)       CC 6.2.0.1       f90 3.2.0.0
-  IBM SP (single node, v4.2)      XLC 3.1.4.10     f77 5.1.0.2       
-  DEC Alpha/Digital Unix v4.0     DEC C v5.6-079   Digital Fortran v5.1        
-  DEC Alpha/OpenVMS AXP v6.2      DEC C v5.0-003   Digital Fortran 77 X7.1-156  
+  Cray J90 (bob.1 10.0.0.7)       CC 6.3.0.2       Cray Fortran 3.4.0.1.0 
+  IBM SP (single node, v4.2)      XLC 5.0.1.0      f77 07.01.0000.0002 
+  DEC Alpha/Digital Unix v4.0     DEC C v5.2-040   Digital Fortran v4.1-92 
   DEC Alpha/OpenVMS AXP v7.1      DEC C v5.6-003   Digital Fortran 77 X7.1-156  
-  VAX OpenVMS v6.2                DEC C v5.6       DEC Fortran v6.3 
   IBM PC - Intel Pentium
        Solarisx86 (2.5.1)         GCC 2.7.2          -                
-       Linux (elf) (2.2.26)       GCC 2.8.1        g77 2.8.1     
-       FreeBSD (3.1)              GCC 2.7.2.1      g77 2.7.2.1
-  PowerMac 7600/120 (MacOS 8.5.1) MetroWerks         -
-                                  Codewarrior Pro1                 
-  68k-far/4i/8d                     -                -           
-  Windows NT/95                   MSVC++ 5.0       DEC Visual Fortran 5.0
-  DEC Alpha NT                    MSVC++ 5.0       DEC Visual Fortran 5.0
-  T3E (unicosmk 2.0.4.46)         CC 6.2.0.1       f90 3.2.0.0
+       Linux      (2.2.16)        GCC 2.95.2       g77  0.5.25    
+       FreeBSD    (4.1.1)         GCC 2.95.2       GNU f77 V0.5.25
+  PowerMac 7600/120 (MacOS 8.5.1) -                -
+  Windows NT/98/2000              MSVC++ 6.0       DEC Visual Fortran 6.0
+  T3E (sn6711 2.0.539b)           Cray CC 6.3.0.2  Cray Fortran 3.4.0.1.0
 
 
   NOTE:  Platforms listed with compiler information entered, are 
@@ -504,7 +498,7 @@ C      endif
     ---------------------------------------------
 
 
-      Install HDF4.1 Release 4 on Windows NT and Windows 98
+      Install HDF4.1 Release 4 on Windows NT, Windows 2000 and Windows 98
 
 The instructions which follow assume that you will be using one of 
 the 'zip' files that we provide, either the binary code release
@@ -624,7 +618,7 @@ Note that the instructions are the same for both Options I and II.
 
 
 	1. Unpack Win32.nofortran.zip or Win32.zip in 
-           directory HDF41r3\. 
+           directory HDF41r4\. 
          
         2. Invoke Microsoft Visial C++ 6.0, go to "File" and select
            the "Open Workspace" option. 
@@ -735,7 +729,7 @@ STEP V:  INSTALLATION
            include    - include files 
 
        In the command prompt window run install_release.bat file to install 
-       release version. This file will create four directories under HDF41r3 
+       release version. This file will create four directories under HDF41r4 
        directory and copy corresponding files: 
  
            bin     - utilties 
@@ -757,13 +751,31 @@ the following locations will need to be specified for locating
 header files and linking in the HDF libraries:
  
             <top-level HDF directory>\lib
-            <top-level HDF directory>\DLLlib
+            <top-level HDF directory>\dlllib
             <top-level HDF directory>\include
 
 where <top-level HDF directory> may be C:\myHDFstuff\dev or C:\MyHDFstuff\HDF41r4\
 
-Please refer to the <top-level HDF directory>\release_notes\compile.txt file
-for more information on compiling an application with the HDF libraries.
+
+Using Microsoft Visual C++ version 6.x:
+
+Under Tools->Options, select the folder, Directories:
+   Under "Show directories for", select "Include files".
+   Add the following directories:
+      C:<path to HDF includes>\include  
+
+Under "Show directories for", select "Library files":
+   Add the following directories:
+      C:<path to HDF libs>\lib        
+
+Under Project->Settings, select folder, Link:
+   Add the following libraries to the beginning of the list of
+   Object/Library Modules:
+         HD414.lib HM414.lib (single-threaded release version)
+         HD414d.lib HM414d.lib (single-threaded debug version)
+
+         HD414m.lib HM414m.lib (multi-threaded release version)
+         HD414md.lib HM414md.lib (multi-threaded debug version)
 
 
 MORE HELPFUL POINTERS
