@@ -45,7 +45,12 @@ static char RcsId[] = "@(#)$Revision$";
 #define NBIT_TEST 
 #define COMP_TEST 
 #define CHUNK_TEST
-#define NETCDF_READ_TEST
+/*  commented out for now because of 'long' handling on 64-bit
+    machines by this version of the netCDF library is broken. 
+    The new version of the netCDF library(2.4.3?) has fixed 
+    this I think. To fix it here requires merging in those fixes.
+ #define NETCDF_READ_TEST 
+*/
 
 /* Macintosh console stuff */
 #if defined __MWERKS__
@@ -1491,7 +1496,7 @@ test_chunk()
 #endif /* CHUNK_TEST */
 
 #ifdef NETCDF_READ_TEST
-static uint16  netcdf_u16[2][3] = {{1, 2, 3}, 
+static int16  netcdf_u16[2][3] = {{1, 2, 3}, 
                                    {4, 5, 6}};
 
 /* Tests reading of netCDF file 'test1.nc' using the SDxxx inteface.
@@ -1537,10 +1542,6 @@ test_netcdf_reading()
           fprintf(stderr,"netCDF Read Test 1: SDfileinfo returned wrong number of file attributes in file test1.nc \n");
           num_err++;
       }
-#if 0
-    fprintf(stdout,"n_datasets=%d, n_file_attrs=%d \n", 
-            n_datasets, n_file_attrs);
-#endif
 
 	/* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16). 
        in the file while querying every data set in the file. 
@@ -1554,20 +1555,14 @@ test_netcdf_reading()
           CHECK(status, FAIL, "netCDF Read Test 1. SDgetinfo failed for dataset in  file test1.nc");
 
           /* look for the dataset 'order' based on rank and number type */
-          if (rank == 2 & num_type == DFNT_INT16)
+          if (rank == 2 && num_type == (int32)DFNT_INT16)
             { /* should only be one of these */
-#if 0
-                fprintf(stdout,"found SDS with rank 2 and num_type DFNT_INT16(22) \n");
-#endif
                 start[0] =  start[1] = 0; 
                 edges [0] = dim_sizes[0];
                 edges [1] = dim_sizes[1];
-        
                 status = SDreaddata (sds_id, start, NULL, edges, (VOIDP) array_data);
                 CHECK(status, FAIL, "netCDF Read Test 1. SDreaddata failed for dataset in  file test1.nc");
-#if 0
-                fprintf (stderr,"\nData for 2-dimensional array of type DFNT_INT16: \n");
-#endif
+
                 /* check the data against our buffer 'netcdf_u16[][]' */
                 for (j = 0; j < dim_sizes[0]; j++ )
                   {
@@ -1578,14 +1573,8 @@ test_netcdf_reading()
                                   fprintf(stderr,"netCDF Read Test 1: bogus val read: wanted netcdf[%d][%d]=%d, read array[%d][%d]=%d \n",
                                           j,i,netcdf_u16[j][i], j,i, array_data[j][i] );
                               }
-#if 0
-                            fprintf(stderr,"  %i ", array_data[j][i]);
-#endif
-                        }
-#if 0
-                      fprintf(stderr,"\n");
-#endif
-                  }
+                        } /* end for inner */
+                  } /* end for outer */
             }
 
           /* end access to this SDS */
