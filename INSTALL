@@ -22,7 +22,7 @@ Supported Platforms
   DecStation/MIPSEL           CC              -
   IBM PC - Intel Pentium
        Linux
-       Windows NT/95
+       Windows NT/95        Visual C++ 2.0    -               X         X(C only)
        Free BSD 2.0         GCC 2.6.2     Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
@@ -65,6 +65,8 @@ Configuration/Installation
     e.g. 'hppa1.1-hp-hpux9.03' from an  HP9000/735 running HPUX-9.03.
 
 
+    To install on a Windows '95 or Windows NT machine, read the seperate
+    installation instructions for Windows NT.
 
 
 Documentation
