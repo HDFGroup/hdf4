@@ -200,9 +200,11 @@ int main(void)
  * SZIP
  *-------------------------------------------------------------------------
  */ 
+#ifdef H4_HAVE_SZLIB
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
+#endif
 
 /*-------------------------------------------------------------------------
  * add some RIS24 images to the file
@@ -249,10 +251,11 @@ int main(void)
  * SZIP
  *-------------------------------------------------------------------------
  */ 
-
+#ifdef H4_HAVE_SZLIB
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
+#endif 
 
 /*-------------------------------------------------------------------------
  * add some GR realistic images to the file
@@ -403,6 +406,7 @@ int main(void)
  * test4:  
  *-------------------------------------------------------------------------
  */
+#ifdef H4_HAVE_SZLIB
  TESTING("compressing SDS SELECTED with SZIP, chunking SELECTED");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:SZIP",&options);
@@ -417,6 +421,7 @@ int main(void)
   goto out;
  PASSED();
 
+#endif
 
 /*-------------------------------------------------------------------------
  * test4:  
@@ -452,7 +457,9 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
+#ifdef H4_HAVE_SZLIB
  hrepack_addcomp("dset7:SZIP",&options);
+#endif
  hrepack_addchunk("dset4:10x8",&options);
  hrepack_addchunk("dset5:10x8",&options);
  hrepack_addchunk("dset6:10x8",&options);
@@ -466,8 +473,10 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
   goto out;
+#ifdef H4_HAVE_SZLIB
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
+#endif
  if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
  if ( sds_verifiy_chunk("dset5",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
@@ -485,7 +494,9 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
+#ifdef H4_HAVE_SZLIB
  hrepack_addcomp("dset7:SZIP",&options);
+#endif
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -496,8 +507,10 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
   goto out;
+#ifdef H4_HAVE_SZLIB
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
+#endif
  PASSED();
 
 /*-------------------------------------------------------------------------
