@@ -113,9 +113,9 @@ int list(char* infname, char* outfname, options_t *options)
 
  /* close the HDF files */
  if ((status_n = Hclose (infile_id)) == FAIL )
-  fprintf(stderr, "Failed to close file <%s>\n", infname);
+  printf( "Failed to close file <%s>\n", infname);
  if ((status_n = Hclose (outfile_id)) == FAIL )
-  fprintf(stderr, "Failed to close file <%s>\n", infname);
+  printf( "Failed to close file <%s>\n", infname);
 
 #if !defined (ONE_TABLE)
 
@@ -426,8 +426,8 @@ void vgroup_insert(char* infname,char* outfname,int32 infile_id,int32 outfile_id
    /* initialize path */
    path=get_path(path_name,vgroup_name);
 
-   /* add object to table; print always */
-   table_add(table,tag,ref,path,options->verbose);
+   /* add object to table */
+   table_add(table,tag,ref,path);
 
    if (options->verbose)
     printf(PFORMAT,"","",path);    
@@ -815,27 +815,27 @@ int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path)
 
  /* Get the number of attributes attached to this vgroup.  */
  if((n_attrs = Vnattrs (vg_in))==FAIL) {
-  fprintf(stderr, "Failed to get attributes for <%s>\n", path);
+  printf( "Failed to get attributes for <%s>\n", path);
   return-1;
  }
  
  for (i = 0; i < n_attrs; i++) 
  {
   if((Vattrinfo (vg_in, i, attr_name, &data_type, &n_values, &size))==FAIL) {
-   fprintf(stderr, "Failed to get attribute %d of <%s>\n", i, path);
+   printf( "Failed to get attribute %d of <%s>\n", i, path);
    continue;
   }
   if ((buf = (char *)malloc(size * n_values))==NULL ) {
-   fprintf(stderr, "Failed to get memory for attribute %d of <%s>\n", i, path);
+   printf( "Failed to get memory for attribute %d of <%s>\n", i, path);
    continue;
   }
   if((Vgetattr (vg_in, i, buf))==FAIL){
-   fprintf(stderr, "Failed to get attribute %d of <%s>\n", i, path);
+   printf( "Failed to get attribute %d of <%s>\n", i, path);
    if (buf) free(buf);
    continue;
   }
   if((Vsetattr(vg_out, attr_name, data_type, n_values, buf))==FAIL){
-   fprintf(stderr, "Failed to set attribute %d of <%s>\n", i, path);
+   printf( "Failed to set attribute %d of <%s>\n", i, path);
   }
   if (buf) free(buf);
  }
@@ -981,7 +981,7 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
 
   /* Write the annotations  */
   if ((status_32 = ANwriteann (file_label_id, ann_buf, ann_length))==FAIL) {
-   fprintf(stderr,"Failed to write file label %d\n", i);
+   printf("Failed to write file label %d\n", i);
 		}
   
   /* Terminate access to the current data label */
@@ -1015,7 +1015,7 @@ void list_an(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
 
   /* Write the annotations  */
   if ((status_32 = ANwriteann (file_desc_id, ann_buf, ann_length))==FAIL){
-   fprintf(stderr,"Failed to write file description %d\n", i);
+   printf("Failed to write file description %d\n", i);
 		}
   
   /* Terminate access to the current data label */

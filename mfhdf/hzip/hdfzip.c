@@ -363,7 +363,7 @@ void read_info(char *filename,options_t *options)
 
  
  if ((fp = fopen(filename, "r")) == (FILE *)NULL) {
-  fprintf(stderr, "Cannot open options file %s", filename);
+  printf( "Cannot open options file %s", filename);
   exit(1);
  }
 
@@ -427,7 +427,7 @@ void read_info(char *filename,options_t *options)
   *-------------------------------------------------------------------------
   */
   else {
-   fprintf(stderr, "Bad file format for %s", filename);
+   printf( "Bad file format for %s", filename);
    exit(1);
   }
  }

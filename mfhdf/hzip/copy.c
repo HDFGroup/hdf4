@@ -94,6 +94,7 @@ int copy_sds(int32 sd_in,
  HDF_CHUNK_DEF    chunk_def_in;   /* chunk definition original */
  int32            chunk_flags;    /* chunk flags */ 
  int32            chunk_flags_in; /* chunk flags original*/ 
+ intn             empty_sds;
  int              have_info;
 
 #if !defined (ONE_TABLE)
@@ -119,7 +120,7 @@ int copy_sds(int32 sd_in,
  path=get_path(path_name,sds_name);
  
  /* add object to table */
- table_add(table,tag,ref,path,options->verbose&&options->trip==0);
+ table_add(table,tag,ref,path);
 
 #if defined(HZIP_DEBUG)
  printf ("\t%s %d\n", path, ref); 
@@ -154,7 +155,7 @@ int copy_sds(int32 sd_in,
    chunk_def_in.comp.cinfo.deflate.level    = c_info_in.deflate.level;
    break;
   default:
-   fprintf(stderr,"Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
+   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
   };
  }
 
@@ -244,6 +245,7 @@ int copy_sds(int32 sd_in,
   start[j] = 0;
  }
 
+
 /*-------------------------------------------------------------------------
  * check for objects too small
  *-------------------------------------------------------------------------
@@ -297,34 +299,14 @@ int copy_sds(int32 sd_in,
   if (path) free(path);
   return 0;
  }
- 
 
 /*-------------------------------------------------------------------------
- * read sds and create new one
+ * create new SDS
  *-------------------------------------------------------------------------
  */
 
- 
-
- /* alloc */
- if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-  fprintf(stderr, "Failed to allocate %d elements of size %d\n", nelms, eltsz);
-  SDendaccess(sds_id);
-  if (path) free(path);
-  return-1;
- }
- 
- /* read data */
- if (SDreaddata (sds_id, start, NULL, edges, buf) == FAIL) {
-  fprintf(stderr, "Could not read SDS <%s>\n", path);
-  SDendaccess(sds_id);
-  if (path) free(path);
-  return-1;
- }
-
- /* create output SDS */
  if ((sds_out = SDcreate(sd_out,sds_name,dtype,rank,dimsizes)) == FAIL) {
-  fprintf(stderr, "Failed to create new SDS <%s>\n", path);
+  printf( "Failed to create new SDS <%s>\n", path);
   ret=-1;
   goto out;
  }
@@ -344,7 +326,7 @@ int copy_sds(int32 sd_in,
  {
   if (SDsetchunk (sds_out, chunk_def, chunk_flags)==FAIL)
   {
-   fprintf(stderr, "Error: Failed to set chunk dimensions for <%s>\n", path);
+   printf( "Error: Failed to set chunk dimensions for <%s>\n", path);
    ret=-1;
    goto out;
   }
@@ -374,24 +356,54 @@ int copy_sds(int32 sd_in,
    c_info.deflate.level = info;
    break;
   default:
-   fprintf(stderr, "Error: Unrecognized compression code %d\n", comp_type);
+   printf( "Error: Unrecognized compression code %d\n", comp_type);
   }
 
   if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
   {
-   fprintf(stderr, "Error: Failed to set compression for <%s>\n", path);
+   printf( "Error: Failed to set compression for <%s>\n", path);
    ret=-1;
    goto out;
   }
  }
- 
- 
- /* write the data */
- if (SDwritedata(sds_out, start, NULL, edges, buf) == FAIL) {
-  fprintf(stderr, "Failed to write to new SDS <%s>\n", path);
+
+
+/*-------------------------------------------------------------------------
+ * check if the input SDS is empty. if so , do not read its data and write to new one
+ *-------------------------------------------------------------------------
+ */ 
+ if (SDcheckempty( sds_id, &empty_sds ) == FAIL) {
+  printf( "Failed to check empty SDS <%s>\n", path);
   ret=-1;
   goto out;
  }
+/*-------------------------------------------------------------------------
+ * read sds and write new one
+ *-------------------------------------------------------------------------
+ */
+ if (empty_sds==0 )
+ {
+  /* alloc */
+  if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
+   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+   ret=-1;
+   goto out;
+  }
+  
+  /* read data */
+  if (SDreaddata (sds_id, start, NULL, edges, buf) == FAIL) {
+   printf( "Could not read SDS <%s>\n", path);
+   ret=-1;
+   goto out;
+  }
+  
+  /* write the data */
+  if (SDwritedata(sds_out, start, NULL, edges, buf) == FAIL) {
+   printf( "Failed to write to new SDS <%s>\n", path);
+   ret=-1;
+   goto out;
+  }
+ } /* empty_sds */
 
 /*-------------------------------------------------------------------------
  * copy attributes
@@ -402,7 +414,6 @@ int copy_sds(int32 sd_in,
   ret=-1;
   goto out;
  }
-
  
 /*-------------------------------------------------------------------------
  * copy dimension scales
@@ -414,31 +425,31 @@ int copy_sds(int32 sd_in,
  {
   /* get dimension handle for input dimension */
   if ((dim_id = SDgetdimid(sds_id, i)) == FAIL) {
-   fprintf(stderr, "Failed to get dimension %d of SDS <%s>\n", i, path);
+   printf( "Failed to get dimension %d of SDS <%s>\n", i, path);
    ret=-1;
    goto out;
   }
   /* get dimension handle for output dimension */
   if ((dim_out = SDgetdimid(sds_out, i)) == FAIL) {
-   fprintf(stderr, "Failed to get dim_id for dimension %d of SDS <%s>\n", i, path);
+   printf( "Failed to get dim_id for dimension %d of SDS <%s>\n", i, path);
    ret=-1;
    goto out;
   }
   /* get dimension information for input dimension */
   if (SDdiminfo(dim_id, dim_name, &dim_size, &dtype, &nattrs) == FAIL) {
-   fprintf(stderr, "Failed to get info for dimension %d of SDS <%s>\n", i, path);
+   printf( "Failed to get info for dimension %d of SDS <%s>\n", i, path);
    ret=-1;
    goto out;
   }
   /* set output dimension name */
   if (SDsetdimname(dim_out, dim_name) == FAIL) {
-   fprintf(stderr, "Failed to set dimension name %d of SDS <%s>\n", i, path);
+   printf( "Failed to set dimension name %d of SDS <%s>\n", i, path);
    ret=-1;
    goto out;
   }
   /* copy attributes */
   if (nattrs && copy_sds_attrs(dim_id, dim_out, nattrs, options) == FAIL) {
-   fprintf(stderr, "Failed to copy attributes for dimension %d of of SDS <%s>\n", i, path);
+   printf( "Failed to copy attributes for dimension %d of of SDS <%s>\n", i, path);
    ret=-1;
    goto out;
   }
@@ -450,17 +461,17 @@ int copy_sds(int32 sd_in,
    eltsz = DFKNTsize(numtype | DFNT_NATIVE);
 
    if ((dim_buf = (VOIDP) HDmalloc(dim_size * eltsz)) == NULL) {
-    fprintf(stderr, "Failed to alloc %d for dimension scale\n", dim_size);
+    printf( "Failed to alloc %d for dimension scale\n", dim_size);
     ret=-1;
     goto out;
    }
    if (SDgetdimscale(dim_id, dim_buf) == FAIL) {
-    fprintf(stderr, "Failed to get scale info for %s\n", dim_name);
+    printf( "Failed to get scale info for %s\n", dim_name);
     ret=-1;
     goto out;
    }
    if (SDsetdimscale(dim_out, dim_size, dtype, dim_buf) == FAIL) {
-    fprintf(stderr, "Failed to set scale info for %s\n", dim_name);
+    printf( "Failed to set scale info for %s\n", dim_name);
     ret=-1;
     goto out;
    }
@@ -478,14 +489,14 @@ int copy_sds(int32 sd_in,
  {
   /* obtain the reference number of the new SDS using its identifier */
   if ((sds_ref = SDidtoref (sds_out)) == FAIL) {
-   fprintf(stderr, "Failed to get new SDS reference in <%s>\n", path);
+   printf( "Failed to get new SDS reference in <%s>\n", path);
    ret=-1;
    goto out;
   }
 
   /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_DSET, sds_ref)) == FAIL) {
-   fprintf(stderr, "Failed to add new SDS to group <%s>\n", path);
+   printf( "Failed to add new SDS to group <%s>\n", path);
    ret=-1;
    goto out;
   }
@@ -538,25 +549,25 @@ int copy_sds_attrs(int32 id_in,
  for (i = 0; i < nattrs; i++) 
  {
   if (SDattrinfo (id_in, i, attr_name, &dtype, &nelms) == FAIL) {
-   fprintf(stderr, "Cannot get info for attribute number %d\n", i);
+   printf( "Cannot get info for attribute number %d\n", i);
    return-1;
   }
   /* compute the number of the bytes for each value. */
   numtype = dtype & DFNT_MASK;
   eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
   if ((attr_buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-   fprintf(stderr, "Error allocating %d values of size %d for attribute %s",
+   printf( "Error allocating %d values of size %d for attribute %s",
     nelms, numtype, attr_name);
    return-1;
   }
   /* read attributes from input SDS */
   if (SDreadattr(id_in, i, attr_buf) == FAIL) {
-   fprintf(stderr, "Cannot read attribute %s\n", attr_name);
+   printf( "Cannot read attribute %s\n", attr_name);
    return-1;
   }
   /* put attributes into output SDS */
   if (SDsetattr(id_out, attr_name, dtype, nelms, attr_buf) == FAIL) {
-   fprintf(stderr, "Cannot write attribute %s\n", attr_name);
+   printf( "Cannot write attribute %s\n", attr_name);
    return-1;
   }
 
@@ -598,25 +609,25 @@ int copy_gr_attrs(int32 ri_id,
  for (i = 0; i < nattrs; i++) 
  {
   if (GRattrinfo (ri_id, i, attr_name, &dtype, &nelms) == FAIL) {
-   fprintf(stderr, "Cannot get info for attribute number %d\n", i);
+   printf( "Cannot get info for attribute number %d\n", i);
    return-1;
   }
   /* compute the number of the bytes for each value. */
   numtype = dtype & DFNT_MASK;
   eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
   if ((attr_buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-   fprintf(stderr, "Error allocating %d values of size %d for attribute %s",
+   printf( "Error allocating %d values of size %d for attribute %s",
     nelms, numtype, attr_name);
    return-1;
   }
   /* read attributes from input GR */
   if (GRgetattr(ri_id, i, attr_buf) == FAIL) {
-   fprintf(stderr, "Cannot read attribute %s\n", attr_name);
+   printf( "Cannot read attribute %s\n", attr_name);
    return-1;
   }
   /* put attributes into output GR */
   if (GRsetattr(ri_out, attr_name, dtype, nelms, attr_buf) == FAIL) {
-   fprintf(stderr, "Cannot write attribute %s\n", attr_name);
+   printf( "Cannot write attribute %s\n", attr_name);
    return-1;
   }
 
@@ -652,21 +663,21 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
 
  /* Allocate space for attribute values */
  if ((values = (VOIDP)malloc(attr_size * n_values)) == NULL) {
-  fprintf(stderr, "Cannot allocate %d values of size %d for attribute %s",
+  printf( "Cannot allocate %d values of size %d for attribute %s",
    n_values, attr_size, attr_name);
   return-1;
  }
 
  /* Read attribute from input object */
  if (VSgetattr(in, findex, attrindex, values) == FAIL) {
-  fprintf(stderr, "Cannot read attribute %s\n", attr_name);
+  printf( "Cannot read attribute %s\n", attr_name);
   if (values) free(values);
   return-1;
  }
 
  /* Write attribute to output object */
  if (VSsetattr(out, findex, attr_name, attr_type, n_values, values) == FAIL) {
-  fprintf(stderr, "Cannot write attribute %s\n", attr_name);
+  printf( "Cannot write attribute %s\n", attr_name);
   if (values) free(values);
   return-1;
  }
@@ -756,7 +767,7 @@ int  copy_gr(int32 gr_in,
  path=get_path(path_name,gr_name);
 
  /* add object to table */
- table_add(table,tag,ref,path,options->verbose&&options->trip==0);
+ table_add(table,tag,ref,path);
  
 #if defined(HZIP_DEBUG)
  printf ("\t%s %d\n", path, ref); 
@@ -796,7 +807,7 @@ int  copy_gr(int32 gr_in,
    chunk_def_in.comp.cinfo.jpeg.force_baseline = c_info_in.jpeg.force_baseline;
    break;
   default:
-   fprintf(stderr,"Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
+   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
   };
  }
 
@@ -954,7 +965,7 @@ int  copy_gr(int32 gr_in,
 
  /* alloc */
  if ((buf = (VOIDP) HDmalloc(data_size)) == NULL) {
-  fprintf(stderr, "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+  printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
   GRendaccess(ri_id);
   if (path) free(path);
   return-1;
@@ -962,7 +973,7 @@ int  copy_gr(int32 gr_in,
 
  /* set the interlace for reading by component interlacing scheme */
  if ( GRreqimageil(ri_id, interlace_mode) == FAIL ){
-  fprintf(stderr, "Could not read GR <%s>\n", path);
+  printf( "Could not set interlace for GR <%s>\n", path);
   GRendaccess(ri_id);
   if (path) free(path);
   return-1;
@@ -970,7 +981,7 @@ int  copy_gr(int32 gr_in,
  
  /* read data */
  if (GRreadimage (ri_id, start, NULL, edges, buf) == FAIL) {
-  fprintf(stderr, "Could not read GR <%s>\n", path);
+  printf( "Could not read GR <%s>\n", path);
   GRendaccess(ri_id);
   if (path) free(path);
   return-1;
@@ -979,7 +990,7 @@ int  copy_gr(int32 gr_in,
  
  /* create output GR */
  if ((ri_out = GRcreate(gr_out,gr_name,n_comps,dtype,interlace_mode,dimsizes)) == FAIL) {
-  fprintf(stderr, "Failed to create new GR <%s>\n", path);
+  printf( "Failed to create new GR <%s>\n", path);
   ret=-1;
   goto out;
  }
@@ -999,7 +1010,7 @@ int  copy_gr(int32 gr_in,
  {
   if (GRsetchunk (ri_out, chunk_def, chunk_flags)==FAIL)
   {
-   fprintf(stderr, "Error: Failed to set chunk dimensions for <%s>\n", path);
+   printf( "Error: Failed to set chunk dimensions for <%s>\n", path);
    ret=-1;
    goto out;
   }
@@ -1033,12 +1044,12 @@ int  copy_gr(int32 gr_in,
    c_info.jpeg.force_baseline = 1;
    break;
   default:
-   fprintf(stderr, "Error: Unrecognized compression code %d\n", comp_type);
+   printf( "Error: Unrecognized compression code %d\n", comp_type);
   }
 
   if (GRsetcompress (ri_out, comp_type, &c_info)==FAIL)
   {
-   fprintf(stderr, "Error: Failed to set compression for <%s>\n", path);
+   printf( "Error: Failed to set compression for <%s>\n", path);
    ret=-1;
    goto out;
   }
@@ -1046,7 +1057,7 @@ int  copy_gr(int32 gr_in,
  
  /* write the data */
  if (GRwriteimage(ri_out, start, NULL, edges, buf) == FAIL) {
-  fprintf(stderr, "Failed to write to new GR <%s>\n", path);
+  printf( "Failed to write to new GR <%s>\n", path);
   ret=-1;
   goto out;
  }
@@ -1076,20 +1087,20 @@ int  copy_gr(int32 gr_in,
  {
   GRreqlutil(ri_id, r_interlace_mode);    
   if ((status_n = GRreadlut(pal_id, pal_data)) == FAIL) {
-   fprintf(stderr, "Failed to get palette data for <%s>\n", path);
+   printf( "Failed to get palette data for <%s>\n", path);
   }
   
   if (status_n==SUCCEED)
   {
    /* Get the id for the new palette */
    if ((pal_out = GRgetlutid(ri_out, 0)) == FAIL) {
-    fprintf(stderr, "Failed to get palette ID for <%s>\n", path);
+    printf( "Failed to get palette ID for <%s>\n", path);
    }
    
    /* Write the palette to file. */
    if ((status_n = GRwritelut(pal_out,r_ncomp,r_data_type,r_interlace_mode,r_num_entries, 
     (VOIDP)pal_data)) == FAIL) {
-    fprintf(stderr, "Failed to write palette for <%s>\n", path);
+    printf( "Failed to write palette for <%s>\n", path);
    }
   } /* SUCCEED */
  } /* has_pal==1 */
@@ -1103,12 +1114,12 @@ int  copy_gr(int32 gr_in,
  {
   /* obtain the reference number of the new SDS using its identifier */
   if ((gr_ref = GRidtoref (ri_out)) == FAIL) {
-   fprintf(stderr, "Failed to get new GR reference in <%s>\n", path);
+   printf( "Failed to get new GR reference in <%s>\n", path);
   }
 
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
   if ((status_32 = Vaddtagref (vgroup_id_out_par, TAG_GRP_IMAGE, gr_ref)) == FAIL) {
-   fprintf(stderr, "Failed to add new GR to group <%s>\n", path);
+   printf( "Failed to add new GR to group <%s>\n", path);
   }
  }
 
@@ -1178,15 +1189,15 @@ int copy_vs( int32 infile_id,
  */ 
 
  if ((vdata_id  = VSattach (infile_id, ref, "r")) == FAIL ){
-  fprintf(stderr, "Failed to attach vdata ref %d\n", ref);
+  printf( "Failed to attach vdata ref %d\n", ref);
   return-1;
  }
  if ((status_32 = VSgetname  (vdata_id, vdata_name)) == FAIL ){
-  fprintf(stderr, "Failed to name for vdata ref %d\n", ref);
+  printf( "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
  if ((status_32 = VSgetclass (vdata_id, vdata_class)) == FAIL ){
-  fprintf(stderr, "Failed to name for vdata ref %d\n", ref);
+  printf( "Failed to name for vdata ref %d\n", ref);
   return-1;
  }
  
@@ -1194,7 +1205,7 @@ int copy_vs( int32 infile_id,
  if(vdata_class != NULL) {
   if( is_reserved(vdata_class)){
    if ((status_32 = VSdetach (vdata_id)) == FAIL )
-    fprintf(stderr, "Failed to detach vdata <%s>\n", path_name);
+    printf( "Failed to detach vdata <%s>\n", path_name);
    return 0;
   }
  }
@@ -1203,7 +1214,7 @@ int copy_vs( int32 infile_id,
  path=get_path(path_name,vdata_name);
  
  /* add object to table */
- table_add(table,tag,ref,path,options->verbose&&options->trip==0);
+ table_add(table,tag,ref,path);
  
 #if defined(HZIP_DEBUG)
  printf ("\t%s %d\n", path, ref); 
@@ -1217,7 +1228,7 @@ int copy_vs( int32 infile_id,
  /* check inspection mode */
  if ( options->trip==0 ) {
   if ((status_32 = VSdetach (vdata_id)) == FAIL )
-   fprintf(stderr, "Failed to detach vdata <%s>\n", path_name);
+   printf( "Failed to detach vdata <%s>\n", path_name);
   if (path) free(path);
   return 0;
  }
@@ -1230,13 +1241,13 @@ int copy_vs( int32 infile_id,
  
  if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, 
   &vdata_size, vdata_name) == FAIL) {
-  fprintf(stderr, "Failed to get info for vdata ref %d\n", ref);
+  printf( "Failed to get info for vdata ref %d\n", ref);
   if (path) free(path);
   return-1;
  }
  
 #if defined( HZIP_DEBUG)
- fprintf(stderr, 
+ printf( 
   "Transferring vdata %s: class=%s, %d recs, interlace=%d, size=%d\n\tfields='%s'\n",
   vdata_name, vdata_class, n_records, interlace_mode, vdata_size, 
   fieldname_list);
@@ -1250,23 +1261,23 @@ int copy_vs( int32 infile_id,
   */ 
  
  if ((vdata_out  = VSattach (outfile_id, -1, "w")) == FAIL) {
-  fprintf(stderr, "Failed to create new VS <%s>\n", path);
+  printf( "Failed to create new VS <%s>\n", path);
   status_32 = VSdetach (vdata_id);
   if (path) free(path);
   return -1;
  }
  if ((status_32 = VSsetname (vdata_out, vdata_name)) == FAIL) {
-  fprintf(stderr, "Failed to set name for new VS <%s>\n", path);
+  printf( "Failed to set name for new VS <%s>\n", path);
   ret=-1;
   goto out;
  }
  if ((status_32 = VSsetclass(vdata_out, vdata_class)) == FAIL) {
-  fprintf(stderr, "Failed to set class for new VS <%s>\n", path);
+  printf( "Failed to set class for new VS <%s>\n", path);
   ret=-1;
   goto out;
  }
  if (VSsetinterlace(vdata_out, interlace_mode) == FAIL) {
-  fprintf(stderr, "Failed to set interlace mode for output vdata\n");
+  printf( "Failed to set interlace mode for output vdata\n");
   ret=-1;
   goto out;
  }
@@ -1278,7 +1289,7 @@ int copy_vs( int32 infile_id,
  */ 
  
  if ((n_fields = VFnfields(vdata_id)) == FAIL ){
-  fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
+  printf( "Failed getting fields for VS <%s>\n", path);
   ret=-1;
   goto out;
  }
@@ -1288,7 +1299,7 @@ int copy_vs( int32 infile_id,
   field_type = VFfieldtype(vdata_id, i);
   field_order = VFfieldorder(vdata_id, i);
   if (VSfdefine(vdata_out, field_name, field_type, field_order) == FAIL) {
-   fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+   printf( "Error: cannot define fields for VS <%s>\n", path);
    ret=-1;
    goto out;
   }
@@ -1296,7 +1307,7 @@ int copy_vs( int32 infile_id,
  
  /* Set fields */
  if ((status_n = VSsetfields(vdata_out, fieldname_list)) == FAIL) {
-  fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+  printf( "Error: cannot define fields for VS <%s>\n", path);
   ret=-1;
   goto out;
  }
@@ -1309,24 +1320,27 @@ int copy_vs( int32 infile_id,
 
  /* Set fields for reading */
  if ((status_n = VSsetfields(vdata_id, fieldname_list)) == FAIL) {
-   fprintf(stderr, "Error: cannot define fields for VS <%s>\n", path);
+   printf( "Error: cannot define fields for VS <%s>\n", path);
    ret=-1;
    goto out;
   }
- if ((buf = (uint8 *)malloc(n_records * vdata_size)) == NULL ){
-  fprintf(stderr, "Failed to get memory for new VS <%s>\n", path);
-  ret=-1;
-  goto out;
- }
- if (VSread(vdata_id, buf, n_records, interlace_mode) == FAIL) {
-  fprintf(stderr, "Error reading vdata <%s>\n", path);
-  ret=-1;
-  goto out;
- }
- if (VSwrite(vdata_out, buf, n_records, interlace_mode) == FAIL) {
-  fprintf(stderr, "Error writing vdata <%s>\n", path);
-  ret=-1;
-  goto out;
+ if (n_records>0)
+ {
+  if ((buf = (uint8 *)malloc(n_records * vdata_size)) == NULL ){
+   printf( "Failed to get memory for new VS <%s>\n", path);
+   ret=-1;
+   goto out;
+  }
+  if (VSread(vdata_id, buf, n_records, interlace_mode) == FAIL) {
+   printf( "Error reading vdata <%s>\n", path);
+   ret=-1;
+   goto out;
+  }
+  if (VSwrite(vdata_out, buf, n_records, interlace_mode) == FAIL) {
+   printf( "Error writing vdata <%s>\n", path);
+   ret=-1;
+   goto out;
+  }
  }
  
 
@@ -1336,7 +1350,7 @@ int copy_vs( int32 infile_id,
  */ 
  
  if ((n_attrs = VSfnattrs( vdata_id, -1 )) == FAIL ){
-  fprintf(stderr, "Failed getting attributes for VS <%s>\n", path);
+  printf( "Failed getting attributes for VS <%s>\n", path);
   ret=-1;
   goto out;
  }
@@ -1351,7 +1365,7 @@ int copy_vs( int32 infile_id,
   
  for (i = 0; i < n_fields; i++) {
   if ((n_attrs = VSfnattrs(vdata_id, i)) == FAIL ){
-   fprintf(stderr, "Failed getting fields for VS <%s>\n", path);
+   printf( "Failed getting fields for VS <%s>\n", path);
    ret=-1;
    goto out;
   }
@@ -1369,12 +1383,12 @@ int copy_vs( int32 infile_id,
  {
   /* obtain the reference number of the new VS using its identifier */
   if ((vdata_ref = VSfind (outfile_id,vdata_name)) == 0) {
-   fprintf(stderr, "Failed to get new VS reference in <%s>\n", path);
+   printf( "Failed to get new VS reference in <%s>\n", path);
   }
   
-  /* add the VS to the vgroup. the tag DFTAG_VS is used */
-  if ((status_32 = Vaddtagref (vgroup_id_out_par, DFTAG_VS, vdata_ref)) == FAIL) {
-   fprintf(stderr, "Failed to add new VS to group <%s>\n", path);
+  /* add the VS to the vgroup. the INPUT TAG is used */
+  if ((status_32 = Vaddtagref (vgroup_id_out_par, tag, vdata_ref)) == FAIL) {
+   printf( "Failed to add new VS to group <%s>\n", path);
   }
  }
  
@@ -1488,7 +1502,7 @@ void copy_vg(char* infname,
  path=get_path(path_name,vgroup_name);
  
  /* add object to table */
- table_add(table,tag,ref,path,options->verbose&&options->trip==0);
+ table_add(table,tag,ref,path);
   
 #if defined(HZIP_DEBUG)
  printf ("\t%s %d\n", path, ref); 
