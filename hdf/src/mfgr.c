@@ -183,6 +183,74 @@ intn rigcompare(VOIDP k1, VOIDP k2, intn cmparg)
     return ((intn) ((*(int32 *) k1) - (*(int32 *) k2)));    /* valid for integer keys */
 }   /* rigcompare */
 
+/*--------------------------------------------------------------------------
+ NAME
+    GRIattrdestroynode
+ PURPOSE
+    Frees B-Tree attribute nodes.
+ USAGE
+    VOID GRIattrdestroynode(n)
+        VOIDP n;               IN: ptr to the attr node to delete
+ RETURNS
+    none
+ DESCRIPTION
+    Called internally by the tbbt*() routines, this routine is used when
+    deleting trees.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+
+  *** Only called by B-tree routines, should _not_ be called externally ***
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+VOID GRIattrdestroynode(VOIDP n)
+{
+    at_info_t *at_ptr=(at_info_t *)n;
+
+    if(at_ptr->name!=NULL)
+        HDfree(at_ptr->name);
+    if(at_ptr->data!=NULL)
+        HDfree(at_ptr->data);
+
+    HDfree(at_ptr);
+}   /* GRIattrdestroynode */
+       
+/*--------------------------------------------------------------------------
+ NAME
+    GRIridestroynode
+ PURPOSE
+    Frees B-Tree raster-image nodes.
+ USAGE
+    VOID GRIridestroynode(n)
+        VOIDP n;               IN: ptr to the attr node to delete
+ RETURNS
+    none
+ DESCRIPTION
+    Called internally by the tbbt*() routines, this routine is used when
+    deleting trees.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+
+  *** Only called by B-tree routines, should _not_ be called externally ***
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+VOID GRIridestroynode(VOIDP n)
+{
+    ri_info_t *ri_ptr=(ri_info_t *)n;
+
+    if(ri_ptr->name!=NULL)
+        HDfree(ri_ptr->name);
+    if(ri_ptr->ext_name!=NULL)
+        HDfree(ri_ptr->ext_name);
+    tbbtdfree(ri_ptr->lattree, GRIattrdestroynode, NULL);
+    if(ri_ptr->fill_value!=NULL)
+        HDfree(ri_ptr->fill_value);
+
+    HDfree(ri_ptr);
+}   /* GRIridestroynode */
        
 /*--------------------------------------------------------------------------
  NAME
@@ -1658,9 +1726,12 @@ printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
             HRETURN_ERROR(DFE_CANTDETACH,FAIL);
       } /* end if */
 
-/* Free all the memory we've allocated -QAK */
+    /* Free all the memory we've allocated */
+    tbbtdfree(gr_ptr->grtree, GRIridestroynode, NULL);
+    tbbtdfree(gr_ptr->gattree, GRIattrdestroynode, NULL);
 
-    /* Close down the entry for this file in the GR table -QAK */
+    /* Close down the entry for this file in the GR table */
+    HDfree(gr_ptr);
     gr_tab[gr_idx]=NULL;
 
     /* Close down the Vset routines we started */
@@ -2042,6 +2113,14 @@ printf("%s: check 1\n",FUNC);
 #ifdef QAK
 printf("%s: check 2, stride[XDIM,YDIM]=%ld, %ld\n",FUNC,stride[XDIM],stride[YDIM]);
 #endif /* QAK */
+#ifdef QAK
+printf("%s: riid=%ld\n",FUNC,(long)riid);
+printf("%s: start={%ld,%ld}\n",FUNC,(long)start[XDIM],(long)start[YDIM]);
+printf("%s: stride={%ld,%ld}\n",FUNC,(long)stride[XDIM],(long)stride[YDIM]);
+printf("%s: count={%ld,%ld}\n",FUNC,(long)count[XDIM],(long)count[YDIM]);
+printf("%s: data=%p\n",FUNC,data);
+#endif /* QAK */
+
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
     gr_ptr=gr_tab[gr_idx];
@@ -2105,6 +2184,14 @@ printf("%s: check 3\n",FUNC);
 #ifdef QAK
 printf("%s: check 4\n",FUNC);
 #endif /* QAK */
+#ifdef QAK
+printf("%s: solid_block=%d\n",FUNC,(int)solid_block);
+printf("%s: whole_image=%d\n",FUNC,(int)whole_image);
+printf("%s: pixel_mem_size=%d\n",FUNC,(int)pixel_mem_size);
+printf("%s: pixel_disk_size=%d\n",FUNC,(int)pixel_disk_size);
+printf("%s: convert=%d\n",FUNC,(int)convert);
+printf("%s: new_image=%d\n",FUNC,(int)new_image);
+#endif /* QAK */
 /* QAK */
     if(ri_ptr->comp_img==TRUE)
       {   /* create a compressed image */
@@ -2144,7 +2231,7 @@ printf("%s: check 5, new_image=%d, whole_image=%d, solid_block=%d\n",FUNC,new_im
                     fill_line_size=0;   /* number of bytes in the "line" block */
 
 #ifdef QAK
-printf("%s: check 6, ri_ptr->fill_img=%d\n",FUNC,ri_ptr->fill_img);
+printf("%s: check 6, ri_ptr->fill_img=%d, tag=%u, ref=%u\n",FUNC,(int)ri_ptr->fill_img,(unsigned)ri_ptr->img_tag,(unsigned)ri_ptr->img_ref);
 #endif /* QAK */
                 if((aid=Hstartaccess(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         DFACC_WRITE))==FAIL)
@@ -2156,7 +2243,11 @@ printf("%s: check 6, ri_ptr->fill_img=%d\n",FUNC,ri_ptr->fill_img);
                 if(new_image==TRUE && ri_ptr->fill_img==TRUE)
                   { /* create fill value arrays for various blocks */
                       VOIDP fill_pixel; /* converted value for the filled pixel */
+                      int32 at_index;   /* attribute index for the fill value */
 
+#ifdef QAK
+printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_value=%p\n",FUNC,ri_ptr->fill_value);
+#endif /* QAK */
                       if((fill_pixel=(VOIDP)HDmalloc(pixel_disk_size))==NULL)
                           HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
@@ -2166,7 +2257,16 @@ printf("%s: check 6, ri_ptr->fill_img=%d\n",FUNC,ri_ptr->fill_img);
                                   ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
                                   DFACC_WRITE,0,0);
                       else  /* create default pixel fill value of all zero components */
-                          HDmemset(fill_pixel,0,pixel_disk_size);
+                        {
+                          /* Try to find a fill value attribute */
+                          if((at_index=GRfindattr(riid,FILL_ATTR))!=FAIL)
+                            { /* Found a fill value attribute */
+                                if(GRgetattr(riid,at_index,fill_pixel)==FAIL)
+                                    HRETURN_ERROR(DFE_BADATTR,FAIL);
+                            } /* end if */
+                          else
+                              HDmemset(fill_pixel,0,pixel_disk_size);
+                        } /* end else */
 
                       /* check for "low" pixel runs */
                       if(start[XDIM]>0)
@@ -2176,6 +2276,10 @@ printf("%s: check 6, ri_ptr->fill_img=%d\n",FUNC,ri_ptr->fill_img);
                       if((start[XDIM]+((count[XDIM]-1)*stride[XDIM])+1)<ri_ptr->img_dim.xdim)
                           fill_hi_size=pixel_disk_size*(ri_ptr->img_dim.xdim-
                               (start[XDIM]+((count[XDIM]-1)*stride[XDIM])+1));
+
+#ifdef QAK
+printf("%s: check 6.75, xdim=%ld, ydim=%ld, fill_lo_size=%ld, fill_hi_size=%ld\n",FUNC,(long)ri_ptr->img_dim.xdim,(long)ri_ptr->img_dim.ydim,(long)fill_lo_size,(long)fill_hi_size);
+#endif /* QAK */
 
                       /* create the "line" pixel block */
                       /* allocate space for the "line" block */
@@ -2235,7 +2339,8 @@ printf("%s: check 9\n",FUNC);
                                     HRETURN_ERROR(DFE_WRITEERROR,FAIL);
 
 #ifdef QAK
-printf("%s: check 10, fill_lo_size=%ld, fill_hi_size=%ld\n",FUNC,(long)fill_lo_size,(long)fill_hi_size);
+printf("%s: check 10, fill_lo_size=%ld, fill_hi_size=%ld, pix_len=%ld\n",FUNC,(long)fill_lo_size,(long)fill_hi_size,(long)pix_len);
+printf("%s: *tmp_data=%u\n",FUNC,(unsigned)*(uint8 *)tmp_data);
 #endif /* QAK */
                             /* write out the block */
                             for(i=0; i<count[YDIM]; i++)
@@ -2273,11 +2378,16 @@ printf("%s: check 12\n",FUNC);
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
                                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
                               } /* end if */
+#ifdef QAK
+printf("%s: check 12.4\n",FUNC);
+#endif /* QAK */
                         } /* end if */
                       else
                         {   /* don't worry about fill values */
 #ifdef QAK
 printf("%s: check 12.5\n",FUNC);
+#endif /* QAK */
+#ifdef QAK
 #endif /* QAK */
                             for(i=0; i<count[YDIM]; i++)
                               {
@@ -2293,22 +2403,16 @@ printf("%s: check 12.5\n",FUNC);
                 else
                   {   /* sub-sampling, seek to each data element and write it out */
                       intn i,j,k;       /* temporary loop variables */
-                      int32 stride_add; /* amount to add for stride amount */
                       int32 fill_stride_size=0; /* # of pixels in the stride block */
                       intn fill_xdim=FALSE, /* whether to fill in the X dimension */
                           fill_ydim=FALSE;  /* whether to fill in the Y dimension */
 
-                      stride_add=pixel_disk_size*stride[XDIM];
 #ifdef QAK
-printf("%s: check 13, stride_add=%ld\n",FUNC,(long)stride_add);
+printf("%s: check 13\n",FUNC);
 #endif /* QAK */
-
                       /* check if we need to insert fill pixels between strides */
                       if(fill_image==TRUE)
                         {   /* create the "stride" pixel block */
-#ifdef QAK
-printf("%s: check 14\n",FUNC);
-#endif /* QAK */
                             if(stride[XDIM]>1)
                               {
                                 /* allocate space for the "stride" block */
@@ -2317,6 +2421,9 @@ printf("%s: check 14\n",FUNC);
                               } /* end if */
                             if(stride[YDIM]>1)
                                 fill_ydim=TRUE;
+#ifdef QAK
+printf("%s: check 14\n",FUNC);
+#endif /* QAK */
 
                             /* write fills and sub-sampled data */
 #ifdef QAK
@@ -2327,20 +2434,33 @@ printf("%s: check 14\n",FUNC);
                             /* write out lines "below" the block */
                             if(start[YDIM]>0)
                               { /* fill in the lines leading up the block */
+#ifdef QAK
+printf("%s: check 14.1 start[YDIM]=%d, writing %ld bytes\n",FUNC,(int)start[YDIM],(long)fill_line_size);
+#endif /* QAK */
                                 for(i=0; i<start[YDIM]; i++)
+                                  {
+#ifdef QAK
+printf("%s: check 14.15 i=%d\n",FUNC,i);
+#endif /* QAK */
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
                                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                  } /* end for */
                               } /* end if */
 
                             /* write prelude of low pixels */
                             if(fill_lo_size>0)
+                              {
+#ifdef QAK
+printf("%s: check 14.2 writing prelude of %d bytes\n",FUNC,(int)fill_lo_size);
+#endif /* QAK */
                                 if(Hwrite(aid,fill_lo_size,fill_line)==FAIL)
                                     HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end if */
 
 #ifdef QAK
 printf("%s: check 14.5, fill_lo_size=%ld, fill_hi_size=%ld\n",FUNC,(long)fill_lo_size,(long)fill_hi_size);
 printf("%s: check 14.55, pixel_disk_size=%ld\n",FUNC,(long)pixel_disk_size);
-printf("%s: check 14.6, fill_xdim=%ld, fill_ydim=%ld, fill_line_size=%ld\n",FUNC,(long)fill_xdim,(long)fill_ydim,(long)fill_line_size);
+printf("%s: check 14.6, fill_xdim=%ld, fill_ydim=%ld, fill_stride_size=%ld, fill_line_size=%ld\n",FUNC,(long)fill_xdim,(long)fill_ydim,(long)fill_stride_size,(long)fill_line_size);
 printf("%s: check 14.61, count[YDIM]=%ld, count[XDIM]=%ld\n",FUNC,(long)count[YDIM],(long)count[XDIM]);
 #endif /* QAK */
                             for(i=0; i<count[YDIM]; i++)
@@ -2349,9 +2469,14 @@ printf("%s: check 14.61, count[YDIM]=%ld, count[XDIM]=%ld\n",FUNC,(long)count[YD
                                     {
                                       if(Hwrite(aid,pixel_disk_size,tmp_data)==FAIL)
                                           HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                                      if(fill_xdim==TRUE)
+                                      if(fill_xdim==TRUE && j<(count[XDIM]-1))
+                                        {
+#ifdef QAK
+printf("%s: check 14.63, writing fill_stride_size=%ld bytes\n",FUNC,(long)fill_stride_size);
+#endif /* QAK */
                                           if(Hwrite(aid,fill_stride_size,fill_line)==FAIL)
                                               HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                        } /* end if */
                                       tmp_data=(VOIDP)((char *)tmp_data+pixel_disk_size);
                                     } /* end for */
   
@@ -2382,25 +2507,37 @@ printf("%s: check 14.7, i=%d\n",FUNC,(int)i);
 
                             /* Finish the last chunk of high side fill values */
                             if(fill_hi_size>0)
+                              {
+#ifdef QAK
+printf("%s: check 14.75, fill_hi_size=%d\n",FUNC,(int)fill_hi_size);
+#endif /* QAK */
                                 if(Hwrite(aid,fill_hi_size,fill_line)==FAIL)
                                     HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                              } /* end if */
 
+#ifdef INCORRECT
                             /* write out lines "above" the block */
                             if((start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1)
                                 <ri_ptr->img_dim.ydim)
                               {
-#ifdef QAK
-printf("%s: check 14.8\n",FUNC);
-#endif /* QAK */
+printf("%s: check 14.8, ri_ptr->img_dim.xdim=%d, ri_ptr->img_dim.ydim=%d\n",FUNC,(int)ri_ptr->img_dim.xdim,(int)ri_ptr->img_dim.ydim);
                                 for(i=start[YDIM]+((count[YDIM]-1)*stride[YDIM])+1;
                                         i<ri_ptr->img_dim.ydim; i++)
+                                  {
+printf("%s: check 14.81, i=%d\n",FUNC,i);
                                     if(Hwrite(aid,fill_line_size,fill_line)==FAIL)
                                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+                                  } /* end for */
                               } /* end if */
+#endif /* QAK */
 
                         } /* end if */
                       else
                         {   /* don't worry about fill values */
+                          int32 stride_add; /* amount to add for stride amount */
+
+                          stride_add=pixel_disk_size*stride[XDIM];
+
 #ifdef QAK
 printf("%s: check 15, stride_add=%ld, img_offset=%ld\n",FUNC,(long)stride_add,(long)img_offset);
 #endif /* QAK */
@@ -2427,6 +2564,9 @@ printf("%s: check 15.5, local_offset=%ld\n",FUNC,(long)local_offset);
                         } /* end else */
                   } /* end else */
                   
+                if(fill_line!=NULL)     /* free the fill-value pixels if we used 'em */
+                    HDfree(fill_line);
+
                 if(Hendaccess(aid)==FAIL)
                     HRETURN_ERROR(DFE_CANTENDACCESS,FAIL);
             } /* end else */
@@ -2514,6 +2654,13 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
             || (count[XDIM]<1 || count[YDIM]<1))
         HRETURN_ERROR(DFE_BADDIM, FAIL);
 
+#ifdef QAK
+printf("%s: riid=%ld\n",FUNC,(long)riid);
+printf("%s: start={%ld,%ld}\n",FUNC,(long)start[XDIM],(long)start[YDIM]);
+printf("%s: stride={%ld,%ld}\n",FUNC,(long)stride[XDIM],(long)stride[YDIM]);
+printf("%s: count={%ld,%ld}\n",FUNC,(long)count[XDIM],(long)count[YDIM]);
+printf("%s: data=%p\n",FUNC,data);
+#endif /* QAK */
     /* Get the array index for the grid */
     gr_idx=RIID2GRID(riid);
     gr_ptr=gr_tab[gr_idx];
@@ -2547,6 +2694,12 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
     platnumsubclass = DFKgetPNSC(ri_ptr->img_dim.nt & (~DFNT_LITEND), DF_MT);
     convert = (ri_ptr->img_dim.file_nt_subclass != platnumsubclass);  /* is conversion necessary? */
 
+#ifdef QAK
+printf("%s: solid_block=%d\n",FUNC,(int)solid_block);
+printf("%s: whole_image=%d\n",FUNC,(int)whole_image);
+printf("%s: pixel_disk_size=%d\n",FUNC,(int)pixel_disk_size);
+printf("%s: convert=%d\n",FUNC,(int)convert);
+#endif /* QAK */
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
       { /* Fake an image for the user by using the pixel fill value */
           VOIDP fill_pixel;         /* converted value for the filled pixel */
@@ -2573,6 +2726,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],VOI
       } /* end if */
     else
       { /* an image exists in the file */
+#ifdef QAK
+printf("%s: image exists\n",FUNC);
+#endif /* QAK */
           if(convert)
             {   /* convert image data to HDF disk format */
                 /* Allocate space for the conversion buffer */
@@ -2587,6 +2743,9 @@ printf("%s: check 1 whole_image=%d, solid_block=%d\n",FUNC,(int)whole_image,(int
 #endif /* QAK */
           if(whole_image==TRUE)
             { /* read the whole image in */
+#ifdef QAK
+printf("%s: check 1.3, tag=%u, ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,(unsigned)ri_ptr->img_ref);
+#endif /* QAK */
                 if(Hgetelement(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref,
                         (uint8 *)img_data)==FAIL)
                     HRETURN_ERROR(DFE_GETELEM,FAIL);

@@ -1974,7 +1974,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 		  if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
 			  HRETURN_ERROR(DFE_CANTFLUSH, FAIL);
 #ifdef TESTING
-		  printf("Hwrite(): appending to a dataset, ok to append\n");
+printf("Hwrite(): appending to a dataset, ok to append\n");
 #endif
 	  }		/* end if */
 
@@ -1987,14 +1987,17 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 
 /* update end of file pointer? */
 #ifdef TESTING
-	printf("%s: file_rec->f_end_off=%ld\n", FUNC,(long)file_rec->f_end_off);
-	printf("%s: file_rec->f_cur_off=%ld\n", FUNC,(long)file_rec->f_cur_off);
+printf("%s: file_rec->f_end_off=%ld\n", FUNC,(long)file_rec->f_end_off);
+printf("%s: file_rec->f_cur_off=%ld\n", FUNC,(long)file_rec->f_cur_off);
 #endif
 	if (file_rec->f_cur_off > file_rec->f_end_off)
 		file_rec->f_end_off = file_rec->f_cur_off;
 
 /* update position of access in elt */
 	access_rec->posn += length;
+#ifdef TESTING
+printf("%s: access_rec->posn=%ld\n",FUNC,(long)access_rec->posn);
+#endif
 
 	return length;	/* return number of bytes written */
 }	/* end Hwrite */

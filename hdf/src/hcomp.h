@@ -42,7 +42,8 @@ typedef enum
       COMP_CODE_RLE,            /* for simple RLE encoding */
       COMP_CODE_NBIT,           /* for N-bit encoding */
       COMP_CODE_SKPHUFF,        /* for Skipping huffman encoding */
-      COMP_CODE_GZIP            /* for gzip encoding */
+      COMP_CODE_GZIP,           /* for gzip encoding */
+      COMP_CODE_INVALID         /* invalid last code, for range checking */
   }
 comp_coder_t;
 

@@ -706,12 +706,16 @@ HLIstaccess(accrec_t * access_rec, int16 acc_mode)
                 link_t     *next;   /* next link to free */
 
                 /* free the linked list of links/block tables */
-                for (t_link = t_info->link; t_link; t_link = next)
+                if(t_info->link!=NULL)
                   {
-                      next = t_link->next;
-                      HDfree((VOIDP) t_link->block_list);
-                      HDfree((VOIDP) t_link);
-                  }
+                    for (t_link = t_info->link; t_link; t_link = next)
+                      {
+                          next = t_link->next;
+                          if(t_link->block_list!=NULL)
+                              HDfree((VOIDP) t_link->block_list);
+                          HDfree((VOIDP) t_link);
+                      }
+                  } /* end if */
                 HDfree((VOIDP) t_info);
                 access_rec->special_info = NULL;
             }

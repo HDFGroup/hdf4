@@ -39,7 +39,7 @@ typedef enum
   }
 gr_interlace_t;
 
-#ifdef MFGR_MASTER
+#if defined MFGR_MASTER | defined MFGR_TESTER
 
 /* By default this is the same as the number of files allowed to be open */
 #define MAX_GR_FILES    MAX_FILE
@@ -111,7 +111,9 @@ typedef struct gr_info {
     uint32      attr_cache;     /* the threshhold for the attribute sizes to cache */
 } gr_info_t;
 
+#ifdef MFGR_MASTER
 gr_info_t *gr_tab[MAX_GR_FILES]={0};
+#endif /* MFGR_MASTER */
 
 typedef struct at_info {
     int32 index;            /* index of the attribute (needs to be first in the struct) */
@@ -165,6 +167,6 @@ typedef struct ri_info {
     uintn store_fill;           /* whether to add fill value attribute or not */
 } ri_info_t;
 
-#endif /* MFGR_MASTER */
+#endif /* MFGR_MASTER | MFGR_TESTER */
 
 #endif /* __MFGR_H */

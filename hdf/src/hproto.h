@@ -276,11 +276,15 @@ extern      "C"
     extern int32 HXcreate
                 (int32 file_id, uint16 tag, uint16 ref, const char _HUGE * extern_file_name,
                  int32 offset, int32 start_len);
+
     extern intn HXsetcreatedir
-		(char *dir);
+                (char *dir);
 
     extern intn HXsetdir
                 (char *dir);
+
+    extern intn HXPshutdown
+                (void);
 
 /*
    ** from hcomp.c
