@@ -39,7 +39,7 @@
  *  HDFendIOtrace   : complete trace
  *-------------------------------------------------------------------------*/
 
-#ifdef PABLO
+#ifdef HAVE_PABLO
 
 #include "hdf.h"
 #include "ProcIDs.h"
