@@ -81,6 +81,32 @@ get_next_file(filelist_t * f_list, intn advance)
     return (f_list->file_arr[f_list->curr_file]);
 }	/* end get_next_file() */
 
+/* free_str_list use HDfree to free the list of strings of characters */
+void
+free_str_list( char **str_list,
+               int32 num_items )
+{
+   intn i;
+
+   if( str_list != NULL)
+   {
+      for( i = 0; i < num_items; i++ )
+         if( str_list[i] != NULL )
+            HDfree( str_list[i] );
+      HDfree( str_list );
+   }
+}  /* end of free_str_list */
+
+/* free_num_list use HDfree to free the list of integers; this routine
+   is short but can be used in many different places and very
+   convenient */
+void
+free_num_list( int32 *num_list )
+{
+   if( num_list != NULL)
+      HDfree( num_list );
+}  /* end of free_num_list */
+
 void 
 free_file_list(filelist_t * f_list)
 {

@@ -106,9 +106,10 @@ typedef struct
 list_info_t;
 
 /* Which dataset to dump */
+/* BMR: added defined values to fix exclusive problem - 1/23/99 */
 typedef enum
   {
-	  DINDEX, DREFNUM, DNAME, DCLASS, DFIELDS, DALL
+	  DALL=0, DINDEX=1, DREFNUM=2, DNAME=4, DCLASS=8, DFIELDS=16 
   }
 filter_t;
 
@@ -126,17 +127,43 @@ typedef enum
   }
 file_type_t;
 
-/* 'dumpsds' command option structure */
+/* BMR: numerical filter structure; used to hold a list of indices or reference numbers 
+   and the number of indices or reference numbers given - 1/23/99 */
 typedef struct
-  {
-	  filter_t    filter;		/* Which data object to dump */
-	  intn       *filter_num;	/* ref #'s or indices to use as filter */
-	  char      **filter_str;	/* names or classes to use as filter */
-	  int32       num_chosen;	/* number of items chosen (-1==ALL) */
-	  content_t   contents;		/* What contents to dump */
-	  intn        dump_to_file;	/* Whether to dump to a filename */
-	  file_type_t file_type;	/* What kind of data to dump to file */
-	  char        file_name[MAXNAMELEN];	/* Name of file to dump into */
+{
+	int32 *num_list;
+	int32 num_items;
+}
+number_filter_t;
+
+/* BMR: character filter structure; used to hold a list of names or class names 
+   and the number of names or class names given - 1/23/99 */
+typedef struct
+{
+	char **str_list;
+	int32 num_items;
+}
+char_filter_t;
+
+/* 'dumpsds' command option structure */
+/* BMR: added fields to hold indices, reference numbers, names, and classes
+   separately - 1/23/99 */
+typedef struct
+{
+   filter_t    filter;		/* Which data object to dump */
+   intn      *filter_num;      /* ref #'s or indices to use as filter */
+   char      **filter_str;      /* names or classes to use as filter */
+   number_filter_t by_index;	/* data objects requested by index */
+   number_filter_t by_ref;	/* data objects requested by reference number */
+   char_filter_t by_name;	/* data objects requested by name */
+   char_filter_t by_class;	/* data objects requested by class name */
+   char_filter_t by_field;	/* data objects requested by field - only VD */
+   int32       num_chosen;	/* number of items chosen, totally (-1==ALL) */
+   content_t   contents;        /* What contents to dump */
+   intn        dump_to_file;	/* Whether to dump to a file */
+   file_type_t file_type;	/* Is data written in ASCII or binary */
+   char        file_name[MAXFNLEN];/* Name of file to dump into */
+   char        ifile_name[MAXFNLEN];/* Name of input file being processed */
   }
 dump_info_t;
 
@@ -201,21 +228,21 @@ extern intn print_all_data_descs(const char *fname, int32 an_id);
 extern intn do_list(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
 
 /* hdp_sds.c */
-extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help);
 
 /* hdp_rig.c */
-extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], intn help);
 
 /* hdp_vg.c */
-extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], intn help);
 
 /* hdp_vd.c */
-extern intn do_dumpvd(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts);
+extern intn do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help);
 extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc,
               char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
 /* hdp_gr.c */
-extern intn do_dumpgr(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_ops);
+extern intn do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help);
 
 
 /* hdp_dump.c */
@@ -242,6 +269,10 @@ extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *f
 
 /* hdp_util.c */
 	/* misc. functions */
+
+void init_dump_opts(dump_info_t *dump_opts);
+void parse_number_opts( char *argv[], int *curr_arg, number_filter_t *filter);
+void parse_string_opts( char *argv[], int *curr_arg, char_filter_t *filter);
 extern char *tagnum_to_name(intn num);
 extern intn tagname_to_num(const char *name);
 extern void sort(int32 *chosen, int32 choices);
@@ -250,6 +281,8 @@ int int32_compare(const void *, const void *);
 	/* filename list functions */
 extern filelist_t *make_file_list(intn curr_arg, intn argc, char *argv[]);
 extern char *get_next_file(filelist_t * f_list, intn advance);
+extern void free_num_list(int32 *num_list );
+extern void free_str_list(char **str_list, int32 num_items );
 extern void free_file_list(filelist_t * f_list);
 	/* group list functions */
 extern groupinfo_t *make_group_list(int32 fid, uint16 tag, uint16 ref);
@@ -263,5 +296,11 @@ extern objinfo_t *goto_nth_obj(objlist_t * o_list, intn n);
 extern void reset_obj_list(objlist_t * o_list);
 extern void free_obj_list(objlist_t * o_list);
 extern void sort_obj_list(objlist_t * o_list, sort_t sort_type);
+extern intn print_all_file_labels(const char *fname, int32 an_id);
+extern intn print_file_annotations( int32 file_id, char *file_name );
+extern intn print_file_descs(const char *f_name, int32 an_id );
+extern intn print_data_annots(int32 file_id, char *file_name, int32 tag, int32 ref);
+extern intn print_SDattrs( int32 sdf_id, FILE *fp, int32 n_file_attrs);
+extern intn print_GRattrs( int32 gr_id, int32 n_file_attrs, FILE *fp, dump_info_t *dumpgr_opts );
 
 #endif /* __HDP_H */

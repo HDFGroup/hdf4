@@ -296,7 +296,7 @@ print_data_labels(const char *fname,
                       goto done;
                   }
 
-                printf("%*s%s\n", LABEL_FIELD_WIDTH, "Name/Label=", buf);
+                printf("%*s%s\n", LABEL_FIELD_WIDTH, " Name/Label=", buf);
 
                 /* end access */
                 if (FAIL == ANendaccess(ann_id))
@@ -409,7 +409,7 @@ print_data_descs(const char *fname,
                       goto done;
                   }
 
-                printf("%*s%s\n", LABEL_FIELD_WIDTH, "Description=", buf);
+                printf("%*s%s\n", LABEL_FIELD_WIDTH, "  Description=", buf);
 
                 /* end access */
                 if (FAIL == ANendaccess(ann_id))
@@ -627,7 +627,7 @@ print_all_data_descs(const char *fname,
     return ret_value;
 } /* print_all_data_descs() */
 
-static intn
+intn
 print_all_file_labels(const char *fname, 
                       int32 an_id)
 {
@@ -716,7 +716,7 @@ print_all_file_labels(const char *fname,
     return ret_value;
 }	/* end print_all_file_labels() */
 
-static intn 
+intn 
 print_all_file_descs(const char *fname, 
                      int32 an_id)
 {
@@ -804,79 +804,23 @@ print_all_file_descs(const char *fname,
           desc = NULL;
       } /* end for every file desc */ 
 
-    /* all SDS global attributes are considered file descriptions */   
+    /* all SDS global attributes are considered file descriptions */
     if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
       { /* SD global attributes */
           if (SDfileinfo(sd_fid, &ndsets, &nattrs) != FAIL)
-            {
-                for (i = 0; i < nattrs; i++)
-                  {
-                      if (SDattrinfo(sd_fid, i, name, &attr_nt, &attr_count) !=
-                          FAIL)
-                        {
-                            attr_nt_desc = HDgetNTdesc(attr_nt);
-                            if (attr_nt_desc == NULL)
-                              {
-                                  fprintf(stderr,"Failure in HDgetNTdesc for %d'th attribute for file %s \n",i, fname);
-                                  ret_value = FAIL;
-                                  goto done;
-                              }
-                            attr_index = SDfindattr(sd_fid, name);
-                            if (attr_index == FAIL)
-                              {
-                                  fprintf(stderr,"Failure in SDfindattr for %d'th attribute for file %s\n",i, fname);
-                                  ret_value = FAIL;
-                                  goto done;
-                              }
-                            attr_buf_size = DFKNTsize(attr_nt) * attr_count;
-                            if ((attr_buf = (VOIDP) HDmalloc(attr_buf_size)) ==
-                                NULL)
-                              {
-                                  fprintf(stderr,"Failure to allocate space \n");
-                                  ret_value = FAIL;
-                                  goto done;
-                              }
-                            if (FAIL == SDreadattr(sd_fid, attr_index, attr_buf))
-                              {
-                                  fprintf(stderr,"Failure in SDreadattr for %d'th attribute for file %s\n",i, fname);
-                                  ret_value = FAIL;
-                                  goto done;
-                              }
-                            printf("\t Attr%i: Name = %s\n", 
-                                   (int) attr_index, name);
-                            printf("\t\t Type = %s \n\t\t Count= %i\n",
-                                   attr_nt_desc, (int) attr_count);
-                            printf("\t\t Value = ");
-                            if (FAIL == dumpfull(attr_nt, ft, attr_count, attr_buf, 20, stdout))
-                              {
-                                  fprintf(stderr,"Failure from dumpfull for %d'th attribute for file %s\n",i, fname);
-                                  ret_value = FAIL;
-                                  goto done;
-                              }
-                            printf("\n");
-
-                            /* clean up */
-                            HDfree(attr_nt_desc);
-                            attr_nt_desc = NULL;
-                            HDfree((VOIDP) attr_buf);
-                            attr_buf = NULL;
-                        }       /* end if SDattrinfo */
-                      else
-                        {
-                            fprintf(stderr, "Failure in SDattrinfo for %d'th attribute for file %s\n",i, fname);
-                            ret_value = FAIL;
-                            goto done;
-                        }
-
-                  } /* end for */
-
-            }/* end if  SDfileinfo */
+               print_SDattrs( sd_fid, stdout, nattrs );
+               /* temporary use stdout until fixing hdp_list to print
+                  to a FILE *fp */
           else
             {
-                fprintf(stderr,"Failure in SDfileinfo for file %s\n", fname);
+                fprintf(stderr,"Failure in SDfileinfo for file %s\n",
+fname);
                 ret_value = FAIL;
                 goto done;
             }
+          if (FAIL == SDend(sd_fid))
+             fprintf(stderr, "SDend failed for the current file\n" );
+          sd_fid = FAIL; /* reset */
       }         /* end if  SDstart */
 
   done:
@@ -890,6 +834,109 @@ print_all_file_descs(const char *fname,
               HDfree(attr_nt_desc);
           if (attr_buf != NULL)
               HDfree((VOIDP) attr_buf);
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+}	/* end print_all_file_descs() */
+
+/* BMR: use part of print_all_file_descs for this routine to just print
+   the file annotations because print_all_file_descs also prints SD
+   file attributes.  Probably will separate SD file attributes when
+   adding GR file attributes */
+intn 
+print_file_descs(const char *f_name,
+                 int32 an_id ) 
+{
+    /* file desc */
+    int32       len; 
+    char       *desc = NULL;
+    int32       ann_id = FAIL;
+    intn       i;
+    int32       n_file_label;
+    int32       n_file_desc;
+    int32       n_data_label;
+    int32       n_data_desc;
+    file_type_t ft = DASCII;
+    /* SDS */
+    int32       sd_fid = FAIL;
+    int32       ndsets, nattrs;
+    char        name[MAXNAMELEN];
+    int32       attr_nt;
+    int32       attr_count;
+    int32       attr_index;
+    int32       attr_buf_size;
+    intn        ret_value = SUCCEED;
+
+    /* find out how many file labels/descs and data labels/descs in file */
+    if (FAIL == ANfileinfo(an_id, &n_file_label, &n_file_desc, &n_data_label, 
+                           &n_data_desc))
+      {
+          fprintf(stderr,"ANfileinfo failed for file %s \n",f_name);
+          ret_value = FAIL;
+          goto done;
+      }
+
+    /* for all file descs */
+    for(i = 0; i< n_file_desc; i++) 
+      {  
+          /* select i'th file desc */
+          ann_id = ANselect(an_id, i, AN_FILE_DESC);
+          if (FAIL == ann_id)
+            {
+                fprintf(stderr,"ANselect failed for %d'th desc for file %s \n",i, f_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          /* get length of i'th file desc */
+          len = ANannlen(ann_id);
+          if (FAIL == len)
+            {
+                fprintf(stderr,"ANannlen failed for %d'th desc for file %s \n",i,f_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          /* allocate room for the file desc */
+          if ((desc = (char *) HDcalloc(len + 1,1)) == NULL)
+            {
+                fprintf(stderr,"Failed to allocate space for %d file annotation desc for file %s\n",i, f_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          /* read in file desc and print it */
+          if(ANreadann(ann_id, desc, len+1)!= FAIL)
+              printf("File description #%ld: %s\n", (long)i, desc);
+          else
+            {
+                fprintf(stderr,"ANreadann failed for %d'th desc for file %s \n",i,f_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          /* end access */
+          if (FAIL == ANendaccess(ann_id))
+            {
+                fprintf(stderr,"ANendaccess failed for %d'th desc for file %s \n",i,f_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
+          /* reset id and free space for label */
+          ann_id = FAIL;
+          HDfree(desc);
+          desc = NULL;
+      } /* end for every file desc */ 
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (ann_id != FAIL)
+              ANendaccess(ann_id);        
+          if (desc != NULL)
+              HDfree(desc);
       }
     /* Normal cleanup */
 
@@ -1117,6 +1164,7 @@ do_list(intn curr_arg,
           obj_num = 0;	      /* number of the object we are displaying */
           fid = FAIL;
           an_id = FAIL;
+/* BMR: the last parameter should be non-negative integer accord. to RM */
           if ((fid = Hopen(f_name, DFACC_READ, -1)) != FAIL)
             {
                 an_id = ANstart(fid);

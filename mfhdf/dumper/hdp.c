@@ -27,7 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 static void 
 usage(intn argc, char *argv[])
 {
-    printf("%s, version: 1.0, April 6, 1994\n\n", argv[0]);
+    printf("%s, %s\n\n", argv[0], LIBVER_STRING );
     printf("Usage: hdp [-H] command [command options] <filename list>\n");
     printf("\t-H  Display usage information about the specified command.\n");
     printf("\t     If no command is specified, -H lists all commands.\n");
@@ -39,6 +39,26 @@ usage(intn argc, char *argv[])
     printf("\t     dumprig\tdisplays data of RIGs in <filename list>. \n");
     printf("\t     dumpgr\tdisplays data of RIGs in <filename list>. \n");
 }
+
+void
+init_dump_opts(dump_info_t * dump_opts)
+{
+    dump_opts->filter = DALL; /* default dump all GRs */
+    dump_opts->by_index.num_list = NULL; /* no index given */
+    dump_opts->by_index.num_items = 0;
+    dump_opts->by_ref.num_list = NULL; /* no ref# given */
+    dump_opts->by_ref.num_items = 0;
+    dump_opts->by_name.str_list = NULL; /* no name given */
+    dump_opts->by_name.num_items = 0;
+    dump_opts->by_class.str_list = NULL; /* no class given */
+    dump_opts->by_class.num_items = 0;
+    dump_opts->num_chosen = (-1);     /* default dump all items */
+    dump_opts->contents = DVERBOSE;   /* default dump all information */
+    dump_opts->dump_to_file = FALSE;          /* don't dump to output file */
+    dump_opts->file_type = DASCII;    /* default output is ASCII file */
+    HDstrcpy(dump_opts->file_name, "\0");
+}       /* end init_dump_opts() */
+
 
 int 
 main(int argc, char *argv[])
@@ -103,27 +123,27 @@ main(int argc, char *argv[])
           break;
 
       case DUMPSDS:
-          if (FAIL == do_dumpsds(curr_arg, argc, argv, &glob_opts))
+          if (FAIL == do_dumpsds(curr_arg, argc, argv, glob_opts.help))
               exit(1);
           break;
 
       case DUMPRIG:
-          if (FAIL == do_dumprig(curr_arg, argc, argv, &glob_opts))
+          if (FAIL == do_dumprig(curr_arg, argc, argv, glob_opts.help))
               exit(1);
           break;
 
       case DUMPVG:
-          if (FAIL == do_dumpvg(curr_arg, argc, argv, &glob_opts))
+          if (FAIL == do_dumpvg(curr_arg, argc, argv, glob_opts.help))
               exit(1);
           break;
 
       case DUMPVD:
-          if (FAIL == do_dumpvd(curr_arg, argc, argv, &glob_opts))
+          if (FAIL == do_dumpvd(curr_arg, argc, argv, glob_opts.help))
               exit(1);
           break;
 
       case DUMPGR:
-          if (FAIL == do_dumpgr(curr_arg, argc, argv, &glob_opts))
+          if (FAIL == do_dumpgr(curr_arg, argc, argv, glob_opts.help))
               exit(1);
           break;
 
