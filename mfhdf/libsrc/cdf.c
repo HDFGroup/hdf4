@@ -2600,7 +2600,10 @@ hdf_read_vars(XDR *xdrs,
                                       HDfree(vp->shape);
                                   if(vp->dsizes != NULL)
                                       HDfree(vp->dsizes);
-                      
+				  /* Reset these two pointers to NULL after 
+				     freeing.  BMR 4/11/01 */
+				  vp->shape = NULL;
+				  vp->dsizes = NULL;
                               } 
                             else 
                               {
