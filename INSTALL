@@ -3,6 +3,16 @@
     ====================================================================
                           December, 2003
 
+
+CONTENTS
+
+0. Third Party Software Requirements
+1. Optional SZIP compression Library
+2. HDF4 Source code and precompiled binaries 
+3. UNIX and MacOSX configuration and build
+4. Using HDF/MFHDF libraries w/ original netCDF library
+
+
 0. Third Party Software Requirements
    =================================
 
@@ -59,7 +69,7 @@
        Windows 2000 and XP
        FeeBSD
        IA32 and IA64
-       Altrix
+       Altix
 
        For more information, see the release_notes/RELEASE.txt file, "Platforms
        tested" section.
@@ -126,6 +136,20 @@
 
         where "..." are your configuration options.
  
-    10) Report all problems to
+4. Using HDF/MFHDF libraries w/ original netCDF library 
+   ====================================================
 
-        hdfhelp@ncsa.uiuc.edu
+        To use the HDF/MFHDF libraries(libdf.a, libmfhdf.a) with the
+        original netCDF library(libnetcdf.a) the HDF/MFHDF distribution
+        must be compiled with the option '-DHAVE_NETCDF'. This will
+        rename the HDF version of the C-interface(ncxxx) of the netCDF API
+        to sd_ncxxx to avoid clashing with the original netCDF API from
+        libnetcdf.a. Currently there is no support for renaming the 
+        netCDF Fortran interface stubs. As such the HDF/MFHDF distribution 
+        must be compiled without fortran support. HDF Users can still access
+        HDF/netCDF files through the SDxxx interface but not through the
+        ncxxx interface unless the renamed interface is used(sd_ncxxx).
+
+
+   Report all problems to hdfhelp@ncsa.uiuc.edu
+

@@ -352,6 +352,7 @@ extern int ncerr ;
 #define	NC_FATAL	1
 #define	NC_VERBOSE	2
 
+#include "hdf2netcdf.h"
 extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 
 /*
@@ -371,7 +372,6 @@ extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 #   define	PROTO(x)	()
 #endif
 
-#include "hdf2netcdf.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -14,6 +14,8 @@
    need to mangle the HDF versions of netCDF API function names 
    to not conflict w/ oriinal netCDF ones */
 #ifdef HAVE_NETCDF
+#define ncerr     HNAME(ncerr)
+#define ncopts    HNAME(ncopts)
 #define nccreate  HNAME(nccreate)
 #define ncopen    HNAME(ncopen)
 #define ncredef   HNAME(ncredef)

@@ -343,6 +343,7 @@ typedef long    nclong;         /* default, compatible type */
 #define	NC_EXDR		32	/* */
 #define	NC_SYSERR	-1
 
+#include "hdf2netcdf.h"
 extern int ncerr ;
 
 /*
@@ -371,7 +372,6 @@ extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 #   define	PROTO(x)	()
 #endif
 
-#include "hdf2netcdf.h"
 
 #ifdef __cplusplus
 extern "C" {

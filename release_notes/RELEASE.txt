@@ -1,5 +1,5 @@
 
-                          HDF 4.2 Release 0
+                          HDF 4.2 Release 0-post0
                            December 2003
 
 INTRODUCTION
@@ -35,106 +35,20 @@ CONTENTS
 New Features and Changes:
 ========================
 
-o IMPORTANT: HDF4 HAS A NEW CONFIGURATION 
-
-  ZLIB and JPEG libraries were removed from the HDF4 distribution source.
-  ZLIB and JPEG have to be installed on the system before HDF4 library
-  can be built or HDF4 precompiled binaries can be used.
-  Please read INSTALL in the top HDF4 directory for instructions
-  how to build the HDF4 library and applications.
-
-o HDF4 has an optional SZIP compression method; in order to use SZIP compression,
-  SZIP library has to be installed on the system. Please refer to the INSTALL 
-  file for instructions on how to build with/without the SZIP Library.
-  SZIP in HDF4 is free for non-commercial use; 
-  see http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/Commercial_szip.html 
-  for information regarding commercial use. 
-
-  For more information about SZIP compression
-  see http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/ and 
-  the "HDF4 Reference Manual" entries for the GRsetcompress and 
-  SDsetcompress functions. 
-
-o IMPORTANT note about prebuild binaries:
-
-  NCSA precompiled binaries has SZIP compression method enabled for all platforms
-  except Crays T3E and SV1 and Linux 2.4 SuSE x86_64. To use the binaries download
-  the SZIP library from http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/
-
-o The following new tools have been added
-
-      hrepack
-      hdiff
-      hdfimport
-
-  See "HDF4 Reference Manual" in the HDF 4.2r0 documentation set for more
-  information.
-
-o fp2hdf is removed. It is replaced with hdfimport.
-
-o Helper scripts to facilitate HDF4 installation and compilation were added:
-  
-      h4cc   - to compile C application with the HDF4 Libraries
-      h4fc   - to compiler Fortran applications with the HDF4 Libraries
-      h4redeploy - to fix binary installation
-
-  See "HDF4 Reference Manual" in the HDF 4.2r0 documentation set for more
-  information.
 
 Support for new platforms 
 =========================
 
-o HDF4 was ported to the following platforms
 
-      AIX 5.1 64-bit version
-      MacOSX
-      Linux 2.4 RH8 and RH9 
-      Linux 2.4 RH8 64-bit, SuSE 64-bit
-      Linux 2.4 ia64
-      Linux 2.4 SGI (Altrix)
-
-
-Bugs fixed since HDF4.1r5
+Bugs fixed since HDF4.2r0
 =========================
 
-1. "hdp dumpgr" and "hdp dumpsds" have two new options:
-        -g to suppress the data of global (or file) attributes
-        -l to suppress the data of local attributes
+ * Library failed to compile in presence of the NetCDF library; fixed
+                                            11/22/04 EIP
 
-2. The problem where hdp failed on a very long file name has been
-   fixed. (bug #693)
-
-3. The problem where VSinquire failed when being called on a vdata
-   that had no fields defined, has been fixed. (bug #626)
-
-4. When the values of VGNAMELENMAX and VSNAMELENMAX are changed
-   the hdp output doesn't reflect the change. This problem is 
-   now fixed. (bug #606)
-
-5. hdp dumpvg sometimes failed when reading a file that had a vgroup 
-   being inserted into another.  This has been fixed. (bug #477)
-
-6. hdf2gif failed when a user tried it on JPEG compressed images. (Bug #601).
-   The problem is now fixed. An error message is displayed if the image is not
-   8-bit. If the image is 24-bit, the message suggests using hdf2jpeg.
-
-7. ncdump failed to read NetCDF files 3.5 when there was more than one variable
-   with unlimited dimensions. Fixed.
-
-8. The NetCDF part of the HDF4 library was not ported to Compaq True64 system. 
-   Fixed.
-
-9. The hdp commands dumpsds, dumpgr, dumpvd, and dumpvg now display an 
-    informative message when a non-HDF file is given as input. (Bug #817)
-
-10. The compilation warnings and error on the macro HDFclose are fixed.
-    (Bug #818)
 
 Documentation
 ==============
-
-    Entries for new utilities hdiff, hrepack, hdfimport and helper
-    scripts h4cc, h4fc, and h4redeply were added to the Reference Manual.
 
 Platforms Tested
 ================
