@@ -1241,7 +1241,9 @@ C        Variables declarations
          integer status, ncid, var_id
          integer time(12), date(12), start(3), count(3), int_attr(5)
          real a(3,2), float_attr(3)
-         double precision c(3), double_attr(3)
+C         double precision c(3), double_attr(3)
+C        On Cray double precision in Fortran is 16 bytes, use real instead
+         real c(3), double_attr(3)
          integer*2 b(2,3,12), short_attr(2)
          integer i, j, k, dlen
          character*10 description
@@ -1251,7 +1253,9 @@ C        Arrays to read data to.
          integer time_val(12), date_val(12), int_attr_val(5)
          integer*2 b_val(2,3,12), short_attr_val(2)
          real a_val(3,2), float_attr_val(3)
-         double precision c_val(3), double_attr_val(3)
+C         double precision c_val(3), double_attr_val(3)
+C        On Cray double precision in Fortran is 16 bytes, use real instead
+         real c_val(3), double_attr_val(3)
          real epsilon
          double precision depsilon
          integer external fixname
