@@ -1,6 +1,6 @@
 * text=auto !eol
 hdf/test/bitio.dat -text
-hdf/test/litend.dat -text svneol=unset#application/octet-stream
+hdf/test/litend.dat -text
 hdf/test/nbit.dat -text
 hdf/util/testfiles/fp2hdf/h100x100 -text
 hdf/util/testfiles/fp2hdf/h100x100h -text
