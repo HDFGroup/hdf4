@@ -13,14 +13,12 @@
 # $Id$
 #
 # ==> specify your machine
-#MACHINE=IBM6000
 MACHINE=SUN
 # ==> specify your fortran compiler  (Convex: fc)
 FC=f77 
 FFLAGS=  -g
 
 # ==> specify your C compiler
-#CC=gct -test-dir ../src
 CC=cc
 
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
@@ -62,6 +60,8 @@ FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
 all: testhdf fortest 
 
 nofortran: testhdf
+
+debug: dbgtesthdf
 
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 

@@ -177,6 +177,8 @@ nofortran: libnofortran install_it
 
 libnostub: nofortran
 
+debug: libdf.a install_it
+
 saber:
 	#load -D$(MACHINE) $(CSRCS) $(TSRCS) $(JCSRCS) -lc
 
@@ -357,7 +359,7 @@ clean:
 	-$(RM) $(RMFLAGS) *.o
 
 distclean:
-	-$(RM) $(RMFLAGS) libdf.a 
+	-$(RM) $(RMFLAGS) *.o libdf.a 
 
 lint: $(SRCS) $(R8SRCS)
 	$(LINT) $(LINTFLAGS) $(SRCS)
