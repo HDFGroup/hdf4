@@ -33,7 +33,7 @@ static char RcsId[] = "@(#)$Revision$";
    with say the SDS layer.
    
    NOTE: GeorgeV's standard Disclaimer <here>. 
-         I was coerced to do it this way....
+         I was coerced to do it this way....:-)
          If you break it .....you fix it...
 
    Description of file format headers for chunked element
@@ -56,7 +56,6 @@ static char RcsId[] = "@(#)$Revision$";
    NOTE: I know some of the fields could be 1 byte instead of 4 bytes
          but I decided to make them 4 to allow the fields to change
          their behaviour in the future.....i.e some could hold tag/refs..
-         yes this is *sick*....but then I have a creative mind :-)
 
    DD for Chunked Element pointing to Chunked Description Record(12 byes )
    =======================================================================
@@ -1659,6 +1658,10 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
     /* get tag of Vdata */
     info->chktbl_tag = (uint16)VSQuerytag(info->aid);
 
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCcreate: info->chktbl_tag =%d, info->chktbl_ref=%d \n", 
+            info->chktbl_tag, info->chktbl_ref);
+#endif
     /* Define fields of chunk table i.e. Vdata */
 
     /* Define origin - order based on number of dims */
@@ -1868,7 +1871,12 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
           if(HTPendaccess(data_id)==FAIL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
-
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCcreate: special_tag =%d, ref=%d \n", 
+            special_tag, ref);
+    fprintf(stderr,"HMCcreate: dd_aid =%d, data_id=%d \n", 
+            dd_aid, data_id);
+#endif
     /* update access record and file record */
     if((access_rec->ddid = HTPselect(file_rec,special_tag,ref))==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1883,6 +1891,10 @@ HMCcreate(int32 file_id,       /* IN: file to put chunked element in */
 
     file_rec->attach++;
 
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCcreate: access_rec->ddid =%d \n", 
+            access_rec->ddid);
+#endif
     /* register this valid access record for the chunked element */
     access_aid = HAregister_atom(AIDGROUP,access_rec);
 
@@ -2015,10 +2027,18 @@ HMCsetMaxcache(int32 access_id, /* IN: access aid to mess with */
     /* shut compiler up */
     flags=flags;
 
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCsetMaxcache: access_id =%d \n", access_id);
+#endif
     /* Check args */
     access_rec = HAatom_object(access_id);
     if (access_rec == NULL || maxcache < 1)
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCsetMaxcache: access_rec->special =%d \n", access_rec->special);
+    fprintf(stderr,"HMCsetMaxcache: access_rec->ddid =%d \n", access_rec->ddid);
+#endif
 
     /* since this routine can be called by the user,
        need to check if this access id is special CHUNKED */
@@ -2532,6 +2552,11 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
     /* Check args */
     if (access_rec == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
+
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCread: access_rec->special =%d \n", access_rec->special);
+    fprintf(stderr,"HMCread: access_rec->ddid =%d \n", access_rec->ddid);
+#endif
 
     /* set inputs */
 #ifdef UNUSED
@@ -3398,6 +3423,10 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
        If no more references to that, free the record */
     if (--(info->attached) == 0)
       {
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCPcloseAID: info->attached =%d, last one \n", info->attached);
+            
+#endif
           if (info->chk_cache != NULL)
             {
                 /* Sync chunk cache */
@@ -3447,6 +3476,13 @@ HMCPcloseAID(accrec_t *access_rec /* IN:  access record of file to close */)
           HDfree(info);
           access_rec->special_info = NULL;
       } /* attached to info */
+    else
+      {
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCPcloseAID: info->attached =%d \n", info->attached);
+            
+#endif
+      }
 
   done:
     if(ret_value == FAIL)   
@@ -3507,6 +3543,10 @@ HMCPendaccess(accrec_t * access_rec /* IN:  access record to close */)
     /* detach from the file */
     file_rec->attach--;
 
+#ifdef CHK_DEBUG_2
+    fprintf(stderr,"HMCPendaccess: file_rec->attach =%d \n", file_rec->attach);
+            
+#endif
     /* free the access record */
     HIrelease_accrec_node(access_rec);
 
