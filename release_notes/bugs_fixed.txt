@@ -9,7 +9,8 @@ HDF4.1b
 4. A problem was fixed in HDc2fstr, which caused garbage to
    be attached to a converted string.
 5. The multi-file annotation functions were added to dffunc.inc.
-6. A bug was fixed in the DFPnpals function.
+6. A bug was fixed in the DFPnpals function, where it would return
+   the wrong number of palettes.
 7. A problem was fixed with the gzip compression, where an error
    occurred if you attempted to write to an SDS that you have created, and 
    then performed an SDendaccess, followed by a SDselect.
