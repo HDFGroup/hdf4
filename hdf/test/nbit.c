@@ -900,8 +900,8 @@ test_nbit10(int32 fid)
     for (i = 0; i < NBIT_SIZE10; i++)
       {
 /* intel windows c++ compiler has a bug when masking outbuf[i], it extends the
-/* signed bit to all bits of higher 16 bit, so don't use MASK for intel windows
-/* c++ compiler. Kent Yang 09/02/02 */
+ signed bit to all bits of higher 16 bit, so don't use MASK for intel windows
+ c++ compiler. Kent Yang 09/02/02 */
 /* The same error occur in the Unix Intel Compiler. Albert Cheng 10/26/02 */
 #if (defined __INTEL_COMPILER || defined __ICL)
      test_out = (int16)(outbuf[i] | NBIT_MASK10A);
