@@ -1,4 +1,9 @@
 
+HDF4.1r4
+========
+1. Fixed GR JPEG compression problem.
+2. Added -s, -c and -l options to hdp.
+
 HDF4.1r3
 =========
 1. HDF 4.1r2 was unable to properly read HDF SDSs created with HDF 3.3x.
