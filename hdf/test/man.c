@@ -286,7 +286,7 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
   int32 nflabs, nfdescs, nolabs, nodescs;
   intn  num_dlabels, num_ddescs;
   int32  *dlabels = NULL;
-  int32f *ddescs = NULL;
+  int32 *ddescs = NULL;
   int32 ann_len;
   char  *ann_label = NULL;
   char  *ann_desc = NULL;
