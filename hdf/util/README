@@ -3,6 +3,17 @@ subdirectory testfiles/ which contains all the data files needed to test
 the utilities. The README.UTILS file describes how to use the data files
 in testfiles/ to test the utilities. 
 
+Another hdf utility fp2hdf is not included in this directory due
+to historical reason. It is available on the HDF ftp anonymous
+server, hdf.ncsa.uiuc.edu, with path:
+
+	/pub/outgoing/sxu/new-fp2hdf.tar.
+
+Fp2hdf converts ASCII/binery/HDF floating-point scientific data sets
+into HDF SDS/RIS data sets. For more information see README file in
+new-fp2hdf.tar. This utility will be contained in hdf/util/ in HDF4.0.
+
+
 The utilities are:
 
     . hdf24to8 -- converts 24-bit raster images to hdf 8-bit images
@@ -38,6 +49,7 @@ The utilities are:
     . jpegtohdf -- converts jpeg images to hdf raster images
 
     . hdftojpeg -- converts hdf raster images to jpeg images
+
 
 
 
