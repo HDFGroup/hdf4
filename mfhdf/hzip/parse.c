@@ -42,7 +42,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
  unsigned    i, u;
  char        c;
  size_t      len=strlen(str);
- int         j, m, n, k, end_obj, no_param=0;
+ int         j, m, n, k, end_obj=-1, no_param=0;
  char        obj[MAX_NC_NAME]; 
  char        scomp[10];
  char        stype[5];
@@ -63,6 +63,11 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   {
    n++;
   }
+ }
+
+ if (end_obj==-1) { /* missing : */
+  printf("Input Error: Invalid compression input in <%s>\n",str);
+  exit(1);
  }
   
  n++;
@@ -87,7 +92,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
  if (end_obj+1==(int)len)
  {
   if (obj_list) free(obj_list);
-  printf("%s\nError: Invalid compression type\n",str);
+  printf("Input Error: Invalid compression type in <%s>\n",str);
   exit(1);
  }
 
@@ -107,7 +112,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     for ( m=0,u=i+1; u<len; u++,m++) {
      c = str[u];
      if (!isdigit(c)){
-      printf("Error: Compression parameter not digit in <%s>\n",str);
+      printf("Input Error: Compression parameter not digit in <%s>\n",str);
       exit(1);
      }
      stype[m]=c;
@@ -127,7 +132,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     comp->type=COMP_CODE_RLE;
     if (m>0){ /*RLE does not have parameter */
      if (obj_list) free(obj_list);
-     printf("Error: Invalid compression parameter in RLE <%s>\n",str);
+     printf("Input Error: Extra compression parameter in RLE <%s>\n",str);
      exit(1);
     }
    }
@@ -136,7 +141,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     comp->type=COMP_CODE_SKPHUFF;
     if (no_param) { /*no more parameters, HUFF must have parameter */
      if (obj_list) free(obj_list);
-     printf("Error: Missing compression parameter in <%s>\n",str);
+     printf("Input Error: Missing compression parameter in <%s>\n",str);
      exit(1);
     }
    }
@@ -145,7 +150,7 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     comp->type=COMP_CODE_DEFLATE;
     if (no_param) { /*no more parameters, GZIP must have parameter */
      if (obj_list) free(obj_list);
-     printf("Error: Missing compression parameter in <%s>\n",str);
+     printf("Input Error: Missing compression parameter in <%s>\n",str);
      exit(1);
     }
    }
@@ -154,13 +159,13 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
     comp->type=COMP_CODE_JPEG;
     if (no_param) { /*no more parameters, JPEG must have parameter */
      if (obj_list) free(obj_list);
-     printf("Error: Missing compression parameter in <%s>\n",str);
+     printf("Input Error: Missing compression parameter in <%s>\n",str);
      exit(1);
     }
    }
    else {
     if (obj_list) free(obj_list);
-    printf("%s\nError: Invalid compression type\n",str);
+    printf("Input Error: Invalid compression type in <%s>\n",str);
     exit(1);
    }
   }
@@ -175,21 +180,21 @@ obj_list_t* parse_comp(char *str, int *n_objs, comp_info_t *comp)
   case COMP_CODE_SKPHUFF:
    if (comp->info<=0 ){
     if (obj_list) free(obj_list);
-    printf("%s\nError: Invalid compression parameter\n",str);
+    printf("Input Error: Invalid compression parameter in <%s>\n",str);
     exit(1);
    }
    break;
   case COMP_CODE_DEFLATE:
    if (comp->info<0 || comp->info>9 ){
     if (obj_list) free(obj_list);
-    printf("%s\nError: Invalid compression parameter\n",str);
+    printf("Input Error: Invalid compression parameter in <%s>\n",str);
     exit(1);
    }
    break;
   case COMP_CODE_JPEG:
    if (comp->info<0 || comp->info>100 ){
     if (obj_list) free(obj_list);
-    printf("%s\nError: Invalid compression parameter\n",str);
+    printf("Input Error: Invalid compression parameter in <%s>\n",str);
     exit(1);
    }
    break;
@@ -222,7 +227,7 @@ char* get_scomp(int code)
  else if (code==COMP_CODE_NONE)
   return "NONE";
  else
-  return "Error in compression type";
+  return "Input Error in compression type";
 } 
 
 
@@ -253,7 +258,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
  unsigned    i;
  char        c;
  size_t      len=strlen(str);
- int         j, n, k, end_obj, c_index;
+ int         j, n, k, end_obj=-1, c_index;
  char        obj[MAX_NC_NAME]; 
  char        sdim[10];
  
@@ -269,6 +274,11 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
   {
    n++;
   }
+ }
+
+ if (end_obj==-1) { /* missing : */
+  printf("Input Error: Invalid chunking input in <%s>\n",str);
+  exit(1);
  }
   
  n++;
@@ -294,7 +304,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
  if (end_obj+1==(int)len)
  {
   if (obj_list) free(obj_list);
-  printf("%s\nError: Invalid chunking\n",str);
+  printf("Input Error: Invalid chunking in <%s>\n",str);
   exit(1);
  }
 
@@ -306,7 +316,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
 
   if (!isdigit(c) && c!='x' && c!='N' && c!='O' && c!='N' && c!='E'){
    if (obj_list) free(obj_list);
-   printf("%s\nError: Invalid chunking definition\n",str);
+   printf("Input Error: Invalid chunking in <%s>\n",str);
    exit(1);
   }
 
@@ -317,7 +327,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
     chunk_lengths[c_index]=atoi(sdim);
     if (chunk_lengths[c_index]==0) {
       if (obj_list) free(obj_list);
-      printf("%s\nError: Invalid chunking definition\n",str);
+      printf("Input Error: Invalid chunking in <%s>\n",str);
       exit(1);
      }
     c_index++;
@@ -334,7 +344,7 @@ obj_list_t* parse_chunk(char *str, int *n_objs, int32 *chunk_lengths, int *chunk
      if (chunk_lengths[c_index]==0)
      {
       if (obj_list) free(obj_list);
-      printf("%s\nError: Invalid chunking definition\n",str);
+      printf("Input Error: Invalid chunking in <%s>\n",str);
       exit(1);
      }
      *chunk_rank=c_index+1;
@@ -474,7 +484,7 @@ int options_add_chunk(obj_list_t *obj_list,int n_objs,int32 *chunk_lengths,
      /* already chunk info inserted for this one; exit */
      if (table->objs[i].chunk.rank>0)
      {
-      printf("Error: chunk information already inserted for <%s>\n",obj_list[j].obj);
+      printf("Input Error: chunk information already inserted for <%s>\n",obj_list[j].obj);
       exit(1);
      }
      /* insert the chunk info */
@@ -566,7 +576,7 @@ int options_add_comp(obj_list_t *obj_list,int n_objs,comp_info_t comp,
      /* already COMP info inserted for this one; exit */
      if (table->objs[i].comp.type>0)
      {
-      printf("Error: compression information already inserted for <%s>\n",obj_list[j].obj);
+      printf("Input Error: compression information already inserted for <%s>\n",obj_list[j].obj);
       exit(1);
      }
      /* insert the comp info */
@@ -863,7 +873,7 @@ int options_add_chunk(obj_list_t *obj_list,int n_objs,int32 *chunk_lengths,
      /* already chunk info inserted for this one; exit */
      if (table->objs[i].rank>0)
      {
-      printf("Error: chunk information already inserted for <%s>\n",obj_list[j].obj);
+      printf("Input Error: chunk information already inserted for <%s>\n",obj_list[j].obj);
       exit(1);
      }
      /* insert the chunk info */

@@ -142,7 +142,7 @@ int list(char* infname, char* outfname, options_t *options)
      err=table_check(table,obj_name);
      if (err!=NULL)
      {
-      printf("\nError: %s %s in file %s. Exiting...\n",obj_name,err,infname);
+      printf("Error: %s %s in file %s. Exiting...\n",obj_name,err,infname);
       table_free(table);
       return FAIL;
      }
@@ -213,7 +213,7 @@ int list(char* infname, char* outfname, options_t *options)
    err=table_check(table,obj_name);
    if (err!=NULL)
    {
-    printf("\nError: %s %s in file %s. Exiting...\n",obj_name,err,infname);
+    printf("\nError: <%s> %s in file <%s>. Exiting...\n",obj_name,err,infname);
     table_free(table);
     exit(1);
    }

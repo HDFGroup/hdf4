@@ -43,7 +43,7 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
  sd_id     = SDstart (FILENAME_OUT, DFACC_RDONLY);
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
-  printf("error:cannot open sds <%s>", sds_name);
+  printf("Error: Cannot open sds <%s>", sds_name);
   status_n = SDend (sd_id);
   return -1;
  }
@@ -58,7 +58,7 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
  status_n = SDgetcompress(sds_id, &comp_type, &comp_info);
  if ( comp_type != in_comp_type )
  {
-  printf("error:compression type does not match ");
+  printf("Error: Compression type does not match ");
   status_n = SDendaccess (sds_id);
   status_n = SDend (sd_id);
   return -1;
@@ -66,7 +66,7 @@ int sds_verifiy_comp(char *sds_name, int32 in_comp_type, int32 in_comp_info)
  if (in_comp_info) {
   if ( comp_info.skphuff.skp_size != in_comp_info )
   {
-   printf("error:compresion information does not match ");
+   printf("Error: compresion information does not match ");
    status_n = SDendaccess (sds_id);
    status_n = SDend (sd_id);
    return -1;
@@ -118,7 +118,7 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
  
  /* determine the number of data sets in the file */
  if ((status_n = SDfileinfo (sd_id, &n_datasets, &n_file_attrs))==FAIL) {
-  printf("error:cannot get file information");
+  printf("Error: Cannot get file information");
   status_n = SDend (sd_id);
   return -1;
  }
@@ -145,7 +145,7 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
   status_n = SDgetcompress(sds_id, &comp_type, &comp_info);
   if ( comp_type != in_comp_type )
   {
-   printf("error:compression type does not match ");
+   printf("Error: compression type does not match ");
    status_n = SDendaccess (sds_id);
    status_n = SDend (sd_id);
    return -1;
@@ -153,7 +153,7 @@ int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info)
   if (in_comp_info) {
    if ( comp_info.skphuff.skp_size != in_comp_info )
    {
-    printf("error:compresion information does not match ");
+    printf("Error: compresion information does not match ");
     status_n = SDendaccess (sds_id);
     status_n = SDend (sd_id);
     return -1;
@@ -199,7 +199,7 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  sd_id     = SDstart (FILENAME_OUT, DFACC_RDONLY);
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
-  printf("error:cannot open sds <%s>", sds_name);
+  printf("Error: cannot open sds <%s>", sds_name);
   status_n = SDend (sd_id);
   return -1;
  }
@@ -211,7 +211,7 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  */
  if ( chunk_flags != (in_chunk_flags) )
  {
-  printf("error:chunk flags do not match");
+  printf("Error: chunk flags do not match");
   status_n = SDendaccess (sds_id);
   status_n = SDend (sd_id);
   return -1;
@@ -220,7 +220,7 @@ int sds_verifiy_chunk(char *sds_name, int32 in_chunk_flags, int rank,
  {
   if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i] )
   {
-   printf("error:chunk lengths do not match ");
+   printf("Error: chunk lengths do not match ");
    status_n = SDendaccess (sds_id);
    status_n = SDend (sd_id);
    return -1;
@@ -274,7 +274,7 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
  
  /* determine the number of data sets in the file */
  if ((status_n = SDfileinfo (sd_id, &n_datasets, &n_file_attrs))==FAIL) {
-  printf("error:cannot get file information");
+  printf("Error: cannot get file information");
   status_n = SDend (sd_id);
   return -1;
  }
@@ -298,7 +298,7 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
   */
   if ( chunk_flags != (in_chunk_flags) )
   {
-   printf("error:chunk flags do not match");
+   printf("Error: chunk flags do not match");
    status_n = SDendaccess (sds_id);
    status_n = SDend (sd_id);
    return -1;
@@ -307,7 +307,7 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank,
   {
    if (chunk_def.chunk_lengths[i] != in_chunk_lengths[i] )
    {
-    printf("error:chunk lengths do not match ");
+    printf("Error: chunk lengths do not match ");
     status_n = SDendaccess (sds_id);
     status_n = SDend (sd_id);
     return -1;

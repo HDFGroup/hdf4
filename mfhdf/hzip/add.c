@@ -638,7 +638,7 @@ int read_data(char* file_name)
 
  if ( f == NULL )
  {
-  printf( "Could not open file %s. Try set $srcdir \n", file_name );
+  printf( "Could not open file <%s>\n", file_name );
   return -1;
  }
 
