@@ -82,6 +82,8 @@ int32 GRnametoindex(int32 grid,char *name)
     - Maps a RI name to an index which is returned.
 intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,int32 dimsizes[2],int32 *n_attr)
     - Gets information about an RI which has been selected/created.
+intn GRgetnluts(int32 riid)
+    - Get the number of palettes (LUTs) for an image
 intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],int32 count[2],void * data)
     - Writes image data to an RI.  Partial dataset writing and subsampling is
         allowed, but only with the dimensions of the dataset (ie. no UNLIMITED
@@ -2686,6 +2688,68 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
+    GRgetnluts
+
+ PURPOSE
+    Get the number of palettes (LUTs) for an image
+
+ USAGE
+    intn GRgetnluts(riid)
+        int32 riid;         IN: RI ID from GRselect/GRcreate
+
+ RETURNS
+    The number of palettes on success, FAIL (-1) on failure
+
+ DESCRIPTION
+    Determines the number of palettes for an image (0 or 1 for now).  In the
+    future, if multiple palettes are supported, this function may return
+    values greater than 1.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn GRgetnluts(int32 riid)
+{
+    CONSTR(FUNC, "GRgetnluts");   /* for HERROR */
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    intn  ret_value = FAIL;
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask,ID_GRgetnluts);
+#endif /* HAVE_PABLO */
+    /* clear error stack and check validity of args */
+    HEclear();
+
+    /* check the validity of the RI ID */
+    if (HAatom_group(riid)!=RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    
+    /* locate LUT's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    if(ri_ptr->lut_ref==DFREF_WILDCARD) /* check for no palette defined currently */
+        ret_value=0;
+    else        /* we've got a valid palette currently */
+        ret_value=1;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+#ifdef HAVE_PABLO
+    TRACE_OFF(PABLO_mask, ID_GRgetnluts);
+#endif /* HAVE_PABLO */
+    return ret_value;
+} /* end GRgetnluts() */
+
+/*--------------------------------------------------------------------------
+ NAME
     GRwriteimage
 
  PURPOSE
@@ -4078,7 +4142,14 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     if(ri_ptr->lut_ref==DFREF_WILDCARD) { /* check for no palette defined currently */
-        HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
+        if(ncomp!=NULL)
+            *ncomp=0;
+        if(nt!=NULL)
+            *nt=DFNT_NONE;
+        if(il!=NULL)
+            *il=-1;
+        if(nentries!=NULL)
+            *nentries=0;
     } /* end if */
     else        /* we've got a valid palette currently */
       {

@@ -2665,6 +2665,8 @@ HDFLIBAPI int32 GRnametoindex(int32 grid,const char *name);
 HDFLIBAPI intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     int32 dimsizes[2],int32 *n_attr);
 
+HDFLIBAPI intn GRgetnluts(int32 riid);
+
 HDFLIBAPI intn GRwriteimage(int32 riid,int32 start[2],int32 stride[2],
     int32 count[2],void * data);
 
