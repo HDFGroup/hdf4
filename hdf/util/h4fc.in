@@ -148,8 +148,8 @@ for arg in $@ ; do
 
       if test -s "$arg"; then
         ext=`expr "$arg" : '.*\(\..*\)'`
-
-        if test "x$ext" = "x.c"; then
+        if [ "$ext" = ".f" -o "$ext" = ".F" -o "$ext" = ".f90" -o \
+             "$ext" = ".for" -o "$ext" = ".FOR" -o "$ext" = ".F90" ] ; then       
           do_compile="yes"
           compile_args="$compile_args $arg"
           fname=`basename $arg .c`
