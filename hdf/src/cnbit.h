@@ -62,13 +62,14 @@ extern int32 HCPcnbit_endaccess
 #endif /* c_plusplus || __cplusplus */
 
 /* size of the N-bit buffer */
-#define NBIT_BUF_SIZE   (MAX_NT_SIZE)
+#define NBIT_BUF_SIZE   (MAX_NT_SIZE*64)
 /* size of the N-bit mask buffer (same as buffer size for now) */
-#define NBIT_MASK_SIZE  NBIT_BUF_SIZE
+#define NBIT_MASK_SIZE  (MAX_NT_SIZE)
 
 typedef struct {        /* structure to hold bit vector info */
     intn offset,        /* offset of the bit information */
         length;         /* number of bits in the information */
+    uint8 mask;         /* mask for this bit vector */
   } nbit_mask_info_t;
 
 /* N-bit [en|de]coding information */
@@ -77,18 +78,14 @@ typedef struct {
     intn nt_size;           /* size of the number-type in the file */
     bool fill_one;          /* whether to fill with 1's or not (0's) */
     bool sign_ext;          /* whether to sign extend or not */
+    uint8 buffer[NBIT_BUF_SIZE];    /* buffer for expanding n-bit data in */
+    intn buf_pos;           /* current offset in the expansion buffer */
     intn mask_off,          /* offset of the bit to start masking with */
         mask_len;           /* number of bits to mask */
-    uint32 offset;          /* offset in the file */
-    uint8 buffer[NBIT_BUF_SIZE];     /* buffer for storing N-bit data */
-    intn buf_length;        /* number of bytes in buffer */
-    intn buf_pos;           /* offset into the buffer */
+    uint32 offset;          /* offset in the file in terms of bytes */
     uint8 mask_buf[NBIT_MASK_SIZE]; /* buffer to hold the bitmask */
     nbit_mask_info_t mask_info[NBIT_MASK_SIZE]; /* information about the mask */
-    enum {NBIT_INIT,        /* initial state, need to read a byte to determine
-                                next state */
-        NBIT_COMPOSE}       /* composing a data chunk */
-	    nbit_state;         /* state of the buffer storage */
+    intn nt_pos;            /* current byte to read or write */
  } comp_coder_nbit_info_t;
 
 #ifndef CNBIT_MASTER
@@ -106,4 +103,3 @@ funclist_t cnbit_funcs={    /* functions to perform N-bit encoding */
 #endif
 
 #endif /* __CNBIT_H */
-

@@ -49,13 +49,11 @@ static char RcsId[] = "@(#)$Revision$";
 /* Internal Defines */
 
 /* Local Variables */
-static uint8 mask_arr8[9]={    /* array of values with [n] bits set */
-    0x00000000,
-    0x00000001,0x00000003,0x00000007,0x0000000F,
-    0x0000001F,0x0000003F,0x0000007F,0x000000FF
+static const uint8 mask_arr8[9]={    /* array of values with [n] bits set */
+    0x00,0x01,0x03,0x07,0x0F,0x1F,0x3F,0x7F,0xFF
 };
 
-static uint32 mask_arr32[33]={    /* array of values with [n] bits set */
+static const uint32 mask_arr32[33]={    /* array of values with [n] bits set */
     0x00000000,
     0x00000001,0x00000003,0x00000007,0x0000000F,
     0x0000001F,0x0000003F,0x0000007F,0x000000FF,
@@ -69,20 +67,22 @@ static uint32 mask_arr32[33]={    /* array of values with [n] bits set */
 
 /* declaration of the functions provided in this module */
 PRIVATE int32 HCIcnbit_staccess
-    PROTO((accrec_t *access_rec, int16 access));
+    (accrec_t *access_rec, int16 access);
 
 PRIVATE int32 HCIcnbit_init
-    PROTO((accrec_t *access_rec));
+    (accrec_t *access_rec);
 
 #ifdef QAK
 PRIVATE int32 HCIcnbit_decode
-    PROTO((compinfo_t *info,int32 length,uint8 *buf));
+    (compinfo_t *info,int32 length,uint8 *buf);
+#endif
 
 PRIVATE int32 HCIcnbit_encode
-    PROTO((compinfo_t *info,int32 length,uint8 *buf));
+    (compinfo_t *info,int32 length,uint8 *buf);
 
+#ifdef QAK
 PRIVATE int32 HCIcnbit_term
-    PROTO((compinfo_t *info));
+    (compinfo_t *info);
 #endif
 
 /*--------------------------------------------------------------------------
@@ -104,12 +104,7 @@ PRIVATE int32 HCIcnbit_term
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_init(accrec_t *access_rec)
-#else
-PRIVATE int32 HCIcnbit_init(access_rec)
-    accrec_t *access_rec;   /* access record */
-#endif
 {
     char *FUNC="HCIcnbit_init";         /* for HERROR */
     compinfo_t *info;                   /* special element information */
@@ -127,8 +122,8 @@ PRIVATE int32 HCIcnbit_init(access_rec)
     nbit_info=&(info->cinfo.coder_info.nbit_info);
 
     /* Initialize N-bit state information */
-    nbit_info->nbit_state=NBIT_INIT;    /* start in initial state */
     nbit_info->buf_pos=0;           /* start at the beginning of the buffer */
+    nbit_info->nt_pos=0;            /* start at beginning of the NT info */
     nbit_info->offset=0;            /* offset into the file */
     HDmemset(nbit_info->mask_buf,nbit_info->nt_size,
             (nbit_info->fill_one==TRUE ? 0xff : 0));
@@ -145,10 +140,12 @@ PRIVATE int32 HCIcnbit_init(access_rec)
             if(mask_bot<=bot_bit) { /* entire byte is in mask */
                 nbit_info->mask_info[i].offset=7;
                 nbit_info->mask_info[i].length=8;
+                nbit_info->mask_info[i].mask=mask_arr8[8];
               } /* end if */
             else {  /* only top part of byte is in mask */
                 nbit_info->mask_info[i].offset=7;
                 nbit_info->mask_info[i].length=(top_bit-mask_bot)+1;
+                nbit_info->mask_info[i].mask=mask_arr8[(top_bit-mask_bot)+1]<<(8-((top_bit-mask_bot)+1));
                 break;  /* we've found the bottom of the mask, we're done */
               } /* end else */
           } /* end if */
@@ -157,10 +154,12 @@ PRIVATE int32 HCIcnbit_init(access_rec)
                 if(mask_bot>=bot_bit) { /* mask top to bottom of byte is in mask */
                     nbit_info->mask_info[i].offset=mask_top-bot_bit;
                     nbit_info->mask_info[i].length=(mask_top-bot_bit)+1;
+                    nbit_info->mask_info[i].mask=mask_arr8[(mask_top-bot_bit)+1];
                   } /* end if */
                 else {  /* entire bit-field is inside of this byte */
                     nbit_info->mask_info[i].offset=mask_top-bot_bit;
                     nbit_info->mask_info[i].length=(mask_top-mask_bot)+1;
+                    nbit_info->mask_info[i].mask=mask_arr8[(mask_top-mask_bot)+1]<<(mask_bot-bot_bit);
                     break;  /* we've found the bottom of the mask, we're done */
                   } /* end else */
               } /* end if */
@@ -173,20 +172,16 @@ PRIVATE int32 HCIcnbit_init(access_rec)
 
     /* mask to 0 the bits where the bit-field will go */
     if(nbit_info->fill_one==TRUE) {
-        for(i=0; i<nbit_info->nt_size; i++) {
-            mask=mask_arr8[nbit_info->mask_info[i].length];
-            mask<<=nbit_info->mask_info[i].offset;
-            nbit_info->mask_buf[i]^=mask;
-          } /* end for */
+        for(i=0; i<nbit_info->nt_size; i++)
+            nbit_info->mask_buf[i]&=~(nbit_info->mask_info[i].mask);
       } /* end if */
 
     return(SUCCEED);
 }   /* end HCIcnbit_init() */
 
-#ifdef QAK
 /*--------------------------------------------------------------------------
  NAME
-    HCIcnbit_decode -- Decode RLE compressed data into a buffer.
+    HCIcnbit_decode -- Decode n-bit data into a buffer.
 
  USAGE
     int32 HCIcnbit_decode(info,length,buf)
@@ -198,90 +193,75 @@ PRIVATE int32 HCIcnbit_init(access_rec)
     Returns SUCCEED or FAIL
 
  DESCRIPTION
-    Common code called to decode RLE data from the file.
+    Common code called to decode n-bit data from the file.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
-#else
-PRIVATE int32 HCIcnbit_decode(info,length,buf)
-    compinfo_t *info;       /* compression info */
-    int32 length;           /* number of bytes to read in */
-    uint8 *buf;             /* buffer to read data into */
-#endif
 {
-    char *FUNC="HCIcnbit_decode";        /* for HERROR */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+    char *FUNC="HCIcnbit_decode";       /* for HERROR */
+    comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
-    intn dec_len;           /* length to decode */
-    intn c;                 /* character to hold a byte read in */
+    uint32 input_bits;      /* bits read from the file */
+    nbit_mask_info_t *mask_info;    /* ptr to the mask info */
+    intn copy_length;       /* number of bytes to copy */
+    intn buf_items;         /* number of items which will fit into expansion buffer */
+    bool top_bit,           /* the top bit in an n-bit item */
+        top_bit_found;      /* set to TRUE if we've found the top bit */
+    intn i,j;               /* local counting variable */
 
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    /* get a local ptr to the nbit info for convenience */
+    nbit_info=&(info->cinfo.coder_info.nbit_info);
 
+    buf_items=NBIT_BUF_SIZE/nbit_info->nt_size; /* compute # of items in buffer */
     orig_length=length;     /* save this for later */
-    while(length>0) {   /* decode until we have all the bytes we need */
-        if(rle_info->rle_state==INIT) { /* need to figure out RUN or MIX state */
-            if((c=HDgetc(info->aid))==FAIL)
-                HRETURN_ERROR(DFE_READERROR,FAIL);
-            if(c&RUN_MASK) {   /* run byte */
-                rle_info->rle_state=RUN;    /* set to run state */
-                rle_info->buf_length=(c&COUNT_MASK)+RLE_MIN_RUN; /* run length */
-                if((rle_info->last_byte=HDgetc(info->aid))==FAIL)
-                    HRETURN_ERROR(DFE_READERROR,FAIL);
+    for(; length>0; length--;buf++) {   /* decode until we have all the bytes */
 #ifdef TESTING
-printf("HCPcnbit_decode(): INIT - found a run of %d bytes\n",rle_info->buf_length);
+printf("HCPcnbit_encode(): length=%d, buf=%p\n",length,buf);
 #endif
+        if(buf_pos>=NBIT_BUF_SIZE) {    /* re-fill buffer */
+            /* get a ptr to the mask info for convenience also */
+            mask_info=&(nbit_info->mask_info[0]);
+            for(i=0; i<buf_items; i++) {
+                HDmemcpy(buf,nbit_info->mask_buf,nbit_info->nt_size);
+                if(nbit_info->sign_ext) {   /* special code for expanding sign extended data */
+                  } /* end if */
+                else {  /* no sign extension */
+                    for(j=0; j<nbit_info->nt_size; j++) {
+                        if(mask_info->length>0) {   /* check if we need to read bits */
+                            Hbitread(info->aid,mask_info->length,input_bits);
+                            *buf++=input_bits|(mask_info->mask <<
+                                    ((mask_info->offset-mask_info->length)+1));
+                          } /* end if */
+                      } /* end for */
+                  } /* end else */
+              } /* end for */
+
+            /* advance to the next mask position */
+            mask_info++;
+            /* advance buffer offset and check for wrap */
+            if((++nbit_info->nt_pos)>=nbit_info->nt_size) {
+                nbit_info->nt_pos=0;            /* reset to beginning of buffer */
+                mask_info=nbit_info->mask_info; /* reset ptr to masks also */
               } /* end if */
-            else {      /* mix byte */
-                rle_info->rle_state=MIX;    /* set to mix state */
-                rle_info->buf_length=(c&COUNT_MASK)+RLE_MIN_MIX; /* mix length */
-                if(Hread(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
-                    HRETURN_ERROR(DFE_READERROR,FAIL);
-#ifdef TESTING
-printf("HCPcnbit_decode(): INIT - found a mix of %d bytes\n",rle_info->buf_length);
-#endif
-                rle_info->buf_pos=0;
-              } /* end else */
           } /* end if */
-        else {  /* RUN or MIX states */
-            if(length>rle_info->buf_length)  /* still need more data */
-                dec_len=rle_info->buf_length;
-            else        /* only grab "length" bytes */
-                dec_len=length;
 
-            if(rle_info->rle_state==RUN) {
-#ifdef TESTING
-printf("HCPcnbit_decode(): RUN - decoding a run of %d bytes\n",dec_len);
-#endif
-                HDmemset(buf,rle_info->last_byte,dec_len);  /* copy the run */
-              } /* end if */
-            else {
-#ifdef TESTING
-printf("HCPcnbit_decode(): MIX - decoding a mix of %d bytes\n",dec_len);
-#endif
-                HDmemcpy(buf,&(rle_info->buffer[rle_info->buf_pos]),dec_len);
-                rle_info->buf_pos+=dec_len;
-              } /* end else */
+        copy_length=(length>(NBIT_BUF_SIZE-(buf_pos+1))) ? (NBIT_BUF_SIZE-(buf_pos+1)) : length;
 
-            rle_info->buf_length-=dec_len;
-            if(rle_info->buf_length<=0) /* check for running out of bytes */
-                rle_info->rle_state=INIT;   /* get the next status byte */
-            length-=dec_len;    /* decrement the bytes to get */
-            buf+=dec_len;       /* in case we need more bytes */
-          } /* end else */
-      } /* end while */
+        HDmemcpy(buf,&(nbit_info->buffer[buf_pos]),copy_length);
 
-    rle_info->offset+=orig_length;  /* incr. abs. offset into the file */
+      } /* end for */
+
+    nbit_info->offset+=orig_length;  /* incr. abs. offset into the file */
     return(SUCCEED);
 }   /* end HCIcnbit_decode() */
 
 /*--------------------------------------------------------------------------
  NAME
-    HCIcnbit_encode -- Encode data from a buffer into RLE compressed data
+    HCIcnbit_encode -- Encode data from a buffer into n-bit data
 
  USAGE
     int32 HCIcnbit_encode(info,length,buf)
@@ -293,139 +273,52 @@ printf("HCPcnbit_decode(): MIX - decoding a mix of %d bytes\n",dec_len);
     Returns SUCCEED or FAIL
 
  DESCRIPTION
-    Common code called to encode RLE data into a file.
+    Common code called to encode n-bit data into a file.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-#ifdef PROTOTYPE
 PRIVATE int32 HCIcnbit_encode(compinfo_t *info,int32 length,uint8 *buf)
-#else
-PRIVATE int32 HCIcnbit_encode(info,length,buf)
-    compinfo_t *info;       /* compression info */
-    int32 length;           /* number of bytes to write out */
-    uint8 *buf;             /* buffer to read data from */
-#endif
 {
-    char *FUNC="HCIcnbit_encode";        /* for HERROR */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
+    char *FUNC="HCIcnbit_encode";       /* for HERROR */
+    comp_coder_nbit_info_t *nbit_info;  /* ptr to n-bit info */
     int32 orig_length;      /* original length to write */
-    intn dec_len;           /* length to decode */
-    intn c;                 /* character to hold a byte read in */
+    uint32 output_bits;     /* bits to write to the file */
+    nbit_mask_info_t *mask_info;    /* ptr to the mask info */
 
-    rle_info=&(info->cinfo.coder_info.rle_info);
+    /* get a local ptr to the nbit info for convenience */
+    nbit_info=&(info->cinfo.coder_info.nbit_info);
+
+    /* get a ptr to the mask info for convenience also */
+    mask_info=&(nbit_info->mask_info[nbit_info->nt_pos]);
 
     orig_length=length;     /* save this for later */
-    while(length>0) {   /* encode until we stored all the bytes */
-        switch(rle_info->rle_state) {
-            case INIT:  /* initial encoding state */
+    for(; length>0; length--;buf++) {  /* encode until we store all the bytes */
 #ifdef TESTING
-printf("HCPcnbit_encode(): INIT - shifting to MIX state, length=%d, buf=%p\n",length,buf);
+printf("HCPcnbit_encode(): length=%d, buf=%p\n",length,buf);
 #endif
-                rle_info->rle_state=MIX;    /* shift to MIX state */
-                rle_info->last_byte=rle_info->buffer[0]=*buf;
-                rle_info->buf_length=1;
-                rle_info->buf_pos=1;
-                buf++;
-                length--;
-                break;
+        if(mask_info->length>0) {   /* check if we need to output bits */
+            output_bits=((*buf)&(mask_info->mask)) >>
+                    ((mask_info->offset-mask_info->length)+1);
+            Hbitwrite(info->aid,mask_info->length,output_bits);
+          } /* end if */
 
-            case RUN:
-                /* check for end of run */
-                if(*buf!=rle_info->last_byte) {
-                    rle_info->rle_state=MIX;
-                    c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
-                    if(HDputc((uint8)c,info->aid)==FAIL)
-                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                    if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
-                        HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcnbit_encode(): RUN - shifting to MIX state, wrote run of %d bytes\n",rle_info->buf_length);
-#endif
-                    rle_info->last_byte=rle_info->buffer[0]=*buf;
-                    rle_info->buf_length=1;
-                    rle_info->buf_pos=1;
-                  } /* end if */
-                else {  /* run is continuing */
-                    rle_info->buf_length++;
-                    if(rle_info->buf_length>=RLE_MAX_RUN) {    /* check for too long */
-                        c=RUN_MASK|(rle_info->buf_length-RLE_MIN_RUN);
-                        if(HDputc((uint8)c,info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        if(HDputc((uint8)rle_info->last_byte,info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcnbit_encode(): RUN - shifting to INIT state, wrote run of %d bytes\n",rle_info->buf_length);
-#endif
-                        rle_info->rle_state=INIT;
-                        rle_info->second_byte=rle_info->last_byte=RLE_NIL;
-                      } /* end if */
-                  } /* end else */
-                buf++;
-                length--;
-                break;
+        /* advance to the next mask position */
+        mask_info++;
+        /* advance buffer offset and check for wrap */
+        if((++nbit_info->nt_pos)>=nbit_info->nt_size) {
+            nbit_info->nt_pos=0;            /* reset to beginning of buffer */
+            mask_info=nbit_info->mask_info; /* reset ptr to masks also */
+          } /* end if */
+      } /* end for */
 
-            case MIX:   /* mixed bunch of bytes */
-                /* check for run */
-#ifdef TESTING2
-printf("HCPcnbit_encode(): MIX - buf=%p, length=%d\n",buf,length);
-#endif
-                if(*buf==rle_info->last_byte && *buf==rle_info->second_byte) {
-#ifdef TESTING2
-printf("HCPcnbit_encode(): MIX - shifting to RUN state, buf_length=%d buf_pos=%d\n",rle_info->buf_length,rle_info->buf_pos);
-#endif
-                    rle_info->rle_state=RUN;    /* shift to RUN state */
-                    if(rle_info->buf_length>(RLE_MIN_RUN-1)) {  /* check for mixed data to write */
-                        if(HDputc((uint8)((rle_info->buf_length-RLE_MIN_MIX)-(RLE_MIN_RUN-1)),info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        if(Hwrite(info->aid,(rle_info->buf_length-(RLE_MIN_RUN-1)),rle_info->buffer)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcnbit_encode(): MIX - shifting to RUN state, wrote mix of %d bytes\n",rle_info->buf_length-(RLE_MIN_RUN-1));
-#endif
-                      } /* end if */
-                    else {
-#ifdef TESTING
-printf("HCPcnbit_encode(): MIX - shifting to RUN state, have run of %d bytes\n",rle_info->buf_length);
-#endif
-                      } /* end else */
-                    rle_info->buf_length=RLE_MIN_RUN;
-                  } /* end if */
-                else {  /* continue MIX */
-#ifdef TESTING2
-printf("HCPcnbit_encode(): MIX - continuing MIX state, buf_length=%d buf_pos=%d\n",rle_info->buf_length,rle_info->buf_pos);
-#endif
-                    rle_info->second_byte=rle_info->last_byte;
-                    rle_info->last_byte=rle_info->buffer[rle_info->buf_pos]=*buf;
-                    rle_info->buf_length++;
-                    rle_info->buf_pos++;
-                    if(rle_info->buf_length>=RLE_BUF_SIZE) {    /* check for too long */
-                        if(HDputc((uint8)(rle_info->buf_length-RLE_MIN_MIX),info->aid)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-                        if(Hwrite(info->aid,rle_info->buf_length,rle_info->buffer)==FAIL)
-                            HRETURN_ERROR(DFE_WRITEERROR,FAIL);
-#ifdef TESTING
-printf("HCPcnbit_encode(): MIX - shifting to INIT state, write mix of %d bytes\n",rle_info->buf_length);
-#endif
-                        rle_info->rle_state=INIT;
-                        rle_info->second_byte=rle_info->last_byte=RLE_NIL;
-                      } /* end if */
-                  } /* end else */
-                buf++;
-                length--;
-                break;
-
-            default:
-                HRETURN_ERROR(DFE_INTERNAL,FAIL);
-          } /* end switch */
-      } /* end while */
-
-    rle_info->offset+=orig_length;  /* incr. abs. offset into the file */
+    nbit_info->offset+=orig_length;  /* incr. abs. offset into the file */
     return(SUCCEED);
 }   /* end HCIcnbit_encode() */
 
+#ifdef QAK
 /*--------------------------------------------------------------------------
  NAME
     HCIcnbit_term -- Flush encoded data from internal buffer to RLE compressed data
@@ -747,24 +640,13 @@ int32 HCPcnbit_write(access_rec, length, data)
 #endif
 {
     char *FUNC="HCPcnbit_write";     /* for HERROR */
-#ifdef QAK
     compinfo_t *info;               /* special element information */
-    comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
 
     info=(compinfo_t *)access_rec->special_info;
-    rle_info=&(info->cinfo.coder_info.rle_info);
-
-    /* Don't allow random write in a dataset unless: */
-    /*  1 - append onto the end */
-    /*  2 - start at the beginning and rewrite (at least) the whole dataset */
-    if((info->length!=rle_info->offset)
-            && (rle_info->offset!=0 || length<info->length))
-        HRETURN_ERROR(DFE_UNSUPPORTED,FAIL);
 
     if(HCIcnbit_encode(info,length,data)==FAIL)
         HRETURN_ERROR(DFE_CENCODE,FAIL);
 
-#endif
     return(length);
 }   /* HCPcnbit_write() */
 
