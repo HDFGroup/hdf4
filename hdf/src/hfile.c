@@ -3317,7 +3317,7 @@ done:
 NAME
    HIsync -- sync file with memory
 USAGE
-   intn Hsync(file_rec)
+   intn HIsync(file_rec)
    filerec_t *file_rec;            IN: file record of file
 RETURNS
    returns SUCCEED (0) if sucessful, FAIL (-1) otherwise

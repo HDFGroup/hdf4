@@ -112,9 +112,9 @@ intn GRreqimageil(int32 riid,intn il)
 LUT/Palette I/O Functions:
 int32 GRgetlutid(int32 riid,int32 index)
     - Get a palette id ('palid') for an RI.
-intn GRgetlutinfo(int32 riid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
+intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     - Gets information about a palette.
-intn GRwritelut(int32 riid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
+intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP data)
     - Writes out a palette for an RI.
 intn GRreadlut(int32 palid,VOIDP data)
     - Reads a palette from an RI.
@@ -1101,6 +1101,10 @@ done:
  COMMENTS, BUGS, ASSUMPTIONS
     This routine does no parameter checking, it's assumed to be done at a
     higher layer.
+
+    This routine also does not handle the case where the inbuf==outbuf, i.e.
+    switching the interlace 'in-place'.  More work would be required to enable
+    this to be done.
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
@@ -1499,7 +1503,14 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
           UINT16ENCODE(p, img_ptr->lut_dim.nt_tag);
           UINT16ENCODE(p, img_ptr->lut_dim.nt_ref);
           INT16ENCODE(p, img_ptr->lut_dim.ncomps);
+/* Currently all data is written out in 'pixel' interlace, so force the */
+/* interlace stored on disk to match, instead of the interlacing that the */
+/* user created the image with. -QAK  */
+#ifdef LATER
           INT16ENCODE(p, img_ptr->lut_dim.il);
+#else /* LATER */
+          INT16ENCODE(p, (int16)MFGR_INTERLACE_PIXEL);
+#endif /* LATER */
           UINT16ENCODE(p, img_ptr->lut_dim.comp_tag);
           UINT16ENCODE(p, img_ptr->lut_dim.comp_ref);
           if(img_ptr->lut_dim.dim_ref<=DFTAG_NULL)
@@ -1519,9 +1530,9 @@ intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr)
 /* interlace stored on disk to match, instead of the interlacing that the */
 /* user created the image with. -QAK  */
 #ifdef LATER
-    INT16ENCODE(p, (int16)MFGR_INTERLACE_PIXEL);
-#else /* LATER */
     INT16ENCODE(p, img_ptr->img_dim.il);
+#else /* LATER */
+    INT16ENCODE(p, (int16)MFGR_INTERLACE_PIXEL);
 #endif /* LATER */
     UINT16ENCODE(p, img_ptr->img_dim.comp_tag);
     UINT16ENCODE(p, img_ptr->img_dim.comp_ref);
@@ -2651,10 +2662,9 @@ printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_valu
                       /* create correct disk version of fill pixel */
                       if(ri_ptr->fill_value!=NULL)
                         {
-                          if(convert)
-                              DFKconvert(ri_ptr->fill_value,fill_pixel,
-                                  ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
-                                  DFACC_WRITE,0,0);
+                            DFKconvert(ri_ptr->fill_value,fill_pixel,
+                                ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                                DFACC_WRITE,0,0);
                         } /* end if */
                       else  /* create default pixel fill value of all zero components */
                         {
@@ -2668,10 +2678,9 @@ printf("%s: check 6.5, creating new image and need to fill it, ri_ptr->fill_valu
 #ifdef QAK
 printf("%s: check 6.6, found a fill value, nt=%d, ncomps=%d\n",FUNC,(int)ri_ptr->img_dim.nt,(int)ri_ptr->img_dim.ncomps);
 #endif /* QAK */
-                                if(convert)
-                                    DFKconvert(ri_ptr->fill_value,fill_pixel,
-                                      ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
-                                      DFACC_WRITE,0,0);
+                                DFKconvert(ri_ptr->fill_value,fill_pixel,
+                                    ri_ptr->img_dim.nt,ri_ptr->img_dim.ncomps,
+                                    DFACC_WRITE,0,0);
                             } /* end if */
                           else
                               HDmemset(fill_pixel,0,pixel_disk_size);
@@ -3132,10 +3141,7 @@ printf("%s: convert=%d\n",FUNC,(int)convert);
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFTAG_NULL)
       { /* Fake an image for the user by using the pixel fill value */
           VOIDP fill_pixel;         /* converted value for the filled pixel */
-          uintn pixel_mem_size;     /* size of a pixel in memory */
           int32 at_index;
-
-          pixel_mem_size=ri_ptr->img_dim.ncomps*DFKNTsize((ri_ptr->img_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
 
           if((fill_pixel=(VOIDP)HDmalloc(pixel_mem_size))==NULL)
               HGOTO_ERROR(DFE_NOSPACE,FAIL);
@@ -3737,9 +3743,8 @@ done:
     Gets information about a LUT.
 
  USAGE
-    intn GRgetlutinfo(lutid,name,ncomp,nt,il,nentries)
+    intn GRgetlutinfo(lutid,ncomp,nt,il,nentries)
         int32 lutid;        IN: LUT ID from GRgetlutid
-        char *name;         OUT: name of LUT image
         int32 *ncomp;       OUT: number of components in LUT
         int32 *nt;          OUT: number type of components
         int32 *il;          OUT: interlace of the LUT
@@ -3789,14 +3794,28 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
     ri_ptr=(ri_info_t *)*t;
 
-    if(ncomp!=NULL)
-        *ncomp=ri_ptr->lut_dim.ncomps;
-    if(nt!=NULL)
-        *nt=ri_ptr->lut_dim.nt;
-    if(il!=NULL)
-        *il=ri_ptr->lut_dim.il;
-    if(nentries!=NULL)  /* xdim for LUTs is the number of entries */
-        *nentries=ri_ptr->lut_dim.xdim;
+    if(ri_ptr->lut_ref<=DFTAG_NULL) /* check for no palette defined currently */
+      {
+          if(ncomp!=NULL)
+              *ncomp=0;
+          if(nt!=NULL)
+              *nt=DFNT_NONE;
+          if(il!=NULL)
+              *il=-1;
+          if(nentries!=NULL)
+              *nentries=0;
+      } /* end if */
+    else        /* we've got a valid palette currently */
+      {
+          if(ncomp!=NULL)
+              *ncomp=ri_ptr->lut_dim.ncomps;
+          if(nt!=NULL)
+              *nt=ri_ptr->lut_dim.nt;
+          if(il!=NULL)
+              *il=ri_ptr->lut_dim.il;
+          if(nentries!=NULL)  /* xdim for LUTs is the number of entries */
+              *nentries=ri_ptr->lut_dim.xdim;
+      } /* end else */
 
 done:
   if(ret_value == 0)   
@@ -3819,9 +3838,8 @@ done:
     Writes out a LUT for an RI.
 
  USAGE
-    intn GRwritelut(riid,name,ncomps,nt,il,nentries,data)
+    intn GRwritelut(riid,ncomps,nt,il,nentries,data)
         int32 lutid;        IN: LUT ID from GRgetlutid
-        char *name;         IN: name of LUT image
         int32 ncomp;        IN: number of components in LUT
         int32 nt;           IN: number type of components
         int32 il;           IN: interlace of the LUT
@@ -3879,7 +3897,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,VOIDP 
     if(ncomps==3 && nt==DFNT_UINT8 && il==MFGR_INTERLACE_PIXEL && nentries==256)
       {
           /* Check if LUT exists already */
-          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFTAG_NULL)
+          if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref>DFTAG_NULL)
             {   /* LUT already exists */
                 if(Hputelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,
                         data,ncomps*nentries*DFKNTsize(nt))==FAIL)
@@ -3987,6 +4005,29 @@ intn GRreadlut(int32 lutid,VOIDP data)
       {
           if(Hgetelement(hdf_file_id,ri_ptr->lut_tag,ri_ptr->lut_ref,data)==FAIL)
               HGOTO_ERROR(DFE_GETELEM,FAIL);
+      } /* end if */
+    
+    /* Re-format the palette into the user's requested interlacing */
+    if(ri_ptr->lut_il!=MFGR_INTERLACE_PIXEL)
+      {
+          uintn pixel_mem_size;       /* size of a pixel in memory */
+          VOIDP pixel_buf;  /* buffer for the pixel interlaced data */
+          int32 count[2];   /* "dimension" info */
+
+          pixel_mem_size=ri_ptr->lut_dim.ncomps*DFKNTsize((ri_ptr->lut_dim.nt | DFNT_NATIVE) & (~DFNT_LITEND));
+
+          /* Allocate space for the conversion buffer */
+          if((pixel_buf=HDmalloc(pixel_mem_size*ri_ptr->lut_dim.xdim))==NULL)
+              HGOTO_ERROR(DFE_NOSPACE,FAIL);
+
+          count[XDIM]=1;
+          count[YDIM]=ri_ptr->lut_dim.xdim;
+          GRIil_convert(data,MFGR_INTERLACE_PIXEL,pixel_buf,ri_ptr->lut_il,
+              count,ri_ptr->lut_dim.ncomps,ri_ptr->lut_dim.nt);
+
+          HDmemcpy(data,pixel_buf,pixel_mem_size*ri_ptr->lut_dim.xdim);
+
+          HDfree(pixel_buf);
       } /* end if */
 
 done:
