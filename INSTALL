@@ -750,8 +750,11 @@ STEP V:  INSTALLATION
            bin     - utilties 
            lib     - static libraries 
            dlllib  - multi-threaded libraries and DLLs 
-           include - include files 
-
+           include - include files
+ 
+Note:  There is an error in the debug version of the hdp tool.  It will show an
+       alert box with the error and 3 buttons.  This is a known problem.  The release
+       version is fine.
 
 STEP VI:  
 
