@@ -16,7 +16,9 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #include <stdio.h>
 #include "types.h"
 #ifndef MSDOS
-#include <netinet/in.h>		/* for htonl() */
+#   ifndef VMS
+#       include <netinet/in.h>		/* for htonl() */
+#   endif
 #else
 extern long ntohl(long i_in);
 extern long htonl(long i_in);
