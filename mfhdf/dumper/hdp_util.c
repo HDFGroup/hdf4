@@ -431,16 +431,22 @@ free_obj_list(objlist_t * o_list)
     intn        i;				/* local counting variable */
     objinfo_t  *temp_obj;		/* temporary pointer to a working DD object */
 
-    for (i = 0, temp_obj = o_list->raw_obj_arr; i < o_list->max_obj; i++, temp_obj++)
-      {
+    /* BMR: verify that o_list is not nil before accessing */
+    if( o_list != NULL )
+    {
+       for (i = 0, temp_obj = o_list->raw_obj_arr; i < o_list->max_obj; i++, temp_obj++)
+       {
           if (temp_obj->is_group)
               free_group_list(temp_obj->group_info);
           if (temp_obj->is_special)
               HDfree(temp_obj->spec_info);
-      }		/* end for */
-    HDfree(o_list->srt_obj_arr);
-    HDfree(o_list->raw_obj_arr);
-    HDfree(o_list);
+       }		/* end for */
+       HDfree(o_list->srt_obj_arr);
+       HDfree(o_list->raw_obj_arr);
+       HDfree(o_list);
+    } /* if o_list not null */
+    else
+       fprintf(stderr, ">>>free_obj_list failed - attempting to free a NULL list \n");
 }	/* end free_obj_list() */
 
 int 
