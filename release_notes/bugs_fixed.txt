@@ -31,12 +31,13 @@ HDF4.1r5
    now returns FAIL instead of causing segnmentation fault. (bug #514)
 
 9. Two routines are added to get compression information for the SD and
-   GR interfaces: SDgetcompress/sfgcompress and GRgetcompress/mggcompress. 
-   (bug #307)  
-   Note that, 
-   for a JPEG image, GRgetcompress only returns the compression type, not 
-   the compression information (i.e, quantity and force_baseline) because 
-   these information are not retrievable.
+   GR interfaces, including chunked elements: SDgetcompress/sfgcompress 
+   and GRgetcompress/mggcompress. (bug #307)  
+   Note: 
+   - for a JPEG image, GRgetcompress only returns the compression type, not 
+     the compression information (i.e, quantity and force_baseline) because 
+     these information currently are not retrievable.
+   - getting compression type for JPEG chunked images is not working yet.
 
 10.  Added new fortran function heprntf (HEprint) that takes two
      arguments: file name and level. If file name string has 0 length
