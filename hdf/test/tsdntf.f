@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/06/26 20:44:33  chouck
-C Oops, filename change made lines too long
+C Revision 1.5  1992/06/30 20:34:24  chouck
+C Fortran character passing problems were making the int8 tests
+C fail.  Change int8 variables to 'byte' for VMS
 C
+c Revision 1.4  1992/06/26  20:44:33  chouck
+c Oops, filename change made lines too long
+c
 c Revision 1.2  1992/05/28  17:31:32  chouck
 c Changed output file names
 c
@@ -23,14 +27,26 @@ C
 C  Input file:  none
 C  Output files:  o.hdf.1, o.hdf.2, ... o.hdf.5
 C
-
+C  **** VMS users ****
+C
+C  VMS has a special way of handling the passsing of character
+C   strings between C and FORTRAN.  For these tests to work 
+C   correctly, you must change the definition of i8 and ti8
+C   to be 'byte' not 'character'  You will also need to remove
+C   a couple of calls to char().  If you search on the string 
+C   VMS you should be able to find all of the necessary changes.
+C
       integer dspdata, dsgdata, dsadata, dssdims, dssnt
 
       real*8 f64(10,10), tf64(10,10)
       real*4 f32(10,10), tf32(10,10)
-      character i8(10,10), ti8(10,10)
       integer*2 i16(10,10), ti16(10,10)
       integer*4 i32(10,10), ti32(10,10)
+
+C  Change these to be of type 'byte' for VMS
+C      byte      i8(10,10), ti8(10,10)
+      character i8(10,10), ti8(10,10)
+
       
       integer i, j, err, err1, err2
       integer rank
@@ -55,7 +71,9 @@ C
           do 100 j=1,10
             f64(i,j) = (i * 10) + j
   	    f32(i,j) = (i * 10) + j
-  	    i8(i,j) = char( (i * 10) + j )
+C  Use the following line for VMS
+C            i8(i,j) =  (i * 10) + j
+  	     i8(i,j) = char( (i * 10) + j )
   	    i16(i,j) = (i * 10) + j
   	    i32(i,j) = (i * 10) + j
   100     continue
@@ -102,6 +120,8 @@ C  individual files
       do 310 i=1,10
           do 300 j=1,10
   	    if (i8(i,j).ne.ti8(i,j)) err = 1
+C Use the following line for VMS
+C           ti8(i,j) = 0
   	    ti8(i,j) = char(0)
   300     continue
   310 continue
