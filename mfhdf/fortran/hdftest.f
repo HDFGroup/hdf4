@@ -57,7 +57,7 @@ C     create a new file
       eps = 0.0001
       access = 4
       fid1 = sfstart('test1.hdf', access)
-      if(fid1.ne.393216) then
+      if(fid1.ne.-1) then
          print *, 'Hopen returned bad ID'
          err = err + 1
       endif
