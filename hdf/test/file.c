@@ -1,55 +1,22 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
+
+/* $Id$ */
+
 /*
-$Header$
-
-$Log$
-Revision 1.2  1993/08/28 00:12:46  georgev
-Added VOIDP casts to HDfreespace().
-
- * Revision 1.1  1993/08/16  21:47:57  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.2  1993/04/19  23:03:46  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:15  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.3  1993/02/16  20:51:15  chouck
- * Went back to using -ansi so needed to fix a few casting problems
- *
- * Revision 1.2  1993/01/27  22:41:26  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:31  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.7  1992/07/16  19:34:08  mlivin
- * changed re-opening of file to NOT include DFACC_CREATE
- *
- * Revision 1.6  1992/06/26  20:23:20  mlivin
- * added in tests for Hishdf - open HDF, closed HDF, non-HDF, non-existing
- *
- * Revision 1.5  1992/06/22  23:04:42  chouck
- * Removed calls to fork()
- *
- * Revision 1.4  1992/06/01  19:23:47  chouck
- * Cleaned up output
- *
- * Revision 1.3  1992/05/31  15:23:30  mfolk
- * Added uint8 * and uint16 casts to make Convex stop complaining.
- *
- * Revision 1.2  1992/05/28  14:24:01  chouck
- * Added casts for calls to Hinquire()
- *
- * Revision 1.1  1992/02/10  20:59:34  chouck
- * Initial revision
- *
-*/
-/*
-
 * Hopen
 ** Create a file.
 ** Open an existing file.

@@ -1,125 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.35  1993/09/30 19:05:30  koziol
-Added basic compressing functionality for special tags.
+/* $Id$ */
 
- * Revision 1.34  1993/09/28  19:10:15  koziol
- * Made Vinquire check parameter values for NULL before updating them.
- *
- * Revision 1.33  1993/09/28  18:44:36  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.32  1993/09/28  18:04:59  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.31  1993/09/16  17:19:48  chouck
- * Allow duplicates in Vgroups unless NO_DUPLICATES is defined
- *
- * Revision 1.30  1993/09/11  18:08:10  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.29  1993/08/18  15:58:03  chouck
- * Restored version 1.26 changes that had gotten blown away (grumble grumble)
- *
- * Revision 1.28  1993/08/17  16:33:58  chouck
- * Made Vaddtagref() a little smarter
- *
- * Revision 1.27  1993/08/16  21:46:39  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.26  1993/07/30  17:49:37  chouck
- * Fixed problem in Vinsert() would only accept Vgroups
- *
- * Revision 1.25  1993/07/23  20:49:18  sxu
- * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
- *
- * Revision 1.24  1993/07/15  19:38:46  chouck
- * More weird characters removed
- *
- * Revision 1.23  1993/07/15  19:00:39  chouck
- * Fixed weird RCS type noise in file
- *
- * Revision 1.22  1993/07/15  01:26:22  koziol
- * Final Whammy on the VSet memory Leak bug, mostly for maintenance purposes
- *
- * Revision 1.21  1993/07/14  20:52:55  chouck
- * Plugged memory leak on Vdelete() and VSdelete()
- *
- * Revision 1.20  1993/07/14  11:55:47  koziol
- * Fixed memory leaks in freeing trees
- *
- * Revision 1.19  1993/05/04  18:56:24  georgev
- * Fixed a minor cast problem on the Mac.
- *
- * Revision 1.18  1993/04/19  22:48:32  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.17  1993/04/15  19:18:45  koziol
- * Fixed bug introduced into the tbbt routines with the last bugfix (sigh)
- *
- * Revision 1.16  1993/04/14  21:39:29  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.15  1993/04/13  16:50:30  georgev
- * Casting problems on SGI's for two calls to the new balanced tree stuff.
- *
- * Revision 1.14  1993/04/10  00:02:19  koziol
- * Removed debugging statements.
- *
- * Revision 1.13  1993/04/08  18:33:56  chouck
- * Various Vset modifications (additions of Vdelete and VSdelete)
- *
- * Revision 1.12  1993/04/06  17:23:43  chouck
- * Added Vset macros
- *
- * Revision 1.11  1993/03/29  18:58:30  chouck
- * Made vinsertpair() public and added dummy decls to convert and JPeg
- * files to prevent 'empty symbol table' messages on the Sun
- *
- * Revision 1.10  1993/03/29  18:38:26  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.9  1993/03/29  16:50:38  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.7  1993/02/09  17:59:20  chouck
- * Added a fix to Vinsert() to increase the size of a Vgroup dynamically.
- * Also fixed a problem in vunpackvg() when reading Vgroups with no
- * elements.  A couple minor speed improvements here and there too.
- *
- * Revision 1.6  1993/01/19  05:56:22  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.5  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.4  1992/11/24  17:43:26  chouck
- * Fixed memory over-write when VGroups have lots of members
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/08/27  19:54:56  likkai
- * Vclose now returns an (intn) status.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*****************************************************************************
 * 
 * vgp.c

@@ -1,92 +1,17 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.27  1993/10/04 20:03:01  koziol
-Updated error reporting in H-Layer routines, and added more error codes and
-compression stuff.
+/* $Id$ */
 
- * Revision 1.26  1993/10/01  20:01:07  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.25  1993/09/28  19:06:52  koziol
- * Fixed prototyping the Iris didn't like.
- *
- * Revision 1.24  1993/09/28  18:44:24  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.23  1993/09/20  19:56:14  koziol
- * Updated the "special element" function pointer array to be a structure
- * of function pointers.  This way, function prototypes can be written for the
- * functions pointers and some type checking done.
- *
- * Revision 1.22  1993/09/13  21:12:54  chouck
- * Modified date for Release 1
- *
- * Revision 1.21  1993/09/08  20:57:13  georgev
- * Fixed flags for UNIXUNBUFIO.
- *
- * Revision 1.20  1993/09/08  18:29:29  koziol
- * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
- *
- * Revision 1.19  1993/09/02  14:41:59  koziol
- * Patches for Watcom/386 Support
- *
- * Revision 1.18  1993/09/01  23:16:46  georgev
- * Fixed prototypes for MAC.
- *
- * Revision 1.17  1993/08/16  21:46:02  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.16  1993/07/01  20:08:07  chouck
- * Made the hash table use fewer malloc() and free() pairs to improve
- * efficiency and (hopefully) reduce PC memory fragmentation.
- *
- * Revision 1.15  1993/06/23  19:05:54  chouck
- * Updated Version string and fixed a VSinquire macro
- *
- * Revision 1.14  1993/04/22  20:24:19  koziol
- * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
- * utility...
- *
- * Revision 1.12  1993/04/05  22:35:48  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.11  1993/03/29  16:48:03  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.8  1993/01/19  05:55:56  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.7  1993/01/14  19:08:42  chouck
- * Added ID type of SDS objects (4)
- *
- * Revision 1.6  1992/11/30  21:59:11  chouck
- * Added NO_ID for testing if an ID variable has an invalid content
- *
- * Revision 1.5  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.4  1992/10/22  22:53:32  chouck
- * Added group handle to group interface
- *
- * Revision 1.3  1992/10/09  20:49:17  chouck
- * Added some patches to work with ThinkC I/O on the Mac
- *
- * Revision 1.2  1992/10/08  19:09:36  chouck
- * Changed file_t to hdf_file_t to make strict ANSI compliant
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*+ hfile.h
 *** Header for hfile.c, routines for low level data element I/O
 +*/

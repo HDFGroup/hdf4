@@ -1,26 +1,17 @@
-! #
-! # $Header$
-! #
-! # $Log$
-! # Revision 1.6  1993/09/17 14:13:46  koziol
-! # Updated the makefiles a little
-! #
-! # Revision 1.5  1993/07/22  21:54:38  sxu
-! # Set path name for 3.3b2
-! #
-! # Revision 1.4  1993/05/17  20:42:13  sxu
-! # Commented out non-command lines
-! #
-! # Revision 1.3  1993/01/14  17:26:29  georgev
-! # Upated headers in Makefiles to reflect HDF3.3.
-! #
-! # Revision 1.2  1992/08/26  16:25:18  sxu
-! # *** empty log message ***
-! #
-! # Revision 1.1  1992/08/24  20:56:31  sxu
-! # Initial revision
-! #
-! #
+! ****************************************************************************
+! * NCSA HDF                                                                 *
+! * Software Development Group                                               *
+! * National Center for Supercomputing Applications                          *
+! * University of Illinois at Urbana-Champaign                               *
+! * 605 E. Springfield, Champaign IL 61820                                   *
+! *                                                                          *
+! * For conditions of distribution and use, see the accompanying             *
+! * hdf/COPYING file.                                                        *
+! *                                                                          *
+! ***************************************************************************
+!
+! $Id$
+!
 ! $ !
 ! $ ! Build the entire HDF library
 ! $ !

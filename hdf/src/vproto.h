@@ -1,78 +1,16 @@
-/*
-$Header$
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
 
-$Log$
-Revision 1.19  1993/10/01 20:01:29  koziol
-Put "extern C" block around function prototypes for C++ compatibility.
-
- * Revision 1.18  1993/09/14  20:17:23  chouck
- * Added prototypes for erstwhile Vset macros
- *
- * Revision 1.17  1993/09/08  18:29:33  koziol
- * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
- *
- * Revision 1.16  1993/07/23  20:49:14  sxu
- * Changed 'void' to 'VOID' VSdump, Vinitialize, Vsetzap, Remove_vfile and unpackvs.
- *
- * Revision 1.15  1993/07/14  11:55:53  koziol
- * Fixed memory leaks in freeing trees
- *
- * Revision 1.14  1993/05/19  20:05:12  chouck
- * Moved general interest VSet info out of vg.h and into hdf.h
- * Removed OLD_WAY parts of vproto.h
- * Fixed a problem in DFfindnextref()
- *
- * Revision 1.13  1993/04/26  17:16:22  chouck
- * Fixed minor problem with C++ statements
- *
- * Revision 1.12  1993/04/26  15:08:32  chouck
- * Fixes for the convex (doesn't like foo(VOID) prototypes)
- * Also added extern "C" { } around prototypes
- *
- * Revision 1.11  1993/04/22  16:05:55  chouck
- * Minor Vset fixes
- *
- * Revision 1.10  1993/04/19  22:48:39  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.9  1993/04/08  18:34:01  chouck
- * Various Vset modifications (additions of Vdelete and VSdelete)
- *
- * Revision 1.8  1993/04/05  22:36:00  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.7  1993/03/29  16:50:48  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.6  1993/01/19  05:56:31  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.5  1992/11/30  22:00:01  chouck
- * Added fixes for changing to Vstart and Vend
- *
- * Revision 1.4  1992/11/24  17:43:26  chouck
- * Fixed memory over-write when VGroups have lots of members
- *
- * Revision 1.3  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.2  1992/09/11  14:15:04  koziol
- * Changed Fortran stubs' parameter passing to use a new typedef, intf,
- * which should be typed to the size of an INTEGER*4 in whatever Fortran
- * compiler the C functions need to be compatible with.  (This is mostly
- * for the PC and possibly for the Mac)
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
+/* $Id$ */
 
 #if defined c_plusplus || defined __cplusplus
 extern "C" {

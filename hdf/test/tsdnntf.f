@@ -1,34 +1,16 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
-C
-C $Log$
-C Revision 1.7  1993/01/19 05:59:09  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.6  1992/12/01  21:07:48  chouck
-c Fixed tab / space problem so Mac Fortran doesn't complain
-c
-c Revision 1.5  1992/07/09  16:09:49  chouck
-c Changed characters to bytes for VMS
-c
-c Revision 1.4  1992/06/29  15:41:39  chouck
-c Changed the OR() to an addition.  Removed bitwise assignment
-c to make VMS happy.
-c
-c Revision 1.3  1992/06/01  14:53:26  mfolk
-c Convex Fortran doesn't have the 'OR' function.  You have to
-c use 'JIOR' instead.  So I added these comments right before
-c the 'OR' is called:
-c   C Some Fortrans do not have the 'OR' function.  If this
-c   C causes an error, try substituting 'JIOR'.
-c
-c Revision 1.2  1992/05/29  18:54:51  chouck
-c Changed output file names
-c
-c Revision 1.1  1992/04/27  17:28:04  sxu
-c Initial revision
-c
+C $Id$
 C
       program tdfsd_nntF
 C

@@ -1,49 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.4  1993/08/16 21:58:16  koziol
-Fixed access list for these files, and the actual changes I made to the
-files are for PC compatibility.
+/* $Id$ */
 
- * Revision 1.3  1993/05/05  22:24:12  georgev
- * Fixed some cast problems on the Mac.
- *
- * Revision 1.2  1993/04/19  23:04:00  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:31  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.5  1993/04/05  22:37:45  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.3  1993/02/25  22:35:32  chouck
- * Second DFSDgetcal() is *supposed* to return FAIL
- *
- * Revision 1.2  1993/01/27  22:41:30  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:34  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.4  1992/08/27  22:19:29  chouck
- * Added test for calibration tags
- *
- * Revision 1.3  1992/07/08  22:05:20  sxu
- * Changed DFSDgetmaxmin() to DFSDgetrange().
- * Changed DFSDsetmaxmin() to DFSDsetrange().
- *
- * Revision 1.2  1992/05/31  15:25:21  mfolk
- * Changed declaration of rank and dims[2] to int32 for Convex.
- *
- * Revision 1.1  1992/02/26  20:08:43  mfolk
- * Initial revision
- *
-*/
 #include "tproto.h"
 
 extern int Verbocity;

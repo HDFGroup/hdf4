@@ -1,13 +1,17 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
+C $Id$
 C
-C $Log$
-C Revision 1.4  1993/08/16 21:45:10  koziol
-C Wrapped in changes for final, working version on the PC.
-C
-
-
-
 C	dffunctions.f
 C
 C	Declarations of return values for HDF SDS functions

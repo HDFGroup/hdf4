@@ -1,60 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.14  1993/10/06 20:27:27  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+/* $Id$ */
 
- * Revision 1.13  1993/10/04  20:02:39  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.12  1993/09/30  19:04:58  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.11  1993/09/28  18:04:18  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.10  1993/09/21  01:13:09  koziol
- * Fixed typo in function declaration for non-ANSI machines...
- *
- * Revision 1.9  1993/09/20  19:56:02  koziol
- * Updated the "special element" function pointer array to be a structure
- * of function pointers.  This way, function prototypes can be written for the
- * functions pointers and some type checking done.
- *
- * Revision 1.8  1993/09/08  18:29:19  koziol
- * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
- *
- * Revision 1.7  1993/09/03  14:10:09  koziol
- * Saved debugging info.
- *
- * Revision 1.6  1993/09/02  00:32:07  georgev
- * Fixed some VOIDP casts.
- *
- * Revision 1.5  1993/05/03  21:32:10  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.4  1993/04/19  22:47:55  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.3  1993/01/19  05:55:34  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.2  1992/12/18  15:46:32  mfolk
- * added the line "access_rec->posn += bytes_read", because the linked
- * block read routine did not update the read pointer properly.  This
- * addition was at line 733, in function HLIread.
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*LINTLIBRARY*/
 /*+ hblocks .c
  routines to implement linked-block elements

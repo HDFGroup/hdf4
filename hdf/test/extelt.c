@@ -1,63 +1,20 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.3  1993/09/03 14:10:27  koziol
-Saved debugging info.
-
- * Revision 1.2  1993/08/28  00:12:44  georgev
- * Added VOIDP casts to HDfreespace().
- *
- * Revision 1.1  1993/08/16  21:47:55  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.2  1993/04/19  23:03:44  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:13  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.5  1993/03/24  21:40:01  chouck
- * Cleaned Makefile and fixed external element test
- *
- * Revision 1.4  1993/03/17  21:29:43  chouck
- * Updated external elements test and fixed syntax error in anfile test
- *
- * Revision 1.3  1993/02/16  20:51:14  chouck
- * Went back to using -ansi so needed to fix a few casting problems
- *
- * Revision 1.2  1993/01/27  22:41:25  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:29  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.7  1992/07/27  18:40:12  dilg
- * Changed DFACC_ALL to DFACC_RDWR in appropriate places to conform to new
- * handling of access modes by Hopen().
- *
- * Revision 1.6  1992/06/25  18:27:39  chouck
- * Changed output file names
- *
- * Revision 1.5  1992/06/22  23:04:42  chouck
- * Removed calls to fork()
- *
- * Revision 1.4  1992/06/01  18:57:55  chouck
- * Cleaned up output so its clear what is going on
- *
- * Revision 1.3  1992/05/31  15:13:55  mfolk
- * Added several casts (uint8 * and uint16) to keep Convex from complaining.
- *
- * Revision 1.2  1992/05/28  14:24:01  chouck
- * Added casts for calls to Hinquire()
- *
- * Revision 1.1  1992/02/10  20:59:34  chouck
- * Initial revision
- *
-*/
+/* $Id$ */
 
 #include "tproto.h"
 #define TESTFILE_NAME "t.hdf"

@@ -1,25 +1,19 @@
+# ****************************************************************************
+# * NCSA HDF                                                                 *
+# * Software Development Group                                               *
+# * National Center for Supercomputing Applications                          *
+# * University of Illinois at Urbana-Champaign                               *
+# * 605 E. Springfield, Champaign IL 61820                                   *
+# *                                                                          *
+# * For conditions of distribution and use, see the accompanying             *
+# * hdf/COPYING file.                                                        *
+# *                                                                          *
+# ***************************************************************************
 #
-# $Header$
-#
-# $Log$
-# Revision 1.1  1993/05/17 20:44:12  sxu
-# Added in CVS
-#
-# Revision 1.1  1993/03/02  01:51:16  sxu
-# Initial revision
-#
-# Revision 1.2  1992/12/03  09:33:27  koziol
-# Changed to correct date for v3.2r3
-#
-# Revision 1.1  1992/10/19  21:33:45  koziol
-# Initial revision
-#
+# $Id$
 #
 #
 # ##################################################################
-#
-#                   NCSA HDF version 3.3 release Beta 1
-#                           May 11, 1993
 #
 #           MAKEFILE for creating the HDF library, libdf.a, on Moto
 #

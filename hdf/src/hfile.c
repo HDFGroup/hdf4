@@ -1,98 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.27  1993/10/06 20:27:45  koziol
-More compression fixed, and folded Doug's suggested change into VSappendable.
+/* $Id$ */
 
- * Revision 1.26  1993/10/04  20:02:56  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.25  1993/09/28  18:44:19  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.24  1993/09/28  18:04:36  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- * Revision 1.23  1993/09/21  00:58:37  georgev
- * With the new HDstrdup() need casts on the Mac and Convex.
- *
- * Revision 1.22  1993/09/20  19:56:09  koziol
- * Updated the "special element" function pointer array to be a structure
- * of function pointers.  This way, function prototypes can be written for the
- * functions pointers and some type checking done.
- *
- * Revision 1.21  1993/09/11  18:08:01  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.20  1993/09/08  20:55:37  georgev
- * Added #defines for THINK_C.
- *
- * Revision 1.19  1993/09/08  18:29:24  koziol
- * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
- *
- * Revision 1.18  1993/09/03  14:10:13  koziol
- * Saved debugging info.
- *
- * Revision 1.17  1993/09/01  23:16:48  georgev
- * Fixed prototypes for MAC.
- *
- * Revision 1.16  1993/08/16  21:45:58  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.15  1993/07/01  20:08:03  chouck
- * Made the hash table use fewer malloc() and free() pairs to improve
- * efficiency and (hopefully) reduce PC memory fragmentation.
- *
- * Revision 1.14  1993/05/03  21:32:14  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.13  1993/04/22  20:24:13  koziol
- * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
- * utility...
- *
- * Revision 1.11  1993/04/14  21:39:18  georgev
- * Had to add some VOIDP casts to some functions to make the compiler happy.
- *
- * Revision 1.10  1993/01/19  05:55:52  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.9  1993/01/14  19:09:07  chouck
- * Added routine Hfidinquire() to get info about an open file
- *
- * Revision 1.8  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.7  1992/10/09  20:49:17  chouck
- * Added some patches to work with ThinkC I/O on the Mac
- *
- * Revision 1.6  1992/10/08  19:09:36  chouck
- * Changed file_t to hdf_file_t to make strict ANSI compliant
- *
- * Revision 1.5  1992/10/01  20:46:10  chouck
- * Fixed a Mac opening problem resulting from access change
- *
- * Revision 1.4  1992/09/15  21:04:06  chouck
- * Removed DFACC_CREATE problems.  Restored some other changes that had
- * gotten over-written
- *
- * Revision 1.3  1992/09/11  16:43:24  chouck
- * Minor Mac fix
- *
- * Revision 1.2  1992/08/26  19:44:25  chouck
- * Moved HDgettagname() into hkit.c and added calibration tag
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*LINTLIBRARY*/
 /*+
  FILE
@@ -190,17 +113,11 @@ extern funclist_t linked_funcs;
 
 extern funclist_t ext_funcs;
 
-/* Functions for accessing compressed special data elements.
-   For definition of the compressed data element, see hcomp.c. */
-
-extern funclist_t comp_funcs;
-
 /* Table of these function tables for accessing special elements.  The first
    member of each record is the speical code for that type of data element. */
 functab_t functab[] = {
     {SPECIAL_LINKED, &linked_funcs},
     {SPECIAL_EXT, &ext_funcs},
-    {SPECIAL_COMP, &comp_funcs},
     {0, NULL}                  /* terminating record; add new record */
                                /* before this line */
 };
@@ -659,15 +576,6 @@ intn Hnextread(access_id, tag, ref, origin)
      */
     if(access_rec->special == SPECIAL_EXT) {
         if(HXPcloseAID(access_rec) == FAIL)
-            HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
-    }
-
-    /*
-     * if access record used to point to an compressed element we
-     * need to free the internal data structures before moving on
-     */
-    if(access_rec->special == SPECIAL_COMP) {
-        if(HCPcloseAID(access_rec) == FAIL)
             HRETURN_ERROR(DFE_CANTCLOSE,FAIL);
     }
 

@@ -1,51 +1,27 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /***************************************************************************
 *
 * Slab test routines slabw(), slabwf64(), slabwui16(), slabwui8(),
 *  slab1w(), slab2w(), slab3w(), slab4w()
 *
 ***************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "$Id$";
-#endif
-/*-------------------------------------------------------------------------
- *
- * $Header$
- *
- * $Log$
- * Revision 1.4  1993/08/16 21:58:23  koziol
- * Fixed access list for these files, and the actual changes I made to the
- * files are for PC compatibility.
- *
- * Revision 1.2  1993/04/19  23:04:07  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:37  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.9  1993/04/14  21:37:37  georgev
- * Had to change how headers were included.
- *
- * Revision 1.8  1993/04/06  18:59:12  koziol
- * Minor changes for num_err wierdness.
- *
- * Revision 1.7  1993/04/05  22:37:49  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.4  1993/03/17  16:42:55  georgev
- * Added a few more data types.
- *
- * Revision 1.3  1993/03/11  19:45:26  georgev
- * Added tests for different number types.
- *
- * Revision 1.2  1993/02/25  22:36:17  georgev
- * Minor changes .
- *
- * Revision 1.1  1993/02/19  17:48:40  georgev
- * Added slab tests.
- *
- *
- *------------------------------------------------------------------------*/
 
 #include "hdf.h"
 #include "tutils.h"

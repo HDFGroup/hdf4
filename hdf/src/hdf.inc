@@ -1,26 +1,17 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
+C $Id$
 C
-C $Log$
-C Revision 1.4  1993/07/27 14:04:47  koziol
-C Updated for v3.3
-C
-# Revision 1.3  1993/06/18  16:44:23  georgev
-# Deleted 'bogus' function
-#
-# Revision 1.2  1993/05/12  16:25:32  chouck
-# Added SUCCEED and FAIL parameters
-#
-# Revision 1.1  1993/04/28  20:47:05  koziol
-# Renamed constant.f to constant.i and added dffunc.i
-#
-c Revision 1.3  1993/01/19  05:53:54  koziol
-c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-c port.  Lots of minor annoyances fixed.
-c
-c Revision 1.1  1992/08/25  21:40:44  koziol
-c Initial revision
-c
 C
 C
 C *-----------------------------------------------------------------------------

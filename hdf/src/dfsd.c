@@ -1,137 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.37  1993/09/21 00:58:32  georgev
-With the new HDstrdup() need casts on the Mac and Convex.
+/* $Id$ */
 
- * Revision 1.36  1993/09/11  21:00:18  koziol
- * Defined alternate HDstrdup routine for VMS and fixed a couple of HDstrdup
- * mistakes.
- *
- * Revision 1.35  1993/09/11  18:07:46  koziol
- * Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
- * cleaned up some goofy string manipulations in various places.
- *
- * Revision 1.34  1993/09/03  15:16:47  chouck
- * Fixed a casting problem for the SGI
- *
- * Revision 1.33  1993/09/02  00:17:51  georgev
- * Fixed large number of casts.
- *
- * Revision 1.32  1993/09/02  00:00:21  georgev
- * Fixed some more prototypes.
- *
- * Revision 1.31  1993/09/01  23:53:38  georgev
- * Fixed some errors in prototypes for DFSD calls.
- *
- * Revision 1.30  1993/08/16  21:45:23  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.29  1993/05/17  15:20:13  georgev
- * Took out some unused varibles in DFSDwriteslab.
- *
- * Revision 1.28  1993/04/26  15:08:15  chouck
- * Fixes for the convex (doesn't like foo(VOID) prototypes)
- * Also added extern "C" { } around prototypes
- *
- * Revision 1.27  1993/04/22  23:00:10  koziol
- * Changed DFR8nimages, DFPnpals to report the correct number of images
- * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
- *
- * Revision 1.26  1993/04/19  22:47:35  koziol
- * General Code Cleanup to reduce/remove errors on the PC
- *
- * Revision 1.25  1993/04/08  20:08:40  georgev
- * Somehow(?) fill values got broken in hyperslabs. Fixed it. Minor cosmetic
- *  changes also.
- *
- * Revision 1.24  1993/04/06  17:23:33  chouck
- * Added Vset macros
- *
- * Revision 1.23  1993/04/05  22:35:16  koziol
- * Fixed goofups made in haste when patching code.
- *
- * Revision 1.22  1993/03/29  18:38:19  chouck
- * Cleaned up a bunch of casting problems
- *
- * Revision 1.21  1993/03/29  16:47:40  koziol
- * Updated JPEG code to new JPEG 4 code.
- * Changed VSets to use Threaded-Balanced-Binary Tree for internal
- * 	(in memory) representation.
- * Changed VGROUP * and VDATA * returns/parameters for all VSet functions
- * 	to use 32-bit integer keys instead of pointers.
- * Backed out speedups for Cray, until I get the time to fix them.
- * Fixed a bunch of bugs in the little-endian support in DFSD.
- *
- * Revision 1.19  1993/02/18  04:21:47  georgev
- * Fixed DFSDsetfillvalue so that users don't clobber their data.
- *
- * Revision 1.18  1993/02/02  00:13:04  georgev
- * Changed Hyperslab interface, added DFSDstartslab(), DFSDendslab().
- * Removed DFSDwritefillvalue().Fixed bug when writing out slabs in 
- * one dimension. Lots of minor changes to.
- *
- * Revision 1.17  1993/01/26  19:42:35  koziol
- * Added support for reading and writing Little-Endian data on all
- * platforms.  This has been tested on: Cray, Sun, and PCs so far.
- *
- * Revision 1.16  1993/01/19  05:55:07  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.15  1993/01/15  22:46:57  georgev
- * Added flag to allow multiple SDS when using hyperslabs.
- *
- * Revision 1.14  1993/01/15  16:50:20  georgev
- * DFSDwritefillvalue works now.
- *
- * Revision 1.13  1993/01/07  21:09:21  georgev
- * Forgot to swith order of HDmemcpy arguments in DFSDgetfillvalue.
- *
- * Revision 1.12  1993/01/06  19:32:23  chouck
- * Spelled one of the Hendaccess()s wrong (oops)
- *
- * Revision 1.11  1993/01/05  17:53:55  chouck
- * DFSDIgetndg() was leaving active AIDs on error
- *
- * Revision 1.10  1992/12/30  16:09:50  sxu
- * replaced dfsdpre32() with dfsdpre32sdg()
- *  A bug is fixed in DFSDIputndg.LUF: writes out null strings
- * when datastrs are set and dimstrs are not.
- *
- * Revision 1.9  1992/12/21  16:56:55  chouck
- * Fixed problem reading old float32 calibration tags
- *
- * Revision 1.8  1992/12/08  20:47:56  georgev
- * Changed order of src/dest for HDmemcpy
- *
- * Revision 1.7  1992/11/12  21:29:12  georgev
- * DFSDgetfillvalue has been fixed
- *
- * Revision 1.6  1992/11/10  20:19:42  georgev
- * Added routines DFSDwriteref, DFSDsetfillvalue, DFSDgetfillvalue
- *  DFSDwritefillvalue, DFSDwriteslab for writing hyperslabs
- *
- * Revision 1.5  1992/11/02  16:35:41  koziol
- * Updates from 3.2r2 -> 3.3
- *
- * Revision 1.4  1992/10/22  22:53:32  chouck
- * Added group handle to group interface
- *
- * Revision 1.3  1992/09/17  22:06:06  chouck
- * Removed debugging info for calibration tag routines
- *
- * Revision 1.2  1992/08/27  22:18:42  chouck
- * Added support for calibration tag reading and writing
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 /*-----------------------------------------------------------------------------
  File:  dfsd.c
 

@@ -1,58 +1,20 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.7  1993/09/09 18:37:04  georgev
-More cast fixes...
-
- * Revision 1.6  1993/08/28  00:12:40  georgev
- * Added VOIDP casts to HDfreespace().
- *
- * Revision 1.5  1993/08/16  21:47:49  koziol
- * Wrapped in changes for final, working version on the PC.
- *
- * Revision 1.3  1993/05/03  21:32:36  koziol
- * First half of fixes to make Purify happy
- *
- * Revision 1.2  1993/04/19  23:03:38  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:05  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.3  1993/04/08  20:44:01  koziol
- * Minor Cray tweaks and made the tests in testhdf.c dynamic, so the only thing
- * you have to do to add a test is to add the InitTest line.  Also added the
- * nt_lend.c test for little-endian testing.
- *
- * Revision 1.2  1993/01/27  22:41:22  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:25  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.6  1992/05/31  19:05:44  mfolk
- * Added int32 casts to line 127 for Convex.
- *
- * Revision 1.5  1992/05/29  19:19:08  mfolk
- * Changed pal declaration from char to uint8 for Convex.
- *
- * Revision 1.4  1992/05/27  21:46:34  chouck
- * Added a cast
- *
- * Revision 1.3  1992/03/23  16:38:33  mfolk
- * fixed minor bug in reporting success/failure of a DFR8 routine.
- *
- * Revision 1.2  1992/02/28  15:22:47  mfolk
- * *** empty log message ***
- *
- * Revision 1.1  1992/02/28  14:33:49  mfolk
- * Initial revision
- *
-*/
+/* $Id$ */
 
 /***********************************************************
 *

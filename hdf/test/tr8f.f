@@ -1,31 +1,17 @@
+C****************************************************************************
+C* NCSA HDF                                                                 *
+C* Software Development Group                                               *
+C* National Center for Supercomputing Applications                          *
+C* University of Illinois at Urbana-Champaign                               *
+C* 605 E. Springfield, Champaign IL 61820                                   *
+C*                                                                          *
+C* For conditions of distribution and use, see the accompanying             *
+C* hdf/COPYING file.                                                        *
+C*                                                                          *
+C****************************************************************************
 C
-C $Header$
+C $Id$
 C
-C $Log$
-C Revision 1.2  1993/01/19 05:58:53  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.1  1992/11/05  19:34:01  chouck
-c Initial revision
-c
-c Revision 1.5  1992/09/15  19:39:10  koziol
-c Added Shiming's changes to a couple of boolean tests
-c
-c Revision 1.4  1992/06/22  15:48:20  chouck
-c Changed integer*2 to integers.  The HP Fortran compiler
-c generates bogus code if you use a local called 'error'
-c so I renamed it.
-c
-c Revision 1.3  1992/05/08  18:40:08  sxu
-c fixed an typo.
-c
-c Revision 1.2  1992/05/04  16:29:28  sxu
-c Changed set write ref3 to ref1.
-c
-c Revision 1.1  1992/04/27  17:07:49  sxu
-c Initial revision
-c
 C
       program tdfr8F
 C
