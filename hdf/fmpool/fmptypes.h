@@ -49,7 +49,11 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
+#ifdef HAVE_CDEFS_H
+#include <cdefs.h>
+#else
 #include "cdefs.h"
+#endif
 
 #ifdef HAVE_LIMITS_H
 #include <limits.h>

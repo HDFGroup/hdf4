@@ -36,7 +36,7 @@
  *	@(#)cdefs.h	8.7 (Berkeley) 1/21/94
  */
 
-#ifndef	_CDEFS_H_
+#if !defined(_CDEFS_H_) && !defined(_SYS_CDEFS_H)
 #define	_CDEFS_H_
 
 #if defined(__cplusplus)
