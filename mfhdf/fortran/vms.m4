@@ -26,6 +26,9 @@ define(`STRINGL',`
     char	*$1	= $1d->dsc$a_pointer;
     int		$1len	= $1d->dsc$w_length;') # use descriptor components
 
+# C integral type equivalent to a FORTRAN INTEGER
+define(`F_INTEGER',`int') 
+
 # FORTRAN declaration for a long integer (e.g. integer*4 for Microsoft)
 define(`LONG_INT',`integer')
 

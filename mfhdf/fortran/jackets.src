@@ -77,7 +77,11 @@ M4__FORTRAN_DEFINES
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
+#ifdef __alpha
+    int ll;
+#else
     long ll;
+#endif
     float ff;
     short ss;
     char cc;
@@ -104,7 +108,11 @@ struct ncfils {			/* This will be a common block from Fortran */
 
 struct ncfils {			/* This will be a common block from Fortran */
     double dd;
+#ifdef __alpha
+    int ll;
+#else
     long ll;
+#endif
     float ff;
     short ss;
     char cc;
@@ -450,12 +458,121 @@ stoig(shorts, ints, dims, basis, ndims)
 }
 #endif /* FORTRAN_HAS_NO_SHORT */
 
+#ifdef __alpha
+/*
+ * Convert multi-dimensional array of NCLONGs stored in `int's to packed
+ * array of `long's, in malloc'ed space.  Returns pointer to `long's or NULL
+ * if malloc failed.
+ */
+static long *
+itol(ints, dims, ndims)
+    int		*ints;		/* multi-dimensional array of ints */
+    long	*dims;		/* list of dimensions */
+    int		ndims;		/* number of dimensions in list */
+{
+    long	iocount = dimprod (dims, ndims);
+    long	*longs = (long *) malloc (iocount * sizeof (long));
+    int		*ip;
+    long	*lp = longs;
+
+    if (longs != NULL)
+	for (ip = ints; iocount > 0; iocount--)
+	    *lp++ = (long) *ip++;
+    return longs;
+}
+
+/*
+ * Convert a generalized multi-dimensional array of `long's stored in `int's to 
+ * packed array of `long's, in malloc'ed space.  Returns pointer to `long's or 
+ * NULL if malloc failed.
+ */
+static long *
+itolg(ints, dims, imap, ndims)
+    int		*ints;		/* multi-dimensional array of integers */
+    long	*dims;		/* list of dimensions */
+    long	*imap;		/* memory access index mapping vector */
+    int		ndims;		/* number of dimensions in list */
+{
+    long	iocount = dimprod (dims, ndims);
+    long	*longs = (long *) malloc (iocount * sizeof (long));
+
+    if (longs != NULL && iocount > 0) {
+	int	idim;
+	char	*ip	= (char*)ints;
+	long	*lp	= longs;
+	long	length[MAX_NC_DIMS];
+	long	coords[MAX_NC_DIMS];
+
+	for (idim = 0; idim < ndims; ++idim) {
+	    length[idim]	= dims[idim]*imap[idim];
+	    coords[idim]	= 0;
+	}
+
+	for (;;) {
+	    *lp++	= (long)*(int*)ip;
+	    idim	= ndims - 1;
+	carry:
+	    ip	+= imap[idim];
+	    if (++coords[idim] >= dims[idim]) {
+		coords[idim]	= 0;
+		ip		-= length[idim];
+		if (--idim < 0)
+		    break;
+		goto carry;
+	    }
+        }
+    }
+
+    return longs;
+}
+
+/*
+ * Convert a packed array of `long's into a generalized multi-dimensional array
+ * of `int's.
+ */
+static void
+ltoig(longs, ints, dims, imap, ndims)
+    long	*longs;		/* packed array of longs */
+    int		*ints;		/* multi-dimensional array of integers */
+    long	*dims;		/* list of dimensions */
+    long	*imap;		/* memory access index mapping vector */
+    int		ndims;		/* number of dimensions in list */
+{
+    if (dimprod (dims, ndims) > 0) {
+	int	idim;
+	long	*lp	= longs;
+	char	*ip	= (char*)ints;
+	long	length[MAX_NC_DIMS];
+	long	coords[MAX_NC_DIMS];
+
+	for (idim = 0; idim < ndims; ++idim) {
+	    length[idim]	= dims[idim]*imap[idim];
+	    coords[idim]	= 0;
+	}
+
+	for (;;) {
+	    *(int*)ip	= *lp++;
+	    idim	= ndims - 1;
+	carry:
+	    ip	+= imap[idim];
+	    if (++coords[idim] >= dims[idim]) {
+		coords[idim]	= 0;
+		ip		-= length[idim];
+		if (--idim < 0)
+		    break;
+		goto carry;
+	    }
+        }
+    }
+}
+#endif	/* Alpha platform above */
+
 /* ------------ M4__SYSTEM FORTRAN jackets for netCDF Functions ------------ */
 
 /* used to set the C global variable ncopts from Fortran */
 % void
 % ncpopt (
-%	int *val     /* NC_FATAL, NC_VERBOSE, or NC_FATAL|NC_VERBOSE */
+%	INTEGER val     /* NC_FATAL, NC_VERBOSE, or NC_FATAL|NC_VERBOSE */
 %       )
 % {
     ncopts = *val;
@@ -465,7 +582,7 @@ stoig(shorts, ints, dims, basis, ndims)
 /* used to get the C global variable ncopts from Fortran */
 % void
 % ncgopt (
-%	int	*val	/* NC_FATAL, NC_VERBOSE, or NC_FATAL|NC_VERBOSE */
+%	INTEGER	val	/* NC_FATAL, NC_VERBOSE, or NC_FATAL|NC_VERBOSE */
 %       )
 % {
     *val = ncopts;
@@ -477,9 +594,9 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % int
 % nccre (
-%     string pathname,		/* file name of new netCDF file */
-%     int *clobmode,		/* either NCCLOB or NCNOCLOB */
-%     int *rcode		/* returned error code */
+%     STRING pathname,		/* file name of new netCDF file */
+%     INTEGER clobmode,		/* either NCCLOB or NCNOCLOB */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -498,9 +615,9 @@ stoig(shorts, ints, dims, basis, ndims)
 /* opens an existing netCDF file for access */
 % int
 % ncopn (
-%     string pathname,		/* file name for netCDF to be opened */
-%     int *rwmode,		/* either NCWRITE or NCNOWRIT */
-%     int *rcode		/* returned error code */
+%     STRING pathname,		/* file name for netCDF to be opened */
+%     INTEGER rwmode,		/* either NCWRITE or NCNOWRIT */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -519,17 +636,17 @@ stoig(shorts, ints, dims, basis, ndims)
 /* adds a new dimension to an open netCDF file in define mode */
 % int
 % ncddef (
-%     int *cdfid,		/* netCDF ID */
-%     string dimname,		/* dimension name */
-%     long *dimlen,		/* size of dimension */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     STRING dimname,		/* dimension name */
+%     INTEGER dimlen,		/* size of dimension */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
     int dimid;
 
     nstrncpy (name, dimname, dimnamelen);
-    if ((dimid = ncdimdef (*cdfid, name, *dimlen)) != -1) {
+    if ((dimid = ncdimdef (*cdfid, name, (long)*dimlen)) != -1) {
 	*rcode = 0;
 	return (dimid + 1);
     }
@@ -544,9 +661,9 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % int
 % ncdid (
-%     int *cdfid,		/* netCDF ID */
-%     string dimname,		/* dimension name */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     STRING dimname,		/* dimension name */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -565,12 +682,12 @@ stoig(shorts, ints, dims, basis, ndims)
 /* adds a new variable to an open netCDF file in define mode */
 % int
 % ncvdef (
-%     int *cdfid,		/* netCDF ID */
-%     string varname,		/* name of variable */
-%     int *datatype,		/* netCDF datatype of variable */
-%     int *ndims,		/* number of dimensions of variable */
-%     int *dimarray,		/* array of ndims dimensions IDs */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     STRING varname,		/* name of variable */
+%     INTEGER datatype,		/* netCDF datatype of variable */
+%     INTEGER ndims,		/* number of dimensions of variable */
+%     INTEGER dimarray,		/* array of ndims dimensions IDs */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     int varid, i, dimid[MAX_VAR_DIMS];
@@ -593,9 +710,9 @@ stoig(shorts, ints, dims, basis, ndims)
 /* returns the ID of a netCDF variable given its name */
 % int
 % ncvid (
-%     int *cdfid,		/* netCDF ID */
-%     string varname,		/* variable name */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     STRING varname,		/* variable name */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     int varid;
@@ -614,8 +731,8 @@ stoig(shorts, ints, dims, basis, ndims)
 /* returns number of bytes per netCDF data type */
 % int
 % nctlen (
-%     int *datatype,		/* netCDF datatype */
-%     int *rcode		/* returned error code */
+%     INTEGER datatype,		/* netCDF datatype */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     int itype;
@@ -631,8 +748,8 @@ stoig(shorts, ints, dims, basis, ndims)
 /* closes an open netCDF file */
 % void
 % ncclos (
-%     int *cdfid,			/* netCDF ID */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
     *rcode = 0;
@@ -643,8 +760,8 @@ stoig(shorts, ints, dims, basis, ndims)
 /* puts an open netCDF into define mode */
 % void
 % ncredf (
-%     int *cdfid,			/* netCDF ID */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
     *rcode = 0;
@@ -655,8 +772,8 @@ stoig(shorts, ints, dims, basis, ndims)
 /* takes an open netCDF out of define mode */
 % void
 % ncendf (
-%     int *cdfid,			/* netCDF ID */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
     *rcode = 0;
@@ -667,12 +784,12 @@ stoig(shorts, ints, dims, basis, ndims)
 /* returns information about an open netCDF file given its netCDF ID */
 % void
 % ncinq (
-%     int *cdfid,			/* netCDF ID */
-%     int *ndims,			/* returned number of dimensions */
-%     int *nvars,			/* returned number of variables */
-%     int *natts,			/* returned number of attributes */
-%     int *recdim,		/* returned ID of the unlimited dimension */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER ndims,		/* returned number of dimensions */
+%     INTEGER nvars,		/* returned number of variables */
+%     INTEGER natts,		/* returned number of attributes */
+%     INTEGER recdim,		/* returned ID of the unlimited dimension */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     *rcode = 0;
@@ -690,8 +807,8 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncsnc (
-%     int *cdfid,			/* netCDF ID */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
     *rcode = 0;
@@ -706,8 +823,8 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncabor (
-%     int *cdfid,			/* netCDF ID */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
     *rcode = 0;
@@ -718,20 +835,22 @@ stoig(shorts, ints, dims, basis, ndims)
 /* returns the name and size of a dimension, given its ID */
 % void
 % ncdinq (
-%     int *cdfid,			/* netCDF ID */
-%     int *dimid,			/* dimension ID */
-%     string dimname,			/* returned dimension name */
-%     long *size,			/* returned dimension size */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER dimid,			/* dimension ID */
+%     STRING dimname,			/* returned dimension name */
+%     INTEGER size,			/* returned dimension size */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
+    long siz;
     char name[MAX_NC_NAME + 1];
 
     *rcode = 0;
-    if (ncdiminq (*cdfid, *dimid - 1, name, size) == -1) {
+    if (ncdiminq (*cdfid, *dimid - 1, name, &siz) == -1) {
 	*rcode = ncerr;
 	return;
     }
+    *size = siz;
     if (strlen (name) > dimnamelen) {
 	*rcode = NC_ESTS;
 	handle_err ("NCDINQ", *rcode);
@@ -744,10 +863,10 @@ stoig(shorts, ints, dims, basis, ndims)
 /* renames an existing dimension in a netCDF open for writing */
 % void
 % ncdren (
-%     int *cdfid,			/* netCDF ID */
-%     int *dimid,			/* dimension ID */
-%     string dimname,			/* new name of dimension */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,			/* netCDF ID */
+%     INTEGER dimid,			/* dimension ID */
+%     STRING dimname,			/* new name of dimension */
+%     INTEGER rcode			/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -761,14 +880,14 @@ stoig(shorts, ints, dims, basis, ndims)
 /* returns information about a netCDF variable, given its ID */
 % void
 % ncvinq (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     string varname,			/* returned variable name */
-%     int *datatype,			/* returned variable type */
-%     int *ndims,			/* returned number of dimensions */
-%     int *dimarray,			/* returned array of ndims dimension IDs */
-%     int *natts,			/* returned number of attributes */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING varname,		/* returned variable name */
+%     INTEGER datatype,		/* returned variable type */
+%     INTEGER ndims,		/* returned number of dimensions */
+%     INTEGER dimarray,		/* returned array of ndims dimension IDs */
+%     INTEGER natts,		/* returned number of attributes */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -794,11 +913,11 @@ stoig(shorts, ints, dims, basis, ndims)
 /* puts a single numeric data value into a variable of an open netCDF */
 % void
 % ncvpt1 (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     long *indices,			/* multidim index of data to be written */
-%     void *value,			/* pointer to data value to be written */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     INTEGER indices,		/* multidim index of data to be written */
+%     void *value,		/* pointer to data value to be written */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     int datatype, ndims, natts, i;
@@ -833,6 +952,15 @@ stoig(shorts, ints, dims, basis, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long          longs = *(int *)value;
+	if (ncvarput1(*cdfid, *varid - 1, nindices, (ncvoid *) &longs) == -1) {
+	    *rcode = ncerr;
+	}
+	return;
+    }				/* else */
+#endif
     if (ncvarput1 (*cdfid, *varid - 1, nindices, value) == -1) {
 	*rcode = ncerr;
     }
@@ -841,11 +969,11 @@ stoig(shorts, ints, dims, basis, ndims)
 /* puts a single character into an open netCDF file */
 % void
 % ncvp1c (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     long *indices,			/* multidimensional index of data value to be written */
-%     string chval,			/* data value to be written */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER indices,	/* multidim. index of data value to be written */
+%     STRING chval,	/* data value to be written */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     int datatype, ndims, natts, i;
@@ -872,12 +1000,12 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvpt (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     long *start,			/* multidimensional index of corner of hypercube where first of the data values will be written */
-%     long *count,			/* multidimensional edge lengths from the corner of the hypercube where first of data values will be written */
-%     void *value,			/* pointer to block of data values to be written */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     INTEGER start,		/* multidimensional index of hypercube corner */
+%     INTEGER count,		/* multidimensional hypercube edge lengths */
+%     void *value,		/* block of data values to be written */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
@@ -898,7 +1026,7 @@ stoig(shorts, ints, dims, basis, ndims)
     *rcode = 0;
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) datatype == NC_BYTE) {	/* pack ints into bytes */
-	char *bytes = itob (value, count, ndims);
+	char *bytes = itob (value, ncount, ndims);
 	if (bytes == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -913,18 +1041,34 @@ stoig(shorts, ints, dims, basis, ndims)
 #endif				/* FORTRAN_HAS_NO_BYTE */
 #ifdef FORTRAN_HAS_NO_SHORT
     if ((nc_type) datatype == NC_SHORT) { /* pack ints into shorts */
-	short *shorts = itos (value, count, ndims);
+	short *shorts = itos (value, ncount, ndims);
 	if (shorts == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
 	    }
-	if (ncvarput (*cdfid, *varid - 1, nstart, ncount, (ncvoid *) shorts) == -1) {
+	if (ncvarput (*cdfid, *varid - 1, nstart, ncount,
+		      (ncvoid *) shorts) == -1) {
 	    *rcode = ncerr;
 	}
 	free (shorts);
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long *longs = itol (value, ncount, ndims);
+	if (longs == NULL) {
+	    *rcode = NC_SYSERR;
+	    return;
+	    }
+	if (ncvarput (*cdfid, *varid - 1, nstart, ncount,
+	              (ncvoid *) longs) == -1) {
+	    *rcode = ncerr;
+	}
+	free (longs);
+	return;
+    }				/* else */
+#endif
     if (ncvarput (*cdfid, *varid - 1, nstart, ncount, value) == -1) {
 	*rcode = ncerr;
     }
@@ -933,13 +1077,13 @@ stoig(shorts, ints, dims, basis, ndims)
 /* writes a hypercube of character values into an open netCDF file */
 % void
 % ncvptc (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     long *start,			/* multidimensional index of corner of hypercube where first of the data values will be written */
-%     long *count,			/* multidimensional edge lengths from the corner of the hypercube where first of data values will be written */
-%     string string,		/* pointer to block of data values to be written */
-%     int *lenstr,		/* declared length of the data argument */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     INTEGER start,		/* multidimensional index of hypercube corner */
+%     INTEGER count,		/* multidimensional hypercube edge lengths */
+%     STRING string,		/* block of data values to be written */
+%     INTEGER lenstr,		/* declared length of the data argument */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
@@ -950,17 +1094,17 @@ stoig(shorts, ints, dims, basis, ndims)
 	*rcode = ncerr;
 	return;
     }
-    if (dimprod(count,ndims) > *lenstr) {
-	*rcode = NC_ESTS;
-	handle_err ("NCVPTC", *rcode);
-	return;
-    }
     for (i = 0; i < ndims; i++) {
 	ncount[i] = count[i];
 	nstart[i] = start[i] - 1;
     }
     revlongs (ncount, ndims);
     revlongs (nstart, ndims);
+    if (dimprod(ncount,ndims) > *lenstr) {
+	*rcode = NC_ESTS;
+	handle_err ("NCVPTC", *rcode);
+	return;
+    }
     *rcode = 0;
     if (ncvarput (*cdfid, *varid - 1, nstart, ncount, (ncvoid *) string) == -1) {
 	*rcode = ncerr;
@@ -973,14 +1117,14 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvptg (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     long *start,			/* multidimensional index of corner of hypercube where first of the data values will be written */
-%     long *count,			/* multidimensional edge lengths from the corner of the hypercube where first of data values will be written */
-%     long *stride,			/* netCDF variable access strides */
-%     long *basis,			/* memory values access basis vector */
-%     void *value,			/* pointer to block of data values to be written */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     INTEGER start,		/* multidimensional index of hypercube corner */
+%     INTEGER count,		/* multidimensional hypercube edge lengths */
+%     INTEGER stride,		/* netCDF variable access strides */
+%     INTEGER basis,		/* memory values access basis vector */
+%     void *value,		/* block of data values to be written */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
@@ -993,7 +1137,22 @@ stoig(shorts, ints, dims, basis, ndims)
 	*rcode = ncerr;
 	return;
     }
-    tmpbasis	= nctypelen(datatype);
+#ifdef FORTRAN_HAS_NO_BYTE
+    if (datatype == NC_CHAR || datatype == NC_BYTE)
+	tmpbasis	= nctypelen(NC_LONG);
+    else
+#endif
+#ifdef FORTRAN_HAS_NO_SHORT
+    if (datatype == NC_SHORT)
+	tmpbasis	= nctypelen(NC_LONG);
+    else
+#endif
+#ifdef __alpha
+    if (datatype == NC_LONG)
+	tmpbasis	= sizeof(int);
+    else
+#endif
+	tmpbasis	= nctypelen(datatype);
     for (i = 0; i < ndims; i++) {
 	ncount[i] = count[i];
 	nstart[i] = start[i] - 1;
@@ -1009,7 +1168,11 @@ stoig(shorts, ints, dims, basis, ndims)
     *rcode = 0;
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) datatype == NC_BYTE) {	/* pack ints into bytes */
-	char *bytes = itobg (value, count, nbasis, ndims);
+	/*
+	 * Release 2.3.1 had a bug in the following line: it used `count'
+	 * rather than `ncount'.
+	 */
+	char *bytes = itobg (value, ncount, nbasis, ndims);
 	if (bytes == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -1024,7 +1187,11 @@ stoig(shorts, ints, dims, basis, ndims)
 #endif				/* FORTRAN_HAS_NO_BYTE */
 #ifdef FORTRAN_HAS_NO_SHORT
     if ((nc_type) datatype == NC_SHORT) { /* pack ints into shorts */
-	short *shorts = itosg (value, count, nbasis, ndims);
+	/*
+	 * Release 2.3.1 had a bug in the following line: it used `count'
+	 * rather than `ncount'.
+	 */
+	short *shorts = itosg (value, ncount, nbasis, ndims);
 	if (shorts == NULL) {
 	    *rcode = NC_SYSERR;
 	    return;
@@ -1037,6 +1204,21 @@ stoig(shorts, ints, dims, basis, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long *longs = itolg (value, ncount, nbasis, ndims);
+	if (longs == NULL) {
+	    *rcode = NC_SYSERR;
+	    return;
+	    }
+	if (ncvarputg (*cdfid, *varid - 1, nstart, ncount, nstride,
+		      (long*)NULL, (ncvoid *) longs) == -1) {
+	    *rcode = ncerr;
+	}
+	free (longs);
+	return;
+    }				/* else */
+#endif
     if (ncvarputg (*cdfid, *varid - 1, nstart, ncount, nstride, nbasis,
 		   value) == -1) {
 	*rcode = ncerr;
@@ -1049,14 +1231,14 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvpgc (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     long *start,			/* multidimensional index of corner of hypercube where first of the data values will be written */
-%     long *count,			/* multidimensional edge lengths from the corner of the hypercube where first of data values will be written */
-%     long *stride,			/* netCDF variable access strides */
-%     long *basis,			/* memory values access basis vector */
-%     string string,			/* pointer to block of character values to be written */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     INTEGER start,		/* multidimensional index of hypercube corner */
+%     INTEGER count,		/* multidimensional hypercube edge lengths */
+%     INTEGER stride,		/* netCDF variable access strides */
+%     INTEGER basis,		/* memory values access basis vector */
+%     STRING string,		/* block of character values to be written */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS], i;
@@ -1092,11 +1274,11 @@ stoig(shorts, ints, dims, basis, ndims)
 /* gets a single numeric value from a variable of an open netCDF file */
 % void
 % ncvgt1 (
-%     int *cdfid,	/* netCDF ID */
-%     int *varid,	/* variable ID */
-%     long *indices,	/* multidimensional index of data values to be read */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER indices,	/* multidimensional index of data values to be read */
 %     void *value,	/* pointer to location into which value is read */
-%     int *rcode	/* returned error code */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     long nindices[MAX_VAR_DIMS], i;
@@ -1140,6 +1322,19 @@ stoig(shorts, ints, dims, basis, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long          longs;
+	int           *ip = (int *) value;
+
+	if (ncvarget1(*cdfid, *varid - 1, nindices, (ncvoid *) &longs) == -1) {
+	    *rcode = ncerr;
+	    return;
+	}
+	*ip = longs;
+	return;
+    }				/* else */
+#endif
     if (ncvarget1 (*cdfid, *varid - 1, nindices, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1151,11 +1346,11 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvg1c (
-%     int *cdfid,    /* netCDF ID */
-%     int *varid,    /* variable ID */
-%     long *indices,  /* multidimensional index of the data value to be read */
-%     string chval,   /* location into which data will be read */
-%     int *rcode     /* returned error code */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER indices,	/* multidimensional index of data value to be read */
+%     STRING chval,	/* location into which data will be read */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     long nindices[MAX_VAR_DIMS];
@@ -1183,12 +1378,12 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvgt (
-%     int *cdfid,  /* netCDF ID */
-%     int *varid,  /* variable ID */
-%     long *start,  /* multidimensional index of the corner of the hypercube where the first of the data values will be read from */
-%     long *count,  /* multidimensional edge lengths from the corner of the hypercube where first of the data values will be read */
-%     void *value, /* pointer to first of the locations in which the data will be read from the specified hypercube */
-%     int *rcode   /* returned error code */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER start,	/* multidimensional index of the hypercube corner */
+%     INTEGER count,	/* multidimensional hypercube edge lengths */
+%     void *value,	/* locations into which the data will be read */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
@@ -1209,7 +1404,7 @@ stoig(shorts, ints, dims, basis, ndims)
     *rcode = 0;
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) datatype == NC_BYTE) {
-	long iocount = dimprod (count, ndims);	/* product of dimensions */
+	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
 	char *bytes = (char *) malloc (iocount * sizeof (char));
 	int *ip;
 	char *bp = bytes;
@@ -1218,7 +1413,8 @@ stoig(shorts, ints, dims, basis, ndims)
 	    *rcode = NC_SYSERR;
 	    return;
 	}
-	if (ncvarget (*cdfid, *varid - 1, nstart, ncount, (ncvoid *) bytes) == -1) {
+	if (ncvarget (*cdfid, *varid - 1, nstart, ncount,
+		      (ncvoid *) bytes) == -1) {
 	    *rcode = ncerr;
 	    free (bytes);
 	    return;
@@ -1231,7 +1427,7 @@ stoig(shorts, ints, dims, basis, ndims)
 #endif				/* FORTRAN_HAS_NO_BYTE */
 #ifdef FORTRAN_HAS_NO_SHORT
     if ((nc_type) datatype == NC_SHORT) {
-	long iocount = dimprod (count, ndims);	/* product of dimensions */
+	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
 	short *shorts = (short *) malloc (iocount * sizeof (short));
 	int *ip;
 	short *sp = shorts;
@@ -1240,7 +1436,8 @@ stoig(shorts, ints, dims, basis, ndims)
 	    *rcode = NC_SYSERR;
 	    return;
 	}
-	if (ncvarget (*cdfid, *varid - 1, nstart, ncount, (ncvoid *) shorts) == -1) {
+	if (ncvarget (*cdfid, *varid - 1, nstart, ncount,
+		      (ncvoid *) shorts) == -1) {
 	    *rcode = ncerr;
 	    free (shorts);
 	    return;
@@ -1251,6 +1448,29 @@ stoig(shorts, ints, dims, basis, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
+	long *longs = (long *) malloc (iocount * sizeof (long));
+	int *ip;
+	long *lp = longs;
+
+	if (longs == NULL) {
+	    *rcode = NC_SYSERR;
+	    return;
+	}
+	if (ncvarget (*cdfid, *varid - 1, nstart, ncount,
+		      (ncvoid *) longs) == -1) {
+	    *rcode = ncerr;
+	    free (longs);
+	    return;
+	}
+	for (ip = (int *) value; iocount > 0; iocount--)
+	    *ip++ = *lp++;
+	free (longs);
+	return;
+    }				/* else */
+#endif
     if (ncvarget (*cdfid, *varid - 1, nstart, ncount, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1259,13 +1479,13 @@ stoig(shorts, ints, dims, basis, ndims)
 /* reads a hypercube of character values from a netCDF variable */
 % void
 % ncvgtc (
-%     int *cdfid,	/* netCDF ID */
-%     int *varid,	/* variable ID */
-%     long *start,	/* multidimensional index of the corner of the hypercube where the first of the data values will be read from */
-%     long *count,	/* multidimensional edge lengths from the corner of the hypercube where the first of the data values will be read */
-%     string string,	/* character string into which data values will be read */
-%     int *lenstr,	/* declared length of data argument */
-%     int *rcode	/* returned error code */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER start,	/* multidimensional index of hypercube corner */
+%     INTEGER count,	/* multidimensional hypercube edge lengths */
+%     STRING string,	/* character string for data values */
+%     INTEGER lenstr,	/* declared length of data argument */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
@@ -1305,14 +1525,14 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvgtg (
-%     int *cdfid,  /* netCDF ID */
-%     int *varid,  /* variable ID */
-%     long *start,  /* multidimensional index of the corner of the hypercube where the first of the data values will be read from */
-%     long *count,  /* multidimensional edge lengths from the corner of the hypercube where first of the data values will be read */
-%     long *stride, /* netCDF variable access strides */
-%     long *basis,  /* memory values access basis vectory */
-%     void *value, /* pointer to first of the locations in which the data will be read from the specified hypercube */
-%     int *rcode   /* returned error code */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER start,	/* multidimensional index of hypercube corner */
+%     INTEGER count,	/* multidimensional hypercube edge lengths */
+%     INTEGER stride,	/* netCDF variable access strides */
+%     INTEGER basis,	/* memory values access basis vectory */
+%     void *value,	/* locations into which data will be read */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
@@ -1325,7 +1545,22 @@ stoig(shorts, ints, dims, basis, ndims)
 	*rcode = ncerr;
 	return;
     }
-    tmpbasis	= nctypelen(datatype);
+#ifdef FORTRAN_HAS_NO_BYTE
+    if (datatype == NC_CHAR || datatype == NC_BYTE)
+	tmpbasis	= nctypelen(NC_LONG);
+    else
+#endif
+#ifdef FORTRAN_HAS_NO_SHORT
+    if (datatype == NC_SHORT)
+	tmpbasis	= nctypelen(NC_LONG);
+    else
+#endif
+#ifdef __alpha
+    if (datatype == NC_LONG)
+	tmpbasis	= sizeof(int);
+    else
+#endif
+	tmpbasis	= nctypelen(datatype);
     for (i = 0; i < ndims; i++) {
 	ncount[i] = count[i];
 	nstart[i] = start[i] - 1;
@@ -1341,7 +1576,7 @@ stoig(shorts, ints, dims, basis, ndims)
     *rcode = 0;
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) datatype == NC_BYTE) {
-	long iocount = dimprod (count, ndims);	/* product of dimensions */
+	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
 	char *bytes = (char *) malloc (iocount * sizeof (char));
 	int *ip;
 	char *bp = bytes;
@@ -1356,16 +1591,18 @@ stoig(shorts, ints, dims, basis, ndims)
 	    free (bytes);
 	    return;
 	}
-	for (i = 0; i < ndims; i++)
-	    nbasis[i]	*= sizeof(int)/sizeof(char);
-	btoig(bytes, (int*)value, ncount, basis, ndims);
+	/*
+	 * Release 2.3.1 had a bug in the following line: it used `basis'
+	 * rather than `nbasis'.
+	 */
+	btoig(bytes, (int*)value, ncount, nbasis, ndims);
 	free (bytes);
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_BYTE */
 #ifdef FORTRAN_HAS_NO_SHORT
     if ((nc_type) datatype == NC_SHORT) {
-	long iocount = dimprod (count, ndims);	/* product of dimensions */
+	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
 	short *shorts = (short *) malloc (iocount * sizeof (short));
 	int *ip;
 	short *sp = shorts;
@@ -1380,13 +1617,35 @@ stoig(shorts, ints, dims, basis, ndims)
 	    free (shorts);
 	    return;
 	}
-	for (i = 0; i < ndims; i++)
-	    nbasis[i]	*= sizeof(int)/sizeof(short);
-	stoig(shorts, (int*)value, ncount, basis, ndims);
+	/*
+	 * Release 2.3.1 had a bug in the following line: it used `basis'
+	 * rather than `nbasis'.
+	 */
+	stoig(shorts, (int*)value, ncount, nbasis, ndims);
 	free (shorts);
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long iocount = dimprod (ncount, ndims);	/* product of dimensions */
+	long *longs = (long *) malloc (iocount * sizeof (long));
+
+	if (longs == NULL) {
+	    *rcode = NC_SYSERR;
+	    return;
+	}
+	if (ncvargetg (*cdfid, *varid - 1, nstart, ncount, nstride, 
+		       (long*)NULL, (ncvoid *) longs) == -1) {
+	    *rcode = ncerr;
+	    free (longs);
+	    return;
+	}
+	ltoig(longs, (int*)value, ncount, nbasis, ndims);
+	free (longs);
+	return;
+    }				/* else */
+#endif
     if (ncvargetg (*cdfid, *varid - 1, nstart, ncount, nstride,
 		   nbasis, value) == -1) {
 	*rcode = ncerr;
@@ -1399,14 +1658,14 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncvggc (
-%     int *cdfid,  /* netCDF ID */
-%     int *varid,  /* variable ID */
-%     long *start,  /* multidimensional index of the corner of the hypercube where the first of the data values will be read from */
-%     long *count,  /* multidimensional edge lengths from the corner of the hypercube where first of the data values will be read */
-%     long *stride, /* netCDF variable access strides */
-%     long *basis,  /* memory values access basis vectory */
-%     string string, /* pointer to first of the locations in which the data will be read from the specified hypercube */
-%     int *rcode   /* returned error code */
+%     INTEGER cdfid,	/* netCDF ID */
+%     INTEGER varid,	/* variable ID */
+%     INTEGER start,	/* multidimensional index of hypercube corner */
+%     INTEGER count,	/* multidimensional hypercube edge lengths */
+%     INTEGER stride,	/* netCDF variable access strides */
+%     INTEGER basis,	/* memory values access basis vectory */
+%     STRING string,	/* locations into which data will be read */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     long ncount[MAX_VAR_DIMS], nstart[MAX_VAR_DIMS];
@@ -1442,10 +1701,10 @@ stoig(shorts, ints, dims, basis, ndims)
 /* changes the name of a netCDF variable in an open netCDF file */
 % void
 % ncvren (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     string varname,		/* new name for variable */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING varname,		/* new name for variable */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1463,13 +1722,13 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncapt (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     string attname,		/* attribute name */
-%     int *datatype,		/* attribute datatype */
-%     int *attlen,		/* attribute length */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* attribute name */
+%     INTEGER datatype,		/* attribute datatype */
+%     INTEGER attlen,		/* attribute length */
 %     void *value,		/* pointer to data values */
-%     int *rcode		/* returned error code */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1509,6 +1768,22 @@ stoig(shorts, ints, dims, basis, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) *datatype == NC_LONG) {
+	long *longs = itol (value, attlen, 1);
+
+	if (longs == NULL) {
+	    *rcode = NC_SYSERR;
+	    return;
+	}
+	if (ncattput (*cdfid, *varid - 1, name, (nc_type) *datatype, *attlen,
+		      (ncvoid *) longs) == -1) {
+	    *rcode = ncerr;
+	}
+	free (longs);
+	return;
+    }				/* else */
+#endif
     if (ncattput (*cdfid, *varid - 1, name, (nc_type) *datatype, *attlen,
 		  value) == -1) {
 	*rcode = ncerr;
@@ -1521,13 +1796,13 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncaptc (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     string attname,		/* attribute name */
-%     int *datatype,		/* attribute datatype */
-%     int *lenstr,		/* length of data argument */
-%     string string,		/* character string value */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* attribute name */
+%     INTEGER datatype,		/* attribute datatype */
+%     INTEGER lenstr,		/* length of data argument */
+%     STRING string,		/* character string value */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1554,12 +1829,12 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncainq (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     string attname,		/* returned attribute name */
-%     int *datatype,		/* returned attribute datatype */
-%     int *attlen,		/* returned attribute length */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* returned attribute name */
+%     INTEGER datatype,		/* returned attribute datatype */
+%     INTEGER attlen,		/* returned attribute length */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1577,27 +1852,24 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncagt (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     string attname,		/* attribute name */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* attribute name */
 %     void *value,		/* returned attribute values */
-%     int *rcode		/* returned error code */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
-#if defined(FORTRAN_HAS_NO_BYTE) || defined(FORTRAN_HAS_NO_SHORT)
     int datatype;
     int attlen;
-#endif
 
     nstrncpy (name, attname, attnamelen);
     *rcode = 0;
-#if defined(FORTRAN_HAS_NO_BYTE) || defined(FORTRAN_HAS_NO_SHORT)
-    if (ncattinq (*cdfid, *varid - 1, name, (nc_type *) &datatype, &attlen) == -1) {
+    if (ncattinq (*cdfid, *varid - 1, name, (nc_type *) &datatype, &attlen)
+	    == -1) {
 	*rcode = ncerr;
 	return;
     }
-#endif
 #ifdef FORTRAN_HAS_NO_BYTE
     if ((nc_type) datatype == NC_BYTE) {
 	char *bytes = (char *) malloc (attlen);
@@ -1640,7 +1912,27 @@ stoig(shorts, ints, dims, basis, ndims)
 	return;
     }				/* else */
 #endif				/* FORTRAN_HAS_NO_SHORT */
+#ifdef __alpha
+    if ((nc_type) datatype == NC_LONG) {
+	long *longs = (long *) malloc (attlen * sizeof (long));
+	int *ip;
+	long *lp = longs;
 
+	if (longs == NULL) {
+	    *rcode = NC_SYSERR;
+	    return;
+	}
+	if (ncattget (*cdfid, *varid - 1, name, (ncvoid *) longs) == -1) {
+	    *rcode = ncerr;
+	    free (longs);
+	    return;
+	}
+	for (ip = (int *) value; attlen > 0; attlen--)
+	    *ip++ = *lp++;
+	free (longs);
+	return;
+    }				/* else */
+#endif
     if (ncattget (*cdfid, *varid - 1, name, value) == -1) {
 	*rcode = ncerr;
     }
@@ -1652,12 +1944,12 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncagtc (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     string attname,		/* attribute name */
-%     string string,		/* returned attribute value */
-%     int *lenstr,		/* length of string argument */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* attribute name */
+%     STRING string,		/* returned attribute value */
+%     INTEGER lenstr,		/* length of string argument */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1688,12 +1980,12 @@ stoig(shorts, ints, dims, basis, ndims)
 /* copies an attribute from one open netCDF file to another */
 % void
 % ncacpy (
-%     int *incdfid,	/* input netCDF ID */
-%     int *invarid,	/* variable ID of input netCDF or NC_GLOBAL */
-%     string attname,	/* name of attribute in input netCDF to be copied */
-%     int *outcdfid,	/* netCDF ID of output netCDF file to which attribute will be copied */
-%     int *outvarid,	/* ID of the variable in output netCDF file to which attribute will be copied or NC_GLOBAL */
-%     int *rcode	/* returned error code */
+%     INTEGER incdfid,	/* input netCDF ID */
+%     INTEGER invarid,	/* variable ID of input netCDF or NC_GLOBAL */
+%     STRING attname,	/* name of attribute in input netCDF to be copied */
+%     INTEGER outcdfid,	/* ID of output netCDF file for attribute */
+%     INTEGER outvarid,	/* ID of associated netCDF variable or NC_GLOBAL */
+%     INTEGER rcode	/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1712,11 +2004,11 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncanam (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     int *attnum,		/* attribute number */
-%     string attname,		/* returned attribute name */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     INTEGER attnum,		/* attribute number */
+%     STRING attname,		/* returned attribute name */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1738,11 +2030,11 @@ stoig(shorts, ints, dims, basis, ndims)
 /* renames an attribute in an open netCDF file */
 % void
 % ncaren (
-%     int *cdfid,			/* netCDF ID */
-%     int *varid,			/* variable ID */
-%     string attname,		/* attribute name */
-%     string newname,		/* new name */
-%     int *rcode			/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* attribute name */
+%     STRING newname,		/* new name */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1], nname[MAX_NC_NAME + 1];
@@ -1761,10 +2053,10 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % void
 % ncadel (
-%     int *cdfid,		/* netCDF ID */
-%     int *varid,		/* variable ID */
-%     string attname,		/* attribute name */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER varid,		/* variable ID */
+%     STRING attname,		/* attribute name */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     char name[MAX_NC_NAME + 1];
@@ -1782,9 +2074,9 @@ stoig(shorts, ints, dims, basis, ndims)
  */
 % int
 % ncsfil (
-%     int *cdfid,		/* netCDF ID */
-%     int *fillmode,		/* fill mode, NCNOFILL or NCFILL */
-%     int *rcode		/* returned error code */
+%     INTEGER cdfid,		/* netCDF ID */
+%     INTEGER fillmode,		/* fill mode, NCNOFILL or NCFILL */
+%     INTEGER rcode		/* returned error code */
 %     )
 % {
     int retval;

@@ -5,8 +5,8 @@
 
 PACKAGE		= netcdf
 MANIFEST	= CHANGES COPYRIGHT CUSTOMIZE FAQ INSTALL MANIFEST \
-		  Makefile.in ORIGIN README VERSION configure configure.in \
-		  aclocal.m4 msoft.mk
+		  Makefile.in ORIGIN README THANKS VERSION configure \
+		  configure.in aclocal.m4 msoft.mk
 SUBDIRS		= port doc fortran ncdump ncgen nctest libsrc xdr c++
 SUBDIR_TARGETS	= \
     port/all	port/clean   port/distclean \

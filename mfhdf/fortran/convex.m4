@@ -32,4 +32,7 @@ define(`BYTE_INT',`integer*1')
 # FORTRAN declaration for double precision (e.g. real for a Cray)
 define(`DOUBLE_PRECISION',`double precision')
 
+# C integral type equivalent to a FORTRAN INTEGER
+define(`F_INTEGER',`int')
+
 divert(0)dnl

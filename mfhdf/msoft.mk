@@ -10,7 +10,7 @@
 
 OS2     = 0
 CC        = cl
-CFLAGS    = /c /AL /Za
+CFLAGS    = /c /AL /Za /DMSDOS
 DESTDIR   = C:
 F77	  = fl
 FFLAGS	  = /c /AL

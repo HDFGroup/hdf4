@@ -6,6 +6,8 @@ divert(-1)dnl
 # diversion 4 is for extra local variables derived from formal arguments
 #
 define(`STRING',`divert(1)ifdef(`INIT',,`, ')STRINGF(`$1')`'undefine(`INIT')divert(2)`'STRINGX(`$1')`'divert(3)`'STRINGD(`$1',`$2')`'divert(4)`'STRINGL(`$1')`'divert(0)')dnl
+define(`INTEGERSTAR',`divert(1)ifdef(`INIT',,`, ')$1`'undefine(`INIT')divert(3)
+    F_INTEGER		*$1;	`$2'divert(0)')dnl
 define(`INTSTAR',`divert(1)ifdef(`INIT',,`, ')$1`'undefine(`INIT')divert(3)
     int		*$1;	`$2'divert(0)')dnl
 define(`LONGSTAR',`divert(1)ifdef(`INIT',,`, ')$1`'undefine(`INIT')divert(3)

@@ -13,14 +13,15 @@
 
 #include	"local_nc.h"
 
-#ifndef HDF
-    static 
-#endif
-    int
+
 /*
  * Perform I/O on a generalized hyperslab.  The efficiency of this
  * implementation is dependent upon caching in the lower layers.
  */
+#ifndef HDF
+    static 
+#endif
+int
 NCgenio(handle, varid, start, count, stride, imap, values)
     NC		*handle;
     int		varid;
@@ -57,6 +58,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	long	myimap[MAX_NC_DIMS];
 	long	iocount[MAX_NC_DIMS];	/* count vector for NCvario() */
 	long	stop[MAX_NC_DIMS];	/* stop indexes */
+	long	length[MAX_NC_DIMS];	/* edge lengths in bytes */
 
 	/*
 	 * Verify stride argument.
@@ -90,6 +92,7 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 					: myimap[idim+1] * mycount[idim+1];
 
 	    iocount[idim]	= 1;
+	    length[idim]	= myimap[idim] * mycount[idim];
 	    stop[idim]		= mystart[idim] + mycount[idim]*mystride[idim];
 	}
 
@@ -101,7 +104,8 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	 */
 	if (mystride[maxidim] == 1 && myimap[maxidim] == vp->szof) {
 	    iocount[maxidim]	= mycount[maxidim];
-	    stop[maxidim]	= mystart[maxidim];
+	    mystride[maxidim]	= mycount[maxidim];
+	    myimap[maxidim]	= length[maxidim];
 	}
 
 	/*
@@ -125,9 +129,9 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	    mystart[idim]	+= mystride[idim];
 	    if (mystart[idim] >= stop[idim]) {
 		mystart[idim]	 = start[idim];
+		valp		-= length[idim];
 		if (--idim < 0)
 		    return 0;
-		valp		-= myimap[idim];
 		goto carry;
 	    }
 	}				/* I/O loop */
@@ -156,11 +160,11 @@ const ncvoid *values ;
 	if(handle == NULL)
 		return(-1) ;
 
-        if(!(handle->flags & NC_RDWR))
-        {
-                NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
-                return(-1) ;
-        }
+	if(!(handle->flags & NC_RDWR))
+	{
+		NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+		return(-1) ;
+	}
 	handle->xdrs->x_op = XDR_ENCODE ;
 
 	return NCgenio(handle, varid, start, count, 
@@ -216,11 +220,11 @@ const ncvoid *values ;
 	if(handle == NULL)
 		return(-1) ;
 
-        if(!(handle->flags & NC_RDWR))
-        {
-                NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
-                return(-1) ;
-        }
+	if(!(handle->flags & NC_RDWR))
+	{
+		NCadvise(NC_EPERM, "%s: NC_NOWRITE", handle->path) ;
+		return(-1) ;
+	}
 	handle->xdrs->x_op = XDR_ENCODE ;
 
 	return NCgenio(handle, varid, start, count, 

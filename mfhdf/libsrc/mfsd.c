@@ -437,12 +437,12 @@ int32 *rank, *nt, *nattr, *dimsizes;
 
 */
 #ifdef PROTOTYPE
-int32 SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, Void *data)
+int32 SDreaddata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
 int32 SDreaddata(sdsid, start, stride, end, data)
 int32 sdsid;
 int32 *start, *stride, *end;
-Void  *data;
+VOIDP data;
 #endif
 {
 
@@ -625,11 +625,11 @@ char  *name;
 */
 intn
 #ifdef PROTOTYPE
-SDgetrange(int32 sdsid, Void *pmax, Void *pmin)
+SDgetrange(int32 sdsid, VOIDP pmax, VOIDP pmin)
 #else
 SDgetrange(sdsid, pmax, pmin)
 int32 sdsid;
-Void *pmax, *pmin;
+VOIDP pmax, pmin;
 #endif
 {
     NC      * handle;
@@ -1098,11 +1098,11 @@ VOIDP    data;
 
 intn
 #ifdef PROTOTYPE
-SDsetrange(int32 sdsid, Void *pmax, Void *pmin)
+SDsetrange(int32 sdsid, VOIDP pmax, VOIDP pmin)
 #else
 SDsetrange(sdsid, pmax, pmin)
 int32 sdsid;
-Void *pmax, *pmin;
+VOIDP pmax, pmin;
 #endif
 {
     NC      * handle;
@@ -1154,14 +1154,14 @@ Void *pmax, *pmin;
 */
 intn
 #ifdef PROTOTYPE
-SDsetattr(int32 id, char *name, int32 nt, intn count, Void *data)
+SDsetattr(int32 id, char *name, int32 nt, intn count, VOIDP data)
 #else
 SDsetattr(id, name, nt, count, data)
 int32 id;
 char  *name;
 int32 nt;
 intn  count;
-Void  *data;
+VOIDP data;
 #endif
 { 
 
@@ -1302,11 +1302,11 @@ intn  *count;
 
 intn
 #ifdef PROTOTYPE
-SDreadattr(int32 id, int32 index, Void *buf)
+SDreadattr(int32 id, int32 index, VOIDP buf)
 #else
 SDreadattr(id, index, buf)
 int32 id, index;
-Void *buf;
+VOIDP buf;
 #endif
 {
 
@@ -1372,12 +1372,12 @@ Void *buf;
 
 */
 #ifdef PROTOTYPE
-int32 SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, Void *data)
+int32 SDwritedata(int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data)
 #else
 int32 SDwritedata(sdsid, start, stride, end, data)
 int32 sdsid;
 int32 *start, *stride, *end;
-Void  *data;
+VOIDP data;
 #endif
 {
 
@@ -1584,11 +1584,11 @@ int32 nt;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetfillvalue(int32 sdsid, Void *val)
+int32 SDsetfillvalue(int32 sdsid, VOIDP val)
 #else
 int32 SDsetfillvalue(sdsid, val)
 int32 sdsid;
-Void *val;
+VOIDP val;
 #endif
 {
 
@@ -1633,11 +1633,11 @@ Void *val;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetfillvalue(int32 sdsid, Void *val)
+int32 SDgetfillvalue(int32 sdsid, VOIDP val)
 #else
 int32 SDgetfillvalue(sdsid, val)
 int32 sdsid;
-Void *val;
+VOIDP val;
 #endif
 {
 
@@ -1979,12 +1979,12 @@ char  *l, *u, *f;
 
 */
 #ifdef PROTOTYPE
-int32 SDsetdimscale(int32 id, int32 count, int32 nt, Void *data)
+int32 SDsetdimscale(int32 id, int32 count, int32 nt, VOIDP data)
 #else
 int32 SDsetdimscale(id, count, nt, data)
 int32 id;
 int32 count, nt;
-Void  *data;
+VOIDP data;
 #endif
 {
 
@@ -2043,11 +2043,11 @@ Void  *data;
 
 */
 #ifdef PROTOTYPE
-int32 SDgetdimscale(int32 id, Void *data)
+int32 SDgetdimscale(int32 id, VOIDP data)
 #else
 int32 SDgetdimscale(id, data)
 int32 id;
-Void  *data;
+VOIDP data;
 #endif
 {
 

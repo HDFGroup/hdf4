@@ -53,8 +53,8 @@ expand_escapes(termstring, yytext, yyleng)
 	      case '\\':
 		*s++ = '\\'; t++;
 		break;
-	      case '\?':
-		*s++ = '\?'; t++;
+	      case '?':
+		*s++ = '\177'; t++;
 		break;
 	      case '\'':
 		*s++ = '\''; t++;

@@ -14,7 +14,7 @@ PRINTER		= hpnp
 
 all::
 
-install::	installed_manuals installed_infos
+install::	installed_manuals
 
 guide.hc:	guide.ps
 	lpr -P$(PRINTER) guide.ps

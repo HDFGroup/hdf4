@@ -25,6 +25,9 @@ define(`STRINGD',`
 # declarations and initializations of canonical local variables
 define(`STRINGL',`')
 
+# C integral type equivalent to a FORTRAN INTEGER
+define(`F_INTEGER',`int') 
+
 # FORTRAN declaration for a long integer (e.g. integer*4 for Microsoft)
 define(`LONG_INT',`integer')
 

@@ -2,6 +2,7 @@ s/\([^a-zA-Z]\)len/\1M4_len_4M/g
 s/CHARSTAR/M4_CHARSTAR_4M/g
 s/DOUBLESTAR/M4_DOUBLESTAR_4M/g
 s/FLOATSTAR/M4_FLOATSTAR_4M/g
+s/INTEGERSTAR/M4_INTEGERSTAR_4M/g
 s/INTSTAR/M4_INTSTAR_4M/g
 s/LONGSTAR/M4_LONGSTAR_4M/g
 s/NAMEF/M4_NAMEF_4M/g
@@ -52,8 +53,16 @@ s/unix/M4_unix_4M/g
     s//M4__PROTO(`\1',/
     b
 }
+/^%[ 	]*STRING[ 	]*\([a-zA-Z_][^ 	]*\).*$/ {
+    s//`STRING(\1)dnl'/
+    b cleanup
+}
 /^%[ 	]*string[ 	]*\([a-zA-Z_][^ 	]*\).*$/ {
     s//`STRING(\1)dnl'/
+    b cleanup
+}
+/^%[ 	]*INTEGER[ 	]*[ 	]*\([A-Za-z_][^ 	]*\).*$/ {
+    s//`INTEGERSTAR(\1)dnl'/
     b cleanup
 }
 /^%[ 	]*int[ 	]*\*[ 	]*\([A-Za-z_][^ 	]*\).*$/ {
@@ -64,8 +73,16 @@ s/unix/M4_unix_4M/g
     s//`LONGSTAR(\1)dnl'/
     b cleanup
 }
+/^%[ 	]*REAL[ 	]*[ 	]*\([A-Za-z_][^ 	]*\).*$/ {
+    s//`FLOATSTAR(\1)dnl'/
+    b cleanup
+}
 /^%[ 	]*float[ 	]*\*[ 	]*\([A-Za-z_][^ 	]*\).*$/ {
     s//`FLOATSTAR(\1)dnl'/
+    b cleanup
+}
+/^%[ 	]*DOUBLE[ 	]*[ 	]*\([A-Za-z_][^ 	]*\).*$/ {
+    s//`DOUBLESTAR(\1)dnl'/
     b cleanup
 }
 /^%[ 	]*double[ 	]*\*[ 	]*\([A-Za-z_][^ 	]*\).*$/ {

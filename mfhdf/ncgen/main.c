@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef __hpux
+#include <locale.h>
+#endif
+    
 #include "genlib.h"
 
 char *progname;			/* for error messages */
@@ -30,6 +34,10 @@ char *argv[];
     int c;
     FILE *fp, *efopen();
 
+#ifdef __hpux
+    setlocale(LC_CTYPE,"");
+#endif
+    
 #ifdef MDEBUG
 	malloc_debug(2) ;	/* helps find malloc/free errors on Sun */
 #endif /* MDEBUG */

@@ -16,7 +16,7 @@ ARFLAGS   =
 ASM       = masm
 
 CC	      = cl
-CFLAGS    = /c /AL /Za
+CFLAGS    = /c /AL /Za /DMSDOS
 
 !IF $(WANT_FORTRAN_NETCDF)
 F77       = fl
@@ -38,7 +38,7 @@ BINDIR    = $(DESTDIR)\bin
 LIBDIR    = $(DESTDIR)\lib
 NCGENLIB  = ncgen.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
-CLIB      = llibc7.lib
+CLIB      = llibce.lib
 
 !IF $(OS2)
 OS2LIB    = os2.lib
@@ -89,7 +89,7 @@ FORCE:
 ntest:	ncgen.exe test0.cdl test1.cdl
 	ncgen -b test1.cdl
 	..\ncdump\ncdump test1.nc > test2.cdl
- 	diff test1.cdl test2.cdl
+ 	echo N | comp test1.cdl test2.cdl
 	@echo "*** ncgen -b test successful ***"
 
 # test "-c" option of ncgen
@@ -99,7 +99,7 @@ ctest:	ncgen.exe test0.cdl test1.cdl
 	$(LINK) $(LFLAGS) test0,test0.exe,,$(LIBS);
 	test0
 	..\ncdump\ncdump -n test1 ctest0.nc > ctest1.cdl
- 	diff test1.cdl ctest1.cdl
+ 	echo N | comp test1.cdl ctest1.cdl
 	@echo "*** ncgen -c test successful ***"
 
 # test "-f" option of ncgen
@@ -109,7 +109,7 @@ ftest:	ncgen.exe test0.cdl netcdf.inc test1.cdl msoft.int jackets.obj fslen.obj
 	$(LINK) $(LFLAGS) test0 jackets fslen,test0.exe,,$(LIBS) $(FORTLIB);
 	test0
 	..\ncdump\ncdump -n test1 ftest0.nc > ftest1.cdl
- 	diff test1.cdl ftest1.cdl
+ 	echo N | comp test1.cdl ftest1.cdl
 	@echo "*** ncgen -f test successful ***" 
 
 test1.cdl: test0.nc

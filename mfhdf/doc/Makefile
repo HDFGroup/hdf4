@@ -15,7 +15,7 @@ PRINTER		= hpnp
 
 all::
 
-install::	installed_manuals installed_infos
+install::	installed_manuals
 
 guide.hc:	guide.ps
 	lpr -P$(PRINTER) guide.ps
@@ -547,7 +547,7 @@ depend:		FORCE
 # Distributions:
 ############################################################################
 FTPDIR		= /home/ftp/pub/sdm
-VERSION		= 2.3
+VERSION		= 2.3.2
 
 ftp:		$(FTPDIR)/$(PACKAGE)-$(VERSION).tar.Z
 	test ! -h $(FTPDIR)/$(PACKAGE).tar.Z && exit 0; \

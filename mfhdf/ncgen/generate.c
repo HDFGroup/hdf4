@@ -77,8 +77,6 @@ gen_netcdf(filename)
     }
 }
 
-#define fpr    (void) fprintf
-
 /*
  * Output a C statement.
  */
@@ -88,8 +86,8 @@ cline(stmnt)
 {
     FILE *cout = stdout;
     
-    fpr(cout, stmnt);
-    fpr(cout, "\n");
+    fputs(stmnt, cout);
+    fputs("\n", cout);
 }
 
 
@@ -364,16 +362,16 @@ fline(stmnt)
 	'+', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
     
     if(stmnt[0] == '*') {
-	fpr(fout, stmnt);
-	fpr(fout,"\n");
+	fputs(stmnt, fout);
+	fputs("\n", fout);
 	return;
     }
 
     while (len > 0) {
 	if (line >= FORT_MAX_LINES)
 	  derror("FORTRAN statement too long: %s",stmnt);
-	fpr(fout, "     %c", cont[line++]);
-	fpr(fout, "%.66s\n", stmnt);
+	(void) fprintf(fout, "     %c", cont[line++]);
+	(void) fprintf(fout, "%.66s\n", stmnt);
 	len -= 66;
 	if (len > 0)
 	  stmnt += 66;
@@ -791,14 +789,15 @@ cstring(type,valp, num)
 	  case '\t': *cp++ = '\\'; *cp++ = 't'; break;
 	  case '\v': *cp++ = '\\'; *cp++ = 'v'; break;
 	  case '\\': *cp++ = '\\'; *cp++ = '\\'; break;
-	  case '\?': *cp++ = '\\'; *cp++ = '?'; break;
+/*, tj	  case '\?': *cp++ = '\\'; *cp++ = '?'; break; */
 	  case '\'': *cp++ = '\\'; *cp++ = '\''; break;
 	  default:
-	    if (ch < '\040' || ch > '\176') { /* assumes ASCII */
+/*, tj	    if (ch < '\040' || ch > '\176') { */ /* assumes ASCII */
+	    if (!isprint((unsigned char)ch)) {
 		static char octs[] = "01234567";
-		int rem = ch%64;
+		int rem = ((unsigned char)ch)%64;
 		*cp++ = '\\';
-		*cp++ = octs[ch/64]; /* to get, e.g. '\177' */
+		*cp++ = octs[((unsigned char)ch)/64]; /* to get, e.g. '\177' */
 		*cp++ = octs[rem/8];
 		*cp++ = octs[rem%8];
 	    } else {
@@ -870,13 +869,13 @@ fstring(type,valp, num)
       case NC_BYTE:
 	sp = cp = (char *) emalloc (10);
 	ch = *((char *)valp + num);
-	if (isprint((unsigned)ch)) {
+	if (isprint((unsigned char)ch)) {
 	    *cp++ = '\'';
 	    *cp++ = ch;
 	    *cp++ = '\'';
 	    *cp = '\0';
 	} else {
-	    sprintf(cp,"%d",ch); /* char(%d) ? */
+	    sprintf(cp,"%d",(unsigned char)ch); /* char(%d) ? */
 	}
 	return sp;
 
@@ -944,14 +943,15 @@ cstrstr(valp, len)
 	  case '\t': *cp++ = '\\'; *cp++ = 't'; break;
 	  case '\v': *cp++ = '\\'; *cp++ = 'v'; break;
 	  case '\\': *cp++ = '\\'; *cp++ = '\\'; break;
-	  case '\?': *cp++ = '\\'; *cp++ = '?'; break;
+/*, tj	  case '\?': *cp++ = '\\'; *cp++ = '?'; break; */
 	  case '\'': *cp++ = '\\'; *cp++ = '\''; break;
 	  default:
-	    if (*istr < '\040' || *istr > '\176') { /* assumes ASCII */
+/*, tj	    if (*istr < '\040' || *istr > '\176') { */ /* assumes ASCII */
+	    if (!isprint((unsigned char)*istr)) {
 		static char octs[] = "01234567";
-		int rem = *istr%64;
+		int rem = ((unsigned char)*istr)%64;
 		*cp++ = '\\';
-		*cp++ = octs[*istr/64]; /* to get, e.g. '\177' */
+		*cp++ = octs[((unsigned char)*istr)/64]; /* to get, e.g. '\177' */
 		*cp++ = octs[rem/8];
 		*cp++ = octs[rem%8];
 	    } else {
@@ -1001,7 +1001,7 @@ fstrstr(str, ilen)
 	free(istr0);
 	return ostr;
     }
-    if (isprint(*istr)) {	/* handle first character in input */
+    if (isprint((unsigned char)*istr)) {	/* handle first character in input */
 	*cp++ = '\'';
 	if (*istr == '\'') {
 	    *cp++ = '\'';
@@ -1012,7 +1012,7 @@ fstrstr(str, ilen)
 	*cp = '\0';
 	was_print = 1;
     } else {
-	sprintf(tstr, "char(%d)", *istr);
+	sprintf(tstr, "char(%d)", (unsigned char)*istr);
 	strcat(cp, tstr);
 	cp += strlen(tstr);
 	was_print = 0;
@@ -1020,7 +1020,7 @@ fstrstr(str, ilen)
     istr++;
 
     while (*istr != '\0') {	/* handle subsequent characters in input */
-	if (isprint(*istr)) {
+	if (isprint((unsigned char)*istr)) {
 	    if (! was_print) {
 		strcat(cp, "//'");
 		cp += 3;
@@ -1038,7 +1038,7 @@ fstrstr(str, ilen)
 		*cp++ = '\'';
 		*cp = '\0';
 	    }
-	    sprintf(tstr, "//char(%d)", *istr);
+	    sprintf(tstr, "//char(%d)", (unsigned char)*istr);
 	    strcat(cp, tstr);
 	    cp += strlen(tstr);
 	    was_print = 0;

@@ -25,6 +25,9 @@ define(`STRINGD',`
 define(`STRINGL',`
     int $1`'`len' = fslen(STR_COUNT`'define(`STR_COUNT',incr(STR_COUNT)));') # all strings must be null-terminated
 
+# C integral type equivalent to a FORTRAN INTEGER
+define(`F_INTEGER',`long') 
+
 # FORTRAN declaration for a long integer (e.g. integer*4 for Microsoft)
 define(`LONG_INT',`integer*4')
 

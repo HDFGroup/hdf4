@@ -34,6 +34,9 @@ define(`STRINGL',`
     char	*$1	= _fcdtocp ($1d);
     unsigned	$1len	= _fcdlen ($1d);')	# use _fcd functions
 
+# C integral type equivalent to a FORTRAN INTEGER
+define(`F_INTEGER',`int') 
+
 # FORTRAN declaration for a long integer (e.g. integer*4 for Microsoft)
 define(`LONG_INT',`integer')
 

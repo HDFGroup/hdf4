@@ -12,7 +12,7 @@ AR       = LIB
 ARFLAGS  = 
 
 CC        = cl
-CFLAGS	  = /c /AL /Za
+CFLAGS	  = /c /AL /Za /DMSDOS
 
 LINK      = link
 LFLAGS    = /st:30000 /nod
@@ -26,7 +26,7 @@ BINDIR    = $(DESTDIR)\bin
 LIBDIR    = $(DESTDIR)\lib
 NCTESTLIB = nctest.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
-CLIB      = llibc7.lib
+CLIB      = llibce.lib
 !IF $(OS2)
 OS2LIB    = os2.lib
 !ELSE

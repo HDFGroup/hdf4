@@ -13,7 +13,7 @@ AR       = LIB
 ARFLAGS  = 
 
 CC       = cl
-CFLAGS   = /c /AL /Za
+CFLAGS   = /c /AL /Za /DMSDOS
 
 LINK     = link
 LFLAGS   = /nod
@@ -31,7 +31,7 @@ OS2LIB    = os2.lib
 !ELSE
 OS2LIB    =
 !ENDIF
-LIBS     = $(XDRLIB) llibc7.lib $(OS2LIB)
+LIBS     = $(XDRLIB) llibce.lib $(OS2LIB)
 
 XDROBJS  = xdr.obj xdrarray.obj xdrfloat.obj xdrstdio.obj byteordr.obj
 XDRLOBJS = -+xdr -+xdrarray -+xdrfloat -+xdrstdio -+byteordr

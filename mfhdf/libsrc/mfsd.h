@@ -32,7 +32,7 @@ extern int32 SDgetinfo
            int32 *nt, int32 *nattr));
 
 extern int32 SDreaddata
-    PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, Void *data));
+    PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
 
 extern uint16 SDgerefnumber
     PROTO((int32 sdsid));
@@ -41,7 +41,7 @@ extern int32 SDnametoindex
     PROTO((int32 fid, char *name));
 
 extern intn SDgetrange
-    PROTO((int32 sdsid, Void *pmax, Void *pmin));
+    PROTO((int32 sdsid, VOIDP pmax, VOIDP pmin));
 
 extern int32 SDcreate
     PROTO((int32 fid, char *name, int32 nt, int32 rank, int32 *dimsizes));
@@ -56,19 +56,19 @@ extern int32 SDendaccess
     PROTO((int32 id));
 
 extern intn SDsetrange
-    PROTO((int32 sdsid, Void *pmax, Void *pmin));
+    PROTO((int32 sdsid, VOIDP pmax, VOIDP pmin));
 
 extern intn SDsetattr
-    PROTO((int32 id, char *name, int32 nt, intn count, Void *data));
+    PROTO((int32 id, char *name, int32 nt, intn count, VOIDP data));
 
 extern intn SDattrinfo
     PROTO((int32 id, int32 index, char *name, int32 *nt, intn *count));
 
 extern intn SDreadattr
-    PROTO((int32 id, int32 index, Void *buf));
+    PROTO((int32 id, int32 index, VOIDP buf));
 
 extern int32 SDwritedata
-    PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, Void *data));
+    PROTO((int32 sdsid, int32 *start, int32 *stride, int32 *end, VOIDP data));
 
 extern int32 SDsetdatastrs
     PROTO((int32 sdsid, char *l, char *u, char *f, char *c));
@@ -78,10 +78,10 @@ extern int32 SDsetcal
                float64 ioffe, int32 nt));
 
 extern int32 SDsetfillvalue
-    PROTO((int32 sdsid, Void *val));
+    PROTO((int32 sdsid, VOIDP val));
 
 extern int32 SDgetfillvalue
-    PROTO((int32 sdsid, Void *val));
+    PROTO((int32 sdsid, VOIDP val));
 
 extern int32 SDgetdatastrs
     PROTO((int32 sdsid, char *l, char *u, char *f, char *c, intn len));
@@ -94,10 +94,10 @@ extern int32 SDsetdimstrs
     PROTO((int32 id, char *l, char *u, char *f));
 
 extern int32 SDsetdimscale
-    PROTO((int32 id, int32 count, int32 nt, Void *data));
+    PROTO((int32 id, int32 count, int32 nt, VOIDP data));
 
 extern int32 SDgetdimscale
-    PROTO((int32 id, Void *data));
+    PROTO((int32 id, VOIDP data));
 
 extern int32 SDdiminfo
     PROTO((int32 id, char *name, int32 *size, int32 *nt, int32 *nattr));

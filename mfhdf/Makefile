@@ -6,8 +6,8 @@
 
 PACKAGE		= netcdf
 MANIFEST	= CHANGES COPYRIGHT CUSTOMIZE FAQ INSTALL MANIFEST \
-		  Makefile.in ORIGIN README VERSION configure configure.in \
-		  aclocal.m4 msoft.mk
+		  Makefile.in ORIGIN README THANKS VERSION configure \
+		  configure.in aclocal.m4 msoft.mk
 SUBDIRS		= port doc fortran ncdump ncgen nctest libsrc xdr c++
 SUBDIR_TARGETS	= \
     port/all	port/clean   port/distclean \
@@ -549,7 +549,7 @@ depend:		FORCE
 # Distributions:
 ############################################################################
 FTPDIR		= /home/ftp/pub/sdm
-VERSION		= 2.3
+VERSION		= 2.3.2
 
 ftp:		$(FTPDIR)/$(PACKAGE)-$(VERSION).tar.Z
 	test ! -h $(FTPDIR)/$(PACKAGE).tar.Z && exit 0; \

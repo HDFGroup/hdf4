@@ -5433,7 +5433,7 @@ imap[0] = stride[2]*sizeof(struct datum);
 imap[1] = stride[1]*(1+(LONS-1)/stride[0])*imap[0];
 imap[2] = stride[0]*(1+(LATS-1)/stride[1])*imap[1];
 /* write generalized hyperslab of values into netCDF variable */
-ncvarputg(ncid, rh_id, start, count, stride, imap, (void *) data);
+ncvarputg(ncid, rh_id, start, count, stride, imap, (void*)&data[0][0][0].rh_val);
 @end group
 @end example
 
@@ -6276,22 +6276,32 @@ with @code{time}, @code{lat}, and @code{lon}, and that there are three
 @example 
 @group
 #include "netcdf.h"
-   @dots{} #define TIMES 3 #define LATS 5 #define LONS 10 int ncid; /*
-netCDF ID */ int rh_id; /* variable ID */ static long start[] = @{0, 0,
-0@}; /* start at first value */ static long count[] = @{TIMES, LATS,
-LONS@}; static long stride[] = @{2, 2, 2@}; /* every other value */ long
-imap[3]; /* set to reverse of variable */ struct datum @{
-    int dummy; /* to illustrate mapping vector usage */
-    double rh_val; /* actual value to be read */ @}
-data[TIMES][LATS][LONS]; /* array to hold values */
-   @dots{} ncid = ncopen("foo.nc", NC_NOWRITE);
-   @dots{} rh_id = ncvarid (ncid, "rh");
-   @dots{} /* access every `stride' in-memory value using reversed
-dimensions */ imap[0] = stride[2]*sizeof(struct datum); imap[1] =
-stride[1]*(1+(LONS-1)/stride[0])*imap[0]; imap[2] =
-stride[0]*(1+(LATS-1)/stride[1])*imap[1]; /* read generalized hyperslab
-of values from netCDF variable */ ncvargetg(ncid, rh_id, start, count,
-stride, imap, (void *) data);
+   @dots{}
+#define TIMES 3
+#define LATS  5
+#define LONS 10
+int ncid;                           /* netCDF ID */
+int rh_id;                          /* variable ID */
+static long start[] = @{0, 0, 0@};  /* start at first value */
+static long count[] = @{TIMES, LATS, LONS@};
+static long stride[] = @{2, 2, 2@}; /* every other value */
+long imap[3];                       /* set to reverse of variable */
+struct datum @{
+    int dummy;                      /* to illustrate mapping vector usage */
+    double rh_val;                  /* actual value to be read */
+@}      data[TIMES][LATS][LONS];    /* array to hold values */
+   @dots{}
+   ncid = ncopen("foo.nc", NC_NOWRITE);
+   @dots{}
+   rh_id = ncvarid (ncid, "rh");
+   @dots{}
+   /* access every `stride' in-memory value using reversed dimensions */
+   imap[0] = stride[2]*sizeof(struct datum);
+   imap[1] = stride[1]*(1+(LONS-1)/stride[0])*imap[0];
+   imap[2] = stride[0]*(1+(LATS-1)/stride[1])*imap[1];
+   /* read generalized hyperslab of values from netCDF variable */
+   ncvargetg(ncid, rh_id, start, count, stride, imap, (void*)&data[0][0][0].rh_val);
+   @dots{}
 @end group
 @end example
 

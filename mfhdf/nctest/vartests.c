@@ -555,7 +555,8 @@ test_ncvarrename(path)
     int yy_id;			/* variable id */
     static struct cdfvar yy =	/* variable */
       {"old_name", NC_SHORT, 1, ___, 0};
-    static char newname[] = "yy"; /* variable name */
+    static char newname[] = "yyy"; /* variable name */
+    static char shortname[] = "yy"; /* variable name */
     struct cdfvar var;		/* variable */
     static struct cdfvar zz =	/* variable */
       {"zz", NC_BYTE, 2, ___, 0};
@@ -595,7 +596,10 @@ test_ncvarrename(path)
 	error("%s: ncvarrename failed", pname);
 	ncclose(cdfid); return;
     }
-    /* check new name with ncvarinq */
+    /* check new name with ncvarid, ncvarinq */
+    if (yy_id != ncvarid(cdfid, newname)) {
+        error("%s: lookup by name failed after ncvarrename", pname);
+    }
     var.dims = (int *) emalloc(sizeof(int) * MAX_VAR_DIMS);
     var.name = (char *) emalloc(MAX_NC_NAME);
     if (ncvarinq(cdfid, yy_id, var.name,
@@ -630,10 +634,15 @@ test_ncvarrename(path)
 	ncclose(cdfid); return;
     }
     /* in data mode */
-    if (ncvarrename(cdfid, 0, newname) != -1) {
-	error("%s: ncvarrename should fail in data mode", pname);
+    if (ncvarrename(cdfid, yy_id, "a_longer_name") != -1) {
+	error("%s: ncvarrename to longer should fail in data mode", pname);
 	ncclose(cdfid); return;
     }
+    if (ncvarrename(cdfid, yy_id, shortname) == -1) {
+	error("%s: ncvarrename to shorter should succeed in data mode", pname);
+	ncclose(cdfid); return;
+    }
+    (void) strcpy(test.vars[yy_id].name, shortname); /* keep test consistent */
     if (ncclose (cdfid) == -1) {
 	error("%s: ncclose failed", pname);
 	return;

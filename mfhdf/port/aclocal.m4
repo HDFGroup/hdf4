@@ -2,8 +2,8 @@ define(diversion_number, divnum)dnl
 divert(-1)
 
 
-# Define a substitution for both `@...@' and C preprocessor forms.
-#
+dnl Define a substitution for both `@...@' and C preprocessor forms.
+dnl
 define(UC_REPLACE, [dnl
 $1=$2
 AC_SUBST($1)dnl
@@ -11,17 +11,17 @@ AC_DEFINE($1,$2)
 ])
 
 
-# Set the value of a variable.  Use the environment if possible; otherwise
-# set it to a default value.  Call the substitute routine.
-#
+dnl Set the value of a variable.  Use the environment if possible; otherwise
+dnl set it to a default value.  Call the substitute routine.
+dnl
 define([UC_DEFAULT], [dnl
 $1=${$1-"$2"}
 AC_SUBST([$1])
 ])
 
 
-# Initialize this Unidata autoconf(1)-support module.
-#
+dnl Initialize this Unidata autoconf(1)-support module.
+dnl
 define([UC_INIT], [dnl
 AC_INIT($1) dnl
 UC_CUSTOMIZE dnl
@@ -29,8 +29,8 @@ UC_PORT dnl
 ])
 
 
-# Set up for customizing the makefile in the port/ subdirectory.
-#
+dnl Set up for customizing the makefile in the port/ subdirectory.
+dnl
 define([UC_PORT], [dnl
 TRANSFORMEES='port/Makefile port/master.mk'
 POST_PROCESSEES='port/Makefile'
@@ -51,38 +51,38 @@ AC_PROG_RANLIB dnl
 ])
 
 
-# Terminate this Unidata autoconf(1)-support module.
-#
+dnl Terminate this Unidata autoconf(1)-support module.
+dnl
 define([UC_TERM], [dnl
 UC_CHECK_MISSING dnl
 UC_POSTPROCESS_MAKEFILES($1) dnl
 ])
 
 
-# Finish with everything (both GNU and Unidata autoconf(1) support).
-#
+dnl Finish with everything (both GNU and Unidata autoconf(1) support).
+dnl
 define([UC_FINISH], [dnl
 AC_OUTPUT($1 ${TRANSFORMEES-})dnl
 UC_TERM($1 ${POST_PROCESSEES-})dnl
 ])
 
 
-# Add a member to the list of makefiles to be post-processed.
-#
+dnl Add a member to the list of makefiles to be post-processed.
+dnl
 define([UC_POST_PROCESS], [dnl
 UC_ENSURE(POST_PROCESSEES, $1)dnl
 ])
 
 
-# Add a member to the list of files to be transformed.
-#
+dnl Add a member to the list of files to be transformed.
+dnl
 define([UC_CREATE], [dnl
 UC_ENSURE(TRANSFORMEES, $1)dnl
 ])
 
 
-# Check for functioning `const' keyword
-#
+dnl Check for functioning `const' keyword
+dnl
 define([UC_CONST], [dnl
 AC_COMPILE_CHECK([working const], , [/* Ultrix mips cc rejects this.  */
 typedef int charset[2]; const charset x;
@@ -92,8 +92,8 @@ typedef int charset[2]; const charset x;
 ])
 
 
-# Check for functioning `signed' keyword
-#
+dnl Check for functioning `signed' keyword
+dnl
 define([UC_SIGNED],
 [AC_COMPILE_CHECK([working signed], ,
 changequote(,)dnl
@@ -105,8 +105,8 @@ changequote([,])dnl
 ])
 
 
-# Check for function prototypes
-#
+dnl Check for function prototypes
+dnl
 define([UC_PROTOTYPES],
 [AC_COMPILE_CHECK([function prototypes], ,
 extern int foo(int bar);
@@ -116,19 +116,19 @@ extern int foo(int bar);
 ])
 
 
-# Convert argument to uppercase.
-#
+dnl Convert argument to uppercase.
+dnl
 define([UC_UPPERCASE],[translit($1,abcdefghijklmnopqrstuvwxyz,ABCDEFGHIJKLMNOPQRSTUVWXYZ)])
 
 
-# Return the C macro name version of the argument.
-#
+dnl Return the C macro name version of the argument.
+dnl
 define([UC_C_MACRONAME], [UC_UPPERCASE([translit($1,/.<>,__)])])
 
 
-# Obtain the pathname of a system-supplied header file.  The value of the
-# associated shell variable is empty if the header-file could not be found.
-#
+dnl Obtain the pathname of a system-supplied header file.  The value of the
+dnl associated shell variable is empty if the header-file could not be found.
+dnl
 define([UC_SYSTEM_HEADER], [dnl
 AC_REQUIRE([UC_PROG_CPP])dnl
 echo "#include <$1.h>" > conftestpath.c
@@ -152,8 +152,8 @@ UC_REPLACE(UD_SYSTEM_[]UC_C_MACRONAME(ifelse($2,,$1,$2))_H,\"$path\")dnl
 ])
 
 
-# Define macros for variadic function support
-#
+dnl Define macros for variadic function support
+dnl
 define([UC_VARIADIC_FUNCTIONS],[dnl
 AC_REQUIRE([UC_PROG_CPP])dnl
 UC_ENSURE(PORT_MANIFEST, stdarg.h.in)dnl
@@ -174,8 +174,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Define macro for string generation
-#
+dnl Define macro for string generation
+dnl
 define([UC_MAKESTRING], [dnl
 AC_COMPILE_CHECK([stringization], dnl
 [# define MAKESTRING(x)	#x],
@@ -186,8 +186,8 @@ char *cp = MAKESTRING(foo);
 ])
 
 
-# Define macro for token pasting.
-#
+dnl Define macro for token pasting.
+dnl
 define([UC_GLUE], [dnl
 ifdef([AC_PROVIDE_$0], , [
 AC_COMPILE_CHECK([token pasting], [#define GLUE(a,b) a ## b],
@@ -199,8 +199,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Define pointer-to-void macro.
-#
+dnl Define pointer-to-void macro.
+dnl
 define([UC_VOIDP],
 [AC_COMPILE_CHECK([void*], ,
 extern void *foo();
@@ -209,8 +209,8 @@ extern void *foo();
 [AC_DEFINE(UD_NO_VOIDSTAR)])])
 
 
-# CFORTRAN support:
-#
+dnl CFORTRAN support:
+dnl
 define([UC_CFORTRAN], [dnl
 ifdef([AC_PROVIDE_$0], , [
 echo "checking for cfortran.h"
@@ -226,8 +226,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for standard, udposix(3) stuff.
-#
+dnl Check for standard, udposix(3) stuff.
+dnl
 define([UC_UDPOSIX], [dnl
 ifdef([AC_PROVIDE_$0], , [
 AC_REQUIRE([UC_CONST])dnl
@@ -244,22 +244,19 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for a function.
-#
+dnl Check for a function.
+dnl
 define([UC_FUNC], [dnl
-AC_COMPILE_CHECK(function $2 declaration, [#include $1
-extern struct {int foo;} *$2();
-], , [dnl
-UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_DECL,1)dnl
 AC_REPLACE_FUNCS($2)dnl
-], [dnl
-UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_DECL,0)])dnl
-AC_FUNC_CHECK($2, , [UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)_FUNC,1)])dnl
+case "$LIBOBJS" in
+    *$2.o*) UC_REPLACE([UD_NO_[]UC_UPPERCASE($2)_DECL],1);;
+    *) UC_REPLACE([UD_NO_[]UC_UPPERCASE($2)_DECL],0);;
+esac
 ])
 
 
-# Check for a type definition.
-#
+dnl Check for a type definition.
+dnl
 define([UC_TYPEDEF], [dnl
 AC_COMPILE_CHECK("typedef $2 in $1", [#include $1
 typedef void $2;], , [dnl
@@ -270,8 +267,8 @@ UC_REPLACE(UD_NO_[]UC_C_MACRONAME($1[]_$2),0)dnl
 ])
 
 
-# Check for a structure definition.
-#
+dnl Check for a structure definition.
+dnl
 define([UC_STRUCT], [dnl
 AC_COMPILE_CHECK(structure $2, [#include $1
 struct $2 {char *foo;};], , [dnl
@@ -282,8 +279,8 @@ UC_REPLACE(UD_NO_[]UC_UPPERCASE($2)[]_STRUCT,0)dnl
 ])
 
 
-# Ensure a macro definition.
-#
+dnl Ensure a macro definition.
+dnl
 define([UC_MACRO], [dnl
 AC_COMPILE_CHECK(macro $2, [#include $1
 #ifdef $2
@@ -294,21 +291,50 @@ AC_COMPILE_CHECK(macro $2, [#include $1
 ])
 
 
-# Ensure a POSIX <limits.h>.
-#
+dnl Check for POSIX threads.
+dnl
+define([UC_PTHREADS], [dnl
+ifdef([AC_PROVIDE_$0], , [dnl
+AC_BEFORE([$0], [UC_UDPOSIX_ERRNO])dnl
+AC_BEFORE([$0], [UC_UDPOSIX_LIMITS])dnl
+AC_BEFORE([$0], [UC_UDPOSIX_SETJMP])dnl
+AC_BEFORE([$0], [UC_UDPOSIX_SIGNAL])dnl
+AC_BEFORE([$0], [UC_UDPOSIX_UNISTD])dnl
+echo checking for POSIX threads
+UC_TEST_DIR(CPP_PTHREADS,
+    /usr/include /usr/gnu/include /usr/local/include /usr/local/gnu/include,
+    pthread.h,
+    [POSIX threads [[include]]-directory],
+    [-I/usr/local/[[include]]])dnl
+case "$CPP_PTHREADS" in
+    -I*) ;;
+    /usr/include)  CPP_PTHREADS=;;
+    *) CPP_PTHREADS=-I$CPP_PTHREADS;;
+esac
+DEFS="$DEFS $CPP_PTHREADS"
+UC_TEST_LIB(LD_PTHREADS,
+    /lib /usr/lib /usr/gnu /usr/local/lib /usr/local/gnu/lib,
+    pthreads,
+    POSIX threads,
+    -L/usr/local/lib -lpthreads)dnl
+AC_PROVIDE([$0])dnl
+])])
+
+
+dnl Ensure a POSIX <limits.h>.
+dnl
 define([UC_UDPOSIX_LIMITS], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 AC_REQUIRE([UC_PROG_CC])dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, config.c)dnl
-AC_HEADER_CHECK(limits.h, UC_SYSTEM_HEADER(limits), [dnl
-UC_ENSURE(PORT_HEADERS, limits.h)], dnl
-[UC_ENSURE(PORT_HEADERS)])dnl
+AC_HEADER_CHECK(UC_SYSTEM_HEADER(limits), , dnl
+[UC_ENSURE(PORT_HEADERS, limits.h)])dnl
 ])])
 
 
-# Ensure a POSIX <float.h>.
-#
+dnl Ensure a POSIX <float.h>.
+dnl
 define([UC_UDPOSIX_FLOAT], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 AC_REQUIRE([UC_PROG_CC])dnl
@@ -317,20 +343,19 @@ echo "checking for conforming <float.h>"
 UC_ENSURE(PORT_MANIFEST, config.c)dnl
 AC_TEST_CPP([#include <float.h>
 #define DBL_DIG foobar], dnl
-[UC_ENSURE(PORT_HEADERS)], dnl
 [UC_ENSURE(PORT_HEADERS, float.h)])dnl
 ])])
 
 
-# Ensure a POSIX <stdarg.h>.
-#
+dnl Ensure a POSIX <stdarg.h>.
+dnl
 define([UC_UDPOSIX_STDARG], [dnl
 AC_REQUIRE([UC_VARIADIC_FUNCTIONS])dnl
 ])
 
 
-# Ensure a POSIX <stddef.h>.
-#
+dnl Ensure a POSIX <stddef.h>.
+dnl
 define([UC_UDPOSIX_STDDEF], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
@@ -344,8 +369,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Ensure a POSIX <stdlib.h>.
-#
+dnl Ensure a POSIX <stdlib.h>.
+dnl
 define([UC_UDPOSIX_STDLIB], [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, stdlib.h.in atexit.c)dnl
@@ -361,8 +386,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Ensure a POSIX <string.h>.
-#
+dnl Ensure a POSIX <string.h>.
+dnl
 define([UC_UDPOSIX_STRING], [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, strerror.c string.h strstr.c string.h.in)dnl
@@ -377,8 +402,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Ensure a POSIX <time.h>.
-#
+dnl Ensure a POSIX <time.h>.
+dnl
 define([UC_UDPOSIX_TIME], [dnl
 ifdef([AC_PROVIDE_$0], , [
 AC_REQUIRE([UC_UDPOSIX])dnl
@@ -393,8 +418,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Ensure a POSIX <signal.h>.
-#
+dnl Ensure a POSIX <signal.h>.
+dnl
 define([UC_UDPOSIX_SIGNAL], [dnl
 AC_REQUIRE([UC_UDPOSIX])dnl
 UC_ENSURE(PORT_MANIFEST, signal.h.in sigaddset.c \
@@ -419,8 +444,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Ensure a POSIX <unistd.h>.
-#
+dnl Ensure a POSIX <unistd.h>.
+dnl
 define([UC_UDPOSIX_UNISTD], [dnl
 ifdef([AC_PROVIDE_$0], , [
 AC_REQUIRE([UC_UDPOSIX])dnl
@@ -433,18 +458,18 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Ensure a <select.h>.
-#
+dnl Ensure a <select.h>.
+dnl
 define([UC_SELECT], [dnl
 UC_ENSURE(PORT_MANIFEST, select.h)dnl
 UC_SYSTEM_HEADER(sys/select)dnl
 ])
 
 
-# Check for C compiler.  This macro replaces the AC_PROG_CC macro because 
-# that macro prefers the GNU C compiler.  Note that `c89' isn't checked for;
-# this is because that compiler hides things like NBBY.
-#
+dnl Check for C compiler.  This macro replaces the AC_PROG_CC macro because 
+dnl that macro prefers the GNU C compiler.  Note that `c89' isn't checked for;
+dnl this is because that compiler hides things like NBBY.
+dnl
 define([UC_PROG_CC], [dnl
 ifdef([AC_PROVIDE_$0], , [
 AC_BEFORE([$0], [UC_PROG_CPP])dnl
@@ -452,7 +477,7 @@ AC_PROGRAM_CHECK(CC, cc, cc, )dnl
 if test -z "$CC"; then
   UC_NEED_VALUE(CC, [C compiler], /bin/cc)dnl
 fi
-# Find out if we are using GNU C, under whatever name.
+dnl Find out if we are using GNU C, under whatever name.
 cat <<EOF > conftest.c
 #ifdef __GNUC__
   yes
@@ -468,8 +493,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for which(1)
-#
+dnl Check for which(1)
+dnl
 define([UC_PROG_WHICH], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 UC_ENSURE(PORT_MANIFEST, which)dnl
@@ -478,17 +503,17 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for cpp(1).  This macro replaces the AC_PROG_CPP macro because:
-#	1. That macro, for some reason, sets the value of the shell 
-#	   variable `CPP' to `${CC-cc} -E' rather than to the cpp(1)
-#	   program and such a value has caused trouble in shell command
-#	   lines;
-#	2. The documentation explicitly states that the AC_PROG_CPP macro 
-#	   should be called after the AC_PROG_CC macro, so there's no reason 
-#	   for the above value that I can see; and
-#	3. We need to discover when ${CPP} doesn't work (e.g. when it's 
-#	   defined as `acc -E' under older versions of SunOS).
-#
+dnl Check for cpp(1).  This macro replaces the AC_PROG_CPP macro because:
+dnl	1. That macro, for some reason, sets the value of the shell 
+dnl	   variable `CPP' to `${CC-cc} -E' rather than to the cpp(1)
+dnl	   program and such a value has caused trouble in shell command
+dnl	   lines;
+dnl	2. The documentation explicitly states that the AC_PROG_CPP macro 
+dnl	   should be called after the AC_PROG_CC macro, so there's no reason 
+dnl	   for the above value that I can see; and
+dnl	3. We need to discover when ${CPP} doesn't work (e.g. when it's 
+dnl	   defined as `acc -E' under older versions of SunOS).
+dnl
 define([UC_PROG_CPP], [dnl
 ifdef([AC_PROVIDE_$0], , [dnl
 AC_REQUIRE([UC_PROG_WHICH])dnl
@@ -514,8 +539,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for FORTRAN compiler.
-#
+dnl Check for FORTRAN compiler.
+dnl
 define([UC_PROG_FC], [dnl
 ifdef([AC_PROVIDE_$0], , [ dnl
 AC_REQUIRE([UC_OS])dnl
@@ -532,8 +557,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for FORTRAN library.
-#
+dnl Check for FORTRAN library.
+dnl
 define([UC_LIB_F77], [dnl
 ifdef([AC_PROVIDE_$0], , [ dnl
 AC_REQUIRE([UC_PROG_FC])dnl
@@ -549,8 +574,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for library utility, ar(1).
-#
+dnl Check for library utility, ar(1).
+dnl
 define([UC_PROG_AR], [dnl
 AC_PROGRAM_CHECK(AR, ar, ar, )dnl
 if test -z "$AR"; then
@@ -560,8 +585,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for troff(1).
-#
+dnl Check for troff(1).
+dnl
 define([UC_PROG_TROFF], [dnl
 AC_PROGRAM_CHECK(TROFF, troff, ptroff, troff)dnl
 if test -z "$TROFF"; then
@@ -571,8 +596,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for fortc(1)
-#
+dnl Check for fortc(1)
+dnl
 define([UC_PROG_FORTC], [dnl
 AC_REQUIRE([UC_OS])dnl
 AC_REQUIRE([UC_UDPOSIX_STDDEF])dnl
@@ -588,8 +613,8 @@ AC_SUBST(NEED_FORTC)dnl
 ])
 
 
-# Check for neqn(1).
-#
+dnl Check for neqn(1).
+dnl
 define([UC_PROG_NEQN], [dnl
 AC_PROGRAM_CHECK(NEQN, neqn, neqn, cat)dnl
 test "$NEQN" = cat && 
@@ -597,8 +622,8 @@ test "$NEQN" = cat &&
 ])
 
 
-# Check for tbl(1).
-#
+dnl Check for tbl(1).
+dnl
 define([UC_PROG_TBL], [dnl
 AC_PROGRAM_CHECK(TBL, tbl, tbl, cat)dnl
 test "$TBL" = cat && 
@@ -606,15 +631,15 @@ test "$TBL" = cat &&
 ])
 
 
-# Check for makeinfo(1).
-#
+dnl Check for makeinfo(1).
+dnl
 define([UC_PROG_MAKEINFO], [dnl
 AC_PROGRAM_CHECK(MAKEINFO, makeinfo, makeinfo)dnl
 ])
 
 
-# Determine the operating system.
-#
+dnl Determine the operating system.
+dnl
 define([UC_OS], [dnl
 ifdef([AC_PROVIDE_$0], , [
 if test -z "$OS"; then
@@ -668,8 +693,8 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Determine the machine type.
-#
+dnl Determine the machine type.
+dnl
 define([UC_MACHINE], [dnl
 ifdef([AC_PROVIDE_$0], , [
 if test -z "$MACHINE"; then
@@ -684,29 +709,30 @@ AC_PROVIDE([$0])dnl
 ])])
 
 
-# Check for ncdump(1)
-#
-define([UC_PROG_NCDUMP], [dnl
-AC_REQUIRE([UC_PROG_WHICH])dnl
-AC_PROGRAM_CHECK(NCDUMP, ncdump, ncdump, UC_ABSPATH($exec_prefix)/ncdump)dnl
-if test `$(WHICH) "$NCDUMP" | wc -w` != 1; then
+dnl Check for ncdump(1)
+dnl
+ncdump=${NCDUMP-}
+NCDUMP=
+AC_PROGRAMS_CHECK(NCDUMP, $ncdump ncdump UC_ABSPATH($exec_prefix)/ncdump)dnl
+if test -z "$NCDUMP"; then
   UC_NEED_VALUE(NCDUMP, [netCDF lister], /usr/local/unidata/bin/ncdump)dnl
 fi
 ])
 
 
-# Check for ncgen(1)
-#
-define([UC_PROG_NCGEN], [dnl
-AC_PROGRAM_CHECK(NCGEN, ncgen, ncgen, UC_ABSPATH($exec_prefix)/ncgen)dnl
-if test `which "$NCGEN" | wc -w` != 1; then
+dnl Check for ncgen(1)
+dnl
+ncgen=${NCGEN-}
+NCGEN=
+AC_PROGRAMS_CHECK(NCGEN, $ncgen ncgen UC_ABSPATH($exec_prefix)/ncgen)dnl
+if test -z "$NCGEN"; then
   UC_NEED_VALUE(NCGEN, [netCDF generator], /usr/local/unidata/bin/ncgen)dnl
 fi
 ])
 
 
-# Test a script.
-#
+dnl Test a script.
+dnl
 define([UC_TEST_SCRIPT],
 [cat << EOF > conftest.sh
 [$1]
@@ -722,15 +748,15 @@ rm -f conftest.sh
 ])dnl
 
 
-# Filter a file through cpp(1).
-#
+dnl Filter a file through cpp(1).
+dnl
 define([UC_FILTER_CPP], [dnl
 AC_REQUIRE([UC_PROG_CPP])dnl
 echo processing $1 with the C preprocessor to produce $2
 ifdef([AC_CONFIG_NAME],
 UC_TEST_SCRIPT([dnl
 echo "$DEFS" > conftest.c
-echo "# line 1 $1" >> conftest.c
+echo "dnl line 1 $1" >> conftest.c
 cat $1 >> conftest.c
 $CPP conftest.c | \
     awk '/^$/ {if (set) next; set=1} {print} !/^$/ {set=0}' > $2
@@ -740,8 +766,8 @@ rm -f conftest.c]), dnl
     awk '/^$/ {if (set) next; set=1} {print} !/^$/ {set=0}' > $2])])])
 
 
-# Convert a pathname to an absolute one at autoconf(1) execution time.
-#
+dnl Convert a pathname to an absolute one at autoconf(1) execution time.
+dnl
 define([UC_ABSPATH_M4], [dnl
 syscmd([case "$1" in 
   /*) echo $1; exit;;
@@ -759,8 +785,8 @@ include(conftest.syscmd)dnl
 ])
 
 
-# Convert a pathname to an absolute one at ./configure execution time.
-#
+dnl Convert a pathname to an absolute one at ./configure execution time.
+dnl
 define([UC_ABSPATH], [`dnl
 case "$1" in 
   /*[)] echo $1; exit;;
@@ -776,8 +802,8 @@ esac
 `])
 
 
-# Set a value for the installation prefix.
-#
+dnl Set a value for the installation prefix.
+dnl
 define([UC_PREFIX], 
 [AC_BEFORE([$0],[UC_PROG_FORTC])dnl
 AC_BEFORE([$0],[UC_LIB_NETCDF])AC_BEFORE([$0],[UC_CPP_NETCDF])dnl
@@ -790,8 +816,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for a directory containing a file.
-#
+dnl Check for a directory containing a file.
+dnl
 define([UC_TEST_DIR], [dnl
   if test -z "$$1"; then
     for dir in $2; do
@@ -808,8 +834,8 @@ AC_SUBST($1)dnl
 ])
 
 
-# Check for X11 header-file directory.
-#
+dnl Check for X11 header-file directory.
+dnl
 define([UC_CPP_X11], [dnl
 echo checking for X11 header-files
 UC_TEST_DIR(CPP_X11, ${OPENWINHOME-/usr/openwin}/[[include]] \
@@ -820,8 +846,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for McIDAS library.
-#
+dnl Check for McIDAS library.
+dnl
 define([UC_LIB_MCIDAS], [dnl
 echo checking for MCIDAS library
 UC_TEST_LIB(LD_MCIDAS, /home/mcidas/lib /home/mcidasd/lib, mcidas, McIDAS, dnl
@@ -830,8 +856,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for X11 library.
-#
+dnl Check for X11 library.
+dnl
 define([UC_LIB_X11], [dnl
 echo checking for X11 library
 UC_TEST_LIB(LD_X11, ${OPENWINHOME-/usr/openwin}/lib /usr/lib dnl
@@ -841,13 +867,13 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for X11 implementation (header file and library).
-#
+dnl Check for X11 implementation (header file and library).
+dnl
 define([UC_X11], [AC_REQUIRE([UC_CPP_X11])AC_REQUIRE([UC_LIB_X11])])
 
 
-# Check for netCDF header-file directory.
-#
+dnl Check for netCDF header-file directory.
+dnl
 define([UC_CPP_NETCDF], [dnl
 echo checking for netCDF header-file
 UC_TEST_DIR(CPP_NETCDF, UC_ABSPATH($prefix/[[[include]]]), netcdf.h,
@@ -857,8 +883,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for netCDF library.
-#
+dnl Check for netCDF library.
+dnl
 define([UC_LIB_NETCDF], [dnl
 echo checking for netCDF library
 UC_TEST_LIB(LD_NETCDF, UC_ABSPATH($prefix/lib), netcdf,
@@ -867,13 +893,13 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for netCDF implementation (header file and library).
-#
+dnl Check for netCDF implementation (header file and library).
+dnl
 define([UC_NETCDF], [AC_REQUIRE([UC_CPP_NETCDF])AC_REQUIRE([UC_LIB_NETCDF])])
 
 
-# Check for netCDF operators library.
-#
+dnl Check for netCDF operators library.
+dnl
 define([UC_LIB_NCOPERS], [dnl
 echo checking for netCDF operators library
 UC_TEST_LIB(LD_NCOPERS, UC_ABSPATH($prefix/lib), ncopers,
@@ -882,8 +908,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for LDM header-file directory.
-#
+dnl Check for LDM header-file directory.
+dnl
 define([UC_CPP_LDM], [dnl
 echo checking for LDM header-file
 UC_TEST_DIR(CPP_LDM, UC_ABSPATH($prefix/[[[include]]]) dnl
@@ -895,8 +921,8 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for LDM library.
-#
+dnl Check for LDM library.
+dnl
 define([UC_LIB_LDM], [dnl
 echo checking for LDM library
 UC_TEST_LIB(LD_LDM, UC_ABSPATH($prefix/lib) dnl
@@ -906,13 +932,13 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for LDM implementation (header file and library).
-#
+dnl Check for LDM implementation (header file and library).
+dnl
 define([UC_LDM], [AC_REQUIRE([UC_CPP_LDM])AC_REQUIRE([UC_LIB_LDM])])
 
 
-# Check for udres(3) library.
-#
+dnl Check for udres(3) library.
+dnl
 define([UC_LIB_UDRES], [dnl
 echo 'checking for udres library'
 UC_TEST_LIB(LD_UDRES, UC_ABSPATH($prefix/lib), udape,
@@ -921,9 +947,9 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Set installation programs.  This differs from the standard
-# autoconf(1) macro by making installed data files group writable.
-#
+dnl Set installation programs.  This differs from the standard
+dnl autoconf(1) macro by making installed data files group writable.
+dnl
 define([UC_PROG_INSTALL], [dnl
 AC_PROG_INSTALL[]dnl
 INSTALL_DATA="`echo "${INSTALL_DATA}" | sed 's/644/664/'`"
@@ -931,11 +957,11 @@ AC_PROVIDE([$0])dnl
 ])
 
 
-# Check for a library.  It would have been nice to see if a compile-link-
-# execute sequence would have worked (via AC_TEST_PROGRAM) but, with dynamic
-# libraries under SunOS, the link and execution fail due to unresolved 
-# references.  Ergo, we just check for the regular `.a' file.
-#
+dnl Check for a library.  It would have been nice to see if a compile-link-
+dnl execute sequence would have worked (via AC_TEST_PROGRAM) but, with dynamic
+dnl libraries under SunOS, the link and execution fail due to unresolved 
+dnl references.  Ergo, we just check for the regular `.a' file.
+dnl
 define([UC_TEST_LIB], [dnl
 if test -z "$$1"; then
   for dir in $2; do
@@ -952,8 +978,8 @@ AC_SUBST($1)dnl
 ])
 
 
-# Check for missing definitions.
-#
+dnl Check for missing definitions.
+dnl
 define([UC_CHECK_MISSING], [dnl
 if test -s conf.missing; then
   cat << CAT_EOF
@@ -975,15 +1001,15 @@ rm -f conf.missing
 ])
 
 
-# Post process makefiles.
-#
+dnl Post process makefiles.
+dnl
 define([UC_POSTPROCESS_MAKEFILES], [dnl
 AC_REQUIRE([UC_PROG_CC])dnl
-define(dn,divnum)divert(-1)undivert[]divert(dn)undefine([dn])dnl
-# Post process any makefiles.
-#
-# Create a script to accomplish the post processing.
-#
+define([dn],divnum)divert(-1)undivert[]divert(dn)undefine([dn])dnl
+dnl Post process any makefiles.
+dnl
+dnl Create a script to accomplish the post processing.
+dnl
 cat << EOF_CONFTEST_SH > conftest.sh
 cat << EOF_CONFTEST_C > conftest.c
 #include <stdio.h>
@@ -1026,24 +1052,24 @@ if $CC -o conftest conftest.c; then
 fi
 rm conftest conftest.c
 EOF_CONFTEST_SH
-#
-# Append the above script to the output-script file, config.status, so that 
-# invoking that file will also do the post processing.  Note that the 
-# output-script file will be invoked by ./configure before the post-
-# processing code is appended.
-#
+dnl
+dnl Append the above script to the output-script file, config.status, so that 
+dnl invoking that file will also do the post processing.  Note that the 
+dnl output-script file will be invoked by ./configure before the post-
+dnl processing code is appended.
+dnl
 cat conftest.sh >> config.status
-#
-# If appropriate, do the postprocessing now because the previous step 
-# couldn't.
-#
+dnl
+dnl If appropriate, do the postprocessing now because the previous step 
+dnl couldn't.
+dnl
 test -n "$no_create" || sh conftest.sh
 rm conftest.sh
 ])
 
 
-# Get shell-variable override values for local customizations.
-#
+dnl Get shell-variable override values for local customizations.
+dnl
 define([UC_CUSTOMIZE], [dnl
 AC_BEFORE([$0], [UC_DEFAULT])dnl
 if [[ -r CUSTOMIZE ]]; then
@@ -1053,16 +1079,16 @@ fi
 ])
 
 
-# Set the root of the FTP distribution directory.
-#
+dnl Set the root of the FTP distribution directory.
+dnl
 define([UC_FTPDIR], [dnl
 FTPDIR=${FTPDIR-/home/ftp}/$1
 AC_SUBST(FTPDIR)dnl
 ])
 
 
-# Set package name.
-#
+dnl Set package name.
+dnl
 define([UC_PACKAGE], [dnl
 echo checking for package name
 PACKAGE=${PACKAGE-`basename \`pwd\``}
@@ -1070,8 +1096,8 @@ AC_SUBST(PACKAGE)dnl
 ])
 
 
-# Set version identifiers.
-#
+dnl Set version identifiers.
+dnl
 define([UC_VERSION], [dnl
 echo checking for package version
 if test -z "$VERSION"; then
@@ -1103,15 +1129,15 @@ AC_SUBST(MINOR_NO)dnl
 ])
 
 
-# Handle a missing value.
-#
+dnl Handle a missing value.
+dnl
 define([UC_NEED_VALUE], [dnl
 echo "$1:$2:$3" >> conf.missing
 ])
 
 
-# Ensure that a variable contains a given string and that it's substituted.
-#
+dnl Ensure that a variable contains a given string and that it's substituted.
+dnl
 define([UC_ENSURE], [dnl
 ifelse($2, , [dnl
   $1=${$1-}

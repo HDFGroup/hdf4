@@ -12,7 +12,7 @@ AR        = lib
 ARFLAGS   =
 
 CC        = cl
-CFLAGS    = /c /AL /Za
+CFLAGS    = /c /AL /Za /DMSDOS
 
 LINK      = link
 LFLAGS    = /st:30000 /nod
@@ -28,7 +28,7 @@ INCLUDE   = $(DESTDIR)\include
 LIBDIR    = $(DESTDIR)\lib
 NCDUMPLIB = ncdump.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
-CLIB      = llibc7.lib
+CLIB      = llibce.lib
 !IF $(OS2)
 OS2LIB    = os2.lib
 !ELSE
@@ -68,7 +68,7 @@ test:	ncdump.exe test0.cdl FORCE
 	ncdump test0.cdf > test1.cdl
 	..\ncgen\ncgen -o test1.cdf -n test1.cdl
 	ncdump -n test0 test1.cdf > test2.cdl
-	diff test1.cdl test2.cdl 
+	echo N | comp test1.cdl test2.cdl 
 	@echo "Test successful."
 
 ncdump: ncdump.exe

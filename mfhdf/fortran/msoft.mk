@@ -9,7 +9,7 @@
 OS2      = 0
 
 CC	  = cl
-CFLAGS	  = /c /AL /Za
+CFLAGS	  = /c /AL /Za /DMSDOS
 
 F77	  = fl
 FFLAGS	  = /c /AL
@@ -24,7 +24,7 @@ INCLUDES  = /I$(INCDIR)
 
 BINDIR    = $(DESTDIR)\bin
 LIBDIR    = $(DESTDIR)\lib
-CLIB      = llibc7.lib
+CLIB      = llibce.lib
 FORTLIB   = llibfor7.lib
 NETCDFLIB = ..\libsrc\netcdf.lib
 !IF $(OS2)

@@ -12,7 +12,7 @@ AR        = LIB
 ARFLAGS   = 
 
 CC        = cl
-CFLAGS    = /c /AL /Za
+CFLAGS    = /c /AL /Za /DMSDOS
 
 LINK      = link
 LFLAGS    = /nod /st:1000
@@ -25,7 +25,7 @@ INCLUDES  = /I$(INCDIR)
 DEFINES  = /DSWAP /DNO_SYSTEM_XDR_INCLUDES /DDOS_FS
 
 NETCDFLIB = netcdf.lib
-CLIBS     = llibc7.lib
+CLIBS     = llibce.lib
 !IF $(OS2)
 OS2LIB    = os2.lib
 !ELSE

@@ -52,7 +52,7 @@ On a UNIX system:
 	 you define CPPFLAGS as something else (such as the empty string).
 
 	 If you do not have a FORTRAN compiler, then you should set the FC
-	 macro to a dummy value (e.g. "/bin/f77" or "/foo/bar").  The
+	 macro to a dummy value (e.g. "/bin/f77" or just "").  The
 	 makefiles check to see that the compiler actually exists.
 
 	 The OLD_FILLVALUES macro is provided for backward compatibility
