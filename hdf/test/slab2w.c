@@ -9,15 +9,18 @@
 static char RcsId[] = "$Id$";
 #endif
 /*-------------------------------------------------------------------------
-*
-* $Header$
-*
-* $Log$
-* Revision 1.1  1993/01/07 20:56:15  georgev
-* Added Hyperslab C and Fortran test programs.
-*
-*
-*-------------------------------------------------------------------------*/
+ *
+ * $Header$
+ *
+ * $Log$
+ * Revision 1.2  1993/01/07 21:38:38  georgev
+ * Minor cosmetic changes.
+ *
+ * Revision 1.1  1993/01/07  20:56:15  georgev
+ * Added Hyperslab C and Fortran test programs.
+ *
+ *
+ *------------------------------------------------------------------------*/
 
 #include "../include/hdf.h"
 

@@ -8,15 +8,18 @@
 static char RcsId[] = "$Id$";
 #endif
 /*-------------------------------------------------------------------------
-*
-* $Header$
-*
-* $Log$
-* Revision 1.1  1993/01/07 20:56:23  georgev
-* Added Hyperslab C and Fortran test programs.
-*
-*
-*-------------------------------------------------------------------------*/
+ *
+ * $Header$
+ *
+ * $Log$
+ * Revision 1.2  1993/01/07 21:38:45  georgev
+ * Minor cosmetic changes.
+ *
+ * Revision 1.1  1993/01/07  20:56:23  georgev
+ * Added Hyperslab C and Fortran test programs.
+ *
+ *
+ *------------------------------------------------------------------------*/
 
 #include "../include/hdf.h"
 
@@ -98,16 +101,6 @@ main()
 
     ret = DFSDsetdimscale(3, size_dims[2], sccol);
     no_err += ret;
-
-#if 0
-	/* Set max, min range */
-    ret = DFSDsetrange(&maxi, &mini);
-    no_err += ret;
-
-	/* write out all the data to hdf file "slice.hdf"  */
-    ret = DFSDputdata(fn, (int16)rank, size_dims, fdata);
-    no_err += ret;
-#endif
 
     /* 
     ** write data out using slabs with

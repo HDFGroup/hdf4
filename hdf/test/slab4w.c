@@ -8,15 +8,18 @@
 static char RcsId[] = "$Id$";
 #endif
 /*-------------------------------------------------------------------------
-*
-* $Header$
-*
-* $Log$
-* Revision 1.1  1993/01/07 20:56:21  georgev
-* Added Hyperslab C and Fortran test programs.
-*
-*
-*-------------------------------------------------------------------------*/
+ *
+ * $Header$
+ *
+ * $Log$
+ * Revision 1.2  1993/01/07 21:38:43  georgev
+ * Minor cosmetic changes.
+ *
+ * Revision 1.1  1993/01/07  20:56:21  georgev
+ * Added Hyperslab C and Fortran test programs.
+ *
+ *
+ *------------------------------------------------------------------------*/
 
 #include "../include/hdf.h"
 
@@ -117,10 +120,6 @@ main()
           {
             if (sdata[i][j][k] != fdata[i][j][k])
                num_err += 1;
-#if 0
-			printf("sdata[%d][%d][%d]=%d \n",i,j,k,sdata[i][j][k]);
-			printf("fdata[%d][%d][%d]=%d \n",i,j,k,sdata[i][j][k]);
-#endif
           }
     if (num_err == 0)
        printf("\n   >>> All tests passed <<< \n");
