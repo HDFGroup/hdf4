@@ -1025,3 +1025,65 @@ C         INTEGER mgcscompress
      .                              comp_prm)
          return
          end
+C-------------------------------------------------------------------------
+C        Name:      mggcompress
+C        Purpose:   gets compression information about GR image
+C        Inputs:    riid      - access ID to GR
+C        Outputs:  comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4
+C                            COMP_CODE_JPEG    = 6
+C                   comp_prm  - compression parameters array
+C                   Huffman:   comp_prm(1) = skphuff_skp_size
+C                   GZIP:      comp_prm(1) = deflate_level       
+C        Returns:   0 on success, -1 on failure
+C        Calls:     mgcgcompress (C stub for GRgetcompress function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mggcompress(riid, comp_type, comp_prm)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggcompress
+	!MS$endif
+
+         INTEGER riid, comp_type
+      INTERFACE
+        INTEGER FUNCTION mgcgcompress(riid, comp_type, comp_prm)
+          !MS$ATTRIBUTES C,reference,alias:'_MGCGCOMPRESS'::mgcgcompress
+          integer riid, comp_type, comp_prm
+        END FUNCTION mgcgcompress
+      END INTERFACE
+
+         mggcompress = mgcgcompress(riid, comp_type,
+     .                              comp_prm)
+         return
+         end
+C-------------------------------------------------------------------------
+C        Name:      mggnluts
+C        Purpose:   gets number of palettes (LUTs) for an image
+C        Inputs:    riid      - access ID to GR
+C        Returns:   Number of palettes on success (0 or 1), -1 on failure
+C        Calls:     mgcgnluts (C stub for GRgetnluts function)
+C-------------------------------------------------------------------------
+
+         INTEGER function mggnluts(riid)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: mggnluts
+	!MS$endif
+
+         INTEGER riid
+      INTERFACE
+        INTEGER FUNCTION mgcgnluts(riid) 
+          !MS$ATTRIBUTES C,reference,alias:'_MGCGNLUTS'::mgcgnluts
+          integer riid
+        END FUNCTION mgcgnluts
+      END INTERFACE
+
+         mggnluts = mgcgnluts(riid)
+         return
+         end
+
+           
