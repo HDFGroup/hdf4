@@ -839,7 +839,7 @@ NC_var **var;
   bufp = DFtbuf;
   rank = assoc->count;
   UINT16ENCODE(bufp, rank);
-  for(i = 0; i < rank; i++) {
+  for(i = 0; i < (int) rank; i++) {
 
       val = (int32) (*var)->shape[i];
 
@@ -855,7 +855,7 @@ NC_var **var;
   }
   
   /* "<=" used to put 1 data NT + rank scale NTs in buffer */
-  for (i = 0; i <= rank; i++) 
+  for (i = 0; i <= (int)rank; i++) 
       {  /* scale NTs written even if no scale!*/
           UINT16ENCODE(bufp, DFTAG_NT);
           UINT16ENCODE(bufp, nt_ref);
