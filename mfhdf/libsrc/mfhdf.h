@@ -478,6 +478,7 @@ extern intn SDsetchunkcache
 #   define nscwchnk      FNAME(SCWCHNK)
 #   define nscscompress  FNAME(SCSCOMPRESS)
 #   define nsfsnbit      FNAME(SFSNBIT)
+#   define nsfsblsz      FNAME(SFSBLSZ)
 #else   /* DF_CAPFNAMES */
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
@@ -534,6 +535,7 @@ extern intn SDsetchunkcache
 #   define nscwchnk      FNAME(scwchnk)
 #   define nscscompress  FNAME(scscompress)
 #   define nsfsnbit      FNAME(sfsnbit)
+#   define nsfsblsz      FNAME(sfsblsz)
 #endif
 #endif
 
