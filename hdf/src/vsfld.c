@@ -512,7 +512,7 @@ VFfieldtype(int32 vkey, int32 index)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     if (vs->wlist.n == 0)
-      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+      HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
     ret_value = ((int32) vs->wlist.type[index]);
 
@@ -561,7 +561,7 @@ VFfieldisize(int32 vkey, int32 index)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     if (vs->wlist.n == 0)
-      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+      HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
     ret_value = ((int32) vs->wlist.isize[index]);
 
@@ -610,7 +610,7 @@ VFfieldesize(int32 vkey, int32 index)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     if (vs->wlist.n == 0)
-      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+      HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
     ret_value = ((int32) vs->wlist.esize[index]);
 
@@ -658,7 +658,7 @@ VFfieldorder(int32 vkey, int32 index)
       HGOTO_ERROR(DFE_ARGS,FAIL);
 
     if (vs->wlist.n == 0)
-      HGOTO_ERROR(DFE_BADFIELDS,NULL);
+      HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
     ret_value = ((int32) vs->wlist.order[index]);
 
