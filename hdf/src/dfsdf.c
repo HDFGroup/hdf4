@@ -28,9 +28,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/01/05 04:07:25  georgev
-Added Fortran hyperslab C stubs
+Revision 1.9  1993/01/15 16:51:37  georgev
+dswfv() works now. i.e. DFSDwritefillvalue()
 
+ * Revision 1.8  1993/01/05  04:07:25  georgev
+ * Added Fortran hyperslab C stubs
+ *
  * Revision 1.7  1993/01/04  21:26:13  sxu
  * delete dspre32 and dfsdpre32
  *
@@ -104,10 +107,10 @@ Added Fortran hyperslab C stubs
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
- *  dswref:        Call DFSDwriteref to set up next ref to write
+ *  dswref:         Call DFSDwriteref to set up next ref to write
  *  dssfv:          Call DFSDsetfillvalue to set fill value for SDS
  *  dsgfv:          Call DFSDgetfillvalue to get fill value from SDS
- *  dswf:           Call DFSDwritefillvalue to write fill value to SDS
+ *  dswfv:          Call DFSDwritefillvalue to write fill value to SDS
  *  dswslab:        Call DFSDwriteslab to write slab to file
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
  *---------------------------------------------------------------------------*/
@@ -1638,7 +1641,8 @@ ndswref(filename, fnlen, ref)
     fn = HDf2cstring(filename, *fnlen);
     ret = DFSDwriteref(fn, (uint16) *ref);
     HDfreespace(fn);
-    return(ret);
+
+    return ret;
 }
 
 /*-----------------------------------------------------------------------------
@@ -1707,7 +1711,7 @@ ndswfv(filename, fnlen, fill_value)
     intf ret;
 
     fn = HDf2cstring(filename, *fnlen);
-    if (fn = NULL)
+    if (fn == NULL)
       return FAIL;
     ret = DFSDwritefillvalue(fn, fill_value);
     HDfreespace(fn);
