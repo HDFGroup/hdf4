@@ -48,7 +48,7 @@ Supported Platforms
                                              2.6.2
                                  (Fortran to C converter)
 
-  MacQuadra950(Mac-OS-7.5)     -               -               -         -
+  PowerPC(Mac-OS-7.5)         Codewarrior 8    -              X         X
   Windows NT/95                -               -               -         - 
  
 Requirements
@@ -65,7 +65,9 @@ Requirements
         compile both libraries without Fortran support by setting 
         the Fortran compiler variable 'FC = NONE' in the respective
         makefile fragment(mh-<os>) found in the top-level 'config'
-        directory($(toplevel)/config/mh-<os>).
+        directory: 
+
+                $(toplevel)/config/mh-<os>.
 
         See below for further details of configuration and installation.
         
@@ -79,9 +81,9 @@ General Configuration/Installation - Unix
     scripts. One is the Cygnus 'configure' script and the other is the
     'configure' script created by the GNU autconf package. The Cygnus
     'configure' script is used at the top level to configure the overall
-    distribution and the HDF/MFHDF library. The GNU 'configure' script
-    is used by the netCDF distribution to configure itself. However, this
-    gnu configure script is not used in configuring this distribution.
+    distribution and the HDF/MFHDF/IJPEG libraries. The GNU 'configure' script
+    is used by the netCDF/IJPEG distributions to configure themselves. However, 
+    these gnu configure scripts are not used in configuring this distribution.
  
     The Cygnus 'configure' script attempts to guess the correct
     platform you are configuring the distribution for by calling the shell
@@ -91,40 +93,47 @@ General Configuration/Installation - Unix
 
     Layout of configuration files
     -----------------------------
-    The following shows the layout of the files used in the configuration.
+    The following shows the layout of the files used in the configuration
+    of the HDF/MFHDF distribution..
+
     NOTE: The $(toplevel)/mfhdf/CUSTOMIZE and 
           $(toplevel)/mfhdf/configure(autoconf) files are no longer used 
-          in the configuration
+          in the configuration of the distribution.
   
     $(toplevel)/Makefile.in
                 config.guess
                 config.sub
                 configure (cygnus)
-                configure.in
+                configure.in (cygnus)
                 config/mh-hpux, mh-sun,.....
-                      /custom_hpux, mh-sun,...
 
-                mfhdf/libsrc/config/netcdf-aix.h, netcdf-alpha.h,...
-                mfhdf/fortran/config/ftest-aix.f,...
-                mfhdf/fortran/config/jackets-aix.c,..
-                mfhdf/fortran/config/netcdf-aix.inc,..
+                mfhdf/CUSTOMIZE(not used)
+                mfhdf/configure(autoconf - not used)
+                mfhdf/libsrc/config/netcdf-aix.h,...  -> linked to netcdf.h
+                mfhdf/fortran/config/ftest-aix.f,...  -> linked to ftest.f
+                mfhdf/fortran/config/jackets-aix.c,.. -> linked to jackets.c
+                mfhdf/fortran/config/netcdf-aix.inc,..-> linked to netcdf.inc
 
                 hdf/Makefile.in
                 hdf/src/Makefile.in
                 hdf/test/Makefile.in
                 hdf/util/Makefile.in
+                hdf/zlib/Makefile.in
 
-                hdf/jpeg/configure.in
+                hdf/jpeg/configure.in (cygnus)
                 hdf/jpeg/Makefile.in
-                hdf/jpeg/configure.gnu
+                hdf/jpeg/configure.gnu(autoconf - not used)
                 hdf/jpeg/config/mh-hpux, mh-sun,...
-                hdf/jpeg/config/jhpux.h, jsun.h,...
+                hdf/jpeg/config/jhpux.h, jsun.h,...   -> linked to jconfig.h
 
     Changing default values(CC,CFLAGS,..)
     -------------------------------------
     To change any of the default values for CC, FC, CFLAGS, FFLAGS,..etc
-    edit the makefile fragment '$(toplevel)/config/mh-<os>' for your 
-    particular operating system. After changing the values you must 
+    edit the makefile fragment: 
+
+             $(toplevel)/config/mh-<os>
+
+    for your particular operating system. After changing the values you must 
     re-run the top-level 'configure' script. 
 
     Running configure
@@ -146,8 +155,8 @@ General Configuration/Installation - Unix
     installed in '/usr/local/lib'. The '-v' option is for verbose output.
 
     If the configure script can't determine your type of computer, give it
-    the name as an argument, for instance ``./configure sun4''.  You can
-    use the script ``config.sub'' to test whether a name is recognised; if
+    the name as an argument, for instance './configure sun4'.  You can
+    use the script 'config.sub' to test whether a name is recognised; if
     it is, config.sub translates it to a triplet specifying CPU, vendor,
     and OS.(e.g hppa1.1-hp-hpux9.03 for an HP900/735 running HPUX9.03).
 
@@ -161,7 +170,7 @@ General Configuration/Installation - Unix
 
         make help
 
-    To test the libraries type :
+    To test the libraries and utilities type :
 
         make test 
 
@@ -254,8 +263,10 @@ Pablo Instrumentation
     about I/O behaviour and procedure execution times.  
 
     More detailed documentation on how to use the instrumented version of
-    the HDF library with Pablo can be found in the Pablo directory 
-    '$(toplevel)/hdf/pablo'. 
+    the HDF library with Pablo can be found in the Pablo directory: 
+
+       $(toplevel)/hdf/pablo 
+
     See the provided '$(toplevel)/hdf/pablo/README.Pablo' and the PostScript 
     file '$(toplevel)/hdf/pablo/Pablo.ps'.
 
@@ -285,16 +296,15 @@ Pablo Instrumentation
     Details on running configure can be found above in the section
     'General Configuration/Installation - Unix'.
 
-File Page Buffering(Beta release)
+File Cache(Beta release)
 =================================
-    This version of the distribution has preliminary support for file page
-    buffering. 
+    This version of the distribution has preliminary support for file caching.
 
 *NOTE*: This version is NOT officially supported on all platforms
         and has not been extensively tested. As such it is provided as is.
         It will be supported officially in a later release.
 
-    The file page buffering allows the file to be mapped to user memory on 
+    The file cache allows the file to be mapped to user memory on 
     a per page basis i.e a memory pool of the file. With regards to the 
     file system, page sizes can be allocated based on the file system 
     page-size or if the user wants in some multiple of the file system 
@@ -306,11 +316,11 @@ File Page Buffering(Beta release)
     next release). The default is 8192 bytes for page-size and 1 for number 
     of pages in the pool.
 
-    More detailed documentation on how to use the file page buffering version 
+    More detailed documentation on how to use the file caching version 
     of the HDF library can be found in the directory'$(toplevel)/release_notes'.
     See the provided file '$(toplevel)/release_notes/page_buf.txt'
 
-    To enable the creation of a library using page buffering the following 
+    To enable the creation of a library using page caching the following 
     section in the makefile fragment($(toplevel)/config/mh-<os>) must be 
     uncommented and set.
 
@@ -331,12 +341,16 @@ Documentation
 =============
 
     Manual pages for the library are not yet completed but some early
-    drafts are available in $(toplevel)/man.
+    drafts are available in:
+
+         $(toplevel)/man.
 
     The files in sub-directory $(toplevel)/release_notes are detailed 
     descriptions for the new features. They can be used as supplement 
     documentation for HDF4.0. Those files are also available on the NCSA 
-    ftp server, in /HDF/Documentation/HDF4.0/4.0b2_release_notes/.
+    ftp server(ftp.ncsa.uiuc.edu) in:
+ 
+         /HDF/Documentation/HDF4.0/4.0_release_notes/.
 
 
 Installation Location
