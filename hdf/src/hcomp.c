@@ -389,6 +389,9 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
               break;
 
           case COMP_CODE_SKPHUFF:   /* Skipping Huffman coding needs info */
+              if(c_info->skphuff.skp_size<1)
+                  HRETURN_ERROR(DFE_BADCODER, FAIL)
+
               /* specify skipping unit size */
               UINT32ENCODE(p, (uint32) c_info->skphuff.skp_size);
               /* specify # of bytes compressed (not used currently) */
@@ -396,6 +399,9 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
               break;
 
           case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+              if(c_info->deflate.level<1 || c_info->deflate.level>9)
+                  HRETURN_ERROR(DFE_BADCODER, FAIL)
+
               /* specify deflation level */
               UINT16ENCODE(p, (uint16) c_info->deflate.level);
               break;
