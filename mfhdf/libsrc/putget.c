@@ -1176,12 +1176,16 @@ hdf_xdr_NCvdata(NC *handle,
                 int32 buf_size = where;
                 int32 chunk_size;
                 uint8 *write_buf = NULL;
+                uint32 fill_count;
 
                 /* Make certain we don't try to write too large of a chunk at a time */
                 chunk_size = MIN(buf_size,MAX_SIZE);
 
+		/* How many fill values will cover chunk_size after conversion??? */
+		fill_count = chunk_size/vp->HDFsize;;
+
                 /* make sure our tmp buffer is big enough to hold everything */
-                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,chunk_size) == FAIL)
+                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,fill_count*vp->szof) == FAIL)
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1197,7 +1201,7 @@ hdf_xdr_NCvdata(NC *handle,
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
                 else 
-                    NC_arrayfill(tBuf, chunk_size, vp->type);
+                    NC_arrayfill(tBuf, fill_count*vp->szof, vp->type);
 
                 /* convert the fill-values, if necessary */
                 if(convert) 
@@ -1208,7 +1212,7 @@ hdf_xdr_NCvdata(NC *handle,
                             goto done;
                         }
 
-                      if (FAIL == DFKnumout(tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
+                      if (FAIL == DFKnumout(tBuf, tValues, fill_count, 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
@@ -1244,6 +1248,7 @@ hdf_xdr_NCvdata(NC *handle,
       } /* end if */
     else
       { /* position ourselves correctly */
+
 #ifdef DEBUG
           fprintf(stderr, "hdf_xdr_NCvdata: Check 2.0\n");
 #endif
@@ -1255,12 +1260,12 @@ hdf_xdr_NCvdata(NC *handle,
                       goto done;
                   }    
             }
-      } /* end else */
     
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata after Hseek(), byte_count=%d\n",(int)byte_count);
 #endif
     
+      } /* end else */
     /* Read or write the data into / from values */
     if(handle->xdrs->x_op == XDR_DECODE) 
       {
@@ -1302,7 +1307,8 @@ hdf_xdr_NCvdata(NC *handle,
                       ret_value = FAIL;
                       goto done;
                   }    
-                if (FAIL == DFKnumout(values, tBuf, (uint32) count, 0, 0))
+
+                if (FAIL == DFKnumout(values, tBuf, count, 0, 0))
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1336,12 +1342,16 @@ hdf_xdr_NCvdata(NC *handle,
                 int32 buf_size = bytes_left;
                 int32 chunk_size;
                 uint8 *write_buf = NULL;
+                uint32 fill_count;
 
                 /* Make certain we don't try to write too large of a chunk at a time */
                 chunk_size = MIN(buf_size,MAX_SIZE);
 
+		/* How many fill values will cover chunk_size after conversion??? */
+		fill_count = chunk_size/vp->HDFsize;
+
                 /* make sure our tmp buffer is big enough to hold everything */
-                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,chunk_size) == FAIL)
+                if(SDIresizebuf((void * *)&tBuf,&tBuf_size,fill_count*vp->szof) == FAIL)
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1356,7 +1366,7 @@ hdf_xdr_NCvdata(NC *handle,
                 if(attr != NULL)
                     HDmemfill(tBuf,(*attr)->data->values,vp->szof,(chunk_size/vp->HDFsize));
                 else 
-                    NC_arrayfill(tBuf, chunk_size, vp->type);
+                    NC_arrayfill(tBuf, fill_count*vp->szof, vp->type);
 
                 /* convert the fill-values, if necessary */
                 if(convert) 
@@ -1366,7 +1376,7 @@ hdf_xdr_NCvdata(NC *handle,
                             ret_value = FAIL;
                             goto done;
                         }    
-                      if (FAIL == DFKnumout(tBuf, tValues, (uint32) (chunk_size/vp->HDFsize), 0, 0))
+                      if (FAIL == DFKnumout(tBuf, tValues, fill_count, 0, 0))
                         {
                             ret_value = FAIL;
                             goto done;
