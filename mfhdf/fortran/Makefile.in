@@ -438,7 +438,7 @@ program:
 	    $(MAKE) $(MFLAGS) $(LOCAL_MACROS) $(PROGRAM); \
 	fi
 
-dummy_prog $(PROGRAM):	$(PROGRAM).o $(LIBS)
+dummy_prog $(PROGRAM):	$(PROGRAM).o FORCE
 	@if [ -r $@.f -o -r $@.F ]; then \
 	    ld='$(FC) $(FFLAGS)'; \
 	else \
