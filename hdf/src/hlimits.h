@@ -14,6 +14,8 @@
 
 /*+ hlimits.h
    *** This file contains all hard coded limits for the library
+   *** and reserved vdata/vgroup names and classes. 
+   *** Also pre-defined attribute names are contained in thie file.
    + */
 
 #ifndef _HLIMITS_H
@@ -199,3 +201,57 @@
 #define MAX_GR_NAME 256		 /* max length of a name */
 
 #endif /* _HLIMITS_H */
+
+/* -----------  Reserved classes and names for vdatas/vgroups -----*/
+
+/* The names of the Vgroups created by the GR interface, from mfgr.h */
+#define GR_NAME "RIG0.0"    /* name of the Vgroup containing all the images */
+#define RI_NAME "RI0.0"     /* name of a Vgroup containing information a
+bout one image */
+#define RIGATTRNAME  "RIATTR0.0N"  /* name of a Vdata containing an attr
+ibute */
+#define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an att
+ribute */
+
+/* classes of the Vdatas/Vgroups created by the SD interface, from local_nc.h  */
+#define ATTRIBUTE         "Attr0.0" 
+        /* class of a Vdata containing SD interface attribute */
+#define VARIABLE          "Var0.0"
+        /* class of a Vgroup representing an SD NDG */
+#define DIMENSION         "Dim0.0"
+        /* class of a Vgroup representing an SD dimension */
+#define UDIMENSION        "UDim0.0"
+        /* class of a Vgroup representing an SD UNLIMITED dimension*/
+#define DIM_VALS          "DimVal0.0"
+        /* class of a Vdata containing an SD dimension size and fake values */
+#define DIM_VALS01        "DimVal0.1"
+             /* class of a Vdata containing an SD dimension size */
+#define CDF               "CDF0.0"
+/* DATA is defined in DTM. Change DATA to DATA0 *
+#define DATA              "Data0.0"
+*/
+#define DATA0             "Data0.0"
+#define ATTR_FIELD_NAME   "VALUES"
+
+/* ------------  pre-defined attribute names ---------------- */
+/* For MFGR interface */
+#define FILL_ATTR    "FillValue"   
+          /* name of an attribute containing the fill value */
+
+/* For SD interface  */
+#define _FillValue      "_FillValue"
+          /* name of an attribute to set fill value for an SDS */
+#define _LongName "long_name" /* data/dimension label string  */
+#define _Units    "units"     /* data/dimension unit string   */
+#define _Format   "format"    /* data/dimension format string */
+#define _CoordSys "coordsys"  /* data coordsys string         */
+#define _ValidRange     "valid_range" /* valid range of data values  */
+#define _ScaleFactor    "scale_factor" /* data calibration factor    */
+#define _ScaleFactorErr "scale_factor_err" /* data calibration factor error */
+#define _AddOffset      "add_offset" /* calibration offset           */
+#define _AddOffsetErr   "add_offset_err" /*  calibration offset error */
+#define _CalibratedNt   "calibrated_nt"  /* data type of uncalibrated data */
+#define _ValidMax       "valid_max"
+#define _ValidMin       "valid_min"
+#define _Remarks        "remarks"        /* annotation, by DFAN */
+#define _AnnoLabel      "anno_label"     /* annotation label, by DFAN */

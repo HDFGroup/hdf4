@@ -44,6 +44,7 @@ gr_interlace_t;
 /* By default this is the same as the number of files allowed to be open */
 #define MAX_GR_FILES    MAX_FILE
 
+#if 0  /* moved to hlimits.h */
 /* The names of the Vgroups created by the GR interface */
 #define GR_NAME "RIG0.0"    /* name of the Vgroup containing all the images */
 #define RI_NAME "RI0.0"     /* name of a Vgroup containing information about one image */
@@ -51,6 +52,7 @@ gr_interlace_t;
 #define RIGATTRCLASS "RIATTR0.0C"  /* class of a Vdata containing an attribute */
 
 #define FILL_ATTR    "FillValue"   /* name of an attribute containing the fill value */
+#endif
 
 /* The tag of the attribute data */
 #define RI_TAG      DFTAG_VG    /* Current RI groups are stored in Vgroups */
