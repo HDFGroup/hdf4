@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/11/02 16:35:41  koziol
-Updates from 3.2r2 -> 3.3
+Revision 1.3  1993/01/15 23:47:37  sxu
+bug fixed in DFKvo8f and DFKvi8f
 
+ * Revision 1.2  1992/11/02  16:35:41  koziol
+ * Updates from 3.2r2 -> 3.3
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -1957,6 +1960,7 @@ uint32 num_elm, source_stride, dest_stride;
 
 }
 
+
 /*
  * Define structures to encode and decode Vax numbers
  * The following code is based on the methods of reading / writing
@@ -2021,7 +2025,8 @@ uint32 num_elm, source_stride, dest_stride;
   char *FUNC="DFKvi8f";
   intn exp;
 
-  struct ieee_double *id;
+  struct dbl_limits *lim;
+  struct ieee_double id;
   struct vax_double  *vd;
   intn found, j;
 
@@ -2039,32 +2044,47 @@ uint32 num_elm, source_stride, dest_stride;
       source_stride = dest_stride = 8;
 
   for(i = 0; i < num_elm; i++) {
+shipit:  /* In VAX, bytes in a word are counted from right to left */
+      {
+         register int j,k;
+         uint8 *bufi, *i3e;
 
-      id = (struct ieee_double *) source;
+         i3e = source;
+         bufi = (uint8 *)&(id);
+         for (j=0; j<2; j++)     {
+             for (k=0; k<4; k++)
+                 bufi[k] = i3e[3-k];
+             bufi += 4;
+             i3e +=4;
+         }
+      }   /* shipit   */
+
       vd = (struct vax_double *)  dest;
       
       found = FALSE;
       
-      for(j = 0; j < 2; j++) {
-          if((id->mantissa2 == dbl_lim[j].ieee.mantissa2) &&
-             (id->mantissa1 == dbl_lim[j].ieee.mantissa1) &&
-             (id->exp == dbl_lim[j].vaxx.exp)) {
-              *vd = dbl_lim[j].vaxx;
+      for(j = 0, lim = dbl_lim;
+          j < sizeof(dbl_lim)/sizeof(struct dbl_limits);
+          j++, lim++) {
+          if((id.mantissa2 == lim->ieee.mantissa2) &&
+             (id.mantissa1 == lim->ieee.mantissa1) &&
+             (id.exp == lim->vaxx.exp)) {
+              *vd = lim->vaxx;
               found = TRUE;
               break;
           }
       }
 
       if(!found) {
-          vd->exp = id->exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
-          vd->mantissa1 = id->mantissa1 >> 13;
-          vd->mantissa2 = ((id->mantissa1 & MASK(13)) << 3) |
-              (id->mantissa2 >> 29);
-          vd->mantissa3 = id->mantissa2 >> 13;
-          vd->mantissa4 = id->mantissa2 << 3;
+          vd->exp = id.exp - IEEE_DBL_BIAS + VAX_DBL_BIAS;
+          vd->mantissa1 = id.mantissa1 >> 13;
+          vd->mantissa2 = ((id.mantissa1 & MASK(13)) << 3) |
+              (id.mantissa2 >> 29);
+          vd->mantissa3 = id.mantissa2 >> 13;
+          vd->mantissa4 = id.mantissa2 << 3;
       }
 
-      vd->sign = id->sign;
+      vd->sign = id.sign;
 
       source += source_stride;
       dest   += dest_stride;
@@ -2087,7 +2107,7 @@ uint32 num_elm, source_stride, dest_stride;
 #endif /* PROTOTYPE */
 {
   int in_place = 0;                     /* Inplace must be detected */
-  register uint32 i;            
+  register int i;            
   uint8 buf[4];                          /* Inplace processing buffer */
 #ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
@@ -2096,8 +2116,9 @@ uint32 num_elm, source_stride, dest_stride;
   char *FUNC="DFKvo8f";
   intn exp;
 
-  struct ieee_double *id;
-  struct vax_double  *vd;
+  struct dbl_limits *lim;
+  struct ieee_double id;
+  struct vax_double  vd;
   intn found, j;
 
   HEclear();
@@ -2115,33 +2136,49 @@ uint32 num_elm, source_stride, dest_stride;
 
   for(i = 0; i < num_elm; i++) {
 
-      id = (struct ieee_double *) dest;
-      vd = (struct vax_double *)  source;
+      vd = *((struct vax_double *)  source);
       
       found = FALSE;
 
-      for(j = 0; j < 2; j++) {
-          if((vd->mantissa4 == dbl_lim[j].vaxx.mantissa4) &&
-             (vd->mantissa3 == dbl_lim[j].vaxx.mantissa3) &&
-             (vd->mantissa2 == dbl_lim[j].vaxx.mantissa2) &&
-             (vd->mantissa1 == dbl_lim[j].vaxx.mantissa1) &&
-             (vd->exp == dbl_lim[j].vaxx.exp)) {
-              *id = dbl_lim[j].ieee;
+      for(j = 0, lim=dbl_lim;
+          j< sizeof(dbl_lim)/sizeof(struct dbl_limits);
+          j++, lim++) {
+          if((vd.mantissa4 == lim->vaxx.mantissa4) &&
+             (vd.mantissa3 == lim->vaxx.mantissa3) &&
+             (vd.mantissa2 == lim->vaxx.mantissa2) &&
+             (vd.mantissa1 == lim->vaxx.mantissa1) &&
+             (vd.exp == lim->vaxx.exp)) {
+              id = lim->ieee;
               found = TRUE;
               break;
           }
       }
 
       if(!found) {
-          id->exp = vd->exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
-          id->mantissa1 = (vd->mantissa1 << 13) | (vd->mantissa2 >> 3);
-          id->mantissa2 = ((vd->mantissa2 & MASK(3)) << 29) |
-              (vd->mantissa3 << 13) |
-                  ((vd->mantissa4>> 3) & MASK(13));
+          id.exp = vd.exp - VAX_DBL_BIAS + IEEE_DBL_BIAS;
+          id.mantissa1 = (vd.mantissa1 << 13) | (vd.mantissa2 >> 3);
+          id.mantissa2 = ((vd.mantissa2 & MASK(3)) << 29) |
+              (vd.mantissa3 << 13) |
+                  ((vd.mantissa4>> 3) & MASK(13));
       }
       
-      id->sign = vd->sign;
+      id.sign = vd.sign;
 
+shipit:  /* In VAX the bytes in a word are counted from right to left */
+      {
+         register int j,k;
+         uint8 *i3e, *bufo;
+
+         i3e = (uint8 *)&(id);
+         bufo = dest;
+         for (j=0;j<2;j++)   {
+             for (k=0; k<4; k++)
+                 bufo[k]=i3e[3-k];
+             bufo += 4;
+             i3e +=4;
+         }
+       }
+             
       source += source_stride;
       dest   += dest_stride;
   }
