@@ -146,6 +146,9 @@ main(int argc, char *argv[])
     InitTest("extelt", test_hextelt, "EXTERNAL ELEMENTS");
     InitTest("comp", test_comp, "COMPRESSED ELEMENTS");
     InitTest("chunks", test_chunks, "Chunks");
+#ifdef LATER
+    InitTest("vblocks", test_hvblocks, "Variable Length Linked Blocks");
+#endif /* LATER */
     InitTest("bitio", test_bitio, "BIT I/O");
     InitTest("8bit", test_r8, "8BIT RASTER IMAGE INTERFACE");
     InitTest("pal", test_pal, "PALETTE INTERFACE");
@@ -169,10 +172,7 @@ main(int argc, char *argv[])
     Verbosity = 4;  /* Default Verbosity is Low */
     Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
-    printf("===============================\n");
-    printf("HDF Library C Interface Tests\n");
-    printf("===============================\n");
-    printf("For help use: testhdf -help\n");
+    printf("\nFor help use: testhdf -help\n");
     printf("Built with HDF Library Version: %u.%ur%u, %s\n\n", (unsigned) lmajor,
            (unsigned) lminor, (unsigned) lrelease, lstring);
     for (CLLoop = 1; CLLoop < argc; CLLoop++)
@@ -321,12 +321,16 @@ main(int argc, char *argv[])
       {
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
+#ifdef VMS   
+       system("delete *.tmp;*");
+#else        /* VMS */
 #if !(defined DOS386 | defined WIN386)
           system("rm -f *.hdf *.tmp");
 #else   /* OLD_WAY */
           remove("*.hdf");
           remove("*.tmp");
 #endif  /* OLD_WAY */
+#endif  /* VMS */
       }     /* end if */
     exit(0);
     return (0);
