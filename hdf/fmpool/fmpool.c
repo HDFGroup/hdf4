@@ -184,7 +184,7 @@ NOTE: We don't have much use for the page in/out filters as we rely
       to arbitrarily change the pagesize from one invocation to another.
       This deviates from the original Berkely implemntation.
 
-      The key string byte for sharing buffers is not implemented
+      The key string byte for sharing buffers is not implemented.
 ******************************************************************************/
 MPOOL *
 fmpool_open(key, fd, pagesize, maxcache)
@@ -388,19 +388,22 @@ NAME
 
 DESCRIPTION
     Get a new page of memory. This is where we get new pages for the file.
-    This will only return a full page of memory and 
-    if the last page is and odd size the user must keep track
-    of this as only 'lastpagesize' bytes will be written out
-    and as a result if the user fills the last page and
-    'lastpagesize' != 'pagesize' the user will lose data.
-    'flags' = 0, increase number of pages by 1 and return
-                *pgnoaddr = (npages -1)
-    'flags' = MPOOL_EXTEND, set page to *pgnoaddr and
-                npages = *pgnoaddr + 1
+    This will only return a full page of memory. 
+    If the last page is an odd size the user must keep track
+    of this as only lastpagesize bytes will be written out.
+    As a result if the user fills the last page and
+    lastpagesize does not equal pagesize the user will lose data.
+
+    If 'flags' = 0, increase number of pages by 1 and return
+                   *pgnoaddr = npages
+
+    If 'flags' = MPOOL_EXTEND, set page to *pgnoaddr and
+                               npages = *pgnoaddr.
+
     All returned pages are pinned.
 
 RETURNS
-    Returns the new page if succesfula and NULL otherwise
+    Returns the new page if successfull and NULL otherwise
 ******************************************************************************/
 void *
 fmpool_new(mp, pgnoaddr, pagesize, flags)
