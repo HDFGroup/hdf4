@@ -7,7 +7,7 @@ SWAP    	= @SWAP@
 NETLONG    	= @NETLONG@
 CPPFLAGS	= $(SWAP) $(NETLONG) @CPPFLAGS@
 CFLAGS		= @CFLAGS@ @HDF_INC@
-GARBAGE		= $(PROGRAM) test.cdf cdfout.new test*.hdf \
+GARBAGE		= $(PROGRAM) test.cdf cdfout.new *.hdf \
                   hdftest hdfout.new
 HEADERS		= netcdf.h mfhdf.h
 XDRFILE		= @XDRFILE@
