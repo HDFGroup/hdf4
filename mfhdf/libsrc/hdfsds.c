@@ -365,7 +365,7 @@ intn hdf_read_ndgs(handle)
                 case DFTAG_CAL:        /* calibration info */
                     /* 
                      * DFTAG_CAL => 'scale_factor', 'add_offset', 'scale_factor_err', 
-                     *              'add_offset_err'
+                     *              'add_offset_err' and 'cal_nt'
                      */
                     if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, DFtbuf) == FAIL)
                         return FALSE;
@@ -400,7 +400,17 @@ intn hdf_read_ndgs(handle)
                                                     NC_DOUBLE, 
                                                     1, 
                                                     (Void *) &(tBuf[24]));
-                    
+
+                        /* don't forget number_type  */
+                        DFKconvert((VOIDP)(DFtbuf + 32),
+                                   (VOIDP) tBuf,
+                                   DFNT_INT32, 1, DFACC_READ, 0,0);
+
+                        attrs[current_attr++] =
+                            (NC_attr *) NC_new_attr("calibrated_nt", 
+                                                    NC_LONG,
+                                                    1,
+                                                    (Void *) &(tBuf[0])); 
                     } else {
                         /* DFNT_FLOAT32 based calibration */
 
@@ -431,8 +441,17 @@ intn hdf_read_ndgs(handle)
                                                     NC_FLOAT, 
                                                     1, 
                                                     (Void *) &(tBuf[12]));
-                        
-                        
+
+                       /* don't forget number_type  */
+                        DFKconvert((VOIDP)(DFtbuf + 16),
+                                   (VOIDP) tBuf,
+                                   DFNT_INT16, 1, DFACC_READ, 0,0);
+
+                        attrs[current_attr++] =
+                            (NC_attr *) NC_new_attr("calibrated_nt", 
+                                                    NC_SHORT,
+                                                    1,
+                                                    (Void *) &(tBuf[0]));
                     }
                     
                     break;
