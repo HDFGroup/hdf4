@@ -29,6 +29,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FNAME0   "tvset.hdf"
 #define FNAME1   "tvset1.hdf"
 #define FNAME2   "tvset2.hdf"
+#define EXTFNM	 "tvsetext.hdf"
 
 #define FIELD1       "FIELD_name_HERE"
 #define FIELD1_UPPER "FIELD_NAME_HERE"
@@ -213,6 +214,13 @@ write_vset_stuff(void)
       {
           num_errs++;
           printf(">>> Vsetfields failed for %s\n", name);
+      }
+    /* change this vdata to store in an external file */
+    status = VSsetexternalfile(vs1, EXTFNM, (int32) 0);
+    if (status == FAIL)
+      {
+          num_errs++;
+          printf(">>> VSsetexternalfile failed\n");
       }
 
     /* create some bogus data */
@@ -621,6 +629,39 @@ read_vset_stuff(void)
       }
 
     VSdetach(vs1);
+
+    /* testing VSsetexternalfile by reading the external file directly */
+    {   int fd, j;
+	int32 ival;
+
+
+	if ((fd = open(EXTFNM, O_RDONLY)) < 0 ){
+	    num_errs++;
+	    printf(">>> Reopen External file %s failed\n", EXTFNM);
+	}
+	else{
+	    status = read(fd, gbuf, 2*count*sizeof(int32));
+
+	    j = 0;
+	    for (i = 0; i < 2 * count; i++)
+	    {
+		ival = 0xff & gbuf[j++];
+		ival = ival<<8 | (0xff & gbuf[j++]);
+		ival = ival<<8 | (0xff & gbuf[j++]);
+		ival = ival<<8 | (0xff & gbuf[j++]);
+
+		if (ival != i)
+		{
+		    num_errs++;
+		    printf(">>> External value %d was expecting %d got %d\n",
+			(int) i, (int) i, (int) ival);
+		}
+	    }
+	}
+	close(fd);
+    }
+
+	    
 
     /* Move to the next one (integers + floats) */
     ref = VSgetid(fid, ref);
