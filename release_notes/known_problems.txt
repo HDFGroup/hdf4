@@ -1,4 +1,4 @@
-This file contains known problems in this release.
+This file contains known problems for HDF4.1r5
 
 Writing n-bit datasets from FORTRAN with the SD interface is not working.
 
