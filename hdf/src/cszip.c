@@ -78,9 +78,6 @@ HCIcszip_init(accrec_t * access_rec)
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);
 #endif
 
-    if (SZ_encoder_enabled() == 0) 
-        HRETURN_ERROR(DFE_NOENCODER, FAIL);
-
     info = (compinfo_t *) access_rec->special_info;
     if (Hseek(info->aid, 0, DF_START) == FAIL)  /* seek to beginning of element */
         HRETURN_ERROR(DFE_SEEKERROR, FAIL);
@@ -387,7 +384,12 @@ HCIcszip_term(compinfo_t * info)
 	return (SUCCEED); /* nothing to do */
 
     if (szip_info->szip_dirty != SZIP_DIRTY) /* Should never happen?? */
+    {
+	    if (szip_info->buffer_size == 0) {
+		HDfree(szip_info->buffer);
+            }
 	return (SUCCEED);
+    }
 
     szip_info->szip_state = SZIP_TERM;
 
@@ -645,8 +647,6 @@ HCPcszip_stwrite(accrec_t * access_rec)
     CONSTR(FUNC, "HCPcszip_stwrite");
     int32       ret;
 
-    if (SZ_encoder_enabled() == 0) 
-	HRETURN_ERROR(DFE_NOENCODER, FAIL);
     if ((ret = HCIcszip_staccess(access_rec, DFACC_WRITE)) == FAIL)
         HRETURN_ERROR(DFE_CINIT, FAIL);
     return (ret);
