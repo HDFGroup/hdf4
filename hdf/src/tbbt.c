@@ -206,7 +206,7 @@ tbbtindx(TBBT_NODE * root, int32 indx)
 {
   TBBT_NODE  *ptr = root;
 
-  indx += 1; /* index is Zero based */
+  /* I believe indx is 1 based */
   if (NULL == ptr || indx < 1)
     return (NULL);
   /* Termination condition is if the index equals the number of children on

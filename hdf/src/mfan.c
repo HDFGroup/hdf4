@@ -27,7 +27,8 @@ static char RcsId[] = "@(#)$Revision$";
  *           TBBT trees are created to handle annotations(1 for file_ids,
  *           1 for all ann_ids, 4 for file_ann, file_desc, data_ann and
  *           data_desc) which is not pretty but it does make search/find of
- *           annotations much easier.
+ *           annotations much easier.Currently the implementation uses TBBT
+ *           trees and there exists code for Red-Black tree implmentation.
  *
  * Contents: 
  *
@@ -2166,7 +2167,7 @@ ANcreatef(int32 file_id, ann_type type)
  RETURNS
         An ID to an annotation type which can either be a label or description 
  DESCRIPTION
-        The position index is zero based
+        The position index is 1 based
 --------------------------------------------------------------------------- */
 EXPORT int32
 ANselect(int32 file_id, int32 index, ann_type type)
