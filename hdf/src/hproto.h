@@ -162,8 +162,12 @@ extern intn Hfidinquire
         intn _HUGE *attach));
 
 /*
-** from hkit.c 
+** from hdfalloc.c
 */
+
+extern VOIDP HDmemfill
+  (VOIDP dest,const VOIDP src,uint32 item_size,uint32 num_items);
+
 extern char _HUGE *HIstrncpy
   PROTO((register char _HUGE *dest, register char _HUGE *source, int32 len));
 
@@ -1214,7 +1218,6 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndsisslab         FNAME(DSISSLAB)
 #   define ndswslab          FNAME(DSWSLAB)
 #   define ndseslab          FNAME(DSESLAB)
-#   define ndsirslab         FNAME(DSIRSLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -1269,7 +1272,6 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndsisslab         FNAME(dsisslab)
 #   define ndswslab          FNAME(dswslab)
 #   define ndseslab          FNAME(dseslab)
-#   define ndsirslab         FNAME(dsirslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 
@@ -1526,7 +1528,7 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(D2IGIMG)
 #   define nd2iaimg  FNAME(D2IAIMG)
 #   define nd2irref  FNAME(D2IRREF)
-#   define nd2lref   FNAME(D2LREF)
+#   define nd24lref  FNAME(D24LREF)
 #   define nd2scomp  FNAME(D2SCOMP)
 #   define ndf24scompress FNAME(DF24SCOMPRESS)
 #   define nd2sjpeg  FNAME(D2SJPEG)
@@ -1544,7 +1546,7 @@ extern FRETVAL(intf) ndfplastref
 #   define nd2igimg  FNAME(d2igimg)
 #   define nd2iaimg  FNAME(d2iaimg)
 #   define nd2irref  FNAME(d2irref)
-#   define nd2lref   FNAME(d2lref)
+#   define nd24lref  FNAME(d24lref)
 #   define nd2scomp  FNAME(d2scomp)
 #   define ndf24scompress FNAME(df24scompress)
 #   define nd2sjpeg  FNAME(d2sjpeg)
@@ -1591,7 +1593,7 @@ extern FRETVAL(intf) ndf24restart
 extern FRETVAL(intf) nd2irref
     PROTO((_fcd filename, intf _HUGE *ref, intf _HUGE *fnlen));
 
-extern FRETVAL(intf) nd2lref
+extern FRETVAL(intf) nd24lref
     PROTO((void));
 
 extern FRETVAL(intf) nd2scomp
@@ -1818,4 +1820,3 @@ extern int DFUfptoimage
 #endif /* c_plusplus || __cplusplus */
 
 #endif /* _H_PROTO */
-

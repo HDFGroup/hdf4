@@ -223,36 +223,31 @@ PRIVATE int32 HCIcnbit_decode(compinfo_t *info,int32 length,uint8 *buf)
 printf("HCPcnbit_encode(): length=%d, buf=%p\n",length,buf);
 #endif
         if(buf_pos>=NBIT_BUF_SIZE) {    /* re-fill buffer */
-            /* get a ptr to the mask info for convenience also */
-            mask_info=&(nbit_info->mask_info[0]);
             for(i=0; i<buf_items; i++) {
+                /* get initial copy of the mask */
                 HDmemcpy(buf,nbit_info->mask_buf,nbit_info->nt_size);
+
+                /* get a ptr to the mask info for convenience also */
+                mask_info=&(nbit_info->mask_info[0]);
+
                 if(nbit_info->sign_ext) {   /* special code for expanding sign extended data */
                   } /* end if */
                 else {  /* no sign extension */
-                    for(j=0; j<nbit_info->nt_size; j++) {
+                    for(j=0; j<nbit_info->nt_size; j++,mask_info++) {
                         if(mask_info->length>0) {   /* check if we need to read bits */
                             Hbitread(info->aid,mask_info->length,input_bits);
-                            *buf++=input_bits|(mask_info->mask <<
+                            *buf++=mask_info->mask|(input_bits <<
                                     ((mask_info->offset-mask_info->length)+1));
                           } /* end if */
                       } /* end for */
                   } /* end else */
               } /* end for */
-
-            /* advance to the next mask position */
-            mask_info++;
-            /* advance buffer offset and check for wrap */
-            if((++nbit_info->nt_pos)>=nbit_info->nt_size) {
-                nbit_info->nt_pos=0;            /* reset to beginning of buffer */
-                mask_info=nbit_info->mask_info; /* reset ptr to masks also */
-              } /* end if */
           } /* end if */
 
-        copy_length=(length>(NBIT_BUF_SIZE-(buf_pos+1))) ? (NBIT_BUF_SIZE-(buf_pos+1)) : length;
+        copy_length=(length>(NBIT_BUF_SIZE-(buf_pos+1))) ?
+                (NBIT_BUF_SIZE-(buf_pos+1)) : length;
 
         HDmemcpy(buf,&(nbit_info->buffer[buf_pos]),copy_length);
-
       } /* end for */
 
     nbit_info->offset+=orig_length;  /* incr. abs. offset into the file */
