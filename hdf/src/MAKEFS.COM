@@ -17,7 +17,7 @@ $ ccc := cc/noopt/debug/define=VMS
 $ type sys$input
 	Compiling Fortran stubs
 $ ffiles="df24ff.f, dfff.f, dfpff.f, dfr8ff.f, dfanff.f, dfsdff.f, "+-
-"hfileff.f, vgff.f, dfufp2if.f"
+"hfileff.f, vgff.f, dfufp2if.f, mfgrff.f"
 $ fobj="dfff, dfsdff, dfr8ff, df24ff, dfanff, dfpff, vgff, hfileff, "+-
        "dfufp2if, mfgrff "
 $ cobj="dff,  dfsdf,  dfr8f,  df24f,  dfanf,  dfpf,  vgf,  hfilef, "+-
