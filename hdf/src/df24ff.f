@@ -124,6 +124,23 @@ C----------------------------------------------------------------------------*/
       end
 
 
+C------------------------------------------------------------------------------
+C Name: d2nimg
+C Purpose:  Count the # of 24-bit raster images in a file
+C Inputs:   filename: name of HDF file
+C Returns: # of images on success, -1 on failure with DFerror set
+C Users:    HDF HLL (high-level library) users, utilities, other routines
+C Invokes: d2inimg
+C Remarks: 
+C----------------------------------------------------------------------------*/
+
+      integer function d2nimg(name)
+      character*(*) name
+
+      d2nimg = d2inimg(name, len(name))
+      return
+      end
+
 CEND7MAX
 
 
@@ -215,6 +232,23 @@ C----------------------------------------------------------------------------*/
       integer ref
 
       df24readref = d2irref(name, ref, len(name))
+      return
+      end
+
+C------------------------------------------------------------------------------
+C Name: df24nimages
+C Purpose:  Count the # of 24-bit raster images in a file
+C Inputs:   filename: name of HDF file
+C Returns: # of images on success, -1 on failure with DFerror set
+C Users:    HDF HLL (high-level library) users, utilities, other routines
+C Invokes: d2inimg
+C Remarks: 
+C----------------------------------------------------------------------------*/
+
+      integer function df24nimages(name)
+      character*(*) name
+
+      df24nimages = d2inimg(name, len(name))
       return
       end
 
