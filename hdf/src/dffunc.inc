@@ -340,6 +340,8 @@ C
       external sfisrcrd
       integer  sfsblsz
       external sfsblsz
+      integer  sfchempty
+      external sfchempty
 C
 C     Declarations of return values for HDF Vgroup functions
 C
