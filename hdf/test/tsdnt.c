@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/02/26 20:07:41  mfolk
-Initial revision
+Revision 1.2  1992/03/24 20:42:04  sxu
+Changed output file names
 
+ * Revision 1.1  1992/02/26  20:07:41  mfolk
+ * Initial revision
+ *
 */
 #include "hdf.h"
 #include "dfsd.h"
@@ -54,9 +57,9 @@ int main()
     printf("Testing arrays in individual files...\n");
 
     DFSDsetNT(DFNT_FLOAT32);
-    err = DFSDadddata("o0", rank, dims, f32);
+    err = DFSDadddata("co0", rank, dims, f32);
     printf("Write: %d     ", err);		
-    err = DFSDgetdata("o0", rank, dims, tf32);
+    err = DFSDgetdata("co0", rank, dims, tf32);
     HEprint(stderr, 0);
     printf("Read: %d\n", err);
     err = 0;
@@ -75,9 +78,9 @@ int main()
     
 
     DFSDsetNT(DFNT_INT8);
-    err = DFSDadddata("o1", rank, dims, i8);
+    err = DFSDadddata("co1", rank, dims, i8);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("o1", rank, dims, ti8);
+    err = DFSDgetdata("co1", rank, dims, ti8);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -94,9 +97,9 @@ int main()
 	printf("Test passed for int8 array.\n");
 
     DFSDsetNT(DFNT_UINT8);
-    err = DFSDadddata("o2", rank, dims, ui8);
+    err = DFSDadddata("co2", rank, dims, ui8);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("o2", rank, dims, tui8);
+    err = DFSDgetdata("co2", rank, dims, tui8);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++) {
@@ -114,9 +117,9 @@ int main()
 	printf("Test passed for uint8 array.\n");
 
     DFSDsetNT(DFNT_INT16);
-    err = DFSDadddata("o3", rank, dims, i16);
+    err = DFSDadddata("co3", rank, dims, i16);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("o3", rank, dims, ti16);
+    err = DFSDgetdata("co3", rank, dims, ti16);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -133,9 +136,9 @@ int main()
 	printf("Test passed for int16 array.\n");
 
     DFSDsetNT(DFNT_UINT16);
-    err = DFSDadddata("o4", rank, dims, ui16);
+    err = DFSDadddata("co4", rank, dims, ui16);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("o4", rank, dims, tui16);
+    err = DFSDgetdata("co4", rank, dims, tui16);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -152,9 +155,9 @@ int main()
 	printf("Test passed for uint16 array.\n");
 
     DFSDsetNT(DFNT_INT32);
-    err = DFSDadddata("o5", rank, dims, i32);
+    err = DFSDadddata("co5", rank, dims, i32);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("o5", rank, dims, ti32);
+    err = DFSDgetdata("co5", rank, dims, ti32);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++)
@@ -171,9 +174,9 @@ int main()
 	printf("Test passed for int32 array.\n");
 
     DFSDsetNT(DFNT_UINT32);
-    err = DFSDadddata("o6", rank, dims, ui32);
+    err = DFSDadddata("co6", rank, dims, ui32);
     printf("Write: %d     ", err);
-    err = DFSDgetdata("o6", rank, dims, tui32);
+    err = DFSDgetdata("co6", rank, dims, tui32);
     printf("Read: %d\n", err);
     err = 0;
     for (i=0; i<10; i++) {
@@ -193,48 +196,48 @@ int main()
 
     printf("Writing arrays to single file... ");
     DFSDsetNT(DFNT_FLOAT32);
-    err = DFSDadddata("o.hdf", rank, dims, f32);
+    err = DFSDadddata("co.hdf", rank, dims, f32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT8);
-    err = DFSDadddata("o.hdf", rank, dims, i8);
+    err = DFSDadddata("co.hdf", rank, dims, i8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT8);
-    err = DFSDadddata("o.hdf", rank, dims, ui8);
+    err = DFSDadddata("co.hdf", rank, dims, ui8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT16);
-    err = DFSDadddata("o.hdf", rank, dims, i16);
+    err = DFSDadddata("co.hdf", rank, dims, i16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT16);
-    err = DFSDadddata("o.hdf", rank, dims, ui16);
+    err = DFSDadddata("co.hdf", rank, dims, ui16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT32);
-    err = DFSDadddata("o.hdf", rank, dims, i32);
+    err = DFSDadddata("co.hdf", rank, dims, i32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT32);
-    err = DFSDadddata("o.hdf", rank, dims, ui32);
+    err = DFSDadddata("co.hdf", rank, dims, ui32);
     printf("%d\n\n", err);
 
     printf("Reading arrays from single file... ");
     DFSDsetNT(DFNT_FLOAT32);
-    err = DFSDgetdata("o.hdf", rank, dims, tf32);
+    err = DFSDgetdata("co.hdf", rank, dims, tf32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT8);
-    err = DFSDgetdata("o.hdf", rank, dims, ti8);
+    err = DFSDgetdata("co.hdf", rank, dims, ti8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT8);
-    err = DFSDgetdata("o.hdf", rank, dims, tui8);
+    err = DFSDgetdata("co.hdf", rank, dims, tui8);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT16);
-    err = DFSDgetdata("o.hdf", rank, dims, ti16);
+    err = DFSDgetdata("co.hdf", rank, dims, ti16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT16);
-    err = DFSDgetdata("o.hdf", rank, dims, tui16);
+    err = DFSDgetdata("co.hdf", rank, dims, tui16);
     printf("%d  ", err);
     DFSDsetNT(DFNT_INT32);
-    err = DFSDgetdata("o.hdf", rank, dims, ti32);
+    err = DFSDgetdata("co.hdf", rank, dims, ti32);
     printf("%d  ", err);
     DFSDsetNT(DFNT_UINT32);
-    err = DFSDgetdata("o.hdf", rank, dims, tui32);
+    err = DFSDgetdata("co.hdf", rank, dims, tui32);
     printf("%d\n", err);
 
     printf("Checking arrays from single file...\n\n");
