@@ -24,7 +24,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define TESTFILE_NAME "t.hdf"             /* file for first 4 series of tests */
 #define TESTFILE_NAME1 "tx.hdf"           /* file for last test */
 #define STRING         "element 1000 2"          /* 14 bytes */
-#define STRING2        "element 1000 1 wrong"    /* 20 bytes */
+#define STRING2        "element 1000 1   wrong"  /* 22 bytes */
 #define STRING3        "element 1000 1 correct"  /* 22 bytes */
 
 #define BUF_SIZE        4096
@@ -82,7 +82,7 @@ test_hextelt()
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     ret = Hendaccess(aid1);
@@ -116,7 +116,7 @@ test_hextelt()
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     ret = Hendaccess(aid1);
@@ -144,7 +144,7 @@ test_hextelt()
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     ret = Hendaccess(aid1);
@@ -180,7 +180,7 @@ test_hextelt()
       {
           fprintf(stderr, "Hread failed (code %d)\n", (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     MESSAGE(5, printf("Verifying data(%d bytes) in external element in file #1\n", ret);
@@ -215,7 +215,7 @@ test_hextelt()
           fprintf(stderr, "Incorrect element size returned from Hgetelement: %d\n",
                   (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
 #if 0
@@ -225,7 +225,7 @@ test_hextelt()
           fprintf(stderr, "Incorrect element size returned from Hread: %d\n",
                   (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 #endif
     MESSAGE(5, printf("Verifying data(%d bytes) that was stored to file #2\n",ret);
@@ -245,7 +245,7 @@ test_hextelt()
           inbuf[i] = '\0';
       }
     if (errflag)
-        printf("Error: Wrong data in inbuf[] from external elment in file #2\n");
+        fprintf(stderr,"Error: Wrong data in inbuf[] from external elment in file #2\n");
 
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
@@ -269,7 +269,7 @@ test_hextelt()
           fprintf(stderr, "Incorrect element size returned from Hgetelement: %d\n",
                   (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 #if 0
     ret = Hread(aid1, length, inbuf);
@@ -278,7 +278,7 @@ test_hextelt()
           fprintf(stderr, "Incorrect element size returned from Hread: %d\n",
                   (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 #endif
     MESSAGE(5, printf("Verifying data(%d bytes) that was stored in overlapping element in file #3\n",ret);
@@ -318,7 +318,7 @@ test_hextelt()
       {
           fprintf(stderr, "Hread failed (code %d)\n", (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     MESSAGE(5, printf("Verifying data(%d bytes) in whole external element in file #3\n", ret);
@@ -354,7 +354,7 @@ test_hextelt()
           fprintf(stderr, "Incorrect element size returned from Hread: %d\n",
                   (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     MESSAGE(5, printf("Verifying data(%d bytes) in external element in file #4\n",ret);
@@ -374,7 +374,7 @@ test_hextelt()
           inbuf[i] = '\0';
       }
     if (errflag)
-        printf("Error: Wrong data in inbuf[]  from external elment in file #4\n");
+        fprintf(stderr,"Error: Wrong data in inbuf[]  from external elment in file #4\n");
 
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
@@ -390,7 +390,7 @@ test_hextelt()
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
           HEprint(stderr, 0);
-          exit(1);
+          errors++;
       }
 
     ret = Hendaccess(aid2);
@@ -418,6 +418,9 @@ test_hextelt()
         );
 
     /* start with a brand new file */
+    MESSAGE(5, printf("Creating header file %s for external element \n",
+                      TESTFILE_NAME1);
+        );
     fid = Hopen(TESTFILE_NAME1, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
 
@@ -434,11 +437,20 @@ test_hextelt()
     ret = Hwrite(aid1, 2000, outbuf);
     CHECK(ret, FAIL, "Hwrite");
 
+    MESSAGE(5, printf("Ending access to element and closing header file %s\n", 
+                      TESTFILE_NAME1);
+        );
     ret = Hendaccess(aid1);
     CHECK(ret, FAIL, "Hendaccess");
 
-    MESSAGE(5, printf("Try read it.  Should fail the first time.\n");
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    MESSAGE(5, printf("Re-open file and try read to external element.  Should fail the first time.\n");
         );
+
+    fid = Hopen(TESTFILE_NAME1, DFACC_READ, 0);
+    CHECK(fid, FAIL, "Hopen");
 
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
     VERIFY(ret, FAIL, "Hgetelement");
@@ -466,8 +478,7 @@ test_hextelt()
           inbuf[i] = '\0';
       }
     if (errflag)
-        printf("Error: Wrong data in inbuf[]  from external elment in file #5\n"
-);
+        fprintf(stderr,"Error: Wrong data in inbuf[]  from external elment in file #5\n" );
 
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
@@ -478,5 +489,6 @@ test_hextelt()
     ret = HXsetdir(NULL);
     CHECK(ret, FAIL, "HXsetdir");
 
+    num_errs += errors;     /* increment global error count */
 }
 
