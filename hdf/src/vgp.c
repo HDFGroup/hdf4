@@ -1164,7 +1164,7 @@ Vdetach(int32 vkey)
                if (Vgbuf)
                    HDfree((VOIDP) Vgbuf);
                if ((Vgbuf = (uint8 *) HDmalloc(Vgbufsize)) == NULL)
-                   HGOTO_ERROR(DFE_NOSPACE, NULL);
+                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
              } /* end if */
 
             if (FAIL == vpackvg(vg, Vgbuf, &vgpacksize))
