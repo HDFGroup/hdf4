@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.14  1993/04/23 21:58:58  koziol
+# Revision 1.15  1993/09/16 15:31:53  koziol
+# Changes for updating the Fujitsu VP
+#
+# Revision 1.14  1993/04/23  21:58:58  koziol
 # Cleaned up some more warnings on the Cray
 #
 # Revision 1.13  1993/04/13  17:45:43  koziol
@@ -87,8 +90,8 @@ CFLAGS = -D$(MACHINE)
 #CFLAGS=  -g -D$(MACHINE) -ansi
 
 .c.o: he.h he_proto.h
-#	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
-	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
+	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $(GLLAB)  $<
+#	$(CC) -c $(CFLAGS) -I$(HDFINC) $(GLLIB)  $<
 
 all: hdfed utils
 	-if( test \! -d $(HDFBIN)) then (mkdir $(HDFBIN)) fi

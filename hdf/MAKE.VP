@@ -50,7 +50,7 @@ SHELL=/bin/sh
 MACHINE=VP
 
 # Define your C compiler and flags
-CC= /usr/usb/cc
+CC= /usr/ucb/cc
 CFLAGS= -D${MACHINE} -O
 
 # Define your FORTRAN compiler
