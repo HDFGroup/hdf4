@@ -290,6 +290,11 @@ jpeg2hdf/hdf2jpeg
 
 fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
 
+   To test this utility you must first create the binary test files
+   with the fptest utility.  Then run fp2hdf on the test files that 
+   were created, and analyze the output.  Following are the steps to 
+   do this:
+
    1. Run fptest to create 2-/3-D ASCII/binary test files:  
                    ctxtr2, type 'TEXT', size 3x4
                    ctxtr3, type 'TEXT', size 3x4x5
@@ -298,7 +303,7 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
                    cb64r2, type 'FP64', size 3x4
                    cb64r3, type 'FP64', size 3x4x5
 
-     Contents of the arrays:
+     Contents of the arrays that get created:
 
      row scale values start at 11 and increment by 1 => 11, 12, 13
      column scale values start at 21 and increment by 2 => 21, 23, 25, 27
@@ -307,13 +312,13 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
      data element value = row scale value + column scale value [+ plane 
                           scale value, if rank=3]
 
-   For an array of [3][4], data values are:
+     For an array of [3][4], data values are:
 
       3.200000E+01  3.400000E+01  3.600000E+01  3.800000E+01
       3.300000E+01  3.500000E+01  3.700000E+01  3.900000E+01
       3.400000E+01  3.600000E+01  3.800000E+01  4.000000E+01
  
-   For array of [5][3][4], data values are:
+     For array of [5][3][4], data values are:
  
       8.300000E+01  8.500000E+01  8.700000E+01  8.900000E+01
       8.400000E+01  8.600000E+01  8.800000E+01  9.000000E+01
@@ -335,7 +340,7 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
       1.040000E+02  1.060000E+02  1.080000E+02  1.100000E+02
       1.050000E+02  1.070000E+02  1.090000E+02  1.110000E+02
 
-   2. Run:
+   2. Run fp2hdf on the test files that were created:
     
       ./fp2hdf ctxtr2 -o ctxtr2.hdf
       ./fp2hdf ctxtr3 -o ctxtr3.hdf
@@ -346,11 +351,19 @@ fp2hdf -- converts floating point 2D/3D datasets into hdf SDS or RIS.
       ./fp2hdf ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
       ./fp2hdf cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
 
-   3. Use hdfls and hdfed/Collage or hdp to verify the correctness 
-      of the output *.hdf files.  To use the hdp command from the
+   3. Use hdfls and hdfed/Collage to verify the correctness of 
+      the output *.hdf files.  
+
+      You can also use the hdp command.  To use hdp from the
       util/ directory, type:
    
+       For an SDS:
+
         ../../mfhdf/dumper/hdp dumpsds <hdf filename>
+
+       For a raster image:
+  
+        ../../mfhdf/dumper/hdp dumprig <hdf filename>
 
       ctxtr2.hdf -- 2D SDS, display spreadsheet
       ctxtr3.hdf -- 3D SDS, display spreadsheet along z axis.
