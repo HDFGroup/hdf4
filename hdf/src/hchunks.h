@@ -15,12 +15,12 @@
 /*-----------------------------------------------------------------------------
  * File:         hchunks.h
  * Purpose:      Header file for Chunked elements
- * Dependencies: 
+ * Dependencies: tbbt.c mcache.c
  * Invokes:      none
- * Contents:     Structures & definitions for chunked distribution.  
- * Structure definitions:
+ * Contents:     Structures & definitions for chunked elements
+ * Structure definitions: DIM_DEF, CHUNK_DEF
  * Constant definitions:
- * Author: -GV
+ * Author: -GeorgeV -  9/3/96
  *---------------------------------------------------------------------------*/
 
 /* avoid re-inclusion */
