@@ -51,6 +51,8 @@ void        lprint
             (int32, dd_t *, int);
 void        print_item
             (int32, dd_t *, intn);
+void	    printfilever
+	    (int32 file_id);
 
 int
 compare(const VOID * aa, const VOID * bb)
@@ -297,6 +299,22 @@ lprint(int32 fid, dd_t *desc_tmp, int num)
         printf("\nEmpty (tag %d): %d slots\n", DFTAG_NULL, empty);
 }
 
+
+/* print the library version of the file */
+void printfilever(int32 file_id)
+{
+    uint32 major, minor, release;
+    char string[LIBVSTR_LEN+1];
+
+    if (Hgetfileversion(file_id, &major, &minor, &release, string) == SUCCEED){
+	string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
+	printf("\nFile library version: ");
+	printf("Major= %u, Minor=%u, Release=%u\n%s\n", major, minor, release, string);
+    }
+    else
+	printf("(Does not have libraray version information)");
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -421,7 +439,7 @@ main(int argc, char *argv[])
                     i++;
                     continue;
                 } /* end if */
-              while(next_block!=0)
+	     while(next_block!=0)
                 {
                   if(HI_SEEK(file_id,next_block)==FAIL)
                     {
@@ -535,6 +553,7 @@ main(int argc, char *argv[])
                   }
             }
 
+	  printfilever(fid);
           aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
           if (aid == FAIL)
             {
