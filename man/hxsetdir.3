@@ -19,8 +19,8 @@ Return SUCCEED if no error, else FAIL.
 Description
 HXsetdir sets the directory variable for locating an external file 
 according to \fIdir\fP
-which may contain multiple directories separated by colons (e.g.,
-"dir1:dir2").
+which may contain multiple directories separated by verticle bars (e.g.,
+"dir1|dir2").
 The content of \fIdir\fP is copied into private memory of the
 HDF library.
 If \fIdir\fP is NULL, the directory variable is unset.
@@ -52,7 +52,7 @@ Assume the following files exist,
 	Mydata/datadir/data001
 and
 	HXsetdir("/DataVault/ProjectB")
-	$HDFEXTDIR is "Mydata:Mydata/datadir"
+	$HDFEXTDIR is "Mydata|Mydata/datadir"
 .fi
 
 For each external filename on the left, HDF will open the file on the right, 
