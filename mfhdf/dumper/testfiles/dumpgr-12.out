@@ -40,6 +40,24 @@ File name: grtdfi322.hdf
 	 Index = 2
 	 Type= 8-bit unsigned char
 	 width=5; height=6
+	 Ref. = 1
+	 ncomps = 3
+	 Number of attributes = 0
+	 Interlace= 0
+	 Data : 
+                1 2 3 4 5 6 7 10 11 12 13 14 15 16 17 
+                20 21 22 23 24 25 26 27 30 31 32 33 34 
+                35 36 37 40 41 42 43 44 45 46 47 50 51 
+                52 53 54 55 56 57 60 61 62 63 64 65 66 
+                67 70 71 72 73 74 75 76 77 100 101 102 
+                103 104 105 106 107 110 111 112 113 114 
+                115 116 117 120 121 122 123 124 125 126 
+                127 130 131 132 
+
+	 Image  Name = Raster Image #4
+	 Index = 3
+	 Type= 8-bit unsigned char
+	 width=5; height=6
 	 Ref. = 3
 	 ncomps = 3
 	 Number of attributes = 0
@@ -54,8 +72,8 @@ File name: grtdfi322.hdf
                 115 116 117 120 121 122 123 124 125 126 
                 127 130 131 132 
 
-	 Image  Name = Raster Image #4
-	 Index = 3
+	 Image  Name = Raster Image #5
+	 Index = 4
 	 Type= 8-bit unsigned char
 	 width=5; height=6
 	 Ref. = 4
