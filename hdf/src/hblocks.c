@@ -5,11 +5,14 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.9  1993/09/20 19:56:02  koziol
-Updated the "special element" function pointer array to be a structure
-of function pointers.  This way, function prototypes can be written for the
-functions pointers and some type checking done.
+Revision 1.10  1993/09/21 01:13:09  koziol
+Fixed typo in function declaration for non-ANSI machines...
 
+ * Revision 1.9  1993/09/20  19:56:02  koziol
+ * Updated the "special element" function pointer array to be a structure
+ * of function pointers.  This way, function prototypes can be written for the
+ * functions pointers and some type checking done.
+ *
  * Revision 1.8  1993/09/08  18:29:19  koziol
  * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
  *
@@ -635,7 +638,7 @@ PRIVATE int32 HLIseek(access_rec, offset, origin)
 #ifdef PROTOTYPE
 PRIVATE int32 HLIread(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
-PRIVATE int32 HLIread(access_rec, length, data)
+PRIVATE int32 HLIread(access_rec, length, datap)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data to read */
     VOIDP datap;               /* buffer to read data into */
@@ -774,7 +777,7 @@ PRIVATE int32 HLIread(access_rec, length, data)
 #ifdef PROTOTYPE
 PRIVATE int32 HLIwrite(accrec_t *access_rec, int32 length, VOIDP datap)
 #else
-PRIVATE int32 HLIwrite(access_rec, length, data)
+PRIVATE int32 HLIwrite(access_rec, length, datap)
     accrec_t *access_rec;      /* access record */
     int32 length;              /* length of data */
     VOIDP datap;                        /* data buffer to write from */
