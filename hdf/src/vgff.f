@@ -1,33 +1,7 @@
 C
-C $Header$
+C $Id$ 
 C
-C $Log$
-C Revision 1.6  1993/03/29 16:50:35  koziol
-C Updated JPEG code to new JPEG 4 code.
-C Changed VSets to use Threaded-Balanced-Binary Tree for internal
-C 	(in memory) representation.
-C Changed VGROUP * and VDATA * returns/parameters for all VSet functions
-C 	to use 32-bit integer keys instead of pointers.
-C Backed out speedups for Cray, until I get the time to fix them.
-C Fixed a bunch of bugs in the little-endian support in DFSD.
-C
-c Revision 1.5  1993/01/19  05:56:19  koziol
-c Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-c port.  Lots of minor annoyances fixed.
-c
-c Revision 1.4  1992/11/30  22:00:01  chouck
-c Added fixes for changing to Vstart and Vend
-c
-c Revision 1.3  1992/11/06  20:10:32  chouck
-c Changed tabs to spaces so Absoft Fortran on the Mac will be happy
-c
-c Revision 1.2  1992/10/23  19:13:12  koziol
-c Created fortran stubs dfvopen and dfvclos for DFvsetopen() and DFvsetclose
-c
-c Revision 1.1  1992/08/25  21:40:44  koziol
-c Initial revision
-c
-C
+C     
 c	**************************************************************************
 c	* Likkai Ng May 1991 NCSA
 c	*

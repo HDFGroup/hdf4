@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*
  FILE
        hcomp.c
@@ -40,39 +46,6 @@
  MODIFICATION HISTORY
     9/21/93     Starting writing specs & coding prototype
 */
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.6.2.1  1993/10/10 22:10:12  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
-
- * Revision 1.6  1993/10/06  20:27:30  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.5  1993/10/04  20:02:43  koziol
- * Updated error reporting in H-Layer routines, and added more error codes and
- * compression stuff.
- *
- * Revision 1.4  1993/10/01  20:00:54  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.3  1993/09/30  19:05:00  koziol
- * Added basic compressing functionality for special tags.
- *
- * Revision 1.2  1993/09/28  18:44:12  koziol
- * Fixed various things the Sun's pre-processor didn't like.
- *
- * Revision 1.1  1993/09/28  18:04:21  koziol
- * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
- * tag handling.  Added new compression special tag type.
- *
- *
- */
 
 /* General HDF includes */
 #define COMPRESS_MASTER

@@ -1,24 +1,5 @@
-/*
-$Header$
+/* $Id$ */
 
-$Log$
-Revision 1.6  1993/04/26 00:10:38  koziol
-Updated calls to DFSDnumber to DFSDndatasets
-
- * Revision 1.5  1993/01/19  05:54:37  koziol
- * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
- * port.  Lots of minor annoyances fixed.
- *
- * Revision 1.3  1992/10/16  20:47:17  chouck
- * Added DFSDpre32
- *
- * Revision 1.2  1992/10/16  16:33:07  chouck
- * Added entry for DFtransarrry()
- *
- * Revision 1.1  1992/08/25  21:40:44  koziol
- * Initial revision
- *
-*/
 #ifndef DFIVMS_H
 #define DFIVMS_H
 

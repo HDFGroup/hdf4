@@ -1,12 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header:
 
-$Log:
-*
-*/
+/* $Id$ */
+
 
 #include <ctype.h>
 #ifdef MALDEBUG
