@@ -66,6 +66,8 @@ mfhdf/dumper/tvattr.hdf -text
 mfhdf/dumper/tvset.hdf -text
 mfhdf/hdiff/testfiles/hdifftst1.hdf -text
 mfhdf/hdiff/testfiles/hdifftst2.hdf -text
+mfhdf/hzip/hziptst.hdf -text
+mfhdf/hzip/hziptst_out.hdf -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
