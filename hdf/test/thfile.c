@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/06/22 23:04:42  chouck
-Removed calls to fork()
+Revision 1.6  1992/06/26 20:23:20  mlivin
+added in tests for Hishdf - open HDF, closed HDF, non-HDF, non-existing
 
+ * Revision 1.5  1992/06/22  23:04:42  chouck
+ * Removed calls to fork()
+ *
  * Revision 1.4  1992/06/01  19:23:47  chouck
  * Cleaned up output
  *
@@ -75,12 +78,16 @@ int main(argc, argv)
     int16 access, special;
     int ret, i;
     intn errors = 0;
+    bool ret_bool;
 
     for (i=0; i<4096; i++) outbuf[i] = (char) (i % 256);
 
     printf("Creating a file %s\n\n", TESTFILE_NAME);
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
     CHECK(fid, FAIL, "Hopen");
+
+    ret_bool = Hishdf(TESTFILE_NAME);
+    CHECK(ret_bool, FALSE, "Hishdf");
 
     ret = Hnewref(fid);
     CHECK(ret, FAIL, "Hnewref");
@@ -218,7 +225,16 @@ int main(argc, argv)
 
     ret = Hclose(fid1);
     CHECK(ret, FAIL, "Hclose");
-  
+
+    ret_bool = Hishdf(TESTFILE_NAME);
+    CHECK(ret_bool, FALSE, "Hishdf");
+
+    ret_bool = Hishdf(__FILE__);
+    CHECK(ret_bool, TRUE, "Hishdf");
+
+    ret_bool = Hishdf("qqqqqqqq.qqq");  /* I sure hope it isn't there */
+    CHECK(ret, TRUE, "Hishdf");
+
     if(errors) 
       fprintf(stderr, "\n\t>>> %d errors were encountered <<<\n\n");
     else
