@@ -1270,6 +1270,9 @@ uninstall-am: uninstall-info-am
 	tags uninstall uninstall-am uninstall-info-am
 
 
+check:
+	srcdir="$(srcdir)" $(MAKE) $(AM_MAKEFLAGS) check-am
+
 testdir:
 	-mkdir testdir
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
