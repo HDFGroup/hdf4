@@ -314,9 +314,7 @@ int32 id;
             if(handle->flags & NC_NDIRTY) {
                 if(!xdr_numrecs(handle->xdrs, handle) )
                     return FAIL;
-#ifdef HDF
                 if (handle->file_type != HDF_FILE)
-#endif
                 handle->flags &= ~(NC_NDIRTY);
             }
 	}
@@ -2473,8 +2471,8 @@ VOIDP data;
     if(dim == NULL)
         return FAIL;
 
-    /* sanity check */
-    if(count != dim->size)
+    /* sanity check, if not SD_UNLIMITED */
+    if( dim->size != 0 && count != dim->size)
         return FAIL;
 
     /* look for a variable with the same name */
@@ -2531,6 +2529,7 @@ VOIDP data;
 
     NC        * handle;
     NC_dim    * dim;
+    NC_var    * vp;
     int32       status;
     intn        varid;
     long        start[1], end[1];
@@ -2558,7 +2557,19 @@ VOIDP data;
     /* store the data */
     handle->xdrs->x_op = XDR_DECODE;
     start[0] = 0;
-    end[0]   = dim->size;
+    if (dim->size != 0)
+        end[0] = dim->size;
+    else   {
+        if (handle->file_type != HDF_FILE)
+            end[0] = handle->numrecs;
+        else   {
+            vp = SDIget_var(handle, varid);
+            if (vp == NULL)
+                return FAIL;
+            end[0] = vp->numrecs;
+        }
+    }
+  
     status   = NCvario(handle, varid, start, end, (Void *)data);
     if(status == FAIL)
         return FAIL;
