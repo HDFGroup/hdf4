@@ -11,6 +11,8 @@
 #include "error.h"
 #include "tests.h"
 
+#define VARS 100
+
 /*
  * Returns number of record variables in an open netCDF file, and an array of
  * the record variable ids, if the array parameter is non-null.  Returns -1 on
@@ -91,7 +93,7 @@ recinq(ncid, nrecvars, recvarids, recsizes)
      long *recsizes;
 {
     int iv;
-    int rvarids[MAX_NC_VARS];
+    int rvarids[VARS];
     int nrvars = numrecvars(ncid, rvarids);
 
     if (nrvars == -1)
@@ -123,11 +125,11 @@ test_ncrecinq(path)
     static char pname[] = "test_ncrecinq";
     int ncid;
     int nrvars;			/* number of record variables */
-    int rvarids[MAX_NC_VARS];	/* id of each record variable */
-    long rvarsizes[MAX_NC_VARS]; /* record size of each record variable */
+    int rvarids[VARS];	/* id of each record variable */
+    long rvarsizes[VARS]; /* record size of each record variable */
     int tnrvars;		/* true number of record variables */
-    int trvarids[MAX_NC_VARS];	/* true id of each record variable */
-    long trvarsizes[MAX_NC_VARS]; /* true rec size of each record variable */
+    int trvarids[VARS];	/* true id of each record variable */
+    long trvarsizes[VARS]; /* true rec size of each record variable */
     int iv;
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
@@ -253,7 +255,7 @@ recput(ncid, recnum, datap)
      void **datap;
 {
     int iv;
-    int rvids[MAX_NC_VARS];
+    int rvids[VARS];
     int nrvars = numrecvars(ncid, rvids);
     long start[MAX_VAR_DIMS];
     long edges[MAX_VAR_DIMS];
@@ -290,7 +292,7 @@ recget(ncid, recnum, datap)
      void **datap;
 {
     int iv;
-    int rvids[MAX_NC_VARS];
+    int rvids[VARS];
     int nrvars = numrecvars(ncid, rvids);
     long start[MAX_VAR_DIMS];
     long edges[MAX_VAR_DIMS];
@@ -329,16 +331,16 @@ test_ncrecput(path)
     int nerrs = 0;
     static char pname[] = "test_ncrecput";
     int nrvars;			/* number of record variables */
-    int rvarids[MAX_NC_VARS];	/* id of each record variable */
-    long rvarsizes[MAX_NC_VARS]; /* record size of each record variable */
+    int rvarids[VARS];	/* id of each record variable */
+    long rvarsizes[VARS]; /* record size of each record variable */
     int ncid;			/* netcdf id */
-    void *datap[MAX_NC_VARS];	/* array of address pointers for rec vars */
-    void *datar[MAX_NC_VARS];	/* pointers for comparison data */
+    void *datap[VARS];	/* array of address pointers for rec vars */
+    void *datar[VARS];	/* pointers for comparison data */
     long recnum = 1;		/* we'll write the second record */
     int iv;
-    long recsize[MAX_NC_VARS];	/* record size in data elements */
-    nc_type vartype[MAX_NC_VARS];
-    void *zeros[MAX_NC_VARS];
+    long recsize[VARS];	/* record size in data elements */
+    nc_type vartype[VARS];
+    void *zeros[VARS];
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 
@@ -485,16 +487,16 @@ test_ncrecget(path)
     int nerrs = 0;
     static char pname[] = "test_ncrecget";
     int nrvars;			/* number of record variables */
-    int rvarids[MAX_NC_VARS];	/* id of each record variable */
-    long rvarsizes[MAX_NC_VARS]; /* record size of each record variable */
+    int rvarids[VARS];	/* id of each record variable */
+    long rvarsizes[VARS]; /* record size of each record variable */
     int ncid;			/* netcdf id */
-    void *datap[MAX_NC_VARS];	/* array of address pointers for rec vars */
-    void *datar[MAX_NC_VARS];	/* pointers for comparison data */
+    void *datap[VARS];	/* array of address pointers for rec vars */
+    void *datar[VARS];	/* pointers for comparison data */
     long recnum = 1;		/* we'll write the second record */
     int iv;
-    long recsize[MAX_NC_VARS];	/* record size in data elements */
-    nc_type vartype[MAX_NC_VARS];
-    void *zeros[MAX_NC_VARS];
+    long recsize[VARS];	/* record size in data elements */
+    nc_type vartype[VARS];
+    void *zeros[VARS];
 
     (void) fprintf(stderr, "*** Testing %s ...\t", &pname[5]);
 

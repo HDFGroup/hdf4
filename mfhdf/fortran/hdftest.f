@@ -39,7 +39,7 @@ C     create a new file
       nt = 24
       rank = 2
       sds1 = sfcreate(fid1, "Alpha", nt, rank, dims)
-      if(sds1.ne.262144) then
+      if(sds1.eq.-1) then
          print *, 'SDcreate #1 returned bad ID', sds1
          err = err + 1
       endif
@@ -50,7 +50,7 @@ C     create a new file
       nt = 5
       rank = 3
       sds2 = sfcreate(fid1, "Beta[float32]", nt, rank, dims)
-      if(sds2.ne.262145) then
+      if(sds2.eq.-1) then
          print *, 'SDcreate #2 returned bad ID', sds2
          err = err + 1
       endif
@@ -111,6 +111,8 @@ C     create a new file
          err = err + 1
          print *, 'was expecting 5 got', ivals(1)
       endif
+      
+      if(err.ne.0) print *, 'Before ReadVerify err = ', err
       if (ivals(2).ne.6)  err = err + 1
       if (ivals(3).ne.14) err = err + 1
       if (ivals(4).ne.8)  err = err + 1
@@ -119,6 +121,7 @@ C     create a new file
       if (ivals(7).ne.14) err = err + 1
       if (ivals(8).ne.14) err = err + 1
       if (ivals(9).ne.14) err = err + 1
+      if(err.ne.0) print *, 'After ReadVerify err = ', err
 
       nt = 24
       stat = sfsattr(sds2, "TestAttr", nt, 3, ivals)
@@ -229,14 +232,29 @@ C
 
       stat = sfginfo(sds3, name, rank, ivals, nt, nattr)
       if(stat.ne.0) then
-         print *, 'Get info returned', stat
+         print *, 'Get info returned ', stat
          err = err + 1
       endif
 
-      if(nt.ne.24)  err = err + 1
-      if(rank.ne.2) err = err + 1
-      if(ivals(1).ne.4) err = err + 1
-      if(ivals(2).ne.9) err = err + 1
+      if(nt.ne.24) then
+         print *, 'Incorrect number type ', nt
+         err = err + 1
+      endif
+
+      if(rank.ne.2) then
+         print *, 'Incorrect rank ', rank
+         err = err + 1
+      endif
+
+      if(ivals(1).ne.4) then
+         print *, 'Incorrect Dim(1) = ', ivals(1)
+         err = err + 1
+      endif
+
+      if(ivals(2).ne.9) then
+         print *, 'Incorrect Dim(2) = ', ivals(2)
+         err = err + 1
+      endif
 
       if(nattr.ne.6) then
          print *, 'Wrong number of attributes returned', nattr
@@ -250,8 +268,16 @@ C
          print *, 'Get range returned', stat
          err = err + 1
       endif
-      if(max.ne.10)  err = err + 1
-      if(min.ne.1) err = err + 1
+
+      if(max.ne.10) then
+         print *, 'Max from GetRange ', max
+         err = err + 1
+      endif
+
+      if(min.ne.1) then
+         print *, 'Min from GetRange ', min
+         err = err + 1
+      endif
 
       if(err.ne.0) print *, 'Current error count ', err
 
@@ -261,7 +287,10 @@ C
          err = err + 1
       endif
 
-      if(max.ne.14) err = err + 1
+      if(max.ne.14) then
+         print *, 'Incorrect FillValue ', max
+         err = err + 1
+      endif
 
       sds4 = sfselect(fid2, 1)
       if(sds4.ne.262145) then
@@ -366,5 +395,4 @@ C
 
       print *, 'Total errors : ', err
 
-      stop
       end

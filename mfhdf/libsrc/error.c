@@ -21,11 +21,14 @@
 #include	<varargs.h>
 #endif /* !NO_STDARG */
 
+#ifdef UNICOS
+int errno = 0;
+#else
 #include <errno.h>
 #ifdef ERRNO_MISSING
 extern int errno;
 #endif
-
+#endif
 
 #ifndef NO_STRERROR
 #include <string.h> /* contains prototype for ansi libc function strerror() */

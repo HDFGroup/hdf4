@@ -13,5 +13,4 @@ hdf/util/testfiles/test.cdf -text
 mfhdf/libsrc/test.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/nctest/test.nc -text
-mfhdf/nctest/test2.nc -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset

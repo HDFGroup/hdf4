@@ -1083,7 +1083,7 @@ VOIDP    data;
         NC_free_attr(old);
         return SUCCEED;
     }
- 
+
     if((*ap)->count >= MAX_NC_ATTRS) {  /* Too many */
         return FAIL;
     }
@@ -1140,7 +1140,7 @@ VOIDP pmax, pmin;
         return FAIL;
 
     /* move data values over */
-    sz = DFKNTsize(var->HDFtype);
+    sz = DFKNTsize(var->HDFtype | DFNT_NATIVE);
     HDmemcpy(data, pmin, sz);
     HDmemcpy(data + sz, pmax, sz);
 
