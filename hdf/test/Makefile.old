@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.7  1992/05/08 20:54:15  sxu
+# Revision 1.8  1992/05/18 22:11:07  sxu
+# added vset test programs
+#
+# Revision 1.7  1992/05/08  20:54:15  sxu
 # Change filenames from tdf* to t*
 #
 # Revision 1.6  1992/05/04  14:48:23  sxu
@@ -69,6 +72,14 @@
 #              tanfileF (annotations for HDF files)
 #              tstubsF  (emulation of old lower level i/o routines)
 #
+# Vset test programs:
+#
+#	       egchi.c  (high level VSET write routines)
+#	       tv1.c    (the basic vgroup and vdata creation routines)
+#	       tv2.c    (creates vsets in 2 files simultaneously)
+#	       tvers.c  (get version string from an HDF file)
+# 	       egfhi.f  (Fortran version of egchi.c)
+#
 # The lower level C test programs are:
 #
 #              thfile     (basic i/o)
@@ -131,19 +142,22 @@ CFLAGS=  -g -D${MACHINE} $(IFLAGS)
 IFLAGS=   -I../include -I.
 
 # ==> where is your HDF library (libdf.a) located?
-LIBS= ../lib/libdf.a
+LIBS= ../src/libdf.a
 
 RM=/bin/rm
 RMFLAGS=-f
 
 CTESTS= tr8 t24 tsdmms tsdnmms tsdnnt tsdnt tan \
-        tanfile tp tstubs
+        tanfile tp tstubs tv1 tv2 tvers egchi
 
-CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h
+CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
+	vproto.h 
 CTSRCS= tr8.c t24.c tsdmms.c tsdnmms.c tsdnnt.c \
-        tsdnt.c tan.c tanfile.c tp.c tstubs.c 
+        tsdnt.c tan.c tanfile.c tp.c tstubs.c \
+	tv1.c tv2.c tvers.c egchi.c
 CTOBJS= tr8.o t24.o tsdmms.o tsdnt.o tan.o tanfile.o \
-        tp.o tstubs.o tsdnmms.o tsdnnt.o	
+        tp.o tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
+	tvers.o egchi.o
 
 HTESTS= thfile thfile1 terr thblocks thextelt 
 HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
@@ -151,11 +165,11 @@ HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c
 HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o
 
 FTESTS= tr8F t24F tpF tanF tanfileF tsdntF tsdnntF \
-        tsdmmsF tsdnmmsF tstubsF
+        tsdmmsF tsdnmmsF tstubsF egfhi
 FSRCS = tr8F.f t24F.f tpF.f tanF.f tanfileF.f tsdntF.f \
-        tsdnntF.f tsdmmsF.f  tsdnmmsF.f tstubsF.f
+        tsdnntF.f tsdmmsF.f  tsdnmmsF.f tstubsF.f egfhi.f
 FOBJS = tr8F.o t24F.o tpF.o tanF.o tanfileF.o tsdntF.o \
-        tsdnntF.o tsdmmsF.o tsdnmmsF.o tstubsF.o
+        tsdnntF.o tsdmmsF.o tsdnmmsF.o tstubsF.o egfhi.o
 
 all: ctests ftests htests
 
@@ -192,9 +206,20 @@ tan:  tan.c
 tanfile:     tanfile.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) tanfile.c $(LIBS) -o tanfile
 
-
 tstubs:     tstubs.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) tstubs.c $(LIBS) -o tstubs
+
+tv1:	    tv1.c
+	$(CC) $(CFLAGS) -D$(MACHINE) tv1.c $(LIBS) -o tv1
+
+tv2:	    tv2.c
+	$(CC) $(CFLAGS) -D$(MACHINE) tv2.c $(LIBS) -o tv2
+
+tvers:	    tvers.c
+	$(CC) $(CFLAGS) -D$(MACHINE) tvers.c $(LIBS) -o tvers
+
+egchi:	    egchi.c
+	$(CC) $(CFLAGS) -D$(MACHINE) egchi.c $(LIBS) -o egchi
 
 tr8F:	       tr8F.f
 	$(FC) $(FFLAGS) tr8F.f $(LIBS) -o tr8F 
@@ -225,6 +250,9 @@ tsdmmsF:   tsdmmsF.f
 
 tsdnmmsF:   tsdnmmsF.f 
 	$(FC) $(FFLAGS) tsdnmmsF.f $(LIBS) -o tsdnmmsF
+
+egfhi:	   egfhi.f
+	$(FC) $(FFLAGS)  egfhi.f $(LIBS) -o egfhi
 
 thfile:     thfile.c 
 	$(CC) $(CFLAGS) -D$(MACHINE) thfile.c $(LIBS) -o thfile
