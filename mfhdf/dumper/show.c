@@ -30,7 +30,7 @@ dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
 	char        vdname[100], fields[FIELDNAMELENMAX], flds[FIELDNAMELENMAX];
 	int32       j, i, t, interlace, nv, vsize;
 	uint8      *bb, *b;
-	VWRITELIST *w;
+	DYN_VWRITELIST *w;
 	int32       (*vfmtfn[60]) (VOIDP , FILE *);
 	int32       off[60];
 	int32       order[60];
