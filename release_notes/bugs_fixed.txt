@@ -1,3 +1,21 @@
+HDF4.0r2
+========
+1. SDstart (<non-existent file>, DFACC_RDWR) no longer fails.
+   It will create a file now.
+2. When appending compressed data onto the end of an unlimited
+   dimension SDS, the SD interface no longer writes the fill-
+   values in locations where they will immediately be over-
+   written by data.
+3. dfkcray.c, IEG2JPEG and JPEG2IEG do not work if the foreign
+   data does not start from the 64-bit boundary.
+4. On IRIX 6.1 with -n32,  hdf/test/comp.c gave error messages.
+   Fix: Not to use '-O' option (for now).
+5. Problem when running 'make test' on UNICOS has been fixed
+   (bug was in hdf/util/he_main.c).
+6. The RIG tag was not getting written out when creating a
+   GR object, so you couldn't view it with "hdp list". The hdp
+   command has been updated.
+
 HDF4.0r1p1
 ==========
 1. Fixed a bug in SDS interface which caused a wrong
@@ -11,7 +29,7 @@ HDF4.0r1p1
 
 HDF4.0r1
 ========
-1. Fixed Fortran character string hanling under UNICOS. 
+1. Fixed Fortran character string handling under UNICOS. 
 2. Added checks on the return values of HDmalloc calls. 
 3. The automatic test of hdf utilities (in hdf/util/) 
    is added to the Makefile and will be executed by 
