@@ -196,8 +196,12 @@ DFKNTsize(int32 number_type)
     CONSTR(FUNC, "DFKNTsize");
 #endif
 
-    switch (number_type)
+    /* mask off the litend bit since little endian and big endian have */
+    /* the same size.  Only need to distinguish size difference between */
+    /* HDF and native types. */
+    switch (number_type & (~DFNT_LITEND))
       {
+	  /* native types */
           case DFNT_NUCHAR:
               return (SIZE_NUCHAR);
           case DFNT_NCHAR:
@@ -223,31 +227,7 @@ DFKNTsize(int32 number_type)
           case DFNT_NFLOAT64:
               return (SIZE_NFLOAT64);
 
-          case DFNT_LUCHAR:
-              return (SIZE_LUCHAR);
-          case DFNT_LCHAR:
-              return (SIZE_LCHAR);
-          case DFNT_LINT8:
-              return (SIZE_LINT8);
-          case DFNT_LUINT8:
-              return (SIZE_LUINT8);
-
-          case DFNT_LINT16:
-              return (SIZE_LINT16);
-          case DFNT_LUINT16:
-              return (SIZE_LUINT16);
-
-          case DFNT_LINT32:
-              return (SIZE_LINT32);
-          case DFNT_LUINT32:
-              return (SIZE_LUINT32);
-
-          case DFNT_LFLOAT32:
-              return (SIZE_LFLOAT32);
-
-          case DFNT_LFLOAT64:
-              return (SIZE_LFLOAT64);
-
+	  /* HDF types */
           case DFNT_UCHAR:
               return (SIZE_UCHAR);
           case DFNT_CHAR:
@@ -273,6 +253,7 @@ DFKNTsize(int32 number_type)
           case DFNT_FLOAT64:
               return (SIZE_FLOAT64);
 
+	  /* Unknown types */
           default:
               break;
       }     /* switch       */
@@ -536,12 +517,20 @@ DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype,
 int8
 DFKgetPNSC(int32 numbertype, int32 machinetype)
 {
-    switch (numbertype)
+    CONSTR(FUNC, "DFKgetPNSC");
+
+    /* clear error stack and validate args */
+    HEclear();
+
+    /* Since the information is provided only for the 4 */
+    /* classes of char, int, float, double and is indenpend */
+    /* of whether it is stored native or little-endian in file, */
+    /* we will use only the standard HDF format information */
+    switch (numbertype & DFNT_MASK)
       {
-          case DFNT_FLOAT32:
-          case DFNT_FLOAT64:
-          case DFNT_FLOAT128:
-              return (int8) ((machinetype >> 8) & 0x0f);
+          case DFNT_CHAR8:
+          case DFNT_UCHAR8:
+              return (int8) (machinetype & 0x0f);
 
           case DFNT_INT8:
           case DFNT_UINT8:
@@ -549,42 +538,16 @@ DFKgetPNSC(int32 numbertype, int32 machinetype)
           case DFNT_UINT16:
           case DFNT_INT32:
           case DFNT_UINT32:
-          case DFNT_INT64:
-          case DFNT_UINT64:
-          case DFNT_INT128:
-          case DFNT_UINT128:
               return (int8) ((machinetype >> 4) & 0x0f);
 
-          case DFNT_CHAR8:
-          case DFNT_UCHAR8:
-          case DFNT_CHAR16:
-          case DFNT_UCHAR16:
-              return (int8) (machinetype & 0x0f);
-
-          case DFNT_NFLOAT32:
-          case DFNT_NFLOAT64:
-          case DFNT_NFLOAT128:
+          case DFNT_FLOAT32:
               return (int8) ((machinetype >> 8) & 0x0f);
 
-          case DFNT_NINT8:
-          case DFNT_NUINT8:
-          case DFNT_NINT16:
-          case DFNT_NUINT16:
-          case DFNT_NINT32:
-          case DFNT_NUINT32:
-          case DFNT_NINT64:
-          case DFNT_NUINT64:
-          case DFNT_NINT128:
-          case DFNT_NUINT128:
-              return (int8) ((machinetype >> 4) & 0x0f);
+          case DFNT_FLOAT64:
+              return (int8) ((machinetype >> 12) & 0x0f);
 
-          case DFNT_NCHAR8:
-          case DFNT_NUCHAR8:
-          case DFNT_NCHAR16:
-          case DFNT_NUCHAR16:
-              return (int8) (machinetype & 0x0f);
           default:
-              return FAIL;
+	      HRETURN_ERROR(DFE_BADNUMTYPE, FAIL);
       }
 }
 

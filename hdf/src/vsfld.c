@@ -162,10 +162,8 @@ VSsetfields(int32 vkey, const char *fields)
                               wlist->order[wlist->n] = order;
 
                               value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
-/* should be ok if field size in memory > MAX_FIELD_SIZE. ( 65535 after 40r1p1)  
-                              if (value > MAX_FIELD_SIZE)
-                                   HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-*/
+                              if (value == FAIL)
+				  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                               wlist->esize[wlist->n] = (uint16) value;
 
                               value = order * vs->usym[j].isize;
@@ -175,7 +173,7 @@ VSsetfields(int32 vkey, const char *fields)
 
                               value = (int32) wlist->ivsize + (int32) (wlist->isize[wlist->n]);
                               if (value > MAX_FIELD_SIZE)
-                              HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+				  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
                               wlist->ivsize = (uint16) value;
 
                               wlist->n++;
@@ -199,7 +197,10 @@ VSsetfields(int32 vkey, const char *fields)
                                     order = rstab[j].order;
                                     wlist->type[wlist->n] = rstab[j].type;
                                     wlist->order[wlist->n] = order;
-                                    wlist->esize[wlist->n] = (uint16) (order * DFKNTsize((int32) rstab[j].type | DFNT_NATIVE));
+                                    value = order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
+				    if (value == FAIL)
+					  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                    wlist->esize[wlist->n] = (uint16) value;
                                     wlist->isize[wlist->n] = (uint16) (order * rstab[j].isize);
                                     wlist->ivsize += (uint16) (wlist->isize[wlist->n]);
                                     wlist->n++;
