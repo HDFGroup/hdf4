@@ -3347,7 +3347,7 @@ main(int argc, char *argv[])
     index = SDnametoindex(f1, "FIXED");
     CHECK(index, FAIL, "SDnametoindex: (FIXED)");
 
-    /* Select the data set 'FIXED' based on it's index */
+    /* Select the data set 'FIXED' based on its index */
     sdid = SDselect(f1, index);
     CHECK(sdid, FAIL, "SDselect: (FIXED)");
 
@@ -3359,7 +3359,7 @@ main(int argc, char *argv[])
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, FAIL, "SDwritedata (SD_FILL)");
 
-    /* end acces to data set 'FIXED' */
+    /* end access to data set 'FIXED' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -3377,7 +3377,7 @@ main(int argc, char *argv[])
     index = SDnametoindex(f1, "FIXED");
     CHECK(index, FAIL, "SDnametoindex (FIXED)");
 
-    /* Select the data set 'FIXED' based on it's index */
+    /* Select the data set 'FIXED' based on its index */
     sdid = SDselect(f1, index);
     CHECK(sdid, FAIL, "SDselect (FIXED)");
 
@@ -3421,7 +3421,7 @@ main(int argc, char *argv[])
     index = SDnametoindex(f1, "FIXED1");
     CHECK(index, FAIL, "SDnametoindex (FIXED1)");
 
-    /* select dataset 'FIXED1' based on it's index in the file */
+    /* select dataset 'FIXED1' based on its index in the file */
     sdid = SDselect(f1, index);
     CHECK(sdid, FAIL, "SDselect (FIXED1)");
 
@@ -3519,7 +3519,7 @@ main(int argc, char *argv[])
     index = SDnametoindex(f1, "UNLIMITED_SDS");
     CHECK(index, FAIL, "SDnametoindex: (UNLIMITED)");
 
-    /* select data set 'UNLIMITED_SDS' based on it's index in the file */
+    /* select data set 'UNLIMITED_SDS' based on its index in the file */
     sdid = SDselect(f1, index);
     CHECK(sdid, FAIL, "SDselect: (UNLIMITED)");
 
@@ -4042,6 +4042,10 @@ main(int argc, char *argv[])
 
     /* BMR: Added a test routine dedicated for testing SDcheckempty. 09/17/04 */
     status = test_checkempty();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing SDidtype. 01/21/05 */
+    status = test_idtype();
     num_errs = num_errs + status;
 
 #ifdef H4_HAVE_LIBSZ

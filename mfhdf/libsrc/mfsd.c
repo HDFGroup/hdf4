@@ -50,10 +50,6 @@ status = SDisdimval_bwcomp(dimid);
 
 status = SDcheckempty(sdsid, emptySDS);
 
-        --- take an id and determine if it is an SD id, SDS id, dim id, or
-            none of the above ---
-id_type =  SDidtype(an_id);
-
  NOTE: This file needs to have the comments cleaned up for most of the
        functions here. -GV 9/10/97
 
@@ -1327,11 +1323,6 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
       }
 
     /* get the dim number out of the assoc array */
-    if (var->assoc->values == NULL)
-      {
-	ret_value = FAIL;
-	goto done;
-      }
     dimindex = var->assoc->values[number];
 
     /* build the dim id */
@@ -4042,11 +4033,6 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
         /* Get the index of the SDS' first dimension from the list of indices
          * branching out from NC_var.  This index indicates where this dim
          * is in the "dims" list branching out from NC. */
-	if (var->assoc->values == NULL)
-	{
-	    ret_value = FAIL;
-	    goto done;
-	}
         dimindex = var->assoc->values[0];
 
         /* Retrieve the NC_dim record to check for unlimited dimension */
@@ -4470,12 +4456,6 @@ SDisrecord(int32 id /* IN: dataset ID */)
         goto done;
       }
 
-    if(var->shape == NULL)
-      {
-        ret_value = TRUE; /* EP thinks it should return true - BMR, bug #1045 */
-        goto done;
-      }
-
     if(var->shape[0] == SD_UNLIMITED)
         ret_value = TRUE;
     else
@@ -4544,12 +4524,6 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
         goto done;
       }
 
-    /* get the dim number out of the assoc array */
-    if(var->assoc->values == NULL)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
     dimindex = var->assoc->values[0];
 
     dim = SDIget_dim(handle, dimindex);
@@ -5169,13 +5143,6 @@ uint32 comp_config;
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
-
-    /* cannot set chunk for SDS with rank = 0 - BMR, bug #1045 */
-    if(var->shape == NULL)
       {
         ret_value = FAIL;
         goto done;
@@ -6290,6 +6257,7 @@ done:
 ******************************************************************************/
 id_type_t SDidtype(int32 an_id)
 {
+    CONSTR(FUNC, "SDidtype");	/* for HGOTO_ERROR */
     NC     *handle = NULL;	/* file record struct */
     id_type_t ret_value = NOT_SDAPI_ID;
 
