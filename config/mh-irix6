@@ -25,13 +25,14 @@ VERSION  = 4.0
 #
 # Using ANSI compilier
 CC=cc
-# Temporary turned off the -O option which causes an error in
-# the zlib compression code.
-CFLAGS=-ansi -64 -mips4 -O -s
+# turn off some incorrect or harmless warnings.
+# 1429 -- about long long as non-standard.  It is in the new C standard.
+warn=-woff 1429
+CFLAGS=-ansi -64 -O -s $(warn)
 
 # Fortran compilier
 FC = f77
-FFLAGS =-64 -mips4 -O -s
+FFLAGS =-64 -O -s
 
 # Name of archive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = true
@@ -103,7 +104,7 @@ CFLAGS_NETCDF =
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS -std1
 #
 # for IRIX6(64-bit) 
-CPPFLAGS_HDF  = -ansi -64 -mips4 $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
+CPPFLAGS_HDF  = -ansi -64 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # for AIX
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -D_ALL_SOURCE
@@ -112,7 +113,7 @@ CPPFLAGS_HDF  = -ansi -64 -mips4 $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DBIG_LONGS
 # CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF -DNO_STRERROR
 #
 # for IRIX6.x (32-bit mode).
-# CPPFLAGS_HDF  = -n32 -mips3 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
+# CPPFLAGS_HDF  = -n32 $(FMPOOL_FLAGS) -DNDEBUG -DHDF
 #
 # normal
 #CPPFLAGS_HDF  = $(FMPOOL_FLAGS) -DNDEBUG -DHDF
