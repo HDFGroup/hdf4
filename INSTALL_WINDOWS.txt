@@ -8,8 +8,7 @@ the 'zip' files that we provide, either the binary code release
 (HDF42r0.zip) or the source code release (HDF42r0s.zip).
 
 In building HDF from source code you may select between 
-two build environment options ( with Fortran or without Fortran support
-depending on your application and environment needs ).  
+two build environment options ( with Fortran or without Fortran).  
 
 The following sections discuss in details installation procedures. 
 
@@ -21,12 +20,12 @@ The following sections discuss in details installation procedures.
 
            ZLIB, JPEG and SZIP libraries for windows can be found on the HDF FTP
            server ftp://hdf.ncsa.uiuc.edu/gzip/bin/windows
-                                          jpeg/jpeg-6b.exe (archive file)
-                                          szip/bin/windows
+                  ftp://hdf.ncsa.uiuc.edu/jpeg/jpeg-6b.exe (archive file)
+                  ftp://hdf.ncsa.uiuc.edu/szip/bin/windows
 
 Building from Binary Code Release (HDF42r0.zip)
 ===============================================
-To install the HDFand MFHDF libraries and utilities, 
+To install the HDF and MFHDF libraries and utilities, 
 it is assumed that you have done the following:
       
 
@@ -36,11 +35,10 @@ it is assumed that you have done the following:
 	    c:\					(any drive)
            MyHDFstuff\				(any folder name)
 
-      2. Copy the binary archive (HDF42r0.zip) 
-      to that directory 
+      2. Copy the binary archive (HDF42r0.zip)to that directory 
       and unpack it by running WinZip on HDF42r0.zip (the binary archive).
       This should create a directory called 'HDF42r0' which 
-      contains the following files and directories.
+      contains the following files and directories:
 
             c:\MyHDFstuff\HDF42r0\lib             ( Single-threaded static
                                                     versions of HDF and MFHDF
@@ -78,7 +76,7 @@ Building from Source Code Release (HDF42r0s.zip)
 STEP I:  Preconditions
 
 To build the HDF and MFHDF libraries ( single-threaded static or
-multi-threaded DLL import libraries) and utilities, 
+multi-threaded DLL) and utilities, 
 it is assumed that you have done the following:
       
       1. Installed MicroSoft Developer Studio, and Visual C++ 6.0.
@@ -89,12 +87,12 @@ it is assumed that you have done the following:
       2. Set up a directory structure to unpack the library. For 
       example: 
 
-	    c:\					(any drive)
+	     c:\					(any drive)
            MyHDFstuff\				(any folder name)
 
       3. Copy the source distribution archive to that directory 
       and unpack it using the appropriate archiver options to
-      create a directory  hierarchy.
+      create a directory hierarchy.
          
       Run WinZip on HDF42r0s.zip (the entire source tree).
       This should create a directory called 'HDF42r0' which 
@@ -107,7 +105,7 @@ utilities, depending on your environment and application needs.
 
 Option I, (select Win32.nofortran.zip)
 This is the "NOFORTRAN" configuration : It builds debug and release single-threaded
-and multi-threaded versions of the HDF libraries, tests, and utilities. 
+and multi-threaded DLL versions of the HDF libraries, tests, and utilities. 
 There is no Fortran support.
 
 
@@ -124,24 +122,24 @@ Note that the instructions are the same for both Options I and II.
 	1. Unpack Win32.nofortran.zip or Win32.zip in 
            directory HDF42r0\. 
          
-        2. Invoke Microsoft Visial C++ 6.0, go to "File" and select
-           the "Open Workspace" option. 
+      2. Invoke Microsoft Visial C++ 6.0, go to "File" and select
+         the "Open Workspace" option. 
 
-           Then open the c:\myHDFstuff\HDF42r0\all.dsw workspace. 
+         Then open the c:\myHDFstuff\HDF42r0\all.dsw workspace. 
 
-           Set the path to ZLIB, JPEG and SZIP Libraries and include files:
+         Set the path to ZLIB, JPEG and SZIP Libraries and include files:
 
-               Go to "Tools" and select "Options", find "Directories"
+         Go to "Tools" and select "Options", find "Directories"
 
-               Find the box "Show directories for", choose "Include files"
-               Add path to the ZLIB, JPEG, and SZIP include files, for example
-               C:\zlib114\include, C:\jpeg-6b\include, C:\szlib\include
+         Find the box "Show directories for", choose "Include files"
+         Add path to the ZLIB, JPEG, and SZIP include files, for example
+         C:\zlib114\include, C:\jpeg-6b\include, C:\szlib\include
 
-               Find the box "Show directories for", choose "Library files"
-               Add path to ZLIB, JPEG, and SZIP libraries, for example
-               C:\zlib114\lib, C:\jpeg-6b\lib, C:\szlib\lib 
+         Find the box "Show directories for", choose "Library files"
+         Add path to ZLIB, JPEG, and SZIP libraries, for example
+         C:\zlib114\lib, C:\jpeg-6b\lib, C:\szlib\lib 
 
-SZIP Note: To build without SZIP Library comment the following line in the
+SZIP Note: To build without SZIP Library comment out the following line in the
            hdf\src\h4config.h file
                              #define H4_HAVE_LIBSZ 1
 
@@ -218,7 +216,7 @@ SZIP Note: To build without SZIP Library comment the following line in the
                HM420m.DLL - MFHDF DLL
 
 
-Note: The ws2_32.lib needs to linked with your executable if using the static 
+Note: The ws2_32.lib needs to be linked with your executable if using the static 
       mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++
       directory under the lib folder.
 
@@ -271,6 +269,8 @@ header files and linking in the HDF libraries:
 
 where <top-level HDF directory> may be C:\myHDFstuff\dev or C:\MyHDFstuff\HDF42r0\
 
+Moving DLLs to the directory(for example, windows system directory) where the 
+application can find. 
 
 Using Microsoft Visual C++ version 6.x:
 
@@ -292,6 +292,21 @@ Under Project->Settings, select folder, Link:
          HD420m.lib HM420m.lib (multi-threaded release version)
          HD420md.lib HM420md.lib (multi-threaded debug version)
 
+BUILD HDF in VS 7.0(.NET)    
+============================================
+We just briefly introduce you how to build HDF in VS 7.0(.NET);
+
+1. Open the old dataspace(all.dsw) file with the "Open solution" option,
+.NET will automatically convert the data space file to solution file.
+2. Then find  "Build" and go to "Configuration Manager"; choose "release"
+or "debug", then choose "build all".
+3. If you want to change some project setting, select the project and right
+click the button to choose Properties; find the similar menu there as in 6.0.
+4. You need to specify the zlib include header files and libraries under 
+Tools->Options->Projects->VC++ Directories and choose Include and libraries under
+the category of "show directories for" to add the corresponding path.
+
+Note: Currently we only build and test .NET on windows XP.
 
 MORE HELPFUL POINTERS
 =====================
@@ -306,17 +321,17 @@ Project name and location issues:
 
          If you must install all.dsw and all.dsp in 
          another directory, relative to HDF42r0\ , you will be asked to
-	 locate the above 5 sub-project files, when you open the
-	 project all.dsw.
+	   locate all sub-project files, when you open the
+	   project all.dsw.
 	 
-	 If you want to rename all (the entire project),
-	 you will need to modify two files
-	 all.dsw and all.dsp as text
-	 (contrary to the explicit warnings in the files).
+	   If you want to rename all (the entire project),
+	   you will need to modify two files
+	   all.dsw and all.dsp as text
+	   (contrary to the explicit warnings in the files).
 
-	 You can also modify all.dsw and all.dsp
-	 as text, to allow these 2 files to be installed
-	 in another directory.
+	   You can also modify all.dsw and all.dsp
+	   as text, to allow these 2 files to be installed
+	   in another directory.
 
 
 
@@ -324,7 +339,7 @@ Project name and location issues:
   If you create your own project, the necessary settings can be
   read from the all.dsp file(as text), or from the
   Project Settings in the Developer Studio project settings 
-dialog.
+  dialog.
 
     Project
 	  Settings
@@ -336,8 +351,8 @@ dialog.
 				   These are all set to use 
                                       Single-Threaded
 				   or Single-Threaded debug
-                                   or Multi-Threaded
-                                   or Multi-Threaded debug
+                                   or Multi-Threaded DLL 
+                                   or Multi-Threaded debug DLL
 
 
 
