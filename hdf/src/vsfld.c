@@ -236,10 +236,8 @@ VSsetfields(int32 vkey, const char *fields)
 
                   HGOTO_DONE(SUCCEED); /* OK */
               } /* if wlist->n == 0 */
-          }     /* writing to empty vdata */
-        else
-            HGOTO_ERROR(DFE_FIELDSSET, FAIL);
-      }     /* writing to vdata */
+          } /* writing to empty vdata */
+      } /* writing to vdata */
 
     /*
      *   No matter the access mode, if there are elements in the VData
