@@ -651,7 +651,7 @@ intn hdf_read_ndgs(handle)
                             
                         }
                         
-                        HDfreespace(tBuf);
+                        HDfreespace((VOIDP)tBuf);
                         
                     }
                 }
@@ -719,12 +719,12 @@ intn hdf_read_ndgs(handle)
             /*
              * De-allocate temporary storage
              */
-            if(namebuf)  HDfreespace(namebuf);
-            if(scalebuf) HDfreespace(scalebuf);
-            if(unitbuf)  HDfreespace(unitbuf);
-            HDfreespace(dimsizes);
-            HDfreespace(vardims);
-            HDfreespace(scaletypes);
+            if(namebuf)  HDfreespace((VOIDP)namebuf);
+            if(scalebuf) HDfreespace((VOIDP)scalebuf);
+            if(unitbuf)  HDfreespace((VOIDP)unitbuf);
+            HDfreespace((VOIDP)dimsizes);
+            HDfreespace((VOIDP)vardims);
+            HDfreespace((VOIDP)scaletypes);
             
             /*
              * Look for the next DataSet
@@ -750,9 +750,9 @@ intn hdf_read_ndgs(handle)
         
     } /* outermost for loop to loop between NDGs and SDGs */
     
-    HDfreespace(dims);
-    HDfreespace(vars);
-    HDfreespace(attrs);
+    HDfreespace((VOIDP)dims);
+    HDfreespace((VOIDP)vars);
+    HDfreespace((VOIDP)attrs);
 
     return TRUE;
 
@@ -793,7 +793,7 @@ NC **handlep;
     if(!status) return FALSE;
 
     /* deallocate SDG-NDG space */
-    if(sdgTable) HDfreespace(sdgTable);
+    if(sdgTable) HDfreespace((VOIDP)sdgTable);
     sdgTable = NULL;
 
     return TRUE;
