@@ -1826,12 +1826,18 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
                                     { /* DIM_VALS && _HDF_UDIMENSION */
                                         int32 val;	/* needs a temp var since handle->numrecs */
                                         /* may not be an int32 */
+       /* 
+          The call to VSsetfields fails for the files created with the library
+          version 3.3r1. This call is not necessary since handle vs is
+          obtained by specifying class name. 
+          Elena Pourmal 2/17/99
 
                                         if (VSsetfields(vs, "Values") == FAIL)
                                           {
                                               ret_value = FAIL;
                                               goto done;
                                           }
+        */
 
                                         if (VSseek(vs, 0) == FAIL)
                                           {
