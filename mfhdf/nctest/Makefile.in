@@ -36,6 +36,12 @@ install::
 nctime:		nctime.o
 	$(CC) $(CFLAGS) nctime.o $(LIBS) -o $@
 
+debug:      ../libsrc/libnetcdf.a
+	purify $(CC) $(CFLAGS) $(OBJS) $(LIBS) -o pnctest
+
+perfs:      ../libsrc/libnetcdf.a
+	quantify $(CC) $(CFLAGS) $(OBJS) $(LIBS) -o qnctest
+
 saber_src:
 	#load -C $(CPPFLAGS) $(SRCS) $(LIBS)
 
