@@ -242,6 +242,73 @@ extern char *cdf_routine_name ; /* defined in lerror.c */
 extern "C" {
 #endif
 
+/* If using the real netCDF library and API (use -DHAVE_NETCDF)
+   need to mangle the HDF versions of netCDF API function names 
+   to not conflict w/ oriinal netCDF ones */
+#ifdef HAVE_NETCDF
+#define nc_serror        HNAME(nc_serror)
+#define NCadvise         HNAME(NCadvise)
+#define NC_computeshapes HNAME(NC_computeshapes)
+#define NC_xtypelen      HNAME(NC_xtypelen)
+#define NC_xlen_array    HNAME(NC_xlen_array)
+#define NC_xlen_attr     HNAME(NC_xlen_attr)
+#define NC_xlen_cdf      HNAME(NC_xlen_cdf)
+#define NC_xlen_dim      HNAME(NC_xlen_dim)
+#define NC_xlen_iarray   HNAME(NC_xlen_iarray)
+#define NC_xlen_string   HNAME(NC_xlen_string)
+#define NC_xlen_var      HNAME(NC_xlen_var)
+#define NCmemset         HNAME(NCmemset)
+#define NC_arrayfill     HNAME(NC_arrayfill)
+#define NC_copy_arrayvals HNAME(NC_copy_arrayvals)
+#define NC_free_array    HNAME(NC_free_array)
+#define NC_free_attr     HNAME(NC_free_attr)
+#define NC_free_cdf      HNAME(NC_free_cdf)
+#define NC_free_dim      HNAME(NC_free_dim)
+#define NC_free_iarray   HNAME(NC_free_iarray)
+#define NC_free_string   HNAME(NC_free_string)
+#define NC_free_var      HNAME(NC_free_var)
+#define NC_incr_array    HNAME(NC_incr_array)
+#define NC_dimid         HNAME(NC_dimid)
+#define NCcktype         HNAME(NCcktype)
+#define NC_indefine      HNAME(NC_indefine)
+#define xdr_cdf          HNAME(xdr_cdf)
+#define xdr_numrecs      HNAME(xdr_numrecs)
+#define xdr_shorts       HNAME(xdr_shorts)
+#define xdr_NC_array     HNAME(xdr_NC_array)
+#define xdr_NC_attr      HNAME(xdr_NC_attr)
+#define xdr_NC_dim       HNAME(xdr_NC_dim)
+#define xdr_NC_fill      HNAME(xdr_NC_fill)
+#define xdr_NC_iarray    HNAME(xdr_NC_iarray)
+#define xdr_NC_string    HNAME(xdr_NC_string)
+#define xdr_NC_var       HNAME(xdr_NC_var)
+#define NC_typelen       HNAME(NC_typelen)
+#define NC_check_id      HNAME(NC_check_id)
+#define NC_dup_cdf       HNAME(NC_dup_cdf)
+#define NC_new_cdf       HNAME(NC_new_cdf)
+#define NC_new_array     HNAME(NC_new_array)
+#define NC_re_array      HNAME(NC_re_array)
+#define NC_new_attr      HNAME(NC_new_attr)
+#define NC_findattr      HNAME(NC_findattr)
+#define NC_new_dim       HNAME(NC_new_dim)
+#define NC_new_iarray    HNAME(NC_new_iarray)
+#define NC_new_string    HNAME(NC_new_string)
+#define NC_re_string     HNAME(NC_re_string)
+#define NC_hlookupvar    HNAME(NC_hlookupvar)
+#define NC_new_var       HNAME(NC_new_var)
+#define NCvario          HNAME(NCvario)
+#define NCcoordck        HNAME(NCcoordck)
+#define xdr_NCvshort     HNAME(xdr_NCvshort)
+#define NC_dcpy          HNAME(NC_dcpy)
+#define NCxdrfile_sync   HNAME(NCxdrfile_sync)
+#define NCxdrfile_create HNAME(NCxdrfile_create)
+#ifdef HDF
+#define NCgenio          HNAME(NCgenio)      /* from putgetg.c */
+#define NC_var_shape     HNAME(NC_var_shape) /* from var.c */
+#define NCvcmaxcontig    HNAME(NCvcmaxcontig)/* from putget.c */
+#define ncvarcpy         HNAME(ncvarcpy)     /* from var.c */
+#endif
+#endif /* HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
+
 extern void		nc_serror			PROTO((
 	char *fmt,
 	...
