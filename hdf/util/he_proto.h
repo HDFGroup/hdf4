@@ -134,7 +134,9 @@ HE_CMD *findAlias();
 int findDesc
   PROTO((tag_ref_ptr dd));
 
-HE_FUNC findFunc();
+HE_FUNC findFunc
+  PROTO((char *word));
+
 int findKey();
 
 int findOpt
