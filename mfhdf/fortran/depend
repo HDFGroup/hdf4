@@ -1,0 +1,2 @@
+jackets.o: jackets.c
+jackets.o: ../libsrc/netcdf.h
