@@ -456,5 +456,9 @@ c	Interlace Types
      *		MFGR_INTERLACE_LINE	= 1,
      * 		MFGR_INTERLACE_COMPONENT	= 2)
 
+c       Vdata fields packing types
+      integer   HDF_VSPACK, HDF_VSUNPACK
+      parameter (HDF_VSPACK   = 0,
+                 HDF_VSUNPACK = 1)
 
 c******************End of hdf.inc***************************
