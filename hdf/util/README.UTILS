@@ -19,7 +19,7 @@ ristosds:
    storm130.hdf from the examples/files directory.
 
    Execute:
-        ristosds storm*.hdf storm.hdf
+        ristosds storm*.hdf -o storm.hdf
  
    Use he to compare storm*.hdf with storm.hdf:
       In storm.hdf tag 702's element should be 38988 bytes.
