@@ -2490,7 +2490,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vgid, char *attrname);
    extern intn Vattrinfo
                 (int32 vgid, intn attrindex, char *name, 
-                 int32 *datatype, int32 *count);
+                 int32 *datatype, int32 *count, int32 *size);
    extern intn Vgetattr
                 (int32 vgid, intn attrindex, VOIDP values);
    extern int32 Vgetversion
@@ -2508,7 +2508,8 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
                 (int32 vsid, int32 findex, char *attrname);
    extern intn VSattrinfo
                 (int32 vsid, int32 findex, intn attrindex,
-                 char *name, int32 *datatype, int32 *count);
+                 char *name, int32 *datatype, int32 *count, 
+                 int32 *size);
    extern intn VSgetattr
                 (int32 vsid, int32 findex, intn attrindex,
                   VOIDP values);
@@ -2737,7 +2738,10 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 
     extern int32 VSQueryref
                 (int32 vkey);
-
+ 
+    extern intn VSQuerynfields
+                (int32 vkey);
+    
     extern int32 VSgetid
                 (HFILEID f, int32 vsref);
 

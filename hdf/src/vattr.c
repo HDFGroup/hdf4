@@ -139,7 +139,8 @@ static char RcsId[] = "@(#)$Revision$";
 *   intn VSfindattr(int32 vsid, int32 findex, char *attrname)
 *        get index of an attribute with a given name
 *   intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
-*                   char *name, int32 *datatype, int32 *count);
+*                   char *name, int32 *datatype, int32 *count,
+                    int32 *size);
 *        get info about an attribute
 *   intn VSgetattr(int32 vsid, int32 findex, intn attrindex, 
 *                  VOIDP values)
@@ -159,7 +160,7 @@ static char RcsId[] = "@(#)$Revision$";
 *   intn Vfindattr(int32 vgid, char *attrname)
 *        get index of an attribute with a given name
 *   intn Vattrinfo(int32 vgid, intn attrindex, char *name, 
-*                  int32 *datatype, int32 *count)
+*                  int32 *datatype, int32 *count, int32 *size)
 *        get info about an attribute
 *   intn Vgetattr(int32 vgid, intn attrindex, VOIDP values)
 *        get values of an attribute
@@ -610,7 +611,7 @@ NAME
        VSattrinfo -- get info of an attribute of a vdata/field
 USAGE
       intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
-                 char *name, int32 *datatype, int32 *count);
+           char *name, int32 *datatype, int32 *count, int32 *size);
       int32 vsid;      IN: vdata id
       int32 findex;    IN: field index. -1 for the vdata
       intn attrindex;  IN: which attr of the field/vdata 
@@ -618,6 +619,7 @@ USAGE
       char *name;      OUT: attribute name
       int32 *datatype; OUT: datatype of the attribute
       int32 *count;    OUT: number of values
+      int32 *size;     OUT: size of the attr values on local machine
 RETURNS
         Returns SUCCEED when successful, FAIL otherwise.
 DESCRIPTION
@@ -625,7 +627,7 @@ DESCRIPTION
         not interested.
 --------------------------------------------------- */
 intn VSattrinfo(int32 vsid, int32 findex, intn attrindex, 
-                char *name, int32 *datatype, int32 *count)
+     char *name, int32 *datatype, int32 *count, int32 *size)
 {
 
      CONSTR(FUNC, "VSattrinfo");
@@ -682,15 +684,21 @@ intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
     if (NULL == (attr_vs = attr_inst->vs) ||
           HDstrcmp(attr_vs->vsclass,  _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    HDstrncpy(name, attr_vs->vsname, HDstrlen(attr_vs->vsname));
-    name[HDstrlen(attr_vs->vsname)] = '\0';
+    if (name) {
+       HDstrncpy(name, attr_vs->vsname, HDstrlen(attr_vs->vsname));
+       name[HDstrlen(attr_vs->vsname)] = '\0';
+    }
     w = &(attr_vs->wlist);
     fldname = w->name[0];
     /* this vdata has 1 field */
     if (w->n != 1 || HDstrcmp(fldname, ATTR_FIELD_NAME))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    *datatype =  w->type[0];
-    *count = w->order[0];
+    if (datatype) 
+        *datatype =  w->type[0];
+    if (count)
+        *count = w->order[0];
+    if (size)
+        *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
@@ -1181,13 +1189,15 @@ NAME
        Vattrinfo -- get info of a vgroup attribute
 USAGE
         intn Vattrinfo(int32 vgid, intn attrindex, char *name,
-                  int32 *datatype, int32 *count)
+                  int32 *datatype, int32 *count, int32 *size)
         int32 vgid;      IN: vgroup id
         intn attrindex;  IN: which attr's info we want
                              attrindex is 0-based
         char *name;      OUT: attribute name 
         int32 *datatype; OUT: datatype of the attribute
         int32 *count;    OUT: number of values
+        int32 *size;     OUT: size of the attr values on local machine.
+
 RETURNS
         Returns SUCCEED when successful, FAIL otherwise.
 DESCRIPTION
@@ -1195,7 +1205,7 @@ DESCRIPTION
         not interested.
 --------------------------------------------------- */
 intn Vattrinfo(int32 vgid, intn attrindex, char *name,
-                  int32 *datatype, int32 *count)
+             int32 *datatype, int32 *count, int32 *size)
 {
     CONSTR(FUNC, "Vattrinfo");
     VGROUP *vg;
@@ -1238,16 +1248,22 @@ intn Vattrinfo(int32 vgid, intn attrindex, char *name,
     if (NULL == (vs = vs_inst->vs) ||
           HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    HDstrncpy(name, vs->vsname, HDstrlen(vs->vsname));
-    name[HDstrlen(vs->vsname)] = '\0';
+    if (name)  {
+        HDstrncpy(name, vs->vsname, HDstrlen(vs->vsname));
+        name[HDstrlen(vs->vsname)] = '\0';
+    }
     w = &(vs->wlist);
     fldname = w->name[0];
     /* this vdata has 1 field */
-/*    if (w->n != 1 || !HDstrcmp(fldname, ATTR_FIELD_NAME))  */
-    if (w->n != 1 ) 
+    if (w->n != 1 || HDstrcmp(fldname, ATTR_FIELD_NAME))  
+/*    if (w->n != 1 )   */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
-    *datatype =  w->type[0];
-    *count = w->order[0];
+    if (datatype)
+       *datatype =  w->type[0];
+    if (count)
+       *count = w->order[0];
+    if (size)
+       *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
