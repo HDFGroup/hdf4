@@ -742,7 +742,7 @@ C-------------------------------------------------------------------------
 C
          INTEGER id
          CHARACTER*(*) vdclass
-         INTEGER vcfcls 
+         INTEGER vscfcls 
 C
          vsffcls = vscfcls(id,vdclass, len(vdclass)) 
 
