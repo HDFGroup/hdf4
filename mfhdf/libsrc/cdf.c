@@ -3562,7 +3562,7 @@ NC_var *vp ;
         alen /= 4 ;
 #if defined _CRAYMPP
         xdr_NC_fnct = xdr_short;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64) || defined AIX5L64
+#elif defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64) || (defined _AIX && defined __64BIT__)
         xdr_NC_fnct = xdr_int ;
 #else
         xdr_NC_fnct = xdr_long ;
