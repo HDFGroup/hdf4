@@ -50,14 +50,17 @@ test_hfile1()
       {
           files[i] = Hopen("thf.hdf", DFACC_RDWR, 0);
           if (files[i] < 0)
+            {
+/*            i++; */
               break;
+            } /* end if */
       }
     MESSAGE(5, printf("Opening stopped at %d/%d files\n", i, BIG);
         );
 
-    MESSAGE(5, puts("Closing all files except first open");
+    MESSAGE(5, puts("Closing all files");
         );
-    for (i--; i > 0; i--)
+    for (i--; i >=0; i--)
       {
           ret = Hclose(files[i]);
           if (ret < 0)
@@ -74,7 +77,10 @@ test_hfile1()
           sprintf(fname, "%s%1d.hdf", TESTFILE_NAME, i);
           files[i] = Hopen(fname, DFACC_ALL, 0);
           if (files[i] < 0)
+            {
+/*            i++; */
               break;
+            } /* end if */
       }
     MESSAGE(5, printf("Opening stopped at %d/%d files\n", i, BIG);
         );
