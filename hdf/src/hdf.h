@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 /* $Id$ */
 
 #ifndef HDF_H
@@ -14,8 +26,10 @@
 #define    PROTO(x) ()
 #endif
 
+/* Internal DF structure */
 typedef struct {
-    uint16 tag, ref;
+    uint16 tag;  /* tag of element */
+    uint16 ref;  /* ref of element */
 } DFdi;
 
 /* internal file access codes */
@@ -79,9 +93,6 @@ typedef struct {
 #ifndef PUBLIC
 #define PUBLIC  /* nothing */
 #endif
-
-/* functions declarations */
-
 
 /* masks for types */
 #define DFNT_HDF      0x00000000    /* standard HDF format  */
@@ -312,7 +323,9 @@ typedef struct {
 #endif /* !macintosh */
 #endif
 
+#if 0 /* replaced with dynamic memory */
 extern uint8 *tbuf;
+#endif
 
 /* tags and refs */
 #define DFREF_WILDCARD      0
