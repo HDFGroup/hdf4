@@ -551,7 +551,9 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-#if defined __alpha || (_MIPS_SZLONG == 64)
+#if defined _CRAYMPP
+		return( xdr_short(xdrs, (nclong *)values) ) ;
+#elif defined __alpha || (_MIPS_SZLONG == 64)
 		return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
 		return( xdr_long(xdrs, (nclong *)values) ) ;
@@ -892,13 +894,7 @@ extern int32 CM_HDFtype;
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static bool_t
-hdf_xdr_NCvdata(handle, vp, where, type, count, values)
-NC      * handle;
-NC_var  * vp;
-u_long    where;
-nc_type   type;
-VOIDP     values;
-uint32    count;
+hdf_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, VOIDP values)
 {
     NC_attr ** attr;        /* pointer to the fill-value attribute */
     int32 status;
@@ -1236,13 +1232,7 @@ VOIDP     values;
  * The calling routine is responsible for calling DFKsetNT() as required.
  */
 static bool_t
-nssdc_xdr_NCvdata(handle, vp, where, type, count, values)
-NC      * handle;
-NC_var  * vp;
-u_long    where;
-nc_type   type;
-VOIDP     values;
-uint32    count;
+nssdc_xdr_NCvdata(NC *handle, NC_var *vp, u_long where, nc_type type, uint32 count, VOIDP values)
 {
     int32 status;
     int32 byte_count;
@@ -1491,7 +1481,9 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
-#if defined __alpha || (_MIPS_SZLONG == 64)
+#if defined _CRAYMPP
+                xdr_NC_fnct = xdr_short;
+#elif defined __alpha || (_MIPS_SZLONG == 64)
 		xdr_NC_fnct = xdr_int ;
 #else
 		xdr_NC_fnct = xdr_long ;

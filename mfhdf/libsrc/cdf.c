@@ -768,11 +768,7 @@ NC_dim *dim;
 **
 */
 int
-  hdf_create_compat_dim_vdata(xdrs, handle, dim, dimval_ver)
-XDR *xdrs;
-NC *handle;
-NC_dim *dim;
-int32 dimval_ver;
+  hdf_create_compat_dim_vdata(XDR *xdrs, NC *handle, NC_dim *dim, int32 dimval_ver)
 {
   char *FUNC = "hdf_create_compat_dim_vdata";
   int found = FALSE;
@@ -890,11 +886,7 @@ NC_attr **attr;
 ** Write out a group representing a dimension
 */
 int32
-  hdf_write_dim(xdrs, handle, dim, cnt)
-XDR *xdrs;
-NC *handle;
-NC_dim **dim;
-int32 cnt;
+  hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
 {
   int32 status;
   int32 tags[100];
@@ -1384,15 +1376,13 @@ NC **handlep;
    return SUCCEED;
 }
   
+
 /* ----------------------------------------------------------------
 ** Read in the dimensions out of a cdf structure
 ** Return FAIL if something goes wrong
 */
 int 
-  hdf_read_dims(xdrs, handle, vg)
-XDR    *xdrs;
-NC     *handle;
-int32  vg;
+  hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 {
 
   char vgname[100] = "";
@@ -1535,10 +1525,7 @@ m */
 ** Return a pointer to the array of attributes if all goes well
 */
 NC_array *
-  hdf_read_attrs(xdrs, handle, vg)
-XDR    *xdrs;
-NC     *handle;
-int32   vg;
+  hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
 {
 
   char vsname[100] = "";
@@ -1650,10 +1637,7 @@ int32   vg;
 **   variables intelligently)
 */
 int 
-  hdf_read_vars(xdrs, handle, vg)
-XDR    *xdrs;
-NC     *handle;
-int32  vg;
+  hdf_read_vars(XDR *xdrs, NC *handle, int32 vg)
 {
 
   char vgname[100] = "";
@@ -2375,7 +2359,9 @@ NC_var *vp ;
 			break ;
 		case NC_LONG :
 			alen /= 4 ;
-#if defined __alpha || (_MIPS_SZLONG == 64)
+#if defined _CRAYMPP
+			xdr_NC_fnct = xdr_short;
+#elif defined __alpha || (_MIPS_SZLONG == 64)
 			xdr_NC_fnct = xdr_int ;
 #else
 			xdr_NC_fnct = xdr_long ;
