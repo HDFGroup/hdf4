@@ -1,0 +1,377 @@
+/*
+ * jdhuff.c
+ *
+ * Copyright (C) 1991, 1992, Thomas G. Lane.
+ * This file is part of the Independent JPEG Group's software.
+ * For conditions of distribution and use, see the accompanying README file.
+ *
+ * This file contains Huffman entropy decoding routines.
+ * These routines are invoked via the methods entropy_decode
+ * and entropy_decoder_init/term.
+ */
+
+#include "jinclude.h"
+
+
+/* Static variables to avoid passing 'round extra parameters */
+
+static decompress_info_ptr dcinfo;
+
+static int32 get_buffer;    /* current bit-extraction buffer */
+static int bits_left;		/* # of unused bits in it */
+
+
+LOCAL VOID
+#ifdef PROTOTYPE
+fix_huff_tbl (HUFF_TBL * htbl)
+#else
+fix_huff_tbl (htbl)
+HUFF_TBL * htbl;
+#endif
+/* Compute derived values for a Huffman table */
+{
+  int p, i, l, si;
+  char huffsize[257];
+  uint16 huffcode[257];
+  uint16 code;
+  
+  /* Figure C.1: make table of Huffman code length for each symbol */
+  /* Note that this is in code-length order. */
+
+  p = 0;
+/* Stop the Cray from dumping core... */
+#ifdef UNICOS
+#pragma novector
+#endif
+  for (l = 1; l <= 16; l++) {
+    for (i = 1; i <= (int) htbl->bits[l]; i++)
+      huffsize[p++] = (char) l;
+  }
+  huffsize[p] = 0;
+  
+  /* Figure C.2: generate the codes themselves */
+  /* Note that this is in code-length order. */
+  
+  code = 0;
+  si = huffsize[0];
+  p = 0;
+  while (huffsize[p]) {
+    while (((int) huffsize[p]) == si) {
+      huffcode[p++] = code;
+      code++;
+    }
+    code <<= 1;
+    si++;
+  }
+
+  /* We don't bother to fill in the encoding tables ehufco[] and ehufsi[], */
+  /* since they are not used for decoding. */
+
+  /* Figure F.15: generate decoding tables */
+
+  p = 0;
+  for (l = 1; l <= 16; l++) {
+    if (htbl->bits[l]) {
+      htbl->valptr[l] = p;	/* huffval[] index of 1st sym of code len l */
+      htbl->mincode[l] = huffcode[p]; /* minimum code of length l */
+      p += htbl->bits[l];
+      htbl->maxcode[l] = huffcode[p-1];	/* maximum code of length l */
+    } else {
+      htbl->maxcode[l] = -1;
+    }
+  }
+  htbl->maxcode[17] = 0xFFFFFL;	/* ensures huff_DECODE terminates */
+}
+
+
+/* Extract the next N bits from the input stream (N <= 15) */
+
+LOCAL int
+#ifdef PROTOTYPE
+get_bits (int nbits)
+#else
+get_bits (nbits)
+int nbits;
+#endif
+{
+  int result;
+  
+  while (nbits > bits_left) {
+    int c = JGETC(dcinfo);
+    
+    get_buffer <<= 8;
+    get_buffer |= c;
+    bits_left += 8;
+    /* If it's 0xFF, check and discard stuffed zero byte */
+    if (c == 0xff) {
+      c = JGETC(dcinfo);  /* Byte stuffing */
+      if (c != 0)
+	ERREXIT1(dcinfo->emethods,
+		 "Unexpected marker 0x%02x in compressed data", c);
+    }
+  }
+  
+  bits_left -= nbits;
+  result = ((int) (get_buffer >> bits_left)) & ((1 << nbits) - 1);
+  return result;
+}
+
+/* Macro to make things go at some speed! */
+
+#define get_bit()	(bits_left ? \
+			 ((int) (get_buffer >> (--bits_left))) & 1 : \
+			 get_bits(1))
+
+
+/* Figure F.16: extract next coded symbol from input stream */
+  
+LOCAL int
+#ifdef PROTOTYPE
+huff_DECODE (HUFF_TBL * htbl)
+#else
+huff_DECODE (htbl)
+HUFF_TBL * htbl;
+#endif
+{
+  int l, p;
+  int32 code;
+  
+  code = get_bit();
+  l = 1;
+  while (code > htbl->maxcode[l]) {
+    code = (code << 1) + get_bit();
+    l++;
+  }
+
+  /* With garbage input we may reach the sentinel value l = 17. */
+
+  if (l > 16) {
+    ERREXIT(dcinfo->emethods, "Corrupted data in JPEG file");
+  }
+
+  p = (int) (htbl->valptr[l] + (code - htbl->mincode[l]));
+  
+  return (int) htbl->huffval[p];
+}
+
+
+/* Figure F.12: extend sign bit */
+
+/* NB: on some compilers this will only work for s > 0 */
+
+#define huff_EXTEND(x, s)	((x) < (1 << ((s)-1)) ? \
+				 (x) + (-1 << (s)) + 1 : \
+				 (x))
+
+
+/* Decode a single block's worth of coefficients */
+/* Note that only the difference is returned for the DC coefficient */
+
+LOCAL VOID
+#ifdef PROTOTYPE
+decode_one_block (JBLOCK block, HUFF_TBL *dctbl, HUFF_TBL *actbl)
+#else
+decode_one_block (block, dctbl, actbl)
+JBLOCK block;
+HUFF_TBL *dctbl;
+HUFF_TBL *actbl;
+#endif
+{
+  int s, k, r, n;
+
+  /* zero out the coefficient block */
+
+  MEMZERO((VOIDP) block, SIZEOF(JBLOCK));
+  
+  /* Section F.2.2.1: decode the DC coefficient difference */
+
+  s = huff_DECODE(dctbl);
+  if (s) {
+    r = get_bits(s);
+    s = huff_EXTEND(r, s);
+  }
+  block[0] = s;
+
+  /* Section F.2.2.2: decode the AC coefficients */
+  
+  for (k = 1; k < DCTSIZE2; k++) {
+    r = huff_DECODE(actbl);
+    
+    s = r & 15;
+    n = r >> 4;
+    
+    if (s) {
+      k += n;
+      r = get_bits(s);
+      block[k] = huff_EXTEND(r, s);
+    } else {
+      if (n != 15)
+	break;
+      k += 15;
+    }
+  }
+}
+
+
+/*
+ * Initialize for a Huffman-compressed scan.
+ * This is invoked after reading the SOS marker.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+huff_decoder_init (decompress_info_ptr cinfo)
+#else
+huff_decoder_init (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  short ci;
+  jpeg_component_info * compptr;
+
+  /* Initialize static variables */
+  dcinfo = cinfo;
+  bits_left = 0;
+
+  for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+    compptr = cinfo->cur_comp_info[ci];
+    /* Make sure requested tables are present */
+    if (cinfo->dc_huff_tbl_ptrs[compptr->dc_tbl_no] == NULL ||
+	cinfo->ac_huff_tbl_ptrs[compptr->ac_tbl_no] == NULL)
+      ERREXIT(cinfo->emethods, "Use of undefined Huffman table");
+    /* Compute derived values for Huffman tables */
+    /* We may do this more than once for same table, but it's not a big deal */
+    fix_huff_tbl(cinfo->dc_huff_tbl_ptrs[compptr->dc_tbl_no]);
+    fix_huff_tbl(cinfo->ac_huff_tbl_ptrs[compptr->ac_tbl_no]);
+    /* Initialize DC predictions to 0 */
+    cinfo->last_dc_val[ci] = 0;
+  }
+
+  /* Initialize restart stuff */
+  cinfo->restarts_to_go = cinfo->restart_interval;
+  cinfo->next_restart_num = 0;
+}
+
+
+/*
+ * Check for a restart marker & resynchronize decoder.
+ */
+
+LOCAL VOID
+#ifdef PROTOTYPE
+process_restart (decompress_info_ptr cinfo)
+#else
+process_restart (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  int c, nbytes;
+  short ci;
+
+  /* Throw away any partial unread byte */
+  bits_left = 0;
+
+  /* Scan for next JPEG marker */
+  nbytes = 0;
+  do {
+    do {			/* skip any non-FF bytes */
+      nbytes++;
+      c = JGETC(cinfo);
+    } while (c != 0xFF);
+    do {			/* skip any duplicate FFs */
+      nbytes++;
+      c = JGETC(cinfo);
+    } while (c == 0xFF);
+  } while (c == 0);		/* repeat if it was a stuffed FF/00 */
+
+  if (c != (RST0 + cinfo->next_restart_num))
+    ERREXIT2(cinfo->emethods, "Found 0x%02x marker instead of RST%d",
+	     c, cinfo->next_restart_num);
+
+  if (nbytes != 2)
+    TRACEMS2(cinfo->emethods, 1, "Skipped %d bytes before RST%d",
+	     nbytes-2, cinfo->next_restart_num);
+  else
+    TRACEMS1(cinfo->emethods, 2, "RST%d", cinfo->next_restart_num);
+
+  /* Re-initialize DC predictions to 0 */
+  for (ci = 0; ci < cinfo->comps_in_scan; ci++)
+    cinfo->last_dc_val[ci] = 0;
+
+  /* Update restart state */
+  cinfo->restarts_to_go = cinfo->restart_interval;
+  cinfo->next_restart_num++;
+  cinfo->next_restart_num &= 7;
+}
+
+
+/*
+ * Decode and return one MCU's worth of Huffman-compressed coefficients.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+huff_decode_proc (decompress_info_ptr cinfo, JBLOCK *MCU_data)
+#else
+huff_decode_proc (cinfo, MCU_data)
+decompress_info_ptr cinfo;
+JBLOCK *MCU_data;
+#endif
+{
+  short blkn, ci;
+  jpeg_component_info * compptr;
+
+  /* Account for restart interval, process restart marker if needed */
+  if (cinfo->restart_interval) {
+    if (cinfo->restarts_to_go == 0)
+      process_restart(cinfo);
+    cinfo->restarts_to_go--;
+  }
+
+  for (blkn = 0; blkn < cinfo->blocks_in_MCU; blkn++) {
+    ci = cinfo->MCU_membership[blkn];
+    compptr = cinfo->cur_comp_info[ci];
+    decode_one_block(MCU_data[blkn],
+		     cinfo->dc_huff_tbl_ptrs[compptr->dc_tbl_no],
+		     cinfo->ac_huff_tbl_ptrs[compptr->ac_tbl_no]);
+    /* Convert DC difference to actual value, update last_dc_val */
+    MCU_data[blkn][0] += cinfo->last_dc_val[ci];
+    cinfo->last_dc_val[ci] = MCU_data[blkn][0];
+  }
+}
+
+
+/*
+ * Finish up at the end of a Huffman-compressed scan.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+huff_decoder_term (decompress_info_ptr cinfo)
+#else
+huff_decoder_term (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  /* No work needed */
+}
+
+
+/*
+ * The method selection routine for Huffman entropy decoding.
+ */
+
+GLOBAL VOID
+#ifdef PROTOTYPE
+jseldhuffman (decompress_info_ptr cinfo)
+#else
+jseldhuffman (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  if (! cinfo->arith_code) {
+    cinfo->methods->entropy_decoder_init = huff_decoder_init;
+    cinfo->methods->entropy_decode = huff_decode_proc;
+    cinfo->methods->entropy_decoder_term = huff_decoder_term;
+  }
+}

@@ -1,0 +1,210 @@
+/*
+ * jwrppm.c
+ *
+ * Copyright (C) 1991, 1992, Thomas G. Lane.
+ * This file is part of the Independent JPEG Group's software.
+ * For conditions of distribution and use, see the accompanying README file.
+ *
+ * This file contains routines to write output images in PPM format.
+ * The PBMPLUS library is required (well, it will be in the real version).
+ *
+ * These routines may need modification for non-Unix environments or
+ * specialized applications.  As they stand, they assume output to
+ * an ordinary stdio stream.
+ *
+ * These routines are invoked via the methods put_pixel_rows, put_color_map,
+ * and output_init/term.
+ */
+
+#include "jinclude.h"
+
+#ifdef PPM_SUPPORTED
+
+
+/*
+ * Haven't yet got around to making this work with text-format output,
+ * hence cannot handle pixels wider than 8 bits.
+ */
+
+#ifndef EIGHT_BIT_SAMPLES
+  Sorry, this code only copes with 8-bit JSAMPLEs. /* deliberate syntax err */
+#endif
+
+
+/*
+ * Write the file header.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+output_init (decompress_info_ptr cinfo)
+#else
+output_init (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  if (cinfo->out_color_space == CS_GRAYSCALE) {
+    /* emit header for raw PGM format */
+    fprintf(cinfo->output_file, "P5\n%ld %ld\n%d\n",
+	    cinfo->image_width, cinfo->image_height, 255);
+  } else if (cinfo->out_color_space == CS_RGB) {
+    /* emit header for raw PPM format */
+    fprintf(cinfo->output_file, "P6\n%ld %ld\n%d\n",
+	    cinfo->image_width, cinfo->image_height, 255);
+  } else {
+    ERREXIT(cinfo->emethods, "PPM output must be grayscale or RGB");
+  }
+}
+
+
+/*
+ * Write some pixel data.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_pixel_rows (decompress_info_ptr cinfo, int num_rows,
+		JSAMPIMAGE pixel_data)
+#else
+put_pixel_rows (cinfo, num_rows, pixel_data)
+decompress_info_ptr cinfo;
+int num_rows;
+JSAMPIMAGE pixel_data;
+#endif
+{
+  register FILE * outfile = cinfo->output_file;
+  register JSAMPROW ptr0, ptr1, ptr2;
+  register long col;
+  register long width = cinfo->image_width;
+  register int row;
+  
+  if (cinfo->out_color_space == CS_GRAYSCALE) {
+    for (row = 0; row < num_rows; row++) {
+      ptr0 = pixel_data[0][row];
+      for (col = width; col > 0; col--) {
+	putc(GETJSAMPLE(*ptr0), outfile);
+	ptr0++;
+      }
+    }
+  } else {
+    for (row = 0; row < num_rows; row++) {
+      ptr0 = pixel_data[0][row];
+      ptr1 = pixel_data[1][row];
+      ptr2 = pixel_data[2][row];
+      for (col = width; col > 0; col--) {
+	putc(GETJSAMPLE(*ptr0), outfile);
+	ptr0++;
+	putc(GETJSAMPLE(*ptr1), outfile);
+	ptr1++;
+	putc(GETJSAMPLE(*ptr2), outfile);
+	ptr2++;
+      }
+    }
+  }
+}
+
+
+/*
+ * Write some pixel data when color quantization is in effect.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_demapped_rows (decompress_info_ptr cinfo, int num_rows,
+		   JSAMPIMAGE pixel_data)
+#else
+put_demapped_rows (cinfo, num_rows, pixel_data)
+decompress_info_ptr cinfo;
+int num_rows;
+JSAMPIMAGE pixel_data;
+#endif
+{
+  register FILE * outfile = cinfo->output_file;
+  register JSAMPARRAY color_map = cinfo->colormap;
+  register JSAMPROW ptr;
+  register long col;
+  long width = cinfo->image_width;
+  int row;
+  
+  if (cinfo->out_color_space == CS_GRAYSCALE) {
+    for (row = 0; row < num_rows; row++) {
+      ptr = pixel_data[0][row];
+      for (col = width; col > 0; col--) {
+	putc(GETJSAMPLE(color_map[0][GETJSAMPLE(*ptr)]), outfile);
+	ptr++;
+      }
+    }
+  } else {
+    for (row = 0; row < num_rows; row++) {
+      ptr = pixel_data[0][row];
+      for (col = width; col > 0; col--) {
+	register int pixval = GETJSAMPLE(*ptr);
+
+	putc(GETJSAMPLE(color_map[0][pixval]), outfile);
+	putc(GETJSAMPLE(color_map[1][pixval]), outfile);
+	putc(GETJSAMPLE(color_map[2][pixval]), outfile);
+	ptr++;
+      }
+    }
+  }
+}
+
+
+/*
+ * Write the color map.
+ * For PPM output, we just demap the output data!
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+put_color_map (decompress_info_ptr cinfo, int num_colors, JSAMPARRAY colormap)
+#else
+put_color_map (cinfo, num_colors, colormap)
+decompress_info_ptr cinfo;
+int num_colors;
+JSAMPARRAY colormap;
+#endif
+{
+  cinfo->methods->put_pixel_rows = put_demapped_rows;
+}
+
+
+/*
+ * Finish up at the end of the file.
+ */
+
+METHODDEF VOID
+#ifdef PROTOTYPE
+output_term (decompress_info_ptr cinfo)
+#else
+output_term (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  /* No work except to make sure we wrote the output file OK */
+  fflush(cinfo->output_file);
+  if (ferror(cinfo->output_file))
+    ERREXIT(cinfo->emethods, "Output file write error");
+}
+
+
+/*
+ * The method selection routine for PPM format output.
+ * This should be called from d_ui_method_selection if PPM output is wanted.
+ */
+
+GLOBAL VOID
+#ifdef PROTOTYPE
+jselwppm (decompress_info_ptr cinfo)
+#else
+jselwppm (cinfo)
+decompress_info_ptr cinfo;
+#endif
+{
+  cinfo->methods->output_init = output_init;
+  cinfo->methods->put_color_map = put_color_map;
+  cinfo->methods->put_pixel_rows = put_pixel_rows;
+  cinfo->methods->output_term = output_term;
+}
+
+#endif /* PPM_SUPPORTED */
