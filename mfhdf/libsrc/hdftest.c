@@ -804,6 +804,8 @@ char *argv[];
 /* test fixed size SDS   */
 /* create an empty SDS, set SD_NOFILL.
    Change the fill mode to SD_FILL, and write a slab of data */
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, "SDsetfillmode (SD_NOFILL)");
     dimsize[0]=5;
     dimsize[1]=6;
     sdid = SDcreate(f1, "FIXED1", DFNT_INT32, 2, dimsize);
@@ -815,11 +817,8 @@ char *argv[];
     for (i=0; i<30; i++)
         idata[i] = i+100;
     status = SDsetattr(sdid, "_FillValue", DFNT_INT32, 1,
-                         (VOIDP) &fillval);
+               (VOIDP) &fillval); /* can use SDsetfillvalue */
     CHECK(status, "SDsetattr");
-
-    status = SDsetfillmode(f1, SD_NOFILL);
-    CHECK(status, "SDsetfillmode (SD_NOFILL)");
     status = SDendaccess(sdid);
 
     index = SDnametoindex(f1, "FIXED1");
@@ -828,6 +827,7 @@ char *argv[];
     start[1]=0;
     end[0]=1;
     end[1]=6;
+    /* change back to fill mode */
     status = SDsetfillmode(f1, SD_FILL);
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, "SDwritedata (SD_FILL)");
@@ -835,6 +835,8 @@ char *argv[];
     CHECK(status, "SDendaccess");
     /* write out the first 2 records with SD_FILL mode */
 /* create a new fixed size SDS. write with SD_NOFILL mode */
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, "SDsetfillmode (SD_NOFILL)");
     sdid = SDcreate(f1, "FIXED", DFNT_INT32, 2, dimsize);
     if (sdid == FAIL) {
        fprintf(stderr, "Fail to create FIXED SDS in FILE1\n");
@@ -846,13 +848,10 @@ char *argv[];
         idata[i] = i+100;
     status = SDsetfillvalue(sdid, (VOIDP) &fillval);
     CHECK(status, "SDsetfillvalue");
-    status = SDsetfillmode(f1, SD_NOFILL);
-    CHECK(status, "SDsetfillmode (SD_NOFILL)");
     start[0]=2;
     start[1]=0;
     end[0]=1;
     end[1]=6;
-    status = SDsetfillmode(f1, SD_NOFILL);
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, "SDwritedata (SD_NOFILL)");
         status = SDendaccess(sdid);
@@ -866,12 +865,12 @@ char *argv[];
        fillmode changes should not affect the fill values */
     f1 = SDstart(FILE1, DFACC_RDWR);
     CHECK(f1, "SDstart (file1)");
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, "SDsetfillmode (SD_FILL)");
     index = SDnametoindex(f1, "FIXED");
     CHECK(f1, "SDnametoindex (FIXED)");
     sdid = SDselect(f1, index);
     CHECK(f1, "SDselect (FIXED)");
-    status = SDsetfillmode(f1, SD_FILL);
-    CHECK(status, "SDsetfillmode (SD_FILL)");
     start[0]=4;
     start[1]=0;
     end[0]=1;
@@ -942,9 +941,10 @@ char *argv[];
     CHECK(status, "SDend");
 
 /* test UNLIMITED size SDS   */
-/*    dimsize[0]=4;   */
     f1 = SDstart(FILE1, DFACC_RDWR);
     CHECK(f1, "SDstart (file1)");
+    status = SDsetfillmode(f1, SD_NOFILL);
+    CHECK(status, "SDsetfillmode (SD_NOFILL)");
 
     dimsize[0]=SD_UNLIMITED;
     dimsize[1]=6;
@@ -959,28 +959,26 @@ char *argv[];
     status = SDsetfillvalue(sdid, (VOIDP) &fillval);
     CHECK(status, "SDsetattr");
 
-    status = SDsetfillmode(f1, SD_NOFILL);
-    CHECK(status, "SDsetfillmode (SD_NOFILL)");
     start[0]=2;
     start[1]=0;
     end[0]=1;
     end[1]=6;
+/* write out the third record with SD_NOFILL mode */
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, "SDwritedata (UNLIMITED)");
         status = SDendaccess(sdid);
     CHECK(status, "SDendaccess");
-    /* write out the first 2 records with SD_NOFILL mode */
     status = SDend(f1);
     CHECK(status, "SDend");
     /* open again, write record 4 with SD_FILL mode */
     f1 = SDstart(FILE1, DFACC_RDWR);
     CHECK(f1, "SDstart (file1)");
+    status = SDsetfillmode(f1, SD_FILL);
+    CHECK(status, "SDsetfillmode (SD_FILL)");
     index = SDnametoindex(f1, "UNLIMITED_SDS");
     CHECK(f1, "SDnametoindex (UNLIMITED)");
     sdid = SDselect(f1, index);
     CHECK(f1, "SDselect (UNLIMITED)");
-    status = SDsetfillmode(f1, SD_FILL);
-    CHECK(status, "SDsetfillmode (SD_FILL)");
     start[0]=4;
     start[1]=0;
     end[0]=1;
