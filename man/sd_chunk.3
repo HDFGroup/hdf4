@@ -2,16 +2,16 @@
 .\" DO NOT EDIT! CHANGES MADE TO THIS FILE WILL BE LOST!
 .TH "mfhdf" 3 "15 October 1996" "c2man mfhdf.h"
 .SH "NAME"
-SDsetChunk,
-SDgetChunkInfo,
-SDwriteChunk,
-SDreadChunk,
-SDsetChunkCache \- SDS Chunking Routines
+SDsetchunk,
+SDgetchunkinfo,
+SDwritechunk,
+SDreadchunk,
+SDsetchunkcache \- SDS Chunking Routines
 .SH "SYNOPSIS"
 .ft B
 #include <mfhdf.h>
 .sp
-extern intn SDsetChunk
+extern intn SDsetchunk
 .br
 (
 .br
@@ -23,7 +23,7 @@ extern intn SDsetChunk
 .br
 );
 .sp
-extern intn SDgetChunkInfo
+extern intn SDgetchunkinfo
 .br
 (
 .br
@@ -35,7 +35,7 @@ extern intn SDgetChunkInfo
 .br
 );
 .sp
-extern intn SDwriteChunk
+extern intn SDwritechunk
 .br
 (
 .br
@@ -47,7 +47,7 @@ extern intn SDwriteChunk
 .br
 );
 .sp
-extern intn SDreadChunk
+extern intn SDreadchunk
 .br
 (
 .br
@@ -59,7 +59,7 @@ extern intn SDreadChunk
 .br
 );
 .sp
-extern intn SDsetChunkCache
+extern intn SDsetchunkcache
 .br
 (
 .br
@@ -79,7 +79,7 @@ IN: sds access id.
 .B "HDF_CHUNK_DEF chunk_def"
 IN: chunk definition.
 .TP
-.BR "int32 flags" "	(SDsetChunk)"
+.BR "int32 flags" "	(SDsetchunk)"
 IN: flags.
 .TP
 .B "HDF_CHUNK_DEF *chunk_def"
@@ -88,13 +88,13 @@ IN/OUT: chunk definition.
 .B "int32 *flags"
 IN/OUT: flags.
 .TP
-.BR "int32 *origin" "	(SDwriteChunk)"
+.BR "int32 *origin" "	(SDwritechunk)"
 IN: origin of chunk to write.
 .TP
 .B "const VOID *datap"
 IN: buffer for data.
 .TP
-.BR "int32 *origin" "	(SDreadChunk)"
+.BR "int32 *origin" "	(SDreadchunk)"
 IN: origin of chunk to read.
 .TP
 .B "VOID *datap"
@@ -103,10 +103,10 @@ IN/OUT: buffer for data.
 .B "int32 maxcache"
 IN: max number of chunks to cache.
 .TP
-.BR "int32 flags" "	(SDsetChunkCache)"
+.BR "int32 flags" "	(SDsetchunkcache)"
 IN: flags = 0, HDF_CACHEALL.
 .SH "DESCRIPTION"
-.SS "SDsetChunk"
+.SS "SDsetchunk"
 This routine makes the SDS a chunked SDS according to the chunk
 definition passed in.
 
@@ -149,7 +149,7 @@ The performance of the SDxxx interface with chunking is greatly
 affected by the users access pattern over the dataset and by
 the maximum number of chunks set in the chunk cache. The cache contains
 the Least Recently Used(LRU cache replacment policy) chunks. See the
-routine SDsetmaxcache() for further info on the chunk cache and how
+routine SDsetchunkcache() for further info on the chunk cache and how
 to set the maximum number of chunks in the chunk cache. A default chunk
 cache is always created.
 
@@ -179,7 +179,7 @@ Y     |  (0,1)  |  (1,1)  |
  chunk_def.chunk_lengths[1]= 2;
 
  -- Set Chunking --
- SDsetChunk(sdsid, chunk_def, HDF_CHUNK);
+ SDsetchunk(sdsid, chunk_def, HDF_CHUNK);
  ......
 }
 
@@ -195,12 +195,12 @@ Y     |  (0,1)  |  (1,1)  |
  chunk_def.comp.cinfo.deflate.level = 9;
  chunk_def.comp.comp_type = COMP_CODE_DEFLATE;
  -- Set Chunking with Compression --
- SDsetChunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);
+ SDsetchunk(sdsid, chunk_def, HDF_CHUNK | HDF_COMP);
  ......
 }.
 .fi
 
-.SS "SDgetChunkInfo"
+.SS "SDgetchunkinfo"
 This routine gets any special information on the SDS. If its chunked,
 chunked and compressed or just a regular SDS. Currently it will only
 fill the array of chunk lengths for each dimension as specified in
@@ -221,11 +221,11 @@ e.g. 4x4 array - Pseudo-C
  int32   cflags;
  ...
  rchunk_def.chunk_lengths = rcdims;
- SDgetChunkInfo(sdsid, &rchunk_def, &cflags);
+ SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
  ...
 }.
 .fi
-.SS "SDwriteChunk"
+.SS "SDwritechunk"
 This routine writes a whole chunk of data to the chunked SDS
 specified by chunk "origin" for the given SDS and can be used
 instead of SDwritedata() when this information is known. This
@@ -236,9 +236,9 @@ position in the overall chunk array.
 
 Note that "datap" must point to a whole chunk of data.
 
-See SDsetChunk() for a description of the organization of chunks in an SDS.
+See SDsetchunk() for a description of the organization of chunks in an SDS.
 
-.SS "SDreadChunk"
+.SS "SDreadchunk"
 This routine reads a whole chunk of data from the chunked SDS
 specified by chunk "origin" for the given SDS and can be used
 instead of SDreaddata() when this information is known. This
@@ -249,9 +249,9 @@ position in the overall chunk array.
 
 Note that "datap" must point to a whole chunk of data.
 
-See SDsetChunk() for a description of the organization of chunks in an SDS.
+See SDsetchunk() for a description of the organization of chunks in an SDS.
 
-.SS "SDsetChunkCache"
+.SS "SDsetchunkcache"
 Set the maximum number of chunks to cache.
 
 The cache contains the Least Recently Used(LRU cache replacment policy)
@@ -285,29 +285,29 @@ Use flags argument of "HDF_CACHEALL" if the whole object is to be cached
 in memory, otherwise pass in zero(0). Currently you can only
 pass in zero.
 
-See SDsetChunk() for a description of the organization of chunks in an SDS.
+See SDsetchunk() for a description of the organization of chunks in an SDS.
 .SH "RETURNS"
-.SS "SDsetChunk"
+.SS "SDsetchunk"
 SUCCEED/FAIL.
-.SS "SDgetChunkInfo"
+.SS "SDgetchunkinfo"
 SUCCEED/FAIL.
-.SS "SDwriteChunk"
+.SS "SDwritechunk"
 SUCCEED/FAIL.
-.SS "SDreadChunk"
+.SS "SDreadchunk"
 SUCCEED/FAIL.
-.SS "SDsetChunkCache"
+.SS "SDsetchunkcache"
 Returns the 'maxcache' value for the chunk cache if successful
 and FAIL otherwise.
 .SH "NAME"
-.SS "SDsetChunk"
-SDsetChunk   -- make SDS a chunked SDS.
-.SS "SDgetChunkInfo"
-SDgetChunkInfo -- get Info on SDS.
-.SS "SDwriteChunk"
-SDwriteChunk  -- write the specified chunk to the SDS.
-.SS "SDreadChunk"
-SDreadChunk   -- read the specified chunk to the SDS.
-.SS "SDsetChunkCache"
-SDsetChunkCache -- maximum number of chunks to cache.
+.SS "SDsetchunk"
+SDsetchunk   -- make SDS a chunked SDS.
+.SS "SDgetchunkinfo"
+SDgetchunkinfo -- get Info on SDS.
+.SS "SDwritechunk"
+SDwritechunk  -- write the specified chunk to the SDS.
+.SS "SDreadchunk"
+SDreadchunk   -- read the specified chunk to the SDS.
+.SS "SDsetchunkcache"
+SDsetchunkcache -- maximum number of chunks to cache.
 
 
