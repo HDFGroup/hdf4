@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/28 14:24:01  chouck
-Added casts for calls to Hinquire()
+Revision 1.3  1992/05/31 15:23:30  mfolk
+Added uint8 * and uint16 casts to make Convex stop complaining.
 
+ * Revision 1.2  1992/05/28  14:24:01  chouck
+ * Added casts for calls to Hinquire()
+ *
  * Revision 1.1  1992/02/10  20:59:34  chouck
  * Initial revision
  *
@@ -48,7 +51,7 @@ Added casts for calls to Hinquire()
 #include "hdf.h"
 #define TESTFILE_NAME "t.hdf"
 static int shell = 0;
-char outbuf[4096], inbuf[4096];
+uint8 outbuf[4096], inbuf[4096];
 
 void do_shell()
 {
@@ -89,11 +92,12 @@ int main(argc, argv)
 
     puts("putting some data elements into the file.");
     puts("Data element 100 1");
-    ret = Hputelement(fid, 100, 1, "testing 100 1", strlen("testing 100 1")+1);
-    printf("ret from Hputelement is %d\n", ret);
+    ret = Hputelement(fid, (uint16) 100, 1, 
+                      (uint8 *) "testing 100 1", strlen("testing 100 1")+1);
+    printf("ret from Hputelement is %d\n",(uint16)  ret);
 
     puts("Putting data element 100 4");
-    ret = Hputelement(fid, 100, 4, outbuf, 2000);
+    ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
     printf("ret from Hputelement is %d\n", ret);
 
     puts("checking newref");
@@ -101,11 +105,11 @@ int main(argc, argv)
     printf("newref is %d\n", ret);
 
     puts("putting data element 103 2");
-    ret = Hputelement(fid, 103, 2, "element 103 2", strlen("element 103 2")+1);
+    ret = Hputelement(fid, (uint16) 103, (uint16) 2, 
+                         (uint8 *) "element 103 2", strlen("element 103 2")+1);
     printf("ret from Hputelement is %d\n", ret);
-
     puts("getting data element 100 4");
-    ret = Hgetelement(fid, 100, 4, inbuf);
+    ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
     printf("ret from Hgetelement is %d\n", ret);
     for (i=0; i<ret; i++) {
        if (inbuf[i] != outbuf[i])
@@ -203,7 +207,7 @@ int main(argc, argv)
     printf("aid from Hstartwrite is %d\n", aid1);
 
     puts("writing ABCD into data element");
-    ret = Hwrite(aid1, 4, "ABCD");
+    ret = Hwrite(aid1, 4, (uint8 *) "ABCD");
     printf("ret from Hwrite is %d\n");
 
     puts("ending read access element");
