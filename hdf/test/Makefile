@@ -50,17 +50,15 @@ all: testhdf fortest
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
 .c.o: 
-	 purify $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
+	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 
 all: testhdf
 
 testhdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
-#	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a
 
 fortest: $(FTESTS) $(HDFLIB)/libdf.a fortest.o
-	purify $(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
-#	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
+	$(CC) $(CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a
 
 ftests: $(FTESTS)
 
