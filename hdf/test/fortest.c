@@ -83,6 +83,7 @@ main(int argc, char *argv[])
     InitTest("r24", "./t24f", "");
     InitTest("an", "./tanf", "");
     InitTest("anfile", "./tanfilef", "");
+    InitTest("manf", "./manf", "");
     InitTest("p", "./tpf", "");
     InitTest("r8", "./tr8f", "");
     InitTest("sdmms", "./tsdmmsf", "");
