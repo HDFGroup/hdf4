@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.4  1992/07/07 21:51:03  chouck
-C Minor error reporting fix
+C Revision 1.5  1992/07/08 22:05:20  sxu
+C Changed dsgmaxm() to dsgrang(), and dssmaxm() to dssrang().
 C
+c Revision 1.4  1992/07/07  21:51:03  chouck
+c Minor error reporting fix
+c
 c Revision 1.3  1992/07/07  21:04:17  chouck
 c Changed 'character' to 'byte' for VMS systems.  Fixed error
 c reporting.
@@ -45,7 +48,7 @@ C   VMS you should be able to find all of the necessary changes.
 C
    
       
-      integer dsgdata, dsadata, dssdims, dssmaxm, dsgmaxm, dssnt
+      integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt
       integer dssdisc, dsgdisc
 
       real*8 f64(10,10), tf64(10,10)
@@ -135,32 +138,32 @@ C
 
       err  = dssnt(DFNT_FLOAT64)
       err1 = dssdisc(1, 10, f64scale)
-      err2 = dssmaxm(f64max, f64min)
+      err2 = dssrang(f64max, f64min)
       err3 = dsadata('of.hdf', rank, dims, f64)
       call errchkio(err1, err2, err3, number_failed, 'float64 write')
       
       err  = dssnt(DFNT_FLOAT32)
       err1 = dssdisc(1, 10, f32scale)
-      err2 = dssmaxm(f32max, f32min)
+      err2 = dssrang(f32max, f32min)
       err3 = dsadata('of.hdf', rank, dims, f32)
       call errchkio(err1, err2, err3, number_failed, 'float32 write')
 
       err  = dssnt(DFNT_INT8)
       err1 = dssdisc(1, 10, i8scale)
-      err2 = dssmaxm(i8max, i8min)
+      err2 = dssrang(i8max, i8min)
       err3 = dsadata('of.hdf', rank, dims, i8)
       call errchkio(err1, err2, err3, number_failed, 'int8 write')
       
       
       err  = dssnt(DFNT_INT16)
       err1 = dssdisc(1, 10, i16scale)
-      err2 = dssmaxm(i16max, i16min)
+      err2 = dssrang(i16max, i16min)
       err3 = dsadata('of.hdf', rank, dims, i16)
       call errchkio(err1, err2, err3, number_failed, 'int16 write')
       
       err  = dssnt(DFNT_INT32)
       err1 = dssdisc(1, 10, i32scale)
-      err2 = dssmaxm(i32max, i32min)
+      err2 = dssrang(i32max, i32min)
       err3 = dsadata('of.hdf', rank, dims, i32)
       call errchkio(err1, err2, err3, number_failed, 'int32 write')
       
@@ -169,27 +172,27 @@ C  Reading back dimscales, max/min, and arrays from single file
 C
       err1 = dsgdata('of.hdf', rank, dims, tf64)
       err2 = dsgdisc(1, 10, tf64scale)
-      err3 = dsgmaxm(tf64max, tf64min)
+      err3 = dsgrang(tf64max, tf64min)
       call errchkio(err1, err2, err3, number_failed, 'float64 read')
       
       err1 = dsgdata('of.hdf', rank, dims, tf32)
       err2 = dsgdisc(1, 10, tf32scale)
-      err3 = dsgmaxm(tf32max, tf32min)
+      err3 = dsgrang(tf32max, tf32min)
       call errchkio(err1, err2, err3, number_failed, 'float32 read')
       
       err1 = dsgdata('of.hdf', rank, dims, ti8)
       err2 = dsgdisc(1, 10, ti8scale)
-      err3 = dsgmaxm(ti8max, ti8min)
+      err3 = dsgrang(ti8max, ti8min)
       call errchkio(err1, err2, err3, number_failed, 'int8 read')
       
       err1 = dsgdata('of.hdf', rank, dims, ti16)
       err2 = dsgdisc(1, 10, ti16scale)
-      err3 = dsgmaxm(ti16max, ti16min)
+      err3 = dsgrang(ti16max, ti16min)
       call errchkio(err1, err2, err3, number_failed, 'int16 read')
       
       err1 = dsgdata('of.hdf', rank, dims, ti32)
       err2 = dsgdisc(1, 10, ti32scale)
-      err3 = dsgmaxm(ti32max, ti32min)
+      err3 = dsgrang(ti32max, ti32min)
       call errchkio(err1, err2, err3, number_failed, 'int32 read')
       
 C
