@@ -1,9 +1,23 @@
 /*****************************************************************************
-* 
-*			  NCSA HDF version 3.2beta
-*			     February 29, 1992
 *
-* NCSA HDF Version 3.10r5 source code and documentation are in the public
+* vshow.c
+*
+*	HDF Vset utility.
+*
+*	vshow: 	dumps out vsets in a hdf file.
+*
+*	Usage:  vshow [file] {+{n}}
+*		the '+' option indicates a full dump on all vdatas.
+*		'+n' means full dump only for the nth vdata.
+*
+*
+*****************************************************************************
+* 
+*			  NCSA HDF Vset release 2.1
+*					May 1991
+* 				Jason Ng May 1991 NCSA
+*
+* NCSA HDF Vset release 2.1 source code and documentation are in the public
 * domain.  Specifically, we give to the public domain all rights for future
 * licensing of the source code, all resale rights, and all publishing rights.
 * 
@@ -17,42 +31,9 @@
 * SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
 * WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
 * 
-*****************************************************************************/
-
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.3  1992/03/01 20:11:02  dilg
-Changed #include <*> to #include "*" for all includes.  Closed un-closed
-comments.
-
- * Revision 1.2  1992/02/29  18:58:36  sxu
- * add header
- *
- * Revision 1.1  1992/02/28  17:00:00  likkai
- * Initial revision
- *
-*/
-/*****************************************************************************
-*
-* vshow.c
-*
-*	HDF Vset utility.
-*
-*	vshow: 	dumps out vsets in a hdf file.
-*
-*	Usage:  vshow [file] {+{n}}
-*		the '+' option indicates a full dump on all vdatas.
-*		'+n' means full dump only for the nth vdata.
-*
-*
 ******************************************************************************/
 
-#include "vg.h"
+#include <vg.h>
 
 static int condensed;
 static char sbuf[80]; /* message buffer */
@@ -66,20 +47,20 @@ main(ac,av) int ac;
 char**av;
 {
 	VGROUP	   *vg, *vgt;
-	VDATA  	*vs;
+	VDATA  		*vs;
 	HFILEID		f;
-	int vgid = -1;
-	int vsid = -1;
-	int vsno = 0;
-	int	vstag;
+	int32 vgid = -1;
+	int32 vsid = -1;
+	int32 vsno = 0;
+	int32	vstag;
 
-	int i, t, nvg, n, ne, nv, interlace, vsize;
-	int * lonevs; /* array to store refs of all lone vdatas */
-	int nlone; /* total number of lone vdatas */
+	int32 i, t, nvg, n, ne, nv, interlace, vsize;
+	int32 * lonevs; /* array to store refs of all lone vdatas */
+	int32 nlone; /* total number of lone vdatas */
 
 	char fields[50], vgname[50],vsname[50];
 	char  vgclass[50],vsclass[50];
-	int fulldump = 0;
+	int32 fulldump = 0;
 
 	if (ac==3) if(av[2][0]=='-'||av[2][0]=='+') {
 		sscanf(&(av[2][1]),"%d",&vsno);
@@ -209,23 +190,24 @@ char**av;
 
 /* ------------------------------------------------ */
 /* printing functions used by vsdumpfull(). */
-static int cn = 0;
-int fmtchar(x) char*x;   	{ cn++; putchar(*x); return(1); }
-int fmtint(x) int*x;   		{ cn += printf("%d ",*x); return(1);  }
-int fmtfloat(x) float*x; 	{ cn += printf("%f ",*x); return(1);  }
-int fmtlong(x) int*x;   	{ cn += printf("%ld ",*x); return(1);  }
+static int32 cn = 0;
+int32 fmtchar(x) char*x;   	{ cn++; putchar(*x); return(1); }
+int32 fmtint(x) int*x;   		{ cn += printf("%d ",*x); return(1);  }
+int32 fmtfloat(x) float*x; 	{ cn += printf("%f ",*x); return(1);  }
+int32 fmtlong(x) int*x;   	{ cn += printf("%ld ",*x); return(1);  }
 /* ------------------------------------------------ */
 
-int vsdumpfull(vs) VDATA * vs; 
+int32 vsdumpfull(vs) VDATA * vs; 
 {
 	char vsname[100], fields[100];
-	int i,t,interlace, nv, vsize;
-	char *bb, *b;
+	int32 j,i,t,interlace, nv, vsize;
+	BYTE *bb, *b;
 	VWRITELIST* w;
-	int (*fmtfn[20])();
-	int off[20];
+	int32 (*fmtfn[60])();
+	int32 off[60];
+	int32 order[60];
 
-	int nf;
+	int32 nf;
 
 	VSinquire(vs, &nv,&interlace, fields, &vsize, vsname);
 	bb = (char*) VGETSPACE (nv*vsize);
@@ -239,53 +221,50 @@ int vsdumpfull(vs) VDATA * vs;
 	VSread(vs,bb,nv,interlace);
 
 	w = &(vs->wlist);
-	nf=0;
 
+	nf = w->n;
 	for (i=0;i<w->n;i++) {
 		printf("%d: fld [%s], type=%d, order=%d\n",
 		    i, w->name[i], w->type[i], w->order[i]);
 		switch(w->type[i]) {
-		case LOCAL_FLOATTYPE:
-			for(t=0;t<w->order[i];t++,nf++) {
-				fmtfn[nf] = fmtfloat;
-				off[nf] = sizeof(float);
-			}
-			break;
-		case LOCAL_INTTYPE:
-			for(t=0;t<w->order[i];t++,nf++) {
-				fmtfn[nf] = fmtint;
-				off[nf] = sizeof(int);
-			}
-			break;
-		case LOCAL_CHARTYPE:
-			for(t=0;t<w->order[i];t++,nf++) {
-				fmtfn[nf] = fmtchar;
-				off[nf] = sizeof(char);
-			}
-			break;
-		case LOCAL_LONGTYPE:
-			for(t=0;t<w->order[i];t++,nf++) {
-				fmtfn[nf] = fmtlong;
-				off[nf] = sizeof(long);
-			}
-			break;
+
+			case LOCAL_FLOATTYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(float);
+				fmtfn[i] = fmtfloat;
+				break;
+
+			case LOCAL_INTTYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(int);
+				fmtfn[i] = fmtint;
+				break;
+
+			case LOCAL_CHARTYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(char);
+				fmtfn[i] = fmtchar;
+				break;
+
+			case LOCAL_LONGTYPE:
+				order[i] = w->order[i];
+				off[i]   = sizeof(long);
+				fmtfn[i] = fmtlong;
+				break;
 		}
 	}
 
 	b= bb;
 	cn=0;
-	for(i=0;i<nv;i++) {
-		for(t=0;t<nf;t++) { 
-			(fmtfn[t]) (b); 
-			b+=off[t]; 
+
+	for(j=0;j<nv;j++) 
+		for(i=0;i<nf;i++) {
+			for(t=0;t<order[i];t++) { (fmtfn[i]) (b); b+=off[i]; }
+			if (condensed)
+			{ if( cn > 70) { putchar('\n'); cn=0; } }
+			else 
+				putchar('\n');
 		}
-		if (condensed)
-		{ 
-			if( cn > 70) { putchar('\n'); cn=0; } 
-		}
-		else 
-			putchar('\n');
-	}
 
 	/* ============================================ */
 
