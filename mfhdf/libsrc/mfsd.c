@@ -757,7 +757,7 @@ VOIDP pmax, pmin;
     if(var == NULL)
         return FAIL;
 
-    attr = (NC_attr **) NC_findattr(&(var->attrs), _ValidRange);
+    attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_ValidRange);
     if((attr != NULL) && ((*attr)->data->type == var->type)) {
 
         /* BUG: this may be a pointer to a pointer */
@@ -1356,7 +1356,7 @@ VOIDP pmax, pmin;
     HDmemcpy(data + sz, pmax, sz);
 
     /* call common code */
-    if(SDIputattr(&var->attrs, _ValidRange, var->HDFtype, (intn) 2, 
+    if(SDIputattr(&var->attrs, _HDF_ValidRange, var->HDFtype, (intn) 2, 
                   (VOIDP) data) == FAIL)
         return FAIL;
     
@@ -1839,22 +1839,22 @@ char  *l, *u, *f, *c;
         return FAIL;
     
     if(l && l[0] != '\0') 
-        if(SDIputattr(&var->attrs, _LongName, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR, 
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
     if(u && u[0] != '\0') 
-        if(SDIputattr(&var->attrs, _Units, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR, 
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
     if(f && f[0] != '\0') 
-        if(SDIputattr(&var->attrs, _Format, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR, 
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
     
     if(c && c[0] !='\0') 
-        if(SDIputattr(&var->attrs, _CoordSys, DFNT_CHAR, 
+        if(SDIputattr(&var->attrs, _HDF_CoordSys, DFNT_CHAR, 
                       (intn) HDstrlen(c), c) == FAIL)
             return FAIL;
     
@@ -1914,19 +1914,19 @@ int32 nt;
     if(var == NULL)
         return FAIL;
     
-    if(SDIputattr(&var->attrs, _ScaleFactor, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_ScaleFactor, DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &cal) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, _ScaleFactorErr, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_ScaleFactorErr, DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &cale) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, _AddOffset, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_AddOffset, DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &ioff) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, _AddOffsetErr, DFNT_FLOAT64, 
+    if(SDIputattr(&var->attrs, _HDF_AddOffsetErr, DFNT_FLOAT64, 
                   (intn) 1, (VOIDP) &ioffe) == FAIL)
         return FAIL;
-    if(SDIputattr(&var->attrs, _CalibratedNt, DFNT_INT32, 
+    if(SDIputattr(&var->attrs, _HDF_CalibratedNt, DFNT_INT32, 
                   (intn) 1, (VOIDP) &nt) == FAIL)
         return FAIL;
     
@@ -2101,7 +2101,7 @@ intn len;
         return FAIL;
 
     if(l) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _LongName);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
         if(attr != NULL) {
             HDstrncpy((char *)l, (*attr)->data->values, len);
             if((*attr)->data->count < len)
@@ -2111,7 +2111,7 @@ intn len;
         }
     }
     if(u) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _Units);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
         if(attr != NULL) {
             HDstrncpy((char *)u, (*attr)->data->values, len);
             if((*attr)->data->count < len)
@@ -2121,7 +2121,7 @@ intn len;
         }
     }
     if(f) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _Format);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
         if(attr != NULL) {
             HDstrncpy((char *)f, (*attr)->data->values, len);
             if((*attr)->data->count < len)
@@ -2131,7 +2131,7 @@ intn len;
         }
     }
     if(c) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _CoordSys);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_CoordSys);
         if(attr != NULL) {
             HDstrncpy((char *)c, (*attr)->data->values, len);
             if((*attr)->data->count < len)
@@ -2195,27 +2195,27 @@ int32    *nt;
     if(var == NULL)
         return FAIL;
 
-    attr = (NC_attr **) NC_findattr(&(var->attrs), _ScaleFactor);
+    attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_ScaleFactor);
     if(attr == NULL)
         return FAIL;
     NC_copy_arrayvals((char *)cal, (*attr)->data) ;    
 
-    attr = (NC_attr **) NC_findattr(&(var->attrs), _ScaleFactorErr);
+    attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_ScaleFactorErr);
     if(attr == NULL)
         return FAIL;
     NC_copy_arrayvals((char *)cale, (*attr)->data) ;    
 
-    attr = (NC_attr **) NC_findattr(&(var->attrs), _AddOffset);
+    attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_AddOffset);
     if(attr == NULL)
         return FAIL;
     NC_copy_arrayvals((char *)ioff, (*attr)->data) ;    
 
-    attr = (NC_attr **) NC_findattr(&(var->attrs), _AddOffsetErr);
+    attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_AddOffsetErr);
     if(attr == NULL)
         return FAIL;
     NC_copy_arrayvals((char *)ioffe, (*attr)->data) ;    
 
-    attr = (NC_attr **) NC_findattr(&(var->attrs), _CalibratedNt);
+    attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_CalibratedNt);
     if(attr == NULL)
         return FAIL;
     NC_copy_arrayvals((char *)nt, (*attr)->data) ;    
@@ -2386,17 +2386,17 @@ char  *l, *u, *f;
 
     /* set the attributes */
     if(l && l[0] != '\0')
-        if(SDIputattr(&var->attrs, _LongName, DFNT_CHAR,
+        if(SDIputattr(&var->attrs, _HDF_LongName, DFNT_CHAR,
                       (intn) HDstrlen(l), l) == FAIL)
             return FAIL;
 
     if(u && u[0] != '\0')
-        if(SDIputattr(&var->attrs, _Units, DFNT_CHAR,
+        if(SDIputattr(&var->attrs, _HDF_Units, DFNT_CHAR,
                       (intn) HDstrlen(u), u) == FAIL)
             return FAIL;
 
     if(f && f[0] != '\0')
-        if(SDIputattr(&var->attrs, _Format, DFNT_CHAR,
+        if(SDIputattr(&var->attrs, _HDF_Format, DFNT_CHAR,
                       (intn) HDstrlen(f), f) == FAIL)
             return FAIL;
 
@@ -2776,7 +2776,7 @@ intn  len;
         return FAIL;
 
     if(l) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _LongName);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
         if(attr != NULL) {
             HDstrncpy((char *)l, (*attr)->data->values, len);
             if((*attr)->data->count < len)
@@ -2786,7 +2786,7 @@ intn  len;
         }
     }
     if(u) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _Units);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
         if(attr != NULL) {
             HDstrncpy((char *)u, (*attr)->data->values, len);
             if((*attr)->data->count < len)
@@ -2796,7 +2796,7 @@ intn  len;
         }
     }
     if(f) {
-        attr = (NC_attr **) NC_findattr(&(var->attrs), _Format);
+        attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
         if(attr != NULL) {
             HDstrncpy((char *)f, (*attr)->data->values, len);
             if((*attr)->data->count < len)
