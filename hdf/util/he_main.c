@@ -66,7 +66,9 @@ static char RcsId[] = "@(#)$Revision$";
  *****************************************************************************/
 /* ------ he.c ------- main() main HDF interfacing routines */
 #include "he.h"
+#ifdef PC
 #include <process.h>
+#endif
 
 /* the return status of last command executed */
 int he_status = HE_OK;
