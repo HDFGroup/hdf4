@@ -43,4 +43,4 @@ hzipck_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hzipck_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hziptst hzip
-	srcdir="$(srcdir)" $(srcdir)/testhzip.sh
+	@srcdir="$(srcdir)" $(srcdir)/testhzip.sh
