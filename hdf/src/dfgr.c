@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/10/01 02:54:34  chouck
-Added function DF24lastref()
+Revision 1.3  1992/10/22 22:53:32  chouck
+Added group handle to group interface
 
+ * Revision 1.2  1992/10/01  02:54:34  chouck
+ * Added function DF24lastref()
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -477,18 +480,20 @@ PRIVATE int DFGRgetrig(file_id, ref, rig)
     uint16 elt_tag, elt_ref;
     uint8 ntstring[4];
     int type;
+    int32 GroupID;
 
     HEclear();
     if (!HDvalidfid(file_id) || !ref) {
        HERROR(DFE_ARGS);
         return FAIL;
     }
-
-    if (DFdiread(file_id, DFTAG_RIG, ref) == FAIL) /* read RIG into memory */
+    
+    /* read RIG into memory */
+    if ((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL) 
         return FAIL;
 
     *rig = Grzrig;             /* fill rig with zeroes */
-    while (!DFdiget(&elt_tag, &elt_ref)) {     /* get next tag/ref from RIG */
+    while (!DFdiget(GroupID, &elt_tag, &elt_ref)) {  /* get next tag/ref */
         switch (elt_tag) {     /* process tag/ref */
             case DFTAG_CI:
             case DFTAG_RI:
@@ -557,6 +562,7 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
     char *FUNC="DFGRaddrig";
     uint8 ntstring[4];
     int32 lutsize;
+    int32 GroupID;
 
     HEclear();
 
@@ -630,25 +636,25 @@ PRIVATE int DFGRaddrig(file_id, ref, rig)
 
     /* prepare to start writing rig */
     /* ### NOTE: the parameter to this call may go away */
-    if (DFdisetup(10) == FAIL)
+    if ((GroupID = DFdisetup(10)) == FAIL)
        return FAIL; /* max 10 tag/refs in set */
     /* add tag/ref to RIG - image description, image and lookup table */
-    if (DFdiput(DFTAG_ID,(uint16)Ref.dims[IMAGE]) == FAIL)
+    if (DFdiput(GroupID, DFTAG_ID,(uint16)Ref.dims[IMAGE]) == FAIL)
        return FAIL;
 
-    if (DFdiput(rig->data[IMAGE].tag, rig->data[IMAGE].ref) == FAIL)
+    if (DFdiput(GroupID, rig->data[IMAGE].tag, rig->data[IMAGE].ref) == FAIL)
        return FAIL;
 
     if ((Ref.dims[LUT]>0)
-       && (DFdiput(DFTAG_LD, (uint16)Ref.dims[LUT]) == FAIL))
+       && (DFdiput(GroupID, DFTAG_LD, (uint16)Ref.dims[LUT]) == FAIL))
        return FAIL;
 
     if ((Ref.lut>0)
-       && (DFdiput(rig->data[LUT].tag, rig->data[LUT].ref) == FAIL))
+       && (DFdiput(GroupID, rig->data[LUT].tag, rig->data[LUT].ref) == FAIL))
        return FAIL;
 
     /* write out RIG */
-    return(DFdiwrite(file_id, DFTAG_RIG, ref));
+    return(DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
 /*****************************************************************************/

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/09/17 20:02:17  koziol
-Included Shiming's bugfix to RIG stuff
+Revision 1.3  1992/10/22 22:53:32  chouck
+Added group handle to group interface
 
+ * Revision 1.2  1992/09/17  20:02:17  koziol
+ * Included Shiming's bugfix to RIG stuff
+ *
  * Revision 1.1  1992/08/25  21:40:44  koziol
  * Initial revision
  *
@@ -484,6 +487,7 @@ PRIVATE int DFR8getrig(file_id, ref, rig)
     uint16 elt_tag;
     uint16 elt_ref;
     uint8 ntstring[4];
+    int32 GroupID;
 
     HEclear();
 
@@ -492,11 +496,12 @@ PRIVATE int DFR8getrig(file_id, ref, rig)
         return FAIL;
     }
 
-    if (DFdiread(file_id, DFTAG_RIG, ref) == FAIL) /* read RIG into memory */
+    /* read RIG into memory */
+    if((GroupID = DFdiread(file_id, DFTAG_RIG, ref)) == FAIL) 
         return FAIL;
 
     *rig = Zrig;               /* fill rig with zeroes */
-    while (DFdiget(&elt_tag, &elt_ref) != FAIL) {
+    while (DFdiget(GroupID, &elt_tag, &elt_ref) != FAIL) {
        /*get next tag/ref from RIG */
         switch (elt_tag) {     /* process tag/ref */
             case DFTAG_CI:
@@ -572,6 +577,7 @@ PRIVATE int DFR8putrig(file_id, ref, rig, wdim)
     static uint16 prevdimref=0; /*ref of previous dimension record, to reuse */
     R8dim im8dim;
     uint8 ntstring[4];
+    int32 GroupID;
 
     HEclear();
 
@@ -624,22 +630,22 @@ PRIVATE int DFR8putrig(file_id, ref, rig, wdim)
 
     /* prepare to start writing rig */
     /* ### NOTE: the second parameter to this call may go away */
-    if (DFdisetup(10) == FAIL)
+    if ((GroupID = DFdisetup(10)) == FAIL)
        return FAIL;            /* max 10 tag/refs in set */
 
     /* add tag/ref to RIG - image description, image and palette */
-    if (DFdiput(DFTAG_ID, prevdimref) == FAIL)
+    if (DFdiput(GroupID, DFTAG_ID, prevdimref) == FAIL)
        return FAIL;
 
-    if (DFdiput(rig->image.tag, rig->image.ref) == FAIL)
+    if (DFdiput(GroupID, rig->image.tag, rig->image.ref) == FAIL)
        return FAIL;
 
     if (rig->lut.ref
-       && DFdiput(rig->lut.tag, rig->lut.ref) == FAIL)
+       && DFdiput(GroupID, rig->lut.tag, rig->lut.ref) == FAIL)
        return FAIL;
 
     /* write out RIG */
-    return(DFdiwrite(file_id, DFTAG_RIG, ref));
+    return(DFdiwrite(file_id, GroupID, DFTAG_RIG, ref));
 }
 
 

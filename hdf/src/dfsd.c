@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1992/09/17 22:06:06  chouck
-Removed debugging info for calibration tag routines
+Revision 1.4  1992/10/22 22:53:32  chouck
+Added group handle to group interface
 
+ * Revision 1.3  1992/09/17  22:06:06  chouck
+ * Removed debugging info for calibration tag routines
+ *
  * Revision 1.2  1992/08/27  22:18:42  chouck
  * Added support for calibration tag reading and writing
  *
@@ -1462,6 +1465,7 @@ DFnsdg_t_hdr *nsdghdr;
     uint32 sz_DFnsdgle = (uint32)sizeof(struct DFnsdgle);
     int32 aid,         /* access id */
           ndgs, sdgs;	/* number of ndg's and sdg's */
+    int32 GroupID;
     uint16 intag, inref;
     bool moretags, found;
     DFnsdgle *ntb, *stb, *new, *nf, *nr, *sf, *sr;
@@ -1541,15 +1545,15 @@ DFnsdg_t_hdr *nsdghdr;
             }
             
 	    /* Does this NDG have an SDG? 	*/
-	    if (DFdiread(file_id, DFTAG_NDG, inref) < 0)
+	    if ((GroupID = DFdiread(file_id, DFTAG_NDG, inref)) < 0)
                 return FAIL;
 
-	    found = 0;
+	    found = FALSE;
 	    di.tag = DFTAG_NULL;
 	    di.ref = 0;
-	    while ((found == 0) && (DFdiget(&di.tag, &di.ref) == 0))  {
- 		if (di.tag == DFTAG_SDLNK)
-                    found = 1;
+	    while ((found == 0) && 
+                   (DFdiget(GroupID, &di.tag, &di.ref) == 0))  {
+ 		if (di.tag == DFTAG_SDLNK) found = TRUE;
 	    }
 	    if (found)	{    /* read in the tag/refs in the link element */
                 if ((int32)FAIL == Hgetelement(file_id, di.tag, di.ref, DFtbuf) )
@@ -1590,13 +1594,12 @@ DFnsdg_t_hdr *nsdghdr;
                 sf->next = new;
 	    }
 	    /* Does it belong to  an NDG?    */
-	    if (DFdiread(file_id, DFTAG_SDG, inref) < 0) return FAIL;
-	    found = 0;
+	    if ((GroupID = DFdiread(file_id, DFTAG_SDG, inref)) < 0) return FAIL;
+	    found = FALSE;
             di.tag = DFTAG_NULL;
 	    di.ref = 0;        	
-            while ((found == 0) && (DFdiget(&di.tag, &di.ref) == 0)) {
-                if (di.tag == DFTAG_SDLNK)
-                    found = 1;
+            while ((found == 0) && (DFdiget(GroupID, &di.tag, &di.ref) == 0)) {
+                if (di.tag == DFTAG_SDLNK) found = TRUE;
             }
 	    if (found)	{   /* read in the tag/refs in the link element */
                 if ((int32)FAIL == Hgetelement(file_id,  di.tag, di.ref, DFtbuf))
@@ -1763,6 +1766,7 @@ DFSsdg *sdg;
           *buf, 
           *p;           /* temporary pointer for moving things to buffer */
     char *FUNC="DFSDIgetndg";
+    int32 GroupID;
 
     HEclear();
 
@@ -1772,7 +1776,7 @@ DFSsdg *sdg;
     if (!ref)  { 
         HERROR(DFE_BADREF); return FAIL; 
     }
-    if (DFdiread(file_id, tag, ref)<0) /* read NDG into memory */
+    if ((GroupID = DFdiread(file_id, tag, ref)) < 0) /* read NDG into memory */
         return FAIL;
 
     DFSDIclear(sdg);
@@ -1783,7 +1787,7 @@ DFSsdg *sdg;
     /*
      * Loop through all members of the group 
      */
-    while (!DFdiget(&elmt.tag, &elmt.ref)) {
+    while (!DFdiget(GroupID, &elmt.tag, &elmt.ref)) {
         luf = -1;		              /* flag value for label/unit/ */
         switch (elmt.tag) {	              /* format gets process tag/ref */
 
@@ -2189,6 +2193,7 @@ DFSsdg *sdg;
           ret, aid;
     intn len;
     char *FUNC="DFSDIputndg";
+    int32 GroupID;
      
     HEclear();
 
@@ -2206,10 +2211,10 @@ DFSsdg *sdg;
     platnumsubclass = DFKgetPNSC(numtype, DF_MT);
     
     /* prepare to start writing ndg   */
-    if (DFdisetup(10) < 0) return FAIL;
+    if ((GroupID = DFdisetup(10)) < 0) return FAIL;
     
     /* put ND and ref       */
-    if (DFdiput(sdg->data.tag, sdg->data.ref) < 0) return FAIL;
+    if (DFdiput(GroupID, sdg->data.tag, sdg->data.ref) < 0) return FAIL;
     
     if (Ref.nt<=0) {   /* will not execute if has been written in putsdg  */ 
         /* construct and write out NT */
@@ -2247,7 +2252,7 @@ DFSsdg *sdg;
         Ref.dims = ref;
     }
     /* write dimension record tag/ref */
-    if (DFdiput(DFTAG_SDD,(uint16) Ref.dims) < 0) return FAIL;
+    if (DFdiput(GroupID, DFTAG_SDD,(uint16) Ref.dims) < 0) return FAIL;
     
     /* write out label/unit/format */
     for (luf=LABEL; luf<=FORMAT; luf++) {
@@ -2289,7 +2294,7 @@ DFSsdg *sdg;
         
 	/* write luf tag/ref */
         if (Ref.luf[luf]>0)
-            if (DFdiput(luftag, (uint16)Ref.luf[luf]) < 0)
+            if (DFdiput(GroupID, luftag, (uint16)Ref.luf[luf]) < 0)
                 return FAIL;
     }	/* luf loop	*/
     
@@ -2362,7 +2367,7 @@ DFSsdg *sdg;
     }
     Isscales = HDfreespace(Isscales);
     if (Ref.scales>0)
-        if (DFdiput(DFTAG_SDS, (uint16) Ref.scales) < 0)
+        if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
             return FAIL;
 
     /* write coordsys */
@@ -2373,7 +2378,7 @@ DFSsdg *sdg;
         if (ret == FAIL) return FAIL;
         Ref.coordsys = ref;
     }
-    if (Ref.coordsys>0) if (DFdiput(DFTAG_SDC, (uint16) Ref.coordsys) < 0)
+    if (Ref.coordsys>0) if (DFdiput(GroupID, DFTAG_SDC, (uint16) Ref.coordsys) < 0)
 	return FAIL;
     
     /* write max/min */
@@ -2404,7 +2409,7 @@ DFSsdg *sdg;
         }
     }
     if (Ref.maxmin>0)
-        if (DFdiput(DFTAG_SDM, (uint16) Ref.maxmin) < 0)
+        if (DFdiput(GroupID, DFTAG_SDM, (uint16) Ref.maxmin) < 0)
             return FAIL;
     Ref.maxmin = (-1);		/* max/min should be reset for each data set */
     
@@ -2449,7 +2454,7 @@ DFSsdg *sdg;
 
     
     if (Ref.cal>0)
-        if (DFdiput(DFTAG_CAL, (uint16) Ref.cal) < 0)
+        if (DFdiput(GroupID, DFTAG_CAL, (uint16) Ref.cal) < 0)
             return(-1);
     Ref.cal = (-1);        /* Calibration should be reset for each data set */
     
@@ -2460,7 +2465,7 @@ DFSsdg *sdg;
         Ref.transpose = ref;
     }
     if (Ref.transpose>0)
-        if (DFdiput(DFTAG_SDT, (uint16) Ref.transpose) < 0)
+        if (DFdiput(GroupID, DFTAG_SDT, (uint16) Ref.transpose) < 0)
             return FAIL;
 
     if (numtype == DFNT_FLOAT32) {  /* if float32, add a DFTAG_SDLNK   */
@@ -2481,11 +2486,11 @@ DFSsdg *sdg;
         if (ret == FAIL) return FAIL;
 
 	/* write DFTAG_SDLNK  */
-        if (DFdiput(DFTAG_SDLNK, ref) < 0) return FAIL;
+        if (DFdiput(GroupID, DFTAG_SDLNK, ref) < 0) return FAIL;
     }
     
     /* write out NDG */
-    if (DFdiwrite(file_id, DFTAG_NDG, ref) < 0) return FAIL;
+    if (DFdiwrite(file_id, GroupID, DFTAG_NDG, ref) < 0) return FAIL;
     /* write an SDG point to the dataset if it is an NDG SDG  */
     if (issdg)	{
         if (Hdupdd(file_id, DFTAG_SDG, ref, DFTAG_NDG, ref) < 0) {

@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.7  1992/10/08 18:27:07  chouck
-Fixed prototype for DFfindnextref()
+Revision 1.8  1992/10/22 22:53:32  chouck
+Added group handle to group interface
 
+ * Revision 1.7  1992/10/08  18:27:07  chouck
+ * Fixed prototype for DFfindnextref()
+ *
  * Revision 1.6  1992/10/01  02:54:34  chouck
  * Added function DF24lastref()
  *
@@ -220,20 +223,20 @@ extern VOID DFCunimcomp
 /* 
 ** from dfgroup.c 
 */
-extern int DFdiread
+extern int32 DFdiread
   PROTO((int32 file_id, uint16 tag, uint16 ref));
 
 extern int DFdiget
-  PROTO((uint16 *ptag, uint16 *pref));
+  PROTO((int32 list, uint16 *ptag, uint16 *pref));
 
-extern int DFdisetup
+extern int32 DFdisetup
   PROTO((int maxsize));
 
 extern int DFdiput
-  PROTO((uint16 tag, uint16 ref));
+  PROTO((int32 list, uint16 tag, uint16 ref));
 
 extern int DFdiwrite
-  PROTO((int32 file_id, uint16 tag, uint16 ref));
+  PROTO((int32 file_id, int32 list, uint16 tag, uint16 ref));
 
 /*
 ** from dfp.c 

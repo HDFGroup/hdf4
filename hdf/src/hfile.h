@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.3  1992/10/09 20:49:17  chouck
-Added some patches to work with ThinkC I/O on the Mac
+Revision 1.4  1992/10/22 22:53:32  chouck
+Added group handle to group interface
 
+ * Revision 1.3  1992/10/09  20:49:17  chouck
+ * Added some patches to work with ThinkC I/O on the Mac
+ *
  * Revision 1.2  1992/10/08  19:09:36  chouck
  * Changed file_t to hdf_file_t to make strict ANSI compliant
  *
@@ -259,8 +262,9 @@ typedef struct functab_t {
    significant 16 bits is an id unique to each type; in this, we use the
    internal slot number. */
 
-#define FIDTYPE 1
-#define AIDTYPE 2
+#define FIDTYPE   1
+#define AIDTYPE   2
+#define GROUPTYPE 3
 #define FSLOT2ID(s) ((((uint32)FIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                     (((uint32)(i) & 0xffff) < MAX_FILE))
