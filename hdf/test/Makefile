@@ -173,14 +173,14 @@ CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 
 FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
         tsdmmsf.f tsdnmmsf.f tstubsf.f \
-        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f
+        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f manf.f
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
         tsdmmsf tsdnmmsf tstubsf \
-        slabwf slab1wf slab2wf slab3wf slab4wf
+        slabwf slab1wf slab2wf slab3wf slab4wf manf
 TESTF = fortest.o
 FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
         tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o fortest.o \
-        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o 
+        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o manf.o 
 
 $(FTESTS): $(FSRCS)
 	$(FC) $(FFLAGS) $@.f -o $@ $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a
