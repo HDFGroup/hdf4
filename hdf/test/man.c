@@ -285,7 +285,8 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
   int32 an_handle;
   int32 nflabs, nfdescs, nolabs, nodescs;
   intn  num_dlabels, num_ddescs;
-  int32  *dlabels, *ddescs;
+  int32  *dlabels = NULL;
+  int32f *ddescs = NULL;
   int32 ann_len;
   char  *ann_label = NULL;
   char  *ann_desc = NULL;
@@ -455,8 +456,10 @@ check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
     } /* end for descs */
     
   /* free space */
-  HDfree(dlabels);
-  HDfree(ddescs);
+  if (dlabels != NULL)
+    HDfree(dlabels);
+  if (ddescs != NULL)
+    HDfree(ddescs);
   if (ann_label != NULL)
     HDfree(ann_label);
   if (ann_desc != NULL)
