@@ -66,6 +66,13 @@ HDFBIN=../bin
 JPEGINC=../jpeg
 JPEGLIB=../jpeg
 
+#Common include
+COMMINC=../common/chipset/src/rbtree
+COMMLIB=../common/chipset/src/librb.a
+
+# all includes
+ALLINC= -I$(JPEGINC) -I$(COMMINC)
+
 # ==> specify your FORTRAN compiler (Convex: fc)
 FC=f77
 FFLAGS= -g
@@ -113,7 +120,7 @@ ARCHIVE=hdf.shar
 include src.inc
 
 .c.o:
-	$(CC) $(CFLAGS) -I$(JPEGINC) -c $<
+	$(CC) $(CFLAGS) $(ALLINC) -c $<
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<
@@ -285,3 +292,5 @@ cskphuff.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 cskphuff.o: vproto.h hfile.h hcompi.h mstdio.h cskphuff.h $(FRC)
 hblocks.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
 hblocks.o: vproto.h hfile.h $(FRC)
+mfan.o: hdf.h hdfi.h hbitio.h hcomp.h herr.h hproto.h
+mfan.o: vproto.h hfile.h mfan.h $(FRC)
