@@ -1070,7 +1070,7 @@ hdf_xdr_NCvdata(NC *handle,
           if(handle->xdrs->x_op == XDR_DECODE) 
             {
                 if(attr != NULL)
-                    HDmemfill(values,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+                    HDmemfill(values,(*attr)->data->values,vp->szof,count);
                 else 
                     NC_arrayfill(values, count * vp->szof, vp->type);
 
