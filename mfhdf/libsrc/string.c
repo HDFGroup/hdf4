@@ -14,6 +14,10 @@ static uint32 compute_hash(unsigned count, const char *str)
     uint32 ret=0;
     uint32 temp;
 
+     /* check if string is NULL */
+     if (str == NULL)
+         return ret;
+
     while(count>sizeof(uint32))
       {
           HDmemcpy((VOIDP)&temp,(const VOIDP)str,sizeof(uint32));
@@ -55,8 +59,6 @@ const char *str ;
 	ret->count = count ;
         ret->len   = count ;
 #ifdef HDF
-    if (str == NULL)
-        return NULL;
     ret->hash=compute_hash(count,str);
 #endif /* HDF */
 	if(count != 0 ) /* allocate */
