@@ -23,7 +23,8 @@ static char RcsId[] = "@(#)$Revision$";
 *
 
 LOCAL ROUTINES
- None
+ VSPshutdown  --  Free the Vtbuf buffer.
+
 EXPORTED ROUTINES
  VSseek  -- Seeks to an element boundary within a vdata i.e. 2nd element.
  VSread  -- Reads a specified number of elements' worth of data from a vdata.
@@ -31,6 +32,9 @@ EXPORTED ROUTINES
  VSwrite -- Writes a specified number of elements' worth of data to a vdata.
 	     You must specify how your data in your buffer is interlaced.
              Creates an aid, and writes it out if this is the first time.
+
+ NOTE: Another pass needs to made through this file to update some of
+       the comments about certain sections of the code. -GV 9/8/97
 
 ************************************************************************/
 
@@ -56,78 +60,89 @@ EXPORTED ROUTINES
 PRIVATE uint32 Vtbufsize = 0;
 PRIVATE uint8 *Vtbuf = NULL;
 
-/*--------------------------------------------------------------------------
+/*******************************************************************************
  NAME
-    VSPshutdown
- PURPOSE
-    Free the Vtbuf buffer.
- USAGE
-    intn VSPshutdown()
- RETURNS
-    Returns SUCCEED/FAIL
+    VSPshutdown  --  Free the Vtbuf buffer.
+
  DESCRIPTION
     For completeness, when the VSet interface is shut-down, free the Vtbuf.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
+
     Should only ever be called by the "atexit" function HDFend
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-intn VSPshutdown(void)
+
+ RETURNS
+    Returns SUCCEED/FAIL
+
+*******************************************************************************/
+intn 
+VSPshutdown(void)
 {
   intn  ret_value = SUCCEED;
 
-  if(Vtbuf!=NULL)
+  /* free global buffers */
+  if(Vtbuf != NULL)
     {
       HDfree(Vtbuf);
-      Vtbuf=NULL;
+      Vtbuf = NULL;
       Vtbufsize = 0;
     } /* end if */
 
   /* Clear the local buffers in vio.c */
-  VSPhshutdown();
+  ret_value = VSPhshutdown();
 
   return ret_value;
 } /* end VSPshutdown() */
 
-/* --------------------------- VSseek -------------------------------------- */
-
-/*
+/*******************************************************************************
+NAME
    VSseek
 
+DESCRIPTION
    Seeks to an element boundary within a vdata
    Vdata must be attached with "r" or "w" access.
    Specify eltpos = 0 for 1st element, 1 for 2nd element etc.
+
+   (eg  returns 5 if seek to the 6th element, etc)
+
+RETURNS
    RETURNS FAIL on error
    RETURNS position of element seeked to (0 or a +ve integer)
-   (eg  returns 5 if seek to the 6th element, etc)
- */
+
+*******************************************************************************/
 int32
-VSseek(int32 vkey, int32 eltpos)
+VSseek(int32 vkey,   /* IN: vdata key */
+       int32 eltpos  /* IN: element position in vdata */)
 {
-    int32       ret, offset;
-    vsinstance_t *w;
-    VDATA      *vs;
-    int32      ret_value = SUCCEED;
+    int32        ret;
+    int32        offset;
+    vsinstance_t *w = NULL;
+    VDATA        *vs = NULL;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "VSseek");
 
 #ifdef HAVE_PABLO
     TRACE_ON(VS_mask, ID_VSseek);
 #endif /* HAVE_PABLO */
 
+    /* clear error stack */
+    HEclear();
+
+    /* check if vdata is part of vdata group */
     if (HAatom_group(vkey)!=VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vs's index in vstab */
+    /* get vdata instance */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it. Check element postion also. */
     vs = w->vs;
     if ((vs == NULL) || (eltpos < 0))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* calculate offset of element in vdata */
     offset = eltpos * vs->wlist.ivsize;
 
+    /* seek to element */
     ret = Hseek(vs->aid, offset, DF_START);
     if (ret == FAIL)
         HGOTO_ERROR(DFE_BADSEEK, FAIL);
@@ -148,29 +163,41 @@ done:
   return ret_value;
 }	/* VSseek */
 
-/* ------------------------------------------------------------------------ */
-/*
+/*******************************************************************************
+NAME
    VSread
+
+DESCRIPTION
    Reads a specified number of elements' worth of data from a vdata.
    Data will be returned to you interlaced in the way you specified.
+
+RETURNS
    RETURNS FAIL if error
    RETURNS the number of elements read (0 or a +ve integer).
- */
+
+*******************************************************************************/
 int32 
-VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
+VSread(int32 vkey,       /* IN: vdata key */
+       uint8 buf[],      /* IN/OUT: space to put elements in */
+       int32 nelt,       /* IN: number of elements to read */
+       int32 interlace   /* IN: interlace to return elements in 'buf' */)
 {
     intn isize = 0;
     intn order = 0;
     intn index = 0;
     intn esize = 0;
     intn hsize = 0;
-    uint8 *b1, *b2;
-    int32  i, j, nv, offset, type;
-    DYN_VWRITELIST *w;
-    DYN_VREADLIST  *r;
-    int32       uvsize;         /* size of "element" as NEEDED by user */
-    vsinstance_t *wi;
-    VDATA      *vs;
+    uint8 *b1 = NULL;
+    uint8 *b2 = NULL;
+    int32  i, j;
+    int32  nv;
+    int32  offset;
+    int32  type;
+    int32  uvsize;         /* size of "element" as NEEDED by user */
+    DYN_VWRITELIST *w = NULL;
+    DYN_VREADLIST  *r = NULL;
+    vsinstance_t   *wi = NULL;
+    VDATA          *vs = NULL;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "VSread");
 
@@ -178,26 +205,35 @@ VSread(int32 vkey, uint8 buf[], int32 nelt, int32 interlace)
     TRACE_ON(VS_mask, ID_VSread);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* clear error stack */
+    HEclear();
+
+    /* check if vdata is part of vdata group */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vs's index in vstab */
+    /* get vdata instance */
     if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it */
     vs = wi->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* check access id and number of vertices in vdata */
     if ((vs->aid == 0) || (vs->nvertices == 0))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* check if vdata exists in file */
     if (vexistvs(vs->f, vs->oref) == FAIL)
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* check interlace parameter */
     if (interlace != FULL_INTERLACE && interlace != NO_INTERLACE)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* read/write lists */
     w = &(vs->wlist);
     r = &(vs->rlist);
     hsize = (intn)vs->wlist.ivsize;   /* size as stored in HDF */
@@ -380,39 +416,50 @@ done:
   return ret_value;
 }   /* VSread */
 
-/* ------------------------------------------------------------------ */
-/*
+/*******************************************************************************
+NAME
    VSwrite
+
+DESCRIPTION
    Writes a specified number of elements' worth of data to a vdata.
    You must specify how your data in your buffer is interlaced.
-   RETURNS FAIL if error
-   RETURNS the number of elements written (0 or a +ve integer).
 
    NEW
    create an aid, and write out if this is the first time.
    (otherwise) subsequent writes result in link-blocks.
- */
+
+RETURNS
+   RETURNS FAIL if error
+   RETURNS the number of elements written (0 or a +ve integer).
+
+*******************************************************************************/
 int32 
-VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
+VSwrite(int32 vkey,         /* IN: vdata key */
+        const uint8 buf[],  /* IN: elements to write to vdata */
+        int32 nelt,         /* IN: number of elements */
+        int32 interlace     /* IN: interlace of elements 'buf' */)
 {
     intn isize = 0;
     intn order = 0;
     intn index = 0;
     intn esize = 0;
-    uint8 *dest;
+    uint8 *dest = NULL;
     const uint8 *src, *Src;
-
-    int32       j, type, offset;
-    int32       position=0, new_size;
+    int32       j;
+    int32       type;
+    int32       offset;
+    int32       position = 0;
+    int32       new_size;
     int32       status;
     int32       total_bytes;    /* total number of bytes that need to be written out */
-    DYN_VWRITELIST *w;
+    DYN_VWRITELIST *w = NULL;
     int32       int_size;       /* size of "element" as needed by user in memory */
     intn        hdf_size = 0;   /* size of record in HDF file */
-    vsinstance_t *wi;
-    VDATA      *vs;
+    vsinstance_t *wi = NULL;
+    VDATA        *vs = NULL;
     int32       bytes;          /* number of elements / bytes to write next time */
-    int32       chunk, done;    /* number of records to do / done */
+    int32       chunk;
+    int32       done;    /* number of records to do / done */
     int32       ret_value = SUCCEED;
     CONSTR(FUNC, "VSwrite");
 
@@ -420,24 +467,31 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
     TRACE_ON(VS_mask, ID_VSwrite);
 #endif /* HAVE_PABLO */
 
-    if (HAatom_group(vkey)!=VSIDGROUP)
+    /* clear error stack */
+    HEclear();
+
+    /* check if vdata is part of vdata group */
+    if (HAatom_group(vkey) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate vs's index in vstab */
+    /* get vdata instance */
     if (NULL == (wi = (vsinstance_t *) HAatom_object(vkey)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get vdata itself and check it. Also check number of elements */
     vs = wi->vs;
-
     if ((nelt <= 0) || (vs == NULL))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* check if write access to vdata */
     if (vs->access != 'w')
         HGOTO_ERROR(DFE_BADACC, FAIL);
 
+    /* check if vdata exists in the file */
     if (FAIL == vexistvs(vs->f, vs->oref))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* get write list */
     w = & vs->wlist;
     if (w->n == 0)
       {
@@ -446,6 +500,7 @@ VSwrite(int32 vkey, const uint8 buf[], int32 nelt, int32 interlace)
           HGOTO_DONE(FAIL);
       }
 
+    /* check interlace of input buffer */
     if (interlace != NO_INTERLACE && interlace != FULL_INTERLACE)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -708,4 +763,3 @@ done:
   return ret_value;
 }	/* VSwrite */
 
-/* ------------------------------------------------------------------ */

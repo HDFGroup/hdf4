@@ -286,7 +286,7 @@ extern      "C"
 
     extern void VIrelease_vginstance_node(vginstance_t *vg);
 
-    extern void VPparse_shutdown(void);
+    extern intn VPparse_shutdown(void);
 
     extern vfile_t *Get_vfile(HFILEID f);
 

@@ -16,39 +16,20 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /*****************************************************************************
-*
-* vparse.c
-* Part of the HDF VSet interface.
-*
+
+ file - vparse.c
+
+ Part of the HDF VSet interface.
+
+ NOTE: Another pass needs to made through this file to update some of
+       the comments about certain sections of the code. -GV 9/8/97
+
 ************************************************************************/
 
 #include "vg.h"
 
 #define ISCOMMA(c) ( (c==',') ? 1:0 )
 
-/* ------------------------------------------------------------------ */
-
-/*
-   ** Given a string (attrs) , the routine parses it into token strings,
-   ** and returns a ptr (attrv) to an array of ptrs where the tokens
-   ** are stored.  The number of tokens are returned in attrc.
-   **
-   ** Currently used only by routines that manipulate field names.
-   ** As such each field string is truncated to a max length of
-   ** FIELDNAMELENMAX (as defined in hdf.h). For most cases, this
-   ** truncation doesn't happen because FIELDNAMELENMAX is a big number.
-   **
-   ** RETURN FAIL if error.
-   ** RETURN SUCCEED if ok.
-   **
-   ** Current implementation: all strings inputs converted to uppercase.
-   ** tokens must be separated by COMMAs.
-   **
-   ** Tokens are stored in static area sym , and pointers are returned
-   ** to calling routine. Hence, tokens must be used before next call
-   ** to scanattrs.
-   **
- */
 #if defined(macintosh) || defined(MAC) || defined(__MWERKS__) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
 PRIVATE char **symptr = NULL;   /* array of ptrs to tokens  ? */
 PRIVATE char **sym = NULL;      /* array of tokens ? */
@@ -62,7 +43,35 @@ PRIVATE intn nsym;              /* token index ? */
 PRIVATE uint32 Vpbufsize = 0;
 PRIVATE uint8 *Vpbuf = NULL;
 
-int32 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
+/*******************************************************************************
+ NAME
+   scanattrs
+
+ DESCRIPTION
+   Given a string (attrs) , the routine parses it into token strings,
+   and returns a ptr (attrv) to an array of ptrs where the tokens
+   are stored.  The number of tokens are returned in attrc.
+   
+   Currently used only by routines that manipulate field names.
+   As such each field string is truncated to a max length of
+   FIELDNAMELENMAX (as defined in hdf.h). For most cases, this
+   truncation doesn't happen because FIELDNAMELENMAX is a big number.
+   
+   Current implementation: all strings inputs converted to uppercase.
+   tokens must be separated by COMMAs.
+   
+   Tokens are stored in static area sym , and pointers are returned
+   to calling routine. Hence, tokens must be used before next call
+   to scanattrs.
+
+ RETURNS
+    Returns SUCCEED/FAIL
+
+*******************************************************************************/
+int32 
+scanattrs(const char *attrs, 
+          int32 *attrc, 
+          char ***attrv)
 {
     CONSTR(FUNC, "scanattrs");
     char *s, *s0, *ss;
@@ -172,31 +181,31 @@ int32 scanattrs(const char *attrs, int32 *attrc, char ***attrv)
     return (SUCCEED);   /* ok */
 }   /* scanattrs */
 
-/*--------------------------------------------------------------------------
+/*******************************************************************************
  NAME
-    VPparse_shutdown
- PURPOSE
-    Free the Vpbuf buffer.
- USAGE
-    intn VPparse_shutdown()
- RETURNS
-    Returns SUCCEED/FAIL
+    VPparse_shutdown  --  Free the Vpbuf buffer.
+
  DESCRIPTION
     For completeness, when the VSet interface is shut-down, free the Vpbuf.
- GLOBAL VARIABLES
- COMMENTS, BUGS, ASSUMPTIONS
+
     Should only ever be called by the "atexit" function HDFend
- EXAMPLES
- REVISION LOG
---------------------------------------------------------------------------*/
-void VPparse_shutdown(void)
+
+ RETURNS
+    Returns SUCCEED/FAIL
+
+*******************************************************************************/
+intn
+VPparse_shutdown(void)
 {
-    if(Vpbuf!=NULL)
+    intn ret_value = SUCCEED;
+
+    if(Vpbuf != NULL)
       {
         HDfree(Vpbuf);
-        Vpbuf=NULL;
+        Vpbuf = NULL;
         Vpbufsize = 0;
       } /* end if */
+
+    return ret_value;
 } /* end VSPhshutdown() */
 
-/* ------------------------------------------------------------------ */
