@@ -997,9 +997,12 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4
+C                            COMP_CODE_JPEG    = 6 
 C                   comp_prm  - compression parameters array
 C                   Huffman:   comp_prm(1) = skphuff_skp_size
 C                   GZIP:      comp_prm(1) = deflate_level       
+C                   JPEG:      comp_prm(1) = quality ( value from 0 to 100)
+C                              comp_prm(2) = baseline (compatibility flag 0 or 1)
 C        Returns:   0 on success, -1 on failure
 C        Calls:     mgcscompress (C stub for GRsetcompress function)
 C-------------------------------------------------------------------------

@@ -1130,10 +1130,13 @@ return(ret);
  *                      COMP_CODE_RLE  = 1
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
+*                      COMP_CODE_JPEG    = 6 
  *          comp_prm:   compression parameters array
  *          comp_prm[0]=skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0]=deflate_level:    GZIP  compression parameter
+ *          comp_prm[0]=quality           JPEG parameters 
+ *          comp_prm[1]=baseline  
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -1179,6 +1182,13 @@ switch (CASE)  {
           c_type = COMP_CODE_DEFLATE;
           c_info.deflate.level = comp_prm[0];
           break;
+
+       case COMP_CODE_JPEG:   /*JPEG compression */
+          c_type = COMP_CODE_JPEG;
+          c_info.jpeg.quality = comp_prm[0];
+          c_info.jpeg.force_baseline = comp_prm[1];
+          break;
+
 
        default:
 
