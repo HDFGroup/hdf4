@@ -94,6 +94,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #if defined(UNICOS)
 
+#define BITOFF 58
 #define NOINTCRAY2IEG
 /* #define NOFLOATCRAY2IEG */
 
@@ -243,6 +244,7 @@ DFKui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, source, &bitoff, dest);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -508,6 +510,7 @@ DFKui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[6] = source[0];
                 dest[7] = source[1];
 #else
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, source, &bitoff, dest);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -563,6 +566,7 @@ DFKui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, source, &bitoff, dest);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -593,6 +597,7 @@ DFKui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[6] = source[0];
                 dest[7] = source[1];
 #else
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, source, &bitoff, dest);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -638,6 +643,7 @@ DFKuo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, dest, &bitoff, source);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -838,6 +844,7 @@ DFKuo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[0] = source[6];
                 dest[1] = source[7];
 #else
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, dest, &bitoff, source);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -882,6 +889,7 @@ DFKuo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, dest, &bitoff, source);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -894,6 +902,7 @@ DFKuo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[0] = source[6];
                 dest[1] = source[7];
 #else
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, dest, &bitoff, source);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -940,6 +949,7 @@ DFKui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, source, &bitoff, dest);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1117,6 +1127,7 @@ DFKui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                 dest[6] = source[2];
                 dest[7] = source[3];
 #else
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, source, &bitoff, dest);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -1165,6 +1176,7 @@ DFKui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, source, &bitoff, dest);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1192,6 +1204,7 @@ DFKui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
               dest[6] = source[2];
               dest[7] = source[3];
 #else
+              bitoff = ((unsigned int)source) >> BITOFF;
               ierr = IEG2CRAY(&type, &n_elem, source, &bitoff, dest);
               if (ierr != 0)
                   HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1236,6 +1249,7 @@ DFKuo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     if (fast_processing)
       {
 #ifdef DOESNT_WORK
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, dest, &bitoff, source);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1353,6 +1367,7 @@ DFKuo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
               dest[2] = source[6];
               dest[3] = source[7];
 #else
+              bitoff = ((unsigned int)dest) >> BITOFF;
               ierr = CRAY2IEG(&type, &n_elem, dest, &bitoff, source);
               if (ierr != 0)
                   HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1395,6 +1410,7 @@ DFKuo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, dest, &bitoff, source);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1408,6 +1424,7 @@ DFKuo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
               dest[2] = source[6];
               dest[3] = source[7];
 #else
+              bitoff = ((unsigned int)dest) >> BITOFF;
               ierr = CRAY2IEG(&type, &n_elem, dest, &bitoff, source);
               if (ierr != 0)
                   HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1479,6 +1496,7 @@ DFKui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, source, &bitoff, dest);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1524,6 +1542,7 @@ DFKui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, &tmp_src, &bitoff, tmp_dst);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -1592,6 +1611,7 @@ DFKuo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, dest, &bitoff, source);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1634,6 +1654,7 @@ DFKuo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, &tmp_src);
                 if (ierr != 0)
                     HRETURN_ERROR(DFE_BADCONV, FAIL);   /* error in Cray conversion */
@@ -1687,7 +1708,8 @@ DFKui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         fast_processing = 1;
 
     if (fast_processing)
-      {
+      {  
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, source, &bitoff, dest);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1727,6 +1749,7 @@ DFKui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
               dest[7] = dud[7];
 
 #else
+              bitoff = ((unsigned int)source) >> BITOFF;
               ierr = IEG2CRAY(&type, &n_elem, source, &bitoff, dest);
               if (ierr != 0)
                   HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1777,6 +1800,7 @@ DFKuo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 
     if (fast_processing)
       {
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, dest, &bitoff, source);
           if (ierr != 0)
               HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1813,6 +1837,7 @@ DFKuo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
               dest[7] = dud[7];
 
 #else
+              bitoff = ((unsigned int)dest) >> BITOFF;
               ierr = CRAY2IEG(&type, &n_elem, dest, &bitoff, source);
               if (ierr != 0)
                   HRETURN_ERROR(DFE_BADCONV, FAIL);     /* error in Cray conversion */
@@ -1872,6 +1897,7 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 2, num_elm);
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
           if (ierr != 0)
@@ -2237,6 +2263,7 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 2, 1);
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
@@ -2305,6 +2332,7 @@ DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 2, num_elm);
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
           if (ierr != 0)
@@ -2345,6 +2373,7 @@ DFKlui2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 2, 1);
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
@@ -2400,6 +2429,7 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -2692,6 +2722,7 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
@@ -2747,6 +2778,7 @@ DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           tmp_dst = (uint8 *) HDmalloc(2 * num_elm);
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -2772,6 +2804,7 @@ DFKluo2s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
+                bitoff = ((unsigned int)dest) >> BITOFF; 
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
@@ -2835,6 +2868,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 4, num_elm);
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
           if (ierr != 0)
@@ -3139,6 +3173,7 @@ DFKlui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
@@ -3202,6 +3237,7 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 4, num_elm);
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
           if (ierr != 0)
@@ -3240,6 +3276,7 @@ DFKlui4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
@@ -3295,6 +3332,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -3533,6 +3571,7 @@ DFKluo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
@@ -3589,6 +3628,7 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -3616,6 +3656,7 @@ DFKluo4s(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
+                bitoff = ((unsigned int)dest) >> BITOFF; 
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
@@ -3705,6 +3746,7 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 4, num_elm);
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
           if (ierr != 0)
@@ -3754,6 +3796,7 @@ DFKlui4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 4, 1);
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, &tmp_dst2);
                 if (ierr != 0)
                   {
@@ -3833,6 +3876,7 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           tmp_dst = (uint8 *) HDmalloc(4 * num_elm);
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -3881,6 +3925,7 @@ DFKluo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 HDmemcpy(&tmp_src, source, sizeof(float32));
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, &tmp_src);
                 if (ierr != 0)
                   {
@@ -3956,6 +4001,7 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           DFKswap(source, tmp_dst, 8, num_elm);
+          bitoff = ((unsigned int)source) >> BITOFF;
           ierr = IEG2CRAY(&type, &num_elm, tmp_dst, &bitoff, dest);
           HDfree(tmp_dst);
           if (ierr != 0)
@@ -4006,6 +4052,7 @@ DFKlui8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           for (i = 0; i < num_elm; i++)
             {
                 DFKswap(source, tmp_dst, 8, 1);
+                bitoff = ((unsigned int)source) >> BITOFF;
                 ierr = IEG2CRAY(&type, &n_elem, tmp_dst, &bitoff, dest);
                 if (ierr != 0)
                   {
@@ -4070,6 +4117,7 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
           tmp_dst = (uint8 *) HDmalloc(8 * num_elm);
 	  if (!tmp_dst)
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
+          bitoff = ((unsigned int)dest) >> BITOFF;
           ierr = CRAY2IEG(&type, &num_elm, tmp_dst, &bitoff, source);
           if (ierr != 0)
             {
@@ -4120,6 +4168,7 @@ DFKluo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 	      HRETURN_ERROR(DFE_NOSPACE, FAIL);
           for (i = 0; i < num_elm; i++)
             {
+                bitoff = ((unsigned int)dest) >> BITOFF;
                 ierr = CRAY2IEG(&type, &n_elem, tmp_dst, &bitoff, source);
                 if (ierr != 0)
                   {
