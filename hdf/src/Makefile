@@ -2,7 +2,11 @@
 # $Header$
 #
 # $Log$
-# Revision 1.4  1992/11/02 18:07:57  chouck
+# Revision 1.5  1993/01/14 17:27:43  georgev
+# Upated headers in Makefiles to reflect HDF3.3.
+# Updated Makefile headers to reflect HDF3.3
+#
+# Revision 1.4  1992/11/02  18:07:57  chouck
 # Added hcomp.h into the list of include files to move
 #
 # Revision 1.3  1992/11/02  16:35:41  koziol
@@ -17,8 +21,8 @@
 #
 # ##################################################################
 #
-#                   NCSA HDF Version 3.2 release Beta 1
-#                               March 1992
+#                   NCSA HDF Version 3.3 release Beta 1
+#                               November 1992
 #
 #           MAKEFILE for creating the HDF library, libdf.a,
 #

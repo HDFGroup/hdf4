@@ -1,12 +1,12 @@
 ***********************************************************************
 
-			NCSA HDF version 3.2
-			    August 28, 1992
+			NCSA HDF version 3.3
+			    November 1992
 ***********************************************************************
 
      ---------------- Invoking the Makefile ------------------ 
 
-A Makefile is provided for building HDF3.2.  Open the Makefile
+A Makefile is provided for building HDF3.3.  Open the Makefile
 in your editor and read the instructions at the top of the file.
 The section marked PORTING INSTRUCTIONS indicates that you need
 to modify certain lines in order to configure the Makefile for your
