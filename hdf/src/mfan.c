@@ -2497,17 +2497,7 @@ ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref)
 
     file_entry = (ANfile *) entry->data; /* get file entry from node */
 
-    /* Check for empty annotation tree of 'type'? */   
-    if (file_entry->an_num[type] == -1)
-      {
-          if ((file_entry->an_tree[type] = 
-               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
-              HE_REPORT_GOTO("failed to create annotation tree", FAIL);
-
-          file_entry->an_num[type] = 0; /* intialize after allocation */
-      }
-
-    /* set type annotation tag */
+    /* set type given annotation tag */
     switch((uint16)ann_tag)
       {
       case DFTAG_DIL:
@@ -2524,6 +2514,16 @@ ANtagref2id(int32 an_id, uint16 ann_tag, uint16 ann_ref)
           break;
       default:
           HE_REPORT_GOTO("Bad annotation type for this call",FAIL);
+      }
+
+    /* Check for empty annotation tree of 'type'? */   
+    if (file_entry->an_num[type] == -1)
+      {
+          if ((file_entry->an_tree[type] = 
+               (TBBT_TREE *) tbbtdmake(ANIanncmp,sizeof(int32))) == NULL)
+              HE_REPORT_GOTO("failed to create annotation tree", FAIL);
+
+          file_entry->an_num[type] = 0; /* intialize after allocation */
       }
 
     /* Create key from type/ref pair 
