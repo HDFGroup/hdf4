@@ -3751,7 +3751,7 @@ done:
     FORTRAN	- sfsextf
 
  RETURNS
-    Return SUCCEED or FAIL
+    SUCCEED/FAIL
 
 ******************************************************************************/ 
 intn 
@@ -3895,7 +3895,7 @@ done:
     NOTE: n-bit "compression" is described more fully in the cnbit.c file.
 
  RETURNS
-    Return SUCCEED or FAIL
+    SUCCEED/FAIL
 
 ******************************************************************************/ 
 intn 
@@ -4026,14 +4026,14 @@ done:
     IMPORTANT:  This will only work on datasets stored in HDF files.
 
  RETURNS
-     Return SUCCEED or FAIL
+    SUCCEED/FAIL
 
 ******************************************************************************/ 
 intn 
-SDsetcompress(int32      id,    /* IN: dataset ID */
-              int32      type,  /* IN: the type of compression to perform on the
-                                        next image */
-              comp_info *c_info /* IN: ptr to compression information structure */)
+SDsetcompress(int32 id,         /* IN: dataset ID */
+              int32 comp_type,  /* IN: the type of compression to perform
+                                       on the next image */
+              comp_info *c_info /* IN: ptr to compression info structure */)
 {
     NC        *handle;
     NC_var    *var;
@@ -4049,7 +4049,7 @@ SDsetcompress(int32      id,    /* IN: dataset ID */
     TRACE_ON(PABLO_mask, ID_SDsetcompress );
 #endif
 
-    if (type < 0 || type >= COMP_CODE_INVALID)
+    if (comp_type < 0 || comp_type >= COMP_CODE_INVALID)
       {
           ret_value = FAIL;
           goto done;
@@ -4099,7 +4099,7 @@ SDsetcompress(int32      id,    /* IN: dataset ID */
 
     status=(intn)HCcreate(handle->hdf_file,(uint16)DATA_TAG,
                           (uint16) var->data_ref,COMP_MODEL_STDIO,&m_info,
-                          (comp_coder_t)type, c_info);
+                          (comp_coder_t)comp_type, c_info);
 
 #ifdef SDDEBUG
     printf("SDsetcompress(): HCcreate() status=%d\n",(intn)status);
@@ -4168,6 +4168,79 @@ done:
     return ret_value;    
 } /* SDsetcompress */
 
+/******************************************************************************
+ NAME
+	SDgetcompress -- Retrieves compression information of a dataset
+
+ DESCRIPTION
+    This routine uses HCgetcompress to retrieve the compression type
+    and the compression information of the identified dataset.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ MODIFICATION
+    July 2001: Added to fix bug #307 - BMR 
+
+******************************************************************************/ 
+intn 
+SDgetcompress(int32     id,     /* IN: dataset ID */
+              int32*    comp_type,   /* OUT: the type of compression */
+              comp_info* c_info)/* OUT: ptr to compression information 
+				structure for storing the retrieved info */
+{
+    CONSTR(FUNC, "SDgetcompress");    /* for HGOTO_ERROR */
+    NC        *handle;
+    NC_var    *var;
+    intn       status = FAIL;
+    intn       ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetcompress: I've been called\n");
+#endif /* SDDEBUG */
+
+#ifdef HAVE_PABLO
+    TRACE_ON(PABLO_mask, ID_SDgetcompress );
+#endif
+
+    /* clear error stack */
+    HEclear();
+
+    if(comp_type == NULL || c_info == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, id);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+#ifdef SDDEBUG
+    printf("SDgetcompress(): var->data_ref=%d, var->aid=%d\n",(int)var->data_ref, (int)var->aid);
+#endif /* SDDEBUG */
+    if(!var->data_ref) 
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* use lower-level routine to get the compression information */
+    status = HCgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
+		(comp_coder_t*)comp_type, c_info);
+    if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+#ifdef HAVE_PABLO
+    TRACE_OFF (PABLO_mask, ID_SDgetcompress);
+#endif
+    return ret_value;    
+} /* SDgetcompress */
 
 /******************************************************************************
  NAME
