@@ -14,7 +14,7 @@ C $Id$
 C
 C
 C
-C *-----------------------------------------------------------------------------
+C *---------------------------------------------------------------------------
 C * File: 	constant.f
 C * Purpose:	Fortran header file for HDF routines
 C * Contents: 
@@ -29,7 +29,7 @@ C *          include numbers are for backward compatibility only.  Also,
 C *          there are no current plans to support 128-bit number types.
 C *          For more information about constants in this file, see the
 C *          equivalent constant declarations in the C include file 'hdf.h'
-C *--&-------------------------------------------------------------------XXXXXX*
+C *---------------------------------------------------------------------------
 
 
 C	Error Return Codes 
@@ -152,8 +152,9 @@ c	Constants for DFSDsetorder
 
 c	Definitions of storage convention
 
-      integer	DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC   
-     *		DFNTF_CONVEX, DFNTF_VP
+      integer	DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC,   
+     *		DFNTF_CONVEX, DFNTF_VP, DFNTF_NONE 
+     *          DFNTF_HDFDEFAULT
  
       parameter(DFNTF_IEEE             = 1,
      *		DFNTF_VAX              = 2,
@@ -164,7 +165,8 @@ c	Definitions of storage convention
 
 c       Masks for types
 
-      integer   DFNT_HDF, DFNT_NATIVE, DFNT_CUSTOM
+      integer   DFNT_HDF, DFNT_NATIVE, DFNT_CUSTOM,
+     *          DFNT_LITEND
 
       parameter(DFNT_HDF                 = 0,
      *          DFNT_NATIVE              = 4096,
@@ -290,13 +292,14 @@ c	Number type info codes
 c	tags and refs
 
       integer 	DFREF_WILDCARD, DFTAG_WILDCARD, DFTAG_NULL,
-     *		DFTAG_LINKED,   DFTAG_VERSION
+     *		DFTAG_LINKED, DFTAG_VERSION, DFTAG_COMPRESSED
  
       parameter(DFREF_WILDCARD	= 0,
      *		DFTAG_WILDCARD	= 0,
      *		DFTAG_NULL	= 1,
      *		DFTAG_LINKED	= 20,
-     *		DFTAG_VERSION	= 30)
+     *		DFTAG_VERSION	= 30,
+     *          DFTAG_COMPRESSED = 40)
 
 c	utility set
 
@@ -360,9 +363,10 @@ c	Tektronix
 c	Scientific Data set 
 
       integer	DFTAG_SDG, DFTAG_SDD, DFTAG_SDS, DFTAG_SDL,
-     *      DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC,
-     *		DFTAG_SDT,DFTAG_SDLNK,DFTAG_NDG, 
-     *		DFTAG_BREQ,DFTAG_EREQ
+     *          DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC,
+     *		DFTAG_SDT, DFTAG_NDG, DFTAG_SD,  DFTAG_CAL
+     *		DFTAG_BREQ, DFTAG_EREQ,  DFTAG_SDLNK,
+     *          DFTAG_FV
  
       parameter(DFTAG_SDG	= 700,
      *		DFTAG_SDD	= 701,
@@ -376,6 +380,8 @@ c	Scientific Data set
      *		DFTAG_SDT	= 709,
      *		DFTAG_SDLNK	= 710,
      *		DFTAG_NDG	= 720,
+     *          DFTAG_CAL       = 731,
+     *          DFTAG_FV        = 732,
      *		DFTAG_BREQ	= 799,
      *		DFTAG_EREQ	= 780)
 
@@ -389,7 +395,8 @@ c	VSets
 
 c	compression schemes 
 
-      integer	DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP
+      integer	DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP,
+     *          DFTAG_JPEG, DFTAG_GREYJPEG
  
       parameter(DFTAG_RLE   	=11,
      *		DFTAG_IMC   	=12,
