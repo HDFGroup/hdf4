@@ -330,7 +330,7 @@ dnl ----------------------------------------------------------------------
 dnl Is the SZip library present?
 AC_ARG_WITH([szlib],
             [AC_HELP_STRING([--with-szlib=DIR],
-                            [Use szlib library [default=yes]])],,
+                            [Use szlib library [default=no]])],,
             [withval=no])
 
 case "$withval" in

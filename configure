@@ -894,7 +894,7 @@ Optional Packages:
 
   --with-zlib=DIR         Use zlib library [default=yes]
   --with-jpeg=DIR         Use jpeg library [default=yes]
-  --with-szlib=DIR        Use szlib library [default=yes]
+  --with-szlib=DIR        Use szlib library [default=no]
 
 Some influential environment variables:
   CC          C compiler command
