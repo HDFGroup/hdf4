@@ -33,6 +33,7 @@
   2.5.9 T3D/T3E Single node
   2.5.10 IRIX 6.2
   2.5.11 DEC Alpha(Digital Unix v4.0)
+  2.5.12 Cray T90
 
   2.6 Pablo Instrumentation
   2.7 File Cache(Beta release)
@@ -609,6 +610,22 @@
 
     During the testing of the library the test 'mfhdf/libsrc/hdftest' 
     will report "Unaligned access ..." messages which can be ignored.
+
+    2.5.12 Cray T90
+    ---------------
+    Prior to installing on the T90 CFP or T90 IEEE, the following
+    changes will have to be made to ./hdf/test/tsdmmsf.f and
+    ./hdf/test/tsdnmmsf.f:
+
+    Search on '-128'. You will find two instances of this in
+    each file.  The second instance looks as follows: 
+
+    C NOTE: If you get a compile error on the "char(-128)" line, substitute
+    C       the "char(0)" line.  Its not quite as thorough a test, but...
+    C      i8min = char(0)
+          i8min = char(-128)
+
+    Replace the char(-128) line, as directed.
 
 
 2.6 Pablo Instrumentation
