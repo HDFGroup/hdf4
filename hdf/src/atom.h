@@ -70,7 +70,7 @@ typedef intn (*HAsearch_func_t)(const VOIDP obj, const VOIDP key);
 #endif /* ATOMS_ARE_CACHED */
 
 /* Map an atom to a Group number */
-#define ATOM_TO_GROUP(a)    ((((atom_t)(a))>>((sizeof(atom_t)*8)-GROUP_BITS))&GROUP_MASK)
+#define ATOM_TO_GROUP(a)    ((group_t)((((atom_t)(a))>>((sizeof(atom_t)*8)-GROUP_BITS))&GROUP_MASK))
 
 #ifdef HASH_SIZE_POWER_2
 /* Map an atom to a hash location (assumes s is a power of 2 and smaller than the ATOM_MASK constant) */
