@@ -169,7 +169,7 @@ PRIVATE intn HIread_version
 
        Access equals DFACC_CREATE means discard existing file and
        create new file.  If access is a bitwise-or of DFACC_CREATE
-       and anything else, the file is only created is it does not
+       and anything else, the file is only created if it does not
        exist.  DFACC_WRITE set in access also means that if the file
        does not exist, it is created.  DFACC_READ is assumed to be
        implied even if it is not set.  DFACC_CREATE implies
@@ -764,7 +764,8 @@ intn Hexist(file_id, search_tag, search_ref)
        Inquire statistics of the data element pointed to by access elt and
        the access elt.  The access type is set if the access_id is valid even
        if FAIL is returned.  If access_id is not valid then access is set to
-       zero (0).
+       zero (0). If statistic is not needed, pass NULL for the appropriate
+       value.
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
@@ -1545,7 +1546,7 @@ int32 Hgetelement(file_id, tag, ref, data)
        returns length of bytes written if successful and FAIL (-1) 
        otherwise
  DESCRIPTION
-       Writes a data element or replacesx an existing data element 
+       Writes a data element or replaces an existing data element 
        in an HDF file.  Uses Hwrite and its associated routines.
 
 --------------------------------------------------------------------------*/
@@ -2657,7 +2658,9 @@ uint16 HDbase_tag(tag)
  RETURNS
 	returns SUCCEED (0).
  DESCRIPTION
-	Copies values from #defines in hfile.h to provided buffers.
+	Copies values from #defines in hfile.h to provided buffers. This
+        information is statistically compilied into the HDF library, so
+        it is not necessary to have any files open to get this information.
 
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
@@ -2697,7 +2700,8 @@ char string[];
  RETURNS
 	returns SUCCEED (0) if successful and FAIL (-1) if failed.
  DESCRIPTION
-	Copies values from file_records[] for given file to provided buffers.
+	Copies values from file_records[] structure for a given file to 
+        provided buffers.
  GLOBAL VARIABLES
 	Reads file_records[]
 
@@ -3460,10 +3464,10 @@ int32 file_id;
 } /* HIread_version */
 
 
-/* ----------------------------- Hfidinquire ----------------------------- 
+/* ----------------------------------------------------------------------- 
 
  NAME
-	Hfidinquire --- Inquire about a file ID
+	Hfidinquire --- Inquire about a file indentifier(ID)
  USAGE
 	int Hfidinquire(file_id, fname, access, attach)
 	int32    file_id;        IN: handle of file
@@ -3473,7 +3477,8 @@ int32 file_id;
  RETURNS
 	returns SUCCEED (0) if successful and FAIL (-1) if failed.
  DESCRIPTION
-        return some of the more interesting information out of a file ID
+        Gets the complete path name, acces mode, and number of data element
+        access identifiers associated with the file identifier.
 
 -------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
