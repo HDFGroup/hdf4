@@ -9,6 +9,7 @@
 
 # 'srcdir' Gets set to directory this Makefile is found in
 srcdir = .
+TOP_SRCDIR = .
 
 prefix = /usr/local
 
@@ -180,9 +181,10 @@ netcdfdistclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
           SUBDIRS="$(NETCDFDIR)" subd
 
-distclean::	
+distclean:	
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(SUBDIRS)" subd
+	-rm -f config.status Makefile
 
 # target for recursive directory make
 subd:
