@@ -899,11 +899,12 @@ char * vsname;
         if (vkey==FAIL)
             return(0);            /* error */
         VSgetname(vkey, name);
-        VSdetach (vkey);
         if (!HDstrcmp(vsname, name)) {
             ret_ref = VSQueryref(vkey);
+            VSdetach (vkey);
             return(ret_ref);  /* found the vdata */
           } /* end if */
+        VSdetach (vkey);
   	}
   	return(0); /* not found */
 
