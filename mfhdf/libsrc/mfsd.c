@@ -443,7 +443,7 @@ Void  *data;
 
     NC     * handle;
     int32    varid, status;
-#ifdef DEC_ALPHA
+#ifdef BIG_LONGS
     long     Start[MAX_NC_DIMS], End[MAX_NC_DIMS], Stride[MAX_NC_DIMS];
 #else 
     int32    *Start, *End, *Stride;
@@ -473,7 +473,7 @@ Void  *data;
      * In general, (long) == int32 
      * In cases where it doesn't we need to convert
      */
-#ifdef DEC_ALPHA
+#ifdef BIG_LONGS
 
     {
         int i;
@@ -1378,7 +1378,7 @@ Void  *data;
 
     NC     * handle;
     int32    varid, status;
-#ifdef DEC_ALPHA
+#ifdef BIG_LONGS
     long     Start[MAX_NC_DIMS], End[MAX_NC_DIMS], Stride[MAX_NC_DIMS];
 #else 
     int32    *Start, *End, *Stride;
@@ -1408,7 +1408,7 @@ Void  *data;
      * In general, (long) == int32 
      * In cases where it doesn't we need to convert
      */
-#ifdef DEC_ALPHA
+#ifdef BIG_LONGS
 
     {
         int i;

@@ -176,10 +176,10 @@ nc_type type ;
 	Void *hi = lo + len ;
 	switch(type) {
 	case NC_BYTE :
-		while(lo < hi ) *lo++ = FILL_BYTE ;
+                HDmemset(lo, FILL_BYTE, len);
 		break ;
 	case NC_CHAR :
-		while(lo < hi ) *lo++ = FILL_CHAR ;
+                HDmemset(lo, FILL_CHAR, len);
 		break ;
 	case NC_SHORT :
 		while(lo < hi ){
