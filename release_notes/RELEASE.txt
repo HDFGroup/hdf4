@@ -1,11 +1,11 @@
 
-                          HDF 4.2 Release 1
+                          HDF 4.2 Release 1-post*
                             February, 2005
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2r0 and
-HDF 4.2r1.  It is written for people who are familiar with
+This document describes the differences between HDF 4.2r1 and
+HDF 4.2r1-post*.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to HDF 4.2r1
 
 The HDF 4.2r1 documentation can be found on the NCSA ftp server 
@@ -40,62 +40,18 @@ New Features and Changes:
     Configuration
     ============= 
      
-     * By default HDF4 libraies and utilities are installed under 
-       <source_dir>/NewHDF
-                                               12/01/2004 EIP
-     * Windows configuration, build and testing procedures have been changed. 
-       Please see INSTALL_WINDOWS.txt file for more information
-                                               02/12/2005 EIP 
     Library
     ========= 
-    * New API SDidtype was added to the library (bug #766)
-                                               01/23/2005 EIP for BMR
-    * HCgetcompress renamed to HCPgetcompress
-    * New API HCget_config_info added
-    * The default chunk cache size was changed for 2D and higher
-      chunks
-    * Pablo instumentation was removed
    
     Utilities
     ========= 
-     * hdiff and hrepack are supported on Windows.
-     * Substantial performance improvements in hdiff and hrepack
 
 Support for new platforms and compilers
 =======================================
-     * Fortran IBM xlf v 8.1 and Absoft f95 version 8.2 compilers 
-       are supported on Mac OSX.
-                                                          12/07/2004 EIP
-     * Absoft Fortran compiler f95 version 9.0 is supported on Linux 2.4 
-                                                          12/07/2004 EIP
-     * PGI C and Fortran compilers are supported on Linux 2.4 
-     * Intel C and Fortran compilers are supported on Linux 2.4
-     * Cray TS IEEE is supported.
 
 
-Bugs fixed since HDF4.2r0
+Bugs fixed since HDF4.2r1
 =========================
- * VERY IMPORTANT:
-   Data compressed with SZIP may be corrupted; fixed. For more
-   information see "HDF4.2r1 SZIP Release Notes" available at
-   http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/SZIP_HDF4_2r1.pdf
-                                            02/12/2005 EIP 
- * Fortran couldn't read names with spaces when NetCDF interfaces
-   were used; fixed
-                                            02/12/2005 EIP
- * Library failed to compile in presence of the NetCDF library; fixed
-                                            11/22/2004 EIP
- * h4fc couldn't create object files; fixed 
-
-                                            01/23/2005 EIP
- * When rank of SDS is 0, some SD APIs give segmentation fault (bug 1045);
-   fixed
-                                            01/23/2005 EIP for BMR
- * Some GR images with special elements are read in as duplicate
-   (bug 814); fixed
-                                            02/14/2005 BMR
-
- * Many bugs fixed in hdiff and hrepack utilities
 
 Documentation
 ==============
