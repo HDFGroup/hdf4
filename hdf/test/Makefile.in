@@ -269,7 +269,7 @@ TESTF = fortest.o
 TESTDIR = testdir
 
 $(FTESTS): $(FOBJS) $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
-	$(FC) $(FFLAGS) $@.f -o $@ $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+	$(FC) $(FFLAGS) $@.o -o $@ $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 $(FTESTS): $(FRC)
 
