@@ -1,4 +1,8 @@
 * text=auto !eol
+hdf/jpeg/testimg.gif -text
+hdf/jpeg/testimg.jpg -text
+hdf/jpeg/testimg.ppm -text svneol=unset#application/octet-stream
+hdf/jpeg/testorig.jpg -text
 hdf/test/bitio.dat -text
 hdf/test/litend.dat -text
 hdf/test/nbit.dat -text
