@@ -2029,3 +2029,26 @@ nscsblsz(id, block_size)
 #endif /* HDF */
 
 
+/*-----------------------------------------------------------------------------
+ * Name:    scchempty
+ * Purpose: call SDcheckempty
+ * Inputs:  id:          sd id
+            flag:        TRUE/FALSE flag 
+ * Returns: SUCCEED/FAIL (0/-1)
+ *---------------------------------------------------------------------------*/
+ 
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscchempty(intf *id, intf *flag)
+#else
+nscchempty(id, flag)
+     intf *id;
+     intf *flag;
+#endif /* PROTOTYPE */
+{
+    intn flag_c;
+    intf status;
+    status = SDcheckempty(*id, &flag_c);
+    *flag = flag_c;
+    return(status);
+}   
