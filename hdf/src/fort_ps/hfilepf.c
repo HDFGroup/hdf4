@@ -263,3 +263,28 @@ nhgfilverc(file_id, major_v, minor_v, release, string, len)
    return((intf)status);
 
 }
+
+/*-----------------------------------------------------------------------------
+ * Name:    hiishdf
+ * Purpose: call Hishdf function
+ * Inputs:  name: Name of the file 
+ *          namelen: length of name
+ * Returns: TRUE(1) on success, FALSE (-1) on failure
+ * Users:   HDF Fortran programmers
+ * Method:  Convert filename to C string, call Hishdf
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nhiishdf(_fcd name,  intf *namelen)
+
+{
+    char       *fn;
+    intf        ret;
+
+    fn = HDf2cstring(name, (intn) *namelen);
+    if (!fn)
+	return(FAIL);
+    ret = (intf) Hishdf(fn);
+    HDfree(fn);
+    return (ret);
+}
