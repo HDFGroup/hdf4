@@ -645,7 +645,7 @@ intn hdf_read_ndgs(handle)
              * Convert spaces in the name to underscores (yuck) otherwise
              *    ncgen will barf on ncdumped files
              */
-            if(namebuf) {
+            if(namebuf && (namebuf[0] != '\0')) {
                 char *c;
                 for(c = (char *)namebuf; *c; c++)
                     if((*c) == ' ') (*c) = '_';
