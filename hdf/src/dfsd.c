@@ -748,7 +748,7 @@ intn DFSDIsetdatastrs(const char *label, const char *unit, const char *format, c
 	/* copy string */
         if (lufp) 
           {
-            Writesdg.dataluf[luf] = (char *)HDstrdup(lufp);
+            Writesdg.dataluf[luf] = (char *)HDstrdup((char *)lufp);
             if (Writesdg.dataluf[luf] == NULL) 
               return FAIL;
           }
@@ -758,7 +758,7 @@ intn DFSDIsetdatastrs(const char *label, const char *unit, const char *format, c
 
     if (coordsys) 
       {
-        Writesdg.coordsys = (char *)HDstrdup(coordsys);
+        Writesdg.coordsys = (char *)HDstrdup((char *) coordsys);
         if (Writesdg.coordsys == NULL) 
           return FAIL;
       }
@@ -858,7 +858,7 @@ intn DFSDIsetdimstrs(intn dim, const char *label, const char *unit, const char *
 	/* copy string */
         if (lufp) 
           {
-            Writesdg.dimluf[luf][rdim] = (char *)HDstrdup(lufp);
+            Writesdg.dimluf[luf][rdim] = (char *)HDstrdup((char *) lufp);
             if (Writesdg.dimluf[luf][rdim] == NULL) 
               return FAIL;
           }

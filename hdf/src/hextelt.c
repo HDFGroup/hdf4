@@ -221,7 +221,7 @@ int32 HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_na
     info->file_open = TRUE;
     info->file_external = file_external;
     info->extern_offset = offset;
-    info->extern_file_name = (char *)HDstrdup(extern_file_name);
+    info->extern_file_name = (char *)HDstrdup((char *)extern_file_name);
     if (!info->extern_file_name) {
        access_rec->used = FALSE;
        HDfreespace((VOIDP)info);
