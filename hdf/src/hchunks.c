@@ -1262,89 +1262,93 @@ HMCIstaccess(accrec_t *access_rec, /* IN: access record to fill in */
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
 
-          /* Set the fields to read */
-          if(VSsetfields(info->aid,_HDF_CHK_FIELD_NAMES)==FAIL)
-              HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+          /* Check to see if any chunks have been written out yet */
+          if (num_recs > 0)
+            { /* Yes */
+                /* Set the fields to read */
+                if(VSsetfields(info->aid,_HDF_CHK_FIELD_NAMES)==FAIL)
+                    HGOTO_ERROR(DFE_BADFIELDS,FAIL);
 
-          /* Allocate space for a single Vdata record */
-          if ((v_data = (VOIDP) HDmalloc((size_t)vdata_size)) == NULL)
-              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-          /* for each record read it in and put into TBBT tree 
-             NOTE: Should change this to a single VSread() but then
-             would have to store all the v_data rec's somewhere
-             before inserting them into the TBBT tree...
-             ....for somone to do later if performance of VSread() is bad.
-             Technically a B+-Tree should have been used instead or
-             better yet the Vdata implementation should be re-written to use one.
-             Note that chunk tag DTAG_CHUNK is not verified here.
-             It is checked in HMCPchunkread() before the chunk is read. */
-          for (j = 0; j < num_recs; j++)
-            {
-                uint8 *pntr = NULL;
-
-                /* read single record */
-                if(VSread(info->aid,v_data,1,FULL_INTERLACE)==FAIL)
-                    HGOTO_ERROR(DFE_VSREAD,FAIL);
-        
-                pntr = v_data; /* set pointer to vdata record */
-
-                /* Allocate space for a chunk record */
-                if ((chkptr = (CHUNK_REC *) HDmalloc(sizeof(CHUNK_REC))) == NULL)
+                /* Allocate space for a single Vdata record */
+                if ((v_data = (VOIDP) HDmalloc((size_t)vdata_size)) == NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-                /* Allocate space for a origin in chunk record */
-                if ((chkptr->origin = (int32 *) HDmalloc((size_t)info->ndims*sizeof(int32))) == NULL)
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-                /* allocate space for key */
-                if ((chk_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
-                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-
-                /* Copy origin first */
-                for (k = 0; k < info->ndims; k++)
+                /* for each record read it in and put into TBBT tree 
+                   NOTE: Should change this to a single VSread() but then
+                   would have to store all the v_data rec's somewhere
+                   before inserting them into the TBBT tree...
+                   ....for somone to do later if performance of VSread() is bad.
+                   Technically a B+-Tree should have been used instead or
+                   better yet the Vdata implementation should be re-written to use one.
+                   Note that chunk tag DTAG_CHUNK is not verified here.
+                   It is checked in HMCPchunkread() before the chunk is read. */
+                for (j = 0; j < num_recs; j++)
                   {
-                      HDmemcpy(&chkptr->origin[k],pntr,sizeof(int32));
-                      pntr += sizeof(int32);
+                      uint8 *pntr = NULL;
 
-                  }
+                      /* read single record */
+                      if(VSread(info->aid,v_data,1,FULL_INTERLACE)==FAIL)
+                          HGOTO_ERROR(DFE_VSREAD,FAIL);
+        
+                      pntr = v_data; /* set pointer to vdata record */
+
+                      /* Allocate space for a chunk record */
+                      if ((chkptr = (CHUNK_REC *) HDmalloc(sizeof(CHUNK_REC))) == NULL)
+                          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+                      /* Allocate space for a origin in chunk record */
+                      if ((chkptr->origin = (int32 *) HDmalloc((size_t)info->ndims*sizeof(int32))) == NULL)
+                          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+                      /* allocate space for key */
+                      if ((chk_key = (int32 *)HDmalloc(sizeof(int32))) == NULL)
+                          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+                      /* Copy origin first */
+                      for (k = 0; k < info->ndims; k++)
+                        {
+                            HDmemcpy(&chkptr->origin[k],pntr,sizeof(int32));
+                            pntr += sizeof(int32);
+
+                        }
 
 #ifdef CHK_DEBUG_2
-                printf(" chkptr->origin = (");
-                for (k = 0; k < info->ndims; k++)
-                    printf("%d%s", chkptr->origin[k], k!= info->ndims-1 ? ",":NULL);
-                printf("), ");
+                      printf(" chkptr->origin = (");
+                      for (k = 0; k < info->ndims; k++)
+                          printf("%d%s", chkptr->origin[k], k!= info->ndims-1 ? ",":NULL);
+                      printf("), ");
 #endif
 
-                /* Copy tag next. 
-                   Note: Verification of tag as DTAG_CHUNK is done in
+                      /* Copy tag next. 
+                         Note: Verification of tag as DTAG_CHUNK is done in
                          HMCPchunkread() before the chunk object is read.
                          In the future the tag/ref pair could point to
                          another chunk table...etc.
-                 */
-                HDmemcpy(&chkptr->chk_tag,pntr,sizeof(uint16));
-                pntr += sizeof(uint16);
+                         */
+                      HDmemcpy(&chkptr->chk_tag,pntr,sizeof(uint16));
+                      pntr += sizeof(uint16);
 #ifdef CHK_DEBUG_2
-                printf(" chktpr->chk_tag=%d, ",chkptr->chk_tag);
+                      printf(" chktpr->chk_tag=%d, ",chkptr->chk_tag);
 #endif
-                /* Copy ref last */
-                HDmemcpy(&chkptr->chk_ref,pntr,sizeof(uint16));
+                      /* Copy ref last */
+                      HDmemcpy(&chkptr->chk_ref,pntr,sizeof(uint16));
 #ifdef CHK_DEBUG_2
-                printf(" chktpr->chk_ref=%d, ",chkptr->chk_ref);
-                printf("\n");
+                      printf(" chktpr->chk_ref=%d, ",chkptr->chk_ref);
+                      printf("\n");
 #endif
-                /* now compute chunk number from origin */
-                calculate_chunk_num(chk_key, info->ndims, chkptr->origin, 
-                                    info->ddims);
+                      /* now compute chunk number from origin */
+                      calculate_chunk_num(chk_key, info->ndims, chkptr->origin, 
+                                          info->ddims);
 
-                chkptr->chunk_number = *chk_key; 
+                      chkptr->chunk_number = *chk_key; 
 
-                /* set chunk number to record number */
-                chkptr->chk_vnum = info->num_recs++;
+                      /* set chunk number to record number */
+                      chkptr->chk_vnum = info->num_recs++;
 
-                /* add to TBBT tree based on chunk number as the key */
-                tbbtdins(info->chk_tree, (VOIDP) chkptr , chk_key);   
-            }
+                      /* add to TBBT tree based on chunk number as the key */
+                      tbbtdins(info->chk_tree, (VOIDP) chkptr , chk_key);   
+                  } /* end for num_recs */
+            } /* end if num_recs */
 
           /* set return value */
           access_aid = HAregister_atom(AIDGROUP,access_rec);
