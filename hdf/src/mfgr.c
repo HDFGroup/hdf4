@@ -5841,7 +5841,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     intn       i;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
-    intn       free_img_data = TRUE;
+    intn       free_img_data = FALSE;
 
 #ifdef HAVE_PABLO
     HDF_TRACE_ON(ID_GRwritechunk);
