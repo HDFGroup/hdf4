@@ -521,6 +521,15 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                 goto done;
             }
 
+ 	  vsize = VShdfsize(vd_id, fields);
+ 	  if (vsize == FAIL)
+            {
+              	fprintf(stderr,"VShdfsize failed on vdid(%d) in file %s\n", 
+ 			(int) vdata_ref, file_name);
+                ret_value = FAIL;
+                goto done;
+            }
+
           if (FAIL == (vdata_tag = VSQuerytag(vd_id)))
             {
                 fprintf(stderr,"VSQuerytag failed on vd_id(%d) in file %s\n", 

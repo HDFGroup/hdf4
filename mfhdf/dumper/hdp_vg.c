@@ -459,6 +459,15 @@ vgdumpfull(int32        vg_id,
                       goto done;
                   }
 
+          	vsize = VShdfsize(vs, fields);
+          	if (vsize == FAIL)
+            	{
+               	   fprintf(stderr,"VShdfsize failed on vsid(%d) in file %s\n", 
+ 			(int) vs, file_name);
+                	ret_value = FAIL;
+                	goto done;
+            	}
+
                 if (FAIL == (vsotag = VSQuerytag(vs)))
                   {
                       fprintf(stderr,"VSQuerytag failed on vsid(%d) for file %s\n", 
