@@ -24,9 +24,8 @@ Supported Platforms
   Platform(OS)            C-Compiler  Fortran-Compiler   libdf.a   libmfhdf.a
   ------------            -----------  -----------------   -------   -----------
   Sun4(SunOS 4.1.4)           GCC 2.7.2      f77 SC1.0        X         X
-  Sun4(Solaris 2.3)           CC SC3.0       f77 SC3.0        X         X
-  Sun4(Solaris 2.4)           CC SC3.0       f77              X         X
-  SGI-?(IRIX4.0.2)            CC             f77              X         X
+  Sun4(Solaris 2.4)           CC SC3.0       f77 SC3.0        X         X
+  Sun4(Solaris 2.5)           CC SC3.0       f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
   SGI-Indy(IRIX6.1_32)        CC 6.1         f77 6.1          X         X
   SGI-Indy(IRIX6.1_64)        CC 6.1         f77 6.1          X         X
@@ -49,11 +48,7 @@ Supported Platforms
                                              2.6.2
                                  (Fortran to C converter)
 
-  DecStation/MIPSEL            -               -               -         -
-  NeXT/Next-STEP               -               -               -         -
   MacQuadra950(Mac-OS-7.5)     -               -               -         -
-  Fujitsu VP/UXPM              -               -               -         -  
-  Intel i860                   -               -               -         -  
   VAX/VMS                      (See 'DEC Alpha/OpenVMS' above )
   Windows NT/95                -               -               -         - 
    
