@@ -17,7 +17,10 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 /* --- he-file.c  --- file and annotation manipulation routines */
+#if defined _POSIX_SOURCE
 #include <unistd.h>
+#endif
+
 #include "he.h"
 #ifdef VMS
 #   include descrip
