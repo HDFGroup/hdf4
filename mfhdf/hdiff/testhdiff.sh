@@ -34,10 +34,10 @@ TESTING() {
 # non-zero value.
 #
 TOOLTEST() {
-   expect="$srcdir/testfiles/$1"
-#   expect="testfiles/$1"
-   actual="$srcdir/testfiles/`basename $1 .txt`.out"
-   actual_err="$srcdir/testfiles/`basename $1 .txt`.err"
+#   expect="$srcdir/testfiles/$1"
+   expect="testfiles/$1"
+   actual="testfiles/`basename $1 .txt`.out"
+   actual_err="testfiles/`basename $1 .txt`.err"
    shift
 
    # Run test.
@@ -48,7 +48,7 @@ TOOLTEST() {
       echo "#############################"
       echo "Expected output for '$HDIFF $@'" 
       echo "#############################"
-      cd $srcdir/testfiles
+      cd testfiles
       if [ "`uname -s`" = "TFLOPS O/S" ]; then
         $RUNSERIAL $HDIFF_BIN $@
       else
@@ -58,7 +58,7 @@ TOOLTEST() {
    cat $actual_err >> $actual
 
    if [ ! -f $expect ]; then
-   # Create the expect file if it doesn't yet exist.
+   # Create the expected file if it doesn't yet exist.
       echo " CREATED"
       cp $actual $expect
    elif $CMP $expect $actual; then
@@ -76,12 +76,10 @@ TOOLTEST() {
      fi
 }
 
-##############################################################################
-##############################################################################
-###			  T H E   T E S T S                                            ###
-##############################################################################
-##############################################################################
 
+
+
+RUN() {
 
 # help message
 TOOLTEST hdiff_01.txt 
@@ -116,6 +114,22 @@ TOOLTEST hdiff_10.txt -d -t 2 hdifftst1.hdf hdifftst2.hdf
 # no options
 TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
 
+}
+
+
+##############################################################################
+###			  T H E   T E S T S                                            ###
+##############################################################################
+
+#generate the hdf files to test
+cd testfiles
+../hdifftst
+cd ..
+# do a 1st run, generate output
+#RUN >& /dev/null
+RUN
+# compare output
+RUN
 
 
 # ##############################################################################

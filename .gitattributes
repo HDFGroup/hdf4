@@ -57,8 +57,6 @@ mfhdf/dumper/testfiles/tdfr8f.hdf -text
 mfhdf/dumper/testfiles/test.hdf -text
 mfhdf/dumper/testfiles/tvattr.hdf -text
 mfhdf/dumper/testfiles/tvset.hdf -text
-mfhdf/hdiff/testfiles/hdifftst1.hdf -text
-mfhdf/hdiff/testfiles/hdifftst2.hdf -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/nctest/test_unlim.nc -text
