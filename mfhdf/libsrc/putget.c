@@ -833,12 +833,14 @@ uint32    count;
                     int len;
                     
                     attr = NC_findattr(&vp->attrs, _FillValue);
-                    len = (vp->len / vp->HDFsize) * vp->szof;       
+/* fill the buffer, use 'count' instead of 'vp->len' to calculate len   */
+/*                    len = (vp->len / vp->HDFsize) * vp->szof;       */
+
+                    len = (count / vp->HDFsize) * vp->szof;
                     if(attr != NULL)
                         hdf_fill_array(values, len, (*attr)->data->values, vp->type);
                     else 
                         NC_arrayfill(values, len, vp->type);
-                    
                 }
                 return TRUE;
             } else {
