@@ -13,11 +13,7 @@
 all:
 	cd hdflib; \
 	$(MAKE) 
-	cd jhv; \
-	$(MAKE)
 
 
 clean:
 	cd hdflib; $(MAKE) clean;
-	cd jhv; $(MAKE) clean ;
-
