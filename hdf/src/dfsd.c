@@ -3444,7 +3444,8 @@ DFSDIputndg(int32 file_id, uint16 ref, DFSsdg * sdg)
       Ref.scales = ref;
       Hendaccess(aid);
     }
-  HDfree((VOIDP) Isscales);
+  if (Isscales != NULL)
+     HDfree((VOIDP) Isscales);
   Isscales = NULL;
   if (Ref.scales > 0)
     if (DFdiput(GroupID, DFTAG_SDS, (uint16) Ref.scales) < 0)
@@ -4739,9 +4740,12 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
         }
       while (!done && leastsig > 0);
 
-      HDfree((VOIDP) buf);
-      HDfree((VOIDP) scatterbuf);
-      HDfree((VOIDP) offset);
+      if (buf != NULL)
+         HDfree((VOIDP) buf);
+      if (scatterbuf != NULL)
+         HDfree((VOIDP) scatterbuf);
+      if (offset != NULL)
+         HDfree((VOIDP) offset);
     }
 
   Hendaccess(aid);
@@ -5830,8 +5834,10 @@ DFSDwriteslab(int32 start[], int32 stride[],
         }
       while (!done && leastsig > 0);
 
-      HDfree((VOIDP) buf);
-      HDfree((VOIDP) foffset);
+      if (buf != NULL)
+         HDfree((VOIDP) buf);
+      if (foffset != NULL)
+         HDfree((VOIDP) foffset);
     }
 
   /* Clean up time.... */
