@@ -29,13 +29,17 @@
 #     mfan.h hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
 #     dynarray.h linklist.h glist.h
 
+# Header files not included for copying to 'include' directory during installation
+# These are private to the library and users do need them
+HDRS_NO= glist.h mcache.h hqueue.h
+
 HDRS=$(H_HDRS) $(DF_HDRS) $(DFAN_HDRS) $(DFRI_HDRS) $(DFSD_HDRS) $(V_HDRS) \
      $(MFAN_HDRS) $(MFGR_HDRS)
 
 H_HDRS=hfile.h hdf.h hdfi.h herr.h hproto.h hcomp.h hconv.h hbitio.h \
        tbbt.h crle.h cnbit.h mstdio.h cnone.h cskphuff.h cdeflate.h \
        hlimits.h hntdefs.h htags.h hkit.h hcompi.h bitvect.h atom.h \
-       dynarray.h linklist.h glist.h hchunks.h mcache.h hqueue.h
+       dynarray.h linklist.h hchunks.h 
 
 DF_HDRS=df.h dfi.h dfstubs.h dfufp2i.h
 DFAN_HDRS=dfan.h
