@@ -1,36 +1,9 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-/*
-$Header$
 
-$Log$
-Revision 1.3  1993/08/16 21:58:10  koziol
-Fixed access list for these files, and the actual changes I made to the
-files are for PC compatibility.
+/* $Id$ */
 
- * Revision 1.2  1993/04/19  23:03:40  koziol
- * General Code Cleanup to reduce/remove compilation warnings on PC
- *
- * Revision 1.1  1993/04/15  20:00:07  koziol
- * Re-named the new tests for MS-DOS compatibility
- *
- * Revision 1.3  1993/03/17  21:29:42  chouck
- * Updated external elements test and fixed syntax error in anfile test
- *
- * Revision 1.2  1993/01/27  22:41:23  briand
- * Fixed problem with compiling on RS6000.
- *
- * Revision 1.1  1993/01/27  22:04:26  briand
- * Converted test files to work with master test program: testhdf
- *
- * Revision 1.1  1992/02/28  22:21:15  mfolk
- * Initial revision
- *
- * Revision 1.1  1992/02/28  22:19:20  mfolk
- * Initial revision
- *
-*/
 #include "hdf.h"
 #include "tproto.h"
 #define TESTFILE "tdfan.hdf"

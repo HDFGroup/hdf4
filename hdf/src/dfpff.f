@@ -1,17 +1,5 @@
 C
-C $Header$
-C
-C $Log$
-C Revision 1.3  1993/01/19 05:54:52  koziol
-C Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-C port.  Lots of minor annoyances fixed.
-C
-c Revision 1.2  1992/11/06  20:26:03  chouck
-c Made names lower-case for Absoft Fortran on the Mac
-c
-c Revision 1.1  1992/08/25  21:40:44  koziol
-c Initial revision
-c
+C $Id$
 C
 C------------------------------------------------------------------------------
 C File:     dfpFf.f

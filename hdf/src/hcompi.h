@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    hcompi.h
  * Purpose: Internal library header file for compression information
@@ -7,27 +9,6 @@
  * Structure definitions: 
  * Constant definitions: 
  *---------------------------------------------------------------------------*/
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.3.2.1  1993/10/10 22:10:15  koziol
-Moved Tag descriptions into a header file.  Updated compression routines.
-
- * Revision 1.3  1993/10/06  20:27:32  koziol
- * More compression fixed, and folded Doug's suggested change into VSappendable.
- *
- * Revision 1.2  1993/10/01  20:00:57  koziol
- * Put "extern C" block around function prototypes for C++ compatibility.
- *
- * Revision 1.1  1993/09/30  19:16:25  koziol
- * Initial revision of the internal compression header
- *
- *
- */
 
 /* avoid re-inclusion */
 #ifndef __HCOMPI_H

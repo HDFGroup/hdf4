@@ -1,3 +1,9 @@
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 /*-----------------------------------------------------------------------------
  * File:    dfjpeg.c
  * Purpose: JPEG image compression algorithm
