@@ -98,9 +98,9 @@ HDF_FLAGS       = \
         ARFLAGS="$(ARFLAGS)" \
         RM="$(RM)" \
         RMFLAGS="$(RMFLAGS)" \
-        MACHINE="$(MACHINE)" \
-        HDFLIB="$(HDFLIB)" \
-        HDFINC="$(HDFINC)" 
+        MACHINE="$(MACHINE)" 
+#        HDFLIB="$(HDFLIB)" 
+#        HDFINC="$(HDFINC)" 
 #	HDFBIN="$(HDFBIN)"	
 
 #
@@ -220,6 +220,23 @@ message:
 	@echo " HDF 4.0 library successfully created."
 	@echo ""
 	@echo "***********************************************************"
+	@echo ""
+
+help:
+	@echo ""
+	@echo "Make supports the following targets"
+	@echo "make help    - prints this usage section"
+	@echo "make all     - (DEFAULT) makes HDF package"
+	@echo "make allnofortran - makes HDF package excluding fortran support"
+	@echo "make libnofortran - makes HDF library excluding fortran support"
+	@echo "make testnofortran - makes HDF library and tests"
+	@echo "                     excluding fortran support""
+	@echo "make utilities     - makes HDF library and utilities"
+	@echo "make libdf         - makes HDF library "
+	@echo "make libjpeg       - makes IJG JPEG library "
+	@echo "make clean     - cleans up HDF packages(*.o,libdf.a,..)"
+	@echo "make distclean - cleans up HDF packages including"
+	@echo "                 configuration(Makefiles,config.status,..)"
 	@echo ""
 
 

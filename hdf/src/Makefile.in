@@ -249,6 +249,22 @@ dist: $(DISTFILES)
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
 
+
+help:
+	@echo ""
+	@echo "Make supports the following targets"
+	@echo "make help    - prints this usage section"
+	@echo "make all     - (DEFAULT) makes HDF library"
+	@echo "make libdf.a      - makes HDF library "
+	@echo "make libnofortran - makes HDF library excluding fortran support"
+	@echo "make rebuild      - rebuilds HDF library "
+	@echo "make rebuildnofortran - rebuilds HDF library excluding"
+	@echo "                        fortran support "
+	@echo "make clean     - cleans up HDF library(*.o,libdf.a,..)"
+	@echo "make distclean - cleans up HDF library including"
+	@echo "                 configuration(Makefiles,config.status,..)"
+	@echo ""
+
 #$(ARCHIVE): ChangeLog Makefile $(SRCS) $(HDRS) $(TSRCS) $(USRCS)
 #       $(RM) $(RMFLAGS) $(ARCHIVE)
 #       $(SHAR) $(ARCHIVE) ChangeLog Makefile $(SRCS) $(HDRS) \

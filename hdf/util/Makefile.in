@@ -156,5 +156,15 @@ depend:
 saber:	$(SRCS)
 	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS) 
 
+help:
+	@echo ""
+	@echo "Make supports the following targets in the 'utilities' directory"
+	@echo "make help    - prints this usage section"
+	@echo "make all     - (DEFAULT) makes utilities"
+	@echo "make hdfed   - makes hdfed utilitiy"
+	@echo "make clean     - cleans up tests (both C and Fortran)"
+	@echo "make distclean - cleans up HDF tests including"
+	@echo "                 configuration(Makefiles,config.status,..)"
+	@echo ""
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.

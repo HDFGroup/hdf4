@@ -190,6 +190,18 @@ infodir = $(prefix)/info
 
 # ############# End of system configuration section. ###############
 
+HDF_FLAGS       = \
+        CC="$(CC)" \
+        CFLAGS="$(CFLAGS)" \
+        FC="$(FC)" \
+        FFLAGS="$(FFLAGS)" \
+        RANLIB="$(RANLIB)" \
+        AR="$(AR)" \
+        ARFLAGS="$(ARFLAGS)" \
+        RM="$(RM)" \
+        RMFLAGS="$(RMFLAGS)" \
+        MACHINE="$(MACHINE)" 
+
 # ==> where is your HDF library (libdf.a) located?
 # ==> where are your hdf.h, hdfi.h and vg.h files located?
 HDFINC= $(srcdir)/../src
@@ -240,6 +252,14 @@ force_rebuild:
 
 debug: ptesthdf
 
+$(HDFLIB)/libdf.a:
+#	cd $(HDFLIB); echo Making \`$(TARG)\' in `pwd`; \        
+#	$(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG); 
+
+$(JPEGLIB)/libjpeg.a:
+#	cd $(JPEGLIB); echo Making \`$(TARG)\' in `pwd`; \        
+#	$(MAKE) $(MFLAGS) $(HDF_FLAGS) $(TARG); 
+
 #.c.o: 
 #	 $(CC) $(CFLAGS) -c -I$(HDFINC) $*.c 
 #
@@ -282,5 +302,17 @@ depend:
 saber:	$(SRCS)
 	 #load -I$(HDFINC) -D$(MACHINE) $(SRCS) 
 
+help:
+	@echo ""
+	@echo "Make supports the following targets in the 'tests' directory"
+	@echo "make help    - prints this usage section"
+	@echo "make all     - (DEFAULT) makes tests"
+	@echo "make nofortran - makes HDF tests excluding fortran tests"
+	@echo "make testhdf   - makes HDF C test program "
+	@echo "make fortest   - makes HDF Fortran test program "
+	@echo "make clean     - cleans up tests (both C and Fortran)"
+	@echo "make distclean - cleans up HDF tests including"
+	@echo "                 configuration(Makefiles,config.status,..)"
+	@echo ""
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
