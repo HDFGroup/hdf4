@@ -44,10 +44,10 @@ error(fmt, va_alist)
     va_end(args) ;
 
     (void) fprintf(stderr, "\n") ;
-    (void) fflush(stderr);	/* to ensure log files are current */
+    (void) fflush(stderr); /* to ensure log files are current */
 }
 
-#define LINEPIND	"    "	/* indent of continued lines */
+#define LINEPIND "    " /* indent of continued lines */
 
 static int linep;
 static int max_line_len;
@@ -75,9 +75,9 @@ lput(cp)
     int nn = strlen(cp);
 
     if (nn+linep > max_line_len && nn > 2) {
-	(void) fputs("\n", stdout);
-	(void) fputs(LINEPIND, stdout);
-	linep = strlen(LINEPIND);
+ (void) fputs("\n", stdout);
+ (void) fputs(LINEPIND, stdout);
+ linep = strlen(LINEPIND);
     }
     (void) fputs(cp,stdout);
     linep += nn;
@@ -86,11 +86,11 @@ lput(cp)
 
 static char *formats[] =
 {
-    "%d",			/* bytes, shorts */
-    "%s",			/* char arrays as strings */
-    "%ld",			/* longs */
-    "%.7g ",			/* floats */
-    "%.15g"			/* doubles */
+    "%d",   /* bytes, shorts */
+    "%s",   /* char arrays as strings */
+    "%ld",   /* longs */
+    "%.7g ",   /* floats */
+    "%.15g"   /* doubles */
 };
 
 
@@ -107,14 +107,14 @@ set_formats(flt, dbl)
 
 static char *
 has_c_format_att(ncid, varid)
-    int ncid;			/* netcdf id */
-    int varid;			/* variable id */
+    int ncid;   /* netcdf id */
+    int varid;   /* variable id */
 {
     nc_type cfmt_type;
     int cfmt_len;
     int savopts;
-#define C_FMT_NAME	"C_format" /* name of C format attribute */
-#define	MAX_CFMT_LEN	100	/* max length of C format attribute */
+#define C_FMT_NAME "C_format" /* name of C format attribute */
+#define MAX_CFMT_LEN 100 /* max length of C format attribute */
     static char cfmt[MAX_CFMT_LEN];
     
     /*
@@ -124,13 +124,13 @@ has_c_format_att(ncid, varid)
     savopts = ncopts;
     ncopts = 0;
     if (ncattinq(ncid, varid, "C_format", &cfmt_type, &cfmt_len) != -1) {
-	ncopts = savopts;	/* restore error handling */
-	if (cfmt_type == NC_CHAR && cfmt_len > 0 && cfmt_len < MAX_CFMT_LEN) {
-	    if (ncattget(ncid, varid, "C_format", (void *)cfmt) != -1)
-	      return &cfmt[0];
-	}
+ ncopts = savopts; /* restore error handling */
+ if (cfmt_type == NC_CHAR && cfmt_len > 0 && cfmt_len < MAX_CFMT_LEN) {
+     if (ncattget(ncid, varid, "C_format", (void *)cfmt) != -1)
+       return &cfmt[0];
+ }
     }
-    ncopts = savopts;		/* restore error handling */
+    ncopts = savopts;  /* restore error handling */
     return 0;
 }
 
@@ -141,9 +141,9 @@ has_c_format_att(ncid, varid)
  */
 char *
 get_fmt(ncid, varid, type)
-     int ncid;			/* netcdf id */
-     int varid;			/* variable id */
-     nc_type type;		/* netCDF data type */
+     int ncid;   /* netcdf id */
+     int varid;   /* variable id */
+     nc_type type;  /* netCDF data type */
 {
     char *c_format_att = has_c_format_att(ncid, varid);
 
@@ -154,20 +154,20 @@ get_fmt(ncid, varid, type)
     /* Otherwise return sensible default. */
     switch (type) {
       case NC_BYTE:
-	return formats[0];
+ return formats[0];
       case NC_CHAR:
-	return formats[1];
+ return formats[1];
       case NC_SHORT:
-	return formats[0];
+ return formats[0];
       case NC_LONG:
- 	return formats[2];
+  return formats[2];
       case NC_FLOAT:
-	return formats[3];
+ return formats[3];
       case NC_DOUBLE:
-	return formats[4];
+ return formats[4];
       default:
-	error("pr_vals: bad type");
-	return NULL;
+ error("pr_vals: bad type");
+ return NULL;
     }
 }
 
@@ -178,8 +178,8 @@ newvnode()
     vnode *newvp = (vnode*) malloc(sizeof(vnode));
     
     if (!newvp) {
-	error("out of memory!");
-	exit(EXIT_FAILURE);
+ error("out of memory!");
+ exit(EXIT_FAILURE);
     }
     return newvp;
 }
@@ -191,7 +191,7 @@ newvlist()
     vnode *vp = newvnode();
 
     vp -> next = 0;
-    vp -> id = -1;		/* bad id */
+    vp -> id = -1;  /* bad id */
 
     return vp;
 }
@@ -219,7 +219,7 @@ varmember(vlist, varid)
 
     for (; vp ; vp = vp->next)
       if (vp->id == varid)
-	return 1;
+ return 1;
     return 0;    
 }
 

@@ -14,9 +14,11 @@
 
 
 int 
-vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_flag)
-/* cmp_flag;     to control any data comparison */
-/* f_flag;       to control the print out message */
+vdata_diff(fid1, fid2, specp, cmp_flag, f_flag)
+int32 fid1, fid2;
+struct fspec specp;
+int32 cmp_flag;     /* to control any data comparison */
+int32 f_flag;       /* to control the print out message */
 {
  int32 vsid1, vsid2;
  int32 vgid1, vgid2;
@@ -26,7 +28,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
  int32 *lonevs1=NULL, *lonevs2=NULL;   /* refs of all lone vdatas */
  int32 nlone1, nlone2;                 /* total no. of lone vdatas */
  int32 i, j, imatch, gfind, sfind;
-	int   ret=0;
+ int   ret=0;
  
  char  vgname1[65], vgclass1[65], vsname1[65];
  char  vgname2[65], vgclass2[65], vsname2[65];
@@ -34,7 +36,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
  Vstart(fid1);
  Vstart(fid2);
  
-	if (specp.verbose)
+ if (specp.verbose)
  printf ("\n*****     Vdata comparison:     *****\n");
  
  vgid1 = -1;
@@ -140,6 +142,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
       if (cmp_flag == 1)   /* compare the data only requested */
       {
        vs1 = VSattach(fid1, vsid1, "r");
+       if (specp.verbose)
        printf("\n--Comparing... %s/%s/%s\n", vgname1, vgclass1, vsname1);
        ret=vdata_cmp(vs1, vs2, vgname1, vgclass1, specp.max_err_cnt);
        VSdetach(vs1);
@@ -172,7 +175,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
       printf("< Vdata '%s' in <%s/%s> does not exist in file1\n", 
        vsname1, vgname1, vgclass1);
       printf("> Vdata '%s' in <%s/%s>\n", vsname1, vgname1, vgclass1);
-						ret=1;
+      ret=1;
      }
      else
      {
@@ -180,7 +183,7 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
       printf("> Vdata '%s' in <%s/%s>\n", vsname1, vgname1, vgclass1);
       printf("< Vdata '%s' in <%s/%s> does not exist in file2\n", 
        vsname1, vgname1, vgclass1);
-						ret=1;
+      ret=1;
      }
     }
     
@@ -268,14 +271,14 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
       printf("\n---------------------------\n");
       printf("< Vdata '%s' does not exist in file1\n", vsname1);
       printf("> Vdata '%s'\n", vsname1);
-						ret=1;
+      ret=1;
      }
      else
      {
       printf("\n---------------------------\n");
       printf("> Vdata '%s'\n", vsname1);
       printf("< Vdata '%s' does not exist in file2\n", vsname1);
-						ret=1;
+      ret=1;
      }
     } 
     VSdetach(vs2);
@@ -291,12 +294,15 @@ vdata_diff(int32 fid1, int32 fid2, struct fspec specp, int32 cmp_flag, int32 f_f
   
   Vend(fid1);
   Vend(fid2);
-		return ret;
+  return ret;
 }
 
 
 int
-vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, int32 max_err_cnt)
+vdata_cmp(vs1, vs2, gname, cname, max_err_cnt)
+int32  vs1, vs2;
+char   *gname, *cname;
+int32  max_err_cnt;
 {
  int32   i, j, k, iflag, err_cnt;
  int32   nv1, interlace1, vsize1;
@@ -307,7 +313,7 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, int32 max_err_cnt)
  char    fields2[150], vsclass2[50], vsname2[50];
  uint8   *buf1, *buf2, *b1, *b2;
  int32   off1[60], off2[60];
-	int     ret=0;
+ int     ret=0;
  DYN_VWRITELIST *w1, *w2;
  
  VSinquire(vs1, &nv1, &interlace1, fields1, &vsize1, vsname1);
@@ -383,7 +389,7 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, int32 max_err_cnt)
     printf("\n---------------------------\n");
     printf("Vdata Name: %s (Data record comparison)\n", 
      vsname1);
-				ret=1;
+    ret=1;
    }
    
    printf("> %d: ", i);
@@ -430,7 +436,7 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, int32 max_err_cnt)
     printf("\n---------------------------\n");
     printf("Vdata Name: %s (Data record comparison)\n", 
      vsname1);
-				ret=1;
+    ret=1;
    }
    printf("> %d: ", i);
    for (j=0; j<w1->n; j++)
@@ -470,12 +476,14 @@ vdata_cmp(int32 vs1, int32 vs2, char *gname, char *cname, int32 max_err_cnt)
  if (buf1)free((char *) buf1);
  if (buf2)free((char *) buf2);
 
-	return ret;
+ return ret;
 }
 
 
 void
-fmt_print(char* x, int32 type)
+fmt_print(x, type)
+char *x;
+int32 type;
 {
  short s = 0;
  long  l = 0;

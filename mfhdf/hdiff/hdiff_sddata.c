@@ -44,13 +44,13 @@ struct fspec specp;
  int      varid1, varid2;      /* variable id */
  struct   ncvar var1, var2;    /* variable */
  int      iv1, iv2;            /* variable number */
-	vnode*   vlist = newvlist();  /* list for vars specified with -v option */
+ vnode*   vlist = newvlist();  /* list for vars specified with -v option */
  int      k, iret1, iret2;
-	int      tot_cnt;
-	int      tot_cnt1, tot_cnt2;
+ int      tot_cnt;
+ int      tot_cnt1, tot_cnt2;
  int32    start[MAX_NC_DIMS];
  void     *buf1, *buf2;
-	int      array_diff();
+ int      array_diff();
  void     *fill1, *fill2;
  int      max_err_cnt, ret=0;
   
@@ -64,7 +64,7 @@ struct fspec specp;
   varadd(vlist, varid1);
  }
  
-	if (specp.verbose)
+ if (specp.verbose)
  printf ("\n*****     SD Data comparison:     *****\n");
  
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
@@ -85,7 +85,7 @@ struct fspec specp;
   if (iv2 == -1)     /* sd doesn't exist in file2 */
   {
    SDendaccess(varid1);
-			ret=1;
+   ret=1;
    continue;
   }
   
@@ -96,12 +96,14 @@ struct fspec specp;
   if (var1.ndims != var2.ndims || var1.type != var2.type) 
   {
    SDendaccess(varid1);
-			ret=1;
+   ret=1;
    continue;
   }
   
+  if (specp.verbose) {
   printf("\n---------------------------\n");
   printf("SD Name: %s .... Comparing\n", var1.name);
+  }
   
   tot_cnt1 = 1;
   for (iv1 = 0; iv1 < var1.ndims; iv1++) 
@@ -156,7 +158,7 @@ struct fspec specp;
   SDendaccess(varid1);
   SDendaccess(varid2);
  }
-	return ret;
+ return ret;
 }
 
 
@@ -497,5 +499,5 @@ float err_limit;
   if (debug) {
    fclose(fp);
   }
-		return (n_diff>0 ? 1 : 0 );
+  return (n_diff>0 ? 1 : 0 );
 }

@@ -14,7 +14,7 @@ int hdiff(char *fname1, char *fname2, struct fspec fspec)
 {
  int32 sdid1, sdid2;
  int32 fid1, fid2;
-	int   ret=0;
+ int   ret=0;
  
  sdid1 = SDstart(fname1, DFACC_RDONLY); 
  if (sdid1 == -1)

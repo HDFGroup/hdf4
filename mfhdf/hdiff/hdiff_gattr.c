@@ -22,7 +22,7 @@ struct fspec specp;
  int     ia, ib;              /* attribute number */
  int     iret1, iret2, ret=0;
  
-	if (specp.verbose)
+ if (specp.verbose)
  printf ("\n*****     Global attributes comparison:     *****\n");
  
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
@@ -38,7 +38,7 @@ struct fspec specp;
    printf("\n---------------------------\n");
    printf("< %s\n", att1.name);
    printf("> '%s' does not exist in file2\n", att1.name);
-			ret=1;
+   ret=1;
    continue;
   }
   iret2 = SDattrinfo(sdid2, ib, att2.name, &att2.type, &att2.len);
@@ -77,7 +77,7 @@ struct fspec specp;
    printf("\n> ");
    pr_att_vals(att2.type, att2.len, att2.val);
    printf("\n");
-			ret=1;
+   ret=1;
   }
   
   free ((char *) att1.val);
@@ -97,9 +97,9 @@ struct fspec specp;
    printf("\n---------------------------\n");
    printf("< '%s' does not exist in file1\n", att2.name);
    printf("> %s\n", att2.name);
-			ret=1;
+   ret=1;
   }
  }
  
-	return ret;
+ return ret;
 }

@@ -26,7 +26,7 @@ struct fspec specp;
  int iv1, iv2;                   /* variable number */
  int iret1, iret2, iflag, istop, ret=0;
  
-	if (specp.verbose)
+ if (specp.verbose)
  printf ("\n*****     SD attributes comparison:     *****\n");
  
  iret1 =  SDfileinfo(sdid1, &nvars1, &ngatts1);
@@ -47,7 +47,7 @@ struct fspec specp;
    printf("\n---------------------------\n");
    printf("< '%s' does not exist in file1\n", var2.name);
    printf("> %s\n", var2.name);
-			ret=1;
+   ret=1;
    continue;
   }
  }
@@ -67,7 +67,7 @@ struct fspec specp;
    printf("\n---------------------------\n");
    printf("< %s\n", var1.name);
    printf("> '%s' does not exist in file2\n", var1.name);
-			ret=1;
+   ret=1;
    continue;
   }
   
@@ -105,7 +105,7 @@ struct fspec specp;
     {
      istop = 1;
      iflag = 1;
-					ret=1;
+     ret=1;
      continue;
     }
     
@@ -156,7 +156,7 @@ struct fspec specp;
   
   if (iflag == 1)    /* print out the difference */
   {
-			ret=1;
+   ret=1;
    printf("\n---------------------------\n");
    printf("SD Name: %s\n", var1.name);
    printf("<<<<\n");
@@ -222,7 +222,7 @@ struct fspec specp;
   SDendaccess(varid2);
   }
 
-	return ret;
+ return ret;
 }
 
 
