@@ -22,7 +22,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif /* MIPSEL */
 
 static intn dvd(dump_info_t * dumpvd_opts, intn curr_arg, intn argc,
-				char *argv[], char *flds_chosen[MAXCHOICES],
+				char *argv[], char *flds_chosen[],
 				int dumpallfields);
 
 int32       dumpvd(int32 vd_id, file_type_t ft, int data_only, FILE * fp, char sep[2],
@@ -392,7 +392,8 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
     int32       vdata_ref = -1, vdata_tag, status;
     char       *label_str;
     char        vdclass[VSNAMELENMAX], vdname[VSNAMELENMAX];
-    char        fields[FIELDNAMELENMAX], tempflds[FIELDNAMELENMAX];
+    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
+    char        tempflds[VSFIELDMAX*FIELDNAMELENMAX];
     char       *tempPtr, *ptr, string[MAXNAMELEN];
     char        file_name[MAXFNLEN];
     FILE       *fp=NULL;
