@@ -17,6 +17,9 @@ HDF4.1r6
 5. hdp dumpvg failed sometimes when reading a file that has a vgroup 
    being inserted into another.  This has been fixed. (bug #477)
 
+6. fp2hdf when used with -p option did the opposite of what it was supposed
+   to do with palette files. This problem is now fixed. (bug #800). However
+   the utility hdfimport should be used in the future instead of fp2hdf.
 
 HDF4.1r5
 ========
