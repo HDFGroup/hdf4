@@ -4547,7 +4547,7 @@ const VOID *datap;
                       /* make sure our tmp buffer is big enough to hold everything */
                       if(convert && tBuf_size < byte_count) 
                         {
-                            if(tBuf == NULL) 
+                            if(tBuf != NULL) 
                                 HDfree((VOIDP)tBuf);
                             tBuf_size = byte_count;
                             tBuf      = (VOID *)HDmalloc(tBuf_size);
@@ -4720,7 +4720,7 @@ VOID *datap;
                       /* make sure our tmp buffer is big enough to hold everything */
                       if(convert && tBuf_size < byte_count) 
                         {
-                            if(tBuf == NULL) 
+                            if(tBuf != NULL) 
                                 HDfree((VOIDP)tBuf);
                             tBuf_size = byte_count;
                             tBuf      = (VOID *) HDmalloc(tBuf_size);
