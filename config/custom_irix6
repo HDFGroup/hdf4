@@ -25,6 +25,9 @@ CC='cc -ansi'
 # C compiler flags (default is `-O'):
 #CFLAGS='-g'
 #
+# SGI needs not ranlib.  Set RANLIB to true as an no-op.
+RANLIB=true
+#
 # C preprocessor flags 
 # CPPFLAGS=-DNDEBUG
 #

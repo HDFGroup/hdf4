@@ -13,8 +13,8 @@ CFLAGS=-ansi
 FC = f77
 FFLAGS =
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = ranlib
+# Name of archive randomizer, usually ranlib (use 'true' if non-existant)
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar

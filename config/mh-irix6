@@ -9,12 +9,12 @@
 CC=cc
 CFLAGS=-ansi -32
 
-# Fortran compilier for32-bit mode
+# Fortran compilier for 32-bit mode
 FC = f77
 FFLAGS = -32
 
-# Name of achive randomizer, usually ranlib (use 'touch' if non-existant)
-RANLIB = ranlib
+# Name of archive randomizer, usually ranlib (use 'true' if non-existant)
+RANLIB = true
 
 # Name of library archiver and flags to send, default 'AR=ar', 'ARFLAGS=r'
 AR = ar
