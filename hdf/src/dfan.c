@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -47,14 +59,17 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 #include "dfan.h"
 
-static uint16 Lastref = 0;             /* Last ref read/written */
-static uint16 Next_label_ref = 0;      /* Next file label ref to read/write */
-static uint16 Next_desc_ref = 0;       /* Next file desc ref to read/write */
+PRIVATE uint16 Lastref = 0;             /* Last ref read/written */
+PRIVATE uint16 Next_label_ref = 0;      /* Next file label ref to read/write */
+PRIVATE uint16 Next_desc_ref = 0;       /* Next file desc ref to read/write */
 
-static char Lastfile[DF_MAXFNLEN];          /* last file opened */
+#if 0
+static char Lastfile[DF_MAXFNLEN] = "";          /* last file opened */
+#endif
+PRIVATE char *Lastfile = NULL;
 
 /* pointers to directories of object annotations */
-static DFANdirhead *DFANdir[2] = { NULL,          /* object labels       */
+PRIVATE DFANdirhead *DFANdir[2] = { NULL,          /* object labels       */
                                    NULL           /* object descriptions */
                                  };
 /*
@@ -471,9 +486,17 @@ char *filename;
 intn access;
 #endif 
 {
-
+    char *FUNC = "DFANIopen";
     int32 file_id;
     DFANdirhead *p, *q;
+
+    /* Check if filename buffer has been allocated */
+    if (Lastfile == NULL)
+      {
+        Lastfile = (char *)HDgetspace((DF_MAXFNLEN +1) * sizeof(char));
+        if (Lastfile == NULL)
+          HRETURN_ERROR(DFE_NOSPACE, FAIL);
+      }
 
         /* use reopen if same file as last time - more efficient */
     if (HDstrncmp(Lastfile,filename,DF_MAXFNLEN) || (access==DFACC_CREATE)) {
