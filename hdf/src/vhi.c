@@ -190,11 +190,13 @@ VHmakegroup(HFILEID f, int32 tagarray[], int32 refarray[], int32 n, char *vgname
     if (( vg = Vattach(f, -1, "w"))== FAIL)
         HGOTO_ERROR(DFE_CANTATTACH,FAIL);
 
-    if(Vsetname(vg, vgname)==FAIL)
-        HGOTO_ERROR(DFE_BADVGNAME,FAIL);
+    if(vgname!=NULL)
+        if(Vsetname(vg, vgname)==FAIL)
+            HGOTO_ERROR(DFE_BADVGNAME,FAIL);
 
-    if(Vsetclass(vg, vgclass)==FAIL)
-        HGOTO_ERROR(DFE_BADVGCLASS,FAIL);
+    if(vgclass!=NULL)
+        if(Vsetclass(vg, vgclass)==FAIL)
+            HGOTO_ERROR(DFE_BADVGCLASS,FAIL);
 
     for (i = 0; i < n; i++)
       {
