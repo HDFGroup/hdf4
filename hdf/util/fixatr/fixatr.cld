@@ -1,5 +1,5 @@
 define verb fixatr
-	image           $1$dia0:[folk.hdf32.util.fixatr]rformat
+	image           $1$dia0:[folk.hdf33.hdf.util.fixatr]rformat
 	parameter	p1,label=filespec,prompt="File",value(required)
 	qualifier	rfm, label=rfm, value(default=variable)
 	qualifier	rat, label=rat, value(default=impliedcc)
