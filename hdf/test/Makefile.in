@@ -317,13 +317,17 @@ $(ZLIBLIB)/libz.a:
 $(CTESTS) $(TESTF) $(FTESTS): $(FRC)
 
 test-hdf: testhdf fortest
+	 -$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
+	 -$(RM) $(RMFLAGS) *.hdf 
 	./fortest
 
 test-hdfnofortran: testhdf
+	 -$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
 
 test-hdffortran: fortest fortest.sav
+	 -$(RM) $(RMFLAGS) *.hdf 
 	./fortest > fortest.out
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
 
@@ -350,7 +354,7 @@ ftests: $(FTESTS)
 
 clean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core \
-	ptesthdf qtesthdf gentest *.o $(TESTDIR)/*
+	*.hdf ptesthdf qtesthdf gentest *.o $(TESTDIR)/*
 
 distclean: 
 	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) *.o fortest core \
