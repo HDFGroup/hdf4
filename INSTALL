@@ -589,19 +589,19 @@
 
     2.5.12 IRIX 6.2
     ---------------
-    SGI supports IRIX 6.2 on all their new machines.  4.1b1 version
-    is tested on various types of SGI machines running IRIX 6.2.
-    The configure script has been updated to work in three different
+    SGI supports IRIX 6.2 on all their new machines.  HDF version 4.1b1
+    was tested on various types of SGI machines running IRIX 6.2.
+    The configure script has been updated to work on three different
     systems.
 
     OS	   	ABI	Configure command	Code produced
     --		--	-----------------	-------------
     IRIX64	N64	./configure		-64  -mips4
-    IRIX64	N32	./configure irix6_32	-n32 -mips3
+    IRIX64	N32	./configure irix6_32 -n32 -mips3
     IRIX	O32	./configure		-32  -mips2
 
-    NB: Previously, "./configure irix6_32" produces -n32 -mips4 codes.
-    But SGI has changed the compiler defaults in IRIX 6.2.  We decided
+    NOTE: Previously, "./configure irix6_32" produced -n32 -mips4 code.
+    However, SGI changed the compiler defaults in IRIX 6.2.  We decided
     to change the setting for it too.
 
 
