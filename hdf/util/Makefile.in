@@ -170,10 +170,11 @@ $(JPEGLIB)/libjpeg.a:
 
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
+	-$(RM) $(RMFLAGS) o* ctx* cb* fptestf 
 
 distclean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest config.status Makefile
-
+	-$(RM) $(RMFLAGS) o* ctx* cb* fptestf
 depend: 
 	 makedepend -I$(HDFINC) -I$(UTILINC) *.c
 

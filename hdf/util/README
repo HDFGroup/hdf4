@@ -37,6 +37,7 @@ The utilities are:
 
     . hdftojpeg -- converts hdf raster images to jpeg images
 
+    . fp2hdf -- converts 2D and 3D floating point data sets into HDF SDS.
 
 
 Hdfrseq, which displays images, has been moved to /HDF/contrib/NCSA/hdfrseq/.
