@@ -115,7 +115,7 @@ tbbtprev(TBBT_NODE * node)
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE  *
 tbbtfind(TBBT_NODE * root, VOIDP key,
-     intn (*compar) HPROTO((VOIDP, VOIDP, intn)), intn arg, TBBT_NODE ** pp)
+     intn (*compar) (VOIDP, VOIDP, intn), intn arg, TBBT_NODE ** pp)
 {
     TBBT_NODE  *ptr = root;
     TBBT_NODE  *parent = NULL;
@@ -154,7 +154,7 @@ tbbtdfind(TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp)
 /* Returns a pointer to the found node (or NULL) */
 TBBT_NODE  *
 tbbtless(TBBT_NODE * root, VOIDP key,
-     intn (*compar) HPROTO((VOIDP, VOIDP, intn)), intn arg, TBBT_NODE ** pp)
+     intn (*compar) (VOIDP, VOIDP, intn), intn arg, TBBT_NODE ** pp)
 {
     TBBT_NODE  *ptr = root;
     TBBT_NODE  *parent = NULL;
@@ -540,7 +540,7 @@ balance(TBBT_NODE ** root, TBBT_NODE * ptr, intn side, intn added)
 /* Returns pointer to inserted node (or NULL) */
 TBBT_NODE  *
 tbbtins(TBBT_NODE ** root, VOIDP item, VOIDP key, intn (*compar)
-        HPROTO      ((VOIDP k1, VOIDP k2, intn arg)), intn arg)
+        (VOIDP k1, VOIDP k2, intn arg), intn arg)
 {
     intn        cmp;
     TBBT_NODE  *ptr, *parent;
@@ -810,7 +810,7 @@ tbbtrem(TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp)
 /* tbbtdmake - Allocate a new tree description record for an empty tree */
 /* Returns a pointer to the description record */
 TBBT_TREE  *
-tbbtdmake(intn (*cmp) HPROTO((VOIDP k1, VOIDP k2, intn arg)), intn arg)
+tbbtdmake(intn (*cmp) (VOIDP k1, VOIDP k2, intn arg), intn arg)
 {
     TBBT_TREE  *tree = Alloc(1, TBBT_TREE);
 

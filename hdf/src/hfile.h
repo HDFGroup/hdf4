@@ -489,18 +489,18 @@ sp_info_block_t;
    of functions in array pointed to by tab. */
 typedef struct funclist_t
   {
-      int32       (*stread) HPROTO((accrec_t * rec));
-      int32       (*stwrite) HPROTO((accrec_t * rec));
-      int32       (*seek) HPROTO((accrec_t * access_rec, int32 offset, intn origin));
-      int32       (*inquire) HPROTO((accrec_t * access_rec, int32 *pfile_id,
+      int32       (*stread) (accrec_t * rec);
+      int32       (*stwrite) (accrec_t * rec);
+      int32       (*seek) (accrec_t * access_rec, int32 offset, intn origin);
+      int32       (*inquire) (accrec_t * access_rec, int32 *pfile_id,
                                  uint16 *ptag, uint16 *pref, int32 *plength,
                                int32 *poffset, int32 *pposn, int16 *paccess,
-                                     int16 *pspecial));
-      int32       (*read) HPROTO((accrec_t * access_rec, int32 length, VOIDP data));
-      int32       (*write) HPROTO((accrec_t * access_rec, int32 length, const VOIDP data));
-      intn        (*endaccess) HPROTO((accrec_t * access_rec));
-      int32       (*info) HPROTO((accrec_t * access_rec, sp_info_block_t * info));
-      int32       (*reset) HPROTO((accrec_t * access_rec, sp_info_block_t * info));
+                                     int16 *pspecial);
+      int32       (*read) (accrec_t * access_rec, int32 length, VOIDP data);
+      int32       (*write) (accrec_t * access_rec, int32 length, const VOIDP data);
+      intn        (*endaccess) (accrec_t * access_rec);
+      int32       (*info) (accrec_t * access_rec, sp_info_block_t * info);
+      int32       (*reset) (accrec_t * access_rec, sp_info_block_t * info);
   }
 funclist_t;
 

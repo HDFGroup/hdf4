@@ -298,7 +298,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
   /* This routine depends on having ANSI C support */
-#if defined(__STDC__) && !defined(SUN)
+#if !defined(SUN)
   if (atexit_installed == FALSE)
     {
       atexit_installed = TRUE;

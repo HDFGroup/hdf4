@@ -39,9 +39,8 @@ EXPORTED ROUTINES
 /*
    ** Include files for variable argument processing for HEreport
  */
-#if defined __STDC__ || defined MIPSEL || defined PC || defined CONVEX || defined MPW
 #include <stdarg.h>
-#else /* ! __STDC__ || MIPSEL || PC || CONVEX || MPW */
+#ifdef OLD_WAY
 #include <varargs.h>
 #endif
 

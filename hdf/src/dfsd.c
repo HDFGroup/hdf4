@@ -5002,19 +5002,9 @@ done:
        tag.
 
 ----------------------------------------------------------------------------*/
-#if defined __STDC__ || defined PC
 intn
 DFSDgetcal(float64 *pcal, float64 *pcal_err, float64 *pioff,
            float64 *pioff_err, int32 *cal_nt)
-#else
-intn
-DFSDgetcal(pcal, pcal_err, pioff, pioff_err, cal_nt)
-float64    *pcal;
-float64    *pcal_err;
-float64    *pioff;
-float64    *pioff_err;
-int32      *cal_nt;
-#endif /* __STDC__ || PC */
 {
   intn      ret_value = SUCCEED;
   CONSTR(FUNC, "DFSDgetcal");
@@ -5092,19 +5082,9 @@ done:
        after a call to "DFSDputdata" or "DFSDadddata". Hence, "DFSDsetcal"
        must be called anew for each data set that is to be written.
 ----------------------------------------------------------------------------*/
-#if defined __STDC__ || defined PC
 intn
 DFSDsetcal(float64 cal, float64 cal_err, float64 ioff, float64 ioff_err,
            int32 cal_nt)
-#else
-intn
-DFSDsetcal(cal, cal_err, ioff, ioff_err, cal_nt)
-float64     cal;
-float64     cal_err;
-float64     ioff;
-float64     ioff_err;
-int32       cal_nt;
-#endif /* __STDC__ || PC */
 {
   intn    ret_value = SUCCEED;
 

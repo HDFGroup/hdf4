@@ -127,10 +127,10 @@ PRIVATE int DFKInoset
 /* Prototypes */
 extern int32 DFKqueryNT(void);
 extern int DFKsetcustom(
-  int (*DFKcustin) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                           uint32 source_stride, uint32 dest_stride)),
-  int  (*DFKcustout) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                             uint32 source_stride, uint32 dest_stride)));
+  int (*DFKcustin) (VOIDP source, VOIDP dest, uint32 num_elm,
+                           uint32 source_stride, uint32 dest_stride),
+  int  (*DFKcustout) (VOIDP source, VOIDP dest, uint32 num_elm,
+                             uint32 source_stride, uint32 dest_stride));
 extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype, 
                      int desttype, int32 size);
 
@@ -138,11 +138,11 @@ extern int DFconvert(uint8 *source, uint8 *dest, int ntype, int sourcetype,
    **  Conversion Routine Pointer Definitions
  */
 int         (*DFKnumin)
-            HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                    uint32 source_stride, uint32 dest_stride)) = DFKInoset;
+            (VOIDP source, VOIDP dest, uint32 num_elm,
+                    uint32 source_stride, uint32 dest_stride) = DFKInoset;
 int         (*DFKnumout)
-            HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                    uint32 source_stride, uint32 dest_stride)) = DFKInoset;
+            (VOIDP source, VOIDP dest, uint32 num_elm,
+                    uint32 source_stride, uint32 dest_stride) = DFKInoset;
 
 /************************************************************
  * If the programmer forgot to call DFKsetntype, then let
@@ -418,10 +418,10 @@ DFKsetNT(int32 ntype)
  *****************************************************************************/
 int
 DFKsetcustom(
-  int         (*DFKcustin) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                                 uint32 source_stride, uint32 dest_stride)),
- int         (*DFKcustout) HPROTO((VOIDP source, VOIDP dest, uint32 num_elm,
-                                   uint32 source_stride, uint32 dest_stride))
+  int         (*DFKcustin) (VOIDP source, VOIDP dest, uint32 num_elm,
+                                 uint32 source_stride, uint32 dest_stride),
+ int         (*DFKcustout) (VOIDP source, VOIDP dest, uint32 num_elm,
+                                   uint32 source_stride, uint32 dest_stride)
 )
 {
     DFKnumin = DFKcustin;

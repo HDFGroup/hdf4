@@ -264,10 +264,8 @@ DFKci8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   int in_place = 0;                     /* Inplace must be detected */
   uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKci8f";
   intn exp;
 
@@ -356,10 +354,8 @@ DFKco8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   int in_place = 0;                     /* Inplace must be detected */
   uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco8f";
   intn  exp;
 
@@ -460,10 +456,8 @@ DFKlci4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   int in_place = 0;                     /* Inplace must be detected */
   uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKci4f";
   uint8 exp;
 
@@ -540,10 +534,8 @@ DFKlco4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   int in_place = 0;                     /* Inplace must be detected */
   uint32 i;            
   uint8 buf[4];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco4f";
   intn  exp;
 
@@ -731,10 +723,8 @@ DFKlco8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   int in_place = 0;                     /* Inplace must be detected */
   uint32 i;            
   uint8 buf[8];                          /* Inplace processing buffer */
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKco8f";
   intn  exp;
 

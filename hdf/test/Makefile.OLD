@@ -2,6 +2,10 @@
 # $Header$
 #
 # $Log$
+# Revision 1.5  1995/10/31 16:38:33  koziol
+# Took out old-style function prototypes, they should be fixed on a per
+# machine basis for now.  Also assume ANSI-C compiler in header files.
+#
 # Revision 1.4  1995/10/11 21:30:10  acheng
 # Added two new fortran functions,
 # 	hxscdir		== 	HXsetdir

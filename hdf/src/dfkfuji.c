@@ -106,10 +106,8 @@ DFKpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   intn i,k;
   int32 ibs, ibe, ibt;
 
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   uint32 *buf;
   char *FUNC="DFKpi4f";
 
@@ -170,10 +168,8 @@ DFKpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
   intn i, k;
   int32 ibs, ibe, ibt, it;
 
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKpi4f";
   uint32 *buf;
   uint8 exp;
@@ -236,10 +232,8 @@ int
 DFKpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest   = (uint8*)d;
-#endif /* PROTOTYPE */
   char *FUNC="DFKpi8f"; 
   intn i,k;
   uint32 ibs,ibe,ibt1,ibt2,isht;
@@ -328,10 +322,8 @@ int
 DFKpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
         uint32 dest_stride)
 {
-#ifdef PROTOTYPE
   uint8 * source = (uint8*)s;
   uint8 * dest = (uint8*)d;
-#endif				/* PROTOTYPE */
   uint32 ibs, ibe, ibt1, ibt2, it, isht;
   intn i,k;
   uint32 *buf;
@@ -435,10 +427,8 @@ DFKlpi4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     intn i,k;
     int32 ibs, ibe, ibt;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     uint32 *buf;
     uint32 temp;
     char *FUNC="DFKpi4f";
@@ -513,10 +503,8 @@ DFKlpo4f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
 {
     intn i, k;
     int32 ibs, ibe, ibt, it;
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif /* PROTOTYPE */
     char *FUNC="DFKpi4f";
     uint32 *buf;
     uint32 temp;
@@ -593,10 +581,8 @@ int
 DFKlpi8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest   = (uint8*)d;
-#endif /* PROTOTYPE */
     char *FUNC="DFKpi8f";
     intn i,k;
     uint32 ibs,ibe,ibt1,ibt2,isht;
@@ -709,10 +695,8 @@ int
 DFKlpo8f(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
          uint32 dest_stride)
 {
-#ifdef PROTOTYPE
     uint8 * source = (uint8*)s;
     uint8 * dest = (uint8*)d;
-#endif				/* PROTOTYPE */
     uint32 ibs, ibe, ibt1, ibt2, it, isht;
     intn i,k;
     uint32 *buf;
