@@ -31,8 +31,9 @@ static char RcsId[] = "@(#)$Revision$";
 *
 * Handles vgroup and vdata attributes 
 *
-* Previous VSET_VERSION is 3. With attributes or large fields
-*   or other new features, version number will be 4. 
+* Up to HDF4.0r2 vdata and vgroup version number is VSET_VERSION, 
+* defined as 3 in vg.h. With attributes or large fields
+*   or other new features, version number will be 4, VSET_NEW_VERSION. 
 * Attributes will be stored in vdatas. All attributes of a vgroup
 *    or a vdata will be included in the vgroup or the vdata header. 
 *
@@ -53,7 +54,7 @@ static char RcsId[] = "@(#)$Revision$";
 *        <other new featrues >  version  more extra_byte
 *                                 2       2      1 
 *
-*      o To make version number accessable without parsing the 
+*      o To make version number accessible without parsing the 
 *           variable length of new feature list, a dublicated
 *           version number and 3 bytes (the 'more' and the extra
 *           byte) will be added at the end of the VH. See below.
@@ -166,9 +167,6 @@ static char RcsId[] = "@(#)$Revision$";
 *        get values of an attribute
 *   int32 Vgetversion(int32 vgid)
 *        get vset version of a vgroup
-*   int32 VSQuerynfields(int32 vsid)
-*        get number of fields of a vdata. This routine is 
-*        added in vio.c, to be close with other VSQuery routines. 
 * Private routines:
 *
 * Affected existing functions:
