@@ -274,7 +274,7 @@ extern      "C"
 		(char *dir);
 
     extern intn HXsetdir
-                (char *dir)
+                (char *dir);
 
 /*
    ** from hcomp.c
