@@ -982,11 +982,26 @@ dsd(dump_info_t *dumpsds_opts,
       display information and data of each SDS in the specified manner */
    while (curr_arg < argc)
    {
+      intn isHDF = TRUE;  /* FALSE, if current file is not HDF file */
+
       HDstrcpy(file_name, argv[curr_arg]);
       HDstrcpy( dumpsds_opts->ifile_name, file_name ); /* record file name */
       curr_arg++;
 
-      /* if SDstart fails, shoudl ret_value be set to FAIL or SUCCEED? */
+      /* Print an informative message and skip this file if it is not
+         an HDF file */
+      isHDF = Hishdf(file_name);
+      if (isHDF == FALSE)
+      {
+         /* if there are no more files to be processed, print error
+            message, then returns with FAIL */
+	 if( curr_arg == argc )
+	    {ERROR_GOTO_1( "in dsd: %s is not an HDF file", file_name);}
+         else /* print message, then continue processing the next file */
+            {ERROR_CONT_1( "in dsd: %s is not an HDF file", file_name);}
+      }
+
+      /* open current hdf file with error check, if fail, go to next file */
       sd_id = SDstart(file_name, DFACC_RDONLY);
       if (sd_id == FAIL)
       {
@@ -994,8 +1009,7 @@ dsd(dump_info_t *dumpsds_opts,
 	    message, then returns with FAIL */
 	 if( curr_arg == argc )
             {ERROR_GOTO_1( "in dsd: Failure in opening file %s", file_name);}
-	 /* otherwise, print message, then continue processing the next file */
-	 else
+	 else /* print message, then continue processing the next file */
             ERROR_CONT_1( "in dsd: Failure in opening file %s", file_name );
       }
 
@@ -1127,8 +1141,7 @@ do_dumpsds(intn  curr_arg,
    if( curr_arg >= argc )
    {
       dumpsds_usage(argc, argv);
-      ret_value = FAIL; /* so caller can be traced in debugging */
-      goto done;
+      ERROR_GOTO_0( "in do_dumpsds: command is incomplete");
    }            /* end if */
 
    /* parse the user's command and store the inputs in dumpsds_opts */
@@ -1143,7 +1156,7 @@ do_dumpsds(intn  curr_arg,
    /* display data and information as specified in dumpsds_opts */
    status = dsd( &dumpsds_opts, curr_arg, argc, argv );
    if( status == FAIL )
-      ERROR_GOTO_0( "in do_dumpsds" );
+      ERROR_GOTO_0( "in do_dumpsds: dsd failed" );
 
   done:
     if (ret_value == FAIL)
