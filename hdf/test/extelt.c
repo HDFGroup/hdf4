@@ -60,7 +60,7 @@ test_hextelt(void)
                       HDstrlen(STRING2));
             );
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
-                      (uint8 *) STRING2,
+                      (const uint8 *) STRING2,
                       (int32)HDstrlen(STRING2) + 1);
     CHECK(ret, FAIL, "Hputelement");
 
@@ -77,7 +77,7 @@ test_hextelt(void)
     MESSAGE(5, printf("Writing to promoted object now in file #1 \n");
             );
 
-    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, (uint8 *) "correct");
+    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, "correct");
     if (ret != (int32) HDstrlen("correct") + 1)
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
@@ -111,7 +111,7 @@ test_hextelt(void)
     MESSAGE(5, printf("Writing string '%s'(%d bytes) to file #3\n", 
                       STRING, HDstrlen(STRING));
         );
-    ret = Hwrite(aid1, (int32)HDstrlen(STRING) + 1, (uint8 *) STRING);
+    ret = Hwrite(aid1, (int32)HDstrlen(STRING) + 1, STRING);
     if (ret != (int32) HDstrlen(STRING) + 1)
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);
@@ -183,7 +183,7 @@ test_hextelt(void)
           errors++;
       }
 
-    MESSAGE(5, printf("Verifying data(%d bytes) in external element in file #1\n", ret);
+    MESSAGE(5, printf("Verifying data(%d bytes) in external element in file #1\n", (int)ret);
         );
     if (HDstrcmp((const char *) inbuf, (const char *) STRING3))
       {
@@ -228,7 +228,7 @@ test_hextelt(void)
           errors++;
       }
 #endif
-    MESSAGE(5, printf("Verifying data(%d bytes) that was stored to file #2\n",ret);
+    MESSAGE(5, printf("Verifying data(%d bytes) that was stored to file #2\n",(int)ret);
         );
 
     errflag = 0;
@@ -281,7 +281,7 @@ test_hextelt(void)
           errors++;
       }
 #endif
-    MESSAGE(5, printf("Verifying data(%d bytes) that was stored in overlapping element in file #3\n",ret);
+    MESSAGE(5, printf("Verifying data(%d bytes) that was stored in overlapping element in file #3\n",(int)ret);
         );
 
     if (inbuf[0] != '1' ||
@@ -321,7 +321,7 @@ test_hextelt(void)
           errors++;
       }
 
-    MESSAGE(5, printf("Verifying data(%d bytes) in whole external element in file #3\n", ret);
+    MESSAGE(5, printf("Verifying data(%d bytes) in whole external element in file #3\n", (int)ret);
         );
     if (HDstrcmp((const char *) inbuf, (const char *) STRING))
       {
@@ -357,7 +357,7 @@ test_hextelt(void)
           errors++;
       }
 
-    MESSAGE(5, printf("Verifying data(%d bytes) in external element in file #4\n",ret);
+    MESSAGE(5, printf("Verifying data(%d bytes) in external element in file #4\n",(int)ret);
         );
 
     errflag  = 0;
@@ -385,7 +385,7 @@ test_hextelt(void)
     aid2 = Hstartwrite(fid, 1000, 1, 4);
     CHECK(aid2, FAIL, "Hstartwrite");
 
-    ret = Hwrite(aid2, 4, (uint8 *) "ABCD");
+    ret = Hwrite(aid2, 4, "ABCD");
     if (ret != 4)
       {
           fprintf(stderr, "Hwrite failed (code %d)\n", (int) ret);

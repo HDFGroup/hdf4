@@ -776,8 +776,8 @@ DESCRIPTION
 
 /*---------------------------------------------------------*/
 
-intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
-         void * buf, intn bufsz, intn n_records, char *fields, void * fldbufpt[])
+intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
+         void * buf, intn bufsz, intn n_records, const char *fields, void * fldbufpt[])
 {
     CONSTR(FUNC, "VSfpack");
 

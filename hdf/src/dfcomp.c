@@ -64,13 +64,13 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 intn
-DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
+DFputcomp(int32 file_id, uint16 tag, uint16 ref, const uint8 *image, int32 xdim,
           int32 ydim, uint8 *palette, uint8 *newpal, int16 scheme,
           comp_info * cinfo)
 {
     CONSTR(FUNC, "DFputcomp");
     uint8      *buffer;         /* buffer to hold compressed image */
-    uint8      *in;             /* pointer to input for compression */
+    const uint8      *in;       /* pointer to input for compression */
     uint8      *out;            /* pointer to space for compressed output */
     int32       cisize;         /* maximum size of compressed image */
     int32       crowsize;       /* maximum size of compressed row */
@@ -124,7 +124,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
               /* compress row by row */
               for (i = 0; i < ydim; i++)
                 {
-                    n = DFCIrle((VOIDP) in, (VOIDP) out, xdim);     /* compress row */
+                    n = DFCIrle(in, out, xdim);     /* compress row */
                     in += xdim;     /* move input pointer */
                     total += n;     /* keep running total */
                     if (buftype == 1)   /* can hold whole image */
@@ -165,7 +165,7 @@ DFputcomp(int32 file_id, uint16 tag, uint16 ref, uint8 *image, int32 xdim,
 
           case DFTAG_JPEG5:      /* JPEG compression (for 24-bit images) */
           case DFTAG_GREYJPEG5:      /* JPEG compression (for 8-bit images) */
-              ret = DFCIjpeg(file_id, tag, ref, xdim, ydim, (VOIDP) image, scheme, cinfo);
+              ret = DFCIjpeg(file_id, tag, ref, xdim, ydim, image, scheme, cinfo);
               break;
 
           default:      /* unknown compression scheme */

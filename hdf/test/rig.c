@@ -962,7 +962,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1011,7 +1011,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1046,7 +1046,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1086,7 +1086,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in1, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1115,7 +1115,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in1, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1144,7 +1144,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in1, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in1, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1179,7 +1179,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in2, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1207,7 +1207,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in2, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     for (i = 0; i < YSIZE; i++)
         for (j = 0; j < XSIZE; j++)
@@ -1235,7 +1235,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(TESTFILE, (VOIDP) in2, XSIZE, YSIZE);
+    ret = DF24getimage(TESTFILE, in2, XSIZE, YSIZE);
     RESULT("DF24getimage");
     Error = FALSE;
     for (i = 0; i < YSIZE; i++)
@@ -1264,7 +1264,7 @@ test_r24(void)
     cinfo.jpeg.quality = 80;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
-    ret = DF24putimage(JPEGFILE, (VOIDP) jpeg_24bit_orig, JPEGX, JPEGY);
+    ret = DF24putimage(JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24putimage");
 
     MESSAGE(6, printf("Storing second image with JPEG quality 30\n");
@@ -1272,7 +1272,7 @@ test_r24(void)
     cinfo.jpeg.quality = 30;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
-    ret = DF24addimage(JPEGFILE, (VOIDP) jpeg_24bit_orig, JPEGX, JPEGY);
+    ret = DF24addimage(JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24addimage");
 
     MESSAGE(6, printf("Storing third image with JPEG default quality of 75\n");
@@ -1280,7 +1280,7 @@ test_r24(void)
     cinfo.jpeg.quality = 75;
     cinfo.jpeg.force_baseline = TRUE;
     DF24setcompress(COMP_JPEG, &cinfo);
-    ret = DF24addimage(JPEGFILE, (VOIDP) jpeg_24bit_orig, JPEGX, JPEGY);
+    ret = DF24addimage(JPEGFILE, jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24addimage");
 
     if (DF24nimages(JPEGFILE) != 3)
@@ -1307,7 +1307,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(JPEGFILE, (VOIDP) jpeg_24bit_temp, JPEGX, JPEGY);
+    ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 #ifdef QAK
 {
@@ -1348,7 +1348,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(JPEGFILE, (VOIDP) jpeg_24bit_temp, JPEGX, JPEGY);
+    ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 #ifdef QAK
 {
@@ -1389,7 +1389,7 @@ test_r24(void)
           num_errs++;
       }
 
-    ret = DF24getimage(JPEGFILE, (VOIDP) jpeg_24bit_temp, JPEGX, JPEGY);
+    ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 #ifdef QAK
 {
@@ -1424,7 +1424,7 @@ test_r24(void)
           num_errs++;
       }
 
-    HDfree((VOIDP) jpeg_24bit_temp);
+    HDfree(jpeg_24bit_temp);
 }
 
 static VOID
@@ -1569,14 +1569,14 @@ test_r8(void)
 
     MESSAGE(5, printf("Putting image with no compression\n");
         );
-    ret = DFR8putimage(TESTFILE, (VOIDP) im1, XD1, YD1, 0);
+    ret = DFR8putimage(TESTFILE, im1, XD1, YD1, 0);
     RESULT("DFR8putimage");
     num_images++;
     ref1 = DFR8lastref();
 
     MESSAGE(5, printf("Putting image RLE compression\n");
         );
-    ret = DFR8addimage(TESTFILE, (VOIDP) im2, XD2, YD2, DFTAG_RLE);
+    ret = DFR8addimage(TESTFILE, im2, XD2, YD2, DFTAG_RLE);
     RESULT("DFR8addimage");
     num_images++;
     ref2 = DFR8lastref();
@@ -1586,7 +1586,7 @@ test_r8(void)
     RESULT("DFR8setpalette");
     MESSAGE(5, printf("Putting image IMCOMP compression\n");
         );
-    ret = DFR8addimage(TESTFILE, (VOIDP) im3, XD3, YD3, DFTAG_IMCOMP);
+    ret = DFR8addimage(TESTFILE, im3, XD3, YD3, DFTAG_IMCOMP);
     RESULT("DFR8addimage");
     num_images++;
     ref3 = DFR8lastref();
@@ -1646,7 +1646,7 @@ test_r8(void)
     RESULT("DFR8writeref");
     ret = DFR8setpalette(pal2);
     RESULT("DFR8setpalette");
-    ret = DFR8addimage(TESTFILE, (VOIDP) im1, XD1, YD1, DFTAG_RLE);
+    ret = DFR8addimage(TESTFILE, im1, XD1, YD1, DFTAG_RLE);
     RESULT("DFR8addimage");
 
     MESSAGE(5, printf("Verifying palette change\n");
@@ -1668,7 +1668,7 @@ test_r8(void)
     cinfo.jpeg.quality = 80;
     cinfo.jpeg.force_baseline = TRUE;
     DFR8setcompress(COMP_JPEG, &cinfo);
-    ret = DFR8putimage(JPEGFILE, (VOIDP) jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
+    ret = DFR8putimage(JPEGFILE, jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
     RESULT("DFR8putimage");
 
     MESSAGE(6, printf("Storing second image with JPEG quality 30\n");
@@ -1676,12 +1676,12 @@ test_r8(void)
     cinfo.jpeg.quality = 30;
     cinfo.jpeg.force_baseline = TRUE;
     DFR8setcompress(COMP_JPEG, &cinfo);
-    ret = DFR8addimage(JPEGFILE, (VOIDP) jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
+    ret = DFR8addimage(JPEGFILE, jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
     RESULT("DFR8addimage");
 
     MESSAGE(6, printf("Storing third image with JPEG default quality of 75\n");
         );
-    ret = DFR8addimage(JPEGFILE, (VOIDP) jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
+    ret = DFR8addimage(JPEGFILE, jpeg_8bit_orig, JPEGX, JPEGY, COMP_JPEG);
     RESULT("DFR8addimage");
 
     MESSAGE(5, printf("\nReading and verifying 8-bit JPEG'ed images\n\n");
@@ -1783,16 +1783,16 @@ test_r8(void)
           num_errs++;
       }
 
-    HDfree((VOIDP) im1);
-    HDfree((VOIDP) ii1);
-    HDfree((VOIDP) im2);
-    HDfree((VOIDP) ii2);
-    HDfree((VOIDP) im3);
-    HDfree((VOIDP) ii3);
-    HDfree((VOIDP) pal1);
-    HDfree((VOIDP) pal2);
-    HDfree((VOIDP) ipal);
-    HDfree((VOIDP) jpeg_8bit_temp);
+    HDfree(im1);
+    HDfree(ii1);
+    HDfree(im2);
+    HDfree(ii2);
+    HDfree(im3);
+    HDfree(ii3);
+    HDfree(pal1);
+    HDfree(pal2);
+    HDfree(ipal);
+    HDfree(jpeg_8bit_temp);
 }
 
 void
@@ -1913,7 +1913,7 @@ test_pal(void)
         for (i = 0; i < 768; i++)
             if (ipal[i] != pal1[i])
                 printf("(%d) Error at %d, ipal %d pal1 %d\n", __LINE__,i, ipal[i], pal1[i]);
-    HDfree((VOIDP) pal1);
-    HDfree((VOIDP) pal2);
-    HDfree((VOIDP) ipal);
+    HDfree(pal1);
+    HDfree(pal2);
+    HDfree(ipal);
 }

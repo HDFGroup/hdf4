@@ -416,7 +416,6 @@ static void test_mgr_image_b1a(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
 /* B1a - Read/Write images - with no Data - Default Fill Value */
     MESSAGE(8, printf("Check out I/O on image with no data, using the default fill value\n"););
@@ -505,9 +504,9 @@ static void test_mgr_image_b1a(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -536,7 +535,6 @@ static void test_mgr_image_b1b(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
 /* B1b - Read/Write images - with no Data - User-defined Fill Value */
     MESSAGE(8, printf("Check out I/O on image with no data, using User Defined fill-value\n"););
@@ -626,9 +624,9 @@ static void test_mgr_image_b1b(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -657,8 +655,6 @@ static void test_mgr_image_b2a1aa(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
-
 
 /* B2a1aa - Read/Write images - with real Data - New Image - with Default Fill Value - Whole Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Whole Image\n"););
@@ -781,9 +777,9 @@ static void test_mgr_image_b2a1aa(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -812,7 +808,6 @@ static void test_mgr_image_b2a1bb1(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
 /* B2a1bb - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-setted Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Writing Sub-setted Image\n"););
@@ -959,9 +954,9 @@ static void test_mgr_image_b2a1bb1(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -991,7 +986,6 @@ static void test_mgr_image_b2a1bb2(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-setted Image\n"););
     /* Open up the existing datafile and get the image information from it */
@@ -1134,9 +1128,9 @@ static void test_mgr_image_b2a1bb2(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -1166,7 +1160,6 @@ static void test_mgr_image_b2a1cc1(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
 /* B2a1cc - Read/Write images - with real Data - New Image - with Default Fill Value - Sub-sampled Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Writing Sub-sampled Image\n"););
@@ -1312,9 +1305,9 @@ static void test_mgr_image_b2a1cc1(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -1344,7 +1337,6 @@ static void test_mgr_image_b2a1cc2(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
     MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-sampled Image\n"););
     /* Open up the existing datafile and get the image information from it */
@@ -1482,9 +1474,9 @@ static void test_mgr_image_b2a1cc2(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -1632,7 +1624,6 @@ static void test_mgr_image_b2a2bb(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
 /* B2a2bb - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-setted Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Writing Sub-setted Image\n"););
@@ -1785,9 +1776,9 @@ static void test_mgr_image_b2a2bb(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -1948,7 +1939,6 @@ static void test_mgr_image_b2a2cc(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
 /* B2a2cc - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Sub-sampled Image */
     MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Writing Sub-sampled Image\n"););
@@ -2099,9 +2089,9 @@ static void test_mgr_image_b2a2cc(int flag)
               if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
                 {
                     fprintf(stderr, "Chunk Test. GRgetchunkinfo returned wrong values\n");
-                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-                    fprintf(stderr, "cflags =%d \n", cflags );
+                    fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+                    fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+                    fprintf(stderr, "cflags =%d \n", (int)cflags );
                 }
 
           }
@@ -2437,11 +2427,9 @@ static void test_mgr_image_chunk(int flag)
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-
 
     /* Open up the existing datafile and get the image information from it */
     fid=Hopen(TESTFILE2,DFACC_RDWR,0);
@@ -2570,9 +2558,9 @@ static void test_mgr_image_chunk(int flag)
         if (cdims[0] != rcdims[0] || cdims[1] != rcdims[1] || cflags != HDF_CHUNK)
           {
               fprintf(stderr, "Chunk Test 1. GRgetchunkinfo returned wrong values\n");
-              fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",cdims[0],cdims[1]);
-              fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",rcdims[0],rcdims[1]);
-              fprintf(stderr, "cflags =%d \n", cflags );
+              fprintf(stderr, "cdims[0]=%d,cdims[1]=%d \n",(int)cdims[0],(int)cdims[1]);
+              fprintf(stderr, "rcdims[0]=%d,rcdims[1]=%d \n",(int)rcdims[0],(int)rcdims[1]);
+              fprintf(stderr, "cflags =%d \n", (int)cflags );
           }
 
         /* Close the empty image */
@@ -2700,12 +2688,6 @@ test_mgr_interlace(int flag)
     int32 n_attrs;          /* number of attributes */
     int32 ret;              /* generic return value */
     VOIDP image;            /* image to retrieve */
-    int32   cdims[2] = {1,1};    /* chunk dims */
-    int32   *rcdims;             /* for SDgetchunkinfo() */
-    HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
-    HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
-    int32     cflags;            /* chunk flags */
-    comp_info cinfo;             /* compression info */
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Interlace routines\n"););

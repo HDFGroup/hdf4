@@ -49,6 +49,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 static int32 write_vset_stuff(void);
 static int32 read_vset_stuff(void);
+static void test_vsdelete(void);
+static void test_vdelete(void);
+static void test_vdeletetagref(void);
 
 /* write some stuff to the file */
 static int32
@@ -552,7 +555,6 @@ write_vset_stuff(void)
 static int32
 read_vset_stuff(void)
 {
-    int32       ret;            /* generic return value */
     int32       ibuf[2000];     /* integer buffer */
     float32     fbuf[2000];     /* floating point buffer */
     char        gbuf[2000];     /* generic buffer */
@@ -1257,7 +1259,7 @@ read_vset_stuff(void)
 }   /* read_vset_stuff */
 
 /* Testing VSdelete for vdatas.*/
-void
+static void
 test_vsdelete(void)
 {
 #define FIELD_NAME     "Field Entries"
@@ -1382,7 +1384,7 @@ test_vsdelete(void)
 } /* test_vsdelete */
 
 /* Testing Vdelete for vgroups. */ 
-void
+static void
 test_vdelete(void)
 {
     int32 file_id;
@@ -1480,7 +1482,7 @@ test_vdelete(void)
 } /* test_vdelete */
 
 /* Testing Vdeletetagref() for vgroups. */ 
-void
+static void
 test_vdeletetagref(void)
 {
     int32 file_id;

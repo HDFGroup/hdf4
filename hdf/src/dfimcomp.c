@@ -122,7 +122,7 @@ PRIVATE int next_pt(int dim, int i, int rank[], int distinct);
 /************************************************************************/
 
 VOID
-DFCIimcomp(int32 xdim, int32 ydim, uint8 in[], uint8 out[],
+DFCIimcomp(int32 xdim, int32 ydim, const uint8 *in, uint8 out[],
            uint8 in_pal[], uint8 out_pal[], int mode)
 {
     unsigned char raster[48];

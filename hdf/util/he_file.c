@@ -29,7 +29,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* get the prototype for the wait() func. */
-#if defined SUN | defined HP9000 | defined IRIX
+#if defined SUN | defined HP9000 | defined IRIX | defined UNIX386
 #include <sys/wait.h>
 #endif /* SUN | HP9000 */
 #if defined _POSIX_SOURCE | defined IRIX
@@ -144,7 +144,7 @@ annotate(char *editor, int ann)
       {
           editor = (char *) getenv("EDITOR");
           if (editor == NULL)
-              editor = "/usr/bin/ex";
+              editor = (const char *)"/usr/bin/ex";
       }
 #ifdef CRAYMPP
     {	char	cmd[256];

@@ -87,7 +87,7 @@ main(int ac, char **av)
     char        fields[VSFIELDMAX*FIELDNAMELENMAX], vgname[VGNAMELENMAX];
     char        vsname[VSNAMELENMAX];
     char        vgclass[VGNAMELENMAX], vsclass[VSNAMELENMAX];
-    const char *name;
+    char *name;
     int32       fulldump = 0, full;
 
 #if defined __MWERKS__
@@ -262,7 +262,7 @@ main(int ac, char **av)
                 dumpattr(vs, full, 1);
                 VSdetach(vs);
             }
-          HDfree((VOIDP) lonevs);
+          HDfree(lonevs);
       }
 
     Vend(f);
@@ -486,7 +486,7 @@ vsdumpfull(int32 vs)
 
     /* ============================================ */
 
-    HDfree((VOIDP) bb);
+    HDfree(bb);
     printf("\n");
 
     return (1);
@@ -530,7 +530,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
           for (i=0; i<nattrs; i++)  {
              if (vs_alist->findex != (int)_HDF_VDATA)
                  printf("     %d:               %d/%d               %d\n",
-                 i, vs_alist->atag, vs_alist->aref,vs_alist->findex);
+                 i, vs_alist->atag, vs_alist->aref,(int)vs_alist->findex);
              else
                  printf("     %d:               %d/%d         %s\n",
                  i, vs_alist->atag, vs_alist->aref, "VDATA");
@@ -556,21 +556,21 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
                  continue;
               }
               printf("     %d: name=%s type=%d count=%d size=%d\n",
-                       i, name, i_type, i_count, i_size);
+                       i, name, (int)i_type, (int)i_count, (int)i_size);
               if (i_size > BUFFER) {
                   if (NULL == (buf = HDmalloc(i_size)))  {
                      printf(">>>dumpattr:can't allocate buf.\n");
                      continue;
                   }
                   alloc_flag = 1;
-                  if ( ret = VSgetattr(vid, temp, i, (VOIDP)buf)) {
+                  if ( ret = VSgetattr(vid, temp, i, buf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
                      continue;
                   }
               }
               else 
               {
-                 if ( ret = VSgetattr(vid, temp, i, (VOIDP)attrbuf)) {
+                 if ( ret = VSgetattr(vid, temp, i, attrbuf)) {
                      printf(">>>dympattr: failed in VSgetattr.\n");
                      continue;
                   }
@@ -661,21 +661,21 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
               continue;
           }
           printf("   %d: name=%s type=%d count=%d size=%d\n",
-                     i,  name, i_type, i_count, i_size);
+                     i,  name, (int)i_type, (int)i_count, (int)i_size);
           if (i_size > BUFFER) {
               if (NULL == (buf = HDmalloc(i_size)))  {
                  printf(">>>dumpattr:can't allocate buf.\n");
                  continue;
               }
               alloc_flag = 1;
-              if ( ret = Vgetattr(vid, i, (VOIDP)buf)) {
+              if ( ret = Vgetattr(vid, i, buf)) {
                  printf(">>>dympattr: failed in Vgetattr.\n");
                  continue;
               }
           }
           else 
           {
-             if ( ret = Vgetattr(vid, i, (VOIDP)attrbuf)) {
+             if ( ret = Vgetattr(vid, i, attrbuf)) {
                  printf(">>>dympattr: failed in Vgetattr.\n");
                  continue;
               }

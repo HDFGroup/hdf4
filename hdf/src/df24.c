@@ -144,7 +144,7 @@ DF24reqil(intn il)
  USAGE
     intn DF24getimage(filename,image,xdim,ydim)
         char *filename;     IN: file name to retrieve image from
-        VOIDP image;        OUT: buffer to store image in
+        void * image;        OUT: buffer to store image in
         int32 xdim,ydim;    IN: dimensions of image buffer
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -160,7 +160,7 @@ DF24reqil(intn il)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24getimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
+DF24getimage(const char *filename, void * image, int32 xdim, int32 ydim)
 {
   CONSTR(FUNC, "DF24getimage");
   intn        il;
@@ -354,7 +354,7 @@ DF24restart(void)
  USAGE
     intn DF24addimage(filename,image,xdim,ydim)
         char *filename;     IN: name of HDF file to write to
-        VOIDP image;        IN: Pointer to image data
+        void * image;        IN: Pointer to image data
         int32 xdim,ydim;    IN: Dimensions of image to write
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -369,7 +369,7 @@ DF24restart(void)
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24addimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
+DF24addimage(const char *filename, const void * image, int32 xdim, int32 ydim)
 {
   CONSTR(FUNC, "DF24addimage");
   intn ret_value = SUCCEED;
@@ -405,7 +405,7 @@ done:
  USAGE
     intn DF24addimage(filename,image,xdim,ydim)
         char *filename;     IN: name of HDF file to write to
-        VOIDP image;        IN: Pointer to image data
+        void * image;        IN: Pointer to image data
         int32 xdim,ydim;    IN: Dimensions of image to write
  RETURNS
     SUCCEED on success, FAIL on failure.
@@ -420,7 +420,7 @@ done:
  REVISION LOG
 --------------------------------------------------------------------------*/
 intn
-DF24putimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
+DF24putimage(const char *filename, const void * image, int32 xdim, int32 ydim)
 {
   CONSTR(FUNC, "DF24putimage");
   intn ret_value = SUCCEED;

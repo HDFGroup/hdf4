@@ -169,7 +169,6 @@ check_fann_rewrite(const char *fname)
     uint16 ann_ref;
     uint16 b_ann_tag;
     uint16 b_ann_ref;
-    intn  i;
 
     /* open file again for writing */
     ret = file_handle = Hopen(fname, DFACC_RDWR,0);
@@ -284,7 +283,7 @@ check_fann_rewrite(const char *fname)
     if (HDstrncmp((const char *)ann_label, (const char *)file_lab[2],(size_t)(ann_len+1)) != 0)
       {
           printf("\t>>>BAD FILE LABEL. \n\t       IS: %s; \n\tSHOULD BE: %s<<<\n",
-                 ann_label, file_lab[i]);
+                 ann_label, file_lab[2]);
           num_errs++;
       }
 

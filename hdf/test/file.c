@@ -84,7 +84,7 @@ test_hfile(void)
     MESSAGE(5, printf("Reading / Writing to file\n");
         );
     ret = Hputelement(fid, (uint16) 100, 1,
-                  (uint8 *) "testing 100 1", (int32)HDstrlen("testing 100 1") + 1);
+                  (const uint8 *) "testing 100 1", (int32)HDstrlen("testing 100 1") + 1);
     CHECK(ret, FAIL, "Hputelement");
 
     ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
@@ -94,7 +94,7 @@ test_hfile(void)
     CHECK(ret, FAIL, "Hnewref");
 
     ret = Hputelement(fid, (uint16) 103, (uint16) 2,
-                  (uint8 *) "element 103 2", (int32)HDstrlen("element 103 2") + 1);
+                  (const uint8 *) "element 103 2", (int32)HDstrlen("element 103 2") + 1);
     CHECK(ret, FAIL, "Hputlement");
 
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
@@ -198,7 +198,7 @@ test_hfile(void)
           errors++;
       }
 
-    ret = Hwrite(aid1, 4, (uint8 *) "ABCD");
+    ret = Hwrite(aid1, 4, "ABCD");
     if (ret != FAIL)
       {
           fprintf(stderr, "ERROR: was allowed to write to read access object\n");

@@ -39,7 +39,7 @@ typedef struct {
     int32 aid;              /* target AID for output */
     int32 file_id;          /* HDF file ID */
     uint16 tag, ref;        /* tag & ref of image to output */
-    VOIDP image;            /* pointer to the image data */
+    void * image;            /* pointer to the image data */
     int32 xdim, ydim;       /* X & Y dimensions of the image */
     int16 scheme;           /* type of image (8-bit or 24-bit) */
 
@@ -55,7 +55,7 @@ extern void    hdf_init_destination(struct jpeg_compress_struct *cinfo_ptr);
 extern boolean hdf_empty_output_buffer(struct jpeg_compress_struct *cinfo_ptr);
 extern void    hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr);
 extern intn    jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
-                             uint16 ref, VOIDP image, int32 xdim, int32 ydim, int16 scheme);
+                             uint16 ref, const void * image, int32 xdim, int32 ydim, int16 scheme);
 extern intn    jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr);
 
 /*-----------------------------------------------------------------------------
@@ -162,7 +162,7 @@ hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr)
  *---------------------------------------------------------------------------*/
 intn
 jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
-    uint16 ref, VOIDP image, int32 xdim, int32 ydim, int16 scheme)
+    uint16 ref, const void * image, int32 xdim, int32 ydim, int16 scheme)
 {
     CONSTR(FUNC, "jpeg_HDF_dest");     /* for HERROR */
     hdf_dest_ptr dest;
@@ -180,7 +180,7 @@ jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
     dest->file_id = file_id;
     dest->tag = tag;
     dest->ref = ref;
-    dest->image = image;
+    dest->image = (void *)image;
     dest->xdim = xdim;
     dest->ydim = ydim;
     dest->scheme = scheme;
@@ -229,7 +229,7 @@ jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr)
 
 intn
 DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
-         VOIDP image, int16 scheme, comp_info * scheme_info)
+         const void * image, int16 scheme, comp_info * scheme_info)
 {
     CONSTR(FUNC, "DFCIjpeg");     /* for HERROR */
     /* These three structs contain JPEG parameters and working data.
@@ -241,7 +241,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
     struct jpeg_error_mgr *jerr_ptr;
     JSAMPROW row_pointer[1];
     intn row_stride;
-    uint8 *image_buffer=(uint8 *)image;
+    const uint8 *image_buffer=image;
 
     if((cinfo_ptr=HDmalloc(sizeof(struct jpeg_compress_struct)))==NULL)
         HRETURN_ERROR(DFE_NOSPACE,FAIL);

@@ -83,13 +83,13 @@ int         backupFile
             (char *file);
 
 char       *backupName
-            (char *file);
+            (const char *file);
 
 int         bigImg
             (unsigned char *targ, unsigned char *src);
 
 char       *catStr
-            (char *s1, char *s2);
+            (const char *s1, const char *s2);
 
 int         closeFile
             (int keep);

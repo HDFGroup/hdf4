@@ -24,8 +24,7 @@ static char RcsId[] = "$Id$";
 ***************************************************************************/
 /* slabwin & slabwuin do not work for all machines */
 
-#include "hdf.h"
-#include "tutils.h"
+#include "tproto.h"
 
 /* Internal variables */
 static int32  rank = 3;
@@ -1129,7 +1128,7 @@ slabwin(void)
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillin)
         num_err += 1;
-    MESSAGE(10, printf("\n       fill value =: %d \n", lfill);
+    MESSAGE(10, printf("\n       fill value =: %d \n", (int)lfill);
         );
 
     if (num_err != 0)
@@ -1146,7 +1145,7 @@ slabwin(void)
               {
                   if (sdata[i][j][k] != indata[i][j][k])
                       num_err++;
-                  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
+                  MESSAGE(10, printf("%u, ", (unsigned)sdata[i][j][k]);
                       );
               }
     if (num_err == 0)
@@ -1286,7 +1285,7 @@ slabwuin(void)
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != filluin)
         num_err += 1;
-    MESSAGE(10, printf("\n       fill value =: %u \n", lfill);
+    MESSAGE(10, printf("\n       fill value =: %u \n", (unsigned)lfill);
         );
 
     if (num_err != 0)
@@ -1303,7 +1302,7 @@ slabwuin(void)
               {
                   if (sdata[i][j][k] != uindata[i][j][k])
                       num_err++;
-                  MESSAGE(10, printf("%u, ", sdata[i][j][k]);
+                  MESSAGE(10, printf("%u, ", (unsigned)sdata[i][j][k]);
                       );
               }
     if (num_err == 0)

@@ -306,7 +306,7 @@ fileOpen(void)
 }
 
 char       *
-backupName(char *file)
+backupName(const char *file)
 {
     return catStr(file, "$hdfed$");
 }
@@ -1118,7 +1118,7 @@ findOpt(char *word)
 }
 
 char       *
-catStr(char *s, char *s1)
+catStr(const char *s, const char *s1)
 {
     char       *t;
 

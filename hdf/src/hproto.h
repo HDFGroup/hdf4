@@ -521,7 +521,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfcomp.c
  */
     extern intn DFputcomp
-                (int32 file_id, uint16 tag, uint16 ref, uint8 * image,
+                (int32 file_id, uint16 tag, uint16 ref, const uint8 * image,
         int32 xdim, int32 ydim, uint8 * palette, uint8 * newpal,
                  int16 scheme, comp_info * cinfo);
 
@@ -533,7 +533,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfrle.c
  */
     extern int32 DFCIrle
-                (void * buf, void * bufto, int32 len);
+                (const void * buf, void * bufto, int32 len);
 
     extern int32 DFCIunrle
                 (uint8 * buf, uint8 *bufto, int32 outlen, int resetsave);
@@ -542,7 +542,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
    ** from dfimcomp.c
  */
     extern VOID DFCIimcomp
-                (int32 xdim, int32 ydim, uint8 in[], uint8 out[],
+                (int32 xdim, int32 ydim, const uint8 *in, uint8 out[],
                  uint8 in_pal[], uint8 out_pal[], int mode);
 
     extern VOID DFCIunimcomp
@@ -554,7 +554,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     extern intn DFCIjpeg
                 (int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
-                 void * image, int16 scheme, comp_info * scheme_info);
+                 const void * image, int16 scheme, comp_info * scheme_info);
 
 /*
    ** from dfunjpeg.c
@@ -725,7 +725,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern intn DFGRIaddimlut
-                (const char * filename, void * imlut, int32 xdim, int32 ydim, intn type,
+                (const char * filename, const void * imlut, int32 xdim, int32 ydim, intn type,
                  intn isfortran, intn newfile);
 
     extern intn DFGRPshutdown(void);
@@ -756,10 +756,10 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void);
 
     extern intn DF24addimage
-                (const char * filename, void * image, int32 xdim, int32 ydim);
+                (const char * filename, const void * image, int32 xdim, int32 ydim);
 
     extern intn DF24putimage
-                (const char * filename, void * image, int32 xdim, int32 ydim);
+                (const char * filename, const void * image, int32 xdim, int32 ydim);
 
     extern intn DF24nimages
                 (const char * filename);
@@ -3170,9 +3170,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 		(int32 vkey, const char *filename, int32 offset);
 
     extern intn VSfpack
-                (int32 vsid, intn packtype, char *fields_in_buf,
+                (int32 vsid, intn packtype, const char *fields_in_buf,
                 void * buf, intn bufsz, intn n_records, 
-                char *fields, void * fldbufpt[]);
+                const char *fields, void * fldbufpt[]);
 
 /*
    ** from vrw.c
@@ -3602,6 +3602,29 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     extern      FRETVAL(intf) nvdtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
+    extern      FRETVAL(intf) nvsqfnelt
+                (intf * vkey, intf * nelt);
+
+    extern      FRETVAL(intf)nvsqfintr
+                (intf * vkey, intf * interlace);
+
+    extern      FRETVAL(intf)nvsqfldsc
+                (intf * vkey, _fcd fields, intf *fieldslen);
+
+    extern      FRETVAL(intf)nvsqfvsiz
+                (intf * vkey, intf * size);
+
+    extern      FRETVAL(intf)nvsqnamec  
+                (intf * vkey, _fcd name, intf *namelen);
+
+    extern      FRETVAL(intf)nvsfccpk
+                (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
+        intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len);
+
+    extern      FRETVAL(intf)nvsfncpk
+                (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
+        intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len);
+
 /* 
   ** from vattrf.c
  */
@@ -3648,8 +3671,7 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #endif   /* DF_CAPFNAMES */
 #endif   /* VATTR_FNAMES  */
    extern   FRETVAL(intf) nvsfcfdx
-            (intf *vsid, _fcd fldnm, intf *findex,
-             intf *fldnmlen);
+            (intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen);
    extern   FRETVAL(intf) nvsfcsat
             (intf *vsid, intf *findex, _fcd attrnm, intf *dtype,
              intf *count, intf *values, intf *attrnmlen);

@@ -425,7 +425,7 @@ promptblocks(mydd_t * dd)
 
     printf("Would you like to coalesce the following linked-block element:\n");
     printf("\ttag = %d\n\tref = %d\n(y/n): ", dd->tag, dd->ref);
-    gets(ans);
+    fgets(ans,80,stdin);
     if ((ans[0] == 'y') || (ans[0] == 'Y'))
         return (1);
     else

@@ -41,16 +41,16 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 int32
-DFCIrle(VOIDP buf, VOIDP bufto, int32 len)
+DFCIrle(const void * buf, void * bufto, int32 len)
 {
-    uint8 *p;
-    uint8 *q;
+    const uint8 *p;
+    const uint8 *q;
     uint8 *cfoll;
     uint8 *clead;
-    uint8      *begp;
+    const uint8 *begp;
     int32       i;
 
-    p = (uint8 *) buf;
+    p = buf;
     cfoll = (uint8 *) bufto;    /* place to copy to */
     clead = cfoll + 1;
 

@@ -207,7 +207,7 @@ DFGRreqlutil(int il)
  *---------------------------------------------------------------------------*/
 
 int
-DFGRgetlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
+DFGRgetlut(const char *filename, void * lut, int32 xdim, int32 ydim)
 {
     int compressed, has_pal;
     uint16 compr_type;
@@ -266,7 +266,7 @@ DFGRreqimil(int il)
  *---------------------------------------------------------------------------*/
 
 int
-DFGRgetimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
+DFGRgetimage(const char *filename, void * image, int32 xdim, int32 ydim)
 {
     int compressed, has_pal;
     uint16 compr_type;
@@ -358,7 +358,7 @@ DFGRsetlutdims(int32 xdim, int32 ydim, int ncomps, int il)
  *---------------------------------------------------------------------------*/
 
 int
-DFGRsetlut(VOIDP lut, int32 xdim, int32 ydim)
+DFGRsetlut(void * lut, int32 xdim, int32 ydim)
 {
     /* 0 == C, 0 == no newfile */
     return (DFGRIaddimlut((const char *) NULL, lut, xdim, ydim, LUT, 0, 0));
@@ -377,7 +377,7 @@ DFGRsetlut(VOIDP lut, int32 xdim, int32 ydim)
  *---------------------------------------------------------------------------*/
 
 int
-DFGRaddlut(const char *filename, VOIDP lut, int32 xdim, int32 ydim)
+DFGRaddlut(const char *filename, void * lut, int32 xdim, int32 ydim)
 {
     /* 0 == C, 0 == no new file */
     return (DFGRIaddimlut(filename, lut, xdim, ydim, LUT, 0, 0));
@@ -416,14 +416,14 @@ DFGRsetimdims(int32 xdim, int32 ydim, int ncomps, int il)
  *---------------------------------------------------------------------------*/
 
 int
-DFGRaddimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
+DFGRaddimage(const char *filename, void * image, int32 xdim, int32 ydim)
 {
     /* 0 == C, 0 == not new file */
     return (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 0));
 }
 
 int
-DFGRputimage(const char *filename, VOIDP image, int32 xdim, int32 ydim)
+DFGRputimage(const char *filename, void * image, int32 xdim, int32 ydim)
 {
     /* 0 == C, 1 == new file */
     return (DFGRIaddimlut(filename, image, xdim, ydim, IMAGE, 0, 1));
@@ -1063,7 +1063,7 @@ done:
 /* shut lint up */
 /* ARGSUSED */
 int
-DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
+DFGRIgetimlut(const char *filename, void * imlut, int32 xdim, int32 ydim,
               int type, int isfortran, int *compressed, uint16 *compr_type, 
 	      int *has_pal)
 {
@@ -1214,7 +1214,7 @@ DFGRIgetimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                               }
                         }
                       Hendaccess(aid);
-                      HDfree((VOIDP) buf);
+                      HDfree(buf);
                       HGOTO_DONE(Hclose(file_id));
                   }
             }
@@ -1376,7 +1376,7 @@ done:
 /* shut lint up */
 /* ARGSUSED */
 int
-DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
+DFGRIaddimlut(const char *filename, const void * imlut, int32 xdim, int32 ydim,
               int type, int isfortran, int newfile)
 {
     CONSTR(FUNC, "DFGRIaddimlut");
@@ -1436,7 +1436,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
       {     /* set call */
           if (Grlutdata)
             {
-                HDfree((VOIDP) Grlutdata);
+                HDfree(Grlutdata);
                 Grlutdata = NULL;
             }
           Ref.lut = -1;
@@ -1476,14 +1476,14 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
                 if (( newlut = (uint8 *) HDmalloc((uint32) lutsize))==NULL)
                     HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
-          if (DFputcomp(file_id, wtag, wref, (uint8 *) imlut, xdim, ydim,
+          if (DFputcomp(file_id, wtag, wref, imlut, xdim, ydim,
            (uint8 *) Grlutdata, (uint8 *) newlut, (int16) Grcompr, &Grcinfo)
               == FAIL)
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
     else
       {     /* image need not be compressed */
-          if (Hputelement(file_id, (uint16) wtag, (uint16) wref, (uint8 *) imlut,
+          if (Hputelement(file_id, (uint16) wtag, (uint16) wref, imlut,
                   xdim * ydim * Grwrite.datadesc[type].ncomponents) == FAIL)
               HGOTO_ERROR(DFE_PUTELEM, FAIL);
       }
@@ -1532,7 +1532,7 @@ DFGRIaddimlut(const char *filename, VOIDP imlut, int32 xdim, int32 ydim,
     if (Grcompr == DFTAG_IMC)
       {
           Ref.lut = 0;
-          HDfree((VOIDP) newlut);
+          HDfree(newlut);
           newlut = NULL;
       }
 

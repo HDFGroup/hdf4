@@ -43,19 +43,16 @@ uint16      only_tag = DFTAG_NULL;  /* by default print info about all tags */
 
 char       *file_name;          /* name of current file being listed */
 
-int         compare
-(const VOID *, const VOID *);
-int         main
-(int, char *a[]);
-void        lprint
-(int32, dd_t *, int);
-void        print_item
-(int32, dd_t *, intn);
-void	    printfilever
-(int32 file_id);
+int         compare (const void *, const void *);
+int         main (int, char *a[]);
+void        lprint (int32, dd_t *, int);
+void        print_item (int32, dd_t *, intn);
+void	    printfilever (int32 file_id);
+void        usage(char *argv[]);
+int         dumpDD(void);
 
 int
-compare(const VOID * aa, const VOID * bb)
+compare(const void * aa, const void * bb)
 {
     const dd_t *a = (const dd_t *) aa;
     const dd_t *b = (const dd_t *) bb;

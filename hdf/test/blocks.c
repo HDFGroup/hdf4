@@ -51,7 +51,7 @@ test_hblocks(void)
     MESSAGE(5, printf("Write an element and then promote to Linked Blocks\n");
         );
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
-                      (uint8 *) "element 1000 1 wrong ",
+                      (const uint8 *)"element 1000 1 wrong ",
                       (int32)HDstrlen("element 1000 1 wrong ") + 1);
     CHECK(ret, FAIL, "Hputelement");
 
@@ -61,7 +61,7 @@ test_hblocks(void)
     ret = Hseek(aid1, (int32)HDstrlen("element 1000 1 "), DF_START);
     CHECK(ret, FAIL, "Hseek");
 
-    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, (uint8 *) "correct");
+    ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, "correct");
     if (ret != (int32) HDstrlen("correct") + 1)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -92,7 +92,7 @@ test_hblocks(void)
     aid1 = HLcreate(fid, 1000, 2, 128, 16);
     CHECK(aid1, FAIL, "HLcreate");
 
-    ret = Hwrite(aid1, (int32)HDstrlen("element 1000 2") + 1, (uint8 *) "element 1000 2");
+    ret = Hwrite(aid1, (int32)HDstrlen("element 1000 2") + 1, "element 1000 2");
     if (ret != (int32) HDstrlen("element 1000 2") + 1)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -229,7 +229,7 @@ test_hblocks(void)
     aid2 = Hstartwrite(fid, 1000, 1, 4);
     CHECK(aid2, FAIL, "Hstartwrite");
 
-    ret = Hwrite(aid2, 4, (uint8 *) "ABCD");
+    ret = Hwrite(aid2, 4, "ABCD");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -237,7 +237,7 @@ test_hblocks(void)
       }
 
     /* let's try to write to a read element for fun */
-    ret = Hwrite(aid1, 4, (uint8 *) "ABCD");
+    ret = Hwrite(aid1, 4, "ABCD");
     if (ret != FAIL)
       {
           fprintf(stderr, "ERROR: Hwrite allowed write to read access obj\n");

@@ -321,6 +321,9 @@ extern      "C"
     extern int16 map_from_old_types
                 (intn type);
 
+    extern void trimendblanks
+                (char *ss);
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif                          /* c_plusplus || __cplusplus */

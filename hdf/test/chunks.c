@@ -265,11 +265,11 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 1. Create a new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill,  chunk array */
     aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -374,7 +374,7 @@ test_chunks(void)
     if (ref != 2 || length != 16)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -458,11 +458,11 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 2. Create another new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 3, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -519,7 +519,7 @@ test_chunks(void)
     if ( ref != 3 || length != 16)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -587,11 +587,11 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 3. Create another new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 5, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -643,7 +643,7 @@ test_chunks(void)
     if ( ref != 5 || length != 16)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -714,14 +714,14 @@ test_chunks(void)
     CHECK(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 4. Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 6, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -773,7 +773,7 @@ test_chunks(void)
     if ( ref != 6 || length != 192)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -886,14 +886,14 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 5. Create another new element as a 3-D, uint8 chunked element(192bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 7, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -950,7 +950,7 @@ test_chunks(void)
     if ( ref != 7 || length != 192)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -1057,14 +1057,14 @@ test_chunks(void)
     CHECK(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 6. Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 12, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -1165,7 +1165,7 @@ test_chunks(void)
     if ( ref != 12 || length != 24)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -1432,14 +1432,14 @@ test_chunks(void)
     CHECK(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 7. Create another new element as a 3-D, uint16 chunked element(48 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 14, 1, fill_val_len, &fill_val_u16, (HCHUNK_DEF *)chunk);
@@ -1558,14 +1558,14 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 8. Create another new element as a 3-D, float32 chunked element(96 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 15, 1, fill_val_len, &fill_val_f32, (HCHUNK_DEF *)chunk);
@@ -1699,17 +1699,17 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 9. Create another new element as a 4-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      3,chunk[0].pdims[3].dim_length, 
-                      3,chunk[0].pdims[3].chunk_length););
+                      3,(int)chunk[0].pdims[3].dim_length, 
+                      3,(int)chunk[0].pdims[3].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 9, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -1761,7 +1761,7 @@ test_chunks(void)
     if ( ref != 9 || length != 10000)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -2038,11 +2038,11 @@ test_chunks(void)
 
     MESSAGE(5, printf("Test 11. Create another new element as a 2-D, uint8 chunked, RLE Compressed element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 20, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -2094,7 +2094,7 @@ test_chunks(void)
     if ( ref != 20 || length != 16)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
@@ -2180,14 +2180,14 @@ test_chunks(void)
     CHECK(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 12. Create another new element as a 3-D, uint8 chunked, GZIP Compressed element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      0,chunk[0].pdims[0].dim_length, 
-                      0,chunk[0].pdims[0].chunk_length););
+                      0,(int)chunk[0].pdims[0].dim_length, 
+                      0,(int)chunk[0].pdims[0].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      1,chunk[0].pdims[1].dim_length, 
-                      1,chunk[0].pdims[1].chunk_length););
+                      1,(int)chunk[0].pdims[1].dim_length, 
+                      1,(int)chunk[0].pdims[1].chunk_length););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
-                      2,chunk[0].pdims[2].dim_length, 
-                      2,chunk[0].pdims[2].chunk_length););
+                      2,(int)chunk[0].pdims[2].dim_length, 
+                      2,(int)chunk[0].pdims[2].chunk_length););
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 21, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
@@ -2288,7 +2288,7 @@ test_chunks(void)
     if ( ref != 21 || length != 24)
       {
           fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
-          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,(int)length);
           errors++;
           goto done;
       }
