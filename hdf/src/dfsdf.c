@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.20  1993/08/28 00:44:09  georgev
-Changed long fortran slab name to short ones.
+Revision 1.21  1993/08/28 00:49:42  georgev
+Changed slab long fortran names to short ones.
 
+ * Revision 1.20  1993/08/28  00:44:09  georgev
+ * Changed long fortran slab name to short ones.
+ *
  * Revision 1.19  1993/08/28  00:32:04  georgev
  * Fixed some things that got blown away during the PC merge.
  *
@@ -120,12 +123,12 @@ Changed long fortran slab name to short ones.
  *  dfsdsetnt_:     Call DFSDsetNT to set number type
  *  dfsdgetnt_:	    Call DFSDgetNT to get number type
  *  dfsdlastref_:   Call DFSDlastref to get ref of last SDS accessed
- *  dfsdweref_:  Call DFSDwriteref to set up next ref to write
- *  dfsdsfill_:   Call DFSDsetfillvalue to set fill value for SDS
- *  dfsdgfill_:   Call DFSDgetfillvalue to get fill value from SDS
- *  dfsdsslab_: Call DFSDstartslab to set up write to SDS
- *  dfsdwslab_: Call DFSDwriteslab to write slab to file
- *  dfsdeslab_:   Call DFSDendslab to end slab writes, write NDG to file
+ *  dfsdiwref:      Call DFSDwriteref to set up next ref to write
+ *  dssfill:        Call DFSDsetfillvalue to set fill value for SDS
+ *  dsgfill:        Call DFSDgetfillvalue to get fill value from SDS
+ *  dfsdisslab:     Call DFSDstartslab to set up write to SDS
+ *  dswslab:        Call DFSDwriteslab to write slab to file
+ *  dseslab:        Call DFSDendslab to end slab writes, write NDG to file
  * Remarks: no C stubs needed for the put string routines, only Fortran stubs
  *---------------------------------------------------------------------------*/
 

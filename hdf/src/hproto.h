@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.36  1993/08/16 21:46:08  koziol
-Wrapped in changes for final, working version on the PC.
+Revision 1.37  1993/08/28 00:49:46  georgev
+Changed slab long fortran names to short ones.
 
+ * Revision 1.36  1993/08/16  21:46:08  koziol
+ * Wrapped in changes for final, working version on the PC.
+ *
  * Revision 1.34  1993/07/01  17:15:21  briand
  * Removed a '\' from line 1320.
  *
@@ -1242,12 +1245,12 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(DFSDSETNT)
 #   define ndfsdgetnt        FNAME(DFSDGETNT)
 #   define ndfsdlastref      FNAME(DFSDLASTREF)
-#   define ndfsdwref         FNAME(DFSDWREF)
-#   define ndfsdsfill        FNAME(DFSDSFILL)
-#   define ndfsdgfill        FNAME(DFSDGFILL)
-#   define ndfsdsslab        FNAME(DFSDSSLAB)
-#   define ndfsdwslab        FNAME(DFSDWSLAB)
-#   define ndfsdeslab        FNAME(DFSDESLAB)
+#   define ndswref           FNAME(DSWREF)
+#   define ndssfill          FNAME(DSSFILL)
+#   define ndsgfill          FNAME(DSGFILL)
+#   define ndssslab          FNAME(DSSSLAB)
+#   define ndswslab          FNAME(DSWSLAB)
+#   define ndseslab          FNAME(DSESLAB)
 #else
 #   define ndsgdast  FNAME(dsgdast)
 #   define ndsgdisc  FNAME(dsgdisc)
@@ -1296,12 +1299,12 @@ extern FRETVAL(intf) ndfr8sjpeg
 #   define ndfsdsetnt        FNAME(dfsdsetnt)
 #   define ndfsdgetnt        FNAME(dfsdgetnt)
 #   define ndfsdlastref      FNAME(dfsdlastref)
-#   define ndfsdwref         FNAME(dfsdwref)
-#   define ndfsdsfill        FNAME(dfsdsfill)
-#   define ndfsdgfill        FNAME(dfsdgfill)
-#   define ndfsdsslab        FNAME(dfsdsslab)
-#   define ndfsdwslab        FNAME(dfsdwslab)
-#   define ndfsdeslab        FNAME(dfsdeslab)
+#   define ndswref           FNAME(dswref)
+#   define ndssfill          FNAME(dssfill)
+#   define ndsgfill          FNAME(dsgfill)
+#   define ndssslab          FNAME(dssslab)
+#   define ndswslab          FNAME(dswslab)
+#   define ndseslab          FNAME(dseslab)
 #endif /* DF_CAPFNAMES */
 #endif  /* DFSD_FNAMES */
 
@@ -1464,23 +1467,23 @@ extern FRETVAL(intf) ndsgcal
     PROTO((float64 _HUGE *cal, float64 _HUGE *cal_err, float64 _HUGE *ioff,
         float64 _HUGE *ioff_err, intf _HUGE *cal_type));
 
-extern FRETVAL(intf) ndfsdwriteref
+extern FRETVAL(intf) ndswref
      PROTO((_fcd filename, intf _HUGE *fnlen, intf _HUGE *ref));
 
-extern FRETVAL(intf) ndfsdsetfill
+extern FRETVAL(intf) ndssfill
      PROTO((VOIDP fill_value));
 
-extern FRETVAL(intf) ndfsdgetfill
+extern FRETVAL(intf) ndsgfill
      PROTO((VOIDP fill_value));
 
-extern FRETVAL(intf) ndfsdstartslab
+extern FRETVAL(intf) ndssslab
      PROTO((_fcd filename, intf _HUGE *fnlen));
 
-extern FRETVAL(intf) ndfsdwriteslab
+extern FRETVAL(intf) ndswslab
      PROTO((intf _HUGE start[], intf _HUGE stride[],
             intf _HUGE cont[], VOIDP data));
 
-extern FRETVAL(intf) ndfsdendslab
+extern FRETVAL(intf) ndseslab
      PROTO((void));
 
 /*
