@@ -769,3 +769,62 @@ C-------------------------------------------------------------------------
      .                      len(field_name)) 
          return 
          end
+C-------------------------------------------------------------------------
+C        Name:      vsfsetblsz
+C        Purpose:   sets the block size of the linked-block element
+C        Inputs:    id       -  vdata identifier
+C                   block_size - size of each block
+C        Returns:   returns 0 if succeeds and -1 if fails
+C        Calls:     vscsetblsz (C stub for VSsetblocksize function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vsfsetblsz(id, block_size)
+C
+         INTEGER id
+         INTEGER vscsetblsz
+C
+         vsfsetblsz = vscsetblsz(id, block_size) 
+         return 
+         end
+
+C-------------------------------------------------------------------------
+C        Name:      vsfsetnmbl
+C        Purpose:   sets the number of blocks for a linked-block element
+C        Inputs:    id       -  vdata identifier
+C                   num_blocks - number of blocks to be used for the linked-block
+C                                elements
+C        Returns:   returns 0 if succeeds and -1 if fails
+C        Calls:     vscsetnmbl (C stub for VSsetnumblocks function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vsfsetnmbl(id, num_blocks)
+C
+         INTEGER id, num_blocks
+         INTEGER vscsetnmbl
+C
+         vsfsetnmbl = vscsetnmbl(id, num_blocks) 
+         return 
+         end
+
+C-------------------------------------------------------------------------
+C        Name:      vsfgetblinfo
+C        Purpose:   retrieves the block size and the number of blocks
+C                   of a linked-block element.
+C        Inputs:    id       -  vdata identifier
+C        Outputs:   block_size - the linked-block size
+C                   num_blocks - number of blocks the element has
+C        Returns:   returns 0 if succeeds and -1 if fails
+C        Calls:     vscgetblinfo (C stub for VSgetblockinfo function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vsfgetblinfo(id, block_size, num_blocks)
+C
+         INTEGER id, num_blocks, block_size
+         INTEGER vscgetblinfo
+C
+         vsfgetblinfo = vscgetblinfo(id, block_size, num_blocks) 
+         return 
+         end

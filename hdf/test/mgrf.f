@@ -808,7 +808,7 @@ C
 C
 C---GR compression function 
 C
-      integer mgscompress
+      integer mgscompress, mggcompress
 C
       integer hopen, hclose
       integer DFACC_CREATE, 
@@ -828,8 +828,8 @@ C
 C
 C---Compression types and parameters arrays 
 C
-      integer comp_type(N_COMP_TYPES)
-      integer comp_prm(N_COMP_ARG)
+      integer comp_type(N_COMP_TYPES), comp_type_out
+      integer comp_prm(N_COMP_ARG), comp_prm_out(N_COMP_ARG)
 C
 C---Compression parameters
 C
@@ -848,7 +848,7 @@ C
      .          COMP_CODE_SKPHUFF = 3,
      .          COMP_CODE_DEFLATE = 4,
      .          COMP_CODE_JPEG = 6)
-      parameter (DEFLATE_LEVEL = 1,
+      parameter (DEFLATE_LEVEL = 6,
      .           SKPHUFF_SKP_SIZE = 2)
       parameter (JPEG_QUALITY = 100,
      .           JPEG_COMPATIBILITY = 1)
@@ -1036,7 +1036,7 @@ C
          print *, 'mgstart failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
       endif 
-      do 2000 i_comp=1, N_COMP_TYPES - 1
+      do 2000 i_comp=1, N_COMP_TYPES 
       index = mgn2ndx(gr_id, name(i_comp))
       if(index .eq. -1 ) then
          print *, 'mgn2ndx failed for',  name(i_comp), ' data set'
@@ -1048,6 +1048,53 @@ C
          err_grcompress = err_grcompress +1
          goto 1999
       endif 
+C
+C  Find out type of compression used and compression parameters.
+C
+       status = mggcompress(ri_id(i_comp), comp_type_out, comp_prm_out)
+	    if (status .eq. -1) then
+            print *, 'mggcompress failed for', i, ' -th dataset'
+                err_grcompress = err_grcompress + 1
+            endif
+            if (name(i_comp) .eq. 'Nocomp_data') then
+                if (comp_type_out .ne. COMP_CODE_NONE) then
+            print *, 'wrong compression type for Nocomp_data dataset'
+                err_grcompress = err_grcompress + 1
+                endif
+            endif
+            if (name(i_comp) .eq. 'Rlcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_RLE) then
+            print *, 'wrong compression type for Rlcomp_data dataset'
+                err_grcompress = err_grcompress + 1
+                endif
+            endif
+            if (name(i_comp) .eq. 'Hucomp_data') then
+                if (comp_type_out .ne. COMP_CODE_SKPHUFF) then
+            print *, 'wrong compression type for Hucomp_data dataset'
+                err_grcompress = err_grcompress + 1
+                endif
+                if (comp_prm_out(1). ne. skphuff_skp_size) then
+         print *, 'wrong compression parameter for Hucomp_data dataset'
+                err_grcompress = err_grcompress + 1
+                endif
+
+            endif
+            if (name(i_comp) .eq. 'Gzcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_DEFLATE) then
+          print *, 'wrong compression type for Gzcomp_data dataset'
+                endif
+                if (comp_prm_out(1). ne. deflate_level) then
+          print *, 'wrong compression parameter for Gzcomp_data dataset'
+                err_grcompress = err_grcompress + 1
+                endif
+            endif
+            if (name(i_comp) .eq. 'Jpcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_JPEG) then
+            print *, 'wrong compression type for Jpcomp_data dataset'
+                err_grcompress = err_grcompress + 1
+                endif
+            goto 1111
+            endif
 C
 C     Read the stored data to the image array.
 C
@@ -1077,7 +1124,7 @@ C
 50    continue
 60    continue
 
-  
+1111  continue  
 C
 C     Terminate access to the array.
 C

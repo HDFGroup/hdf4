@@ -2394,7 +2394,9 @@ HDFLIBAPI intn ANdestroy(void);
 # define nmgcwcchnk        FNAME(MGCWCCHNK)
 # define nmgcwchnk         FNAME(MGCWCHNK)
 # define nmgcscompress     FNAME(MGCSCOMPRESS)
+# define nmgcgcompress     FNAME(MGCGCOMPRESS)
 # define nmglt2rf         FNAME(MGLT2RF)
+# define nmgcgnluts       FNAME(MGCGNLUTS)
 # else                                  /* !sl */
 #  define nmgistrt      FNAME(MGISTRT)
 #  define nmgifinf      FNAME(MGIFINF)
@@ -2435,7 +2437,9 @@ HDFLIBAPI intn ANdestroy(void);
 # define nmgcwcchnk        FNAME(MGCWCCHNK)
 # define nmgcwchnk         FNAME(MGCWCHNK)
 # define nmgcscompress     FNAME(MGCSCOMPRESS)
+# define nmgcgcompress     FNAME(MGCGCOMPRESS)
 # define nmglt2rf         FNAME(MGLT2RF)
+# define nmgcgnluts       FNAME(MGCGNLUTS)
 # endif
 #else  /* !DF_CAPFNAMES */
 # if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
@@ -2478,7 +2482,9 @@ HDFLIBAPI intn ANdestroy(void);
 # define nmgcwcchnk        FNAME(mgcwcchnk)
 # define nmgcwchnk         FNAME(mgcwchnk)
 # define nmgcscompress     FNAME(mgcscompress)
+# define nmgcgcompress     FNAME(mgcgcompress)
 # define nmglt2rf         FNAME(mglt2rf)
+# define nmgcgnluts       FNAME(mgcgnluts)
 # else                                    /* !sl */
 #  define nmgistrt      FNAME(mgistrt)
 #  define nmgifinf      FNAME(mgifinf)
@@ -2519,7 +2525,9 @@ HDFLIBAPI intn ANdestroy(void);
 # define nmgcwcchnk        FNAME(mgcwcchnk)
 # define nmgcwchnk         FNAME(mgcwchnk)
 # define nmgcscompress     FNAME(mgcscompress)
+# define nmgcgcompress     FNAME(mgcgcompress)
 # define nmglt2rf         FNAME(mglt2rf)
+# define nmgcgnluts       FNAME(mgcgnluts)
 # endif
 
 #endif /* DF_CAPFNAMES */
@@ -2654,7 +2662,13 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
        nmgcscompress(intf *id, intf *comp_type, intf *comp_prm);
 
     HDFLIBAPI FRETVAL (intf)
+       nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm);
+
+    HDFLIBAPI FRETVAL (intf)
        nmglt2rf(intf *id);
+
+    HDFLIBAPI FRETVAL (intf)
+       nmgcgnluts(intf *id);
 
 /* Multi-file Raster C-routines found in mfgr.c */
 HDFLIBAPI intn rigcompare(void * k1, void * k2, intn cmparg);
@@ -3540,6 +3554,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsfncpk    FNAME(VSFNCPK)
 #   define  nvdtrc      FNAME(VDTRC)
 #   define  nvscfcls    FNAME(VSCFCLS)
+#   define  nvscsetblsz FNAME(VSCSETBLSZ)
+#   define  nvscsetnmbl FNAME (VSCSETNMBL)
+#   define  nvscgetblinfo FNAME(VSCGETBLINFO)
 #  else                                /* !sl */
 #   define  ndfivopn FNAME(DFIVOPN)
 #   define  ndfvclos FNAME(DFVCLOS)
@@ -3622,6 +3639,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsfncpk    FNAME(VSFNCPK)
 #   define  nvdtrc      FNAME(VDTRC)
 #   define  nvscfcls    FNAME(VSCFCLS)
+#   define  nvscsetblsz FNAME(VSCSETBLSZ)
+#   define  nvscsetnmbl FNAME (VSCSETNMBL)
+#   define  nvscgetblinfo FNAME(VSCGETBLINFO)
 #  endif
 #else                           /* !DF_CAPFNAMES */
 # if defined(UNIX386) || (!(defined INTEL86) && !(defined WIN32))
@@ -3706,6 +3726,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsfncpk    FNAME(vsfncpk)
 #   define  nvdtrc      FNAME(vdtrc)
 #   define  nvscfcls    FNAME(vscfcls)
+#   define  nvscsetblsz FNAME(vscsetblsz)
+#   define  nvscsetnmbl FNAME (vscsetnmbl)
+#   define  nvscgetblinfo FNAME(vscgetblinfo)
 #  else                            /* !sl */
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
@@ -3788,6 +3811,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 #   define  nvsfncpk    FNAME(vsfncpk)
 #   define  nvdtrc      FNAME(vdtrc)
 #   define  nvscfcls    FNAME(vscfcls)
+#   define  nvscsetblsz FNAME(vscsetblsz)
+#   define  nvscsetnmbl FNAME (vscsetnmbl)
+#   define  nvscgetblinfo FNAME(vscgetblinfo)
 #  endif
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
@@ -4058,6 +4084,15 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     HDFLIBAPI      FRETVAL(intf)nvsfncpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len);
+
+    HDFLIBAPI      FRETVAL(intf)nvscsetblsz
+                (intf *id, intf *block_size);
+
+    HDFLIBAPI      FRETVAL(intf)nvscsetnmbl
+                (intf *id, intf *num_blocks);
+
+    HDFLIBAPI      FRETVAL(intf)nvscgetblinfo
+                (intf *id, intf *block_size, intf *num_blocks);
 
 /* 
   ** from vattrf.c

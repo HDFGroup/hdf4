@@ -34,7 +34,7 @@ CFLAGS= -Xc -xO2
 
 # Fortran compilier (set to NONE if no FORTRAN support)
 #FC = f77
-FC = NONE
+FC = f77
 #FFLAGS = -g
 FFLAGS = -O
 

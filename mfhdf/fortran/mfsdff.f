@@ -557,6 +557,36 @@ C-------------------------------------------------------------------------
          end
 
 C-------------------------------------------------------------------------
+C        Name:      sfgcompress
+C        Purpose:   get compression information about  SDS 
+C        Inputs:    id       - data set ID
+C        Output:    comp_type - type of compression
+C                   supports the following compression types:
+C                            ( see hcomp.h  file) 
+C                            COMP_CODE_NONE = 0
+C                            COMP_CODE_RLE =1
+C                            COMP_CODE_SKPHUFF = 3
+C                            COMP_CODE_DEFLATE = 4 
+C                   comp_prm - compression parameter array:
+C                   comp_prm(1) = deflate_level for GZIP
+C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C        NOTE: IT IS USER's responsibility to pass correct compression
+C              parameters for each type of compression
+C
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgcompress (C stub for SDsetcompress function)
+C-------------------------------------------------------------------------
+
+         INTEGER function sfgcompress(id, comp_type,comp_prm)
+
+         INTEGER id, comp_type, comp_prm(*)
+         INTEGER scgcompress 
+         sfgcompress = scgcompress(id, comp_type, comp_prm)
+         return
+         end
+
+
+C-------------------------------------------------------------------------
 C        Name:      sfchempty
 C        Purpose:   checks whether an SDS is empty ( data has not been written) 
 C        Inputs:    id       - data set ID

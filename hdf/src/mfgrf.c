@@ -46,7 +46,8 @@ static char RcsId[] = "@(#)$Revision$";
  *  mgrclut:    Call GRreadlut to read a character palette from the file
  *  mgsxfil:    Call GRsetexternalfile to move an image into an external file
  *  mgsactp:    Call GRsetaccesstype to set the access type for an image
- *  mgscomp:    Call GRsetcompress to compress an image in the file [Later]
+ *  mgscomp:    Call GRsetcompress to compress an image in the file 
+ *  mggcomp:    Call GRgetcompress to get image compression information 
  *  mgisattr:    Call GRsetattr to write an attribute for an object
  *  mgiscatt:   Call GRsetattr to write a char attribute for an obj.
  *  mgatinf:    Call GRattrinfo get information about an attribute
@@ -1191,6 +1192,84 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 
 }   
 /*-------------------------------------------------------------------------
+ * Name:    mgcgcompress
+ * Puporse: Call GRgetcompress
+ * Inputs:  id: access id to GR
+ * Outputs: comp_type:  type of compression
+ *                      COMP_CODE_NONE = 0
+ *                      COMP_CODE_RLE  = 1
+ *                      COMP_CODE_SKPHUFF = 3
+ *                      COMP_CODE_DEFLATE = 4
+ *                      COMP_CODE_JPEG    = 6
+ *          comp_prm:   compression parameters array
+ *          comp_prm[0]=skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0]=deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcgcompress(intf *id, intf *comp_type, intf *comp_prm)
+#else
+       nmgcgcompress( id, comp_type, comp_prm)
+       intf *id;
+       intf *comp_type;
+       intf *comp_prm;
+#endif /* PROTOTYPE */
+{
+    comp_info c_info;         /* compression info     */
+    int32 c_type;              /* compression type definition */
+
+    int CASE;
+    intf ret = -1;
+    intn c_ret;
+
+
+    c_ret = GRgetcompress(*id, &c_type, &c_info);
+
+    if (c_ret == 0) {
+    CASE = c_type;
+    switch (CASE)  {
+
+       case COMP_CODE_NONE:       /* No compression */
+         *comp_type = 0;
+         ret = 0;
+         break;
+    
+       case COMP_CODE_RLE:             /* RLE compression */
+         *comp_type = 1;
+         ret = 0;
+         break;
+ 
+       case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
+          *comp_type = 3;
+          comp_prm[0] = c_info.skphuff.skp_size;
+          ret = 0;
+          break;
+
+       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+          *comp_type = 4;
+          comp_prm[0] = c_info.deflate.level;
+          ret = 0;
+          break;
+
+       case COMP_CODE_JPEG:      /* JPEG compression */  
+          *comp_type = 6;
+          ret = 0;
+          break;
+
+       default:
+
+          return FAIL;
+                    
+     } /*end CASE */
+    } /*end if */
+    return(ret);
+
+}   
+/*-------------------------------------------------------------------------
  * Name:    mglt2rf
  * Puporse: Call GRluttoref
  * Inputs:  id: LUT id returned by GRgetlutid(mggltid) 
@@ -1210,5 +1289,28 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
    intf ret;
 
    ret = GRluttoref ( *id );
+   return(ret);
+}
+/*-------------------------------------------------------------------------
+ * Name:    mgcgnluts
+ * Puporse: Call GRgetnluts
+ * Inputs:  id: image identifier
+ * Returns: number of palettes on success and -1 if fails.
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nmgcgnluts(intf *id)
+#else
+       nmgcgnluts( id)
+       intf *id;
+#endif /* PROTOTYPE */
+{
+   intf ret = -1;
+   intn c_ret;
+
+   c_ret = GRgetnluts ( *id );
+   if(c_ret >= 0) ret = c_ret;
    return(ret);
 }

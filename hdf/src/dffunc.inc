@@ -342,6 +342,8 @@ C
       external sfschnk
       integer  sfscompress
       external sfscompress
+      integer  sfgcompress
+      external sfgcompress
       integer  sfisrcrd
       external sfisrcrd
       integer  sfsblsz
@@ -516,6 +518,12 @@ C
       external vsfwrtc
       integer  vsfwrit
       external vsfwrit
+      external vsfsetblsz
+      integer  vsfsetblsz
+      external vsfsetnmbl 
+      integer  vsfsetnmbl
+      external vsfgetblinfo
+      integer  vsfgetblinfo
 C
 C     Declarations of return values for HDF Vdata Field Functions
 C
@@ -642,8 +650,12 @@ C
       external mgrcchnk
       integer  mgscompress
       external mgscompress
+      integer  mggcompress
+      external mggcompress
       integer  mglt2rf
       external mglt2rf
+      integer  mggnluts
+      external mggnluts
 
 C
 C       Decls of ANxxx functions for Fortran multi-file AN interface

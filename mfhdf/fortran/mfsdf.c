@@ -1873,6 +1873,77 @@ switch (cflags)
     return(ret);
 
 }
+/*-------------------------------------------------------------------------
+ * Name:    scgcompress
+ * Puporse: Call SDgetcompress 
+ * Inputs:  id: SDS access id
+ * Outputs: comp_type:  type of compression
+ *                      COMP_CODE_NONE = 0
+ *                      COMP_CODE_RLE  = 1
+ *                      COMP_CODE_SKPHUFF = 3
+ *                      COMP_CODE_DEFLATE = 4
+ *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
+ *                            Adaptive Huffman compression algorithm
+ *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ * Returns: 0 on success, -1 on failure with error set
+ * Users:   HDF Fortran programmers          
+ *-------------------------------------------------------------------------*/
+
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nscgcompress(intf *id, intf *comp_type, intf *comp_prm)
+#else
+       nscgcompress( id, comp_type, comp_prm)
+       intf *id;
+       intf *comp_type;
+       intf *comp_prm;
+#endif /* PROTOTYPE */
+{
+
+    comp_info c_info;         /* compression info     */
+    int32 c_type;              /* compression type definition */
+
+    int   CASE;
+    intn c_ret;
+    intf ret = -1;
+
+
+    c_ret = SDgetcompress(*id, &c_type, &c_info);
+    if (c_ret == 0) {
+    CASE = c_type;
+    switch (CASE)  {
+
+       case COMP_CODE_NONE:       /* No compression */
+         *comp_type = 0;
+	  ret = 0;
+         break;
+    
+       case COMP_CODE_RLE:             /* RLE compression */
+         *comp_type = 1;
+	  ret = 0;
+         break;
+ 
+       case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
+          *comp_type = 3;
+          comp_prm[0] = c_info.skphuff.skp_size; 
+	  ret = 0;
+          break;
+
+       case COMP_CODE_DEFLATE:      /* GZIP compression */  
+          *comp_type = 4;
+          comp_prm[0] = c_info.deflate.level; 
+	  ret = 0;
+          break;
+
+       default:
+
+          return FAIL;
+                    
+                     } /*end CASE */
+    } /* end if */
+    return(ret);
+
+}
 /*-----------------------------------------------------------------------------
  * Name:    sfisrcrd
  * Purpose: call SDisrecord to see if a dataset is a record variable

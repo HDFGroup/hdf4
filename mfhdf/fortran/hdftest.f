@@ -2221,8 +2221,8 @@ C
          integer   sd_id(N_COMP_TYPES),
      .             sds_id(N_COMP_TYPES),
      .             sds_index(N_COMP_TYPES)
-         integer   RANK, comp_type
-         integer   comp_arg(N_COMP_ARG)
+         integer   RANK, comp_type, comp_type_out
+         integer   comp_arg(N_COMP_ARG), comp_prm_out(N_COMP_ARG)
          integer   d_dims(2)
          integer   start(2), stride(2), edges(2)
          integer   status, fill_value
@@ -2242,7 +2242,7 @@ C
          integer   sfstart, sfcreate, sfendacc, sfend,
      .             sfn2index, sfselect,
      .             sfsfill, sfrdata,
-     .             sfwdata, sfscompress
+     .             sfwdata, sfscompress, sfgcompress
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C
@@ -2317,7 +2317,7 @@ C  will be passed to SFSCHUNK function via comp_arg parameter)
 C
          integer deflate_level,
      .           skphuff_skp_size
-          parameter ( deflate_level    = 1,
+          parameter ( deflate_level    = 6,
      .                skphuff_skp_size = 2 )
 
 
@@ -2474,6 +2474,46 @@ C
             if( sds_id(i) .eq. -1 ) then
                 print *, 'sfselect failed for', i, ' -th dataset'
                 err_compress = err_compress + 1
+            endif
+C
+C  Find out type of compression used and compression parameters.
+C
+            status = sfgcompress(sds_id(i), comp_type_out, comp_prm_out)
+	    if (status .eq. -1) then
+            print *, 'sfgcompress failed for', i, ' -th dataset'
+                err_compress = err_compress + 1
+            endif
+            if (name(i) .eq. 'Nocomp_data') then
+                if (comp_type_out .ne. COMP_CODE_NONE) then
+            print *, 'wrong compression type for Nocomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+            endif
+            if (name(i) .eq. 'Rlcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_RLE) then
+            print *, 'wrong compression type for Rlcomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+            endif
+            if (name(i) .eq. 'Hucomp_data') then
+                if (comp_type_out .ne. COMP_CODE_SKPHUFF) then
+            print *, 'wrong compression type for Hucomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+                if (comp_prm_out(1). ne. skphuff_skp_size) then
+         print *, 'wrong compression parameter for Hucomp_data dataset'
+                err_compress = err_compress + 1
+                endif
+
+            endif
+            if (name(i) .eq. 'Gzcomp_data') then
+                if (comp_type_out .ne. COMP_CODE_DEFLATE) then
+          print *, 'wrong compression type for Gzcomp_data dataset'
+                endif
+                if (comp_prm_out(1). ne. deflate_level) then
+          print *, 'wrong compression parameter for Gzcomp_data dataset'
+                err_compress = err_compress + 1
+                endif
             endif
 
 
