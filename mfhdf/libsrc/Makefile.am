@@ -7,7 +7,7 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_srcdir)/mfhdf/port
 DEFINES=-DNDEBUG -DHDF
-CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##
@@ -16,20 +16,30 @@ CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
 lib_LIBRARIES = libmfhdf.a
 
 ## Information for building the "libmfhdf.a" library
+CSOURCES=array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
+         globdef.c mfsd.c nssdc.c putget.c putgetg.c sharray.c string.c \
+         var.c xdrposix.c
+FSOURCES=../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
+XDRSOURCES=../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
+
+if HDF_BUILD_FORTRAN
+
 if HDF_BUILD_XDR
-libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
-                     iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
-                     putgetg.c sharray.c string.c var.c xdrposix.c      \
-                     ../fortran/jackets.c ../fortran/mfsdf.c            \
-                     ../fortran/mfsdff.f ../xdr/xdr.c ../xdr/xdrfloat.c \
-                     ../xdr/xdrstdio.c ../xdr/xdrarray.c
+libmfhdf_a_SOURCES = $(CSOURCES) $(FSOURCES) $(XDRSOURCES)
 else
-libmfhdf_a_SOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c         \
-                     iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
-                     putgetg.c sharray.c string.c var.c xdrposix.c      \
-                     ../fortran/jackets.c ../fortran/mfsdf.c            \
-                     ../fortran/mfsdff.f
+libmfhdf_a_SOURCES = $(CSOURCES) $(FSOURCES)
 endif
+
+else
+
+if HDF_BUILD_XDR
+libmfhdf_a_SOURCES = $(CSOURCES) $(XDRSOURCES)
+else
+libmfhdf_a_SOURCES = $(CSOURCES)
+endif
+
+endif
+
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
 
 #############################################################################
