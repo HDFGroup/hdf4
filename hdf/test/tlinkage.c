@@ -5,13 +5,26 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/05/29 19:23:00  chouck
-Modified to reflect current names
+Revision 1.3  1992/07/09 16:08:00  chouck
+Minor fix to a few routine names for VMS
 
+ * Revision 1.2  1992/05/29  19:23:00  chouck
+ * Modified to reflect current names
+ *
  * Revision 1.1  1992/02/10  20:59:34  chouck
  * Initial revision
  *
 */
+
+/*
+  As the VMS linker ignores case, some function names have
+  to be redefined.  BUT don't just include hdf.h as then
+  we will get all the prototypes too.
+*/
+#ifdef VMS
+#include "dfivms.h"
+#endif
+
 main()
 {
     puts("This program is for checking the linkage of functions.");
