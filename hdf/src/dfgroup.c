@@ -44,7 +44,11 @@ typedef struct DIlist_struct
   }
 DIlist     , *DIlist_ptr;
 
+#ifdef OLD_WAY
 static DIlist_ptr *Group_list = NULL;
+#else /* OLD_WAY */
+static DIlist_ptr Group_list[MAX_GROUPS] = {NULL};
+#endif /* OLD_WAY */
 
 #define GSLOT2ID(s) ((((uint32)GROUPTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDGID(i) (((((uint32)(i) >> 16) & 0xffff) == GROUPTYPE) && \
@@ -66,6 +70,7 @@ setgroupREC(DIlist_ptr list_rec)
     CONSTR(FUNC, "setgroupREC");
     int32       i;
 
+#ifdef OLD_WAY
     if (!Group_list)
       {
           Group_list = (DIlist_ptr *) HDmalloc((uint32) MAX_GROUPS *
@@ -81,6 +86,7 @@ setgroupREC(DIlist_ptr list_rec)
 #endif
 
       }
+#endif /* OLD_WAY */
 
     for (i = 0; i < MAX_GROUPS; i++)
         if (!Group_list[i])

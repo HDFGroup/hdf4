@@ -288,6 +288,8 @@ extern      "C"
 /*
    ** from vrw.c
  */
+    extern intn VSPfreebuf(void);
+
     extern int32 VSseek
                 (int32 vkey, int32 eltpos);
 

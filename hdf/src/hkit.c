@@ -740,3 +740,32 @@ HDfidtoname(int32 file_id)
 
     return (file_rec->path);
 }   /* HDfidtoname */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HDFend
+ PURPOSE
+    Terminate various static buffers and shutdown the library.
+ USAGE
+    intn HDFend()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Walk through the shutdown routines for the various interfaces and 
+    terminate them all.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function, or real power-users.
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+void HDFend(void)
+{
+    CONSTR(FUNC, "HDFend");    /* for HERROR */
+
+    /* can't issue errors if you're free'ing the error stack. */
+    VSPfreebuf();
+    Hshutdown();
+    HEshutdown();
+} /* end HDFend() */
+

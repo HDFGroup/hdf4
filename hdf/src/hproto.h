@@ -178,6 +178,10 @@ extern      "C"
     extern intn Hfidinquire
                 (int32 file_id, char _HUGE ** fname, intn _HUGE * acc_mode,
                  intn _HUGE * attach);
+    
+    extern intn Hshutdown(void);
+
+    extern void HDFend(void);
 
 /*
    ** from hdfalloc.c

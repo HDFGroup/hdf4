@@ -314,3 +314,30 @@ HEvalue(int32 level)
 	return DFE_NONE;
 } /* HEvalue */
 
+/*--------------------------------------------------------------------------
+ NAME
+    HEshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn HEshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the HE routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn HEshutdown(void)
+{
+    if(error_stack!=NULL)
+      {
+          HDfree(error_stack);
+          error_stack=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end HEshutdown() */
+

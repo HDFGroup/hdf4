@@ -55,6 +55,34 @@ EXPORTED ROUTINES
 PRIVATE uint32 Vtbufsize = 0;
 PRIVATE uint8 *Vtbuf = NULL;
 
+/*--------------------------------------------------------------------------
+ NAME
+    VSPfreebuf
+ PURPOSE
+    Free the Vtbuf buffer.
+ USAGE
+    intn VSPfreebuf()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    For completeness, when the VSet interface is shut-down, free the Vtbuf.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn VSPfreebuf(void)
+{
+    if(Vtbuf!=NULL)
+      {
+          HDfree(Vtbuf);
+          Vtbuf=NULL;
+          Vtbufsize = 0;
+      } /* end if */
+    return(SUCCEED);
+} /* end VSPfreebuf() */
+
 /* --------------------------- VSseek -------------------------------------- */
 
 /*

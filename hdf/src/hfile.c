@@ -160,6 +160,9 @@ PRIVATE uint8 *ptbuf = NULL;
 /* The default state of the file DD caching */
 PRIVATE intn default_cache=FALSE;
 
+/* Whether we've installed the atexit function yet */
+PRIVATE intn atexit_installed=FALSE;
+
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
 to functions that help access each type of special element. */
@@ -295,6 +298,16 @@ int         vtag = 0;       /* write version tag? */
 HEclear();
 if (!path || ((acc_mode & DFACC_ALL) != acc_mode))
 	HRETURN_ERROR(DFE_ARGS, FAIL);
+
+/* This routine depends on having ANSI C support */
+#ifdef __STDC__
+if(atexit_installed==FALSE)
+  {
+      atexit_installed=TRUE;
+      if(atexit(&HDFend)!=0)
+          HRETURN_ERROR(DFE_CANTINIT,FAIL);
+  } /* end if */
+#endif /* __STDC__ */
 
 /* Check if temproray buffer has been allocated */
 /* Note: ptbuf is not actually used in Hopen, but many other routines */
@@ -4327,6 +4340,38 @@ HDset_special_info(int32 access_id, sp_info_block_t * info_block)
     /* else is not special so fail */
     return FAIL;
 }   /* HDset_special_info */
+
+/*--------------------------------------------------------------------------
+ NAME
+    Hshutdown
+ PURPOSE
+    Terminate various static buffers.
+ USAGE
+    intn Hshutdown()
+ RETURNS
+    Returns SUCCEED/FAIL
+ DESCRIPTION
+    Free various buffers allocated in the H routines.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    Should only ever be called by the "atexit" function HDFend
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn Hshutdown(void)
+{
+    if(access_records!=NULL)
+      {
+          HDfree(access_records);
+          access_records=NULL;
+      } /* end if */
+    if(ptbuf!=NULL)
+      {
+          HDfree(ptbuf);
+          ptbuf=NULL;
+      } /* end if */
+    return(SUCCEED);
+} /* end Hshutdown() */
 
 /* -------------------------- MAC Specific Stuff -------------------------- */
 #if defined(MAC) & !defined(THINK_C)
