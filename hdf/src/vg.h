@@ -67,14 +67,6 @@ typedef struct symdef_struct
   }
 SYMDEF;
 
-typedef struct vdata_memory_struct
-  {
-      int32       n;            /* byte size */
-      uint8      *mem;
-      struct vdata_memory_struct *next;
-  }
-VMBLOCK;
-
 typedef struct write_struct
   {
       intn        n;            /* S actual # fields in element */
@@ -106,15 +98,6 @@ typedef struct dyn_write_struct
       int16       *esize;   /*  external (local machine) size [incl order] */
   }
 DYN_VWRITELIST;
-
-#ifdef OLD_WAY
-typedef struct read_struct
-  {
-      intn        n;            /* # fields to read */
-      intn        item[VSFIELDMAX];     /* index into vftable_struct */
-  }
-VREADLIST;
-#endif /* OLD_WAY */
 
 typedef struct dyn_read_struct
   {
@@ -153,8 +136,6 @@ struct vgroup_desc
    *  -----------------------------------------------
  */
 
-/* #define USYMMAX 36  */  /* max user-defined symbols allowed */
-
 struct vdata_desc
   {
       uint16      otag, oref;   /* tag,ref of this vdata */
@@ -167,38 +148,16 @@ struct vdata_desc
       DYN_VWRITELIST  wlist;
       DYN_VREADLIST   rlist;
       int16       nusym;
-      SYMDEF      usym[VSFIELDMAX];
-/*      SYMDEF      usym[USYMMAX];    */
+      SYMDEF      *usym;
       intn        marked;       /* =1 if new info has been added to vdata */
       intn        islinked;     /* =1 if vdata is a linked-block in file */
 
       uint16      extag, exref; /* expansion tag-ref */
       int16       version, more;    /* version and "more" field */
 
-      VMBLOCK    *vm;
       int32       aid;          /* access id - for LINKED blocks */
       struct vs_instance_struct *instance;  /* ptr to the intance struct for this VData */
   };                            /* VDATA */
-
-/*
-   with the definition of Vobject handles these macros have been replaced
-   with functions of the *SAME* name
- */
-#ifdef OLD_MACROS
-/* macros - Use these for accessing items in a vdata or a group. */
-#define VQuerytag(vgroup)   (vgroup->otag)
-#define VQueryref(vgroup)   (vgroup->oref)
-#define VSQuerytag(vdata)   (vdata->otag)
-#define VSQueryref(vdata)   (vdata->oref)
-
-/* macros - Use these for accessing user-defined fields in a vdata. */
-#define VFnfields(vdata)        (vdata->wlist.n)
-#define VFfieldname(vdata,t)    (vdata->wlist.name[t])
-#define VFfieldtype(vdata,t)    (vdata->wlist.type[t])
-#define VFfieldisize(vdata,t)   (vdata->wlist.isize[t])
-#define VFfieldesize(vdata,t)   (vdata->wlist.esize[t])
-#define VFfieldorder(vdata,t)   (vdata->wlist.order[t])
-#endif /* OLD_MACROS */
 
 /* --------------  H D F    V S E T   tags  ---------------------------- */
 
@@ -213,32 +172,6 @@ struct vdata_desc
 #define VGDESCTAG       NEW_VGDESCTAG
 #define VSDESCTAG       NEW_VSDESCTAG
 #define VSDATATAG       NEW_VSDATATAG
-
-/*
-   * types used in defining a new field via a call to VSfdefine
- */
-
-#define LOCAL_NOTYPE        0
-#define LOCAL_CHARTYPE      1   /* 8-bit ascii text stream */
-#define LOCAL_INTTYPE       2   /* 32-bit integers - don't use */
-#define LOCAL_FLOATTYPE     3   /* as opposed to DOUBLE */
-#define LOCAL_LONGTYPE      4   /* 32-bit integers */
-#define LOCAL_BYTETYPE      5   /* 8-bit byte stream - unsupported */
-#define LOCAL_SHORTTYPE     6   /* 16-bit integers - unsupported */
-#define LOCAL_DOUBLETYPE    7   /* as opposed to FLOAT - unsupported */
-
-/*
-   * actual LOCAL MACHINE sizes of the above types
- */
-
-#define LOCAL_UNTYPEDSIZE  0
-#define LOCAL_CHARSIZE      sizeof(char)
-#define LOCAL_INTSIZE       sizeof(int)
-#define LOCAL_FLOATSIZE     sizeof(float)
-#define LOCAL_LONGSIZE      sizeof(long)
-#define LOCAL_BYTESIZE      sizeof(unsigned char)
-#define LOCAL_SHORTSIZE     sizeof(short)
-#define LOCAL_DOUBLESIZE    sizeof(double)
 
 /* .................................................................. */
 /* Private data structures. Unlikely to be of interest to applications */
@@ -328,26 +261,6 @@ vfile_t;
 
 /* .................................................................. */
 
-/*
- *   Macros to provide fast access to the name and class of a Vset
- *     element.  The information returned is only guarenteed to be
- *     valid as long as the provided Vstructure is attached
- *
- *   The macros are NO LONGER SUPPORTED
- */
-
-#ifdef OLD_MACROS
-
-#define VGCLASS(vg) ((vg)->vgclass)
-#define VGNAME(vg)  ((vg)->vgname)
-
-#define VSCLASS(vs) ((vs)->vsclass)
-#define VSNAME(vs)  ((vs)->vsname)
-
-#define DFvsetopen(x,y,z)  Vopen((x),(y),(z))
-#define DFvsetclose(x)     Vclose((x))
-#endif /* OLD_MACROS */
-
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
@@ -379,6 +292,9 @@ extern      "C"
 
     extern VDATA _HUGE *VSPgetinfo
                 (HFILEID f,uint16 ref);
+
+    extern int16 map_from_old_types
+                (intn type);
 
 #if defined c_plusplus || defined __cplusplus
 }
