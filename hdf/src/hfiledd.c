@@ -1070,6 +1070,7 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
     filerec_t  *file_rec;	   /* file record */
     uint16      ref;		   /* the new ref */
     uint16      ret_value = 0; /* 0 is invalid ref */
+    uint32      i_ref;        /* index for FOR loop */
 
 #ifdef HAVE_PABLO
   TRACE_ON(PABLO_mask,ID_Hnewref);
@@ -1089,10 +1090,10 @@ Hnewref(int32 file_id /* IN: File ID the tag/refs are in */)
       { /* otherwise, search for an empty ref */
         /* incredibly slow but unlikely situation */
 /* This could possibly get replaced with some sort of bit-vector manipulation -QAK */
-        for (ref = 1; ref <= MAX_REF; ref++)
+        for (i_ref = 1; i_ref <= (uint32)MAX_REF; i_ref++)
           {
             dd_t *dd_ptr=NULL;
-      
+            ref = (uint16)i_ref; 
             if (HTIfind_dd(file_rec, (uint16) DFTAG_WILDCARD, ref, &dd_ptr, DF_FORWARD) == FAIL)
               {
                ret_value = ref; /* set return value to ref found */
