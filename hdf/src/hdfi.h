@@ -569,6 +569,7 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 #define const
 #undef HPROTO
 #define HPROTO(x) ()
+#define PROTOTYPE
 #endif /* __STDC__ */
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */

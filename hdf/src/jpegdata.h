@@ -86,7 +86,7 @@ typedef FILE * IFILEREF;	/* source or dest of non-JPEG image data */
 /* We want to supply prototype parameters if the compiler can cope. */
 /* Note that the arglist parameter must be parenthesized! */
 
-#ifdef PROTOTYPE
+#if defined PROTOTYPE && !defined MIPSEL
 #define METHOD(type,methodname,arglist)  type (*methodname) arglist
 #else
 #define METHOD(type,methodname,arglist)  type (*methodname) ()
