@@ -2017,14 +2017,9 @@ void hdf_close(handle)
                             VSgetclass(vs, class);
                             if(!HDstrcmp(class, DIM_VALS) ||
                                !HDstrcmp(class, DIM_VALS01)) {
-                               uint8 nrecs[4];
-                               uint8 *nrecsp;
-
                                 VSsetfields(vs, "Values");
                                 VSseek(vs, 0);
-                               nrecsp = &nrecs[0];
-                               INT32ENCODE(nrecsp, handle->numrecs);
-                               if(VSwrite(vs, nrecs, 1, FULL_INTERLACE)!= 1)
+                               if(VSwrite(vs, (unsigned char *)&(handle->numrecs), 1, FULL_INTERLACE) != 1)
                                HEprint(stderr, 0);  
 
                             }
