@@ -904,11 +904,17 @@ test_nbit10(int32 fid)
  * c++ compiler. Kent Yang 09/02/02
  * The same error occur in the Unix Intel Compiler. Albert Cheng 10/26/02
  */
+/* Apparently Intel compiler bug was fixed and the fix below causes problems
+ * when optimization is used. We decided to go to the original code that
+ * works now with Intel 7.0 and Intel 7.1 compilers on both UNIX and Windows  
+ * EIP 12/2/03
 #if (defined __INTEL_COMPILER || defined __ICL)
      test_out = (int16)(outbuf[i] | NBIT_MASK10A);
 #else
      test_out = (int16) ((outbuf[i] | NBIT_MASK10A) & NBIT_MASK10B);
 #endif
+*/
+     test_out = (int16) ((outbuf[i] | NBIT_MASK10A) & NBIT_MASK10B);
           test_in = (int16) (inbuf[i] & NBIT_MASK10B);
 /* The following ifdef block fixes a compiler bug on the */
 /* HP9000, leave it in! -QAK */
