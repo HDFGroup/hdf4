@@ -224,6 +224,8 @@ test_chunk()
     uint16  fill_u16 = 0;        /* fill value */
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
+    comp_coder_t comp_type;      /* to retrieve compression type into */
+    comp_info cinfo;             /* compression information structure */
     int32   cflags;              /* chunk flags */
     int32   index;       /* Index of dataset in file */
     intn    status;      /* status flag */
@@ -975,6 +977,7 @@ test_chunk()
      * Test 6. Create a new chunked SDS of uint8 in file 1 
      *         Compress using Skipping Huffman. Write using SDwriteChunk
      *         Read back in using SDreaddata and SDreadChunk. 
+     *	       Retrieve and verify the compression information.
      *         Use Skipping Huffman compression
      *         Note: a template is created first then the SDS 
      *               is re-slected for writing/reading.
@@ -999,6 +1002,9 @@ test_chunk()
 #if 0
     chunk_def.comp.comp_type = COMP_CODE_RLE;
 #endif
+    /* the test for SDgetcompress relies on this compression setting , so 
+       if the setting is changed, please ensure that the verification of 
+       the next call to SDgetcompress below is still valid - BMR */
     chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
     chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
 
@@ -1016,7 +1022,7 @@ test_chunk()
 
     newsds6 = FAIL;
 
-    /* Select same SDS again, fist get index */
+    /* Select same SDS again, first get index */
     if ((index = SDnametoindex(fchk,"DataSetChunked_3D_SKIP_HUF_2")) == FAIL)
       {
           fprintf(stderr, "Chunk Test 6. SDnametoindex  Failed for  Skipping Huffman compressed data set\n");
@@ -1030,6 +1036,17 @@ test_chunk()
           num_err++;
           goto test7;
       }
+
+    /*
+     * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
+     */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompress(newsds6, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompress");
+    VERIFY(comp_type, chunk_def.comp.comp_type, "SDgetcompress");
+    VERIFY(cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "SDgetcompress");
+    /* end of test for bug#307 */
 
     /* Write data use SDwriteChunk */
     start_dims[0] = 0;
@@ -1270,8 +1287,8 @@ test_chunk()
 
     d_dims[0] = 9;
     d_dims[1] = 4;
-    newsds8 = SDcreate(fchk, "DataSetChunked_2D_GZIP_1", DFNT_UINT16, 2, d_dims);
-    if(newsds8 == FAIL) 
+    newsds7 = SDcreate(fchk, "DataSetChunked_2D_GZIP_1", DFNT_UINT16, 2, d_dims);
+    if(newsds7 == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. Failed to create a new 2D uint16 data set \n");
         num_err++;
@@ -1280,7 +1297,7 @@ test_chunk()
 
     /* set fill value */
     fill_u16 = 0;
-    status = SDsetfillvalue(newsds8, (VOIDP) &fill_u16);
+    status = SDsetfillvalue(newsds7, (VOIDP) &fill_u16);
     CHECK(status, FAIL, "Chunk Test 7. SDsetfillvalue");
 
     /* Create chunked SDS 
@@ -1294,10 +1311,13 @@ test_chunk()
     chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
     chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
 #endif
+    /* the test for SDgetcompress relies on this compression setting , so 
+       if the setting is changed, please ensure that the verification of 
+       the next call to SDgetcompress below is still valid - BMR */
     chunk_def.comp.comp_type = COMP_CODE_DEFLATE; /* GZIP */
     chunk_def.comp.cinfo.deflate.level = 6;
 
-    status = SDsetchunk(newsds8, chunk_def, HDF_CHUNK | HDF_COMP);
+    status = SDsetchunk(newsds7, chunk_def, HDF_CHUNK | HDF_COMP);
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. Failed to create new chunked, GZIP Compressed data set\n");
@@ -1306,7 +1326,7 @@ test_chunk()
       }
 
     /* Set Chunk cache to hold 2 chunks */
-    status = SDsetchunkcache(newsds8, 2, 0);
+    status = SDsetchunkcache(newsds7, 2, 0);
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. SDsetchunkcache failed\n");
@@ -1320,7 +1340,7 @@ test_chunk()
     start_dims[1] = 0;
     edge_dims[0] = 9;
     edge_dims[1] = 4;
-    status = SDwritedata(newsds8, start_dims, NULL, edge_dims, (VOIDP) u16_2data);
+    status = SDwritedata(newsds7, start_dims, NULL, edge_dims, (VOIDP) u16_2data);
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. Failed to write u16_2data to new chunked data set\n");
@@ -1333,7 +1353,7 @@ test_chunk()
     start_dims[1] = 0;
     edge_dims[0] = 9;
     edge_dims[1] = 4;
-    status = SDreaddata(newsds8, start_dims, NULL, edge_dims, (VOIDP) inbuf1_2u16);
+    status = SDreaddata(newsds7, start_dims, NULL, edge_dims, (VOIDP) inbuf1_2u16);
     CHECK(status, FAIL, "Chunk Test 7. SDreaddata");
     for (i = 0; i < 9; i++)
       {
@@ -1351,7 +1371,7 @@ test_chunk()
           }
       }
     /* Get chunk lengths */
-    status = SDgetchunkinfo(newsds8, &rchunk_def, &cflags);
+    status = SDgetchunkinfo(newsds7, &rchunk_def, &cflags);
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 7. SDgetchunkinfo failed \n");
@@ -1371,8 +1391,38 @@ test_chunk()
       }
 
     /* Close down this SDS*/    
-    status = SDendaccess(newsds8);
+    status = SDendaccess(newsds7);
     CHECK(status, FAIL, "Chunk Test 7. SDendaccess");
+
+    /*
+     * Added to test getting compression information for chunked SDS - 
+     * bug# 307, 10/10/01 - BMR
+     */
+    /* Select same SDS again, first get index */
+    if ((index = SDnametoindex(fchk,"DataSetChunked_2D_GZIP_1")) == FAIL)
+      {
+          fprintf(stderr, "Chunk Test 7. SDnametoindex  Failed for GZIP compressed data set\n");
+          num_err++;
+          goto test8;
+      }
+
+    if ((newsds7 = SDselect(fchk,index)) == FAIL)
+      {
+          fprintf(stderr, "Chunk Test 7. SDselect Failed to re-select new chunked, GZIP compressed data set\n");
+          num_err++;
+          goto test8;
+      }
+
+    /*
+     * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
+     */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompress(newsds7, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompress");
+    VERIFY(comp_type, chunk_def.comp.comp_type, "SDgetcompress");
+    VERIFY(cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "SDgetcompress");
+    /* end of test for bug#307 */
 
     /* Close down file 'chktst.hdf' */
     status = SDend(fchk);
@@ -1405,7 +1455,6 @@ test_chunk()
 
     for(i = 0; i < 25; i++)
         idata[i] = i*10;
-
     /* Create chunked SDS with NBIT compression.
        chunk is 2x2 which will create 9 chunks.*/
     cdims[0] = chunk_def.nbit.chunk_lengths[0] = 2;
@@ -1490,6 +1539,23 @@ test_chunk()
         num_err++;
         goto done;
       }
+    /*
+     * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
+     */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompress(newsds2, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompress");
+
+    /* Note: the struct nbit in the union HDF_CHUNK_DEF seems like an extra
+	thing since comp_info also has nbit, but the HDF_CHUNK_DEF.nbit was
+	used to set the compression info so it's also used here to verify */ 
+    VERIFY(comp_type, COMP_CODE_NBIT, "SDgetcompress");
+    VERIFY(cinfo.nbit.sign_ext, chunk_def.nbit.sign_ext, "SDgetcompress");
+    VERIFY(cinfo.nbit.fill_one, chunk_def.nbit.fill_one, "SDgetcompress");
+    VERIFY(cinfo.nbit.start_bit, chunk_def.nbit.start_bit, "SDgetcompress");
+    VERIFY(cinfo.nbit.bit_len, chunk_def.nbit.bit_len, "SDgetcompress");
+    /* end of test for bug#307 */
 
     /* end access to SDS */
     status = SDendaccess(newsds2);
@@ -1704,6 +1770,7 @@ test_dimensions()
 
     /* Read the first dimension and verify its information */
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
+    CHECK(status, FAIL, "SDdiminfo");
     VERIFY (strcmp(dim_name, DIM0_NAME), 0, "SDdiminfo");
     VERIFY (size, dims[0], "SDdiminfo");
     VERIFY (dim_data_type, DFNT_UINT8, "SDdiminfo"); /* bug #172 is fixed! */
@@ -1773,6 +1840,7 @@ test_dimensions()
     /* Read the second dimension and verify its information; since the
        scale of this dimension is not set yet, the datatype should be 0 */
     status = SDdiminfo(dim1_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
+    CHECK(status, FAIL, "SDdiminfo");
     VERIFY (strcmp(dim_name, DIM1_NAME), 0, "SDdiminfo");
     VERIFY (size, dims[1], "SDdiminfo");
     VERIFY (dim_data_type, 0, "SDdiminfo");
@@ -1786,6 +1854,7 @@ test_dimensions()
     /* Read the second dimension and verify its information; since the
        scale of this dimension is now set, the datatype should be DFNT_INT16 */
     status = SDdiminfo(dim1_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
+    CHECK(status, FAIL, "SDdiminfo");
     VERIFY (dim_data_type, DFNT_INT16, "SDdiminfo");
 
     /* Terminate access to the array. */
@@ -1872,6 +1941,7 @@ test_dimensions()
 
     /* Read dimension scale values and verify them */
     status = SDgetdimscale (dim0_id, (VOIDP)scale2_out);
+    CHECK(status, FAIL, "SDgetdimscale");
     for(i=0; i < LENGTH2; i++)
 	VERIFY (scale2_out[i], scale2[i], "SDgetdimscale");
 
@@ -1967,8 +2037,8 @@ printf("reading compressed dataset\n");
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
-    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompress");
-    VERIFY(cinfo.skphuff.skp_size, 4, "GRgetcompress");
+    VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompress");
+    VERIFY(cinfo.skphuff.skp_size, 4, "SDgetcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -2372,7 +2442,7 @@ printf("reading compressed dataset\n");
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
-    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompress");
+    VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -2459,7 +2529,7 @@ printf("reading compressed dataset\n");
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
-    VERIFY(comp_type, COMP_CODE_NONE, "GRgetcompress");
+    VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -2547,8 +2617,8 @@ printf("reading compressed dataset\n");
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
-    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompress");
-    VERIFY(cinfo.deflate.level, 6, "GRgetcompress");
+    VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompress");
+    VERIFY(cinfo.deflate.level, 6, "SDgetcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
