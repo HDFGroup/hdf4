@@ -118,4 +118,200 @@ PRIVATE intn    num_anns   = 0;    /* total number of annotations
 
 #endif /* !MFAN_C */
 
+/******************************************************************************
+ NAME
+      ANstart - open file for annotation handling
+
+ DESCRIPTION
+      Start annotation handling on the file return a annotation ID to the file.
+
+ RETURNS
+      A file ID or FAIL.
+*******************************************************************************/
+extern int32 ANstart(int32 file_id /* IN: file to start annotation access on */);
+
+/******************************************************************************
+ NAME
+    ANfileinfo - Report high-level information about the ANxxx interface for a given file.
+
+ DESCRIPTION
+    Reports general information about the number of file and object(i.e. data)
+    annotations in the file. This routine is generally used to find
+    the range of acceptable indices for ANselect calls.
+
+ RETURNS
+    Returns SUCCEED if successful and FAIL othewise
+
+*******************************************************************************/
+extern intn  ANfileinfo(int32 an_id, /* IN:  annotation interface id */
+                        int32 *n_file_label, /* OUT: the # of file labels */
+                        int32 *n_file_desc, /* OUT: the # of file descriptions */
+                        int32 *n_obj_label, /* OUT: the # of object labels */ 
+                        int32 *n_obj_desc /* OUT: the # of object descriptions */);
+
+/******************************************************************************
+ NAME
+     ANend - End annotation access to file file
+
+ DESCRIPTION
+     End annotation access to file.
+
+ RETURNS
+     SUCCEED if successful and  FAIL otherwise.
+*******************************************************************************/
+extern int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
+
+/******************************************************************************
+ NAME
+	ANcreate - create a new element annotation and return a handle(id)
+
+ DESCRIPTION
+        Creates a data annotation, returns an 'an_id' to work with the new 
+        annotation which can either be a label or description.
+        Valid annotation types are AN_DATA_LABEL for data labels and 
+        AN_DATA_DESC for data descriptions.
+
+ RETURNS
+        An ID to an annotation which can either be a label or description.
+*******************************************************************************/
+extern int32 ANcreate(int32 an_id, /* IN: annotation interface ID */
+                      uint16 elem_tag, /* IN: tag of item to be assigned annotation */
+                      uint16 elem_ref, /* IN: reference number of itme to be assigned ann*/
+                      ann_type type /* IN: annotation type */);
+
+
+/******************************************************************************
+ NAME
+	ANcreatef - create a new file annotation and return a handle(id)
+
+ DESCRIPTION
+        Creates a file annotation, returns an 'an_id' to work with the new 
+        file annotation which can either be a label or description.
+        Valid annotation types are AN_FILE_LABEL for file labels and
+        AN_FILE_DESC for file descritpions.
+
+ RETURNS
+        An ID to an annotation which can either be a file label or description
+*******************************************************************************/
+extern int32 ANcreatef(int32 an_id, /* IN: annotation interface ID */
+                       ann_type type /* IN:  annotation type */);
+
+/******************************************************************************
+ NAME
+	ANselect - get an annotation ID from index of 'type'
+
+ DESCRIPTION
+        Get an annotation Id from index of 'type'.
+        The position index is ZERO based
+
+ RETURNS
+        An ID to an annotation type which can either be a label or description 
+*******************************************************************************/
+extern int32 ANselect(int32 an_id, /* IN: annotation interface ID */
+                      int32 index, /* IN: index of annottion to get ID for */
+                      ann_type type /* IN: annotation type */);
+
+/******************************************************************************
+ NAME
+   ANnumann - find number of annotation of 'type' that  match the given element tag/ref 
+
+ DESCRIPTION
+       Find number of annotation of 'type' for the given element 
+       tag/ref pair.
+
+ RETURNS
+       number of annotation found if successful and FAIL (-1) otherwise
+
+*******************************************************************************/
+extern intn  ANnumann(int32 an_id, /* IN: annotation interface id */
+                      ann_type type, /* IN: annotation type */
+                      uint16 elem_tag, /* IN: tag of item of which this is annotation */
+                      uint16 elem_ref /* IN: ref of item of which this is annotation*/);
+
+/******************************************************************************
+ NAME
+   ANannlist - generate list of annotation ids of 'type' that match the given element tag/ref 
+
+ DESCRIPTION
+       Find and generate list of annotation ids of 'type' for the given 
+       element tag/ref pair.
+
+ RETURNS
+       number of annotations ids found if successful and FAIL (-1) otherwise
+
+*******************************************************************************/
+extern intn  ANannlist(int32 an_id, /* IN: annotation interface id */
+                       ann_type type, /* IN: annotation type */
+                       uint16 elem_tag, /* IN: tag of item of which this is annotation */
+                       uint16 elem_ref, /* IN: ref of item of which this is annotation*/
+                       int32 ann_list[] /* OUT: array of ann_id's that match criteria.*/);
+
+/******************************************************************************
+ NAME
+       ANannlen - get length of annotation givne annotation id
+
+ DESCRIPTION
+       Uses the annotation id to find ann_key & file_id
+
+ RETURNS
+       length of annotation if successful and FAIL (-1) otherwise
+
+*******************************************************************************/
+extern int32 ANannlen(int32 ann_id /* IN: annotation id */);
+
+/******************************************************************************
+ NAME
+       ANwriteann - write annotation given ann_id
+
+ DESCRIPTION
+       Checks for pre-existence of given annotation, replacing old one if it
+       exists. Writes out annotation.
+
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+
+*******************************************************************************/
+extern int32 ANwriteann(int32 ann_id, /* IN: annotation id */
+                        char *ann, /* IN: annotation to write */
+                        int32 annlen /* IN: length of annotation*/);
+
+/******************************************************************************
+ NAME
+       ANreadann - read annotation given ann_id
+
+ DESCRIPTION
+       Gets tag and ref of annotation.  Finds DD for that annotation.
+       Reads the annotation, taking care of NULL terminator, if necessary.
+
+ RETURNS
+       SUCCEED (0) if successful and FAIL (-1) otherwise
+
+*******************************************************************************/
+extern int32 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
+                       char *ann, /* OUT: space to return annotation in */
+                       int32 maxlen /* IN: size of space to return annotation in */);
+
+/******************************************************************************
+ NAME
+	ANendaccess - end access to an annotation given it's id
+
+ DESCRIPTION
+        Terminates access to an annotation. For now does nothing
+
+ RETURNS
+        SUCCEED or FAIL
+*******************************************************************************/
+extern intn  ANendaccess(int32 ann_id /* IN: annotation id */);
+
+extern int32 ANget_tagref(int32 an_id, int32 index, ann_type type,
+                          uint16 *ann_tag, uint16 *ann_ref);
+
+extern int32 ANid2tagref(int32 an_id, uint16 *ann_tag, uint16 *ann_ref);
+
+extern uint16 atype2tag(ann_type atype);
+
+extern ann_type tag2atype(uint16 atag);
+
+extern int32 ANdestroy(void);
+
 #endif /* _MFAN_H */
