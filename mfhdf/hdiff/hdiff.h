@@ -13,7 +13,6 @@
 
 #include "hdf.h"
 #include "mfhdf.h"
-#include "dumplib.h"
 #include "hdiff_table.h"
 
 #define  Printf  (void) printf

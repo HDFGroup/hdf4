@@ -11,7 +11,6 @@
 #include "vg.h"
 
 #include "hdiff.h"
-#include "dumplib.h"
 
 
 int
@@ -45,7 +44,7 @@ gattr_diff(int32 sdid1,
   att1.val = (void *) malloc((unsigned) (att1.len*DFKNTsize(att1.type | DFNT_NATIVE)));
   if (!att1.val) 
   {
-   error("Out of memory!");
+   fprintf(stderr,"Out of memory!\n");
    SDend(sdid1);
    SDend(sdid2);
    exit(0);
@@ -53,7 +52,7 @@ gattr_diff(int32 sdid1,
   att2.val = (void *) malloc((unsigned) (att2.len*DFKNTsize(att2.type | DFNT_NATIVE)));
   if (!att2.val) 
   {
-   error("Out of memory!");
+   fprintf(stderr,"Out of memory!\n");
    SDend(sdid1);
    SDend(sdid2);
    exit(0);

@@ -10,7 +10,7 @@
 #include "mfhdf.h"
 
 #include "hdiff.h"
-#include "dumplib.h"
+
 /* 
 * convert pathname of netcdf file into name for cdl unit, by taking 
 * last component of path and stripping off any extension.
@@ -36,7 +36,7 @@ name_path(char *path)
   cp++;
  newc = (char *) malloc((unsigned) (strlen(cp)+1));
  if (newc == 0) {
-  error("out of memory!");
+  fprintf(stderr,"Out of memory!\n");
   exit(EXIT_FAILURE);
  }
  (void) strcpy(newc, cp); /* copy last component of path */
@@ -63,7 +63,7 @@ type_name(nc_type type)
  case DFNT_DOUBLE:
   return "double";
  default:
-  error("type_name: bad type %d", type);
+  fprintf(stderr,"type_name: bad type %d", type);
   return "bogus";
  }
 }
@@ -203,7 +203,7 @@ pr_att_vals(nc_type type, int len, void *vals)
   }
   break;
  default:
-  error("pr_att_vals: bad type - %d", type);
+  fprintf(stderr,"pr_att_vals: bad type - %d", type);
  }
 }
 
@@ -230,7 +230,7 @@ make_vars(char *optarg, diff_opt_t *opt, int option)
   {
    opt->lvars = (char **) malloc(nvars * sizeof(char*));
    if (!opt->lvars) {
-    error("out of memory");
+    fprintf(stderr,"Out of memory!\n");
     exit(EXIT_FAILURE);
    }
    cpp = opt->lvars;
@@ -239,7 +239,7 @@ make_vars(char *optarg, diff_opt_t *opt, int option)
   {
    opt->uvars = (char **) malloc(nvars * sizeof(char*));
    if (!opt->uvars) {
-    error("out of memory");
+    fprintf(stderr,"Out of memory!\n");
     exit(EXIT_FAILURE);
    }
    cpp = opt->uvars;
@@ -252,7 +252,7 @@ make_vars(char *optarg, diff_opt_t *opt, int option)
    
    *cpp = (char *) malloc(strlen(cp) + 1);
    if (!*cpp) {
-    error("out of memory");
+    fprintf(stderr,"Out of memory!\n");
     exit(EXIT_FAILURE);
    }
    strcpy(*cpp, cp);
@@ -263,40 +263,4 @@ make_vars(char *optarg, diff_opt_t *opt, int option)
   else
    opt->nuvars = nvars;
 }
-
-
-/*
-* Extract the significant-digits specifiers from the -d argument on the
-* command-line and update the default data formats appropriately.
-*/
-void
-set_sigdigs(char *optarg)
-{
- char *ptr = optarg;
- char *ptr2 = 0;
- int32 flt_digits = 7; /* default floating-point digits */
- int32 dbl_digits = 15; /* default double-precision digits */
- char flt_fmt[6];
- char dbl_fmt[6];
- 
- if (optarg != 0 && strlen(optarg) > 0 && optarg[0] != ',')
-  flt_digits=strtol(optarg, &ptr, 10);
- 
- if (flt_digits < 1 || flt_digits > 10) {
-  error("unreasonable value for float significant digits: %d",
-   flt_digits);
-  exit(EXIT_FAILURE);
- }
- if (*ptr == ',')
-  dbl_digits = strtol(ptr+1, &ptr2, 10);
- if (ptr2 == ptr+1 || dbl_digits < 1 || dbl_digits > 20) {
-  error("unreasonable value for double significant digits: %d",
-   dbl_digits);
-  exit(EXIT_FAILURE);
- }
- (void) sprintf(flt_fmt, "%%.%dg", flt_digits);
- (void) sprintf(dbl_fmt, "%%.%dg", dbl_digits);
- set_formats(flt_fmt, dbl_fmt);
-}
-
 

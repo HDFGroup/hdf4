@@ -57,7 +57,7 @@ CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
-CYGPATH_W = @CYGPATH_W@
+cygPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DIFF = @DIFF@
@@ -157,7 +157,7 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 #############################################################################
 bin_PROGRAMS = hdiff
 
-hdiff_SOURCES = dumplib.c hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c     \
+hdiff_SOURCES = hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c     \
                 hdiff_main.c hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c      \
                 hdiff_sds.c hdiff_table.c hdiff_vs.c
 
@@ -183,7 +183,7 @@ bin_PROGRAMS = hdiff$(EXEEXT)
 noinst_PROGRAMS = hdifftst$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
-am_hdiff_OBJECTS = dumplib.$(OBJEXT) hdiff.$(OBJEXT) \
+am_hdiff_OBJECTS =  hdiff.$(OBJEXT) \
 	hdiff_array.$(OBJEXT) hdiff_gr.$(OBJEXT) hdiff_list.$(OBJEXT) \
 	hdiff_main.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
 	hdiff_gattr.$(OBJEXT) hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) \
@@ -197,7 +197,7 @@ hdifftst_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/dumplib.Po ./$(DEPDIR)/hdiff.Po \
+@AMDEP_TRUE@DEP_FILES =  ./$(DEPDIR)/hdiff.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_array.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_gattr.Po ./$(DEPDIR)/hdiff_gr.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_list.Po ./$(DEPDIR)/hdiff_main.Po \
@@ -262,7 +262,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dumplib.Po@am__quote@
+
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_array.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gattr.Po@am__quote@

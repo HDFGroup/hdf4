@@ -8,7 +8,7 @@
 #include "mfhdf.h"
 
 #include "hdiff.h"
-#include "dumplib.h"
+
 
 char *progname;
 

@@ -328,7 +328,6 @@ int diff( char *fname1,
 
   case DFTAG_VG: 
    break;
-
    
   case DFTAG_RI:  /* Raster Image */
   case DFTAG_CI:  /* Compressed Image */

@@ -178,7 +178,7 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
                        hrepack_vs.c test_hrepack_add.c test_hrepack_main.c  \
-                       test_hrepack_verify.c ../hdiff/dumplib.c             \
+                       test_hrepack_verify.c                                \
                        ../hdiff/hdiff.c ../hdiff/hdiff_array.c              \
                        ../hdiff/hdiff_gattr.c ../hdiff/hdiff_gr.c           \
                        ../hdiff/hdiff_list.c ../hdiff/hdiff_mattbl.c        \
@@ -226,7 +226,7 @@ am_test_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hrepack_sdutil.$(OBJEXT) hrepack_utils.$(OBJEXT) \
 	hrepack_vg.$(OBJEXT) hrepack_vs.$(OBJEXT) \
 	test_hrepack_add.$(OBJEXT) test_hrepack_main.$(OBJEXT) \
-	test_hrepack_verify.$(OBJEXT) dumplib.$(OBJEXT) hdiff.$(OBJEXT) \
+	test_hrepack_verify.$(OBJEXT)  hdiff.$(OBJEXT) \
 	hdiff_array.$(OBJEXT) hdiff_gattr.$(OBJEXT) hdiff_gr.$(OBJEXT) \
 	hdiff_list.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
 	hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) hdiff_table.$(OBJEXT) \
@@ -237,7 +237,7 @@ test_hrepack_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/dumplib.Po ./$(DEPDIR)/hdiff.Po \
+@AMDEP_TRUE@DEP_FILES =  ./$(DEPDIR)/hdiff.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_array.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_gattr.Po ./$(DEPDIR)/hdiff_gr.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/hdiff_list.Po \
@@ -322,7 +322,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dumplib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_array.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gattr.Po@am__quote@
@@ -375,27 +374,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
-dumplib.o: ../hdiff/dumplib.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dumplib.o -MD -MP -MF "$(DEPDIR)/dumplib.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o dumplib.o `test -f '../hdiff/dumplib.c' || echo '$(srcdir)/'`../hdiff/dumplib.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/dumplib.Tpo" "$(DEPDIR)/dumplib.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/dumplib.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/dumplib.c' object='dumplib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/dumplib.Po' tmpdepfile='$(DEPDIR)/dumplib.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dumplib.o `test -f '../hdiff/dumplib.c' || echo '$(srcdir)/'`../hdiff/dumplib.c
 
-dumplib.obj: ../hdiff/dumplib.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dumplib.obj -MD -MP -MF "$(DEPDIR)/dumplib.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o dumplib.obj `if test -f '../hdiff/dumplib.c'; then $(CYGPATH_W) '../hdiff/dumplib.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/dumplib.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/dumplib.Tpo" "$(DEPDIR)/dumplib.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/dumplib.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/dumplib.c' object='dumplib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/dumplib.Po' tmpdepfile='$(DEPDIR)/dumplib.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dumplib.obj `if test -f '../hdiff/dumplib.c'; then $(CYGPATH_W) '../hdiff/dumplib.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/dumplib.c'; fi`
 
 hdiff.o: ../hdiff/hdiff.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff.o -MD -MP -MF "$(DEPDIR)/hdiff.Tpo" \

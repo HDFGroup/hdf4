@@ -829,8 +829,6 @@
 
 ./mfhdf/hdiff/Makefile.am
 ./mfhdf/hdiff/Makefile.in
-./mfhdf/hdiff/dumplib.c
-./mfhdf/hdiff/dumplib.h
 ./mfhdf/hdiff/hdiff.c
 ./mfhdf/hdiff/hdiff.h
 ./mfhdf/hdiff/hdiff_array.c

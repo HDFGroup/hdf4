@@ -40,7 +40,6 @@ int diff_sds(char  *fname1,
              int32 ref2,
              diff_opt_t * opt)
 {
- intn  status_n;               /* returned status_n for functions returning an intn  */
  int32 sd1_id,                 /* SD identifier */
        sds1_id,                /* data set identifier */
        sds1_index,             /* index number of the data set */
@@ -69,9 +68,7 @@ int diff_sds(char  *fname1,
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
  int32 max_err_cnt;
- int    i, k;
- vnode* vlist = newvlist();  /* list for vars specified with -v option */
- int32  varid1;
+ int   i;
 
 /*-------------------------------------------------------------------------
  * object 1
@@ -117,20 +114,23 @@ int diff_sds(char  *fname1,
  * check for input SDs
  *-------------------------------------------------------------------------
  */
-
-/*
- * If any vars were specified with -v option, get list of associated
- * variable ids
- */
- for (k=0; k < opt->nlvars; k++) 
- {
-  varid1 = SDnametoindex(sd1_id, opt->lvars[k]);
-  varadd(vlist, varid1);
- }
  
- /* if var list specified, test for membership */
- if (opt->nlvars > 0 && ! varmember(vlist, sds1_index))
-  goto out;
+ if (opt->nlvars > 0)   /* if specified vdata is selected */
+ {
+  int imatch = 0, j;
+  for (j = 0; j < opt->nlvars; j++)
+  {
+   if (strcmp(sds1_name, opt->lvars[j]) == 0)
+   {
+    imatch = 1;
+    break;
+   }
+  }
+  if (imatch == 0)
+  {
+   goto out;
+  }
+ }  
 
 /*-------------------------------------------------------------------------
  * check for different type
@@ -282,10 +282,14 @@ int diff_sds(char  *fname1,
  */
 
 out:
- status_n = SDendaccess(sds1_id);
- status_n = SDend(sd1_id);
- status_n = SDendaccess(sds2_id);
- status_n = SDend(sd2_id);
+ if (SDendaccess(sds1_id)<0)
+  fprintf(stderr,"SDendaccess FAIL\n");
+ if (SDend(sd1_id)<0)
+  fprintf(stderr,"SDend FAIL\n");
+ if (SDendaccess(sds2_id)<0)
+  fprintf(stderr,"SDendaccess FAIL\n");
+ if (SDend(sd2_id)<0)
+  fprintf(stderr,"SDend FAIL\n");
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 
