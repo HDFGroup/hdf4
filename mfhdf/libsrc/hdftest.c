@@ -1,3 +1,21 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+
+/* $Id$ */
+
 #define CHECK(status, name) {if(status == FAIL) { printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_err++;}}
 
 #include "mfhdf.h"
@@ -314,23 +332,23 @@ char *argv[];
     CHECK(status, "SDreaddata");
 
     if(data[0] != -17.5) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 0\n");
         num_err++;
     }
     if(data[3] != -17.5) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 3\n");
         num_err++;
     }
     if(data[5] != 1.0) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 5\n");
         num_err++;
     }
     if(data[6] != -17.5) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 6\n");
         num_err++;
     }
     if(data[8] != 4.0) {
-        fprintf(stderr, "Wrong value returned\n");
+        fprintf(stderr, "Wrong value returned loc 8\n");
         num_err++;
     }
 
