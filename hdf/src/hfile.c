@@ -4286,6 +4286,8 @@ char *base_name(char *path_name, char seperator)
  *         base_name(path_name(target,':'),'/');
  *      since the memory will be leaked. It would work
  *      better if there was a nice garbage collector:-)...
+ *
+ * Modified for Macintosh as suggested by Fortner 8/26/97
  */
 char *
 path_name(char *path_name, char seperator)
@@ -4302,13 +4304,16 @@ path_name(char *path_name, char seperator)
   if ((path_len = sptr - path_name) == 0)
     return(mk_compound_str(1,seperator));
 
-  /* Allocate space for directory path and copy path over */
-  if ((dptr = (char *)HDmalloc((path_len+1)*sizeof(char))) == NULL)
+  /* Allocate space for directory path and copy path over. 
+     pathlen + 1(for ':') + 1(for NULL). 
+     Note Macintosh specific now. */
+  if ((dptr = (char *)HDmalloc((path_len+2)*sizeof(char))) == NULL)
     return(NULL);
   else
     {
       HDstrncpy(dptr, path_name, path_len);
-      dptr[path_len] = '\0';
+      dptr[path_len] = ':';  /* for macintosh */
+      dptr[path_len + 1] = '\0';
       return(dptr) ;
     }
 } /* path_name */

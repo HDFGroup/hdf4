@@ -246,6 +246,11 @@ hopendir(char *dirname, short vRefNum, long dirID)
 		
           if (dd_errno = PBHSetVol(&pb, false))
               goto failure_exit;
+          else /* Fortner supplied fix 8/26/97 */
+            {  /* make vRefNum and dirId valid */
+                vRefNum = pb.ioVRefNum;
+                dirId = pb.ioWDDirID;
+            }
       }
 
 	cur->dd_buf	= nil;
