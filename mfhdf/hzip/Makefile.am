@@ -1,17 +1,31 @@
-bin_PROGRAMS = hzip
+#############################################################################
+##                      Setup for building programs                        ##
+#############################################################################
 
-INCLUDES=-I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
-         -I${top_srcdir}/mfhdf/hdiff    \
+## Setup the different includes and preprocessor #defines we need.
+INCLUDES=-I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/hdiff    \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 DEFINES=-DNDEBUG -DHDF
+CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
+
+#############################################################################
+##                          Programs to build                              ##
+#############################################################################
+
+bin_PROGRAMS = hzip
 
 hzip_SOURCES = copy.c hdfzip.c hdfzip_main.c list.c parse.c table.c
-hzip_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hzip_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hzip_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hzip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hzip_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+#############################################################################
+##                   Testing -- Here there be dragons.                     ##
+#############################################################################
+
+TESTS = hziptst
 check_PROGRAMS = hziptst
 
 hziptst_SOURCES = add.c copy.c hdfzip.c hdfziptst_main.c list.c parse.c     \
@@ -19,16 +33,14 @@ hziptst_SOURCES = add.c copy.c hdfzip.c hdfziptst_main.c list.c parse.c     \
                   ../hdiff/hdiff_gattr.c ../hdiff/hdiff_grdata.c            \
                   ../hdiff/hdiff_misc.c ../hdiff/hdiff_sdattr.c             \
                   ../hdiff/hdiff_sddata.c ../hdiff/hdiff_vdata.c
-hziptst_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hziptst_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hziptst_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hziptst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hziptst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 noinst_PROGRAMS = hzipck
 
 hzipck_SOURCES = hdfzipck.c
-hzipck_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hzipck_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hzipck_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hzipck_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hzipck_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hziptst hzip
-	sh ${srcdir}/testhzip.sh
+	srcdir="$(srcdir)" $(srcdir)/testhzip.sh

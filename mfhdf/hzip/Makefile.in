@@ -14,6 +14,9 @@
 
 @SET_MAKE@
 
+#############################################################################
+#############################################################################
+
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
@@ -49,7 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@ $(INCLUDES) $(DEFINES)
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -135,21 +138,28 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-bin_PROGRAMS = hzip
 
-INCLUDES = -I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
-         -I${top_srcdir}/mfhdf/hdiff    \
+INCLUDES = -I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/hdiff    \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF
 
-hzip_SOURCES = copy.c hdfzip.c hdfzip_main.c list.c parse.c table.c
-hzip_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hzip_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hzip_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+#############################################################################
+#############################################################################
+bin_PROGRAMS = hzip
+
+hzip_SOURCES = copy.c hdfzip.c hdfzip_main.c list.c parse.c table.c
+hzip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hzip_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+
+#############################################################################
+#############################################################################
+TESTS = hziptst
 check_PROGRAMS = hziptst
 
 hziptst_SOURCES = add.c copy.c hdfzip.c hdfziptst_main.c list.c parse.c     \
@@ -158,16 +168,14 @@ hziptst_SOURCES = add.c copy.c hdfzip.c hdfziptst_main.c list.c parse.c     \
                   ../hdiff/hdiff_misc.c ../hdiff/hdiff_sdattr.c             \
                   ../hdiff/hdiff_sddata.c ../hdiff/hdiff_vdata.c
 
-hziptst_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hziptst_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hziptst_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hziptst_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hziptst_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 noinst_PROGRAMS = hzipck
 
 hzipck_SOURCES = hdfzipck.c
-hzipck_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hzipck_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hzipck_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hzipck_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
+hzipck_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 subdir = mfhdf/hzip
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -177,55 +185,42 @@ check_PROGRAMS = hziptst$(EXEEXT)
 noinst_PROGRAMS = hzipck$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 
-am_hzip_OBJECTS = hzip-copy.$(OBJEXT) hzip-hdfzip.$(OBJEXT) \
-	hzip-hdfzip_main.$(OBJEXT) hzip-list.$(OBJEXT) \
-	hzip-parse.$(OBJEXT) hzip-table.$(OBJEXT)
+am_hzip_OBJECTS = copy.$(OBJEXT) hdfzip.$(OBJEXT) hdfzip_main.$(OBJEXT) \
+	list.$(OBJEXT) parse.$(OBJEXT) table.$(OBJEXT)
 hzip_OBJECTS = $(am_hzip_OBJECTS)
-hzip_DEPENDENCIES = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a
+hzip_DEPENDENCIES = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hzip_LDFLAGS =
-am_hzipck_OBJECTS = hzipck-hdfzipck.$(OBJEXT)
+am_hzipck_OBJECTS = hdfzipck.$(OBJEXT)
 hzipck_OBJECTS = $(am_hzipck_OBJECTS)
 hzipck_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	${top_builddir}/hdf/src/libdf.a
+	$(top_builddir)/hdf/src/libdf.a
 hzipck_LDFLAGS =
-am_hziptst_OBJECTS = hziptst-add.$(OBJEXT) hziptst-copy.$(OBJEXT) \
-	hziptst-hdfzip.$(OBJEXT) hziptst-hdfziptst_main.$(OBJEXT) \
-	hziptst-list.$(OBJEXT) hziptst-parse.$(OBJEXT) \
-	hziptst-table.$(OBJEXT) hziptst-verify.$(OBJEXT) \
-	hziptst-dumplib.$(OBJEXT) hziptst-hdiff.$(OBJEXT) \
-	hziptst-hdiff_gattr.$(OBJEXT) hziptst-hdiff_grdata.$(OBJEXT) \
-	hziptst-hdiff_misc.$(OBJEXT) hziptst-hdiff_sdattr.$(OBJEXT) \
-	hziptst-hdiff_sddata.$(OBJEXT) hziptst-hdiff_vdata.$(OBJEXT)
+am_hziptst_OBJECTS = add.$(OBJEXT) copy.$(OBJEXT) hdfzip.$(OBJEXT) \
+	hdfziptst_main.$(OBJEXT) list.$(OBJEXT) parse.$(OBJEXT) \
+	table.$(OBJEXT) verify.$(OBJEXT) dumplib.$(OBJEXT) \
+	hdiff.$(OBJEXT) hdiff_gattr.$(OBJEXT) hdiff_grdata.$(OBJEXT) \
+	hdiff_misc.$(OBJEXT) hdiff_sdattr.$(OBJEXT) \
+	hdiff_sddata.$(OBJEXT) hdiff_vdata.$(OBJEXT)
 hziptst_OBJECTS = $(am_hziptst_OBJECTS)
 hziptst_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	${top_builddir}/hdf/src/libdf.a
+	$(top_builddir)/hdf/src/libdf.a
 hziptst_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hzip-copy.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hzip-hdfzip.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hzip-hdfzip_main.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hzip-list.Po ./$(DEPDIR)/hzip-parse.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hzip-table.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hzipck-hdfzipck.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-add.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-copy.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-dumplib.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdfzip.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdfziptst_main.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff_gattr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff_grdata.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff_misc.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff_sdattr.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff_sddata.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-hdiff_vdata.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-list.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-parse.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-table.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hziptst-verify.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/add.Po ./$(DEPDIR)/copy.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/dumplib.Po ./$(DEPDIR)/hdfzip.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdfzip_main.Po ./$(DEPDIR)/hdfzipck.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdfziptst_main.Po ./$(DEPDIR)/hdiff.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_gattr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_grdata.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_misc.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_sdattr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_sddata.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdiff_vdata.Po ./$(DEPDIR)/list.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/parse.Po ./$(DEPDIR)/table.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/verify.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -289,29 +284,24 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-copy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-hdfzip.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-hdfzip_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-list.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-parse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzip-table.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hzipck-hdfzipck.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-add.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-copy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-dumplib.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdfzip.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdfziptst_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff_gattr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff_grdata.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff_misc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff_sdattr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff_sddata.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-hdiff_vdata.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-list.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-parse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-table.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hziptst-verify.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/add.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/copy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dumplib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfzip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfzip_main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfzipck.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfziptst_main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gattr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_grdata.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_sdattr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_sddata.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_vdata.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/list.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/table.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/verify.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -338,511 +328,181 @@ distclean-depend:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
 
-hzip-copy.o: copy.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-copy.o -MD -MP -MF "$(DEPDIR)/hzip-copy.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-copy.o `test -f 'copy.c' || echo '$(srcdir)/'`copy.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-copy.Tpo" "$(DEPDIR)/hzip-copy.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-copy.Tpo"; exit 1; \
+dumplib.o: ../hdiff/dumplib.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dumplib.o -MD -MP -MF "$(DEPDIR)/dumplib.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o dumplib.o `test -f '../hdiff/dumplib.c' || echo '$(srcdir)/'`../hdiff/dumplib.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/dumplib.Tpo" "$(DEPDIR)/dumplib.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/dumplib.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='copy.c' object='hzip-copy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-copy.Po' tmpdepfile='$(DEPDIR)/hzip-copy.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/dumplib.c' object='dumplib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/dumplib.Po' tmpdepfile='$(DEPDIR)/dumplib.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-copy.o `test -f 'copy.c' || echo '$(srcdir)/'`copy.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dumplib.o `test -f '../hdiff/dumplib.c' || echo '$(srcdir)/'`../hdiff/dumplib.c
 
-hzip-copy.obj: copy.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-copy.obj -MD -MP -MF "$(DEPDIR)/hzip-copy.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-copy.obj `if test -f 'copy.c'; then $(CYGPATH_W) 'copy.c'; else $(CYGPATH_W) '$(srcdir)/copy.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-copy.Tpo" "$(DEPDIR)/hzip-copy.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-copy.Tpo"; exit 1; \
+dumplib.obj: ../hdiff/dumplib.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dumplib.obj -MD -MP -MF "$(DEPDIR)/dumplib.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o dumplib.obj `if test -f '../hdiff/dumplib.c'; then $(CYGPATH_W) '../hdiff/dumplib.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/dumplib.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/dumplib.Tpo" "$(DEPDIR)/dumplib.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/dumplib.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='copy.c' object='hzip-copy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-copy.Po' tmpdepfile='$(DEPDIR)/hzip-copy.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/dumplib.c' object='dumplib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/dumplib.Po' tmpdepfile='$(DEPDIR)/dumplib.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-copy.obj `if test -f 'copy.c'; then $(CYGPATH_W) 'copy.c'; else $(CYGPATH_W) '$(srcdir)/copy.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dumplib.obj `if test -f '../hdiff/dumplib.c'; then $(CYGPATH_W) '../hdiff/dumplib.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/dumplib.c'; fi`
 
-hzip-hdfzip.o: hdfzip.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-hdfzip.o -MD -MP -MF "$(DEPDIR)/hzip-hdfzip.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-hdfzip.o `test -f 'hdfzip.c' || echo '$(srcdir)/'`hdfzip.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-hdfzip.Tpo" "$(DEPDIR)/hzip-hdfzip.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-hdfzip.Tpo"; exit 1; \
+hdiff.o: ../hdiff/hdiff.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff.o -MD -MP -MF "$(DEPDIR)/hdiff.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff.o `test -f '../hdiff/hdiff.c' || echo '$(srcdir)/'`../hdiff/hdiff.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff.Tpo" "$(DEPDIR)/hdiff.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzip.c' object='hzip-hdfzip.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-hdfzip.Po' tmpdepfile='$(DEPDIR)/hzip-hdfzip.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff.c' object='hdiff.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff.Po' tmpdepfile='$(DEPDIR)/hdiff.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-hdfzip.o `test -f 'hdfzip.c' || echo '$(srcdir)/'`hdfzip.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff.o `test -f '../hdiff/hdiff.c' || echo '$(srcdir)/'`../hdiff/hdiff.c
 
-hzip-hdfzip.obj: hdfzip.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-hdfzip.obj -MD -MP -MF "$(DEPDIR)/hzip-hdfzip.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-hdfzip.obj `if test -f 'hdfzip.c'; then $(CYGPATH_W) 'hdfzip.c'; else $(CYGPATH_W) '$(srcdir)/hdfzip.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-hdfzip.Tpo" "$(DEPDIR)/hzip-hdfzip.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-hdfzip.Tpo"; exit 1; \
+hdiff.obj: ../hdiff/hdiff.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff.obj -MD -MP -MF "$(DEPDIR)/hdiff.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff.obj `if test -f '../hdiff/hdiff.c'; then $(CYGPATH_W) '../hdiff/hdiff.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff.Tpo" "$(DEPDIR)/hdiff.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzip.c' object='hzip-hdfzip.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-hdfzip.Po' tmpdepfile='$(DEPDIR)/hzip-hdfzip.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff.c' object='hdiff.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff.Po' tmpdepfile='$(DEPDIR)/hdiff.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-hdfzip.obj `if test -f 'hdfzip.c'; then $(CYGPATH_W) 'hdfzip.c'; else $(CYGPATH_W) '$(srcdir)/hdfzip.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff.obj `if test -f '../hdiff/hdiff.c'; then $(CYGPATH_W) '../hdiff/hdiff.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff.c'; fi`
 
-hzip-hdfzip_main.o: hdfzip_main.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-hdfzip_main.o -MD -MP -MF "$(DEPDIR)/hzip-hdfzip_main.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-hdfzip_main.o `test -f 'hdfzip_main.c' || echo '$(srcdir)/'`hdfzip_main.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-hdfzip_main.Tpo" "$(DEPDIR)/hzip-hdfzip_main.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-hdfzip_main.Tpo"; exit 1; \
+hdiff_gattr.o: ../hdiff/hdiff_gattr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_gattr.o -MD -MP -MF "$(DEPDIR)/hdiff_gattr.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_gattr.o `test -f '../hdiff/hdiff_gattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_gattr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_gattr.Tpo" "$(DEPDIR)/hdiff_gattr.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_gattr.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzip_main.c' object='hzip-hdfzip_main.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-hdfzip_main.Po' tmpdepfile='$(DEPDIR)/hzip-hdfzip_main.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_gattr.c' object='hdiff_gattr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_gattr.Po' tmpdepfile='$(DEPDIR)/hdiff_gattr.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-hdfzip_main.o `test -f 'hdfzip_main.c' || echo '$(srcdir)/'`hdfzip_main.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_gattr.o `test -f '../hdiff/hdiff_gattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_gattr.c
 
-hzip-hdfzip_main.obj: hdfzip_main.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-hdfzip_main.obj -MD -MP -MF "$(DEPDIR)/hzip-hdfzip_main.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-hdfzip_main.obj `if test -f 'hdfzip_main.c'; then $(CYGPATH_W) 'hdfzip_main.c'; else $(CYGPATH_W) '$(srcdir)/hdfzip_main.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-hdfzip_main.Tpo" "$(DEPDIR)/hzip-hdfzip_main.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-hdfzip_main.Tpo"; exit 1; \
+hdiff_gattr.obj: ../hdiff/hdiff_gattr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_gattr.obj -MD -MP -MF "$(DEPDIR)/hdiff_gattr.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_gattr.obj `if test -f '../hdiff/hdiff_gattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_gattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_gattr.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_gattr.Tpo" "$(DEPDIR)/hdiff_gattr.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_gattr.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzip_main.c' object='hzip-hdfzip_main.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-hdfzip_main.Po' tmpdepfile='$(DEPDIR)/hzip-hdfzip_main.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_gattr.c' object='hdiff_gattr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_gattr.Po' tmpdepfile='$(DEPDIR)/hdiff_gattr.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-hdfzip_main.obj `if test -f 'hdfzip_main.c'; then $(CYGPATH_W) 'hdfzip_main.c'; else $(CYGPATH_W) '$(srcdir)/hdfzip_main.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_gattr.obj `if test -f '../hdiff/hdiff_gattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_gattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_gattr.c'; fi`
 
-hzip-list.o: list.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-list.o -MD -MP -MF "$(DEPDIR)/hzip-list.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-list.o `test -f 'list.c' || echo '$(srcdir)/'`list.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-list.Tpo" "$(DEPDIR)/hzip-list.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-list.Tpo"; exit 1; \
+hdiff_grdata.o: ../hdiff/hdiff_grdata.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_grdata.o -MD -MP -MF "$(DEPDIR)/hdiff_grdata.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_grdata.o `test -f '../hdiff/hdiff_grdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_grdata.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_grdata.Tpo" "$(DEPDIR)/hdiff_grdata.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_grdata.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='list.c' object='hzip-list.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-list.Po' tmpdepfile='$(DEPDIR)/hzip-list.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_grdata.c' object='hdiff_grdata.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_grdata.Po' tmpdepfile='$(DEPDIR)/hdiff_grdata.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-list.o `test -f 'list.c' || echo '$(srcdir)/'`list.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_grdata.o `test -f '../hdiff/hdiff_grdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_grdata.c
 
-hzip-list.obj: list.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-list.obj -MD -MP -MF "$(DEPDIR)/hzip-list.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-list.obj `if test -f 'list.c'; then $(CYGPATH_W) 'list.c'; else $(CYGPATH_W) '$(srcdir)/list.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-list.Tpo" "$(DEPDIR)/hzip-list.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-list.Tpo"; exit 1; \
+hdiff_grdata.obj: ../hdiff/hdiff_grdata.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_grdata.obj -MD -MP -MF "$(DEPDIR)/hdiff_grdata.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_grdata.obj `if test -f '../hdiff/hdiff_grdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_grdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_grdata.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_grdata.Tpo" "$(DEPDIR)/hdiff_grdata.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_grdata.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='list.c' object='hzip-list.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-list.Po' tmpdepfile='$(DEPDIR)/hzip-list.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_grdata.c' object='hdiff_grdata.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_grdata.Po' tmpdepfile='$(DEPDIR)/hdiff_grdata.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-list.obj `if test -f 'list.c'; then $(CYGPATH_W) 'list.c'; else $(CYGPATH_W) '$(srcdir)/list.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_grdata.obj `if test -f '../hdiff/hdiff_grdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_grdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_grdata.c'; fi`
 
-hzip-parse.o: parse.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-parse.o -MD -MP -MF "$(DEPDIR)/hzip-parse.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-parse.o `test -f 'parse.c' || echo '$(srcdir)/'`parse.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-parse.Tpo" "$(DEPDIR)/hzip-parse.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-parse.Tpo"; exit 1; \
+hdiff_misc.o: ../hdiff/hdiff_misc.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_misc.o -MD -MP -MF "$(DEPDIR)/hdiff_misc.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_misc.o `test -f '../hdiff/hdiff_misc.c' || echo '$(srcdir)/'`../hdiff/hdiff_misc.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_misc.Tpo" "$(DEPDIR)/hdiff_misc.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_misc.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='hzip-parse.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-parse.Po' tmpdepfile='$(DEPDIR)/hzip-parse.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_misc.c' object='hdiff_misc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_misc.Po' tmpdepfile='$(DEPDIR)/hdiff_misc.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-parse.o `test -f 'parse.c' || echo '$(srcdir)/'`parse.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_misc.o `test -f '../hdiff/hdiff_misc.c' || echo '$(srcdir)/'`../hdiff/hdiff_misc.c
 
-hzip-parse.obj: parse.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-parse.obj -MD -MP -MF "$(DEPDIR)/hzip-parse.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-parse.obj `if test -f 'parse.c'; then $(CYGPATH_W) 'parse.c'; else $(CYGPATH_W) '$(srcdir)/parse.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-parse.Tpo" "$(DEPDIR)/hzip-parse.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-parse.Tpo"; exit 1; \
+hdiff_misc.obj: ../hdiff/hdiff_misc.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_misc.obj -MD -MP -MF "$(DEPDIR)/hdiff_misc.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_misc.obj `if test -f '../hdiff/hdiff_misc.c'; then $(CYGPATH_W) '../hdiff/hdiff_misc.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_misc.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_misc.Tpo" "$(DEPDIR)/hdiff_misc.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_misc.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='hzip-parse.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-parse.Po' tmpdepfile='$(DEPDIR)/hzip-parse.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_misc.c' object='hdiff_misc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_misc.Po' tmpdepfile='$(DEPDIR)/hdiff_misc.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-parse.obj `if test -f 'parse.c'; then $(CYGPATH_W) 'parse.c'; else $(CYGPATH_W) '$(srcdir)/parse.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_misc.obj `if test -f '../hdiff/hdiff_misc.c'; then $(CYGPATH_W) '../hdiff/hdiff_misc.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_misc.c'; fi`
 
-hzip-table.o: table.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-table.o -MD -MP -MF "$(DEPDIR)/hzip-table.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-table.o `test -f 'table.c' || echo '$(srcdir)/'`table.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-table.Tpo" "$(DEPDIR)/hzip-table.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-table.Tpo"; exit 1; \
+hdiff_sdattr.o: ../hdiff/hdiff_sdattr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_sdattr.o -MD -MP -MF "$(DEPDIR)/hdiff_sdattr.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_sdattr.o `test -f '../hdiff/hdiff_sdattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_sdattr.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_sdattr.Tpo" "$(DEPDIR)/hdiff_sdattr.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_sdattr.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='table.c' object='hzip-table.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-table.Po' tmpdepfile='$(DEPDIR)/hzip-table.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sdattr.c' object='hdiff_sdattr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_sdattr.Po' tmpdepfile='$(DEPDIR)/hdiff_sdattr.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-table.o `test -f 'table.c' || echo '$(srcdir)/'`table.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_sdattr.o `test -f '../hdiff/hdiff_sdattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_sdattr.c
 
-hzip-table.obj: table.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzip-table.obj -MD -MP -MF "$(DEPDIR)/hzip-table.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzip-table.obj `if test -f 'table.c'; then $(CYGPATH_W) 'table.c'; else $(CYGPATH_W) '$(srcdir)/table.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzip-table.Tpo" "$(DEPDIR)/hzip-table.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzip-table.Tpo"; exit 1; \
+hdiff_sdattr.obj: ../hdiff/hdiff_sdattr.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_sdattr.obj -MD -MP -MF "$(DEPDIR)/hdiff_sdattr.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_sdattr.obj `if test -f '../hdiff/hdiff_sdattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_sdattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sdattr.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_sdattr.Tpo" "$(DEPDIR)/hdiff_sdattr.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_sdattr.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='table.c' object='hzip-table.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzip-table.Po' tmpdepfile='$(DEPDIR)/hzip-table.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sdattr.c' object='hdiff_sdattr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_sdattr.Po' tmpdepfile='$(DEPDIR)/hdiff_sdattr.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzip_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzip-table.obj `if test -f 'table.c'; then $(CYGPATH_W) 'table.c'; else $(CYGPATH_W) '$(srcdir)/table.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_sdattr.obj `if test -f '../hdiff/hdiff_sdattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_sdattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sdattr.c'; fi`
 
-hzipck-hdfzipck.o: hdfzipck.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzipck-hdfzipck.o -MD -MP -MF "$(DEPDIR)/hzipck-hdfzipck.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzipck-hdfzipck.o `test -f 'hdfzipck.c' || echo '$(srcdir)/'`hdfzipck.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzipck-hdfzipck.Tpo" "$(DEPDIR)/hzipck-hdfzipck.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzipck-hdfzipck.Tpo"; exit 1; \
+hdiff_sddata.o: ../hdiff/hdiff_sddata.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_sddata.o -MD -MP -MF "$(DEPDIR)/hdiff_sddata.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_sddata.o `test -f '../hdiff/hdiff_sddata.c' || echo '$(srcdir)/'`../hdiff/hdiff_sddata.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_sddata.Tpo" "$(DEPDIR)/hdiff_sddata.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_sddata.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzipck.c' object='hzipck-hdfzipck.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzipck-hdfzipck.Po' tmpdepfile='$(DEPDIR)/hzipck-hdfzipck.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sddata.c' object='hdiff_sddata.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_sddata.Po' tmpdepfile='$(DEPDIR)/hdiff_sddata.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzipck-hdfzipck.o `test -f 'hdfzipck.c' || echo '$(srcdir)/'`hdfzipck.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_sddata.o `test -f '../hdiff/hdiff_sddata.c' || echo '$(srcdir)/'`../hdiff/hdiff_sddata.c
 
-hzipck-hdfzipck.obj: hdfzipck.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hzipck-hdfzipck.obj -MD -MP -MF "$(DEPDIR)/hzipck-hdfzipck.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hzipck-hdfzipck.obj `if test -f 'hdfzipck.c'; then $(CYGPATH_W) 'hdfzipck.c'; else $(CYGPATH_W) '$(srcdir)/hdfzipck.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hzipck-hdfzipck.Tpo" "$(DEPDIR)/hzipck-hdfzipck.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hzipck-hdfzipck.Tpo"; exit 1; \
+hdiff_sddata.obj: ../hdiff/hdiff_sddata.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_sddata.obj -MD -MP -MF "$(DEPDIR)/hdiff_sddata.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_sddata.obj `if test -f '../hdiff/hdiff_sddata.c'; then $(CYGPATH_W) '../hdiff/hdiff_sddata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sddata.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_sddata.Tpo" "$(DEPDIR)/hdiff_sddata.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_sddata.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzipck.c' object='hzipck-hdfzipck.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hzipck-hdfzipck.Po' tmpdepfile='$(DEPDIR)/hzipck-hdfzipck.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sddata.c' object='hdiff_sddata.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_sddata.Po' tmpdepfile='$(DEPDIR)/hdiff_sddata.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hzipck_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hzipck-hdfzipck.obj `if test -f 'hdfzipck.c'; then $(CYGPATH_W) 'hdfzipck.c'; else $(CYGPATH_W) '$(srcdir)/hdfzipck.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_sddata.obj `if test -f '../hdiff/hdiff_sddata.c'; then $(CYGPATH_W) '../hdiff/hdiff_sddata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sddata.c'; fi`
 
-hziptst-add.o: add.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-add.o -MD -MP -MF "$(DEPDIR)/hziptst-add.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-add.o `test -f 'add.c' || echo '$(srcdir)/'`add.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-add.Tpo" "$(DEPDIR)/hziptst-add.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-add.Tpo"; exit 1; \
+hdiff_vdata.o: ../hdiff/hdiff_vdata.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_vdata.o -MD -MP -MF "$(DEPDIR)/hdiff_vdata.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_vdata.o `test -f '../hdiff/hdiff_vdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_vdata.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_vdata.Tpo" "$(DEPDIR)/hdiff_vdata.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_vdata.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='add.c' object='hziptst-add.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-add.Po' tmpdepfile='$(DEPDIR)/hziptst-add.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_vdata.c' object='hdiff_vdata.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_vdata.Po' tmpdepfile='$(DEPDIR)/hdiff_vdata.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-add.o `test -f 'add.c' || echo '$(srcdir)/'`add.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_vdata.o `test -f '../hdiff/hdiff_vdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_vdata.c
 
-hziptst-add.obj: add.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-add.obj -MD -MP -MF "$(DEPDIR)/hziptst-add.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-add.obj `if test -f 'add.c'; then $(CYGPATH_W) 'add.c'; else $(CYGPATH_W) '$(srcdir)/add.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-add.Tpo" "$(DEPDIR)/hziptst-add.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-add.Tpo"; exit 1; \
+hdiff_vdata.obj: ../hdiff/hdiff_vdata.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_vdata.obj -MD -MP -MF "$(DEPDIR)/hdiff_vdata.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o hdiff_vdata.obj `if test -f '../hdiff/hdiff_vdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_vdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_vdata.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdiff_vdata.Tpo" "$(DEPDIR)/hdiff_vdata.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdiff_vdata.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='add.c' object='hziptst-add.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-add.Po' tmpdepfile='$(DEPDIR)/hziptst-add.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_vdata.c' object='hdiff_vdata.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdiff_vdata.Po' tmpdepfile='$(DEPDIR)/hdiff_vdata.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-add.obj `if test -f 'add.c'; then $(CYGPATH_W) 'add.c'; else $(CYGPATH_W) '$(srcdir)/add.c'; fi`
-
-hziptst-copy.o: copy.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-copy.o -MD -MP -MF "$(DEPDIR)/hziptst-copy.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-copy.o `test -f 'copy.c' || echo '$(srcdir)/'`copy.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-copy.Tpo" "$(DEPDIR)/hziptst-copy.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-copy.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='copy.c' object='hziptst-copy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-copy.Po' tmpdepfile='$(DEPDIR)/hziptst-copy.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-copy.o `test -f 'copy.c' || echo '$(srcdir)/'`copy.c
-
-hziptst-copy.obj: copy.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-copy.obj -MD -MP -MF "$(DEPDIR)/hziptst-copy.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-copy.obj `if test -f 'copy.c'; then $(CYGPATH_W) 'copy.c'; else $(CYGPATH_W) '$(srcdir)/copy.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-copy.Tpo" "$(DEPDIR)/hziptst-copy.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-copy.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='copy.c' object='hziptst-copy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-copy.Po' tmpdepfile='$(DEPDIR)/hziptst-copy.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-copy.obj `if test -f 'copy.c'; then $(CYGPATH_W) 'copy.c'; else $(CYGPATH_W) '$(srcdir)/copy.c'; fi`
-
-hziptst-hdfzip.o: hdfzip.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdfzip.o -MD -MP -MF "$(DEPDIR)/hziptst-hdfzip.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdfzip.o `test -f 'hdfzip.c' || echo '$(srcdir)/'`hdfzip.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdfzip.Tpo" "$(DEPDIR)/hziptst-hdfzip.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdfzip.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzip.c' object='hziptst-hdfzip.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdfzip.Po' tmpdepfile='$(DEPDIR)/hziptst-hdfzip.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdfzip.o `test -f 'hdfzip.c' || echo '$(srcdir)/'`hdfzip.c
-
-hziptst-hdfzip.obj: hdfzip.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdfzip.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdfzip.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdfzip.obj `if test -f 'hdfzip.c'; then $(CYGPATH_W) 'hdfzip.c'; else $(CYGPATH_W) '$(srcdir)/hdfzip.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdfzip.Tpo" "$(DEPDIR)/hziptst-hdfzip.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdfzip.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfzip.c' object='hziptst-hdfzip.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdfzip.Po' tmpdepfile='$(DEPDIR)/hziptst-hdfzip.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdfzip.obj `if test -f 'hdfzip.c'; then $(CYGPATH_W) 'hdfzip.c'; else $(CYGPATH_W) '$(srcdir)/hdfzip.c'; fi`
-
-hziptst-hdfziptst_main.o: hdfziptst_main.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdfziptst_main.o -MD -MP -MF "$(DEPDIR)/hziptst-hdfziptst_main.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdfziptst_main.o `test -f 'hdfziptst_main.c' || echo '$(srcdir)/'`hdfziptst_main.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdfziptst_main.Tpo" "$(DEPDIR)/hziptst-hdfziptst_main.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdfziptst_main.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfziptst_main.c' object='hziptst-hdfziptst_main.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdfziptst_main.Po' tmpdepfile='$(DEPDIR)/hziptst-hdfziptst_main.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdfziptst_main.o `test -f 'hdfziptst_main.c' || echo '$(srcdir)/'`hdfziptst_main.c
-
-hziptst-hdfziptst_main.obj: hdfziptst_main.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdfziptst_main.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdfziptst_main.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdfziptst_main.obj `if test -f 'hdfziptst_main.c'; then $(CYGPATH_W) 'hdfziptst_main.c'; else $(CYGPATH_W) '$(srcdir)/hdfziptst_main.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdfziptst_main.Tpo" "$(DEPDIR)/hziptst-hdfziptst_main.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdfziptst_main.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfziptst_main.c' object='hziptst-hdfziptst_main.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdfziptst_main.Po' tmpdepfile='$(DEPDIR)/hziptst-hdfziptst_main.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdfziptst_main.obj `if test -f 'hdfziptst_main.c'; then $(CYGPATH_W) 'hdfziptst_main.c'; else $(CYGPATH_W) '$(srcdir)/hdfziptst_main.c'; fi`
-
-hziptst-list.o: list.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-list.o -MD -MP -MF "$(DEPDIR)/hziptst-list.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-list.o `test -f 'list.c' || echo '$(srcdir)/'`list.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-list.Tpo" "$(DEPDIR)/hziptst-list.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-list.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='list.c' object='hziptst-list.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-list.Po' tmpdepfile='$(DEPDIR)/hziptst-list.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-list.o `test -f 'list.c' || echo '$(srcdir)/'`list.c
-
-hziptst-list.obj: list.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-list.obj -MD -MP -MF "$(DEPDIR)/hziptst-list.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-list.obj `if test -f 'list.c'; then $(CYGPATH_W) 'list.c'; else $(CYGPATH_W) '$(srcdir)/list.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-list.Tpo" "$(DEPDIR)/hziptst-list.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-list.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='list.c' object='hziptst-list.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-list.Po' tmpdepfile='$(DEPDIR)/hziptst-list.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-list.obj `if test -f 'list.c'; then $(CYGPATH_W) 'list.c'; else $(CYGPATH_W) '$(srcdir)/list.c'; fi`
-
-hziptst-parse.o: parse.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-parse.o -MD -MP -MF "$(DEPDIR)/hziptst-parse.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-parse.o `test -f 'parse.c' || echo '$(srcdir)/'`parse.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-parse.Tpo" "$(DEPDIR)/hziptst-parse.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-parse.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='hziptst-parse.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-parse.Po' tmpdepfile='$(DEPDIR)/hziptst-parse.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-parse.o `test -f 'parse.c' || echo '$(srcdir)/'`parse.c
-
-hziptst-parse.obj: parse.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-parse.obj -MD -MP -MF "$(DEPDIR)/hziptst-parse.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-parse.obj `if test -f 'parse.c'; then $(CYGPATH_W) 'parse.c'; else $(CYGPATH_W) '$(srcdir)/parse.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-parse.Tpo" "$(DEPDIR)/hziptst-parse.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-parse.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parse.c' object='hziptst-parse.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-parse.Po' tmpdepfile='$(DEPDIR)/hziptst-parse.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-parse.obj `if test -f 'parse.c'; then $(CYGPATH_W) 'parse.c'; else $(CYGPATH_W) '$(srcdir)/parse.c'; fi`
-
-hziptst-table.o: table.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-table.o -MD -MP -MF "$(DEPDIR)/hziptst-table.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-table.o `test -f 'table.c' || echo '$(srcdir)/'`table.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-table.Tpo" "$(DEPDIR)/hziptst-table.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-table.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='table.c' object='hziptst-table.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-table.Po' tmpdepfile='$(DEPDIR)/hziptst-table.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-table.o `test -f 'table.c' || echo '$(srcdir)/'`table.c
-
-hziptst-table.obj: table.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-table.obj -MD -MP -MF "$(DEPDIR)/hziptst-table.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-table.obj `if test -f 'table.c'; then $(CYGPATH_W) 'table.c'; else $(CYGPATH_W) '$(srcdir)/table.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-table.Tpo" "$(DEPDIR)/hziptst-table.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-table.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='table.c' object='hziptst-table.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-table.Po' tmpdepfile='$(DEPDIR)/hziptst-table.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-table.obj `if test -f 'table.c'; then $(CYGPATH_W) 'table.c'; else $(CYGPATH_W) '$(srcdir)/table.c'; fi`
-
-hziptst-verify.o: verify.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-verify.o -MD -MP -MF "$(DEPDIR)/hziptst-verify.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-verify.o `test -f 'verify.c' || echo '$(srcdir)/'`verify.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-verify.Tpo" "$(DEPDIR)/hziptst-verify.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-verify.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='verify.c' object='hziptst-verify.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-verify.Po' tmpdepfile='$(DEPDIR)/hziptst-verify.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-verify.o `test -f 'verify.c' || echo '$(srcdir)/'`verify.c
-
-hziptst-verify.obj: verify.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-verify.obj -MD -MP -MF "$(DEPDIR)/hziptst-verify.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-verify.obj `if test -f 'verify.c'; then $(CYGPATH_W) 'verify.c'; else $(CYGPATH_W) '$(srcdir)/verify.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-verify.Tpo" "$(DEPDIR)/hziptst-verify.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-verify.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='verify.c' object='hziptst-verify.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-verify.Po' tmpdepfile='$(DEPDIR)/hziptst-verify.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-verify.obj `if test -f 'verify.c'; then $(CYGPATH_W) 'verify.c'; else $(CYGPATH_W) '$(srcdir)/verify.c'; fi`
-
-hziptst-dumplib.o: ../hdiff/dumplib.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-dumplib.o -MD -MP -MF "$(DEPDIR)/hziptst-dumplib.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-dumplib.o `test -f '../hdiff/dumplib.c' || echo '$(srcdir)/'`../hdiff/dumplib.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-dumplib.Tpo" "$(DEPDIR)/hziptst-dumplib.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-dumplib.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/dumplib.c' object='hziptst-dumplib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-dumplib.Po' tmpdepfile='$(DEPDIR)/hziptst-dumplib.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-dumplib.o `test -f '../hdiff/dumplib.c' || echo '$(srcdir)/'`../hdiff/dumplib.c
-
-hziptst-dumplib.obj: ../hdiff/dumplib.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-dumplib.obj -MD -MP -MF "$(DEPDIR)/hziptst-dumplib.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-dumplib.obj `if test -f '../hdiff/dumplib.c'; then $(CYGPATH_W) '../hdiff/dumplib.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/dumplib.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-dumplib.Tpo" "$(DEPDIR)/hziptst-dumplib.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-dumplib.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/dumplib.c' object='hziptst-dumplib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-dumplib.Po' tmpdepfile='$(DEPDIR)/hziptst-dumplib.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-dumplib.obj `if test -f '../hdiff/dumplib.c'; then $(CYGPATH_W) '../hdiff/dumplib.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/dumplib.c'; fi`
-
-hziptst-hdiff.o: ../hdiff/hdiff.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff.o `test -f '../hdiff/hdiff.c' || echo '$(srcdir)/'`../hdiff/hdiff.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff.Tpo" "$(DEPDIR)/hziptst-hdiff.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff.c' object='hziptst-hdiff.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff.o `test -f '../hdiff/hdiff.c' || echo '$(srcdir)/'`../hdiff/hdiff.c
-
-hziptst-hdiff.obj: ../hdiff/hdiff.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff.obj `if test -f '../hdiff/hdiff.c'; then $(CYGPATH_W) '../hdiff/hdiff.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff.Tpo" "$(DEPDIR)/hziptst-hdiff.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff.c' object='hziptst-hdiff.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff.obj `if test -f '../hdiff/hdiff.c'; then $(CYGPATH_W) '../hdiff/hdiff.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff.c'; fi`
-
-hziptst-hdiff_gattr.o: ../hdiff/hdiff_gattr.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_gattr.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_gattr.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_gattr.o `test -f '../hdiff/hdiff_gattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_gattr.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_gattr.Tpo" "$(DEPDIR)/hziptst-hdiff_gattr.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_gattr.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_gattr.c' object='hziptst-hdiff_gattr.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_gattr.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_gattr.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_gattr.o `test -f '../hdiff/hdiff_gattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_gattr.c
-
-hziptst-hdiff_gattr.obj: ../hdiff/hdiff_gattr.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_gattr.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_gattr.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_gattr.obj `if test -f '../hdiff/hdiff_gattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_gattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_gattr.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_gattr.Tpo" "$(DEPDIR)/hziptst-hdiff_gattr.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_gattr.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_gattr.c' object='hziptst-hdiff_gattr.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_gattr.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_gattr.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_gattr.obj `if test -f '../hdiff/hdiff_gattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_gattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_gattr.c'; fi`
-
-hziptst-hdiff_grdata.o: ../hdiff/hdiff_grdata.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_grdata.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_grdata.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_grdata.o `test -f '../hdiff/hdiff_grdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_grdata.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_grdata.Tpo" "$(DEPDIR)/hziptst-hdiff_grdata.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_grdata.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_grdata.c' object='hziptst-hdiff_grdata.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_grdata.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_grdata.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_grdata.o `test -f '../hdiff/hdiff_grdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_grdata.c
-
-hziptst-hdiff_grdata.obj: ../hdiff/hdiff_grdata.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_grdata.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_grdata.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_grdata.obj `if test -f '../hdiff/hdiff_grdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_grdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_grdata.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_grdata.Tpo" "$(DEPDIR)/hziptst-hdiff_grdata.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_grdata.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_grdata.c' object='hziptst-hdiff_grdata.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_grdata.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_grdata.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_grdata.obj `if test -f '../hdiff/hdiff_grdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_grdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_grdata.c'; fi`
-
-hziptst-hdiff_misc.o: ../hdiff/hdiff_misc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_misc.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_misc.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_misc.o `test -f '../hdiff/hdiff_misc.c' || echo '$(srcdir)/'`../hdiff/hdiff_misc.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_misc.Tpo" "$(DEPDIR)/hziptst-hdiff_misc.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_misc.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_misc.c' object='hziptst-hdiff_misc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_misc.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_misc.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_misc.o `test -f '../hdiff/hdiff_misc.c' || echo '$(srcdir)/'`../hdiff/hdiff_misc.c
-
-hziptst-hdiff_misc.obj: ../hdiff/hdiff_misc.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_misc.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_misc.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_misc.obj `if test -f '../hdiff/hdiff_misc.c'; then $(CYGPATH_W) '../hdiff/hdiff_misc.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_misc.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_misc.Tpo" "$(DEPDIR)/hziptst-hdiff_misc.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_misc.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_misc.c' object='hziptst-hdiff_misc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_misc.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_misc.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_misc.obj `if test -f '../hdiff/hdiff_misc.c'; then $(CYGPATH_W) '../hdiff/hdiff_misc.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_misc.c'; fi`
-
-hziptst-hdiff_sdattr.o: ../hdiff/hdiff_sdattr.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_sdattr.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_sdattr.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_sdattr.o `test -f '../hdiff/hdiff_sdattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_sdattr.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_sdattr.Tpo" "$(DEPDIR)/hziptst-hdiff_sdattr.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_sdattr.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sdattr.c' object='hziptst-hdiff_sdattr.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_sdattr.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_sdattr.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_sdattr.o `test -f '../hdiff/hdiff_sdattr.c' || echo '$(srcdir)/'`../hdiff/hdiff_sdattr.c
-
-hziptst-hdiff_sdattr.obj: ../hdiff/hdiff_sdattr.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_sdattr.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_sdattr.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_sdattr.obj `if test -f '../hdiff/hdiff_sdattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_sdattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sdattr.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_sdattr.Tpo" "$(DEPDIR)/hziptst-hdiff_sdattr.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_sdattr.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sdattr.c' object='hziptst-hdiff_sdattr.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_sdattr.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_sdattr.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_sdattr.obj `if test -f '../hdiff/hdiff_sdattr.c'; then $(CYGPATH_W) '../hdiff/hdiff_sdattr.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sdattr.c'; fi`
-
-hziptst-hdiff_sddata.o: ../hdiff/hdiff_sddata.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_sddata.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_sddata.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_sddata.o `test -f '../hdiff/hdiff_sddata.c' || echo '$(srcdir)/'`../hdiff/hdiff_sddata.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_sddata.Tpo" "$(DEPDIR)/hziptst-hdiff_sddata.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_sddata.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sddata.c' object='hziptst-hdiff_sddata.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_sddata.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_sddata.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_sddata.o `test -f '../hdiff/hdiff_sddata.c' || echo '$(srcdir)/'`../hdiff/hdiff_sddata.c
-
-hziptst-hdiff_sddata.obj: ../hdiff/hdiff_sddata.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_sddata.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_sddata.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_sddata.obj `if test -f '../hdiff/hdiff_sddata.c'; then $(CYGPATH_W) '../hdiff/hdiff_sddata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sddata.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_sddata.Tpo" "$(DEPDIR)/hziptst-hdiff_sddata.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_sddata.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_sddata.c' object='hziptst-hdiff_sddata.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_sddata.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_sddata.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_sddata.obj `if test -f '../hdiff/hdiff_sddata.c'; then $(CYGPATH_W) '../hdiff/hdiff_sddata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_sddata.c'; fi`
-
-hziptst-hdiff_vdata.o: ../hdiff/hdiff_vdata.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_vdata.o -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_vdata.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_vdata.o `test -f '../hdiff/hdiff_vdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_vdata.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_vdata.Tpo" "$(DEPDIR)/hziptst-hdiff_vdata.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_vdata.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_vdata.c' object='hziptst-hdiff_vdata.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_vdata.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_vdata.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_vdata.o `test -f '../hdiff/hdiff_vdata.c' || echo '$(srcdir)/'`../hdiff/hdiff_vdata.c
-
-hziptst-hdiff_vdata.obj: ../hdiff/hdiff_vdata.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hziptst-hdiff_vdata.obj -MD -MP -MF "$(DEPDIR)/hziptst-hdiff_vdata.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hziptst-hdiff_vdata.obj `if test -f '../hdiff/hdiff_vdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_vdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_vdata.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hziptst-hdiff_vdata.Tpo" "$(DEPDIR)/hziptst-hdiff_vdata.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hziptst-hdiff_vdata.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_vdata.c' object='hziptst-hdiff_vdata.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hziptst-hdiff_vdata.Po' tmpdepfile='$(DEPDIR)/hziptst-hdiff_vdata.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hziptst_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hziptst-hdiff_vdata.obj `if test -f '../hdiff/hdiff_vdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_vdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_vdata.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_vdata.obj `if test -f '../hdiff/hdiff_vdata.c'; then $(CYGPATH_W) '../hdiff/hdiff_vdata.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_vdata.c'; fi`
 uninstall-info-am:
 
 ETAGS = etags
@@ -898,6 +558,79 @@ GTAGS:
 
 distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
+
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
+	srcdir=$(srcdir); export srcdir; \
+	list='$(TESTS)'; \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *" $$tst "*) \
+	        xpass=`expr $$xpass + 1`; \
+	        failed=`expr $$failed + 1`; \
+	        echo "XPASS: $$tst"; \
+	      ;; \
+	      *) \
+	        echo "PASS: $$tst"; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *" $$tst "*) \
+	        xfail=`expr $$xfail + 1`; \
+	        echo "XFAIL: $$tst"; \
+	      ;; \
+	      *) \
+	        failed=`expr $$failed + 1`; \
+	        echo "FAIL: $$tst"; \
+	      ;; \
+	      esac; \
+	    else \
+	      skip=`expr $$skip + 1`; \
+	      echo "SKIP: $$tst"; \
+	    fi; \
+	  done; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="All $$all tests passed"; \
+	    else \
+	      banner="All $$all tests behaved as expected ($$xfail expected failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all tests failed"; \
+	    else \
+	      banner="$$failed of $$all tests did not behave as expected ($$xpass unexpected passes)"; \
+	    fi; \
+	  fi; \
+	  dashes="$$banner"; \
+	  skipped=""; \
+	  if test "$$skip" -ne 0; then \
+	    skipped="($$skip tests were not run)"; \
+	    test `echo "$$skipped" | wc -c` -gt `echo "$$banner" | wc -c` && \
+	      dashes="$$skipped"; \
+	  fi; \
+	  report=""; \
+	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
+	    report="Please report to $(PACKAGE_BUGREPORT)"; \
+	    test `echo "$$report" | wc -c` -gt `echo "$$banner" | wc -c` && \
+	      dashes="$$report"; \
+	  fi; \
+	  dashes=`echo "$$dashes" | sed s/./=/g`; \
+	  echo "$$dashes"; \
+	  echo "$$banner"; \
+	  test -n "$$skipped" && echo "$$skipped"; \
+	  test -n "$$report" && echo "$$report"; \
+	  echo "$$dashes"; \
+	  test "$$failed" -eq 0; \
+	else :; fi
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 
 top_distdir = ../..
@@ -932,6 +665,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile $(PROGRAMS)
 
@@ -1007,21 +741,21 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-checkPROGRAMS clean-generic clean-noinstPROGRAMS ctags \
-	distclean distclean-compile distclean-depend distclean-generic \
-	distclean-tags distdir dvi dvi-am info info-am install \
-	install-am install-binPROGRAMS install-data install-data-am \
-	install-exec install-exec-am install-info install-info-am \
-	install-man install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-info-am
+.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
+	clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+	clean-noinstPROGRAMS ctags distclean distclean-compile \
+	distclean-depend distclean-generic distclean-tags distdir dvi \
+	dvi-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-exec install-exec-am \
+	install-info install-info-am install-man install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
 
 check: hziptst hzip
-	sh ${srcdir}/testhzip.sh
+	srcdir="$(srcdir)" $(srcdir)/testhzip.sh
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
