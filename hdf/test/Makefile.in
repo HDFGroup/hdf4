@@ -281,9 +281,9 @@ all::		FORCE
 
 rall::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf fortest fortestF gentest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf $(FTESTS) gentest; \
 	else		 \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" testhdf fortest gentest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" testhdf $(FTESTS) gentest; \
 	fi
 
 nofortran::         FORCE
@@ -342,7 +342,7 @@ test-hdf::		FORCE
 	    $(MAKE) $(MFLAGS) $(HDF_FLAGS) atest-hdf ; \
 	esac
 
-atest-hdf: testhdf fortest
+atest-hdf: testhdf $(FTESTS)
 	-$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
 	-$(RM) $(RMFLAGS) *.hdf 
@@ -352,7 +352,7 @@ test-hdfnofortran: testhdf
 	-$(RM) $(RMFLAGS) *.hdf 
 	./testhdf
 
-test-hdffortran: fortest fortest.sav
+test-hdffortran: $(FTESTS) fortest.sav
 	-$(RM) $(RMFLAGS) *.hdf 
 	./fortest > fortest.out
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
