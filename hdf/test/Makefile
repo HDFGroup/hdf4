@@ -205,7 +205,8 @@ clean:
 	ptesthdf qtesthdf gentest
 
 distclean: 
-	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core *.hdf
+	 -$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest core *.hdf \
+	ptesthdf qtesthdf gentest
 
 depend: 
 	 makedepend -I$(HDFINC) *.c
