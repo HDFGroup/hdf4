@@ -13,9 +13,7 @@
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
-
-/* $Id$ */
-
+/* vg.c,v 1.15.4.1 1993/10/26 19:25:07 georgev Exp */
 /*
 FILE  
      vg.c
@@ -50,8 +48,10 @@ PRIVATE data structures in here pertain to vdata in vsdir only.
 #include "vg.h"
 
 /* Private functions */
+#ifdef VDATA_FIELDS_ALL_UPPER
 PRIVATE int32 matchnocase
-  PROTO((char *strx, char *stry));
+    PROTO((char *strx, char *stry));
+#endif /* VDATA_FIELDS_ALL_UPPER */
 
 /* ------------------------------------------------------------------
 NAME 
@@ -82,6 +82,8 @@ HFILEID f;
 	return (r);
 } /* vnewref */
 
+
+#ifdef VDATA_FIELDS_ALL_UPPER
 /* -----------------------------------------------------------------
 NAME
        matchnocase -  (PRIVATE) compares 2 strings, ignoring case 
@@ -93,7 +95,6 @@ RETURNS
 DESCRIPTION
        Private routine. 
 -------------------------------------------------------------------- */
-
 #ifdef PROTOTYPE
 PRIVATE int32 matchnocase (char *strx, char *stry)
 #else
@@ -101,19 +102,20 @@ PRIVATE int32 matchnocase (strx, stry)
 char *strx,*stry;
 #endif
 {
-	int32 	i,nx,ny;
-
+    int32 	i,nx,ny;
+    
     nx = HDstrlen(strx);
     ny = HDstrlen(stry);
     if (nx != ny)
         return(FALSE);  /* different lengths */
-
+    
     for(i=0; i<nx; i++,strx++,stry++)
         if(toupper(*strx)!=toupper(*stry))
             return(FALSE);
-
-	return (TRUE);
+    
+    return (TRUE);
 } /* matchnocase */
+#endif /* VDATA_FIELDS_ALL_UPPER */
 
 
 /* ------------------------------------------------------------------
@@ -204,9 +206,9 @@ DESCRIPTION
 -------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSsetinterlace(int32 vkey, int32 interlace)
+PUBLIC intn VSsetinterlace(int32 vkey, int32 interlace)
 #else
-PUBLIC int32 VSsetinterlace(vkey, interlace)
+PUBLIC intn VSsetinterlace(vkey, interlace)
 int32 vkey;
 int32 interlace;
 #endif
@@ -303,16 +305,16 @@ DESCRIPTION
 -------------------------------------------------------------------- */
 
 #ifdef PROTOTYPE
-PUBLIC int32 VSfexist (int32 vkey, char *fields)
+PUBLIC intn VSfexist (int32 vkey, char *fields)
 #else
-PUBLIC int32 VSfexist (vkey, fields)
+PUBLIC intn VSfexist (vkey, fields)
 int32 vkey;
 char *fields;
 #endif
 {
-	char   		**av, *s;
-	int32			ac,i,j,found;
-	VWRITELIST	*w;
+    char   		**av, *s;
+    int32			ac,i,j,found;
+    VWRITELIST	*w;
     vsinstance_t    *wi;
     VDATA           *vs;
     char * FUNC = "VSfexist";
@@ -320,35 +322,44 @@ char *fields;
     if (!VALIDVSID(vkey))
         HRETURN_ERROR(DFE_ARGS,FAIL);
 
-  /* locate vg's index in vgtab */
+    /* locate vg's index in vgtab */
     if(NULL==(wi=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey))))
         HRETURN_ERROR(DFE_NOVS,FAIL);
 
-    vs=wi->vs;
+    vs = wi->vs;
 
-	/* call scanattrs to parse the string */
-	if (scanattrs(fields,&ac,&av) < 0)
+    /* call scanattrs to parse the string */
+    if (scanattrs(fields,&ac,&av) < 0)
         HRETURN_ERROR(DFE_BADFIELDS,FAIL);
-
-	if ((vs == NULL) || (ac<1))
+    
+    if ((vs == NULL) || (ac<1))
         HRETURN_ERROR(DFE_ARGS,FAIL);
-
-	/* now check in vs's field table */
+    
+    /* now check in vs's field table */
     w = &vs->wlist;
-    for (i=0; i<ac; i++) {
-        for (found=0,s=av[i],j=0; j<w->n; j++) {
-			if ( matchnocase(s,w->name[j]) ) {
-				found = 1;
-				break;
-			}
-		}
+    for (i = 0; i < ac; i++) {
+        found = 0;
+        s = av[i];
+        for(j = 0; j < w->n; j++) {
+#ifdef VDATA_FIELDS_ALL_UPPER
+            if(matchnocase(s, w->name[j])) {
+                found = 1;
+                break;
+            }
+#else
+            if(HDstrcmp(s, w->name[j]) == 0) {
+                found = 1;
+                break;
+            }
+#endif /* VDATA_FIELDS_ALL_UPPER */
+        }
         if (!found)
             return (FAIL);
-	}
-
+    }
+    
     return(TRUE);
-} /* VSfexist */
 
+} /* VSfexist */
 
 /* -----------------------------------------------------------------
 NAME
@@ -414,7 +425,6 @@ USAGE
 RETURNS
         No return codes.
 ------------------------------------------------------------------- */
-
 #ifdef PROTOTYPE
 VOID VSdump (int32 vkey)
 #else
@@ -464,6 +474,7 @@ DESCRIPTION
         Truncates name to max length of VSNAMELENMAX
 ---------------------------------------------------------- */
 
+
 #ifdef PROTOTYPE
 PUBLIC int32 VSsetname (int32 vkey, char *vsname)
 #else
@@ -498,6 +509,7 @@ char    *vsname;
     return(SUCCEED);
 } /* VSsetname */
 
+
 /* ------------------------------------------------------
 NAME
         VSsetclass - give a class name to a vdata.
@@ -510,7 +522,6 @@ RETURNS
 DESCRIPTION
         Truncates class name to max length of VSNAMELENMAX
 ---------------------------------------------------------- */
-
 #ifdef PROTOTYPE
 PUBLIC int32 VSsetclass (int32 vkey, char *vsclass)
 #else
@@ -544,6 +555,7 @@ char    *vsclass;
 	vs->marked = TRUE;
     return(SUCCEED);
 } /* VSsetclass*/
+
 
 /* ------------------------------------------------------ 
 NAME
@@ -584,6 +596,7 @@ char    *vsname;
     return(SUCCEED);
 } /* VSgetname */
 
+
 /* ------------------------------------------------------ 
 NAME
         VSgetclass - gets the vdata's class name.
@@ -623,6 +636,7 @@ char    *vsclass;
     return(SUCCEED);
 } /* VSgetclass */
 
+
 /* ------------------------------------------------------------------ 
 NAME
  	VSinquire - gets info about a vdata vkey:
@@ -647,10 +661,10 @@ RETURNS
 	Returns FAIL if error;	Returns 1 if ok.
 ------------------------------------------------------------------------ */
 #ifdef PROTOTYPE
-PUBLIC int32 VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
+PUBLIC intn VSinquire (int32 vkey, int32 *nelt, int32 *interlace,
         char *fields, int32 *eltsize, char *vsname)
 #else
-PUBLIC int32 VSinquire (vkey, nelt, interlace, fields, eltsize, vsname)
+PUBLIC intn VSinquire (vkey, nelt, interlace, fields, eltsize, vsname)
 int32 vkey;
 char    *fields, *vsname;
 int32   *nelt, *interlace, *eltsize;
@@ -671,6 +685,7 @@ int32   *nelt, *interlace, *eltsize;
 
 	return (SUCCEED); /* ok */
 } /* VSinquire */
+
 
 /* -----------------------------------------------------------------
 NAME
@@ -741,6 +756,7 @@ int32   asize;            /* input: size of idarray */
     return (nlone); /* return the TOTAL # of lone vdatas */
 } /* VSlone */
 
+
 /* ----------------------------------------------------------------- 
 NAME
        Vlone  - returns an array of refs of all lone vgroups in the file.
@@ -757,6 +773,21 @@ DESCRIPTION
         If idarray is too small, routine will only fill idarray with up
                  to asize worth of refs.
 --------------------------------------------------------------------- */
+
+/* -------------------------------- Vlone --------------------------------- */
+/*
+ * Vlone  - returns an array of refs of all lone vgroups in the file.
+ * 	      - returns -1 if error
+ *	      - otherwise returns the total number of lone vgroups in the file 
+ *
+ *			If idarray is too small, routine will only fill idarray with up
+ *			 to asize worth of refs.
+ *
+ *			INPUT idarray: user supplies  an int array.
+ *		   INPUT asize: integer specifying how many ints in idarray[];
+ *			INPUT f: HDF file pointer.
+ *
+ */
 
 #ifdef PROTOTYPE
 PUBLIC int32 Vlone (HFILEID f, int32 idarray[], int32 asize)
@@ -826,7 +857,6 @@ RETURNS
         Returns 0 if not found, or error. Otherwise, returns the 
            vgroup's ref (a positive integer).
 ----------------------------------------------------------------------- */
-
 #ifdef PROTOTYPE
 int32 Vfind (HFILEID f, char *vgname)
 #else
@@ -855,6 +885,7 @@ char    * vgname;
     return(0); /* not found */
     
 } /* Vfind */
+
 
 /* ------------------------------------------------------------------
 NAME
@@ -898,9 +929,11 @@ char * vsname;
 
 } /* VSfind */
 
-/* -----------------------------------------------------------------
-* Vsetzap: Useless now. Maintained for back compatibility.
---------------------------------------------------------------------- */
+/* ------------------------------- Vsetzap -------------------------------- */
+
+/*
+ * Vsetzap: Useless now. Maintained for back compatibility.
+ */
 
 #ifdef PROTOTYPE
 #ifdef CONVEX
