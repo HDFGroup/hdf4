@@ -49,7 +49,9 @@
 
   6. FAQ
 
-  7. HELP
+  7. Java Products
+
+  8. HELP
 
 *****************************************************************************
 
@@ -823,7 +825,14 @@
    An FAQ is available on our ftp server, as well as under
    "Information about HDF" on the home page.
 
-7. HELP
+7. HDF Java products
+   =================
+   The HDF Java Interface and Java HDF Viewer are included as an
+   optional part of the HDF source.  These products are built
+   separately after the library.  See java-hdf/README.
+
+
+8. HELP
    ====
    If you have any questions or comments, or would like to be
    added to or removed from our hdfnews email list, contact us

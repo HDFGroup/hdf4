@@ -35,6 +35,12 @@ Distribution Layout
                     are also available on the NCSA ftp server, 
                     in /HDF/HDF_Current/release_notes.
 
+   java-hdf -- optional Java interface and Java HDF Viewer.  The Java
+               products are built separately after the library has
+               been built.  Change to the java-hdf directory and
+               see the README.
+
+
 Third Party Software Requirements:
 ---------------------------------
  1. IJPEG distribution release 6b(libjpeg.a). The "official" site 
