@@ -955,7 +955,7 @@ done:
        HDfree(fbufps);
 
 #ifdef HAVE_PABLO
-  TRACE_OFF(VS_mask, ID_VSfpact)
+  TRACE_OFF(VS_mask, ID_VSfpack);
 #endif /* HAVE_PABLO */
 
   return ret_value;

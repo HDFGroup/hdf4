@@ -488,7 +488,7 @@ done:
 
   /* Normal function cleanup */
 #ifdef HAVE_PABLO
-    TRACE_OFF(V_mask, ID_VSfattrs);
+    TRACE_OFF(V_mask, ID_VSfnattrs);
 #endif /* HAVE_PABLO */
 
   return ret_value;
