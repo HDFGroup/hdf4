@@ -117,6 +117,7 @@
 #define        DFNTF_PC        4    /* PC floats - flipped IEEE */
 #define        DFNTF_CONVEX    5    /* CONVEX native format */
 #define        DFNTF_VP        6    /* Fujitsu VP native format */
+#define        DFNTF_CRAYMPP   7    /* Cray MPP format */
 
 /* class info codes for char */
 #define        DFNTC_BYTE      0    /* bitwise/numeric field */
