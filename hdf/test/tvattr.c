@@ -234,7 +234,7 @@ intn write_vattrs(void)
                      vsversion);
       }
    /* check number of fields */
-   if (2 != (n_flds = VSQuerynfields(vsid)))  {
+   if (2 != (n_flds = VFnfields(vsid)))  {
          num_errs++;
          printf(">>> Wrong number of fields, should be 2, got %d.\n",
                       n_flds);
