@@ -9,7 +9,7 @@ DEFINES=-DNDEBUG -DHDF
 
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-ncdump_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
+ncdump_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a
 ncdump_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: ncdump ${srcdir}/test0.cdl
