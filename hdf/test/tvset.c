@@ -51,12 +51,25 @@ write_vset_stuff(void)
     int32       ibuf[2000];     /* integer buffer */
     float32     fbuf[2000];     /* floating point buffer */
     char        gbuf[2000];     /* generic buffer */
-    uint8       gbuf1[65536];   /* buffer for uint8 */
-    float32     gbuf2[20000];   /*  buffer for float32 */
+    uint8       *gbuf1 = NULL;   /* buffer for uint8 */
+    float32     *gbuf2 = NULL;   /* buffer for float32 */
     const char *name;
     char       *p;
     char8       c;
     float32     f;
+
+    /* allocate these buffers dynamically and not off the stack
+       as they were previously handled */
+    if (gbuf1 == NULL)
+     {
+       gbuf1 = (uint8 *)HDmalloc(sizeof(uint8)*65536);
+     }
+
+    if (gbuf2 == NULL)
+     {
+       gbuf2 = (float32 *)HDmalloc(sizeof(float32)*20000);
+     }
+
 
     fid = Hopen(FNAME0, DFACC_CREATE, 100);
     if (fid == FAIL)
@@ -429,6 +442,8 @@ write_vset_stuff(void)
 
     Vend(fid);
     Hclose(fid);
+    HDfree(gbuf1);
+    HDfree(gbuf2);
     return SUCCEED;
 
 }   /* write_vset_stuff */
