@@ -90,9 +90,6 @@ PRIVATE intn Load_vfile
 PRIVATE intn Remove_vfile
             (HFILEID f);
 
-PRIVATE vginstance_t *vginstance
-            (HFILEID f, uint16 vgid);
-
 PRIVATE void vunpackvg
             (VGROUP * vg, uint8 buf[], uintn len);
 
@@ -173,7 +170,11 @@ Load_vfile(HFILEID f)
           vf->vgtabn++;
           v->key = (int32) VGSLOT2ID(f, ref);   /* set the key for the node */
           v->ref = (intn) ref;
+#ifdef OLD_WAY
           v->vg = (VGROUP *) NULL;  /* ie not attached yet */
+#else
+          v->vg = VPgetinfo(f,ref);  /* get the header information */
+#endif /* OLD_WAY */
           v->nattach = 0;
           v->nentries = 0;
           tbbtdins(vf->vgtree, (VOIDP) v, NULL);    /* insert the vg instance in B-tree */
@@ -204,7 +205,11 @@ Load_vfile(HFILEID f)
           vf->vstabn++;
           w->key = (int32) VSSLOT2ID(f, ref);   /* set the key for the node */
           w->ref = (intn) ref;
-          w->vs = (VDATA *) NULL;   /* ie not attached yet */
+#ifdef OLD_WAY
+          w->vs = (VGROUP *) NULL;  /* ie not attached yet */
+#else
+          w->vs = VSPgetinfo(f,ref);  /* get the header information */
+#endif /* OLD_WAY */
           w->nattach = 0;
           w->nvertices = 0;
           tbbtdins(vf->vstree, (VOIDP) w, NULL);    /* insert the vg instance in B-tree */
@@ -364,7 +369,7 @@ Vfinish(HFILEID f)
    * RETURNS vginstance_t pointer if ok.
    *
  */
-PRIVATE vginstance_t *
+vginstance_t *
 vginstance(HFILEID f, uint16 vgid)
 {
     VOIDP      *t;
@@ -564,6 +569,60 @@ vunpackvg(VGROUP * vg, uint8 buf[], uintn len)
 #endif
 }   /* vunpackvg */
 
+/*--------------------------------------------------------------------------
+ NAME
+    VPgetinfo
+ PURPOSE
+    Read in the "header" information about the Vgroup.
+ USAGE
+    VGROUP *VPgetinfo(f,ref)
+        HFILEID f;              IN: the HDF file id
+        uint16 ref;             IN: the tag & ref of the Vgroup 
+ RETURNS
+    Return a pointer to a VGROUP filled with the Vgroup information on success,
+    NULL on failure.
+ DESCRIPTION
+    This routine pre-reads the header information for a Vgroup into memory
+    so that it can be accessed more quickly by the routines that need it.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
+{
+    CONSTR(FUNC, "VPgetinfo");
+	VGROUP         *vg;
+    uint8          *vgpack;
+    uint32          len;
+          
+    /* Find out how long the VGroup information is */
+    if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == FAIL)
+        HRETURN_ERROR(DFE_INTERNAL,NULL);
+ 
+    /* Get space for the raw Vgroup info */
+    if(( vgpack = (uint8 *) HDgetspace(len)) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE,NULL);
+ 
+    /* Get the raw Vgroup info */
+    if (Hgetelement(f, DFTAG_VG, (uint16)ref, vgpack) == (int32)FAIL) 
+        HRETURN_ERROR(DFE_NOMATCH,NULL);
+       
+    /* allocate space for vg */
+    if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP)))) 
+        HRETURN_ERROR(DFE_NOSPACE,NULL);
+       
+    /* unpack vgpack into structure vg, and init  */
+    vunpackvg(vg,vgpack,len);
+    vg->f             = f;
+    vg->oref          = ref;
+    vg->otag          = DFTAG_VG;
+      
+    HDfreespace((VOIDP)vgpack);
+
+    return(vg);
+} /* end VPgetinfo */
+
 /* ----------------------------- Vattach --------------------------- */
 
 /*
@@ -589,7 +648,9 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
 {
     VGROUP     *vg;
     int16       acc_mode;
+#ifdef OLD_WAY
     uint8      *vgpack;
+#endif /* OLD_WAY */
     vginstance_t *v;
     vfile_t    *vf;
     CONSTR(FUNC, "Vattach");
@@ -668,7 +729,9 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
     else
       {
 /******* access an EXISTING vg *********/
+#ifdef OLD_WAY
           uint32      len;
+#endif /* OLD_WAY */
 
           if (NULL == (v = vginstance(f, (uint16) vgid)))
               HRETURN_ERROR(DFE_NOMATCH, FAIL);
@@ -677,13 +740,14 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
            * vg already attached.  inc nattach and return existing ptr
            */
 
-          if (v->vg != NULL)
+          if (v->nattach > 0)
             {
                 v->vg->access = MAX(v->vg->access, acc_mode);
                 v->nattach++;
                 return (v->key);    /* return key instead of VGROUP ptr */
             }
 
+#ifdef OLD_WAY
           /* else vg not attached, must fetch vg from file */
 
           len = Hlength(f, DFTAG_VG, (uint16) vgid);
@@ -707,14 +771,19 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           vg->f = f;
           vg->oref = (uint16) vgid;
           vg->otag = DFTAG_VG;
+          HDfreespace((VOIDP) vgpack);
+#else
+          vg=v->vg;
+#endif /* OLD_WAY */
           vg->access = acc_mode;
           vg->marked = 0;
 
           /* attach vg to file's vgtab at the vg instance v */
+#ifdef OLD_WAY
           v->vg = vg;
+#endif /* OLD_WAY */
           v->nattach = 1;
           v->nentries = vg->nvelt;
-          HDfreespace((VOIDP) vgpack);
 
           return (v->key);  /* return key instead of VGROUP ptr */
       }
@@ -981,6 +1050,39 @@ Vntagrefs(int32 vkey)
     return ((vg->otag == DFTAG_VG) ? (int32) vg->nvelt : FAIL);
 }   /* Vntagrefs */
 
+/* ---------------------------- Vnrefs ------------------------------- */
+/*
+   * Returns the number (0 or +ve integer) of tags of a given type in a vgroup.
+   * If error, returns FAIL
+   * 05-NOV-94 Quincey Koziol.
+ */
+int32
+Vnrefs(int32 vkey,int32 tag)
+{
+    CONSTR(FUNC, "Vnrefs");
+    vginstance_t *v;
+    VGROUP     *vg;
+    uint16 ttag=(uint16)tag;    /* alias for faster comparison */
+    int32 count=0;              /* number of matching tags in the Vgroup */
+    uintn u;                    /* local counting variable */
+
+    if (!VALIDVGID(vkey))
+        HRETURN_ERROR(DFE_ARGS, FAIL);
+
+    /* locate vg's index in vgtab */
+    if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
+        HRETURN_ERROR(DFE_NOVS, FAIL);
+
+    vg = v->vg;
+    if (vg == NULL)
+        HRETURN_ERROR(DFE_BADPTR, FAIL);
+
+    for (u = 0; u < vg->nvelt; u++)
+        if (ttag == vg->tag[u])
+            count++;
+    return(count);
+}   /* Vnrefs */
+
 /* -------------------------- Vgettagrefs ----------------------------- */
 /*
    * Returns n tag/ref pairs from the vgroup into the caller-supplied arrays
@@ -1202,14 +1304,19 @@ vinsertpair(VGROUP * vg, uint16 tag, uint16 ref)
 int32
 Ventries(HFILEID f, int32 vgid)
 {
+#ifdef OLD_WAY
     uint8      *vgpack;
     VGROUP      vg;
     int32       len;
+#else
+    vginstance_t *v;
+#endif /* OLD_WAY */
     CONSTR(FUNC, "Ventries");
 
     if (vgid < 1)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
+#ifdef OLD_WAY
     len = Hlength(f, DFTAG_VG, (uint16) vgid);
     if (len == FAIL)
         HRETURN_ERROR(DFE_NOSUCHTAG, FAIL);
@@ -1227,6 +1334,11 @@ Ventries(HFILEID f, int32 vgid)
     HDfreespace((VOIDP) vg.ref);
 
     return ((int32) vg.nvelt);
+#else
+    if((v=vginstance(f,(uint16)vgid))==NULL)
+        HRETURN_ERROR(DFE_NOMATCH,FAIL);          /* error */
+    return(v->vg->nvelt);
+#endif /* OLD_WAY */
 }   /* Ventries */
 
 /* ==================================================================== */

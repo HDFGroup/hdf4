@@ -139,6 +139,9 @@ extern      "C"
     extern int32 Vntagrefs
                 (int32 vkey);
 
+    extern int32 Vnrefs
+                (int32 vkey,int32 tag);
+
     extern int32 Vgettagrefs
                 (int32 vkey, int32 _HUGE tagarray[], int32 _HUGE refarray[], int32 n);
 

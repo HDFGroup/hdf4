@@ -322,6 +322,9 @@ extern      "C"
     extern vsinstance_t _HUGE *vsinstance
                 (HFILEID f, uint16 vsid);
 
+    extern vginstance_t _HUGE *vginstance
+            (HFILEID f, uint16 vgid);
+
     extern VWRITELIST _HUGE *vswritelist
                 (int32 vskey);
 
@@ -333,6 +336,12 @@ extern      "C"
 
     extern void vpackvs
                 (VDATA _HUGE * vs, uint8 _HUGE buf[], int32 _HUGE * size);
+
+    extern VGROUP _HUGE *VPgetinfo
+                (HFILEID f,uint16 ref);
+
+    extern VDATA _HUGE *VSPgetinfo
+                (HFILEID f,uint16 ref);
 
 #if defined c_plusplus || defined __cplusplus
 }

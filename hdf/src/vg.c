@@ -772,15 +772,20 @@ int32
 Vfind(HFILEID f, const char *vgname)
 {
     int32       vgid = -1;
+#ifdef OLD_WAY
     int32       ret_ref;
     int32       vkey;
     char        name[512];
+#else
+    vginstance_t    * v;
+#endif /* OLD_WAY */
 #ifdef LATER
     CONSTR(FUNC, "Vfind");
 #endif
 
     while (-1L != (vgid = Vgetid(f, vgid)))
       {
+#ifdef OLD_WAY
 	  vkey = Vattach(f, vgid, "r");
 	  if (vkey == FAIL)
 	      return (0);	/* error */
@@ -794,7 +799,12 @@ Vfind(HFILEID f, const char *vgname)
 	    }	/* else */
 
 	  Vdetach(vkey);
-
+#else
+        if((v=vginstance(f,(uint16)vgid))==NULL)
+            return(0);          /* error */
+        if (!HDstrcmp(vgname, v->vg->vgname)) 
+            return((int32)(v->vg->oref));  /* found the vdata */
+#endif /* OLD_WAY */
       }
     return (0);		/* not found */
 
@@ -816,15 +826,20 @@ int32
 VSfind(HFILEID f, const char *vsname)
 {
     int32       vsid = -1;
+#ifdef OLD_WAY
     int32       ret_ref;
     int32       vkey;
     char        name[512];
+#else
+    vsinstance_t    * v;
+#endif /* OLD_WAY */
 #ifdef LATER
     CONSTR(FUNC, "VSfind");
 #endif
 
     while (-1L != (vsid = VSgetid(f, vsid)))
       {
+#ifdef OLD_WAY
           vkey = VSattach(f, vsid, "r");
           if (vkey == FAIL)
               return (0);   /* error */
@@ -836,6 +851,12 @@ VSfind(HFILEID f, const char *vsname)
                 return (ret_ref);   /* found the vdata */
             }   /* end if */
           VSdetach(vkey);
+#else
+        if((v=vsinstance(f,(uint16)vsid))==NULL)
+            return(0);          /* error */
+        if (!HDstrcmp(vsname, v->vs->vsname)) 
+            return((int32)(v->vs->oref));  /* found the vdata */
+#endif /* OLD_WAY */
       }
     return (0);     /* not found */
 }   /* VSfind */
