@@ -81,7 +81,6 @@ typedef int clock_t;
 #define clock() (0)
 #endif
 
-extern int num_errs;
 extern int Verbocity;
 
 /* Local variables */

@@ -684,10 +684,27 @@ static const char  *sw1 = "s1w.hdf";
 static const char  *sw3 = "s3w.hdf";
 static const char  *sw4 = "s4w.hdf";
 
+static int slabwf32(void);
+static int slabwf64(void);
+#if !(defined CRAYMPP)
+static int slabwin(void);
+static int slabwuin(void);
+#endif
+static int slabwi32(void);
+static int slabwui32(void);
+static int slabwi16(void);
+static int slabwui16(void);
+static int slabwi8(void);
+static int slabwui8(void);
+static int slab1w(void);
+static int slab2w(void);
+static int slab3w(void);
+static int slab4w(void);
+
 /*
    ** Write data set to slabw.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwf32(void)
 {
     int32       i, j, k;
@@ -841,7 +858,7 @@ slabwf32(void)
 /*
    ** Write float64 data set to slabw.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwf64(void)
 {
     int32       i, j, k;
@@ -999,7 +1016,7 @@ slabwf64(void)
 /*
    ** Write intn data set to slabwin.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwin(void)
 {
     int32       i, j, k;
@@ -1156,7 +1173,7 @@ slabwin(void)
 /*
    ** Write uintn data set to slabwuin.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwuin(void)
 {
     int32       i, j, k;
@@ -1314,7 +1331,7 @@ slabwuin(void)
 /*
    ** Write int32 data set to slabwi32.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwi32(void)
 {
     int32       i, j, k;
@@ -1471,7 +1488,7 @@ slabwi32(void)
 /*
    ** Write uint32 data set to slabwui32.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwui32(void)
 {
     int32       i, j, k;
@@ -1628,7 +1645,7 @@ slabwui32(void)
 /*
    ** Write int16 data set to slabwi16.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwi16(void)
 {
     int32       i, j, k;
@@ -1785,7 +1802,7 @@ slabwi16(void)
 /*
    ** Write uint16 data set to slabwui16.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwui16(void)
 {
     int32       i, j, k;
@@ -1942,7 +1959,7 @@ slabwui16(void)
 /*
    ** Write int8 data set to slabwi8.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwi8(void)
 {
     int32       i, j, k;
@@ -2099,7 +2116,7 @@ slabwi8(void)
 /*
    ** Write uint8 data set to slabw.hdf as 5 hyperslabs.
  */
-int
+static int
 slabwui8(void)
 {
     int32       i, j, k;
@@ -2254,7 +2271,7 @@ slabwui8(void)
     return (int) num_err;
 }
 
-int
+static int
 slab1w(void)
 {
     int32       ret = 0;
@@ -2347,7 +2364,7 @@ slab1w(void)
     return (int) num_err;
 }
 
-int
+static int
 slab2w(void)
 {
     int32       i, j, k;
@@ -2442,7 +2459,7 @@ slab2w(void)
     return (int) num_err;
 }
 
-int
+static int
 slab3w(void)
 {
     int32       i, j, k;
@@ -2751,7 +2768,7 @@ slab3w(void)
     return (int) num_err;
 }
 
-int
+static int
 slab4w(void)
 {
     int32       i, j, k;

@@ -35,8 +35,11 @@ static char RcsId[] = "@(#)$Revision$";
 static int32  files[BIG];
 static int32  accs[BIG];
 
-void
-test_file_limits()
+static void test_file_limits(void);
+static void test_ref_limits(void);
+
+static void
+test_file_limits(void)
 {
     int         i;
     int32       ret;
@@ -118,8 +121,8 @@ test_file_limits()
     ret = Hclose(files[0]);
 } /* end test_file_limits() */
 
-void
-test_ref_limits()
+static void
+test_ref_limits(void)
 {
     int32 i;                /* local counting variable */
     int32 fid;              /* file ID */

@@ -53,7 +53,7 @@ const struct {
     {"Test Image #2", 2, DFNT_FLOAT64, MFGR_INTERLACE_PIXEL, {17,19}, 3}
   };
 
-const uint8 image0[15][13][3]={
+const uint8 image00[15][13][3]={
 {{0 ,0 ,0 },{1 ,1 ,1 },{2 ,2 ,2 },{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 }},
 {{1 ,1 ,1 },{2 ,2 ,2 },{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 }},
 {{2 ,2 ,2 },{3 ,3 ,3 },{4 ,4 ,4 },{5 ,5 ,5 },{6 ,6 ,6 },{7 ,7 ,7 },{8 ,8 ,8 },{9 ,9 ,9 },{10 ,10 ,10 },{11 ,11 ,11 },{12 ,12 ,12 },{13 ,13 ,13 },{14 ,14 ,14 }},
@@ -151,7 +151,30 @@ const float64 image4[19][17][2]={
 {{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}}
 };
 
-void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
+static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt);
+static void test_mgr_init(void);
+static void test_mgr_image_b1a(void);
+static void test_mgr_image_b1b(void);
+static void test_mgr_image_b2a1aa(void);
+static void test_mgr_image_b2a1bb1(void);
+static void test_mgr_image_b2a1bb2(void);
+static void test_mgr_image_b2a1cc1(void);
+static void test_mgr_image_b2a1cc2(void);
+static void test_mgr_image_b2a2aa(void);
+static void test_mgr_image_b2a2bb(void);
+static void test_mgr_image_b2a2cc(void);
+static void test_mgr_image_b2b1(void);
+static void test_mgr_image_b2b2(void);
+static void test_mgr_image_b2b3(void);
+static void test_mgr_image(void);
+static void test_mgr_index(void);
+static void test_mgr_interlace(void);
+static void test_mgr_lut(void);
+static void test_mgr_special(void);
+static void test_mgr_attr(void);
+
+#ifdef QAK
+static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
 {
     int32 nt_size=DFKNTsize(nt);
     int32 i,j,k;
@@ -249,6 +272,7 @@ void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
           printf("\n");
       } /* end for */
 }   /* dump_image() */
+#endif /* QAK */
 
 /* Test outline:
     I. Interface Initialization
@@ -309,8 +333,8 @@ void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
 **      C. GRfileinfo
 ** 
 ****************************************************************/
-void
-test_mgr_init()
+static void
+test_mgr_init(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -379,7 +403,7 @@ test_mgr_init()
 }   /* end test_mgr_init() */
 
 /* Sub-tests for test_mgr_image() */
-void test_mgr_image_b1a()
+static void test_mgr_image_b1a(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -455,7 +479,7 @@ void test_mgr_image_b1a()
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_image_b1a() */
 
-void test_mgr_image_b1b()
+static void test_mgr_image_b1b(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -536,7 +560,7 @@ void test_mgr_image_b1b()
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_image_b1b() */
 
-void test_mgr_image_b2a1aa()
+static void test_mgr_image_b2a1aa(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -650,7 +674,7 @@ void test_mgr_image_b2a1aa()
     CHECK(ret,FAIL,"Hclose");
 } /* end test_mgr_image_b2a1aa() */
 
-void test_mgr_image_b2a1bb1()
+static void test_mgr_image_b2a1bb1(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -789,7 +813,7 @@ void test_mgr_image_b2a1bb1()
 
 } /* end test_mgr_image_b2a1bb1() */
 
-void test_mgr_image_b2a1bb2()
+static void test_mgr_image_b2a1bb2(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -920,7 +944,7 @@ void test_mgr_image_b2a1bb2()
 
 } /* end test_mgr_image_b2a1bb2() */
 
-void test_mgr_image_b2a1cc1()
+static void test_mgr_image_b2a1cc1(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -1058,7 +1082,7 @@ void test_mgr_image_b2a1cc1()
 
 }
 
-void test_mgr_image_b2a1cc2()
+static void test_mgr_image_b2a1cc2(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -1188,7 +1212,7 @@ void test_mgr_image_b2a1cc2()
 
 } /* end test_mgr_image_b2a1cc() */
 
-void test_mgr_image_b2a2aa()
+static void test_mgr_image_b2a2aa(void)
 {
 #ifdef QAK
     int32 fid;              /* HDF file ID */
@@ -1306,7 +1330,7 @@ void test_mgr_image_b2a2aa()
 
 } /* end test_mgr_image_b2a2aa() */
 
-void test_mgr_image_b2a2bb()
+static void test_mgr_image_b2a2bb(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -1581,7 +1605,7 @@ void test_mgr_image_b2a2bb()
 
 } /* end test_mgr_image_b2a2bb() */
 
-void test_mgr_image_b2a2cc()
+static void test_mgr_image_b2a2cc(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -1849,7 +1873,7 @@ void test_mgr_image_b2a2cc()
 
 } /* end test_mgr_image_b2a2cc() */
 
-void test_mgr_image_b2b1()
+static void test_mgr_image_b2b1(void)
 {
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
@@ -1960,7 +1984,7 @@ void test_mgr_image_b2b1()
                     switch(i)
                       {
                           case 0:
-                              if(0!=HDmemcmp(img_data,image0,sizeof(image0)))
+                              if(0!=HDmemcmp(img_data,image00,sizeof(image00)))
                                 {
                                     MESSAGE(3, printf("Error reading data for image %d\n",i););
                                     num_errs++;
@@ -2020,13 +2044,13 @@ void test_mgr_image_b2b1()
 
 } /* end test_mgr_image_b2b1() */
 
-void test_mgr_image_b2b2()
+static void test_mgr_image_b2b2(void)
 {
 /* B2b2 - Read/Write images - with real Data - Existing Image - Sub-setted Image */
     /* This test is unnecessary, I think this case has been adequately covered above -QAK */
 } /* end test_mgr_image_b2b2() */
 
-void test_mgr_image_b2b3()
+static void test_mgr_image_b2b3(void)
 {
 /* B2b3 - Read/Write images - with real Data - Existing Image - Sub-sampled Image */
     /* This test is unnecessary, I think this case has been adequately covered above -QAK */
@@ -2057,13 +2081,9 @@ void test_mgr_image_b2b3()
 **                  3. Sub-sampled image
 ** 
 ****************************************************************/
-void
-test_mgr_image()
+static void
+test_mgr_image(void)
 {
-    int32 fid;              /* HDF file ID */
-    int32 grid;             /* GRID for the interface */
-    int32 ret;              /* generic return value */
-
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Image I/O routines\n"););
 
@@ -2091,8 +2111,8 @@ test_mgr_image()
 **      B. GRreftoindex
 ** 
 ****************************************************************/
-void
-test_mgr_index()
+static void
+test_mgr_index(void)
 {
     /* output message about test being performed */
     MESSAGE(6, printf("Testing Multi-File Raster id/ref/index routines\n"););
@@ -2109,8 +2129,8 @@ test_mgr_index()
 **      B. GRreqimageil
 ** 
 ****************************************************************/
-void
-test_mgr_interlace()
+static void
+test_mgr_interlace(void)
 {
     int32 fid;              /* hdf file id */
     int32 grid;             /* grid for the interface */
@@ -2224,8 +2244,8 @@ test_mgr_interlace()
 **          2. GRreadlut
 ** 
 ****************************************************************/
-void
-test_mgr_lut()
+static void
+test_mgr_lut(void)
 {
     int32 fid;              /* hdf file id */
     int32 grid;             /* grid for the interface */
@@ -2321,7 +2341,7 @@ test_mgr_lut()
         for(j=(intn)MFGR_INTERLACE_PIXEL; j<=(intn)MFGR_INTERLACE_COMPONENT; j++)
           {
               VOIDP pixel_buf;
-              int32 dimsizes[2];
+              int32 dimsizes2[2];
 
               tmp_data=HDmalloc(pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE));
               CHECK(tmp_data,NULL,"HDmalloc");
@@ -2336,9 +2356,9 @@ test_mgr_lut()
 
               ret=GRreadlut(lutid,tmp_data);
 
-              dimsizes[XDIM]=1;
-              dimsizes[YDIM]=pal_entries;
-              GRIil_convert(pal_data,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes,pal_ncomp,pal_nt);
+              dimsizes2[XDIM]=1;
+              dimsizes2[YDIM]=pal_entries;
+              GRIil_convert(pal_data,MFGR_INTERLACE_PIXEL,pixel_buf,j,dimsizes2,pal_ncomp,pal_nt);
               if(0!=HDmemcmp(tmp_data,pixel_buf,
                     pal_entries*pal_ncomp*DFKNTsize(pal_nt|DFNT_NATIVE)))
                 {
@@ -2375,8 +2395,8 @@ test_mgr_lut()
 **      C. GRsetcompress
 ** 
 ****************************************************************/
-void
-test_mgr_special()
+static void
+test_mgr_special(void)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Special Element routines\n"););
@@ -2394,8 +2414,8 @@ test_mgr_special()
 **      C. GRfindattr
 ** 
 ****************************************************************/
-void
-test_mgr_attr()
+static void
+test_mgr_attr(void)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Attribute routines\n"););
@@ -2409,7 +2429,7 @@ test_mgr_attr()
 ** 
 ****************************************************************/
 void
-test_mgr()
+test_mgr(void)
 {
     /*
         Each major outline portion has it's own main function:

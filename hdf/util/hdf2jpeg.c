@@ -28,8 +28,10 @@ static char RcsId[] = "@(#)$Revision$";
 
 PRIVATE uint8 file_buf[MAX_FILE_BUF];   /* size of the buffer to copy through */
 
-VOID
-usage()
+static VOID usage(void);
+
+static VOID
+usage(void)
 {
     printf("USAGE: hdf2jpeg <input HDF file> <output JPEG file template>\n");
     printf("        <input HDF file> : the HDF file to extract JPEG images from\n");

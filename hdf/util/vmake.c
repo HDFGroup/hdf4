@@ -74,6 +74,9 @@ int32       separate
 int         show_help_msg
             (void);
 
+void showfmttypes 
+            (void);
+
 /*
  *  Main entry point
  */
@@ -139,7 +142,7 @@ main(int ac, char **av)
 }   /* main */
 
 void
-showfmttypes()
+showfmttypes(void)
 {
     fprintf(stderr, "\tvalid fmt types: \n");
     fprintf(stderr, "\t  c - char    (char in HDF file)    \n");
@@ -452,7 +455,7 @@ inpdata(unsigned char **bp)
     int32       totalsize, nread, t, i, j, k;
     unsigned char *b;
     int32       maxrec;
-    int32       (*inpfn[MAXVAR]) ();
+    int32       (*inpfn[MAXVAR]) (char *);
     int32       inpsiz[MAXVAR];
 
     for (i = 0; i < ntotal; i++)

@@ -36,8 +36,11 @@ static char RcsId[] = "@(#)$Revision$";
 #define FIELD1_UPPER "FIELD_NAME_HERE"
 #define FIELD2       "DIFFERENT_FIELD_NAME"
 
+static int32 write_vset_stuff(void);
+static int32 read_vset_stuff(void);
+
 /* write some stuff to the file */
-int32
+static int32
 write_vset_stuff(void)
 {
     int32       status;
@@ -396,7 +399,7 @@ write_vset_stuff(void)
     /* create a whole bunch of Vdatas to check for memory leakage */
     for (i = 0; i < VDATA_COUNT; i++)
       {
-          char        name[80];
+          char        name2[80];
           vs1 = VSattach(fid, -1, "w");
           if (vs1 == FAIL)
             {
@@ -404,8 +407,8 @@ write_vset_stuff(void)
                 printf(">>> Vsattach failed on loop %d\n", (int) i);
                 continue;
             }
-          sprintf(name, "VdataLoop-%d", (int) i);
-          VSsetname(vs1, name);
+          sprintf(name2, "VdataLoop-%d", (int) i);
+          VSsetname(vs1, name2);
           status = VSfdefine(vs1, "A", DFNT_CHAR8, 1);
           if (status == FAIL)
             {
@@ -420,7 +423,7 @@ write_vset_stuff(void)
                 printf(">>> VSsetfields failed on loop %d\n", (int) i);
                 continue;
             }
-          VSwrite(vs1, (unsigned char *) name, 1, FULL_INTERLACE);
+          VSwrite(vs1, (unsigned char *) name2, 1, FULL_INTERLACE);
           VSdetach(vs1);
       }
 
@@ -431,7 +434,7 @@ write_vset_stuff(void)
 }   /* write_vset_stuff */
 
 /* read everything back in and check it */
-int32
+static int32
 read_vset_stuff(void)
 {
     int32       ret;            /* generic return value */

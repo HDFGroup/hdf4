@@ -60,12 +60,17 @@ struct TestStruct
       char        Description[64];
       int         SkipFlag;
       char        Name[16];
-                  VOID(*Call) ();
+      VOID        (*Call) (void);
   }
          Test[MAXNUMOFTESTS];
 
-void
-InitTest(const char *TheName, VOID(*TheCall) (), const char *TheDescr)
+static void
+InitTest(const char *TheName, VOID(*TheCall) (void), const char *TheDescr);
+static void
+usage(intn argc, char *argv[]);
+
+static void
+InitTest(const char *TheName, VOID(*TheCall) (void), const char *TheDescr)
 {
     if (Index >= MAXNUMOFTESTS)
       {
@@ -80,7 +85,7 @@ InitTest(const char *TheName, VOID(*TheCall) (), const char *TheDescr)
     Index++;
 }
 
-void
+static void
 usage(intn argc, char *argv[])
 {
     intn        i;

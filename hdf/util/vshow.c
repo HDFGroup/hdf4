@@ -42,6 +42,26 @@ static int  condensed;
 int32       vsdumpfull
             (int32 vs);
 
+int32 fmtbyte
+            (char *x);
+int32 fmtchar
+            (char *x);
+
+int32 fmtint
+            (char *x);
+
+int32 fmtfloat
+            (char *x);
+
+int32 fmtlong
+            (char *x);
+
+int32 fmtshort
+            (char *x);
+
+int32 fmtdouble
+            (char *x);
+
 int
 main(int ac, char **av)
 {
@@ -247,7 +267,7 @@ static int32 cn = 0;
 /* ------------------------------------------------ */
 /* printing functions used by vsdumpfull(). */
 int32
-fmtbyte(unsigned char *x)
+fmtbyte(char *x)
 {
     cn += printf("%02x ", *x);
     return (1);
@@ -317,7 +337,7 @@ vsdumpfull(int32 vs)
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb, *b;
     DYN_VWRITELIST *w;
-    int32       (*fmtfn[VSFIELDMAX]) ();
+    int32       (*fmtfn[VSFIELDMAX]) (char *);
     int32       off[VSFIELDMAX];
     int32       order[VSFIELDMAX];
 

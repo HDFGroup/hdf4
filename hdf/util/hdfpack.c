@@ -317,15 +317,15 @@ main(int argc, char *argv[])
                                 if (external)
                                   {
                                       sp_info_block_t info;
-                                      int32       aid, new_aid;
+                                      int32       aid1, new_aid;
                                       char       *name;
 
                                       /* get file name and offset */
-                                      aid = Hstartread(infile, dlist[i].tag, dlist[i].ref);
-                                      if (aid == FAIL)
+                                      aid1 = Hstartread(infile, dlist[i].tag, dlist[i].ref);
+                                      if (aid1 == FAIL)
                                           continue;
 
-                                      ret = HDget_special_info(aid, &info);
+                                      ret = HDget_special_info(aid1, &info);
                                       if ((ret == FAIL) || (info.key != SPECIAL_EXT))
                                           continue;
 
@@ -341,7 +341,7 @@ main(int argc, char *argv[])
                                                          dlist[i].length);
 
                                       /* close the elements */
-                                      Hendaccess(aid);
+                                      Hendaccess(aid1);
                                       Hendaccess(new_aid);
 
                                   }

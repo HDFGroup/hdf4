@@ -181,7 +181,7 @@ putRaster(const char *template, int32 xdim, int32 ydim, int imageNumber,
     char        fileName[DF_MAXFNLEN];
 
     if (!template)  /* can assume interactive (see main) */
-        template = (char *) getTemplate("image", imageNumber);
+        template = (const char *) getTemplate("image", imageNumber);
 
     convert(template, imageNumber, xdim, ydim, fileName);
 
@@ -224,7 +224,7 @@ putPalette(const char *template, int imageNumber, uint8 *palette)
     char        greens[COLOR_SIZE], blues[COLOR_SIZE];
 
     if (!template)  /* can assume interactive (see main) */
-        template = (char *) getTemplate("palette", imageNumber);
+        template = (const char *) getTemplate("palette", imageNumber);
 
     convert(template, imageNumber, (int32) 1, (int32) 768, fileName);
 

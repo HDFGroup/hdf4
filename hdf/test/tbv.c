@@ -39,8 +39,12 @@ static char RcsId[] = "@(#)$Revision$";
 #include "tproto.h"
 #include "bitvect.h"
 
+static void test_1(void);
+static void test_2(void);
+static void test_3(void);
+
 /* Basic creation & deletion tests */
-void test_1(void)
+static void test_1(void)
 {
     bv_ptr b;
     int32 size;
@@ -75,7 +79,7 @@ void test_1(void)
 } /* end test_1 */
 
 /* Basic set & get tests */
-void test_2(void)
+static void test_2(void)
 {
     bv_ptr b;
     int32 size;
@@ -148,7 +152,7 @@ void test_2(void)
 } /* end test_2 */
 
 /* Advanced set & get tests */
-void test_3(void)
+static void test_3(void)
 {
     bv_ptr b;
     int32 size;

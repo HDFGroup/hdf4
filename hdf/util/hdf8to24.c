@@ -34,6 +34,17 @@ uint8       red_comp[256], green_comp[256], blue_comp[256];
 
 comp_info   cinfo;              /* compression structure */
 
+static intn
+magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0,
+        int32 from_y0, int32 from_x1, int32 from_y1, int32 from_width,
+        int32 from_height, int32 to_width, int32 to_height);
+
+static intn
+convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim,
+             int32 img_ydim);
+
+static VOID usage(void);
+
 /**********************************************************************
 *  Function :   magnify
 *  Purpose  :   Magnify an image by independant X and Y magnification
@@ -61,7 +72,7 @@ comp_info   cinfo;              /* compression structure */
 *  Calls    :
 *  Called by    :
 **********************************************************************/
-intn
+static intn
 magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0,
         int32 from_y0, int32 from_x1, int32 from_y1, int32 from_width,
         int32 from_height, int32 to_width, int32 to_height)
@@ -148,7 +159,7 @@ magnify(uint8 *from_buffer, uint8 *to_buffer, int32 from_x0,
 *  Calls    :
 *  Called by    :
 **********************************************************************/
-intn
+static intn
 convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim,
              int32 img_ydim)
 {
@@ -171,8 +182,8 @@ convert8to24(uint8 *img8_buf, uint8 *img24_buf, int32 img_xdim,
     return (TRUE);
 }   /* end convert8to24() */
 
-VOID
-usage()
+static VOID
+usage(void)
 {
     printf("USAGE: make24 [-s<scale>] [-j] <input HDF file> <output HDF file>\n");
     printf("    -s<scale> : set scale for magnifying the 8-bit input file.\n");

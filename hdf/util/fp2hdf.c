@@ -322,6 +322,15 @@ static int  process(struct Options *opt);
 static int  gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in);
 static int  gint(char *infile, FILE * strm, int *ival, struct Input *in);
 static int  isnum(char *s);
+static int  gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin);
+static int  gdimen(char *infile, struct Input *inp, FILE *strm);
+static int  gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin);
+static int  gscale(char *infile, struct Input *in, FILE *strm, int *is_scale);
+static int  gtype(char *infile, struct Input *in, FILE **strm);
+static int  indexes(float32 *scale, int dim, int *idx, int res);
+static int  interp(struct Input *in, struct Raster *im);
+static int  palette(char *palfile);
+static int  pixrep(struct Input *in, struct Raster *im);
 
 /*
  * functions with non-integer return types
@@ -477,12 +486,8 @@ main(int argc, char *argv[])
  * Purpose:
  *      Get the input data.
  */
-int
-gdata(infile, in, strm, is_maxmin)
-char       *infile;
-struct Input *in;
-FILE       *strm;
-int        *is_maxmin;
+static int
+gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
 {
     int32       i, j, k;
     float32    *fp32;
@@ -581,11 +586,8 @@ int        *is_maxmin;
  * Purpose:
  *      Determine the input data dimensions.
  */
-int
-gdimen(infile, inp, strm)
-char       *infile;
-struct Input *inp;
-FILE       *strm;
+static int
+gdimen(char *infile, struct Input *inp, FILE *strm)
 {
     int32       hdfdims[3];     /* order: ZYX or YX */
     int32       nt;             /* number type of input file */
@@ -783,12 +785,8 @@ gint(char *infile, FILE * strm, int *ival, struct Input *in)
  * Purpose:
  *      Extract the maximum and minimum data values from the input file.
  */
-int
-gmaxmin(infile, in, strm, is_maxmin)
-char       *infile;
-struct Input *in;
-FILE       *strm;
-int        *is_maxmin;
+static int
+gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
 {
     const char *err1 = "Unable to get max/min values from file: %s.\n";
 
@@ -835,12 +833,8 @@ int        *is_maxmin;
  * Purpose:
  *      Determine the scale for each axis.
  */
-int
-gscale(infile, in, strm, is_scale)
-char       *infile;
-struct Input *in;
-FILE       *strm;
-int        *is_scale;
+static int
+gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
 {
     int         i;
     int32       hdfdims[3];     /* order: ZYX or YX */
@@ -1073,11 +1067,8 @@ gtoken(char *s)
  * Purpose:
  *      Determine the type of the input file (HDF, TEXT, FP32 or FP64).
  */
-int
-gtype(infile, in, strm)
-char       *infile;
-struct Input *in;
-FILE      **strm;
+static int
+gtype(char *infile, struct Input *in, FILE **strm)
 {
     char        buf[8];
 
@@ -1323,12 +1314,8 @@ char       *name;
  *      scale value neighbor.  Return a list of indexes into the scale
  *      array.
  */
-int
-indexes(scale, dim, idx, res)
-float32    *scale;
-int         dim;
-int        *idx;
-int         res;
+static int
+indexes(float32 *scale, int dim, int *idx, int res)
 {
     int         i, j;
     float32    *midpt;
@@ -1404,10 +1391,8 @@ int         res;
  *    be the same as the max and min, respectively.
  */
 
-int
-interp(in, im)
-struct Input *in;
-struct Raster *im;
+static int
+interp(struct Input *in, struct Raster *im)
 {
     int         i, j, k, m;
     int        *hinc, *voff, *doff = NULL;
@@ -1693,9 +1678,8 @@ struct Options *opt;
  * Purpose:
  *      Process the (user specified) palette input file.
  */
-int
-palette(palfile)
-char       *palfile;
+static int
+palette(char *palfile)
 {
     unsigned char *color;
     unsigned char pal[1024], red[256], green[256], blue[256];
@@ -1780,10 +1764,8 @@ char       *palfile;
  *      Expand the image(s) to the desired resolution using pixel
  *      replication.
  */
-int
-pixrep(in, im)
-struct Input *in;
-struct Raster *im;
+static int
+pixrep(struct Input *in, struct Raster *im)
 {
     int        *hidx, *vidx, *didx;
     int         ovidx, odidx;

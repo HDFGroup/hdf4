@@ -43,7 +43,7 @@ test_tsdstr(void)
                *coordsys = "coordsys";
     char        in_datalabel[256], in_dataunit[256], in_datafmt[256], in_coordsys[256];
 
-    char       *dimlabels[2], *dimunits[2], *dimfmts[2];
+    const char  *dimlabels[2], *dimunits[2], *dimfmts[2];
     char        in_dimlabels[2][256], in_dimunits[2][256], in_dimfmts[2][256];
 
     rank = 2;

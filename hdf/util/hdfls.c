@@ -306,13 +306,14 @@ void printfilever(int32 file_id)
     uint32 major, minor, release;
     char string[LIBVSTR_LEN+1];
 
-    if (Hgetfileversion(file_id, &major, &minor, &release, string) == SUCCEED){
-	string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
-	printf("\nFile library version: ");
-	printf("Major= %u, Minor=%u, Release=%u\n%s\n", major, minor, release, string);
-    }
+    if (Hgetfileversion(file_id, &major, &minor, &release, string) == SUCCEED)
+      {
+        string[LIBVSTR_LEN] = '\0';		/* make it a null terminated string */
+        printf("\nFile library version: ");
+        printf("Major= %u, Minor=%u, Release=%u\n%s\n", (unsigned)major, (unsigned)minor, (unsigned)release, string);
+      }
     else
-	printf("(Does not have libraray version information)");
+        printf("(Does not have libraray version information)\n");
 }
 
 int
@@ -430,7 +431,7 @@ main(int argc, char *argv[])
               int16 n_dds;          /* number of DDs in the current block */
               uint16 tag,ref;       /* DD tag & ref */
               int32 off,len;        /* DD offset & length */
-              intn i;               /* local counting variable */
+              intn l;               /* local counting variable */
 
               file_id=HI_OPEN(file_name,DFACC_READ);
               if(OPENERR(file_id))
@@ -467,7 +468,7 @@ main(int argc, char *argv[])
                         continue;
                     } /* end if */
                   b=ddbuf;
-                  for(j=0; j<n_dds; j++)
+                  for(l=0; l<n_dds; l++)
                     {
 #ifdef DISKBLOCK_DEBUG
                         uint8 block_head[DISKBLOCK_HSIZE];

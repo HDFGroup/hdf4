@@ -38,7 +38,12 @@ static uint32  cdata_u32[CDIM_Y][CDIM_X];
 static float32  cdata_f32[CDIM_Y][CDIM_X];
 static float64  cdata_f64[CDIM_Y][CDIM_X];
 
-VOID
+static VOID init_cdata(void);
+static VOID wrapup_cdata(void);
+static VOID test_little_read(void);
+static VOID test_little_write(void);
+
+static VOID
 init_cdata(void)
 {
     int         i, j;
@@ -57,12 +62,12 @@ init_cdata(void)
           }     /* end for */
 }   /* end init_cdata() */
 
-VOID
+static VOID
 wrapup_cdata(void)
 {
 }   /* end wrapup_cdata() */
 
-VOID
+static VOID
 test_little_read(void)
 {
     intn rank;
@@ -356,7 +361,7 @@ printf("cd_f64[%d]=%lf, d_f64[%d]=%lf\n",i,cd_f64[i],i,d_f64[i]);
       } /* end else */
 }   /* end test_little_read */
 
-VOID
+static VOID
 test_little_write(void)
 {
     intn        rank;

@@ -83,8 +83,12 @@ static uint32  maskbuf[] =
     0x01ffffff, 0x03ffffff, 0x07ffffff, 0x0fffffff,
     0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff};
 
-void
-test_bitio_write()
+static void test_bitio_write(void);
+static void test_bitio_read(void);
+static void test_bitio_seek(void);
+
+static void
+test_bitio_write(void)
 {
     int32       fid;
     int32       bitid1;
@@ -150,8 +154,8 @@ test_bitio_write()
     RESULT("Hclose");
 }   /* test_bitio_write() */
 
-void
-test_bitio_read()
+static void
+test_bitio_read(void)
 {
     int32       fid;
     int32       bitid1;
@@ -239,8 +243,8 @@ test_bitio_read()
     RESULT("Hclose");
 }   /* test_bitio_read() */
 
-void
-test_bitio_seek()
+static void
+test_bitio_seek(void)
 {
     int32       fid;
     int32       bitid1;

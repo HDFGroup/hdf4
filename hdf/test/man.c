@@ -39,22 +39,22 @@ static char RcsId[] = "@(#)$Revision$";
 #define REPS           3   /* number of data sets to write to file */
 
 /* File labels/desriptions to write */
-static char *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
-static char *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
+static const char *file_lab[2] = {"File label #1: aaa", "File label #2: bbbbbb"};
+static const char *file_desc[2]= {"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13"
                            "\n        14 15 16 17 18 19 20 **END FILE DESCR**\n",
                            "File Descr #2: A B C D E F G H I J K L \n"
                            "               M N O  **END FILE DESCR**\n"};
 
 /* Data labels /descriptions to write */
-static char *labsds[2] = {"Object label #1:  sds", 
+static const char *labsds[2] = {"Object label #1:  sds", 
                           "Object label #1.1:sds"};
-static char *labris[2] = {"Object label #2:  image", 
+static const char *labris[2] = {"Object label #2:  image", 
                           "Object label #2.1:image"};
-static char *descsds[2]={"Object Descr #1:   1  2  3  4  5  6  7  8  9 10 11 12 "
+static const char *descsds[2]={"Object Descr #1:   1  2  3  4  5  6  7  8  9 10 11 12 "
                          "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n",
                          "Object Descr #1.1: 1  2  3  4  5  6  7  8  9 10 11 12 "
                          "\n       13 14 15 16 17 18 19 20 **END SDS DESCR**\n"};
-static char *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
+static const char *descris[2] = {"Object Descr #2:   A B C D E F G H I J K L \n"
                            "                 M N O **END IMAGE DESCR **\n",
                            "Object Descr #2.1: A B C D E F G H I J K L \n"
                            "                 M N O **END IMAGE DESCR **\n"};
@@ -66,10 +66,10 @@ static VOID
 genimage (int height, int width, float *data, uint8 *image);
 
 static VOID 
-check_lab_desc (char *fname, uint16 tag, uint16 ref,char* label[],char *desc[]);
+check_lab_desc (const char *fname, uint16 tag, uint16 ref,const char* label[],const char *desc[]);
 
 static VOID
-check_fann(char *fname);
+check_fann(const char *fname);
 
 /****************************************************************
 **
@@ -77,7 +77,7 @@ check_fann(char *fname);
 **
 ****************************************************************/
 static VOID
-check_fann(char *fname)
+check_fann(const char *fname)
 {
   int32 ret;
   int32 file_handle;
@@ -278,7 +278,7 @@ genimage(int height, int width, float *data, uint8 *image)
 **
 ****************************************************************/
 static      VOID
-check_lab_desc(char *fname, uint16 tag, uint16 ref, char *label[], char *desc[])
+check_lab_desc(const char *fname, uint16 tag, uint16 ref, const char *label[], const char *desc[])
 {
   int32 ret;
   int32 file_handle;

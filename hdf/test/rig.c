@@ -849,7 +849,13 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
-intn
+static intn
+fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
+static VOID
+check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
+             uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal);
+
+static intn
 fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
 {
     const uint8 *t1 = (const uint8 *) s1;
@@ -1421,7 +1427,7 @@ test_r24(void)
     HDfree((VOIDP) jpeg_24bit_temp);
 }
 
-VOID
+static VOID
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
              uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal)
 {

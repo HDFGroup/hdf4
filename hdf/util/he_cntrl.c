@@ -226,7 +226,7 @@ HEdump(HE_CMD * cmd)
 {
     int i;
     int         offset = 0, raw = 0;
-    char       *format = "-o";
+    char        format[] = "-o";
     int32       length = 0;     /* zero is special, means all */
 
     for (i = 1; i < cmd->argc; i++)
@@ -264,34 +264,34 @@ HEdump(HE_CMD * cmd)
                         }
                       break;
                   case HE_DECIMAL:
-                      format = "-i";
+                      HDstrcpy(format,"-i");
                       break;
                   case HE_UDECIMAL:
-                      format = "-d";
+                      HDstrcpy(format,"-d");
                       break;
                   case HE_SHORT:
-                      format = "-j";
+                      HDstrcpy(format,"-j");
                       break;
                   case HE_USHORT:
-                      format = "-s";
+                      HDstrcpy(format,"-s");
                       break;
                   case HE_BYTE:
-                      format = "-b";
+                      HDstrcpy(format,"-b");
                       break;
                   case HE_OCTAL:
-                      format = "-o";
+                      HDstrcpy(format,"-o");
                       break;
                   case HE_HEX:
-                      format = "-x";
+                      HDstrcpy(format,"-x");
                       break;
                   case HE_FLOAT:
-                      format = "-f";
+                      HDstrcpy(format,"-f");
                       break;
                   case HE_DOUBLE:
-                      format = "-e";
+                      HDstrcpy(format,"-e");
                       break;
                   case HE_ASCII:
-                      format = "-a";
+                      HDstrcpy(format,"-a");
                       break;
                   case HE_RAW:
                       raw = DFNT_NATIVE;
@@ -474,8 +474,11 @@ dump(int32 length, int offset, char *format, int raw_flag)
               {
                   intn *idata;
                   intn        sizeintn;
+
                   sizeintn = sizeof(intn);
-                  idata = (intn *) (data + offset);
+                  idata = (intn *) HDmalloc(length / 4 * sizeintn);
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_NINT32 | raw_flag,
+                             length / 4, DFACC_READ, 0, 0);
                   printf("%8d: ", offset);
                   for (i = 0; i < length / sizeintn; i++)
                     {
@@ -495,10 +498,13 @@ dump(int32 length, int offset, char *format, int raw_flag)
               {
                   intn *idata;
                   intn        sizeintn;
+
                   sizeintn = sizeof(intn);
-                  idata = (intn *) (data + offset);
+                  idata = (intn *) HDmalloc(length / 4 * sizeintn);
+                  DFKconvert((VOIDP) (data + offset), (VOIDP) idata, DFNT_NINT32 | raw_flag,
+                             length / 4, DFACC_READ, 0, 0);
                   printf("%8d: ", offset);
-                  for (i = 0; i < length / 4; i++)
+                  for (i = 0; i < length / sizeintn; i++)
                     {
                         printf("%10o ", idata[i]);
                         if (++len > 4)
