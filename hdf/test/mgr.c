@@ -28,8 +28,8 @@ static char RcsId[] = "$Revision$";
 #define TESTFILE2 "tmgrchk.hdf"
 #define DATAFILE "tmgr.dat"
 
-#include "tproto.h"
 #define MFGR_TESTER
+#include "tproto.h"
 #include "mfgr.h"
 
 /* Local pre-processor macros */
