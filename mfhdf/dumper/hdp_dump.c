@@ -413,8 +413,8 @@ dumpclean(int32       nt,
    VOIDP   bufptr = NULL;
    int32   off;
    intn    cn;		/* # of characters being printed on a line */
-   intn plain_data = TRUE;    /* data buffer doesn't contain LF or CR */
-   intn    is_null;	/* TRUE if current character is a null */
+   intn small_attr = TRUE;    /* data buffer of the attribute is small */
+   intn    is_null;	/* TRUE if current character is a null  */
    char* tempptr;	/* used in finding CR or LF in data buffer */
    intn    ret_value = SUCCEED;
 
@@ -437,26 +437,48 @@ dumpclean(int32       nt,
 
    is_null = FALSE; /* no null character is reached yet */
 
-   /* if the buffer contains at least one \n (LF) or \r (CR), print
-      all data at the left most column; otherwise, print the first line of
-      the data next to the title, i.e. "Value = ", and indent the succeeding
-      lines ATTR_CONT_INDENT spaces.  Here, we are setting variables to
-      prepare for the printing */
-   tempptr = strchr( (char *) bufptr, '\n'); /* find the first linefeed */
-   if( tempptr != NULL) /* if an LF is found within the data buffer */
+   /***********************************************************************
+    * Requirement for printing attribute data (BMR - Oct 5, 2000):
+    * if the attribute is large, print all data at the left most column; 
+    * otherwise (small attribute), print the first line of the data 
+    * next to the title, i.e. "Value = ", and indent the succeeding lines 
+    * ATTR_CONT_INDENT spaces.
+    * Large attribute: buffer size is >= MAXPERLINE and the buffer 
+    * contains at least one \n (LF) or \r (CR).
+    * Small attribute: buffer size is < MAXPERLINE or the buffer doesn't
+    * contain any \n (LF) or \r (CR) among the data. 
+    ***********************************************************************/
+
+   /* Setting variables to prepare for the printing */
+
+   /* check the size of the buffer first, if it's shorter than MAXPERLINE
+      then set flag small_attr.  If the buffer size is larger, then 
+      proceed to the next segment which determines whether the attribute
+      is small or large using the space char. criteria. */
+
+   if( cnt < MAXPERLINE )
+      small_attr = TRUE;
+
+   /* if the buffer contains at least one \n (LF) or \r (CR), reset
+      flag small_attr to indicate the attribute is considred large. */
+   else /* space char. criteria */
    {
-      putc('\n', ofp); /* start first line of data on the next line */
-      plain_data = FALSE; /* indicate data buffer contains CRs or LFs */
-   }
-   else    /* no LF, maybe CR is there */
-   {
-      tempptr = strchr( (char *) bufptr, '\r');
-      if( tempptr != NULL) /* if a CR is found within the data buffer */
+      tempptr = strchr( (char *) bufptr, '\n'); /* find the first linefeed */
+      if( tempptr != NULL) /* if an LF is found within the data buffer */
       {
          putc('\n', ofp); /* start first line of data on the next line */
-         plain_data = FALSE; /* indicate data buffer contains CRs or LFs */
+         small_attr = FALSE; /* indicate data buffer contains CRs or LFs */
       }
-   }
+      else    /* no LF, maybe CR is there */
+      {
+         tempptr = strchr( (char *) bufptr, '\r');
+         if( tempptr != NULL) /* if a CR is found within the data buffer */
+         {
+            putc('\n', ofp); /* start first line of data on the next line */
+            small_attr = FALSE; /* indicate data buffer contains CRs or LFs */
+         }
+      }
+   }  /* space char. criteria */
 
    /* for each character in the buffer, print it accordingly */
    for (i = 0; i < cnt && bufptr != NULL; i++)
@@ -467,7 +489,7 @@ dumpclean(int32       nt,
 	 Note: this statement is at the top here is to prevent the
 	 extra line and indentation when the last line of the attribute
 	 data just reached MAXPERLINE */
-      if (cn >= MAXPERLINE && plain_data )
+      if (cn >= MAXPERLINE && small_attr )
       {
          putc('\n', ofp);
          for (cn = 0; cn < ATTR_CONT_INDENT; cn++)
