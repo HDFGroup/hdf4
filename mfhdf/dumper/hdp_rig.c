@@ -274,7 +274,7 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
 
           for(i=0; i<dumprig_opts->num_chosen; i++)
              { if((rig_chosen[i] >= ndsets)||(rig_chosen[i]<0))
-                printf("\nThe index %d is out of range\n",rig_chosen[i]);
+                printf("\nThe index %d is out of range\n",(int)rig_chosen[i]);
              }
 
           for (i = 0; i < ndsets && (dumpall!=0 || x<dumprig_opts->num_chosen); i++)
@@ -383,7 +383,7 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
                       break;
                   }		/* switch  */
 
-          if(i == rig_chosen[x])
+          if(dumpall!=1 && i == rig_chosen[x])
             x++;
 
             }	/* for ndsets  */
