@@ -625,7 +625,8 @@ intn SDPfreebuf()
 /*
  * Given a variable vgid return the id of a valid data storage
  * Create and fill in the VS as a side effect if it doesn't
- *  exist yet
+ *  exist yet <- not any more, we delay filling until data is
+ *  written out -QAK
  */
 int 
   hdf_get_data(handle, vp)
@@ -681,6 +682,7 @@ NC_var *vp;
     fprintf(stderr, "dsize[0]= %d dsize[1]= %d\n", vp->dsizes[0], vp->dsizes[1]);
 #endif  
     
+#ifdef OLD_WAY
     /* look up fill value (if it exists) */
     attr = NC_findattr(&(vp->attrs), _FillValue);
 
@@ -714,6 +716,7 @@ NC_var *vp;
             HDmemfill((VOIDP)tValues,(*attr)->data->values,vp->szof,to_do);
        }
     }
+#endif /* OLD_WAY */
     
     /* --------------------------------------
      *
@@ -731,6 +734,8 @@ NC_var *vp;
     fprintf(stderr, "--- Allocating new data storage szof=%d, to_do=%d\n",(int)vp->szof, (int)to_do);
     fprintf(stderr, "byte_count=%d\n", (int)byte_count);
 #endif  
+
+#ifdef OLD_WAY
     vp->aid = Hstartwrite(handle->hdf_file, DATA_TAG, vsid, vp->len);
 
     if(vp->aid == FAIL) return FALSE;
@@ -769,6 +774,7 @@ NC_var *vp;
         }
     }  /* NC_NOFILL */
     if(Hendaccess(vp->aid) == FAIL) return FALSE;
+#endif /* OLD_WAY */
 
     /* if it is a record var might as well make it linked blocks now */
     if(IS_RECVAR(vp)) {
@@ -850,7 +856,11 @@ NC_var    * vp;
     if(handle->hdf_mode == DFACC_RDONLY)
         vp->aid = Hstartread(handle->hdf_file, vp->data_tag, vp->data_ref);
     else
+#ifdef OLD_WAY
         vp->aid = Hstartwrite(handle->hdf_file, vp->data_tag, vp->data_ref, 0);
+#else /* OLD_WAY */
+        vp->aid = Hstartaccess(handle->hdf_file, vp->data_tag, vp->data_ref, DFACC_WRITE|DFACC_APPENDABLE);
+#endif /* OLD_WAY */
     
     if(vp->aid == FAIL)
         return(FALSE);
@@ -893,7 +903,6 @@ uint32    count;
     uint8 outntsubclass;   /* the data's machine type */
     uintn convert;          /* whether to convert or not */
     int16 isspecial;
-    uintn comp_template=0;  /* whether the data is a compressed template or not */
 
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata I've been called : %s\n", vp->name->values);
@@ -936,12 +945,11 @@ uint32    count;
     if(Hinquire(vp->aid,NULL,NULL,NULL,&elem_length,NULL,NULL,NULL,&isspecial)==FAIL)
         return FALSE;
 #ifdef DEBUG 
-    fprintf(stderr, "vp->aid=%d, isspecial=%d, length=%ld\n", (int)vp->aid, (int)isspecial,(long)elem_length);
+    fprintf(stderr, "vp->aid=%d, length=%ld, byte_count=%ld\n", (int)vp->aid, (long)elem_length, (long)byte_count);
 #endif
     /* Check for zero-length compressed special element, i.e. a template */
-    if(isspecial==SPECIAL_COMP && elem_length==0)
+    if(elem_length<=0)
       {
-        comp_template=1;    /* set flag for later */
         attr=NC_findattr(&vp->attrs, _FillValue);
 
         /* Check for reading from template & fill memory buffer with fill-value */
@@ -974,6 +982,9 @@ uint32    count;
             return FALSE;
           } /* end if */
       } /* end if */
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata: tBuf_size=%d, tBuf=%p\n",(int)tBuf_size,tBuf);
+#endif
 
     /* 
      * It may be the case that the current does NOT begin at the start of the
@@ -981,44 +992,101 @@ uint32    count;
      *   location.
      * QAK: This shouldn't be an issue for compressed template objects.
      */
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata: vp->data_offset=%d, where=%d\n",(int)vp->data_offset,(int)where);
+#endif
     if(vp->data_offset > 0) 
+      {
         where += vp->data_offset;
+
+#ifdef QAK
+        /* if the dataset doesn't exist yet, we need to fill in the dimension scale info */
+        if(elem_length<=0 && (handle->flags & NC_NOFILL)==0)
+          {
+            /* Fill the temporary buffer with the fill-value */
+            if(attr != NULL)
+                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(vp->data_offset/vp->HDFsize));
+            else 
+                NC_arrayfill((VOIDP)tBuf, vp->data_offset, vp->type);
+
+            /* convert the fill-values, if necessary */
+            if(convert) {
+                DFKsetNT(vp->HDFtype); /* added back here -GV */
+                DFKnumout((uint8 *) tBuf, tBuf, (uint32) (vp->data_offset/vp->HDFsize), 0, 0);
+              } /* end if */
+
+            /* Write the fill-values out */
+            status = Hwrite(vp->aid, vp->data_offset, (uint8 *) tBuf);
+          } /* end if */
+#endif /* QAK */
+      } /* end if */
     
 #ifdef DEBUG
     fprintf(stderr, "hdf_xdr_NCvdata vp->aid=%d, where=%d\n",(int)vp->aid,(int)where);
 #endif
-    /* if we get here and the comp_template flag is set, we need to fill in the initial set of fill-values */
-    if(comp_template && where>0)
+    /* if we get here and the length is 0, we need to fill in the initial set of fill-values */
+    if(elem_length<=0 && where>0)
       { /* fill in the lead sequence of bytes with the fill values */
-#ifdef QAK
-        if( Hseek(vp->aid, 0, DF_START) == FAIL)
-            return(FALSE);
-#endif /* QAK */
+        if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
+          {
+            /* make sure our tmp buffer is big enough to hold everything */
+            if(tBuf_size<where) {
+                if(tBuf) 
+                    HDfree((VOIDP)tBuf);
+                tBuf_size = where;
+                tBuf = (int8 *) HDmalloc(tBuf_size);
+                if(tBuf == NULL) 
+                  {
+                    tBuf_size=0;
+                    return FALSE;
+                  } /* end if */
+              } /* end if */
 
-        /* Fill the temporary buffer with the fill-value */
-        if(attr != NULL)
-            HDmemfill(tBuf,(*attr)->data->values,vp->szof,(where/vp->HDFsize));
-        else 
-            NC_arrayfill(tBuf, where, vp->type);
+#ifdef DEBUG
+        fprintf(stderr, "hdf_xdr_NCvdata: Check 1.0, attr=%p, (*attr)->data->values=%p, vp->szof=%d, vp->HDFsize=%d\n",attr,(*attr)->data->values,(int)vp->szof,(int)vp->HDFsize);
+#endif
+            /* Fill the temporary buffer with the fill-value */
+            if(attr != NULL)
+                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(where/vp->HDFsize));
+            else 
+                NC_arrayfill((VOIDP)tBuf, where, vp->type);
 
-        /* convert the fill-values, if necessary */
-        if(convert) {
-            DFKsetNT(vp->HDFtype); /* added back here -GV */
-            DFKnumout((uint8 *) tBuf, tBuf, (uint32) (where/vp->HDFsize), 0, 0);
+#ifdef DEBUG
+        fprintf(stderr, "hdf_xdr_NCvdata: Check 1.2\n");
+#endif
+            /* convert the fill-values, if necessary */
+            if(convert) {
+                DFKsetNT(vp->HDFtype); /* added back here -GV */
+                DFKnumout((uint8 *) tBuf, tBuf, (uint32) (where/vp->HDFsize), 0, 0);
+              } /* end if */
+
+#ifdef DEBUG
+        fprintf(stderr, "hdf_xdr_NCvdata: Check 1.4\n");
+#endif
+            /* Write the fill-values out */
+            status = Hwrite(vp->aid, where, (uint8 *) tBuf);
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata: filled first empty chunk, status=%d\n",(int)status);
+#endif
           } /* end if */
-
-        /* Write the fill-values out */
-        status = Hwrite(vp->aid, where, (uint8 *) tBuf);
+        else
+          { /* don't write fill values, just seek to the correct location */
+            if( Hseek(vp->aid, where, DF_START) == FAIL)
+                return(FALSE);
+          } /* end else */
       } /* end if */
     else
       { /* position ourselves correctly */
-        if(elem_length!=0)
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata: Check 2.0\n");
+#endif
+        if(elem_length>0)
             if( Hseek(vp->aid, where, DF_START) == FAIL)
                 return(FALSE);
       } /* end else */
     
 #ifdef DEBUG
-    fprintf(stderr, "hdf_xdr_NCvdata after Hseek()\n");
+    fprintf(stderr, "hdf_xdr_NCvdata after Hseek(), byte_count=%d\n",(int)byte_count);
 #endif
     
 #ifdef CM5
@@ -1047,41 +1115,52 @@ CM_HDFtype = vp->HDFtype;
         else 
             status = Hwrite(vp->aid, byte_count, (uint8 *) values);
 
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata: status=%d\n",(int)status);
+    if(status==FAIL)
+        HEprint(stdout,0);
+#endif
         if(status != byte_count) 
             return FALSE;
     }
 
-    /* if we get here and the comp_template flag is set, we need to finish writing out the fill-values */
+    /* if we get here and the length is 0, we need to finish writing out the fill-values */
     bytes_left=vp->len-(where+byte_count);
-    if(comp_template && bytes_left>0)
+#ifdef DEBUG
+    fprintf(stderr, "hdf_xdr_NCvdata: bytes_left=%d\n",(int)bytes_left);
+#endif
+    if(elem_length<=0 && bytes_left>0)
       {
-        /* make sure our tmp buffer is big enough to hold everything */
-        if(convert && (tBuf_size < bytes_left)) {
-            if(tBuf) 
-                HDfree((VOIDP)tBuf);
-            tBuf_size = bytes_left;
-            tBuf = (int8 *) HDmalloc(tBuf_size);
-            if(tBuf == NULL) 
-              {
-                tBuf_size=0;
-                return FALSE;
+        if((handle->flags & NC_NOFILL)==0 || isspecial==SPECIAL_COMP)
+          {
+            /* make sure our tmp buffer is big enough to hold everything */
+            if(tBuf_size < bytes_left) {
+                if(tBuf) 
+                    HDfree((VOIDP)tBuf);
+                tBuf_size = bytes_left;
+                tBuf = (int8 *) HDmalloc(tBuf_size);
+                if(tBuf == NULL) 
+                  {
+                    tBuf_size=0;
+                    return FALSE;
+                  } /* end if */
               } /* end if */
+
+            /* Fill the temporary buffer with the fill-value */
+            if(attr != NULL)
+                HDmemfill(tBuf,(*attr)->data->values,vp->szof,(bytes_left/vp->HDFsize));
+            else 
+                NC_arrayfill((VOIDP)tBuf, bytes_left, vp->type);
+
+            /* convert the fill-values, if necessary */
+            if(convert) {
+                DFKsetNT(vp->HDFtype); /* added back here -GV */
+                DFKnumout((uint8 *) tBuf, tBuf, (uint32) (bytes_left/vp->HDFsize), 0, 0);
+              } /* end if */
+
+            /* Write the fill-values out */
+            status = Hwrite(vp->aid, bytes_left, (uint8 *) tBuf);
           } /* end if */
-
-        /* Fill the temporary buffer with the fill-value */
-        if(attr != NULL)
-            HDmemfill(tBuf,(*attr)->data->values,vp->szof,(bytes_left/vp->HDFsize));
-        else 
-            NC_arrayfill(tBuf, bytes_left, vp->type);
-
-        /* convert the fill-values, if necessary */
-        if(convert) {
-            DFKsetNT(vp->HDFtype); /* added back here -GV */
-            DFKnumout((uint8 *) tBuf, tBuf, (uint32) (bytes_left/vp->HDFsize), 0, 0);
-          } /* end if */
-
-        /* Write the fill-values out */
-        status = Hwrite(vp->aid, bytes_left, (uint8 *) tBuf);
       } /* end if */
 
 #ifdef DEBUG

@@ -589,23 +589,23 @@ char *argv[];
     CHECK(status, "SDreaddata");
 
     if(data[0] != -17.5) {
-        fprintf(stderr, "Wrong value returned loc 0\n");
+        fprintf(stderr, "Wrong value returned loc 0: %f\n",(float)data[0]);
         num_err++;
     }
     if(data[3] != -17.5) {
-        fprintf(stderr, "Wrong value returned loc 3\n");
+        fprintf(stderr, "Wrong value returned loc 3: %f\n",(float)data[3]);
         num_err++;
     }
     if(data[5] != 1.0) {
-        fprintf(stderr, "Wrong value returned loc 5\n");
+        fprintf(stderr, "Wrong value returned loc 5: %f\n",(float)data[5]);
         num_err++;
     }
     if(data[6] != -17.5) {
-        fprintf(stderr, "Wrong value returned loc 6\n");
+        fprintf(stderr, "Wrong value returned loc 6: %f\n",(float)data[6]);
         num_err++;
     }
     if(data[8] != 4.0) {
-        fprintf(stderr, "Wrong value returned loc 8\n");
+        fprintf(stderr, "Wrong value returned loc 8: %f\n",(float)data[8]);
         num_err++;
     }
 
