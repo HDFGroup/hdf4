@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.14  1993/09/28 18:04:56  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.15  1993/09/30 19:05:27  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.14  1993/09/28  18:04:56  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.13  1993/08/16  21:46:36  koziol
  * Wrapped in changes for final, working version on the PC.
  *

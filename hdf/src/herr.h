@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.7  1993/09/28 18:04:29  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.8  1993/09/30 19:05:10  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.7  1993/09/28  18:04:29  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.6  1993/07/13  20:45:02  chouck
  * Fixed a few memory leaks
  *
@@ -154,6 +157,8 @@ extern int32 error_top;
 #define DFE_CANTHASH    -68 /* Cannot add a DD to the hash table */
 #define DFE_CANTDELDD   -69 /* Cannot delete a DD in the file */
 #define DFE_CANTDELHASH -70 /* Cannot delete a DD from the hash table */
+#define DFE_BADMODEL    -71 /* Invalid compression model specified */
+#define DFE_BADCODER    -72 /* Invalid compression encoder specified */
 
 #ifdef _H_ERR_MASTER_
 
@@ -237,7 +242,9 @@ PRIVATE struct error_messages_t error_messages[] =
 { DFE_CANTUPDATE,  "Cannot update the DD block"},
 { DFE_CANTHASH,    "Cannot add a DD to the hash table"},
 { DFE_CANTDELDD,   "Cannot delete a DD in the file"},
-{ DFE_CANTDELHASH, "Cannot delete a DD from the hash table"}
+{ DFE_CANTDELHASH, "Cannot delete a DD from the hash table"},
+{ DFE_BADMODEL,    "Invalid compression model specified"},
+{ DFE_BADCODER,    "Invalid compression coder specified"}
 };
 #endif /* _H_ERR_MASTER_ */
 

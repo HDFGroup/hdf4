@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/09/28 18:05:02  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.6  1993/09/30 19:05:33  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.5  1993/09/28  18:05:02  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.4  1993/04/06  17:23:45  chouck
  * Added Vset macros
  *

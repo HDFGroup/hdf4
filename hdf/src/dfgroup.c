@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/09/28 18:04:12  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.11  1993/09/30 19:04:53  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.10  1993/09/28  18:04:12  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.9  1993/09/11  21:14:26  koziol
  * Fixed sizeof(DFdi) problem on Cray Y-MP.  Replaced all occurences of
  * sizeof(DFdi) with a hard-coded 4, because there is no fileNTsize vs.

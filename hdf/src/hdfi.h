@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.38  1993/09/28 18:04:26  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.39  1993/09/30 19:05:08  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.38  1993/09/28  18:04:26  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.37  1993/09/27  20:59:49  briand
  * Added MIPSEL to the list for strdup
  *

@@ -5,15 +5,18 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/09/28 18:44:12  koziol
-Fixed various things the Sun's pre-processor didn't like.
+Revision 1.3  1993/09/30 19:05:00  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.2  1993/09/28  18:44:12  koziol
+ * Fixed various things the Sun's pre-processor didn't like.
+ *
  * Revision 1.1  1993/09/28  18:04:21  koziol
- * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
  *
-*
-*/
+ *
+ */
 
 /*
  FILE
@@ -55,26 +58,84 @@ Fixed various things the Sun's pre-processor didn't like.
        Quincey Koziol
 
  MODIFICATION HISTORY
-    9/21/93     Starting coding specs
+    9/21/93     Starting writing specs & coding prototype
 */
 
+/* General HDF includes */
 #define COMPRESS_MASTER
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
 
-/* compinfo_t -- compressed element information structure */
+/* HDF compression includes */
+#include "hcompi.h"         /* Internal definitions for compression */
+#include "crle.h"           /* run-length encoding header */
+#include "mstdio.h"         /* stdio modeling header */
 
+/* Local defines */
+#define COMP_HEADER_VERSION  0
+
+/* Modeling information */
+
+/* model information about stdio model */
 typedef struct {
-    int attached;              /* number of access records attached
+    uint32 pos;
+ } comp_model_stdio_info_t;
+
+/* structure for storing modeling information */
+typedef struct {
+    comp_model_t model_type;  /* model this stream is using */
+    union {     /* union of all the different types of model information */
+        comp_model_stdio_info_t stdio_info;     /* stdio model info */
+    } model_info;
+    funclist_t model_funcs;     /* functions to perform modeling */
+ } comp_model_info_t;
+
+
+/* Coding information */
+
+/* RLE coding information */
+typedef struct {
+    uint8 buffer[128];      /* buffer for storing RLE bytes as they are sent */
+    intn  buf_pos;          /* offset into the buffer */
+    uint8 last_byte,        /* the last byte stored in the buffer */
+        second_byte;        /* the second to last byte stored in the buffer */
+    enum {RUN=0,            /* buffer up to the current position is a run */
+        MIX}                /* buffer up to the current position is a mix */
+	rle_state;          /* state of the buffer storage */
+ } comp_code_rle_info_t;
+
+/* structure for storing modeling information */
+typedef struct {
+    comp_code_t coder_type;     /* coding scheme this stream is using */
+    union {     /* union of all the different types of coding information */
+        comp_code_rle_info_t rle_info;      /* RLE coding info */
+    } coder_info;
+    funclist_t coder_funcs;     /* functions to perform encoding */
+ } comp_code_info_t;
+
+/* structure for storing a state */
+typedef struct {
+    uint32 offset;              /* the offset in bytes of the state */
+    comp_model_info_t minfo;    /* modeling information */
+    comp_code_info_t cinfo;     /* coding information */
+ } comp_stateinfo_t;
+
+/* structure for storing state caching information */
+typedef struct {
+    intn num_states;            /* the number of states cached */
+    comp_stateinfo_t **comp_state;   /* pointer to an array of pointers to
+                                    compression states */
+ } comp_state_cache_t;
+
+/* compinfo_t -- compressed element information structure */
+typedef struct {
+    intn attached;              /* number of access records attached
                                   to this information structure */
-#ifdef QAK
-    int32 extern_offset;
-    int32 length;              /* length of this element */
-    int32 length_file_name;    /* length of the external file name */
-    hdf_file_t file_external;      /* external file descriptor */
-    char *extern_file_name;    /* name of the external file */
-#endif
+    comp_model_info_t minfo;    /* modeling information */
+    comp_code_info_t cinfo;     /* coding information */
+    bool caching;               /* whether caching is turned on */
+    comp_state_cache_t sinfo;   /* state information for caching */
 } compinfo_t;
 
 /* declaration of the functions provided in this module */
@@ -92,7 +153,7 @@ funclist_t comp_funcs={
     HCPinquire,
     HCPread,
     HCPwrite,
-    HCPendaccess,
+    HCPendaccess
 };
 
 /*--------------------------------------------------------------------------
@@ -103,6 +164,8 @@ funclist_t comp_funcs={
     int32 HCcreate(id,tag,ref)
     int32 id;            IN: the file id to create the data in
     uint16 tag,ref;      IN: the tag/ref pair which is to be compressed
+    intn model_type;     IN: the type of modeling to use
+    intn coder_type;     IN: the type of encoding to use
 
  RETURNS
     Return an AID to the newly created compressed element, FAIL on error.
@@ -118,11 +181,14 @@ funclist_t comp_funcs={
  REVISION LOG
 --------------------------------------------------------------------------*/
 #ifdef PROTOTYPE
-int32 HCcreate(int32 file_id, uint16 tag, uint16 ref)
+int32 HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
+        comp_code_t coder_type)
 #else
-int32 HCcreate(file_id, tag, ref)
+int32 HCcreate(file_id, tag, ref, model_type, coder_type)
     int32 file_id;      /* file record id */
     uint16 tag, ref;    /* tag/ref of the special data element to create */
+    comp_model_t model_type;    /* type of modeling to use */
+    comp_code_t coder_type;    /* type of encoding to use */
 #endif
 {
     char *FUNC="HCcreate";  /* for HERROR */
@@ -135,6 +201,7 @@ int32 HCcreate(file_id, tag, ref)
     compinfo_t *info;       /* special element information */
     dd_t *data_dd;          /* dd of existing regular element */
     uint16 special_tag;     /* special version of tag */
+    uint8 *p;               /* pointer into the temp. buffer */
 
     /* clear error stack and validate args */
     HEclear();
@@ -235,22 +302,36 @@ int32 HCcreate(file_id, tag, ref)
 
     /* set up compressed special info structure */
     info->attached=1;
+    switch((comp_model_t)model_type) {    /* determine the type of modeling */
+        case COMP_MODEL_STDIO:        /* standard C stdio modeling */
+            info->minfo.model_type=COMP_MODEL_STDIO;    /* set model type */
 #ifdef QAK
-    info->file_external=file_external;
-    info->extern_offset=f_offset;
-    info->extern_file_name=(char *)HDstrdup(extern_file_name);
-    if(!info->extern_file_name) {
-       access_rec->used=FALSE;
-       HRETURN_ERROR(DFE_NOSPACE,FAIL);
-      } /* end if */
+            HCPstdio_init(&(info->minfo.model_info.stdio_info),0);  /* initialize the model */
 #endif
+            break;
+
+        default:
+           HRETURN_ERROR(DFE_BADMODEL,FAIL);
+      } /* end switch */
+
+    switch((comp_code_t)coder_type) {    /* determin the type of encoding */
+        case COMP_CODE_RLE:           /* Run-length encoding */
+            info->cinfo.coder_type=COMP_CODE_RLE;    /* set coding type */
+#ifdef QAK
+            HCPrle_init(&(info->cinfo.coder_info.rle_info));  /* initialize the coder */
+#endif
+            break;
+
+        default:
+           HRETURN_ERROR(DFE_BADCODER,FAIL);
+      } /* end switch */
 
     /* write special element info to the file */
-    {
-       uint8 *p=tbuf;
-
-       INT16ENCODE(p, SPECIAL_COMP);
-    }
+    p=tbuf;
+    INT16ENCODE(p, SPECIAL_COMP);        /* specify special tag type */
+    UINT16ENCODE(p, COMP_HEADER_VERSION);   /* specify header version */
+    UINT16ENCODE(p, (uint16)model_type);    /* specify model type stored */
+    UINT16ENCODE(p, (uint16)coder_type);    /* specify coder type stored */
     if(HI_SEEKEND(file_rec->file)==FAIL) {
        access_rec->used=FALSE;
        HRETURN_ERROR(DFE_SEEKERROR,FAIL);
@@ -258,7 +339,7 @@ int32 HCcreate(file_id, tag, ref)
 
     /* write compressed special element data to the file */
     dd->offset=HI_TELL(file_rec->file);
-    dd->length=2;
+    dd->length=(p-tbuf);
     dd->tag=special_tag;
     dd->ref=ref;
     if(HI_WRITE(file_rec->file, tbuf, dd->length)==FAIL) {
@@ -302,7 +383,7 @@ int32 HCcreate(file_id, tag, ref)
         file_rec->maxref=ref;
 
     return(ASLOT2ID(slot));
-}   /* end HCcreate */
+}   /* end HCcreate() */
 
 
 /* ----------------------------- HCIstaccess ------------------------------ */
@@ -322,96 +403,60 @@ PRIVATE int32 HCIstaccess(access_rec, access)
     int16 access;           /* access mode */
 #endif
 {
-    char *FUNC="HCIstaccess";  /* for HERROR */
-#ifdef QAK
-    dd_t *info_dd;             /* dd of the special information element */
-    extinfo_t *info;           /* special element information */
-    filerec_t *file_rec;       /* file record */
+    char *FUNC="HCIstaccess";   /* for HERROR */
+    dd_t *info_dd;              /* dd of the special information element */
+    compinfo_t *info;           /* special element information */
+    filerec_t *file_rec;        /* file record */
 
     /* get file record and validate */
-
     file_rec=FID2REC(access_rec->file_id);
-    if(!file_rec || file_rec->refcount==0 || !(file_rec->access & access)) {
-       HERROR(DFE_ARGS);
-       return FAIL;
-    }
+    if(!file_rec || file_rec->refcount==0 || !(file_rec->access & access))
+        HRETURN_ERROR(DFE_ARGS,FAIL);
 
     /* intialize the access record */
-
-    access_rec->special=SPECIAL_EXT;
+    access_rec->special=SPECIAL_COMP;
     access_rec->posn=0;
     access_rec->access=access;
 
     /* get the dd for information */
-
     info_dd=&access_rec->block->ddlist[access_rec->idx];
 
     /* get the special info record */
-
-    access_rec->special_info=HIgetspinfo(access_rec,
-                                          info_dd->tag, info_dd->ref);
-    if(access_rec->special_info) {
-
-       /* found it from other access records */
-
-       info=(extinfo_t *)access_rec->special_info;
-       info->attached++;
-
-    } else {
-
-       /* look for information in the file */
-
-       if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL) {
-           HERROR(DFE_SEEKERROR);
+    access_rec->special_info=HIgetspinfo(access_rec,info_dd->tag,info_dd->ref);
+#ifdef QAK
+    if(access_rec->special_info) {  /* found it from other access records */
+        info=(compinfo_t *)access_rec->special_info;
+        info->attached++;
+      } /* end if */
+    else {  /* look for information in the file */
+        if(HI_SEEK(file_rec->file, info_dd->offset+2)==FAIL) {
+            access_rec->used=FALSE;
+            HRETURN_ERROR(DFE_SEEKERROR,FAIL);
+        }
+        if(HI_READ(file_rec->file, tbuf, 12)==FAIL) {
+            access_rec->used=FALSE;
+            HRETURN_ERROR(DFE_READERROR,FAIL);
+        }
+        access_rec->special_info=(VOIDP)HDgetspace(sizeof(compinfo_t));
+        info=(compinfo_t *)access_rec->special_info;
+        if(!info) {
            access_rec->used=FALSE;
-           return FAIL;
-       }
-       if(HI_READ(file_rec->file, tbuf, 12)==FAIL) {
-           HERROR(DFE_READERROR);
-           access_rec->used=FALSE;
-           return FAIL;
-       }
-       access_rec->special_info=(VOIDP) HDgetspace((uint32)sizeof(extinfo_t));
-       info=(extinfo_t *) access_rec->special_info;
-       if(!info) {
-           HERROR(DFE_NOSPACE);
-           access_rec->used=FALSE;
-           return FAIL;
-       }
-       {
-           uint8 *p=tbuf;
-           INT32DECODE(p, info->length);
-           INT32DECODE(p, info->extern_offset);
-           INT32DECODE(p, info->length_file_name);
-       }
-       info->extern_file_name=(char *)HDgetspace((uint32)
-                                               info->length_file_name + 1);
-       if(!info->extern_file_name) {
-           HERROR(DFE_NOSPACE);
-           access_rec->used=FALSE;
-           return FAIL;
-       }
-       if(HI_READ(file_rec->file, info->extern_file_name,
-                  info->length_file_name)==FAIL) {
-           HERROR(DFE_READERROR);
-           access_rec->used=FALSE;
-           return FAIL;
-       }
-       info->extern_file_name[info->length_file_name]='\0';
-       info->file_external=HI_OPEN(info->extern_file_name, access);
-       if(OPENERR(info->file_external)) {
-           HERROR(DFE_BADOPEN);
-           access_rec->used=FALSE;
-           return FAIL;
-       }
-       info->attached=1;
-    }
+           HRETURN_ERROR(DFE_NOSPACE,FAIL);
+        }
+        {
+            uint8 *p=tbuf;
+            INT32DECODE(p, info->length);
+            INT32DECODE(p, info->extern_offset);
+            INT32DECODE(p, info->length_file_name);
+        }
+        info->attached=1;
+      } /* end else */
+#endif
 
     file_rec->attach++;
 
-    return ASLOT2ID(access_rec-access_records);
-#endif
-}
+    return(ASLOT2ID(access_rec-access_records));
+}   /* end HCIstaccess() */
 
 /*- HCPstread
  start reading an compressed data element

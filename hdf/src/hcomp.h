@@ -1,15 +1,39 @@
 /*-----------------------------------------------------------------------------
  * File:    hcomp.h
  * Purpose: header file for compression information & structures
+ * Dependencies: should be included after hdf.h
  * Invokes:
- * Contents: 
+ * Contents:
  * Structure definitions: comp_info
  * Constant definitions: lots...
  *---------------------------------------------------------------------------*/
+#ifdef RCSID
+static char RcsId[] = "@(#)$Revision$";
+#endif
+/*
+$Header$
+
+$Log$
+Revision 1.3  1993/09/30 19:05:02  koziol
+Added basic compressing functionality for special tags.
+
+ *
+ */
 
 /* avoid re-inclusion */
-#ifndef _HCOMP_H
-#define _HCOMP_H
+#ifndef __HCOMP_H
+#define __HCOMP_H
+
+/* For determining which type of modeling is being done */
+typedef enum {
+    COMP_MODEL_STDIO=0      /* for Standard C I/O model */
+} comp_model_t;
+
+/* For determining which type of encoding is being done */
+typedef enum {
+    COMP_CODE_NONE=0,       /* don't encode at all, just store */
+    COMP_CODE_RLE           /* for simple RLE encoding */
+} comp_code_t;
 
 /* Compression types available */
 #define COMP_NONE       0
@@ -53,5 +77,4 @@ typedef union tag_comp_info {  /* Union to contain compression information */
       } jpeg;
   } comp_info;
 
-#endif /* _HCOMP_H */
-
+#endif /* __HCOMP_H */

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.23  1993/09/28 18:05:04  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.24  1993/09/30 19:05:35  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.23  1993/09/28  18:05:04  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.22  1993/09/02  21:15:50  chouck
  * Was losing AIDs in VSappendable()
  *

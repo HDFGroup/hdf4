@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.17  1993/09/28 18:04:24  koziol
-Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
-tag handling.  Added new compression special tag type.
+Revision 1.18  1993/09/30 19:05:04  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.17  1993/09/28  18:04:24  koziol
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
+ * tag handling.  Added new compression special tag type.
+ *
  * Revision 1.16  1993/09/08  20:53:10  georgev
  * Changed TBUF_SZ size for Mac only.
  *

@@ -5,14 +5,17 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.34  1993/09/28 19:10:15  koziol
-Made Vinquire check parameter values for NULL before updating them.
+Revision 1.35  1993/09/30 19:05:30  koziol
+Added basic compressing functionality for special tags.
 
+ * Revision 1.34  1993/09/28  19:10:15  koziol
+ * Made Vinquire check parameter values for NULL before updating them.
+ *
  * Revision 1.33  1993/09/28  18:44:36  koziol
  * Fixed various things the Sun's pre-processor didn't like.
  *
  * Revision 1.32  1993/09/28  18:04:59  koziol
- * Removed OLD_WAY & QAK #ifdef's.  Removed oldspecial #ifdef's for special
+ * Removed OLD_WAY & QAK ifdef's.  Removed oldspecial ifdef's for special
  * tag handling.  Added new compression special tag type.
  *
  * Revision 1.31  1993/09/16  17:19:48  chouck
