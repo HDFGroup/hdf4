@@ -44,9 +44,7 @@
 # ##################################################################
 #
 #
-#
-#
-# This is the top level Makefile to build HDF 3.3 on Unix based
+# This is the top level Makefile to build HDF 4.0 on Unix based
 #       platforms
 #
 # Possible Machine Types
@@ -175,7 +173,7 @@ _sub:
 message:
 	@echo ""
 	@echo "***********************************************************"
-	@echo " HDF 3.3 library successfully created."
+	@echo " HDF 4.0 library successfully created."
 	@echo ""
 	@echo "If you have any old vset files (v 1.0) you must use vcompat"
 	@echo "to make them compatible with Vset 2.0 applications"

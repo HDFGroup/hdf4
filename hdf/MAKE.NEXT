@@ -14,9 +14,6 @@
 #
 # ##################################################################
 #
-#                   NCSA HDF Version 3.3 release Beta 1
-#                               November 1992
-#
 #           MAKEFILE for creating the HDF library, libdf.a,
 #
 # This makefile creates the following FORTRAN and C interfaces 
@@ -47,9 +44,7 @@
 # ##################################################################
 #
 #
-#
-#
-# This is the top level Makefile to build HDF 3.3 on Unix based
+# This is the top level Makefile to build HDF 4.0 on Unix based
 #       platforms
 #
 # Possible Machine Types
@@ -136,11 +131,11 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="util" _sub
+          SUBDIRS="src util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="test" _sub
+          SUBDIRS="src test" _sub
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
@@ -151,6 +146,12 @@ clean:
           SUBDIRS="src util test" _sub
 	$(RM) $(RMFLAGS) core *.log
 
+distclean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+	$(RM) -rf bin lib include
+
 _sub:
 	@for dir in $(SUBDIRS); do \
           (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
@@ -160,7 +161,7 @@ _sub:
 message:
 	@echo ""
 	@echo "***********************************************************"
-	@echo " HDF 3.3 library successfully created."
+	@echo " HDF 4.0 library successfully created."
 	@echo ""
 	@echo "If you have any old vset files (v 1.0) you must use vcompat"
 	@echo "to make them compatible with Vset 2.0 applications"

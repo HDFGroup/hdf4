@@ -44,9 +44,7 @@
 # ##################################################################
 #
 #
-#
-#
-# This is the top level Makefile to build HDF 3.3 on Unix based
+# This is the top level Makefile to build HDF 4.0 on Unix based
 #       platforms
 #
 # Possible Machine Types
@@ -113,11 +111,11 @@ HDF_FLAGS       = \
 #
 all:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
-          SUBDIRS="src util test dumper" _sub message 
+          SUBDIRS="src util test" _sub message 
 
 allnofortran:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=nofortran \
-          SUBDIRS="src util test dumper" _sub message 
+          SUBDIRS="src util test" _sub message 
 
 libnofortran:
 	@$(MAKE) $(MYFLAGS) $(HDF_FLAGS) TARG=nofortran \
@@ -133,15 +131,12 @@ libdf:
 
 utilities:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="util" _sub
+          SUBDIRS="src util" _sub
 
 tests:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="test" _sub
+          SUBDIRS="src test" _sub
 
-hdp:
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=all \
-          SUBDIRS="src dumper" _sub
 
 #install:      $(INSTALL_DIRS)
 #	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
@@ -152,6 +147,12 @@ clean:
           SUBDIRS="src util test dumper" _sub
 	$(RM) $(RMFLAGS) core *.log
 
+distclean:
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@  \
+          SUBDIRS="src util test" _sub
+	$(RM) $(RMFLAGS) core *.log
+	$(RM) -rf bin lib include
+
 _sub:
 	@for dir in $(SUBDIRS); do \
           (cd $$dir; echo Making \`$(TARG)\' in `pwd`; \
@@ -161,7 +162,7 @@ _sub:
 message:
 	@echo ""
 	@echo "***********************************************************"
-	@echo " HDF 3.3 library successfully created."
+	@echo " HDF 4.0 library successfully created."
 	@echo ""
 	@echo "If you have any old vset files (v 1.0) you must use vcompat"
 	@echo "to make them compatible with Vset 2.0 applications"

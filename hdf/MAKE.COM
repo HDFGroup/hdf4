@@ -37,7 +37,7 @@ $ !
 ! $ !
 ! $ ! Make full df lib (with fortran stubs)
 $ type sys$input
-  ======== Building HDF 3.3 ========
+  ======== Building HDF 4.0 ========
 ! $ !              
 ! $ ! Build the base HDF library
 ! $ !
@@ -72,4 +72,4 @@ $ @MAKE
 $ set default hdf$src
 $ !
 $ type sys$input
-  ======== HDF 3.3 has now been built ========
+  ======== HDF 4.0 has now been built ========
