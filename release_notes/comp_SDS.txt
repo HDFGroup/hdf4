@@ -116,14 +116,14 @@ types of compression.
             COMP_CODE_SKPHUFF - for adaptive Huffman
             COMP_CODE_DEFLATE - for gzip 'deflation'
 
-    coder_info *c_info - Information needed for the encoding type chosen.
+    comp_info *c_info - Information needed for the encoding type chosen.
         For COMP_CODE_NONE and COMP_CODE_RLE, this is unused and can be set to
         NULL.  For COMP_CODE_SKPHUFF, the structure skphuff in this union needs
         information about the size of the data elements in bytes (see example
         below).  For COMP_CODE_DEFLATE, the structure deflate in this union
         need information about "effort" to try to compress with (see example
-        below).  For more information about the types of compression and the
-        coder information see the compression.txt document in this directory.
+        below).  For more information about the types of compression 
+        see the compression.txt document in this directory.
 
     RETURNS - SUCCEED (0) or FAIL (-1) for success/failure.
 
@@ -133,9 +133,9 @@ types of compression.
     For example, to compress unsigned 16-bit integer data using the adaptive
     Huffman algorithm, the following setup and call would be used:
 
-    coder_info c_info;
+    comp_info c_info;
     c_info.skphuff.skp_size=sizeof(uint16);
-    SDsetcompress(sds_id,COMP_CODER_SKPHUFF,&c_info);
+    SDsetcompress(sds_id,COMP_CODE_SKPHUFF,&c_info);
 
     Further reads and writes to this dataset would transparently convert the
     16-bit unsigned integers from memory into a compressed representation on
@@ -145,9 +145,9 @@ types of compression.
     the maximum effort to compress the data, the following setup and call would
     be used:
 
-    coder_info c_info;
+    comp_info c_info;
     c_info.deflate.level=9;
-    SDsetcompress(sds_id,COMP_CODER_DEFLATE,&c_info);
+    SDsetcompress(sds_id,COMP_CODE_DEFLATE,&c_info);
 
     Currently, SDsetcompress is limited to creating new datasets or appending
     new slices/slabs onto existing datasets.  Overwriting existing data in a
