@@ -1304,9 +1304,9 @@ void test_r8()
 		exit(1);
 	}
 	
-    pal1 = (uint8 *) malloc(768 * sizeof(char));
-    pal2 = (uint8 *) malloc(768 * sizeof(char));
-    ipal = (uint8 *) malloc(768 * sizeof(char));
+    pal1 = (uint8 *) HDgetspace(768 * sizeof(char));
+    pal2 = (uint8 *) HDgetspace(768 * sizeof(char));
+    ipal = (uint8 *) HDgetspace(768 * sizeof(char));
 	if(!ipal || !pal1 || !pal2) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(1);	
@@ -1486,6 +1486,9 @@ void test_r8()
         num_errs++;
     }
     
+    HDfreespace(pal1);
+    HDfreespace(pal2);
+    HDfreespace(ipal);
 }
 
 void test_pal()
@@ -1496,9 +1499,9 @@ void test_pal()
 
     char *pal1, *pal2, *ipal;
    
-    pal1 = (char *) malloc(768 * sizeof(char));
-	pal2 = (char *) malloc(768 * sizeof(char));
-	ipal = (char *) malloc(768 * sizeof(char));
+    pal1 = (char *) HDgetspace(768 * sizeof(char));
+	pal2 = (char *) HDgetspace(768 * sizeof(char));
+	ipal = (char *) HDgetspace(768 * sizeof(char));
 	if(!ipal || !pal1 || !pal2) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(1);	
@@ -1596,5 +1599,8 @@ void test_pal()
     for (i=0;i<768;i++)
        if (ipal[i] != pal1[i])
            printf("Error at %d, ipal %d pal1 %d\n", i, ipal[i], pal1[i]);
+    HDfreespace(pal1);
+    HDfreespace(pal2);
+    HDfreespace(ipal);
 }
 

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/04/19 23:03:38  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.3  1993/05/03 21:32:36  koziol
+First half of fixes to make Purify happy
 
+ * Revision 1.2  1993/04/19  23:03:38  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.1  1993/04/15  20:00:05  koziol
  * Re-named the new tests for MS-DOS compatibility
  *
@@ -158,6 +161,9 @@ void test_an()
         check_lab_desc(DFTAG_RIG, refnum, labris, descris);
     }
 
+    HDfreespace(data);
+    HDfreespace(image);
+    HDfreespace(newimage);
 }
 
 
@@ -269,5 +275,6 @@ uint16 tag, ref;
             printf("\n\tSHOULD BE: %s<<<\n", desc);
             num_errs++;
         }
+	HDfreespace(indesc);
     }
 }

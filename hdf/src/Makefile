@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.12  1993/04/12 13:26:59  koziol
+# Revision 1.13  1993/05/03 21:32:01  koziol
+# First half of fixes to make Purify happy
+#
+# Revision 1.12  1993/04/12  13:26:59  koziol
 # Changed Macros for the JPEG stuff so the unused sources don't get
 # included into Codecenter and have to be removed.  Also, added
 # smarter "mkdir" lines so the installation won't try to re-create
@@ -194,7 +197,7 @@ DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
 JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 
 .c.o:
-	$(CC) $(CFLAGS) -c $<
+	purify $(CC) $(CFLAGS) -c $<
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.13  1993/04/22 20:24:13  koziol
-Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
-utility...
+Revision 1.14  1993/05/03 21:32:14  koziol
+First half of fixes to make Purify happy
 
+ * Revision 1.13  1993/04/22  20:24:13  koziol
+ * Added new Hfind() routine to hfile.c which duplicates older DFsetfind/DFfind
+ * utility...
+ *
  * Revision 1.11  1993/04/14  21:39:18  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -446,7 +449,8 @@ int32 Hopen(path, access, ndds)
 
     file_rec->version_set = FALSE;
 
-    HIread_version(FSLOT2ID(slot));
+    if(vtag==0)
+        HIread_version(FSLOT2ID(slot));
     /* end version tags */
     
     return FSLOT2ID(slot);
@@ -1705,7 +1709,7 @@ int Hputelement(file_id, tag, ref, data, length)
 
     /* get access record, write out data and dispose of access record */
 
-    access_id = Hstartwrite(file_id, tag, ref, length);
+    access_id = Hstartwrite(file_id, (uint16)tag, (uint16)ref, length);
     if (access_id == FAIL) {
        HERROR(DFE_NOMATCH);
        return FAIL;
@@ -3478,7 +3482,7 @@ int32 file_id;
     HIstrncpy((char*) p, file_rec->version.string, 80);
     }
 
-    ret = Hputelement(file_id, DFTAG_VERSION, (uint16)1, lversion, 
+    ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion, 
 		      (uint32)sizeof(lversion));
 
     if (ret == SUCCEED) {
@@ -3529,7 +3533,7 @@ int32 file_id;
         return(FAIL);
     }
 
-    if (Hgetelement(file_id, DFTAG_VERSION, 
+    if (Hgetelement(file_id, (uint16)DFTAG_VERSION, 
                               (uint16)1, fversion) == FAIL) {
         file_rec->version.majorv = 0;
         file_rec->version.minorv = 0;

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/19 22:47:15  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.5  1993/05/03 21:32:07  koziol
+First half of fixes to make Purify happy
 
+ * Revision 1.4  1993/04/19  22:47:15  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.3  1993/01/19  05:54:35  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -199,6 +202,10 @@ VOID DFCIimcomp(xdim, ydim, in, out, in_pal, out_pal, mode)
     }
 
     fillin_color(blocks);
+    if(color_pt) {
+	HDfreespace(color_pt);
+	color_pt=NULL;
+      } /* end if */
 
 } /* end of DFCIimcomp */
 

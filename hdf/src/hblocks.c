@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.4  1993/04/19 22:47:55  koziol
-General Code Cleanup to reduce/remove errors on the PC
+Revision 1.5  1993/05/03 21:32:10  koziol
+First half of fixes to make Purify happy
 
+ * Revision 1.4  1993/04/19  22:47:55  koziol
+ * General Code Cleanup to reduce/remove errors on the PC
+ *
  * Revision 1.3  1993/01/19  05:55:34  koziol
  * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
  * port.  Lots of minor annoyances fixed.
@@ -554,6 +557,7 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
     access_id = Hstartread(file_id, tag, ref);
     if (access_id == FAIL ||
        Hread(access_id, 2+2*number_blocks, buffer) == FAIL) {
+       HDfreespace(buffer);
        HERROR(DFE_READERROR);
        return (link_t *) NULL;
     }
@@ -567,6 +571,7 @@ PRIVATE link_t * HLIgetlink(file_id, ref, number_blocks)
        UINT16DECODE(p, link->block_list[i].ref);
 }
     Hendaccess(access_id);
+    HDfreespace(buffer);
 
     return link;
 }

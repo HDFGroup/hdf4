@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/04/22 22:59:58  koziol
-Changed DFR8nimages, DFPnpals to report the correct number of images
-and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+Revision 1.11  1993/05/03 21:32:04  koziol
+First half of fixes to make Purify happy
 
+ * Revision 1.10  1993/04/22  22:59:58  koziol
+ * Changed DFR8nimages, DFPnpals to report the correct number of images
+ * and palettes.  Added DF24nimages, and changed DFSDnumber to DFSDndatasets.
+ *
  * Revision 1.8  1993/04/05  22:35:06  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -1080,6 +1083,7 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
                     }
                 }
                Hendaccess(aid);
+	       HDfreespace(buf);
                 return(Hclose(file_id));
             }
         }
@@ -1293,7 +1297,7 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
                      == FAIL)
             return(HDerr(file_id));
     } else {                   /* image need not be compressed */
-        if (Hputelement(file_id, wtag, wref, (uint8 *)imlut,
+        if (Hputelement(file_id, (uint16)wtag, (uint16)wref, (uint8 *)imlut,
                        xdim*ydim*Grwrite.datadesc[type].ncomponents) == FAIL)
             return(HDerr(file_id));
     }
