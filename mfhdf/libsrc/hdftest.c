@@ -198,7 +198,10 @@ static uint8  u8_data[2][3][4] =
         { 100, 101, 102, 103},
         { 110, 111, 112, 113},
         { 120, 121, 122, 123}}};
+
 extern int test_szip_compression();
+extern int test_checkempty();
+
 static intn
 test_chunk()
 {
@@ -2688,7 +2691,6 @@ main(int argc, char *argv[])
     uint8   iuval;
     float32 data[1000], max, min, imax, imin;
     float64 cal, cale, ioff, ioffe;
-    intn emptySDS = FALSE;
     int     num_errs = 0;    /* number of errors so far */
 
 
@@ -3225,19 +3227,6 @@ main(int argc, char *argv[])
     status = SDendaccess(newsds3);
     CHECK(status, FAIL, "SDendaccess");
 
-    /* BMR - 2/21/99: added a 2x2 dataset called EmptyDataset to file 
-       'test1.hdf' to later test new routine SDcheckempty.  */
-
-    /* create a 2x2 dataset called EmptyDataset in file test1.hdf */
-    dimsize[0] = 2;
-    dimsize[1] = 2;
-    newsds = SDcreate(f1, "EmptyDataset", DFNT_FLOAT32, 2, dimsize);
-    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set EmptyDataset ");
-    /* Close down this SDS*/
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "Test empty SDS. SDendaccess");
-    /* end BMR */
-
     /* Close access to file 'test1.hdf' */
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
@@ -3269,7 +3258,6 @@ main(int argc, char *argv[])
     dimsize[1]=6;
     sdid = SDcreate(f1, "FIXED1", DFNT_INT32, 2, dimsize);
     CHECK(sdid, FAIL, "SDcreate:Fail to create data set 'FIXED1' in 'test1.hdf'");
-
 
     for (i=0; i<30; i++)
         idata[i] = i+100;
@@ -3338,24 +3326,6 @@ main(int argc, char *argv[])
     /* end access to data set 'FIXED' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
-
-    /* BMR - 2/21/99: get index of dataset 'EmptyDataset' */
-    index = SDnametoindex(f1, "EmptyDataset");
-    CHECK(index, FAIL, "SDnametoindex: (EmptyDataset)");
-    
-    /* Select dataset 'EmptyDataset' */
-    sdsid = SDselect(f1, index);
-
-    /* This dataset should be empty, if SDcheckempty returns FAIL or the
-       parameter emptySDS is not TRUE, the test fails */
-    status = SDcheckempty( sdsid, &emptySDS );    
-    CHECK( status, FAIL, "SDcheckempty" );
-    VERIFY( emptySDS, TRUE, "SDcheckempty" );
-
-    /* end access to data set 'EmptyDataset' */
-    status = SDendaccess(sdsid);
-    CHECK(status, FAIL, "SDendaccess");
-    /* end BMR */
 
     /* close file 'test1.hdf' */
     status = SDend(f1);
@@ -4068,6 +4038,10 @@ main(int argc, char *argv[])
        day, the main program can be shortened and some of its dimension-related
        tests can be moved into this test routine - 04/18/01 */
     status = test_dimensions();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing SDcheckempty. 09/17/04 */
+    status = test_checkempty();
     num_errs = num_errs + status;
 
 #ifdef H4_HAVE_LIBSZ
