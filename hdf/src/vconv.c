@@ -32,7 +32,8 @@ static char RcsId[] = "@(#)$Revision$";
    * Part of the HDF Vset interface.
  */
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 /*
    ** ==================================================================

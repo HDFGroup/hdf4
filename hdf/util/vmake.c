@@ -39,7 +39,7 @@ static char *RcsId[] = "@(#)$Revision$";
 #include <console.h>
 #endif
 
-#include "vg.h"
+#include "hdf.h"
 
 /*
  * Prototypes of local functions

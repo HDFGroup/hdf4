@@ -26,7 +26,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 ************************************************************************/
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 #define ISCOMMA(c) ( (c==',') ? 1:0 )
 

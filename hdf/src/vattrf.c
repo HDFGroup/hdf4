@@ -25,7 +25,8 @@ static char RcsId[] = "@(#)$Revision$";
    *
    ******************************************************/
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 /* ----------------- vsfcfdx ---------------------- 
  *  get field index

@@ -27,7 +27,8 @@ static char RcsId[] = "@(#)$Revision$";
    *       VHmakegroup  -- makes a vgroup from tag/ref pairs
  */
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 /* ------------------------ VHstoredata -------------------------------
    NAME

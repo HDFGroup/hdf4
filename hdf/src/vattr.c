@@ -177,8 +177,8 @@ static char RcsId[] = "@(#)$Revision$";
 * First draft on 7/31/96, modified on 8/6/96, 8/15/96
 *************************************************************/
 
+#define VSET_INTERFACE
 #include "hdf.h"
-#include "vg.h"
 
 /* -----------------  VSfindex ---------------------
 NAME

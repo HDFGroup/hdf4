@@ -147,6 +147,7 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
+#include "vg.h"         /* Add the Vgroup/Vdata header so the users don't have to */
 
 /* For Pablo Instrumentation */
 #ifdef HAVE_PABLO

@@ -47,7 +47,8 @@ PRIVATE functions manipulate vsdir and are used only within this file.
 PRIVATE data structures in here pertain to vdata in vsdir only.
  */
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 /* Private functions */
 #ifdef VDATA_FIELDS_ALL_UPPER

@@ -35,7 +35,8 @@ static char *RcsId[] = "@(#)$Revision$";
 #include <console.h>
 #endif
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 static int  condensed;
 

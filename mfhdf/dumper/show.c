@@ -16,8 +16,8 @@
 static char *RcsId[] = "@(#)$Revision$";
 #endif
 
+#define VSET_INTERFACE
 #include "hdp.h"
-#include "vg.h"
 
 #define BUFFER 1000000
 

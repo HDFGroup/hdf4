@@ -20,6 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #define HDP_MASTER
+#define VSET_INTERFACE
 #include "hdp.h"
 
 /* Print the usage message about this utility */

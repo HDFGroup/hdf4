@@ -38,7 +38,8 @@ EXPORTED ROUTINES
 
 ************************************************************************/
 
-#include "vg.h"
+#define VSET_INTERFACE
+#include "hdf.h"
 
 #ifndef MIN
 #define MIN(a,b)     ((a) < (b) ? (a) : (b))
