@@ -358,10 +358,6 @@ int main(int argc, char *argv[])
             status = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
 		}
         
-		if(n == MAXBUFF) 
-            fprintf(stderr, 
-                    "Warning:  File may have more DD's than hdfls can display\n");
-        
 		if(debug) {
             printf("\n");
             for (j=0; j<n; j++) {
@@ -385,6 +381,10 @@ int main(int argc, char *argv[])
         
         i++;
         printf("\n");
+
+		if(n >= MAXBUFF) 
+            fprintf(stderr, 
+                  "Warning:  File may have more DD's than hdfls can display\n");
     }
 
     HDfreespace(desc_buf);
