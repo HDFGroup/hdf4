@@ -611,7 +611,7 @@ done:
 NAME
    VSgetname - gets the vdata's name. 
 USAGE
-   int32 VSsetname(vkey, vsname)
+   int32 VSgetname(vkey, vsname)
    int32 vkey;    IN: vdata key.
    char *vsname;  OUT: storage for vdata name. 
 RETURNS
@@ -728,6 +728,8 @@ VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
           char *fields, int32 *eltsize, char *vsname)
 {
   intn ret_value = SUCCEED;
+  intn status;
+
 #ifdef LATER
     CONSTR(FUNC, "VSinquire");
 #endif
@@ -736,16 +738,26 @@ VSinquire(int32 vkey, int32 *nelt, int32 *interlace,
   TRACE_ON(VS_mask, ID_VSinquire);
 #endif /* HAVE_PABLO */
 
-    if (fields)
-        VSgetfields(vkey, fields);
-    if (nelt)
+    if (fields) {
+        status = VSgetfields(vkey, fields);
+        ret_value = (status == FAIL)? FAIL: ret_value;
+    }
+    if (nelt)   {
         *nelt = VSelts(vkey);
-    if (interlace)
+        ret_value = (*nelt == FAIL)? FAIL: ret_value;
+    }
+    if (interlace)  {
         *interlace = VSgetinterlace(vkey);
-    if (eltsize)
+        ret_value = (*interlace == FAIL)? FAIL: ret_value;
+    }
+    if (eltsize) {
         *eltsize = VSsizeof(vkey, fields);
-    if (vsname)
-        VSgetname(vkey, vsname);
+        ret_value = (*eltsize == FAIL)? FAIL: ret_value;
+    }
+    if (vsname)  {
+        status = VSgetname(vkey, vsname);
+        ret_value = (status == FAIL)? FAIL: ret_value;
+    }
 
 #ifdef HAVE_PABLO
   TRACE_OFF(VS_mask, ID_VSinquire);

@@ -419,7 +419,7 @@ nvsinqc(intf * vkey, intf * nelt, intf * interlace, _fcd fields, intf * eltsize,
         _fcd vsname)
 {
     return ((intf) VSinquire(*vkey, (int32 *) nelt, (int32 *) interlace,
-                             fields, (int32 *) eltsize, _fcdtocp(vsname)));
+                  _fcdtocp(fields), (int32 *) eltsize, _fcdtocp(vsname)));
 }   /* VSINQC */
 
 /* ------------------------------------------------------------------ */

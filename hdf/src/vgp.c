@@ -1688,15 +1688,15 @@ Visvg(int32 vkey, int32 id)
     CONSTR(FUNC, "Visvg");
 
     if (!VALIDVGID(vkey))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FALSE);
 
     /* locate vg's index in vgtab */
     if (NULL == (v = (vginstance_t *) vginstance(VGID2VFILE(vkey), (uint16) VGID2SLOT(vkey))))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_NOVS, FALSE);
 
     vg = v->vg;
     if (vg == NULL)
-        HGOTO_ERROR(DFE_BADPTR, FAIL);
+        HGOTO_ERROR(DFE_BADPTR, FALSE);
 
     ID = (uint16) id;
 
@@ -1756,6 +1756,7 @@ Visvs(int32 vkey, int32 id)
             ret_value = (TRUE);
             goto done;
           }
+    ret_value = (FALSE);
 
 done:
   if(ret_value == FALSE)   
