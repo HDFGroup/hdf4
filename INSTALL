@@ -271,8 +271,9 @@ File Page Buffering(Beta release)
     accommodating the users file usage pattern.
 
     The current version supports setting the page-size and number of pages
-    in the memory pool through user routines. The default is 8192 bytes for 
-    page-size and 1 for number of pages in the pool.
+    in the memory pool through user C-routines(Fortran will be added in the
+    next release). The default is 8192 bytes for page-size and 1 for number 
+    of pages in the pool.
 
     More detailed documentation on how to use the file page buffering version 
     of the HDF library can be found in the directory'$(toplevel)/release_notes'.

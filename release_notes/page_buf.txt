@@ -16,10 +16,11 @@ File Page Buffering(Beta release)
     usage pattern.
 
     The current version supports setting the page-size and number of pages
-    to cache in the memory pool through user routines. The default is 8192 
-    bytes for page-size and 1 for number of pages in the pool.
+    in the memory pool through user C-routines(Fortran will be added in the
+    next release). The default is 8192 bytes for page-size and 1 for number 
+    of pages in the pool.
 
-    Two user routines are provided: one to set the values for page-size and
+    Two user C-routines are provided: one to set the values for page-size and
     number of pages to cache, and the other to inquire the current values being 
     used for the pagesize and number of pages cached.
 
