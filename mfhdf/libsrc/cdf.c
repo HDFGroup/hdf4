@@ -31,6 +31,14 @@ NC *handle ;
 
       xdr_destroy(handle->xdrs) ;
       Free(handle->xdrs) ;
+
+#ifdef HDF
+      if(handle->is_hdf) {
+          Vend(handle->hdf_file);
+          Hclose(handle->hdf_file);
+      }
+#endif
+
       Free(handle) ;
 }
 
