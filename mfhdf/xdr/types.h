@@ -23,7 +23,7 @@
 
 #if defined __STDC__ || defined PC
 #define STDC_INCLUDES
-#if !defined UNIX386 && !defined WINNT
+#if !(defined UNIX386 || defined WINNT || defined __ultrix)
 long ntohl(long);
 long htonl(long);
 #endif /* !unix */

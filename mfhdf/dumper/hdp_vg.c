@@ -18,7 +18,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 
 #include "hdp.h"
+#ifndef MIPSEL
 #include <math.h>
+#endif /* MIPSEL */
 #include "vg.h"
 
 #define NUM_VGS 20;

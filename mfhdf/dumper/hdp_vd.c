@@ -18,7 +18,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 
 #include "hdp.h"
+#ifndef MIPSEL
 #include <math.h>
+#endif /* MIPSEL */
 
 extern void sort(int32 chosen[MAXCHOICES]);
 

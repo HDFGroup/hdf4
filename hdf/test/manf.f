@@ -360,8 +360,8 @@ C**************************************************************
 
       integer  inlablen, indesclen, ret
 
-      integer affileinfo, afnumann, afannlist, afannlen, afreadann
-      integer afstart, afend, afendaccess
+      integer affileinfo, afnumann, afannlist, afannlen
+      integer afreadann, afstart, afend, afendaccess
 
       integer fileh
       integer nflabs, nfdescs, nolabs, nodescs
@@ -406,7 +406,7 @@ C ***** Look for label in list ******
          annlen = afannlen(dlabels(j))
          call RESULT(annlen, 'afannlen')
 
-         ret = afreadann(dlabels(j), inlabel, MAXLENLAB+1)
+         ret = afreadann(dlabels(j), inlabel, MAXLENLAB)
          call RESULT(ret, 'afreadann')
          ret = afendaccess(dlabels(j))
          call RESULT(ret, 'afendaccess')
@@ -442,7 +442,7 @@ C ***** look for description in list
          annlen = afannlen(ddescs(j))
          call RESULT(annlen, 'afannlen')
 
-         ret = afreadann(ddescs(j), indesc, MAXLEN_DESC+1)
+         ret = afreadann(ddescs(j), indesc, MAXLEN_DESC)
          call RESULT(ret, 'afreadann')
          ret = afendaccess(ddescs(j))
          call RESULT(ret, 'afendaccess')
@@ -522,7 +522,7 @@ C ***** Read file label **********
       fannlen = afannlen(annh)
       call RESULT(fannlen, 'afannlen')
 
-      ret = afreadann(annh, flabel, fannlen+1)
+      ret = afreadann(annh, flabel, fannlen)
       call RESULT(ret, 'afreadann')
       ret = afendaccess(annh)
       call RESULT(ret, 'afendaccess')
@@ -548,7 +548,7 @@ C **** Read file description *****
       fannlen = afannlen(annh)
       call RESULT(fannlen, 'afannlen')
 
-      ret = afreadann(annh, fdesc, fannlen+1)
+      ret = afreadann(annh, fdesc, fannlen)
       call RESULT(ret, 'afreadann')
       ret = afendaccess(annh)
       call RESULT(ret, 'afendaccess')

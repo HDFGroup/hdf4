@@ -293,7 +293,7 @@ nafannlen(intf *an_id)
   CONSTR(FUNC, "afannlen");
 #endif /* LATER */
 
-  return (intf)ANannlen((int32)*an_id);
+    return (intf)ANannlen((int32)*an_id);
 } /* nafannlen() */
 
 /*-----------------------------------------------------------------------------
@@ -313,7 +313,18 @@ nafwriteann(intf *an_id,_fcd ann, intf *annlen)
   CONSTR(FUNC, "afwriteann");
 #endif /* LATER */
 
+#ifdef OLD_WAY
   return (intf)ANwriteann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *annlen);
+#else /* OLD_WAY */
+    char       *iann = HDf2cstring(ann, (intn) *annlen);
+    intf        status;
+
+    status = ANwriteann((int32)*an_id, iann, (int32)*annlen);
+
+    HDfree(iann);
+
+    return status;
+#endif /* OLD_WAY */
 } /* nafwriteann() */
 
 /*-----------------------------------------------------------------------------
@@ -333,7 +344,24 @@ nafreadann(intf *an_id,_fcd ann, intf *maxlen)
   CONSTR(FUNC, "afreadann");
 #endif /* LATER */
 
+#ifdef OLD_WAY
   return (intf)ANreadann((int32)*an_id,(char *) _fcdtocp(ann), (int32) *maxlen);
+#else /* OLD_WAY */
+    char       *iann=NULL;
+    intn        status;
+
+    if (*maxlen)
+        iann = (char *) HDmalloc((uint32) *maxlen + 1);
+
+    status = ANreadann((int32)*an_id, iann, (int32)*maxlen);
+
+    HDpackFstring(iann, _fcdtocp(ann), (intn) *maxlen);
+
+    if (iann)
+        HDfree(iann);
+
+    return status;
+#endif /* OLD_WAY */
 } /* nafreadann() */
 
 /*-----------------------------------------------------------------------------

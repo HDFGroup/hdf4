@@ -546,7 +546,7 @@ typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 #endif /* CONVEX */
 
 
-#if defined(MIPSEL) || (defined(mips) && defined(ultrix))
+#if defined(MIPSEL) || ((defined(mips) || defined(__mips)) && (defined(ultrix) || defined(__ultrix)))
 
 #ifndef MIPSEL
 #define MIPSEL
@@ -558,7 +558,10 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
+#ifndef __GNUC__
 #define DUMBCC 	/* because it is.  for later use in macros */
+#endif /* __GNUC__ */
+
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */

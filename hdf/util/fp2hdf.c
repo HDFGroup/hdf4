@@ -154,7 +154,9 @@
 
 #include "hdf.h"
 #include <stdio.h>
+#ifndef MIPSEL
 #include <math.h>
+#endif /* MIPSEL */
 #include <string.h>
 #include <ctype.h>
 

@@ -20,7 +20,9 @@ static char RcsId[] = "@(#)Revision";
 #include <stdio.h>
 #include "mfhdf.h"
 #include "hdp.h"
+#ifndef MIPSEL
 #include <math.h>
+#endif /* MIPSEL */
 
 
 static intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[]);
