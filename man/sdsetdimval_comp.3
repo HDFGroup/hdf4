@@ -63,13 +63,16 @@ Examples
 
 Assuming the following,
 .nf
-        dimid=SDgetdimid(sdid, 0);
+        dimid=SDgetdimid(sdsid, 0);
         status = SDsetdimval_comp(dimid, SD_DIMVAL_BW_INCOMP);
 .fi
 
 .TP
 FORTRAN 
-Not available yet.
+integer function sfsdmvc(sdsid, compmode)
+.br
+integer sdsid, compmode
+
 .TP
 See Also
 SDisdimval_bwcomp(3)
