@@ -8,7 +8,7 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 DEFINES=-DNDEBUG -DHDF
-CPPFLAGS=@CPPFLAGS@ $(INCLUDES) $(DEFINES)
+CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
 
 #############################################################################
 ##                          Programs to build                              ##
