@@ -45,7 +45,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <console.h>
 #endif
 
-#define MAXNUMOFTESTS 25
+#define MAXNUMOFTESTS 27
 #define TESTMASTER
 
 /* Internal Variables */
@@ -147,6 +147,7 @@ main(int argc, char *argv[])
     InitTest("hblocks", test_hblocks, "HBLOCKS");
     InitTest("extelt", test_hextelt, "EXTERNAL ELEMENTS");
     InitTest("comp", test_comp, "COMPRESSED ELEMENTS");
+    InitTest("chunks", test_chunks, "Chunks");
 #ifdef LATER
     InitTest("vblocks", test_hvblocks, "Variable Length Linked Blocks");
 #endif /* LATER */

@@ -44,5 +44,6 @@ void        test_nbit(void);
 void        test_hvblocks(void);
 void        test_mgr(void);
 void        test_bitvect(void);
+void        test_chunks(void);
 
 #endif /* _TPROTO_H */
