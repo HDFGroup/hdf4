@@ -44,7 +44,7 @@
 
   4. Release Notes
 
-  5. 4.0 Documentation
+  5. 4.1 Documentation
 
   6. FAQ
 
@@ -734,7 +734,7 @@ the NCSA ftp archive site at:
    =============
     The files in sub-directory $(toplevel)/release_notes are detailed 
     descriptions for the new features. They can be used as supplemental 
-    documentation for HDF4.0. These files are also available on the NCSA 
+    documentation for HDF4.1. These files are also available on the NCSA 
     ftp server(ftp.ncsa.uiuc.edu) in:
  
          /HDF/HDF_Current/release_notes/.
@@ -742,8 +742,8 @@ the NCSA ftp archive site at:
 5. Documentation
    =============
 
-   The HDF 4.0 documentation can be found on the NCSA ftp server
-   in the directory /HDF/Documentation/HDF4.0/Users_Guide.  The
+   The HDF 4.1 documentation can be found on the NCSA ftp server
+   in the directory /HDF/Documentation/HDF4.1/Users_Guide.  The
    HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/

@@ -1,4 +1,4 @@
-               README for HDF/netCDF 4.0 Distribution
+               README for HDF/netCDF 4.1 Distribution
                --------------------------------------
 
 Obtaining the latest version
@@ -31,9 +31,9 @@ Distribution Layout
 
    release_notes -- descriptions on new features and bug fixes in this
                     release. Files in this sub-directory can be used 
-                    as supplemental documentation for HDF4.0. These files 
+                    as supplemental documentation for HDF4.1. These files 
                     are also available on the NCSA ftp server, 
-                    in /HDF/Documentation/HDF4.0/release_notes/.
+                    in /HDF/Documentation/HDF4.1/release_notes/.
 
 Third Party Software Requirements:
 ---------------------------------
@@ -69,8 +69,8 @@ Configuring/Testing/Installing
 
 DOCUMENTATION/FAQ/HELP
 ----------------------
- The HDF 4.0 documentation can be found on the NCSA ftp server
- in the directory /HDF/Documentation/HDF4.0/Users_Guide.  The
+ The HDF 4.1 documentation can be found on the NCSA ftp server
+ in the directory /HDF/Documentation/HDF4.1/Users_Guide.  The
  HDF home page is at:
 
       http://hdf.ncsa.uiuc.edu/
