@@ -815,15 +815,15 @@ intf    *vgid;
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nvlonec(HFILEID *f, intf **idarray, intf *asize)
+nvlonec(HFILEID *f, intf *idarray, intf *asize)
 #else
 nvlonec(f, idarray, asize)
 HFILEID     *f;
-intf    **idarray;          /* output -- an integer array */
+intf    *idarray;          /* output -- an integer array */
 intf    *asize;
 #endif
 {
-    return( (intf) Vlone( *f, (int32 *)*idarray, (int32)*asize) );
+    return( (intf) Vlone( *f, (int32 *)idarray, (int32)*asize) );
 }
 
 /* ------------------------------------------------------------------ */
@@ -834,15 +834,15 @@ intf    *asize;
 
     FRETVAL(intf)
 #ifdef PROTOTYPE
-nvslonec(HFILEID *f, intf **idarray, intf *asize)
+nvslonec(HFILEID *f, intf *idarray, intf *asize)
 #else
 nvslonec(f, idarray, asize)
 HFILEID     *f;
-intf    **idarray;      /* output -- an integer array */
+intf    *idarray;      /* output -- an integer array */
 intf    *asize;
 #endif
 {
-    return( VSlone( *f, (int32 *)*idarray, (int32)*asize) );
+    return( VSlone( *f, (int32 *)idarray, (int32)*asize) );
 }
 
 /*

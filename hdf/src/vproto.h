@@ -507,10 +507,10 @@ extern FRETVAL(intf) nventsc
     PROTO((HFILEID _HUGE *f,intf _HUGE *vgid));
 
 extern FRETVAL(intf) nvlonec
-    PROTO((HFILEID _HUGE *f, intf _HUGE **idarray, intf _HUGE *asize));
+    PROTO((HFILEID _HUGE *f, intf _HUGE *idarray, intf _HUGE *asize));
 
 extern FRETVAL(intf) nvslonec
-    PROTO((HFILEID _HUGE *f, intf _HUGE **idarray, intf _HUGE *asize));
+    PROTO((HFILEID _HUGE *f, intf _HUGE *idarray, intf _HUGE *asize));
 
 extern FRETVAL(intf) nvhsdc
     PROTO((HFILEID _HUGE *f, _fcd field, uint8 _HUGE *buf, intf _HUGE *n, intf _HUGE *datatype,
