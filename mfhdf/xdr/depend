@@ -11,7 +11,6 @@ xdr.o: ../../hdf/src//hbitio.h
 xdr.o: ../../hdf/src//hcomp.h
 xdr.o: ../../hdf/src//herr.h
 xdr.o: ../../hdf/src//hproto.h
-xdr.o: ../../hdf/src//vproto.h
 xdrarray.o: xdrarray.c
 xdrarray.o: types.h
 xdrarray.o: xdr.h
@@ -24,7 +23,6 @@ xdrarray.o: ../../hdf/src//hbitio.h
 xdrarray.o: ../../hdf/src//hcomp.h
 xdrarray.o: ../../hdf/src//herr.h
 xdrarray.o: ../../hdf/src//hproto.h
-xdrarray.o: ../../hdf/src//vproto.h
 xdrfloat.o: xdrfloat.c
 xdrfloat.o: types.h
 xdrfloat.o: xdr.h
@@ -37,7 +35,6 @@ xdrfloat.o: ../../hdf/src//hbitio.h
 xdrfloat.o: ../../hdf/src//hcomp.h
 xdrfloat.o: ../../hdf/src//herr.h
 xdrfloat.o: ../../hdf/src//hproto.h
-xdrfloat.o: ../../hdf/src//vproto.h
 xdrstdio.o: xdrstdio.c
 xdrstdio.o: types.h
 xdrstdio.o: xdr.h
@@ -50,5 +47,4 @@ xdrstdio.o: ../../hdf/src//hbitio.h
 xdrstdio.o: ../../hdf/src//hcomp.h
 xdrstdio.o: ../../hdf/src//herr.h
 xdrstdio.o: ../../hdf/src//hproto.h
-xdrstdio.o: ../../hdf/src//vproto.h
 xdrtest.o: xdrtest.c
