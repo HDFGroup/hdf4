@@ -2,9 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.40  1993/09/09 20:52:31  chouck
-Pexky Convex doesn't like extern foo(VOID); prototypes
+Revision 1.41  1993/09/11 18:08:06  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.40  1993/09/09  20:52:31  chouck
+ * Pexky Convex doesn't like extern foo(VOID); prototypes
+ *
  * Revision 1.39  1993/09/01  23:53:31  georgev
  * Fixed some errors in prototypes for DFSD calls.
  *
@@ -290,7 +294,7 @@ extern VOIDP HDregetspace
 extern VOIDP HDfreespace
   PROTO((VOIDP ptr));
 
-#if defined WIN3 | defined PC
+#if defined PC & !defined PC386
 extern VOIDP fmemcpy_big
   PROTO((VOIDP dest, VOIDP source, uint32 len));
 
@@ -308,6 +312,10 @@ extern VOIDP memset_big
 
 extern intn memcmp_big
   PROTO((VOIDP s1, VOIDP s2, uint32 len));
+
+extern char *HDstrdup
+  PROTO((const char *s));
+
 #endif  /* WIN3 | PC */
 
 extern intn HDc2fstr

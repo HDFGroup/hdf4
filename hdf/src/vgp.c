@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.29  1993/08/18 15:58:03  chouck
-Restored version 1.26 changes that had gotten blown away (grumble grumble)
+Revision 1.30  1993/09/11 18:08:10  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.29  1993/08/18  15:58:03  chouck
+ * Restored version 1.26 changes that had gotten blown away (grumble grumble)
+ *
  * Revision 1.28  1993/08/17  16:33:58  chouck
  * Made Vaddtagref() a little smarter
  *
@@ -1598,12 +1602,7 @@ printf("Vsetname(): vkey=%d, VFILE=%d, VSLOT=%d\n",vkey,VGID2VFILE(vkey),VGID2SL
         return(FAIL);
     }
   
-    if ( HDstrlen(vgname) > VGNAMELENMAX ) {
-        HIstrncpy(vg->vgname, vgname, VGNAMELENMAX);
-        vg->vgname[VGNAMELENMAX]='\0';
-    }
-    else
-        HDstrcpy(vg->vgname, vgname);
+    HIstrncpy(vg->vgname, vgname, VGNAMELENMAX);
     vg->marked = TRUE;
     return(SUCCEED);
 } /* Vsetname */
@@ -1649,12 +1648,7 @@ char *vgclass;
         return(FAIL);
     }
 
-    if ( HDstrlen(vgclass) > VGNAMELENMAX) {
-        HIstrncpy(vg->vgclass, vgclass,VGNAMELENMAX);
-        vg->vgclass[VGNAMELENMAX]='\0';
-      }
-    else
-        HDstrcpy(vg->vgclass, vgclass);
+    HIstrncpy(vg->vgclass, vgclass,VGNAMELENMAX);
     vg->marked = TRUE;
     return(SUCCEED);
 } /* Vsetclass*/

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.20  1993/09/08 20:55:37  georgev
-Added #defines for THINK_C.
+Revision 1.21  1993/09/11 18:08:01  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.20  1993/09/08  20:55:37  georgev
+ * Added #defines for THINK_C.
+ *
  * Revision 1.19  1993/09/08  18:29:24  koziol
  * Fixed annoying bug on Suns, which was introduced by my PC386 enhancements
  *
@@ -2798,7 +2802,6 @@ char string[];
     *minorv = LIBVER_MINOR;
     *release = LIBVER_RELEASE;
     HIstrncpy(string, LIBVER_STRING, 81);
-    string[HDstrlen(string)] = '\0';
 
     return(SUCCEED);
 }
@@ -2850,7 +2853,6 @@ char string[];
     *minorv = file_rec->version.minorv;
     *release = file_rec->version.release;
     HIstrncpy(string, file_rec->version.string, 81);
-    string[HDstrlen(string)] = '\0';
 
     if (majorv == 0) {
         HERROR(DFE_NOMATCH);
@@ -3049,7 +3051,8 @@ PRIVATE int HIget_file_slot(path, FUNC)
        file_records[0].version_set = FALSE;
 
        file_records[0].path = HDgetspace(HDstrlen(path)+1);
-       HIstrncpy(file_records[0].path, path, HDstrlen(path)+1);
+       if(file_records[0].path)
+           HDstrcpy(file_records[0].path,path);
        return file_records[0].path ? 0 : FAIL;
     }
 
@@ -3088,8 +3091,7 @@ PRIVATE int HIget_file_slot(path, FUNC)
     file_records[slot].version_set = FALSE;
 
     if (file_records[slot].path) HDfreespace(file_records[slot].path);
-    file_records[slot].path = HDgetspace(HDstrlen(path)+1);
-    HIstrncpy(file_records[slot].path, path, HDstrlen(path)+1);
+    file_records[slot].path = HDstrdup(path);
     return file_records[slot].path ? slot : FAIL;
 }
 
@@ -3495,7 +3497,7 @@ int32 file_id;
 	UINT32ENCODE(p, file_rec->version.majorv);
 	UINT32ENCODE(p, file_rec->version.minorv);
 	UINT32ENCODE(p, file_rec->version.release);
-    HIstrncpy((char*) p, file_rec->version.string, 80);
+        HIstrncpy((char*) p, file_rec->version.string, 80);
     }
 
     ret = Hputelement(file_id, (uint16)DFTAG_VERSION, (uint16)1, lversion,
@@ -3554,7 +3556,7 @@ int32 file_id;
         file_rec->version.majorv = 0;
         file_rec->version.minorv = 0;
         file_rec->version.release = 0;
-        HIstrncpy(file_rec->version.string, "", 81);
+        HDstrcpy(file_rec->version.string, "");
         file_rec->version.modified = 0;
         HERROR(DFE_INTERNAL);
         return(FAIL);
@@ -3566,7 +3568,6 @@ int32 file_id;
         UINT32DECODE(p, file_rec->version.minorv);
         UINT32DECODE(p, file_rec->version.release);
         HIstrncpy(file_rec->version.string, (char*) p, 80);
-        file_rec->version.string[80]= '\0';
     }
     file_rec->version.modified = 0;
 

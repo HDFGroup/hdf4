@@ -177,7 +177,6 @@ VOIDP HDgetspace(uint32 qty)
     qty+=sizeof(char)+sizeof(uint32);   /* increment the quantity to allocate */
 
     if(qty>=(int32)64000) {   /* see if we have to use halloc() to get a really large chunk of memory */
-printf("HDgetspace(): halloc() called, qty=%lu\n",qty);
         p = halloc((int32)qty,(size_t)1);
         if (p==NULL) {
             HERROR(DFE_NOSPACE);
@@ -267,6 +266,19 @@ printf("HDfreespace(): hfree() called\n");
 }
 
 #endif /* WIN3 */
+
+/* HDstrdup replacement for strdup() on PCs under MS-DOS and Windows. */
+/* This is needed because of the way memory is allocated on the PC */
+char *HDstrdup(const char *s)
+{
+    char *ret;
+
+    ret=HDgetspace((uint32)HDstrlen(s)+1);
+    if(ret==NULL)
+        return(NULL);
+    HDstrcpy(ret,s);
+    return(ret);
+} /* end HDstrdup() */
 #else /* !PC | PC386 */
 
 
@@ -320,7 +332,7 @@ VOIDP ptr;
     return(NULL);
 }
 
-#endif /* PC */
+#endif /* !PC | PC386 */
 
 #if defined WIN3 || defined PC
 #ifdef WIN3

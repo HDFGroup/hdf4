@@ -2,10 +2,14 @@
 $Header$
 
 $Log$
-Revision 1.32  1993/09/08 20:54:53  georgev
-Fixed problem with #elif directive on HP9000.
-Deleted NewPtr, DisposPtr references for Mac.
+Revision 1.33  1993/09/11 18:07:55  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.32  1993/09/08  20:54:53  georgev
+ * Fixed problem with #elif directive on HP9000.
+ * Deleted NewPtr, DisposPtr references for Mac.
+ *
  * Revision 1.31  1993/09/02  14:41:56  koziol
  * Patches for Watcom/386 Support
  *
@@ -1141,7 +1145,6 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (_fstrncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (_fstrncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (_fstrchr((s),(c)))
-#  define HDstrdup(s)      (_fstrdup((s)))
 #else
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
 #  define HDstrcmp(s,t)     (strcmp((s),(t)))
@@ -1150,7 +1153,10 @@ extern uint8 FAR *DFtbuf;
 #  define HDstrncmp(s1,s2,n)    (strncmp((s1),(s2),(n)))
 #  define HDstrncpy(s1,s2,n)    (strncpy((s1),(s2),(n)))
 #  define HDstrchr(s,c)    (strchr((s),(c)))
+/* Can't use on PCs. strdup() uses malloc() and HDgetspace uses halloc() */
+#if !defined PC | defined PC386
 #  define HDstrdup(s)      (strdup((s)))
+#endif /* PC */
 #endif /* WIN3 */
 
 
@@ -1158,7 +1164,7 @@ extern uint8 FAR *DFtbuf;
 *  Memory functions defined differently under MS Windows
 **************************************************************************/
 
-#if defined WIN3 || defined PC
+#if defined PC & !defined PC386
 #   ifdef WIN3
 #       define HDmemcpy(dst,src,n)   (fmemcpy_big((dst),(src),(n)))
 #       define HDmemset(dst,c,n)     (fmemset_big((dst),(c),(n)))

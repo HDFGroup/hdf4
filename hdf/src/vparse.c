@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.11  1993/09/09 20:54:14  chouck
-Need to cast HDstrdup() call on Convex
+Revision 1.12  1993/09/11 18:08:15  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.11  1993/09/09  20:54:14  chouck
+ * Need to cast HDstrdup() call on Convex
+ *
  * Revision 1.10  1993/09/08  20:58:07  georgev
  * Cleaned up some Global space only for the Mac.
  *
@@ -155,8 +159,7 @@ int32 scanattrs (attrs,attrc,attrv)
           nsym++;
           
           /* shove the string into our static buffer.  YUCK! */
-          if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
-          HIstrncpy(ss, s0, len + 1);
+          HIstrncpy(ss, s0, FIELDNAMELENMAX + 1);
 
           /* skip over the comma */
           s++;
@@ -180,8 +183,7 @@ int32 scanattrs (attrs,attrc,attrv)
   ss = symptr[nsym] = sym[nsym]; 
   nsym++;
   
-  if ( len > FIELDNAMELENMAX) len = FIELDNAMELENMAX;
-  HIstrncpy(ss, s0, len + 1);
+  HIstrncpy(ss, s0, FIELDNAMELENMAX + 1);
   
   symptr[nsym] = NULL;
   *attrc = nsym;

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.34  1993/09/03 15:16:47  chouck
-Fixed a casting problem for the SGI
+Revision 1.35  1993/09/11 18:07:46  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.34  1993/09/03  15:16:47  chouck
+ * Fixed a casting problem for the SGI
+ *
  * Revision 1.33  1993/09/02  00:17:51  georgev
  * Fixed large number of casts.
  *
@@ -1004,10 +1008,9 @@ intn DFSDIsetdimstrs(dim, label, unit, format)
 	/* copy string */
         if (lufp) 
           {
-            Writesdg.dimluf[luf][rdim] = HDgetspace((uint32) luflen + 1);
+            Writesdg.dimluf[luf][rdim] = HDstrdup(lufp);
             if (Writesdg.dimluf[luf][rdim] == NULL) 
               return FAIL;
-            HIstrncpy(Writesdg.dimluf[luf][rdim], lufp, luflen + 1);
           }
       }
     /* Indicate that this info has not been written to file */
@@ -2712,14 +2715,12 @@ intn DFSDIputndg(file_id, ref, sdg)
             /* if dataluf non-NULL, set up to write */
             if (sdg->dataluf[luf] && sdg->dataluf[luf][0])
               {
-                len = HDstrlen(sdg->dataluf[luf])+1;
-                HIstrncpy( (char *)bufp, sdg->dataluf[luf], len);
+                HDstrcpy( (char *)bufp, sdg->dataluf[luf]);
                 bufp += len;
               }
             else
               {  /* dataluf NULL */
-                HIstrncpy( (char *)bufp, "", (int32) 1 );
-                bufp ++;
+                *bufp++='\0';
               }
 
             /* for each dimluf, if non-NULL, set up to write */
@@ -2728,14 +2729,12 @@ intn DFSDIputndg(file_id, ref, sdg)
                 if (sdg->dimluf[luf] && sdg->dimluf[luf][i]
                     && sdg->dimluf[luf][i][0] )
                   {   /* dimluf not NULL */
-                        len = HDstrlen(sdg->dimluf[luf][i])+1;
-                        HIstrncpy( (char *)bufp, sdg->dimluf[luf][i], len);
+                        HDstrcpy( (char *)bufp, sdg->dimluf[luf][i]);
                         bufp += len;
                   }
                 else
                   {  /* dimluf NULL */
-                    HIstrncpy( (char *)bufp, "", (int32) 1 );
-                    bufp ++;
+                    *bufp++='\0';
                   }
               }   /* i loop   */
             Ref.luf[luf] = ref; /* remember ref */

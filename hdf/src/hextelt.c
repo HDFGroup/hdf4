@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.10  1993/06/16 17:17:59  chouck
-Fixed comments and increased some buffer sizes
+Revision 1.11  1993/09/11 18:07:57  koziol
+Fixed HDstrdup to work correctly on PCs under MS-DOS and Windows.  Also
+cleaned up some goofy string manipulations in various places.
 
+ * Revision 1.10  1993/06/16  17:17:59  chouck
+ * Fixed comments and increased some buffer sizes
+ *
  * Revision 1.9  1993/04/14  21:39:15  georgev
  * Had to add some VOIDP casts to some functions to make the compiler happy.
  *
@@ -278,14 +282,13 @@ int32 HXcreate(file_id, tag, ref, extern_file_name, f_offset, start_len)
     info->attached = 1;
     info->file_external = file_external;
     info->extern_offset = f_offset;
-    info->extern_file_name = HDgetspace((uint32)HDstrlen(extern_file_name)+1);
-    HIstrncpy(info->extern_file_name, extern_file_name,
-          HDstrlen(extern_file_name)+1);
+    info->extern_file_name = HDstrdup(extern_file_name);
     if (!info->extern_file_name) {
        HERROR(DFE_NOSPACE);
        access_rec->used = FALSE;
        return FAIL;
     }
+
     info->length_file_name = HDstrlen(extern_file_name);
     {
        uint8 *p = tbuf;
