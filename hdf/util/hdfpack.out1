@@ -1,4 +1,7 @@
 test.hdf:  
+File library version: Major= 3, Minor=3, Release=2
+NCSA HDF Version 3.3 Release 2, Novermber 1993
+
 Linked Blocks Indicator       : (tag 20)
 	Ref nos: 59 60 61 113 114 115 116 117 118 119 120
 Version Descriptor            : (tag 30)
@@ -20,6 +23,9 @@ Vgroup                        : (tag 1965)
 Special Scientific Data       : (tag 17086)
 	Ref nos: 59 113 116 119
 test.pck:  
+File library version: Major= 4, Minor=0, Release=1
+NCSA HDF Version 4.0 Release 1, Post patch01 1996/05/13
+
 Version Descriptor            : (tag 30)
 	Ref nos: 1
 Number type                   : (tag 106)
