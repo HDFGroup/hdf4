@@ -2,9 +2,12 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.2  1992/04/27 17:20:31  sxu
-C Changed output file name.
+C Revision 1.3  1992/05/04 14:51:22  sxu
+C Make (data(i,j)-min)*multiplier integer to please char()
 C
+c Revision 1.2  1992/04/27  17:20:31  sxu
+c Changed output file name.
+c
 c Revision 1.1  1992/03/23  22:55:42  mfolk
 c Initial revision
 c
@@ -198,7 +201,7 @@ C     store one value per row, increasing by one for each row
       multiplier = 255.0 /(max-min)
       do 210 i=1, height
           do 200 j=1, width
-             image(i,j) = char( (data(i,j)-min) * multiplier )
+             image(i,j) = char(int((data(i,j)-min) * multiplier))
   200     continue
   210 continue
       return 
