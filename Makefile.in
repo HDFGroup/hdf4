@@ -55,9 +55,9 @@ RMFLAGS = -f
 
 AS = as
 CC = gcc
-CFLAGS = -ansi
+CFLAGS = -ansi -O
 FC = f77
-FFLAGS=
+FFLAGS= -O
 
 # Set for document generation
 MAKEINFO = makeinfo
@@ -154,7 +154,7 @@ LOCAL_MACROS  = CC="$(CC)" \
 	CPPFLAGS="$(CPPFLAGS)" \
 	exec_prefix="$(exec_prefix)" \
 	FC="$(FC)" \
-        FFLAGS="$(FFLAGS)" \
+	FFLAGS="$(FFLAGS)" \
 	prefix="$(prefix)"
 
 #
@@ -177,6 +177,8 @@ NETCDF:
 
 test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="test-hdf" \
+          SUBDIRS="$(HDFDIR)" subd
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=test-utils \
           SUBDIRS="$(HDFDIR)" subd
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subdn
