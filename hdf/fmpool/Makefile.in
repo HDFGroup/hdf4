@@ -128,7 +128,7 @@ all::         FORCE
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) libfmpool; \
 	fi
 
-libfmpool: $(LIBOBJECTS)
+libfmpool.a: $(LIBOBJECTS)
 	$(RM) $(RMFLAGS) libfmpool.a
 	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
 	if test -f $(HDFLIB)/libdf.a ; then \
@@ -137,10 +137,10 @@ libfmpool: $(LIBOBJECTS)
 	fi
 	$(RANLIB) libfmpool.a 
 
-libfmpool.a: $(LIBOBJECTS)
-	$(RM) $(RMFLAGS) libfmpool.a
-	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
-	$(AR2) libfmpool.a
+#libfmpool.a: $(LIBOBJECTS)
+#	$(RM) $(RMFLAGS) libfmpool.a
+#	$(AR) $(ARFLAGS) libfmpool.a  $(LIBOBJECTS)
+#	$(AR2) libfmpool.a
 
 
 tfmp: ${INCLUDES} fmpconf.h test_fmpio.c libfmpool.a
