@@ -97,8 +97,8 @@ int Hgetlist (const char* fname, dtable_t *table)
  hdiff_list_gr (fname,file_id,gr_id,table);
  hdiff_list_sds(fname,file_id,sd_id,table);
  hdiff_list_vs (fname,file_id,table);
-	hdiff_list_glb(fname,file_id,sd_id,gr_id,table);
-	hdiff_list_an (fname,file_id,table);
+ hdiff_list_glb(fname,file_id,sd_id,gr_id,table);
+ hdiff_list_an (fname,file_id,table);
 
  /* close */
  if (GRend (gr_id)==FAIL) {

@@ -35,19 +35,19 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  */
 
 int diff_sds(const char  *fname1, 
-             const char  *fname2, 
+             const char  *fname2,
+             int32 sd1_id,              
+             int32 sd2_id,
              int32 ref1,
              int32 ref2,
              diff_opt_t * opt)
 {
- int32 sd1_id,                 /* SD identifier */
-       sds1_id,                /* data set identifier */
+ int32 sds1_id,                /* data set identifier */
        sds1_index,             /* index number of the data set */
        dtype1,                 /* SDS data type */
        dimsizes1[MAX_VAR_DIMS],/* dimensional size of SDS */
        nattrs1,                /* number of SDS attributes */
        rank1,                  /* rank of SDS */
-       sd2_id,                 /* SD identifier */
        sds2_id,                /* data set identifier */
        sds2_index,             /* index number of the data set */
        dtype2,                 /* SDS data type */
@@ -74,7 +74,7 @@ int diff_sds(const char  *fname1,
  * object 1
  *-------------------------------------------------------------------------
  */
-	 
+  
  sd1_id     = SDstart(fname1, DFACC_RDONLY);
  sds1_index = SDreftoindex(sd1_id,ref1);
  sds1_id    = SDselect(sd1_id,sds1_index);

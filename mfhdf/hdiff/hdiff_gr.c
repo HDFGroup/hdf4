@@ -32,19 +32,19 @@
 
 int diff_gr( int32 file1_id,
              int32 file2_id,
+             int32 gr1_id,              
+             int32 gr2_id,
              int32 ref1,              
              int32 ref2,
              diff_opt_t *opt)  
 {
- int32 gr1_id,                 /* GR identifier */
-       ri1_id,                 /* data set identifier */
+ int32 ri1_id,                 /* data set identifier */
        ri1_index,              /* index number of the data set */
        dtype1,                 /* GR data type */
        dimsizes1[MAX_VAR_DIMS],/* dimensional size */
        nattrs1,                /* number of attributes */
        ncomps1,                /* number of components */
        interlace_mode1,        /* interlace mode of an image */ 
-       gr2_id,                 /* GR identifier */
        ri2_id,                 /* data set identifier */
        ri2_index,              /* index number of the data set */
        dtype2,                 /* GR data type */
@@ -72,7 +72,7 @@ int diff_gr( int32 file1_id,
  * object 1
  *-------------------------------------------------------------------------
  */
-	
+ 
  gr1_id    = GRstart(file1_id);
  ri1_index = GRreftoindex(gr1_id,(uint16)ref1);
  ri1_id    = GRselect(gr1_id,ri1_index);
@@ -90,7 +90,7 @@ int diff_gr( int32 file1_id,
  * object 2
  *-------------------------------------------------------------------------
  */
-	
+ 
  gr2_id    = GRstart(file2_id);
  ri2_index = GRreftoindex(gr2_id,(uint16)ref2);
  ri2_id    = GRselect(gr2_id,ri2_index);

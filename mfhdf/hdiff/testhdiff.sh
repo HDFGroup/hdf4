@@ -121,19 +121,12 @@ TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
 ###			  T H E   T E S T S                                            ###
 ##############################################################################
 
-#generate the hdf files to test
-cd testfiles
-../hdifftst
-cd ..
 # compare output
 RUN
-
 
 # ##############################################################################
 # # END
 # ##############################################################################
-
-
 
 if test $nerrors -eq 0 ; then
    echo "All $HDIFF tests passed."
