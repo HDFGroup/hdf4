@@ -154,13 +154,13 @@ DISTFILES	= $(PROGRAM).src Makefile.in README aix.m4 common.inc \
 		config/netcdf-cm5.inc config/jackets-cm5.c config/ftest-cm5.f 
 
 LIBOBJS		= jackets.o mfsdf.o mfsdff.o
-LIBNAME		= netcdf
+LIBNAME		= mfhdf
 #REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 REMOTE_LIBRARY	= $(srcdir)/../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS) 
 #LD_XDR		= @LD_XDR@
-#LD_NETCDF	= -L../libsrc -lnetcdf
-LD_NETCDF	= $(srcdir)/../libsrc/libnetcdf.a
+#LD_NETCDF	= -L../libsrc -lmfhdf
+LD_NETCDF	= $(srcdir)/../libsrc/libmfhdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
 prefix		= ../../..
 

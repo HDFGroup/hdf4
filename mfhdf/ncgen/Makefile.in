@@ -127,8 +127,8 @@ DISTFILES	= Makefile.in depend README \
 		  msoftyy.c ncgen.1 ncgen.h ncgen.l ncgen.opt ncgen.y \
 		  test.com test0.cdl \
 		  $(vms_stuff)
-LIBNAME		= netcdf
-LD_NETCDF	= ../libsrc/libnetcdf.a $(HDF_LIB) $(JPEG_LIB)
+LIBNAME		= mfhdf
+LD_NETCDF	= ../libsrc/libmfhdf.a $(HDF_LIB) $(JPEG_LIB)
 OBJS		= main.o generate.o load.o ncgentab.o escapes.o \
 		  getfill.o init.o close.o genlib.o
 #LD_XDR		= @LD_XDR@

@@ -140,12 +140,12 @@ DISTFILES	= Makefile.in README \
 LIBOBJS		= array.o attr.o cdf.o dim.o file.o iarray.o error.o \
 		  globdef.o putget.o putgetg.o sharray.o string.o var.o \
 		  $(XDRFILE).o hdfsds.o mfsd.o nssdc.o
-LIBRARY		= netcdf
-DEBUGLIBRARY	= netcdf_g
-PROFILEDLIBRARY	= netcdf_pg
+LIBRARY		= mfhdf
+DEBUGLIBRARY	= mfhdf_g
+PROFILEDLIBRARY	= mfhdf_pg
 OBJS		= $(PROGRAM).o
 #LD_XDR		= @LD_XDR@
-LD_NETCDF	= libnetcdf.a
+LD_NETCDF	= libmfhdf.a
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB)
 prefix		= ../../..
 

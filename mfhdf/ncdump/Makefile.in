@@ -121,11 +121,11 @@ DISTFILES	= Makefile.in ncdump.c ncdump.h  depend msoft.mk \
 		  test0.cdl vardata.c vardata.h dumplib.c dumplib.h ncdump.1 \
                   make.com msofttab.c
 MANUALS		= ncdump.1
-LIBNAME		= netcdf
-LD_NETCDF	= ../libsrc/libnetcdf.a
+LIBNAME		= mfhdf
+LD_NETCDF	= ../libsrc/libmfhdf.a
 OBJS		=  ncdump.o vardata.o dumplib.o
 #LD_XDR		= @LD_XDR@
-LD_NETCDF	= -L../libsrc -lnetcdf
+LD_NETCDF	= -L../libsrc -lmfhdf
 LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(JPEG_LIB) -lm
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) test0.nc test1.nc test1.cdl test2.cdl

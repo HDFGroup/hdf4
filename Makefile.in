@@ -191,7 +191,7 @@ test-hdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
-test-netcdf:
+test-mfhdf:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=test \
           SUBDIRS="$(NETCDFDIR)" subd
 
@@ -199,7 +199,7 @@ hdf-test:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=$@ \
           SUBDIRS="$(HDFDIR)" subd
 
-netcdf-test:
+mfhdf-test:
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=$@ \
           SUBDIRS="$(NETCDFDIR)" subd
 
@@ -263,7 +263,7 @@ install-hdf:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG=install \
           SUBDIRS="$(HDFDIR)" subd
 
-install-netcdf:	
+install-mfhdf:	
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG=install \
           SUBDIRS="$(NETCDFDIR)" subd
 
@@ -271,7 +271,7 @@ hdfclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="clean" \
           SUBDIRS="$(HDFDIR)" subd
 
-netcdfclean:		
+mfhdfclean:		
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="clean" \
           SUBDIRS="$(NETCDFDIR)" subd
 
@@ -285,7 +285,7 @@ hdfdistclean:
 	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="distclean" \
           SUBDIRS="$(HDFDIR)" subd
 
-netcdfdistclean:		
+mfhdfdistclean:		
 	@$(MAKE) $(MFLAGS) $(NETCDF_FLAGS) TARG="distclean" \
           SUBDIRS="$(NETCDFDIR)" subd
 
@@ -318,21 +318,21 @@ help:
 	@echo "make test              - run both HDF and NETCDF tests"
 	@echo "make testnofortran     - run HDF tests except the fortran test" 
 	@echo "                         and NETCDF tests"
-	@echo "make test-netcdf       - run NETCDF tests" 
+	@echo "make test-mfhdf        - run NETCDF tests" 
 	@echo "make test-hdf          - run HDF tests" 
 	@echo "make test-hdfnofortran - run HDF tests except the fortran test" 
 	@echo "make install           - install HDF,netCDF libraries,"
 	@echo "                         utilites, and includes" 
 	@echo "make install-hdf       - install HDF library, utilities and includes"
-	@echo "make install-netcdf    - install netCDF library, utilities and includes"
+	@echo "make install-mfhdf     - install netCDF library, utilities and includes"
 	@echo "make clean        - cleans up HDF and NETCDF packages(*.o,libdf.a,..)"
 	@echo "make distclean    - cleans up HDF and NETCDF packages including"
 	@echo "                    configuration(Makefiles,config.status,..)"
 	@echo "make hdfclean     - cleans up HDF package(*.o,libdf.a,..et)"
 	@echo "make hdfdistclean - cleans up HDF package including"
 	@echo "                    configuration(Makefiles,config.status,..)"
-	@echo "make netcdfclean  - cleans up NETCDF package(*.o,libnetcdf.a,..et)"
-	@echo "make netcdfdistclean - cleans up NETCDF package including"
+	@echo "make mfhdfclean   - cleans up NETCDF package(*.o,libmfhdf.a,..et)"
+	@echo "make mfhdfdistclean - cleans up NETCDF package including"
 	@echo "                       configuration(Makefiles,config.status,..)"
 
 # target for recursive directory make

@@ -122,11 +122,11 @@ DISTFILES	= Makefile.in NOTICE.h README depend \
 		  xdrfloat.c xdrstdio.c $(PROGRAM).c $(PROGRAM).opt \
 		  testout.sav
 LIBOBJS		= $(XDR_LIBOBJS)
-LIBNAME		= netcdf
+LIBNAME		= mfhdf
 REMOTE_LIBRARY	= ../libsrc/lib$(LIBNAME).a
 OBJS		= $(PROGRAM).o $(LIBOBJS)
 #LD_XDR		= @LD_XDR@
-LD_NETCDF	= ../libsrc/libnetcdf.a
+LD_NETCDF	= ../libsrc/libmfhdf.a
 LIBS		= $(LD_XDR)
 INSTALL_DEPS	= $(XDR_INSTALL_DEPS)
 prefix		= ../../..

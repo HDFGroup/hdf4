@@ -119,8 +119,8 @@ DISTFILES	= Makefile.in README add.c add.h atttests.c cdftests.c \
 		  error.h misctest.c msoft.mk rec.c slabs.c testcdf.h \
 		  tests.h val.c val.h vardef.c varget.c vargetg.c varput.c \
 		  varputg.c vartests.c vputget.c vputgetg.c make.com
-LIBNAME		= netcdf
-LD_NETCDF	= ../libsrc/libnetcdf.a
+LIBNAME		= mfhdf
+LD_NETCDF	= ../libsrc/libmfhdf.a
 SRCS		= varget.c vargetg.c varput.c varputg.c vardef.c vartests.c \
 		  vputget.c vputgetg.c driver.c cdftests.c dimtests.c rec.c \
 		  atttests.c misctest.c add.c error.c emalloc.c val.c slabs.c
@@ -136,17 +136,17 @@ all::		program
 test:		$(PROGRAM)
 	./$(PROGRAM)
 
-$(PROGRAM):   ../libsrc/libnetcdf.a
+$(PROGRAM):   ../libsrc/libmfhdf.a
 
 install::
 
 nctime:		nctime.o
 	$(CC) $(CFLAGS) $(CFLAGS_NETCDF) nctime.o $(LIBS) -o $@
 
-debug:      ../libsrc/libnetcdf.a
+debug:      ../libsrc/libmfhdf.a
 	purify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o pnctest
 
-perfs:      ../libsrc/libnetcdf.a
+perfs:      ../libsrc/libmfhdf.a
 	quantify $(CC) $(CFLAGS) $(CFLAGS_NETCDF) $(OBJS) $(LIBS) -o qnctest
 
 saber_src:
