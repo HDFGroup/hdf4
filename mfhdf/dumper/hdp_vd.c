@@ -692,6 +692,15 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                               }
 
                             an_handle = FAIL; /* reset */
+
+                            /* BMR - 6/30/98 to fix bug #236
+				if no fields are defined or no data is
+                                written, break out and don't fall through */
+                            if ( fields[0] == '\0' || nvf == 0 )
+                            {
+                                fprintf( stderr, "<No data written>\n\n");
+                                break;
+                            }
                         }
                       else /* only header, no attributes, annotations or data */
                         {
