@@ -24,7 +24,7 @@ release_notes -- descriptions on new features and bug fixes in this
                  release. Files in this sub-directory can be used 
                  as  supplement documentation for HDF4.0. These files 
                  are also available on the NCSA ftp server, 
-                 in /HDF/Documentation/HDF4.0/4.0b2_release_notes/.
+                 in /HDF/Documentation/HDF4.0/release_notes/.
 
 Configuring/Testing/Installing(Short version)
 ---------------------------------------------
