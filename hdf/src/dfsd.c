@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.12  1993/01/06 19:32:23  chouck
-Spelled one of the Hendaccess()s wrong (oops)
+Revision 1.13  1993/01/07 21:09:21  georgev
+Forgot to swith order of HDmemcpy arguments in DFSDgetfillvalue.
 
+ * Revision 1.12  1993/01/06  19:32:23  chouck
+ * Spelled one of the Hendaccess()s wrong (oops)
+ *
  * Revision 1.11  1993/01/05  17:53:55  chouck
  * DFSDIgetndg() was leaving active AIDs on error
  *
@@ -4002,7 +4005,7 @@ DFSDgetfillvalue(fill_value)
     localNTsize = DFKNTsize(numtype | DFNT_NATIVE);
 
     /* Set return fill value  */
-    HDmemcpy(Readsdg.fill_value, fill_value, localNTsize);
+    HDmemcpy(fill_value, Readsdg.fill_value, localNTsize);
     return SUCCEED;
 }
 
