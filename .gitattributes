@@ -6,6 +6,7 @@ hdf/jpeg/testorig.jpg -text
 hdf/test/bitio.dat -text
 hdf/test/litend.dat -text
 hdf/test/nbit.dat -text
+hdf/test/tmgr.dat -text
 hdf/util/testfiles/fp2hdf/h100x100 -text
 hdf/util/testfiles/fp2hdf/h100x100h -text
 hdf/util/testfiles/fp2hdf/h100x100hv -text

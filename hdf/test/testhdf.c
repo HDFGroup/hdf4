@@ -154,7 +154,8 @@ main(int argc, char *argv[])
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
     InitTest("tbbt", test_tbbt, "Threaded Balanced Binary Trees");
-    InitTest("vset", test_vsets, "VSET Interface Test");
+    InitTest("vset", test_vsets, "VSET InterfaceTest");
+    InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 
     Verbosity = 4;  /* Default Verbosity is Low */
     ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
