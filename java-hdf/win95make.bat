@@ -1,9 +1,11 @@
 @ECHO OFF
 
-REM Set up the jhv and java home directories. You need java 1.1.1 or above
-REM -----------------------------------------------------------------------
-SET JHVHOME=c:\jhv
-SET JAVAHOME=c:\jdk1.1.3
+@REM set up your java home directory. You need java 1.1.1 or above.
+@SET JAVAHOME=c:\jdk1.1.3
+
+@REM you do not need to set your jhv home directory unless you move
+@REM the jhv run script "win95make.bat" away from your_jhv_home.
+@SET JHVHOME=.
 
 @REM Do not make changes under this line unless you know what you are doing.
 @REM -----------------------------------------------------------------------
