@@ -89,6 +89,7 @@ main(int argc, char *argv[])
     num_tests=InitTest("sdnt", "tsdntf", "");
     num_tests=InitTest("sdstr", "tsdstrf", "");
     num_tests=InitTest("vsetf", "tvsetf", "");
+    num_tests=InitTest("vsetblock", "tvsetblock", "");
     num_tests=InitTest("vattrf", "tvattrf", "");
 #ifdef DEC_ALPHA
     printf("   Skipping stubs\n");

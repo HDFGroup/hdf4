@@ -266,6 +266,11 @@ C Test command
 	    return
 	endif
 
+	if (param .EQ. 'vsetblock') then
+	    call tvsetblock(retcode)
+	    return
+	endif
+
 	if (param .EQ. 'vattrf') then
 	    call tvattrf(retcode)
 	    return

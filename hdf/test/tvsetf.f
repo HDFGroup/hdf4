@@ -545,3 +545,170 @@ C     Close file
 
       return
       end
+C
+C This subroutine tests vsfsetblsz, vsfsetnm, vsfgetinfo functions
+C
+C It creates and writes multi-component Vdata and single-component Vdata; 
+C then it sets sizes and number of blocks
+C for multi-component Vdata's link block and appends to the Vdata.
+C File is then closed and reponened once more; block information
+C is retrieved for the multi-component Vdata.
+C
+      subroutine tvsetblock(number_failed)
+      implicit none
+      character*20 myname
+      parameter (myname = 'vsetblock')
+      integer number_failed
+C
+C     Parameter declaration
+C
+      character*22 FILE_NAME
+      character*9  CLASS1_NAME
+      character*9  CLASS2_NAME
+      character*11 VDATA1_NAME
+      character*12 VDATA2_NAME
+      character*22 FIELD1_NAME
+      character*21 FIELD2_NAME
+      integer      N_RECORDS_1, N_RECORDS_2
+      integer      ORDER_2
+      integer      FULL_INTERLACE
+C
+      parameter (FILE_NAME   = 'Vdatas_blocks_test.hdf',
+     +           CLASS1_NAME = '5x1 Array',
+     +           CLASS2_NAME = '6x4 Array',
+     +           VDATA1_NAME = 'First Vdata',
+     +           VDATA2_NAME = 'Second Vdata',
+     +           FIELD1_NAME = 'Single-component Field',
+     +           FIELD2_NAME = 'Multi-component Field')
+      parameter (N_RECORDS_1 = 5,
+     +           N_RECORDS_2 = 256,
+     +           ORDER_2     = 2,
+     +           FULL_INTERLACE = 0)               
+   
+      integer DFACC_WRITE, DFNT_CHAR8, DFNT_INT32
+      parameter (DFACC_WRITE = 2,
+     +           DFNT_CHAR8  = 4,
+     +           DFNT_INT32  = 24)
+      integer BLOCK_SIZE, NUM_BLOCKS
+      parameter (BLOCK_SIZE = 256,
+     +           NUM_BLOCKS = 3)
+      
+C
+C     Function declaration
+C
+      integer hopen, hclose
+      integer vfstart, vhfscd, vhfsdm, vfend 
+      integer vsfsetblsz, vsfsetnmbl, vsfgetblinfo
+      integer vsfatch, vsfdtch, vsffnd, vsfwrt, vsfrd, vsfseek
+
+C
+C**** Variable declaration *******************************************
+C
+      integer   status, return_flag
+      integer   file_id
+      integer   vdata1_ref, vdata2_ref 
+      integer   vdata2_id 
+      character vdata1_buf(N_RECORDS_1)
+      integer   vdata2_buf(ORDER_2, N_RECORDS_2)
+      integer   buf(ORDER_2)
+      integer   i, j
+      integer   block_size_out, num_blocks_out
+      integer   n_records
+      data vdata1_buf /'V','D','A','T','A'/
+C
+C**** End of variable declaration ************************************
+      call ptestban('Testing', myname)
+C
+C     Initialize vdata2_buf
+C
+      do i = 1, N_RECORDS_2
+         do j = 1, ORDER_2
+            vdata2_buf(j,i) = j + i
+         enddo
+      enddo
+C
+C
+C     Open the HDF file for writing.
+C
+      file_id = hopen(FILE_NAME, DFACC_WRITE, 0)
+      call VRFY(file_id,'hopen',number_failed)
+C
+C     Initialize the VS interface.
+C
+      status = vfstart(file_id) 
+      call VRFY(status,'vfstart',number_failed)
+C
+C     Create multi-component vdata and populate it with data from vdata2_buf array.
+C     
+      vdata2_ref = vhfsdm(file_id, FIELD2_NAME, vdata2_buf, N_RECORDS_2,
+     +                    DFNT_INT32, VDATA2_NAME, CLASS2_NAME,
+     +                    ORDER_2)
+      call VRFY(vdata2_ref,'vhfsdm',number_failed)
+C
+C     Create single-component vdata and populate it with data from vdata1_buf array.
+C     
+      vdata1_ref = vhfscd(file_id, FIELD1_NAME, vdata1_buf, N_RECORDS_1,
+     +                    DFNT_CHAR8, VDATA1_NAME, CLASS1_NAME)
+      call VRFY(vdata1_ref,'vhfscd',number_failed)
+C
+C     Terminate access to the VS interface and close the HDF file.
+C
+      status = vfend(file_id)
+      call VRFY(status,'vfend',number_failed)
+      status = hclose(file_id)
+      call VRFY(status,'hclose',number_failed)
+      if (return_flag .eq. -1) goto 1000
+C
+C     Reopen the HDF file for writing.
+C
+      file_id = hopen(FILE_NAME, DFACC_WRITE, 0)
+      call VRFY(file_id,'hopen',number_failed)
+C
+C     Initialize the VS interface.
+C
+      status = vfstart(file_id) 
+      call VRFY(status,'vfstart',number_failed)
+C
+C     Attach to the multi-component Vdata
+C
+      vdata2_ref = vsffnd(file_id, VDATA2_NAME) 
+      call VRFY(vdata2_ref,'vsffnd',number_failed)
+      vdata2_id = vsfatch(file_id, vdata2_ref, 'w')
+      status = vsfsetblsz(vdata2_id, BLOCK_SIZE) 
+      call VRFY(status,'vsfsetblsz',number_failed)
+      status = vsfsetnmbl(vdata2_id, NUM_BLOCKS) 
+      call VRFY(status,'vsfsetblnm',number_failed)
+C
+C     Append to the multi-component Vdata 
+C
+      n_records = vsfseek(vdata2_id, N_RECORDS_2-1)
+      call VRFY(n_records,'vsfseek',number_failed)
+      n_records = 1
+      status = vsfrd(vdata2_id, buf, n_records, FULL_INTERLACE)
+      call VRFY(status,'vsfrd',number_failed)
+       
+      n_records = N_RECORDS_2
+      status = vsfwrt(vdata2_id, vdata2_buf, n_records,
+     +                FULL_INTERLACE)
+      if (status .ne. N_RECORDS_2) then
+          number_failed = number_failed + 1
+          call MESSAGE(3,'Wrong number of records added ')
+          call MESSAGE(3,'Append to multi-component Vdata failed ')
+      endif
+      call VRFY(vdata2_id,'vsfatch',number_failed)
+      status = vsfgetblinfo(vdata2_id, block_size_out, num_blocks_out)
+      if (block_size_out .ne. BLOCK_SIZE .or. 
+     +    num_blocks_out .ne. NUM_BLOCKS) then
+          call MESSAGE(3,'Linked-block info is wrong ')
+          number_failed = number_failed + 1
+      endif
+      status = vsfdtch(vdata2_id)
+      call VRFY(status,'vsfdtch',number_failed)
+      status = vfend(file_id)
+      call VRFY(status,'vfend',number_failed)
+      status = hclose(file_id)
+      call VRFY(status,'hclose',number_failed)
+
+1000  continue
+      return
+      end
