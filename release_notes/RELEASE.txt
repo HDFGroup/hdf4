@@ -135,10 +135,10 @@ HDF 4.2 Release 1 has been tested on the following platforms:
     Linux 2.4.21-sgi303rp05012313_10138 (Altix) 
                                   Intel C++ and Intel Fortran Verison 8.1
     
-    Linux 2.4.20-31.9smp_perfctr_lustre (IA-64)
+    Linux 2.4.20-31.9smp_perfctr_lustre (IA-32)
                                   Intel(R) C++ Version 8.0
                                   Intel(R) Fortran Compiler Version 8.0
-    Linux 2.4.21.SuSE_241.bef1 (IA-32)
+    Linux 2.4.21.SuSE_241.bef1 (IA-64)
                                   Intel(R) C++ Version 8.0
                                   Intel(R) Fortran Compiler Version 8.0
    
