@@ -41,7 +41,7 @@ H4VERSTR=		# default to current CVS version
 # Will run test only if there is significant differences from previous version.
 # If srcdir is not used, don't launched multiple tests
 SNAPSHOT="${DEBUGMODE:+echo }bin/snapshot"
-SRCDIR=""
+SRCDIR="srcdir"
 # Default standard Snaptest commands
 SNAPCMD="$SRCDIR test clean"
 # Default Standard snaptest command options
@@ -335,7 +335,8 @@ RUNSNAPTEST()
     fi
 
     # Setup log file name to save test output
-    LOGFILE=${LOGBASENAME}${SRCDIRNAME}_${TODAY}
+    THIS_MINUTE=`date +%H%M`
+    LOGFILE=${LOGBASENAME}${SRCDIRNAME}_${TODAY}_${THIS_MINUTE}
     PRINT "Running snapshot with output saved in"
     PRINT "   $LOGFILE"
     (date; PRINT Hostname=$HOSTNAME) >> $LOGFILE

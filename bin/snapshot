@@ -64,6 +64,20 @@ while [ $# -gt 0 ] ; do
 	    cmdtest="test"
 	    cmd=""
 	    ;;
+	srcdir)
+	    #use srcdir option for test
+	    srcdir="yes"
+	    ;;
+	srcdirname)
+	    shift
+	    if [ $# -lt 1 ]; then
+		echo "srcdirname <dir> missing"
+		errcode=1
+		cmd="help"
+		break
+	    fi
+	    SRCDIRNAME="$1"
+	    ;;
 	release)
 	    cmdrel="release"
 	    cmd=""
@@ -112,7 +126,7 @@ done
 if [ "$cmd" = help ]; then
     set -
     cat <<EOF
-Usage: $0 [all] [checkout] [diff] [test] [release] [help]
+Usage: $0 [all] [checkout] [diff] [test] [srcdir] [release] [help]
           [archive <arch_path>] [dir <dir>]
 	  [op-configure <option>] [--<option>]
     all:      Run all commands (checkout, test & release)
@@ -124,6 +138,14 @@ Usage: $0 [all] [checkout] [diff] [test] [release] [help]
     release:  Run release
     clean:    Run make clean
     distclean:Run make distclean
+    srcdir:   Use srcdir option (does not imply other commands)
+              "snapshot srcdir" is equivalent to "snapshot srcdir all"
+              "snapshot srcdir checkout" is equivalent to "snapshot checkout"
+    srcdirname <dir>:
+              Use <dir> as the srcdir testing directory if srcdir is choosen.
+              If <dir> starts with '-', it is append to the default name
+              E.g., "snapshot srcdir srcdirname -xx" uses hostname-xx
+              [Default is hostname]
     help:     Print this message
     archive <arch_path>:
               Use <arch_path> as the release ARCHIVE area
@@ -172,6 +194,16 @@ if [ "$cmd" = "all" -o -n "$cmdcheckout" ]; then
     # not, just create one and assume that a snapshot is necessary.
     test -d ${BASEDIR} || mkdir -p ${BASEDIR} || exit 1
 
+    # If there is a Makefile in ${CURRENT}, the last test done in it
+    # has not been distclean'ed.  They would interfere with other
+    # --srcdir build since make considers the files in ${CURRENT} 
+    # take precedence over files in its own build-directory.  Run
+    # a "make distclean" to clean them all out.  This is not really
+    # part of the "checkout" functions but this is the most convenient
+    # spot to do the distclean.  We will also continue the checkout process
+    # regardless of the return code of distclean.
+    ( cd ${CURRENT}; test -f Makefile && ${MAKE} distclean)
+
     # Check out the current version from CVS
     cvs -Q co -d ${CURRENT} ${CVSVERSION} hdf4 || exit 1
 fi # Do CVS checkout
@@ -181,7 +213,22 @@ fi # Do CVS checkout
 # Run Test the HDF4 library
 #=============================
 if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
-    TESTDIR=${CURRENT}
+    # setup if srcdir is used.
+    if [ -z "$srcdir" ]; then
+	TESTDIR=${CURRENT}
+    else
+	#create TESTDIR if not exist yet
+	case "$SRCDIRNAME" in
+	"")
+	    SRCDIRNAME=$HOSTNAME
+	    ;;
+	-*)
+	    SRCDIRNAME="$HOSTNAME$SRCDIRNAME"
+	    ;;
+	esac
+	TESTDIR=${BASEDIR}/TestDir/${SRCDIRNAME}
+	test -d ${TESTDIR} || mkdir ${TESTDIR}
+    fi
     INSTALLDIR=${TESTDIR}/installdir
     test -d $INSTALLDIR || mkdir $INSTALLDIR
     # Make sure current version exists and is clean
@@ -226,7 +273,7 @@ if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
     # No uninstall target.  Use "rm -rf ..." for now.
     if [ "$snapshot" = "yes" ]; then
 	if (cd ${TESTDIR} && \
-	    ${CURRENT}/${CONFIGURE} --prefix=$INSTALLDIR && \
+	    ${srcdir:+${CURRENT}/}${CONFIGURE} --prefix=$INSTALLDIR && \
 	    ${MAKE} && \
 	    ${MAKE} check && \
 	    ${MAKE} install && \
@@ -279,7 +326,20 @@ fi #Release snapshot
 # Clean the test area.  Default is no clean.
 #=============================
 if [ -n "$cmdclean" ]; then
-    TESTDIR=${CURRENT}
+    # setup if srcdir is used.
+    if [ -z "$srcdir" ]; then
+	TESTDIR=${CURRENT}
+    else
+	case "$SRCDIRNAME" in
+	"")
+	    SRCDIRNAME=$HOSTNAME
+	    ;;
+	-*)
+	    SRCDIRNAME="$HOSTNAME$SRCDIRNAME"
+	    ;;
+	esac
+	TESTDIR=${BASEDIR}/TestDir/${SRCDIRNAME}
+    fi
     # Make sure current version exists and is clean
     if [ -d ${TESTDIR} ]; then
 	(cd ${TESTDIR} && ${MAKE} $cmdclean )
