@@ -378,7 +378,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     uint16      gr_ref;         /* ref # of the Vgroup containing new-style RIs */
     intn        curr_image;     /* current image gathering information about */
     intn        nimages;        /* total number of potential images */
-    int32       nri, nci, nri8, nci8, nvg;   /* number of RIs, CIs, RI8s & CI8s & Vgroups */
+    int32       nri, nci, nri8, nci8, nii8, nvg;   /* number of RIs, CIs, RI8s, CI8s & II8s & Vgroups */
     struct image_info {
         uint16 grp_tag,grp_ref;         /* tag/ref of the group the image is in */
         uint16 img_tag,img_ref;         /* tag/ref of the image itself */
@@ -401,19 +401,22 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     nci = Hnumber(file_id, DFTAG_CI);     /* count the number of RI and CIs */
     if (nci == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    nri8 = Hnumber(file_id, DFTAG_RI8);     /* add the number of RI8 and CI8s */
+    nri8 = Hnumber(file_id, DFTAG_RI8);     /* add the number of RI8, CI8s and II8s */
     if (nri8 == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nci8 = Hnumber(file_id, DFTAG_CI8);
     if (nci8 == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    nii8 = Hnumber(file_id, DFTAG_II8);
+    if (nii8 == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
     nvg = Hnumber(file_id, RI_TAG);
     if (nvg == FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    nimages = (intn) (nri + nci + nri8 + nci8 + nvg);
+    nimages = (intn) (nri + nci + nri8 + nci8 + nii8 + nvg);
 
 #ifdef QAK
-printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(long)nci,(long)nri8,(long)nci8,(long)nvg);
+printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nii8=%ld, nvg=%ld\n",FUNC,(long)nri,(long)nci,(long)nri8,(long)nci8,(long)nii8,(long)nvg);
 #endif /* QAK */
     /* if there are no images just close the file and get out */
     if (nimages == 0)
@@ -597,6 +600,18 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nvg=%ld\n",FUNC,(long)nri,(lon
           curr_image++;
       } /* end while */
 
+    /* go through the II8s */
+    find_tag = find_ref = 0;
+    while (Hfind(file_id, DFTAG_II8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+      {
+          img_info[curr_image].grp_tag=DFTAG_NULL;
+          img_info[curr_image].grp_ref=DFREF_WILDCARD;
+          img_info[curr_image].img_tag=find_tag;
+          img_info[curr_image].img_ref=find_ref;
+          img_info[curr_image].offset = find_off;   /* store offset */
+          curr_image++;
+      } /* end while */
+
     /* Eliminate duplicate images by using the offset of the image data */
     /* Here's a table for how the images will be eliminated: */
     /*
@@ -651,8 +666,9 @@ for (i = 0; i < curr_image; i++)
                                       break;
 
                                   case DFTAG_RI8:
-                                  case DFTAG_CI8: /* Eldest style raster image, no grouping */
-                                      if(img_info[j].img_tag!=DFTAG_RI8 && img_info[j].img_tag!=DFTAG_CI8)
+                                  case DFTAG_CI8:
+                                  case DFTAG_II8: /* Eldest style raster image, no grouping */
+                                      if(img_info[j].img_tag!=DFTAG_RI8 && img_info[j].img_tag!=DFTAG_CI8 && img_info[j].img_tag!=DFTAG_II8)
                                           img_info[i].img_tag=DFTAG_NULL;
                                       else
                                           img_info[j].img_tag=DFTAG_NULL;
@@ -3615,9 +3631,13 @@ uint16 GRidtoref(int32 riid)
         ret_value=ri_ptr->ri_ref;
     else
       {
-        if(ri_ptr->rig_ref==DFREF_WILDCARD)
-            HGOTO_ERROR(DFE_INTERNAL,0);
-        ret_value=ri_ptr->rig_ref;
+        if(ri_ptr->rig_ref==DFREF_WILDCARD) {
+            if(ri_ptr->img_ref==DFREF_WILDCARD)
+                HGOTO_ERROR(DFE_INTERNAL,0);
+            ret_value=ri_ptr->img_ref;
+        }
+        else
+            ret_value=ri_ptr->rig_ref;
       } /* end else */
 #endif /* OLD_WAY */
 
