@@ -1430,9 +1430,8 @@ nsfsflmd(id, fillmode)
 
 HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
 int32 sdsid;              /* SDS id               */
-comp_info cinfo;          /* compression info     */
 int   i;
-int32 rank, status, cflags, comp_type;
+int32 rank, status, cflags;
 intf ret;
 
 int32 cdims[100], nt32, nattr32;
@@ -1493,35 +1492,6 @@ switch (cflags)
 
 }   
 /*-----------------------------------------------------------------------------
- * Name:     scrcchnk
- * Purpose:  read the specified chunk of CHARACTER data to the buffer
- * Inputs:   id        - data set ID
- *           start     - origin of chunk to read 
- * Outputs:  char_data  - buffer the data will be read into
- * Calls:    scrchnk 
- * Reamrks:  dimensions will be flipped in scrchnk function
- * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
-    FRETVAL (intf)
-#ifdef PROTOTYPE 
-       nscrcchnk(intf *id, intf *start, _fcd char_data)
-#else
-       nscrcchnk(id, start, char_data)
-                intf *id;
-                intf *start;
-               _fcd  char_data;
-#endif /* PROTOTYPE */
-
-{
-       intf  ret;
-
-       ret = nscrchnk(id, start, (VOIDP) _fcdtocp(char_data));
-
-       return(ret);
-
-} 
-
-/*-----------------------------------------------------------------------------
  * Name:     scrchnk
  * Purpose:  read the specified chunk of NUMERIC data to the buffer
  * Inputs:   id        - data set ID
@@ -1572,6 +1542,35 @@ switch (cflags)
 /* Free memory */
 
        HDfree((VOIDP)cstart);
+       return(ret);
+
+} 
+
+/*-----------------------------------------------------------------------------
+ * Name:     scrcchnk
+ * Purpose:  read the specified chunk of CHARACTER data to the buffer
+ * Inputs:   id        - data set ID
+ *           start     - origin of chunk to read 
+ * Outputs:  char_data  - buffer the data will be read into
+ * Calls:    scrchnk 
+ * Reamrks:  dimensions will be flipped in scrchnk function
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE 
+       nscrcchnk(intf *id, intf *start, _fcd char_data)
+#else
+       nscrcchnk(id, start, char_data)
+                intf *id;
+                intf *start;
+               _fcd  char_data;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = nscrchnk(id, start, (VOIDP) _fcdtocp(char_data));
+
        return(ret);
 
 } 
@@ -1643,26 +1642,25 @@ switch (cflags)
 #endif /* PROTOTYPE */
 {
 
-HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
-int32 sdsid;              /* SDS id               */
-int32 cflags;             /* chunk flags          */
-comp_info cinfo;          /* compression info     */
-int   i, CASE;
-int32 rank, status;
-intf ret;
+    HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+    int32 sdsid;              /* SDS id               */
+    int32 cflags;             /* chunk flags          */
+    int   i, CASE;
+    int32 rank, status;
+    intf ret;
 
-int32 cdims[100], nt32, nattr32;
+    int32 cdims[100], nt32, nattr32;
 
-/* Get rank of SDS */
+    /* Get rank of SDS */
 
        status = SDgetinfo((int32) *id, NULL , &rank, cdims, &nt32, &nattr32);
        if(status == FAIL) return FAIL;
 
-CASE = *comp_type;
-sdsid = *id;
-cflags = HDF_CHUNK | HDF_COMP;
+    CASE = *comp_type;
+    sdsid = *id;
+    cflags = HDF_CHUNK | HDF_COMP;
 
-switch (CASE)  {
+    switch (CASE)  {
 
        case 0:       /* No compression */
          cflags = HDF_CHUNK;
@@ -1716,42 +1714,13 @@ switch (CASE)  {
 
           return FAIL;
                     
-                     }
+     }
 
-ret = SDsetchunk(sdsid, chunk_def, cflags);
- 
-return(ret);
+    ret = SDsetchunk(sdsid, chunk_def, cflags);
+     
+    return(ret);
 
 }   
-/*-----------------------------------------------------------------------------
- * Name:     scwcchnk
- * Purpose:  write the specified chunk of CHARACTER data to the SDS 
- * Inputs:   id        - data set ID
- *           start     - origin of chunk to read 
- * Outputs:  char_data  - buffer the data will be read into
- * Calls:    scwchnk 
- * Reamrks:  dimensions will be flipped in scrchnk function
- * Returns:  0 on success, -1 on failure with error set
- *----------------------------------------------------------------------------*/   
-    FRETVAL (intf)
-#ifdef PROTOTYPE
-       nscwcchnk(intf *id, intf *start, _fcd char_data)
-#else
-       nscwcchnk(id, start, char_data)
-                intf *id;
-                intf *start;
-               _fcd  char_data;
-#endif /* PROTOTYPE */
-
-{
-       intf  ret;
-
-       ret = nscwchnk(id, start, (VOIDP) _fcdtocp(char_data));
-
-       return(ret);
-
-} 
-
 /*-----------------------------------------------------------------------------
  * Name:     scwchnk
  * Purpose:  write the specified chunk of NUMERIC data to the SDS
@@ -1807,6 +1776,35 @@ return(ret);
        return(ret);
 
 } 
+/*-----------------------------------------------------------------------------
+ * Name:     scwcchnk
+ * Purpose:  write the specified chunk of CHARACTER data to the SDS 
+ * Inputs:   id        - data set ID
+ *           start     - origin of chunk to read 
+ * Outputs:  char_data  - buffer the data will be read into
+ * Calls:    scwchnk 
+ * Reamrks:  dimensions will be flipped in scrchnk function
+ * Returns:  0 on success, -1 on failure with error set
+ *----------------------------------------------------------------------------*/   
+    FRETVAL (intf)
+#ifdef PROTOTYPE
+       nscwcchnk(intf *id, intf *start, _fcd char_data)
+#else
+       nscwcchnk(id, start, char_data)
+                intf *id;
+                intf *start;
+               _fcd  char_data;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret;
+
+       ret = nscwchnk(id, start, (VOIDP) _fcdtocp(char_data));
+
+       return(ret);
+
+} 
+
 /*-------------------------------------------------------------------------
  * Name:    scscompress
  * Puporse: Call SDsetcompress 
@@ -1834,18 +1832,18 @@ return(ret);
 #endif /* PROTOTYPE */
 {
 
-int32 sdsid;              /* SDS id               */
-comp_info c_info;         /* compression info     */
-int32 c_type;              /* compression type definition */
+    int32 sdsid;              /* SDS id               */
+    comp_info c_info;         /* compression info     */
+    int32 c_type;              /* compression type definition */
 
-int   i, CASE;
-intf ret;
+    int   CASE;
+    intf ret;
 
 
 
-CASE = *comp_type;
-sdsid = *id;
-switch (CASE)  {
+    CASE = *comp_type;
+    sdsid = *id;
+    switch (CASE)  {
 
        case COMP_CODE_NONE:       /* No compression */
          c_type = COMP_CODE_NONE;
@@ -1871,8 +1869,8 @@ switch (CASE)  {
                     
                      }
 
-ret = SDsetcompress(sdsid, c_type, &c_info);
-return(ret);
+    ret = SDsetcompress(sdsid, c_type, &c_info);
+    return(ret);
 
 }
 /*-----------------------------------------------------------------------------

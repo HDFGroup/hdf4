@@ -226,10 +226,10 @@ test_ncvardef(path)
 		    if ((nclong) val != (nclong) fillval) {
                         nclong a, b;
 
-printf("\n\n Was expecting %d instead got a %d\n", fillval, val);
+printf("\n\n Was expecting %d instead got a %d\n", (int)fillval, (int)val);
                         a = (nclong) val;
                         b = (nclong) fillval;
-printf("\n\n After cast %d %d\n", a, b);
+printf("\n\n After cast %d %d\n", (int)a, (int)b);
 
 			error("%s: unwritten long not FILL_LONG", pname);
 			nerrs++;

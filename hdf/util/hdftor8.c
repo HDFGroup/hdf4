@@ -138,7 +138,7 @@ main(int argc, char *argv[])
                     printf("Getting image and palette %d.\n", imageNumber);
                 else
                     printf("Getting image %d.\n", imageNumber);
-                printf("Image dimensions : %d * %d\n", xdim, ydim);
+                printf("Image dimensions : %d * %d\n", (int)xdim, (int)ydim);
             }
           if (!DFR8getimage(hdfFile, image, xdim, ydim, palette))
             {
@@ -287,8 +287,8 @@ convert(const char *template, int imageNumber, int32 xdim, int32 ydim,
     char        numStr[20], xStr[20], yStr[20];
 
     sprintf(numStr, "%03d", imageNumber);
-    sprintf(xStr, "%03d", xdim);
-    sprintf(yStr, "%03d", ydim);
+    sprintf(xStr, "%03d", (int)xdim);
+    sprintf(yStr, "%03d", (int)ydim);
 
     for (; (*template);)
       {

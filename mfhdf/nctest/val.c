@@ -225,7 +225,7 @@ val_out(type, len, vals)
       case NC_LONG:
 	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
-	  (void)fprintf(stderr,"%d%s",*gp.lp++,iel<len-1 ? ", " : "");
+	  (void)fprintf(stderr,"%d%s",(int)*gp.lp++,iel<len-1 ? ", " : "");
 	break;
       case NC_FLOAT:
 	gp.fp = (float *) vals;

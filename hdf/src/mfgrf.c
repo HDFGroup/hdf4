@@ -775,53 +775,50 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 #endif /* PROTOTYPE */
 {
 
-HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
-int32 riid;               /* GR id               */
-comp_info cinfo;          /* compression info     */
-int   i;
-int32 rank, status, cflags, comp_type;
-intf ret;
+    HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+    int32 riid;               /* GR id               */
+    int   i;
+    int32 rank, status, cflags;
+    intf ret;
 
-riid = *id;
-rank = 2;
+    riid = *id;
+    rank = 2;
 
-/* Get GR info */
-  
-       status = GRgetchunkinfo(riid, &chunk_def, &cflags);
-       if(status == FAIL) return FAIL;
+    /* Get GR info */
+    status = GRgetchunkinfo(riid, &chunk_def, &cflags);
+    if(status == FAIL) return FAIL;
 
-switch (cflags)  
+    switch (cflags)  
 
-  {
+      {
 
-  case HDF_NONE:       /* Non-chunked GR */
+      case HDF_NONE:       /* Non-chunked GR */
 
-    *flags = -1;
-     ret = 0;
-     return(ret);
+        *flags = -1;
+         ret = 0;
+         return(ret);
 
-  case HDF_CHUNK:    /* Chunked, noncompressed GR */
+      case HDF_CHUNK:    /* Chunked, noncompressed GR */
 
-    *flags = 0;
-     for (i=0; i < rank; i++)
-          dim_length[rank-i-1] = chunk_def.chunk_lengths[i];
-     ret = 0;
-     return(ret);
+        *flags = 0;
+         for (i=0; i < rank; i++)
+              dim_length[rank-i-1] = chunk_def.chunk_lengths[i];
+         ret = 0;
+         return(ret);
 
-  case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed GR */
- 
-     *flags = 1;
-     for (i=0; i < rank; i++)
-          dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
-     ret = 0;
-     return(ret);
+      case (HDF_CHUNK | HDF_COMP):     /* Chunked and compressed GR */
+     
+         *flags = 1;
+         for (i=0; i < rank; i++)
+              dim_length[rank-i-1] =  chunk_def.comp.chunk_lengths[i];
+         ret = 0;
+         return(ret);
 
-  default:
+      default:
 
-    return FAIL;
+        return FAIL;
             
-  }
-
+      }
 
 }   
 #if 0 /* Commented out for now  -EIP 12/29/97 */ 
@@ -967,20 +964,19 @@ switch (cflags)
 #endif /* PROTOTYPE */
 {
 
-HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
-int32 riid;               /* GR id               */
-int32 cflags;             /* chunk flags          */
-comp_info cinfo;          /* compression info     */
-int   i, CASE;
-int32 rank, status;
-intf ret;
+    HDF_CHUNK_DEF chunk_def;  /* Chunk definition set */
+    int32 riid;               /* GR id               */
+    int32 cflags;             /* chunk flags          */
+    int   i, CASE;
+    int32 rank;
+    intf ret;
 
-rank   = 2;
-CASE   = *comp_type;
-riid  = *id;
-cflags = HDF_CHUNK | HDF_COMP;
+    rank   = 2;
+    CASE   = *comp_type;
+    riid  = *id;
+    cflags = HDF_CHUNK | HDF_COMP;
 
-switch (CASE)  {
+    switch (CASE)  {
 
        case 0:       /* No compression */
          cflags = HDF_CHUNK;
@@ -1033,11 +1029,11 @@ switch (CASE)  {
 
           return FAIL;
                     
-                     }
+     }
 
-ret = GRsetchunk(riid, chunk_def, cflags);
- 
-return(ret);
+    ret = GRsetchunk(riid, chunk_def, cflags);
+     
+    return(ret);
 
 }   
 #if 0 /* Commented out for now  -EIP 12/29/97 */ 
@@ -1148,19 +1144,18 @@ return(ret);
        intf *comp_prm;
 #endif /* PROTOTYPE */
 {
+    int32 riid;               /*  GR id               */
+    comp_info c_info;         /* compression info     */
+    int32 c_type;              /* compression type definition */
 
-int32 riid;               /*  GR id               */
-comp_info c_info;         /* compression info     */
-int32 c_type;              /* compression type definition */
-
-int   i, CASE;
-intf ret;
-
+    int CASE;
+    intf ret;
 
 
-CASE = *comp_type;
-riid = *id;
-switch (CASE)  {
+
+    CASE = *comp_type;
+    riid = *id;
+    switch (CASE)  {
 
        case COMP_CODE_NONE:       /* No compression */
          c_type = COMP_CODE_NONE;
@@ -1184,10 +1179,10 @@ switch (CASE)  {
 
           return FAIL;
                     
-                     }
+     }
 
-ret = GRsetcompress(riid, c_type, &c_info);
-return(ret);
+    ret = GRsetcompress(riid, c_type, &c_info);
+    return(ret);
 
 }   
 /*-------------------------------------------------------------------------

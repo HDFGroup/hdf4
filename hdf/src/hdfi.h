@@ -1259,9 +1259,9 @@ correctly.
 *                   Conversion Routine Pointers
 ***************************************************************************/
 #    ifndef DFKMASTER
-HDFPUBLIC extern int (*DFKnumin)(const void * source, void * dest, uint32 num_elm,
+HDFLIBAPI int (*DFKnumin)(const void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
-HDFPUBLIC extern int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
+HDFLIBAPI int (*DFKnumout)(const void * source, void * dest, uint32 num_elm,
             uint32 source_stride,uint32 dest_stride);
 #     endif /* DFKMASTER */
 

@@ -1674,7 +1674,7 @@ test_emptyvdata(void)
     int32 vs1;          /* Vdata ID */
     int32 ref;          /* Vdata ref */
 #ifndef macintosh
-    char  name[VSNAMELENMAX], class[VSNAMELENMAX], fields[FIELDNAMELENMAX*VSFIELDMAX];
+    char  name[VSNAMELENMAX], fields[FIELDNAMELENMAX*VSFIELDMAX];
 #else
 	// fields is too big - Mac has a 32K local data limit.
     char  name[VSNAMELENMAX], *fields;

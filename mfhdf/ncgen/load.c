@@ -219,7 +219,7 @@ gen_load_c(rec_start)
 			sprintf(s2, "%d, ", *shortvalp++);
 		    break;
 		  case NC_LONG:
-			sprintf(s2, "%d, ", *longvalp++);
+			sprintf(s2, "%d, ", (int)*longvalp++);
 		    break;
 		  case NC_FLOAT:
 			sprintf(s2, "%.8g, ", *floatvalp++);
@@ -248,7 +248,7 @@ gen_load_c(rec_start)
 			sprintf(s2, "%d", *shortvalp);
 		    break;
 		  case NC_LONG:
-			sprintf(s2, "%d", *longvalp);
+			sprintf(s2, "%d", (int)*longvalp);
 		    break;
 		  case NC_FLOAT:
 			sprintf(s2, "%.8g", *floatvalp);
@@ -304,7 +304,7 @@ gen_load_c(rec_start)
 	    break;
 	  case NC_LONG:
 	    longvalp = (nclong *) rec_start;
-	    sprintf(s2, "%d", *longvalp);
+	    sprintf(s2, "%d", (int)*longvalp);
 	    strcat(stmnt, s2);
 	    break;
 	  case NC_FLOAT:
@@ -433,10 +433,10 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
 	  case NC_LONG:
 	    longvalp = (nclong *) rec_start;
 	    for (ival = 0; ival < var_len-1; ival++) {
-		sprintf(s2, "%d, ", *longvalp++);
+		sprintf(s2, "%d, ", (int)*longvalp++);
 		fstrcat(stmnt, s2, &stmnt_len);
 	    }
-	    sprintf(s2, "%d", *longvalp);
+	    sprintf(s2, "%d", (int)*longvalp);
 	    fstrcat(stmnt, s2, &stmnt_len);
 	    break;
 	  case NC_FLOAT:

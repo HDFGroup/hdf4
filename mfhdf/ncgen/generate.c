@@ -836,7 +836,7 @@ cstring(type,valp, num)
       case NC_LONG:
 	cp = (char *) emalloc (20);
 	longp = (nclong *)valp;
-	(void) sprintf(cp,"%d",* (longp + num));
+	(void) sprintf(cp,"%d",(int)* (longp + num));
 	return cp;
 
       case NC_FLOAT:
@@ -900,7 +900,7 @@ fstring(type,valp, num)
       case NC_LONG:
 	cp = (char *) emalloc (20);
 	longp = (nclong *)valp;
-	(void) sprintf(cp,"%d",* (longp + num));
+	(void) sprintf(cp,"%d",(int)* (longp + num));
 	return cp;
 
       case NC_FLOAT:

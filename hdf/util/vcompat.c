@@ -20,7 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 #include <stdio.h>
-#include "vg.h"
+#include "hdf.h"
 
 int
 main(int argc, char *argv[])

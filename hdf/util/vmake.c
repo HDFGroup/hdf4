@@ -126,10 +126,10 @@ main(int ac, char **av)
           int32       vgref, ids[50];
 
           hfile = av[1];
-          sscanf(av[3], "%d", &vgref);
+          sscanf(av[3], "%d", (int *)&vgref);
           for (n = 0, i = 4; i < ac; i++, n++)
             {
-                sscanf(av[i], "%d", &ids[n]);
+                sscanf(av[i], "%d", (int *)&ids[n]);
             }
           vsetlink(hfile, vgref, ids, n);
       }
@@ -403,7 +403,7 @@ inplong(VOIDP x)
 {
     int32       val, ret;
 
-    ret = scanf("%d ", &val);
+    ret = scanf("%d ", (int *)&val);
     *(int32 *)x = (int32) val;
     return (ret);
 }
@@ -609,7 +609,7 @@ separate(char *ss, char *fmt, int32 *num)
           i++;
       }
     if (i > 0)
-        sscanf(ss, "%d", num);
+        sscanf(ss, "%d", (int *)num);
     else
         *num = 1;
     *fmt = ss[i];

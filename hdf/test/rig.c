@@ -1303,7 +1303,7 @@ test_r24(void)
     if ((xd != JPEGX) || (yd != JPEGY))
       {
           fprintf(stderr, "Returned meta-data is wrong for JPEG quality 80 image\n");
-          fprintf(stderr, "xd=%d, yd=%d\n", xd, yd);
+          fprintf(stderr, "xd=%d, yd=%d\n", (int)xd, (int)yd);
           num_errs++;
       }
 
@@ -1344,7 +1344,7 @@ test_r24(void)
     if ((xd != JPEGX) || (yd != JPEGY))
       {
           fprintf(stderr, "Returned meta-data is wrong for JPEG quality 30 image\n");
-          fprintf(stderr, "xd=%d, yd=%d\n", xd, yd);
+          fprintf(stderr, "xd=%d, yd=%d\n", (int)xd, (int)yd);
           num_errs++;
       }
 
@@ -1385,7 +1385,7 @@ test_r24(void)
     if ((xd != JPEGX) || (yd != JPEGY))
       {
           fprintf(stderr, "Returned meta-data is wrong for JPEG quality 75 image\n");
-          fprintf(stderr, "xd=%d, yd=%d\n", xd, yd);
+          fprintf(stderr, "xd=%d, yd=%d\n", (int)xd, (int)yd);
           num_errs++;
       }
 

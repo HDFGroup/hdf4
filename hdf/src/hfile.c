@@ -3261,7 +3261,7 @@ HIcheckfileversion(int32 file_id)
   Hgetlibversion(&lmajorv, &lminorv, &lrelease, string);
 
   /* check whether we need to update the file version tag */
-  if(lmajorv > fmajorv || (lmajorv==fmajorv && lminorv > fminorv)
+  if(lmajorv > fmajorv || (lmajorv==fmajorv && lminorv > fminorv) ||
           (lmajorv==fmajorv && lminorv==fminorv && lrelease > frelease))
       newver=1;
   if (newver == 1)
