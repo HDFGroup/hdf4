@@ -1268,7 +1268,7 @@ extern int (*DFKnumout)(void _HUGE * source, void _HUGE * dest, uint32 num_elm,
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* Can't use on PCs. strdup() uses malloc() and HDmalloc uses halloc() */
-#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX)
+#if !(defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX | defined IBM6000)
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | PC) */
 #endif /* WIN3 */

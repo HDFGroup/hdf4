@@ -384,7 +384,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 #endif                          /* WIN3 | PC */
 
-#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX
+#if defined VMS | (defined PC & !defined PC386) | defined macintosh | defined MAC | defined MIPSEL | defined NEXT | defined CONVEX | defined IBM6000
     extern char *HDstrdup
                 (const char *s);
 
