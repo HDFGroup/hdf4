@@ -25,15 +25,15 @@ static char *RcsId[] = "@(#)$Revision$";
 
 int32
 dumpvd(int32 vd, int data_only, FILE * fp, char separater[2],
-	   int flds_indices[100], int dumpallfields)
+	   int flds_indices[VSFIELDMAX], int dumpallfields)
 {
-	char        vdname[100], fields[FIELDNAMELENMAX], flds[FIELDNAMELENMAX];
+	char        vdname[VSNAMELENMAX], fields[FIELDNAMELENMAX], flds[FIELDNAMELENMAX];
 	int32       j, i, t, interlace, nv, vsize;
 	uint8      *bb, *b;
 	DYN_VWRITELIST *w;
-	int32       (*vfmtfn[60]) (VOIDP , FILE *);
-	int32       off[60];
-	int32       order[60];
+	intn       (*vfmtfn[VSFIELDMAX]) (VOIDP , FILE *);
+	int32       off[VSFIELDMAX];
+	int32       order[VSFIELDMAX];
 
 	int32       bufsize;		/* size of the buffer we are using */
 	int32       chunk;			/* number of rows that will fit in the buffer */
