@@ -848,6 +848,11 @@ void test_r24()
     RESULT("DF24addimage");
     ref2 = DF24lastref();
 
+    if(DF24nimages(TESTFILE) != 3) {
+        fprintf(stderr,"  >>> DF24nimages() gives wrong number <<<\n");
+        num_errs++;
+    }
+
     /* read image 0 */
  
     MESSAGE(5,printf("Reading and verifying 24bit images\n"););
@@ -1141,6 +1146,11 @@ void test_r24()
     DF24setcompress(COMP_JPEG,&cinfo);
     ret = DF24addimage(JPEGFILE, (VOIDP)jpeg_24bit_orig, JPEGX, JPEGY);
     RESULT("DF24addimage");
+
+    if(DF24nimages(JPEGFILE) != 3) {
+        fprintf(stderr,"  >>> DF24nimages() gives wrong number for JPEG images<<<\n");
+        num_errs++;
+    }
 
     MESSAGE(5,printf("\nReading and verifying 24bit JPEG'ed images\n\n"););
   
