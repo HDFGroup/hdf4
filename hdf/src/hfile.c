@@ -1248,9 +1248,9 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
 	access_rec->flush = FALSE;	/* start data as not needing flushing */
 	if (access_rec->block->ddlist[access_rec->idx].length == INVALID_OFFSET
 	 && access_rec->block->ddlist[access_rec->idx].offset == INVALID_LENGTH)
-		access_rec->new = TRUE;
+		access_rec->new_elem = TRUE;
 	else
-		access_rec->new = FALSE;
+		access_rec->new_elem = FALSE;
 
 /* If special element act upon it accordingly */
 	if (SPECIALTAG(access_rec->block->ddlist[access_rec->idx].tag))
@@ -1309,9 +1309,9 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 
 	access_rec = AID2REC(ret);
 #ifdef QAK
-printf("access_rec->new=%d\n",(int)access_rec->new);
+printf("access_rec->new_elem=%d\n",(int)access_rec->new_elem);
 #endif /* QAK */
-	if (access_rec->new && (Hsetlength(ret, length) == FAIL))
+	if (access_rec->new_elem && (Hsetlength(ret, length) == FAIL))
 	  {
 		  Hendaccess(ret);
 		  HRETURN_ERROR(DFE_BADLEN, FAIL);
@@ -1493,7 +1493,7 @@ printf("tag=%u, access_rec->block->ddlist[access_rec->idx].tag=%u\n",tag,
 	access_rec->access = flags;		/* keep the access flags around */
 	access_rec->file_id = file_id;
 	access_rec->special = 0;
-	access_rec->new = ddnew;	/* set the flag indicating whether this elt is new */
+	access_rec->new_elem = ddnew;	/* set the flag indicating whether this elt is new */
 	file_rec->attach++;
 	if (ref > file_rec->maxref)
 		file_rec->maxref = ref;
@@ -1541,7 +1541,7 @@ Hsetlength(int32 aid, int32 length)
 printf("%s: access_rec->new=%d\n",FUNC,(int)access_rec->new);
 #endif /* QAK */
 /* Check whether we are allowed to change the length */
-	if (access_rec->new != TRUE)
+	if (access_rec->new_elem != TRUE)
 		HRETURN_ERROR(DFE_ARGS, FAIL);
 
 	file_rec = FID2REC(access_rec->file_id);
@@ -1560,7 +1560,7 @@ printf("%s: access_rec->new=%d\n",FUNC,(int)access_rec->new);
 	access_rec->block->ddlist[access_rec->idx].length = length;
 
 /* turn off the "new" flag now that we have a length and offset */
-	access_rec->new = FALSE;
+	access_rec->new_elem = FALSE;
 
 /* update dd in the file */
 	if (HIupdate_dd(file_rec, access_rec->block, access_rec->idx, FUNC) == FAIL)
@@ -1793,7 +1793,7 @@ Hread(int32 access_id, int32 length, VOIDP data)
 		HRETURN_ERROR(DFE_ARGS, FAIL);
 
 /* Don't allow reading of "new" elements */
-	if (access_rec->new == TRUE)
+	if (access_rec->new_elem == TRUE)
 		HRETURN_ERROR(DFE_READERROR, FAIL);
 
 /* special elt, so call special function */
@@ -1885,7 +1885,7 @@ Hwrite(int32 access_id, int32 length, const VOIDP data)
 	dd = &(access_rec->block->ddlist[access_rec->idx]);
 
 /* check for a "new" element and make it appendable if so */
-	if (access_rec->new == TRUE)
+	if (access_rec->new_elem == TRUE)
 	  {
 		  Hsetlength(access_id, length);	/* make the initial chunk of data */
 		  access_rec->appendable = TRUE;	/* make it appendable */

@@ -117,7 +117,7 @@ typedef struct at_info {
     int32 len;              /* length/order of the attribute */
     uint16 ref;             /* ref of the attribute (stored in VData) */
     uintn data_modified;    /* flag to indicate whether the attribute data has been modified */
-    uintn new;              /* flag to indicate whether the attribute was added to the Vgroup */
+    uintn new_at;           /* flag to indicate whether the attribute was added to the Vgroup */
     char *name;             /* name of the attribute */
     VOIDP data;             /* data for the attribute */
 } at_info_t;

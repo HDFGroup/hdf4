@@ -371,7 +371,7 @@ printf("%s: found global attribute, new_attr=%p\n",FUNC,new_attr);
                                       new_attr->ref=(uint16)grp_ref;
                                       new_attr->index=gr_ptr->gattr_count;
                                       new_attr->data_modified=FALSE;
-                                      new_attr->new=FALSE;
+                                      new_attr->new_at=FALSE;
                                       new_attr->data=NULL;
                                       if((at_key=VSattach(file_id,(int32)grp_ref,"r"))!=FAIL)
                                         {
@@ -698,7 +698,7 @@ printf("%s: global attribute name=%s, index=%ld\n",FUNC,new_attr->name,(long)new
                                                   new_attr->ref=(uint16)img_ref;
                                                   new_attr->index=new_image->lattr_count;
                                                   new_attr->data_modified=FALSE;
-                                                  new_attr->new=FALSE;
+                                                  new_attr->new_at=FALSE;
                                                   new_attr->data=NULL;
                                                   if((at_key=VSattach(file_id,(int32)img_ref,"r"))!=FAIL)
                                                     {
@@ -1421,7 +1421,7 @@ printf("%s: attr_ptr->ref=%u\n",FUNC,attr_ptr->ref);
         if((attr_ptr->ref=(uint16)VHstoredata(hdf_file_id,attr_ptr->name,attr_ptr->data,
                 attr_ptr->len,attr_ptr->nt,RIGATTRNAME,RIGATTRCLASS))==(uint16)FAIL)
             HRETURN_ERROR(DFE_VSCANTCREATE,FAIL);
-        attr_ptr->new=TRUE;
+        attr_ptr->new_at=TRUE;
       } /* end if */
     else    /* update an existing one */
       {
@@ -1570,7 +1570,7 @@ printf("%s: ri_ref=%u\n",FUNC,img_ptr->ri_ref);
 printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
 #endif /* QAK */
                                 /* check if the attribute was added to the group */
-                                if(attr_ptr->new==TRUE)
+                                if(attr_ptr->new_at==TRUE)
                                   {
                                       int32 GroupID;  /* ID of the Vgroup */
 
@@ -1580,7 +1580,7 @@ printf("%s: ri_ref=%u, atptr->ref=%u\n",FUNC,img_ptr->ri_ref,attr_ptr->ref);
                                           HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
                                       if(Vdetach(GroupID)==FAIL)
                                           HRETURN_ERROR(DFE_CANTDETACH,FAIL);
-                                      attr_ptr->new=FALSE;
+                                      attr_ptr->new_at=FALSE;
                                   } /* end if */
 
                                 /* get the next local attribute in the tree/list */
@@ -1634,17 +1634,17 @@ printf("%s: attr_ptr->data_modified=%d\n",FUNC,attr_ptr->data_modified);
                         attr_ptr->data_modified=FALSE;
 
 #ifdef QAK
-printf("%s: attr_ptr->new=%d\n",FUNC,attr_ptr->new);
+printf("%s: attr_ptr->new_at=%d\n",FUNC,attr_ptr->new_at);
 #endif /* QAK */
                         /* check if the attribute was a new attribute */
-                        if(attr_ptr->new==TRUE)
+                        if(attr_ptr->new_at==TRUE)
                           {
 #ifdef QAK
 printf("%s: GroupID=%ld\n",FUNC,(long)GroupID);
 #endif /* QAK */
                             if(Vaddtagref(GroupID,ATTR_TAG,attr_ptr->ref)==FAIL)
                                 HRETURN_ERROR(DFE_CANTADDELEM,FAIL);
-                            attr_ptr->new=FALSE;
+                            attr_ptr->new_at=FALSE;
                           } /* end if */
                       } /* end if */
 
@@ -3668,7 +3668,7 @@ printf("%s:1: gr_ptr->gattr_count=%ld\n",FUNC,(long)gr_ptr->gattr_count);
               at_ptr->data=NULL;
               at_ptr->data_modified=FALSE;
           } /* end else */
-        at_ptr->new=TRUE;
+        at_ptr->new_at=TRUE;
 
         /* Add the attribute to the attribute tree */
         if(tbbtdins(search_tree, (VOIDP)at_ptr, NULL)==NULL)

@@ -619,7 +619,7 @@ VGROUP _HUGE *VPgetinfo(HFILEID f,uint16 ref)
     /* unpack vgpack into structure vg, and init  */
     vunpackvg(vg,vgpack,len);
     vg->f             = f;
-    vg->new           = 0;
+    vg->new_vg        = 0;
     vg->oref          = ref;
     vg->otag          = DFTAG_VG;
       
@@ -720,7 +720,7 @@ Vattach(HFILEID f, int32 vgid, const char *accesstype)
           vg->marked = 0;
 #else
           vg->marked = 1;
-          vg->new = 1;
+          vg->new_vg = 1;
 #endif
           vg->vgclass[0] = '\0';
           vg->extag = 0;
@@ -878,14 +878,14 @@ Vdetach(int32 vkey)
              *  For now attempt to blow away the old one.  This is a total HACK
              *    but the H-level needs to stabilize first
              */
-            if(!vg->new)
+            if(!vg->new_vg)
                 Hdeldd(vg->f, DFTAG_VG, vg->oref);
 
             if (Hputelement(vg->f, DFTAG_VG, vg->oref, vgpack, vgpacksize) == FAIL)
                 HERROR(DFE_WRITEERROR);
             HDfree((VOIDP) vgpack);
             vg->marked = 0;
-            vg->new = 0;
+            vg->new_vg = 0;
         }
 #endif /* OLD_WAY */
     v->nattach--;

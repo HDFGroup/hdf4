@@ -414,7 +414,7 @@ typedef struct accrec_t
       intn        used;         /* whether the access record is used */
       uint32      access;       /* access codes */
       intn        special;      /* special element ? */
-      intn        new;          /* is a new element (i.e. no length set yet) */
+      intn        new_elem;     /* is a new element (i.e. no length set yet) */
       uintn       access_type;  /* I/O access type: serial/parallel/... */
       int32       file_id;      /* id of attached file */
       int32       idx;          /* index of dd into *block */
