@@ -5,6 +5,9 @@
 #define VGROUPCLASS "RIG0.0"
 #define GIFNAME "temp.gif"
 
+extern int hdfWriteGIF(FILE *fp, BYTE *pic, int ptype, int w, int h, BYTE *rmap,
+    BYTE *gmap, BYTE *bmap, BYTE *pc2ncmap, int numcols, int colorstyle, int BitsPerPixel);
+
 int EndianOrder;
 
 VOID
@@ -180,10 +183,7 @@ int main(int argc , char **argv) {
 		status = GRreadimage(ri_id , start , stride , dim_sizes , Image);
 		w = dim_sizes[0];
 		h = dim_sizes[1];
-		/* If it is the first image we do all the header stuff that isn't required for the
-		** rest of the images. 
 		
-			if (index == 0) {
 		/* If the first image does not have a palette, I make my own global color table
 		** Obviously this is not the best thing to do, better steps would be:
 		** 1. Check for either a global palette or a global attribute called palette
@@ -245,6 +245,9 @@ int main(int argc , char **argv) {
 			return (1);
 		}
 		
+		/* If it is the first image we do all the header stuff that isn't required for the
+		** rest of the images. 
+        */
 		if (index == 0) {
 			/* Write out the GIF header and logical screen descriptor */
 			if (n_images > 0) {

@@ -80,7 +80,7 @@ BYTE    **MemGif2;       /* GIF image file input FILE stream */
 	for (i = 0 ; i < 6 ; i++) {
 		GifHead->HeaderDump[i] = *(*MemGif2)++;
 	}
-	if (strncmp(GifHead->HeaderDump , "GIF" , 3)) {
+	if (strncmp((const char *)GifHead->HeaderDump , "GIF" , 3)) {
 		printf("The file does not appear to be a valid GIF file.\n");
 		exit(-1);
 	}
@@ -353,7 +353,7 @@ BYTE       **MemGif2;      /* GIF image file input FILE stream           */
 **  Returns: A NULL pointer if a memory allocation error occured,
 **           otherwise a valid pointer if no error occured.
 */
-static BYTE *
+BYTE *
 ReadDataSubBlocks(MemGif2 , DSize)
 BYTE **MemGif2;        /* GIF image file input FILE stream              */
 WORD *DSize;
@@ -379,7 +379,9 @@ WORD *DSize;
         bufSize += (dataSize);  /* Running total of the buffer size */
 		*DSize = bufSize;
 
-        /* *ptr1++ = dataSize;			/* Write the data count */
+#ifdef NO
+        *ptr1++ = dataSize;			/* Write the data count */
+#endif
         while (dataSize--)			/* Read/write the Plain Text data */
              *ptr1++ = *(*MemGif2)++;
         
@@ -397,7 +399,9 @@ WORD *DSize;
 	
     }
 
-    /**ptr1++ = (BYTE) NULL;			/* Add NULL to simulate Terminator value */
+#ifdef NO
+    *ptr1++ = (BYTE) NULL;			/* Add NULL to simulate Terminator value */
+#endif
    	*ptr1++ = '\0';
 	
     return(ptr2);					/* Return a pointer to the sub-block data */

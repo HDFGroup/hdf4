@@ -65,7 +65,6 @@ static int  Width, Height;
 static int  curx, cury;
 static long CountDown;
 static int  Interlace;
-static byte bw[2] = {0, 0xff};
 
 #ifdef __STDC__
 static void putword(int, FILE *);

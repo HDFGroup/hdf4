@@ -90,23 +90,23 @@ char     *GIFFileName;
 		}
 	}
 	for (i = 0 ; i < CommentCount ; i++) {
-		sprintf(CommentName , "Comment Extension Data %d" , i);
+		sprintf(CommentName , "Comment Extension Data %d" , (int)i);
 		status = Vsetattr (vgroup_id , CommentName , DFNT_CHAR8 , (int32)(GifMemoryStruct.GifCommentExtension[i])->DataSize , (VOIDP)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
 		free(GifMemoryStruct.GifCommentExtension[i]);
 	}
 	free(GifMemoryStruct.GifCommentExtension);
 	
 	for (i = 0 ; i < ApplicationCount ; i++) {
-		sprintf(ApplicationName , "Application Extension Data %d", i);
+		sprintf(ApplicationName , "Application Extension Data %d", (int)i);
 		status = Vsetattr (vgroup_id , ApplicationName , DFNT_CHAR8 , (int32)(GifMemoryStruct.GifApplicationExtension[i])->DataSize , (VOIDP)(GifMemoryStruct.GifApplicationExtension[i])->ApplicationData);
-		sprintf(ApplicationName , "Application Extension Dump %d", i);
+		sprintf(ApplicationName , "Application Extension Dump %d", (int)i);
 		status = Vsetattr (vgroup_id , ApplicationName , DFNT_CHAR8 , (int32)11, (VOIDP)(GifMemoryStruct.GifApplicationExtension[i])->AEDump);
 	}
 
 	for (i = 0 ; i < PlainTextCount ; i++) {
-		sprintf(PlainTextName , "PlainText Extension Data %d", i);
+		sprintf(PlainTextName , "PlainText Extension Data %d", (int)i);
 		status = Vsetattr (vgroup_id , PlainTextName , DFNT_CHAR8 , (int32)(GifMemoryStruct.GifPlainTextExtension[i])->DataSize , (VOIDP)(GifMemoryStruct.GifPlainTextExtension[i])->PlainTextData);
-		sprintf(PlainTextName , "PlainText Extension Dump %d", i);
+		sprintf(PlainTextName , "PlainText Extension Dump %d", (int)i);
 		status = Vsetattr (vgroup_id , PlainTextName , DFNT_CHAR8 , (int32)15, (VOIDP)(GifMemoryStruct.GifPlainTextExtension[i])->PTEDump);
 	}
 
@@ -125,7 +125,7 @@ char     *GIFFileName;
 		edges[1] = gifImageDesc.ImageHeight;
 		
 		/* Create GR Image */
-		sprintf(ImageName,"Image%d",i);
+		sprintf(ImageName,"Image%d",(int)i);
 		ri_id = GRcreate (gr_id, ImageName, 1, data_type, interlace_mode, dim_sizes);
 
 		/* GRSetCompress */

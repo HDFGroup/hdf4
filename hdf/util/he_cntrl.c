@@ -93,7 +93,7 @@ HEselect(HE_CMD * cmd)
 
     /* step through all elements */
     for (he_currDesc = 0; he_currDesc < he_numDesc; he_currDesc++)
-        if (currTag != DFTAG_NULL && satPred(currDesc, pred))
+        if (currTag != DFTAG_NULL && satPred(currDesc, pred)) {
             for (cmdTail = cmd->sub; HDstrcmp(cmdTail->argv[0], "end");
                  cmdTail = cmdTail->next)
                 if (cmdTail->func)
@@ -104,6 +104,7 @@ HEselect(HE_CMD * cmd)
                               cmdTail->argv[0]);
                       he_status = FAIL;
                   }
+        }
 
     /* restore he_currDesc */
     he_currDesc = t_currDesc;
@@ -735,11 +736,12 @@ info(int all, int longout, int group, int label)
             {
                 puts("\n**These do not belong to any group:");
                 for (i = 0; i < he_numDesc; i++)
-                    if (!mark[i])
+                    if (!mark[i]) {
                         if (he_desc[i].tag == DFTAG_NULL)
                             empty++;
                         else
                             infoDesc(i, longout, label);
+                    }
 
                 if (empty > 0)
                     printf("Empty (tag %d) : %d slots.\n", DFTAG_NULL, empty);

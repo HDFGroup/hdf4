@@ -19,13 +19,15 @@ static int BitOffset = 0,	/* Bit Offset of next code */
 XC = 0, YC = 0,				/* Output X and Y coords of current pixel */
 Pass = 0,					/* Used by output routine if WORDerlaced pic */
 OutCount = 0,				/* Decompressor output 'stack count' */
+#ifdef UNUSED
 RWidth, RHeight,			/* screen dimensions */
-IWidth, IHeight,			/* image dimensions */
 LeftOfs, TopOfs,			/* image offset */
 BitsPerPixel,				/* Bits per pixel, read from GIF header */
-BytesPerScanline,			/* Bytes per scanline in output raster */
 ColorMapSize,				/* number of colors */
 Background,					/* background color */
+#endif /* UNUSED */
+IWidth, IHeight,			/* image dimensions */
+BytesPerScanline,			/* Bytes per scanline in output raster */
 CodeSize,					/* Code size, read from GIF header */
 InitCodeSize,				/* Starting code size, used during Clear */
 Code,						/* Value returned by ReadCode */
@@ -73,7 +75,7 @@ int  numused;
 * three BYTEs, compute the bit Offset WORDo our 24-bit chunk, shift to
 * bring the desired code to the bottom, then mask it off and return it. 
 */
-ReadCode()
+int ReadCode(void)
 {
 	int RawCode, ByteOffset;
 	
@@ -87,7 +89,7 @@ ReadCode()
 }
 
 
-AddToPixel(Index)
+void AddToPixel(Index)
 BYTE Index;
 {
     if (YC<IHeight)
