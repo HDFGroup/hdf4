@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/01 20:14:53  mlivin
-cleaned up some little things
+Revision 1.3  1992/07/07 21:39:36  chouck
+Changed main() to be of type int and added PROTO() stuff
 
+ * Revision 1.2  1992/07/01  20:14:53  mlivin
+ * cleaned up some little things
+ *
  * Revision 1.1  1992/06/30  20:46:56  mlivin
  * Initial revision
  *
@@ -70,31 +73,28 @@ cleaned up some little things
 int interactive;		/* interactive option */
 int verbose;			/* verbose option */
 
-#ifdef PROTOTYPE
-void main(int argc, char *argv[]);
-void putRaster(char *template, int32 xdim, int32 ydim, int imageNumber,
-               char *image);
-void putPalette(char *template, int imageNumber, char *palette);
-void convert(char *template, int imageNumber, int32 xdim, int32 ydim,
-	     char *stringOut);
-void fillStr(char **template, char **stringOut, char *string,
-             char specialChar);
-char *newSpace(int32 size);
-char *getTemplate(char *type, int imageNumber);
-#else
-void main();
-void putRaster();
-void putPalette();
-void convert();
-void fillStr();
-char *newSpace();
-char *getTemplate();
-#endif /* PROTOTYPE */
+int main
+    PROTO((int argc, char *argv[]));
+void putRaster
+    PROTO((char *template, int32 xdim, int32 ydim, int imageNumber,
+           char *image));
+void putPalette
+    PROTO((char *template, int imageNumber, char *palette));
+void convert
+    PROTO((char *template, int imageNumber, int32 xdim, int32 ydim,
+           char *stringOut));
+void fillStr
+    PROTO((char **template, char **stringOut, char *string, char specialChar));
+char *newSpace
+    PROTO((int32 size));
+char *getTemplate
+    PROTO((char *type, int imageNumber));
+
 
 #ifdef PROTOTYPE
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 #else
-void main(argc, argv)
+int main(argc, argv)
     int argc;
     char *argv[];
 #endif /* PROTOTYPE */
