@@ -50,36 +50,37 @@
 # Makefile created at Fri May 23 11:47:43 1997, by mmake
 #
 
+@VERSION@
 
-VERSION=JHV-2.0
-
-JAVAC           = /hdf6/jdk/SunOS/jdk1.1.4/bin/javac
-JAVADOC         = /hdf6/jdk/SunOS/jdk1.1.4/bin/javadoc
-JAR         	= /hdf6/jdk/SunOS/jdk1.1.4/bin/jar
-FIND            = /bin/find
+JAVAC           = @JAVAC@
+JAVADOC         = @JAVADOC@
+JAR         	= @JAR@
+FIND            = @FIND@
 JAVADOC_FLAGS   = -version -author 
 
 # 
 # C compiling configuration
 #
-CC=gcc 
+CC=@CC@ 
 
-SLEXT=so
-COPT=-G
+SLEXT=@SLEXT@
+COPT=@COPT@
+#SLEXT=so
+#COPT=-G
 
-HDFINC = /hdf2/install/solaris/include
-HDFLIB = /hdf2/install/solaris/lib
+HDFINC = @HDFINC@
+HDFLIB = @HDFLIB@
 #java include file
-JAVAINC1=/hdf6/jdk/SunOS/jdk1.1.4/include
-JAVAINC2=/hdf6/jdk/SunOS/jdk1.1.4/include/solaris
+JAVAINC1=@JAVAINC@
+JAVAINC2=@JAVAINC2@
 
-CLASSPATH=/hdf6/jdk/SunOS/jdk1.1.4/lib/classes.zip:/hdf6/users/xlu/works/jhv-2.x
+CLASSPATH=@CLASSPATH@
 
-JHVINSTALLDIR=/hdf6/tmp/jhv-test
+JHVINSTALLDIR=@JHVINST@
 
 #make this relative to the source root...
-PWD=/hdf6/users/xlu/works/jhv-2.x
-LIBDIR=$(JHVINSTALLDIR)/lib/solaris
+PWD=@PWD@
+LIBDIR=$(JHVINSTALLDIR)/lib/@JAVATARG@
 CLASSDIR=$(JHVINSTALLDIR)/lib/classes
 BINDIR=$(JHVINSTALLDIR)/bin
 DOCDIR= $(JHVINSTALLDIR)/docs
@@ -159,11 +160,10 @@ uninstall-classes:
 
 install-lib: natives
 	mkdir -p $(LIBDIR);
-	cp ./lib/solaris/libhdf.$(SLEXT) $(LIBDIR)
-
+	cp ./lib/@JAVATARG@/libhdf.$(SLEXT) $(LIBDIR)
 
 uninstall-lib:
-	rm -f $(LIBDIR)/solaris/libhdf.$(SLEXT)
+	rm -f $(LIBDIR)/@JAVATARG@/libhdf.$(SLEXT)
 
 install-bin: bin/jhv
 	mkdir -p $(BINDIR);
@@ -181,7 +181,7 @@ clean: clean-natives clean-classes clean-docs
 
 distclean: clean-natives clean-classes clean-docs
 	rm config.cache config.status config.log 
-	rm -rf ./lib/solaris
+	rm -rf ./lib/@JAVATARG@
 	rm -f ./native/Makefile
 	rm -rf ./native/hdflib/Makefile
 	rm -rf ./Makefile
