@@ -93,6 +93,7 @@ extern uint16 procTrace;
 #define ID_DFR8setcompress	309
 #define ID_DFR8setpalette	310
 #define ID_DFR8writeref		311
+#define ID_DFR8Istart		312
 
 /* DFSD */
 #define ID_DFSDadddata		401
@@ -189,6 +190,27 @@ extern uint16 procTrace;
 #define ID_Hsetlength           638
 #define ID_Hfidinquire          639
 
+/* Take these out of source code later */
+#define ID_HDdont_atexit        640
+#define ID_HIstart              641
+#define ID_HPregister_term_func 642
+#define ID_HIbitstart           643
+
+#define ID_HMCcreate            644
+#define ID_HMCsetMaxcache       645
+#define ID_HMCPstread           646
+#define ID_HMCPstwrite          647
+#define ID_HMCPseek             648
+#define ID_HMCPchunkread        649
+#define ID_HMCreadChunk         650
+#define ID_HMCPread             651
+#define ID_HMCPchunkwrite       652
+#define ID_HMCwriteChunk        653
+#define ID_HMCPwrite            654
+#define ID_HMCPendaccess        655
+#define ID_HMCPinfo             656
+#define ID_HMCPinquire          657
+
 /* HDFclose and HDFopen are implemented as macros. */
 
 /* HE */
@@ -263,6 +285,20 @@ extern uint16 procTrace;
 #define ID_Vfinish		1017
 #define ID_Vfind		1018
 #define ID_Vfindclass		1019
+
+#define ID_vpackvs		1020
+#define ID_vunpackvs		1021
+#define ID_vpackvg		1022
+#define ID_vunpackvg		1023
+
+#define ID_Vsetattr		1024
+#define ID_Vgetversion		1025
+#define ID_Vnattrs		1026
+#define ID_Vfindattr		1027
+#define ID_Vattrinfo		1028
+#define ID_Vgetattr		1029
+
+
 /* Vstart is implemented as a macro. */
 
 /* VH */
@@ -295,6 +331,15 @@ extern uint16 procTrace;
 #define ID_VSappendable		1222
 #define ID_VSdelete		1223
 #define ID_VSfindclass		1224
+#define ID_VSfpack		1225
+#define ID_VSfindex		1226
+#define ID_VSsetattr		1227
+#define ID_VSnattrs		1228
+#define ID_VSfnattrs		1229
+#define ID_VSfindattr		1230
+#define ID_VSattrinfo		1231
+#define ID_VSgetattr		1232
+#define ID_VSisattr		1233
 
 /* AN */
 #define ID_ANstart              1300
@@ -339,6 +384,7 @@ extern uint16 procTrace;
 #define ID_GRattrinfo           1425
 #define ID_GRgetattr            1426
 #define ID_GRfindattr           1427
+#define ID_GRluttoref           1428
 
 /* HA */
 #define ID_HAinit_group         1501
@@ -347,6 +393,7 @@ extern uint16 procTrace;
 #define ID_HAatom_object        1504
 #define ID_HAatom_group         1505
 #define ID_HAremove_atom        1506
+#define ID_HAsearch_atom        1507
 
 /* DA */
 #define ID_DAcreate_array       1601
@@ -355,6 +402,15 @@ extern uint16 procTrace;
 #define ID_DAget_elem           1604
 #define ID_DAset_elem           1605
 #define ID_DAdel_elem           1606
+
+/*  HU  get rid off next time */
+#define ID_HULcreate_list       10001
+#define ID_HULdestroy_list      10002
+#define ID_HULadd_node          10003
+#define ID_HULsearch_node       10004
+#define ID_HULfirst_node        10005
+#define ID_HULnext_node         10006
+#define ID_HULremove_node       10007
 
 #endif /* HAVE_PABLO || PABLO */
 

@@ -317,11 +317,11 @@ help:
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
 PabloHDF.o: ProcIDs.h
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDF.c
 PabloHDFf.o: ProcIDs.h PabloHDF.inc
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $<
+	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c PabloHDFf.c
 PabloHDFff.o: ProcIDs.h PabloHDF.inc
-	$(FC) $(FFLAGS) -c $<
+	$(FC) $(FFLAGS) -c PabloHDFff.f
 
 #get all the source dependecies.....
 # the dependencies don't work well

@@ -461,7 +461,7 @@ USAGE
 RETURNS
        None.
 --------------------------------------------------------------------- */
-PUBLIC int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
+int HDFinitIOTrace(char *traceFileName, intn detail, intn lifetime,
 			   intn timeWindow, float64 timeWindowSize,
 			   intn regionTrace, intn regionSize,
 			   uint16 procTraceMask )
@@ -513,7 +513,7 @@ USAGE
 RETURNS
        None.
 --------------------------------------------------------------------- */
-PUBLIC int HDFendIOTrace(VOID)
+int HDFendIOTrace(VOID)
 {
   int ret_value = 0;
 

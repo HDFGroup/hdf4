@@ -133,4 +133,7 @@
 /* DAcreate_array, DAdestroy_array, DAsize_array, DAget_elem,
    DAset_elem, DAdel_elem */
 
+#define HUL_mask        0x10000
+/* need to get rid off */
+
 #endif /* PROCMASK_H */

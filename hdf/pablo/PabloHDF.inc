@@ -49,6 +49,7 @@ C IDs for annotation procedures
       integer ID_DFR8addimage,ID_DFR8getdims,ID_DFR8getimage,ID_DFR8lastref
       integer ID_DFR8nimages,ID_DFR8putimage,ID_DFR8readref,ID_DFR8restart
       integer ID_DFR8setcompress,ID_DFR8setpalette,ID_DFR8writeref
+      integer ID_DFR8Istart
 
       integer ID_DFSDadddata,ID_DFSDclear,ID_DFSDendslab,ID_DFSDendslice
       integer ID_DFSDgetcal,ID_DFSDgetdata,ID_DFSDgetdatalen
@@ -75,6 +76,12 @@ C IDs for annotation procedures
       integer ID_HXsetdir, ID_HLconvert, ID_Hstartaccess, ID_Hisappendable
       integer ID_Htell, ID_Htagnewref, ID_Hcaceh, ID_Hsetaccesstype
       integer ID_Hexist, ID_Hsetlength, ID_Hfidinquire
+      integer ID_HDdont_atexit, ID_HIstart, ID_HPregister_term_func
+      integer ID_HIbitstart, ID_HMCcreate, ID_HMCsetMaxcache
+      integer ID_HMCPstread, ID_HMCPstwrite, ID_HMCPseek, ID_HMCPchunkread
+      integer ID_HMCreadChunk, ID_HMCPread, ID_HMCPchunkwrite
+      integer ID_HMCwriteChunk, ID_HMCPwrite, ID_HMCPendaccess
+      integer ID_HMCPinfo, ID_HMCPinquire
 
       integer ID_HEclear,ID_HEprint,ID_HEpush,ID_HEreport,ID_HEstring
 
@@ -94,7 +101,10 @@ C IDs for annotation procedures
       integer ID_Vaddtagref,ID_Vattach,ID_Vdetach,ID_Vgetclass,ID_Vgetid
       integer ID_Vgetname,ID_Vgettagref,ID_Vgettagrefs,ID_Vinqtagref
       integer ID_Vinquire,ID_Vinsert,ID_Vlone,ID_Vntagrefs,ID_Vsetclass
-      integer ID_Vsetname
+      integer ID_Vsetname, ID_Vinitialize, ID_Vfinish, ID_Vfind
+      integer ID_Vfindclass, ID_vpackvs, ID_vunpackvs, ID_vpackvg
+      integer ID_vunpackvg, ID_Vsetattr, ID_Vgetversion, ID_vnattrs
+      integer ID_Vfindattr, ID_Vattrinfo, ID_Vgetattr
 
       integer ID_VHmakegroup,ID_VHstoredata,ID_VHstoredatam
 
@@ -102,7 +112,10 @@ C IDs for annotation procedures
       integer ID_VSfind,ID_VSgetclass,ID_VSgetfields,ID_VSgetid
       integer ID_VSgetinterlace,ID_VSgetname,ID_VSinquire,ID_VSlone,ID_VSread
       integer ID_VSseek,ID_VSsetclass,ID_VSsetfields,ID_VSsetinterlace
-      integer ID_VSsetname,ID_VSsizeof,ID_VSwrite
+      integer ID_VSsetname,ID_VSsizeof,ID_VSwrite, ID_VSappendable
+      integer ID_VSdelete, ID_VSfindclass, ID_VSfpack, ID_VSfindex
+      integer ID_VSsetattr, ID_VSnattrs, ID_VSfnattrs, ID_VSfindattr
+      integer ID_VSattrinfo, ID_VSgetattr, ID_VSisattr
 
       integer ID_ANstart, ID_ANfileinfo, ID_ANend, ID_ANcreate, ID_ANcreatef
       integer ID_ANselect, ID_ANnumann, ID_ANannlist, ID_ANannlen
@@ -116,12 +129,18 @@ C IDs for annotation procedures
       integer ID_GRgetlutinfo, ID_GRwritelut, ID_GRreadlut
       integer ID_GRsetexternalfile, ID_GRsetaccesstype, ID_GRsetcompress
       integer ID_GRsetattr, ID_GRattrinfo, ID_GRgetattr, ID_GRfindattr
+      integer ID_GRluttoref
 
       integer ID_HAinit_group, ID_HAdestroy_group, ID_HAregister_atom,
       integer ID_HAatom_object, ID_HAatom_group, ID_HAremove_atom 
+      integer ID_HAsearch_atom
 
       integer ID_DAcreate_array, ID_DAdestroy_array, ID_DAsize_array, 
       integer ID_DAget_elem, ID_DAset_elem, ID_DAdel_elem 
+
+      integer ID_HULcreate_list, ID_HULdestroy_list, ID_HULaddnode
+      integer ID_HULsearch_node, ID_HULfirst_node, ID_HULnext_node
+      integer ID_remove_node
 
       parameter(ID_DFANaddfds           = 101,
      *          ID_DFANaddfid           = 102,
@@ -158,7 +177,8 @@ C IDs for annotation procedures
      *          ID_DFR8restart          = 308,
      *          ID_DFR8setcompress      = 309,
      *          ID_DFR8setpalette       = 310,
-     *          ID_DFR8writeref         = 311)
+     *          ID_DFR8writeref         = 311,
+     *          ID_DFR8Istart           = 312)
 
       parameter(ID_DFSDadddata          = 401,
      *          ID_DFSDclear            = 402,
@@ -249,7 +269,25 @@ C IDs for annotation procedures
      *          ID_Hsetaccesstype       = 636,
      *          ID_Hexist               = 637,
      *          ID_Hsetlength           = 638,
-     *          ID_Hfindinquire         = 639)
+     *          ID_Hfindinquire         = 639,
+     *          ID_HDdont_atexit        = 640,
+     *          ID_HIstart              = 641,
+     *          ID_HPregister_term_func  = 642,
+     *          ID_HIbitstart           = 643,
+     *          ID_HMCcreate            = 644,
+     *          ID_HMCsetMaxcache       = 645,
+     *          ID_HMCPstread           = 646,
+     *          ID_HMCPstwrite          = 647,
+     *          ID_HMCPseek             = 648,
+     *          ID_HMCPchunkread        = 649,
+     *          ID_HMCreadChunk         = 650,
+     *          ID_HMCPread             = 651,
+     *          ID_HMCPchunkwrite       = 652,
+     *          ID_HMCwriteChunk        = 653,
+     *          ID_HMCPwrite            = 654,
+     *          ID_HMCPendaccess        = 655,
+     *          ID_HMCPinfo             = 656,
+     *          ID_HMCPinquire          = 657)
 
       parameter(ID_HEclear              = 701,
      *          ID_HEprint              = 702,
@@ -316,7 +354,17 @@ C IDs for annotation procedures
      *          ID_Vinitialize          = 1016,
      *          ID_Vfinish              = 1017,
      *          ID_Vfind                = 1018,
-     *          ID_Vfindclass           = 1019)
+     *          ID_Vfindclass           = 1019,
+     *          ID_vpackvs              = 1020,
+     *          ID_vunpackvs            = 1021,
+     *          ID_vpackvg              = 1022,
+     *          ID_vunpackvg            = 1023,
+     *          ID_Vsetattr             = 1024,
+     *          ID_Vgetversion          = 1025,
+     *          ID_Vnattrs              = 1026,
+     *          ID_Vfindattr            = 1027,
+     *          ID_Vattrinfo            = 1028,
+     *          ID_Vgetattr             = 1029)
 
       parameter(ID_VHmakegroup          = 1101,
      *          ID_VHstoredata          = 1102,
@@ -345,7 +393,16 @@ C IDs for annotation procedures
      *          ID_VSwrite              = 1221,
      *          ID_VSappendable         = 1222,
      *          ID_VSdelete             = 1223,
-     *          ID_VSfindclass          = 1224)
+     *          ID_VSfindclass          = 1224,
+     *          ID_VSfpack              = 1225,
+     *          ID_VSfindex             = 1226,
+     *          ID_VSsetattr            = 1227,
+     *          ID_VSnattrs             = 1228,
+     *          ID_VSfnattrs            = 1229,
+     *          ID_VSfindattr           = 1230,
+     *          ID_VSattrinfo           = 1231,
+     *          ID_VSgetattr            = 1232,
+     *          ID_VSisattr             = 1233)
 
       parameter(ID_ANstart              = 1300,
      *          ID_ANfileinfo           = 1301,
@@ -387,14 +444,16 @@ C IDs for annotation procedures
      *          ID_GRsetattr            = 1424,
      *          ID_GRattrinfo           = 1425,
      *          ID_GRgetattr            = 1426,
-     *          ID_GRfindattr           = 1427)
+     *          ID_GRfindattr           = 1427,
+     *          ID_GRluttoref           = 1428)
 
       parameter(ID_HAinit_group         = 1501,
      *          ID_HAdestroy_group      = 1502,
      *          ID_HAregister_atom      = 1503,
      *          ID_HAatom_object        = 1504,
      *          ID_HAatom_group         = 1505,
-     *          ID_HAremove_atom        = 1506)
+     *          ID_HAremove_atom        = 1506,
+     *          ID_HAsearch_atom        = 1507)
 
       parameter(ID_DAcreate_array       = 1601,
      *          ID_DAdestroy_array      = 1602,
@@ -402,3 +461,11 @@ C IDs for annotation procedures
      *          ID_DAget_elem           = 1604,
      *          ID_DAset_elem           = 1605,
      *          ID_DAdel_elem           = 1606)
+
+      parameter(ID_HULcreate_list       = 10001,
+     *          ID_HULdestroy_list      = 10002,
+     *          ID_HULadd_node          = 10003,
+     *          ID_HULsearch_node       = 10004,
+     *          ID_HULfirst_node        = 10005,
+     *          ID_HULnext_node         = 10006,
+     *          ID_HULremove_node       = 10007)

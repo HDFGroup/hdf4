@@ -282,3 +282,19 @@ hfiledd.c: $(HDFSRC)/hfiledd.c
 hfiledd.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
 hfiledd.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
 hfiledd.o: $(HDFSRC)/hfile.h $(FRC)
+linklist.c: $(HDFSRC)/linklist.c $(HDFSRC)/linklist.h
+linklist.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+linklist.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h $(HDFSRC)/vproto.h 
+linklist.o: $(HDFSRC)/hfile.h $(FRC)
+glist.c: $(HDFSRC)/glist.c $(HDFSRC)/glist.h
+glist.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+glist.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h 
+mcache.c: $(HDFSRC)/mcache.c $(HDFSRC)/mcache.h
+mcache.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+mcache.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h 
+hchunks.c: $(HDFSRC)/hchunks.c $(HDFSRC)/hchunks.h
+hchunks.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+hchunks.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h 
+vattr.c: $(HDFSRC)/vattr.c $(HDFSRC)/vattr.h
+vattr.o: $(HDFSRC)/hdf.h $(HDFSRC)/hlimits.h $(HDFSRC)/hdfi.h 
+vattr.o: $(HDFSRC)/herr.h $(HDFSRC)/hproto.h 
