@@ -172,7 +172,13 @@
 #define MAX_NC_DIMS 5000	 /* max dimensions per file */
 #define MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
 #define MAX_NC_VARS 5000	 /* max variables per file */
-#define MAX_NC_NAME MIN(256,MIN(VSNAMELENMAX,VGNAMELENMAX))		 /* max length of a name */
+/* This macro changed the behavior of the SDcreate function in HDF4r1.3
+ * SDcreate started to fail if SDS name length was greater than 64, instead of truncating
+ * it to 64 characters and creating a dataset. Switched back to the old definition.
+ * EP 5/5/2000
+#define MAX_NC_NAME MIN(256,MIN(VSNAMELENMAX,VGNAMELENMAX)) */
+
+#define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
 
 /* ----------------- Constants for MFGR interface --------------------- */
