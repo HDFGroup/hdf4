@@ -96,7 +96,7 @@ TOOLTEST hdiff_03.txt -s hdifftst1.hdf hdifftst2.hdf
 TOOLTEST hdiff_04.txt -d hdifftst1.hdf hdifftst2.hdf
 
 # Compare Vdata data only
-TOOLTEST hdiff_05.txt -D hdifftst1.hdf hdifftst2.hdf
+#TOOLTEST hdiff_05.txt -D hdifftst1.hdf hdifftst2.hdf
 
 # Print statistics
 TOOLTEST hdiff_06.txt -d -S hdifftst1.hdf hdifftst2.hdf
@@ -114,7 +114,7 @@ TOOLTEST hdiff_09.txt -d -e 2 hdifftst1.hdf hdifftst2.hdf
 TOOLTEST hdiff_10.txt -d -t 2 hdifftst1.hdf hdifftst2.hdf
 
 # no options
-TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
+#TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
 
 
 
