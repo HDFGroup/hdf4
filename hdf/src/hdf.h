@@ -101,10 +101,6 @@ typedef enum
 #   define TRUE (!FALSE)
 #endif
 
-#ifndef NULL
-#   define NULL (void *)0
-#endif
-
 /* macros */
 #define STREQ(s, t) (HDstrcmp((s), (t)) == 0)
 #define NSTREQ(s, t, n) (HDstrncmp((s), (t), (n)) == 0)
