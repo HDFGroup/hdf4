@@ -422,6 +422,7 @@ extern uint8 *tbuf;
 #define SPECIAL_LINKED 1
 #define SPECIAL_EXT 2
 #define SPECIAL_COMP 3
+#define SPECIAL_BIGEXT 4	/* Big External */
 
 /* PARAMETERS */
 
