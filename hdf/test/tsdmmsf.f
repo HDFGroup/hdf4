@@ -2,9 +2,13 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.1  1992/04/27 17:17:46  sxu
-C Initial revision
+C Revision 1.2  1992/05/07 16:48:07  dilg
+C Put in comment explaining the choice between using "char(-128)" and
+C "char(0)"
 C
+c Revision 1.1  1992/04/27  17:17:46  sxu
+c Initial revision
+c
 c Revision 1.2  1992/03/24  20:42:04  sxu
 c Changed output file names
 c
@@ -57,7 +61,9 @@ C
       f32max = 40.0
       f32min = 0.0
       i8max = char(127)
-C NOTE: the next assignment will not work in some Fortran implementations.
+C NOTE: If you get a compile error on the "char(-128)" line, substitute
+C       the "char(0)" line.  Its not quite as thorough a test, but...
+C      i8min = char(0)
       i8min = char(-128)
       i16max = 1200
       i16min = -1200
