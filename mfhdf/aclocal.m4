@@ -70,27 +70,32 @@ AC_REQUIRE([UC_OS])dnl
 AC_PROVIDE([$0])dnl
 case "${OS}" in
   irix*)	LD_XDR=-lsun
-                UC_ENSURE(HDF_INC, -DIRIS4)
+#                UC_ENSURE(HDF_INC, -DIRIS4)
                 UC_ENSURE(HDF_INC, -cckr);;
   ultrix*)	LD_XDR=
-                UC_ENSURE(HDF_INC, -DMIPSEL);;
+#                UC_ENSURE(HDF_INC, -DMIPSEL);;
   unicos*)	LD_XDR=
 		UC_ENSURE(CPPFLAGS, -DBIG_SHORTS -DBIG_LONGS)
-                UC_ENSURE(HDF_INC, -DUNICOS);;
-  aix*)         UC_ENSURE(HDF_INC, -DIBM6000)
+#                UC_ENSURE(HDF_INC, -DUNICOS);;
+  aix*)         
+#               UC_ENSURE(HDF_INC, -DIBM6000)
                 LD_XDR=;;
-  sunos*)       UC_ENSURE(HDF_INC, -DSUN)
+  sunos*)       
+#               UC_ENSURE(HDF_INC, -DSUN)
                 LD_XDR=;;
-  hpux*)        UC_ENSURE(HDF_INC, -DHP9000)
+  hpux*)        
+#               UC_ENSURE(HDF_INC, -DHP9000)
                 if test -z "$GCC"; then
                         UC_ENSURE(CPPFLAGS, -Aa)
                 fi
                 LD_XDR=;;
-  osf*)         UC_ENSURE(HDF_INC, -DDEC_ALPHA)
+  osf*)         
+#               UC_ENSURE(HDF_INC, -DDEC_ALPHA)
 		UC_ENSURE(CPPFLAGS, -DBIG_LONGS)
 		UC_ENSURE(CPPFLAGS, -std1)
                 LD_XDR=;;
-  convex*)      UC_ENSURE(HDF_INC, -DCONVEX)
+  convex*)      
+#               UC_ENSURE(HDF_INC, -DCONVEX)
                 LD_XDR=;;
   *)		LD_XDR=;;
 esac

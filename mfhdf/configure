@@ -631,12 +631,12 @@ fi
 echo checking XDR library
 case "${OS}" in
   irix*)	LD_XDR=-lsun
-                  for arg in -DIRIS4; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+#                 for arg in -DIRIS4; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
                   for arg in -cckr; do
     case "$HDF_INC" in
@@ -646,12 +646,12 @@ case "${OS}" in
   done
 ;;
   ultrix*)	LD_XDR=
-                  for arg in -DMIPSEL; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+#                 for arg in -DMIPSEL; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 ;;
   unicos*)	LD_XDR=
 		  for arg in -DBIG_SHORTS -DBIG_LONGS; do
@@ -661,43 +661,47 @@ case "${OS}" in
     esac
   done
 
-                  for arg in -DUNICOS; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+#                 for arg in -DUNICOS; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 ;;
-  aix*)           for arg in -DIBM6000; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+  aix*)           
+#                   for arg in -DIBM6000; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
                 LD_XDR=;;
-  sunos*)         for arg in -DSUN; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+  sunos*)         
+#                   for arg in -DSUN; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
                 LD_XDR=;;
-  freebsd*)         for arg in -DUNIX386; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+  freebsd*)         
+#                   for arg in -DUNIX386; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
                 LD_XDR=-lnsl;;
-  hpux*)          for arg in -DHP9000; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+  hpux*)          
+#               for arg in -DHP9000; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
                 if test -z "$GCC"; then
                           for arg in -Aa; do
@@ -709,12 +713,13 @@ case "${OS}" in
 
                 fi
                 LD_XDR=;;
-  osf*)           for arg in -DDEC_ALPHA; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+  osf*)           
+#               for arg in -DDEC_ALPHA; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
 		  for arg in -DBIG_LONGS; do
     case "$CPPFLAGS" in
@@ -731,12 +736,13 @@ case "${OS}" in
   done
 
                 LD_XDR=;;
-  convex*)        for arg in -DCONVEX; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+  convex*)        
+#               for arg in -DCONVEX; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 
                 LD_XDR=;;
   *)		LD_XDR=;;
