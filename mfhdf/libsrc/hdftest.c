@@ -58,7 +58,7 @@ char *argv[];
         num_err++;
     }
 
-/*
+
 
     dimid = SDgetdimid(newsds3, 0);
     if(dimid == FAIL) {
@@ -69,7 +69,7 @@ char *argv[];
     status = SDsetdimname(dimid, "MyDim");
     CHECK(status, "SDsetdimname");
 
-*/
+
 
     dimid = SDgetdimid(newsds, 0);
     if(dimid == FAIL) {

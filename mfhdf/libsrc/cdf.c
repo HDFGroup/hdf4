@@ -523,7 +523,7 @@ NC_dim *dim;
 #endif
       
       /* allocate space */
-      val = (int *) malloc(dsize * sizeof(int));
+      val = (int *) HDgetspace(dsize * sizeof(int));
       if(!val) {
           HERROR(DFE_NOSPACE);
           return FAIL;
@@ -764,9 +764,9 @@ XDR *xdrs;
 NC **handlep;
 {
   int32 *tags, *refs, count;
-  int sz, i, status;
+  int sz, i, j, status, done;
+  NC_dim **dims, **dims1;
   NC_array *tmp;
-  Void *dims;
   Void *vars;
   Void *attrs;
 
@@ -785,11 +785,11 @@ NC **handlep;
 #endif
 
   /* allocate tag / ref arrays */
-  tags = (int32 *) malloc(sz * sizeof(int32) + 1);
-  refs = (int32 *) malloc(sz * sizeof(int32) + 1);
+  tags = (int32 *) HDgetspace(sz * sizeof(int32) + 1);
+  refs = (int32 *) HDgetspace(sz * sizeof(int32) + 1);
   if(!tags || !refs) {
-    fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
-    return FALSE;
+      fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
+      return FALSE;
   }
 
   /* 
@@ -797,16 +797,31 @@ NC **handlep;
   */
   count = 0;
   if((*handlep)->dims) {
-    tmp = (*handlep)->dims; 
-    dims = (*handlep)->dims->values;
-    for(i = 0; i < tmp->count; i++) {
-      tags[count] = (int32) DIM_TAG;
-      refs[count] = (int32) hdf_write_dim(xdrs, (*handlep), dims);
-      dims += tmp->szof;
-      count++;
-    }
-  }
+      tmp = (*handlep)->dims; 
+      dims = (NC_dim **) (*handlep)->dims->values;
+      for(i = 0; i < tmp->count; i++) {
 
+          /* this is really ugly and should be handled another way */
+          /* make sure we don't duplicate dimensions */
+          done = FALSE;
+          dims1 = (NC_dim **) (*handlep)->dims->values;
+          for(j = 0; j < i; j++) {
+              if((*dims1)->size == (*dims)->size &&
+                 HDstrcmp((*dims)->name->values, 
+                          (*dims1)->name->values) == 0)
+                  done = TRUE;
+              dims1++;
+          }
+
+          if(!done) {
+              tags[count] = (int32) DIM_TAG;
+              refs[count] = (int32) hdf_write_dim(xdrs, (*handlep), dims);
+              count++;
+          }
+          dims++;
+      }
+  }
+  
   /* 
   ** write out variable info 
   */
@@ -888,7 +903,7 @@ int32  vg;
    * Allocate enough space in case everything is a dimension
    */
   count = 0;
-  dimension = (NC_dim **) malloc(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
+  dimension = (NC_dim **) HDgetspace(sizeof(NC_dim *) * Vntagrefs(vg) + 1);
   if(!dimension) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return FAIL;
@@ -990,7 +1005,7 @@ int32   vg;
    * Allocate enough space in case everything is an attribute
    */
   count = 0;
-  attributes = (NC_attr **) malloc(sizeof(NC_attr *) * Vntagrefs(vg) + 1);
+  attributes = (NC_attr **) HDgetspace(sizeof(NC_attr *) * Vntagrefs(vg) + 1);
   if(!attributes) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return NULL;
@@ -1012,7 +1027,7 @@ int32   vg;
           if(!HDstrcmp(class, ATTRIBUTE)) {
               VSinquire(vs, &attr_size, NULL, fields, &vsize, vsname);
               type = hdf_unmap_type(VFfieldtype(vs, 0));
-              values = (char *) malloc(vsize * attr_size + 1);
+              values = (char *) HDgetspace(vsize * attr_size + 1);
               VSsetfields(vs, fields);
               VSread(vs, (uint8 *) values, attr_size, FULL_INTERLACE);
               
@@ -1090,7 +1105,7 @@ int32  vg;
    * Allocate enough space in case everything is a variable
    */
   count = 0;
-  variables = (NC_var **) malloc(sizeof(NC_var *) * Vntagrefs(vg) + 1);
+  variables = (NC_var **) HDgetspace(sizeof(NC_var *) * Vntagrefs(vg) + 1);
   if(!variables) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return FAIL;
@@ -1099,7 +1114,7 @@ int32  vg;
   /*
    * Allocate enough space in case lots of dimensions
    */
-  dims = (int *) malloc(sizeof(int) * Vntagrefs(vg) + 1);
+  dims = (int *) HDgetspace(sizeof(int) * Vntagrefs(vg) + 1);
   if(!dims) {
     fprintf(stderr, "Out of memory line %d file %s\n", __LINE__, __FILE__);
     return FAIL;

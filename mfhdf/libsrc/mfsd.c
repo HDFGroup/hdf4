@@ -740,7 +740,7 @@ int32 nt, rank, *dimsizes;
     NC_var  * var;
     NC_dim  * newdim;
     int32     sdsid, nctype;
-    char      dimname[80];
+    char      dimname[MAX_NC_NAME];
     intn      i, num;
     intn    * dims;
 
