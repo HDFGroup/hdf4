@@ -571,6 +571,7 @@ int type;
 
   switch(type & 0xff) {
   case DFNT_CHAR        :
+  case DFNT_UCHAR       :
     return NC_CHAR;
   case DFNT_INT8        :
   case DFNT_UINT8       :

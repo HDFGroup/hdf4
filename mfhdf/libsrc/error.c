@@ -25,10 +25,11 @@
 #include	<varargs.h>
 #endif /* !NO_STDARG */
 
+#include <errno.h>  /* Originally errno.h is not included for UNICOS */
 #ifdef UNICOS
 int errno = 0;
 #else
-#include <errno.h>
+/* #include <errno.h>  */
 /*
 #if defined ERRNO_MISSING | defined vms
 */
