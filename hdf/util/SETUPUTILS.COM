@@ -1,16 +1,8 @@
-#
-# $Header$
-#
-# $Log$
-# Revision 1.1  1992/08/24 22:06:19  sxu
-# Initial revision
-#
-#
-$ ! This file is only for VAX/VMX systems.
-$ !
-$ ! set up utilities
-$ ! change below to the hdf bin directory
-$ ! 
+!$ ! This file is only for VAX/VMS systems.
+!$ !
+!$ ! set up utilities
+!$ ! change below to the hdf bin directory
+!$ ! 
 $ define/nolog hdf$bin    _$4$dua1:[folk.hdf32.bin]
 $ !
 $ hdfls    :== $ hdf$bin:hdfls

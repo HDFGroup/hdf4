@@ -1,9 +1,9 @@
-$ !
-$ ! Make HDF utilities
-$ !
-$ ! This assumes that you have run top level MAKE.COM which came
-$ !   with the HDF distribution.  Otherwise, you will need to 
-$ !   manually define hdf$lib and sys$clib
+!$ !
+!$ ! Make HDF utilities
+!$ !
+!$ ! This assumes that you have run top level MAKE.COM which came
+!$ !   with the HDF distribution.  Otherwise, you will need to 
+!$ !   manually define hdf$lib and sys$clib
 $ !
 $ type sys$input
 	Making utilities
