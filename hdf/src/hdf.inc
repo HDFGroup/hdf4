@@ -459,6 +459,6 @@ c	Interlace Types
 c       Vdata fields packing types
       integer   HDF_VSPACK, HDF_VSUNPACK
       parameter (HDF_VSPACK   = 0,
-                 HDF_VSUNPACK = 1)
+     *           HDF_VSUNPACK = 1)
 
 c******************End of hdf.inc***************************
