@@ -133,7 +133,6 @@ LIBNAME		= mfhdf
 LD_NETCDF	= ../libsrc/libmfhdf.a
 OBJS		= copy.o hdfzip.o hdfzip_main.o list.o parse.o table.o 
 #LD_XDR		= @LD_XDR@
-LD_NETCDF	= -L ../libsrc -lmfhdf
 LIBS		= -lm $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB) $(SLIB_LIB)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) $(TESTPROG) $(CHECKPROG) *.o

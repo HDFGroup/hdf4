@@ -129,7 +129,6 @@ LIBNAME		= mfhdf
 LD_NETCDF	= ../libsrc/libmfhdf.a
 OBJS		= hdiff.o hdiff_main.o dumplib.o hdiff_gattr.o hdiff_misc.o hdiff_sdattr.o hdiff_sddata.o hdiff_grdata.o hdiff_vdata.o
 #LD_XDR		= @LD_XDR@
-LD_NETCDF	= -L ../libsrc -lmfhdf
 LIBS		= -lm $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) $(LIBSX) $(JPEG_LIB) $(ZLIB_LIB) $(SLIB_LIB)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) $(TESTPROG) *.o
