@@ -205,7 +205,7 @@ int mode ;
             /* will handle below */
             break;
         case NC_WRITE     :
-		hdf_mode = DFACC_RDWR;    break;
+            hdf_mode = DFACC_RDWR;    break;
         case NC_NOWRITE   :
             hdf_mode = DFACC_RDONLY;  break;
         default:
