@@ -15,6 +15,8 @@ HDF4.1b
    then performed an SDendaccess, followed by a SDselect.
 8. HDF4.0r2 did not recognize JPEG images created by HDF 3.3r4.  This
    has been fixed.
+9. The compression tests no longer produce errors on IRIX 6.1, when 
+   the '-O' option is used.
 
 HDF4.0r2
 ========
