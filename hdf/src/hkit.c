@@ -80,8 +80,10 @@ int HIlookup_dd(file_rec, look_tag, look_ref, pblock, pidx)
      ddblock_t **pblock;        /* OUT: ddblock where dd is found */
      int32 *pidx;               /* OUT: index into ddlist where dd is found */
 #endif
-{ 
+{
+#ifdef LATER
   char *FUNC="HIlookup_dd";       /* for HERROR */
+#endif
   register intn tag, ref, key, i;
   register tag_ref_list_ptr p;
 
@@ -201,7 +203,9 @@ int HIdel_hash_dd(file_rec, look_tag, look_ref)
      uint16 look_ref;           /* ref of dd to add */
 #endif
 {
+#ifdef LATER
   char *FUNC="HIdel_hash_dd";       /* for HERROR */
+#endif
   register intn tag, ref, key, i;
   register tag_ref_list_ptr p;
 

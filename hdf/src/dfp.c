@@ -367,6 +367,9 @@ int DFPwriteref(filename, ref)
     uint16 ref;
 #endif
 {
+    /* shut the compiler up */
+    filename=filename;
+
     Writeref = ref;
     return SUCCEED;
 }

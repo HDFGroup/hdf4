@@ -312,7 +312,9 @@ int32*      size;   /* ignored, but included to look like packvg() */
 {
     uint8       *bb;
     uint32       i;
+#ifdef LATER
 	char * FUNC = "oldunpackvg";
+#endif
 
     *size = *size; /* dummy, so that compiler thinks it is used  */
 
@@ -346,7 +348,9 @@ uint8        buf[];
 {
     uint8   *bb;
 	int16    i;
+#ifdef LATER
 	char * FUNC = "oldunpackvs";
+#endif
 
     *size = *size; /* dummy */
 

@@ -180,8 +180,10 @@ HFILEID f;
 #endif
 {
     vfile_t      *vf=NULL;
+#ifdef LATER
     char * FUNC = "Remove_vfile";
-    
+#endif
+
     /* Figure out what file to work on */
     if((vf = Get_vfile(f)) == NULL)
         return;
@@ -211,6 +213,9 @@ VOIDP k2;
 intn cmparg;
 #endif
 {
+    /* shut compiler up */
+    cmparg=cmparg;
+
     return((intn)((*(int32 *)k1) - (*(int32 *)k2)));  /* valid for integer keys */
 }  /* vcompare */
 
@@ -283,7 +288,9 @@ PUBLIC VOID Vinitialize(f)
 HFILEID f;
 #endif
 {
+#ifdef LATER
     char * FUNC = "Vinitialize";
+#endif
     
     Load_vfile (f);
 }
@@ -297,7 +304,9 @@ PUBLIC intn Vfinish (f)
 HFILEID f;
 #endif
 {
+#ifdef LATER
     char * FUNC = "Vfinish";
+#endif
     
     Remove_vfile (f);
     return(SUCCEED);
@@ -352,7 +361,9 @@ HFILEID     f;
 uint16  vgid;
 #endif
 {
+#ifdef LATER
     char * FUNC = "vexistvg";
+#endif
   
     if (NULL== (vginstance_t *) vginstance(f,vgid))
         return(FAIL);
@@ -394,7 +405,9 @@ int32           *size;  /* the size of buf is returned here */
 {
 	register uint16 	i;
     register uint8      *bb;
+#ifdef LATER
 	char * FUNC = "vpackvg";
+#endif
 
 	bb = &buf[0];
 
@@ -459,7 +472,9 @@ uint8  buf[];  /* must contain a DFTAG_VG data object from file */
     register uint8   *bb;
     register uintn   u;
     register uint16  uint16var;
+#ifdef LATER
     char * FUNC = "vunpackvg";
+#endif
     
     bb = &buf[0];
 
@@ -772,7 +787,6 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
 {
     VGROUP *vg;
     vginstance_t  * v;
-    VDATA *velt;
     vsinstance_t  * w;
     vginstance_t  * x;
     register uintn u;
@@ -802,7 +816,7 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
         HERROR(DFE_ARGS);
         return(FAIL);
     }
-    
+
     newfid = FAIL;
     if (VALIDVSID(insertkey)) {
   
@@ -812,7 +826,7 @@ int32 insertkey;          /* (VGROUP*) or (VDATA*), doesn't matter */
             HEprint(stderr, 0);
             return(FAIL);
         }
-        
+
         if (w->vs == NULL) {
             HERROR(DFE_ARGS);
             HEprint(stderr,0);
@@ -1216,12 +1230,15 @@ int32 vkey;
 int32  tag, ref;
 #endif
 {
-    int32  n, i;
+    int32  n;
     vginstance_t  * v;
     VGROUP *vg;
+#ifdef NO_DUPLICATES
     uint16 ttag, rref;
+    int32  i;
+#endif
     char * FUNC = "Vaddtagref";
-    
+
     if (!VALIDVGID(vkey)) {
         HERROR(DFE_ARGS);
         HEprint(stderr, 0);
@@ -1855,7 +1872,9 @@ intn 		access;
 int16       ndds;
 #endif
 {
+#ifdef LATER
     char * FUNC = "Vopen";
+#endif
     HFILEID  f;
     
     f = Hopen(path, access, ndds);
@@ -1891,7 +1910,9 @@ PUBLIC intn Vclose (f)
 HFILEID f;
 #endif
 {
+#ifdef LATER
 	char * FUNC = "Vclose";
+#endif
 
 	Vfinish (f);
     return(Hclose (f));

@@ -628,8 +628,9 @@ int32 HXPcloseAID(access_rec)
 accrec_t *access_rec;
 #endif
 {
-
+#ifdef LATER
     char *FUNC="HXPcloseAID"; /* for HERROR */
+#endif
     extinfo_t *info =          /* special information record */
        (extinfo_t *)access_rec->special_info;
 

@@ -1069,7 +1069,9 @@ int32 HLPendaccess(access_rec)
     accrec_t *access_rec;      /* access record to dispose of */
 #endif
 {
+#ifdef LATER
     char *FUNC="HLPendaccess"; /* for HERROR */
+#endif
     linkinfo_t *info =         /* special information record */
        (linkinfo_t *)access_rec->special_info;
     filerec_t *file_rec =      /* file record */

@@ -465,7 +465,7 @@ extern uint8 *tbuf;
 */
 
 #define FIELDNAMELENMAX        128  /* fieldname   : 16 chars max */
-#if defined macintosh | THINK_C
+#if defined macintosh | defined THINK_C
 #define VSFIELDMAX             64  /* max no of fields per vdata */
 #else /* !macintosh */
 #define VSFIELDMAX             256  /* max no of fields per vdata */

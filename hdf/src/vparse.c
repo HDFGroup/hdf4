@@ -72,7 +72,9 @@ int32 scanattrs (attrs,attrc,attrv)
 {
     register char   *s, *s0, *ss;
     register intn   i, slen, len;
+#ifdef LATER
     char * FUNC = "scanattrs";
+#endif
     char * saved_string = (char *) HDstrdup(attrs);
     
 #if defined(macintosh) | defined(THINK_C)

@@ -354,7 +354,7 @@ uint8        buf[];
     vsinstance_t * wi;
     VDATA        * vs;
     char *  FUNC = "VSwrite";
-    int32        elements, bytes; /* number of elements / bytes to write next time */
+    int32        bytes; /* number of bytes to write next time */
     int32        chunk, done; /* number of records to do / done */
 
     if (!VALIDVSID(vkey)) {
@@ -394,7 +394,7 @@ uint8        buf[];
         vs->aid = Hstartwrite (vs->f, DFTAG_VS, vs->oref, total_bytes);
         if (vs->aid == FAIL) HRETURN_ERROR(DFE_BADAID, FAIL);
     }
-    
+
     /* 
      * promote to link-block if vdata exists and is not already one
      *  AND we are incresing its size
@@ -424,7 +424,7 @@ uint8        buf[];
         int_size += w->esize[j];
     
     /* 
-      First, convert and repack field(s) from Vtbuf into buf.    
+      First, convert and repack field(s) from Vtbuf into buf.
       
       This section of the code deals with interlacing. In all cases
       the items for each of the fields are converted and shuffled 
@@ -494,7 +494,7 @@ uint8        buf[];
 /*
 printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, bytes);
 */
-            
+
             offset = 0;
             for(j = 0; j < w->n; j++) {
                 src   = Src + offset;
@@ -504,7 +504,7 @@ printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, byt
                 isize = w->isize[j];
                 order = w->order[j];
                 
-                DFKsetNT(type); 
+                DFKsetNT(type);
                 for(index = 0; index < order; index++) {
                     DFKnumout (src, dest, (uint32) chunk, (uint32) int_size, (uint32) hdf_size);
                     dest += isize / order;
@@ -524,7 +524,7 @@ printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, byt
         }
 
     } /* case (C + E) */
-    
+
     else {
 
         /* 
@@ -554,7 +554,7 @@ printf("Case E/C: [%d,%d] writing %d (elems) %d bytes\n", done, nelt, chunk, byt
                 esize = w->esize[j];
                 isize = w->isize[j];
                 order = w->order[j];
-                
+
                 DFKsetNT(type); 
                 for(index = 0; index < order; index++) {
                     DFKnumout (src, dest, (uint32) nelt, (uint32) esize, (uint32) hdf_size);

@@ -58,6 +58,7 @@
 #define MACIO       3
 #define PCIO        4
 #define WINIO       5
+#define WINNTIO       6
 
 #include <stdio.h>
 
@@ -595,8 +596,10 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
+#ifdef QAK
 #if !defined TEST_PC && !defined TEST_WIN && !defined unix
 #undef FAR
+#endif
 #endif
 
 #include <fcntl.h>

@@ -672,7 +672,9 @@ char    *fields, *vsname;
 int32   *nelt, *interlace, *eltsize;
 #endif
 {
+#ifdef LATER
     char * FUNC = "VSinquire";
+#endif
 
     if(fields)
         VSgetfields(vkey,fields);
@@ -852,7 +854,9 @@ char    * vgname;
     int32 ret_ref;
     int32 vkey;
     char  name[512];
+#ifdef LATER
     char * 	FUNC = "Vfind";
+#endif
     
     while ( -1L != (vgid = Vgetid(f, vgid)) ) {
         vkey = Vattach(f, vgid, "r");
@@ -892,7 +896,9 @@ char * vsname;
     int32   ret_ref;
     int32 vkey;
   	char 		name[512];
+#ifdef LATER
 	char * 	FUNC = "VSfind";
+#endif
 
     while ( -1L != (vsid=VSgetid(f, vsid)) ) {
         vkey = VSattach(f,vsid,"r");

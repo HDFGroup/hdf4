@@ -1870,8 +1870,6 @@ Hishdf(filename)
     char *filename;
 #endif /* PROTOTYPE */
 {
-    char *FUNC = "Hishdf";
-
 #if defined(VMS) || defined(MAC) || defined(PC)
   
     int32 fid;
@@ -1885,26 +1883,24 @@ Hishdf(filename)
     return TRUE;
 
 #else
-
+    char *FUNC = "Hishdf";
     bool ret;
     hdf_file_t fp;
     char b[MAGICLEN];
-  
+
     fp = HI_OPEN(filename, DFACC_READ);
     if (OPENERR(fp))
         return(FALSE);
     else {
-        if(HI_SEEK(fp, 0) == FAIL) {
-            HERROR(DFE_SEEKERROR);
-            return FALSE;
-          }
+        if(HI_SEEK(fp, 0) == FAIL)
+            HRETURN_ERROR(DFE_SEEKERROR,FALSE);
 
-        if(HI_READ(fp, b, MAGICLEN) == FAIL) {
-            HERROR(DFE_READERROR);
-            return FALSE;
-          }
-        if(NSTREQ(b, HDFMAGIC, MAGICLEN)) ret = TRUE;
-        else ret = FALSE;
+        if(HI_READ(fp, b, MAGICLEN) == FAIL)
+            HRETURN_ERROR(DFE_READERROR,FALSE);
+        if(NSTREQ(b, HDFMAGIC, MAGICLEN))
+            ret = TRUE;
+        else
+            ret = FALSE;
 
         HI_CLOSE(fp);
         return((int)ret);
@@ -2019,6 +2015,9 @@ int Hsync(file_id)
             return FAIL;
           } /* end if */
       } /* end if */
+#else
+    /* shut compiler up */
+    file_id=file_id;
 #endif
     return SUCCEED;
 }
@@ -2068,7 +2067,7 @@ int HDerr(file_id)
 
 
 
-
+#ifdef LATER
 /*--------------------------------------------------------------------------
  HIchangedd
 
@@ -2110,6 +2109,7 @@ static int HIchangedd(datadd, block, idx, special, special_info, special_func)
 
     return attached;
 }
+#endif
 
 /*--------------------------------------------------------------------------
  HIinit_file_dds
@@ -2277,6 +2277,7 @@ VOIDP HIgetspinfo(access_rec, tag, ref)
     return NULL;
 }
 
+#ifdef LATER
 /*--------------------------------------------------------------------------
  HIlock
 
@@ -2302,6 +2303,7 @@ static int HIlock(file_id)
 
     return SUCCEED;
 }
+#endif
 
 /*--------------------------------------------------------------------------
  HIunlock
@@ -2489,8 +2491,9 @@ uint32 *majorv, *minorv, *releasev;
 char string[];
 #endif
 {
+#ifdef LATER
     char *FUNC="Hgetlibversion";
-    int i;
+#endif
 
     HEclear();
 

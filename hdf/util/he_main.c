@@ -67,6 +67,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* ------ he.c ------- main() main HDF interfacing routines */
 #include "he.h"
 #include "herr.h"
+#ifdef PC386
+#include <process.h>
+#endif
 
 /* the return status of last command executed */
 int he_status = HE_OK;
@@ -385,7 +388,8 @@ int updateDesc(void)
 int updateDesc()
 #endif
 {
-  uint32 fid, groupID;
+  uint32 fid;
+  int32 groupID;
   int32 aid, status;
   register int i, j;
   
@@ -393,7 +397,7 @@ int updateDesc()
     printf("failed opening\n");
     HEprint(stdout, 0);
     return FAIL;
-  }    
+  }
   
   aid = Hstartread(fid, DFTAG_WILDCARD, DFREF_WILDCARD);
   if(aid == FAIL) {
@@ -1202,6 +1206,9 @@ int HEhelp(dummy)
      HE_CMD *dummy;
 #endif
 {
+    /* shut compiler up */
+    dummy=dummy;
+
     help();
     return HE_OK;
 }

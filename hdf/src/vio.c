@@ -86,7 +86,9 @@ HFILEID f;
 uint16 vsid;
 #endif
 {
+#ifdef LATER
     char * FUNC = "vexistvs";
+#endif
   
     if (NULL== vsinstance(f,vsid))
         return(FAIL);
@@ -150,7 +152,9 @@ uint8        buf[];
 {
     register int32      i;
     register uint8      *bb;
+#ifdef LATER
 	char * FUNC = "vpackvs";
+#endif
 
 	bb = &buf[0];
 
@@ -270,7 +274,9 @@ int32   *size;  /* UNUSED, but retained for compatibility with vpackvs */
     uint8   *bb;
     int32   i;
     int16   int16var;
+#ifdef LATER
 	char * FUNC = "vunpackvs";
+#endif
 
 	i = *size; /* dum */
 
@@ -741,7 +747,6 @@ int32 vkey;
 int32 blk;
 #endif
 {
-    int32           status;
     int32           blksize, curr_size;
     vsinstance_t    *w;
     VDATA           *vs;

@@ -940,6 +940,9 @@ int DFR8writeref(filename, ref)
 {
     HEclear();
 
+    /* Shut the compiler up */
+    filename=filename;
+
     Writeref = ref;
     return SUCCEED;
 }

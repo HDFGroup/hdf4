@@ -1438,7 +1438,9 @@ intn DFSDsetNT(numbertype)
 #endif /* PROTOTYPE */
 {
     uint8 outNT;
+#ifdef LATER
     char *FUNC="DFSDsetNT";
+#endif
 
     HEclear();
 
@@ -1481,7 +1483,9 @@ intn DFSDIclearNT(sdg)
 #endif
 {
     intn i;
+#ifdef LATER
     char *FUNC="DFSDIclearNT";
+#endif
 
     HEclear();
 
@@ -3220,7 +3224,9 @@ intn DFSDIrefresh(filename)
 #endif /* PROTOTYPE */
 {
       int32 file_id;
+#ifdef LATER
       char *FUNC="DFSDgetdims";
+#endif
 
       HEclear();
       if (Newdata != 1 || Nextsdg) 
@@ -3422,7 +3428,9 @@ int DFSDIgetdata(filename, rank, maxsizes, data, isfortran)
     int32 *winst;
     int32 *windims;
     int32 file_id;
+#ifdef LATER
     char *FUNC="DFSDIgetdata";
+#endif
 
     HEclear();
 
@@ -3497,7 +3505,9 @@ intn DFSDIputdata(filename, rank, dimsizes, data, accmode, isfortran)
 {
     intn ret;
     int32 file_id;
+#ifdef LATER
     char *FUNC="DFSDIputdata";
+#endif
 
     HEclear();
 
@@ -3959,6 +3969,9 @@ intn DFSDIputslice(windims, data, dims, isfortran)
     uint8 *buf;          /* buffer containing converted current row */
     char *FUNC="DFSDIputslice";
 
+    /* shut compiler up */
+    isfortran=isfortran;
+
     HEclear();
 
     if (!data) 
@@ -4273,7 +4286,9 @@ DFSDsetfillvalue(fill_value)
 {
     int32 numtype;      /* current number type  */
     int32 localNTsize;  /* size of this NT on as it is on this machine  */
+#ifdef LATER
     char *FUNC="DFSDsetfillvalue";
+#endif
 
     /* Clear error stack  */
     HEclear();
@@ -4370,6 +4385,9 @@ intn DFSDreadslab(filename, start, slab_size, stride, buffer, buffer_size)
      int32 buffer_size[];
 #endif /* PROTOTYPE */
 {
+    /* shut compiler up */
+    stride=stride;
+
     return (DFSDgetslice(filename, start, slab_size, buffer, buffer_size));
 }
 
@@ -4571,6 +4589,9 @@ DFSDwriteslab(start, stride, count, data)
                            /*   of current block */
 
     char *FUNC="DFSDwriteslab";
+
+    /* shut compiler up */
+    stride=stride;
 
     /* Clear error stack  */
     HEclear();

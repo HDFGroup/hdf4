@@ -944,6 +944,9 @@ int DFGRIgetimlut(filename, imlut, xdim, ydim, type, isfortran)
     uint8 *buf, *destp;
     int32 aid;
 
+    /* shut compiler up */
+    isfortran=isfortran;
+
     HEclear();
 
     file_id = DFGRIopen(filename, DFACC_READ);
@@ -1193,6 +1196,9 @@ int DFGRIaddimlut(filename, imlut, xdim, ydim, type, isfortran, newfile)
         uint16 ydim;
     } r8dims;
     uint8 *p;
+
+    /* shut compiler up */
+    isfortran=isfortran;
 
     HEclear();
 

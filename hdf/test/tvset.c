@@ -41,9 +41,8 @@ extern int num_errs;
 int32 write_vset_stuff() {
     int32 status;
     int32 fid, aid;
-    int32 tags[10], refs[10];
-    int32 vg1, vg2, vg3, vg4;
-    int32 vs1, vs2, vs3, vs4;
+    int32 vg1, vg2;
+    int32 vs1;
     int32 count, i, j, num;
     int32   ibuf[2000]; /* integer buffer */
     float32 fbuf[2000]; /* floating point buffer */
@@ -320,8 +319,8 @@ int32 read_vset_stuff() {
     char    name[512], class[512], fields[512];
     char  * p;
     int32   fid;
-    int32   vg1, vg2;
-    int32   vs1, vs2;
+    int32   vg1;
+    int32   vs1;
     int32   status, num, i, count, intr, sz;
     float32 fl_expected;
     int32   in_expected;
