@@ -52,7 +52,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = $(INCLUDES) $(DEFINES) @CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -68,6 +68,8 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
+HDF_BUILD_FORTRAN_FALSE = @HDF_BUILD_FORTRAN_FALSE@
+HDF_BUILD_FORTRAN_TRUE = @HDF_BUILD_FORTRAN_TRUE@
 HDF_BUILD_XDR_FALSE = @HDF_BUILD_XDR_FALSE@
 HDF_BUILD_XDR_TRUE = @HDF_BUILD_XDR_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
@@ -139,12 +141,13 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
-INCLUDES = -I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
+INCLUDES = -I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF
+AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 
 
 #############################################################################
@@ -152,9 +155,8 @@ DEFINES = -DNDEBUG -DHDF
 bin_PROGRAMS = hdfimport
 
 hdfimport_SOURCES = hdfimport.c
-hdfimport_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hdfimport_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdfimport_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimport_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdfimport_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 
 #############################################################################
@@ -162,9 +164,8 @@ hdfimport_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 check_PROGRAMS = hdfimporttest
 
 hdfimporttest_SOURCES = hdfimporttest.c
-hdfimporttest_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hdfimporttest_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdfimporttest_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdfimporttest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 subdir = mfhdf/hdfimport
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -174,22 +175,22 @@ bin_PROGRAMS = hdfimport$(EXEEXT)
 check_PROGRAMS = hdfimporttest$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_hdfimport_OBJECTS = hdfimport-hdfimport.$(OBJEXT)
+am_hdfimport_OBJECTS = hdfimport.$(OBJEXT)
 hdfimport_OBJECTS = $(am_hdfimport_OBJECTS)
 hdfimport_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	${top_builddir}/hdf/src/libdf.a
+	$(top_builddir)/hdf/src/libdf.a
 hdfimport_LDFLAGS =
-am_hdfimporttest_OBJECTS = hdfimporttest-hdfimporttest.$(OBJEXT)
+am_hdfimporttest_OBJECTS = hdfimporttest.$(OBJEXT)
 hdfimporttest_OBJECTS = $(am_hdfimporttest_OBJECTS)
 hdfimporttest_DEPENDENCIES = ../libsrc/libmfhdf.a \
-	${top_builddir}/hdf/src/libdf.a
+	$(top_builddir)/hdf/src/libdf.a
 hdfimporttest_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hdfimport-hdfimport.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/hdfimporttest-hdfimporttest.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hdfimport.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/hdfimporttest.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -249,8 +250,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfimport-hdfimport.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfimporttest-hdfimporttest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfimport.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfimporttest.Po@am__quote@
 
 distclean-depend:
 	-rm -rf ./$(DEPDIR)
@@ -276,50 +277,6 @@ distclean-depend:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
-
-hdfimport-hdfimport.o: hdfimport.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimport_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdfimport-hdfimport.o -MD -MP -MF "$(DEPDIR)/hdfimport-hdfimport.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdfimport-hdfimport.o `test -f 'hdfimport.c' || echo '$(srcdir)/'`hdfimport.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdfimport-hdfimport.Tpo" "$(DEPDIR)/hdfimport-hdfimport.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdfimport-hdfimport.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfimport.c' object='hdfimport-hdfimport.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdfimport-hdfimport.Po' tmpdepfile='$(DEPDIR)/hdfimport-hdfimport.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimport_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdfimport-hdfimport.o `test -f 'hdfimport.c' || echo '$(srcdir)/'`hdfimport.c
-
-hdfimport-hdfimport.obj: hdfimport.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimport_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdfimport-hdfimport.obj -MD -MP -MF "$(DEPDIR)/hdfimport-hdfimport.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdfimport-hdfimport.obj `if test -f 'hdfimport.c'; then $(CYGPATH_W) 'hdfimport.c'; else $(CYGPATH_W) '$(srcdir)/hdfimport.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdfimport-hdfimport.Tpo" "$(DEPDIR)/hdfimport-hdfimport.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdfimport-hdfimport.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfimport.c' object='hdfimport-hdfimport.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdfimport-hdfimport.Po' tmpdepfile='$(DEPDIR)/hdfimport-hdfimport.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimport_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdfimport-hdfimport.obj `if test -f 'hdfimport.c'; then $(CYGPATH_W) 'hdfimport.c'; else $(CYGPATH_W) '$(srcdir)/hdfimport.c'; fi`
-
-hdfimporttest-hdfimporttest.o: hdfimporttest.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimporttest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdfimporttest-hdfimporttest.o -MD -MP -MF "$(DEPDIR)/hdfimporttest-hdfimporttest.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdfimporttest-hdfimporttest.o `test -f 'hdfimporttest.c' || echo '$(srcdir)/'`hdfimporttest.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdfimporttest-hdfimporttest.Tpo" "$(DEPDIR)/hdfimporttest-hdfimporttest.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdfimporttest-hdfimporttest.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfimporttest.c' object='hdfimporttest-hdfimporttest.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdfimporttest-hdfimporttest.Po' tmpdepfile='$(DEPDIR)/hdfimporttest-hdfimporttest.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimporttest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdfimporttest-hdfimporttest.o `test -f 'hdfimporttest.c' || echo '$(srcdir)/'`hdfimporttest.c
-
-hdfimporttest-hdfimporttest.obj: hdfimporttest.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimporttest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdfimporttest-hdfimporttest.obj -MD -MP -MF "$(DEPDIR)/hdfimporttest-hdfimporttest.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o hdfimporttest-hdfimporttest.obj `if test -f 'hdfimporttest.c'; then $(CYGPATH_W) 'hdfimporttest.c'; else $(CYGPATH_W) '$(srcdir)/hdfimporttest.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/hdfimporttest-hdfimporttest.Tpo" "$(DEPDIR)/hdfimporttest-hdfimporttest.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/hdfimporttest-hdfimporttest.Tpo"; exit 1; \
-@am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hdfimporttest.c' object='hdfimporttest-hdfimporttest.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/hdfimporttest-hdfimporttest.Po' tmpdepfile='$(DEPDIR)/hdfimporttest-hdfimporttest.TPo' @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hdfimporttest_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdfimporttest-hdfimporttest.obj `if test -f 'hdfimporttest.c'; then $(CYGPATH_W) 'hdfimporttest.c'; else $(CYGPATH_W) '$(srcdir)/hdfimporttest.c'; fi`
 uninstall-info-am:
 
 ETAGS = etags

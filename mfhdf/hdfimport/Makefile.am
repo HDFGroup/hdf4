@@ -3,12 +3,12 @@
 #############################################################################
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
+INCLUDES=-I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 DEFINES=-DNDEBUG -DHDF
-CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
+AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -17,9 +17,8 @@ CPPFLAGS=$(INCLUDES) $(DEFINES) @CPPFLAGS@
 bin_PROGRAMS = hdfimport
 
 hdfimport_SOURCES = hdfimport.c
-hdfimport_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hdfimport_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdfimport_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimport_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdfimport_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
@@ -28,9 +27,8 @@ hdfimport_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
 check_PROGRAMS = hdfimporttest
 
 hdfimporttest_SOURCES = hdfimporttest.c
-hdfimporttest_CPPFLAGS = ${INCLUDES} ${DEFINES} @CPPFLAGS@
-hdfimporttest_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdfimporttest_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdfimporttest_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdfimporttest
 	sh testutil.sh
