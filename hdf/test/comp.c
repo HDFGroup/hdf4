@@ -340,6 +340,8 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
     int32       read_size;
     VOIDP       out_ptr;
     VOIDP       in_ptr;
+    sp_info_block_t info_block;
+    intn        i;
 
     MESSAGE(8,
             {
@@ -397,7 +399,15 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
       {
           char       *s = HDgetNTdesc(ntype);
 
-          fprintf(stderr, "ERROR: Data from test %d, number type %s differs\n", test_num, s);
+          HDget_special_info(aid, &info_block);
+          fprintf(stderr, "ERROR: Data from test: %d, number type: %s, model type: %d, coder type: %d differs\n", test_num, s, (int)info_block.model_type, (int)info_block.comp_type);
+          MESSAGE(8,
+	  for(i=0; i<read_size*DFKNTsize(ntype); i++) 
+	    {
+	      if(((char *)in_ptr)[i]!=((char *)out_ptr)[i]) 
+		  printf("byte %i differs, written:%d, read in:%d\n",i,((char *)out_ptr)[i],((char *)in_ptr)[i]);
+	    } /* end for */
+	  )
           HDfreespace(s);
           num_errs++;
       }     /* end if */

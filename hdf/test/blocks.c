@@ -290,10 +290,10 @@ test_hblocks()
     CHECK(ret, FAIL, "Hendaccess");
 
     aid = Hstartread(fid, HLCONVERT_TAG, ref);
-    CHECK(aid, FAIL, "Hstartwrite");
+    CHECK(aid, FAIL, "Hstartread");
 
     ret = Hread(aid, 512, inbuf);
-    CHECK(ret, FAIL, "Hwrite");
+    CHECK(ret, FAIL, "Hread");
 
     ret = Hendaccess(aid);
     CHECK(ret, FAIL, "Hendaccess");
