@@ -244,12 +244,12 @@ C Users:    HDF HLL (high-level library) users, utilities, other routines
 C Invokes: d2inimg
 C Remarks: 
 C----------------------------------------------------------------------------*/
-
-      integer function df24nimages(name)
-      character*(*) name
-
-      df24nimages = d2inimg(name, len(name))
-      return
-      end
+C
+C      integer function df24nimages(name)
+C      character*(*) name
+C
+C      df24nimages = d2inimg(name, len(name))
+C      return
+C      end
 
 

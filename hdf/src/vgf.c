@@ -28,9 +28,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "vg.h"
 
-/* Prototypes */
-extern void trimendblanks(char *ss);
-
 /*
    **  remove trailing blanks from a string. input argument is a  string
    **  and *MUST* be a variable and not a constant!! For internal use only!!
@@ -630,9 +627,9 @@ nventsc(HFILEID * f, intf * vgid)
  */
 
 FRETVAL(intf)
-nvlonec(HFILEID * f, intf ** idarray, intf * asize)
+nvlonec(HFILEID * f, intf * idarray, intf * asize)
 {
-    return ((intf) Vlone(*f, (int32 *) *idarray, (int32) *asize));
+    return ((intf) Vlone(*f, (int32 *)idarray, (int32) *asize));
 }
 
 /* ------------------------------------------------------------------ */
@@ -642,9 +639,9 @@ nvlonec(HFILEID * f, intf ** idarray, intf * asize)
  */
 
 FRETVAL(intf)
-nvslonec(HFILEID * f, intf ** idarray, intf * asize)
+nvslonec(HFILEID * f, intf * idarray, intf * asize)
 {
-    return (VSlone(*f, (int32 *) *idarray, (int32) *asize));
+    return (VSlone(*f, (int32 *)idarray, (int32) *asize));
 }
 
 /*

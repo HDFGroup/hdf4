@@ -415,14 +415,6 @@ extern      "C"
 #endif                          /* DF_CAPFNAMES */
 #endif                          /* VG_FNAMES */
 
-extern FRETVAL(intf) nvfstart(HFILEID * f);
-extern FRETVAL(intf) nvfend(HFILEID * f);
-extern FRETVAL(intf) nvsqfnelt(intf * vkey, intf * nelt);
-extern FRETVAL(intf) nvsqfintr(intf * vkey, intf * interlace);
-extern FRETVAL(intf) nvsqfldsc(intf * vkey, _fcd fields);
-extern FRETVAL(intf) nvsqfvsiz(intf * vkey, intf * size);
-extern FRETVAL(intf) nvsqnamec(intf * vkey, _fcd name);
-
     extern      FRETVAL(intf) ndfivopn
                 (_fcd filename, intf _HUGE * acc_mode, intf _HUGE * defdds, intf _HUGE * namelen);
 
@@ -536,10 +528,10 @@ extern FRETVAL(intf) nvsqnamec(intf * vkey, _fcd name);
                 (HFILEID _HUGE * f, intf _HUGE * vgid);
 
     extern      FRETVAL(intf) nvlonec
-                (HFILEID _HUGE * f, intf _HUGE ** idarray, intf _HUGE * asize);
+                (HFILEID _HUGE * f, intf _HUGE * idarray, intf _HUGE * asize);
 
     extern      FRETVAL(intf) nvslonec
-                (HFILEID _HUGE * f, intf _HUGE ** idarray, intf _HUGE * asize);
+                (HFILEID _HUGE * f, intf _HUGE * idarray, intf _HUGE * asize);
 
     extern      FRETVAL(intf) nvhsdc
                 (HFILEID _HUGE * f, _fcd field, uint8 _HUGE * buf, intf _HUGE * n, intf _HUGE * datatype,

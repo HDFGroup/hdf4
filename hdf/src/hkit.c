@@ -17,7 +17,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #include <ctype.h>
-#include <string.h>
 #include "hdf.h"
 #include "hfile.h"
 #include "hkit.h"
@@ -67,7 +66,7 @@ HDc2fstr(char *str, intn len)
     for(i=0; (str[i]); i++)
         /* EMPTY */;
 #else /* OLD_WAY */
-    i=HDstrlen(str);
+    i=HDstrlen(str)+1;
 #endif /* OLD_WAY */
     for (; i < len; i++)
         str[i] = ' ';
@@ -111,7 +110,7 @@ HDf2cstring(_fcd fdesc, intn len)
     for (; i >= 0; i--)
         cstr[i] = str[i];
 #else /* OLD_WAY */
-    HDmemcpy(cstr,str,(size_t)i+1);
+    HDmemcpy(cstr,str,i+1);
 #endif /* OLD_WAY */
     return cstr;
 }   /* HDf2cstring */
@@ -614,7 +613,7 @@ HDgettagsname(uint16 tag)
         if (tag_descriptions[i].tag == tag)
           {
               if (ret == NULL)
-                  ret = (char *) HDstrdup(tag_descriptions[i].name);
+                  ret = (char *) HDstrdup((char *) tag_descriptions[i].name);
               else
                 {
                     char       *t;
@@ -681,18 +680,18 @@ HDgetNTdesc(int32 nt)
 
     /* evil hard-coded values */
     if (nt & DFNT_NATIVE)
-        ret_desc = (char *) HDstrdup(nt_descriptions[0].desc);
+        ret_desc = (char *) HDstrdup((char *) nt_descriptions[0].desc);
     else if (nt & DFNT_CUSTOM)
-        ret_desc = (char *) HDstrdup(nt_descriptions[1].desc);
+        ret_desc = (char *) HDstrdup((char *) nt_descriptions[1].desc);
     else if (nt & DFNT_LITEND)
-        ret_desc = (char *) HDstrdup(nt_descriptions[2].desc);
+        ret_desc = (char *) HDstrdup((char *) nt_descriptions[2].desc);
 
     nt &= DFNT_MASK;    /* mask off unusual format types */
     for (i = 3; i < sizeof(nt_descriptions) / sizeof(nt_descript_t); i++)
         if (nt_descriptions[i].nt == nt)
           {
               if (ret_desc == NULL)
-                  ret_desc = (char *) HDstrdup(nt_descriptions[i].desc);
+                  ret_desc = (char *) HDstrdup((char *) nt_descriptions[i].desc);
               else
                 {
                     char       *t;
