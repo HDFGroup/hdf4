@@ -660,12 +660,12 @@ case "${OS}" in
 #   esac
 # done
 
-                  for arg in -cckr; do
-    case "$HDF_INC" in
-      *$arg*) ;;
-      *)      HDF_INC="${HDF_INC-} $arg";;
-    esac
-  done
+#                 for arg in -cckr; do
+#   case "$HDF_INC" in
+#     *$arg*) ;;
+#     *)      HDF_INC="${HDF_INC-} $arg";;
+#   esac
+# done
 ;;
   ultrix*)	LD_XDR=
 #                 for arg in -DMIPSEL; do
