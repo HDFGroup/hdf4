@@ -5,30 +5,17 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/07/06 22:54:16  mlivin
-Initial revision
+Revision 1.2  1992/07/14 17:50:30  mlivin
+removed Sun pixrect stuff
 
+ * Revision 1.1  1992/07/06  22:54:16  mlivin
+ * Initial revision
+ *
 */
 /* display.c -- contains code for displaying an image using ICR 
  * this code is plucked from hdfrseq.c
  */
 #include "he.h"
-
-#ifdef SUN
-#include <pixrect/pixrect_hs.h>
-
-#ifndef __GNUC__
-#include <memory.h>
-#endif
-
-#define DEVICE "/dev/fb"
-
-struct pixrect
-    *screen,
-    *img = NULL;
-struct mpr_data
-    *stuff;
-#endif /* SUN */
 
 #define SCRX 1152
 #define SCRY 900
@@ -158,45 +145,6 @@ int getSpace()
     return(0);
 }
 
-
-/*
- *  Allocate the space for the pixrect if displaying locally
- */
-#ifdef SUN
-#ifdef PROTOTYPE
-int getPix(void)
-#else
-int getPix()
-#endif
-{
-    /*
-     *  If local expansion is desired, allocate the space for it in the
-     *  pixrect.  Allocation will take place because xsize and ysize will
-     *  be set before calling this routine.
-     *
-     *  only re-allocate if the image changes size.
-     */
-    if (!he_remote && (oldxs != xsize || oldys != ysize)) {
-	oldxs = xsize ; oldys = ysize;
-	if (img)
-	    pr_destroy(img);
-
-	img = mem_create(xsize,ysize,8); /* to size of image */
-	if (factor > 1) {
-	    stuff = mpr_d(img);
-	    wherebig = (char *)stuff->md_image;
-	    /* pointer inside pixrect */
-	}
-	else {
-	    stuff = mpr_d(img);
-	    wheresmall = (char *)stuff->md_image;
-	}
-    }
-    return(0);
-}
-
-#endif
-
 /*************************************************************************/
 /*  largeset
  *  Set up the xfact, yfact, xsize and ysize for expanding the image
@@ -254,14 +202,6 @@ int display(c, x, y, f, l)
 	return HE_FAIL;
     }
 
-#ifdef SUN
-    if (!he_remote) {
-	if (largeSet())	/* set expansion needs */
-	    getSpace();	/* get local space for pre-expansion */
-	getPix();		/* allocate pixrect */
-    }
-#endif
-
     if (he_remote)
 	getSpace();		/* get space for image in mem */
 
@@ -277,78 +217,10 @@ int display(c, x, y, f, l)
     if (he_remote) 
 	rImage(ispal);	/* display remote image with [palette] */
 
-#ifdef SUN
-    else
-	pixImage(ispal);	/* display image on Sun with [palette] */
-#endif
-
     return HE_OK;
 
 }
 
-
-#ifdef SUN
-/***********************************************************************/
-/*  piximage
-*  On the Sun console, display the image as the parameters specify.
-*  Handles centering (center)
-*  Uses xwhere and ywhere, xsize and ysize.
-*  Performs expansion if xfact or yfact > 1
-*  Takes the palette from the rgb[] if asked to.
-*  Will pause if step=1.
-*/
-#ifdef PROTOTYPE
-int pixImage(usepal)
-#else
-int pixImage(usepal)
-    int usepal;
-#endif
-{
-    unsigned char r[256],g[256],b[256],*pp;
-    int j;
-
-/*
-*  compute centering values, based on new size
-*/
-    if (center) {
-	xwhere = (SCRX-xsize)/2;
-	ywhere = (SCRY-ysize)/2;
-	if (xwhere < 0) 
-	    xwhere = 0;
-	if (ywhere < 0)
-	    ywhere = 0;
-    }
-
-
-/*
-*  Do the image expansion, if called for.
-*  The creative pointering makes sure that wherebig and wheresmall are
-*  always set to the correct pointers.  img is always the target pixrect.
-*/
-    if (factor > 1)
-	bigImg(wherebig,wheresmall);
-
-/*
-*  Set the display palette to the new palette.
-*/
-    if (usepal) {
-	pp = rgb;		/* array of rgbrgbrgbrgb */
-	for (j=0; j<256; j++) {
-	    r[j] = *pp++;
-	    g[j] = *pp++;
-	    b[j] = *pp++;
-	}
-
-	pr_putcolormap(screen, 2, 254, &r[2], &g[2], &b[2]);
-    }
-
-/*
-*  Display the image using pixrects
-*/
-    pr_rop(screen,xwhere,ywhere,xsize,ysize,PIX_SRC,img,0,0);
-}
-
-#endif
 
 /*****************************************************************************/
 /*  rimage
