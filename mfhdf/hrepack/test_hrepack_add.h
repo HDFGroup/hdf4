@@ -77,6 +77,10 @@ int add_sd3d(const char *fname,       /* file name */
               comp_coder_t comp_type,  /* compression flag */
               comp_info *comp_info     /* compression structure */ );
 
+int add_empty_sd(int32 sd_id,             /* SD id */
+                 const char* sds_name     /* sds name */
+                );
+
 int add_pal(const char* fname);
 
 int add_sd_szip_all(const char *fname,       /* file name */

@@ -933,6 +933,48 @@ fail:
 }
 
 
+
+/*-------------------------------------------------------------------------
+ * Function: add_empty_sd
+ *
+ * Purpose: utility function to write an empty sds
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int add_empty_sd(int32 sd_id,             /* SD id */
+                 const char* sds_name     /* sds name */
+                )
+
+{
+ int32  sds_id,       /* data set identifier */
+        dim_sds[2],   /* dimension of the data set */
+        rank = 2;     /* rank of the data set array */
+             
+ /* set the size of the SDS's dimension */
+ dim_sds[0] = Y_DIM;
+ dim_sds[1] = X_DIM;
+ 
+ /* create the SDS */
+ if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
+ {
+  printf( "Could not create SDS <%s>\n",sds_name);
+  return FAIL;
+ }
+ 
+ /* terminate access to the SDS */
+ if (SDendaccess (sds_id)==FAIL){
+  printf( "Failed to end SDS <%s>\n", sds_name);
+  return FAIL;
+ } 
+ 
+ return SUCCESS;
+
+}
+
+
+
+
 /*-------------------------------------------------------------------------
  * Function: add_vs
  *

@@ -114,7 +114,8 @@ int sds_verifiy_comp_all(int32 in_comp_type,
                dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
  char          name[MAX_GR_NAME];      /* name of dataset */
  int           info;
- int status;
+ intn          empty_sds;
+ int           status;
 
  /* initialize the sd interface */
  sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
@@ -144,56 +145,72 @@ int sds_verifiy_comp_all(int32 in_comp_type,
    SDend (sd_id);
    return -1;
   }
+
+ /*-------------------------------------------------------------------------
+  * check if the input SDS is empty
+  *-------------------------------------------------------------------------
+  */ 
+  if (SDcheckempty( sds_id, &empty_sds ) == FAIL) {
+   printf( "Failed to check empty SDS <%s>\n", name);
+   SDendaccess (sds_id);
+   SDend (sd_id);
+   return -1;
+  }
  
  /*-------------------------------------------------------------------------
   * retrieve and verify the compression info
   *-------------------------------------------------------------------------
   */
-  
-  comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
-  HDmemset(&comp_info, 0, sizeof(comp_info)) ;
-  
-  status = SDgetcompress(sds_id, &comp_type, &comp_info);
-  if (status < 0) {
-   printf("Warning: can't read compression for SDS <%s>",name);
-  } else {
-  if ( comp_type != in_comp_type )
+
+  if (empty_sds==0 )
   {
-   printf("Error: compression type does not match <%s>",name);
-   SDendaccess (sds_id);
-   SDend (sd_id);
-   return -1;
-  }
-  if (in_comp_type) 
-  {
-   switch (in_comp_type)
-   {
-   case COMP_CODE_NONE:
-    break;
-   case COMP_CODE_RLE:
-    break;
-   case COMP_CODE_SZIP:
-    break;
-   case COMP_CODE_SKPHUFF:
-    info  = comp_info.skphuff.skp_size;
-    break;
-   case COMP_CODE_DEFLATE:
-    info  = comp_info.deflate.level;
-    break;
-   default:
-    printf("Error: Unrecognized compression code %d\n",in_comp_type);
-    break;
-   };
+  
+   comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
+   HDmemset(&comp_info, 0, sizeof(comp_info)) ;
    
-   if ( info != in_comp_info )
-   {
-    printf("Error: compresion information does not match for <%s>",name);
-    SDendaccess (sds_id);
-    SDend (sd_id);
-    return -1;
+   status = SDgetcompress(sds_id, &comp_type, &comp_info);
+   if (status < 0) {
+    printf("Warning: can't read compression for SDS <%s>",name);
+   } else {
+    if ( comp_type != in_comp_type )
+    {
+     printf("Error: compression type does not match <%s>",name);
+     SDendaccess (sds_id);
+     SDend (sd_id);
+     return -1;
+    }
+    if (in_comp_type) 
+    {
+     switch (in_comp_type)
+     {
+     case COMP_CODE_NONE:
+      break;
+     case COMP_CODE_RLE:
+      break;
+     case COMP_CODE_SZIP:
+      break;
+     case COMP_CODE_SKPHUFF:
+      info  = comp_info.skphuff.skp_size;
+      break;
+     case COMP_CODE_DEFLATE:
+      info  = comp_info.deflate.level;
+      break;
+     default:
+      printf("Error: Unrecognized compression code %d\n",in_comp_type);
+      break;
+     };
+     
+     if ( info != in_comp_info )
+     {
+      printf("Error: compresion information does not match for <%s>",name);
+      SDendaccess (sds_id);
+      SDend (sd_id);
+      return -1;
+     }
+    }
    }
-  }
-  }
+
+  } /* empty_sds */
   
   /* terminate access to the current dataset */
   SDendaccess (sds_id);

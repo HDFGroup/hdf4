@@ -113,70 +113,83 @@ int copy_sds(int32 sd_in,
 #if defined(HZIP_DEBUG)
  printf ("\t%s %d\n", path, ref); 
 #endif
+
+
+/*-------------------------------------------------------------------------
+ * check if the input SDS is empty. if so , avoid some operations (mainly read, write)
+ *-------------------------------------------------------------------------
+ */ 
+ if (SDcheckempty( sds_id, &empty_sds ) == FAIL) {
+  printf( "Failed to check empty SDS <%s>\n", path);
+  ret=-1;
+  goto out;
+ }
  
 /*-------------------------------------------------------------------------
  * get the original compression/chunk information from the object 
  *-------------------------------------------------------------------------
  */
- 
- comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
- HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
- stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
- if (stat==FAIL && comp_type_in>0){
-  printf( "Could not get compression information for SDS <%s>\n",path);
-  SDendaccess(sds_id);
-  return -1;
- }
 
- /* get chunk lengths */
- stat=SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
- if (stat==FAIL){
-  printf( "Could not get chunking information for SDS <%s>\n",path);
-  SDendaccess(sds_id);
-  return -1;
- }
-
- /* retrieve the compress information if so */
- if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
+ if (empty_sds==0 )
  {
-  chunk_def_in.comp.comp_type=comp_type_in;
+ 
+  comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
+  HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
+  stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
+  if (stat==FAIL && comp_type_in>0){
+   printf( "Could not get compression information for SDS <%s>\n",path);
+   SDendaccess(sds_id);
+   return -1;
+  }
+  
+  /* get chunk lengths */
+  stat=SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
+  if (stat==FAIL){
+   printf( "Could not get chunking information for SDS <%s>\n",path);
+   SDendaccess(sds_id);
+   return -1;
+  }
+  
+  /* retrieve the compress information if so */
+  if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
+  {
+   chunk_def_in.comp.comp_type=comp_type_in;
+   switch (comp_type_in)
+   {
+   case COMP_CODE_RLE:
+    chunk_def_in.comp.comp_type              = COMP_CODE_RLE;
+    break;
+   case COMP_CODE_SKPHUFF:
+    chunk_def_in.comp.comp_type              = COMP_CODE_SKPHUFF;
+    chunk_def_in.comp.cinfo.skphuff          = c_info_in.skphuff;
+    break;
+   case COMP_CODE_DEFLATE:
+    chunk_def_in.comp.comp_type              = COMP_CODE_DEFLATE;
+    chunk_def_in.comp.cinfo.deflate          = c_info_in.deflate;
+    break;
+   case COMP_CODE_SZIP:
+#ifdef H4_HAVE_LIBSZ
+    chunk_def_in.comp.comp_type              = COMP_CODE_SZIP;
+    chunk_def_in.comp.cinfo.szip             = c_info_in.szip;
+#else
+    printf("Error: SZIP compression is not available <%s>\n",path);
+    SDendaccess(sds_id);
+    return -1;
+#endif
+    break;
+   default:
+    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
+   };
+  }
+  
+  /*-------------------------------------------------------------------------
+  * set the default values to the ones read from the object
+  *-------------------------------------------------------------------------
+  */
+  
+  comp_type   = comp_type_in;
   switch (comp_type_in)
   {
-  case COMP_CODE_RLE:
-   chunk_def_in.comp.comp_type              = COMP_CODE_RLE;
-   break;
-  case COMP_CODE_SKPHUFF:
-   chunk_def_in.comp.comp_type              = COMP_CODE_SKPHUFF;
-   chunk_def_in.comp.cinfo.skphuff          = c_info_in.skphuff;
-   break;
-  case COMP_CODE_DEFLATE:
-   chunk_def_in.comp.comp_type              = COMP_CODE_DEFLATE;
-   chunk_def_in.comp.cinfo.deflate          = c_info_in.deflate;
-   break;
-  case COMP_CODE_SZIP:
-#ifdef H4_HAVE_LIBSZ
-   chunk_def_in.comp.comp_type              = COMP_CODE_SZIP;
-   chunk_def_in.comp.cinfo.szip             = c_info_in.szip;
-#else
-   printf("Error: SZIP compression is not available <%s>\n",path);
-  SDendaccess(sds_id);
-  return -1;
-#endif
-   break;
-  default:
-   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
-  };
- }
-
-/*-------------------------------------------------------------------------
- * set the default values to the ones read from the object
- *-------------------------------------------------------------------------
- */
-
- comp_type   = comp_type_in;
- switch (comp_type_in)
-  {
-
   case COMP_CODE_NBIT:
    printf("Nbit compression not supported in this version <%s>\n",path);
    break;
@@ -187,11 +200,11 @@ int copy_sds(int32 sd_in,
   case COMP_CODE_SZIP:
 #ifdef H4_HAVE_LIBSZ
    info      = c_info_in.szip.pixels_per_block;
- if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
-  szip_mode = EC_MODE;
- } else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
-  szip_mode = NN_MODE;
- }
+   if (c_info_in.szip.options_mask & SZ_EC_OPTION_MASK) {
+    szip_mode = EC_MODE;
+   } else if (c_info_in.szip.options_mask & SZ_NN_OPTION_MASK) {
+    szip_mode = NN_MODE;
+   }
 #else
    printf("SZIP compression not supported in this version <%s>\n",path);
 #endif
@@ -206,127 +219,131 @@ int copy_sds(int32 sd_in,
    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type,path);
    break;
   };
- chunk_flags = chunk_flags_in;
- if ( (HDF_CHUNK) == chunk_flags )
- {
-  for (i = 0; i < rank; i++) 
-   chunk_def.chunk_lengths[i]      = chunk_def_in.chunk_lengths[i];
- }
- else if ( (HDF_CHUNK | HDF_COMP) == chunk_flags )
- {
-  for (i = 0; i < rank; i++) {
-   chunk_def.chunk_lengths[i]      = chunk_def_in.chunk_lengths[i];
-   chunk_def.comp.chunk_lengths[i] = chunk_def_in.chunk_lengths[i];
-  }
-  chunk_def.comp.comp_type=comp_type_in;
-  switch (comp_type_in)
+  chunk_flags = chunk_flags_in;
+  if ( (HDF_CHUNK) == chunk_flags )
   {
-  case COMP_CODE_RLE:
-   chunk_def.comp.comp_type              = COMP_CODE_RLE;
-   break;
-  case COMP_CODE_SKPHUFF:
-   chunk_def.comp.comp_type              = COMP_CODE_SKPHUFF;
-   chunk_def.comp.cinfo.skphuff          = c_info_in.skphuff;
-   break;
-  case COMP_CODE_DEFLATE:
-   chunk_def.comp.comp_type              = COMP_CODE_DEFLATE;
-   chunk_def.comp.cinfo.deflate         = c_info_in.deflate;
-   break;
-  case COMP_CODE_SZIP:
+   for (i = 0; i < rank; i++) 
+    chunk_def.chunk_lengths[i]      = chunk_def_in.chunk_lengths[i];
+  }
+  else if ( (HDF_CHUNK | HDF_COMP) == chunk_flags )
+  {
+   for (i = 0; i < rank; i++) {
+    chunk_def.chunk_lengths[i]      = chunk_def_in.chunk_lengths[i];
+    chunk_def.comp.chunk_lengths[i] = chunk_def_in.chunk_lengths[i];
+   }
+   chunk_def.comp.comp_type=comp_type_in;
+   switch (comp_type_in)
+   {
+   case COMP_CODE_RLE:
+    chunk_def.comp.comp_type              = COMP_CODE_RLE;
+    break;
+   case COMP_CODE_SKPHUFF:
+    chunk_def.comp.comp_type              = COMP_CODE_SKPHUFF;
+    chunk_def.comp.cinfo.skphuff          = c_info_in.skphuff;
+    break;
+   case COMP_CODE_DEFLATE:
+    chunk_def.comp.comp_type              = COMP_CODE_DEFLATE;
+    chunk_def.comp.cinfo.deflate         = c_info_in.deflate;
+    break;
+   case COMP_CODE_SZIP:
 #ifdef H4_HAVE_LIBSZ
-   chunk_def.comp.comp_type              = COMP_CODE_SZIP;
-   chunk_def.comp.cinfo.szip             = c_info_in.szip;
+    chunk_def.comp.comp_type              = COMP_CODE_SZIP;
+    chunk_def.comp.cinfo.szip             = c_info_in.szip;
 #else
-   printf("Error: SZIP compression not available in %d <%s>\n",comp_type_in,path);
+    printf("Error: SZIP compression not available in %d <%s>\n",comp_type_in,path);
 #endif
-   break;
-  default:
-   printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
-  };
- }
+    break;
+   default:
+    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,path);
+   };
+  }
 
-/*-------------------------------------------------------------------------
- * get the compression/chunk information of this object from the table
- * translate to usable information
- * this is done ONLY for the second trip inspection 
- *-------------------------------------------------------------------------
- */
- 
- /* check inspection mode */
- if ( options->trip>0 ) 
- {
-  have_info = 
-  options_get_info(options,      /* global options */
-                   &chunk_flags, /* chunk flags OUT */
-                   &chunk_def,   /* chunk definition OUT */
-                   &info,        /* compression information OUT */
-                   &szip_mode,   /* compression information OUT */
-                   &comp_type,   /* compression type OUT  */
-                   rank,         /* rank of object IN */
-                   path,         /* path of object IN */
-                   1,            /* number of GR image planes (for SZIP), IN */
-                   dimsizes,     /* dimensions (for SZIP), IN */
-                   dtype         /* numeric type ( for SZIP), IN */
-                    );
-  if (have_info==FAIL)
-   comp_type=COMP_CODE_NONE;
- } /* check inspection mode */
-
-
-/*-------------------------------------------------------------------------
- * get size before printing
- *-------------------------------------------------------------------------
- */
-
- /* compute the number of the bytes for each value. */
- numtype = dtype & DFNT_MASK;
- eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-
- /* set edges of SDS */
- nelms=1;
- for (j = 0; j < rank; j++) {
-  nelms   *= dimsizes[j];
-  edges[j] = dimsizes[j];
-  start[j] = 0;
- }
-
-/*-------------------------------------------------------------------------
- * check for maximum number of chunks treshold
- *-------------------------------------------------------------------------
- */
- if ( options->trip>0 ) 
- {
-  int count=1, nchunks;
-  int maxchunk=INT_MAX;
-  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+  
+  /*-------------------------------------------------------------------------
+  * get the compression/chunk information of this object from the table
+  * translate to usable information
+  * this is done ONLY for the second trip inspection 
+  *-------------------------------------------------------------------------
+  */
+  
+  /* check inspection mode */
+  if ( options->trip>0 ) 
   {
-   for (j = 0; j < rank; j++) {
-    count   *= chunk_def.chunk_lengths[j];
-   }
-   nchunks=nelms/count;
-   if (nchunks>maxchunk){
-    printf("Warning: number of chunks is %d (greater than %d). Not chunking <%s>\n",
-    nchunks,maxchunk,path);
-    chunk_flags=HDF_NONE;
+   have_info = 
+    options_get_info(options,      /* global options */
+    &chunk_flags, /* chunk flags OUT */
+    &chunk_def,   /* chunk definition OUT */
+    &info,        /* compression information OUT */
+    &szip_mode,   /* compression information OUT */
+    &comp_type,   /* compression type OUT  */
+    rank,         /* rank of object IN */
+    path,         /* path of object IN */
+    1,            /* number of GR image planes (for SZIP), IN */
+    dimsizes,     /* dimensions (for SZIP), IN */
+    dtype         /* numeric type ( for SZIP), IN */
+    );
+   if (have_info==FAIL)
+    comp_type=COMP_CODE_NONE;
+  } /* check inspection mode */
+  
+  
+  /*-------------------------------------------------------------------------
+   * get size before printing
+   *-------------------------------------------------------------------------
+   */
+  
+  /* compute the number of the bytes for each value. */
+  numtype = dtype & DFNT_MASK;
+  eltsz = DFKNTsize(numtype | DFNT_NATIVE);
+  
+  /* set edges of SDS */
+  nelms=1;
+  for (j = 0; j < rank; j++) {
+   nelms   *= dimsizes[j];
+   edges[j] = dimsizes[j];
+   start[j] = 0;
+  }
+  
+ /*-------------------------------------------------------------------------
+  * check for maximum number of chunks treshold
+  *-------------------------------------------------------------------------
+  */
+  if ( options->trip>0 ) 
+  {
+   int count=1, nchunks;
+   int maxchunk=INT_MAX;
+   if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+   {
+    for (j = 0; j < rank; j++) {
+     count   *= chunk_def.chunk_lengths[j];
+    }
+    nchunks=nelms/count;
+    if (nchunks>maxchunk){
+     printf("Warning: number of chunks is %d (greater than %d). Not chunking <%s>\n",
+      nchunks,maxchunk,path);
+     chunk_flags=HDF_NONE;
+    }
    }
   }
- }
-
-
-/*-------------------------------------------------------------------------
- * check for objects too small
- *-------------------------------------------------------------------------
- */
- if ( have_info==1 && options->trip>0  && nelms*eltsz<options->threshold )
- {
-  /* reset to the original values . we don't want to uncompress if it was */
-  chunk_flags=chunk_flags_in;
-  comp_type=comp_type_in;
-  if (options->verbose) {
-   printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
-    options->threshold,path);
+  
+  
+  /*-------------------------------------------------------------------------
+  * check for objects too small
+  *-------------------------------------------------------------------------
+  */
+  if ( have_info==1 && options->trip>0  && nelms*eltsz<options->threshold )
+  {
+   /* reset to the original values . we don't want to uncompress if it was */
+   chunk_flags=chunk_flags_in;
+   comp_type=comp_type_in;
+   if (options->verbose) {
+    printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
+     options->threshold,path);
+   }
   }
- }
+  
+
+ } /* empty_sds */
 
 /*-------------------------------------------------------------------------
  * print the PATH, COMP and CHUNK information
@@ -360,7 +377,7 @@ int copy_sds(int32 sd_in,
  */
  
  /* check inspection mode */
- if ( options->trip>0 ) 
+ if ( options->trip>0 && empty_sds==0) 
  {
   switch(comp_type)
   {
@@ -382,10 +399,6 @@ int copy_sds(int32 sd_in,
    goto out;
   }
  } /* check inspection mode */
-
-
-
- 
 
 /*-------------------------------------------------------------------------
  * if we are in first trip inspection mode, exit, after printing the information
@@ -420,89 +433,83 @@ int copy_sds(int32 sd_in,
  *-------------------------------------------------------------------------
  */
 
- /* set chunk */
- if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
+ if (empty_sds==0 )
  {
-  if (SDsetchunk (sds_out, chunk_def, chunk_flags)==FAIL)
+  
+  /* set chunk */
+  if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
   {
-   printf( "Error: Failed to set chunk dimensions for <%s>\n", path);
-   ret=-1;
-   goto out;
-  }
-
- }
-
-/*-------------------------------------------------------------------------
- * set compression
- *
- * COMP_CODE_RLE       -> simple RLE encoding
- * COMP_CODE_SKPHUFF   -> Skipping huffman encoding
- * COMP_CODE_DEFLATE   -> gzip 'deflate' encoding
- *-------------------------------------------------------------------------
- */
-   
- /* use compress without chunk-in */
- else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)  
- {
- if ( nelms*eltsz<options->threshold )
- {
-  /* reset to the original values . we don't want to uncompress if it was */
-    comp_type=COMP_CODE_NONE;
-  if (options->verbose) {
-   printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
-    options->threshold,path);
-  } 
-  } else  {
-
-  /* setup compression factors */
-  switch(comp_type) 
-  {
-  case COMP_CODE_SZIP:
-   if (set_szip (info,szip_mode,&c_info)==FAIL)
+   if (SDsetchunk (sds_out, chunk_def, chunk_flags)==FAIL)
    {
-    comp_type=COMP_CODE_NONE;
+    printf( "Error: Failed to set chunk dimensions for <%s>\n", path);
+    ret=-1;
+    goto out;
    }
-   break;
-  case COMP_CODE_RLE:         
-   break;
-  case COMP_CODE_SKPHUFF:     
-   c_info.skphuff.skp_size = info;
-   break;
-  case COMP_CODE_DEFLATE:
-   c_info.deflate.level = info;
-   break;
-  case COMP_CODE_NBIT:
-   comp_type = COMP_CODE_NONE;  /* not supported in this version */
-   break;
-  default:
-   printf( "Error: Unrecognized compression code %d\n", comp_type);
+   
   }
-
-  if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
+  
+  /*-------------------------------------------------------------------------
+  * set compression
+  *
+  * COMP_CODE_RLE       -> simple RLE encoding
+  * COMP_CODE_SKPHUFF   -> Skipping huffman encoding
+  * COMP_CODE_DEFLATE   -> gzip 'deflate' encoding
+  *-------------------------------------------------------------------------
+  */
+  
+  /* use compress without chunk-in */
+  else if ( chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE)  
   {
-   printf( "Error: Failed to set compression for <%s>\n", path);
-   ret=-1;
-   goto out;
+   if ( nelms*eltsz<options->threshold )
+   {
+    /* reset to the original values . we don't want to uncompress if it was */
+    comp_type=COMP_CODE_NONE;
+    if (options->verbose) {
+     printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
+      options->threshold,path);
+    } 
+   } else  {
+    
+    /* setup compression factors */
+    switch(comp_type) 
+    {
+    case COMP_CODE_SZIP:
+     if (set_szip (info,szip_mode,&c_info)==FAIL)
+     {
+      comp_type=COMP_CODE_NONE;
+     }
+     break;
+    case COMP_CODE_RLE:         
+     break;
+    case COMP_CODE_SKPHUFF:     
+     c_info.skphuff.skp_size = info;
+     break;
+    case COMP_CODE_DEFLATE:
+     c_info.deflate.level = info;
+     break;
+    case COMP_CODE_NBIT:
+     comp_type = COMP_CODE_NONE;  /* not supported in this version */
+     break;
+    default:
+     printf( "Error: Unrecognized compression code %d\n", comp_type);
+    }
+    
+    if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
+    {
+     printf( "Error: Failed to set compression for <%s>\n", path);
+     ret=-1;
+     goto out;
+    }
+   }
   }
-  }
- }
+  
 
 
-/*-------------------------------------------------------------------------
- * check if the input SDS is empty. if so , do not read its data and write to new one
- *-------------------------------------------------------------------------
- */ 
- if (SDcheckempty( sds_id, &empty_sds ) == FAIL) {
-  printf( "Failed to check empty SDS <%s>\n", path);
-  ret=-1;
-  goto out;
- }
 /*-------------------------------------------------------------------------
  * read sds and write new one
  *-------------------------------------------------------------------------
  */
- if (empty_sds==0 )
- {
+
   /* alloc */
   if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
    printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
@@ -523,6 +530,8 @@ int copy_sds(int32 sd_in,
    ret=-1;
    goto out;
   }
+
+
  } /* empty_sds */
 
 /*-------------------------------------------------------------------------

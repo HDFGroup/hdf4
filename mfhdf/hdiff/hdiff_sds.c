@@ -211,7 +211,7 @@ int diff_sds(const char  *fname1,
   nfound=FAIL;
   goto out;
  }
- if (empty1_sds==1 ) {
+ if (empty1_sds==1 && opt->verbose) {
   printf( "Empty SDS <%s>\n", sds1_name);
   goto out;
  }
@@ -220,7 +220,7 @@ int diff_sds(const char  *fname1,
   nfound=FAIL;
   goto out;
  }
- if (empty2_sds==1 ) {
+ if (empty2_sds==1 && opt->verbose) {
   printf( "Empty SDS <%s>\n", sds2_name);
   goto out;
  }
