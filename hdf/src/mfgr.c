@@ -445,6 +445,9 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nii8=%ld, nvg=%ld\n",FUNC,(lon
                 int32 img_tag,img_ref;  /* image tag/ref in the Vgroup */
                 char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
                 
+#ifdef QAK
+printf("%s: nobjs=%d\n",FUNC,(int)nobjs);
+#endif /* QAK */
                 for(i=0; i<nobjs; i++)
                   {
                       if(Vgettagref(gr_key,i,&grp_tag,&grp_ref)==FAIL)
@@ -453,16 +456,31 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nii8=%ld, nvg=%ld\n",FUNC,(lon
                       switch(grp_tag)
                         {
                             case DFTAG_VG:  /* should be an image */
+#ifdef QAK
+printf("%s: DFTAG_VG, ref=%u\n",FUNC,(unsigned)grp_ref);
+#endif /* QAK */
                                 if((img_key=Vattach(file_id,grp_ref,"r"))!=FAIL)
                                   {
+#ifdef QAK
+printf("%s: img_key=%d\n",FUNC,(int)img_key);
+#endif /* QAK */
                                     if(Vgetclass(img_key,textbuf)!=FAIL)
                                       {
+#ifdef QAK
+printf("%s: class=%s\n",FUNC,textbuf);
+#endif /* QAK */
                                         if(!HDstrcmp(textbuf,RI_NAME))
                                           { /* found an image, whew! */
+#ifdef QAK
+printf("%s: Vntagrefs=%d\n",FUNC,(int)Vntagrefs(img_key));
+#endif /* QAK */
                                             for(j=0; j<Vntagrefs(img_key); j++)
                                               {
                                                   if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
                                                       continue;
+#ifdef QAK
+printf("%s: img_tag=%u, img_ref=%u\n",FUNC,(unsigned)img_tag,(unsigned)img_ref);
+#endif /* QAK */
                                                   if(img_tag==DFTAG_RI)
                                                     {
                                                         img_info[curr_image].grp_tag=(uint16)grp_tag;
@@ -541,6 +559,9 @@ printf("%s: nri=%ld, nci=%ld, nri8=%ld, nci8=%ld, nii8=%ld, nvg=%ld\n",FUNC,(lon
                                 break;
 
                             default:
+#ifdef QAK
+printf("%s: tag=%u, ref=%u\n",FUNC,(unsigned)grp_tag,(unsigned)grp_ref);
+#endif /* QAK */
                                 break;
                         } /* end switch */
                   } /* end for */
@@ -642,7 +663,7 @@ for (i = 0; i < curr_image; i++)
               for (j = i+1; j < curr_image; j++)
                 {
                     if(img_info[j].img_tag!=DFTAG_NULL)
-                        if (img_info[i].offset == img_info[j].offset)
+                        if (img_info[i].offset!= INVALID_OFFSET && img_info[i].offset == img_info[j].offset)
                           {
                               /* eliminate the oldest tag from the match */
                               switch(img_info[i].img_tag) {
@@ -1901,6 +1922,19 @@ printf("%s: check 2.0, GroupID=%ld\n",FUNC,(long)GroupID);
     if(img_ptr->img_tag==DFTAG_NULL)
         img_ptr->img_tag=DFTAG_RI;
 
+    /* If we don't have a ref for the image, generate a new one */
+    if(img_ptr->img_ref==DFREF_WILDCARD) {
+        int32 temp_aid;
+
+        /* Assign reference number for image */
+        img_ptr->img_ref=Htagnewref(hdf_file_id,img_ptr->img_tag);
+
+        /* Make certain that the tag/ref pair is allocated in the file */
+        if((temp_aid=Hstartaccess(hdf_file_id,img_ptr->img_tag,img_ptr->img_ref,DFACC_WRITE))==FAIL)
+            HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
+        Hendaccess(temp_aid);
+    } /* end if */
+
     /* add image data tag/ref to RIG */
     if (Vaddtagref(GroupID, (int32)img_ptr->img_tag, (int32)img_ptr->img_ref) == FAIL)
         HGOTO_ERROR(DFE_CANTADDELEM, FAIL);
@@ -2813,8 +2847,13 @@ printf("%s: pixel_mem_size=%u, pixel_disk_size=%u\n",FUNC,(unsigned)pixel_mem_si
 
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
         new_image=TRUE;
-    else
-        new_image=FALSE;
+    else {
+        /* Check if the actual image data is in the file yet, or if just the tag & ref are known */
+        if(Hlength(ri_ptr->gr_ptr->hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref)>0)
+            new_image=FALSE;
+        else
+            new_image=TRUE;
+    } /* end else */
 
 #ifdef QAK
 printf("%s: check 4\n",FUNC);
@@ -3241,8 +3280,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32 stride[2];            /* pointer to the stride array */
     intn solid_block=FALSE;     /* whether the image data is a solid block of data */
-    intn whole_image=FALSE;     /* whether we are writing out the whole image */
-    void * *img_data;            /* pointer to the converted image data to write */
+    intn whole_image=FALSE;     /* whether we are reading in the whole image */
+    intn image_data=FALSE;      /* whether there is actual image data or not */
+    void * *img_data;           /* pointer to the converted image data to write */
     uintn pixel_disk_size;      /* size of a pixel on disk */
     uintn pixel_mem_size;       /* size of a pixel in memory */
     intn convert;               /* true if machine NT != NT to be written */
@@ -3318,7 +3358,19 @@ fprintf(stderr,"%s: pixel_disk_size=%d\n",FUNC,(int)pixel_disk_size);
 fprintf(stderr,"%s: ri_ptr->img_tag=%d, ri_ptr->img_ref=%d\n",FUNC,(int)ri_ptr->img_tag,(int)ri_ptr->img_ref);
 fprintf(stderr,"%s: convert=%d\n",FUNC,(int)convert);
 #endif /* QAK */
+
+    /* Check if the image data is in the file */
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+        image_data=FALSE;
+    else {
+        /* Check if the actual image data is in the file yet, or if just the tag & ref are known */
+        if(Hlength(ri_ptr->gr_ptr->hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref)>0)
+            image_data=TRUE;
+        else
+            image_data=FALSE;
+    } /* end else */
+
+    if(image_data==FALSE)
       { /* Fake an image for the user by using the pixel fill value */
           void * fill_pixel;         /* converted value for the filled pixel */
           int32 at_index;
@@ -3563,6 +3615,12 @@ intn GRendaccess(int32 riid)
         Hendaccess(ri_ptr->img_aid);
         ri_ptr->img_aid=0;
       } /* end if */
+
+#ifdef QAK
+printf("%s: ri_ptr->ri_ref=%u, ri_ptr->rig_ref=%u\n",FUNC,(unsigned)ri_ptr->ri_ref,(unsigned)ri_ptr->rig_ref);
+printf("%s: ri_ptr->img_tag=%u, ri_ptr->img_ref=%u\n",FUNC,(unsigned)ri_ptr->img_tag,(unsigned)ri_ptr->img_ref);
+printf("%s: ri_ptr->meta_mod=%u, ri_ptr->data_mod=%u\n",FUNC,(unsigned)ri_ptr->meta_modified,(unsigned)ri_ptr->data_modified);
+#endif /* QAK */
 
     /* Delete the atom for the RI ID */
     if(NULL==HAremove_atom(riid))
