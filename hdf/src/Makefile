@@ -118,7 +118,7 @@ SHAR=shar
 ARCHIVE=hdf.shar
 
 #include the source file definitions
-.include "src.inc"
+include src.inc
 
 .c.o:
 	$(CC) $(CFLAGS) $(ALLINC) -c $<
