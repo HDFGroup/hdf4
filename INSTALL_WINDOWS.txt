@@ -1,0 +1,331 @@
+    Installation instructions for Windows platforms.
+    -----------------------------------------------
+
+      Install HDF4.2 Release 0 on Windows Windows 2000 and Windows XP
+
+The instructions which follow assume that you will be using one of 
+the 'zip' files that we provide, either the binary code release
+(HDF42r0.zip) or the source code release (HDF42r0s.zip).
+
+In building HDF from source code you may select between 
+two build environment options ( with Fortran or without Fortran support
+depending on your application and environment needs ).  
+
+The following sections discuss in details installation procedures. 
+
+
+Building from Binary Code Release (HDF42r0.zip)
+===============================================
+To install the HDFand MFHDF libraries and utilities, 
+it is assumed that you have done the following:
+      
+
+      1. Create a directory structure to unpack the library. For 
+      example: 
+
+	    c:\					(any drive)
+           MyHDFstuff\				(any folder name)
+
+      2. Copy the binary archive (HDF42r0.zip) 
+      to that directory 
+      and unpack it by running WinZip on HDF42r0.zip (the binary archive).
+      This should create a directory called 'HDF42r0' which 
+      contains the following files and directories.
+
+            c:\MyHDFstuff\HDF42r0\lib             ( Single-threaded static
+                                                    versions of HDF and MFHDF
+                                                    libraries  with Fortran
+                                                    or without Fortran support )
+            c:\MyHDFstuff\HDF42r0\dlllib          ( Multi-threaded DLL import
+                                                    HDF and MFHDF  libraries 
+                                                    and DLL files with Fortran
+                                                    or no Fortran support )
+            c:\MyHDFstuff\HDF42r0\include         ( include files )
+            c:\MyHDFstuff\HDF42r0\bin             ( utilities )
+            c:\MyHDFstuff\HDF42r0\release_notes   ( release notes )
+            c:\MyHDFstuff\HDF42r0\install_NT_98   ( this file)
+
+      
+      3. If you are building an application that uses the HDF libraries 
+         the following locations will need to be specified for locating
+         header files and linking in the HDF libraries:
+ 
+            C:\MyHDFstuff\HDF42r0\lib or C:\MyHDFstuff\HDF42r0\dlllib
+            C:\MyHDFstuff\HDF42r0\include
+
+
+
+Note: The ws2_32.lib needs to linked with your executable if using the static 
+      mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++
+      directory under the lib folder.
+
+
+Building from Source Code Release (HDF42r0s.zip)
+================================================
+
+STEP I:  Preconditions
+
+To build the HDF and MFHDF libraries ( single-threaded static or
+multi-threaded DLL import libraries) and utilities, 
+it is assumed that you have done the following:
+      
+      1. Installed MicroSoft Developer Studio, and Visual C++ 6.0.
+         Visual Fortran 6.0 is needed if you are going to build the
+         full HDF Library with Fortran support.
+
+      2. Set up a directory structure to unpack the library. For 
+      example: 
+
+	    c:\					(any drive)
+           MyHDFstuff\				(any folder name)
+
+      3. Copy the source distribution archive to that directory 
+      and unpack it using the appropriate archiver options to
+      create a directory  hierarchy.
+         
+      Run WinZip on HDF42r0s.zip (the entire source tree).
+      This should create a directory called 'HDF42r0' which 
+      contains several files and directories.
+      
+Note: If you are building from the UNIX source code, then you will
+      need to replace the jconfig.h and netcdf.h file as follows
+      ( this assumes that the HDF Library tree resides 
+      under HDF42r0 directory ):
+ 
+      copy C:\MyHDFstuff\HDF42r0\hdf\jpeg\config\jwin32.h
+                                 C:\MyHDFstuff\HDF42r0\hdf\jpeg\jconfig.h
+      copy C:\MyHDFstuff\HDF42r0\mfhdf\libsrc\win32cdf.h
+                                 C:\MyHDFstuff\HDF42r0\mfhdf\libsrc\netcdf.h
+
+You do not need to do this if you are using the HDF42r0s.zip file! 
+
+STEP II: Select Installation type and Build.
+
+You may select one of 2 ways to build the HDF libraries and 
+utilities, depending on your environment and application needs.
+
+Option I, (select Win32.nofortran.zip)
+This is the "NOFORTRAN" configuration : It builds debug and release single-threaded
+and multi-threaded versions of the HDF libraries, tests, and utilities. 
+There is no Fortran support.
+
+
+Option II, (select Win32.zip)
+This is "WITH FORTRAN support" configuration : it is the same as above but with
+Fortran support. 
+
+
+
+STEP III: Building the Libraries, tests and utilities.
+Note that the instructions are the same for both Options I and II. 
+
+
+	1. Unpack Win32.nofortran.zip or Win32.zip in 
+           directory HDF42r0\. 
+         
+        2. Invoke Microsoft Visial C++ 6.0, go to "File" and select
+           the "Open Workspace" option. 
+           Then open the c:\myHDFstuff\HDF42r0\all.dsw workspace. 
+
+        3. Select "Build", then Select "Set Active Configuration".
+
+           On Windows platform select as the active configuration
+
+           "all -- Win32 Debug" to build debug versions of single-threaded
+                                static libraries, tests and utilities and
+                                multi-threaded libraries and tests.
+            or
+ 
+           "all -- Win32 Release" to build release versions of single-threaded
+                                static libraries, tests and utilities and
+                                multi-threaded libraries and tests.
+
+
+           Select "Build" and "Build all.exe" to
+           build the corresponding version of the HDF42r0 library.
+           If you are building from the Win32.zip archive, 
+           you will see that the Digital Visual Fortran compiler is invoked
+           by the Visual C++ Development environment in compiling the fortran code.
+
+           NOTE: "all" is a dummy target. You will get a link error when   
+           "all.exe." is built : 
+                 LINK: error LNK2001: unresolved external symbol _WinMainCRTStartup.....
+                 all.exe - 2 error(s), ....
+
+           Warning messages can be ignored. The "all.exe" is never created, 
+           so it is OK.
+
+           When the debug build is done the directories listed 
+           below will contain the following files:
+
+           c:\MyHDFstuff\HDF42r0\Windows\bin\debug - 
+
+             utilities, statically linked with the single-threaded libraries.
+
+           c:\MyHDFstuff\HDF42r0\Windows\lib\debug\singlethreaded -
+
+              HD420d.lib - HDF static library (inludes JPEG and GZIP libraries) 
+              HM420d.lib - MFHDF static library
+
+           c:\MyHDFstuff\HDF42r0\Windows\lib\debug\multithreaded -
+
+              HD420md.lib - HDF multi-threaded DLL import library 
+                            (inludes JPEG and GZIP libraries)
+              HM420md.lib - MFHDF multi-threaded DLL import library 
+
+           c:\MyHDFstuff\HDF42r0\Windows\DLL\debug
+
+               HD420md.DLL - HDF DLL
+               HM420md.DLL - MFHDF DLL
+
+           When the release build is done the directories listed
+           below will contain the following files:
+ 
+           c:\MyHDFstuff\HDF42r0\Windows\bin\release - 
+ 
+             utilities, statically linked with the single-threaded libraries.
+ 
+           c:\MyHDFstuff\HDF42r0\Windows\lib\release\singlethreaded - 
+ 
+              HD420.lib - HDF static library (inludes JPEG and GZIP libraries)
+              HM420.lib - MFHDF static library
+
+           c:\MyHDFstuff\HDF42r0\Windows\lib\release\multithreaded - 
+ 
+              HD420m.lib - HDF multi-threaded DLL import library 
+                            (inludes JPEG and GZIP libraries)
+              HM420m.lib - MFHDF multi-threaded DLL import library
+ 
+           c:\MyHDFstuff\HDF42r0\Windows\DLL\release 
+
+               HD420m.DLL - HDF DLL
+               HM420m.DLL - MFHDF DLL
+
+
+Note: The ws2_32.lib needs to linked with your executable if using the static 
+      mfhdf library.  The ws2_32.lib can be found in your Microsoft Visual C++
+      directory under the lib folder.
+
+		
+STEP IV:   TESTING THE BUILD
+
+       In a command prompt window run the test batch file which
+       resides in the HDF42r0 directory to make sure that the libraries
+       were built correctly.
+
+       Set the path to include the DLL files or copy the files to the system
+       directory.
+
+       Then run Win32debugtst.bat to test debug version or
+       Win32releasetst.bat to test release version.  
+        
+
+STEP V:  INSTALLATION
+
+       In the command prompt window run the install_debug.bat file to install
+       the debug version. This file will create four directories under 
+       the HDF42r0 directory and copy over corresponding files:
+
+           bindbg     - utilties 
+           libdbg     - static libraries
+           dlllibdbg  - multi-threaded libraries and DLLs
+           include    - include files 
+
+       In the command prompt window run install_release.bat file to install 
+       release version. This file will create four directories under HDF42r0 
+       directory and copy corresponding files: 
+ 
+           bin     - utilties 
+           lib     - static libraries 
+           dlllib  - multi-threaded libraries and DLLs 
+           include - include files
+ 
+Note:  There is an error in the debug version of the hdp tool.  It will show an
+       alert box with the error and 3 buttons.  This is a known problem.  The release
+       version is fine.
+
+STEP VI:  
+
+BUILDING AN APPLICATION USING THE HDF LIBRARY - SOME HELPFUL POINTERS
+=====================================================================
+
+If you are building an application that uses the HDF library 
+the following locations will need to be specified for locating
+header files and linking in the HDF libraries:
+ 
+            <top-level HDF directory>\lib
+            <top-level HDF directory>\dlllib
+            <top-level HDF directory>\include
+
+where <top-level HDF directory> may be C:\myHDFstuff\dev or C:\MyHDFstuff\HDF42r0\
+
+
+Using Microsoft Visual C++ version 6.x:
+
+Under Tools->Options, select the folder, Directories:
+   Under "Show directories for", select "Include files".
+   Add the following directories:
+      C:<path to HDF includes>\include  
+
+Under "Show directories for", select "Library files":
+   Add the following directories:
+      C:<path to HDF libs>\lib        
+
+Under Project->Settings, select folder, Link:
+   Add the following libraries to the beginning of the list of
+   Object/Library Modules:
+         HD420.lib HM420.lib (single-threaded release version)
+         HD420d.lib HM420d.lib (single-threaded debug version)
+
+         HD420m.lib HM420m.lib (multi-threaded release version)
+         HD420md.lib HM420md.lib (multi-threaded debug version)
+
+
+MORE HELPFUL POINTERS
+=====================
+(as described in terms of installing the  nofortran configuration)
+
+Here are some notes that may be of help if you are not familiar
+with using the Visual C++ Development Environment.
+
+Project name and location issues: 
+         The files in Win32.zip  and Win32.nofortran.zip must end up 
+         in the HDF42r0\ directory installed by HDF42r0s.zip
+
+         If you must install all.dsw and all.dsp in 
+         another directory, relative to HDF42r0\ , you will be asked to
+	 locate the above 5 sub-project files, when you open the
+	 project all.dsw.
+	 
+	 If you want to rename all (the entire project),
+	 you will need to modify two files
+	 all.dsw and all.dsp as text
+	 (contrary to the explicit warnings in the files).
+
+	 You can also modify all.dsw and all.dsp
+	 as text, to allow these 2 files to be installed
+	 in another directory.
+
+
+
+  Settings... details:
+  If you create your own project, the necessary settings can be
+  read from the all.dsp file(as text), or from the
+  Project Settings in the Developer Studio project settings 
+dialog.
+
+    Project
+	  Settings
+	      C/C++
+		  Category
+		     PreProcessor
+			 Code Generation
+			    Use run-time Library
+				   These are all set to use 
+                                      Single-Threaded
+				   or Single-Threaded debug
+                                   or Multi-Threaded
+                                   or Multi-Threaded debug
+
+
+

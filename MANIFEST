@@ -8,7 +8,8 @@
 
 ./COPYING
 ./INSTALL
-./INSTALL-4.2r0-Beta
+./INSTALL_WINDOWS.txt
+./INSTALL_old
 ./Makefile.am
 ./Makefile.in
 ./MAKEVMS.COM
