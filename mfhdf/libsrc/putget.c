@@ -1867,9 +1867,11 @@ Void *values ;
         return(-1) ;
 #endif /* !HDF */
         
+#ifdef HDF
 	if(newrecs > 0)
       {
           handle->numrecs += newrecs ;
+	  vp->numrecs += newrecs;
           if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
             {
                 if(!xdr_numrecs(handle->xdrs, handle) )
@@ -1877,6 +1879,7 @@ Void *values ;
                 handle->flags &= ~NC_NDIRTY ;
             }
       }
+#endif
 	return(0) ;
 }
 
