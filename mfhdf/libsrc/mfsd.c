@@ -59,6 +59,11 @@ status = SDisdimval_bwcomp(dimid);
 #include "hfile.h"
 #include "hchunks.h" /* include here for now */
 
+/* for Chunk debugging */
+/*
+#define CHK_DEBUG
+*/
+
 PRIVATE NC_dim * SDIget_dim
     PROTO((NC *handle, int32 id));
 
@@ -3899,8 +3904,9 @@ int32 flags;
                 status = FAIL;
                 goto done;
             }
+
 #ifdef CHK_DEBUG
-    fprintf(stder,"SDsetChunk: (int32) var->shape[%d]=%d\n",i,(int32) var->shape[i]);
+    fprintf(stderr,"SDsetChunk: (int32) var->shape[%d]=%d\n",i,(int32) var->shape[i]);
 #endif
           /* set chunk lengths */
           if (cdims[i] >= 1)
@@ -3921,6 +3927,9 @@ int32 flags;
     /* Set number type size i.e. size of data type */
     chunk[0].nt_size = var->HDFsize;
 
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: var->HDFsize=%d\n",var->HDFsize);
+#endif
     /* allocate space for fill value whose number type is the same as
        the dataset */
     fill_val_len = var->HDFsize;
@@ -3947,6 +3956,9 @@ int32 flags;
           }
       }
 
+#ifdef CHK_DEBUG
+    fprintf(stderr,"SDsetChunk: fill_val=%d\n",*fill_val);
+#endif
 
     /* check to see already special.
        Error if already special since doubly special elements are
