@@ -132,7 +132,12 @@ EXTERN VOID jopen_backing_store PROTO((backing_store_ptr info,
  */
 
 EXTERN VOID jmem_init PROTO((external_methods_ptr emethods));
+
+#ifdef CONVEX
+EXTERN VOID jmem_term PROTO(());
+#else
 EXTERN VOID jmem_term PROTO((VOID));
+#endif
 
 #endif /* JMEMSYS !=MEM_DOS */
 

@@ -182,7 +182,7 @@ static JSAMPARRAY my_colormap;	/* the finished colormap (in YCbCr space) */
 
 
 LOCAL boxptr
-#ifdef PROTOTYPE
+#if defined( PROTOTYPE ) && ! defined( CONVEX )
 find_biggest_color_pop (VOID)
 #else
 find_biggest_color_pop ()
@@ -209,7 +209,7 @@ find_biggest_color_pop ()
 
 
 LOCAL boxptr
-#ifdef PROTOTYPE
+#if defined( PROTOTYPE ) && ! defined( CONVEX )
 find_biggest_volume (VOID)
 #else
 find_biggest_volume ()

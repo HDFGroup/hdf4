@@ -86,7 +86,7 @@ HUFF_TBL * htbl;
 /* Outputting bytes to the file */
 
 LOCAL VOID
-#ifdef PROTOTYPE
+#if defined( PROTOTYPE ) && ! defined( CONVEX )
 flush_bytes (VOID)
 #else
 flush_bytes ()
@@ -156,7 +156,7 @@ int size;
 
 
 LOCAL VOID
-#ifdef PROTOTYPE
+#if defined( PROTOTYPE ) && ! defined( CONVEX )
 flush_bits (VOID)
 #else
 flush_bits ()

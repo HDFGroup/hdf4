@@ -1110,7 +1110,7 @@ big_barray_ptr ptr;
  */
 
 METHODDEF VOID
-#ifdef PROTOTYPE
+#if defined ( PROTOTYPE ) && ! defined ( CONVEX )
 free_all (VOID)
 #else
 free_all ()
