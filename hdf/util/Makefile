@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.5  1992/07/31 21:20:39  chouck
+# Revision 1.6  1992/08/05 21:27:55  chouck
+# Added support for moving utils to HDFBIN
+#
+# Revision 1.5  1992/07/31  21:20:39  chouck
 # Fixed a couple CFLAGS problems
 #
 # Revision 1.3  1992/07/15  21:39:54  sxu
@@ -40,6 +43,7 @@ MACHINE = SUN
 
 HDFLIB = ../lib
 HDFINC = ../include
+HDFBIN = ../bin
 
 CFLAGS = -D$(MACHINE) -I$(HDFINC) 
 
@@ -50,6 +54,8 @@ CFLAGS = -D$(MACHINE) -I$(HDFINC)
 	$(CC) -c $(CFLAGS) -I$(HDFINC) $(HDFLIB)/libdf.a $<
 
 all: hdfed utils
+	-mkdir $(HDFBIN)
+	-cp $(UTILS) hdfed $(HDFBIN)
 
 nofortran: all
 
