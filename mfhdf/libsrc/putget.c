@@ -829,6 +829,10 @@ NC_var    * vp;
 } /* hdf_get_vp_aid */
 
  
+#ifdef CM5
+extern int32 CM_HDFtype;
+#endif
+
 /* --------------------------- hdf_xdr_NCvdata ---------------------------- */
 /*
  *  Read / write 'count' items of contiguous data of type 'type' at 'where'
