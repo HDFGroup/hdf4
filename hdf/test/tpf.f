@@ -41,7 +41,7 @@ C
       character*1 CR
       character pal1(768), pal2(768), ipal(768)
       integer ret, ref 
-      integer*2  ref1, ref2, newref1, newref2
+      integer ref1, ref2, newref1, newref2
       integer i
 
 
