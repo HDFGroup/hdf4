@@ -395,7 +395,7 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
     char        fields[FIELDNAMELENMAX], tempflds[FIELDNAMELENMAX];
     char       *tempPtr, *ptr, string[MAXNAMELEN];
     char        file_name[MAXFNLEN];
-    FILE       *fp;
+    FILE       *fp=NULL;
     int         index_error = 0, dumpall = 0;
     file_type_t  ft;
 
@@ -708,9 +708,6 @@ dvd(dump_info_t * dumpvd_opts, intn curr_arg,
                     flds_match = 1;
                 if (flds_match)
                   {
-                      int32       z, lastItem, count = 0;
-                      
-
                       if (dumpvd_opts->contents == DDATA)
                               {
                                   data_only = 1;

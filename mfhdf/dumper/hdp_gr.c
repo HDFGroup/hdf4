@@ -207,8 +207,6 @@ parse_dumpgr_opts(dump_info_t * dumpgr_opts, intn *curr_arg, intn argc, char *ar
 void 
 do_dumpgr(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 {
-    int32 i;
-    char tempPtr;
     dump_info_t dumpgr_opts;	/* dumpgr options */
     int model = 0;
 
@@ -245,12 +243,10 @@ grdumpfull(dump_info_t * dumpgr_opts, int32 ri_id, file_type_t ft, int32 ncomp, 
 	/* "ncomp" is the number of components in each element of the data 
             set 
 	   "dimsizes[i]" is size of dimension "i". */
-    int32       j, i, ret, rig_ref;
+    int32       ret;
     VOIDP       buf;
     int32       numtype, eltsz, read_nelts;
-    int32       done;			/* number of rows we have done */
     int32       *start, *edge, *stride;
-    intn        count;
 
     if (indent > 65)
       {		/* This block is probably not necessary. */
@@ -314,15 +310,15 @@ static intn
 dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[], 
     int model)   
 {
-    intn        i, ret, isdimvar;
+    intn        i, ret;
     int32       grf_id, gr_id, ri_id, *gr_chosen=NULL;
     int32       num_gr_chosen;
     int32       ncomp, nt, nattr, ndsets, il, nglb_attr;
     int32       j, k, attr_nt, attr_count, attr_buf_size, attr_index;
     char        file_name[MAXFNLEN], name[MAXNAMELEN];
-    char        attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
-    int32       dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
-    FILE       *fp;
+    char        attr_name[MAXNAMELEN];
+    int32       dimsizes[MAXRANK], dimNT[MAXRANK], dimnattr[MAXRANK];
+    FILE       *fp=NULL;
     int32 /* ref , */ index;
     VOIDP       attr_buf;
     char       *nt_desc, *attr_nt_desc;
@@ -645,12 +641,7 @@ dgr(dump_info_t * dumpgr_opts, intn curr_arg, intn argc, char *argv[],
           /*   output data to binary file   */
 
             if (ncomp > 0 && dimsizes[0] != 0)
-                        {
-                            intn        count;
-
-                            ret = grdumpfull(dumpgr_opts, ri_id, ft, ncomp, 
-                                              dimsizes, nt, 16, fp);
-                        }
+                ret = grdumpfull(dumpgr_opts, ri_id, ft, ncomp, dimsizes, nt, 16, fp);
                GRendaccess(ri_id);
              }        /* for ndsets */
             break;

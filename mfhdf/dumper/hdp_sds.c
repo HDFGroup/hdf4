@@ -200,8 +200,6 @@ parse_dumpsds_opts(dump_info_t * dumpsds_opts, intn *curr_arg, intn argc, char *
 void 
 do_dumpsds(intn curr_arg, intn argc, char *argv[], dump_opt_t * glob_opts)
 {
-    int32 i;
-    char tempPtr;
     dump_info_t dumpsds_opts;	/* dumpsds options */
 
     if (glob_opts->help == TRUE)
@@ -369,7 +367,7 @@ dsd(dump_info_t * dumpsds_opts, intn curr_arg, intn argc, char *argv[])
     char        file_name[MAXFNLEN], name[MAXNAMELEN];
     char        attr_name[MAXNAMELEN], dim_nm[MAXNAMELEN];
     int32       dimsizes[MAXRANK], dim_id, dimNT[MAXRANK], dimnattr[MAXRANK];
-    FILE       *fp;
+    FILE       *fp=NULL;
     int32 /* ref , */ index;
     VOIDP       attr_buf;
     char       *nt_desc, *attr_nt_desc;
@@ -687,12 +685,7 @@ i++)
           /*   output data to binary file   */
 
             if (rank > 0 && dimsizes[0] != 0)
-                        {
-                            intn        count;
-
-                            ret = sdsdumpfull(sds_id, ft, rank, dimsizes, nt, 16
-, fp);
-                        }
+                ret = sdsdumpfull(sds_id, ft, rank, dimsizes, nt, 16, fp);
             SDendaccess(sds_id);
              }        /* for ndsets */
             break;

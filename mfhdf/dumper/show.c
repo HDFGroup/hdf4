@@ -45,7 +45,7 @@ dumpvd(int32 vd, file_type_t ft, int data_only, FILE * fp, char separater[2],
 
     int32       nf;				/* number of fields in this Vdata */
     int32       x, display;
-    int32       temp, addr_width, num_digits, address=0;
+    int32       temp, addr_width=0, num_digits, address=0;
     int32       num_flds, cnt1, cnt2;
     int32       cn=0;
 

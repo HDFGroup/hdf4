@@ -212,7 +212,6 @@ print_file_label(int32 an_id)
 {
     
     int32       len;
-    intn        num = 0;
     char       *label = NULL;
 
     int32 ann_id, i;
@@ -234,7 +233,7 @@ print_file_label(int32 an_id)
           return;
          }
       if(ANreadann(ann_id, label, len+1)!= FAIL)
-        printf("File Label #%d: %s\n", i, label);
+        printf("File Label #%ld: %s\n", (long)i, label);
       retn = ANendaccess(ann_id);
       HDfree(label);
     }; 
@@ -246,7 +245,6 @@ print_data_label(int32 an_id)
 {
 
     int32       len;
-    intn        num = 0;
     char       *label = NULL;
 
     int32 ann_id, i;
@@ -269,7 +267,7 @@ print_data_label(int32 an_id)
           return;
          }
       if(ANreadann(ann_id, label, len+1)!= FAIL)
-       printf("Data ID Label #%d: %s\n", i, label);
+       printf("Data ID Label #%ld: %s\n", (long)i, label);
       retn = ANendaccess(ann_id);
       HDfree(label);
     };
@@ -279,11 +277,8 @@ print_data_label(int32 an_id)
 static void
 print_data_desc(const char *fname, int32 an_id)
 {
-    int32       sd_fid;
     int32       len;
-    intn        num = 0;
     char       *desc = NULL;
-    file_type_t ft;
 
     int32 ann_id, i;
     int32 n_file_label;
@@ -305,7 +300,7 @@ print_data_desc(const char *fname, int32 an_id)
           return;
          }
       if(ANreadann(ann_id, desc, len+1)!= FAIL)
-        printf("Data ID Annotation #%d: %s\n", i, desc);
+        printf("Data ID Annotation #%ld: %s\n", (long)i, desc);
 
       retn = ANendaccess(ann_id);
     }
@@ -316,7 +311,6 @@ print_file_desc(const char *fname, int32 an_id)
 {
     int32       sd_fid;
     int32       len; 
-    intn        num = 0;
     char       *desc = NULL;
     file_type_t ft;
 
@@ -340,7 +334,7 @@ print_file_desc(const char *fname, int32 an_id)
           return;
          }
       if(ANreadann(ann_id, desc, len+1)!= FAIL)
-        printf("File description #%d: %s\n", i, desc);
+        printf("File description #%ld: %s\n", (long)i, desc);
 
       retn = ANendaccess(ann_id);
     } 

@@ -36,19 +36,19 @@ fmtbyte(unsigned char *x, file_type_t ft, FILE * ofp)
       return (fprintf(ofp, "%02x ", (unsigned) *x));
     else
       { s = (unsigned) * x;
-        fwrite(&s, sizeof(unsigned int),1,ofp);
+        return(fwrite(&s, sizeof(unsigned int),1,ofp));
       }
 }
 
 intn 
 fmtint8(VOIDP x, file_type_t ft, FILE * ofp)
 {
-    int s,k;
+    int s;
     if(ft==DASCII)
     return (fprintf(ofp, "%d", (int) *((signed char *) x)));
     else
       {s= (int) *((signed char *) x);
-       fwrite(&s, sizeof(int), 1, ofp);
+       return(fwrite(&s, sizeof(int), 1, ofp));
       }
 }
 
@@ -60,7 +60,7 @@ fmtuint8(VOIDP x, file_type_t ft, FILE * ofp)
     return (fprintf(ofp, "%u", (unsigned) *((unsigned char *) x)));
     else
       { s= (unsigned) *((unsigned char *) x);
-        fwrite(&s, sizeof(uint8), 1, ofp);
+        return(fwrite(&s, sizeof(uint8), 1, ofp));
       } 
 }
 
@@ -131,7 +131,6 @@ intn
 fmtfloat32(VOIDP x, file_type_t ft, FILE * ofp)
 {
     float32     fdata;
-    int k;
 
     HDmemcpy(&fdata, x, sizeof(float32));
     if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)

@@ -207,7 +207,7 @@ drig(dump_info_t * dumprig_opts, intn curr_arg, intn argc,
     int32       width, height, ndsets, temp;
     int32       i, k, x;
     char        file_name[MAXFNLEN];
-    FILE       *fp;
+    FILE       *fp=NULL;
     VOIDP       image;
     int         dumpall = 0, ncomps, il, rig;
     intn        count;
