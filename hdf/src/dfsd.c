@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.14  1993/01/15 16:50:20  georgev
-DFSDwritefillvalue works now.
+Revision 1.15  1993/01/15 22:46:57  georgev
+Added flag to allow multiple SDS when using hyperslabs.
 
+ * Revision 1.14  1993/01/15  16:50:20  georgev
+ * DFSDwritefillvalue works now.
+ *
  * Revision 1.13  1993/01/07  21:09:21  georgev
  * Forgot to swith order of HDmemcpy arguments in DFSDgetfillvalue.
  *
@@ -2702,7 +2705,7 @@ DFSsdg *sdg;
             Hclose(file_id); return FAIL;
         }
     }
-    return(0);
+
 }
 
 /*-----------------------------------------------------------------------------
@@ -4478,7 +4481,7 @@ DFSDwriteslab(filename, start, stride, count, data)
       }
 
     /* Check to see if we have written out the SDG info */
-    if (!Ref.dims)
+    if (!Ref.new_ndg)
       {
         if (DFSDIputndg(file_id, Writeref, &Writesdg)<0)
           {
@@ -4517,6 +4520,7 @@ DFSDwriteslab(filename, start, stride, count, data)
           }
 
         Lastref = Writeref;     /* remember ref written */
+        Ref.new_ndg = -1;
       }
 
     /* Clean up time....*/
