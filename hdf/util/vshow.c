@@ -65,8 +65,9 @@ char**av;
   int32 * lonevs; /* array to store refs of all lone vdatas */
   int32 nlone; /* total number of lone vdatas */
   
-  char fields[50], vgname[50],vsname[50];
-  char  vgclass[50],vsclass[50], *name;
+  char fields[VSFIELDMAX*FIELDNAMELENMAX], vgname[VGNAMELENMAX];
+  char vsname[VSNAMELENMAX];
+  char  vgclass[VGNAMELENMAX],vsclass[VSNAMELENMAX], *name;
   int32 fulldump = 0;
   
   if (ac == 3) if(av[2][0]=='-'||av[2][0]=='+') {
@@ -310,7 +311,7 @@ int32 vsdumpfull(vs)
 int32 vs; 
 #endif
 {
-  char vsname[100], fields[100];
+  char vsname[100], fields[VSFIELDMAX*FIELDNAMELENMAX];
   int32 j,i,t,interlace, nv, vsize;
   uint8 *bb, *b;
   VWRITELIST* w;
