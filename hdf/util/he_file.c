@@ -5,15 +5,21 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/15 21:48:48  sxu
-No change.
+Revision 1.3  1992/08/24 22:00:44  sxu
+Added TPU$EDIT as default editor for VMS
 
+ * Revision 1.2  1992/07/15  21:48:48  sxu
+ * No change.
+ *
  * Revision 1.1  1992/07/06  22:54:16  mlivin
  * Initial revision
  *
 */
 /* --- he-file.c  --- file and annotation manipulation routines */
 #include "he.h"
+#ifdef VMS
+#   include descrip
+#endif
 
 #ifdef PROTOTYPE
 int HEannotate(HE_CMD *cmd)
@@ -96,13 +102,13 @@ int annotate(editor, ann)
      * defaults to /usr/bin/ex
      * but should be made a compile time option
      */
-    if (editor == NULL)
+/*    if (editor == NULL)
     {
 	char *getenv();
 	editor = getenv("EDITOR");
 	if (editor == NULL) editor = "/usr/bin/ex";
     }
-
+*/
     (void) getTmpName(&file);
 
     /* if there is prior annotation, put it into the tmp file
@@ -119,6 +125,17 @@ int annotate(editor, ann)
 	free(buf);
     }
 
+#ifndef VMS
+   /* make sure some editor will be used
+     * defaults to /usr/bin/ex
+     * but should be made a comple time option
+     */
+    if (editor == NULL)
+    {
+        char *getenv();
+        eitor = getenv("EDITOR");
+        if (editor == NULL) editor = "/usr/bin/ex";
+    }
     if (fork() == 0)
     {
 	/* this is the child */
@@ -129,7 +146,19 @@ int annotate(editor, ann)
 	 */
 	exit(0);
     }
-
+#else	/* VMS  */
+    if (vfork() == 0)
+        /* this is the child */
+    {
+     intn ret_status;
+     static $DESCRIPTOR (input_file, file);
+     static $DESCRIPTOR (output_file, file);
+     ret_status = TPU$EDIT(&input_file, &output_file);
+     fprintf( "TPU$EDIT return status: %d. \n",ret_status);
+     exit(0);
+    }
+#endif
+    
     /* the parent waits for the child to die */
     wait(0);
 
