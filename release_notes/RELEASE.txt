@@ -181,3 +181,6 @@ o  N-Bit compression is not supported with Fortran APIs.
 
 o  Using both fill-value and compression on SD datasets doesn't work.
 
+o  SDgetdimscale incorrectly returns FAIL when the associated SDS has the same
+   name as the dimension
+
