@@ -17,6 +17,48 @@ fi
 
 test -d testfiles || mkdir testfiles
 
+
+
+# Print message with formats according to message level ($1)
+MESG() {
+  level=$1
+  shift
+  case $level in
+    0)
+      echo '============================='
+      echo $*
+      echo '============================='
+      ;;
+    3)
+      echo '-----------------------------'
+      echo $*
+      echo '-----------------------------'
+      ;;
+    6)
+      echo "*** $* ***"
+      ;;
+    *)
+      echo "MESG(): Unknown level ($level)"
+      exit 1
+      ;;
+  esac
+}
+
+
+# Report the result and exit
+FINISH()
+{
+    if [ $nerrors -eq 0 ]
+    then
+	MESG 0 "All hrepack tests passed"
+    else
+	MESG 0 "hrepack tests failed: $nerrors"
+    fi
+    exit $nerrors
+}
+
+
+
 # Print a line-line message left justified in a field of 70 characters
 # beginning with the word "Testing".
 #
@@ -82,20 +124,17 @@ TOOLTEST() {
 ##############################################################################
 
 
+# Print a beginning banner
+MESG 0 "Running hrepack tests"
+
 # just run the program test_hrepack; this has several runs with 
 # different compression and chunking options
 ./test_hrepack
 
+# save the exit code from the run
+exit_code=$?
+nerrors=$exit_code
 
+# End of test, return exit code
+FINISH
 
-# ##############################################################################
-# # END
-# ##############################################################################
-
-
-
-if test $nerrors -eq 0 ; then
-   echo "All $HDIFF tests passed."
-fi
-
-exit $nerrors

@@ -17,6 +17,44 @@ fi
 
 test -d testfiles || mkdir testfiles
 
+# Print message with formats according to message level ($1)
+MESG() {
+  level=$1
+  shift
+  case $level in
+    0)
+      echo '============================='
+      echo $*
+      echo '============================='
+      ;;
+    3)
+      echo '-----------------------------'
+      echo $*
+      echo '-----------------------------'
+      ;;
+    6)
+      echo "*** $* ***"
+      ;;
+    *)
+      echo "MESG(): Unknown level ($level)"
+      exit 1
+      ;;
+  esac
+}
+
+
+# Report the result and exit
+FINISH()
+{
+    if [ $nerrors -eq 0 ]
+    then
+	MESG 0 "All hdiff tests passed"
+    else
+	MESG 0 "hdiff tests failed: $nerrors"
+    fi
+    exit $nerrors
+}
+
 # Print a line-line message left justified in a field of 70 characters
 # beginning with the word "Testing".
 #
@@ -123,15 +161,11 @@ TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
 ###			  T H E   T E S T S                                            ###
 ##############################################################################
 
+# Print a beginning banner
+MESG 0 "Running hdiff tests"
+
 # compare output
 RUN
 
-# ##############################################################################
-# # END
-# ##############################################################################
-
-if test $nerrors -eq 0 ; then
-   echo "All $HDIFF tests passed."
-fi
-
-exit $nerrors
+# End of test, return exit code
+FINISH
