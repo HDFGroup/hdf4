@@ -73,6 +73,10 @@ MPopen(const char * path, int flags)
     }
 
   mpfs->curp = 0; /* set current page to none */
+  mpfs->curpr = 0;
+  mpfs->poff = 0;
+  mpfs->foff = 0;
+  mpfs->rpage = NULL;
 
   /* create private memory pool for file 
   * currently we are sharing the pool*/
@@ -152,6 +156,7 @@ MPclose(MPFILE *mpfs)
             
     }
   /* Normal cleanup */
+
   /* free file struct */
   free(mpfs);
 
@@ -262,9 +267,9 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
           npages,pagesize);
 #endif
   /* calculate which page number this offset refers to */
-  new_pgno = (pageno_t)(cur_off / pagesize);
+  new_pgno = (cur_off / pagesize);
   new_pgno++;
-  oddpagesize = (pageno_t)(cur_off % pagesize);
+  oddpagesize = (cur_off % pagesize);
   if (!oddpagesize && new_pgno != 1)
     { /* we are even multiple of page sizes */
       oddpagesize = pagesize;
@@ -331,13 +336,6 @@ MPseek(MPFILE *mpfs, off_t offset, int whence )
                   mpool_get_lastpagesize(mpfs->mp));
 #endif
         }
-#ifdef NEED_SYNC_LASTPAGE
-      if (mpool_page_sync(mpfs->mp, new_pgno,0) == RET_ERROR) /*sync last page */
-        {
-          ret = FAIL;
-          goto done;
-        }
-#endif
     }
 
   done:
@@ -377,12 +375,12 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
   pageno_t pagesize = 0;
   pageno_t npages = 0;
   pageno_t oddpagesize = 0;
-  pageno_t cpageno = 0;
   off_t    end_off = 0;
   void *mypage = NULL;
   void *cptr = NULL;
   void *bptr = buf;
   int   ret = SUCCEED;
+  int   skip_first_put = 0;
 
   if (mpfs == NULL || buf == NULL)
     {
@@ -395,10 +393,6 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
 
   /* calculate bytes left, number of pages*/
   nbl = nbytes;
-#if 0
-  cpageno = (mpfs->foff / pagesize);
-  cpageno++;
-#endif
   end_off = (off_t)(mpfs->foff + nbytes);
   npageno = (pageno_t)(end_off / pagesize);
   npageno++;
@@ -415,6 +409,15 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
   fprintf(stderr,"ENTER->MPread: mpfs->foff =%u\n",mpfs->foff);
   fprintf(stderr,"ETNER->MPread: mpfs->poff =%u\n",mpfs->poff);
 #endif 
+
+  /* Check to see if this page is the last page read */
+  if (mpfs->curpr != 0 && mpfs->curp == mpfs->curpr )
+    {
+      mypage = mpfs->rpage;
+      skip_first_put = 1;
+      goto skip_rget; /* we don't need to get it */
+    }
+
   /* copy First page */
   if ((mypage = mpool_get(mpfs->mp, mpfs->curp, 0)) == NULL)
     {
@@ -422,6 +425,7 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
       goto done;
     }
 
+skip_rget:
   cptr = (char *)mypage + mpfs->poff; /* adjust into current page */
 
   /* set number of bytes read */
@@ -436,13 +440,16 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
 #ifdef MP_DEBUG
   fprintf(stderr,"MPread: read %d bytes, mpfs->poff =%u\n",nbr,mpfs->poff);
 #endif
-  /* return page */
-  if (mpool_put(mpfs->mp, mypage, 0) == RET_ERROR)
-    {
-      ret = FAIL;
-      goto done;
-    }
 
+  /* return page */
+  if (!skip_first_put)
+    {
+      if (mpool_put(mpfs->mp, mypage, 0) == RET_ERROR)
+        {
+          ret = FAIL;
+          goto done;
+        }
+    }
   bptr = (char *)bptr + nbr; /* increment buffer ptr */
   nbl -= nbr;  /* decrement bytes left to read */
   nr += nbr;
@@ -474,9 +481,16 @@ MPread(MPFILE *mpfs, void *buf, size_t nbytes )
       bptr = (char *)bptr + nbr; /* increment buffer ptr */
       nbl -= nbr;  /* decrement bytes left to read */
       nr += nbr;
-    }
+    } /* end while */
 
   mpfs->foff += nr; /* set file offset */
+
+  /* point last page read */
+  if (mpfs->curp != mpfs->curpr )
+   {
+     mpfs->rpage = mypage;
+     mpfs->curpr = mpfs->curp; 
+   }
 
   done:
   if(ret == FAIL)
@@ -555,9 +569,14 @@ MPwrite(MPFILE *mpfs, void *buf, size_t nbytes )
   fprintf(stderr,"MPwrite: mpfs->poff =%d\n",mpfs->poff);
   fprintf(stderr,"MPwrite: getting pageno =%u, npagno=%u\n",pageno, npagno);
 #endif
+
+  /* Check if this was the last page read */
+  if (mpfs->curpr >= pageno &&  mpfs->curpr <= npagno)
+     mpfs->curpr = 0; /* reset last page read to invalid */
+
   /* Check to see if this is the current page */
   if (mpfs->curp != pageno)
-    mpfs->poff = 0;
+    mpfs->poff = 0; /* reset page offset since not current page */
 
   /* get First page */
   if ((mypage = mpool_get(mpfs->mp, pageno, 0)) == NULL)

@@ -25,14 +25,18 @@
 #include "fmptypes.h"
 #include "fmpool.h"
 
-/* Memory Pool file structure */
+/* Memory Pool file structure 
+* Note that we keep a ptr to the last  page read. 
+* This is probably not a good idea in a threaded environment */
 typedef struct mpfile_st 
 {
-  fmp_file_t  fd;  /* file handle */
-  pageno_t    curp;  /* current page */
-  off_t     poff;  /* offset into current page */
-  off_t     foff;  /* current offset into file */
-  MPOOL     *mp;   /* memory pool for this file */
+  fmp_file_t  fd;     /* file handle */
+  pageno_t    curpr;  /* current page read */
+  pageno_t    curp;   /* current page */
+  off_t       poff;   /* offset into current page */
+  off_t       foff;   /* current offset into file */
+  void        *rpage; /* ptr to last page read */
+  MPOOL       *mp;    /* memory pool for this file */
 } MPFILE;
 
 #else /* __FMPINTERFACE_PRIVATE */
