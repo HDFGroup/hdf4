@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/05/29 19:19:08  mfolk
-Changed pal declaration from char to uint8 for Convex.
+Revision 1.6  1992/05/31 19:05:44  mfolk
+Added int32 casts to line 127 for Convex.
 
+ * Revision 1.5  1992/05/29  19:19:08  mfolk
+ * Changed pal declaration from char to uint8 for Convex.
+ *
  * Revision 1.4  1992/05/27  21:46:34  chouck
  * Added a cast
  *
@@ -124,7 +127,7 @@ main()
         if ((j%3) != 0)       /* read in annotations for 2 out of every 3 */
             check_lab_desc(TESTFILE, DFTAG_SDG, refnum, labsds, descsds);
 
-        ret = DFR8getimage(TESTFILE, (char *) newimage, COLS, ROWS, pal);
+        ret = DFR8getimage(TESTFILE, newimage, (int32) COLS, (int32) ROWS, pal);
         RESULT("DFR8getimage")
         refnum = DFR8lastref();
         check_lab_desc(TESTFILE, DFTAG_RIG, refnum, labris, descris);
