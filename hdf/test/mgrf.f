@@ -239,13 +239,13 @@ C Close the file
       ret = hclose(file_id)
       call VERIFY(ret,'hclose',number_failed,Verbosity)
 
-      if (Verbosity .gt. 6) then
-      print *, CR, CR
       if (number_failed .eq. 0) then 
-          print *, '****** ALL TESTS SUCCESSFUL ******'
+	  if (Verbosity .gt. 6) then
+	      print *, CR, CR
+	      print *, '****** ALL TESTS SUCCESSFUL ******'
+	  endif
       else
           print *, '****** ', number_failed, ' TESTS FAILED  ******'
-      endif
       endif
 
       return 
