@@ -47,13 +47,16 @@ const char *str ;
 			count,  MAX_NC_NAME ) ;
 		return NULL ;
 	}
-		
+
+
 	ret = (NC_string *)HDmalloc(sizeof(NC_string)) ;
 	if( ret == NULL )
 		goto alloc_err ;
 	ret->count = count ;
         ret->len   = count ;
 #ifdef HDF
+    if (str == NULL)
+        return NULL;
     ret->hash=compute_hash(count,str);
 #endif /* HDF */
 	if(count != 0 ) /* allocate */
@@ -115,6 +118,10 @@ const char *str ;
 			old->count) ;
 		return(NULL) ;
 	}
+
+    if (str == NULL)
+        return NULL;
+
 	(void)memcpy(old->values, str, count) ;
 	(void)memset(old->values + count, 0, (int)old->count - (int)count +1) ;
         
