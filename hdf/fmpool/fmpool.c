@@ -630,7 +630,8 @@ fmpool_get(mp, pgno, flags)
   /* If there is no hit then we allocate a new element 
   *  and insert into hash table */
   if (!list_hit)
-    { /* NO hit, new list element */
+    { /* NO hit, new list element 
+       * no need to read this page from disk */
       if ((lp = (L_ELEM *)malloc(sizeof(L_ELEM))) == NULL)
         {
           ret = RET_ERROR;
@@ -646,60 +647,59 @@ fmpool_get(mp, pgno, flags)
 #ifdef MPOOL_DEBUG
     (void)fprintf(stderr,"fmpool_get: skiping reading in page=%u\n",pgno);
 #endif
-      goto skip_read;  /* no need to read this page from disk */
-    }
-
-  /* Indiate we are reading this page */
-  lp->eflags = ELEM_READ; 
+    } /*end if !list_hit */
+  else
+    { /* list hit, need to read page */
+      lp->eflags = ELEM_READ; /* Indiate we are reading this page */
 
 #ifdef STATISTICS
-  ++mp->pageread;
+      ++mp->pageread;
 #endif
 
-  /* Check to see if we are reading in last page */
-  if (pgno != mp->npages) 
-    { /* regular page */
-      rpagesize = mp->pagesize;
+      /* Check to see if we are reading in last page */
+      if (pgno != mp->npages) 
+        { /* regular page */
+          rpagesize = mp->pagesize;
 #ifdef MPOOL_DEBUG
-    (void)fprintf(stderr,"fmpool_get: reading in page=%d\n",pgno);
+          (void)fprintf(stderr,"fmpool_get: reading in page=%d\n",pgno);
 #endif   
-    }
-  else 
-    { /* reading in last page */
-      rpagesize = mp->lastpagesize;
+        }
+      else 
+        { /* reading in last page */
+          rpagesize = mp->lastpagesize;
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"fmpool_get: reading in last page=%d\n",pgno);
+          (void)fprintf(stderr,"fmpool_get: reading in last page=%d\n",pgno);
 #endif  
-    }
+        }
 
-  /* Get ready to read page */
-  off = mp->pagesize * (pgno -1);
-  if (FMPI_SEEK(mp->fd, off) == FAIL)
-    {
-      ret = RET_ERROR;
-      goto done;
-    }
+      /* Get ready to read page */
+      off = mp->pagesize * (pgno -1);
+      if (FMPI_SEEK(mp->fd, off) == FAIL)
+        {
+          ret = RET_ERROR;
+          goto done;
+        }
 
-  /* We do this to see if we really have reached this postion */
-  if (FMPI_TELL(mp->fd) != off)
-    {
+      /* We do this to see if we really have reached this postion */
+      if (FMPI_TELL(mp->fd) != off)
+        {
 #ifdef MPOOL_DEBUG
-      (void)fprintf(stderr,"fmpool_get: lseek error=%d\n",off);
+          (void)fprintf(stderr,"fmpool_get: lseek error=%d\n",off);
 #endif
-      ret = RET_ERROR;
-      goto done;
-    }
+          ret = RET_ERROR;
+          goto done;
+        }
 
-  /* Read in the contents. */
-  if ((nr = FMPI_READ(mp->fd, bp->page, rpagesize)) != rpagesize) 
-    {
-      if (nr >= 0)
-        errno = EFTYPE;
-      ret = RET_ERROR;
-      goto done;
-    }
+      /* Read in the contents. */
+      if ((nr = FMPI_READ(mp->fd, bp->page, rpagesize)) != rpagesize) 
+        {
+          if (nr >= 0)
+            errno = EFTYPE;
+          ret = RET_ERROR;
+          goto done;
+        }
+    } /* end else list hit */
 
-skip_read:
   /* Set the page number, pin the page. */
   bp->pgno = pgno;
   bp->flags = MPOOL_PINNED;
