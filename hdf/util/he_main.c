@@ -154,7 +154,7 @@ main(int argc, char *argv[])
     cmdLoop();
 
     if (fileOpen())
-        close(YES);     /* close with keep */
+        closeFile(YES);     /* close with keep */
     quit(0);
     return 0;
 }

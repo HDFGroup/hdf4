@@ -37,7 +37,7 @@ $    ccopt = "/define=VMS/include='hdfinc"
 $ endif
 $ cc 'ccopt  'utils
 $ link/exe=hdfed he_main,he_cntrl,he_disp,he_file,'hdflib, -
-   sys$clib/lib, MRLXP1$DKA200:[folk.dev.hdf.util]helink.opt/option
+   sys$clib/lib, helink.opt/option
 $ link hdfls,     'hdflib, sys$clib/lib
 $! link hdfrseq,   'hdflib, sys$clib/lib
 $ link r8tohdf,   'hdflib, sys$clib/lib
