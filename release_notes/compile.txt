@@ -262,33 +262,25 @@ VAX OpenVMS:
 
 Windows NT/95:
 -------------
-Using Microsoft Visual C++ version 4.x:
+Using Microsoft Visual C++ version 5.x:
 
 Under Tools->Options, select the folder, Directories:
    Under "Show directories for", select "Include files".
    Add the following directories:
-      C:\MSDEV\INCLUDE                   
-      C:\MSDEV\MFC\INCLUDE          
       C:<path to HDF includes>\INCLUDE  
 
 Under "Show directories for", select "Library files":
    Add the following directories:
-      C:\MSDEV\LIB                  
-      C:\MSDEV\MFC\LIB               
       C:<path to HDF libs>\LIB        
 
-Under Build->Settings, select folder, Link:
+Under Project->Settings, select folder, Link:
    Add the following libraries to the beginning of the list of
    Object/Library Modules:
-       libsrc.lib src.lib jpeg.lib zlib.lib xdr.lib 
+         hd412.lib hm412.lib (single-threaded release version)
+         hd412d.lib hm412d.lib (single-threaded debug version)
 
-   The following libraries may (or may not) need to be included: 
-       kernel32.lib user32.lib gdi32.lib winspool.lib comdig32.lib
-       advapi32lib shell32.lib ole32.lib oleaut32.lib uuid.lib
-       odbc32.lib odbccp32.lib
+         hd412m.lib hm412m.lib (multi-threaded release version)
+         hd412md.lib hm412md.lib (multi-threaded debug version)
 
-Under Build->Settings, select folder C/C++:
-   For the Preprocessor Definitions add:  INTEL86
-   The following were already there:   WIN32,_CONSOLE
 
 
