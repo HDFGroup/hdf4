@@ -10,7 +10,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#include <hdf.h>
+#include "hdf.h"
 #include "tutils.h"
 
 #define  FILE_NAME8     "RI_8_sziped.hdf"

@@ -53,7 +53,7 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 
-CPPFLAGS = @CPPFLAGS@ -I$(top_srcdir)/hdf/src
+CPPFLAGS = -I$(top_srcdir)/hdf/src @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@

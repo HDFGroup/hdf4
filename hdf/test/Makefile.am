@@ -2,7 +2,7 @@
 ##                      Setup for building programs                        ##
 #############################################################################
 
-CPPFLAGS=@CPPFLAGS@ -I$(top_srcdir)/hdf/src
+CPPFLAGS=-I$(top_srcdir)/hdf/src @CPPFLAGS@
 
 #############################################################################
 ##                              Testing                                    ##
