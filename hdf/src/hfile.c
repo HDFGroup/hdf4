@@ -322,7 +322,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
             }
           file_rec->file = f;
           file_rec->f_cur_off=0;
-          file_rec->last_op=OP_UNKNOWN;
+          file_rec->last_op=H4_OP_UNKNOWN;
 #else  /* NO_MULTI_OPEN */
           HGOTO_ERROR(DFE_DENIED, FAIL);
 #endif /* NO_MULTI_OPEN */
@@ -368,7 +368,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
                 }
 
               file_rec->f_cur_off=0;
-              file_rec->last_op=OP_UNKNOWN;
+              file_rec->last_op=H4_OP_UNKNOWN;
               /* Read in all the relevant data descriptor records. */
               if (HTPstart(file_rec) == FAIL)
                 {
@@ -387,7 +387,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           if (OPENERR(file_rec->file))
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
           file_rec->f_cur_off=0;
-          file_rec->last_op=OP_UNKNOWN;
+          file_rec->last_op=H4_OP_UNKNOWN;
 #ifdef STDIO_BUF
 	/* Testing stdio buffered i/o */
           if (setvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
@@ -4029,12 +4029,12 @@ HP_read(filerec_t *file_rec,void * buf,int32 bytes)
   intn     ret_value = SUCCEED;
 
   /* Check for switching file access operations */
-  if(file_rec->last_op==OP_WRITE || file_rec->last_op==OP_UNKNOWN)
+  if(file_rec->last_op==H4_OP_WRITE || file_rec->last_op==H4_OP_UNKNOWN)
     {
 #ifdef HFILE_SEEKINFO
       read_force_seek++;
 #endif /* HFILE_SEEKINFO */
-      file_rec->last_op=OP_UNKNOWN;
+      file_rec->last_op=H4_OP_UNKNOWN;
       if(HPseek(file_rec,file_rec->f_cur_off)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL,FAIL);
     } /* end if */
@@ -4042,7 +4042,7 @@ HP_read(filerec_t *file_rec,void * buf,int32 bytes)
   if(HI_READ(file_rec->file,buf,bytes)==FAIL)
     HGOTO_ERROR(DFE_READERROR, FAIL);
   file_rec->f_cur_off+=bytes;
-  file_rec->last_op=OP_READ;
+  file_rec->last_op=H4_OP_READ;
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -4082,7 +4082,7 @@ HPseek(filerec_t *file_rec,int32 offset)
 #ifdef HFILE_SEEKINFO
 printf("%s: file_rec=%p, last_offset=%ld, offset=%ld, last_op=%d",FUNC,file_rec,(long)file_rec->f_cur_off,(long)offset,(int)file_rec->last_op);
 #endif /* HFILE_SEEKINFO */
-  if(file_rec->f_cur_off!=offset || file_rec->last_op==OP_UNKNOWN)
+  if(file_rec->f_cur_off!=offset || file_rec->last_op==H4_OP_UNKNOWN)
     {
 #ifdef HFILE_SEEKINFO
       seek_taken++;
@@ -4091,7 +4091,7 @@ printf(" taken: %d\n",(int)seek_taken);
       if (HI_SEEK(file_rec->file, offset) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
       file_rec->f_cur_off=offset;
-      file_rec->last_op=OP_SEEK;
+      file_rec->last_op=H4_OP_SEEK;
     } /* end if */
 #ifdef HFILE_SEEKINFO
   else
@@ -4139,12 +4139,12 @@ HP_write(filerec_t *file_rec,const void * buf,int32 bytes)
   intn    ret_value = SUCCEED;
 
   /* Check for switching file access operations */
-  if(file_rec->last_op==OP_READ || file_rec->last_op==OP_UNKNOWN)
+  if(file_rec->last_op==H4_OP_READ || file_rec->last_op==H4_OP_UNKNOWN)
     {
 #ifdef HFILE_SEEKINFO
       write_force_seek++;
 #endif /* HFILE_SEEKINFO */
-      file_rec->last_op=OP_UNKNOWN;
+      file_rec->last_op=H4_OP_UNKNOWN;
       if(HPseek(file_rec,file_rec->f_cur_off)==FAIL)
         HGOTO_ERROR(DFE_INTERNAL,FAIL);
     } /* end if */
@@ -4152,7 +4152,7 @@ HP_write(filerec_t *file_rec,const void * buf,int32 bytes)
   if(HI_WRITE(file_rec->file,buf,bytes)==FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
   file_rec->f_cur_off+=bytes;
-  file_rec->last_op=OP_WRITE;
+  file_rec->last_op=H4_OP_WRITE;
 
 done:
   if(ret_value == FAIL)   
