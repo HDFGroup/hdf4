@@ -1,9 +1,9 @@
-This directory contains the test suite for the basic library libdf.a.
-After running the make file at either the higher level or this level,
+This directory contains the test suite for the basic library, libdf.a.
+After running the makefile at either the higher level or this level,
 you will find two executable programs, testhdf and fortest, in this 
 directory. Testhdf tests the C functions, while fortest the Fortran 
 interface. At the end of execution, each program reports how many 
-errors happened. Please contact us at hdfhelp@ncsa.uiuc.edu 
+errors occurred. Please contact us at hdfhelp@ncsa.uiuc.edu 
 if the test fails on your machine.
 
 Special notes for fortest:
@@ -24,10 +24,10 @@ in fortest.arg contains a command and a parameter.
 
 Cleanup Commands
 ----------------
-If <String> is Yes/No, it directs to delete the *.hdf or not.
+If <String> is Yes/No, it directs to delete the *.hdf files or not.
 If <String> is not Yes/No, it represents the system command to delete
-    the *.hdf.  (NB: specifying system command does not imply
-    to Cleanup, i.e., it does not current CleanUp setting.
+    the *.hdf files.  (NOTE: specifying a system command does not imply
+    Cleanup.)
 
 
 
@@ -35,8 +35,8 @@ Verbosity convention
 --------------------
 
 The higher the verbosity value, the more information printed.
-So, output for higher verbosity also include output of all lower
-verbosity.
+So, output for a higher verbosity value also includes the output of 
+all lower verbosity values.
 
     Value	Description
     0		None:	No informational message.
