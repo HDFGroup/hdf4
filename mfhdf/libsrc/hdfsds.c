@@ -819,7 +819,7 @@ hdf_read_ndgs(NC *handle)
                                 (NC_attr *) NC_new_attr(_HDF_ValidMin, 
                                                         type, 
                                                         1, 
-                                                        (Void *) &(tBuf[DFKNTsize(HDFtype)]));
+                                                        (Void *) &(tBuf[DFKNTsize(HDFtype|DFNT_NATIVE)]));
 
                             if (NULL == attrs[current_attr])
                               {
