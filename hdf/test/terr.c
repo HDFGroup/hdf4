@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1992/05/31 19:07:09  mfolk
-*** empty log message ***
+Revision 1.6  1992/10/01 16:15:47  chouck
+Removed unused vars to make Mac happy
 
+ * Revision 1.5  1992/05/31  19:07:09  mfolk
+ * *** empty log message ***
+ *
  * Revision 1.4  1992/05/31  17:43:29  mfolk
  * Put in a semicolon I accidentally deleted in last change.
  *
@@ -54,12 +57,8 @@ main(argc, argv)
     int argc;
     char *argv[];
 {
-    int32 fid, fid1;
-    int32 aid1, aid2;
-    int32 fileid, length, offset, posn;
-    uint16 tag, ref;
-    int16 access, special;
-    int   ret, i, status;
+    int32 fid;
+    int   status;
 
     printf(" -------- \n");
 
