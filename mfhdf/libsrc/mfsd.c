@@ -835,6 +835,9 @@ int32 nt, rank, *dimsizes;
     /* make sure it gets reflected in the file */
     handle->flags |= NC_HDIRTY;
 
+    /* free dims */
+   HDfreespace((VOIDP)dims);
+
     return sdsid;
 
 } /* SDcreate */
@@ -959,6 +962,8 @@ char  * name;
                 if(dim->size != (*dp)->size) return FAIL;
                 ap = (NC_array **) handle->dims->values;
                 ap += id & 0xffff;
+                NC_free_dim(dim);
+                (*dp)->count += 1;
                 (*ap) = (NC_array *) (*dp);
                 return SUCCEED;
             }
