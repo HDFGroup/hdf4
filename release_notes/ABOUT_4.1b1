@@ -8,7 +8,7 @@ HDF 4.1b1.  It is written for people who are familiar with
 previous releases of HDF and wish to migrate to HDF 4.1b1.
 The release notes provide more in-depth information concerning 
 the topics discussed here.  For documentation, please refer
-the the HDF 4.0r2 documentation which can be found on the NCSA 
+to the HDF 4.0r2 documentation which can be found on the NCSA 
 ftp server (ftp.ncsa.uiuc.edu) in the directory 
 /HDF/Documentation/HDF4.0r2.
 
@@ -56,6 +56,9 @@ o Data chunking is now supported in SD scientific data sets.
   modified to work with chunked SDSs.  For more information, please 
   refer to the file ../release_notes/sd_chunk_examples.txt, as
   well as the man page for sd_chunk.
+
+  More information will be included in the HDF 4.1 documentation,
+  which will be available with the release of HDF 4.1.  
 
 o Due to certain limitations in the way compressed SDS datasets are stored, 
   data which has been compressed is not completely writable in ways that 
