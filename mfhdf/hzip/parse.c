@@ -428,7 +428,7 @@ void options_table_init( options_table_t **tbl )
  
  table->size   = 3;
  table->nelems = 0;
- table->objs   = (obj_info_t*) malloc(table->size * sizeof(obj_info_t));
+ table->objs   = (pack_info_t*) malloc(table->size * sizeof(pack_info_t));
  
  for (i = 0; i < table->size; i++) {
    strcpy(table->objs[i].path,"\0");
@@ -473,7 +473,7 @@ int options_add_chunk(obj_list_t *obj_list,int n_objs,int32 *chunk_lengths,
  
  if (table->nelems+n_objs >= table->size) {
   table->size += n_objs;
-  table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
+  table->objs = (pack_info_t*)realloc(table->objs, table->size * sizeof(pack_info_t));
   for (i = table->nelems; i < table->size; i++) {
    strcpy(table->objs[i].path,"\0");
    table->objs[i].comp.info  = -1;
@@ -565,7 +565,7 @@ int options_add_comp(obj_list_t *obj_list,int n_objs,comp_info_t comp,
  
  if (table->nelems+n_objs >= table->size) {
   table->size += n_objs;
-  table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
+  table->objs = (pack_info_t*)realloc(table->objs, table->size * sizeof(pack_info_t));
   for (i = table->nelems; i < table->size; i++) {
    strcpy(table->objs[i].path,"\0");
    table->objs[i].comp.info  = -1;
@@ -645,7 +645,7 @@ int options_add_comp(obj_list_t *obj_list,int n_objs,comp_info_t comp,
  *-------------------------------------------------------------------------
  */
 
-obj_info_t* options_get_object(char *path,options_table_t *table)
+pack_info_t* options_get_object(char *path,options_table_t *table)
 {
  int i;
  

@@ -927,7 +927,7 @@ void add_vs(char* vs_name,int32 file_id,int32 vgroup_id)
  printf("add_vs %d\n",vdata_ref); 
 #endif
  
- /* add the VS to the vgroup. the tag DFTAG_VS is used */
+ /* add the VS to the vgroup*/
  if (vgroup_id)
   status_32 = Vaddtagref (vgroup_id, vdata_tag, vdata_ref);
  

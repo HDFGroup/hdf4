@@ -23,7 +23,7 @@
 #if defined (HZIPTST_DEBUG)
 #define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); printf("\n");}
 #else
-#define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout);}
+#define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); }
 #endif
 #define PASSED() {puts(" PASSED");fflush(stdout);}
 #define H4_FAILED() {puts("*FAILED*");fflush(stdout);}

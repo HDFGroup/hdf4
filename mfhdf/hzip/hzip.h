@@ -55,13 +55,13 @@ typedef struct {
  char         path[MAX_NC_NAME];            /* name of object */
  comp_info_t  comp;                         /* compression information */
  chunk_info_t chunk;                        /* chunk information */
-} obj_info_t;
+} pack_info_t;
 
 /* store a list of all objects */
 typedef struct {
  int        size;
  int        nelems;
- obj_info_t *objs;
+ pack_info_t *objs;
 } options_table_t;
 
 

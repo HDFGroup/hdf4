@@ -16,6 +16,8 @@
 #include "hzip.h"
 #include "copy.h"
 #include "parse.h"
+#include "utils.h"
+
 
 
 void list_vg (char* infname,char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
@@ -122,7 +124,7 @@ int list(char* infname, char* outfname, options_t *options)
  2) they are valid objects (SDS or GR)
  check only if selected objects are given (all==0)
  */
- if ( options->trip==0 /*&& (options->all_chunk==0 || && options->all_comp==0) */) 
+ if ( options->trip==0 ) 
  {
   if (options->verbose)
    printf("Searching for objects to modify...\n");
@@ -176,7 +178,9 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
        *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
        *tags,          /* buffer to hold the tag numbers of vgroups   */
        *refs,          /* buffer to hold the ref numbers of vgroups   */
-       vgroup_id_out;  /* vgroup identifier */
+       vgroup_id_out,  /* vgroup identifier */
+       ref_vg,
+       tag_vg;
  char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
  int   i;
 
@@ -229,26 +233,36 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
      status_32 = Vdetach (vgroup_id);
      continue;
     }
+       
+    if ((ref_vg = VQueryref(vgroup_id))==FAIL){
+     printf( "Failed to get ref for <%s>\n", vgroup_name);
+    }
+    if ((tag_vg = VQuerytag(vgroup_id))==FAIL){
+     printf( "Failed to get tag for <%s>\n", vgroup_name);
+    }
+
+     /* add object to table */
+    table_add(table,tag_vg,ref_vg,vgroup_name);
+
+    if (options->verbose)
+    printf(PFORMAT,"","",vgroup_name);    
       
    /* 
     * create the group in the output file.  the vgroup reference number is set
     * to -1 for creating and the access mode is "w" for writing 
     */
     vgroup_id_out = Vattach (outfile_id, -1, "w");
-    if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
-    {
+    if (Vsetname (vgroup_id_out, vgroup_name)==FAIL){
      printf("Error: Could not create group <%s>\n", vgroup_name);
     }
-    if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
-    {
+    if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL){
      printf("Error: Could not create group <%s>\n", vgroup_name);
     }
 
     copy_vgroup_attrs(vgroup_id,vgroup_id_out,vgroup_name,options);
     copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,vgroup_name,options);
 
-    if (options->verbose)
-    printf(PFORMAT,"","",vgroup_name);    
+ 
        
     /* insert objects for this group */
     ntagrefs = Vntagrefs(vgroup_id);
@@ -265,12 +279,10 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
      free (refs);
     }
     
-    if(Vdetach (vgroup_id)==FAIL)
-    {
+    if(Vdetach (vgroup_id)==FAIL){
      printf("Error: Could not detach group <%s>\n", vgroup_name);
     }
-    if (Vdetach (vgroup_id_out)==FAIL)
-    {
+    if (Vdetach (vgroup_id_out)==FAIL){
      printf("Error: Could not detach group <%s>\n", vgroup_name);
     }
 
@@ -284,12 +296,10 @@ void list_vg(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
  
 
  /* terminate access to the V interface */
- if (Vend (infile_id)==FAIL)
- {
+ if (Vend (infile_id)==FAIL){
   printf("Error: Could not end group interface in <%s>\n", vgroup_name);
  }
- if (Vend (outfile_id)==FAIL)
- {
+ if (Vend (outfile_id)==FAIL){
   printf("Error: Could not end group interface in <%s>\n", vgroup_name);
  }
  
@@ -482,11 +492,7 @@ void vgroup_insert(char* infname,
  */   
    
   case DFTAG_VH:  /* Vdata Header */
-  case DFTAG_VS:  /* Vdata Storage */
-
-   /* copy VS */
    copy_vs(infile_id,outfile_id,tag,ref,vgroup_id_out_par,path_name,options,table,0);
-  
    break;
    
    
@@ -654,7 +660,7 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
        ref;          /* temporary ref number  */
  int   i;
 
- /* initialize the VS interface */
+ /* initialize the V interface */
  status_n = Vstart (infile_id);
  status_n = Vstart (outfile_id);
 
@@ -692,13 +698,12 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
    ref = ref_array[i];
 
    /* check if already inserted in Vgroup; search all VS tags */
-   if ( table_search(table,DFTAG_VH,ref)>=0 ||
-        table_search(table,DFTAG_VS,ref)>=0 ) {
+   if ( table_search(table,DFTAG_VH,ref)>=0 ) {
     continue;
    }
 
    /* copy VS */
-   copy_vs(infile_id,outfile_id,DFTAG_VS,ref,0,NULL,options,table,1);
+   copy_vs(infile_id,outfile_id,DFTAG_VH,ref,0,NULL,options,table,1);
  
   } /* for */
 
@@ -715,45 +720,6 @@ void list_vs(char* infname,char* outfname,int32 infile_id,int32 outfile_id,table
 
 }
 
-/*-------------------------------------------------------------------------
- * Function: is_reserved
- *
- * Purpose: check for reserved Vgroup/Vdata class/names
- *
- * Return: 1 if reserved, 0 if not
- *
- *-------------------------------------------------------------------------
- */
-
-int is_reserved(char*vgroup_class)
-{
- int ret=0;
- 
- /* ignore reserved HDF groups/vdatas */
- if(vgroup_class != NULL) {
-  if( (strcmp(vgroup_class,_HDF_ATTRIBUTE)==0) ||
-   (strcmp(vgroup_class,_HDF_VARIABLE) ==0) || 
-   (strcmp(vgroup_class,_HDF_DIMENSION)==0) ||
-   (strcmp(vgroup_class,_HDF_UDIMENSION)==0) ||
-   (strcmp(vgroup_class,DIM_VALS)==0) ||
-   (strcmp(vgroup_class,DIM_VALS01)==0) ||
-   (strcmp(vgroup_class,_HDF_CDF)==0) ||
-   (strcmp(vgroup_class,GR_NAME)==0) ||
-   (strcmp(vgroup_class,RI_NAME)==0) || 
-   (strcmp(vgroup_class,RIGATTRNAME)==0) ||
-   (strcmp(vgroup_class,RIGATTRCLASS)==0) ){
-   ret=1;
-  }
-
-  /* class and name(partial) for chunk table i.e. Vdata */
-  if( (strncmp(vgroup_class,"_HDF_CHK_TBL_",13)==0)){
-   ret=1;
-  }
-
- }
- 
- return ret;
-}
 
 /*-------------------------------------------------------------------------
  * Function: copy_vgroup_attrs
@@ -1113,7 +1079,8 @@ int copy_an_data(int32 infile_id,
                  char *path, 
                  options_t *options) 
 {
- int32 an_id,         /* AN interface identifier */
+ int32 status_32,
+       an_id,         /* AN interface identifier */
        an_out,        /* AN interface identifier */
        ann_id,        /* an annotation identifier */
        ann_out,       /* an annotation identifier */
@@ -1199,6 +1166,10 @@ int copy_an_data(int32 infile_id,
   }
   if (buf) free(buf);
  }
+
+ /* Terminate access to the AN interface */
+ status_32 = ANend (an_id);
+ status_32 = ANend (an_out);
  return 1;
 }
 

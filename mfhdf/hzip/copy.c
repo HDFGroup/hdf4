@@ -17,6 +17,8 @@
 #include "mfhdf.h"
 #include "copy.h"
 #include "parse.h"
+#include "utils.h"
+
 
 
 int  copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex);
@@ -1495,38 +1497,6 @@ out:
 }
 
 
-/*-------------------------------------------------------------------------
- * Function: get_path
- *
- * Purpose: return absolute path for an object
- *
- * Return: path
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: July 11, 2003
- *
- *-------------------------------------------------------------------------
- */
-
-char *get_path(char*path_name, char*obj_name) 
-{
- char *path=NULL;
- /* initialize path */
- if (path_name!=NULL) 
- {
-  path = (char*) malloc(strlen(path_name) + strlen(obj_name) + 2);
-  strcpy( path, path_name );
-  strcat( path, "/" );
-  strcat( path, obj_name ); 
- }
- else
- {
-  path = (char*) malloc(strlen(obj_name) + 1);
-  strcpy( path, obj_name ); 
- }
- return path;
-}
 
 
 
@@ -1664,7 +1634,7 @@ int  options_get_info(options_t      *options,     /* global options */
                       )
 {
 
- obj_info_t *obj=NULL; /* check if we have info for this object */
+ pack_info_t *obj=NULL; /* check if we have info for this object */
  int         i;
  comp_info   c_info; /* for SZIP default values */
  
