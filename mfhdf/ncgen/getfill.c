@@ -4,8 +4,7 @@
  *   $Id$
  *********************************************************************/
 
-#include <stdlib.h>
-#include "netcdf.h"
+#include "mfhdf.h"
 #include "generic.h"
 #include "genlib.h"
 
@@ -41,7 +40,6 @@ nc_getfill(type, gval)
 	derror("nc_getfill: unrecognized type");
     }
 }
-
 
 void
 nc_fill(type, num, datp, fill_val)
