@@ -48,7 +48,7 @@ int32 len;
     return(destp);
 }
 
-#ifdef PC
+#if defined PC && !defined PC386
 #ifdef WIN3
 int32 HDspaceleft(void)
 {
@@ -97,7 +97,7 @@ int32 HDspaceleft(void)
 #endif /* PC */
 
 
-#ifdef PC
+#if defined PC && !defined PC386
 #ifdef WIN3
 VOIDP HDgetspace(uint32 qty)
 {
@@ -267,7 +267,7 @@ printf("HDfreespace(): hfree() called\n");
 }
 
 #endif /* WIN3 */
-#else /* !PC */
+#else /* !PC | PC386 */
 
 
 #if defined PROTOTYPE

@@ -54,7 +54,6 @@
 +vgff &
 +dfff &
 +dfufp2if &
-+maldebug &
 +jutils &
 +jerror &
 +jmemmgr &

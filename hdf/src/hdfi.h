@@ -2,10 +2,13 @@
 $Header$
 
 $Log$
-Revision 1.30  1993/08/18 16:04:09  chouck
-Restored changes blown away in version 1.28 (addition of HDstrdup())
-(grumble grumble)
+Revision 1.31  1993/09/02 14:41:56  koziol
+Patches for Watcom/386 Support
 
+ * Revision 1.30  1993/08/18  16:04:09  chouck
+ * Restored changes blown away in version 1.28 (addition of HDstrdup())
+ * (grumble grumble)
+ *
  * Revision 1.29  1993/08/16  21:45:43  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -661,8 +664,7 @@ void exit(int status);
 
 #endif /*MAC*/
 
-
-#if defined WIN3 || defined __WINDOWS__ || defined _WINDOWS
+#if defined WIN3 || defined __WINDOWS__
 #ifndef WIN3
 #define WIN3
 #endif  /* WIN3 */
@@ -738,13 +740,18 @@ typedef long              intf;     /* size of INTEGERs in Fortran compiler */
 #define _HUGE              /* This should only be defined to a value on the PC */
 #endif  /* PC386 */
 
+#ifdef PC386
+#define DF_CAPFNAMES
+#endif
 #define _fcdtocp(desc) (desc)
 
 #define register    /* don't mess with the PC compiler's register allocation */
 
 #ifdef WIN3
 #define FILELIB WINIO
-#else /* !WIN3 */
+#elif defined PC386 /* !WIN3 */
+#define FILELIB UNIXBUFIO
+#else /* must be plain PC */
 #define FILELIB PCIO
 #endif /* WIN3 */
 

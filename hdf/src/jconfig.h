@@ -73,7 +73,7 @@
  * "far" pointers and to be allocated with a special version of malloc.)
  */
 
-#if defined(MSDOS) && !(defined(M_I86CM) || defined(M_I86LM) || defined(M_I86HM))
+#if defined(MSDOS) && !(defined(M_I86CM) || defined(M_I86LM) || defined(M_I86HM) || defined(PC386))
 #define NEED_FAR_POINTERS
 #endif
 

@@ -40,6 +40,10 @@
 
 #ifndef VMS
 #define DUFF
+#else
+#ifdef DUFF
+#undef DUFF
+#endif
 #endif
 #ifdef DUFF
 #define DUFF_sb4b

@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.8  1993/08/27 23:53:09  georgev
-Added VOIDP cast to HDfreespace()
+Revision 1.9  1993/09/02 14:41:47  koziol
+Patches for Watcom/386 Support
 
+ * Revision 1.8  1993/08/27  23:53:09  georgev
+ * Added VOIDP cast to HDfreespace()
+ *
  * Revision 1.7  1993/08/16  21:45:15  koziol
  * Wrapped in changes for final, working version on the PC.
  *
@@ -44,7 +47,7 @@ Added VOIDP cast to HDfreespace()
 #define BIT8 0
 #define BIT24 1
 
-#if !defined MAC && !defined PC
+#if (!defined MAC && !defined PC) | defined PC386
 #define MAXCOLOR 32768
 #else /*MAC*/
 #define MAXCOLOR 768
