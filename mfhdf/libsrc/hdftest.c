@@ -1602,8 +1602,7 @@ char *argv[];
     cdims[0] = 3;
     cdims[1] = 2;
     chunk_def.chunk_lengths = cdims;
-    cinfo.deflate.level = 9;
-    chunk_def.comp_type = COMP_CODE_DEFLATE;
+    chunk_def.comp_type = COMP_CODE_RLE;
     chunk_def.cinfo = &cinfo;
     status = SDsetChunk(newsds8, &chunk_def, SD_CHUNK_COMP);
     if(status == FAIL) 
