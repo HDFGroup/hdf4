@@ -84,26 +84,26 @@ void test_sdmms()
         for (j=0; j<10; j++) {
             f32[i][j] = (i * 40) + j;   /* range: 0 ~ 4-billion */
 
-            i8[i][j] = (int8)((i * 10) + j);        /* range: 0 ~ 100 */
+            i8[i][j] = (int8)((i * 20)-100 + j);        /* range: 0 ~ 100 */
             ui8[i][j] = (uint8)((i * 20) + j);      /* range: 0 ~ 200 */
 
-            i16[i][j] = (int16)((i * 3000) + j);     /* range: 0 ~ 30000 */
+            i16[i][j] = (int16)((i * 6000)-30000 + j);     /* range: 0 ~ 30000 */
             ui16[i][j] = (uint16)((i * 6000) + j);   /* range: 0 ~ 60000 */
 
-            i32[i][j] = (int32)((i * 20) + j);   /* range: 0 ~ 2-billion */
-            ui32[i][j] = (uint32)((i * 40) + j); /* range: 0 ~ 4-billion */
+            i32[i][j] = (int32)((i * 60000)-300000 + j);   /* range: 0 ~ 2-billion */
+            ui32[i][j] = (uint32)((i * 400000000) + j); /* range: 0 ~ 4-billion */
         }
 
         f32scale[i] = (float32)((i * 40) + j); /* range: 0 ~ 4-billion */
 
-        i8scale[i] = (int8)((i * 10) + j);     /* range: 0 ~ 100 */
+        i8scale[i] = (int8)((i * 20)-100 + j);     /* range: 0 ~ 100 */
         ui8scale[i] = (uint8)((i * 20) + j);   /* range: 0 ~ 200 */
 
-        i16scale[i] = (int16)((i * 3000) + j); /* range: 0 ~ 30000 */
+        i16scale[i] = (int16)((i * 6000)-30000 + j); /* range: 0 ~ 30000 */
         ui16scale[i] = (uint16)((i * 6000) + j);/* range: 0 ~ 60000 */
 
-        i32scale[i] = (int32)((i * 20) + j);   /* range: 0 ~ 2-billion */
-        ui32scale[i] = (uint32)((i * 40) + j); /* range: 0 ~ 4-billion */
+        i32scale[i] = (int32)((i * 60000)-300000 + j);   /* range: 0 ~ 2-billion */
+        ui32scale[i] = (uint32)((i * 400000000) + j); /* range: 0 ~ 4-billion */
     }
 
     cal1 = (float64)10.0;
