@@ -14,7 +14,7 @@ C $Id$
 C
       subroutine t24f (number_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 C
 C Test Program: 
 C     		Writes 24-bit raster images with specified interlace 
@@ -26,7 +26,7 @@ C
 C
       integer number_failed
       character*(*) myname
-      parameter (myname = "r24")
+      parameter (myname = 'r24')
 
       integer d2setil, d2reqil, d2pimg, d2aimg
       integer d2gdims, d2gimg, d2first
@@ -38,7 +38,7 @@ C
       character in(3,2,2), in1(2, 3, 2), in2(2, 2, 3)
       integer i, j, k, ret
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       TESTFILE = 'tdf24f.hdf'
       CR = char(10)
       number_failed = 0

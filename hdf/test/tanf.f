@@ -30,11 +30,11 @@ C                 may be due to a bug in dfan.c in DFANIgetann().
 C
 
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer number_failed
       character*(*) myname
-      parameter (myname = "an")
+      parameter (myname = 'an')
 
       integer daplab, dapdesc  
       integer dssdims, dsadata, dslref, dsgdims
@@ -69,7 +69,7 @@ C
       real      data(ROWS, COLS)
 
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       number_failed =  0
       CR = char(10)
       TESTFILE = 'tdfanF.hdf'
@@ -169,7 +169,7 @@ C**************************************************************
       subroutine an_check_lab_desc(filename, tag, ref, label, desc, 
      *                                                   number_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       character*(*) filename, label, desc
       integer tag, ref, number_failed

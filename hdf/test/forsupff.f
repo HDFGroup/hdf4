@@ -64,7 +64,7 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine VERIFY(errval, routine, num_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer errval
       character*(*)  routine
@@ -98,7 +98,7 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine MESSAGE(priority, out_str)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer priority
       character*(*)  out_str
@@ -257,14 +257,14 @@ C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine ptestban(action, name)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       character*(*) action, name
 
       if (Verbosity .ge. VERBO_DEF) then
-	print *, "====================================="
+	print *, '====================================='
 	print *, action, ' ', name
-	print *, "====================================="
+	print *, '====================================='
       endif
 
       return

@@ -14,7 +14,7 @@ C $Id$
 C
       subroutine tr8f (number_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 C
 C Test program:
 C     		Writes images together with pals to a file.
@@ -25,7 +25,7 @@ C Output file: tdfr8f.hdf
 C
       integer number_failed
       character*(*) myname
-      parameter (myname = "r8")
+      parameter (myname = 'r8')
 
       integer d8spal, d8pimg, d8aimg, d8gdims, d8nims
       integer d8gimg, d8rref, d8wref, d8first, d8lref
@@ -41,7 +41,7 @@ C
       integer d1, d2, ispal, FALSE, TRUE
       integer ref1, ref2, ref3
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       DFTAG_RLE = 11
       DFTAG_IMCOMP = 12
       TESTFILE = 'tdfr8f.hdf' 
@@ -176,7 +176,7 @@ C********************************************************
 
       subroutine check_im1_pal(od1,od2,nd1,nd2,oim,nim,opal,npal)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer od1, od2, nd1, nd2
       character oim(100, 100), nim(100, 100)
@@ -229,7 +229,7 @@ C********************************************************
 
       subroutine check_im2_pal(od1,od2,nd1,nd2,oim,nim,opal,npal)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer od1, od2, nd1, nd2
       character oim(321, 111), nim(321, 111)

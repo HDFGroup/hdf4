@@ -14,7 +14,7 @@ C $Id$
 C
       subroutine tpf (number_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 C
 C
 C Test program: Writes palettes in a file.
@@ -30,7 +30,7 @@ C
 
       integer number_failed
       character*(*) myname
-      parameter (myname = "p")
+      parameter (myname = 'p')
 
       integer dpppal, dpapal, dprest, dpgpal, dpnpals
       integer dprref, dpwref
@@ -44,7 +44,7 @@ C
       integer i
 
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       TESTFILE = 'tpalf.hdf'
       CR = char(10)
       number_failed = 0

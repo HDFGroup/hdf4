@@ -34,7 +34,7 @@ C
    
       integer number_failed
       character*(*) myname
-      parameter (myname = "sdmms")
+      parameter (myname = 'sdmms')
       
       integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt
       integer dssdisc, dsgdisc, dsscal, dsgcal
@@ -72,7 +72,7 @@ C      byte ti8max, ti8min
       integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
       integer DFNT_INT32
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       f64max = 40.0
       f64min = 0.0
       f32max = 40.0

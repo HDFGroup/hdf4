@@ -3,7 +3,7 @@ C Interface to invoke tests for HDF Fortran interfaces.
 
 	Program main
 	implicit none
-	include "fortest.inc"
+	include 'fortest.inc'
 
 	integer nerror, retcode
 	character cmd*15, test*30
@@ -20,15 +20,15 @@ C Default to cleanup *.hdf files and set verbosity to default value
 	    call getcmd(cmd, test, retcode)
 	end do
 
-	print *, "====================================="
+	print *, '====================================='
 	if (nerror .ne. 0) then
-	    print*, "Fortran tests have ", nerror, "errors"
+	    print*, 'Fortran tests have ', nerror, 'errors'
 	else
-	    print*, "All fortran tests passed"
+	    print*, 'All fortran tests passed'
 	endif
-	print *, "====================================="
+	print *, '====================================='
 
-	if (CleanUp) call system("rm -f *.hdf")
+	if (CleanUp) call system('rm -f *.hdf')
 
 	stop
 	end
@@ -48,7 +48,7 @@ C
 	retcode = 0
 
 	read(*,11,END=100,err=100) inline
-C	print *, "inline=", inline
+C	print *, 'inline=', inline
 	linelen = len(inline)
 	i = index(inline, ' ')
 	if (i .le. 0) i = linelen+1
@@ -64,7 +64,7 @@ C	print *, "inline=", inline
 
 50	test = inline(i:linelen)
 
-C	print * , "cmd=", cmd, ", test=", test
+C	print * , 'cmd=', cmd, ', test=', test
 
 	retcode = 0
 	return
@@ -82,116 +82,116 @@ C
 	implicit none
 	character*(*) cmd, param
 
-	include "fortest.inc"
+	include 'fortest.inc'
 	
 	integer retcode
 C
 	retcode = 0
 
 C Parse command types
-	if (cmd .EQ. "Verbosity") then
+	if (cmd .EQ. 'Verbosity') then
 	    Verbosity = index('0123456789', param(1:1)) - 1
 	    return
 	endif
 	    
-	if (cmd .EQ. "Cleanup") then
+	if (cmd .EQ. 'Cleanup') then
 	    CleanUp = .FALSE.
 	    return
 	endif
 	    
-C	print *, "====================================="
+C	print *, '====================================='
 C	print *, cmd, param
-C	print *, "====================================="
-	if (cmd .EQ. "Skip") then
-	    call ptestban("Skipping", param)
+C	print *, '====================================='
+	if (cmd .EQ. 'Skip') then
+	    call ptestban('Skipping', param)
 	    return
 	endif
 
-	if (cmd .NE. "Test") then
-	    print *, "Unknown Command: ", cmd, param
+	if (cmd .NE. 'Test') then
+	    print *, 'Unknown Command: ', cmd, param
 	    print *, 'Try one of "Skip", "Test", "Verbosity" or "Cleanup"'
 	    retcode = -1
 	    return
 	endif
 
 C run the command
-	if (param .EQ. "slab") then
+	if (param .EQ. 'slab') then
 	    call slabwf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "r24") then
+	if (param .EQ. 'r24') then
 	    call t24f(retcode)
 	    return
 	endif
 
-	if (param .EQ. "an") then
+	if (param .EQ. 'an') then
 	    call tanf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "anfile") then
+	if (param .EQ. 'anfile') then
 	    call tanfilef(retcode)
 	    return
 	endif
 
-	if (param .EQ. "manf") then
+	if (param .EQ. 'manf') then
 	    call manf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "mgrf") then
+	if (param .EQ. 'mgrf') then
 	    call mgrf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "p") then
+	if (param .EQ. 'p') then
 	    call tpf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "r8") then
+	if (param .EQ. 'r8') then
 	    call tr8f(retcode)
 	    return
 	endif
 
-	if (param .EQ. "sdmms") then
+	if (param .EQ. 'sdmms') then
 	    call tsdmmsf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "sdnmms") then
+	if (param .EQ. 'sdnmms') then
 	    call tsdnmmsf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "sdnnt") then
+	if (param .EQ. 'sdnnt') then
 	    call tsdnntf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "sdnt") then
+	if (param .EQ. 'sdnt') then
 	    call tsdntf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "sdstr") then
+	if (param .EQ. 'sdstr') then
 	    call tsdstrf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "vsetf") then
+	if (param .EQ. 'vsetf') then
 	    call tvsetf(retcode)
 	    return
 	endif
 
-	if (param .EQ. "stubs") then
+	if (param .EQ. 'stubs') then
 	    call tstubsf(retcode)
 	    return
 	endif
 
 C
-	print *, "Unknown Command: ", cmd, param
+	print *, 'Unknown Command: ', cmd, param
 	retcode = -1
 	return
 	end

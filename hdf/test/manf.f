@@ -25,11 +25,11 @@ C  Input file:   none
 C  Output files: manf.hdf
 C
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer number_failed
       character*(*) myname
-      parameter (myname = "manf")
+      parameter (myname = 'manf')
 
       integer afstart, afend, afcreate, affcreate
       integer afwriteann, afendaccess, hopen, hclose
@@ -73,7 +73,7 @@ C
       real      data(ROWS, COLS)
 
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       number_failed = 0
       numberfailed =  0
       CR = char(10)
@@ -311,7 +311,7 @@ C**************************************************************
       subroutine man_check_lab_desc(fname, tag, ref, label, desc, 
      *                          num_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       character*(*) fname, label, desc
       integer tag, ref, num_failed
@@ -452,7 +452,7 @@ C
 C************************************************************
       subroutine check_fan(fname, index, label, desc, num_failed)
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       character*(*) fname, label, desc
       integer index, num_failed

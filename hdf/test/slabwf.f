@@ -19,11 +19,11 @@ C
 C Output files: slabwf.hdf, slab1wf, slab4wf
 
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer num_err
       character*(*) myname
-      parameter (myname = "slab")
+      parameter (myname = 'slab')
 
       integer dssdims, dssdisc, dssdist, dssfill
       integer dssslab, dswslab, dseslab, dsrslab
@@ -42,7 +42,7 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
       integer nref
       integer number_failed
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       number_failed = 0
 
       DFTAG_SDT = 709 

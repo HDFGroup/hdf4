@@ -21,11 +21,11 @@ C Output file: tmgrf.hdf
 C
 C
       implicit none
-      include "fortest.inc"
+      include 'fortest.inc'
 
       integer num_err
       character*(*) myname
-      parameter (myname = "mgrf")
+      parameter (myname = 'mgrf')
 
       integer hopen, hclose
       integer mgstart, mgfinfo, mgend, mgcreat, mgselct 
@@ -94,7 +94,7 @@ C
       DATA cbuf/'A','B','C','D','E','F','G','H','I','J','K','L',
      +          'M','N','O','P','Q','R','S','T','U','V','W','X'/
 
-      call ptestban("Testing", myname)
+      call ptestban('Testing', myname)
       num_err = 0
       TESTFILE = 'tmgrf.hdf'
       IMAGE1 = 'Image #1'
