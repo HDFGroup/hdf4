@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.28  1992/11/19 17:14:47  chouck
+# Revision 1.29  1993/01/07 20:48:43  georgev
+# Added Hyperslab C and Fortran test programs.
+#
+# Revision 1.28  1992/11/19  17:14:47  chouck
 # Made rules cleaner.  Fixed Fortran capitalizations
 #
 # Revision 1.27  1992/10/01  03:27:34  chouck
@@ -151,6 +154,21 @@
 #              tvers      (storing and retrieving version strings)
 #              thlinkage  (linkage of functions)
 #
+# Hyperslab C test programs
+#              slabw      (write data as 5 slabs )
+#              slab1w     (write data as first 3 of 5 slabs )
+#              slab2w     (write data as last 2 of 5 slabs )
+#              slab3w     (write data as 24 slabs i.e. each element )
+#              slab4w     (write data as 1 slab )
+#              slabwf     (write data as 5 slabs )
+#
+# Hyperslab Fortran test programs
+#              slabw      (write data as 5 slabs )
+#              slab1wf    (write data as first 3 of 5 slabs )
+#              slab2wf    (write data as last 2 of 5 slabs )
+#              slab3wf    (write data as 24 slabs i.e. each element )
+#              slab4wf    (write data as 1 slab )
+#
 # ##################################################################
 #
 #                      HOW TO USE THIS MAKEFILE
@@ -214,16 +232,20 @@ RM=/bin/rm
 RMFLAGS=-f
 
 CTESTS= trig tsdstr tsdmms tsdnmms tsdnnt tsdnt tan \
-        tanfile tstubs tv1 tv2 tvers egchi
+        tanfile tstubs tv1 tv2 tvers egchi \
+        slabw slab1w slab2w slab3w slab4w
+
 
 CHDRS = df.h dfi.h dfsd.h vg.h df.h dfi.h dfstubs.h \
-	vproto.h 
+	    vproto.h 
 CTSRCS= trig.c tsdstr.c tsdmms.c tsdnmms.c tsdnnt.c \
         tsdnt.c tan.c tanfile.c tstubs.c \
-	tv1.c tv2.c tvers.c egchi.c
+	    tv1.c tv2.c tvers.c egchi.c\
+        slabw.c slab1w.c slab2w.c slab3w.c slab4w.c
 CTOBJS= trig.o tsdstr.o tsdmms.o tsdnt.o tan.o tanfile.o \
         tstubs.o tsdnmms.o tsdnnt.o tv1.o tv2.o \
-	tvers.o egchi.o
+	    tvers.o egchi.o \
+        slabw.o slab1w.o slab2w.o slab3w.o slab4w.o
 
 HTESTS= thfile thfile1 terr thblocks thextelt tlinkage
 HHDRS = hfile.h hdf.h hdfi.h herr.h hproto.h 
@@ -231,11 +253,14 @@ HTSRCS= thfile.c thfile1.c terr.c thblocks.c thextelt.c tlinkage.c
 HTOBJS= thfile.o thfile1.o terr.o thblocks.o thextelt.o tlinkage.o
 
 FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
-        tsdmmsf tsdnmmsf tstubsf egfhi
+        tsdmmsf tsdnmmsf tstubsf egfhi \
+        slabwf slab1wf slab2wf slab3wf slab4wf
 FSRCS = tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f \
-        tsdnntf.f tsdmmsf.f  tsdnmmsf.f tstubsf.f egfhi.f
+        tsdnntf.f tsdmmsf.f  tsdnmmsf.f tstubsf.f egfhi.f \
+        slabwf.f slab1wf.f slab2wf.f slab3wf.f slab4wf.f
 FOBJS = tr8f.o t24f.o tpf.o tanf.o tanfilef.o tsdstrf.o tsdntf.o \
-        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o egfhi.o
+        tsdnntf.o tsdmmsf.o tsdnmmsf.o tstubsf.o egfhi.o \
+        slabwf.o slab1wf.o slab2wf.o slab3wf.o slab4wf.o
 
 all: htests ctests ftests
 
