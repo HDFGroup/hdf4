@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.13  1993/05/03 21:32:01  koziol
+# Revision 1.14  1993/05/03 21:38:39  chouck
+# Removed purify directive
+#
+# Revision 1.13  1993/05/03  21:32:01  koziol
 # First half of fixes to make Purify happy
 #
 # Revision 1.12  1993/04/12  13:26:59  koziol
@@ -197,7 +200,7 @@ DFILEOBJECTS=jrdjfif.o jwrgif.o jwrppm.o jwrrle.o jwrtarga.o
 JOBJS= $(CLIBOBJECTS) $(DLIBOBJECTS) $(COMOBJECTS)
 
 .c.o:
-	purify $(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $<
 
 .f.o:
 	$(FC) $(FFLAGS) -c $<
