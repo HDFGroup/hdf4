@@ -69,7 +69,9 @@
 /* largest number that will fit into 16-bit word ref variable */
 #define MAX_REF ((uint16)32767)
 
-/* invalid offset & length to indicate a partially defined element */
+/* invalid offset & length to indicate a partially defined element 
+* written to the HDF file i.e. can handle the case where the the
+* element is defined but not written out */
 #define INVALID_OFFSET 0xFFFFFFFF
 #define INVALID_LENGTH 0xFFFFFFFF
 
@@ -348,9 +350,9 @@ tag_ref    , *tag_ref_ptr;
 /* tag/ref list structure */
 typedef struct tag_ref_list_str
   {
-      int         count;        /* number of objects */
+      int         count;        /* number of valid DDs in this list*/
       tag_ref     objects[HASH_BLOCK_SIZE];     /* DDs */
-      struct tag_ref_list_str *next;    /* next one in the list */
+      struct tag_ref_list_str *next;    /* next list of DDs */
   }
 tag_ref_list, *tag_ref_list_ptr;
 
@@ -379,7 +381,7 @@ typedef struct filerec_t
       struct ddblock_t *ddlast; /* end of ddblock list */
 
       /* hash table stuff */
-      tag_ref_list_ptr hash[HASH_MASK + 1];     /* hashed table of tag / refs */
+      tag_ref_list_ptr hash[HASH_MASK + 1];   /* hashed table of tag/refs */
   }
 filerec_t;
 
@@ -489,26 +491,41 @@ functab_t;
 #define BITTYPE   10    /* For bit-accesses */
 #define GRIDTYPE  11    /* for GR access */
 #define RIIDTYPE  12    /* for RI access */
+
+/* Translate file SLOT to file ID */
 #define FSLOT2ID(s) ((int32)((((uint32)FIDTYPE & 0xffff) << 16)|((s) & 0xffff)))
+
+/* Checks if valid file ID */
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                      (((uint32)(i) & 0xffff) < MAX_FILE))
+/* Translate file ID to file SLOT */
 #define FID2SLOT(i) (VALIDFID(i) ? (uint32)(i) & 0xffff : -1)
+
+/* Translate file ID to file RECORD */
 #define FID2REC(i)  ((VALIDFID(i) ? &(file_records[(uint32)(i) & 0xffff]) : \
                       NULL))
 #define BADFREC(r)  ((r)==NULL || (r)->refcount==0)
+
+/* Translate access SLOT to access ID */
 #define ASLOT2ID(s) ((((uint32)AIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
+
+/* Verify valid access ID */
 #define VALIDAID(i) (((((uint32)(i) >> 16) & 0xffff) == AIDTYPE) && \
                      (((uint32)(i) & 0xffff) < MAX_ACC) && \
                      (access_records))
+/* Translate access ID to access SLOT */ 
 #define AID2SLOT(i) (VALIDAID(i) ? (uint32)(i) & 0xffff : -1)
-#define AID2REC(i) ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) : NULL))
+
+/* Translate access ID to access RECORD */
+#define AID2REC(i)  ((VALIDAID(i) ? &(access_records[(uint32)(i) & 0xffff]) : \
+                     NULL))
 
 #define NO_ID     (uint32) 0
 
 /* --------------------------- Special Elements --------------------------- */
 /* The HDF tag space is divided as follows based on the 2 highest bits:
    00: NCSA reserved ordinary tags
-   01: NCSA reserved special tags
+   01: NCSA reserved special tags(e.g. linked-block, external, compressed,..)
    10, 11: User tags.
 
    It is relatively cheap to operate with special tags within the NCSA
@@ -517,8 +534,8 @@ functab_t;
    special_table in hfile.c and SPECIAL_TABLE must be defined. */
 
 #ifdef SPECIAL_TABLE
-#define BASETAG(t) (HDbase_tag(t))
-#define SPECIALTAG(t) (HDis_special_tag(t))
+#define BASETAG(t)      (HDbase_tag(t))
+#define SPECIALTAG(t)   (HDis_special_tag(t))
 #define MKSPECIALTAG(t) (HDmake_special_tag(t))
 #else
 #define BASETAG(t)      (uint16)((~(t) & 0x8000) ? ((t) & ~0x4000) : (t))
@@ -531,13 +548,13 @@ functab_t;
 extern accrec_t *access_records;
 
 /* file records array.  defined in hfile.c */
-#if defined(macintosh) | defined(THINK_C) | defined(DMEM)   /* Dynamic memory */
+#if defined(macintosh) | defined(THINK_C) | defined(DMEM)  /* Dynamic memory */
 extern filerec_t *file_records;
 #else  /* !macintosh */
 extern filerec_t file_records[];
 #endif /* !macintosh */
 
-/* */
+/* The total number of DD's in the file?..hmm...*/
 #define FILE_NDDS(file_rec) ((file_rec)->ddlast->ndds)
 
 /* -------------------------- H-Layer Prototypes -------------------------- */
