@@ -123,7 +123,7 @@ nssdc_read_cdf(xdrs, handlep)
     uint8  * b;
     int32    dummy;
     char   * FUNC = "nssdc_read_cdf";
-    FILE   * fp;
+    hdf_file_t fp;
     intn     i, j;
     int32    rank, current_var, nctype, current_dim, hdftype;
     intn     dims[MAX_VAR_DIMS];
