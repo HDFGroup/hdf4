@@ -286,7 +286,7 @@ int nbytes;
 
 static bool_t   xdrposix_getlong();
 static bool_t   xdrposix_putlong();
-#if (_MIPS_SZLONG == 64)
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64)
 static bool_t   xdrposix_getint();
 static bool_t   xdrposix_putint();
 #endif
@@ -300,7 +300,11 @@ static inline_t *   xdrposix_inline();
 #if (_MIPS_SZLONG == 64)
 static long *    xdrposix_inline();
 #else
+#if (defined __sun && defined _LP64)
+static rpc_inline_t *    xdrposix_inline();
+#else
 static netlong *    xdrposix_inline();
+#endif
 #endif
 #endif
 static void xdrposix_destroy();
@@ -322,7 +326,16 @@ static struct xdr_ops   xdrposix_ops = {
     xdrposix_getpos,    /* get offset in the stream */
     xdrposix_setpos,    /* set offset in the stream */
     xdrposix_inline,    /* prime stream for inline macros */
+#if (defined __sun && defined _LP64)
+    xdrposix_destroy,   /* destroy stream */
+    NULL,               /* no xdr_control function defined */
+    /* Solaris 64-bit (arch=v9) has 64 bits long and 32 bits int. */
+    /* It defines the two extra entries for get/put int. here */
+    xdrposix_getint,   /* deserialize a 32-bit int */
+    xdrposix_putint    /* serialize a 32-bit int */
+#else
     xdrposix_destroy    /* destroy stream */
+#endif
 };
 
 
@@ -542,7 +555,11 @@ static inline_t *
 #if (_MIPS_SZLONG == 64)
 static long *
 #else
+#if (defined __sun && defined _LP64)
+static rpc_inline_t *
+#else
 static netlong *
+#endif
 #endif
 #endif
 xdrposix_inline(xdrs, len)
@@ -559,7 +576,7 @@ xdrposix_inline(xdrs, len)
     return (NULL);
 }
 
-#if (_MIPS_SZLONG == 64)
+#if (_MIPS_SZLONG == 64) || (defined __sun && defined _LP64)
 
 static bool_t
 xdrposix_getint(xdrs, lp)
