@@ -249,7 +249,7 @@ HDGLinitialize_list(Generic_list *list)
           list->info->num_of_elements = 0;
       }
     else
-        HGOTO_ERROR(DFE_NOSPACE, NULL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 done:
     if (ret_value == FAIL)
@@ -361,7 +361,7 @@ HDGLadd_to_beginning(Generic_list list,
           list.info->num_of_elements++;
       }
     else
-        HGOTO_ERROR(DFE_NOSPACE, NULL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 done:
     if (ret_value == FAIL)
@@ -406,7 +406,7 @@ HDGLadd_to_end(Generic_list list,
           list.info->num_of_elements++;
       }
     else
-        HGOTO_ERROR(DFE_NOSPACE, NULL);
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 done:
     if (ret_value == FAIL)
@@ -459,7 +459,7 @@ HDGLadd_to_list(Generic_list list,
               list.info->num_of_elements++;
           }
         else
-            HGOTO_ERROR(DFE_NOSPACE, NULL);
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
     else /* no sort fcn so add to end of list */
         ret_value = HDGLadd_to_end(list, pointer);
