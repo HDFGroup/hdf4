@@ -237,41 +237,36 @@ ALL_CFLAGS = $(CFLAGS) $(FMPOOL_FLAGS) -I$(HDFINC) -I$(JPEGINC) -I$(ZLIBINC)
 MANIFEST = $(DISTFILES)
 
 DISTFILES = Makefile.in bitio.dat litend.dat nbit.dat tmgr.dat win32tst.mak \
-	$(SRCS) $(FSRCS) $(HDRS)
+	$(CSRCS) $(FSRCS) $(CHDRS) gentest.c
 
-HDRS= tproto.h tutils.h
+CHDRS= tproto.h tutils.h
 
-SRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
+CSRCS= 	rig.c sdstr.c blocks.c an.c anfile.c extelt.c file.c file1.c vers.c \
 	sdmms.c sdnmms.c slab.c litend.c tvset.c comp.c bitio.c tree.c conv.c \
-	nbit.c man.c mgr.c testhdf.c gentest.c tbv.c tvsfpack.c
+	nbit.c man.c mgr.c testhdf.c tbv.c tvsfpack.c
 
-CTESTS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
+COBJS= rig.o sdstr.o blocks.o an.o anfile.o extelt.o file.o file1.o vers.o \
 	sdmms.o sdnmms.o slab.o litend.o tvset.o comp.o bitio.o tree.o conv.o \
 	nbit.o man.o mgr.o testhdf.o tbv.o tvsfpack.o
 
-FSRCS= tr8f.f t24f.f tpf.f tanf.f tanfilef.f tsdstrf.f tsdntf.f tsdnntf.f \
-        tsdmmsf.f tsdnmmsf.f tstubsf.f  tvsetf.f\
-        slabwf.f manf.f mgrf.f fortest.c
-CFORSUPSRCS = forsupf.c
-FFORSUPSRCS = forsupff.f
-FTESTS= tr8f t24f tpf tanf tanfilef tsdstrf tsdntf tsdnntf \
-        tsdmmsf tsdnmmsf tstubsf \
-        slabwf manf mgrf
-FOBJS = slabwf.o \
-	t24f.o tanf.o tanfilef.o manf.o mgrf.o tpf.o tr8f.o \
-	tsdmmsf.o tsdnmmsf.o tsdnntf.o tsdntf.o tsdstrf.o tstubsf.o \
-	tvsetf.o fortestF.o
-CFORSUPOBJS = forsupf.o
-FFORSUPOBJS = forsupff.o
+FSRCS= fortest.c fortestF.f forsupff.f \
+	manf.f mgrf.f slabwf.f t24f.f tanf.f tanfilef.f tpf.f tr8f.f \
+	tsdmmsf.f tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f tvsetf.f
+
+FOBJS = fortestF.o forsupff.o \
+	manf.o mgrf.o slabwf.o t24f.o tanf.o tanfilef.o tpf.o tr8f.o \
+	tsdmmsf.o tsdnmmsf.o tsdnntf.o tsdntf.o tsdstrf.o tstubsf.o tvsetf.o
+
+#CFORSUPSRCS = forsupf.c
+
+FTESTS = fortest fortestF
+
+#CFORSUPOBJS = forsupf.o
+
 TESTF = fortest.o
 
 # directory used by extelt test.
 TESTDIR = testdir
-
-$(FTESTS): $(FOBJS) $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
-	$(FC) $(FFLAGS) $@.o -o $@ $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
-
-$(FTESTS): $(FRC)
 
 all::		FORCE
 	@case "$(FC)" in \
@@ -283,7 +278,7 @@ all::		FORCE
 
 rall::         FORCE
 	@if test -z "$(FMPOOL_FLAGS)"; then \
-	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf fortest gentest; \
+	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) testhdf fortest fortestF gentest; \
 	else		 \
 	  $(MAKE) $(MFLAGS) $(HDF_FLAGS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" testhdf fortest gentest; \
 	fi
@@ -327,7 +322,14 @@ $(ZLIBLIB)/libz.a:
 .f.o:
 	$(FC) $(FFLAGS) -c $*.f 
 
-$(CTESTS) $(TESTF) $(FTESTS): $(FRC)
+$(COBJS) $(TESTF) $(FTESTS): $(FRC)
+
+$(FOBJS): fortest.inc
+
+#$(FTESTS): $(FOBJS) $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+#	$(FC) $(FFLAGS) $@.o -o $@ $(CFORSUPOBJS) $(FFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+
+#$(FTESTS): $(FRC)
 
 test-hdf::		FORCE
 	@case "$(FC)" in \
@@ -352,24 +354,24 @@ test-hdffortran: fortest fortest.sav
 	./fortest > fortest.out
 	@cmp fortest.out fortest.sav && echo "*** Fortran tests passed ***";
 
-qtesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	quantify $(CC) $(ALL_CFLAGS) -o qtesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+qtesthdf: $(COBJS) $(HDFLIB)/libdf.a
+	quantify $(CC) $(ALL_CFLAGS) -o qtesthdf $(COBJS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
-ptesthdf: $(CTESTS) $(HDFLIB)/libdf.a
-	purify $(CC) $(ALL_CFLAGS) -o ptesthdf $(CTESTS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+ptesthdf: $(COBJS) $(HDFLIB)/libdf.a
+	purify $(CC) $(ALL_CFLAGS) -o ptesthdf $(COBJS) $(HDFSRC)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
-testhdf.tc: $(CTESTS) $(HDFLIB)/libdf.a
-	proof $(CC) $(ALL_CFLAGS) -o testhdf.tc $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+testhdf.tc: $(COBJS) $(HDFLIB)/libdf.a
+	proof $(CC) $(ALL_CFLAGS) -o testhdf.tc $(COBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
-testhdf: $(CTESTS) $(HDFLIB)/libdf.a
-	$(CC) $(ALL_CFLAGS) -o testhdf $(CTESTS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+testhdf: $(COBJS) $(HDFLIB)/libdf.a
+	$(CC) $(ALL_CFLAGS) -o testhdf $(COBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 	test -d $(TESTDIR) || mkdir $(TESTDIR)
 
-fortestF: $(FOBJS) $(FFORSUPOBJS) $(CFORSUPOBJS) $(HDFLIB)/libdf.a
-	$(FC) $(FFLAGS) -o $@ $(FOBJS) $(FFORSUPOBJS) $(CFORSUPOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+fortestF: $(FOBJS) $(HDFLIB)/libdf.a
+	$(FC) $(FFLAGS) -o $@ $(FOBJS) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
-fortest: $(HDFLIB)/libdf.a $(TESTF) fortestF
-	$(CC) $(ALL_CFLAGS) -o fortest $(TESTF) $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
+fortest: $(HDFLIB)/libdf.a fortest.c
+	$(CC) $(ALL_CFLAGS) -o fortest fortest.c $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
 
 gentest: gentest.c $(HDFLIB)/libdf.a
 	$(CC) $(ALL_CFLAGS) gentest.c -o gentest $(HDFLIB)/libdf.a $(JPEGLIB)/libjpeg.a $(ZLIBLIB)/libz.a
@@ -377,19 +379,19 @@ gentest: gentest.c $(HDFLIB)/libdf.a
 ftests: $(FTESTS)
 
 clean: 
-	-$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest fortestF \
+	-$(RM) $(RMFLAGS) $(COBJS) testhdf $(FOBJS) $(FTESTS) \
 	core *.hdf ptesthdf qtesthdf gentest *.o fortest.arg $(TESTDIR)/*
 
 distclean: 
-	-$(RM) $(RMFLAGS) $(CTESTS) testhdf $(FOBJS) $(FTESTS) fortest fortestF \
+	-$(RM) $(RMFLAGS) $(COBJS) testhdf $(FOBJS) $(FTESTS) \
 	core *.hdf ptesthdf qtesthdf gentest *.o fortest.arg $(TESTDIR)/* \
 	config.status Makefile
 
 depend: 
 	makedepend -I$(HDFINC) *.c
 
-saber:	$(SRCS)
-	 #load $(ALL_CFLAGS) $(SRCS) 
+saber:	$(CSRCS)
+	 #load $(ALL_CFLAGS) $(CSRCS) 
 
 # for distribution creation
 distdir = $(TOP_SRCDIR)/$(PACKAGE)-$(VERSION)/$(curdir)
