@@ -6,6 +6,7 @@ PROGRAM		= hdp
 BINFILES	= $(PROGRAM)
 HDF_LIB         = @HDF_LIB@
 HDF_INC         = @HDF_INC@
+JPEG_LIB        = @JPEG_LIB@
 CPP_NETCDF	= -I../libsrc -I../port $(HDF_INC)
 CPPFLAGS	= $(CPP_NETCDF) @CPPFLAGS@
 CFLAGS		= @CFLAGS@
@@ -17,7 +18,7 @@ LD_NETCDF	= ../libsrc/libnetcdf.a
 OBJS		=  hdp.o hdp_list.o hdp_sds.o hdp_util.o hdp_vd.o hdp_vg.o hdp_rig.o show.o
 LD_XDR		= @LD_XDR@
 LD_NETCDF	= -L../libsrc -lnetcdf
-LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm
+LIBS		= $(LD_NETCDF) $(LD_XDR) $(HDF_LIB) -lm $(JPEG_LIB)
 prefix		= ../../..
 GARBAGE		= $(PROGRAM) *.o
 
