@@ -20,6 +20,12 @@
 #ifndef _NETCDF_
 #define _NETCDF_
 
+#ifdef __MWERKS__
+#ifndef HDF
+#define HDF
+#endif
+#endif /* __MWERKS__ */
+
 /*
  * The definitions ncvoid, USE_ENUM, and MAX_NC_OPEN, may need to be set
  * properly for your installation.
@@ -42,7 +48,9 @@
  * Otherwise, delete this definition so that the nc_type is
  * an int and the valid values are #defined.
  */
+#ifndef __MWERKS__
 #define USE_ENUM
+#endif
 
 
 /*
@@ -399,6 +407,9 @@ extern int ncsync	PROTO((
 extern int ncabort	PROTO((
     int		cdfid
 ));
+extern int ncnobuf	PROTO((
+    int		cdfid
+));
 extern int ncdimdef	PROTO((
     int		cdfid,
     const char*	name,
@@ -456,7 +467,7 @@ extern int ncvarput	PROTO((
     int		varid,
     const long*	start,
     const long*	count, 
-    const void*	value
+    void*	value
 ));
 extern int ncvarget	PROTO((
     int		cdfid,
@@ -471,7 +482,7 @@ extern int ncvarputs	PROTO((
     const long*	start,
     const long*	count,
     const long*	stride,
-    const void*	values
+    void*	values
 ));
 extern int ncvargets	PROTO((
     int		cdfid,
@@ -488,7 +499,7 @@ extern int ncvarputg	PROTO((
     const long*	count,
     const long*	stride,
     const long*	imap,
-    const void* values
+    void* values
 ));
 extern int ncvargetg	PROTO((
     int		cdfid,
@@ -570,7 +581,7 @@ extern int ncrecget		PROTO((
 extern int ncrecput		PROTO((
     int		cdfid,
     long	recnum,
-    void* const* datap
+    void* * datap
 ));
 #ifdef __cplusplus
 }
