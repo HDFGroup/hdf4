@@ -25,6 +25,9 @@ HDF4.1r6
    The problem is now fixed. An error message is displayed if the image is not
    8-bit. If the image is 24-bit, the message suggests using hdf2jpeg.
 
+8. Changed VSsetfields() function to return error if fields are attempted to
+   be set on vdata opened for writing that already has fields defined.
+
 HDF4.1r5
 ========
 1. The following VS routines are added as requested (bug #267):

@@ -126,115 +126,120 @@ VSsetfields(int32 vkey, const char *fields)
      * write to an empty vdata : set the write list but do not set the
      *   read list cuz there is nothing there to read yet...
      */
-    if ((vs->access == 'w') && (vs->nvertices == 0))
+    if (vs->access == 'w')
        {
-          wlist=&(vs->wlist);
-          if (wlist->n == 0) /* fields not set yet, Sept. 96. */
-            /* do not re-set fields if they were already set. */
-          {
-              wlist->ivsize = 0;
-              wlist->n = 0;
+        if (vs->nvertices == 0)
+           {
+              wlist=&(vs->wlist);
+              if (wlist->n == 0) /* fields not set yet, Sept. 96. */
+                /* do not re-set fields if they were already set. */
+              {
+                  wlist->ivsize = 0;
+                  wlist->n = 0;
 
-          /* allocate space for the internal WRITELIST structures */
-              /* Allocate buffer to hold all the int16/uint16 arrays */
-              if((wlist->bptr=HDmalloc(sizeof(uint16)*(size_t)(ac*5)))==NULL)
-                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
+              /* allocate space for the internal WRITELIST structures */
+                  /* Allocate buffer to hold all the int16/uint16 arrays */
+                  if((wlist->bptr=HDmalloc(sizeof(uint16)*(size_t)(ac*5)))==NULL)
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
-              /* Use buffer to support the other arrays */
-              wlist->type=(int16 *)wlist->bptr;
-              wlist->off=(uint16 *)wlist->type+ac;
-              wlist->isize=wlist->off+ac;
-              wlist->order=wlist->isize+ac;
-              wlist->esize=wlist->order+ac;
-              if((wlist->name=HDmalloc(sizeof(char *)*(size_t)ac))==NULL)
-                {
-                  HDfree(wlist->bptr);
-                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                } /* end if */
+                  /* Use buffer to support the other arrays */
+                  wlist->type=(int16 *)wlist->bptr;
+                  wlist->off=(uint16 *)wlist->type+ac;
+                  wlist->isize=wlist->off+ac;
+                  wlist->order=wlist->isize+ac;
+                  wlist->esize=wlist->order+ac;
+                  if((wlist->name=HDmalloc(sizeof(char *)*(size_t)ac))==NULL)
+                    {
+                      HDfree(wlist->bptr);
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                    } /* end if */
 
-              for (i = 0; i < ac; i++)
-                {
-                    found = FALSE;
-                /* --- first look in the user's symbol table --- */
-                    for (j = 0; j < vs->nusym; j++)
-                        if (!HDstrcmp(av[i], vs->usym[j].name))
-                          {
-                              found = TRUE;
-                            
-                              if((wlist->name[wlist->n]=HDstrdup(vs->usym[j].name))==NULL)
-                               {
-                                  HDfree(wlist->name);
-                                  HDfree(wlist->bptr);
-                                  HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                } /* end if */
-                              order = vs->usym[j].order;
-                              wlist->type[wlist->n] = vs->usym[j].type;
-                              wlist->order[wlist->n] = order;
+                  for (i = 0; i < ac; i++)
+                    {
+                        found = FALSE;
+                    /* --- first look in the user's symbol table --- */
+                        for (j = 0; j < vs->nusym; j++)
+                            if (!HDstrcmp(av[i], vs->usym[j].name))
+                              {
+                                  found = TRUE;
+                                
+                                  if((wlist->name[wlist->n]=HDstrdup(vs->usym[j].name))==NULL)
+                                   {
+                                      HDfree(wlist->name);
+                                      HDfree(wlist->bptr);
+                                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                    } /* end if */
+                                  order = vs->usym[j].order;
+                                  wlist->type[wlist->n] = vs->usym[j].type;
+                                  wlist->order[wlist->n] = order;
 
-                              value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
-                              if (value == FAIL)
-                                  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                              wlist->esize[wlist->n] = (uint16) value;
-
-                              value = order * vs->usym[j].isize;
-                              if (value > MAX_FIELD_SIZE)
-                                  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                              wlist->isize[wlist->n] = (uint16) value;
-
-                              value = (int32) wlist->ivsize + (int32) (wlist->isize[wlist->n]);
-                              if (value > MAX_FIELD_SIZE)
-                                  HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                              wlist->ivsize = (uint16) value;
-
-                              wlist->n++;
-                              break;
-                          }
-
-                /* --- now look in the reserved symbol table --- */
-                    if (!found)
-                      {
-                          for (j = 0; j < (intn)NRESERVED; j++)
-                              if (!HDstrcmp(av[i], rstab[j].name))
-                                {
-                                    found = TRUE;
-
-                                    if((wlist->name[wlist->n]=HDstrdup(rstab[j].name))==NULL)
-                                      {
-                                        HDfree(wlist->name);
-                                        HDfree(wlist->bptr);
-                                        HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                      } /* end if */
-                                    order = rstab[j].order;
-                                    wlist->type[wlist->n] = rstab[j].type;
-                                    wlist->order[wlist->n] = order;
-                                    value = order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
-                                    if (value == FAIL)
+                                  value = order * DFKNTsize(vs->usym[j].type | DFNT_NATIVE);
+                                  if (value == FAIL)
                                       HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                                    wlist->esize[wlist->n] = (uint16) value;
-                                    wlist->isize[wlist->n] = (uint16) (order * rstab[j].isize);
-                                    wlist->ivsize += (uint16) (wlist->isize[wlist->n]);
-                                    wlist->n++;
-                                    break;
-                                }
-                      }
-                    if (!found)     /* field is not a defined field - error  */
-                        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-                }
+                                  wlist->esize[wlist->n] = (uint16) value;
 
-          /* *********************************************************** */
-          /* compute and save the fields' offsets */
-               for (uj = 0, i = 0; i < wlist->n; i++)
-                {
-                    wlist->off[i] = (uint16) uj;
-                    uj += wlist->isize[i];
-                }
+                                  value = order * vs->usym[j].isize;
+                                  if (value > MAX_FIELD_SIZE)
+                                      HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                  wlist->isize[wlist->n] = (uint16) value;
 
-              vs->marked = TRUE; /* mark vdata as being modified */
-              vs->new_h_sz = TRUE; /* mark vdata header size being changed */
+                                  value = (int32) wlist->ivsize + (int32) (wlist->isize[wlist->n]);
+                                  if (value > MAX_FIELD_SIZE)
+                                      HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                  wlist->ivsize = (uint16) value;
 
-              HGOTO_DONE(SUCCEED); /* OK */
-          } /* if wlist->n == 0 */
-      }     /* writing to empty vdata */
+                                  wlist->n++;
+                                  break;
+                              }
+
+                    /* --- now look in the reserved symbol table --- */
+                        if (!found)
+                          {
+                              for (j = 0; j < (intn)NRESERVED; j++)
+                                  if (!HDstrcmp(av[i], rstab[j].name))
+                                    {
+                                        found = TRUE;
+
+                                        if((wlist->name[wlist->n]=HDstrdup(rstab[j].name))==NULL)
+                                          {
+                                            HDfree(wlist->name);
+                                            HDfree(wlist->bptr);
+                                            HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                          } /* end if */
+                                        order = rstab[j].order;
+                                        wlist->type[wlist->n] = rstab[j].type;
+                                        wlist->order[wlist->n] = order;
+                                        value = order * DFKNTsize(rstab[j].type | DFNT_NATIVE);
+                                        if (value == FAIL)
+                                          HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                                        wlist->esize[wlist->n] = (uint16) value;
+                                        wlist->isize[wlist->n] = (uint16) (order * rstab[j].isize);
+                                        wlist->ivsize += (uint16) (wlist->isize[wlist->n]);
+                                        wlist->n++;
+                                        break;
+                                    }
+                          }
+                        if (!found)     /* field is not a defined field - error  */
+                            HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+                    }
+
+              /* *********************************************************** */
+              /* compute and save the fields' offsets */
+                   for (uj = 0, i = 0; i < wlist->n; i++)
+                    {
+                        wlist->off[i] = (uint16) uj;
+                        uj += wlist->isize[i];
+                    }
+
+                  vs->marked = TRUE; /* mark vdata as being modified */
+                  vs->new_h_sz = TRUE; /* mark vdata header size being changed */
+
+                  HGOTO_DONE(SUCCEED); /* OK */
+              } /* if wlist->n == 0 */
+          }     /* writing to empty vdata */
+        else
+            HGOTO_ERROR(DFE_FIELDSSET, FAIL);
+      }     /* writing to vdata */
 
     /*
      *   No matter the access mode, if there are elements in the VData
