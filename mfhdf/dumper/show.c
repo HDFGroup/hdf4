@@ -471,7 +471,7 @@ dumpattr(int32 vid,
     intn          alloc_flag = 0;
     int32         i_type;
     int32         i_count;
-    int32         i_size;
+    int32         i_size, e_size;
     int32         off;
     uint8         attrbuf[BUFFER];
     uint8         *buf = NULL;
@@ -501,9 +501,9 @@ dumpattr(int32 vid,
       {
           /* get attribute infor of vdata/vgroup */
           if (isvs)
-              status = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &i_size);
+              status = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &e_size);
           else
-              status = Vattrinfo(vid, i, name, &i_type,&i_count, &i_size);
+              status = Vattrinfo(vid, i, name, &i_type,&i_count, &e_size);
 
           if (status == FAIL) 
             {
@@ -512,13 +512,26 @@ dumpattr(int32 vid,
                 goto done;
             }
 
+          /* get attribute hdfsize of vdata/vgroup */
+          if (isvs)
+              status = VSattrhdfsize(vid, findex, i, &i_size);
+          else
+              status = Vattrhdfsize(vid, i, &i_size);
+
+          if (status == FAIL) 
+            {
+                fprintf(stderr,">>>dumpattr: failed in getting %d'th attr hdfsize.\n",i);
+                ret_value = FAIL;
+                goto done;
+            }
+
           fprintf(fp,"    attr%d: name=%s type=%d count=%d size=%d\n",
                   i, name, (int)i_type, (int)i_count, (int)i_size);
 
           /* we have two buffer sizes? */
-          if (i_size > BUFFER) 
+          if (e_size > BUFFER) 
             {
-                if (NULL == (buf = HDmalloc(i_size)))  
+                if (NULL == (buf = HDmalloc(e_size)))  
                   {
                       fprintf(stderr,">>>dumpattr:can't allocate buf for %d'th attribute.\n",i);
                       ret_value = FAIL;
