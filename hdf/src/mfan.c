@@ -72,6 +72,12 @@ static char RcsId[] = "@(#)$Revision$";
  *  ANwriteann: - write annotation given handle(ann_id)
  *  ANendaccess - end access to annotation using handle(ann_id)
  *
+ *  Miscellaneous Routines
+ *  ----------------------
+ *  ANget_tagref - get tag/ref pair to annotation ID
+ *  atype2tag - annotation type to corresponding annotation TAG
+ *  tag2atype - annotation TAG to corresponding annotation type
+ *
  *---------------------------------------------------------------------------*/
 
 #ifndef MFAN_C  /* define main annoation source file */
@@ -2516,5 +2522,65 @@ ANget_tagref(int32 file_id, int32 index, ann_type type, uint16 *tag, uint16 *ref
 
   return SUCCEED;
 } /* ANget_tagref() */
+
+/*-------------------------------------------------------------------- 
+ NAME
+     atype2tag - annotation type to corresponding annotation TAG
+ DESCRIPTION
+     translate annotation type to corresponding TAG
+ RETURNS
+     returns TAG correspondign to annotatin type
+--------------------------------------------------------------------*/
+EXPORT uint16
+#ifdef PROTOTYPE
+atype2tag(ann_type atype)
+#else
+atype2tag(ann_type)
+ann_type atype;         /* annotation type */
+#endif
+{   /* Switch on annotation type "atype" */
+  CONSTR(FUNC, "atype2tag");    /* for HERROR */
+  uint16 ann_tag;
+
+  switch(atype) 
+    {
+    case AN_FILE_LABEL: ann_tag = DFTAG_FID; break;
+    case AN_FILE_DESC:  ann_tag = DFTAG_FD;  break;
+    case AN_DATA_LABEL: ann_tag = DFTAG_DIL; break;
+    case AN_DATA_DESC:  ann_tag = DFTAG_DIA; break;
+    default: ann_tag = -1;
+    } /* switch */
+  return ann_tag;
+} /* atype2tag */
+
+/*-------------------------------------------------------------------- 
+ NAME
+     tag2atype - annotation TAG to corresponding annotation type
+ DESCRIPTION
+     translate annotation TAG to corresponding atype
+ RETURNS
+     returns type correspondign to annotatin TAG
+--------------------------------------------------------------------*/
+EXPORT ann_type
+#ifdef PROTOTYPE
+tag2atype(uint16 atag)
+#else
+tag2atype(atag)
+uint16 atag;         /* annotation tag */
+#endif
+{   /* Switch on annotation tag */
+  CONSTR(FUNC, "tag2atype");    /* for HERROR */
+  ann_type atype;
+
+  switch(atag) 
+    {
+    case DFTAG_FID: atype = AN_FILE_LABEL; break;
+    case DFTAG_FD:  atype = AN_FILE_DESC;  break;
+    case DFTAG_DIL: atype = AN_DATA_LABEL; break;
+    case DFTAG_DIA: atype = AN_DATA_DESC;  break;
+    default: atype = -1;
+    } /* switch */
+  return atype;
+} /* tag2atype */
 
 #endif /* MFAN_C */

@@ -1962,6 +1962,10 @@ extern intn  ANendaccess(int32 an_id);
 extern int32 ANget_tagref(int32 file_id, int32 index, ann_type type,
                           uint16 *ann_tag, uint16 *ann_ref);
 
+extern uint16 atype2tag(ann_type atype);
+
+extern ann_type tag2atype(uint16 atag);
+
 /* Multi-file Raster C-routines found in mfgr.c */
 extern int32 GRstart(int32 hdf_file_id);
 
