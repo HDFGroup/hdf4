@@ -932,7 +932,7 @@ NC_var **var;
   bufp = ptbuf;
   rank = assoc->count;
   UINT16ENCODE(bufp, rank);
-  for(i = 0; i < rank; i++) {
+  for(i = 0; i < (int)rank; i++) {
 
       val = (int32) (*var)->shape[i];
 
@@ -948,7 +948,7 @@ NC_var **var;
   }
   
   /* "<=" used to put 1 data NT + rank scale NTs in buffer */
-  for (i = 0; i <= rank; i++) 
+  for (i = 0; i <= (int)rank; i++) 
       {  /* scale NTs written even if no scale!*/
           UINT16ENCODE(bufp, DFTAG_NT);
           UINT16ENCODE(bufp, nt_ref);
@@ -1497,6 +1497,7 @@ int32  vg;
               vp->data_tag = DATA_TAG;
               vp->HDFtype  = HDFtype;
               vp->ndg_ref  = (uint16) ndg_ref;
+              vp->cdf = handle; /* for NC_var_shape */
 
               /* need to process the ragged array info here */
               /* QUESTION:  Load the whole rag_fill list in now??????? */

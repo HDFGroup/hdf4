@@ -175,6 +175,10 @@ int id ;
 		{
 			if(!xdr_numrecs(handle->xdrs, handle) )
 				return(-1) ;
+#ifdef HDF
+                        if (handle->file_type != HDF_FILE)
+#endif
+
 			handle->flags &= ~(NC_NDIRTY) ;
 		}
 	} else /* read only */

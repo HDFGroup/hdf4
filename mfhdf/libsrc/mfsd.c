@@ -927,7 +927,7 @@ int32 nt, rank, *dimsizes;
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
     var->HDFsize = DFKNTsize(nt);
-
+    var->cdf = handle; /* set cdf before calling NC_var_shape */
     /* get a new NDG ref for this sucker */
     var->ndg_ref = Hnewref(handle->hdf_file);
 
@@ -2279,7 +2279,7 @@ int32    id, nt;
     /* add it to the handle */
     if(handle->vars->count >= MAX_NC_VARS)
         return FAIL;
-        
+    var->cdf = handle; /* set cdf before calling NC_var_shape */
     /* compute all of the shape information */
     if(NC_var_shape(var, handle->dims) == -1)
         return FAIL;

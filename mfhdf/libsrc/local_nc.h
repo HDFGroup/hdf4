@@ -130,6 +130,27 @@ typedef struct {
 	NC_array	*data ;
 } NC_attr ;
 
+typedef struct {
+	char path[FILENAME_MAX + 1] ;
+	unsigned flags ;
+	XDR *xdrs ;
+	long begin_rec ; /* (off_t) postion of the first 'record' */
+	unsigned long recsize ; /* length of 'record' */
+	int redefid ;
+	/* below gets xdr'd */
+	unsigned long numrecs ; /* number of 'records' allocated */
+	NC_array *dims ;
+	NC_array *attrs ;
+	NC_array *vars ;
+#ifdef HDF
+	int32 hdf_file;
+        int file_type;
+        int32 vgid;
+        int hdf_mode; /* mode we are attached for */
+        FILE * cdf_fp; /* file pointer used for CDF files */
+#endif
+} NC ;
+
 /* NC variable: description and data */
 typedef struct {
 	NC_string *name ;
@@ -142,6 +163,7 @@ typedef struct {
 	size_t szof ;		/* sizeof each value */
 	long begin ;  /* seek index, often an off_t */
 #ifdef HDF
+	NC *cdf;    /* handle of the file where this var belongs to  */
 	int32 vgid;     /* id of the variable's Vgroup */
         uint16 data_ref;  /* ref of the variable's data storage (if exists) */
         uint16 data_tag;  /* tag of the variable's data storage (if exists) */
@@ -165,27 +187,6 @@ typedef struct {
 #define netCDF_FILE  0
 #define HDF_FILE     1
 #define CDF_FILE     2
-
-typedef struct {
-	char path[FILENAME_MAX + 1] ;
-	unsigned flags ;
-	XDR *xdrs ;
-	long begin_rec ; /* (off_t) postion of the first 'record' */
-	unsigned long recsize ; /* length of 'record' */
-	int redefid ;
-	/* below gets xdr'd */
-	unsigned long numrecs ; /* number of 'records' allocated */
-	NC_array *dims ;
-	NC_array *attrs ;
-	NC_array *vars ;
-#ifdef HDF
-	int32 hdf_file;
-        int file_type;
-        int32 vgid;
-        int hdf_mode; /* mode we are attached for */
-        FILE * cdf_fp; /* file pointer used for CDF files */
-#endif
-} NC ;
 
 extern char *cdf_routine_name ; /* defined in lerror.c */
 
