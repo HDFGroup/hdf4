@@ -160,6 +160,7 @@ main(int argc, char *argv[])
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
     InitTest("vset", test_vsets, "VSET InterfaceTest");
+    InitTest("vsfpack", test_vspack, "Vdata fields pack Test");
     InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 
     Verbosity = 4;  /* Default Verbosity is Low */

@@ -35,6 +35,7 @@ void        test_vers(void);
 void        test_slab(void);
 void        test_litend(void);
 void        test_vsets(void);
+void        test_vspack(void);
 void        test_comp(void);
 void        test_bitio(void);
 void        test_tbbt(void);
