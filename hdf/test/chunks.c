@@ -51,13 +51,20 @@ static char RcsId[] = "@(#)$Revision$";
  *       where each chunk is 3x4x5= 60 bytes , 
  *       data size with chunks is 60 bytes x 8 chunks = 480 bytes  
  *
- *    6. Create 4-D element with partial chunks.
+ *     6. Now create 3-D chunked element with no partial chunks.
+ *        Write using HMCwriteChunk(). Read data back in first
+ *        using Hread() and verify. Then read data back in using
+ *        HMCreadChunk() and verify.
+ *        Set dimension to 2x3x4 array with 6 chunks 
+ *        where each chunk is 1x1x4= 4 bytes , total data size 24 bytes 
+ *
+ *    7. Create 4-D element with partial chunks.
  *       Write only half the data out(5,000 bytes)
  *       Set dimension to 10x10x10x10 array -> real data 10,000 bytes .
  *       120 chunks with chunks of 2x3x4x5 = 120 bytes,
  *       data size with chunks is 120 bytes x 120 chunks = 14,400 bytes 
  *
- *    7. *NOT ENABLED*
+ *    8. *NOT ENABLED*
  *       The rest of the tests here are commented out
  *       They are some extra high order tests to replicate
  *       some test done on EOS-DEM data 
@@ -105,8 +112,29 @@ static    uint8      cptr1[4] = {2,3,6,7};
 static    uint8      cptr2[4] = {8,9,12,13};
 static    uint8      cptr3[4] = {10,11,14,15};
 
-/* Not used yet */
-static uint8  ui8data[2][3][4] =
+/* for writing/verifying some chunks used in Test 6*/
+static uint8  chunk1[4] = { 0, 1, 2, 3};
+
+static uint8  chunk2[4] = { 10, 11, 12, 13};
+
+static uint8  chunk3[4] = { 20, 21, 22, 23};
+
+static uint8  chunk4[4] = { 100, 101, 102, 103};
+
+static uint8  chunk5[4] = { 110, 111, 112, 113};
+
+static uint8  chunk6[4] = { 120, 121, 122, 123};
+
+/* for comparison in Test 6 */
+static uint8  wui8_data[24] =
+{0, 100, 10, 110, 20, 120, 
+ 1, 101, 11, 111, 21, 121,
+ 2, 102, 12, 112, 22, 122,
+ 3, 103, 13, 113, 23, 123
+};
+
+/* for comparison only */
+static uint8  ui8_data[2][3][4] =
 {
     {
         {0, 1, 2, 3},
@@ -135,10 +163,11 @@ test_chunks()
     int32       ret;
     CHUNK_DEF   chunk[1];       /* Chunk definition, see 'hchunks.h' */
     CHUNK_DEF  *chkptr = NULL;
-    int32       dim[5];
+    int32       dims[5];
     int32      fill_val_len = 1;
     uint8      fill_val = 0;
     int32      nseek = 0;
+    uint8      iui8_data[2][3][4];
     sp_info_block_t info_block;      /* special info block */
     intn       errors = 0;
 
@@ -222,17 +251,17 @@ test_chunks()
     CHECK(aid1, FAIL, "Hstartwrite");
 
     /* Try writing to last chunk in the element */
-    dim[0] = 1;
-    dim[1] = 1;
-    ret = HMCwriteChunk(aid1, dim, cptr3);
+    dims[0] = 1;
+    dims[1] = 1;
+    ret = HMCwriteChunk(aid1, dims, cptr3);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 4th chunk(4of4 chunks) in file\n"););
 
     /* Try writing to 2nd to last chunk in the element */
-    dim[0] = 0;
-    dim[1] = 1;
-    ret = HMCwriteChunk(aid1, dim, cptr2);
+    dims[0] = 0;
+    dims[1] = 1;
+    ret = HMCwriteChunk(aid1, dims, cptr2);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 3 chunk (3of4 chunks) in file\n"););
@@ -364,17 +393,17 @@ test_chunks()
     CHECK(aid1, FAIL, "HMCcreate");
 
     /* Try writing to 2 chunk in the element */
-    dim[0] = 0;
-    dim[1] = 1;
-    ret = HMCwriteChunk(aid1, dim, cptr2);
+    dims[0] = 0;
+    dims[1] = 1;
+    ret = HMCwriteChunk(aid1, dims, cptr2);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 3 chunk (3of4) in file\n"); );
 
     /* Try writing to 1 chunk in the element */
-    dim[0] = 1;
-    dim[1] = 0;
-    ret = HMCwriteChunk(aid1, dim, cptr1);
+    dims[0] = 1;
+    dims[1] = 0;
+    ret = HMCwriteChunk(aid1, dims, cptr1);
     CHECK(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 2nd chunk (2of4 chunks) in file\n"); );
@@ -890,9 +919,334 @@ test_chunks()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
+    /* 
+       6. Now create 3-D chunked element with no partial chunks.
+       Write using HMCwriteChunk(). Read data back in first
+       using Hread() and verify. Then read data back in using
+       HMCreadChunk() and verify.
+       Set dimension to 2x3x4 array with 6 chunks 
+       where each chunk is 1x1x4= 4 bytes , total data size 24 bytes 
+       */
+    chunk[0].num_dims   = 3;
+    chunk[0].chunk_size = 4; /* 1x1x4 bytes */
+    chunk[0].nt_size    = 1; /* number type size */
+    chunk[0].chunk_flag = 0; /* nothing set */
+
+    chunk[0].pdims[0].dim_length   = 2;
+    chunk[0].pdims[0].chunk_length = 1;  
+    chunk[0].pdims[0].distrib_type = 1;
+
+    chunk[0].pdims[1].dim_length   = 3;
+    chunk[0].pdims[1].chunk_length = 1;
+    chunk[0].pdims[1].distrib_type = 1;
+
+    chunk[0].pdims[2].dim_length   = 4;
+    chunk[0].pdims[2].chunk_length = 4;
+    chunk[0].pdims[2].distrib_type = 1;
+
+    /* Open file for writing last odd size chunks now */
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    MESSAGE(5, printf("Create another new element as a 3-D chunked element(192 bytes)\n"););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      0,chunk[0].pdims[0].dim_length, 
+                      0,chunk[0].pdims[0].chunk_length););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      1,chunk[0].pdims[1].dim_length, 
+                      1,chunk[0].pdims[1].chunk_length););
+    MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
+                      2,chunk[0].pdims[2].dim_length, 
+                      2,chunk[0].pdims[2].chunk_length););
+
+    /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
+    aid1 = HMCcreate(fid, 1020, 12, 1, fill_val_len, &fill_val, (CHUNK_DEF *)chunk);
+    CHECK(aid1, FAIL, "HMCcreate");
+
+    /* write data out as chunks */
+    MESSAGE(5, printf("Writing to 3-D chunked element using HMCwriteChunk\n"); );
+
+    /* Write data use SDwriteChunk */
+    dims[0] = 0;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk1);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 1;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk4);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 0;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk2);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 1;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk5);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 0;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk3);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    dims[0] = 1;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCwriteChunk(aid1, dims, chunk6);
+    CHECK(ret, FAIL, "HMCwriteChunk");
+
+    /* end access */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the files\n");
+            );
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
+    MESSAGE(5, printf("Open 3-D chunked element again for reading\n"); );
+    /* Open file for reading now */
+    fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
+    CHECK(fid, FAIL, "Hopen");
+
+    /* start read access   tag,  ref */
+    aid1 = Hstartread(fid, 1020, 12);
+    CHECK(aid1, FAIL, "Hstartread");
+
+    /* inquire about element */
+    ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
+                   &acc_mode, &special);
+
+    CHECK(ret, FAIL, "Hinquire");
+    if (!special)
+      {
+          fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
+                  __LINE__);
+          errors++;
+          goto done;
+      }
+
+    /* Check values from Hinquire */
+    if ( ref != 12 || length != 24)
+      {
+          fprintf(stderr, "ERROR: Hinquire does not return the correct values \n");
+          fprintf(stderr, "       tag =%d, ref=%d, length=%d \n",tag,ref,length);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Get/Check special info data\n"); );
+
+    /* get special info about element */
+    ret = HDget_special_info(aid1, &info_block);
+    CHECK(aid1, FAIL, "HDget_special_info");
+
+    /* check special info */
+    if (info_block.ndims != chunk[0].num_dims /* 2-D */)
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
+      }
+
+    /* check chunk_lengths */
+    if (info_block.cdims != NULL)
+      {
+          if ((info_block.cdims[0] != 1) 
+              || (info_block.cdims[1] != 1)
+              || (info_block.cdims[2] != 4))
+            {
+                fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+                errors++;
+                goto done;
+            }
+
+          /* free allocated space by routine */
+          HDfree(info_block.cdims);
+      }
+    else
+      {
+          fprintf(stderr, "ERROR: HDget_specail_info does not return the correct values \n");
+          errors++;
+          goto done;
+      }
+
+
+    /* read back in buffer  */
+    ret = Hread(aid1, 24, inbuf);
+    VERIFY(ret, 24, "Hread");
+    if (ret != 24)
+      {
+          fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    /* verify the data */
+    MESSAGE(5, printf("Verifying 24 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != wui8_data[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, wui8_data[i], inbuf[i]);
+                errors++;
+            }
+      }
+    if (errors)
+        goto done;
+
+    /* read data back as chunks */
+    dims[0] = 0;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid1, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk1 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk1[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk1[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 0;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid1, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk2 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk2[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk2[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 0;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid1, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk3 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk3[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk3[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 1;
+    dims[1] = 0;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid1, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk4 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk4[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk4[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 1;
+    dims[1] = 1;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid1, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk5 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk5[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk5[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    dims[0] = 1;
+    dims[1] = 2;
+    dims[2] = 0;
+    ret = HMCreadChunk(aid1, dims, inbuf);
+    CHECK(ret, FAIL, "HMCreadChunk");
+    if (ret != 4)
+      {
+          fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
+          errors++;
+          goto done;
+      }
+
+    MESSAGE(5, printf("Verifying chunk6 4 bytes data\n"); );
+    for (i = 0; i < ret; i++)
+      {
+          if (inbuf[i] != chunk6[i])
+            {
+                printf("Wrong data at %d, out %d in %d\n", i, chunk6[i], inbuf[i]);
+                errors++;
+            }
+      }
+
+    /* end access and close file */
+    ret = Hendaccess(aid1);
+    CHECK(ret, FAIL, "Hendaccess");
+
+    MESSAGE(5, printf("Closing the file\n"););
+    ret = Hclose(fid);
+    CHECK(ret, FAIL, "Hclose");
+
 
     /* 
-       6. Create 4-D element with partial chunks.
+       7. Create 4-D element with partial chunks.
        Write only half the data out(5,000 bytes)
        Set dimension to 10x10x10x10 array  real data 10,000 bytes .
        120 chunks whit chunks of 2x3x4x5 = 120 bytes,
@@ -1053,12 +1407,11 @@ test_chunks()
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
-#if 0
-#endif
+
 #if 0
 
     /* 
-       7. The rest of the tests here are commented out
+       8. The rest of the tests here are commented out
        They are some extra high order tests to replicate
        some test done on EOS-DEM data  -GV.....
        Set dimension to 12000x12000 array with 2,500 chunks 
