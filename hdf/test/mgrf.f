@@ -814,15 +814,13 @@ C
       integer DFACC_CREATE, 
      .        DFACC_READ,
      .        DFACC_WRITE
-C      integer DFNT_INT16
-      integer DFNT_CHAR8
+      integer DFNT_INT32
       integer X_LENGTH, Y_LENGTH
       integer X_CH_LENGTH, Y_CH_LENGTH
       parameter (DFACC_CREATE = 4,
      .           DFACC_READ   = 1,
      .           DFACC_WRITE  = 2)
-C      parameter (DFNT_INT16   = 22)
-      parameter (DFNT_CHAR8   = 4)
+      parameter (DFNT_INT32   = 24)
       parameter (X_LENGTH     = 9,
      .           Y_LENGTH     = 4,
      .           X_CH_LENGTH  = 3,
@@ -857,15 +855,12 @@ C
 C
 C---Data
 C 
-C      integer*2 image_data(NCOMP, X_LENGTH, Y_LENGTH)
-C      integer*2 image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
-      character image_data(NCOMP, X_LENGTH, Y_LENGTH)
-      character image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
+      integer image_data(NCOMP, X_LENGTH, Y_LENGTH)
+      integer image_data_out(NCOMP,X_LENGTH,Y_LENGTH)
 C
 C---Default pixel value
 C
-C      integer*2 pixel_value(2)
-      character pixel_value(NCOMP)
+      integer pixel_value(NCOMP)
 C
 C---We will write/read to four different files corresponding to the
 C   different compression types.
@@ -901,8 +896,7 @@ C
       do 30 j = 1, Y_LENGTH
          do 20 i = 1, X_LENGTH
            do 10 k = 1, NCOMP
-C            image_data(k, i, j) = i + j - 1
-            image_data(k, i, j) = char(i + j - 1)
+            image_data(k, i, j) = i + j - 1
 10         continue
 20    continue
 30    continue
@@ -951,8 +945,7 @@ C     Define the number of components and dimensions of the image.
 C     Create the data set.
 
       ri_id(i_comp) = mgcreat(gr_id, name(i_comp), NCOMP,
-C     .                        DFNT_INT16, il, dims)
-     .                        DFNT_CHAR8, il, dims)
+     .                        DFNT_INT32, il, dims)
       if(ri_id(i_comp) .eq. -1) then
          print *, 'mgcreat failed for', i_comp, '-th data set'
          err_grcompress = err_grcompress +1
@@ -961,8 +954,7 @@ C     .                        DFNT_INT16, il, dims)
 C
 C---Fill the image array with the default pixel value
 C
-C      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT16,
-      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_CHAR8,
+      status = mgsnatt(ri_id(i_comp), 'FillValue', DFNT_INT32,
      .                 ncomp, pixel_value) 
       if(status .ne. 0) then
          print *, 'mgsnatt failed for', i_comp, '-th data set'
