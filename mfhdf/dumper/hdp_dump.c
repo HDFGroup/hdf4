@@ -24,6 +24,9 @@ static char RcsId[] = "$Revision$";
 #include <math.h>
 #endif /* MIPSEL */
 
+#define	CARRIAGE_RETURN	13
+#define	LINE_FEED	10
+#define	HORIZONTAL_TAB	9
 /* 
  * printing functions copied from vshow.c and used by sdsdumpfull(). 
  *
@@ -399,10 +402,6 @@ done:
     return ret_value;
 } /* dumpfull */
 
-#define	CARRIAGE_RETURN	13
-#define	LINE_FEED	10
-#define	HORIZONTAL_TAB	9
-
 intn 
 dumpclean(int32       nt, 
 	 dump_info_t* dump_opts,
@@ -413,42 +412,69 @@ dumpclean(int32       nt,
    intn    i;
    VOIDP   bufptr = NULL;
    int32   off;
-   intn    cn;
+   intn    cn;		/* # of characters being printed on a line */
+   intn plain_data = TRUE;    /* data buffer doesn't contain LF or CR */
    intn    is_null;	/* TRUE if current character is a null */
+   char* tempptr;	/* used in finding CR or LF in data buffer */
    intn    ret_value = SUCCEED;
 
    /* check inputs */
    if( NULL == databuf )
-      ERROR_GOTO_1( "in %s: Data buffer to be dumped is NULL", "dumpGR_SDattr" );
+      ERROR_GOTO_1( "in %s: Data buffer to be dumped is NULL", "dumpclean" );
    if( NULL == ofp )
-      ERROR_GOTO_1( "in %s: Output file pointer is NULL", "dumpGR_SDattr" );
+      ERROR_GOTO_1( "in %s: Output file pointer is NULL", "dumpclean" );
     
    /* assign to variables used in loop below (?)*/
    bufptr = databuf;
    off = DFKNTsize(nt | DFNT_NATIVE); /* what is offset for data type */
    if (off == FAIL)
       ERROR_GOTO_2("in %s: Failed to find native size of type [%d]", 
-			"dumpGR_SDattr", (int)nt );
+			"dumpclean", (int)nt );
 
-   cn = 0;  /* so attribute values printed next to "Value =" */
+   /* set char counter to the col. #, where the first attr value will be
+      printed in the case it is printed on the same line with "Value =" */
+   cn = ATTR_CONT_INDENT;  /* this is the default */
+
    is_null = FALSE; /* no null character is reached yet */
 
-   /* dumping data in clean format only allowed in ASCII mode, not Binary */
+   /* if the buffer contains at least one \n (LF) or \r (CR), print
+      all data at the left most column; otherwise, print the first line of
+      the data next to the title, i.e. "Value = ", and indent the succeeding
+      lines ATTR_CONT_INDENT spaces.  Here, we are setting variables to
+      prepare for the printing */
+   tempptr = strchr( (char *) bufptr, '\n'); /* find the first linefeed */
+   if( tempptr != NULL) /* if an LF is found within the data buffer */
+   {
+      putc('\n', ofp); /* start first line of data on the next line */
+      plain_data = FALSE; /* indicate data buffer contains CRs or LFs */
+   }
+   else    /* no LF, maybe CR is there */
+   {
+      tempptr = strchr( (char *) bufptr, '\r');
+      if( tempptr != NULL) /* if a CR is found within the data buffer */
+      {
+         putc('\n', ofp); /* start first line of data on the next line */
+         plain_data = FALSE; /* indicate data buffer contains CRs or LFs */
+      }
+   }
+
+   /* for each character in the buffer, print it accordingly */
    for (i = 0; i < cnt && bufptr != NULL; i++)
    {
       /* if number of characters printed on the current line reaches
-	 the max defined, print a new line and indent appropriately.
+         the max defined and the data buffer doesn't contain any LF or
+         CR, print a new line and indent appropriately.
 	 Note: this statement is at the top here is to prevent the
 	 extra line and indentation when the last line of the attribute
 	 data just reached MAXPERLINE */
-      if (cn >= MAXPERLINE )
+      if (cn >= MAXPERLINE && plain_data )
       {
          putc('\n', ofp);
          for (cn = 0; cn < ATTR_CONT_INDENT; cn++)
             putc(' ', ofp);
       }	/* end if */
 
-      /* the current character is printable */
+      /* if the current character is printable */
       if (isprint(*(unsigned char *) bufptr))
       {
 	 /* if there has been null characters before this non-null char,
@@ -469,12 +495,22 @@ dumpclean(int32       nt,
       else if( *(unsigned char *) bufptr == '\0')
          is_null = TRUE;
 
+      /* when a space character, such as LF, CR, or tab, is reached, print
+         it and increment the character counter accordingly */
       else if( isspace(*(unsigned char *) bufptr))
       {
+         /* when either LF or CR exists in the data buffer, character
+            counter, cn, is no longer needed since we don't need to keep
+            track of the number of chars being printed on a line anymore.
+            Yet, for logical purpose, reset it here just as a new line 
+	    of data starts */
          if( *(unsigned char *) bufptr == CARRIAGE_RETURN 
             || *(unsigned char *) bufptr == LINE_FEED )
-            cn = MAXPERLINE;  /* so that next data element will be printed
-			   on the next line with proper indentation */
+	 {
+            putc('\n', ofp); /* print \n for both CR and LF, otherwise, CR=^M*/
+            cn = 0;  /* indicating that next data element will be printed
+			   at column 1 */
+	 }
          else if( *(unsigned char *) bufptr == HORIZONTAL_TAB )
          {
             putc(*((char *) bufptr), ofp);
@@ -491,6 +527,7 @@ dumpclean(int32       nt,
       }
       else
       {
+/* this should be printed as binary intstead of \digits */
          putc('\\', ofp);
          cn = cn + fprintf(ofp, "%03o", *((uchar8 *) bufptr));
       }		
