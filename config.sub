@@ -326,6 +326,10 @@ case $basic_machine in
 			;;
 		esac
 		;;
+	irix6_32)
+		basic_machine=mips-sgi
+		os=-irix6_32
+		;;
 	isi68 | isi)
 		basic_machine=m68k-isi
 		os=-sysv

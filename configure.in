@@ -46,7 +46,7 @@ case "${host}" in
   alpha-dec-osf*)         host_makefile_frag=config/mh-alpha ;;
   mips*-dec-ultrix*)      host_makefile_frag=config/mh-decstation ;;
   mips*-sgi-irix6.*)      host_makefile_frag=config/mh-irix6 ;;
-  *irix6_32)              host_makefile_frag=config/mh-irix32 ;;
+  mips*-sgi-irix6_32*)    host_makefile_frag=config/mh-irix32 ;;
   mips*-sgi-irix5*)       host_makefile_frag=config/mh-irix5 ;;
   mips*-sgi-irix4*)       host_makefile_frag=config/mh-irix4 ;;
   i[345]86-*-linux*)      host_makefile_frag=config/mh-linux ;;
@@ -112,8 +112,8 @@ if [ -d ${srcdir}/config ]; then
 case "${host}" in
   alpha-dec-osf*)         files=config/custom_alpha ;;
   mips*-dec-ultrix*)      files=config/custom_dec ;;
-  mips*-sgi-irix6*)       files=config/custom_irix6 ;;
-  *irix6_32)              files=config/custom_irix32 ;;
+  mips*-sgi-irix6.*)      files=config/custom_irix6 ;;
+  mips*-sgi-irix6_32*)    files=config/custom_irix32 ;;
   mips*-sgi-irix5*)       files=config/custom_irix5 ;;
   mips*-sgi-irix4*)       files=config/custom_irix4 ;;
   i[345]86-*-linux*)      files=config/custom_linux ;;
