@@ -50,8 +50,8 @@ status = SDisdimval_bwcomp(dimid);
 
 status = SDcheckempty(sdsid, emptySDS);
 
-        --- take an id and determine if it is an SD id, SDS id, dim id, or
-            none of the above ---
+        --- take an id and determine if it is an SD id, SDS id, dim id, ---
+        --- or none of the above ---
 id_type =  SDidtype(an_id);
 
 NOTE: This file needs to have the comments cleaned up for most of the
@@ -1369,6 +1369,11 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
       }
 
     /* get the dim number out of the assoc array */
+    if (var->assoc->values == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
     dimindex = var->assoc->values[number];
 
     /* build the dim id */
@@ -2199,6 +2204,14 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
               ret_value = FAIL;
               goto done;
       }
+
+    /* disallow writing SDS with rank = 0 - BMR, bug #1045 */
+    if(tvar->shape == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
     /* Check compression method is enabled */
     status = HCPgetcompress(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
 		&comp_type, &c_info);
@@ -4075,6 +4088,13 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
           goto done;
       }
 
+    /* disallow setting compress for SDS with rank = 0 - BMR, bug #1045 */
+    if(var->shape == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
     /* unlimited dimensions don't work with compression */
         /* Get the index of the SDS' first dimension from the list of indices
          * branching out from NC_var.  This index indicates where this dim
@@ -4499,6 +4519,12 @@ SDisrecord(int32 id /* IN: dataset ID */)
     if(var == NULL)
       {
         ret_value = FALSE;
+        goto done;
+      }
+
+    if(var->shape == NULL)
+      {
+        ret_value = TRUE; /* EP thinks it should return true - BMR, bug #1045 */
         goto done;
       }
 
@@ -5189,6 +5215,13 @@ uint32 comp_config;
     /* get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* disallow setting chunk for SDS with rank = 0 - BMR, bug #1045 */
+    if(var->shape == NULL)
       {
         ret_value = FAIL;
         goto done;

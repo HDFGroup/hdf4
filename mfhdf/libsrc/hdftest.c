@@ -4050,6 +4050,11 @@ main(int argc, char *argv[])
     status = test_idtype();
     num_errs = num_errs + status;
 
+    /* BMR: Added a test routine dedicated for testing the behavior of
+     * several functions when the SDS has rank=0. 02/4/05 */
+    status = test_rank0();
+    num_errs = num_errs + status;
+
 #ifdef H4_HAVE_LIBSZ
     status = test_szip_compression();  /* defined in tszip.c */
     num_errs = num_errs + status;
