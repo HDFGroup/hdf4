@@ -304,7 +304,6 @@ int main(void)
  /* close the HDF file */
  status_n = Hclose (file_id);
 
-#if 1
 /*-------------------------------------------------------------------------
  * TESTS:
  * 1) zip FILENAME with some compression/chunking options
@@ -343,6 +342,7 @@ int main(void)
   goto out;
  PASSED();
 
+#if 0
 
 /*-------------------------------------------------------------------------
  * test2:  

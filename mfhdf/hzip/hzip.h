@@ -33,19 +33,10 @@
 #endif
 
 
-#if 1
-#define ONE_TABLE
-#endif
-
-
 /* a list of names */
 typedef struct {
  char obj[MAX_NC_NAME];
 } obj_list_t;
-
-
-
-#if defined (ONE_TABLE)
 
 /* the type of compression and additional parameter */
 typedef struct {
@@ -74,84 +65,13 @@ typedef struct {
 } options_table_t;
 
 
-#else
-
-
-
-typedef enum {
- NONE, SELECTED, ALL
-} behaviour_t;
-
-/* the type of compression and additional parameter */
-typedef struct {
- int type;
- int info;
-} comp_t;
-
-
-
-
-/* store info for one -t option */
-typedef struct {
- obj_list_t *obj_list;  /* a list of object names */
- int        n_objs;     /* the number of object names */
- comp_t     comp;       /* their compression information */
-} obj_comp_t;
-
-/* store a list of all -t options */
-typedef struct {
- int size;
- int nelems;
- obj_comp_t *objs;
-} comp_table_t;
-
-/* store info for one -c option */
-typedef struct {
- obj_list_t    *obj_list;                   /* a list of object names */
- int           n_objs;                      /* the number of object names */
- int32         chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
- int           rank;
-} obj_chunk_t;
-
-/* store a list of all -c options */
-typedef struct {
- int size;
- int nelems;
- obj_chunk_t *objs;
-} chunk_table_t;
-
-
-
-
-
-#endif
-
-
-
 /* all the above, ready to go to the hzip call */
 typedef struct {
- 
-
-#if defined (ONE_TABLE)
  options_table_t *op_tbl;     /*table with all -c and -t options */
  int             all_chunk;   /*chunk all objects, input of "*" */
  int             all_comp;    /*comp all objects, input of "*" */
  comp_info_t     comp_g;      /*global compress INFO for the ALL case */
  chunk_info_t    chunk_g;     /*global chunk INFO for the ALL case */
-
-#else
-
- int             compress;    /*do compress; 0 for NO(default), 1 for SELECTED, 2 for ALL*/
- int             chunk;       /*do chunking; 0 for NO(default), 1 for SELECTED, 2 for ALL*/
- comp_t          comp;        /*global compress type for the ALL case */
- HDF_CHUNK_DEF   chunk_def;   /*global chunk def for the ALL case */
- int32           chunk_flags; /*global chunk flags for the ALL case */
- int32           chunk_rank;  /*global chunk rank for the ALL case */
- comp_table_t    *cp_tbl;     /*table with all -t options */
- chunk_table_t   *ck_tbl;     /*table with all -c options */
-
-#endif
-
  int verbose;                 /*verbose mode */
  int trip;                    /*which cycle are we in */
 	int threshold;               /*minimum size to compress, in bytes */
