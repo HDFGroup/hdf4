@@ -322,7 +322,22 @@ PRIVATE intn hdf_read_ndgs(handle)
                           return FALSE;
                       }
 
-                    
+                    /* test if data was stored in native format of different 
+                       machine or in the LITEND format, and make sure the
+                       numbertype version numbers are the same */
+                    if ((ntstring[0] != DFNT_VERSION) ||
+                        ((ntstring[3] != DFNTF_NONE) && 
+                         (ntstring[3] != DFNTF_IEEE)))  {
+                        if (ntstring[3] == DFNTF_PC)  /* Little Endian */
+                            HDFtype |= DFNT_LITEND;
+                        else  {   /* same machine type?  */
+                            if (ntstring[3] == DFKgetPNSC(HDFtype, DF_MT))  
+                                 HDFtype |= DFNT_NATIVE;
+                            else  /* different machine */
+                                  return FALSE;
+                        }  /* machine type */
+                    }   /* Little Endian */
+
                     /* read in scale NTs */
                     for(i = 0; i < rank; i++) {
                         if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) return FALSE;
@@ -335,6 +350,20 @@ PRIVATE intn hdf_read_ndgs(handle)
                             return FALSE;
                         
                         scaletypes[i] = ntstring[1];
+                        /* check native format and LITEND */
+                       if ((ntstring[0] != DFNT_VERSION) ||
+                           ((ntstring[3] != DFNTF_NONE) &&
+                            (ntstring[3] != DFNTF_IEEE)))  {
+                           if (ntstring[3] == DFNTF_PC)  /* Little Endian */
+                               scaletypes[i] |= DFNT_LITEND;
+                           else  {   /* same machine type?  */
+                               if (ntstring[3] == DFKgetPNSC(HDFtype, DF_MT))
+                                  scaletypes[i] |= DFNT_NATIVE;
+                               else  /* different machine */
+                                  return FALSE;
+                           }  /* scale machine type */
+                        }    /* Little Endian */
+
                     }
                     
                     sddRef = tmpRef;    /* prepare for a new dim var */
@@ -702,7 +731,8 @@ PRIVATE intn hdf_read_ndgs(handle)
                  *   stored with it.  
                  */
                 if(new_dim || (scalebuf && scalebuf[dim])) {
-                    if ((type = hdf_unmap_type(scaletypes[dim])) == FAIL)
+                    int stype;
+                    if ((stype = hdf_unmap_type(scaletypes[dim])) == FAIL)
                       {
 #ifdef DEBUG
                           /* replace it with NCAdvice or HERROR? */
@@ -712,7 +742,7 @@ PRIVATE intn hdf_read_ndgs(handle)
                       }
 
                     vars[current_var] = NC_new_var(tmpname, 
-                                                   type,
+                                                   stype,
                                                    1, 
                                                    &this_dim);
                     vars[current_var]->data_tag = DFTAG_SDS;  /* not normal data */
