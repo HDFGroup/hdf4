@@ -24,31 +24,32 @@ Supported Platforms
   Sun4(Solaris 2.3)           CC SC3.0       f77 SC3.0        X         X
   SGI-?(IRIX4.0.2)            CC             f77              X         X
   SGI-Indy(IRIX5.3)           CC             f77              X         X
-  SGI-Indy(IRIX6.0_32)        CC             f77              X         X
+  SGI-Indy(IRIX6.1_32)        CC             f77              X         X
+  SGI-Indy(IRIX6.1_64)        CC             f77              X         X
   HP9000/735(HPUX 9.03)       CC             f77              X         X
-  Convex C3880(ConvexOS 11.0) CC v5.0        fc v8.0          X         X
   Convex Exemplar(HPUX)       CC             f77              X         X
   Cray C90 (UNICOS 803.2)     CC             cf77             X         X
+  Cray YMP (UNICOS 803.2)     CC             cf77             X         X
   CM5 (Sun Frontend)          GCC 2.6.3      f77 SC1.0        X         X
   CM5 (Parallel I/O)          CSTAR 7.2      CMF 2.2.11       X         X
-  IBM RS6000/AIX              CC              -               X         X
-  DEC Alpha/OSF1/1 v3.0       CC 3.11         -               X         X
+  IBM RS6000/AIX              CC             f77              X         X
+  DEC Alpha/OSF1/1 v3.0       CC 3.11        f77              X         X
   DecStation/MIPSEL           CC              -
   IBM PC - Intel Pentium
        Solarisx86             GCC 2.6.3       -               X         X
-       Linux                  GCC         Fortran compiler   X         X
+       Linux                  GCC         Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
-       Windows NT/95        Visual C++ 2.0    -               X        X(C only)
        Free BSD 2.0         GCC 2.6.2     Fortran compiler    X         X
                                              2.6.2
                                  (Fortran to C converter)
   
   NeXT/Next-STEP               -               -               -         -
   MacQuadra950(Mac-OS-7.5)     -               -               -         -
-  Fujitsu VP/UXPM             -               -               -         -  
-  Intel i860                  -               -               -         -  
-  VMS/VMS                     -               -               -         -  
+  Fujitsu VP/UXPM              -               -               -         -  
+  Intel i860                   -               -               -         -  
+  VMS/VMS                      -               -               -         -  
+  Windows NT/95                -               -               -         - 
    
 Requirements
 ============
