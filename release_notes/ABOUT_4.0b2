@@ -170,4 +170,6 @@ CONTENTS
      . Hfidinquire not included in binaries
      . Gzip doesn't work on 64-bit machines.
      . Currently there is a problem in appending data to compressed objects.  
-
+     . Hfidinquire is in the source code, but it is not included in the
+       pre-compiled code. If your program uses Hfidinquire, you need to
+       re-compile libdf.a. 
