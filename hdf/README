@@ -26,8 +26,3 @@ make -f MAKE.IBM6000 utils
 
 make -f MAKE.IBM6000 tests
         --- builds all of the test programs
-
-
-Which ever Makefile you use, you will need to modify the definitions of
-HDFLIB and HDFINC to reflect where you would like the library and the
-include files to be placed.
