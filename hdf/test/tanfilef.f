@@ -2,10 +2,15 @@ C
 C $Header$
 C
 C $Log$
-C Revision 1.3  1992/05/06 23:03:22  sxu
-C changed hiopen to hopen and hiclose to hclose
-C hopen returns fid (not ret)
+C Revision 1.4  1992/06/29 20:34:06  chouck
+C Cast strings to smaller values for comparisions.  The last
+C byte of annotations and labels returned is NULL so the
+C string comparisions get confused
 C
+c Revision 1.3  1992/05/06  23:03:22  sxu
+c changed hiopen to hopen and hiclose to hclose
+c hopen returns fid (not ret)
+c
 c Revision 1.2  1992/04/27  20:49:14  koziol
 c Changed hopen and hclose calls to hiopen and hiclose stub routine calls
 c
@@ -34,8 +39,8 @@ C
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
       integer fid, DFACC_CREATE, DFACC_READ
 
-      character*30 lab1
-      character*30 lab2, templab
+      character*35 lab1, lab2
+      character*35 templab
       character*100 desc1, desc2, tempstr
       character*64 TESTFILE
       character*1 CR
@@ -46,15 +51,15 @@ C
       number_failed = 0
       TESTFILE = 'tdfanflF.hdf'
       CR = char(10)
-      MAXLEN_LAB = 50
-      MAXLEN_DESC = 1000
+      MAXLEN_LAB = 35
+      MAXLEN_DESC = 100
       DFACC_CREATE = 4
       DFACC_READ = 1
       NULL = char(0)
 
       lab1 = 'File label #1: aaa'
       lab2 = 'File label #2: bbbbbb'
-      desc1 = 'File descr #1: This is a test on file annotation'
+      desc1 = 'File descr #1: This is a test file annotation'
       desc2 = 'File descr #2: One more test ...'
 
       print *, '****** Write file labels *******'
@@ -85,9 +90,9 @@ C
 
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, ISFIRST)
-      call RESULT(ret, 'dagfid')
-      call checkann(lab1, templab, ret, 'label')
 
+      call RESULT(ret, 'dagfid')
+      call checklab(lab1, templab, ret, 'label')
 
       print *, '****** Read length of the second file label ****'
       ret = dagfidl(fid, NOFIRST)
@@ -97,7 +102,7 @@ C
       print *, '******...followed by the label *****'
       ret = dagfid(fid, templab, MAXLEN_LAB, NOFIRST)
       call RESULT(ret, 'dagfid')
-      call checkann(lab2, templab, ret, 'label')
+      call checklab(lab2, templab, ret, 'label')
 
       print *, '****** Read length of the first file description ****'
       ret = dagfdsl(fid, ISFIRST)
@@ -108,7 +113,6 @@ C
       ret = dagfds(fid, tempstr, MAXLEN_DESC, ISFIRST)
       call RESULT(ret, 'dagfds')
       call checkann(desc1, tempstr, ret, 'description')
-
 
       print *, '****** Read length of the second file description ****'
       ret = dagfdsl(fid, NOFIRST)
@@ -186,14 +190,35 @@ C
 C***********************************************
 
       subroutine checkann(oldstr, newstr, ret, type)
-      character*(*) oldstr, newstr, type
+      character*90  oldstr, newstr
+      character*(*) type
       integer ret
 
 
       if (ret .ge. 0 .and. oldstr .ne. newstr) then
           print *, type, ' is incorrect.'
-          print *, ' It should be ', oldstr
-          print *, ' instead of ', newstr
+          print *, ' It should be <', oldstr, '>'
+          print *, ' instead of   <', newstr, '>'
+      endif
+      return 
+      end
+
+C***********************************************
+C
+C  checklab
+C
+C***********************************************
+
+      subroutine checklab(oldstr, newstr, ret, type)
+      character*30  oldstr, newstr
+      character*(*) type
+      integer ret
+
+
+      if (ret .ge. 0 .and. oldstr .ne. newstr) then
+          print *, type, ' is incorrect.'
+          print *, ' It should be <', oldstr, '>'
+          print *, ' instead of   <', newstr, '>'
       endif
       return 
       end
