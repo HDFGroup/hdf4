@@ -275,9 +275,23 @@ void print_options(options_t *options)
  {
   printf("Objects to compress are...\n");
   if (options->all_comp==1) 
-    printf("\tCompress all with %s compression, parameter %d\n",
+  {
+   switch (options->comp_g.type)
+   {
+   case COMP_CODE_RLE:
+   case COMP_CODE_SZIP:
+     printf("\tCompress all with %s compression\n",
+     get_scomp(options->comp_g.type));
+    break;
+   case COMP_CODE_SKPHUFF:
+   case COMP_CODE_DEFLATE:
+   case COMP_CODE_JPEG:
+     printf("\tCompress all with %s compression, parameter %d\n",
      get_scomp(options->comp_g.type),
      options->comp_g.info);
+    break;
+   };
+  }
  } /* verbose */
 
  for ( i = 0; i < options->op_tbl->nelems; i++) 

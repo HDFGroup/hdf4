@@ -223,11 +223,13 @@ int copy_sds(int32 sd_in,
                    &comp_type,   /* compression type OUT  */
                    rank,         /* rank of object IN */
                    path,         /* path of object IN */
+                   1,            /* number of GR image planes (for SZIP), IN */
                    dimsizes,     /* dimensions (for SZIP), IN */
                    dtype         /* numeric type ( for SZIP), IN */
                     );
+  if (have_info==FAIL)
+   comp_type=COMP_CODE_NONE;
  } /* check inspection mode */
-
 
 
 /*-------------------------------------------------------------------------
@@ -372,11 +374,11 @@ int copy_sds(int32 sd_in,
   switch(comp_type) 
   {
   case COMP_CODE_SZIP:
-   if (set_szip (rank,dimsizes,dtype,&c_info)==FAIL)
+   if (set_szip (rank,dimsizes,dtype,1,&c_info)==FAIL)
    {
-    printf( "Error: Failed to set SZIP compression for <%s>\n", path);
-    ret=-1;
-    goto out;
+    printf( "Warning: SZIP compression cannot be set for <%s>. \
+     Using no compression \n", path);
+    comp_type=0;
    }
    break;
   case COMP_CODE_RLE:         
@@ -545,8 +547,10 @@ int copy_sds(int32 sd_in,
 
 out:
  /* terminate access to the SDSs */
- status_n = SDendaccess(sds_id);
- status_n = SDendaccess (sds_out);
+ if (SDendaccess(sds_id)== FAIL )
+  printf( "Failed to close SDS <%s>\n", path);
+ if (SDendaccess (sds_out)== FAIL )
+  printf( "Failed to close SDS <%s>\n", path);
    
  if (path)
   free(path);

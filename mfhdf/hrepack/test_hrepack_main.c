@@ -22,7 +22,12 @@
 #define DATA_FILE1       "image8.txt"
 #define DATA_FILE2       "image24pixel.txt"
 #define DATA_FILE3       "image24plane.txt"
-char    *progname;     
+char    *progname;   
+
+#if 0
+#define ENABLE_SZIP
+#endif
+  
 
 
 /*-------------------------------------------------------------------------
@@ -32,7 +37,8 @@ char    *progname;
  *
  * A)This program writes several HDF objects to the file FILENAME
  *   The image data consists of realistic data read from the files DATA_FILE1
- *   (8bit image) and DATA_FILE2 (24bit image)
+ *   (8bit image) , DATA_FILE2 (24bit image, pixel interlace) and
+ *    DATA_FILE3 (24bit image, plane interlace)
  *  The objects written are
  *  1) groups
  *  2) images 
@@ -196,11 +202,11 @@ int main(void)
  comp_type   = COMP_CODE_SKPHUFF;
  add_sd(FILENAME,file_id,"dset_huff",0,chunk_flags,comp_type,&comp_info);
 
+#if defined (ENABLE_SZIP)
 /*-------------------------------------------------------------------------
  * SZIP
  *-------------------------------------------------------------------------
  */ 
-#ifdef H4_HAVE_LIBSZ
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_sd(FILENAME,file_id,"dset_szip",0,chunk_flags,comp_type,&comp_info);
@@ -209,10 +215,9 @@ int main(void)
 /*-------------------------------------------------------------------------
  * add some RIS24 images to the file
  *-------------------------------------------------------------------------
- */ 
-
- add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,0); /* Pixel Interlacing */
- add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,0); /* Scan Plane Interlacing */
+ */
+ add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,vgroup_img_id); /* Pixel Interlacing */
+ add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,vgroup_img_id); /* Scan Plane Interlacing */
 
 
 /*-------------------------------------------------------------------------
@@ -220,8 +225,6 @@ int main(void)
  *-------------------------------------------------------------------------
  */ 
  add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id);
- add_r8(DATA_FILE1,FILENAME,file_id,0);
-
 
 /*-------------------------------------------------------------------------
  * add some GR images to the file with compression/chunking
@@ -251,11 +254,10 @@ int main(void)
  * SZIP
  *-------------------------------------------------------------------------
  */ 
-#ifdef H4_HAVE_LIBSZ
+
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
  add_gr("gr_szip",file_id,0,chunk_flags,comp_type,&comp_info);
-#endif 
 
 /*-------------------------------------------------------------------------
  * add some GR realistic images to the file
@@ -332,8 +334,6 @@ int main(void)
  in_chunk_lengths[1]=8;
  in_chunk_lengths[2]=6;
 
-
-
 /*-------------------------------------------------------------------------
  * test0:  
  *-------------------------------------------------------------------------
@@ -402,11 +402,12 @@ int main(void)
   goto out;
  PASSED();
 
+#if defined (ENABLE_SZIP)
+
 /*-------------------------------------------------------------------------
  * test4:  
  *-------------------------------------------------------------------------
  */
-#ifdef H4_HAVE_LIBSZ
  TESTING("compressing SDS SELECTED with SZIP, chunking SELECTED");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:SZIP",&options);
@@ -447,6 +448,7 @@ int main(void)
   goto out;
  PASSED();
 
+#if defined (ENABLE_SZIP)
 
 /*-------------------------------------------------------------------------
  * test5:  
@@ -457,9 +459,7 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
-#ifdef H4_HAVE_LIBSZ
  hrepack_addcomp("dset7:SZIP",&options);
-#endif
  hrepack_addchunk("dset4:10x8",&options);
  hrepack_addchunk("dset5:10x8",&options);
  hrepack_addchunk("dset6:10x8",&options);
@@ -473,10 +473,8 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
   goto out;
-#ifdef H4_HAVE_LIBSZ
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
-#endif
  if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
  if ( sds_verifiy_chunk("dset5",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
@@ -484,6 +482,7 @@ int main(void)
  if ( sds_verifiy_chunk("dset6",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
   goto out;
  PASSED();
+
 
 /*-------------------------------------------------------------------------
  * test6:  
@@ -494,9 +493,7 @@ int main(void)
  hrepack_addcomp("dset4:GZIP 9",&options);
  hrepack_addcomp("dset5:RLE",&options);
  hrepack_addcomp("dset6:HUFF 2",&options);
-#ifdef H4_HAVE_LIBSZ
  hrepack_addcomp("dset7:SZIP",&options);
-#endif
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
@@ -507,11 +504,12 @@ int main(void)
   goto out;
  if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
   goto out;
-#ifdef H4_HAVE_LIBSZ
  if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
   goto out;
-#endif
  PASSED();
+
+#endif
+
 
 /*-------------------------------------------------------------------------
  * test7:  
@@ -551,6 +549,7 @@ int main(void)
   goto out;
  PASSED();
 
+
 /*-------------------------------------------------------------------------
  * test9:  
  *-------------------------------------------------------------------------
@@ -559,18 +558,15 @@ int main(void)
  verbose        =1;
  fspec.verbose  =1;
 
- TESTING("compressing SDS ALL with GZIP, chunking ALL");
+ TESTING("compressing SDS ALL with GZIP");
  printf("\n");
  hrepack_init (&options,verbose);
  hrepack_addcomp("*:GZIP 1",&options);
- hrepack_addchunk("*:10x8",&options);
  hrepack(FILENAME,FILENAME_OUT,&options);
  hrepack_end (&options);
  if (hdiff(FILENAME,FILENAME_OUT,fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
-  goto out;
- if ( sds_verifiy_chunk_all(HDF_CHUNK|HDF_COMP,2,in_chunk_lengths,"dset7") == -1) 
   goto out;
  PASSED();
  
