@@ -22,14 +22,13 @@
 #include "hrepack_gr.h"
 #include "hrepack_vs.h"
 #include "hrepack_an.h"
+#include "hrepack_vg.h"
 
-
-
-void list_vg (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_gr (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_sds(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_vg (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
+void list_gr (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
+int  list_sds(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,table_t *table,options_t *options);
 void list_vs (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-void list_glb(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+void list_glb(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
 void list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 void list_an (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
 
@@ -73,11 +72,15 @@ int list(const char* infname,
          const char* outfname, 
          options_t *options)
 {
- table_t  *table=NULL;
- int32    infile_id;
- int32    outfile_id;
- int      i;
- const char*    err;
+ table_t      *table=NULL;
+ int32        sd_id,        /* SD interface identifier */
+              sd_out,       /* SD interface identifier */
+              gr_id,        /* GR interface identifier */
+              gr_out,       /* Gr interface identifier */
+              infile_id,
+              outfile_id;
+ int          i;
+ const char*  err;
 
  /* init table */
  table_init(&table);
@@ -86,16 +89,38 @@ int list(const char* infname,
  infile_id  = Hopen (infname,DFACC_READ,0);
  outfile_id = Hopen (outfname,DFACC_CREATE,0);
 
- if (infile_id==FAIL)
+ if (infile_id==FAIL )
  {
   table_free(table);
   printf("Cannot open file <%s>\n",infname);
   return FAIL;
  }
- if (outfile_id==FAIL)
+ if (outfile_id==FAIL )
  {
   table_free(table);
   printf("Cannot create file <%s>\n",outfname);
+  return FAIL;
+ }
+
+  /* initialize the SD interface */
+ if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
+  printf( "Could not start SD for <%s>\n",infname);
+  return FAIL;
+ }
+
+ if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
+  printf( "Could not start GR for <%s>\n",outfname);
+  return FAIL;
+ }
+
+ /* initialize the GR interface */
+ if ((gr_id  = GRstart (infile_id))==FAIL){
+  printf( "Could not start GR for <%s>\n",infname);
+  return FAIL;
+ }
+ if ((gr_out = GRstart (outfile_id))==FAIL){
+  printf( "Could not start GR for <%s>\n",outfname);
+  GRend (gr_id);
   return FAIL;
  }
 
@@ -103,20 +128,34 @@ int list(const char* infname,
   printf("Building list of objects in %s...\n",infname);
 
  /* iterate tru HDF interfaces */
- list_vg (infname,outfname,infile_id,outfile_id,table,options);
- list_gr (infname,outfname,infile_id,outfile_id,table,options);
- list_sds(infname,outfname,infile_id,outfile_id,table,options);
+ list_vg (infname,outfname,infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,options);
+ list_gr (infname,outfname,infile_id,outfile_id,gr_id,gr_out,table,options);
+ if (list_sds(infname,outfname,infile_id,outfile_id,sd_id,sd_out,table,options)<0) 
+  goto out;
  list_vs (infname,outfname,infile_id,outfile_id,table,options);
- list_glb(infname,outfname,infile_id,outfile_id,table,options);
+ list_glb(infname,outfname,infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,options);
  list_pal(infname,outfname,infile_id,outfile_id,table,options);
  list_an (infname,outfname,infile_id,outfile_id,options);
+
+ 
+ if (GRend (gr_id)==FAIL)
+  printf( "Failed to close GR interface <%s>\n", infname);
+ if (GRend (gr_out)==FAIL)
+  printf( "Failed to close GR interface <%s>\n", outfname);
+ 
+ if (SDend (sd_id)==FAIL)
+  printf( "Failed to close SD interface <%s>\n", infname);
+ if (SDend (sd_out)==FAIL)
+  printf( "Failed to close SD interface <%s>\n", outfname);
 
  /* close the HDF files */
  if (Hclose (infile_id)==FAIL)
   printf( "Failed to close file <%s>\n", infname);
  if (Hclose (outfile_id)==FAIL)
   printf( "Failed to close file <%s>\n", outfname);
+ 
 
+ 
  /* 
  check for objects in the file table:
  1) the input object names are present in the file
@@ -150,6 +189,28 @@ int list(const char* infname,
  /* free table */
  table_free(table);
  return 0;
+
+out:
+ 
+ /* free table */
+ table_free(table);
+ if (GRend (gr_id)==FAIL)
+  printf( "Failed to close GR interface <%s>\n", infname);
+ if (GRend (gr_out)==FAIL)
+  printf( "Failed to close GR interface <%s>\n", outfname);
+ if (SDend (sd_id)==FAIL)
+  printf( "Failed to close file <%s>\n", infname);
+ if (SDend (sd_out)==FAIL)
+  printf( "Failed to close file <%s>\n", outfname);
+ /* close the HDF files */
+ if (Hclose (infile_id)==FAIL)
+  printf( "Failed to close file <%s>\n", infname);
+ if (Hclose (outfile_id)==FAIL)
+  printf( "Failed to close file <%s>\n", outfname);
+
+
+ return -1;
+
 }
 
 
@@ -169,6 +230,10 @@ void list_vg(const char* infname,
              const char* outfname,
              int32 infile_id,
              int32 outfile_id,
+             int32 sd_id,
+             int32 sd_out,
+             int32 gr_id,
+             int32 gr_out,
              table_t *table,
              options_t *options)
 {
@@ -278,7 +343,9 @@ void list_vg(const char* infname,
      refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
      Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
      
-     vgroup_insert(infname,outfname,infile_id,outfile_id,vgroup_id_out,vgroup_name,
+     vgroup_insert(infname,outfname,infile_id,outfile_id,
+                   sd_id,sd_out,gr_id,gr_out,
+                   vgroup_id_out,vgroup_name,
                    tags,refs,ntagrefs,table,options);
      
      free (tags);
@@ -326,6 +393,10 @@ void vgroup_insert(const char* infname,
                    const char* outfname,
                    int32 infile_id,
                    int32 outfile_id,
+                   int32 sd_id,             /* SD interface identifier */
+                   int32 sd_out,            /* SD interface identifier */
+                   int32 gr_id,             /* GR interface identifier */
+                   int32 gr_out,            /* GR interface identifier */
                    int32 vgroup_id_out_par, /* output parent group ID */
                    char*path_name,          /* absolute path for input group name */          
                    int32* in_tags,          /* tag list for parent group */
@@ -336,14 +407,10 @@ void vgroup_insert(const char* infname,
 {
  int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
-       sd_id,                 /* SD interface identifier */
-       sd_out,                /* SD interface identifier */
        tag,                   /* temporary tag */
        ref,                   /* temporary ref */
        *tags,                 /* buffer to hold the tag numbers of vgroups   */
        *refs,                 /* buffer to hold the ref numbers of vgroups   */
-       gr_id,                 /* GR interface identifier */
-       gr_out,                /* GR interface identifier */
        vgroup_id_out;         /* vgroup identifier */
        
  char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
@@ -432,7 +499,9 @@ void vgroup_insert(const char* infname,
     refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
     Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
     /* recurse */
-    vgroup_insert(infname,outfname,infile_id,outfile_id,vgroup_id_out,
+    vgroup_insert(infname,outfname,infile_id,outfile_id,
+                  sd_id,sd_out,gr_id,gr_out,
+                  vgroup_id_out,
                   path,tags,refs,ntagrefs,table,options);
     free (tags);
     free (refs);
@@ -459,18 +528,10 @@ void vgroup_insert(const char* infname,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-
-   sd_id  = SDstart(infname, DFACC_RDONLY);
-   sd_out = SDstart(outfname, DFACC_WRITE);
-
    /* copy dataset */
    copy_sds(sd_id,sd_out,tag,ref,vgroup_id_out_par,path_name,options,table,
             infile_id,outfile_id);
- 
-   SDend (sd_id);
-   SDend (sd_out);
-
-   
+    
    break;
    
 /*-------------------------------------------------------------------------
@@ -481,21 +542,12 @@ void vgroup_insert(const char* infname,
   case DFTAG_RI:  /* Raster Image */
   case DFTAG_CI:  /* Compressed Image */
   case DFTAG_RIG: /* Raster Image Group */
-
   case DFTAG_RI8:  /* Raster-8 image */
   case DFTAG_CI8:  /* RLE compressed 8-bit image */
   case DFTAG_II8:  /* IMCOMP compressed 8-bit image */
-
-   gr_id  = GRstart(infile_id);
-   gr_out = GRstart(outfile_id);
-
    /* copy GR  */
    copy_gr(infile_id,outfile_id,gr_id,gr_out,tag,ref,vgroup_id_out_par,
            path_name,options,table);
-
-   GRend (gr_id);
-   GRend (gr_out);
-   
    break;
 
 /*-------------------------------------------------------------------------
@@ -506,11 +558,9 @@ void vgroup_insert(const char* infname,
   case DFTAG_VH:  /* Vdata Header */
    copy_vs(infile_id,outfile_id,tag,ref,vgroup_id_out_par,path_name,options,table,0);
    break;
-   
-   
-  }
+  } /* switch */
   
- }
+ } /* i */
  
 }
 
@@ -529,12 +579,12 @@ void list_gr(const char* infname,
              const char* outfname,
              int32 infile_id,
              int32 outfile_id,
+             int32 gr_id,             /* GR interface identifier */
+             int32 gr_out,            /* GR interface identifier */
              table_t *table,
              options_t *options)
 {
- int32 gr_id,             /* GR interface identifier */
-       gr_out,            /* GR interface identifier */
-       ri_id,             /* raster image identifier */
+ int32 ri_id,             /* raster image identifier */
        n_rimages,         /* number of raster images in the file */
        n_file_attrs,      /* number of file attributes */
        ri_index,          /* index of a image */
@@ -546,22 +596,9 @@ void list_gr(const char* infname,
        n_attrs;           /* number of attributes belong to an image */
  char  name[MAX_GR_NAME]; /* name of an image */
  
- /* initialize the GR interface */
- if ((gr_id  = GRstart (infile_id))==FAIL){
-  printf( "Could not start GR for <%s>\n",infname);
-  return;
- }
- if ((gr_out = GRstart (outfile_id))==FAIL){
-  printf( "Could not start GR for <%s>\n",outfname);
-  GRend (gr_id);
-  return;
- }
- 
  /* determine the contents of the file */
  if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)==FAIL){
   printf( "Could not get info for GR\n");
-  GRend (gr_id);
-  GRend (gr_out);
   return;
  }
   
@@ -597,13 +634,6 @@ void list_gr(const char* infname,
    printf( "Could not end GR\n");
   }
  }
- 
- /* terminate access to the GR interface */
- if (GRend (gr_id)==FAIL||
-     GRend (gr_out)==FAIL){
-   printf( "Could not end GR\n");
-  }
- 
 
 }
 
@@ -618,16 +648,16 @@ void list_gr(const char* infname,
  *-------------------------------------------------------------------------
  */
 
-void list_sds(const char* infname,
-              const char* outfname,
-              int32 infile_id,
-              int32 outfile_id,
-              table_t *table,
-              options_t *options)
+int list_sds(const char* infname,
+             const char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             int32 sd_id,
+             int32 sd_out,
+             table_t *table,
+             options_t *options)
 {
- int32 sd_id,                  /* SD interface identifier */
-       sd_out,                 /* SD interface identifier */
-       sds_id,                 /* dataset identifier */
+ int32 sds_id,                 /* dataset identifier */
        n_datasets,             /* number of datasets in the file */
        n_file_attrs,           /* number of file attributes */
        index,                  /* index of a dataset */
@@ -637,18 +667,7 @@ void list_sds(const char* infname,
        rank,                   /* rank */
        n_attrs;                /* number of attributes */
  char  name[MAX_GR_NAME];      /* name of dataset */
- 
- /* initialize the SD interface */
- if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
-  printf( "Could not start SD for <%s>\n",infname);
-  return;
- }
-
- if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
-  printf( "Could not start GR for <%s>\n",outfname);
-  return;
- }
- 
+  
  /* determine the number of data sets in the file and the number of file attributes */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
   printf("Could not get SDS info\n");
@@ -670,18 +689,18 @@ void list_sds(const char* infname,
   }
 
   /* copy SDS  */
-  copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,
-           infile_id,outfile_id);
+  if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,
+               infile_id,outfile_id)<0) goto out;
      
   /* terminate access to the current dataset */
   SDendaccess (sds_id);
  }
  
- /* terminate access to the SD interface */
- SDend (sd_id);
- SDend (sd_out);
- 
+ return 0;
 
+out:
+ SDendaccess (sds_id);
+ return -1;
 }
 
 /*-------------------------------------------------------------------------
@@ -785,14 +804,14 @@ void list_glb(const char* infname,
               const char* outfname,
               int32 infile_id,
               int32 outfile_id,
+              int32 sd_id,
+              int32 sd_out,
+              int32 gr_id,
+              int32 gr_out,
               table_t *table,
               options_t *options)
 {
- int32 sd_id,                  /* SD interface identifier */
-       sd_out,                 /* SD interface identifier */
-       gr_id,                  /* GR interface identifier */
-       gr_out,                 /* GR interface identifier */
-       n_datasets,             /* number of datasets in the file */
+ int32 n_datasets,             /* number of datasets in the file */
        n_file_attrs;           /* number of file attributes */
  
  if ( options->trip==0 ) 
@@ -804,18 +823,6 @@ void list_glb(const char* infname,
  * copy SDS global attributes
  *-------------------------------------------------------------------------
  */ 
-
- /* initialize the SD interface */
- if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
-  printf( "Could not start SD for <%s>\n",infname);
-  return;
- }
-
- if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
-  printf( "Could not start GR for <%s>\n",outfname);
-  return;
- }
-
  /* determine the number of data sets in the file and the number of file attributes */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
   printf("Could not get SDS info\n");
@@ -823,31 +830,15 @@ void list_glb(const char* infname,
  
  copy_sds_attrs(sd_id,sd_out,n_file_attrs,options);
 
- /* terminate access to the SD interface */
- SDend (sd_id);
- SDend (sd_out);
-
-
 /*-------------------------------------------------------------------------
  * copy GR global attributes
  *-------------------------------------------------------------------------
  */ 
-
- gr_id  = GRstart(infile_id);
- gr_out = GRstart(outfile_id);
-
  /* determine the number of data sets in the file and the number of file attributes */
  if (GRfileinfo (gr_id, &n_datasets, &n_file_attrs)==FAIL){
   printf("Could not get GR info\n");
  }
- 
  copy_gr_attrs(gr_id,gr_out,n_file_attrs,options);
-
- /* terminate access to the GR interface */
- GRend (gr_id);
- GRend (gr_out);
- 
-
 }
 
 

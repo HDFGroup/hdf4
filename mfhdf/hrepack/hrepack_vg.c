@@ -94,6 +94,10 @@ void copy_vg(char* infname,
              char* outfname,
              int32 infile_id,
              int32 outfile_id,
+             int32 sd_id,             /* SD interface identifier */
+             int32 sd_out,            /* SD interface identifier */
+             int32 gr_id,             /* GR interface identifier */
+             int32 gr_out,            /* GR interface identifier */
              int32 tag,               /* tag of input VS */
              int32 ref,               /* ref of input VS */
              int32 vgroup_id_out_par, /* output parent group ID */
@@ -178,7 +182,9 @@ void copy_vg(char* infname,
   refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
   Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
   /* recurse */
-  vgroup_insert(infname,outfname,infile_id,outfile_id,vgroup_id_out,
+  vgroup_insert(infname,outfname,infile_id,outfile_id,
+   sd_id,sd_out,gr_id,gr_out,
+   vgroup_id_out,
    path,tags,refs,ntagrefs,table,options);
   free (tags);
   free (refs);
