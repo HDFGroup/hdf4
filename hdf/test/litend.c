@@ -1,6 +1,4 @@
-#include "hdf.h"
-#include "dfsd.h"
-#include "tutils.h"
+#include "tproto.h"
 
 /* External Variables */
 extern int num_errs;
@@ -13,14 +11,14 @@ extern int Verbocity;
 #define FILENAME    "litend.dat"
 #define TMPFILE     "temp.hdf"
 
-int8 cdata_i8[CDIM_Y][CDIM_X];
-uint8 cdata_u8[CDIM_Y][CDIM_X];
-int16 cdata_i16[CDIM_Y][CDIM_X];
-uint16 cdata_u16[CDIM_Y][CDIM_X];
-int32 cdata_i32[CDIM_Y][CDIM_X];
-uint32 cdata_u32[CDIM_Y][CDIM_X];
-float32 cdata_f32[CDIM_Y][CDIM_X];
-float64 cdata_f64[CDIM_Y][CDIM_X];
+static int8 cdata_i8[CDIM_Y][CDIM_X];
+static uint8 cdata_u8[CDIM_Y][CDIM_X];
+static int16 cdata_i16[CDIM_Y][CDIM_X];
+static uint16 cdata_u16[CDIM_Y][CDIM_X];
+static int32 cdata_i32[CDIM_Y][CDIM_X];
+static uint32 cdata_u32[CDIM_Y][CDIM_X];
+static float32 cdata_f32[CDIM_Y][CDIM_X];
+static float64 cdata_f64[CDIM_Y][CDIM_X];
 
 VOID init_cdata()
 {
@@ -39,7 +37,7 @@ VOID init_cdata()
           } /* end for */
 }   /* end init_cdata() */
 
-intn test_little_read()
+VOID test_little_read()
 {
     intn rank;
     int32 dimsizes[2];
@@ -267,7 +265,7 @@ intn test_little_read()
       } /* end else */
 }   /* end test_little_read */
 
-intn test_little_write()
+VOID test_little_write()
 {
     intn rank;
     int32 dimsizes[2];

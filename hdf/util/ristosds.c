@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 06:00:32  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 23:04:43  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.3  1993/01/19  06:00:32  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  *  Added changes for CONVEX
  *
@@ -16,26 +19,6 @@ port.  Lots of minor annoyances fixed.
  * Initial revision
  *
 */
-/*****************************************************************************
-*
-*                         NCSA HDF version 3.2beta
-*                            February 29, 1992
-*
-* NCSA HDF Version 3.2 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-*
-* We ask, but do not require, that the following message be included in all
-* derived works:
-*
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.
-*
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-*
-*****************************************************************************/
 
 /* This program converts a series raster image hdf files into   */
 /* a single 3D sds hdf file. Each ris hdf file contains one 	*/
@@ -55,9 +38,11 @@ port.  Lots of minor annoyances fixed.
 #define USAGE "ristosds infile{ infile} -o outfile"
 
 int main
-  PROTO((int, char **));
+    PROTO((int, char **));
 int cntimage
-  PROTO((char *filename, int32 *p_w, int32 *p_h, int *n_images));
+    PROTO((char *filename, int32 *p_w, int32 *p_h, int *n_images));
+VOID finishing
+    PROTO((VOID ));
 
 
 #ifdef PROTOTYPE
@@ -68,19 +53,18 @@ main(argc, argv)
     char *argv[];
 #endif /* PROTOTYPE */
 {
-
     int i,j;
     int nimg, nimg0;  /* nimg, nimg0 -- number of images	*/
     int32 w,h;        /* w, h -- width and height of images */
-    int  ret, n_infile, getoutfile, ispal, dimsizes[3];
+    int  ret, n_infile, getoutfile, ispal;
+    int32 dimsizes[3];
     char *infile, *outfile, **argv_infile;
     uint8 *indata, *indata0, palette[768];
     float32 *outdata, *outdata0;
 
-
     if (argc < 4) {
-	printf("Usage %s.\n", USAGE);
-	finishing();
+        printf("Usage %s.\n", USAGE);
+        finishing();
     }
     /* initialization	*/
 
@@ -121,8 +105,8 @@ main(argc, argv)
     
     /* read in images from all input files.  	*/
 
-    outdata0 = outdata = (float32 *)malloc(nimg*w*h*(sizeof(float32)));
-    indata0 = indata = (uint8 *)malloc(w*h*sizeof(char));
+    outdata0 = outdata = (float32 *)HDgetspace(nimg*w*h*(sizeof(float32)));
+    indata0 = indata = (uint8 *)HDgetspace(w*h*sizeof(char));
     infile = *argv_infile;
     ret = DFR8getdims(infile, &w, &h, &ispal);
     if (ispal) {
@@ -156,13 +140,16 @@ main(argc, argv)
     dimsizes[1] = w;
     dimsizes[2] = h;
     ret = DFSDadddata(outfile, 3, dimsizes, outdata0);
-    if (ret != 0) finishing();
-    exit(0);
+    if (ret != 0)
+        finishing();
+    return(0);
 }
 
-
-
-int finishing()	
+#ifdef PROTOTYPE
+VOID finishing(VOID )
+#else
+VOID finishing()
+#endif
 {
     printf("end of ristosds.\n");
     exit(1);

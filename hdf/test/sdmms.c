@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/04/15 20:00:31  koziol
-Re-named the new tests for MS-DOS compatibility
+Revision 1.2  1993/04/19 23:04:00  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.1  1993/04/15  20:00:31  koziol
+ * Re-named the new tests for MS-DOS compatibility
+ *
  * Revision 1.5  1993/04/05  22:37:45  koziol
  * Fixed goofups made in haste when patching code.
  *
@@ -35,57 +38,56 @@ Re-named the new tests for MS-DOS compatibility
  *
 */
 #include "tproto.h"
-#include "dfsd.h"
 
 extern int Verbocity;
 extern int num_errs;
 
-float32 f32[10][10], tf32[10][10];
-float32 f32scale[10], tf32scale[10];
-float32 f32max = 40.0, f32min = 0.0;
-float32 tf32max, tf32min;
+static float32 f32[10][10], tf32[10][10];
+static float32 f32scale[10], tf32scale[10];
+static float32 f32max = (float32)40.0, f32min = (float32)0.0;
+static float32 tf32max, tf32min;
 
-int8 i8[10][10], ti8[10][10];
-int8 i8scale[10], ti8scale[10];
-int8 i8max = 127, i8min = -128;
-int8 ti8max, ti8min;
+static int8 i8[10][10], ti8[10][10];
+static int8 i8scale[10], ti8scale[10];
+static int8 i8max = 127, i8min = -128;
+static int8 ti8max, ti8min;
 
-uint8 ui8[10][10], tui8[10][10];
-uint8 ui8scale[10], tui8scale[10];
-uint8 ui8max = 255, ui8min = 0;
-uint8 tui8max, tui8min;
+static uint8 ui8[10][10], tui8[10][10];
+static uint8 ui8scale[10], tui8scale[10];
+static uint8 ui8max = 255, ui8min = 0;
+static uint8 tui8max, tui8min;
 
-int16 i16[10][10], ti16[10][10];
-int16 i16scale[10], ti16scale[10];
-int16 i16max = 1200, i16min = -1200;
-int16 ti16max, ti16min;
+static int16 i16[10][10], ti16[10][10];
+static int16 i16scale[10], ti16scale[10];
+static int16 i16max = 1200, i16min = -1200;
+static int16 ti16max, ti16min;
 
-uint16 ui16[10][10], tui16[10][10];
-uint16 ui16scale[10], tui16scale[10];
-uint16 ui16max = 20000, ui16min = 0;
-uint16 tui16max, tui16min;
+static uint16 ui16[10][10], tui16[10][10];
+static uint16 ui16scale[10], tui16scale[10];
+static uint16 ui16max = 20000, ui16min = 0;
+static uint16 tui16max, tui16min;
 
-int32 i32[10][10], ti32[10][10];
-int32 i32scale[10], ti32scale[10];
-int32 i32max = 99999999, i32min = -999999999;
-int32 ti32max, ti32min;
+static int32 i32[10][10], ti32[10][10];
+static int32 i32scale[10], ti32scale[10];
+static int32 i32max = 99999999, i32min = -999999999;
+static int32 ti32max, ti32min;
 
-uint32 ui32[10][10], tui32[10][10];
-uint32 ui32scale[10], tui32scale[10];
-uint32 ui32max = 999999999, ui32min = 0;
-uint32 tui32max, tui32min;
+static uint32 ui32[10][10], tui32[10][10];
+static uint32 ui32scale[10], tui32scale[10];
+static uint32 ui32max = 999999999, ui32min = 0;
+static uint32 tui32max, tui32min;
 
-float64 cal1, cal2, cal3, cal4;
-int32   cal5;
+static float64 cal1, cal2, cal3, cal4;
+static int32   cal5;
 
-float64 ical1, ical2, ical3, ical4;
-int32   ical5;
+static float64 ical1, ical2, ical3, ical4;
+static int32   ical5;
 
 void test_sdmms()
 {
-    int i, j, err, err1, err2, err3, err4, ret;
-    int32 rank, dims[2];
-
+    int i, j, err, err1, err2, ret;
+    intn rank;
+    int32 dims[2];
 
     rank = 2;
     dims[0] = 10;
@@ -95,35 +97,35 @@ void test_sdmms()
 
     for (i=0; i<10; i++) {
         for (j=0; j<10; j++) {
-	    f32[i][j] = (i * 40) + j;	/* range: 0 ~ 4-billion */
+            f32[i][j] = (i * 40) + j;   /* range: 0 ~ 4-billion */
 
-	    i8[i][j] = (i * 10) + j;		/* range: 0 ~ 100 */
-	    ui8[i][j] = (i * 20) + j;		/* range: 0 ~ 200 */
+            i8[i][j] = (int8)((i * 10) + j);        /* range: 0 ~ 100 */
+            ui8[i][j] = (uint8)((i * 20) + j);      /* range: 0 ~ 200 */
 
-	    i16[i][j] = (i * 3000) + j;		/* range: 0 ~ 30000 */
-	    ui16[i][j] = (i * 6000) + j;	/* range: 0 ~ 60000 */
+            i16[i][j] = (int16)((i * 3000) + j);     /* range: 0 ~ 30000 */
+            ui16[i][j] = (uint16)((i * 6000) + j);   /* range: 0 ~ 60000 */
 
-	    i32[i][j] = (i * 20) + j;	/* range: 0 ~ 2-billion */
-	    ui32[i][j] = (i * 40) + j;	/* range: 0 ~ 4-billion */
-	}
+            i32[i][j] = (int32)((i * 20) + j);   /* range: 0 ~ 2-billion */
+            ui32[i][j] = (uint32)((i * 40) + j); /* range: 0 ~ 4-billion */
+        }
 
-	f32scale[i] = (i * 40) + j;	/* range: 0 ~ 4-billion */
+        f32scale[i] = (float32)((i * 40) + j); /* range: 0 ~ 4-billion */
 
-	i8scale[i] = (i * 10) + j;		/* range: 0 ~ 100 */
-	ui8scale[i] = (i * 20) + j;		/* range: 0 ~ 200 */
+        i8scale[i] = (int8)((i * 10) + j);     /* range: 0 ~ 100 */
+        ui8scale[i] = (uint8)((i * 20) + j);   /* range: 0 ~ 200 */
 
-	i16scale[i] = (i * 3000) + j;		/* range: 0 ~ 30000 */
-	ui16scale[i] = (i * 6000) + j;	/* range: 0 ~ 60000 */
+        i16scale[i] = (int16)((i * 3000) + j); /* range: 0 ~ 30000 */
+        ui16scale[i] = (uint16)((i * 6000) + j);/* range: 0 ~ 60000 */
 
-	i32scale[i] = (i * 20) + j;	/* range: 0 ~ 2-billion */
-	ui32scale[i] = (i * 40) + j;	/* range: 0 ~ 4-billion */
+        i32scale[i] = (int32)((i * 20) + j);   /* range: 0 ~ 2-billion */
+        ui32scale[i] = (uint32)((i * 40) + j); /* range: 0 ~ 4-billion */
     }
 
-    cal1 = 10.0;
-    cal2 =  0.0;
-    cal3 = 27.0;
-    cal4 =  1.5;
-    cal5 = DFNT_INT16;
+    cal1 = (float64)10.0;
+    cal2 = (float64)0.0;
+    cal3 = (float64)27.0;
+    cal4 = (float64)1.5;
+    cal5 = (int32)DFNT_INT16;
 
     ret = DFSDsetdims(rank, dims);
     RESULT("DFSDsetdims");

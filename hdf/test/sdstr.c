@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/04/15 20:00:35  koziol
-Re-named the new tests for MS-DOS compatibility
+Revision 1.2  1993/04/19 23:04:03  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.1  1993/04/15  20:00:35  koziol
+ * Re-named the new tests for MS-DOS compatibility
+ *
  * Revision 1.2  1993/01/27  22:41:32  briand
  * Fixed problem with compiling on RS6000.
  *
@@ -35,22 +38,24 @@ Re-named the new tests for MS-DOS compatibility
 
 
 #include "tproto.h"
-#include "dfsd.h"
 
 extern int num_errs;
 extern int Verbocity;
 
 int number_failed = 0;
 
+static VOID compare
+    PROTO((char *outstring, char *instring));
+
 void test_tsdstr()
 {
-    int i, j, err, ret;
-    int32 rank;
+    int i, j, ret;
+    intn rank;
     int32 dims[2];
     float32 f32[10][10], tf32[10][10];
     char *datalabel, *dataunit, *datafmt, *coordsys;
     char in_datalabel[256], in_dataunit[256], in_datafmt[256],
-in_coordsys[256];
+        in_coordsys[256];
 
     char *dimlabels[2], *dimunits[2], *dimfmts[2];
     char in_dimlabels[2][256], in_dimunits[2][256], in_dimfmts[2][256];
@@ -133,10 +138,14 @@ in_coordsys[256];
 
 }
 
-int compare(outstring, instring)
+#ifdef PROTOTYPE
+static VOID compare(char *outstring, char *instring)
+#else
+static VOID compare(outstring, instring)
 char *outstring, *instring;
+#endif
 {
-    if (0 == strcmp(outstring, instring))
+    if (0 == HDstrcmp(outstring, instring))
         MESSAGE(5,printf("Test passed for %s\n", outstring);)
     else {
         MESSAGE(5,printf(">>> Test failed for %s\n", outstring););
@@ -144,7 +153,4 @@ char *outstring, *instring;
         number_failed++;
     }
 }
-
-
-
 

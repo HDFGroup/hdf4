@@ -1,24 +1,3 @@
-/*****************************************************************************
-* 
-*			  NCSA HDF version 3.2beta
-*			     February 29, 1992
-*
-* NCSA HDF Version 3.2 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-* 
-* We ask, but do not require, that the following message be included in all
-* derived works:
-* 
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.
-* 
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-* 
-*****************************************************************************/
-
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -26,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.26  1993/04/13 21:40:09  georgev
-Fixed cast problem for qsort on SGI's.
+Revision 1.27  1993/04/19 23:04:30  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.26  1993/04/13  21:40:09  georgev
+ * Fixed cast problem for qsort on SGI's.
+ *
  * Revision 1.25  1993/04/08  20:44:27  koziol
  * Minor Cray tweaks.
  *
@@ -164,8 +146,8 @@ intn
     debug    = FALSE,        /* Debugging is off by default */
     sort     = TRUE,         /* Sorting is on by default */
     longout  = FALSE,        /* short output by default */
-    labels   = FALSE,        /* no label info by default */
-    only_tag = DFTAG_NULL;   /* by default print info about all tags */
+    labels   = FALSE;        /* no label info by default */
+uint16  only_tag = DFTAG_NULL;  /* by default print info about all tags */
 
 char * file_name;    /* name of current file being listed */
 
@@ -203,7 +185,6 @@ char *argv[];
 {
     int32 fid, aid;
     int i=1, j, n, status;
-    filerec_t *file_rec;    /* file record */
     
     while((i < argc) && (argv[i][0]=='-')){
         switch(argv[i][1]) {
@@ -221,9 +202,9 @@ char *argv[];
             break;
         case 't' :
             if(argv[i][2] != '\0') 
-                only_tag = atoi(&(argv[i][2]));
+                only_tag = (uint16)atoi(&(argv[i][2]));
             else 
-                only_tag = atoi(&(argv[++i][0]));
+                only_tag = (uint16)atoi(&(argv[++i][0]));
             break;
         default:    
             printf("Unknown option : -%c\n", argv[1][1]);
@@ -311,6 +292,7 @@ char *argv[];
         i++;
         printf("\n");
     }
+    return(0);
 }
 
 #ifdef PROTOTYPE

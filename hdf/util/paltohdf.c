@@ -5,9 +5,12 @@ static char RcsId[] = "@(#) $Revision$"
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 06:24:23  koziol
-Updated for better portability and fixed minor compiler warnings
+Revision 1.4  1993/04/19 23:04:42  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.3  1993/01/19  06:24:23  koziol
+ * Updated for better portability and fixed minor compiler warnings
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  * No change.
  *
@@ -91,6 +94,7 @@ char *argv[];
 	}
 
 	palconv(argv[1], argv[2]);
+    return(0);
 }
 
 /*

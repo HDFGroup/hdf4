@@ -192,6 +192,6 @@ char *argv[];
       } /* end if */
     if(n==0)
         printf("Error, no JPEG images found in HDF file\n");
-    exit(0);
+    return(0);
 }
 

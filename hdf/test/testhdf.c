@@ -1,6 +1,3 @@
-#include "hdf.h"
-
-
 #define MAXNUMOFTESTS 20
 #define VERSION "0.8beta"
 #define BUILDDATE "Wed Jan 27 1993"
@@ -22,10 +19,14 @@ struct TestStruct {
   VOID (*Call)();
 } Test[MAXNUMOFTESTS] ;
 
+#ifdef PROTOTYPE
+void InitTest (const char *TheName, VOID (*TheCall)(),const char *TheDescr)
+#else
 void InitTest (TheName, TheCall, TheDescr)
 const char* TheName;
 VOID (*TheCall)();
 const char* TheDescr;
+#endif
 {
   if(Index>=MAXNUMOFTESTS) {
       printf("Uh-oh, too many tests added, increase MAXNUMOFTEST!\n");
@@ -39,18 +40,21 @@ const char* TheDescr;
   Index++;
 }
 
+#ifdef PROTOTYPE
+main (int argc, char *argv[])
+#else
 main (argc, argv) 
      int argc;
      char* argv[];
+#endif
 {
   int CLLoop; /* Command Line Loop */
-  int ErrLoop;
   int Loop,Loop1;
   int Summary    = 0;
   int CleanUp    = 1;
   int ret;
   uint32 lmajor, lminor, lrelease;
-  char fstring[81], lstring[81], output[256];
+  char lstring[81];
 
   InitTest("vers",test_vers,"VERSION OF LIBRARY");
   InitTest("24bit",test_r24,"24BIT RASTER IMAGE INTERFACE");
@@ -208,10 +212,12 @@ main (argc, argv)
 
   if(CleanUp) {
     MESSAGE(2,printf("\nCleaning Up...\n\n"););
+#ifdef PC
+    system("del *.hdf");
+#else
     system("rm *.hdf");
+#endif
   }
+  return(0);
 }
-
-
-
 

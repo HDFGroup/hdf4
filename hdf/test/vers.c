@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/04/15 20:00:42  koziol
-Re-named the new tests for MS-DOS compatibility
+Revision 1.2  1993/04/19 23:04:13  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.1  1993/04/15  20:00:42  koziol
+ * Re-named the new tests for MS-DOS compatibility
+ *
  * Revision 1.2  1993/01/27  22:41:34  briand
  * Fixed problem with compiling on RS6000.
  *
@@ -35,11 +38,9 @@ extern int num_errs;
 
 void test_vers()
 {
-  int i, j, ret;
-  int32 f;
-  uint32 fmajor, fminor, frelease;
+  int ret;
   uint32 lmajor, lminor, lrelease;
-  char fstring[81], lstring[81], output[256];
+  char lstring[81];
 
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
   RESULT("Hgetlibversion");
@@ -48,13 +49,4 @@ void test_vers()
   MESSAGE(5,printf("Major:\t\t%d\nMinor:\t\t%d\nRelease:\t%d\nString:\t\t\"%s\"\n",lmajor, lminor, lrelease, lstring););
 
 }
-
-
-
-
-
-
-
-
-
 

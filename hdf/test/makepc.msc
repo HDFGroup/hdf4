@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.2  1993/01/26 19:45:08  koziol
+# Revision 1.3  1993/04/19 23:03:52  koziol
+# General Code Cleanup to reduce/remove compilation warnings on PC
+#
+# Revision 1.2  1993/01/26  19:45:08  koziol
 # Added new test files for checking little-endian support
 #
 # Revision 1.1  1993/01/19  06:12:23  koziol
@@ -133,12 +136,12 @@ IFLAGS=   /I../include /I.
 
 # ==> specify your FORTRAN compiler
 FC=fl
-FFLAGS= /c /AH /4I4 $(IFLAGS) /W2 /Od /Tf
+FFLAGS= /c /Gt512 /AH /4I4 $(IFLAGS) /W2 /Od /Tf
 
 # ==> specify your C compiler
 CC=cl
-CFLAGS=  /c /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi /Zp1
-#CFLAGS=  /c /D$(MACHINE) /AH /W4 /Ox $(IFLAGS) /Zp1
+CFLAGS=  /c /D$(MACHINE) /ND$* /Gt64 /AH /W4 /Od $(IFLAGS) /Zi /Zp1
+#CFLAGS=  /c /D$(MACHINE) /ND$* /Gt64 /AH /W4 /Ox $(IFLAGS) /Zp1
 
 # ==> where is your HDF library (libdf.a) located?
 LIBS= ..\lib\df.lib
@@ -152,7 +155,7 @@ ARFLAGS2=/NOLOGO /PAGE:32 -+
 
 # ==> specify your linker
 LN=link
-LNFLAGS=/COD /ST:6118
+LNFLAGS=/COD /ST:6118 /SEG:512
 
 # ==> specify your archive randomizer
 #RANLIB=ranlib
@@ -197,11 +200,11 @@ FOBJS = tr8f.obj t24f.obj tpf.obj tanf.obj tanfilef.obj tsdstrf.obj tsdntf.obj \
 
 .c.exe:
     $(CC) $(CFLAGS) $<
-    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+    $(LN) $(LNFLAGS) $*,$*,$*,$(LIBS);
 
 .f.exe:
     $(FC) $(FFLAGS) $<
-    $(LN) $(LNFLAGS) $*,$*,nul,$(LIBS);
+    $(LN) $(LNFLAGS) $*,$*,$*,$(LIBS);
 
 all: ctests ftests htests
 

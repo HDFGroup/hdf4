@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 06:00:21  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 23:04:34  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.3  1993/01/19  06:00:21  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  *  Added changes for CONVEX
  *
@@ -91,6 +94,7 @@ char *argv[];
     }
 
     rawpalconv(argv[1], argv[2]);
+    return(0);
 }
 
 /*

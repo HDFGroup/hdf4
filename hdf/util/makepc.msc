@@ -2,7 +2,10 @@
 # $Header$
 #
 # $Log$
-# Revision 1.1  1993/01/19 06:13:02  koziol
+# Revision 1.2  1993/04/19 23:04:40  koziol
+# General Code Cleanup to reduce/remove compilation warnings on PC
+#
+# Revision 1.1  1993/01/19  06:13:02  koziol
 # New JPEG utilities and a real makefile for the PC
 #
 # Revision 1.11  1992/12/03  09:40:58  koziol
@@ -71,8 +74,8 @@ IFLAGS=   /I../include /I.
 LIBS= ..\lib\df.lib
 
 CC=cl
-CFLAGS=  /c /D$(MACHINE) /AH /W4 /Od $(IFLAGS) /Zi /Zp1
-#CFLAGS=  /c /D$(MACHINE) /AH /W4 /Ox $(IFLAGS) /Zp1
+CFLAGS=  /c /D$(MACHINE) /Gt512 /AH /W4 /Od $(IFLAGS) /Zi /Zp1
+#CFLAGS=  /c /D$(MACHINE) /Gt512 /AH /W4 /Ox $(IFLAGS) /Zp1
 
 LN=link
 LNFLAGS=/COD /ST:6118

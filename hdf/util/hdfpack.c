@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.5  1993/01/19 06:00:16  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.6  1993/04/19 23:04:32  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.5  1993/01/19  06:00:16  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.4  1993/01/12  20:02:14  chouck
  * Last object was not always getting moved over correctly
  *
@@ -58,20 +61,26 @@ typedef struct mydd_t {
     int16 special;
 }mydd_t;
 
+/* Static function prototypes */
+int promptblocks
+    PROTO((mydd_t *dd));
 
-#ifdef PROTOTYPE
-int main(int, char **);
-int usage(char *);
-int hdferror(void);
-int error(char *);
-int desc_comp(const void *d1, const void *d2);
-#else
-int main();
-int usage();
-int hdferror();
-int error();
-int desc_comp();
-#endif /* PROTOTYPE */
+VOID copy_blocks
+    PROTO((mydd_t *dd, int32 infile, int32 outfile));
+
+VOID merge_blocks
+    PROTO((mydd_t *dd, int32 infile, int32 outfile));
+
+int main
+    PROTO((int, char **));
+static VOID usage
+    PROTO((char *));
+static VOID hdferror
+    PROTO((void));
+static VOID error
+    PROTO((char *));
+int desc_comp
+    PROTO((const void *d1, const void *d2));
 
 unsigned char *data;
 char invoke[81];
@@ -87,19 +96,15 @@ char *argv[];
 #endif /* PROTOTYPE */
 {
     int i, num_desc, ret, fnum, merge;
-    int32 infile, outfile, aid, inaid, outaid, stat;
+    int32 infile, outfile, aid, stat;
     mydd_t *dlist;
-    uint16 tag, ref, sptag, spref;
-    char spdata[128];
-    int32 len, oldoff, oldlen;
+    int32 oldoff, oldlen;
     int blocks = 1;
     int intr = 0;
     int16 ndds = 0;
     int optset = 0;
     char *tmp, fname[2][80];
     char *FUNC="main";
-
-
 
 /*
 **   Get invocation name of program
@@ -125,34 +130,34 @@ char *argv[];
     i = 1;
     while(i < argc){
 	if (argv[i][0]=='-') {
-            switch(argv[i][1]) {
-                case 'b':
-		    if (optset == 0) {
-                        blocks = 0;
-		        optset = 1;
-		    } else {
-			error("incompatible options: -i and -b");
-		    }
-                    break;
-                case 'i':
-		    if (optset == 0) {
-                        intr = 1;
-			blocks = 0;
-		        optset = 1;
-		    } else {
-			error("incompatible options: -i and -b");
-		    }
-                    break;
-                case 'd':
-		    ndds = atoi(&argv[i][2]);
-                    break;
-                case 't':
-                    nblk = atoi(&argv[i][2]);
-                    break;
-                default:
-                    fprintf(stderr, "Unknown option -%c ignored\n", argv[i][1]);
-                    break;
-            }
+        switch(argv[i][1]) {
+            case 'b':
+                if (optset == 0) {
+                    blocks = 0;
+                    optset = 1;
+                } else {
+                    error("incompatible options: -i and -b");
+                }
+                break;
+            case 'i':
+                if (optset == 0) {
+                    intr = 1;
+                    blocks = 0;
+                    optset = 1;
+                } else {
+                    error("incompatible options: -i and -b");
+                }
+                break;
+            case 'd':
+                ndds = (int16)atoi(&argv[i][2]);
+                break;
+            case 't':
+                nblk = atoi(&argv[i][2]);
+                break;
+            default:
+                fprintf(stderr, "Unknown option -%c ignored\n", argv[i][1]);
+                break;
+        }
 	} else {
 	    if (fnum < 2) {
 	        strcpy(fname[fnum], argv[i]);
@@ -172,9 +177,9 @@ char *argv[];
 /*
 **   Check to make sure input file is HDF
 */
-    ret = Hishdf(fname[0]);
+    ret = (int)Hishdf(fname[0]);
     if (ret == FALSE)
-	hdferror();
+        hdferror();
 
 /*
 **   Open input and output files
@@ -302,7 +307,7 @@ char *argv[];
     Hclose(infile);
     Hclose(outfile);
 
-    exit(0);
+    return(0);
 }
 
 
@@ -334,9 +339,9 @@ mydd_t *dd;
 **      copy_blocks -- move a linked-block element; preserve blocking
 */
 #ifdef PROTOTYPE
-int copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
+VOID copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
 #else
-int copy_blocks(dd, infile, outfile)
+VOID copy_blocks(dd, infile, outfile)
 mydd_t *dd;
 int32 infile, outfile;
 #endif /* PROTOTYPE */
@@ -410,9 +415,9 @@ int32 infile, outfile;
 **      merge_blocks
 */
 #ifdef PROTOTYPE
-int merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
+VOID merge_blocks(mydd_t *dd, int32 infile, int32 outfile)
 #else
-int merge_blocks(dd, infile, outfile)
+VOID merge_blocks(dd, infile, outfile)
 mydd_t *dd;
 int32 infile, outfile;
 #endif /* PROTOTYPE */
@@ -473,9 +478,9 @@ int32 infile, outfile;
 ** EXAMPLES
 */
 #ifdef PROTOTYPE
-int usage(char *name)
+static VOID usage(char *name)
 #else
-int usage(name)
+static VOID usage(name)
 char *name;
 #endif /* PROTOTYPE */
 {
@@ -497,9 +502,9 @@ char *name;
 ** EXAMPLES
 */
 #ifdef PROTOTYPE
-int hdferror(void)
+static VOID hdferror(void)
 #else
-int hdferror()
+static VOID hdferror()
 #endif /* PROTOTYPE */
 {
     HEprint(stderr, 0);
@@ -522,9 +527,9 @@ int hdferror()
 ** EXAMPLES
 */
 #ifdef PROTOTYPE
-int error(char *string)
+static VOID error(char *string)
 #else
-int error(string)
+static VOID error(string)
 char *string;
 #endif
 {
@@ -557,5 +562,5 @@ int desc_comp(d1, d2)
 const VOID *d1, *d2;
 #endif /* PROTOTYPE */
 {
-    return(((mydd_t *)d1)->offset - ((mydd_t *)d2)->offset);
+    return((int)(((mydd_t *)d1)->offset - ((mydd_t *)d2)->offset));
 }

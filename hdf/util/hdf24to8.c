@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/01/19 06:00:09  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.4  1993/04/19 23:04:26  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.3  1993/01/19  06:00:09  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.2  1992/07/15  21:48:48  sxu
  * Added changes for CONVEX
  *
@@ -86,7 +89,7 @@ typedef unsigned int	UINT;
 int main
   PROTO((int, char **));
 int r24r8
-  PROTO((int, int, unsigned char *, unsigned char *, int, unsigned char *));
+  PROTO((int32, int32, unsigned char *, unsigned char *, int, unsigned char *));
 
 #ifdef PROTOTYPE
 main (int argc, char *argv[])
@@ -96,19 +99,13 @@ int argc;
 char *argv[];
 #endif /* PROTOTYPE */ 
 {
-	int i, nc;
+    int i;
 	int32 x_dim, y_dim, size;
 	int interlace;
-	char c;
-	char *ptr;
 	uint8 *r24, *r8, *pal;
 	uint8 hdfpal[PALSIZE], *p;
-#ifdef UNIX
-	char *malloc ();
-#endif
 
-	if (argc != 3)
-	{
+    if (argc != 3) {
 		USAGE;
 		exit (1);
 	}
@@ -146,7 +143,7 @@ char *argv[];
 		exit (-1);
 	}
 
-	if (r24r8 (x_dim, y_dim, r24, r8, NCOLORS, pal) == -1)
+    if (r24r8 (x_dim, y_dim, r24, r8, NCOLORS, pal) == -1)
 	{
 		fprintf (stderr, "error: quantization failed\n");
 		exit (-1);
@@ -179,11 +176,11 @@ char *argv[];
 }
 
 #ifdef PROTOTYPE
-r24r8 (int xres, int yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
+r24r8 (int32 xres, int32 yres, UCHAR *dat24, UCHAR *dat8, int cres, UCHAR *cdat)
 #else
 r24r8 (xres, yres, dat24, dat8, cres, cdat)
-int      xres;		/* x dimension - horizontal size */
-int      yres;		/* y dimension - vertical size */
+int32    xres;      /* x dimension - horizontal size */
+int32    yres;      /* y dimension - vertical size */
 UCHAR   *dat24;		/* pointer to 24 bit image in "pixel" format */
 UCHAR   *dat8;		/* pointer to 8 bit image */
 int      cres;		/* number of colors in the palette - use 256 */
@@ -240,13 +237,13 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
     dip = dat24;
     dop = dat8;
 
-    for (xct=3*xres; --xct>=0; )
-	*cp++ = *dip++;
+    for (xct=(intn)(3*xres); --xct>=0; )
+        *cp++ = *dip++;
 
     for (yct=0; yct<(yres-1); yct++)
     {
 	np = idat[(yct+1)%2];
-	for (xct=3*xres; --xct>=0; )
+    for (xct=(intn)(3*xres); --xct>=0; )
 	    *np++ = *dip++;
 
 	cp = idat[yct%2];
@@ -256,7 +253,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
 	if ((gct = (cp[1] * gn / gr)) > gn) gct = gn;
 	if ((bct = (cp[2] * bn / br)) > bn) bct = bn;
 
-	*dop++ = ct = (rct * gres + gct) * bres + bct + coff;
+    *dop++ = (UCHAR)(ct = (rct * gres + gct) * bres + bct + coff);
 
 	rd = cp[0] - rp[ct];
 	gd = cp[1] - gp[ct];
@@ -281,7 +278,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
 	    if ((gct = (cp[1] * gn / gr)) > gn) gct = gn;
 	    if ((bct = (cp[2] * bn / br)) > bn) bct = bn;
 
-	    *dop++ = ct = (rct * gres + gct) * bres + bct + coff;
+        *dop++ = (UCHAR)(ct = (rct * gres + gct) * bres + bct + coff);
 
 	    rd = cp[0] - rp[ct];
 	    gd = cp[1] - gp[ct];
@@ -309,7 +306,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
 	if ((gct = (cp[1] * gn / gr)) > gn) gct = gn;
 	if ((bct = (cp[2] * bn / br)) > bn) bct = bn;
 
-	*dop++ = ct = (rct * gres + gct) * bres + bct + coff;
+    *dop++ = (UCHAR)(ct = (rct * gres + gct) * bres + bct + coff);
 
 	rd = cp[0] - rp[ct];
 	gd = cp[1] - gp[ct];
@@ -332,7 +329,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
     if ((gct = (cp[1] * gn / gr)) > gn) gct = gn;
     if ((bct = (cp[2] * bn / br)) > bn) bct = bn;
 
-    *dop++ = ct = (rct * gres + gct) * bres + bct + coff;
+    *dop++ = (UCHAR)(ct = (rct * gres + gct) * bres + bct + coff);
 
     rd = cp[0] - rp[ct];
     gd = cp[1] - gp[ct];
@@ -350,7 +347,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
 	if ((gct = (cp[1] * gn / gr)) > gn) gct = gn;
 	if ((bct = (cp[2] * bn / br)) > bn) bct = bn;
 
-	*dop++ = ct = (rct * gres + gct) * bres + bct + coff;
+    *dop++ = (UCHAR)(ct = (rct * gres + gct) * bres + bct + coff);
 
 	rd = cp[0] - rp[ct];
 	gd = cp[1] - gp[ct];
@@ -367,7 +364,7 @@ UCHAR   *cdat;		/* pointer to palette - should be 3 * 256 bytes long */
     if ((gct = (cp[1] * gn / gr)) > gn) gct = gn;
     if ((bct = (cp[2] * bn / br)) > bn) bct = bn;
 
-    *dop++ = (rct * gres + gct) * bres + bct + coff;
+    *dop++ = (UCHAR)((rct * gres + gct) * bres + bct + coff);
 
     free(idat[0]);
     return 0;

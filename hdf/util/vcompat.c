@@ -1,24 +1,3 @@
-/*****************************************************************************
-* 
-*			  NCSA HDF version 3.2beta
-*			     February 29, 1992
-*
-* NCSA HDF Version 3.2 source code and documentation are in the public
-* domain.  Specifically, we give to the public domain all rights for future
-* licensing of the source code, all resale rights, and all publishing rights.
-* 
-* We ask, but do not require, that the following message be included in all
-* derived works:
-* 
-* Portions developed at the National Center for Supercomputing Applications at
-* the University of Illinois at Urbana-Champaign.
-* 
-* THE UNIVERSITY OF ILLINOIS GIVES NO WARRANTY, EXPRESSED OR IMPLIED, FOR THE
-* SOFTWARE AND/OR DOCUMENTATION PROVIDED, INCLUDING, WITHOUT LIMITATION,
-* WARRANTY OF MERCHANTABILITY AND WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE
-* 
-*****************************************************************************/
-
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -26,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.6  1993/01/19 06:00:34  koziol
-Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
-port.  Lots of minor annoyances fixed.
+Revision 1.7  1993/04/19 23:04:46  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.6  1993/01/19  06:00:34  koziol
+ * Merged Hyperslab and JPEG routines with beginning of DEC ALPHA
+ * port.  Lots of minor annoyances fixed.
+ *
  * Revision 1.5  1992/07/15  21:48:48  sxu
  * No change
  *
@@ -49,7 +31,14 @@ port.  Lots of minor annoyances fixed.
 #include <stdio.h>
 #include "vg.h"
 
-main (ac,av) int ac; char**av; {
+#ifdef PROTOTYPE
+main (int ac,char **av)
+#else
+main (ac,av)
+int ac;
+char**av;
+#endif
+{
 
 if (ac!=2) { 
 	fprintf(stderr,"%v: converts HDF vset v1.0 files to v2.0\n",av[0]);
@@ -64,6 +53,7 @@ if ( 0 == vcheckcompat(av[1]) ) {
 else
 	fprintf(stderr,"file [%s] already compatible with r2.0\n",av[1]);
 
+    return(0);
 } /* main */
 
 /* ------------------------------------------------------------------ */

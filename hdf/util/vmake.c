@@ -49,10 +49,20 @@ int32 savtype
 int32 separate
   PROTO((char *ss, char *fmt, int32 *num));
 
+int show_help_msg
+    PROTO((VOID));
+
 /*
  *  Main entry point
  */
-main(ac,av) int ac; char**av; {
+#ifdef PROTOTYPE
+main(int ac,char **av)
+#else
+main(ac,av)
+int ac;
+char**av;
+#endif
+{
 
   char  *hfile, *vgname, *vsname, *fmt;
 
@@ -76,21 +86,20 @@ main(ac,av) int ac; char**av; {
 		}
 
   else if (!HDstrcmp(av[2],"-l")) {
-
-     	int i;
+    int i;
 	int32 n, vgref, ids[50];
+
 	  	hfile 	= av[1];
 		sscanf(av[3],"%d",&vgref);
 		for(n=0,i=4;i<ac;i++,n++) { sscanf(av[i],"%d",&ids[n]); }
 		vsetlink(hfile,vgref,ids,n);
 		}
-
   else {
 		show_help_msg();
 		exit(0);
 		}
-
-  } /* main */
+    return(0);
+} /* main */
   
 void showfmttypes() {
 	fprintf(stderr,"\tvalid fmt types: \n");
@@ -101,7 +110,12 @@ void showfmttypes() {
 	fprintf(stderr,"\t  f - float \n");
 	}
 
-int show_help_msg()  {
+#ifdef PROTOTYPE
+int show_help_msg(VOID)
+#else
+int show_help_msg()
+#endif
+{
 
   printf("\nvmake: creates vsets.\n");
   printf("\nUSAGE:\n");
@@ -153,27 +167,30 @@ int32 vgid, n, ids[];
   vgmain = Vattach(f,vgid,"w");
   if(vgmain==FAIL) { fprintf(stderr, "0\n"); Hclose(f); exit(-1);}
 
-  for(i=0;i<n;i++) {
-	  if     ( -1 != vexistvg(f,ids[i])) {
-			if ((vg=Vattach(f,ids[i],"r")) != FAIL)  {
-	         if (Vinsert(vgmain,vg)  == -1)  { /*  is really VGROUP* */
-					err = 1; 
-				   fprintf(stderr,"insert a vg (%d)fails!!\n",ids[i]);	
-					}
-		      Vdetach(vg);
-		      }
-		 }
-     else if ( -1 != vexistvs(f,ids[i])) {
-	       if ((vs= VSattach(f,ids[i],"r")) != FAIL) { 
-	         if (Vinsert(vgmain,vs) == FAIL) { 
-					err = 1;
-				   fprintf(stderr,"insert a vs (%d)fails!!\n",ids[i]);	
-					}
-		      VSdetach(vs);
-		      }
-		 }
-     else { fprintf(stderr,"no such vgroup or vdata [%d]\n",ids[i]);  err= 1; }
-	  }
+    for(i=0;i<n;i++) {
+        if( -1 != vexistvg(f,(uint16)ids[i])) {
+            if ((vg=Vattach(f,ids[i],"r")) != FAIL)  {
+                if (Vinsert(vgmain,vg)  == -1)  { /*  is really VGROUP* */
+                    err = 1;
+                    fprintf(stderr,"insert a vg (%d)fails!!\n",ids[i]);
+                }
+                Vdetach(vg);
+            }
+        }
+        else if ( -1 != vexistvs(f,(uint16)ids[i])) {
+            if ((vs= VSattach(f,ids[i],"r")) != FAIL) {
+                if (Vinsert(vgmain,vs) == FAIL) {
+                    err = 1;
+                    fprintf(stderr,"insert a vs (%d)fails!!\n",ids[i]);
+                }
+                VSdetach(vs);
+            }
+        }
+        else {
+            fprintf(stderr,"no such vgroup or vdata [%d]\n",ids[i]);
+            err= 1;
+        }
+    }
 
   Vdetach(vgmain);
   Hclose(f);
@@ -313,18 +330,55 @@ static int  ntotal = 0;
 
 
 /* scanf functions */
-static int32 inpint  (x) int  *x; { return(scanf ("%d ",x)); }
-static int32 inpfloat(x) float*x; { return(scanf ("%f ",x)); }
-static int32 inpchar (x) char *x; { return(scanf ("%c ",x)); }
-static int32 inplong (x) long *x; { return(scanf ("%ld ",x)); }
+#ifdef PROTOTYPE
+static int32 inpint  (int *x)
+#else
+static int32 inpint  (x)
+int  *x;
+#endif
+{
+    return(scanf ("%d ",x));
+}
 
+#ifdef PROTOTYPE
+static int32 inpfloat(float *x)
+#else
+static int32 inpfloat(x)
+float*x;
+#endif
+{
+    return(scanf ("%f ",x));
+}
 
+#ifdef PROTOTYPE
+static int32 inpchar (char *x)
+#else
+static int32 inpchar (x)
+char *x;
+#endif
+{
+    return(scanf ("%c ",x));
+}
+
+#ifdef PROTOTYPE
+static int32 inplong (long *x)
+#else
+static int32 inplong (x)
+long *x;
+#endif
+{
+    return(scanf ("%ld ",x));
+}
 
 #define BUFSIZE 40000
 unsigned char inpbuffer[BUFSIZE];
 
-int32 inpdata (bp) 
+#ifdef PROTOTYPE
+int32 inpdata (unsigned char **bp)
+#else
+int32 inpdata (bp)
      unsigned char**bp; 
+#endif
 { 
   int32 totalsize, nread, t,i,j,k;
   unsigned char *b;
@@ -381,18 +435,21 @@ int32 inpdata (bp)
 } /* inpdata */
 
 
+#ifdef PROTOTYPE
+int32 scanit (char *string,char ***fields,int32 **type,int32 **order)
+#else
 int32 scanit (string,fields,type,order)
  char *   string;
  char *** fields;
  int32  **  type;
  int32  **  order;
- {
+#endif
+{
   int32 ns,i;
   int32 p1,p2;
   char ss[300];
   int32 c;
 
- 
  compact(string,ss);
  ns = HDstrlen(ss); ss[ns++] = ',';
 
@@ -401,12 +458,12 @@ int32 scanit (string,fields,type,order)
 	 c = ss[i];
 	 if(c== '=') {
 		 p2 = i;
-		 savfld(ss,p1,p2-1);
-		 p1 = p2+1;
+         savfld(ss,(int)p1,(int)(p2-1));
+         p1 = p2+1;
 		 }
 	 else if(c== ',') {
 		 p2 = i;
-		 savtype(ss,p1,p2-1);
+         savtype(ss,(int)p1,(int)(p2-1));
 		 p1 = p2+1;
 		 }
 	 }
@@ -448,10 +505,10 @@ int32 savfld(ss,p1,p2)
 #endif
 {
   int32 t=p2-p1+1;
+
   HDstrncpy(flds[ntotal],&ss[p1],t);
   flds[ntotal][t] = '\0';
   return (1);
-
 } /* savfld */
 
 #ifdef PROTOTYPE

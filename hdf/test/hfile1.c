@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/04/15 20:00:17  koziol
-Re-named the new tests for MS-DOS compatibility
+Revision 1.2  1993/04/19 23:03:48  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.1  1993/04/15  20:00:17  koziol
+ * Re-named the new tests for MS-DOS compatibility
+ *
  * Revision 1.2  1993/01/27  22:41:28  briand
  * Fixed problem with compiling on RS6000.
  *
@@ -36,12 +39,13 @@ Re-named the new tests for MS-DOS compatibility
 extern int Verbocity;
 extern int num_errs;
 
-int32 files[BIG];
-int32 accs[BIG];
+static int32 files[BIG];
+static int32 accs[BIG];
 
 void test_hfile1()
 {
-  int i,ret;
+  int i;
+  int32 ret;
 
   MESSAGE(5,puts("Opening many files of same name"););
   for (i=0; i< BIG; i++) {
@@ -77,7 +81,7 @@ void test_hfile1()
 
   MESSAGE(5,puts("Opening write access elements"););
   for (i=0; i<BIG; i++) {
-    accs[i] = Hstartwrite(files[0], 100, i, 100L);
+    accs[i] = Hstartwrite(files[0], (uint16)100, (uint16)i, 100L);
     if (accs[i] < 0) break;
   }
   MESSAGE(5,printf("Opening stoped at %d element\n", i););
@@ -91,17 +95,3 @@ void test_hfile1()
   MESSAGE(5,puts("Ended access"););
 }
 
-
-
-
-
-
-
-
-
-
-/*
- * Local variables:
- * compile-command: "gcc -O -g thfile1.c libhdf.a -o thfile1"
- * end:
- */

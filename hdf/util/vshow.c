@@ -20,8 +20,13 @@ static int condensed;
 int32 vsdumpfull
   PROTO((int32 vs)); 
 
-main(ac,av) int ac; 
+#ifdef PROTOTYPE
+main(int ac,char **av)
+#else
+main(ac,av)
+int ac; 
 char**av;
+#endif
 {
   int32	vg, vgt;
   int32 vgotag,vgoref;
@@ -125,7 +130,7 @@ char**av;
           Vdetach(vgt);
         }
         else { 
-          name = HDgettagname(vstag);
+          name = HDgettagname((uint16)vstag);
           if(!name) name = "Unknown Tag";
           printf("  --:%d <%d/%d> %s\n", t, vstag, vsid, name);
         }
@@ -173,22 +178,43 @@ char**av;
 
   Vend(f);
   Hclose(f);
-  
+  return(0);
 } /* main */
 
 
+static int32 cn = 0;
+
 /* ------------------------------------------------ */
 /* printing functions used by vsdumpfull(). */
-static int32 cn = 0;
-int32 fmtbyte(x) unsigned char*x;  { cn += printf("%02x ",*x); return(1);  }
-
-int32 fmtchar(x) char*x; 
-{ 
-  cn++; putchar(*x); return(1);
+#ifdef PROTOTYPE
+int32 fmtbyte(unsigned char *x)
+#else
+int32 fmtbyte(x)
+unsigned char*x;
+#endif
+{
+    cn += printf("%02x ",*x);
+    return(1);
 }
 
+#ifdef PROTOTYPE
+int32 fmtchar(char *x)
+#else
+int32 fmtchar(x)
+char*x; 
+#endif
+{ 
+    cn++;
+    putchar(*x);
+    return(1);
+}
+
+#ifdef PROTOTYPE
+int32 fmtint(char *x)
+#else
 int32 fmtint(x) 
-     char* x;
+char* x;
+#endif
 {	
   int *i;
   i = (int *) x;
@@ -196,44 +222,66 @@ int32 fmtint(x)
   return(1);  
 }
 
+#ifdef PROTOTYPE
+int32 fmtfloat(char *x)
+#else
 int32 fmtfloat(x) 
-     char* x;
+char* x;
+#endif
 {
-  float *f;
-  f = (float *) x;
-  cn += printf("%f", *f); 
-  return(1);  
+    float *f;
+    f = (float *) x;
+    cn += printf("%f", *f);
+    return(1);
 }
 
+#ifdef PROTOTYPE
+int32 fmtlong(char *x)
+#else
 int32 fmtlong(x) 
-     char* x;   
+char* x;
+#endif
 {	
-  int32 *l;
-  l = (int32 *) x;
-  cn += printf("%d", *l);
-  return(1);  
+    int32 *l;
+    l = (int32 *) x;
+    cn += printf("%d", *l);
+    return(1);
 }
 
+#ifdef PROTOTYPE
+int32 fmtshort(char *x)
+#else
 int32 fmtshort(x) 
-     char* x;   
+char* x;
+#endif
 {	
-  int16 *s;
-  s = (int16 *) x;
-  cn += printf("%d", *s);
-  return(1);  
+    int16 *s;
+    s = (int16 *) x;
+    cn += printf("%d", *s);
+    return(1);
 }
 
-int32 fmtdouble(x) char*x;
+#ifdef PROTOTYPE
+int32 fmtdouble(char *x)
+#else
+int32 fmtdouble(x)
+char*x;
+#endif
 {	
-  double *d;
-  d = (double *) x;
-  cn += printf("%f", *d); 
-  return(1);  
+    double *d;
+    d = (double *) x;
+    cn += printf("%f", *d);
+    return(1);
 }
 
 /* ------------------------------------------------ */
 
-int32 vsdumpfull(vs) int32 vs; 
+#ifdef PROTOTYPE
+int32 vsdumpfull(int32 vs)
+#else
+int32 vsdumpfull(vs)
+int32 vs; 
+#endif
 {
   char vsname[100], fields[100];
   int32 j,i,t,interlace, nv, vsize;

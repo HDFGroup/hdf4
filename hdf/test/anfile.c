@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1993/04/15 20:00:07  koziol
-Re-named the new tests for MS-DOS compatibility
+Revision 1.2  1993/04/19 23:03:40  koziol
+General Code Cleanup to reduce/remove compilation warnings on PC
 
+ * Revision 1.1  1993/04/15  20:00:07  koziol
+ * Re-named the new tests for MS-DOS compatibility
+ *
  * Revision 1.3  1993/03/17  21:29:42  chouck
  * Updated external elements test and fixed syntax error in anfile test
  *
@@ -24,6 +27,7 @@ Re-named the new tests for MS-DOS compatibility
  * Initial revision
  *
 */
+#include "hdf.h"
 #include "tproto.h"
 #define TESTFILE "tdfan.hdf"
 
@@ -35,12 +39,17 @@ extern int Verbocity;
 #define MAXLEN_LAB     50
 #define MAXLEN_DESC  1000
 
+static int checkannlen
+    PROTO((int32 ret, char *oldstr, char *type, int32 testflag));
+
+static int checkann
+    PROTO((char *oldstr, char *newstr, int32 ret, char *type, int32 testflag));
+
 void test_anfile()
 {
     char lab1[MAXLEN_LAB], lab2[MAXLEN_LAB],
          desc1[MAXLEN_DESC], desc2[MAXLEN_DESC],
          tempstr[MAXLEN_DESC];
-    uint16 ref1, ref2, ref3;
     int32 testflag = SUCCEED;
     int32 file_id, ret;
 
@@ -69,10 +78,10 @@ void test_anfile()
     RESULT("DFANaddfid");
 
     MESSAGE(5,puts("Writing file descriptions."););
-    ret = DFANaddfds(file_id, desc1, strlen(desc1));
+    ret = DFANaddfds(file_id, desc1, HDstrlen(desc1));
     RESULT("DFANaddfds");
 
-    ret = DFANaddfds(file_id, desc2, strlen(desc2));
+    ret = DFANaddfds(file_id, desc2, HDstrlen(desc2));
     RESULT("DFANaddfds");
 
     if (FAIL == Hclose(file_id) ) 
@@ -127,23 +136,32 @@ void test_anfile()
 
 }
 
-checkannlen(ret, oldstr, type, testflag)
+#ifdef PROTOTYPE
+static int checkannlen(int32 ret, char *oldstr, char *type, int32 testflag)
+#else
+static int checkannlen(ret, oldstr, type, testflag)
 int32 ret, testflag;
 char *oldstr, *type;
+#endif
 {
-    if ( (ret >=0) && (ret != strlen(oldstr)) ) {
+    if ( (ret >=0) && (ret != (int32)HDstrlen(oldstr)) ) {
         printf("Length of %s is INCORRECT\n", type);
         printf("It is:  %d\n", ret);
-        printf("It should be: %d\n", strlen(oldstr));
+        printf("It should be: %d\n", HDstrlen(oldstr));
         testflag = FAIL;
         return FAIL;
     }
     return SUCCEED;
 }
 
-checkann (oldstr, newstr, ret, type, testflag)
+#ifdef PROTOTYPE
+static int checkann(char *oldstr, char *newstr, int32 ret, char *type,
+        int32 testflag)
+#else
+static int checkann(oldstr, newstr, ret, type, testflag)
 char *oldstr, *newstr, *type;
 int32 ret, testflag;
+#endif
 {
     if ( (ret >=0) && (0 != strcmp(oldstr, newstr)) ) {
         printf("%s is INCORRECT.\n", type);

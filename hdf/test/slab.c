@@ -13,7 +13,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.1  1993/04/15 20:00:37  koziol
+ * Revision 1.2  1993/04/19 23:04:07  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
+ * Revision 1.1  1993/04/15  20:00:37  koziol
  * Re-named the new tests for MS-DOS compatibility
  *
  * Revision 1.9  1993/04/14  21:37:37  georgev
@@ -55,9 +58,9 @@ static float64 maxf64  = 123.0;
 static float64 minf64  = -1.0;
 static float64 fillf64 =  1.0;
 
-static float32 maxf32  = 123.0;
-static float32 minf32  = -1.0;
-static float32 fillf32 =  1.0;
+static float32 maxf32  = (float32)123.0;
+static float32 minf32  = (float32)-1.0;
+static float32 fillf32 = (float32) 1.0;
 
 static intn maxin  = 123;
 static intn minin  = -1;
@@ -112,9 +115,9 @@ static float64 scplnf64[2] = {0.0, 100.0};
 static float64 scrowf64[3] = {0.0, 10.0, 20.0};
 static float64 sccolf64[4] = {0.0, 1.0, 2.0, 3.0};
 
-static float32 scplnf32[2] = {0.0, 100.0};	
-static float32 scrowf32[3] = {0.0, 10.0, 20.0};
-static float32 sccolf32[4] = {0.0, 1.0, 2.0, 3.0};
+static float32 scplnf32[2] = {(float32)0.0, (float32)100.0};
+static float32 scrowf32[3] = {(float32)0.0, (float32)10.0, (float32)20.0};
+static float32 sccolf32[4] = {(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0};
 
 static intn scplnin[2] = {0, 100};	
 static intn scrowin[3] = {0, 10, 20};
@@ -149,14 +152,14 @@ static uint8 scrowui8[3] = {0, 10, 20};
 static uint8 sccolui8[4] = {0, 1, 2, 3};
 
 /* Slabs for slabw(), slab1w(), slab2w() */
-static float32 slabw1[1][1][3] = { { {110.0, 111.0, 112.0} } }; 
-static float32 slabw2[2][1][3] = { { {20.0, 21.0, 22.0} },
-                                   { {120.0, 121.0, 122.0} } }; 
-static float32 slabw3[1][2][3] = { { {0.0, 1.0, 2.0},
-                                     {10.0, 11.0, 12.0} } }; 
-static float32 slabw4[1][1][3] = { { {100.0, 101.0, 102.0} } }; 
-static float32 slabw5[2][3][1] = { { {3.0}, {13.0}, {23.0} }, 
-                                   { {103.0}, {113.0}, {123.0} } }; 
+static float32 slabw1[1][1][3] = { { {(float32)110.0, (float32)111.0, (float32)112.0} } };
+static float32 slabw2[2][1][3] = { { {(float32)20.0, (float32)21.0, (float32)22.0} },
+                                   { {(float32)120.0, (float32)121.0, (float32)122.0} } };
+static float32 slabw3[1][2][3] = { { {(float32)0.0, (float32)1.0, (float32)2.0},
+                                     {(float32)10.0, (float32)11.0, (float32)12.0} } };
+static float32 slabw4[1][1][3] = { { {(float32)100.0, (float32)101.0, (float32)102.0} } };
+static float32 slabw5[2][3][1] = { { {(float32)3.0}, {(float32)13.0}, {(float32)23.0} },
+                                   { {(float32)103.0}, {(float32)113.0}, {(float32)123.0} } };
 
 static float64 slabw1f64[1][1][3] = { { {110.0, 111.0, 112.0} } }; 
 static float64 slabw2f64[2][1][3] = { { {20.0, 21.0, 22.0} },
@@ -239,39 +242,39 @@ static uint8 slabw4ui8[1][1][3] = { { {100, 101, 102} } };
 static uint8 slabw5ui8[2][3][1] = { { {3}, {13}, {23} }, 
                                     { {103}, {113}, {123} } }; 
 /* Slabs for slab3w() */
-static float32 slab1[1][1][1] = { { {0.0} } }; 
-static float32 slab2[1][1][1] = { { {1.0} } }; 
-static float32 slab3[1][1][1] = { { {2.0} } }; 
-static float32 slab4[1][1][1] = { { {3.0} } }; 
-static float32 slab5[1][1][1] = { { {10.0} } }; 
-static float32 slab6[1][1][1] = { { {11.0} } }; 
-static float32 slab7[1][1][1] = { { {12.0} } }; 
-static float32 slab8[1][1][1] = { { {13.0} } }; 
-static float32 slab9[1][1][1] = { { {20.0} } }; 
-static float32 slab10[1][1][1] = { { {21.0} } }; 
-static float32 slab11[1][1][1] = { { {22.0} } }; 
-static float32 slab12[1][1][1] = { { {23.0} } }; 
-static float32 slab13[1][1][1] = { { {100.0} } }; 
-static float32 slab14[1][1][1] = { { {101.0} } }; 
-static float32 slab15[1][1][1] = { { {102.0} } }; 
-static float32 slab16[1][1][1] = { { {103.0} } }; 
-static float32 slab17[1][1][1] = { { {110.0} } }; 
-static float32 slab18[1][1][1] = { { {111.0} } }; 
-static float32 slab19[1][1][1] = { { {112.0} } }; 
-static float32 slab20[1][1][1] = { { {113.0} } }; 
-static float32 slab21[1][1][1] = { { {120.0} } }; 
-static float32 slab22[1][1][1] = { { {121.0} } }; 
-static float32 slab23[1][1][1] = { { {122.0} } }; 
-static float32 slab24[1][1][1] = { { {123.0} } }; 
+static float32 slab1[1][1][1] = { { {(float32)0.0} } };
+static float32 slab2[1][1][1] = { { {(float32)1.0} } };
+static float32 slab3[1][1][1] = { { {(float32)2.0} } };
+static float32 slab4[1][1][1] = { { {(float32)3.0} } };
+static float32 slab5[1][1][1] = { { {(float32)10.0} } };
+static float32 slab6[1][1][1] = { { {(float32)11.0} } };
+static float32 slab7[1][1][1] = { { {(float32)12.0} } };
+static float32 slab8[1][1][1] = { { {(float32)13.0} } };
+static float32 slab9[1][1][1] = { { {(float32)20.0} } };
+static float32 slab10[1][1][1] = { { {(float32)21.0} } };
+static float32 slab11[1][1][1] = { { {(float32)22.0} } };
+static float32 slab12[1][1][1] = { { {(float32)23.0} } };
+static float32 slab13[1][1][1] = { { {(float32)100.0} } };
+static float32 slab14[1][1][1] = { { {(float32)101.0} } };
+static float32 slab15[1][1][1] = { { {(float32)102.0} } };
+static float32 slab16[1][1][1] = { { {(float32)103.0} } };
+static float32 slab17[1][1][1] = { { {(float32)110.0} } };
+static float32 slab18[1][1][1] = { { {(float32)111.0} } };
+static float32 slab19[1][1][1] = { { {(float32)112.0} } };
+static float32 slab20[1][1][1] = { { {(float32)113.0} } };
+static float32 slab21[1][1][1] = { { {(float32)120.0} } };
+static float32 slab22[1][1][1] = { { {(float32)121.0} } };
+static float32 slab23[1][1][1] = { { {(float32)122.0} } };
+static float32 slab24[1][1][1] = { { {(float32)123.0} } };
 
 /* data array in memory  */
 static float32 fdata[2][3][4] = 
-		{{{   0.0,   1.0,   2.0,   3.0},  
-		  {  10.0,  11.0,  12.0,  13.0},
-		  {  20.0,  21.0,  22.0,  23.0}},
-		 {{ 100.0, 101.0, 102.0, 103.0},
-		  { 110.0, 111.0, 112.0, 113.0},
-		  { 120.0, 121.0, 122.0, 123.0}}};
+        {{{(float32)   0.0,(float32)   1.0,(float32)   2.0,(float32)   3.0},
+          {(float32)  10.0,(float32)  11.0,(float32)  12.0,(float32)  13.0},
+          {(float32)  20.0,(float32)  21.0,(float32)  22.0,(float32)  23.0}},
+         {{(float32) 100.0,(float32) 101.0,(float32) 102.0,(float32) 103.0},
+          {(float32) 110.0,(float32) 111.0,(float32) 112.0,(float32) 113.0},
+          {(float32) 120.0,(float32) 121.0,(float32) 122.0,(float32) 123.0}}};
 static float64 f64data[2][3][4] = 
 		{{{   0.0,   1.0,   2.0,   3.0},  
 		  {  10.0,  11.0,  12.0,  13.0},
@@ -469,7 +472,7 @@ slabwf32()
     else
        MESSAGE(10,printf("\n       slabwf32:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 /* 
@@ -594,7 +597,7 @@ slabwf64()
     else
        MESSAGE(10,printf("\n       slabwf64:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 
@@ -720,7 +723,7 @@ slabwin()
     else
        MESSAGE(10,printf("\n       slabwin:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 
@@ -846,7 +849,7 @@ slabwuin()
     else
        MESSAGE(10,printf("\n       slabwuin:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 
@@ -972,7 +975,7 @@ slabwi32()
     else
        MESSAGE(10,printf("\n       slabwi32:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 
@@ -1098,7 +1101,7 @@ slabwui32()
     else
        MESSAGE(10,printf("\n       slabwui32:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 
@@ -1224,7 +1227,7 @@ slabwi16()
     else
        MESSAGE(10,printf("\n       slabwi16:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 /* 
@@ -1349,7 +1352,7 @@ slabwui16()
     else
        MESSAGE(10,printf("\n       slabwui16:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 /* 
@@ -1474,7 +1477,7 @@ slabwi8()
     else
        MESSAGE(10,printf("\n       slabwi8:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 /* 
@@ -1599,14 +1602,13 @@ slabwui8()
     else
        MESSAGE(10,printf("\n       slabwui8:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 
 int
 slab1w()
 {
-  int32 i, j, k;
   int32 ret = 0; 
   int32 no_err = 0;
 
@@ -1678,7 +1680,7 @@ slab1w()
     else
       MESSAGE(10,printf("\n         slab1w:  %d failures.  \n", no_err););
 
-    return no_err;
+    return (int)no_err;
 }
 
 int
@@ -1690,7 +1692,7 @@ slab2w()
   int32 num_err = 0;
   static float32 sdata[2][3][4]; /* Data array read from from file */
   float32 lfill;
-  int32 trank;
+  intn trank;
 
     MESSAGE(10,printf("\n slab2w:  Writing the last 2 of 5 slabs to slab1w.hdf \n"););
 
@@ -1755,7 +1757,7 @@ slab2w()
     else
        MESSAGE(10,printf("\n        slab2w:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 int
@@ -1958,7 +1960,7 @@ slab3w()
     else
        MESSAGE(10,printf("\n       slab3w:  %d wrong values in slab.  \n", num_err););
 
-    return num_err;
+    return (int)num_err;
 }
 
 int
@@ -2040,7 +2042,7 @@ slab4w()
     else
        MESSAGE(10,printf("\n          slab4w:  %d wrong values in slab.  \n", num_err););
 
-    return (num_err + no_err);
+    return (int)(num_err + no_err);
 }
 
 /*

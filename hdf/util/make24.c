@@ -206,7 +206,7 @@ char *argv[];
         while(argv[file][0]=='-' || argv[file][0]=='/') {
             switch(argv[file][1]) {
                 case 's':
-                    if((img_scale=atof(&argv[file][2]))<=0) { /* check for valid scale */
+                    if((img_scale=(float32)atof(&argv[file][2]))<=0) { /* check for valid scale */
                         printf("Bad scale, must be greater than 0\n");
                         return(1);
                       } /* end if */
@@ -261,8 +261,8 @@ char *argv[];
         uint8 *scaled_image;        /* storage for the scaled image */
         int32 new_xdim,new_ydim;    /* the new image's x and y dim. */
 
-        new_xdim=img_scale*xdim;    /* calc. new image's dimensions */
-        new_ydim=img_scale*ydim;
+        new_xdim=(int32)(img_scale*xdim);    /* calc. new image's dimensions */
+        new_ydim=(int32)(img_scale*ydim);
         if((scaled_image = (uint8 *) HDgetspace(new_xdim*new_ydim))==NULL) {
             printf("Error, cannot allocate space for %ldx%ld scaled image\n");
             return(1);
