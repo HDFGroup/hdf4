@@ -1958,9 +1958,9 @@ extern intn  ANannlist(int32 file_id, ann_type type, uint16 elem_tag,
 
 extern int32 ANannlen(int32 ann_id);
 
-extern int32 ANwriteann(int32 ann_id, char8 *ann, int32 annlen);
+extern int32 ANwriteann(int32 ann_id, char *ann, int32 annlen);
 
-extern int32 ANreadann(int32 ann_id, char8 *ann, int32 maxlen);
+extern int32 ANreadann(int32 ann_id, char *ann, int32 maxlen);
 
 extern intn  ANendaccess(int32 an_id);
 
