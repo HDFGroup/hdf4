@@ -593,6 +593,7 @@ If you get an error on this line more than one machine type has been defined.
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 #ifdef THINK_C                  /* for THINK C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))
