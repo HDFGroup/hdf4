@@ -248,10 +248,13 @@ $(ZLIBLIB)/libz.a:
 clean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest
 	-$(RM) $(RMFLAGS) o* ctx* cb* fptestf 
+	-$(RM) $(RMFLAGS) gif_hdf_temp/*
 
 distclean:
 	-$(RM) $(RMFLAGS) *.o $(UTILS) hdfed fptest config.status Makefile
 	-$(RM) $(RMFLAGS) o* ctx* cb* fptestf
+	-$(RM) $(RMFLAGS) gif_hdf_temp/*
+
 depend: 
 	 makedepend -I$(HDFINC) -I$(UTILINC) *.c
 
