@@ -292,12 +292,14 @@ HCIcszip_term(compinfo_t * info)
 		fprintf(stderr, "Pixels (%d) must integer multiple of pixels per scanline (%d)\n", szip_info->pixels, szip_info->pixels_per_scanline);
 		return (FAIL);
 		}
-
+#if 0
+/* this condition was removed from szip requirement 9.03 pvn */	
 	if (szip_info->pixels_per_scanline % szip_info->pixels_per_block)
 		{
 		fprintf(stderr, "Pixels per scanline (%d) must be an integer multiple of pixels per block (%d)\n", szip_info->pixels_per_scanline, szip_info->pixels_per_block);
 		return (FAIL);
 		}
+#endif	
 
 	out_bytes = szip_compress_memory(szip_info->options_mask, szip_info->bits_per_pixel, szip_info->pixels_per_block, szip_info->pixels_per_scanline, szip_info->buffer, szip_info->pixels, out_buffer);
 
