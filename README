@@ -1,5 +1,5 @@
-               README for HDF 4.1 Distribution
-               -------------------------------
+               README for HDF 4.1r2 Distribution
+               ---------------------------------
 
 Obtaining the latest version
 ----------------------------
@@ -35,12 +35,6 @@ Distribution Layout
                     are also available on the NCSA ftp server, 
                     in /HDF/HDF_Current/release_notes.
 
-   java-hdf -- optional Java interface and Java HDF Viewer.  The Java
-               products are built separately after the library has
-               been built.  Change to the java-hdf directory and
-               see the README.
-
-
 Third Party Software Requirements:
 ---------------------------------
  1. IJPEG distribution release 6b(libjpeg.a). The "official" site 
@@ -54,15 +48,14 @@ Third Party Software Requirements:
 
 System Requirements
 -------------------
- To build both HDF and netCDF library from source, you need:
+ To build the HDF library from source, you need:
 
    * an ANSI C compiler. The native ANSI compilers on the above 
      platforms are supported. On platforms where no ANSI compiler
      was available the free GNU ANSI compiler GCC was used.
 
-   * a Fortran 77 compiler if you want Fortran support. See above
-     table for platforms where Fortran is supported. You can
-     compile both libraries without Fortran support by setting 
+   * a Fortran 77 (F90 for Crays) compiler if you want Fortran support.
+     You can compile both libraries without Fortran support by setting 
      the Fortran compiler variable 'FC = NONE' in the respective
      makefile fragment(mh-<os>) found in the top-level 'config'
      directory. See the INSTALL file for further details on 
