@@ -276,7 +276,7 @@ mpool_open(key, fd, pagesize, maxcache)
       lp->pgno   = (pageno_t)pageno;     /* set page number */
       lp->eflags = (u_int8_t)ELEM_SYNC; /* valid page exists on disk */
 #ifdef STATISTICS
-      lp->elemhit = (u_int32_t)0;
+      lp->elemhit = 0;
       ++(mp->listalloc);
 #endif
       CIRCLEQ_INSERT_HEAD(lhead, lp, hl); /* add to list */
@@ -1475,7 +1475,7 @@ mpool_stat(mp)
      (void)fprintf(stderr, "sizeof(MPOOL)=%d, sizeof(BKT)=%d, sizeof(L_ELEM)=%d\n",
                     sizeof(MPOOL), sizeof(BKT), sizeof(L_ELEM));
       (void)fprintf(stderr, "memory pool used %u bytes\n",
-              (u_int32_t)(sizeof(MPOOL)+ (sizeof(BKT)+mp->pagesize)*mp->curcache +
+              (pageno_t)(sizeof(MPOOL)+ (sizeof(BKT)+mp->pagesize)*mp->curcache +
                 (sizeof(L_ELEM)*mp->npages)));
       sep = "";
       cnt = 0;
