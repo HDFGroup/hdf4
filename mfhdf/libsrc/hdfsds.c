@@ -710,7 +710,7 @@ intn hdf_read_ndgs(handle)
             /*
              * Units => 'units'
              */
-            if(unitbuf) {
+            if(unitbuf && (HDstrlen((char *) unitbuf) > 0)) {
                 attrs[current_attr++] = 
                     (NC_attr *) NC_new_attr("units", 
                                             NC_CHAR, 
