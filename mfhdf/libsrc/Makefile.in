@@ -133,7 +133,7 @@ DISTFILES	= Makefile.in README \
 		  $(CSRCS) cdftest.c \
 		  alloc.h testout.sav descrip.mms error.h htons.mar \
 		  local_nc.h make.com msoft.mk netcdf.h ntohs.mar \
-		  test_cdf.sav hdfout.sav hdftest.c mfhdf.h win32cdf.h hdf2netcdf.h \
+		  test_cdf.sav hdfout.sav hdftest.c tszip.c mfhdf.h win32cdf.h hdf2netcdf.h \
 		config/netcdf-hpux.h config/netcdf-irix4.h config/netcdf-irix5.h \
 		config/netcdf-irix6.h config/netcdf-irix32.h config/netcdf-sun.h \
 		config/netcdf-linux.h config/netcdf-fbsd.h config/netcdf-alpha.h \
@@ -204,8 +204,8 @@ nhdftest::         FORCE
 	  $(MAKE) $(MFLAGS) $(LOCAL_MACROS) FMPOOL_FLAGS="$(FMPOOL_FLAGS) -I$(FMPOOL_INC)" hdftest; \
 	fi
 
-hdftest:	hdftest.o library        
-	$(CC) $(CFLAGS) $(CFLAGS_NETCDF) hdftest.o $(LIBS) -o $@
+hdftest:	hdftest.o tszip.o library        
+	$(CC) $(CFLAGS) $(CFLAGS_NETCDF) hdftest.o tszip.o $(LIBS) -o $@
 	@ echo "============================"
 	@ echo "HDF-SD C interfaces tests"
 	@ echo "============================"

@@ -205,7 +205,7 @@ static uint8  u8_data[2][3][4] =
         { 100, 101, 102, 103},
         { 110, 111, 112, 113},
         { 120, 121, 122, 123}}};
-
+extern int test_szip_compression();
 static intn
 test_chunk()
 {
@@ -4066,6 +4066,11 @@ main(int argc, char *argv[])
     status = test_dimensions();
     CHECK(status, FAIL, "test_dimensions");
     num_err = num_err + status;
+
+    status = test_szip_compression();  /* defined in tszip.c */
+    CHECK(status, FAIL, "test_szip_compression");
+    num_err = num_err + status;
+
 
     printf("num_err == %d\n", num_err);
 
