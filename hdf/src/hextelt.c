@@ -259,7 +259,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-    if (data_id!=FAIL)
+    if (data_id!=FAIL && data_len>0)
       {
           VOIDP       buf;      /* temporary buffer */
 
