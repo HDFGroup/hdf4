@@ -169,6 +169,7 @@ fortestF_DEPENDENCIES = testdir ../src/libdf.a
 subdir = hdf/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = testhdf$(EXEEXT) fortest$(EXEEXT) fortestF$(EXEEXT)
 am_fortest_OBJECTS = fortest.$(OBJEXT)
@@ -195,7 +196,7 @@ am_testhdf_OBJECTS = an.$(OBJEXT) anfile.$(OBJEXT) bitio.$(OBJEXT) \
 testhdf_OBJECTS = $(am_testhdf_OBJECTS)
 testhdf_LDFLAGS =
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/an.Po ./$(DEPDIR)/anfile.Po \

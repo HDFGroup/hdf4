@@ -139,9 +139,9 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
-INCLUDES = -I${top_srcdir}/hdf/src        \
-         -I${top_srcdir}/mfhdf/libsrc   \
-         -I${top_srcdir}/mfhdf/port     \
+INCLUDES = -I$(top_srcdir)/hdf/src        \
+         -I$(top_srcdir)/mfhdf/libsrc   \
+         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF
@@ -154,11 +154,12 @@ bin_PROGRAMS = hdp
 hdp_SOURCES = hdp.c hdp_dump.c hdp_gr.c hdp_list.c hdp_rig.c hdp_sds.c      \
               hdp_util.c hdp_vd.c hdp_vg.c show.c
 
-hdp_LDADD = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a @LIBS@
-hdp_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdp_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdp_DEPENPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 subdir = mfhdf/dumper
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES = testhdp.sh
 bin_PROGRAMS = hdp$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
@@ -168,10 +169,10 @@ am_hdp_OBJECTS = hdp.$(OBJEXT) hdp_dump.$(OBJEXT) hdp_gr.$(OBJEXT) \
 	hdp_util.$(OBJEXT) hdp_vd.$(OBJEXT) hdp_vg.$(OBJEXT) \
 	show.$(OBJEXT)
 hdp_OBJECTS = $(am_hdp_OBJECTS)
-hdp_DEPENDENCIES = ../libsrc/libmfhdf.a ${top_builddir}/hdf/src/libdf.a
+hdp_DEPENDENCIES = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hdp_LDFLAGS =
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hdp.Po ./$(DEPDIR)/hdp_dump.Po \

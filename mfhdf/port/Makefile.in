@@ -140,6 +140,7 @@ libudport_a_SOURCES = uddummy.c
 subdir = mfhdf/port
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(lib_LIBRARIES)
 
@@ -148,7 +149,7 @@ libudport_a_LIBADD =
 am_libudport_a_OBJECTS = uddummy.$(OBJEXT)
 libudport_a_OBJECTS = $(am_libudport_a_OBJECTS)
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/uddummy.Po

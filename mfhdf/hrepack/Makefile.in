@@ -190,6 +190,7 @@ hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.
 subdir = mfhdf/hrepack
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = hrepack$(EXEEXT)
 check_PROGRAMS = test_hrepack$(EXEEXT)
@@ -225,7 +226,7 @@ am_test_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 test_hrepack_OBJECTS = $(am_test_hrepack_OBJECTS)
 test_hrepack_LDFLAGS =
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/dumplib.Po ./$(DEPDIR)/hdiff.Po \

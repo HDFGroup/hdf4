@@ -168,6 +168,7 @@ hdfimporttest_DEPENPENDENCIES = ${top_builddir}/hdf/src/libdf.a ../libsrc/libmfh
 subdir = mfhdf/hdfimport
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES = testutil.sh
 bin_PROGRAMS = hdfimport$(EXEEXT)
 check_PROGRAMS = hdfimporttest$(EXEEXT)
@@ -184,7 +185,7 @@ hdfimporttest_DEPENDENCIES = ../libsrc/libmfhdf.a \
 	${top_builddir}/hdf/src/libdf.a
 hdfimporttest_LDFLAGS =
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/hdfimport-hdfimport.Po \

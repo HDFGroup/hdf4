@@ -160,6 +160,7 @@ SUFFIXES = .inc .f90
 subdir = mfhdf/fortran
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 check_PROGRAMS = ftest$(EXEEXT)
 am_ftest_OBJECTS = ftest.$(OBJEXT)
@@ -168,7 +169,7 @@ ftest_DEPENDENCIES = ../libsrc/libmfhdf.a \
 	$(top_builddir)/hdf/src/libdf.a
 ftest_LDFLAGS =
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@

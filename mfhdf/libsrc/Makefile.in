@@ -178,6 +178,7 @@ hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 subdir = mfhdf/libsrc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
+CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
 LIBRARIES = $(lib_LIBRARIES)
 
@@ -221,7 +222,7 @@ hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hdftest_LDFLAGS =
 
-DEFAULT_INCLUDES =  -I. -I$(srcdir)
+DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/array.Po ./$(DEPDIR)/attr.Po \
