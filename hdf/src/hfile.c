@@ -3896,12 +3896,14 @@ Hshutdown(void)
     accrec_t *curr;
 
     /* Release the free-list if it exists */
-    if(accrec_free_list!=NULL)
+    if(accrec_free_list != NULL)
       {
-        while(accrec_free_list!=NULL)
+        while(accrec_free_list != NULL 
+              && accrec_free_list != accrec_free_list->next)
           {
-            curr=accrec_free_list;
-            accrec_free_list=accrec_free_list->next;
+            curr = accrec_free_list;
+            accrec_free_list = accrec_free_list->next;
+            curr->next = NULL;
             HDfree(curr);
           } /* end while */
       } /* end if */
