@@ -848,7 +848,9 @@ NC_var **var;
           if(handle->is_hdf)
 /*              val = (*var)->numrecs; Multi_dim SDS UNLIMITED dim  
                                         is 1 less than the # of recs */
-              val = (rank > 1)? (*var)->numrecs + 1: (*var)->numrecs;
+/* 12/27              val = (rank > 1)? (*var)->numrecs + 1: (*var)->numrecs;
+*/
+              val = (*var)->numrecs;
           else
               val = handle->numrecs;
       }
