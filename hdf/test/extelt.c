@@ -321,5 +321,11 @@ test_hextelt()
     ret = Hclose(fid);
     CHECK(ret, FAIL, "Hclose");
 
+    /* unset the external paths directory variables */
+    ret = HXsetcreatedir(NULL);
+    CHECK(ret, FAIL, "HXsetcreatedir");
+    ret = HXsetdir(NULL);
+    CHECK(ret, FAIL, "HXsetdir");
+
 }
 
