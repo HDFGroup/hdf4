@@ -13,7 +13,10 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.7  1993/04/05 22:37:49  koziol
+ * Revision 1.8  1993/04/06 18:59:12  koziol
+ * Minor changes for num_err wierdness.
+ *
+ * Revision 1.7  1993/04/05  22:37:49  koziol
  * Fixed goofups made in haste when patching code.
  *
  * Revision 1.4  1993/03/17  16:42:55  georgev
@@ -327,19 +330,19 @@ static uint8 ui8data[2][3][4] =
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
 /* Output files */
-static char *swf32  = "slabwf32.hdf";
-static char *swf64  = "slabwf64.hdf";
-static char *swin = "slabwin.hdf";
-static char *swuin = "slabwuin.hdf";
-static char *swi32 = "slabwi32.hdf";
-static char *swui32 = "slabwui32.hdf";
-static char *swi16 = "slabwi16.hdf";
-static char *swui16 = "slabwui16.hdf";
-static char *swi8  = "slabwi8.hdf";
-static char *swui8  = "slabwui8.hdf";
-static char *sw1 = "slab1w.hdf";
-static char *sw3 = "slab3w.hdf";
-static char *sw4 = "slab4w.hdf";
+static char *swf32  = "swf32.hdf";
+static char *swf64  = "swf64.hdf";
+static char *swin = "swin.hdf";
+static char *swuin = "swuin.hdf";
+static char *swi32 = "swi32.hdf";
+static char *swui32 = "swui32.hdf";
+static char *swi16 = "swi16.hdf";
+static char *swui16 = "swui16.hdf";
+static char *swi8  = "swi8.hdf";
+static char *swui8  = "swui8.hdf";
+static char *sw1 = "s1w.hdf";
+static char *sw3 = "s3w.hdf";
+static char *sw4 = "s4w.hdf";
 
 /* 
 ** Write data set to slabw.hdf as 5 hyperslabs.
