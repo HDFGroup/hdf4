@@ -31,7 +31,9 @@ dumpvd_usage(intn argc,
 	printf("\t-i <index>\tDump the <index>th SDS in the file \n");
 	printf("\t-n <name>\tDump the VDS with name <name>\n");
 	printf("\t-r <ref>\tDump the VDS with reference number <ref>\n");
+	printf("\t-c <class>\tDump the VDS with class <class>\n");
 	printf("\t-d\tDump data only, no tag/ref, formatted to input to hp2hdf\n");
+	printf("\t-f <f1, f2,..> \tDump based on fields in vdata header\n");
 	printf("\t-h\tDump header only, no annotation for elements nor data\n");
 	printf("\t-v\tDump everything including all annotations (default)\n");
 	printf("\t-o <filename>\tOutput to file <filename>\n");
