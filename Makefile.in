@@ -195,7 +195,7 @@ hdf-libnofortran:
           SUBDIRS="$(HDFDIR)" subd
 
 test-hdfnofortran: 
-	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="testnofortran" \
+	@$(MAKE) $(MFLAGS) $(HDF_FLAGS) TARG="test-hdfnofortran" \
           SUBDIRS="$(HDFDIR)" subd
 
 #hdf-testnofortran:
