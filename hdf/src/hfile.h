@@ -2,9 +2,12 @@
 $Header$
 
 $Log$
-Revision 1.6  1992/11/30 21:59:11  chouck
-Added NO_ID for testing if an ID variable has an invalid content
+Revision 1.7  1993/01/14 19:08:42  chouck
+Added ID type of SDS objects (4)
 
+ * Revision 1.6  1992/11/30  21:59:11  chouck
+ * Added NO_ID for testing if an ID variable has an invalid content
+ *
  * Revision 1.5  1992/11/02  16:35:41  koziol
  * Updates from 3.2r2 -> 3.3
  *
@@ -297,6 +300,7 @@ typedef struct functab_t {
 #define FIDTYPE   1
 #define AIDTYPE   2
 #define GROUPTYPE 3
+#define SDSTYPE   4
 #define FSLOT2ID(s) ((((uint32)FIDTYPE & 0xffff) << 16) | ((s) & 0xffff))
 #define VALIDFID(i) (((((uint32)(i) >> 16) & 0xffff) == FIDTYPE) && \
                     (((uint32)(i) & 0xffff) < MAX_FILE))
