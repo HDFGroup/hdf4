@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
 /* $Id$ */
 
 /*+ hkit.h
@@ -9,10 +21,9 @@
 /* tag_messages is the list of tag descriptions in the system, kept as
    tag-description pairs.  To look up a description, a linear search is
    required but efficiency should be okay. */
-
 typedef struct tag_descript_t {
-    uint16 tag;
-    char *desc;
+    uint16 tag;    /* tag for description ? */
+    char   *desc;  /* tag description ? */  
 } tag_descript_t;
 
 /*  NOTE: 

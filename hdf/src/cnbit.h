@@ -1,4 +1,18 @@
-/*-----------------------------------------------------------------------------
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                      *
+ *                                                                          *
+ ****************************************************************************/
+
+ /* $Id$ */
+
+ /*-----------------------------------------------------------------------------
  * File:    cnbit.h
  * Purpose: Header file for N-bit encoding information.
  * Dependencies: should only be included from hcompi.h
@@ -7,20 +21,6 @@
  * Structure definitions:
  * Constant definitions:
  *---------------------------------------------------------------------------*/
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/*
-$Header$
-
-$Log$
-Revision 1.1  1993/10/19 17:36:32  koziol
-Tons of changes and updates.  Fixed the 0 length problem in Hstartwrite(),
-made all the 'void' returning routines in the Vsets return a succeed or
-fail.  Added N-Bit files (which aren't working yet...)
-
- *
- */
 
 /* avoid re-inclusion */
 #ifndef __CNBIT_H
