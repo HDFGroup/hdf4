@@ -2,8 +2,9 @@ C---------------------------------------------------------------------------
 C $Header$
 C
 C $Log$
-C Revision 1.5  1993/08/03 16:37:03  georgev
-C Fixed problem with slab interface.
+C Revision 1.6  1993/08/16 21:58:34  koziol
+C Fixed access list for these files, and the actual changes I made to the
+C files are for PC compatibility.
 C
 c Revision 1.4  1993/04/27  21:02:11  georgev
 c Changed fortran stubs interface for hyperslabs, made them different
@@ -29,7 +30,7 @@ C Output file: slabwf.hdf
 
 
       integer dssdims, dssdisc, dssdist
-      integer dfsdsslab, dfsdwslab, dfsdeslab, dsgslc
+      integer dfsdsslab, dfsdwslab, dfsdeslab, dsigslc
       integer ret, np, nr,nc, di(3), st(3), sz(3), sr(3)
       integer rank, DFTAG_SDT, DFO_FORTRAN
       real    scpln(2), scrow(3), sccol(4), da(4,3,2)
@@ -39,6 +40,7 @@ C Output file: slabwf.hdf
       integer i, j, k
       character*10 lcol,ucol,fcol,lrow,urow,frow,lpln,upln,fpln
       character*30 fn, sn
+      integer fnlen
       integer num_err
      
 	  print *,'\n   Writing data as 5 slabs to slabwf.hdf'
@@ -72,6 +74,7 @@ C Output file: slabwf.hdf
       fpln = 'Int32'
       fn = 'slabf.hdf'
       sn = 'slabwf.hdf'
+      fnlen = 30
       slab1(1,1,1) = 110.0
       slab1(2,1,1) = 111.0
       slab1(3,1,1) = 112.0
@@ -135,7 +138,7 @@ C
       ret = dssdims(rank, di)
       num_err = num_err + ret
 
-      ret = dfsdsslab(sn)
+      ret = dfsdsslab(sn, fnlen)
       num_err = num_err + ret
       st(1) = 1
       st(2) = 2
@@ -192,7 +195,7 @@ C
       sr(1) = 4
       sr(2) = 3
       sr(3) = 2
-      ret = dsgslc(sn, st, sz, sa, sr)
+      ret = dsigslc(sn, st, sz, sa, sr, fnlen)
       num_err = num_err + ret
 
       if ( num_err .ne. 0) then

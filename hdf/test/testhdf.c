@@ -10,13 +10,23 @@ int Index=0;
 /* ANY new test needs to have a prototype in tproto.h */
 #include "tproto.h"
 
+#ifdef TEST_PC
+#define FAR far
+#else
+#define FAR /* */
+#endif
+
+#ifdef TEST_PC
+FILE *dbg_file;
+#endif
+
 struct TestStruct {
   int  NumErrors;
   char Description[64];
   int  SkipFlag;
   char Name[16];
   VOID (*Call)();
-} Test[MAXNUMOFTESTS] ;
+} FAR Test[MAXNUMOFTESTS] ;
 
 #ifdef PROTOTYPE
 void InitTest (const char *TheName, VOID (*TheCall)(),const char *TheDescr)
@@ -42,7 +52,7 @@ const char* TheDescr;
 #ifdef PROTOTYPE
 main (int argc, char *argv[])
 #else
-main (argc, argv) 
+main (argc, argv)
      int argc;
      char* argv[];
 #endif
@@ -54,6 +64,10 @@ main (argc, argv)
   int ret;
   uint32 lmajor, lminor, lrelease;
   char lstring[81];
+
+#ifdef TEST_PC
+    dbg_file=fopen("test.dbg","w+");
+#endif
 
   InitTest("vers",test_vers,"VERSION OF LIBRARY");
   InitTest("24bit",test_r24,"24BIT RASTER IMAGE INTERFACE");
@@ -70,7 +84,11 @@ main (argc, argv)
   InitTest("sdnmms",test_sdnmms,"SDNMMS");
   InitTest("slabs",test_slab,"HYPERSLAB INTERFACE");
   InitTest("litend",test_litend,"LITTLE-ENDIAN INTERFACE");
-  InitTest("vset",test_vsets,"VSET INTERFACE");
+#ifndef PC
+  InitTest("egchi",test_egchi,"VSET TEST");
+  InitTest("tv1",test_tv1,"VSET TEST 1");
+  InitTest("tv2",test_tv2,"VSET TEST 2");
+#endif
 
   Verbocity = 4; /* Default Verbocity is Low */
   ret = Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
@@ -87,8 +105,8 @@ main (argc, argv)
         Verbocity = 6;
       else if (argv[CLLoop+1][0] == 'h')
         Verbocity = 10;
-      else 
-        Verbocity = atoi(argv[CLLoop+1]); 
+      else
+        Verbocity = atoi(argv[CLLoop+1]);
     }
     if ((argc > CLLoop) && (HDstrcmp(argv[CLLoop],"-summary")==0) ||
         (HDstrcmp(argv[CLLoop],"-s")==0)) {
@@ -154,7 +172,7 @@ main (argc, argv)
       Loop = CLLoop+1;
       while ((Loop < argc) && (argv[Loop][0] != '-')) {
         for (Loop1 = 0; Loop1 < Index; Loop1++) {
-          if (HDstrcmp(argv[Loop],Test[Loop1].Name) == 0)  
+          if (HDstrcmp(argv[Loop],Test[Loop1].Name) == 0)
               Test[Loop1].SkipFlag = 0;
         }
         Loop++;
@@ -177,22 +195,22 @@ main (argc, argv)
       (*Test[Loop].Call)();
       Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
       MESSAGE(5,printf("===============================================\n"););
-      MESSAGE(5,printf("There were %d errors detected.\n\n",Test[Loop].NumErrors););
+      MESSAGE(5,printf("There were %d errors detected.\n\n",(int)Test[Loop].NumErrors););
     }
   }
 
   MESSAGE(2,printf("\n\n");)
   if(num_errs) {
-    fprintf(stderr, "!!! %d Error(s) were detected !!!\n\n", num_errs);
+    printf("!!! %d Error(s) were detected !!!\n\n", (int)num_errs);
   } else {
-    fprintf(stderr, "All tests were successful. \n\n");
+    printf("All tests were successful. \n\n");
   }
 
 
   if(Summary) {
 /*    printf("\n\n"); */
 /*    printf("==========================================================\n");*/
-    printf("Summary of Test Results:\n"); 
+    printf("Summary of Test Results:\n");
 /*    printf("==========================================================\n\n");*/
     printf("Name of Test     Errors Description of Test\n");
     printf("---------------- ------ --------------------------------------\n");
@@ -202,7 +220,7 @@ main (argc, argv)
         printf("%16s %6s %s\n",Test[Loop].Name,"N/A",
                Test[Loop].Description);
       else
-        printf("%16s %6d %s\n",Test[Loop].Name,Test[Loop].NumErrors,
+        printf("%16s %6d %s\n",Test[Loop].Name,(int)Test[Loop].NumErrors,
                Test[Loop].Description);
     }
     printf("\n\n");
@@ -213,11 +231,14 @@ main (argc, argv)
   if(CleanUp) {
     MESSAGE(2,printf("\nCleaning Up...\n\n"););
 #ifdef PC
-    system("del *.hdf");
+    remove("*.hdf");
 #else
     system("rm -f *.hdf *.tmp");
 #endif
   }
+#ifdef TEST_PC
+    fclose(dbg_file);
+#endif
   return(0);
 }
 

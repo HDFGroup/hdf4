@@ -13,8 +13,9 @@ static char RcsId[] = "$Id$";
  * $Header$
  *
  * $Log$
- * Revision 1.3  1993/05/05 22:24:20  georgev
- * Fixed some cast problems on the Mac.
+ * Revision 1.4  1993/08/16 21:58:23  koziol
+ * Fixed access list for these files, and the actual changes I made to the
+ * files are for PC compatibility.
  *
  * Revision 1.2  1993/04/19  23:04:07  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
@@ -53,321 +54,334 @@ static char RcsId[] = "$Id$";
 extern int num_errs;
 extern int Verbocity;
 
+#ifdef TEST_PC
+#define FAR far
+#else
+#define FAR /* */
+#endif
+
 /* Internal variables */
 
-static int32 rank = 3; 
+static int32 FAR rank = 3;
 
-static float64 maxf64  = 123.0;
-static float64 minf64  = -1.0;
-static float64 fillf64 =  1.0;
+static float64 FAR maxf64  = 123.0;
+static float64 FAR minf64  = -1.0;
+static float64 FAR fillf64 =  1.0;
 
-static float32 maxf32  = (float32)123.0;
-static float32 minf32  = (float32)-1.0;
-static float32 fillf32 = (float32) 1.0;
+static float32 FAR maxf32  = (float32)123.0;
+static float32 FAR minf32  = (float32)-1.0;
+static float32 FAR fillf32 = (float32) 1.0;
 
-static intn maxin  = 123;
-static intn minin  = -1;
-static intn fillin = 1;
+#ifndef PC
+static intn FAR maxin  = 123;
+static intn FAR minin  = -1;
+static intn FAR fillin = 1;
 
-static uintn maxuin  = 123;
-static uintn minuin  = 2;
-static uintn filluin = 1;
+static uintn FAR maxuin  = 123;
+static uintn FAR minuin  = 2;
+static uintn FAR filluin = 1;
+#endif
 
-static int32 maxi32  = 123;
-static int32 mini32  = -1;
-static int32 filli32 = 1;
+static int32 FAR maxi32  = 123;
+static int32 FAR mini32  = -1;
+static int32 FAR filli32 = 1;
 
-static uint32 maxui32  = 123;
-static uint32 minui32  = 2;
-static uint32 fillui32 = 1;
+static uint32 FAR maxui32  = 123;
+static uint32 FAR minui32  = 2;
+static uint32 FAR fillui32 = 1;
 
-static int16 maxi16  = 123;
-static int16 mini16  = -1;
-static int16 filli16 = 1;
+static int16 FAR maxi16  = 123;
+static int16 FAR mini16  = -1;
+static int16 FAR filli16 = 1;
 
-static uint16 maxui16  = 123;
-static uint16 minui16  = 2;
-static uint16 fillui16 = 1;
+static uint16 FAR maxui16  = 123;
+static uint16 FAR minui16  = 2;
+static uint16 FAR fillui16 = 1;
 
-static int8 maxi8    = 123;
-static int8 mini8    = -1;
-static int8 filli8   = 1;
+static int8 FAR maxi8    = 123;
+static int8 FAR mini8    = -1;
+static int8 FAR filli8   = 1;
 
-static uint8 maxui8    = 123;
-static uint8 minui8    =  2;
-static uint8 fillui8   = 1;
+static uint8 FAR maxui8    = 123;
+static uint8 FAR minui8    =  2;
+static uint8 FAR fillui8   = 1;
 
 /* Dimensions of slab */
-static int32 size_dims[3]  = {2, 3, 4}; /* size of slab dims */
-static int32 start_dims[3] = {1, 1, 1}; /* starting dims  */
-static int32 stride[3]     = {0, 0, 0};
+static int32 FAR size_dims[3]  = {2, 3, 4}; /* size of slab dims */
+static int32 FAR start_dims[3] = {1, 1, 1}; /* starting dims  */
+static int32 FAR stride[3]     = {0, 0, 0};
 
 /* luf for planes, rows and cols  */
-static char *lpln = "Time"; 	
-static char *upln = "Second"; 
-static char *fpln = "Int32";
-static char *lrow = "Line";
-static char *urow = "Inch";
-static char *frow = "Int16";	
-static char *lcol = "Column";
-static char *ucol = "Cm";
-static char *fcol = "Int32";
+static char FAR *lpln = "Time";
+static char FAR *upln = "Second";
+static char FAR *fpln = "Int32";
+static char FAR *lrow = "Line";
+static char FAR *urow = "Inch";
+static char FAR *frow = "Int16";
+static char FAR *lcol = "Column";
+static char FAR *ucol = "Cm";
+static char FAR *fcol = "Int32";
 
 /* scales for planes, rows, and cols */
-static float64 scplnf64[2] = {0.0, 100.0};	
-static float64 scrowf64[3] = {0.0, 10.0, 20.0};
-static float64 sccolf64[4] = {0.0, 1.0, 2.0, 3.0};
+static float64 FAR scplnf64[2] = {0.0, 100.0};
+static float64 FAR scrowf64[3] = {0.0, 10.0, 20.0};
+static float64 FAR sccolf64[4] = {0.0, 1.0, 2.0, 3.0};
 
-static float32 scplnf32[2] = {(float32)0.0, (float32)100.0};
-static float32 scrowf32[3] = {(float32)0.0, (float32)10.0, (float32)20.0};
-static float32 sccolf32[4] = {(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0};
+static float32 FAR scplnf32[2] = {(float32)0.0, (float32)100.0};
+static float32 FAR scrowf32[3] = {(float32)0.0, (float32)10.0, (float32)20.0};
+static float32 FAR sccolf32[4] = {(float32)0.0, (float32)1.0, (float32)2.0, (float32)3.0};
 
-static intn scplnin[2] = {0, 100};	
-static intn scrowin[3] = {0, 10, 20};
-static intn sccolin[4] = {0, 1, 2, 3};
+#ifndef PC
+static intn FAR scplnin[2] = {0, 100};
+static intn FAR scrowin[3] = {0, 10, 20};
+static intn FAR sccolin[4] = {0, 1, 2, 3};
 
-static uintn scplnuin[2] = {0, 100};	
-static uintn scrowuin[3] = {0, 10, 20};
-static uintn sccoluin[4] = {0, 1, 2, 3};
+static uintn FAR scplnuin[2] = {0, 100};
+static uintn FAR scrowuin[3] = {0, 10, 20};
+static uintn FAR sccoluin[4] = {0, 1, 2, 3};
+#endif
 
-static int32 scplni32[2] = {0, 100};	
-static int32 scrowi32[3] = {0, 10, 20};
-static int32 sccoli32[4] = {0, 1, 2, 3};
+static int32 FAR scplni32[2] = {0, 100};
+static int32 FAR scrowi32[3] = {0, 10, 20};
+static int32 FAR sccoli32[4] = {0, 1, 2, 3};
 
-static uint32 scplnui32[2] = {0, 100};	
-static uint32 scrowui32[3] = {0, 10, 20};
-static uint32 sccolui32[4] = {0, 1, 2, 3};
+static uint32 FAR scplnui32[2] = {0, 100};
+static uint32 FAR scrowui32[3] = {0, 10, 20};
+static uint32 FAR sccolui32[4] = {0, 1, 2, 3};
 
-static int16 scplni16[2] = {0, 100};	
-static int16 scrowi16[3] = {0, 10, 20};
-static int16 sccoli16[4] = {0, 1, 2, 3};
+static int16 FAR scplni16[2] = {0, 100};
+static int16 FAR scrowi16[3] = {0, 10, 20};
+static int16 FAR sccoli16[4] = {0, 1, 2, 3};
 
-static uint16 scplnui16[2] = {0, 100};	
-static uint16 scrowui16[3] = {0, 10, 20};
-static uint16 sccolui16[4] = {0, 1, 2, 3};
+static uint16 FAR scplnui16[2] = {0, 100};
+static uint16 FAR scrowui16[3] = {0, 10, 20};
+static uint16 FAR sccolui16[4] = {0, 1, 2, 3};
 
-static int8 scplni8[2] = {0, 100};	
-static int8 scrowi8[3] = {0, 10, 20};
-static int8 sccoli8[4] = {0, 1, 2, 3};
+static int8 FAR scplni8[2] = {0, 100};
+static int8 FAR scrowi8[3] = {0, 10, 20};
+static int8 FAR sccoli8[4] = {0, 1, 2, 3};
 
-static uint8 scplnui8[2] = {0, 100};	
-static uint8 scrowui8[3] = {0, 10, 20};
-static uint8 sccolui8[4] = {0, 1, 2, 3};
+static uint8 FAR scplnui8[2] = {0, 100};
+static uint8 FAR scrowui8[3] = {0, 10, 20};
+static uint8 FAR sccolui8[4] = {0, 1, 2, 3};
 
 /* Slabs for slabw(), slab1w(), slab2w() */
-static float32 slabw1[1][1][3] = { { {(float32)110.0, (float32)111.0, (float32)112.0} } };
-static float32 slabw2[2][1][3] = { { {(float32)20.0, (float32)21.0, (float32)22.0} },
+static float32 FAR slabw1[1][1][3] = { { {(float32)110.0, (float32)111.0, (float32)112.0} } };
+static float32 FAR slabw2[2][1][3] = { { {(float32)20.0, (float32)21.0, (float32)22.0} },
                                    { {(float32)120.0, (float32)121.0, (float32)122.0} } };
-static float32 slabw3[1][2][3] = { { {(float32)0.0, (float32)1.0, (float32)2.0},
+static float32 FAR slabw3[1][2][3] = { { {(float32)0.0, (float32)1.0, (float32)2.0},
                                      {(float32)10.0, (float32)11.0, (float32)12.0} } };
-static float32 slabw4[1][1][3] = { { {(float32)100.0, (float32)101.0, (float32)102.0} } };
-static float32 slabw5[2][3][1] = { { {(float32)3.0}, {(float32)13.0}, {(float32)23.0} },
+static float32 FAR slabw4[1][1][3] = { { {(float32)100.0, (float32)101.0, (float32)102.0} } };
+static float32 FAR slabw5[2][3][1] = { { {(float32)3.0}, {(float32)13.0}, {(float32)23.0} },
                                    { {(float32)103.0}, {(float32)113.0}, {(float32)123.0} } };
 
-static float64 slabw1f64[1][1][3] = { { {110.0, 111.0, 112.0} } }; 
-static float64 slabw2f64[2][1][3] = { { {20.0, 21.0, 22.0} },
-                                    { {120.0, 121.0, 122.0} } }; 
-static float64 slabw3f64[1][2][3] = { { {0.0, 1.0, 2.0},
-                                        {10.0, 11.0, 12.0} } }; 
-static float64 slabw4f64[1][1][3] = { { {100.0, 101.0, 102.0} } }; 
-static float64 slabw5f64[2][3][1] = { { {3.0}, {13.0}, {23.0} }, 
-                                      { {103.0}, {113.0}, {123.0} } }; 
+static float64 FAR slabw1f64[1][1][3] = { { {110.0, 111.0, 112.0} } };
+static float64 FAR slabw2f64[2][1][3] = { { {20.0, 21.0, 22.0} },
+                                    { {120.0, 121.0, 122.0} } };
+static float64 FAR slabw3f64[1][2][3] = { { {0.0, 1.0, 2.0},
+                                        {10.0, 11.0, 12.0} } };
+static float64 FAR slabw4f64[1][1][3] = { { {100.0, 101.0, 102.0} } };
+static float64 FAR slabw5f64[2][3][1] = { { {3.0}, {13.0}, {23.0} },
+                                      { {103.0}, {113.0}, {123.0} } };
 
-static intn slabw1in[1][1][3] = { { {110, 111, 112} } }; 
-static intn slabw2in[2][1][3] = { { {20, 21, 22} },
-                                  { {120, 121, 122} } }; 
-static intn slabw3in[1][2][3] = { { {0, 1, 2},
-                                    {10, 11, 12} } }; 
-static intn slabw4in[1][1][3] = { { {100, 101, 102} } }; 
-static intn slabw5in[2][3][1] = { { {3}, {13}, {23} }, 
-                                  { {103}, {113}, {123} } }; 
+#ifndef PC
+static intn FAR slabw1in[1][1][3] = { { {110, 111, 112} } };
+static intn FAR slabw2in[2][1][3] = { { {20, 21, 22} },
+                                  { {120, 121, 122} } };
+static intn FAR slabw3in[1][2][3] = { { {0, 1, 2},
+                                    {10, 11, 12} } };
+static intn FAR slabw4in[1][1][3] = { { {100, 101, 102} } };
+static intn FAR slabw5in[2][3][1] = { { {3}, {13}, {23} },
+                                  { {103}, {113}, {123} } };
 
-static uintn slabw1uin[1][1][3] = { { {110, 111, 112} } }; 
-static uintn slabw2uin[2][1][3] = { { {20, 21, 22} },
-                                    { {120, 121, 122} } }; 
-static uintn slabw3uin[1][2][3] = { { {0, 1, 2},
-                                      {10, 11, 12} } }; 
-static uintn slabw4uin[1][1][3] = { { {100, 101, 102} } }; 
-static uintn slabw5uin[2][3][1] = { { {3}, {13}, {23} }, 
-                                    { {103}, {113}, {123} } }; 
+static uintn FAR slabw1uin[1][1][3] = { { {110, 111, 112} } };
+static uintn FAR slabw2uin[2][1][3] = { { {20, 21, 22} },
+                                    { {120, 121, 122} } };
+static uintn FAR slabw3uin[1][2][3] = { { {0, 1, 2},
+                                      {10, 11, 12} } };
+static uintn FAR slabw4uin[1][1][3] = { { {100, 101, 102} } };
+static uintn FAR slabw5uin[2][3][1] = { { {3}, {13}, {23} },
+                                    { {103}, {113}, {123} } };
+#endif
 
-static int32 slabw1i32[1][1][3] = { { {110, 111, 112} } }; 
-static int32 slabw2i32[2][1][3] = { { {20, 21, 22} },
-                                    { {120, 121, 122} } }; 
-static int32 slabw3i32[1][2][3] = { { {0, 1, 2},
-                                      {10, 11, 12} } }; 
-static int32 slabw4i32[1][1][3] = { { {100, 101, 102} } }; 
-static int32 slabw5i32[2][3][1] = { { {3}, {13}, {23} }, 
-                                    { {103}, {113}, {123} } }; 
+static int32 FAR slabw1i32[1][1][3] = { { {110, 111, 112} } };
+static int32 FAR slabw2i32[2][1][3] = { { {20, 21, 22} },
+                                    { {120, 121, 122} } };
+static int32 FAR slabw3i32[1][2][3] = { { {0, 1, 2},
+                                      {10, 11, 12} } };
+static int32 FAR slabw4i32[1][1][3] = { { {100, 101, 102} } };
+static int32 FAR slabw5i32[2][3][1] = { { {3}, {13}, {23} },
+                                    { {103}, {113}, {123} } };
 
-static uint32 slabw1ui32[1][1][3] = { { {110, 111, 112} } }; 
-static uint32 slabw2ui32[2][1][3] = { { {20, 21, 22} },
-                                      { {120, 121, 122} } }; 
-static uint32 slabw3ui32[1][2][3] = { { {0, 1, 2},
-                                        {10, 11, 12} } }; 
-static uint32 slabw4ui32[1][1][3] = { { {100, 101, 102} } }; 
-static uint32 slabw5ui32[2][3][1] = { { {3}, {13}, {23} }, 
-                                      { {103}, {113}, {123} } }; 
+static uint32 FAR slabw1ui32[1][1][3] = { { {110, 111, 112} } };
+static uint32 FAR slabw2ui32[2][1][3] = { { {20, 21, 22} },
+                                      { {120, 121, 122} } };
+static uint32 FAR slabw3ui32[1][2][3] = { { {0, 1, 2},
+                                        {10, 11, 12} } };
+static uint32 FAR slabw4ui32[1][1][3] = { { {100, 101, 102} } };
+static uint32 FAR slabw5ui32[2][3][1] = { { {3}, {13}, {23} },
+                                      { {103}, {113}, {123} } };
 
-static int16 slabw1i16[1][1][3] = { { {110, 111, 112} } }; 
-static int16 slabw2i16[2][1][3] = { { {20, 21, 22} },
-                                    { {120, 121, 122} } }; 
-static int16 slabw3i16[1][2][3] = { { {0, 1, 2},
-                                      {10, 11, 12} } }; 
-static int16 slabw4i16[1][1][3] = { { {100, 101, 102} } }; 
-static int16 slabw5i16[2][3][1] = { { {3}, {13}, {23} }, 
-                                    { {103}, {113}, {123} } }; 
+static int16 FAR slabw1i16[1][1][3] = { { {110, 111, 112} } };
+static int16 FAR slabw2i16[2][1][3] = { { {20, 21, 22} },
+                                    { {120, 121, 122} } };
+static int16 FAR slabw3i16[1][2][3] = { { {0, 1, 2},
+                                      {10, 11, 12} } };
+static int16 FAR slabw4i16[1][1][3] = { { {100, 101, 102} } };
+static int16 FAR slabw5i16[2][3][1] = { { {3}, {13}, {23} },
+                                    { {103}, {113}, {123} } };
 
-static uint16 slabw1ui16[1][1][3] = { { {110, 111, 112} } }; 
-static uint16 slabw2ui16[2][1][3] = { { {20, 21, 22} },
-                                      { {120, 121, 122} } }; 
-static uint16 slabw3ui16[1][2][3] = { { {0, 1, 2},
-                                        {10, 11, 12} } }; 
-static uint16 slabw4ui16[1][1][3] = { { {100, 101, 102} } }; 
-static uint16 slabw5ui16[2][3][1] = { { {3}, {13}, {23} }, 
-                                      { {103}, {113}, {123} } }; 
+static uint16 FAR slabw1ui16[1][1][3] = { { {110, 111, 112} } };
+static uint16 FAR slabw2ui16[2][1][3] = { { {20, 21, 22} },
+                                      { {120, 121, 122} } };
+static uint16 FAR slabw3ui16[1][2][3] = { { {0, 1, 2},
+                                        {10, 11, 12} } };
+static uint16 FAR slabw4ui16[1][1][3] = { { {100, 101, 102} } };
+static uint16 FAR slabw5ui16[2][3][1] = { { {3}, {13}, {23} },
+                                      { {103}, {113}, {123} } };
 
-static int8 slabw1i8[1][1][3] = { { {110, 111, 112} } }; 
-static int8 slabw2i8[2][1][3] = { { {20, 21, 22} },
-                                  { {120, 121, 122} } }; 
-static int8 slabw3i8[1][2][3] = { { {0, 1, 2},
-                                    {10, 11, 12} } }; 
-static int8 slabw4i8[1][1][3] = { { {100, 101, 102} } }; 
-static int8 slabw5i8[2][3][1] = { { {3}, {13}, {23} }, 
-                                  { {103}, {113}, {123} } }; 
+static int8 FAR slabw1i8[1][1][3] = { { {110, 111, 112} } };
+static int8 FAR slabw2i8[2][1][3] = { { {20, 21, 22} },
+                                  { {120, 121, 122} } };
+static int8 FAR slabw3i8[1][2][3] = { { {0, 1, 2},
+                                    {10, 11, 12} } };
+static int8 FAR slabw4i8[1][1][3] = { { {100, 101, 102} } };
+static int8 FAR slabw5i8[2][3][1] = { { {3}, {13}, {23} },
+                                  { {103}, {113}, {123} } };
 
-static uint8 slabw1ui8[1][1][3] = { { {110, 111, 112} } }; 
-static uint8 slabw2ui8[2][1][3] = { { {20, 21, 22} },
-                                    { {120, 121, 122} } }; 
-static uint8 slabw3ui8[1][2][3] = { { {0, 1, 2},
-                                      {10, 11, 12} } }; 
-static uint8 slabw4ui8[1][1][3] = { { {100, 101, 102} } }; 
-static uint8 slabw5ui8[2][3][1] = { { {3}, {13}, {23} }, 
-                                    { {103}, {113}, {123} } }; 
+static uint8 FAR slabw1ui8[1][1][3] = { { {110, 111, 112} } };
+static uint8 FAR slabw2ui8[2][1][3] = { { {20, 21, 22} },
+                                    { {120, 121, 122} } };
+static uint8 FAR slabw3ui8[1][2][3] = { { {0, 1, 2},
+                                      {10, 11, 12} } };
+static uint8 FAR slabw4ui8[1][1][3] = { { {100, 101, 102} } };
+static uint8 FAR slabw5ui8[2][3][1] = { { {3}, {13}, {23} },
+                                    { {103}, {113}, {123} } };
 /* Slabs for slab3w() */
-static float32 slab1[1][1][1] = { { {(float32)0.0} } };
-static float32 slab2[1][1][1] = { { {(float32)1.0} } };
-static float32 slab3[1][1][1] = { { {(float32)2.0} } };
-static float32 slab4[1][1][1] = { { {(float32)3.0} } };
-static float32 slab5[1][1][1] = { { {(float32)10.0} } };
-static float32 slab6[1][1][1] = { { {(float32)11.0} } };
-static float32 slab7[1][1][1] = { { {(float32)12.0} } };
-static float32 slab8[1][1][1] = { { {(float32)13.0} } };
-static float32 slab9[1][1][1] = { { {(float32)20.0} } };
-static float32 slab10[1][1][1] = { { {(float32)21.0} } };
-static float32 slab11[1][1][1] = { { {(float32)22.0} } };
-static float32 slab12[1][1][1] = { { {(float32)23.0} } };
-static float32 slab13[1][1][1] = { { {(float32)100.0} } };
-static float32 slab14[1][1][1] = { { {(float32)101.0} } };
-static float32 slab15[1][1][1] = { { {(float32)102.0} } };
-static float32 slab16[1][1][1] = { { {(float32)103.0} } };
-static float32 slab17[1][1][1] = { { {(float32)110.0} } };
-static float32 slab18[1][1][1] = { { {(float32)111.0} } };
-static float32 slab19[1][1][1] = { { {(float32)112.0} } };
-static float32 slab20[1][1][1] = { { {(float32)113.0} } };
-static float32 slab21[1][1][1] = { { {(float32)120.0} } };
-static float32 slab22[1][1][1] = { { {(float32)121.0} } };
-static float32 slab23[1][1][1] = { { {(float32)122.0} } };
-static float32 slab24[1][1][1] = { { {(float32)123.0} } };
+static float32 FAR slab1[1][1][1] = { { {(float32)0.0} } };
+static float32 FAR slab2[1][1][1] = { { {(float32)1.0} } };
+static float32 FAR slab3[1][1][1] = { { {(float32)2.0} } };
+static float32 FAR slab4[1][1][1] = { { {(float32)3.0} } };
+static float32 FAR slab5[1][1][1] = { { {(float32)10.0} } };
+static float32 FAR slab6[1][1][1] = { { {(float32)11.0} } };
+static float32 FAR slab7[1][1][1] = { { {(float32)12.0} } };
+static float32 FAR slab8[1][1][1] = { { {(float32)13.0} } };
+static float32 FAR slab9[1][1][1] = { { {(float32)20.0} } };
+static float32 FAR slab10[1][1][1] = { { {(float32)21.0} } };
+static float32 FAR slab11[1][1][1] = { { {(float32)22.0} } };
+static float32 FAR slab12[1][1][1] = { { {(float32)23.0} } };
+static float32 FAR slab13[1][1][1] = { { {(float32)100.0} } };
+static float32 FAR slab14[1][1][1] = { { {(float32)101.0} } };
+static float32 FAR slab15[1][1][1] = { { {(float32)102.0} } };
+static float32 FAR slab16[1][1][1] = { { {(float32)103.0} } };
+static float32 FAR slab17[1][1][1] = { { {(float32)110.0} } };
+static float32 FAR slab18[1][1][1] = { { {(float32)111.0} } };
+static float32 FAR slab19[1][1][1] = { { {(float32)112.0} } };
+static float32 FAR slab20[1][1][1] = { { {(float32)113.0} } };
+static float32 FAR slab21[1][1][1] = { { {(float32)120.0} } };
+static float32 FAR slab22[1][1][1] = { { {(float32)121.0} } };
+static float32 FAR slab23[1][1][1] = { { {(float32)122.0} } };
+static float32 FAR slab24[1][1][1] = { { {(float32)123.0} } };
 
 /* data array in memory  */
-static float32 fdata[2][3][4] = 
+static float32 FAR fdata[2][3][4] =
         {{{(float32)   0.0,(float32)   1.0,(float32)   2.0,(float32)   3.0},
           {(float32)  10.0,(float32)  11.0,(float32)  12.0,(float32)  13.0},
           {(float32)  20.0,(float32)  21.0,(float32)  22.0,(float32)  23.0}},
          {{(float32) 100.0,(float32) 101.0,(float32) 102.0,(float32) 103.0},
           {(float32) 110.0,(float32) 111.0,(float32) 112.0,(float32) 113.0},
           {(float32) 120.0,(float32) 121.0,(float32) 122.0,(float32) 123.0}}};
-static float64 f64data[2][3][4] = 
-		{{{   0.0,   1.0,   2.0,   3.0},  
+static float64 FAR f64data[2][3][4] =
+		{{{   0.0,   1.0,   2.0,   3.0},
 		  {  10.0,  11.0,  12.0,  13.0},
 		  {  20.0,  21.0,  22.0,  23.0}},
 		 {{ 100.0, 101.0, 102.0, 103.0},
 		  { 110.0, 111.0, 112.0, 113.0},
 		  { 120.0, 121.0, 122.0, 123.0}}};
-static intn indata[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+#ifndef PC
+static intn FAR indata[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static uintn uindata[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+static uintn FAR uindata[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static int32 i32data[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+#endif
+static int32 FAR i32data[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static uint32 ui32data[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+static uint32 FAR ui32data[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static int16 i16data[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+static int16 FAR i16data[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static uint16 ui16data[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+static uint16 FAR ui16data[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static int8 i8data[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+static int8 FAR i8data[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
-static uint8 ui8data[2][3][4] = 
-		{{{   0,   1,   2,   3},  
+static uint8 FAR ui8data[2][3][4] =
+		{{{   0,   1,   2,   3},
 		  {  10,  11,  12,  13},
 		  {  20,  21,  22,  23}},
 		 {{ 100, 101, 102, 103},
 		  { 110, 111, 112, 113},
 		  { 120, 121, 122, 123}}};
 /* Output files */
-static char *swf32  = "swf32.hdf";
-static char *swf64  = "swf64.hdf";
-static char *swin = "swin.hdf";
-static char *swuin = "swuin.hdf";
-static char *swi32 = "swi32.hdf";
-static char *swui32 = "swui32.hdf";
-static char *swi16 = "swi16.hdf";
-static char *swui16 = "swui16.hdf";
-static char *swi8  = "swi8.hdf";
-static char *swui8  = "swui8.hdf";
-static char *sw1 = "s1w.hdf";
-static char *sw3 = "s3w.hdf";
-static char *sw4 = "s4w.hdf";
+static char FAR *swf32  = "swf32.hdf";
+static char FAR *swf64  = "swf64.hdf";
+static char FAR *swin = "swin.hdf";
+static char FAR *swuin = "swuin.hdf";
+static char FAR *swi32 = "swi32.hdf";
+static char FAR *swui32 = "swui32.hdf";
+static char FAR *swi16 = "swi16.hdf";
+static char FAR *swui16 = "swui16.hdf";
+static char FAR *swi8  = "swi8.hdf";
+static char FAR *swui8  = "swui8.hdf";
+static char FAR *sw1 = "s1w.hdf";
+static char FAR *sw3 = "s3w.hdf";
+static char FAR *sw4 = "s4w.hdf";
 
-/* 
+/*
 ** Write data set to slabw.hdf as 5 hyperslabs.
 */
 int
 slabwf32()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static float32 sdata[2][3][4]; /* Data array read from from file */
-  static float32 lfill;
+  float32 sdata[2][3][4]; /* Data array read from from file */
+  float32 lfill;
 
     MESSAGE(10,printf("\n slabwf32:  Writing 5 slabs to slabwf32.hdf \n"););
 
@@ -389,13 +403,13 @@ slabwf32()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -416,27 +430,27 @@ slabwf32()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -446,49 +460,47 @@ slabwf32()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swf32, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swf32, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillf32) 
-       num_err += 1;
+       num_err ++;
     MESSAGE(10,printf("\n       fill value =: %f \n", lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwf32:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwf32:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != fdata[i][j][k])
-               num_err += 1;
+               num_err ++;
             MESSAGE(10,printf("%f, ",sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwf32 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwf32:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwf32:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
 
-/* 
+/*
 ** Write float64 data set to slabw.hdf as 5 hyperslabs.
 */
 int
 slabwf64()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static float64 sdata[2][3][4]; /* Data array read from from file */
+  float64 sdata[2][3][4]; /* Data array read from from file */
   float64 lfill;
 
     MESSAGE(10,printf("\n slabwf64:  Writing 5 slabs to slabwf64.hdf \n"););
@@ -514,16 +526,16 @@ slabwf64()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf64);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnf64);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf64);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowf64);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf64);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolf64);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
     ** write data out using slabs with
     ** each slab in different order to the file "slab.hdf"
     */
@@ -541,27 +553,27 @@ slabwf64()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5f64);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5f64);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -571,50 +583,49 @@ slabwf64()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swf64, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swf64, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != fillf64) 
+    if (lfill != fillf64)
        num_err += 1;
-    MESSAGE(10,printf("\n       fill value =: %f \n", lfill););
+    MESSAGE(10,printf("\n       fill value =: %f \n", (float)lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwf64:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwf64:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != f64data[i][j][k])
-               num_err += 1;
-            MESSAGE(10,printf("%f, ",sdata[i][j][k]););
+               num_err ++;
+            MESSAGE(10,printf("%f, ",(float)sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwf64 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwf64:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwf64:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
 
 
-/* 
+#ifndef PC
+/*
 ** Write intn data set to slabwin.hdf as 5 hyperslabs.
 */
 int
 slabwin()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static intn sdata[2][3][4]; /* Data array read from from file */
+  intn sdata[2][3][4]; /* Data array read from from file */
   intn lfill;
 
     MESSAGE(10,printf("\n slabwin:  Writing 5 slabs to slabwin.hdf \n"););
@@ -640,22 +651,22 @@ slabwin()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnin);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowin);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolin);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
     ** write data out using slabs with
     ** each slab in different order to the file "slab.hdf"
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange((VOIDP)&maxin,(VOIDP) &minin);
+    ret = DFSDsetrange((VOIDP)&maxin, (VOIDP)&minin);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
@@ -667,27 +678,27 @@ slabwin()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5in);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5in);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -697,50 +708,48 @@ slabwin()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swin, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swin, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != fillin) 
+    if (lfill != fillin)
        num_err += 1;
     MESSAGE(10,printf("\n       fill value =: %d \n", lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwin:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwin:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != indata[i][j][k])
-               num_err += 1;
+               num_err ++;
             MESSAGE(10,printf("%u, ",sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwin <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwin:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwin:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
 
 
-/* 
+/*
 ** Write uintn data set to slabwuin.hdf as 5 hyperslabs.
 */
 int
 slabwuin()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static uintn sdata[2][3][4]; /* Data array read from from file */
+  uintn sdata[2][3][4]; /* Data array read from from file */
   uintn lfill;
 
     MESSAGE(10,printf("\n slabwuin:  Writing 5 slabs to slabwuin.hdf \n"););
@@ -766,13 +775,13 @@ slabwuin()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnuin);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnuin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowuin);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowuin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoluin);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccoluin);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -793,27 +802,27 @@ slabwuin()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5uin);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5uin);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -823,50 +832,49 @@ slabwuin()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swuin, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swuin, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != filluin) 
+    if (lfill != filluin)
        num_err += 1;
     MESSAGE(10,printf("\n       fill value =: %u \n", lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwin:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwin:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != uindata[i][j][k])
-               num_err += 1;
+               num_err ++;
             MESSAGE(10,printf("%u, ",sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwuin <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwuin:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwuin:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
+#endif
 
 
-/* 
+/*
 ** Write int32 data set to slabwi32.hdf as 5 hyperslabs.
 */
 int
 slabwi32()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static int32 sdata[2][3][4]; /* Data array read from from file */
+  int32 sdata[2][3][4]; /* Data array read from from file */
   int32 lfill;
 
     MESSAGE(10,printf("\n slabwi32:  Writing 5 slabs to slabwi32.hdf \n"););
@@ -892,22 +900,22 @@ slabwi32()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplni32);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplni32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowi32);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowi32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoli32);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccoli32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
     ** write data out using slabs with
     ** each slab in different order to the file "slab.hdf"
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange((VOIDP)&maxi32,(VOIDP) &mini32);
+    ret = DFSDsetrange((VOIDP)&maxi32, (VOIDP)&mini32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     /* Set fill value */
@@ -919,27 +927,27 @@ slabwi32()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5i32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5i32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -949,50 +957,48 @@ slabwi32()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi32, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swi32, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != filli32) 
+    if (lfill != filli32)
        num_err += 1;
-    MESSAGE(10,printf("\n       fill value =: %d \n", lfill););
+    MESSAGE(10,printf("\n       fill value =: %d \n", (int)lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwi32:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwi32:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != i32data[i][j][k])
-               num_err += 1;
-            MESSAGE(10,printf("%d, ",sdata[i][j][k]););
+               num_err ++;
+            MESSAGE(10,printf("%d, ",(int)sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwi32 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwi32:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwi32:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
 
 
-/* 
+/*
 ** Write uint32 data set to slabwui32.hdf as 5 hyperslabs.
 */
 int
 slabwui32()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static uint32 sdata[2][3][4]; /* Data array read from from file */
+  uint32 sdata[2][3][4]; /* Data array read from from file */
   uint32 lfill;
 
     MESSAGE(10,printf("\n slabwui32:  Writing 5 slabs to slabwui32.hdf \n"););
@@ -1018,13 +1024,13 @@ slabwui32()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnui32);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowui32);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolui32);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolui32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1045,27 +1051,27 @@ slabwui32()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5ui32);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5ui32);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1075,7 +1081,7 @@ slabwui32()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui32, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swui32, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
@@ -1083,42 +1089,40 @@ slabwui32()
     CHECK(ret, FAIL, "DFSDgetfillvalue");
     if (lfill != fillui32) 
        num_err += 1;
-    MESSAGE(10,printf("\n       fill value =: %u \n", lfill););
+    MESSAGE(10,printf("\n       fill value =: %u \n", (unsigned)lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwui32:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwui32:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != ui32data[i][j][k])
-               num_err += 1;
-            MESSAGE(10,printf("%u, ",sdata[i][j][k]););
+               num_err ++;
+            MESSAGE(10,printf("%u, ",(unsigned)sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwui32 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwui32:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwui32:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
 
 
-/* 
+/*
 ** Write int16 data set to slabwi16.hdf as 5 hyperslabs.
 */
 int
 slabwi16()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static int16 sdata[2][3][4]; /* Data array read from from file */
+  int16 sdata[2][3][4]; /* Data array read from from file */
   int16 lfill;
 
     MESSAGE(10,printf("\n slabwi16:  Writing 5 slabs to slabwi16.hdf \n"););
@@ -1144,13 +1148,13 @@ slabwi16()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplni16);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplni16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowi16);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowi16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoli16);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccoli16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1171,27 +1175,27 @@ slabwi16()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5i16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5i16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1201,49 +1205,47 @@ slabwi16()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi16, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swi16, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != filli16) 
+    if (lfill != filli16)
        num_err += 1;
     MESSAGE(10,printf("\n       fill value =: %d \n", lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwi16:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwi16:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != i16data[i][j][k])
-               num_err += 1;
+               num_err ++;
             MESSAGE(10,printf("%d, ",sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwi16 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwi16:  %d wrong values in slab.  \n", num_err););
+      MESSAGE(10,printf("\n       slabwi16:  %d wrong values in slab.  \n", (int)num_err);)
 
     return (int)num_err;
 }
 
-/* 
+/*
 ** Write uint16 data set to slabwui16.hdf as 5 hyperslabs.
 */
 int
 slabwui16()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static uint16 sdata[2][3][4]; /* Data array read from from file */
+  uint16 sdata[2][3][4]; /* Data array read from from file */
   uint16 lfill;
 
     MESSAGE(10,printf("\n slabwui16:  Writing 5 slabs to slabwui16.hdf \n"););
@@ -1269,16 +1271,16 @@ slabwui16()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnui16);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnui16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowui16);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowui16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolui16);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolui16);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    /* 
+    /*
     ** write data out using slabs with
     ** each slab in different order to the file "slab.hdf"
     */
@@ -1296,27 +1298,27 @@ slabwui16()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5ui16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5ui16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1326,49 +1328,47 @@ slabwui16()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui16, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swui16, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != fillui16) 
+    if (lfill != fillui16)
        num_err += 1;
     MESSAGE(10,printf("\n       fill value =: %u \n", lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwui16:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwui16:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != ui16data[i][j][k])
-               num_err += 1;
+               num_err ++;
             MESSAGE(10,printf("%u, ",sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwui16 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwui16:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwui16:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
 
-/* 
+/*
 ** Write int8 data set to slabwi8.hdf as 5 hyperslabs.
 */
 int
 slabwi8()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static int8 sdata[2][3][4]; /* Data array read from from file */
+  int8 sdata[2][3][4]; /* Data array read from from file */
   int8 lfill;
 
     MESSAGE(10,printf("\n slabwi8:  Writing 5 slabs to slabwi8.hdf \n"););
@@ -1394,13 +1394,13 @@ slabwi8()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplni8);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplni8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowi8);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowi8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccoli8);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccoli8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1421,27 +1421,27 @@ slabwi8()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5i8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5i8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1451,34 +1451,33 @@ slabwi8()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swi8, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swi8, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != filli8) 
+    if (lfill != filli8)
        num_err += 1;
-    MESSAGE(10,printf("\n       fill value =: %d \n", lfill););
+    MESSAGE(10,printf("\n       fill value =: %d \n", (int)lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwi8:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwi8:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
        	for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != i8data[i][j][k])
-               num_err += 1;
-            MESSAGE(10,printf("%d, ",sdata[i][j][k]););
+               num_err ++;
+            MESSAGE(10,printf("%d, ",(int)sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwi8 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwi8:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwi8:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
@@ -1490,10 +1489,9 @@ int
 slabwui8()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static uint8 sdata[2][3][4]; /* Data array read from from file */
+  uint8 sdata[2][3][4]; /* Data array read from from file */
   uint8 lfill;
 
     MESSAGE(10,printf("\n slabwui8:  Writing 5 slabs to slabwui8.hdf \n"););
@@ -1519,13 +1517,13 @@ slabwui8()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnui8);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowui8);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolui8);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolui8);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1546,27 +1544,27 @@ slabwui8()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5ui8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5ui8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1576,18 +1574,18 @@ slabwui8()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(swui8, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(swui8, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
     /* Get fill value */
     ret = DFSDgetfillvalue((VOIDP)&lfill);
     CHECK(ret, FAIL, "DFSDgetfillvalue");
-    if (lfill != fillui8) 
+    if (lfill != fillui8)
        num_err += 1;
-    MESSAGE(10,printf("\n       fill value =: %u \n", lfill););
+    MESSAGE(10,printf("\n       fill value =: %u \n", (unsigned)lfill););
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n      slabwui8:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n      slabwui8:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n  Verifying data  \n"););
     MESSAGE(10,printf("sdata = "););
@@ -1598,12 +1596,12 @@ slabwui8()
           {
             if (sdata[i][j][k] != ui8data[i][j][k])
                num_err += 1;
-            MESSAGE(10,printf("%u, ",sdata[i][j][k]););
+            MESSAGE(10,printf("%u, ",(unsigned)sdata[i][j][k]););
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n       >>> All tests passed for slabwui8 <<< \n");)
     else
-       MESSAGE(10,printf("\n       slabwui8:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slabwui8:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
@@ -1612,8 +1610,8 @@ slabwui8()
 int
 slab1w()
 {
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
+  int32 num_err = 0;
 
     MESSAGE(10,printf("\n slab1w: Writing the first 3 of 5 slabs to slab1w.hdf \n"););
 
@@ -1635,13 +1633,13 @@ slab1w()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* Set fill value */
@@ -1649,12 +1647,12 @@ slab1w()
     CHECK(ret, FAIL, "DFSDsetfillvalue");
     MESSAGE(10,printf("\n        slab1w: Setting fill value =%f \n", fillf32););
 
-    /* 
-    ** write each slab in different order 
+    /*
+    ** write each slab in different order
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange((VOIDP)&maxf32,(VOIDP) &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32, (VOIDP)&minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw1);
@@ -1662,38 +1660,37 @@ slab1w()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw1);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 2; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw3);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw5);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
     CHECK(ret, FAIL, "DFSDendslab");
 
-    if (no_err == 0)
+    if (num_err == 0)
        MESSAGE(10,printf("\n        >>> All tests passed for slab1w, now run slab2w <<< \n");)
     else
-      MESSAGE(10,printf("\n         slab1w:  %d failures.  \n", no_err););
+      MESSAGE(10,printf("\n         slab1w:  %d failures.  \n", (int)num_err););
 
-    return (int)no_err;
+    return (int)num_err;
 }
 
 int
 slab2w()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static float32 sdata[2][3][4]; /* Data array read from from file */
+  float32 sdata[2][3][4]; /* Data array read from from file */
   float32 lfill;
   intn trank;
 
@@ -1716,20 +1713,20 @@ slab2w()
     ret = DFSDwriteref(sw1, 2);
     CHECK(ret, FAIL, "DFSDwriteref");
 
-    /* 
-    ** write each slab in different order 
+    /*
+    ** write each slab in different order
     */
     ret = DFSDstartslab(sw1);
     CHECK(ret, FAIL, "DFSDstartslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw2);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 3;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slabw4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slabw4);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1739,26 +1736,25 @@ slab2w()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0]  = 2; size_dims[1]  = 3; size_dims[2]  = 4;
     stride[0]     = 2; stride[1]     = 3; stride[2]     = 4;
-    ret = DFSDgetslice(sw1, start_dims, size_dims,(VOIDP) sdata, stride);
+    ret = DFSDgetslice(sw1, start_dims, size_dims, (VOIDP)sdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
-    if (no_err != 0)
-      MESSAGE(10,printf("\n        slab2w:  %d failures.  \n", no_err););
+    if (num_err != 0)
+      MESSAGE(10,printf("\n        slab2w:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n         Verifying data \n"););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
         for (k = 0; k < stride[2]; k++)
           {
             if (sdata[i][j][k] != fdata[i][j][k])
-               num_err += 1;
+               num_err ++;
           }
 
     if (num_err == 0)
        MESSAGE(10,printf("\n        >>> All tests passed for slab2w <<< \n");)
     else
-       MESSAGE(10,printf("\n        slab2w:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n        slab2w:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
@@ -1768,10 +1764,9 @@ slab3w()
 
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static float32 adata[2][3][4]; /* Data array read from from file */
+  float32 adata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10,printf("\n slab3w: Writing all 24 elements of data as slabs to slab3w.hdf \n"););
 
@@ -1793,13 +1788,13 @@ slab3w()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
     /* 
@@ -1807,7 +1802,7 @@ slab3w()
     */
 
     /* Set max, min range */
-    ret = DFSDsetrange((VOIDP)&maxf32,(VOIDP) &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32, (VOIDP)&minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw3);
@@ -1815,122 +1810,122 @@ slab3w()
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab20);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab20);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab21);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab21);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab22);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab22);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab23);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab23);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab24);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab24);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab6);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab6);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab7);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab7);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab8);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab8);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab9);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab9);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab10);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab10);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab16);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab16);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab17);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab17);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab18);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab18);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 2; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab19);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab19);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab11);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab11);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 3; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab12);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab12);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab13);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab13);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab14);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab14);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 2; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab15);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab15);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab1);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab1);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 2;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab2);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab2);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 3;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab3);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab3);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 4;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab4);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab4);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     start_dims[0] = 1; start_dims[1] = 2; start_dims[2] = 1;
     size_dims[0] = 1; size_dims[1] = 1; size_dims[2] = 1;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) slab5);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)slab5);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -1940,28 +1935,27 @@ slab3w()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(sw3, start_dims, size_dims,(VOIDP) adata, stride);
+    ret = DFSDgetslice(sw3, start_dims, size_dims, (VOIDP)adata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
-    if (no_err != 0)
-      MESSAGE(10,printf("\n        slab3w:  %d failures.  \n", no_err););
+    if (num_err != 0)
+      MESSAGE(10,printf("\n        slab3w:  %d failures.  \n", (int)num_err););
 
     MESSAGE(10,printf("\n        Verifying data  \n"););
     MESSAGE(10,printf("adata = "););
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
         for (k = 0; k < stride[2]; k++)
           {
             if (adata[i][j][k] != fdata[i][j][k])
-               num_err += 1;
+               num_err ++;
             MESSAGE(10,printf("%f, ",adata[i][j][k]););
           }
 
     if (num_err == 0)
        MESSAGE(10,printf("\n        >>> All tests passed for slab3w <<< \n");)
     else
-       MESSAGE(10,printf("\n       slab3w:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n       slab3w:  %d wrong values in slab.  \n", (int)num_err););
 
     return (int)num_err;
 }
@@ -1970,10 +1964,9 @@ int
 slab4w()
 {
   int32 i, j, k;
-  int32 ret = 0; 
-  int32 no_err = 0;
+  int32 ret = 0;
   int32 num_err = 0;
-  static float32 bdata[2][3][4]; /* Data array read from from file */
+  float32 bdata[2][3][4]; /* Data array read from from file */
 
     MESSAGE(10,printf("\n slab4w: Writing data as 1 slab to slab4w.hdf \n"););
 
@@ -1995,17 +1988,17 @@ slab4w()
     CHECK(ret, FAIL, "DFSDsetdimstrs");
 
     /* Set dimension scales */
-    ret = DFSDsetdimscale(1, size_dims[0],(VOIDP) scplnf32);
+    ret = DFSDsetdimscale(1, size_dims[0], (VOIDP)scplnf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(2, size_dims[1],(VOIDP) scrowf32);
+    ret = DFSDsetdimscale(2, size_dims[1], (VOIDP)scrowf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
-    ret = DFSDsetdimscale(3, size_dims[2],(VOIDP) sccolf32);
+    ret = DFSDsetdimscale(3, size_dims[2], (VOIDP)sccolf32);
     CHECK(ret, FAIL, "DFSDsetdimscale");
 
 	/* Set max, min range */
-    ret = DFSDsetrange((VOIDP)&maxf32,(VOIDP) &minf32);
+    ret = DFSDsetrange((VOIDP)&maxf32, (VOIDP)&minf32);
     CHECK(ret, FAIL, "DFSDsetrange");
 
     ret = DFSDstartslab(sw4);
@@ -2014,7 +2007,7 @@ slab4w()
     /* write out all the data to hdf file */
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
-    ret = DFSDwriteslab(start_dims, stride, size_dims,(VOIDP) fdata);
+    ret = DFSDwriteslab(start_dims, stride, size_dims, (VOIDP)fdata);
     CHECK(ret, FAIL, "DFSDwriteslab");
 
     ret = DFSDendslab();
@@ -2024,28 +2017,27 @@ slab4w()
     start_dims[0] = 1; start_dims[1] = 1; start_dims[2] = 1;
     size_dims[0] = 2; size_dims[1] = 3; size_dims[2] = 4;
     stride[0] = 2; stride[1] = 3; stride[2] = 4;
-    ret = DFSDgetslice(sw4, start_dims, size_dims,(VOIDP) bdata, stride);
+    ret = DFSDgetslice(sw4, start_dims, size_dims, (VOIDP)bdata, stride);
     CHECK(ret, FAIL, "DFSDgetslice");
 
-    if (no_err != 0)
-        MESSAGE(10,printf("\n        slab4w:  %d failures.  \n", no_err););
+    if (num_err != 0)
+        MESSAGE(10,printf("\n        slab4w:  %d failures.  \n", (int)num_err););
 
    MESSAGE(10,printf("\n          Verifying data  \n"););
 
-    num_err = 0;
      for (i = 0; i < stride[0]; i++)
        for (j = 0; j < stride[1]; j++)
         for (k = 0; k < stride[2]; k++)
           {
             if (bdata[i][j][k] != fdata[i][j][k])
-               num_err += 1;
+               num_err ++;
           }
     if (num_err == 0)
        MESSAGE(10,printf("\n          >>> All tests passed for slab4w <<< \n");)
     else
-       MESSAGE(10,printf("\n          slab4w:  %d wrong values in slab.  \n", num_err););
+       MESSAGE(10,printf("\n          slab4w:  %d wrong values in slab.  \n", (int)num_err););
 
-    return (int)(num_err + no_err);
+    return (int)(num_err);
 }
 
 /*
@@ -2056,8 +2048,10 @@ test_slab()
 {
     num_errs += slabwf32();
     num_errs += slabwf64();
+#ifndef PC
     num_errs += slabwin();
     num_errs += slabwuin();
+#endif
     num_errs += slabwi32();
     num_errs += slabwui32();
     num_errs += slabwi16();
@@ -2067,5 +2061,5 @@ test_slab()
     num_errs += slab1w();
     num_errs += slab2w();
     num_errs += slab3w();
-    num_errs += slab4w(); 
+    num_errs += slab4w();
 }

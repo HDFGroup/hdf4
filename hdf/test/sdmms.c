@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/05/05 22:24:12  georgev
-Fixed some cast problems on the Mac.
+Revision 1.4  1993/08/16 21:58:16  koziol
+Fixed access list for these files, and the actual changes I made to the
+files are for PC compatibility.
 
+ * Revision 1.3  1993/05/05  22:24:12  georgev
+ * Fixed some cast problems on the Mac.
+ *
  * Revision 1.2  1993/04/19  23:04:00  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
  *
@@ -45,38 +49,44 @@ Fixed some cast problems on the Mac.
 extern int Verbocity;
 extern int num_errs;
 
-static float32 f32[10][10], tf32[10][10];
-static float32 f32scale[10], tf32scale[10];
+#ifdef TEST_PC
+#define FAR far
+#else
+#define FAR /* */
+#endif
+
+static float32 FAR f32[10][10], FAR tf32[10][10];
+static float32 FAR f32scale[10], FAR tf32scale[10];
 static float32 f32max = (float32)40.0, f32min = (float32)0.0;
 static float32 tf32max, tf32min;
 
-static int8 i8[10][10], ti8[10][10];
-static int8 i8scale[10], ti8scale[10];
+static int8 FAR i8[10][10], FAR ti8[10][10];
+static int8 FAR i8scale[10], FAR ti8scale[10];
 static int8 i8max = 127, i8min = -128;
 static int8 ti8max, ti8min;
 
-static uint8 ui8[10][10], tui8[10][10];
-static uint8 ui8scale[10], tui8scale[10];
+static uint8 FAR ui8[10][10], FAR tui8[10][10];
+static uint8 FAR ui8scale[10], FAR tui8scale[10];
 static uint8 ui8max = 255, ui8min = 0;
 static uint8 tui8max, tui8min;
 
-static int16 i16[10][10], ti16[10][10];
-static int16 i16scale[10], ti16scale[10];
+static int16 FAR i16[10][10], FAR ti16[10][10];
+static int16 FAR i16scale[10], FAR ti16scale[10];
 static int16 i16max = 1200, i16min = -1200;
 static int16 ti16max, ti16min;
 
-static uint16 ui16[10][10], tui16[10][10];
-static uint16 ui16scale[10], tui16scale[10];
+static uint16 FAR ui16[10][10], FAR tui16[10][10];
+static uint16 FAR ui16scale[10], FAR tui16scale[10];
 static uint16 ui16max = 20000, ui16min = 0;
 static uint16 tui16max, tui16min;
 
-static int32 i32[10][10], ti32[10][10];
-static int32 i32scale[10], ti32scale[10];
+static int32 FAR i32[10][10], FAR ti32[10][10];
+static int32 FAR i32scale[10], FAR ti32scale[10];
 static int32 i32max = 99999999, i32min = -999999999;
 static int32 ti32max, ti32min;
 
-static uint32 ui32[10][10], tui32[10][10];
-static uint32 ui32scale[10], tui32scale[10];
+static uint32 FAR ui32[10][10], FAR tui32[10][10];
+static uint32 FAR ui32scale[10], FAR tui32scale[10];
 static uint32 ui32max = 999999999, ui32min = 0;
 static uint32 tui32max, tui32min;
 
@@ -217,12 +227,12 @@ void test_sdmms()
     ret = DFSDgetrange((VOIDP)&ti8max, (VOIDP)&ti8min);
     RESULT("DFSDgetrange");
 
-    /* this test should return FAIL so that we can verify that 
-       when we don't store calibration info we don't get any 
+    /* this test should return FAIL so that we can verify that
+       when we don't store calibration info we don't get any
        info returned */
     ret = DFSDgetcal(&ical1,&ical2, &ical3, &ical4, &ical5);
-    CHECK(ret, SUCCEED, "DFSDgetcal"); 
-   
+    CHECK(ret, SUCCEED, "DFSDgetcal");
+
     ret = DFSDgetdata("ntcheck.hdf", rank, dims, (VOIDP)tui8);
     RESULT("DFSDgetdata");
     ret = DFSDgetdimscale(1, (int32)10, (void *)tui8scale);

@@ -11,18 +11,25 @@ extern int Verbocity;
 #define FILENAME    "litend.dat"
 #define TMPFILE     "temp.hdf"
 
-static int8 cdata_i8[CDIM_Y][CDIM_X];
-static uint8 cdata_u8[CDIM_Y][CDIM_X];
-static int16 cdata_i16[CDIM_Y][CDIM_X];
-static uint16 cdata_u16[CDIM_Y][CDIM_X];
-static int32 cdata_i32[CDIM_Y][CDIM_X];
-static uint32 cdata_u32[CDIM_Y][CDIM_X];
-static float32 cdata_f32[CDIM_Y][CDIM_X];
-static float64 cdata_f64[CDIM_Y][CDIM_X];
+#ifdef TEST_PC
+#define FAR far
+#else
+#define FAR /* */
+#endif
+
+static int8 FAR cdata_i8[CDIM_Y][CDIM_X];
+static uint8 FAR cdata_u8[CDIM_Y][CDIM_X];
+static int16 FAR cdata_i16[CDIM_Y][CDIM_X];
+static uint16 FAR cdata_u16[CDIM_Y][CDIM_X];
+static int32 FAR cdata_i32[CDIM_Y][CDIM_X];
+static uint32 FAR cdata_u32[CDIM_Y][CDIM_X];
+static float32 FAR cdata_f32[CDIM_Y][CDIM_X];
+static float64 FAR cdata_f64[CDIM_Y][CDIM_X];
 
 VOID init_cdata()
 {
     int i,j;
+
 
     for (i=0; i< CDIM_Y; i++)
        for (j=0; j< CDIM_X; j++) {
@@ -36,6 +43,10 @@ VOID init_cdata()
             cdata_f64[i][j]=(float64)(i*10+j);
           } /* end for */
 }   /* end init_cdata() */
+
+VOID wrapup_cdata()
+{
+}   /* end wrapup_cdata() */
 
 VOID test_little_read()
 {
@@ -51,6 +62,10 @@ VOID test_little_read()
     float32 *data_f32;
     float64 *data_f64;
     int ret;
+
+    MESSAGE(5,printf("Testing Little-Endian Read Routines\n"););
+
+    MESSAGE(10,printf("Testing Little-Endian INT8 Reading Routines\n"););
 
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
@@ -78,6 +93,8 @@ VOID test_little_read()
           } /* end else */
       } /* end else */
 
+    MESSAGE(10,printf("Testing Little-Endian UINT8 Reading Routines\n"););
+
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
@@ -104,6 +121,8 @@ VOID test_little_read()
           } /* end else */
       } /* end else */
 
+    MESSAGE(10,printf("Testing Little-Endian INT16 Reading Routines\n"););
+
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
@@ -129,6 +148,8 @@ VOID test_little_read()
             HDfreespace((VOIDP)data_i16);
           } /* end else */
       } /* end else */
+
+    MESSAGE(10,printf("Testing Little-Endian UINT16 Reading Routines\n"););
 
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
@@ -157,6 +178,8 @@ VOID test_little_read()
           } /* end else */
       } /* end else */
 
+    MESSAGE(10,printf("Testing Little-Endian INT32 Reading Routines\n"););
+
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
@@ -182,6 +205,8 @@ VOID test_little_read()
             HDfreespace((VOIDP)data_i32);
           } /* end else */
       } /* end else */
+
+    MESSAGE(10,printf("Testing Little-Endian UINT32 Reading Routines\n"););
 
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
@@ -210,6 +235,8 @@ VOID test_little_read()
           } /* end else */
       } /* end else */
 
+    MESSAGE(10,printf("Testing Little-Endian FLOAT32 Reading Routines\n"););
+
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
     if(dimsizes[0]!=CDIM_Y || dimsizes[1]!=CDIM_X) {
@@ -236,6 +263,8 @@ VOID test_little_read()
             HDfreespace((VOIDP)data_f32);
           } /* end else */
       } /* end else */
+
+    MESSAGE(10,printf("Testing Little-Endian FLOAT64 Reading Routines\n"););
 
     ret=DFSDgetdims(FILENAME,&rank,dimsizes,2);
     RESULT("DFSDgetdims");
@@ -280,64 +309,82 @@ VOID test_little_write()
     float64 *data_f64;
     int ret;
 
+    MESSAGE(5,printf("Testing Little-Endian Write Routines\n"););
+
     rank = 2;
     dimsizes[0]=CDIM_Y;
     dimsizes[1]=CDIM_X;
+
+    MESSAGE(10,printf("Testing Little-Endian INT8 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LINT8);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_i8);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_i8);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian UINT8 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LUINT8);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_u8);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_u8);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian INT16 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LINT16);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_i16);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_i16);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian UINT16 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LUINT16);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_u16);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_u16);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian INT32 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LINT32);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_i32);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_i32);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian UINT32 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LUINT32);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_u32);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_u32);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian FLOAT32 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LFLOAT32);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_f32);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_f32);
     RESULT("DFSDadddata");
+
+    MESSAGE(10,printf("Testing Little-Endian FLOAT64 Writing Routines\n"););
 
     ret=DFSDsetdims(2,dimsizes);
     RESULT("DFSDsetdims");
     ret=DFSDsetNT(DFNT_LFLOAT64);
     RESULT("DFSDsetNT");
-    ret=DFSDadddata(TMPFILE, rank, dimsizes,(VOIDP) cdata_f64);
+    ret=DFSDadddata(TMPFILE, rank, dimsizes, (VOIDP)cdata_f64);
     RESULT("DFSDadddata");
 
     ret=DFSDrestart();
@@ -562,5 +609,7 @@ void test_litend()
 
     test_little_read();
     test_little_write();
+
+    wrapup_cdata();
 }   /* end test_litend() */
 

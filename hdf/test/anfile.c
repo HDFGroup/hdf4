@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1993/04/19 23:03:40  koziol
-General Code Cleanup to reduce/remove compilation warnings on PC
+Revision 1.3  1993/08/16 21:58:10  koziol
+Fixed access list for these files, and the actual changes I made to the
+files are for PC compatibility.
 
+ * Revision 1.2  1993/04/19  23:03:40  koziol
+ * General Code Cleanup to reduce/remove compilation warnings on PC
+ *
  * Revision 1.1  1993/04/15  20:00:07  koziol
  * Re-named the new tests for MS-DOS compatibility
  *
@@ -55,12 +59,12 @@ void test_anfile()
 
 /* set up file labels and descriptions */
 
-    strcpy(lab1, "File label #1: aaa");
-    strcpy(lab2, "File label #2: bbbbbb");
-    strcpy(desc1,"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13\n" );
-    strcat(desc1,"              14 15 16 17 18 19 20 **END FILE DESCR**\n");
-    strcpy(desc2,"File Descr #2: A B C D E F G H I J K L\n");
-    strcat(desc2, "              M N O **END FILE DESCR**\n");
+    HDstrcpy(lab1, "File label #1: aaa");
+    HDstrcpy(lab2, "File label #2: bbbbbb");
+    HDstrcpy(desc1,"File Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 13\n" );
+    HDstrcat(desc1,"              14 15 16 17 18 19 20 **END FILE DESCR**\n");
+    HDstrcpy(desc2,"File Descr #2: A B C D E F G H I J K L\n");
+    HDstrcat(desc2, "              M N O **END FILE DESCR**\n");
 
 
 
@@ -170,6 +174,6 @@ int32 ret, testflag;
         testflag = FAIL;
         return (FAIL);
     }
-    return (SUCCEED); 
+    return (SUCCEED);
 }
 

@@ -5,9 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.3  1993/05/05 22:24:17  georgev
-Fixed some cast problems on the Mac.
+Revision 1.4  1993/08/16 21:58:21  koziol
+Fixed access list for these files, and the actual changes I made to the
+files are for PC compatibility.
 
+ * Revision 1.3  1993/05/05  22:24:17  georgev
+ * Fixed some cast problems on the Mac.
+  *
  * Revision 1.2  1993/04/19  23:04:03  koziol
  * General Code Cleanup to reduce/remove compilation warnings on PC
  *
