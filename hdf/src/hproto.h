@@ -257,7 +257,7 @@ extern      "C"
                 (int32 file_id, uint16 tag, uint16 ref, int32 block_length,
                  int32 number_blocks);
 
-    intn        HLconvert
+    extern intn HLconvert
                 (int32 aid, int32 block_length, int32 number_blocks);
 
     extern int  HDinqblockinfo
@@ -270,6 +270,11 @@ extern      "C"
     extern int32 HXcreate
                 (int32 file_id, uint16 tag, uint16 ref, const char _HUGE * extern_file_name,
                  int32 offset, int32 start_len);
+    extern intn HXsetcreatedir
+		(char *dir);
+
+    extern intn HXsetdir
+                (char *dir)
 
 /*
    ** from hcomp.c
