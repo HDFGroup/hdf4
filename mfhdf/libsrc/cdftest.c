@@ -384,7 +384,6 @@ main()
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");
 #endif
-printf("Entering cdftest()\n");
 
 #ifdef MDEBUG
 	malloc_debug(2) ;
