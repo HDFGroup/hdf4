@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/07/01 20:14:53  mlivin
-Initial revision
+Revision 1.2  1992/07/15 21:48:48  sxu
+Added changes for CONVEX
 
+ * Revision 1.1  1992/07/01  20:14:53  mlivin
+ * Initial revision
+ *
  * Revision 3.2  1991/10/22  17:56:10  dilg
  * 5
  * HDF3.1r5
@@ -48,7 +51,7 @@ Initial revision
 #include "hdf.h"
 
 uint8 *space;
-char palette[768];
+uint8 palette[768];
 int32 xdim, ydim;
 int ispal;
 
@@ -121,14 +124,15 @@ main(argc,argv)
                     printf("Error reading image from file %s\n", argv[i]);
                     exit(1);
                 }
-                if (ispal) DFR8setpalette(palette);
+                if (ispal) DFR8setpalette((uint8 *) palette);
                 else if (compress == DFTAG_IMC) {
                     printf("Couldn't find palette for IMCOMP compression\n");
                     exit(1);
                 }
                 ret = DFR8writeref(outfile, writeref++);
 
-                if (DFR8addimage(outfile, space, xdim, ydim, compress)<0) {
+                if (DFR8addimage(outfile, (VOIDP) space, 
+						  xdim, ydim, compress)<0) {
                     printf("Error writing image to file %s\n", outfile);
                     exit(1);
                 }

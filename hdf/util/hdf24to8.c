@@ -5,9 +5,12 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.1  1992/06/09 17:35:18  mfolk
-Initial revision
+Revision 1.2  1992/07/15 21:48:48  sxu
+Added changes for CONVEX
 
+ * Revision 1.1  1992/06/09  17:35:18  mfolk
+ * Initial revision
+ *
 */
 /*****************************************************************************
 *
@@ -90,12 +93,12 @@ char *argv[];
 #endif /* PROTOTYPE */ 
 {
 	int i, nc;
-	int x_dim, y_dim, size;
+	int32 x_dim, y_dim, size;
 	int interlace;
 	char c;
 	char *ptr;
-	UCHAR *r24, *r8, *pal;
-	UCHAR hdfpal[PALSIZE], *p;
+	uint8 *r24, *r8, *pal;
+	uint8 hdfpal[PALSIZE], *p;
 #ifdef UNIX
 	char *malloc ();
 #endif
@@ -123,7 +126,7 @@ char *argv[];
 		exit (-1);
 	}
 
-	if (DF24getimage(argv[1], r24, x_dim, y_dim) < 0) {
+	if (DF24getimage(argv[1],(VOIDP) r24, x_dim, y_dim) < 0) {
 		fprintf(stderr,"error: DF24getimage failed\n");
 		exit (-1);
 	}
@@ -158,7 +161,7 @@ char *argv[];
         HEprint(stderr,0);
 		exit (-1);
 	}
-	if (DFR8putimage (argv[2], r8, x_dim, y_dim, COMPRESSION) == -1)
+	if (DFR8putimage (argv[2], (VOIDP) r8, x_dim,y_dim,  COMPRESSION) == -1)
 	{
         HEprint(stderr,0);
 		exit (-1);

@@ -5,10 +5,13 @@ static char RcsId[] = "@(#)$Revision$";
 $Header$
 
 $Log$
-Revision 1.2  1992/07/01 17:16:17  dilg
-Changed option "-#" to "-d#" and added option "-t#" to change the size of
-the linked block table entries.  Cleaned up code a bit.
+Revision 1.3  1992/07/15 21:48:48  sxu
+Added changes for CONVEX
 
+ * Revision 1.2  1992/07/01  17:16:17  dilg
+ * Changed option "-#" to "-d#" and added option "-t#" to change the size of
+ * the linked block table entries.  Cleaned up code a bit.
+ *
  * Revision 1.1  1992/06/22  21:23:33  dilg
  * Initial revision
  *
@@ -40,12 +43,20 @@ the linked block table entries.  Cleaned up code a bit.
 #include "hdf.h"
 #include "herr.h"
 
+typedef struct mydd_t {
+    uint16 tag;
+    uint16 ref;
+    int32 offset;
+    int32 length;
+    int16 special;
+}mydd_t;
+
 
 #ifdef PROTOTYPE
 int main(int, char **);
 int usage(char *);
 int hdferror(void);
-int error(char *, char *);
+int error(char *);
 int32 desc_comp(mydd_t *d1, mydd_t *d2);
 #else
 int main();
@@ -54,14 +65,6 @@ int hdferror();
 int error();
 int32 desc_comp();
 #endif /* PROTOTYPE */
-
-typedef struct mydd_t {
-    uint16 tag;
-    uint16 ref;
-    int32 offset;
-    int32 length;
-    int16 special;
-}mydd_t;
 
 unsigned char *data;
 char invoke[81];
@@ -286,7 +289,7 @@ char *argv[];
 **      promptblocks
 */
 #ifdef PROTOTYPE
-int promptblocks(mydd_t dd)
+int promptblocks(mydd_t *dd)
 #else
 int promptblocks(dd)
 mydd_t *dd;
@@ -309,7 +312,7 @@ mydd_t *dd;
 **      copy_blocks -- move a linked-block element; preserve blocking
 */
 #ifdef PROTOTYPE
-int copy_blocks(mydd_t dd, int32 infile, int32 outfile)
+int copy_blocks(mydd_t *dd, int32 infile, int32 outfile)
 #else
 int copy_blocks(dd, infile, outfile)
 mydd_t *dd;
@@ -355,7 +358,7 @@ int32 infile, outfile;
     if (nblk > 0)
         nblocks = nblk;
 
-    outaid = HLcreate(outfile, HDbase_tag(dd->tag), dd->ref, block_len, nblocks);
+    outaid = HLcreate(outfile,HDbase_tag(dd->tag), dd->ref, block_len, nblocks);
     if (outaid == FAIL) {
 	HERROR(DFE_GENAPP);
 	hdferror();
@@ -500,6 +503,7 @@ int hdferror()
 int error(char *string)
 #else
 int error(string)
+char *string;
 #endif
 {
     fprintf(stderr, "%s: %s\n", invoke, string);
