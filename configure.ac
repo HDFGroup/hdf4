@@ -140,8 +140,8 @@ case $withval in
     HAVE_ZLIB="yes"
     case "$withval" in
       *,*)
-        zlib_inc="`echo $withval |cut -f1 -d,`"
-        zlib_lib="`echo $withval |cut -f2 -d, -s`"
+        zlib_inc="`echo $withval | cut -f1 -d,`"
+        zlib_lib="`echo $withval | cut -f2 -d, -s`"
         ;;
       *)
         if test -n "$withval"; then
@@ -188,7 +188,7 @@ case $withval in
   yes)
     HAVE_JPEG="yes"
     AC_CHECK_HEADERS([jpeglib.h],, [unset HAVE_JPEG])
-    AC_CHECK_LIB([jpeg], [jpeg_CreateCompress],, [unset HAVE_JPEG])
+    AC_CHECK_LIB([jpeg], [jpeg_start_decompress],, [unset HAVE_JPEG])
 
     if test -z "$HAVE_JPEG"; then
       AC_MSG_ERROR([couldn't find jpeg library])
@@ -201,8 +201,8 @@ case $withval in
     HAVE_JPEG="yes"
     case "$withval" in
       *,*)
-        jpeg_inc="`echo $withval |cut -f1 -d,`"
-        jpeg_lib="`echo $withval |cut -f2 -d, -s`"
+        jpeg_inc="`echo $withval | cut -f1 -d,`"
+        jpeg_lib="`echo $withval | cut -f2 -d, -s`"
         ;;
       *)
         if test -n "$withval"; then
@@ -231,7 +231,7 @@ case $withval in
       LDFLAGS="$LDFLAGS -L$jpeg_lib"
     fi
 
-    AC_CHECK_LIB([jpeg], [jpeg_CreateCompress],, [unset HAVE_JPEG])
+    AC_CHECK_LIB([jpeg], [jpeg_start_decompress],, [unset HAVE_JPEG])
 
     if test -z "$HAVE_JPEG"; then
       AC_MSG_ERROR([couldn't find jpeg library])
@@ -262,8 +262,8 @@ case $withval in
     HAVE_SZIP="yes"
     case "$withval" in
       *,*)
-        szip_inc="`echo $withval |cut -f1 -d,`"
-        szip_lib="`echo $withval |cut -f2 -d, -s`"
+        szip_inc="`echo $withval | cut -f1 -d,`"
+        szip_lib="`echo $withval | cut -f2 -d, -s`"
         ;;
       *)
         if test -n "$withval"; then

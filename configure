@@ -4871,8 +4871,8 @@ echo "$as_me: error: zlib library required to build HDF4" >&2;}
     HAVE_ZLIB="yes"
     case "$withval" in
       *,*)
-        zlib_inc="`echo $withval |cut -f1 -d,`"
-        zlib_lib="`echo $withval |cut -f2 -d, -s`"
+        zlib_inc="`echo $withval | cut -f1 -d,`"
+        zlib_lib="`echo $withval | cut -f2 -d, -s`"
         ;;
       *)
         if test -n "$withval"; then
@@ -5274,9 +5274,9 @@ fi
 done
 
 
-echo "$as_me:$LINENO: checking for jpeg_CreateCompress in -ljpeg" >&5
-echo $ECHO_N "checking for jpeg_CreateCompress in -ljpeg... $ECHO_C" >&6
-if test "${ac_cv_lib_jpeg_jpeg_CreateCompress+set}" = set; then
+echo "$as_me:$LINENO: checking for jpeg_start_decompress in -ljpeg" >&5
+echo $ECHO_N "checking for jpeg_start_decompress in -ljpeg... $ECHO_C" >&6
+if test "${ac_cv_lib_jpeg_jpeg_start_decompress+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -5295,11 +5295,11 @@ extern "C"
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
-char jpeg_CreateCompress ();
+char jpeg_start_decompress ();
 int
 main ()
 {
-jpeg_CreateCompress ();
+jpeg_start_decompress ();
   ;
   return 0;
 }
@@ -5316,19 +5316,19 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  ac_cv_lib_jpeg_jpeg_CreateCompress=yes
+  ac_cv_lib_jpeg_jpeg_start_decompress=yes
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-ac_cv_lib_jpeg_jpeg_CreateCompress=no
+ac_cv_lib_jpeg_jpeg_start_decompress=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_jpeg_jpeg_CreateCompress" >&5
-echo "${ECHO_T}$ac_cv_lib_jpeg_jpeg_CreateCompress" >&6
-if test $ac_cv_lib_jpeg_jpeg_CreateCompress = yes; then
+echo "$as_me:$LINENO: result: $ac_cv_lib_jpeg_jpeg_start_decompress" >&5
+echo "${ECHO_T}$ac_cv_lib_jpeg_jpeg_start_decompress" >&6
+if test $ac_cv_lib_jpeg_jpeg_start_decompress = yes; then
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBJPEG 1
 _ACEOF
@@ -5355,8 +5355,8 @@ echo "$as_me: error: jpeg library required to build HDF4" >&2;}
     HAVE_JPEG="yes"
     case "$withval" in
       *,*)
-        jpeg_inc="`echo $withval |cut -f1 -d,`"
-        jpeg_lib="`echo $withval |cut -f2 -d, -s`"
+        jpeg_inc="`echo $withval | cut -f1 -d,`"
+        jpeg_lib="`echo $withval | cut -f2 -d, -s`"
         ;;
       *)
         if test -n "$withval"; then
@@ -5527,9 +5527,9 @@ done
     fi
 
 
-echo "$as_me:$LINENO: checking for jpeg_CreateCompress in -ljpeg" >&5
-echo $ECHO_N "checking for jpeg_CreateCompress in -ljpeg... $ECHO_C" >&6
-if test "${ac_cv_lib_jpeg_jpeg_CreateCompress+set}" = set; then
+echo "$as_me:$LINENO: checking for jpeg_start_decompress in -ljpeg" >&5
+echo $ECHO_N "checking for jpeg_start_decompress in -ljpeg... $ECHO_C" >&6
+if test "${ac_cv_lib_jpeg_jpeg_start_decompress+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -5548,11 +5548,11 @@ extern "C"
 #endif
 /* We use char because int might match the return type of a gcc2
    builtin and then its argument prototype would still apply.  */
-char jpeg_CreateCompress ();
+char jpeg_start_decompress ();
 int
 main ()
 {
-jpeg_CreateCompress ();
+jpeg_start_decompress ();
   ;
   return 0;
 }
@@ -5569,19 +5569,19 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  ac_cv_lib_jpeg_jpeg_CreateCompress=yes
+  ac_cv_lib_jpeg_jpeg_start_decompress=yes
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-ac_cv_lib_jpeg_jpeg_CreateCompress=no
+ac_cv_lib_jpeg_jpeg_start_decompress=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_jpeg_jpeg_CreateCompress" >&5
-echo "${ECHO_T}$ac_cv_lib_jpeg_jpeg_CreateCompress" >&6
-if test $ac_cv_lib_jpeg_jpeg_CreateCompress = yes; then
+echo "$as_me:$LINENO: result: $ac_cv_lib_jpeg_jpeg_start_decompress" >&5
+echo "${ECHO_T}$ac_cv_lib_jpeg_jpeg_start_decompress" >&6
+if test $ac_cv_lib_jpeg_jpeg_start_decompress = yes; then
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBJPEG 1
 _ACEOF
@@ -5839,8 +5839,8 @@ echo "$as_me: error: szlib library required to build HDF4" >&2;}
     HAVE_SZIP="yes"
     case "$withval" in
       *,*)
-        szip_inc="`echo $withval |cut -f1 -d,`"
-        szip_lib="`echo $withval |cut -f2 -d, -s`"
+        szip_inc="`echo $withval | cut -f1 -d,`"
+        szip_lib="`echo $withval | cut -f2 -d, -s`"
         ;;
       *)
         if test -n "$withval"; then
