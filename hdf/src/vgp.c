@@ -33,9 +33,6 @@ PRIVATE int32 Load_vfile
 PRIVATE VOID Remove_vfile
     PROTO((HFILEID f));
 
-PRIVATE vginstance_t *vginstance
-    PROTO((HFILEID f, uint16 vgid));
-
 PRIVATE void vunpackvg
     PROTO((VGROUP *vg, uint8 buf[]));
 
@@ -114,7 +111,11 @@ HFILEID f;
         vf->vgtabn++;
         v->key      = (int32) VGSLOT2ID(f,ref); /* set the key for the node */
         v->ref      = (intn) ref;
+#ifdef OLD_WAY
         v->vg       = (VGROUP*) NULL; /* ie not attached yet */
+#else
+        v->vg       = VPgetinfo(f,ref); /* get the header information */
+#endif /* OLD_WAY */
         v->nattach  = 0;
         v->nentries = 0;
         tbbtdins(vf->vgtree,(VOIDP)v,NULL);    /* insert the vg instance in B-tree */
@@ -142,7 +143,11 @@ HFILEID f;
         vf->vstabn++;
         w->key      = (int32) VSSLOT2ID(f,ref); /* set the key for the node */
         w->ref      = (intn) ref;
+#ifdef OLD_WAY
         w->vs       = (VDATA*) NULL; /* ie not attached yet */
+#else
+        w->vs       = VSPgetinfo(f,ref); /* grab the vdata header */
+#endif /* OLD_WAY */
         w->nattach  = 0;
         w->nvertices= 0;
         tbbtdins(vf->vstree,(VOIDP)w,NULL);    /* insert the vg instance in B-tree */
@@ -322,9 +327,9 @@ HFILEID f;
 *
 */
 #ifdef PROTOTYPE
-PRIVATE vginstance_t * vginstance (HFILEID f, uint16 vgid)
+vginstance_t * vginstance (HFILEID f, uint16 vgid)
 #else
-PRIVATE vginstance_t * vginstance (f, vgid)
+vginstance_t * vginstance (f, vgid)
 HFILEID     f;
 uint16  vgid;
 #endif
@@ -517,6 +522,63 @@ uint8  buf[];  /* must contain a DFTAG_VG data object from file */
 } /* vunpackvg */
 
 
+/*--------------------------------------------------------------------------
+ NAME
+    VPgetinfo
+ PURPOSE
+    Read in the "header" information about the Vgroup.
+ USAGE
+    VGROUP *VPgetinfo(f,ref)
+        HFILEID f;              IN: the HDF file id
+        uint16 ref;             IN: the tag & ref of the Vgroup 
+ RETURNS
+    Return a pointer to a VGROUP filled with the Vgroup information on success,
+    NULL on failure.
+ DESCRIPTION
+    This routine pre-reads the header information for a Vgroup into memory
+    so that it can be accessed more quickly by the routines that need it.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+VGROUP *VPgetinfo(HFILEID f,uint16 ref)
+#else 
+VGROUP *VPgetinfo(f,ref)
+HFILEID f;
+uint16 ref;
+#endif /* PROTOTYPE */
+{
+    char * FUNC = "VPgetinfo";
+	VGROUP         *vg;
+    uint8          *vgpack;
+    uint32          len;
+          
+    if (( len = Hlength(f, DFTAG_VG, (uint16) ref)) == FAIL)
+        HRETURN_ERROR(DFE_INTERNAL,NULL);
+
+    if(( vgpack = (uint8 *) HDgetspace(len)) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE,NULL);
+
+    if (Hgetelement(f, DFTAG_VG, (uint16)ref, vgpack) == (int32)FAIL) 
+        HRETURN_ERROR(DFE_NOMATCH,NULL);
+      
+    /* allocate space for vg, & zero it out */
+    if (NULL == (vg =(VGROUP*) HDgetspace (sizeof(VGROUP)))) 
+        HRETURN_ERROR(DFE_NOSPACE,NULL);
+      
+    /* unpack vgpack into structure vg, and init  */
+    vunpackvg(vg,vgpack);
+    vg->f             = f;
+    vg->oref          = ref;
+    vg->otag          = DFTAG_VG;
+      
+    HDfreespace((VOIDP)vgpack);
+
+    return(vg);
+} /* end VPgetinfo */
+
 /* ----------------------------- Vattach --------------------------- */
 
 /*
@@ -548,7 +610,9 @@ char    *accesstype;    /* access mode */
 {
 	VGROUP			*vg;
     int16           access;
+#ifdef OLD_WAY 
     uint8           * vgpack;
+#endif /* OLD_WAY */
     vginstance_t    * v;
 	vfile_t			* vf;
 	char * FUNC = "Vattach";
@@ -628,7 +692,9 @@ char    *accesstype;    /* access mode */
 	}
 	else { 		
           /******* access an EXISTING vg *********/
+#ifdef OLD_WAY
         uint32 len;
+#endif /* OLD_WAY */
           
         if (NULL == (v= vginstance (f,(uint16)vgid))) {
             HERROR(DFE_NOMATCH);
@@ -640,13 +706,14 @@ char    *accesstype;    /* access mode */
          * vg already attached.  inc nattach and return existing ptr
          */
 
-        if (v->vg != NULL) {
+        if (v->nattach > 0) {
             if(access > v->vg->access)
                 v->vg->access = access;
             v->nattach++;
             return(v->key);     /* return key instead of VGROUP ptr */
         }
           
+#ifdef OLD_WAY
           /* else vg not attached, must fetch vg from file */
           
         len = Hlength(f, DFTAG_VG, (uint16) vgid);
@@ -675,14 +742,20 @@ char    *accesstype;    /* access mode */
         vg->f             = f;
         vg->oref            = (uint16)vgid;
         vg->otag      = DFTAG_VG;
+        HDfreespace((VOIDP)vgpack);
+#else
+        vg=v->vg;
+#endif /* OLD_WAY
+
         vg->access        = access;
         vg->marked        = 0;
           
         /* attach vg to file's vgtab at the vg instance v */
+#ifdef OLD_WAY
         v->vg             = vg;
+#endif /* OLD_WAY */
         v->nattach        = 1;
         v->nentries    = vg->nvelt;
-        HDfreespace((VOIDP)vgpack);
           
         return(v->key);     /* return key instead of VGROUP ptr */
 	}
@@ -719,21 +792,18 @@ int32 vkey;
   
     if (!VALIDVGID(vkey)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
         return;
     }
 
   /* locate vg's index in vgtab */
     if(NULL==(v=(vginstance_t*)vginstance(VGID2VFILE(vkey),(uint16)VGID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
         return;
     }
 
     vg=v->vg;
     if ((vg == NULL) || (vg->otag != DFTAG_VG)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
         return;
     }
 

@@ -372,6 +372,71 @@ VOIDP n;
 /* ------------------------------------------------------------------ */
 
 
+/*--------------------------------------------------------------------------
+ NAME
+    VSPgetinfo
+ PURPOSE
+    Read in the "header" information about the Vdata.
+ USAGE
+    VDATA *VSPgetinfo(f,ref)
+        HFILEID f;              IN: the HDF file id
+        uint16 ref;             IN: the tag & ref of the Vdata 
+ RETURNS
+    Return a pointer to a VDATA filled with the Vdata information on success,
+    NULL on failure.
+ DESCRIPTION
+    This routine pre-reads the header information for a Vdata into memory
+    so that it can be accessed more quickly by the routines that need it.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+#ifdef PROTOTYPE
+VDATA *VSPgetinfo(HFILEID f,uint16 ref)
+#else 
+VDATA *VSPgetinfo(f,ref)
+HFILEID f;
+uint16 ref;
+#endif /* PROTOTYPE */
+{
+    char * FUNC = "VSPgetinfo";
+	VDATA 		*vs;  			 /* new vdata to be returned */
+	int32 		vspacksize;
+    uint8       *vspack;
+    int32       access;
+	vsinstance_t	* w;
+	vfile_t			* vf;
+
+    /* allocate space for vs,  & zero it out  */
+    if ( (vs=(VDATA*) HDgetspace (sizeof(VDATA))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, NULL);
+
+      /* need to fetch from file */
+    if ( (vspack= (uint8 *) HDgetspace (sizeof(VWRITELIST))) == NULL)
+        HRETURN_ERROR(DFE_NOSPACE, NULL);
+    if (Hgetelement(f,DFTAG_VH,ref,vspack) == FAIL) {
+        HDfreespace((VOIDP)vspack);
+        HRETURN_ERROR(DFE_NOVS, NULL);
+      } /* end if */
+
+    vs->wlist.n = vs->rlist.n = 0;
+
+    /* unpack the vs, then init all other fields in it */
+    vunpackvs (vs,vspack,&vspacksize);
+    vs->otag    = DFTAG_VH;
+    vs->oref    = ref;
+    vs->f   = f;
+    vs->marked  = 0;
+    vs->nusym   = 0;
+
+    vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */
+
+    HDfreespace((VOIDP)vspack);
+
+    return(vs);
+} /* end VSPgetinfo() */
+
 /* ***************************************************************
    NEW VSattach: 
 	(a)	if vsid == -1 
@@ -433,7 +498,9 @@ char *  accesstype;
 {
 	VDATA 		*vs;  			 /* new vdata to be returned */
 	int32 		vspacksize;
+#ifdef OLD_WAY
     uint8       *vspack;
+#endif /* OLD_WAY */
     int32       access;
 	vsinstance_t	* w;
 	vfile_t			* vf;
@@ -522,8 +589,11 @@ char *  accesstype;
             return (w->key);
           }
 
+#ifdef OLD_WAY
         if (w->vs) {    /* use existing vs record */
+#endif /* OLD_WAY */
             vs = w->vs;
+#ifdef OLD_WAY
         } else {
 
             /* allocate space for vs,  & zero it out  */
@@ -545,28 +615,28 @@ char *  accesstype;
         vunpackvs (vs,vspack,&vspacksize);
         vs->otag    = DFTAG_VH;
         vs->oref    = (uint16)vsid;
-        vs->access  = 'r';
         vs->f   = f;
         vs->marked  = 0;
         vs->nusym   = 0;
 
         vs->vm      = (VMBLOCK*) NULL; /* always NULL for "r" */
 
+
+        HDfreespace((VOIDP)vspack);
+#endif /* OLD_WAY */
+        vs->access  = 'r';
         vs->aid     = Hstartread(vs->f, VSDATATAG, vs->oref);
-        if(vs->aid == FAIL) {
-            HDfreespace((VOIDP)vs);
-            HDfreespace((VOIDP)vspack);
+        if(vs->aid == FAIL) 
             HRETURN_ERROR(DFE_BADAID, FAIL);
-        }
 
         vs->instance = w;
 
         /* attach vs to vsdir  at the vdata instance w */
+#ifdef OLD_WAY
         w->vs        = vs;
+#endif /* OLD_WAY */
         w->nattach   = 1;
         w->nvertices = vs->nvertices;
-
-        HDfreespace((VOIDP)vspack);
         return (w->key);
  	} /* end of case where vsid is positive, and "r"  */
 
@@ -580,8 +650,11 @@ char *  accesstype;
             HRETURN_ERROR(DFE_BADATTACH,FAIL);
 
           /* free old record (should reuse....) */
+#ifdef OLD_WAY
         if(w->vs) {
+#endif /* OLD_WAY */
             vs = w->vs;
+#ifdef OLD_WAY
         } else {
             /* allocate space */
             if( (vs=(VDATA*) HDgetspace(sizeof(VDATA))) == NULL)
@@ -603,26 +676,26 @@ char *  accesstype;
         vunpackvs (vs,vspack,&vspacksize);
         vs->otag  = DFTAG_VH;
         vs->oref    = (uint16)vsid;
-        vs->access    = 'w';
         vs->f     = f;
         vs->marked    = 0;
         vs->vm    = (VMBLOCK*) NULL;
 
+        HDfreespace((VOIDP)vspack);
+#endif /* OLD_WAY */
+        vs->access    = 'w';
         vs->aid   = Hstartwrite(vs->f, VSDATATAG, vs->oref, 0);
-        if(vs->aid == FAIL) {
-            HDfreespace((VOIDP)vs);
-            HDfreespace((VOIDP)vspack);
+        if(vs->aid == FAIL) 
             HRETURN_ERROR(DFE_BADAID, FAIL);
-        }
 
         vs->instance = w;
 
           /* attach vs to vsdir  at the vdata instance w */
+#ifdef OLD_WAY
         w->vs        = vs;
+#endif /* OLD_WAY */
         w->nattach   = 1;
         w->nvertices = vs->nvertices;
 
-        HDfreespace((VOIDP)vspack);
         return(w->key);
 	} /* end of case where vsid is positive, and "w"  */
     return (FAIL);
@@ -663,21 +736,18 @@ PUBLIC void VSdetach (vkey)
 
     if (!VALIDVSID(vkey)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr, 0);
         return;
     }
     
     /* locate vg's index in vgtab */
     if(NULL==(w=(vsinstance_t*)vsinstance(VSID2VFILE(vkey),(uint16)VSID2SLOT(vkey)))) {
         HERROR(DFE_NOVS);
-        HEprint(stderr, 0);
         return;
     }
     
     vs=w->vs;
     if ((vs == NULL) || (vs->otag != VSDESCTAG)) {
         HERROR(DFE_ARGS);
-        HEprint(stderr,0);
         return;
     }
     
@@ -687,9 +757,13 @@ PUBLIC void VSdetach (vkey)
     if (vs->access =='r') {
         
         if (w->nattach == 0) {
+#ifdef OLD_WAY
             w->vs = NULL; /* detach vs from vsdir */
+#endif /* OLD_WAY */
             Hendaccess (vs->aid);
+#ifdef OLD_WAY
             HDfreespace((VOIDP)vs);
+#endif /* OLD_WAY */
 /*
    not needed if we free all the time
             vs->aid = NO_ID;
@@ -721,11 +795,13 @@ PUBLIC void VSdetach (vkey)
         
     /* remove all defined symbols */
     for(i=0; i<vs->nusym; i++)
-            HDfreespace((VOIDP)vs->usym[i].name);
+        HDfreespace((VOIDP)vs->usym[i].name);
     vs->nusym = 0;
     Hendaccess (vs->aid);
+#ifdef OLD_WAY
     w->vs = NULL;                 /* detach vs from vsdir */
     HDfreespace((VOIDP)vs);
+#endif /* OLD_WAY */
     
 } /* VSdetach */
 

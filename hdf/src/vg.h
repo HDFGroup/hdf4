@@ -311,6 +311,9 @@ extern "C" {
 extern vsinstance_t _HUGE * vsinstance
     PROTO((HFILEID f, uint16 vsid));
 
+extern vginstance_t *vginstance
+    PROTO((HFILEID f, uint16 vgid));
+
 extern VWRITELIST _HUGE * vswritelist
     PROTO((int32 vskey));
 
@@ -322,6 +325,12 @@ extern int32 vinsertpair
 
 extern void vpackvs
     PROTO((VDATA _HUGE *vs, uint8 _HUGE buf[], int32 _HUGE *size));
+
+extern VGROUP *VPgetinfo
+    PROTO((HFILEID f,uint16 ref));
+
+extern VDATA *VSPgetinfo
+    PROTO((HFILEID f,uint16 ref));
 
 #if defined c_plusplus || defined __cplusplus
 }
