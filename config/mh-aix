@@ -24,13 +24,13 @@ VERSION  = 4.0
 #CFLAGS=-ansi 
 #
 #Using ANSI compilier
-CC= xlc
+CC= xlc -qlanglvl=ansi
 #CC= gcc
-CFLAGS=
+CFLAGS= -O
 
 # Fortran compilier
 FC = f77
-FFLAGS =
+FFLAGS = -O
 
 # Name of achive randomizer, usually ranlib (use 'true' if non-existant)
 RANLIB = ranlib
