@@ -50,13 +50,12 @@ SHELL=/bin/sh
 MACHINE=VP
 
 # Define your C compiler and flags
-CC= cc
+CC= /usr/usb/cc
 CFLAGS= -D${MACHINE} -O
 
 # Define your FORTRAN compiler
 FC= frt
 FFLAGS=-Ab
-#FFLAGS=-Wv,-p2200
 
 # Define gl library
 GLLIB =
