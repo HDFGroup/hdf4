@@ -13,6 +13,11 @@ char errstr[100];		/* for short error messages */
 extern long strtol();
 void expand_escapes();
 
+#ifdef VMS
+#include <unixio.h>
+#include "ncgen.h"
+extern void yyerror();
+#endif
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>

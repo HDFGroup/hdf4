@@ -42,9 +42,10 @@ $ define/user sys$output test0.c
 $ ncgen -c -o ctest0.cdf test0.cdl
 $
 $! Compile generated C program
-$ cc/include_dir=[-.-.-.include]/nodebug test0
-$ link /exe=test0 test0,[-.-.-.lib]netcdf/library,sys$input/opt
-	[--.hdf.lib]df/library,sys$library:vaxcrtl.exe/share
+$ cc/include_dir=[--.include]/nodebug test0
+$ link /exe=test0 test0,[--.lib]mfhdf/lib,sys$input/opt
+	[--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib, -
+        [--.hdf.zlib]libz.olb/lib, sys$library:vaxcrtl/lib
 $
 $! Run generated C program to create netCDF file ctest0.cdf
 $ run test0
@@ -63,10 +64,11 @@ $ define/user sys$output ftest0.for
 $ ncgen -f -o ftest0.cdf test0.cdl
 $
 $! Compile generated FORTRAN program
-$ copy [---.include]netcdf.inc netcdf.inc
+$ copy [--.include]netcdf.inc netcdf.inc
 $ fortran/nodebug ftest0
-$ link /exe=ftest0 ftest0.obj,[---.lib]netcdf/library,sys$input/opt
-	[--.hdf.lib]df/library,sys$library:vaxcrtl.exe/share
+$ link /exe=ftest0 ftest0.obj,[--.lib]mfhdf/lib,sys$input/opt
+	[--.hdf.src]df/lib,[--.hdf.jpeg]libjpeg.olb/lib, -
+        [--.hdf.zlib]libz.olb/lib, sys$library:vaxcrtl/lib
 $
 $! Run generated FORTRAN program to create netCDF file ftest0.cdf
 $ run ftest0

@@ -6,6 +6,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifdef VMS
+#include <stdlib.h>
+#endif
 
 #ifdef __hpux
 #include <locale.h>

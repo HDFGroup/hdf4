@@ -6,7 +6,9 @@
 
 #include "netcdf.h"
 #include "generic.h"		/* defines union generic */
-
+#ifdef VMS
+#include <stdlib.h>
+#endif
 #define MAX_NC_ATTSIZE    2000	/* max size in bytes of an attribute */
 #define MAX_NC_ATTS        500	/* max number of attributes in a netCDF */
 #define MAXTRST		   500	/* maximum size of a single string value */

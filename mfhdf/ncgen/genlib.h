@@ -40,6 +40,28 @@ extern void	*erealloc	PROTO((
 				       void *ptr,
 				       int size
 				       ));
+extern int      usage           PROTO((
+                                       void
+                                       ));
+
+extern void     yyerror         PROTO((
+                                       char *
+                                       ));
+
+extern int      yyparse         PROTO((
+                                       void
+                                       ));
+
+extern void     put_variable    PROTO((
+                                       void *
+                                       ));
+#ifdef OLD_WAY
+extern int      getopt          PROTO((
+                                       int  argc,
+                                       char **argv,
+                                       char *opts
+                                       ))
+#endif
 
 #ifdef __cplusplus
 }

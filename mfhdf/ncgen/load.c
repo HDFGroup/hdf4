@@ -27,7 +27,7 @@ extern int fortran_flag;
  * struct dims[]     - structure containing name and size of dimensions.
  * int netcdf_record_number - number of current record for this variable.
  */
-int
+void
 put_variable(rec_start)
      void *rec_start;		/* points to data to be loaded  */
 {
