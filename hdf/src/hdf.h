@@ -37,6 +37,9 @@ DFdi;
 #define DFACC_RDWR 3
 #define DFACC_CLOBBER 4
 
+/* The magic cookie for Hcache to cache all files */
+#define CACHE_ALL_FILES (-2)
+
 /* File access modes */
 /* 001--007 for different serial modes */
 /* 011--017 for different parallel modes */

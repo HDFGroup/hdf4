@@ -133,6 +133,9 @@ uint8      *tbuf = (uint8 *) int_tbuf;
 #endif
 PRIVATE uint8 *ptbuf = NULL;
 
+/* The default state of the file DD caching */
+PRIVATE intn default_cache=FALSE;
+
 /*--------------------- Externally defined Globals --------------------------*/
 /* Function tables declarations.  These function tables contain pointers
    to functions that help access each type of special element. */
@@ -392,7 +395,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           file_rec->attach = 0;
 
           /* currently, default is caching OFF */
-          file_rec->cache = FALSE;
+          file_rec->cache = default_cache;
           file_rec->dirty = 0;  /* mark all dirty flags off to start */
 
           /* Set up the new pointers for empty space */
@@ -2102,6 +2105,8 @@ Hsync(int32 file_id)
        returns SUCCEED (0) if sucessful, FAIL (-1) otherwise
  DESCRIPTION
        Set/reset the caching in an HDF file.
+       If file_id is set to CACHE_ALL_FILES, then the value of cache_on is
+       used to modify the default caching state.
 --------------------------------------------------------------------------*/
 intn
 Hcache(int32 file_id, intn cache_on)
@@ -2114,21 +2119,29 @@ Hcache(int32 file_id, intn cache_on)
     if (BADFREC(file_rec))
         HRETURN_ERROR(DFE_INTERNAL, FAIL);
 
-    /* check whether to flush the file info */
-    if (cache_on == FALSE && (file_rec->cache && file_rec->dirty))
+    if(file_id==CACHE_ALL_FILES) /* check whether to modify the default cache */
+      { /* set the default caching for all further files Hopen'ed */
+        default_cache = (cache_on != 0 ? TRUE : FALSE);
+      } /* end if */
+    else
       {
-          /* flush DD blocks if necessary */
-          if (file_rec->dirty & DDLIST_DIRTY)
-              if (HIflush_dds(file_rec) == FAIL)
-                  HRETURN_ERROR(DFE_CANTFLUSH, FAIL);
 
-          /* extend the end of the file if necessary */
-          if (file_rec->dirty & FILE_END_DIRTY)
-              if (HIextend_file(file_rec) == FAIL)
-                  HRETURN_ERROR(DFE_CANTFLUSH, FAIL);
-          file_rec->dirty = 0;  /* file doesn't need to be flushed now */
-      }     /* end if */
-    file_rec->cache = (cache_on != 0 ? TRUE : FALSE);
+        /* check whether to flush the file info */
+        if (cache_on == FALSE && (file_rec->cache && file_rec->dirty))
+          {
+              /* flush DD blocks if necessary */
+              if (file_rec->dirty & DDLIST_DIRTY)
+                  if (HIflush_dds(file_rec) == FAIL)
+                      HRETURN_ERROR(DFE_CANTFLUSH, FAIL);
+
+              /* extend the end of the file if necessary */
+              if (file_rec->dirty & FILE_END_DIRTY)
+                  if (HIextend_file(file_rec) == FAIL)
+                      HRETURN_ERROR(DFE_CANTFLUSH, FAIL);
+              file_rec->dirty = 0;  /* file doesn't need to be flushed now */
+          }     /* end if */
+        file_rec->cache = (cache_on != 0 ? TRUE : FALSE);
+      } /* end else */
 
     return (SUCCEED);
 }   /* Hcache */
