@@ -1,0 +1,55 @@
+#!/bin/sh
+#
+# Copyright by the Board of Trustees of the University of Illinois.
+# All rights reserved.
+#
+# This file is part of HDF.  The full HDF copyright notice, including
+# terms governing use, modification, and redistribution, is contained in
+# the files COPYING.  COPYING can be found at the root
+# of the source code distribution tree.  If you do not have
+# access to the file, you may request a copy from hdfhelp@ncsa.uiuc.edu.
+#
+# Deploy the HDF4 binary.
+#
+# Programmer: Albert Cheng
+# Created Date: 2005/04/07
+#
+# Modifications
+
+# Function definitions
+#
+# Print Usage page
+USAGE()
+{
+cat << EOF
+Usage: $0 <dir>
+   Install the binary to directory <dir>
+
+Examples:
+
+    $ bin/deploy /usr/local/hdf4
+    ....
+
+EOF
+
+}
+
+
+# Variables
+
+if [ $# != 1 ]; then
+    USAGE
+    exit 1
+fi
+
+installdir=$1
+# create installdir if it does not exist yet.
+if [ -d $installdir ] || mkdir $installdir ; then
+    ${MAKE:-gmake} install prefix=$installdir
+    exit $?
+else
+    echo $installdir is not a valid directory
+    USAGE
+    exit 1
+fi
+
