@@ -25,6 +25,7 @@
 ./bin/config.guess
 ./bin/config.sub
 ./bin/depcomp
+./bin/deploy
 ./bin/install-sh
 ./bin/locate_sw
 ./bin/missing
