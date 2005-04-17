@@ -1000,9 +1000,6 @@ test_chunk()
 #if 0
     chunk_def.comp.comp_type = COMP_CODE_RLE;
 #endif
-    /* the test for SDgetcompress relies on this compression setting , so 
-       if the setting is changed, please ensure that the verification of 
-       the next call to SDgetcompress below is still valid - BMR */
     chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
     chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
 
@@ -1044,7 +1041,15 @@ test_chunk()
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, chunk_def.comp.comp_type, "SDgetcompress");
     VERIFY(cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "SDgetcompress");
-    /* end of test for bug#307 */
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds6, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, chunk_def.comp.comp_type, "SDgetcompinfo");
+    VERIFY(cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "SDgetcompinfo");
+    /* end of test for bug#307/bugzilla #130 */
 
     /* Write data use SDwriteChunk */
     start_dims[0] = 0;
@@ -1309,9 +1314,6 @@ test_chunk()
     chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
     chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
 #endif
-    /* the test for SDgetcompress relies on this compression setting , so 
-       if the setting is changed, please ensure that the verification of 
-       the next call to SDgetcompress below is still valid - BMR */
     chunk_def.comp.comp_type = COMP_CODE_DEFLATE; /* GZIP */
     chunk_def.comp.cinfo.deflate.level = 6;
 
@@ -1420,6 +1422,14 @@ test_chunk()
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, chunk_def.comp.comp_type, "SDgetcompress");
     VERIFY(cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "SDgetcompress");
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds7, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, chunk_def.comp.comp_type, "SDgetcompinfo");
+    VERIFY(cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "SDgetcompinfo");
     /* end of test for bug#307 */
 
     /* Close down file 'chktst.hdf' */
@@ -1553,6 +1563,21 @@ test_chunk()
     VERIFY(cinfo.nbit.fill_one, chunk_def.nbit.fill_one, "SDgetcompress");
     VERIFY(cinfo.nbit.start_bit, chunk_def.nbit.start_bit, "SDgetcompress");
     VERIFY(cinfo.nbit.bit_len, chunk_def.nbit.bit_len, "SDgetcompress");
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+
+    /* Note: the struct nbit in the union HDF_CHUNK_DEF seems like an extra
+	thing since comp_info also has nbit, but the HDF_CHUNK_DEF.nbit was
+	used to set the compression info so it's also used here to verify */ 
+    VERIFY(comp_type, COMP_CODE_NBIT, "SDgetcompinfo");
+    VERIFY(cinfo.nbit.sign_ext, chunk_def.nbit.sign_ext, "SDgetcompinfo");
+    VERIFY(cinfo.nbit.fill_one, chunk_def.nbit.fill_one, "SDgetcompinfo");
+    VERIFY(cinfo.nbit.start_bit, chunk_def.nbit.start_bit, "SDgetcompinfo");
+    VERIFY(cinfo.nbit.bit_len, chunk_def.nbit.bit_len, "SDgetcompinfo");
     /* end of test for bug#307 */
 
     /* end access to SDS */
@@ -2009,6 +2034,12 @@ printf("before SDsetcompress\n");
     status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
     CHECK(status, FAIL, "SDcompress");
 
+    /* Test get compression info when the data set is empty but set to be
+       compressed */
+    status = SDgetcompinfo(newsds, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompinfo");
+
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
 #ifdef QAK
@@ -2049,6 +2080,14 @@ printf("reading compressed dataset\n");
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompress");
     VERIFY(cinfo.skphuff.skp_size, 4, "SDgetcompress");
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompinfo");
+    VERIFY(cinfo.skphuff.skp_size, 4, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -2453,6 +2492,13 @@ printf("reading compressed dataset\n");
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -2540,6 +2586,13 @@ printf("reading compressed dataset\n");
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompress");
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -2629,6 +2682,14 @@ printf("reading compressed dataset\n");
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompress");
     VERIFY(cinfo.deflate.level, 6, "SDgetcompress");
+    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompinfo");
+    VERIFY(cinfo.deflate.level, 6, "SDgetcompinfo");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
@@ -3272,6 +3333,16 @@ main(int argc, char *argv[])
                (VOIDP) &fillval); /* can use SDsetfillvalue */
     CHECK(status, FAIL, "SDsetattr");
 
+    /* Test get compression info when the data set is empty and not set
+       to be compressed */
+    {
+	comp_coder_t comp_type;	/* type of compression */
+	comp_info cinfo;	/* compression information */
+	status = SDgetcompinfo(sdid, &comp_type, &cinfo);
+	CHECK(status, FAIL, "SDgetcompinfo");
+	VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
+    }
+
     /* end access to data set 'FIXED1' */
     status = SDendaccess(sdid);
     CHECK(status, FAIL, "SDendaccess");
@@ -3297,6 +3368,16 @@ main(int argc, char *argv[])
     end[1]=6;
     status = SDwritedata(sdid, start, NULL, end, (VOIDP)idata);
     CHECK(status, FAIL, "SDwritedata: (SD_FILL)");
+
+    /* Test get compression info when the data set is not empty and 
+       compressed */
+    {
+	comp_coder_t comp_type;	/* type of compression */
+	comp_info cinfo;	/* compression information */
+	status = SDgetcompinfo(sdid, &comp_type, &cinfo);
+	CHECK(status, FAIL, "SDgetcompinfo");
+	VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
+    }
 
     /* end access to data set 'FIXED1' */
     status = SDendaccess(sdid);
