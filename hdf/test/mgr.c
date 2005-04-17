@@ -4232,8 +4232,13 @@ static void test_get_compress(int flag)
     /* First image uses RLE compression method, so no info will be
        retrieved */
     status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    CHECK(status, FAIL, "GRgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompress");
+    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    status = GRgetcompinfo(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
 
     /* end access to the first image */
     status = GRendaccess(riid);
@@ -4252,9 +4257,17 @@ static void test_get_compress(int flag)
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    CHECK(status, FAIL, "GRgetcompress");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompress");
     VERIFY(cinfo.skphuff.skp_size, SKPHUFF_SKIPSIZE, "GRgetcompress");
+    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = GRgetcompinfo(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
+    VERIFY(cinfo.skphuff.skp_size, SKPHUFF_SKIPSIZE, "GRgetcompinfo");
 
     /* end access to the second image */
     status = GRendaccess(riid);
@@ -4273,9 +4286,17 @@ static void test_get_compress(int flag)
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    CHECK(status, FAIL, "GRgetcompress");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompress");
     VERIFY(cinfo.deflate.level, DEFLATE_LEVEL, "GRgetcompress");
+    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = GRgetcompinfo(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
+    VERIFY(cinfo.deflate.level, DEFLATE_LEVEL, "GRgetcompinfo");
 
     /* Terminate access to the third image */
     status = GRendaccess(riid);
@@ -4295,6 +4316,15 @@ static void test_get_compress(int flag)
     VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompress");
     VERIFY(cinfo.jpeg.quality, 0, "GRgetcompress");
     VERIFY(cinfo.jpeg.force_baseline, 0, "GRgetcompress");
+    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
+       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    status = GRgetcompinfo(riid, &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
+    VERIFY(cinfo.jpeg.quality, 0, "GRgetcompinfo");
+    VERIFY(cinfo.jpeg.force_baseline, 0, "GRgetcompinfo");
 
     /* Terminate access to the third image */
     status = GRendaccess(riid);
@@ -4540,29 +4570,29 @@ test_mgr_chunk_compress()
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
 
-    status = GRgetcompress(ri_id[img_num], &comp_type, &cinfo);
-    CHECK(status, FAIL, "GRsetcompress");
+    status = GRgetcompinfo(ri_id[img_num], &comp_type, &cinfo);
+    CHECK(status, FAIL, "GRgetcompinfo");
     switch (img_num) {
 	case 0: 
-	    VERIFY(comp_type, COMP_CODE_NONE, "GRgetcompress");
+	    VERIFY(comp_type, COMP_CODE_NONE, "GRgetcompinfo");
 	    break;
 	case 1 :
-	    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompress");
+	    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
 	    break;
 	case 2 :
-	    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompress");
+	    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
 	    VERIFY(cinfo.skphuff.skp_size, 
-		   chunk_def[img_num].comp.cinfo.skphuff.skp_size, "GRgetcompress");
+		   chunk_def[img_num].comp.cinfo.skphuff.skp_size, "GRgetcompinfo");
 	    break;
 	case 3 :
-	    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompress");
+	    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
 	    VERIFY(cinfo.deflate.level, 
-		   chunk_def[img_num].comp.cinfo.deflate.level, "GRgetcompress");
+		   chunk_def[img_num].comp.cinfo.deflate.level, "GRgetcompinfo");
 	    break;
 #ifdef NOT_WORKING
 	/* JPEG is not working correctly yet.  Add test here when it is */
 	case 4 :  /* only return comp type for JPEG */
-	    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompress");
+	    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
 	    break;
 #endif
 	default:
