@@ -4346,12 +4346,18 @@ SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
 #ifdef SDDEBUG
     printf("SDgetcompinfo(): var->data_ref=%d, var->aid=%d\n",(int)var->data_ref, (int)var->aid);
 #endif /* SDDEBUG */
+    /* return with SUCCEED if the data set is empty and not compressed; when
+       the data set is set compressed, the data has a valid reference number */
     if(!var->data_ref) 
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    {
+	comp_type = COMP_CODE_NONE;
+	HGOTO_DONE(SUCCEED);
+    }
 
     /* use lower-level routine to get the compression information */
     status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
 		comp_type, c_info);
+
     if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
