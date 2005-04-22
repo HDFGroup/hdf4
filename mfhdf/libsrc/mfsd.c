@@ -4350,7 +4350,7 @@ SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
        the data set is set compressed, the data has a valid reference number */
     if(!var->data_ref) 
     {
-	comp_type = COMP_CODE_NONE;
+	*comp_type = COMP_CODE_NONE;
 	HGOTO_DONE(SUCCEED);
     }
 
