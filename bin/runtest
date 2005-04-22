@@ -372,6 +372,20 @@ RUNSNAPTEST()
     [ $retcode -ne 0 ] && errcode=$retcode
 
     date >> $LOGFILE
+    if [ $retcode -ne 0 ]; then
+        # Dump the first 10 lines and the last 30 lines of the LOGFILE.
+        ( ntail=30
+	    echo =========================
+	    echo "Dumping logfile of ${HOSTNAME}: $TEST_TYPE"
+	    echo "Last $ntail lines of $LOGFILE"
+	    echo =========================
+	    tail -$ntail $LOGFILE
+            echo =========================
+            echo Dumping done
+            echo =========================
+	    echo ""
+	) >> $FAILEDDETAIL
+    fi
 }
 
 
@@ -600,6 +614,7 @@ LOGDIR=${SNAPYARD}/log
 LOGBASENAME=${LOGDIR}/${HOSTNAME}
 PASSEDLOG=${LOGDIR}/PASSED_LOG_${TODAY}
 FAILEDLOG=${LOGDIR}/FAILED_LOG_${TODAY}
+FAILEDDETAIL=${LOGDIR}/FAILED_DETAIL_${TODAY}
 SKIPPEDLOG=${LOGDIR}/SKIPPED_LOG_${TODAY}
 TIMELOG=${LOGDIR}/TIME_LOG_${TODAY}
 CVSLOG=${LOGDIR}/CVS_LOG_${TODAY}
@@ -608,6 +623,7 @@ DIFFLOG=${LOGDIR}/DIFF_LOG_${TODAY}
 # Snap Test hosts and Configuration files
 ALLHOSTSFILE=${SNAPYARD}/allhostfile
 SNAPTESTCFG=${SNAPYARD}/snaptest.cfg
+TMPFILE="${LOGDIR}/#runtest.${TODAY}.$$"
 
 # more processing of setup option if requested
 if test x-$CMD = x-setup; then
@@ -677,12 +693,25 @@ if [ -z "$NOCVS" -a ! -f $CVSLOG ]; then
 	exit $errcode
     fi
     PRINT Checking MAINFEST file ...
-    (cd $SNAPYARD/current; bin/chkmanifest)
+    (cd $SNAPYARD/current; bin/chkmanifest) > $TMPFILE 2>&1
     errcode=$?
-    if [ $errcode -ne 0 ]; then
+    if [ $errcode -eq 0 ]; then
+	# test passed.
+	cat $TMPFILE
+    else
 	# test failed.
 	REPORT_ERR "****FAILED ${HOSTNAME}: MANIFEST check****"
+        (   echo =========================
+	    echo "MANIFEST checking failed output"
+	    echo =========================
+	    cat $TMPFILE
+            echo =========================
+	    echo "MANIFEST checking failed output done"
+            echo =========================
+	    echo ""
+	) >> $FAILEDDETAIL
     fi
+    rm $TMPFILE
     PRINT_BLANK
 else
     # make sure the cvs update, if done by another host, has completed.
