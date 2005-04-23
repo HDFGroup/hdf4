@@ -845,9 +845,17 @@ NC_var *vp;
               block_size = vp->block_size;
           else 
             { /* try figuring out a good value using some heuristics */
-                block_size = vp->len*BLOCK_MULT;
-                if (block_size > MAX_BLOCK_SIZE)
+		/* User's suggested fix for bug #602 - Apr, 2005 */
+                /* This check avoids overflowing the int32 block_size */
+                /* if the user has a huge value for vp->len */ 
+                if(vp->len > MAX_BLOCK_SIZE)
                     block_size = MAX_BLOCK_SIZE;
+                else
+                  {
+                    block_size = vp->len*BLOCK_MULT;
+                    if (block_size > MAX_BLOCK_SIZE)
+                        block_size = MAX_BLOCK_SIZE;
+                  }
             } /* end else */
 
           vp->aid = HLcreate(handle->hdf_file, DATA_TAG, vsid, block_size,
