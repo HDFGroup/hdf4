@@ -58,6 +58,7 @@ Bugs fixed since HDF4.2r1
 =========================
 	- Added the display of compression method to hdp dumpsds and dumpgr.
 	  (bugzilla #130) BMR - 2005/4/4
+	- Applied user's patch to fix bug #602 - BMR - 2005/4/23
 
 Documentation
 ==============
