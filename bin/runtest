@@ -328,6 +328,16 @@ RUNSNAPTEST()
 		# skip this test
 		skiptest=yes
 		;;
+	    deploy)
+		# deploy the built binary.
+		shift
+		SNAPCMD_OPT="$SNAPCMD_OPT deploy $1"
+		;;
+	    deploydir)
+		# default directory for deployment.
+		shift
+		SNAPCMD_OPT="$SNAPCMD_OPT deploydir $1"
+		;;
 	    *) # unknown test
 		PRINT "$0: unknown type of test ($1)"
 		retcode=1
@@ -417,6 +427,8 @@ RUNSNAPTEST()
 #		        set environment variable with <N> values
 #		        e.g., setenvN 3 x a b c is same as setenv x="a b c".
 #    skip		skip this test
+#    deploy <name>	deploy the built binary at directory <name>.
+#    deploydir <name>   use <name> as the default directory for deployment.
 SNAPTEST_CONFIG_PARSE()
 {
     while read x y ; do
