@@ -80,6 +80,10 @@ MODIFICATION HISTORY
 #define COMPRESS_MASTER
 #include "hdf.h"
 
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"                                                                                 
+#endif 
+
 /* HDF compression includes */
 #include "hcompi.h"     /* Internal definitions for compression */
 
