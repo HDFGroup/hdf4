@@ -175,6 +175,7 @@ static void test_mgr_interlace(int flag);
 static void test_mgr_lut(int flag);
 static void test_mgr_special(int flag);
 static void test_mgr_attr(int flag);
+extern void test_mgr_dup_images();
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
