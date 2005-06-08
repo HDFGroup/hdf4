@@ -203,6 +203,7 @@ extern int test_szip_compression();
 extern int test_checkempty();
 extern int test_idtest();
 extern int test_sd();
+extern int test_idtype();
 
 static intn
 test_chunk()
