@@ -200,6 +200,10 @@ extern      "C"
     HDFLIBAPI int32 HMCPcloseAID
         (accrec_t *access_rec /* IN:  access record of file to close */);
 
+    HDFLIBAPI int32 HMCPgetnumrecs /* has to be here because used in hfile.c */
+        (accrec_t * access_rec, /* IN:  access record to return info about */
+         int32 *num_recs        /* OUT: length of the chunked elt */);
+
 /* Library Private */
 #ifdef _HCHUNKS_MAIN_
     /* tbbt.h helper routines */
@@ -258,10 +262,6 @@ extern      "C"
          int32 *pposn,          /* OUT: current position in element; */
          int16 *paccess,        /* OUT: access mode; */
          int16 *pspecial        /* OUT: special code; */);
-
-    extern int32 HMCPgetnumrecs
-        (accrec_t * access_rec, /* IN:  access record to return info about */
-         int32 *num_recs        /* OUT: length of the chunked elt */);
 
 #endif /* _HCHUNKS_MAIN_ */
 
