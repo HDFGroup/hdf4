@@ -433,7 +433,7 @@ done:
           HAremove_atom(fid);
 
       /* Chuck the file record we've built */
-      if(file_rec!=NULL)
+      if(file_rec!=NULL && file_rec->refcount==0)
           HIrelease_filerec_node(file_rec);
     } /* end if */
 
