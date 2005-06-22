@@ -107,8 +107,11 @@ int mode ;
       {
           if((mode & 0x0f) == NC_CLOBBER)
             {
-                if( remove(path) != 0 )
-                    nc_serror("couldn't remove filename \"%s\"", path) ;
+		/* only attempt to remove the file if it's not currently 
+		   in use - bugzilla #376 */
+		if(!HPisfile_in_use(path))
+                    if( remove(path) != 0 )
+                	nc_serror("couldn't remove filename \"%s\"", path) ;
             }
           return(-1) ;
       }

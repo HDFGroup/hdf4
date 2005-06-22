@@ -556,6 +556,9 @@ extern      "C"
     HDFLIBAPI intn HPfreediskblock
                 (filerec_t * file_rec, int32 block_offset, int32 block_size);
 
+    HDFLIBAPI intn HPisfile_in_use
+                (const char *path);
+
     HDFLIBAPI int32 HDcheck_empty
                 (int32 file_id, uint16 tag, uint16 ref, intn *emptySDS);
 

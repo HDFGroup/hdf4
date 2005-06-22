@@ -3132,7 +3132,52 @@ done:
   /* Normal function cleanup */
 
   return SUCCEED;
-}	/* HIget_filerec_node */
+}	/* HIrelease_filerec_node */
+
+/*--------------------------------------------------------------------------
+ NAME
+       HPisfile_in_use -- check if a FILE is currently in use
+ USAGE
+       intn HPisfile_in_use(path)
+       const char * path;             IN: name of file
+ RETURNS
+       TRUE if the file is in use or FALSE, otherwise.
+ DESCRIPTION
+        Get its record if the file is opened, then check its
+        reference count to decide whether the file is currently in use.
+
+--------------------------------------------------------------------------*/
+intn HPisfile_in_use(const char *path)
+{
+#ifdef LATER
+    CONSTR(FUNC, "HPisfile_in_use");
+#endif /* LATER */
+
+    filerec_t  *file_rec=NULL;
+    intn	ret_value=FALSE;
+
+    /* Search for the record of a file named "path". */
+    file_rec = (filerec_t *)HAsearch_atom(FIDGROUP,HPcompare_filerec_path,path);
+
+    /* If the file is not found, it can't be in use, return FALSE */
+    if (file_rec == NULL)
+	ret_value = FALSE;
+    else
+	if (file_rec->refcount) /* file is in use if ref count is not 0 */
+	    ret_value = TRUE;
+
+#ifdef LATER
+done:
+  if(ret_value == FALSE)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+#endif /* LATER */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}	/* HPisfile_in_use */
 
 /*--------------------------------------------------------------------------
  NAME
