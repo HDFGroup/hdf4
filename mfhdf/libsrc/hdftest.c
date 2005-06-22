@@ -2723,6 +2723,114 @@ printf("before SDend\n");
 
 }   /* end test_compression */
 
+/********************************************************************
+   Name: test_file_inuse() - tests preventing of an in-use file being removed.
+
+   Description: 
+	Sometime, when an error occurs, the cleanup process attempts to 
+	remove a file, which might still be in use (part of bugzilla #376.)  
+	The routine test_file_inuse is to test the fix that provides the 
+	underlaying call to HPisfile_in_use, which should successfully 
+	determines whether a file is still in use before an attempt to remove.
+
+	The main contents include:
+	- a loop that repeatedly calls SDstart/DFACC_CREATE; only the first
+	  SDstart succeeds, the subsequent ones should fail.
+	- SDcreate, SDwritedata, SDendaccess follow
+	- outside of that loop is another loop to call SDend corresponding
+	  to the previous SDstart's
+	- then, at the end, the file will be reopened; if the file doesn't
+	  exist and causes SDstart to fail, the test will fail.
+
+	Before the fix, when the 2nd SDstart/DFACC_CREATE was called and
+	failed because the file was being in use from the first call to
+	SDstart/DFACC_CREATE, the cleaning process removes the file.
+
+   Return value:
+	The number of errors occurred in this routine.
+
+   BMR - Jun 22, 2005
+*********************************************************************/
+
+#define FILE_NAME     "bug376.hdf"	/* data file to test */
+#define DIM0 10
+
+static intn
+test_file_inuse()
+{
+    int32 file_id, sd_id[5], sds_id[5];
+    intn statusn;
+    int32 dims[1], start[1], edges[1], rank;
+    int16 array_data[DIM0];
+    char* names[5] = {"data1", "data2", "data3", "data4", "data5"};
+    intn i, j;
+    intn      num_errs = 0;     /* number of errors so far */
+
+    for (i=0; i<5; i++)
+    {
+        /* Create and open the file and initiate the SD interface. */
+        sd_id[i] = SDstart(FILE_NAME, DFACC_CREATE);
+	if (i == 0) {
+	    CHECK(sd_id[i], FAIL, "SDstart"); } /* 1st SDstart must pass */
+	else {
+	    VERIFY(sd_id[i], FAIL, "SDstart"); } /* 1st SDstart should fail */
+	/* subsequent SDstart should fail, which causes the following calls
+	   to fail as well */
+
+        /* Define the rank and dimensions of the data sets to be created. */
+        rank = 1;
+        dims[0] = DIM0;
+        start[0] = 0;
+        edges[0] = DIM0;
+
+        /* Create the array data set. */
+        sds_id[i] = SDcreate(sd_id[i], names[i], DFNT_INT16, rank, dims);
+	if (i == 0) {
+	    CHECK(sds_id[i], FAIL, "SDcreate"); } /* 1st SDcreate must pass */
+	else
+	    VERIFY(sds_id[i], FAIL, "SDcreate");
+
+        /* Fill the stored-data array with values. */
+        for (j = 0; j < DIM0; j++) {
+                        array_data[j] = (i + 1)*(j + 1);
+        }
+
+	/* Write data to the data set */
+	statusn = SDwritedata(sds_id[i], start, NULL, edges, (VOIDP)array_data);
+	if (i == 0) {
+	    CHECK(statusn, FAIL, "SDwritedata"); } /* 1st SDwritedata must pass */
+	else
+	    VERIFY(statusn, FAIL, "SDwritedata");
+
+        /* Terminate access to the data sets. */
+        statusn = SDendaccess(sds_id[i]);
+	if (i == 0) {
+	    CHECK(statusn, FAIL, "SDendaccess"); } /* 1st SDendaccess must pass */
+	else
+	    VERIFY(statusn, FAIL, "SDendaccess");
+
+    } /* for i */
+
+    for (i=0; i<5; i++)
+    {
+        /* Terminate access to the SD interface and close the file. */
+        statusn = SDend (sd_id[i]);
+	if (i == 0) {
+	    CHECK(statusn, FAIL, "SDend"); } /* 1st SDend must pass */
+	else
+	    VERIFY(statusn, FAIL, "SDend");
+    }
+
+    /* Try to open the file, which should exist */
+    file_id = SDstart(FILE_NAME, DFACC_RDWR);
+    CHECK(file_id, FAIL, "SDstart");
+
+    statusn = SDend (file_id);
+    CHECK(statusn, FAIL, "SDend");
+
+    return num_errs;
+}   /* test_file_inuse */
+
 int 
 main(int argc, char *argv[])
 {
@@ -4131,6 +4239,11 @@ main(int argc, char *argv[])
 
     /* BMR: Added a test routine dedicated for testing SDidtype. 01/21/05 */
     status = test_idtype();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing that an in-use file
+     * is not removed in certain failure cleanup. 06/21/05 - bugzilla 376 */
+    status = test_file_inuse();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing the behavior of
