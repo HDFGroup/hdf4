@@ -147,7 +147,7 @@ done:
 /*
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
 */
-PRIVATE intn
+intn
 Hiscdf(filename)
 const char * filename;
 {
@@ -211,7 +211,7 @@ done:
 /*
   Return TRUE if the given file is a netCDF file, FALSE otherwise.
 */
-PRIVATE intn
+intn
 Hisnetcdf(filename)
 const char * filename;
 {

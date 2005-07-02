@@ -647,6 +647,12 @@ extern bool_t nssdc_write_cdf
 extern bool_t nssdc_xdr_cdf
     PROTO((XDR *xdrs, NC **handlep));
 
+extern intn Hiscdf
+    PROTO((const char *filename));
+
+extern intn Hisnetcdf
+    PROTO((const char *filename));
+
 #endif /* HDF */
 
 #ifdef __cplusplus

@@ -1001,7 +1001,7 @@ dsd(dump_info_t *dumpsds_opts,
       display information and data of each SDS in the specified manner */
    while (curr_arg < argc)
    {
-      intn isHDF = TRUE;  /* FALSE, if current file is not HDF file */
+      intn isHDF;  /* FALSE, if current file is not HDF file */
 
       HDstrcpy(file_name, argv[curr_arg]);
       HDstrcpy( dumpsds_opts->ifile_name, file_name ); /* record file name */
@@ -1012,12 +1012,21 @@ dsd(dump_info_t *dumpsds_opts,
       isHDF = Hishdf(file_name);
       if (isHDF == FALSE)
       {
-         /* if there are no more files to be processed, print error
+	 char msg[40];
+	 intn isnetCDF;  /* TRUE, if current file is a netCDF file */
+
+	 isnetCDF = Hisnetcdf(file_name);
+	 if (isnetCDF == TRUE)
+	    strcpy(msg, "is a netCDF file, please use ncdump to read it");
+	 else 
+	    strcpy(msg, "is not an HDF file");
+
+         /* if there are no more files to be processed, print informative
             message, then returns with FAIL */
 	 if( curr_arg == argc )
-	    {ERROR_GOTO_1( "in dsd: %s is not an HDF file", file_name);}
+	    {ERROR_GOTO_2( "in dsd: %s %s", file_name, msg);}
          else /* print message, then continue processing the next file */
-            {ERROR_CONT_1( "in dsd: %s is not an HDF file", file_name);}
+            {ERROR_CONT_2( "in dsd: %s %s", file_name, msg);}
       }
 
       /* open current hdf file with error check, if fail, go to next file */
