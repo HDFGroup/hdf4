@@ -17,7 +17,7 @@
  * Function from ncdump.c. "Fixes" variable names to remove spaces and other
  * "illegal" characters.
  */
-extern char *fixstr(char *str);
+extern char *fixstr(char *str, bool fix_str);
 
 static void annotate
     PROTO((struct ncvar *vp,struct fspec *fsp,long cor[], long iel));
@@ -499,7 +499,7 @@ vardata(vp, vdims, ncid, varid, fsp)
 	nels *= vdims[id];	/* total number of values for variable */
     }
 
-    fixed_var = fixstr(vp->name);
+    fixed_var = fixstr(vp->name, fsp->fix_str);
 
     if (vrank <= 1) {
 	Printf("\n %s = ", fixed_var);

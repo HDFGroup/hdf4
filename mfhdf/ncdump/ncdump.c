@@ -27,6 +27,7 @@ usage()
 #define USAGE   "\
   [-c]             Coordinate variable data and header information\n\
   [-h]             Header information only, no data\n\
+  [-u]             Replace nonalpha-numerics in names with underscores\n\
   [-v var1[,...]]  Data for variable(s) <var1>,... only\n\
   [-b [c|f]]       Brief annotations for C or Fortran indices in data\n\
   [-f [c|f]]       Full annotations for C or Fortran indices in data\n\
@@ -36,7 +37,7 @@ usage()
   file             File name of input netCDF file\n"
 
     (void) fprintf(stderr,
-		   "%s [-c|-h] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-d n[,n]] file\n%s",
+		   "%s [-c|-h|-u] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-d n[,n]] file\n%s",
 		   progname,
 		   USAGE);
     exit(EXIT_FAILURE);
@@ -247,8 +248,12 @@ pr_att_vals(type, len, vals)
  *
  * 	If the string contains characters other than alpha-numerics,
  * 	an underscore, or a hyphen, convert it to an underscore.
+ *
+ * Modification:
+ *	- Added "fix_str" to determine whether the conversion should be
+ *	  carried out, based on user's request. - bug #934, BMR 7/3/2005
  */
-char *fixstr(char *str)
+char *fixstr(char *str, bool fix_str)
 {
 #ifndef __GNUC__ 
     char *strdup(const char *);
@@ -265,9 +270,12 @@ char *fixstr(char *str)
 		return NULL;
 	}
 
-	for (; *ptr; ptr++)
+	if (fix_str)
+	{
+	    for (; *ptr; ptr++)
 		if (!isalnum(*ptr) && *ptr != '_' && *ptr != '-')
 			*ptr = '_';
+	}
 
 	return new_str;
 }
@@ -333,7 +341,7 @@ do_ncdump(char *path, struct fspec* specp)
 
 			(void)ncdiminq(ncid, dimid, dims[dimid].name,
 				       &dims[dimid].size);
-			fixed_str = fixstr(dims[dimid].name);
+			fixed_str = fixstr(dims[dimid].name, specp->fix_str);
 
 			if (!fixed_str && dims[dimid].name) {
 				/* strdup(3) failed */
@@ -361,7 +369,7 @@ do_ncdump(char *path, struct fspec* specp)
 
 		(void) ncvarinq(ncid, varid, var.name, &var.type, &var.ndims,
 				var.dims, &var.natts);
-		fixed_var = fixstr(var.name);
+		fixed_var = fixstr(var.name, specp->fix_str);
 
 		if (!fixed_var && var.name) {
 			/* strdup(3) failed */
@@ -375,7 +383,8 @@ do_ncdump(char *path, struct fspec* specp)
 			Printf ("(");
 
 		for (id = 0; id < var.ndims; id++) {
-			char *fixed_dim = fixstr(dims[var.dims[id]].name);
+			char *fixed_dim = fixstr(dims[var.dims[id]].name, 
+						 specp->fix_str);
 
 			if (!fixed_dim && dims[var.dims[id]].name) {
 				/* strdup(3) failed */
@@ -396,7 +405,7 @@ do_ncdump(char *path, struct fspec* specp)
 			char *fixed_att;
 
 			(void) ncattname(ncid, varid, ia, att.name);
-			fixed_att = fixstr(att.name);
+			fixed_att = fixstr(att.name, specp->fix_str);
 
 			if (!fixed_att) {
 				(void) ncclose(ncid);
@@ -435,7 +444,7 @@ do_ncdump(char *path, struct fspec* specp)
 		char *fixed_att;
 
 		(void) ncattname(ncid, NC_GLOBAL, ia, att.name);
-		fixed_att = fixstr(att.name);
+		fixed_att = fixstr(att.name, specp->fix_str);
 
 		if (!fixed_att) {
 			(void) ncclose(ncid);
@@ -634,6 +643,7 @@ char *argv[];
 	  false,		/* just print coord vars? */
 	  false,		/* brief  comments in data section? */
 	  false,		/* full annotations in data section?  */
+	  false,		/* replace nonalpha-numeric with underscore?  */
 	  LANG_NONE,		/* language conventions for indices */
 	  0,			/* if -v specified, number of variables */
 	  0			/* if -v specified, list of variable names */
@@ -645,7 +655,7 @@ char *argv[];
     opterr = 1;
     progname = argv[0];
 
-    while ((c = getopt(argc, argv, "b:cf:hl:n:v:d:")) != EOF)
+    while ((c = getopt(argc, argv, "b:cf:hul:n:v:d:")) != EOF)
       switch(c) {
 	case 'h':		/* dump header only, no data */
 	  fspec.header_only = true;
@@ -658,6 +668,9 @@ char *argv[];
 				 * file name
 				 */
 	  fspec.name = optarg;
+	  break;
+	case 'u':		/* replace nonalpha-numerics with underscores */
+	  fspec.fix_str = true;
 	  break;
 	case 'b':		/* brief comments in data section */
 	  fspec.brief_data_cmnts = true;
@@ -716,7 +729,6 @@ char *argv[];
     argv += optind;
 
     i = 0;
-
     do {		
 	if (argc > 0)
 	  do_ncdump(argv[i], &fspec);

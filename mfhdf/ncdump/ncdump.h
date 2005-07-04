@@ -58,6 +58,10 @@ struct fspec {			/* specification for how to format dump */
 				 * navigating through large multi-dimensional
 				 * data lists.
 				 */
+    bool fix_str;		/*
+				 * if true, replace nonalpha-numeric 
+				 * characters in a name with underscores
+				 */
     Nclang data_lang;		/*
 				 * Specifies index conventions used in data
 				 * comments, either LANG_C (C, 0-based, column
