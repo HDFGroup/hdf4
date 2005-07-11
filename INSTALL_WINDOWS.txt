@@ -883,7 +883,7 @@ b. Set up external libraries and headers paths for Intel 8.1
          This error message can be ignored.  "test.exe" and 
          "util.exe" are never created, so it is OK. 
          
-      c. You need to unpack Win32.nofortran.zip in directory HDF42r1\ again
+      c. You need to unpack Win32.zip in directory HDF42r1\ again
          if you rebuild or clean any project as Intel compiler will
          delete all *.bat and *.out files during the cleaning process.
    
