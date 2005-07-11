@@ -1,5 +1,4 @@
 * text=auto !eol
-/Win32.nofortran.zip -text
 /Win32.zip -text
 hdf/test/8bit.dat -text
 hdf/test/bitio.dat -text
