@@ -13,7 +13,6 @@
 ./Makefile.in
 ./MAKEVMS.COM
 ./README
-./Win32.nofortran.zip
 ./Win32.zip
 ./aclocal.m4
 ./configure
