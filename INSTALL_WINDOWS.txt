@@ -142,43 +142,26 @@ The following sections discuss installation procedures in detail:
 Section I: Build and Test HDF4 Libraries and Utilities
 ======================================================================
 
-Step 1: Select Installation Type
-
-You may select one of 2 ways to build the HDF4 libraries and utilities,
-depending on your environment and application needs.
-
-Option A, (select Win32.nofortran.zip)
-This is the "NOFORTRAN" configuration: it builds debug and release
-single-threaded and multi-threaded DLL versions of the HDF libraries,
-tests, and utilities.  There is no Fortran support.
-
-Option B, (select Win32.zip)
-This is "WITH FORTRAN SUPPORT" configuration: it is the same as above
-but with Fortran support. 
-
-
-Step 2: Build HDF4 Libraries and Utilities
+Step 1: Build HDF4 Libraries and Utilities
 
 Notes:
 
-   a. The instructions are the same for both options A and B.
-
-   b. These instructions are written for MicroSoft Visual Studio 6.0
+   a. These instructions are written for MicroSoft Visual Studio 6.0
       and DEC Visual Fortran users.  For .NET users, please also read
-      section III.  For Intel compiler users, please aslo read
+      section III.  For Intel compiler users, please also read
       section IV. 
 
-   c. For Microsoft Visual C++ 6.0 and DEC Visual Fortran 6.0(or
+   b. For Microsoft Visual C++ 6.0 and DEC Visual Fortran 6.0(or
       higher versions) users, we support building HDF4 libraries and
       utilities from the HDF4 source code archive on command line.
       To build HDF4 on the command line, please read section VII.
 
-   d. To build HDF4 Multithreaded static library, please read
+   c. To build HDF4 Multithreaded static library, please read
       section VIII.
 
 Building Instructions:
 
-   1. Unpack Win32.nofortran.zip or Win32.zip in directory HDF42r1\. 
+   1. Unpack Win32.zip in directory HDF42r1\. 
 
       Note: Please select "Yes to All" when you are asked to confirm
             file overwrite by WinZip.
@@ -188,27 +171,57 @@ Building Instructions:
 
       Then open the c:\MyHDFstuff\HDF42r1\all.dsw workspace. 
 
-   3. Select "Build", then Select "Set Active Configuration".
+   Invoke Microsoft Visual C++ compiler
+    
+      Invoke Microsoft Visual C++.  From the main menu, go to "File"
+      and select the "Open Workspace" option. Then open the
+      c:\MyHDFstuff\hdf5\windows\proj\all\all.dsw workspace. 
 
-      On Windows platform select as the active configuration
+      You should find windows project files listed as "all files, 
+      big files etc." on the left.        
 
-         "all -- Win32 Debug" to build debug versions of
-                              single-threaded static libraries, tests
-                              and utilities and multi-threaded libraries
-                              and tests.
-         or
- 
-         "all -- Win32 Release" to build release versions of
-                                single-threaded static libraries, tests
-                                and utilities and multi-threaded
-                                libraries and tests.
-
-      Select "Build" and "Build all.exe" to build the corresponding
-      version of the HDF42r1 library.
-
-      You should see 0 error at the end of building.
-
-      Warning messages can be ignored.
+   3. (Optional)HDF4 Static and DLL Fortran libraries
+    
+      Skip this step if you do not want to build HDF4 Fortran libraries
+        
+          Go to "Project" and select "dependencies";
+          Select "all" in the "Select project to modify:" box,
+          then enable the following desired projects:
+      
+             dllfortestf
+             dllhdftestf
+             dlllibtest_fcstub
+             fortestf
+             hdf_fcstub
+             hdf_fcstubdll
+             hdf_fortran
+             hdftestf
+             hdf_fortrandll
+             libtest_fcstub
+             mfhdf_fcstub
+             mfhdf_fcstubdll
+             mfhdf_fortran
+             mfhdf_fortrandll
+             
+   4. Select "Build", then Select "Set Active Configuration".
+   
+      4.1 To build debug versions of single-threaded static libraries, 
+    	  Debug multithreaded DLLs and tests
+    	    
+          In "Project configurations", select "all -- Win32 Debug",
+	  select "ok". Select "Build" -> "Build" or "Rebuild All" to
+   	  build debug version of project "all".
+   	      
+      4.2 To build release versions of single-threaded static libraries, 
+   	  multithreaded DLLs and tests
+   	      
+   	  In "Project configurations", select "all -- Win32 Release",
+   	  select "ok". Select "Build" -> "Build" or "Rebuild All" to
+   	  build release version of project "all".
+                
+      Both debug and release versions must be built.
+       
+      Warning messages can be ignored. 
 
       When the debug build is done the directories listed below will
       contain the following files:
@@ -232,7 +245,7 @@ Building Instructions:
 
             utilities, statically linked with the single-threaded
             libraries.
-
+            
       When the release build is done the directories listed below will
       contain the following files:
 
@@ -246,7 +259,7 @@ Building Instructions:
             hd421m.lib - HDF multi-threaded DLL export library 
             hm421m.lib - MFHDF multi-threaded DLL export library
  
-         c:\MyHDFstuff\HDF42r1\windows\dll\release 
+         c:\MyHDFstuff\HDF42r1\windows\dll\release -
 
             hd421m.dll - HDF DLL
             hm421m.dll - MFHDF DLL
@@ -255,7 +268,71 @@ Building Instructions:
  
             utilities, statically linked with the single-threaded
             libraries.
+       
+       The directories listed below will contain the following files
+       ONLY when you choose to build HDF4 Fortran libraries:
+       
+         c:\MyHDFstuff\HDF42r1\windows\lib\debug\singlethreaded -
+
+            hdf_fcstubd.lib - HDF cstub library
+            hdf_fortrand.lib - HDF static fortran library
+            mfhdf_fcstubd.lib - MFHDF cstub library
+            mfhdf_fortrand.lib - MFHDF static fortran library
  
+         c:\MyHDFstuff\HDF42r1\windows\lib\debug\multithreaded -
+
+            hdf_fcstubdlld.lib - HDF multi-threaded DLL cstub library
+            hdf_fortrandlld.lib - HDF multi-threaded DLL fortran library
+            mfhdf_fcstubdlld.lib - MFHDF multi-threaded DLL cstub library
+            mfhdf_fortrandlld.lib - MFHDF multi-threaded DLL fortran library
+            
+        c:\MyHDFstuff\HDF42r1\windows\dll\debug -
+
+            hdf_fcstubdlld.dll - HDF cstub DLL
+            hdf_fortrandlld.dll - HDF Fortran DLL
+            mfhdf_fcstubdlld.dll - MFHDF cstub DLL
+            mfhdf_fortrandlld.dll - MFHDF fortran DLL   
+            
+        c:\MyHDFstuff\HDF42r1\libtest_fcstub\debug -
+         
+           libtest_fcstubd.lib - the internal library for fortran test
+         
+      c:\MyHDFstuff\HDF42r1\dlllibtest_fcstub\debug -
+          
+          dlllibtest_fcstubd.lib - the internal dll export library for fortran test       
+          dlllibtest_fcstubd.dll - the internal dll for fortran test
+          
+        
+        c:\MyHDFstuff\HDF42r1\windows\lib\release\singlethreaded -
+
+            hdf_fcstub.lib - HDF cstub library
+            hdf_fortran.lib - HDF static fortran library
+            mfhdf_fcstub.lib - MFHDF cstub library
+            mfhdf_fortran.lib - MFHDF static fortran library
+ 
+         c:\MyHDFstuff\HDF42r1\windows\lib\release\multithreaded -
+
+            hdf_fcstubdll.lib - HDF multi-threaded DLL cstub library
+            hdf_fortrandll.lib - HDF multi-threaded DLL fortran library
+            mfhdf_fcstubdll.lib - MFHDF multi-threaded DLL cstub library
+            mfhdf_fortrandll.lib - MFHDF multi-threaded DLL fortran library
+            
+        c:\MyHDFstuff\HDF42r1\windows\dll\release -
+
+            hdf_fcstubdll.dll - HDF cstub DLL
+            hdf_fortrandll.dll - HDF Fortran DLL
+            mfhdf_fcstubdll.dll - MFHDF cstub DLL
+            mfhdf_fortrandll.dll - MFHDF fortran DLL       
+        
+       c:\MyHDFstuff\HDF42r1\libtest_fcstub\release -
+         
+           libtest_fcstub.lib - the internal library for fortran test
+         
+      c:\MyHDFstuff\HDF42r1\dlllibtest_fcstub\release -
+          
+          dlllibtest_fcstub.lib - the internal dll export library for fortran test       
+          dlllibtest_fcstub.dll - the internal dll for fortran test
+             
 Note: The ws2_32.lib needs to be linked with your executable if using
       the static mfhdf library.  The ws2_32.lib can be found in your
       Microsoft Visual C++ directory under the lib folder.
@@ -268,12 +345,18 @@ were built correctly.
 
 We provide 2 options for users to test HDF4 libraries and utilities.  
 
-   Option 1: Automatic testings
+   3.1 Option 1: Automatic testings
 
    HDF4 comes with various test suites, all of which can be tested
    with hdf4check.bat batch file in c:\MyHDFstuff\HDF42r1\ directory.
+   
+   There are two options for hdf4check:
+   
+   hdf4check                               test hdf4 C libraries and utilities
+   hdf4check enablefortran  test hdf4 C/Fortran libraries and utilities
 
-   Invoke a command prompt window and run hdf4check.bat.
+   Invoke a command prompt window and run hdf4check.bat with
+   appropriate option.
 
    Test results are saved in:
 
@@ -283,33 +366,82 @@ We provide 2 options for users to test HDF4 libraries and utilities.
    processor to check the results.  You should not find any FAILED
    marks in check_results.txt.
 
-   Option 2: Step-by-step HDF4 libraries and utilities testings
+   3.2 Option 2: Step-by-step HDF4 libraries and utilities testings
 
    You can also test debug and release versions of HDF4 libraries
    and utilities separately.
-
-   DLLs listed below should be placed into the Windows system directory.
-   A batch file named install_dll.bat is included in
+   
+   3.2.1 Install HDF4 Dlls for C library
+   
+   User who want to test ONLY HDF4 C libraries and utilities, the
+   following DLLs should be placed into the Windows system directory.
+   
+   Batch file c:\MyHDFstuff\HDF42r1\install_dll.bat will copy all of 
+   following DLLS into system directory.
+   
+     HDF42r1\Windows\dll\debug\hd421md.dll 
+	HDF42r1\Windows\dll\debug\hm421md.dll 
+		                                            
+	HDF42r1\Windows\dll\release\hd421m.dll 
+	HDF42r1\Windows\dll\release\hm421m.dll 
+	   
+   3.2.2 (optional) Install HDF4 Dlls for fortran library
+   Users who already built HDF4 Fortran library in Step 1 (3) have to 
+   install HDF4 fortran dlls into the windows system directory before
+   test HDF4 fortran library.
+   
+   A batch file named install_fortrandll.bat is included in
    c:\MyHDFstuff\HDF42r1 directory.  Run this batch file and the
    following HDF4 DLLs will be copied to the system directory.
 
-      HDF42r1\windows\dll\release\hd421m.dll
-      HDF42r1\windows\dll\release\hm421m.dll
-      HDF42r1\windows\dll\debug\hd421md.dll
-      HDF42r1\windows\dll\debug\hm421md.dll
+        HDF42r1\Windows\dll\debug\hd421md.dll 
+	HDF42r1\Windows\dll\debug\hm421md.dll 
+	HDF42r1\Windows\dll\debug\hdf_fcstubdlld.dll
+	HDF42r1\Windows\dll\debug\hdf_fortrandlld.dll
+	HDF42r1\Windows\dll\debug\mfhdf_fortrandlld.dll
+	HDF42r1\Windows\dll\debug\mfhdf_fcstubdlld.dll 
+	HDF42r1\dlllibtest_fcstub\debug\dlllibtest_fcstubd.dll    
+	                                            
+	HDF42r1\Windows\dll\release\hd421m.dll 
+	HDF42r1\Windows\dll\release\hm421m.dll 
+	HDF42r1\Windows\dll\release\hdf_fcstubdll.dll
+	HDF42r1\Windows\dll\release\hdf_fortrandll.dll
+	HDF42r1\Windows\dll\release\mfhdf_fortrandll.dll
+	HDF42r1\Windows\dll\release\mfhdf_fcstubdll.dll 
+	HDF42r1\dlllibtest_fcstub\release\dlllibtest_fcstub.dll 
 
-   Then run Win32debugtst.bat to test debug version or
-   Win32releasetst.bat to test release version.  
-
+      
+   3.2.3 Test HDF4 C library
+   
+   To test debug version of HDF4 C library, run Win32debugtst.bat;
+   To test release version of HDF4 C library, run Win32releasetst.bat.
+      
    We strongly suggest you to redirect your testing results into an
    output file so that you can easily check the testing results.  You
    may use either Notepad or WordPad or whatever other windows word
    processor to check the results.  You should not find any FAILED
    marks in your output files.
-        
-
+   
+   3.2.4 Test HDF4 C/Fortran library
+   
+   To test debug version of HDF4 C/Fortran library, run 
+   Win32debugtst.bat in the following manner:
+   
+              Win32debugtst enablefortran
+   
+   To test release version of HDF4 C/Fortran library, run 
+   Win32releasetst.bat in the following manner:
+             
+             Win32releasetst enablefortran       
+            
+   We strongly suggest you to redirect your testing results into an
+   output file so that you can easily check the testing results.  You
+   may use either Notepad or WordPad or whatever other windows word
+   processor to check the results.  You should not find any FAILED
+   marks in your output files.
+      
 Step 4: ncgen -c test (Optional)
-
+      
 ncgen is a netCDF utility that converts a CDL description of a netCDF
 file into an HDF file, or that generates the C or Fortran source
 code required to create a netCDF file.
@@ -432,8 +564,8 @@ Simple examples have been provided for users to test HDF4 C/Fortran
 library and utilities.
 
 Note: 
-      To build HDF4 Fortran examples, Win32.zip must have been
-      chosen in step 1.
+      To build HDF4 Fortran examples, HDF4 Fortran library must have
+      been built in step 1.
 
 To build and test HDF4 C examples:
 
@@ -448,12 +580,12 @@ To build and test HDF4 C examples:
       In "Project configurations", select the active configuration
 
           "allexamples -- Win32 Debug" to build debug versions of the
-                                       C examples.
+                          C examples.
 
                           or
 	
           "allexamples -- Win32 Release" to build release versions the 
-                                         C examples.
+                          C examples.
 
       When the debug build or release build is done, there should be the 
       following subdirectories in c:\MyHDFstuff\HDF42r1\examples\
@@ -461,7 +593,7 @@ To build and test HDF4 C examples:
           chgnamtest
           createtest
           dimtest
-          gittest
+          gitest
           rattrtest
           readtest 
           sattrest 
@@ -496,18 +628,18 @@ To build and test HDF4 Fortran example:
       In "Project configurations", select the active configuration
 
           "allf90examples -- Win32 Debug" to build debug versions of the
-                                          Fortran examples.
+                             Fortran examples.
 
                              or
 	
           "allf90examples -- Win32 Release" to build release versions the 
-                                            Fortran examples.
+                             Fortran examples.
 
       When the debug build or release build is done, there should be the 
       following subdirectories in c:\MyHDFstuff\HDF42r1\fortran\examples\
 
           createtest
-          gittest
+          gitest
           rattrtest
           readtest 
           sattrest 
@@ -548,7 +680,7 @@ where <top-level HDF directory> may be
 c:\MyHDFstuff\HDF42r1\hdf4lib\release or
 c:\MyHDFstuff\HDF42r1\hdf4lib\debug
 
-if you have installed HDF4 library in Section I, Step 5.
+If you have installed HDF4 library in Section I, Step 5.
 
 We assume that you will use the Szip compression with HDF4 library.
 
@@ -573,6 +705,22 @@ Under Project->Settings, select folder, Link:
 
       hd421m.lib hm421m.lib (multi-threaded release version)
       hd421md.lib hm421md.lib (multi-threaded debug version)
+
+      (Optional)For applications which use HDF4 fortran libraries,
+      except the libraries listed above, users should also add the 
+      following libraries to the list of Object/Library Modules:
+      
+      For single-threaded release version:
+        mfhdf_fortran.lib hdf_fortran.lib
+
+      For single-threaded debug version:
+        mfhdf_fortrand.lib hdf_fortrand.lib
+
+      For multi-threaded release version:
+        mfhdf_fortrandll.lib hdf_fortrandll.lib
+ 
+      For multi-threaded debug version:
+        mfhdf_fortrandlld.lib hdf_fortrandlld.lib 
 
       HDF4_EXT_ZLIB
       HDF4_EXT_JPEG
@@ -756,12 +904,12 @@ b. Set up external libraries and headers paths for Intel 8.1
          dllfortestf
          dllhdftestf
          fortestf
-         hdf
-         hdf_dll
+         hdf_fortran
+         hdf_fortrandll
          hdftestf
-         mfhdf
-         mfhdf_dll
-
+         mfhdf_fortran
+         mfhdf_fortrandll
+         
       To make the extraction, right click appropriate projects and
       select Extract Compaq Visual Fortran Projects Items on the
       right-click menu.
@@ -769,61 +917,15 @@ b. Set up external libraries and headers paths for Intel 8.1
 
       Notes:
 
-         a. Above projects should not be converted into Intel(R) C++
+            Above projects should not be converted into Intel(R) C++
             project system.  Otherwise, you could not extract Fortran
             projects items from converted Intel(R) C++ projects
             anymore and Fortran source codes in those projects will
             not be compiled.
 
-         b. As dllfortestf, fortestf, hdf, hdf_dll, mfhdf, and
-            mfhdf_dll projects contains both Fortran and C/C++
-            project files.  The Intel(R) Fortran project converter
-            will split each of the above project into 2 Visual Studio
-            projects - a Visual C++ project and an Intel(R) Fortran
-            project.
+   2) Convert the rest projects into Intel(R) C++ project system.
 
-            Please choose the Intel(R) Fortran project as the main
-            project before splitting.
-
-            Meanwhile, the following projects will be created by the
-            Intel(R) Fortran project converter after the splitting:
-
-               dllfortestf_lib
-               fortestf_lib
-               hdf_dll_lib
-               hdf_lib
-               mfhdf_dll_lib
-               mfhdf_lib
-
-   2) Convert the rest projects (including the six projects created
-      in the above step and except the "all" dummy project) into
-      Intel(R) C++ project system.
-
-   3) Right clik project "hdf", go to Properties,
-      in the "Configuration:" text box, select "Debug",
-      go to Librarian-->Output Files, rename the output from
-      $(OutDir)/$(ProjectName).lib to
-      $(OutDir)/$(ProjectName)d.lib, then press "OK".
-
-   4) Right clik project "mfhdf", go to Properties,
-      in the "Configuration:" text box, select "Debug",
-      go to Librarian-->Output Files, rename the output from
-      $(OutDir)/$(ProjectName).lib to
-      $(OutDir)/$(ProjectName)d.lib, then press "OK".
-
-   5) Right clik project "hdf_dll", go to Properties,
-      in the "Configuration:" text box, select "Release",
-      go to Linker-->Advanced, rename the "Import Library" from
-      $(OutDir)/hdf_dll.lib to $(OutDir)/hd421m.lib,
-      then press "OK".
-
-   6) Right clik project "mfhdf_dll", go to Properties,
-      in the "Configuration:" text box, select "Release",
-      go to Linker-->Advanced, rename the "Import Library" from
-      $(OutDir)/mfhdf_dll.lib to $(OutDir)/hm421m.lib,
-      then press "OK".
-
-   After the above converion and modifications, HDF4 with Fortran
+    After the above converion and modifications, HDF4 with Fortran
    support can be built and tested following instrctions in
    Sections I and III.
 
