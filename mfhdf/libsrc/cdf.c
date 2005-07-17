@@ -143,16 +143,16 @@ done:
 #define V2_MAGIC_NUMBER  0x0000FFFF   /* Written twice at the beginning of file */
 #define V2_MAGIC_OFFSET  0
 
-/* -------------------------------- Hiscdf -------------------------------- */
+/* -------------------------------- HDiscdf -------------------------------- */
 /*
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
 */
 intn
-Hiscdf(filename)
+HDiscdf(filename)
 const char * filename;
 {
     
-    static const char *FUNC = "Hiscdf";
+    static const char *FUNC = "HDiscdf";
     hdf_file_t fp;
     uint8      b[4];
     uint8    * bb = NULL;
@@ -205,18 +205,18 @@ done:
 
 
 /*
-  Model after Hiscdf
+  Model after HDiscdf
 */
-/* -------------------------------- Hisnetcdf -------------------------------- */
+/* -------------------------------- HDisnetcdf -------------------------------- */
 /*
   Return TRUE if the given file is a netCDF file, FALSE otherwise.
 */
 intn
-Hisnetcdf(filename)
+HDisnetcdf(filename)
 const char * filename;
 {
     
-    static const char *FUNC = "Hisnetcdf";
+    static const char *FUNC = "HDisnetcdf";
     hdf_file_t fp;
     uint8      b[4];
     uint8    * bb = NULL;
@@ -311,9 +311,9 @@ int mode ;
       {
           if(Hishdf(name))
               cdf->file_type = HDF_FILE;
-          else if(Hiscdf(name))
+          else if(HDiscdf(name))
               cdf->file_type = CDF_FILE;
-          else if(Hisnetcdf(name))
+          else if(HDisnetcdf(name))
               cdf->file_type = netCDF_FILE;
           else
             {

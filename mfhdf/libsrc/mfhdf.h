@@ -214,6 +214,12 @@ HDFLIBAPI int32 SDcheckempty
 HDFLIBAPI hdf_idtype_t SDidtype
     (int32 an_id);
 
+HDFLIBAPI intn HDiscdf
+    (const char *filename);
+
+HDFLIBAPI intn HDisnetcdf
+    (const char *filename);
+
 /*====================== Chunking Routines ================================*/
 
 /* For defintion of HDF_CHUNK_DEF union see hproto.h since 
