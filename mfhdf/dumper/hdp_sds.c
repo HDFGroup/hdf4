@@ -500,8 +500,9 @@ print_SDattrs( int32 sd_id,
       fprintf(fp,"\t\t Type = %s \n\t\t Count= %i\n", attr_nt_desc, (int) attr_count);
       resetBuff(( VOIDP *) &attr_nt_desc );
 
-      /* display the attribute's values unless user chose to suppress them */
-      if( dumpsds_opts->no_gattr_data == FALSE )
+      /* display the attribute's values unless user chose to suppress them or
+	there are no values stored */
+      if (dumpsds_opts->no_gattr_data == FALSE && attr_count != 0)
       {
          /* to be sure that attr_buf is free before reuse since sometimes we
             have to break the current loop and continue to the next item */
@@ -598,8 +599,9 @@ print_SDSattrs( int32 sds_id,
       /* free buffer and reset it to NULL */
       resetBuff((VOIDP *) &attr_nt_desc );
 
-      /* display the attribute's values unless user chose to suppress them */
-      if( dumpsds_opts->no_lattr_data == FALSE )
+      /* display the attribute's values unless user chose to suppress them 
+	 or there are no values stored */
+      if (dumpsds_opts->no_lattr_data == FALSE && attr_count != 0)
       {
          /* to be sure that attr_buf is free before reuse since sometimes we
             have to break the current loop and continue to the next item */
@@ -685,13 +687,15 @@ intn printSD_ASCII(
          curr_file_name[MAXFNLEN]; /* curr hdf file name */
    intn  isdimvar,      /* TRUE if curr SDS is used for a dim */
          j,
-         dumpall = FALSE,    /* TRUE if all SDSs are to be dumped */
-         status,             /* status returned from a routine */
-         ret_value = SUCCEED;/* returned value of printSD_ASCII */
+         dumpall = FALSE,	/* TRUE if all SDSs are to be dumped */
+	 isnetCDF = FALSE,	/* TRUE when the file is netCDF */
+         status,		/* status returned from a routine */
+         ret_value = SUCCEED;	/* returned value of printSD_ASCII */
 
    /* temp. name for curr input file name for ease of use */
 /* curr_file_name can be removed from this routine after changing resetSDS API */
    HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
+   isnetCDF = HDisnetcdf(curr_file_name);   /* find out if file is netCDF */
 
    /* when there are no SDS specified, dumper dumps all datasets */
    if (num_sds_chosen == (NO_SPECIFIC))  /* NO_SPECIFIC = -1 */
@@ -789,18 +793,20 @@ intn printSD_ASCII(
 
             resetBuff(( VOIDP *) &nt_desc );  /* done with nt_desc */
 
-            /* get SDS's ref# from its id */
-            if ((sds_ref = SDidtoref(sds_id)) == FAIL)
-               ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
-			"printSD_ASCII", "SDidtoref", (int)sds_index, FAIL );
-
-            fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
-
-            /* print compression method or "NONE" */
-            {
+	    /* If the current file is not a netCDF, print the SDS' ref#
+	       and compression information */
+	    if(!isnetCDF)
+	    {
                 comp_coder_t comp_type;         /* Compression flag */
                 comp_info    c_info;            /* Compression structure */
 
+		/* get SDS's ref# from its id */
+		if ((sds_ref = SDidtoref(sds_id)) == FAIL)
+		    ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
+			"printSD_ASCII", "SDidtoref", (int)sds_index, FAIL );
+		fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
+
+                /* print compression method or "NONE" */
                 comp_type = COMP_CODE_NONE;  /* reset variables */
                 HDmemset(&c_info, 0, sizeof(c_info));
 
@@ -1001,32 +1007,20 @@ dsd(dump_info_t *dumpsds_opts,
       display information and data of each SDS in the specified manner */
    while (curr_arg < argc)
    {
-      intn isHDF;  /* FALSE, if current file is not HDF file */
-
       HDstrcpy(file_name, argv[curr_arg]);
       HDstrcpy( dumpsds_opts->ifile_name, file_name ); /* record file name */
       curr_arg++;
 
       /* Print an informative message and skip this file if it is not
          an HDF file */
-      isHDF = Hishdf(file_name);
-      if (isHDF == FALSE)
+      if (!Hishdf(file_name) && !HDisnetcdf(file_name))
       {
-	 char msg[40];
-	 intn isnetCDF;  /* TRUE, if current file is a netCDF file */
-
-	 isnetCDF = Hisnetcdf(file_name);
-	 if (isnetCDF == TRUE)
-	    strcpy(msg, "is a netCDF file, please use ncdump to read it");
-	 else 
-	    strcpy(msg, "is not an HDF file");
-
          /* if there are no more files to be processed, print informative
             message, then returns with FAIL */
 	 if( curr_arg == argc )
-	    {ERROR_GOTO_2( "in dsd: %s %s", file_name, msg);}
+	    {ERROR_GOTO_1( "in dsd: %s is not an HDF or netCDF file", file_name);}
          else /* print message, then continue processing the next file */
-            {ERROR_CONT_2( "in dsd: %s %s", file_name, msg);}
+            {ERROR_CONT_1( "in dsd: %s is not an HDF or netCDF file", file_name);}
       }
 
       /* open current hdf file with error check, if fail, go to next file */
