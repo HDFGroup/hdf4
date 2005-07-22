@@ -3116,6 +3116,10 @@ HIrelease_filerec_node(filerec_t *file_rec)
     CONSTR(FUNC, "HIrelease_filerec_node");
 #endif /* LATER */
 
+    /* Close file if it's opened */
+    if(file_rec->file!=NULL)
+	HI_CLOSE(file_rec->file);
+
     /* Free all the components of the file record */
     if(file_rec->path!=NULL)
         HDfree(file_rec->path);

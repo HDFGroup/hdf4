@@ -87,7 +87,7 @@ typedef FILE *hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((size_t)(n) == (size_t)fwrite((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)   (fclose(f))
+#   define HI_CLOSE(f)   (((f = ((fclose(f)==0) ? NULL : f))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(f)   (fflush(f)==0 ? SUCCEED : FAIL)
 #   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
 #   define HI_SEEK_CUR(f,o)  (fseek((f), (long)(o), SEEK_CUR)==0 ? SUCCEED : FAIL)
@@ -102,7 +102,7 @@ typedef int hdf_file_t;
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                     open((p), O_RDWR) : open((p), O_RDONLY))
 #   define HI_CREATE(p)         (open((p), O_RDWR | O_CREAT | O_TRUNC, 0666))
-#   define HI_CLOSE(f)          (close(f))
+#   define HI_CLOSE(f)          (((f = ((close(f)==0) ? NULL : f))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(f)          (SUCCEED)
 #   define HI_READ(f, b, n)     (((n)==read((f), (char *)(b), (n))) ? SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)    (((n)==write((f), (char *)(b), (n))) ? SUCCEED : FAIL)
@@ -117,7 +117,7 @@ typedef int hdf_file_t;
 typedef short hdf_file_t;
 #   define HI_OPEN(x,y)         mopen(x,y)
 #   define HI_CREATE(name)      mopen(name, DFACC_CREATE)
-#   define HI_CLOSE(x)          mclose(x)
+#   define HI_CLOSE(x)          (((x = ((mclose(x)==0) ? NULL : x))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(a)          (SUCCEED)
 #   define HI_READ(a,b,c)       mread(a, (char *) b, (int32) c)
 #   define HI_WRITE(a,b,c)      mwrite(a, (char *) b, (int32) c)
@@ -141,7 +141,7 @@ typedef FILE *hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)          (fclose(f))
+#   define HI_CLOSE(f)          (((f = ((fclose(f)==0) ? NULL : f))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(f)          (fflush(f)==0 ? SUCCEED : FAIL)
 #   define HI_SEEK(f,o)  (fseek((f), (long)(o), SEEK_SET)==0 ? SUCCEED : FAIL)
 #   define HI_SEEKEND(f) (fseek((f), (long)0, SEEK_END)==0 ? SUCCEED : FAIL)
@@ -161,7 +161,7 @@ typedef HFILE hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == HDfwritebig((b), (n), (f))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f)          (_lclose(f))
+#   define HI_CLOSE(f)          (((f = ((_lclose(f)==0) ? NULL : f))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(f)          (0)
 #   define HI_SEEK(f, o)        (_llseek((f), (long)(o), SEEK_SET))
 #   define HI_SEEKEND(f)        (_llseek((f), (long)0, SEEK_END))
@@ -179,7 +179,7 @@ typedef HFILE hdf_file_t;
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((int32)(n) == _hwrite((f), (b), (n))) ? \
                                 SUCCEED : FAIL)
-#   define HI_CLOSE(f) (_lclose(f)==0 ? SUCCEED : FAIL)
+#   define HI_CLOSE(f)         (((f = ((_lclose(f)==0) ? NULL : f))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(f) (0)
 #   define HI_SEEK(f, o)       (_llseek((f), (long)(o), 0))
 #   define HI_SEEKEND(f) (_llseek((f), (long)0, 2))
@@ -194,7 +194,7 @@ typedef HFILE hdf_file_t;
 typedef MPFILE *hdf_file_t;
 #   define HI_OPEN(p, a)        (MPopen((p), (a)))
 #   define HI_CREATE(p)         (MPopen((p), DFACC_CREATE))
-#   define HI_CLOSE(f)          (MPclose(f))
+#   define HI_CLOSE(f)          (((f = ((MPclose(f)==0) ? NULL : f))==NULL) ? SUCCEED:FAIL)
 #   define HI_FLUSH(f)          (MPflush(f))
 #   define HI_READ(f, b, n)     (MPread((f), (char *)(b), (n)))
 #   define HI_WRITE(f, b, n)    (MPwrite((f), (char *)(b), (n)))
