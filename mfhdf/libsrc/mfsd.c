@@ -2959,7 +2959,9 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
     dp = (NC_var**)handle->vars->values ;
     for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
       {
-          if( len == (*dp)->name->len 
+	/* eliminate vars with rank > 1, coord vars only have rank 1 */
+	if((*dp)->assoc->count == 1) 
+            if( len == (*dp)->name->len 
               && HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0) 
             {
                 /* see if we need to change the number type */
@@ -3516,7 +3518,9 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
           dp = (NC_var**)handle->vars->values;
           for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
             {
-                if( len == (*dp)->name->len 
+	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
+	      if((*dp)->assoc->count == 1) 
+                  if( len == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
                   {
                       if (handle->file_type == HDF_FILE)
@@ -3611,7 +3615,9 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
           dp = (NC_var**)handle->vars->values;
           for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
             {
-                if( namelen == (*dp)->name->len 
+	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
+	      if((*dp)->assoc->count == 1) 
+                  if( namelen == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, (size_t)namelen) == 0)
                   {
                       var = (*dp);
