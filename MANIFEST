@@ -914,6 +914,7 @@
 ./mfhdf/libsrc/putgetg.c
 ./mfhdf/libsrc/sharray.c
 ./mfhdf/libsrc/string.c
+./mfhdf/libsrc/tcoordvar.c
 ./mfhdf/libsrc/temptySDSs.c
 ./mfhdf/libsrc/tidtypes.c
 ./mfhdf/libsrc/test1.nc
