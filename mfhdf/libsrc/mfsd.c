@@ -2208,13 +2208,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
               goto done;
       }
 
-    /* disallow writing SDS with rank = 0 - BMR, bug #1045 */
-    if(tvar->shape == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
-
     /* Check compression method is enabled */
     status = HCPgetcompress(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
 		&comp_type, &c_info);
