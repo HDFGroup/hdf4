@@ -303,13 +303,6 @@ Hbitwrite(int32 bitid, intn count, uint32 data)
     /* clear error stack and check validity of file id */
     HEclear();
 
-#ifdef QAK
-{
-    static int total=0;
-    total+=count;
-printf("%s: total=%d\n",FUNC,total);
-}
-#endif /* QAK */
     if (count <= 0)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
@@ -591,9 +584,6 @@ Hbitseek(int32 bitid, int32 byte_offset, intn bit_offset)
     new_block = (byte_offset < bitfile_rec->block_offset
          || byte_offset >= bitfile_rec->block_offset + BITBUF_SIZE)
         ? TRUE : FALSE;
-#ifdef QAK
-printf("%s: check 1.0, new_block=%d\n",FUNC,new_block);
-#endif /* QAK */
     if (bitfile_rec->mode == 'w')
         if (HIbitflush(bitfile_rec, -1, new_block) == FAIL)     /* flush, but merge */
             HRETURN_ERROR(DFE_WRITEERROR, FAIL);
@@ -742,9 +732,6 @@ Hendbitaccess(int32 bitfile_id, intn flushbit)
     if (bitfile_rec == NULL)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
-#ifdef QAK
-printf("%s: flushbit=%d\n",FUNC,flushbit);
-#endif /* QAK */
     if (bitfile_rec->mode == 'w')
         if (HIbitflush(bitfile_rec, flushbit, TRUE) == FAIL)
             HRETURN_ERROR(DFE_WRITEERROR,FAIL);
@@ -835,23 +822,14 @@ HIbitflush(bitrec_t * bitfile_rec, intn flushbit, intn writeout)
 
     if (bitfile_rec->count < (intn)BITNUM)
       {     /* check if there are any */
-#ifdef QAK
-printf("%s: byte_offset=%d, max_offset=%d, bitfile_rec->count=%d\n",FUNC,(int)bitfile_rec->byte_offset,(int)bitfile_rec->max_offset,(int)bitfile_rec->count);
-#endif /* QAK */
           if (bitfile_rec->byte_offset > bitfile_rec->max_offset)
             {
-#ifdef QAK
-printf("%s: flushing bits, flushbit=%d, count=%d\n",FUNC,flushbit,bitfile_rec->count);
-#endif /* QAK */
                 if (flushbit != (-1))   /* only flush bits if asked and there are bits to flush */
                     if (Hbitwrite(bitfile_rec->bit_id, bitfile_rec->count, (uint32) (flushbit ? 0xFF : 0)) == FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
             }   /* end if */
           else
             {   /* we are in the middle of a dataset and need to integrate */
-#ifdef QAK
-printf("%s: merging bits, bytea=%p, bytep=%p, bytez=%p\n",FUNC,bitfile_rec->bytea,bitfile_rec->bytep,bitfile_rec->bytez);
-#endif /* QAK */
                 /* mask off a place for the new bits */
                 *(bitfile_rec->bytep) &= (uint8)(~(maskc[(intn)BITNUM - bitfile_rec->count] << bitfile_rec->count));
 
@@ -872,9 +850,6 @@ printf("%s: merging bits, bytea=%p, bytep=%p, bytez=%p\n",FUNC,bitfile_rec->byte
     if (writeout == TRUE)
       {     /* only write data out if necessary */
           write_size = (intn) MIN((bitfile_rec->bytez - bitfile_rec->bytea),bitfile_rec->max_offset);
-#ifdef QAK
-printf("%s: write_size=%d\n",FUNC,write_size);
-#endif /* QAK */
           if (write_size > 0)
               if (Hwrite(bitfile_rec->acc_id, write_size, bitfile_rec->bytea) == FAIL)
                   HRETURN_ERROR(DFE_WRITEERROR, FAIL);
@@ -952,9 +927,6 @@ HIwrite2read(bitrec_t * bitfile_rec)
     intn       prev_count = bitfile_rec->count;    /* preserve this for later */
     int32       prev_offset = bitfile_rec->byte_offset;
 
-#ifdef QAK
-printf("%s: check 1.0\n",FUNC);
-#endif /* QAK */
     if (HIbitflush(bitfile_rec, -1, TRUE) == FAIL)  /* flush any leftover bits */
         HRETURN_ERROR(DFE_WRITEERROR, FAIL);
 

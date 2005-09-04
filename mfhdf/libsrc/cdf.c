@@ -3409,11 +3409,6 @@ hdf_close(handle)
 
     } /* end if we need to flush out unlimited dimensions? */
 
-#ifdef QAK
-    /* Free dimension array if necessary */
-    if(handle->dims) 
-        NC_free_array(handle->dims); /* Might need to close Vdatas? -QAK */
-#endif /* QAK */
 
 done:
   if(ret_value == FAIL)   

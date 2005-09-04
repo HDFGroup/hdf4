@@ -1677,29 +1677,6 @@ nssdc_xdr_NCvdata(NC *handle,
     fprintf(stderr, "\tbyte_count %d   vp->HDFsize %d\n", byte_count, vp->HDFsize);
 #endif
 
-#ifdef QAK
-    /* Read or write the data into / from values */
-    if(handle->xdrs->x_op == XDR_DECODE) {
-        status = HI_READ((hdf_file_t) handle->cdf_fp, tBuf, byte_count);
-        if(status == FAIL) return FALSE;
-        
-        /* convert tBuf into values */
-        DFKnumin(tBuf, values, (uint32) count, 0, 0);
-        
-    } else {
-
-#ifdef CDF_WRITE      
-        /*  convert values into tBuf */
-        DFKnumout(values, tBuf, (uint32) count, 0, 0);
-        
-        status = Hwrite(vp->aid, byte_count, tBuf);
-        if(status != byte_count) return FALSE;
-#endif /* CDF_WRITE */
-
-    }
-#endif /* QAK */
-    
-
 #ifdef DEBUG
     fprintf(stderr, " * * * Done with call to nssdc_xdr_NCvdata * * *\n");
 #endif

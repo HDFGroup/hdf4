@@ -484,14 +484,6 @@ int32 bv_find(bv_ptr b,int32 last_find,bv_bool value)
               u=(uint32)b->last_zero;
           else
               u=0;
-#ifdef QAK
-{
-    static intn count=0;
-
-    printf("count=%d, u=%lu, b->last_zero=%ld, bytes_used=%ld\n",count,u,(long)b->last_zero,(long)bytes_used);
-    count++;
-}
-#endif /* QAK */
 #ifdef OLD_WAY
           for(; u<bytes_used; u++)
             {

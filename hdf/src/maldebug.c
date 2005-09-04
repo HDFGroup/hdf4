@@ -310,16 +310,6 @@ mem_HDrealloc(
     p->mh_tag = ~MEMTAG;
     mem_size -= p->mh_size;
 
-#ifdef QAK
-/* Invalidate the block of memory to be free'd */
-/* ------------------------------------------- */
-#if defined(MEM_COMP_FREE)
-    q = (unsigned char *) ptr;
-    for (i = 0; i < p->mh_size; i++)
-        q[i] = ~q[i];
-#endif
-#endif
-
 #if defined(MEM_WHERE)
     mem_list_delete(p);     /* Remove block from list */
 #endif
@@ -665,8 +655,5 @@ mem_tag_err(void *p, int type, char *func, char *fil, int lin)
 #if defined(MEM_LIST)
     Mem_Display(stdaux);
 #endif
-#endif
-#ifdef QAK
-    exit(1);
 #endif
 }   /* end mem_tag_err() */

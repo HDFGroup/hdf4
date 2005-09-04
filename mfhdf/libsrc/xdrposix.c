@@ -88,11 +88,7 @@ typedef struct {
     unsigned char *ptr;         /* next byte */
 #ifndef CRAY
 #ifdef DOS_FS
-#ifdef QAK
-#define BIOBUFSIZ   4096
-#else
 #define BIOBUFSIZ   512
-#endif
 #else
 #define BIOBUFSIZ   8192
 #endif

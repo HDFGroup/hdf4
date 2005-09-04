@@ -241,9 +241,6 @@ HLcreate(int32  file_id,
     uint8       local_ptbuf[16];
     int32       ret_value = SUCCEED;
 
-#ifdef QAK
-printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_blocks);
-#endif /* QAK */
     /* clear error stack and validate file record id */
     HEclear();
     file_rec = HAatom_object(file_id);
@@ -446,9 +443,6 @@ HLconvert(int32 aid,
     int32       old_posn;       /* position in the access element */
     intn        ret_value = SUCCEED;
 
-#ifdef QAK
-printf("%s: block_length=%ld, number_blocks=%ld\n",FUNC,block_length,number_blocks);
-#endif /* QAK */
     /* clear error stack */
     HEclear();
 
@@ -1038,9 +1032,6 @@ HLPread(accrec_t *access_rec,
     int32       ret_value = SUCCEED;
 
     /* validate length */
-#ifdef QAK
-printf("%s: length=%ld, info->length=%d, access_rec->posn=%d\n",FUNC,(long)length,(int)info->length,(int)access_rec->posn);
-#endif /* QAK */
     if (length == 0)
         length = info->length - access_rec->posn;
     else
@@ -1050,31 +1041,19 @@ printf("%s: length=%ld, info->length=%d, access_rec->posn=%d\n",FUNC,(long)lengt
     if (access_rec->posn + length > info->length)
         length = info->length - access_rec->posn;
 
-#ifdef QAK
-printf("%s: check 0\n",FUNC);
-#endif /* QAK */
     /* search for linked block to start reading from */
     if (relative_posn < info->first_length)
       { /* first block */
-#ifdef QAK
-printf("%s: check 1\n",FUNC);
-#endif /* QAK */
           block_idx = 0;
           current_length = info->first_length;
       }
     else /* not first block? */
       {
-#ifdef QAK
-printf("%s: check 2\n",FUNC);
-#endif /* QAK */
           relative_posn -= info->first_length;
           block_idx = relative_posn / info->block_length + 1;
           relative_posn %= info->block_length;
           current_length = info->block_length;
       }
-#ifdef QAK
-printf("%s: check 3\n",FUNC);
-#endif /* QAK */
 
 /* calculate which block to start from? */
     {
@@ -1089,9 +1068,6 @@ printf("%s: check 3\n",FUNC);
     }
     block_idx %= info->number_blocks;
 
-#ifdef QAK
-printf("%s: check 4, block_idx=%d\n",FUNC,block_idx);
-#endif /* QAK */
     /* found the starting block, now read in the data */
     do
       {
@@ -1101,18 +1077,12 @@ printf("%s: check 4, block_idx=%d\n",FUNC,block_idx);
           /* read in the data in this block */
           if (remaining > length)
               remaining = length;
-#ifdef QAK
-printf("%s: check 5, remaining=%d\n",FUNC,remaining);
-#endif /* QAK */
           if (t_link->block_list[block_idx].ref != 0)
             {
                 int32       access_id;  /* access record id for this block */
                 block_t    *current_block =     /* record on the current block */
                     &(t_link->block_list[block_idx]);
 
-#ifdef QAK
-printf("%s: check 6, relative_posn=%d\n",FUNC,(int)relative_posn);
-#endif /* QAK */
                 access_id = Hstartread(access_rec->file_id, DFTAG_LINKED,
                                        current_block->ref);
                 if (access_id == (int32) FAIL
@@ -1126,16 +1096,10 @@ printf("%s: check 6, relative_posn=%d\n",FUNC,(int)relative_posn);
             }
           else
             {   /*if block is missing, fill this part of buffer with zero's */
-#ifdef QAK
-printf("%s: check 7\n",FUNC);
-#endif /* QAK */
                 HDmemset(data, 0, (size_t)remaining);
                 bytes_read += nbytes;
             }
 
-#ifdef QAK
-printf("%s: check 7.2\n",FUNC);
-#endif /* QAK */
           /* move variables for the next block */
           data += remaining;
           length -= remaining;
@@ -1151,9 +1115,6 @@ printf("%s: check 7.2\n",FUNC);
       }
     while (length > 0);     /* if still somemore to read in, repeat */
 
-#ifdef QAK
-printf("%s: check 8, bytes_read=%d\n",FUNC,bytes_read);
-#endif /* QAK */
     access_rec->posn += bytes_read;
     ret_value = bytes_read;
 
@@ -1214,14 +1175,6 @@ HLPwrite(accrec_t   *access_rec,
     /* convert file id to file record */
     file_rec = HAatom_object(access_rec->file_id);
 
-#ifdef QAK
-printf("%s: length=%d\n",FUNC,(int)length);
-printf("%s: info->first_length=%d\n",FUNC,(int)info->first_length);
-printf("%s: info->block_length=%d\n",FUNC,(int)info->block_length);
-printf("%s: info->number_blocks=%d\n",FUNC,(int)info->number_blocks);
-printf("%s: info->length=%d\n",FUNC,(int)info->length);
-printf("%s: access_rec->posn=%d\n",FUNC,(int)access_rec->posn);
-#endif /* QAK */
     /* validate length and file records */
     if (length <= 0)
         HGOTO_ERROR(DFE_RANGE, FAIL);
@@ -1243,11 +1196,6 @@ printf("%s: access_rec->posn=%d\n",FUNC,(int)access_rec->posn);
           relative_posn %= info->block_length;
           current_length = info->block_length;
       }
-#ifdef QAK
-printf("%s: relative_posn=%d\n",FUNC,(int)relative_posn);
-printf("%s: current_length=%d\n",FUNC,(int)current_length);
-printf("%s: (a) block_idx=%d\n",FUNC,(int)block_idx);
-#endif /* QAK */
     {
         /* follow the links of block tables and create missing
            block tables along the way */
@@ -1255,9 +1203,6 @@ printf("%s: (a) block_idx=%d\n",FUNC,(int)block_idx);
 
         for (num_links = block_idx / info->number_blocks; num_links > 0; num_links--)
           {
-#ifdef QAK
-printf("%s: num_links=%d\n",FUNC,num_links);
-#endif /* QAK */
               if (!t_link->next)
                 {   /* create missing link (block table) */
                     t_link->nextref = Htagnewref(access_rec->file_id,DFTAG_LINKED);
@@ -1296,9 +1241,6 @@ printf("%s: num_links=%d\n",FUNC,num_links);
     }   /* end block statement(bad) */
 
     block_idx %= info->number_blocks;
-#ifdef QAK
-printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
-#endif /* QAK */
 
     /* start writing in that block */
     do
@@ -1312,9 +1254,6 @@ printf("%s: (b) block_idx=%d\n",FUNC,(int)block_idx);
           if (remaining > length)
               remaining = length;
 
-#ifdef QAK
-printf("%s: remaining=%d\n",FUNC,(int)remaining);
-#endif /* QAK */
           /* this block already exist, so just set up access to it */
           if (t_link->block_list[block_idx].ref != 0)
             {
@@ -1438,9 +1377,6 @@ printf("%s: remaining=%d\n",FUNC,(int)remaining);
     /* return SUCCEED; */
     /* if wrong # bytes written, FAIL has already been returned */
     ret_value = bytes_written;
-#ifdef QAK
-printf("%s: ret_value=%ld\n",FUNC,(long)bytes_written);
-#endif /* QAK */
 
 done:
   if(ret_value == FAIL)   

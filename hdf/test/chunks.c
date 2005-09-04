@@ -135,9 +135,6 @@ static uint8  outbuf_2[16] = {0,0,2,3,0,0,6,7,8,9,0,0,12,13,0,0};
 static    uint8      cptr3[4] = {10,11,14,15};
 static    uint8      cptr2[4] = {8,9,12,13};
 static    uint8      cptr1[4] = {2,3,6,7};
-#ifdef QAK
-static    uint8      cptr0[4] = {0,1,4,5};
-#endif /* QAK */
 
 /* for writing/verifying some chunks used in Test 6*/
 static uint8  chunk1[4] = { 0, 1, 2, 3};

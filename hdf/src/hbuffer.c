@@ -125,9 +125,6 @@ HBconvert(int32 aid)
     if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-#ifdef QAK
-printf("%s: check 1.0\n",FUNC);
-#endif /* QAK */
     /* get the info for the dataset */
     if (HTPis_special(access_rec->ddid) || access_rec->special!=0) {
         if((*access_rec->special_func->inquire) (access_rec, NULL,
@@ -138,9 +135,6 @@ printf("%s: check 1.0\n",FUNC);
         if(HTPinquire(access_rec->ddid,&data_tag,&data_ref,&data_off,&data_len)==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-#ifdef QAK
-printf("%s: check 2.0, data_off=%d, data_len=%d\n",FUNC,(int)data_off,(int)data_len);
-#endif /* QAK */
     /* is data defined but does not exist in the file? */
     if(data_off==INVALID_OFFSET && data_len==INVALID_LENGTH)
       { /* catch the case where the data doesn't exist yet */
@@ -520,9 +514,6 @@ HBPendaccess(accrec_t * access_rec)
 #endif /* LATER */
     intn     ret_value = SUCCEED;
 
-#ifdef QAK
-printf("%s: check 1.0\n",FUNC);
-#endif /* QAK */
     /* shut down the memory buffer and dependant access record */
     HBPcloseAID(access_rec);
 

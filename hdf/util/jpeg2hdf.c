@@ -192,27 +192,7 @@ process_tables(FILE * f)
 
           switch (c)
             {
-#ifdef QAK
-                case M_SOF0:
-                case M_SOF1:
-                case M_SOF2:
-                case M_SOF3:
-                case M_SOF5:
-                case M_SOF6:
-                case M_SOF7:
-                case M_JPG:
-                case M_SOF9:
-                case M_SOF10:
-                case M_SOF11:
-                case M_SOF13:
-                case M_SOF14:
-                case M_SOF15:
-                case M_SOI:
-#endif
                 case M_EOI:
-#ifdef OLD_WAY
-                case M_SOS:
-#endif
                     return ((JPEG_MARKER) c);
 
                 case M_SOF0:
@@ -220,28 +200,6 @@ process_tables(FILE * f)
                 case M_SOF9:
                     get_sof(f);
                     return ((JPEG_MARKER) c);
-
-#ifdef QAK
-                case M_DHT:
-                    get_dht(cinfo);
-                    break;
-
-                case M_DAC:
-                    get_dac(cinfo);
-                    break;
-
-                case M_DQT:
-                    get_dqt(cinfo);
-                    break;
-
-                case M_DRI:
-                    get_dri(cinfo);
-                    break;
-
-                case M_APP0:
-                    get_app0(cinfo);
-                    break;
-#endif
 
                 case M_RST0:    /* these are all parameterless */
                 case M_RST1:

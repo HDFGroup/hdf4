@@ -279,20 +279,6 @@ main(int argc, char *argv[])
                     );
                 MESSAGE(5, printf("There were %d errors detected.\n\n", (int) Test[Loop].NumErrors);
                     );
-
-#ifdef QAK
-                MESSAGE(2, printf("Testing  -- %s (%s) \n", Test[Loop].Description,
-                                  Test[Loop].Name);
-                    );
-                MESSAGE(5, printf("===============================================\n");
-                    );
-                Test[Loop].NumErrors = num_errs;
-                (*Test[Loop].Call) ();
-                Test[Loop].NumErrors = num_errs - Test[Loop].NumErrors;
-                MESSAGE(5, printf("===============================================\n");
-                    );
-#endif
-
             }   /* end else */
       }     /* end for */
 

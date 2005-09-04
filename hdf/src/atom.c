@@ -129,9 +129,6 @@ assert(sizeof(hdf_pint_t)==sizeof(void *));
     /* Increment the count of the times this group has been initialized */
     grp_ptr->count++;
 
-#ifdef QAK
-printf("%s: group ID=%d, count=%d, current # of active atoms=%d\n",FUNC,grp,grp_ptr->count,grp_ptr->atoms);
-#endif /* QAK */
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -177,9 +174,6 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
     if(grp_ptr==NULL || grp_ptr->count<=0)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-#ifdef QAK
-printf("%s: group ID=%d, count=%d, current # of active atoms=%d\n",FUNC,grp,grp_ptr->count,grp_ptr->atoms);
-#endif /* QAK */
     /* Decrement the number of users of the atomic group */
     if((--(grp_ptr->count))==0)
       {

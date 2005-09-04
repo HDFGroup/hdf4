@@ -2191,9 +2191,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         dim = SDIget_dim(handle, sdsid);
       }
 
-#ifdef QAK
-    fprintf(stderr, "SDwritedata: check 1.0\n");
-#endif
     if(handle->vars == NULL)
       {
           ret_value = FAIL;
@@ -2242,9 +2239,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         varid = (intn)sdsid & 0xffff;
       }
 
-#ifdef QAK
-    fprintf(stderr, "SDwritedata: check 2.0\n");
-#endif
     /* Check for strides all set to '1', so it acts like NULL was passed */
     if(stride!=NULL)
       {

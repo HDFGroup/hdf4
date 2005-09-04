@@ -1309,27 +1309,6 @@ test_r24(void)
 
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
-#ifdef QAK
-{
-    intn i,j,k;
-    intn out_cnt=0;
-
-    printf("retrieved quality 80\n");
-    for(i=0; i<JPEGY; i++) {
-        for(j=0; j<JPEGX; j++) {
-            for(k=0; k<3; k++) 
-                out_cnt+=printf("%d, ",(intn)*(jpeg_24bit_temp+(i*JPEGX*3)+(j*3)+k));
-            if(out_cnt>80) {
-                printf("\n");
-                out_cnt=0;
-              } /* end if */
-          } /* end for */
-        out_cnt=0;
-        printf("\n\n");
-      } /* end for */
-    printf("\n");
-} /* end block */
-#endif /* QAK */
 
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j80, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
@@ -1350,27 +1329,6 @@ test_r24(void)
 
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
-#ifdef QAK
-{
-    intn i,j,k;
-    intn out_cnt=0;
-
-    printf("retrieved quality 30\n");
-    for(i=0; i<JPEGY; i++) {
-        for(j=0; j<JPEGX; j++) {
-            for(k=0; k<3; k++) 
-                out_cnt+=printf("%d, ",(intn)*(jpeg_24bit_temp+(i*JPEGX*3)+(j*3)+k));
-            if(out_cnt>80) {
-                printf("\n");
-                out_cnt=0;
-              } /* end if */
-          } /* end for */
-        out_cnt=0;
-        printf("\n\n");
-      } /* end for */
-    printf("\n");
-} /* end block */
-#endif /* QAK */
 
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j30, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
@@ -1391,36 +1349,11 @@ test_r24(void)
 
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
-#ifdef QAK
-{
-    intn i,j,k;
-    intn out_cnt=0;
-
-    printf("retrieved quality 75\n");
-    for(i=0; i<JPEGY; i++) {
-        for(j=0; j<JPEGX; j++) {
-            for(k=0; k<3; k++) 
-                out_cnt+=printf("%d, ",(intn)*(jpeg_24bit_temp+(i*JPEGX*3)+(j*3)+k));
-            if(out_cnt>80) {
-                printf("\n");
-                out_cnt=0;
-              } /* end if */
-          } /* end for */
-        out_cnt=0;
-        printf("\n\n");
-      } /* end for */
-    printf("\n");
-} /* end block */
-#endif /* QAK */
 
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j75, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
           fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
           fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
-#ifdef QAK
-          print_image24("JPEG(75) Correct image", (uint8 *) jpeg_24bit_j75, JPEGX, JPEGY);
-          print_image24("JPEG(75) New image", (uint8 *) jpeg_24bit_temp, JPEGX, JPEGY);
-#endif
           num_errs++;
       }
 
@@ -1701,19 +1634,6 @@ test_r8(void)
 
     ret = DFR8getimage(JPEGFILE, (uint8 *) jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
-#ifdef QAK
-{
-    intn i,j;
-
-    printf("retrieved quality 80\n");
-    for(i=0; i<JPEGY; i++) {
-        for(j=0; j<JPEGX; j++) 
-            printf("%d, ",(intn)*(jpeg_8bit_temp+(i*JPEGX)+j));
-        printf("\n\n");
-      } /* end for */
-    printf("\n");
-} /* end block */
-#endif /* QAK */
 
     if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j80, sizeof(jpeg_8bit_orig)))
       {
@@ -1732,19 +1652,6 @@ test_r8(void)
 
     ret = DFR8getimage(JPEGFILE, (uint8 *) jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
-#ifdef QAK
-{
-    intn i,j;
-
-    printf("retrieved quality 30\n");
-    for(i=0; i<JPEGY; i++) {
-        for(j=0; j<JPEGX; j++) 
-            printf("%d, ",(intn)*(jpeg_8bit_temp+(i*JPEGX)+j));
-        printf("\n\n");
-      } /* end for */
-    printf("\n");
-} /* end block */
-#endif /* QAK */
 
     if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j30, sizeof(jpeg_8bit_orig)))
       {
@@ -1763,19 +1670,6 @@ test_r8(void)
 
     ret = DFR8getimage(JPEGFILE, (uint8 *) jpeg_8bit_temp, JPEGX, JPEGY, NULL);
     RESULT("DFR8getimage");
-#ifdef QAK
-{
-    intn i,j;
-
-    printf("retrieved quality 75\n");
-    for(i=0; i<JPEGY; i++) {
-        for(j=0; j<JPEGX; j++) 
-            printf("%d, ",(intn)*(jpeg_8bit_temp+(i*JPEGX)+j));
-        printf("\n\n");
-      } /* end for */
-    printf("\n");
-} /* end block */
-#endif /* QAK */
 
     if (HDmemcmp(jpeg_8bit_temp, jpeg_8bit_j75, sizeof(jpeg_8bit_orig)))
       {

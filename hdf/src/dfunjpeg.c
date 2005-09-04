@@ -40,11 +40,6 @@ typedef struct {
     int32 aid;              /* target AID for input */
     int32 file_id;          /* HDF file ID */
     uint16 tag, ref;        /* tag & ref of image to input */
-#ifdef QAK
-    VOIDP image;            /* pointer to the image data */
-    int32 xdim, ydim;       /* X & Y dimensions of the image */
-    int16 scheme;           /* type of image (8-bit or 24-bit) */
-#endif /* QAK */
 
     /* HDF backward compatibility flags */
     intn old_jpeg_image;    /* whether the image is an JPEG4-style HDF image */
@@ -253,12 +248,6 @@ jpeg_HDF_src(struct jpeg_decompress_struct *cinfo_ptr, int32 file_id, uint16 tag
     src->file_id = file_id;
     src->tag = tag;
     src->ref = ref;
-#ifdef QAK
-    src->image = image;
-    src->xdim = xdim;
-    src->ydim = ydim;
-    src->scheme = scheme;
-#endif /* QAK */
 
     /* check for old-style HDF JPEG image */
 #ifdef OLD_WAY

@@ -2010,9 +2010,6 @@ test_compression()
     intn  status;      /* status flag */
     int32   start[10], end[10]; /* start and end arrays */
 
-#ifdef QAK
-printf("writing 1st compressed dataset, basic skipping huffman\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE1, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2028,9 +2025,6 @@ printf("writing 1st compressed dataset, basic skipping huffman\n");
     for(i = 0; i < 25; i++)
         idata[i] = i*10;
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     cinfo.skphuff.skp_size=4;
     status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
     CHECK(status, FAIL, "SDcompress");
@@ -2043,15 +2037,9 @@ printf("before SDsetcompress\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
     CHECK(status, FAIL, "SDwritedata");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2060,9 +2048,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE1, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2092,9 +2077,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2104,18 +2086,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("writing 2nd compressed dataset, partially filled & skipping huffman\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE2, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2129,15 +2105,9 @@ printf("writing 2nd compressed dataset, partially filled & skipping huffman\n");
     }
 
     fillval=43;
-#ifdef QAK
-printf("before SDsetfillvalue\n");
-#endif /* QAK */
     status = SDsetfillvalue(newsds,(VOIDP)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     cinfo.skphuff.skp_size=4;
     status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
     CHECK(status, FAIL, "SDsetcompress");
@@ -2155,15 +2125,9 @@ printf("before SDsetcompress\n");
     start[1] = 0;
     end[0]   = 3;
     end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[5]);
     CHECK(status, FAIL, "SDwritedata");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2172,9 +2136,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE2, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2186,9 +2147,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2198,18 +2156,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("creating 3rd compressed dataset, compressed template & skipping huffman\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE3, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2223,22 +2175,13 @@ printf("creating 3rd compressed dataset, compressed template & skipping huffman\
     }
 
     fillval=56;
-#ifdef QAK
-printf("before SDsetfillvalue\n");
-#endif /* QAK */
     status = SDsetfillvalue(newsds,(VOIDP)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     cinfo.skphuff.skp_size=4;
     status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
     CHECK(status, FAIL, "SDsetcompress");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2247,9 +2190,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE3, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2261,9 +2201,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2273,18 +2210,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("creating 4th compressed dataset, compressed template read, then partial write & skipping huffman\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE4, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2298,22 +2229,13 @@ printf("creating 4th compressed dataset, compressed template read, then partial 
     }
 
     fillval=67;
-#ifdef QAK
-printf("before SDsetfillvalue\n");
-#endif /* QAK */
     status = SDsetfillvalue(newsds,(VOIDP)&fillval);
     CHECK(status, FAIL, "SDsetfillvalue");
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     cinfo.skphuff.skp_size=4;
     status = SDsetcompress(newsds,COMP_CODE_SKPHUFF,&cinfo);
     CHECK(status, FAIL, "SDsetcompress");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2322,9 +2244,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE4, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2336,9 +2255,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2348,18 +2264,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("writing compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE4, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2381,16 +2291,10 @@ printf("writing compressed dataset\n");
     start[1] = 0;
     end[0]   = 2;
     end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) &idata[10]);
     CHECK(status, FAIL, "SDwritedata");
 
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2409,9 +2313,6 @@ printf("before SDendaccess\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2421,18 +2322,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("writing 5th compressed dataset, basic RLE\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE5, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2448,23 +2343,14 @@ printf("writing 5th compressed dataset, basic RLE\n");
     for(i = 0; i < 25; i++)
         idata[i] = i*10;
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     status = SDsetcompress(newsds,COMP_CODE_RLE,&cinfo);
     CHECK(status, FAIL, "SDcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
     CHECK(status, FAIL, "SDwritedata");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2473,9 +2359,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE5, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2503,9 +2386,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2515,18 +2395,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("writing 6th compressed dataset, no encoding\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE6, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2542,23 +2416,14 @@ printf("writing 6th compressed dataset, no encoding\n");
     for(i = 0; i < 25; i++)
         idata[i] = i*10;
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     status = SDsetcompress(newsds,COMP_CODE_NONE,&cinfo);
     CHECK(status, FAIL, "SDcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
     CHECK(status, FAIL, "SDwritedata");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2567,9 +2432,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE6, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2597,9 +2459,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2609,18 +2468,12 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 
-#ifdef QAK
-printf("writing 7th compressed dataset, deflate encoding\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE7, DFACC_CREATE);
     CHECK(fcomp, FAIL, "SDstart");
 
@@ -2636,24 +2489,15 @@ printf("writing 7th compressed dataset, deflate encoding\n");
     for(i = 0; i < 25; i++)
         idata[i] = i*10;
 
-#ifdef QAK
-printf("before SDsetcompress\n");
-#endif /* QAK */
     cinfo.deflate.level=6;
     status = SDsetcompress(newsds,COMP_CODE_DEFLATE,&cinfo);
     CHECK(status, FAIL, "SDcompress");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDwritedata\n");
-#endif /* QAK */
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
     CHECK(status, FAIL, "SDwritedata");
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -2662,9 +2506,6 @@ printf("before SDendaccess\n");
     CHECK(status, FAIL, "SDend");
 
     /* read the compressed data back in */
-#ifdef QAK
-printf("reading compressed dataset\n");
-#endif /* QAK */
     fcomp = SDstart(COMPFILE7, DFACC_RDWR);
     CHECK(fcomp, FAIL, "SDstart (again)");
 
@@ -2694,9 +2535,6 @@ printf("reading compressed dataset\n");
 
     start[0] = start[1] = 0;
     end[0]   = end[1]   = 5;
-#ifdef QAK
-printf("before SDreaddata\n");
-#endif /* QAK */
     status = SDreaddata(newsds2, start, NULL, end, (VOIDP) rdata);
     CHECK(status, FAIL, "SDreaddata");
 
@@ -2706,15 +2544,9 @@ printf("before SDreaddata\n");
             num_errs++;
         }
 
-#ifdef QAK
-printf("before SDendaccess\n");
-#endif /* QAK */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
 
-#ifdef QAK
-printf("before SDend\n");
-#endif /* QAK */
     status = SDend(fcomp);
     CHECK(status, FAIL, "SDend");
 

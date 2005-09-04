@@ -480,64 +480,6 @@ DFKui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                               lp_dest[3] = lp_src[0] & UI2I_MASKD;
                               lp_dest += 4;
                               lp_src++;
-#ifdef QAK
-                    case 15:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 14:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 13:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 12:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 11:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 10:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 9:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-                    case 8:
-                              lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
-                              lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
-                              lp_dest[2] = (lp_src[0] & UI2I_MASKC) >> 16;
-                              lp_dest[3] = lp_src[0] & UI2I_MASKD;
-                              lp_dest += 4;
-                              lp_src++;
-#endif
                     case 7:
                               lp_dest[0] = (lp_src[0] & UI2I_MASKA) >> 48;
                               lp_dest[1] = (lp_src[0] & UI2I_MASKB) >> 32;
@@ -834,56 +776,6 @@ DFKuo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((lp_src[2] & UO2I_MASK) << 16) |
                                   (lp_src[3] & UO2I_MASK);
                               lp_src += 4;
-#ifdef QAK
-                    case 15:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 14:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 13:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 12:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 11:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 10:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 9:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-                    case 8:
-                              *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
-                                  ((lp_src[1] & UO2I_MASK) << 32) |
-                                  ((lp_src[2] & UO2I_MASK) << 16) |
-                                  (lp_src[3] & UO2I_MASK);
-                              lp_src += 4;
-#endif
                     case 7:
                               *lp_dest++ = ((lp_src[0] & UO2I_MASK) << 48) |
                                   ((lp_src[1] & UO2I_MASK) << 32) |
@@ -1145,48 +1037,6 @@ DFKui4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                               lp_dest[1] = lp_src[0] & UI4I_MASKB;
                               lp_dest += 2;
                               lp_src++;
-#ifdef QAK
-                    case 15:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 14:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 13:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 12:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 11:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 10:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 9:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-                    case 8:
-                              lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
-                              lp_dest[1] = lp_src[0] & UI4I_MASKB;
-                              lp_dest += 2;
-                              lp_src++;
-#endif
                     case 7:
                               lp_dest[0] = (lp_src[0] & UI4I_MASKA) >> 32;
                               lp_dest[1] = lp_src[0] & UI4I_MASKB;
@@ -1419,32 +1269,6 @@ DFKuo4i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                           {
                               *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
                               lp_src += 2;
-#ifdef QAK
-                    case 15:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 14:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 13:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 12:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 11:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 10:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 9:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-                    case 8:
-                              *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
-                              lp_src += 2;
-#endif
                     case 7:
                               *lp_dest++ = ((lp_src[0] & UO4I_MASK) << 32) | (lp_src[1] & UO4I_MASK);
                               lp_src += 2;
@@ -2158,96 +1982,6 @@ DFKlui2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((lp_src[0] & LUI2I_MASKD2) << 8);
                               lp_dest += 4;
                               lp_src++;
-#ifdef QAK
-                    case 15:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 14:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 13:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 12:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 11:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 10:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 9:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-                    case 8:
-                              lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
-                                  ((lp_src[0] & LUI2I_MASKA2) >> 40);
-                              lp_dest[1] = ((lp_src[0] & LUI2I_MASKB1) >> 40) |
-                                  ((lp_src[0] & LUI2I_MASKB2) >> 24);
-                              lp_dest[2] = ((lp_src[0] & LUI2I_MASKC1) >> 24) |
-                                  ((lp_src[0] & LUI2I_MASKC2) >> 8);
-                              lp_dest[3] = ((lp_src[0] & LUI2I_MASKD1) >> 8) |
-                                  ((lp_src[0] & LUI2I_MASKD2) << 8);
-                              lp_dest += 4;
-                              lp_src++;
-#endif
                     case 7:
                               lp_dest[0] = ((lp_src[0] & LUI2I_MASKA1) >> 56) |
                                   ((lp_src[0] & LUI2I_MASKA2) >> 40);
@@ -2639,88 +2373,6 @@ DFKluo2i(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
                                   ((lp_src[3] & LUO2I_MASKA) << 8) |
                                   ((lp_src[3] & LUO2I_MASKB) >> 8);
                               lp_src += 4;
-#ifdef QAK
-                    case 15:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 14:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 13:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 12:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 11:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 10:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 9:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-                    case 8:
-                              *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
-                                  ((lp_src[0] & LUO2I_MASKB) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKA) << 40) |
-                                  ((lp_src[1] & LUO2I_MASKB) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKA) << 24) |
-                                  ((lp_src[2] & LUO2I_MASKB) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKA) << 8) |
-                                  ((lp_src[3] & LUO2I_MASKB) >> 8);
-                              lp_src += 4;
-#endif
                     case 7:
                               *lp_dest++ = ((lp_src[0] & LUO2I_MASKA) << 56) |
                                   ((lp_src[0] & LUO2I_MASKB) << 40) |

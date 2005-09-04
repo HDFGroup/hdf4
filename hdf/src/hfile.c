@@ -1252,9 +1252,6 @@ Hseek(int32 access_id, int32 offset, intn origin)
   /* clear error stack and check validity of this access id */
   HEclear();
 
-#ifdef QAK
-printf("%s: entering\n",FUNC);
-#endif /* QAK */
   access_rec = HAatom_object(access_id);
   if (access_rec == (accrec_t *) NULL
       || (origin != DF_START && origin != DF_CURRENT && origin != DF_END))
@@ -1263,9 +1260,6 @@ printf("%s: entering\n",FUNC);
   /* if special elt, use special function */
   if (access_rec->special)
     { /* yes, call special seek fucntion with proper args */
-#ifdef QAK
-printf("%s: access ID is special\n",FUNC);
-#endif /* QAK */
       ret_value = (intn) (*access_rec->special_func->seek) (access_rec, offset, origin);
       goto done;
     }
@@ -1274,19 +1268,12 @@ printf("%s: access ID is special\n",FUNC);
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
       
-#ifdef QAK
-printf("%s: check 1.0, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(int)origin,(int)data_len);
-#endif /* QAK */
   /* calculate real offset based on the origin */
   if (origin == DF_CURRENT)
     offset += access_rec->posn;
   if (origin == DF_END)
     offset += data_len;
 
-#ifdef QAK
-printf("%s: check 1.5, offset=%d, origin=%d, data_len=%d\n",FUNC,(int)offset,(int)origin,(int)data_len);
-printf("%s: check 1.6, access_rec->posn=%d\n",FUNC,(int)access_rec->posn);
-#endif /* QAK */
   /* If we aren't moving the access records position, bypass the next bit of code */
   /* This allows seeking to offset zero in not-yet-existent data elements -QAK */
   if(offset==access_rec->posn)
@@ -1299,9 +1286,6 @@ printf("%s: check 1.6, access_rec->posn=%d\n",FUNC,(int)access_rec->posn);
       HGOTO_ERROR(DFE_BADSEEK, FAIL);
     }
 
-#ifdef QAK
-printf("%s: check 2.0\n",FUNC);
-#endif /* QAK */
 /* check if element is appendable and writing past current element length */
   if (access_rec->appendable && offset >= data_len)
     { /* yes */
@@ -1330,9 +1314,6 @@ printf("%s: check 2.0\n",FUNC);
   access_rec->posn = offset;
 
 done:
-#ifdef QAK
-printf("%s: exiting\n",FUNC);
-#endif /* QAK */
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
@@ -1506,16 +1487,10 @@ Hwrite(int32 access_id, int32 length, const void * data)
       || data == NULL)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
-#ifdef QAK
-printf("%s: length=%ld\n",FUNC,(long)length);
-#endif /* QAK */
 
   /* if special elt, call special write function */
   if (access_rec->special)
     {
-#ifdef QAK
-printf("%s: access record is special\n",FUNC);
-#endif /* QAK */
       ret_value = (*access_rec->special_func->write) (access_rec, length, data);
       goto done; /* we are done */
     } /* end special */
@@ -1533,18 +1508,12 @@ printf("%s: access record is special\n",FUNC);
       access_rec->appendable = TRUE;	/* make it appendable */
     }		/* end if */
 
-#ifdef QAK
-printf("%s: before HTPinquire\n",FUNC);
-#endif /* QAK */
 
   /* get the offset and length of the element. This should have
      been set by Hstartwrite(). */
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-#ifdef QAK
-printf("%s: length=%ld, data_len=%ld, access_rec->posn=%ld\n",FUNC,(long)length,(long)data_len,(long)access_rec->posn);
-#endif /* QAK */
   /* check validity of length and write data.
    NOTE: it is an error to attempt write past the end of the elt */
   if (length <= 0 
@@ -1579,9 +1548,6 @@ printf("%s: length=%ld, data_len=%ld, access_rec->posn=%ld\n",FUNC,(long)length,
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }		/* end if */
 
-#ifdef QAK
-printf("%s: offset=%ld\n",FUNC,(long)(access_rec->posn+data_off));
-#endif /* QAK */
   /* seek and write data */
   if (HPseek(file_rec, access_rec->posn + data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -1668,9 +1634,6 @@ HDputc(uint8 c, int32 access_id)
   CONSTR(FUNC, "HDputc");		/* for HERROR */
   intn ret_value = SUCCEED;
 
-#ifdef QAK
-printf("%s: c=%u\n",FUNC,(unsigned)c);
-#endif /* QAK */
   if (Hwrite(access_id, 1, &c) == FAIL)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 

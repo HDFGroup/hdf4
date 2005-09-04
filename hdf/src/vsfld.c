@@ -315,7 +315,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
     /*
      ** check for any duplicates
      */
-#ifdef QAK
+#ifdef OLD_WAY
 /* It's OK to over-ride pre-defined symbols with the user's own -QAK */
     /* --- first look in the reserved symbol table --- */
     for (j = 0; j < NRESERVED; j++)
@@ -324,7 +324,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
               if (localtype != rstab[j].type && order != rstab[j].order)
                   break;
           }
-#endif /* QAK */
+#endif /* OLD_WAY */
 
     /* --- then look in the user's symbol table --- */
     for (replacesym = 0, j = 0; j < vs->nusym; j++)

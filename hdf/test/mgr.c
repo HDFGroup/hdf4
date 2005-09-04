@@ -152,9 +152,6 @@ const float64 image4[19][17][2]={
 {{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}}
 };
 
-#ifdef QAK
-static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt);
-#endif /* QAK */
 static void test_mgr_init(void);
 static void test_mgr_image_b1a(int flag);
 static void test_mgr_image_b1b(int flag);
@@ -163,12 +160,9 @@ static void test_mgr_image_b2a1bb1(int flag);
 static void test_mgr_image_b2a1bb2(int flag);
 static void test_mgr_image_b2a1cc1(int flag);
 static void test_mgr_image_b2a1cc2(int flag);
-static void test_mgr_image_b2a2aa(int flag);
 static void test_mgr_image_b2a2bb(int flag);
 static void test_mgr_image_b2a2cc(int flag);
 static void test_mgr_image_b2b1(int flag);
-static void test_mgr_image_b2b2(int flag);
-static void test_mgr_image_b2b3(int flag);
 static void test_mgr_image(int flag);
 static void test_mgr_index(int flag);
 static void test_mgr_interlace(int flag);
@@ -207,112 +201,6 @@ fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
           return ((intn) (*t1 - *t2));
       }
 }   /* end fuzzy_memcmp() */
-
-
-#ifdef QAK
-static void dump_image(void *data, int32 xdim, int32 ydim, int32 ncomp, int32 nt)
-{
-    int32 nt_size=DFKNTsize(nt);
-    int32 i,j,k;
-
-    for(i=0; i<ydim; i++)
-      {
-#ifdef QAK
-          printf("%ld:",(long)i);
-#endif /* QAK */
-          for(j=0; j<xdim; j++)
-            {
-                if(ncomp>1)
-                    printf("{");
-                for(k=0; k<ncomp; k++)
-                  {
-                    switch(nt)
-                      {
-                          case DFNT_CHAR8:
-                          case DFNT_UCHAR8:
-#ifdef QAK
-                            {
-                                char *ptr=(char *)data;
-                                printf("%c",*ptr);
-                            }
-                            break;
-#endif /* QAK */
-
-                          case DFNT_UINT8:
-                            {
-                                unsigned char *ptr=(unsigned char *)data;
-                                printf("%u",(unsigned)*ptr);
-                            }
-                            break;
-
-                          case DFNT_INT8:
-                            {
-                                char *ptr=(char *)data;
-                                printf("%d",(int)*ptr);
-                            }
-                            break;
-
-                          case DFNT_UINT16:
-                            {
-                                uint16 *ptr=(uint16 *)data;
-                                printf("%u",(unsigned)*ptr);
-                            }
-                            break;
-
-                          case DFNT_INT16:
-                            {
-                                int16 *ptr=(int16 *)data;
-                                printf("%d",(int)*ptr);
-                            }
-                            break;
-
-                          case DFNT_UINT32:
-                            {
-                                uint32 *ptr=(uint32 *)data;
-                                printf("%lu",(unsigned long)*ptr);
-                            }
-                            break;
-
-                          case DFNT_INT32:
-                            {
-                                int32 *ptr=(int32 *)data;
-                                printf("%ld",(long)*ptr);
-                            }
-                            break;
-
-                          case DFNT_FLOAT32:
-                            {
-                                float32 *ptr=(float32 *)data;
-                                printf("%f",(double)*ptr);
-                            }
-                            break;
-
-                          case DFNT_FLOAT64:
-                            {
-                                float64 *ptr=(float64 *)data;
-                                printf("%f",(double)*ptr);
-                            }
-                            break;
-
-                          default:
-                            printf("unknown NT: %ld\n",(long)nt);
-                            break;
-
-                      } /* end switch */
-                    if(k<(ncomp-1))
-                        printf(", ");
-                    data=(void *)((char *)data+nt_size);
-                  } /* end for */
-                if(ncomp>1)
-                    printf("}, ");
-                else
-                    printf(", ");
-
-            } /* end for */
-          printf("\n");
-      } /* end for */
-}   /* dump_image() */
-#endif /* QAK */
 
 /* Test outline:
     I. Interface Initialization
@@ -1552,124 +1440,6 @@ static void test_mgr_image_b2a1cc2(int flag)
 
 } /* end test_mgr_image_b2a1cc() */
 
-static void test_mgr_image_b2a2aa(int flag)
-{
-#ifdef QAK
-    int32 fid;              /* HDF file ID */
-    int32 grid;             /* GRID for the interface */
-    int32 ret;              /* generic return value */
-
-/* B2a2aa - Read/Write images - with real Data - New Image - with User-Defined Fill Value - Whole Image */
-/* The following test is unnecessary, fill-values only are important when writing out partial images */
-    MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Whole Image\n"););
-
-    /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(fid,FAIL,"Hopen");
-
-    /* Initialize the GR interface */
-    grid=GRstart(fid);
-    CHECK(grid,FAIL,"GRstart");
-
-    {
-#ifdef TEST_XDIM
-#undef TEST_XDIM
-#endif /* TEST_XDIM */
-#define TEST_XDIM    3
-#ifdef TEST_YDIM
-#undef TEST_YDIM
-#endif /* TEST_YDIM */
-#define TEST_YDIM    8
-#ifdef TEST_NCOMP
-#undef TEST_NCOMP
-#endif /* TEST_NCOMP */
-#define TEST_NCOMP   2
-#ifdef TEST_VARTYPE
-#undef TEST_VARTYPE
-#endif /* TEST_VARTYPE */
-#define TEST_VARTYPE int32
-#ifdef TEST_NT
-#undef TEST_NT
-#endif /* TEST_NT */
-#define TEST_NT      DFNT_INT32
-
-        int32 riid;     /* RI ID for the new image */
-        int32 dims[2]={TEST_XDIM,TEST_YDIM};    /* dimensions for the empty image */
-        uint16 ref;     /* RI ref #. */
-        int32 index;    /* RI index # */
-        TEST_VARTYPE image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE fill_pixel[TEST_NCOMP]={1,-2};   /* pixel with fill values */
-        TEST_VARTYPE fill_pixel2[TEST_NCOMP]={-2,1};   /* pixel with fill values */
-        TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        int32 start[2]; /* start of image data to grab */
-        int32 stride[2];/* stride of image data to grab */
-        intn i,j,k;     /* local counting variables */
-
-        /* fill the memory-only with the default pixel fill-value */
-        for(i=0; i<TEST_YDIM; i++)
-          {
-              for(j=0; j<TEST_XDIM; j++)
-                {
-                    if((j%2)==0)
-                        HDmemcpy(&image0[i][j][0],fill_pixel,sizeof(fill_pixel));
-                    else
-                        HDmemcpy(&image0[i][j][0],fill_pixel2,sizeof(fill_pixel2));
-                } /* end for */
-          } /* end for */
-        HDmemcpy(image,image0,sizeof(image0));
-
-        /* Create empty image with default fill value */
-        riid=GRcreate(grid,"Test Image B2a1aa",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
-        CHECK(riid,FAIL,"GRcreate");
-
-        /* Save the ref. # for later access */
-        ref=GRidtoref(riid);
-        CHECK(ref,(uint16)FAIL,"GRidtoref");
-
-        start[0]=start[1]=0;
-        stride[0]=stride[1]=1;
-        ret=GRwriteimage(riid,start,stride,dims,image);
-        CHECK(ret,FAIL,"GRwriteimage");
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-
-        /* Get the index of the newly created image */
-        index=GRreftoindex(grid,ref);
-        CHECK(index,FAIL,"GRreftoindex");
-
-        /* Select the newly created image */
-        riid=GRselect(grid,index);
-        CHECK(riid,FAIL,"GRselect");
-
-        start[0]=start[1]=0;
-        stride[0]=stride[1]=1;
-        ret=GRreadimage(riid,start,stride,dims,image);
-        CHECK(ret,FAIL,"GRreadimage");
-
-        if(0!=HDmemcmp(image,image0,sizeof(image0)))
-          {
-              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, whole image\n",__LINE__););
-              num_errs++;
-          } /* end if */
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-    }
-    
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-
-    /* Close the file */
-    ret=Hclose(fid);
-    CHECK(ret,FAIL,"Hclose");
-#endif /* QAK */
-
-} /* end test_mgr_image_b2a2aa() */
-
 static void test_mgr_image_b2a2bb(int flag)
 {
     int32 fid;              /* HDF file ID */
@@ -1851,137 +1621,6 @@ static void test_mgr_image_b2a2bb(int flag)
     /* Close the file */
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
-
-/* The following test is unnecessary, fill-values only make a difference when writing out data -QAK */
-#ifdef QAK
-    MESSAGE(8, printf("Check out I/O on new image with real data, with User-Defined fill-value, Reading Sub-setted Image\n"););
-    /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(fid,FAIL,"Hopen");
-
-    /* Initialize the GR interface */
-    grid=GRstart(fid);
-    CHECK(grid,FAIL,"GRstart");
-
-    {
-#ifdef TEST_XDIM
-#undef TEST_XDIM
-#endif /* TEST_XDIM */
-#define TEST_XDIM    19
-#ifdef TEST_YDIM
-#undef TEST_YDIM
-#endif /* TEST_YDIM */
-#define TEST_YDIM    23
-#ifdef TEST_NCOMP
-#undef TEST_NCOMP
-#endif /* TEST_NCOMP */
-#define TEST_NCOMP   4
-#ifdef TEST_VARTYPE
-#undef TEST_VARTYPE
-#endif /* TEST_VARTYPE */
-#define TEST_VARTYPE uint16
-#ifdef TEST_NT
-#undef TEST_NT
-#endif /* TEST_NT */
-#define TEST_NT      DFNT_UINT16
-
-        int32 riid;     /* RI ID for the new image */
-        int32 dims[2]={TEST_XDIM,TEST_YDIM};    /* dimensions for the empty image */
-        uint16 ref;     /* RI ref #. */
-        int32 index;    /* RI index # */
-        TEST_VARTYPE image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE fill_pixel[TEST_NCOMP]={-3.4,4.5,-0.03,100.4};   /* pixel with fill values */
-        TEST_VARTYPE pixel[TEST_NCOMP]={-20.00,4.8,0.3,1.0};   /* pixel with fill values */
-        TEST_VARTYPE pixel2[TEST_NCOMP]={1.23,1.0,-6500.0,350.0};   /* pixel with fill values */
-        TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE sub_image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE *sub_ptr;
-        int32 start[2]; /* start of image data to use */
-        int32 stride[2];/* stride of image data to use */
-        int32 count[2]; /* # of pixels of image data to use */
-        intn i,j,k;     /* local counting variables */
-
-        /* fill the memory-only with the default pixel fill-values */
-        HDmemset(image0,0,sizeof(image0));
-        sub_ptr=(TEST_VARTYPE *)sub_image;
-        for(i=0; i<TEST_YDIM; i++)
-          {
-              for(j=0; j<TEST_XDIM; j++)
-                {
-                    if((j%2)==0)
-                        HDmemcpy(&image0[i][j][0],pixel,sizeof(pixel));
-                    else
-                        HDmemcpy(&image0[i][j][0],pixel2,sizeof(pixel2));
-                    if(((i>(TEST_YDIM/3)) && (i<(2*TEST_YDIM/3)))
-                        && ((j>(TEST_XDIM/4)) && (j<(3*TEST_XDIM/4))))
-                      {
-                          HDmemcpy(sub_ptr,&image0[i][j][0],TEST_NCOMP*sizeof(TEST_VARTYPE));
-                          sub_ptr+=TEST_NCOMP;
-                      } /* end if */
-                } /* end for */
-          } /* end for */
-
-        /* initialize the disk buffer */
-        HDmemset(image,255,sizeof(image));
-
-        /* Create empty image with default fill value */
-        riid=GRcreate(grid,"Test Image B2a2bb2",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
-        CHECK(riid,FAIL,"GRcreate");
-
-        /* Save the ref. # for later access */
-        ref=GRidtoref(riid);
-        CHECK(ref,(uint16)FAIL,"GRidtoref");
-
-        /* Set the fill-value */
-        ret=GRsetattr(riid,FILL_ATTR,TEST_NT,TEST_NCOMP,fill_pixel);
-        CHECK(ret,FAIL,"GRsetattr");
-
-        /* Create whole image */
-        start[XDIM]=start[YDIM]=0;
-        stride[XDIM]=stride[YDIM]=1;
-        ret=GRwriteimage(riid,start,stride,dims,image0);
-        CHECK(ret,FAIL,"GRwriteimage");
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-
-        /* Get the index of the newly created image */
-        index=GRreftoindex(grid,ref);
-        CHECK(index,FAIL,"GRreftoindex");
-
-        /* Select the newly created image */
-        riid=GRselect(grid,index);
-        CHECK(riid,FAIL,"GRselect");
-
-        /* Get the sub-set image back */
-        start[XDIM]=(TEST_XDIM/4)+1;
-        start[YDIM]=(TEST_YDIM/3)+1;
-        count[XDIM]=((3*TEST_XDIM/4)-(TEST_XDIM/4))-1;
-        count[YDIM]=((2*TEST_YDIM/3)-(TEST_YDIM/3))-1;
-        stride[XDIM]=stride[YDIM]=1;
-        ret=GRreadimage(riid,start,stride,count,image);
-        CHECK(ret,FAIL,"GRreadimage");
-
-        if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(pixel)))
-          {
-              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-setted image\n",__LINE__););
-              num_errs++;
-          } /* end if */
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-    }
-    
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-
-    /* Close the file */
-    ret=Hclose(fid);
-    CHECK(ret,FAIL,"Hclose");
-#endif /* QAK */
 
 } /* end test_mgr_image_b2a2bb() */
 
@@ -2165,131 +1804,6 @@ static void test_mgr_image_b2a2cc(int flag)
     ret=Hclose(fid);
     CHECK(ret,FAIL,"Hclose");
 
-/* The following test is unnecessary, fill-values only make a difference when writing out data -QAK */
-#ifdef QAK
-    MESSAGE(8, printf("Check out I/O on new image with real data, with Default fill-value, Reading Sub-sampled Image\n"););
-    /* Open up the existing datafile and get the image information from it */
-    fid=Hopen(TESTFILE,DFACC_RDWR,0);
-    CHECK(fid,FAIL,"Hopen");
-
-    /* Initialize the GR interface */
-    grid=GRstart(fid);
-    CHECK(grid,FAIL,"GRstart");
-
-    {
-#ifdef TEST_XDIM
-#undef TEST_XDIM
-#endif /* TEST_XDIM */
-#define TEST_XDIM    19
-#ifdef TEST_YDIM
-#undef TEST_YDIM
-#endif /* TEST_YDIM */
-#define TEST_YDIM    23
-#ifdef TEST_NCOMP
-#undef TEST_NCOMP
-#endif /* TEST_NCOMP */
-#define TEST_NCOMP   4
-#ifdef TEST_VARTYPE
-#undef TEST_VARTYPE
-#endif /* TEST_VARTYPE */
-#define TEST_VARTYPE uint32
-#ifdef TEST_NT
-#undef TEST_NT
-#endif /* TEST_NT */
-#define TEST_NT      DFNT_UINT32
-
-        int32 riid;     /* RI ID for the new image */
-        int32 dims[2]={TEST_XDIM,TEST_YDIM};    /* dimensions for the empty image */
-        uint16 ref;     /* RI ref #. */
-        int32 index;    /* RI index # */
-        TEST_VARTYPE image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE fill_pixel[TEST_NCOMP]={4000000,4800,3,1000};   /* pixel with fill values */
-        TEST_VARTYPE fill_pixel2[TEST_NCOMP]={1230,1,65000,350000};   /* pixel with fill values */
-        TEST_VARTYPE image0[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE sub_image[TEST_YDIM][TEST_XDIM][TEST_NCOMP]; /* space for the image data */
-        TEST_VARTYPE *sub_ptr;
-        int32 start[2]; /* start of image data to use */
-        int32 stride[2];/* stride of image data to use */
-        int32 count[2]; /* # of pixels of image data to use */
-        intn i,j,k;     /* local counting variables */
-
-        /* fill the memory-only with the default pixel fill-values */
-        HDmemset(image0,0,sizeof(image0));
-        sub_ptr=(TEST_VARTYPE *)sub_image;
-        for(i=0; i<TEST_YDIM; i++)
-          {
-              for(j=0; j<TEST_XDIM; j++)
-                {
-                    if((j%2)==0)
-                        HDmemcpy(&image0[i][j][0],fill_pixel,sizeof(fill_pixel));
-                    else
-                        HDmemcpy(&image0[i][j][0],fill_pixel2,sizeof(fill_pixel2));
-                    if((i%2) && (j%2))
-                      {
-                          HDmemcpy(sub_ptr,&image0[i][j][0],TEST_NCOMP*sizeof(TEST_VARTYPE));
-                          sub_ptr+=TEST_NCOMP;
-                      } /* end if */
-                } /* end for */
-          } /* end for */
-
-        /* initialize the disk buffer */
-        HDmemset(image,255,sizeof(image));
-
-        /* Create empty image with default fill value */
-        riid=GRcreate(grid,"Test Image B2a2cc2",TEST_NCOMP,TEST_NT,MFGR_INTERLACE_PIXEL,dims);
-        CHECK(riid,FAIL,"GRcreate");
-
-        /* Save the ref. # for later access */
-        ref=GRidtoref(riid);
-        CHECK(ref,(uint16)FAIL,"GRidtoref");
-
-        /* Create whole image */
-        start[XDIM]=start[YDIM]=0;
-        stride[XDIM]=stride[YDIM]=1;
-        ret=GRwriteimage(riid,start,stride,dims,image0);
-        CHECK(ret,FAIL,"GRwriteimage");
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-
-        /* Get the index of the newly created image */
-        index=GRreftoindex(grid,ref);
-        CHECK(index,FAIL,"GRreftoindex");
-
-        /* Select the newly created image */
-        riid=GRselect(grid,index);
-        CHECK(riid,FAIL,"GRselect");
-
-        /* Get the sub-sample image back */
-        start[XDIM]=1;
-        start[YDIM]=1;
-        count[XDIM]=TEST_XDIM/2;
-        count[YDIM]=TEST_YDIM/2;
-        stride[XDIM]=stride[YDIM]=2;
-        ret=GRreadimage(riid,start,stride,count,image);
-        CHECK(ret,FAIL,"GRreadimage");
-
-        if(0!=HDmemcmp(image,sub_image,count[XDIM]*count[YDIM]*sizeof(fill_pixel)))
-          {
-              MESSAGE(3, printf("%d:Error reading data for new image with default fill-value, sub-sampled image\n",__LINE__););
-              num_errs++;
-          } /* end if */
-
-        /* Close the empty image */
-        ret=GRendaccess(riid);
-        CHECK(ret,FAIL,"GRendaccess");
-    }
-    
-    /* Shut down the GR interface */
-    ret=GRend(grid);
-    CHECK(ret,FAIL,"GRend");
-
-    /* Close the file */
-    ret=Hclose(fid);
-    CHECK(ret,FAIL,"Hclose");
-#endif /* QAK */
-
 } /* end test_mgr_image_b2a2cc() */
 
 static void test_mgr_image_b2b1(int flag)
@@ -2472,18 +1986,6 @@ static void test_mgr_image_b2b1(int flag)
     CHECK(ret,FAIL,"Hclose");
 
 } /* end test_mgr_image_b2b1() */
-
-static void test_mgr_image_b2b2(int flag)
-{
-/* B2b2 - Read/Write images - with real Data - Existing Image - Sub-setted Image */
-    /* This test is unnecessary, I think this case has been adequately covered above -QAK */
-} /* end test_mgr_image_b2b2() */
-
-static void test_mgr_image_b2b3(int flag)
-{
-/* B2b3 - Read/Write images - with real Data - Existing Image - Sub-sampled Image */
-    /* This test is unnecessary, I think this case has been adequately covered above -QAK */
-} /* end test_mgr_image_b2b3() */
 
 static void test_mgr_image_chunk(int flag)
 {
@@ -2706,12 +2208,9 @@ test_mgr_image(int flag)
     test_mgr_image_b2a1bb2(flag);
     test_mgr_image_b2a1cc1(flag);
     test_mgr_image_b2a1cc2(flag);
-    test_mgr_image_b2a2aa(flag);
     test_mgr_image_b2a2bb(flag);
     test_mgr_image_b2a2cc(flag);
     test_mgr_image_b2b1(flag);
-    test_mgr_image_b2b2(flag);
-    test_mgr_image_b2b3(flag);
 #if 0
     test_mgr_image_chunk(flag);
 #endif

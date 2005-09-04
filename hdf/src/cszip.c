@@ -831,9 +831,6 @@ HCPcszip_read(accrec_t * access_rec, int32 length, void * data)
     if (HCIcszip_decode(info, length, data) == FAIL)
         HRETURN_ERROR(DFE_CDECODE, FAIL);
 
-#ifdef QAK
-printf("%s: *data=%u\n",FUNC,*(uint8 *)data);
-#endif /* QAK */
     return (length);
 }   /* HCPcszip_read() */
 

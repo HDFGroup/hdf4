@@ -118,9 +118,6 @@ HRPconvert(int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 schem
 
     HEclear();
 
-#ifdef QAK
-printf("%s: check 1.0\n",FUNC);
-#endif /* QAK */
     file_rec = HAatom_object(fid);
     if (BADFREC(file_rec) || SPECIALTAG(tag))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -150,9 +147,6 @@ printf("%s: check 1.0\n",FUNC);
 
     /* Check if the tag/ref pair exists */
     if(Hexist(fid,tag,ref)<0) {
-#ifdef QAK
-printf("%s: check 2.0\n",FUNC);
-#endif /* QAK */
         access_rec->new_elem=TRUE;
         if((access_rec->ddid=HTPcreate(file_rec,tag,ref))==FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -290,9 +284,6 @@ HRPread(accrec_t * access_rec, int32 length, void * data)
     int32    ret_value = SUCCEED;
 
     /* validate length */
-#ifdef QAK
-printf("%s: length=%d, image_size=%d\n",FUNC,(int)length,(int)info->image_size);
-#endif /* QAK */
     if (length!=0 && length!=info->image_size)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
@@ -457,9 +448,6 @@ HRPendaccess(accrec_t * access_rec)
     /* convert file id to file record */
     file_rec = HAatom_object(access_rec->file_id);
 
-#ifdef QAK
-printf("%s: check 1.0\n",FUNC);
-#endif /* QAK */
     /* shut down dependant access record */
     HRPcloseAID(access_rec);
 
