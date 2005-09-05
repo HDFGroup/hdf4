@@ -141,9 +141,22 @@ HCIcdeflate_decode(compinfo_t * info, int32 length, uint8 *buf)
                 deflate_info->deflate_context.avail_in=(uInt)file_bytes;
             } /* end if */
 
-          /* break out if we've reached the end of the compressed data somehow */
-          if((zstat=inflate(&(deflate_info->deflate_context),Z_NO_FLUSH))==Z_STREAM_END)
+          /* Read compressed data */
+          zstat=inflate(&(deflate_info->deflate_context),Z_NO_FLUSH);
+
+          /* break out if we've reached the end of the compressed data */
+          if (zstat == Z_STREAM_END)
               break;
+
+          /* break out if "inflate" returns reading errors */
+          else if (zstat == Z_VERSION_ERROR)
+          {
+              HRETURN_ERROR(DFE_COMPVERSION,FAIL);
+          }
+          else if (zstat <= Z_ERRNO && zstat > Z_VERSION_ERROR)
+          {
+              HRETURN_ERROR(DFE_READCOMP,FAIL);
+          }
       } /* end while */
     bytes_read=(int32)length-(int32)deflate_info->deflate_context.avail_out;
     deflate_info->offset+=bytes_read;

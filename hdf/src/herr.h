@@ -225,6 +225,15 @@ typedef enum
       DFE_CANTCOMP,             /* Can't compress an object */
       DFE_CANTDECOMP,           /* Can't de-compress an object */
       DFE_NOENCODER,            /* Encoder not available */
+      DFE_COMPVERSION,          /* Z_VERSION_ERROR (-6) returned from zlib */
+      DFE_READCOMP,             /* Error in reading compressed data; this
+                                   error occurs when one of the following
+                                   error codes is returned from zlib:
+                                        Z_ERRNO         (-1)
+                                        Z_STREAM_ERROR  (-2)
+                                        Z_DATA_ERROR    (-3)
+                                        Z_MEM_ERROR     (-4)
+                                        Z_BUF_ERROR     (-5) */
 
 /* Raster errors */
       DFE_NODIM,                /* No dimension record associated with image */
