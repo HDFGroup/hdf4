@@ -415,6 +415,8 @@ dnl For Solaris and Fuji systems, add the -nsl for XDR support
 case "$host" in
   *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
     LIBS="$LIBS -lnsl"  ;;
+  i686-pc-cygwin*)
+    LIBS="$LIBS -lrpc"  ;;
   *) ;;
 esac
 
@@ -564,6 +566,7 @@ case "$host" in
   S370-fujitsu-sysv*)   BAR="fujivp"      ;;
   *-mac-*)              BAR="mac"         ;;
   *-apple*)             BAR="apple"       ;;
+  i686-pc-cygwin*)      BAR="linux"       ;;
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 
