@@ -28,6 +28,8 @@ ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
 ncgen_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
+ctest0_SOURCES=
+ftest0_SOURCES=
 ## Recipe for building the ncgentab.c file
 ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
 	$(YACC) -d $(srcdir)/ncgen.y
@@ -87,7 +89,7 @@ f-check:	test1.cdl ftest0
 	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
 	fi
 
-ftest0:		ncgen test0.cdl netcdf.inc
+ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
 	./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 endif
@@ -101,7 +103,7 @@ test1.cdl:	test0.nc
 test0.nc:	ncgen $(srcdir)/test0.cdl
 	./ncgen -b -o test0.nc $(srcdir)/test0.cdl
 
-ctest0:		ncgen $(srcdir)/test0.cdl
+ctest0$(EXEEXT):		ncgen $(srcdir)/test0.cdl
 	./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -o $@ test0.c $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 
@@ -119,6 +121,6 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = ctest0 ctest0.nc ctest1.cdl ftest0 ftest0.nc ftest1.cdl    \
+DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ctest1.cdl ftest0$(EXEEXT) ftest0.nc ftest1.cdl    \
                  ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f \
                  test0.nc test1.cdl test1.nc test2.cdl

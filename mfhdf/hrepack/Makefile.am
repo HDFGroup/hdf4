@@ -50,7 +50,7 @@ hrepack_check_SOURCES = hrepack_check.c
 hrepack_check_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
-check: test_hrepack
+check: test_hrepack$(EXEEXT)
 	@srcdir="$(srcdir)" $(SHELL) $(srcdir)/test_hrepack.sh
 
 #############################################################################
