@@ -31,5 +31,5 @@ hdfimporttest_SOURCES = hdfimporttest.c
 hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdfimporttest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
-check: hdfimporttest
+check: hdfimporttest$(EXEEXT)
 	@$(SHELL) ./testutil.sh
