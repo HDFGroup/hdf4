@@ -18,16 +18,18 @@
 #endif
 
 #include <sys/resource.h>
+
+/* obtaining system limit for opening files at the same time */
 struct rlimit rlim;
-#define MAX_SYS_LIMIT (                                        \
+#define MAX_OPEN_FILES (                                        \
         getrlimit((RLIMIT_NOFILE), (&rlim)),                    \
         rlim.rlim_cur)
 
-/*#define MAX_SYS_LIMIT MAX_OPEN_FILES*/
+#define MAX_SYS_LIMIT MAX_OPEN_FILES
 
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
 static NC **_cdfs;
-/*static NC *_cdfs[MAX_NC_OPEN] ;*/
+
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
 #define STASH(id) (((id) >= 0 && (id) < _ncdf) ?  \
 		HNDLE(_cdfs[(id)]->redefid) : NULL)
