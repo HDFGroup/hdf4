@@ -214,11 +214,14 @@ HDFLIBAPI int32 SDcheckempty
 HDFLIBAPI hdf_idtype_t SDidtype
     (int32 an_id);
 
-HDFLIBAPI intn HDiscdf
-    (const char *filename);
+HDFLIBAPI intn SDreset_maxopenfiles
+    (intn req_max);
 
-HDFLIBAPI intn HDisnetcdf
-    (const char *filename);
+HDFLIBAPI intn SDget_maxopenfiles
+    (intn *curr_max, intn *sys_limit);
+
+HDFLIBAPI intn SDget_curropenfiles
+    ();
 
 /*====================== Chunking Routines ================================*/
 

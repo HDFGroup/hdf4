@@ -17,8 +17,17 @@
 #   include <file.h>
 #endif
 
+#include <sys/resource.h>
+struct rlimit rlim;
+#define MAX_SYS_LIMIT (                                        \
+        getrlimit((RLIMIT_NOFILE), (&rlim)),                    \
+        rlim.rlim_cur)
+
+/*#define MAX_SYS_LIMIT MAX_OPEN_FILES*/
+
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
-static NC *_cdfs[MAX_NC_OPEN] ;
+static NC **_cdfs;
+/*static NC *_cdfs[MAX_NC_OPEN] ;*/
 #define HNDLE(id) (((id) >= 0 && (id) < _ncdf) ? _cdfs[(id)] : NULL)
 #define STASH(id) (((id) >= 0 && (id) < _ncdf) ?  \
 		HNDLE(_cdfs[(id)]->redefid) : NULL)
@@ -34,6 +43,113 @@ static NC *_cdfs[MAX_NC_OPEN] ;
 #ifndef SEP
 #define SEP '/' /* default, unix */
 #endif
+
+static intn max_NC_open = MAX_NC_OPEN;	/* current netCDF default */
+
+/*
+ *  Allocates _cdfs and returns the allocated size
+ */
+intn
+NC_reset_maxopenfiles(req_max)
+intn req_max;	/* requested max to allocate */
+{
+	intn sys_limit = MAX_SYS_LIMIT;
+	intn alloc_size = req_max;
+	NC **newlist;
+	intn i;
+
+	/* If requested max is 0, allocate _cdfs with the default,
+	   max_NC_open, if _cdfs is not yet allocated, otherwise, keep 
+	   _cdfs as is and return the current max */
+	if (req_max == 0)
+	{
+	    if (!_cdfs)
+	    {
+		_cdfs = (NC **)HDmalloc(sizeof(NC *) * max_NC_open);
+
+		/* If allocation fails, return 0 for no allocation */
+		if (_cdfs == NULL)
+		{
+		    /* NC_EINVAL is Invalid Argument, but must decide if
+		       we just want to return 0 without error or not */
+		    NCadvise(NC_EINVAL, "Unable to allocate a cdf list of %d elements", max_NC_open);
+		    return(0) ;
+		}
+		else
+		    return(max_NC_open);
+	    }
+	    else  /* return the current limit */
+		return (max_NC_open);
+	} /* if req_max == 0 */
+
+	/* If the requested max is less than the current max but there are
+	   more than the requested max number of files opened, do not reset
+	   the current max, since this will cause information lost. */
+	if (req_max < max_NC_open && req_max <= _ncdf)
+	    return(max_NC_open);
+
+	/* If the requested max exceeds system limit, only allocate up
+	   to system limit */
+	if (req_max > sys_limit)
+	    alloc_size = sys_limit;
+
+	/* Allocate a new list */
+	newlist = (NC **)HDmalloc(sizeof(NC *) * alloc_size);
+
+	/* If allocation fails, return 0 for no allocation */
+	if (newlist == NULL)
+	{
+	    /* NC_EINVAL is Invalid Argument, but must decide if
+	       we just want to return 0 without error or not */
+	    NCadvise(NC_EINVAL, "Unable to allocate a cdf list of %d elements", alloc_size) ;
+	    return(0) ;
+	}
+
+	/* If _cdfs is already allocated, transfer pointers over to the
+	   new list and deallocate the old list of pointers */
+	if (_cdfs)
+	{
+	    for (i=0; i <= _ncdf; i++)
+		newlist[i] = _cdfs[i];
+	    HDfree((VOIDP)_cdfs);
+	}
+
+	/* Set _cdfs to the new list */
+	_cdfs = newlist;
+	newlist = NULL;
+
+	/* Reset current max files opened allowed in HDF to the new max */
+	max_NC_open = alloc_size;
+
+	return(max_NC_open);
+} /* NC_reset_maxopenfiles */
+
+/*
+ *  Returns the current # of open files allowed
+ */
+intn
+NC_get_maxopenfiles()
+{
+	return(max_NC_open);
+} /* NC_get_maxopenfiles */
+
+/*
+ *  Returns the maximum number of open files the system allows.
+ */
+intn
+NC_get_systemlimit()
+{
+	return(MAX_SYS_LIMIT);
+} /* NC_get_systemlimit */
+
+/*
+ *  Returns the number of files currently being opened.
+ */
+int
+NC_get_numopencdfs()
+{
+	return(_ncdf);
+} /* NC_get_numopencdfs */
 
 /*
  *  Check validity of cdf handle, return pointer to NC struct or
@@ -90,17 +206,27 @@ int mode ;
 	NC *handle ;
 	int id ;
 
+	/* Allocate _cdfs, if it is already allocated, nothing will be done */
+	NC_reset_maxopenfiles(0);
 
 	/* find first available id */
 	for(id = 0 ; id < _ncdf; id++)
 		if( _cdfs[id] == NULL) break ;
 
-	if(id == _ncdf && _ncdf >= MAX_NC_OPEN) /* will need a new one */
-      {
-          NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded",
-                   _ncdf) ;
-          return(-1) ;
-      }
+	/* if application attempts to open more files than the current max
+	   allows, increase the current max to the system limit, if it's 
+	   not at the system limit yet */
+	if(id == _ncdf && _ncdf >= max_NC_open)
+	{
+	    /* if the current max already reaches the system limit, fail */
+	    if (max_NC_open == MAX_SYS_LIMIT)
+	    {
+		NCadvise(NC_ENFILE, "maximum number of open cdfs allowed already reaches system limit %d", MAX_SYS_LIMIT) ;
+		return(-1); 
+	    }
+	    /* otherwise, increase the current max to the system limit */
+	    max_NC_open = NC_reset_maxopenfiles(MAX_SYS_LIMIT);
+	}
 
 	handle = NC_new_cdf(path, mode) ;
 	if( handle == NULL)
@@ -458,7 +584,7 @@ int cdfid ;
 	for(id = 0 ; id < _ncdf; id++)
 		if( _cdfs[id] == NULL) break ;
 
-	if(id == _ncdf && _ncdf >= MAX_NC_OPEN) /* will need a new one */
+	if(id == _ncdf && _ncdf >= max_NC_open) /* will need a new one */
       {
           NCadvise(NC_ENFILE, "maximum number of open cdfs %d exceeded",
                    _ncdf) ;

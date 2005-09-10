@@ -2191,6 +2191,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         dim = SDIget_dim(handle, sdsid);
       }
 
+#ifdef QAK
+    fprintf(stderr, "SDwritedata: check 1.0\n");
+#endif
     if(handle->vars == NULL)
       {
           ret_value = FAIL;
@@ -2239,6 +2242,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         varid = (intn)sdsid & 0xffff;
       }
 
+#ifdef QAK
+    fprintf(stderr, "SDwritedata: check 2.0\n");
+#endif
     /* Check for strides all set to '1', so it acts like NULL was passed */
     if(stride!=NULL)
       {
@@ -5255,7 +5261,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     HDF_CHUNK_DEF *cdef   = NULL;  /* SD Chunk definition */
     model_info minfo;              /* dummy model info struct */
     comp_info  cinfo;              /* compression info - NBIT */
-uint32 comp_config;
+    uint32 comp_config;
     int32     *cdims    = NULL;    /* array of chunk lengths */
     int32      fill_val_len = 0;   /* fill value length */
     void      *fill_val    = NULL; /* fill value */
@@ -6323,7 +6329,7 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
  RETURNS
     SUCCEED/FAIL
 
- AUTHOR
+ PROGRAMMER
     bmribler - 9-01-98
         
  MODIFICATION
@@ -6403,7 +6409,7 @@ done:
     A value of type hdf_idtype_t, which can be either of the following:
     SD_ID, SDS_ID, DIM_ID, NOT_SDAPI_ID.
 
- AUTHOR
+ PROGRAMMER
     bmribler - 1-19-2005
         
  MODIFICATION
@@ -6454,4 +6460,139 @@ done:
     return ret_value;
 } /* SDidtype */
 
+/******************************************************************************
+ NAME
+	SDreset_maxopenfiles -- resets the maximum number of files can be
+				opened at a time.
+
+ DESCRIPTION
+    Uses NC local function NC_reset_maxopenfiles to change the maximum 
+    number of opened files allowed.  This involves re-allocating of the 
+    internal cdf list.
+
+ RETURNS
+    The current maximum number of opened files allowed, or FAIL, if 
+    unable to reset it.
+
+ PROGRAMMER
+    bmribler - 9-06-2005
+        
+ MODIFICATION
+
+******************************************************************************/
+intn SDreset_maxopenfiles(intn req_max)
+{
+    intn ret_value = SUCCEED;
+    CONSTR(FUNC, "SDreset_maxopenfiles");	/* for HGOTO_ERROR */
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDreset_maxopenfiles: I've been called\n");
+#endif
+
+    /* Reset the max NC open and re-allocate cdf list appropriately */
+    ret_value = NC_reset_maxopenfiles(req_max);
+
+    if (ret_value == 0)
+	/* no successful allocation */
+	HGOTO_ERROR(DFE_NOSPACE, FAIL);  /* must change DFE_NOSPACE to something else, if the other case of returning 0 exists??? */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    return ret_value;
+} /* SDreset_maxopenfiles */
+
+/******************************************************************************
+ NAME
+	SDget_maxopenfiles -- retrieves the current number of opened files
+			      allowed in HDF and the maximum number of opened 
+			      files allowed on a system.
+
+ DESCRIPTION
+    Uses NC_get_maxopenfiles.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ PROGRAMMER
+    bmribler - 9-06-2005
+        
+ MODIFICATION
+
+******************************************************************************/
+intn
+SDget_maxopenfiles(intn *curr_max,  /* OUT: current # of open files allowed */
+		   intn *sys_limit) /* OUT: max # of open files allowed on 
+					a system */
+{
+    intn ret_value = SUCCEED;
+    CONSTR(FUNC, "SDget_maxopenfiles");	/* for HGOTO_ERROR */
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDget_maxopenfiles: I've been called\n");
+#endif
+
+    /* Retrieve the current max and the system limit */
+    if (curr_max != NULL)
+    {
+	*curr_max = NC_get_maxopenfiles();
+	if (*curr_max == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    if (sys_limit != NULL)
+    {
+	*sys_limit = NC_get_systemlimit();
+	if (*sys_limit == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    return ret_value;
+} /* SDget_maxopenfiles */
+
+/******************************************************************************
+ NAME
+	SDget_numopenfiles -- returns the number of files currently being 
+			      opened.
+
+ DESCRIPTION
+    Uses NC_get_numopencdfs.
+
+ RETURNS
+    The number of files currently being opened or FAIL.
+
+ PROGRAMMER
+    bmribler - 9-06-2005
+        
+ MODIFICATION
+
+******************************************************************************/
+int
+SDget_numopenfiles()
+{
+    int ret_value = SUCCEED;
+    CONSTR(FUNC, "SDget_numopenfiles");	/* for HGOTO_ERROR */
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDget_numopenfiles: I've been called\n");
+#endif
+
+    ret_value = NC_get_numopencdfs();
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    return ret_value;
+} /* SDget_numopenfiles */
 #endif /* HDF */
