@@ -8,6 +8,7 @@
 
 ./COPYING
 ./INSTALL
+./INSTALL_CYGWIN.txt
 ./INSTALL_WINDOWS.txt
 ./Makefile.am
 ./Makefile.in
