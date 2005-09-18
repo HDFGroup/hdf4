@@ -19,12 +19,17 @@
 
 #include <sys/resource.h>
 
-/* obtaining system limit for opening files at the same time */
+/* obtaining the maximum number of open files at the same time */
+#ifdef WIN32
+#define MAX_OPEN_FILES	_getmaxstdio()
+#else
 struct rlimit rlim;
 #define MAX_OPEN_FILES (                                        \
         getrlimit((RLIMIT_NOFILE), (&rlim)),                    \
         rlim.rlim_cur)
+#endif
 
+/* Alias for system limit of max open files */
 #define MAX_SYS_LIMIT MAX_OPEN_FILES
 
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
