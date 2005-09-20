@@ -17,12 +17,11 @@
 #   include <file.h>
 #endif
 
-#include <sys/resource.h>
-
 /* obtaining the maximum number of open files at the same time */
 #ifdef WIN32
 #define MAX_OPEN_FILES	_getmaxstdio()
 #else
+#include <sys/resource.h>
 struct rlimit rlim;
 #define MAX_OPEN_FILES (                                        \
         getrlimit((RLIMIT_NOFILE), (&rlim)),                    \
