@@ -3,6 +3,7 @@
 ************************************************************************
 
 Known Problems:
+---------------
 
 ONLY HDF4 C library is supported on Cygwin on September 9, 2005. This 
 document is a instruction on how to build, test and install HDF4 C 
@@ -135,6 +136,11 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r1.
         <path_to_hdf4.2r1>/configure ...
 
         where "..." are your configuration options.
+
+Acknowledgements:
+-----------------
+HDF group would like to thank xinmin Hua(NASA/GSFC) for his help to 
+make HDF4 work on Cygwin.  
 
 -----------------------------------------------------------------------
 
