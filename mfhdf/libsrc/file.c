@@ -17,19 +17,17 @@
 #   include <file.h>
 #endif
 
-/* obtaining the maximum number of open files at the same time */
+/* obtain the maximum number of open files allowed, at the same time,
+   on the current system */
 #ifdef WIN32
-#define MAX_OPEN_FILES	_getmaxstdio()
+#define MAX_SYS_OPENFILES	_getmaxstdio()
 #else
 #include <sys/resource.h>
 struct rlimit rlim;
-#define MAX_OPEN_FILES (                                        \
+#define MAX_SYS_OPENFILES (                                     \
         getrlimit((RLIMIT_NOFILE), (&rlim)),                    \
         rlim.rlim_cur)
 #endif
-
-/* Alias for system limit of max open files */
-#define MAX_SYS_LIMIT MAX_OPEN_FILES
 
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
 static NC **_cdfs;
@@ -59,7 +57,7 @@ intn
 NC_reset_maxopenfiles(req_max)
 intn req_max;	/* requested max to allocate */
 {
-	intn sys_limit = MAX_SYS_LIMIT;
+	intn sys_limit = MAX_SYS_OPENFILES;
 	intn alloc_size = req_max;
 	NC **newlist;
 	intn i;
@@ -145,7 +143,7 @@ NC_get_maxopenfiles()
 intn
 NC_get_systemlimit()
 {
-	return(MAX_SYS_LIMIT);
+	return(MAX_SYS_OPENFILES);
 } /* NC_get_systemlimit */
 
 /*
@@ -225,13 +223,13 @@ int mode ;
 	if(id == _ncdf && _ncdf >= max_NC_open)
 	{
 	    /* if the current max already reaches the system limit, fail */
-	    if (max_NC_open == MAX_SYS_LIMIT)
+	    if (max_NC_open == MAX_SYS_OPENFILES)
 	    {
-		NCadvise(NC_ENFILE, "maximum number of open cdfs allowed already reaches system limit %d", MAX_SYS_LIMIT) ;
+		NCadvise(NC_ENFILE, "maximum number of open cdfs allowed already reaches system limit %d", MAX_SYS_OPENFILES) ;
 		return(-1); 
 	    }
 	    /* otherwise, increase the current max to the system limit */
-	    max_NC_open = NC_reset_maxopenfiles(MAX_SYS_LIMIT);
+	    max_NC_open = NC_reset_maxopenfiles(MAX_SYS_OPENFILES);
 	}
 
 	handle = NC_new_cdf(path, mode) ;

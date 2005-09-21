@@ -220,8 +220,14 @@ HDFLIBAPI intn SDreset_maxopenfiles
 HDFLIBAPI intn SDget_maxopenfiles
     (intn *curr_max, intn *sys_limit);
 
-HDFLIBAPI intn SDget_curropenfiles
+HDFLIBAPI intn SDget_numopenfiles
     ();
+
+HDFLIBAPI intn HDiscdf
+    (const char *filename);
+
+HDFLIBAPI intn HDisnetcdf
+    (const char *filename);
 
 /*====================== Chunking Routines ================================*/
 

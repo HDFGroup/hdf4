@@ -57,6 +57,16 @@ status = SDgetcompinfo(sdsid, ...);
         --- or none of the above ---
 id_type =  SDidtype(an_id);
 
+	--- reset the maximum number of files can be opened at a time.
+max_files = SDreset_maxopenfiles(req_max);
+
+	--- retrieve the current number of opened files allowed in HDF and
+	--- the maximum number of opened files allowed on a system.
+status = SDget_maxopenfiles(&curr_max, &sys_limit);
+
+	--- return the number of files currently being opened
+num_files = SDget_numopenfiles();
+
 NOTE: This file needs to have the comments cleaned up for most of the
        functions here. -GV 9/10/97
 
@@ -6415,7 +6425,8 @@ done:
  MODIFICATION
 
 ******************************************************************************/
-hdf_idtype_t SDidtype(int32 an_id)
+hdf_idtype_t
+SDidtype(int32 an_id)
 {
     NC     *handle = NULL;	/* file record struct */
     hdf_idtype_t ret_value = NOT_SDAPI_ID;
@@ -6480,7 +6491,8 @@ done:
  MODIFICATION
 
 ******************************************************************************/
-intn SDreset_maxopenfiles(intn req_max)
+intn
+SDreset_maxopenfiles(intn req_max)
 {
     intn ret_value = SUCCEED;
     CONSTR(FUNC, "SDreset_maxopenfiles");	/* for HGOTO_ERROR */
@@ -6575,17 +6587,17 @@ done:
  MODIFICATION
 
 ******************************************************************************/
-int
+intn
 SDget_numopenfiles()
 {
-    int ret_value = SUCCEED;
+    intn ret_value = SUCCEED;
     CONSTR(FUNC, "SDget_numopenfiles");	/* for HGOTO_ERROR */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDget_numopenfiles: I've been called\n");
 #endif
 
-    ret_value = NC_get_numopencdfs();
+    ret_value = (intn)NC_get_numopencdfs();
 
 done:
     if (ret_value == FAIL)
