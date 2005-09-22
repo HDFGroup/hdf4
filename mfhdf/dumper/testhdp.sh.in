@@ -308,9 +308,9 @@ TEST dumpgr-4.out dumpgr -n Image_array_5 grtdfui82.hdf
 TEST dumpgr-5.out dumpgr -r 6,2,3 grtdfui82.hdf
 TEST dumpgr-6.out dumpgr -r 6 -d  grtdfui82.hdf
 TEST dumpgr-7.out dumpgr -o my.dat grtdfui82.hdf
-$RM my.dat
+$RM ${srcdir}/testfiles/my.dat
 TEST dumpgr-8.out dumpgr -o mybin.dat  -b grtdfui82.hdf
-$RM mybin.dat
+$RM ${srcdir}/testfiles/mybin.dat
 TEST dumpgr-9.out dumpgr grtdfui83.hdf
 TEST dumpgr-10.out dumpgr grtdfui84.hdf
 TEST dumpgr-11.out dumpgr grtdfui162.hdf
