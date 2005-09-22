@@ -4,6 +4,7 @@
 # See the USAGE function for command usage.
 
 srcdir=@srcdir@
+currentdir=`pwd`
 
 # Definitions of commands and variables
 HDP='./hdp'               # The tool name
@@ -76,9 +77,9 @@ TEST()
 
   # run the test
   ( 
-    echo "#############################"
-    echo "Expected output for '$HDP $@'" 
-    echo "#############################"
+    # The first three lines of the "correct output" file are used to
+    # identify the test.  Copy them to the output to make cmp happy.
+    sed 3q $expected
     cd $srcdir/testfiles
     $HDP_BIN "$@"
   ) > $output
@@ -307,10 +308,10 @@ TEST dumpgr-3.out dumpgr -i 0 grtdfui82.hdf
 TEST dumpgr-4.out dumpgr -n Image_array_5 grtdfui82.hdf
 TEST dumpgr-5.out dumpgr -r 6,2,3 grtdfui82.hdf
 TEST dumpgr-6.out dumpgr -r 6 -d  grtdfui82.hdf
-TEST dumpgr-7.out dumpgr -o my.dat grtdfui82.hdf
-$RM ${srcdir}/testfiles/my.dat
-TEST dumpgr-8.out dumpgr -o mybin.dat  -b grtdfui82.hdf
-$RM ${srcdir}/testfiles/mybin.dat
+TEST dumpgr-7.out dumpgr -o $currentdir/my.dat grtdfui82.hdf
+$RM my.dat
+TEST dumpgr-8.out dumpgr -o $currentdir/mybin.dat  -b grtdfui82.hdf
+$RM mybin.dat
 TEST dumpgr-9.out dumpgr grtdfui83.hdf
 TEST dumpgr-10.out dumpgr grtdfui84.hdf
 TEST dumpgr-11.out dumpgr grtdfui162.hdf
