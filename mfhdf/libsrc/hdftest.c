@@ -2870,7 +2870,6 @@ test_max_open_files()
     char  filename[NUM_FILES_HI][10]; /* holds generated file names */
     intn  index, status;
     intn  curr_max, sys_limit, curr_max_bk, curr_opened;
-    int32 status_32;
     intn  num_errs = 0;	/* number of errors so far */
 
     /* Get the current max and system limit */

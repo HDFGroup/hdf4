@@ -6462,12 +6462,6 @@ SDidtype(int32 an_id)
 		ret_value = NOT_SDAPI_ID;
         }
     }
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-
-      }
-    /* Normal cleanup */
     return ret_value;
 } /* SDidtype */
 
@@ -6591,7 +6585,6 @@ intn
 SDget_numopenfiles()
 {
     intn ret_value = SUCCEED;
-    CONSTR(FUNC, "SDget_numopenfiles");	/* for HGOTO_ERROR */
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDget_numopenfiles: I've been called\n");
@@ -6599,12 +6592,6 @@ SDget_numopenfiles()
 
     ret_value = (intn)NC_get_numopencdfs();
 
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-
-      }
-    /* Normal cleanup */
     return ret_value;
 } /* SDget_numopenfiles */
 #endif /* HDF */

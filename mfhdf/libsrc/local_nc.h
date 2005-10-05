@@ -634,6 +634,18 @@ extern intn NCgenio
 extern intn NC_var_shape
     PROTO((NC_var *var,NC_array *dims));
 
+extern intn NC_reset_maxopenfiles
+    PROTO((intn req_max));
+
+extern intn NC_get_maxopenfiles
+    PROTO(());
+
+extern intn NC_get_systemlimit
+    PROTO(());
+
+extern int NC_get_numopencdfs
+    PROTO(());
+
 /* CDF stuff. don't need anymore? -GV */
 extern nc_type cdf_unmap_type
     PROTO((int type));
