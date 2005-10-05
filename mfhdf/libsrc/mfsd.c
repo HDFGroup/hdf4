@@ -137,7 +137,7 @@ SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
     NC   *ret_value = NULL;
 
     /* check that it is the proper type of id */
-    tmp = (id >> 16) & 0xff;
+    tmp = (id >> 16) & 0x0f;
     if(tmp != typ)
       {
         ret_value = NULL;
@@ -145,7 +145,7 @@ SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
       }
 
     /* get the file from top 8 bits*/
-    tmp = (id >> 24) & 0xff;
+    tmp = (id >> 20) & 0xfff;
     ret_value = NC_check_id((int)tmp);
 
 done:
@@ -222,19 +222,19 @@ PRIVATE NC_dim *
 SDIget_dim(NC   *handle,/* IN: the handle for this file */
            int32 id     /* IN: a dimension ID */)
 {
-    int32      dimid;
+    int32      dimindex;
     NC_array **ap = NULL;
     NC_dim    *ret_value = NULL;
 
-    /* dimid is low 16bits of id */
-    dimid = id & 0xffff;
+    /* dimindex is low 16bits of id */
+    dimindex = id & 0xffff;
 
     if(handle->dims != NULL 
-       && dimid >= 0 
-       && dimid < handle->dims->count) 
+       && dimindex >= 0 
+       && dimindex < handle->dims->count) 
       {
         ap = (NC_array **)handle->dims->values;
-        ap += dimid;
+        ap += dimindex;
       } 
     else 
       {
@@ -393,7 +393,7 @@ SDstart(const char *name,   /* IN: file name to open */
     handle->flags &= ~(NC_INDEF);
 
     /* create file id to return */
-    fid = (((int32) cdfid) << 24) + (((int32) CDFTYPE) << 16) + cdfid;
+    fid = (((int32) cdfid) << 20) + (((int32) CDFTYPE) << 16) + cdfid;
 
     ret_value = fid;
 
@@ -564,10 +564,10 @@ done:
 
     sdsID:
         
-        32       24       16               0
-        ------------------------------------
-        |  fid   | id-type| position index |
-        ------------------------------------
+        32           20       16               0
+        ----------------------------------------
+        |  fid       | id-type| position index |
+        ----------------------------------------
         
     fid is the netCDF based file ID (i.e. from ncopen).  ID type
     is SDSTYPE defined in mfhdf.h and position index is the 
@@ -614,7 +614,7 @@ SDselect(int32 fid,  /* IN: file ID */
       }
 
     /* create SDS id to return */
-    sdsid  = (((int32) fid & 0xffff) << 24) + (((int32) SDSTYPE) << 16) + index;
+    sdsid  = (((int32) fid & 0xffff) << 20) + (((int32) SDSTYPE) << 16) + index;
 
     ret_value = sdsid;
 
@@ -1299,7 +1299,7 @@ SDcreate(int32  fid,      /* IN: file ID */
       } 
 
     /* create a handle we can give back to the user */
-    sdsid  = (((int32) fid) << 24) + (((int32) SDSTYPE) << 16);
+    sdsid  = (((int32) fid) << 20) + (((int32) SDSTYPE) << 16);
     sdsid += handle->vars->count -1;
 
     /* make sure it gets reflected in the file */
@@ -1334,10 +1334,10 @@ done:
 
     dimID:
         
-        32       24       16               0
-        ------------------------------------
-        |  fid   | id-type| position index |
-        ------------------------------------
+        32           20       16               0
+        ----------------------------------------
+        |  fid       | id-type| position index |
+        ----------------------------------------
 
  RETURNS
         An ID to the dimension else FAIL
@@ -1390,7 +1390,7 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
     dimindex = var->assoc->values[number];
 
     /* build the dim id */
-    id  = (sdsid & 0xff000000) + (((int32) DIMTYPE) << 16) + dimindex;
+    id  = (sdsid & 0xfff00000) + (((int32) DIMTYPE) << 16) + dimindex;
 
     ret_value = id;
 
