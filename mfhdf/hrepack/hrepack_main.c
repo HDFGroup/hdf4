@@ -19,12 +19,23 @@
 
 static void usage();
 
-
-/*
-Examples of use:
--v -i hziptst.hdf -o hziptst_out.hdf -t "dataset:GZIP 6" -c "dataset:2x2"
--v -i hziptst.hdf -o hziptst_out.hdf -f info.txt
-*/
+/*-------------------------------------------------------------------------
+ * Function: main
+ *
+ * Purpose: hrepack main program
+ *
+ * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
+ *
+ * Date: July 10, 2003
+ *
+ * Comments:
+ *
+ * Examples of use:
+ *  -v -i hziptst.hdf -o hziptst_out.hdf -t "/group1/dataset:GZIP 6" -c "/group2/dataset:2x2"
+ *  -v -i hziptst.hdf -o hziptst_out.hdf -f info.txt
+	*
+ *-------------------------------------------------------------------------
+ */
 
 
 int main(int argc, char **argv)
@@ -158,17 +169,23 @@ void usage()
  printf("1)$hrepack -v -i file1.hdf -o file2.hdf -t '*:RLE'\n");
  printf("  compresses all objects in the file file1.hdf, using RLE compression\n");
  printf("\n");
- printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t 'A,B,C:HUFF 1' -t 'D,E:RLE' -c 'D,E:10x10'\n");
- printf("  applies Skipping Huffman compression with skip factor of 1, for objects A, B and C\n");
- printf("  applies RLE compression for objects D and E.\n");
+ printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A,/group2/B,C:HUFF 1'\n");
+ printf("  applies Skipping Huffman compression with skip factor of 1,\n");
+	printf("   for objects /group1/A, /group2/B and C\n");
+ printf("\n");
+	printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/D:RLE' -c 'D,E:10x10'\n");
+ printf("  applies RLE compression for object /group1/D\n");
  printf("  applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions\n");
  printf("\n");
- printf("3)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:NONE'\n");
- printf("  uncompresses object A\n");
- printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t 'A:SZIP 8,NN'\n");
- printf("  applies SZIP compression to object A, with parameters 8 and NN\n");
+ printf("3)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A:NONE'\n");
+ printf("  uncompresses object /group1/A\n");
+	printf("\n");
+ printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/group2/A:SZIP 8,NN'\n");
+ printf("  applies SZIP compression to object /group1/group2/A, with parameters 8 and NN\n");
  printf("\n");
  printf("Note: the use of the verbose option -v is recommended\n");
  exit(1);
 }
+
+
 

@@ -10,10 +10,19 @@
 #include "hdiff.h"
 
 
-char *progname;
-
-/*
-Examples:
+/*-------------------------------------------------------------------------
+ * Function: main
+ *
+ * Purpose: hdiff main program
+ *
+ * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
+ *
+ * Date:  August 27, 2003
+ *
+ * Comments:
+ *
+ * Examples of use:
+ 
 
 # Compare global attributes only
 -g hdifftst1.hdf hdifftst2.hdf
@@ -47,7 +56,12 @@ hdifftst1.hdf hdifftst2.hdf
 
 # verbose 
 -b hdifftst1.hdf hdifftst2.hdf
+
+
 */
+
+
+char *progname;
 
 
 static void
