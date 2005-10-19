@@ -204,7 +204,6 @@ extern int test_checkempty();
 extern int test_idtest();
 extern int test_sd();
 extern int test_idtype();
-extern int test_idtype();
 extern int test_files();
 
 static intn
