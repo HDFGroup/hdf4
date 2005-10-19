@@ -6594,4 +6594,63 @@ SDget_numopenfiles()
 
     return ret_value;
 } /* SDget_numopenfiles */
+
+/******************************************************************************
+ NAME
+	SDgetfilename -- retrieves the name of the file given its ID.
+
+ DESCRIPTION
+    Given an ID to a file, returns its name via parameter 'filename.'
+    The user is repsonsible for allocating sufficient space to hold
+    the file name.  It can be at most MAX_NC_NAME characters in 
+    length.
+
+ RETURNS
+    Length of the file name on success, and FAIL, otherwise.
+
+ PROGRAMMER
+    bmribler - 9-06-2005
+        
+ MODIFICATION
+
+******************************************************************************/ 
+intn
+SDgetfilename(int32 fid,       /* IN:  file ID */
+              char  *filename  /* OUT: name of the file */)
+{
+    CONSTR(FUNC, "SDgetfilename");    /* for HGOTO_ERROR */
+    NC     *handle = NULL;
+    intn    len;
+    intn    ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetfilename: I've been called\n");
+#endif
+
+    /* check that fid is valid */
+    handle = SDIhandle_from_id(fid, CDFTYPE);
+    if(handle == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    len = HDstrlen(handle->path);
+    if(filename != NULL) 
+      {
+          HDmemcpy(filename, handle->path, len);
+          filename[len] = '\0';
+      }
+
+    ret_value = len+1;
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* SDgetfilename */
 #endif /* HDF */

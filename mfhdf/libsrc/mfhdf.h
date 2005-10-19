@@ -223,6 +223,9 @@ HDFLIBAPI intn SDget_maxopenfiles
 HDFLIBAPI intn SDget_numopenfiles
     ();
 
+HDFLIBAPI intn SDgetfilename
+    (int32 fid, char *filename);
+
 HDFLIBAPI intn HDiscdf
     (const char *filename);
 
