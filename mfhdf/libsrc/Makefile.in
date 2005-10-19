@@ -130,8 +130,8 @@ check_PROGRAMS = cdftest hdftest
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
-hdftest_SOURCES = hdftest.c tcoordvar.c temptySDSs.c tidtypes.c         \
-		  trank0.c tsd.c tszip.c
+hdftest_SOURCES = hdftest.c tcoordvar.c temptySDSs.c tfile.c   \
+		  tidtypes.c trank0.c tsd.c tszip.c
 
 hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
@@ -175,8 +175,8 @@ cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 cdftest_LDFLAGS =
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tcoordvar.$(OBJEXT) \
-	temptySDSs.$(OBJEXT) tidtypes.$(OBJEXT) trank0.$(OBJEXT) \
-	tsd.$(OBJEXT) tszip.$(OBJEXT)
+	temptySDSs.$(OBJEXT) tfile.$(OBJEXT) tidtypes.$(OBJEXT) \
+	trank0.$(OBJEXT) tsd.$(OBJEXT) tszip.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hdftest_LDFLAGS =
@@ -198,12 +198,12 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/nssdc.Po ./$(DEPDIR)/putget.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/putgetg.Po ./$(DEPDIR)/sharray.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/string.Po ./$(DEPDIR)/tcoordvar.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/temptySDSs.Po ./$(DEPDIR)/tidtypes.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/trank0.Po ./$(DEPDIR)/tsd.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/tszip.Po ./$(DEPDIR)/var.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xdr.Po ./$(DEPDIR)/xdrarray.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xdrfloat.Po ./$(DEPDIR)/xdrposix.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/xdrstdio.Po
+@AMDEP_TRUE@	./$(DEPDIR)/temptySDSs.Po ./$(DEPDIR)/tfile.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tidtypes.Po ./$(DEPDIR)/trank0.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/tsd.Po ./$(DEPDIR)/tszip.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/var.Po ./$(DEPDIR)/xdr.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xdrarray.Po ./$(DEPDIR)/xdrfloat.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/xdrposix.Po ./$(DEPDIR)/xdrstdio.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -307,6 +307,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcoordvar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tidtypes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trank0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsd.Po@am__quote@
