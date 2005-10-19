@@ -29,6 +29,10 @@ struct rlimit rlim;
         rlim.rlim_cur)
 #endif
 
+/* Maximum number of files can be opened at one time; subtract 3 from
+   the system allowed to account for stdin, stdout, and stderr */
+#define MAX_AVAIL_OPENFILES          (MAX_SYS_OPENFILES - 3)
+
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
 static NC **_cdfs;
 
@@ -57,7 +61,7 @@ intn
 NC_reset_maxopenfiles(req_max)
 intn req_max;	/* requested max to allocate */
 {
-	intn sys_limit = MAX_SYS_OPENFILES;
+	intn sys_limit = MAX_AVAIL_OPENFILES;
 	intn alloc_size = req_max;
 	NC **newlist;
 	intn i;
@@ -143,7 +147,7 @@ NC_get_maxopenfiles()
 intn
 NC_get_systemlimit()
 {
-	return(MAX_SYS_OPENFILES);
+	return(MAX_AVAIL_OPENFILES);
 } /* NC_get_systemlimit */
 
 /*
@@ -223,13 +227,13 @@ int mode ;
 	if(id == _ncdf && _ncdf >= max_NC_open)
 	{
 	    /* if the current max already reaches the system limit, fail */
-	    if (max_NC_open == MAX_SYS_OPENFILES)
+	    if (max_NC_open == MAX_AVAIL_OPENFILES)
 	    {
-		NCadvise(NC_ENFILE, "maximum number of open cdfs allowed already reaches system limit %d", MAX_SYS_OPENFILES) ;
+		NCadvise(NC_ENFILE, "maximum number of open cdfs allowed already reaches system limit %d", MAX_AVAIL_OPENFILES) ;
 		return(-1); 
 	    }
 	    /* otherwise, increase the current max to the system limit */
-	    max_NC_open = NC_reset_maxopenfiles(MAX_SYS_OPENFILES);
+	    max_NC_open = NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES);
 	}
 
 	handle = NC_new_cdf(path, mode) ;
