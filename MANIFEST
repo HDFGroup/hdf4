@@ -918,6 +918,7 @@
 ./mfhdf/libsrc/string.c
 ./mfhdf/libsrc/tcoordvar.c
 ./mfhdf/libsrc/temptySDSs.c
+./mfhdf/libsrc/tfile.c
 ./mfhdf/libsrc/tidtypes.c
 ./mfhdf/libsrc/test1.nc
 ./mfhdf/libsrc/test_cdf.sav
