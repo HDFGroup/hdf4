@@ -10,7 +10,6 @@
  *                                                                          *
  ****************************************************************************/
 
-
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
@@ -186,6 +185,4 @@ void usage()
  printf("Note: the use of the verbose option -v is recommended\n");
  exit(1);
 }
-
-
 

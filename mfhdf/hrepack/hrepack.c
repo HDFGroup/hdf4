@@ -110,7 +110,7 @@ void hrepack_addcomp(const char* str, options_t *options)
   }
  }
 
- if (i>1)
+ if (i>1 && options->all_comp==1)
  {
   printf("\nError: '*' cannot be with other objects, <%s>. Exiting...\n",str);
   free(obj_list);
