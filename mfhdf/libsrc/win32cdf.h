@@ -225,7 +225,7 @@
  * these sizes internally.
  */
 #define MAX_NC_DIMS 5000	 /* max dimensions per file */
-#define MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
+#define MAX_NC_ATTRS 2000	 /* max global or per variable attributes */
 #define MAX_NC_VARS 5000	 /* max variables per file */
 #define MAX_NC_NAME 256		 /* max length of a name */
 #define MAX_VAR_DIMS 32          /* max per variable dimensions */
