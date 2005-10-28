@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #endif
 #define MAX_NC_ATTSIZE    2000	/* max size in bytes of an attribute */
-#define MAX_NC_ATTS        500	/* max number of attributes in a netCDF */
 #define MAXTRST		   500	/* maximum size of a single string value */
 #define FORT_MAX_LINES	20	/* max lines in FORTRAN statement */
 #define	FORT_MAX_STMNT	66*FORT_MAX_LINES /* max chars in FORTRAN statement */
@@ -50,4 +49,4 @@ extern struct atts {
     nc_type type;
     int len;
     void *val;
-} atts[MAX_NC_ATTS];		/* should be a malloc'ed list, not an array */
+} atts[MAX_NC_ATTRS];		/* should be a malloc'ed list, not an array */

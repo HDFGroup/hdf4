@@ -913,7 +913,7 @@ case 38:
 case 39:
 # line 245 "ncgen.y"
 {
-		       if (natts >= MAX_NC_ATTS)
+		       if (natts >= MAX_NC_ATTRS)
 			 derror("too many attributes");
 		       atts[natts].var = varnum ;
 		       atts[natts].type = valtype;

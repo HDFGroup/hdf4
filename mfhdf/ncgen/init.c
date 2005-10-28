@@ -29,7 +29,7 @@ long netcdf_record_number;	/* current record number for variables */
 
 struct vars vars[MAX_NC_VARS];	/* should be a malloc'ed list, not an array */
 
-struct atts atts[MAX_NC_ATTS];	/* should be a malloc'ed list, not an array */
+struct atts atts[MAX_NC_ATTRS];	/* should be a malloc'ed list, not an array */
 
 extern void clearout();
 
