@@ -243,7 +243,7 @@ attdecl:        att
 		   }
 		'=' attvallist
 		   {
-		       if (natts >= MAX_NC_ATTS)
+		       if (natts >= MAX_NC_ATTRS)
 			 derror("too many attributes");
 		       atts[natts].var = varnum ;
 		       atts[natts].type = valtype;
