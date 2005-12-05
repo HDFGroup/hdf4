@@ -1,7 +1,6 @@
 /* hdf/src/h4config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define to 1 if your Fortran 77 compiler doesn't accept -c and -o together.
-   */
+/* Define to 1 if your Fortran compiler doesn't accept -c and -o together. */
 #undef F77_NO_MINUS_C_MINUS_O
 
 /* Define to 1 if you have the <inttypes.h> header file. */

@@ -20,7 +20,7 @@ AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
 
-AM_INIT_AUTOMAKE([HDF], [4.2r1])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AC_PREFIX_DEFAULT([`pwd`/NewHDF])
@@ -49,19 +49,6 @@ set >&AS_MESSAGE_LOG_FD
 AC_MSG_RESULT([done])
 
 AC_CANONICAL_HOST
-
-dnl Some platforms have broken tr, basename, and/or xargs programs. Check
-dnl that it actually does what it's supposed to do. Catch this early
-dnl since configure relies upon tr heavily and there's no use continuing
-dnl if it's broken.
-dnl
-AC_MSG_CHECKING([if tr works])
-TR_TEST="`echo Test | tr 'a-z,' 'A-Z '`"
-if test $TR_TEST != "TEST"; then
-  AC_MSG_ERROR([tr program doesn't work])
-else
-  AC_MSG_RESULT([yes])
-fi
 
 AC_MSG_CHECKING([if basename works])
 BASENAME_TEST="`basename /foo/bar/baz/qux/basename_works`"

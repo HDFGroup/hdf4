@@ -1,0 +1,99 @@
+#! /bin/sh
+#
+# Copyright by the Board of Trustees of the University of Illinois.
+# All rights reserved.
+#
+
+# A script to run the GNU autotools to regenerate files for HDF4.
+# If the paths of the autotools are not specified by the user, they
+# are hardcoded to point to their locations in AFS on HDF5 Linux machines.
+# Users can specify the locations of the autotools with the following
+# variables:
+# AUTOCONF, AUTOMAKE, ACLOCAL, AUTOHEADER should be the path to the
+# corresponding tools.
+# LIBTOOL_DIR should be the path to the base libtool directory;
+# $LIBTOOL_DIR/bin/libtool should invoke libtool, while
+# $LIBTOOL_DIR/share/aclocal needs to be included by aclocal.
+# Be very careful when specifying these tools manually!  There are a lot
+# of versions that can get confused (not even counting the m4 utility)!
+
+# HDF4 currently uses the following versions of the autotools:
+# Uses automake (and aclocal) version 1.9.5
+# Uses autoconf (and autoheader) version 2.59
+# Includes macros from libtool version 1.5.14
+#
+# When upgrading automake's version, don't forget to also update its
+# helper utilities, especially depcomp.
+AUTOCONF_VERSION="autoconf (GNU Autoconf) 2.59"
+AUTOMAKE_VERSION="automake (GNU automake) 1.9.5"
+AUTOHEADER_VERSION="autoheader (GNU Autoconf) 2.59"
+ACLOCAL_VERSION="aclocal (GNU automake) 1.9.5"
+LIBTOOL_VERSION="(GNU libtool) 1.5.14"
+
+# If the user has defined environment variables pointing to the autotools,
+# use those (but check their versions first!).  Otherwise, assume that
+# we're running on a Linux box with access to the autotools in AFS.
+if test "X$AUTOCONF" = "X"; then
+  AUTOCONF=/afs/ncsa/projects/hdf/packages/autoconf_2.59/Linux_2.4/bin/autoconf
+fi
+if test "X$AUTOMAKE" = "X"; then
+  AUTOMAKE=/afs/ncsa/projects/hdf/packages/automake_1.9.5/Linux_2.4/bin/automake-1.9
+fi
+if test "X$AUTOHEADER" = "X"; then
+  AUTOHEADER=/afs/ncsa/projects/hdf/packages/autoconf_2.59/Linux_2.4/bin/autoheader
+fi
+  # When using the default settings, add the correct version of autoconf
+  # binaries to path (otherwise aclocal may find an outdated version of
+  # autom4ate and complain about an
+  # "unknown language": Autoconf-without-aclocal-m4.
+if test "X$ACLOCAL" = "X"; then
+  ACLOCAL=/afs/ncsa/projects/hdf/packages/automake_1.9.5/Linux_2.4/bin/aclocal-1.9
+  PATH=/afs/ncsa/projects/hdf/packages/autoconf_2.59/Linux_2.4/bin:$PATH
+fi
+  # Libtool is used to supply macros that aclocal uses
+if test "X$LIBTOOL_DIR" = "X"; then
+  LIBTOOL_DIR=/afs/ncsa/projects/hdf/packages/libtool_1.5.14/Linux_2.4
+fi
+
+
+# Check version numbers of all autotools against the "correct" versions
+AC_VERS=`${AUTOCONF} --version 2>&1 | grep "^${AUTOCONF_VERSION}"`
+if test -z "${AC_VERS}"; then
+   echo "${AUTOCONF} version is not 2.59"
+   exit 1
+fi
+AM_VERS=`${AUTOMAKE} --version 2>&1 | grep "^${AUTOMAKE_VERSION}"`
+if test -z "${AM_VERS}"; then
+   echo "${AUTOMAKE} version is not 1.9.5"
+   exit 1
+fi
+AH_VERS=`${AUTOHEADER} --version 2>&1 | grep "^${AUTOHEADER_VERSION}"`
+if test -z "${AH_VERS}"; then
+   echo "${AUTOHEADER} version is not 2.59"
+   exit 1
+fi
+AL_VERS=`${ACLOCAL} --version 2>&1 | grep "^${ACLOCAL_VERSION}"`
+if test -z "${AL_VERS}"; then
+   echo "${ACLOCAL} version is not 1.9.5"
+   exit 1
+fi
+LT_VERS=`${LIBTOOL_DIR}/bin/libtool --version 2>&1 | grep "${LIBTOOL_VERSION}"`
+if test -z "${LT_VERS}"; then
+   echo "${LIBTOOL_DIR}/bin/libtool version is not 1.5.14"
+   exit 1
+fi
+
+# Run autoconf/automake commands in order
+  echo ${ACLOCAL} -I ${LIBTOOL_DIR}/share/aclocal
+  ${ACLOCAL} -I ${LIBTOOL_DIR}/share/aclocal || exit 1
+
+  echo ${AUTOHEADER}
+  ${AUTOHEADER} || exit 1
+
+  echo ${AUTOMAKE} --add-missing
+  ${AUTOMAKE} --add-missing || exit 1
+
+  echo ${AUTOCONF}
+  ${AUTOCONF} || exit 1
+
+exit 0
