@@ -30,7 +30,7 @@
 ./bin/locate_sw
 ./bin/missing
 ./bin/mkinstalldirs
-./bin/regenerate.sh
+./bin/reconfigure
 ./bin/runtest
 ./bin/snapshot
 
