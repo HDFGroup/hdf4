@@ -423,12 +423,23 @@ C
       integer COMP_CODE_NONE, COMP_CODE_RLE, COMP_CODE_NBIT
       integer COMP_CODE_SKPHUFF, COMP_CODE_DEFLATE
       integer COMP_CODE_JPEG
+      integer COMP_CODE_SZIP
+      integer SZ_EC_OPTION_MASK, SZ_NN_OPTION_MASK
+      integer COMP_DECODER_ENABLED, COMP_ENCODER_ENABLED
       parameter (COMP_CODE_NONE = 0)
       parameter (COMP_CODE_RLE  = 1)
       parameter (COMP_CODE_NBIT = 2)
       parameter (COMP_CODE_SKPHUFF = 3)
       parameter (COMP_CODE_DEFLATE = 4)
+      parameter (COMP_CODE_SZIP = 5)
       parameter (COMP_CODE_JPEG = 6)
+C
+C     SZIP parameters
+C
+      parameter (SZ_EC_OPTION_MASK = 4)
+      parameter (SZ_NN_OPTION_MASK = 32)
+      parameter (COMP_DECODER_ENABLED = 1)
+      parameter (COMP_ENCODER_ENABLED = 2)
 C
 C	Interlace Types 
 

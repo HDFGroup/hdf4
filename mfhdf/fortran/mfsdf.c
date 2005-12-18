@@ -1814,9 +1814,13 @@ switch (cflags)
  *                      COMP_CODE_RLE  = 1
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
+ *                      COMP_CODE_SZIP = 5
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ *          SZIP:
+ *          comp_prm[0] = options_mask    
+ *          comp_prm[1] = pixels_per_block 
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -1863,6 +1867,11 @@ switch (cflags)
           c_info.deflate.level = comp_prm[0]; 
           break;
 
+       case COMP_CODE_SZIP:      /* SZIP compression */  
+          c_type = COMP_CODE_SZIP;
+          c_info.szip.options_mask = comp_prm[0]; 
+          c_info.szip.pixels_per_block = comp_prm[1]; 
+          break;
        default:
 
           return FAIL;
@@ -1883,6 +1892,7 @@ switch (cflags)
  *                      COMP_CODE_NBIT = 2
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
+ *                      COMP_CODE_SZIP = 5
  *          SKPHUFF:
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
@@ -1893,6 +1903,12 @@ switch (cflags)
  *          comp_prm[1] = nbit_fill_one
  *          comp_prm[2] = nbit_start_bit
  *          comp_prm[3] = nbit_bit_len
+ *          SZIP:
+ *          comp_prm[0] = options_mask             IN
+ *          comp_prm[1] = pixels_per_block         IN
+ *          comp_prm[2] = pixels_per_scanline      OUT
+ *          comp_prm[3] = bits_per_pixel           OUT
+ *          comp_prm[4] = pixels                   OUT
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -1950,6 +1966,16 @@ switch (cflags)
        case COMP_CODE_DEFLATE:      /* GZIP compression */  
           *comp_type = 4;
           comp_prm[0] = c_info.deflate.level; 
+	  ret = 0;
+          break;
+
+       case COMP_CODE_SZIP:      /* SZIP encoding */
+          *comp_type = 5;
+          comp_prm[0] = c_info.szip.options_mask;
+          comp_prm[1] = c_info.szip.pixels_per_block;
+          comp_prm[2] = c_info.szip.pixels_per_scanline; 
+          comp_prm[3] = c_info.szip.bits_per_pixel; 
+          comp_prm[4] = c_info.szip.pixels; 
 	  ret = 0;
           break;
 

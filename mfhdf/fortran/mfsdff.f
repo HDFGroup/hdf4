@@ -538,9 +538,12 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_SZIP =  5
 C                   comp_prm - compression parameter array:
 C                   comp_prm(1) = deflate_level for GZIP
 C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C                   comp_prm(1) = options_mask for SZIP
+C                   comp_prm(2) = bits_per_block for SZIP
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C
@@ -567,9 +570,15 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_SZIP =  5
 C                   comp_prm - compression parameter array:
 C                   comp_prm(1) = deflate_level for GZIP
 C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C                   comp_prm(1) = options_mask for SZIP
+C                   comp_prm(2) = bits_per_block for SZIP
+C                   comp_prm(3) = pixels_per_scanline for SZIP
+C                   comp_prm(4) = bits_per_pixel for SZIP
+C                   comp_prm(5) = pixels for SZIP
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C
