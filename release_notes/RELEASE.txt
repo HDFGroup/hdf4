@@ -91,6 +91,8 @@ Bugs fixed since HDF4.2r1
 			files allowed on a system.
 		SDget_numopenfiles -- returns the number of files currently 
 			being opened.
+	- If a VSgetattr was called twice for an attribute, the second would
+	  failed (bugzilla #486.)  This problem is fixed.  BMR - 2005/12/30
 
 Documentation
 ==============
