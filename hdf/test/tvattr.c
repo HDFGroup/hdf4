@@ -30,6 +30,9 @@ static char RcsId[] = "@(#)$Revision$";
 *  and adds attrs to them.  read_vattr reads the attributes back,
 *  and check their correctness.  
 *
+* test_readattrtwice: tests the fix of bugzilla #486, which a 
+*	subsequent read of an attribute failed. - BMR - Dec, 2005.
+*
 **************************************************************/
 #include "hdf.h"
 #include "tproto.h"
@@ -63,6 +66,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define ATTNAME10  "attname10"
 #define EPS64     (float64)1.0E-14
 #define EPS32     (float32)1.0E-7
+#define MAX_HDF4_NAME_LENGTH 256
 
 int32 data1[6]={0,-1,10,11,20,21}, idata1[6];
 char  data2[6] = {'A','B','C','D','E','F'}, idata2[6];
@@ -75,6 +79,7 @@ float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 static intn write_vset_stuff(void);
 static intn write_vattrs(void);
 static intn read_vattrs(void);
+static void test_readattrtwice(void);
 
 /* create vdatas and vgroups */
 
@@ -749,6 +754,101 @@ static intn read_vattrs(void)
    return 0;
 }
 
+static void test_readattrtwice(void)
+{
+    int32 file_id, vsref, vsid;
+    int32 findex, attr_index, fattr_index;
+    int32 data_type, count, size; 
+    int32 nfields, num_attrs, num_fattrs;
+    char name[MAX_HDF4_NAME_LENGTH + 1];
+    char *buffer;
+    int k;
+    intn ret;
+
+    file_id = Hopen(FILENAME, DFACC_READ, 0);
+    CHECK(file_id,FAIL,"Hopen:FILENAME");
+
+    ret = Vstart(file_id);
+    CHECK(ret,FAIL,"Vstart:file_id");
+
+    /* get the first vdata */
+    vsref = VSgetid(file_id, -1);
+    if (vsref == FAIL)
+    {
+	num_errs++;
+	printf(">>> VSgetid was unable to find first Vdata\n");
+    }
+
+    /* read attributes of each vdata and its fields, then go to next vdata */
+    while (vsref != -1)
+    {
+	vsid = VSattach(file_id, vsref, "r");
+	CHECK(vsid,FAIL,"VSattach");
+
+	num_attrs =  VSfnattrs(vsid, _HDF_VDATA);
+	CHECK(num_attrs,FAIL,"VSfnattrs");
+
+	for (k = 0; k < num_attrs; k++)
+	{
+	    ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
+	    CHECK(ret,FAIL,"VSattrinfo");
+
+	    buffer = HDmalloc(size);
+	    CHECK(buffer,NULL,"HDmalloc");
+
+	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
+	    CHECK(ret,FAIL,"VSgetattr");
+
+	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
+	    if (ret == FAIL)
+	    {
+		num_errs++;
+		printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
+	    }
+	    free(buffer);
+
+	    nfields = VFnfields(vsid);
+	    CHECK(nfields,FAIL,"VFnfields");
+
+	    for (findex = 0; findex < nfields; findex++)
+	    {
+		num_fattrs = VSfnattrs(vsid, findex);
+		CHECK(num_fattrs,FAIL,"VSfnattrs");
+
+		for (fattr_index = 0; fattr_index < num_fattrs; fattr_index++)
+		{
+		    ret = VSattrinfo(vsid, findex, fattr_index, name, 
+						&data_type, &count, &size);
+		    CHECK(ret,FAIL,"VSattrinfo");
+
+		    buffer = HDmalloc(size);
+		    CHECK(buffer,NULL,"HDmalloc");
+
+		    ret = VSgetattr(vsid, findex, fattr_index, buffer);
+		    CHECK(ret,FAIL,"VSgetattr");
+
+		    ret = VSgetattr(vsid, findex, fattr_index, buffer);
+		    if (ret == FAIL)
+		    {
+			num_errs++;
+			printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
+		    }
+		}   /* for fattr_index */
+	    }   /* for findex */
+	}   /* for k */
+
+	ret = VSdetach(vsid);
+	CHECK(ret,FAIL,"VSdetach");
+
+	/* find next vdata */
+	vsref = VSgetid(file_id, vsref);
+    }
+    ret = Vend(file_id);
+    CHECK(ret,FAIL,"VSdetach");
+    ret = Hclose(file_id);
+    CHECK(ret,FAIL,"Hclose");
+}   /* test_readattrtwice */
+
 /* main test driver */
 void
 test_vset_attr(void)   
@@ -756,4 +856,5 @@ test_vset_attr(void)
    write_vset_stuff();
    write_vattrs();
    read_vattrs(); 
+   test_readattrtwice();
 } /* test_vset_attr */

@@ -980,8 +980,19 @@ VSattach(HFILEID f,             /* IN: file handle */
         if (acc_mode == 'r')
           {     /* reading an existing vdata */
               /* this vdata is already attached for 'r', ok to do so again */
+	      /* then reset the read position to the beginning of the vdata */
               if (w->nattach && w->vs->access == 'r')
+		{
+		  accrec_t *access_rec;	/* access record */
+
                   w->nattach++;
+
+		  /* get the access_rec pointer to reset position */
+/*
+		  if ((access_rec = HAatom_object(w->vs->aid)) == NULL)
+		      HGOTO_ERROR(DFE_ARGS, FAIL);
+		  access_rec->posn = 0;	/* to fix bugzilla #486 - BMR, Dec, 05 */
+		}
               else
                 {
                   vs = w->vs;
