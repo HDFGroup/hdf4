@@ -175,7 +175,7 @@ Building Instructions:
     
       Invoke Microsoft Visual C++.  From the main menu, go to "File"
       and select the "Open Workspace" option. Then open the
-      c:\MyHDFstuff\hdf5\windows\proj\all\all.dsw workspace. 
+      c:\MyHDFstuff\HDF42r1\all.dsw workspace. 
 
       You should find windows project files listed as "all files, 
       big files etc." on the left.        
