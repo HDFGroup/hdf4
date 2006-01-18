@@ -700,6 +700,7 @@
 ./mfhdf/fortran/sunos.m4
 ./mfhdf/fortran/test_nc.cdl
 ./mfhdf/fortran/test_nc.nc
+./mfhdf/fortran/tszip.f
 ./mfhdf/fortran/ultrix.m4
 ./mfhdf/fortran/unicos.m4
 ./mfhdf/fortran/vax-ultrix.m4
