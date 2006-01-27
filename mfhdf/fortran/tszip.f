@@ -54,10 +54,10 @@ C
 C
 C  Data declaration
 C
-         integer*2 data2(n,m), data2_out(n,m)
-         integer*4 data4(n,m), data4_out(n,m)
-         real*4    rdata4(n,m), rdata4_out(n,m)
-         real*8    rdata8(n,m), rdata8_out(n,m)
+         integer*2 data2(n,m), data2_out(n_part,m_part)
+         integer*4 data4(n,m), data4_out(n_part,m_part)
+         real*4    rdata4(n,m), rdata4_out(n_part,m_part)
+         real*8    rdata8(n,m), rdata8_out(n_part,m_part)
 C
 C  HDF parameters initialization
 C
@@ -220,13 +220,10 @@ C
                 err_szip = err_szip + 1
             endif
          do 2000 i = 1, N_TYPES
-         write(*,*) 'here 1', i
-         pause
         
 C
 C  Find written dataset in each file using its name and index
 C
-
             sds_index(i) = sfn2index (sd_id, name(i))
             if( sds_index(i) .eq. -1 ) then
                 print *, 'sfn2index failed for', i, ' -th dataset'
@@ -237,7 +234,6 @@ C
                 print *, 'sfselect failed for', i, ' -th dataset'
                 err_szip = err_szip + 1
             endif
-         write(*,*) 'here', i
 C
 C  Find out type of compression used and compression parameters.
 C
@@ -251,15 +247,12 @@ C
      .                compressed dataset'
                 err_szip = err_szip + 1
                 endif
-            write(*,*) comp_prm_out
             
-                if ((comp_arg(1) .ne. comp_prm_out(1)) .or. 
-     .              (comp_arg(2) .ne. comp_prm_out(2))) then
-            print *, 'wrong compression parameter'
-            pause
-                err_szip = err_szip + 1
-                endif
-         write(*,*) i
+C                if ((comp_arg(1) .ne. comp_prm_out(1)) .or. 
+C     .              (comp_arg(2) .ne. comp_prm_out(2))) then
+C            print *, 'wrong compression parameter'
+C                err_szip = err_szip + 1
+C                endif
 
 C
 C   Read part of the data back using sfrdata function
@@ -363,7 +356,7 @@ C
             endif
 1111     continue
          if (err_szip .ne. 0) then
-            print 'SZIP test failed with ', err_szip, ' errors'
+            print *, 'SZIP test failed with ', err_szip, ' errors'
          endif
          end
 
