@@ -353,7 +353,7 @@ C                   comp_flag:
 C                               -1 - SDS is non-chunked
 C                                0 - SDS is chunked without compression
 C                                1 - SDS is chunked and compressed with
-C                                    RLE, GZIP or SKPHUFF 
+C                                    RLE, GZIP, SZIP or SKPHUFF 
 C                                2 - SDS is chunked and compressed with
 C                                    NBIT
 C        Returns:   0 on success, -1 on failure
@@ -452,6 +452,7 @@ C                            COMP_CODE_RLE = 1
 C                            COMP_CODE_NBIT = 2 
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_SZIP = 5
 C                   comp_prm  - compression parameters array
 C        For
 C        Adaptive Huffman 
@@ -463,7 +464,10 @@ C                   comp_prm(1) = nbit_sign_ext
 C                   comp_prm(2) = nbit_fill_one
 C                   comp_prm(3) = nbit_start_bit
 C                   comp_prm(4) = nbit_bit_len 
-C          
+C         
+C        SZIP
+C                   comp_prm(1) = options_mask
+C                   comp_prm(2) = pixels_per_block 
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C

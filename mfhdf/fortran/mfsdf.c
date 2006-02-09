@@ -1624,6 +1624,8 @@ switch (cflags)
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ *          comp_prm[0] = option_mask:      SZIP option mask parameter
+ *          comp_prm[1] = pixels_per_block  SZIP parameter
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -1710,6 +1712,16 @@ switch (cflags)
 
           break;
 
+       case 5:      /* SZIP compression */  
+         cflags = HDF_CHUNK | HDF_COMP;
+          for (i=0; i < rank; i++)
+                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+           
+          chunk_def.comp.comp_type = COMP_CODE_SZIP;
+          chunk_def.comp.cinfo.szip.options_mask     = comp_prm[0];
+          chunk_def.comp.cinfo.szip.pixels_per_block = comp_prm[1];
+          break;
+
        default:
 
           return FAIL;
@@ -1717,7 +1729,6 @@ switch (cflags)
      }
 
     ret = SDsetchunk(sdsid, chunk_def, cflags);
-     
     return(ret);
 
 }   
