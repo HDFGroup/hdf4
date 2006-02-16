@@ -548,7 +548,7 @@ merge_blocks(mydd_t * dd, int32 infile, int32 outfile)
                 hdferror();
             }
           ret = Hwrite(outaid, len, data);
-          if (len == FAIL)
+          if (ret == FAIL)
             {
                 HERROR(DFE_GENAPP);
                 hdferror();
