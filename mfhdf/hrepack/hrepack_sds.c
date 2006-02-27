@@ -55,7 +55,7 @@ int copy_sds(int32 sd_in,
        sds_out,               /* data set identifier */
        sds_index,             /* index number of the data set */
        dtype,                 /* SDS data type */
-       dimsizes[MAX_VAR_DIMS],/* dimensional size of SDS */
+       dimsizes[MAX_VAR_DIMS],/* dimensions of SDS */
        start[MAX_VAR_DIMS],   /* read start */
        edges[MAX_VAR_DIMS],   /* read edges */
        nattrs,                /* number of SDS attributes */
@@ -64,7 +64,6 @@ int copy_sds(int32 sd_in,
        numtype,               /* number type */
        eltsz,                 /* element size */
        nelms,                 /* number of elements */
-       dim_size,              /* dimension size */
        dim_id,                /* dimension ID */
        dim_out;               /* dimension ID */
  char             sds_name[MAX_NC_NAME]; 
@@ -552,6 +551,8 @@ int copy_sds(int32 sd_in,
  /* loop through each dimension up to rank of SDS */
  for (i = 0; i < rank; i++) 
  {
+  int32 dim_size;
+
   /* get dimension handle for input dimension */
   if ((dim_id = SDgetdimid(sds_id, i)) == FAIL) {
    printf( "Failed to get dimension %d of SDS <%s>\n", i, path);
@@ -591,22 +592,22 @@ int copy_sds(int32 sd_in,
    numtype = dtype & DFNT_MASK;
    eltsz = DFKNTsize(numtype | DFNT_NATIVE);
 
-   if ((dim_buf = (VOIDP) HDmalloc(dim_size * eltsz)) == NULL) {
-    printf( "Failed to alloc %d for dimension scale\n", dim_size);
+   if ((dim_buf = (VOIDP) HDmalloc(dimsizes[i] * eltsz)) == NULL) {
+    printf( "Failed to alloc %d for dimension scale\n", dimsizes[i]);
     ret=-1;
     goto out;
    }
    if ((okdim=SDgetdimscale(dim_id, dim_buf)) == FAIL) {
     printf( "Warning: Failed to get scale information for %s\n", dim_name);
-    /* SDgetdimscale incorrectly returns FAIL when
-       the associated SDS has the same name as the dimension.
-       we avoid returning FAIL, allowing for the rest of the file
-       to be processed */
    }
-   if (okdim!=FAIL && SDsetdimscale(dim_out, dim_size, dtype, dim_buf) == FAIL) {
-    printf( "Failed to set scale information for %s\n", dim_name);
-    ret=-1;
-    goto out;
+   if (okdim!=FAIL)
+   {
+    /* use dimsizes returned by SDgetinfo */
+    if (SDsetdimscale(dim_out,dimsizes[i], dtype, dim_buf) == FAIL) {
+     printf( "Failed to set scale information for %s\n", dim_name);
+     ret=-1;
+     goto out;
+    }
    }
    free(dim_buf);
   }
