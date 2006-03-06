@@ -2703,6 +2703,9 @@ pixrep(struct Input *in, struct Raster *im)
  * Revision: (pkamat)
  *		Modified to support the writing of the data set in any of the
  *		following types: INT32, INT16, INT8 and FP64
+ * Modification: pvn: March, 3, 2006
+ *  handled a missing case of in->outtype == 5 (NO_NE), for hdf input type
+ *  current version assumes that datum is DFNT_FLOAT32 for this case
  */
 static int
 process(struct Options *opt)
@@ -2812,6 +2815,7 @@ process(struct Options *opt)
 	  switch(in.outtype)
 	    {
 	    case 0: /* 32-bit float */
+     case 5:
 	      if ((in.data = (VOIDP) HDmalloc((size_t) len * sizeof(float32))) == NULL)
 		{
 		  (void) fprintf(stderr, err2);
@@ -2862,6 +2866,7 @@ process(struct Options *opt)
 	    {
 
 	    case 0: /* 32-bit float */
+     case 5:
             
 			/* create data-set */ 
 			if (in.rank == 2)
@@ -3556,6 +3561,9 @@ void fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
  *
  * Purpose:
  *      Initialise the data-structures to hold scale information
+ * Modification: pvn: March, 3, 2006
+ *  handled a missing case of in->outtype == 5 (NO_NE), for hdf input type
+ *  current version assumes that datum is DFNT_FLOAT32 for this case
  */
 static int init_scales(struct Input * in)
 {
@@ -3563,6 +3571,7 @@ static int init_scales(struct Input * in)
   switch(in->outtype)
     {
     case 0: /* 32-bit float */
+    case 5:
       if ((in->hscale = (float32 *) HDmalloc((size_t)
 					     (in->dims[0] + 1) * sizeof(float32))) == NULL)
 	{
