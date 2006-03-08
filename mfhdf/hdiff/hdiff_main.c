@@ -1,3 +1,15 @@
+/****************************************************************************
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
+ ****************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,6 +94,8 @@ usage()
  fprintf(stderr,"  [-t limit]        Print difference when it is greater than limit\n");
  fprintf(stderr,"  file1             File name of the first input HDF file\n");
  fprintf(stderr,"  file2             File name of the second input HDF file\n");
+ fprintf(stderr,"\n");
+ fprintf(stderr,"return code: 0 - no differences found; 1 - differences found \n");
  exit(EXIT_FAILURE);
 }
 
@@ -109,7 +123,6 @@ main(int argc, char *argv[])
   0     /* if -S specified print statistics */
  };
  int   c;
- int   i;
  int   nfound;
  
  opterr = 1;
@@ -167,20 +180,6 @@ main(int argc, char *argv[])
  case '?':
   usage();
   break;
- }
- 
-/*-------------------------------------------------------------------------
- * print the command line options
- *-------------------------------------------------------------------------
- */
- 
- if ( opt.verbose == 1) {
- printf("$hdiff");
- for (i=1; i<argc ; i++) 
- {
-  printf(" %s", argv[i] );
- }
- printf("\n");
  }
  
  argv = argv + optind;

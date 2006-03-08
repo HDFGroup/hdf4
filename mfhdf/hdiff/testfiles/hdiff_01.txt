@@ -14,3 +14,5 @@ hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] file1 file2
   [-t limit]        Print difference when it is greater than limit
   file1             File name of the first input HDF file
   file2             File name of the second input HDF file
+
+return code: 0 - no differences found; 1 - differences found 
