@@ -793,7 +793,7 @@ static void test_readattrtwice(void)
 	    ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
 	    CHECK(ret,FAIL,"VSattrinfo");
 
-	    buffer = HDmalloc(size);
+	    buffer = HDmalloc(size+1);
 	    CHECK(buffer,NULL,"HDmalloc");
 
 	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
@@ -805,7 +805,7 @@ static void test_readattrtwice(void)
 		num_errs++;
 		printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
 	    }
-	    free(buffer);
+	    HDfree(buffer);
 
 	    nfields = VFnfields(vsid);
 	    CHECK(nfields,FAIL,"VFnfields");

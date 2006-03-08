@@ -1685,7 +1685,7 @@ test_emptyvdata(void)
 	// fields is too big - Mac has a 32K local data limit.
     char  name[VSNAMELENMAX], *fields;
     
-    fields = malloc(FIELDNAMELENMAX*VSFIELDMAX*sizeof(char));
+    fields = HDmalloc(FIELDNAMELENMAX*VSFIELDMAX*sizeof(char));
     if (fields == NULL)		return;
 #endif
 
@@ -1845,7 +1845,7 @@ test_emptyvdata(void)
     CHECK(status,FAIL,"Hclose");
 
 #ifdef macintosh
-	free(fields);
+	HDfree(fields);
 #endif
 
 } /* test_emptyvdata() */
