@@ -46,15 +46,16 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
  * printf formatting
  *-------------------------------------------------------------------------
  */
-#define SPACES  "          "
-#define FFORMAT "%-15f %-15f %-15f\n"
-#define IFORMAT "%-15d %-15d %-15d\n"
-#define CFORMAT "%-16c %-17c\n"
-#define SFORMAT "%-16s %-17s\n"
-#define UIFORMAT "%-15u %-15u %-15u\n"
-#define LIFORMAT "%-15ld %-15ld %-15ld\n"
+#define SPACES    "          "
+#define FFORMAT   "%-15f %-15f %-15f\n"
+#define FFORMATP  "%-15f %-15f %.0f%%\n"
+#define IFORMAT   "%-15d %-15d %-15d\n"
+#define IFORMATP  "%-15d %-15d %.0f%%\n"
+#define CFORMAT   "%-16c %-17c\n"
+#define SFORMAT   "%-16s %-17s\n"
+#define UIFORMAT  "%-15u %-15u %-15u\n"
+#define LIFORMAT  "%-15ld %-15ld %-15ld\n"
 #define ULIFORMAT "%-15lu %-15lu %-15lu\n"
-
 
 /*-------------------------------------------------------------------------
  * Function: print_pos
@@ -109,7 +110,7 @@ void print_pos( int        *ph,
 /*-------------------------------------------------------------------------
  * Function: array_diff
  *
- * Purpose: memory compare
+ * Purpose: compare the 2 buffers BUF1 and BUF2
  *
  *-------------------------------------------------------------------------
  */
@@ -122,7 +123,8 @@ int array_diff(void *buf1,
                int rank,
                int32 *dims,
                int32 type, 
-               float32 err_limit, 
+               float32 err_limit,
+               float32 err_rel,
                uint32 max_err_cnt, 
                int32 statistics,
                void *fill1, 
@@ -155,6 +157,7 @@ int array_diff(void *buf1,
  int32   pos[MAX_VAR_DIMS];   /* matrix position */
  int     ph=1;                /* print header  */
  int     j;
+ double  per;
 
  acc[rank-1]=1;
  for(j=(rank-2); j>=0; j--)
@@ -257,7 +260,24 @@ int array_diff(void *buf1,
     i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i1ptr2));
     i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i1ptr2));
    }
-   if (c_diff > (int32) err_limit)
+   /* relative */
+   if (err_rel)
+   {
+    per=-1;
+    if (*i1ptr1!=0)
+     per=fabs(1-( (double)*i1ptr2 / (double)*i1ptr1 ));
+    if (per > err_rel)
+    {
+     n_diff++;
+     if (n_diff <= max_err_cnt) 
+     {
+      print_pos(&ph,i,acc,pos,rank,name1,name2);
+      printf(SPACES);
+      printf(IFORMATP,*i1ptr1,*i1ptr2,per*100);
+     }
+    }  
+   } /* relative */
+   else if (c_diff > (int32) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
@@ -306,7 +326,24 @@ int array_diff(void *buf1,
     i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i2ptr2));
     i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i2ptr2));
    }
-   if (i2_diff > (int) err_limit)
+   /* relative */
+   if (err_rel)
+   {
+    per=-1;
+    if (*i2ptr1!=0)
+     per=fabs(1-( (double)*i2ptr2 / (double)*i2ptr1 ));
+    if (per > err_rel)
+    {
+     n_diff++;
+     if (n_diff <= max_err_cnt) 
+     {
+      print_pos(&ph,i,acc,pos,rank,name1,name2);
+      printf(SPACES);
+      printf(IFORMATP,*i2ptr1,*i2ptr2,per*100);
+     }
+    }  
+   } /* relative */
+   else if (i2_diff > (int) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
@@ -351,13 +388,30 @@ int array_diff(void *buf1,
     i4_max_val2 = MYMAX(i4_max_val2,*i4ptr2);
     i4_min_val2 = MYMIN(i4_min_val2,*i4ptr2);
    }
-   if (i4_diff > (int32) err_limit)
+   /* relative */
+    if (err_rel)
+    {
+     per=-1;
+     if (*i4ptr1!=0)
+      per=fabs(1-( (double)*i4ptr2 / (double)*i4ptr1 ));
+     if (per > err_rel)
+     {
+      n_diff++;
+      if (n_diff <= max_err_cnt) 
+      {
+       print_pos(&ph,i,acc,pos,rank,name1,name2);
+       printf(SPACES);
+       printf(IFORMATP,*i4ptr1,*i4ptr2,per*100);
+      }
+     }  
+    } /* relative */
+   else if (i4_diff > (int32) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
      print_pos(&ph,i,acc,pos,rank,name1,name2);
      printf(SPACES);
-     printf(IFORMAT,*i4ptr1,*i4ptr2,abs(*i4ptr1-*i4ptr2));
+     printf(IFORMAT,*i4ptr1,*i4ptr2,i4_diff);
     }
    }                                               
    i4ptr1++;  i4ptr2++;
@@ -399,7 +453,24 @@ int array_diff(void *buf1,
     d_max_val2 = MYMAX(d_max_val2, (float64)(*fptr2));
     d_min_val2 = MYMIN(d_min_val2, (float64)(*fptr2));
    }
-   if (f_diff > err_limit)
+   /* relative */
+   if (err_rel)
+   {
+    per=-1;
+    if (*fptr1!=0)
+     per=fabs(1-( (double)*fptr2 / (double)*fptr1 ));
+    if (per > err_rel)
+    {
+     n_diff++;
+     if (n_diff <= max_err_cnt) 
+     {
+      print_pos(&ph,i,acc,pos,rank,name1,name2);
+      printf(SPACES);
+      printf(FFORMATP,*fptr1,*fptr2,per*100);
+     }
+    }  
+   } /* relative */
+   else if (f_diff > err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
@@ -443,6 +514,23 @@ int array_diff(void *buf1,
     d_max_val2 = MYMAX(d_max_val2, (*dptr2));
     d_min_val2 = MYMIN(d_min_val2, (*dptr2));
    }
+   /* relative */
+   if (err_rel)
+   {
+    per=-1;
+    if (*dptr1!=0)
+     per=fabs(1-( (double)*dptr2 / (double)*dptr1 ));
+    if (per > err_rel)
+    {
+     n_diff++;
+     if (n_diff <= max_err_cnt) 
+     {
+      print_pos(&ph,i,acc,pos,rank,name1,name2);
+      printf(SPACES);
+      printf(FFORMATP,*dptr1,*dptr2,per*100);
+     }
+    }  
+   } /* relative */
    if (d_diff > (float64) err_limit)
    {
     n_diff++;

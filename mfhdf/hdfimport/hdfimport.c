@@ -1241,21 +1241,36 @@ gint8(char *infile, FILE * strm, int8 *ival, struct Input *in)
  * Purpose:
  *      Extract the maximum and minimum data values from the input file.
  *      Supports 32-bit integer, 16-bit integer, 8-bit integer, 32-bit float, 64-bit float
+ * Revision: (pvn) March 14, 2006
+ *      Used the SD interface instead of DFSD 
  */
 static int
 gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
 {
     const char *err1 = "Unable to get max/min values from file: %s.\n";
+    int32 sd_id, sds_id, sd_index;
  
     /*
      * extract the max/min values from the input file
      */
     if (in->is_hdf == TRUE)
-      {
-	if (!DFSDgetrange(&in->max, &in->min))
-	  if (in->max > in->min)
-	    *is_maxmin = TRUE;
-      }
+    {
+     if ((sd_id = SDstart(infile, DFACC_RDONLY))==FAIL)
+      goto err;
+     sd_index = 0;
+	    sds_id = SDselect (sd_id, sd_index); 
+     if (SDgetrange(sds_id,&in->max, &in->min)!=FAIL)
+     {
+      if (in->max > in->min)
+       *is_maxmin = TRUE;
+     }
+     /* terminate access to the array. */
+     if (SDendaccess(sds_id)==FAIL)
+      goto err;
+     /* terminate access to the SD interface and close the file */
+     if (SDend(sd_id)==FAIL)
+      goto err;
+    }
     else
       {
 	if (in->outtype == FP_32)
@@ -1358,6 +1373,8 @@ gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
  * Revision: (pkamat)
  *      Modified to support 32-bit integer, 16-bit integer, 8-bit integer in
  *		addition to 32-bit float and 64-bit float
+ * Revision: (pvn) March 14, 2006
+ *      Used the SD interface instead of DFSD
  */
 static int
 gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
@@ -1389,44 +1406,51 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
      * extract the scale values from the input file
      */
     if (in->is_hdf == TRUE)
-      {
-          if (in->rank == 2)
-            {
-                if (DFSDgetdimscale(1, hdfdims[0], in->vscale))
-                  {
-                      *is_scale = FALSE;
-                      for (i = 0; i <= hdfdims[0]; i++)
-                          in->vscale[i] = (float32) i;
-                  }
-                if (DFSDgetdimscale(2, hdfdims[1], in->hscale))
-                  {
-                      *is_scale = FALSE;
-                      for (i = 0; i <= hdfdims[1]; i++)
-                          in->hscale[i] = (float32) i;
-                  }
-            }
-          else
-            {
-                if (DFSDgetdimscale(1, hdfdims[0], in->dscale))
-                  {
-                      *is_scale = FALSE;
-                      for (i = 0; i <= hdfdims[0]; i++)
-                          in->dscale[i] = (float32) i;
-                  }
-                if (DFSDgetdimscale(2, hdfdims[1], in->vscale))
-                  {
-                      *is_scale = FALSE;
-                      for (i = 0; i <= hdfdims[1]; i++)
-                          in->vscale[i] = (float32) i;
-                  }
-                if (DFSDgetdimscale(3, hdfdims[2], in->hscale))
-                  {
-                      *is_scale = FALSE;
-                      for (i = 0; i <= hdfdims[2]; i++)
-                          in->hscale[i] = (float32) i;
-                  }
-            }
-      }
+    {
+     int32 sd_id, sds_id, sd_index, dim_id;
+     
+     if ((sd_id = SDstart(infile, DFACC_RDONLY))==FAIL)
+      goto err;
+     sd_index = 0;
+     sds_id = SDselect (sd_id, sd_index); 
+     
+     if (in->rank == 2)
+     {
+      /* select the dimension */
+      dim_id = SDgetdimid (sds_id, 0);
+      if (SDgetdimscale (dim_id, in->vscale)==FAIL)
+       goto err;
+      
+      dim_id = SDgetdimid (sds_id, 1);
+      if (SDgetdimscale (dim_id, in->hscale)==FAIL)
+       goto err;
+      
+     }
+     else
+     {
+      
+      dim_id = SDgetdimid (sds_id, 0);
+      if (SDgetdimscale (dim_id, in->dscale)==FAIL)
+       goto err;
+      
+      dim_id = SDgetdimid (sds_id, 1);
+      if (SDgetdimscale (dim_id, in->vscale)==FAIL)
+       goto err;
+      
+      dim_id = SDgetdimid (sds_id, 2);
+      if (SDgetdimscale (dim_id, in->hscale)==FAIL)
+       goto err;
+      
+     }
+     
+     
+     /* terminate access to the array. */
+     if (SDendaccess(sds_id)==FAIL)
+      goto err;
+     /* terminate access to the SD interface and close the file */
+     if (SDend(sd_id)==FAIL)
+      goto err;
+    }
     else
       {
 	switch(in->outtype)
@@ -2704,7 +2728,7 @@ pixrep(struct Input *in, struct Raster *im)
  *		Modified to support the writing of the data set in any of the
  *		following types: INT32, INT16, INT8 and FP64
  * Modification: pvn: March, 3, 2006
- *  handled a missing case of in->outtype == 5 (NO_NE), for hdf input type
+ *  handled the case of in->outtype == 5 (NO_NE), for hdf input type
  *  current version assumes that datum is DFNT_FLOAT32 for this case
  */
 static int
@@ -3562,7 +3586,7 @@ void fpdeallocate(struct Input *in, struct Raster *im, struct Options *opt)
  * Purpose:
  *      Initialise the data-structures to hold scale information
  * Modification: pvn: March, 3, 2006
- *  handled a missing case of in->outtype == 5 (NO_NE), for hdf input type
+ *  handled the case of in->outtype == 5 (NO_NE), for hdf input type
  *  current version assumes that datum is DFNT_FLOAT32 for this case
  */
 static int init_scales(struct Input * in)

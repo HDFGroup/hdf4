@@ -85,6 +85,9 @@ typedef struct {   /* selection for comparison  */
      * option on command line
      */
     int statistics;
+    float32 err_rel;  /*
+     * relative diff for the comparison
+     */
 
 } diff_opt_t;
 
@@ -132,6 +135,7 @@ int array_diff(void *buf1,
                int32 *dims,
                int32 type, 
                float32 err_limit, 
+               float32 err_rel,
                uint32 max_err_cnt, 
                int32 statistics,
                void *fill1, 

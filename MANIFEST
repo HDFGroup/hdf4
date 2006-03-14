@@ -831,6 +831,7 @@
 ./mfhdf/hdiff/testfiles/hdiff_09.txt
 ./mfhdf/hdiff/testfiles/hdiff_10.txt
 ./mfhdf/hdiff/testfiles/hdiff_11.txt
+./mfhdf/hdiff/testfiles/hdiff_12.txt
 ./mfhdf/hdiff/testfiles/hdifftst1.hdf
 ./mfhdf/hdiff/testfiles/hdifftst2.hdf
 

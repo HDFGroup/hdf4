@@ -15,13 +15,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-
 #include "hdf.h"
 #include "mfhdf.h"
-
 #include "hdiff.h"
-
-
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -31,6 +27,8 @@
  * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
  *
  * Date:  August 27, 2003
+ *  Modifications: March 8, 2006
+ *  Added percent (relative) option
  *
  * Comments:
  *
@@ -70,6 +68,8 @@ hdifftst1.hdf hdifftst2.hdf
 # verbose 
 -b hdifftst1.hdf hdifftst2.hdf
 
+# percent (relative)
+-d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf
 
 */
 
@@ -81,7 +81,7 @@ static void
 usage()
 {
  (void) fprintf(stderr,
-  "hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] file1 file2\n");
+  "hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] [-p relative] file1 file2\n");
  fprintf(stderr,"  [-b]              Verbose mode\n");
  fprintf(stderr,"  [-g]              Compare global attributes only\n");
  fprintf(stderr,"  [-s]              Compare SD local attributes only\n");
@@ -92,9 +92,15 @@ usage()
  fprintf(stderr,"  [-u var1[,...]]   Compare vdata on variable(s) <var1>,... only\n");
  fprintf(stderr,"  [-e count]        Print difference up to count number for each variable\n");
  fprintf(stderr,"  [-t limit]        Print difference when it is greater than limit\n");
+ fprintf(stderr,"  [-p relative]     Print difference when it is greater than a relative limit\n");
  fprintf(stderr,"  file1             File name of the first input HDF file\n");
  fprintf(stderr,"  file2             File name of the second input HDF file\n");
  fprintf(stderr,"\n");
+ fprintf(stderr,"Items in [] are optional\n");
+ fprintf(stderr,"The 'count' value must be a positive integer\n");
+ fprintf(stderr,"The 'limit' and 'relative' values must be positive numbers\n");
+ fprintf(stderr,"The -t compare criteria is |a - b| > limit\n");
+ fprintf(stderr,"The -p compare criteria is |1 - b/a| > relative\n");
  fprintf(stderr,"return code: 0 - no differences found; 1 - differences found \n");
  exit(EXIT_FAILURE);
 }
@@ -120,7 +126,8 @@ main(int argc, char *argv[])
   0,    /* if -v specified, list of variable names */
   0,    /* if -u specified, number of variables */
   0,    /* if -u specified, list of variable names */
-  0     /* if -S specified print statistics */
+  0,    /* if -S specified print statistics */
+  0,    /* -p err_rel */
  };
  int   c;
  int   nfound;
@@ -131,7 +138,7 @@ main(int argc, char *argv[])
  if (argc == 1)
   usage();
  
- while ((c = getopt(argc, argv, "bgsdSDe:t:v:u:")) != EOF)
+ while ((c = getopt(argc, argv, "bgsdSDe:t:v:u:p:")) != EOF)
   switch(c) {
  case 'b':  /* verbose mode */
   opt.verbose =1;
@@ -176,6 +183,9 @@ main(int argc, char *argv[])
   break;
  case 'S':
   opt.statistics = 1;
+  break;
+ case 'p':
+  opt.err_rel = (float32)atof(optarg);
   break;
  case '?':
   usage();

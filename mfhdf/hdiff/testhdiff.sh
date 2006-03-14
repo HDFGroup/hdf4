@@ -96,12 +96,12 @@ TOOLTEST() {
 
  
    # Used only to create the output file; uncomment to create
-   #   if [ ! -f $expect ]; then
+      if [ ! -f $expect ]; then
    # Create the expected file if it doesn't yet exist.
-   #   echo " CREATED"
-   #   cp $actual $expect
+      echo " CREATED"
+      cp $actual $expect
    #   elif
-   if $CMP $expect $actual; then
+   elif $CMP $expect $actual; then
       echo " PASSED"
    else
       echo "*FAILED*"
@@ -153,6 +153,9 @@ TOOLTEST hdiff_10.txt -d -t 2 hdifftst1.hdf hdifftst2.hdf
 
 # no options
 TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
+
+# percent (relative)
+TOOLTEST hdiff_12.txt -d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf
 
 }
 

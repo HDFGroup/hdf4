@@ -41,6 +41,8 @@ main( )
  int32 n_values;
  int32 buf1a[Y_LENGTH][X_LENGTH] = {{1,1},{1,1},{5,6}};
  int32 buf1b[Y_LENGTH][X_LENGTH] = {{1,2},{3,4},{5,6}};
+ int32 buf2a[Y_LENGTH][X_LENGTH] = {{100,100},{100,100},{100,0}};
+ int32 buf2b[Y_LENGTH][X_LENGTH] = {{101,105},{106,150},{200,100}};
  char8 bufga1[] = "Storm_track_data1"; 
  char8 bufga2[] = "Storm_track_data2"; 
  float32 bufa1[2] = {1., 1.};
@@ -82,7 +84,7 @@ main( )
  status = SDsetattr (sd1_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga1);
  status = SDsetattr (sd2_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, (VOIDP)bufga2);
   
-/* Create the data set */ 
+/* Create the data sets */ 
  sds1_id = SDcreate (sd1_id, "dset1", DFNT_INT32, RANK, dim_sizes);
  sds2_id = SDcreate (sd2_id, "dset1", DFNT_INT32, RANK, dim_sizes);
 
@@ -90,7 +92,6 @@ main( )
  n_values  = 2;
  status = SDsetattr (sds1_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa1);
  status = SDsetattr (sds2_id, SDS_ATTR_NAME, DFNT_FLOAT32, n_values, (VOIDP)bufa2);
-
  
 /* Write the stored data to the data set */
  status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf1a);
@@ -105,6 +106,14 @@ main( )
  sds2_id = SDcreate (sd2_id, "dset2", DFNT_INT32, RANK, dim_sizes);
  status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf1a);
  status = SDwritedata (sds2_id, start, NULL, edges, (VOIDP)buf1b);
+ status = SDendaccess (sds1_id);
+ status = SDendaccess (sds2_id);
+
+ /* data sets for -p test */ 
+ sds1_id = SDcreate (sd1_id, "dset3", DFNT_INT32, RANK, dim_sizes);
+ sds2_id = SDcreate (sd2_id, "dset3", DFNT_INT32, RANK, dim_sizes);
+ status = SDwritedata (sds1_id, start, NULL, edges, (VOIDP)buf2a);
+ status = SDwritedata (sds2_id, start, NULL, edges, (VOIDP)buf2b);
  status = SDendaccess (sds1_id);
  status = SDendaccess (sds2_id);
 
