@@ -27,7 +27,8 @@ nctest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 # On some platforms (RedStorm), tests need to be invoked with a certain
 # command.  HDF traditionally uses RUNSERIAL to hold the name of this 
-# command, while Automake uses TESTS_ENVIRONMENT to invoke its tests. # Set the TESTS_ENVIRONMENT variable equal to RUNSERIAL.
+# command, while Automake uses TESTS_ENVIRONMENT to invoke its tests.
+# Set the TESTS_ENVIRONMENT variable equal to RUNSERIAL.
 TESTS_ENVIRONMENT=$(RUNSERIAL) 
  
 #############################################################################
