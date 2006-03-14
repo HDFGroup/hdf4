@@ -37,11 +37,11 @@ check:
 	@echo "==================================="
 	@echo "HDF-SD Fortran interfaces tests"
 	@echo "==================================="
-	srcdir="$(srcdir)" ./hdftest
+	srcdir="$(srcdir)" $(RUNSERIAL) ./hdftest
 	@echo "==================================="
 	@echo "HDF-NetCDF Fortran interfaces tests"
 	@echo "==================================="
-	srcdir="$(srcdir)" ./ftest
+	srcdir="$(srcdir)" $(RUNSERIAL) ./ftest
 
 #############################################################################
 ##                          And the cleanup                                ##

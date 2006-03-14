@@ -229,6 +229,12 @@ testhdf_DEPENDENCIES = testdir ../src/libdf.a
 
 @HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../src/libdf.a
 @HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir ../src/libdf.a
+
+# On some platforms (RedStorm), tests need to be invoked with a certain
+# command.  HDF traditionally uses RUNSERIAL to hold the name of this
+# command, while Automake uses TESTS_ENVIRONMENT to invoke its tests.
+# Set the TESTS_ENVIRONMENT variable equal to RUNSERIAL.
+TESTS_ENVIRONMENT = $(RUNSERIAL)
 #############################################################################
 #############################################################################
 DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
