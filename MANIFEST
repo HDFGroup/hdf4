@@ -33,6 +33,7 @@
 ./bin/reconfigure
 ./bin/runtest
 ./bin/snapshot
+./bin/yodconfigure
 
 ./config/BlankForm
 ./config/freebsd
