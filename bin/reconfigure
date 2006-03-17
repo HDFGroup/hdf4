@@ -55,6 +55,9 @@ if test "X$LIBTOOL_DIR" = "X"; then
   LIBTOOL_DIR=/afs/ncsa/projects/hdf/packages/libtool_1.5.14/Linux_2.4
 fi
 
+# yodconfigure is locally created and maintained.
+YODCONFIGURE=bin/yodconfigure
+
 
 # Check version numbers of all autotools against the "correct" versions
 AC_VERS=`${AUTOCONF} --version 2>&1 | grep "^${AUTOCONF_VERSION}"`
@@ -95,5 +98,8 @@ fi
 
   echo ${AUTOCONF}
   ${AUTOCONF} || exit 1
+
+  echo ${YODCONFIGURE} configure
+  ${YODCONFIGURE} configure || exit 1
 
 exit 0
