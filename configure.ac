@@ -521,6 +521,8 @@ AC_TRY_LINK([#include <math.h>], [sqrt(37.927)],
             [AC_MSG_RESULT([yes])],
             [AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
+AC_CHECK_FUNCS(fork system vfork wait)
+
 dnl ======================================================================
 dnl Checks for system services
 dnl ======================================================================
