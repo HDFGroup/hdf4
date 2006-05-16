@@ -21,7 +21,7 @@ hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c         \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
                   hrepack_opttable.c hrepack_pal.c hrepack_parse.c          \
                   hrepack_sds.c hrepack_sdutil.c hrepack_utils.c            \
-                  hrepack_vg.c hrepack_vs.c
+                  hrepack_vg.c hrepack_vs.c hrepack_mattbl.c hrepack_dim.c
 hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
@@ -36,6 +36,7 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
                        hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
+                       hrepack_mattbl.c hrepack_dim.c                       \
                        hrepack_vs.c test_hrepack_add.c test_hrepack_main.c  \
                        test_hrepack_verify.c ../hdiff/hdiff.c               \
                        ../hdiff/hdiff_array.c ../hdiff/hdiff_gattr.c        \

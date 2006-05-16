@@ -70,7 +70,7 @@ int copy_vg_an(int32 infile_id,
   options)<0)
    return FAIL;
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -282,6 +282,6 @@ int copy_an(int32 infile_id,
   AN_DATA_DESC,path,options)<0)
   return FAIL;
  
- return SUCCESS;
+ return SUCCEED;
 }
 

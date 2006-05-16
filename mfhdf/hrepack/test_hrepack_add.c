@@ -146,7 +146,7 @@ int add_gr_ffile(const char* name_file,
   image_data=NULL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -353,7 +353,7 @@ int add_gr(const char* gr_name,     /* gr name */
  if (add_an(file_id, DFTAG_RI, gr_ref)<0)
   return FAIL;
 
- return SUCCESS;
+ return SUCCEED;
  
 }
 
@@ -401,7 +401,7 @@ int add_glb_attrs(const char *fname,
   return FAIL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -476,7 +476,7 @@ int add_r8(const char* image_file,
   image_data=NULL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -552,7 +552,7 @@ int add_r24(const char* image_file,
   image_data=NULL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -787,7 +787,7 @@ int add_sd(const char *fname,       /* file name */
   goto fail;
  } 
 
- return SUCCESS;
+ return SUCCEED;
 
 fail:
  SDendaccess (sds_id);
@@ -925,7 +925,7 @@ int add_sd3d(const char *fname,       /* file name */
   goto fail;
  } 
  
- return SUCCESS;
+ return SUCCEED;
 
 fail:
  SDendaccess (sds_id);
@@ -968,7 +968,7 @@ int add_empty_sd(int32 sd_id,             /* SD id */
   return FAIL;
  } 
  
- return SUCCESS;
+ return SUCCEED;
 
 }
 
@@ -1112,7 +1112,7 @@ int add_vs(const char* vs_name,
  if (add_an(file_id, vdata_tag, vdata_ref)<0)
   return FAIL;
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -1232,7 +1232,7 @@ int add_file_an(int32 file_id)
   return FAIL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -1297,7 +1297,7 @@ int add_an(int32 file_id, int32 tag, int32 ref)
   return FAIL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -1327,7 +1327,7 @@ int add_pal(const char* fname)
   return FAIL;
  }
  
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -1511,7 +1511,7 @@ int add_sd_szip(const char *fname,       /* file name */
   goto fail;
  }
 
- return SUCCESS;
+ return SUCCEED;
 
 fail:
  SDendaccess (sds_id);
@@ -1557,7 +1557,7 @@ int add_sd_szip_all(const char *fname,       /* file name */
    return FAIL;
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 /*-------------------------------------------------------------------------

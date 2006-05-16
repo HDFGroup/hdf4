@@ -11,11 +11,10 @@
  ****************************************************************************/
 
 
-#ifndef REPACK_SDS_H_
-#define REPACK_SDS_H_
+#ifndef REPACK_DIM_H_
+#define REPACK_DIM_H_
 
 #include "hrepack.h"
-#include "hrepack_lsttable.h"
 
 
 #ifdef __cplusplus
@@ -23,25 +22,11 @@ extern "C" {
 #endif
 
 
-int  copy_sds(int32 sd_in,
-              int32 sd_out,
-              int32 tag,
-              int32 ref,
-              int32 vgroup_id_out_par,
-              char*group_name,
-              options_t *options,
-              table_t *table,
-              table_t *td1,
-              table_t *td2,
-              int32 infile_id,
-              int32 outfile_id);
-
-
-
-int copy_sds_attrs(int32 sds_id,
-                   int32 sds_out,
-                   int32 nattrs,          
-                   options_t *options);
+void match_dim(int32 sd_in,
+               int32 sd_out,
+               table_t *td1,
+               table_t *td2,
+               options_t *options);
 
 
 
@@ -50,4 +35,4 @@ int copy_sds_attrs(int32 sds_id,
 #endif
 
 
-#endif  /* REPACK_SDS_H_ */
+#endif  /* REPACK_DIM_H_ */

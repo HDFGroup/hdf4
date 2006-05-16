@@ -11,29 +11,47 @@
  ****************************************************************************/
 
 
-#ifndef REPACK_PARSE_H_
-#define REPACK_PARSE_H_
+#ifndef HDF_HREPACK_MATCH_TABLE__
+#define HDF_HREPACK_MATCH_TABLE__
+
 
 #include "hdf.h"
 #include "mfhdf.h"
-#include "hrepack.h"
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int parse_number(char *str);
+/* match objects in 2 HDF files */ 
+typedef struct match_info_t {
+ int32   tag1;
+ int32   ref1;
+ int32   tag2;
+ int32   ref2;
+ char  obj_name[MAX_NC_NAME];      /* same name for file1 and 2 */
+ int   flags[2];                   /* object exists in file=1, no=0 */  
+} match_info_t;
+
+/* table to store the match info */
+typedef struct match_table_t {
+ int          size;
+ int          nobjs;
+ match_info_t *objs;
+} match_table_t;
 
 
-/* compression */
+/* table methods */
+void match_dim_table_init(match_table_t **table);
+void match_dim_table_free(match_table_t *table);
+void match_dim_table_add (match_table_t *table, 
+                      unsigned *flags, 
+                      char* path, 
+                      int32 tag1, 
+                      int32 ref1,
+                      int32 tag2, 
+                      int32 ref2 );
 
-obj_list_t* parse_comp(const char *str, int *n_objs, comp_info_t *comp);
-const char*       get_scomp(comp_coder_t code);
 
-/* chunking */
-
-obj_list_t* parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int *chunk_rank);
 
 
 #ifdef __cplusplus
@@ -41,4 +59,4 @@ obj_list_t* parse_chunk(const char *str, int *n_objs, int32 *chunk_lengths, int 
 #endif
 
 
-#endif  /* REPACK_PARSE_H_ */
+#endif  /* HDF_HREPACK_MATCH_TABLE__ */

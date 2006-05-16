@@ -103,7 +103,9 @@ int  copy_vg(char* infname,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table)
+             table_t *table,
+             table_t *td1,
+             table_t *td2)
 {
  int32 vgroup_id,             /* vg identifier */
        vgroup_id_out,         /* vg identifier */
@@ -135,7 +137,7 @@ int  copy_vg(char* infname,
    printf( "Could not dettach group\n");
    return FAIL;
   }
-  return SUCCESS;
+  return SUCCEED;
  }
  if(vgroup_name != NULL) 
   if(strcmp(vgroup_name,GR_NAME)==0) {
@@ -143,7 +145,7 @@ int  copy_vg(char* infname,
     printf( "Could not dettach group\n");
     return FAIL;
    }
-   return SUCCESS;
+   return SUCCEED;
   }
   
  /* initialize path */
@@ -192,7 +194,7 @@ int  copy_vg(char* infname,
   if (vgroup_insert(infname,outfname,infile_id,outfile_id,
    sd_id,sd_out,gr_id,gr_out,
    vgroup_id_out,
-   path,tags,refs,ntagrefs,table,options)<0) {
+   path,tags,refs,ntagrefs,table,td1,td2,options)<0) {
    free (tags);
    free (refs);
    return FAIL;
@@ -212,7 +214,7 @@ int  copy_vg(char* infname,
  if (path)
   free(path);
   
- return SUCCESS;
+ return SUCCEED;
 }
 
 

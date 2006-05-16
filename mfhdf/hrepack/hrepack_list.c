@@ -23,10 +23,13 @@
 #include "hrepack_vs.h"
 #include "hrepack_an.h"
 #include "hrepack_vg.h"
+#include "hrepack_mattbl.h"
+#include "hrepack_dim.h"
 
-int list_vg (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
+
+int list_vg (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,table_t *td1,table_t *td2,options_t *options);
 int list_gr (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
-int list_sds(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,table_t *table,options_t *options);
+int list_sds(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,table_t *table,table_t *td1,table_t *td2,options_t *options);
 int list_vs (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
 int list_glb(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
 int list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
@@ -73,10 +76,12 @@ int list(const char* infname,
          options_t *options)
 {
  table_t      *table=NULL;
+ table_t      *td1=NULL;    /* dimensions */
+ table_t      *td2=NULL;    /* dimensions */
  int32        sd_id,        /* SD interface identifier */
               sd_out,       /* SD interface identifier */
               gr_id,        /* GR interface identifier */
-              gr_out,       /* Gr interface identifier */
+              gr_out,       /* GR interface identifier */
               infile_id,
               outfile_id;
  int          i;
@@ -84,6 +89,8 @@ int list(const char* infname,
 
  /* init table */
  table_init(&table);
+ table_init(&td1);
+ table_init(&td2);
 
  /* open the input file for read and create the output file */
  infile_id  = Hopen (infname,DFACC_READ,0);
@@ -128,11 +135,11 @@ int list(const char* infname,
   printf("Building list of objects in %s...\n",infname);
 
  /* iterate tru HDF interfaces */
- if (list_vg (infname,outfname,infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,options)<0) 
+ if (list_vg (infname,outfname,infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,td1,td2,options)<0) 
   goto out;
  if (list_gr (infname,outfname,infile_id,outfile_id,gr_id,gr_out,table,options)<0) 
   goto out;
- if (list_sds(infname,outfname,infile_id,outfile_id,sd_id,sd_out,table,options)<0) 
+ if (list_sds(infname,outfname,infile_id,outfile_id,sd_id,sd_out,table,td1,td2,options)<0) 
   goto out;
  if (list_vs (infname,outfname,infile_id,outfile_id,table,options)<0) 
   goto out;
@@ -142,6 +149,11 @@ int list(const char* infname,
   goto out;
  if (list_an (infname,outfname,infile_id,outfile_id,options)<0) 
   goto out;
+
+ if ( options->trip==1 ) 
+ {
+  match_dim(sd_id,sd_out,td1,td2,options);
+ }
 
  
  if (GRend (gr_id)==FAIL)
@@ -190,14 +202,20 @@ int list(const char* infname,
   }
  }
 
+ 
+
  /* free table */
  table_free(table);
+ table_free(td1);
+ table_free(td2);
  return 0;
 
 out:
  
  /* free table */
  table_free(table);
+ table_free(td1);
+ table_free(td2);
  if (GRend (gr_id)==FAIL)
   printf( "Failed to close GR interface <%s>\n", infname);
  if (GRend (gr_out)==FAIL)
@@ -238,6 +256,8 @@ int list_vg(const char* infname,
             int32 gr_id,
             int32 gr_out,
             table_t *table,
+            table_t *td1,
+            table_t *td2,
             options_t *options)
 {
  int32 vgroup_id,      /* vgroup identifier */
@@ -369,6 +389,8 @@ int list_vg(const char* infname,
       refs,
       ntagrefs,
       table,
+      td1,
+      td2,
       options)<0) {
       free (tags);
       free (refs);
@@ -407,7 +429,7 @@ int list_vg(const char* infname,
   return FAIL;
  }
  
- return SUCCESS;
+ return SUCCEED;
 }
 
 /*-------------------------------------------------------------------------
@@ -434,6 +456,8 @@ int vgroup_insert(const char* infname,
                    int32* in_refs,          /* ref list for parent group */
                    int npairs,              /* number tag/ref pairs for parent group */
                    table_t *table,
+                   table_t *td1,
+                   table_t *td2,
                    options_t *options)
 {
  int32 vgroup_id,             /* vgroup identifier */
@@ -551,6 +575,8 @@ int vgroup_insert(const char* infname,
      refs,
      ntagrefs,
      table,
+     td1,
+     td2,
      options)<0) {
      free (tags);
      free (refs);
@@ -591,6 +617,8 @@ int vgroup_insert(const char* infname,
     path_name,
     options,
     table,
+    td1,
+    td2,
     infile_id,
     outfile_id)<0)
     return FAIL;
@@ -643,7 +671,7 @@ int vgroup_insert(const char* infname,
   
  } /* i */
  
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -717,7 +745,7 @@ int list_gr(const char* infname,
   }
  }
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -738,6 +766,8 @@ int list_sds(const char* infname,
              int32 sd_id,
              int32 sd_out,
              table_t *table,
+             table_t *td1,
+             table_t *td2,
              options_t *options)
 {
  int32 sds_id,                 /* dataset identifier */
@@ -773,7 +803,7 @@ int list_sds(const char* infname,
   }
 
   /* copy SDS  */
-  if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,
+  if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,td1,td2,
                infile_id,outfile_id)<0) goto out;
      
   /* terminate access to the current dataset */
@@ -874,7 +904,7 @@ int list_vs(const char* infname,
  }
 
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -905,7 +935,7 @@ int list_glb(const char* infname,
  
  if ( options->trip==0 ) 
  {
-  return SUCCESS;
+  return SUCCEED;
  }
      
 /*-------------------------------------------------------------------------
@@ -933,7 +963,7 @@ int list_glb(const char* infname,
  if (copy_gr_attrs(gr_id,gr_out,n_file_attrs,options)<0)
   return FAIL;
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 
@@ -965,7 +995,7 @@ int list_an(const char* infname,
 
  if ( options->trip==0 ) 
  {
-  return SUCCESS;
+  return SUCCEED;
  }
  ann_buf=NULL;
  
@@ -1078,7 +1108,7 @@ int list_an(const char* infname,
    free (ann_buf);
  }
 
- return SUCCESS;
+ return SUCCEED;
  
  /* Terminate access to the AN interface */
 out:
@@ -1119,7 +1149,7 @@ int list_pal(const char* infname,
  
  if ( options->trip==0 ) 
  {
-  return SUCCESS;
+  return SUCCEED;
  }
 
  DFPrestart();
@@ -1150,7 +1180,6 @@ int list_pal(const char* infname,
   
  }
  
- return SUCCESS;
+ return SUCCEED;
 }
-
 

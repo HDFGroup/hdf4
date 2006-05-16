@@ -15,7 +15,7 @@
 #include <assert.h>
 #include "hdf.h"
 #include "mfhdf.h"
-
+#include "hrepack.h"
 #include "hrepack_gr.h"
 #include "hrepack_utils.h"
 #include "hrepack_sdutil.h"

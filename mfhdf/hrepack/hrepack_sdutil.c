@@ -10,16 +10,13 @@
  *                                                                          *
  ****************************************************************************/
 
-
-
 #include <assert.h>
 #include "hdf.h"
 #include "mfhdf.h"
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
 #endif
-
-
+#include "hrepack.h"
 #include "hrepack_sdutil.h"
 #include "hrepack_parse.h"
 #include "hrepack_opttable.h"

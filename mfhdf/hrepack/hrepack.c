@@ -61,7 +61,7 @@ int hrepack(const char* infile,
  if (list(infile,outfile,options)<0)
   return FAIL;
 
- return SUCCESS;
+ return SUCCEED;
 }
 
 

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <ctype.h> /*isdigit*/
 
+#include "hrepack.h"
 #include "hrepack_parse.h"
 
 #ifdef H4_HAVE_LIBSZ

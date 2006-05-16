@@ -868,6 +868,10 @@
 ./mfhdf/hrepack/hrepack_vg.h
 ./mfhdf/hrepack/hrepack_vs.c
 ./mfhdf/hrepack/hrepack_vs.h
+./mfhdf/hrepack/hrepack_dim.c
+./mfhdf/hrepack/hrepack_dim.h
+./mfhdf/hrepack/hrepack_mattbl.c
+./mfhdf/hrepack/hrepack_mattbl.h
 ./mfhdf/hrepack/image24pixel.txt
 ./mfhdf/hrepack/image24plane.txt
 ./mfhdf/hrepack/image8.txt

@@ -34,7 +34,7 @@ int copy_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
  
  if ( options->trip==0 ) 
  {
-  return SUCCESS;
+  return SUCCEED;
  }
 
  DFPrestart();
@@ -65,7 +65,7 @@ int copy_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
   
  }
  
- return SUCCESS;
+ return SUCCEED;
 }
 
 

@@ -19,24 +19,10 @@
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
 #endif
-
-
+#define NN_MODE 0
+#define EC_MODE 1
 #define TAG_GRP_IMAGE DFTAG_RIG
 #define TAG_GRP_DSET  DFTAG_NDG
-
-#ifndef SUCCESS
-#define SUCCESS 0
-#endif
-
-#ifndef FAIL
-#define FAIL -1
-#endif
-
-
-#if 0
-#define HZIP_DEBUG
-#endif
-
 
 /* a list of names */
 typedef struct {
