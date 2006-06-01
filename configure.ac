@@ -517,7 +517,7 @@ dnl Checks for library functions
 dnl ======================================================================
 
 AC_MSG_CHECKING([for math library support])
-AC_TRY_LINK([#include <math.h>], [sqrt(37.927)],
+AC_TRY_LINK([#include <math.h>], [sinh(37.927)],
             [AC_MSG_RESULT([yes])],
             [AC_MSG_RESULT([no]); LIBS="$LIBS -lm"])
 
