@@ -65,8 +65,8 @@ c	related: Vgetclass--vgclsc--VFGCLS
 
       integer function vfgcls (vg, vgclass)
 
-      integer			vg
-      character*(*)	vgclass
+      integer   vg
+      character*(*)   vgclass
       integer       vgclsc
 
       vfgcls = vgclsc  (vg, vgclass)
@@ -76,9 +76,9 @@ c	general inquiry on a vgroup
 c	related: Vinquire--vinqc--VFINQ
 
       integer   function    vfinq (vg, nentries, vgname)
-      integer			vg, nentries
-      character*(*)	vgname
-      integer			vinqc
+      integer   vg, nentries
+      character*(*)   vgname
+      integer   vinqc
 
       vfinq = vinqc (vg, nentries, vgname)
       end
@@ -88,8 +88,8 @@ c	gets the id of the next vgroup in the file
 c	related: Vgetid--vgidc--VFGID
 
       integer   function    vfgid (f, vgid)
-      integer		f, vgid
-      integer		vgidc
+      integer     f, vgid
+      integer     vgidc
 
       vfgid = vgidc (f, vgid)
       end
@@ -99,8 +99,8 @@ c	gets the id of the next entry in the vgroup
 c	related: Vgetnext--vgnxtc--VFGNXT
 
       integer   function    vfgnxt (vg, id)
-      integer		vg, id
-      integer		vgnxtc
+      integer   vg, id
+      integer   vgnxtc
 
       vfgnxt = vgnxtc (vg, id)
       end
@@ -111,9 +111,9 @@ c	sets the name of the vgroup
 c	related: Vsetname--vsnamc--VFSNAM
 
       integer function vfsnam (vg, vgname)
-      integer			vg
-      character*(*)	vgname
-      integer       vsnamc
+      integer        vg
+      character*(*)  vgname
+      integer        vsnamc
 
       vfsnam = vsnamc (vg, vgname, len(vgname))
       end
@@ -122,9 +122,9 @@ c	sets the class name of the vgroup
 c	related: Vsetclass--vsclsc--VFSCLS
 
       integer function vfscls (vg, vgclass)
-      integer			vg
-      character*(*)	vgclass
-      integer      vsclsc
+      integer       vg
+      character*(*) vgclass
+      integer       vsclsc
 
       vfscls = vsclsc  (vg, vgclass, len(vgclass))
       end
@@ -134,8 +134,8 @@ c	inserts a vset entity (ie vgroup or vdata) into the given vgroup
 c	related: Vinsert--vinsrtc--VFINSRT
 
       integer   function vfinsrt (vg, velt)
-      integer		vg, velt
-      integer		vinsrtc
+      integer   vg, velt
+      integer   vinsrtc
 
       vfinsrt = vinsrtc (vg, velt)
       end
@@ -144,9 +144,9 @@ c     ------------------------------------------------------------
 c     tests if an id in a vgroup is a vgroup
 c     related: Visvg--visvgc--vfisvg
 
-      integer	function	vfisvg (vg, id) 									
-      integer		vg, id
-      integer		visvgc
+      integer function vfisvg (vg, id)
+      integer vg, id
+      integer visvgc
 
       vfisvg = visvgc (vg, id)
       end
@@ -155,9 +155,9 @@ c     ------------------------------------------------------------
 c     tests if an id in a vgroup is a vdata
 c     related: Visvs--visvsc--vfisvs
 
-      integer	function	vfisvs (vg, id)
-      integer		vg, id
-      integer		visvsc
+      integer   function vfisvs (vg, id)
+      integer   vg, id
+      integer   visvsc
 
       vfisvs = visvsc (vg, id)
       end
@@ -171,10 +171,10 @@ c     ============================================================
 c     attach to a vdata
 c     related: VSattach--vsatchc--vfatch
 
-      integer	function	vsfatch (f, vsid, accesstype)
-      integer		f, vsid
-      character*1	accesstype
-      integer		vsatchc
+      integer function vsfatch (f, vsid, accesstype)
+      integer     f, vsid
+      character*1 accesstype
+      integer     vsatchc
 
       vsfatch = vsatchc (f, vsid, accesstype)
       end
@@ -184,8 +184,8 @@ c     detach from a vdata
 c     related: VSdetach--vsdtchc--vfdtch
 
       integer function vsfdtch (vs)
-      integer		vs
-      integer       vsdtchc
+      integer vs
+      integer vsdtchc
 
       vsfdtch = vsdtchc (vs)
       end
@@ -194,9 +194,9 @@ c     ------------------------------------------------------------
 c     seeks to a given element position in a vadata
 c     related: VSseek--vsseekc--vsfseek
 
-      integer	function	vsfseek (vs, eltpos )
-      integer		vs, eltpos
-      integer		vsseekc
+      integer   function vsfseek (vs, eltpos )
+      integer   vs, eltpos
+      integer   vsseekc
 
       vsfseek = vsseekc (vs, eltpos)
       end
@@ -206,8 +206,8 @@ c     gets the name of a vdata
 c     related: VSgetname--vsgnamc--vsfgnam
 
       integer function vsfgnam (vs, vsname)
-      integer			vs
-      character*(*)	vsname
+      integer       vs
+      character*(*) vsname
       integer       vsgnamc
 
       vsfgnam = vsgnamc (vs, vsname, len(vsname))
@@ -218,8 +218,8 @@ c     get the class name of a vdata
 c     related: VSgetclass--vsgclsc--vsfgcls
 
       integer function vsfgcls (vs, vsclass)
-      integer			vs
-      character*(*)	vsclass
+      integer       vs
+      character*(*) vsclass
       integer       vsgclsc
 
       vsfgcls = vsgclsc  (vs, vsclass, len(vsclass))
@@ -230,9 +230,9 @@ c     general inquiry on a vdata
 c     related: VSinquire--vsinqc--vsfinq
 
       integer function vsfinq (vs,nvs,ilace,fields,vsize,vsname) 
-      integer			vs, nvs, ilace, vsize
-      character*(*)	fields, vsname
-      integer			vsinqc
+      integer        vs, nvs, ilace, vsize
+      character*(*)  fields, vsname
+      integer        vsinqc
 
       vsfinq = vsinqc (vs, nvs, ilace, fields, vsize, vsname,
      +             len(fields), len(vsname))
@@ -242,10 +242,10 @@ c     ------------------------------------------------------------
 c     tests if given fields exist in the vdata
 c     related: VSfexist--vsfexc--vsfex
 
-      integer	function vsfex (vs, fields)
-      integer			vs
-      character*(*)	fields
-      integer			vsfexc
+      integer   function vsfex (vs, fields)
+      integer   vs
+      character*(*) fields
+      integer       vsfexc
 
       vsfex = vsfexc (vs, fields, len(fields))
       end
@@ -254,9 +254,9 @@ c     ------------------------------------------------------------
 c     looks for a Vdata with a given name
 c     related: VSfind--vsfind--vsffnd
 
-      integer	function vsffnd (vs, name)
-      integer			vs
-      character*(*)	name
+      integer function vsffnd (vs, name)
+      integer       vs
+      character*(*) name
       integer vsfndc
 
       vsffnd = vsfndc (vs, name, len(name))
@@ -267,8 +267,8 @@ c     gets the id of the next vdata from the file
 c     related: VSgetid--vsgidc--vsfgid
 
       integer  function vsfgid (f, vsid)
-      integer     f, vsid
-      integer     vsgidc
+      integer  f, vsid
+      integer  vsgidc
 
       vsfgid = vsgidc (f, vsid)
       end
@@ -289,8 +289,8 @@ c     sets the name of a vdata
 c     related: VSsetname--vssnamc--vsfsnam
 
       integer function vsfsnam (vs, vsname)
-      integer			vs
-      character*(*)	vsname
+      integer       vs
+      character*(*) vsname
       integer       vssnamc
 
       vsfsnam = vssnamc (vs, vsname, len(vsname))
@@ -301,8 +301,8 @@ c     set the class name of a vdata
 c     related: VSsetclass--vssclsc--vsfscls
 
       integer function vsfscls (vs, vsclass)
-      integer			vs
-      character*(*)	vsclass
+      integer       vs
+      character*(*) vsclass
       integer vssclsc
 
       vsfscls = vssclsc  (vs, vsclass, len(vsclass))
@@ -312,10 +312,10 @@ c     ------------------------------------------------------------
 c     sets the fields in a vdata for reading or writing
 c     related: VSsetfields--vssfldc--vsfsfld
 
-      integer	function	vsfsfld (vs, fields)		
-      integer			vs
-      character*(*)	fields
-      integer		vssfldc
+      integer function vsfsfld (vs, fields)
+      integer   vs
+      character*(*)  fields
+      integer        vssfldc
 
       vsfsfld = vssfldc (vs, fields, len(fields))
       end
@@ -324,9 +324,9 @@ c     ------------------------------------------------------------
 c     sets the file interlace of a vdata
 c     related: VSsetinterlace--vssintc--vsfsint
 
-      integer 	function vsfsint (vs, interlace)
-      integer 		vs, interlace
-      integer		vssintc
+      integer   function vsfsint (vs, interlace)
+      integer   vs, interlace
+      integer   vssintc
 
       vsfsint = vssintc (vs, interlace)
       end
@@ -335,11 +335,11 @@ c     ------------------------------------------------------------
 c     defines a new field to be used in the vdata
 c     related: VSfdefine--vsfdefc--vsffdef
 
-      integer	function	vsffdef (vs, field, localtype, order)	
+      integer function vsffdef (vs, field, localtype, order)
 
-      integer			vs, localtype, order
-      character*(*)	field
-      integer			vsfdefc
+      integer        vs, localtype, order
+      character*(*)  field
+      integer        vsfdefc
 
       vsffdef = vsfdefc ( vs, field, localtype, order, len(field))
 
@@ -349,11 +349,11 @@ c     ------------------------------------------------------------
 c     reads from a vdata
 c     related: VSread--vsreadc--vsfread
 
-      integer	function	vsfread (vs, buf, nelts , interlace)
+      integer function vsfread (vs, buf, nelts , interlace)
 
-      integer			vs, nelts , interlace
-      character*(*)	buf
-      integer			vsreadc
+      integer    vs, nelts , interlace
+      character*(*)   buf
+      integer    vsreadc
 
       vsfread = vsreadc (vs, buf, nelts, interlace)
       end
@@ -362,11 +362,11 @@ c     ------------------------------------------------------------
 c     writes to a vdata
 c     related: VSwrite--vswritc--vsfwrit
 
-      integer	function	vsfwrit (vs, buf, nelts, interlace)
+      integer function vsfwrit (vs, buf, nelts, interlace)
 
-      integer			vs, nelts, interlace
-      character*(*)		buf(*)	
-      integer			vswritc
+      integer       vs, nelts, interlace
+      character*(*) buf(*)
+      integer       vswritc
 
       vsfwrit = vswritc (vs, buf, nelts, interlace)
       end
@@ -402,9 +402,9 @@ c     undocumented
 c     gets the interlace of a vdata
 c     related: VSgetinterlace--vsgintc--vsfgint
 
-      integer 	function vsfgint (vs)					
-      integer 		vs
-      integer		vsgintc
+      integer   function vsfgint (vs)
+      integer   vs
+      integer   vsgintc
 
       vsfgint = vsgintc (vs)
       end
@@ -413,9 +413,9 @@ c     ------------------------------------------------------------
 c     gets the number of elements in a vdata
 c     related: VSelts--vseltsc--vsfelts
 
-      integer 	function vsfelts (vs)			
-      integer  vs	
-      integer	vseltsc
+      integer function vsfelts (vs)
+      integer vs
+      integer vseltsc
 
       vsfelts = vseltsc (vs)
       end
@@ -424,10 +424,10 @@ c     ------------------------------------------------------------
 c     gets the fields in the vdata
 c     related: VSgetfields--vsgfldc--vsfgfld
 
-      integer	function vsfgfld (vs, fields)	
-      integer			vs
-      character*(*) 	fields
-      integer			vsgfldc
+      integer function vsfgfld (vs, fields)
+      integer vs
+      character*(*) fields
+      integer  vsgfldc
 
       vsfgfld = vsgfldc (vs, fields)
       end
@@ -436,10 +436,10 @@ c     ------------------------------------------------------------
 c 	determines the (machine) size of the given fields
 c     related: VSsizeof--vssizc--vsfsiz
 
-      integer	function vsfsiz (vs, fields)		
-      integer			vs
-      character*(*) 	fields
-      integer			vssizc
+      integer function vsfsiz (vs, fields)
+      integer vs
+      character*(*) fields
+      integer vssizc
 
       vsfsiz = vssizc (vs, fields, len(fields))
       end
@@ -448,9 +448,9 @@ c     ------------------------------------------------------------
 c     determines the no of entries in a vgroup
 c     related: Ventries--ventsc--vfents
 
-      integer 	function	vfents (f, vgid)		
-      integer	f, vgid
-      integer	ventsc 
+      integer function vfents (f, vgid)
+      integer f, vgid
+      integer ventsc 
 
       vfents = ventsc (f, vgid)
       end
@@ -460,10 +460,10 @@ c     gets the refs of all lone vgroups in the file
 c     related: Vlone--vlonec--vflone
 
       integer function vflone (f, idarray, asize)
-      integer			f
-      integer			idarray(*)
-      integer			asize
-      integer			vlonec
+      integer f
+      integer idarray(*)
+      integer asize
+      integer vlonec
 
       vflone = vlonec  (f, idarray, asize)
       end
@@ -473,10 +473,10 @@ c     gets the refs of all lone vdatas in the file
 c     related: VSlone--vslonec--vsflone
 
       integer function vsflone (f, idarray, asize)
-      integer			f
-      integer			idarray(*)
-      integer			asize
-      integer			vslonec
+      integer f
+      integer idarray(*)
+      integer asize
+      integer vslonec
 
       vsflone = vslonec  (f, idarray, asize)
       end
@@ -486,9 +486,9 @@ c     gets the ref # of a vgroup for a given name
 c     related: Vfind--vfindc--VFIND
 
       integer function vfind(f,name)
-      integer		f
+      integer f
       character*(*)  name
-      integer vfindc 	
+      integer vfindc
 
       vfind = vfindc (f, name, len(name))
       end
@@ -498,9 +498,9 @@ c     gets the ref # of a vgroup for a given class
 c     related: Vfindclass--vfndclsc--VFNDCLS
 
       integer function vfndcls(f,class)
-      integer		f
+      integer f
       character*(*)  class
-      integer vfndclsc 	
+      integer vfndclsc
 
       vfndcls = vfndclsc (f, class, len(class))
       end
@@ -510,12 +510,12 @@ c     store a simple dataset in a vdata
 c     related: VHstoredata--vhsdc--vhfsd
 
       integer function vhfsd(f,field,buf,n,dtype,vsname,vsclass)
-      integer		f
+      integer f
       character*(*)  field
-      integer		buf(*)	
-      integer		n, dtype
+      integer buf(*)
+      integer n, dtype
       character*(*)  vsname, vsclass
-      integer vhsdc 	
+      integer vhsdc
 
       vhfsd = vhsdc (f, field, buf, n, dtype, vsname, vsclass,
      1            len(field), len(vsname), len(vsclass))
@@ -526,12 +526,12 @@ c     store an aggregate dataset in a vadata
 c     related: VHstoredatam--vhsdmc--vhfsdm
 
       integer function vhfsdm (f,field,buf,n,dtype,vsname,vsclass,order)
-      integer			f
+      integer f
       character*(*)  field
-      integer			buf(*)	
-      integer			n, dtype, order
+      integer        buf(*)
+      integer        n, dtype, order
       character*(*)  vsname, vsclass
-      integer vhsdmc 		
+      integer vhsdmc
 
       vhfsdm = vhsdmc (f, field, buf, n, dtype, vsname,vsclass, order,
      1             len(field), len(vsname), len(vsclass))
@@ -542,10 +542,10 @@ c     store a simple char dataset in a vdata
 c     related: VHstoredata--vhscdc--vhfscd
 
       integer function vhfscd(f,field,cbuf,n,dtype,vsname,vsclass)
-      integer           f
+      integer        f
       character*(*)  field
       character      cbuf(*)
-      integer           n, dtype
+      integer        n, dtype
       character*(*)  vsname, vsclass
       integer vhscdc
 
@@ -559,10 +559,10 @@ c     related: VHstoredatam--vhscdmc--vhfscdm
 
       integer function vhfscdm (f,field,cbuf,n,dtype,vsname,
      1            vsclass,order)
-      integer                   f
+      integer        f
       character*(*)  field
-      character              cbuf(*)
-      integer                   n, dtype, order
+      character      cbuf(*)
+      integer        n, dtype, order
       character*(*)  vsname, vsclass
       integer vhscdmc
 
@@ -576,10 +576,10 @@ c     make a new vgroup given several tag/ref pairs
 c     related: VHmakegroup--vhmkgpc--vhfmkgp
 
       integer function vhfmkgp(f,tagarray,refarray,n,vgname,vgclass)
-      integer		f, n
-      integer		tagarray(*), refarray(*)
+      integer f, n
+      integer tagarray(*), refarray(*)
       character*(*)  vgname, vgclass
-      integer 		vhmkgpc 	
+      integer vhmkgpc 
 
       vhfmkgp = vhmkgpc (f, tagarray, refarray , n, vgname, vgclass,
      1                len(vgname), len(vgclass))
@@ -592,9 +592,9 @@ c     locate a field in a vdata that belongs to this VGROUP
 c     related: Vflocate--vffloc--vflocc
 
       integer function vffloc  (vg, field)
-      integer			vg
-      character*(*)	field
-      integer 			vflocc								
+      integer vg
+      character*(*) field
+      integer vflocc
       vffloc = vflocc (vg, field, len(field))
       end
 
@@ -603,8 +603,8 @@ c     tests if a tag/ref pair is in a vgroup.
 c     related: Vinqtagref--vinqtrc--vfinqtr
 
       integer function vfinqtr  (vg, tag, ref)
-      integer		vg, tag, ref
-      integer		vinqtrc									 
+      integer vg, tag, ref
+      integer vinqtrc
       vfinqtr = vinqtrc (vg, tag, ref)
       end
 
@@ -613,7 +613,7 @@ c     gets the number of tag/refs stored in a vgroup
 c     related: Velts--veltsc--vfelts
 
       integer function vfntr (vg)
-      integer		vg
+      integer vg
       integer vntrc 
       vfntr = vntrc (vg)
       end
@@ -623,9 +623,9 @@ c     returns all the tag/ref pairs in a vgroup
 c     related: Vgettagrefs--vgttrsc--vfgttrs
 
       integer function vfgttrs (vg, tagarray, refarray, n)
-      integer		vg, n
-      integer		tagarray(*), refarray(*)
-      integer		vgttrsc									
+      integer vg, n
+      integer tagarray(*), refarray(*)
+      integer vgttrsc
 
       vfgttrs = vgttrsc (vg, tagarray, refarray, n)
       end
@@ -634,9 +634,9 @@ c     returns a specified tag/ref pair in a vgroup
 c     related: Vgettagref--vgttrc--vfgttr
 
       integer function vfgttr (vg, which, tag, ref)
-      integer		vg, which
-      integer		tag, ref
-      integer		vgttrc
+      integer vg, which
+      integer tag, ref
+      integer vgttrc
 
       vfgttr = vgttrc (vg, which, tag, ref)
       end
@@ -645,9 +645,9 @@ c     ------------------------------------------------------------
 c     add a tag/ref pair to a vgroup
 c     related: Vaddtagref--vadtrc--vfadtr
 
-      integer function vfadtr	( vg, tag, ref)
-      integer		vg, tag, ref
-      integer vadtrc				
+      integer function vfadtr( vg, tag, ref)
+      integer vg, tag, ref
+      integer vadtrc
 
       vfadtr = vadtrc  ( vg, tag, ref)
       end
@@ -657,9 +657,9 @@ c     specific inquiry on a vdata, gets fields
 c     related: VSQueryfields--vsqfldsc--vsqfflds
 
       integer function vsqfflds (vs,fields) 
-      integer			vs
-      character*(*)	fields
-      integer			vsqfldsc
+      integer vs
+      character*(*) fields
+      integer       vsqfldsc
 
       vsqfflds = vsqfldsc (vs,fields, len(fields))
       end
@@ -669,9 +669,9 @@ c     specific inquiry on a vdata, gets vdata name
 c     related: VSQueryname--vsqnamec--vsqfname
 
       integer function vsqfname (vs,name) 
-      integer			vs
-      character*(*)	name
-      integer			vsqnamec
+      integer vs
+      character*(*) name
+      integer vsqnamec
 
       vsqfname = vsqnamec (vs,name, len(name))
       end
@@ -719,9 +719,9 @@ c     ------------------------------------------------------------
 c     Delete a tag/ref pair in a vgroup.
 c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
 
-      integer function vfdtr	( vg, tag, ref)
-      integer		vg, tag, ref
-      integer vdtrc				
+      integer function vfdtr( vg, tag, ref)
+      integer vg, tag, ref
+      integer vdtrc
 
       vfdtr = vdtrc  ( vg, tag, ref)
       end
