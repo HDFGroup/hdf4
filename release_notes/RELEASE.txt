@@ -83,7 +83,7 @@ Bugs fixed since HDF4.2r1
 	  library, which users cannot change without recompiling the library.
 	  In this release, if this limit is reached, the library will 
 	  increase it to the system limit.  In addition, three APIs are 
-	  added for more flexibility.  BMR - 2005/10/21
+	  added for more flexibility.  (bugzilla #396) BMR - 2005/10/21
 		SDreset_maxopenfiles -- resets the maximum number of files 
 			can be opened at a time.
 		SDget_maxopenfiles -- retrieves the current number of opened 
@@ -91,8 +91,18 @@ Bugs fixed since HDF4.2r1
 			files allowed on a system.
 		SDget_numopenfiles -- returns the number of files currently 
 			being opened.
+	  Note:
+		Because there are also stdin, stdout, and stderr, the maximum
+		limit that can be set must only be (system limit) - 3.
 	- If a VSgetattr was called twice for an attribute, the second would
 	  failed (bugzilla #486.)  This problem is fixed.  BMR - 2005/12/30
+	- Allowing maximum number of opened files to be increased revealed
+	  a problem, more than 255 files being opened will cause file
+	  corruption (bugzilla #440.)  Specifically, file number (255*m)+n 
+	  will overwrite file number n, where n is [0..255] and m is [1..p], 
+	  where (255*p) <= maximum system allowed.  This problem is fixed.
+	  In addition, a new API is added for convenience:
+		SDgetfilename -- retrieves the name of the file given its ID.
 
 Documentation
 ==============
