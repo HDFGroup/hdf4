@@ -133,10 +133,11 @@ int copy_sds(int32 sd_in,
  *-------------------------------------------------------------------------
  */
 
+ /* reset variables before retrieving information */
+ comp_type = comp_type_in = COMP_CODE_NONE;  
+
  if (empty_sds==0 )
  {
- 
-  comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
   HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
   stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
   if (stat==FAIL && comp_type_in>0){
