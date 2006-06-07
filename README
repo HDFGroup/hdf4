@@ -1,5 +1,5 @@
-               README for HDF 4.1r5 Version
-               ----------------------------
+               README for HDF 4.2
+               ------------------
 
 Obtaining the latest version
 ----------------------------
@@ -31,7 +31,7 @@ Distribution Layout
 
    release_notes -- descriptions on new features and bug fixes in this
                     release. Files in this sub-directory can be used 
-                    as supplemental documentation for HDF4.1. These files 
+                    as supplemental documentation for HDF. These files 
                     are also available on the NCSA ftp server, 
                     in /HDF/HDF/HDF_Current/release_notes/.
 
