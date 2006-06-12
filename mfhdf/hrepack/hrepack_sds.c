@@ -134,7 +134,8 @@ int copy_sds(int32 sd_in,
  */
 
  /* reset variables before retrieving information */
- comp_type = comp_type_in = COMP_CODE_NONE;  
+ comp_type = comp_type_in = COMP_CODE_NONE; 
+ chunk_flags = chunk_flags_in = HDF_NONE;
 
  if (empty_sds==0 )
  {
@@ -223,7 +224,6 @@ int copy_sds(int32 sd_in,
    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type,path);
    break;
   };
-  chunk_flags = chunk_flags_in;
   if ( (HDF_CHUNK) == chunk_flags )
   {
    for (i = 0; i < rank; i++) 
