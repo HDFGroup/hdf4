@@ -607,6 +607,19 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* CRAYMPP */
 
+/* CRAY XT3
+ * Note from RedStorm helpdesk,
+ * When I compile a C code with the '-v' option, it indicates that the compile
+ * is done with the macros __QK_USER__ and __LIBCATAMOUNT__ defined.  In
+ * addition, there are other macros like __x86_64__ defined as well, to
+ * indicate processor type.  __QK_USER__ might be a good check for Catamount,
+ * and __x86_64__ might be good for Opteron node.  You might try something
+ * like the following in a header file:
+ */
+#if ((defined(__QK_USER__)) && (defined(__x86_64__)))
+#define __CRAY_XT3__
+#endif
+
 #if defined(VMS) || defined(vms)
 
 #ifdef GOT_MACHINE

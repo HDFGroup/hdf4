@@ -49,9 +49,10 @@ ngetverb(void)
  * Name:    hisystem
  * Purpose: Invoke the system call to execute cmd
  * Inputs:  cmd -- the command to execute
- * Returns: verbosity level on success, FAIL on failure
+ *          cmdlen -- command length
+ * Returns: Code returned by the system call
  * Users:   HDF Fortran programmers
- * Invokes: HDgetenv
+ * Invokes: system
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)

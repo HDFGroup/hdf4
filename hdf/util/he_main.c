@@ -215,35 +215,6 @@ getElement(int desc, char **pdata)
     return length;
 }
 
-/* The function is not called.
-
-   int od(char *format, char *file)
-   {
-   fork a child and let the child run od. Use vfork for VMS.
-
-   if (fork() == 0)
-
-   {
-   this is the child
-
-   if (execl("/bin/od", "od", format, file, 0) == -1)
-   fprintf(stderr, "Error while executing od.\n");
-
-   return control to the parent
-   exit(0);
-   }
-
-   the parent waits for the child to die
-
-   wait(0);
-
-   this is a bug because it always returns OK, will expand this as
-   soon as the status return mechanism from wait is understood
-   return HE_OK;
-
-   }
- */
-
 /* the tmp directory, currently set for unix */
 #define TDIR "/tmp/"
 

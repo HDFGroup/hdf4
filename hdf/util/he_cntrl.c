@@ -312,7 +312,7 @@ HEdump(HE_CMD * cmd)
               unkArg(cmd->argv[i]);
               return HE_FAIL;
           }
-    return dump(length, offset, format, raw);
+    return HEIdump(length, offset, format, raw);
 }
 
 #define MAX_LINE 60
@@ -321,7 +321,7 @@ HEdump(HE_CMD * cmd)
  * Run 'od' on a segment of the current data element
  */
 int
-dump(int32 length, int offset, char *format, int raw_flag)
+HEIdump(int32 length, int offset, char *format, int raw_flag)
 {
     int32       eltLength;
     int32 i;

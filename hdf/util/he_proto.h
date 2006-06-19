@@ -121,7 +121,7 @@ int         desc2Grp
 int         display
             (int c, int x, int y, int f, int l);
 
-int         dump
+int         HEIdump
             (int32 length, int offset, char *foramt, int raw);
 
 int         fileOpen

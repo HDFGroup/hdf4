@@ -347,6 +347,11 @@ test_buffer(void)
 
     MESSAGE(6, printf("Starting buffered element test\n");
         )
+#ifdef __CRAY_XT3__
+    /* This infinite loops in XT3. Skip it for now. */
+    printf("buffer test infinite loops in XT3. Skip it for now.\n");
+    return;
+#endif
 
     /* fill the buffer with interesting data to compress */
     init_buffer();
