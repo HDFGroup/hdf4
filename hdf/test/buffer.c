@@ -55,7 +55,14 @@ static char RcsId[] = "@(#)$Revision$";
 #define EXTFILE_NAME "tbuffer.dat"
 
 /* Size of data elements to create */
+#ifdef __CRAY_XT3__
+/* Use a smaller test size as small unbuffered IO is expensive in XT3. */
+/* This runs much faster in Lustre file system like /scratchN. ELEMSIZE 1000 */
+/* takes 3 minutes to run in /scratch3. 2006/6/20, -AKC- */
+#define ELEMSIZE 1000
+#else
 #define ELEMSIZE 16384
+#endif
 
 /* define aliases for random number generation */
 #define RAND rand
@@ -345,13 +352,8 @@ test_buffer(void)
     intn        test_num;
     int32       ret;
 
-    MESSAGE(6, printf("Starting buffered element test\n");
+    MESSAGE(6, printf("Starting buffered element test (ELEMSIZE=%d)\n", ELEMSIZE);
         )
-#ifdef __CRAY_XT3__
-    /* This infinite loops in XT3. Skip it for now. */
-    printf("buffer test infinite loops in XT3. Skip it for now.\n");
-    return;
-#endif
 
     /* fill the buffer with interesting data to compress */
     init_buffer();
