@@ -129,7 +129,7 @@ MESG 0 "Running hrepack tests"
 
 # just run the program test_hrepack; this has several runs with 
 # different compression and chunking options
-./test_hrepack
+${TESTS_ENVIRONMENT} ./test_hrepack
 
 # save the exit code from the run
 exit_code=$?
