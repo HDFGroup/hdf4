@@ -87,9 +87,9 @@ TOOLTEST() {
       echo "#############################"
       cd $srcdir/testfiles
       if [ "`uname -s`" = "TFLOPS O/S" ]; then
-        $RUNSERIAL $HDIFF_BIN $@
+        ${TESTS_ENVIRONMENT} $HDIFF_BIN $@
       else
-        $RUNSERIAL $HDIFF_BIN "$@"
+        ${TESTS_ENVIRONMENT} $HDIFF_BIN "$@"
       fi
    ) >$actual 2>$actual_err
    cat $actual_err >> $actual

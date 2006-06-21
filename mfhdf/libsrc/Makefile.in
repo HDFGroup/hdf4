@@ -676,7 +676,7 @@ check:
 	@echo "============================"
 	@echo "HDF-SD C interfaces tests"
 	@echo "============================"
-	srcdir="$(srcdir)" $(RUNSERIAL) ./hdftest > hdfout.new
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest > hdfout.new
 	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
 	  echo $$cmd;                                                   \
 	  if $$cmd; then                                                \
@@ -689,7 +689,7 @@ check:
 	@echo "========================="
 	@echo "netCDF formatted tests"
 	@echo "========================="
-	srcdir="$(srcdir)" $(RUNSERIAL) ./cdftest > cdfout.new
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./cdftest > cdfout.new
 	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
 	  echo $$cmd;                                                   \
 	  if $$cmd; then                                                \

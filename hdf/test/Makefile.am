@@ -37,12 +37,6 @@ fortestF_LDADD = ../src/libdf.a
 fortestF_DEPENDENCIES = testdir ../src/libdf.a
 endif
 
-# On some platforms (RedStorm), tests need to be invoked with a certain
-# command.  HDF traditionally uses RUNSERIAL to hold the name of this
-# command, while Automake uses TESTS_ENVIRONMENT to invoke its tests.
-# Set the TESTS_ENVIRONMENT variable equal to RUNSERIAL.
-TESTS_ENVIRONMENT=$(RUNSERIAL)
-
 testdir:
 	-mkdir testdir
 #############################################################################

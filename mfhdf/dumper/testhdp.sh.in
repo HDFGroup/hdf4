@@ -8,7 +8,7 @@ currentdir=`pwd`
 
 # Definitions of commands and variables
 HDP='./hdp'               # The tool name
-HDP_BIN=`pwd`/$HDP        # The path of the tool binary
+HDP_BIN="${TESTS_ENVIRONMENT} "`pwd`/$HDP        # The path of the tool binary
 
 RM='rm -f'
 DIFF=diff

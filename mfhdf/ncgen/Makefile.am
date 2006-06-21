@@ -60,8 +60,8 @@ endif
 
 ## Test the "-b" option of ncgen
 b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
-	./ncgen -b test1.cdl
-	$(NCDUMP) test1.nc > test2.cdl
+	$(TESTS_ENVIRONMENT) ./ncgen -b test1.cdl
+	$(TESTS_ENVIRONMENT) $(NCDUMP) test1.nc > test2.cdl
 	@if $(DIFF) test1.cdl test2.cdl; then                               \
 	  echo "*** ncgen -b test successful ***";                          \
 	else                                                                \
@@ -70,8 +70,8 @@ b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
 
 ## Test the "-c" option of ncgen
 c-check:	test2.cdl ctest0
-	./ctest0        # tests `-c' option, creates ctest0.nc
-	$(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
+	$(TESTS_ENVIRONMENT) ./ctest0        # tests `-c' option, creates ctest0.nc
+	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
 	@if $(DIFF) test1.cdl ctest1.cdl; then                              \
 	  echo "*** ncgen -c test successful ***";                          \
 	else                                                                \
@@ -81,8 +81,8 @@ c-check:	test2.cdl ctest0
 if HDF_BUILD_FORTRAN
 ## Test the "-f" option of ncgen
 f-check:	test1.cdl ftest0
-	./ftest0
-	$(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
+	$(TESTS_ENVIRONMENT) ./ftest0
+	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
 	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
 	  echo "*** ncgen -f test successful ***";                          \
 	else                                                                \
@@ -90,7 +90,7 @@ f-check:	test1.cdl ftest0
 	fi
 
 ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
-	./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
+	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 endif
 
@@ -98,13 +98,13 @@ netcdf.inc:
 	ln -s ../fortran/$@ .
 
 test1.cdl:	test0.nc
-	$(NCDUMP) -n test1 test0.nc > $@
+	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 test0.nc > $@
 
 test0.nc:	ncgen $(srcdir)/test0.cdl
-	./ncgen -b -o test0.nc $(srcdir)/test0.cdl
+	$(TESTS_ENVIRONMENT) ./ncgen -b -o test0.nc $(srcdir)/test0.cdl
 
 ctest0$(EXEEXT):		ncgen $(srcdir)/test0.cdl
-	./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
+	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -o $@ test0.c $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 
 #############################################################################

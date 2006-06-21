@@ -545,8 +545,8 @@ ncgenyy.c: ncgen.l
 @HDF_BUILD_FORTRAN_FALSE@check: ncgen $(srcdir)/test0.cdl b-check c-check
 
 b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
-	./ncgen -b test1.cdl
-	$(NCDUMP) test1.nc > test2.cdl
+	$(TESTS_ENVIRONMENT) ./ncgen -b test1.cdl
+	$(TESTS_ENVIRONMENT) $(NCDUMP) test1.nc > test2.cdl
 	@if $(DIFF) test1.cdl test2.cdl; then                               \
 	  echo "*** ncgen -b test successful ***";                          \
 	else                                                                \
@@ -554,8 +554,8 @@ b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
 	fi
 
 c-check:	test2.cdl ctest0
-	./ctest0        # tests `-c' option, creates ctest0.nc
-	$(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
+	$(TESTS_ENVIRONMENT) ./ctest0        # tests `-c' option, creates ctest0.nc
+	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
 	@if $(DIFF) test1.cdl ctest1.cdl; then                              \
 	  echo "*** ncgen -c test successful ***";                          \
 	else                                                                \
@@ -563,8 +563,8 @@ c-check:	test2.cdl ctest0
 	fi
 
 @HDF_BUILD_FORTRAN_TRUE@f-check:	test1.cdl ftest0
-@HDF_BUILD_FORTRAN_TRUE@	./ftest0
-@HDF_BUILD_FORTRAN_TRUE@	$(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
+@HDF_BUILD_FORTRAN_TRUE@	$(TESTS_ENVIRONMENT) ./ftest0
+@HDF_BUILD_FORTRAN_TRUE@	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
 @HDF_BUILD_FORTRAN_TRUE@	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
 @HDF_BUILD_FORTRAN_TRUE@	  echo "*** ncgen -f test successful ***";                          \
 @HDF_BUILD_FORTRAN_TRUE@	else                                                                \
@@ -572,20 +572,20 @@ c-check:	test2.cdl ctest0
 @HDF_BUILD_FORTRAN_TRUE@	fi
 
 @HDF_BUILD_FORTRAN_TRUE@ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
-@HDF_BUILD_FORTRAN_TRUE@	./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
+@HDF_BUILD_FORTRAN_TRUE@	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 @HDF_BUILD_FORTRAN_TRUE@	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 
 netcdf.inc:
 	ln -s ../fortran/$@ .
 
 test1.cdl:	test0.nc
-	$(NCDUMP) -n test1 test0.nc > $@
+	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 test0.nc > $@
 
 test0.nc:	ncgen $(srcdir)/test0.cdl
-	./ncgen -b -o test0.nc $(srcdir)/test0.cdl
+	$(TESTS_ENVIRONMENT) ./ncgen -b -o test0.nc $(srcdir)/test0.cdl
 
 ctest0$(EXEEXT):		ncgen $(srcdir)/test0.cdl
-	./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
+	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -o $@ test0.c $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 
 #############################################################################
