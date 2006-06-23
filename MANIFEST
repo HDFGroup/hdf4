@@ -880,7 +880,6 @@
 ./mfhdf/hrepack/test_hrepack_add.c
 ./mfhdf/hrepack/test_hrepack_add.h
 ./mfhdf/hrepack/test_hrepack_main.c
-./mfhdf/hrepack/test_hrepack.sh
 ./mfhdf/hrepack/test_hrepack_verify.c
 ./mfhdf/hrepack/test_hrepack_verify.h
 
