@@ -30,7 +30,7 @@ hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 #############################################################################
 
 check_PROGRAMS = hrepack_check test_hrepack
-check_SCRIPTS = test_hrepack.sh
+TESTS = test_hrepack
 
 test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
@@ -50,9 +50,6 @@ test_hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 hrepack_check_SOURCES = hrepack_check.c
 hrepack_check_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
-
-check: test_hrepack$(EXEEXT)
-	@srcdir="$(srcdir)" $(SHELL) $(srcdir)/test_hrepack.sh
 
 #############################################################################
 ##                          And the cleanup                                ##
