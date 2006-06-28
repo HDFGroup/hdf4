@@ -39,9 +39,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure COPYING INSTALL \
-	bin/compile bin/config.guess bin/config.sub bin/depcomp \
-	bin/install-sh bin/missing bin/mkinstalldirs
+	$(srcdir)/Makefile.in $(srcdir)/libhdf4.settings.in \
+	$(top_srcdir)/configure COPYING INSTALL bin/compile \
+	bin/config.guess bin/config.sub bin/depcomp bin/install-sh \
+	bin/missing bin/mkinstalldirs
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -51,7 +52,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = libhdf4.settings
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -86,6 +87,9 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CONFIG_DATE = @CONFIG_DATE@
+CONFIG_MODE = @CONFIG_MODE@
+CONFIG_USER = @CONFIG_USER@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -218,6 +222,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(srcdir) && $(AUTOCONF)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
+libhdf4.settings: $(top_builddir)/config.status $(srcdir)/libhdf4.settings.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -355,7 +361,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/bin $(distdir)/hdf/util $(distdir)/mfhdf/dumper $(distdir)/mfhdf/hdfimport
+	$(mkdir_p) $(distdir)/. $(distdir)/bin $(distdir)/hdf/util $(distdir)/mfhdf/dumper $(distdir)/mfhdf/hdfimport
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

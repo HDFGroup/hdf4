@@ -313,7 +313,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE F77 FFLAGS ac_ct_F77 HDF_BUILD_FORTRAN_TRUE HDF_BUILD_FORTRAN_FALSE LEX LEXLIB LEX_OUTPUT_ROOT LN_S RANLIB ac_ct_RANLIB YACC AR DIFF NEQN TBL EGREP HDF_BUILD_XDR_TRUE HDF_BUILD_XDR_FALSE CXXCPP LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE F77 FFLAGS ac_ct_F77 HDF_BUILD_FORTRAN_TRUE HDF_BUILD_FORTRAN_FALSE LEX LEXLIB LEX_OUTPUT_ROOT LN_S RANLIB ac_ct_RANLIB YACC AR DIFF NEQN TBL EGREP HDF_BUILD_XDR_TRUE HDF_BUILD_XDR_FALSE CXXCPP CONFIG_DATE CONFIG_USER CONFIG_MODE LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -7612,6 +7612,13 @@ if test $ac_cv_sizeof_intp -ge 8; then
   esac
 fi
 
+
+ CONFIG_DATE="`date`"
+
+ CONFIG_USER="`whoami`@`hostname`"
+
+
+
 echo "$as_me:$LINENO: checking whether byte ordering is bigendian" >&5
 echo $ECHO_N "checking whether byte ordering is bigendian... $ECHO_C" >&6
 if test "${ac_cv_c_bigendian+set}" = set; then
@@ -7855,7 +7862,7 @@ case "X-$enable_production" in
   X-|X-yes)
     echo "$as_me:$LINENO: result: production" >&5
 echo "${ECHO_T}production" >&6
-
+    CONFIG_MODE=production
         CFLAGS_temp=""
     if test -n "$CFLAGS"; then
       for d in $CFLAGS ; do
@@ -7894,6 +7901,7 @@ echo "${ECHO_T}production" >&6
   X-no)
     echo "$as_me:$LINENO: result: development" >&5
 echo "${ECHO_T}development" >&6
+    CONFIG_MODE=development
     CFLAGS="$CFLAGS $DEBUG_CFLAGS"
     FFLAGS="$FFLAGS $DEBUG_FFLAGS"
     CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
@@ -8124,7 +8132,7 @@ for config_file in $src_files; do
   fi
 done
 
-                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/port/Makefile"
+                                                                                                                                                                                                                                                ac_config_files="$ac_config_files Makefile libhdf4.settings hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/port/Makefile"
 
 
 if test "X$build_xdr" = "Xyes"; then
@@ -8711,6 +8719,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "libhdf4.settings" ) CONFIG_FILES="$CONFIG_FILES libhdf4.settings" ;;
   "hdf/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/Makefile" ;;
   "hdf/src/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/src/Makefile" ;;
   "hdf/test/Makefile" ) CONFIG_FILES="$CONFIG_FILES hdf/test/Makefile" ;;
@@ -8898,6 +8907,9 @@ s,@EGREP@,$EGREP,;t t
 s,@HDF_BUILD_XDR_TRUE@,$HDF_BUILD_XDR_TRUE,;t t
 s,@HDF_BUILD_XDR_FALSE@,$HDF_BUILD_XDR_FALSE,;t t
 s,@CXXCPP@,$CXXCPP,;t t
+s,@CONFIG_DATE@,$CONFIG_DATE,;t t
+s,@CONFIG_USER@,$CONFIG_USER,;t t
+s,@CONFIG_MODE@,$CONFIG_MODE,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
@@ -9633,4 +9645,102 @@ chmod 755 hdf/util/h4cc hdf/util/h4redeploy
 
 if test "X$BUILD_FORTRAN" = "Xyes"; then
   chmod 755 hdf/util/h4fc
+fi
+
+if test -z "$ECHO_N" -o -z "$ECHO_C"; then
+  if (echo "testing\c"; echo 1,2,3) | grep c >/dev/null; then
+    if (echo -n testing; echo 1,2,3) | sed s/-n/xn/ | grep xn >/dev/null; then
+      ECHO_N=''
+      ECHO_C='
+'
+    else
+      ECHO_N=-n
+      ECHO_C=''
+    fi
+  else
+    ECHO_N=''
+    ECHO_C='\c'
+  fi
+fi
+
+PRINT_PLAIN() {
+  echo $ECHO_N "$1$ECHO_C"
+  echo $ECHO_N "$1$ECHO_C" 1>>libhdf4.settings
+}
+
+PRINT_N() {
+  echo $ECHO_N "$1:  $ECHO_C"
+  echo $ECHO_N "$1:  $ECHO_C" 1>>libhdf4.settings
+}
+
+PRINT() {
+  echo "$1"
+  echo "$1" 1>>libhdf4.settings
+}
+
+IF_YES_NO() {
+  if test $# -lt 1; then
+    PRINT "No"
+    return
+  else
+    while test $# -gt 0; do
+      if test "$1" != "yes"; then
+        PRINT "No"
+        return
+      fi
+      shift
+    done
+  fi
+  PRINT "Yes"
+}
+
+IF_ENABLED_DISABLED() {
+  if test "$1" = "yes"; then
+    PRINT "Enabled"
+  else
+    PRINT "Disabled"
+  fi
+}
+
+PRINT ""
+PRINT "                       Configure Summary"
+PRINT "                       ================="
+PRINT ""
+PRINT "Compiling Options:"
+PRINT "------------------"
+
+PRINT_N "               Compilation Mode"
+case "X-$enable_production" in
+  X-yes)        PRINT "Production" ;;
+  X-no)         PRINT "Development" ;;
+  X-profile)    PRINT "Profile" ;;
+  X-)           PRINT "Default" ;;
+  *)            PRINT "$enable_production" ;;
+esac
+
+PRINT_N "                     C Compiler"
+PRINT "$CC"
+
+PRINT_N "                         CFLAGS"
+PRINT "$CFLAGS"
+
+PRINT_N "                       CPPFLAGS"
+PRINT "$CPPFLAGS"
+
+PRINT_N "                        LDFLAGS"
+PRINT "$LDFLAGS"
+
+
+PRINT ""
+PRINT "Languages:"
+PRINT "----------"
+
+PRINT_N "                        Fortran"
+IF_YES_NO "$BUILD_FORTRAN"
+if test X$BUILD_FORTRAN = Xyes; then
+   PRINT_N "               Fortran Compiler"
+   PRINT "$F77"
+
+   PRINT_N "                         FFLAGS"
+   PRINT "$FFLAGS"
 fi
