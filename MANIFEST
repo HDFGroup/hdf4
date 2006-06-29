@@ -18,6 +18,7 @@
 ./aclocal.m4
 ./configure
 ./configure.ac
+./libhdf4.settings.in
 ./move-if-change
 
 ./bin/chkmanifest
