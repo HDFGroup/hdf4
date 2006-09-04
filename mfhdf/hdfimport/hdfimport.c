@@ -215,14 +215,16 @@
  */
 #define EXPAND      1   /* -e: expand image with pixel replication */
 #define INTERP      2   /* -i: expand image with interpolation */
+#define NAME_LEN    255
 
 /*
  * structure definition to associate input files with the output data types
  */
 struct infilesformat
 {
-	char filename[255];
+	char filename[NAME_LEN];
 	int outtype;   /* if the value is "" output type will be FP32. Applicable only to TEXT Files*/
+	int32 handle;	/* added to facilitate the use of SD interface -BMR 2006/08/18 */
 };
 /*
  * structure definition for command line options
@@ -295,10 +297,10 @@ struct Input
       int         is_text;      /* ASCII text format flag */
       int         is_fp32;      /* 32-bit native floating point format flag */
       int         is_fp64;      /* 64-bit native floating point format flag */
-      int 	      is_int32;	    /* 32-bit int */
-      int 	      is_int16;     /* 16-bit int */
-      int         rank;         /* number of input data dimensions */
-      int         dims[3];      /* input dimensions - ncols, nrows, nplanes */
+      int         is_int32;     /* 32-bit int */
+      int         is_int16;     /* 16-bit int */
+      int32       rank;         /* number of input data dimensions */
+      int32       dims[3];      /* input dimensions - ncols, nrows, nplanes */
       int         is_vscale;    /* vertical axis scales in the input */
       int         is_hscale;    /* horizontal axis scales in the input */
       int         is_dscale;    /* depth axis scales in the input */
@@ -312,7 +314,7 @@ struct Input
       struct int8set	in8s;
       struct fp64set	fp64s;
       VOIDP       data;         /* input data */
-	  int 	      outtype;
+      int 	  outtype;
   };
 
 
@@ -449,12 +451,12 @@ static int  state_table[19][12] =
 static int  gtoken(char *s);
 static int  process(struct Options *opt);
 static int  gfloat(char *infile, FILE * strm, float32 *fp32, struct Input *in);
-static int  gint(char *infile, FILE * strm, int *ival, struct Input *in);
+static int  gint(char *infile, FILE * strm, int32 *ival, struct Input *in);
 static int  isnum(char *s);
-static int  gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin);
-static int  gdimen(char *infile, struct Input *inp, FILE *strm);
-static int  gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin);
-static int  gscale(char *infile, struct Input *in, FILE *strm, int *is_scale);
+static int  gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin);
+static int  gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm);
+static int  gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin);
+static int  gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_scale);
 static int  gtype(char *infile, struct Input *in, FILE **strm);
 static int  indexes(float32 *scale, int dim, int *idx, int res);
 static int  interp(struct Input *in, struct Raster *im);
@@ -624,7 +626,6 @@ main(int argc, char *argv[])
             }
       }
 
-
      /*
      * make sure an output file was specified
      */
@@ -661,19 +662,24 @@ main(int argc, char *argv[])
  * Revision(pkamat):
  *      Modified to read in data of type INT 32, INT 16, INT 8 
  *      in addition to FP 32 and FP 64.
+ * Revision: (bmribler - 2006/8/18)
+ *	Replaced first parameter with 'struct infilesformat' to use both
+ *	the file name and the SD identifier (handle.)
  */
 static int
-gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
+gdata(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin)
 {
-    int32       i, j, k;
-    float32    *fp32;
-    int32        *in32;
-    int16 *in16;
-    float64 *fp64;
-    int8 *in8;
-    int32       hdfdims[3];     /* order: ZYX or YX */
-    int32       len = in->dims[0] * in->dims[1] * in->dims[2];
-
+    int32	i, j, k;
+    float32	*fp32;
+    int32	*in32;
+    int16	*in16;
+    float64	*fp64;
+    int8	*in8;
+    int32	hdfdims[3], start[3];     /* order: ZYX or YX */
+    int32	sd_id, sds_id, sd_index, dim_id;
+    int32	len = in->dims[0] * in->dims[1] * in->dims[2];
+    char	infile[NAME_LEN];
+    intn	status;
     const char *err1 = "Unable to get input data from file: %s.\n";
     
     /*
@@ -681,23 +687,31 @@ gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
      */
     if (in->is_hdf == TRUE)
       {
-          /*
-           * hdfdims is ordered: ZYX or YX
-           * in->dims is ordered: XYZ
-           */
-          if (in->rank == 2)
-            {
-                hdfdims[0] = in->dims[1];
-                hdfdims[1] = in->dims[0];
-            }
-          else
-            {
-                hdfdims[0] = in->dims[2];
-                hdfdims[1] = in->dims[1];
-                hdfdims[2] = in->dims[0];
-            }
+	sd_id = infile_info.handle;
+	strcpy(infile, infile_info.filename);
+	sd_index = 0;
+	sds_id = SDselect (sd_id, sd_index);
 
-          if (DFSDgetdata(infile, in->rank, hdfdims, in->data))
+        /*
+         * hdfdims is ordered: ZYX or YX
+         * in->dims is ordered: XYZ
+         */
+	if (in->rank == 2)
+	  {
+            hdfdims[0] = in->dims[1];
+            hdfdims[1] = in->dims[0];
+	    start[0] = start[1] = 0;
+	  }
+        else
+          {
+            hdfdims[0] = in->dims[2];
+            hdfdims[1] = in->dims[1];
+            hdfdims[2] = in->dims[0];
+	    start[0] = start[1] = start[2] = 0;
+          }
+
+	status = SDreaddata (sds_id, start, NULL, hdfdims, in->data);
+	if (status == FAIL)
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;
@@ -884,58 +898,79 @@ gdata(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
  *
  * Purpose:
  *      Determine the input data dimensions.
+ * Revision: (bmribler - 2006/8/18)
+ *	Used the SD interface instead of DFSD.
+ *	Replaced first parameter with 'struct infilesformat' to use both
+ *	the file name and the SD identifier (handle.)
  */
  
 static int
-gdimen(char *infile, struct Input *inp, FILE *strm)
+gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
 {
     int32       hdfdims[3];     /* order: ZYX or YX */
-    int32       nt;             /* number type of input file */
+    intn	status;		/* returned value from APIs */
+    char	sds_name[NAME_LEN], infile[NAME_LEN];
+    int32	rank, nattrs, dtype; /* rank, num of attrs, data type */
 
     const char *err1 = "Unable to get data dimensions from file: %s.\n";
     const char *err2 = "Invalid data rank of %d in file: %s.\n";
     const char *err3 = "Dimension(s) is less than '2' in file: %s.\n";
     const char *err4 = "Unexpected number type from file: %s.\n";
+    const char *err7 = "Failed to open the SDS.\n";
 
     /*
      * extract the rank and dimensions of the HDF input file
      */
-    if (inp->is_hdf == TRUE)
+    if (in->is_hdf == TRUE)
       {
-          if (DFSDgetdims(infile, &inp->rank, hdfdims, 3) == FAIL)
-            {
-                (void) fprintf(stderr, err1, infile);
-                goto err;
-            }
+	int32 sds_id, sd_index;
+	int32 sd_id = infile_info.handle; /* shortcut for handle from SDstart */
+	char *infile = infile_info.filename; /* shortcut for input filename */
 
-          /* don't know how to deal with other numbers yet */
-          if (DFSDgetNT(&nt) == FAIL || nt != DFNT_FLOAT32)
-            {
-                (void) fprintf(stderr, err4, infile);
-                goto err;
-            }
+	/* get the dimension information of the only SDS in the file */
+	sd_index = 0;
+	sds_id = SDselect (sd_id, sd_index);
+	if (sds_id == FAIL)
+          {
+            (void) fprintf(stderr, err7, infile);
+            goto err;
+          }
+	status = SDgetinfo(sds_id, sds_name, &rank, hdfdims, &dtype, &nattrs);
+	if (status == FAIL)
+          {
+            (void) fprintf(stderr, err1, infile);
+            goto err;
+          }
+	in->rank = (int)rank;
 
-          /*
-           * hdfdims is ordered: ZYX or YX
-           * inp->dims is ordered: XYZ
-           */
-          if (inp->rank == 2)
-            {
-                inp->dims[0] = hdfdims[1];
-                inp->dims[1] = hdfdims[0];
-                inp->dims[2] = 1;
-            }
-          else if (inp->rank == 3)
-            {
-                inp->dims[0] = hdfdims[2];
-                inp->dims[1] = hdfdims[1];
-                inp->dims[2] = hdfdims[0];
-            }
-          else
-            {
-                (void) fprintf(stderr, err2, inp->rank, infile);
-                goto err;
-            }
+        /* don't know how to deal with other numbers yet */
+        if (dtype != DFNT_FLOAT32)
+          {
+            (void) fprintf(stderr, err4, infile);
+            goto err;
+          }
+
+        /*
+         * hdfdims is ordered: ZYX or YX
+         * in->dims is ordered: XYZ
+         */
+        if (in->rank == 2)
+          {
+            in->dims[0] = hdfdims[1];
+            in->dims[1] = hdfdims[0];
+            in->dims[2] = 1;
+          }
+        else if (in->rank == 3)
+          {
+            in->dims[0] = hdfdims[2];
+            in->dims[1] = hdfdims[1];
+            in->dims[2] = hdfdims[0];
+          }
+        else
+          {
+            (void) fprintf(stderr, err2, in->rank, infile);
+            goto err;
+          }
 
           /*
            * get the rank and dimensions from files of other input formats
@@ -944,21 +979,21 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
       }
     else
       {	       			
-          if (gint(infile, strm, &inp->dims[2], inp))
+          if (gint(infile, strm, &in->dims[2], in))
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;
             }
-          if (inp->dims[2] > 1)
-              inp->rank = 3;
+          if (in->dims[2] > 1)
+              in->rank = 3;
           else
-              inp->rank = 2;
-          if (gint(infile, strm, &inp->dims[1], inp))
+              in->rank = 2;
+          if (gint(infile, strm, &in->dims[1], in))
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;
             }
-          if (gint(infile, strm, &inp->dims[0], inp))
+          if (gint(infile, strm, &in->dims[0], in))
             {
                 (void) fprintf(stderr, err1, infile);
                 goto err;
@@ -968,7 +1003,7 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
     /*
      * validate dimension sizes
      */
-    if ((inp->dims[0] < 2) || (inp->dims[1] < 2))
+    if ((in->dims[0] < 2) || (in->dims[1] < 2))
       {
           (void) fprintf(stderr, err3, infile);
           goto err;
@@ -976,9 +1011,9 @@ gdimen(char *infile, struct Input *inp, FILE *strm)
 
 #ifdef  DEBUG
     (void) printf("\nInput Information ...\n\n");
-    (void) printf("\trank:\n\n\t%d\n\n", inp->rank);
+    (void) printf("\trank:\n\n\t%d\n\n", in->rank);
     (void) printf("\tdimensions (nplanes,nrows,ncols):\n\n");
-    (void) printf("\t%d %d %d\n\n", inp->dims[2], inp->dims[1], inp->dims[0]);
+    (void) printf("\t%d %d %d\n\n", in->dims[2], in->dims[1], in->dims[0]);
 #endif /* DEBUG */
 
     return (0);
@@ -1082,7 +1117,7 @@ gfloat64(char *infile, FILE * strm, float64 *fp64, struct Input *in)
  *      format may either be ASCII text or a native BCD of type integer.
  */
 static int
-gint(char *infile, FILE * strm, int *ival, struct Input *in)
+gint(char *infile, FILE * strm, int32 *ival, struct Input *in)
 {
     const char *err1 = "Unable to get 'int' value from file: %s.\n";
     /*
@@ -1243,36 +1278,39 @@ gint8(char *infile, FILE * strm, int8 *ival, struct Input *in)
  *      Supports 32-bit integer, 16-bit integer, 8-bit integer, 32-bit float, 64-bit float
  * Revision: (pvn) March 14, 2006
  *      Used the SD interface instead of DFSD 
+ * Revision: (bmribler - 2006/8/18)
+ *	Removed SDstart call here, used passed-in SD id from process() instead.
+ *	Replaced first parameter with 'struct infilesformat' to use both
+ *	the file name and the SD identifier (handle.)
  */
 static int
-gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
+gmaxmin(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_maxmin)
 {
     const char *err1 = "Unable to get max/min values from file: %s.\n";
-    int32 sd_id, sds_id, sd_index;
  
     /*
      * extract the max/min values from the input file
      */
     if (in->is_hdf == TRUE)
-    {
-     if ((sd_id = SDstart(infile, DFACC_RDONLY))==FAIL)
-      goto err;
-     sd_index = 0;
-	    sds_id = SDselect (sd_id, sd_index); 
-     if (SDgetrange(sds_id,&in->max, &in->min)!=FAIL)
-     {
-      if (in->max > in->min)
-       *is_maxmin = TRUE;
-     }
-     /* terminate access to the array. */
-     if (SDendaccess(sds_id)==FAIL)
-      goto err;
-     /* terminate access to the SD interface and close the file */
-     if (SDend(sd_id)==FAIL)
-      goto err;
-    }
-    else
       {
+	int32 sds_id, sd_index = 0;
+	intn status;
+
+	sds_id = SDselect(infile_info.handle, sd_index); 
+	status = SDgetrange(sds_id, &in->max, &in->min);
+	if (status != FAIL)
+	  {
+	    if (in->max > in->min)
+	    *is_maxmin = TRUE;
+	  }
+
+	/* terminate access to the array. */
+	if (SDendaccess(sds_id)==FAIL)
+	    goto err;
+      }
+    else /* input file is not an HDF file */
+      {
+	char *infile = infile_info.filename;
 	if (in->outtype == FP_32)
 	  {
 	    if (gfloat(infile, strm, &in->max, in))
@@ -1375,9 +1413,13 @@ gmaxmin(char *infile, struct Input *in, FILE *strm, int *is_maxmin)
  *		addition to 32-bit float and 64-bit float
  * Revision: (pvn) March 14, 2006
  *      Used the SD interface instead of DFSD
+ * Revision: (bmribler - 2006/8/18)
+ *	Removed SDstart call here, used passed-in SD id from process() instead.
+ *	Replaced first parameter with 'struct infilesformat' to use both
+ *	the file name and the SD identifier (handle.)
  */
 static int
-gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
+gscale(struct infilesformat infile_info, struct Input *in, FILE *strm, int *is_scale)
 {
     int         i;
     int32       hdfdims[3];     /* order: ZYX or YX */
@@ -1406,53 +1448,49 @@ gscale(char *infile, struct Input *in, FILE *strm, int *is_scale)
      * extract the scale values from the input file
      */
     if (in->is_hdf == TRUE)
-    {
-     int32 sd_id, sds_id, sd_index, dim_id;
-     
-     if ((sd_id = SDstart(infile, DFACC_RDONLY))==FAIL)
-      goto err;
-     sd_index = 0;
-     sds_id = SDselect (sd_id, sd_index); 
-     
-     if (in->rank == 2)
-     {
-      /* select the dimension */
-      dim_id = SDgetdimid (sds_id, 0);
-      if (SDgetdimscale (dim_id, in->vscale)==FAIL)
-       goto err;
-      
-      dim_id = SDgetdimid (sds_id, 1);
-      if (SDgetdimscale (dim_id, in->hscale)==FAIL)
-       goto err;
-      
-     }
-     else
-     {
-      
-      dim_id = SDgetdimid (sds_id, 0);
-      if (SDgetdimscale (dim_id, in->dscale)==FAIL)
-       goto err;
-      
-      dim_id = SDgetdimid (sds_id, 1);
-      if (SDgetdimscale (dim_id, in->vscale)==FAIL)
-       goto err;
-      
-      dim_id = SDgetdimid (sds_id, 2);
-      if (SDgetdimscale (dim_id, in->hscale)==FAIL)
-       goto err;
-      
-     }
-     
-     
-     /* terminate access to the array. */
-     if (SDendaccess(sds_id)==FAIL)
-      goto err;
-     /* terminate access to the SD interface and close the file */
-     if (SDend(sd_id)==FAIL)
-      goto err;
-    }
-    else
       {
+	int32 sds_id, dim_id, sd_index = 0;
+	int32 sd_id = infile_info.handle; /* shortcut for handle from SDstart */
+
+	/* select the SDS */
+	sds_id = SDselect (sd_id, sd_index); 
+     
+	/* if the SDS is two-dimensional... */
+	if (in->rank == 2)
+	  {
+	    /* select the dimension */
+	    dim_id = SDgetdimid (sds_id, 0);
+	    if (SDgetdimscale (dim_id, in->vscale)==FAIL)
+	        goto err;
+      
+	    dim_id = SDgetdimid (sds_id, 1);
+	    if (SDgetdimscale (dim_id, in->hscale)==FAIL)
+	        goto err;
+      
+	  }
+	else /* ...three-dimensional... */
+	  {
+	    dim_id = SDgetdimid (sds_id, 0);
+	    if (SDgetdimscale (dim_id, in->dscale)==FAIL)
+	        goto err;
+      
+	    dim_id = SDgetdimid (sds_id, 1);
+	    if (SDgetdimscale (dim_id, in->vscale)==FAIL)
+	        goto err;
+      
+	    dim_id = SDgetdimid (sds_id, 2);
+	    if (SDgetdimscale (dim_id, in->hscale)==FAIL)
+	        goto err;
+	  }
+     
+	/* terminate access to the array. */
+	if (SDendaccess(sds_id)==FAIL)
+	    goto err;
+      }
+    else /* input file is not an HDF file */
+      {
+	char infile[NAME_LEN];
+	strcpy(infile, infile_info.filename);
 	switch(in->outtype)
 	  {
 	  case 0: /* 32-bit float */
@@ -2719,17 +2757,236 @@ pixrep(struct Input *in, struct Raster *im)
 
 /*
  * Name:
+ *      create_SDS
+ *
+ * Purpose:
+ *      This function contains common code that creates a two- or 
+ *	three-dimensional dataset, used in function 'process.'  It
+ *	was factored out to reduce the length of 'process.'
+ *	Returns the new SDS identifier, if success, and FAIL, 
+ *	otherwise. (bmribler - 2006/8/18)
+ */
+static int32
+create_SDS(int32 sd_id, int32 nt, struct Input *in)
+{
+    int32	sds_id;
+
+    if (in->rank == 2)
+      {
+	int32 edges[2];
+	edges[0] = in->dims[1];
+	edges[1] = in->dims[0];
+	sds_id = SDcreate (sd_id, NULL, nt, in->rank, edges);
+      }
+    else
+      {
+	int32 edges[3];
+	edges[0] = in->dims[2];
+	edges[1] = in->dims[1];
+	edges[2] = in->dims[0];
+	sds_id = SDcreate (sd_id, NULL, nt, in->rank, edges);
+      }
+    return(sds_id);
+}
+
+/*
+ * Name:
+ *      alloc_data
+ *
+ * Purpose:
+ *      This function contains common code that allocates memory for 
+ *	the data buffer to hold different types of data.  It
+ *	was factored out to reduce the length of 'process.'
+ *	Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
+ */
+static intn
+alloc_data(VOIDP *data, int32 len, int outtype)
+{
+    const char *alloc_err = "Unable to dynamically allocate memory.\n";
+
+    switch(outtype)
+      {
+	case 0: /* 32-bit float */
+	case 5: /* NO_NE */
+	    if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(float32))) == NULL)
+	      {
+		(void) fprintf(stderr, alloc_err);
+		return FAIL;
+	      }
+	    break;
+	case 1: /* 64-bit float */
+	    if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(float64))) == NULL)
+	      {
+		(void) fprintf(stderr, alloc_err);
+		return FAIL;
+	      }
+	    break;
+	case 2: /* 32-bit integer */
+	    if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(int32))) == NULL)
+	      {
+		(void) fprintf(stderr, alloc_err);
+		return FAIL;
+	      }
+	    break;
+	case 3: /* 16-bit integer */
+	    if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(int16))) == NULL)
+	      {
+		(void) fprintf(stderr, alloc_err);
+		return FAIL;
+	      }
+	    break;
+	case 4: /* 8-bit integer */
+	    if ((*data = (VOIDP) HDmalloc((size_t) len * sizeof(int8))) == NULL)
+	      {
+		(void) fprintf(stderr, alloc_err);
+		return FAIL;
+	      }
+	    break;
+    } /* end switch */
+    return SUCCEED;
+} /* alloc_data */
+
+/*
+ * Name:
+ *      write_SDS
+ *
+ * Purpose:
+ *      This function contains common code, that writes a two- or 
+ *	three-dimensional dataset, used in function 'process.'  It
+ *	was factored out to reduce the length of 'process.'
+ *	Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
+ */
+static intn
+write_SDS(int32 sds_id, struct Input *in)
+{
+    const char *write_err = "Unable to write an SDS to the HDF output file\n";
+    if (in->rank == 2)
+      {
+	int32 edges[2], start[2];
+	edges[0] = in->dims[1];
+	edges[1] = in->dims[0];
+	start[0] = 0;
+	start[1] = 0;
+	if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)in->data) != 0)
+	  {
+	    (void) fprintf(stderr, write_err);
+	    return FAIL;
+	  }
+      }
+    else
+      {
+	int32 edges[3], start[3];
+	edges[0] = in->dims[2];
+	edges[1] = in->dims[1];
+	edges[2] = in->dims[0];
+	start[0] = 0;
+	start[1] = 0;
+	start[2] = 0;
+	if (SDwritedata(sds_id, start, NULL, edges, (VOIDP)in->data) != 0)
+	  {
+	    (void) fprintf(stderr, write_err);
+	    return FAIL;
+	  }
+      }
+    return SUCCEED;
+} /* write_SDS */
+
+/*
+ * Name:
+ *      set_dimensions
+ *
+ * Purpose:
+ *      This function contains the common code, that sets dimension scale 
+ *	for a two- or three-dimensional dataset, used in function 'process.'  
+ *	It was factored out to reduce the length of 'process.'
+ *	Returns SUCCEED or FAIL. (bmribler - 2006/8/18)
+ */
+static intn
+set_dimensions(int32 sds_id, struct Input *in, int32 nt, VOIDP dscale, VOIDP vscale, VOIDP hscale)
+{
+    int32 dim_id, dim_index;
+    const char *dim_err = "Unable to set dimension scales\n";
+
+    if (in->rank == 2)
+      {
+	int32 edges[2];
+	intn status;
+
+	edges[0] = in->dims[1];
+	edges[1] = in->dims[0];
+
+	dim_index = 0;
+	dim_id = SDgetdimid (sds_id, dim_index);
+
+	if (SDsetdimscale(dim_id, edges[0], nt, (VOIDP)vscale) == FAIL)
+	  {
+	    (void) fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+	    return FAIL;
+	  }
+			    
+	dim_index = 1;  
+	dim_id = SDgetdimid (sds_id, dim_index); 
+			
+	if (SDsetdimscale(dim_id, edges[1], nt, hscale)!=0)
+	  {
+	    (void) fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+	    return FAIL;
+	  }
+      }
+    else
+      {
+	int32 edges[3];
+	edges[0] = in->dims[2];
+	edges[1] = in->dims[1];
+	edges[2] = in->dims[0];
+
+	dim_index = 0; 
+	dim_id = SDgetdimid (sds_id, dim_index);
+
+	if (SDsetdimscale(dim_id, edges[0], nt, dscale)!=0)
+	  {
+	    (void) fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+	    return FAIL;
+	  }
+	dim_index = 1; 
+	dim_id = SDgetdimid (sds_id, dim_index); 
+
+	if (SDsetdimscale(dim_id, edges[1], nt, vscale)!=0)
+	  {
+	    (void) fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+	    return FAIL;
+	  }
+	dim_index = 2; 
+	dim_id = SDgetdimid (sds_id, dim_index);	
+			  
+	if (SDsetdimscale(dim_id, edges[2], nt, hscale)!=0)
+	  {
+	    (void) fprintf(stderr, "%s, dim index %d\n", dim_err, dim_index);
+	    return FAIL;
+	  }
+      }
+    return SUCCEED;
+} /* set_dimensions */
+
+/*
+ * Name:
  *      process
  *
  * Purpose:
  *      Process each input file.
  *
  * Revision: (pkamat)
- *		Modified to support the writing of the data set in any of the
- *		following types: INT32, INT16, INT8 and FP64
+ *	Modified to support the writing of the data set in any of the
+ *	following types: INT32, INT16, INT8 and FP64
  * Modification: pvn: March, 3, 2006
- *  handled the case of in->outtype == 5 (NO_NE), for hdf input type
- *  current version assumes that datum is DFNT_FLOAT32 for this case
+ *	handled the case of in->outtype == 5 (NO_NE), for hdf input type
+ *	current version assumes that datum is DFNT_FLOAT32 for this case
+ * Revision: (bmribler - 2006/8/18)
+ *	- Modified to store the input SD identifier in 'struct infilesformat'
+ *	  so the id can be passed into various functions, instead of
+ *	  repeatedly calling SDstart in these functions.
+ *	- Factored out common codes to make this ~900-line function become
+ *	  more readable and maintainable.
  */
 static int
 process(struct Options *opt)
@@ -2743,8 +3000,8 @@ process(struct Options *opt)
     int32       len;
     FILE       *strm;
     int32       hdf;
-    int32 	    sd_id, sds_id;
-    int32 	    start3[3], edges3[3], start2[2], edges2[2];
+    int32 	sd_id, sds_id;
+    int32 	start3[3], edges3[3], start2[2], edges2[2];
     int32       dim_index = 0, dim_id;
     
 #ifdef  DEBUG
@@ -2759,7 +3016,9 @@ process(struct Options *opt)
     const char *err3c = "same as %s dimension of the\n\t dataset, ";
     const char *err3d = "which is: %d.\n\n";
     const char *err4 = "Unable to write an RIS8 to the HDF output file\n";
-    const char *err5 = "Unable to write an SDS to the HDF output file\n";
+    const char *err5 = "err5 - Unable to write an SDS to the HDF output file\n";
+    const char *err5a = "err5aaaa - Unable to write an SDS to the HDF output file\n";
+    const char *err6a = "Unable to close the SDS\n";
     const char *err6 = "Unable to close the HDF output file\n";
     /*
      * process the palette file (if one was specified)
@@ -2790,596 +3049,236 @@ process(struct Options *opt)
      */
 
     for (i = 0; i < opt->fcount; i++)
-
       {
-          /*
-           * initialize key parameters
-           */
-          in.is_hdf = FALSE;
-          in.is_text = FALSE;
-          in.is_fp32 = FALSE;
-          in.is_fp64 = FALSE;
-	      
-	      in.outtype = opt->infiles[i].outtype;
-          is_maxmin = FALSE;
-          is_scale = FALSE;
+	/*
+	 * initialize key parameters
+	 */
+	in.is_hdf = FALSE;
+	in.is_text = FALSE;
+	in.is_fp32 = FALSE;
+	in.is_fp64 = FALSE;
+	is_maxmin = FALSE;
+	is_scale = FALSE;
+	in.outtype = opt->infiles[i].outtype;
 
-          /*
-           * get the file type, input data dimensions, and input data
-           * max/min values
-           */
+	if (Hishdf(opt->infiles[i].filename))
+	  {
+	    in.is_hdf = TRUE;
+	    opt->infiles[i].handle = SDstart(opt->infiles[i].filename, DFACC_RDONLY);
+	    if (opt->infiles[i].handle == FAIL)
+	      {
+		(void) fprintf(stderr, err1a, opt->infiles[i].filename);
+		goto err;
+	      }
+	  }
+	/*
+         * get the file type, input data dimensions, and input data
+         * max/min values
+         */
 	     
-	  if (gtype(opt->infiles[i].filename, &in, &strm))
+	if (gtype(opt->infiles[i].filename, &in, &strm))
 	    goto err;
 
-	  if (gdimen(opt->infiles[i].filename, &in, strm))
+	if (gdimen(opt->infiles[i], &in, strm))
 	    goto err;
 	  
-	  if (gmaxmin(opt->infiles[i].filename, &in, strm, &is_maxmin))
+	if (gmaxmin(opt->infiles[i], &in, strm, &is_maxmin))
 	    goto err;
 
-          /*
-           * initialise the scale variables according to the output type of data set
-           */
-
-	  if (init_scales(&in))
+        /*
+         * initialise the scale variables according to the output type 
+	 * of data set
+         */
+	if (init_scales(&in))
 	    goto err;
 
-	      /*
-           * get the scale for each axis
-           */
-      if (gscale(opt->infiles[i].filename, &in, strm, &is_scale))
-              goto err;
+	/*
+         * get the scale for each axis
+         */
+	if (gscale(opt->infiles[i], &in, strm, &is_scale))
+	    goto err;
 
-          /*
-           * get the input data
-           */
-      len = in.dims[0] * in.dims[1] * in.dims[2];
-	
-	  switch(in.outtype)
-	    {
-	    case 0: /* 32-bit float */
-     case 5:
-	      if ((in.data = (VOIDP) HDmalloc((size_t) len * sizeof(float32))) == NULL)
-		{
-		  (void) fprintf(stderr, err2);
-		  goto err;
-		}
-	      break;
-	    case 1: /* 64-bit float */
-	      if ((in.data = (VOIDP) HDmalloc((size_t) len * sizeof(float64))) == NULL)
-		{
-		  (void) fprintf(stderr, err2);
-		  goto err;
-		}
-	      break;
-	    case 2: /* 32-bit integer */
-	      if ((in.data = (VOIDP) HDmalloc((size_t) len * sizeof(int32))) == NULL)
-		{
-		  (void) fprintf(stderr, err2);
-		  goto err;
-		}
-	      break;
-	    case 3: /* 16-bit integer */
-	      if ((in.data = (VOIDP) HDmalloc((size_t) len * sizeof(int16))) == NULL)
-		{
-		  (void) fprintf(stderr, err2);
-		  goto err;
-		}
-	      break;
-	    case 4: /* 8-bit integer */
-	      if ((in.data = (VOIDP) HDmalloc((size_t) len * sizeof(int8))) == NULL)
-		{
-		  (void) fprintf(stderr, err2);
-		  goto err;
-		}
-	      break;
-	    }
+        /*
+         * get the input data
+         */
+	len = in.dims[0] * in.dims[1] * in.dims[2];
+
+	/* allocate memory for in.data depending on in.outtype value */
+	if (alloc_data(&(in.data), len, in.outtype) == FAIL)
+	    goto err;
 	  
-          if (gdata(opt->infiles->filename, &in, strm, &is_maxmin))
+	if (gdata(opt->infiles[i], &in, strm, &is_maxmin))
 	    goto err;
 		
-          /*
-           * put the input data in the HDF output file, in SDS format
-           */
+	/*
+         * put the input data in the HDF output file, in SDS format
+         */
+	if (opt->to_float == TRUE)
+	  {
+	    intn status;
+	    switch(in.outtype)
+	      {
 
-	  if (opt->to_float == TRUE)
-	    {
+		case 0: /* 32-bit float */
+		case 5: /* NO_NE */
+		    /* create data-set */ 
+		    sds_id = create_SDS(sd_id, DFNT_FLOAT32, &in);
+		    if (sds_id == FAIL)
+			goto err;
 
-	  switch(in.outtype)
-	    {
-
-	    case 0: /* 32-bit float */
-     case 5:
-            
-			/* create data-set */ 
-			if (in.rank == 2)
-                  {
-                     	edges2[0] = in.dims[1];
-		  	edges2[1] = in.dims[0];
-		  	
-			
-			sds_id = SDcreate (sd_id, NULL, DFNT_FLOAT32, in.rank, edges2);
-		  	start2[0] = 0;
-		  	start2[1] = 0;	
-                  }
-                else
-                  {
-		        edges3[0] = in.dims[2];
-		  	edges3[1] = in.dims[1];
-			edges3[2] = in.dims[0];
-			sds_id = SDcreate (sd_id, NULL, DFNT_FLOAT32, in.rank, edges3);
-			start3[0] = 0;
-			start3[1] = 0;	
-			start3[2] = 0;
-                  }
-
-                
-                if (is_scale == TRUE)
-                  {
-			/* set range */
-		    if (SDsetrange(sds_id, &in.max, &in.min)!=0)
+		    if (is_scale == TRUE)
 		      {
-			(void) fprintf(stderr, err5);
+			/* set range */
+			if (SDsetrange(sds_id, &in.max, &in.min)!=0)
+			  {
+			    (void) fprintf(stderr, err5a);
 			    goto err;
-		      }	
+			  }	
 		    
 			/* set dimension scale */
-			if (in.rank == 2)
-		      {
-			dim_index = 0;
-			dim_id = SDgetdimid (sds_id, dim_index);
-			    
-			
-			if (SDsetdimscale(dim_id, edges2[0],DFNT_FLOAT32,(VOIDP)in.vscale)!=0)
-			  {
-			    (void) fprintf(stderr, err5);
+			status = set_dimensions(sds_id, &in, DFNT_FLOAT32, 
+			(VOIDP)in.dscale, (VOIDP)in.vscale, (VOIDP)in.hscale);
+			if (status == FAIL)
 			    goto err;
-			  }
-			    
-			dim_index = 1;  
-			dim_id = SDgetdimid (sds_id, dim_index); 
-			
-			if (SDsetdimscale(dim_id, edges2[1], DFNT_FLOAT32, (VOIDP)in.hscale)!=0)
-			  {
-			    (void) fprintf(stderr, err5);
-			    goto err;
-			  }
 		      }
-		    else
-		      {
-			dim_index = 0; 
-			dim_id = SDgetdimid (sds_id, dim_index);
-			if (SDsetdimscale(dim_id, edges3[0], DFNT_FLOAT32, (VOIDP)in.dscale)!=0)
-			  {
-			    (void) fprintf(stderr, err5);
-			    goto err;
-			  }
-			dim_index = 1; 
-			dim_id = SDgetdimid (sds_id, dim_index); 
-			
-			if (SDsetdimscale(dim_id, edges3[1], DFNT_FLOAT32, (VOIDP)in.vscale)!=0)
-			  {
-			      (void) fprintf(stderr, err5);
-			  			goto err;
-			    }
-			  dim_index = 2; 
-			  dim_id = SDgetdimid (sds_id, dim_index);	
-			  
-			  if (SDsetdimscale(dim_id, edges3[2], DFNT_FLOAT32, (VOIDP)in.hscale)!=0)
-			    {
-			      (void) fprintf(stderr, err5);
-			      goto err;
-			    }
-		      }
-                  }
-				/* write data to the data set */
-		if (in.rank == 2)
-		  {
-		    if (SDwritedata(sds_id, start2, NULL, edges2, (VOIDP)in.data)!=0)
-		      {
-			(void) fprintf(stderr, err5);
-			goto err;
-		      }
-		  }
-		else
-		  {
-		    if (SDwritedata(sds_id, start3, NULL, edges3, (VOIDP)in.data)!=0)
-		      {
-			(void) fprintf(stderr, err5);
-			goto err;
-		      }
-		    
-		  }
-		break; 
-		
-	    case 1:/* 64-bit float */
-            
-			/* create data-set */ 
-	       
-	      if (in.rank == 2)
-		{
-		  edges2[0] = in.dims[1];
-		  edges2[1] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_FLOAT64, in.rank, edges2);
-		  start2[0] = 0;
-		  start2[1] = 0;	
-		}
-	      else
-		{
-		  edges3[0] = in.dims[2];
-		  edges3[1] = in.dims[1];
-		  edges3[2] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_FLOAT64, in.rank, edges3);
-		  start3[0] = 0;
-		  start3[1] = 0;	
-		  start3[2] = 0;
-		}
-	      
-	      
-	      if (is_scale == TRUE)
-		{
-		  /* set range */
-		  if (SDsetrange(sds_id, &in.fp64s.max, &in.fp64s.min)!=0)
-		    {
-			(void) fprintf(stderr, err5);
-			goto err;
-		    }
-		  
-		  /* set dimension scale */
-		  if (in.rank == 2)
-		    {
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		 
-		      if (SDsetdimscale(dim_id, edges2[0],DFNT_FLOAT64,(VOIDP)in.fp64s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-			
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		      if (SDsetdimscale(dim_id, edges2[1], DFNT_FLOAT64, (VOIDP)in.fp64s.hscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		    }
-		  else
-		    {
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);  	
-		      if (SDsetdimscale(dim_id, edges3[0], DFNT_FLOAT64, (VOIDP)in.fp64s.dscale)!=0)
-			  {
-			    (void) fprintf(stderr, err5);
-			    goto err;
-			  }
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		      if (SDsetdimscale(dim_id, edges3[1], DFNT_FLOAT64, (VOIDP)in.fp64s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 2;
-		      dim_id = SDgetdimid (sds_id, dim_index);  	
-		      if (SDsetdimscale(dim_id, edges3[2], DFNT_FLOAT64, (VOIDP)in.fp64s.hscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		    }
-		}
-		  
-		/* write data to the data set */
-	      if (in.rank == 2)
-		{
-		  if (SDwritedata(sds_id, start2, NULL, edges2, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
-		}
-	      else
-		  {
-		    if (SDwritedata(sds_id, start3, NULL, edges3, (VOIDP)in.data)!=0)
-		      {
-			(void) fprintf(stderr, err5);
-			goto err;
-		      }
-		    
-		  }
-	      break; 
-	    case 2: /* 32-bit integer */
-            
-			/* create data-set */ 
-	      
-	      if (in.rank == 2)
-		{
-		  edges2[0] = in.dims[1];
-		  edges2[1] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_INT32, in.rank, edges2);
-		  start2[0] = 0;
-		  start2[1] = 0;	
-		}
-	      else
-		{
-		  edges3[0] = in.dims[2];
-		  edges3[1] = in.dims[1];
-		  edges3[2] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_INT32, in.rank, edges3);
-		  start3[0] = 0;
-		  start3[1] = 0;	
-		  start3[2] = 0;
-		}
-	      
-	      if (is_scale == TRUE)
-		{
-		  /* set range */
-		  if (SDsetrange(sds_id, &in.in32s.max, &in.in32s.min)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
 
-		  /* set dimension scale */
-		  if (in.rank == 2)
-		    {	
-		       dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);
-			if (SDsetdimscale(dim_id, edges2[0],DFNT_INT32,(VOIDP)in.in32s.vscale)!=0)
+		    /* write data to the data set */
+		    if (write_SDS(sds_id, &in) == FAIL)
+			goto err;
+		    break; 
+		
+		case 1:/* 64-bit float */
+            
+		    /* create data-set */ 
+		    sds_id = create_SDS(sd_id, DFNT_FLOAT64, &in);
+		    if (sds_id == FAIL)
+			goto err;
+	      
+		    if (is_scale == TRUE)
+		      {
+			/* set range */
+			if (SDsetrange(sds_id, &in.fp64s.max, &in.fp64s.min)!=0)
 			  {
-			    (void) fprintf(stderr, err5);
+			    (void) fprintf(stderr, err5a);
 			    goto err;
-			  }
-			
-			dim_index = 1; 
-			dim_id = SDgetdimid (sds_id, dim_index);  
-			if (SDsetdimscale(dim_id, edges2[1], DFNT_INT32, (VOIDP)in.in32s.hscale)!=0)
+			  }	
+		    
+			/* set dimension scale */
+			status = set_dimensions(sds_id, &in, DFNT_FLOAT64, 
+			(VOIDP)in.fp64s.dscale, (VOIDP)in.fp64s.vscale, 
+			(VOIDP)in.fp64s.hscale);
+			if (status == FAIL)
+			    goto err;
+		      }
+
+		    /* write data to the data set */
+		    if (write_SDS(sds_id, &in) == FAIL)
+			goto err;
+		    break; 
+
+		case 2: /* 32-bit integer */
+            
+		    /* create data-set */ 
+		    sds_id = create_SDS(sd_id, DFNT_INT32, &in);
+		    if (sds_id == FAIL)
+			goto err;
+
+		    if (is_scale == TRUE)
+		      {
+			/* set range */
+			if (SDsetrange(sds_id, &in.in32s.max, &in.in32s.min)!=0)
 			  {
-			    (void) fprintf(stderr, err5);
-		 		goto err;
-			  }
-		    }
-		  else 
-		    {
-		      
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);	
-		      if (SDsetdimscale(dim_id, edges3[0], DFNT_INT32, (VOIDP)in.in32s.dscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		      if (SDsetdimscale(dim_id, edges3[1], DFNT_INT32, (VOIDP)in.in32s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 2;
-		      dim_id = SDgetdimid (sds_id, dim_index);	
-		      if (SDsetdimscale(dim_id, edges3[2], DFNT_INT32, (VOIDP)in.in32s.hscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		    }
-		}				
+			    (void) fprintf(stderr, err5a);
+			    goto err;
+			  }	
+		    
+			/* set dimension scale */
+			status = set_dimensions(sds_id, &in, DFNT_INT32, 
+			(VOIDP)in.in32s.dscale, (VOIDP)in.in32s.vscale, 
+			(VOIDP)in.in32s.hscale);
+			if (status == FAIL)
+			    goto err;
+		      }
 	    
-		  /* write data to the data set */
-		  if (in.rank == 2)
-		{
-		  if (SDwritedata(sds_id, start2, NULL, edges2, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
-		}
-	      else
-		{
-		  if (SDwritedata(sds_id, start3, NULL, edges3, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }			
-		}
-	      
-	      break;
-	    case 3: /* 16-bit integer */
-            
-			/* create data-set */ 
-	      
-	      if (in.rank == 2)
-		{
-		  edges2[0] = in.dims[1];
-		  edges2[1] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_INT16, in.rank, edges2);
-		  start2[0] = 0;
-		  start2[1] = 0;	
-		}
-	      else
-		{
-		  edges3[0] = in.dims[2];
-		  edges3[1] = in.dims[1];
-		  edges3[2] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_INT16, in.rank, edges3);
-		  start3[0] = 0;
-		  start3[1] = 0;	
-		  start3[2] = 0;
-		}
-		
-	      if (is_scale == TRUE)
-		{
-		  /* set range */
-		  if (SDsetrange(sds_id, &in.in16s.max, &in.in16s.min)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
+		    /* write data to the data set */
+		    if (write_SDS(sds_id, &in) == FAIL)
+			goto err;
+		    break;
 
-		  /* set dimension scale */
-		  if (in.rank == 2)
-		    {	
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);  
-		      if (SDsetdimscale(dim_id, edges2[0],DFNT_INT16,(VOIDP)in.in16s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index);  
-		      if (SDsetdimscale(dim_id, edges2[1], DFNT_INT16, (VOIDP)in.in16s.hscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		    }
-		  else 
-		    {
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);	
-		      if (SDsetdimscale(dim_id, edges3[0], DFNT_INT16, (VOIDP)in.in16s.dscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		      if (SDsetdimscale(dim_id, edges3[1], DFNT_INT16, (VOIDP)in.in16s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 2;
-		      dim_id = SDgetdimid (sds_id, dim_index);	
-		      if (SDsetdimscale(dim_id, edges3[2], DFNT_INT16, (VOIDP)in.in16s.hscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		    }
-		}				
-	      if (in.rank == 2)
-		{
-		  if (SDwritedata(sds_id, start2, NULL, edges2, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
-		}
-	      else
-		{
-			  /* write data to the data set */
-		  if (SDwritedata(sds_id, start3, NULL, edges3, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }			
-		}
-	      
-	break;
-	    case 4: /* 8-bit integer */
-            
-			/* create data-set */ 
-	      
-	      if (in.rank == 2)
-		{
-		  edges2[0] = in.dims[1];
-		  edges2[1] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_INT8, in.rank, edges2);
-		  start2[0] = 0;
-		  start2[1] = 0;	
-		}
-	      else
-		{
-		  edges3[0] = in.dims[2];
-		  edges3[1] = in.dims[1];
-		  edges3[2] = in.dims[0];
-		  sds_id = SDcreate (sd_id, NULL, DFNT_INT8, in.rank, edges3);
-		  start3[0] = 0;
-		  start3[1] = 0;	
-		  start3[2] = 0;
-		}
+		case 3: /* 16-bit integer */
+		    /* create data-set */ 
+		    sds_id = create_SDS(sd_id, DFNT_INT16, &in);
+		    if (sds_id == FAIL)
+			goto err;
 		
-	      if (is_scale == TRUE)
-		{
-		  /* set range */
-		  if (SDsetrange(sds_id, &in.in8s.max, &in.in8s.min)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
-
-		  /* set dimension scale */
-		  if (in.rank == 2)
-		    {	
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);
-		      if (SDsetdimscale(dim_id, edges2[0],DFNT_INT8,(VOIDP)in.in8s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		      if (SDsetdimscale(dim_id, edges2[1], DFNT_INT8, (VOIDP)in.in8s.hscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		    }
-		  else 
-		    {
-		      dim_index = 0;
-		      dim_id = SDgetdimid (sds_id, dim_index);	
-		      if (SDsetdimscale(dim_id, edges3[0], DFNT_INT8, (VOIDP)in.in8s.dscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 1; 
-		      dim_id = SDgetdimid (sds_id, dim_index); 
-		      if (SDsetdimscale(dim_id, edges3[1], DFNT_INT8, (VOIDP)in.in8s.vscale)!=0)
-			{
-			  (void) fprintf(stderr, err5);
-			  goto err;
-			}
-		      dim_index = 2;
-		      dim_id = SDgetdimid (sds_id, dim_index);	
-		      if (SDsetdimscale(dim_id, edges3[2], DFNT_INT8, (VOIDP)in.in8s.hscale)!=0)
-			{
-			    (void) fprintf(stderr, err5);
+		    if (is_scale == TRUE)
+		      {
+			/* set range */
+			if (SDsetrange(sds_id, &in.in16s.max, &in.in16s.min)!=0)
+			  {
+			    (void) fprintf(stderr, err5a);
 			    goto err;
-			}
-		    }
-		}	
+			  }	
+		    
+			/* set dimension scale */
+			status = set_dimensions(sds_id, &in, DFNT_INT16, 
+			(VOIDP)in.in16s.dscale, (VOIDP)in.in16s.vscale, 
+			(VOIDP)in.in16s.hscale);
+			if (status == FAIL)
+			    goto err;
+		      }
+
+		    /* write data to the data set */
+		    if (write_SDS(sds_id, &in) == FAIL)
+			goto err;
+		    break;
+
+		case 4: /* 8-bit integer */
+		    /* create data-set */ 
+		    sds_id = create_SDS(sd_id, DFNT_INT8, &in);
+		    if (sds_id == FAIL)
+			goto err;
+		
+		    if (is_scale == TRUE)
+		      {
+			/* set range */
+			if (SDsetrange(sds_id, &in.in8s.max, &in.in8s.min)!=0)
+			  {
+			    (void) fprintf(stderr, err5a);
+			    goto err;
+			  }	
+		    
+			/* set dimension scale */
+			status = set_dimensions(sds_id, &in, DFNT_INT8, 
+			(VOIDP)in.in8s.dscale, (VOIDP)in.in8s.vscale, 
+			(VOIDP)in.in8s.hscale);
+			if (status == FAIL)
+			    goto err;
+		      }
 		  
-		  /* write data to the data set */
-	      if (in.rank == 2)
+		    /* write data to the data set */
+		    if (write_SDS(sds_id, &in) == FAIL)
+			goto err;
+		    break;
+	      }
+	    /* close data set */
+	    if (SDendaccess(sds_id) == FAIL )
+	      {
+		(void) fprintf(stderr, err6a);
+		goto err;
+	      }
+
+	    /* close the input file */
+	    if (in.is_hdf == TRUE)
+	      {
+		if (SDend(opt->infiles[i].handle) == FAIL)
 		{
-		  if (SDwritedata(sds_id, start2, NULL, edges2, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }
-		}
-	      else
-		{
-		  if (SDwritedata(sds_id, start3, NULL, edges3, (VOIDP)in.data)!=0)
-		    {
-		      (void) fprintf(stderr, err5);
-		      goto err;
-		    }			
-		}
-	      break;
-	    }
-	    }	  
+		    (void) fprintf(stderr, "SDend handle");
+		    goto err;
+	        }
+	      }
+	    } /* if opt->to_float == TRUE */
+
           /*
            * put the input data in the HDF output file, in RIS8 format
            */
@@ -3494,25 +3393,14 @@ process(struct Options *opt)
            * free dynamically allocated space
            */
 	  fpdeallocate(&in,&im,opt);
-	 
-	  /* close data-set */
-	  if (opt->to_float)
-	    {
-	      if (SDendaccess (sds_id) !=0 )
-		{
-		  (void) fprintf(stderr, err5);
-		  goto err;
-		}
-	    }
-	    
-      }
+      } /* end of for loop */
 
-	  /* close file */
-	if (SDend (sd_id) != 0)
-	  {
-	    (void) fprintf(stderr, err6);
-	    goto err;
-	  }
+    /* close the output file */
+    if (SDend (sd_id) != 0)
+      {
+	(void) fprintf(stderr, err6);
+	goto err;
+      }
 	
     return (0);
 
@@ -3595,7 +3483,7 @@ static int init_scales(struct Input * in)
   switch(in->outtype)
     {
     case 0: /* 32-bit float */
-    case 5:
+    case 5: /* NO_NE */
       if ((in->hscale = (float32 *) HDmalloc((size_t)
 					     (in->dims[0] + 1) * sizeof(float32))) == NULL)
 	{
