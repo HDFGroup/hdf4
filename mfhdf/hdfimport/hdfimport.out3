@@ -1,0 +1,36 @@
+SDSfloat2.out:
+
+Version Descriptor            : (tag 30)
+	Ref nos: 1
+Number type                   : (tag 106)
+	Ref nos: 13 15 17
+SciData dimension record      : (tag 701)
+	Ref nos: 13 15 17
+Scientific Data               : (tag 702)
+	Ref nos: 4 6 7
+Numeric Data Group            : (tag 720)
+	Ref nos: 2 3 5
+Vdata                         : (tag 1962)
+	Ref nos: 8 10 12
+Vdata Storage                 : (tag 1963)
+	Ref nos: 8 10 12
+Vgroup                        : (tag 1965)
+	Ref nos: 9 11 14 16 18 19
+SDSfloat3.out:
+
+Version Descriptor            : (tag 30)
+	Ref nos: 1
+Number type                   : (tag 106)
+	Ref nos: 17 19 21 23
+SciData dimension record      : (tag 701)
+	Ref nos: 17 19 21 23
+Scientific Data               : (tag 702)
+	Ref nos: 4 6 8 9
+Numeric Data Group            : (tag 720)
+	Ref nos: 2 3 5 7
+Vdata                         : (tag 1962)
+	Ref nos: 10 12 14 16
+Vdata Storage                 : (tag 1963)
+	Ref nos: 10 12 14 16
+Vgroup                        : (tag 1965)
+	Ref nos: 11 13 15 18 20 22 24 25

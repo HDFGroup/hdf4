@@ -60,6 +60,7 @@ mfhdf/fortran/test_nc.nc -text
 mfhdf/hdfimport/SDSfloat2.hdf -text
 mfhdf/hdfimport/SDSfloat3.hdf -text
 mfhdf/hdfimport/crtSDSfloats.c -text
+mfhdf/hdfimport/hdfimport.out3 -text
 mfhdf/hdiff/testfiles/hdifftst1.hdf -text
 mfhdf/hdiff/testfiles/hdifftst2.hdf -text
 mfhdf/libsrc/test1.nc -text
