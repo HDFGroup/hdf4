@@ -795,10 +795,14 @@
 
 ./mfhdf/hdfimport/Makefile.am
 ./mfhdf/hdfimport/Makefile.in
+./mfhdf/hdfimport/SDSfloat2.hdf
+./mfhdf/hdfimport/SDSfloat3.hdf
+./mfhdf/hdfimport/crtSDSfloats.c
 ./mfhdf/hdfimport/hdfimport.c
 ./mfhdf/hdfimport/hdfimport.input1
 ./mfhdf/hdfimport/hdfimport.out1
 ./mfhdf/hdfimport/hdfimport.out2
+./mfhdf/hdfimport/hdfimport.out3
 ./mfhdf/hdfimport/hdfimporttest.c
 ./mfhdf/hdfimport/testutil.sh.in
 
