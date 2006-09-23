@@ -32,7 +32,9 @@ echo "=============================="
 if [ -f hdfimport -a -f hdfimporttest ]; then
 echo "** Testing hdfimport  ***"
 
-/bin/rm -f ctxt* cb* *.hdf *.out hdfls.tmp5 hdfed.tmp6 hdffiles.tmp
+# use [!S] to prevent SDSfloat2.hdf and SDSfloat3.hdf from being deleted;
+# please replace with better solution, one is if available. - BMR (2006/9/23)
+/bin/rm -f ctxt* cb* [!S]*.hdf *.out hdfls.tmp5 hdfed.tmp6 hdffiles.tmp
 ${TESTS_ENVIRONMENT} ./hdfimporttest
 echo "Testing for 32-bit floating point ASCII (2D data)" 
 $TESTCMD ctxtr2 -o ctxtr2.hdf
@@ -95,7 +97,9 @@ $TESTCMD $srcdir/SDSfloat3.hdf -o SDSfloat3.out
     # from SDSfloat*.out with the library version removed - BMR (2006/9/7)
     diff  hdffiles.tmp $srcdir/hdfimport.out3 || errors=1
 
-/bin/rm -f ctxt* cb* *.hdf *.out hdfls.tmp5 hdfed.tmp6 hdffiles.tmp
+# use [!S] to prevent SDSfloat2.hdf and SDSfloat3.hdf from being deleted;
+# please replace with a better solution, if one is available. - BMR (2006/9/23)
+/bin/rm -f ctxt* cb* [!S]*.hdf *.out hdfls.tmp5 hdfed.tmp6 hdffiles.tmp
 #/bin/rm -f ctxt* cb* *.hdf 
 else
 haserr=1
