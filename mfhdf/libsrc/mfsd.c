@@ -1139,7 +1139,6 @@ SDcreate(int32  fid,      /* IN: file ID */
     fprintf(stderr, "SDcreate: I've been called\n");
 #endif
 
-
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
@@ -1309,6 +1308,7 @@ SDcreate(int32  fid,      /* IN: file ID */
     HDfree(dims);
 
     ret_value = sdsid;
+
 
 done:
     if (ret_value == FAIL)
@@ -6606,7 +6606,7 @@ SDget_numopenfiles()
     length.
 
  RETURNS
-    Length of the file name on success, and FAIL, otherwise.
+    Length of the file name, without '\0', on success, and FAIL, otherwise.
 
  PROGRAMMER
     bmribler - 9-06-2005
@@ -6642,7 +6642,7 @@ SDgetfilename(int32 fid,       /* IN:  file ID */
           filename[len] = '\0';
       }
 
-    ret_value = len+1;
+    ret_value = len;
 
 done:
     if (ret_value == FAIL)
@@ -6653,4 +6653,93 @@ done:
 
     return ret_value;
 } /* SDgetfilename */
+
+/******************************************************************************
+ NAME
+	SDgetnamelen -- retrieves the length of the name of a file, a dataset,
+			or a dimension.
+
+DESCRIPTION
+    Given an id, retrieves the length of its name.
+
+RETURNS
+   SUCCEED/FAIL
+
+ PROGRAMMER
+    bmribler - 9-14-2006
+        
+ MODIFICATION
+
+******************************************************************************/ 
+intn
+SDgetnamelen(int32 id,		/* IN:  object ID */
+             uint16 *name_len	/* OUT: buffer for name's length */)
+{
+    CONSTR(FUNC, "SDgetnamelen");    /* for HGOTO_ERROR */
+    NC     *handle = NULL;
+    NC_var *var = NULL;
+    NC_dim *dim = NULL;
+    intn   ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetnamelen: I've been called\n");
+#endif
+
+    /* Assuming that the id is an SD id, get the file handle */
+    handle = SDIhandle_from_id(id, CDFTYPE);
+
+    /* If it is, obtain the file name's length */
+    if(handle != NULL)
+	*name_len = (uint16)HDstrlen(handle->path);
+
+    /* otherwise, check further... */
+    else
+    {
+	/* Assuming that it is an id of an SDS, get its file handle */
+	handle = SDIhandle_from_id(id, SDSTYPE);
+
+	/* If it is, get the NC_var record, and obtain the SDS name's length */
+	if(handle != NULL)
+	{
+	    var = SDIget_var(handle, id);
+	    if(var == NULL)
+	    {
+		ret_value = FAIL;
+		goto done;
+	    }
+	    *name_len = (uint16)var->name->len;
+	}
+
+	/* otherwise, check if it is a dimension id, or just not valid */
+	else
+	{
+            handle = SDIhandle_from_id(id, DIMTYPE);
+            if(handle != NULL)
+	    {
+		dim = SDIget_dim(handle, id);
+		if(dim == NULL) 
+		{
+		    ret_value = FAIL;
+		    goto done;
+		}
+		*name_len = (uint16)dim->name->len;
+	    }
+	    else	/* invalid id */
+	    {
+		ret_value = FAIL;
+		goto done;
+	    }
+        }
+    }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* SDgetnamelen */
+
 #endif /* HDF */
