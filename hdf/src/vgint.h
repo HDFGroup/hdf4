@@ -123,7 +123,7 @@ struct vgroup_desc
       intn        access;       /* 'r' or 'w' */
       uint16     *tag;          /* S tag of objects */
       uint16     *ref;          /* S ref of objects */
-      char        vgname[VGNAMELENMAX + 1];     /* S name of this vgroup */
+      char*       vgname;       /* S name of this vgroup */
       char        vgclass[VGNAMELENMAX + 1];    /* S class name of this vgroup */
       intn        marked;       /* =1 if new info has been added to vgroup */
       intn        new_vg;       /* =1 if this is a new Vgroup */

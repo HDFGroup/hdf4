@@ -793,12 +793,13 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                           ri_info_t *new_image; /* ptr to the image to read in */
                           int32 img_key;            /* Vgroup key of an image */
                           int32 img_tag,img_ref;    /* image tag/ref in the Vgroup */
-                          char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
+                          char *textbuf;    /* buffer to store the name in */
                           uint8 ntstring[4];        /* buffer to store NT info */
                           uint8 GRtbuf[64];         /* local buffer for reading RIG info */
 
                           if((img_key=Vattach(file_id,(int32)img_info[i].grp_ref,"r"))!=FAIL)
                             {
+				int16 name_len;
                                 if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                                   {
                                     HDfree(img_info);   /* free offsets */
@@ -810,11 +811,12 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                 HDmemset(new_image,0,sizeof(ri_info_t));
 
                                 /* Get the name of the image */
-                                if(Vgetname(img_key,textbuf)==FAIL)
-                                    sprintf(textbuf,"Raster Image #%d",(int)i);
-                                if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+				if((name_len=Vgetnamelen(img_key))==FAIL)
+				    name_len = 20; /* for "Raster Image #%d" */
+                                if((new_image->name=(char *)HDmalloc(name_len+1))==NULL)
                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                HDstrcpy(new_image->name,textbuf);
+                                if(Vgetname(img_key,new_image->name)==FAIL)
+                                    sprintf(new_image->name,"Raster Image #%d",(int)i);
 
                                 /* Initialize the local attribute tree */
                                 new_image->lattr_count = 0;

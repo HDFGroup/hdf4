@@ -84,6 +84,7 @@ EXPORTED ROUTINES
  Vgetid       -- Given a vgroup's id, returns the next vgroup's id in the file.
  Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg 
                   for the next entry after it, and returns its id.
+ Vgetnamelen  -- Returns the length of the vgroup's name.
  Vgetname     -- Returns the vgroup's name.
  Vgetclass    -- Returns the vgroup's class name .
  Vinquire     -- General inquiry routine for VGROUP. 
@@ -882,7 +883,7 @@ vpackvg(VGROUP * vg, /* IN: */
     CONSTR(FUNC, "vpackvg");
 #endif
     uintn  i;
-    int16 slen;
+    int16 slen = 0;
     uint8 *bb = NULL;
     int32 ret_value = SUCCEED;
 
@@ -903,10 +904,12 @@ vpackvg(VGROUP * vg, /* IN: */
         UINT16ENCODE(bb, vg->ref[i]);
 
     /* save the vgnamelen and vgname - omit the null */
-    slen = HDstrlen(vg->vgname);
+    if (vg->vgname != NULL)
+        slen = HDstrlen(vg->vgname);
     UINT16ENCODE(bb, slen);
 
-    HDstrcpy((char *) bb, vg->vgname);
+    if (vg->vgname != NULL)
+        HDstrcpy((char *) bb, vg->vgname);
     bb += slen;
 
     /* save the vgclasslen and vgclass- omit the null */
@@ -951,6 +954,7 @@ vpackvg(VGROUP * vg, /* IN: */
     /* but since files have been created with */
     /* it there (and the size calc. wrong) it */
     /* has to be left alone -QAK */
+
 #ifdef LATER
 done:
     if (ret_value == FAIL)
@@ -1029,6 +1033,7 @@ vunpackvg(VGROUP * vg, /* IN/OUT: */
           /* retrieve vgname (and its len)  */
           UINT16DECODE(bb, uint16var);
 
+	  vg->vgname = (char *)HDmalloc(uint16var+1);
           HIstrncpy(vg->vgname, (char *) bb, (int32) uint16var + 1);
           bb += (size_t)uint16var;
 
@@ -2249,7 +2254,6 @@ NAME
 
 DESCRIPTION
    gives a name to the VGROUP vg.
-    truncates to max length of VGNAMELENMAX
 
 RETURNS
     RETURN VALUES: SUCCEED for success, FAIL for failure (big suprise, eh?)
@@ -2257,10 +2261,11 @@ RETURNS
 *******************************************************************************/
 int32
 Vsetname(int32 vkey,         /* IN: vgroup key */
-         const char *vgname  /* IN: name to set for vgrou */) 
+         const char *vgname  /* IN: name to set for vgroup */) 
 {
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
+    uint16 name_len;
     int32      ret_value = SUCCEED;
     CONSTR(FUNC, "Vsetname");
 
@@ -2280,8 +2285,10 @@ Vsetname(int32 vkey,         /* IN: vgroup key */
     if (vg == NULL || vg->access!='w')
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy the name over, upto VGNAMELENMAX in length */
-    HIstrncpy(vg->vgname, vgname, VGNAMELENMAX);
+    /* copy the name over */
+    name_len = HDstrlen(vgname);
+    vg->vgname = (char *)HDmalloc(name_len+1);
+    HIstrncpy(vg->vgname, vgname, name_len+1);
 
     vg->marked = TRUE;
 
@@ -2644,6 +2651,58 @@ done:
 
   return ret_value;
 }   /* Vgetnext  */
+
+/*******************************************************************************
+NAME
+   Vgetnamelen
+
+DESCRIPTION
+   Returns the length of the vgroup's name.
+
+RETURNS
+   Returns the length of the vgroup's name.  If an error occurs, 
+   returns FAIL.
+   BMR - 2006/09/10
+   
+*******************************************************************************/
+int32
+Vgetnamelen(int32 vkey   /* IN: vgroup key */)
+{
+    vginstance_t *v = NULL;
+    VGROUP       *vg = NULL;
+    int32        ret_value = 0;
+    CONSTR(FUNC, "Vgetnamelen");
+
+
+    /* clear error stack */
+    HEclear();
+
+    /* check if vgroup is valid and the vgname */
+    if (HAatom_group(vkey)!=VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get instance of vgroup */
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* get vgroup itself and check */
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* obtain the name length */
+    ret_value = HDstrlen(vg->vgname);
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+
+  return ret_value;
+}   /* Vgetnamelen */
 
 /*******************************************************************************
 NAME
