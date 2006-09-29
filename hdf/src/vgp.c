@@ -84,7 +84,7 @@ EXPORTED ROUTINES
  Vgetid       -- Given a vgroup's id, returns the next vgroup's id in the file.
  Vgetnext     -- Given the id of an entry from a vgroup vg, looks in vg 
                   for the next entry after it, and returns its id.
- Vgetnamelen  -- Returns the length of the vgroup's name.
+ Vgetnamelen  -- Retrieves the length of the vgroup's name.
  Vgetname     -- Returns the vgroup's name.
  Vgetclass    -- Returns the vgroup's class name .
  Vinquire     -- General inquiry routine for VGROUP. 
@@ -2657,20 +2657,20 @@ NAME
    Vgetnamelen
 
 DESCRIPTION
-   Returns the length of the vgroup's name.
+   Retrieves the length of the vgroup's name.
 
 RETURNS
-   Returns the length of the vgroup's name.  If an error occurs, 
-   returns FAIL.
+   Returns SUCCEED/FAIL
    BMR - 2006/09/10
    
 *******************************************************************************/
 int32
-Vgetnamelen(int32 vkey   /* IN: vgroup key */)
+Vgetnamelen(int32 vkey,   /* IN: vgroup key */
+	    uint16 *name_len /* OUT: length of vgroup's name */)
 {
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
-    int32        ret_value = 0;
+    int32        ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetnamelen");
 
 
@@ -2691,7 +2691,7 @@ Vgetnamelen(int32 vkey   /* IN: vgroup key */)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* obtain the name length */
-    ret_value = HDstrlen(vg->vgname);
+    *name_len = (uint16)HDstrlen(vg->vgname);
 
 done:
   if(ret_value == FAIL)   
