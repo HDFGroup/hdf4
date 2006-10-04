@@ -811,7 +811,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                 HDmemset(new_image,0,sizeof(ri_info_t));
 
                                 /* Get the name of the image */
-				if((name_len=Vgetnamelen(img_key))==FAIL)
+				if(Vgetnamelen(img_key,&name_len)==FAIL)
 				    name_len = 20; /* for "Raster Image #%d" */
                                 if((new_image->name=(char *)HDmalloc(name_len+1))==NULL)
                                     HGOTO_ERROR(DFE_NOSPACE,FAIL);
