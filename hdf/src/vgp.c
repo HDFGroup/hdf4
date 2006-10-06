@@ -850,8 +850,8 @@ vexistvg(HFILEID f,   /* IN: file handle */
    *
    *    Fields of VGROUP  that gets stored in HDF as a DFTAG_VG data object:
    *            int16           nvelt (no of entries )
-   *            char            vgname[MAXVGNAMELEN]
-   *            char     vgclass[MAXVGNAMELEN]
+   *            char*           vgname
+   *            char            vgclass[MAXVGNAMELEN]
    *            int16           tag[1..nvelt]
    *            int16           ref[1..nvelt]
    *    (fields for version 4) 
@@ -884,6 +884,7 @@ vpackvg(VGROUP * vg, /* IN: */
 #endif
     uintn  i;
     int16 slen = 0;
+    uint16 temp_len = 0;
     uint8 *bb = NULL;
     int32 ret_value = SUCCEED;
 
@@ -906,18 +907,20 @@ vpackvg(VGROUP * vg, /* IN: */
     /* save the vgnamelen and vgname - omit the null */
     if (vg->vgname != NULL)
         slen = HDstrlen(vg->vgname);
-    UINT16ENCODE(bb, slen);
+    temp_len = slen > 0 ? slen : 0;
+    UINT16ENCODE(bb, temp_len);
 
     if (vg->vgname != NULL)
         HDstrcpy((char *) bb, vg->vgname);
-    bb += slen;
+    bb += temp_len;
 
     /* save the vgclasslen and vgclass- omit the null */
     slen = HDstrlen(vg->vgclass);
-    UINT16ENCODE(bb, slen);
+    temp_len = slen > 0 ? slen : 0;
+    UINT16ENCODE(bb, temp_len);
 
     HDstrcpy((char *) bb, vg->vgclass);
-    bb += slen;
+    bb += temp_len;
 
     /* save the expansion tag/ref pair */
     UINT16ENCODE(bb, vg->extag);    /* the vg's expansion tag */
@@ -2670,6 +2673,7 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
 {
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
+    size_t       temp_len;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetnamelen");
 
@@ -2691,7 +2695,8 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* obtain the name length */
-    *name_len = (uint16)HDstrlen(vg->vgname);
+    temp_len = HDstrlen(vg->vgname);
+    *name_len = temp_len > 0 ? (uint16)temp_len : 0;
 
 done:
   if(ret_value == FAIL)   

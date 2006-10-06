@@ -799,7 +799,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                           if((img_key=Vattach(file_id,(int32)img_info[i].grp_ref,"r"))!=FAIL)
                             {
-				int16 name_len;
+				uint16 name_len;
                                 if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                                   {
                                     HDfree(img_info);   /* free offsets */
