@@ -1690,7 +1690,7 @@ test_emptyvdata(void)
 #endif
 
     /* Open the HDF file. */
-    fid = Hopen(EMPTYNM, DFACC_RDWR, 0);
+    fid = Hopen(EMPTYNM, DFACC_CREATE, 0);
     CHECK(fid,FAIL,"Hopen");
 
     /* Initialize HDF for subsequent vgroup/vdata access. */
