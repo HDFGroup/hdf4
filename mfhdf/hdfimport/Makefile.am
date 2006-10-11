@@ -11,25 +11,23 @@ DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 #############################################################################
+##                      Libraries to link against                          ##
+#############################################################################
+
+LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+
+#############################################################################
 ##                          Programs to build                              ##
 #############################################################################
 
 bin_PROGRAMS = hdfimport
 
-hdfimport_SOURCES = hdfimport.c
-hdfimport_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimport_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
-
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
-check_PROGRAMS = hdfimporttest
+check_PROGRAMS = hdfimporttest gen_sds_floats
 check_SCRIPTS = testutil.sh
-
-hdfimporttest_SOURCES = hdfimporttest.c
-hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimporttest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 check: hdfimporttest$(EXEEXT)
 	@$(SHELL) ./testutil.sh

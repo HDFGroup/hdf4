@@ -17,7 +17,7 @@
 #############################################################################
 #############################################################################
 
-SOURCES = $(hdfimport_SOURCES) $(hdfimporttest_SOURCES)
+SOURCES = gen_sds_floats.c hdfimport.c hdfimporttest.c
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -42,7 +42,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = hdfimport$(EXEEXT)
-check_PROGRAMS = hdfimporttest$(EXEEXT)
+check_PROGRAMS = hdfimporttest$(EXEEXT) gen_sds_floats$(EXEEXT)
 subdir = mfhdf/hdfimport
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/testutil.sh.in
@@ -56,10 +56,21 @@ CONFIG_CLEAN_FILES = testutil.sh
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_hdfimport_OBJECTS = hdfimport.$(OBJEXT)
-hdfimport_OBJECTS = $(am_hdfimport_OBJECTS)
-am_hdfimporttest_OBJECTS = hdfimporttest.$(OBJEXT)
-hdfimporttest_OBJECTS = $(am_hdfimporttest_OBJECTS)
+gen_sds_floats_SOURCES = gen_sds_floats.c
+gen_sds_floats_OBJECTS = gen_sds_floats.$(OBJEXT)
+gen_sds_floats_LDADD = $(LDADD)
+gen_sds_floats_DEPENDENCIES = ../libsrc/libmfhdf.a \
+	$(top_builddir)/hdf/src/libdf.a
+hdfimport_SOURCES = hdfimport.c
+hdfimport_OBJECTS = hdfimport.$(OBJEXT)
+hdfimport_LDADD = $(LDADD)
+hdfimport_DEPENDENCIES = ../libsrc/libmfhdf.a \
+	$(top_builddir)/hdf/src/libdf.a
+hdfimporttest_SOURCES = hdfimporttest.c
+hdfimporttest_OBJECTS = hdfimporttest.$(OBJEXT)
+hdfimporttest_LDADD = $(LDADD)
+hdfimporttest_DEPENDENCIES = ../libsrc/libmfhdf.a \
+	$(top_builddir)/hdf/src/libdf.a
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
@@ -67,8 +78,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(hdfimport_SOURCES) $(hdfimporttest_SOURCES)
-DIST_SOURCES = $(hdfimport_SOURCES) $(hdfimporttest_SOURCES)
+SOURCES = gen_sds_floats.c hdfimport.c hdfimporttest.c
+DIST_SOURCES = gen_sds_floats.c hdfimport.c hdfimporttest.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -189,13 +200,11 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
-hdfimport_SOURCES = hdfimport.c
-hdfimport_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimport_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+#############################################################################
+#############################################################################
+LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 check_SCRIPTS = testutil.sh
-hdfimporttest_SOURCES = hdfimporttest.c
-hdfimporttest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdfimporttest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 all: all-am
 
 .SUFFIXES:
@@ -257,6 +266,9 @@ clean-binPROGRAMS:
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+gen_sds_floats$(EXEEXT): $(gen_sds_floats_OBJECTS) $(gen_sds_floats_DEPENDENCIES) 
+	@rm -f gen_sds_floats$(EXEEXT)
+	$(LINK) $(gen_sds_floats_LDFLAGS) $(gen_sds_floats_OBJECTS) $(gen_sds_floats_LDADD) $(LIBS)
 hdfimport$(EXEEXT): $(hdfimport_OBJECTS) $(hdfimport_DEPENDENCIES) 
 	@rm -f hdfimport$(EXEEXT)
 	$(LINK) $(hdfimport_LDFLAGS) $(hdfimport_OBJECTS) $(hdfimport_LDADD) $(LIBS)
@@ -270,6 +282,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gen_sds_floats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfimport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfimporttest.Po@am__quote@
 
