@@ -66,5 +66,6 @@ mfhdf/hdiff/testfiles/hdifftst1.hdf -text
 mfhdf/hdiff/testfiles/hdifftst2.hdf -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
+mfhdf/libsrc/tsdsprops.c -text
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
