@@ -1,0 +1,20 @@
+#############################
+Expected output for './hdp dumpsds -h -n "The name of this dataset is long and it is used to test the new variable length name feature." SDSlongname.hdf'
+#############################
+File name: SDSlongname.hdf 
+
+Variable Name = The name of this dataset is long and it is used to test the new variable length name feature.
+	 Index = 0
+	 Type= 32-bit signed integer
+	 Ref. = 2
+	 Compression method = NONE
+	 Rank = 2
+	 Number of attributes = 0
+	 Dim0: Name=fakeDim0
+		 Size = 10
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=fakeDim1
+		 Size = 10
+		 Scale Type = number-type not set
+		 Number of attributes = 0
