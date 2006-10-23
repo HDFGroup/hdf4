@@ -227,6 +227,9 @@ TEST dumpsds-10.out dumpsds -g swf32_fileattr.hdf
 
 # Test 11 prints contents of file without local attribute's data
 TEST dumpsds-11.out dumpsds -l swf32_fileattr.hdf
+
+# Test 12 prints contents of file without local attribute's data
+TEST dumpsds-12.out dumpsds -h -n "The name of this dataset is long and it is used to test the new variable length name feature." SDSlongname.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi

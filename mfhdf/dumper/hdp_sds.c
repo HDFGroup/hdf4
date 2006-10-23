@@ -681,10 +681,11 @@ intn printSD_ASCII(
          dimNT[MAXRANK],        /* number type of dimension */
          dimnattr[MAXRANK];     /* # of attributes of a dim */
    char  dim_nm[MAXNAMELEN],    /* dimension name */
-         name[MAXNAMELEN],      /* SDS name */
+         *sdsname,			/* SDS name */
          *nt_desc = NULL,       /* SDS's or dim's num type description */
          *attr_nt_desc = NULL,  /* attr's nt description */
          curr_file_name[MAXFNLEN]; /* curr hdf file name */
+   uint16 name_len=0;
    intn  isdimvar,      /* TRUE if curr SDS is used for a dim */
          j,
          dumpall = FALSE,	/* TRUE if all SDSs are to be dumped */
@@ -728,8 +729,20 @@ intn printSD_ASCII(
          ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
                       "printSD_ASCII", "SDselect", (int)sds_index );
 
+      status = SDgetnamelen(sds_id, &name_len);
+      if( FAIL == status )
+      {
+         resetSDS( &sds_id, sds_index, curr_file_name );
+         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
+			"printSD_BINARY", "SDgetnamelen", (int)sds_index );
+      }
+
+      /* allocate space for sds name */
+      sdsname = (char *) HDmalloc(name_len+1);
+      CHECK_ALLOC( sdsname, "sdsname", "printSD_BINARY" );
+
       /* get dataset's information */
-      status = SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattrs);
+      status = SDgetinfo(sds_id, sdsname, &rank, dimsizes, &nt, &nattrs);
       if( status == FAIL )
       {
          resetSDS( &sds_id, sds_index, curr_file_name );
@@ -780,14 +793,14 @@ intn printSD_ASCII(
                dimension */
             if (isdimvar)
             {
-               fprintf(fp, "\nDimension Variable Name = %s\n\t ", name);
+               fprintf(fp, "\nDimension Variable Name = %s\n\t ", sdsname);
                fprintf(fp, "Index = %d\n\t Scale Type= %s\n", 
 						(int)sds_index, nt_desc);
             }
             /* display the SDS info, otherwise */
             else
             {
-               fprintf(fp, "\nVariable Name = %s\n\t Index = ", name);
+               fprintf(fp, "\nVariable Name = %s\n\t Index = ", sdsname);
                fprintf(fp, "%d\n\t Type= %s\n", (int)sds_index, nt_desc);
             }
 
@@ -915,8 +928,9 @@ printSD_BINARY( int32 sd_id,
          rank,
          nt,
          nattrs;
-   char  name[MAXNAMELEN],
+   char *sdsname,
          curr_file_name[MAXFNLEN];
+   uint16 name_len=0;
    intn  dumpall = FALSE,
          status,
          ret_value = SUCCEED;
@@ -955,13 +969,26 @@ printSD_BINARY( int32 sd_id,
          ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
 			"printSD_BINARY", "SDselect", (int)sds_index );
 
-      status = SDgetinfo(sds_id, name, &rank, dimsizes, &nt, &nattrs);
+      status = SDgetnamelen(sds_id, &name_len);
+      if( FAIL == status )
+      {
+         resetSDS( &sds_id, sds_index, curr_file_name );
+         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
+			"printSD_BINARY", "SDgetnamelen", (int)sds_index );
+      }
+
+      /* allocate space for sds name */
+      sdsname = (char *) HDmalloc(name_len+1);
+      CHECK_ALLOC( sdsname, "sdsname", "printSD_BINARY" );
+
+      status = SDgetinfo(sds_id, sdsname, &rank, dimsizes, &nt, &nattrs);
       if( FAIL == status )
       {
          resetSDS( &sds_id, sds_index, curr_file_name );
          ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
 			"printSD_BINARY", "SDgetinfo", (int)sds_index );
       }
+      if (sdsname != NULL) HDfree(sdsname);
 
       /* output data to binary file   */
       if (rank > 0 && dimsizes[0] != 0)
