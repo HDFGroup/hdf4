@@ -295,6 +295,12 @@ TEST dumpvg-10.out dumpvg -h -c Dim0.0,Var0.0 tdata.hdf
 
 # moved test #12 up to #11, consequently - BMR 7/25/00
 TEST dumpvg-11.out dumpvg tvattr.hdf
+
+# Added these two tests for the new feature: vgroup has variable length 
+# name - BMR 10/27/06
+# Note that the dumpvg-13 test searches for an SDS also
+TEST dumpvg-12.out dumpvg VGlongname.hdf
+TEST dumpvg-13.out dumpvg -n "SD Vgroup - this vgroup has an sds as a member and it is actually meant to test long vgroup name" VGlongname.hdf
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
