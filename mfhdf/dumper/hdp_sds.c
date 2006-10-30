@@ -434,7 +434,7 @@ intn get_SDSindex_list(
          index = SDnametoindex(sd_id, dumpsds_opts->by_name.str_list[i]);
          if (index == FAIL)
          {
-            printf( "SDS with name %s: not found\n",
+            printf( "SDS with name '%s': not found\n",
                               dumpsds_opts->by_name.str_list[i]);
             *index_error = TRUE; /* error */
          }

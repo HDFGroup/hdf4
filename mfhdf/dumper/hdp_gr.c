@@ -386,7 +386,7 @@ get_RIindex_list(
          index = GRnametoindex(gr_id, dumpgr_opts->by_name.str_list[i]);
          if (index == FAIL)
          {
-            printf("Image with name %s: not found\n", dumpgr_opts->by_name.str_list[i]);
+            printf("Image with name '%s': not found\n", dumpgr_opts->by_name.str_list[i]);
             *index_error = TRUE;
          }
          else

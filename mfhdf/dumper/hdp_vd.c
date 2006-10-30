@@ -362,7 +362,7 @@ choose_vd(dump_info_t * dumpvd_opts,
          index = VSstr_index(file_id, dumpvd_opts->by_name.str_list[i], 1, &find_ref, &number);
          if (index == FAIL)
          {
-            printf("Vdata with name %s: not found\n", 
+            printf("Vdata with name '%s': not found\n", 
                          dumpvd_opts->by_name.str_list[i]);
             *index_error = TRUE;
          }

@@ -325,7 +325,7 @@ display(vg_info_t *ptr,
                     && (HDstrcmp(ptr->children[i], "***")))
          {
             x = 0;
-            while (HDstrcmp(name, list[x]->name))
+            while (HDstrcmp(name, list[x]->vg_name))
             {
                x++;
             }
@@ -394,10 +394,12 @@ get_VGandInfo( int32 *vg_id,
                int32  vg_ref,
                const  char *file_name,
                int32 *n_entries,
-               char  *vgname,
+               char  **vgname,
                char  *vgclass )
 {
    intn status, ret_value = SUCCEED;
+   uint16 name_len = 0;
+   *vgname = NULL;
 
    /* detach the current vgroup if it's attached to cover the case 
       where a library routine fails and must continue to the next vgroup
@@ -409,18 +411,30 @@ get_VGandInfo( int32 *vg_id,
       ERROR_GOTO_2( "in %s: Vattach failed for vgroup ref=%d", 
 		"get_VGandInfo", (int) vg_ref );
 
-   status = Vinquire(*vg_id, n_entries, vgname);
+   /* get the length of the vgname to allocate enough space */
+   status = Vgetnamelen(*vg_id, &name_len);
+   if (FAIL == status) /* go to done and return a FAIL */
+   {
+      ERROR_GOTO_2( "in %s: Vgetnamelen failed for vg ref=%d",
+                "get_VGandInfo", (int) vg_ref );
+   }
+   *vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+
+   /* If allocation fails, get_VGandInfo simply terminates hdp. */
+   CHECK_ALLOC(*vgname, "*vgname", "get_VGandInfo" );
+
+   status = Vinquire(*vg_id, n_entries, *vgname);
    if (FAIL == status) /* go to done and return a FAIL */
    {
       /* stuff values to these variables so they can be printed */
       *n_entries = -1;
-      HDstrcpy( vgname, "<Unknown>" );
+      HDstrcpy( *vgname, "<Unknown>" );
 
       ERROR_GOTO_2( "in %s: Vinquire failed for vg ref=%d",
 		"get_VGandInfo", (int) vg_ref );
    }
-   else if( HDstrcmp( vgname, "" ) == 0) 
-      HDstrcpy( vgname, "<Unknown>" );
+   else if( HDstrcmp( *vgname, "" ) == 0) 
+      HDstrcpy( *vgname, "<Unknown>" );
 
    status = Vgetclass(*vg_id, vgclass);
    if( FAIL == status ) /* go to done and return a FAIL */
@@ -433,6 +447,7 @@ get_VGandInfo( int32 *vg_id,
    }
    else if( HDstrcmp( vgclass, "" ) == 0) 
       HDstrcpy( vgclass, "<Unknown>" ); 
+
 done:
    if( ret_value == FAIL )
    {
@@ -672,7 +687,7 @@ get_VGindex_list(
          index = Vstr_index(file_id, dumpvg_opts->by_name.str_list[i], 1, &find_ref, &number);
          if (index == FAIL)
          {
-            printf( "Vgroup with name %s: not found\n", 
+            printf( "Vgroup with name '%s': not found\n", 
                            dumpvg_opts->by_name.str_list[i]);
             *index_error = 1; /* error */
          }
@@ -816,7 +831,7 @@ vgBuildGraph(int32        vg_id,
 {
     int32  vs;
     char   vsname[MAXNAMELEN];
-    char   vgname[VGNAMELENMAX];
+    char  *vgname = NULL;
     char   vgclass[VGNAMELENMAX];
     char  *name = NULL;
     int32  vgt = FAIL;
@@ -849,7 +864,7 @@ vgBuildGraph(int32        vg_id,
 
          /* get the current vgroup and its information */
          status = get_VGandInfo( &vgt, file_id, elem_ref, file_name, 
-				 &elem_n_entries, vgname, vgclass );
+				 &elem_n_entries, &vgname, vgclass );
          if( status == FAIL )
             ERROR_NOTIFY_3( "in %s: %s failed in getting vgroup with ref#=%d",
 		"vgBuildGraph", "get_VGandInfo", (int)vg_ref );
@@ -897,7 +912,7 @@ vgBuildGraph(int32        vg_id,
 			"vgBuildGraph", (int) elem_ref );
 
                   /* set vdata's name to undefined */
-      		  HDstrcpy( vgname, "<Invalid>" );
+      		  HDstrcpy( vsname, "<Invalid>" );
                }
 
             if (FAIL == VSdetach(vs))
@@ -937,23 +952,11 @@ vgBuildGraph(int32        vg_id,
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-          if (aNode->children != NULL)
-            {
-                for (entry_num = 0; entry_num < num_entries; entry_num++)
-                   if (aNode->children[entry_num] != NULL)
-                       HDfree(aNode->children[entry_num]);
-                HDfree( aNode->children );
-            }
-          if (aNode->type != NULL)
-            {
-                for (entry_num = 0; entry_num < num_entries; entry_num++)
-                   if (aNode->type[entry_num] != NULL)
-                       HDfree(aNode->type[entry_num]);
-                HDfree( aNode->type );
-            }
+	  aNode = free_node_vg_info_t(aNode);
       }
     /* Normal cleanup */
-    
+    if (vgname != NULL) HDfree(vgname);
+
     return ret_value;
 }	/* vgBuildGraph */
 
@@ -979,7 +982,7 @@ vgdumpfull(int32        vg_id,
     int32  vsize;
     char   vsname[MAXNAMELEN];
     char   vsclass[VSNAMELENMAX];
-    char   vgname[VGNAMELENMAX];
+    char  *vgname = NULL;
     char   vgclass[VGNAMELENMAX];
     char  *name = NULL;
     int32  i;
@@ -1024,7 +1027,7 @@ vgdumpfull(int32        vg_id,
       { /* vgroup */
 
          /* get the current vgroup and its information */
-         status = get_VGandInfo( &vgt, file_id, elem_ref, file_name, &elem_n_entries, vgname, vgclass );
+         status = get_VGandInfo( &vgt, file_id, elem_ref, file_name, &elem_n_entries, &vgname, vgclass );
          if( status == FAIL )
 	    ERROR_GOTO_3( "in %s: %s failed in getting vgroup with ref#=%d",
                 "vgdumpfull", "get_VGandInfo", (int) vg_ref );
@@ -1161,20 +1164,7 @@ vgdumpfull(int32        vg_id,
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-          if (aNode->children != NULL)
-            {
-                for (i = 0; i < num_entries; i++)
-                   if (aNode->children[i] != NULL)
-                       HDfree(aNode->children[i]);
-                HDfree( aNode->children );
-            }
-          if (aNode->type != NULL)
-            {
-                for (i = 0; i < num_entries; i++)
-                   if (aNode->type[i] != NULL)
-                       HDfree(aNode->type[i]);
-                HDfree( aNode->type );
-            }
+	  aNode = free_node_vg_info_t(aNode);
       }
     /* Normal cleanup */
 #if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
@@ -1184,6 +1174,7 @@ done:
       fields = NULL;
     } 
 #endif /* macintosh */ 
+    if (vgname != NULL) HDfree(vgname); /* free temp memory */
     
     return ret_value;
 }	/* vgdumpfull */
@@ -1211,7 +1202,7 @@ dvg(dump_info_t *dumpvg_opts,
     int         dumpall = 0;
     char        file_name[MAXFNLEN];
     char        vgclass[VGNAMELENMAX];
-    char        vgname[VGNAMELENMAX];
+    char       *vgname = NULL;
     FILE       *fp = NULL;
     vg_info_t **list = NULL;
     vg_info_t *ptr = NULL;
@@ -1333,7 +1324,7 @@ dvg(dump_info_t *dumpvg_opts,
 
          /* attaches the current vgroup and gets its tag, name, and class */ 
          status = get_VGandInfo( &vg_id, file_id, vg_ref, file_name, 
-                                 &n_entries, vgname, vgclass );
+                                 &n_entries, &vgname, vgclass );
          if( status == FAIL )
             ERROR_CONT_2( "in dvg: %s failed in getting vgroup with ref#=%d",
                         "get_VGandInfo", (int)vg_ref );
@@ -1434,7 +1425,8 @@ dvg(dump_info_t *dumpvg_opts,
   
          /* fill the graph. rep. node for this vgroup */
          list[i]->index = i;
-         HDstrcpy(list[i]->name, vgname);
+	 list[i]->vg_name = (char *) HDmalloc(sizeof(char *) * (HDstrlen(vgname)+1));
+         HDstrcpy(list[i]->vg_name, vgname);
          list[i]->displayed = FALSE;
          list[i]->treedisplayed = FALSE;  /* BMR - 01/16/99 */
       }	/* for all vgroups */
@@ -1473,12 +1465,17 @@ dvg(dump_info_t *dumpvg_opts,
 
    } /* while (more file to process) */
 
+   /* clean up allocated memory */
+   if (vgname != NULL) HDfree(vgname);
+   list = free_vginfo_list(list, max_vgs);
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
           closeVG( &file_id, &vg_chosen, file_name );
           resetVG( &vg_id, file_name );
           list = free_vginfo_list( list, max_vgs );
+	  if (vgname != NULL) HDfree(vgname);
       }
     /* Normal cleanup */
 

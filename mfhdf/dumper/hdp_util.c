@@ -81,6 +81,35 @@ get_next_file(filelist_t * f_list, intn advance)
     return (f_list->file_arr[f_list->curr_file]);
 }	/* end get_next_file() */
 
+/* free_node_vg_info_t frees a node of vgroup info */
+vg_info_t* free_node_vg_info_t(
+                vg_info_t* aNode)
+{
+   intn i;
+
+   if( aNode != NULL )
+   {
+      if (aNode->children != NULL)
+      {
+         for (i = 0; i < aNode->n_entries; i++)
+            if (aNode->children[i] != NULL)
+                HDfree(aNode->children[i]);
+         HDfree( aNode->children );
+      }
+      if (aNode->type != NULL)
+      {
+         for (i = 0; i < aNode->n_entries; i++)
+            if (aNode->type[i] != NULL)
+                HDfree(aNode->type[i]);
+         HDfree( aNode->type );
+      }
+      if (aNode->vg_name != NULL)
+         HDfree(aNode->vg_name);
+      HDfree(aNode);
+   }
+   return(NULL);
+}  /* end of free_node_vg_info_t */
+
 /* free_struct_list use HDfree to free the list of vgroup info structs */
 vg_info_t ** free_vginfo_list( 
 		vg_info_t **nodelist,
@@ -108,20 +137,12 @@ char** free_str_list( char **str_list,
    if( str_list != NULL)
    {
       for( i = 0; i < num_items; i++ )
-         free_char_list( str_list[i] );
+         if (str_list[i] != NULL)
+            HDfree(str_list[i]);
       HDfree( str_list );
    }
    return( NULL );
 }  /* end of free_str_list */
-
-/* free_num_list use HDfree to free the string of characters; this routine
-   is short but can be used in many different places and very convenient */
-char* free_char_list( char *char_list )
-{
-   if( char_list != NULL)
-      HDfree( char_list );
-   return( NULL );
-}  /* end of free_char_list */
 
 /* free_num_list use HDfree to free the list of integers; this routine
    is short but can be used in many different places and very convenient */

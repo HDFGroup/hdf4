@@ -442,12 +442,13 @@ vd_info_t;
 
 typedef struct 
 {
-    int32  index;
-    int32  displayed;
-    int32  treedisplayed;       /* BMR: added to do the loop - 01/16/99 */
-    char   name[MAXNAMELEN];
-    char **children;
-    char **type;
+	int32  index;
+	int32  displayed;
+	int32  treedisplayed;   /* BMR: added to do the loop - 01/16/99 */
+	char  *vg_name;		/* vgroup name, variable length - 10/26/06 */
+	int32  n_entries;	/* added for convenience - 10/26/06 */
+	char **children;
+	char **type;
 }
 vg_info_t;
 
@@ -530,10 +531,10 @@ int int32_compare(const void *, const void *);
 	/* filename list functions */
 extern filelist_t *make_file_list(intn curr_arg, intn argc, char *argv[]);
 extern char *get_next_file(filelist_t * f_list, intn advance);
-extern int32* free_num_list(int32 *num_list );
-extern char* free_char_list(char *char_list );
-extern char** free_str_list(char **str_list, int32 num_items );
-extern vg_info_t** free_vginfo_list(vg_info_t** list, int32 num_items );
+extern int32* free_num_list(int32 *num_list);
+extern char** free_str_list(char **str_list, int32 num_items);
+extern vg_info_t** free_vginfo_list(vg_info_t** list, int32 num_items);
+extern vg_info_t* free_node_vg_info_t(vg_info_t* aNode);
 extern void free_file_list(filelist_t * f_list);
 
 	/* group list functions */
