@@ -15,6 +15,7 @@ C
       subroutine t24f (number_failed)
       implicit none
       include 'fortest.inc'
+      include '../src/dffunc.inc'
 C
 C Test Program: 
 C     		Writes 24-bit raster images with specified interlace 
@@ -28,8 +29,6 @@ C
       character*20 myname
       parameter (myname = 'r24')
 
-      integer d2setil, d2reqil, d2pimg, d2aimg
-      integer d2gdims, d2gimg, d2first
 
       integer d1, d2, il
       character*80 TESTFILE

@@ -29,17 +29,18 @@ C
       integer*4   i32(2), ii32(2), max32, min32
       integer*4 natt(2), inatt(2)
 
-      integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
-      integer sfrdata,  sfwdata,   sfdimid,  sfsdmname
-      integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
-      integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
-      integer sffattr,  sfsrange,  sfgrange, sfgfill,  sfsflmd
-      integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
-      integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
-      integer sfsextf,  hxsdir,    hxscdir
-      integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
-      integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
-      integer sfchempty
+C      integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
+C      integer sfrdata,  sfwdata,   sfdimid,  sfsdmname
+C      integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
+C      integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
+C      integer sffattr,  sfsrange,  sfgrange, sfgfill,  sfsflmd
+C      integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
+C      integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
+C      integer sfsextf,  hxsdir,    hxscdir
+C      integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
+C      integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
+C      integer sfchempty
+      include 'mffunc.inc'
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer DFNT_FLOAT32, DFNT_CHAR8
       integer SD_DIMVAL_BW_COMP, SD_FILL, SD_NOFILL
@@ -1230,10 +1231,11 @@ C
 C
 C  SDS functions declarations
 C
-         integer   sfstart, sfcreate, sfendacc, sfend,
-     .             sfn2index, sfselect, sfgcompress,
-     .             sfsfill, sfschnk, sfscchnk, sfwchnk, 
-     .             sfgichnk, sfrchnk, sfwdata, sfrdata
+C         integer   sfstart, sfcreate, sfendacc, sfend,
+C     .             sfn2index, sfselect, sfgcompress,
+C     .             sfsfill, sfschnk, sfscchnk, sfwchnk, 
+C     .             sfgichnk, sfrchnk, sfwdata, sfrdata
+         include 'mffunc.inc'
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C
@@ -1790,10 +1792,11 @@ C
 C
 C  SDS functions declarations
 C
-         integer   sfstart, sfcreate, sfendacc, sfend,
-     .             sfn2index, sfselect,
-     .             sfsfill, sfschnk, sfscchnk, sfwcchnk, 
-     .             sfgichnk, sfrcchnk, sfwcdata, sfrcdata
+C         integer   sfstart, sfcreate, sfendacc, sfend,
+C     .             sfn2index, sfselect,
+C     .             sfsfill, sfschnk, sfscchnk, sfwcchnk, 
+C     .             sfgichnk, sfrcchnk, sfwcdata, sfrcdata
+         include 'mffunc.inc'
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C
@@ -2295,10 +2298,11 @@ C
 C
 C  SDS functions declarations
 C
-         integer   sfstart, sfcreate, sfendacc, sfend,
-     .             sfn2index, sfselect,
-     .             sfsfill, sfrdata,
-     .             sfwdata, sfscompress, sfgcompress
+C         integer   sfstart, sfcreate, sfendacc, sfend,
+C     .             sfn2index, sfselect,
+C     .             sfsfill, sfrdata,
+C     .             sfwdata, sfscompress, sfgcompress
+         include 'mffunc.inc'
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C

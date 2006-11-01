@@ -25,18 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-
-#ifndef DFUTIL_FNAMES
-#   define DFUTIL_FNAMES
-#ifdef DF_CAPFNAMES
-#   define ndfindnr          FNAME(DFINDNR)
-#   define ndffindnextref    FNAME(DFFINDNEXTREF)
-#else
-#   define ndfindnr          FNAME(dfindnr)
-#   define ndffindnextref    FNAME(dffindnextref)
-#endif /* DF_CAPFNAMES */
-#endif /* DFUTIL_FNAMES */
-
+#include "hproto.h"
 /*-----------------------------------------------------------------------------
  * Name:    dfindnr
  * Purpose: For this tag, find the ref after lref

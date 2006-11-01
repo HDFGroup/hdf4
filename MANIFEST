@@ -584,8 +584,6 @@
 ./mfhdf/dumper/testfiles/Example6.hdf
 ./mfhdf/dumper/testfiles/Image_with_Palette.hdf
 ./mfhdf/dumper/testfiles/LongDataset.hdf
-./mfhdf/dumper/testfiles/SDSlongname.hdf
-./mfhdf/dumper/testfiles/VGlongname.hdf
 ./mfhdf/dumper/testfiles/ctxtr2r.hdf
 ./mfhdf/dumper/testfiles/dumpgr-10.out
 ./mfhdf/dumper/testfiles/dumpgr-11.out
@@ -623,7 +621,6 @@
 ./mfhdf/dumper/testfiles/dumpsds-9.out
 ./mfhdf/dumper/testfiles/dumpsds-10.out
 ./mfhdf/dumper/testfiles/dumpsds-11.out
-./mfhdf/dumper/testfiles/dumpsds-12.out
 ./mfhdf/dumper/testfiles/dumpvd-10.out
 ./mfhdf/dumper/testfiles/dumpvd-1.out
 ./mfhdf/dumper/testfiles/dumpvd-2.out
@@ -637,7 +634,6 @@
 ./mfhdf/dumper/testfiles/dumpvg-10.out
 ./mfhdf/dumper/testfiles/dumpvg-11.out
 ./mfhdf/dumper/testfiles/dumpvg-12.out
-./mfhdf/dumper/testfiles/dumpvg-13.out
 ./mfhdf/dumper/testfiles/dumpvg-1.out
 ./mfhdf/dumper/testfiles/dumpvg-2.out
 ./mfhdf/dumper/testfiles/dumpvg-3.out
@@ -697,6 +693,7 @@
 ./mfhdf/fortran/hpux.m4
 ./mfhdf/fortran/irix.m4
 ./mfhdf/fortran/jackets.src
+./mfhdf/fortran/mffunc.inc
 ./mfhdf/fortran/mfsdf.c
 ./mfhdf/fortran/mfsdff.f
 ./mfhdf/fortran/msoft.m4

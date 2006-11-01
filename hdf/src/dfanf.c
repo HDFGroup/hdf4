@@ -43,54 +43,9 @@ static char RcsId[] = "@(#)$Revision$";
  *
  *  daiafid_       : add file id (intermediate routine)
  *---------------------------------------------------------------------------*/
-
 #include "dfan.h"
 #include "df.h"
-
-#ifndef DFAN_FNAMES
-#   define  DFAN_FNAMES
-#ifdef DF_CAPFNAMES
-#   define ndaiganl  FNAME(DAIGANL)
-#   define ndaigann  FNAME(DAIGANN)
-#   define ndaipann  FNAME(DAIPANN)
-#   define ndailist  FNAME(DAILIST)
-#   define ndalref   FNAME(DALREF)
-#   define ndaclear  FNAME(DACLEAR)
-#   define ndfanlastref  FNAME(DFANLASTREF)
-
-#   define ndfanaddfds      FNAME(DFANADDFDS)
-#   define ndfangetfidlen   FNAME(DFANGETFIDLEN)
-#   define ndfangetfdslen   FNAME(DFANGETFDSLEN)
-#   define ndfangetfid      FNAME(DFANGETFID)
-#   define ndfangetfds      FNAME(DFANGETFDS)
-#   define ndaafds          FNAME(DAAFDS)
-#   define ndagfidl         FNAME(DAGFIDL)
-#   define ndagfdsl         FNAME(DAGFDSL)
-#   define ndagfid          FNAME(DAGFID)
-#   define ndagfds          FNAME(DAGFDS)
-#   define ndaiafid         FNAME(DAIAFID)
-#else  /* !DF_CAPFNAMES */
-#   define ndaiganl  FNAME(daiganl)
-#   define ndaigann  FNAME(daigann)
-#   define ndaipann  FNAME(daipann)
-#   define ndailist  FNAME(dailist)
-#   define ndalref   FNAME(dalref)
-#   define ndaclear  FNAME(daclear)
-#   define ndfanlastref  FNAME(dfanlastref)
-
-#   define ndfanaddfds      FNAME(dfanaddfds)
-#   define ndfangetfidlen   FNAME(dfangetfidlen)
-#   define ndfangetfdslen   FNAME(dfangetfdslen)
-#   define ndfangetfid      FNAME(dfangetfid)
-#   define ndfangetfds      FNAME(dfangetfds)
-#   define ndaafds          FNAME(daafds)
-#   define ndagfidl         FNAME(dagfidl)
-#   define ndagfdsl         FNAME(dagfdsl)
-#   define ndagfid          FNAME(dagfid)
-#   define ndagfds          FNAME(dagfds)
-#   define ndaiafid         FNAME(daiafid)
-#endif /* DF_CAPFNAMES */
-#endif /* DFAN_FNAMES */
+#include "hproto.h"
 
 /* conventions used in forming names of routines:
    **

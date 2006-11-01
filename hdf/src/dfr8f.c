@@ -38,7 +38,9 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "hproto.h"
 
+#ifdef EIP
 #ifndef DFR8_FNAMES
 #   define DFR8_FNAMES
 #ifdef DF_CAPFNAMES
@@ -71,7 +73,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define ndfr8restart  FNAME(dfr8restart)
 #endif /* DF_CAPFNAMES */
 #endif /* DFR8_FNAMES */
-
+#endif /*EIP*/
 /*-----------------------------------------------------------------------------
  * Name:    d8spal
  * Purpose: Set palette to be written out with subsequent images

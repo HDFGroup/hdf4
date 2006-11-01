@@ -42,56 +42,9 @@ static char RcsId[] = "@(#)$Revision$";
  *  dfstat:    call DFstat to get status info on file
  *  dfiishdf:  call DFishdf to get HDF string
  *---------------------------------------------------------------------------*/
-
 #include "df.h"
 
-#ifndef DF_FNAMES
-#   define DF_FNAMES
-#ifdef DF_CAPFNAMES
-#   define ndfiaccess   FNAME(DFIACCESS)
-#   define ndfiopen  FNAME(DFIOPEN)
-#   define ndfclose  FNAME(DFCLOSE)
-#   define ndfdesc   FNAME(DFDESC)
-#   define ndfdup    FNAME(DFDUP)
-#   define ndfdel    FNAME(DFDEL)
-#   define ndfstart  FNAME(DFSTART)
-#   define ndfread   FNAME(DFREAD)
-#   define ndfseek   FNAME(DFSEEK)
-#   define ndfwrite  FNAME(DFWRITE)
-#   define ndfupdate FNAME(DFUPDATE)
-#   define ndfget    FNAME(DFGET)
-#   define ndfput    FNAME(DFPUT)
-#   define ndfsfind  FNAME(DFSFIND)
-#   define ndffind   FNAME(DFFIND)
-#   define ndferrno  FNAME(DFERRNO)
-#   define ndfnewref FNAME(DFNEWREF)
-#   define ndfnumber FNAME(DFNUMBER)
-#   define ndfstat   FNAME(DFSTAT)
-#   define ndfiishdf FNAME(DFIISHDF)
-#else  /* !DF_CAPFNAMES */
-#   define ndfiaccess   FNAME(dfiaccess)
-#   define ndfiopen  FNAME(dfiopen)
-#   define ndfclose  FNAME(dfclose)
-#   define ndfdesc   FNAME(dfdesc)
-#   define ndfdup    FNAME(dfdup)
-#   define ndfdel    FNAME(dfdel)
-#   define ndfstart  FNAME(dfstart)
-#   define ndfread   FNAME(dfread)
-#   define ndfseek   FNAME(dfseek)
-#   define ndfwrite  FNAME(dfwrite)
-#   define ndfupdate FNAME(dfupdate)
-#   define ndfget    FNAME(dfget)
-#   define ndfput    FNAME(dfput)
-#   define ndfsfind  FNAME(dfsfind)
-#   define ndffind   FNAME(dffind)
-#   define ndferrno  FNAME(dferrno)
-#   define ndfnewref FNAME(dfnewref)
-#   define ndfnumber FNAME(dfnumber)
-#   define ndfstat   FNAME(dfstat)
-#   define ndfiishdf FNAME(dfiishdf)
-#endif /* DF_CAPFNAMES */
-#endif /* DF_FNAMES */
-
+#include "hproto.h"
 /*-----------------------------------------------------------------------------
  * Name:    dfiopen
  * Purpose: call DFopen to open HDF file

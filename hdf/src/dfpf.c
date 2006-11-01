@@ -34,7 +34,8 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-
+#include "hproto.h"
+#ifdef EIP
 #ifndef DFP_FNAMES
 #   define DFP_FNAMES
 #ifdef DF_CAPFNAMES
@@ -59,7 +60,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define ndfplastref   FNAME(dfplastref)
 #endif /* DF_CAPFNAMES */
 #endif /* DFP_FNAMES */
-
+#endif /*EIP*/
 /*-----------------------------------------------------------------------------
  * Name:    dpigpal
  * Purpose: call DFPgetpal, get palette

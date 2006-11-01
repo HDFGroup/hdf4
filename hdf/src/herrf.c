@@ -26,7 +26,9 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "hproto.h"
 
+#ifdef EIP
 #ifndef HERR_FNAMES
 #   define HERR_FNAMES
 #ifdef DF_CAPFNAMES
@@ -35,6 +37,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define nheprnt   FNAME(heprnt)
 #endif /* DF_CAPFNAMES */
 #endif /* HERR_FNAMES */
+#endif /*EIP*/
 
 /*-----------------------------------------------------------------------------
  * Name:    heprnt

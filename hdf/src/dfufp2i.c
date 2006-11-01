@@ -91,7 +91,7 @@ static char RcsId[] = "@(#)$Revision$";
 #endif /* TRUE */
 #define EXPAND  1   /* -e: expand image with pixel replication */
 #define INTERP  2   /* -i: expand image with bilinear interpolation */
-
+#ifdef EIP
 #ifndef DFUFP2I_FNAMES
 #   define DFUFP2I_FNAMES
 #ifdef DF_CAPFNAMES
@@ -100,7 +100,9 @@ static char RcsId[] = "@(#)$Revision$";
 #   define nduif2i       FNAME(duif2i)
 #endif /* DF_CAPFNAMES */
 #endif /* DFUFP2I_FNAMES */
+#endif /*EIP*/
 
+#   define nduif2i       H4_F77_FUNC(duif2i, DUIF2I)
 /*-----------------------------------------------------------------------------
  * Name:    duif2i
  * Purpose: Intermediate Fortran callable version of DFUfptoimage

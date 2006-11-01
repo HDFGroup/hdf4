@@ -149,7 +149,7 @@ case "$enableval" in
     BUILD_FORTRAN="no"
     ;;
 esac
-
+AC_F77_WRAPPERS
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
 
 AC_PROG_INSTALL

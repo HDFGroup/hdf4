@@ -19,15 +19,9 @@
 /* Verbosity Environment Variable */
 #define FOR_VERB    "HDF_FOR_VERBOSITY"
 
-#ifdef DF_CAPFNAMES
-#  define ngetverb      FNAME(GETVERB)
-#  define nhisystem       FNAME(HISYSTEM)
-#  define nfixnamec        FNAME(FIXNAMEC) 
-#else  /* !DF_CAPFNAMES */
-#  define ngetverb      FNAME(getverb)
-#  define nhisystem       FNAME(hisystem)
-#  define nfixnamec        FNAME(fixnamec) 
-#endif /* DF_CAPFNAMES */
+#  define ngetverb      H4_F77_FUNC(getverb, GETVERB)
+#  define nhisystem     H4_F77_FUNC(hisystem, HISYSTEM)
+#  define nfixnamec     H4_F77_FUNC(fixnamec, FIXNAMEC) 
 
 /* FORTRAN support C-stubs for FORTRAN interface tests */
 

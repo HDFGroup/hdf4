@@ -14,7 +14,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
-include_HEADERS = netcdf.inc netcdf.f90
+include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
 check_PROGRAMS = ftest hdftest
 
 ftest_SOURCES = ftest.f
@@ -47,4 +47,4 @@ check:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf

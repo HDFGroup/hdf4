@@ -25,10 +25,11 @@ C
 C
 C  SDS functions declarations
 C
-         integer   sfstart, sfcreate, sfendacc, sfend,
-     .             sfn2index, sfselect,
-     .             sfsfill, sfrdata,
-     .             sfwdata, sfscompress, sfgcompress
+C         integer   sfstart, sfcreate, sfendacc, sfend,
+C     .             sfn2index, sfselect,
+C     .             sfsfill, sfrdata,
+C     .            sfwdata, sfscompress, sfgcompress
+         include 'mffunc.inc'
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C

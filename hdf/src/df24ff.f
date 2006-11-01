@@ -235,21 +235,5 @@ C----------------------------------------------------------------------------*/
       return
       end
 
-C------------------------------------------------------------------------------
-C Name: df24nimages
-C Purpose:  Determine the number of 24-bit raster images in a file.
-C Inputs:   filename: name of HDF file
-C Returns: # of images on success, -1 on failure with error stack set
-C Users:    HDF HLL (high-level library) users, utilities, other routines
-C Invokes: d2inimg
-C Remarks: 
-C----------------------------------------------------------------------------*/
-C
-C      integer function df24nimages(name)
-C      character*(*) name
-C
-C      df24nimages = d2inimg(name, len(name))
-C      return
-C      end
 
 

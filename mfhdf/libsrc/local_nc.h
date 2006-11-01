@@ -5,7 +5,7 @@
 /* $Id$ */
 #ifndef _LOCAL_NC_
 #define _LOCAL_NC_
-
+#include "h4config.h"
 /*
  *	netcdf library 'private' data structures, objects and interfaces
  */
@@ -325,6 +325,48 @@ extern "C" {
 #define NC_var_shape     HNAME(NC_var_shape) /* from var.c */
 #endif
 #endif /* HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
+
+#define nncpopt           H4_F77_FUNC(ncpopt, NCPOPT)
+#define nncgopt           H4_F77_FUNC(ncgopt, NCGOPT)
+#define nnccre            H4_F77_FUNC(nccre, NCCRE)
+#define nncopn            H4_F77_FUNC(ncopn, NCOPN)
+#define nncddef           H4_F77_FUNC(ncddef, NCDDEF)
+#define nncdid            H4_F77_FUNC(ncdid, NCDID)
+#define nncvdef           H4_F77_FUNC(ncvdef, NCVDEF)
+#define nncvid            H4_F77_FUNC(ncvid, NCVID)
+#define nnctlen           H4_F77_FUNC(nctlen, NCTLEN)
+#define nncclos           H4_F77_FUNC(ncclos, NCCLOS)
+#define nncredf           H4_F77_FUNC(ncredf, NCREDF)
+#define nncendf           H4_F77_FUNC(ncendf, NCENDF)
+#define nncinq            H4_F77_FUNC(ncinq, NCINQ)
+#define nncsnc            H4_F77_FUNC(ncsnc, NCSNC)
+#define nncabor           H4_F77_FUNC(ncabor, NCABOR)
+#define nncdinq           H4_F77_FUNC(ncdinq, NCDINQ)
+#define nncdren           H4_F77_FUNC(ncdren, NCDREN)
+#define nncvinq           H4_F77_FUNC(ncvinq, NCVINQ)
+#define nncvpt1           H4_F77_FUNC(ncvpt1, NCVPT1)
+#define nncvp1c           H4_F77_FUNC(ncvp1c, NCVP1C)
+#define nncvpt            H4_F77_FUNC(ncvpt, NCVPT)
+#define nncvptc           H4_F77_FUNC(ncvptc, NCVPTC)
+#define nncvptg           H4_F77_FUNC(ncvptg, NCVPTG)
+#define nncvpgc           H4_F77_FUNC(ncvpgc, NCVPGC)
+#define nncvgt1           H4_F77_FUNC(ncvgt1, NCVGT1)
+#define nncvg1c           H4_F77_FUNC(ncvg1c, NCVG1C)
+#define nncvgt            H4_F77_FUNC(ncvgt, NCVGT)
+#define nncvgtc           H4_F77_FUNC(ncvgtc, NCVGTC)
+#define nncvgtg           H4_F77_FUNC(ncvgtg, NCVGTG)
+#define nncvggc           H4_F77_FUNC(ncvggc, NCVGGC)
+#define nncvren           H4_F77_FUNC(ncvren, NCVREN)
+#define nncapt            H4_F77_FUNC(ncapt, NCAPT)
+#define nncaptc           H4_F77_FUNC(ncaptc, NCAPTC)
+#define nncainq           H4_F77_FUNC(ncainq, NCAINQ)
+#define nncagt            H4_F77_FUNC(ncagt, NCAGT)
+#define nncagtc           H4_F77_FUNC(ncagtc, NCAGTC)
+#define nncacpy           H4_F77_FUNC(ncacpy, NCACPY)
+#define nncanam           H4_F77_FUNC(ncanam, NCANAM)
+#define nncaren           H4_F77_FUNC(ncaren, NCAREN)
+#define nncadel           H4_F77_FUNC(ncadel, NCADEL)
+#define nncsfil           H4_F77_FUNC(ncsfil, NCSFIL)
 
 extern void		nc_serror			PROTO((
 	const char *fmt,
