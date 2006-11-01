@@ -21,18 +21,13 @@
 #       used within this file.
 
 if test "X-$CC" = "X-"; then
-  CC=ecc
-  CC_BASENAME=ecc
+  CC=icc
+  CC_BASENAME=icc
 fi
 
 if test "X-$F77" = "X-"; then
-  F77=efc
-  F77_BASENAME=efc
-fi
-
-if test "X-$CXX" = "X-"; then
-  CXX=ecc
-  CXX_BASENAME=ecc
+  F77=ifort
+  F77_BASENAME=ifort
 fi
 
 # C, Fortran, and C++ Compiler and Preprocessor Flags
@@ -131,22 +126,6 @@ case $F77_BASENAME in
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
-    ;;
-esac
-
-case $CXX_BASENAME in 
-  g++)
-    CXXFLAGS="$CXXFLAGS"
-    DEBUG_CXXFLAGS="-g -fverbose-asm"
-    PROD_CXXFLAGS="-O3 -fomit-frame-pointer"
-    PROFILE_CXXFLAGS="-pg"
-    ;;
-
-  *)
-    CXXFLAGS="$CXXFLAGS -ansi"
-    DEBUG_CXXFLAGS="-g"
-    PROD_CXXFLAGS="-O"
-    PROFILE_CXXFLAGS="-pg"
     ;;
 esac
 
