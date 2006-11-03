@@ -482,7 +482,6 @@ done:
             }
       }
      /* Normal cleanup */
-
     return ret_value;
 }
 

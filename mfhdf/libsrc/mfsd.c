@@ -355,6 +355,9 @@ SDstart(const char *name,   /* IN: file name to open */
     fprintf(stderr, "SDstart: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
+
     /* turn off annoying crash on error stuff */
     ncopts = 0;
 
@@ -382,7 +385,12 @@ SDstart(const char *name,   /* IN: file name to open */
 
     /* check if bad create/open */
     if(cdfid == -1) 
-        HGOTO_ERROR(DFE_BADOPEN, FAIL);
+    {
+        /* catch what's on the stack; this is to catch specific error code,
+           when the failure was due to "too many open files" -BMR- 2006/11/1 */
+        int16 err = HEvalue(1);
+        HGOTO_ERROR(err, FAIL);
+    }
 
     /* hmm.....*/
     handle = NC_check_id(cdfid);

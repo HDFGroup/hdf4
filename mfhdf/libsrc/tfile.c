@@ -73,7 +73,7 @@ test_file_inuse()
 	if (i == 0) {
 	    CHECK(sd_id[i], FAIL, "SDstart"); } /* 1st SDstart must pass */
 	else {
-	    VERIFY(sd_id[i], FAIL, "SDstart"); } /* 1st SDstart should fail */
+	    VERIFY(sd_id[i], FAIL, "SDstart"); }
 	/* subsequent SDstart should fail, which causes the following calls
 	   to fail as well */
 
@@ -236,7 +236,17 @@ test_max_open_files()
         /* Create a file */
 	sprintf(filename[index], "file%i", index);
 	fids[index] = SDstart(filename[index], DFACC_CREATE);
-	CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
+
+        /* if SDstart fails due to "too many open files," then adjust
+           temp_limit so that further failure can be prevented, i.e.
+           following SDend and SDstart */
+        if ((fids[index] == FAIL) && (HEvalue(1) == DFE_TOOMANY))
+            temp_limit = index;
+
+        /* only CHECK returned value from SDstart if the failure wasn't
+           because of "too many open files" -BMR 2006/11/01 */
+        else
+            CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
 
     /* Close all the files, then try opening all again to verify their 
@@ -254,6 +264,7 @@ test_max_open_files()
     for (index=0; index < temp_limit; index++)
     {
 	status = SDgetfilename(fids[index], readfname);
+	CHECK(status, FAIL, "test_maxopenfiles: SDgetfilename");
 
 	/* Verify the file name retrieved against the original */
 	if (HDstrcmp(readfname, filename[index]))
