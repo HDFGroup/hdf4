@@ -119,6 +119,7 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #define HFILE_MASTER
 #include "hfile.h"
+#include <errno.h>
 #include "glist.h" /* for double-linked lists, stacks and queues */
 
 /*--------------------- Locally defined Globals -----------------------------*/
@@ -378,7 +379,16 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
           file_rec->file =  (hdf_file_t)HI_CREATE(file_rec->path);
           if (OPENERR(file_rec->file))
-            HGOTO_ERROR(DFE_BADOPEN, FAIL);
+          {
+	      /* check if the failure was due to "too many open files" */
+              if(errno == EMFILE)
+                {
+                  HGOTO_ERROR(DFE_TOOMANY, FAIL);
+                }
+              else
+                  HGOTO_ERROR(DFE_BADOPEN, FAIL);
+          }
+
           file_rec->f_cur_off=0;
           file_rec->last_op=H4_OP_UNKNOWN;
 #ifdef STDIO_BUF
@@ -437,6 +447,9 @@ done:
           HIrelease_filerec_node(file_rec);
     } /* end if */
 
+/*
+fprintf(stderr, "Hopen normal cleanup: prints HEvalue(1) = %d\n", HEvalue(1));
+*/
   /* Normal function cleanup */
   return ret_value;
 }	/* Hopen */
