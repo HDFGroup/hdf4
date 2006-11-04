@@ -909,13 +909,16 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
 {
     int32       hdfdims[3];     /* order: ZYX or YX */
     intn	status;		/* returned value from APIs */
-    char	sds_name[NAME_LEN], infile[NAME_LEN];
+    char	infile[NAME_LEN];
+    char       *sds_name=NULL;
     int32	rank, nattrs, dtype; /* rank, num of attrs, data type */
 
     const char *err1 = "Unable to get data dimensions from file: %s.\n";
     const char *err2 = "Invalid data rank of %d in file: %s.\n";
     const char *err3 = "Dimension(s) is less than '2' in file: %s.\n";
     const char *err4 = "Unexpected number type from file: %s.\n";
+    const char *err5 = "Unable to get the length of the SDS' name: index %d.\n";
+    const char *err6 = "Unable to allocate dynamic memory.\n";
     const char *err7 = "Failed to open the SDS.\n";
 
     /*
@@ -926,6 +929,8 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
 	int32 sds_id, sd_index;
 	int32 sd_id = infile_info.handle; /* shortcut for handle from SDstart */
 	char *infile = infile_info.filename; /* shortcut for input filename */
+	uint16 name_len = 0;
+	intn status = FAIL;
 
 	/* get the dimension information of the only SDS in the file */
 	sd_index = 0;
@@ -935,6 +940,23 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
             (void) fprintf(stderr, err7, infile);
             goto err;
           }
+
+	/* get the SDS name's length and allocate sufficient space for 
+	   the name's buffer */
+	status = SDgetnamelen(sds_id, &name_len);
+	if (status == FAIL)
+          {
+            (void) fprintf(stderr, err5, sd_index);
+            goto err;
+          }
+	sds_name = (char *)HDmalloc(name_len+1);
+	if (sds_name == NULL)
+          {
+            (void) fprintf(stderr, err6);
+            goto err;
+          }
+
+	/* obtain the SDS' information */
 	status = SDgetinfo(sds_id, sds_name, &rank, hdfdims, &dtype, &nattrs);
 	if (status == FAIL)
           {
@@ -1016,9 +1038,11 @@ gdimen(struct infilesformat infile_info, struct Input *in, FILE *strm)
     (void) printf("\t%d %d %d\n\n", in->dims[2], in->dims[1], in->dims[0]);
 #endif /* DEBUG */
 
+    if (sds_name != NULL) HDfree(sds_name);
     return (0);
 
   err:
+    if (sds_name != NULL) HDfree(sds_name);
     return (1);
 }
 
