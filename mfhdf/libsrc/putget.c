@@ -1992,8 +1992,12 @@ Void *values ;
           return -1 ;
       }
 
-	/* check to see if we are trying to read beyond the end */
-	newrecs = (*start + *edges) - handle->numrecs ;
+        /* check to see if we are trying to read beyond the end;
+           Modification: (BMR - 11/10/2006) - replaced "handle->numrecs"
+           with "vp->numrecs" to fix bug 525, ie. writing two unlimited
+           1D datasets without closing the file in between the two writes
+           caused the second dataset to contain garbage. */
+	newrecs = (*start + *edges) - vp->numrecs ;
 	if(handle->xdrs->x_op != XDR_ENCODE && newrecs > 0)
       {
           NCadvise(NC_EINVALCOORDS, "%s: Invalid Coordinates",
