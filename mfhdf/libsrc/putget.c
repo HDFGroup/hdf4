@@ -73,7 +73,7 @@ XDR *xdrs ;
 NC_var **vpp ;
 unsigned numvars ;
 {
-	int ii ;
+	unsigned ii ;
 
 	for(ii = 0 ; ii < numvars ; ii++, vpp++)
 	{
@@ -126,7 +126,7 @@ const long *coords ;
           fprintf(stderr,"	NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
                   ip, *ip, up, *up ) ;
 #endif /* CDEBUG */
-          if( *ip < 0 || *ip >= *up )
+          if( *ip < 0 || *ip >= (long)*up )
               goto bad ;
       }
 
@@ -219,7 +219,7 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
 #ifdef CDEBUG
 fprintf(stderr, "NCcoordck: check 10.0, vp->numrecs=%d\n",vp->numrecs);
 #endif /* CDEBUG */
-        if((*ip + 1) > handle->numrecs) 
+        if((*ip + 1) > (long)(handle->numrecs)) 
           {
               handle->numrecs = *ip + 1;
               handle->flags |= NC_NDIRTY;

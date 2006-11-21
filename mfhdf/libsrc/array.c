@@ -437,7 +437,7 @@ NC_array *array ;
 	int rem ;
 	int (*xlen_funct)() =NULL;
 	Void *vp ;
-	int ii ;
+	unsigned ii ;
 
 	if(array!=NULL)
 	{

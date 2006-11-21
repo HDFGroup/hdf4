@@ -615,7 +615,7 @@ SDselect(int32 fid,  /* IN: file ID */
         goto done;
       }
 
-    if(handle->vars->count < index)
+    if(handle->vars->count < (unsigned)index)
       {
         ret_value = FAIL;
         goto done;
@@ -922,7 +922,7 @@ int32
 SDnametoindex(int32 fid,  /* IN: file ID */
               const char *name  /* IN: name of dataset to search for */)
 {
-    intn     ii;
+    unsigned ii;
     intn     len;
     NC      *handle = NULL;
     NC_var **dp = NULL;
@@ -954,7 +954,7 @@ SDnametoindex(int32 fid,  /* IN: file ID */
         if( len == (*dp)->name->len 
             && HDstrncmp(name, (*dp)->name->values, len) == 0) 
           {
-            ret_value = ii;
+            ret_value = (int32)ii;
             goto done;
           }
       }
@@ -1355,6 +1355,7 @@ int32
 SDgetdimid(int32 sdsid,  /* IN: dataset ID */
            intn  number  /* IN: index of dimension */)
 {
+    CONSTR(FUNC, "SDgetdimid");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var = NULL;
     int32   id;
@@ -1365,6 +1366,10 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDgetdimid: I've been called\n");
 #endif
 
+
+    /* sanity check args */
+    if(number < 0) 
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -1383,7 +1388,7 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
       }
 
     /* check if enough / too many dims */
-    if((var->assoc == NULL) || (var->assoc->count < number))
+    if((var->assoc == NULL) || (var->assoc->count < (unsigned)number))
       {
         ret_value = FAIL;
         goto done;
@@ -1438,8 +1443,8 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
     NC_string  *old = NULL;
     NC_string  *new = NULL;
     NC_array  **ap = NULL;
-    int32       len;
-    int32       ii;
+    size_t      len;
+    unsigned    ii;
     intn        ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -2753,7 +2758,7 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
           if(attr != NULL) 
             {
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                   {
                       HDstrncpy((char *)l, (*attr)->data->values,(*attr)->data->count );
                       l[(*attr)->data->count] = '\0';
@@ -2770,7 +2775,7 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Units);
           if(attr != NULL) 
             {
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                   {
                       HDstrncpy((char *)u, (*attr)->data->values,(*attr)->data->count );
                       u[(*attr)->data->count] = '\0';
@@ -2788,7 +2793,7 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_Format);
           if(attr != NULL) 
             {
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                   {
                       HDstrncpy((char *)f, (*attr)->data->values, (*attr)->data->count);
                       f[(*attr)->data->count] = '\0';
@@ -2805,7 +2810,7 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_CoordSys);
           if(attr != NULL) 
             {
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                   {
                       HDstrncpy((char *)c, (*attr)->data->values, (*attr)->data->count);
                       c[(*attr)->data->count] = '\0';
@@ -2955,8 +2960,8 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
                int32   id,     /* IN: dimension ID */
                int32   nt      /* IN: number type to use if new variable*/)
 { 
-    int32      ii;
-    int32      len;
+    unsigned      ii;
+    unsigned      len;
     nc_type    nctype;
     intn       dimindex;
     NC_string *name = NULL;
@@ -3582,6 +3587,7 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
              char *f,   /* OUT: format string ("format") */
              intn  len  /* IN:  buffer length */)
 {
+    CONSTR(FUNC, "SDgetdimstrs");    /* for HGOTO_ERROR */
     NC       *handle = NULL;
     NC_var   *var = NULL;
     NC_var  **dp = NULL;
@@ -3596,6 +3602,9 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
     fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
+
+    /* sanity check args */
+    if(len < 0) HGOTO_ERROR(DFE_ARGS, FAIL);
 
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL) 
@@ -3648,9 +3657,9 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
           if(attr != NULL) 
             {
                 intn minlen;
-                minlen = (len > (*attr)->data->count)? (*attr)->data->count: len;
+                minlen = ((unsigned)len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
                 HDstrncpy((char *)l, (*attr)->data->values, minlen);
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                     l[(*attr)->data->count] = '\0';
             } 
           else 
@@ -3663,9 +3672,9 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
           if(attr != NULL) 
             {
                 intn minlen;
-                minlen = (len > (*attr)->data->count)? (*attr)->data->count: len;
+                minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
                 HDstrncpy((char *)u, (*attr)->data->values, minlen);
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                     u[(*attr)->data->count] = '\0';
             } 
           else 
@@ -3678,9 +3687,9 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
           if(attr != NULL) 
             {
                 intn minlen;
-                minlen = (len > (*attr)->data->count)? (*attr)->data->count: len;
+                minlen = (len > (*attr)->data->count)? (*attr)->data->count: (unsigned)len;
                 HDstrncpy((char *)f, (*attr)->data->values, minlen);
-                if((*attr)->data->count < len)
+                if((*attr)->data->count < (unsigned)len)
                     f[(*attr)->data->count] = '\0';
             } 
           else 
@@ -4409,7 +4418,7 @@ SDfindattr(int32 id,       /* IN: object ID */
     NC_attr  **attr = NULL;
     NC        *handle = NULL;
     int32      attrid;
-    int32      len;
+    size_t      len;
     int32      ret_value = FAIL;
 
 

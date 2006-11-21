@@ -53,6 +53,7 @@ static NC **_cdfs;
 #define SEP '/' /* default, unix */
 #endif
 
+pid_t getpid(void);
 static intn max_NC_open = MAX_NC_OPEN;	/* current netCDF default */
 
 /*
@@ -651,7 +652,7 @@ static void
 NC_begins(handle)
 NC *handle ;
 {
-	int ii ;
+	unsigned ii ;
 	u_long index = 0 ;
 	NC_var **vpp ;
 	NC_var *last = NULL ;
@@ -802,8 +803,8 @@ int cdfid ;
 NC *handle ;
 {
 	XDR *xdrs ;
-	int ii ;
-	int jj = 0 ;
+	unsigned ii ;
+	unsigned jj = 0 ;
 	NC_var **vpp ;
 	NC *stash = STASH(cdfid) ; /* faster rvalue */
 

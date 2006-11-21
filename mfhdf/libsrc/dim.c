@@ -87,8 +87,8 @@ long size ;
 	NC *handle ;
 	NC_dim *dim[1] ;
 	NC_dim **dp ;
-	int ii ;
-	int len ;
+	unsigned ii ;
+	size_t len ;
 
 	cdf_routine_name = "ncdimdef" ;
 
@@ -153,8 +153,8 @@ int NC_dimid( handle, name)
 NC *handle;
 char *name;
 {
-  int ii;
-  int len;
+  unsigned ii;
+  size_t len;
   NC_dim **dp;
 
   len = strlen(name) ;
@@ -175,8 +175,8 @@ const char *name ;
 {
 	NC *handle ;
 	NC_dim **dp ;
-	int ii ;
-	int len ;
+	unsigned ii ;
+	size_t len ;
 
 	cdf_routine_name = "ncdimid" ;
 
@@ -251,8 +251,8 @@ const char *newname ;
 	NC *handle ;
 	NC_dim **dp ;
 	NC_string *old, *new ;
-	int ii ;
-	int len ;
+	unsigned ii ;
+	size_t len ;
 
 	cdf_routine_name = "ncdimrename" ;
 

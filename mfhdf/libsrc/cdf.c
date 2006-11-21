@@ -591,7 +591,7 @@ int *xtendimp ;
 	if(handle->dims != NULL)
       {
           NC_dim **dp ;
-          int ii ;
+          unsigned ii ;
 
           if(ndimsp != NULL)
               *ndimsp = handle->dims->count ;
@@ -1189,7 +1189,7 @@ NC_var **var;
     CONSTR(FUNC,"hdf_write_var"); 
 #endif /* LATER */
     int32      ret_value = SUCCEED;
-    register int  i, count;
+    register unsigned  i, count;
     register Void *attribute = NULL;
 
     count = 0;
@@ -1416,7 +1416,8 @@ XDR *xdrs;
 NC **handlep;
 {
     int32 count;
-    int sz, i, j, status, done;
+    int status, done;
+    unsigned sz, i, j;
     int32    *tags = NULL;
     int32    *refs = NULL;
     NC_dim  **dims = NULL;
@@ -1631,7 +1632,8 @@ intn
 hdf_conv_scales(handlep)
 NC **handlep;
 {
-    int i, status, scaleref, scaletag, scalelen;
+    int status, scaleref, scaletag, scalelen;
+    unsigned i;
     NC_var   **vars = NULL;
     NC_array  *tmp = NULL;
     uint8     *scalebuf = NULL;

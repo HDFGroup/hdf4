@@ -121,7 +121,7 @@ int varid ;
 	if(varid == NC_GLOBAL) /* Global attribute, attach to cdf */
 	{
 		ap = &(handle->attrs) ;
-	}else if(handle->vars != NULL && varid >= 0 && varid < handle->vars->count)
+	}else if(handle->vars != NULL && varid >= 0 && (unsigned)varid < handle->vars->count)
 	{
 		ap = (NC_array **)handle->vars->values ;
 		ap += varid ;
@@ -144,7 +144,7 @@ NC_array **ap ;
 const char *name ;
 {
     NC_attr **attr ;
-    int attrid ;
+    unsigned attrid ;
     size_t len ;
     
     if(*ap == NULL)
@@ -456,8 +456,8 @@ const char *name ;
 	NC_array **ap ;
 	NC_attr **attr ;
 	NC_attr *old = NULL ;
-	int attrid ;
-	int len ;
+	unsigned attrid ;
+	size_t len ;
 
 	cdf_routine_name = "ncattdel" ;
 
@@ -470,7 +470,7 @@ const char *name ;
 
 	attr = (NC_attr **) (*ap)->values ;
 
-	len = strlen(name) ;
+	len = strlen(name);
 	for(attrid = 0 ; attrid < (*ap)->count ; attrid++, attr++)
 	{
 		if( len == (*attr)->name->len &&
