@@ -988,7 +988,6 @@ VSattach(HFILEID f,             /* IN: file handle */
                   w->nattach++;
 
 		  /* get the access_rec pointer to reset position */
-/*
 		  if ((access_rec = HAatom_object(w->vs->aid)) == NULL)
 		      HGOTO_ERROR(DFE_ARGS, FAIL);
 		  access_rec->posn = 0;	/* to fix bugzilla #486 - BMR, Dec, 05 */

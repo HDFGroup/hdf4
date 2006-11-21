@@ -793,7 +793,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                           ri_info_t *new_image; /* ptr to the image to read in */
                           int32 img_key;            /* Vgroup key of an image */
                           int32 img_tag,img_ref;    /* image tag/ref in the Vgroup */
-                          char *textbuf;    /* buffer to store the name in */
+                          char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
                           uint8 ntstring[4];        /* buffer to store NT info */
                           uint8 GRtbuf[64];         /* local buffer for reading RIG info */
 
