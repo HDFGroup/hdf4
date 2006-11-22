@@ -53,7 +53,6 @@ static NC **_cdfs;
 #define SEP '/' /* default, unix */
 #endif
 
-pid_t getpid(void);
 static intn max_NC_open = MAX_NC_OPEN;	/* current netCDF default */
 
 /*
@@ -493,7 +492,8 @@ const char *proto ;
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #	define TN_NDIGITS 4
-    unsigned int pid ; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
+	pid_t getpid(void);
+	unsigned int pid ; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 #else
 #	define TN_NDIGITS 0
 #endif /* !NO_GETPID */
