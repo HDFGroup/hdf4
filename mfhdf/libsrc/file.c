@@ -492,6 +492,9 @@ const char *proto ;
 /* NO_GETPID defined if the OS lacks the getpid() function */
 #ifndef NO_GETPID
 #	define TN_NDIGITS 4
+#ifdef WIN32
+	typedef int pid_t;
+#endif
 	pid_t getpid(void);
 	unsigned int pid ; /* OS/2 DOS (MicroSoft Lib) allows "negative" int pids */
 #else
