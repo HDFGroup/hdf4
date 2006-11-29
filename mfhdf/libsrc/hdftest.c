@@ -205,6 +205,7 @@ extern int test_idtest();
 /* extern int test_sd(); - removed temporarily, see note in main(...) */
 extern int test_idtype();
 extern int test_files();
+extern int test_SDSprops();
 
 static intn
 test_chunk()
@@ -2922,7 +2923,7 @@ main(int argc, char *argv[])
       }
 
     /* hmm...lets store an attribute here for the dimension */
-    max = 3.1415;
+    max = (float32)3.1415;
     status = SDsetattr(dimid, "DimAttr", DFNT_FLOAT32, 1, (VOIDP) &max);
     CHECK(status, FAIL, "SDsetattr");
 
@@ -3070,8 +3071,8 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDwritedata");
 
     /* set the range for data set 'DataSetAlpha' */
-    max = 10.0;
-    min = 4.6;
+    max = (float32)10.0;
+    min = (float32)4.6;
     status = SDsetrange(newsds, (VOIDP) &max, (VOIDP) &min);
     CHECK(status, FAIL, "SDsetrange");
 
