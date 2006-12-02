@@ -279,7 +279,7 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
 
     /* Set up user JPEG parameters in the cinfo data structure. */
     jpeg_set_quality(cinfo_ptr, scheme_info->jpeg.quality,
-                 scheme_info->jpeg.force_baseline);
+                 (boolean)scheme_info->jpeg.force_baseline);
 
     /* OK, get things started */
     jpeg_start_compress(cinfo_ptr,TRUE);

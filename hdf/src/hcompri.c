@@ -284,7 +284,7 @@ HRPread(accrec_t * access_rec, int32 length, void * data)
     int32    ret_value = SUCCEED;
 
     /* validate length */
-    if (length!=0 && length!=info->image_size)
+    if (length!=0 && length!=(int32)info->image_size)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* adjust length */
@@ -332,7 +332,7 @@ HRPwrite(accrec_t * access_rec, int32 length, const void * data)
     int32      ret_value = SUCCEED;
 
     /* validate length */
-    if (length!=0 && length!=info->image_size)
+    if (length!=0 && length!=(int32)info->image_size)
         HGOTO_ERROR(DFE_RANGE, FAIL);
 
     /* adjust length */

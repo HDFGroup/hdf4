@@ -278,7 +278,7 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 		HRETURN_ERROR(DFE_CDECODE, FAIL);
         }
 
-	if (size_out != out_length) {
+	if ((int32)size_out != out_length) {
 	   /* This should never happen?? */
 	   printf("status: %d ??bytes != out_length %d != %d\n",status,size_out,out_length);
 	}
@@ -499,7 +499,7 @@ HCIcszip_term(compinfo_t * info)
     if(SZ_OK!= (status =SZ_BufftoBuffCompress((out_buffer+5), &size_out, szip_info->buffer, szip_info->buffer_pos, &sz_param)))
     {
        /* Compression Failed.  Analyse several cases, and clean up the mess */
-	if (size_out > out_buffer_size) {
+	if ((int32)size_out > out_buffer_size) {
                 /* Should never happen */
 		printf("PANIC: overwrote memory\n");fflush(stdout);
 	}
@@ -537,9 +537,9 @@ HCIcszip_term(compinfo_t * info)
 
         /* Compression Succeeded, write out the compressed data */
 
-	if (size_out >= out_buffer_size) 
+	if ((int32)size_out >= out_buffer_size) 
 		printf("PANIC: overwrote memory but returned OK?\n");fflush(stdout);
-	if (size_out > (szip_info->pixels * bytes_per_pixel)) {
+	if ((int32)size_out > (szip_info->pixels * bytes_per_pixel)) {
             /* The compression succeeded, but is larger than the original data! */
 	    /*  Write the original data, discard the output  */
 	    *out_buffer=1;  /* 1 = don't decompress */
@@ -559,7 +559,7 @@ HCIcszip_term(compinfo_t * info)
 	    return (SUCCEED);
 	}
 
-      if ((current_size > 0) && ((size_out+5) < current_size)) {
+      if ((current_size > 0) && (((int32)size_out+5) < current_size)) {
             /* SZIP freaks out if there is junk at the end of the good data */
             /* need to have enough data to overwrite the existing data */
             /* allocate a buffer, fill in the good data. The rest must be
