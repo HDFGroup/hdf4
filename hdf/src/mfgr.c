@@ -1502,7 +1502,7 @@ done:
     /* Free arrays allocated during this routine */
     /* (common for both error and normal returns) */
     if(in_comp_ptr!=NULL)
-        HDfree(in_comp_ptr);
+        HDfree((void*)in_comp_ptr);
     if(out_comp_ptr!=NULL)
         HDfree(out_comp_ptr);
     if(in_pixel_add!=NULL)
