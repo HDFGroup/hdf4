@@ -58,7 +58,7 @@
 static intn
 test_SDSnames()
 {
-    int32  fid, dset1, dset2, dim_id;
+    int32  fid, dset1, dset2;
     int32  rank, dtype, nattrs, dimsizes[RANK];
     char*  ds_name;
     uint16 name_len;
@@ -173,7 +173,7 @@ test_SDSnames()
 static intn
 test_unlim_dim()
 {
-    int32 fid, dset1, dset2, dim_id;
+    int32 fid, dset1, dset2;
     int32 rank, start[1], edges[1], dtype, nattrs, dimsizes[1];
     int16 array_data[DIM0],	/* data to be written to both datasets */
 	  append_data[DIM0],	/* data to be appended to both datasets */
@@ -320,7 +320,7 @@ test_unlim_inloop()
     int32   fid;
     int32   sds_id[N_DSETS];
     int32   start[RANK1], edges[RANK1], rank, dimsizes[RANK1];
-    int32   dtype, nattrs, begin_at;
+    int32   dtype, nattrs;
     char    sds_name[20];
     int     i, n_writes; /* number of times writing to the data sets */
     /*int32   n,m, mm;*/
