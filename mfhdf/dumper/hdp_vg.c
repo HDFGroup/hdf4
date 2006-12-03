@@ -471,12 +471,12 @@ print_data_annots( int32 file_id,
 		"print_data_annots", file_name);
                                   
    /* print labels of vgroup if any */
-   if (FAIL == print_data_labels(file_name, an_id, tag, ref))
+   if (FAIL == print_data_labels(file_name, an_id, (uint16)tag, (uint16)ref))
       ERROR_GOTO_3( "in %s: print_data_labels failed for vg_ref(%d) in file %s\n", 
 		"print_data_annots", (int) ref, file_name);
 
    /* print descriptions of vgroup if any */
-   if (FAIL == print_data_descs(file_name, an_id, tag, ref))
+   if (FAIL == print_data_descs(file_name, an_id, (uint16)tag, (uint16)ref))
       ERROR_GOTO_3( "in %s: print_data_descs failed for vg-ref(%d) in file %s\n", 
 		"print_data_annots", (int) ref, file_name);
 
@@ -985,7 +985,6 @@ vgdumpfull(int32        vg_id,
     char  *vgname = NULL;
     char   vgclass[VGNAMELENMAX];
     char  *name = NULL;
-    int32  i;
     char  *file_name = dumpvg_opts->ifile_name;
     intn   status, ret_value = SUCCEED;
 

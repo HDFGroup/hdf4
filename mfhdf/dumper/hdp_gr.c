@@ -363,7 +363,7 @@ get_RIindex_list(
    if( filter & DREFNUM ) 
       for (i = 0; i < dumpgr_opts->by_ref.num_items; i++)
       {
-         index = GRreftoindex(gr_id, dumpgr_opts->by_ref.num_list[i]);
+         index = GRreftoindex(gr_id, (uint16)dumpgr_opts->by_ref.num_list[i]);
                 
          if (index == FAIL)
          {
@@ -767,22 +767,17 @@ done:
 char*
 Il_mode_text( gr_interlace_t interlace_mode )
 {
-   char* il_text;
    switch( interlace_mode )
    {
 	case MFGR_INTERLACE_PIXEL:
-	   il_text = "PIXEL";
-	   break;
+	   return("PIXEL");
 	case MFGR_INTERLACE_LINE:
-	   il_text = "LINE";
-	   break;
+	   return("LINE");
 	case MFGR_INTERLACE_COMPONENT: 
-           il_text = "COMPONENT";
-	   break;
+           return("COMPONENT");
 	default:
-	   il_text = "INVALID";
+	   return("INVALID");
    } /* end switch */
-   return( il_text );
 }
 
 intn
@@ -897,7 +892,7 @@ printGR_ASCII(
                fprintf(fp, "\t width=%d; height=%d\n", (int) dimsizes[0], (int) dimsizes[1]);
                fprintf(fp, "\t Ref. = %d\n", (int) ri_ref);
                fprintf(fp, "\t ncomps = %d\n\t Interlace mode= %s\n",
-				(int) ncomps, Il_mode_text(il) );
+			(int) ncomps, Il_mode_text((gr_interlace_t)il) );
 
 	       /* print the palette info now so it won't be lost after the 
 	          image data; currently, only 1 palette per image (2nd arg.) */

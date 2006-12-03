@@ -25,7 +25,10 @@ tagnum_to_name(intn num)
 {
     char       *ret;
 
-    ret = HDgettagsname(num);
+    if (num < 0)
+	ret = NULL;
+    else
+	ret = HDgettagsname((uint16)num);
     if (ret == NULL)
         ret = HDstrdup(unknown_tag);
     return (ret);
