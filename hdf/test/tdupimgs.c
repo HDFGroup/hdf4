@@ -13,7 +13,7 @@
 
 extern void test_mgr_dup_images()
 {
-    int32 fid, grid, riid, index, il = MFGR_INTERLACE_PIXEL;
+    int32 fid, grid, riid, il = MFGR_INTERLACE_PIXEL;
     int32 ncomp=1; 
     int32 start[2], stride[2], edges[2],dims[2];
     uint8 image_data[X_LENGTH][Y_LENGTH]; 
@@ -51,7 +51,6 @@ extern void test_mgr_dup_images()
 
     /**** Make an image with compressed data ****/
     {
-	HDF_CHUNK_DEF c_def; 
 	comp_info cinfo;
 	int32 comp_type;
 
@@ -106,9 +105,8 @@ extern void test_mgr_dup_images()
 
     /**** Make a GR image with chunked and DEFLATE compressed data */
     {
-	int32 comp_type, comp_flag;
+	int32 comp_flag;
 	HDF_CHUNK_DEF c_def; 
-	comp_info cinfo;
 
 	/* Create the image */
 	riid = GRcreate(grid, IMAGE_CMP_CHK, 3, DFNT_UINT8, il, dims); 

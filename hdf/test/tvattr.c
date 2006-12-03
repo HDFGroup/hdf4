@@ -757,7 +757,7 @@ static intn read_vattrs(void)
 static void test_readattrtwice(void)
 {
     int32 file_id, vsref, vsid;
-    int32 findex, attr_index, fattr_index;
+    int32 findex, fattr_index;
     int32 data_type, count, size; 
     int32 nfields, num_attrs, num_fattrs;
     char name[MAX_HDF4_NAME_LENGTH + 1];
