@@ -301,7 +301,7 @@ char *av[] ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("ints: ");
 	for(ii = 0, ip = got_ip ;
-			ii < count ; ii++, ip++)
+			ii < (int)count ; ii++, ip++)
 	{
 		printf("%d ", *ip) ;
 		assert( *ip == ints[ii] ) ;
@@ -315,7 +315,7 @@ char *av[] ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("unsigned ints: ");
 	for(ii = 0, uip = got_uip ;
-			ii < count ; ii++, uip++)
+			ii < (int)count ; ii++, uip++)
 	{
 		printf("%u ", *uip) ;
 		assert( *uip == u_ints[ii] ) ;
@@ -334,7 +334,7 @@ char *av[] ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("longs: ");
 	for(ii = 0, lp = got_al ;
-			ii < count ; ii++, lp++)
+			ii < (int)count ; ii++, lp++)
 	{
 		printf("%ld ", got_al[ii]) ;
 		assert( got_al[ii] == longs[ii] ) ;
@@ -348,7 +348,7 @@ char *av[] ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("unsigned longs: ");
 	for(ii = 0, ulp = got_aul ;
-			ii < count ; ii++, ulp++)
+			ii < (int)count ; ii++, ulp++)
 	{
 		printf("%lu ", *ulp) ;
 		assert( *ulp == u_longs[ii] ) ;
@@ -362,7 +362,7 @@ char *av[] ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("floats:\n");
 	for(ii = 0, fp = got_af ;
-			ii < count ; ii++, fp++)
+			ii < (int)count ; ii++, fp++)
 	{
 		printf("\t% .6e\n", *fp) ;
 		assert( *fp < floats[ii] + EPSILON &&  *fp > floats[ii] - EPSILON ) ;
@@ -376,7 +376,7 @@ char *av[] ;
 	assert( poses[jj++] = xdr_getpos(xdrs) ) ;
 	printf("doubles:\n");
 	for(ii = 0, dp = got_ad ;
-			ii < count ; ii++, dp++)
+			ii < (int)count ; ii++, dp++)
 	{
 		printf("\t% .12e\n", *dp) ;
 		assert( (*dp < doubles[ii] + EPSILON) && (*dp > doubles[ii] - EPSILON )) ;
@@ -388,7 +388,7 @@ char *av[] ;
 	assert( xdr_vector(xdrs, (char *)got_ep, count, szof, xdr_enum)) ;
 	printf("enums: ");
 	for(ii = 0, ep = got_ep ;
-			ii < count ; ii++, ep++)
+			ii < (int)count ; ii++, ep++)
 	{
 		printf("%d ", (int)*ep) ;
 		assert( *ep == encounts[ii] ) ;
