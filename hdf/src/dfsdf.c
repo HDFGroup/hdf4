@@ -75,6 +75,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "dfsd.h"
+#include "hproto_fortran.h"
 
 
 /*-----------------------------------------------------------------------------

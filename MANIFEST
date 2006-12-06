@@ -179,7 +179,8 @@
 ./hdf/src/dfstubs.c
 ./hdf/src/dfstubs.h
 ./hdf/src/dfufp2i.c
-./hdf/src/dfufp2if.f
+./hdf/src/dfufp2if.c
+./hdf/src/dfufp2iff.f
 ./hdf/src/dfufp2i.h
 ./hdf/src/dfunjpeg.c
 ./hdf/src/dfutil.c
@@ -227,6 +228,7 @@
 ./hdf/src/hlimits.h
 ./hdf/src/hntdefs.h
 ./hdf/src/hproto.h
+./hdf/src/hproto_fortran.h
 ./hdf/src/hqueue.h
 ./hdf/src/htags.h
 ./hdf/src/.indent.pro

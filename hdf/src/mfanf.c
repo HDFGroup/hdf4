@@ -55,6 +55,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "mfan.h"
+#include "hproto_fortran.h"
 
 /*-----------------------------------------------------------------------------
   FUNCTION NAMEING CONVENTION:

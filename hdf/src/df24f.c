@@ -44,6 +44,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "hdf.h"
 #include "dfgr.h"
+#include "hproto_fortran.h"
 
 #define LUT     0
 #define IMAGE   1

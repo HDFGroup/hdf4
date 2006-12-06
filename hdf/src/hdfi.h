@@ -62,6 +62,7 @@
 #define     DFMT_MIPSEL         0x4441
 #define     DFMT_PC             0x4441
 #define     DFMT_APPLE          0x1111
+#define     DFMT_APPLE_INTEL    0x4441
 #define     DFMT_MAC            0x1111
 #define     DFMT_SUN386         0x4441
 #define     DFMT_NEXT           0x1111
@@ -749,7 +750,15 @@ Please check your Makefile.
 #include <sys/types.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
-#define DF_MT   DFMT_APPLE 
+#ifdef __i386
+#ifndef INTEL86
+#define INTEL86   /* we need this Intel define or bad things happen later */
+#endif /* INTEL86 */
+#define DF_MT   DFMT_APPLE_INTEL
+#else
+#define DF_MT   DFMT_APPLE
+#endif /* __i386 */
+
 typedef void            VOID;
 typedef void            *VOIDP;
 typedef char            *_fcd;
@@ -899,7 +908,7 @@ void exit(int status);
 #endif /*MAC*/
 
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
-#if !(defined(macintosh) || defined(MAC))
+#if !(defined(macintosh) || defined(MAC) || defined (__APPLE__))
 
 #if defined _M_ALPHA || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86

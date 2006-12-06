@@ -62,6 +62,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "hproto_fortran.h"
 
 /* Local pre-processor macros */
 #define XDIM    0

@@ -46,6 +46,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define VSET_INTERFACE
 #include "hdf.h"
+#include "hproto_fortran.h"
 
 /*
    **  remove trailing blanks from a string. input argument is a  string

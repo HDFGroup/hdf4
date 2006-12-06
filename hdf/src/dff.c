@@ -44,7 +44,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 #include "df.h"
 
-#include "hproto.h"
+#include "hproto_fortran.h"
 /*-----------------------------------------------------------------------------
  * Name:    dfiopen
  * Purpose: call DFopen to open HDF file

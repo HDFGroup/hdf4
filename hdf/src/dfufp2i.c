@@ -91,42 +91,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif /* TRUE */
 #define EXPAND  1   /* -e: expand image with pixel replication */
 #define INTERP  2   /* -i: expand image with bilinear interpolation */
-#ifdef EIP
-#ifndef DFUFP2I_FNAMES
-#   define DFUFP2I_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nduif2i       FNAME(DUIF2I)
-#else
-#   define nduif2i       FNAME(duif2i)
-#endif /* DF_CAPFNAMES */
-#endif /* DFUFP2I_FNAMES */
-#endif /*EIP*/
-
-#   define nduif2i       H4_F77_FUNC(duif2i, DUIF2I)
-/*-----------------------------------------------------------------------------
- * Name:    duif2i
- * Purpose: Intermediate Fortran callable version of DFUfptoimage
- *          (See DFUfptoimage for details)
- *
- * Invokes: DFUfptoimage
- *---------------------------------------------------------------------------*/
-
-FRETVAL(int)
-nduif2i(int32 *hdim, int32 *vdim, float32 *max, float32 *min, float32 hscale[],
-        float32 vscale[], float32 data[], _fcd palette, _fcd outfile,
-        int *ct_method, int32 *hres, int32 *vres, int *compress, int *lenfn)
-{
-    char       *fn;
-    int         ret;
-
-    fn = HDf2cstring(outfile, *lenfn);
-    if (!fn)
-	return(FAIL);
-    ret = DFUfptoimage(*hdim, *vdim, (float32)*max, (float32)*min, hscale, vscale, data,
-                (uint8 *)_fcdtocp(palette), fn, *ct_method, *hres, *vres, *compress);
-    HDfree(fn);
-    return (ret);
-}
 
 /*-----------------------------------------------------------------------------s
  * DFUfptoimage()

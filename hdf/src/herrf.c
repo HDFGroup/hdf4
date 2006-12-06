@@ -26,18 +26,8 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "hproto.h"
+#include "hproto_fortran.h"
 
-#ifdef EIP
-#ifndef HERR_FNAMES
-#   define HERR_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nheprnt   FNAME(HEPRNT)
-#else
-#   define nheprnt   FNAME(heprnt)
-#endif /* DF_CAPFNAMES */
-#endif /* HERR_FNAMES */
-#endif /*EIP*/
 
 /*-----------------------------------------------------------------------------
  * Name:    heprnt

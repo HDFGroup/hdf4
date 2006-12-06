@@ -65,45 +65,45 @@ ARFLAGS = cru
 libdf_a_AR = $(AR) $(ARFLAGS)
 libdf_a_LIBADD =
 am__libdf_a_SOURCES_DIST = atom.c bitvect.c cdeflate.c cnbit.c cnone.c \
-	crle.c cskphuff.c cszip.c df24.c df24f.c dfan.c dfcomp.c \
-	dfconv.c dfgr.c dfgroup.c dfimcomp.c dfjpeg.c dfkconv.c \
-	dfkcray.c dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfr8.c \
-	dfrle.c dfsd.c dfstubs.c dfufp2i.c dfunjpeg.c dfutil.c \
-	dynarray.c glist.c hbitio.c hblocks.c hbuffer.c hchunks.c \
-	hcomp.c hcompri.c hdfalloc.c herr.c hextelt.c hfile.c \
-	hfiledd.c hkit.c linklist.c mcache.c mfan.c mfgr.c mstdio.c \
-	tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c vio.c vparse.c vrw.c \
-	vsfld.c df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f \
-	dfr8f.c dfr8ff.f dfsdf.c dfsdff.f dfufp2if.f dfutilf.c herrf.c \
-	hfilef.c hfileff.f mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f \
-	vgf.c vgff.f
+	crle.c cskphuff.c cszip.c df24.c dfan.c dfcomp.c dfconv.c \
+	dfgr.c dfgroup.c dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c \
+	dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfr8.c dfrle.c \
+	dfsd.c dfstubs.c dfufp2i.c dfunjpeg.c dfutil.c dynarray.c \
+	glist.c hbitio.c hblocks.c hbuffer.c hchunks.c hcomp.c \
+	hcompri.c hdfalloc.c herr.c hextelt.c hfile.c hfiledd.c hkit.c \
+	linklist.c mcache.c mfan.c mfgr.c mstdio.c tbbt.c vattr.c \
+	vconv.c vg.c vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c df24ff.f \
+	dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c dfr8ff.f \
+	dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c \
+	df24f.c dfufp2if.c hfileff.f mfanf.c mfgrf.c mfgrff.f vattrf.c \
+	vattrff.f vgf.c vgff.f
 am__objects_1 = atom.$(OBJEXT) bitvect.$(OBJEXT) cdeflate.$(OBJEXT) \
 	cnbit.$(OBJEXT) cnone.$(OBJEXT) crle.$(OBJEXT) \
 	cskphuff.$(OBJEXT) cszip.$(OBJEXT) df24.$(OBJEXT) \
-	df24f.$(OBJEXT) dfan.$(OBJEXT) dfcomp.$(OBJEXT) \
-	dfconv.$(OBJEXT) dfgr.$(OBJEXT) dfgroup.$(OBJEXT) \
-	dfimcomp.$(OBJEXT) dfjpeg.$(OBJEXT) dfkconv.$(OBJEXT) \
-	dfkcray.$(OBJEXT) dfkfuji.$(OBJEXT) dfknat.$(OBJEXT) \
-	dfkswap.$(OBJEXT) dfkvms.$(OBJEXT) dfp.$(OBJEXT) \
-	dfr8.$(OBJEXT) dfrle.$(OBJEXT) dfsd.$(OBJEXT) \
-	dfstubs.$(OBJEXT) dfufp2i.$(OBJEXT) dfunjpeg.$(OBJEXT) \
-	dfutil.$(OBJEXT) dynarray.$(OBJEXT) glist.$(OBJEXT) \
-	hbitio.$(OBJEXT) hblocks.$(OBJEXT) hbuffer.$(OBJEXT) \
-	hchunks.$(OBJEXT) hcomp.$(OBJEXT) hcompri.$(OBJEXT) \
-	hdfalloc.$(OBJEXT) herr.$(OBJEXT) hextelt.$(OBJEXT) \
-	hfile.$(OBJEXT) hfiledd.$(OBJEXT) hkit.$(OBJEXT) \
-	linklist.$(OBJEXT) mcache.$(OBJEXT) mfan.$(OBJEXT) \
-	mfgr.$(OBJEXT) mstdio.$(OBJEXT) tbbt.$(OBJEXT) vattr.$(OBJEXT) \
-	vconv.$(OBJEXT) vg.$(OBJEXT) vgp.$(OBJEXT) vhi.$(OBJEXT) \
-	vio.$(OBJEXT) vparse.$(OBJEXT) vrw.$(OBJEXT) vsfld.$(OBJEXT)
+	dfan.$(OBJEXT) dfcomp.$(OBJEXT) dfconv.$(OBJEXT) \
+	dfgr.$(OBJEXT) dfgroup.$(OBJEXT) dfimcomp.$(OBJEXT) \
+	dfjpeg.$(OBJEXT) dfkconv.$(OBJEXT) dfkcray.$(OBJEXT) \
+	dfkfuji.$(OBJEXT) dfknat.$(OBJEXT) dfkswap.$(OBJEXT) \
+	dfkvms.$(OBJEXT) dfp.$(OBJEXT) dfr8.$(OBJEXT) dfrle.$(OBJEXT) \
+	dfsd.$(OBJEXT) dfstubs.$(OBJEXT) dfufp2i.$(OBJEXT) \
+	dfunjpeg.$(OBJEXT) dfutil.$(OBJEXT) dynarray.$(OBJEXT) \
+	glist.$(OBJEXT) hbitio.$(OBJEXT) hblocks.$(OBJEXT) \
+	hbuffer.$(OBJEXT) hchunks.$(OBJEXT) hcomp.$(OBJEXT) \
+	hcompri.$(OBJEXT) hdfalloc.$(OBJEXT) herr.$(OBJEXT) \
+	hextelt.$(OBJEXT) hfile.$(OBJEXT) hfiledd.$(OBJEXT) \
+	hkit.$(OBJEXT) linklist.$(OBJEXT) mcache.$(OBJEXT) \
+	mfan.$(OBJEXT) mfgr.$(OBJEXT) mstdio.$(OBJEXT) tbbt.$(OBJEXT) \
+	vattr.$(OBJEXT) vconv.$(OBJEXT) vg.$(OBJEXT) vgp.$(OBJEXT) \
+	vhi.$(OBJEXT) vio.$(OBJEXT) vparse.$(OBJEXT) vrw.$(OBJEXT) \
+	vsfld.$(OBJEXT)
 am__objects_2 = df24ff.$(OBJEXT) dfanf.$(OBJEXT) dfanff.$(OBJEXT) \
 	dff.$(OBJEXT) dfff.$(OBJEXT) dfpf.$(OBJEXT) dfpff.$(OBJEXT) \
 	dfr8f.$(OBJEXT) dfr8ff.$(OBJEXT) dfsdf.$(OBJEXT) \
-	dfsdff.$(OBJEXT) dfufp2if.$(OBJEXT) dfutilf.$(OBJEXT) \
-	herrf.$(OBJEXT) hfilef.$(OBJEXT) hfileff.$(OBJEXT) \
-	mfanf.$(OBJEXT) mfgrf.$(OBJEXT) mfgrff.$(OBJEXT) \
-	vattrf.$(OBJEXT) vattrff.$(OBJEXT) vgf.$(OBJEXT) \
-	vgff.$(OBJEXT)
+	dfsdff.$(OBJEXT) dfufp2iff.$(OBJEXT) dfutilf.$(OBJEXT) \
+	herrf.$(OBJEXT) hfilef.$(OBJEXT) df24f.$(OBJEXT) \
+	dfufp2if.$(OBJEXT) hfileff.$(OBJEXT) mfanf.$(OBJEXT) \
+	mfgrf.$(OBJEXT) mfgrff.$(OBJEXT) vattrf.$(OBJEXT) \
+	vattrff.$(OBJEXT) vgf.$(OBJEXT) vgff.$(OBJEXT)
 @HDF_BUILD_FORTRAN_FALSE@am_libdf_a_OBJECTS = $(am__objects_1)
 @HDF_BUILD_FORTRAN_TRUE@am_libdf_a_OBJECTS = $(am__objects_1) \
 @HDF_BUILD_FORTRAN_TRUE@	$(am__objects_2)
@@ -125,9 +125,9 @@ am__include_HEADERS_DIST = atom.h bitvect.h cdeflate.h cnbit.h cnone.h \
 	cskphuff.h crle.h cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h \
 	dfsd.h dfstubs.h dfufp2i.h dynarray.h h4config.h hbitio.h \
 	hchunks.h hcomp.h hcompi.h hconv.h hdf.h hdfi.h herr.h hfile.h \
-	hkit.h hlimits.h hntdefs.h htags.h linklist.h mfan.h mfgr.h \
-	mstdio.h tbbt.h vattr.h vg.h hproto.h dffunc.f90 hdf.f90 \
-	dffunc.inc hdf.inc
+	hkit.h hlimits.h hproto.h hntdefs.h htags.h linklist.h mfan.h \
+	mfgr.h mstdio.h tbbt.h vattr.h vg.h hproto_fortran.h \
+	dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(include_HEADERS)
 ETAGS = etags
@@ -246,11 +246,12 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 lib_LIBRARIES = libdf.a
 FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
-           dfr8ff.f dfsdf.c dfsdff.f dfufp2if.f dfutilf.c herrf.c hfilef.c  \
+           dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \
+	   df24f.c dfufp2if.c\
            hfileff.f mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f vgf.c vgff.f 
 
 CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
-           cszip.c df24.c df24f.c dfan.c dfcomp.c dfconv.c dfgr.c dfgroup.c \
+           cszip.c df24.c dfan.c dfcomp.c dfconv.c dfgr.c dfgroup.c         \
            dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c dfkfuji.c dfknat.c       \
            dfkswap.c dfkvms.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c         \
            dfufp2i.c dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c        \
@@ -263,14 +264,14 @@ CHEADERS = atom.h bitvect.h cdeflate.h cnbit.h cnone.h cskphuff.h crle.h    \
            cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h dfsd.h dfstubs.h        \
            dfufp2i.h dynarray.h h4config.h hbitio.h hchunks.h hcomp.h       \
            hcompi.h hconv.h hdf.h hdfi.h herr.h hfile.h hkit.h hlimits.h    \
-           hntdefs.h htags.h linklist.h mfan.h mfgr.h mstdio.h    \
+           hproto.h hntdefs.h htags.h linklist.h mfan.h mfgr.h mstdio.h     \
            tbbt.h vattr.h vg.h
 
 FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 @HDF_BUILD_FORTRAN_FALSE@libdf_a_SOURCES = $(CSOURCES)
 @HDF_BUILD_FORTRAN_TRUE@libdf_a_SOURCES = $(CSOURCES) $(FSOURCES)
 @HDF_BUILD_FORTRAN_FALSE@include_HEADERS = $(CHEADERS)
-@HDF_BUILD_FORTRAN_TRUE@include_HEADERS = $(CHEADERS) hproto.h $(FHEADERS)
+@HDF_BUILD_FORTRAN_TRUE@include_HEADERS = $(CHEADERS) hproto_fortran.h $(FHEADERS)
 SUFFIXES = .inc .f90
 
 #############################################################################
@@ -401,6 +402,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfsdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfstubs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfufp2i.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfufp2if.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfunjpeg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfutilf.Po@am__quote@

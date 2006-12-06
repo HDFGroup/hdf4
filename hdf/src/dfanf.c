@@ -45,7 +45,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 #include "dfan.h"
 #include "df.h"
-#include "hproto.h"
+#include "hproto_fortran.h"
 
 /* conventions used in forming names of routines:
    **

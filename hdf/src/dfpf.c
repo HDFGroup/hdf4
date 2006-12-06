@@ -34,33 +34,8 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "hproto.h"
-#ifdef EIP
-#ifndef DFP_FNAMES
-#   define DFP_FNAMES
-#ifdef DF_CAPFNAMES
-#   define ndpigpal  FNAME(DPIGPAL)
-#   define ndpippal  FNAME(DPIPPAL)
-#   define ndpinpal  FNAME(DPINPAL)
-#   define ndpiwref  FNAME(DPIWREF)
-#   define ndpirref  FNAME(DPIRREF)
-#   define ndprest   FNAME(DPREST)
-#   define ndplref   FNAME(DPLREF)
-#   define ndfprestart   FNAME(DFPRESTART)
-#   define ndfplastref   FNAME(DFPLASTREF)
-#else  /* !DF_CAPNAMES */
-#   define ndpigpal  FNAME(dpigpal)
-#   define ndpippal  FNAME(dpippal)
-#   define ndpinpal  FNAME(dpinpal)
-#   define ndpiwref  FNAME(dpiwref)
-#   define ndpirref  FNAME(dpirref)
-#   define ndprest   FNAME(dprest)
-#   define ndplref   FNAME(dplref)
-#   define ndfprestart   FNAME(dfprestart)
-#   define ndfplastref   FNAME(dfplastref)
-#endif /* DF_CAPFNAMES */
-#endif /* DFP_FNAMES */
-#endif /*EIP*/
+#include "hproto_fortran.h"
+
 /*-----------------------------------------------------------------------------
  * Name:    dpigpal
  * Purpose: call DFPgetpal, get palette

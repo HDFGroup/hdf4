@@ -25,7 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "hproto.h"
+#include "hproto_fortran.h"
 /*-----------------------------------------------------------------------------
  * Name:    dfindnr
  * Purpose: For this tag, find the ref after lref

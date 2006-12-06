@@ -27,6 +27,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define VSET_INTERFACE
 #include "hdf.h"
+#include "hproto_fortran.h"
 
 /* ----------------- vsfcfdx ---------------------- 
  *  get field index

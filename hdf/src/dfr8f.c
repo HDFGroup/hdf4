@@ -38,42 +38,8 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
-#include "hproto.h"
+#include "hproto_fortran.h"
 
-#ifdef EIP
-#ifndef DFR8_FNAMES
-#   define DFR8_FNAMES
-#ifdef DF_CAPFNAMES
-#   define nd8spal   FNAME(D8SPAL)
-#   define nd8first  FNAME(D8FIRST)
-#   define nd8igdim  FNAME(D8IGDIM)
-#   define nd8igimg  FNAME(D8IGIMG)
-#   define nd8ipimg  FNAME(D8IPIMG)
-#   define nd8iaimg  FNAME(D8IAIMG)
-#   define nd8irref  FNAME(D8IRREF)
-#   define nd8iwref  FNAME(D8IWREF)
-#   define nd8inims  FNAME(D8INIMS)
-#   define nd8lref   FNAME(D8LREF)
-#   define ndfr8lastref      FNAME(DFR8LASTREF)
-#   define ndfr8setpalette   FNAME(DFR8SETPALETTE)
-#   define ndfr8restart  FNAME(DFR8RESTART)
-#else  /* !DF_CAPFNAMES */
-#   define nd8spal   FNAME(d8spal)
-#   define nd8first  FNAME(d8first)
-#   define nd8igdim  FNAME(d8igdim)
-#   define nd8igimg  FNAME(d8igimg)
-#   define nd8ipimg  FNAME(d8ipimg)
-#   define nd8iaimg  FNAME(d8iaimg)
-#   define nd8irref  FNAME(d8irref)
-#   define nd8iwref  FNAME(d8iwref)
-#   define nd8inims  FNAME(d8inims)
-#   define nd8lref   FNAME(d8lref)
-#   define ndfr8lastref      FNAME(dfr8lastref)
-#   define ndfr8setpalette   FNAME(dfr8setpalette)
-#   define ndfr8restart  FNAME(dfr8restart)
-#endif /* DF_CAPFNAMES */
-#endif /* DFR8_FNAMES */
-#endif /*EIP*/
 /*-----------------------------------------------------------------------------
  * Name:    d8spal
  * Purpose: Set palette to be written out with subsequent images
