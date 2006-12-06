@@ -2,6 +2,7 @@
 /Win32.zip -text
 hdf/src/dfufp2if.c -text
 hdf/src/dfufp2iff.f -text
+hdf/src/hproto_fortran.h -text
 hdf/test/8bit.dat -text
 hdf/test/bitio.dat -text
 hdf/test/gr_r24.dat -text
