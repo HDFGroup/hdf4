@@ -47,7 +47,8 @@
 /*      8 - Cray IEEE                                                       */
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
-#define     DFMT_SUN            0x1111
+#define     DFMT_SUN            0x1111 
+#define     DFMT_SUN_INTEL      0x4441
 #define     DFMT_ALLIANT        0x1111
 #define     DFMT_IRIX           0x1111
 #define     DFMT_APOLLO         0x1111
@@ -180,7 +181,11 @@ Please check your Makefile.
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
-#define DF_MT             DFMT_SUN
+#ifdef __i386
+#define DF_MT   DFMT_SUN_INTEL
+#else
+#define DF_MT   DFMT_SUN
+#endif /* __i386 */
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
