@@ -766,10 +766,10 @@ static void test_readattrtwice(void)
     intn ret;
 
     file_id = Hopen(FILENAME, DFACC_READ, 0);
-    CHECK(file_id,FAIL,"Hopen:FILENAME");
+    CHECK_VOID(file_id,FAIL,"Hopen:FILENAME");
 
     ret = Vstart(file_id);
-    CHECK(ret,FAIL,"Vstart:file_id");
+    CHECK_VOID(ret,FAIL,"Vstart:file_id");
 
     /* get the first vdata */
     vsref = VSgetid(file_id, -1);
@@ -783,21 +783,21 @@ static void test_readattrtwice(void)
     while (vsref != -1)
     {
 	vsid = VSattach(file_id, vsref, "r");
-	CHECK(vsid,FAIL,"VSattach");
+	CHECK_VOID(vsid,FAIL,"VSattach");
 
 	num_attrs =  VSfnattrs(vsid, _HDF_VDATA);
-	CHECK(num_attrs,FAIL,"VSfnattrs");
+	CHECK_VOID(num_attrs,FAIL,"VSfnattrs");
 
 	for (k = 0; k < num_attrs; k++)
 	{
 	    ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
-	    CHECK(ret,FAIL,"VSattrinfo");
+	    CHECK_VOID(ret,FAIL,"VSattrinfo");
 
 	    buffer = HDmalloc(size+1);
-	    CHECK(buffer,NULL,"HDmalloc");
+	    CHECK_VOID(buffer,NULL,"HDmalloc");
 
 	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
-	    CHECK(ret,FAIL,"VSgetattr");
+	    CHECK_VOID(ret,FAIL,"VSgetattr");
 
 	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
 	    if (ret == FAIL)
@@ -808,24 +808,24 @@ static void test_readattrtwice(void)
 	    HDfree(buffer);
 
 	    nfields = VFnfields(vsid);
-	    CHECK(nfields,FAIL,"VFnfields");
+	    CHECK_VOID(nfields,FAIL,"VFnfields");
 
 	    for (findex = 0; findex < nfields; findex++)
 	    {
 		num_fattrs = VSfnattrs(vsid, findex);
-		CHECK(num_fattrs,FAIL,"VSfnattrs");
+		CHECK_VOID(num_fattrs,FAIL,"VSfnattrs");
 
 		for (fattr_index = 0; fattr_index < num_fattrs; fattr_index++)
 		{
 		    ret = VSattrinfo(vsid, findex, fattr_index, name, 
 						&data_type, &count, &size);
-		    CHECK(ret,FAIL,"VSattrinfo");
+		    CHECK_VOID(ret,FAIL,"VSattrinfo");
 
 		    buffer = HDmalloc(size);
-		    CHECK(buffer,NULL,"HDmalloc");
+		    CHECK_VOID(buffer,NULL,"HDmalloc");
 
 		    ret = VSgetattr(vsid, findex, fattr_index, buffer);
-		    CHECK(ret,FAIL,"VSgetattr");
+		    CHECK_VOID(ret,FAIL,"VSgetattr");
 
 		    ret = VSgetattr(vsid, findex, fattr_index, buffer);
 		    if (ret == FAIL)
@@ -838,15 +838,15 @@ static void test_readattrtwice(void)
 	}   /* for k */
 
 	ret = VSdetach(vsid);
-	CHECK(ret,FAIL,"VSdetach");
+	CHECK_VOID(ret,FAIL,"VSdetach");
 
 	/* find next vdata */
 	vsref = VSgetid(file_id, vsref);
     }
     ret = Vend(file_id);
-    CHECK(ret,FAIL,"VSdetach");
+    CHECK_VOID(ret,FAIL,"VSdetach");
     ret = Hclose(file_id);
-    CHECK(ret,FAIL,"Hclose");
+    CHECK_VOID(ret,FAIL,"Hclose");
 }   /* test_readattrtwice */
 
 /* main test driver */

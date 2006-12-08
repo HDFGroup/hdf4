@@ -162,7 +162,7 @@ test_nbit1(int32 fid)
         outbuf[i] = (uint8) (i * 3);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as an unsigned 8-bit n-bit element\n");
         );
@@ -173,7 +173,7 @@ test_nbit1(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS1;
     aid1 = HCcreate(fid, NBIT_TAG1, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, NBIT_SIZE1, outbuf);
     if (ret != NBIT_SIZE1)
@@ -184,7 +184,7 @@ test_nbit1(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -229,7 +229,7 @@ test_nbit2(int32 fid)
         outbuf[i] = (int8) (((i * 3) % 64) - 32);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a signed 8-bit n-bit element\n");
         );
@@ -240,7 +240,7 @@ test_nbit2(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS2;
     aid1 = HCcreate(fid, NBIT_TAG2, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, NBIT_SIZE2, (uint8  *) outbuf);
     if (ret != NBIT_SIZE2)
@@ -251,7 +251,7 @@ test_nbit2(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -298,7 +298,7 @@ test_nbit3(int32 fid)
         outbuf[i] = (uint16) (i * 3);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a unsigned 16-bit n-bit element\n");
         );
@@ -309,10 +309,10 @@ test_nbit3(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS3;
     aid1 = HCcreate(fid, NBIT_TAG3, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_UINT16, NBIT_SIZE3, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
     ret = Hwrite(aid1, NBIT_SIZE3 * DFKNTsize(DFNT_UINT16), convbuf);
     if (ret != NBIT_SIZE3 * DFKNTsize(DFNT_UINT16))
       {
@@ -322,7 +322,7 @@ test_nbit3(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -336,7 +336,7 @@ test_nbit3(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_UINT16, NBIT_SIZE3, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
     for (i = 0; i < NBIT_SIZE3; i++)
       {
           test_out = (uint16) (outbuf[i] & NBIT_MASK3A);
@@ -379,7 +379,7 @@ test_nbit4(int32 fid)
         outbuf[i] = (int16) (((i * 3) % (64 * 256)) - (32 * 256));
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a signed 16-bit n-bit element\n");
         );
@@ -390,10 +390,10 @@ test_nbit4(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS4;
     aid1 = HCcreate(fid, NBIT_TAG4, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_INT16, NBIT_SIZE4, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE4 * DFKNTsize(DFNT_INT16), convbuf);
     if (ret != NBIT_SIZE4 * DFKNTsize(DFNT_INT16))
@@ -404,7 +404,7 @@ test_nbit4(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -420,7 +420,7 @@ test_nbit4(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_INT16, NBIT_SIZE4, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
     for (i = 0; i < NBIT_SIZE4; i++)
       {
           test_out = (int16) (outbuf[i] & NBIT_MASK4A);
@@ -463,7 +463,7 @@ test_nbit5(int32 fid)
         outbuf[i] = (uint32)(i * 300000);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a unsigned 32-bit n-bit element\n");
         );
@@ -474,10 +474,10 @@ test_nbit5(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS5;
     aid1 = HCcreate(fid, NBIT_TAG5, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_UINT32, NBIT_SIZE5, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE5 * DFKNTsize(DFNT_UINT32), convbuf);
     if (ret != NBIT_SIZE5 * DFKNTsize(DFNT_UINT32))
@@ -488,7 +488,7 @@ test_nbit5(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -504,7 +504,7 @@ test_nbit5(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_UINT32, NBIT_SIZE5, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE5; i++)
       {
@@ -548,7 +548,7 @@ test_nbit6(int32 fid)
         outbuf[i] = ((i * 300001) % ((int32) 16 * 256 * 256 * 256)) - ((int32) 8 * 256 * 256 * 256);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a signed 32-bit n-bit element\n");
         );
@@ -559,10 +559,10 @@ test_nbit6(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS6;
     aid1 = HCcreate(fid, NBIT_TAG6, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_INT32, NBIT_SIZE6, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE6 * DFKNTsize(DFNT_INT32), convbuf);
     if (ret != NBIT_SIZE6 * DFKNTsize(DFNT_INT32))
@@ -573,7 +573,7 @@ test_nbit6(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -589,7 +589,7 @@ test_nbit6(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_INT32, NBIT_SIZE6, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE6; i++)
       {
@@ -631,7 +631,7 @@ test_nbit7(int32 fid)
         outbuf[i] = (uint8) (i * 3);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a unsigned 8-bit n-bit element with filled ones\n");
         );
@@ -642,7 +642,7 @@ test_nbit7(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS7;
     aid1 = HCcreate(fid, NBIT_TAG7, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, NBIT_SIZE7, outbuf);
     if (ret != NBIT_SIZE7)
@@ -653,7 +653,7 @@ test_nbit7(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -699,7 +699,7 @@ test_nbit8(int32 fid)
         outbuf[i] = (int8) ((((i * 3) % 16) - 8) << 2);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a signed 8-bit n-bit element with filled ones\n");
         );
@@ -710,7 +710,7 @@ test_nbit8(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS8;
     aid1 = HCcreate(fid, NBIT_TAG8, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = Hwrite(aid1, NBIT_SIZE8, (uint8  *) outbuf);
     if (ret != NBIT_SIZE8)
@@ -721,7 +721,7 @@ test_nbit8(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -769,7 +769,7 @@ test_nbit9(int32 fid)
         outbuf[i] = (uint16) (i * 3);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a unsigned 16-bit n-bit element\n");
         );
@@ -780,10 +780,10 @@ test_nbit9(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS9;
     aid1 = HCcreate(fid, NBIT_TAG9, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_UINT16, NBIT_SIZE9, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE9 * DFKNTsize(DFNT_UINT16), convbuf);
     if (ret != NBIT_SIZE9 * DFKNTsize(DFNT_UINT16))
@@ -794,7 +794,7 @@ test_nbit9(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -810,7 +810,7 @@ test_nbit9(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_UINT16, NBIT_SIZE9, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE9; i++)
       {
@@ -854,7 +854,7 @@ test_nbit10(int32 fid)
         outbuf[i] = (int16) ((((i * 3) % (2 * 256)) - (256)) << ((NBIT_OFF10 - NBIT_BITS10) + 1));
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a signed 16-bit n-bit element\n");
         );
@@ -865,10 +865,10 @@ test_nbit10(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS10;
     aid1 = HCcreate(fid, NBIT_TAG10, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_INT16, NBIT_SIZE10, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE10 * DFKNTsize(DFNT_INT16), convbuf);
     if (ret != NBIT_SIZE10 * DFKNTsize(DFNT_INT16))
@@ -879,7 +879,7 @@ test_nbit10(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -895,7 +895,7 @@ test_nbit10(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_INT16, NBIT_SIZE10, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE10; i++)
       {
@@ -963,7 +963,7 @@ test_nbit11(int32 fid)
         outbuf[i] = (uint32)(i * 304327);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a unsigned 32-bit n-bit element\n");
         );
@@ -974,10 +974,10 @@ test_nbit11(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS11;
     aid1 = HCcreate(fid, NBIT_TAG11, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_UINT32, NBIT_SIZE11, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE11 * DFKNTsize(DFNT_UINT32), convbuf);
     if (ret != NBIT_SIZE11 * DFKNTsize(DFNT_UINT32))
@@ -988,7 +988,7 @@ test_nbit11(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -1004,7 +1004,7 @@ test_nbit11(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_UINT32, NBIT_SIZE11, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE11; i++)
       {
@@ -1048,7 +1048,7 @@ test_nbit12(int32 fid)
         outbuf[i] = (((i * 300001) % ((int32) 4 * 256 * 256 * 256)) - ((int32) 2 * 256 * 256 * 256)) << ((NBIT_OFF10 - NBIT_BITS10) + 1);
 
     ref1 = Hnewref(fid);
-    CHECK(ref1, 0, "Hnewref");
+    CHECK_VOID(ref1, 0, "Hnewref");
 
     MESSAGE(5, printf("Create a new element as a signed 32-bit n-bit element\n");
         );
@@ -1059,10 +1059,10 @@ test_nbit12(int32 fid)
     c_info.nbit.bit_len = NBIT_BITS12;
     aid1 = HCcreate(fid, NBIT_TAG12, ref1, COMP_MODEL_STDIO, &m_info,
                     COMP_CODE_NBIT, &c_info);
-    CHECK(aid1, FAIL, "HCcreate");
+    CHECK_VOID(aid1, FAIL, "HCcreate");
 
     ret = DFKconvert(outbuf, convbuf, DFNT_INT32, NBIT_SIZE12, DFACC_WRITE, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     ret = Hwrite(aid1, NBIT_SIZE12 * DFKNTsize(DFNT_INT32), convbuf);
     if (ret != NBIT_SIZE12 * DFKNTsize(DFNT_INT32))
@@ -1073,7 +1073,7 @@ test_nbit12(int32 fid)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -1089,7 +1089,7 @@ test_nbit12(int32 fid)
       }
 
     ret = DFKconvert(convbuf, inbuf, DFNT_INT32, NBIT_SIZE12, DFACC_READ, 0, 0);
-    CHECK(ret, FAIL, "DFKconvert");
+    CHECK_VOID(ret, FAIL, "DFKconvert");
 
     for (i = 0; i < NBIT_SIZE12; i++)
       {
@@ -1120,7 +1120,7 @@ test_nbit(void)
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME);
         );
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     test_nbit1(fid);    /* basic uint8 test */
     test_nbit2(fid);    /* basic int8 test */
@@ -1139,5 +1139,5 @@ test_nbit(void)
     MESSAGE(5, printf("Closing the files\n");
         );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 }

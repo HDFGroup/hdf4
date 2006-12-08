@@ -109,10 +109,10 @@ test_bitio_write(void)
       }     /* end for */
 
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     bitid1 = Hstartbitwrite(fid, BITIO_TAG_1, BITIO_REF_1, 16);
-    CHECK(bitid1, FAIL, "Hstartbitwrite");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitwrite");
 
     ret = Hbitappendable(bitid1);
     RESULT("Hbitappendable");
@@ -127,7 +127,7 @@ test_bitio_write(void)
     RESULT("Hbitendaccess");
 
     bitid1 = Hstartbitread(fid, BITIO_TAG_1, BITIO_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++)
       {
@@ -174,7 +174,7 @@ test_bitio_read(void)
     strcat(datafile, DATAFILE_NAME);
 
     fid = Hopen(datafile, DFACC_READ, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = Hgetelement(fid, DATA_TAG_1, DATA_REF_1, inbuf);
     RESULT("Hgetelement");
@@ -185,10 +185,10 @@ test_bitio_read(void)
     MESSAGE(8, printf("Reading 8 bits at a time\n");
         );
     fid = Hopen(datafile, DFACC_READ, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     bitid1 = Hstartbitread(fid, DATA_TAG_1, DATA_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < DATASIZE; i++)
       {
@@ -211,7 +211,7 @@ test_bitio_read(void)
     MESSAGE(8, printf("Read random # of bits at a time\n");
         );
     bitid1 = Hstartbitread(fid, DATA_TAG_1, DATA_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     /* read in random #'s of bits */
     for (i = 0; i < DATASIZE / (NUM_BITS / 8); i++)
@@ -232,7 +232,7 @@ test_bitio_read(void)
     RESULT("Hbitendaccess");
 
     test_ptr = (uint8 *) HDmalloc((size_t)((DATASIZE / 4) * DFKNTsize(DFNT_UINT32)));
-    CHECK(test_ptr, NULL, "HDmalloc");
+    CHECK_VOID(test_ptr, NULL, "HDmalloc");
 
     ret = DFKconvert(inbuf2, test_ptr, DFNT_UINT32, (DATASIZE / 4), DFACC_WRITE, 0, 0);
     RESULT("DFKconvert");
@@ -264,17 +264,17 @@ test_bitio_seek(void)
         );
 
     fid = Hopen(TESTFILE_NAME, DFACC_READ | DFACC_WRITE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(8, printf("Seek & read from start of dataset\n");
         );
     bitid1 = Hstartbitread(fid, BITIO_TAG_1, BITIO_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++)
       {
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
-          CHECK(ret, FAIL, "Hbitseek");
+          CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
           VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
@@ -287,12 +287,12 @@ test_bitio_seek(void)
     MESSAGE(8, printf("Seek & read from end of dataset\n");
         );
     bitid1 = Hstartbitread(fid, BITIO_TAG_1, BITIO_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = BUFSIZE - 1; i >= 0; i--)
       {
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
-          CHECK(ret, FAIL, "Hbitseek");
+          CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
           VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
@@ -305,7 +305,7 @@ test_bitio_seek(void)
     MESSAGE(8, printf("Seek & write from start of dataset\n");
         );
     bitid1 = Hstartbitwrite(fid, BITIO_TAG_1, BITIO_REF_1, 16);
-    CHECK(bitid1, FAIL, "Hstartbitwrite");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitwrite");
 
     MESSAGE(9, printf("Writing new data to every other bit-sequence\n");
         );
@@ -315,7 +315,7 @@ test_bitio_seek(void)
           outbuf2[i] = (uintn)RAND() & maskbuf[outbuf[i]];     /* actual bits to output */
 
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
-          CHECK(ret, FAIL, "Hbitseek");
+          CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
           VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
@@ -326,7 +326,7 @@ test_bitio_seek(void)
     MESSAGE(9, printf("Verifying new data\n");
         );
     bitid1 = Hstartbitread(fid, BITIO_TAG_1, BITIO_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++)
       {
@@ -344,7 +344,7 @@ test_bitio_seek(void)
     MESSAGE(8, printf("Seek & write from end of dataset\n");
         );
     bitid1 = Hstartbitwrite(fid, BITIO_TAG_1, BITIO_REF_1, 16);
-    CHECK(bitid1, FAIL, "Hstartbitwrite");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitwrite");
 
     MESSAGE(9, printf("Writing new data to every other bit-sequence from the end\n");
         );
@@ -365,12 +365,12 @@ test_bitio_seek(void)
     MESSAGE(9, printf("Verifying new data again\n");
         );
     bitid1 = Hstartbitread(fid, BITIO_TAG_1, BITIO_REF_1);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     for (i = 0; i < BUFSIZE; i++)
       {
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
-          CHECK(ret, FAIL, "Hbitseek");
+          CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
           VERIFY((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
@@ -383,7 +383,7 @@ test_bitio_seek(void)
     MESSAGE(8, printf("Write non-byte filling number of bits and seek to beginning\n");
         );
     bitid1 = Hstartbitwrite(fid, BITIO_TAG_3, BITIO_REF_3, 0);
-    CHECK(bitid1, FAIL, "Hstartbitwrite");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitwrite");
 
     ret = Hbitappendable(bitid1);
     RESULT("Hbitappendable");
@@ -409,7 +409,7 @@ test_bitio_seek(void)
 
     /* Read those 35 bits back in */
     bitid1 = Hstartbitread(fid, BITIO_TAG_3, BITIO_REF_3);
-    CHECK(bitid1, FAIL, "Hstartbitread");
+    CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     ret = Hbitread(bitid1, 8, &inbuf2[0]);
     VERIFY((uint8) ret, 8, "Hbitread");

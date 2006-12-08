@@ -349,7 +349,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
     )
 
         aid = Hstartread(fid, COMP_TAG, ref_num);
-    CHECK(aid, FAIL, "Hstartread");
+    CHECK_VOID(aid, FAIL, "Hstartread");
     if (aid == FAIL)
         return;
 
@@ -410,7 +410,7 @@ read_data(int32 fid, uint16 ref_num, intn test_num, int32 ntype)
       }     /* end if */
 
     err_ret = Hendaccess(aid);
-    CHECK(err_ret, FAIL, "Hendaccess");
+    CHECK_VOID(err_ret, FAIL, "Hendaccess");
 }   /* end read_data() */
 
 void
@@ -475,7 +475,7 @@ test_comp(void)
 
     /* close the HDF file */
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* free the input and output buffers */
     free_buffers();

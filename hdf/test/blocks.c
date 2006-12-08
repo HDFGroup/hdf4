@@ -43,23 +43,23 @@ test_hblocks(void)
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME);
         );
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Write an element and then promote to Linked Blocks\n");
         );
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
                       (const uint8 *)"element 1000 1 wrong ",
                       (int32)HDstrlen("element 1000 1 wrong ") + 1);
-    CHECK(ret, FAIL, "Hputelement");
+    CHECK_VOID(ret, FAIL, "Hputelement");
 
     aid1 = HLcreate(fid, 1000, 1, 10, 10);
-    CHECK(aid1, FAIL, "HLcreate");
+    CHECK_VOID(aid1, FAIL, "HLcreate");
 
     ret = Hseek(aid1, (int32)HDstrlen("element 1000 1 "), DF_START);
-    CHECK(ret, FAIL, "Hseek");
+    CHECK_VOID(ret, FAIL, "Hseek");
 
     ret = Hwrite(aid1, (int32)HDstrlen("correct") + 1, "correct");
     if (ret != (int32) HDstrlen("correct") + 1)
@@ -69,12 +69,12 @@ test_hblocks(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Create a new element as a Linked Block\n");
         );
     aid1 = HLcreate(fid, 1000, 4, 512, 2);
-    CHECK(aid1, FAIL, "HLcreate");
+    CHECK_VOID(aid1, FAIL, "HLcreate");
 
     ret = Hwrite(aid1, BUFSIZE / 2, outbuf);
     if (ret != BUFSIZE / 2)
@@ -84,13 +84,13 @@ test_hblocks(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     aid1 = HLcreate(fid, 1000, 2, 128, 16);
-    CHECK(aid1, FAIL, "HLcreate");
+    CHECK_VOID(aid1, FAIL, "HLcreate");
 
     ret = Hwrite(aid1, (int32)HDstrlen("element 1000 2") + 1, "element 1000 2");
     if (ret != (int32) HDstrlen("element 1000 2") + 1)
@@ -100,7 +100,7 @@ test_hblocks(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Verifying data\n");
         );
@@ -122,7 +122,7 @@ test_hblocks(void)
       }
 
     aid1 = HLcreate(fid, 1020, 2, 128, 4);
-    CHECK(aid1, FAIL, "HLcreate");
+    CHECK_VOID(aid1, FAIL, "HLcreate");
 
     ret = Hwrite(aid1, BUFSIZE, outbuf);
     if (ret != BUFSIZE)
@@ -132,28 +132,28 @@ test_hblocks(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing and re-opening file %s\n", TESTFILE_NAME);
         );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Verifying data\n");
         );
 
     aid1 = Hstartread(fid, 1000, 1);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -177,14 +177,14 @@ test_hblocks(void)
       }
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     ret = Hnextread(aid1, 1000, DFREF_WILDCARD, DF_CURRENT);
-    CHECK(ret, FAIL, "Hnextread");
+    CHECK_VOID(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -193,11 +193,11 @@ test_hblocks(void)
       }
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, DFREF_WILDCARD, DF_START);
-    CHECK(ret, FAIL, "Hnextread");
+    CHECK_VOID(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (special)
       {
           fprintf(stderr, "ERROR: Hinquire thinks a non-special element is special\n");
@@ -212,11 +212,11 @@ test_hblocks(void)
       }
 
     ret = Hnextread(aid1, 1020, DFREF_WILDCARD, DF_CURRENT);
-    CHECK(ret, FAIL, "Hnextread");
+    CHECK_VOID(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -227,7 +227,7 @@ test_hblocks(void)
     MESSAGE(5, printf("Writing to existing element\n");
         );
     aid2 = Hstartwrite(fid, 1000, 1, 4);
-    CHECK(aid2, FAIL, "Hstartwrite");
+    CHECK_VOID(aid2, FAIL, "Hstartwrite");
 
     ret = Hwrite(aid2, 4, "ABCD");
     if (ret != 4)
@@ -245,61 +245,61 @@ test_hblocks(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Open a second id for file %s\n", TESTFILE_NAME);
         );
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
-    CHECK(fid1, FAIL, "Hopen");
+    CHECK_VOID(fid1, FAIL, "Hopen");
 
     ret = (int32)Hnewref(fid1);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Closing the files\n");
         );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     ret = Hclose(fid1);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Testing HLconvert function\n");
         );
     fid = Hopen(TESTFILE_NAME, DFACC_WRITE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ref = Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     aid = Hstartwrite(fid, HLCONVERT_TAG, ref, 5);
-    CHECK(aid, FAIL, "Hstartwrite");
+    CHECK_VOID(aid, FAIL, "Hstartwrite");
 
     ret = Hwrite(aid, 4, outbuf);
-    CHECK(ret, FAIL, "Hwrite");
+    CHECK_VOID(ret, FAIL, "Hwrite");
 
     ret = HLconvert(aid, 256, 10);
-    CHECK(ret, FAIL, "HLconvert");
+    CHECK_VOID(ret, FAIL, "HLconvert");
 
     ret = Hwrite(aid, 508, &outbuf[4]);
-    CHECK(ret, FAIL, "Hwrite");
+    CHECK_VOID(ret, FAIL, "Hwrite");
 
     ret = Hendaccess(aid);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     aid = Hstartread(fid, HLCONVERT_TAG, ref);
-    CHECK(aid, FAIL, "Hstartread");
+    CHECK_VOID(aid, FAIL, "Hstartread");
 
     ret = Hread(aid, 512, inbuf);
-    CHECK(ret, FAIL, "Hread");
+    CHECK_VOID(ret, FAIL, "Hread");
 
     ret = Hendaccess(aid);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     if (HDmemcmp(inbuf, outbuf, 512))
       {

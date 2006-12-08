@@ -234,7 +234,7 @@ test_chunks(void)
     /* Create file first */
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME); );
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
 
     /*
@@ -272,7 +272,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill,  chunk array */
     aid1 = HMCcreate(fid, 1020, 2, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
 #if 0
     /* write 16 bytes out */
@@ -287,12 +287,12 @@ test_chunks(void)
     MESSAGE(5, printf("Wrote first 16 bytes to 2-D, uint8 chunked element to file\n"); );
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 #endif
 
@@ -308,28 +308,28 @@ test_chunks(void)
     MESSAGE(5, printf("Wrote first 12 bytes to 2-D, uint8 chunked element to file\n"); );
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 2-D chunked element again for writing\n"); );
 
     /* Open file for writing last 2 chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start write access   tag,  ref */
     aid1 = Hstartwrite(fid, 1020, 2, 16);
-    CHECK(aid1, FAIL, "Hstartwrite");
+    CHECK_VOID(aid1, FAIL, "Hstartwrite");
 
     /* Try writing to last chunk in the element */
     dims[0] = 1;
     dims[1] = 1;
     ret = HMCwriteChunk(aid1, dims, cptr3);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 4th chunk(4of4 chunks) in file\n"););
 
@@ -337,31 +337,31 @@ test_chunks(void)
     dims[0] = 1;
     dims[1] = 0;
     ret = HMCwriteChunk(aid1, dims, cptr2);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 3 chunk (3of4 chunks) in file\n"););
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 2-D, uint8 chunked element again for reading \n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 2);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -382,7 +382,7 @@ test_chunks(void)
 
     /* get special info about element */
     ret = HDget_special_info(aid1, &info_block);
-    CHECK(aid1, FAIL, "HDget_special_info");
+    CHECK_VOID(aid1, FAIL, "HDget_special_info");
 
     /* check special info */
     if (info_block.ndims != chunk[0].num_dims /* 2-D */)
@@ -439,11 +439,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* 
        2. Now create a new chunked 2-D element with same parameters
@@ -453,7 +453,7 @@ test_chunks(void)
 
     /* Open file for writing again */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Test 2. Create another new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
@@ -465,13 +465,13 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 3, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* Try writing to 2 chunk in the element */
     dims[0] = 1;
     dims[1] = 0;
     ret = HMCwriteChunk(aid1, dims, cptr2);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 3 chunk (3of4) in file\n"); );
 
@@ -479,33 +479,33 @@ test_chunks(void)
     dims[0] = 0;
     dims[1] = 1;
     ret = HMCwriteChunk(aid1, dims, cptr1);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     MESSAGE(5, printf("Wrote to 2nd chunk (2of4 chunks) in file\n"); );
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* Now reopen and read back 16 bytes */
     MESSAGE(5, printf("Open 2-D, uint8 chunked element again for reading \n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 3);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -549,11 +549,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* 
@@ -582,7 +582,7 @@ test_chunks(void)
 
     /* Open file for writing odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Test 3. Create another new element as a 2-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
@@ -594,7 +594,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 5, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write 16 bytes out */
     ret = Hwrite(aid1, 16, outbuf);
@@ -609,27 +609,27 @@ test_chunks(void)
     MESSAGE(5, printf("Wrote to 4of4 chunks (16 bytes) in file\n"););
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 2-D, uint8 chunked element again for reading\n"); );
 
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 5);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -673,11 +673,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* 
@@ -710,7 +710,7 @@ test_chunks(void)
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 4. Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,(int)chunk[0].pdims[0].dim_length, 
@@ -724,7 +724,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 6, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write only 112 bytes out */
     ret = Hwrite(aid1, 112, outbuf);
@@ -739,27 +739,27 @@ test_chunks(void)
     MESSAGE(5, printf("Wrote 112of192 bytes to 3-D, uint8 chunked element \n"); );
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
             );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 3-D, uint8 chunked element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 6);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -781,7 +781,7 @@ test_chunks(void)
 
     /* get special info about element */
     ret = HDget_special_info(aid1, &info_block);
-    CHECK(aid1, FAIL, "HDget_special_info");
+    CHECK_VOID(aid1, FAIL, "HDget_special_info");
 
     /* check special info */
     if (info_block.ndims != chunk[0].num_dims /* 2-D */)
@@ -840,11 +840,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* 
@@ -881,7 +881,7 @@ test_chunks(void)
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Test 5. Create another new element as a 3-D, uint8 chunked element(192bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
@@ -896,7 +896,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 7, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* Set max chunks to cache to 3x4 = 12 chunks */
     MESSAGE(5, printf("Set max # of chunks to cache for chunked element to 12 \n"); );
@@ -917,26 +917,26 @@ test_chunks(void)
 
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 3-D, uint8 chunked element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 7);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -1004,11 +1004,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* 
@@ -1053,7 +1053,7 @@ test_chunks(void)
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 6. Create another new element as a 3-D, uint8 chunked element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,(int)chunk[0].pdims[0].dim_length, 
@@ -1067,11 +1067,11 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 12, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid2 = HMCcreate(fid, 1020, 18, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write 24 bytes out */
     ret = Hwrite(aid2, 24, u8_data);
@@ -1090,68 +1090,68 @@ test_chunks(void)
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk1);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 1;
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk4);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk2);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 1;
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk5);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 0;
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk3);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 1;
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk6);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* end access */
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 3-D, uint8 chunked element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 12);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* start read access   tag,  ref */
     aid2 = Hstartread(fid, 1020, 18);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -1173,7 +1173,7 @@ test_chunks(void)
 
     /* get special info about element */
     ret = HDget_special_info(aid1, &info_block);
-    CHECK(aid1, FAIL, "HDget_special_info");
+    CHECK_VOID(aid1, FAIL, "HDget_special_info");
 
     /* check special info */
     if (info_block.ndims != chunk[0].num_dims /* 2-D */)
@@ -1243,7 +1243,7 @@ test_chunks(void)
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -1265,7 +1265,7 @@ test_chunks(void)
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -1287,7 +1287,7 @@ test_chunks(void)
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -1309,7 +1309,7 @@ test_chunks(void)
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -1331,7 +1331,7 @@ test_chunks(void)
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -1353,7 +1353,7 @@ test_chunks(void)
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -1373,15 +1373,15 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* end access and close file */
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* The following tests will work if Number type conversion
@@ -1428,7 +1428,7 @@ test_chunks(void)
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 7. Create another new element as a 3-D, uint16 chunked element(48 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,(int)chunk[0].pdims[0].dim_length, 
@@ -1442,7 +1442,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 14, 1, fill_val_len, &fill_val_u16, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write 48 bytes out */
     ret = Hwrite(aid1, 48, u16_data);
@@ -1458,21 +1458,21 @@ test_chunks(void)
 
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
             );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 3-D, uint16 chunked element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 14);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* read back in buffer  */
     ret = Hread(aid1, 48, inbuf_u16);
@@ -1507,11 +1507,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* 
@@ -1553,7 +1553,7 @@ test_chunks(void)
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Test 8. Create another new element as a 3-D, float32 chunked element(96 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
@@ -1568,7 +1568,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 15, 1, fill_val_len, &fill_val_f32, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     if (aid1 == FAIL)
       {
@@ -1591,21 +1591,21 @@ test_chunks(void)
 
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
             );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 3-D, float32 chunked element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 15);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* read back in buffer  */
     ret = Hread(aid1, 96, inbuf_f32);
@@ -1641,11 +1641,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 #endif /*  !(defined(UNICOS) || defined(_UNICOS) || defined(_CRAYMPP)) */
 
@@ -1694,7 +1694,7 @@ test_chunks(void)
 
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Test 9. Create another new element as a 4-D, uint8 chunked element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
@@ -1712,7 +1712,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 9, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write 5000 bytes out */
     ret = Hwrite(aid1, 5000, outbuf);
@@ -1727,27 +1727,27 @@ test_chunks(void)
     MESSAGE(5, printf("Wrote 5000of10000 bytes to 4-D chunked element \n"); );
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Open 4-D chunked element again for reading\n"); );
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 9);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -1822,11 +1822,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 #ifdef BIG_TEST
 
@@ -1857,12 +1857,12 @@ test_chunks(void)
 #if 0
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 #endif
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 10, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     for (j = 0; j < 12000; j++)
       {
@@ -1879,27 +1879,27 @@ test_chunks(void)
 
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
             );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 10);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -1983,12 +1983,12 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n");
             );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 #endif /* BIG_TEST */
 
@@ -2033,7 +2033,7 @@ test_chunks(void)
 
     /* Open file for writing odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     MESSAGE(5, printf("Test 11. Create another new element as a 2-D, uint8 chunked, RLE Compressed element\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
@@ -2045,7 +2045,7 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 20, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write 16 bytes out */
     ret = Hwrite(aid1, 16, outbuf);
@@ -2060,27 +2060,27 @@ test_chunks(void)
     MESSAGE(5, printf("Wrote to 4of4 chunks (16 bytes) in file\n"););
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 2-D, uint8 chunked, RLE Compressed element again for reading\n"); );
 
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 20);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -2124,11 +2124,11 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"); );
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* 
        12. Now create 3-D chunked, Compressed element with no partial chunks.
@@ -2176,7 +2176,7 @@ test_chunks(void)
 
     /* Open file for writing last odd size chunks now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
     MESSAGE(5, printf("Test 12. Create another new element as a 3-D, uint8 chunked, GZIP Compressed element(192 bytes)\n"););
     MESSAGE(5, printf(" dim_length[%d]=%d, chunk_length[%d]=%d \n",
                       0,(int)chunk[0].pdims[0].dim_length, 
@@ -2190,11 +2190,11 @@ test_chunks(void)
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid1 = HMCcreate(fid, 1020, 21, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* Create element     tag, ref,  nlevels, fill_len, fill, chunk array */
     aid2 = HMCcreate(fid, 1020, 22, 1, fill_val_len, &fill_val_u8, (HCHUNK_DEF *)chunk);
-    CHECK(aid1, FAIL, "HMCcreate");
+    CHECK_VOID(aid1, FAIL, "HMCcreate");
 
     /* write 24 bytes out */
     ret = Hwrite(aid2, 24, u8_data);
@@ -2213,68 +2213,68 @@ test_chunks(void)
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk1);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 1;
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk4);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk2);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 1;
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk5);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 0;
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk3);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     dims[0] = 1;
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCwriteChunk(aid1, dims, chunk6);
-    CHECK(ret, FAIL, "HMCwriteChunk");
+    CHECK_VOID(ret, FAIL, "HMCwriteChunk");
 
     /* end access */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* end access */
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the files\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Open 3-D, uint8 chunked, GZIP Compressed element again for reading\n"); );
     /* Open file for reading now */
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* start read access   tag,  ref */
     aid1 = Hstartread(fid, 1020, 21);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* start read access   tag,  ref */
     aid2 = Hstartread(fid, 1020, 22);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     /* inquire about element */
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
 
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
     if (!special)
       {
           fprintf(stderr, "ERROR: Hinquire does not think element is special line %d\n",
@@ -2296,7 +2296,7 @@ test_chunks(void)
 
     /* get special info about element */
     ret = HDget_special_info(aid1, &info_block);
-    CHECK(aid1, FAIL, "HDget_special_info");
+    CHECK_VOID(aid1, FAIL, "HDget_special_info");
 
     /* check special info */
     if (info_block.ndims != chunk[0].num_dims /* 2-D */)
@@ -2366,7 +2366,7 @@ test_chunks(void)
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -2388,7 +2388,7 @@ test_chunks(void)
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -2410,7 +2410,7 @@ test_chunks(void)
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -2432,7 +2432,7 @@ test_chunks(void)
     dims[1] = 0;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -2454,7 +2454,7 @@ test_chunks(void)
     dims[1] = 1;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -2476,7 +2476,7 @@ test_chunks(void)
     dims[1] = 2;
     dims[2] = 0;
     ret = HMCreadChunk(aid2, dims, inbuf);
-    CHECK(ret, FAIL, "HMCreadChunk");
+    CHECK_VOID(ret, FAIL, "HMCreadChunk");
     if (ret != 4)
       {
           fprintf(stderr, "ERROR: HMCreadChunk returned the wrong length: %d\n", (int) ret);
@@ -2496,15 +2496,15 @@ test_chunks(void)
 
     /* end access and close file */
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* end access and close file */
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
 
   done:

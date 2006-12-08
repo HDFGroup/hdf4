@@ -134,17 +134,17 @@ test_conv(void)
         /* allocate arrays */
         src_int8=(int8 *)HDmalloc(TEST_SIZE*sizeof(int8));
         if(src_int8==NULL) {
-        	CHECK(src_int8,NULL,"HDmalloc");
+        	CHECK_VOID(src_int8,NULL,"HDmalloc");
         	return;
           } /* end if */
         dst_int8=(int8 *)HDmalloc(TEST_SIZE*sizeof(int8));
         if(dst_int8==NULL) {
-        	CHECK(dst_int8,NULL,"HDmalloc");
+        	CHECK_VOID(dst_int8,NULL,"HDmalloc");
         	return;
           } /* end if */
         dst2_int8=(int8 *)HDmalloc(TEST_SIZE*sizeof(int8));
         if(dst2_int8==NULL) {
-            CHECK(dst2_int8,NULL,"HDmalloc");
+            CHECK_VOID(dst2_int8,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -205,17 +205,17 @@ test_conv(void)
         MESSAGE(6,printf("seeding %s uint8 array\n",test_name[t]););
         src_uint8=(uint8 *)HDmalloc(TEST_SIZE*sizeof(uint8));
         if(src_uint8==NULL) {
-            CHECK(src_uint8,NULL,"HDmalloc");
+            CHECK_VOID(src_uint8,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_uint8=(uint8 *)HDmalloc(TEST_SIZE*sizeof(uint8));
         if(dst_uint8==NULL) {
-            CHECK(dst_uint8,NULL,"HDmalloc");
+            CHECK_VOID(dst_uint8,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_uint8=(uint8 *)HDmalloc(TEST_SIZE*sizeof(uint8));
         if(dst2_uint8==NULL) {
-            CHECK(dst2_uint8,NULL,"HDmalloc");
+            CHECK_VOID(dst2_uint8,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -277,17 +277,17 @@ test_conv(void)
         MESSAGE(6,printf("seeding %s int16 array\n",test_name[t]););
         src_int16=(int16 *)HDmalloc(TEST_SIZE*sizeof(int16));
         if(src_int16==NULL) {
-            CHECK(src_int16,NULL,"HDmalloc");
+            CHECK_VOID(src_int16,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_int16=(int16 *)HDmalloc(TEST_SIZE*sizeof(int16));
         if(dst_int16==NULL) {
-            CHECK(dst_int16,NULL,"HDmalloc");
+            CHECK_VOID(dst_int16,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_int16=(int16 *)HDmalloc(TEST_SIZE*sizeof(int16));
         if(dst2_int16==NULL) {
-            CHECK(dst2_int16,NULL,"HDmalloc");
+            CHECK_VOID(dst2_int16,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -348,17 +348,17 @@ test_conv(void)
         MESSAGE(6,printf("seeding %s uint16 array\n",test_name[t]););
         src_uint16=(uint16 *)HDmalloc(TEST_SIZE*sizeof(uint16));
         if(src_uint16==NULL) {
-            CHECK(src_uint16,NULL,"HDmalloc");
+            CHECK_VOID(src_uint16,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_uint16=(uint16 *)HDmalloc(TEST_SIZE*sizeof(uint16));
         if(dst_uint16==NULL) {
-            CHECK(dst_uint16,NULL,"HDmalloc");
+            CHECK_VOID(dst_uint16,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_uint16=(uint16 *)HDmalloc(TEST_SIZE*sizeof(uint16));
         if(dst2_uint16==NULL) {
-            CHECK(dst2_uint16,NULL,"HDmalloc");
+            CHECK_VOID(dst2_uint16,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -419,17 +419,17 @@ test_conv(void)
         MESSAGE(6,printf("seeding %s int32 array\n",test_name[t]););
         src_int32=(int32 *)HDmalloc(TEST_SIZE*sizeof(int32));
         if(src_int32==NULL) {
-            CHECK(src_int32,NULL,"HDmalloc");
+            CHECK_VOID(src_int32,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_int32=(int32 *)HDmalloc(TEST_SIZE*sizeof(int32));
         if(dst_int32==NULL) {
-            CHECK(dst_int32,NULL,"HDmalloc");
+            CHECK_VOID(dst_int32,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_int32=(int32 *)HDmalloc(TEST_SIZE*sizeof(int32));
         if(dst2_int32==NULL) {
-            CHECK(dst2_int32,NULL,"HDmalloc");
+            CHECK_VOID(dst2_int32,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -490,17 +490,17 @@ test_conv(void)
         MESSAGE(6,printf("seeding %s uint32 array\n",test_name[t]););
         src_uint32=(uint32 *)HDmalloc(TEST_SIZE*sizeof(uint32));
         if(src_uint32==NULL) {
-            CHECK(src_uint32,NULL,"HDmalloc");
+            CHECK_VOID(src_uint32,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_uint32=(uint32 *)HDmalloc(TEST_SIZE*sizeof(uint32));
         if(dst_uint32==NULL) {
-            CHECK(dst_uint32,NULL,"HDmalloc");
+            CHECK_VOID(dst_uint32,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_uint32=(uint32 *)HDmalloc(TEST_SIZE*sizeof(uint32));
         if(dst2_uint32==NULL) {
-            CHECK(dst2_uint32,NULL,"HDmalloc");
+            CHECK_VOID(dst2_uint32,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -561,17 +561,17 @@ test_conv(void)
         MESSAGE(6,printf("seeding %s float32 array\n",test_name[t]););
         src_float32=(float32 *)HDmalloc(TEST_SIZE*sizeof(float32));
         if(src_float32==NULL) {
-            CHECK(src_float32,NULL,"HDmalloc");
+            CHECK_VOID(src_float32,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_float32=(float32 *)HDmalloc(TEST_SIZE*sizeof(float32));
         if(dst_float32==NULL) {
-            CHECK(dst_float32,NULL,"HDmalloc");
+            CHECK_VOID(dst_float32,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_float32=(float32 *)HDmalloc(TEST_SIZE*sizeof(float32));
         if(dst2_float32==NULL) {
-            CHECK(dst2_float32,NULL,"HDmalloc");
+            CHECK_VOID(dst2_float32,NULL,"HDmalloc");
             return;
           } /* end if */
 
@@ -742,17 +742,17 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float32[i],i,dst_float32
         MESSAGE(6,printf("seeding %s float64 array\n",test_name[t]););
         src_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
         if(src_float64==NULL) {
-            CHECK(src_float64,NULL,"HDmalloc");
+            CHECK_VOID(src_float64,NULL,"HDmalloc");
             return;
           } /* end if */
         dst_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
         if(dst_float64==NULL) {
-            CHECK(dst_float64,NULL,"HDmalloc");
+            CHECK_VOID(dst_float64,NULL,"HDmalloc");
             return;
           } /* end if */
         dst2_float64=(float64 *)HDmalloc(TEST_SIZE*sizeof(float64));
         if(dst2_float64==NULL) {
-            CHECK(dst2_float64,NULL,"HDmalloc");
+            CHECK_VOID(dst2_float64,NULL,"HDmalloc");
             return;
           } /* end if */
 

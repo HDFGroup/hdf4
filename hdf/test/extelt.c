@@ -53,7 +53,7 @@ test_hextelt(void)
         );
 
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* Write first object to header file */
     MESSAGE(5, printf("Writing object(%lu bytes) into base file\n",
@@ -62,16 +62,16 @@ test_hextelt(void)
     ret = Hputelement(fid, (uint16) 1000, (uint16) 1,
                       (const uint8 *) STRING2,
                       (int32)HDstrlen(STRING2) + 1);
-    CHECK(ret, FAIL, "Hputelement");
+    CHECK_VOID(ret, FAIL, "Hputelement");
 
     /* Promote the above object to an external object */
     MESSAGE(5, printf("Promoting above object to external element in file #1\n");
             );
     aid1 = HXcreate(fid, 1000, 1, "t1.hdf", (int32) 0, (int32) 0);
-    CHECK(aid1, FAIL, "HXcreate");
+    CHECK_VOID(aid1, FAIL, "HXcreate");
 
     ret = Hseek(aid1, (int32)HDstrlen("element 1000 1") + 1, DF_START);
-    CHECK(ret, FAIL, "Hseek");
+    CHECK_VOID(ret, FAIL, "Hseek");
 
     /* Now verify that the new promoted object can be written to */
     MESSAGE(5, printf("Writing to promoted object now in file #1 \n");
@@ -86,27 +86,27 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Create a new external object of size 2000 bytes in a seperate file */
     MESSAGE(5, printf("Creating an external element in file #2\n");
         );
     aid1 = HXcreate(fid, 1000, 4, "t2.hdf", (int32) 0, (int32) 0);
-    CHECK(aid1, FAIL, "HXcreate");
+    CHECK_VOID(aid1, FAIL, "HXcreate");
 
     MESSAGE(5, printf("Writing 2000 bytes to file #2\n");
         );
     ret = Hwrite(aid1, 2000, outbuf);
-    CHECK(ret, FAIL, "Hwrite");
+    CHECK_VOID(ret, FAIL, "Hwrite");
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Create a new external string object  in a seperate file */
     MESSAGE(5, printf("Creating an external element in file #3\n");
         );
     aid1 = HXcreate(fid, 1000, 2, "t3.hdf", (int32) 0, (int32) 0);
-    CHECK(aid1, FAIL, "HXcreate");
+    CHECK_VOID(aid1, FAIL, "HXcreate");
 
     MESSAGE(5, printf("Writing string '%s'(%lu bytes) to file #3\n", 
                       STRING, (unsigned long)HDstrlen(STRING));
@@ -120,22 +120,22 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Create a new external object that points to part of an existing element */
     MESSAGE(5, printf("Creating an overlapping element that already exists in file #3\n");
         );
     aid2 = HXcreate(fid, 1001, 2, "t3.hdf", (int32) 8, (int32) 4);
-    CHECK(aid2, FAIL, "HXcreate");
+    CHECK_VOID(aid2, FAIL, "HXcreate");
 
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Create a new external object of size 4096 bytes */
     MESSAGE(5, printf("Creating an external element in file #4\n");
         );
     aid1 = HXcreate(fid, 1020, 2, "t4.hdf", (int32) 0, (int32) 0);
-    CHECK(aid1, FAIL, "HXcreate");
+    CHECK_VOID(aid1, FAIL, "HXcreate");
 
     MESSAGE(5, printf("Writing %d bytes to file #4\n", BUF_SIZE);
         );
@@ -148,27 +148,27 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Close the file */
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* Now re-open for reading and verifying the elements */
     MESSAGE(5, printf("Closing and re-opening base file %s\n", TESTFILE_NAME);
         );
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(ret, FAIL, "Hopen");
+    CHECK_VOID(ret, FAIL, "Hopen");
 
     /* Verify element in file #1 */
     aid1 = Hstartread(fid, 1000, 1);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     MESSAGE(5, printf("Inquiring about external element in file #1\n");
         );
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     for (i = 0; i < BUF_SIZE; i++)
         inbuf[i] = '\0';
@@ -194,17 +194,17 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Verify element in file #2 */
     aid1 = Hstartread(fid, 1000, 4);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     MESSAGE(5, printf("Inquiring about external element in file #2\n");
         );
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     for (i = 0; i < BUF_SIZE; i++)
         inbuf[i] = 0;
@@ -248,17 +248,17 @@ test_hextelt(void)
         fprintf(stderr,"Error: Wrong data in inbuf[] from external elment in file #2\n");
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Verify overlapping element in file #3 */
     aid1 = Hstartread(fid, 1001, 2);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     MESSAGE(5, printf("Inquiring about overlaping external element in file #3\n");
         );
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     for (i = 0; i < BUF_SIZE; i++)
         inbuf[i] = '\0';
@@ -296,17 +296,17 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Verify the whole element in file #3 */
     aid1 = Hstartread(fid, 1000, 2);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     MESSAGE(5, printf("Inquiring about external element in file #3\n");
         );
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     for (i = 0; i < BUF_SIZE; i++)
         inbuf[i] = '\0';
@@ -332,17 +332,17 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Verify element in file #4 */
     aid1 = Hstartread(fid, 1020, 2);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     MESSAGE(5, printf("Inquiring about access element in file #4\n");
         );
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     for (i = 0; i < BUF_SIZE; i++)
         inbuf[i] = 0;
@@ -377,13 +377,13 @@ test_hextelt(void)
         fprintf(stderr,"Error: Wrong data in inbuf[]  from external elment in file #4\n");
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Write to the first element in file #1 again */
     MESSAGE(5, printf("Now writing again to external element in file #1\n");
         );
     aid2 = Hstartwrite(fid, 1000, 1, 4);
-    CHECK(aid2, FAIL, "Hstartwrite");
+    CHECK_VOID(aid2, FAIL, "Hstartwrite");
 
     ret = Hwrite(aid2, 4, "ABCD");
     if (ret != 4)
@@ -394,22 +394,22 @@ test_hextelt(void)
       }
 
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     /* Second file open rest for reading */
     fid1 = Hopen(TESTFILE_NAME, DFACC_READ, 0);
-    CHECK(fid1, FAIL, "Hopen");
+    CHECK_VOID(fid1, FAIL, "Hopen");
 
     ret = (int32)Hnewref(fid1);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     /* Close first open of file */
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* Close second open of file */
     ret = Hclose(fid1);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /*==============================*/
     /* Test External Path functions */
@@ -422,47 +422,47 @@ test_hextelt(void)
                       TESTFILE_NAME1);
         );
     fid = Hopen(TESTFILE_NAME1, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = HXsetcreatedir("testdir");
-    CHECK(ret, FAIL, "HXsetcreatedir");
+    CHECK_VOID(ret, FAIL, "HXsetcreatedir");
    
     MESSAGE(5, printf("Creating an external element in file testdir/t5.hdf\n");
         );
     aid1 = HXcreate(fid, 1000, 5, "t5.hdf", (int32) 0, (int32) 0);
-    CHECK(aid1, FAIL, "HXcreate");
+    CHECK_VOID(aid1, FAIL, "HXcreate");
 
     MESSAGE(5, printf("Writing 2000 bytes to file t5.hdf\n");
         );
     ret = Hwrite(aid1, 2000, outbuf);
-    CHECK(ret, FAIL, "Hwrite");
+    CHECK_VOID(ret, FAIL, "Hwrite");
 
     MESSAGE(5, printf("Ending access to element and closing header file %s\n", 
                       TESTFILE_NAME1);
         );
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Re-open file and try read to external element.  Should fail the first time.\n");
         );
 
     fid = Hopen(TESTFILE_NAME1, DFACC_READ, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
     VERIFY(ret, FAIL, "Hgetelement");
 
     ret = HXsetdir("nosuchdir|testdir");
-    CHECK(ret, FAIL, "HXsetdir");
+    CHECK_VOID(ret, FAIL, "HXsetdir");
 
     MESSAGE(5, printf("Try read it again.  Should not fail this time.\n");
         );
 
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
-    CHECK(ret, FAIL, "Hgetelement");
+    CHECK_VOID(ret, FAIL, "Hgetelement");
 
     errflag  = 0;
     for (i = 0; i < ret; i++)
@@ -481,13 +481,13 @@ test_hextelt(void)
         fprintf(stderr,"Error: Wrong data in inbuf[]  from external elment in file #5\n" );
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* unset the external paths directory variables */
     ret = HXsetcreatedir(NULL);
-    CHECK(ret, FAIL, "HXsetcreatedir");
+    CHECK_VOID(ret, FAIL, "HXsetcreatedir");
     ret = HXsetdir(NULL);
-    CHECK(ret, FAIL, "HXsetdir");
+    CHECK_VOID(ret, FAIL, "HXsetdir");
 
     num_errs += errors;     /* increment global error count */
 }

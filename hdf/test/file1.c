@@ -135,7 +135,7 @@ test_ref_limits(void)
     MESSAGE(7, printf("Writing out data\n"););
     /* Write out MAX_REF number of data items for each tag */
     fid=Hopen(TESTREF_NAME, DFACC_CREATE, 512);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     if(fid!=FAIL)
       {
@@ -149,14 +149,14 @@ test_ref_limits(void)
 
                 /* Write out data to tag1 */
                 ref=Htagnewref(fid,TAG1);
-                CHECK(ref, 0, "Htagnewref");
+                CHECK_VOID(ref, 0, "Htagnewref");
                 aid=Hstartwrite(fid,TAG1,ref,sizeof(int32));
-                CHECK(aid, FAIL, "Hstartwrite");
+                CHECK_VOID(aid, FAIL, "Hstartwrite");
                 data=(int32)ref;
                 ret=Hwrite(aid,sizeof(int32),&data);
-                CHECK(ret, FAIL, "Hwrite");
+                CHECK_VOID(ret, FAIL, "Hwrite");
                 ret=Hendaccess(aid);
-                CHECK(ret, FAIL, "Hendaccess");
+                CHECK_VOID(ret, FAIL, "Hendaccess");
 
                 /* lets be a little smatter here */
                 if (ret == FAIL)
@@ -164,14 +164,14 @@ test_ref_limits(void)
 
                 /* Write out data to tag2 */
                 ref=Htagnewref(fid,TAG2);
-                CHECK(ref, 0, "Htagnewref");
+                CHECK_VOID(ref, 0, "Htagnewref");
                 aid=Hstartwrite(fid,TAG2,ref,sizeof(int32));
-                CHECK(aid, FAIL, "Hstartwrite");
+                CHECK_VOID(aid, FAIL, "Hstartwrite");
                 data=ref<<16;
                 ret=Hwrite(aid,sizeof(int32),&data);
-                CHECK(ret, FAIL, "Hwrite");
+                CHECK_VOID(ret, FAIL, "Hwrite");
                 ret=Hendaccess(aid);
-                CHECK(ret, FAIL, "Hendaccess");
+                CHECK_VOID(ret, FAIL, "Hendaccess");
                 /* lets be a little smatter here */
                 if (ret == FAIL)
                     break;
@@ -183,7 +183,7 @@ test_ref_limits(void)
         
         /* Check the data written earlier */
         fid=Hopen(TESTREF_NAME, DFACC_READ, 0);
-        CHECK(fid, FAIL, "Hopen");
+        CHECK_VOID(fid, FAIL, "Hopen");
 
         if(fid!=FAIL)
           {
@@ -194,44 +194,44 @@ test_ref_limits(void)
 
               /* Read in data from tag1 */
               aid1=Hstartread(fid,TAG1,DFREF_WILDCARD);
-              CHECK(aid1, FAIL, "Hstartread");
+              CHECK_VOID(aid1, FAIL, "Hstartread");
               ret=Hread(aid1,sizeof(int32),&data);
-              CHECK(ret, FAIL, "Hread");
+              CHECK_VOID(ret, FAIL, "Hread");
               ret=Hinquire(aid1,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-              CHECK(ret, FAIL, "Hinquire");
+              CHECK_VOID(ret, FAIL, "Hinquire");
               VERIFY((uint16)data,ref,"Hread");
 
               /* Read in data from tag2 */
               aid2=Hstartread(fid,TAG2,DFREF_WILDCARD);
-              CHECK(aid2, FAIL, "Hstartread");
+              CHECK_VOID(aid2, FAIL, "Hstartread");
               ret=Hread(aid2,sizeof(int32),&data);
-              CHECK(ret, FAIL, "Hread");
+              CHECK_VOID(ret, FAIL, "Hread");
               ret=Hinquire(aid2,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-              CHECK(ret, FAIL, "Hinquire");
+              CHECK_VOID(ret, FAIL, "Hinquire");
               VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
 
               while(Hnextread(aid1,TAG1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
                 {
                     ret=Hread(aid1,sizeof(int32),&data);
-                    CHECK(ret, FAIL, "Hread");
+                    CHECK_VOID(ret, FAIL, "Hread");
                     ret=Hinquire(aid1,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-                    CHECK(ret, FAIL, "Hinquire");
+                    CHECK_VOID(ret, FAIL, "Hinquire");
                     VERIFY((uint16)data,ref,"Hread");
 
                   if(Hnextread(aid2,TAG2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
                     {
                         ret=Hread(aid2,sizeof(int32),&data);
-                        CHECK(ret, FAIL, "Hread");
+                        CHECK_VOID(ret, FAIL, "Hread");
                         ret=Hinquire(aid2,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
-                        CHECK(ret, FAIL, "Hinquire");
+                        CHECK_VOID(ret, FAIL, "Hinquire");
                         VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
                     } /* end while */
                 } /* end while */
               ret=Hendaccess(aid1);
-              CHECK(ret, FAIL, "Hendaccess");
+              CHECK_VOID(ret, FAIL, "Hendaccess");
 
               ret=Hendaccess(aid2);
-              CHECK(ret, FAIL, "Hendaccess");
+              CHECK_VOID(ret, FAIL, "Hendaccess");
 
               Hclose(fid);
           } /* end if */

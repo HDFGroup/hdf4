@@ -200,7 +200,7 @@ test_sdmms(void)
        when we don't store calibration info we don't get any
        info returned */
     ret = DFSDgetcal(&ical1, &ical2, &ical3, &ical4, &ical5);
-    CHECK(ret, SUCCEED, "DFSDgetcal");
+    CHECK_VOID(ret, SUCCEED, "DFSDgetcal");
 
     ret = DFSDgetdata("ntcheck.hdf", rank, dims, (VOIDP) tui8);
     RESULT("DFSDgetdata");

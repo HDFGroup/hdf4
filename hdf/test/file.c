@@ -73,29 +73,29 @@ test_hfile(void)
     MESSAGE(5, printf("Creating a file %s\n", TESTFILE_NAME);
         );
     fid = Hopen(TESTFILE_NAME, DFACC_CREATE, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret_bool = (intn) Hishdf(TESTFILE_NAME);
-    CHECK(ret_bool, FALSE, "Hishdf");
+    CHECK_VOID(ret_bool, FALSE, "Hishdf");
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Reading / Writing to file\n");
         );
     ret = Hputelement(fid, (uint16) 100, 1,
                   (const uint8 *) "testing 100 1", (int32)HDstrlen("testing 100 1") + 1);
-    CHECK(ret, FAIL, "Hputelement");
+    CHECK_VOID(ret, FAIL, "Hputelement");
 
     ret = Hputelement(fid, (uint16) 100, (uint16) 4, outbuf, 2000);
-    CHECK(ret, FAIL, "Hputelement");
+    CHECK_VOID(ret, FAIL, "Hputelement");
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     ret = Hputelement(fid, (uint16) 103, (uint16) 2,
                   (const uint8 *) "element 103 2", (int32)HDstrlen("element 103 2") + 1);
-    CHECK(ret, FAIL, "Hputlement");
+    CHECK_VOID(ret, FAIL, "Hputlement");
 
     ret = Hgetelement(fid, (uint16) 100, (uint16) 4, inbuf);
     if (ret != 2000)
@@ -112,25 +112,25 @@ test_hfile(void)
       }
 
     ret = Hputelement(fid, 102, 2, outbuf, BUF_SIZE);
-    CHECK(ret, FAIL, "Hputlement");
+    CHECK_VOID(ret, FAIL, "Hputlement");
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     MESSAGE(5, printf("Closing and re-opening file %s\n", TESTFILE_NAME);
         );
     fid = Hopen(TESTFILE_NAME, DFACC_RDWR, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     aid1 = Hstartread(fid, 100, 1);
-    CHECK(aid1, FAIL, "Hstartread");
+    CHECK_VOID(aid1, FAIL, "Hstartread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     MESSAGE(5, printf("Verifying data\n\n");
         );
@@ -150,16 +150,16 @@ test_hfile(void)
       }
 
     ret = (int32)Hnewref(fid);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     MESSAGE(5, printf("Testing a number of searching schemes\n");
         );
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
-    CHECK(ret, FAIL, "Hnextread");
+    CHECK_VOID(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     ret = Hnextread(aid1, 100, DFREF_WILDCARD, DF_CURRENT);
     if (ret != FAIL)
@@ -170,11 +170,11 @@ test_hfile(void)
       }
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, DFREF_WILDCARD, DF_START);
-    CHECK(ret, FAIL, "Hnextread");
+    CHECK_VOID(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, 3, DF_CURRENT);
     if (ret != FAIL)
@@ -185,11 +185,11 @@ test_hfile(void)
       }
 
     ret = Hnextread(aid1, DFTAG_WILDCARD, 2, DF_CURRENT);
-    CHECK(ret, FAIL, "Hnextread");
+    CHECK_VOID(ret, FAIL, "Hnextread");
 
     ret = Hinquire(aid1, &fileid, &tag, &ref, &length, &offset, &posn,
                    &acc_mode, &special);
-    CHECK(ret, FAIL, "Hinquire");
+    CHECK_VOID(ret, FAIL, "Hinquire");
 
     aid2 = Hstartwrite(fid, 100, 1, 4);
     if (aid2 == FAIL)
@@ -206,10 +206,10 @@ test_hfile(void)
       }
 
     ret = Hendaccess(aid1);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     ret = Hendaccess(aid2);
-    CHECK(ret, FAIL, "Hendaccess");
+    CHECK_VOID(ret, FAIL, "Hendaccess");
 
     MESSAGE(5, printf("Attempting to gain multiple access to file (is allowed)\n");
         );
@@ -221,21 +221,21 @@ test_hfile(void)
       }
 
     ret = (int32)Hnewref(fid1);
-    CHECK(ret, FAIL, "Hnewref");
+    CHECK_VOID(ret, FAIL, "Hnewref");
 
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     ret = Hclose(fid1);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     ret_bool = (intn) Hishdf(TESTFILE_NAME);
-    CHECK(ret_bool, FALSE, "Hishdf");
+    CHECK_VOID(ret_bool, FALSE, "Hishdf");
 
     ret_bool = (intn) Hishdf(__FILE__);
-    CHECK(ret_bool, TRUE, "Hishdf");
+    CHECK_VOID(ret_bool, TRUE, "Hishdf");
 
     ret_bool = (intn) Hishdf("qqqqqqqq.qqq");   /* I sure hope it isn't there */
-    CHECK(ret, TRUE, "Hishdf");
+    CHECK_VOID(ret, TRUE, "Hishdf");
 
 }

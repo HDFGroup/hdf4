@@ -360,7 +360,7 @@ test_buffer(void)
 
     /* open the HDF file */
     fid = Hopen(TESTFILE_NAME, DFACC_ALL, 0);
-    CHECK(fid, FAIL, "Hopen");
+    CHECK_VOID(fid, FAIL, "Hopen");
 
     /* Cycle through the different testing element types */
     /* Performing timings on each type of buffer and record results for output */
@@ -369,29 +369,29 @@ test_buffer(void)
       {
         /* Get a new reference number */
         ref_num=Htagnewref(fid,BUFF_TAG);
-        CHECK(ref_num, 0, "Htagnewref");
+        CHECK_VOID(ref_num, 0, "Htagnewref");
 
         /* Create the data element to perform the tests on */
         switch(test_num) {
             case 0:     /* create plain data element */
                 aid=Hstartaccess(fid,BUFF_TAG,ref_num,DFACC_RDWR);
-                CHECK(aid, FAIL, "Hstartaccess");
+                CHECK_VOID(aid, FAIL, "Hstartaccess");
                 break;
 
             case 1:     /* create external data element */
                 aid=HXcreate(fid,BUFF_TAG,ref_num,EXTFILE_NAME,0,ELEMSIZE);
-                CHECK(aid, FAIL, "HXcreate");
+                CHECK_VOID(aid, FAIL, "HXcreate");
                 break;
 
             case 2:     /* create compressed data element */
                 c_info.deflate.level=9;
                 aid=HCcreate(fid,BUFF_TAG,ref_num,COMP_MODEL_STDIO,&m_info,COMP_CODE_DEFLATE,&c_info);
-                CHECK(aid, FAIL, "HCcreate");
+                CHECK_VOID(aid, FAIL, "HCcreate");
                 break;
 
             case 3:     /* create linked-block data element */
                 aid=HLcreate(fid,BUFF_TAG,ref_num,HDF_APPENDABLE_BLOCK_LEN,HDF_APPENDABLE_BLOCK_NUM);
-                CHECK(aid, FAIL, "HLcreate");
+                CHECK_VOID(aid, FAIL, "HLcreate");
                 break;
 
         } /* end switch */
@@ -409,7 +409,7 @@ test_buffer(void)
 
         /* Convert element to a buffered element */
         ret=HBconvert(aid);
-        CHECK(ret, FAIL, "HBconvert");
+        CHECK_VOID(ret, FAIL, "HBconvert");
 
         /* Perform read timing tests on buffered data element */
         read_time[test_num][1]=read_test(aid);
@@ -419,7 +419,7 @@ test_buffer(void)
 
         /* Close data element */
         ret=Hendaccess(aid);
-        CHECK(ret, FAIL, "Hendaccess");
+        CHECK_VOID(ret, FAIL, "Hendaccess");
 
         MESSAGE(6, {
             printf("Unbuffered read time=%f seconds\n",((float)read_time[test_num][0]/CLOCKS_PER_SEC));
@@ -433,7 +433,7 @@ test_buffer(void)
 
     /* close the HDF file */
     ret = Hclose(fid);
-    CHECK(ret, FAIL, "Hclose");
+    CHECK_VOID(ret, FAIL, "Hclose");
 
     /* Clean up files created */
     remove(EXTFILE_NAME);
