@@ -53,6 +53,23 @@ New Features and Changes:
 	  BMR - 2005/10/21
 	- The API SDgetfilename was added to retrieve the name of a file, 
 	  given the file id. BMR - 2005/10/21
+	- SDS' name is no longer limited to 64 characters, and so is vgroup's
+	  (bugzilla 516.)  Note that when an older version of the library 
+	  reads a new name that is longer than 64 characters, the name will
+	  contain some garbage after 64 characters.  BMR - 2006/10/12
+	- User reported that SDreaddata went into infinitely loop when 
+	  reading some corrupted compressed data.  This problem is fixed.
+	  Two new error codes were added, consequently:
+		DFE_READCOMP  - when the zlib function returns
+                        Z_ERRNO        (-1) or
+                        Z_STREAM_ERROR (-2) or
+                        Z_DATA_ERROR   (-3) or
+                        Z_MEM_ERROR    (-4) or
+                        Z_BUF_ERROR    (-5)
+
+		DFE_COMPVERSION - when the zlib function returns
+                        Z_VERSION_ERROR (-6)
+
 
     Utilities
     ========= 
@@ -67,8 +84,8 @@ Bugs fixed since HDF4.2r1
 	  (bugzilla #130) BMR - 2005/4/4
 	- Applied user's patch to fix bug #602 - BMR - 2005/4/23
 	- Added a switch ('u') to ncdump to replace nonalpha-numerics 
-	  characters with underscores.  Thus, the SDS names won't be
-	  changed automatically unless the user requests. (bug #934)
+	  characters with underscores.  Thus, the SDS names won't be changed 
+	  automatically unless the user requests. (bug #934/bugzilla #381)
 	  BMR - 2005/7/17
 	- In HDF4.2r0, SDwritedata failed when the SDS had rank=0 (bug #1045.)
 	  This change was retracted, writing to SDS with rank=0 is allowed 
@@ -77,14 +94,22 @@ Bugs fixed since HDF4.2r1
 	  data when the associated SDS has the same name as the dimension.
 	  The problem was fixed for multi-dimensional SDSs.  If the SDS has 
 	  only one dimension, the results of subsequent assesses to the
-	  dimension are still unpredictable.  BMR - 2005/8/23
+	  dimension are still unpredictable (bugzilla #328.)  BMR - 2005/8/23
+	- Allowing maximum number of opened files to be increased revealed
+	  a problem, more than 255 files being opened will cause file
+	  corruption (bugzilla #440.)  Specifically, file number (255*m)+n 
+	  will overwrite file number n, where n is [0..255] and m is [1..p], 
+	  where (255*p) <= maximum system allowed.  This problem is fixed.
+	  In addition, a new API is added for convenience:
+		SDgetfilename -- retrieves the name of the file given its ID.
+	  BMR - 2005/10/05
 	- Prior to this release, the maximum number of files that can be opened 
 	  at the same time was only 32, and it was a defined constant in the
 	  library, which users cannot change without recompiling the library.
 	  In this release, if this limit is reached, the library will 
 	  increase it to the system limit, minus 3 to account for stdin,
 	  stdout, and stderr.  In addition, three APIs are added for more 
-	  flexibility.  (bugzilla #396) BMR - 2005/10/21
+	  flexibility.  (bugzilla #396/access bug #935) BMR - 2005/10/21
 		SDreset_maxopenfiles -- resets the maximum number of files 
 			can be opened at a time.
 		SDget_maxopenfiles -- retrieves the current number of opened 
@@ -98,15 +123,17 @@ Bugs fixed since HDF4.2r1
 	    (2) If the system maximum limit is reached, the library will 
 		push the error code DFE_TOOMANY onto the error stack.
 		User application can detect this after an SDstart fails.
+	- The problem where ncgen failed with "too many attributes" on 
+	  some user's file is fixed (bugzilla #373.)  BMR - 2005/10/28
+	- The problem where SDcheckempty returns "not empty" for empty 
+	  chunked and compressed datasets is fixed (bugzilla #218.)
+	  BMR - 2005/10/31
 	- If a VSgetattr was called twice for an attribute, the second would
 	  failed (bugzilla #486.)  This problem is fixed.  BMR - 2005/12/30
-	- Allowing maximum number of opened files to be increased revealed
-	  a problem, more than 255 files being opened will cause file
-	  corruption (bugzilla #440.)  Specifically, file number (255*m)+n 
-	  will overwrite file number n, where n is [0..255] and m is [1..p], 
-	  where (255*p) <= maximum system allowed.  This problem is fixed.
-	  In addition, a new API is added for convenience:
-		SDgetfilename -- retrieves the name of the file given its ID.
+	- A bug with reading metadata in hdfimport is fixed (bugzilla #558)
+	  BMR - 2006/9/23
+	- The problem of writing to two unlimited 1-D arrays is fixed
+	  (access bug #525) - BMR - 2006/11/11
 
 Documentation
 ==============
