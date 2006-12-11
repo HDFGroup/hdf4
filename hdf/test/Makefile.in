@@ -16,7 +16,7 @@
 
 #############################################################################
 #############################################################################
-SOURCES = $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
+SOURCES = buffer.c $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -40,9 +40,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@HDF_BUILD_FORTRAN_FALSE@check_PROGRAMS = testhdf$(EXEEXT)
+@HDF_BUILD_FORTRAN_FALSE@check_PROGRAMS = testhdf$(EXEEXT) \
+@HDF_BUILD_FORTRAN_FALSE@	buffer$(EXEEXT)
 @HDF_BUILD_FORTRAN_TRUE@check_PROGRAMS = testhdf$(EXEEXT) \
-@HDF_BUILD_FORTRAN_TRUE@	fortest$(EXEEXT) fortestF$(EXEEXT)
+@HDF_BUILD_FORTRAN_TRUE@	buffer$(EXEEXT) fortest$(EXEEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	fortestF$(EXEEXT)
 subdir = hdf/test
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,6 +54,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
+buffer_SOURCES = buffer.c
+buffer_OBJECTS = buffer.$(OBJEXT)
 am__fortest_SOURCES_DIST = fortest.c
 @HDF_BUILD_FORTRAN_TRUE@am_fortest_OBJECTS = fortest.$(OBJEXT)
 fortest_OBJECTS = $(am_fortest_OBJECTS)
@@ -71,15 +75,14 @@ am__fortestF_SOURCES_DIST = forsupff.f forsupf.c fortestF.f manf.f \
 @HDF_BUILD_FORTRAN_TRUE@	tvattrf.$(OBJEXT) tvsetf.$(OBJEXT)
 fortestF_OBJECTS = $(am_fortestF_OBJECTS)
 am_testhdf_OBJECTS = an.$(OBJEXT) anfile.$(OBJEXT) bitio.$(OBJEXT) \
-	blocks.$(OBJEXT) buffer.$(OBJEXT) chunks.$(OBJEXT) \
-	comp.$(OBJEXT) conv.$(OBJEXT) extelt.$(OBJEXT) file.$(OBJEXT) \
-	file1.$(OBJEXT) litend.$(OBJEXT) macros.$(OBJEXT) \
-	man.$(OBJEXT) mgr.$(OBJEXT) nbit.$(OBJEXT) rig.$(OBJEXT) \
-	sdmms.$(OBJEXT) sdnmms.$(OBJEXT) sdstr.$(OBJEXT) \
-	slab.$(OBJEXT) tbv.$(OBJEXT) tdupimgs.$(OBJEXT) \
-	testhdf.$(OBJEXT) tree.$(OBJEXT) tszip.$(OBJEXT) \
-	tvattr.$(OBJEXT) tvset.$(OBJEXT) tvsfpack.$(OBJEXT) \
-	vers.$(OBJEXT)
+	blocks.$(OBJEXT) chunks.$(OBJEXT) comp.$(OBJEXT) \
+	conv.$(OBJEXT) extelt.$(OBJEXT) file.$(OBJEXT) file1.$(OBJEXT) \
+	litend.$(OBJEXT) macros.$(OBJEXT) man.$(OBJEXT) mgr.$(OBJEXT) \
+	nbit.$(OBJEXT) rig.$(OBJEXT) sdmms.$(OBJEXT) sdnmms.$(OBJEXT) \
+	sdstr.$(OBJEXT) slab.$(OBJEXT) tbv.$(OBJEXT) \
+	tdupimgs.$(OBJEXT) testhdf.$(OBJEXT) tree.$(OBJEXT) \
+	tszip.$(OBJEXT) tvattr.$(OBJEXT) tvset.$(OBJEXT) \
+	tvsfpack.$(OBJEXT) vers.$(OBJEXT)
 testhdf_OBJECTS = $(am_testhdf_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
@@ -92,8 +95,9 @@ F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
-SOURCES = $(fortest_SOURCES) $(fortestF_SOURCES) $(testhdf_SOURCES)
-DIST_SOURCES = $(am__fortest_SOURCES_DIST) \
+SOURCES = buffer.c $(fortest_SOURCES) $(fortestF_SOURCES) \
+	$(testhdf_SOURCES)
+DIST_SOURCES = buffer.c $(am__fortest_SOURCES_DIST) \
 	$(am__fortestF_SOURCES_DIST) $(testhdf_SOURCES)
 ETAGS = etags
 CTAGS = ctags
@@ -210,12 +214,12 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
-@HDF_BUILD_FORTRAN_FALSE@TESTS = testhdf
+@HDF_BUILD_FORTRAN_FALSE@TESTS = testhdf buffer
 
 #############################################################################
 #############################################################################
-@HDF_BUILD_FORTRAN_TRUE@TESTS = testhdf fortest
-testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
+@HDF_BUILD_FORTRAN_TRUE@TESTS = testhdf buffer fortest
+testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
                   tdupimgs.c testhdf.c tree.c tszip.c tvattr.c tvset.c      \
@@ -223,6 +227,8 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
 
 testhdf_LDADD = ../src/libdf.a
 testhdf_DEPENDENCIES = testdir ../src/libdf.a
+buffer_LDADD = ../src/libdf.a
+buffer_DEPENDENCIES = ../src/libdf.a
 @HDF_BUILD_FORTRAN_TRUE@fortest_SOURCES = fortest.c
 @HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = ../src/libdf.a
 @HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
@@ -272,6 +278,9 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+buffer$(EXEEXT): $(buffer_OBJECTS) $(buffer_DEPENDENCIES) 
+	@rm -f buffer$(EXEEXT)
+	$(LINK) $(buffer_LDFLAGS) $(buffer_OBJECTS) $(buffer_LDADD) $(LIBS)
 fortest$(EXEEXT): $(fortest_OBJECTS) $(fortest_DEPENDENCIES) 
 	@rm -f fortest$(EXEEXT)
 	$(LINK) $(fortest_LDFLAGS) $(fortest_OBJECTS) $(fortest_LDADD) $(LIBS)

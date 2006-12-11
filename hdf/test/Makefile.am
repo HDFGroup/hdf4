@@ -9,20 +9,23 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
 #############################################################################
 
 if HDF_BUILD_FORTRAN
-TESTS = testhdf fortest
-check_PROGRAMS = testhdf fortest fortestF
+TESTS = testhdf buffer fortest
+check_PROGRAMS = testhdf buffer fortest fortestF
 else
-TESTS = testhdf
-check_PROGRAMS = testhdf
+TESTS = testhdf buffer
+check_PROGRAMS = testhdf buffer
 endif
 
-testhdf_SOURCES = an.c anfile.c bitio.c blocks.c buffer.c chunks.c comp.c   \
+testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
                   tdupimgs.c testhdf.c tree.c tszip.c tvattr.c tvset.c      \
 		  tvsfpack.c vers.c
 testhdf_LDADD = ../src/libdf.a
 testhdf_DEPENDENCIES = testdir ../src/libdf.a
+
+buffer_LDADD = ../src/libdf.a
+buffer_DEPENDENCIES = ../src/libdf.a
 
 if HDF_BUILD_FORTRAN
 fortest_SOURCES = fortest.c
