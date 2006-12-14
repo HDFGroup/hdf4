@@ -76,7 +76,10 @@ New Features and Changes:
 
 Support for new platforms and compilers
 =======================================
-
+         - Added support for MAC OS X Intel with gcc and g95 compilers
+         - Added support for SUNOS 5.10 on Intel with SUN compilers (32 and
+           64-bit modes)
+					EIP 2006/12/14
 
 Bugs fixed since HDF4.2r1
 =========================

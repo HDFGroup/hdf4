@@ -301,7 +301,7 @@ static long *    xdrposix_inline();
 #if (defined __sun && defined _LP64)
 static rpc_inline_t *    xdrposix_inline();
 #else
-#if (defined __x86_64__ )
+#if (defined __x86_64__ ) && !(defined __sun && defined _LP64)
 static int32_t *    xdrposix_inline();
 #else
 #if (defined __alpha )
@@ -334,10 +334,10 @@ static struct xdr_ops   xdrposix_ops = {
     xdrposix_inline,    /* prime stream for inline macros */
 #if (defined __sun && defined _LP64) || defined __x86_64__
     xdrposix_destroy,   /* destroy stream */
-#ifndef __x86_64__
+#if !(defined __x86_64__) || (defined  __sun && defined _LP64) /* i.e. we are on SUN/Intel in 64-bit mode */
     NULL,               /* no xdr_control function defined */
-#endif
-    /* Solaris 64-bit (arch=v9) has 64 bits long and 32 bits int. */
+#endif 
+    /* Solaris 64-bit (arch=v9 and arch=amd64) has 64 bits long and 32 bits int. */
     /* It defines the two extra entries for get/put int. here */
     xdrposix_getint,   /* deserialize a 32-bit int */
     xdrposix_putint    /* serialize a 32-bit int */
@@ -593,7 +593,7 @@ static rpc_inline_t *
 #if (defined  __alpha)
 static int* 
 #else
-#if (defined  __x86_64__)
+#if (defined  __x86_64__) && !(defined __sun && defined _LP64)
 static int32_t * 
 #else
 static netlong * 

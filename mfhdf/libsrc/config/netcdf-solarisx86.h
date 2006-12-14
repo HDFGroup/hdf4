@@ -20,6 +20,11 @@
 #ifndef _NETCDF_
 #define _NETCDF_
 
+/* This header must be included before the _LP64 macro is checked when
+ * compiling for Solaris on Intel
+ */
+#include <stdio.h>
+
 #ifdef __MWERKS__
 #ifndef HDF
 #define HDF

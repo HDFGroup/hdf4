@@ -181,11 +181,11 @@ Please check your Makefile.
 #include <sys/time.h>
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
-#ifdef __i386
-#define DF_MT   DFMT_SUN_INTEL
+#if (defined __sun) && (defined __amd64 || defined __i386) /* SunOS on Intel; 32 and 64-bit modes */
+#define DF_MT   DFMT_SUN_INTEL 
 #else
 #define DF_MT   DFMT_SUN
-#endif /* __i386 */
+#endif /* __sun */
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
@@ -1303,7 +1303,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #endif /* I860 */
 
 /* Linux 64 */
-#if defined __x86_64__
+#if defined __x86_64__  && !(defined  SUN) /* i.e. not SunOS on Intel */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
