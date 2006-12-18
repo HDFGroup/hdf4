@@ -74,6 +74,7 @@
 #define     DFMT_CRAYMPP        0x1171
 #define     DFMT_IA64           0x4441
 #define     DFMT_LINUX64        0x4441
+#define     DFMT_POWERPC64      0x1111
 
 /* I/O library constants */
 #define UNIXUNBUFIO 1
@@ -1302,6 +1303,59 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* I860 */
 
+
+/* Power PC 5 64 */
+#if defined __powerpc64__
+
+#ifdef GOT_MACHINE
+If you get an error on this line more than one machine type has been defined.
+Please check your Makefile.
+#endif
+#define GOT_MACHINE
+
+#include <sys/file.h>               /* for unbuffered i/o stuff */
+#include <sys/stat.h>
+#define DF_MT             DFMT_POWERPC64
+typedef void              VOID;
+typedef void              *VOIDP;
+typedef char              *_fcd;
+typedef char              char8;
+typedef unsigned char     uchar8;
+typedef char              int8;
+typedef unsigned char     uint8;
+typedef short int         int16;
+typedef unsigned short int uint16;
+typedef int               int32;
+typedef unsigned int      uint32;
+typedef int               intn;
+typedef unsigned int      uintn;
+typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+typedef float             float32;
+typedef double            float64;
+typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
+#if defined __GNUC__
+#define FNAME_POST_UNDERSCORE
+#endif
+#define _fcdtocp(desc) (desc)
+#ifdef  HAVE_FMPOOL
+#define FILELIB PAGEBUFIO  /* enable page buffering */
+#else
+#define FILELIB UNIXBUFIO
+#endif
+
+/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
+
+/* Determine the memory manager we are going to use. Valid values are: */
+/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
+/*  what each does */
+#define JMEMSYS         MEM_ANSI
+
+#ifdef __GNUC__
+#define HAVE_STDC
+#define INCLUDES_ARE_ANSI
+#endif
+
+#endif /*power PC 5 64 */
 /* Linux 64 */
 #if defined __x86_64__  && !(defined  SUN) /* i.e. not SunOS on Intel */
 
