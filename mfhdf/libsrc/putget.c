@@ -582,7 +582,7 @@ Void *values ;
 	case NC_LONG :
 #if defined _CRAYMPP
 		return( xdr_short(xdrs, (nclong *)values) ) ;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#elif defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
 		return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
 		return( xdr_long(xdrs, (nclong *)values) ) ;

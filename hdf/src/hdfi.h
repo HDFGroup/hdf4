@@ -387,14 +387,23 @@ typedef char              int8;
 typedef unsigned char     uint8;
 typedef short int         int16;
 typedef unsigned short int uint16;
+#ifdef _LP64 /* 64-bit environment */
+typedef int               int32;
+typedef unsigned int      uint32;
+#else /* 32-bit environment */
 typedef long int          int32;
 typedef unsigned long int uint32;
+#endif
 typedef int               intn;
 typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
+#ifdef _LP64 /* 64-bit environment */
+typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
+#else /* 32-bit environment */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+#endif
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -1417,7 +1426,7 @@ correctly.
 /*-----------------------------------------------------*/
 
 /* IA64 running Linux */
-#if defined __ia64
+#if defined __ia64 && !(defined(hpux) || defined(__hpux))
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.

@@ -39,6 +39,11 @@ New Features and Changes:
 ========================
     Configuration
     ============= 
+
+        - Fortran part of the HDF4 library uses F77_FUNC macro to mangle names 
+          of the C functions called from Fortran APIs. This should help with
+          the HDF4 code portability to different Fortran compilers.
+						EIP - 2006/12/19
      
     Library
     ========= 
@@ -80,6 +85,8 @@ Support for new platforms and compilers
          - Added support for SUNOS 5.10 on Intel with SUN compilers (32 and
            64-bit modes)
 					EIP 2006/12/14
+         - Added support for HPUX 11.23 (32 and 64-bit modes)
+                                        EIP 2006/12/19
 
 Bugs fixed since HDF4.2r1
 =========================

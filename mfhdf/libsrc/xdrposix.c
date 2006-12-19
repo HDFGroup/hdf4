@@ -469,7 +469,7 @@ xdrposix_getlong(xdrs, lp)
 #endif
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined CRAY || defined AIX5L64 || defined __powerpc64__)   
+#if (defined CRAY || defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))  
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
@@ -496,7 +496,7 @@ xdrposix_putlong(xdrs, lp)
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
-#if (defined CRAY || defined AIX5L64  || defined __powerpc64__)
+#if (defined CRAY || defined AIX5L64  || defined __powerpc64__ || (defined __hpux && __LP64__))
     up += (sizeof(long) - 4) ;
 #endif
 
@@ -509,7 +509,7 @@ static bool_t
 xdrposix_getbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
-#if (defined __alpha)
+#if (defined __alpha) || (defined __hpux && defined __ia64)
     int len;
 #else
     u_int len;
@@ -526,7 +526,7 @@ static bool_t
 xdrposix_putbytes(xdrs, addr, len)
     XDR *xdrs;
     caddr_t addr;
-#if (defined __alpha)
+#if (defined __alpha) || (defined __hpux && defined __ia64)
     int len;
 #else
     u_int len;
@@ -604,7 +604,7 @@ static netlong *
 #endif
 xdrposix_inline(xdrs, len)
     XDR *xdrs;
-#if (defined  __alpha)
+#if (defined  __alpha) || (defined __hpux && defined __ia64)
 int 
 #else
     u_int

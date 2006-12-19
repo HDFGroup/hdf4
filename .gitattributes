@@ -1,5 +1,6 @@
 * text=auto !eol
 /Win32.zip -text
+config/ia64-hp-hpux11.23 -text
 hdf/src/dfufp2if.c -text
 hdf/src/dfufp2iff.f -text
 hdf/src/hproto_fortran.h -text

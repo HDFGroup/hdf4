@@ -40,6 +40,7 @@
 ./config/freebsd
 ./config/hpux11.00
 ./config/i686-pc-cygwin
+./config/ia64-hp-hpux11.23
 ./config/ia64-linux-gnu
 ./config/irix6.x
 ./config/linux-gnu
