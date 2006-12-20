@@ -34,6 +34,11 @@
 
     MODIFICATION HISTORY
         12/11/98 - Wrote tests
+        12/20/06 - Compute the wallclock time and use the environment
+                   variable or macro HDF4_TESTPREFIX to add prefix to the
+                   testing files names. Also, it allows to specify the number
+                   of elements in buffer at the command line.
+
  */
 
 /* $Id$ */
@@ -59,7 +64,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* Size of data elements to create */
 #ifdef __CRAY_XT3__
 /* Use a smaller test size as small unbuffered IO is expensive in XT3. */
-/* This runs much faster in Lustre file system like /scratchN. ELEMSIZE 1000 */
+/* This runs much faster in Lustre file system like /scratchN. elemsize 1000 */
 /* takes 3 minutes to run in /scratch3. 2006/6/20, -AKC- */
 #define ELEMSIZE 1000
 #else
@@ -86,12 +91,18 @@ static char RcsId[] = "@(#)$Revision$";
 long read_time[NUM_TESTS][2];    /* 0 is unbuffered, 1 is buffered */
 long write_time[NUM_TESTS][2];   /* 0 is unbuffered, 1 is buffered */
 
+int32 elemsize;    /* Actual number of elements in buffer */
+
 /* I/O buffers */
-uint8 out_buf[ELEMSIZE];    /* Buffer for writing data */
-uint8 in_buf[ELEMSIZE];     /* Buffer for reading data */
+uint8 *out_buf;    /* Buffer for writing data */
+uint8 *in_buf;     /* Buffer for reading data */
 
 /* local function prototypes */
 static void init_buffer(void);
+static void usage(void);
+static char *fixname(const char *base_name, char *fullname, size_t size);
+static long read_test(int32 aid); 
+static long write_test(int32 aid,intn num_timings); 
 
 /* Initialize output buffer */
 static void
@@ -100,11 +111,19 @@ init_buffer(void)
     intn        j;
 
     SEED(time(NULL));
-    for (j = 0; j < ELEMSIZE; j++)
+    for (j = 0; j < elemsize; j++)
       {
           out_buf[j] = (uint8) RAND();
       }     /* end for */
 }   /* init_buffers() */
+
+static void
+usage(void)
+{
+    printf("\nUsage: buffer [elemsize] \n\n");
+    printf("where elemsize is the number of elements in buffer (default: 1000 in Cray, 16384 in other platforms)\n");
+    printf("\n");
+}   /* end usage() */
 
 
 /*
@@ -115,7 +134,7 @@ init_buffer(void)
    FULLNAME is the null pointer or if FULLNAME isn't large enough for the
    result.
 */
-char *fixname(const char *base_name, char *fullname, size_t size)
+static char *fixname(const char *base_name, char *fullname, size_t size)
 {
     const char  *prefix = NULL;
     char        *ptr, last = '\0';
@@ -179,14 +198,14 @@ read_test(int32 aid)
         switch(timing) {
             case 0:     /* Read entire buffer in one I/O operation */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                ret=Hread(aid,ELEMSIZE,in_buf);
-                VERIFY(ret, ELEMSIZE, "Hread");
+                ret=Hread(aid,elemsize,in_buf);
+                VERIFY(ret, elemsize, "Hread");
                 gettimeofday(&end_time,(struct timeval*)0);                
                 break;
 
             case 1:     /* Read entire buffer one byte at a time forwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=0; i<ELEMSIZE; i++) {
+                for(i=0; i<elemsize; i++) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -199,7 +218,7 @@ read_test(int32 aid)
 
             case 2:     /* Read entire buffer one byte at a time every one byte forwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=0; i<ELEMSIZE; i+=2) {
+                for(i=0; i<elemsize; i+=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -207,7 +226,7 @@ read_test(int32 aid)
                     ret=Hread(aid,1,&in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                for(i=1; i<ELEMSIZE; i+=2) {
+                for(i=1; i<elemsize; i+=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -220,7 +239,7 @@ read_test(int32 aid)
 
             case 3:     /* Read entire buffer one byte at a time backwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=ELEMSIZE-1; i>=0; i--) {
+                for(i=elemsize-1; i>=0; i--) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -233,7 +252,7 @@ read_test(int32 aid)
 
             case 4:     /* Read entire buffer one byte at a time every one byte backwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=ELEMSIZE-1; i>=0; i-=2) {
+                for(i=elemsize-1; i>=0; i-=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -241,7 +260,7 @@ read_test(int32 aid)
                     ret=Hread(aid,1,&in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                for(i=ELEMSIZE-2; i>=0; i-=2) {
+                for(i=elemsize-2; i>=0; i-=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -254,7 +273,7 @@ read_test(int32 aid)
         } /* end switch */
 
         /* Verify buffer contents */
-        for(err_count=0,i=0; i<ELEMSIZE; i++) {
+        for(err_count=0,i=0; i<elemsize; i++) {
             if(out_buf[i]!=in_buf[i]) {
                 printf("Position (%d) read in is (%d), should be (%d)\n",i,(int)in_buf[i],(int)out_buf[i]);
                 num_errs++;
@@ -265,7 +284,7 @@ read_test(int32 aid)
         } /* end for */
 
         /* Clear input buffer */
-        HDmemset(in_buf,0,ELEMSIZE);
+        HDmemset(in_buf,0,elemsize);
 
         /* Increment the total I/O time */
         acc_time+=(end_time.tv_sec-start_time.tv_sec)*1000000+
@@ -297,14 +316,14 @@ write_test(int32 aid,intn num_timings)
         switch(timing) {
             case 0:     /* Write entire buffer in one I/O operation */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                ret=Hwrite(aid,ELEMSIZE,out_buf);
-                VERIFY(ret, ELEMSIZE, "Hwrite");
+                ret=Hwrite(aid,elemsize,out_buf);
+                VERIFY(ret, elemsize, "Hwrite");
                 gettimeofday(&end_time,(struct timeval*)0);                
                 break;
 
             case 1:     /* Write entire buffer one byte at a time forwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=0; i<ELEMSIZE; i++) {
+                for(i=0; i<elemsize; i++) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -317,7 +336,7 @@ write_test(int32 aid,intn num_timings)
 
             case 2:     /* Write entire buffer one byte at a time every one byte forwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=0; i<ELEMSIZE; i+=2) {
+                for(i=0; i<elemsize; i+=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -325,7 +344,7 @@ write_test(int32 aid,intn num_timings)
                     ret=Hwrite(aid,1,&out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                for(i=1; i<ELEMSIZE; i+=2) {
+                for(i=1; i<elemsize; i+=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -338,7 +357,7 @@ write_test(int32 aid,intn num_timings)
 
             case 3:     /* Write entire buffer one byte at a time backwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=ELEMSIZE-1; i>=0; i--) {
+                for(i=elemsize-1; i>=0; i--) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -351,7 +370,7 @@ write_test(int32 aid,intn num_timings)
 
             case 4:     /* Write entire buffer one byte at a time every one byte backwards */
                 gettimeofday(&start_time,(struct timeval*)0);                
-                for(i=ELEMSIZE-1; i>=0; i-=2) {
+                for(i=elemsize-1; i>=0; i-=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -359,7 +378,7 @@ write_test(int32 aid,intn num_timings)
                     ret=Hwrite(aid,1,&out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                for(i=ELEMSIZE-2; i>=0; i-=2) {
+                for(i=elemsize-2; i>=0; i-=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
                     CHECK(ret, FAIL, "Hseek");
@@ -376,11 +395,11 @@ write_test(int32 aid,intn num_timings)
         CHECK(ret, FAIL, "Hseek");
 
         /* Read buffer contents */
-        ret=Hread(aid,ELEMSIZE,in_buf);
-        VERIFY(ret, ELEMSIZE, "Hread");
+        ret=Hread(aid,elemsize,in_buf);
+        VERIFY(ret, elemsize, "Hread");
 
         /* Verify buffer contents */
-        for(i=0; i<ELEMSIZE; i++) {
+        for(i=0; i<elemsize; i++) {
             if(out_buf[i]!=in_buf[i]) {
                 printf("Position (%d) read in is (%d), should be (%d)\n",i,(int)in_buf[i],(int)out_buf[i]);
                 num_errs++;
@@ -390,7 +409,7 @@ write_test(int32 aid,intn num_timings)
 
 
         /* Clear input buffer */
-        HDmemset(in_buf,0,ELEMSIZE);
+        HDmemset(in_buf,0,elemsize);
 
         /* Increment the total I/O time */
         acc_time+=(end_time.tv_sec-start_time.tv_sec)*1000000+
@@ -427,14 +446,29 @@ main(int argc, char *argv[])
         setbuf(stdout, NULL);
     #endif
 
+    if (argc>2) {
+        usage();
+        exit(1);
+    }
+    else 
+        elemsize = (argc==2)? (int32)atol(argv[1]):(int32)ELEMSIZE;
 
+    if (elemsize<=0) {
+        usage();
+        exit(1);
+    }
+
+    out_buf = malloc(elemsize * sizeof(uint8));
+    in_buf = malloc(elemsize * sizeof(uint8));    
+        
     Verbosity = 4;  /* Default Verbosity is Low */
+
     Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
     printf("Built with HDF Library Version: %u.%ur%u, %s\n\n", (unsigned) lmajor,
            (unsigned) lminor, (unsigned) lrelease, lstring);
 
-    MESSAGE(6, printf("Starting buffered element test (ELEMSIZE=%d)\n", ELEMSIZE);
+    MESSAGE(6, printf("Starting buffered element test (elemsize=%d)\n", elemsize);
         )
 
     if(Cache) /* turn on caching, unless we were instucted not to */
@@ -467,7 +501,7 @@ main(int argc, char *argv[])
 
             case 1:     /* create external data element */
 		fixname(EXTFILE_NAME, extfilename, sizeof extfilename);
-                aid=HXcreate(fid,BUFF_TAG,ref_num,extfilename,0,ELEMSIZE);
+                aid=HXcreate(fid,BUFF_TAG,ref_num,extfilename,0,elemsize);
                 CHECK(aid, FAIL, "HXcreate");
                 break;
 
@@ -485,8 +519,8 @@ main(int argc, char *argv[])
         } /* end switch */
 
         /* Write the initial data to the data element */
-        ret=Hwrite(aid,ELEMSIZE,out_buf);
-        VERIFY(ret, ELEMSIZE, "Hwrite");
+        ret=Hwrite(aid,elemsize,out_buf);
+        VERIFY(ret, elemsize, "Hwrite");
 
         /* Perform read timing tests on un-buffered data element */
         read_time[test_num][0]=read_test(aid);
@@ -529,6 +563,11 @@ main(int argc, char *argv[])
         remove(hfilename);
     }
 
+    free(out_buf);
+    free(in_buf);
+
     MESSAGE(6, printf("Finished buffered element test\n");
         )
+    exit(num_errs);
+    return num_errs;
 }   /* end main() */
