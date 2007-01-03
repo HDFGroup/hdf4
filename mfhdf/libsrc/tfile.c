@@ -230,7 +230,8 @@ test_max_open_files()
 
     /* Try to create more files up to the system limit or NUM_FILES_HI,
        because the arrays have max NUM_FILES_HI elements in this test */
-    temp_limit = sys_limit > NUM_FILES_HI ? NUM_FILES_HI : sys_limit;
+    temp_limit = sys_limit / 2;
+    temp_limit = temp_limit > NUM_FILES_HI ? NUM_FILES_HI : temp_limit;
     for (index=NUM_FILES_LOW; index < temp_limit; index++)
     {
         /* Create a file */
