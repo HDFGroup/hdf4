@@ -2927,7 +2927,6 @@ static void test_mgr_old_a(int flag)
     MESSAGE(8, printf("Read RLE compressed image\n"););
 
     /* Open up the existing datafile and get the image information from it */
-printf("mgr.c: oldrlefile = %s\n", oldrlefile);
     fid=Hopen(oldrlefile,DFACC_RDWR,0);
     CHECK_VOID(fid,FAIL,"Hopen");
 
