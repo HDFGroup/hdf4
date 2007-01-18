@@ -241,10 +241,10 @@ obj_list_t* parse_comp(const char *str,
         printf("Input Error: Missing compression parameter in <%s>\n",str);
         exit(1);
        }
-	if (comp->szip_mode==FAIL) {
-		printf("Input Error: SZIP compression mode must be NN_MODE or EC_MODE");
-	     exit(1);
-	}
+    if (comp->szip_mode==FAIL) {
+        printf("Input Error: SZIP compression mode must be NN_MODE or EC_MODE");
+         exit(1);
+    }
     } else {
      printf("Input Error: SZIP encoder is not available\n");
      exit(1);

@@ -16,6 +16,8 @@
 
 #include "hrepack.h"
 #include "hrepack_lsttable.h"
+#include "hrepack_dim.h"
+
 
 
 #ifdef __cplusplus
@@ -42,8 +44,8 @@ int vgroup_insert(const char* infname,
                    int32* in_refs,          /* ref list for parent group */
                    int npairs,              /* number tag/ref pairs for parent group */
                    table_t *table,
-                   table_t *td1,
-                   table_t *td2,
+                   dim_table_t *td1,
+                   dim_table_t *td2,
                    options_t *options);
 
 

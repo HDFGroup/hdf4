@@ -62,8 +62,7 @@ am_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hrepack_pal.$(OBJEXT) hrepack_parse.$(OBJEXT) \
 	hrepack_sds.$(OBJEXT) hrepack_sdutil.$(OBJEXT) \
 	hrepack_utils.$(OBJEXT) hrepack_vg.$(OBJEXT) \
-	hrepack_vs.$(OBJEXT) hrepack_mattbl.$(OBJEXT) \
-	hrepack_dim.$(OBJEXT)
+	hrepack_vs.$(OBJEXT) hrepack_dim.$(OBJEXT)
 hrepack_OBJECTS = $(am_hrepack_OBJECTS)
 am_hrepack_check_OBJECTS = hrepack_check.$(OBJEXT)
 hrepack_check_OBJECTS = $(am_hrepack_check_OBJECTS)
@@ -73,12 +72,11 @@ am_test_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hrepack_opttable.$(OBJEXT) hrepack_pal.$(OBJEXT) \
 	hrepack_parse.$(OBJEXT) hrepack_sds.$(OBJEXT) \
 	hrepack_sdutil.$(OBJEXT) hrepack_utils.$(OBJEXT) \
-	hrepack_vg.$(OBJEXT) hrepack_mattbl.$(OBJEXT) \
-	hrepack_dim.$(OBJEXT) hrepack_vs.$(OBJEXT) \
-	test_hrepack_add.$(OBJEXT) test_hrepack_main.$(OBJEXT) \
-	test_hrepack_verify.$(OBJEXT) hdiff.$(OBJEXT) \
-	hdiff_array.$(OBJEXT) hdiff_gattr.$(OBJEXT) hdiff_gr.$(OBJEXT) \
-	hdiff_list.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
+	hrepack_vg.$(OBJEXT) hrepack_dim.$(OBJEXT) \
+	hrepack_vs.$(OBJEXT) test_hrepack_add.$(OBJEXT) \
+	test_hrepack_main.$(OBJEXT) test_hrepack_verify.$(OBJEXT) \
+	hdiff.$(OBJEXT) hdiff_array.$(OBJEXT) hdiff_gattr.$(OBJEXT) \
+	hdiff_gr.$(OBJEXT) hdiff_list.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
 	hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) hdiff_table.$(OBJEXT) \
 	hdiff_vs.$(OBJEXT)
 test_hrepack_OBJECTS = $(am_test_hrepack_OBJECTS)
@@ -219,7 +217,7 @@ hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c         \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
                   hrepack_opttable.c hrepack_pal.c hrepack_parse.c          \
                   hrepack_sds.c hrepack_sdutil.c hrepack_utils.c            \
-                  hrepack_vg.c hrepack_vs.c hrepack_mattbl.c hrepack_dim.c
+                  hrepack_vg.c hrepack_vs.c hrepack_dim.c
 
 hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
@@ -228,7 +226,7 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
                        hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
-                       hrepack_mattbl.c hrepack_dim.c                       \
+                       hrepack_dim.c                                        \
                        hrepack_vs.c test_hrepack_add.c test_hrepack_main.c  \
                        test_hrepack_verify.c ../hdiff/hdiff.c               \
                        ../hdiff/hdiff_array.c ../hdiff/hdiff_gattr.c        \
@@ -340,7 +338,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_lsttable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_mattbl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_opttable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_pal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_parse.Po@am__quote@

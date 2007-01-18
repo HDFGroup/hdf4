@@ -22,6 +22,8 @@
 #include "hrepack_utils.h"
 #include "hrepack_parse.h"
 #include "hrepack_opttable.h"
+#include "hrepack_dim.h"
+
 
 
 
@@ -48,8 +50,8 @@ int copy_sds(int32 sd_in,
              char*path_name,          /* absolute path for input group name */
              options_t *options,
              table_t *table,
-             table_t *td1,
-             table_t *td2,
+             dim_table_t *td1,
+             dim_table_t *td2,
              int32 infile_id,
              int32 outfile_id)
 {
@@ -102,7 +104,7 @@ int copy_sds(int32 sd_in,
  /* check if the given SDS is a dimension scale, return 0 for no table add */
  if ( SDiscoordvar(sds_id) ) {
   /* add SDS coordinate variable to dimension table 1 */
-  table_add(td1,-1,ref,sds_name);
+  dim_table_add(td1,ref,sds_name);
   SDendaccess(sds_id);
   return 0;
  }
@@ -577,8 +579,8 @@ int copy_sds(int32 sd_in,
    goto out;
   }
 
-  /* add dimension name to dimension table */
-  table_add(td2,-1,-1,dim_name);
+  /* add dimension name to dimension scales table */
+  dim_table_add(td2,-1,dim_name);
 
   /* set output dimension name */
   if (SDsetdimname(dim_out, dim_name) == FAIL) {

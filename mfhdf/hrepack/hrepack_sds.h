@@ -16,6 +16,8 @@
 
 #include "hrepack.h"
 #include "hrepack_lsttable.h"
+#include "hrepack_dim.h"
+
 
 
 #ifdef __cplusplus
@@ -31,8 +33,8 @@ int  copy_sds(int32 sd_in,
               char*group_name,
               options_t *options,
               table_t *table,
-              table_t *td1,
-              table_t *td2,
+              dim_table_t *td1,
+              dim_table_t *td2,
               int32 infile_id,
               int32 outfile_id);
 

@@ -14,19 +14,37 @@
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
-#include "hrepack_mattbl.h"
 #include "hrepack_sdutil.h"
 #include "hrepack_sds.h"
 #include "hrepack_dim.h"
 
-static 
-int gen_dim(char* name,              /* name of SDS */
-            int32 ref,               /* ref of SDS */
-            int32 sd_in,
-            int32 sd_out,
-            table_t *td1,
-            table_t *td2,
-            options_t *options);
+
+/* match name between 2 dim_table_t type lists */
+typedef struct match_dim_name_t {
+    int32 ref;                    /* reference */
+    char  dim_name[MAX_NC_NAME];  /* name */
+    int   flags[2];               /* name exists 1, no 0 */  
+} match_dim_name_t;
+
+/* table for match_dim_name_t */
+typedef struct match_dim_table_t {
+    int        size;
+    int        nobjs;
+    match_dim_name_t *objs;
+} match_dim_table_t;
+
+/*-------------------------------------------------------------------------
+ * local prototypes
+ *-------------------------------------------------------------------------
+ */
+
+/* methods for match_dim_table_t */
+static void match_dim_table_free( match_dim_table_t *table );
+static void match_dim_table_init( match_dim_table_t **tbl );
+static void match_dim_table_add ( match_dim_table_t *table, unsigned *flags, char* dim_name, int32 ref);
+
+/* generate the SDS */
+static int gen_dim(char* name, int32 ref, int32 sd_in, int32 sd_out, options_t *options);
 
 
 /*-------------------------------------------------------------------------
@@ -39,7 +57,7 @@ int gen_dim(char* name,              /* name of SDS */
  *
  * Return: void
  *
- * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
+ * Programmer: Pedro Vicente Nunes, pvn@hdfgroup.org
  *
  * Date: May 10, 2006
  *
@@ -47,20 +65,29 @@ int gen_dim(char* name,              /* name of SDS */
  */
 void match_dim(int32 sd_in,
                int32 sd_out,
-               table_t *td1,
-               table_t *td2,
+               dim_table_t *dt1,
+               dim_table_t *dt2,
                options_t *options)
 {
  int   cmp;
- int   more_names_exist = (td1->nobjs>0 && td2->nobjs>0) ? 1 : 0;
+ int   more_names_exist = (dt1->nobjs>0 && dt2->nobjs>0) ? 1 : 0;
  int   curr1=0;
  int   curr2=0;
  int   nfound=0;
  /*build a common list */
- match_table_t *mattbl=NULL;
- unsigned infile[2]; 
+ match_dim_table_t *mattbl=NULL;
+ unsigned inlist[2]; 
  int      i;
- 
+
+#if defined (HREPACK_DEBUG)
+ for (i = 0; i < dt1->nobjs; i++) {
+     printf("%s\n", dt1->objs[i].dim_name);
+ }
+ for (i = 0; i < dt2->nobjs; i++) {
+     printf("%s\n", dt2->objs[i].dim_name);
+ }
+#endif
+
 
 /*-------------------------------------------------------------------------
  * build the list
@@ -70,76 +97,61 @@ void match_dim(int32 sd_in,
 
  while ( more_names_exist )
  {
-  cmp = strcmp( td1->objs[curr1].obj_name, td2->objs[curr2].obj_name );
+  cmp = strcmp( dt1->objs[curr1].dim_name, dt2->objs[curr2].dim_name );
   if ( cmp == 0 )
   {
-   infile[0]=1; infile[1]=1;
-   match_dim_table_add(mattbl,infile,
-    td1->objs[curr1].obj_name,
-    td1->objs[curr1].tag,
-    td1->objs[curr1].ref,
-    td2->objs[curr2].tag,
-    td2->objs[curr2].ref);
+   inlist[0]=1; inlist[1]=1;
+   match_dim_table_add(mattbl,inlist,
+       dt1->objs[curr1].dim_name,
+       dt1->objs[curr1].ref);
 
    curr1++;
    curr2++;
   }
   else if ( cmp < 0 )
   {
-   infile[0]=1; infile[1]=0;
-   match_dim_table_add(mattbl,infile,
-    td1->objs[curr1].obj_name,
-    td1->objs[curr1].tag,
-    td1->objs[curr1].ref,
-    -1,
-    -1);
+   inlist[0]=1; inlist[1]=0;
+   match_dim_table_add(mattbl,inlist,
+    dt1->objs[curr1].dim_name,
+    dt1->objs[curr1].ref);
    curr1++;
   }
   else 
   {
-   infile[0]=0; infile[1]=1;
-   match_dim_table_add(mattbl,infile,
-    td2->objs[curr2].obj_name,
-    -1,
-    -1,
-    td2->objs[curr2].tag,
-    td2->objs[curr2].ref);
+   inlist[0]=0; inlist[1]=1;
+   match_dim_table_add(mattbl,inlist,
+    dt2->objs[curr2].dim_name,
+    dt2->objs[curr2].ref);
    curr2++;
   }
 
-  more_names_exist = (curr1<td1->nobjs && curr2<td1->nobjs) ? 1 : 0;
+  more_names_exist = (curr1<dt1->nobjs && curr2<dt1->nobjs) ? 1 : 0;
 
  
  } /* end while */
 
- /* td1 did not end */
- if (curr1<td1->nobjs)
+ /* dt1 did not end */
+ if (curr1<dt1->nobjs)
  {
-  while ( curr1<td1->nobjs )
+  while ( curr1<dt1->nobjs )
   {
-   infile[0]=1; infile[1]=0;
-   match_dim_table_add(mattbl,infile,
-    td1->objs[curr1].obj_name,
-    td1->objs[curr1].tag,
-    td1->objs[curr1].ref,
-    -1,
-    -1);
+   inlist[0]=1; inlist[1]=0;
+   match_dim_table_add(mattbl,inlist,
+    dt1->objs[curr1].dim_name,
+    dt1->objs[curr1].ref);
    curr1++;
   }
  }
 
- /* td2 did not end */
- if (curr2<td2->nobjs)
+ /* dt2 did not end */
+ if (curr2<dt2->nobjs)
  {
-  while ( curr2<td2->nobjs )
+  while ( curr2<dt2->nobjs )
   {
-   infile[0]=0; infile[1]=1;
-   match_dim_table_add(mattbl,infile,
-    td2->objs[curr2].obj_name,
-    -1,
-    -1,
-    td2->objs[curr2].tag,
-    td2->objs[curr2].ref);
+   inlist[0]=0; inlist[1]=1;
+   match_dim_table_add(mattbl,inlist,
+    dt2->objs[curr2].dim_name,
+    dt2->objs[curr2].ref);
    curr2++;
   }
  }
@@ -148,18 +160,18 @@ void match_dim(int32 sd_in,
  * print the list
  *-------------------------------------------------------------------------
  */
-#if 0
+#if defined (HREPACK_DEBUG)
  {
   char     c1, c2;
   if (options->verbose) {
    printf("---------------------------------------\n");
-   printf("file1     file2\n");
+   printf("list1     list2\n");
    printf("---------------------------------------\n");
    for (i = 0; i < mattbl->nobjs; i++)
    {
     c1 = (char)((mattbl->objs[i].flags[0]) ? 'x' : ' ');
     c2 = (char)((mattbl->objs[i].flags[1]) ? 'x' : ' ');
-    printf("%5c %6c    %-15s\n", c1, c2, mattbl->objs[i].obj_name);
+    printf("%5c %6c    %-15s\n", c1, c2, mattbl->objs[i].dim_name);
    }
    printf("\n");
   }
@@ -176,12 +188,10 @@ void match_dim(int32 sd_in,
  {
   if ( mattbl->objs[i].flags[0] && ( ! mattbl->objs[i].flags[1] ) )
   {
-   gen_dim(mattbl->objs[i].obj_name,
-           mattbl->objs[i].ref1,
+   gen_dim(mattbl->objs[i].dim_name,
+           mattbl->objs[i].ref,
            sd_in,
            sd_out,
-           td1,
-           td2,
            options);
      
   }
@@ -206,14 +216,11 @@ void match_dim(int32 sd_in,
  *
  *-------------------------------------------------------------------------
  */
-static 
-int gen_dim(char* name,              /* name of SDS */
-            int32 ref,               /* ref of SDS */
-            int32 sd_in,
-            int32 sd_out,
-            table_t *td1,
-            table_t *td2,
-            options_t *options)
+static int gen_dim(char* name,              /* name of SDS */
+                   int32 ref,               /* ref of SDS */
+                   int32 sd_in,
+                   int32 sd_out,
+                   options_t *options)
 {
  int32 sds_id,                /* data set identifier */
        sds_out,               /* data set identifier */
@@ -321,7 +328,7 @@ int gen_dim(char* name,              /* name of SDS */
    };
   }
   
-  /*-------------------------------------------------------------------------
+ /*-------------------------------------------------------------------------
   * set the default values to the ones read from the object
   *-------------------------------------------------------------------------
   */
@@ -396,9 +403,8 @@ int gen_dim(char* name,              /* name of SDS */
     printf("Error: Unrecognized compression code in %d <%s>\n",comp_type_in,sds_name);
    };
   }
-
   
-  /*-------------------------------------------------------------------------
+ /*-------------------------------------------------------------------------
   * get the compression/chunk information of this object from the table
   * translate to usable information
   * this is done ONLY for the second trip inspection 
@@ -466,7 +472,7 @@ int gen_dim(char* name,              /* name of SDS */
   }
   
   
-  /*-------------------------------------------------------------------------
+ /*-------------------------------------------------------------------------
   * check for objects too small
   *-------------------------------------------------------------------------
   */
@@ -707,4 +713,197 @@ out:
  
 }
 
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: match_dim_table_add
+ *
+ * Purpose: add an entry from a list of dimension names into the match table 
+ *
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
+ *
+ * Date: January 17, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static void match_dim_table_add (match_dim_table_t *table, 
+                                 unsigned *flags, 
+                                 char* dim_name, 
+                                 int32 ref)
+{
+ int i;
+
+ /* check if name already on match table */
+ for (i = 0; i < table->nobjs; i++) 
+ {
+     /* insert information at position i */
+     if ( strcmp(dim_name, table->objs[i].dim_name)==0 )
+     {
+         if (table->objs[i].flags[0] == 0)
+             table->objs[i].flags[0] = flags[0];
+         if (table->objs[i].flags[1] == 0)
+             table->objs[i].flags[1] = flags[1];
+         return;
+     }
+ }
+
+ 
+ if (table->nobjs == table->size) {
+  table->size *= 2;
+  table->objs = (match_dim_name_t*)realloc(table->objs, table->size * sizeof(match_dim_name_t));
+  
+  for (i = table->nobjs; i < table->size; i++) {
+   table->objs[i].ref = -1;
+   table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
+  }
+ }
+ 
+ i = table->nobjs++;
+ table->objs[i].ref = ref;
+ strcpy(table->objs[i].dim_name,dim_name);
+ table->objs[i].flags[0] = flags[0];
+ table->objs[i].flags[1] = flags[1];
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: match_dim_table_init
+ *
+ * Purpose: initialize match table
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
+ *
+ * Date: January 17, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static void match_dim_table_init( match_dim_table_t **tbl )
+{
+ int i;
+ match_dim_table_t *table = (match_dim_table_t*) malloc(sizeof(match_dim_table_t));
+ 
+ table->size = 20;
+ table->nobjs = 0;
+ table->objs = (match_dim_name_t*) malloc(table->size * sizeof(match_dim_name_t));
+ 
+ for (i = 0; i < table->size; i++) {
+  table->objs[i].ref = -1;
+  table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
+ }
+ 
+ *tbl = table;
+}
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: match_dim_table_free
+ *
+ * Purpose: free match table 
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
+ *
+ * Date: January 17, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static void match_dim_table_free( match_dim_table_t *table )
+{
+ free(table->objs);
+ free(table);
+}
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: dim_table_add
+ *
+ * Purpose: add an entry of pair REF/NAME into a dimension table
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
+ *
+ * Date: January 17, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void dim_table_add(dim_table_t *table, int ref, char* name)
+{
+ int i;
+ 
+ if (table->nobjs == table->size) {
+  table->size *= 2;
+  table->objs = (dim_name_t*)realloc(table->objs, table->size * sizeof(dim_name_t));
+  
+  for (i = table->nobjs; i < table->size; i++) {
+   table->objs[i].ref = -1;
+  }
+ }
+ 
+ i = table->nobjs++;
+ table->objs[i].ref = ref;
+ strcpy(table->objs[i].dim_name,name);
+}
+
+
+
+/*-------------------------------------------------------------------------
+ * Function: dim_table_init
+ *
+ * Purpose: initialize dimension table
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
+ *
+ * Date: January 17, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void dim_table_init( dim_table_t **tbl )
+{
+ int i;
+ dim_table_t* table = (dim_table_t*) malloc(sizeof(dim_table_t));
+ 
+ table->size = 20;
+ table->nobjs = 0;
+ table->objs = (dim_name_t*) malloc(table->size * sizeof(dim_name_t));
+ 
+ for (i = 0; i < table->size; i++) {
+  table->objs[i].ref = -1;
+ }
+ 
+ *tbl = table;
+}
+
+/*-------------------------------------------------------------------------
+ * Function: dim_table_free
+ *
+ * Purpose: free dimension table 
+ *
+ * Return: void
+ *
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
+ *
+ * Date: January 17, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+void dim_table_free( dim_table_t *table )
+{
+ free(table->objs);
+ free(table);
+}
 

@@ -32,7 +32,7 @@ char    *progname;
 #define H4_HAVE_LIBSZ
 #endif
   
-#define HDIFF_TSTSTR "hdiff hziptst.hdf hziptst.hdf"
+#define HDIFF_TSTSTR "hdiff hziptst.hdf hziptst_out.hdf"
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -430,7 +430,7 @@ int main(void)
   printf( "Could not close file\n");
   return 1;
  }
-   
+
 
 /*-------------------------------------------------------------------------
  * TESTS:
@@ -454,7 +454,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test1:  
-	* HUFF
+ * HUFF
  *-------------------------------------------------------------------------
  */
 
@@ -466,7 +466,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -483,14 +483,14 @@ int main(void)
  * RLE
  *-------------------------------------------------------------------------
  */
-	TESTING("hrepack -t dset4:RLE -c dset4:10x8");
+ TESTING("hrepack -t dset4:RLE -c dset4:10x8");
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:RLE",&options);
  hrepack_addchunk("dset4:10x8",&options);
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -503,7 +503,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test3:  
-	* SDS SELECTED with GZIP, chunking SELECTED
+ * SDS SELECTED with GZIP, chunking SELECTED
  *-------------------------------------------------------------------------
  */
  TESTING("hrepack -t dset4:GZIP 6 -c dset4:10x8");
@@ -513,7 +513,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -527,7 +527,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test4:  
-	* SDS SELECTED with SZIP, chunking SELECTED
+    * SDS SELECTED with SZIP, chunking SELECTED
  *-------------------------------------------------------------------------
  */
  TESTING("hrepack -t dset4:SZIP 8,EC -c dset4:10x8");
@@ -539,7 +539,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -561,7 +561,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test4:  
-	* SDS SELECTED with NONE, chunking SELECTED NONE
+    * SDS SELECTED with NONE, chunking SELECTED NONE
  *-------------------------------------------------------------------------
  */
  TESTING("hrepack -t dset_chunk:NONE -c dset_chunk:NONE");
@@ -573,7 +573,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -591,7 +591,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test5:
-	* SDS SELECTED with all types, chunking SELECTED
+ * SDS SELECTED with all types, chunking SELECTED
  *-------------------------------------------------------------------------
  */
  TESTING("hrepack -t dset4:GZIP 9 -t dset5:RLE -c dset4:10x8");
@@ -610,7 +610,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -654,7 +654,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -676,7 +676,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test7:  
-	* compressing SDS ALL, chunking SELECTED NONE
+ * compressing SDS ALL, chunking SELECTED NONE
  *-------------------------------------------------------------------------
  */
 
@@ -688,7 +688,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -703,7 +703,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test8:
-	* no compressing, chunking ALL
+    * no compressing, chunking ALL
  *-------------------------------------------------------------------------
  */
 
@@ -713,7 +713,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
@@ -735,7 +735,7 @@ int main(void)
  if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
-	PASSED();
+ PASSED();
 
  TESTING(HDIFF_TSTSTR);
  if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)

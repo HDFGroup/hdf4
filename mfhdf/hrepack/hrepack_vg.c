@@ -104,8 +104,8 @@ int  copy_vg(char* infname,
              char*path_name,          /* absolute path for input group name */
              options_t *options,
              table_t *table,
-             table_t *td1,
-             table_t *td2)
+             dim_table_t *td1,
+             dim_table_t *td2)
 {
  int32 vgroup_id,             /* vg identifier */
        vgroup_id_out,         /* vg identifier */

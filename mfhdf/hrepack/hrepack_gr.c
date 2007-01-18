@@ -444,7 +444,7 @@ int  copy_gr(int32 infile_id,
    }
 #endif
    printf("Warning: SZIP not supported for GR\n");
-			can_compress=0;
+            can_compress=0;
    break;
   case COMP_CODE_RLE:         
    break;
@@ -460,18 +460,18 @@ int  copy_gr(int32 infile_id,
    break;
   default:
    printf( "Error: Unrecognized compression code %d\n", comp_type);
-			can_compress=0;
+            can_compress=0;
   }
 
-		if (can_compress) 
-		{
-			if (GRsetcompress (ri_out, comp_type, &c_info)==FAIL)
-			{
-				printf( "Error: Failed to set compression for <%s>\n", path);
-				ret=-1;
-				goto out;
-			}
-		} /* can_compress */
+        if (can_compress) 
+        {
+            if (GRsetcompress (ri_out, comp_type, &c_info)==FAIL)
+            {
+                printf( "Error: Failed to set compression for <%s>\n", path);
+                ret=-1;
+                goto out;
+            }
+        } /* can_compress */
  }
  }
  
