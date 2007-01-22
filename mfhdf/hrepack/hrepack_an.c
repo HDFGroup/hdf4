@@ -156,10 +156,9 @@ int copy_an_data(int32 infile_id,
        an_out,        /* AN interface identifier */
        ann_id,        /* an annotation identifier */
        ann_out,       /* an annotation identifier */
-       i,             /* position of an annotation */
        ann_length,    /* length of the text in an annotation */
        n_anno;
-       
+ int   i;             /* position of an annotation */
  char *buf;           /* buffer to hold the read annotation */
  int  is_label= (type==AN_DATA_LABEL)?1:0;
  int  ret=0;

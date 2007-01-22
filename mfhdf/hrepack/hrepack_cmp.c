@@ -49,8 +49,8 @@ int cmp_grs(char* file1_name,char* file2_name)
  int   cmp=-1;
 
  /* open the files for read  */
- file1_id = Hopen (file1_name,DFACC_READ,0);
- file2_id = Hopen (file2_name,DFACC_READ,0);
+ file1_id = Hopen (file1_name,DFACC_READ,(int16)0);
+ file2_id = Hopen (file2_name,DFACC_READ,(int16)0);
  
  /* initialize the GR interface */
  gr1_id = GRstart (file1_id);
@@ -139,7 +139,7 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
  */
  if ( interlace_mode1 != interlace_mode2 )
  {
-  printf("Warning: different interlace mode: <%d> and <%d>", 
+  printf("Warning: different interlace mode: <%ld> and <%ld>", 
    interlace_mode1,interlace_mode2);
   interlace_mode1=interlace_mode2;
  }
@@ -170,7 +170,7 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
 
  /* alloc */
  if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
-  printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+  printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
   goto out;
  }
 
@@ -194,7 +194,7 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
 
  /* alloc */
  if ((buf2 = (VOIDP) HDmalloc(data_size)) == NULL) {
-  printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+  printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
   goto out;
  }
 
