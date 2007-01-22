@@ -16,7 +16,7 @@
 #include "hrepack_parse.h"
 #include "hrepack_opttable.h"
 
-static void usage();
+static void usage(void);
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -32,7 +32,7 @@ static void usage();
  * Examples of use:
  *  -v -i hziptst.hdf -o hziptst_out.hdf -t "/group1/dataset:GZIP 6" -c "/group2/dataset:2x2"
  *  -v -i hziptst.hdf -o hziptst_out.hdf -f info.txt
-	*
+ *
  *-------------------------------------------------------------------------
  */
 
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
  */
 
 static 
-void usage()
+void usage(void)
 {
 
  printf(
