@@ -56,8 +56,8 @@ int diff_gr( int32 file1_id,
        edges[MAX_VAR_DIMS],    /* read edges */
        numtype,                /* number type */
        eltsz,                  /* element size */
-       nelms,                  /* number of elements */
        data_size;
+ uint32 nelms;                 /* number of elements */ 
  char  gr1_name[MAX_NC_NAME]; 
  char  gr2_name[MAX_NC_NAME]; 
  int   nfound=0;

@@ -69,13 +69,13 @@ int hdiff(const char *fname1,
  *-------------------------------------------------------------------------
  */
 
- if ((file1_id = Hopen(fname1, DFACC_READ, 0))==FAIL)
+ if ((file1_id = Hopen(fname1, DFACC_READ, (int16)0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname1);
   return FAIL;
  }
  
- if ((file2_id = Hopen(fname2, DFACC_READ, 0))==FAIL)
+ if ((file2_id = Hopen(fname2, DFACC_READ, (int16)0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname2);
   return FAIL;
@@ -403,7 +403,7 @@ int diff( const char *fname1,
    break;
   
   default:
-   printf("Tag <%d> and Tag <%d>: Comparison not supported for <%s> and <%s> \n", 
+   printf("Tag <%ld> and Tag <%ld>: Comparison not supported for <%s> and <%s> \n", 
     tag1, tag2, obj1_name, obj2_name);
    break;
  } 
