@@ -30,9 +30,7 @@
  *-------------------------------------------------------------------------
  */
 
-int diff_gr( int32 file1_id,
-             int32 file2_id,
-             int32 gr1_id,              
+int diff_gr( int32 gr1_id,              
              int32 gr2_id,
              int32 ref1,              
              int32 ref2,

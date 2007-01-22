@@ -115,10 +115,16 @@ int hdiff(const char *fname1,
  */
 
 
- nfound=match(fname1,nobjects1,list1,
-              fname2,nobjects2,list2,
-              sd1_id,gr1_id,file1_id,
-              sd2_id,gr2_id,file2_id,
+ nfound=match(nobjects1,
+              list1,
+              nobjects2,
+              list2,
+              sd1_id,
+              gr1_id,
+              file1_id,
+              sd2_id,
+              gr2_id,
+              file2_id,
               opt);
 
 
@@ -186,10 +192,16 @@ int hdiff(const char *fname1,
  *
  *-------------------------------------------------------------------------
  */
-int match( const char *fname1, int nobjects1, dtable_t *list1,
-           const char *fname2, int nobjects2, dtable_t *list2,
-           int32 sd1_id, int32 gr1_id, int32 file1_id,                
-           int32 sd2_id, int32 gr2_id, int32 file2_id,
+int match( int nobjects1, 
+           dtable_t *list1,
+           int nobjects2, 
+           dtable_t *list2,
+           int32 sd1_id, 
+           int32 gr1_id, 
+           int32 file1_id,                
+           int32 sd2_id, 
+           int32 gr2_id, 
+           int32 file2_id,
            diff_opt_t *opt )
 {
  int   cmp;
@@ -313,8 +325,7 @@ int match( const char *fname1, int nobjects1, dtable_t *list1,
  {
   if ( mattbl->objs[i].flags[0] && mattbl->objs[i].flags[1] )
   {
-   if((ret=diff( fname1, 
-    fname2,
+   if((ret=diff(
     file1_id,
     file2_id,
     sd1_id,
@@ -353,9 +364,7 @@ int match( const char *fname1, int nobjects1, dtable_t *list1,
  *-------------------------------------------------------------------------
  */
 
-int diff( const char *fname1,
-          const char *fname2, 
-          int32 file1_id,
+int diff( int32 file1_id,
           int32 file2_id,
           int32 sd1_id,
           int32 sd2_id,
@@ -376,7 +385,7 @@ int diff( const char *fname1,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-   if ((nfound=diff_sds(fname1,fname2,sd1_id,sd2_id,ref1,ref2,opt))<0)
+   if ((nfound=diff_sds(sd1_id,sd2_id,ref1,ref2,opt))<0)
     return FAIL;
   break;
 
@@ -390,7 +399,7 @@ int diff( const char *fname1,
   case DFTAG_CI8: /* RLE compressed 8-bit image */
   case DFTAG_II8: /* IMCOMP compressed 8-bit image */
    if (opt->gr == 1) {
-     if ((nfound=diff_gr(file1_id,file2_id,gr1_id,gr2_id,ref1,ref2,opt))<0)
+     if ((nfound=diff_gr(gr1_id,gr2_id,ref1,ref2,opt))<0)
       return FAIL;
    }
    break;

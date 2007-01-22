@@ -142,20 +142,24 @@ int array_diff(void *buf1,
                void *fill2);
 
 
-int match( const char *fname1, int nobjects1, dtable_t *list1,
-           const char *fname2, int nobjects2, dtable_t *list2,
-           int32 sd1_id, int32 gr1_id, int32 file1_id,                
-           int32 sd2_id, int32 gr2_id, int32 file2_id,
+int match( int nobjects1, 
+           dtable_t *list1,
+           int nobjects2, 
+           dtable_t *list2,
+           int32 sd1_id, 
+           int32 gr1_id, 
+           int32 file1_id,                
+           int32 sd2_id, 
+           int32 gr2_id, 
+           int32 file2_id,
            diff_opt_t *opt );
 
 
-int diff( const char *fname1,
-          const char *fname2, 
-          int32 file1_id,
+int diff( int32 file1_id,
           int32 file2_id,
-										int32 sd1_id,
+          int32 sd1_id,
           int32 sd2_id,
-										int32 gr1_id,
+          int32 gr1_id,
           int32 gr2_id,
           char *obj1_name,
           char *obj2_name,
@@ -175,18 +179,14 @@ int diff_vs( int32 file1_id,
              diff_opt_t * opt);
 
 
-int diff_gr( int32 file1_id,
-             int32 file2_id,
-													int32 gr1_id,              
+int diff_gr( int32 gr1_id,              
              int32 gr2_id,
              int32 ref1,              
              int32 ref2,
              diff_opt_t * opt);
 
 
-int diff_sds(const char  *fname1, 
-             const char  *fname2, 
-													int32 sd1_id,              
+int diff_sds(int32 sd1_id,              
              int32 sd2_id,
              int32 ref1,
              int32 ref2,

@@ -34,9 +34,7 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  *-------------------------------------------------------------------------
  */
 
-int diff_sds(const char  *fname1, 
-             const char  *fname2,
-             int32 sd1_id,              
+int diff_sds(int32 sd1_id,              
              int32 sd2_id,
              int32 ref1,
              int32 ref2,
