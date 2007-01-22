@@ -73,7 +73,6 @@ void match_dim(int32 sd_in,
  int   more_names_exist = (dt1->nobjs>0 && dt2->nobjs>0) ? 1 : 0;
  int   curr1=0;
  int   curr2=0;
- int   nfound=0;
  /*build a common list */
  match_dim_table_t *mattbl=NULL;
  unsigned inlist[2]; 
@@ -237,7 +236,6 @@ static int gen_dim(char* name,              /* name of SDS */
        nelms;                 /* number of elements */
  char             sds_name[MAX_NC_NAME]; 
  VOIDP            buf=NULL;
- VOIDP            dim_buf=NULL;
  int              i, j, ret=1,stat;
  int              info;           /* temporary int compression information */
  comp_coder_t     comp_type;      /* compression type requested  */
@@ -663,7 +661,7 @@ static int gen_dim(char* name,              /* name of SDS */
 
   /* alloc */
   if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+   printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
    ret=-1;
    goto out;
   }

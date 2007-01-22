@@ -28,11 +28,24 @@ unsigned char *image_data = 0;
 
 
 
-static void set_chunk_def( int32 comp_type, 
+static void set_chunk_def( comp_coder_t comp_type, 
                            int32 *dim,
                            int32 ncomps,
                            int32 bits_per_pixel, /* for szip */
                            HDF_CHUNK_DEF *chunk_def );
+
+static
+int add_sd_szip(const char *fname,       /* file name */
+                 int32 file_id,           /* file ID */
+                 int32 sd_id,             /* SD interface identifier */
+                 const char* sds_name,    /* sds name */
+                 int32 vgroup_id,         /* group ID */
+                 int32 chunk_flags,       /* chunk flags */
+                 int32 nt,                /* number type */
+                 int32 bits_per_pixel,    /* szip parameter */
+                 int32 *dim,              /* dimension of the data set */
+                 void *data
+                 );
 
 
 /*-------------------------------------------------------------------------
@@ -446,7 +459,7 @@ int add_r8(const char* image_file,
   }
 
   /* write the image */
-  if (DFR8addimage(fname, image_data, X_LENGTH, Y_LENGTH, 0)==FAIL){
+  if (DFR8addimage(fname, image_data, X_LENGTH, Y_LENGTH, (uint16)0)==FAIL){
    printf( "Could not write palette for image\n");
    return FAIL;
   }
@@ -1199,7 +1212,7 @@ int add_file_an(int32 file_id)
  }
  
  /* Create the data description for the vgroup identified by its tag and ref number */
- data_desc_id = ANcreate (an_id, vgroup_tag, vgroup_ref, AN_DATA_DESC);
+ data_desc_id = ANcreate (an_id, (uint16)vgroup_tag, (uint16)vgroup_ref, AN_DATA_DESC);
  
  /* Write the annotation text to the data description */
  if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
@@ -1271,7 +1284,7 @@ int add_an(int32 file_id, int32 tag, int32 ref)
  
  /* Write the annotation text to the data label */
  if (ANwriteann (data_label_id, DATA_LABEL_TXT, strlen (DATA_LABEL_TXT))==FAIL){
-  printf("Error: writing data label in tag %d ref %d\n", tag, ref);
+  printf("Error: writing data label in tag %ld ref %ld\n", tag, ref);
   return FAIL;
  }
  
@@ -1280,7 +1293,7 @@ int add_an(int32 file_id, int32 tag, int32 ref)
  
  /* Write the annotation text to the data description */
  if (ANwriteann (data_desc_id, DATA_DESC_TXT, strlen (DATA_DESC_TXT))==FAIL){
-  printf("Error: writing data label in tag %d ref %d\n", tag, ref);
+  printf("Error: writing data label in tag %ld ref %ld\n", tag, ref);
   return FAIL;
  }
  
@@ -1413,6 +1426,7 @@ int read_data(const char* file_name)
  *-------------------------------------------------------------------------
  */
 
+static
 int add_sd_szip(const char *fname,       /* file name */
                  int32 file_id,           /* file ID */
                  int32 sd_id,             /* SD interface identifier */
@@ -1426,14 +1440,14 @@ int add_sd_szip(const char *fname,       /* file name */
                  )
 
 {
- int32  sds_id,       /* data set identifier */
-        sds_ref,      /* reference number of the data set */
-        rank = 2;     /* rank of the data set array */
- comp_coder_t          comp_type;        /* compression flag */
- comp_info      comp_info;        /* compression structure */
- HDF_CHUNK_DEF  chunk_def;        /* chunking definitions */ 
- int32 edges[2],        /* write edges */
-       start[2]={0,0};  /* write start */
+ int32          sds_id,       /* data set identifier */
+                sds_ref,      /* reference number of the data set */
+                rank = 2;     /* rank of the data set array */
+ comp_coder_t   comp_type  = COMP_CODE_NONE;    /* compression flag */
+ comp_info      comp_info;    /* compression structure */
+ HDF_CHUNK_DEF  chunk_def;    /* chunking definitions */ 
+ int32 edges[2],              /* write edges */
+ start[2]={0,0};              /* write start */
 
  edges[0]=dim[0]; edges[1]=dim[1];
 
@@ -1575,7 +1589,7 @@ int add_sd_szip_all(const char *fname,       /* file name */
  */
 
 
-static void set_chunk_def( int32 comp_type, 
+static void set_chunk_def( comp_coder_t comp_type, 
                            int32 *dim,
                            int32 ncomps,
                            int32 bits_per_pixel, /* for szip */
