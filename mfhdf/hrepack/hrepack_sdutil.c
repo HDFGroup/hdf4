@@ -383,9 +383,9 @@ int set_szip( int   pixels_per_block, /*in */
               int   compression_mode, /* in */
               comp_info *c_info/*out*/)
 {
- int   ppb=pixels_per_block;
-
 #ifdef H4_HAVE_LIBSZ
+
+ int   ppb=pixels_per_block;
 
  if (SZ_encoder_enabled() == 0) {
   printf("Warning: SZIP encoder is not enabled\n");
@@ -467,7 +467,7 @@ int32 cntr;
  for (i = 0; i < rank; i++) {
   chunkcnt *= chunksizes[i];
  }
- printf("total chunks is %d\n",chunkcnt);
+ printf("total chunks is %ld\n",chunkcnt);
  return 0;
 }
 
