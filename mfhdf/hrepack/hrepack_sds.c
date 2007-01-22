@@ -265,7 +265,7 @@ int copy_sds(int32 sd_in,
   }
 
   
-  /*-------------------------------------------------------------------------
+ /*-------------------------------------------------------------------------
   * get the compression/chunk information of this object from the table
   * translate to usable information
   * this is done ONLY for the second trip inspection 
@@ -518,7 +518,7 @@ int copy_sds(int32 sd_in,
 
   /* alloc */
   if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-   printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+   printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
    ret=-1;
    goto out;
   }
@@ -604,7 +604,7 @@ int copy_sds(int32 sd_in,
    eltsz = DFKNTsize(numtype | DFNT_NATIVE);
 
    if ((dim_buf = (VOIDP) HDmalloc(dimsizes[i] * eltsz)) == NULL) {
-    printf( "Failed to alloc %d for dimension scale\n", dimsizes[i]);
+    printf( "Failed to alloc %ld for dimension scale\n", dimsizes[i]);
     ret=-1;
     goto out;
    }
@@ -717,7 +717,7 @@ int copy_sds_attrs(int32 id_in,
   numtype = dtype & DFNT_MASK;
   eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
   if ((attr_buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-   printf( "Error allocating %d values of size %d for attribute %s",
+   printf( "Error allocating %ld values of size %ld for attribute %s",
     nelms, numtype, attr_name);
    return-1;
   }

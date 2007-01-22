@@ -302,8 +302,8 @@ obj_list_t* parse_comp(const char *str,
    }
 #else 
     if (obj_list) free(obj_list);
-    printf("Input Error: Invalid compression method in <%s>. \
-     SZIP is not available < %d\n",str);
+    printf("Input Error: Invalid compression method in <%s>. SZIP is not available\n",
+        str);
     exit(1);
 #endif
    break;
