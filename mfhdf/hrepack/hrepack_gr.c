@@ -88,8 +88,8 @@ int  copy_gr(int32 infile_id,
                data_size;
  VOIDP         buf=NULL;
  uint8         pal_data[256*3];
-	int           can_compress=1; /* flag to tell if a compression is supported */
-
+ int           can_compress=1; /* flag to tell if a compression is supported */
+ char          *pal_path="palette";
 
  ri_index = GRreftoindex(gr_in,(uint16)ref);
  ri_id    = GRselect(gr_in,ri_index);
@@ -361,7 +361,7 @@ int  copy_gr(int32 infile_id,
 
  /* alloc */
  if ((buf = (VOIDP) HDmalloc(data_size)) == NULL) {
-  printf( "Failed to allocate %d elements of size %d\n", nelms, eltsz);
+  printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
   GRendaccess(ri_id);
   if (path) free(path);
   return-1;
@@ -514,7 +514,7 @@ int  copy_gr(int32 infile_id,
    printf( "Failed to get palette ref for <%s>\n", path);
   }
   /* add palette to table; we want to later check for lone palettes */
-  table_add(table,DFTAG_IP8,pal_ref,"palette");
+  table_add(table,DFTAG_IP8,pal_ref,pal_path);
   
   /* Get the id for the new palette */
   if ((pal_out = GRgetlutid(ri_out, 0)) == FAIL) {
@@ -620,7 +620,7 @@ int copy_gr_attrs(int32 ri_id,
   numtype = dtype & DFNT_MASK;
   eltsz   = DFKNTsize(numtype | DFNT_NATIVE);
   if ((attr_buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-   printf( "Error allocating %d values of size %d for attribute %s",
+   printf( "Error allocating %ld values of size %ld for attribute %s",
     nelms, numtype, attr_name);
    return-1;
   }

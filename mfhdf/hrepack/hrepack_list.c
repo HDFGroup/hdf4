@@ -92,8 +92,8 @@ int list(const char* infname,
  dim_table_init(&td2);
 
  /* open the input file for read and create the output file */
- infile_id  = Hopen (infname,DFACC_READ,0);
- outfile_id = Hopen (outfname,DFACC_CREATE,0);
+ infile_id  = Hopen (infname,DFACC_READ,(int16)0);
+ outfile_id = Hopen (outfname,DFACC_CREATE,(int16)0);
 
  if (infile_id==FAIL )
  {
@@ -984,13 +984,13 @@ int list_an(const char* infname,
 {
  int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
-       i,             /* position of an annotation in all of the same type*/
        ann_length,    /* length of the text in an annotation */
        an_out,        /* AN interface identifier */
        file_label_id, /* file label identifier */
        file_desc_id,  /* file description identifier */
        n_file_labels, n_file_descs, n_data_labels, n_data_descs;
  char *ann_buf;       /* buffer to hold the read annotation */
+ int   i;             /* position of an annotation in all of the same type*/
 
  if ( options->trip==0 ) 
  {
