@@ -98,8 +98,8 @@ int sds_verifiy_comp(const char *sds_name,
  *-------------------------------------------------------------------------
  */
 
-int sds_verifiy_comp_all(int32 in_comp_type, 
-                         int32 in_comp_info)
+int sds_verifiy_comp_all(comp_coder_t in_comp_type, 
+                         int in_comp_info)
 {
  comp_coder_t  comp_type;    /* to retrieve compression type into */
  comp_info     comp_info;    /* compression structure */ 

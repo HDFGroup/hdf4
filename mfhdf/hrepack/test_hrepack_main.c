@@ -100,7 +100,7 @@ int main(void)
  */
       
  /* create a HDF file */
- if ((file_id = Hopen (FILENAME, DFACC_CREATE, 0))<0)
+ if ((file_id = Hopen (FILENAME, DFACC_CREATE, (int16)0))<0)
  {
   printf("Error: Could not create file <%s>\n",FILENAME);
   return 1;

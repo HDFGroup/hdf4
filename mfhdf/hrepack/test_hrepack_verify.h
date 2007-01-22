@@ -27,7 +27,7 @@ extern "C" {
 
 
 int sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info);
-int sds_verifiy_comp_all(int32 in_comp_type, int32 in_comp_info);
+int sds_verifiy_comp_all(comp_coder_t in_comp_type, int in_comp_info);
 int sds_verifiy_chunk(const char *sds_name, int32 in_chunk_flags, int rank, 
                       int32 *in_chunk_lengths);
 int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, 
