@@ -173,7 +173,13 @@ int  copy_gr(int32 infile_id,
  *-------------------------------------------------------------------------
  */
 
+/*-------------------------------------------------------------------------
+ * compression
+ *-------------------------------------------------------------------------
+ */
+
  comp_type   = comp_type_in;
+
  switch (comp_type_in)
   {
  default:
@@ -205,7 +211,14 @@ int  copy_gr(int32 infile_id,
    info  = c_info_in.jpeg.quality;
    break;
   };
+
+ /*-------------------------------------------------------------------------
+  * chunking
+  *-------------------------------------------------------------------------
+  */
+
  chunk_flags = chunk_flags_in;
+
  if ( (HDF_CHUNK) == chunk_flags )
  {
   for (i = 0; i < rank; i++) 
@@ -323,19 +336,26 @@ int  copy_gr(int32 infile_id,
  if (options->verbose)
  {
   int pr_comp_type=0;
+  int pr_chunk_flags;
+
+  if ( options->trip==0 )
+      pr_chunk_flags=chunk_flags_in;
+  else
+      pr_chunk_flags=chunk_flags;
+
   if (comp_type>0)
   {
    pr_comp_type=comp_type;
   }
   else
   {
-   if (chunk_flags== (HDF_CHUNK | HDF_COMP))
+   if (pr_chunk_flags == (HDF_CHUNK | HDF_COMP) )
    {
     pr_comp_type=chunk_def.comp.comp_type;
    }
   }
   printf(PFORMAT,
-   (chunk_flags>0)?"chunk":"",                    /*chunk information*/
+   (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
    (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
    path);                                         /*name*/
  }

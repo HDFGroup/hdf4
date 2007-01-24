@@ -561,7 +561,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test4:  
-    * SDS SELECTED with NONE, chunking SELECTED NONE
+ * SDS SELECTED with NONE, chunking SELECTED NONE
  *-------------------------------------------------------------------------
  */
  TESTING("hrepack -t dset_chunk:NONE -c dset_chunk:NONE");
@@ -703,7 +703,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test8:
-    * no compressing, chunking ALL
+ * no compressing, chunking ALL
  *-------------------------------------------------------------------------
  */
 

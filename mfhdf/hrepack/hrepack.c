@@ -254,10 +254,10 @@ void print_options(options_t *options)
   if (options->op_tbl->objs[i].chunk.rank>0)
   {
    if (options->verbose){
-    printf("\t%s ",obj_name); 
+    printf("\t%s [",obj_name); 
     for ( k = 0; k < options->op_tbl->objs[i].chunk.rank; k++) 
      printf("%ld ",options->op_tbl->objs[i].chunk.chunk_lengths[k]);
-    printf("\n");
+    printf("]\n");
    }
    has_ck=1;
   }
