@@ -27,18 +27,18 @@
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
- printf("Type: %s  Npts: %d  Ndiff: %d (%f%%)\n", \
+ printf("Type: %s  Npts: %lu  Ndiff: %lu (%f%%)\n", \
  T, tot_cnt, n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
  printf("Avg Diff: %.3e  Max Diff: %.3e\n",  \
  d_avg_diff/n_stats, d_max_diff); \
  printf("Range File1: %f/%f  File2: %f/%f\n", \
 d_min_val1, d_max_val1, d_min_val2, d_max_val2); }
 #define PRINT_ISTATS(T) {\
- printf("Type: %s  Npts: %d  Ndiff: %d (%f%%)\n", \
+ printf("Type: %s  Npts: %lu  Ndiff: %lu (%f%%)\n", \
  T, tot_cnt,n_diff, 100.*(float64)n_diff/(float64)tot_cnt); \
- printf("Avg Diff: %e   Max. Diff: %d\n",  \
+ printf("Avg Diff: %e   Max. Diff: %ld\n",  \
  (d_avg_diff / n_stats), i4_max_diff); \
- printf("Range File1: %d/%d  File2: %d/%d\n", \
+ printf("Range File1: %ld/%ld  File2: %ld/%ld\n", \
 i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 
 
@@ -46,66 +46,30 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
  * printf formatting
  *-------------------------------------------------------------------------
  */
-#define SPACES    "          "
-#define FFORMAT   "%-15f %-15f %-15f\n"
-#define FFORMATP  "%-15f %-15f %.0f%%\n"
-#define IFORMAT   "%-15d %-15d %-15d\n"
-#define IFORMATP  "%-15d %-15d %.0f%%\n"
-#define CFORMAT   "%-16c %-17c\n"
-#define SFORMAT   "%-16s %-17s\n"
-#define UIFORMAT  "%-15u %-15u %-15u\n"
-#define LIFORMAT  "%-15ld %-15ld %-15ld\n"
-#define ULIFORMAT "%-15lu %-15lu %-15lu\n"
+#define SPACES     "          "
+#define FFORMAT    "%-15f %-15f %-15f\n"
+#define FFORMATP   "%-15f %-15f %.0f%%\n"
+#define I8FORMAT   "%-15d %-15d %-15d\n"
+#define I8FORMATP  "%-15d %-15d %.0f%%\n"
+#define I16FORMAT  "%-15d %-15d %-15d\n"
+#define I16FORMATP "%-15d %-15d %.0f%%\n"
+#define IFORMAT    "%-15ld %-15ld %-15ld\n"
+#define IFORMATP   "%-15ld %-15ld %.0f%%\n"
+#define CFORMAT    "%-16c %-17c\n"
+#define SFORMAT    "%-16s %-17s\n"
+#define UIFORMAT   "%-15lu %-15lu %-15lu\n"
+#define LIFORMAT   "%-15ld %-15ld %-15ld\n"
+#define ULIFORMAT  "%-15lu %-15lu %-15lu\n"
 
-/*-------------------------------------------------------------------------
- * Function: print_pos
- *
- * Purpose: convert an array index position to matrix notation
- *
- * Return: pos matrix array
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: May 9, 2003
- *
- *-------------------------------------------------------------------------
- */
-void print_pos( int        *ph, 
-                uint32     curr_pos, 
-                int32      *acc, 
-                int32      *pos, 
-                int        rank, 
-                const char *obj1, 
-                const char *obj2 )
-{
- int i;
+static void print_pos( int        *ph, 
+                       uint32     curr_pos, 
+                       int32      *acc, 
+                       int32      *pos, 
+                       int        rank, 
+                       const char *obj1, 
+                       const char *obj2 );
 
- /* print header */
- if ( *ph==1 )
- {
-  *ph=0;
-  printf("%-15s %-15s %-15s %-20s\n", 
-   "position", 
-   (obj1!=NULL) ? obj1 : " ", 
-   (obj2!=NULL) ? obj2 : " ",
-   "difference");
-  printf("------------------------------------------------------------\n");
- }
 
- for ( i = 0; i < rank; i++)
- {
-  pos[i] = curr_pos/acc[i];
-  curr_pos -= acc[i]*pos[i];
- }
- assert( curr_pos == 0 );
-
- printf("[ " );  
- for ( i = 0; i < rank; i++)
- {
-  fprintf(stdout,"%d ", pos[i]  );
- }
- printf("]" );
-}
 
 /*-------------------------------------------------------------------------
  * Function: array_diff
@@ -225,7 +189,7 @@ int array_diff(void *buf1,
   d_min_val2 = DBL_MAX;
   break;
  default:
-  printf(" bad type - %d\n", type);
+  printf(" bad type - %ld\n", type);
  }
  switch(type)
  {
@@ -273,7 +237,7 @@ int array_diff(void *buf1,
      {
       print_pos(&ph,i,acc,pos,rank,name1,name2);
       printf(SPACES);
-      printf(IFORMATP,*i1ptr1,*i1ptr2,per*100);
+      printf(I8FORMATP,*i1ptr1,*i1ptr2,per*100);
      }
     }  
    } /* relative */
@@ -283,7 +247,7 @@ int array_diff(void *buf1,
     if (n_diff <= max_err_cnt) {
      print_pos(&ph,i,acc,pos,rank,name1,name2);
      printf(SPACES);
-     printf(IFORMAT,*i1ptr1,*i1ptr2,abs(*i1ptr1-*i1ptr2));
+     printf(I8FORMAT,*i1ptr1,*i1ptr2,abs(*i1ptr1-*i1ptr2));
     }
    }                                               
    i1ptr1++;  i1ptr2++;
@@ -304,7 +268,7 @@ int array_diff(void *buf1,
    is_fill1 = fill1 && (*i2ptr1 == *((int16 *)fill1));
    is_fill2 = fill2 && (*i2ptr2 == *((int16 *)fill2));
    if (debug) {
-    fprintf(fp, "%d %d %d %d\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
+    fprintf(fp, "%d %d %ld %ld\n", is_fill1, is_fill2, (int32)(*i2ptr1), (int32)(*i2ptr2));
    }
    if (!is_fill1 && !is_fill2) {
     d_val1 = (float64)(*i2ptr1);
@@ -339,7 +303,7 @@ int array_diff(void *buf1,
      {
       print_pos(&ph,i,acc,pos,rank,name1,name2);
       printf(SPACES);
-      printf(IFORMATP,*i2ptr1,*i2ptr2,per*100);
+      printf(I16FORMATP,*i2ptr1,*i2ptr2,per*100);
      }
     }  
    } /* relative */
@@ -349,7 +313,7 @@ int array_diff(void *buf1,
     if (n_diff <= max_err_cnt) {
      print_pos(&ph,i,acc,pos,rank,name1,name2);
      printf(SPACES);
-     printf(IFORMAT,*i2ptr1,*i2ptr2,abs(*i2ptr1-*i2ptr2));
+     printf(I16FORMAT,*i2ptr1,*i2ptr2,abs(*i2ptr1-*i2ptr2));
     }
    }                                               
    i2ptr1++;  i2ptr2++;
@@ -548,7 +512,7 @@ int array_diff(void *buf1,
   break;
   
  default:
-  printf(" bad type - %d\n", type);
+  printf(" bad type - %ld\n", type);
   }
   if (statistics) {
    float64 sqrt_arg;
@@ -608,9 +572,13 @@ fmt_print(uint8 *x, int32 type)
   break;
   
  case DFNT_UINT32:
+  HDmemcpy(&l, x, sizeof(int32));
+  printf("%lu", l);
+  break;
+
  case DFNT_INT32:
   HDmemcpy(&l, x, sizeof(int32));
-  printf("%d", l);
+  printf("%ld", l);
   break;
   
  case DFNT_FLOAT32:
@@ -624,7 +592,7 @@ fmt_print(uint8 *x, int32 type)
   break;
   
  default: 
-  fprintf(stderr,"sorry, type [%d] not supported\n", type); 
+  fprintf(stderr,"sorry, type [%ld] not supported\n", type); 
   break;
   
  }
@@ -668,9 +636,9 @@ vdata_cmp(int32  vs1, int32  vs2,
   printf("\n---------------------------\n");
   printf("Vdata Name: %s <%s/%s> (Different attributes)\n",
    vsname1, gname, cname);
-  printf("> <%d> nrec=%d interlace=%d fld=[%s] vsize=%d class={%s})\n",
+  printf("> <%ld> nrec=%ld interlace=%ld fld=[%s] vsize=%ld class={%s})\n",
    vsotag1, nv1, interlace1, fields1, vsize1, vsclass1);
-  printf("< <%d> nrec=%d interlace=%d fld=[%s] vsize=%d class={%s})\n",
+  printf("< <%ld> nrec=%ld interlace=%ld fld=[%s] vsize=%ld class={%s})\n",
    vsotag2, nv2, interlace2, fields2, vsize2, vsclass2);
   return 1;
  }
@@ -726,7 +694,7 @@ vdata_cmp(int32  vs1, int32  vs2,
     ret=1;
    }
    
-   printf("> %d: ", i);
+   printf("> %ld: ", i);
    for (j=0; j<w1->n; j++)
    {
     for (k=0; k<w1->order[j]; k++)
@@ -738,7 +706,7 @@ vdata_cmp(int32  vs1, int32  vs2,
     }
    }        
    putchar('\n');
-   printf("< %d: ", i);
+   printf("< %ld: ", i);
    for (j=0; j<w2->n; j++)
    {
     for (k=0; k<w2->order[j]; k++)
@@ -772,7 +740,7 @@ vdata_cmp(int32  vs1, int32  vs2,
      vsname1);
     ret=1;
    }
-   printf("> %d: ", i);
+   printf("> %ld: ", i);
    for (j=0; j<w1->n; j++)
    {
     for (k=0; k<w1->order[j]; k++)
@@ -784,7 +752,7 @@ vdata_cmp(int32  vs1, int32  vs2,
     }
    }  
    putchar('\n');
-   printf("< %d: ", i);
+   printf("< %ld: ", i);
    for (j=0; j<w2->n; j++)
    {
     for (k=0; k<w2->order[j]; k++)
@@ -811,5 +779,56 @@ vdata_cmp(int32  vs1, int32  vs2,
  if (buf2)free((char *) buf2);
 
  return ret;
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: print_pos
+ *
+ * Purpose: convert an array index position to matrix notation
+ *
+ * Return: pos matrix array
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: May 9, 2003
+ *
+ *-------------------------------------------------------------------------
+ */
+static void print_pos( int        *ph, 
+                       uint32     curr_pos, 
+                       int32      *acc, 
+                       int32      *pos, 
+                       int        rank, 
+                       const char *obj1, 
+                       const char *obj2 )
+{
+ int i;
+
+ /* print header */
+ if ( *ph==1 )
+ {
+  *ph=0;
+  printf("%-15s %-15s %-15s %-20s\n", 
+   "position", 
+   (obj1!=NULL) ? obj1 : " ", 
+   (obj2!=NULL) ? obj2 : " ",
+   "difference");
+  printf("------------------------------------------------------------\n");
+ }
+
+ for ( i = 0; i < rank; i++)
+ {
+  pos[i] = curr_pos/acc[i];
+  curr_pos -= acc[i]*pos[i];
+ }
+ assert( curr_pos == 0 );
+
+ printf("[ " );  
+ for ( i = 0; i < rank; i++)
+ {
+  fprintf(stdout,"%ld ", pos[i]  );
+ }
+ printf("]" );
 }
 

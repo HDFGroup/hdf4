@@ -222,7 +222,7 @@ static int gen_dim(char* name,              /* name of SDS */
                    options_t *options)
 {
  int32 sds_id,                /* data set identifier */
-       sds_out,               /* data set identifier */
+       sds_out=FAIL,          /* data set identifier */
        dim_id,                /* dimension identifier */
        sds_index,             /* index number of the data set */
        dtype,                 /* SDS data type */
@@ -268,6 +268,23 @@ static int gen_dim(char* name,              /* name of SDS */
   printf( "Failed to check empty SDS <%s>\n", sds_name);
   ret=-1;
   goto out;
+ }
+
+/*-------------------------------------------------------------------------
+ * element size and number of elements
+ *-------------------------------------------------------------------------
+ */
+ 
+ /* compute the number of the bytes for each value */
+ numtype = dtype & DFNT_MASK;
+ eltsz = DFKNTsize(numtype | DFNT_NATIVE);
+ 
+ /* set edges of SDS */
+ nelms=1;
+ for (j = 0; j < rank; j++) {
+     nelms   *= dimsizes[j];
+     edges[j] = dimsizes[j];
+     start[j] = 0;
  }
  
 /*-------------------------------------------------------------------------
@@ -330,8 +347,14 @@ static int gen_dim(char* name,              /* name of SDS */
   * set the default values to the ones read from the object
   *-------------------------------------------------------------------------
   */
+
+ /*-------------------------------------------------------------------------
+  * compression
+  *-------------------------------------------------------------------------
+  */
   
   comp_type   = comp_type_in;
+  
   switch (comp_type_in)
   {
   case COMP_CODE_NBIT:
@@ -363,7 +386,14 @@ static int gen_dim(char* name,              /* name of SDS */
    printf("Error: Unrecognized compression code in %d <%s>\n",comp_type,sds_name);
    break;
   };
+
+ /*-------------------------------------------------------------------------
+  * chunking
+  *-------------------------------------------------------------------------
+  */
+
   chunk_flags = chunk_flags_in;
+
   if ( (HDF_CHUNK) == chunk_flags )
   {
    for (i = 0; i < rank; i++) 
@@ -430,23 +460,6 @@ static int gen_dim(char* name,              /* name of SDS */
   } /* check inspection mode */
   
   
-  /*-------------------------------------------------------------------------
-   * get size before printing
-   *-------------------------------------------------------------------------
-   */
-  
-  /* compute the number of the bytes for each value. */
-  numtype = dtype & DFNT_MASK;
-  eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-  
-  /* set edges of SDS */
-  nelms=1;
-  for (j = 0; j < rank; j++) {
-   nelms   *= dimsizes[j];
-   edges[j] = dimsizes[j];
-   start[j] = 0;
-  }
-  
  /*-------------------------------------------------------------------------
   * check for maximum number of chunks treshold
   *-------------------------------------------------------------------------
@@ -496,21 +509,28 @@ static int gen_dim(char* name,              /* name of SDS */
  if (options->verbose)
  {
   int pr_comp_type=0;
+  int pr_chunk_flags;
+
+  if ( options->trip==0 )
+      pr_chunk_flags=chunk_flags_in;
+  else
+      pr_chunk_flags=chunk_flags;
+
   if (comp_type>0)
   {
    pr_comp_type=comp_type;
   }
   else
   {
-   if (chunk_flags== (HDF_CHUNK | HDF_COMP))
+   if (pr_chunk_flags == (HDF_CHUNK | HDF_COMP) )
    {
     pr_comp_type=chunk_def.comp.comp_type;
    }
   }
   printf(PFORMAT,
-   (chunk_flags>0)?"chunk":"",                    /*chunk information*/
+   (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
    (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
-   sds_name);                                         /*name*/
+   name);                                         /*name*/
  }
 
 /*-------------------------------------------------------------------------

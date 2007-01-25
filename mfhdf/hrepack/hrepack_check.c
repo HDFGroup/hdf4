@@ -14,7 +14,7 @@
 #include "hdf.h"
 #include "mfhdf.h"
 
-static void usage();
+static void usage(void);
 static int sds_get_compck(char *fname, char *sds_name);
 static int sds_get_all(char *fname);
 static const char* get_schunk(int32 flags);
@@ -291,7 +291,7 @@ const char* get_schunk(int32 flags)
  */
 
 static 
-void usage()
+void usage(void)
 {
  printf("hrepack_check file_name <sds_name>\n");
  printf("    file_name   HDF File\n");

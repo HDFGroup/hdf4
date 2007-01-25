@@ -56,7 +56,7 @@ int copy_sds(int32 sd_in,
              int32 outfile_id)
 {
  int32 sds_id,                /* data set identifier */
-       sds_out,               /* data set identifier */
+       sds_out=FAIL,          /* data set identifier */
        sds_index,             /* index number of the data set */
        dtype,                 /* SDS data type */
        dimsizes[MAX_VAR_DIMS],/* dimensions of SDS */
@@ -88,8 +88,6 @@ int copy_sds(int32 sd_in,
  int              szip_mode;      /* szip mode, EC, NN */
  intn             empty_sds;
  int              have_info=0;
-
- sds_out=FAIL;
 
  sds_index = SDreftoindex(sd_in,ref);
  sds_id    = SDselect(sd_in,sds_index);
@@ -128,6 +126,23 @@ int copy_sds(int32 sd_in,
   printf( "Failed to check empty SDS <%s>\n", path);
   ret=-1;
   goto out;
+ }
+
+/*-------------------------------------------------------------------------
+ * element size and number of elements
+ *-------------------------------------------------------------------------
+ */
+ 
+ /* compute the number of the bytes for each value */
+ numtype = dtype & DFNT_MASK;
+ eltsz = DFKNTsize(numtype | DFNT_NATIVE);
+ 
+ /* set edges of SDS */
+ nelms=1;
+ for (j = 0; j < rank; j++) {
+     nelms   *= dimsizes[j];
+     edges[j] = dimsizes[j];
+     start[j] = 0;
  }
  
 /*-------------------------------------------------------------------------
@@ -306,23 +321,6 @@ int copy_sds(int32 sd_in,
     comp_type=COMP_CODE_NONE;
   } /* check inspection mode */
   
-  
-  /*-------------------------------------------------------------------------
-   * get size before printing
-   *-------------------------------------------------------------------------
-   */
-  
-  /* compute the number of the bytes for each value. */
-  numtype = dtype & DFNT_MASK;
-  eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-  
-  /* set edges of SDS */
-  nelms=1;
-  for (j = 0; j < rank; j++) {
-   nelms   *= dimsizes[j];
-   edges[j] = dimsizes[j];
-   start[j] = 0;
-  }
   
  /*-------------------------------------------------------------------------
   * check for maximum number of chunks treshold

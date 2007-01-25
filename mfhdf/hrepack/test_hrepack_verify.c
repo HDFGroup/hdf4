@@ -197,6 +197,7 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
       break;
      default:
       printf("Error: Unrecognized compression code %d\n",in_comp_type);
+      info = -1;
       break;
      };
      
