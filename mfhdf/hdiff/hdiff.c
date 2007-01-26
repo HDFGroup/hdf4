@@ -134,7 +134,7 @@ int hdiff(const char *fname1,
  */
  
  if (opt->ga == 1) 
-  nfound+=gattr_diff(sd1_id, sd2_id, opt);
+  nfound+=gattr_diff(sd1_id, sd2_id);
 
 
 /*-------------------------------------------------------------------------

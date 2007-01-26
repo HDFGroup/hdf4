@@ -94,11 +94,11 @@ int Hgetlist (const char* fname, dtable_t *table)
 
  /* iterate tru HDF interfaces */
  hdiff_list_vg (fname,file_id,sd_id,gr_id,table);
- hdiff_list_gr (fname,file_id,gr_id,table);
- hdiff_list_sds(fname,file_id,sd_id,table);
- hdiff_list_vs (fname,file_id,table);
- hdiff_list_glb(fname,file_id,sd_id,gr_id,table);
- hdiff_list_an (fname,file_id,table);
+ hdiff_list_gr (file_id,gr_id,table);
+ hdiff_list_sds(file_id,sd_id,table);
+ hdiff_list_vs (file_id,table);
+ hdiff_list_glb(sd_id,gr_id);
+ hdiff_list_an (file_id);
 
  /* close */
  if (GRend (gr_id)==FAIL) {
@@ -383,7 +383,7 @@ int insert_vg(const char* fname,
  *-------------------------------------------------------------------------
  */   
   case DFTAG_VH:  /* Vdata Header */
-   insert_vs(file_id,tag,ref,path_name,table,0);
+   insert_vs(file_id,ref,path_name,table,0);
    break;
    
   }
@@ -403,8 +403,7 @@ int insert_vg(const char* fname,
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_gr(const char* fname,
-                  int32 file_id,
+int hdiff_list_gr(int32 file_id,
                   int32 gr_id,             /* GR interface identifier */
                   dtable_t *table)
 {
@@ -466,8 +465,7 @@ int hdiff_list_gr(const char* fname,
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_sds(const char* fname,
-                   int32 file_id,
+int hdiff_list_sds(int32 file_id,
                    int32 sd_id,                  /* SD interface identifier */
                    dtable_t *table)
 {
@@ -524,8 +522,7 @@ int hdiff_list_sds(const char* fname,
  */
 
 
-int hdiff_list_vs(const char* fname,
-                  int32 file_id,
+int hdiff_list_vs(int32 file_id,
                   dtable_t *table)
 {
  int32 nlones = 0,   /* number of lone vdatas */
@@ -574,7 +571,7 @@ int hdiff_list_vs(const char* fname,
    }
 
    /* insert VS */
-   insert_vs(file_id,DFTAG_VH,ref,0,table,1);
+   insert_vs(file_id,ref,0,table,1);
  
   } /* for */
 
@@ -633,11 +630,8 @@ int insert_vg_attrs(int32 vg_in,char *path)
  *-------------------------------------------------------------------------
  */
 
-int hdiff_list_glb(const char* fname,
-                   int32 file_id,
-                   int32 sd_id,                  /* SD interface identifier */
-                   int32 gr_id,                  /* GR interface identifier */
-                   dtable_t *table)
+int hdiff_list_glb(int32 sd_id,                  /* SD interface identifier */
+                   int32 gr_id)                  /* GR interface identifier */
 {
  int32 n_datasets,             /* number of datasets in the file */
        n_file_attrs;           /* number of file attributes */
@@ -674,9 +668,7 @@ int hdiff_list_glb(const char* fname,
  */
 
 
-int hdiff_list_an(const char* fname,
-                  int32 file_id,
-                  dtable_t *table)
+int hdiff_list_an(int32 file_id)
 {
  int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
@@ -1196,7 +1188,6 @@ int  insert_gr(int32 file_id,
  */
 
 int  insert_vs( int32 file_id,
-                int32 tag,
                 int32 ref,               /* ref of input VS */
                 char*path_name,          /* absolute path for input group name */
                 dtable_t *table,

@@ -118,7 +118,7 @@ int  hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
  *-------------------------------------------------------------------------
  */
 
-int  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
+int  gattr_diff(int32 sdid1, int32 sdid2);
 int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
 void pr_att_vals(nc_type type, int len, void *vals);
 int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, uint32 max_err_cnt);

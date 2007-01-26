@@ -80,28 +80,28 @@ char *progname;
 static void
 usage()
 {
- (void) fprintf(stderr,
+ (void) fprintf(stdout,
   "hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] [-p relative] file1 file2\n");
- fprintf(stderr,"  [-b]              Verbose mode\n");
- fprintf(stderr,"  [-g]              Compare global attributes only\n");
- fprintf(stderr,"  [-s]              Compare SD local attributes only\n");
- fprintf(stderr,"  [-d]              Compare SD data only\n");
- fprintf(stderr,"  [-D]              Compare Vdata data only\n");
- fprintf(stderr,"  [-S]              Print statistics\n");
- fprintf(stderr,"  [-v var1[,...]]   Compare SD data on variable(s) <var1>,... only\n");
- fprintf(stderr,"  [-u var1[,...]]   Compare vdata on variable(s) <var1>,... only\n");
- fprintf(stderr,"  [-e count]        Print difference up to count number for each variable\n");
- fprintf(stderr,"  [-t limit]        Print difference when it is greater than limit\n");
- fprintf(stderr,"  [-p relative]     Print difference when it is greater than a relative limit\n");
- fprintf(stderr,"  file1             File name of the first input HDF file\n");
- fprintf(stderr,"  file2             File name of the second input HDF file\n");
- fprintf(stderr,"\n");
- fprintf(stderr,"Items in [] are optional\n");
- fprintf(stderr,"The 'count' value must be a positive integer\n");
- fprintf(stderr,"The 'limit' and 'relative' values must be positive numbers\n");
- fprintf(stderr,"The -t compare criteria is |a - b| > limit\n");
- fprintf(stderr,"The -p compare criteria is |1 - b/a| > relative\n");
- fprintf(stderr,"return code: 0 - no differences found; 1 - differences found \n");
+ fprintf(stdout,"  [-b]              Verbose mode\n");
+ fprintf(stdout,"  [-g]              Compare global attributes only\n");
+ fprintf(stdout,"  [-s]              Compare SD local attributes only\n");
+ fprintf(stdout,"  [-d]              Compare SD data only\n");
+ fprintf(stdout,"  [-D]              Compare Vdata data only\n");
+ fprintf(stdout,"  [-S]              Print statistics\n");
+ fprintf(stdout,"  [-v var1[,...]]   Compare SD data on variable(s) <var1>,... only\n");
+ fprintf(stdout,"  [-u var1[,...]]   Compare vdata on variable(s) <var1>,... only\n");
+ fprintf(stdout,"  [-e count]        Print difference up to count number for each variable\n");
+ fprintf(stdout,"  [-t limit]        Print difference when it is greater than limit\n");
+ fprintf(stdout,"  [-p relative]     Print difference when it is greater than a relative limit\n");
+ fprintf(stdout,"  file1             File name of the first input HDF file\n");
+ fprintf(stdout,"  file2             File name of the second input HDF file\n");
+ fprintf(stdout,"\n");
+ fprintf(stdout,"Items in [] are optional\n");
+ fprintf(stdout,"The 'count' value must be a positive integer\n");
+ fprintf(stdout,"The 'limit' and 'relative' values must be positive numbers\n");
+ fprintf(stdout,"The -t compare criteria is |a - b| > limit\n");
+ fprintf(stdout,"The -p compare criteria is |1 - b/a| > relative\n");
+ fprintf(stdout,"return code: 0 - no differences found; 1 - differences found \n");
  exit(EXIT_FAILURE);
 }
 

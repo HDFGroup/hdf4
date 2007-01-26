@@ -39,7 +39,7 @@ int diff_vs( int32 file1_id,
        n_records1,            /* number of records */
        vdata1_size, 
        interlace1_mode,
-       vdata2_id,             /* vdata identifier */
+       vdata2_id=-1,          /* vdata identifier */
        n_records2,            /* number of records */
        vdata2_size, 
        interlace2_mode;
@@ -169,8 +169,11 @@ out:
  if (VSdetach (vdata1_id)==FAIL) {
   printf( "Failed to dettach VS ref %ld\n", ref1);
  }
- if (VSdetach (vdata2_id)==FAIL) {
-  printf( "Failed to dettach VS ref %ld\n", ref2);
+ if (vdata2_id!=-1)
+ {
+     if (VSdetach (vdata2_id)==FAIL) {
+         printf( "Failed to dettach VS ref %ld\n", ref2);
+     }
  }
  
  return ret;

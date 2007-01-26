@@ -27,11 +27,11 @@ extern "C" {
 int Hgetlist (const char* fname, dtable_t *list);
 
 int hdiff_list_vg (const char* fname,int32 file_id,int32 sd_id,int32 gr_id,dtable_t *table);
-int hdiff_list_gr (const char* fname,int32 file_id,int32 gr_id,dtable_t *table);
-int hdiff_list_sds(const char* fname,int32 file_id,int32 sd_id,dtable_t *table);
-int hdiff_list_vs (const char* fname,int32 file_id,dtable_t *table);
-int hdiff_list_glb(const char* fname,int32 file_id,int32 sd_id,int32 gr_id,dtable_t *table);
-int hdiff_list_an (const char* fname,int32 file_id,dtable_t *table);
+int hdiff_list_gr (int32 file_id,int32 gr_id,dtable_t *table);
+int hdiff_list_sds(int32 file_id,int32 sd_id,dtable_t *table);
+int hdiff_list_vs (int32 file_id,dtable_t *table);
+int hdiff_list_glb(int32 sd_id,int32 gr_id);
+int hdiff_list_an (int32 file_id);
 
 
 int insert_vg_attrs(int32 vgroup_id,char *path);
@@ -63,7 +63,6 @@ int  insert_gr(int32 file_id,
                dtable_t *table);
 
 int  insert_vs( int32 file_id,
-                int32 tag,
                 int32 ref,               /* ref of input VS */
                 char*path_name,          /* absolute path for input group name */
                 dtable_t *table,
