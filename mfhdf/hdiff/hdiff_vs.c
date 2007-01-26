@@ -59,34 +59,34 @@ int diff_vs( int32 file1_id,
  */
 
  if (Vstart (file1_id)==FAIL) {
-  printf("Error: Could not start VS interface in VS ref %d\n", ref1);
+  printf("Error: Could not start VS interface in VS ref %ld\n", ref1);
   return FAIL;
  }
 
  if ((vdata1_id  = VSattach (file1_id, ref1, "r")) == FAIL ){
-  printf( "Failed to attach VS ref %d\n", ref1);
+  printf( "Failed to attach VS ref %ld\n", ref1);
   return FAIL;
  }
  if (VSgetname  (vdata1_id, vdata1_name) == FAIL ){
-  printf( "Failed to name for VS ref %d\n", ref1);
+  printf( "Failed to name for VS ref %ld\n", ref1);
   ret=-1;
   goto out;
  }
  if (VSgetclass (vdata1_id, vdata1_class) == FAIL ){
-  printf( "Failed to name for VS ref %d\n", ref1);
+  printf( "Failed to name for VS ref %ld\n", ref1);
   ret=-1;
   goto out;
  }
  
  if (VSinquire(vdata1_id, &n_records1, &interlace1_mode, fieldname1_list, 
   &vdata1_size, vdata1_name) == FAIL) {
-  printf( "Failed to get info for VS ref %d\n", ref1);
+  printf( "Failed to get info for VS ref %ld\n", ref1);
   ret=-1;
   goto out;
  }
  
  if (VFnfields(vdata1_id)== FAIL ){
-  printf( "Failed getting fields forVS ref %d\n", ref1);
+  printf( "Failed getting fields forVS ref %ld\n", ref1);
   ret=-1;
   goto out;
  }
@@ -98,35 +98,35 @@ int diff_vs( int32 file1_id,
  */
 
  if (Vstart (file2_id)==FAIL) {
-  printf("Error: Could not start VS interface in VS ref %d\n", ref1);
+  printf("Error: Could not start VS interface in VS ref %ld\n", ref1);
   return FAIL;
  }
 
  if ((vdata2_id  = VSattach (file2_id, ref2, "r")) == FAIL ){
-  printf( "Failed to attach VS ref %d\n", ref2);
+  printf( "Failed to attach VS ref %ld\n", ref2);
   ret=-2;
   goto out;
  }
  if (VSgetname  (vdata2_id, vdata2_name) == FAIL ){
-  printf( "Failed to name for VS ref %d\n", ref2);
+  printf( "Failed to name for VS ref %ld\n", ref2);
   ret=-2;
   goto out;
  }
  if (VSgetclass (vdata2_id, vdata2_class) == FAIL ){
-  printf( "Failed to name for VS ref %d\n", ref2);
+  printf( "Failed to name for VS ref %ld\n", ref2);
   ret=-2;
   goto out;
  }
  
  if (VSinquire(vdata2_id, &n_records2, &interlace2_mode, fieldname2_list, 
   &vdata2_size, vdata2_name) == FAIL) {
-  printf( "Failed to get info for VS ref %d\n", ref2);
+  printf( "Failed to get info for VS ref %ld\n", ref2);
   ret=-2;
   goto out;
  }
  
  if (VFnfields(vdata2_id)== FAIL ){
-  printf( "Failed getting fields forVS ref %d\n", ref2);
+  printf( "Failed getting fields forVS ref %ld\n", ref2);
   ret=-2;
   goto out;
  }
@@ -167,10 +167,10 @@ int diff_vs( int32 file1_id,
 out:
  /* terminate access to the VSs */
  if (VSdetach (vdata1_id)==FAIL) {
-  printf( "Failed to dettach VS ref %d\n", ref1);
+  printf( "Failed to dettach VS ref %ld\n", ref1);
  }
  if (VSdetach (vdata2_id)==FAIL) {
-  printf( "Failed to dettach VS ref %d\n", ref2);
+  printf( "Failed to dettach VS ref %ld\n", ref2);
  }
  
  return ret;

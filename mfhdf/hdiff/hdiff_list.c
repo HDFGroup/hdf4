@@ -186,13 +186,13 @@ int hdiff_list_vg(const char* fname,
    * moving to the next.
    */
    if ((vgroup_id = Vattach (file_id, ref_array[i], "r"))==FAIL){
-    printf("Error: Could not attach group with ref <%d>\n", ref_array[i]);
+    printf("Error: Could not attach group with ref <%ld>\n", ref_array[i]);
    }
    if (Vgetname (vgroup_id, vgroup_name)==FAIL){
-    printf("Error: Could not get name for group with ref <%d>\n", ref_array[i]);
+    printf("Error: Could not get name for group with ref <%ld>\n", ref_array[i]);
    }
    if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
-    printf("Error: Could not get class for group with ref <%d>\n", ref_array[i]);
+    printf("Error: Could not get class for group with ref <%ld>\n", ref_array[i]);
    }
    
    /* ignore reserved HDF groups/vdatas */
@@ -828,12 +828,12 @@ int insert_an_data(int32 file_id,
  for (i = 0; i < n_anno; i++) 
  {
   if((ann_id = ANselect(an_id,i,type))==FAIL) {
-   printf( "Failed to select AN %d of <%s>\n", i, path);
+   printf( "Failed to select AN %ld of <%s>\n", i, path);
    continue;
   }
  
   if(ANendaccess(ann_id)==FAIL){
-   printf( "Failed to end AN %d of <%s>\n", i, path);
+   printf( "Failed to end AN %ld of <%s>\n", i, path);
    continue;
   }
 
@@ -1216,15 +1216,15 @@ int  insert_vs( int32 file_id,
  */ 
 
  if ((vdata_id  = VSattach (file_id, ref, "r")) == FAIL ){
-  printf( "Failed to attach vdata ref %d\n", ref);
+  printf( "Failed to attach vdata ref %ld\n", ref);
   return-1;
  }
  if (VSgetname  (vdata_id, vdata_name) == FAIL ){
-  printf( "Failed to name for vdata ref %d\n", ref);
+  printf( "Failed to name for vdata ref %ld\n", ref);
   return-1;
  }
  if (VSgetclass (vdata_id, vdata_class) == FAIL ){
-  printf( "Failed to name for vdata ref %d\n", ref);
+  printf( "Failed to name for vdata ref %ld\n", ref);
   return-1;
  }
  

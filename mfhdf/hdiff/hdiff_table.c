@@ -196,7 +196,7 @@ void dtable_print(dtable_t *table)
 
  for (i = 0; i < table->nobjs; i++)
  {
-  printf("%5d %6d    %-15s\n", 
+  printf("%5ld %6ld    %-15s\n", 
    table->objs[i].tag, 
    table->objs[i].ref, 
    table->objs[i].obj_name);
