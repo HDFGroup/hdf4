@@ -16,9 +16,14 @@
 #include "hdiff_mattbl.h"
 
 
-static
-int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char* sds1_name);
 
+static
+uint32 diff_sds_attrs(int32 sds1_id,
+                      int32 nattrs1,
+                      int32 sds2_id,
+                      int32 nattrs2,
+                      char* sds1_name,
+                      diff_opt_t * opt);
 
 /*-------------------------------------------------------------------------
  * Function: diff_sds
@@ -34,19 +39,19 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  *-------------------------------------------------------------------------
  */
 
-int diff_sds(int32 sd1_id,              
-             int32 sd2_id,
-             int32 ref1,
-             int32 ref2,
-             diff_opt_t * opt)
+uint32 diff_sds(int32 sd1_id,              
+                int32 sd2_id,
+                int32 ref1,
+                int32 ref2,
+                diff_opt_t * opt)
 {
- int32 sds1_id,                /* data set identifier */
+ int32 sds1_id=-1,             /* data set identifier */
        sds1_index,             /* index number of the data set */
        dtype1,                 /* SDS data type */
        dimsizes1[MAX_VAR_DIMS],/* dimensional size of SDS */
        nattrs1,                /* number of SDS attributes */
        rank1,                  /* rank of SDS */
-       sds2_id,                /* data set identifier */
+       sds2_id=-1,             /* data set identifier */
        sds2_index,             /* index number of the data set */
        dtype2,                 /* SDS data type */
        dimsizes2[MAX_VAR_DIMS],/* dimensional size of SDS */
@@ -59,7 +64,6 @@ int diff_sds(int32 sd1_id,
        nelms;                  /* number of elements */
  char  sds1_name[MAX_NC_NAME]; 
  char  sds2_name[MAX_NC_NAME]; 
- int   nfound=0;
  int   dim_diff=0;             /* dimensions are different */
  intn  empty1_sds;
  intn  empty2_sds;
@@ -69,6 +73,8 @@ int diff_sds(int32 sd1_id,
  int   i;
  VOIDP fill1=NULL;
  VOIDP fill2=NULL;
+ uint32 nfound=0;
+
 
 /*-------------------------------------------------------------------------
  * object 1
@@ -81,8 +87,7 @@ int diff_sds(int32 sd1_id,
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
  if (SDgetinfo(sds1_id,sds1_name,&rank1,dimsizes1,&dtype1,&nattrs1)==FAIL) {
    printf( "Failed to get info for SDS ref <%ld>\n",ref1);
-   SDendaccess(sds1_id);
-   return FAIL;
+   goto out;
   }
 
 
@@ -97,8 +102,7 @@ int diff_sds(int32 sd1_id,
  /*obtain name,rank,dimsizes,datatype and num of attributes of sds */
  if (SDgetinfo(sds2_id,sds2_name,&rank2,dimsizes2,&dtype2,&nattrs2)==FAIL) {
    printf( "Failed to get info for SDS ref <%ld>\n",ref2);
-   SDendaccess(sds2_id);
-   return FAIL;
+   goto out;
   }
 
 
@@ -124,7 +128,7 @@ int diff_sds(int32 sd1_id,
   }
   if (imatch == 0)
   {
-   goto out;
+   goto do_nothing;
   }
  }  
 
@@ -137,7 +141,7 @@ int diff_sds(int32 sd1_id,
  {
   printf("Comparison not supported\n");
   printf("<%s> has datatype %ld, <%s> has datatype %ld ",sds1_name,dtype1,sds2_name,dtype2);
-  goto out;
+  goto do_nothing;
  }
 
 /*-------------------------------------------------------------------------
@@ -153,7 +157,7 @@ int diff_sds(int32 sd1_id,
   printf("\n" );
   printf("<%s> has rank %ld, dimensions ", sds2_name, rank2);
   print_dims(rank2,dimsizes2);
-  goto out;
+  goto do_nothing;
  }
 
 /*-------------------------------------------------------------------------
@@ -180,7 +184,7 @@ int diff_sds(int32 sd1_id,
   printf("\n" );
   printf("<%s> has rank %ld, dimensions ", sds2_name, rank2);
   print_dims(rank2,dimsizes2);
-  goto out;
+  goto do_nothing;
  }
 
 /*-------------------------------------------------------------------------
@@ -206,21 +210,19 @@ int diff_sds(int32 sd1_id,
  */ 
  if (SDcheckempty( sds1_id, &empty1_sds ) == FAIL) {
   printf( "Failed to check empty SDS <%s>\n", sds1_name);
-  nfound=FAIL;
   goto out;
  }
  if (empty1_sds==1 && opt->verbose) {
   printf( "Empty SDS <%s>\n", sds1_name);
-  goto out;
+  goto do_nothing;
  }
  if (SDcheckempty( sds2_id, &empty2_sds ) == FAIL) {
   printf( "Failed to check empty SDS <%s>\n", sds2_name);
-  nfound=FAIL;
   goto out;
  }
  if (empty2_sds==1 && opt->verbose) {
   printf( "Empty SDS <%s>\n", sds2_name);
-  goto out;
+  goto do_nothing;
  }
 
 /*-------------------------------------------------------------------------
@@ -231,25 +233,21 @@ int diff_sds(int32 sd1_id,
  /* alloc */
  if ((buf1 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
   printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
-  nfound=FAIL;
   goto out;
  }
  /* read data */
  if (SDreaddata (sds1_id, start, NULL, edges, buf1) == FAIL) {
   printf( "Could not read SDS <%s>\n", sds1_name);
-  nfound=FAIL;
   goto out;
  }
  /* alloc */
  if ((buf2 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
   printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
-  nfound=FAIL;
   goto out;
  }
  /* read data */
  if (SDreaddata (sds2_id, start, NULL, edges, buf2) == FAIL) {
   printf( "Could not read SDS <%s>\n", sds2_name);
-  nfound=FAIL;
   goto out;
  }
  
@@ -263,12 +261,12 @@ int diff_sds(int32 sd1_id,
  if (fill1!=NULL && SDgetfillvalue(sds1_id,fill1)<0)
  {
   HDfree(fill1);
-  fill1=NULL;
+  fill1 = NULL;
  }
  if (fill2!=NULL && SDgetfillvalue(sds2_id,fill2)<0)
  {
   HDfree(fill2);
-  fill2=NULL;
+  fill2 = NULL;
  }
 
 /*-------------------------------------------------------------------------
@@ -304,7 +302,7 @@ int diff_sds(int32 sd1_id,
  /* flag to compare SDSs local attributes */
  if (opt->sa == 1)
  {
-  diff_sds_attrs(sds1_id,nattrs1,sds2_id,nattrs2,sds1_name);
+  nfound += diff_sds_attrs(sds1_id,nattrs1,sds2_id,nattrs2,sds1_name,opt);
  }
  
 /*-------------------------------------------------------------------------
@@ -312,21 +310,34 @@ int diff_sds(int32 sd1_id,
  *-------------------------------------------------------------------------
  */
 
-out:
- if (SDendaccess(sds1_id)<0) {
-  fprintf(stderr,"SDendaccess FAIL\n");
-  nfound=FAIL;
- }
- if (SDendaccess(sds2_id)<0) {
-  fprintf(stderr,"SDendaccess FAIL\n");
-  nfound=FAIL;
- }
- if (buf1) free(buf1);
- if (buf2) free(buf2);
- if (fill1!=NULL) HDfree(fill1);
- if (fill2!=NULL) HDfree(fill2);
+do_nothing:
+
+ SDendaccess(sds1_id);
+ SDendaccess(sds2_id);
+ if (buf1)  HDfree(buf1);
+ if (buf2)  HDfree(buf2);
+ if (fill1) HDfree(fill1);
+ if (fill2) HDfree(fill2);
 
  return nfound;
+
+
+out:
+
+ opt->err_stat = 1;
+
+ if (sds1_id!=-1)
+  SDendaccess(sds1_id);
+ if (sds2_id!=-1)
+  SDendaccess(sds2_id);
+
+ if (buf1)  HDfree(buf1);
+ if (buf2)  HDfree(buf2);
+ if (fill1) HDfree(fill1);
+ if (fill2) HDfree(fill2);
+
+ return 0;
+
 }
 
 
@@ -337,8 +348,6 @@ out:
  *
  * Purpose: compare SDS attributes
  *
- * Return: 
- *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
  * Date: September 2, 2003
@@ -347,7 +356,12 @@ out:
  */
 
 static
-int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char* sds1_name)
+uint32 diff_sds_attrs(int32 sds1_id,
+                      int32 nattrs1,
+                      int32 sds2_id,
+                      int32 nattrs2,
+                      char* sds1_name,
+                      diff_opt_t * opt)
 {
  int32 dtype1,                 /* SDS data type */
        nelms1,                 /* number of elements */
@@ -358,10 +372,11 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  VOIDP attr1_buf=NULL;
  VOIDP attr2_buf=NULL;
  int   i, cmp;
+ uint32 nfound=0;
 
  if ( nattrs1!=nattrs2) {
   printf( "Different number of atrributes\n");
-  return -1;
+  return 0;
  }
 
  /* loop through attributes */
@@ -369,12 +384,12 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  {
   if (SDattrinfo (sds1_id, i, attr1_name, &dtype1, &nelms1) == FAIL) {
    printf( "Cannot get info for attribute number %d\n", i);
-   continue;
+   goto out;
   }
   
   if (SDattrinfo (sds2_id, i, attr2_name, &dtype2, &nelms2) == FAIL) {
    printf( "Cannot get info for attribute number %d\n", i);
-   continue;
+   goto out;
   }
 
   if (dtype1 != dtype2 || nelms1 != nelms2 || (strcmp(attr1_name,attr2_name)!=0)) {
@@ -385,25 +400,21 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
   attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
   if (!attr1_buf) {
    printf("Out of memory!");
-   return -1;
+   goto out;;
   }
   attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2 | DFNT_NATIVE));
   if (!attr2_buf) {
    printf("Out of memory!");
-   return -1;
+   goto out;
   }
  
   if (SDreadattr(sds1_id, i, attr1_buf)==FAIL ) {
    printf( "Could not read attribute number %d\n", i);
-   if (attr1_buf) free(attr1_buf);
-   if (attr2_buf) free(attr2_buf);
-   continue;
+   goto out;
   }
   if (SDreadattr(sds2_id, i, attr2_buf)==FAIL ) {
    printf( "Could not read attribute number %d\n", i);
-   if (attr1_buf) free(attr1_buf);
-   if (attr2_buf) free(attr2_buf);
-   continue;
+   goto out;
   }
 
 
@@ -419,6 +430,7 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
    pr_att_vals((nc_type)dtype2, nelms2, attr2_buf);
    printf (" ;\n");
 
+   nfound++;
   }
 
   if (attr1_buf) free(attr1_buf);
@@ -426,7 +438,15 @@ int diff_sds_attrs(int32 sds1_id,int32 nattrs1,int32 sds2_id,int32 nattrs2,char*
  
  }
 
- return 1;
+ return nfound;
+
+
+out:
+
+ if (attr1_buf) free(attr1_buf);
+ if (attr2_buf) free(attr2_buf);
+ opt->err_stat = 1;
+ return 0;
 }
 
 

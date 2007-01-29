@@ -41,8 +41,8 @@ typedef struct dobj_info_t {
 
 /*struct that stores all objects */
 typedef struct dtable_t {
- int        size;
- int        nobjs;
+ uint32     size;
+ uint32     nobjs;
  dobj_info_t *objs;
 } dtable_t;
 

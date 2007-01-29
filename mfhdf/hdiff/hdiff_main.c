@@ -32,46 +32,8 @@
  *
  * Comments:
  *
- * Examples of use:
- 
-
-# Compare global attributes only
--g hdifftst1.hdf hdifftst2.hdf
-
-# Compare SD local attributes only
--s hdifftst1.hdf hdifftst2.hdf
-
-# Compare SD data only
--d hdifftst1.hdf hdifftst2.hdf
-
-# Compare Vdata data only
--D hdifftst1.hdf hdifftst2.hdf
-
-# Print statistics
--d -S hdifftst1.hdf hdifftst2.hdf
-
-# Compare SD data on variable(s)
--d -v dset1 hdifftst1.hdf hdifftst2.hdf
-
-# Compare vdata on variable(s) 
--D -u vdata1 hdifftst1.hdf hdifftst2.hdf
-
-# Print difference up to count number
--d -e 2 hdifftst1.hdf hdifftst2.hdf
-
-# Print difference when it is greater than limit
--d -t 2 hdifftst1.hdf hdifftst2.hdf
-
-# no options
-hdifftst1.hdf hdifftst2.hdf
-
-# verbose 
--b hdifftst1.hdf hdifftst2.hdf
-
-# percent (relative)
--d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf
-
-*/
+ *-------------------------------------------------------------------------
+ */
 
 
 char *progname;
@@ -128,9 +90,11 @@ main(int argc, char *argv[])
   0,    /* if -u specified, list of variable names */
   0,    /* if -S specified print statistics */
   0,    /* -p err_rel */
+  0,    /* error status */
  };
- int   c;
- int   nfound;
+ int    c;
+ uint32 nfound;
+ int    ret;
  
  opterr = 1;
  progname = argv[0];
@@ -196,9 +160,15 @@ main(int argc, char *argv[])
 
  nfound = hdiff(argv[0],argv[1],&opt);
 
- if (nfound==0) 
-  return 0;
- else
-  return 1;
+/*-------------------------------------------------------------------------
+ * exit code
+ *   >0 if differences, 0 if no differences, <0 if error
+ *-------------------------------------------------------------------------
+ */
+
+ ret= (nfound==0 ? 0 : 1 );
+ if (opt.err_stat)
+  ret=-1;
+ return ret;
  
 }

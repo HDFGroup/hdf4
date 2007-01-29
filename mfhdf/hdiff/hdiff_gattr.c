@@ -21,15 +21,28 @@
 #include "hdiff.h"
 
 
-int
-gattr_diff(int32 sdid1, 
-           int32 sdid2)
+/*-------------------------------------------------------------------------
+ * Function: gattr_diff
+ *
+ * Purpose: compare global SDS attributes
+ *
+ * Programmer: 
+ *
+ * Date: 
+ *
+ *-------------------------------------------------------------------------
+ */
+
+uint32 gattr_diff(int32 sdid1, 
+                  int32 sdid2,
+                  diff_opt_t *opt)
 {
  int32   nvars1, nvars2;      /* number of variables */
  int32   ngatts1, ngatts2;    /* number of global attributes */
  struct  ncatt att1, att2;    /* attribute */
  int     ia, ib;              /* attribute number */
- int     iret2, ret=0;
+ int     iret2;
+ uint32  nfound=0;
 
  SDfileinfo(sdid1, &nvars1, &ngatts1);
  
@@ -44,7 +57,7 @@ gattr_diff(int32 sdid1,
    printf("\n---------------------------\n");
    printf("< %s\n", att1.name);
    printf("> '%s' does not exist in file2\n", att1.name);
-   ret=1;
+   nfound ++;
    continue;
   }
   iret2 = SDattrinfo(sdid2, ib, att2.name, &att2.type, &att2.len);
@@ -52,17 +65,13 @@ gattr_diff(int32 sdid1,
   if (!att1.val) 
   {
    fprintf(stderr,"Out of memory!\n");
-   SDend(sdid1);
-   SDend(sdid2);
-   exit(0);
+   goto out;
   }
   att2.val = (void *) malloc((unsigned) (att2.len*DFKNTsize(att2.type | DFNT_NATIVE)));
   if (!att2.val) 
   {
    fprintf(stderr,"Out of memory!\n");
-   SDend(sdid1);
-   SDend(sdid2);
-   exit(0);
+   goto out;
   }
   SDreadattr(sdid1, ia, att1.val);
   iret2 = SDreadattr(sdid2, ib, att2.val);
@@ -83,7 +92,8 @@ gattr_diff(int32 sdid1,
    printf("\n> ");
    pr_att_vals((nc_type)att2.type, att2.len, att2.val);
    printf("\n");
-   ret=1;
+   
+   nfound ++;
   }
   
   free ((char *) att1.val);
@@ -103,10 +113,17 @@ gattr_diff(int32 sdid1,
    printf("\n---------------------------\n");
    printf("< '%s' does not exist in file1\n", att2.name);
    printf("> %s\n", att2.name);
-   ret=1;
+   
+   nfound ++;
   }
  }
  
- return ret;
+ return nfound;
+
+
+out:
+
+ opt->err_stat = 1;
+ return 0;
 }
 

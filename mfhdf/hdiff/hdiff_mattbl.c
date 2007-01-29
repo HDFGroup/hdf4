@@ -43,7 +43,7 @@ void match_table_add (match_table_t *table,
                       int32 tag2, 
                       int32 ref2 )
 {
- int i;
+ uint32 i;
  
  if (table->nobjs == table->size) {
   table->size *= 2;
@@ -83,7 +83,7 @@ void match_table_add (match_table_t *table,
 
 void match_table_init( match_table_t **tbl )
 {
- int i;
+ uint32 i;
  match_table_t* table = (match_table_t*) malloc(sizeof(match_table_t));
  
  table->size = 20;

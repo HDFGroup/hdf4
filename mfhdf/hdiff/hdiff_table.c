@@ -31,7 +31,7 @@
 
 int dtable_search(dtable_t *table, int32 tag, int32 ref )
 {
- int i;
+ uint32 i;
  
  for (i = 0; i < table->nobjs; i++)
   if (table->objs[i].tag == tag && table->objs[i].ref == ref)
@@ -57,7 +57,7 @@ int dtable_search(dtable_t *table, int32 tag, int32 ref )
 
 void dtable_add(dtable_t *table, int32 tag, int32 ref, char* path)
 {
- int i;
+ uint32 i;
  
  if (table->nobjs == table->size) {
   table->size *= 2;
@@ -94,7 +94,7 @@ void dtable_add(dtable_t *table, int32 tag, int32 ref, char* path)
 
 void dtable_init( dtable_t **tbl )
 {
- int i;
+ uint32 i;
  dtable_t* table = (dtable_t*) malloc(sizeof(dtable_t));
  
  table->size = 20;
@@ -146,8 +146,8 @@ void dtable_free( dtable_t *table )
 
 char* dtable_check(dtable_t *table, char*obj_name)
 {
- int   i;
- int32 tag;
+ uint32   i;
+ int32    tag;
  
  for (i = 0; i < table->nobjs; i++)
  {
@@ -188,7 +188,7 @@ char* dtable_check(dtable_t *table, char*obj_name)
 
 void dtable_print(dtable_t *table)
 {
- int i;
+ uint32 i;
 
  printf("---------------------------------------\n");
  printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");

@@ -29,21 +29,21 @@
  *-------------------------------------------------------------------------
  */
 
-int hdiff(const char *fname1, 
-          const char *fname2, 
-          diff_opt_t *opt)
+uint32 hdiff(const char *fname1, 
+             const char *fname2, 
+             diff_opt_t *opt)
 {
  dtable_t  *list1;
  dtable_t  *list2;
  int       nobjects1;
  int       nobjects2;
- int       nfound=0;
- int32     sd1_id,                 
-           sd2_id,
-           gr1_id,                 
-           gr2_id,
-           file1_id,                 
-           file2_id;
+ int32     sd1_id=-1,                 
+           sd2_id=-1,
+           gr1_id=-1,                 
+           gr2_id=-1,
+           file1_id=-1,                 
+           file2_id=-1;
+ uint32    nfound=0;   
 
  /* init tables */
  dtable_init(&list1);
@@ -54,10 +54,10 @@ int hdiff(const char *fname1,
  *-------------------------------------------------------------------------
  */
 
- if ((nobjects1=Hgetlist(fname1, list1))<=0)
-  return FAIL;
- if ((nobjects2=Hgetlist(fname2, list2))<=0)
-  return FAIL;
+ if ((nobjects1=hdiff_list(fname1, list1))<=0)
+  goto out;
+ if ((nobjects2=hdiff_list(fname2, list2))<=0)
+  goto out;
 
  if (opt->verbose) {
   dtable_print(list1);
@@ -72,13 +72,13 @@ int hdiff(const char *fname1,
  if ((file1_id = Hopen(fname1, DFACC_READ, (int16)0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname1);
-  return FAIL;
+  goto out;
  }
  
  if ((file2_id = Hopen(fname2, DFACC_READ, (int16)0))==FAIL)
  {
   printf("Exiting: Hopen failed on <%s>", fname2);
-  return FAIL;
+  goto out;
  }
 
 /*-------------------------------------------------------------------------
@@ -86,13 +86,15 @@ int hdiff(const char *fname1,
  *-------------------------------------------------------------------------
  */
 
- if ((sd1_id = SDstart(fname1, DFACC_RDONLY))==FAIL) {
+ if ((sd1_id = SDstart(fname1, DFACC_RDONLY))==FAIL) 
+ {
   printf("SDstart failed on <%s>", fname1);
-  return FAIL;
+  goto out;
  }
- if ((sd2_id = SDstart(fname2, DFACC_RDONLY))==FAIL) {
+ if ((sd2_id = SDstart(fname2, DFACC_RDONLY))==FAIL) 
+ {
   printf("SDstart failed on <%s>", fname2);
-  return FAIL;
+  goto out;
  }
 
 /*-------------------------------------------------------------------------
@@ -100,13 +102,15 @@ int hdiff(const char *fname1,
  *-------------------------------------------------------------------------
  */
 
- if ((gr1_id = GRstart(file1_id))==FAIL) {
+ if ((gr1_id = GRstart(file1_id))==FAIL) 
+ {
   printf("GRstart failed on <%s>", fname1);
-  return FAIL;
+  goto out;
  }
- if ((gr2_id = GRstart(file2_id))==FAIL) {
+ if ((gr2_id = GRstart(file2_id))==FAIL) 
+ {
   printf("GRstart failed on <%s>", fname2);
-  return FAIL;
+  goto out;
  }
 
 /*-------------------------------------------------------------------------
@@ -134,7 +138,7 @@ int hdiff(const char *fname1,
  */
  
  if (opt->ga == 1) 
-  nfound+=gattr_diff(sd1_id, sd2_id);
+  nfound+=gattr_diff(sd1_id, sd2_id, opt);
 
 
 /*-------------------------------------------------------------------------
@@ -142,29 +146,35 @@ int hdiff(const char *fname1,
  *-------------------------------------------------------------------------
  */
  
- if ( SDend(sd1_id)==FAIL) {
+ if ( SDend(sd1_id)==FAIL) 
+ {
   printf("Error: SDend failed on <%s>", fname1);
-  return FAIL;
+  goto out;
  }
- if (SDend(sd2_id)==FAIL) {
+ if (SDend(sd2_id)==FAIL) 
+ {
   printf("Error: SDend failed on <%s>", fname2);
-  return FAIL;
+  goto out;
  }
- if (GRend(gr1_id)==FAIL) {
+ if (GRend(gr1_id)==FAIL) 
+ {
   printf("Error: GRend failed on <%s>", fname1);
-  return FAIL;
+  goto out;
  }
- if (GRend(gr2_id)==FAIL) {
+ if (GRend(gr2_id)==FAIL) 
+ {
   printf("Error: GRend failed on <%s>", fname2);
-  return FAIL;
+  goto out;
  }
- if (Hclose(file1_id)==FAIL) {
+ if (Hclose(file1_id)==FAIL) 
+ {
   printf("Error: Hclose failed on <%s>", fname1);
-  return FAIL;
+  goto out;
  }
- if (Hclose(file2_id)==FAIL) {
+ if (Hclose(file2_id)==FAIL) 
+ {
   printf("Error: Hclose failed on <%s>", fname2);
-  return FAIL;
+  goto out;
  }
 
 
@@ -173,6 +183,31 @@ int hdiff(const char *fname1,
  dtable_free(list2);
 
  return nfound;
+
+
+out:
+
+ opt->err_stat = 1;
+
+
+ /* free tables */
+ dtable_free(list1);
+ dtable_free(list2);
+
+ if (sd1_id!=-1)
+  SDend(sd1_id);
+ if (sd2_id!=-1)
+  SDend(sd2_id);
+ if (gr1_id!=-1)
+  GRend(gr1_id);
+ if (gr2_id!=-1)
+  GRend(gr2_id);
+ if (file1_id!=-1)
+  Hclose(file1_id);
+ if (file2_id!=-1)
+  Hclose(file2_id);
+ 
+ return 0;
 }
 
 
@@ -192,28 +227,28 @@ int hdiff(const char *fname1,
  *
  *-------------------------------------------------------------------------
  */
-int match( int nobjects1, 
-           dtable_t *list1,
-           int nobjects2, 
-           dtable_t *list2,
-           int32 sd1_id, 
-           int32 gr1_id, 
-           int32 file1_id,                
-           int32 sd2_id, 
-           int32 gr2_id, 
-           int32 file2_id,
-           diff_opt_t *opt )
+uint32 match( uint32 nobjects1, 
+              dtable_t *list1,
+              uint32 nobjects2, 
+              dtable_t *list2,
+              int32 sd1_id, 
+              int32 gr1_id, 
+              int32 file1_id,                
+              int32 sd2_id, 
+              int32 gr2_id, 
+              int32 file2_id,
+              diff_opt_t *opt )
 {
- int   cmp;
- int   more_names_exist = (nobjects1>0 && nobjects2>0) ? 1 : 0;
- int   curr1=0;
- int   curr2=0;
- int   nfound=0, ret;
+ int    cmp;
+ int    more_names_exist = (nobjects1>0 && nobjects2>0) ? 1 : 0;
+ uint32 curr1=0;
+ uint32 curr2=0;
+ uint32 nfound=0;
  /*build a common list */
  match_table_t *mattbl=NULL;
  unsigned infile[2]; 
  char     c1, c2;
- int      i;
+ uint32   i;
 
 /*-------------------------------------------------------------------------
  * build the list
@@ -323,25 +358,22 @@ int match( int nobjects1,
 
  for (i = 0; i < mattbl->nobjs; i++)
  {
-  if ( mattbl->objs[i].flags[0] && mattbl->objs[i].flags[1] )
-  {
-   if((ret=diff(
-    file1_id,
-    file2_id,
-    sd1_id,
-    sd2_id,
-    gr1_id,
-    gr2_id,
-    mattbl->objs[i].obj_name, 
-    mattbl->objs[i].obj_name, 
-    mattbl->objs[i].tag1,
-    mattbl->objs[i].ref1,
-    mattbl->objs[i].tag2,
-    mattbl->objs[i].ref2,
-    opt ))<0)
-    return FAIL;
-   nfound+=ret;
-  }
+     if ( mattbl->objs[i].flags[0] && mattbl->objs[i].flags[1] )
+     {
+         nfound += diff(file1_id,
+             file2_id,
+             sd1_id,
+             sd2_id,
+             gr1_id,
+             gr2_id,
+             mattbl->objs[i].obj_name, 
+             mattbl->objs[i].obj_name, 
+             mattbl->objs[i].tag1,
+             mattbl->objs[i].ref1,
+             mattbl->objs[i].tag2,
+             mattbl->objs[i].ref2,
+             opt );
+     }
  }
 
 
@@ -364,59 +396,57 @@ int match( int nobjects1,
  *-------------------------------------------------------------------------
  */
 
-int diff( int32 file1_id,
-          int32 file2_id,
-          int32 sd1_id,
-          int32 sd2_id,
-          int32 gr1_id,
-          int32 gr2_id,
-          char *obj1_name,
-          char *obj2_name,
-          int32 tag1,
-          int32 ref1,
-          int32 tag2,
-          int32 ref2,
-          diff_opt_t *opt )
+uint32 diff( int32 file1_id,
+             int32 file2_id,
+             int32 sd1_id,
+             int32 sd2_id,
+             int32 gr1_id,
+             int32 gr2_id,
+             char *obj1_name,
+             char *obj2_name,
+             int32 tag1,
+             int32 ref1,
+             int32 tag2,
+             int32 ref2,
+             diff_opt_t *opt )
 {
- int nfound=0;
+    uint32 nfound=0;
+    
+    switch ( tag1 )
+    {
+    case DFTAG_SD:  /* Scientific Data */
+    case DFTAG_SDG: /* Scientific Data Group */
+    case DFTAG_NDG: /* Numeric Data Group */
 
- switch ( tag1 )
- {
-  case DFTAG_SD:  /* Scientific Data */
-  case DFTAG_SDG: /* Scientific Data Group */
-  case DFTAG_NDG: /* Numeric Data Group */
-   if ((nfound=diff_sds(sd1_id,sd2_id,ref1,ref2,opt))<0)
-    return FAIL;
-  break;
+        nfound=diff_sds(sd1_id,sd2_id,ref1,ref2,opt);
+        break;
+        
+    case DFTAG_VG: 
+        break;
+        
+    case DFTAG_RI:  /* Raster Image */
+    case DFTAG_CI:  /* Compressed Image */
+    case DFTAG_RIG: /* Raster Image Group */
+    case DFTAG_RI8: /* Raster-8 image */
+    case DFTAG_CI8: /* RLE compressed 8-bit image */
+    case DFTAG_II8: /* IMCOMP compressed 8-bit image */
 
-  case DFTAG_VG: 
-   break;
-   
-  case DFTAG_RI:  /* Raster Image */
-  case DFTAG_CI:  /* Compressed Image */
-  case DFTAG_RIG: /* Raster Image Group */
-  case DFTAG_RI8: /* Raster-8 image */
-  case DFTAG_CI8: /* RLE compressed 8-bit image */
-  case DFTAG_II8: /* IMCOMP compressed 8-bit image */
-   if (opt->gr == 1) {
-     if ((nfound=diff_gr(gr1_id,gr2_id,ref1,ref2,opt))<0)
-      return FAIL;
-   }
-   break;
-   
-  case DFTAG_VH: 
-   if (opt->vd == 1) {
-    if ((nfound=diff_vs(file1_id,file2_id,ref1,ref2,opt))<0)
-     return FAIL;
-   }
-   break;
-  
-  default:
-   printf("Tag <%ld> and Tag <%ld>: Comparison not supported for <%s> and <%s> \n", 
-    tag1, tag2, obj1_name, obj2_name);
-   break;
- } 
- 
- return nfound;
+        if (opt->gr == 1) 
+            nfound=diff_gr(gr1_id,gr2_id,ref1,ref2,opt);
+        break;
+        
+    case DFTAG_VH: 
+
+        if (opt->vd == 1) 
+            nfound=diff_vs(file1_id,file2_id,ref1,ref2,opt);
+        break;
+        
+    default:
+        printf("Tag <%ld> and Tag <%ld>: Comparison not supported for <%s> and <%s> \n", 
+            tag1, tag2, obj1_name, obj2_name);
+        break;
+    } 
+    
+    return nfound;
 }
 

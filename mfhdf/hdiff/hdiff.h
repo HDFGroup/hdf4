@@ -89,6 +89,9 @@ typedef struct {   /* selection for comparison  */
      * relative diff for the comparison
      */
 
+    int    err_stat;  
+    /* an error ocurred (1, error, 0, no error) */
+
 } diff_opt_t;
 
 
@@ -104,7 +107,7 @@ typedef struct {   /* selection for comparison  */
 extern "C" {
 #endif
 
-int  hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
+uint32  hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
 
 #ifdef __cplusplus
 }
@@ -118,79 +121,76 @@ int  hdiff(const char *fname1, const char *fname2, diff_opt_t *opt);
  *-------------------------------------------------------------------------
  */
 
-int  gattr_diff(int32 sdid1, int32 sdid2);
-int  sdattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
-void pr_att_vals(nc_type type, int len, void *vals);
-int  vdata_cmp(int32 vs1, int32 vs2, char *gname, char*cname, uint32 max_err_cnt);
-void fmt_print(uint8 *x, int32 type);
-void make_vars(char *optarg, diff_opt_t *opt, int option);
+uint32  gattr_diff(int32 sdid1, int32 sdid2, diff_opt_t *opt);
+void    pr_att_vals(nc_type type, int len, void *vals);
+void    make_vars(char *optarg, diff_opt_t *opt, int option);
 
 
-int array_diff(void *buf1, 
-               void *buf2, 
-               uint32 tot_cnt, 
-               const char *name1,
-               const char *name2,
-               int rank,
-               int32 *dims,
-               int32 type, 
-               float32 err_limit, 
-               float32 err_rel,
-               uint32 max_err_cnt, 
-               int32 statistics,
-               void *fill1, 
-               void *fill2);
+uint32 array_diff(void *buf1, 
+                  void *buf2, 
+                  uint32 tot_cnt, 
+                  const char *name1,
+                  const char *name2,
+                  int rank,
+                  int32 *dims,
+                  int32 type, 
+                  float32 err_limit, 
+                  float32 err_rel,
+                  uint32 max_err_cnt, 
+                  int32 statistics,
+                  void *fill1, 
+                  void *fill2);
 
 
-int match( int nobjects1, 
-           dtable_t *list1,
-           int nobjects2, 
-           dtable_t *list2,
-           int32 sd1_id, 
-           int32 gr1_id, 
-           int32 file1_id,                
-           int32 sd2_id, 
-           int32 gr2_id, 
-           int32 file2_id,
-           diff_opt_t *opt );
+uint32 match( uint32 nobjects1, 
+              dtable_t *list1,
+              uint32 nobjects2, 
+              dtable_t *list2,
+              int32 sd1_id, 
+              int32 gr1_id, 
+              int32 file1_id,                
+              int32 sd2_id, 
+              int32 gr2_id, 
+              int32 file2_id,
+              diff_opt_t *opt );
 
 
-int diff( int32 file1_id,
-          int32 file2_id,
-          int32 sd1_id,
-          int32 sd2_id,
-          int32 gr1_id,
-          int32 gr2_id,
-          char *obj1_name,
-          char *obj2_name,
-          int32 tag1,
-          int32 ref1,
-          int32 tag2,
-          int32 ref2,
-          diff_opt_t *opt );
+uint32 diff( int32 file1_id,
+             int32 file2_id,
+             int32 sd1_id,
+             int32 sd2_id,
+             int32 gr1_id,
+             int32 gr2_id,
+             char *obj1_name,
+             char *obj2_name,
+             int32 tag1,
+             int32 ref1,
+             int32 tag2,
+             int32 ref2,
+             diff_opt_t *opt );
 
 void print_dims( int r, int32 *d );
 
 
-int diff_vs( int32 file1_id,
-             int32 file2_id,
-             int32 ref1,              
-             int32 ref2,
-             diff_opt_t * opt);
+uint32 diff_vs( int32 file1_id,
+                int32 file2_id,
+                int32 ref1,              
+                int32 ref2,
+                diff_opt_t * opt);
 
 
-int diff_gr( int32 gr1_id,              
-             int32 gr2_id,
-             int32 ref1,              
-             int32 ref2,
-             diff_opt_t * opt);
+uint32 diff_gr( int32 gr1_id,              
+                int32 gr2_id,
+                int32 ref1,              
+                int32 ref2,
+                diff_opt_t * opt);
 
 
-int diff_sds(int32 sd1_id,              
-             int32 sd2_id,
-             int32 ref1,
-             int32 ref2,
-             diff_opt_t *opt);
+uint32 diff_sds(int32 sd1_id,              
+                int32 sd2_id,
+                int32 ref1,
+                int32 ref2,
+                diff_opt_t *opt);
 
 
 

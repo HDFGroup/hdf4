@@ -30,20 +30,20 @@
  *-------------------------------------------------------------------------
  */
 
-int diff_gr( int32 gr1_id,              
-             int32 gr2_id,
-             int32 ref1,              
-             int32 ref2,
-             diff_opt_t *opt)  
+uint32 diff_gr( int32 gr1_id,              
+                int32 gr2_id,
+                int32 ref1,              
+                int32 ref2,
+                diff_opt_t *opt)  
 {
- int32 ri1_id,                 /* data set identifier */
+ int32 ri1_id=-1,              /* data set identifier */
        ri1_index,              /* index number of the data set */
        dtype1,                 /* GR data type */
        dimsizes1[MAX_VAR_DIMS],/* dimensional size */
        nattrs1,                /* number of attributes */
        ncomps1,                /* number of components */
        interlace_mode1,        /* interlace mode of an image */ 
-       ri2_id,                 /* data set identifier */
+       ri2_id=-1,              /* data set identifier */
        ri2_index,              /* index number of the data set */
        dtype2,                 /* GR data type */
        dimsizes2[MAX_VAR_DIMS],/* dimensional size */
@@ -58,12 +58,14 @@ int diff_gr( int32 gr1_id,
  uint32 nelms;                 /* number of elements */ 
  char  gr1_name[MAX_NC_NAME]; 
  char  gr2_name[MAX_NC_NAME]; 
- int   nfound=0;
  int   dim_diff=0;             /* dimensions are different */
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;
  uint32 max_err_cnt;
- int   i, cmp;
+ int    i, cmp;
+ uint32 nfound=0;
+ int    compare = 1;
+
 
 
 /*-------------------------------------------------------------------------
@@ -77,8 +79,7 @@ int diff_gr( int32 gr1_id,
  /*obtain name,rank,dimsizes,datatype and num of attributes of gr */
  if (GRgetiminfo(ri1_id,gr1_name,&ncomps1,&dtype1,&interlace_mode1,dimsizes1,&nattrs1)==FAIL) {
    printf( "Failed to get info for SDS ref <%ld>\n",ref1);
-   GRendaccess(ri1_id);
-   return FAIL;
+   goto out;
   }
 
 
@@ -93,8 +94,7 @@ int diff_gr( int32 gr1_id,
  /*obtain name,rank,dimsizes,datatype and num of attributes of gr */
  if (GRgetiminfo(ri2_id,gr2_name,&ncomps2,&dtype2,&interlace_mode2,dimsizes2,&nattrs2)==FAIL) {
    printf( "Failed to get info for SDS ref <%ld>\n",ref2);
-   GRendaccess(ri2_id);
-   return FAIL;
+   goto out;
   }
 
 
@@ -107,7 +107,7 @@ int diff_gr( int32 gr1_id,
  {
   printf("Comparison not supported\n");
   printf("<%s> has datatype %ld, <%s> has datatype %ld ",gr1_name,dtype1,gr2_name,dtype2);
-  goto out;
+  compare = 0;
  }
 
 /*-------------------------------------------------------------------------
@@ -121,7 +121,7 @@ int diff_gr( int32 gr1_id,
   printf("<%s> has %ld components\n", gr1_name, ncomps1);
   printf("\n" );
   printf("<%s> has %ld components\n", gr2_name, ncomps2);
-  goto out;
+  compare = 0;
  }
 
 /*-------------------------------------------------------------------------
@@ -148,7 +148,7 @@ int diff_gr( int32 gr1_id,
   printf("\n" );
   printf("<%s> has dimensions ", gr2_name);
   print_dims(2,dimsizes2);
-  goto out;
+  compare = 0;
  }
 
 /*-------------------------------------------------------------------------
@@ -187,101 +187,118 @@ int diff_gr( int32 gr1_id,
 
  data_size = dimsizes1[0]*dimsizes1[1]*ncomps1*eltsz;
 
-/*-------------------------------------------------------------------------
- * Read image 1
- *-------------------------------------------------------------------------
- */
- 
- /* alloc */
- if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
-  printf( "Failed to allocate %lu elements of size %ld\n", nelms, eltsz);
-  goto out;
- }
- 
- /* set the interlace for reading  */
- if ( GRreqimageil(ri1_id, interlace_mode1) == FAIL ){
-  printf( "Could not set interlace for GR <%s>\n", gr1_name);
-  goto out;
- }
- 
- /* read data */
- if (GRreadimage (ri1_id, start, NULL, edges, buf1) == FAIL) {
-  printf( "Could not read GR <%s>\n", gr1_name);
-  goto out;
- }
-
-/*-------------------------------------------------------------------------
- * Read image 2
- *-------------------------------------------------------------------------
- */
-
- /* alloc */
- if ((buf2 = (VOIDP) HDmalloc(data_size)) == NULL) {
-  printf( "Failed to allocate %lu elements of size %ld\n", nelms, eltsz);
-  goto out;
- }
- 
- /* set the interlace for reading  */
- if ( GRreqimageil(ri2_id, interlace_mode2) == FAIL ){
-  printf( "Could not set interlace for GR <%s>\n", gr2_name);
-  goto out;
- }
- 
- /* read data */
- if (GRreadimage (ri2_id, start, NULL, edges, buf2) == FAIL) {
-  printf( "Could not read GR <%s>\n", gr2_name);
-  goto out;
- }
-
-
-/*-------------------------------------------------------------------------
- * Comparing
- *-------------------------------------------------------------------------
- */
- 
-
- if (opt->verbose)
- printf("Comparing <%s>\n",gr1_name); 
-
- cmp = HDmemcmp(buf1,buf2,data_size);
- if (cmp!=0)
+ if (compare)
  {
-  
- /* 
-  If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
-  to tot_err_cnt so it doesn't trip  
-  */
-  max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
-  nfound=array_diff(
-   buf1, 
-   buf2, 
-   nelms, 
-   gr1_name,
-   gr2_name,
-   2,
-   dimsizes1,
-   dtype1, 
-   opt->err_limit, 
-   opt->err_rel,
-   max_err_cnt, 
-   opt->statistics, 
-   0, 
-   0);
- }
+     
+    /*-------------------------------------------------------------------------
+     * read image 1
+     *-------------------------------------------------------------------------
+     */
+     
+     /* alloc */
+     if ((buf1 = (VOIDP) HDmalloc(data_size)) == NULL) {
+         printf( "Failed to allocate %lu elements of size %ld\n", nelms, eltsz);
+         goto out;
+     }
+     
+     /* set the interlace for reading  */
+     if ( GRreqimageil(ri1_id, interlace_mode1) == FAIL ){
+         printf( "Could not set interlace for GR <%s>\n", gr1_name);
+         goto out;
+     }
+     
+     /* read data */
+     if (GRreadimage (ri1_id, start, NULL, edges, buf1) == FAIL) {
+         printf( "Could not read GR <%s>\n", gr1_name);
+         goto out;
+     }
+     
+    /*-------------------------------------------------------------------------
+     * read image 2
+     *-------------------------------------------------------------------------
+     */
+     
+     /* alloc */
+     if ((buf2 = (VOIDP) HDmalloc(data_size)) == NULL) {
+         printf( "Failed to allocate %lu elements of size %ld\n", nelms, eltsz);
+         goto out;
+     }
+     
+     /* set the interlace for reading  */
+     if ( GRreqimageil(ri2_id, interlace_mode2) == FAIL ){
+         printf( "Could not set interlace for GR <%s>\n", gr2_name);
+         goto out;
+     }
+     
+     /* read data */
+     if (GRreadimage (ri2_id, start, NULL, edges, buf2) == FAIL) {
+         printf( "Could not read GR <%s>\n", gr2_name);
+         goto out;
+     }
+     
+     
+    /*-------------------------------------------------------------------------
+     * comparing
+     *-------------------------------------------------------------------------
+     */
+     
+     
+     if (opt->verbose)
+         printf("Comparing <%s>\n",gr1_name); 
+     
+     cmp = HDmemcmp(buf1,buf2,data_size);
+     if (cmp!=0)
+     {
+         
+     /* if max_err_cnt is set (i.e. not its default -1), use it otherwise set it
+        to tot_err_cnt so it doesn't trip  */
+         max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
+         nfound=array_diff(
+             buf1, 
+             buf2, 
+             nelms, 
+             gr1_name,
+             gr2_name,
+             2,
+             dimsizes1,
+             dtype1, 
+             opt->err_limit, 
+             opt->err_rel,
+             max_err_cnt, 
+             opt->statistics, 
+             0, 
+             0);
+     }
+     
+ } /* compare */
   
 /*-------------------------------------------------------------------------
  * close
  *-------------------------------------------------------------------------
  */
 
-out:
- if (GRendaccess(ri1_id)<0)
-  printf("GRendaccess returned -1");
- if (GRendaccess(ri2_id)<0)
-  printf("GRendaccess returned -1");
+
+ GRendaccess(ri1_id);
+ GRendaccess(ri2_id);
  if (buf1) free(buf1);
  if (buf2) free(buf2);
 
+
  return nfound;
+
+
+
+out:
+
+ opt->err_stat = 1;
+
+ if (ri1_id!=-1)
+    GRendaccess(ri1_id);
+ if (ri2_id!=-1)
+    GRendaccess(ri2_id);
+ if (buf1) free(buf1);
+ if (buf2) free(buf2);
+
+ return 0;
 }
 

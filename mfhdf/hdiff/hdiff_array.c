@@ -79,20 +79,20 @@ static void print_pos( int        *ph,
  *-------------------------------------------------------------------------
  */
 
-int array_diff(void *buf1, 
-               void *buf2, 
-               uint32 tot_cnt, 
-               const char *name1,
-               const char *name2,
-               int rank,
-               int32 *dims,
-               int32 type, 
-               float32 err_limit,
-               float32 err_rel,
-               uint32 max_err_cnt, 
-               int32 statistics,
-               void *fill1, 
-               void *fill2)
+uint32 array_diff(void *buf1, 
+                  void *buf2, 
+                  uint32 tot_cnt, 
+                  const char *name1,
+                  const char *name2,
+                  int rank,
+                  int32 *dims,
+                  int32 type, 
+                  float32 err_limit, 
+                  float32 err_rel,
+                  uint32 max_err_cnt, 
+                  int32 statistics,
+                  void *fill1, 
+                  void *fill2)
 
 
 {
@@ -112,7 +112,6 @@ int array_diff(void *buf1,
  int32   i4_max_val1=0, i4_min_val1=0, i4_max_val2=0, i4_min_val2=0;
  int16   i2_diff;
  int8    c_diff;
- uint32  n_diff = 0;
  int     is_fill1, is_fill2;
  int     n_stats = 0;
  char    *debug;
@@ -122,6 +121,8 @@ int array_diff(void *buf1,
  int     ph=1;                /* print header  */
  int     j;
  double  per;
+ uint32  n_diff = 0;
+
 
  acc[rank-1]=1;
  for(j=(rank-2); j>=0; j--)
@@ -533,252 +534,8 @@ int array_diff(void *buf1,
   if (debug) {
    fclose(fp);
   }
-  return (n_diff>0 ? 1 : 0 );
-}
-
-
-/*-------------------------------------------------------------------------
- * Function: vdata_cmp
- *
- * Purpose: memory compare
- *
- *-------------------------------------------------------------------------
- */
-
-
-void
-fmt_print(uint8 *x, int32 type)
-{
- int16    s = 0;
- int32    l = 0;
- float32  f = 0;
- float64  d = 0;
  
- switch(type) 
- {
- case DFNT_CHAR:
-  putchar(*x);
-  break;
-  
- case DFNT_UINT8:
- case DFNT_INT8:
-  printf("%02x ", *x);
-  break;
-  
- case DFNT_UINT16:
- case DFNT_INT16:
-  HDmemcpy(&s, x, sizeof(int16));
-  printf("%d", s);
-  break;
-  
- case DFNT_UINT32:
-  HDmemcpy(&l, x, sizeof(int32));
-  printf("%lu", l);
-  break;
-
- case DFNT_INT32:
-  HDmemcpy(&l, x, sizeof(int32));
-  printf("%ld", l);
-  break;
-  
- case DFNT_FLOAT32:
-  HDmemcpy(&f, x, sizeof(float32));
-  printf("%f", f);
-  break;
-  
- case DFNT_FLOAT64:
-  HDmemcpy(&d, x, sizeof(float64));
-  printf("%f", f);
-  break;
-  
- default: 
-  fprintf(stderr,"sorry, type [%ld] not supported\n", type); 
-  break;
-  
- }
-}
-
-
-int
-vdata_cmp(int32  vs1, int32  vs2, 
-          char   *gname, 
-          char   *cname, 
-          uint32  max_err_cnt)
-{
- int32   i, j, k, iflag;
- uint32  err_cnt;
- int32   nv1, interlace1, vsize1;
- int32   vsotag1;
- char    fields1[VSFIELDMAX*FIELDNAMELENMAX];
- char    vsclass1[VSNAMELENMAX], vsname1[VSNAMELENMAX];
- int32   nv2, interlace2, vsize2;
- int32   vsotag2;
- char    fields2[VSFIELDMAX*FIELDNAMELENMAX];
- char    vsclass2[VSNAMELENMAX], vsname2[VSNAMELENMAX];
- uint8   *buf1, *buf2, *b1, *b2;
- int32   off1[60], off2[60];
- int     ret=0;
- DYN_VWRITELIST *w1, *w2;
- 
- VSinquire(vs1, &nv1, &interlace1, fields1, &vsize1, vsname1);
- VSinquire(vs2, &nv2, &interlace2, fields2, &vsize2, vsname2);
- 
- vsotag1 = VSQuerytag(vs1);
- VSgetclass(vs1,vsclass1);
- 
- vsotag2 = VSQuerytag(vs2);
- VSgetclass(vs2,vsclass2);
- 
- if (vsotag1 != vsotag2 || nv1 != nv2 || interlace1 != interlace2 ||
-  strcmp(fields1, fields2) != 0 || strcmp(vsclass1, vsclass2) != 0 ||
-  (strcmp(vsclass1, "Attr0.0") != 0 && vsize1 != vsize2))
- {
-  printf("\n---------------------------\n");
-  printf("Vdata Name: %s <%s/%s> (Different attributes)\n",
-   vsname1, gname, cname);
-  printf("> <%ld> nrec=%ld interlace=%ld fld=[%s] vsize=%ld class={%s})\n",
-   vsotag1, nv1, interlace1, fields1, vsize1, vsclass1);
-  printf("< <%ld> nrec=%ld interlace=%ld fld=[%s] vsize=%ld class={%s})\n",
-   vsotag2, nv2, interlace2, fields2, vsize2, vsclass2);
-  return 1;
- }
- 
- 
- /* compare the data */
- 
- buf1 = (uint8 *) malloc((unsigned) (nv1 * vsize1));
- buf2 = (uint8 *) malloc((unsigned) (nv2 * vsize2));
- if (!buf1 || !buf2) 
- {
-  printf("Out of memory!");
-  exit(0);
- }
- 
- VSsetfields(vs1, fields1);
- VSread(vs1, buf1, nv1, interlace1);
- w1 = (DYN_VWRITELIST*) vswritelist(vs1);
- 
- VSsetfields(vs2, fields2);
- VSread(vs2, buf2, nv2, interlace2);
- w2 = (DYN_VWRITELIST*) vswritelist(vs2);
- 
- b1 = buf1;
- b2 = buf2;
- 
- for (j=0; j < w1->n; j++)
-  off1[j] = DFKNTsize(w1->type[j] | DFNT_NATIVE);
- 
- for (j=0; j < w2->n; j++)
-  off2[j] = DFKNTsize(w2->type[j] | DFNT_NATIVE);
- 
- iflag = 0;
- 
- err_cnt = 0;
- 
- if (vsize1 == vsize2)
- {
-  for (i=0; i<nv1; i++)
-  {
-   if (memcmp(b1, b2, (size_t)vsize1) == 0)
-   {
-    b1 += vsize1;   
-    b2 += vsize2;
-    continue;
-   }
-   if (iflag == 0)
-   {
-    iflag = 1;         /* there is a difference */
-    printf("\n---------------------------\n");
-    printf("Vdata Name: %s (Data record comparison)\n", 
-     vsname1);
-    ret=1;
-   }
-   
-   printf("> %ld: ", i);
-   for (j=0; j<w1->n; j++)
-   {
-    for (k=0; k<w1->order[j]; k++)
-    {
-     fmt_print(b1, w1->type[j]);
-     b1 += off1[j];
-     if (w1->type[j] != DFNT_CHAR)
-      putchar(' ');
-    }
-   }        
-   putchar('\n');
-   printf("< %ld: ", i);
-   for (j=0; j<w2->n; j++)
-   {
-    for (k=0; k<w2->order[j]; k++)
-    {
-     fmt_print(b2, w2->type[j]);
-     b2 += off2[j];
-     if (w2->type[j] != DFNT_CHAR)
-      putchar(' ');
-    }
-   }        
-   putchar('\n');
-   
-   if (max_err_cnt > 0)
-   {
-    err_cnt++;
-    if (err_cnt >= max_err_cnt)
-     break;
-   }
-  }
- }
- else
- {
-  printf("****....\n");
-  for (i=0; i<nv1; i++)
-  {
-   if (iflag == 0)
-   {
-    iflag = 1;         /* there is a difference */
-    printf("\n---------------------------\n");
-    printf("Vdata Name: %s (Data record comparison)\n", 
-     vsname1);
-    ret=1;
-   }
-   printf("> %ld: ", i);
-   for (j=0; j<w1->n; j++)
-   {
-    for (k=0; k<w1->order[j]; k++)
-    {
-     fmt_print(b1, w1->type[j]);
-     b1 += off1[j];
-     if (w1->type[j] != DFNT_CHAR)
-      putchar(' ');
-    }
-   }  
-   putchar('\n');
-   printf("< %ld: ", i);
-   for (j=0; j<w2->n; j++)
-   {
-    for (k=0; k<w2->order[j]; k++)
-    {
-     fmt_print(b2, w2->type[j]);
-     b1 += off2[j];
-     if (w2->type[j] != DFNT_CHAR)
-      putchar(' ');
-    }
-   }  
-   putchar('\n');
-   
-   if (max_err_cnt > 0)
-   {
-    err_cnt++;
-    if (err_cnt >= max_err_cnt)
-     break;
-   }
-  }
-  
- }
- 
- if (buf1)free((char *) buf1);
- if (buf2)free((char *) buf2);
-
- return ret;
+  return n_diff;
 }
 
 

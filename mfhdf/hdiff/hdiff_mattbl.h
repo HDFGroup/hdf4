@@ -28,14 +28,14 @@ typedef struct match_info_t {
  int32   ref1;
  int32   tag2;
  int32   ref2;
- char  obj_name[MAX_NC_NAME];      /* same name for file1 and 2 */
- int   flags[2];                   /* object exists in file=1, no=0 */  
+ char    obj_name[MAX_NC_NAME];      /* same name for file1 and 2 */
+ int     flags[2];                   /* object exists in file=1, no=0 */  
 } match_info_t;
 
 /* table to store the match info */
 typedef struct match_table_t {
- int          size;
- int          nobjs;
+ uint32       size;
+ uint32       nobjs;
  match_info_t *objs;
 } match_table_t;
 

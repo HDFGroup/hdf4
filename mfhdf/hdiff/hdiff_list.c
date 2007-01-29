@@ -17,22 +17,16 @@
 #include "mfhdf.h"
 #include "hdiff_list.h"
 
-static
-int is_reserved(char*vgroup_class);
-static
-char *get_path(char*path_name, char*obj_name);
-static 
-int insert_an_data(int32 file_id,
-                   int32 ref_in, 
-                   int32 tag_in,
-                   ann_type type, 
-                   char *path);
-
-
-
+static int is_reserved(char*vgroup_class);
+static char *get_path(char*path_name, char*obj_name);
+static int insert_an_data(int32 file_id,
+                          int32 ref_in, 
+                          int32 tag_in,
+                          ann_type type, 
+                          char *path);
 
 /*-------------------------------------------------------------------------
- * Function: Hgetlist
+ * Function: hdiff_list
  *
  * Purpose: locate all HDF objects in the file and return a list of them
  *
@@ -66,56 +60,71 @@ int insert_an_data(int32 file_id,
  */
 
 
-int Hgetlist (const char* fname, dtable_t *table)
+uint32 hdiff_list (const char* fname, dtable_t *table)
 {
- int32    file_id, 
-          sd_id, 
-          gr_id;
- int      n_objs=0;
+ int32    file_id=-1, 
+          sd_id=-1, 
+          gr_id=-1;
 
  /* open the file for read */
  if ((file_id  = Hopen (fname,DFACC_READ,(int16)0))==FAIL)
  {
   printf("Cannot open file <%s>\n",fname);
-  return FAIL;
+  goto out;
  }
 
  /* initialize the SD interface */
  if ((sd_id  = SDstart (fname, DFACC_READ))==FAIL){
   printf( "Could not start SD for <%s>\n",fname);
-  return FAIL;
+  goto out;
  }
 
  /* initialize the GR interface */
  if ((gr_id  = GRstart (file_id))==FAIL){
   printf( "Could not start GR for <%s>\n",fname);
-  return FAIL;
+  goto out;
  }
 
  /* iterate tru HDF interfaces */
- hdiff_list_vg (fname,file_id,sd_id,gr_id,table);
- hdiff_list_gr (file_id,gr_id,table);
- hdiff_list_sds(file_id,sd_id,table);
- hdiff_list_vs (file_id,table);
- hdiff_list_glb(sd_id,gr_id);
- hdiff_list_an (file_id);
+ if ( hdiff_list_vg (fname,file_id,sd_id,gr_id,table) < 0)
+     goto out;
+ if ( hdiff_list_gr (file_id,gr_id,table) < 0)
+     goto out;
+ if ( hdiff_list_sds(file_id,sd_id,table) < 0)
+     goto out;
+ if ( hdiff_list_vs (file_id,table) < 0)
+     goto out;
+ if ( hdiff_list_glb(sd_id,gr_id) < 0)
+     goto out;
+ if ( hdiff_list_an (file_id) < 0)
+     goto out;
 
  /* close */
  if (GRend (gr_id)==FAIL) {
   printf( "Failed to close GR interface <%s>\n", fname);
-  return FAIL;
+  goto out;
  }
  if (SDend (sd_id)==FAIL) {
   printf( "Failed to close SD interface <%s>\n", fname);
-  return FAIL;
+  goto out;
  }
  if (Hclose (file_id) == FAIL ) {
   printf( "Failed to close file <%s>\n", fname);
-  return FAIL;
+  goto out;
  }
  
- n_objs=table->nobjs;
- return n_objs;
+ return table->nobjs;
+
+out:
+
+ if (sd_id!=-1)
+  SDend(sd_id);
+ if (gr_id!=-1)
+  GRend(gr_id);
+ if (file_id!=-1)
+  Hclose(file_id);
+
+ return FAIL;
 }
 
 
@@ -187,18 +196,22 @@ int hdiff_list_vg(const char* fname,
    */
    if ((vgroup_id = Vattach (file_id, ref_array[i], "r"))==FAIL){
     printf("Error: Could not attach group with ref <%ld>\n", ref_array[i]);
+    goto out;
    }
    if (Vgetname (vgroup_id, vgroup_name)==FAIL){
     printf("Error: Could not get name for group with ref <%ld>\n", ref_array[i]);
+    goto out;
    }
    if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
     printf("Error: Could not get class for group with ref <%ld>\n", ref_array[i]);
+    goto out;
    }
    
    /* ignore reserved HDF groups/vdatas */
    if( is_reserved(vgroup_class)){
     if (Vdetach (vgroup_id)==FAIL){
      printf("Error: Could not detach group <%s>\n", vgroup_class);
+     goto out;
     }
     continue;
    }
@@ -206,28 +219,27 @@ int hdiff_list_vg(const char* fname,
     if(strcmp(vgroup_name,GR_NAME)==0) {
      if (Vdetach (vgroup_id)==FAIL){
       printf("Error: Could not detach group <%s>\n", vgroup_class);
+      goto out;
      }
      continue;
     }
 
     if ((ref_vg = VQueryref(vgroup_id))==FAIL){
      printf( "Failed to get ref for <%s>\n", vgroup_name);
+     goto out;
     }
     if ((tag_vg = VQuerytag(vgroup_id))==FAIL){
      printf( "Failed to get tag for <%s>\n", vgroup_name);
+     goto out;
     }
 
      /* add object to table */
     dtable_add(table,tag_vg,ref_vg,vgroup_name);
-
-#if defined (HDIFF_DEBUG)
-    printf("%s\n",vgroup_name); 
-#endif
   
     insert_vg_attrs(vgroup_id,vgroup_name);
     insert_vg_an(file_id,vgroup_id,vgroup_name);
 
-   /* insert objects for this group */
+    /* insert objects for this group */
     ntagrefs = Vntagrefs(vgroup_id);
     if ( ntagrefs > 0 )
     {
@@ -243,6 +255,7 @@ int hdiff_list_vg(const char* fname,
     
     if(Vdetach (vgroup_id)==FAIL){
      printf("Error: Could not detach group <%s>\n", vgroup_name);
+     goto out;
     }
   
   } /* for */
@@ -260,6 +273,16 @@ int hdiff_list_vg(const char* fname,
  }
  
  return 0;
+
+
+out:
+
+ Vend (file_id);
+ if (ref_array) 
+   free (ref_array);
+ return FAIL;
+
+
 }
 
 /*-------------------------------------------------------------------------
