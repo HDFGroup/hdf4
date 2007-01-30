@@ -60,8 +60,8 @@ uint32 diff_sds(int32 sd1_id,
        start[MAX_VAR_DIMS],    /* read start */
        edges[MAX_VAR_DIMS],    /* read edges */
        numtype,                /* number type */
-       eltsz,                  /* element size */
-       nelms;                  /* number of elements */
+       eltsz;                  /* element size */
+ uint32 nelms;                 /* number of elements */
  char  sds1_name[MAX_NC_NAME]; 
  char  sds2_name[MAX_NC_NAME]; 
  int   dim_diff=0;             /* dimensions are different */

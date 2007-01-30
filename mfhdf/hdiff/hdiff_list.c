@@ -60,11 +60,12 @@ static int insert_an_data(int32 file_id,
  */
 
 
-uint32 hdiff_list (const char* fname, dtable_t *table)
+uint32 hdiff_list (const char* fname, dtable_t *table, int *err)
 {
  int32    file_id=-1, 
           sd_id=-1, 
           gr_id=-1;
+
 
  /* open the file for read */
  if ((file_id  = Hopen (fname,DFACC_READ,(int16)0))==FAIL)
@@ -113,9 +114,12 @@ uint32 hdiff_list (const char* fname, dtable_t *table)
   goto out;
  }
  
+ *err=0;
  return table->nobjs;
 
 out:
+
+ 
 
  if (sd_id!=-1)
   SDend(sd_id);
@@ -124,7 +128,8 @@ out:
  if (file_id!=-1)
   Hclose(file_id);
 
- return FAIL;
+ *err=1;
+ return 0;
 }
 
 

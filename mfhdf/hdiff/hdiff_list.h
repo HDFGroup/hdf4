@@ -24,7 +24,7 @@ extern "C" {
 
 
 /* get the list of HDF objects in the file */
-uint32 hdiff_list (const char* fname, dtable_t *list);
+uint32 hdiff_list (const char* fname, dtable_t *list, int *err);
 int hdiff_list_vg (const char* fname,int32 file_id,int32 sd_id,int32 gr_id,dtable_t *table);
 int hdiff_list_gr (int32 file_id,int32 gr_id,dtable_t *table);
 int hdiff_list_sds(int32 file_id,int32 sd_id,dtable_t *table);

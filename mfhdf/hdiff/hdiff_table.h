@@ -52,7 +52,6 @@ void  dtable_init(dtable_t **table);
 void  dtable_free(dtable_t *table);
 int   dtable_search(dtable_t *table, int32 tag, int32 ref );
 void  dtable_add(dtable_t *table, int32 tag, int32 ref, char* obj_name);
-char* dtable_check(dtable_t *table, char*obj_name);
 void  dtable_print(dtable_t *table);
 
 

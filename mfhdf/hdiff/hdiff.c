@@ -35,15 +35,16 @@ uint32 hdiff(const char *fname1,
 {
  dtable_t  *list1;
  dtable_t  *list2;
- int       nobjects1;
- int       nobjects2;
  int32     sd1_id=-1,                 
            sd2_id=-1,
            gr1_id=-1,                 
            gr2_id=-1,
            file1_id=-1,                 
            file2_id=-1;
- uint32    nfound=0;   
+ uint32    nobjects1;
+ uint32    nobjects2;
+ uint32    nfound=0;  
+ int       err;
 
  /* init tables */
  dtable_init(&list1);
@@ -54,10 +55,12 @@ uint32 hdiff(const char *fname1,
  *-------------------------------------------------------------------------
  */
 
- if ((nobjects1=hdiff_list(fname1, list1))<=0)
-  goto out;
- if ((nobjects2=hdiff_list(fname2, list2))<=0)
-  goto out;
+ nobjects1=hdiff_list(fname1, list1, &err);
+ if (err)
+     goto out;
+ nobjects2=hdiff_list(fname2, list2, &err);
+ if (err)
+     goto out;
 
  if (opt->verbose) {
   dtable_print(list1);
