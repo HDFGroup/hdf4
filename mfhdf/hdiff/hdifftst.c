@@ -41,8 +41,10 @@ main( )
  int32 n_values;
  int32 buf1a[Y_LENGTH][X_LENGTH] = {{1,1},{1,1},{5,6}};
  int32 buf1b[Y_LENGTH][X_LENGTH] = {{1,2},{3,4},{5,6}};
- int32 buf2a[Y_LENGTH][X_LENGTH] = {{100,100},{100,100},{100,0}};
- int32 buf2b[Y_LENGTH][X_LENGTH] = {{101,105},{106,150},{200,100}};
+
+ /* percent test: compare divide by zero, both zero */
+ int32 buf2a[Y_LENGTH][X_LENGTH] = {{100,100},{100,0},{0,100}}; 
+ int32 buf2b[Y_LENGTH][X_LENGTH] = {{120,80},{0,100},{0,50}};
  char8 bufga1[] = "Storm_track_data1"; 
  char8 bufga2[] = "Storm_track_data2"; 
  float32 bufa1[2] = {1., 1.};

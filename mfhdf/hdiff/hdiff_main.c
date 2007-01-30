@@ -62,7 +62,7 @@ usage()
  fprintf(stdout,"The 'count' value must be a positive integer\n");
  fprintf(stdout,"The 'limit' and 'relative' values must be positive numbers\n");
  fprintf(stdout,"The -t compare criteria is |a - b| > limit\n");
- fprintf(stdout,"The -p compare criteria is |1 - b/a| > relative\n");
+ fprintf(stdout,"The -p compare criteria is |(b-a)/a| > relative\n");
  fprintf(stdout,"return code: 0 - no differences found; 1 - differences found \n");
  exit(EXIT_FAILURE);
 }

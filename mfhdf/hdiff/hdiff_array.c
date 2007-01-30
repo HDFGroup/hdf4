@@ -24,6 +24,11 @@
 #include "hdiff.h"
 #include "vgint.h"
 
+#ifndef ABS
+#   define ABS(a)		(((a)>=0) ? (a) : -(a))
+#endif
+
+
 #define MYMAX(A,B) (((A) > (B)) ? (A) : (B))
 #define MYMIN(A,B) (((A) < (B)) ? (A) : (B))
 #define PRINT_FSTATS(T) {\
@@ -61,6 +66,33 @@ i4_min_val1, i4_max_val1, i4_min_val2, i4_max_val2); }
 #define LIFORMAT   "%-15ld %-15ld %-15ld\n"
 #define ULIFORMAT  "%-15lu %-15lu %-15lu\n"
 
+
+#define I16FORMATP_NOTCOMP "%-15d %-15d not comparable\n"
+#define I8FORMATP_NOTCOMP  "%-15d %-15d not comparable\n"
+#define IFORMATP_NOTCOMP   "%-15ld %-15ld not comparable\n"
+#define FFORMATP_NOTCOMP   "%-15f %-15f not comparable\n"
+
+
+/*-------------------------------------------------------------------------
+ * relative error
+ *-------------------------------------------------------------------------
+ */
+
+#define PER(A,B) { per=-1;                           \
+    not_comparable=0;                                \
+    both_zero=0;                                     \
+    if (A==0 && B==0)                                \
+    both_zero=1;                                     \
+    if (A!=0)                                        \
+    per = (double)ABS( ( double)(B-A) / (double)A ); \
+    else                                             \
+    not_comparable=1;                                \
+}
+
+/*-------------------------------------------------------------------------
+ * local prototypes
+ *-------------------------------------------------------------------------
+ */
 static void print_pos( int        *ph, 
                        uint32     curr_pos, 
                        int32      *acc, 
@@ -121,6 +153,8 @@ uint32 array_diff(void *buf1,
  int     ph=1;                /* print header  */
  int     j;
  double  per;
+ int     both_zero;
+ int     not_comparable;
  uint32  n_diff = 0;
 
 
@@ -194,6 +228,11 @@ uint32 array_diff(void *buf1,
  }
  switch(type)
  {
+
+/*-------------------------------------------------------------------------
+ * DFNT_INT8, DFNT_UINT8, DFNT_UCHAR8, DFNT_CHAR8
+ *-------------------------------------------------------------------------
+ */
  case DFNT_INT8:
  case DFNT_UINT8:
  case DFNT_UCHAR8:
@@ -225,23 +264,41 @@ uint32 array_diff(void *buf1,
     i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i1ptr2));
     i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i1ptr2));
    }
-   /* relative */
+
+
+/*-------------------------------------------------------------------------
+ * relative
+ *-------------------------------------------------------------------------
+ */
+
    if (err_rel)
    {
-    per=-1;
-    if (*i1ptr1!=0)
-     per=fabs(1-( (double)*i1ptr2 / (double)*i1ptr1 ));
-    if (per > err_rel)
-    {
-     n_diff++;
-     if (n_diff <= max_err_cnt) 
-     {
-      print_pos(&ph,i,acc,pos,rank,name1,name2);
-      printf(SPACES);
-      printf(I8FORMATP,*i1ptr1,*i1ptr2,per*100);
-     }
-    }  
-   } /* relative */
+       
+       PER(*i1ptr1,*i1ptr2);
+       
+       if (not_comparable && !both_zero) /* not comparable */
+       {
+           print_pos(&ph,i,acc,pos,rank,name1,name2);
+           printf(SPACES);
+           printf(I8FORMATP_NOTCOMP,*i1ptr1,*i1ptr2);
+           n_diff++;
+       }
+       
+       else
+           
+           if (per > err_rel)
+           {
+               n_diff++;
+               if (n_diff <= max_err_cnt) 
+               {
+                   print_pos(&ph,i,acc,pos,rank,name1,name2);
+                   printf(SPACES);
+                   printf(I8FORMATP,*i1ptr1,*i1ptr2,per*100);
+               }
+           }  
+           
+   }
+
    else if (c_diff > (int32) err_limit)
    {
     n_diff++;
@@ -258,6 +315,11 @@ uint32 array_diff(void *buf1,
   }
   
   break;
+
+/*-------------------------------------------------------------------------
+ * DFNT_INT16, DFNT_UINT16
+ *-------------------------------------------------------------------------
+ */
   
  case DFNT_INT16:
  case DFNT_UINT16:
@@ -291,23 +353,42 @@ uint32 array_diff(void *buf1,
     i4_max_val2 = MYMAX(i4_max_val2, (int32)(*i2ptr2));
     i4_min_val2 = MYMIN(i4_min_val2, (int32)(*i2ptr2));
    }
-   /* relative */
+
+
+/*-------------------------------------------------------------------------
+ * relative
+ *-------------------------------------------------------------------------
+ */
+
    if (err_rel)
    {
-    per=-1;
-    if (*i2ptr1!=0)
-     per=fabs(1-( (double)*i2ptr2 / (double)*i2ptr1 ));
-    if (per > err_rel)
-    {
-     n_diff++;
-     if (n_diff <= max_err_cnt) 
-     {
-      print_pos(&ph,i,acc,pos,rank,name1,name2);
-      printf(SPACES);
-      printf(I16FORMATP,*i2ptr1,*i2ptr2,per*100);
-     }
-    }  
-   } /* relative */
+       
+       PER(*i2ptr1,*i2ptr2);
+       
+       if (not_comparable && !both_zero) /* not comparable */
+       {
+           print_pos(&ph,i,acc,pos,rank,name1,name2);
+           printf(SPACES);
+           printf(I16FORMATP_NOTCOMP,*i2ptr1,*i2ptr2);
+           n_diff++;
+       }
+       
+       else
+           
+           if (per > err_rel)
+           {
+               n_diff++;
+               if (n_diff <= max_err_cnt) 
+               {
+                   print_pos(&ph,i,acc,pos,rank,name1,name2);
+                   printf(SPACES);
+                   printf(I16FORMATP,*i2ptr1,*i2ptr2,per*100);
+               }
+           }  
+           
+   }
+
+
    else if (i2_diff > (int) err_limit)
    {
     n_diff++;
@@ -323,6 +404,12 @@ uint32 array_diff(void *buf1,
    PRINT_ISTATS("Integer2");
   }
   break;
+
+/*-------------------------------------------------------------------------
+ * DFNT_INT32, DFNT_UINT32
+ *-------------------------------------------------------------------------
+ */
+  
   
  case DFNT_INT32:
  case DFNT_UINT32:
@@ -353,23 +440,41 @@ uint32 array_diff(void *buf1,
     i4_max_val2 = MYMAX(i4_max_val2,*i4ptr2);
     i4_min_val2 = MYMIN(i4_min_val2,*i4ptr2);
    }
-   /* relative */
+
+
+/*-------------------------------------------------------------------------
+ * relative
+ *-------------------------------------------------------------------------
+ */
+
     if (err_rel)
     {
-     per=-1;
-     if (*i4ptr1!=0)
-      per=fabs(1-( (double)*i4ptr2 / (double)*i4ptr1 ));
-     if (per > err_rel)
-     {
-      n_diff++;
-      if (n_diff <= max_err_cnt) 
-      {
-       print_pos(&ph,i,acc,pos,rank,name1,name2);
-       printf(SPACES);
-       printf(IFORMATP,*i4ptr1,*i4ptr2,per*100);
-      }
-     }  
-    } /* relative */
+        
+        PER(*i4ptr1,*i4ptr2);
+        
+        if (not_comparable && !both_zero) /* not comparable */
+        {
+            print_pos(&ph,i,acc,pos,rank,name1,name2);
+            printf(SPACES);
+            printf(IFORMATP_NOTCOMP,*i4ptr1,*i4ptr2);
+            n_diff++;
+        }
+        
+        else
+            
+            if (per > err_rel)
+            {
+                n_diff++;
+                if (n_diff <= max_err_cnt) 
+                {
+                    print_pos(&ph,i,acc,pos,rank,name1,name2);
+                    printf(SPACES);
+                    printf(IFORMATP,*i4ptr1,*i4ptr2,per*100);
+                }
+            }  
+            
+    }
+
    else if (i4_diff > (int32) err_limit)
    {
     n_diff++;
@@ -386,6 +491,12 @@ uint32 array_diff(void *buf1,
   }
   
   break;
+
+/*-------------------------------------------------------------------------
+ * DFNT_FLOAT
+ *-------------------------------------------------------------------------
+ */
+  
   
  case DFNT_FLOAT:
   fptr1 = (float32 *) buf1;
@@ -418,23 +529,41 @@ uint32 array_diff(void *buf1,
     d_max_val2 = MYMAX(d_max_val2, (float64)(*fptr2));
     d_min_val2 = MYMIN(d_min_val2, (float64)(*fptr2));
    }
-   /* relative */
+
+
+/*-------------------------------------------------------------------------
+ * relative
+ *-------------------------------------------------------------------------
+ */
+
    if (err_rel)
    {
-    per=-1;
-    if (*fptr1!=0)
-     per=fabs(1-( (double)*fptr2 / (double)*fptr1 ));
-    if (per > err_rel)
-    {
-     n_diff++;
-     if (n_diff <= max_err_cnt) 
-     {
-      print_pos(&ph,i,acc,pos,rank,name1,name2);
-      printf(SPACES);
-      printf(FFORMATP,*fptr1,*fptr2,per*100);
-     }
-    }  
-   } /* relative */
+       
+       PER(*fptr1,*fptr2);
+       
+       if (not_comparable && !both_zero) /* not comparable */
+       {
+           print_pos(&ph,i,acc,pos,rank,name1,name2);
+           printf(SPACES);
+           printf(FFORMATP_NOTCOMP,*fptr1,*fptr2);
+           n_diff++;
+       }
+       
+       else
+           
+           if (per > err_rel)
+           {
+               n_diff++;
+               if (n_diff <= max_err_cnt) 
+               {
+                   print_pos(&ph,i,acc,pos,rank,name1,name2);
+                   printf(SPACES);
+                   printf(FFORMATP,*fptr1,*fptr2,per*100);
+               }
+           }  
+           
+   }
+
    else if (f_diff > err_limit)
    {
     n_diff++;
@@ -450,6 +579,12 @@ uint32 array_diff(void *buf1,
    PRINT_FSTATS("Float");
   }
   break;
+
+
+/*-------------------------------------------------------------------------
+ * DFNT_DOUBLE
+ *-------------------------------------------------------------------------
+ */
   
  case DFNT_DOUBLE:
   dptr1 = (float64 *) buf1;
@@ -479,24 +614,43 @@ uint32 array_diff(void *buf1,
     d_max_val2 = MYMAX(d_max_val2, (*dptr2));
     d_min_val2 = MYMIN(d_min_val2, (*dptr2));
    }
-   /* relative */
+
+
+/*-------------------------------------------------------------------------
+ * relative
+ *-------------------------------------------------------------------------
+ */
+
    if (err_rel)
    {
-    per=-1;
-    if (*dptr1!=0)
-     per=fabs(1-( (double)*dptr2 / (double)*dptr1 ));
-    if (per > err_rel)
-    {
-     n_diff++;
-     if (n_diff <= max_err_cnt) 
-     {
-      print_pos(&ph,i,acc,pos,rank,name1,name2);
-      printf(SPACES);
-      printf(FFORMATP,*dptr1,*dptr2,per*100);
-     }
-    }  
-   } /* relative */
-   if (d_diff > (float64) err_limit)
+       
+       PER(*dptr1,*dptr2);
+       
+       if (not_comparable && !both_zero) /* not comparable */
+       {
+           print_pos(&ph,i,acc,pos,rank,name1,name2);
+           printf(SPACES);
+           printf(FFORMATP_NOTCOMP,*dptr1,*dptr2);
+           n_diff++;
+       }
+       
+       else
+           
+           if (per > err_rel)
+           {
+               n_diff++;
+               if (n_diff <= max_err_cnt) 
+               {
+                   print_pos(&ph,i,acc,pos,rank,name1,name2);
+                   printf(SPACES);
+                   printf(FFORMATP,*dptr1,*dptr2,per*100);
+               }
+           }  
+           
+   }
+
+
+   else if (d_diff > (float64) err_limit)
    {
     n_diff++;
     if (n_diff <= max_err_cnt) {
