@@ -615,7 +615,7 @@ SDselect(int32 fid,  /* IN: file ID */
         goto done;
       }
 
-    if(handle->vars->count < (unsigned)index)
+    if((unsigned)index >= handle->vars->count)
       {
         ret_value = FAIL;
         goto done;
