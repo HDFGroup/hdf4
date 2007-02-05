@@ -40,13 +40,10 @@ the following:
 
       4.1 HDF4 uses Zlib version 1.2.2 for compression.  To use Zlib
           library, you have to install your own Zlib DLL library or go
-          to ftp://hdf.ncsa.uiuc.edu/lib-external/zlib/bin/windows 
+          to ftp://hdf.ncsa.uiuc.edu/lib-external/zlib/1.2/bin 
           to download the Zlib library.
 
           Zlib compression feature inside HDF4 is required.
-
-          Note: Zlib 1.2.2 DLL library can also be downloaded from
-          http://www.zlib.net/zlib122-dll.zip
       
       4.2 HDF4 uses JPEG release 6b for compression.  To use JPEG
           library, you have to install your own JPEG library or go to
@@ -803,7 +800,7 @@ Currently, HDF4 is supported with Intel compilers version 7.1 and
 version 8.1 on .NET.
 
 In this section, we just briefly introduce some extra/different points
-when building HDF4 with Inel compiler 7.1 or 8.1 on .NET.  For other
+when building HDF4 with Intel compiler 7.1 or 8.1 on .NET.  For other
 parts, you should still follow the instructions in Sections I and IIV.
 
 To use Intel compilers, all HDF4 workspace files must be converted
