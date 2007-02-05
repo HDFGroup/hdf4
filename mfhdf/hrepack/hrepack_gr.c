@@ -105,10 +105,6 @@ int  copy_gr(int32 infile_id,
 
  /* add object to table */
  table_add(table,tag,ref,path);
- 
-#if defined(HZIP_DEBUG)
- printf ("\t%s %d\n", path, ref); 
-#endif
 
 /*-------------------------------------------------------------------------
  * get the original compression/chunk information from the object 
@@ -290,7 +286,7 @@ int  copy_gr(int32 infile_id,
                    dtype         /* numeric type ( for SZIP), IN */
                    );
   if (have_info==FAIL)
-   comp_type=COMP_CODE_NONE;
+    goto out;
  } /* check inspection mode */
 
 

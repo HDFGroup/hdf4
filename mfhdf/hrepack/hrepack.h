@@ -76,13 +76,13 @@ extern "C" {
 #endif
 
 int  hrepack         (const char* infname, const char* outfname, options_t *options);
-void hrepack_addcomp (const char* str, options_t *options);
-void hrepack_addchunk(const char* str, options_t *options);
+int  hrepack_addcomp (const char* str, options_t *options);
+int  hrepack_addchunk(const char* str, options_t *options);
 void hrepack_init    (options_t *options, int verbose);
 void hrepack_end     (options_t *options);
 
 int  list(const char* infname,const char* outfname,options_t *options);
-void read_info(const char *filename,options_t *options); 
+int  read_info(const char *filename,options_t *options); 
 
 #ifdef __cplusplus
 }

@@ -94,10 +94,6 @@ int copy_vs( int32 infile_id,
  /* add object to table */
  table_add(table,tag,ref,path);
  
-#if defined(HZIP_DEBUG)
- printf ("\t%s %d\n", path, ref); 
-#endif
- 
  if (options->verbose)
  {
   printf(PFORMAT,"","",path);    
@@ -123,14 +119,7 @@ int copy_vs( int32 infile_id,
   if (path) free(path);
   return-1;
  }
- 
-#if defined( HZIP_DEBUG)
- printf( 
-  "Transferring vdata %s: class=%s, %d recs, interlace=%d, size=%d\n\tfields='%s'\n",
-  vdata_name, vdata_class, n_records, interlace_mode, vdata_size, 
-  fieldname_list);
-#endif
- 
+
  
  /*-------------------------------------------------------------------------
   * create the VS in the output file.  the vdata reference number is set

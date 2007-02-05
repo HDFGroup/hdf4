@@ -125,11 +125,6 @@ int add_gr_ffile(const char* name_file,
   
   /* obtain the reference number of the GR using its identifier */
   gr_ref = GRidtoref (ri_id);
-
-
-#if defined( HZIP_DEBUG)
-  printf("add_gr %d\n",gr_ref); 
-#endif
   
   /* add the GR to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id) {
@@ -342,11 +337,7 @@ int add_gr(const char* gr_name,     /* gr name */
    
  /* obtain the reference number of the GR using its identifier */
  gr_ref = GRidtoref (ri_id);
- 
-#if defined( HZIP_DEBUG)
- printf("add_gr %d\n",gr_ref); 
-#endif
- 
+
  /* add the GR to the vgroup. the tag DFTAG_RIG is used */
  if (vgroup_id)
   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, gr_ref)==FAIL)
@@ -467,10 +458,6 @@ int add_r8(const char* image_file,
   /* obtain the reference number of the RIS8 */
   ri_ref = DFR8lastref();
 
-#if defined( HZIP_DEBUG)
-  printf("add_r8 %d\n",ri_ref); 
-#endif
-  
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
    if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL){
@@ -542,10 +529,6 @@ int add_r24(const char* image_file,
   
   /* obtain the reference number of the RIS24 */
   ri_ref = DF24lastref();
-
-#if defined( HZIP_DEBUG)
-  printf("add_r24 %d\n",ri_ref); 
-#endif
   
   /* add the image to the vgroup. the tag DFTAG_RIG is used */
   if (vgroup_id)
@@ -779,11 +762,7 @@ int add_sd(const char *fname,       /* file name */
 
  /* obtain the reference number of the SDS using its identifier */
  sds_ref = SDidtoref (sds_id);
- 
-#if defined( HZIP_DEBUG)
- printf("add_sd %d\n",sds_ref); 
-#endif
- 
+  
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id)
   if (Vaddtagref (vgroup_id, TAG_GRP_DSET, sds_ref)==FAIL){
@@ -917,10 +896,6 @@ int add_sd3d(const char *fname,       /* file name */
 
  /* obtain the reference number of the SDS using its identifier */
  sds_ref = SDidtoref (sds_id);
- 
-#if defined( HZIP_DEBUG)
- printf("add_sd %d\n",sds_ref); 
-#endif
  
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id)
@@ -1097,11 +1072,7 @@ int add_vs(const char* vs_name,
  /* Obtain the tag and ref number of the vdata */
  vdata_tag = VSQuerytag (vdata_id);
  vdata_ref = VSQueryref (vdata_id);
- 
-#if defined( HZIP_DEBUG)
- printf("add_vs %d\n",vdata_ref); 
-#endif
- 
+  
  /* add the VS to the vgroup*/
  if (vgroup_id)
   if (Vaddtagref (vgroup_id, vdata_tag, vdata_ref)==FAIL){
@@ -1506,10 +1477,6 @@ int add_sd_szip(const char *fname,       /* file name */
 
  /* obtain the reference number of the SDS using its identifier */
  sds_ref = SDidtoref (sds_id);
- 
-#if defined( HZIP_DEBUG)
- printf("add_sd %d\n",sds_ref); 
-#endif
  
  /* add the SDS to the vgroup. the tag DFTAG_NDG is used */
  if (vgroup_id) {

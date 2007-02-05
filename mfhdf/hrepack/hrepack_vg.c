@@ -26,7 +26,7 @@
  *
  * Purpose: copy VG attributes
  *
- * Return: 1 
+ * Return: FAIL, SUCCEED
  *
  *-------------------------------------------------------------------------
  */

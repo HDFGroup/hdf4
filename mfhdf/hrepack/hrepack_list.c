@@ -155,22 +155,7 @@ int list(const char* infname,
  }
 
  
- if (GRend (gr_id)==FAIL)
-  printf( "Failed to close GR interface <%s>\n", infname);
- if (GRend (gr_out)==FAIL)
-  printf( "Failed to close GR interface <%s>\n", outfname);
- 
- if (SDend (sd_id)==FAIL)
-  printf( "Failed to close SD interface <%s>\n", infname);
- if (SDend (sd_out)==FAIL)
-  printf( "Failed to close SD interface <%s>\n", outfname);
 
- /* close the HDF files */
- if (Hclose (infile_id)==FAIL)
-  printf( "Failed to close file <%s>\n", infname);
- if (Hclose (outfile_id)==FAIL)
-  printf( "Failed to close file <%s>\n", outfname);
- 
  /* 
  check for objects in the file table:
  1) the input object names are present in the file
@@ -193,8 +178,7 @@ int list(const char* infname,
    if (err!=NULL)
    {
     printf("\nError: <%s> %s in file <%s>. Exiting...\n",obj_name,err,infname);
-    table_free(table);
-    exit(1);
+    goto out;
    }
    if (options->verbose)
     printf("...Found\n");
@@ -203,15 +187,6 @@ int list(const char* infname,
 
  
 
- /* free table */
- table_free(table);
- dim_table_free(td1);
- dim_table_free(td2);
- return 0;
-
-out:
- 
- /* free table */
  table_free(table);
  dim_table_free(td1);
  dim_table_free(td2);
@@ -223,7 +198,26 @@ out:
   printf( "Failed to close file <%s>\n", infname);
  if (SDend (sd_out)==FAIL)
   printf( "Failed to close file <%s>\n", outfname);
- /* close the HDF files */
+ if (Hclose (infile_id)==FAIL)
+  printf( "Failed to close file <%s>\n", infname);
+ if (Hclose (outfile_id)==FAIL)
+  printf( "Failed to close file <%s>\n", outfname);
+ 
+ return SUCCEED;
+
+out:
+ 
+ table_free(table);
+ dim_table_free(td1);
+ dim_table_free(td2);
+ if (GRend (gr_id)==FAIL)
+  printf( "Failed to close GR interface <%s>\n", infname);
+ if (GRend (gr_out)==FAIL)
+  printf( "Failed to close GR interface <%s>\n", outfname);
+ if (SDend (sd_id)==FAIL)
+  printf( "Failed to close file <%s>\n", infname);
+ if (SDend (sd_out)==FAIL)
+  printf( "Failed to close file <%s>\n", outfname);
  if (Hclose (infile_id)==FAIL)
   printf( "Failed to close file <%s>\n", infname);
  if (Hclose (outfile_id)==FAIL)
@@ -240,7 +234,7 @@ out:
  *
  * Purpose: locate all lone Vgroups in the file
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -436,7 +430,7 @@ int list_vg(const char* infname,
  *
  * Purpose: recursive function to locate objects in lone Vgroups
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -519,10 +513,6 @@ int vgroup_insert(const char* infname,
 
    if (options->verbose)
     printf(PFORMAT,"","",path);    
-     
-#if defined(HZIP_DEBUG)
-   printf ("\t%s %d\n", path, ref); 
-#endif
    
    if ( options->trip==0 ) 
    {
@@ -679,7 +669,7 @@ int vgroup_insert(const char* infname,
  *
  * Purpose: get top level GR image list
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -717,6 +707,7 @@ int list_gr(const char* infname,
   if (GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
    dim_sizes, &n_attrs)==FAIL){
    printf("Could not get GR info\n");
+   return FAIL;
   }
 
   gr_ref = GRidtoref(ri_id);
@@ -731,6 +722,7 @@ int list_gr(const char* infname,
   {
    if (GRendaccess (ri_id)==FAIL){
     printf("Could not close GR\n");
+    return FAIL;
    }
    continue;
   }
@@ -741,6 +733,7 @@ int list_gr(const char* infname,
   /* terminate access to the current raster image */
   if (GRendaccess (ri_id)==FAIL){
    printf( "Could not end GR\n");
+   return FAIL;
   }
  }
 
@@ -753,7 +746,7 @@ int list_gr(const char* infname,
  *
  * Purpose: get top level SDS
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -821,7 +814,7 @@ out:
  *
  * Purpose: get top level VS
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -913,7 +906,7 @@ int list_vs(const char* infname,
  *
  * Purpose: list/copy global SDS attributes, global GR atrributes
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -971,7 +964,7 @@ int list_glb(const char* infname,
  *
  * Purpose: list/copy AN FILE objects
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */
@@ -1130,7 +1123,7 @@ out:
  *
  * Purpose: list/copy lone palettes
  *
- * Return: void
+ * Return: SUCCEED, FAIL
  *
  *-------------------------------------------------------------------------
  */

@@ -456,7 +456,7 @@ static int gen_dim(char* name,              /* name of SDS */
     dtype         /* numeric type ( for SZIP), IN */
     );
    if (have_info==FAIL)
-    comp_type=COMP_CODE_NONE;
+    goto out;
   } /* check inspection mode */
   
   

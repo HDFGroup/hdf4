@@ -110,7 +110,7 @@ int  options_get_info(options_t      *options,     /* global options */
     case COMP_CODE_SZIP:
      if (set_szip (obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
      {
-      return -1;
+      return FAIL;
      }
      chunk_def->comp.cinfo = c_info;
  
@@ -162,7 +162,7 @@ int  options_get_info(options_t      *options,     /* global options */
     if (obj->chunk.rank!=rank)
     {
      printf("Error: chunk rank does not match for <%s>\n",path);
-     exit(1);
+     return FAIL;
     }
     *chunk_flags = HDF_CHUNK;
     for (i = 0; i < rank; i++) 
@@ -188,7 +188,7 @@ int  options_get_info(options_t      *options,     /* global options */
      case COMP_CODE_SZIP:
       if (set_szip (obj->comp.info,obj->comp.szip_mode,&c_info)==FAIL)
       {
-       return -1;
+       return FAIL;
       }
       chunk_def->comp.cinfo = c_info;
       
@@ -207,6 +207,7 @@ int  options_get_info(options_t      *options,     /* global options */
      break;
      default:
       printf("Error: Unrecognized compression code in %d <%s>\n",*comp_type,path);
+      return FAIL;
      break;
      };
     }
@@ -238,7 +239,7 @@ int  options_get_info(options_t      *options,     /* global options */
     if (obj->chunk.rank!=rank)
     {
      printf("Error: chunk rank does not match for <%s>\n",path);
-     exit(1);
+     return FAIL;
     }
     *chunk_flags = HDF_CHUNK;
     for (i = 0; i < rank; i++) 
@@ -264,7 +265,7 @@ int  options_get_info(options_t      *options,     /* global options */
    case COMP_CODE_SZIP:
     if (set_szip (options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
     {
-     return -1;
+     return FAIL;
     }
     chunk_def->comp.cinfo = c_info;
     
@@ -282,6 +283,7 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
    default:
     printf("Error: Unrecognized compression code in %d <%s>\n",*comp_type,path);
+    return FAIL;
     break;
    };
   }
@@ -329,7 +331,7 @@ int  options_get_info(options_t      *options,     /* global options */
    case COMP_CODE_SZIP:
     if (set_szip (options->comp_g.info,options->comp_g.szip_mode,&c_info)==FAIL)
     {
-     return -1;
+     return FAIL;
     }
     chunk_def->comp.cinfo = c_info;
 
@@ -347,12 +349,14 @@ int  options_get_info(options_t      *options,     /* global options */
     break;
    default:
     printf("Error: Unrecognized compression code in %d <%s>\n",*comp_type,path);
+    return FAIL;
     break;
    };
   }
  } /* else if */
 
  return (obj==NULL) ? 0 : 1;
+
  
 }
 

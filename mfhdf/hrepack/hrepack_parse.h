@@ -29,7 +29,7 @@ int parse_number(char *str);
 /* compression */
 
 obj_list_t* parse_comp(const char *str, int *n_objs, comp_info_t *comp);
-const char*       get_scomp(comp_coder_t code);
+const char* get_scomp(comp_coder_t code);
 
 /* chunking */
 

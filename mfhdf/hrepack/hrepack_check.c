@@ -225,8 +225,6 @@ int sds_get_all(char *fname)
  *
  * Purpose: return the compression type as a string
  *
- * Return: void
- *
  *-------------------------------------------------------------------------
  */
 
