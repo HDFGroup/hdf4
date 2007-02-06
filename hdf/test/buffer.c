@@ -81,6 +81,9 @@ static char RcsId[] = "@(#)$Revision$";
 /* Number of tests */
 #define NUM_TESTS       4
 
+/* Factor for converting seconds to microseconds */
+#define FACTOR 1000000
+
 /* Number of timing tests to run */
 /* 0 - read/write entire buffer in one I/O operation */
 /* 1 - read/write entire buffer one byte at a time forwards */
@@ -287,7 +290,7 @@ read_test(int32 aid)
         HDmemset(in_buf,0,elemsize);
 
         /* Increment the total I/O time */
-        acc_time+=(end_time.tv_sec-start_time.tv_sec)*1000000+
+        acc_time+=(end_time.tv_sec-start_time.tv_sec)*FACTOR+
                   (end_time.tv_usec-start_time.tv_usec);
     } /* end for */
 
@@ -412,7 +415,7 @@ write_test(int32 aid,intn num_timings)
         HDmemset(in_buf,0,elemsize);
 
         /* Increment the total I/O time */
-        acc_time+=(end_time.tv_sec-start_time.tv_sec)*1000000+
+        acc_time+=(end_time.tv_sec-start_time.tv_sec)*FACTOR+
                   (end_time.tv_usec-start_time.tv_usec);
     } /* end for */
 
@@ -544,10 +547,10 @@ main(int argc, char *argv[])
         CHECK(ret, FAIL, "Hendaccess");
 
         MESSAGE(3, {
-            printf("Unbuffered read time=%f seconds\n",((float)read_time[test_num][0]/1000000));
-            printf("Unbuffered write time=%f seconds\n",((float)write_time[test_num][0]/1000000));
-            printf("Buffered read time=%f seconds\n",((float)read_time[test_num][1]/1000000));
-            printf("Buffered write time=%f seconds\n",((float)write_time[test_num][1]/1000000));
+            printf("Unbuffered read time=%f seconds\n",((float)read_time[test_num][0]/FACTOR));
+            printf("Unbuffered write time=%f seconds\n",((float)write_time[test_num][0]/FACTOR));
+            printf("Buffered read time=%f seconds\n",((float)read_time[test_num][1]/FACTOR));
+            printf("Buffered write time=%f seconds\n",((float)write_time[test_num][1]/FACTOR));
         }
             )
 
