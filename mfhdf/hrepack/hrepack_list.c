@@ -26,13 +26,13 @@
 #include "hrepack_dim.h"
 
 
-int list_vg (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,dim_table_t *td1,dim_table_t *td2,options_t *options);
-int list_gr (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
-int list_sds(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,table_t *table,dim_table_t *td1,dim_table_t *td2,options_t *options);
-int list_vs (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-int list_glb(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
+int list_vg (int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,dim_table_t *td1,dim_table_t *td2,options_t *options);
+int list_gr (int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
+int list_sds(int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,table_t *table,dim_table_t *td1,dim_table_t *td2,options_t *options);
+int list_vs (int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+int list_glb(int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
 int list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-int list_an (const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,options_t *options);
+int list_an (int32 infile_id,int32 outfile_id,options_t *options);
 
 
 /*-------------------------------------------------------------------------
@@ -40,7 +40,7 @@ int list_an (const char* infname,const char* outfname,int32 infile_id,int32 outf
  *
  * Purpose: locate all HDF objects in the file and compress them using options
  *
- * Return: 0, ok, -1 no
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -74,157 +74,159 @@ int list(const char* infname,
          const char* outfname, 
          options_t *options)
 {
- table_t      *table=NULL;
- dim_table_t  *td1=NULL;    /* dimensions */
- dim_table_t  *td2=NULL;    /* dimensions */
- int32        sd_id,        /* SD interface identifier */
-              sd_out,       /* SD interface identifier */
-              gr_id,        /* GR interface identifier */
-              gr_out,       /* GR interface identifier */
-              infile_id,
-              outfile_id;
- int          i;
- const char*  err;
-
- /* init table */
- table_init(&table);
- dim_table_init(&td1);
- dim_table_init(&td2);
-
- /* open the input file for read and create the output file */
- infile_id  = Hopen (infname,DFACC_READ,(int16)0);
- outfile_id = Hopen (outfname,DFACC_CREATE,(int16)0);
-
- if (infile_id==FAIL )
- {
-  table_free(table);
-  printf("Cannot open file <%s>\n",infname);
-  return FAIL;
- }
- if (outfile_id==FAIL )
- {
-  table_free(table);
-  printf("Cannot create file <%s>\n",outfname);
-  return FAIL;
- }
-
-  /* initialize the SD interface */
- if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
-  printf( "Could not start SD for <%s>\n",infname);
-  return FAIL;
- }
-
- if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
-  printf( "Could not start GR for <%s>\n",outfname);
-  return FAIL;
- }
-
- /* initialize the GR interface */
- if ((gr_id  = GRstart (infile_id))==FAIL){
-  printf( "Could not start GR for <%s>\n",infname);
-  return FAIL;
- }
- if ((gr_out = GRstart (outfile_id))==FAIL){
-  printf( "Could not start GR for <%s>\n",outfname);
-  GRend (gr_id);
-  return FAIL;
- }
-
- if (options->verbose && options->trip==0)
-  printf("Building list of objects in %s...\n",infname);
-
- /* iterate tru HDF interfaces */
- if (list_vg (infname,outfname,infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,td1,td2,options)<0) 
-  goto out;
- if (list_gr (infname,outfname,infile_id,outfile_id,gr_id,gr_out,table,options)<0) 
-  goto out;
- if (list_sds(infname,outfname,infile_id,outfile_id,sd_id,sd_out,table,td1,td2,options)<0) 
-  goto out;
- if (list_vs (infname,outfname,infile_id,outfile_id,table,options)<0) 
-  goto out;
- if (list_glb(infname,outfname,infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,options)<0) 
-  goto out;
- if (list_pal(infname,outfname,infile_id,outfile_id,table,options)<0) 
-  goto out;
- if (list_an (infname,outfname,infile_id,outfile_id,options)<0) 
-  goto out;
-
- if ( options->trip==1 ) 
- {
-  match_dim(sd_id,sd_out,td1,td2,options);
- }
-
- 
-
- /* 
- check for objects in the file table:
- 1) the input object names are present in the file
- 2) they are valid objects (SDS or GR)
- check only if selected objects are given (all==0)
- */
- if ( options->trip==0 ) 
- {
-  if (options->verbose)
-   printf("Searching for objects to modify...\n");
-   
-  for ( i = 0; i < options->op_tbl->nelems; i++) 
-  {
-   char* obj_name=options->op_tbl->objs[i].path;
-   if (options->verbose)
-    printf(PFORMAT1,"","",obj_name);
-   
-   /* the input object names are present in the file and are valid */
-   err=table_check(table,obj_name);
-   if (err!=NULL)
-   {
-    printf("\nError: <%s> %s in file <%s>. Exiting...\n",obj_name,err,infname);
-    goto out;
-   }
-   if (options->verbose)
-    printf("...Found\n");
-  }
- }
-
- 
-
- table_free(table);
- dim_table_free(td1);
- dim_table_free(td2);
- if (GRend (gr_id)==FAIL)
-  printf( "Failed to close GR interface <%s>\n", infname);
- if (GRend (gr_out)==FAIL)
-  printf( "Failed to close GR interface <%s>\n", outfname);
- if (SDend (sd_id)==FAIL)
-  printf( "Failed to close file <%s>\n", infname);
- if (SDend (sd_out)==FAIL)
-  printf( "Failed to close file <%s>\n", outfname);
- if (Hclose (infile_id)==FAIL)
-  printf( "Failed to close file <%s>\n", infname);
- if (Hclose (outfile_id)==FAIL)
-  printf( "Failed to close file <%s>\n", outfname);
- 
- return SUCCEED;
-
+    table_t      *table=NULL;
+    dim_table_t  *td1=NULL;    /* dimensions */
+    dim_table_t  *td2=NULL;    /* dimensions */
+    int32        sd_id,        /* SD interface identifier */
+                 sd_out,       /* SD interface identifier */
+                 gr_id,        /* GR interface identifier */
+                 gr_out,       /* GR interface identifier */
+                 infile_id,
+                 outfile_id;
+    int          i;
+    const char*  err;
+    
+    /* init table */
+    table_init(&table);
+    dim_table_init(&td1);
+    dim_table_init(&td2);
+    
+  
+    
+    /* open the input file for read and create the output file */
+    infile_id  = Hopen (infname,DFACC_READ,(int16)0);
+    outfile_id = Hopen (outfname,DFACC_CREATE,(int16)0);
+    
+    if (infile_id==FAIL )
+    {
+        table_free(table);
+        printf("Cannot open file <%s>\n",infname);
+        return FAIL;
+    }
+    if (outfile_id==FAIL )
+    {
+        table_free(table);
+        printf("Cannot create file <%s>\n",outfname);
+        return FAIL;
+    }
+    
+    /* initialize the SD interface */
+    if ((sd_id  = SDstart (infname, DFACC_READ))==FAIL){
+        printf( "Could not start SD for <%s>\n",infname);
+        return FAIL;
+    }
+    
+    if ((sd_out = SDstart (outfname, DFACC_WRITE))==FAIL){
+        printf( "Could not start GR for <%s>\n",outfname);
+        return FAIL;
+    }
+    
+    /* initialize the GR interface */
+    if ((gr_id  = GRstart (infile_id))==FAIL){
+        printf( "Could not start GR for <%s>\n",infname);
+        return FAIL;
+    }
+    if ((gr_out = GRstart (outfile_id))==FAIL){
+        printf( "Could not start GR for <%s>\n",outfname);
+        GRend (gr_id);
+        return FAIL;
+    }
+    
+    if (options->verbose && options->trip==0)
+        printf("Building list of objects in %s...\n",infname);
+    
+    /* iterate tru HDF interfaces */
+    if (list_vg (infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,td1,td2,options)<0) 
+        goto out;
+    if (list_gr (infile_id,outfile_id,gr_id,gr_out,table,options)<0) 
+        goto out;
+    if (list_sds(infile_id,outfile_id,sd_id,sd_out,table,td1,td2,options)<0) 
+        goto out;
+    if (list_vs (infile_id,outfile_id,table,options)<0) 
+        goto out;
+    if (list_glb(infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,options)<0) 
+        goto out;
+    if (list_pal(infname,outfname,infile_id,outfile_id,table,options)<0) 
+        goto out;
+    if (list_an (infile_id,outfile_id,options)<0) 
+        goto out;
+    
+    if ( options->trip==1 ) 
+    {
+        match_dim(sd_id,sd_out,td1,td2,options);
+    }
+    
+    
+    
+    /* 
+    check for objects in the file table:
+    1) the input object names are present in the file
+    2) they are valid objects (SDS or GR)
+    check only if selected objects are given (all==0)
+    */
+    if ( options->trip==0 ) 
+    {
+        if (options->verbose)
+            printf("Searching for objects to modify...\n");
+        
+        for ( i = 0; i < options->op_tbl->nelems; i++) 
+        {
+            char* obj_name=options->op_tbl->objs[i].path;
+            if (options->verbose)
+                printf(PFORMAT1,"","",obj_name);
+            
+            /* the input object names are present in the file and are valid */
+            err=table_check(table,obj_name);
+            if (err!=NULL)
+            {
+                printf("\nError: <%s> %s in file <%s>. Exiting...\n",obj_name,err,infname);
+                goto out;
+            }
+            if (options->verbose)
+                printf("...Found\n");
+        }
+    }
+    
+    
+    
+    table_free(table);
+    dim_table_free(td1);
+    dim_table_free(td2);
+    if (GRend (gr_id)==FAIL)
+        printf( "Failed to close GR interface <%s>\n", infname);
+    if (GRend (gr_out)==FAIL)
+        printf( "Failed to close GR interface <%s>\n", outfname);
+    if (SDend (sd_id)==FAIL)
+        printf( "Failed to close file <%s>\n", infname);
+    if (SDend (sd_out)==FAIL)
+        printf( "Failed to close file <%s>\n", outfname);
+    if (Hclose (infile_id)==FAIL)
+        printf( "Failed to close file <%s>\n", infname);
+    if (Hclose (outfile_id)==FAIL)
+        printf( "Failed to close file <%s>\n", outfname);
+    
+    return SUCCEED;
+    
 out:
- 
- table_free(table);
- dim_table_free(td1);
- dim_table_free(td2);
- if (GRend (gr_id)==FAIL)
-  printf( "Failed to close GR interface <%s>\n", infname);
- if (GRend (gr_out)==FAIL)
-  printf( "Failed to close GR interface <%s>\n", outfname);
- if (SDend (sd_id)==FAIL)
-  printf( "Failed to close file <%s>\n", infname);
- if (SDend (sd_out)==FAIL)
-  printf( "Failed to close file <%s>\n", outfname);
- if (Hclose (infile_id)==FAIL)
-  printf( "Failed to close file <%s>\n", infname);
- if (Hclose (outfile_id)==FAIL)
-  printf( "Failed to close file <%s>\n", outfname);
-
- return FAIL;
-
+    
+    table_free(table);
+    dim_table_free(td1);
+    dim_table_free(td2);
+    if (GRend (gr_id)==FAIL)
+        printf( "Failed to close GR interface <%s>\n", infname);
+    if (GRend (gr_out)==FAIL)
+        printf( "Failed to close GR interface <%s>\n", outfname);
+    if (SDend (sd_id)==FAIL)
+        printf( "Failed to close file <%s>\n", infname);
+    if (SDend (sd_out)==FAIL)
+        printf( "Failed to close file <%s>\n", outfname);
+    if (Hclose (infile_id)==FAIL)
+        printf( "Failed to close file <%s>\n", infname);
+    if (Hclose (outfile_id)==FAIL)
+        printf( "Failed to close file <%s>\n", outfname);
+    
+    return FAIL;
+    
 }
 
 
@@ -240,9 +242,7 @@ out:
  */
 
 
-int list_vg(const char* infname,
-            const char* outfname,
-            int32 infile_id,
+int list_vg(int32 infile_id,
             int32 outfile_id,
             int32 sd_id,
             int32 sd_out,
@@ -368,9 +368,7 @@ int list_vg(const char* infname,
      refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
      Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
      
-     if (vgroup_insert(infname,
-      outfname,
-      infile_id,
+     if (vgroup_insert(infile_id,
       outfile_id,
       sd_id,
       sd_out,
@@ -435,23 +433,21 @@ int list_vg(const char* infname,
  *-------------------------------------------------------------------------
  */
 
-int vgroup_insert(const char* infname,
-                   const char* outfname,
-                   int32 infile_id,
-                   int32 outfile_id,
-                   int32 sd_id,             /* SD interface identifier */
-                   int32 sd_out,            /* SD interface identifier */
-                   int32 gr_id,             /* GR interface identifier */
-                   int32 gr_out,            /* GR interface identifier */
-                   int32 vgroup_id_out_par, /* output parent group ID */
-                   char*path_name,          /* absolute path for input group name */          
-                   int32* in_tags,          /* tag list for parent group */
-                   int32* in_refs,          /* ref list for parent group */
-                   int npairs,              /* number tag/ref pairs for parent group */
-                   table_t *table,
-                   dim_table_t *td1,
-                   dim_table_t *td2,
-                   options_t *options)
+int vgroup_insert(int32 infile_id,
+                  int32 outfile_id,
+                  int32 sd_id,             /* SD interface identifier */
+                  int32 sd_out,            /* SD interface identifier */
+                  int32 gr_id,             /* GR interface identifier */
+                  int32 gr_out,            /* GR interface identifier */
+                  int32 vgroup_id_out_par, /* output parent group ID */
+                  char*path_name,          /* absolute path for input group name */          
+                  int32* in_tags,          /* tag list for parent group */
+                  int32* in_refs,          /* ref list for parent group */
+                  int npairs,              /* number tag/ref pairs for parent group */
+                  table_t *table,
+                  dim_table_t *td1,
+                  dim_table_t *td2,
+                  options_t *options)
 {
  int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
@@ -550,8 +546,7 @@ int vgroup_insert(const char* infname,
     refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
     Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
     /* recurse */
-    if (vgroup_insert(infname,
-     outfname,
+    if (vgroup_insert(
      infile_id,
      outfile_id,
      sd_id,
@@ -674,9 +669,7 @@ int vgroup_insert(const char* infname,
  *-------------------------------------------------------------------------
  */
 
-int list_gr(const char* infname,
-            const char* outfname,
-            int32 infile_id,
+int list_gr(int32 infile_id,
             int32 outfile_id,
             int32 gr_id,             /* GR interface identifier */
             int32 gr_out,            /* GR interface identifier */
@@ -751,9 +744,7 @@ int list_gr(const char* infname,
  *-------------------------------------------------------------------------
  */
 
-int list_sds(const char* infname,
-             const char* outfname,
-             int32 infile_id,
+int list_sds(int32 infile_id,
              int32 outfile_id,
              int32 sd_id,
              int32 sd_out,
@@ -820,9 +811,7 @@ out:
  */
 
 
-int list_vs(const char* infname,
-            const char* outfname,
-            int32 infile_id,
+int list_vs(int32 infile_id,
             int32 outfile_id,
             table_t *table,
             options_t *options)
@@ -911,16 +900,14 @@ int list_vs(const char* infname,
  *-------------------------------------------------------------------------
  */
 
-int list_glb(const char* infname,
-             const char* outfname,
-             int32 infile_id,
-              int32 outfile_id,
-              int32 sd_id,
-              int32 sd_out,
-              int32 gr_id,
-              int32 gr_out,
-              table_t *table,
-              options_t *options)
+int list_glb(int32 infile_id,
+             int32 outfile_id,
+             int32 sd_id,
+             int32 sd_out,
+             int32 gr_id,
+             int32 gr_out,
+             table_t *table,
+             options_t *options)
 {
  int32 n_datasets,             /* number of datasets in the file */
        n_file_attrs;           /* number of file attributes */
@@ -969,11 +956,9 @@ int list_glb(const char* infname,
  *-------------------------------------------------------------------------
  */
 
-int list_an(const char* infname,
-             const char* outfname,
-             int32 infile_id,
-             int32 outfile_id,
-             options_t *options)
+int list_an(int32 infile_id,
+            int32 outfile_id,
+            options_t *options)
 {
  int32 an_id,         /* AN interface identifier */
        ann_id,        /* an annotation identifier */
@@ -1129,11 +1114,11 @@ out:
  */
 
 int list_pal(const char* infname,
-              const char* outfname,
-              int32 infile_id,
-              int32 outfile_id,
-              table_t *table,
-              options_t *options)
+             const char* outfname,
+             int32 infile_id,
+             int32 outfile_id,
+             table_t *table,
+             options_t *options)
 {
  uint8  palette_data[256*3];
  intn   nPals, j;
