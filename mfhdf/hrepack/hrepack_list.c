@@ -307,14 +307,14 @@ int list_vg(int32 infile_id,
             options_t *options)
 {
     int32 vgroup_id,      /* vgroup identifier */
-        nlones = 0,     /* number of lone vgroups */
-        ntagrefs,       /* number of tag/ref pairs in a vgroup */
-        *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
-        *tags=NULL,     /* buffer to hold the tag numbers of vgroups   */
-        *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
-        vgroup_id_out,  /* vgroup identifier */
-        ref_vg,
-        tag_vg;
+          nlones = 0,     /* number of lone vgroups */
+          ntagrefs,       /* number of tag/ref pairs in a vgroup */
+          *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
+          *tags=NULL,     /* buffer to hold the tag numbers of vgroups   */
+          *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
+          vgroup_id_out,  /* vgroup identifier */
+          ref_vg,
+          tag_vg;
     char  vgroup_name[VGNAMELENMAX];
     char  vgroup_class[VGNAMELENMAX];
     int   i;
@@ -506,8 +506,12 @@ int list_vg(int32 infile_id,
 
  } /* if  nlones */
  
+
+/*-------------------------------------------------------------------------
+ * terminate access to the V interface
+ *-------------------------------------------------------------------------
+ */
  
- /* terminate access to the V interface */
  if (Vend (infile_id)==FAIL)
  {
      printf("Error: Could not end group interface in <%s>\n", vgroup_name);
@@ -828,61 +832,66 @@ int list_gr(int32 infile_id,
             table_t *table,
             options_t *options)
 {
- int32 ri_id,             /* raster image identifier */
-       n_rimages,         /* number of raster images in the file */
-       n_file_attrs,      /* number of file attributes */
-       ri_index,          /* index of a image */
-       gr_ref,            /* reference number of the GR image */
-       dim_sizes[2],      /* dimensions of an image */
-       n_comps,           /* number of components an image contains */
-       interlace_mode,    /* interlace mode of an image */ 
-       data_type,         /* number type of an image */
-       n_attrs;           /* number of attributes belong to an image */
- char  name[MAX_GR_NAME]; /* name of an image */
- 
- /* determine the contents of the file */
- if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)==FAIL){
-  printf( "Could not get info for GR\n");
-  return FAIL;
- }
-  
- for (ri_index = 0; ri_index < n_rimages; ri_index++)
- {
-  ri_id = GRselect (gr_id, ri_index);
-  if (GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
-   dim_sizes, &n_attrs)==FAIL){
-   printf("Could not get GR info\n");
-   return FAIL;
-  }
-
-  gr_ref = GRidtoref(ri_id);
-
-  /* check if already inserted in Vgroup; search all image tags */
-  if ( table_search(table,DFTAG_RI,gr_ref)>=0 ||
-       table_search(table,DFTAG_CI,gr_ref)>=0 ||
-       table_search(table,DFTAG_RIG,gr_ref)>=0 ||
-       table_search(table,DFTAG_RI8,gr_ref)>=0 ||
-       table_search(table,DFTAG_CI8,gr_ref)>=0 ||
-       table_search(table,DFTAG_II8,gr_ref)>=0 )
-  {
-   if (GRendaccess (ri_id)==FAIL){
-    printf("Could not close GR\n");
+    int32 ri_id,             /* raster image identifier */
+          n_rimages,         /* number of raster images in the file */
+          n_file_attrs,      /* number of file attributes */
+          ri_index,          /* index of a image */
+          gr_ref,            /* reference number of the GR image */
+          dim_sizes[2],      /* dimensions of an image */
+          n_comps,           /* number of components an image contains */
+          interlace_mode,    /* interlace mode of an image */ 
+          data_type,         /* number type of an image */
+          n_attrs;           /* number of attributes belong to an image */
+    char  name[MAX_GR_NAME]; /* name of an image */
+    
+    /* determine the contents of the file */
+    if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)==FAIL){
+        printf( "Could not get info for GR\n");
+        return FAIL;
+    }
+    
+    for (ri_index = 0; ri_index < n_rimages; ri_index++)
+    {
+        ri_id = GRselect (gr_id, ri_index);
+        if (GRgetiminfo (ri_id, name, &n_comps, &data_type, &interlace_mode, 
+            dim_sizes, &n_attrs)==FAIL){
+            printf("Could not get GR info\n");
+            goto out;
+        }
+        
+        gr_ref = GRidtoref(ri_id);
+        
+        /* check if already inserted in Vgroup; search all image tags */
+        if ( table_search(table,DFTAG_RI,gr_ref)>=0 ||
+            table_search(table,DFTAG_CI,gr_ref)>=0 ||
+            table_search(table,DFTAG_RIG,gr_ref)>=0 ||
+            table_search(table,DFTAG_RI8,gr_ref)>=0 ||
+            table_search(table,DFTAG_CI8,gr_ref)>=0 ||
+            table_search(table,DFTAG_II8,gr_ref)>=0 )
+        {
+            if (GRendaccess (ri_id)==FAIL){
+                printf("Could not close GR\n");
+                return FAIL;
+            }
+            continue;
+        }
+        
+        /* copy GR  */
+        if (copy_gr(infile_id,outfile_id,gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,table)<0)
+            goto out;
+        
+        /* terminate access to the current raster image */
+        if (GRendaccess (ri_id)==FAIL){
+            printf( "Could not end GR\n");
+            return FAIL;
+        }
+    }
+    
+     return SUCCEED;
+    
+out:
+    GRendaccess (ri_id);
     return FAIL;
-   }
-   continue;
-  }
-
-  /* copy GR  */
-  copy_gr(infile_id,outfile_id,gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,table);
-
-  /* terminate access to the current raster image */
-  if (GRendaccess (ri_id)==FAIL){
-   printf( "Could not end GR\n");
-   return FAIL;
-  }
- }
-
- return SUCCEED;
 }
 
 
@@ -905,51 +914,51 @@ int list_sds(int32 infile_id,
              dim_table_t *td2,
              options_t *options)
 {
- int32 sds_id,                 /* dataset identifier */
-       n_datasets,             /* number of datasets in the file */
-       n_file_attrs,           /* number of file attributes */
-       index,                  /* index of a dataset */
-       sds_ref,                /* reference number */
-       dim_sizes[MAX_VAR_DIMS],/* dimensions of an image */
-       data_type,              /* number type  */
-       rank,                   /* rank */
-       n_attrs;                /* number of attributes */
- char  name[MAX_GR_NAME];      /* name of dataset */
-  
- /* determine the number of data sets in the file and the number of file attributes */
- if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
-  printf("Could not get SDS info\n");
-  return FAIL;
- }
-
- for (index = 0; index < n_datasets; index++)
- {
-  sds_id  = SDselect (sd_id, index);
-  SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
-  sds_ref = SDidtoref(sds_id);
-
-  /* check if already inserted in Vgroup; search all SDS tags */
-  if ( table_search(table,DFTAG_SD,sds_ref)>=0 ||
-       table_search(table,DFTAG_SDG,sds_ref)>=0 ||
-       table_search(table,DFTAG_NDG,sds_ref)>=0 )
-  {
-   SDendaccess (sds_id);
-   continue;
-  }
-
-  /* copy SDS  */
-  if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,td1,td2,
-               infile_id,outfile_id)<0) goto out;
-     
-  /* terminate access to the current dataset */
-  SDendaccess (sds_id);
- }
- 
- return 0;
-
+    int32 sds_id,                 /* dataset identifier */
+          n_datasets,             /* number of datasets in the file */
+          n_file_attrs,           /* number of file attributes */
+          index,                  /* index of a dataset */
+          sds_ref,                /* reference number */
+          dim_sizes[MAX_VAR_DIMS],/* dimensions of an image */
+          data_type,              /* number type  */
+          rank,                   /* rank */
+          n_attrs;                /* number of attributes */
+    char  name[MAX_GR_NAME];      /* name of dataset */
+    
+    /* determine the number of data sets in the file and the number of file attributes */
+    if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
+        printf("Could not get SDS info\n");
+        return FAIL;
+    }
+    
+    for (index = 0; index < n_datasets; index++)
+    {
+        sds_id  = SDselect (sd_id, index);
+        SDgetinfo(sds_id, name, &rank, dim_sizes, &data_type, &n_attrs);
+        sds_ref = SDidtoref(sds_id);
+        
+        /* check if already inserted in Vgroup; search all SDS tags */
+        if ( table_search(table,DFTAG_SD,sds_ref)>=0 ||
+            table_search(table,DFTAG_SDG,sds_ref)>=0 ||
+            table_search(table,DFTAG_NDG,sds_ref)>=0 )
+        {
+            SDendaccess (sds_id);
+            continue;
+        }
+        
+        /* copy SDS  */
+        if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,td1,td2,
+            infile_id,outfile_id)<0) goto out;
+        
+        /* terminate access to the current dataset */
+        SDendaccess (sds_id);
+    }
+    
+    return SUCCEED;
+    
 out:
- SDendaccess (sds_id);
- return FAIL;
+    SDendaccess (sds_id);
+    return FAIL;
 }
 
 /*-------------------------------------------------------------------------
@@ -968,76 +977,119 @@ int list_vs(int32 infile_id,
             table_t *table,
             options_t *options)
 {
- int32 nlones = 0,   /* number of lone vdatas */
-       *ref_array,   /* buffer to hold the ref numbers of lone vdatas   */
-       ref;          /* temporary ref number  */
- int   i;
+    int32 nlones = 0,        /* number of lone vdatas */
+          *ref_array=NULL,   /* buffer to hold the ref numbers of lone vdatas   */
+          ref;               /* temporary ref number  */
+    int   i;
 
- /* initialize the V interface */
- Vstart (infile_id);
- Vstart (outfile_id);
+   /*-------------------------------------------------------------------------
+    * initialize the V interface
+    *-------------------------------------------------------------------------
+    */
+    
+    if (Vstart(infile_id) == FAIL)  
+    {
+        return FAIL;
+    } 
+    
+    if (options->trip==1)
+    {
+        if (Vstart(outfile_id) == FAIL)  
+        {
+            return FAIL;
+        }
+    }
 
-/*
- * get and print the names and class names of all the lone vdatas.
- * first, call Vlone with nlones set to 0 to get the number of
- * lone vdatas in the file, but not to get their reference numbers.
- */
- nlones = VSlone (infile_id, NULL, nlones );
+   /*-------------------------------------------------------------------------
+    * get the names and class names of all the lone vdatas
+    * first, call Vlone with nlones set to 0 to get the number of lone vdatas 
+    * in the file
+    *
+    *-------------------------------------------------------------------------
+    */
+    nlones = VSlone (infile_id, NULL, nlones );
+    
+    if (nlones > 0)
+    {
+       /*
+        * use the nlones returned to allocate sufficient space for the
+        * buffer ref_array to hold the reference numbers of all lone vgroups,
+        */
+        ref_array = (int32 *) malloc(sizeof(int32) * nlones);
+        
+       /*
+        * and call VSlone again to retrieve the reference numbers into 
+        * the buffer ref_array.
+        */
+        nlones = VSlone (infile_id, ref_array, nlones);
+        
+       /*
+        * iterate tru each lone vdata.
+        */
+        for (i = 0; i < nlones; i++)
+        {
+           /*
+            * attach to the current vdata then get its
+            * name and class. note: the current vdata must be detached before
+            * moving to the next.
+            */
+            ref = ref_array[i];
+            
+            /* check if already inserted in Vgroup, search with VS tag */
+            if ( table_search(table,DFTAG_VH,ref)>=0 ) 
+            {
+                continue;
+            }
+            
+            /* copy VS */
+            if (copy_vs(infile_id,outfile_id,DFTAG_VH,ref,0,NULL,options,table,1)<0)
+            {
+                goto out;
+            }
+            
+        } /* for */
+        
+        
+        /* free the space allocated */
+        if (ref_array) 
+        {
+            free (ref_array);
+            ref_array = NULL;
+        }
+    } /* if */
+    
+   /*-------------------------------------------------------------------------
+    * terminate access to the V interface
+    *-------------------------------------------------------------------------
+    */
+    if (Vend (infile_id)==FAIL)
+    {
+        printf("Error: Could not end Vdata interface\n");
+        return FAIL;
+    }
+    if (options->trip==1)
+    {
+        if (Vend (outfile_id)==FAIL){
+            printf("Error: Could not end Vdata interface\n");
+            return FAIL;
+        }
+    }
+    
+    
+    return SUCCEED;
 
- if (nlones > 0)
- {
- /*
-  * use the nlones returned to allocate sufficient space for the
-  * buffer ref_array to hold the reference numbers of all lone vgroups,
-  */
-  ref_array = (int32 *) malloc(sizeof(int32) * nlones);
-  
- /*
-  * and call VSlone again to retrieve the reference numbers into 
-  * the buffer ref_array.
-  */
-  nlones = VSlone (infile_id, ref_array, nlones);
 
- /*
-  * iterate tru each lone vdata.
-  */
-  for (i = 0; i < nlones; i++)
-  {
-  /*
-   * attach to the current vdata then get its
-   * name and class. note: the current vdata must be detached before
-   * moving to the next.
-   */
-   ref = ref_array[i];
-
-   /* check if already inserted in Vgroup; search all VS tags */
-   if ( table_search(table,DFTAG_VH,ref)>=0 ) {
-    continue;
-   }
-
-   /* copy VS */
-   if (copy_vs(infile_id,outfile_id,DFTAG_VH,ref,0,NULL,options,table,1)<0)
-   {
-    if (ref_array) free (ref_array);
-    return FAIL;
-   }
+out:
  
-  } /* for */
-
+ Vend (infile_id);
+ if (options->trip==1)
+     Vend (outfile_id);
+ 
+ /* free the space allocated */
+ if (ref_array!=NULL) 
+     free (ref_array);
   
-  /* free the space allocated */
-  if (ref_array) free (ref_array);
- } /* if */
-
- /* terminate access to the VS interface */
- if (Vend (infile_id)==FAIL||
-  Vend (outfile_id)==FAIL){
-  printf( "Could not end VG\n");
-  return FAIL;
- }
-
-
- return SUCCEED;
+ return FAIL;
 }
 
 
@@ -1061,40 +1113,44 @@ int list_glb(int32 infile_id,
              table_t *table,
              options_t *options)
 {
- int32 n_datasets,             /* number of datasets in the file */
-       n_file_attrs;           /* number of file attributes */
- 
- if ( options->trip==0 ) 
- {
-  return SUCCEED;
- }
-     
-/*-------------------------------------------------------------------------
- * copy SDS global attributes
- *-------------------------------------------------------------------------
- */ 
- /* determine the number of data sets in the file and the number of file attributes */
- if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL){
-  printf("Could not get SDS info\n");
-  return FAIL;
- }
- 
- if (copy_sds_attrs(sd_id,sd_out,n_file_attrs,options)<0)
-  return FAIL;
+    int32 n_datasets,             /* number of datasets in the file */
+          n_file_attrs;           /* number of file attributes */
+    
+    if ( options->trip==0 ) 
+    {
+        return SUCCEED;
+    }
+    
+    /*-------------------------------------------------------------------------
+     * copy SDS global attributes
+     *-------------------------------------------------------------------------
+     */ 
 
-/*-------------------------------------------------------------------------
- * copy GR global attributes
- *-------------------------------------------------------------------------
- */ 
- /* determine the number of data sets in the file and the number of file attributes */
- if (GRfileinfo (gr_id, &n_datasets, &n_file_attrs)==FAIL){
-  printf("Could not get GR info\n");
-  return FAIL;
- }
- if (copy_gr_attrs(gr_id,gr_out,n_file_attrs,options)<0)
-  return FAIL;
-
- return SUCCEED;
+    /* determine the number of data sets in the file and the number of file attributes */
+    if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL)
+    {
+        printf("Could not get SDS info\n");
+        return FAIL;
+    }
+    
+    if (copy_sds_attrs(sd_id,sd_out,n_file_attrs,options)<0)
+        return FAIL;
+    
+    /*-------------------------------------------------------------------------
+     * copy GR global attributes
+     *-------------------------------------------------------------------------
+     */ 
+   
+    /* determine the number of data sets in the file and the number of file attributes */
+    if (GRfileinfo (gr_id, &n_datasets, &n_file_attrs)==FAIL)
+    {
+        printf("Could not get GR info\n");
+        return FAIL;
+    }
+    if (copy_gr_attrs(gr_id,gr_out,n_file_attrs,options)<0)
+        return FAIL;
+    
+    return SUCCEED;
 }
 
 
@@ -1112,144 +1168,157 @@ int list_an(int32 infile_id,
             int32 outfile_id,
             options_t *options)
 {
- int32 an_id,         /* AN interface identifier */
-       ann_id,        /* an annotation identifier */
-       ann_length,    /* length of the text in an annotation */
-       an_out,        /* AN interface identifier */
-       file_label_id, /* file label identifier */
-       file_desc_id,  /* file description identifier */
-       n_file_labels, n_file_descs, n_data_labels, n_data_descs;
- char *ann_buf;       /* buffer to hold the read annotation */
- int   i;             /* position of an annotation in all of the same type*/
+    int32 an_id,         /* AN interface identifier */
+          ann_id,        /* an annotation identifier */
+          ann_length,    /* length of the text in an annotation */
+          an_out,        /* AN interface identifier */
+          file_label_id, /* file label identifier */
+          file_desc_id,  /* file description identifier */
+          n_file_labels, n_file_descs, n_data_labels, n_data_descs;
+    char  *ann_buf=NULL; /* buffer to hold the read annotation */
+    int   i;             /* position of an annotation in all of the same type*/
+    
+    if ( options->trip==0 ) 
+    {
+        return SUCCEED;
+    }
+    
+    /* Initialize the AN interface  */
+    an_id  = ANstart (infile_id);
+    an_out = ANstart (outfile_id);
+    
+    /*
+     * Get the annotation information, e.g., the numbers of file labels, file
+     * descriptions, data labels, and data descriptions.
+     */
+    if (ANfileinfo (an_id,&n_file_labels,&n_file_descs,&n_data_labels,&n_data_descs)==FAIL)
+    {
+        printf( "Could not get AN info\n");
+        goto out;
+    }
+    
+    
+   /*-------------------------------------------------------------------------
+    * AN_FILE_LABEL
+    *-------------------------------------------------------------------------
+    */ 
+    
+    
+    for (i = 0; i < n_file_labels; i++)
+    {
+        /* Get the identifier of the current data label */
+        ann_id = ANselect (an_id, i, AN_FILE_LABEL);
+        
+        /* Get the length of the data label */
+        ann_length = ANannlen (ann_id);
+        
+        /* Allocate space for the buffer to hold the data label text */
+        ann_buf = malloc ((ann_length+1) * sizeof (char));
+        
+       /*
+        * Read and display the file label.  Note that the size of the buffer,
+        * i.e., the third parameter, is 1 character more than the length of
+        * the data label; that is for the null character.  It is not the case
+        * when a description is retrieved because the description does not 
+        * necessarily end with a null character.
+        * 
+        */
+        if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL)
+        {
+            printf( "Could not read AN\n");
+            goto out;
+        }
+        
+        /* Create the file label */
+        file_label_id = ANcreatef (an_out, AN_FILE_LABEL);
+        
+        /* Write the annotations  */
+        if (ANwriteann (file_label_id, ann_buf, ann_length)==FAIL) 
+        {
+            printf("Failed to write file label %d\n", i);
+            goto out;
+        }
+        
+        /* Terminate access to the current data label */
+        if (ANendaccess (ann_id)==FAIL || ANendaccess (file_label_id)==FAIL)
+        {
+            printf( "Could not end AN\n");
+            goto out;
+        }
+        
+        
+        /* Free the space allocated for the annotation buffer */
+        if (ann_buf)
+            free (ann_buf);
+    }
+    
+    /*-------------------------------------------------------------------------
+     * AN_FILE_DESC
+     *-------------------------------------------------------------------------
+     */ 
+    
+    for (i = 0; i < n_file_descs; i++)
+    {
+        /* Get the identifier of the current data label */
+        ann_id = ANselect (an_id, i, AN_FILE_DESC);
+        
+        /* Get the length of the data label */
+        ann_length = ANannlen (ann_id);
+        
+        /* Allocate space for the buffer to hold the data label text */
+        ann_buf = malloc ((ann_length+1) * sizeof (char));
+        
+        if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL)
+        {
+            printf( "Could not read AN\n");
+            goto out;
+        }
+        
+        /* Create the label */
+        file_desc_id = ANcreatef (an_out, AN_FILE_DESC);
+        
+        /* Write the annotations  */
+        if (ANwriteann (file_desc_id, ann_buf, ann_length)==FAIL)
+        {
+            printf("Failed to write file description %d\n", i);
+            goto out;
+        }
+        
+        /* Terminate access to the current data label */
+        if (ANendaccess (ann_id)==FAIL || ANendaccess (file_desc_id)==FAIL)
+        {
+            printf( "Could not read AN\n");
+            goto out;
+        }
+        
+        /* Free the space allocated for the annotation buffer */
+        if (ann_buf)
+        {
+            free (ann_buf);
+            ann_buf = NULL;
+        }
+    }
+    
 
- if ( options->trip==0 ) 
- {
-  return SUCCEED;
- }
- ann_buf=NULL;
- 
- /* Initialize the AN interface  */
- an_id  = ANstart (infile_id);
- an_out = ANstart (outfile_id);
- 
-/*
- * Get the annotation information, e.g., the numbers of file labels, file
- * descriptions, data labels, and data descriptions.
- */
- if (ANfileinfo (an_id, &n_file_labels, &n_file_descs, 
-  &n_data_labels, &n_data_descs)==FAIL){
-  printf( "Could not get AN info\n");
-  goto out;
- }
- 
+   /* Terminate access to the AN interface */
+    if (ANend (an_id)==FAIL || ANend (an_out)==FAIL)
+    {
+        printf( "Could not end AN\n");
+        goto out;
+    }
 
-/*-------------------------------------------------------------------------
- * AN_FILE_LABEL
- *-------------------------------------------------------------------------
- */ 
-
-
- for (i = 0; i < n_file_labels; i++)
- {
- /* Get the identifier of the current data label */
-  ann_id = ANselect (an_id, i, AN_FILE_LABEL);
-  
-  /* Get the length of the data label */
-  ann_length = ANannlen (ann_id);
-  
-  /* Allocate space for the buffer to hold the data label text */
-  ann_buf = malloc ((ann_length+1) * sizeof (char));
-  
- /*
-  * Read and display the file label.  Note that the size of the buffer,
-  * i.e., the third parameter, is 1 character more than the length of
-  * the data label; that is for the null character.  It is not the case
-  * when a description is retrieved because the description does not 
-  * necessarily end with a null character.
-  * 
-  */
-  if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL){
-   printf( "Could not read AN\n");
-   goto out;
-  }
-
-  /* Create the file label */
-  file_label_id = ANcreatef (an_out, AN_FILE_LABEL);
-
-  /* Write the annotations  */
-  if (ANwriteann (file_label_id, ann_buf, ann_length)==FAIL) {
-   printf("Failed to write file label %d\n", i);
-   goto out;
-  }
-  
-  /* Terminate access to the current data label */
-  if (ANendaccess (ann_id)==FAIL||
-      ANendaccess (file_label_id)==FAIL){
-   printf( "Could not end AN\n");
-   goto out;
-  }
-
-  
-  /* Free the space allocated for the annotation buffer */
-  if (ann_buf)
-   free (ann_buf);
- }
-
-/*-------------------------------------------------------------------------
- * AN_FILE_DESC
- *-------------------------------------------------------------------------
- */ 
-
- for (i = 0; i < n_file_descs; i++)
- {
- /* Get the identifier of the current data label */
-  ann_id = ANselect (an_id, i, AN_FILE_DESC);
-  
-  /* Get the length of the data label */
-  ann_length = ANannlen (ann_id);
-  
-  /* Allocate space for the buffer to hold the data label text */
-  ann_buf = malloc ((ann_length+1) * sizeof (char));
- 
-  if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL){
-   printf( "Could not read AN\n");
-   goto out;
-  }
-
-   /* Create the label */
-  file_desc_id = ANcreatef (an_out, AN_FILE_DESC);
-
-  /* Write the annotations  */
-  if (ANwriteann (file_desc_id, ann_buf, ann_length)==FAIL){
-   printf("Failed to write file description %d\n", i);
-   goto out;
-  }
-  
-  /* Terminate access to the current data label */
-  if (ANendaccess (ann_id)==FAIL||
-      ANendaccess (file_desc_id)==FAIL){
-   printf( "Could not read AN\n");
-   goto out;
-  }
- 
-  /* Free the space allocated for the annotation buffer */
-  if (ann_buf)
-   free (ann_buf);
- }
-
- return SUCCEED;
- 
- /* Terminate access to the AN interface */
+    return SUCCEED;
+    
 out:
- if (ANend (an_id)==FAIL||
-  ANend (an_out)==FAIL){
-  printf( "Could not end AN\n");
- }
- if (ann_buf)
-   free (ann_buf);
-
- return FAIL;
- 
+    if (ANend (an_id)==FAIL || ANend (an_out)==FAIL)
+    {
+        printf( "Could not end AN\n");
+    }
+    if (ann_buf!=NULL)
+        free (ann_buf);
+    
+    return FAIL;
+    
 }
 
 
@@ -1272,43 +1341,47 @@ int list_pal(const char* infname,
              table_t *table,
              options_t *options)
 {
- uint8  palette_data[256*3];
- intn   nPals, j;
- uint16 ref;
- 
- if ( options->trip==0 ) 
- {
-  return SUCCEED;
- }
-
- DFPrestart();
- 
- if((nPals = DFPnpals (infname))==FAIL ) {
-  printf( "Failed to get palettes in <%s>\n", infname);
-  return FAIL;
- }
- 
- for ( j = 0; j < nPals; j++) 
- {
-  if (DFPgetpal(infname, (VOIDP)palette_data)==FAIL ) {
-   printf( "Failed to read palette <%d> in <%s>\n", j, infname);
-   continue;
-  }
-  
-  ref=DFPlastref();
-  
-  /* check if already inserted in image */
-  if ( table_search(table,DFTAG_IP8,ref)>=0 ){
-   continue;
-  }
-  
-  if (DFPaddpal(outfname,palette_data)==FAIL){
-   printf( "Failed to write palette in <%s>\n", outfname);
-   return FAIL;
-  }
-  
- }
- 
- return SUCCEED;
+    uint8  palette_data[256*3];
+    intn   nPals, j;
+    uint16 ref;
+    
+    if ( options->trip==0 ) 
+    {
+        return SUCCEED;
+    }
+    
+    DFPrestart();
+    
+    if((nPals = DFPnpals (infname))==FAIL ) 
+    {
+        printf( "Failed to get palettes in <%s>\n", infname);
+        return FAIL;
+    }
+    
+    for ( j = 0; j < nPals; j++) 
+    {
+        if (DFPgetpal(infname, (VOIDP)palette_data)==FAIL ) 
+        {
+            printf( "Failed to read palette <%d> in <%s>\n", j, infname);
+            return FAIL;
+        }
+        
+        ref=DFPlastref();
+        
+        /* check if already inserted in image */
+        if ( table_search(table,DFTAG_IP8,ref)>=0 )
+        {
+            continue;
+        }
+        
+        if (DFPaddpal(outfname,palette_data)==FAIL)
+        {
+            printf( "Failed to write palette in <%s>\n", outfname);
+            return FAIL;
+        }
+        
+    }
+    
+    return SUCCEED;
 }
 
