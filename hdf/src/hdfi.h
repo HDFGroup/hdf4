@@ -85,10 +85,6 @@
 #define PAGEBUFIO   6    /* page buffering - fmpool */
 #define WINNTIO     7    /* 32-bit Windows File I/O (deprecated, WinNT now uses UNIXBUFIO) */ 
 
-/* IBM RS6000 AIX hack */
-#if defined(IBM6000) || defined(_AIX)
-#define _POSIX_SOURCE
-#endif 
 
 /* Standard header files needed all the time */
 #include <stdio.h>
