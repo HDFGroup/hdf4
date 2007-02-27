@@ -2,7 +2,7 @@
 ========================================================================
 
 The instructions which follow assume that you will be using the HDF4
-source code archive from HDF website (http://hdf.ncsa.uiuc.edu).
+source code archive from HDF website (http://hdfgroup.org).
 
 In building HDF4 from source code you may select between two build
 environment options ( with Fortran or without Fortran).  
@@ -29,7 +29,7 @@ the following:
          MyHDFstuff\                     (any folder name)
 
    3. Download the HDF4.2r1 source code archive HDF4.2r1.tar.gz from
-      ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current/src/ and use WinZip
+      ftp://ftp.hdfgroup.org/HDF/HDF_Current/src and use WinZip
       to extract HDF4 source code into c:\MyHDFstuff.  This creates a 
       directory called 'HDF4.2r1' under MyHDFstuff which contains 
       several files and directories.  Rename "HDF4.2r1" to "HDF42r1".  
@@ -40,26 +40,26 @@ the following:
 
       4.1 HDF4 uses Zlib version 1.2.2 for compression.  To use Zlib
           library, you have to install your own Zlib DLL library or go
-          to ftp://hdf.ncsa.uiuc.edu/lib-external/zlib/1.2/bin 
+          to ftp://ftp.hdfgroup.org/lib-external/zlib/1.2/bin 
           to download the Zlib library.
 
           Zlib compression feature inside HDF4 is required.
       
       4.2 HDF4 uses JPEG release 6b for compression.  To use JPEG
           library, you have to install your own JPEG library or go to
-          ftp://hdf.ncsa.uiuc.edu/lib-external/jpeg/bin to download
+          ftp://ftp.hdfgroup.org/lib-external/jpeg/bin to download
           the JPEG library archive file jpeg-6b.exe.
 
           JPEG compression feature inside HDF4 is required.
 
       4.3 HDF4 uses Szip version 2.0 for compression. To use Szip
           library, you can download Szip source codes and binaries
-          from ftp://hdf.ncsa.uiuc.edu/szip/2.0/bin/windows/
+          from ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/windows/
 
           Please note that Szip is not a totally open-source free
           software.  For licensing issue of Szip, please check 
           "Licensing terms" at
-          http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/index.html.
+          http://hdfgroup.org/doc_resource/SZIP/index.html.
 
           Szip compression feature inside HDF4 is optional. 
       
@@ -737,7 +737,7 @@ Windows system directory) where the application can find.
 Note: You can also follow the above instructions in this section if
       want to build an application using the HDF42r1 binary
       distributions available from
-      ftp://ftp.ncsa.uiuc.edu/HDF/HDF/HDF_Current/bin/windows.
+      ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin/windows.
 
       Make sure to download appropriate binary distribution based on
       your Windows platforms and compilers.
@@ -976,14 +976,17 @@ b. Set up external libraries and headers paths for Intel 8.1
 Section V: Some Helpful Pointers
 ======================================================================
 
-(as described in terms of installing the nofortran configuration)
+(as described in terms of installing the no fortran configuration)
 
 Here are some notes that may be of help if you are not familiar
 with using the Visual C++ Development Environment.
 
 Project name and location issues: 
 
-   The files in Win32.zip  and Win32.nofortran.zip must end up in the
+   The file Win32.nofortran.zip is now depreciated.  If building
+   HDF4 without fortran support, use Win32.zip.
+
+   The file in Win32.zip must end up in the
    HDF42r1\ directory installed by HDF4.2r1.tar.gz.
 
    If you must install all.dsw and all.dsp in another directory,
@@ -1093,13 +1096,43 @@ Step 1. Set path for Microsoft Visual C++ 6.0 and Visual Fortran 6.0
    C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin\)
    into "Variable Value" and click "OK".
   
-Step 2. Unpack Win32.nofortran.zip or Win32.zip
+Step 2. Unpack Win32.zip
 
-   Unpack Win32.nofortran.zip or Win32.zip with WinZip into HDF42r1\
-   directory. 
+   Option A: Use Winzip
+      Unpack Win32.zip with WinZip into HDF42r1\
+      directory. 
 
-   Note: Please select "Yes" or "Yes to All" when you are asked
-         to confirm file overwrite by WinZip.
+      Note: Please select "Yes" or "Yes to All" when you are asked
+            to confirm file overwrite by WinZip.
+
+   Option B: Use 7-Zip from Command line
+   
+      7-Zip is a free, open-source file archiver which supports
+      unpacking zip file from the command line.  To use 7-Zip:
+
+      Step 1) Install 7-Zip
+      
+         7-zip is available online at http://www.7-zip.org/
+         Please install the latest version available
+     
+      Step 2) Add 7-Zip to Path
+      
+         Open "System" in Control Panel.
+   
+         On the "Advanced" tab, click "Environment Variables", click "Path"
+         in the "System variables" box, then click "Edit" and add your 7-Zip
+         path (For example, C:\Program Files\7-Zip) into "Variable Value" 
+         and click "OK".
+      
+      Step 3) Unpack Win32.zip on command line
+      
+         Open a command prompt and navigate the the directory
+         C:\MyHDFstuff\HDF42r1.  Then run the command:
+         
+            7z x Win32.zip -o.\ -y
+
+        This will extract all windows files into the c:\MyHDFstuff\HDF42r1
+        directory.
 
 Step 3. Build and Test
 
@@ -1255,4 +1288,4 @@ For Intel 8.1 Fortran Compiler Users: (HDF4 with Fortran support)
 
 
 
-Please send email to hdfhelp@ncsa.uiuc.edu for further assistance.
+Please send email to help@hdfgroup.org for further assistance.
