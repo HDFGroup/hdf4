@@ -312,7 +312,7 @@ int list_vg(int32 infile_id,
           *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
           *tags=NULL,     /* buffer to hold the tag numbers of vgroups   */
           *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
-          vgroup_id_out,  /* vgroup identifier */
+          vgroup_id_out=0,  /* vgroup identifier */
           ref_vg,
           tag_vg;
     char  vgroup_name[VGNAMELENMAX];
@@ -578,7 +578,7 @@ int vgroup_insert(int32 infile_id,
           ref,                   /* temporary ref */
           *tags=NULL,            /* buffer to hold the tag numbers of vgroups   */
           *refs=NULL,            /* buffer to hold the ref numbers of vgroups   */
-          vgroup_id_out;         /* vgroup identifier */
+          vgroup_id_out = 0;         /* vgroup identifier */
     
     char  vgroup_name[VGNAMELENMAX];
     char  vgroup_class[VGNAMELENMAX];
