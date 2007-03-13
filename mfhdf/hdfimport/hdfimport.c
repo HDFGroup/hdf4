@@ -510,8 +510,8 @@ main(int argc, char *argv[])
     /*
      * set 'stdout' and 'stderr' to line-buffering mode
      */
-    (void) setvbuf(stderr, (char *) NULL, _IOLBF, 0);
-    (void) setvbuf(stdout, (char *) NULL, _IOLBF, 0);
+    (void) HDsetvbuf(stderr, (char *) NULL, _IOLBF, 0);
+    (void) HDsetvbuf(stdout, (char *) NULL, _IOLBF, 0);
 
 #if defined __MWERKS__
     argc = ccommand(&argv);

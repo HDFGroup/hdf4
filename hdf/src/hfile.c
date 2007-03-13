@@ -348,7 +348,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
             {
 #ifdef STDIO_BUF
                /* Testing stdio buffered i/o */
-              if (setvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
+              if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
                 HGOTO_ERROR(DFE_BADOPEN, FAIL);
 #endif /* STDIO_BUF */
                /* Open existing file successfully. */
@@ -393,7 +393,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           file_rec->last_op=H4_OP_UNKNOWN;
 #ifdef STDIO_BUF
 	/* Testing stdio buffered i/o */
-          if (setvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
+          if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
 #endif /* STDIO_BUF */
 	/* set up the newly created (and empty) file with

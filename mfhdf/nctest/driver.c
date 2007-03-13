@@ -92,9 +92,9 @@ char *argv[];
     test_ncclose(testfile);
 
     test_ncinquire(testfile);
-
+#if (!defined _MSC_VER) || (_MSC_VER < 1400)
     test_ncsync(testfile);
-
+#endif
     test_ncabort(testfile);
 
     test_ncdimdef(testfile);
