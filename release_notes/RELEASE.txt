@@ -78,6 +78,15 @@ New Features and Changes:
 
     Utilities
     ========= 
+         - hdiff now shows indices in multidimensional array notation. PVN - 2007/4/5
+         - hdiff now shows the name of the array when printing differences. PVN - 2007/4/5
+         - hdiff now shows a list of all objects in verbose mode. PVN - 2007/4/5
+         - hdiff return code is now 1 if differences found, 0 for no differences and
+            -1 for error found. PVN - 2007/4/5
+         - hdiff has a new option -p for relative error, see usage. PVN - 2007/4/5
+         - hrepack now prints chunk information along with the compression type in verbose
+            mode. PVN - 2007/4/5
+         
 
 Support for new platforms and compilers
 =======================================
@@ -90,6 +99,19 @@ Support for new platforms and compilers
 
 Bugs fixed since HDF4.2r1
 =========================
+     Utilities
+    ========= 
+      - hrepack improved performance for large number of SDSs, due to the 
+         elimination of redundant file open calls. PVN - 2007/4/5
+      - hrepack: fixed a bug in the -t option that now accepts multiple
+         comma separated names. PVN - 2007/4/5
+      - hrepack now duplicates dimension SDSs that are not accessed from any other
+         SDSs. PVN - 2007/4/5
+      - hrepack: fixed a bug that caused the unchunking of a dataset when
+         uncompressing was requested. PVN - 2007/4/5
+
+    Library
+    ========= 
 	- Added the display of compression method to hdp dumpsds and dumpgr.
 	  (bugzilla #130) BMR - 2005/4/4
 	- Applied user's patch to fix bug #602 - BMR - 2005/4/23
