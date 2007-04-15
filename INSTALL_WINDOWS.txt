@@ -16,7 +16,7 @@ To build the HDF4 and MFHDF libraries ( single-threaded static or
 multi-threaded DLL) and utilities, it is assumed that you have done
 the following:
       
-   1. Installed MicroSoft Visual Studio or Intel C compiler and WinZip.
+   1. Installed MicroSoft Visual Studio or Intel C compiler and 7zip or WinZip.
 
       1.1 Installed DEC Visual Fortran compiler(6.0 or higher version)
           or Intel Fortran compiler if you want to build the full HDF4
@@ -29,7 +29,7 @@ the following:
          MyHDFstuff\                     (any folder name)
 
    3. Download the HDF4.2r1 source code archive HDF4.2r1.tar.gz from
-      ftp://ftp.hdfgroup.org/HDF/HDF_Current/src and use WinZip
+      ftp://ftp.hdfgroup.org/HDF/HDF_Current/src and use 7zip or WinZip
       to extract HDF4 source code into c:\MyHDFstuff.  This creates a 
       directory called 'HDF4.2r1' under MyHDFstuff which contains 
       several files and directories.  Rename "HDF4.2r1" to "HDF42r1".  
@@ -161,8 +161,8 @@ Building Instructions:
 
    1. Unpack Win32.zip in directory HDF42r1\. 
 
-      Note: Please select "Yes to All" when you are asked to confirm
-            file overwrite by WinZip.
+      Note: Please select "Yes to All" when you are asked if you would like
+      to overwrite files.
 
    2. Invoke Microsoft Visual C++ 6.0, go to "File" and select the
       "Open Workspace" option. 
