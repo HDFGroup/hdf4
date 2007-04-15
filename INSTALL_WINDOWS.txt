@@ -132,7 +132,7 @@ The following sections discuss installation procedures in detail:
    Section VI:   Disable Szip Compression Feature inside HDF4
    Section VII:  Build and Test HDF4 Library on the Command Line
    Section VIII: Build HDF4 Multithreaded Static Library
-   Section XI:   Build HDF4 in VS 8.0(2005)
+   Section IX:   Build HDF4 in VS 8.0(2005)
 
 ************************************************************************
 
@@ -562,8 +562,11 @@ Simple examples have been provided for users to test HDF4 C/Fortran
 library and utilities.
 
 Note: 
-      To build HDF4 Fortran examples, HDF4 Fortran library must have
+      1. To build HDF4 Fortran examples, HDF4 Fortran library must have
       been built in step 1.
+      
+      2. Extra steps will need to be taken to build HDF4 examples on Visual Studio
+      2005.  Please refer to Section IX.
 
 To build and test HDF4 C examples:
 
@@ -1293,8 +1296,49 @@ Section IX: Build HDF4 in VS 8.0(2005)
 
 The building procedure is almost the same as building HDF4 on .Net 2003.
 
-Please refer to Section III: Build HDF4 in VS 7.0(.NET).
+Please refer to Section III: Build HDF4 in VS 7.0(.NET), with a few minor
+changes:
+
+    1. The jpeg library supplied through the HDF ftp is not compatible with
+       Visual Studio 2005.  Please use the jpeg library from
+       http://sourceforge.net/project/showfiles.php?group_id=23617&package_id=16348
+       If you download the jpeg6b-4.exe, not that the directories are different,
+       For example if you installed to c:\jpeg6b-4, use
+       c:\jpeg6b-4\include for your include directory, and c:\jpeg6b-4\lib for
+       the library directory.
+       
+    2. When building the HDF4 libraries with VS2005, there are a couple extra steps
+       that need to be taken to build an application with these libraries, including
+       the example projects distributed with the source:
+ 
+       In addition to the dependencies listed, any application that statically links
+       to HDF libraries, and uses the xdr library needs to be linked with xdr.lib.  In
+       the example projects, this includes:
+
+       createtest
+       dimtest
+       gitest
+       rattrtest
+       readtest
+       sattrtest
+       sds2grouptest
+       sh_dimtest
+       unltest
+
+       To link these with xdr.lib in Visual Studio 2005:
+
+       1. Right click on the project name and select "Properties"
+       2. In the top left corner, make sure the Configuration is set to "Debug"
+       3. In the left pane, select Linker -> General
+       4. In the right pane, under "Additional Library Directories", add a semi-colon
+       after any existing directories, and then add "..\..\windows\xdr\xdr\Debug"
+       5. In the left pane, select Linker -> Input
+       6. In Additional Dependencies, add "xdr.lib" to the list
+       7. In the top left corner, change the Configuration to "Release"
+       8. Repeat steps 3-6, but use "..\..\windows\xdr\xdr\Release" in step 4.
+
+       This needs to be done for each project that uses xdr functions.
 
 
-
+*************************************************************
 Please send email to help@hdfgroup.org for further assistance.
