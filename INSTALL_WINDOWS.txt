@@ -38,7 +38,7 @@ the following:
       library.  Currently, three external compression libraries ZLIB,
       JPEG, and SZIP can be used with HDF4.
 
-      4.1 HDF4 uses Zlib version 1.2.2 for compression.  To use Zlib
+      4.1 HDF4 uses Zlib version 1.2.3 for compression.  To use Zlib
           library, you have to install your own Zlib DLL library or go
           to ftp://ftp.hdfgroup.org/lib-external/zlib/1.2/bin 
           to download the Zlib library.
@@ -1300,8 +1300,8 @@ Please refer to Section III: Build HDF4 in VS 7.0(.NET), with a few minor
 changes:
 
     1. The jpeg library supplied through the HDF ftp is not compatible with
-       Visual Studio 2005.  Please use the jpeg library from
-       http://sourceforge.net/project/showfiles.php?group_id=23617&package_id=16348
+       Visual Studio 2005.  Please use the jpeg library at
+       ftp://ftp.hdfgroup.org/lib-external/jpeg/bin/jpeg-6b-4.exe
        If you download the jpeg6b-4.exe, not that the directories are different,
        For example if you installed to c:\jpeg6b-4, use
        c:\jpeg6b-4\include for your include directory, and c:\jpeg6b-4\lib for
