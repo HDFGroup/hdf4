@@ -163,6 +163,7 @@ vicheckcompat(HFILEID f)
         Hendaccess(aid);
       }
 
+    HEclear();	/* clear the stack to remove faux failures - bug #655 */
     if (foundold == 0)  /* has no old vset elements */
         return (1);     /* just assume compatible */
 

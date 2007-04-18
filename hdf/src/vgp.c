@@ -434,6 +434,10 @@ Load_vfile(HFILEID f /* IN: file handle */)
     if (aid != FAIL)
         Hendaccess(aid);
 
+    /* clear error stack - this is to remove the faux errors about DD not
+       found from when Hstartread is called on a new file */
+    HEclear();
+
     /* load all the vs's  tag/refs from file */
     vf->vstabn = 0;
     vf->vstree = tbbtdmake(vcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
@@ -479,6 +483,10 @@ Load_vfile(HFILEID f /* IN: file handle */)
 
     if (aid != FAIL)
         Hendaccess(aid);
+
+    /* clear error stack - this is to remove the faux errors about DD not
+       found from when Hstartread is called on a new file */
+    HEclear();
 
     /* file may be incompatible with vset version 2.x. Need to check it */
     if (((int32) 0 == vf->vgtabn) && ((int32) 0 == vf->vstabn))
