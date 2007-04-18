@@ -32,6 +32,11 @@ uname -a
 # setup exit banner message
 trap EXIT_BANNER 0
 
+# Dump environment variables before option parsing
+echo ===Dumping environment variables before option parsing ===
+printenv | sort
+echo ===Done Dumping environment variables before option parsing ===
+
 # The path isn't properly initialized on hawkwind -- /usr/local/bin is
 # either missing or is after /usr/bin when it should be before.
 PATH="/usr/local/bin:$PATH"
@@ -172,6 +177,11 @@ while [ $# -gt 0 ] ; do
     esac
     shift
 done
+
+# Dump environment variables after option parsing
+echo ===Dumping environment variables after option parsing ===
+printenv | sort
+echo ===Done Dumping environment variables after option parsing ===
 
 if [ "$cmd" = help ]; then
     set -
