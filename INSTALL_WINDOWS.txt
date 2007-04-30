@@ -1028,9 +1028,11 @@ Section VI. Disable Szip Compression Feature inside HDF4
 Warning: When you modify the h4config.h file as described below,
          DO NOT just change the values of these macros from 1 to 0.
          Please DO remove(or comment out) appropriate lines.
+         
+When disabling Szip in HDF4 libraries, users have two options.  Szip compress
+can be removed completely, or szip can be used without encoding.
 
-If you would like to remove Szip compression from the HDF4 library,
-follow the steps below.
+Option 1: Remove Szip compression completely:
 
    1. Open the H4config.h file from the c:\MyHDFstuff\HDF42r1\hdf\src
       directory and remove(or comment out) the following two lines: 
@@ -1076,7 +1078,24 @@ follow the steps below.
       testings with Szip compression feature.  As you disabled the
       Szip compression feature in HDF4, SD Szip test should be skipped.
 
+Option 2: Remove Szip Compression in HDF4
 
+      If you would like to just disable Szip encoder from the HDF4
+      library while keeping Szip decoder enabled, follow the steps
+      below.
+
+      1. Download Szip library without encoder
+
+          Szip library is different if you want to disable Szip encoder.
+          Download szip_noencoder binaries from
+          ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/windows.
+          The Szip library and header path should also be set up
+          accordingly (refer to precondition 6).
+
+      2. Run-compile HDF4 library according to Section I.
+      
+      
+      
 Section VII. Build and Test HDF4 Library on the Command Line    
 ======================================================================
 
