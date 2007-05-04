@@ -31,139 +31,145 @@ static char RcsId[] = "@(#)$Revision$";
 #include "mfhdf.h"
 
 #ifdef PROTOTYPE
-FRETVAL(intf) nscstart(_fcd name, intf *access, intf *namelen);
-FRETVAL(intf) nscend(intf *file_id);
-FRETVAL(intf) nscendacc(intf *id);
-FRETVAL(intf) nscfinfo(intf *file_id, intf *datasets, intf *gattr);
-FRETVAL(intf) nscselct(intf *file_id, intf *index);
-FRETVAL(intf) nscdimid(intf *id, intf *index);
-FRETVAL(intf) nscginfo(intf *id, _fcd name, intf *rank, 
+HDFFCLIBAPI FRETVAL(intf) nscstart(_fcd name, intf *access, intf *namelen);
+HDFFCLIBAPI FRETVAL(intf) nscend(intf *file_id);
+HDFFCLIBAPI FRETVAL(intf) nscendacc(intf *id);
+HDFFCLIBAPI FRETVAL(intf) nscfinfo(intf *file_id, intf *datasets, intf *gattr);
+HDFFCLIBAPI FRETVAL(intf) nscselct(intf *file_id, intf *index);
+HDFFCLIBAPI FRETVAL(intf) nscdimid(intf *id, intf *index);
+HDFFCLIBAPI FRETVAL(intf) nscginfo(intf *id, _fcd name, intf *rank, 
                 intf *dimsizes, intf *nt, intf *nattr, intf *len);
-FRETVAL(intf) nscgcal(intf *id, float64 *cal, float64 *cale, 
+HDFFCLIBAPI FRETVAL(intf) nscgcal(intf *id, float64 *cal, float64 *cale, 
                 float64 *ioff, float64 *ioffe, intf *nt);
-FRETVAL(intf) nscscal(intf *id, float64 *cal, float64 *cale,
+HDFFCLIBAPI FRETVAL(intf) nscscal(intf *id, float64 *cal, float64 *cale,
                 float64 *ioff, float64 *ioffe, intf *nt);
-FRETVAL(intf) nscsdscale(intf *id, intf *count, intf *nt, VOIDP values);
-FRETVAL(intf) nscgdscale(intf *id, VOIDP values);
-FRETVAL(intf) nscscfill(intf *id, _fcd val);
-FRETVAL(intf) nscgcfill(intf *id, _fcd val);
-FRETVAL(intf) nscsfill(intf *id, VOIDP val);
-FRETVAL(intf) nscgfill(intf *id, VOIDP val);
-FRETVAL(intf) nscgrange(intf *id, VOIDP max, VOIDP min);
-FRETVAL(intf) nscsrange(intf *id, VOIDP max, VOIDP min);
-FRETVAL(intf) nscn2index(intf *id, _fcd name, intf *namelen);
-FRETVAL(intf) nsccreate(intf *id, _fcd name, intf *nt, intf *rank, 
+HDFFCLIBAPI FRETVAL(intf) nscsdscale(intf *id, intf *count, intf *nt, VOIDP values);
+HDFFCLIBAPI FRETVAL(intf) nscgdscale(intf *id, VOIDP values);
+HDFFCLIBAPI FRETVAL(intf) nscscfill(intf *id, _fcd val);
+HDFFCLIBAPI FRETVAL(intf) nscgcfill(intf *id, _fcd val);
+HDFFCLIBAPI FRETVAL(intf) nscsfill(intf *id, VOIDP val);
+HDFFCLIBAPI FRETVAL(intf) nscgfill(intf *id, VOIDP val);
+HDFFCLIBAPI FRETVAL(intf) nscgrange(intf *id, VOIDP max, VOIDP min);
+HDFFCLIBAPI FRETVAL(intf) nscsrange(intf *id, VOIDP max, VOIDP min);
+HDFFCLIBAPI FRETVAL(intf) nscn2index(intf *id, _fcd name, intf *namelen);
+HDFFCLIBAPI FRETVAL(intf) nsccreate(intf *id, _fcd name, intf *nt, intf *rank, 
                         intf *dims, intf *namelen);
-FRETVAL(intf) nscsdimstr(intf *id, _fcd l, _fcd u, _fcd f, intf *ll, 
+HDFFCLIBAPI FRETVAL(intf) nscsdimstr(intf *id, _fcd l, _fcd u, _fcd f, intf *ll, 
                         intf *ul, intf *fl);
-FRETVAL(intf) nscsdimname(intf *id, _fcd name, intf *len);
-FRETVAL(intf) nscsdatstr(intf *id, _fcd l, _fcd u, _fcd f, _fcd c, 
+HDFFCLIBAPI FRETVAL(intf) nscsdimname(intf *id, _fcd name, intf *len);
+HDFFCLIBAPI FRETVAL(intf) nscsdatstr(intf *id, _fcd l, _fcd u, _fcd f, _fcd c, 
                         intf *ll, intf *ul, intf *fl, intf *cl);
-FRETVAL(intf) nscrcatt(intf *id, intf *index, _fcd buf);
-FRETVAL(intf) nscrnatt(intf *id, intf *index, VOIDP buf);
-FRETVAL(intf) nscrattr(intf *id, intf *index, VOIDP buf);
-FRETVAL(intf) nscrdata(intf *id, intf *start, intf *stride, 
+HDFFCLIBAPI FRETVAL(intf) nscrcatt(intf *id, intf *index, _fcd buf);
+HDFFCLIBAPI FRETVAL(intf) nscrnatt(intf *id, intf *index, VOIDP buf);
+HDFFCLIBAPI FRETVAL(intf) nscrattr(intf *id, intf *index, VOIDP buf);
+HDFFCLIBAPI FRETVAL(intf) nscrdata(intf *id, intf *start, intf *stride, 
                        intf *end, VOIDP values);
-FRETVAL(intf) nscwdata(intf *id, intf *start, intf *stride, 
+HDFFCLIBAPI FRETVAL(intf) nscwdata(intf *id, intf *start, intf *stride, 
                        intf *end, VOIDP values);
-FRETVAL(intf) nscgdimstrs(intf *dim, _fcd label, _fcd unit, 
+HDFFCLIBAPI FRETVAL(intf) nscgdimstrs(intf *dim, _fcd label, _fcd unit, 
                       _fcd format,intf *llabel,intf *lunit, 
                       intf *lformat, intf *mlen);
-FRETVAL(intf) nscrcdata(intf *id, intf *start, intf *stride, 
+HDFFCLIBAPI FRETVAL(intf) nscrcdata(intf *id, intf *start, intf *stride, 
                        intf *end, _fcd values);
-FRETVAL(intf) nscwcdata(intf *id, intf *start, intf *stride, 
+HDFFCLIBAPI FRETVAL(intf) nscwcdata(intf *id, intf *start, intf *stride, 
                        intf *end, _fcd values);
-FRETVAL(intf) nscgdatstrs(intf *id, _fcd label, _fcd unit,
+HDFFCLIBAPI FRETVAL(intf) nscgdatstrs(intf *id, _fcd label, _fcd unit,
                  _fcd format, _fcd coord, intf *llabel, intf *lunit,
                    intf *lformat, intf *lcoord, intf *len);
-FRETVAL(intf) nscgainfo(intf *id, intf *number, _fcd name, intf *nt, 
+HDFFCLIBAPI FRETVAL(intf) nscgainfo(intf *id, intf *number, _fcd name, intf *nt, 
                    intf *count, intf *len);
-FRETVAL(intf) nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, 
+HDFFCLIBAPI FRETVAL(intf) nscgdinfo(intf *id, _fcd name, intf *sz, intf *nt, 
                    intf *nattr, intf *len);
-FRETVAL(intf) nscscatt(intf *id, _fcd name, intf *nt, intf *count,
+HDFFCLIBAPI FRETVAL(intf) nscscatt(intf *id, _fcd name, intf *nt, intf *count,
                     _fcd data, intf *len);
-FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
-FRETVAL(intf) nscsattr(intf *id, _fcd name, intf *nt, intf *count, 
+HDFFCLIBAPI FRETVAL(intf) nscsnatt(intf *id, _fcd name, intf *nt, intf *count, VOIDP data, intf *len);
+HDFFCLIBAPI FRETVAL(intf) nscsattr(intf *id, _fcd name, intf *nt, intf *count, 
                        VOIDP data, intf *len);
-FRETVAL(intf) nscid2ref(intf *id);
-FRETVAL(intf) nscr2idx(intf *id, intf *ref);
-FRETVAL(intf) nsciscvar(intf *id);
-FRETVAL(intf) nscsextf(intf *id, _fcd name, intf *offset,
+HDFFCLIBAPI FRETVAL(intf) nscid2ref(intf *id);
+HDFFCLIBAPI FRETVAL(intf) nscr2idx(intf *id, intf *ref);
+HDFFCLIBAPI FRETVAL(intf) nsciscvar(intf *id);
+HDFFCLIBAPI FRETVAL(intf) nscsextf(intf *id, _fcd name, intf *offset,
                        intf *namelen);
-FRETVAL(intf) nscsnbit(intf *id, intf *start_bit, intf *bit_len,
+HDFFCLIBAPI FRETVAL(intf) nscsnbit(intf *id, intf *start_bit, intf *bit_len,
                        intf *sign_ext, intf *fill_one);
-FRETVAL(intf) nscsacct(intf *id, intf *type);
-FRETVAL(intf) nscsdmvc(intf *id, intf *compmode);
-FRETVAL(intf) nscisdmvc(intf *id);
-FRETVAL(intf) nscsflmd(intf *id, intf *fillmode);
-FRETVAL (intf) nscgichnk(intf *id, intf *dim_length, intf *flags);
-FRETVAL (intf) nscrcchnk(intf *id, intf *start, _fcd char_data);
-FRETVAL (intf) nscrchnk(intf *id, intf *start, VOIDP num_data);
-FRETVAL (intf) nscscchnk(intf *id, intf *maxcache, intf *flags);
-FRETVAL (intf) nscschnk(intf *id, intf *dim_length, intf *comp_type,
+HDFFCLIBAPI FRETVAL(intf) nscsacct(intf *id, intf *type);
+HDFFCLIBAPI FRETVAL(intf) nscsdmvc(intf *id, intf *compmode);
+HDFFCLIBAPI FRETVAL(intf) nscisdmvc(intf *id);
+HDFFCLIBAPI FRETVAL(intf) nscsflmd(intf *id, intf *fillmode);
+HDFFCLIBAPI FRETVAL (intf) nscgichnk(intf *id, intf *dim_length, intf *flags);
+HDFFCLIBAPI FRETVAL (intf) nscrcchnk(intf *id, intf *start, _fcd char_data);
+HDFFCLIBAPI FRETVAL (intf) nscrchnk(intf *id, intf *start, VOIDP num_data);
+HDFFCLIBAPI FRETVAL (intf) nscscchnk(intf *id, intf *maxcache, intf *flags);
+HDFFCLIBAPI FRETVAL (intf) nscschnk(intf *id, intf *dim_length, intf *comp_type,
                 intf *comp_prm);
-FRETVAL (intf) nscwcchnk(intf *id, intf *start, _fcd char_data);
-FRETVAL (intf) nscwchnk(intf *id, intf *start, VOIDP num_data);
-FRETVAL (intf) nscscompress(intf *id, intf *comp_type, intf *comp_prm);
-FRETVAL(intf)  nscisrcrd(intf *id);
-FRETVAL(intf) nscsblksz(intf *id, intf *block_size);
+HDFFCLIBAPI FRETVAL (intf) nscwcchnk(intf *id, intf *start, _fcd char_data);
+HDFFCLIBAPI FRETVAL (intf) nscwchnk(intf *id, intf *start, VOIDP num_data);
+HDFFCLIBAPI FRETVAL (intf) nscscompress(intf *id, intf *comp_type, intf *comp_prm);
+HDFFCLIBAPI FRETVAL(intf)  nscisrcrd(intf *id);
+HDFFCLIBAPI FRETVAL(intf) nscsblsz(intf *id, intf *block_size);
+HDFFCLIBAPI FRETVAL(intf) nscgcompress(intf *id, intf *comp_type, intf *comp_prm);
+HDFFCLIBAPI FRETVAL(intf) nscfattr(intf *id, _fcd name, intf *namelen); 
+HDFFCLIBAPI FRETVAL(intf) nscchempty(intf *id, intf *flag);
 
 #else
-FRETVAL(intf) nscstart();
-FRETVAL(intf) nscend();
-FRETVAL(intf) nscendacc();
-FRETVAL(intf) nscfinfo();
-FRETVAL(intf) nscselct();
-FRETVAL(intf) nscdimid();
-FRETVAL(intf) nscginfo();
-FRETVAL(intf) nscgcal();
-FRETVAL(intf) nscscal();
-FRETVAL(intf) nscsdscale();
-FRETVAL(intf) nscgdscale();
-FRETVAL(intf) nscscfill();
-FRETVAL(intf) nscgcfill();
-FRETVAL(intf) nscsfill();
-FRETVAL(intf) nscgfill();
-FRETVAL(intf) nscgrange();
-FRETVAL(intf) nscsrange();
-FRETVAL(intf) nscn2index();
-FRETVAL(intf) nsccreate();
-FRETVAL(intf) nscsdimstr();
-FRETVAL(intf) nscsdimname();
-FRETVAL(intf) nscsdatstr();
-FRETVAL(intf) nscrcatt();
-FRETVAL(intf) nscrnatt();
-FRETVAL(intf) nscrattr();
-FRETVAL(intf) nscrdata();
-FRETVAL(intf) nscwdata();
-FRETVAL(intf) nscgdimstrs();
-FRETVAL(intf) nscrcdata();
-FRETVAL(intf) nscwcdata();
-FRETVAL(intf) nscgdatstrs();
-FRETVAL(intf) nscgainfo();
-FRETVAL(intf) nscgdinfo();
-FRETVAL(intf) nscscatt();
-FRETVAL(intf) nscsnatt();
-FRETVAL(intf) nscsattr();
-FRETVAL(intf) nscid2ref();
-FRETVAL(intf) nscr2idx();
-FRETVAL(intf) nsciscvar();
-FRETVAL(intf) nscsextf();
-FRETVAL(intf) nscsnbit();
-FRETVAL(intf) nscsacct();
-FRETVAL(intf) nscsdmvc();
-FRETVAL(intf) nscisdmvc();
-FRETVAL(intf) nscsflmd();
-FRETVAL(intf) nscgichnk();
-FRETVAL(intf) nscrcchnk();
-FRETVAL(intf) nscrchnk();
-FRETVAL(intf) nscscchnk();
-FRETVAL(intf) nscschnk();
-FRETVAL(intf) nscwcchnk();
-FRETVAL(intf) nscwchnk();
-FRETVAL(intf) nscscompress();
-FRETVAL(intf)  nscisrcrd();
-FRETVAL(intf) nscsblksz();
+HDFFCLIBAPI FRETVAL(intf) nscstart();
+HDFFCLIBAPI FRETVAL(intf) nscend();
+HDFFCLIBAPI FRETVAL(intf) nscendacc();
+HDFFCLIBAPI FRETVAL(intf) nscfinfo();
+HDFFCLIBAPI FRETVAL(intf) nscselct();
+HDFFCLIBAPI FRETVAL(intf) nscdimid();
+HDFFCLIBAPI FRETVAL(intf) nscginfo();
+HDFFCLIBAPI FRETVAL(intf) nscgcal();
+HDFFCLIBAPI FRETVAL(intf) nscscal();
+HDFFCLIBAPI FRETVAL(intf) nscsdscale();
+HDFFCLIBAPI FRETVAL(intf) nscgdscale();
+HDFFCLIBAPI FRETVAL(intf) nscscfill();
+HDFFCLIBAPI FRETVAL(intf) nscgcfill();
+HDFFCLIBAPI FRETVAL(intf) nscsfill();
+HDFFCLIBAPI FRETVAL(intf) nscgfill();
+HDFFCLIBAPI FRETVAL(intf) nscgrange();
+HDFFCLIBAPI FRETVAL(intf) nscsrange();
+HDFFCLIBAPI FRETVAL(intf) nscn2index();
+HDFFCLIBAPI FRETVAL(intf) nsccreate();
+HDFFCLIBAPI FRETVAL(intf) nscsdimstr();
+HDFFCLIBAPI FRETVAL(intf) nscsdimname();
+HDFFCLIBAPI FRETVAL(intf) nscsdatstr();
+HDFFCLIBAPI FRETVAL(intf) nscrcatt();
+HDFFCLIBAPI FRETVAL(intf) nscrnatt();
+HDFFCLIBAPI FRETVAL(intf) nscrattr();
+HDFFCLIBAPI FRETVAL(intf) nscrdata();
+HDFFCLIBAPI FRETVAL(intf) nscwdata();
+HDFFCLIBAPI FRETVAL(intf) nscgdimstrs();
+HDFFCLIBAPI FRETVAL(intf) nscrcdata();
+HDFFCLIBAPI FRETVAL(intf) nscwcdata();
+HDFFCLIBAPI FRETVAL(intf) nscgdatstrs();
+HDFFCLIBAPI FRETVAL(intf) nscgainfo();
+HDFFCLIBAPI FRETVAL(intf) nscgdinfo();
+HDFFCLIBAPI FRETVAL(intf) nscscatt();
+HDFFCLIBAPI FRETVAL(intf) nscsnatt();
+HDFFCLIBAPI FRETVAL(intf) nscsattr();
+HDFFCLIBAPI FRETVAL(intf) nscid2ref();
+HDFFCLIBAPI FRETVAL(intf) nscr2idx();
+HDFFCLIBAPI FRETVAL(intf) nsciscvar();
+HDFFCLIBAPI FRETVAL(intf) nscsextf();
+HDFFCLIBAPI FRETVAL(intf) nscsnbit();
+HDFFCLIBAPI FRETVAL(intf) nscsacct();
+HDFFCLIBAPI FRETVAL(intf) nscsdmvc();
+HDFFCLIBAPI FRETVAL(intf) nscisdmvc();
+HDFFCLIBAPI FRETVAL(intf) nscsflmd();
+HDFFCLIBAPI FRETVAL(intf) nscgichnk();
+HDFFCLIBAPI FRETVAL(intf) nscrcchnk();
+HDFFCLIBAPI FRETVAL(intf) nscrchnk();
+HDFFCLIBAPI FRETVAL(intf) nscscchnk();
+HDFFCLIBAPI FRETVAL(intf) nscschnk();
+HDFFCLIBAPI FRETVAL(intf) nscwcchnk();
+HDFFCLIBAPI FRETVAL(intf) nscwchnk();
+HDFFCLIBAPI FRETVAL(intf) nscscompress();
+HDFFCLIBAPI FRETVAL(intf)  nscisrcrd();
+HDFFCLIBAPI FRETVAL(intf) nscsblsz();
+HDFFCLIBAPI FRETVAL(intf) nscgcompress();
+HDFFCLIBAPI FRETVAL(intf) nscfattr(); 
+HDFFCLIBAPI FRETVAL(intf) nscchempty();
 #endif /* PROTOTYPE */
 
 /*-----------------------------------------------------------------------------
