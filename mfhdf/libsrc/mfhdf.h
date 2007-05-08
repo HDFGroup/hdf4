@@ -483,71 +483,44 @@ HDFLIBAPI intn SDsetchunkcache
      int32 flags      /* IN: flags = 0, HDF_CACHEALL */);
 
 /* Define the FORTRAN names */
-# ifdef WIN32
-/* Windows cannot work with the H4_F77_FUNC macro that was introduced 
-   on Unix to avoid name translation problems;
-   We need to use an "old-way" of specifying names of the C functions
-   called from Fortran interfaces. In the case of Winodws FNAME shouldn't
-   do anything: name translation is done in the interface block of the Fortran stubs
-*/
-#   define nscstart    FNAME(scstart)
-#   define nscend      FNAME(scend)
-#   define nscendacc   FNAME(scendacc)
-#   define nscfinfo    FNAME(scfinfo)
-#   define nscginfo    FNAME(scginfo)
-#   define nscgainfo   FNAME(scgainfo)
-#   define nscgdinfo   FNAME(scgdinfo)
-#   define nscgcal     FNAME(scgcal)
-#   define nscscal     FNAME(scscal)
-#   define nscgdscale  FNAME(scgdscale)
-#   define nscsdscale  FNAME(scsdscale)
-#   define nscgcfill   FNAME(scgcfill)
-#   define nscgfill    FNAME(scgfill)
-#   define nscscfill   FNAME(scscfill)
-#   define nscsfill    FNAME(scsfill)
-#   define nscsflmd    FNAME(scsflmd)
-#   define nscgrange   FNAME(scgrange)
-#   define nscsrange   FNAME(scsrange)
-#   define nscn2index  FNAME(scn2index)
-#   define nsccreate   FNAME(sccreate)
-#   define nscsdimstr  FNAME(scsdimstr)
-#   define nscsdimname FNAME(scsdimname)
-#   define nscsdatstr  FNAME(scsdatstr)
-#   define nscdimid    FNAME(scdimid)
-#   define nscrcatt    FNAME(scrcatt)
-#   define nscrnatt    FNAME(scrnatt)
-#   define nscrattr    FNAME(scrattr)
-#   define nscscatt    FNAME(scscatt)
-#   define nscsnatt    FNAME(scsnatt)
-#   define nscsattr    FNAME(scsattr)
-#   define nscfattr    FNAME(scfattr)
-#   define nscrcdata   FNAME(scrcdata)
-#   define nscrdata    FNAME(scrdata)
-#   define nscwcdata   FNAME(scwcdata)
-#   define nscwdata    FNAME(scwdata)
-#   define nscgdatstrs FNAME(scgdatstrs)
-#   define nscgdimstrs FNAME(scgdimstrs)
-#   define nscid2ref   FNAME(scid2ref)
-#   define nsciscvar   FNAME(sciscvar)
-#   define nscsextf    FNAME(scsextf)
-#   define nscsacct    FNAME(scsacct)
-#   define nscsdmvc    FNAME(scsdmvc)
-#   define nscisdmvc   FNAME(scisdmvc)
-#   define nscisrcrd     FNAME(scisrcrd)
-#   define nscgichnk     FNAME(scgichnk)
-#   define nscrcchnk     FNAME(scrcchnk)
-#   define nscrchnk      FNAME(scrchnk)
-#   define nscscchnk     FNAME(scscchnk)
-#   define nscschnk      FNAME(scschnk)
-#   define nscwcchnk     FNAME(scwcchnk)
-#   define nscwchnk      FNAME(scwchnk)
-#   define nscgcompress  FNAME(scgcompress)
-#   define nscsnbit      FNAME(scsnbit)
-#   define nscsblsz      FNAME(scsblsz)
-#   define nscselct      FNAME(scselct)
-#   define nscr2idx      FNAME(scr2idx)
-#   define nscchempty    FNAME(scchempty)
-#else
+
+#ifdef WIN32 /* windows specific cstub functions*/
+
+#define nscend          H4_F77_FUNC(scend,SCEND)
+#define nscendacc       H4_F77_FUNC(scendacc,SCENDACC)
+#define nscfinfo        H4_F77_FUNC(scfinfo,SCFINFO)
+#define nscselct       H4_F77_FUNC(scselect,SCSELCT)
+#define nscdimid        H4_F77_FUNC(scdimid,SCDIMID)
+#define nscgcal         H4_F77_FUNC(scgcal,SCGCAL)
+#define nscscal         H4_F77_FUNC(scscal, SCSCAL)
+#define nscgdscale      H4_F77_FUNC(scgdscale, SCGDSCALE)
+#define nscsdscale      H4_F77_FUNC(scsdscale, SCSDSCALE)
+#define nscgcfill       H4_F77_FUNC(scgcfill, SCGCFILL)
+#define nscgfill        H4_F77_FUNC(scgfill, SCGFILL)
+#define nscscfill       H4_F77_FUNC(scscfill, SCSCFILL)
+#define nscsfill        H4_F77_FUNC(scsfill, SCSFILL)
+#define nscsrange       H4_F77_FUNC(scsrange, SCSRANGE)
+#define nscgrange       H4_F77_FUNC(scgrange, SCGRANGE)
+#define nscrcatt        H4_F77_FUNC(scrcatt, SCRCATT)
+#define nscrnatt        H4_F77_FUNC(scrnatt, SCRNATT)
+#define nscrattr        H4_F77_FUNC(scrattr, SCRATTR)
+#define nscrcdata       H4_F77_FUNC(scrcdata, SCRCDATA)
+#define nscrdata        H4_F77_FUNC(scrdata, SCRDATA)
+#define nscwcdata       H4_F77_FUNC(scwcdata, SCWCDATA)
+#define nscwdata        H4_F77_FUNC(scwdata, SCWDATA)
+#define nscid2ref       H4_F77_FUNC(scid2ref, SCID2REF)
+#define nscref2index    H4_F77_FUNC(scref2index,SCREF2INDEX)
+#define nscr2idx        H4_F77_FUNC(scr2idx,SCR2IDX)
+#define nsciscvar       H4_F77_FUNC(sciscvar,SCISCVAR)
+#define nscsnbit        H4_F77_FUNC(scsnbit,SCSNBIT)
+#define nscsacct        H4_F77_FUNC(scsacct,SCSACCT)
+#define nscsdmvc        H4_F77_FUNC(scsdmvc,SCSDMVC)
+#define nscisdmvc       H4_F77_FUNC(scisdmvc,SCISDMVC)
+#define nscsflmd        H4_F77_FUNC(scsflmd,SCSFLMD)
+#define nscisrcrd       H4_F77_FUNC(scisrcrd,SCISRCRD)
+#define nscsblsz        H4_F77_FUNC(scsblsz,SCSBLSZ)
+#endif
+
 #   define nscstart      H4_F77_FUNC(scstart, SCSTART)
 #   define nsfend        H4_F77_FUNC(sfend, SFEND)
 #   define nsfendacc     H4_F77_FUNC(sfendacc, SFENDACC)
@@ -606,7 +579,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nsfsnbit      H4_F77_FUNC(sfsnbit, SFSNBIT)
 #   define nsfsblsz      H4_F77_FUNC(sfsblsz, SFSBLSZ)
 #   define nscchempty    H4_F77_FUNC(scchempty, SCCHEMPTY)
-#endif /* WIN32 */
+
 #ifdef __cplusplus
 }
 #endif
