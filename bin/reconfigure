@@ -24,35 +24,36 @@
 #
 # When upgrading automake's version, don't forget to also update its
 # helper utilities, especially depcomp.
-AUTOCONF_VERSION="autoconf (GNU Autoconf) 2.59"
-AUTOMAKE_VERSION="automake (GNU automake) 1.9.5"
-AUTOHEADER_VERSION="autoheader (GNU Autoconf) 2.59"
-ACLOCAL_VERSION="aclocal (GNU automake) 1.9.5"
-LIBTOOL_VERSION="(GNU libtool) 1.5.14"
+AUTOCONF_VERSION="autoconf (GNU Autoconf) 2.61"
+AUTOMAKE_VERSION="automake (GNU automake) 1.10"
+AUTOHEADER_VERSION="autoheader (GNU Autoconf) 2.61"
+ACLOCAL_VERSION="aclocal (GNU automake) 1.10"
+LIBTOOL_VERSION="(GNU libtool) 1.5.22"
 
 # If the user has defined environment variables pointing to the autotools,
 # use those (but check their versions first!).  Otherwise, assume that
-# we're running on a Linux box with access to the autotools in AFS.
+# we're running on kagiso with access to the autotools in home1/packages.
 if test "X$AUTOCONF" = "X"; then
-  AUTOCONF=/afs/ncsa/projects/hdf/packages/autoconf_2.59/Linux_2.4/bin/autoconf
+  AUTOCONF=/home1/packages/autoconf/autoconf-2.61/bin/autoconf
 fi
 if test "X$AUTOMAKE" = "X"; then
-  AUTOMAKE=/afs/ncsa/projects/hdf/packages/automake_1.9.5/Linux_2.4/bin/automake-1.9
+  AUTOMAKE=/home1/packages/automake/automake-1.10.0/bin/automake-1.10
 fi
 if test "X$AUTOHEADER" = "X"; then
-  AUTOHEADER=/afs/ncsa/projects/hdf/packages/autoconf_2.59/Linux_2.4/bin/autoheader
+  AUTOHEADER=/home1/packages/autoconf/autoconf-2.61/bin/autoheader
 fi
   # When using the default settings, add the correct version of autoconf
   # binaries to path (otherwise aclocal may find an outdated version of
   # autom4ate and complain about an
   # "unknown language": Autoconf-without-aclocal-m4.
 if test "X$ACLOCAL" = "X"; then
-  ACLOCAL=/afs/ncsa/projects/hdf/packages/automake_1.9.5/Linux_2.4/bin/aclocal-1.9
-  PATH=/afs/ncsa/projects/hdf/packages/autoconf_2.59/Linux_2.4/bin:$PATH
+  ACLOCAL=/home1/packages/automake/automake-1.10.0/bin/aclocal-1.10
+  PATH=/home1/packages/autoconf/autoconf-2.61/bin:$PATH
+  PATH=/home1/packages/m4/m4-1.4.7/bin:/home1/packages/m4/m4-1.4.7/share:$PATH
 fi
   # Libtool is used to supply macros that aclocal uses
 if test "X$LIBTOOL_DIR" = "X"; then
-  LIBTOOL_DIR=/afs/ncsa/projects/hdf/packages/libtool_1.5.14/Linux_2.4
+  LIBTOOL_DIR=/home1/packages/libtool/libtool-1.5.22
 fi
 
 
