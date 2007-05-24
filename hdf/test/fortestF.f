@@ -189,10 +189,10 @@ C Skip command
 	endif
 
 	if (cmd .NE. 'Test' .AND. cmd .NE. 'test') then
-	    print *, 'Unknown Command: ', cmd, param
-	    print *, 'Try one of "Skip", "Test", "Verbosity" or "Cleanup"'
-	    retcode = -1
-	    return
+	 print *, 'Unknown Command: ', cmd, param
+	 print *, 'Try one of "Skip", "Test", "Verbosity" or "Cleanup"'
+	 retcode = -1
+	 return
 	endif
 
 C Test command
