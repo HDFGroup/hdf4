@@ -90,6 +90,8 @@ New Features and Changes:
 
 Support for new platforms and compilers
 =======================================
+         - Added support for FreeBSD on AMD64 with gcc compilers
+                                        EIP 2007/05/24
          - Added support for MAC OS X Intel with gcc and g95 compilers
          - Added support for SUNOS 5.10 on Intel with SUN compilers (32 and
            64-bit modes)
