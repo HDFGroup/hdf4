@@ -157,6 +157,9 @@ TOOLTEST hdiff_11.txt hdifftst1.hdf hdifftst2.hdf
 # percent (relative)
 TOOLTEST hdiff_12.txt -d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf
 
+# hyperslab reading 
+TOOLTEST hdiff_13.txt hdifftst3.hdf hdifftst4.hdf
+
 }
 
 

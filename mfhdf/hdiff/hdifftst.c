@@ -297,8 +297,8 @@ error:
 
 
 #define DIM0     10
-#define DIM1     5
-#define ADD_ROWS 4
+#define DIM1     10
+#define ADD_ROWS ( 1024 * 1024 - 10 ) / 10 
 
 /*-------------------------------------------------------------------------
  * write 2 big files for hyperslab reading
@@ -318,8 +318,9 @@ static int do_big_file(void)
     int32 sds1_idx;
     int32 sds2_idx;
     int32 rank;
-	int16 array_data[DIM0][DIM1];
-    int16 append_data[DIM1];
+	uint8 array_data[DIM0][DIM1];
+    uint8 append_data1[DIM1];
+    uint8 append_data2[DIM1];
 	intn  i, j, n;
 
 	/* Create 2 files and initiate the SD interface. */
@@ -334,9 +335,9 @@ static int do_big_file(void)
 	dims[1] = DIM1;
 
 	/* Create 2 data sets */
-	if ((sds1_id = SDcreate(sd1_id, "data1", DFNT_INT16, rank, dims))==FAIL) 
+	if ((sds1_id = SDcreate(sd1_id, "data1", DFNT_UINT8, rank, dims))==FAIL) 
         goto error;
-    if ((sds2_id = SDcreate(sd2_id, "data1", DFNT_INT16, rank, dims))==FAIL) 
+    if ((sds2_id = SDcreate(sd2_id, "data1", DFNT_UINT8, rank, dims))==FAIL) 
         goto error;
 
 	/* initial values */
@@ -385,23 +386,36 @@ static int do_big_file(void)
     if ((sds2_id = SDselect (sd2_id, sds2_idx))==FAIL) 
         goto error;
     
-    /* store array values to be appended */
-    for (i = 0; i < DIM1; i++)
-        append_data[i] = i + 1;
-
-	/* define the location of the append */
+   	/* define the location of the append */
     for (n = 0; n < ADD_ROWS; n++)
     {
         start[0] = DIM0 + n;   /* 10 */
         start[1] = 0;
         edges[0] = 1;          /* 1 row at a time */
         edges[1] = DIM1;       /* 5 elements */
+
+        /* store array values to be appended */
+        for (i = 0; i < DIM1; i++)
+            append_data1[i] = i + 1;
+        for (i = 0; i < DIM1; i++)
+            append_data2[i] = i + 1;
+
+        if (n == 20 || n == ADD_ROWS / 2 || n == ADD_ROWS - 10 )
+        {
+            /* change a few values at 3 places evenly divided */
+            for (i = 0; i < DIM1; i++)
+                append_data2[i] = 100;
+            
+            /* append data to file */
+            if ( SDwritedata (sds1_id, start, NULL, edges, (VOIDP) append_data1)==FAIL) 
+                goto error;
+            if ( SDwritedata (sds2_id, start, NULL, edges, (VOIDP) append_data2)==FAIL) 
+                goto error;
+
+
+        }
         
-        /* append data to file */
-        if ( SDwritedata (sds1_id, start, NULL, edges, (VOIDP) append_data)==FAIL) 
-            goto error;
-        if ( SDwritedata (sds2_id, start, NULL, edges, (VOIDP) append_data)==FAIL) 
-            goto error;
+        
                
     }
 

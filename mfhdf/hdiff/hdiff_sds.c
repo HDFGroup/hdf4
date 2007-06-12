@@ -10,10 +10,13 @@
  *                                                                          *
  ****************************************************************************/
 
-
+#include <assert.h>
 #include "hdiff.h"
 #include "hdiff_list.h"
 #include "hdiff_mattbl.h"
+
+#define H4TOOLS_BUFSIZE    (1024 * 1024)
+#define H4TOOLS_MALLOCSIZE (1024 * 1024)
 
 
 
@@ -62,6 +65,7 @@ uint32 diff_sds(int32 sd1_id,
        numtype,                /* number type */
        eltsz;                  /* element size */
  uint32 nelms;                 /* number of elements */
+ size_t need;	               /* read size needed */
  char  sds1_name[MAX_NC_NAME]; 
  char  sds2_name[MAX_NC_NAME]; 
  int   dim_diff=0;             /* dimensions are different */
@@ -74,6 +78,8 @@ uint32 diff_sds(int32 sd1_id,
  VOIDP fill1=NULL;
  VOIDP fill2=NULL;
  uint32 nfound=0;
+ void   *sm_buf1=NULL;                
+ void   *sm_buf2=NULL;
 
 
 /*-------------------------------------------------------------------------
@@ -188,24 +194,7 @@ uint32 diff_sds(int32 sd1_id,
  }
 
 /*-------------------------------------------------------------------------
- * get size 
- *-------------------------------------------------------------------------
- */
-
- /* compute the number of the bytes for each value. */
- numtype = dtype1 & DFNT_MASK;
- eltsz = DFKNTsize(numtype | DFNT_NATIVE);
-
- /* set edges of SDS */
- nelms=1;
- for (i = 0; i < rank1; i++) {
-  nelms   *= dimsizes1[i];
-  edges[i] = dimsizes1[i];
-  start[i] = 0;
- }
-
-/*-------------------------------------------------------------------------
- * check if the input SDSs are empty. if so , do not read its data 
+ * check if the input SDSs are empty. if so , return 
  *-------------------------------------------------------------------------
  */ 
  if (SDcheckempty( sds1_id, &empty1_sds ) == FAIL) {
@@ -225,11 +214,247 @@ uint32 diff_sds(int32 sd1_id,
   goto do_nothing;
  }
 
+
 /*-------------------------------------------------------------------------
- * Read
+ * get size 
  *-------------------------------------------------------------------------
  */
+
+ /* compute the number of the bytes for each value. */
+ numtype = dtype1 & DFNT_MASK;
+ eltsz = DFKNTsize(numtype | DFNT_NATIVE);
+
+/*-------------------------------------------------------------------------
+ * get fill values
+ *-------------------------------------------------------------------------
+ */
+
+ fill1 = (VOIDP) HDmalloc(eltsz);
+ fill2 = (VOIDP) HDmalloc(eltsz);
+ if (fill1!=NULL && SDgetfillvalue(sds1_id,fill1)<0)
+ {
+  HDfree(fill1);
+  fill1 = NULL;
+ }
+ if (fill2!=NULL && SDgetfillvalue(sds2_id,fill2)<0)
+ {
+  HDfree(fill2);
+  fill2 = NULL;
+ }
+
+
+/*-------------------------------------------------------------------------
+ * read
+ *-------------------------------------------------------------------------
+ */ 
+
+ nelms = 1;
+ for (i = 0; i < rank1; i++) 
+ {
+     nelms   *= dimsizes1[i];
+ }
+
+
+ need = (size_t)(nelms * eltsz); /* bytes needed */
  
+ if ( need < H4TOOLS_MALLOCSIZE)
+ {
+     buf1 = (VOIDP)HDmalloc(need);
+     buf2 = (VOIDP)HDmalloc(need);
+ }
+
+/*-------------------------------------------------------------------------
+ * read all
+ *-------------------------------------------------------------------------
+ */ 
+
+ if ( buf1!=NULL && buf2!=NULL)
+ {
+     
+     /* select all */
+     for (i = 0; i < rank1; i++) 
+     {
+         edges[i] = dimsizes1[i];
+         start[i] = 0;
+     }
+
+  
+     /* read */
+     if (SDreaddata (sds1_id, start, NULL, edges, buf1) == FAIL) 
+     {
+         printf( "Could not read SDS <%s>\n", sds1_name);
+         goto out;
+     }
+     /* read */
+     if (SDreaddata (sds2_id, start, NULL, edges, buf2) == FAIL) 
+     {
+         printf( "Could not read SDS <%s>\n", sds2_name);
+         goto out;
+     }
+
+    /*-------------------------------------------------------------------------
+     * comparing
+     *-------------------------------------------------------------------------
+     */
+     
+     if (opt->verbose)
+         printf("Comparing <%s>\n",sds1_name); 
+     
+    /* if max_err_cnt is set (i.e. not its default -1), use it otherwise set it
+       to tot_err_cnt so it doesn't trip  
+     */
+     max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
+     nfound=array_diff(buf1, 
+         buf2, 
+         nelms, 
+         sds1_name,
+         sds2_name,
+         rank1,
+         dimsizes1,
+         dtype1, 
+         opt->err_limit,
+         opt->err_rel,
+         max_err_cnt, 
+         opt->statistics, 
+         fill1, 
+         fill2);
+ }
+ 
+ else /* possibly not enough memory, read/compare by hyperslabs */
+  
+ {
+     size_t        p_type_nbytes = eltsz;   /*size of type */
+     uint32        p_nelmts = nelms;        /*total selected elmts */
+     int32         elmtno;                  /*counter  */
+     int           carry;                   /*counter carry value */
+     
+     /* stripmine info */
+     int32         sm_size[MAX_VAR_DIMS];   /*stripmine size */
+     int32         sm_nbytes;               /*bytes per stripmine */
+     int32         sm_nelmts;               /*elements per stripmine*/
+     
+     /* hyperslab info */
+     int32         hs_offset[MAX_VAR_DIMS]; /*starting offset */
+     int32         hs_size[MAX_VAR_DIMS];   /*size this pass */
+     int32         hs_nelmts;               /*elements in request */
+     
+     /*
+      * determine the strip mine size and allocate a buffer. The strip mine is
+      * a hyperslab whose size is manageable.
+      */
+     sm_nbytes = p_type_nbytes;
+     
+     for (i = rank1; i > 0; --i) 
+     {
+         sm_size[i - 1] = MIN(dimsizes1[i - 1], H4TOOLS_BUFSIZE / sm_nbytes);
+         sm_nbytes *= sm_size[i - 1];
+         assert(sm_nbytes > 0);
+     }
+     
+     sm_buf1 = HDmalloc((size_t)sm_nbytes);
+     sm_buf2 = HDmalloc((size_t)sm_nbytes);
+     
+     sm_nelmts = sm_nbytes / p_type_nbytes;
+     
+     /* the stripmine loop */
+     memset(hs_offset, 0, sizeof hs_offset);
+     
+     for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) 
+     {
+         /* calculate the hyperslab size */
+         if (rank1 > 0) 
+         {
+             for (i = 0, hs_nelmts = 1; i < rank1; i++) 
+             {
+                 hs_size[i] = MIN(dimsizes1[i] - hs_offset[i], sm_size[i]);
+                 hs_nelmts *= hs_size[i];
+             }
+             
+         } 
+         else 
+         {
+             hs_nelmts = 1;
+         } /* rank */
+
+         
+         /* read */
+         if (SDreaddata (sds1_id, hs_offset, NULL, hs_size, sm_buf1) == FAIL) 
+         {
+             printf( "Could not read SDS <%s>\n", sds1_name);
+             goto out;
+         }
+         /* read */
+         if (SDreaddata (sds2_id, hs_offset, NULL, hs_size, sm_buf2) == FAIL) 
+         {
+             printf( "Could not read SDS <%s>\n", sds2_name);
+             goto out;
+         }
+         
+        /*-------------------------------------------------------------------------
+         * comparing
+         *-------------------------------------------------------------------------
+         */
+         
+         if (opt->verbose)
+             printf("Comparing <%s>\n",sds1_name); 
+         
+        /* if max_err_cnt is set (i.e. not its default -1), use it otherwise set it
+           to tot_err_cnt so it doesn't trip  
+         */
+         max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
+
+        /* get array differences. in the case of hyperslab read, increment the number of differences 
+           found in each hyperslab and pass the position at the beggining for printing 
+         */
+         nfound=array_diff(sm_buf1, 
+             sm_buf2, 
+             hs_nelmts, 
+             sds1_name,
+             sds2_name,
+             rank1,
+             dimsizes1,
+             dtype1, 
+             opt->err_limit,
+             opt->err_rel,
+             max_err_cnt, 
+             opt->statistics, 
+             fill1, 
+             fill2);
+
+         /* calculate the next hyperslab offset */
+         for (i = rank1, carry = 1; i > 0 && carry; --i) 
+         {
+             hs_offset[i - 1] += hs_size[i - 1];
+             if (hs_offset[i - 1] == dimsizes1[i - 1])
+                 hs_offset[i - 1] = 0;
+             else
+                 carry = 0;
+         } /* i */
+     } /* elmtno */
+     
+     /* free */
+     if (sm_buf1!=NULL)
+     {
+         free(sm_buf1);
+         sm_buf1=NULL;
+     }
+     if (sm_buf2!=NULL)
+     {
+         free(sm_buf2);
+         sm_buf2=NULL;
+     }
+     
+ } /* hyperslab read */
+
+
+
+
+
+
+
+
+
+#if  0
  /* alloc */
  if ((buf1 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
   printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
@@ -251,23 +476,7 @@ uint32 diff_sds(int32 sd1_id,
   goto out;
  }
  
-/*-------------------------------------------------------------------------
- * get fill values
- *-------------------------------------------------------------------------
- */
 
- fill1 = (VOIDP) HDmalloc(eltsz);
- fill2 = (VOIDP) HDmalloc(eltsz);
- if (fill1!=NULL && SDgetfillvalue(sds1_id,fill1)<0)
- {
-  HDfree(fill1);
-  fill1 = NULL;
- }
- if (fill2!=NULL && SDgetfillvalue(sds2_id,fill2)<0)
- {
-  HDfree(fill2);
-  fill2 = NULL;
- }
 
 /*-------------------------------------------------------------------------
  * Comparing
@@ -296,6 +505,10 @@ uint32 diff_sds(int32 sd1_id,
                    opt->statistics, 
                    fill1, 
                    fill2);
+
+#endif
+
+
   
  } /* flag to compare SDSs */
  
