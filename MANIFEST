@@ -844,8 +844,11 @@
 ./mfhdf/hdiff/testfiles/hdiff_10.txt
 ./mfhdf/hdiff/testfiles/hdiff_11.txt
 ./mfhdf/hdiff/testfiles/hdiff_12.txt
+./mfhdf/hdiff/testfiles/hdiff_13.txt
 ./mfhdf/hdiff/testfiles/hdifftst1.hdf
 ./mfhdf/hdiff/testfiles/hdifftst2.hdf
+./mfhdf/hdiff/testfiles/hdifftst3.hdf
+./mfhdf/hdiff/testfiles/hdifftst4.hdf
 
 
 ./mfhdf/hrepack/Makefile.am

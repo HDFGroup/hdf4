@@ -446,69 +446,6 @@ uint32 diff_sds(int32 sd1_id,
      
  } /* hyperslab read */
 
-
-
-
-
-
-
-
-
-#if  0
- /* alloc */
- if ((buf1 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-  printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
-  goto out;
- }
- /* read data */
- if (SDreaddata (sds1_id, start, NULL, edges, buf1) == FAIL) {
-  printf( "Could not read SDS <%s>\n", sds1_name);
-  goto out;
- }
- /* alloc */
- if ((buf2 = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-  printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
-  goto out;
- }
- /* read data */
- if (SDreaddata (sds2_id, start, NULL, edges, buf2) == FAIL) {
-  printf( "Could not read SDS <%s>\n", sds2_name);
-  goto out;
- }
- 
-
-
-/*-------------------------------------------------------------------------
- * Comparing
- *-------------------------------------------------------------------------
- */
-
- if (opt->verbose)
- printf("Comparing <%s>\n",sds1_name); 
-
- /* 
-  If max_err_cnt is set (i.e. not its default -1), use it otherwise set it
-  to tot_err_cnt so it doesn't trip  
- */
- max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
- nfound=array_diff(buf1, 
-                   buf2, 
-                   nelms, 
-                   sds1_name,
-                   sds2_name,
-                   rank1,
-                   dimsizes1,
-                   dtype1, 
-                   opt->err_limit,
-                   opt->err_rel,
-                   max_err_cnt, 
-                   opt->statistics, 
-                   fill1, 
-                   fill2);
-
-#endif
-
-
   
  } /* flag to compare SDSs */
  
