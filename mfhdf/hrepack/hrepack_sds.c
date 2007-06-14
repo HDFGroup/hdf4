@@ -22,6 +22,9 @@
 #include "hrepack_opttable.h"
 #include "hrepack_dim.h"
 
+#define H4TOOLS_BUFSIZE    (1024 * 1024)
+#define H4TOOLS_MALLOCSIZE (1024 * 1024)
+
 /*-------------------------------------------------------------------------
  * Function: copy_sds
  *
@@ -83,6 +86,8 @@ int copy_sds(int32 sd_in,
     int              szip_mode;      /* szip mode, EC, NN */
     intn             empty_sds;
     int              have_info=0;
+    size_t           need;	         /* read size needed */
+    void             *sm_buf=NULL;
     
     sds_index = SDreftoindex(sd_in,ref);
     sds_id    = SDselect(sd_in,sds_index);
@@ -126,12 +131,10 @@ int copy_sds(int32 sd_in,
     numtype = dtype & DFNT_MASK;
     eltsz = DFKNTsize(numtype | DFNT_NATIVE);
     
-    /* set edges of SDS */
+    /* get number of elements */
     nelms=1;
     for (j = 0; j < rank; j++) {
         nelms   *= dimsizes[j];
-        edges[j] = dimsizes[j];
-        start[j] = 0;
     }
     
    /*-------------------------------------------------------------------------
@@ -514,31 +517,142 @@ int copy_sds(int32 sd_in,
        }
        
        
+       need = (size_t)(nelms * eltsz); /* bytes needed */
+       
+       if ( need < H4TOOLS_MALLOCSIZE)
+       {
+           buf = (VOIDP)HDmalloc(need);
+       }
        
       /*-------------------------------------------------------------------------
-       * read sds and write new one
+       * read all
        *-------------------------------------------------------------------------
-       */
+       */ 
        
-       /* alloc */
-       if ((buf = (VOIDP) HDmalloc(nelms * eltsz)) == NULL) {
-           printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
-           goto out;
+       if ( buf!=NULL )
+       {
+           
+           /* set edges of SDS, select all */
+           for (i = 0; i < rank; i++) 
+           {
+               edges[i] = dimsizes[i];
+               start[i] = 0;
+           }
+               
+           
+           /* read  */
+           if (SDreaddata (sds_id, start, NULL, edges, buf) == FAIL) 
+           {
+               printf( "Could not read SDS <%s>\n", path);
+               goto out;
+           }
+           
+           /* write */
+           if (SDwritedata(sds_out, start, NULL, edges, buf) == FAIL) 
+           {
+               printf( "Failed to write to new SDS <%s>\n", path);
+               goto out;
+           }
+
+
+ 
        }
        
-       /* read data */
-       if (SDreaddata (sds_id, start, NULL, edges, buf) == FAIL) {
-           printf( "Could not read SDS <%s>\n", path);
-           goto out;
-       }
-       
-       /* write the data */
-       if (SDwritedata(sds_out, start, NULL, edges, buf) == FAIL) {
-           printf( "Failed to write to new SDS <%s>\n", path);
-           goto out;
-       }
-       
-       
+       else /* possibly not enough memory, read/write by hyperslabs */
+           
+       {
+           size_t        p_type_nbytes = eltsz;   /*size of type */
+           uint32        p_nelmts = nelms;        /*total selected elmts */
+           int32         elmtno;                  /*counter  */
+           int           carry;                   /*counter carry value */
+           
+           /* stripmine info */
+           int32         sm_size[MAX_VAR_DIMS];   /*stripmine size */
+           int32         sm_nbytes;               /*bytes per stripmine */
+           int32         sm_nelmts;               /*elements per stripmine*/
+           
+           /* hyperslab info */
+           int32         hs_offset[MAX_VAR_DIMS]; /*starting offset */
+           int32         hs_size[MAX_VAR_DIMS];   /*size this pass */
+           int32         hs_nelmts;               /*elements in request */
+           
+           /*
+            * determine the strip mine size and allocate a buffer. The strip mine is
+            * a hyperslab whose size is manageable.
+            */
+           sm_nbytes = p_type_nbytes;
+           
+           for (i = rank; i > 0; --i) 
+           {
+               sm_size[i - 1] = MIN(dimsizes[i - 1], H4TOOLS_BUFSIZE / sm_nbytes);
+               sm_nbytes *= sm_size[i - 1];
+               assert(sm_nbytes > 0);
+           }
+           
+           sm_buf = HDmalloc((size_t)sm_nbytes);
+                      
+           sm_nelmts = sm_nbytes / p_type_nbytes;
+           
+           /* the stripmine loop */
+           memset(hs_offset, 0, sizeof hs_offset);
+           
+           for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) 
+           {
+               /* calculate the hyperslab size */
+               if (rank > 0) 
+               {
+                   for (i = 0, hs_nelmts = 1; i < rank; i++) 
+                   {
+                       hs_size[i] = MIN(dimsizes[i] - hs_offset[i], sm_size[i]);
+                       hs_nelmts *= hs_size[i];
+                   }
+                   
+               } 
+               else 
+               {
+                   hs_nelmts = 1;
+               } /* rank */
+               
+               
+               /* read */
+               if (SDreaddata (sds_id, hs_offset, NULL, hs_size, sm_buf) == FAIL) 
+               {
+                   printf( "Could not read SDS <%s>\n", sds_name);
+                   goto out;
+               }
+              
+               
+               /* write */
+               if (SDwritedata(sds_out, hs_offset, NULL, hs_size, sm_buf) == FAIL) 
+               {
+                   printf( "Failed to write to new SDS <%s>\n", path);
+                   goto out;
+               }
+
+
+               
+               /* calculate the next hyperslab offset */
+               for (i = rank, carry = 1; i > 0 && carry; --i) 
+               {
+                   hs_offset[i - 1] += hs_size[i - 1];
+                   if (hs_offset[i - 1] == dimsizes[i - 1])
+                       hs_offset[i - 1] = 0;
+                   else
+                       carry = 0;
+               } /* i */
+           } /* elmtno */
+           
+           /* free */
+           if (sm_buf!=NULL)
+           {
+               free(sm_buf);
+               sm_buf=NULL;
+           }
+           
+           
+       } /* hyperslab read */
+ 
+  
    } /* empty_sds */
    
   /*-------------------------------------------------------------------------

@@ -22,8 +22,10 @@ extern "C" {
 #endif
 
  
-#define FILENAME         "hziptst.hdf"
-#define FILENAME_OUT     "hziptst_out.hdf"
+#define FILENAME         "hrepacktest.hdf"
+#define FILENAME_OUT     "hrepacktest_out.hdf"
+#define FILENAME2        "hrepacktest2.hdf"
+#define FILENAME2_OUT    "hrepacktest2_out.hdf"
 
 
 int sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info);

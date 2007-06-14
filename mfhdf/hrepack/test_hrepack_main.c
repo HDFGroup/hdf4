@@ -31,8 +31,14 @@ char    *progname;
 #if 0
 #define H4_HAVE_LIBSZ
 #endif
-  
-#define HDIFF_TSTSTR "hdiff hziptst.hdf hziptst_out.hdf"
+
+
+#define HDIFF_TSTSTR     "hdiff hrepacktest.hdf hrepacktest_out.hdf"
+#define HDIFF_TSTSTR2    "hdiff hrepacktest2.hdf hrepacktest2_out.hdf"
+
+
+static int do_big_file(void);
+
 
 /*-------------------------------------------------------------------------
  * Function: main
@@ -393,6 +399,15 @@ int main(void)
  if (add_pal(FILENAME)<0)
   return 1; 
 
+
+/*-------------------------------------------------------------------------
+ * generate a big file for hyperslab reading
+ *-------------------------------------------------------------------------
+ */ 
+ if (do_big_file()<0)
+  return 1; 
+
+
 /*-------------------------------------------------------------------------
  * end
  *-------------------------------------------------------------------------
@@ -527,7 +542,7 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * test4:  
-    * SDS SELECTED with SZIP, chunking SELECTED
+ * SDS SELECTED with SZIP, chunking SELECTED
  *-------------------------------------------------------------------------
  */
  TESTING("hrepack -t dset4:SZIP 8,EC -c dset4:10x8");
@@ -744,7 +759,26 @@ int main(void)
   goto out;
  PASSED();
 
-  
+
+/*-------------------------------------------------------------------------
+ * test10: 
+ * repack a big file using hyperslab reading/writing
+ *-------------------------------------------------------------------------
+ */
+
+ TESTING("hyperslab repacking");
+ hrepack_init (&options,verbose);
+ if (hrepack(FILENAME2,FILENAME2_OUT,&options)<0)
+  goto out;
+ hrepack_end (&options);
+ PASSED();
+
+ TESTING(HDIFF_TSTSTR2);
+ if (hdiff(FILENAME2,FILENAME2_OUT,&fspec) == 1)
+  goto out;
+ PASSED();
+ 
+
 /*-------------------------------------------------------------------------
  * all tests PASSED
  *-------------------------------------------------------------------------
@@ -758,3 +792,110 @@ out:
 
 }
 
+
+/*-------------------------------------------------------------------------
+ * write a big file for hyperslab reading
+ *-------------------------------------------------------------------------
+ */
+
+#define DIM0     10
+#define DIM1     10
+#define ADD_ROWS ( 1024 * 1024 - 10 ) / 10 
+
+
+static int do_big_file(void) 
+{
+
+    int32 sd_id;         /* SD interface identifier */
+    int32 sds_id;        /* SDS identifier */
+    int32 dims[2];       /* sizes of the SDS dimensions */
+    int32 start[2];      /* start location to write */
+    int32 edges[2];      /* number of elements to write */
+
+    int32 sds_idx;
+    int32 rank;
+	uint8 array_data[DIM0][DIM1];
+    uint8 append_data[DIM1];
+	intn  i, j, n;
+
+	/* Create a file and initiate the SD interface. */
+    if ((sd_id = SDstart(FILENAME2, DFACC_CREATE))==FAIL) 
+        goto error;
+  
+	/* Define the rank and dimensions of the data set to be created. */
+	rank = 2;
+	dims[0] = SD_UNLIMITED;
+	dims[1] = DIM1;
+
+	/* Create 2 data sets */
+	if ((sds_id = SDcreate(sd_id, "data1", DFNT_UINT8, rank, dims))==FAIL) 
+        goto error;
+  
+	/* initial values */
+    for (j = 0; j < DIM0; j++) 
+    {
+        for (i = 0; i < DIM1; i++)
+            array_data[j][i] = (i + j) + 1;
+    }
+
+	/* define the location, pattern, and size of the data set */
+    for (i = 0; i < rank; i++) 
+    {
+        start[i] = 0;
+    }
+	edges[0] = DIM0; /* 10 */
+	edges[1] = DIM1; /* 5 */
+
+    if ( SDwritedata(sds_id, start, NULL, edges, (VOIDP)array_data)==FAIL) 
+        goto error;
+
+	/* terminate access to the datasets and SD interface */
+    if ( SDendaccess(sds_id)==FAIL) 
+        goto error;
+    if ( SDend(sd_id)==FAIL) 
+        goto error;
+   
+    /* append data */
+	if (( sd_id = SDstart(FILENAME2, DFACC_WRITE))==FAIL) 
+        goto error;
+   	
+    if ((sds_idx = SDnametoindex (sd_id, "data1"))==FAIL) 
+        goto error;
+    if ((sds_id = SDselect (sd_id, sds_idx))==FAIL) 
+        goto error;
+  
+    /* store array values to be appended */
+    for (i = 0; i < DIM1; i++)
+        append_data[i] = i + 1;
+    
+   	/* define the location of the append */
+    for (n = 0; n < ADD_ROWS; n++)
+    {
+        start[0] = DIM0 + n;   /* 10 */
+        start[1] = 0;
+        edges[0] = 1;          /* 1 row at a time */
+        edges[1] = DIM1;       /* 5 elements */
+        
+        /* append data to file */
+        if ( SDwritedata (sds_id, start, NULL, edges, (VOIDP) append_data)==FAIL) 
+            goto error;
+
+    }
+
+    
+    /* terminate access */
+    if ( SDendaccess (sds_id)==FAIL) 
+        goto error;
+    if ( SDend (sd_id)==FAIL) 
+        goto error;
+  
+    return SUCCEED;
+    
+error:
+    
+    printf("Error...Exiting...\n");
+    
+    return FAIL;
+
+
+}
