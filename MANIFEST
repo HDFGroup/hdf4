@@ -6,6 +6,8 @@
 # in column one with a '#'.
 #------------------------------------------------------------------------------
 
+
+./MANIFEST
 ./COPYING
 ./INSTALL
 ./INSTALL_CYGWIN.txt
@@ -813,6 +815,9 @@
 ./mfhdf/hdfimport/hdfimport.out3
 ./mfhdf/hdfimport/hdfimporttest.c
 ./mfhdf/hdfimport/testutil.sh.in
+./mfhdf/hdfimport/gen_sds_floats.c
+
+
 
 ./mfhdf/hdiff/Makefile.am
 ./mfhdf/hdiff/Makefile.in
@@ -831,6 +836,12 @@
 ./mfhdf/hdiff/hdiff_vs.c
 ./mfhdf/hdiff/hdifftst.c
 ./mfhdf/hdiff/testhdiff.sh
+./mfhdf/hdiff/hdiff_mattbl.c
+./mfhdf/hdiff/hdiff_mattbl.h
+
+
+
+
 
 ./mfhdf/hdiff/testfiles/hdiff_01.txt
 ./mfhdf/hdiff/testfiles/hdiff_02.txt
