@@ -211,6 +211,11 @@
         /* class of a Vdata containing SD interface attribute */
 #define _HDF_VARIABLE          "Var0.0"
         /* class of a Vgroup representing an SD NDG */
+#define _HDF_SDSVAR            "SDSVar0.0"
+        /* class of a Vgroup representing an SDS created by hdf4r1.5 and later*/
+#define _HDF_COORDVAR          "CoordVar0.0"
+        /* class of a Vgroup representing a coordinate variable, introduced in
+	   hdf4r1.5 and later */
 #define _HDF_DIMENSION         "Dim0.0"
         /* class of a Vgroup representing an SD dimension */
 #define _HDF_UDIMENSION        "UDim0.0"
