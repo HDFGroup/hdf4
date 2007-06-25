@@ -384,7 +384,6 @@ int mode ;
           hdf_mode = DFACC_RDWR;
       }
         
-        
     /*
      * Do file type specific setup
      */
@@ -1378,9 +1377,18 @@ NC_var **var;
 
 #endif /* WRITE_NDG */
 
-    /* write the vgroup for the variable ? */
+    /* write the vgroup for the coordinate variable */
+    if ((*var)->var_type == IS_COORDVAR)
+	(*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
+                               (*var)->name->values, _HDF_COORDVAR);
+
+    else /* write the vgroup for the variable */
     (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
-                               (*var)->name->values, _HDF_VARIABLE);
+                               (*var)->name->values, _HDF_SDSVAR);
+
+    /* Note that starting from hdf4r1.5, _HDF_VARIABLE is replaced by 
+       _HDF_SDSVAR in newly created SDSs (bugzilla 624) - BMR 05/14/2007 */
+
 
 #ifdef DEBUG
     if((*var)->vgid == FAIL) 
@@ -2304,7 +2312,7 @@ hdf_read_vars(XDR *xdrs,
       }
 
     /*
-     * Look through for a Vgroup of class _HDF_VARIABLE
+     * Look through for a Vgroup of class _HDF_VARIABLE, _HDF_SDSVAR, or _HDF_COORDVAR
      */
     if ((vg_size = Vntagrefs(vg)) == FAIL)
       {
@@ -2338,11 +2346,16 @@ hdf_read_vars(XDR *xdrs,
                       goto done;
                   }
 
-                if(!HDstrcmp(class, _HDF_VARIABLE)) 
+		/* Process as below if this VGroup represents a Variable or
+		   a Coordinate Variable */
+                if(!HDstrcmp(class, _HDF_VARIABLE) ||
+		   !HDstrcmp(class, _HDF_SDSVAR) ||
+		   !HDstrcmp(class, _HDF_COORDVAR))
                   {
               
                       /*
-                       * We have found a VGroup representing a Variable
+                       * We have found a VGroup representing a Variable or a
+		       * a Coordinate Variable
                        */
                       ndims = 0;
                       type = NC_UNSPECIFIED;
@@ -2365,6 +2378,7 @@ hdf_read_vars(XDR *xdrs,
                        */
                       for (t = 0; t < n; t++) 
                         {
+			    char dimclass[MAX_NC_CLASS] = "";
                             if (Vgettagref(var, t, &tag, &sub_id) == FAIL)
                               {
 #ifdef HDF_READ_VARS
@@ -2387,7 +2401,7 @@ hdf_read_vars(XDR *xdrs,
                                         goto done;
                                     }
 
-                                  if (FAIL == Vgetclass(sub, class))
+                                  if (FAIL == Vgetclass(sub, dimclass))
                                     {
 #ifdef HDF_READ_VARS
                                         fprintf(stderr, "hdf_read_vars:Vgetclass failed\n");
@@ -2396,11 +2410,11 @@ hdf_read_vars(XDR *xdrs,
                                         goto done;
                                     }
 
-                                  if(!HDstrcmp(class, _HDF_DIMENSION) 
-                                     || !HDstrcmp(class, _HDF_UDIMENSION)) 
+                                  if(!HDstrcmp(dimclass, _HDF_DIMENSION) 
+                                     || !HDstrcmp(dimclass, _HDF_UDIMENSION)) 
                                     {
                           
-                                        if(!HDstrcmp(class, _HDF_UDIMENSION))
+                                        if(!HDstrcmp(dimclass, _HDF_UDIMENSION))
                                             is_rec_var = TRUE;
                           
                                         if (FAIL == Vinquire(sub, &entries, subname))
@@ -2555,6 +2569,12 @@ hdf_read_vars(XDR *xdrs,
                       vp->HDFtype  = HDFtype;
                       vp->ndg_ref  = (uint16) ndg_ref;
                       vp->cdf = handle; /* for NC_var_shape */
+		      if (HDstrcmp(class, _HDF_COORDVAR) == 0)
+			  vp->var_type = IS_COORDVAR;
+		      else if (HDstrcmp(class, _HDF_SDSVAR) == 0)
+			  vp->var_type = NOT_COORDVAR;
+		      else
+			  vp->var_type = UNKNOWN;
 
                       /* need to process the ragged array info here */
                       /* QUESTION:  Load the whole rag_fill list in now??????? */
@@ -2726,6 +2746,7 @@ NC **handlep;
               }
           }
     }
+
 
   if(!found)
     {

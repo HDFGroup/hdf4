@@ -102,6 +102,8 @@
 #define MAX_VXR_ENTRIES                 10
 #endif /* MAX_VXR_ENTRIES */
 
+typedef enum {NOT_COORDVAR=0, IS_COORDVAR=1, UNKNOWN=2} vartype_t;
+
 #ifdef HDF
 /* VIX record for CDF variable data storage */
 typedef struct vix_t_def {
@@ -205,29 +207,33 @@ typedef struct {
 	size_t szof ;		/* sizeof each value */
 	long begin ;  /* seek index, often an off_t */
 #ifdef HDF
-	NC *cdf;    /* handle of the file where this var belongs to  */
-	int32 vgid;     /* id of the variable's Vgroup */
-    uint16 data_ref;  /* ref of the variable's data storage (if exists) */
-    uint16 data_tag;  /* tag of the variable's data storage (if exists) */
-    uint16 ndg_ref;   /* ref of ndg for this dataset */
-    intn   data_offset; /* non-traditional data may not begin at 0 */
-    int32  block_size;  /* size of the blocks for unlimited dim. datasets */
-    int numrecs;  /* number of records this has been filled to */
-    int32 aid;    /* aid for DFTAG_SD data */
-    int32 HDFtype; /* type of this variable as HDF thinks */
-    int32 HDFsize; /* size of this variable as HDF thinks */
+	NC *cdf;	/* handle of the file where this var belongs to  */
+	int32 vgid;	/* id of the variable's Vgroup */
+	uint16 data_ref;    /* ref of the variable's data storage (if exists) */
+	uint16 data_tag;    /* tag of the variable's data storage (if exists) */
+	uint16 ndg_ref;     /* ref of ndg for this dataset */
+	vartype_t var_type; /* NOT_COORDVAR == not a coordinate variable 
+			   IS_COORDVAR == is a coordinate variable 
+			   UNKNOWN == because the var was created prior to
+					this distinction */
+	intn   data_offset; /* non-traditional data may not begin at 0 */
+	int32  block_size;  /* size of the blocks for unlimited dim. datasets */
+	int numrecs;	/* number of records this has been filled to */
+	int32 aid;	/* aid for DFTAG_SD data */
+	int32 HDFtype;	/* type of this variable as HDF thinks */
+	int32 HDFsize;	/* size of this variable as HDF thinks */
     /* These next two flags control when space in the file is allocated
         for a new dataset.  They are used (currently) in SDwritedata() and
         hdf_get_vp_aid() to allocate the full length of a new fixed-size dataset
         which is not writing fill values, instead of letting them get created
         as an "appendable" dataset and probably get converted into a linked-
         block special element when they don't need to be one */
-    int32   created;    /* BOOLEAN == is newly created */
-    int32   set_length; /* BOOLEAN == needs length set */
-    int32   is_ragged; /* BOOLEAN == is a ragged array */
-    int32 * rag_list;  /* size of ragged array lines */
-    int32   rag_fill;  /* last line in rag_list to be set */
-    vix_t * vixHead;   /* list of VXR records for CDF data storage */
+	int32   created;    /* BOOLEAN == is newly created */
+	int32   set_length; /* BOOLEAN == needs length set */
+	int32   is_ragged;  /* BOOLEAN == is a ragged array */
+	int32 * rag_list;   /* size of ragged array lines */
+	int32   rag_fill;   /* last line in rag_list to be set */
+	vix_t * vixHead;    /* list of VXR records for CDF data storage */
 #endif
 } NC_var ;
 

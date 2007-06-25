@@ -4152,6 +4152,11 @@ main(int argc, char *argv[])
     status = test_SDSprops();
     num_errs = num_errs + status;
 
+    /* BMR: Added a test routine dedicated for testing functionality 
+       related to coordinate variables (in tcoordvar.c) - 05/21/07 */
+    status = test_coordvar();
+    num_errs = num_errs + status;
+
 #ifdef H4_HAVE_LIBSZ
     status = test_szip_compression();  /* defined in tszip.c */
     num_errs = num_errs + status;

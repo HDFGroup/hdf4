@@ -814,7 +814,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
             ret_value = FAIL;
             goto done;
      }
-    status = HCPgetcompress(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
+    status = HCPgetcompinfo(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
 		&comp_type, &c_info);
 
     if (status != FAIL) {
@@ -953,10 +953,13 @@ SDnametoindex(int32 fid,  /* IN: file ID */
       {
         if( len == (*dp)->name->len 
             && HDstrncmp(name, (*dp)->name->values, len) == 0) 
-          {
-            ret_value = (int32)ii;
-            goto done;
-          }
+
+	    /* make sure that this is not a coordinate var - BMR - 05/14/2007 */
+	    if ((*dp)->var_type != IS_COORDVAR)
+	      {
+		ret_value = (int32)ii;
+		goto done;
+	      }
       }
 
     ret_value = FAIL;
@@ -1244,6 +1247,10 @@ SDcreate(int32  fid,      /* IN: file ID */
     /* Set the "newly created" & "set length" flags for use in SDwritedata */
     var->created=TRUE;
     var->set_length=FALSE;
+
+    /* Indicate that this variable is not a coordinate variable (bugzilla 624)
+       - BMR - 05/14/2007 */
+    var->var_type=NOT_COORDVAR;
 
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
@@ -2232,7 +2239,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompress(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
+    status = HCPgetcompinfo(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
 		&comp_type, &c_info);
 
     if (status != FAIL) {
@@ -2979,10 +2986,14 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
 	if((*dp)->assoc->count == 1) 
             if( len == (*dp)->name->len 
               && HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0) 
-            {
-                /* see if we need to change the number type */
-                if((nt != 0) && (nt != (*dp)->type)) 
-                  {
+		/* only proceed if this variable is a coordinate var or when
+		   the status is unknown due to its being created prior to
+		   the fix of bugzilla 624 - BMR 05/14/2007 */
+		if ((*dp)->var_type != NOT_COORDVAR)
+		{
+		    /* see if we need to change the number type */
+		    if((nt != 0) && (nt != (*dp)->type)) 
+		    {
 #ifdef SDDEBUG
                       fprintf(stderr, "SDIgetcoordvar redefining type\n");
 #endif
@@ -3041,6 +3052,10 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
           ret_value = FAIL;
           goto done;
       }
+
+    /* Set flag to indicate that this variable is a coordinate variable -
+       BMR - 05/14/2007 */
+    var->var_type = IS_COORDVAR; 
 
     /* BMR: put back hdf type that was set wrong by NC_new_var; please refer
        to the cvs history of bug #172 for reason on this statement - 4/17/01*/
@@ -3538,6 +3553,10 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 	      if((*dp)->assoc->count == 1) 
                   if( len == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
+		/* only proceed if this variable is a coordinate var or when
+		   its status is unknown due to its being created prior to
+		   the fix of bugzilla 624 - BMR - 05/14/2007 */
+		    if ((*dp)->var_type != NOT_COORDVAR)
                   {
                       if (handle->file_type == HDF_FILE)
                           *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
@@ -3639,6 +3658,12 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 	      if((*dp)->assoc->count == 1) 
                   if( namelen == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, (size_t)namelen) == 0)
+		    /* because a dim was given, make sure that this is a 
+		       coordinate var */
+		/* only proceed if this variable is a coordinate var or when
+		   its status is unknown due to its being created prior to
+		   the fix of bugzilla 624 - BMR - 05/14/2007 */
+		    if ((*dp)->var_type != NOT_COORDVAR)
                   {
                       var = (*dp);
                   }
@@ -4262,6 +4287,8 @@ done:
 
  MODIFICATION
     July 2001: Added to fix bug #307 - BMR 
+    Apr 2005:  This function has incorrect behavior and is replaced by 
+	       SDgetcompinfo.  SDgetcompress will be removed in the future.
 
 ******************************************************************************/ 
 intn 
@@ -4698,34 +4725,49 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
         goto done;
       }
 
-    if(var->assoc->count != 1)
+    /* check whether or not this var is a coord var, then return appropriate 
+       value (if and else if) */
+    if (var->var_type == NOT_COORDVAR)
       {
         ret_value = FALSE;
         goto done;
       }
 
-    dimindex = var->assoc->values[0];
-
-    dim = SDIget_dim(handle, dimindex);
-    if(dim == NULL)
+    else if(var->var_type == IS_COORDVAR)
       {
-        ret_value = FALSE;
+        ret_value = TRUE;
         goto done;
       }
 
-    if(var->name->len != dim->name->len)
+    /* whether or not this var is a coord var is unknown because the data was
+       created by earlier version of the library which did not distinguish
+       the two kinds of variables, SDS variable and coordinate variables.
+       (see bugzilla 624) - BMR - 05/14/2007 */
+    else  /* proceed exactly as before the fix of bugzilla 624 is available */
       {
-        ret_value = FALSE;
-        goto done;
-      }
+	dimindex = var->assoc->values[0];
 
-    if(HDstrcmp(var->name->values, dim->name->values))
-      {
-        ret_value = FALSE;
-        goto done;
-      }
+	dim = SDIget_dim(handle, dimindex);
+	if(dim == NULL)
+	  {
+	    ret_value = FALSE;
+	    goto done;
+	  }
 
-    ret_value = TRUE;
+	if(var->name->len != dim->name->len)
+	  {
+	    ret_value = FALSE;
+	    goto done;
+	  }
+
+	if(HDstrcmp(var->name->values, dim->name->values))
+	  {
+	    ret_value = FALSE;
+	    goto done;
+	  }
+
+	ret_value = TRUE;
+      }
 
 done:
     if (ret_value == FALSE)
@@ -5885,7 +5927,7 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
+    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
 		&comp_type, &c_info);
 
     if (status != FAIL) {
@@ -6097,7 +6139,7 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompress(handle->hdf_file, var->data_tag, var->data_ref, 
+    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
 		&comp_type, &c_info);
 
     if (status != FAIL) {

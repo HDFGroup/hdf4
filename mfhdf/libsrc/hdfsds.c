@@ -1132,6 +1132,10 @@ hdf_read_ndgs(NC *handle)
 #else /* NOT_YET */
                             vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
 #endif /* NOT_YET */
+			    /* Indicate that it is unknown whether the current
+			       variable is an SDS or a coordinate variable.
+			       bugzilla 624 - BMR - 05/16/2007 */
+			    vars[current_var]->var_type  = UNKNOWN;
 
                             /*
                              * See if a scales record has been stored and if there have
@@ -1293,6 +1297,12 @@ hdf_read_ndgs(NC *handle)
                 vars[current_var]->data_tag = DATA_TAG;
                 vars[current_var]->data_ref = sdRef;
                 vars[current_var]->HDFtype  = HDFtype;
+
+		/* Indicate that it is unknown whether the current variable 
+		   is an SDS or a coordinate variable.  bugzilla 624 - BMR - 
+		   05/16/2007 */
+                vars[current_var]->var_type  = UNKNOWN;
+
 
                 /*
                  * NOTE:  If the user changes the file and saves setting this
@@ -1647,6 +1657,7 @@ hdf_read_ndgs(NC *handle)
                 else
                     vars[current_var]->attrs = NULL;
             
+
             
                 current_var++;
 
@@ -1732,7 +1743,6 @@ hdf_read_ndgs(NC *handle)
               handle->vars = NULL;
         
       } /* outermost for loop to loop between NDGs and SDGs */
-
 
 done:
     if (ret_value == FAIL)
