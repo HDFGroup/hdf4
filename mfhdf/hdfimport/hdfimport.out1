@@ -36,9 +36,9 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no      9	      33 bytes
 	Ref no     11	      33 bytes
-	Ref no     14	      56 bytes
-	Ref no     16	      49 bytes
-	Ref no     18	      49 bytes
+	Ref no     14	      59 bytes
+	Ref no     16	      54 bytes
+	Ref no     18	      54 bytes
 	Ref no     19	      51 bytes
 
 ctxtr3.hdf:
@@ -86,10 +86,10 @@ Vgroup                        : (tag 1965)
 	Ref no     11	      33 bytes
 	Ref no     13	      33 bytes
 	Ref no     15	      33 bytes
-	Ref no     18	      60 bytes
-	Ref no     20	      49 bytes
-	Ref no     22	      49 bytes
-	Ref no     24	      49 bytes
+	Ref no     18	      63 bytes
+	Ref no     20	      54 bytes
+	Ref no     22	      54 bytes
+	Ref no     24	      54 bytes
 	Ref no     25	      59 bytes
 
 cb32i2.hdf:
@@ -130,9 +130,9 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no      9	      33 bytes
 	Ref no     11	      33 bytes
-	Ref no     14	      56 bytes
-	Ref no     16	      49 bytes
-	Ref no     18	      49 bytes
+	Ref no     14	      59 bytes
+	Ref no     16	      54 bytes
+	Ref no     18	      54 bytes
 	Ref no     19	      51 bytes
 
 cb32i3.hdf:
@@ -180,10 +180,10 @@ Vgroup                        : (tag 1965)
 	Ref no     11	      33 bytes
 	Ref no     13	      33 bytes
 	Ref no     15	      33 bytes
-	Ref no     18	      60 bytes
-	Ref no     20	      49 bytes
-	Ref no     22	      49 bytes
-	Ref no     24	      49 bytes
+	Ref no     18	      63 bytes
+	Ref no     20	      54 bytes
+	Ref no     22	      54 bytes
+	Ref no     24	      54 bytes
 	Ref no     25	      59 bytes
 
 cb16i2.hdf:
@@ -224,9 +224,9 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no      9	      33 bytes
 	Ref no     11	      33 bytes
-	Ref no     14	      56 bytes
-	Ref no     16	      49 bytes
-	Ref no     18	      49 bytes
+	Ref no     14	      59 bytes
+	Ref no     16	      54 bytes
+	Ref no     18	      54 bytes
 	Ref no     19	      51 bytes
 
 cb16i3.hdf:
@@ -274,10 +274,10 @@ Vgroup                        : (tag 1965)
 	Ref no     11	      33 bytes
 	Ref no     13	      33 bytes
 	Ref no     15	      33 bytes
-	Ref no     18	      60 bytes
-	Ref no     20	      49 bytes
-	Ref no     22	      49 bytes
-	Ref no     24	      49 bytes
+	Ref no     18	      63 bytes
+	Ref no     20	      54 bytes
+	Ref no     22	      54 bytes
+	Ref no     24	      54 bytes
 	Ref no     25	      59 bytes
 
 cb32r2.hdf:
@@ -318,9 +318,9 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no      9	      33 bytes
 	Ref no     11	      33 bytes
-	Ref no     14	      56 bytes
-	Ref no     16	      49 bytes
-	Ref no     18	      49 bytes
+	Ref no     14	      59 bytes
+	Ref no     16	      54 bytes
+	Ref no     18	      54 bytes
 	Ref no     19	      51 bytes
 
 cb32r3.hdf:
@@ -368,10 +368,10 @@ Vgroup                        : (tag 1965)
 	Ref no     11	      33 bytes
 	Ref no     13	      33 bytes
 	Ref no     15	      33 bytes
-	Ref no     18	      60 bytes
-	Ref no     20	      49 bytes
-	Ref no     22	      49 bytes
-	Ref no     24	      49 bytes
+	Ref no     18	      63 bytes
+	Ref no     20	      54 bytes
+	Ref no     22	      54 bytes
+	Ref no     24	      54 bytes
 	Ref no     25	      59 bytes
 
 cb64r2.hdf:
@@ -412,9 +412,9 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no      9	      33 bytes
 	Ref no     11	      33 bytes
-	Ref no     14	      56 bytes
-	Ref no     16	      49 bytes
-	Ref no     18	      49 bytes
+	Ref no     14	      59 bytes
+	Ref no     16	      54 bytes
+	Ref no     18	      54 bytes
 	Ref no     19	      51 bytes
 
 cb64r3.hdf:
@@ -462,10 +462,10 @@ Vgroup                        : (tag 1965)
 	Ref no     11	      33 bytes
 	Ref no     13	      33 bytes
 	Ref no     15	      33 bytes
-	Ref no     18	      60 bytes
-	Ref no     20	      49 bytes
-	Ref no     22	      49 bytes
-	Ref no     24	      49 bytes
+	Ref no     18	      63 bytes
+	Ref no     20	      54 bytes
+	Ref no     22	      54 bytes
+	Ref no     24	      54 bytes
 	Ref no     25	      59 bytes
 
 cb64r2-n.hdf:
@@ -506,9 +506,9 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no      9	      33 bytes
 	Ref no     11	      33 bytes
-	Ref no     14	      56 bytes
-	Ref no     16	      49 bytes
-	Ref no     18	      49 bytes
+	Ref no     14	      59 bytes
+	Ref no     16	      54 bytes
+	Ref no     18	      54 bytes
 	Ref no     19	      53 bytes
 
 cb64r3-n.hdf:
@@ -556,10 +556,10 @@ Vgroup                        : (tag 1965)
 	Ref no     11	      33 bytes
 	Ref no     13	      33 bytes
 	Ref no     15	      33 bytes
-	Ref no     18	      60 bytes
-	Ref no     20	      49 bytes
-	Ref no     22	      49 bytes
-	Ref no     24	      49 bytes
+	Ref no     18	      63 bytes
+	Ref no     20	      54 bytes
+	Ref no     22	      54 bytes
+	Ref no     24	      54 bytes
 	Ref no     25	      61 bytes
 
 ctxtr2_ris.hdf:
@@ -639,8 +639,8 @@ Vdata Storage                 : (tag 1963)
 Vgroup                        : (tag 1965)
 	Ref no     10	      33 bytes
 	Ref no     12	      33 bytes
-	Ref no     15	      56 bytes
-	Ref no     17	      49 bytes
-	Ref no     19	      49 bytes
+	Ref no     15	      59 bytes
+	Ref no     17	      54 bytes
+	Ref no     19	      54 bytes
 	Ref no     20	      55 bytes
 
