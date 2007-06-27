@@ -176,15 +176,15 @@ void usage(void)
  printf("\n");
  printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A,/group2/B,C:HUFF 1'\n");
  printf("  applies Skipping Huffman compression with skip factor of 1,\n");
-	printf("   for objects /group1/A, /group2/B and C\n");
+ printf("   for objects /group1/A, /group2/B and C\n");
  printf("\n");
-	printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/D:RLE' -c 'D,E:10x10'\n");
+ printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/D:RLE' -c 'D,E:10x10'\n");
  printf("  applies RLE compression for object /group1/D\n");
  printf("  applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions\n");
  printf("\n");
  printf("3)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A:NONE'\n");
  printf("  uncompresses object /group1/A\n");
-	printf("\n");
+ printf("\n");
  printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/group2/A:SZIP 8,NN'\n");
  printf("  applies SZIP compression to object /group1/group2/A, with parameters 8 and NN\n");
  printf("\n");
