@@ -41,7 +41,7 @@ int sds_verifiy_comp(const char *sds_name,
                sds_index;   
 
  /* get chunk and comp */
- sd_id     = SDstart (FILENAME_OUT, DFACC_RDONLY);
+ sd_id     = SDstart (HREPACK_FILE1_OUT, DFACC_RDONLY);
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
   printf("Error: Cannot open sds <%s>", sds_name);
@@ -118,7 +118,7 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
  int           status;
 
  /* initialize the sd interface */
- sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
+ sd_id  = SDstart (HREPACK_FILE1_OUT, DFACC_READ);
  
  /* determine the number of data sets in the file */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {
@@ -250,7 +250,7 @@ int sds_verifiy_chunk(const char *sds_name,
  int           i;
 
  /* get chunk and comp */
- sd_id     = SDstart (FILENAME_OUT, DFACC_RDONLY);
+ sd_id     = SDstart (HREPACK_FILE1_OUT, DFACC_RDONLY);
  sds_index = SDnametoindex(sd_id, sds_name);
  if ((sds_id = SDselect(sd_id, sds_index))==FAIL) {
   printf("Error: cannot open sds <%s>", sds_name);
@@ -325,7 +325,7 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
  int           i;
 
  /* initialize the sd interface */
- sd_id  = SDstart (FILENAME_OUT, DFACC_READ);
+ sd_id  = SDstart (HREPACK_FILE1_OUT, DFACC_READ);
  
  /* determine the number of data sets in the file */
  if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {

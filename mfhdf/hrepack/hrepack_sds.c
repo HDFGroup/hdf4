@@ -22,8 +22,8 @@
 #include "hrepack_opttable.h"
 #include "hrepack_dim.h"
 
-#define H4TOOLS_BUFSIZE    (1024 * 1024)
-#define H4TOOLS_MALLOCSIZE (1024 * 1024)
+#define H4TOOLS_BUFSIZE        (1024 * 1024)
+#define H4TOOLS_MALLOCSIZE     (1024 * 1024)
 
 /*-------------------------------------------------------------------------
  * Function: copy_sds
@@ -612,7 +612,8 @@ int copy_sds(int32 sd_in,
                {
                    hs_nelmts = 1;
                } /* rank */
-               
+
+              
                
                /* read */
                if (SDreaddata (sds_id, hs_offset, NULL, hs_size, sm_buf) == FAIL) 

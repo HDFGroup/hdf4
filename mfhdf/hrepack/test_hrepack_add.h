@@ -98,6 +98,11 @@ int add_glb_attrs(const char *fname,
 /* read image data */
 int  read_data(const  char* file_name);
 
+int  do_big_file(char * file_name);
+int  do_lone(char* file_name);
+
+
+
 
 #ifdef __cplusplus
 }

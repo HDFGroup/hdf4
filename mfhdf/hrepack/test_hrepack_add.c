@@ -1610,3 +1610,159 @@ chunk_def->comp.chunk_lengths[1] = dim[1]/2;
 
 }
 
+
+/*-------------------------------------------------------------------------
+ * write a big file for hyperslab reading
+ *-------------------------------------------------------------------------
+ */
+
+#define DIM0     10
+#define DIM1     10
+#define ADD_ROWS ( 1024 * 1024 - 10 ) / 10 
+
+
+int do_big_file(char* file_name) 
+{
+
+    int32 sd_id;         /* SD interface identifier */
+    int32 sds_id;        /* SDS identifier */
+    int32 dims[2];       /* sizes of the SDS dimensions */
+    int32 start[2];      /* start location to write */
+    int32 edges[2];      /* number of elements to write */
+
+    int32 sds_idx;
+    int32 rank;
+	uint8 array_data[DIM0][DIM1];
+    uint8 append_data[DIM1];
+	intn  i, j, n;
+
+	/* Create a file and initiate the SD interface. */
+    if ((sd_id = SDstart(file_name, DFACC_CREATE))==FAIL) 
+        goto error;
+  
+	/* Define the rank and dimensions of the data set to be created. */
+	rank = 2;
+	dims[0] = SD_UNLIMITED;
+	dims[1] = DIM1;
+
+	/* Create 2 data sets */
+	if ((sds_id = SDcreate(sd_id, "data1", DFNT_UINT8, rank, dims))==FAIL) 
+        goto error;
+  
+	/* initial values */
+    for (j = 0; j < DIM0; j++) 
+    {
+        for (i = 0; i < DIM1; i++)
+            array_data[j][i] = (i + j) + 1;
+    }
+
+	/* define the location, pattern, and size of the data set */
+    for (i = 0; i < rank; i++) 
+    {
+        start[i] = 0;
+    }
+	edges[0] = DIM0; /* 10 */
+	edges[1] = DIM1; /* 5 */
+
+    if ( SDwritedata(sds_id, start, NULL, edges, (VOIDP)array_data)==FAIL) 
+        goto error;
+
+	/* terminate access to the datasets and SD interface */
+    if ( SDendaccess(sds_id)==FAIL) 
+        goto error;
+    if ( SDend(sd_id)==FAIL) 
+        goto error;
+   
+    /* append data */
+	if (( sd_id = SDstart(file_name, DFACC_WRITE))==FAIL) 
+        goto error;
+   	
+    if ((sds_idx = SDnametoindex (sd_id, "data1"))==FAIL) 
+        goto error;
+    if ((sds_id = SDselect (sd_id, sds_idx))==FAIL) 
+        goto error;
+  
+    /* store array values to be appended */
+    for (i = 0; i < DIM1; i++)
+        append_data[i] = i + 1;
+    
+   	/* define the location of the append */
+    for (n = 0; n < ADD_ROWS; n++)
+    {
+        start[0] = DIM0 + n;   /* 10 */
+        start[1] = 0;
+        edges[0] = 1;          /* 1 row at a time */
+        edges[1] = DIM1;       /* 5 elements */
+        
+        /* append data to file */
+        if ( SDwritedata (sds_id, start, NULL, edges, (VOIDP) append_data)==FAIL) 
+            goto error;
+
+    }
+
+    
+    /* terminate access */
+    if ( SDendaccess (sds_id)==FAIL) 
+        goto error;
+    if ( SDend (sd_id)==FAIL) 
+        goto error;
+  
+    return SUCCEED;
+    
+error:
+    
+    printf("Error...Exiting...\n");
+    
+    return FAIL;
+
+
+}
+
+#if 0
+int do_lone(char* file_name)
+{
+    char    sds_name[]  = "lone";
+    int32   rank        = 1;
+    int32   dim_sds[1]  = {5};             /* dimension of the data set */
+    int32   data[5]     = {1, 2, 3, 4, 5};
+    int32   start[1];                      /* start position to write for each dimension */
+    int32   edges[1];                      /* number of elements to be written along each dimension */
+    int32   sds_id;
+    int32   dim_id;
+    int32   sd_id;
+    
+    sd_id  = SDstart(file_name, DFACC_CREATE);
+    
+    /* create the SDS */
+    if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
+    {
+        printf( "Could not create SDS <%s>\n",sds_name);
+        goto fail;
+    }
+    
+    dim_id = SDgetdimid(sds_id, 0);
+    SDsetdimname(dim_id, sds_name);
+
+    /* define the location and size of the data to be written to the data set */
+    start[0] = 0;
+    edges[0] = 5;
+    
+    /* write the stored data to the data set */
+    if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL)
+    {
+        printf( "Failed to set write for SDS <%s>\n", sds_name);
+        goto fail;
+    } 
+    
+    
+    SDendaccess(sds_id);
+    SDend(sd_id);
+    
+    return SUCCEED;
+
+fail:
+    SDend(sd_id);
+    return FAIL;
+}
+#endif
+

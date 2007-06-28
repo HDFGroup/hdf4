@@ -37,7 +37,6 @@ char    *progname;
 #define HDIFF_TSTSTR2    "hdiff hrepacktest2.hdf hrepacktest2_out.hdf"
 
 
-static int do_big_file(void);
 
 
 /*-------------------------------------------------------------------------
@@ -45,7 +44,7 @@ static int do_big_file(void);
  *
  * Purpose: test program for hrepack
  *
- * A)This program writes several HDF objects to the file FILENAME
+ * A)This program writes several HDF objects to the file HREPACK_FILE1
  *   The image data consists of realistic data read from the files DATA_FILE1
  *   (8bit image) , DATA_FILE2 (24bit image, pixel interlace) and
  *    DATA_FILE3 (24bit image, plane interlace)
@@ -57,11 +56,11 @@ static int do_big_file(void);
  *  5) global and local attributes
  *  6) labels and annotations
  *
- * B) Then several calls are made to hrepack, in each call the FILENAME_OUT is 
+ * B) Then several calls are made to hrepack, in each call the HREPACK_FILE1_OUT is 
  *  generated
  *
  * C) In each test the hdiff utility is called to compare the files 
- *  FILENAME and FILENAME_OUT
+ *  HREPACK_FILE1 and HREPACK_FILE1_OUT
  *
  * D) In each test the verifiy_comp_chunk function is called to compare 
  *  the input and output compression and chunking parameters
@@ -106,14 +105,14 @@ int main(void)
  */
       
  /* create a HDF file */
- if ((file_id = Hopen (FILENAME, DFACC_CREATE, (int16)0))<0)
+ if ((file_id = Hopen (HREPACK_FILE1, DFACC_CREATE, (int16)0))<0)
  {
-  printf("Error: Could not create file <%s>\n",FILENAME);
+  printf("Error: Could not create file <%s>\n",HREPACK_FILE1);
   return 1;
  }
 
  /* initialize the SD interface */
- if ((sd_id = SDstart (FILENAME, DFACC_RDWR))== FAIL)
+ if ((sd_id = SDstart (HREPACK_FILE1, DFACC_RDWR))== FAIL)
  {
   printf("Error: Could not start SD interface\n");
   return 1;
@@ -195,19 +194,19 @@ int main(void)
  /* add non chunked, non compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_NONE;
- if (add_sd(FILENAME,file_id,sd_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL)<0)
   return 1;
- if (add_sd(FILENAME,file_id,sd_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL)<0)
   return 1;
- if (add_sd(FILENAME,file_id,sd_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL)<0)
   return 1;
- if (add_sd(FILENAME,file_id,sd_id,"dset4",0,chunk_flags,comp_type,NULL)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset4",0,chunk_flags,comp_type,NULL)<0)
   return 1;
- if (add_sd(FILENAME,file_id,sd_id,"dset5",0,chunk_flags,comp_type,NULL)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset5",0,chunk_flags,comp_type,NULL)<0)
   return 1;
- if (add_sd(FILENAME,file_id,sd_id,"dset6",0,chunk_flags,comp_type,NULL)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset6",0,chunk_flags,comp_type,NULL)<0)
   return 1;
- if (add_sd3d(FILENAME,file_id,sd_id,"dset7",0,chunk_flags,comp_type,NULL)<0)
+ if (add_sd3d(HREPACK_FILE1,file_id,sd_id,"dset7",0,chunk_flags,comp_type,NULL)<0)
   return 1;
 
 
@@ -222,12 +221,12 @@ int main(void)
  /* add a chunked, non compressed sds */
  chunk_flags = HDF_CHUNK;
  comp_type   = COMP_CODE_NONE;
- add_sd(FILENAME,file_id,sd_id,"dset_chunk",0,chunk_flags,comp_type,NULL);
+ add_sd(HREPACK_FILE1,file_id,sd_id,"dset_chunk",0,chunk_flags,comp_type,NULL);
 
  /* add a chunked-compressed sds with SDsetchunk */
  chunk_flags = HDF_CHUNK | HDF_COMP;
  comp_type   = COMP_CODE_DEFLATE;
- if (add_sd(FILENAME,file_id,sd_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info)<0)
   return 1;
 
 /*-------------------------------------------------------------------------
@@ -238,7 +237,7 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_DEFLATE;
- if (add_sd(FILENAME,file_id,sd_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info)<0)
   return 1;
 
 /*-------------------------------------------------------------------------
@@ -256,7 +255,7 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_RLE;
- if (add_sd(FILENAME,file_id,sd_id,"dset_rle",0,chunk_flags,comp_type,&comp_info)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_rle",0,chunk_flags,comp_type,&comp_info)<0)
   return 1;
 
 /*-------------------------------------------------------------------------
@@ -267,7 +266,7 @@ int main(void)
  /* add some non chunked, compressed sds */
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SKPHUFF;
- if (add_sd(FILENAME,file_id,sd_id,"dset_huff",0,chunk_flags,comp_type,&comp_info)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_huff",0,chunk_flags,comp_type,&comp_info)<0)
   return 1;
 
 #if defined (H4_HAVE_LIBSZ)
@@ -278,10 +277,10 @@ int main(void)
  if (SZ_encoder_enabled()) {
  chunk_flags = HDF_NONE;
  comp_type   = COMP_CODE_SZIP;
- if (add_sd(FILENAME,file_id,sd_id,"dset_szip",0,chunk_flags,comp_type,&comp_info)<0)
+ if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_szip",0,chunk_flags,comp_type,&comp_info)<0)
   return 1;
   
- if (add_sd_szip_all(FILENAME,file_id,sd_id,0)<0)
+ if (add_sd_szip_all(HREPACK_FILE1,file_id,sd_id,0)<0)
   return 1;
  }
  
@@ -292,10 +291,10 @@ int main(void)
  *-------------------------------------------------------------------------
  */
  /* Pixel Interlacing */
- if (add_r24(DATA_FILE2,FILENAME,file_id,DFIL_PIXEL,vgroup_img_id)<0)
+ if (add_r24(DATA_FILE2,HREPACK_FILE1,file_id,DFIL_PIXEL,vgroup_img_id)<0)
   return 1; 
  /* Scan Plane Interlacing */
- if (add_r24(DATA_FILE3,FILENAME,file_id,DFIL_PLANE,vgroup_img_id)<0)
+ if (add_r24(DATA_FILE3,HREPACK_FILE1,file_id,DFIL_PLANE,vgroup_img_id)<0)
   return 1;  
 
 
@@ -303,7 +302,7 @@ int main(void)
  * add some RIS8 images to the file
  *-------------------------------------------------------------------------
  */ 
- if (add_r8(DATA_FILE1,FILENAME,file_id,vgroup_img_id)<0)
+ if (add_r8(DATA_FILE1,HREPACK_FILE1,file_id,vgroup_img_id)<0)
   return 1; 
 
 /*-------------------------------------------------------------------------
@@ -382,7 +381,7 @@ int main(void)
  * add some global attributes to the file
  *-------------------------------------------------------------------------
  */ 
- if (add_glb_attrs(FILENAME,file_id,sd_id,gr_id)<0)
+ if (add_glb_attrs(HREPACK_FILE1,file_id,sd_id,gr_id)<0)
   return 1; 
 
 /*-------------------------------------------------------------------------
@@ -396,7 +395,7 @@ int main(void)
  * add a palette to the file
  *-------------------------------------------------------------------------
  */ 
- if (add_pal(FILENAME)<0)
+ if (add_pal(HREPACK_FILE1)<0)
   return 1; 
 
 
@@ -404,8 +403,9 @@ int main(void)
  * generate a big file for hyperslab reading
  *-------------------------------------------------------------------------
  */ 
- if (do_big_file()<0)
+ if (do_big_file(HREPACK_FILE2)<0)
   return 1; 
+
 
 
 /*-------------------------------------------------------------------------
@@ -449,11 +449,11 @@ int main(void)
 
 /*-------------------------------------------------------------------------
  * TESTS:
- * 1) zip FILENAME with some compression/chunking options
+ * 1) zip HREPACK_FILE1 with some compression/chunking options
  * 2) use the hdiff utility to compare the input and output file; it returns RET==0
  *    if the high-level objects have the same data
  * 3) use the API functions SD(GR)getcompress, SD(GR)getchunk to verify
- *    the compression/chunking input on the otput file
+ *    the compression/chunking input on the output file
  *-------------------------------------------------------------------------
  */
 
@@ -478,13 +478,13 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset7:HUFF 1",&options);
  hrepack_addchunk("dset7:10x8x6",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
   goto out;
@@ -502,13 +502,13 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:RLE",&options);
  hrepack_addchunk("dset4:10x8",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
   goto out;
@@ -525,13 +525,13 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:GZIP 6",&options);
  hrepack_addchunk("dset4:10x8",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
   goto out;
@@ -551,13 +551,13 @@ int main(void)
  hrepack_init (&options,verbose);
  hrepack_addcomp("dset4:SZIP 8,EC",&options);
  hrepack_addchunk("dset4:10x8",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
   goto out;
@@ -585,13 +585,13 @@ int main(void)
  hrepack_addcomp("dset_chunk:NONE",&options);
  hrepack_addchunk("dset_chunk_comp:NONE",&options);
  hrepack_addchunk("dset_chunk:NONE",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
   goto out;
@@ -622,13 +622,13 @@ int main(void)
  hrepack_addchunk("dset4:10x8",&options);
  hrepack_addchunk("dset5:10x8",&options);
  hrepack_addchunk("dset6:10x8",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
   goto out;
@@ -666,13 +666,13 @@ int main(void)
    hrepack_addcomp("dset7:SZIP 4,EC",&options);
  }
 #endif
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
   goto out;
@@ -700,13 +700,13 @@ int main(void)
  hrepack_addcomp("*:GZIP 1",&options);
  hrepack_addchunk("dset_chunk_comp:NONE",&options);
  hrepack_addchunk("dset_chunk:NONE",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
@@ -725,13 +725,13 @@ int main(void)
  TESTING("hrepack -c *:10x8");
  hrepack_init (&options,verbose);
  hrepack_addchunk("*:10x8",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
   goto out;
@@ -747,13 +747,13 @@ int main(void)
  TESTING("hrepack -t *:GZIP 1");
  hrepack_init (&options,verbose);
  hrepack_addcomp("*:GZIP 1",&options);
- if (hrepack(FILENAME,FILENAME_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(FILENAME,FILENAME_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
@@ -768,13 +768,13 @@ int main(void)
 
  TESTING("hyperslab repacking");
  hrepack_init (&options,verbose);
- if (hrepack(FILENAME2,FILENAME2_OUT,&options)<0)
+ if (hrepack(HREPACK_FILE2,HREPACK_FILE2_OUT,&options)<0)
   goto out;
  hrepack_end (&options);
  PASSED();
 
  TESTING(HDIFF_TSTSTR2);
- if (hdiff(FILENAME2,FILENAME2_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE2,HREPACK_FILE2_OUT,&fspec) == 1)
   goto out;
  PASSED();
  
@@ -793,109 +793,4 @@ out:
 }
 
 
-/*-------------------------------------------------------------------------
- * write a big file for hyperslab reading
- *-------------------------------------------------------------------------
- */
 
-#define DIM0     10
-#define DIM1     10
-#define ADD_ROWS ( 1024 * 1024 - 10 ) / 10 
-
-
-static int do_big_file(void) 
-{
-
-    int32 sd_id;         /* SD interface identifier */
-    int32 sds_id;        /* SDS identifier */
-    int32 dims[2];       /* sizes of the SDS dimensions */
-    int32 start[2];      /* start location to write */
-    int32 edges[2];      /* number of elements to write */
-
-    int32 sds_idx;
-    int32 rank;
-	uint8 array_data[DIM0][DIM1];
-    uint8 append_data[DIM1];
-	intn  i, j, n;
-
-	/* Create a file and initiate the SD interface. */
-    if ((sd_id = SDstart(FILENAME2, DFACC_CREATE))==FAIL) 
-        goto error;
-  
-	/* Define the rank and dimensions of the data set to be created. */
-	rank = 2;
-	dims[0] = SD_UNLIMITED;
-	dims[1] = DIM1;
-
-	/* Create 2 data sets */
-	if ((sds_id = SDcreate(sd_id, "data1", DFNT_UINT8, rank, dims))==FAIL) 
-        goto error;
-  
-	/* initial values */
-    for (j = 0; j < DIM0; j++) 
-    {
-        for (i = 0; i < DIM1; i++)
-            array_data[j][i] = (i + j) + 1;
-    }
-
-	/* define the location, pattern, and size of the data set */
-    for (i = 0; i < rank; i++) 
-    {
-        start[i] = 0;
-    }
-	edges[0] = DIM0; /* 10 */
-	edges[1] = DIM1; /* 5 */
-
-    if ( SDwritedata(sds_id, start, NULL, edges, (VOIDP)array_data)==FAIL) 
-        goto error;
-
-	/* terminate access to the datasets and SD interface */
-    if ( SDendaccess(sds_id)==FAIL) 
-        goto error;
-    if ( SDend(sd_id)==FAIL) 
-        goto error;
-   
-    /* append data */
-	if (( sd_id = SDstart(FILENAME2, DFACC_WRITE))==FAIL) 
-        goto error;
-   	
-    if ((sds_idx = SDnametoindex (sd_id, "data1"))==FAIL) 
-        goto error;
-    if ((sds_id = SDselect (sd_id, sds_idx))==FAIL) 
-        goto error;
-  
-    /* store array values to be appended */
-    for (i = 0; i < DIM1; i++)
-        append_data[i] = i + 1;
-    
-   	/* define the location of the append */
-    for (n = 0; n < ADD_ROWS; n++)
-    {
-        start[0] = DIM0 + n;   /* 10 */
-        start[1] = 0;
-        edges[0] = 1;          /* 1 row at a time */
-        edges[1] = DIM1;       /* 5 elements */
-        
-        /* append data to file */
-        if ( SDwritedata (sds_id, start, NULL, edges, (VOIDP) append_data)==FAIL) 
-            goto error;
-
-    }
-
-    
-    /* terminate access */
-    if ( SDendaccess (sds_id)==FAIL) 
-        goto error;
-    if ( SDend (sd_id)==FAIL) 
-        goto error;
-  
-    return SUCCEED;
-    
-error:
-    
-    printf("Error...Exiting...\n");
-    
-    return FAIL;
-
-
-}
