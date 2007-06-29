@@ -44,6 +44,9 @@ else
                 if( grep -s 'Absoft' $tmpfile > /dev/null) then
                     F77_BASENAME=f95
                 fi 
+                if( grep -s 'g95' $tmpfile > /dev/null) then
+                    F77_BASENAME=g95
+                fi 
                 if( grep -s 'pgf90' $tmpfile > /dev/null) then
                     F77_BASENAME=pgf90
                 fi 
@@ -148,6 +151,14 @@ case $F77_BASENAME in
   f95)
     CFLAGS="$CFLAGS -DH4_ABSOFT"
     FFLAGS="$FFLAGS -YEXT_NAMES=UCS"
+    DEBUG_FFLAGS="-g"
+    PROD_FFLAGS="-O"
+    PROFILE_FFLAGS="-pg"
+    ;;
+
+  g95)
+    CFLAGS="$CFLAGS"
+    FFLAGS="$FFLAGS -i4"
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O"
     PROFILE_FFLAGS="-pg"
