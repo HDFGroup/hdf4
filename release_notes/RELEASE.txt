@@ -78,7 +78,9 @@ New Features and Changes:
 
     Utilities
     ========= 
-         - hdiff reads data by hyperslabs. This feature was added to handle very large 
+         - hrepack repacks by hyperslabs for large (non compressed) datasets.
+           PVN - 2007/7/10
+         - hdiff allows reading by hyperslabs. This feature was added to handle very large 
             datasets, where available memory is a isssue. PVN - 2007/6/13
          - hdiff now shows indices in multidimensional array notation. PVN - 2007/4/5
          - hdiff now shows the name of the array when printing differences. PVN - 2007/4/5
