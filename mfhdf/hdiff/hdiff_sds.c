@@ -325,8 +325,9 @@ uint32 diff_sds(int32 sd1_id,
  {
      size_t        p_type_nbytes = eltsz;   /*size of type */
      uint32        p_nelmts = nelms;        /*total selected elmts */
-     int32         elmtno;                  /*counter  */
+     uint32        elmtno;                  /*counter  */
      int           carry;                   /*counter carry value */
+
      
      /* stripmine info */
      int32         sm_size[MAX_VAR_DIMS];   /*stripmine size */

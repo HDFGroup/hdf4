@@ -22,8 +22,10 @@
 #include "hrepack_opttable.h"
 #include "hrepack_dim.h"
 
+
 #define H4TOOLS_BUFSIZE        (1024 * 1024)
 #define H4TOOLS_MALLOCSIZE     (1024 * 1024)
+
 
 /*-------------------------------------------------------------------------
  * Function: copy_sds
@@ -519,7 +521,10 @@ int copy_sds(int32 sd_in,
        
        need = (size_t)(nelms * eltsz); /* bytes needed */
        
-       if ( need < H4TOOLS_MALLOCSIZE)
+       if ( need < H4TOOLS_MALLOCSIZE 
+            ||
+            /* for compressed datasets do one operation I/O, but allow hyperslab for chunked */
+            (chunk_flags==HDF_NONE && comp_type>COMP_CODE_NONE))
        {
            buf = (VOIDP)HDmalloc(need);
        }
@@ -563,7 +568,7 @@ int copy_sds(int32 sd_in,
        {
            size_t        p_type_nbytes = eltsz;   /*size of type */
            uint32        p_nelmts = nelms;        /*total selected elmts */
-           int32         elmtno;                  /*counter  */
+           uint32        elmtno;                  /*counter  */
            int           carry;                   /*counter carry value */
            
            /* stripmine info */
