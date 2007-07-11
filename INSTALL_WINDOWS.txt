@@ -159,10 +159,12 @@ Notes:
 
 Building Instructions:
 
-   1. Unpack Win32.zip in directory HDF42r1\. 
+   1. Run batch file copy_hdf.bat
 
-      Note: Please select "Yes to All" when you are asked if you would like
-      to overwrite files.
+      Go to  c:\MyHDFstuff\windows and run copy_hdf.bat. This process will 
+      copy all the necessary batch files, Windows specific source codes and 
+      text files saved under c:\MyHDFstuff\windows directory to the 
+      corresponding directories under MyHDFstuff.
 
    2. Invoke Microsoft Visual C++ 6.0, go to "File" and select the
       "Open Workspace" option. 
@@ -883,12 +885,8 @@ b. Set up external libraries and headers paths for Intel 8.1
 
          This error message can be ignored.  "test.exe" and 
          "util.exe" are never created, so it is OK. 
-         
-      c. You need to unpack Win32.zip in directory HDF42r1\ again
-         if you rebuild or clean any project as Intel compiler will
-         delete all *.bat and *.out files during the cleaning process.
-   
-      d. HDF4 C examples should also be converted to use Intel(R) C++
+            
+      c. HDF4 C examples should also be converted to use Intel(R) C++
          project system if HDF4 C libraries are built with Intel 8.1
          compiler.
 
@@ -947,29 +945,25 @@ b. Set up external libraries and headers paths for Intel 8.1
          This error message can be ignored.  "test.exe" and 
          "util.exe" are never created, so it is OK. 
  
-      d. You need to unpack Win32.zip in directory HDF42r1\ again
-         if you rebuild or clean any project as Intel compiler will
-         delete all *.bat and *.out files during the cleaning process.
-
-      e. HDF4 C examples should also be converted t use Intel(R) C++
+      d. HDF4 C examples should also be converted t use Intel(R) C++
          project system if HDF4 C libraries are built with Intel 8.1
          compiler.
 
-      f. You should extract Compaq Visual Fortran Project Items from 
+      e. You should extract Compaq Visual Fortran Project Items from 
          HDF4 Fortran examples if HDF4 Fortran libraries are built with
          Intel 8.1 compiler.
 
-      g. For all HDF4 Fortran examples projects, right click
+      f. For all HDF4 Fortran examples projects, right click
          Properties, in "Configuration:" text box, choose "Debug",
          Go to Linker-->Input-->Additional Dependencies,
          replace hm421d.lib and hd421d.lib with hdfd.lib and mfhdfd.lib.
 
-      h. For all HDF4 Fortran examples projects, right click
+      g. For all HDF4 Fortran examples projects, right click
          Properties, in "Configuration:" text box, choose "Release",
          Go to Linker-->Input-->Additional Dependencies,
          replace hm421.lib and hd421.lib with hdf.lib and mfhdf.lib.
 
-      i. To use HDF4 fortran libraries built with Intel 8.1 compiler,
+      h. To use HDF4 fortran libraries built with Intel 8.1 compiler,
          c:\MyHDFstuff\HDF42r1\windows\lib\release\singlethreaded\hdf.lib
          c:\MyHDFstuff\HDF42r1\windows\lib\release\singlethreaded\mfhdf.lib
          c:\MyHDFstuff\HDF42r1\windows\lib\debug\singlethreaded\hdfd.lib
@@ -987,11 +981,8 @@ with using the Visual C++ Development Environment.
 
 Project name and location issues: 
 
-   The file Win32.nofortran.zip is now depreciated.  If building
-   HDF4 without fortran support, use Win32.zip.
-
-   The file in Win32.zip must end up in the
-   HDF42r1\ directory installed by HDF4.2r1.tar.gz.
+   The file Win32.zip is now depreciated.  Instead, use copy_hdf.BAT in the 
+   .\windows directory.
 
    If you must install all.dsw and all.dsp in another directory,
    relative to HDF42r1\ , you will be asked to locate all sub-project
@@ -1119,43 +1110,13 @@ Step 1. Set path for Microsoft Visual C++ 6.0 and Visual Fortran 6.0
    C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin\)
    into "Variable Value" and click "OK".
   
-Step 2. Unpack Win32.zip
+Step 2. Run batch file copy_hdf.bat
 
-   Option A: Use Winzip
-      Unpack Win32.zip with WinZip into HDF42r1\
-      directory. 
-
-      Note: Please select "Yes" or "Yes to All" when you are asked
-            to confirm file overwrite by WinZip.
-
-   Option B: Use 7-Zip from Command line
-   
-      7-Zip is a free, open-source file archiver which supports
-      unpacking zip file from the command line.  To use 7-Zip:
-
-      Step 1) Install 7-Zip
-      
-         7-zip is available online at http://www.7-zip.org/
-         Please install the latest version available
-     
-      Step 2) Add 7-Zip to Path
-      
-         Open "System" in Control Panel.
-   
-         On the "Advanced" tab, click "Environment Variables", click "Path"
-         in the "System variables" box, then click "Edit" and add your 7-Zip
-         path (For example, C:\Program Files\7-Zip) into "Variable Value" 
-         and click "OK".
-      
-      Step 3) Unpack Win32.zip on command line
-      
-         Open a command prompt and navigate the the directory
-         C:\MyHDFstuff\HDF42r1.  Then run the command:
-         
-            7z x Win32.zip -o.\ -y
-
-        This will extract all windows files into the c:\MyHDFstuff\HDF42r1
-        directory.
+      In a command prompt, cd to  c:\MyHDFstuff\windows and execute
+      copy_hdf.bat. This will copy all the necessary batch files, windows 
+      specific source codes and text files saved under 
+      c:\MyHDFstuff\windows directory to the corresponding directories 
+      under MyHDFstuff.
 
 Step 3. Build and Test
 

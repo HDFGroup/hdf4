@@ -1,0 +1,1295 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "all"=".\all.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name dllcdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllhdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllnctest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllxdrtest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf_ap
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_ap
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name getopt
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name gif2hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf24to8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf2gif
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf2jpeg
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf8to24
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfcomp
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfed
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfimport
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfimporttest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfls
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfpack
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdftopal
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdftor8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfunpac
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdiff
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdifftst
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdp
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hrepack
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hrepacktst
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name jpeg2hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ncdump
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ncgen
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name nctest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name paltohdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name r8tohdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ristosds
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name testhdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name util
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name vmake
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name vshow
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdr
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdr_for_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdrtest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dlltesthdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name cdftest
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "cdftest"=".\cdftest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "ctest0"=".\ctest0.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dllcdftest"=".\dllcdftest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dllfortestf"=".\dllfortestf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_fortrandll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dlllibtest_fcstub
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf_fortrandll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dllhdftest"=".\dllhdftest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dllhdftestf"=".\dllhdftestf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_fortrandll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_fortrandll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dlllibtest_fcstub"=".\dlllibtest_fcstub.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "dllnctest"=".\dllnctest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dlltesthdf"=".\dlltesthdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dllxdrtest"=".\dllxdrtest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdr_for_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "fortestf"=".\fortestf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_fortran
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_fortran
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libtest_fcstub
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "getopt"=".\getopt.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "gif2hdf"=".\gif2hdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf"=".\proj\hdf\hdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "hdf24to8"=".\hdf24to8.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf2gif"=".\hdf2gif.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf2jpeg"=".\hdf2jpeg.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf8to24"=".\hdf8to24.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf_ap"=".\hdf_ap.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name test
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name util
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf_dll"=".\proj\hdf_dll\hdf_dll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "hdf_fcstub"=".\proj\hdf_fcstub\hdf_fcstub.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf_fcstubdll"=".\proj\hdf_fcstubdll\hdf_fcstubdll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf_fortran"=".\proj\hdf_fortran\hdf_fortran.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_fcstub
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdf_fortrandll"=".\proj\hdf_fortrandll\hdf_fortrandll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_fcstubdll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfcomp"=".\hdfcomp.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfed"=".\hdfed.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfimport"=".\hdfimport.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfimporttest
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfimporttest"=".\hdfimporttest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfls"=".\hdfls.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfpack"=".\hdfpack.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdftest"=".\hdftest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdftestf"=".\hdftestf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_fortran
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_fortran
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdftopal"=".\hdftopal.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdftor8"=".\hdftor8.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfunpac"=".\hdfunpac.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdiff"=".\hdiff.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name getopt
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdifftst"=".\hdifftst.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdp"=".\hdp.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hrepack"=".\hrepack.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hrepacktst"=".\hrepacktst.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "jpeg2hdf"=".\jpeg2hdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "libtest_fcstub"=".\libtest_fcstub.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "mfhdf"=".\proj\mfhdf\mfhdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name xdr
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mfhdf_ap"=".\mfhdf_ap.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name cdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdp
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ncdump
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ncgen
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdrtest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name nctest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllcdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllhdftest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllnctest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dlltesthdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllxdrtest
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mfhdf_dll"=".\proj\mfhdf_dll\mfhdf_dll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name xdr_for_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mfhdf_fcstub"=".\proj\mfhdf_fcstub\mfhdf_fcstub.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mfhdf_fcstubdll"=".\proj\mfhdf_fcstubdll\mfhdf_fcstubdll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mfhdf_fortran"=".\proj\mfhdf_fortran\mfhdf_fortran.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_fcstub
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "mfhdf_fortrandll"=".\proj\mfhdf_fortrandll\mfhdf_fortrandll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_fcstubdll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "ncdump"=".\ncdump.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name getopt
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "ncgen"=".\ncgen.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name getopt
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "nctest"=".\nctest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "paltohdf"=".\paltohdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "r8tohdf"=".\r8tohdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "ristosds"=".\ristosds.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test"=".\test.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name testhdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "testhdf"=".\testhdf.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "util"=".\util.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf24to8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf2jpeg
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf8to24
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfcomp
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfls
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfpack
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdftopal
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdftor8
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfunpac
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfed
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name jpeg2hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name paltohdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name r8tohdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name ristosds
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name vmake
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name vshow
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name gif2hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf2gif
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdiff
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdifftst
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfimport
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfimporttest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hrepack
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hrepacktst
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "vmake"=".\vmake.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "vshow"=".\vshow.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "xdr"=".\proj\xdr\xdr.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "xdr_for_dll"=".\proj\xdr_for_dll\xdr_for_dll.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "xdrtest"=".\xdrtest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name xdr
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
