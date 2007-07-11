@@ -2,12 +2,8 @@
          HDF4 Build and Install Instructions for Cygwin
 ************************************************************************
 
-Known Problems:
----------------
-
-ONLY HDF4 C library is supported on Cygwin on September 9, 2005. This 
-document is a instruction on how to build, test and install HDF4 C 
-libary on Cygwin.  See detailed information in hdf4/INSTALL. 
+This document is a instruction on how to build, test and install HDF4 libary on 
+Cygwin.  See detailed information in hdf4/INSTALL. 
 
 Preconditions:
 --------------
@@ -30,12 +26,12 @@ Preconditions:
 
 2. Compilers Installed
 
-   2.1 C/C++ Compilers Supported
+   2.1 Compilers Supported
 
        gcc-3.4.4 is included in Cygwin, which includes: 
        gcc    : GNU C compiler
        gcc-g++: GNU C++ compiler
-       gcc-g77: GNU Fortran 77 compiler
+       g95    : GNU Fortran 95 compiler
 
    2.2 Using Compilers Not Supported
        
@@ -100,12 +96,16 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r1.
 
 3. To configure 
      
-       ./configure --disable-fortran 
+       ./configure <--disable-fortran> 
                    --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
                    <--with-szlib=/path_to_SZIP_install_directory>
                    --prefix=/path_to_HDF4_install_directory
 
+       * When building Fortran libraries, the Fortran compiler may be specified
+         by setting F77 in the environment prior to running configure.  Also,
+         you must set the environment variable EXEEXT as empty.  This is due to
+         a cygwin-specific bug in configure.
        * Please note that when szlib option is not used, SZIP Library will not
          be configured in and SZIP compression will not be enabled.
        * If your system has ZLIB and/or JPEG libraries installed under a
@@ -123,7 +123,10 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r1.
 
   4.2 To build and run the tests
 
-        make check >& check.out
+        make -e check >& check.out
+        
+      Make sure the '-e' flag is specified, specifically if building Fortran
+      libraries.  This is so the "EXEEXT" variable is detected by make.
 
 5. To Install:
 
