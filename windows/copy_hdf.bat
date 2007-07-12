@@ -17,8 +17,13 @@
 :: Purpose     : Copy all Files in the current directory to its parent directory
 ::
 :: Written By  : Scott Wegner, July 11, 2007
-:: Last Update : July 11, 2007
+:: Last Update : July 12, 2007
 
 pushd
+
 xcopy /e /i /y * ..\
+
+:: Remove this file from files which were just copied.
+del ..\%~nx0
+
 popd

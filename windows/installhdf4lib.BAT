@@ -14,12 +14,12 @@ mkdir lib
 mkdir include
 
 cd lib
-copy ..\..\..\Windows\lib\debug\singlethreaded\*.lib .
+copy ..\..\..\proj\lib\debug\singlethreaded\*.lib .
 
 
 cd ..\dll
-copy ..\..\..\Windows\dll\debug\*.DLL .
-copy ..\..\..\Windows\lib\debug\multithreaded\*.lib .
+copy ..\..\..\proj\dll\debug\*.DLL .
+copy ..\..\..\proj\lib\debug\multithreaded\*.lib .
 
 
 cd ..\include
@@ -67,11 +67,11 @@ mkdir include
 
 
 cd lib
-copy ..\..\..\Windows\lib\release\singlethreaded\*.lib .
+copy ..\..\..\proj\lib\release\singlethreaded\*.lib .
 
 cd ..\dll
-copy ..\..\..\Windows\dll\release\*.DLL .
-copy ..\..\..\Windows\lib\release\multithreaded\*.lib .
+copy ..\..\..\proj\dll\release\*.DLL .
+copy ..\..\..\proj\lib\release\multithreaded\*.lib .
 
 
 cd ..\include
