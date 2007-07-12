@@ -141,7 +141,6 @@ windows/fortran/examples/sh_dimtest/sh_dimtest.dsp -text
 windows/fortran/examples/unltest/unltest.dsp -text
 windows/getopt.dsp -text
 windows/gif2hdf.dsp -text
-windows/hdf/jpeg/jconfig.h -text
 windows/hdf/src/h4config.h -text
 windows/hdf/src/hdfi.h -text
 windows/hdf/src/hproto.h -text

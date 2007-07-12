@@ -1248,16 +1248,12 @@
 ./windows/fortran/examples/sh_dimtest/sh_dimtest.dsp
 ./windows/fortran/examples/unltest/unltest.dsp
 
-
-./windows/hdf/jpeg/jconfig.h
-
 ./windows/hdf/src/h4config.h
 ./windows/hdf/src/hdfi.h
 ./windows/hdf/src/hproto.h
 
 ./windows/hdf/test/fortest.h
 ./windows/hdf/util/hdfed.out1
-
 
 ./windows/hdf/util/testfiles/head.r24
 ./windows/hdf/util/testfiles/head.r8
