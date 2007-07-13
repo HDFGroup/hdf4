@@ -21,7 +21,7 @@
 
 pushd
 
-xcopy /e /i /y * ..\
+xcopy /e /i /y . ..\
 
 :: Remove this file from files which were just copied.
 del ..\%~nx0
