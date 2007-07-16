@@ -385,27 +385,6 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI int32 HDspaceleft
                 (void);
 
-#if defined(MALLOC_CHECK) || defined(_HDFDLL_)
-    HDFPUBLIC extern void * HDmalloc
-                (uint32 qty);
-
-    HDFPUBLIC extern void * HDrealloc
-                (void * where, uint32 qty);
-
-    HDFPUBLIC extern void * HDcalloc
-                (uint32 n, uint32 size);
-
-    HDFPUBLIC extern void HDfree
-                (void * ptr);
-
-#endif /* defined MALLOC_CHECK */
-
-#if defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined SUN || defined IRIX || defined _HDFDLL_
-    HDFPUBLIC extern char *HDstrdup
-                (const char *s);
-
-#endif
-
     HDFLIBAPI intn HDc2fstr
                 (char * str, intn len);
 

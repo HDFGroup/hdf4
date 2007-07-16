@@ -199,7 +199,6 @@ windows/proj/mfhdf_fcstub/mfhdf_fcstub.dsp -text
 windows/proj/mfhdf_fcstubdll/mfhdf_fcstubdll.dsp -text
 windows/proj/mfhdf_fortran/mfhdf_fortran.dsp -text
 windows/proj/mfhdf_fortrandll/mfhdf_fortrandll.dsp -text
-windows/proj/src/HDFMemoryOverride.c -text
 windows/proj/xdr/xdr.dsp -text
 windows/proj/xdr_for_dll/xdr_for_dll.dsp -text
 windows/r8tohdf.dsp -text

@@ -110,12 +110,12 @@ LINK32=link.exe
 # PROP Intermediate_Dir "AlphaDbg"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /MDd /c
-# ADD CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /MDd /c
 F90=df.exe
 # ADD BASE F90 /include:"hdf_dll_/"
 # ADD F90 /compile_only /define:"BUILD_HDF_DLL" /include:"AlphaDbg/" /libs:dll /threads
+CPP=cl.exe
+# ADD BASE CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /MDd /c
+# ADD CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /MDd /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
@@ -144,12 +144,12 @@ LINK32=link.exe
 # PROP Intermediate_Dir "AlphaRel"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /MD /Gt0 /W3 /GX /O2 /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /c
-# ADD CPP /nologo /MD /Gt0 /W3 /GX /O2 /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /c
 F90=df.exe
 # ADD BASE F90 /include:"hdf_dll0/"
 # ADD F90 /compile_only /define:"BUILD_HDF_DLL" /include:"AlphaRel/" /libs:dll /threads
+CPP=cl.exe
+# ADD BASE CPP /nologo /MD /Gt0 /W3 /GX /O2 /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /c
+# ADD CPP /nologo /MD /Gt0 /W3 /GX /O2 /I "..\..\hdf\jpeg" /I "..\..\hdf\zlib" /I "..\..\hdf\src" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "INTEL86" /D "DOS_FS" /D "_HDFDLL_" /D "_HDFLIB_" /YX /FD /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
@@ -201,7 +201,15 @@ SOURCE=..\..\hdf\src\dfan.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\hdf\src\dfconvrt.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\hdf\src\dfgr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\hdf\src\dfi.h
 # End Source File
 # Begin Source File
 
@@ -210,6 +218,10 @@ SOURCE=..\..\hdf\src\dfsd.h
 # Begin Source File
 
 SOURCE=..\..\hdf\src\dfstubs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\hdf\src\dfufp2i.h
 # End Source File
 # Begin Source File
 
@@ -233,11 +245,19 @@ SOURCE=..\..\hdf\src\mstdio.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\hdf\src\patchlevel.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\hdf\src\vattr.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\hdf\src\vg.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\hdf\src\vgint.h
 # End Source File
 # End Group
 # Begin Group "Source Files"
@@ -1542,7 +1562,6 @@ SOURCE=..\..\hdf\src\dfjpeg.c
 !ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaDbg"
 
 DEP_CPP_DFJPE=\
-	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\src\atom.h"\
 	"..\..\hdf\src\bitvect.h"\
 	"..\..\hdf\src\dfivms.h"\
@@ -1569,6 +1588,7 @@ DEP_CPP_DFJPE=\
 	"..\..\hdf\src\vgint.h"\
 	
 NODEP_CPP_DFJPE=\
+	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\jpeg\jerror.h"\
 	"..\..\hdf\jpeg\jmorecfg.h"\
 	"..\..\hdf\jpeg\jpegint.h"\
@@ -1584,7 +1604,6 @@ NODEP_CPP_DFJPE=\
 !ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaRel"
 
 DEP_CPP_DFJPE=\
-	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\src\atom.h"\
 	"..\..\hdf\src\bitvect.h"\
 	"..\..\hdf\src\dfivms.h"\
@@ -1611,6 +1630,7 @@ DEP_CPP_DFJPE=\
 	"..\..\hdf\src\vgint.h"\
 	
 NODEP_CPP_DFJPE=\
+	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\jpeg\jerror.h"\
 	"..\..\hdf\jpeg\jmorecfg.h"\
 	"..\..\hdf\jpeg\jpegint.h"\
@@ -2592,7 +2612,6 @@ SOURCE=..\..\hdf\src\dfunjpeg.c
 !ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaDbg"
 
 DEP_CPP_DFUNJ=\
-	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\src\atom.h"\
 	"..\..\hdf\src\bitvect.h"\
 	"..\..\hdf\src\dfivms.h"\
@@ -2619,6 +2638,7 @@ DEP_CPP_DFUNJ=\
 	"..\..\hdf\src\vgint.h"\
 	
 NODEP_CPP_DFUNJ=\
+	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\jpeg\jerror.h"\
 	"..\..\hdf\jpeg\jmorecfg.h"\
 	"..\..\hdf\jpeg\jpegint.h"\
@@ -2634,7 +2654,6 @@ NODEP_CPP_DFUNJ=\
 !ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaRel"
 
 DEP_CPP_DFUNJ=\
-	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\src\atom.h"\
 	"..\..\hdf\src\bitvect.h"\
 	"..\..\hdf\src\dfivms.h"\
@@ -2661,6 +2680,7 @@ DEP_CPP_DFUNJ=\
 	"..\..\hdf\src\vgint.h"\
 	
 NODEP_CPP_DFUNJ=\
+	"..\..\hdf\jpeg\jconfig.h"\
 	"..\..\hdf\jpeg\jerror.h"\
 	"..\..\hdf\jpeg\jmorecfg.h"\
 	"..\..\hdf\jpeg\jpegint.h"\
@@ -3395,91 +3415,6 @@ DEP_CPP_HDFAL=\
 	"..\..\hdf\src\vgint.h"\
 	
 NODEP_CPP_HDFAL=\
-	"..\..\hdf\src\api_adpt.h"\
-	"..\..\hdf\src\fmpio.h"\
-	"..\..\hdf\src\HDFIOTrace.h"\
-	"..\..\hdf\src\ProcIDs.h"\
-	".\ys\stat.h"\
-	".\ys\types.h"\
-	
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\src\HDFMemoryOverride.c
-
-!IF  "$(CFG)" == "hdf_dll - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "hdf_dll - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaDbg"
-
-DEP_CPP_HDFME=\
-	"..\..\hdf\src\atom.h"\
-	"..\..\hdf\src\bitvect.h"\
-	"..\..\hdf\src\dfivms.h"\
-	"..\..\hdf\src\dynarray.h"\
-	"..\..\hdf\src\hbitio.h"\
-	"..\..\hdf\src\hchunks.h"\
-	"..\..\hdf\src\hcomp.h"\
-	"..\..\hdf\src\hdf.h"\
-	"..\..\hdf\src\hdfi.h"\
-	"..\..\hdf\src\herr.h"\
-	"..\..\hdf\src\hfile.h"\
-	"..\..\hdf\src\hlimits.h"\
-	"..\..\hdf\src\hntdefs.h"\
-	"..\..\hdf\src\hproto.h"\
-	"..\..\hdf\src\hqueue.h"\
-	"..\..\hdf\src\htags.h"\
-	"..\..\hdf\src\linklist.h"\
-	"..\..\hdf\src\maldebug.h"\
-	"..\..\hdf\src\mcache.h"\
-	"..\..\hdf\src\mfgr.h"\
-	"..\..\hdf\src\tbbt.h"\
-	"..\..\hdf\src\trace.h"\
-	"..\..\hdf\src\vg.h"\
-	"..\..\hdf\src\vgint.h"\
-	
-NODEP_CPP_HDFME=\
-	"..\..\hdf\src\api_adpt.h"\
-	"..\..\hdf\src\fmpio.h"\
-	"..\..\hdf\src\HDFIOTrace.h"\
-	"..\..\hdf\src\ProcIDs.h"\
-	".\ys\stat.h"\
-	".\ys\types.h"\
-	
-
-!ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaRel"
-
-DEP_CPP_HDFME=\
-	"..\..\hdf\src\atom.h"\
-	"..\..\hdf\src\bitvect.h"\
-	"..\..\hdf\src\dfivms.h"\
-	"..\..\hdf\src\dynarray.h"\
-	"..\..\hdf\src\hbitio.h"\
-	"..\..\hdf\src\hchunks.h"\
-	"..\..\hdf\src\hcomp.h"\
-	"..\..\hdf\src\hdf.h"\
-	"..\..\hdf\src\hdfi.h"\
-	"..\..\hdf\src\herr.h"\
-	"..\..\hdf\src\hfile.h"\
-	"..\..\hdf\src\hlimits.h"\
-	"..\..\hdf\src\hntdefs.h"\
-	"..\..\hdf\src\hproto.h"\
-	"..\..\hdf\src\hqueue.h"\
-	"..\..\hdf\src\htags.h"\
-	"..\..\hdf\src\linklist.h"\
-	"..\..\hdf\src\maldebug.h"\
-	"..\..\hdf\src\mcache.h"\
-	"..\..\hdf\src\mfgr.h"\
-	"..\..\hdf\src\tbbt.h"\
-	"..\..\hdf\src\trace.h"\
-	"..\..\hdf\src\vg.h"\
-	"..\..\hdf\src\vgint.h"\
-	
-NODEP_CPP_HDFME=\
 	"..\..\hdf\src\api_adpt.h"\
 	"..\..\hdf\src\fmpio.h"\
 	"..\..\hdf\src\HDFIOTrace.h"\
@@ -4549,7 +4484,7 @@ SOURCE=..\..\hdf\src\vg.c
 
 !ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaDbg"
 
-DEP_CPP_VG_C60=\
+DEP_CPP_VG_C5e=\
 	"..\..\hdf\src\atom.h"\
 	"..\..\hdf\src\bitvect.h"\
 	"..\..\hdf\src\dfivms.h"\
@@ -4575,7 +4510,7 @@ DEP_CPP_VG_C60=\
 	"..\..\hdf\src\vg.h"\
 	"..\..\hdf\src\vgint.h"\
 	
-NODEP_CPP_VG_C60=\
+NODEP_CPP_VG_C5e=\
 	"..\..\hdf\src\api_adpt.h"\
 	"..\..\hdf\src\fmpio.h"\
 	"..\..\hdf\src\HDFIOTrace.h"\
@@ -4586,7 +4521,7 @@ NODEP_CPP_VG_C60=\
 
 !ELSEIF  "$(CFG)" == "hdf_dll - Win32 AlphaRel"
 
-DEP_CPP_VG_C60=\
+DEP_CPP_VG_C5e=\
 	"..\..\hdf\src\atom.h"\
 	"..\..\hdf\src\bitvect.h"\
 	"..\..\hdf\src\dfivms.h"\
@@ -4612,7 +4547,7 @@ DEP_CPP_VG_C60=\
 	"..\..\hdf\src\vg.h"\
 	"..\..\hdf\src\vgint.h"\
 	
-NODEP_CPP_VG_C60=\
+NODEP_CPP_VG_C5e=\
 	"..\..\hdf\src\api_adpt.h"\
 	"..\..\hdf\src\fmpio.h"\
 	"..\..\hdf\src\HDFIOTrace.h"\

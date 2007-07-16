@@ -1624,7 +1624,7 @@ correctly.
 /**************************************************************************
 *  Allocation functions defined differently 
 **************************************************************************/
-#if !defined(MALLOC_CHECK) && !defined(_HDFDLL_)
+#if !defined(MALLOC_CHECK)
 #  define HDmalloc(s)      (malloc((size_t)s))
 #  define HDcalloc(a,b)    (calloc((size_t)a,(size_t)b))
 #  define HDfree(p)        (free((void*)p))
@@ -1647,7 +1647,7 @@ correctly.
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* non-standard function, not defined on the following machines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX || defined _HDFDLL_ )
+#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX )
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
 #endif /* !(VMS | etc..) */
 

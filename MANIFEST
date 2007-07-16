@@ -1274,6 +1274,5 @@
 ./windows/proj/mfhdf_fcstubdll/mfhdf_fcstubdll.dsp
 ./windows/proj/mfhdf_fortran/mfhdf_fortran.dsp
 ./windows/proj/mfhdf_fortrandll/mfhdf_fortrandll.dsp
-./windows/proj/src/HDFMemoryOverride.c
 ./windows/proj/xdr/xdr.dsp
 ./windows/proj/xdr_for_dll/xdr_for_dll.dsp
