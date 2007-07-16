@@ -1249,7 +1249,6 @@
 ./windows/fortran/examples/unltest/unltest.dsp
 
 ./windows/hdf/src/h4config.h
-./windows/hdf/src/hdfi.h
 ./windows/hdf/src/hproto.h
 
 ./windows/hdf/test/fortest.h

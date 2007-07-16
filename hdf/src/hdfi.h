@@ -104,13 +104,8 @@
  * mutli-threaded DLLs using the multithreaded runtime DLLs.
  **/
 #	if defined(_MT) &&	defined(_DLL) &&!defined(_HDFDLL_)
-/*		If the user really ment to use _HDFDLL_, but he forgot, just define it. */
+/*		If the user really meant to use _HDFDLL_, but he forgot, just define it. */
 #		define _HDFDLL_
-#	endif
-
-#	if defined(_MT) && !defined(_HDFDLL_)
-#		error To use the HDF libraries from a multithreaded project, you must use the HDF DLLs
-#		error Use the Mutlithreaded DLL runtime libraries (prefered), or define the macro "_HDFDLL_"
 #	endif
 
 #	if !defined(_MT) && defined(_HDFDLL_)
@@ -132,9 +127,17 @@
 #		else
 #			define HDFLIBAPI __declspec(dllexport) extern
 #		endif 
+
+#		if defined(_HDFLIB_C_STUB_EXPORTS) || defined(_MFHDFLIB_C_STUB_EXPORTS) || defined(_DLLLIBTEST_FCSTUB_EXPORTS)
+#			define HDFFCLIBAPI __declspec(dllexport) extern
+#		else
+#			define HDFFCLIBAPI __declspec(dllimport) extern
+#		endif 
+
 #	else
 #		define HDFPUBLIC
 #		define HDFLIBAPI extern
+#		define HDFFCLIBAPI extern
 #	endif
 #else	/* !defined( WIN32 ) */
 #	define HDFPUBLIC
