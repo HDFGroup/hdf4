@@ -3,8 +3,12 @@
 
 #define FILE1_NAME         "hdifftst1.hdf" 
 #define FILE2_NAME         "hdifftst2.hdf" 
+
+/* big file for hyperslab I/O */
 #define FILE3_NAME         "hdifftst3.hdf" 
 #define FILE4_NAME         "hdifftst4.hdf"       
+       
+
 #define X_LENGTH           2
 #define Y_LENGTH           3
 #define RANK               2  
@@ -440,5 +444,132 @@ error:
     return FAIL;
 
 
+}
+
+
+#define  FILE_LABEL_TXT  "created with HDF 4.2 Release 1"
+
+
+int do_lone(char* file_name, int do_diffs)
+{
+    char    sds_name[]  = "lone";
+    int32   rank        = 1;
+    int32   dim_sds[1]  = {5};             /* dimension of the data set */
+    int32   data[5]     = {1, 2, 3, 4, 5};
+    int32   start[1];                      /* start position to write for each dimension */
+    int32   edges[1];                      /* number of elements to be written along each dimension */
+    int32   sds_id;
+    int32   dim_id;
+    int32   sd_id;
+
+    if ( do_diffs )
+    {
+ 
+        data[1] = data[2] = 0;
+    }
+    
+    sd_id  = SDstart(file_name, DFACC_CREATE);
+    
+    /* create the SDS */
+    if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
+    {
+        printf( "Could not create SDS <%s>\n",sds_name);
+        goto fail;
+    }
+    
+    dim_id = SDgetdimid(sds_id, 0);
+    SDsetdimname(dim_id, sds_name);
+
+    /* define the location and size of the data to be written to the data set */
+    start[0] = 0;
+    edges[0] = 5;
+    
+    /* write the stored data to the data set */
+    if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL)
+    {
+        printf( "Failed to set write for SDS <%s>\n", sds_name);
+        goto fail;
+    } 
+    
+    
+    SDendaccess(sds_id);
+
+
+    /* create the SDS */
+    if ((sds_id = SDcreate (sd_id, "sds", DFNT_INT32, rank, dim_sds))<0)
+    {
+        printf( "Could not create SDS <%s>\n");
+        goto fail;
+    }
+
+    if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL)
+    {
+        printf( "Failed to set write for SDS <%s>\n");
+        goto fail;
+    } 
+
+    SDendaccess(sds_id);
+
+    SDend(sd_id);
+
+
+    {
+        int32 file_id;      /* /* HDF file identifier */ 
+        int32 an_id;        /* AN interface identifier */
+        int32 file_label_id;  /* file label identifier */
+           
+        /* open file */
+        if ((file_id = Hopen (file_name, DFACC_WRITE, (int16)0))<0)
+        {
+            printf("Error: Could not open file <%s>\n",file_name);
+            return FAIL;
+        }
+        
+        /* Initialize the AN interface */
+        an_id = ANstart (file_id);
+              
+        /* Create the file label */
+        file_label_id = ANcreatef (an_id, AN_FILE_LABEL);
+        
+        /* Write the annotations to the file label */
+        if (ANwriteann (file_label_id,FILE_LABEL_TXT,strlen (FILE_LABEL_TXT))==FAIL)
+        {
+            printf( "Could not write AN\n");
+            return FAIL;
+        }
+
+        /* Terminate access to annotation */
+        if (ANendaccess (file_label_id)==FAIL)
+        {
+            printf( "Could not end AN\n");
+            return FAIL;
+        }
+        
+        /* Terminate access to the AN interface */
+        if (ANend (an_id)==FAIL)
+        {
+            printf( "Could not end AN\n");
+            return FAIL;
+        }
+        
+
+        /* close the HDF file */
+        if (Hclose (file_id)==FAIL)
+        {
+            printf( "Could not close file\n");
+            return FAIL;
+        }
+        
+        
+    
+
+    }
+
+    
+    return SUCCEED;
+
+fail:
+    SDend(sd_id);
+    return FAIL;
 }
 
