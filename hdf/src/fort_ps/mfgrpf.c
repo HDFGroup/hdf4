@@ -59,6 +59,7 @@ static char RcsId[] = "@(#)$Revision$";
  *---------------------------------------------------------------------------*/
 
 #include "hdf.h"
+#include "hproto_fortran.h"
 #include "mfgr.h"
 
 /* Local pre-processor macros */

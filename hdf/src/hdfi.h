@@ -98,9 +98,9 @@
  * In addition it provides error lines if the configuration is incorrect.
  **/
 
-#ifdef WIN32
+#ifdef _WIN32
 /**
- * Under WIN32 we have single threaded static libraries, or
+ * Under _WIN32 we have single threaded static libraries, or
  * mutli-threaded DLLs using the multithreaded runtime DLLs.
  **/
 #	if defined(_MT) &&	defined(_DLL) &&!defined(_HDFDLL_)
@@ -139,9 +139,10 @@
 #		define HDFLIBAPI extern
 #		define HDFFCLIBAPI extern
 #	endif
-#else	/* !defined( WIN32 ) */
+#else	/* !defined( _WIN32 ) */
 #	define HDFPUBLIC
 #	define HDFLIBAPI extern
+#   define HDFFCLIBAPI extern
 #endif
 
 
@@ -937,9 +938,9 @@ void exit(int status);
 #define DOS386
 #endif /* M_I386 && !DOS386 */
 
-#if defined _WINDOWS || defined WIN32
+#if defined _WINDOWS || defined _WIN32
 #define WIN386
-#endif  /* _WINDOWS | WIN32 */
+#endif  /* _WINDOWS | _WIN32 */
 
 #if defined WIN386 || defined DOS386 || defined UNIX386
 #define INTEL386
@@ -951,7 +952,7 @@ Please check your Makefile.
 #endif
 #define GOT_MACHINE 1
 
-#if defined _WINDOWS || defined WIN32
+#if defined _WINDOWS || defined _WIN32
 #pragma comment( lib, "oldnames" )
 #endif
 

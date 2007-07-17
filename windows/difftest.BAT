@@ -2,7 +2,7 @@
 REM This batch file is used for HDF4 diff tests.
 REM By Xuan Bai
 REM Created on 11/29/2004
-REM Last Modified on 11/29/2004
+REM Last Modified on 7/17/2007
 
 echo *** Testing hdfdiff  ***
 cd windows\bin\%1
@@ -54,6 +54,9 @@ REM percent(relative)
 REM hyperslab reading
 ..\hdiff hdifftst3.hdf hdifftst4.hdf > hdiff_13.out 2>&1
 
+REM lone dim
+..\hdiff hdifftst5.hdf hdifftst6.hdf > hdiff_14.out 2>&1
+
 copy ..\..\..\..\deleteline.bat . >temp.txt
 del temp.txt
 mkdir fctemp 
@@ -85,6 +88,8 @@ call deleteline hdiff_12.txt 3
 call deleteline hdiff_12.out 0
 call deleteline hdiff_13.txt 3
 call deleteline hdiff_13.out 0
+call deleteline hdiff_14.txt 3
+call deleteline hdiff_14.out 0
 
 cd fctemp
 
@@ -201,6 +206,15 @@ if %ERRORLEVEL%==0 (
    echo Testing hdiff hdifftst3.hdf hdifftst4.hdf                              FAILED
    more temp.txt
 )
+
+fc hdiff_14.txt hdiff_14.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdiff hdifftst5.hdf hdifftst6.hdf                              PASSED
+) else (
+   echo Testing hdiff hdifftst5.hdf hdifftst6.hdf                              FAILED
+   more temp.txt
+)
+
 
 del temp.txt
 

@@ -147,7 +147,6 @@ windows/fortran/examples/unltest/unltest.dsp -text
 windows/getopt.dsp -text
 windows/gif2hdf.dsp -text
 windows/hdf/src/h4config.h -text
-windows/hdf/src/hproto.h -text
 windows/hdf/test/fortest.h -text
 windows/hdf/util/hdfed.out1 -text
 windows/hdf/util/testfiles/head.r24 -text

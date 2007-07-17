@@ -655,17 +655,18 @@ extern      "C"
 #   define nheprntc   H4_F77_FUNC(heprntc, HEPRNTC)
 #   define nhestringc H4_F77_FUNC(hestringc, HESTRINGC)
 
-    HDFLIBAPI      FRETVAL(void) nheprnt
+    HDFFCLIBAPI      FRETVAL(void) nheprnt
                 (intf  * print_levels);
 
-    HDFLIBAPI      FRETVAL(intf) nheprntc
+    HDFFCLIBAPI      FRETVAL(intf) nheprntc
                 (_fcd filename, intf  * print_levels, intf *namelen);
 
-    HDFLIBAPI      FRETVAL(intf) nhestringc
+    HDFFCLIBAPI      FRETVAL(intf) nhestringc
 				(intf *error_code,_fcd error_message, intf *len);
 /*
    ** from hfileF.c
  */
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
 #   define nhiopen       H4_F77_FUNC(hiopen, HIOPEN)
 #   define nhclose       H4_F77_FUNC(hclose, HCLOSE)
 #   define nhnumber      H4_F77_FUNC(hnumber, HNUMBER)
@@ -675,11 +676,23 @@ extern      "C"
 #   define nhglibverc    H4_F77_FUNC(hglibverc, HGLIBVERC)
 #   define nhgfilverc    H4_F77_FUNC(hgfilverc, HGFILVERC)
 #   define nhiishdf      H4_F77_FUNC(hiishdf, HIISHDF)
+#  else                                   /* !sl */
+#   define nhiopen   H4_F77_FUNC(hiopen, HIOPEN)
+#   define nhiclose   H4_F77_FUNC(hiclose, HICLOSE)
+#   define nhinumbr  H4_F77_FUNC(hinumbr, HINUMBR)
+#   define nhxisdir  H4_F77_FUNC(hxisdir, HXISDIR)
+#   define nhxiscdir H4_F77_FUNC(hxiscdir, HXISCDIR)
+#   define nhddontatexit H4_F77_FUNC(hddontatexit, HDDONTATEXIT)
+#   define nhglibverc H4_F77_FUNC(hglibverc, HGLIBVERC)
+#   define nhgfilverc H4_F77_FUNC(hgfilverc, HGFILVERC)
+#   define nhiishdf   H4_F77_FUNC(hiishdf, HIISHDF)
+#  endif                                   /* !sl */
 
-    HDFLIBAPI      FRETVAL(intf) nhiopen
+
+    HDFFCLIBAPI      FRETVAL(intf) nhiopen
                 (_fcd name, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
-    HDFLIBAPI      FRETVAL(intf) nhclose
+    HDFFCLIBAPI      FRETVAL(intf) nhclose
                 (intf  * file_id);
 
     HDFLIBAPI	FRETVAL(intf) nhnumber
@@ -688,24 +701,28 @@ extern      "C"
     HDFLIBAPI	FRETVAL(intf) nhxisdir
 		(_fcd dir, intf * dirlen);
 
-    HDFLIBAPI	FRETVAL(intf) nhxiscdir
+    HDFFCLIBAPI	FRETVAL(intf) nhxiscdir
 		(_fcd dir, intf * dirlen);
  
-    HDFLIBAPI      FRETVAL(intf)
+    HDFFCLIBAPI      FRETVAL(intf)
                 nhddontatexit(void);
 
-    HDFLIBAPI      FRETVAL(intf)   
+    HDFFCLIBAPI      FRETVAL(intf)   
                 nhglibverc(intf *major_v, intf *minor_v, intf *release,
                 _fcd string, intf *len);
 
-    HDFLIBAPI      FRETVAL(intf)
+    HDFFCLIBAPI      FRETVAL(intf)
                 nhgfilverc(intf *file_id, intf *major_v, intf *minor_v,
                 intf *release, _fcd string, intf *len);
 
-    HDFLIBAPI      FRETVAL(intf) nhiishdf
-                (_fcd name, intf  * namelen);
+    HDFFCLIBAPI      FRETVAL(intf) nhiishdf
+               (_fcd name, intf  * namelen);
 
-
+    HDFFCLIBAPI FRETVAL(intf) nhiclose
+               (intf  * file_id);
+               
+    HDFFCLIBAPI	FRETVAL(intf) nhinumbr
+               (int32 file_id, uint16 tag);
     
 /*
    ** from dfufp2im.c
@@ -727,6 +744,7 @@ extern      "C"
 
 /* for Multi-file fortran Annotation inteface */
 
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
 #  define nafstart      H4_F77_FUNC(afstart, AFSTART)
 #  define naffileinfo   H4_F77_FUNC(affileinfo, AFFILEINFO)
 #  define nafend        H4_F77_FUNC(afend, AFEND)
@@ -744,60 +762,137 @@ extern      "C"
 #  define naftagrefid   H4_F77_FUNC(aftagrefid, AFTAGREFID)
 #  define nafatypetag   H4_F77_FUNC(afatypetag, AFATYPETAG)
 #  define naftagatype   H4_F77_FUNC(aftagatype, AFTAGATYPE)
+# else                                     /* !sl */
+#  define nafistart     H4_F77_FUNC(afistart, AFISTART)
+#  define nafifinf      H4_F77_FUNC(afifinf, AFIFINF)
+#  define nafiend       H4_F77_FUNC(afiend, AFIEND)
+#  define naficreat     H4_F77_FUNC(aficreat, AFICREAT)
+#  define nafifcreat    H4_F77_FUNC(afifcreat, AFIFCREAT)
+#  define nafiselct     H4_F77_FUNC(afiselct, AFISELCT)
+#  define nafinann      H4_F77_FUNC(afinann, AFINANN)
+#  define nafialst      H4_F77_FUNC(afialst, AFIALST)
+#  define nafialen      H4_F77_FUNC(afialen, AFIALEN)
+#  define nafiwann      H4_F77_FUNC(afiwann, AFIWANN)
+#  define nafirann      H4_F77_FUNC(afirann, AFIRANN)
+#  define nafiendac     H4_F77_FUNC(afiendac, AFIENDAC)
+#  define nafigtr       H4_F77_FUNC(afigtr, AFIGTR)
+#  define nafiid2tr     H4_F77_FUNC(afiid2tr, AFIID2TR)
+#  define nafitr2id     H4_F77_FUNC(afitr2id, AFITR2ID)
+#  define nafitp2tg     H4_F77_FUNC(afitp2tg, AFITP2TG)
+#  define nafitg2tp     H4_F77_FUNC(afitg2tp, AFITG2TP)
+# endif                                     /* !sl */
 
 /* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafstart(intf *file_id);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 naffileinfo(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
             intf *num_odesc);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafend(intf *an_id);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafcreate(intf *an_id, intf *etag, intf *eref, intf *atype);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 naffcreate(intf *an_id, intf *atype);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafselect(intf *an_id, intf *idx, intf *atype);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafnumann(intf *an_id, intf *atype, intf *etag, intf *eref);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafannlist(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[]);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafannlen(intf *ann_id);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafwriteann(intf *ann_id,_fcd ann, intf *annlen);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafreadann(intf *ann_id,_fcd ann, intf *maxlen);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafendaccess(intf *ann_id);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafgettagref(intf *an_id, intf *idx, intf *type, intf *tag, intf *ref);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafidtagref(intf *ann_id, intf *tag, intf *ref);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 naftagrefid(intf *an_id, intf *tag, intf *ref);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 nafatypetag(intf *atype);
 
-HDFLIBAPI FRETVAL(intf)
+HDFFCLIBAPI FRETVAL(intf)
 naftagatype(intf *tag);
+
+/* if defined Windows */
+/* Multi-file Annotation C-stubs for fortan interface found in mfanf.c */
+
+HDFFCLIBAPI FRETVAL(intf)
+nafistart(intf *file_id);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafifinf(intf *an_id, intf *num_flabel, intf *num_fdesc, intf *num_olabel,
+            intf *num_odesc);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafiend(intf *an_id);
+
+HDFFCLIBAPI FRETVAL(intf)
+naficreat(intf *an_id, intf *etag, intf *eref, intf *atype);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafifcreat(intf *an_id, intf *atype);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafiselct(intf *an_id, intf *index, intf *atype);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafinann(intf *an_id, intf *atype, intf *etag, intf *eref);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafialst(intf *an_id, intf *atype, intf *etag, intf *eref, intf alist[]);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafialen(intf *ann_id);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafiwann(intf *ann_id,_fcd ann, intf *annlen);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafirann(intf *ann_id,_fcd ann, intf *maxlen);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafiendac(intf *ann_id);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafigtr(intf *an_id, intf *index, intf *type, intf *tag, intf *ref);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafiid2tr(intf *ann_id, intf *tag, intf *ref);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafitr2id(intf *an_id, intf *tag, intf *ref);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafitp2tg(intf *atype);
+
+HDFFCLIBAPI FRETVAL(intf)
+nafitg2tp(intf *tag);
+
+/* endif defined Windows */
+
 
 /* Multi-file Annotation C-routines found in mfan.c */
 HDFLIBAPI int32 ANstart(int32 file_id);
@@ -842,6 +937,7 @@ HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 HDFLIBAPI intn ANdestroy(void);
 
 /* for Multi-file fortran GR interface */
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
 #  define nmgstart         H4_F77_FUNC(mgstart, MGSTART)
 #  define nmgfinfo         H4_F77_FUNC(mgfinfo, MGFINFO)
 #  define nmgend           H4_F77_FUNC(mgend, MGEND)
@@ -872,19 +968,72 @@ HDFLIBAPI intn ANdestroy(void);
 #  define nmggnatt         H4_F77_FUNC(mggnatt, MGGNATT)
 #  define nmggattr         H4_F77_FUNC(mggattr, MGGATTR)
 #  define nmgifndat        H4_F77_FUNC(mgifndat, MGIFNDAT)
-# define nmgcgichnk        H4_F77_FUNC(mgcgichnk, MGCGICHNK)
-# define nmgcrcchnk        H4_F77_FUNC(mgcrcchnk, MGCRCCHNK)
-# define nmgcrchnk         H4_F77_FUNC(mgcrchnk, MGCRCHNK)
-# define nmgcscchnk        H4_F77_FUNC(mgcscchnk, MGCSCCHNK)
-# define nmgcschnk         H4_F77_FUNC(mgcschnk, MGCSCHNK)
-# define nmgcwcchnk        H4_F77_FUNC(mgcwcchnk, MGCWCCHNK)
-# define nmgcwchnk         H4_F77_FUNC(mgcwchnk, MGCWCHNK)
-# define nmgcscompress     H4_F77_FUNC(mgcscompress, MGCSCOMPRESS)
-# define nmgcgcompress     H4_F77_FUNC(mgcgcompress, MGCGCOMPRESS)
-# define nmglt2rf          H4_F77_FUNC(mglt2rf, MGLT2RF)
-# define nmgcgnluts        H4_F77_FUNC(mgcgnluts, MGCGNLUTS)
+#  define nmgcgichnk        H4_F77_FUNC(mgcgichnk, MGCGICHNK)
+#  define nmgcrcchnk        H4_F77_FUNC(mgcrcchnk, MGCRCCHNK)
+#  define nmgcrchnk         H4_F77_FUNC(mgcrchnk, MGCRCHNK)
+#  define nmgcscchnk        H4_F77_FUNC(mgcscchnk, MGCSCCHNK)
+#  define nmgcschnk         H4_F77_FUNC(mgcschnk, MGCSCHNK)
+#  define nmgcwcchnk        H4_F77_FUNC(mgcwcchnk, MGCWCCHNK)
+#  define nmgcwchnk         H4_F77_FUNC(mgcwchnk, MGCWCHNK)
+#  define nmgcscompress     H4_F77_FUNC(mgcscompress, MGCSCOMPRESS)
+#  define nmgcgcompress     H4_F77_FUNC(mgcgcompress, MGCGCOMPRESS)
+#  define nmglt2rf          H4_F77_FUNC(mglt2rf, MGLT2RF)
+#  define nmgcgnluts        H4_F77_FUNC(mgcgnluts, MGCGNLUTS)
+# else  /* !sl */
+#  define nmgistrt          H4_F77_FUNC(mgistrt, MGISTRT)
+#  define nmgifinf          H4_F77_FUNC(mgifinf, MGIFINF)
+#  define nmgiend           H4_F77_FUNC(mgiend, MGIEND)
+#  define nmgicreat         H4_F77_FUNC(mgicreat, MGICREAT)
+#  define nmgislct          H4_F77_FUNC(mgislct, MGISLCT)
+#  define nmgin2ndx         H4_F77_FUNC(mgin2ndx, MGIN2NDX)
+#  define nmgigiinf         H4_F77_FUNC(mgigiinf, MGIGIINF)
+#  define nmgiwcim          H4_F77_FUNC(mgiwcim, MGIWCIM)
+#  define nmgircim          H4_F77_FUNC(mgircim, MGIRCIM)
+#  define nmgiwimg          H4_F77_FUNC(mgiwim, MGIWIMG)
+#  define nmgirimg          H4_F77_FUNC(mgirimg, MGIRIMG)
+#  define nmgiendac         H4_F77_FUNC(mgiendac, MGIENDAC)
+#  define nmgiid2r          H4_F77_FUNC(mgiid2r, MGIID2R)
+#  define nmgir2dx          H4_F77_FUNC(mgir2dx, MGIR2DX)
+#  define nmgiltil          H4_F77_FUNC(mgiltil, MGILTIL)
+#  define nmgiimil          H4_F77_FUNC(mgiimil, MGIIMIL)
+#  define nmgiglid          H4_F77_FUNC(mgiglid, MGIGLID)
+#  define nmgiglinf         H4_F77_FUNC(mgiglinf, MGIGLINF)
+#  define nmgiwrlt          H4_F77_FUNC(mgiwrlt, MGIWRLT)
+#  define nmgiwclt          H4_F77_FUNC(mgiwclt, MGIWCLT)
+#  define nmgirdlt          H4_F77_FUNC(mgirdlt, MGIRDLT)
+#  define nmgirclt          H4_F77_FUNC(mgirclt, MGIRCLT)
+#  define nmgisxfil         H4_F77_FUNC(mgisxfil, MGISXFIL)
+#  define nmgiactp          H4_F77_FUNC(mgiactp, MGIACTP)
+#  define nmgiscatt         H4_F77_FUNC(mgiscatt, MGISCATT)
+#  define nmgisattr         H4_F77_FUNC(mgisattr, MGISATTR)
+#  define nmgiainf          H4_F77_FUNC(mgiainf, MGIAINF)
+#  define nmgigcat          H4_F77_FUNC(mgigcat, MGIGCAT)
+#  define nmgignat          H4_F77_FUNC(mgignat, MGIGNAT)
+#  define nmgigatt          H4_F77_FUNC(mgigatt, MGIGATT)
+#  define nmgifndat         H4_F77_FUNC(mgifndat, MGIFNDAT)
+#  define nmgcgichnk        H4_F77_FUNC(mgcgichnk, MGCGICHNK)
+#  define nmgcrcchnk        H4_F77_FUNC(mgcrcchnk, MGCRCCHNK)
+#  define nmgcrchnk         H4_F77_FUNC(mgcrchnk, MGCRCHNK)
+#  define nmgcscchnk        H4_F77_FUNC(mgcscchnk, MGCSCCHNK)
+#  define nmgcschnk         H4_F77_FUNC(mgcschnk, MGCSCHNK)
+#  define nmgcwcchnk        H4_F77_FUNC(mgcwcchnk, MGCWCCHNK)
+#  define nmgcwchnk         H4_F77_FUNC(mgcwchnk, MGCWCHNK)
+#  define nmgcscompress     H4_F77_FUNC(mgcscompress, MGCSCOMPRESS)
+#  define nmgcgcompress     H4_F77_FUNC(mgcgcompress, MGCGCOMPRESS)
+#  define nmglt2rf          H4_F77_FUNC(mglt2rf, MGLT2RF)
+#  define nmgcgnluts        H4_F77_FUNC(mgcgnluts, MGCGNLUTS)
+# endif  /* sl */
 
 /* Multi-file GR C-stubs for FORTRAN interface found in mfgrf.c */
+
+HDFFCLIBAPI FRETVAL(intf)     /* !sl */
+nmgiwimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
+
+HDFFCLIBAPI FRETVAL(intf)     /* !sl */
+nmgirimg(intf * riid, intf *start, intf *stride, intf *count, VOIDP data);
+
+HDFFCLIBAPI FRETVAL(intf)     /* !sl */
+nmgignat(intf * riid, intf *idx, VOIDP data);
 
 HDFLIBAPI FRETVAL(intf)
 nmgstart(intf * fid);
@@ -1013,10 +1162,80 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
     HDFLIBAPI FRETVAL (intf)
        nmgcgnluts(intf *id);
 
+#ifdef _WIN32
+/* Multi-file GR C-stubs for FORTRAN interface found in mfgrf.c */
+ HDFFCLIBAPI FRETVAL(intf)
+nmgistrt(intf * fid);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgifinf(intf * grid,intf *n_datasets,intf *n_attrs);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiend(intf * grid);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgislct(intf * grid, intf *index);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgigiinf(intf * riid, _fcd name, intf *ncomp, intf *nt, intf *il, intf *dimsizes, intf *nattr);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiwcim(intf * riid, intf *start, intf *stride, intf *count, _fcd data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgircim(intf * riid, intf *start, intf *stride, intf *count, _fcd data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiendac(intf * riid);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiid2r(intf * riid);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgir2dx(intf * grid, intf *ref);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiltil(intf * riid, intf *il);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiimil(intf * riid, intf *il);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiglid(intf * riid, intf *lut_index);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiglinf(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiwrlt(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, VOIDP data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiwclt(intf * lutid, intf *ncomp, intf *nt, intf *il, intf *nentries, _fcd data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgirdlt(intf * lutid, VOIDP data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgirclt(intf * lutid, _fcd data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiactp(intf * riid, intf *accesstype);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgiainf(intf * riid, intf *index, _fcd name, intf *nt, intf *count);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgigcat(intf * riid, intf *index, _fcd data);
+
+ HDFFCLIBAPI FRETVAL(intf)
+nmgigatt(intf * riid, intf *index, VOIDP data);
+
+#endif /* _WIN32 */
 
 /*
    ** from vgF.c
  */
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
 #   define  ndfivopn       H4_F77_FUNC(dfivopn, DFIVOPN)
 #   define  ndfvclos       H4_F77_FUNC(dfvclos, DFVCLOS)
 #   define  nvatchc        H4_F77_FUNC(vatchc, VATCHC)
@@ -1101,284 +1320,442 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 #   define  nvscsetblsz    H4_F77_FUNC(vscsetblsz, VSCSETBLSZ)
 #   define  nvscsetnmbl    H4_F77_FUNC(vscsetnmbl, VSCSETNMBL)
 #   define  nvscgblinfo    H4_F77_FUNC(vscgblinfo, VSCGBLINFO)
+#  else                                /* !sl */
+#   define  ndfivopn       H4_F77_FUNC(dfivopn, DFIVOPN)
+#   define  ndfvclos       H4_F77_FUNC(dfvclos, DFVCLOS)
+#   define  nvatchc        H4_F77_FUNC(vatchc, VATCHC)
+#   define  nvdtchc        H4_F77_FUNC(vdtchc, VDTCHC)
+#   define  nvgnamc        H4_F77_FUNC(vgnamc, VGNAMC)
+#   define  nvgclsc        H4_F77_FUNC(vgclsc, VGCLSC)
+#   define  nvinqc         H4_F77_FUNC(vinqc, VINQC)
+#   define  nvdeletec      H4_F77_FUNC(vdeletec, VDELETEC)
+#   define  nvgidc         H4_F77_FUNC(vgidc, VGIDC)
+#   define  nvgnxtc        H4_F77_FUNC(vgnxtc, VGNXTC)
+#   define  nvsnamc        H4_F77_FUNC(vsnamc, VSNAMC)
+#   define  nvsclsc        H4_F77_FUNC(vsclsc, VSCLSC)
+#   define  nvinsrtc       H4_F77_FUNC(vinsrtc, VINSRTC)
+#   define  nvisvgc        H4_F77_FUNC(visvgc, VISVGC)
+#   define  nvfistart      H4_F77_FUNC(vfistart, VFISTART)
+#   define  nvfiend        H4_F77_FUNC(vfiend, VFIEND)
+#   define  nvisvsc        H4_F77_FUNC(visvsc, VISVSC)
+#   define  nvsatchc       H4_F77_FUNC(vsatchc, VSATCHC)
+#   define  nvsdtchc       H4_F77_FUNC(vsdtchc, VSDTCHC)
+#   define  nvsiqref       H4_F77_FUNC(vsiqref, VSIQREF)
+#   define  nvsiqtag       H4_F77_FUNC(vsiqtag, VSIQTAG)
+#   define  nvsigver       H4_F77_FUNC(vsigver, VSIGVER)
+#   define  nvsseekc       H4_F77_FUNC(vsseekc, VSSEEKC)
+#   define  nvsgnamc       H4_F77_FUNC(vsgnamc, VSGNAMC)
+#   define  nvsgclsc       H4_F77_FUNC(vsglcsc, VSGCLSC)
+#   define  nvsinqc        H4_F77_FUNC(vsinqc, VSINQC)
+#   define  nvsfexc        H4_F77_FUNC(vsfexc, VSFEXC)
+#   define  nvsfndc        H4_F77_FUNC(vsfnd, VSFNDC)
+#   define  nvsgidc        H4_F77_FUNC(vsgidc, VSGIDC)
+#   define  nvsdltc        H4_F77_FUNC(vsdltc, VSDLTC)
+#   define  nvsapp         H4_F77_FUNC(vsapp, VSAPP)
+#   define  nvssnamc       H4_F77_FUNC(vssnamc, VSSNAMC)
+#   define  nvssclsc       H4_F77_FUNC(vssclsc, VSSCLSC)
+#   define  nvssfldc       H4_F77_FUNC(vssfldc, VSSFLDC)
+#   define  nvssintc       H4_F77_FUNC(vssintc, VSSINTC)
+#   define  nvsfdefc       H4_F77_FUNC(vsfdefc, VSFDEFC)
+#   define  nvssextfc      H4_F77_FUNC(vssextfc, VSSEXTFC)
+#   define  nvfinflds      H4_F77_FUNC(vfinflds, VFINFLDS)
+#   define  nvfifnm        H4_F77_FUNC(vfifnm, VFIFNM)
+#   define  nvfiftp        H4_F77_FUNC(vfiftp, VFIFTP)
+#   define  nvfifisz       H4_F77_FUNC(vfifisz, VFIFISZ)
+#   define  nvfifesz       H4_F77_FUNC(vfifesz, VFIFESZ)
+#   define  nvfifodr       H4_F77_FUNC(vfiford, VFIFODR)
+#   define  nvsfirdc       H4_F77_FUNC(vsfirdc, VSFIRDC)
+#   define  nvsfird        H4_F77_FUNC(vsfird, VSFIRD)
+#   define  nvsreadc       H4_F77_FUNC(vsreadc, VSREADC)
+#   define  nvsfiwrc       H4_F77_FUNC(vsfiwrc, VSFIWRC)
+#   define  nvsfiwr        H4_F77_FUNC(vsfiwr, VSFIWR)
+#   define  nvswritc       H4_F77_FUNC(vswritc, VSWRITC)
+#   define  nvsgintc       H4_F77_FUNC(vsgintc, VSGINTC)
+#   define  nvseltsc       H4_F77_FUNC(vseltsc, VSELTSC)
+#   define  nvsgfldc       H4_F77_FUNC(vsgfldc, VSGFLDC)
+#   define  nvssizc        H4_F77_FUNC(vssizc, VSSIZC)
+#   define  nventsc        H4_F77_FUNC(ventsc, VENTSC)
+#   define  nvlonec        H4_F77_FUNC(vlonec, VLONEC)
+#   define  nvslonec       H4_F77_FUNC(vslonec, VSLONEC)
+#   define  nvfindc        H4_F77_FUNC(vfindc, VFINDC)
+#   define  nvfndclsc      H4_F77_FUNC(vfndclsc, VFNDCLSC)
+#   define  nvhsdc         H4_F77_FUNC(vhsdc, VHSDC)
+#   define  nvhscdc        H4_F77_FUNC(vhscdc, VHSCDC)
+#   define  nvhscdmc       H4_F77_FUNC(vhscmc, VHSCDMC)
+#   define  nvhsdmc        H4_F77_FUNC(vhsdmc, VHSDMC)
+#   define  nvhmkgpc       H4_F77_FUNC(vhmkgpc, VHMKGPC)
+#   define  nvflocc        H4_F77_FUNC(vflocc, VFLOCC)
+#   define  nvfirefs       H4_F77_FUNC(vfirefs, VFIREFS)
+#   define  nvfiqref       H4_F77_FUNC(vfiqref, VFIQREF)
+#   define  nvfiqtag       H4_F77_FUNC(vfiqtag, VFIQTAG)
+#   define  nvinqtrc       H4_F77_FUNC(vinqtrc, VINQTRC)
+#   define  nvntrc         H4_F77_FUNC(vntrc, VNTRC)
+#   define  nvgttrsc       H4_F77_FUNC(vgttrsc, VGTTRSC)
+#   define  nvgttrc        H4_F77_FUNC(vgttrc, VGTTRC)
+#   define  nvadtrc        H4_F77_FUNC(vadtrc, VADTRC)
+#   define  nvsiqintr      H4_F77_FUNC(vsiqintr, VSIQINTR)
+#   define  nvsiqnelt      H4_F77_FUNC(vsiqnelt, VSIQNELT)
+#   define  nvsqfldsc      H4_F77_FUNC(vsqfldsc, VSQFLDSC)
+#   define  nvsiqvsz       H4_F77_FUNC(vsiqvsz, VSIQVSZ)
+#   define  nvsqnamec      H4_F77_FUNC(vsqnamec, VSQNAMEC)
+#   define  nvsfccpk       H4_F77_FUNC(vsfccpk, VSFCCPK)
+#   define  nvsfncpk       H4_F77_FUNC(vsfncpk, VSFNCPK)
+#   define  nvdtrc         H4_F77_FUNC(vdtrc, VDTRC)
+#   define  nvscfcls       H4_F77_FUNC(vscfcls, VSCFCLS)
+#   define  nvscsetblsz    H4_F77_FUNC(vscsetblsz, VSCSETBLSZ)
+#   define  nvscsetnmbl    H4_F77_FUNC(vscsetnmbl, VSCSETNMBL)
+#   define  nvscgblinfo    H4_F77_FUNC(vscgblinfo, VSCGBLINFO)
+#  endif                                /* !sl */
 
-    HDFLIBAPI      FRETVAL(intf) ndfivopn
+    HDFFCLIBAPI      FRETVAL(intf) ndfivopn
                 (_fcd filename, intf  * acc_mode, intf  * defdds, intf  * namelen);
 
-    HDFLIBAPI      FRETVAL(intf) ndfvclos
+    HDFFCLIBAPI      FRETVAL(intf) ndfvclos
                 (intf  * file_id);
 
-    HDFLIBAPI      FRETVAL(intf) nvatchc
+    HDFFCLIBAPI      FRETVAL(intf) nvatchc
                 (intf  * f, intf  * vgid, _fcd accesstype);
 
-    HDFLIBAPI      FRETVAL(intf) nvdtchc
+    HDFFCLIBAPI      FRETVAL(intf) nvdtchc
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvgnamc
+    HDFFCLIBAPI      FRETVAL(intf) nvgnamc
                 (intf  * vkey, _fcd vgname);
 
-    HDFLIBAPI      FRETVAL(intf) nvgclsc
+    HDFFCLIBAPI      FRETVAL(intf) nvgclsc
                 (intf  * vkey, _fcd vgclass);
 
-    HDFLIBAPI      FRETVAL(intf) nvinqc
+    HDFFCLIBAPI      FRETVAL(intf) nvinqc
                 (intf  * vkey, intf  * nentries, _fcd vgname);
 
-    HDFLIBAPI      FRETVAL(intf) nvdeletec
+    HDFFCLIBAPI      FRETVAL(intf) nvdeletec
                 (intf  *f, intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvgidc
+    HDFFCLIBAPI      FRETVAL(intf) nvgidc
                 (intf  * f, intf  * vgid);
 
-    HDFLIBAPI      FRETVAL(intf) nvgnxtc
+    HDFFCLIBAPI      FRETVAL(intf) nvgnxtc
                 (intf  * vkey, intf  * id);
 
-    HDFLIBAPI      FRETVAL(intf) nvsnamc
+    HDFFCLIBAPI      FRETVAL(intf) nvsnamc
                 (intf  * vkey, _fcd vgname, intf  * vgnamelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsclsc
+    HDFFCLIBAPI      FRETVAL(intf) nvsclsc
                 (intf  * vkey, _fcd vgclass, intf  * vgclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvinsrtc
+    HDFFCLIBAPI      FRETVAL(intf) nvinsrtc
                 (intf  * vkey, intf  * vobjptr);
 
-    HDFLIBAPI      FRETVAL(intf) nvisvgc
+    HDFFCLIBAPI      FRETVAL(intf) nvisvgc
                 (intf  * vkey, intf  * id);
 
-    HDFLIBAPI      FRETVAL(intf) nvfstart
+    HDFFCLIBAPI      FRETVAL(intf) nvfstart
                 (intf  * f);
 
-    HDFLIBAPI      FRETVAL(intf) nvfend
+    HDFFCLIBAPI      FRETVAL(intf) nvfend
                 (intf  * f);
 
-    HDFLIBAPI      FRETVAL(intf) nvisvsc
+    HDFFCLIBAPI      FRETVAL(intf) nvisvsc
                 (intf  * vkey, intf  * id);
 
-    HDFLIBAPI      FRETVAL(intf) nvsatchc
+    HDFFCLIBAPI      FRETVAL(intf) nvsatchc
                 (intf  * f, intf  * vsref, _fcd accesstype);
 
-    HDFLIBAPI      FRETVAL(intf) nvsdtchc
+    HDFFCLIBAPI      FRETVAL(intf) nvsdtchc
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqref
+    HDFFCLIBAPI      FRETVAL(intf) nvsqref
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqtag
+    HDFFCLIBAPI      FRETVAL(intf) nvsqtag
                 (intf  * vkey);
   
 
-    HDFLIBAPI      FRETVAL(intf) nvsgver
+    HDFFCLIBAPI      FRETVAL(intf) nvsgver
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvsseekc
+    HDFFCLIBAPI      FRETVAL(intf) nvsseekc
                 (intf  * vkey, intf  * eltpos);
 
-    HDFLIBAPI      FRETVAL(intf) nvsgnamc
+    HDFFCLIBAPI      FRETVAL(intf) nvsgnamc
                 (intf  * vkey, _fcd vsname, intf *vsnamelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsgclsc
+    HDFFCLIBAPI      FRETVAL(intf) nvsgclsc
                 (intf  * vkey, _fcd vsclass, intf *vsclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsinqc
+    HDFFCLIBAPI      FRETVAL(intf) nvsinqc
                 (intf  * vkey, intf  * nelt, intf  * interlace, _fcd fields,
 		intf  * eltsize, _fcd vsname, intf *fieldslen, intf *vsnamelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfexc
+    HDFFCLIBAPI      FRETVAL(intf) nvsfexc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfndc
+    HDFFCLIBAPI      FRETVAL(intf) nvsfndc
                 (intf  * f, _fcd name, intf  * namelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsgidc
+    HDFFCLIBAPI      FRETVAL(intf) nvsgidc
                 (intf  * f, intf  * vsref);
 
-    HDFLIBAPI      FRETVAL(intf) nvsdltc
+    HDFFCLIBAPI      FRETVAL(intf) nvsdltc
                 (intf  * f, intf  * vsref);
 
-    HDFLIBAPI      FRETVAL(intf) nvsapp
+    HDFFCLIBAPI      FRETVAL(intf) nvsapp
                 (intf  * vkey, intf  *blk);
 
-    HDFLIBAPI      FRETVAL(intf) nvssnamc
+    HDFFCLIBAPI      FRETVAL(intf) nvssnamc
                 (intf  * vkey, _fcd vsname, intf  * vsnamelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvssclsc
+    HDFFCLIBAPI      FRETVAL(intf) nvssclsc
                 (intf  * vkey, _fcd vsclass, intf  * vsclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvssfldc
+    HDFFCLIBAPI      FRETVAL(intf) nvssfldc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvssintc
+    HDFFCLIBAPI      FRETVAL(intf) nvssintc
                 (intf  * vkey, intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfdefc
+    HDFFCLIBAPI      FRETVAL(intf) nvsfdefc
                 (intf  * vkey, _fcd field, intf  * localtype,
                  intf  * order, intf  * fieldlen);
 
-    HDFLIBAPI      FRETVAL(intf) nvssextfc
+    HDFFCLIBAPI      FRETVAL(intf) nvssextfc
                 (intf  * vkey, _fcd fname, intf  * offset,
                  intf  * fnamelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvfnflds
+    HDFFCLIBAPI      FRETVAL(intf) nvfnflds
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvffnamec
+    HDFFCLIBAPI      FRETVAL(intf) nvffnamec
                 (intf  * vkey, intf  *idx, _fcd fname, intf *len);
 
-    HDFLIBAPI      FRETVAL(intf) nvfftype
+    HDFFCLIBAPI      FRETVAL(intf) nvfftype
                 (intf  * vkey, intf  *idx);
 
-    HDFLIBAPI      FRETVAL(intf) nvffisiz
+    HDFFCLIBAPI      FRETVAL(intf) nvffisiz
                 (intf  * vkey, intf  *idx);
 
-    HDFLIBAPI      FRETVAL(intf) nvffesiz
+    HDFFCLIBAPI      FRETVAL(intf) nvffesiz
                 (intf  * vkey, intf  *idx);
 
-    HDFLIBAPI      FRETVAL(intf) nvffordr
+    HDFFCLIBAPI      FRETVAL(intf) nvffordr
                 (intf  * vkey, intf  *idx);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfrdc
+    HDFFCLIBAPI      FRETVAL(intf) nvsfrdc
                 (intf  * vkey, _fcd  cbuf, intf  * nelt,
                  intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfrd
+    HDFFCLIBAPI      FRETVAL(intf) nvsfrd
                 (intf  * vkey, intf  * buf, intf  * nelt,
                  intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsreadc
+    HDFFCLIBAPI      FRETVAL(intf) nvsreadc
                 (intf  * vkey, uint8  * buf, intf  * nelt,
                  intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfwrtc
+    HDFFCLIBAPI      FRETVAL(intf) nvsfwrtc
                 (intf  * vkey, _fcd  cbuf, intf  * nelt,
                  intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfwrt
+    HDFFCLIBAPI      FRETVAL(intf) nvsfwrt
                 (intf  * vkey, intf  * buf, intf  * nelt,
                  intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvswritc
+    HDFFCLIBAPI      FRETVAL(intf) nvswritc
                 (intf  * vkey, uint8  * buf, intf  * nelt,
                  intf  * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsgintc
+    HDFFCLIBAPI      FRETVAL(intf) nvsgintc
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvseltsc
+    HDFFCLIBAPI      FRETVAL(intf) nvseltsc
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvsgfldc
+    HDFFCLIBAPI      FRETVAL(intf) nvsgfldc
                 (intf  * vkey, _fcd fields);
 
-    HDFLIBAPI      FRETVAL(intf) nvssizc
+    HDFFCLIBAPI      FRETVAL(intf) nvssizc
                 (intf  * vkey, _fcd fields, intf  * fieldslen);
 
-    HDFLIBAPI      FRETVAL(intf) nventsc
+    HDFFCLIBAPI      FRETVAL(intf) nventsc
                 (intf  * f, intf  * vgid);
 
-    HDFLIBAPI      FRETVAL(intf) nvlonec
+    HDFFCLIBAPI      FRETVAL(intf) nvlonec
                 (intf  * f, intf  * idarray, intf  * asize);
 
-    HDFLIBAPI      FRETVAL(intf) nvslonec
+    HDFFCLIBAPI      FRETVAL(intf) nvslonec
                 (intf  * f, intf  * idarray, intf  * asize);
 
-    HDFLIBAPI      FRETVAL(intf) nvfindc
+    HDFFCLIBAPI      FRETVAL(intf) nvfindc
                 (intf  * f, _fcd name, intf  * namelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvfndclsc
+    HDFFCLIBAPI      FRETVAL(intf) nvfndclsc
                 (intf  * f, _fcd vgclass, intf  * classlen);
 
-    HDFLIBAPI      FRETVAL(intf) nvhscdc
+    HDFFCLIBAPI      FRETVAL(intf) nvhscdc
                 (intf  * f, _fcd field, _fcd  cbuf, intf  * n, 
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * fieldlen, intf  * vsnamelen,
                  intf  * vsclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvhsdc
+    HDFFCLIBAPI      FRETVAL(intf) nvhsdc
                 (intf  * f, _fcd field, uint8  * buf, intf  * n, 
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * fieldlen, intf  * vsnamelen,
                  intf  * vsclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvhscdmc
+    HDFFCLIBAPI      FRETVAL(intf) nvhscdmc
                 (intf  * f, _fcd field, _fcd  cbuf, intf  * n,
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvhsdmc
+    HDFFCLIBAPI      FRETVAL(intf) nvhsdmc
                 (intf  * f, _fcd field, uint8  * buf, intf  * n,
                  intf  * datatype, _fcd vsname, _fcd vsclass, 
                  intf  * order, intf  * fieldlen, intf * vsnamelen,
                  intf  * vsclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvhmkgpc
+    HDFFCLIBAPI      FRETVAL(intf) nvhmkgpc
                 (intf  * f, intf  * tagarray, intf  * refarray, intf  * n,
                  _fcd vgname, _fcd vgclass, intf  * vgnamelen, intf  * vgclasslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvflocc
+    HDFFCLIBAPI      FRETVAL(intf) nvflocc
                 (intf  * vkey, _fcd field, intf  * fieldlen);
 
-    HDFLIBAPI      FRETVAL(intf) nvinqtrc
+    HDFFCLIBAPI      FRETVAL(intf) nvinqtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
-    HDFLIBAPI      FRETVAL(intf) nvntrc
+    HDFFCLIBAPI      FRETVAL(intf) nvntrc
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvnrefs
+    HDFFCLIBAPI      FRETVAL(intf) nvnrefs
                 (intf  * vkey, intf  *tag);
 
-    HDFLIBAPI      FRETVAL(intf) nvqref
+    HDFFCLIBAPI      FRETVAL(intf) nvqref
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvqtag
+    HDFFCLIBAPI      FRETVAL(intf) nvqtag
                 (intf  * vkey);
 
-    HDFLIBAPI      FRETVAL(intf) nvgttrsc
+    HDFFCLIBAPI      FRETVAL(intf) nvgttrsc
                 (intf  * vkey, intf  * tagarray, intf  * refarray, intf  * n);
 
-    HDFLIBAPI      FRETVAL(intf) nvgttrc
+    HDFFCLIBAPI      FRETVAL(intf) nvgttrc
                 (intf  * vkey, intf  * which, intf  * tag, intf  * ref);
 
-    HDFLIBAPI      FRETVAL(intf) nvadtrc
+    HDFFCLIBAPI      FRETVAL(intf) nvadtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
-    HDFLIBAPI      FRETVAL(intf) nvdtrc
+    HDFFCLIBAPI      FRETVAL(intf) nvdtrc
                 (intf  * vkey, intf  * tag, intf  * ref);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqfnelt
+    HDFFCLIBAPI      FRETVAL(intf) nvsqfnelt
                 (intf * vkey, intf * nelt);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqfintr
+    HDFFCLIBAPI      FRETVAL(intf) nvsqfintr
                 (intf * vkey, intf * interlace);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqfldsc
+    HDFFCLIBAPI      FRETVAL(intf) nvsqfldsc
                 (intf * vkey, _fcd fields, intf *fieldslen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqfvsiz
+    HDFFCLIBAPI      FRETVAL(intf) nvsqfvsiz
                 (intf * vkey, intf * size);
 
-    HDFLIBAPI      FRETVAL(intf) nvsqnamec  
+    HDFFCLIBAPI      FRETVAL(intf) nvsqnamec  
                 (intf * vkey, _fcd name, intf *namelen);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfccpk
+    HDFFCLIBAPI      FRETVAL(intf) nvsfccpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, _fcd fldbuf, intf *buflds_len, intf *fld_len);
 
-    HDFLIBAPI      FRETVAL(intf) nvsfncpk
+    HDFFCLIBAPI      FRETVAL(intf) nvsfncpk
                 (intf *vs, intf *packtype, _fcd buflds, intf *buf, intf *bufsz,
         intf *nrecs, _fcd pckfld, intf *fldbuf, intf *buflds_len, intf *fld_len);
 
-    HDFLIBAPI      FRETVAL(intf) nvscsetblsz
+    HDFFCLIBAPI      FRETVAL(intf) nvscsetblsz
                 (intf *id, intf *block_size);
 
-    HDFLIBAPI      FRETVAL(intf) nvscsetnmbl
+    HDFFCLIBAPI      FRETVAL(intf) nvscsetnmbl
                 (intf *id, intf *num_blocks);
 
-    HDFLIBAPI      FRETVAL(intf) nvscgblinfo
+    HDFFCLIBAPI      FRETVAL(intf) nvscgblinfo
                 (intf *id, intf *block_size, intf *num_blocks);
 
-/* 
+     HDFFCLIBAPI FRETVAL(intf) nvscfcls
+                (intf  * id, _fcd name, intf  * namelen);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfistart
+                (intf  * f);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfiend
+                (intf  * f);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsiqref
+                (intf  * vkey);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsiqtag
+                (intf  * vkey);
+  
+     HDFFCLIBAPI FRETVAL(intf) nvsigver
+                (intf  * vkey);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfinflds
+                (intf  * vkey);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfifnm
+                (intf  * vkey, intf  *index, _fcd fname);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfiftp
+                (intf  * vkey, intf  *index);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfifisz
+                (intf  * vkey, intf  *index);
+     HDFFCLIBAPI FRETVAL(intf) nvfifesz
+                (intf  * vkey, intf  *index);
+     HDFFCLIBAPI FRETVAL(intf) nvfifodr
+                (intf  * vkey, intf  *index);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsfirdc
+                (intf  * vkey, _fcd  cbuf, intf  * nelt,
+                 intf  * interlace);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsfird
+                (intf  * vkey, intf  * buf, intf  * nelt,
+                 intf  * interlace);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsfiwrc
+                (intf  * vkey, _fcd  cbuf, intf  * nelt,
+                 intf  * interlace);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsfiwr
+                (intf  * vkey, intf  * buf, intf  * nelt,
+                 intf  * interlace);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfirefs
+                (intf  * vkey, intf  *tag);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfiqref
+                (intf  * vkey);
+
+     HDFFCLIBAPI FRETVAL(intf) nvfiqtag
+                (intf  * vkey);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsiqnelt
+                (intf * vkey, intf *nelt);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsiqintr
+                (intf * vkey, intf *interlace);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsqfldsc
+                (intf * vkey, _fcd fields, intf *fieldslen);
+
+     HDFFCLIBAPI FRETVAL(intf) nvsiqvsz
+                (intf * vkey, intf *ret_size);
+
+ /* 
   ** from vattrf.c
- */
+  */
+# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
 #  define nvsfcfdx   H4_F77_FUNC(vsfcfdx, VSFCFDX)
 #  define nvsfcsat   H4_F77_FUNC(vsfcsat, VSFCSAT)
 #  define nvsfcsca   H4_F77_FUNC(vsfcsca, VSFCSCA)
@@ -1397,6 +1774,26 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
 #  define nvfgnatt   H4_F77_FUNC(vfgnatt, VFGNATT)
 #  define nvfgcatt   H4_F77_FUNC(vfgcatt, VFGCATT)
 #  define nvfgver    H4_F77_FUNC(vfgver,  VFGVER)
+# else                          /* !sl */
+#  define nvsfcfdx   H4_F77_FUNC(vsfcfdx, VSFCFDX)
+#  define nvsfcsat   H4_F77_FUNC(vsfcsat, VSFCSAT)
+#  define nvsfcsca   H4_F77_FUNC(vsfcsca, VSFCSCA)
+#  define nvsfcnats  H4_F77_FUNC(vsfcnats, VSFCNATS)
+#  define nvsfcfnas  H4_F77_FUNC(vsfcfnas, VSFCFNAS)
+#  define nvsfcfda   H4_F77_FUNC(vsfcfda, VSFCFDA)
+#  define nvsfcainf  H4_F77_FUNC(vsfcainf, VSFCAINF)
+#  define nvsfcgna   H4_F77_FUNC(vsfcgna, VSFCGNA)
+#  define nvsfcgca   H4_F77_FUNC(vsfcgca, VSFCGCA)
+#  define nvsfcisa   H4_F77_FUNC(vsfcisa, VSFCISA)
+#  define nvfcsatt   H4_F77_FUNC(vfcsatt, VFCSATT)
+#  define nvfcscat   H4_F77_FUNC(vfcscat, VFCSCAT)
+#  define nvfcnats   H4_F77_FUNC(vfcnats, VFCNATS)
+#  define nvfcfdat   H4_F77_FUNC(vfcfdat, VFCFDAT)
+#  define nvfcainf   H4_F77_FUNC(vfcainf, VFCAINF)
+#  define nvfcgnat   H4_F77_FUNC(vfcgnat, VFCGNAT)
+#  define nvfcgcat   H4_F77_FUNC(vfcgcat, VFCGCAT)
+#  define nvfcgver   H4_F77_FUNC(vfcgver, VFCGVER)
+# endif                          /* !sl */
 
    HDFLIBAPI   FRETVAL(intf) nvsfcfdx
             (intf *vsid, _fcd fldnm, intf *findex, intf *fldnmlen);
@@ -1440,6 +1837,47 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
             (intf *vgid, intf *aindex, _fcd values);
    HDFLIBAPI   FRETVAL(intf) nvfgver
             (intf *vgid);
+
+/* Added for windows */
+   HDFFCLIBAPI FRETVAL(intf) nvsfainf
+            (intf *vsid, intf *findex, intf *aindex, _fcd attrname,
+             intf *dtype, intf *count, intf *size);
+  
+   HDFFCLIBAPI FRETVAL(intf) nvsfcnats
+            (intf *vsid);
+
+   HDFFCLIBAPI FRETVAL(intf) nvsfcfnas
+            (intf *vsid, intf *findex);
+   
+   HDFFCLIBAPI FRETVAL(intf) nvsfcainf
+            (intf *vsid, intf *findex, intf *aindex, _fcd attrname,
+             intf *dtype, intf *count, intf *size);
+
+   HDFFCLIBAPI FRETVAL(intf) nvsfcgna
+            (intf *vsid, intf *findex, intf *aindex, intf *values);
+
+   HDFFCLIBAPI FRETVAL(intf) nvsfcgca
+            (intf *vsid, intf *findex, intf *aindex, _fcd values);
+
+   HDFFCLIBAPI FRETVAL(intf) nvsfcisa
+            (intf *vsid);
+
+   HDFFCLIBAPI FRETVAL(intf) nvfcnats
+            (intf *vgid);
+
+   HDFFCLIBAPI FRETVAL(intf) nvfcainf
+            (intf *vgid, intf *aindex, _fcd attrname,
+             intf *dtype, intf *count, intf *size);
+
+   HDFFCLIBAPI FRETVAL(intf) nvfcgnat
+            (intf *vgid, intf *aindex, intf *values);
+
+   HDFFCLIBAPI FRETVAL(intf) nvfcgcat
+            (intf *vgid, intf *aindex, _fcd values);
+
+   HDFFCLIBAPI FRETVAL(intf) nvfcgver
+            (intf *vgid);
+/* End of windows */
 
 
 /* 
