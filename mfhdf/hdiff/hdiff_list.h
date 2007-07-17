@@ -21,13 +21,39 @@ extern "C" {
 #endif
 
 #include "hdiff_table.h"
+#include "hdiff_dim.h"
 
 
 /* get the list of HDF objects in the file */
-uint32 hdiff_list (const char* fname, dtable_t *list, int *err);
-int hdiff_list_vg (const char* fname,int32 file_id,int32 sd_id,int32 gr_id,dtable_t *table);
+
+
+uint32 hdiff_list (const char* fname, 
+                   dtable_t *table, 
+                   dim_table_t *td1,
+                   dim_table_t *td2,
+                   int *err);
+
+
+int hdiff_list_vg(const char* fname,
+                  int32 file_id,
+                  int32 sd_id,             /* SD interface identifier */
+                  int32 gr_id,             /* GR interface identifier */
+                  dtable_t *table,         /* all objects table */
+                  dim_table_t *td1,        /* dimension table 1 */
+                  dim_table_t *td2)        /* dimension table 2 */;
+
+
+
 int hdiff_list_gr (int32 file_id,int32 gr_id,dtable_t *table);
-int hdiff_list_sds(int32 file_id,int32 sd_id,dtable_t *table);
+
+int hdiff_list_sds(int32 file_id,
+                   int32 sd_id,                  /* SD interface identifier */
+                   dtable_t *table,              /* all objects table */
+                   dim_table_t *td1,             /* dimension table 1 */
+                   dim_table_t *td2)             /* dimension table 2 */;
+
+
+
 int hdiff_list_vs (int32 file_id,dtable_t *table);
 int hdiff_list_glb(int32 sd_id,int32 gr_id);
 int hdiff_list_an (int32 file_id);
@@ -45,14 +71,18 @@ int insert_vg(const char* fname,
               int32* in_tags,          /* tag list for parent group */
               int32* in_refs,          /* ref list for parent group */
               int npairs,              /* number tag/ref pairs for parent group */
-              dtable_t *table);
+              dtable_t *table,         /* all objects table */
+              dim_table_t *td1,        /* dimension table 1 */
+              dim_table_t *td2)        /* dimension table 2 */;
 
 int  insert_sds(int32 file_id,
                 int32 sd_id,
-                int32 tag,
-                int32 ref,
-                char *path_name,
-                dtable_t *table);
+                int32 tag,            /* tag of input SDS */
+                int32 ref,            /* ref of input SDS */
+                char *path_name,      /* absolute path for input group name */
+                dtable_t *table,      /* all objects table */
+                dim_table_t *td1,     /* dimension table 1 */
+                dim_table_t *td2)     /* dimension table 2 */;
 
 int  insert_gr(int32 file_id,
                int32 gr_in,

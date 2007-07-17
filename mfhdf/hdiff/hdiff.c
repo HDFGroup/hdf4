@@ -33,8 +33,8 @@ uint32 hdiff(const char *fname1,
              const char *fname2, 
              diff_opt_t *opt)
 {
- dtable_t  *list1;
- dtable_t  *list2;
+ dtable_t  *list1=NULL;
+ dtable_t  *list2=NULL;
  int32     sd1_id=-1,                 
            sd2_id=-1,
            gr1_id=-1,                 
@@ -46,25 +46,48 @@ uint32 hdiff(const char *fname1,
  uint32    nfound=0;  
  int       err;
 
+ /* file 1 */
+ dim_table_t *td1_1=NULL;
+ dim_table_t *td1_2=NULL;
+
+ /* file 2 */
+ dim_table_t *td2_1=NULL;
+ dim_table_t *td2_2=NULL;
+
  /* init tables */
  dtable_init(&list1);
  dtable_init(&list2);
+ dim_table_init(&td1_1);
+ dim_table_init(&td1_2);
+ dim_table_init(&td2_1);
+ dim_table_init(&td2_2);
 
 /*-------------------------------------------------------------------------
  * get a list of objects for both files
  *-------------------------------------------------------------------------
  */
 
- nobjects1=hdiff_list(fname1, list1, &err);
+ nobjects1=hdiff_list(fname1, 
+     list1,
+     td1_1,
+     td1_2,
+     &err);
+
  if (err)
      goto out;
- nobjects2=hdiff_list(fname2, list2, &err);
+
+ nobjects2=hdiff_list(fname2, 
+     list2,
+     td2_1,
+     td2_2,
+     &err);
+
  if (err)
      goto out;
 
  if (opt->verbose) {
-  dtable_print(list1);
-  dtable_print(list2);
+  dtable_print(list1, "file 1");
+  dtable_print(list2, "file 2");
  }
 
 /*-------------------------------------------------------------------------
@@ -133,6 +156,18 @@ uint32 hdiff(const char *fname1,
               gr2_id,
               file2_id,
               opt);
+ 
+ 
+ nfound+=match_dim(sd1_id,
+     sd2_id,
+     td1_1,
+     td1_2,
+     td2_1,
+     td2_2,
+     opt
+     );
+ 
+ 
 
 
 /*-------------------------------------------------------------------------
@@ -185,6 +220,15 @@ uint32 hdiff(const char *fname1,
  dtable_free(list1);
  dtable_free(list2);
 
+ if (td1_1!=NULL)
+     dim_table_free(td1_1);
+ if (td1_2!=NULL)
+     dim_table_free(td1_2);
+ if (td2_1!=NULL)
+     dim_table_free(td2_1);
+ if (td2_2!=NULL)
+     dim_table_free(td2_2);
+
  return nfound;
 
 
@@ -196,6 +240,15 @@ out:
  /* free tables */
  dtable_free(list1);
  dtable_free(list2);
+
+  if (td1_1!=NULL)
+     dim_table_free(td1_1);
+ if (td1_2!=NULL)
+     dim_table_free(td1_2);
+ if (td2_1!=NULL)
+     dim_table_free(td2_1);
+ if (td2_2!=NULL)
+     dim_table_free(td2_2);
 
  if (sd1_id!=-1)
   SDend(sd1_id);

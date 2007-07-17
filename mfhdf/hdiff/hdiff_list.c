@@ -60,7 +60,12 @@ static int insert_an_data(int32 file_id,
  */
 
 
-uint32 hdiff_list (const char* fname, dtable_t *table, int *err)
+
+uint32 hdiff_list (const char* fname, 
+                   dtable_t *table, 
+                   dim_table_t *td1,
+                   dim_table_t *td2,
+                   int *err)
 {
  int32    file_id=-1, 
           sd_id=-1, 
@@ -87,11 +92,11 @@ uint32 hdiff_list (const char* fname, dtable_t *table, int *err)
  }
 
  /* iterate tru HDF interfaces */
- if ( hdiff_list_vg (fname,file_id,sd_id,gr_id,table) < 0)
+ if ( hdiff_list_vg (fname,file_id,sd_id,gr_id,table,td1,td2) < 0)
      goto out;
  if ( hdiff_list_gr (file_id,gr_id,table) < 0)
      goto out;
- if ( hdiff_list_sds(file_id,sd_id,table) < 0)
+ if ( hdiff_list_sds(file_id,sd_id,table,td1,td2) < 0)
      goto out;
  if ( hdiff_list_vs (file_id,table) < 0)
      goto out;
@@ -149,7 +154,9 @@ int hdiff_list_vg(const char* fname,
                   int32 file_id,
                   int32 sd_id,             /* SD interface identifier */
                   int32 gr_id,             /* GR interface identifier */
-                  dtable_t *table)
+                  dtable_t *table,         /* all objects table */
+                  dim_table_t *td1,        /* dimension table 1 */
+                  dim_table_t *td2)        /* dimension table 2 */
 {
  int32 vgroup_id,      /* vgroup identifier */
        nlones = 0,     /* number of lone vgroups */
@@ -252,7 +259,17 @@ int hdiff_list_vg(const char* fname,
      refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
      Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
      
-     insert_vg(fname,file_id,sd_id,gr_id,vgroup_name,tags,refs,ntagrefs,table);
+     insert_vg(fname,
+         file_id,
+         sd_id,
+         gr_id,
+         vgroup_name,
+         tags,
+         refs,
+         ntagrefs,
+         table,
+         td1,
+         td2);
      
      if (tags ) free (tags);
      if (refs) free (refs);
@@ -308,7 +325,9 @@ int insert_vg(const char* fname,
               int32* in_tags,          /* tag list for parent group */
               int32* in_refs,          /* ref list for parent group */
               int npairs,              /* number tag/ref pairs for parent group */
-              dtable_t *table)
+              dtable_t *table,         /* all objects table */
+              dim_table_t *td1,        /* dimension table 1 */
+              dim_table_t *td2)        /* dimension table 2 */
 {
  int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
@@ -368,8 +387,20 @@ int insert_vg(const char* fname,
     tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
     refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
     Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
+    
     /* recurse */
-    insert_vg(fname,file_id,sd_id,gr_id,path,tags,refs,ntagrefs,table);
+    insert_vg(fname,
+        file_id,
+        sd_id,
+        gr_id,
+        path,
+        tags,
+        refs,
+        ntagrefs,
+        table,
+        td1,
+        td2);
+
     free (tags);
     free (refs);
    }
@@ -390,7 +421,16 @@ int insert_vg(const char* fname,
   case DFTAG_SD:  /* Scientific Data */
   case DFTAG_SDG: /* Scientific Data Group */
   case DFTAG_NDG: /* Numeric Data Group */
-   insert_sds(file_id,sd_id,tag,ref,path_name,table);
+
+   insert_sds(file_id,
+       sd_id,
+       tag,
+       ref,
+       path_name,
+       table,
+       td1,
+       td2);
+
    break;
    
 /*-------------------------------------------------------------------------
@@ -495,7 +535,12 @@ int hdiff_list_gr(int32 file_id,
 
 int hdiff_list_sds(int32 file_id,
                    int32 sd_id,                  /* SD interface identifier */
-                   dtable_t *table)
+                   dtable_t *table,              /* all objects table */
+                   dim_table_t *td1,             /* dimension table 1 */
+                   dim_table_t *td2)             /* dimension table 2 */
+
+
+
 {
  int32 sds_id,                 /* dataset identifier */
        n_datasets,             /* number of datasets in the file */
@@ -530,7 +575,14 @@ int hdiff_list_sds(int32 file_id,
   }
 
   /* insert SDS  */
-  insert_sds(file_id,sd_id,DFTAG_NDG,sds_ref,0,table);
+  insert_sds(file_id,
+      sd_id,
+      DFTAG_NDG,
+      sds_ref,
+      0,
+      table,
+      td1,
+      td2);
      
   /* terminate access to the current dataset */
   SDendaccess (sds_id);
@@ -904,6 +956,9 @@ int insert_an(int32 file_id,
  *
  * Date: August 22, 2003
  *
+ * Modifications: pvn. July the 13 (Friday), 2007
+ *  Add support for lone dimensions 
+ *
  *-------------------------------------------------------------------------
  */
 
@@ -912,7 +967,9 @@ int  insert_sds(int32 file_id,
                 int32 tag,            /* tag of input SDS */
                 int32 ref,            /* ref of input SDS */
                 char *path_name,      /* absolute path for input group name */
-                dtable_t *table)
+                dtable_t *table,      /* all objects table */
+                dim_table_t *td1,     /* dimension table 1 */
+                dim_table_t *td2)     /* dimension table 2 */
 {
  int32 sds_id,                /* data set identifier */
        sds_index,             /* index number of the data set */
@@ -935,7 +992,15 @@ int  insert_sds(int32 file_id,
 
  /* check if the given SDS is a dimension scale, return 0 for no table add */
  if ( SDiscoordvar(sds_id) ) {
-  SDendaccess(sds_id);
+
+     
+     /* add SDS coordinate variable to dimension table 1 */
+     dim_table_add(td1,ref,sds_name);
+     SDendaccess(sds_id);
+
+
+
+
   return 0;
  }
  
@@ -965,20 +1030,26 @@ int  insert_sds(int32 file_id,
  for (i = 0; i < rank; i++) 
  {
   /* get dimension handle for input dimension */
-  if ((dim_id = SDgetdimid(sds_id, i)) == FAIL) {
+  if ((dim_id = SDgetdimid(sds_id, i)) == FAIL) 
+  {
    printf( "Failed to get dimension %d of SDS <%s>\n", i, path);
    continue;
   }
   /* get dimension information for input dimension */
-  if (SDdiminfo(dim_id, dim_name, &dim_size, &dtype, &nattrs) == FAIL) {
+  if (SDdiminfo(dim_id, dim_name, &dim_size, &dtype, &nattrs) == FAIL) 
+  {
    printf( "Failed to get info for dimension %d of SDS <%s>\n", i, path);
    continue;
   }
   /* attributes */
-  if (nattrs && insert_sds_attrs(dim_id, nattrs) == FAIL) {
+  if (nattrs && insert_sds_attrs(dim_id, nattrs) == FAIL) 
+  {
    printf( "Failed to copy attributes for dimension %d of of SDS <%s>\n", i, path);
    continue;
   }
+  
+  /* add dimension name to dimension scales table 2 */
+  dim_table_add(td2,-1,dim_name);
   
  }
 

@@ -143,17 +143,20 @@ void dtable_free( dtable_t *table )
  *-------------------------------------------------------------------------
  */
 
-void dtable_print(dtable_t *table)
+void dtable_print(dtable_t *table, char* header)
 {
  uint32 i;
 
+ if ( ! table->nobjs ) /* nothing to do */
+     return;
+
  printf("---------------------------------------\n");
- printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");
+ printf("%s %5s %6s    %-15s\n", header, "Tag", "Ref", "Name");
  printf("---------------------------------------\n");
 
  for (i = 0; i < table->nobjs; i++)
  {
-  printf("%5ld %6ld    %-15s\n", 
+  printf("       %5ld %6ld    %-15s\n", 
    table->objs[i].tag, 
    table->objs[i].ref, 
    table->objs[i].obj_name);

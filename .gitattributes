@@ -70,7 +70,10 @@ mfhdf/hdfimport/SDSfloat3.hdf -text
 mfhdf/hdfimport/crtSDSfloats.c -text
 mfhdf/hdfimport/gen_sds_floats.c -text
 mfhdf/hdfimport/hdfimport.out3 -text
+mfhdf/hdiff/hdiff_dim.c -text
+mfhdf/hdiff/hdiff_dim.h -text
 mfhdf/hdiff/testfiles/hdiff_13.txt -text
+mfhdf/hdiff/testfiles/hdiff_14.txt -text
 mfhdf/hdiff/testfiles/hdifftst1.hdf -text
 mfhdf/hdiff/testfiles/hdifftst2.hdf -text
 mfhdf/hdiff/testfiles/hdifftst3.hdf -text

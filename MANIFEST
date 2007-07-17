@@ -861,6 +861,10 @@
 ./mfhdf/hdiff/testfiles/hdifftst4.hdf
 ./mfhdf/hdiff/testfiles/hdifftst5.hdf
 ./mfhdf/hdiff/testfiles/hdifftst6.hdf
+./mfhdf/hdiff/hdiff_dim.c
+./mfhdf/hdiff/hdiff_dim.h
+./mfhdf/hdiff/testfiles/hdiff_14.txt
+
 
 
 ./mfhdf/hrepack/Makefile.am

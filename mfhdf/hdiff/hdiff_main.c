@@ -27,8 +27,9 @@
  * Programmer: Pedro Vicente Nunes, pvn@ncsa.uiuc.edu
  *
  * Date:  August 27, 2003
- *  Modifications: March 8, 2006
- *  Added percent (relative) option
+ *  Modifications: 
+ *  March 8, 2006. Added percent (relative) option
+ *  July 13, 2007. Add support for lone dimensions 
  *
  * Comments:
  *
