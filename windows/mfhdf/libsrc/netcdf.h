@@ -15,15 +15,16 @@
  * Unidata, to assist in its use, correction, modification, or enhancement.
  *
  */
-/* "$Id: win32cdf.h,v 1.4 1999/02/26 21:05:29 ptlu Exp $" */
+/* "$Id: netcdf-linux.h 4492 2004-11-22 18:57:50Z epourmal $" */
 
 #ifndef _NETCDF_
 #define _NETCDF_
 
-//RWR Modification Start 07/14/98
-//#include "api_adpt.h"
-#include "hdfi.h"
-//RWR Modification End
+#ifdef __MWERKS__
+#ifndef HDF
+#define HDF
+#endif
+#endif /* __MWERKS__ */
 
 /*
  * The definitions ncvoid, USE_ENUM, and MAX_NC_OPEN, may need to be set
@@ -47,7 +48,9 @@
  * Otherwise, delete this definition so that the nc_type is
  * an int and the valid values are #defined.
  */
+#ifndef __MWERKS__
 #define USE_ENUM
+#endif
 
 
 /*
@@ -337,6 +340,7 @@ typedef long    nclong;         /* default, compatible type */
 #define	NC_EXDR		32	/* */
 #define	NC_SYSERR	-1
 
+#include "hdf2netcdf.h"
 extern int ncerr ;
 
 /*
@@ -365,7 +369,6 @@ HDFLIBAPI int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 #   define	PROTO(x)	()
 #endif
 
-#include "hdf2netcdf.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -399,6 +402,9 @@ HDFLIBAPI int ncsync	PROTO((
     int		cdfid
 ));
 HDFLIBAPI int ncabort	PROTO((
+    int		cdfid
+));
+HDFLIBAPI int ncnobuf	PROTO((
     int		cdfid
 ));
 HDFLIBAPI int ncdimdef	PROTO((

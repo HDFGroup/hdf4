@@ -1256,14 +1256,8 @@
 
 ./windows/hdf/src/h4config.h
 
-./windows/hdf/test/fortest.h
-./windows/hdf/util/hdfed.out1
-
 ./windows/hdf/util/testfiles/head.r24
 ./windows/hdf/util/testfiles/head.r8
-
-./windows/mfhdf/hdfimport/hdfimport.out2
-./windows/mfhdf/hdiff/testfiles/hdiff_06.txt
 
 ./windows/mfhdf/libsrc/netcdf.h
 

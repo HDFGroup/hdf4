@@ -147,10 +147,6 @@ windows/fortran/examples/unltest/unltest.dsp -text
 windows/getopt.dsp -text
 windows/gif2hdf.dsp -text
 windows/hdf/src/h4config.h -text
-windows/hdf/test/fortest.h -text
-windows/hdf/util/hdfed.out1 -text
-windows/hdf/util/testfiles/head.r24 -text
-windows/hdf/util/testfiles/head.r8 -text svneol=unset#application/octet-stream
 windows/hdf24to8.dsp -text
 windows/hdf2gif.dsp -text
 windows/hdf2jpeg.dsp -text
@@ -182,8 +178,6 @@ windows/install_fortrandll.BAT -text
 windows/installhdf4lib.BAT -text
 windows/jpeg2hdf.dsp -text
 windows/libtest_fcstub.dsp -text
-windows/mfhdf/hdfimport/hdfimport.out2 -text
-windows/mfhdf/hdiff/testfiles/hdiff_06.txt -text
 windows/mfhdf/libsrc/netcdf.h -text
 windows/mfhdf_ap.dsp -text
 windows/ncdump.dsp -text
