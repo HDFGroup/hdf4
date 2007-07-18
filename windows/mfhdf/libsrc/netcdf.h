@@ -26,6 +26,8 @@
 #endif
 #endif /* __MWERKS__ */
 
+#include "hdfi.h"
+
 /*
  * The definitions ncvoid, USE_ENUM, and MAX_NC_OPEN, may need to be set
  * properly for your installation.
