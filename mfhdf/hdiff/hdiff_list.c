@@ -67,74 +67,77 @@ uint32 hdiff_list (const char* fname,
                    diff_dim_table_t *td2,
                    int *err)
 {
- int32    file_id=-1, 
-          sd_id=-1, 
-          gr_id=-1;
-
-
- /* open the file for read */
- if ((file_id  = Hopen (fname,DFACC_READ,(int16)0))==FAIL)
- {
-  printf("Cannot open file <%s>\n",fname);
-  goto out;
- }
-
- /* initialize the SD interface */
- if ((sd_id  = SDstart (fname, DFACC_READ))==FAIL){
-  printf( "Could not start SD for <%s>\n",fname);
-  goto out;
- }
-
- /* initialize the GR interface */
- if ((gr_id  = GRstart (file_id))==FAIL){
-  printf( "Could not start GR for <%s>\n",fname);
-  goto out;
- }
-
- /* iterate tru HDF interfaces */
- if ( hdiff_list_vg (fname,file_id,sd_id,gr_id,table,td1,td2) < 0)
-     goto out;
- if ( hdiff_list_gr (file_id,gr_id,table) < 0)
-     goto out;
- if ( hdiff_list_sds(file_id,sd_id,table,td1,td2) < 0)
-     goto out;
- if ( hdiff_list_vs (file_id,table) < 0)
-     goto out;
- if ( hdiff_list_glb(sd_id,gr_id) < 0)
-     goto out;
- if ( hdiff_list_an (file_id) < 0)
-     goto out;
-
- /* close */
- if (GRend (gr_id)==FAIL) {
-  printf( "Failed to close GR interface <%s>\n", fname);
-  goto out;
- }
- if (SDend (sd_id)==FAIL) {
-  printf( "Failed to close SD interface <%s>\n", fname);
-  goto out;
- }
- if (Hclose (file_id) == FAIL ) {
-  printf( "Failed to close file <%s>\n", fname);
-  goto out;
- }
- 
- *err=0;
- return table->nobjs;
-
+    int32    file_id=-1, 
+             sd_id=-1, 
+             gr_id=-1;
+    
+    
+    /* open the file for read */
+    if ((file_id  = Hopen (fname,DFACC_READ,(int16)0))==FAIL)
+    {
+        printf("Cannot open file <%s>\n",fname);
+        goto out;
+    }
+    
+    /* initialize the SD interface */
+    if ((sd_id  = SDstart (fname, DFACC_READ))==FAIL)
+    {
+        printf( "Could not start SD for <%s>\n",fname);
+        goto out;
+    }
+    
+    /* initialize the GR interface */
+    if ((gr_id  = GRstart (file_id))==FAIL)
+    {
+        printf( "Could not start GR for <%s>\n",fname);
+        goto out;
+    }
+    
+    /* iterate tru HDF interfaces */
+    if ( hdiff_list_vg (fname,file_id,sd_id,gr_id,table,td1,td2) < 0)
+        goto out;
+    if ( hdiff_list_gr (file_id,gr_id,table) < 0)
+        goto out;
+    if ( hdiff_list_sds(file_id,sd_id,table,td1,td2) < 0)
+        goto out;
+    if ( hdiff_list_vs (file_id,table) < 0)
+        goto out;
+    if ( hdiff_list_glb(sd_id,gr_id) < 0)
+        goto out;
+    if ( hdiff_list_an (file_id) < 0)
+        goto out;
+    
+    /* close */
+    if (GRend (gr_id)==FAIL) 
+    {
+        printf( "Failed to close GR interface <%s>\n", fname);
+        goto out;
+    }
+    if (SDend (sd_id)==FAIL) 
+    {
+        printf( "Failed to close SD interface <%s>\n", fname);
+        goto out;
+    }
+    if (Hclose (file_id) == FAIL ) 
+    {
+        printf( "Failed to close file <%s>\n", fname);
+        goto out;
+    }
+    
+    *err=0;
+    return table->nobjs;
+    
 out:
-
- 
-
- if (sd_id!=-1)
-  SDend(sd_id);
- if (gr_id!=-1)
-  GRend(gr_id);
- if (file_id!=-1)
-  Hclose(file_id);
-
- *err=1;
- return 0;
+    
+    if (sd_id!=-1)
+        SDend(sd_id);
+    if (gr_id!=-1)
+        GRend(gr_id);
+    if (file_id!=-1)
+        Hclose(file_id);
+    
+    *err=1;
+    return 0;
 }
 
 
@@ -155,156 +158,174 @@ int hdiff_list_vg(const char* fname,
                   int32 sd_id,             /* SD interface identifier */
                   int32 gr_id,             /* GR interface identifier */
                   dtable_t *table,         /* all objects table */
-                  diff_dim_table_t *td1,        /* dimension table 1 */
-                  diff_dim_table_t *td2)        /* dimension table 2 */
+                  diff_dim_table_t *td1,   /* dimension table 1 */
+                  diff_dim_table_t *td2)   /* dimension table 2 */
 {
- int32 vgroup_id,      /* vgroup identifier */
-       nlones = 0,     /* number of lone vgroups */
-       ntagrefs,       /* number of tag/ref pairs in a vgroup */
-       *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
-       *tags,          /* buffer to hold the tag numbers of vgroups   */
-       *refs,          /* buffer to hold the ref numbers of vgroups   */
-       tag_vg,
-       ref_vg;
- char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
- int   i;
-
- /* initialize the V interface */
- if (Vstart (file_id)==FAIL) {
-  printf("Error: Could not start group interface in <%s>\n", fname);
-  return FAIL;
- }
-
-/*
- * get the names and class names of all the lone vgroups.
- * first, call Vlone with nlones set to 0 to get the number of
- * lone vgroups in the file, but not to get their reference numbers.
- */
- nlones = Vlone (file_id, NULL, nlones );
-
- if (nlones > 0)
- {
- /*
-  * use the nlones returned to allocate sufficient space for the
-  * buffer ref_array to hold the reference numbers of all lone vgroups,
-  */
-  ref_array = (int32 *) malloc(sizeof(int32) * nlones);
-  
- /*
-  * and call Vlone again to retrieve the reference numbers into 
-  * the buffer ref_array.
-  */
-  nlones = Vlone (file_id, ref_array, nlones);
-  
- /*
-  * iterate tru each lone vgroup.
-  */
-  for (i = 0; i < nlones; i++)
-  {
-  /*
-   * attach to the current vgroup then get its
-   * name and class. note: the current vgroup must be detached before
-   * moving to the next.
-   */
-   if ((vgroup_id = Vattach (file_id, ref_array[i], "r"))==FAIL){
-    printf("Error: Could not attach group with ref <%ld>\n", ref_array[i]);
-    goto out;
-   }
-   if (Vgetname (vgroup_id, vgroup_name)==FAIL){
-    printf("Error: Could not get name for group with ref <%ld>\n", ref_array[i]);
-    goto out;
-   }
-   if (Vgetclass (vgroup_id, vgroup_class)==FAIL){
-    printf("Error: Could not get class for group with ref <%ld>\n", ref_array[i]);
-    goto out;
-   }
-   
-   /* ignore reserved HDF groups/vdatas */
-   if( is_reserved(vgroup_class)){
-    if (Vdetach (vgroup_id)==FAIL){
-     printf("Error: Could not detach group <%s>\n", vgroup_class);
-     goto out;
-    }
-    continue;
-   }
-   if(vgroup_name != NULL) 
-    if(strcmp(vgroup_name,GR_NAME)==0) {
-     if (Vdetach (vgroup_id)==FAIL){
-      printf("Error: Could not detach group <%s>\n", vgroup_class);
-      goto out;
-     }
-     continue;
-    }
-
-    if ((ref_vg = VQueryref(vgroup_id))==FAIL){
-     printf( "Failed to get ref for <%s>\n", vgroup_name);
-     goto out;
-    }
-    if ((tag_vg = VQuerytag(vgroup_id))==FAIL){
-     printf( "Failed to get tag for <%s>\n", vgroup_name);
-     goto out;
-    }
-
-     /* add object to table */
-    dtable_add(table,tag_vg,ref_vg,vgroup_name);
-  
-    insert_vg_attrs(vgroup_id,vgroup_name);
-    insert_vg_an(file_id,vgroup_id,vgroup_name);
-
-    /* insert objects for this group */
-    ntagrefs = Vntagrefs(vgroup_id);
-    if ( ntagrefs > 0 )
+    int32 vgroup_id,      /* vgroup identifier */
+          nlones = 0,     /* number of lone vgroups */
+          ntagrefs,       /* number of tag/ref pairs in a vgroup */
+          *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
+          *tags=NULL,     /* buffer to hold the tag numbers of vgroups   */
+          *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
+          tag_vg,
+          ref_vg;
+    char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
+    int   i;
+    
+    /* initialize the V interface */
+    if (Vstart (file_id)==FAIL) 
     {
-     tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
-     refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
-     Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
-     
-     insert_vg(fname,
-         file_id,
-         sd_id,
-         gr_id,
-         vgroup_name,
-         tags,
-         refs,
-         ntagrefs,
-         table,
-         td1,
-         td2);
-     
-     if (tags ) free (tags);
-     if (refs) free (refs);
+        printf("Error: Could not start group interface in <%s>\n", fname);
+        return FAIL;
     }
     
-    if(Vdetach (vgroup_id)==FAIL){
-     printf("Error: Could not detach group <%s>\n", vgroup_name);
-     goto out;
-    }
-  
-  } /* for */
-  
-  
-  /* free the space allocated */
-  if (ref_array) 
-   free (ref_array);
- } /* if */
- 
+   /*
+    * get the names and class names of all the lone vgroups.
+    * first, call Vlone with nlones set to 0 to get the number of
+    * lone vgroups in the file, but not to get their reference numbers.
+    */
+    nlones = Vlone (file_id, NULL, nlones );
+    
+    if (nlones > 0)
+    {
+   /*
+    * use the nlones returned to allocate sufficient space for the
+    * buffer ref_array to hold the reference numbers of all lone vgroups,
+    */
+        ref_array = (int32 *) malloc(sizeof(int32) * nlones);
+        
+       /*
+        * and call Vlone again to retrieve the reference numbers into 
+        * the buffer ref_array.
+        */
+        nlones = Vlone (file_id, ref_array, nlones);
+        
+       /*
+        * iterate tru each lone vgroup.
+        */
+        for (i = 0; i < nlones; i++)
+        {
+       /*
+        * attach to the current vgroup then get its
+        * name and class. note: the current vgroup must be detached before
+        * moving to the next.
+        */
+            if ((vgroup_id = Vattach (file_id, ref_array[i], "r"))==FAIL)
+            {
+                printf("Error: Could not attach group with ref <%ld>\n", ref_array[i]);
+                goto out;
+            }
+            
+            if (Vgetname (vgroup_id, vgroup_name)==FAIL)
+            {
+                printf("Error: Could not get name for group with ref <%ld>\n", ref_array[i]);
+                goto out;
+            }
+            
+            if (Vgetclass (vgroup_id, vgroup_class)==FAIL)
+            {
+                printf("Error: Could not get class for group with ref <%ld>\n", ref_array[i]);
+                goto out;
+            }
+            
+            /* ignore reserved HDF groups/vdatas */
+            if( is_reserved(vgroup_class))
+            {
+                if (Vdetach (vgroup_id)==FAIL)
+                {
+                    printf("Error: Could not detach group <%s>\n", vgroup_class);
+                    goto out;
+                }
+                continue;
+            }
+            
+            if(strcmp(vgroup_name,GR_NAME)==0) 
+            {
+                if (Vdetach (vgroup_id)==FAIL)
+                {
+                    printf("Error: Could not detach group <%s>\n", vgroup_class);
+                    goto out;
+                }
+                continue;
+            }
+            
+            /* get ref and tag */
+            if ((ref_vg = VQueryref(vgroup_id))==FAIL)
+            {
+                printf( "Failed to get ref for <%s>\n", vgroup_name);
+                goto out;
+            }
 
- /* terminate access to the V interface */
- if (Vend (file_id)==FAIL) {
-  printf("Error: Could not end group interface in <%s>\n", vgroup_name);
- }
+            if ((tag_vg = VQuerytag(vgroup_id))==FAIL)
+            {
+                printf( "Failed to get tag for <%s>\n", vgroup_name);
+                goto out;
+            }
+            
+            /* add object to table */
+            dtable_add(table,tag_vg,ref_vg,vgroup_name);
+            
+            insert_vg_attrs(vgroup_id,vgroup_name);
+            insert_vg_an(file_id,vgroup_id,vgroup_name);
+            
+            /* insert objects for this group */
+            ntagrefs = Vntagrefs(vgroup_id);
+            if ( ntagrefs > 0 )
+            {
+                tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
+                
+                insert_vg(fname,
+                    file_id,
+                    sd_id,
+                    gr_id,
+                    vgroup_name,
+                    tags,
+                    refs,
+                    ntagrefs,
+                    table,
+                    td1,
+                    td2);
+                
+                if (tags ) 
+                    free (tags);
+                if (refs) 
+                    free (refs);
+            }
+            
+            if(Vdetach (vgroup_id)==FAIL)
+            {
+                printf("Error: Could not detach group <%s>\n", vgroup_name);
+                goto out;
+            }
+            
+        } /* for */
+        
+        
+        /* free the space allocated */
+        if (ref_array) 
+            free (ref_array);
+    } /* if */
+ 
+ 
+   /* terminate access to the V interface */
+   if (Vend (file_id)==FAIL) 
+   {
+       printf("Error: Could not end group interface in <%s>\n", vgroup_name);
+   }
  
  return 0;
-
-
+ 
+ 
 out:
-
+ 
  Vend (file_id);
  if (ref_array) 
-   free (ref_array);
+     free (ref_array);
  return FAIL;
-
-
+ 
+ 
 }
 
 /*-------------------------------------------------------------------------

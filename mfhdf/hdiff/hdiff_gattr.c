@@ -26,10 +26,6 @@
  *
  * Purpose: compare global SDS attributes
  *
- * Programmer: 
- *
- * Date: 
- *
  *-------------------------------------------------------------------------
  */
 
