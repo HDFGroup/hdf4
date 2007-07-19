@@ -16,34 +16,33 @@
 #include "hdiff_dim.h"
 
 
-
-/* match name between 2 dim_table_t type lists */
-typedef struct match_dim_name_t {
+/* match name between 2 diff_dim_table_t type lists */
+typedef struct diff_match_dim_name_t {
     int32 ref;                    /* reference */
     char  dim_name[MAX_NC_NAME];  /* name */
     int   flags[2];               /* name exists 1, no 0 */  
-} match_dim_name_t;
+} diff_match_dim_name_t;
 
-/* table for match_dim_name_t */
-typedef struct match_dim_table_t {
+/* table for diff_match_dim_name_t */
+typedef struct diff_match_dim_table_t {
     int        size;
     int        nobjs;
-    match_dim_name_t *objs;
-} match_dim_table_t;
+    diff_match_dim_name_t *objs;
+} diff_match_dim_table_t;
 
 /*-------------------------------------------------------------------------
  * local prototypes
  *-------------------------------------------------------------------------
  */
 
-/* methods for match_dim_table_t */
-static void match_dim_table_free( match_dim_table_t *table );
-static void match_dim_table_init( match_dim_table_t **tbl );
-static void match_dim_table_add ( match_dim_table_t *table, unsigned *flags, char* dim_name, int32 ref);
+/* methods for diff_match_dim_table_t */
+static void diff_match_dim_table_free( diff_match_dim_table_t *table );
+static void diff_match_dim_table_init( diff_match_dim_table_t **tbl );
+static void diff_match_dim_table_add ( diff_match_dim_table_t *table, unsigned *flags, char* dim_name, int32 ref);
 
 
 /*-------------------------------------------------------------------------
- * Function: match_dim
+ * Function: diff_match_dim
  *
  * Purpose: diff "lone" dimensions. 
  *  Find common dimension names; the algorithm used for this search is the 
@@ -58,12 +57,12 @@ static void match_dim_table_add ( match_dim_table_t *table, unsigned *flags, cha
  *
  *-------------------------------------------------------------------------
  */
-uint32 match_dim(int32 sd1_id,
+uint32 diff_match_dim(int32 sd1_id,
                int32 sd2_id,
-               dim_table_t *td1_1,
-               dim_table_t *td1_2,
-               dim_table_t *td2_1,
-               dim_table_t *td2_2,
+               diff_dim_table_t *td1_1,
+               diff_dim_table_t *td1_2,
+               diff_dim_table_t *td2_1,
+               diff_dim_table_t *td2_2,
                diff_opt_t * opt)
 {
  int   cmp;
@@ -71,8 +70,8 @@ uint32 match_dim(int32 sd1_id,
  int   curr1;
  int   curr2;
  /*build a common list */
- match_dim_table_t *mattbl_file1=NULL;
- match_dim_table_t *mattbl_file2=NULL;
+ diff_match_dim_table_t *mattbl_file1=NULL;
+ diff_match_dim_table_t *mattbl_file2=NULL;
  unsigned inlist[2]; 
  int      i;
  uint32   nfound = 0;
@@ -97,7 +96,7 @@ uint32 match_dim(int32 sd1_id,
  curr1=0;
  curr2=0;
 
- match_dim_table_init( &mattbl_file1 );
+ diff_match_dim_table_init( &mattbl_file1 );
 
  while ( more_names_exist )
  {
@@ -105,7 +104,7 @@ uint32 match_dim(int32 sd1_id,
   if ( cmp == 0 )
   {
    inlist[0]=1; inlist[1]=1;
-   match_dim_table_add(mattbl_file1,inlist,
+   diff_match_dim_table_add(mattbl_file1,inlist,
        td1_1->objs[curr1].dim_name,
        td1_1->objs[curr1].ref);
 
@@ -115,7 +114,7 @@ uint32 match_dim(int32 sd1_id,
   else if ( cmp < 0 )
   {
    inlist[0]=1; inlist[1]=0;
-   match_dim_table_add(mattbl_file1,inlist,
+   diff_match_dim_table_add(mattbl_file1,inlist,
     td1_1->objs[curr1].dim_name,
     td1_1->objs[curr1].ref);
    curr1++;
@@ -123,7 +122,7 @@ uint32 match_dim(int32 sd1_id,
   else 
   {
    inlist[0]=0; inlist[1]=1;
-   match_dim_table_add(mattbl_file1,inlist,
+   diff_match_dim_table_add(mattbl_file1,inlist,
     td1_2->objs[curr2].dim_name,
     td1_2->objs[curr2].ref);
    curr2++;
@@ -140,7 +139,7 @@ uint32 match_dim(int32 sd1_id,
   while ( curr1<td1_1->nobjs )
   {
    inlist[0]=1; inlist[1]=0;
-   match_dim_table_add(mattbl_file1,inlist,
+   diff_match_dim_table_add(mattbl_file1,inlist,
     td1_1->objs[curr1].dim_name,
     td1_1->objs[curr1].ref);
    curr1++;
@@ -153,7 +152,7 @@ uint32 match_dim(int32 sd1_id,
   while ( curr2<td1_2->nobjs )
   {
    inlist[0]=0; inlist[1]=1;
-   match_dim_table_add(mattbl_file1,inlist,
+   diff_match_dim_table_add(mattbl_file1,inlist,
     td1_2->objs[curr2].dim_name,
     td1_2->objs[curr2].ref);
    curr2++;
@@ -191,7 +190,7 @@ uint32 match_dim(int32 sd1_id,
  curr1=0;
  curr2=0;
 
- match_dim_table_init( &mattbl_file2 );
+ diff_match_dim_table_init( &mattbl_file2 );
 
  while ( more_names_exist )
  {
@@ -199,7 +198,7 @@ uint32 match_dim(int32 sd1_id,
   if ( cmp == 0 )
   {
    inlist[0]=1; inlist[1]=1;
-   match_dim_table_add(mattbl_file2,inlist,
+   diff_match_dim_table_add(mattbl_file2,inlist,
        td2_1->objs[curr1].dim_name,
        td2_1->objs[curr1].ref);
 
@@ -209,7 +208,7 @@ uint32 match_dim(int32 sd1_id,
   else if ( cmp < 0 )
   {
    inlist[0]=1; inlist[1]=0;
-   match_dim_table_add(mattbl_file2,inlist,
+   diff_match_dim_table_add(mattbl_file2,inlist,
     td2_1->objs[curr1].dim_name,
     td2_1->objs[curr1].ref);
    curr1++;
@@ -217,7 +216,7 @@ uint32 match_dim(int32 sd1_id,
   else 
   {
    inlist[0]=0; inlist[1]=1;
-   match_dim_table_add(mattbl_file2,inlist,
+   diff_match_dim_table_add(mattbl_file2,inlist,
     td2_2->objs[curr2].dim_name,
     td2_2->objs[curr2].ref);
    curr2++;
@@ -234,7 +233,7 @@ uint32 match_dim(int32 sd1_id,
   while ( curr1<td2_1->nobjs )
   {
    inlist[0]=1; inlist[1]=0;
-   match_dim_table_add(mattbl_file2,inlist,
+   diff_match_dim_table_add(mattbl_file2,inlist,
     td2_1->objs[curr1].dim_name,
     td2_1->objs[curr1].ref);
    curr1++;
@@ -247,7 +246,7 @@ uint32 match_dim(int32 sd1_id,
   while ( curr2<td2_2->nobjs )
   {
    inlist[0]=0; inlist[1]=1;
-   match_dim_table_add(mattbl_file2,inlist,
+   diff_match_dim_table_add(mattbl_file2,inlist,
     td2_2->objs[curr2].dim_name,
     td2_2->objs[curr2].ref);
    curr2++;
@@ -326,8 +325,8 @@ uint32 match_dim(int32 sd1_id,
 
 
  /* free tables */
- match_dim_table_free(mattbl_file1);
- match_dim_table_free(mattbl_file2);
+ diff_match_dim_table_free(mattbl_file1);
+ diff_match_dim_table_free(mattbl_file2);
 
  return nfound;
 }
@@ -337,7 +336,7 @@ uint32 match_dim(int32 sd1_id,
 
 
 /*-------------------------------------------------------------------------
- * Function: match_dim_table_add
+ * Function: diff_match_dim_table_add
  *
  * Purpose: add an entry from a list of dimension names into the match table 
  *
@@ -348,7 +347,7 @@ uint32 match_dim(int32 sd1_id,
  *-------------------------------------------------------------------------
  */
 
-static void match_dim_table_add (match_dim_table_t *table, 
+static void diff_match_dim_table_add (diff_match_dim_table_t *table, 
                                  unsigned *flags, 
                                  char* dim_name, 
                                  int32 ref)
@@ -372,7 +371,7 @@ static void match_dim_table_add (match_dim_table_t *table,
  
  if (table->nobjs == table->size) {
   table->size *= 2;
-  table->objs = (match_dim_name_t*)realloc(table->objs, table->size * sizeof(match_dim_name_t));
+  table->objs = (diff_match_dim_name_t*)realloc(table->objs, table->size * sizeof(diff_match_dim_name_t));
   
   for (i = table->nobjs; i < table->size; i++) {
    table->objs[i].ref = -1;
@@ -389,7 +388,7 @@ static void match_dim_table_add (match_dim_table_t *table,
 
 
 /*-------------------------------------------------------------------------
- * Function: match_dim_table_init
+ * Function: diff_match_dim_table_init
  *
  * Purpose: initialize match table
  *
@@ -402,14 +401,14 @@ static void match_dim_table_add (match_dim_table_t *table,
  *-------------------------------------------------------------------------
  */
 
-static void match_dim_table_init( match_dim_table_t **tbl )
+static void diff_match_dim_table_init( diff_match_dim_table_t **tbl )
 {
  int i;
- match_dim_table_t *table = (match_dim_table_t*) malloc(sizeof(match_dim_table_t));
+ diff_match_dim_table_t *table = (diff_match_dim_table_t*) malloc(sizeof(diff_match_dim_table_t));
  
  table->size = 20;
  table->nobjs = 0;
- table->objs = (match_dim_name_t*) malloc(table->size * sizeof(match_dim_name_t));
+ table->objs = (diff_match_dim_name_t*) malloc(table->size * sizeof(diff_match_dim_name_t));
  
  for (i = 0; i < table->size; i++) {
   table->objs[i].ref = -1;
@@ -422,7 +421,7 @@ static void match_dim_table_init( match_dim_table_t **tbl )
 
 
 /*-------------------------------------------------------------------------
- * Function: match_dim_table_free
+ * Function: diff_match_dim_table_free
  *
  * Purpose: free match table 
  *
@@ -435,7 +434,7 @@ static void match_dim_table_init( match_dim_table_t **tbl )
  *-------------------------------------------------------------------------
  */
 
-static void match_dim_table_free( match_dim_table_t *table )
+static void diff_match_dim_table_free( diff_match_dim_table_t *table )
 {
  free(table->objs);
  free(table);
@@ -444,7 +443,7 @@ static void match_dim_table_free( match_dim_table_t *table )
 
 
 /*-------------------------------------------------------------------------
- * Function: dim_table_add
+ * Function: diff_dim_table_add
  *
  * Purpose: add an entry of pair REF/NAME into a dimension table
  *
@@ -457,7 +456,7 @@ static void match_dim_table_free( match_dim_table_t *table )
  *-------------------------------------------------------------------------
  */
 
-void dim_table_add(dim_table_t *table, int ref, char* name)
+void diff_dim_table_add(diff_dim_table_t *table, int ref, char* name)
 {
  int i;
 
@@ -465,7 +464,7 @@ void dim_table_add(dim_table_t *table, int ref, char* name)
  
  if (table->nobjs == table->size) {
   table->size *= 2;
-  table->objs = (dim_name_t*)realloc(table->objs, table->size * sizeof(dim_name_t));
+  table->objs = (diff_dim_name_t*)realloc(table->objs, table->size * sizeof(diff_dim_name_t));
   
   for (i = table->nobjs; i < table->size; i++) {
    table->objs[i].ref = -1;
@@ -480,7 +479,7 @@ void dim_table_add(dim_table_t *table, int ref, char* name)
 
 
 /*-------------------------------------------------------------------------
- * Function: dim_table_init
+ * Function: diff_dim_table_init
  *
  * Purpose: initialize dimension table
  *
@@ -493,14 +492,14 @@ void dim_table_add(dim_table_t *table, int ref, char* name)
  *-------------------------------------------------------------------------
  */
 
-void dim_table_init( dim_table_t **tbl )
+void diff_dim_table_init( diff_dim_table_t **tbl )
 {
  int i;
- dim_table_t* table = (dim_table_t*) malloc(sizeof(dim_table_t));
+ diff_dim_table_t* table = (diff_dim_table_t*) malloc(sizeof(diff_dim_table_t));
  
  table->size = 20;
  table->nobjs = 0;
- table->objs = (dim_name_t*) malloc(table->size * sizeof(dim_name_t));
+ table->objs = (diff_dim_name_t*) malloc(table->size * sizeof(diff_dim_name_t));
  
  for (i = 0; i < table->size; i++) {
   table->objs[i].ref = -1;
@@ -510,7 +509,7 @@ void dim_table_init( dim_table_t **tbl )
 }
 
 /*-------------------------------------------------------------------------
- * Function: dim_table_free
+ * Function: diff_dim_table_free
  *
  * Purpose: free dimension table 
  *
@@ -523,7 +522,7 @@ void dim_table_init( dim_table_t **tbl )
  *-------------------------------------------------------------------------
  */
 
-void dim_table_free( dim_table_t *table )
+void diff_dim_table_free( diff_dim_table_t *table )
 {
  free(table->objs);
  free(table);

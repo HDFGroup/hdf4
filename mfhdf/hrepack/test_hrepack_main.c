@@ -483,8 +483,9 @@ int main(void)
  hrepack_end (&options);
  PASSED();
 
+
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )
   goto out;
  if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
   goto out;
@@ -508,7 +509,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
   goto out;
@@ -531,7 +532,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
   goto out;
@@ -557,7 +558,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
   goto out;
@@ -591,7 +592,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
   goto out;
@@ -628,7 +629,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
   goto out;
@@ -672,7 +673,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
   goto out;
@@ -706,7 +707,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
@@ -731,7 +732,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
   goto out;
@@ -753,7 +754,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR);
- if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
   goto out;
  if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
   goto out;
@@ -774,7 +775,7 @@ int main(void)
  PASSED();
 
  TESTING(HDIFF_TSTSTR2);
- if (hdiff(HREPACK_FILE2,HREPACK_FILE2_OUT,&fspec) == 1)
+ if (hdiff(HREPACK_FILE2,HREPACK_FILE2_OUT,&fspec) > 0)
   goto out;
  PASSED();
  

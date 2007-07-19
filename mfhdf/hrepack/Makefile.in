@@ -73,7 +73,7 @@ am_test_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hdiff.$(OBJEXT) hdiff_array.$(OBJEXT) hdiff_gattr.$(OBJEXT) \
 	hdiff_gr.$(OBJEXT) hdiff_list.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
 	hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) hdiff_table.$(OBJEXT) \
-	hdiff_vs.$(OBJEXT)
+	hdiff_vs.$(OBJEXT) hdiff_dim.$(OBJEXT)
 test_hrepack_OBJECTS = $(am_test_hrepack_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)/hdf/src@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
@@ -232,7 +232,7 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
                        ../hdiff/hdiff_gr.c ../hdiff/hdiff_list.c            \
                        ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_misc.c        \
                        ../hdiff/hdiff_sds.c ../hdiff/hdiff_table.c          \
-                       ../hdiff/hdiff_vs.c
+                       ../hdiff/hdiff_vs.c ../hdiff/hdiff_dim.c
 
 test_hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 test_hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
@@ -320,6 +320,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_array.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_dim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gattr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_gr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdiff_list.Po@am__quote@
@@ -502,6 +503,20 @@ hdiff_vs.obj: ../hdiff/hdiff_vs.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_vs.c' object='hdiff_vs.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_vs.obj `if test -f '../hdiff/hdiff_vs.c'; then $(CYGPATH_W) '../hdiff/hdiff_vs.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_vs.c'; fi`
+
+hdiff_dim.o: ../hdiff/hdiff_dim.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_dim.o -MD -MP -MF $(DEPDIR)/hdiff_dim.Tpo -c -o hdiff_dim.o `test -f '../hdiff/hdiff_dim.c' || echo '$(srcdir)/'`../hdiff/hdiff_dim.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/hdiff_dim.Tpo $(DEPDIR)/hdiff_dim.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_dim.c' object='hdiff_dim.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_dim.o `test -f '../hdiff/hdiff_dim.c' || echo '$(srcdir)/'`../hdiff/hdiff_dim.c
+
+hdiff_dim.obj: ../hdiff/hdiff_dim.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdiff_dim.obj -MD -MP -MF $(DEPDIR)/hdiff_dim.Tpo -c -o hdiff_dim.obj `if test -f '../hdiff/hdiff_dim.c'; then $(CYGPATH_W) '../hdiff/hdiff_dim.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_dim.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/hdiff_dim.Tpo $(DEPDIR)/hdiff_dim.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../hdiff/hdiff_dim.c' object='hdiff_dim.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hdiff_dim.obj `if test -f '../hdiff/hdiff_dim.c'; then $(CYGPATH_W) '../hdiff/hdiff_dim.c'; else $(CYGPATH_W) '$(srcdir)/../hdiff/hdiff_dim.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

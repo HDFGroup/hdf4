@@ -63,8 +63,8 @@ static int insert_an_data(int32 file_id,
 
 uint32 hdiff_list (const char* fname, 
                    dtable_t *table, 
-                   dim_table_t *td1,
-                   dim_table_t *td2,
+                   diff_dim_table_t *td1,
+                   diff_dim_table_t *td2,
                    int *err)
 {
  int32    file_id=-1, 
@@ -155,8 +155,8 @@ int hdiff_list_vg(const char* fname,
                   int32 sd_id,             /* SD interface identifier */
                   int32 gr_id,             /* GR interface identifier */
                   dtable_t *table,         /* all objects table */
-                  dim_table_t *td1,        /* dimension table 1 */
-                  dim_table_t *td2)        /* dimension table 2 */
+                  diff_dim_table_t *td1,        /* dimension table 1 */
+                  diff_dim_table_t *td2)        /* dimension table 2 */
 {
  int32 vgroup_id,      /* vgroup identifier */
        nlones = 0,     /* number of lone vgroups */
@@ -312,8 +312,6 @@ out:
  *
  * Purpose: recursive function to locate objects in lone Vgroups
  *
- * Return: void
- *
  *-------------------------------------------------------------------------
  */
 
@@ -326,8 +324,8 @@ int insert_vg(const char* fname,
               int32* in_refs,          /* ref list for parent group */
               int npairs,              /* number tag/ref pairs for parent group */
               dtable_t *table,         /* all objects table */
-              dim_table_t *td1,        /* dimension table 1 */
-              dim_table_t *td2)        /* dimension table 2 */
+              diff_dim_table_t *td1,        /* dimension table 1 */
+              diff_dim_table_t *td2)        /* dimension table 2 */
 {
  int32 vgroup_id,             /* vgroup identifier */
        ntagrefs,              /* number of tag/ref pairs in a vgroup */
@@ -536,8 +534,8 @@ int hdiff_list_gr(int32 file_id,
 int hdiff_list_sds(int32 file_id,
                    int32 sd_id,                  /* SD interface identifier */
                    dtable_t *table,              /* all objects table */
-                   dim_table_t *td1,             /* dimension table 1 */
-                   dim_table_t *td2)             /* dimension table 2 */
+                   diff_dim_table_t *td1,             /* dimension table 1 */
+                   diff_dim_table_t *td2)             /* dimension table 2 */
 
 
 
@@ -968,8 +966,8 @@ int  insert_sds(int32 file_id,
                 int32 ref,            /* ref of input SDS */
                 char *path_name,      /* absolute path for input group name */
                 dtable_t *table,      /* all objects table */
-                dim_table_t *td1,     /* dimension table 1 */
-                dim_table_t *td2)     /* dimension table 2 */
+                diff_dim_table_t *td1,     /* dimension table 1 */
+                diff_dim_table_t *td2)     /* dimension table 2 */
 {
  int32 sds_id,                /* data set identifier */
        sds_index,             /* index number of the data set */
@@ -995,7 +993,7 @@ int  insert_sds(int32 file_id,
 
      
      /* add SDS coordinate variable to dimension table 1 */
-     dim_table_add(td1,ref,sds_name);
+     diff_dim_table_add(td1,ref,sds_name);
      SDendaccess(sds_id);
 
 
@@ -1049,7 +1047,7 @@ int  insert_sds(int32 file_id,
   }
   
   /* add dimension name to dimension scales table 2 */
-  dim_table_add(td2,-1,dim_name);
+  diff_dim_table_add(td2,-1,dim_name);
   
  }
 

@@ -47,20 +47,21 @@ uint32 hdiff(const char *fname1,
  int       err;
 
  /* file 1 */
- dim_table_t *td1_1=NULL;
- dim_table_t *td1_2=NULL;
+ diff_dim_table_t *td1_1=NULL;
+ diff_dim_table_t *td1_2=NULL;
 
  /* file 2 */
- dim_table_t *td2_1=NULL;
- dim_table_t *td2_2=NULL;
+ diff_dim_table_t *td2_1=NULL;
+ diff_dim_table_t *td2_2=NULL;
 
  /* init tables */
  dtable_init(&list1);
  dtable_init(&list2);
- dim_table_init(&td1_1);
- dim_table_init(&td1_2);
- dim_table_init(&td2_1);
- dim_table_init(&td2_2);
+ 
+ diff_dim_table_init(&td1_1);
+ diff_dim_table_init(&td1_2);
+ diff_dim_table_init(&td2_1);
+ diff_dim_table_init(&td2_2);
 
 /*-------------------------------------------------------------------------
  * get a list of objects for both files
@@ -158,7 +159,7 @@ uint32 hdiff(const char *fname1,
               opt);
  
  
- nfound+=match_dim(sd1_id,
+ nfound+=diff_match_dim(sd1_id,
      sd2_id,
      td1_1,
      td1_2,
@@ -221,13 +222,13 @@ uint32 hdiff(const char *fname1,
  dtable_free(list2);
 
  if (td1_1!=NULL)
-     dim_table_free(td1_1);
+     diff_dim_table_free(td1_1);
  if (td1_2!=NULL)
-     dim_table_free(td1_2);
+     diff_dim_table_free(td1_2);
  if (td2_1!=NULL)
-     dim_table_free(td2_1);
+     diff_dim_table_free(td2_1);
  if (td2_2!=NULL)
-     dim_table_free(td2_2);
+     diff_dim_table_free(td2_2);
 
  return nfound;
 
@@ -242,13 +243,13 @@ out:
  dtable_free(list2);
 
   if (td1_1!=NULL)
-     dim_table_free(td1_1);
+     diff_dim_table_free(td1_1);
  if (td1_2!=NULL)
-     dim_table_free(td1_2);
+     diff_dim_table_free(td1_2);
  if (td2_1!=NULL)
-     dim_table_free(td2_1);
+     diff_dim_table_free(td2_1);
  if (td2_2!=NULL)
-     dim_table_free(td2_2);
+     diff_dim_table_free(td2_2);
 
  if (sd1_id!=-1)
   SDend(sd1_id);
