@@ -26,8 +26,6 @@ extern "C" {
 #define HREPACK_FILE1_OUT     "hrepacktest1_out.hdf"
 #define HREPACK_FILE2         "hrepacktest2.hdf"
 #define HREPACK_FILE2_OUT     "hrepacktest2_out.hdf"
-#define HREPACK_FILE3         "hrepacktest3.hdf"
-#define HREPACK_FILE3_OUT     "hrepacktest3_out.hdf"
 
 
 int sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info);
