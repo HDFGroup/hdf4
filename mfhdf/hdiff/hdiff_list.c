@@ -1182,83 +1182,79 @@ int  insert_gr(int32 file_id,
                char*path_name,          /* absolute path for input group name */
                dtable_t *table)
 {
- int32         ri_id,         /* raster image identifier */
-               ri_index,      /* index of a image */
-               dimsizes[2],   /* dimensions of an image */
-               n_comps,       /* number of components an image contains */
-               interlace_mode,/* interlace mode of an image */ 
-               dtype,         /* number type of an image */
-               n_attrs;       /* number of attributes belong to an image */
-               
- int32         pal_id,        /* palette identifier */
-               r_num_entries, 
-               r_data_type, 
-               r_ncomp, 
-               r_interlace_mode; 
- char          gr_name[MAX_GR_NAME]; 
- char          *path=NULL;
- int           has_pal = 0;
-
- ri_index = GRreftoindex(gr_in,(uint16)ref);
- ri_id    = GRselect(gr_in,ri_index);
-   
- GRgetiminfo(ri_id,gr_name,&n_comps,&dtype,&interlace_mode,dimsizes,&n_attrs);
- 
- /* initialize path */
- path=get_path(path_name,gr_name);
-
- /* add object to table */
- dtable_add(table,tag,ref,path);
-
-#if defined (HDIFF_DEBUG)
-   printf("%s\n",path); 
-#endif  
- 
-/*-------------------------------------------------------------------------
- * insert attributes
- *-------------------------------------------------------------------------
- */ 
- 
- insert_gr_attrs(ri_id,n_attrs);
-
-/*-------------------------------------------------------------------------
- * check for palette
- *-------------------------------------------------------------------------
- */ 
-
- pal_id = GRgetlutid(ri_id, 0);
- GRgetlutinfo(pal_id,&r_ncomp,&r_data_type,&r_interlace_mode,&r_num_entries);
-
- /*check if there is palette data */
- has_pal=((r_ncomp == 0) || (r_interlace_mode < 0) || (r_num_entries == 0))?0:1;
-
- if ( has_pal==1 )
- {
- 
- } /* has_pal==1 */
-
- 
-/*-------------------------------------------------------------------------
- * insert ANs
- *-------------------------------------------------------------------------
- */ 
-
- insert_an(file_id,ref,DFTAG_RIG,path);
- insert_an(file_id,ref,DFTAG_RI,path);
- 
-/*-------------------------------------------------------------------------
- * terminate access to the GR
- *-------------------------------------------------------------------------
- */ 
-
- /* terminate access to the GRs */
- GRendaccess(ri_id);
+    int32         ri_id,         /* raster image identifier */
+                  ri_index,      /* index of a image */
+                  dimsizes[2],   /* dimensions of an image */
+                  n_comps,       /* number of components an image contains */
+                  interlace_mode,/* interlace mode of an image */ 
+                  dtype,         /* number type of an image */
+                  n_attrs;       /* number of attributes belong to an image */
     
- if (path)
-  free(path);
- 
- return 0;
- 
+    int32         pal_id,        /* palette identifier */
+                  r_num_entries, 
+                  r_data_type, 
+                  r_ncomp, 
+                  r_interlace_mode; 
+    char          gr_name[MAX_GR_NAME]; 
+    char          *path=NULL;
+    int           has_pal = 0;
+    
+    ri_index = GRreftoindex(gr_in,(uint16)ref);
+    ri_id    = GRselect(gr_in,ri_index);
+    
+    GRgetiminfo(ri_id,gr_name,&n_comps,&dtype,&interlace_mode,dimsizes,&n_attrs);
+    
+    /* initialize path */
+    path=get_path(path_name,gr_name);
+    
+    /* add object to table */
+    dtable_add(table,tag,ref,path);
+
+   /*-------------------------------------------------------------------------
+    * insert attributes
+    *-------------------------------------------------------------------------
+    */ 
+    
+    insert_gr_attrs(ri_id,n_attrs);
+    
+   /*-------------------------------------------------------------------------
+    * check for palette
+    *-------------------------------------------------------------------------
+    */ 
+    
+    pal_id = GRgetlutid(ri_id, 0);
+    GRgetlutinfo(pal_id,&r_ncomp,&r_data_type,&r_interlace_mode,&r_num_entries);
+    
+    /*check if there is palette data */
+    has_pal=((r_ncomp == 0) || (r_interlace_mode < 0) || (r_num_entries == 0))?0:1;
+    
+    if ( has_pal==1 )
+    {
+        
+    } /* has_pal==1 */
+    
+    
+   /*-------------------------------------------------------------------------
+    * insert ANs
+    *-------------------------------------------------------------------------
+    */ 
+    
+    insert_an(file_id,ref,DFTAG_RIG,path);
+    insert_an(file_id,ref,DFTAG_RI,path);
+    
+   /*-------------------------------------------------------------------------
+    * terminate access to the GR
+    *-------------------------------------------------------------------------
+    */ 
+    
+    /* terminate access to the GRs */
+    GRendaccess(ri_id);
+    
+    if (path)
+        free(path);
+    
+    return 0;
+    
 }
 
 
@@ -1277,136 +1273,134 @@ int  insert_vs( int32 file_id,
                 dtable_t *table,
                 int is_lone)
 {
- int32 vdata_id,              /* vdata identifier */
-       tag_vs,
-       ref_vs;
- int   n_fields, n_attrs;
- char  vdata_name [VSNAMELENMAX], vdata_class[VSNAMELENMAX];
- char  *path=NULL;
- int   i, j, ret=1;
+    int32 vdata_id,              /* vdata identifier */
+          tag_vs,
+          ref_vs;
+    int   n_fields, n_attrs;
+    char  vdata_name [VSNAMELENMAX], vdata_class[VSNAMELENMAX];
+    char  *path=NULL;
+    int   i, j, ret=1;
+    
+   /*-------------------------------------------------------------------------
+    * attach the vdata, gets its name and class
+    *-------------------------------------------------------------------------
+    */ 
+    
+    if ((vdata_id  = VSattach (file_id, ref, "r")) == FAIL )
+    {
+        printf( "Failed to attach vdata ref %ld\n", ref);
+        return-1;
+    }
 
-/*-------------------------------------------------------------------------
- * attach the vdata, gets its name and class
- *-------------------------------------------------------------------------
- */ 
+    if (VSgetname  (vdata_id, vdata_name) == FAIL )
+    {
+        printf( "Failed to name for vdata ref %ld\n", ref);
+        return-1;
+    }
 
- if ((vdata_id  = VSattach (file_id, ref, "r")) == FAIL )
- {
-  printf( "Failed to attach vdata ref %ld\n", ref);
-  return-1;
- }
- if (VSgetname  (vdata_id, vdata_name) == FAIL )
- {
-  printf( "Failed to name for vdata ref %ld\n", ref);
-  return-1;
- }
- if (VSgetclass (vdata_id, vdata_class) == FAIL )
- {
-  printf( "Failed to name for vdata ref %ld\n", ref);
-  return-1;
- }
- 
- /* ignore reserved HDF groups/vdatas; they are lone ones */
- if( is_lone==1 && vdata_class != NULL) 
- {
-  if( is_reserved(vdata_class))
-  {
-   if (VSdetach (vdata_id) == FAIL )
-    printf( "Failed to detach vdata <%s>\n", path_name);
-   return 0;
-  }
- }
-
- 
- if ((ref_vs = VSQueryref(vdata_id))==FAIL)
- {
-  printf( "Failed to get ref for <%s>\n", vdata_name);
- }
- if ((tag_vs = VSQuerytag(vdata_id))==FAIL)
- {
-  printf( "Failed to get tag for <%s>\n", vdata_name);
- }
-
-
- /* initialize path */
- path=get_path(path_name,vdata_name);
- 
- /* add object to table */
- dtable_add(table,tag_vs,ref_vs,path);
-
-/*-------------------------------------------------------------------------
- * fields 
- *-------------------------------------------------------------------------
- */ 
- 
- if ((n_fields = VFnfields(vdata_id)) == FAIL )
- {
-  printf( "Failed getting fields for VS <%s>\n", path);
-  ret=-1;
-  goto out;
- }
- 
-/*-------------------------------------------------------------------------
- * insert attributes
- *-------------------------------------------------------------------------
- */ 
- 
- if ((n_attrs = VSfnattrs( vdata_id, -1 )) == FAIL )
- {
-  printf( "Failed getting attributes for VS <%s>\n", path);
-  ret=-1;
-  goto out;
- }
- for (i = 0; i < n_attrs; i++) 
- {
-  insert_vs_attrs(vdata_id, -1, i);
- }
- 
-/*-------------------------------------------------------------------------
- * insert field attributes
- *-------------------------------------------------------------------------
- */ 
+    if (VSgetclass (vdata_id, vdata_class) == FAIL )
+    {
+        printf( "Failed to name for vdata ref %ld\n", ref);
+        return-1;
+    }
+    
+    /* ignore reserved HDF groups/vdatas; they are lone ones */
+    if( is_lone==1 && vdata_class != NULL) 
+    {
+        if( is_reserved(vdata_class))
+        {
+            if (VSdetach (vdata_id) == FAIL )
+                printf( "Failed to detach vdata <%s>\n", path_name);
+            return 0;
+        }
+    }
+    
+    
+    if ((ref_vs = VSQueryref(vdata_id))==FAIL)
+    {
+        printf( "Failed to get ref for <%s>\n", vdata_name);
+    }
+    if ((tag_vs = VSQuerytag(vdata_id))==FAIL)
+    {
+        printf( "Failed to get tag for <%s>\n", vdata_name);
+    }
+    
+    
+    /* initialize path */
+    path=get_path(path_name,vdata_name);
+    
+    /* add object to table */
+    dtable_add(table,tag_vs,ref_vs,path);
+    
+   /*-------------------------------------------------------------------------
+    * fields 
+    *-------------------------------------------------------------------------
+    */ 
+    
+    if ((n_fields = VFnfields(vdata_id)) == FAIL )
+    {
+        printf( "Failed getting fields for VS <%s>\n", path);
+        ret=-1;
+        goto out;
+    }
+    
+   /*-------------------------------------------------------------------------
+    * insert attributes
+    *-------------------------------------------------------------------------
+    */ 
+    
+    if ((n_attrs = VSfnattrs( vdata_id, -1 )) == FAIL )
+    {
+        printf( "Failed getting attributes for VS <%s>\n", path);
+        ret=-1;
+        goto out;
+    }
   
- for (i = 0; i < n_fields; i++) 
- {
-  if ((n_attrs = VSfnattrs(vdata_id, i)) == FAIL )
-  {
-   printf( "Failed getting fields for VS <%s>\n", path);
-   ret=-1;
-   goto out;
-  }
-  for (j = 0; j < n_attrs; j++) 
-  {
-   insert_vs_attrs(vdata_id, i, j);
-  }
- }
-  
-
-/*-------------------------------------------------------------------------
- * insert ANs
- *-------------------------------------------------------------------------
- */ 
-
- insert_vs_an(file_id,vdata_id,path);
-
-/*-------------------------------------------------------------------------
- * terminate access to the VSs
- *-------------------------------------------------------------------------
- */ 
- 
+    for (i = 0; i < n_attrs; i++) 
+    {
+        insert_vs_attrs(vdata_id, -1, i);
+    }
+    
+   /*-------------------------------------------------------------------------
+    * insert field attributes
+    *-------------------------------------------------------------------------
+    */ 
+    
+    for (i = 0; i < n_fields; i++) 
+    {
+        if ((n_attrs = VSfnattrs(vdata_id, i)) == FAIL )
+        {
+            printf( "Failed getting fields for VS <%s>\n", path);
+            ret=-1;
+            goto out;
+        }
+        for (j = 0; j < n_attrs; j++) 
+        {
+            insert_vs_attrs(vdata_id, i, j);
+        }
+    }
+    
+    
+   /*-------------------------------------------------------------------------
+    * insert ANs
+    *-------------------------------------------------------------------------
+    */ 
+    
+    insert_vs_an(file_id,vdata_id,path);
+    
+    /*-------------------------------------------------------------------------
+    * terminate access to the VSs
+    *-------------------------------------------------------------------------
+    */ 
+    
 out:
- VSdetach (vdata_id);
- 
- if (path)
-  free(path);
- 
- return ret;
+    VSdetach (vdata_id);
+    
+    if (path)
+        free(path);
+    
+    return ret;
 }
-
-
-
-
-
 
 /*-------------------------------------------------------------------------
  * Function: is_reserved
@@ -1421,33 +1415,34 @@ out:
 static
 int is_reserved(char*vgroup_class)
 {
- int ret=0;
- 
- /* ignore reserved HDF groups/vdatas */
- if(vgroup_class != NULL) {
-  if( (strcmp(vgroup_class,_HDF_ATTRIBUTE)==0) ||
-   (strcmp(vgroup_class,_HDF_VARIABLE) ==0) || 
-   (strcmp(vgroup_class,_HDF_DIMENSION)==0) ||
-   (strcmp(vgroup_class,_HDF_UDIMENSION)==0) ||
-   (strcmp(vgroup_class,DIM_VALS)==0) ||
-   (strcmp(vgroup_class,DIM_VALS01)==0) ||
-   (strcmp(vgroup_class,_HDF_CDF)==0) ||
-   (strcmp(vgroup_class,GR_NAME)==0) ||
-   (strcmp(vgroup_class,RI_NAME)==0) || 
-   (strcmp(vgroup_class,RIGATTRNAME)==0) ||
-   (strcmp(vgroup_class,RIGATTRCLASS)==0) ){
-   ret=1;
-  }
-
-  /* class and name(partial) for chunk table i.e. Vdata */
-  if( (strncmp(vgroup_class,"_HDF_CHK_TBL_",13)==0))
-  {
-   ret=1;
-  }
-
- }
- 
- return ret;
+    int ret=0;
+    
+    /* ignore reserved HDF groups/vdatas */
+    if(vgroup_class != NULL) 
+    {
+        if( (strcmp(vgroup_class,_HDF_ATTRIBUTE)==0) ||
+            (strcmp(vgroup_class,_HDF_VARIABLE) ==0) || 
+            (strcmp(vgroup_class,_HDF_DIMENSION)==0) ||
+            (strcmp(vgroup_class,_HDF_UDIMENSION)==0) ||
+            (strcmp(vgroup_class,DIM_VALS)==0) ||
+            (strcmp(vgroup_class,DIM_VALS01)==0) ||
+            (strcmp(vgroup_class,_HDF_CDF)==0) ||
+            (strcmp(vgroup_class,GR_NAME)==0) ||
+            (strcmp(vgroup_class,RI_NAME)==0) || 
+            (strcmp(vgroup_class,RIGATTRNAME)==0) ||
+            (strcmp(vgroup_class,RIGATTRCLASS)==0) ){
+            ret=1;
+        }
+        
+        /* class and name(partial) for chunk table i.e. Vdata */
+        if( (strncmp(vgroup_class,"_HDF_CHK_TBL_",13)==0))
+        {
+            ret=1;
+        }
+        
+    }
+    
+    return ret;
 }
 
 
@@ -1463,7 +1458,8 @@ int is_reserved(char*vgroup_class)
  */
 
 static
-char *get_path(char*path_name, char*obj_name) 
+char *get_path(char*path_name, 
+               char*obj_name) 
 {
     char *path=NULL;
     /* initialize path */
