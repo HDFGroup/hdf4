@@ -39,7 +39,8 @@ New Features and Changes:
 ========================
     Configuration
     ============= 
-
+        - Updated versions of autotools. HDF4 now uses automake 1.10.0,
+          autoconf 2.61, and libtool 1.5.22. MAM - 2007/7/25.
         - Fortran part of the HDF4 library uses F77_FUNC macro to mangle names 
           of the C functions called from Fortran APIs. This should help with
           the HDF4 code portability to different Fortran compilers.
