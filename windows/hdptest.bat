@@ -2,11 +2,11 @@
 REM This batch file is used for HDF4 hdp tests.
 REM By Xuan Bai
 REM Created on 11/22/2004
-REM Last Modified on 11/22/2004
+REM Last Modified on 7/30/2007
 
-cd windows\bin\%1
+pushd mfhdf\dumper\%1
 mkdir temptest
-copy ..\..\..\mfhdf\dumper\testfiles\. temptest\. >temp.txt
+copy ..\testfiles temptest >temp.txt
 del temp.txt
 
 echo -----------------------------
@@ -885,4 +885,4 @@ cd ..\..
 del my*.dat
 rmdir /s/q temptest
 
-cd ..\..\..
+popd

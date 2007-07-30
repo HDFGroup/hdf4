@@ -2,10 +2,10 @@
 REM This batch file is used for HDF4 import tests.
 REM By Xuan Bai
 REM Created on 11/22/2004
-REM Last Modified on 11/22/2004
+REM Last Modified on 7/30/2007
 
 echo *** Testing hdfimport  ***
-cd windows\bin\%1
+pushd mfhdf\hdfimport\%1
 mkdir temptest
 cd temptest
 ..\hdfimporttest
@@ -38,26 +38,26 @@ echo Testing for raster options
 ..\hdfimport ctxtr2 -o ctxtr2_ris.hdf -raster -e 50 50
 ..\hdfimport cb64r2 -o cb64r2_ris.hdf -raster -i 50 50 -f
 
-..\hdfls -l ctxtr2.hdf > hdfls.tmp5 2>&1
-..\hdfls -l ctxtr3.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb32i2.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb32i3.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb16i2.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb16i3.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb32r2.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb32r3.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb64r2.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb64r3.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb64r2-n.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb64r3-n.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l ctxtr2_ris.hdf >> hdfls.tmp5 2>&1
-..\hdfls -l cb64r2_ris.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l ctxtr2.hdf > hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l ctxtr3.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb32i2.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb32i3.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb16i2.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb16i3.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb32r2.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb32r3.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb64r2.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb64r3.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb64r2-n.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb64r3-n.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l ctxtr2_ris.hdf >> hdfls.tmp5 2>&1
+..\..\..\..\hdf\util\%1\hdfls -l cb64r2_ris.hdf >> hdfls.tmp5 2>&1
 
 findstr /V "library String" hdfls.tmp5 > hdfls_temp.tmp5
 del hdfls.tmp5
 rename hdfls_temp.tmp5 hdfls.tmp5
 
-copy ..\..\..\..\mfhdf\hdfimport\hdfimport.*ut* . > temp.txt 2>&1
+copy ..\..\hdfimport.*ut* . > temp.txt 2>&1
 del temp.txt
 
 fc hdfls.tmp5 hdfimport.out1 > temp.txt 2>&1
@@ -69,7 +69,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-..\hdfed -batch < hdfimport.input1 > hdfed.tmp6 2>&1
+..\..\..\..\hdf\util\%1\hdfed -batch < hdfimport.input1 > hdfed.tmp6 2>&1
 REM   The following test is commented out due to a Windows-specific bug.
 REM   Windows outputs the exponent of in scientific notation with a minimum
 REM   of 3 digits, while most other platforms use 2.  This causes false-positives
@@ -98,4 +98,4 @@ cd ..
 
 rmdir /s/q temptest
 
-cd ..\..\..
+popd

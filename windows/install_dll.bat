@@ -2,11 +2,11 @@
 @REM This batch file is used to copy HDF4 DLLs into system folder.
 @REM By Xuan Bai
 @REM Created: 11/08/2004
-@REM Last Updated: 7/12/2007
+@REM Last Updated: 7/30/2007
 
-@ ECHO OFF
-copy proj\dll\debug\hd421md.dll %SystemRoot%\system >temp.txt
-copy proj\dll\debug\hm421md.dll %SystemRoot%\system >temp.txt
-copy proj\dll\release\hd421m.dll %SystemRoot%\system >temp.txt
-copy proj\dll\release\hm421m.dll %SystemRoot%\system >temp.txt
+@echo OFF
+copy hdf\src\Debug\hd421md.dll %systemroot%\system >temp.txt
+copy mfhdf\libsrc\Debug\hm421md.dll %systemroot%\system >temp.txt
+copy hdf\src\Release\hd421m.dll %systemroot%\system >temp.txt
+copy mfhdf\libsrc\release\hm421m.dll %systemroot%\system >temp.txt
 del temp.txt

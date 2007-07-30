@@ -2,27 +2,66 @@
 @REM File name: installhdf4lib.bat
 @REM This batch file is used to install HDF4 debug version library and utilties.
 @REM By Xuan Bai
-@REM Last Updated: 01/28/2004
+@REM Last Updated: 07/30/2007
 
 mkdir hdf4lib
-cd hdf4lib
+pushd hdf4lib
+:: ./hdf4lib
+
 mkdir debug
-cd debug
+pushd debug
+:: ./hdf4lib/debug
+
 mkdir bin
+pushd bin
+:: ./hdf4lib/debug/bin
+copy ..\..\..\hdf\util\Debug\gif2hdf.exe .
+copy ..\..\..\hdf\util\Debug\hdf24to8.exe .
+copy ..\..\..\hdf\util\Debug\hdf2gif.exe .
+copy ..\..\..\hdf\util\Debug\hdf2jpeg.exe .
+copy ..\..\..\hdf\util\Debug\hdf8to24.exe .
+copy ..\..\..\hdf\util\Debug\hdfcomp.exe .
+copy ..\..\..\hdf\util\Debug\hdfed.exe .
+copy ..\..\..\mfhdf\hdfimport\Debug\hdfimport.exe .
+copy ..\..\..\hdf\util\Debug\hdfls.exe .
+copy ..\..\..\hdf\util\Debug\hdfpack.exe .
+copy ..\..\..\hdf\util\Debug\hdftopal.exe .
+copy ..\..\..\hdf\util\Debug\hdftor8.exe .
+copy ..\..\..\hdf\util\Debug\hdfunpac.exe .
+copy ..\..\..\mfhdf\hdiff\Debug\hdiff.exe .
+copy ..\..\..\mfhdf\dumper\Debug\hdp.exe .
+copy ..\..\..\mfhdf\hrepack\Debug\hrepack.exe .
+copy ..\..\..\hdf\util\Debug\jpeg2hdf.exe .
+copy ..\..\..\mfhdf\ncdump\Debug\ncdump.exe .
+copy ..\..\..\mfhdf\ncgen\Debug\ncgen.exe .
+copy ..\..\..\mfhdf\nctest\Debug\nctest.exe .
+copy ..\..\..\hdf\util\Debug\paltohdf.exe .
+copy ..\..\..\hdf\util\Debug\r8tohdf.exe .
+copy ..\..\..\hdf\util\Debug\ristosds.exe .
+copy ..\..\..\hdf\util\Debug\vmake.exe .
+copy ..\..\..\hdf\util\Debug\vshow.exe .
+popd
+
 mkdir dll
-mkdir lib
+pushd dll
+:: ./hdf4lib/debug/dll
+copy ..\..\..\hdf\src\Debug\hd421md.dll .
+copy ..\..\..\hdf\src\Debug\hd421md.lib .
+copy ..\..\..\hdf\src\Debug\hdf_fcstubdlld.dll .
+copy ..\..\..\hdf\src\Debug\hdf_fcstubdlld.lib .
+copy ..\..\..\hdf\src\Debug\hdf_fortrandlld.dll .
+copy ..\..\..\hdf\src\Debug\hdf_fortrandlld.lib .
+copy ..\..\..\mfhdf\libsrc\Debug\hm421md.dll .
+copy ..\..\..\mfhdf\libsrc\Debug\hm421md.lib .
+copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
+copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.lib
+copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
+copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.lib
+popd
+
 mkdir include
-
-cd lib
-copy ..\..\..\proj\lib\debug\singlethreaded\*.lib .
-
-
-cd ..\dll
-copy ..\..\..\proj\dll\debug\*.DLL .
-copy ..\..\..\proj\lib\debug\multithreaded\*.lib .
-
-
-cd ..\include
+pushd include
+:: ./hdf4lib/debug/include
 copy ..\..\..\hdf\src\*.h . 
 copy ..\..\..\hdf\src\*.inc . 
 del maldebug.h
@@ -42,39 +81,76 @@ del alloc.h
 del error.h
 del win32cdf.h
 del hdftest.h
-
 copy ..\..\..\mfhdf\fortran\msoft\netcdf.inc .
+popd
 
-cd ..\bin
+mkdir lib
+pushd lib
+:: ./hdf4lib/debug/lib
+copy ..\..\..\hdf\src\Debug\hd421d.lib .
+copy ..\..\..\hdf\src\Debug\hdf_fcstubd.lib .
+copy ..\..\..\hdf\src\Debug\hdf_fortran.lib .
+copy ..\..\..\mfhdf\libsrc\Debug\hm421d.lib .
+copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubd.lib .
+copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortran.lib .
+popd
 
-copy ..\..\..\ncgen\debug\*.exe .
-copy ..\..\..\ncdump\debug\*.exe .
-copy ..\..\..\nctest\debug\*.exe .
-copy ..\..\..\Windows\bin\debug\*.exe .
-del hdfimporttest.exe
-del hdifftst.exe
-del hrepacktst.exe
-
-
-cd ..\..
+popd
 
 mkdir release
-cd release
+pushd release
+:: ./hdf4lib/release
+
 mkdir bin
+pushd bin
+:: ./hdf4lib/release/bin
+copy ..\..\..\hdf\util\Release\gif2hdf.exe .
+copy ..\..\..\hdf\util\Release\hdf24to8.exe .
+copy ..\..\..\hdf\util\Release\hdf2gif.exe .
+copy ..\..\..\hdf\util\Release\hdf2jpeg.exe .
+copy ..\..\..\hdf\util\Release\hdf8to24.exe .
+copy ..\..\..\hdf\util\Release\hdfcomp.exe .
+copy ..\..\..\hdf\util\Release\hdfed.exe .
+copy ..\..\..\mfhdf\hdfimport\Release\hdfimport.exe .
+copy ..\..\..\hdf\util\Release\hdfls.exe .
+copy ..\..\..\hdf\util\Release\hdfpack.exe .
+copy ..\..\..\hdf\util\Release\hdftopal.exe .
+copy ..\..\..\hdf\util\Release\hdftor8.exe .
+copy ..\..\..\hdf\util\Release\hdfunpac.exe .
+copy ..\..\..\mfhdf\hdiff\Release\hdiff.exe .
+copy ..\..\..\mfhdf\dumper\Release\hdp.exe .
+copy ..\..\..\mfhdf\hrepack\Release\hrepack.exe .
+copy ..\..\..\hdf\util\Release\jpeg2hdf.exe .
+copy ..\..\..\mfhdf\ncdump\Release\ncdump.exe .
+copy ..\..\..\mfhdf\ncgen\Release\ncgen.exe .
+copy ..\..\..\mfhdf\nctest\Release\nctest.exe .
+copy ..\..\..\hdf\util\Release\paltohdf.exe .
+copy ..\..\..\hdf\util\Release\r8tohdf.exe .
+copy ..\..\..\hdf\util\Release\ristosds.exe .
+copy ..\..\..\hdf\util\Release\vmake.exe .
+copy ..\..\..\hdf\util\Release\vshow.exe .
+popd
+
 mkdir dll
-mkdir lib
+pushd dll
+:: ./hdf4lib/release/dll
+copy ..\..\..\hdf\src\Release\hd421m.dll .
+copy ..\..\..\hdf\src\Release\hd421m.lib .
+copy ..\..\..\hdf\src\Release\hdf_fcstubdll.dll .
+copy ..\..\..\hdf\src\Release\hdf_fcstubdll.lib .
+copy ..\..\..\hdf\src\Release\hdf_fortrandll.dll .
+copy ..\..\..\hdf\src\Release\hdf_fortrandll.lib .
+copy ..\..\..\mfhdf\libsrc\Release\hm421m.dll .
+copy ..\..\..\mfhdf\libsrc\Release\hm421m.lib .
+copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
+copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.lib
+copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.dll
+copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.lib
+popd
+
 mkdir include
-
-
-cd lib
-copy ..\..\..\proj\lib\release\singlethreaded\*.lib .
-
-cd ..\dll
-copy ..\..\..\proj\dll\release\*.DLL .
-copy ..\..\..\proj\lib\release\multithreaded\*.lib .
-
-
-cd ..\include
+pushd include
+:: ./hdf4lib/release/include
 copy ..\..\..\hdf\src\*.h . 
 copy ..\..\..\hdf\src\*.inc . 
 del maldebug.h
@@ -94,18 +170,19 @@ del alloc.h
 del error.h
 del win32cdf.h
 del hdftest.h
-
 copy ..\..\..\mfhdf\fortran\msoft\netcdf.inc .
+popd
 
-cd ..\bin
+mkdir lib
+pushd lib
+:: ./hdf4lib/release/lib
+copy ..\..\..\hdf\src\Release\hd421.lib .
+copy ..\..\..\hdf\src\Release\hdf_fcstub.lib .
+copy ..\..\..\hdf\src\Release\hdf_fortran.lib .
+copy ..\..\..\mfhdf\libsrc\Release\hm421.lib .
+copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstub.lib .
+copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortran.lib .
+popd
 
-copy ..\..\..\ncgen\release\*.exe .
-copy ..\..\..\ncdump\release\*.exe .
-copy ..\..\..\nctest\release\*.exe .
-copy ..\..\..\Windows\bin\release\*.exe .
-del hdfimporttest.exe
-del hdifftst.exe
-del hrepacktst.exe
-
-cd ..\..\..
-
+popd
+popd

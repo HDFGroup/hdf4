@@ -17,13 +17,20 @@
 :: Purpose     : Copy all Files in the current directory to its parent directory
 ::
 :: Written By  : Scott Wegner, July 11, 2007
-:: Last Update : July 12, 2007
+:: Last Update : July 30, 2007
 
 pushd
 
-xcopy /e /i /y . ..\
+:: Create an "exclude file", which contains this file, itself, and the proj directory
+echo.\exclude.txt > exclude.txt
+echo.\%~nx0 >> exclude.txt
+echo.\proj\ >> exclude.txt
+echo.\examples\ >> exclude.txt
 
-:: Remove this file from files which were just copied.
-del ..\%~nx0
+:: Copy our files
+xcopy . .. /e /i /y /EXCLUDE:exclude.txt
+
+:: Remove our temporary exclude file
+del %CD%\exclude.txt
 
 popd

@@ -1208,51 +1208,51 @@
 ./windows/win32releasetst.bat
 ./windows/xdrtest.dsp
 
-./windows/examples/sd_addvg.c
-./windows/examples/sd_create.c
-./windows/examples/sd_dim.c
-./windows/examples/sd_gi.c
-./windows/examples/sd_rattr.c
-./windows/examples/sd_rd.c
-./windows/examples/sd_sattr.c
-./windows/examples/sd_sh_dim.c
-./windows/examples/sd_unl.c
-./windows/examples/vg_chgnam.c
+./windows/examples/cexamples/sd_addvg.c
+./windows/examples/cexamples/sd_create.c
+./windows/examples/cexamples/sd_dim.c
+./windows/examples/cexamples/sd_gi.c
+./windows/examples/cexamples/sd_rattr.c
+./windows/examples/cexamples/sd_rd.c
+./windows/examples/cexamples/sd_sattr.c
+./windows/examples/cexamples/sd_sh_dim.c
+./windows/examples/cexamples/sd_unl.c
+./windows/examples/cexamples/vg_chgnam.c
 
-./windows/examples/allexamples/allexamples.dsp
-./windows/examples/allexamples/allexamples.dsw
+./windows/examples/cexamples/allexamples/allexamples.dsp
+./windows/examples/cexamples/allexamples/allexamples.dsw
 
-./windows/examples/chgnamtest/chgnamtest.dsp
-./windows/examples/createtest/createtest.dsp
-./windows/examples/dimtest/dimtest.dsp
-./windows/examples/gitest/gitest.dsp
-./windows/examples/rattrtest/rattrtest.dsp
-./windows/examples/readtest/readtest.dsp
-./windows/examples/sattrtest/sattrtest.dsp
-./windows/examples/sds2grouptest/sds2grouptest.dsp
-./windows/examples/sh_dimtest/sh_dimtest.dsp
-./windows/examples/unltest/unltest.dsp
+./windows/examples/cexamples/chgnamtest/chgnamtest.dsp
+./windows/examples/cexamples/createtest/createtest.dsp
+./windows/examples/cexamples/dimtest/dimtest.dsp
+./windows/examples/cexamples/gitest/gitest.dsp
+./windows/examples/cexamples/rattrtest/rattrtest.dsp
+./windows/examples/cexamples/readtest/readtest.dsp
+./windows/examples/cexamples/sattrtest/sattrtest.dsp
+./windows/examples/cexamples/sds2grouptest/sds2grouptest.dsp
+./windows/examples/cexamples/sh_dimtest/sh_dimtest.dsp
+./windows/examples/cexamples/unltest/unltest.dsp
 
-./windows/fortran/examples/sd_addvg.f
-./windows/fortran/examples/sd_create.f
-./windows/fortran/examples/sd_gi.f
-./windows/fortran/examples/sd_rattr.f
-./windows/fortran/examples/sd_rd.f
-./windows/fortran/examples/sd_sattr.f
-./windows/fortran/examples/sd_sh_dimf.f
-./windows/fortran/examples/sd_unl.f
+./windows/examples/f90examples/sd_addvg.f
+./windows/examples/f90examples/sd_create.f
+./windows/examples/f90examples/sd_gi.f
+./windows/examples/f90examples/sd_rattr.f
+./windows/examples/f90examples/sd_rd.f
+./windows/examples/f90examples/sd_sattr.f
+./windows/examples/f90examples/sd_sh_dimf.f
+./windows/examples/f90examples/sd_unl.f
 
-./windows/fortran/examples/allf90examples/allf90examples.dsp
-./windows/fortran/examples/allf90examples/allf90examples.dsw
+./windows/examples/f90examples/allf90examples/allf90examples.dsp
+./windows/examples/f90examples/allf90examples/allf90examples.dsw
 
-./windows/fortran/examples/createtest/createtest.dsp
-./windows/fortran/examples/gitest/gitest.dsp
-./windows/fortran/examples/rattrtest/rattrtest.dsp
-./windows/fortran/examples/readtest/readtest.dsp
-./windows/fortran/examples/sattrtest/sattrtest.dsp
-./windows/fortran/examples/sds2grouptest/sds2grouptest.dsp
-./windows/fortran/examples/sh_dimtest/sh_dimtest.dsp
-./windows/fortran/examples/unltest/unltest.dsp
+./windows/examples/f90examples/createtest/createtest.dsp
+./windows/examples/f90examples/gitest/gitest.dsp
+./windows/examples/f90examples/rattrtest/rattrtest.dsp
+./windows/examples/f90examples/readtest/readtest.dsp
+./windows/examples/f90examples/sattrtest/sattrtest.dsp
+./windows/examples/f90examples/sds2grouptest/sds2grouptest.dsp
+./windows/examples/f90examples/sh_dimtest/sh_dimtest.dsp
+./windows/examples/f90examples/unltest/unltest.dsp
 
 ./windows/hdf/src/h4config.h
 

@@ -2,17 +2,17 @@
 REM This batch file is used for HDF4 diff tests.
 REM By Xuan Bai
 REM Created on 11/29/2004
-REM Last Modified on 7/17/2007
+REM Last Modified on 7/30/2007
 
 echo *** Testing hdfdiff  ***
-cd windows\bin\%1
+pushd mfhdf\hdiff\%1
 mkdir temptest
 cd temptest
 
-REM Instead of generating comparision files all the time, use the files in the repository
-REM ..\hdifftst
+:: Instead of generating comparision files all the time, use the files in the repository
+:: ..\hdifftst
 
-copy ..\..\..\..\mfhdf\hdiff\testfiles\* . > temp.txt 2>&1
+copy ..\..\testfiles\* . > temp.txt 2>&1
 del temp.txt
 
 REM help message
@@ -64,8 +64,8 @@ REM lone dim
 
 copy ..\..\..\..\deleteline.bat . >temp.txt
 del temp.txt
-mkdir fctemp 
 
+mkdir fctemp 
 
 call deleteline hdiff_01.txt 3 
 call deleteline hdiff_01.out 0
@@ -232,4 +232,4 @@ cd ..\..
 
 rmdir /s/q temptest
 
-cd ..\..\..
+popd
