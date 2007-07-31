@@ -1167,19 +1167,18 @@
 ./windows/examples/cexamples/sd_unl.c
 ./windows/examples/cexamples/vg_chgnam.c
 
-./windows/examples/cexamples/allexamples/allexamples.dsp
-./windows/examples/cexamples/allexamples/allexamples.dsw
-
-./windows/examples/cexamples/chgnamtest/chgnamtest.dsp
-./windows/examples/cexamples/createtest/createtest.dsp
-./windows/examples/cexamples/dimtest/dimtest.dsp
-./windows/examples/cexamples/gitest/gitest.dsp
-./windows/examples/cexamples/rattrtest/rattrtest.dsp
-./windows/examples/cexamples/readtest/readtest.dsp
-./windows/examples/cexamples/sattrtest/sattrtest.dsp
-./windows/examples/cexamples/sds2grouptest/sds2grouptest.dsp
-./windows/examples/cexamples/sh_dimtest/sh_dimtest.dsp
-./windows/examples/cexamples/unltest/unltest.dsp
+./windows/examples/cexamples/proj/allexamples.dsp
+./windows/examples/cexamples/proj/allexamples.dsw
+./windows/examples/cexamples/proj/chgnamtest.dsp
+./windows/examples/cexamples/proj/createtest.dsp
+./windows/examples/cexamples/proj/dimtest.dsp
+./windows/examples/cexamples/proj/gitest.dsp
+./windows/examples/cexamples/proj/rattrtest.dsp
+./windows/examples/cexamples/proj/readtest.dsp
+./windows/examples/cexamples/proj/sattrtest.dsp
+./windows/examples/cexamples/proj/sds2grouptest.dsp
+./windows/examples/cexamples/proj/sh_dimtest.dsp
+./windows/examples/cexamples/proj/unltest.dsp
 
 ./windows/examples/f90examples/sd_addvg.f
 ./windows/examples/f90examples/sd_create.f
@@ -1190,17 +1189,16 @@
 ./windows/examples/f90examples/sd_sh_dimf.f
 ./windows/examples/f90examples/sd_unl.f
 
-./windows/examples/f90examples/allf90examples/allf90examples.dsp
-./windows/examples/f90examples/allf90examples/allf90examples.dsw
-
-./windows/examples/f90examples/createtest/createtest.dsp
-./windows/examples/f90examples/gitest/gitest.dsp
-./windows/examples/f90examples/rattrtest/rattrtest.dsp
-./windows/examples/f90examples/readtest/readtest.dsp
-./windows/examples/f90examples/sattrtest/sattrtest.dsp
-./windows/examples/f90examples/sds2grouptest/sds2grouptest.dsp
-./windows/examples/f90examples/sh_dimtest/sh_dimtest.dsp
-./windows/examples/f90examples/unltest/unltest.dsp
+./windows/examples/f90examples/proj/allf90examples.dsp
+./windows/examples/f90examples/proj/allf90examples.dsw
+./windows/examples/f90examples/proj/createtest.dsp
+./windows/examples/f90examples/proj/gitest.dsp
+./windows/examples/f90examples/proj/rattrtest.dsp
+./windows/examples/f90examples/proj/readtest.dsp
+./windows/examples/f90examples/proj/sattrtest.dsp
+./windows/examples/f90examples/proj/sds2grouptest.dsp
+./windows/examples/f90examples/proj/sh_dimtest.dsp
+./windows/examples/f90examples/proj/unltest.dsp
 
 ./windows/proj/all/all.dsw
 ./windows/proj/all/all.dsp
