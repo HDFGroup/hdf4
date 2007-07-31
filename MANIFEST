@@ -1215,6 +1215,8 @@
 
 ./windows/proj/all/all.sln
 ./windows/proj/all/all.vcproj
+./windows/proj/all_fortran/all_fortran.sln
+./windows/proj/all_fortran/all_fortran.vcproj
 ./windows/proj/hdf/test/fortestf.vfproj
 ./windows/proj/hdf/test/libtest_fcstub.vcproj
 ./windows/proj/hdf/test/dlltesthdf.vcproj
