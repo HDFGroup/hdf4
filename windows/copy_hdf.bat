@@ -17,7 +17,7 @@
 :: Purpose     : Copy all Files in the current directory to its parent directory
 ::
 :: Written By  : Scott Wegner, July 11, 2007
-:: Last Update : July 30, 2007
+:: Last Update : July 31, 2007
 
 pushd
 
@@ -25,6 +25,7 @@ pushd
 echo.\exclude.txt > exclude.txt
 echo.\%~nx0 >> exclude.txt
 echo.\proj\ >> exclude.txt
+echo.\proj_vs6\ >> exclude.txt
 echo.\examples\ >> exclude.txt
 
 :: Copy our files
