@@ -22,8 +22,8 @@ hdf/util/testfiles/fp2hdf/h60x75n -text
 hdf/util/testfiles/fp2hdf/h60x75v -text
 hdf/util/testfiles/fp2hdf/pal.hdf -text
 hdf/util/testfiles/fp2hdf/t100x100 -text svneol=unset#application/octet-stream
-hdf/util/testfiles/head.r24.gz -text
-hdf/util/testfiles/head.r8.gz -text
+hdf/util/testfiles/head.r24 -text
+hdf/util/testfiles/head.r8 -text svneol=unset#application/octet-stream
 hdf/util/testfiles/jet2.hdf -text
 hdf/util/testfiles/jpeg_img.jpg -text
 hdf/util/testfiles/ntcheck.hdf -text
@@ -144,8 +144,6 @@ windows/examples/f90examples/sd_sattr.f -text
 windows/examples/f90examples/sd_sh_dimf.f -text
 windows/examples/f90examples/sd_unl.f -text
 windows/hdf/src/h4config.h -text
-windows/hdf/util/testfiles/head.r24 -text
-windows/hdf/util/testfiles/head.r8 -text svneol=unset#application/octet-stream
 windows/hdf4bt.bat -text
 windows/hdf4build.bat -text
 windows/hdf4check.bat -text

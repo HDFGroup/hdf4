@@ -497,8 +497,8 @@
 ./hdf/util/testfiles/README
 ./hdf/util/testfiles/SunWheel.gif
 ./hdf/util/testfiles/bttrfly.gif
-./hdf/util/testfiles/head.r24.gz
-./hdf/util/testfiles/head.r8.gz
+./hdf/util/testfiles/head.r24
+./hdf/util/testfiles/head.r8
 ./hdf/util/testfiles/jet2.hdf
 ./hdf/util/testfiles/jpeg_img.jpg
 ./hdf/util/testfiles/ntcheck.hdf
@@ -1340,7 +1340,5 @@
 ./windows/proj_vs6/mfhdf/libsrc/dllcdftest.dsp
 
 ./windows/hdf/src/h4config.h
-./windows/hdf/util/testfiles/head.r24
-./windows/hdf/util/testfiles/head.r8
 ./windows/mfhdf/libsrc/netcdf.h
 

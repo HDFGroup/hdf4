@@ -53,13 +53,12 @@ errors=0
 
 # hdf24to8
 # "uncompress" utiltiy became obsolete; replaced with gunzip EIP 2004/12/01
+# gunzip not available on Windows; simply untarring files SJW 2007/7/31
 if [ -f hdf24to8 -a -f hdftor8 ]; then
   echo "** Testing hdf24to8  ***"
   /bin/rm -f head.r24 head.r8 head8.hdf img001-263.328 pal001
   #cp $srcdir/testfiles/head.r24.Z $srcdir/testfiles/head.r8.Z .
-  cp $srcdir/testfiles/head.r24.gz $srcdir/testfiles/head.r8.gz .
-  #uncompress head.r24.Z head.r8.Z
-  gunzip head.r24.gz head.r8.gz
+  cp $srcdir/testfiles/head.r24 $srcdir/testfiles/head.r8 .
   $TESTS_ENVIRONMENT ./hdf24to8 head.r24 head8.hdf
   $TESTS_ENVIRONMENT ./hdftor8 head8.hdf
   cmp img001-263.328 head.r8 || errors=1
@@ -77,8 +76,7 @@ if [ $errors -eq 1 ]; then
   echo " please run the following by hand to verify "
   echo " "
   echo " /bin/rm -f head.r24 head.r8 head8.hdf img001-263.328 pal001"
-  echo " cp $srcdir/testfiles/head.r24.gz $srcdir/testfiles/head.r8.gz . "
-  echo " gunzip head.r24.gz head.r8.gz "
+  echo " cp $srcdir/testfiles/head.r24 $srcdir/testfiles/head.r8 . "
   echo " ./hdf24to8 head.r24 head8.hdf "
   echo " ./hdftor8 head8.hdf "
   echo " cmp img001-263.328 head.r8 " 
