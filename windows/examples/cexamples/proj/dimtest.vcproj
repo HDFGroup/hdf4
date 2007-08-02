@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd421.lib hm421.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile=".\Release/dimtest.exe"
+				OutputFile="..\Release/dimtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
@@ -101,7 +101,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd421d.lib hm421d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile=".\Debug/dimtest.exe"
+				OutputFile="..\Debug/dimtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"

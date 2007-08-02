@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="ctest0"
+	RootNamespace="ctest0"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\mfhdf\ncgen\ctest0.exe"
+				OutputFile="..\..\..\..\mfhdf\ncgen\Release\ctest0.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=".\windows\lib\release\singlethreaded"
@@ -54,7 +55,9 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				Description="Generate test0.c"
+				CommandLine="..\..\..\..\ctest0_gen release"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -101,7 +104,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\mfhdf\ncgen\ctest0.exe"
+				OutputFile="..\..\..\..\mfhdf\ncgen\Debug\ctest0.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=".\windows\lib\debug\singlethreaded"
@@ -117,7 +120,9 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				Description="Generate test0.c"
+				CommandLine="..\..\..\..\ctest0_gen debug"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
