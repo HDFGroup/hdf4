@@ -6,15 +6,15 @@
 
 mkdir hdf4lib
 pushd hdf4lib
-:: ./hdf4lib
+rem ./hdf4lib
 
 mkdir debug
 pushd debug
-:: ./hdf4lib/debug
+rem ./hdf4lib/debug
 
 mkdir bin
 pushd bin
-:: ./hdf4lib/debug/bin
+rem ./hdf4lib/debug/bin
 copy ..\..\..\hdf\util\Debug\gif2hdf.exe .
 copy ..\..\..\hdf\util\Debug\hdf24to8.exe .
 copy ..\..\..\hdf\util\Debug\hdf2gif.exe .
@@ -44,7 +44,7 @@ popd
 
 mkdir dll
 pushd dll
-:: ./hdf4lib/debug/dll
+rem ./hdf4lib/debug/dll
 copy ..\..\..\hdf\src\Debug\hd421md.dll .
 copy ..\..\..\hdf\src\Debug\hd421md.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fcstubdlld.dll .
@@ -61,7 +61,7 @@ popd
 
 mkdir include
 pushd include
-:: ./hdf4lib/debug/include
+rem ./hdf4lib/debug/include
 copy ..\..\..\hdf\src\*.h . 
 copy ..\..\..\hdf\src\*.inc . 
 del maldebug.h
@@ -86,7 +86,7 @@ popd
 
 mkdir lib
 pushd lib
-:: ./hdf4lib/debug/lib
+rem ./hdf4lib/debug/lib
 copy ..\..\..\hdf\src\Debug\hd421d.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fcstubd.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fortran.lib .
@@ -99,11 +99,11 @@ popd
 
 mkdir release
 pushd release
-:: ./hdf4lib/release
+rem ./hdf4lib/release
 
 mkdir bin
 pushd bin
-:: ./hdf4lib/release/bin
+rem ./hdf4lib/release/bin
 copy ..\..\..\hdf\util\Release\gif2hdf.exe .
 copy ..\..\..\hdf\util\Release\hdf24to8.exe .
 copy ..\..\..\hdf\util\Release\hdf2gif.exe .
@@ -133,7 +133,7 @@ popd
 
 mkdir dll
 pushd dll
-:: ./hdf4lib/release/dll
+rem ./hdf4lib/release/dll
 copy ..\..\..\hdf\src\Release\hd421m.dll .
 copy ..\..\..\hdf\src\Release\hd421m.lib .
 copy ..\..\..\hdf\src\Release\hdf_fcstubdll.dll .
@@ -150,7 +150,7 @@ popd
 
 mkdir include
 pushd include
-:: ./hdf4lib/release/include
+rem ./hdf4lib/release/include
 copy ..\..\..\hdf\src\*.h . 
 copy ..\..\..\hdf\src\*.inc . 
 del maldebug.h
@@ -175,7 +175,7 @@ popd
 
 mkdir lib
 pushd lib
-:: ./hdf4lib/release/lib
+rem ./hdf4lib/release/lib
 copy ..\..\..\hdf\src\Release\hd421.lib .
 copy ..\..\..\hdf\src\Release\hdf_fcstub.lib .
 copy ..\..\..\hdf\src\Release\hdf_fortran.lib .

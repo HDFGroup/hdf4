@@ -997,88 +997,102 @@ Option 2: Remove Szip Compression in HDF4
 Section VII. Build and Test HDF4 Library on the Command Line    
 ======================================================================
 
-For Microsoft Visual C++ 6.0 and DEC Visual Fortran 6.0(or higher
-versions) users, we support building HDF4 libraries and utilities from
-the HDF4 source code archive on command line.
+For Visual Studio .NET and Visual Studio 2005, with or without Intel Fortran 
+Compiler 9.1, we support building from the command line.  For all other Windows 
+development tools, HDF4 should be built in the development environment following 
+the instructions in Section I.
+
+1. Preconditions: 
+
+   1.1 Verify environment for Visual Studio
+   
+   Building from the command line requires environment variables for Visual
+   Studio.  These are generally setup when Visual Studio is installed, but you
+   can verify by testing the variables.  For Visual Studio .NET:
+        
+        echo %vs71comntools%
+        
+   or for Visual Studio 2005:
+   
+        echo %vs80comntools%
+        
+    This should output a path similar to:
+    
+        C:\Program Files\Microsoft Visual Studio (version)\Common(#)\Tools\
       
-For all other Windows development tools, HDF4 should be built in the
-development environment following the instructions in Section I.
 
-Step 1. Set path for Microsoft Visual C++ 6.0 and Visual Fortran 6.0
-        (or higher version):
-   
-   Open "System" in Control Panel.
-   
-   On the "Advanced" tab, click "Environment Variables", click "Path"
-   in the "System variables" box, then click "Edit" and add your Visual
-   C++ 6.0 path (For example, 
-   C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin\)
-   and Visual Fortran 6.0 path (For example, 
-   C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin\)
-   into "Variable Value" and click "OK".
-  
-Step 2. Run batch file copy_hdf.bat
+   1.2 Run batch file copy_hdf.bat.
 
-      In a command prompt, cd to  c:\MyHDFstuff\HDF42r1\windows and execute
-      copy_hdf.bat. This will copy all the necessary batch files, windows 
-      specific source codes and text files saved under 
-      c:\MyHDFstuff\HDF42r1\windows directory to the corresponding directories 
-      under MyHDFstuff.
-
-Step 3. Build and Test
-
-   We provide 2 options for users to build test HDF4 libraries 
-   and utilities.
+   Go to  c:\MyHDFstuff\hdf4\windows and run copy_hdf.bat. 
       
-   Options A: Build and test in one step 
+2. Building and testing HDF4 libraries and tools
+
+   We provide 2 options for users to build and test HDF4 libraries 
+   and tools.
       
-      A batch file named hdf4bt.bat in c:\MyHDFstuff\HDF42r1 directory
-      is provided for users to build and test HDF4 library and tools
-      together from the command line.
+    2.1 Options A: Build and test in one step 
+      
+         A batch file named hdf4bt.bat in c:\MyHDFstuff\hdf4 directory is 
+         provided for users to build and test HDF4 library and tools together 
+         from command line.
 
-      Run hdf4bt.bat in a command prompt window.
+         hdf4bt.bat takes the following options:
 
-      Test results are saved in
+            vs8            Build HDF4 using Visual Studio 2005 (default is .NET)
+            enablefortran  Build HDF4 C/Fortran libraries (default is C only)
 
-         c:\MyHDFstuff\HDF42r1\hdf4_results.txt   
+         Invoke a command prompt window and run hdf4bt with the appropriate
+         parameters.  Test results are saved in:
 
+            c:\MyHDFstuff\hdf4\check_results.txt   
 
-   Options B: Build and test in two steps 
+         You may use a text-editor to verify results.  There should be no
+         "FAILED" marks in check_results.txt.
 
-      We also provide users with the option to build and test HDF4
-      libraries and utilities separately from the command line.
+    2.2 Options B: Build and test in two steps 
+
+         We also provide users with the option to build and test HDF4 libraries 
+         and tools seperately.
    
-      Step 1) Build HDF4 Libraries and Utilities
+         Step 1) Build HDF4 Libraries and Tools
 
-         A batch file named hdf4build.bat in c:\MyHDFstuff\HDF42r1 
-         directory is provided for users to build HDF4 libraries and 
-         utilities from command line.
+            A batch file named hdf4build.bat in c:\MyHDFstuff\hdf4 
+            directory is provided for users to build HDF4 library and 
+            tools from command line.
 
-         Run hdf4build.bat in a command prompt window.
+            hdf4build.bat takes the following options:
 
-         Compiling outputs are saved in
+            vs8            Build HDF4 using Visual Studio 2005 (default is .NET)
+            enablefortran  Build HDF4 C/Fortran libraries (default is C only)
 
-            c:\MyHDFstuff\HDF42r1\build_results.txt.
+            Invoke a command prompt window and run hdf4build.  Compiling outputs 
+            are saved in c:\MyHDFstuff\hdf4\build_results.txt.  You can check 
+            the file to find out whether there are any compilation errors.
 
-         You can check the output file to find out whether there
-         are any compilation errors.
-
-      Step 2) Test HDF4 Libraries and Utilities
+         Step 2) Test HDF4 Libraries and Tools
    
-         A batch file named hdf4check.bat in c:\MyHDFstuff\HDF42r1
-         directory is provided for users to test HDF4 libraries and 
-         utilities from command line.
+            A batch file named hdf4check.bat in c:\MyHDFstuff\hdf4 directory is 
+            provided for users to test HDF4 library and tools from command line.
 
-         Run hdf4check.bat in a command prompt window.
+            hdf4check.bat takes the following option:
+            
+            enablefortran   Test HDF4 C/Fortran Libraries
 
-         Test results are saved in:
+            Invoke a command prompt window and run hdf4check with apropriate 
+            options.
 
-            c:\MyHDFstuff\HDF42r1\check_results.txt.
+            Test results are saved in:
 
+               c:\MyHDFstuff\hdf4\check_results.txt.
+            
+             You may use a text-editor to verify results.  There should be no
+             "FAILED" marks in check_results.txt.
 
-Having built and tested HDF4 libraries and utilities successfully 
-on the command line, you can install HDF4 libraries following the
-instruction in Section I, Step 4.
+3. Installing HDF4 Libraries
+
+Run the batch file c:\MyHDFstuff\hdf4\installhdf4lib.bat to install all
+HDF4 libraries and tools into c:\MyHDFstuff\hdf4\hdf4lib directory.
+
 
 
 Section VIII: Build HDF4 Multithreaded Static Library

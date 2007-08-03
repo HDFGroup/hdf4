@@ -13,25 +13,25 @@
 
 @echo off
 
-:: File Name   : copy_hdf.bat
-:: Purpose     : Copy all Files in the current directory to its parent directory
-::
-:: Written By  : Scott Wegner, July 11, 2007
-:: Last Update : July 31, 2007
+rem File Name   : copy_hdf.bat
+rem Purpose     : Copy all Files in the current directory to its parent directory
+rem
+rem Written By  : Scott Wegner, July 11, 2007
+rem Last Update : July 31, 2007
 
 pushd
 
-:: Create an "exclude file", which contains this file, itself, and the proj directory
+rem Create an "exclude file", which contains this file, itself, and the proj directory
 echo.\exclude.txt > exclude.txt
 echo.\%~nx0 >> exclude.txt
 echo.\proj\ >> exclude.txt
 echo.\proj_vs6\ >> exclude.txt
 echo.\examples\ >> exclude.txt
 
-:: Copy our files
+rem Copy our files
 xcopy . .. /e /i /y /EXCLUDE:exclude.txt
 
-:: Remove our temporary exclude file
+rem Remove our temporary exclude file
 del %CD%\exclude.txt
 
 popd

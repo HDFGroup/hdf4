@@ -9,8 +9,8 @@ pushd mfhdf\hdiff\%1
 mkdir temptest
 cd temptest
 
-:: Instead of generating comparision files all the time, use the files in the repository
-:: ..\hdifftst
+rem Instead of generating comparision files all the time, use the files in the repository
+rem ..\hdifftst
 
 copy ..\..\testfiles\* . > temp.txt 2>&1
 del temp.txt
