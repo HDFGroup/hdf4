@@ -2,35 +2,44 @@
 rem File Name: hdf4bt.bat
 rem This batch file is used to build and test HDF4 Libraries and Utilities.
 rem There batch file takes the following options:
-rem      Usage: hdf4bt [[/?] | [vs8] [enablefortran]]
+rem      Usage: hdf4bt [/?] | [vs8] [enablefortran] [disableszip]
 rem      Options:
 rem         vs8               Build using Visual Studio 2005 [default
 rem                           uses Visual Studio .NET]
 rem         enablefortran     Build and test HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
+rem         disableszip       Disable szip library in HDF4
+rem 
 rem By Xuan Bai
 rem Created: 11/08/2004
-rem Last Updated: 8/3/2007
+rem Last Updated: 8/6/2007
 
 rem This batch file makes the following assumptions:
 rem    - The appropriate version of Visual Studio is installed and setup
 rem    - The directory structure is setup from a fresh source copy
 rem    - copy_hdf.bat has already been run from the ./windows directory
-rem    - Visual Studio already contains the required paths for external libraries
-rem    - szip, jpeg, and zlib DLLs are already placed in an accessible directory
-rem    - If hdf4_ext_szip, hdf4_ext_jpeg, or hdf4_ext_zlib are not set, then %szip_name%,
-rem      %jpeg_name%, and %zlib_name% will be used, respectively.
+rem    - Environment variables INCLUDE and LIB have been setup with jpeg, zlib
+rem      and szip (unless disabled) directories
+rem      and zlib directories
+rem    - jpeg, zlib, and szip (unless disabled) DLLs are already placed in an 
+rem      accessible directory
+rem    - hdf4_ext_jpeg, hdf4_ext_zlib, and hdf4_ext_szip (unless disabled) 
+rem      should all be defined
 
 rem By default, only C libraries are built and tested.
 
-goto main
+if "%1"=="/?" (
+    goto help
+) else (
+    goto main
+)
 
 rem Print a help message
 :help
 
     echo.Builds and tests HDF4 libraries and utilities.
     echo.
-    echo.Usage: %~nx0 [[/?] | [vs8] [enablefortran]]
+    echo.Usage: %~nx0 [/?] ^| [vs8] [enablefortran] [disableszip]
     echo.
     echo.Options:
     echo.
@@ -41,6 +50,8 @@ rem Print a help message
     echo.
     echo.   enablefortran           Build and testHDF4 C/Fortran Library and 
     echo.                           Tools [default C only]
+    echo.
+    echo.   disableszip             Disable szip library in HDF4
 
     exit /b 0
 
@@ -58,6 +69,10 @@ rem Parse through the parameters sent to file, and set appropriate variables
             set hdf4_build_params=!hdf4_build_params! enablefortran
             set hdf4_test_params=!hdf4_test_params! enablefortran
             
+        ) else if "%%a"=="disableszip" (
+            rem Completely disable szip
+            set hdf4_build_params=!hdf4_build_params! disableszip
+            
         ) else if "%%a"=="/?" (
             rem Set errorlevel 1 and send to help
             
@@ -65,10 +80,11 @@ rem Parse through the parameters sent to file, and set appropriate variables
             exit /b 1
             
         ) else (
-            rem Set errorlevel 2 to send to help if we receive a bad parameter (or /?)
+            rem Set errorlevel if we receive a bad parameter 
+            echo.Error parsing parameters!>&2
+            echo.>&2
             call :help
-            
-            exit /b 2
+            exit /b 1
         )
     )
     
@@ -91,34 +107,64 @@ rem Setup our environment
     exit /b 0
 
 
+rem Verify our environment is ok before build
+:verify_env
+
+    rem find build and test scripts
+    for %%a in (hdf4build.bat hdf4check.bat) do (
+        if not exist %%a (
+            echo.Error: cannot find %%a>&2
+            exit /b 1
+        )
+    )
+    
+    exit /b 0
+
+
 rem Build HDF4 libraries and tools
 :build
 
-    call hdf4build.BAT %hdf4_build_params%
-    type %build_results% >> %bt_results%
-
-    exit /b
+    call hdf4build %hdf4_build_params%
+    if %errorlevel% neq 0 (
+        type %build_results% >> %bt_results%
+        exit /b 1
+    ) else (
+        type %build_results% >> %bt_results%
+        exit /b 0
+    )
 
 
 rem Test our libraries and tools
 :test
 
     call hdf4check %hdf4_test_params%
-    type check_results.txt >> %bt_results%
-
-    exit /b
+    if %errorlevel% neq 0 (
+        type check_results.txt >> %bt_results%
+        exit /b 1
+    ) else (
+        type check_results.txt >> %bt_results%
+        
+        rem Check for FAILED marks
+        find "FAILED" check_results.txt > nul
+        if !errorlevel! equ 0 (
+            exit /b 1
+        ) else (
+            exit /b 0
+        )
+    )
 
 
 rem Handle errors
 :error
 
     rem For now, our error handling just consists of calling cleanup, and exiting
-    echo.hdf4bt failed.
+    echo.hdf4bt failed.>&2
     echo.hdf4bt failed. >> %bt_results%
     call :cleanup
     
     rem these need to be on the same line to preserve errorlevel
-    endlocal & exit /b %errorlevel%
+    endlocal
+    exit /b 1
 
 
 rem Cleanup our environment
@@ -145,12 +191,14 @@ rem This is where the magic happens
     
     call :parse_params %*
     if %errorlevel% neq 0 (
-        if %errorlevel% equ 2 echo.Error parsing parameters!
-        exit /b
+        exit /b 1
     )
 
     call :setup
 
+    call :verify_env
+    if %errorlevel% neq 0 goto error
+    
     echo.Build and testing all HDF4 libraries and tools
     echo.
 
@@ -161,13 +209,13 @@ rem This is where the magic happens
 
     call :build
     if %errorlevel% neq 0 (
-        echo.Error building HDF4 libraries!
+        echo.Error building HDF4 libraries!>&2
         goto error
     )
 
     call :test
     if %errorlevel% neq 0 (
-        echo.Error testing HDF4 libraries!
+        echo.Error testing HDF4 libraries!>&2
         goto error
     )
 

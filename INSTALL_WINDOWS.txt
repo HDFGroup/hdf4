@@ -1004,23 +1004,53 @@ the instructions in Section I.
 
 1. Preconditions: 
 
-   1.1 Verify environment for Visual Studio
+   1.1 Setup Environment
    
-   Building from the command line requires environment variables for Visual
-   Studio.  These are generally setup when Visual Studio is installed, but you
-   can verify by testing the variables.  For Visual Studio .NET:
+       1.1.1 Verify Visual Studio
+       
+       Building from the command line requires environment variables for Visual
+       Studio.  These are generally setup when Visual Studio is installed, but you
+       can verify by testing the variables.  For Visual Studio .NET:
+            
+            echo %vs71comntools%
+            
+       or for Visual Studio 2005:
+       
+            echo %vs80comntools%
+            
+        This should output a path similar to:
         
-        echo %vs71comntools%
-        
-   or for Visual Studio 2005:
-   
-        echo %vs80comntools%
-        
-    This should output a path similar to:
-    
-        C:\Program Files\Microsoft Visual Studio (version)\Common(#)\Tools\
+            C:\Program Files\Microsoft Visual Studio (version)\Common(#)\Tools\
       
+       1.1.2 Add External Libraries
+       
+       HDF4 uses environmental variables to recognize external libraries.  To
+       define the necessary variables, issue the following commands:
 
+            set HDF4_EXT_ZLIB=zdll.lib
+            set HDF4_EXT_JPEG=libjpeg.lib
+            set HDF4_EXT_SZIP=szlibdll.lib
+        
+       Also, Visual Studio uses the variables INLCUDE and LIB as search paths
+       for the neccessary include files and link libraries, respectively.  These
+       paths must be setup as well.  To define the nessessary variables, issue
+       the following commands:
+       
+            set INCLUDE=%INCLUDE%;c:\zlib122\include;c:\jpeg-6b;c:\szip\include
+            set LIB=%LIB%;c:\zlib122\lib;c:\jpeg-6b;c:\szip\dll
+       
+       Notes:
+       
+        1. If your library names or paths differ from those listed, change the
+           commands accordingly.
+           
+        2. If you plan to build without szip, then you may skip HDF4_EXT_SZIP
+           and leave out the szip paths from INCLUDE and LIB variables.
+           
+        3. You may set these variables permanantly for a user account or the
+           entire system through the Control Panel.  See the Preconditions
+           for instruction.
+           
    1.2 Run batch file copy_hdf.bat.
 
    Go to  c:\MyHDFstuff\hdf4\windows and run copy_hdf.bat. 
@@ -1040,6 +1070,7 @@ the instructions in Section I.
 
             vs8            Build HDF4 using Visual Studio 2005 (default is .NET)
             enablefortran  Build HDF4 C/Fortran libraries (default is C only)
+            disableszip    Build HDF4 libraries without szip library support.
 
          Invoke a command prompt window and run hdf4bt with the appropriate
          parameters.  Test results are saved in:
@@ -1064,6 +1095,7 @@ the instructions in Section I.
 
             vs8            Build HDF4 using Visual Studio 2005 (default is .NET)
             enablefortran  Build HDF4 C/Fortran libraries (default is C only)
+            disableszip    Build HDF4 libraries without szip library support.
 
             Invoke a command prompt window and run hdf4build.  Compiling outputs 
             are saved in c:\MyHDFstuff\hdf4\build_results.txt.  You can check 
