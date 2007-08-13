@@ -228,8 +228,16 @@ TEST dumpsds-10.out dumpsds -g swf32_fileattr.hdf
 # Test 11 prints contents of file without local attribute's data
 TEST dumpsds-11.out dumpsds -l swf32_fileattr.hdf
 
-# Test 12 prints contents of file without local attribute's data
+# Test 12 prints a dataset by name and the name is very long
 TEST dumpsds-12.out dumpsds -h -n "The name of this dataset is long and it is used to test the new variable length name feature." SDSlongname.hdf
+
+# Test 13 prints contents of file when a dimension has the same name as its SDS
+TEST dumpsds-13.out dumpsds sds1_dim1_samename.hdf
+
+# Test 14 prints contents of file when a dimension has the same name as 
+# that of another SDS
+TEST dumpsds-14.out dumpsds sds2_dim1_samename.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
@@ -266,6 +274,13 @@ TEST dumpvd-7.out dumpvd -f B tvset.hdf
 TEST dumpvd-8.out dumpvd -f "STATION_NAME","FLOATS" tvset.hdf
 TEST dumpvd-9.out dumpvd -f "STATION_NAME","FLOATS" -d tvset.hdf
 TEST dumpvd-10.out dumpvd tvattr.hdf
+
+# Tests 11 and 12 print out the vdatas of classes "SDSVar" and "CoordVar"
+# to test the fix of bugzilla 624 (these are new classes used to distinguish
+# between SDS and coordinate variables)
+TEST dumpvd-11.out dumpvd -c "SDSVar" sds1_dim1_samename.hdf
+TEST dumpvd-12.out dumpvd -c "CoordVar" sds1_dim1_samename.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
@@ -301,6 +316,14 @@ TEST dumpvg-11.out dumpvg tvattr.hdf
 # Note that the dumpvg-13 test searches for an SDS also
 TEST dumpvg-12.out dumpvg VGlongname.hdf
 TEST dumpvg-13.out dumpvg -n "SD Vgroup - this vgroup has an sds as a member and it is actually meant to test long vgroup name" VGlongname.hdf
+
+# Prints contents of file when a dimension has the same name as its SDS 
+TEST dumpvg-14.out dumpvg sds1_dim1_samename.hdf
+
+# Prints contents of file when a dimension has the same name as that 
+# of another SDS
+TEST dumpvg-15.out dumpvg sds2_dim1_samename.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
