@@ -240,7 +240,10 @@ Vstr_index(int32 file_id,
       /* Note: in either case, vg or vs, increment the index for the 
 	 next vgroup */
       (*index)++;
-   } /* end while getting vgroups */
+   } /* end whele getting vgroups */
+
+   /* when VSgetid returned FAIL in while above, search should stop */
+   ret_value = FAIL;
 
 done:
     if (ret_value == FAIL)
@@ -703,7 +706,7 @@ get_VGindex_list(
    if( filter & DCLASS )
       for (i = 0; i<dumpvg_opts->by_class.num_items; i++)
       {
-         int32 found = 0;
+         int32 found = FALSE;
          char sear_class[MAXNAMELEN];
 
          number = 0;
@@ -727,7 +730,7 @@ get_VGindex_list(
                (*vg_chosen)[vg_count] = index;
                num_vg_chosen++;
             }
-            found = 1;
+            found = TRUE;
             vg_count++;
          }
          if (!found)

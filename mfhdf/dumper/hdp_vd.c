@@ -237,6 +237,8 @@ VSstr_index(int32 file_id,
       more vdata to search, return FAIL */
    while ((*find_ref = VSgetid(file_id, *find_ref)) != FAIL)
    {
+  /* printf("VSstr_index: *find_ref = %d\n", *find_ref);
+ */ 
       vdata_id = VSattach(file_id, *find_ref, "r");
       if (FAIL == vdata_id)
 	 ERROR_GOTO_2( "in %s: VSattach failed for vdata with ref#=%d",
@@ -265,9 +267,10 @@ VSstr_index(int32 file_id,
          index of the vdata found */
       if (HDstrcmp(vdata_name, filter_str) == 0)
       {
-             /* store the current index to return first */
+         /* store the current index to return first */
          ret_value = (*index);
-            /* then increment index for next vdata - same class vdatas*/
+
+         /* then increment index for next vdata - same class vdatas*/
          (*index)++;
          goto done; /* succeeded */
       }
@@ -277,6 +280,9 @@ VSstr_index(int32 file_id,
       /* Note: in either case, increment the index for the next vdata */
       (*index)++;
    } /* end while getting vdatas */
+
+   /* when VSgetid returned FAIL in while above, search should stop */
+   ret_value = FAIL;
 
 done:
     if (ret_value == FAIL)
@@ -378,7 +384,7 @@ choose_vd(dump_info_t * dumpvd_opts,
    if( filter & DCLASS )
       for (i = 0; i < dumpvd_opts->by_class.num_items; i++)
       {
-         int32       found = 0;
+         int32       found = FALSE;
 
          find_ref = -1;
          number = 0;
@@ -398,7 +404,7 @@ choose_vd(dump_info_t * dumpvd_opts,
                num_vd_chosen++;
             }
             vd_count++;
-            found = 1;
+            found = TRUE;
          }
          if (!found)
          {
