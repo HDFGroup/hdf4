@@ -1,0 +1,37 @@
+#############################
+Expected output for './hdp dumpsds sds1_dim1_samename.hdf
+#############################
+File name: sds1_dim1_samename.hdf 
+
+Variable Name = Variable 1
+	 Index = 0
+	 Type= 32-bit floating point
+	 Ref. = 2
+	 Compression method = NONE
+	 Rank = 1
+	 Number of attributes = 1
+	 Dim0: Name=Variable 1
+		 Size = 5
+		 Scale Type = number-type not set
+		 Number of attributes = 1
+	 Attr0: Name = Attribute SDS 1
+		 Type = 8-bit signed char 
+		 Count= 23
+		 Value = This is not a coord var
+	 Data : 
+                No data written.
+
+Dimension Variable Name = Variable 1
+	 Index = 1
+	 Scale Type= number-type not set
+	 Ref. = 3
+	 Compression method = NONE
+	 Rank = 1
+	 Number of attributes = 1
+	 Dim0: Name=Variable 1
+		 Size = 5
+	 Attr0: Name = Attribute Dimension 1
+		 Type = 8-bit signed char 
+		 Count= 19
+		 Value = This is a coord var
+	 Data : 

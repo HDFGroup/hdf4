@@ -1,0 +1,52 @@
+#############################
+Expected output for './hdp dumpsds sds2_dim1_samename.hdf
+#############################
+File name: sds2_dim1_samename.hdf 
+
+Variable Name = Variable 1
+	 Index = 0
+	 Type= 32-bit floating point
+	 Ref. = 2
+	 Compression method = NONE
+	 Rank = 1
+	 Number of attributes = 0
+	 Dim0: Name=Variable 2
+		 Size = 5
+		 Scale Type = 32-bit signed integer
+		 Number of attributes = 0
+	 Data : 
+                No data written.
+
+Variable Name = Variable 2
+	 Index = 1
+	 Type= 32-bit floating point
+	 Ref. = 3
+	 Compression method = NONE
+	 Rank = 2
+	 Number of attributes = 0
+	 Dim0: Name=fakeDim1
+		 Size = 2
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=fakeDim2
+		 Size = 3
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Data : 
+                0.100000 2.300000 4.500000 
+                4.500000 6.700000 8.900000 
+
+
+
+Dimension Variable Name = Variable 2
+	 Index = 2
+	 Scale Type= 32-bit signed integer
+	 Ref. = 5
+	 Compression method = NONE
+	 Rank = 1
+	 Number of attributes = 0
+	 Dim0: Name=Variable 2
+		 Size = 5
+	 Data : 
+                101 102 103 104 105 
+

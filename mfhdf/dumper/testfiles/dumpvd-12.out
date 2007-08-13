@@ -1,0 +1,14 @@
+#############################
+Expected output for './hdp dumpvd -c CoordVar sds1_dim1_samename.hdf'
+#############################
+File name: sds1_dim1_samename.hdf 
+
+Vdata: 4
+   tag = 1962; reference = 11;
+   number of records = 0; interlace = FULL_INTERLACE (0);
+   fields = [Coordinate variable];
+   record size (in bytes) = 4;
+   name = <Undefined>;  class = CoordVar;
+   number of attributes = 0 
+   No data written
+

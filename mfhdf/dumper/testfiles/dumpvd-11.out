@@ -1,0 +1,14 @@
+#############################
+Expected output for './hdp dumpvd -c SDSVar sds1_dim1_samename.hdf'
+#############################
+File name: sds1_dim1_samename.hdf 
+
+Vdata: 2
+   tag = 1962; reference = 7;
+   number of records = 0; interlace = FULL_INTERLACE (0);
+   fields = [SDS variable];
+   record size (in bytes) = 4;
+   name = <Undefined>;  class = SDSVar;
+   number of attributes = 0 
+   No data written
+
