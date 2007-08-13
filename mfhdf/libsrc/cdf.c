@@ -1182,7 +1182,7 @@ NC_var **var;
     int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2];
     int32 refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
     uint16       nt_ref, rank;
-    int32     GroupID, val;
+    int32     GroupID, val, vs_id;
     uint8     *bufp = NULL;
 #ifdef LATER
     CONSTR(FUNC,"hdf_write_var"); 
@@ -1190,6 +1190,7 @@ NC_var **var;
     int32      ret_value = SUCCEED;
     register unsigned  i, count;
     register Void *attribute = NULL;
+int myi;
 
     count = 0;
     assoc = (*var)-> assoc;
@@ -1239,6 +1240,60 @@ NC_var **var;
       }
   
     /*
+     *  Add info about the type of this variable
+     */
+    if ((*var)->var_type == IS_SDSVAR || (*var)->var_type == IS_CRDVAR)
+      {
+	char fields[FIELDNAMELENMAX];
+	char vsclass[MAX_NC_NAME];
+
+	if ((*var)->var_type == IS_SDSVAR)
+	  {
+	    strncpy(fields, "SDS variable", 13);
+	    strncpy(vsclass, _HDF_SDSVAR, 7);
+	  }
+	else if ((*var)->var_type == IS_CRDVAR)
+	  {
+	    strncpy(fields, "Coordinate variable", 20);
+	    strncpy(vsclass, _HDF_CRDVAR, 9);
+	  }
+
+	if ((vs_id = VSattach(handle->hdf_file, -1, "w")) == FAIL)
+	  {
+	    ret_value = FAIL;
+	    goto done;
+	  }
+        if(VSsetclass(vs_id, vsclass)==FAIL)
+          {
+            ret_value = FAIL;
+            goto done;
+          }
+
+    if ( VSfdefine(vs_id, fields, DFNT_FLOAT32, 1) == FAIL)
+          {
+            ret_value = FAIL;
+            goto done;
+          }
+    if ( VSsetfields(vs_id, fields) == FAIL)
+          {
+            ret_value = FAIL;
+            goto done;
+          }
+
+	ref = VSQueryref(vs_id);
+
+	if(VSdetach(vs_id)==FAIL)
+	  {
+	    ret_value = FAIL;
+	    goto done;
+	  }
+
+	tags[count] = DFTAG_VH;
+	refs[count] = ref;
+	count++;
+      }
+
+    /*
      * If we already have data written out include that too
      *   (this might happen after a redef() cuz we will leave
      *   the data sitting on the disk but clear out all the 
@@ -1287,6 +1342,7 @@ NC_var **var;
     nt_ref = (uint16) ref;
     count++;
   
+
 #ifdef WRITE_NDG
     /* prepare to start writing ndg   */
     if ((GroupID = DFdisetup(10)) < 0)
@@ -1378,16 +1434,8 @@ NC_var **var;
 #endif /* WRITE_NDG */
 
     /* write the vgroup for the coordinate variable */
-    if ((*var)->var_type == IS_COORDVAR)
-	(*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
-                               (*var)->name->values, _HDF_COORDVAR);
-
-    else /* write the vgroup for the variable */
     (*var)->vgid = VHmakegroup(handle->hdf_file, tags, refs, count, 
-                               (*var)->name->values, _HDF_SDSVAR);
-
-    /* Note that starting from hdf4r1.5, _HDF_VARIABLE is replaced by 
-       _HDF_SDSVAR in newly created SDSs (bugzilla 624) - BMR 05/14/2007 */
+				(*var)->name->values, _HDF_VARIABLE);
 
 
 #ifdef DEBUG
@@ -2269,6 +2317,7 @@ hdf_read_vars(XDR *xdrs,
     int32    ndg_ref = 0;
     int32    rag_ref = 0;
     intn     nattrs;
+    vartype_t var_type = UNKNOWN;
     register int     t, i;
     register nc_type type;
     register int32   var, sub;
@@ -2312,7 +2361,7 @@ hdf_read_vars(XDR *xdrs,
       }
 
     /*
-     * Look through for a Vgroup of class _HDF_VARIABLE, _HDF_SDSVAR, or _HDF_COORDVAR
+     * Look through for a Vgroup of class _HDF_VARIABLE
      */
     if ((vg_size = Vntagrefs(vg)) == FAIL)
       {
@@ -2348,9 +2397,7 @@ hdf_read_vars(XDR *xdrs,
 
 		/* Process as below if this VGroup represents a Variable or
 		   a Coordinate Variable */
-                if(!HDstrcmp(class, _HDF_VARIABLE) ||
-		   !HDstrcmp(class, _HDF_SDSVAR) ||
-		   !HDstrcmp(class, _HDF_COORDVAR))
+                if(!HDstrcmp(class, _HDF_VARIABLE))
                   {
               
                       /*
@@ -2379,6 +2426,8 @@ hdf_read_vars(XDR *xdrs,
                       for (t = 0; t < n; t++) 
                         {
 			    char dimclass[MAX_NC_CLASS] = "";
+			    char vsclass[MAX_NC_CLASS] = "";
+			    char vsname[MAX_NC_CLASS] = "";
                             if (Vgettagref(var, t, &tag, &sub_id) == FAIL)
                               {
 #ifdef HDF_READ_VARS
@@ -2449,6 +2498,35 @@ hdf_read_vars(XDR *xdrs,
 
                                   break;
                               case DFTAG_VH :   /* ----- V D A T A ----- */
+  /* fprintf(stderr, "hdf_read_var: found tag DFTAG_VH\n");
+ */ 
+                                  sub = VSattach(handle->hdf_file, sub_id, "r");
+                                  if (FAIL == sub)
+                                    {
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+                                  if (FAIL == VSgetclass(sub, vsclass))
+                                    {
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
+
+ /*  fprintf(stderr, "hdf_read_var: vsclass = %s, \n", vsclass);
+ */ 
+                                  if(!HDstrcmp(vsclass, _HDF_SDSVAR))
+                                        var_type = IS_SDSVAR;
+                                  else if(!HDstrcmp(vsclass, _HDF_CRDVAR))
+                                        var_type = IS_CRDVAR;
+                                  else
+                                        var_type = UNKNOWN;
+
+                                  if (FAIL == VSdetach(sub))
+                                    {
+                                        ret_value = FAIL;
+                                        goto done;
+                                    }
                                   break;
                               case DFTAG_NDG :  /* ----- NDG Tag for HDF 3.2 ----- */
                                   ndg_ref = sub_id;
@@ -2569,12 +2647,7 @@ hdf_read_vars(XDR *xdrs,
                       vp->HDFtype  = HDFtype;
                       vp->ndg_ref  = (uint16) ndg_ref;
                       vp->cdf = handle; /* for NC_var_shape */
-		      if (HDstrcmp(class, _HDF_COORDVAR) == 0)
-			  vp->var_type = IS_COORDVAR;
-		      else if (HDstrcmp(class, _HDF_SDSVAR) == 0)
-			  vp->var_type = NOT_COORDVAR;
-		      else
-			  vp->var_type = UNKNOWN;
+		      vp->var_type = var_type;
 
                       /* need to process the ragged array info here */
                       /* QUESTION:  Load the whole rag_fill list in now??????? */

@@ -102,7 +102,7 @@
 #define MAX_VXR_ENTRIES                 10
 #endif /* MAX_VXR_ENTRIES */
 
-typedef enum {NOT_COORDVAR=0, IS_COORDVAR=1, UNKNOWN=2} vartype_t;
+typedef enum {IS_SDSVAR=0, IS_CRDVAR=1, UNKNOWN=2} vartype_t;
 
 #ifdef HDF
 /* VIX record for CDF variable data storage */
@@ -212,9 +212,9 @@ typedef struct {
 	uint16 data_ref;    /* ref of the variable's data storage (if exists) */
 	uint16 data_tag;    /* tag of the variable's data storage (if exists) */
 	uint16 ndg_ref;     /* ref of ndg for this dataset */
-	vartype_t var_type; /* NOT_COORDVAR == not a coordinate variable 
-			   IS_COORDVAR == is a coordinate variable 
-			   UNKNOWN == because the var was created prior to
+	vartype_t var_type; /* IS_SDSVAR == is an SDS variable 
+			       IS_CRDVAR == is a coordinate variable 
+			       UNKNOWN == because the var was created prior to
 					this distinction */
 	intn   data_offset; /* non-traditional data may not begin at 0 */
 	int32  block_size;  /* size of the blocks for unlimited dim. datasets */

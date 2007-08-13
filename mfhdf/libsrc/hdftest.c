@@ -1629,10 +1629,17 @@ test_netcdf_reading()
     char   *srcdir = getenv("srcdir");
 
     /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) {
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) 
+    {
         strcpy(testfile, srcdir);
         strcat(testfile, "/");
     }
+
+    /* This is to get to the file if the test is ran by ./hdftest, and not by 
+	make check - BMR - 2007/08/09 */
+    if (srcdir == NULL)
+	strcpy(testfile, "../ncgen/");
+
     strcat(testfile, basename);
 
     /* Open the file 'test1.nc' and initialize the SDxxx interface. */

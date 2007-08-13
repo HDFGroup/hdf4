@@ -672,7 +672,6 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
     fprintf(stderr, "SDgetinfo: I've been called\n");
 #endif
 
-
     if( rank == NULL || dimsizes == NULL || nt == NULL || nattr == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -955,7 +954,10 @@ SDnametoindex(int32 fid,  /* IN: file ID */
             && HDstrncmp(name, (*dp)->name->values, len) == 0) 
 
 	    /* make sure that this is not a coordinate var - BMR - 05/14/2007 */
-	    if ((*dp)->var_type != IS_COORDVAR)
+	    /* Note: this means that if the data was created before the fix of
+	       bugzilla 624, the index of the variable will still be returned 
+	       regardless whether or not it is an SDS or coordinate variable. */
+	    if ((*dp)->var_type != IS_CRDVAR)
 	      {
 		ret_value = (int32)ii;
 		goto done;
@@ -1248,9 +1250,9 @@ SDcreate(int32  fid,      /* IN: file ID */
     var->created=TRUE;
     var->set_length=FALSE;
 
-    /* Indicate that this variable is not a coordinate variable (bugzilla 624)
-       - BMR - 05/14/2007 */
-    var->var_type=NOT_COORDVAR;
+    /* Indicate that this variable is an actual sds, not a coordinate 
+	variable (bugzilla 624) - BMR - 05/14/2007 */
+    var->var_type=IS_SDSVAR;
 
     /* NC_new_var strips off "nativeness" add it back in if appropriate */
     var->HDFtype = nt;
@@ -2989,7 +2991,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
 		/* only proceed if this variable is a coordinate var or when
 		   the status is unknown due to its being created prior to
 		   the fix of bugzilla 624 - BMR 05/14/2007 */
-		if ((*dp)->var_type != NOT_COORDVAR)
+		if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
 		{
 		    /* see if we need to change the number type */
 		    if((nt != 0) && (nt != (*dp)->type)) 
@@ -3055,7 +3057,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
 
     /* Set flag to indicate that this variable is a coordinate variable -
        BMR - 05/14/2007 */
-    var->var_type = IS_COORDVAR; 
+    var->var_type = IS_CRDVAR; 
 
     /* BMR: put back hdf type that was set wrong by NC_new_var; please refer
        to the cvs history of bug #172 for reason on this statement - 4/17/01*/
@@ -3509,7 +3511,6 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     fprintf(stderr, "SDdiminfo: I've been called\n");
 #endif
 
-
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
       {
@@ -3551,12 +3552,12 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
             {
 	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
 	      if((*dp)->assoc->count == 1) 
-                  if( len == (*dp)->name->len 
+                 if( len == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
-		/* only proceed if this variable is a coordinate var or when
-		   its status is unknown due to its being created prior to
-		   the fix of bugzilla 624 - BMR - 05/14/2007 */
-		    if ((*dp)->var_type != NOT_COORDVAR)
+		   /* only proceed if this variable is a coordinate var or when
+		      its status is unknown due to its being created prior to
+		      the fix of bugzilla 624 - BMR - 05/14/2007 */
+		   if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
                   {
                       if (handle->file_type == HDF_FILE)
                           *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
@@ -3663,7 +3664,7 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 		/* only proceed if this variable is a coordinate var or when
 		   its status is unknown due to its being created prior to
 		   the fix of bugzilla 624 - BMR - 05/14/2007 */
-		    if ((*dp)->var_type != NOT_COORDVAR)
+		   if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
                   {
                       var = (*dp);
                   }
@@ -4725,15 +4726,15 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
         goto done;
       }
 
-    /* check whether or not this var is a coord var, then return appropriate 
-       value (if and else if) */
-    if (var->var_type == NOT_COORDVAR)
+    /* check whether this var is an SDS or a coordinate variable, then 
+       return the appropriate value (if and else if) */
+    if (var->var_type == IS_SDSVAR)
       {
         ret_value = FALSE;
         goto done;
       }
 
-    else if(var->var_type == IS_COORDVAR)
+    else if(var->var_type == IS_CRDVAR)
       {
         ret_value = TRUE;
         goto done;
