@@ -147,17 +147,47 @@ echo -----------------------------
 echo Test command dumpsds
 echo -----------------------------
 
+rem Test 1 prints all datasets
 hdp dumpsds temptest\swf32.hdf > temptest\dumpsds-1.results 2>&1
+
+rem Tests 2 and 3 print datasets given their indices
 hdp dumpsds -i 2 temptest\swf32.hdf > temptest\dumpsds-2.results 2>&1
 hdp dumpsds -i 1,3 temptest\swf32.hdf > temptest\dumpsds-3.results 2>&1
+
+rem Test 4 should fail with error message: "SD with name Time: not found"
 hdp dumpsds -n Time temptest\swf32.hdf > temptest\dumpsds-4.results 2>&1
+
+rem Test 5 prints datasets given their names 
 hdp dumpsds -n fakeDim0,Data-Set-2 temptest\swf32.hdf > temptest\dumpsds-5.results 2>&1
+
+rem Test 6 prints datasets given their ref numbers
 hdp dumpsds -r 3,2 temptest\swf32.hdf > temptest\dumpsds-6.results 2>&1
+
+rem Test 7 prints only data of the datasets selected by their ref numbers
 hdp dumpsds -r 3,2 -d temptest\swf32.hdf > temptest\dumpsds-7.results 2>&1
+
+rem Test 8 prints only header information
 hdp dumpsds -h temptest\swf32_fileattr.hdf > temptest\dumpsds-8.results 2>&1
+
+rem Test 9 prints data in clean format, no \digit's
 hdp dumpsds -c temptest\swf32_fileattr.hdf > temptest\dumpsds-9.results 2>&1
+
+rem Test 10 prints contents of file without file attribute's data
 hdp dumpsds -g temptest\swf32_fileattr.hdf > temptest\dumpsds-10.results 2>&1
+
+rem Test 11 prints contents of file without local attribute's data
 hdp dumpsds -l temptest\swf32_fileattr.hdf > temptest\dumpsds-11.results 2>&1
+
+rem Test 12 prints a dataset by name and the name is very long
+hdp dumpsds -h -n "The name of this dataset is long and it is used to test the new variable length name feature." temptest\SDSlongname.hdf  > temptest\dumpsds-12.results 2>&1
+
+rem Test 13 prints contents of file when a dimension has the same name as its SDS
+hdp dumpsds temptest\sds1_dim1_samename.hdf > temptest\dumpsds-13.results 2>&1
+
+rem Test 14 prints contents of file when a dimension has the same name as 
+rem that of another SDS
+hdp dumpsds temptest\sds2_dim1_samename.hdf > temptest\dumpsds-14.results 2>&1
+
 
 cd temptest
 
@@ -183,6 +213,12 @@ call deleteline dumpsds-10.results 1
 call deleteline dumpsds-10.out 4
 call deleteline dumpsds-11.results 1 
 call deleteline dumpsds-11.out 4
+call deleteline dumpsds-12.results 1 
+call deleteline dumpsds-12.out 4
+call deleteline dumpsds-13.results 1 
+call deleteline dumpsds-13.out 4
+call deleteline dumpsds-14.results 1 
+call deleteline dumpsds-14.out 4
 
 cd fctemp
 fc dumpsds-1.results dumpsds-1.out >temp.txt
@@ -284,6 +320,38 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
+fc dumpsds-12.results dumpsds-12.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpsds -h -n "The name of this 
+   echo dataset is long and it is used to test the 
+   echo new variable length name feature." SDSlongname.hdf                     PASSED
+) else (
+   echo Testing hdp dumpsds -h -n "The name of this 
+   echo dataset is long and it is used to test the 
+   echo new variable length name feature." SDSlongname.hdf                     FAILED
+   more temp.txt
+)
+del temp.txt
+
+fc dumpsds-13.results dumpsds-13.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpsds sds1_dim1_samename.hdf                             PASSED
+) else (
+   echo Testing hdp dumpsds sds1_dim1_samename.hdf                             FAILED
+   more temp.txt
+)
+del temp.txt
+
+fc dumpsds-14.results dumpsds-14.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpsds sds2_dim1_samename.hdf                             PASSED
+) else (
+   echo Testing hdp dumpsds sds2_dim1_samename.hdf                             FAILED
+   more temp.txt
+)
+del temp.txt
+
+
 cd ..\..
 
 echo -----------------------------
@@ -384,6 +452,12 @@ hdp dumpvd -f "STATION_NAME","FLOATS" temptest\tvset.hdf > temptest\dumpvd-8.res
 hdp dumpvd -f "STATION_NAME","FLOATS" -d temptest\tvset.hdf > temptest\dumpvd-9.results 2>&1
 hdp dumpvd temptest\tvattr.hdf > temptest\dumpvd-10.results 2>&1
 
+rem Tests 11 and 12 print out the vdatas of classes "SDSVar" and "CoordVar"
+rem to test the fix of bugzilla 624 (these are new classes used to distinguish
+rem between SDS and coordinate variables)
+hdp dumpvd -c "SDSVar" temptest\sds1_dim1_samename.hdf > temptest\dumpvd-11.results 2>&1
+hdp dumpvd -c "CoordVar" temptest\sds1_dim1_samename.hdf > temptest\dumpvd-12.results 2>&1
+
 cd temptest
 
 call deleteline dumpvd-1.results 1 
@@ -406,6 +480,10 @@ call deleteline dumpvd-9.results 1
 call deleteline dumpvd-9.out 4
 call deleteline dumpvd-10.results 1 
 call deleteline dumpvd-10.out 4
+call deleteline dumpvd-11.results 1 
+call deleteline dumpvd-11.out 4
+call deleteline dumpvd-12.results 1 
+call deleteline dumpvd-12.out 4
 
 cd fctemp
 fc dumpvd-1.results dumpvd-1.out >temp.txt
@@ -498,6 +576,24 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
+fc dumpvd-11.results dumpvd-11.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpvd -c "SDSVar" sds1_dim1_samename.hdf                  PASSED
+) else (
+   echo Testing hdp dumpvd -c "SDSVar" sds1_dim1_samename.hdf                  FAILED
+   more temp.txt
+)
+del temp.txt
+
+fc dumpvd-12.results dumpvd-12.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpvd -c "CoordVar" sds1_dim1_samename.hdf                PASSED
+) else (
+   echo Testing hdp dumpvd -c "CoordVar" sds1_dim1_samename.hdf                FAILED
+   more temp.txt
+)
+del temp.txt
+
 cd ..\..
 
 echo -----------------------------
@@ -513,8 +609,30 @@ hdp dumpvg -i 1,3,5 temptest\tdata.hdf > temptest\dumpvg-6.results 2>&1
 hdp dumpvg -r 32,39 temptest\tdata.hdf > temptest\dumpvg-7.results 2>&1
 hdp dumpvg -n nsamp,tdata.hdf temptest\tdata.hdf > temptest\dumpvg-8.results 2>&1
 hdp dumpvg -c CDF0.0 temptest\tdata.hdf > temptest\dumpvg-9.results 2>&1
+
+rem Added option -h to the following test; this option has always 
+rem failed; just fixed it - BMR 8/1/00
 hdp dumpvg -h -c Dim0.0,Var0.0 temptest\tdata.hdf > temptest\dumpvg-10.results 2>&1
+
+rem this following test is removed since option -d is removed
+rem hdp dumpvg -c Dim0.0,Var0.0 -d temptest\tdata.hdf > temptest\dumpvg-11.out 2>&1
+
+rem moved test #12 up to #11, consequently - BMR 7/25/00
 hdp dumpvg temptest\tvattr.hdf > temptest\dumpvg-11.results 2>&1
+
+rem Added these two tests for the new feature: vgroup has variable length 
+rem name - BMR 10/27/06
+rem Note that the dumpvg-13 test searches for an SDS also
+hdp dumpvg temptest\VGlongname.hdf > temptest\dumpvg-12.results 2>&1
+hdp dumpvg -n "SD Vgroup - this vgroup has an sds as a member and it is actually meant to test long vgroup name" temptest\VGlongname.hdf > temptest\dumpvg-13.results 2>&1
+
+rem Prints contents of file when a dimension has the same name as its SDS 
+hdp dumpvg temptest\sds1_dim1_samename.hdf > temptest\dumpvg-14.results 2>&1
+
+rem Prints contents of file when a dimension has the same name as that 
+rem of another SDS
+hdp dumpvg temptest\sds2_dim1_samename.hdf > temptest\dumpvg-15.results 2>&1
+
 
 cd temptest
 
@@ -540,6 +658,14 @@ call deleteline dumpvg-10.results 1
 call deleteline dumpvg-10.out 4
 call deleteline dumpvg-11.results 1 
 call deleteline dumpvg-11.out 4
+call deleteline dumpvg-12.results 1 
+call deleteline dumpvg-12.out 4
+call deleteline dumpvg-13.results 1 
+call deleteline dumpvg-13.out 4
+call deleteline dumpvg-14.results 1 
+call deleteline dumpvg-14.out 4
+call deleteline dumpvg-15.results 1 
+call deleteline dumpvg-15.out 4
 
 cd fctemp
 fc dumpvg-1.results dumpvg-1.out >temp.txt
@@ -640,6 +766,47 @@ if %ERRORLEVEL%==0 (
    more temp.txt
 )
 del temp.txt
+
+fc dumpvg-12.results dumpvg-12.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpvg VGlongname.hdf                                      PASSED
+) else (
+   echo Testing hdp dumpvg VGlongname.hdf                                      FAILED
+   more temp.txt
+)
+del temp.txt
+
+fc dumpvg-13.results dumpvg-13.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpvg -n "SD Vgroup - this vgroup 
+   echo has an sds as a member and it is actually meant 
+   echo to test long vgroup name" VGlongname.hdf                               PASSED
+) else (
+   echo Testing hdp dumpvg -n "SD Vgroup - this vgroup 
+   echo has an sds as a member and it is actually meant 
+   echo to test long vgroup name" VGlongname.hdf                               FAILED
+   more temp.txt
+)
+del temp.txt
+
+fc dumpvg-14.results dumpvg-14.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpvg sds1_dim1_samename.hdf                              PASSED
+) else (
+   echo Testing hdp dumpvg sds1_dim1_samename.hdf                              FAILED
+   more temp.txt
+)
+del temp.txt
+
+fc dumpvg-15.results dumpvg-15.out >temp.txt
+if %ERRORLEVEL%==0 (
+   echo Testing hdp dumpvg sds2_dim1_samename.hdf                              PASSED
+) else (
+   echo Testing hdp dumpvg sds2_dim1_samename.hdf                              FAILED
+   more temp.txt
+)
+del temp.txt
+
 
 cd ..\..
 
