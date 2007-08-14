@@ -628,7 +628,11 @@
 ./mfhdf/dumper/testfiles/dumpsds-10.out
 ./mfhdf/dumper/testfiles/dumpsds-11.out
 ./mfhdf/dumper/testfiles/dumpsds-12.out
+./mfhdf/dumper/testfiles/dumpsds-13.out
+./mfhdf/dumper/testfiles/dumpsds-14.out
 ./mfhdf/dumper/testfiles/dumpvd-10.out
+./mfhdf/dumper/testfiles/dumpvd-11.out
+./mfhdf/dumper/testfiles/dumpvd-12.out
 ./mfhdf/dumper/testfiles/dumpvd-1.out
 ./mfhdf/dumper/testfiles/dumpvd-2.out
 ./mfhdf/dumper/testfiles/dumpvd-3.out
@@ -642,6 +646,8 @@
 ./mfhdf/dumper/testfiles/dumpvg-11.out
 ./mfhdf/dumper/testfiles/dumpvg-12.out
 ./mfhdf/dumper/testfiles/dumpvg-13.out
+./mfhdf/dumper/testfiles/dumpvg-14.out
+./mfhdf/dumper/testfiles/dumpvg-15.out
 ./mfhdf/dumper/testfiles/dumpvg-1.out
 ./mfhdf/dumper/testfiles/dumpvg-2.out
 ./mfhdf/dumper/testfiles/dumpvg-3.out
@@ -666,6 +672,8 @@
 ./mfhdf/dumper/testfiles/list-7.out
 ./mfhdf/dumper/testfiles/list-8.out
 ./mfhdf/dumper/testfiles/list-9.out
+./mfhdf/dumper/testfiles/sds1_dim1_samename.hdf
+./mfhdf/dumper/testfiles/sds2_dim1_samename.hdf
 ./mfhdf/dumper/testfiles/swf32.hdf
 ./mfhdf/dumper/testfiles/swi16.hdf
 ./mfhdf/dumper/testfiles/swi8.hdf
