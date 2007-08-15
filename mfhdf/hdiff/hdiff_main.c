@@ -56,15 +56,14 @@ usage()
  fprintf(stdout,"  [-e count]        Print difference up to count number for each variable\n");
  fprintf(stdout,"  [-t limit]        Print difference when it is greater than limit\n");
  fprintf(stdout,"  [-p relative]     Print difference when it is greater than a relative limit\n");
- fprintf(stdout,"  file1             File name of the first input HDF file\n");
- fprintf(stdout,"  file2             File name of the second input HDF file\n");
+ fprintf(stdout,"  file1             File name of the first HDF file\n");
+ fprintf(stdout,"  file2             File name of the second HDF file\n");
  fprintf(stdout,"\n");
- fprintf(stdout,"Items in [] are optional\n");
  fprintf(stdout,"The 'count' value must be a positive integer\n");
  fprintf(stdout,"The 'limit' and 'relative' values must be positive numbers\n");
  fprintf(stdout,"The -t compare criteria is |a - b| > limit\n");
  fprintf(stdout,"The -p compare criteria is |(b-a)/a| > relative\n");
- fprintf(stdout,"return code: 0 - no differences found; 1 - differences found \n");
+ fprintf(stdout,"Return codes: 0 (no differences found), 1 (differences found)\n");
  exit(EXIT_FAILURE);
 }
 

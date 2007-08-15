@@ -13,12 +13,11 @@ hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] [-p relative] fil
   [-e count]        Print difference up to count number for each variable
   [-t limit]        Print difference when it is greater than limit
   [-p relative]     Print difference when it is greater than a relative limit
-  file1             File name of the first input HDF file
-  file2             File name of the second input HDF file
+  file1             File name of the first HDF file
+  file2             File name of the second HDF file
 
-Items in [] are optional
 The 'count' value must be a positive integer
 The 'limit' and 'relative' values must be positive numbers
 The -t compare criteria is |a - b| > limit
 The -p compare criteria is |(b-a)/a| > relative
-return code: 0 - no differences found; 1 - differences found 
+Return codes: 0 (no differences found), 1 (differences found)
