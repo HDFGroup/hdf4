@@ -748,7 +748,7 @@ Please refer to Section I, with a few minor changes:
 
 
 
-Section V. Build HDF4 with Fortran Libraries
+Section V. Build HDF4 Fortran Libraries
 ======================================================================
 
 Currently, HDF4 is supported with Intel Fortran Compilers 9.1, which requires
