@@ -872,6 +872,8 @@
 ./mfhdf/hdiff/hdiff_dim.c
 ./mfhdf/hdiff/hdiff_dim.h
 ./mfhdf/hdiff/testfiles/hdiff_14.txt
+./mfhdf/hdiff/testfiles/hdifftst7.hdf
+./mfhdf/hdiff/testfiles/hdiff_15.txt
 
 
 

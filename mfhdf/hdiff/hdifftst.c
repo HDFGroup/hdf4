@@ -6,7 +6,14 @@
 
 /* big file for hyperslab I/O */
 #define FILE3_NAME         "hdifftst3.hdf" 
-#define FILE4_NAME         "hdifftst4.hdf"       
+#define FILE4_NAME         "hdifftst4.hdf"  
+
+/* lones */
+#define FILE5_NAME         "hdifftst5.hdf" 
+#define FILE6_NAME         "hdifftst6.hdf"  
+
+/* groups */
+#define FILE7_NAME         "hdifftst7.hdf" 
        
 
 #define X_LENGTH           2
@@ -37,11 +44,21 @@
 #define  ORDER3_3          2                                /* order of third field */
 #define  N_VALS_PER_REC   (ORDER3_1 + ORDER3_2 + ORDER3_3)  /* number of values per record */
 
-static int do_big_file(void); 
 
 
-int
-main(void) 
+/*-------------------------------------------------------------------------
+ * local prototypes
+ *-------------------------------------------------------------------------
+ */
+static int do_big_file(void);
+static int do_groups(void);  
+
+/*-------------------------------------------------------------------------
+ * main
+ *-------------------------------------------------------------------------
+ */
+
+int main(void) 
 {
  int32 sd1_id;        /* SD interface identifier */
  int32 sd2_id;        /* SD interface identifier */
@@ -287,6 +304,13 @@ main(void)
  if (do_big_file()==FAIL) 
      goto error;
 
+/*-------------------------------------------------------------------------
+ * groups
+ *-------------------------------------------------------------------------
+ */
+ if (do_groups()==FAIL) 
+     goto error;
+
  
  return 0;
 
@@ -417,13 +441,10 @@ static int do_big_file(void)
                 goto error;
 
 
-        }
-        
-        
+        }    
                
     }
 
-    
     /* terminate access */
     if ( SDendaccess (sds1_id)==FAIL) 
         goto error;
@@ -433,7 +454,6 @@ static int do_big_file(void)
         goto error;
     if ( SDend (sd2_id)==FAIL) 
         goto error;
-   
 
     return SUCCEED;
     
@@ -449,6 +469,10 @@ error:
 
 #define  FILE_LABEL_TXT  "created with HDF 4.2 Release 1"
 
+/*-------------------------------------------------------------------------
+ * do_lone
+ *-------------------------------------------------------------------------
+ */
 
 int do_lone(char* file_name, int do_diffs)
 {
@@ -514,19 +538,19 @@ int do_lone(char* file_name, int do_diffs)
 
 
     {
-        int32 file_id;      /* /* HDF file identifier */ 
+        int32 file1_id;      /* /* HDF file identifier */ 
         int32 an_id;        /* AN interface identifier */
         int32 file_label_id;  /* file label identifier */
            
         /* open file */
-        if ((file_id = Hopen (file_name, DFACC_WRITE, (int16)0))<0)
+        if ((file1_id = Hopen (file_name, DFACC_WRITE, (int16)0))<0)
         {
             printf("Error: Could not open file <%s>\n",file_name);
             return FAIL;
         }
         
         /* Initialize the AN interface */
-        an_id = ANstart (file_id);
+        an_id = ANstart (file1_id);
               
         /* Create the file label */
         file_label_id = ANcreatef (an_id, AN_FILE_LABEL);
@@ -554,22 +578,137 @@ int do_lone(char* file_name, int do_diffs)
         
 
         /* close the HDF file */
-        if (Hclose (file_id)==FAIL)
+        if (Hclose (file1_id)==FAIL)
         {
             printf( "Could not close file\n");
             return FAIL;
         }
-        
-        
-    
-
+  
     }
-
     
     return SUCCEED;
 
 fail:
     SDend(sd_id);
     return FAIL;
+}
+
+
+
+/*-------------------------------------------------------------------------
+ * write groups
+ *-------------------------------------------------------------------------
+ */
+static int do_groups(void) 
+{
+     
+     int32 vg0_id,    /* vgroup identifier */
+           vg1_id,    /* vgroup identifier */
+           vg2_id,    /* vgroup identifier */
+           file1_id;  /* HDF file identifier */
+     
+     /* create a HDF file */
+     if ((file1_id = Hopen (FILE7_NAME, DFACC_CREATE, (int16)0))<0)
+     {
+         printf("Error: Could not create file <%s>\n",FILE5_NAME);
+         return FAIL;
+     }
+     
+     /* initialize the V interface */
+     if (Vstart (file1_id)==FAIL)
+     {
+         printf( "Could not start VG\n");
+         return FAIL;
+     }
+     
+     /* create a vgroup */
+     vg0_id = Vattach (file1_id, -1, "w");
+     if (Vsetname (vg0_id, "g0")==FAIL)
+     {
+         printf( "Could not name group\n");
+         goto out;
+     }
+     
+     /* create the second vgroup */
+     vg1_id = Vattach (file1_id, -1, "w");
+     if (Vsetname (vg1_id, "g1")==FAIL)
+     {
+         printf( "Could not name group\n");
+         goto out;
+     }
+     
+     /* create the third vgroup */
+     vg2_id = Vattach (file1_id, -1, "w");
+     if (Vsetname (vg2_id, "g1.1")==FAIL)
+     {
+         printf( "Could not name group\n");
+         goto out;
+     }
+  
+     if (Vinsert (vg0_id, vg1_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     if (Vinsert (vg0_id, vg2_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     if (Vinsert (vg1_id, vg2_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     if (Vinsert (vg2_id, vg1_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     /* terminate access to the vgroup */
+     if (Vdetach (vg0_id)==FAIL)
+     {
+         printf( "Could not close group\n");
+         goto out;
+     }
+     
+     /* terminate access to the vgroup */
+     if (Vdetach (vg1_id)==FAIL)
+     {
+         printf( "Could not close group\n");
+         goto out;
+     }
+     
+     /* terminate access to the vgroup */
+     if (Vdetach (vg2_id)==FAIL)
+     {
+         printf( "Could not close group\n");
+         goto out;
+     }
+     
+     /* terminate access to the V interface */
+     if (Vend (file1_id)==FAIL)
+     {
+         printf( "Could not end VG\n");
+         goto out;
+     }
+     
+     /* close the HDF file */
+     if (Hclose (file1_id)==FAIL)
+     {
+         printf( "Could not close file\n");
+         return FAIL;
+     }
+     
+     return SUCCEED;
+     
+out:
+     printf("Error...Exiting...\n");
+     return FAIL;
+     
 }
 

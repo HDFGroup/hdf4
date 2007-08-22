@@ -152,7 +152,6 @@ out:
  *-------------------------------------------------------------------------
  */
 
-
 int hdiff_list_vg(const char* fname,
                   int32 file_id,
                   int32 sd_id,             /* SD interface identifier */
@@ -169,7 +168,8 @@ int hdiff_list_vg(const char* fname,
           *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
           tag_vg,
           ref_vg;
-    char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
+    char  vgroup_name[VGNAMELENMAX];
+    char  vgroup_class[VGNAMELENMAX];
     int   i;
     
     /* initialize the V interface */
@@ -261,12 +261,16 @@ int hdiff_list_vg(const char* fname,
                 printf( "Failed to get tag for <%s>\n", vgroup_name);
                 goto out;
             }
-            
+
+            assert(tag_vg==DFTAG_VG);
+      
+                  
             /* add object to table */
             dtable_add(table,tag_vg,ref_vg,vgroup_name);
             
             insert_vg_attrs(vgroup_id,vgroup_name);
             insert_vg_an(file_id,vgroup_id,vgroup_name);
+
             
             /* insert objects for this group */
             ntagrefs = Vntagrefs(vgroup_id);
@@ -328,10 +332,12 @@ out:
  
 }
 
+
+
 /*-------------------------------------------------------------------------
  * Function: insert_vg
  *
- * Purpose: recursive function to locate objects in lone Vgroups
+ * Purpose: recursive function to locate objects in Vgroups
  *
  *-------------------------------------------------------------------------
  */
@@ -347,6 +353,7 @@ int insert_vg(const char* fname,
               dtable_t *table,         /* all objects table */
               diff_dim_table_t *td1,        /* dimension table 1 */
               diff_dim_table_t *td2)        /* dimension table 2 */
+             
 {
     int32 vgroup_id,             /* vgroup identifier */
           ntagrefs,              /* number of tag/ref pairs in a vgroup */
@@ -370,7 +377,13 @@ int insert_vg(const char* fname,
         *-------------------------------------------------------------------------
         */
         case DFTAG_VG: 
-            
+
+            /* check if already inserted */
+            if ( dtable_search(table,DFTAG_VG,ref)>=0 ) 
+            {
+                break;
+            }
+           
             vgroup_id = Vattach (file_id, ref, "r");
             Vgetname (vgroup_id, vgroup_name);
             Vgetclass (vgroup_id, vgroup_class);
@@ -387,7 +400,8 @@ int insert_vg(const char* fname,
                 Vdetach (vgroup_id);
                 break;
             }
-            
+
+         
             /* initialize path */
             path=get_path(path_name,vgroup_name);
             
@@ -752,6 +766,7 @@ int hdiff_list_glb(int32 sd_id,                  /* SD interface identifier */
     * insert GR global attributes
     *-------------------------------------------------------------------------
     */ 
+
     /* determine the number of data sets in the file and the number of file attributes */
     GRfileinfo (gr_id, &n_datasets, &n_file_attrs);
     
@@ -784,15 +799,12 @@ int hdiff_list_an(int32 file_id)
     * Get the annotation information, e.g., the numbers of file labels, file
     * descriptions, data labels, and data descriptions.
     */
-    ANfileinfo (an_id, &n_file_labels, &n_file_descs, &n_data_labels, 
-        &n_data_descs);
-    
+    ANfileinfo (an_id, &n_file_labels, &n_file_descs, &n_data_labels, &n_data_descs);
     
    /*-------------------------------------------------------------------------
     * AN_FILE_LABEL
     *-------------------------------------------------------------------------
     */ 
-    
     
     for (i = 0; i < n_file_labels; i++)
     {
@@ -1477,7 +1489,5 @@ char *get_path(char*path_name,
     }
     return path;
 }
-
-
 
 

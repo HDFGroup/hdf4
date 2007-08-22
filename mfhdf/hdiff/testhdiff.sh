@@ -163,6 +163,9 @@ TOOLTEST hdiff_13.txt hdifftst3.hdf hdifftst4.hdf
 # lone dim
 TOOLTEST hdiff_14.txt hdifftst5.hdf hdifftst6.hdf
 
+# group loop
+TOOLTEST hdiff_15.txt -b hdifftst7.hdf hdifftst7.hdf
+
 }
 
 
