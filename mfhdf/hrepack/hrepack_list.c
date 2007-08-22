@@ -597,6 +597,12 @@ int vgroup_insert(int32 infile_id,
          *-------------------------------------------------------------------------
          */
         case DFTAG_VG: 
+
+            /* check if already inserted */
+            if ( table_search(table,DFTAG_VG,ref)>=0 ) 
+            {
+                break;
+            }
             
             vgroup_id = Vattach (infile_id, ref, "r");
             if (Vgetname (vgroup_id, vgroup_name)==FAIL)
