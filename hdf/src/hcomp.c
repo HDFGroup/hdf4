@@ -224,10 +224,15 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
                   cinfo->coder_info.deflate_info.deflate_level = c_info->deflate.level;
               break;
 
-#ifdef H4_HAVE_LIBSZ
            case COMP_CODE_SZIP:
-              /* set the coding type and the szip func. ptrs */
+              /* set the coding type */
               cinfo->coder_type = COMP_CODE_SZIP;
+
+	      /* when libsz presents, initialize other info - BMR, 08/25/2007
+		 (changed from eliminating this case completely) */
+
+#ifdef H4_HAVE_LIBSZ
+              /* set the szip func. ptrs */
               cinfo->coder_funcs = cszip_funcs;
 
               /* copy encoding info */

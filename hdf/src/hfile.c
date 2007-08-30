@@ -3935,76 +3935,145 @@ done:
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
-    If the data element is SPECIAL_CHUNKED, calls HMCPgetnumrecs to get the
-    data length, or if the data element is SPECIAL_COMP, lets Hinquire
-    retrieve the data length via macro HQuerylength.
+    If the data element is special, gets the compressed or chunked description
+    record and retrieves the special tag.  If the special tag indicates that
+    the data element is compressed, then this function will retrieve the data 
+    length.  If the special tag indicates the data element is chunked, then 
+    retrieve the vdata chunk table to get its number of records.
 
-    Uses the data length to determine the value for 'emptySDS'.
+    Uses the data length or number of records to determine the value for 
+    'emptySDS'.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
     10-30-2004 BMR: This function was added for SDcheckempty
+    08-28-2007 BMR: The old code of this function failed when szip library 
+		didn't present (bugzilla 842.)  Modified to read info directly 
+		from file.
 --------------------------------------------------------------------------*/
 int32
 HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 	      intn  *emptySDS /* TRUE if data element is empty */)
 {
     CONSTR(FUNC, "HDcheck_empty");	/* for HERROR */
-    accrec_t*   access_rec=NULL;	/* access element record */
     int32	aid;			/* access id */
     int32       length;			/* length of the element's data */
+    atom_t      data_id = FAIL;	/* dd ID of existing regular element */
+    int32       data_len;	/* length of the data we are checking */
+    uint16      special_tag;	/* special version of tag */
+    filerec_t  *file_rec;	/* file record pointer */
+    int32	drec_aid;	/* description record access id */
+    uint8      *local_ptbuf=NULL, *p;
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
+    int16	sptag = -1;	/* special tag read from desc record */
     int32       ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
 
-    /* start read access on the access record of the data element, which
-       is being inquired about */
-    aid = Hstartread(file_id, tag, ref);
+    /* convert file id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get the access_rec pointer */
-    access_rec = HAatom_object(aid);
-    if (access_rec == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* if the element is chunked, call HMCPgetnumrecs to get the
-        number of records */
-    if (access_rec->special == SPECIAL_CHUNKED)
+    /* get access element from dataset's tag/ref */
+    if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
     {
-	/* get the access_rec pointer */
-	access_rec = HAatom_object(aid);
-	if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+	/* if the element is not special, that means dataset's tag/ref 
+	   specifies the actual data that was written to the dataset, so
+	   we don't need to check further */
+	if (HTPis_special(data_id)==FALSE)
+            {
+	       *emptySDS = FALSE;
+            }
+	else
+	{
+	    /* get the info for the dataset (description record) */
+	    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&data_len) == FAIL)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-        ret_value = HMCPgetnumrecs(access_rec, &length);
-        if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    }
+	    /* Get the special info header */
+	    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
+	    if (drec_aid == FAIL)
+		HGOTO_ERROR(DFE_BADAID, FAIL);
+	    if (Hread(drec_aid,0,local_ptbuf) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+	    if(Hendaccess(drec_aid)==FAIL)
+		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
-    /* otherwise, let Hinquire retrieve the data length via macro 
-	HQuerylength */
-    else /* if (access_rec->special == SPECIAL_COMP) */
-    {
-	ret_value = HQuerylength(aid, &length);
-	if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    } 
+	    /* get special tag */
+	    p = local_ptbuf;
+	    INT16DECODE(p, sptag);
 
-    /* end access to the aid appropriately */
-    if (Hendaccess(aid)== FAIL)
-        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	    /* if it is a compressed element, get the data length and set
+		flag emptySDS appropriately */
+	    if (sptag == SPECIAL_COMP)
+	    {
+		/* skip 2byte header_version */
+		p = p + 2;
+		INT32DECODE(p, length);   /* get _uncompressed_ data length */
 
-    if (length == 0)
-	*emptySDS = TRUE;
+		/* set flag specifying whether the dataset is empty */
+		*emptySDS = length == 0 ? TRUE : FALSE;
+	    }
+
+	    /* if it is a chunked element, get the number of records in
+	       the chunk table (vdata) to determine emptySDS value */
+	    else if (sptag == SPECIAL_CHUNKED)
+	    {
+		int16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
+		int32 vdata_id = -1;	/* chunk table id */
+		int32 n_records = 0;	/* number of records in chunk table */
+		intn status = 0;
+
+		/* skip 4byte header len, 1byte chunking version, 4byte flag, */
+		/* 4byte elm_tot_length, 4byte chunk_size and 4byte nt_size */
+		p = p + 4 + 1 + 4 + 4 + 4 + 4;
+		INT16DECODE(p, chk_tbl_tag);
+		INT16DECODE(p, chk_tbl_ref);
+
+		/* make sure it is really the vdata */
+		if (chk_tbl_tag == DFTAG_VH)
+		{
+		    /* attach to the chunk table vdata and get its num of records */
+		    vdata_id = VSattach(file_id, chk_tbl_ref, "r");
+		    if (VSinquire(vdata_id, &n_records,NULL,NULL,NULL,NULL) == FAIL)
+		        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+		    if (VSdetach(vdata_id) == FAIL)
+		        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+		    /* set flag specifying whether the dataset is empty */
+		    *emptySDS = n_records == 0 ? TRUE : FALSE;
+		} /* it is a vdata */
+		else
+		    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+	    /* need to check about other special cases - BMR 08/28/2007 */
+	} /* else, data_id is special */
+
+	/* end access to the aid */
+	if (HTPendaccess(data_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }  /* end if data_id != FAIL */
     else
-	*emptySDS = FALSE;
-
+    {
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    }
+ 
 done:
-  if(ret_value == FAIL)   
+    if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
-  /* Normal function cleanup */
-  return ret_value;
+    /* Normal function cleanup */
+    if (local_ptbuf != NULL) 
+	HDfree(local_ptbuf);
+
+    return ret_value;
 } /* end HDcheck_empty() */
 
 #ifdef HAVE_FMPOOL
