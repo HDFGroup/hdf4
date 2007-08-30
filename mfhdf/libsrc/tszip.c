@@ -999,56 +999,65 @@ test_szip_chunk()
 
 
 #define FILE_NAME_3D	"SDSchunkedsziped3d.hdf"
-#define RANK_CH3         3	/* rank of the chunked data set */
-#define WIDTH_CH 	4	/* width of the chunked data set */
-#define LENGTH_CH	9	/* length of the chunked data set */
-#define Z_CH	11	/* length of the chunked data set */
-#define X_CWIDTH		2	/* width of the chunk */
-#define X_CLENGTH		9	/* length of the chunk */
-#define CZ		2	/* length of the chunk */
+#define SDS_NAME_CH3D	"3D Chunked Szipped"
+#define SDS_NAME_CH0	"3D Chunked Szipped Empty"
+#define RANK_CH3        3	/* rank of the chunked data set */
+#define SDS_DIM1 	4	/* first dimension of the chunked data set */
+#define SDS_DIM0	9	/* second dimension of the chunked data set */
+#define SDS_DIM2	11	/* third dimension of the chunked data set */
+#define CHK_DIM0	9	/* first dimension of the chunk */
+#define CHK_DIM1	2	/* second dimension of the chunk */
+#define CHK_DIM2	2	/* third dimension of the chunk */
 
-   int16         all_data[LENGTH_CH][WIDTH_CH][Z_CH];
-   int16         out_data[LENGTH_CH][WIDTH_CH][Z_CH];
+int16         all_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
+int16         out_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
+
 static intn 
 test_szip_chunk_3d()
 {
 #ifdef H4_HAVE_LIBSZ
-   /************************* Variable declaration **************************/
+    /************************* Variable declaration **************************/
 
-   int32         sd_id, sds_id, sds_index;
-   intn          status;
-   int32         dim_sizes[3];
-   HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
-   uint32       comp_config;
-   int32         comp_flag;
-   int32         start[3], edges[3];
-   int16         fill_value = 0;   /* Fill value */
-   comp_coder_t  comp_type;        /* to retrieve compression type into */
-   comp_info     cinfo;            /* compression information structure */
-   int    	 num_errs = 0;     /* number of errors so far */
-   int           i,j,k;
-for (i = 0; i < LENGTH_CH; i++) {
-for (j = 0; j < WIDTH_CH; j++) {
-for (k = 0; k < Z_CH; k++) {
-   out_data[i][j][k] = i*100+j*10+k;
-}}}
+    int32         sd_id, sds_id0, sds_id, sds_index;
+    intn          status;
+    int32         dim_sizes[3];
+    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
+    uint32        comp_config;
+    int32         comp_flag;
+    int32         start[3], edges[3];
+    int16         fill_value = 0;   /* Fill value */
+    comp_coder_t  comp_type;        /* to retrieve compression type into */
+    comp_info     cinfo;            /* compression information structure */
+    int    	  num_errs = 0;     /* number of errors so far */
+    int           i,j,k;
+
+    for (i = 0; i < SDS_DIM0; i++) {
+	for (j = 0; j < SDS_DIM1; j++) {
+	    for (k = 0; k < SDS_DIM2; k++) {
+		out_data[i][j][k] = i*100+j*10+k;
+    }}}
 
     /* Initialize chunk lengths. */
-    c_def.comp.chunk_lengths[0] = X_CLENGTH;
-    c_def.comp.chunk_lengths[1] = X_CWIDTH;
-    c_def.comp.chunk_lengths[2] = CZ;
+    c_def.comp.chunk_lengths[0] = CHK_DIM0;
+    c_def.comp.chunk_lengths[1] = CHK_DIM1;
+    c_def.comp.chunk_lengths[2] = CHK_DIM2;
 
     HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface. */
     sd_id = SDstart (FILE_NAME_3D, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
-    /* Create LENGTH_CHxWIDTH_CH SDS. */
-    dim_sizes[0] = LENGTH_CH;
-    dim_sizes[1] = WIDTH_CH;
-    dim_sizes[2] = Z_CH;
-    sds_id = SDcreate (sd_id, SDS_NAME_CH,DFNT_INT16, RANK_CH3, dim_sizes);
+    /* Create SDS_DIM0xSDS_DIM1 SDS. */
+    dim_sizes[0] = SDS_DIM0;
+    dim_sizes[1] = SDS_DIM1;
+    dim_sizes[2] = SDS_DIM2;
+    sds_id = SDcreate (sd_id, SDS_NAME_CH3D, DFNT_INT16, RANK_CH3, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
+
+    /* Create a similar SDS and will make it chunked, but will not 
+       write data to it */
+    sds_id0 = SDcreate (sd_id, SDS_NAME_CH0, DFNT_INT16, RANK_CH3, dim_sizes);
+    CHECK(sds_id0, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
 
     /* Fill the SDS array with the fill value. */
     status = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
@@ -1064,12 +1073,15 @@ for (k = 0; k < Z_CH; k++) {
     c_def.comp.cinfo.szip.pixels = 0;
     c_def.comp.cinfo.szip.pixels_per_scanline = 0;
     comp_flag = HDF_CHUNK | HDF_COMP;
+    status = SDsetchunk (sds_id0, c_def, comp_flag);
     status = SDsetchunk (sds_id, c_def, comp_flag);
     if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
 	/* should work */
        CHECK(status, FAIL, "SDsetchunk");
     } else {
        /* skip rest of test?? */
+        status = SDendaccess (sds_id0);
+        CHECK(status, FAIL, "SDendaccess");
         status = SDendaccess (sds_id);
         CHECK(status, FAIL, "SDendaccess");
 
@@ -1083,13 +1095,16 @@ for (k = 0; k < Z_CH; k++) {
     start[0] = 0;
     start[1] = 0;
     start[2] = 0;
-    edges[0] = LENGTH_CH;
-    edges[1] = WIDTH_CH;
-    edges[2] = Z_CH;
+    edges[0] = SDS_DIM0;
+    edges[1] = SDS_DIM1;
+    edges[2] = SDS_DIM2;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) out_data); 
     CHECK(status, FAIL, "SDwritedata");
 
-    /* Terminate access to the data set. */
+    /* Terminate access to the data sets. */
+    status = SDendaccess (sds_id0);
+    CHECK(status, FAIL, "SDendaccess");
+
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -1118,22 +1133,22 @@ for (k = 0; k < Z_CH; k++) {
     start[0] = 0;
     start[1] = 0;
     start[2] = 0;
-    edges[0] = LENGTH_CH;
-    edges[1] = WIDTH_CH;
-    edges[2] = Z_CH;
+    edges[0] = SDS_DIM0;
+    edges[1] = SDS_DIM1;
+    edges[2] = SDS_DIM2;
     status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)all_data);
     CHECK(status, FAIL, "SDreaddata");
 
-for (i = 0; i < LENGTH_CH; i++) {
-for (j = 0; j < WIDTH_CH; j++) {
-for (k = 0; k < Z_CH; k++) {
+    for (i = 0; i < SDS_DIM0; i++) {
+	for (j = 0; j < SDS_DIM1; j++) {
+	    for (k = 0; k < SDS_DIM2; k++) {
 	    if (out_data[i][j][k] != all_data[i][j][k])
 	    {
 		fprintf(stderr,"Bogus val in loc [%d][%d][%d] want %ld got %ld\n", i, j,k, out_data[i][j][k], all_data[i][j][k]);
 		num_errs++;
 	    }
-    }
-    }
+	    }
+	}
     }
 
     /* Terminate access to the data set. */
@@ -1170,7 +1185,7 @@ test_szip_unlimited()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[MAX_NC_NAME];
     comp_info	c_info;
-   uint32       comp_config;
+    uint32       comp_config;
     int32       start[2], edges[2];
     int32       fill_value = 0;   /* Fill value */
     int         i,j;

@@ -240,6 +240,11 @@ test_chunked_SDSs(int32 fid)
     esds_id = SDcreate(fid, "Chunked-No-Data", DFNT_INT16, RANK, dim_sizes);
     CHECK(esds_id, FAIL, "In test_chunked_SDSs: SDcreate 'Chunked-No-Data'");
 
+    /* Set info for chunking */
+    comp_flag = HDF_CHUNK;
+    status = SDsetchunk(esds_id, c_def, comp_flag);
+    CHECK(status, FAIL, "In test_chunked_SDSs: SDsetchunk");
+
     /* Terminate access to the "Chunked-No-Data" dataset */
     status = SDendaccess(esds_id);
     CHECK(status, FAIL, "In test_chunked_SDSs: SDendaccess 'Chunked-No-Data'");
