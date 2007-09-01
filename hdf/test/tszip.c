@@ -91,6 +91,7 @@ test_szip_RI8bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
+    printf("value of comp_config %d \n", comp_config);
     CHECK_VOID( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME8, DFACC_CREATE, 0);

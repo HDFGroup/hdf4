@@ -263,3 +263,28 @@ nhiishdf(_fcd name,  intf * namelen)
     HDfree(fn);
     return (ret);
 }
+/*-----------------------------------------------------------------------------
+ * Name:    hcgetconf_infoc
+ * Purpose: call HCget_config_info
+ * Inputs:  coder_type - compression type
+ * Outputs: info       - flag to indicate compression status
+ *                       0 - compression is not available
+ *                       1 - only decoder found
+ *                       2 - both decoder and encoder are available
+ * Returns: SUCCEED (0)  on success, FALSE (-1) on failure
+ *---------------------------------------------------------------------------*/
+
+FRETVAL(intf)
+nhcgetconf_infoc (intf *coder_type,  intf * info)
+{
+    comp_coder_t coder_type_c;
+    uint32       info_c;
+    intn         status;
+
+    coder_type_c = (comp_coder_t) *coder_type;
+    status = HCget_config_info(coder_type_c, &info_c);
+    if (status == FAIL)
+	return(FAIL);
+    *info = (intf) info_c; 
+    return (status);
+}

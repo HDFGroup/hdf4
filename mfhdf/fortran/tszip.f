@@ -24,12 +24,9 @@ C
          integer   i, j, l, kl, kj, i_comp
 C
 C  SDS functions declarations
-C
-C         integer   sfstart, sfcreate, sfendacc, sfend,
-C     .             sfn2index, sfselect,
-C     .             sfsfill, sfrdata,
-C     .            sfwdata, sfscompress, sfgcompress
          include 'mffunc.inc'
+         external hcgetconf_info
+         integer  hcgetconf_info
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C
@@ -99,9 +96,30 @@ C
          integer pixels_per_block 
          parameter (pixels_per_block = 12)
 
-
-C
 C--------------------End of declarations------------------------------
+C
+C-------------------IS SZIP compression present with encoder?--------
+         integer info
+         err_szip = 0
+
+         comp_type = COMP_CODE_SZIP
+         status = hcgetconf_info(comp_type, info)    
+         if(status .LT. 0) then
+            err_szip = err_szip + 1         
+            goto 1111
+         endif 
+         if(info .EQ. 0 ) then
+          print *,'SKIPPING TSZIP TEST: COMPRESSION IS NOT AVAILABLE'
+          print *,' '
+          goto 3333
+         endif
+
+       if(info .EQ. 1) then
+         print *,'SKIPPING TSZIP TEST: SZIP ENCODING IS NOT AVAILABLE'
+          print *,' '
+         goto 3333
+       endif
+            
 C
 C
 C  We will write to five different files corresponding to the 
@@ -118,7 +136,6 @@ C
          type(2) = DFNT_INT32
          type(3) = DFNT_FLOAT32
          type(4) = DFNT_FLOAT64
-         err_szip = 0
 C
 C   Dimension sizes array initialization
 C
@@ -357,7 +374,13 @@ C
             endif
 1111     continue
          if (err_szip .ne. 0) then
-            print *, 'SZIP test failed with ', err_szip, ' errors'
+            print *, 'TSZIP TEST FAILED WITH ', err_szip, ' ERRORS'
+            print *,' '
          endif
+         if (err_szip .eq. 0) then
+            print *, 'TSZIP TEST PASSED'
+            print *,' '
+         endif
+3333     continue
          end
 

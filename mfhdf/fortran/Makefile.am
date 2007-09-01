@@ -15,7 +15,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 #############################################################################
 
 include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
-check_PROGRAMS = ftest hdftest
+check_PROGRAMS = ftest hdftest tszip
 
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
@@ -26,6 +26,10 @@ ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/tes
 hdftest_SOURCES = hdftest.f
 hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+tszip_SOURCES = tszip.f
+tszip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 testdir:
 	-mkdir testdir
@@ -42,6 +46,10 @@ check:
 	@echo "HDF-NetCDF Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
+	@echo "==================================="
+	@echo "SZIP Fortran interfaces tests"
+	@echo "==================================="
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 
 #############################################################################
 ##                          And the cleanup                                ##

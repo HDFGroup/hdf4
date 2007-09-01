@@ -35,7 +35,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = ftest$(EXEEXT) hdftest$(EXEEXT)
+check_PROGRAMS = ftest$(EXEEXT) hdftest$(EXEEXT) tszip$(EXEEXT)
 subdir = mfhdf/fortran
 DIST_COMMON = README $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -50,13 +50,15 @@ am_ftest_OBJECTS = ftest.$(OBJEXT)
 ftest_OBJECTS = $(am_ftest_OBJECTS)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
+am_tszip_OBJECTS = tszip.$(OBJEXT)
+tszip_OBJECTS = $(am_tszip_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)/hdf/src@am__isrc@
 F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
-SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES)
-DIST_SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES)
+SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES) $(tszip_SOURCES)
+DIST_SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES) $(tszip_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -207,6 +209,9 @@ ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/tes
 hdftest_SOURCES = hdftest.f
 hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+tszip_SOURCES = tszip.f
+tszip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 SUFFIXES = .inc .f90
 
 #############################################################################
@@ -254,6 +259,9 @@ ftest$(EXEEXT): $(ftest_OBJECTS) $(ftest_DEPENDENCIES)
 hdftest$(EXEEXT): $(hdftest_OBJECTS) $(hdftest_DEPENDENCIES) 
 	@rm -f hdftest$(EXEEXT)
 	$(F77LINK) $(hdftest_OBJECTS) $(hdftest_LDADD) $(LIBS)
+tszip$(EXEEXT): $(tszip_OBJECTS) $(tszip_DEPENDENCIES) 
+	@rm -f tszip$(EXEEXT)
+	$(F77LINK) $(tszip_OBJECTS) $(tszip_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -475,6 +483,10 @@ check:
 	@echo "HDF-NetCDF Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
+	@echo "==================================="
+	@echo "SZIP Fortran interfaces tests"
+	@echo "==================================="
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

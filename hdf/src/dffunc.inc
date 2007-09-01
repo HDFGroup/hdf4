@@ -461,8 +461,10 @@ C
       external hishdff
       integer  hestringf
       external hestringf
-      integer heprntf
+      integer  heprntf
       external heprntf
+      integer  hcgetconf_info
+      external hcgetconf_info
       
 
 C

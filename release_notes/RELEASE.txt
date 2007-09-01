@@ -48,6 +48,10 @@ New Features and Changes:
      
     Library
     ========= 
+        - Added new Fortran function hcgetconf_info that checks if compression
+          method is present and if encoding is available
+        - Added support for SZIP compression in Fortran
+                                               EIP - 2007/09/01
 	- The current SDgetcompress and GRgetcompress have severe flaws.
 	  Two new APIs, SDgetcompinfo and GRgetcompinfo, were added to 
 	  provide better functionality and will replace SDgetcompress and
@@ -254,9 +258,6 @@ HDF 4.2 Release 1 has been tested on the following platforms:
 
 Known problems
 ==============
-
-o  SZIP Library is not available for Crays SV1 and TS
-   Fortran APIs do not support SZIP compression.
 
 o SZIP compression cannot be used with GR interfaces. For more information
   see "HDF4.2r1 SZIP Release Notes" available at 
