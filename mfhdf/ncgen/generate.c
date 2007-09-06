@@ -28,8 +28,8 @@ gen_netcdf(filename)
 {
     int idim, ivar, iatt;
     int istat;
-    int dimids[MAX_NC_DIMS];
-    int varids[MAX_NC_VARS];
+    int dimids[H4_MAX_NC_DIMS];
+    int varids[H4_MAX_NC_VARS];
 
     ncid = nccreate (filename, NC_CLOBBER);
 
@@ -95,7 +95,7 @@ gen_c(filename)
     int scalar_atts, vector_atts;
     char *val_string;
     char stmnt[C_MAX_STMNT];
-    char s2[MAX_NC_NAME + 2];
+    char s2[H4_MAX_NC_NAME + 2];
 
     static const char *ctypes[] = {"char","short","nclong","float","double"};
     int ntypes = (sizeof ctypes) / (sizeof ctypes[0]);
@@ -383,7 +383,7 @@ gen_fortran(filename)
     int vector_atts;
     char *val_string;
     char stmnt[FORT_MAX_STMNT];
-    char s2[MAX_NC_NAME + 2];
+    char s2[H4_MAX_NC_NAME + 2];
     /* Need how many netCDF types there are, because we create an array
      * for each type of attribute. */
     int ntypes = 6;		/* number of netCDF types, NC_BYTE, ... */

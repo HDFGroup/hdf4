@@ -1617,11 +1617,11 @@ test_netcdf_reading()
 	int32 rank;
     int32 num_type;
     int32 attributes;
-	int32 dim_sizes[MAX_VAR_DIMS];
-    int32 start[MAX_VAR_DIMS];
-    int32 edges[MAX_VAR_DIMS];
+	int32 dim_sizes[H4_MAX_VAR_DIMS];
+    int32 start[H4_MAX_VAR_DIMS];
+    int32 edges[H4_MAX_VAR_DIMS];
     int16 array_data[2][3];
-	char name[MAX_NC_NAME];
+	char name[H4_MAX_NC_NAME];
     int32 status;
     intn i, j;
     int     num_errs = 0;    /* number of errors so far */
@@ -1766,10 +1766,10 @@ test_dimensions()
     int32  dims[2], start[2], edges[2], rank;
     int16  array1_data[LENGTH0][LENGTH1];	/* data for first SDS */
     uint32 array2_data[LENGTH2][LENGTH3];	/* data for second SDS */
-    int32  dim_sizes[MAX_VAR_DIMS];		/* read dimensions */
+    int32  dim_sizes[H4_MAX_VAR_DIMS];		/* read dimensions */
     intn   i, j;
     int32  array_rank, num_type, attributes;
-    char   dim_name[MAX_NC_NAME], name[MAX_NC_NAME];
+    char   dim_name[H4_MAX_NC_NAME], name[H4_MAX_NC_NAME];
     uint8  scale0 [] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,255};
     int16  scale1 [] = {0,1,2,3,4,5,6,7,8,9};
     char8  scale2 [] = {'d','i','m','2'}, scale2_out[4];

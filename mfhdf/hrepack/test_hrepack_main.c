@@ -551,7 +551,7 @@ int test_files(void)
     options_t     options;      /* for hrepack  */ 
     diff_opt_t    fspec;        /* for hdiff  */ 
     int           verbose=0;
-    int32         in_chunk_lengths[MAX_VAR_DIMS];
+    int32         in_chunk_lengths[H4_MAX_VAR_DIMS];
     
     /* initialize options for hdiff */
     memset(&fspec,0,sizeof(diff_opt_t));

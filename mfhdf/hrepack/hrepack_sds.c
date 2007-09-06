@@ -59,9 +59,9 @@ int copy_sds(int32 sd_in,
         sds_out=FAIL,          /* data set identifier */
         sds_index,             /* index number of the data set */
         dtype,                 /* SDS data type */
-        dimsizes[MAX_VAR_DIMS],/* dimensions of SDS */
-        start[MAX_VAR_DIMS],   /* read start */
-        edges[MAX_VAR_DIMS],   /* read edges */
+        dimsizes[H4_MAX_VAR_DIMS],/* dimensions of SDS */
+        start[H4_MAX_VAR_DIMS],   /* read start */
+        edges[H4_MAX_VAR_DIMS],   /* read edges */
         nattrs,                /* number of SDS attributes */
         rank,                  /* rank of SDS */
         sds_ref,               /* reference number of the output data set */
@@ -70,8 +70,8 @@ int copy_sds(int32 sd_in,
         nelms,                 /* number of elements */
         dim_id,                /* dimension ID */
         dim_out;               /* dimension ID */
-    char             sds_name[MAX_NC_NAME]; 
-    char             dim_name[MAX_NC_NAME];
+    char             sds_name[H4_MAX_NC_NAME]; 
+    char             dim_name[H4_MAX_NC_NAME];
     char             *path=NULL;
     VOIDP            buf=NULL;
     VOIDP            dim_buf=NULL;
@@ -572,13 +572,13 @@ int copy_sds(int32 sd_in,
            int           carry;                   /*counter carry value */
            
            /* stripmine info */
-           int32         sm_size[MAX_VAR_DIMS];   /*stripmine size */
+           int32         sm_size[H4_MAX_VAR_DIMS];   /*stripmine size */
            int32         sm_nbytes;               /*bytes per stripmine */
            int32         sm_nelmts;               /*elements per stripmine*/
            
            /* hyperslab info */
-           int32         hs_offset[MAX_VAR_DIMS]; /*starting offset */
-           int32         hs_size[MAX_VAR_DIMS];   /*size this pass */
+           int32         hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
+           int32         hs_size[H4_MAX_VAR_DIMS];   /*size this pass */
            int32         hs_nelmts;               /*elements in request */
            
            /*
@@ -825,7 +825,7 @@ int copy_sds_attrs(int32 id_in,
         numtype,               /* number type */
         eltsz,                 /* element size */
         nelms;                 /* number of elements */
-    char  attr_name[MAX_NC_NAME];
+    char  attr_name[H4_MAX_NC_NAME];
     VOIDP attr_buf=NULL;
     int   i;
     

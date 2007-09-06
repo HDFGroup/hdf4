@@ -188,7 +188,7 @@ test_ncattput(path)
      * length of attribute, and changing value of existing attribute 
      * work OK in define mode.
      */
-    tmp.name = (char *) emalloc(MAX_NC_NAME);
+    tmp.name = (char *) emalloc(H4_MAX_NC_NAME);
     for (ia = 1; ia < na; ia++) {
 	if (ncattput(cdfid, ww_id, atts[ia-1].name, atts[ia].type,
 		      atts[ia].len, atts[ia].val) == -1) {
@@ -919,7 +919,7 @@ test_ncattname(path)
 	ncclose(cdfid); return;
     }
     /* for each NC_GLOBAL attribute, get name and compare with expected name */
-    att.name = (char *) emalloc(MAX_NC_NAME);
+    att.name = (char *) emalloc(H4_MAX_NC_NAME);
     ib = 0;
     for (ia = 0; ia < test.ngatts; ia++) {
 	if (ncattname(cdfid, NC_GLOBAL, ia, att.name) == -1) {
@@ -974,7 +974,7 @@ test_ncattname(path)
     }
     add_att(&test, NC_GLOBAL, &att); /* keep in-memory netcdf consistent */
     /* test that ncattname works immediately after ncattput */
-    tmp.name = (char *) emalloc(MAX_NC_NAME);
+    tmp.name = (char *) emalloc(H4_MAX_NC_NAME);
     if (ncattname(cdfid, NC_GLOBAL, test.ngatts-1, tmp.name) == -1) {
 	error("%s: ncattname failed on variable attribute", pname);
 	ncclose(cdfid); return;
@@ -1276,8 +1276,8 @@ test_ncattdel(path)
 	error("%s: ncinquire in data mode failed", pname);
 	ncclose(cdfid); return;
     }
-    vtmp.dims = (int *) emalloc(sizeof(int) * MAX_VAR_DIMS);
-    vtmp.name = (char *) emalloc(MAX_NC_NAME);
+    vtmp.dims = (int *) emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
+    vtmp.name = (char *) emalloc(H4_MAX_NC_NAME);
     if (ncvarinq(cdfid, yav_id, vtmp.name, &vtmp.type, &vtmp.ndims, vtmp.dims,
 		  &natts) == -1) {
 	error("%s: ncvarinq failed", pname);

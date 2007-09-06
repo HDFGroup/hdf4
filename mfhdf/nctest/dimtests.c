@@ -220,7 +220,7 @@ test_ncdiminq(path)
 	return;
     }
     /* opened, in data mode */
-    dim.name = (char *) emalloc(MAX_NC_NAME);
+    dim.name = (char *) emalloc(H4_MAX_NC_NAME);
     for (dimid = 0 ; dimid < test.ndims; dimid++) { /* loop on all dim ids */
 	if (ncdiminq(cdfid, dimid, dim.name, &dim.size) == -1) {
 	    error("%s: ncdiminq in data mode failed on dim id %d",
@@ -308,7 +308,7 @@ test_ncdimrename(path)
     int pp_dim;			/* dimension id */
     static struct cdfdim pp =	/* dimension */
       {"pp", 7};
-    static char newname[MAX_NC_NAME] = /* dimension name */
+    static char newname[H4_MAX_NC_NAME] = /* dimension name */
       "new_name";
     struct cdfdim dim;		/* dimension */
     static struct cdfdim qq =	/* dimension */
@@ -342,7 +342,7 @@ test_ncdimrename(path)
 	ncclose(cdfid); return;
     }
     /* check new name with ncdiminq */
-    dim.name = (char *) emalloc(MAX_NC_NAME);
+    dim.name = (char *) emalloc(H4_MAX_NC_NAME);
     if (ncdiminq(cdfid, pp_dim, dim.name, &dim.size) == -1) {
 	error("%s: ncdiminq failed", pname);
 	ncclose(cdfid); return;

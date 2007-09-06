@@ -643,12 +643,12 @@ done:
 
  DESCRIPTION
     The user is repsonsible for allocating space to hold
-    the dataset name.  It can be at most MAX_NC_NAME 
+    the dataset name.  It can be at most H4_MAX_NC_NAME 
     characters in length.  NULL can be passed for the name
     if it is not required.
 
     dimsizes should be an array to hold the dimension sizes
-    a dataset can have at most MAX_VAR_DIMS dimensions.
+    a dataset can have at most H4_MAX_VAR_DIMS dimensions.
 
  RETURNS
         SUCCEED / FAIL
@@ -767,9 +767,9 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     uint32  comp_config;
     NC_var * tvar;
 #ifdef BIG_LONGS
-    long    Start[MAX_VAR_DIMS];
-    long    End[MAX_VAR_DIMS];
-    long    Stride[MAX_VAR_DIMS];
+    long    Start[H4_MAX_VAR_DIMS];
+    long    End[H4_MAX_VAR_DIMS];
+    long    Stride[H4_MAX_VAR_DIMS];
 #else
     long    *Start = NULL;
     long    *End   = NULL;
@@ -1114,8 +1114,8 @@ status  = SDsetdimval_comp(dimid, compt_mode);
 
  DESCRIPTION
     Simulate a call to ncvardef without having to be in 
-    define mode.  name can be at most MAX_NC_NAME
-    characters.  Rank can be at most MAX_VAR_DIMS
+    define mode.  name can be at most H4_MAX_NC_NAME
+    characters.  Rank can be at most H4_MAX_VAR_DIMS
 
     It looks like for the call to NC_new_var() we need to 
     have dimension IDs already.  So I guess we should just 
@@ -1142,7 +1142,7 @@ SDcreate(int32  fid,      /* IN: file ID */
     NC_dim  *newdim = NULL;
     int32    sdsid;
     nc_type  nctype;
-    char     dimname[MAX_NC_NAME];
+    char     dimname[H4_MAX_NC_NAME];
     intn     num;
     intn    *dims = NULL;
     intn     is_ragged;
@@ -1187,7 +1187,7 @@ SDcreate(int32  fid,      /* IN: file ID */
         goto done;
       }
 
-    if(rank > MAX_VAR_DIMS)
+    if(rank > H4_MAX_VAR_DIMS)
       {
         ret_value = FAIL;
         goto done;
@@ -1292,7 +1292,7 @@ SDcreate(int32  fid,      /* IN: file ID */
       } 
     else 
       {
-          if(handle->vars->count >= MAX_NC_VARS) 
+          if(handle->vars->count >= H4_MAX_NC_VARS) 
             {
                 ret_value = FAIL;
                 goto done;
@@ -1432,7 +1432,7 @@ done:
 	SDsetdimname -- give a name to a dimension
 
  DESCRIPTION
-    Set the name of a dimension -- at most MAX_NC_NAME characters.  
+    Set the name of a dimension -- at most H4_MAX_NC_NAME characters.  
     If this name is already in use we should point to the 
     existing dimension with that name.  If the sizes are 
     different return an error.  If this dimension already has
@@ -1691,7 +1691,7 @@ SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
             }
           else   
             {
-                if((*ap)->count >= MAX_NC_ATTRS) 
+                if((*ap)->count >= H4_MAX_NC_ATTRS) 
                   {  /* Too many */
                       ret_value = FAIL;
                       goto done;
@@ -2191,9 +2191,9 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     NC     *handle = NULL;
     NC_dim *dim = NULL;
 #ifdef BIG_LONGS
-    long    Start[MAX_VAR_DIMS];
-    long    End[MAX_VAR_DIMS];
-    long    Stride[MAX_VAR_DIMS];
+    long    Start[H4_MAX_VAR_DIMS];
+    long    End[H4_MAX_VAR_DIMS];
+    long    Stride[H4_MAX_VAR_DIMS];
 #else
     long   *Start = NULL;
     long   *End = NULL;
@@ -3071,7 +3071,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
 #endif /* NOT_YET */
 
     /* add it to the handle */
-    if(handle->vars->count >= MAX_NC_VARS)
+    if(handle->vars->count >= H4_MAX_NC_VARS)
       {
           ret_value = FAIL;
           goto done;
@@ -3486,7 +3486,7 @@ done:
     Return basic information about a dimension (name, sizes, number
     of attributes, number type, etc...) The user is repsonsible for 
     allocating space to hold the dataset name.  It can be at most 
-    MAX_NC_NAME characters in length.  NULL can be passed for the 
+    H4_MAX_NC_NAME characters in length.  NULL can be passed for the 
     name if it is not required.
 
  RETURNS
@@ -4036,7 +4036,7 @@ SDsetup_szip_parms( int32 id, NC *handle, comp_info *c_info, int32 *cdims)
     NC_var    *var; 
     int32 ndims;
     int i;
-    int32 xdims[MAX_VAR_DIMS];
+    int32 xdims[H4_MAX_VAR_DIMS];
     int32 nt;
     intn       ret_value = SUCCEED;
 
@@ -5223,11 +5223,11 @@ done:
 
       typedef union hdf_chunk_def_u
       {
-         int32   chunk_lengths[MAX_VAR_DIMS];  Chunk lengths along each dimension
+         int32   chunk_lengths[H4_MAX_VAR_DIMS];  Chunk lengths along each dimension
 
          struct 
           {   
-            int32     chunk_lengths[MAX_VAR_DIMS]; Chunk lengths along each dimension
+            int32     chunk_lengths[H4_MAX_VAR_DIMS]; Chunk lengths along each dimension
             int32     comp_type;                   Compression type 
             comp_info cinfo;                       Compression info struct 
           }comp;
@@ -6662,7 +6662,7 @@ SDget_numopenfiles()
  DESCRIPTION
     Given an ID to a file, returns its name via parameter 'filename.'
     The user is repsonsible for allocating sufficient space to hold
-    the file name.  It can be at most MAX_NC_NAME characters in 
+    the file name.  It can be at most H4_MAX_NC_NAME characters in 
     length.
 
  RETURNS

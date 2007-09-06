@@ -35,9 +35,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = ftest$(EXEEXT) hdftest$(EXEEXT) tszip$(EXEEXT)
+@HDF_BUILD_NETCDF_FALSE@check_PROGRAMS = hdftest$(EXEEXT) \
+@HDF_BUILD_NETCDF_FALSE@	tszip$(EXEEXT)
+@HDF_BUILD_NETCDF_TRUE@check_PROGRAMS = ftest$(EXEEXT) \
+@HDF_BUILD_NETCDF_TRUE@	hdftest$(EXEEXT) tszip$(EXEEXT)
 subdir = mfhdf/fortran
-DIST_COMMON = README $(include_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = README $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -46,7 +49,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
 CONFIG_CLEAN_FILES =
-am_ftest_OBJECTS = ftest.$(OBJEXT)
+am__ftest_SOURCES_DIST = ftest.f
+@HDF_BUILD_NETCDF_TRUE@am_ftest_OBJECTS = ftest.$(OBJEXT)
 ftest_OBJECTS = $(am_ftest_OBJECTS)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
@@ -58,7 +62,9 @@ F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
 SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES) $(tszip_SOURCES)
-DIST_SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES) $(tszip_SOURCES)
+DIST_SOURCES = $(am__ftest_SOURCES_DIST) $(hdftest_SOURCES) \
+	$(tszip_SOURCES)
+am__include_HEADERS_DIST = mffunc.inc mffunc.f90 netcdf.inc netcdf.f90
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -195,16 +201,17 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+@HDF_BUILD_NETCDF_FALSE@include_HEADERS = mffunc.inc mffunc.f90
 
 #############################################################################
 #############################################################################
-include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
-ftest_SOURCES = ftest.f
-ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-              ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+@HDF_BUILD_NETCDF_TRUE@include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
+@HDF_BUILD_NETCDF_TRUE@ftest_SOURCES = ftest.f
+@HDF_BUILD_NETCDF_TRUE@ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
+@HDF_BUILD_NETCDF_TRUE@              ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
-ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-                     $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+@HDF_BUILD_NETCDF_TRUE@ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
+@HDF_BUILD_NETCDF_TRUE@                     $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 hdftest_SOURCES = hdftest.f
 hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
@@ -479,11 +486,11 @@ check:
 	@echo "HDF-SD Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
-	@echo "==================================="
-	@echo "HDF-NetCDF Fortran interfaces tests"
-	@echo "==================================="
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
-	@echo "==================================="
+@HDF_BUILD_NETCDF_TRUE@	@echo "==================================="
+@HDF_BUILD_NETCDF_TRUE@	@echo "HDF-NetCDF Fortran interfaces tests"
+@HDF_BUILD_NETCDF_TRUE@	@echo "==================================="
+@HDF_BUILD_NETCDF_TRUE@	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
+@HDF_BUILD_NETCDF_TRUE@	@echo "==================================="
 	@echo "SZIP Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip

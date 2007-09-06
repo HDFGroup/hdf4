@@ -221,18 +221,18 @@
  * This can be as large as the maximum number of stdio streams
  * you can have open on your system.
  */
-#define MAX_NC_OPEN 32
+#define H4_MAX_NC_OPEN 32
 
 /*
  * These maximums are enforced by the interface, to facilitate writing
  * applications and utilities.  However, nothing is statically allocated to
  * these sizes internally.
  */
-#define MAX_NC_DIMS 5000	 /* max dimensions per file */
-#define MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
-#define MAX_NC_VARS 5000	 /* max variables per file */
-#define MAX_NC_NAME 256		 /* max length of a name */
-#define MAX_VAR_DIMS 32          /* max per variable dimensions */
+#define H4_MAX_NC_DIMS 5000	 /* max dimensions per file */
+#define H4_MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
+#define H4_MAX_NC_VARS 5000	 /* max variables per file */
+#define H4_MAX_NC_NAME 256		 /* max length of a name */
+#define H4_MAX_VAR_DIMS 32          /* max per variable dimensions */
 
 #else /* HDF */
 

@@ -21,7 +21,7 @@
 /* dimension SDS  */
 typedef struct diff_dim_name_t {
     int32 ref;                    /* reference */
-    char  dim_name[MAX_NC_NAME];  /* name */
+    char  dim_name[H4_MAX_NC_NAME];  /* name */
 } diff_dim_name_t;
 
 /* table for diff_dim_name_t */

@@ -165,30 +165,43 @@
  * This can be as large as the maximum number of stdio streams
  * you can have open on your system.
  */
-#define MAX_NC_OPEN MAX_FILE
+#define H4_MAX_NC_OPEN MAX_FILE
 
 /*
  * These maximums are enforced by the interface, to facilitate writing
  * applications and utilities.  However, nothing is statically allocated to
  * these sizes internally.
  */
-#define MAX_NC_DIMS 5000	 /* max dimensions per file */
-#define MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
-#define MAX_NC_VARS 5000	 /* max variables per file */
+#define H4_MAX_NC_DIMS 5000	 /* max dimensions per file */
+#define H4_MAX_NC_ATTRS 3000	 /* max global or per variable attributes */
+#define H4_MAX_NC_VARS 5000	 /* max variables per file */
 /* This macro changed the behavior of the SDcreate function in HDF4r1.3
  * SDcreate started to fail if SDS name length was greater than 64, instead of truncating
  * it to 64 characters and creating a dataset. Switched back to the old definition.
  * EP 5/5/2000
-#define MAX_NC_NAME MIN(256,MIN(VSNAMELENMAX,VGNAMELENMAX)) */
+#define H4_MAX_NC_NAME MIN(256,MIN(VSNAMELENMAX,VGNAMELENMAX)) */
 
-#define MAX_NC_NAME 256		 /* max length of a name */
-#define MAX_NC_CLASS 128         /* max length of a class name - added this
+#define H4_MAX_NC_NAME 256		 /* max length of a name */
+#define H4_MAX_NC_CLASS 128         /* max length of a class name - added this
         because 128 was used commonly in SD for class name, and this will help
         changing the class name variable declaration much easier - BMR 4/1/02*/
-#define MAX_VAR_DIMS 32          /* max per variable dimensions */
+#define H4_MAX_VAR_DIMS 32          /* max per variable dimensions */
+
+/* These definitions here are for backward/forward compatibiliy since major
+   constants were modified with H4 prefix to avoid conflicts with the
+   real NetCDF-3 library   - EIP 9/5/07                                     */
+
+#ifdef H4_HAVE_NETCDF
+#define MAX_NC_OPEN  H4_MAX_NC_OPEN
+#define MAX_NC_DIMS  H4_MAX_NC_DIMS
+#define MAX_NC_VARS  H4_MAX_NC_VARS
+#define MAX_NC_NAME  H4_MAX_NC_NAME
+#define MAX_NC_CLASS H4_MAX_NC_CLASS
+#define MAX_VAR_DIMS H4_MAX_VAR_DIMS
+#endif
 
 /* ----------------- Constants for MFGR interface --------------------- */
-#define MAX_GR_NAME 256		 /* max length of a name */
+#define H4_MAX_GR_NAME 256		 /* max length of a name */
 
 #endif /* _HLIMITS_H */
 

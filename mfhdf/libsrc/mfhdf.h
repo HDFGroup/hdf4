@@ -255,11 +255,11 @@ HDFLIBAPI intn HDisnetcdf
 
       typedef union hdf_chunk_def_u
       {
-         int32   chunk_lengths[MAX_VAR_DIMS];  Chunk lengths along each dimension
+         int32   chunk_lengths[H4_MAX_VAR_DIMS];  Chunk lengths along each dimension
 
          struct 
           {   
-            int32     chunk_lengths[MAX_VAR_DIMS]; Chunk lengths along each dimension
+            int32     chunk_lengths[H4_MAX_VAR_DIMS]; Chunk lengths along each dimension
             int32     comp_type;                   Compression type 
             comp_info cinfo;                       Compression info struct 
           }comp;

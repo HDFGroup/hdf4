@@ -15,7 +15,7 @@ dnl
 dnl NOTE: Don't forget to change the version number here when we do a
 dnl release!!!
 dnl
-AC_INIT([HDF], [4.2r1], [hdfhelp@ncsa.uiuc.edu])
+AC_INIT([HDF], [4.2r2], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
@@ -23,7 +23,7 @@ AC_CONFIG_HEADER([hdf/src/h4config.h])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
-AC_PREFIX_DEFAULT([`pwd`/NewHDF])
+AC_PREFIX_DEFAULT([`pwd`/hdf4])
 
 AC_OUTPUT_COMMANDS([
   echo "creating hdf/src/h4config.h"
@@ -122,6 +122,26 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 dnl ======================================================================
+dnl Checks for NetCDF-3 support 
+dnl ======================================================================
+
+AC_ARG_ENABLE([netcdf],
+              [AC_HELP_STRING([--enable-netcdf],
+                              [Build HDF4 versions of NetCDF-3 APIS [default=yes]])],,
+              enableval="yes")
+
+case "$enableval" in
+  yes)
+    BUILD_NETCDF="yes"
+    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF-3 APIs])
+    ;;
+  no)
+    BUILD_NETCDF="no"
+    ;;
+esac
+AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
+
+dnl ======================================================================
 dnl Checks for programs
 dnl ======================================================================
 
@@ -152,6 +172,8 @@ case "$enableval" in
 esac
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
 
+AC_PROG_INSTALL
+AM_PROG_LEX
 AC_PROG_INSTALL
 AM_PROG_LEX
 AC_PROG_LN_S
@@ -744,3 +766,10 @@ if test X$BUILD_FORTRAN = Xyes; then
    PRINT_N "                         FFLAGS"
    PRINT "$FFLAGS"
 fi
+
+PRINT ""
+PRINT "HDF support for NetCDF-3 APIs:"
+PRINT "------------------------------"
+
+PRINT_N "                    HDF4-NetCDF"
+IF_YES_NO "$BUILD_NETCDF"

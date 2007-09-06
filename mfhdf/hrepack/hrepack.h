@@ -26,7 +26,7 @@
 
 /* a list of names */
 typedef struct {
- char obj[MAX_NC_NAME];
+ char obj[H4_MAX_NC_NAME];
 } obj_list_t;
 
 /* the type of compression and additional parameter */
@@ -38,13 +38,13 @@ typedef struct {
 
 /* chunk lengths along each dimension and rank */
 typedef struct {
- int32   chunk_lengths[MAX_VAR_DIMS]; 
+ int32   chunk_lengths[H4_MAX_VAR_DIMS]; 
  int     rank;
 } chunk_info_t;
 
 /* information for one object, contains PATH, CHUNK info and COMP info */
 typedef struct {
- char         path[MAX_NC_NAME];            /* name of object */
+ char         path[H4_MAX_NC_NAME];            /* name of object */
  comp_info_t  comp;                         /* compression information */
  chunk_info_t chunk;                        /* chunk information */
 } pack_info_t;

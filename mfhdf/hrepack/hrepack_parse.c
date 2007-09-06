@@ -45,7 +45,7 @@ obj_list_t* parse_comp(const char *str,
     char        c;
     size_t      len=strlen(str);
     int         j, m, n, k, end_obj=-1, no_param=0, l;
-    char        obj[MAX_NC_NAME]; 
+    char        obj[H4_MAX_NC_NAME]; 
     char        scomp[10];
     char        stype[5];
     char        smask[3]; 
@@ -343,7 +343,7 @@ obj_list_t* parse_chunk(const char *str,
     char        c;
     size_t      len=strlen(str);
     int         j, n, k, end_obj=-1, c_index;
-    char        obj[MAX_NC_NAME]; 
+    char        obj[H4_MAX_NC_NAME]; 
     char        sdim[10];
     
     /* check for the end of object list and number of objects */

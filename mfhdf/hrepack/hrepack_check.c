@@ -60,7 +60,7 @@ int sds_get_compck(char *fname, char *sds_name)
  int32         sd_id,
                sds_id, 
                sds_index,
-               dimsizes[MAX_VAR_DIMS],/* dimensional size of SDS */
+               dimsizes[H4_MAX_VAR_DIMS],/* dimensional size of SDS */
                nattrs,                /* number of SDS attributes */
                dtype,                 /* SDS data type */
                rank;                  /* rank of SDS */
@@ -178,8 +178,8 @@ int sds_get_all(char *fname)
                data_type,              /* number type  */
                rrank,                  /* read rank */
                n_attrs,                /* number of attributes */
-               dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
- char          name[MAX_GR_NAME];      /* name of dataset */
+               dim_sizes[H4_MAX_VAR_DIMS];/* dimensions of an image */
+ char          name[H4_MAX_GR_NAME];      /* name of dataset */
 
  /* initialize the sd interface */
   if ((sd_id = SDstart (fname, DFACC_RDONLY))==FAIL) {

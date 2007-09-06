@@ -521,7 +521,7 @@ int hdiff_list_gr(int32 file_id,
           interlace_mode,    /* interlace mode of an image */ 
           data_type,         /* number type of an image */
           n_attrs;           /* number of attributes belong to an image */
-    char  name[MAX_GR_NAME]; /* name of an image */
+    char  name[H4_MAX_GR_NAME]; /* name of an image */
     
     /* determine the contents of the file */
     if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)<0)
@@ -584,11 +584,11 @@ int hdiff_list_sds(int32 file_id,
           n_file_attrs,           /* number of file attributes */
           index,                  /* index of a dataset */
           sds_ref,                /* reference number */
-          dim_sizes[MAX_VAR_DIMS],/* dimensions of an image */
+          dim_sizes[H4_MAX_VAR_DIMS],/* dimensions of an image */
           data_type,              /* number type  */
           rank,                   /* rank */
           n_attrs;                /* number of attributes */
-    char  name[MAX_GR_NAME];      /* name of dataset */
+    char  name[H4_MAX_GR_NAME];      /* name of dataset */
     
     /* determine the number of data sets in the file and the number of file attributes */
     if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)<0)
@@ -716,7 +716,7 @@ int insert_vg_attrs(int32 vg_in,
 {
     int    n_attrs;
     int32  data_type, size,  n_values;
-    char   attr_name[MAX_NC_NAME];
+    char   attr_name[H4_MAX_NC_NAME];
     int    i;
     
     /* Get the number of attributes attached to this vgroup.  */
@@ -1006,13 +1006,13 @@ int  insert_sds(int32 file_id,
     int32 sds_id,                /* data set identifier */
           sds_index,             /* index number of the data set */
           dtype,                 /* SDS data type */
-          dimsizes[MAX_VAR_DIMS],/* dimensional size of SDS */
+          dimsizes[H4_MAX_VAR_DIMS],/* dimensional size of SDS */
           nattrs,                /* number of SDS attributes */
           rank,                  /* rank of SDS */
           dim_size,              /* dimension size */
           dim_id;                /* dimension ID */
-    char  sds_name[MAX_NC_NAME]; 
-    char  dim_name[MAX_NC_NAME];
+    char  sds_name[H4_MAX_NC_NAME]; 
+    char  dim_name[H4_MAX_NC_NAME];
     char  *path=NULL;
     int   i;
     
@@ -1114,7 +1114,7 @@ int  insert_sds(int32 file_id,
  {
      int32 dtype,                 /* SDS data type */
            nelms;                 /* number of elements */
-     char  attr_name[MAX_NC_NAME];
+     char  attr_name[H4_MAX_NC_NAME];
      int   i;
      
      /* loop through attributes in input SDS */
@@ -1143,7 +1143,7 @@ int insert_gr_attrs(int32 ri_id,
 {
     int32 dtype,                 /* SDS data type */
           nelms;                 /* number of elements */
-    char  attr_name[MAX_NC_NAME];
+    char  attr_name[H4_MAX_NC_NAME];
     int   i;
     
     /* loop through attributes in input GR */
@@ -1169,7 +1169,7 @@ int insert_gr_attrs(int32 ri_id,
 
 int insert_vs_attrs(int32 in, int32 findex, intn attrindex)
 {
-    char	attr_name[MAX_NC_NAME];
+    char	attr_name[H4_MAX_NC_NAME];
     int32	n_values, attr_size, attr_type;
     
     /* Get attribute information */
@@ -1207,7 +1207,7 @@ int  insert_gr(int32 file_id,
                   r_data_type, 
                   r_ncomp, 
                   r_interlace_mode; 
-    char          gr_name[MAX_GR_NAME]; 
+    char          gr_name[H4_MAX_GR_NAME]; 
     char          *path=NULL;
     int           has_pal = 0;
     

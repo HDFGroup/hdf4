@@ -111,8 +111,8 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
                data_type,              /* number type  */
                rrank,                  /* read rank */
                n_attrs,                /* number of attributes */
-               dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
- char          name[MAX_GR_NAME];      /* name of dataset */
+               dim_sizes[H4_MAX_VAR_DIMS];/* dimensions of an image */
+ char          name[H4_MAX_GR_NAME];      /* name of dataset */
  int           info;
  intn          empty_sds;
  int           status;
@@ -320,8 +320,8 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
                data_type,              /* number type  */
                rrank,                  /* read rank */
                n_attrs,                /* number of attributes */
-               dim_sizes[MAX_VAR_DIMS];/* dimensions of an image */
- char          name[MAX_GR_NAME];      /* name of dataset */
+               dim_sizes[H4_MAX_VAR_DIMS];/* dimensions of an image */
+ char          name[H4_MAX_GR_NAME];      /* name of dataset */
  int           i;
 
  /* initialize the sd interface */

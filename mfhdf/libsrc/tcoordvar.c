@@ -83,7 +83,7 @@ static intn test_dim1_SDS1(void)
     int32 num_type, array_rank, count;
     int32 n_datasets, n_file_attrs, n_local_attrs;
     intn  datanum, ranknum, status =0, i, idx, idx1, idx2;
-    char  attr_name[MAX_NC_NAME], attr_values[80];
+    char  attr_name[H4_MAX_NC_NAME], attr_values[80];
     intn  num_errs = 0;         /* number of errors so far */
 
     file_id = SDstart(FILE1, DFACC_CREATE);

@@ -267,10 +267,10 @@ extern const char *cdf_routine_name ; /* defined in lerror.c */
 extern "C" {
 #endif
 
-/* If using the real netCDF library and API (use -DHAVE_NETCDF)
+/* If using the real netCDF library and API (when --disable-netcdf configure flag is used)
    need to mangle the HDF versions of netCDF API function names 
    to not conflict w/ oriinal netCDF ones */
-#ifdef HAVE_NETCDF
+#ifndef H4_HAVE_NETCDF
 #define nc_serror        HNAME(nc_serror)
 #define NCadvise         HNAME(NCadvise)
 #define NC_computeshapes HNAME(NC_computeshapes)
@@ -330,7 +330,7 @@ extern "C" {
 #define NCgenio          HNAME(NCgenio)      /* from putgetg.c */
 #define NC_var_shape     HNAME(NC_var_shape) /* from var.c */
 #endif
-#endif /* HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
+#endif /* !H4_HAVE_NETCDF ie. NOT USING HDF version of netCDF ncxxx API */
 
 #define nncpopt           H4_F77_FUNC(ncpopt, NCPOPT)
 #define nncgopt           H4_F77_FUNC(ncgopt, NCGOPT)

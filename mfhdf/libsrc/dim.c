@@ -114,7 +114,7 @@ long size ;
 			(Void *)dim) ;
 		if(handle->dims == NULL)
 			return(-1) ;
-	} else if(handle->dims->count >= MAX_NC_DIMS)
+	} else if(handle->dims->count >= H4_MAX_NC_DIMS)
 	{
 		NCadvise(NC_EMAXDIMS, "maximum number of dimensions %d exceeded",
 			handle->dims->count ) ;

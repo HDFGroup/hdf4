@@ -1099,7 +1099,7 @@ hdf_write_dim(XDR *xdrs, NC *handle, NC_dim **dim, int32 cnt)
     int32 refs[100];
     int32 count;
     const char  *class = NULL;
-    char  name[MAX_NC_NAME] = "";
+    char  name[H4_MAX_NC_NAME] = "";
     int32 ret_value = SUCCEED;
 
 #if DEBUG
@@ -1178,9 +1178,9 @@ NC_var **var;
     uint8        ntstring[4];
     uint16       ref;
     int8         outNT;
-    uint8 tbuf[2+((MAX_VAR_DIMS+1)*8)];   /* temporary buffer */
-    int32 tags[MAX_NC_ATTRS + MAX_VAR_DIMS + 2];
-    int32 refs[MAX_NC_ATTRS + MAX_VAR_DIMS + 10];
+    uint8 tbuf[2+((H4_MAX_VAR_DIMS+1)*8)];   /* temporary buffer */
+    int32 tags[H4_MAX_NC_ATTRS + H4_MAX_VAR_DIMS + 2];
+    int32 refs[H4_MAX_NC_ATTRS + H4_MAX_VAR_DIMS + 10];
     uint16       nt_ref, rank;
     int32     GroupID, val, vs_id;
     uint8     *bufp = NULL;
@@ -1245,7 +1245,7 @@ int myi;
     if ((*var)->var_type == IS_SDSVAR || (*var)->var_type == IS_CRDVAR)
       {
 	char fields[FIELDNAMELENMAX];
-	char vsclass[MAX_NC_NAME];
+	char vsclass[H4_MAX_NC_NAME];
 
 	if ((*var)->var_type == IS_SDSVAR)
 	  {
@@ -1778,9 +1778,9 @@ done:
 intn 
 hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 {
-    char vgname[MAX_NC_NAME] = "";
-    char vsclass[MAX_NC_CLASS] = "";
-    char vgclass[MAX_NC_CLASS] = "";
+    char vgname[H4_MAX_NC_NAME] = "";
+    char vsclass[H4_MAX_NC_CLASS] = "";
+    char vgclass[H4_MAX_NC_CLASS] = "";
     int      id, count, i, found;
     int      sub_id;
     int32    dim_size;
@@ -2024,7 +2024,7 @@ hdf_num_attrs(NC *handle,/* IN: handle to SDS */
     int       t, n;
     int32     vs, tag;
     int32     id = -1;
-    char      class[MAX_NC_CLASS] = "";
+    char      class[H4_MAX_NC_CLASS] = "";
     intn      ret_value = FAIL;
 
 #ifdef HDF_NUM_ATTRS
@@ -2108,9 +2108,9 @@ hdf_read_attrs(XDR *xdrs, NC *handle, int32 vg)
     int       count, t, n;
     int32     vs, tag, id, vsize, attr_size, nt;
     nc_type   type;
-    char      vsname[MAX_NC_NAME] = "";
+    char      vsname[H4_MAX_NC_NAME] = "";
     char      fields[100] = "" ;
-    char      class[MAX_NC_CLASS] = "";
+    char      class[H4_MAX_NC_CLASS] = "";
     char     *values = NULL;
     NC_attr **attributes = NULL;
     NC_array *Array = NULL;
@@ -2299,9 +2299,9 @@ hdf_read_vars(XDR *xdrs,
               NC *handle, 
               int32 vg)
 {
-    char     vgname[MAX_NC_NAME] = "";
-    char     subname[MAX_NC_NAME] = "";
-    char     class[MAX_NC_CLASS] = "";
+    char     vgname[H4_MAX_NC_NAME] = "";
+    char     subname[H4_MAX_NC_NAME] = "";
+    char     class[H4_MAX_NC_CLASS] = "";
     NC_var **variables = NULL;
     NC_var  *vp = NULL;
     int      ndims, *dims = NULL;
@@ -2425,9 +2425,9 @@ hdf_read_vars(XDR *xdrs,
                        */
                       for (t = 0; t < n; t++) 
                         {
-			    char dimclass[MAX_NC_CLASS] = "";
-			    char vsclass[MAX_NC_CLASS] = "";
-			    char vsname[MAX_NC_CLASS] = "";
+			    char dimclass[H4_MAX_NC_CLASS] = "";
+			    char vsclass[H4_MAX_NC_CLASS] = "";
+			    char vsname[H4_MAX_NC_CLASS] = "";
                             if (Vgettagref(var, t, &tag, &sub_id) == FAIL)
                               {
 #ifdef HDF_READ_VARS
@@ -2771,7 +2771,7 @@ XDR *xdrs;
 NC **handlep;
 {
 #if DEBUG
-  char            vgname[MAX_NC_NAME];
+  char            vgname[H4_MAX_NC_NAME];
   int32           entries;
 #endif
   register int32  cdf_vg = FAIL;
@@ -2779,7 +2779,7 @@ NC **handlep;
   int             status;
 #ifdef OLD_WAY
   register int    found;
-  char            class[MAX_NC_CLASS];
+  char            class[H4_MAX_NC_CLASS];
 #endif /* OLD_WAY */
   CONSTR(FUNC,"hdf_read_xdr_cdf");
   intn            ret_value = SUCCEED;
@@ -3313,7 +3313,7 @@ hdf_close(handle)
     int        id, sub_id;
     int32      vg, dim;
     int32      vs;
-    char       class[MAX_NC_CLASS] = "";
+    char       class[H4_MAX_NC_CLASS] = "";
     intn       ret_value = SUCCEED;
 #ifdef LATER
     CONSTR(FUNC,"hdf_close"); 

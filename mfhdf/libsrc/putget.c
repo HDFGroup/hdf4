@@ -2153,7 +2153,7 @@ void *values ;
 	/* now edp = edp0 - 1 */
 
 	{ /* inline */
-        long  coords[MAX_VAR_DIMS], upper[MAX_VAR_DIMS];
+        long  coords[H4_MAX_VAR_DIMS], upper[H4_MAX_VAR_DIMS];
         long  *cc ;
         const long *mm ;
         u_long offset ;
@@ -2408,7 +2408,7 @@ long *recsizes ;
 {
 	NC *handle ;
 	int nrvars ;
-	NC_var *rvp[MAX_NC_VARS] ; 
+	NC_var *rvp[H4_MAX_NC_VARS] ; 
 
 	cdf_routine_name = "ncrecinq" ;
 
@@ -2442,9 +2442,9 @@ long recnum ;
 Void **datap ;
 {
 	int nrvars ;
-	NC_var *rvp[MAX_NC_VARS] ; 
+	NC_var *rvp[H4_MAX_NC_VARS] ; 
 	int ii ;
-	long coords[MAX_VAR_DIMS];
+	long coords[H4_MAX_VAR_DIMS];
 	u_long offset ;
 	unsigned iocount ;
 

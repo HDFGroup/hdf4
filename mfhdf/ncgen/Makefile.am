@@ -16,9 +16,13 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 bin_PROGRAMS = ncgen
 
+if HDF_BUILD_NETCDF
 if HDF_BUILD_FORTRAN
 noinst_PROGRAMS = ctest0 ftest0
 else 
+noinst_PROGRAMS = ctest0
+endif
+else
 noinst_PROGRAMS = ctest0
 endif
 
@@ -52,8 +56,14 @@ man1_MANS = ncgen.1
 
 NCDUMP=../ncdump/ncdump
 
+if HDF_BUILD_NETCDF
+
 if HDF_BUILD_FORTRAN
 check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
+else
+check: ncgen $(srcdir)/test0.cdl b-check c-check
+endif
+
 else
 check: ncgen $(srcdir)/test0.cdl b-check c-check
 endif
@@ -77,6 +87,7 @@ c-check:	test2.cdl ctest0
 	else                                                                \
 	  echo "*** ncgen -c test failed  ***";                             \
 	fi
+if HDF_BUILD_NETCDF
 
 if HDF_BUILD_FORTRAN
 ## Test the "-f" option of ncgen
@@ -92,6 +103,8 @@ f-check:	test1.cdl ftest0
 ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
+endif
+
 endif
 
 netcdf.inc:

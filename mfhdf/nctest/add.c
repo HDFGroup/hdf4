@@ -31,7 +31,7 @@ add_dim (test, idim)		/* add the dimension idim to the netcdf test */
 {
     static char pname[] = "add_dim";
 
-    if (test->ndims >= MAX_NC_DIMS) {
+    if (test->ndims >= H4_MAX_NC_DIMS) {
 	(void)fprintf(stderr,
 		      "%s: too many dimensions (%d)", pname, test->ndims);
 	return;
@@ -52,7 +52,7 @@ add_var (test, ivar)		/* add the variable ivar to the netcdf test */
     static char pname[] = "add_var";
     int i;
 
-    if (test->nvars >= MAX_NC_VARS) {
+    if (test->nvars >= H4_MAX_NC_VARS) {
 	(void)fprintf(stderr,
 		      "%s: too many variables (%d)", pname, test->nvars);
 	return;

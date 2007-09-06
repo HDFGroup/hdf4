@@ -52,13 +52,13 @@ NCgenio(handle, varid, start, count, stride, imap, values)
 	 */
 	int	idim;
 	char	*valp	= values;
-	long	mycount[MAX_VAR_DIMS];
-	long	mystart[MAX_VAR_DIMS];
-	long	mystride[MAX_VAR_DIMS];
-	long	myimap[MAX_VAR_DIMS];
-	long	iocount[MAX_VAR_DIMS];	/* count vector for NCvario() */
-	long	stop[MAX_VAR_DIMS];	/* stop indexes */
-	long	length[MAX_VAR_DIMS];	/* edge lengths in bytes */
+	long	mycount[H4_MAX_VAR_DIMS];
+	long	mystart[H4_MAX_VAR_DIMS];
+	long	mystride[H4_MAX_VAR_DIMS];
+	long	myimap[H4_MAX_VAR_DIMS];
+	long	iocount[H4_MAX_VAR_DIMS];	/* count vector for NCvario() */
+	long	stop[H4_MAX_VAR_DIMS];	/* stop indexes */
+	long	length[H4_MAX_VAR_DIMS];	/* edge lengths in bytes */
 
 	/*
 	 * Verify stride argument.

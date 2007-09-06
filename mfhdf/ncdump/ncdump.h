@@ -9,21 +9,21 @@
 typedef enum {false=0, true=1} bool;
 
 struct ncdim {			/* dimension */
-    char name[MAX_NC_NAME];
+    char name[H4_MAX_NC_NAME];
     long size;
 };
 
 struct ncvar {			/* variable */
-    char name[MAX_NC_NAME];
+    char name[H4_MAX_NC_NAME];
     nc_type type;
     int ndims;
-    int dims[MAX_VAR_DIMS];
+    int dims[H4_MAX_VAR_DIMS];
     int natts;
 };
 
 struct ncatt {			/* attribute */
     int var;
-    char name[MAX_NC_NAME];
+    char name[H4_MAX_NC_NAME];
     nc_type type;
     int len;
     void *val;

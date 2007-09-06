@@ -538,7 +538,7 @@ int do_lone(char* file_name, int do_diffs)
 
 
     {
-        int32 file1_id;      /* /* HDF file identifier */ 
+        int32 file1_id;      /*  HDF file identifier */ 
         int32 an_id;        /* AN interface identifier */
         int32 file_label_id;  /* file label identifier */
            

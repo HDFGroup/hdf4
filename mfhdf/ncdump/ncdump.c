@@ -18,8 +18,8 @@
 static const char * type_name(nc_type type);
 
 char *progname;
-struct ncdim dims[MAX_NC_DIMS]; /* dimensions */
-long vdims[MAX_NC_DIMS];	/* dimension sizes for a single variable */
+struct ncdim dims[H4_MAX_NC_DIMS]; /* dimensions */
+long vdims[H4_MAX_NC_DIMS];	/* dimension sizes for a single variable */
 
 static void
 usage()

@@ -128,10 +128,10 @@ nssdc_read_cdf(xdrs, handlep)
     intn     i, j;
     int32    rank, current_var, current_dim, hdftype;
     nc_type  nctype;
-    intn     dims[MAX_VAR_DIMS];
-    int32    dim_sz[MAX_VAR_DIMS];
-    NC_dim * dim_rec[MAX_VAR_DIMS];
-    NC_var * vars[MAX_NC_VARS];
+    intn     dims[H4_MAX_VAR_DIMS];
+    int32    dim_sz[H4_MAX_VAR_DIMS];
+    NC_dim * dim_rec[H4_MAX_VAR_DIMS];
+    NC_var * vars[H4_MAX_NC_VARS];
     NC_var * var = NULL;    /* shorthand for vars[current_var] */
     vix_t  * end;
 
@@ -234,7 +234,7 @@ nssdc_read_cdf(xdrs, handlep)
     /* 
      * dimension sizes are here 
      */
-    if(numDims > MAX_VAR_DIMS)
+    if(numDims > H4_MAX_VAR_DIMS)
         return FALSE;
 
     if (HI_READ(fp, buffer, numDims * sizeof(int32)) == FAIL)

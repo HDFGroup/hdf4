@@ -21,8 +21,8 @@ load_netcdf(rec_start)	/* write out record from in-memory structure */
 {
     int idim;
     int istat=0;
-    long coords[MAX_VAR_DIMS];
-    long edges[MAX_VAR_DIMS];
+    long coords[H4_MAX_VAR_DIMS];
+    long edges[H4_MAX_VAR_DIMS];
     char *charvalp=NULL;
     short *shortvalp=NULL;
     nclong *longvalp=NULL;
@@ -138,7 +138,7 @@ gen_load_c(rec_start)
     double *doublevalp=NULL;
     char stmnt[C_MAX_STMNT];
     int stmnt_len;
-    char s2[MAX_NC_NAME + 2];
+    char s2[H4_MAX_NC_NAME + 2];
 
     /* initialize coords to upper left corner (rec_num,0,0,...) */
     cline("");
@@ -380,7 +380,7 @@ gen_load_fortran(rec_start)  /* make Fortran to put record */
     double *doublevalp;
     char stmnt[FORT_MAX_STMNT];
     long stmnt_len;
-    char s2[MAX_NC_NAME + 2];
+    char s2[H4_MAX_NC_NAME + 2];
 
     /* initialize coords to upper left corner (1,1,...,rec_num) */
     sprintf(stmnt, "* store %s", vars[varnum].name);

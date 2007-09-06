@@ -39,25 +39,25 @@ uint32 diff_gr( int32 gr1_id,
  int32 ri1_id=-1,              /* data set identifier */
        ri1_index,              /* index number of the data set */
        dtype1,                 /* GR data type */
-       dimsizes1[MAX_VAR_DIMS],/* dimensional size */
+       dimsizes1[H4_MAX_VAR_DIMS],/* dimensional size */
        nattrs1,                /* number of attributes */
        ncomps1,                /* number of components */
        interlace_mode1,        /* interlace mode of an image */ 
        ri2_id=-1,              /* data set identifier */
        ri2_index,              /* index number of the data set */
        dtype2,                 /* GR data type */
-       dimsizes2[MAX_VAR_DIMS],/* dimensional size */
+       dimsizes2[H4_MAX_VAR_DIMS],/* dimensional size */
        nattrs2,                /* number of attributes */
        ncomps2,                /* number of components */
        interlace_mode2,        /* interlace mode of an image */ 
-       start[MAX_VAR_DIMS],    /* read start */
-       edges[MAX_VAR_DIMS],    /* read edges */
+       start[H4_MAX_VAR_DIMS],    /* read start */
+       edges[H4_MAX_VAR_DIMS],    /* read edges */
        numtype,                /* number type */
        eltsz,                  /* element size */
        data_size;
  uint32 nelms;                 /* number of elements */ 
- char  gr1_name[MAX_NC_NAME]; 
- char  gr2_name[MAX_NC_NAME]; 
+ char  gr1_name[H4_MAX_NC_NAME]; 
+ char  gr2_name[H4_MAX_NC_NAME]; 
  int   dim_diff=0;             /* dimensions are different */
  VOIDP buf1=NULL;
  VOIDP buf2=NULL;

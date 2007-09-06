@@ -161,7 +161,7 @@ int hrepack_addchunk(const char* str,
     
     obj_list_t  *obj_list=NULL;     /*one object list for the -t and -c option entry */
     int         n_objs;             /*number of objects in the current -t or -c option entry */
-    int32       chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+    int32       chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
     int         chunk_rank;         /*global rank for chunks */
     int         i, j;
     

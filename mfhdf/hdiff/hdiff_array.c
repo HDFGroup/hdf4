@@ -148,8 +148,8 @@ uint32 array_diff(void *buf1,
  int     n_stats = 0;
  char    *debug;
  FILE    *fp=NULL;
- int32   acc[MAX_VAR_DIMS];   /* accumulator position */
- int32   pos[MAX_VAR_DIMS];   /* matrix position */
+ int32   acc[H4_MAX_VAR_DIMS];   /* accumulator position */
+ int32   pos[H4_MAX_VAR_DIMS];   /* matrix position */
  int     ph=1;                /* print header  */
  int     j;
  double  per;

@@ -301,7 +301,7 @@ const int dims[] ;
                                       (Void *)var) ;
           if(handle->vars == NULL)
               return(-1) ;
-      } else if(handle->vars->count >= MAX_NC_VARS)
+      } else if(handle->vars->count >= H4_MAX_NC_VARS)
         {
             NCadvise(NC_EMAXVARS, "maximum number of variables %d exceeded",
                      handle->vars->count ) ;
@@ -715,7 +715,7 @@ int             outcdf;
 	}
 	else
 	{
-		long end[MAX_VAR_DIMS] ;
+		long end[H4_MAX_VAR_DIMS] ;
 		memcpy(end, invp->shape, ndims * sizeof(unsigned long)) ;
 		if(IS_RECVAR(invp))
 		{

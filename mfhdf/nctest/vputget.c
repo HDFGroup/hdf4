@@ -44,8 +44,8 @@ test_varputget(cdfid)
     int id, ie, iv;		/* loop indices */
     int ne = 3;			/* number of test hypercubes for each var */
     struct cdfhc {		/* a hypercube with generic values */
-	long cor[MAX_VAR_DIMS];	/* netcdf coordinates for lower corner */
-	long edg[MAX_VAR_DIMS];	/* netcdf edge lengths to upper corner */
+	long cor[H4_MAX_VAR_DIMS];	/* netcdf coordinates for lower corner */
+	long edg[H4_MAX_VAR_DIMS];	/* netcdf edge lengths to upper corner */
 	void *vals;		/* pointer to block of values */
     } hc[3], tmp;		/* test hypercubes */
     int nel[3];			/* number of elements in hypercube */

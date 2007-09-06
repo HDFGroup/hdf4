@@ -66,7 +66,7 @@ int  copy_gr(int32 infile_id,
                r_data_type, 
                r_ncomp, 
                r_interlace_mode; 
- char          gr_name[MAX_GR_NAME]; 
+ char          gr_name[H4_MAX_GR_NAME]; 
  char          *path=NULL;
  int           info;           /* temporary int compression information */
  int           szip_mode;      /* szip mode, EC, NN */
@@ -621,7 +621,7 @@ int copy_gr_attrs(int32 ri_id,
        numtype,               /* number type */
        eltsz,                 /* element size */
        nelms;                 /* number of elements */
- char  attr_name[MAX_NC_NAME];
+ char  attr_name[H4_MAX_NC_NAME];
  VOIDP attr_buf=NULL;
  int   i;
 

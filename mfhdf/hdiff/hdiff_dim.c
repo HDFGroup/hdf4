@@ -19,7 +19,7 @@
 /* match name between 2 diff_dim_table_t type lists */
 typedef struct diff_match_dim_name_t {
     int32 ref;                    /* reference */
-    char  dim_name[MAX_NC_NAME];  /* name */
+    char  dim_name[H4_MAX_NC_NAME];  /* name */
     int   flags[2];               /* name exists 1, no 0 */  
 } diff_match_dim_name_t;
 

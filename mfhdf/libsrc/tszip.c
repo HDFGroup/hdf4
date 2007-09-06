@@ -36,7 +36,7 @@ test_szip_SDS8bit()
    int32	sd_id, sds_id;
    intn 	status;
    int32	dim_sizes[2], array_rank, num_type, attributes;
-   char 	name[MAX_NC_NAME];
+   char 	name[H4_MAX_NC_NAME];
    comp_info 	c_info;
    int32        start[2], edges[2];
    int8         fill_value = 0; /* Fill value */
@@ -188,7 +188,7 @@ test_szip_SDS16bit()
     int32	sd_id, sds_id;
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
-    char	name[MAX_NC_NAME];
+    char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
    uint32       comp_config;
     int32       start[2], edges[2];
@@ -329,7 +329,7 @@ test_szip_SDS32bit()
     int32	sd_id, sds_id;
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
-    char	name[MAX_NC_NAME];
+    char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
    uint32       comp_config;
     int32       start[2], edges[2];
@@ -470,7 +470,7 @@ test_szip_SDSfl32bit()
     int32	sd_id, sds_id;
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
-    char	name[MAX_NC_NAME];
+    char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
 /*
     int32	pixels_per_scanline;
@@ -605,7 +605,7 @@ test_szip_SDSfl64bit()
     int32	sd_id, sds_id;
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
-    char	name[MAX_NC_NAME];
+    char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
    uint32       comp_config;
     int32       start[2], edges[2];
@@ -1183,7 +1183,7 @@ test_szip_unlimited()
     int32	sd_id, sds_id;
     intn 	status;
     int32	dim_sizes[2], array_rank, num_type, attributes;
-    char	name[MAX_NC_NAME];
+    char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
     uint32       comp_config;
     int32       start[2], edges[2];

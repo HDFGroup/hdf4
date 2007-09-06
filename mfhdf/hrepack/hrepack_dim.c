@@ -22,7 +22,7 @@
 /* match name between 2 dim_table_t type lists */
 typedef struct match_dim_name_t {
     int32 ref;                    /* reference */
-    char  dim_name[MAX_NC_NAME];  /* name */
+    char  dim_name[H4_MAX_NC_NAME];  /* name */
     int   flags[2];               /* name exists 1, no 0 */  
 } match_dim_name_t;
 
@@ -226,15 +226,15 @@ static int gen_dim(char* name,              /* name of SDS */
        dim_id,                /* dimension identifier */
        sds_index,             /* index number of the data set */
        dtype,                 /* SDS data type */
-       dimsizes[MAX_VAR_DIMS],/* dimensions of SDS */
-       start[MAX_VAR_DIMS],   /* read start */
-       edges[MAX_VAR_DIMS],   /* read edges */
+       dimsizes[H4_MAX_VAR_DIMS],/* dimensions of SDS */
+       start[H4_MAX_VAR_DIMS],   /* read start */
+       edges[H4_MAX_VAR_DIMS],   /* read edges */
        nattrs,                /* number of SDS attributes */
        rank,                  /* rank of SDS */
        numtype,               /* number type */
        eltsz,                 /* element size */
        nelms;                 /* number of elements */
- char             sds_name[MAX_NC_NAME]; 
+ char             sds_name[H4_MAX_NC_NAME]; 
  VOIDP            buf=NULL;
  int              i, j, ret=1,stat;
  int              info;           /* temporary int compression information */

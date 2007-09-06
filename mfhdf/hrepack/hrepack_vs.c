@@ -300,7 +300,7 @@ out:
 
 int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
 {
- char   attr_name[MAX_NC_NAME];
+ char   attr_name[H4_MAX_NC_NAME];
  int32  n_values, attr_size, attr_type;
  VOIDP  *values=NULL;
 

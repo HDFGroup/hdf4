@@ -53,7 +53,7 @@ static NC **_cdfs;
 #define SEP '/' /* default, unix */
 #endif
 
-static intn max_NC_open = MAX_NC_OPEN;	/* current netCDF default */
+static intn max_NC_open = H4_MAX_NC_OPEN;	/* current netCDF default */
 
 /*
  *  Allocates _cdfs and returns the allocated size

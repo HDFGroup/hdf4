@@ -103,7 +103,7 @@ ncdesc:	NETCDF
 		   { init_netcdf(); }
                 dimsection	/* dimension declarations */
                      {
-                       if (ndims > MAX_NC_DIMS)
+                       if (ndims > H4_MAX_NC_DIMS)
                          derror("Too many dimensions");
                    }
                 vasection	/* variable and attribute declarations */
@@ -176,7 +176,7 @@ varlist:        varspec
                 ;
 varspec:        var
 		   {
-		    if (nvars >= MAX_NC_VARS)
+		    if (nvars >= H4_MAX_NC_VARS)
 		       derror("too many variables");
 		    nvdims = 0;
 		    /* make sure variable not re-declared */
@@ -210,7 +210,7 @@ dimlist:        vdim
                 ;
 vdim:		dim
 		   {
-		    if (nvdims >= MAX_VAR_DIMS) {
+		    if (nvdims >= H4_MAX_VAR_DIMS) {
 		       derror("%s has too many dimensions",vars[nvars].name);
 		    }
 		    if ($1->is_dim == 1)
@@ -232,7 +232,7 @@ attdecl:        att
 		       valnum = 0;
 		       valtype = NC_UNSPECIFIED;
 		       /* get a large block for attributes, realloc later */
-		       att_space = emalloc(MAX_NC_ATTSIZE);
+		       att_space = emalloc(H4_MAX_NC_ATTSIZE);
 		       /* make all kinds of pointers point to it */
 		       char_valp = (char *) att_space;
 		       byte_valp = (char *) att_space;
@@ -243,7 +243,7 @@ attdecl:        att
 		   }
 		'=' attvallist
 		   {
-		       if (natts >= MAX_NC_ATTRS)
+		       if (natts >= H4_MAX_NC_ATTRS)
 			 derror("too many attributes");
 		       atts[natts].var = varnum ;
 		       atts[natts].type = valtype;

@@ -19,7 +19,13 @@ lib_LIBRARIES = libmfhdf.a
 CSOURCES=array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
          globdef.c mfsd.c nssdc.c putget.c putgetg.c sharray.c string.c \
          var.c xdrposix.c
+
+if HDF_BUILD_NETCDF
 FSOURCES=../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
+else
+FSOURCES=../fortran/mfsdf.c ../fortran/mfsdff.f
+endif
+
 XDRSOURCES=../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
 
 if HDF_BUILD_FORTRAN
@@ -40,7 +46,11 @@ endif
 
 endif
 
+if HDF_BUILD_NETCDF
 include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
+else
+include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h
+endif
 
 #############################################################################
 ##                              Testing                                    ##

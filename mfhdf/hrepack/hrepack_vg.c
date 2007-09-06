@@ -35,7 +35,7 @@ int copy_vgroup_attrs(int32 vg_in, int32 vg_out, char *path,options_t *options)
 {
  int    n_attrs;
  int32  data_type, size,  n_values;
- char   attr_name[MAX_NC_NAME];
+ char   attr_name[H4_MAX_NC_NAME];
  int    i;
  char   *buf=NULL;
 

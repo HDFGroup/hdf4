@@ -112,7 +112,7 @@ int  cmp_gr(int32 ri1_id, int32 ri2_id)
                dtype,         /* number type of an image */
                n_attrs;       /* number of attributes belong to an image */
  int32         interlace_mode2;        
- char          gr_name[MAX_GR_NAME]; 
+ char          gr_name[H4_MAX_GR_NAME]; 
  int           j, rank=2;
  int32         start[2],       /* read start */
                edges[2],       /* read edges */

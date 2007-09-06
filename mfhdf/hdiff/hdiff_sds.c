@@ -51,23 +51,23 @@ uint32 diff_sds(int32 sd1_id,
  int32 sds1_id=-1,             /* data set identifier */
        sds1_index,             /* index number of the data set */
        dtype1,                 /* SDS data type */
-       dimsizes1[MAX_VAR_DIMS],/* dimensional size of SDS */
+       dimsizes1[H4_MAX_VAR_DIMS],/* dimensional size of SDS */
        nattrs1,                /* number of SDS attributes */
        rank1,                  /* rank of SDS */
        sds2_id=-1,             /* data set identifier */
        sds2_index,             /* index number of the data set */
        dtype2,                 /* SDS data type */
-       dimsizes2[MAX_VAR_DIMS],/* dimensional size of SDS */
+       dimsizes2[H4_MAX_VAR_DIMS],/* dimensional size of SDS */
        nattrs2,                /* number of SDS attributes */
        rank2,                  /* rank of SDS */
-       start[MAX_VAR_DIMS],    /* read start */
-       edges[MAX_VAR_DIMS],    /* read edges */
+       start[H4_MAX_VAR_DIMS],    /* read start */
+       edges[H4_MAX_VAR_DIMS],    /* read edges */
        numtype,                /* number type */
        eltsz;                  /* element size */
  uint32 nelms;                 /* number of elements */
  size_t need;	               /* read size needed */
- char  sds1_name[MAX_NC_NAME]; 
- char  sds2_name[MAX_NC_NAME]; 
+ char  sds1_name[H4_MAX_NC_NAME]; 
+ char  sds2_name[H4_MAX_NC_NAME]; 
  int   dim_diff=0;             /* dimensions are different */
  intn  empty1_sds;
  intn  empty2_sds;
@@ -330,13 +330,13 @@ uint32 diff_sds(int32 sd1_id,
 
      
      /* stripmine info */
-     int32         sm_size[MAX_VAR_DIMS];   /*stripmine size */
+     int32         sm_size[H4_MAX_VAR_DIMS];   /*stripmine size */
      int32         sm_nbytes;               /*bytes per stripmine */
      int32         sm_nelmts;               /*elements per stripmine*/
      
      /* hyperslab info */
-     int32         hs_offset[MAX_VAR_DIMS]; /*starting offset */
-     int32         hs_size[MAX_VAR_DIMS];   /*size this pass */
+     int32         hs_offset[H4_MAX_VAR_DIMS]; /*starting offset */
+     int32         hs_size[H4_MAX_VAR_DIMS];   /*size this pass */
      int32         hs_nelmts;               /*elements in request */
      
      /*
@@ -518,8 +518,8 @@ uint32 diff_sds_attrs(int32 sds1_id,
        nelms1,                 /* number of elements */
        dtype2,                 /* SDS data type */
        nelms2;                 /* number of elements */
- char  attr1_name[MAX_NC_NAME];
- char  attr2_name[MAX_NC_NAME];
+ char  attr1_name[H4_MAX_NC_NAME];
+ char  attr2_name[H4_MAX_NC_NAME];
  VOIDP attr1_buf=NULL;
  VOIDP attr2_buf=NULL;
  int   i, cmp;

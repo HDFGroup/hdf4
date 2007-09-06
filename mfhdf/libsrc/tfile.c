@@ -178,7 +178,7 @@ test_max_open_files()
 {
     int32 fids[NUM_FILES_HI];		/* holds IDs of opened files */
     char  filename[NUM_FILES_HI][10];	/* holds generated file names */
-    char  readfname[MAX_NC_NAME];	/* file name retrieved from file id */
+    char  readfname[H4_MAX_NC_NAME];	/* file name retrieved from file id */
     intn  index, status,
 	  curr_max, 	/* curr maximum number of open files allowed in HDF */
 	  sys_limit, 	/* maximum number of open files allowed by system */
@@ -189,7 +189,7 @@ test_max_open_files()
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
-    VERIFY(curr_max, MAX_NC_OPEN, "test_maxopenfiles: SDreset_maxopenfiles");
+    VERIFY(curr_max, H4_MAX_NC_OPEN, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Reset current max to an arbitrary number and check */
     curr_max = SDreset_maxopenfiles(33);

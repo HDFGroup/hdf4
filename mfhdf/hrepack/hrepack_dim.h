@@ -20,7 +20,7 @@
 /* dimension SDS  */
 typedef struct dim_name_t {
     int32 ref;                    /* reference */
-    char  dim_name[MAX_NC_NAME];  /* name */
+    char  dim_name[H4_MAX_NC_NAME];  /* name */
 } dim_name_t;
 
 /* table for dim_name_t */

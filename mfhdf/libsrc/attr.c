@@ -261,7 +261,7 @@ const void *values ;
 		return((*ap)->count -1) ;
 	} 
 	/* else */
-	if((*ap)->count >= MAX_NC_ATTRS)
+	if((*ap)->count >= H4_MAX_NC_ATTRS)
 	{
 		NCadvise(NC_EMAXATTS, "maximum number of attributes %d exceeded",
 			(*ap)->count ) ;

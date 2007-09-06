@@ -474,9 +474,9 @@ vardata(vp, vdims, ncid, varid, fsp)
      int varid;			/* variable id */
      struct fspec* fsp;		/* formatting specs */
 {
-    long cor[MAX_VAR_DIMS];	/* corner coordinates */
-    long edg[MAX_VAR_DIMS];	/* edges of hypercube */
-    long add[MAX_VAR_DIMS];	/* "odometer" increment to next "row"  */
+    long cor[H4_MAX_VAR_DIMS];	/* corner coordinates */
+    long edg[H4_MAX_VAR_DIMS];	/* edges of hypercube */
+    long add[H4_MAX_VAR_DIMS];	/* "odometer" increment to next "row"  */
 #define VALBUFSIZ 8192
     double vals[VALBUFSIZ/sizeof(double)] ; /* aligned buffer */
     int gulp = VALBUFSIZ/nctypelen(vp->type);

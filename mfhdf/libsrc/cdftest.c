@@ -55,15 +55,15 @@ struct {
 } cdesc[1] ;
 
 struct {
-	char mnem[MAX_NC_NAME] ;
+	char mnem[H4_MAX_NC_NAME] ;
 	nc_type type ;
 	int ndims ;
-	int dims[MAX_VAR_DIMS] ;
+	int dims[H4_MAX_VAR_DIMS] ;
 	int num_attrs ;
 } vdesc[1] ;
 
 struct {
-	char mnem[MAX_NC_NAME] ;
+	char mnem[H4_MAX_NC_NAME] ;
 	nc_type type ;
 	int len ;
 } adesc[1] ;
@@ -133,7 +133,7 @@ const char *dim_names[] ;
 {
 	int ii ;
 	long size ;
-	char cp[MAX_NC_NAME] ;
+	char cp[H4_MAX_NC_NAME] ;
 	for(ii=0 ; ii < num_dims ; ii++, sizes++)
 	{
 		assert( ncdiminq(cdfid, ii, cp, &size) >= 0) ;

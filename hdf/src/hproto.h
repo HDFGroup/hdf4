@@ -1376,11 +1376,11 @@ HDFLIBAPI intn GRPshutdown(void);
 typedef union hdf_chunk_def_u
 {
     /* Chunk Lengths only */
-    int32   chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+    int32   chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
 
     struct 
     {   /* For Compression info */
-        int32      chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+        int32      chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
         int32      comp_type;    /* Compression type */
         int32      model_type;   /* Compression model type */
         comp_info  cinfo;        /* Compression info struct */
@@ -1389,7 +1389,7 @@ typedef union hdf_chunk_def_u
         
     struct 
     { /* For NBIT, Used by SDS and not by GR */
-        int32 chunk_lengths[MAX_VAR_DIMS]; /* chunk lengths along each dimension */
+        int32 chunk_lengths[H4_MAX_VAR_DIMS]; /* chunk lengths along each dimension */
         intn  start_bit; /* offset of the start bit in the data */
         intn  bit_len;   /* number of bits to store */
         intn  sign_ext;  /* whether to sign extend or not */

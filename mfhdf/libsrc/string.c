@@ -46,12 +46,12 @@ const char *str ;
 	NC_string *ret ;
 	size_t memlen ;
 
-	if(count > MAX_NC_NAME)
+	if(count > H4_MAX_NC_NAME)
       {
           NCadvise(NC_EMAXNAME,
                    "string \"%c%c%c%c%c%c ...\"  length %d exceeds %d",
                    str[0], str[1], str[2], str[3], str[4], str[5],
-                   count,  MAX_NC_NAME ) ;
+                   count,  H4_MAX_NC_NAME ) ;
           return NULL ;
       }
 

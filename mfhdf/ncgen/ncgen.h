@@ -9,7 +9,7 @@
 #ifdef VMS
 #include <stdlib.h>
 #endif
-#define MAX_NC_ATTSIZE    2000	/* max size in bytes of an attribute */
+#define H4_MAX_NC_ATTSIZE    2000	/* max size in bytes of an attribute */
 #define MAXTRST		   500	/* maximum size of a single string value */
 #define FORT_MAX_LINES	20	/* max lines in FORTRAN statement */
 #define	FORT_MAX_STMNT	66*FORT_MAX_LINES /* max chars in FORTRAN statement */
@@ -19,7 +19,7 @@
 extern struct dims {			/* dimensions */
     long size;
     char *name;
-} dims[MAX_NC_DIMS];		/* table of netcdf dimensions */
+} dims[H4_MAX_NC_DIMS];		/* table of netcdf dimensions */
 
 extern int ncid;		/* handle for netCDF */
 extern int ndims;		/* number of dimensions declared for netcdf */
@@ -38,10 +38,10 @@ extern struct vars {		/* variables */
     char *name;
     nc_type type;
     int ndims;
-    int dims[MAX_VAR_DIMS];	/* should be a malloc'ed list, not an array */
+    int dims[H4_MAX_VAR_DIMS];	/* should be a malloc'ed list, not an array */
     union generic fill_value;	/* set to value of _FillValue attribute */
     int has_data;		/* 1 if data specified, 0 otherwise */
-} vars[MAX_NC_VARS];		/* should be a malloc'ed list, not an array */
+} vars[H4_MAX_NC_VARS];		/* should be a malloc'ed list, not an array */
 
 extern struct atts {
     int var;			/* number of variable for this attribute */
@@ -49,4 +49,4 @@ extern struct atts {
     nc_type type;
     int len;
     void *val;
-} atts[MAX_NC_ATTRS];		/* should be a malloc'ed list, not an array */
+} atts[H4_MAX_NC_ATTRS];		/* should be a malloc'ed list, not an array */

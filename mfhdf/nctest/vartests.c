@@ -122,8 +122,8 @@ test_ncvarinq(path)
 	return;
     }
     /* opened, in data mode */
-    var.dims = (int *) emalloc(sizeof(int) * MAX_VAR_DIMS);
-    var.name = (char *) emalloc(MAX_NC_NAME);
+    var.dims = (int *) emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
+    var.name = (char *) emalloc(H4_MAX_NC_NAME);
     for (varid = 0 ; varid < test.nvars; varid++) { /* loop on all var ids */
 	if (ncvarinq(cdfid, varid, var.name, &var.type,
 		      &var.ndims, var.dims, &var.natts) == -1) {
@@ -229,7 +229,7 @@ test_ncvarinq(path)
 
 
 struct cdfelm {			/* coordinates and generic value */
-    long coords[MAX_VAR_DIMS];
+    long coords[H4_MAX_VAR_DIMS];
     union generic {
 	char by;
 	char ch;
@@ -605,8 +605,8 @@ test_ncvarrename(path)
     if (yy_id != ncvarid(cdfid, newname)) {
         error("%s: lookup by name failed after ncvarrename", pname);
     }
-    var.dims = (int *) emalloc(sizeof(int) * MAX_VAR_DIMS);
-    var.name = (char *) emalloc(MAX_NC_NAME);
+    var.dims = (int *) emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
+    var.name = (char *) emalloc(H4_MAX_NC_NAME);
     if (ncvarinq(cdfid, yy_id, var.name,
 		  &var.type, &var.ndims, var.dims, &var.natts) == -1) {
 	error("%s: ncvarinq failed", pname);

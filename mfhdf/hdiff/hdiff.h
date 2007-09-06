@@ -20,21 +20,21 @@
 
 
 struct ncdim {   /* dimension */
-    char name[MAX_NC_NAME];
+    char name[H4_MAX_NC_NAME];
     int32 size;
 };
 
 struct ncvar {   /* variable */
-    char name[MAX_NC_NAME];
+    char name[H4_MAX_NC_NAME];
     int32 type;
     int32 ndims;
-    int32 dims[MAX_VAR_DIMS];
+    int32 dims[H4_MAX_VAR_DIMS];
     int32 natts;
 };
 
 struct ncatt {   /* attribute */
     int32 var;
-    char name[MAX_NC_NAME];
+    char name[H4_MAX_NC_NAME];
     int32 type;
     int32 len;
     void *val;

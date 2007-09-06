@@ -30,7 +30,7 @@ extern "C" {
 typedef struct dobj_info_t {
  int32   tag;
  int32   ref;
- char    obj_name[MAX_NC_NAME];
+ char    obj_name[H4_MAX_NC_NAME];
  int     flags[2];     
  /*flags that store matching object information
    between the 2 files 

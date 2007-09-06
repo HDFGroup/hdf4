@@ -12,7 +12,7 @@ extern int netcdf_flag;
 extern int c_flag;
 extern int fortran_flag;
 
-struct dims dims[MAX_NC_DIMS];		/* table of netcdf dimensions */
+struct dims dims[H4_MAX_NC_DIMS];		/* table of netcdf dimensions */
 
 int ncid;			/* handle for netCDF */
 int ndims;			/* number of dimensions declared for netcdf */
@@ -27,9 +27,9 @@ long var_len;			/* variable length (product of dimensions) */
 int var_size;			/* size of each element of variable */
 long netcdf_record_number;	/* current record number for variables */
 
-struct vars vars[MAX_NC_VARS];	/* should be a malloc'ed list, not an array */
+struct vars vars[H4_MAX_NC_VARS];	/* should be a malloc'ed list, not an array */
 
-struct atts atts[MAX_NC_ATTRS];	/* should be a malloc'ed list, not an array */
+struct atts atts[H4_MAX_NC_ATTRS];	/* should be a malloc'ed list, not an array */
 
 extern void clearout();
 

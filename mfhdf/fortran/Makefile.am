@@ -14,14 +14,21 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
+if HDF_BUILD_NETCDF
 include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
 check_PROGRAMS = ftest hdftest tszip
+else
+include_HEADERS = mffunc.inc mffunc.f90
+check_PROGRAMS =  hdftest tszip
+endif
 
+if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
               ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
                      $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+endif
 
 hdftest_SOURCES = hdftest.f
 hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
@@ -42,11 +49,13 @@ check:
 	@echo "HDF-SD Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
+if HDF_BUILD_NETCDF
 	@echo "==================================="
 	@echo "HDF-NetCDF Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
 	@echo "==================================="
+endif
 	@echo "SZIP Fortran interfaces tests"
 	@echo "==================================="
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip

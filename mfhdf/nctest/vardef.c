@@ -90,8 +90,8 @@ test_ncvardef(path)
 	add_dim(&test, &di[id]);	/* keep in-memory netcdf in sync */
     }
 
-    tmp.dims = (int *) emalloc(sizeof(int) * MAX_VAR_DIMS);
-    tmp.name = (char *) emalloc(MAX_NC_NAME);
+    tmp.dims = (int *) emalloc(sizeof(int) * H4_MAX_VAR_DIMS);
+    tmp.name = (char *) emalloc(H4_MAX_NC_NAME);
 
     /* in define mode, add variables of each type with various shapes */
     for (iv = 0; iv < nv; iv++) {

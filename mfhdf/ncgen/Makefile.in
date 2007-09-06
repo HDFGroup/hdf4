@@ -36,9 +36,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = ncgen$(EXEEXT)
-@HDF_BUILD_FORTRAN_FALSE@noinst_PROGRAMS = ctest0$(EXEEXT)
-@HDF_BUILD_FORTRAN_TRUE@noinst_PROGRAMS = ctest0$(EXEEXT) \
-@HDF_BUILD_FORTRAN_TRUE@	ftest0$(EXEEXT)
+@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_NETCDF_TRUE@noinst_PROGRAMS = ctest0$(EXEEXT)
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@noinst_PROGRAMS = ctest0$(EXEEXT) \
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	ftest0$(EXEEXT)
+@HDF_BUILD_NETCDF_FALSE@noinst_PROGRAMS = ctest0$(EXEEXT)
 subdir = mfhdf/ncgen
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -284,6 +285,9 @@ clean-noinstPROGRAMS:
 @HDF_BUILD_FORTRAN_FALSE@ftest0$(EXEEXT): $(ftest0_OBJECTS) $(ftest0_DEPENDENCIES) 
 @HDF_BUILD_FORTRAN_FALSE@	@rm -f ftest0$(EXEEXT)
 @HDF_BUILD_FORTRAN_FALSE@	$(LINK) $(ftest0_OBJECTS) $(ftest0_LDADD) $(LIBS)
+@HDF_BUILD_NETCDF_FALSE@ftest0$(EXEEXT): $(ftest0_OBJECTS) $(ftest0_DEPENDENCIES) 
+@HDF_BUILD_NETCDF_FALSE@	@rm -f ftest0$(EXEEXT)
+@HDF_BUILD_NETCDF_FALSE@	$(LINK) $(ftest0_OBJECTS) $(ftest0_LDADD) $(LIBS)
 ncgen$(EXEEXT): $(ncgen_OBJECTS) $(ncgen_DEPENDENCIES) 
 	@rm -f ncgen$(EXEEXT)
 	$(LINK) $(ncgen_OBJECTS) $(ncgen_LDADD) $(LIBS)
@@ -554,8 +558,10 @@ ncgenyy.c: ncgen.l
 	$(LEX) $(srcdir)/ncgen.l
 	mv lex.yy.c ncgenyy.c
 
-@HDF_BUILD_FORTRAN_TRUE@check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
-@HDF_BUILD_FORTRAN_FALSE@check: ncgen $(srcdir)/test0.cdl b-check c-check
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
+@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_NETCDF_TRUE@check: ncgen $(srcdir)/test0.cdl b-check c-check
+
+@HDF_BUILD_NETCDF_FALSE@check: ncgen $(srcdir)/test0.cdl b-check c-check
 
 b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -b test1.cdl
@@ -575,18 +581,18 @@ c-check:	test2.cdl ctest0
 	  echo "*** ncgen -c test failed  ***";                             \
 	fi
 
-@HDF_BUILD_FORTRAN_TRUE@f-check:	test1.cdl ftest0
-@HDF_BUILD_FORTRAN_TRUE@	$(TESTS_ENVIRONMENT) ./ftest0
-@HDF_BUILD_FORTRAN_TRUE@	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
-@HDF_BUILD_FORTRAN_TRUE@	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
-@HDF_BUILD_FORTRAN_TRUE@	  echo "*** ncgen -f test successful ***";                          \
-@HDF_BUILD_FORTRAN_TRUE@	else                                                                \
-@HDF_BUILD_FORTRAN_TRUE@	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
-@HDF_BUILD_FORTRAN_TRUE@	fi
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@f-check:	test1.cdl ftest0
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(TESTS_ENVIRONMENT) ./ftest0
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	  echo "*** ncgen -f test successful ***";                          \
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	else                                                                \
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	fi
 
-@HDF_BUILD_FORTRAN_TRUE@ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
-@HDF_BUILD_FORTRAN_TRUE@	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
-@HDF_BUILD_FORTRAN_TRUE@	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
 
 netcdf.inc:
 	ln -s ../fortran/$@ .

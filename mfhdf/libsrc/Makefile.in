@@ -38,7 +38,7 @@ build_triplet = @build@
 host_triplet = @host@
 check_PROGRAMS = cdftest$(EXEEXT) hdftest$(EXEEXT)
 subdir = mfhdf/libsrc
-DIST_COMMON = README $(include_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = README $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -63,7 +63,7 @@ am__libmfhdf_a_SOURCES_DIST = array.c attr.c cdf.c dim.c file.c \
 	hdfsds.c iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
 	putgetg.c sharray.c string.c var.c xdrposix.c ../xdr/xdr.c \
 	../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c \
-	../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
+	../fortran/mfsdf.c ../fortran/mfsdff.f ../fortran/jackets.c
 am__objects_1 = array.$(OBJEXT) attr.$(OBJEXT) cdf.$(OBJEXT) \
 	dim.$(OBJEXT) file.$(OBJEXT) hdfsds.$(OBJEXT) iarray.$(OBJEXT) \
 	error.$(OBJEXT) globdef.$(OBJEXT) mfsd.$(OBJEXT) \
@@ -72,7 +72,10 @@ am__objects_1 = array.$(OBJEXT) attr.$(OBJEXT) cdf.$(OBJEXT) \
 	xdrposix.$(OBJEXT)
 am__objects_2 = xdr.$(OBJEXT) xdrfloat.$(OBJEXT) xdrstdio.$(OBJEXT) \
 	xdrarray.$(OBJEXT)
-am__objects_3 = jackets.$(OBJEXT) mfsdf.$(OBJEXT) mfsdff.$(OBJEXT)
+@HDF_BUILD_NETCDF_FALSE@am__objects_3 = mfsdf.$(OBJEXT) \
+@HDF_BUILD_NETCDF_FALSE@	mfsdff.$(OBJEXT)
+@HDF_BUILD_NETCDF_TRUE@am__objects_3 = jackets.$(OBJEXT) \
+@HDF_BUILD_NETCDF_TRUE@	mfsdf.$(OBJEXT) mfsdff.$(OBJEXT)
 @HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_FALSE@am_libmfhdf_a_OBJECTS = $(am__objects_1)
 @HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@am_libmfhdf_a_OBJECTS =  \
 @HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@	$(am__objects_1) \
@@ -108,6 +111,7 @@ F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 SOURCES = $(libmfhdf_a_SOURCES) $(cdftest_SOURCES) $(hdftest_SOURCES)
 DIST_SOURCES = $(am__libmfhdf_a_SOURCES_DIST) $(cdftest_SOURCES) \
 	$(hdftest_SOURCES)
+am__include_HEADERS_DIST = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(include_HEADERS)
 ETAGS = etags
@@ -243,13 +247,15 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
          globdef.c mfsd.c nssdc.c putget.c putgetg.c sharray.c string.c \
          var.c xdrposix.c
 
-FSOURCES = ../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
+@HDF_BUILD_NETCDF_FALSE@FSOURCES = ../fortran/mfsdf.c ../fortran/mfsdff.f
+@HDF_BUILD_NETCDF_TRUE@FSOURCES = ../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
 XDRSOURCES = ../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
 @HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_FALSE@libmfhdf_a_SOURCES = $(CSOURCES)
 @HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@libmfhdf_a_SOURCES = $(CSOURCES) $(XDRSOURCES)
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_FALSE@libmfhdf_a_SOURCES = $(CSOURCES) $(FSOURCES)
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@libmfhdf_a_SOURCES = $(CSOURCES) $(FSOURCES) $(XDRSOURCES)
-include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
+@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h
+@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdftest_SOURCES = hdftest.c tcoordvar.c temptySDSs.c tfile.c		\
@@ -446,20 +452,6 @@ xdrarray.obj: ../xdr/xdrarray.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrarray.obj `if test -f '../xdr/xdrarray.c'; then $(CYGPATH_W) '../xdr/xdrarray.c'; else $(CYGPATH_W) '$(srcdir)/../xdr/xdrarray.c'; fi`
 
-jackets.o: ../fortran/jackets.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jackets.o -MD -MP -MF $(DEPDIR)/jackets.Tpo -c -o jackets.o `test -f '../fortran/jackets.c' || echo '$(srcdir)/'`../fortran/jackets.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/jackets.Tpo $(DEPDIR)/jackets.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/jackets.c' object='jackets.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jackets.o `test -f '../fortran/jackets.c' || echo '$(srcdir)/'`../fortran/jackets.c
-
-jackets.obj: ../fortran/jackets.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jackets.obj -MD -MP -MF $(DEPDIR)/jackets.Tpo -c -o jackets.obj `if test -f '../fortran/jackets.c'; then $(CYGPATH_W) '../fortran/jackets.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/jackets.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/jackets.Tpo $(DEPDIR)/jackets.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/jackets.c' object='jackets.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jackets.obj `if test -f '../fortran/jackets.c'; then $(CYGPATH_W) '../fortran/jackets.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/jackets.c'; fi`
-
 mfsdf.o: ../fortran/mfsdf.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mfsdf.o -MD -MP -MF $(DEPDIR)/mfsdf.Tpo -c -o mfsdf.o `test -f '../fortran/mfsdf.c' || echo '$(srcdir)/'`../fortran/mfsdf.c
 @am__fastdepCC_TRUE@	mv -f $(DEPDIR)/mfsdf.Tpo $(DEPDIR)/mfsdf.Po
@@ -473,6 +465,20 @@ mfsdf.obj: ../fortran/mfsdf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/mfsdf.c' object='mfsdf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mfsdf.obj `if test -f '../fortran/mfsdf.c'; then $(CYGPATH_W) '../fortran/mfsdf.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/mfsdf.c'; fi`
+
+jackets.o: ../fortran/jackets.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jackets.o -MD -MP -MF $(DEPDIR)/jackets.Tpo -c -o jackets.o `test -f '../fortran/jackets.c' || echo '$(srcdir)/'`../fortran/jackets.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/jackets.Tpo $(DEPDIR)/jackets.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/jackets.c' object='jackets.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jackets.o `test -f '../fortran/jackets.c' || echo '$(srcdir)/'`../fortran/jackets.c
+
+jackets.obj: ../fortran/jackets.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT jackets.obj -MD -MP -MF $(DEPDIR)/jackets.Tpo -c -o jackets.obj `if test -f '../fortran/jackets.c'; then $(CYGPATH_W) '../fortran/jackets.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/jackets.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/jackets.Tpo $(DEPDIR)/jackets.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../fortran/jackets.c' object='jackets.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o jackets.obj `if test -f '../fortran/jackets.c'; then $(CYGPATH_W) '../fortran/jackets.c'; else $(CYGPATH_W) '$(srcdir)/../fortran/jackets.c'; fi`
 
 .f.o:
 	$(F77COMPILE) -c -o $@ $<
