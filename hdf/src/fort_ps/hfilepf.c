@@ -1,4 +1,4 @@
-
+/****************************************************************************
  * NCSA HDF                                                                 *
  * Software Development Group                                               *
  * National Center for Supercomputing Applications                          *
@@ -38,7 +38,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define nhxiscdir        FNAME(HXISCDIR)
 #   define nhddontatexit    FNAME(HDDONTATEXIT)
 #   define nhglibverc       FNAME(HGLIBVERC)
-#   define nhcgetconf_infoc FNAME(NHCGETCONF_INFOC)
+#   define nhconfinfc			FNAME(HCONFINFC)
 #else
 #   define nhiopen          FNAME(hiopen)
 #   define nhiclose         FNAME(hiclose)
@@ -48,7 +48,7 @@ static char RcsId[] = "@(#)$Revision$";
 #   define nhddontatexit    FNAME(hddontatexit)
 #   define nhglibverc       FNAME(hglibverc)
 #   define nhgfilverc       FNAME(hgfilverc)
-#   define nhcgetconf_infoc FNAME(nhcgetconf_infoc)
+#   define nhconfinfc FNAME(hconfinfc)
 #endif /* DF_CAPFNAMES */
 #endif /* HFILE_FNAMES */
 
@@ -292,7 +292,7 @@ nhiishdf(_fcd name,  intf *namelen)
 }
 
 /*-----------------------------------------------------------------------------
- * Name:    hcgetconf_infoc
+ * Name:    hconfinfc
  * Purpose: call HCget_config_info
  * Inputs:  coder_type - compression type
  * Outputs: info       - flag to indicate compression status
@@ -303,7 +303,13 @@ nhiishdf(_fcd name,  intf *namelen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhcgetconf_infoc (intf *coder_type,  intf * info)
+#ifdef PROTOTYPE
+nhconfinfc (intf *coder_type,  intf *info)
+#else
+nhconfinfc (coder_type, info)
+		intf *coder_type;
+		intf *info;
+#endif
 {
     comp_coder_t coder_type_c;
     uint32       info_c;

@@ -676,7 +676,7 @@ extern      "C"
 #   define nhglibverc    H4_F77_FUNC(hglibverc, HGLIBVERC)
 #   define nhgfilverc    H4_F77_FUNC(hgfilverc, HGFILVERC)
 #   define nhiishdf      H4_F77_FUNC(hiishdf, HIISHDF)
-#   define nhcgetconf_infoc      H4_F77_FUNC_(hcgetconf_infoc, HCGETCONF_INFOC)
+#   define nhconfinfc      H4_F77_FUNC(hconfinfc, HCONFINFC)
 #  else                                   /* !sl */
 #   define nhiopen   H4_F77_FUNC(hiopen, HIOPEN)
 #   define nhiclose   H4_F77_FUNC(hiclose, HICLOSE)
@@ -687,7 +687,7 @@ extern      "C"
 #   define nhglibverc H4_F77_FUNC(hglibverc, HGLIBVERC)
 #   define nhgfilverc H4_F77_FUNC(hgfilverc, HGFILVERC)
 #   define nhiishdf   H4_F77_FUNC(hiishdf, HIISHDF)
-#   define nhcgetconf_infoc      H4_F77_FUNC_(hcgetconf_infoc, HCGETCONF_INFOC)
+#   define nhconfinfc      H4_F77_FUNC(hconfinfc, HCONFINFC)
 #  endif                                   /* !sl */
 
 
@@ -726,7 +726,7 @@ extern      "C"
     HDFFCLIBAPI	FRETVAL(intf) nhinumbr
                (int32 file_id, uint16 tag);
     
-    HDFFCLIBAPI	FRETVAL(intf) nhcgetconfig_infoc
+    HDFFCLIBAPI	FRETVAL(intf) nhconfinfc
                (intf *coder_type, intf *info);
 /*
    ** from dfufp2im.c

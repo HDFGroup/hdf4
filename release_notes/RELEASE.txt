@@ -48,7 +48,7 @@ New Features and Changes:
      
     Library
     ========= 
-        - Added new Fortran function hcgetconf_info that checks if compression
+        - Added new Fortran function hconfinf that checks if compression
           method is present and if encoding is available
         - Added support for SZIP compression in Fortran
                                                EIP - 2007/09/01

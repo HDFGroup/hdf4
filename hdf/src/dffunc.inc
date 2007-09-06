@@ -463,8 +463,8 @@ C
       external hestringf
       integer  heprntf
       external heprntf
-      integer  hcgetconf_info
-      external hcgetconf_info
+      integer  hconfinf
+      external hconfinf
       
 
 C

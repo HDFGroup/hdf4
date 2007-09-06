@@ -25,8 +25,8 @@ C
 C
 C  SDS functions declarations
          include 'mffunc.inc'
-         external hcgetconf_info
-         integer  hcgetconf_info
+         external hconfinf
+         integer  hconfinf
 C
 C  Initial data declarations( change if you which to test larger arrays )
 C
@@ -103,7 +103,7 @@ C-------------------IS SZIP compression present with encoder?--------
          err_szip = 0
 
          comp_type = COMP_CODE_SZIP
-         status = hcgetconf_info(comp_type, info)    
+         status = hconfinf(comp_type, info)    
          if(status .LT. 0) then
             err_szip = err_szip + 1         
             goto 1111

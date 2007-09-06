@@ -175,7 +175,7 @@ C-----------------------------------------------------------------------------*/
       return
       end
 C-----------------------------------------------------------------------------
-C Name: hcgetconf_info
+C Name: hconfinf
 C Purpose: return info about configuration of a compression method
 C Inputs:  coder_type -  the compression type queried  
 C          info       -  flag to indicate compression status
@@ -187,9 +187,9 @@ C
 C Currently this routine is used with SZIP compression only 
 C-----------------------------------------------------------------------------*/
 
-      integer function hcgetconf_info(coder_type, info)
+      integer function hconfinf(coder_type, info)
       integer coder_type, info, status
       
-      status = hcgetconf_infoc(coder_type, info)
+      status = hconfinfc(coder_type, info)
       return
       end

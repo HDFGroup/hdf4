@@ -264,7 +264,7 @@ nhiishdf(_fcd name,  intf * namelen)
     return (ret);
 }
 /*-----------------------------------------------------------------------------
- * Name:    hcgetconf_infoc
+ * Name:    hconfinfc
  * Purpose: call HCget_config_info
  * Inputs:  coder_type - compression type
  * Outputs: info       - flag to indicate compression status
@@ -275,7 +275,7 @@ nhiishdf(_fcd name,  intf * namelen)
  *---------------------------------------------------------------------------*/
 
 FRETVAL(intf)
-nhcgetconf_infoc (intf *coder_type,  intf * info)
+nhconfinfc (intf *coder_type,  intf * info)
 {
     comp_coder_t coder_type_c;
     uint32       info_c;
