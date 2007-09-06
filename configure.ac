@@ -1,7 +1,17 @@
 dnl Process this file with autoconf to produce configure.
 dnl
+dnl
+dnl Copyright by The HDF Group.
 dnl Copyright by the Board of Trustees of the University of Illinois.
 dnl All rights reserved.
+dnl
+dnl This file is part of HDF.  The full HDF copyright notice, including
+dnl terms governing use, modification, and redistribution, is contained in
+dnl the files COPYING and Copyright.html.  COPYING can be found at the root
+dnl of the source code distribution tree; Copyright.html can be found at
+dnl http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have
+dnl access to either file, you may request a copy from help@hdfgroup.org.
+dnl 
 dnl
 AC_REVISION($Id$)
 
