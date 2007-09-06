@@ -261,3 +261,31 @@ C      integer       hiishdf
       hishdf = hiishdf(filename, len(filename))
       return
       end
+C-----------------------------------------------------------------------------
+C Name: hcgetconf_info
+C Purpose: return info about configuration of a compression method
+C Inputs:  coder_type -  the compression type queried  
+C          info       -  flag to indicate compression status
+C                         0 - no compression found
+C                         1 - decoder only found
+C                         3 - both decoder and encoder found 
+C Retruns: SUCCEED (0) if successful and FAIL(-1) otherwise
+C
+C Currently this routine is used with SZIP compression only 
+C-----------------------------------------------------------------------------*/
+
+      integer function hcgetconf_info(coder_type, info)
+	!MS$if defined(BUILD_HDF_DLL)
+	!MS$attributes dllexport :: hcgetconf_info
+	!MS$endif
+      integer coder_type, info, status
+
+	INTERFACE
+        INTEGER FUNCTION hcgetconf_info(coder_type, info)
+          !MS$ATTRIBUTES C,reference,alias:'_HCGETCONF_INFO' :: hcgetconf_info
+          integer coder_type, info
+        END FUNCTION hcgetconf_info
+      status = hcgetconf_infoc(coder_type, info)
+      return
+      end
+
