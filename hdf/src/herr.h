@@ -225,6 +225,7 @@ typedef enum
       DFE_CANTCOMP,             /* Can't compress an object */
       DFE_CANTDECOMP,           /* Can't de-compress an object */
       DFE_NOENCODER,            /* Encoder not available */
+      DFE_NOSZLIB,              /* SZIP library not available */
       DFE_COMPVERSION,          /* Z_VERSION_ERROR (-6) returned from zlib */
       DFE_READCOMP,             /* Error in reading compressed data; this
                                    error occurs when one of the following

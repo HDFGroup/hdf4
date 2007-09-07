@@ -4039,7 +4039,9 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 		if (chk_tbl_tag == DFTAG_VH)
 		{
 		    /* attach to the chunk table vdata and get its num of records */
-		    vdata_id = VSattach(file_id, chk_tbl_ref, "r");
+		    if ((vdata_id = VSattach(file_id,chk_tbl_ref,"r")) == FAIL)
+			HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+
 		    if (VSinquire(vdata_id, &n_records,NULL,NULL,NULL,NULL) == FAIL)
 		        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 		    if (VSdetach(vdata_id) == FAIL)

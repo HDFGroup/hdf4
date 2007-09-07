@@ -1229,7 +1229,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
     intn c_ret;
 
 
-    c_ret = GRgetcompress(*id, &c_type, &c_info);
+    c_ret = GRgetcompinfo(*id, &c_type, &c_info);
 
     if (c_ret == 0) {
     CASE = (int)c_type;

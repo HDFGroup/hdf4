@@ -170,11 +170,8 @@ MODIFICATION HISTORY
 #include "hdf.h"
 #include "hlimits.h"
 
-#ifdef  H4_GR_SZIP
-/* not supported for GR */
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
 #include "szlib.h"
-#endif
 #endif
 
 /* Local pre-processor macros */
@@ -4272,8 +4269,6 @@ done:
 } /* end GRsetaccesstype() */
 
 
-#ifdef H4_GR_SZIP
-/* not supported */
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
 /*--------------------------------------------------------------------------
  NAME
@@ -4321,7 +4316,6 @@ int32 xdims[MAX_VAR_DIMS];
 done:
 	return(ret_value);
 }
-#endif
 #endif
 
 /*--------------------------------------------------------------------------
@@ -4384,29 +4378,23 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
 	/* coder not present?? */
 	    HGOTO_ERROR(DFE_BADCODER, FAIL);
     }
-    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+    if ((comp_config & COMP_ENCODER_ENABLED) != COMP_ENCODER_ENABLED) {
+     /* if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+ */ 
 	/* encoder not present?? */
 	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
 
-    /* SZIP is not supported for GR */
     if (comp_type==COMP_CODE_SZIP) 
-        HGOTO_ERROR(DFE_CANTMOD, FAIL);
-
-#ifdef  H4_GR_SZIP
-/* not supported */
 #ifndef H4_HAVE_LIBSZ
-    /* probably covered by above */
-    if (comp_type==COMP_CODE_SZIP) 
-        HGOTO_ERROR(DFE_CANTMOD, FAIL);
+        HGOTO_ERROR(DFE_NOSZLIB, FAIL);
 #else
-    if (comp_type==COMP_CODE_SZIP)  {
+    {
     /* szip is enabled, check and set up szip parms */
 	if (GRsetup_szip_parms( ri_ptr, &cinfo_x, NULL) == FAIL) {
 	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	}
     }
-#endif
 #endif
 
     /* Mark the image as being compressed and cache args */
@@ -5506,62 +5494,50 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           chunk[0].minfo = &minfo; /* dummy */
           break;
       case (HDF_CHUNK | HDF_COMP):
-      /*  EIP 9/12/03 
-       *  We have to take special care if SZIP library is not available;
-       *  Fow all other compression types do
-       */
+	  /*  EIP 9/12/03 
+	   *  We have to take special care if SZIP library is not available;
+	   *  Fow all other compression types do
+	   */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
 
-    /* Check that the compression encoder is available */
-    HCget_config_info((comp_coder_t )(cdef->comp.comp_type), &comp_config);
-    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-	/* coder not present?? */
-                 HGOTO_ERROR(DFE_BADCODER,FAIL); 
-    }
-    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-	/* encoder not present?? */
-                 HGOTO_ERROR(DFE_NOENCODER,FAIL); 
-    }
-      if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
+	  /* Check that the compression encoder is available */
+	  HCget_config_info((comp_coder_t )(cdef->comp.comp_type), &comp_config);
+	  if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	  /* coder not present?? */
+              HGOTO_ERROR(DFE_BADCODER,FAIL); 
+	  }
+	  if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	  /* encoder not present?? */
+              HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+	  }
           cdims = cdef->comp.chunk_lengths;
           chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
           chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
           chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-          chunk[0].cinfo = &cdef->comp.cinfo; 
           chunk[0].minfo = &minfo; /* dummy */
-       }
-       else /* requested compression is SZIP */
-	 /* SZIP not supported for GR */
-		HGOTO_ERROR(DFE_CANTMOD, FAIL);
-#ifdef H4_GR_SZIP
+
+	  if ((comp_coder_t)cdef->comp.comp_type != COMP_CODE_SZIP) {
+              chunk[0].cinfo = &cdef->comp.cinfo; 
+	  }
+	  else
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
           {
-            cdims = cdef->comp.chunk_lengths;
-            chunk[0].chunk_flag = SPECIAL_COMP;  /* Compression */
-            chunk[0].comp_type  = (comp_coder_t)cdef->comp.comp_type; 
-            chunk[0].model_type = COMP_MODEL_STDIO; /* Default */
-    	    HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
-            chunk[0].minfo = &minfo; /* dummy */
-	    if (GRsetup_szip_parms( ri_ptr, &cinfo, cdims) == FAIL) 
-                HGOTO_ERROR(DFE_INTERNAL,FAIL); 
-            chunk[0].cinfo = &cinfo; 
-	}
+    	      HDmemcpy(&cinfo,&(cdef->comp.cinfo),sizeof(comp_info));
+	      if (GRsetup_szip_parms(ri_ptr, &cinfo, cdims) == FAIL) 
+                  HGOTO_ERROR(DFE_INTERNAL,FAIL); 
+              chunk[0].cinfo = &cinfo; 
+	  }
 #else                         /* we do not have the SZIP library */
           {
-/* covered by new test above ??*/
-		HGOTO_ERROR(DFE_CANTMOD, FAIL);
+	      HGOTO_ERROR(DFE_NOSZLIB, FAIL);
           }
 #endif /* H4_HAVE_LIBSZ */
-#endif
-
           break;
       case (HDF_CHUNK | HDF_NBIT): /* don't support NBIT for GRs */
-          ret_value = FAIL;
-          goto done;
+	  HGOTO_ERROR(DFE_UNSUPPORTED, FAIL);
       default:
-          ret_value = FAIL;
-          goto done;
-      }
+	  HGOTO_ERROR(DFE_BADSCHEME, FAIL);
+      } /* end switch */
 
     /* Now start setting chunk info */
     ndims = 2; /* set number of dims i.e. rank 
@@ -5569,10 +5545,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 
     /* allocate space for chunk dimensions */
     if ((chunk[0].pdims = (DIM_DEF *)HDmalloc(ndims*sizeof(DIM_DEF))) == NULL)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+        HGOTO_ERROR(DFE_NOSPACE,FAIL);
 
     /* initialize image/chunk sizes using CHUNK defintion structure */
     chunk[0].chunk_size = 1;
@@ -5584,20 +5557,11 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
           else /* Y */
               chunk[0].pdims[i].dim_length = ri_ptr->img_dim.ydim;
 
-#ifdef CHK_DEBUG
-    fprintf(stderr,"GRsetchunk: ri_ptr->img_dim.xdim=%d\n",ri_ptr->img_dim.xdim);
-    fprintf(stderr,"GRsetchunk: ri_ptr->img_dim.ydim=%d\n",ri_ptr->img_dim.ydim);
-    fflush(stderr);
-#endif
           /* set chunk lengths */
           if (cdims[i] >= 1)
               chunk[0].pdims[i].chunk_length = cdims[i];
           else
             { /* chunk length is less than 1 */
-#ifdef CHK_DEBUG
-    fprintf(stderr,"GRsetchunk: chunk length less than 1, cdims[%d]=%d \n",i,cdims[i]);
-    fflush(stderr);
-#endif
                 ret_value = FAIL;
                 goto done;
             }
@@ -5689,13 +5653,13 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
                           (HCHUNK_DEF *)chunk     /* chunk definition */);
 
 #ifdef CHK_DEBUG
-    fprintf(stderr,"GRsetchunk: ret_value =%d \n", ret_value);
+    fprintf(stderr,"HMCcreate: ret_value =%d \n", ret_value);
 #endif
 
     /* check return */
     if(ret_value != FAIL) 
       { /* close old aid and set new one
-         ..hmm......this is for the doubly specail hack */
+         ..hmm......this is for the doubly special hack */
           if((ri_ptr->img_aid != 0) && (ri_ptr->img_aid != FAIL))
             {
               if (FAIL == Hendaccess(ri_ptr->img_aid))
