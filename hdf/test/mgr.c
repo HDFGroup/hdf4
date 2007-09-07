@@ -3753,11 +3753,6 @@ static void test_get_compress(int flag)
 
     /* First image uses RLE compression method, so no info will be
        retrieved */
-    status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompress");
-    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
@@ -3776,14 +3771,6 @@ static void test_get_compress(int flag)
     riid = GRselect(grid, 1);
     CHECK_VOID(riid, FAIL, "GRselect");
 
-    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
-    status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompress");
-    VERIFY(cinfo.skphuff.skp_size, SKPHUFF_SKIPSIZE, "GRgetcompress");
-    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
@@ -3807,14 +3794,6 @@ static void test_get_compress(int flag)
 
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
-    status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompress");
-    VERIFY(cinfo.deflate.level, DEFLATE_LEVEL, "GRgetcompress");
-    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
-    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
@@ -3831,15 +3810,6 @@ static void test_get_compress(int flag)
     /* get the compression info of the second image, but only check 
        the compression type value against that being set earlier 
        ('quality' and 'force_baseline' are currently not retrievable) */
-    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
-    status = GRgetcompress(riid, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompress");
-    VERIFY(cinfo.jpeg.quality, 0, "GRgetcompress");
-    VERIFY(cinfo.jpeg.force_baseline, 0, "GRgetcompress");
-    /* duplicate the above test for new API GRgetcompinfo - GRgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
@@ -5128,14 +5098,10 @@ test_mgr(void)
 #endif /* LATER */
     test_mgr_chunkwr();
 
-#ifdef H4_GR_SZIP
-/* szip not supported for GR */
-#ifdef H4_HAVE_LIBSZ
-
+#ifdef H4_HAVE_LIBSZ   /* szlib present */
     test_mgr_szip();   /* write/read with szip compression */
 #else                  /* skip szip test it and report */
-    printf("         -- ***** GR SZIP test skipped *****\n");
-#endif
+    fprintf(stderr, "         -- ***** GR SZIP test skipped *****\n");
 #endif
 
     /* Added after fixing bug #814 to test eliminating of duplicate images */

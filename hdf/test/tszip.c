@@ -13,7 +13,6 @@
 /*
  *  SZIP support eliminated for HDF4.2R1
  */
-#ifdef H4_GR_SZIP
 #include <hdf.h>
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
@@ -45,6 +44,7 @@
  *  test_szip_RI32bit()
  *  test_szip_RIfl32bit()
  *  test_szip_RIfl64bit()
+ *  test_szip_chunk()
  */
 
 /* 
@@ -91,8 +91,8 @@ test_szip_RI8bit()
     /********************** End of variable declaration **********************/
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
-    printf("value of comp_config %d \n", comp_config);
     CHECK_VOID( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
+
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME8, DFACC_CREATE, 0);
     CHECK_VOID(file_id, FAIL, "Hopen");
@@ -131,7 +131,7 @@ test_szip_RI8bit()
     status = GRsetcompress(ri_id, comp_type, &cinfo);
     if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
 	/* should work */
-       CHECK_VOID(status, FAIL, "GRsetcompress");
+        CHECK_VOID(status, FAIL, "GRsetcompress");
     } else {
        /* skip rest of test?? */
         /* Terminate access to the raster image */
@@ -166,7 +166,6 @@ test_szip_RI8bit()
      */
 
     /* Reopen the file */
-
     file_id = Hopen (FILE_NAME8, DFACC_WRITE, 0); 
     CHECK_VOID(file_id, FAIL, "Hopen");
 
@@ -185,9 +184,9 @@ test_szip_RI8bit()
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo,  0, sizeof(cinfo)) ;
 
-    status = GRgetcompress(ri_id, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    CHECK_VOID(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -236,8 +235,7 @@ test_szip_RI16bit()
     int32 start[2],
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
-uint32 comp_config;
-
+    uint32 comp_config;
     comp_coder_t comp_type;
     int16 out_data[LENGTH][WIDTH][N_COMPS];
     int16 in_data[LENGTH][WIDTH][N_COMPS]    = {
@@ -261,6 +259,7 @@ uint32 comp_config;
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK_VOID( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
+
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME16, DFACC_CREATE, 0);
     CHECK_VOID(file_id, FAIL, "Hopen");
@@ -311,7 +310,7 @@ uint32 comp_config;
         CHECK_VOID(status, FAIL, "GRend");
         status = Hclose (file_id);
         CHECK_VOID(status, FAIL, "Hclose");
-        MESSAGE(1,printf("szip_RI16: %s\n",SKIP_STR););
+        MESSAGE(1,printf("test_szip_RI16bit(): %s\n",SKIP_STR););
        return;  
     }
 
@@ -352,9 +351,9 @@ uint32 comp_config;
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo,  0, sizeof(cinfo)) ;
 
-    status = GRgetcompress(ri_id, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    CHECK_VOID(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -403,8 +402,7 @@ test_szip_RI32bit()
     int32 start[2],
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
-uint32 comp_config;
-
+    uint32 comp_config;
     comp_coder_t comp_type;
     int32 out_data[LENGTH][WIDTH][N_COMPS];
     int32 in_data[LENGTH][WIDTH][N_COMPS]    = {
@@ -428,6 +426,7 @@ uint32 comp_config;
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK_VOID( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
+
     /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAME32, DFACC_CREATE, 0);
     CHECK_VOID(file_id, FAIL, "Hopen");
@@ -478,7 +477,7 @@ uint32 comp_config;
         CHECK_VOID(status, FAIL, "GRend");
         status = Hclose (file_id);
         CHECK_VOID(status, FAIL, "Hclose");
-        MESSAGE(1,printf("szip_RI32: %s\n",SKIP_STR););
+        MESSAGE(1,printf("test_szip_RI32bit(): %s\n",SKIP_STR););
        return;  
     }
 
@@ -501,7 +500,6 @@ uint32 comp_config;
      */
 
     /* Reopen the file */
-
     file_id = Hopen (FILE_NAME32, DFACC_WRITE, 0); 
     CHECK_VOID(file_id, FAIL, "Hopen");
 
@@ -520,9 +518,9 @@ uint32 comp_config;
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo,  0, sizeof(cinfo)) ;
 
-    status = GRgetcompress(ri_id, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    CHECK_VOID(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -598,7 +596,6 @@ test_szip_RIfl32bit()
     CHECK_VOID( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
 
     /* Create and open the file for sziped data */
-    /* Create and open the file for sziped data */
     file_id = Hopen (FILE_NAMEfl32, DFACC_CREATE, 0);
     CHECK_VOID(file_id, FAIL, "Hopen");
 
@@ -649,7 +646,7 @@ test_szip_RIfl32bit()
         CHECK_VOID(status, FAIL, "GRend");
         status = Hclose (file_id);
         CHECK_VOID(status, FAIL, "Hclose");
-        MESSAGE(1,printf("szip_RIflt32: %s\n",SKIP_STR););
+        MESSAGE(1,printf("test_szip_RIfl32bit(): %s\n",SKIP_STR););
        return;  
     }
 
@@ -690,9 +687,9 @@ test_szip_RIfl32bit()
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo,  0, sizeof(cinfo)) ;
 
-    status = GRgetcompress(ri_id, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    CHECK_VOID(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -742,7 +739,6 @@ test_szip_RIfl64bit()
           edges[2];
     comp_info cinfo;    /* Compression parameters - union */
     uint32 comp_config;
-
     comp_coder_t comp_type;
     float64 out_data[LENGTH][WIDTH][N_COMPS];
     float64 in_data[LENGTH][WIDTH][N_COMPS]    = {
@@ -819,7 +815,7 @@ test_szip_RIfl64bit()
         CHECK_VOID(status, FAIL, "GRend");
         status = Hclose (file_id);
         CHECK_VOID(status, FAIL, "Hclose");
-        MESSAGE(1,printf("szip_RIflt 64: %s\n",SKIP_STR););
+        MESSAGE(1,printf("test_szip_RIfl64bit(): %s\n",SKIP_STR););
        return;  
     }
 
@@ -860,9 +856,9 @@ test_szip_RIfl64bit()
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo,  0, sizeof(cinfo)) ;
 
-    status = GRgetcompress(ri_id, &comp_type, &cinfo);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
+    CHECK_VOID(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -964,7 +960,7 @@ test_szip_chunk()
 
     HCget_config_info(COMP_CODE_SZIP, &comp_config);
     CHECK_VOID( (comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED),0, "SZIP Compression not available" );
-    /* Create and open the file for sziped data */
+
     /* Create and open the file for chunked and sziped data. */
     file_id = Hopen (CHKSZIPFILE, DFACC_CREATE, 0);
     CHECK_VOID(file_id, FAIL, "Hopen");
@@ -1013,7 +1009,7 @@ test_szip_chunk()
         CHECK_VOID(status, FAIL, "GRend");
         status = Hclose (file_id);
         CHECK_VOID(status, FAIL, "Hclose");
-        MESSAGE(1,printf("szip RI chunk: %s\n",SKIP_STR););
+        MESSAGE(1,printf("test_szip_chunk(): %s\n",SKIP_STR););
        return;  
     }
 
@@ -1064,9 +1060,9 @@ test_szip_chunk()
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo_out,  0, sizeof(cinfo_out)) ;
 
-    status = GRgetcompress(ri_id, &comp_type, &cinfo_out);
-    CHECK_VOID(status, FAIL, "GRgetcompress");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompress");
+    status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
+    CHECK_VOID(status, FAIL, "GRgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Read first chunk back and compare with input chunk. */
     origin[0] = 0; origin[1] = 0;
@@ -1118,6 +1114,7 @@ test_szip_chunk()
     CHECK_VOID(status, FAIL, "GRend");
     status = Hclose (file_id);
     CHECK_VOID(status, FAIL, "Hclose");
+
 #endif
 }  /* end of test_szip_chunk */
 
@@ -1153,4 +1150,3 @@ test_mgr_szip()
     MESSAGE(6, printf("Skipping GR szip compression WRITE/READ\n"););
 #endif
 } 
-#endif
