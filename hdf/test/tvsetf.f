@@ -1,21 +1,15 @@
-C**********************************************************************
-C* NCSA HDF
-C*
-C* Software Development Group
-C*
-C* National Center for Supercomputing Applications
-C*
-C* University of Illinois at Urbana-Champaign
-C*
-C* 605 E. Springfield, Champaign IL 61820
-C*
-C*
-C*
-C* For conditions of distribution and use, see the accompanying
-C*
-C* hdf/COPYING file.
-C*
-C*
+C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+C* Copyright by The HDF Group.                                               *
+C* Copyright by the Board of Trustees of the University of Illinois.         *
+C* All rights reserved.                                                      *
+C*                                                                           *
+C* This file is part of HDF.  The full HDF copyright notice, including       *
+C* terms governing use, modification, and redistribution, is contained in    *
+C* the files COPYING and Copyright.html.  COPYING can be found at the root   *
+C* of the source code distribution tree; Copyright.html can be found at      *
+C* http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
+C* access to either file, you may request a copy from help@hdfgroup.org.     *
+C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C*
 C*********************************************************************
 C $Id$
