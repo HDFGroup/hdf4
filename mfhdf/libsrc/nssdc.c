@@ -1,15 +1,16 @@
-/*
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Copyright by The HDF Group.                                               *
+ * Copyright by the Board of Trustees of the University of Illinois.         *
+ * All rights reserved.                                                      *
+ *                                                                           *
+ * This file is part of HDF.  The full HDF copyright notice, including       *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the files COPYING and Copyright.html.  COPYING can be found at the root   *
+ * of the source code distribution tree; Copyright.html can be found at      *
+ * http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
+ * access to either file, you may request a copy from help@hdfgroup.org.     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  This file contains the code to read CDF V2.x files created with the
-  CDF library as written by the NSSDC group at NASA Goddard
-
-  The code in this file was written by the HDF Group at the National
-  Center for Supercomputing Applications and is governed by the
-  standard HDF copyright statements.
-
-*/
-
-/* #define DEBUG 1 */
 #include "local_nc.h"
 #ifdef HDF
 #include "hfile.h"
