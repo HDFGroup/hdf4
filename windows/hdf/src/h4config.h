@@ -39,6 +39,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #define H4_HAVE_MEMORY_H 1
 
+/* Define if we support HDF NetCDF-3 APIs */
+#define H4_HAVE_NETCDF 1
+
 /* Define to 1 if you have the <stdint.h> header file. */
 /* #undef H4_HAVE_STDINT_H */
 

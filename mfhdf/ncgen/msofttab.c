@@ -923,7 +923,7 @@ case 1:
 case 2:
 # line 105 "ncgen.y"
 {
-		       if (ndims > MAX_NC_DIMS)
+		       if (ndims > H4_MAX_NC_DIMS)
 			 derror("Too many dimensions");
 		   } break;
 case 3:
@@ -985,7 +985,7 @@ case 27:
 case 30:
 # line 178 "ncgen.y"
 {
-		    if (nvars >= MAX_NC_VARS)
+		    if (nvars >= H4_MAX_NC_VARS)
 		       derror("too many variables");
 		    nvdims = 0;
 		    /* make sure variable not re-declared */
@@ -1012,7 +1012,7 @@ case 31:
 case 37:
 # line 212 "ncgen.y"
 {
-		    if (nvdims >= MAX_VAR_DIMS) {
+		    if (nvdims >= H4_MAX_VAR_DIMS) {
 		       derror("%s has too many dimensions",vars[nvars].name);
 		    }
 		    if (yypvt[-0]->is_dim == 1)
@@ -1034,7 +1034,7 @@ case 38:
 		       valnum = 0;
 		       valtype = NC_UNSPECIFIED;
 		       /* get a large block for attributes, realloc later */
-		       att_space = emalloc(MAX_NC_ATTSIZE);
+		       att_space = emalloc(H4_MAX_NC_ATTSIZE);
 		       /* make all kinds of pointers point to it */
 		       char_valp = (char *) att_space;
 		       byte_valp = (char *) att_space;
@@ -1046,7 +1046,7 @@ case 38:
 case 39:
 # line 245 "ncgen.y"
 {
-		       if (natts >= MAX_NC_ATTRS)
+		       if (natts >= H4_MAX_NC_ATTRS)
 			 derror("too many attributes");
 		       atts[natts].var = varnum ;
 		       atts[natts].type = valtype;
