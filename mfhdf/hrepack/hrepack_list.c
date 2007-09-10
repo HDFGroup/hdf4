@@ -46,18 +46,23 @@ int list_an (int32 infile_id,int32 outfile_id,options_t *options);
  *
  * Date: July 10, 2003
  *
+ * Modifications: September 9, 2007
+ *  Check for duplicate Vgroup insertions
+ *
  * Description:
  *
- * A main loop is used to locate all the objects in the file. This loop preserves the 
- * hierarchy of the file. The algorithm used is 
+ * A main loop is used to locate all the objects in the file. The algorithm used is: 
  * 1) Obtain the number of lone VGroups in the HDF file. 
  * 2) Do a loop for each one of these groups. In each iteration a table is updated 
  *    with the tag/reference pair of an object. 
  *    2.1) Obtain the pairs of tag/references for the group 
  *    2.2) Switch between the tag of the current object. Four cases are possible: 
  *         1) Object is a group: recursively repeat the process (obtain the pairs of
- *            tag/references for this group and do another tag switch). 
- *            Add the object to the table. 
+ *            tag/references for this group and do another tag switch).
+ *            If the Vgroup has not been visited
+ *             Add the object to the table and continue recursion
+ *            else
+ *             Open it, create the insertion into its parent and exit the recursion.
  *         2) Object is a dataset: Add the object to the table.
  *         3) Object is an image: Add the object to the table.  
  *         4) Object is a vdata: Add the object to the table. 
@@ -572,21 +577,22 @@ int vgroup_insert(int32 infile_id,
                   dim_table_t *td2,
                   options_t *options)
 {
-    int32 vgroup_id,             /* vgroup identifier */
-          ntagrefs,              /* number of tag/ref pairs in a vgroup */
-          tag,                   /* temporary tag */
-          ref,                   /* temporary ref */
-          *tags=NULL,            /* buffer to hold the tag numbers of vgroups   */
-          *refs=NULL,            /* buffer to hold the ref numbers of vgroups   */
-          vgroup_id_out = 0;         /* vgroup identifier */
-    
+    int32 vgroup_id;             /* vgroup identifier for opened group in input */
+    int32 ntagrefs;              /* number of tag/ref pairs in a vgroup */
+    int32 *tags=NULL;            /* buffer to hold the tag numbers of vgroups   */
+    int32 *refs=NULL;            /* buffer to hold the ref numbers of vgroups   */
+    int32 vgroup_id_out;         /* vgroup identifier for the created group in output */
     char  vgroup_name[VGNAMELENMAX];
     char  vgroup_class[VGNAMELENMAX];
     char  *path=NULL;
+    int   visited;
+    int32 tag;                   
+    int32 ref; 
     int   i;
+
     
     for ( i = 0; i < npairs; i++ ) 
-    {
+    {       
         tag = in_tags[i];
         ref = in_refs[i];
         
@@ -598,12 +604,13 @@ int vgroup_insert(int32 infile_id,
          */
         case DFTAG_VG: 
 
-            /* check if already inserted */
-            if ( table_search(table,DFTAG_VG,ref)>=0 ) 
-            {
-                break;
-            }
+            visited = table_search(table,DFTAG_VG,ref);
             
+           /*-------------------------------------------------------------------------
+            * open input
+            *-------------------------------------------------------------------------
+            */
+                    
             vgroup_id = Vattach (infile_id, ref, "r");
             if (Vgetname (vgroup_id, vgroup_name)==FAIL)
             {
@@ -637,88 +644,129 @@ int vgroup_insert(int32 infile_id,
                 continue;
             }
             
-            /* initialize path */
-            path=get_path(path_name,vgroup_name);
             
-            /* add object to table */
-            table_add(table,tag,ref,path);
-            
-            if (options->verbose)
-                printf(PFORMAT,"","",path);    
-            
-            if ( options->trip==0 ) 
-            {
-                /*we must go to other groups always */
-            }
-           
-
+           /*-------------------------------------------------------------------------
+            * create the group in output or create the link
+            *-------------------------------------------------------------------------
+            */
+         
             if (options->trip==1)
             {
-               /* 
-                * create the group in the output file.  the vgroup reference number is set
-                * to -1 for creating and the access mode is "w" for writing 
-                */
-                vgroup_id_out = Vattach (outfile_id, -1, "w");
-                if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
+            
+                if ( visited < 0 )
+                    
                 {
-                    printf("Error: Could not create group <%s>\n", vgroup_name);
-                    goto out;
-                }
-                if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
-                {
-                    printf("Error: Could not create group <%s>\n", vgroup_name);
-                    goto out;
+                    
+                   /* 
+                    * create the group in the output file.  the vgroup reference number 
+                    * is set to -1 for creating and the access mode is "w" for writing 
+                    */
+                    vgroup_id_out = Vattach (outfile_id, -1, "w");
+                    if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
+                    {
+                        printf("Error: Could not create group <%s>\n", vgroup_name);
+                        goto out;
+                    }
+                    if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
+                    {
+                        printf("Error: Could not create group <%s>\n", vgroup_name);
+                        goto out;
+                    }
+                    
+                    if (copy_vgroup_attrs(vgroup_id,vgroup_id_out,path,options)<0)
+                        goto out;
+                    if (copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,path,options)<0)
+                        goto out;
+                    
                 }
                 
-                if (copy_vgroup_attrs(vgroup_id,vgroup_id_out,path,options)<0)
-                    goto out;
-                if (copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,path,options)<0)
-                    goto out;
+                else
+                    
+                {
+                    /* open previously visited group */
+                    vgroup_id_out = Vattach (outfile_id, ref, "r");
 
+
+                }
+                    
                 
-                /* insert the created vgroup into its parent */
+                /* insert the created (or opened) vgroup into its parent */
                 if (Vinsert (vgroup_id_out_par, vgroup_id_out)==FAIL)
                 {
                     printf("Could not insert group <%s>\n", vgroup_name);
                     goto out;
                 }
-            } /* options->trip==1 */
-
-           
+                    
+            } /* create the group in output or create the link */
             
-            /* insert objects for this group */
-            ntagrefs  = Vntagrefs(vgroup_id);
-            if ( ntagrefs > 0 )
+            
+            
+             
+           /*-------------------------------------------------------------------------
+            * if group not visited, add to table and check for more tag/ref pairs
+            *-------------------------------------------------------------------------
+            */
+            
+                     
+            /* check if already visited */
+            if ( visited < 0  ) 
             {
-                tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                if (Vgettagrefs(vgroup_id, tags, refs, ntagrefs)<0)
-                    goto out;
-                /* recurse */
-                if (vgroup_insert(
-                    infile_id,
-                    outfile_id,
-                    sd_id,
-                    sd_out,
-                    gr_id,
-                    gr_out,
-                    vgroup_id_out,
-                    path,
-                    tags,
-                    refs,
-                    ntagrefs,
-                    table,
-                    td1,
-                    td2,
-                    options)<0) {
-                    goto out;
+                
+                /* initialize path */
+                path=get_path(path_name,vgroup_name);
+                
+                /* add object to table */
+                table_add(table,tag,ref,path);
+                
+                if (options->verbose)
+                    printf(PFORMAT,"","",path);    
+                
+                if ( options->trip==0 ) 
+                {
+                    /*we must go to other groups always */
                 }
-                free (tags);
-                tags=NULL;
-                free (refs);
-                refs=NULL;
-            } /* ntagrefs > 0 */
-
+                
+                
+                /* insert objects for this group */
+                ntagrefs  = Vntagrefs(vgroup_id);
+                if ( ntagrefs > 0 )
+                {
+                    tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                    refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                    if (Vgettagrefs(vgroup_id, tags, refs, ntagrefs)<0)
+                        goto out;
+                    /* recurse */
+                    if (vgroup_insert(
+                        infile_id,
+                        outfile_id,
+                        sd_id,
+                        sd_out,
+                        gr_id,
+                        gr_out,
+                        vgroup_id_out,
+                        path,
+                        tags,
+                        refs,
+                        ntagrefs,
+                        table,
+                        td1,
+                        td2,
+                        options)<0) {
+                        goto out;
+                    }
+                    free (tags);
+                    tags=NULL;
+                    free (refs);
+                    refs=NULL;
+                } /* ntagrefs > 0 */
+                
+                
+                if (path)
+                    free(path);
+                
+            } /* check if already visited */
+            
+            
             if(Vdetach (vgroup_id)==FAIL)
             {
                 printf("Error: Could not detach group <%s>\n", vgroup_name);
@@ -732,8 +780,6 @@ int vgroup_insert(int32 infile_id,
                     goto out;
                 }
             }
-            if (path)
-                free(path);
             
             break;
             

@@ -31,14 +31,15 @@
 
 int table_search(table_t *table, int tag, int ref )
 {
- int i;
- 
- for (i = 0; i < table->nobjs; i++) {
-  if (table->objs[i].tag == tag && table->objs[i].ref == ref)
-   return i;
- }
-  
-  return -1;
+    int i;
+    
+    for (i = 0; i < table->nobjs; i++) 
+    {
+        if (table->objs[i].tag == tag && table->objs[i].ref == ref)
+            return i;
+    }
+    
+    return -1;
 }
 
 
@@ -58,23 +59,24 @@ int table_search(table_t *table, int tag, int ref )
 
 void table_add(table_t *table, int tag, int ref, char* path)
 {
- int i;
- 
- if (table->nobjs == table->size) {
-  table->size *= 2;
-  table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
-  
-  for (i = table->nobjs; i < table->size; i++) {
-   table->objs[i].tag = table->objs[i].ref = -1;
-   table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
-  }
- }
- 
- i = table->nobjs++;
- table->objs[i].tag = tag;
- table->objs[i].ref = ref;
- strcpy(table->objs[i].obj_name,path);
- table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
+    int i;
+    
+    if (table->nobjs == table->size) 
+    {
+        table->size *= 2;
+        table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
+        
+        for (i = table->nobjs; i < table->size; i++) 
+        {
+            table->objs[i].tag = table->objs[i].ref = -1;
+        }
+    }
+    
+    i = table->nobjs++;
+    table->objs[i].tag = tag;
+    table->objs[i].ref = ref;
+    strcpy(table->objs[i].path,path);
+    
 }
 
 
@@ -95,19 +97,21 @@ void table_add(table_t *table, int tag, int ref, char* path)
 
 void table_init( table_t **tbl )
 {
- int i;
- table_t* table = (table_t*) malloc(sizeof(table_t));
- 
- table->size = 20;
- table->nobjs = 0;
- table->objs = (obj_info_t*) malloc(table->size * sizeof(obj_info_t));
- 
- for (i = 0; i < table->size; i++) {
-  table->objs[i].tag = table->objs[i].ref = -1;
-  table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
- }
- 
- *tbl = table;
+    int i;
+    table_t* table = (table_t*) malloc(sizeof(table_t));
+    
+    table->size = 20;
+    table->nobjs = 0;
+    table->objs = (obj_info_t*) malloc(table->size * sizeof(obj_info_t));
+    
+    for (i = 0; i < table->size; i++) 
+    {
+        table->objs[i].tag = -1;
+        table->objs[i].ref = -1;
+        
+    }
+    
+    *tbl = table;
 }
 
 /*-------------------------------------------------------------------------
@@ -126,8 +130,8 @@ void table_init( table_t **tbl )
 
 void table_free( table_t *table )
 {
- free(table->objs);
- free(table);
+    free(table->objs);
+    free(table);
 }
 
 
@@ -147,29 +151,29 @@ void table_free( table_t *table )
 
 const char* table_check(table_t *table, char*obj_name)
 {
- int   i;
- int32 tag;
- 
- for (i = 0; i < table->nobjs; i++)
- {
-  if (strcmp(table->objs[i].obj_name,obj_name)==0)
-  {
-   /* found the name; check if it is an SDS or Image */
-   tag=table->objs[i].tag;
-   if (tag==DFTAG_SD  ||
-       tag==DFTAG_SDG ||
-       tag==DFTAG_NDG ||
-       tag==DFTAG_RI  ||
-       tag==DFTAG_CI  ||
-       tag==DFTAG_RIG ||
-       tag==DFTAG_RI8 ||
-       tag==DFTAG_CI8 ||
-       tag==DFTAG_II8 ) return NULL; 
-   else return "not compressible/chunk object";
-  }
- }
-  
-  return "not found";
+    int   i;
+    int32 tag;
+    
+    for (i = 0; i < table->nobjs; i++)
+    {
+        if (strcmp(table->objs[i].path,obj_name)==0)
+        {
+            /* found the name; check if it is an SDS or Image */
+            tag=table->objs[i].tag;
+            if (tag==DFTAG_SD  ||
+                tag==DFTAG_SDG ||
+                tag==DFTAG_NDG ||
+                tag==DFTAG_RI  ||
+                tag==DFTAG_CI  ||
+                tag==DFTAG_RIG ||
+                tag==DFTAG_RI8 ||
+                tag==DFTAG_CI8 ||
+                tag==DFTAG_II8 ) return NULL; 
+            else return "not compressible/chunk object";
+        }
+    }
+    
+    return "not found";
 }
 
 
@@ -189,18 +193,20 @@ const char* table_check(table_t *table, char*obj_name)
 
 void table_print(table_t *table)
 {
- int i;
-
- printf("---------------------------------------\n");
- printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");
- printf("---------------------------------------\n");
-
- for (i = 0; i < table->nobjs; i++)
- {
-  printf("%5d %6d    %-15s\n", 
-   table->objs[i].tag, 
-   table->objs[i].ref, 
-   table->objs[i].obj_name);
- }
-
+    int i;
+    
+    printf("---------------------------------------\n");
+    printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");
+    printf("---------------------------------------\n");
+    
+    for (i = 0; i < table->nobjs; i++)
+    {
+        printf("%5d %6d    %-15s\n", 
+            table->objs[i].tag, 
+            table->objs[i].ref, 
+            table->objs[i].path);
+    }
+    
 }
+
+
