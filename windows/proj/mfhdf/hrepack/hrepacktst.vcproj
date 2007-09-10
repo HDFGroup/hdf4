@@ -688,67 +688,13 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\test_hrepack_add.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\test_hrepack_main.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst_add.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\test_hrepack_verify.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst_verify.c">
 			</File>
 		</Filter>
 		<Filter
@@ -803,13 +749,10 @@
 				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_vs.h">
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst.h">
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\pal_rgb.h">
-			</File>
-			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\test_hrepack_add.h">
-			</File>
-			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\test_hrepack_verify.h">
 			</File>
 		</Filter>
 		<Filter

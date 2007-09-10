@@ -197,15 +197,15 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_vs.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\mfhdf\hrepack\test_hrepack_add.c
+SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\mfhdf\hrepack\test_hrepack_main.c
+SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst_add.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\mfhdf\hrepack\test_hrepack_verify.c
+SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst_verify.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -277,15 +277,11 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_vs.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\mfhdf\hrepack\pal_rgb.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\test_hrepack_add.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\test_hrepack_verify.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
