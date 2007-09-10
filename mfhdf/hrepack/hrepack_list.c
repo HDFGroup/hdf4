@@ -556,7 +556,7 @@ out:
 /*-------------------------------------------------------------------------
  * Function: vgroup_insert
  *
- * Purpose: recursive function to locate objects vgroups
+ * Purpose: recursive function to locate objects in vgroups
  *
  * Return: SUCCEED, FAIL
  *
