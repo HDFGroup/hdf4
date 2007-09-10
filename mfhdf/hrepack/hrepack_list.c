@@ -53,7 +53,8 @@ int list_an (int32 infile_id,int32 outfile_id,options_t *options);
  * Description:
  *
  * A main loop is used to locate all the objects in the file. The algorithm used is: 
- * 1) Obtain the number of lone VGroups in the HDF file. 
+ * 1) Obtain the number of lone vgroups in the HDF file, i.e., vgroups that are at
+ *     the top of the grouping hierarchy, in a file.
  * 2) Do a loop for each one of these groups. In each iteration a table is updated 
  *    with the tag/reference pair of an object. 
  *    2.1) Obtain the pairs of tag/references for the group 
@@ -293,7 +294,7 @@ out:
 /*-------------------------------------------------------------------------
  * Function: list_vg
  *
- * Purpose: locate all lone Vgroups in the file
+ * Purpose: locate all objects in the file under a group hierarchy
  *
  * Return: SUCCEED, FAIL
  *
@@ -555,7 +556,7 @@ out:
 /*-------------------------------------------------------------------------
  * Function: vgroup_insert
  *
- * Purpose: recursive function to locate objects in lone Vgroups
+ * Purpose: recursive function to locate objects vgroups
  *
  * Return: SUCCEED, FAIL
  *

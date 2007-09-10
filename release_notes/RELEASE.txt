@@ -124,7 +124,9 @@ Bugs fixed since HDF4.2r1
 =========================
      Utilities
     ========= 
-      - hrepack improved performance for large number of SDSs, due to the 
+      - hrepack: repeated vgroup insertions (duplicated links) were not being done.
+           PVN - 2007/9/10
+      - hrepack: improved performance for large number of SDSs, due to the 
          elimination of redundant file open calls. PVN - 2007/4/5
       - hrepack: fixed a bug in the -t option that now accepts multiple
          comma separated names. PVN - 2007/4/5
