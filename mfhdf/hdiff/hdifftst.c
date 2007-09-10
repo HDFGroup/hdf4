@@ -619,7 +619,7 @@ static int do_groups(void)
      /* create a HDF file */
      if ((file1_id = Hopen (FILE7_NAME, DFACC_CREATE, (int16)0))<0)
      {
-         printf("Error: Could not create file <%s>\n",FILE5_NAME);
+         printf("Error: Could not create file <%s>\n",FILE7_NAME);
          return FAIL;
      }
      
