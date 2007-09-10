@@ -4222,9 +4222,9 @@ done:
     intn GRsetaccesstype(riid,accesstype)
         int32 riid;         IN: RI ID from GRselect/GRcreate
         uintn accesstype;   IN: access type for image data, from the following
-                                values:
-                                    DFACC_SERIAL - for serial access
-                                    DFACC_PARALLEL - for parallel access
+           values:
+        DFACC_SERIAL - for serial access
+        DFACC_PARALLEL - for parallel access
 
  RETURNS
     SUCCEED/FAIL
@@ -4280,9 +4280,9 @@ done:
 
  USAGE
     intn GRsetaccesstype( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
-       ri_info_t *ri_ptr;  IN: the RI object 
-       comp_info *c_info;  IN/OUT: the compression info (szip) 
-       int32 *cdims;       IN: chunk dims if chunked, else NULL
+    ri_info_t *ri_ptr;  IN: the RI object 
+    comp_info *c_info;  IN/OUT: the compression info (szip) 
+    int32 *cdims;       IN: chunk dims if chunked, else NULL
 
  RETURNS
     SUCCEED/FAIL
@@ -4298,24 +4298,24 @@ done:
 intn 
 GRsetup_szip_parms( ri_info_t *ri_ptr, comp_info *c_info, int32 *cdims)
 {
-int32 nt;
-int32 ndims;
-int32 ncomp;
-int32 xdims[MAX_VAR_DIMS];
-    intn       ret_value = SUCCEED;
-
-
-	ndims = 2;
-	xdims[0] = ri_ptr->img_dim.xdim;
-	xdims[1] = ri_ptr->img_dim.ydim;
-
-	nt = ri_ptr->img_dim.nt;
-	ncomp = ri_ptr->img_dim.ncomps;
-
-        ret_value = HCPsetup_szip_parms( c_info, nt, ncomp, ndims, xdims, cdims);
-
+    int32 nt;
+    int32 ndims;
+    int32 ncomp;
+    int32 xdims[H4_MAX_VAR_DIMS];
+    intn  ret_value = SUCCEED;
+    
+    
+    ndims = 2;
+    xdims[0] = ri_ptr->img_dim.xdim;
+    xdims[1] = ri_ptr->img_dim.ydim;
+    
+    nt = ri_ptr->img_dim.nt;
+    ncomp = ri_ptr->img_dim.ncomps;
+    
+    ret_value = HCPsetup_szip_parms( c_info, nt, ncomp, ndims, xdims, cdims);
+    
 done:
-	return(ret_value);
+    return(ret_value);
 }
 #endif
 
@@ -4328,9 +4328,9 @@ done:
 
  USAGE
     intn GRsetcompress(riid,comp_type,cinfo)
-        int32 riid;         	IN: RI ID from GRselect/GRcreate
-        comp_coder_t comp_type;	IN: type of compression
-        comp_info *cinfo;   	IN: compression specific information
+        int32 riid;             IN: RI ID from GRselect/GRcreate
+        comp_coder_t comp_type; IN: type of compression
+        comp_info *cinfo;       IN: compression specific information
 
  RETURNS
     SUCCEED/FAIL
