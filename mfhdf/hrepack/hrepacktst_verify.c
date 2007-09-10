@@ -15,14 +15,21 @@
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hcomp.h"
-#include "test_hrepack_verify.h"
+#include "hrepacktst.h"
+
+/*-------------------------------------------------------------------------
+ * locals
+ *-------------------------------------------------------------------------
+ */ 
+
+static int vg_getngrpdep( HFILEID f);
 
 /*-------------------------------------------------------------------------
  * Function: sds_verifiy_comp
  *
  * Purpose: utility function to verify compression for SDS_NAME
  *
- * Return: void
+ * Return: 0, -1 on error
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -90,7 +97,7 @@ int sds_verifiy_comp(const char *sds_name,
  *
  * Purpose: utility function to verify compression for all SDSs
  *
- * Return: void
+ * Return: 0, -1 on error
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -229,7 +236,7 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
  *
  * Purpose: utility function to verify chunking for  SDS_NAME
  *
- * Return: void
+ * Return: 0, -1 on error
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -297,7 +304,7 @@ int sds_verifiy_chunk(const char *sds_name,
  *
  * Purpose: utility function to verify chunking for all SDSs
  *
- * Return: void
+ * Return: 0, -1 on error
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -389,3 +396,134 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
  
 }
 
+/*-------------------------------------------------------------------------
+ * Function: vg_verifygrpdep
+ *
+ * Purpose: utility function to verify number of vgroups dependencies in 
+ *  2 files NAME1 and NAME2
+ *
+ * Return: 0, group dependencies are the same in both files
+ *         1, they are not the same
+ *        -1, error
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: September 10, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+int vg_verifygrpdep( char* name1, char* name2 )
+{
+    HFILEID f1;
+    HFILEID f2;
+    int32   nlnk1;
+    int32   nlnk2;
+    
+    
+    if ((f1 = Hopen(name1, DFACC_READ, 0)) == FAIL)
+    {
+        printf("\nFile (%s) failed to open.\n", name1);
+        return -1;
+    }
+    if ((f2 = Hopen(name2, DFACC_READ, 0)) == FAIL)
+    {
+        printf("\nFile (%s) failed to open.\n", name2);
+        return -1;
+    }
+
+    nlnk1 = vg_getngrpdep( f1 );
+    nlnk2 = vg_getngrpdep( f2 );
+    
+    Hclose(f1);
+    Hclose(f2);
+
+    return (nlnk1 == nlnk2) ? 0: 1;
+    
+}
+
+
+/*-------------------------------------------------------------------------
+ * Function: vg_getngrpdep
+ *
+ * Purpose: utility function to get number of vgroups dependencies in 
+ *  file HFILEID f
+ *
+ * Return: number of vgroups dependencies in file
+ *
+ * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ *
+ * Date: September 10, 2007
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static
+int vg_getngrpdep( HFILEID f)
+{
+    int32       vg, vgt;
+    int32       vgotag, vgoref;
+    int32       vgid = -1;
+    int32       vsid = -1;
+    int32       vsno = 0;
+    int32       vstag;
+    int32       i, nvg, n, ne, nlnk;
+    char        vgname[VGNAMELENMAX];
+    char        vgclass[VGNAMELENMAX];
+
+    Vstart(f);
+    
+    nvg = 0;
+    nlnk = 0;
+    while ((vgid = Vgetid(f, vgid)) != -1)
+    {
+        vg = Vattach(f, vgid, "r");
+        if (vg == FAIL)
+        {
+            printf("cannot open vg id=%d\n", (int) vgid);
+        }
+        Vinquire(vg, &n, vgname);
+        vgotag = VQuerytag(vg);
+        vgoref = VQueryref(vg);
+        Vgetclass(vg, vgclass);
+        
+        
+        for (i = 0; i < Vntagrefs(vg); i++)
+        {
+            Vgettagref(vg, i, &vstag, &vsid);
+            
+            if (vstag == DFTAG_VG)
+            {
+                vgt = Vattach(f, vsid, "r");
+                
+                if (vgt == FAIL)
+                {
+                    printf("cannot open vg id=%d\n", (int) vsid);
+                    continue;
+                }
+                
+                Vinquire(vgt, &ne, vgname);
+                
+                vgotag = VQuerytag(vgt);
+                vgoref = VQueryref(vgt);
+                Vgetclass(vgt, vgclass);
+                
+                Vdetach(vgt);
+
+                nlnk++;
+                
+            } /* if */
+            
+        }   /* for */
+        
+        Vdetach(vg);
+        nvg++;
+        
+    }  /* while */
+    
+
+    Vend(f);
+
+    return nlnk;
+    
+}

@@ -12,20 +12,59 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-#ifndef REPACK_ADD_H_
-#define REPACK_ADD_H_
+#ifndef HREPACKTST_H_
+#define HREPACKTST_H_
+ 
+#define HREPACK_FILE1         "hrepacktst1.hdf"
+#define HREPACK_FILE1_OUT     "hrepacktst1_out.hdf"
+#define HREPACK_FILE2         "hrepacktst2.hdf"
+#define HREPACK_FILE2_OUT     "hrepacktst2_out.hdf"
+#define HREPACK_FILE3         "hrepacktst3.hdf"
+#define HREPACK_FILE3_OUT     "hrepacktst3_out.hdf"
+
+
+#define HDIFF_TSTSTR     "hdiff hrepacktst1.hdf hrepacktst1_out.hdf"
+#define HDIFF_TSTSTR2    "hdiff hrepacktst2.hdf hrepacktst2_out.hdf"
+#define HDIFF_TSTSTR3    "hdiff hrepacktst3.hdf hrepacktst3_out.hdf"
+
+
 
 #define TESTING(WHAT) {printf("%-70s", "Testing " WHAT); fflush(stdout); }
 #define PASSED() {puts(" PASSED");fflush(stdout);}
 #define SKIPPED() {puts(" SKIPPED");fflush(stdout);}
 #define H4_FAILED() {puts("*FAILED*");fflush(stdout);}
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/*-------------------------------------------------------------------------
+ * SDS verify routines
+ *-------------------------------------------------------------------------
+ */
+int sds_verifiy_comp(const char *sds_name, int32 in_comp_type, int32 in_comp_info);
+int sds_verifiy_comp_all(comp_coder_t in_comp_type, int in_comp_info);
+int sds_verifiy_chunk(const char *sds_name, int32 in_chunk_flags, int rank, 
+                      int32 *in_chunk_lengths);
+int sds_verifiy_chunk_all(int32 in_chunk_flags, int rank, 
+                          int32 *in_chunk_lengths,const char *sds_exclude);
 
-/* write data */
+
+/*-------------------------------------------------------------------------
+ * VG verify routines
+ *-------------------------------------------------------------------------
+ */
+
+int vg_verifygrpdep( char* name1, char* name2 );
+
+
+/*-------------------------------------------------------------------------
+ * write data
+ *-------------------------------------------------------------------------
+ */
+
+int generate_files();
 
 int add_gr_ffile(const char* name_file,
                   int32 gr_id,
@@ -100,4 +139,4 @@ int  do_lone(char* file_name);
 #endif
 
 
-#endif  /* REPACK_ADD_H_ */
+#endif  /* HREPACKTST_H_ */

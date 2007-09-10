@@ -17,8 +17,11 @@
 
 #include "hrepack.h"
 #include "pal_rgb.h"
-#include "test_hrepack_add.h"
+#include "hrepacktst.h"
 
+#define DATA_FILE1       "image8.txt"
+#define DATA_FILE2       "image24pixel.txt"
+#define DATA_FILE3       "image24plane.txt"
 
 
 /* globals for read image data, used in gr, r8 and r24 add */
@@ -26,6 +29,13 @@ int      X_LENGTH;
 int      Y_LENGTH;
 int      N_COMPS;
 unsigned char *image_data = 0;   
+
+/*-------------------------------------------------------------------------
+ * prototypes
+ *-------------------------------------------------------------------------
+ */ 
+
+static int do_groups(char* name);
 
 
 
@@ -47,6 +57,463 @@ int add_sd_szip(const char *fname,       /* file name */
                  int32 *dim,              /* dimension of the data set */
                  void *data
                  );
+
+
+/*-------------------------------------------------------------------------
+ * Function: generate_files
+ *
+ * Purpose: writes several HDF objects to the files 
+ *  HREPACK_FILE1
+ *  HREPACK_FILE2
+ *
+ * Return: SUCCEED, FAIL
+ *
+ *-------------------------------------------------------------------------
+ */
+
+
+int generate_files(void)
+{
+    int32         vgroup1_id,   /* vgroup identifier */
+                  vgroup2_id,   /* vgroup identifier */
+                  vgroup3_id,   /* vgroup identifier */
+                  vgroup_img_id,/* vgroup identifier */
+                  file_id,      /* HDF file identifier, same for V interface */
+                  gr_id,        /* GR interface identifier */
+                  sd_id;        /* SD interface identifier */
+    int32         attr_n_values = 3;  /* number of values in the vg attribute */
+    char          vg_attr[3]    = {'A', 'B', 'C'};/* vg attribute values*/
+    comp_coder_t  comp_type;    /* to retrieve compression type into */
+    int32         chunk_flags;  /* Chunking flag */ 
+    comp_info     comp_info;    /* compression structure */ 
+
+   /*-------------------------------------------------------------------------
+    * create a file with SDSs, images , groups and vdatas
+    *-------------------------------------------------------------------------
+    */
+
+    
+    /* create a HDF file */
+    if ((file_id = Hopen (HREPACK_FILE1, DFACC_CREATE, (int16)0))<0)
+    {
+        printf("Error: Could not create file <%s>\n",HREPACK_FILE1);
+        return FAIL;
+    }
+    
+    /* initialize the SD interface */
+    if ((sd_id = SDstart (HREPACK_FILE1, DFACC_RDWR))== FAIL)
+    {
+        printf("Error: Could not start SD interface\n");
+        return FAIL;
+    }
+    
+    /* initialize the GR interface */
+    if ((gr_id = GRstart (file_id))== FAIL)
+    {
+        printf("Error: Could not start GR interface\n");
+        return FAIL;
+    }
+    
+    /* initialize the V interface */
+    if (Vstart (file_id)==FAIL)
+    {
+        printf( "Could not start VG\n");
+        return FAIL;
+    }
+    
+    
+   /*-------------------------------------------------------------------------
+    * create groups
+    *-------------------------------------------------------------------------
+    */ 
+
+    TESTING("generating groups");
+    
+    vgroup1_id = Vattach (file_id, -1, "w");
+    if (Vsetname (vgroup1_id, "g1")==FAIL)
+    {
+        printf( "Could not name group\n");
+        goto out;
+    }
+    
+    /* attach an attribute to the vgroup */
+    if (Vsetattr (vgroup1_id,"Myattr",DFNT_CHAR,attr_n_values,vg_attr)==FAIL)
+    {
+        printf( "Could set group attributes\n");
+        goto out;
+    }
+    
+    /* create the second vgroup */
+    vgroup2_id = Vattach (file_id, -1, "w");
+    if (Vsetname (vgroup2_id, "g2")==FAIL)
+    {
+        printf( "Could not name group\n");
+        goto out;
+    }
+    
+    /* create the 3rd vgroup */
+    vgroup3_id = Vattach (file_id, -1, "w");
+    if (Vsetname (vgroup3_id, "g3")==FAIL)
+    {
+        printf( "Could not name group\n");
+        goto out;
+    }
+    
+    /* insert the second vgroup into the first vgroup using its identifier */
+    if (Vinsert (vgroup1_id, vgroup2_id)==FAIL)
+    {
+        printf( "Could not insert VG\n");
+        goto out;
+    }
+    
+    /* insert the 3rd vgroup into the 2nd vgroup using its identifier */
+    if (Vinsert (vgroup2_id, vgroup3_id)==FAIL)
+    {
+        printf( "Could not insert VG\n");
+        goto out;
+    }
+    
+    /* create the 4th vgroup, for images */
+    vgroup_img_id = Vattach (file_id, -1, "w");
+    if (Vsetname (vgroup_img_id, "images")==FAIL)
+    {
+        printf( "Could not name group\n");
+        goto out;
+    }
+
+    PASSED();
+    
+   /*-------------------------------------------------------------------------
+    * add some SDSs to the file
+    * duplicates are inserted in the groups "g1", "g2", "g3" and root
+    *-------------------------------------------------------------------------
+    */ 
+
+    TESTING("generating SDSs");
+
+    
+    /* add non chunked, non compressed sds */
+    chunk_flags = HDF_NONE;
+    comp_type   = COMP_CODE_NONE;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset4",0,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset5",0,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset6",0,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    if (add_sd3d(HREPACK_FILE1,file_id,sd_id,"dset7",0,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    
+    
+   /*-------------------------------------------------------------------------
+    * add some chunked/compressd SDS to the file
+    * Chunked                  -> flags = HDF_CHUNK
+    * Chunked and compressed   -> flags = HDF_CHUNK | HDF_COMP 
+    * Non-chunked              -> flags = HDF_NONE
+    *-------------------------------------------------------------------------
+    */ 
+    
+    /* add a chunked, non compressed sds */
+    chunk_flags = HDF_CHUNK;
+    comp_type   = COMP_CODE_NONE;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_chunk",0,chunk_flags,comp_type,NULL)<0)
+        goto out;
+    
+    /* add a chunked-compressed sds with SDsetchunk */
+    chunk_flags = HDF_CHUNK | HDF_COMP;
+    comp_type   = COMP_CODE_DEFLATE;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info)<0)
+        goto out;
+    
+   /*-------------------------------------------------------------------------
+    * GZIP
+    *-------------------------------------------------------------------------
+    */ 
+    
+    /* add some non chunked, compressed sds */
+    chunk_flags = HDF_NONE;
+    comp_type   = COMP_CODE_DEFLATE;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info)<0)
+        goto out;
+    
+   /*-------------------------------------------------------------------------
+    * add an empty sds
+    *-------------------------------------------------------------------------
+    */ 
+    if (add_empty_sd(sd_id,"dset_empty")<0)
+        goto out;
+    
+   /*-------------------------------------------------------------------------
+    * RLE
+    *-------------------------------------------------------------------------
+    */ 
+    
+    /* add some non chunked, compressed sds */
+    chunk_flags = HDF_NONE;
+    comp_type   = COMP_CODE_RLE;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_rle",0,chunk_flags,comp_type,&comp_info)<0)
+        goto out;
+    
+   /*-------------------------------------------------------------------------
+    * HUFF
+    *-------------------------------------------------------------------------
+    */ 
+    
+    /* add some non chunked, compressed sds */
+    chunk_flags = HDF_NONE;
+    comp_type   = COMP_CODE_SKPHUFF;
+    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_huff",0,chunk_flags,comp_type,&comp_info)<0)
+        goto out;
+    
+#if defined (H4_HAVE_LIBSZ)
+   /*-------------------------------------------------------------------------
+    * SZIP
+    *-------------------------------------------------------------------------
+    */ 
+    if (SZ_encoder_enabled()) 
+    {
+        chunk_flags = HDF_NONE;
+        comp_type   = COMP_CODE_SZIP;
+        if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_szip",0,chunk_flags,comp_type,&comp_info)<0)
+            goto out;
+        
+        if (add_sd_szip_all(HREPACK_FILE1,file_id,sd_id,0)<0)
+            goto out;
+    }
+    
+#endif
+
+    PASSED();
+
+    TESTING("generating images");
+
+    
+   /*-------------------------------------------------------------------------
+    * add some RIS24 images to the file
+    *-------------------------------------------------------------------------
+    */
+    /* Pixel Interlacing */
+    if (add_r24(DATA_FILE2,HREPACK_FILE1,file_id,DFIL_PIXEL,vgroup_img_id)<0)
+        goto out;
+    /* Scan Plane Interlacing */
+    if (add_r24(DATA_FILE3,HREPACK_FILE1,file_id,DFIL_PLANE,vgroup_img_id)<0)
+        goto out;  
+    
+    
+   /*-------------------------------------------------------------------------
+    * add some RIS8 images to the file
+    *-------------------------------------------------------------------------
+    */ 
+    if (add_r8(DATA_FILE1,HREPACK_FILE1,file_id,vgroup_img_id)<0)
+        goto out;
+    
+   /*-------------------------------------------------------------------------
+    * add some GR images to the file with compression/chunking
+    *-------------------------------------------------------------------------
+    */ 
+    
+   /*-------------------------------------------------------------------------
+    * no compression
+    *-------------------------------------------------------------------------
+    */ 
+    
+    chunk_flags = HDF_NONE;
+    comp_type   = COMP_CODE_NONE;
+    if (add_gr("gr_none",file_id,gr_id,0,chunk_flags,comp_type,&comp_info)<0)
+        goto out;
+    
+    
+   /*-------------------------------------------------------------------------
+    * GZIP
+    *-------------------------------------------------------------------------
+    */ 
+    
+    chunk_flags = HDF_NONE;
+    comp_type   = COMP_CODE_DEFLATE;
+    if (add_gr("gr_gzip",file_id,gr_id,0,chunk_flags,comp_type,&comp_info)<0)
+        goto out; 
+    
+#if defined (H4_GR_SZIP)
+   /* not supported for GR */
+   /*-------------------------------------------------------------------------
+    * SZIP
+    *-------------------------------------------------------------------------
+    */ 
+    
+#if defined (H4_HAVE_LIBSZ)
+    
+    if (SZ_encoder_enabled()) 
+    {
+        chunk_flags = HDF_NONE;
+        comp_type   = COMP_CODE_SZIP;
+        if (add_gr("gr_szip",file_id,gr_id,0,chunk_flags,comp_type,&comp_info)<0)
+            goto out; 
+    }
+    
+#endif
+#endif
+    
+   /*-------------------------------------------------------------------------
+    * add some GR realistic images to the file
+    * realistic data is read from ASCII files
+    *-------------------------------------------------------------------------
+    */ 
+    
+    if (add_gr_ffile(DATA_FILE1,gr_id,"gr_8bit",0,file_id,0)<0)
+        goto out;  
+    if (add_gr_ffile(DATA_FILE2,gr_id,"gr_24bit",0,file_id,0)<0)
+        goto out;  
+    
+   /*-------------------------------------------------------------------------
+    * add some VS to the file
+    * duplicates are inserted in the groups "g1", "g2", "g3" and root
+    *-------------------------------------------------------------------------
+    */ 
+
+    PASSED();
+
+    TESTING("generating Vdatas");
+
+    
+    if (add_vs("vdata1",file_id,vgroup1_id)<0)
+        goto out; 
+    if (add_vs("vdata2",file_id,vgroup2_id)<0)
+        goto out; 
+    if (add_vs("vdata3",file_id,vgroup3_id)<0)
+        goto out;
+    if (add_vs("vdata4",file_id,0)<0)
+        goto out; 
+
+    PASSED();
+
+    TESTING("generating global attributes");
+
+    
+   /*-------------------------------------------------------------------------
+    * add some global attributes to the file
+    *-------------------------------------------------------------------------
+    */ 
+    if (add_glb_attrs(HREPACK_FILE1,file_id,sd_id,gr_id)<0)
+        goto out;
+
+
+    PASSED();
+
+    TESTING("generating annotations");
+
+    
+   /*-------------------------------------------------------------------------
+    * add annotations to the file
+    *-------------------------------------------------------------------------
+    */ 
+    if (add_file_an(file_id)<0)
+        goto out; 
+    
+   /*-------------------------------------------------------------------------
+    * add a palette to the file
+    *-------------------------------------------------------------------------
+    */ 
+
+    PASSED();
+
+
+    TESTING("generating palettes");
+    
+
+    if (add_pal(HREPACK_FILE1)<0)
+        goto out;
+
+    PASSED();
+    
+   /*-------------------------------------------------------------------------
+    * generate a big file for hyperslab reading
+    *-------------------------------------------------------------------------
+    */ 
+
+    TESTING("generating big file");
+
+    if (do_big_file(HREPACK_FILE2)<0)
+        goto out;
+
+    PASSED();
+
+
+   /*-------------------------------------------------------------------------
+    * generate groups
+    *-------------------------------------------------------------------------
+    */ 
+
+    TESTING("generating groups");
+
+    if (do_groups(HREPACK_FILE3)<0)
+        goto out;
+
+    
+   /*-------------------------------------------------------------------------
+    * close
+    *-------------------------------------------------------------------------
+    */
+    
+    /* terminate access to the vgroups */
+    if (Vdetach (vgroup1_id)==FAIL ||
+        Vdetach (vgroup2_id)==FAIL ||
+        Vdetach (vgroup3_id)==FAIL ||
+        Vdetach (vgroup_img_id)==FAIL)
+    {
+        printf( "Could not close group\n");
+        goto out;
+    }
+    
+    /* terminate access to the V interface */
+    if (Vend (file_id)==FAIL)
+    {
+        printf( "Could not end VG\n");
+        goto out;
+    }
+    
+    /* terminate access to the GR interface */
+    if (GRend (gr_id)==FAIL)
+    {
+        printf("Error: Could not close GR interface\n");
+        goto out;
+    }
+    /* terminate access to the SD interface */
+    if (SDend (sd_id)==FAIL)
+    {
+        printf("Error: Could not close SD interface\n");
+        goto out;
+    }
+    /* close the HDF file */
+    if (Hclose (file_id)==FAIL)
+    {
+        printf( "Could not close file\n");
+        return FAIL;
+    }
+
+    PASSED();
+
+    
+
+    return SUCCEED;
+
+out:
+
+    /* close interfaces */
+    Vend (file_id);
+    GRend (gr_id);
+    SDend (sd_id);
+    Hclose (file_id);
+    return FAIL;
+ }
+
+
+
 
 
 /*-------------------------------------------------------------------------
@@ -1719,51 +2186,130 @@ error:
 
 }
 
-#if 0
-int do_lone(char* file_name)
+
+/*-------------------------------------------------------------------------
+ * write groups
+ * a circular reference
+ *
+ *                g0 ----->   g1
+ *                 |       |    ^
+ *                 |       |    |
+ *                 |       \/   |
+ *                 |----->   g1.1
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static int do_groups(char* name) 
 {
-    char    sds_name[]  = "lone";
-    int32   rank        = 1;
-    int32   dim_sds[1]  = {5};             /* dimension of the data set */
-    int32   data[5]     = {1, 2, 3, 4, 5};
-    int32   start[1];                      /* start position to write for each dimension */
-    int32   edges[1];                      /* number of elements to be written along each dimension */
-    int32   sds_id;
-    int32   dim_id;
-    int32   sd_id;
-    
-    sd_id  = SDstart(file_name, DFACC_CREATE);
-    
-    /* create the SDS */
-    if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
-    {
-        printf( "Could not create SDS <%s>\n",sds_name);
-        goto fail;
-    }
-    
-    dim_id = SDgetdimid(sds_id, 0);
-    SDsetdimname(dim_id, sds_name);
-
-    /* define the location and size of the data to be written to the data set */
-    start[0] = 0;
-    edges[0] = 5;
-    
-    /* write the stored data to the data set */
-    if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)data)==FAIL)
-    {
-        printf( "Failed to set write for SDS <%s>\n", sds_name);
-        goto fail;
-    } 
-    
-    
-    SDendaccess(sds_id);
-    SDend(sd_id);
-    
-    return SUCCEED;
-
-fail:
-    SDend(sd_id);
-    return FAIL;
+     
+     int32 vg0_id,    /* vgroup identifier */
+           vg1_id,    /* vgroup identifier */
+           vg2_id,    /* vgroup identifier */
+           file1_id;  /* HDF file identifier */
+     
+     /* create a HDF file */
+     if ((file1_id = Hopen (name, DFACC_CREATE, (int16)0))<0)
+     {
+         printf("Error: Could not create file <%s>\n",name);
+         return FAIL;
+     }
+     
+     /* initialize the V interface */
+     if (Vstart (file1_id)==FAIL)
+     {
+         printf( "Could not start VG\n");
+         return FAIL;
+     }
+     
+     /* create a vgroup */
+     vg0_id = Vattach (file1_id, -1, "w");
+     if (Vsetname (vg0_id, "g0")==FAIL)
+     {
+         printf( "Could not name group\n");
+         goto out;
+     }
+     
+     /* create the second vgroup */
+     vg1_id = Vattach (file1_id, -1, "w");
+     if (Vsetname (vg1_id, "g1")==FAIL)
+     {
+         printf( "Could not name group\n");
+         goto out;
+     }
+     
+     /* create the third vgroup */
+     vg2_id = Vattach (file1_id, -1, "w");
+     if (Vsetname (vg2_id, "g1.1")==FAIL)
+     {
+         printf( "Could not name group\n");
+         goto out;
+     }
+  
+     if (Vinsert (vg0_id, vg1_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     if (Vinsert (vg0_id, vg2_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     if (Vinsert (vg1_id, vg2_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     if (Vinsert (vg2_id, vg1_id)==FAIL)
+     {
+         printf( "Could not insert VG\n");
+         goto out;
+     }
+     
+     /* terminate access to the vgroup */
+     if (Vdetach (vg0_id)==FAIL)
+     {
+         printf( "Could not close group\n");
+         goto out;
+     }
+     
+     /* terminate access to the vgroup */
+     if (Vdetach (vg1_id)==FAIL)
+     {
+         printf( "Could not close group\n");
+         goto out;
+     }
+     
+     /* terminate access to the vgroup */
+     if (Vdetach (vg2_id)==FAIL)
+     {
+         printf( "Could not close group\n");
+         goto out;
+     }
+     
+     /* terminate access to the V interface */
+     if (Vend (file1_id)==FAIL)
+     {
+         printf( "Could not end VG\n");
+         goto out;
+     }
+     
+     /* close the HDF file */
+     if (Hclose (file1_id)==FAIL)
+     {
+         printf( "Could not close file\n");
+         return FAIL;
+     }
+     
+     return SUCCEED;
+     
+out:
+     printf("Error...Exiting...\n");
+     return FAIL;
+     
 }
-#endif
 

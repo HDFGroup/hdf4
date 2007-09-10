@@ -927,11 +927,12 @@
 ./mfhdf/hrepack/image8.txt
 ./mfhdf/hrepack/info.txt
 ./mfhdf/hrepack/pal_rgb.h
-./mfhdf/hrepack/test_hrepack_add.c
-./mfhdf/hrepack/test_hrepack_add.h
-./mfhdf/hrepack/test_hrepack_main.c
-./mfhdf/hrepack/test_hrepack_verify.c
-./mfhdf/hrepack/test_hrepack_verify.h
+./mfhdf/hrepack/hrepacktst.c
+./mfhdf/hrepack/hrepacktst.h
+./mfhdf/hrepack/hrepacktst_verify.c
+./mfhdf/hrepack/hrepacktst_add.c
+
+
 
 ./mfhdf/libsrc/Makefile.am
 ./mfhdf/libsrc/Makefile.in

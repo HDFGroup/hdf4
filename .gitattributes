@@ -90,6 +90,10 @@ mfhdf/hdiff/testfiles/hdifftst4.hdf -text
 mfhdf/hdiff/testfiles/hdifftst5.hdf -text
 mfhdf/hdiff/testfiles/hdifftst6.hdf -text
 mfhdf/hdiff/testfiles/hdifftst7.hdf -text
+mfhdf/hrepack/hrepacktst.c -text
+mfhdf/hrepack/hrepacktst.h -text
+mfhdf/hrepack/hrepacktst_add.c -text
+mfhdf/hrepack/hrepacktst_verify.c -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
 mfhdf/libsrc/tsdsprops.c -text
