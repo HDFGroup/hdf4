@@ -583,7 +583,7 @@ int vgroup_insert(int32 infile_id,
     int32 ntagrefs;              /* number of tag/ref pairs in a vgroup */
     int32 *tags=NULL;            /* buffer to hold the tag numbers of vgroups   */
     int32 *refs=NULL;            /* buffer to hold the ref numbers of vgroups   */
-    int32 vgroup_id_out;         /* vgroup identifier for the created group in output */
+    int32 vgroup_id_out =-1;         /* vgroup identifier for the created group in output */
     char  vgroup_name[VGNAMELENMAX];
     char  vgroup_class[VGNAMELENMAX];
     char  *path=NULL;

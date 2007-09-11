@@ -406,7 +406,7 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
  *         1, they are not the same
  *        -1, error
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
  *
  * Date: September 10, 2007
  *
@@ -451,7 +451,7 @@ int vg_verifygrpdep( char* name1, char* name2 )
  *
  * Return: number of vgroups dependencies in file
  *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
+ * Programmer: Pedro Vicente, pvn@hdfgroup.org
  *
  * Date: September 10, 2007
  *
