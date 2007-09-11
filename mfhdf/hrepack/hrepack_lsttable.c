@@ -13,6 +13,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+
 
 #include "hrepack_lsttable.h"
 
@@ -60,6 +62,7 @@ int list_table_search(list_table_t *list_tbl, int tag, int ref )
 
 void list_table_add(list_table_t *list_tbl, int tag, int ref, char* path)
 {
+    int path_len;
     int i;
     
     if (list_tbl->nobjs == list_tbl->size) 
@@ -69,15 +72,20 @@ void list_table_add(list_table_t *list_tbl, int tag, int ref, char* path)
         
         for (i = list_tbl->nobjs; i < list_tbl->size; i++) 
         {
-            list_tbl->objs[i].tag = list_tbl->objs[i].ref = -1;
+            list_tbl->objs[i].tag = -1;
+            list_tbl->objs[i].ref = -1;
+            list_tbl->objs[i].path = NULL;
         }
     }
     
     i = list_tbl->nobjs++;
     list_tbl->objs[i].tag = tag;
     list_tbl->objs[i].ref = ref;
-    strcpy(list_tbl->objs[i].path,path);
-    
+
+    /* copy the path over */
+    path_len = HDstrlen(path);
+    list_tbl->objs[i].path = (char *)HDmalloc(path_len+1);
+    HIstrncpy(list_tbl->objs[i].path, path, path_len+1);
 }
 
 
@@ -131,6 +139,13 @@ void list_table_init( list_table_t **tbl )
 
 void list_table_free( list_table_t *list_tbl )
 {
+    int i;
+
+    for (i = 0; i < list_tbl->nobjs; i++) 
+    {
+        assert(list_tbl->objs[i].path);
+        free(list_tbl->objs[i].path);
+    }
     free(list_tbl->objs);
     free(list_tbl);
 }

@@ -34,7 +34,8 @@ extern "C" {
 typedef struct obj_info_t {
  int   tag;
  int   ref;
- char  path[ 1024 ];
+ char  *path;  /* build a path for each object using the folder separation symbol "/" 
+                  along the file traversal */
 } obj_info_t;
 
 /*struct that stores all objects */
