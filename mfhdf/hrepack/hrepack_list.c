@@ -194,7 +194,7 @@ int list(const char* infname,
         
         for ( i = 0; i < options->op_tbl->nelems; i++) 
         {
-            char* obj_name=options->op_tbl->objs[i].path;
+            char* obj_name=options->op_tbl->objs[i].objpath;
             if (options->verbose)
                 printf(PFORMAT1,"","",obj_name);
             

@@ -45,7 +45,7 @@ typedef struct {
 
 /* information for one object, contains PATH, CHUNK info and COMP info */
 typedef struct {
- char         path[H4_MAX_NC_NAME];            /* name of object */
+ char         objpath[H4_MAX_NC_NAME];      /* name of object */
  comp_info_t  comp;                         /* compression information */
  chunk_info_t chunk;                        /* chunk information */
 } pack_info_t;

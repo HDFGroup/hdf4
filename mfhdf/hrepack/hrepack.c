@@ -277,7 +277,7 @@ int print_options(options_t *options)
     
     for ( i = 0; i < options->op_tbl->nelems; i++) 
     {
-        char* obj_name=options->op_tbl->objs[i].path;
+        char* obj_name=options->op_tbl->objs[i].objpath;
         
         if (options->op_tbl->objs[i].chunk.rank>0)
         {
@@ -337,7 +337,7 @@ int print_options(options_t *options)
         pack_info_t obj=options->op_tbl->objs[i];
         if (obj.comp.type>0)
         {
-            char* obj_name=obj.path;
+            char* obj_name=obj.objpath;
             if (options->verbose) {
                 printf("\t%s %s compression, parameter %d\n",
                     obj_name,
