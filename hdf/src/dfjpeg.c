@@ -31,7 +31,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "jpeglib.h"
 #include "jerror.h"
-
 /* Expanded data destination object for HDF output */
 
 typedef struct {
@@ -58,6 +57,9 @@ extern void    hdf_term_destination(struct jpeg_compress_struct *cinfo_ptr);
 extern intn    jpeg_HDF_dest(struct jpeg_compress_struct *cinfo_ptr, int32 file_id, uint16 tag,
                              uint16 ref, const void * image, int32 xdim, int32 ydim, int16 scheme);
 extern intn    jpeg_HDF_dest_term(struct jpeg_compress_struct *cinfo_ptr);
+
+void (*jpeg_message_handler)(j_common_ptr cinfo) = NULL;
+
 
 /*-----------------------------------------------------------------------------
  * Name:    hdf_init_destination
@@ -251,7 +253,11 @@ DFCIjpeg(int32 file_id, uint16 tag, uint16 ref, int32 xdim, int32 ydim,
         HRETURN_ERROR(DFE_NOSPACE,FAIL);
 
     /* Initialize the error-handling routines */
-    cinfo_ptr->err=jpeg_std_error(jerr_ptr);
+    cinfo_ptr->err = jpeg_std_error(jerr_ptr);
+    if (jpeg_message_handler != NULL)
+    {
+        jerr_ptr->output_message = jpeg_message_handler;
+    } 
 
     /* Initialize the JPEG compression stuff */
     jpeg_create_compress(cinfo_ptr);
