@@ -469,7 +469,6 @@ int vg_getngrpdep( HFILEID f)
     int32       vstag;
     int32       i, nvg, n, ne, nlnk;
     char        vgname[VGNAMELENMAX];
-    char        vgclass[VGNAMELENMAX];
 
     Vstart(f);
     
@@ -485,9 +484,7 @@ int vg_getngrpdep( HFILEID f)
         Vinquire(vg, &n, vgname);
         vgotag = VQuerytag(vg);
         vgoref = VQueryref(vg);
-        Vgetclass(vg, vgclass);
-        
-        
+       
         for (i = 0; i < Vntagrefs(vg); i++)
         {
             Vgettagref(vg, i, &vstag, &vsid);
@@ -506,7 +503,6 @@ int vg_getngrpdep( HFILEID f)
                 
                 vgotag = VQuerytag(vgt);
                 vgoref = VQueryref(vgt);
-                Vgetclass(vgt, vgclass);
                 
                 Vdetach(vgt);
 
