@@ -973,13 +973,17 @@
 ./mfhdf/libsrc/putgetg.c
 ./mfhdf/libsrc/sharray.c
 ./mfhdf/libsrc/string.c
+./mfhdf/libsrc/tchunk.c
+./mfhdf/libsrc/tcomp.c
 ./mfhdf/libsrc/tcoordvar.c
+./mfhdf/libsrc/tdim.c
 ./mfhdf/libsrc/temptySDSs.c
 ./mfhdf/libsrc/tfile.c
 ./mfhdf/libsrc/tidtypes.c
 ./mfhdf/libsrc/test1.nc
 ./mfhdf/libsrc/test_cdf.sav
 ./mfhdf/libsrc/testout.sav
+./mfhdf/libsrc/tnetcdf.c
 ./mfhdf/libsrc/trank0.c
 ./mfhdf/libsrc/tsd.c
 ./mfhdf/libsrc/tsdsprops.c
