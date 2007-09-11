@@ -37,9 +37,9 @@ typedef struct dim_table_t {
 extern "C" {
 #endif
 
-void dim_table_add(dim_table_t *table, int ref, char* name);
+void dim_table_add(dim_table_t *dim_tbl, int ref, char* name);
 void dim_table_init( dim_table_t **tbl );
-void dim_table_free( dim_table_t *table );
+void dim_table_free( dim_table_t *dim_tbl );
 
 
 void match_dim(int32 sd_in,

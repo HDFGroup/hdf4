@@ -52,7 +52,7 @@ int copy_sds(int32 sd_in,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table,
+             list_table_t *list_tbl,
              dim_table_t *td1,
              dim_table_t *td2,
              int32 infile_id,
@@ -116,7 +116,7 @@ int copy_sds(int32 sd_in,
     path=get_path(path_name,sds_name);
     
     /* add object to table */
-    table_add(table,tag,ref,path);
+    list_table_add(list_tbl,tag,ref,path);
     
    /*-------------------------------------------------------------------------
     * check if the input SDS is empty. if so , avoid some operations (mainly read, write)

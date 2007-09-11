@@ -26,7 +26,7 @@ extern "C" {
 
 
 int copy_pal(char* infname,char* outfname,int32 infile_id,int32 outfile_id,
-              table_t *table,options_t *options);
+              list_table_t *list_tbl,options_t *options);
 
 
 

@@ -48,7 +48,7 @@ int  copy_gr(int32 infile_id,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table)
+             list_table_t *list_tbl)
 {
  int32         ri_id,         /* raster image identifier */
                ri_out,        /* raster image identifier */
@@ -104,7 +104,7 @@ int  copy_gr(int32 infile_id,
  path=get_path(path_name,gr_name);
 
  /* add object to table */
- table_add(table,tag,ref,path);
+ list_table_add(list_tbl,tag,ref,path);
 
 /*-------------------------------------------------------------------------
  * get the original compression/chunk information from the object 
@@ -530,7 +530,7 @@ int  copy_gr(int32 infile_id,
    printf( "Failed to get palette ref for <%s>\n", path);
   }
   /* add palette to table; we want to later check for lone palettes */
-  table_add(table,DFTAG_IP8,pal_ref,pal_path);
+  list_table_add(list_tbl,DFTAG_IP8,pal_ref,pal_path);
   
   /* Get the id for the new palette */
   if ((pal_out = GRgetlutid(ri_out, 0)) == FAIL) {

@@ -32,7 +32,7 @@ int  copy_gr(int32 infile_id,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table);
+             list_table_t *list_tbl);
 
 
 int copy_gr_attrs(int32 ri_id,

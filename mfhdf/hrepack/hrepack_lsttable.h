@@ -38,20 +38,20 @@ typedef struct obj_info_t {
 } obj_info_t;
 
 /*struct that stores all objects */
-typedef struct table_t {
+typedef struct list_table_t {
  int        size;
  int        nobjs;
  obj_info_t *objs;
-} table_t;
+} list_table_t;
 
 
 /* table methods */
-void  table_init(table_t **table);
-void  table_free(table_t *table);
-int   table_search(table_t *table, int tag, int ref );
-void  table_add(table_t *table, int tag, int ref, char* obj_name);
-const char* table_check(table_t *table, char*obj_name);
-void  table_print(table_t *table);
+void  list_table_init(list_table_t **list_tbl);
+void  list_table_free(list_table_t *list_tbl);
+int   list_table_search(list_table_t *list_tbl, int tag, int ref );
+void  list_table_add(list_table_t *list_tbl, int tag, int ref, char* obj_name);
+const char* list_table_check(list_table_t *list_tbl, char*obj_name);
+void  list_table_print(list_table_t *list_tbl);
 
 #ifdef __cplusplus
 }

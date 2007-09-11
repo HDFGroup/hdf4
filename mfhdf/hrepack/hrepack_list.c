@@ -27,12 +27,12 @@
 #include "hrepack_dim.h"
 
 
-int list_vg (int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,dim_table_t *td1,dim_table_t *td2,options_t *options);
-int list_gr (int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
-int list_sds(int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,table_t *table,dim_table_t *td1,dim_table_t *td2,options_t *options);
-int list_vs (int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
-int list_glb(int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,table_t *table,options_t *options);
-int list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,table_t *table,options_t *options);
+int list_vg (int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,list_table_t *list_tbl,dim_table_t *td1,dim_table_t *td2,options_t *options);
+int list_gr (int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,list_table_t *list_tbl,options_t *options);
+int list_sds(int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,list_table_t *list_tbl,dim_table_t *td1,dim_table_t *td2,options_t *options);
+int list_vs (int32 infile_id,int32 outfile_id,list_table_t *list_tbl,options_t *options);
+int list_glb(int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,list_table_t *list_tbl,options_t *options);
+int list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,list_table_t *list_tbl,options_t *options);
 int list_an (int32 infile_id,int32 outfile_id,options_t *options);
 
 
@@ -81,7 +81,7 @@ int list(const char* infname,
          const char* outfname, 
          options_t *options)
 {
-    table_t      *table=NULL;     /* list of objects */
+    list_table_t *list_tbl=NULL;     /* list of objects */
     dim_table_t  *td1=NULL;       /* dimensions */
     dim_table_t  *td2=NULL;       /* dimensions */
     int32        sd_id=FAIL,      /* SD interface identifier */
@@ -98,7 +98,7 @@ int list(const char* infname,
     *-------------------------------------------------------------------------
     */
     
-    table_init(&table);
+    list_table_init(&list_tbl);
     dim_table_init(&td1);
     dim_table_init(&td2);
     
@@ -158,17 +158,17 @@ int list(const char* infname,
     *-------------------------------------------------------------------------
     */
     
-    if (list_vg (infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,td1,td2,options)<0) 
+    if (list_vg (infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,list_tbl,td1,td2,options)<0) 
         goto out;
-    if (list_gr (infile_id,outfile_id,gr_id,gr_out,table,options)<0) 
+    if (list_gr (infile_id,outfile_id,gr_id,gr_out,list_tbl,options)<0) 
         goto out;
-    if (list_sds(infile_id,outfile_id,sd_id,sd_out,table,td1,td2,options)<0) 
+    if (list_sds(infile_id,outfile_id,sd_id,sd_out,list_tbl,td1,td2,options)<0) 
         goto out;
-    if (list_vs (infile_id,outfile_id,table,options)<0) 
+    if (list_vs (infile_id,outfile_id,list_tbl,options)<0) 
         goto out;
-    if (list_glb(infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,table,options)<0) 
+    if (list_glb(infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,list_tbl,options)<0) 
         goto out;
-    if (list_pal(infname,outfname,infile_id,outfile_id,table,options)<0) 
+    if (list_pal(infname,outfname,infile_id,outfile_id,list_tbl,options)<0) 
         goto out;
     if (list_an (infile_id,outfile_id,options)<0) 
         goto out;
@@ -199,7 +199,7 @@ int list(const char* infname,
                 printf(PFORMAT1,"","",obj_name);
             
             /* the input object names are present in the file and are valid */
-            err=table_check(table,obj_name);
+            err=list_table_check(list_tbl,obj_name);
             if (err!=NULL)
             {
                 printf("\nError: <%s> %s in file <%s>. Exiting...\n",obj_name,err,infname);
@@ -238,7 +238,7 @@ int list(const char* infname,
     *-------------------------------------------------------------------------
     */
   
-    table_free(table);
+    list_table_free(list_tbl);
     dim_table_free(td1);
     dim_table_free(td2);
     
@@ -246,8 +246,8 @@ int list(const char* infname,
     
 out:
     
-    if (table!=NULL)
-        table_free(table);
+    if (list_tbl!=NULL)
+        list_table_free(list_tbl);
     if (td1!=NULL)
         dim_table_free(td1);
     if (td2!=NULL)
@@ -308,7 +308,7 @@ int list_vg(int32 infile_id,
             int32 sd_out,
             int32 gr_id,
             int32 gr_out,
-            table_t *table,
+            list_table_t *list_tbl,
             dim_table_t *td1,
             dim_table_t *td2,
             options_t *options)
@@ -425,7 +425,7 @@ int list_vg(int32 infile_id,
             * add object to table
             *-------------------------------------------------------------------------
             */
-            table_add(table,tag_vg,ref_vg,vgroup_name);
+            list_table_add(list_tbl,tag_vg,ref_vg,vgroup_name);
             
             if (options->verbose)
                 printf(PFORMAT,"","",vgroup_name);  
@@ -477,7 +477,7 @@ int list_vg(int32 infile_id,
                     tags,
                     refs,
                     ntagrefs,
-                    table,
+                    list_tbl,
                     td1,
                     td2,
                     options)<0) {
@@ -574,7 +574,7 @@ int vgroup_insert(int32 infile_id,
                   int32* in_tags,          /* tag list for parent group */
                   int32* in_refs,          /* ref list for parent group */
                   int npairs,              /* number tag/ref pairs for parent group */
-                  table_t *table,
+                  list_table_t *list_tbl,
                   dim_table_t *td1,
                   dim_table_t *td2,
                   options_t *options)
@@ -606,7 +606,7 @@ int vgroup_insert(int32 infile_id,
          */
         case DFTAG_VG: 
 
-            visited = table_search(table,DFTAG_VG,ref);
+            visited = list_table_search(list_tbl,DFTAG_VG,ref);
             
            /*-------------------------------------------------------------------------
             * open input
@@ -718,7 +718,7 @@ int vgroup_insert(int32 infile_id,
                 path=get_path(path_name,vgroup_name);
                 
                 /* add object to table */
-                table_add(table,tag,ref,path);
+                list_table_add(list_tbl,tag,ref,path);
                 
                 if (options->verbose)
                     printf(PFORMAT,"","",path);    
@@ -750,7 +750,7 @@ int vgroup_insert(int32 infile_id,
                         tags,
                         refs,
                         ntagrefs,
-                        table,
+                        list_tbl,
                         td1,
                         td2,
                         options)<0) {
@@ -801,7 +801,7 @@ int vgroup_insert(int32 infile_id,
           vgroup_id_out_par,
           path_name,
           options,
-          table,
+          list_tbl,
           td1,
           td2,
           infile_id,
@@ -831,7 +831,7 @@ int vgroup_insert(int32 infile_id,
           vgroup_id_out_par,
           path_name,
           options,
-          table)<0)
+          list_tbl)<0)
           return FAIL;
       break;
       
@@ -848,7 +848,7 @@ int vgroup_insert(int32 infile_id,
           vgroup_id_out_par,
           path_name,
           options,
-          table,
+          list_tbl,
           0)<0)
           return FAIL;
       break;
@@ -883,7 +883,7 @@ int list_gr(int32 infile_id,
             int32 outfile_id,
             int32 gr_id,             /* GR interface identifier */
             int32 gr_out,            /* GR interface identifier */
-            table_t *table,
+            list_table_t *list_tbl,
             options_t *options)
 {
     int32 ri_id,             /* raster image identifier */
@@ -916,12 +916,12 @@ int list_gr(int32 infile_id,
         gr_ref = GRidtoref(ri_id);
         
         /* check if already inserted in Vgroup; search all image tags */
-        if ( table_search(table,DFTAG_RI,gr_ref)>=0 ||
-            table_search(table,DFTAG_CI,gr_ref)>=0 ||
-            table_search(table,DFTAG_RIG,gr_ref)>=0 ||
-            table_search(table,DFTAG_RI8,gr_ref)>=0 ||
-            table_search(table,DFTAG_CI8,gr_ref)>=0 ||
-            table_search(table,DFTAG_II8,gr_ref)>=0 )
+        if ( list_table_search(list_tbl,DFTAG_RI,gr_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_CI,gr_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_RIG,gr_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_RI8,gr_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_CI8,gr_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_II8,gr_ref)>=0 )
         {
             if (GRendaccess (ri_id)==FAIL){
                 printf("Could not close GR\n");
@@ -931,7 +931,7 @@ int list_gr(int32 infile_id,
         }
         
         /* copy GR  */
-        if (copy_gr(infile_id,outfile_id,gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,table)<0)
+        if (copy_gr(infile_id,outfile_id,gr_id,gr_out,DFTAG_RI,gr_ref,0,NULL,options,list_tbl)<0)
             goto out;
         
         /* terminate access to the current raster image */
@@ -963,7 +963,7 @@ int list_sds(int32 infile_id,
              int32 outfile_id,
              int32 sd_id,
              int32 sd_out,
-             table_t *table,
+             list_table_t *list_tbl,
              dim_table_t *td1,
              dim_table_t *td2,
              options_t *options)
@@ -992,16 +992,16 @@ int list_sds(int32 infile_id,
         sds_ref = SDidtoref(sds_id);
         
         /* check if already inserted in Vgroup; search all SDS tags */
-        if ( table_search(table,DFTAG_SD,sds_ref)>=0 ||
-            table_search(table,DFTAG_SDG,sds_ref)>=0 ||
-            table_search(table,DFTAG_NDG,sds_ref)>=0 )
+        if ( list_table_search(list_tbl,DFTAG_SD,sds_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_SDG,sds_ref)>=0 ||
+            list_table_search(list_tbl,DFTAG_NDG,sds_ref)>=0 )
         {
             SDendaccess (sds_id);
             continue;
         }
         
         /* copy SDS  */
-        if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,table,td1,td2,
+        if (copy_sds(sd_id,sd_out,TAG_GRP_DSET,sds_ref,0,NULL,options,list_tbl,td1,td2,
             infile_id,outfile_id)<0) goto out;
         
         /* terminate access to the current dataset */
@@ -1028,7 +1028,7 @@ out:
 
 int list_vs(int32 infile_id,
             int32 outfile_id,
-            table_t *table,
+            list_table_t *list_tbl,
             options_t *options)
 {
     int32 nlones = 0,        /* number of lone vdatas */
@@ -1090,13 +1090,13 @@ int list_vs(int32 infile_id,
             ref = ref_array[i];
             
             /* check if already inserted in Vgroup, search with VS tag */
-            if ( table_search(table,DFTAG_VH,ref)>=0 ) 
+            if ( list_table_search(list_tbl,DFTAG_VH,ref)>=0 ) 
             {
                 continue;
             }
             
             /* copy VS */
-            if (copy_vs(infile_id,outfile_id,DFTAG_VH,ref,0,NULL,options,table,1)<0)
+            if (copy_vs(infile_id,outfile_id,DFTAG_VH,ref,0,NULL,options,list_tbl,1)<0)
             {
                 goto out;
             }
@@ -1164,7 +1164,7 @@ int list_glb(int32 infile_id,
              int32 sd_out,
              int32 gr_id,
              int32 gr_out,
-             table_t *table,
+             list_table_t *list_tbl,
              options_t *options)
 {
     int32 n_datasets,             /* number of datasets in the file */
@@ -1392,7 +1392,7 @@ int list_pal(const char* infname,
              const char* outfname,
              int32 infile_id,
              int32 outfile_id,
-             table_t *table,
+             list_table_t *list_tbl,
              options_t *options)
 {
     uint8  palette_data[256*3];
@@ -1423,7 +1423,7 @@ int list_pal(const char* infname,
         ref=DFPlastref();
         
         /* check if already inserted in image */
-        if ( table_search(table,DFTAG_IP8,ref)>=0 )
+        if ( list_table_search(list_tbl,DFTAG_IP8,ref)>=0 )
         {
             continue;
         }

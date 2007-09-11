@@ -41,7 +41,7 @@ int vgroup_insert(int32 infile_id,
                   int32* in_tags,          /* tag list for parent group */
                   int32* in_refs,          /* ref list for parent group */
                   int npairs,              /* number tag/ref pairs for parent group */
-                  table_t *table,
+                  list_table_t *list_tbl,
                   dim_table_t *td1,
                   dim_table_t *td2,
                   options_t *options);

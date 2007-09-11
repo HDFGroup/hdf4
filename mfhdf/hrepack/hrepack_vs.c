@@ -42,7 +42,7 @@ int copy_vs( int32 infile_id,
              int32 vgroup_id_out_par, /* output parent group ID */
              char*path_name,          /* absolute path for input group name */
              options_t *options,
-             table_t *table,
+             list_table_t *list_tbl,
              int   is_lone)
 {
  int32 vdata_id,              /* vdata identifier */
@@ -92,7 +92,7 @@ int copy_vs( int32 infile_id,
  path=get_path(path_name,vdata_name);
  
  /* add object to table */
- table_add(table,tag,ref,path);
+ list_table_add(list_tbl,tag,ref,path);
  
  if (options->verbose)
  {

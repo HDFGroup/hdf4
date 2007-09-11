@@ -17,7 +17,7 @@
 #include "hrepack_lsttable.h"
 
 /*-------------------------------------------------------------------------
- * Function: table_search
+ * Function: list_table_search
  *
  * Purpose: linear search the table for tag and ref
  *
@@ -30,13 +30,13 @@
  *-------------------------------------------------------------------------
  */
 
-int table_search(table_t *table, int tag, int ref )
+int list_table_search(list_table_t *list_tbl, int tag, int ref )
 {
     int i;
     
-    for (i = 0; i < table->nobjs; i++) 
+    for (i = 0; i < list_tbl->nobjs; i++) 
     {
-        if (table->objs[i].tag == tag && table->objs[i].ref == ref)
+        if (list_tbl->objs[i].tag == tag && list_tbl->objs[i].ref == ref)
             return i;
     }
     
@@ -45,7 +45,7 @@ int table_search(table_t *table, int tag, int ref )
 
 
 /*-------------------------------------------------------------------------
- * Function: table_add
+ * Function: list_table_add
  *
  * Purpose: add pair tag/ref and object path to table
  *
@@ -58,32 +58,32 @@ int table_search(table_t *table, int tag, int ref )
  *-------------------------------------------------------------------------
  */
 
-void table_add(table_t *table, int tag, int ref, char* path)
+void list_table_add(list_table_t *list_tbl, int tag, int ref, char* path)
 {
     int i;
     
-    if (table->nobjs == table->size) 
+    if (list_tbl->nobjs == list_tbl->size) 
     {
-        table->size *= 2;
-        table->objs = (obj_info_t*)realloc(table->objs, table->size * sizeof(obj_info_t));
+        list_tbl->size *= 2;
+        list_tbl->objs = (obj_info_t*)realloc(list_tbl->objs, list_tbl->size * sizeof(obj_info_t));
         
-        for (i = table->nobjs; i < table->size; i++) 
+        for (i = list_tbl->nobjs; i < list_tbl->size; i++) 
         {
-            table->objs[i].tag = table->objs[i].ref = -1;
+            list_tbl->objs[i].tag = list_tbl->objs[i].ref = -1;
         }
     }
     
-    i = table->nobjs++;
-    table->objs[i].tag = tag;
-    table->objs[i].ref = ref;
-    strcpy(table->objs[i].path,path);
+    i = list_tbl->nobjs++;
+    list_tbl->objs[i].tag = tag;
+    list_tbl->objs[i].ref = ref;
+    strcpy(list_tbl->objs[i].path,path);
     
 }
 
 
 
 /*-------------------------------------------------------------------------
- * Function: table_init
+ * Function: list_table_init
  *
  * Purpose: initialize table
  *
@@ -96,27 +96,27 @@ void table_add(table_t *table, int tag, int ref, char* path)
  *-------------------------------------------------------------------------
  */
 
-void table_init( table_t **tbl )
+void list_table_init( list_table_t **tbl )
 {
     int i;
-    table_t* table = (table_t*) malloc(sizeof(table_t));
+    list_table_t* list_tbl = (list_table_t*) malloc(sizeof(list_table_t));
     
-    table->size = 20;
-    table->nobjs = 0;
-    table->objs = (obj_info_t*) malloc(table->size * sizeof(obj_info_t));
+    list_tbl->size = 20;
+    list_tbl->nobjs = 0;
+    list_tbl->objs = (obj_info_t*) malloc(list_tbl->size * sizeof(obj_info_t));
     
-    for (i = 0; i < table->size; i++) 
+    for (i = 0; i < list_tbl->size; i++) 
     {
-        table->objs[i].tag = -1;
-        table->objs[i].ref = -1;
+        list_tbl->objs[i].tag = -1;
+        list_tbl->objs[i].ref = -1;
         
     }
     
-    *tbl = table;
+    *tbl = list_tbl;
 }
 
 /*-------------------------------------------------------------------------
- * Function: table_free
+ * Function: list_table_free
  *
  * Purpose: free table memory
  *
@@ -129,15 +129,15 @@ void table_init( table_t **tbl )
  *-------------------------------------------------------------------------
  */
 
-void table_free( table_t *table )
+void list_table_free( list_table_t *list_tbl )
 {
-    free(table->objs);
-    free(table);
+    free(list_tbl->objs);
+    free(list_tbl);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function: table_check
+ * Function: list_table_check
  *
  * Purpose: search the table for valid objects
  *
@@ -150,17 +150,17 @@ void table_free( table_t *table )
  *-------------------------------------------------------------------------
  */
 
-const char* table_check(table_t *table, char*obj_name)
+const char* list_table_check(list_table_t *list_tbl, char*obj_name)
 {
     int   i;
     int32 tag;
     
-    for (i = 0; i < table->nobjs; i++)
+    for (i = 0; i < list_tbl->nobjs; i++)
     {
-        if (strcmp(table->objs[i].path,obj_name)==0)
+        if (strcmp(list_tbl->objs[i].path,obj_name)==0)
         {
             /* found the name; check if it is an SDS or Image */
-            tag=table->objs[i].tag;
+            tag=list_tbl->objs[i].tag;
             if (tag==DFTAG_SD  ||
                 tag==DFTAG_SDG ||
                 tag==DFTAG_NDG ||
@@ -179,7 +179,7 @@ const char* table_check(table_t *table, char*obj_name)
 
 
 /*-------------------------------------------------------------------------
- * Function: table_print
+ * Function: list_table_print
  *
  * Purpose: print object list
  *
@@ -192,7 +192,7 @@ const char* table_check(table_t *table, char*obj_name)
  *-------------------------------------------------------------------------
  */
 
-void table_print(table_t *table)
+void list_table_print(list_table_t *list_tbl)
 {
     int i;
     
@@ -200,12 +200,12 @@ void table_print(table_t *table)
     printf("%5s %6s    %-15s\n", "Tag", "Ref", "Name");
     printf("---------------------------------------\n");
     
-    for (i = 0; i < table->nobjs; i++)
+    for (i = 0; i < list_tbl->nobjs; i++)
     {
         printf("%5d %6d    %-15s\n", 
-            table->objs[i].tag, 
-            table->objs[i].ref, 
-            table->objs[i].path);
+            list_tbl->objs[i].tag, 
+            list_tbl->objs[i].ref, 
+            list_tbl->objs[i].path);
     }
     
 }
