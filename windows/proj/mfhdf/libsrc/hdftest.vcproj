@@ -153,6 +153,12 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\tchunk.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\tcomp.c">
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\tcoordvar.c">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -169,6 +175,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\tdim.c">
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\temptySDSs.c">
@@ -223,6 +232,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\tnetcdf.c">
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\tsd.c">

@@ -103,14 +103,14 @@ LINK32=link.exe
 # PROP Intermediate_Dir "dllhdftest\AlphaRel"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir "dllhdftest"
+F90=df.exe
+# ADD BASE F90 /compile_only /include:"dllhdftest\AlphaRel/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Release/"
+# ADD F90 /compile_only /include:"dllhdftest\AlphaRel/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Release/"
 CPP=cl.exe
 # ADD BASE CPP /nologo /Gt0 /W3 /GX /O2 /I "..\..\..\..\hdf\src" /I "..\..\..\..\hdf\zlib" /I "..\..\..\..\hdf\jpeg" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /I "..\..\..\..\hdf/src" /I "..\..\..\..\hdf\src" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "DOS_FS" /FD /c
 # SUBTRACT BASE CPP /YX
 # ADD CPP /nologo /MD /Gt0 /W3 /GX /O2 /I "..\..\..\..\hdf\src" /I "..\..\..\..\hdf\zlib" /I "..\..\..\..\hdf\jpeg" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /I "..\..\..\..\hdf/src" /I "..\..\..\..\hdf\src" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "DOS_FS" /FD /c
 # SUBTRACT CPP /YX
-F90=df.exe
-# ADD BASE F90 /compile_only /include:"dllhdftest\AlphaRel/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Release/"
-# ADD F90 /compile_only /include:"dllhdftest\AlphaRel/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Release/"
 RSC=rc.exe
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -134,14 +134,14 @@ LINK32=link.exe
 # PROP Intermediate_Dir "dllhdftest\AlphaDbg"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir "dllhdftest"
+F90=df.exe
+# ADD BASE F90 /compile_only /dbglibs /debug:full /include:"dllhdftest\AlphaDbg/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Debug/"
+# ADD F90 /compile_only /dbglibs /debug:full /include:"dllhdftest\AlphaDbg/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Debug/"
 CPP=cl.exe
 # ADD BASE CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\..\..\hdf\zlib" /I "..\..\..\..\hdf\jpeg" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /I "..\..\..\..\hdf\src" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "DOS_FS" /FD /c
 # SUBTRACT BASE CPP /YX
 # ADD CPP /nologo /MDd /Gt0 /W3 /GX /Zi /Od /I "..\..\..\..\hdf\zlib" /I "..\..\..\..\hdf\jpeg" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /I "..\..\..\..\hdf\src" /D "_CONSOLE" /D "_MBCS" /D "HDF" /D "NO_SYS_XDR_INC" /D "WIN32" /D "_DEBUG" /D "DOS_FS" /FD /c
 # SUBTRACT CPP /YX
-F90=df.exe
-# ADD BASE F90 /compile_only /dbglibs /debug:full /include:"dllhdftest\AlphaDbg/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Debug/"
-# ADD F90 /compile_only /dbglibs /debug:full /include:"dllhdftest\AlphaDbg/" /nologo /warn:nofileopt /I "..\..\..\..\dllhdftest\Debug/"
 RSC=rc.exe
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
@@ -254,7 +254,52 @@ NODEP_CPP_HDFTE=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\mfhdf\libsrc\tchunk.c
+
+!IF  "$(CFG)" == "dllhdftest - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaRel"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaDbg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\mfhdf\libsrc\tcomp.c
+
+!IF  "$(CFG)" == "dllhdftest - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaRel"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaDbg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\mfhdf\libsrc\tcoordvar.c
+
+!IF  "$(CFG)" == "dllhdftest - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaRel"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaDbg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\mfhdf\libsrc\tdim.c
 
 !IF  "$(CFG)" == "dllhdftest - Win32 Release"
 
@@ -300,6 +345,21 @@ SOURCE=..\..\..\..\mfhdf\libsrc\tfile.c
 # Begin Source File
 
 SOURCE=..\..\..\..\mfhdf\libsrc\tidtypes.c
+
+!IF  "$(CFG)" == "dllhdftest - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaRel"
+
+!ELSEIF  "$(CFG)" == "dllhdftest - Win32 AlphaDbg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\mfhdf\libsrc\tnetcdf.c
 
 !IF  "$(CFG)" == "dllhdftest - Win32 Release"
 
