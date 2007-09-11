@@ -91,10 +91,11 @@ libmfhdf_a_OBJECTS = $(am_libmfhdf_a_OBJECTS)
 am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-am_hdftest_OBJECTS = hdftest.$(OBJEXT) tcoordvar.$(OBJEXT) \
+am_hdftest_OBJECTS = hdftest.$(OBJEXT) tchunk.$(OBJEXT) \
+	tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) tdim.$(OBJEXT) \
 	temptySDSs.$(OBJEXT) tfile.$(OBJEXT) tidtypes.$(OBJEXT) \
-	trank0.$(OBJEXT) tsd.$(OBJEXT) tsdsprops.$(OBJEXT) \
-	tszip.$(OBJEXT)
+	tnetcdf.$(OBJEXT) trank0.$(OBJEXT) tsd.$(OBJEXT) \
+	tsdsprops.$(OBJEXT) tszip.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 DEFAULT_INCLUDES = -I. -I$(top_builddir)/hdf/src@am__isrc@
@@ -258,8 +259,9 @@ XDRSOURCES = ../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
 @HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
-hdftest_SOURCES = hdftest.c tcoordvar.c temptySDSs.c tfile.c		\
-		  tidtypes.c trank0.c tsd.c tsdsprops.c tszip.c
+hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
+		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
+		  tsd.c tsdsprops.c tszip.c
 
 hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
@@ -367,10 +369,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/putgetg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sharray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/string.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tchunk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcomp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcoordvar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tidtypes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tnetcdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trank0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsdsprops.Po@am__quote@

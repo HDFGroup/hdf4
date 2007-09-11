@@ -61,8 +61,9 @@ check_PROGRAMS = cdftest hdftest
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
-hdftest_SOURCES = hdftest.c tcoordvar.c temptySDSs.c tfile.c		\
-		  tidtypes.c trank0.c tsd.c tsdsprops.c tszip.c
+hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
+		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
+		  tsd.c tsdsprops.c tszip.c
 hdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 
 check:

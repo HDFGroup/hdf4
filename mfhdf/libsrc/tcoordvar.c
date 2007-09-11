@@ -45,15 +45,22 @@
 	appears in the parentheses, it indicates that the associate step 
 	specificly tests the changes made to that function.
 
-	- create a one-dim SDS, named "Variable 1"
-	- name its dimension "Variable 1"
+	- create a one-dim SDS, named VAR1_NAME
+	- name its dimension VAR1_NAME
+	- get file information and verify that there is only 1 variable, 
+	  dataset VAR1_NAME
 	- set attribute to dimension "Variable 1" (SDsetattr)
+	- set attribute to SDS "Variable 1" (SDsetattr)
+	- get file information and verify that there are 2 variable, 
+	  dataset VAR1_NAME and coordinate variable VAR1_NAME
+	- write data to the SDS
 	- close all and reopen the file
 	- open dataset "Variable 1" (SDnametoindex)
-	- read data and verify that the data is not corrupted
 	- verify that this variable is not a coordinate variable (SDiscoordvar)
-	- get/verify the dimension's scales of dimension "Variable 1"
-	- verify that this variable is a coordinate variable (SDiscoordvar)
+	- read and verify its attribute information and values
+	- get access to the dataset's first dimension
+	- read and verify its attribute information and values
+	- read data and verify that the data is not corrupted
 
    Return value:
         The number of errors occurred in this routine.
@@ -75,54 +82,56 @@ static intn test_dim1_SDS1(void)
     char  sds_name[20];
     int32 datatype = DFNT_FLOAT32;
     float32 sds1_data[] = {0.1, 2.3, 4.5, 6.7, 8.9};
-    float32 sds2_data[2][3] = {{0.1, 2.3, 4.5}, {4.5, 6.7, 8.9}};
-    int32 dimsize[1], dimsize2[2];
+    float32 out_data[5];
+    int32 dimsize[1];
     int32 sds_id, file_id, dim_id, index;
-    int32 start=0, stride=1, stat;
-    int32 start2[2]={0,0}, stride2[2]={1,1};
+    int32 start=0, stride=1;
     int32 scale1 [5] = {101,102,103,104,105}, scale1_out[5];
     int32 num_type, array_rank, count;
     int32 n_datasets, n_file_attrs, n_local_attrs;
     intn  datanum, ranknum, status =0, i, idx, idx1, idx2;
+    intn  is_coord = FALSE;
     char  attr_name[H4_MAX_NC_NAME], attr_values[80];
     intn  num_errs = 0;         /* number of errors so far */
 
     file_id = SDstart(FILE1, DFACC_CREATE);
     CHECK(file_id, FAIL, "SDstart");
 
+    /* Create a one-dim dataset named VAR1_NAME, of type DFNT_FLOAT32. */
     dimsize[0] = 5;
-    dimsize2[0] = 2;
-    dimsize2[1] = 3;
     sds_id = SDcreate(file_id, VAR1_NAME, datatype, 1, dimsize);
     CHECK(sds_id, FAIL, "SDcreate");
 
-    /* Set the dimension name to be the same as its dataset */
+    /* Set the dimension name to be the same as its dataset. */
     dim_id = SDgetdimid(sds_id, 0);
     CHECK(dim_id, FAIL, "SDgetdimid");
-
     status = SDsetdimname(dim_id, VAR1_NAME);
     CHECK(status, FAIL, "SDsetdimname");
 
-    /* Get file info and verify that there are 2 datasets in the file. */
+    /* Get file info and verify that there is 1 dataset in the file. */
     status = SDfileinfo(file_id, &n_datasets, &n_file_attrs);
     CHECK(status, FAIL, "SDfileinfo");
     VERIFY(n_datasets, 1, "SDfileinfo");
 
-    /* Set an attribute to dimension VAR1_NAME */
+    /* Set an attribute to dimension VAR1_NAME. */
     status = SDsetattr(dim_id, ATTR1_NAME, DFNT_CHAR8, ATTR1_LEN, ATTR1_VAL);
     CHECK(status, FAIL, "SDsetattr");
 
-    /* Set an attribute to dataset VAR1_NAME */
+    /* Set an attribute to dataset VAR1_NAME. */
     status = SDsetattr(sds_id, ATTR2_NAME, DFNT_CHAR8, ATTR2_LEN, ATTR2_VAL);
     CHECK(status, FAIL, "SDsetattr");
 
     /* Get file info and verify that there are 2 datasets in the file:
-       1 SDS and 1 coordinate variable */
+       1 SDS and 1 coordinate variable (because of SDsetattr dim) */
     status = SDfileinfo(file_id, &n_datasets, &n_file_attrs);
     CHECK(status, FAIL, "SDfileinfo");
     VERIFY(n_datasets, 2, "SDfileinfo");
 
-    /* Close dataset and file */
+    /* Write data to the SDS */
+    status = SDwritedata(sds_id, &start, &stride, dimsize, (VOIDP)sds1_data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
     status = SDend(file_id); 
@@ -137,16 +146,20 @@ static intn test_dim1_SDS1(void)
     /* Get access to dataset VAR1_NAME */
     index = SDnametoindex(file_id, VAR1_NAME);
     CHECK(index, FAIL, "SDnametoindex");
-
     sds_id = SDselect(file_id, index);
     CHECK(sds_id, FAIL, "SDselect");
 
+    /* Verify that this variable is a dataset. */
+    is_coord = SDiscoordvar(sds_id);
+    VERIFY(is_coord, FALSE, "SDiscoordvar");
+
+    /* Read and verify the information of the SDS' first attribute. */
     status = SDattrinfo(sds_id, 0, attr_name, &num_type, &count);
     CHECK(status, FAIL, "SDattrinfo");
-    VERIFY(count, 23, "SDattrinfo");
+    VERIFY(count, ATTR2_LEN, "SDattrinfo");
     VERIFY(HDstrncmp(attr_name, ATTR2_NAME, 14), 0, "SDattrinfo");
 
-    /* Read and verify the values of the SDS' attribute */
+    /* Read and verify the values of the SDS' first attribute. */
     status = SDreadattr(sds_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
@@ -156,16 +169,17 @@ static intn test_dim1_SDS1(void)
 	num_errs++;
     }
 
-    /* Get access to its first dimension */
+    /* Get access to the SDS' first dimension. */
     dim_id = SDgetdimid(sds_id, 0);
     CHECK(dim_id, FAIL, "SDgetdimid");
 
+    /* Read and verify the information of the dimension's first attribute. */
     status = SDattrinfo(dim_id, 0, attr_name, &num_type, &count);
     CHECK(status, FAIL, "SDattrinfo");
     VERIFY(count, 19, "SDattrinfo");
     VERIFY(HDstrncmp(attr_name, ATTR1_NAME, 21), 0, "SDattrinfo");
 
-    /* Read and verify the values of the SDS' attribute */
+    /* Read and verify the values of the dimension's first attribute. */
     status = SDreadattr(dim_id, 0, attr_values);
     CHECK(status, FAIL, "SDreadattr");
 
@@ -182,6 +196,18 @@ static intn test_dim1_SDS1(void)
     VERIFY(n_datasets, 2, "SDfileinfo");
     VERIFY(n_file_attrs, 0, "SDfileinfo");
 
+    /* Read and verify the dataset's data */
+    status = SDreaddata (sds_id, &start, NULL, dimsize, &out_data);
+    CHECK(status, FAIL, "SDreaddata");
+
+    for (idx1 = 0; idx1 < dimsize[0]; idx1++)
+        if (out_data[idx1] != sds1_data[idx1])
+	{
+	    fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", out_data[idx1], idx1);
+		num_errs++;
+	}
+
+    /* Close dataset and file. */
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
@@ -213,7 +239,7 @@ static intn test_dim1_SDS1(void)
 	- write data to dataset "Variable 1"
 	- close all and reopen the file
 	- open dataset "Variable 1" (SDnametoindex)
-	- get/verify the dimension's scales of SDS "Variable 1" (SDgetdimscale)
+	- get/verify the first dimension's scales of SDS (SDgetdimscale)
 	- open dataset "Variable 2" (SDnametoindex)
 	- read data and verify that the data is not corrupted
 

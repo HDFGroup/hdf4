@@ -94,8 +94,12 @@ mfhdf/hrepack/hrepacktst.c -text
 mfhdf/hrepack/hrepacktst.h -text
 mfhdf/hrepack/hrepacktst_add.c -text
 mfhdf/hrepack/hrepacktst_verify.c -text
+mfhdf/libsrc/tchunk.c -text
+mfhdf/libsrc/tcomp.c -text
+mfhdf/libsrc/tdim.c -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text
+mfhdf/libsrc/tnetcdf.c -text
 mfhdf/libsrc/tsdsprops.c -text
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
