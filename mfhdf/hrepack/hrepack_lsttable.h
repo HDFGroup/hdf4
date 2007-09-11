@@ -30,12 +30,26 @@ extern "C" {
 /*
  structure to store the tag/ref and path of an object 
  the pair tag/ref uniquely identifies an HDF object 
+ the path field is used for information purposes
 */
 typedef struct obj_info_t {
  int   tag;
  int   ref;
- char  *path;  /* build a path for each object using the folder separation symbol "/" 
-                  along the file traversal */
+ char  *path;  /*  build a path for each object using the vgroup separation symbol "/" 
+                *  along the vgroup hierarchy traversal, e.g., the vgroup hierarchy
+                *
+                *    vg0 -----> vg1 -----> vg2 -----> sds1
+                *                   -----> vg3 -----> sds2
+                *
+                *  would built 6 objects with the paths
+                *    
+                *    vg0
+                *    vg0/vg1
+                *    vg0/vg1/vg2
+                *    vg0/vg1/vg2/sds1
+                *    vg0/vg1/vg3
+                *    vg0/vg1/vg3/sds2
+                */
 } obj_info_t;
 
 /*struct that stores all objects */
