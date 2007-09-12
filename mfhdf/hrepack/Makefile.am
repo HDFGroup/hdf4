@@ -17,7 +17,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 bin_PROGRAMS = hrepack
 
-hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c         \
+hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
                   hrepack_opttable.c hrepack_pal.c hrepack_parse.c          \
                   hrepack_sds.c hrepack_sdutil.c hrepack_utils.c            \
@@ -32,13 +32,13 @@ hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 check_PROGRAMS = hrepack_check test_hrepack
 TESTS = test_hrepack
 
-test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_cmp.c hrepack_gr.c    \
+test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                  \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
                        hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
                        hrepack_dim.c                                        \
-                       hrepack_vs.c hrepacktst_add.c hrepacktst.c  \
-                       hrepacktst_verify.c ../hdiff/hdiff.c               \
+                       hrepack_vs.c hrepacktst_add.c hrepacktst.c           \
+                       hrepacktst_verify.c ../hdiff/hdiff.c                 \
                        ../hdiff/hdiff_array.c ../hdiff/hdiff_gattr.c        \
                        ../hdiff/hdiff_gr.c ../hdiff/hdiff_list.c            \
                        ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_misc.c        \

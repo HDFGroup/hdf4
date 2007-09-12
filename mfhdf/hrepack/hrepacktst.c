@@ -62,8 +62,9 @@ static int test_files();
  *
  * Date: August 3, 2003
  *
- * Modifications: July 7, 2007
- *  Add test for hyperslab repacking in HREPACK_FILE2
+ * Modifications: 
+ *  July 7, 2007. Add test for hyperslab repacking in HREPACK_FILE2
+ *  September 12, 2007. Add test for duplicate vgroup insertions in HREPACK_FILE3
  *
  *-------------------------------------------------------------------------
  */
@@ -135,7 +136,6 @@ int test_files(void)
         goto out;
     hrepack_end (&options);
     PASSED();
-    
     
     TESTING(HDIFF_TSTSTR);
     if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )

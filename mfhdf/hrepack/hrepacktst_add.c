@@ -19,9 +19,9 @@
 #include "pal_rgb.h"
 #include "hrepacktst.h"
 
-#define DATA_FILE1       "image8.txt"
-#define DATA_FILE2       "image24pixel.txt"
-#define DATA_FILE3       "image24plane.txt"
+#define DATA_FILE1 "image8.txt"
+#define DATA_FILE2 "image24pixel.txt"
+#define DATA_FILE3 "image24plane.txt"
 
 
 /* globals for read image data, used in gr, r8 and r24 add */
@@ -37,8 +37,6 @@ unsigned char *image_data = 0;
 
 static int do_groups(char* name);
 
-
-
 static void set_chunk_def( comp_coder_t comp_type, 
                            int32 *dim,
                            int32 ncomps,
@@ -46,7 +44,7 @@ static void set_chunk_def( comp_coder_t comp_type,
                            HDF_CHUNK_DEF *chunk_def );
 
 static
-int add_sd_szip(const char *fname,       /* file name */
+int add_sd_szip(const char *fname,        /* file name */
                  int32 file_id,           /* file ID */
                  int32 sd_id,             /* SD interface identifier */
                  const char* sds_name,    /* sds name */
@@ -983,7 +981,7 @@ int add_r24(const char* image_file,
  strcat( data_file, image_file);
  if ( read_data(data_file)>0)
  {
-  /* set pixel interlace */
+  /* set interlace */
   if (DF24setil(il)==FAIL){
    printf( "Could not set interlace for image\n");
    return FAIL;

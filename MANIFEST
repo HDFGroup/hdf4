@@ -897,7 +897,6 @@
 ./mfhdf/hrepack/hrepack_an.c
 ./mfhdf/hrepack/hrepack_an.h
 ./mfhdf/hrepack/hrepack_check.c
-./mfhdf/hrepack/hrepack_cmp.c
 ./mfhdf/hrepack/hrepack_gr.c
 ./mfhdf/hrepack/hrepack_gr.h
 ./mfhdf/hrepack/hrepack_list.c
