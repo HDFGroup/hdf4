@@ -35,27 +35,9 @@ unsigned char *image_data = 0;
  *-------------------------------------------------------------------------
  */ 
 
-static int do_groups(char* name);
-
-static void set_chunk_def( comp_coder_t comp_type, 
-                           int32 *dim,
-                           int32 ncomps,
-                           int32 bits_per_pixel, /* for szip */
-                           HDF_CHUNK_DEF *chunk_def );
-
-static
-int add_sd_szip(const char *fname,        /* file name */
-                 int32 file_id,           /* file ID */
-                 int32 sd_id,             /* SD interface identifier */
-                 const char* sds_name,    /* sds name */
-                 int32 vgroup_id,         /* group ID */
-                 int32 chunk_flags,       /* chunk flags */
-                 int32 nt,                /* number type */
-                 int32 bits_per_pixel,    /* szip parameter */
-                 int32 *dim,              /* dimension of the data set */
-                 void *data
-                 );
-
+static int do_file_groups(char* fname);
+static int do_file_hyperslab(char* fname);
+static int do_file_all(char* fname);
 
 /*-------------------------------------------------------------------------
  * Function: generate_files
@@ -63,6 +45,7 @@ int add_sd_szip(const char *fname,        /* file name */
  * Purpose: writes several HDF objects to the files 
  *  HREPACK_FILE1
  *  HREPACK_FILE2
+ *  HREPACK_FILE3
  *
  * Return: SUCCEED, FAIL
  *
@@ -71,6 +54,35 @@ int add_sd_szip(const char *fname,        /* file name */
 
 
 int generate_files(void)
+{
+    TESTING("generating files");
+    
+    if (do_file_all(HREPACK_FILE1)<0)
+        return FAIL;
+    
+    if (do_file_hyperslab(HREPACK_FILE2)<0)
+        return FAIL;
+    
+    if (do_file_groups(HREPACK_FILE3)<0)
+        return FAIL;
+
+    PASSED();
+    
+    return SUCCEED;
+    
+}
+
+/*-------------------------------------------------------------------------
+ * Function: do_file_all
+ *
+ * Purpose: writes all types of HDF objects 
+ *
+ * Return: SUCCEED, FAIL
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static int do_file_all(char* fname)
 {
     int32         vgroup1_id,   /* vgroup identifier */
                   vgroup2_id,   /* vgroup identifier */
@@ -90,16 +102,15 @@ int generate_files(void)
     *-------------------------------------------------------------------------
     */
 
-    
     /* create a HDF file */
-    if ((file_id = Hopen (HREPACK_FILE1, DFACC_CREATE, (int16)0))<0)
+    if ((file_id = Hopen (fname, DFACC_CREATE, (int16)0))<0)
     {
-        printf("Error: Could not create file <%s>\n",HREPACK_FILE1);
+        printf("Error: Could not create file <%s>\n",fname);
         return FAIL;
     }
     
     /* initialize the SD interface */
-    if ((sd_id = SDstart (HREPACK_FILE1, DFACC_RDWR))== FAIL)
+    if ((sd_id = SDstart (fname, DFACC_RDWR))== FAIL)
     {
         printf("Error: Could not start SD interface\n");
         return FAIL;
@@ -125,7 +136,6 @@ int generate_files(void)
     *-------------------------------------------------------------------------
     */ 
 
-    TESTING("generating groups");
     
     vgroup1_id = Vattach (file_id, -1, "w");
     if (Vsetname (vgroup1_id, "g1")==FAIL)
@@ -179,7 +189,7 @@ int generate_files(void)
         goto out;
     }
 
-    PASSED();
+    
     
    /*-------------------------------------------------------------------------
     * add some SDSs to the file
@@ -187,25 +197,23 @@ int generate_files(void)
     *-------------------------------------------------------------------------
     */ 
 
-    TESTING("generating SDSs");
-
-    
+   
     /* add non chunked, non compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_NONE;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset1",vgroup1_id,chunk_flags,comp_type,NULL)<0)
         goto out;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset2",vgroup2_id,chunk_flags,comp_type,NULL)<0)
         goto out;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset3",vgroup3_id,chunk_flags,comp_type,NULL)<0)
         goto out;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset4",0,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset4",0,chunk_flags,comp_type,NULL)<0)
         goto out;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset5",0,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset5",0,chunk_flags,comp_type,NULL)<0)
         goto out;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset6",0,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset6",0,chunk_flags,comp_type,NULL)<0)
         goto out;
-    if (add_sd3d(HREPACK_FILE1,file_id,sd_id,"dset7",0,chunk_flags,comp_type,NULL)<0)
+    if (add_sd3d(fname,file_id,sd_id,"dset7",0,chunk_flags,comp_type,NULL)<0)
         goto out;
     
     
@@ -220,13 +228,13 @@ int generate_files(void)
     /* add a chunked, non compressed sds */
     chunk_flags = HDF_CHUNK;
     comp_type   = COMP_CODE_NONE;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_chunk",0,chunk_flags,comp_type,NULL)<0)
+    if (add_sd(fname,file_id,sd_id,"dset_chunk",0,chunk_flags,comp_type,NULL)<0)
         goto out;
     
     /* add a chunked-compressed sds with SDsetchunk */
     chunk_flags = HDF_CHUNK | HDF_COMP;
     comp_type   = COMP_CODE_DEFLATE;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info)<0)
+    if (add_sd(fname,file_id,sd_id,"dset_chunk_comp",0,chunk_flags,comp_type,&comp_info)<0)
         goto out;
     
    /*-------------------------------------------------------------------------
@@ -237,7 +245,7 @@ int generate_files(void)
     /* add some non chunked, compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_DEFLATE;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info)<0)
+    if (add_sd(fname,file_id,sd_id,"dset_gzip",0,chunk_flags,comp_type,&comp_info)<0)
         goto out;
     
    /*-------------------------------------------------------------------------
@@ -255,7 +263,7 @@ int generate_files(void)
     /* add some non chunked, compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_RLE;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_rle",0,chunk_flags,comp_type,&comp_info)<0)
+    if (add_sd(fname,file_id,sd_id,"dset_rle",0,chunk_flags,comp_type,&comp_info)<0)
         goto out;
     
    /*-------------------------------------------------------------------------
@@ -266,7 +274,7 @@ int generate_files(void)
     /* add some non chunked, compressed sds */
     chunk_flags = HDF_NONE;
     comp_type   = COMP_CODE_SKPHUFF;
-    if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_huff",0,chunk_flags,comp_type,&comp_info)<0)
+    if (add_sd(fname,file_id,sd_id,"dset_huff",0,chunk_flags,comp_type,&comp_info)<0)
         goto out;
     
 #if defined (H4_HAVE_LIBSZ)
@@ -278,29 +286,24 @@ int generate_files(void)
     {
         chunk_flags = HDF_NONE;
         comp_type   = COMP_CODE_SZIP;
-        if (add_sd(HREPACK_FILE1,file_id,sd_id,"dset_szip",0,chunk_flags,comp_type,&comp_info)<0)
+        if (add_sd(fname,file_id,sd_id,"dset_szip",0,chunk_flags,comp_type,&comp_info)<0)
             goto out;
         
-        if (add_sd_szip_all(HREPACK_FILE1,file_id,sd_id,0)<0)
+        if (add_sd_szip_all(fname,file_id,sd_id,0)<0)
             goto out;
     }
     
 #endif
-
-    PASSED();
-
-    TESTING("generating images");
-
     
    /*-------------------------------------------------------------------------
     * add some RIS24 images to the file
     *-------------------------------------------------------------------------
     */
     /* Pixel Interlacing */
-    if (add_r24(DATA_FILE2,HREPACK_FILE1,file_id,DFIL_PIXEL,vgroup_img_id)<0)
+    if (add_r24(DATA_FILE2,fname,file_id,DFIL_PIXEL,vgroup_img_id)<0)
         goto out;
     /* Scan Plane Interlacing */
-    if (add_r24(DATA_FILE3,HREPACK_FILE1,file_id,DFIL_PLANE,vgroup_img_id)<0)
+    if (add_r24(DATA_FILE3,fname,file_id,DFIL_PLANE,vgroup_img_id)<0)
         goto out;  
     
     
@@ -308,7 +311,7 @@ int generate_files(void)
     * add some RIS8 images to the file
     *-------------------------------------------------------------------------
     */ 
-    if (add_r8(DATA_FILE1,HREPACK_FILE1,file_id,vgroup_img_id)<0)
+    if (add_r8(DATA_FILE1,fname,file_id,vgroup_img_id)<0)
         goto out;
     
    /*-------------------------------------------------------------------------
@@ -373,11 +376,6 @@ int generate_files(void)
     * duplicates are inserted in the groups "g1", "g2", "g3" and root
     *-------------------------------------------------------------------------
     */ 
-
-    PASSED();
-
-    TESTING("generating Vdatas");
-
     
     if (add_vs("vdata1",file_id,vgroup1_id)<0)
         goto out; 
@@ -387,23 +385,13 @@ int generate_files(void)
         goto out;
     if (add_vs("vdata4",file_id,0)<0)
         goto out; 
-
-    PASSED();
-
-    TESTING("generating global attributes");
-
     
    /*-------------------------------------------------------------------------
     * add some global attributes to the file
     *-------------------------------------------------------------------------
     */ 
-    if (add_glb_attrs(HREPACK_FILE1,file_id,sd_id,gr_id)<0)
+    if (add_glb_attrs(fname,file_id,sd_id,gr_id)<0)
         goto out;
-
-
-    PASSED();
-
-    TESTING("generating annotations");
 
     
    /*-------------------------------------------------------------------------
@@ -418,41 +406,11 @@ int generate_files(void)
     *-------------------------------------------------------------------------
     */ 
 
-    PASSED();
 
-
-    TESTING("generating palettes");
-    
-
-    if (add_pal(HREPACK_FILE1)<0)
+    if (add_pal(fname)<0)
         goto out;
-
-    PASSED();
-    
-   /*-------------------------------------------------------------------------
-    * generate a big file for hyperslab reading
-    *-------------------------------------------------------------------------
-    */ 
-
-    TESTING("generating big file");
-
-    if (do_big_file(HREPACK_FILE2)<0)
-        goto out;
-
-    PASSED();
-
-
-   /*-------------------------------------------------------------------------
-    * generate groups
-    *-------------------------------------------------------------------------
-    */ 
-
-    TESTING("generating groups");
-
-    if (do_groups(HREPACK_FILE3)<0)
-        goto out;
-
-    
+   
+     
    /*-------------------------------------------------------------------------
     * close
     *-------------------------------------------------------------------------
@@ -494,9 +452,6 @@ int generate_files(void)
         return FAIL;
     }
 
-    PASSED();
-
-    
 
     return SUCCEED;
 
@@ -509,8 +464,6 @@ out:
     Hclose (file_id);
     return FAIL;
  }
-
-
 
 
 
@@ -1863,7 +1816,6 @@ int read_data(const char* file_name)
  *-------------------------------------------------------------------------
  */
 
-static
 int add_sd_szip(const char *fname,       /* file name */
                  int32 file_id,           /* file ID */
                  int32 sd_id,             /* SD interface identifier */
@@ -2022,11 +1974,11 @@ int add_sd_szip_all(const char *fname,       /* file name */
  */
 
 
-static void set_chunk_def( comp_coder_t comp_type, 
-                           int32 *dim,
-                           int32 ncomps,
-                           int32 bits_per_pixel, /* for szip */
-                           HDF_CHUNK_DEF *chunk_def )
+void set_chunk_def( comp_coder_t comp_type, 
+                    int32 *dim,
+                    int32 ncomps,
+                    int32 bits_per_pixel, /* for szip */
+                    HDF_CHUNK_DEF *chunk_def )
 {
  
  /* Define chunk's dimensions */
@@ -2087,7 +2039,7 @@ chunk_def->comp.chunk_lengths[1] = dim[1]/2;
 #define ADD_ROWS ( 1024 * 1024 - 10 ) / 10 
 
 
-int do_big_file(char* file_name) 
+static int do_file_hyperslab(char* file_name) 
 {
 
     int32 sd_id;         /* SD interface identifier */
@@ -2198,7 +2150,7 @@ error:
  *-------------------------------------------------------------------------
  */
 
-static int do_groups(char* name) 
+static int do_file_groups(char* name) 
 {
      
      int32 vg0_id,    /* vgroup identifier */

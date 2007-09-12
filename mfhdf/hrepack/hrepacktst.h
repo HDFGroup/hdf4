@@ -98,6 +98,26 @@ int add_sd(const char *fname,       /* file name */
             comp_coder_t comp_type,  /* compression flag */
             comp_info *comp_info     /* compression structure */ );
 
+void set_chunk_def( comp_coder_t comp_type, 
+                           int32 *dim,
+                           int32 ncomps,
+                           int32 bits_per_pixel, /* for szip */
+                           HDF_CHUNK_DEF *chunk_def );
+
+
+int add_sd_szip(const char *fname,        /* file name */
+                 int32 file_id,           /* file ID */
+                 int32 sd_id,             /* SD interface identifier */
+                 const char* sds_name,    /* sds name */
+                 int32 vgroup_id,         /* group ID */
+                 int32 chunk_flags,       /* chunk flags */
+                 int32 nt,                /* number type */
+                 int32 bits_per_pixel,    /* szip parameter */
+                 int32 *dim,              /* dimension of the data set */
+                 void *data
+                 );
+
+
 int add_sd3d(const char *fname,       /* file name */
               int32 file_id,           /* file ID */
               int32  sd_id,            /* SD interface identifier */
