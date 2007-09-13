@@ -135,12 +135,11 @@ static
 void usage(void)
 {
 
- printf(
-  "hrepack -i input -o output [-h] [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f comp_file] [-m number]\n");
- printf("  -i input          Input HDF File\n");
- printf("  -o output         Output HDF File\n");
- printf("  [-h]              Print usage message\n");
- printf("  [-t 'comp_info']  Compression type: 'comp_info' is a string with the format\n");
+ printf("usage: hrepack -i input -o output [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f cfile] [-m size]\n");
+ printf("  -i input          input HDF File\n");
+ printf("  -o output         output HDF File\n");
+ printf("  [-v]              verbose mode\n");
+ printf("  [-t 'comp_info']  compression type: 'comp_info' is a string with the format\n");
  printf("\t\t     <object list>:<type of compression><parameters>\n");
  printf("\t\t     <object list> is a comma separated list of object names\n");
  printf("\t\t        meaning apply compression only to those objects\n");
@@ -158,7 +157,7 @@ void usage(void)
  printf("\t\t       GZIP, the deflation level\n");
  printf("\t\t       JPEG, the quality factor\n");
  printf("\t\t       SZIP, pixels per block, compression mode (NN or EC)\n");
- printf("  [-c 'chunk_info'] Apply chunking. 'chunk_info' is a string with the format\n");
+ printf("  [-c 'chunk_info'] apply chunking. 'chunk_info' is a string with the format\n");
  printf("\t\t     <object list>:<chunk information>\n");
  printf("\t\t       <object list> is a comma separated list of object names\n");
  printf("\t\t         meaning apply chunking only to those objects\n");
@@ -166,27 +165,26 @@ void usage(void)
  printf("\t\t       <chunk information> is the chunk size of each dimension:\n");
  printf("\t\t        <dim_1 x dim_2 x ... dim_n> or\n");
  printf("\t\t        NONE, to unchunk a previous chunked object\n");
- printf("  -f comp_file      File with compression info in it (instead of the two above options)\n");
- printf("  -m number         Do not compress objects wich size in bytes is smaller than number\n");
- printf("                    A default minimum of 1024 bytes is used\n");
+ printf("  [-f cfile]      file with compression information -t and -c\n");
+ printf("  [-m size]       do not compress objects smaller than size (bytes)\n");
  printf("\n");
  printf("Examples:\n");
  printf("\n");
- printf("1)$hrepack -v -i file1.hdf -o file2.hdf -t '*:RLE'\n");
+ printf("1) hrepack -v -i file1.hdf -o file2.hdf -t '*:RLE'\n");
  printf("  compresses all objects in the file file1.hdf, using RLE compression\n");
  printf("\n");
- printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A,/group2/B,C:HUFF 1'\n");
+ printf("2) hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A,/group2/B,C:HUFF 1'\n");
  printf("  applies Skipping Huffman compression with skip factor of 1,\n");
  printf("   for objects /group1/A, /group2/B and C\n");
  printf("\n");
- printf("2)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/D:RLE' -c 'D,E:10x10'\n");
+ printf("2) hrepack -v -i file1.hdf -o file2.hdf -t '/group1/D:RLE' -c 'D,E:10x10'\n");
  printf("  applies RLE compression for object /group1/D\n");
  printf("  applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions\n");
  printf("\n");
- printf("3)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A:NONE'\n");
+ printf("3) hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A:NONE'\n");
  printf("  uncompresses object /group1/A\n");
  printf("\n");
- printf("4)$hrepack -v -i file1.hdf -o file2.hdf -t '/group1/group2/A:SZIP 8,NN'\n");
+ printf("4) hrepack -v -i file1.hdf -o file2.hdf -t '/group1/group2/A:SZIP 8,NN'\n");
  printf("  applies SZIP compression to object /group1/group2/A, with parameters 8 and NN\n");
  printf("\n");
  printf("Note: the use of the verbose option -v is recommended\n");
