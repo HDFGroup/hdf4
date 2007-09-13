@@ -147,11 +147,19 @@ Bugs fixed since HDF4.2r1
 	- In HDF4.2r0, SDwritedata failed when the SDS had rank=0 (bug #1045.)
 	  This change was retracted, writing to SDS with rank=0 is allowed 
 	  again.  BMR - 2005/8/23
-	- SDgetdimscale incorrectly returns FAIL or returns incorrect
-	  data when the associated SDS has the same name as the dimension.
-	  The problem was fixed for multi-dimensional SDSs.  If the SDS has 
-	  only one dimension, the results of subsequent assesses to the
-	  dimension are still unpredictable (bugzilla #328.)  BMR - 2005/8/23
+	- When a dimension has the same name as an SDS, depending on the
+	  order in which they were created, either the SDS or the dimension
+	  will be corrupted if certain operations occur, such as SDsetdimscale
+	  or SDsetattr to the dimension.  Current situations can be summarized
+	  as below:
+	  + For the data that was already corrupted, it is impossible to
+	    recover.
+	  + For existing data that has not been corrupted, the problem was
+	    fixed for multi-dimensional SDSs only.  If the SDS had only one
+	    dimension, the results of subsequent assesses to the dimension
+	    would still be unpredictable (bugzilla #328.)  BMR - 2005/8/23
+	  + For future data, the problem has been fixed. (bugzilla #624)
+	    BMR - 2007/6/24
 	- Allowing maximum number of opened files to be increased revealed
 	  a problem, more than 255 files being opened will cause file
 	  corruption (bugzilla #440.)  Specifically, file number (255*m)+n 
