@@ -474,7 +474,7 @@ out:
  *  GR - Multifile General Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -584,7 +584,7 @@ int add_gr_ffile(const char* name_file,
  *  GR - Multifile General Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -785,7 +785,7 @@ int add_gr(const char* gr_name,     /* gr name */
  *
  * Purpose: utility function to write global attributes
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -835,7 +835,7 @@ int add_glb_attrs(const char *fname,
  *  DFR8 - Single-file 8-Bit Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -906,7 +906,7 @@ int add_r8(const char* image_file,
  *  DF24 - Single-file 24-Bit Raster Image Interface,
  *  optionally inserting the image into the group VGROUP_ID
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -916,58 +916,63 @@ int add_r8(const char* image_file,
  */
 
 int add_r24(const char* image_file,
-             const char *fname,
-             int32 file_id,
-             intn il,
-             int32 vgroup_id)
+            const char *fname,
+            int32 file_id,
+            intn il,
+            int32 vgroup_id)
 {
- int32  ri_ref;         /* reference number of the GR image */
- char   *srcdir = getenv("srcdir"); /* the source directory */
- char   data_file[512]="";          /* buffer to hold name of existing data file */
- 
- /* compose the name of the file to open, using the srcdir, if appropriate */
- if ( srcdir )
- {
-  strcpy(data_file, srcdir);
-  strcat(data_file, "/");
- }
- strcat( data_file, image_file);
- if ( read_data(data_file)>0)
- {
-  /* set interlace */
-  if (DF24setil(il)==FAIL){
-   printf( "Could not set interlace for image\n");
-   return FAIL;
-  }
+    int32  ri_ref;                      /* reference number of the GR image */
+    char   *srcdir = getenv("srcdir");  /* the source directory */
+    char   data_file[512]="";           /* buffer to hold name of existing data file */
+    
+    /* compose the name of the file to open, using the srcdir, if appropriate */
+    if ( srcdir )
+    {
+        strcpy(data_file, srcdir);
+        strcat(data_file, "/");
+    }
+    strcat( data_file, image_file);
 
-  /* write the image */
-  if (DF24addimage(fname, image_data, X_LENGTH, Y_LENGTH)==FAIL){
-   printf( "Could not write image\n");
-   return FAIL;
-  }
-  
-  /* obtain the reference number of the RIS24 */
-  ri_ref = DF24lastref();
-  
-  /* add the image to the vgroup. the tag DFTAG_RIG is used */
-  if (vgroup_id)
-   if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL){
-   printf( "Could not set group for image\n");
-   return FAIL;
-  }
-
-  /* add an annotation and label to the object */
-  if (add_an(file_id, TAG_GRP_IMAGE, ri_ref)<0)
-   return FAIL;
- }
-
- if ( image_data )
- {
-  free( image_data );
-  image_data=NULL;
- }
-
- return SUCCEED;
+    if ( read_data(data_file) > 0 )
+    {
+        /* set interlace */
+        if (DF24setil(il)==FAIL){
+            printf( "Could not set interlace for image\n");
+            return FAIL;
+        }
+        
+        /* write the image */
+        if (DF24addimage(fname, image_data, X_LENGTH, Y_LENGTH)==FAIL){
+            printf( "Could not write image\n");
+            return FAIL;
+        }
+        
+        /* obtain the reference number of the RIS24 */
+        ri_ref = DF24lastref();
+        
+        /* add the image to the vgroup. the tag DFTAG_RIG is used */
+        if (vgroup_id)
+        {
+            if (Vaddtagref (vgroup_id, TAG_GRP_IMAGE, ri_ref)==FAIL)
+            {
+                printf( "Could not set group for image\n");
+                return FAIL;
+            }
+        }
+        
+        /* add an annotation and label to the object */
+        if (add_an(file_id, TAG_GRP_IMAGE, ri_ref)<0)
+            return FAIL;
+    
+    } /* read_data */
+    
+    if ( image_data )
+    {
+        free( image_data );
+        image_data=NULL;
+    }
+    
+    return SUCCEED;
 }
 
 
@@ -981,7 +986,7 @@ int add_r24(const char* image_file,
  *   1)inserting the SD into the group VGROUP_ID
  *   2)making the dataset chunked and/or compressed
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1215,7 +1220,7 @@ fail:
  *   1)inserting the SD into the group VGROUP_ID
  *   2)making the dataset chunked and/or compressed
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1389,7 +1394,7 @@ int add_empty_sd(int32 sd_id,             /* SD id */
  *  VS - Vdata Interface,
  *  optionally inserting the VS into the group VGROUP_ID
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1524,7 +1529,7 @@ int add_vs(const char* vs_name,
  *
  * Purpose: utility function to write a file AN
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1645,7 +1650,7 @@ int add_file_an(int32 file_id)
  *
  * Purpose: utility function to write a AN
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1711,7 +1716,7 @@ int add_an(int32 file_id, int32 tag, int32 ref)
  *
  * Purpose: utility function to write a palette
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1751,7 +1756,7 @@ int add_pal(const char* fname)
  *-------------------------------------------------------------------------
  */
 
-int read_data(const char* file_name)
+int read_data(const char* fname)
 {
  int    i, n;
  int    color_planes;
@@ -1759,11 +1764,11 @@ int read_data(const char* file_name)
  FILE   *f;
  int    w, h;
 
- f = fopen( file_name, "r");
+ f = fopen( fname, "r");
 
  if ( f == NULL )
  {
-  printf( "Could not open file <%s>\n", file_name );
+  printf( "Could not open file <%s>\n", fname );
   return -1;
  }
 
@@ -1799,15 +1804,13 @@ int read_data(const char* file_name)
 }
 
 
-
-
 /*-------------------------------------------------------------------------
  * Function: add_sd_szip
  *
  * Purpose: utility function to write with SZIPed SDSs
  *  SD - Multifile Scientific Data Interface,
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -1924,7 +1927,7 @@ fail:
  * Purpose: utility function to write several SZIPed SDSs
  *  SD - Multifile Scientific Data Interface,
  *
- * Return: int
+ * Return: SUCCEED, FAIL
  *
  * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
  *
@@ -2039,7 +2042,7 @@ chunk_def->comp.chunk_lengths[1] = dim[1]/2;
 #define ADD_ROWS ( 1024 * 1024 - 10 ) / 10 
 
 
-static int do_file_hyperslab(char* file_name) 
+static int do_file_hyperslab(char* fname) 
 {
 
     int32 sd_id;         /* SD interface identifier */
@@ -2055,7 +2058,7 @@ static int do_file_hyperslab(char* file_name)
 	intn  i, j, n;
 
 	/* Create a file and initiate the SD interface. */
-    if ((sd_id = SDstart(file_name, DFACC_CREATE))==FAIL) 
+    if ((sd_id = SDstart(fname, DFACC_CREATE))==FAIL) 
         goto error;
   
 	/* Define the rank and dimensions of the data set to be created. */
@@ -2092,7 +2095,7 @@ static int do_file_hyperslab(char* file_name)
         goto error;
    
     /* append data */
-	if (( sd_id = SDstart(file_name, DFACC_WRITE))==FAIL) 
+	if (( sd_id = SDstart(fname, DFACC_WRITE))==FAIL) 
         goto error;
    	
     if ((sds_idx = SDnametoindex (sd_id, "data1"))==FAIL) 
@@ -2261,5 +2264,40 @@ out:
      printf("Error...Exiting...\n");
      return FAIL;
      
+}
+
+/*-------------------------------------------------------------------------
+ * write an image to file FNAME
+ *-------------------------------------------------------------------------
+ */
+
+static int do_file_image(char* fname) 
+{
+    int32 file_id;
+    
+    /* create a HDF file */
+    if ((file_id = Hopen (fname, DFACC_CREATE, (int16)0))<0)
+    {
+        printf("Error: Could not create file <%s>\n",fname);
+        return FAIL;
+    }
+    
+    /* Scan Plane Interlacing */
+    if (add_r24(DATA_FILE3,fname,file_id,DFIL_PLANE,0)<0)
+        goto out;  
+    
+    /* close the HDF file */
+    if (Hclose (file_id)==FAIL)
+    {
+        printf( "Could not close file\n");
+        return FAIL;
+    }
+    
+    
+    return SUCCEED;
+    
+out:
+    return FAIL;
+    
 }
 

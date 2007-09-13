@@ -98,6 +98,10 @@ uint32 diff_gr( int32 gr1_id,
    goto out;
   }
 
+ 
+ if (opt->verbose)
+     printf("Comparing <%s>\n",gr1_name); 
+
 
 /*-------------------------------------------------------------------------
  * check for different type
@@ -243,10 +247,7 @@ uint32 diff_gr( int32 gr1_id,
      *-------------------------------------------------------------------------
      */
      
-     
-     if (opt->verbose)
-         printf("Comparing <%s>\n",gr1_name); 
-     
+         
      cmp = HDmemcmp(buf1,buf2,data_size);
      if (cmp!=0)
      {
