@@ -101,10 +101,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_an.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_cmp.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_dim.c
 # End Source File
 # Begin Source File
