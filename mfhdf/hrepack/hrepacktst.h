@@ -22,6 +22,9 @@
 #define HREPACK_FILE3         "hrepacktst3.hdf"
 #define HREPACK_FILE3_OUT     "hrepacktst3_out.hdf"
 
+#define DATA_FILE1            "image8.txt"
+#define DATA_FILE2            "image24pixel.txt"
+#define DATA_FILE3            "image24plane.txt"
 
 #define HDIFF_TSTSTR     "hdiff hrepacktst1.hdf hrepacktst1_out.hdf"
 #define HDIFF_TSTSTR2    "hdiff hrepacktst2.hdf hrepacktst2_out.hdf"
