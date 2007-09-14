@@ -666,8 +666,16 @@ extern      "C"
 				(intf *error_code,_fcd error_message, intf *len);
 /*
    ** from hfilef.c
+*/
+/* 
+ *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
+ *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
+ *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
+ *  and C wrapper function hiclose called by hclose   
+ *                                                                                    EIP 2007-09-14
  */
-# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
+# ifndef _WIN32
 #   define nhiopen       H4_F77_FUNC(hiopen, HIOPEN)
 #   define nhclose       H4_F77_FUNC(hclose, HCLOSE)
 #   define nhnumber      H4_F77_FUNC(hnumber, HNUMBER)
@@ -749,7 +757,15 @@ extern      "C"
 
 /* for Multi-file fortran Annotation inteface */
 
-# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
+/* 
+ *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
+ *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
+ *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
+ *  and C wrapper function hiclose called by hclose   
+ *                                                                                    EIP 2007-09-14
+ */
+# ifndef _WIN32
 #  define nafstart      H4_F77_FUNC(afstart, AFSTART)
 #  define naffileinfo   H4_F77_FUNC(affileinfo, AFFILEINFO)
 #  define nafend        H4_F77_FUNC(afend, AFEND)
@@ -942,7 +958,15 @@ HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 HDFLIBAPI intn ANdestroy(void);
 
 /* for Multi-file fortran GR interface */
-# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
+/* 
+ *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
+ *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
+ *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
+ *  and C wrapper function hiclose called by hclose   
+ *                                                                                    EIP 2007-09-14
+ */
+# ifndef _WIN32
 #  define nmgstart         H4_F77_FUNC(mgstart, MGSTART)
 #  define nmgfinfo         H4_F77_FUNC(mgfinfo, MGFINFO)
 #  define nmgend           H4_F77_FUNC(mgend, MGEND)
@@ -1240,7 +1264,15 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
 /*
    ** from vgF.c
  */
-# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
+/* 
+ *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
+ *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
+ *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
+ *  and C wrapper function hiclose called by hclose   
+ *                                                                                    EIP 2007-09-14
+ */
+# ifndef _WIN32
 #   define  ndfivopn       H4_F77_FUNC(dfivopn, DFIVOPN)
 #   define  ndfvclos       H4_F77_FUNC(dfvclos, DFVCLOS)
 #   define  nvatchc        H4_F77_FUNC(vatchc, VATCHC)
@@ -1760,7 +1792,15 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
  /* 
   ** from vattrf.c
   */
-# if defined(UNIX386) || (!(defined INTEL86) && !(defined _WIN32))
+/* 
+ *  Not all HDF4 Fortran functions are real Fortran functions, they are C wrappers called from a
+ *  Fortran program. Since on Windows we have to have a real Fortran function, additional C wrappers
+ *  were added at the time when Windows port was done for multi-file interfaces: for example, 
+ *  hclose is a C wrapper on UNIX, while on Windows we have two functions: Fortran function hclose
+ *  and C wrapper function hiclose called by hclose   
+ *                                                                                    EIP 2007-09-14
+ */
+# ifndef _WIN32
 #  define nvsfcfdx   H4_F77_FUNC(vsfcfdx, VSFCFDX)
 #  define nvsfcsat   H4_F77_FUNC(vsfcsat, VSFCSAT)
 #  define nvsfcsca   H4_F77_FUNC(vsfcsca, VSFCSCA)

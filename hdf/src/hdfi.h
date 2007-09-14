@@ -793,10 +793,6 @@ typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
-#define FNAME(x) x
-#ifdef H4_ABSOFT
-#define DF_CAPFNAMES
-#endif /*ABSOFT*/
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
 #else

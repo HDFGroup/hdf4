@@ -108,8 +108,8 @@ New Features and Changes:
 
 Support for new platforms and compilers
 =======================================
-         - Added support for gfortran on Mac Intel
-                                        EIP 2007/05/31
+         - Added support for gfortran and g95 on Mac Intel
+                                        EIP 2007/09/14
          - Added support for gfortran on FreeBSD for both 32 and 64-bit. 
          - Added support for FreeBSD on AMD64 with gcc compilers
                                         EIP 2007/05/24
