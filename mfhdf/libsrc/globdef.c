@@ -1,18 +1,20 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Copyright 1993, University Corporation for Atmospheric Research           *
+ * See netcdf/COPYRIGHT file for copying and redistribution conditions.      *
+ *                                                                           *
+ * Copyright by The HDF Group.                                               *
+ * Copyright by the Board of Trustees of the University of Illinois.         *
+ * All rights reserved.                                                      *
+ *                                                                           *
+ * This file is part of HDF.  The full HDF copyright notice, including       *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the files COPYING and Copyright.html.  COPYING can be found at the root   *
+ * of the source code distribution tree; Copyright.html can be found at      *
+ * http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
+ * access to either file, you may request a copy from help@hdfgroup.org.     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /*
- *	Copyright 1993, University Corporation for Atmospheric Research
- *
- *  Permission to use, copy, modify, and distribute this software and its
- * documentation for any purpose without fee is hereby granted, provided
- * that the above copyright notice appear in all copies, that both that
- * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of UCAR/Unidata not be used in
- * advertising or publicity pertaining to distribution of the software
- * without specific, written prior permission.  UCAR makes no
- * representations about the suitability of this software for any purpose.
- * It is provided "as is" without express or implied warranty.  It is
- * provided with no support and without obligation on the part of UCAR
- * Unidata, to assist in its use, correction, modification, or enhancement.
- *
  *
  * $Id$
  *
