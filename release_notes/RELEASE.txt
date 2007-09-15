@@ -57,6 +57,8 @@ New Features and Changes:
      
     Library
     ========= 
+        - SZIP compression is supported now for GR C interfaces
+                                               EIP - 2007/09/15
         - Added new Fortran function hconfinf that checks if compression
           method is present and if encoding is available
         - Added support for SZIP compression in Fortran
@@ -278,9 +280,7 @@ HDF 4.2 Release 1 has been tested on the following platforms:
 Known problems
 ==============
 
-o SZIP compression cannot be used with GR interfaces. For more information
-  see "HDF4.2r1 SZIP Release Notes" available at 
-  http://hdf.ncsa.uiuc.edu/doc_resource/SZIP/SZIP_HDF4_2r1.pdf
+o  hdfcomp fails on HPUX 11.23 for th e64-bit version of the library
 
 o  This release doesn't support VMS system.
 

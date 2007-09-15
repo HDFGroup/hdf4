@@ -685,18 +685,18 @@ extern      "C"
 #   define nhglibverc    H4_F77_FUNC(hglibverc, HGLIBVERC)
 #   define nhgfilverc    H4_F77_FUNC(hgfilverc, HGFILVERC)
 #   define nhiishdf      H4_F77_FUNC(hiishdf, HIISHDF)
-#   define nhconfinfc      H4_F77_FUNC(hconfinfc, HCONFINFC)
+#   define nhconfinfc    H4_F77_FUNC(hconfinfc, HCONFINFC)
 #  else                                   /* !sl */
-#   define nhiopen   H4_F77_FUNC(hiopen, HIOPEN)
-#   define nhiclose   H4_F77_FUNC(hiclose, HICLOSE)
-#   define nhinumbr  H4_F77_FUNC(hinumbr, HINUMBR)
-#   define nhxisdir  H4_F77_FUNC(hxisdir, HXISDIR)
-#   define nhxiscdir H4_F77_FUNC(hxiscdir, HXISCDIR)
+#   define nhiopen       H4_F77_FUNC(hiopen, HIOPEN)
+#   define nhiclose      H4_F77_FUNC(hiclose, HICLOSE)
+#   define nhinumbr      H4_F77_FUNC(hinumbr, HINUMBR)
+#   define nhxisdir      H4_F77_FUNC(hxisdir, HXISDIR)
+#   define nhxiscdir     H4_F77_FUNC(hxiscdir, HXISCDIR)
 #   define nhddontatexit H4_F77_FUNC(hddontatexit, HDDONTATEXIT)
-#   define nhglibverc H4_F77_FUNC(hglibverc, HGLIBVERC)
-#   define nhgfilverc H4_F77_FUNC(hgfilverc, HGFILVERC)
-#   define nhiishdf   H4_F77_FUNC(hiishdf, HIISHDF)
-#   define nhconfinfc      H4_F77_FUNC(hconfinfc, HCONFINFC)
+#   define nhglibverc    H4_F77_FUNC(hglibverc, HGLIBVERC)
+#   define nhgfilverc    H4_F77_FUNC(hgfilverc, HGFILVERC)
+#   define nhiishdf      H4_F77_FUNC(hiishdf, HIISHDF)
+#   define nhconfinfc    H4_F77_FUNC(hconfinfc, HCONFINFC)
 #  endif                                   /* !sl */
 
 

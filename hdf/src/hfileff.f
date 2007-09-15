@@ -189,8 +189,9 @@ C Currently this routine is used with SZIP compression only
 C-----------------------------------------------------------------------------*/
 
       integer function hconfinf(coder_type, info)
-      integer coder_type, info, status
-      
-      status = hconfinfc(coder_type, info)
+      integer coder_type, info
+
+      integer hconfinfc
+      hconfinf = hconfinfc(coder_type, info)
       return
       end
