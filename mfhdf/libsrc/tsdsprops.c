@@ -23,6 +23,9 @@
  *		second dataset to contain garbage anymore. (bug 525)
  *	  test_unlim_inloop - tests that appending unlimited data to more 
  *		than one dataset within a loop stores data correctly. (bug 801)
+ *	  test_valid_args - tests that when some invalid argments were passed
+ *		into an API, they can be caught and handled properly.
+ *		(bugzilla 150)
 ****************************************************************************/
 
 #include "mfhdf.h"
@@ -422,6 +425,128 @@ test_unlim_inloop()
     return num_errs;
 }   /* test_unlim_inloop */
 
+/***************************************************************************
+   Name: test_valid_args() - tests that when some invalid argments were passed
+			    into an API, they can be caught and handled 
+			    properly. (bugzilla 150)
+   Description:
+	The main contents include:
+	- create a data set of size X_LENGTH x Y_LENGTH
+	- write to the data set
+	- close the file, then reopen it
+	- read the dataset giving a stride value, that goes beyong the 
+	  dimension size
+	- when SDreaddata failed, try to check for error code DFE_ARGS and
+	  handle the failure properly
+	- close all.
+
+   Return value:
+        The number of errors occurred in this routine.
+
+   BMR - Sep 2007
+****************************************************************************/
+
+#define ARGS_FILE_NAME  "test_arguments.hdf" /* file to test validating args */
+
+static intn
+test_valid_args()
+{
+    int32 fid, dset1, dset2;
+    int32 start[2], edges[2], dtype, nattrs, dimsizes[2], rank, strides[2];
+    int16 array_data[X_LENGTH][Y_LENGTH], /* data to be written to datasets */
+	  outdata[X_LENGTH][Y_LENGTH];    /* data read */
+    char  ds_name[20];
+    intn  idxx, idxy, status;
+    intn  num_errs = 0;         /* number of errors so far */
+
+    /* Create a file */
+    fid = SDstart(ARGS_FILE_NAME, DFACC_CREATE);
+    CHECK(fid, FAIL, "SDstart");
+
+    /* Create two array data sets. */
+    dimsizes[0] = X_LENGTH;
+    dimsizes[1] = Y_LENGTH;
+    dset1 = SDcreate(fid, DS1_NAME, DFNT_INT16, RANK, dimsizes);
+    CHECK(dset1, FAIL, "SDcreate");
+
+    dimsizes[0] = SD_UNLIMITED;
+    dset2 = SDcreate(fid, DS2_NAME, DFNT_INT16, RANK, dimsizes);
+    CHECK(dset2, FAIL, "SDcreate");
+
+    /* Fill the stored-data array with values. */
+    for (idxx = 0; idxx < X_LENGTH; idxx++) {
+	for (idxy = 0; idxy < Y_LENGTH; idxy++) {
+	    array_data[idxx][idxy] = idxx*idxy + 1;
+    }}
+
+    /* Define the location, pattern, and size of the data sets */
+    start[0] = 0;
+    start[1] = 0;
+    edges[0] = X_LENGTH;
+    edges[1] = Y_LENGTH;
+
+    status = SDwritedata(dset1, start, NULL, edges, (VOIDP)array_data);
+    CHECK(status, FAIL, "SDwritedata");
+    status = SDwritedata(dset2, start, NULL, edges, (VOIDP)array_data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Close the datasets */
+    status = SDendaccess(dset1);
+    CHECK(status, FAIL, "SDendaccess");
+
+    status = SDendaccess(dset2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close the file */
+    status = SDend(fid);
+    CHECK(status, FAIL, "SDend");
+
+    /* Re-open the file to check on the SDS names */
+    fid = SDstart(ARGS_FILE_NAME, DFACC_RDWR);
+    CHECK(fid, FAIL, "SDstart");
+
+    /* Get access to the datasets */
+    dset1 = SDselect(fid, 0);
+    CHECK(dset1, FAIL, "SDselect");
+    dset2 = SDselect(fid, 1);
+    CHECK(dset1, FAIL, "SDselect");
+
+    /* Get information of the first dataset, and verify its name */
+    status = SDgetinfo(dset1, ds_name, &rank, dimsizes, &dtype, &nattrs);
+    CHECK(status, FAIL, "SDgetinfo");
+
+    /* Define the location to read */
+    strides[0] = X_LENGTH;	/* simulate a mistake here, should have -1 */
+    strides[1] = Y_LENGTH-1;
+
+    /* Attempt to read first dataset, it should fail with invalid an 
+	argument error */
+    status = SDreaddata(dset1, start, strides, edges, (VOIDP) outdata);
+    VERIFY(status, FAIL, "SDreaddata");
+    VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
+
+    /* Show that the error was also caught for the dataset with unlimited 
+	dimension */
+    status = SDreaddata(dset1, start, strides, edges, (VOIDP) outdata);
+    VERIFY(status, FAIL, "SDreaddata");
+    VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
+
+    /* Close the datasets */
+    status = SDendaccess(dset1);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close the datasets */
+    status = SDendaccess(dset2);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Close the file */
+    status = SDend(fid);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of, so far */
+    return num_errs;
+}   /* test_valid_args */
+
 /* Test driver for testing various SDS' properties. */
 extern int
 test_SDSprops()
@@ -431,6 +556,7 @@ test_SDSprops()
     num_errs = num_errs + test_SDSnames();
     num_errs = num_errs + test_unlim_dim();
     num_errs = num_errs + test_unlim_inloop();
+    num_errs = num_errs + test_valid_args();
 
     return num_errs;
 }

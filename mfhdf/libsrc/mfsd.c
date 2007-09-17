@@ -440,6 +440,8 @@ SDend(int32 id /* IN: file ID of file to close */)
     fprintf(stderr, "SDend: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get id? */
     cdfid = (intn)id & 0xffff;
@@ -532,6 +534,8 @@ SDfileinfo(int32  fid,     /* IN:  file ID */
     fprintf(stderr, "SDnumber: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* check that fid is valid and get file structure */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -600,6 +604,8 @@ SDselect(int32 fid,  /* IN: file ID */
     fprintf(stderr, "SDselect: I've been called (index: %d) \n", index);
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -672,6 +678,9 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetinfo: I've been called\n");
 #endif
+
+    /* clear error stack */
+    HEclear();
 
     if( rank == NULL || dimsizes == NULL || nt == NULL || nattr == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -766,7 +775,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     comp_coder_t comp_type;
     comp_info c_info;
     uint32  comp_config;
-    NC_var * tvar;
+    NC_var * var;
 #ifdef BIG_LONGS
     long    Start[H4_MAX_VAR_DIMS];
     long    End[H4_MAX_VAR_DIMS];
@@ -782,6 +791,8 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     fprintf(stderr, "SDreaddata: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
     
     if((start == NULL) || (end == NULL) || (data == NULL))
       {
@@ -807,33 +818,35 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
         goto done;
       }
 
-    /* Check compression method is enabled */
-    tvar = SDIget_var(handle, sdsid);
-    if(tvar == NULL)
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
      {
             ret_value = FAIL;
             goto done;
      }
-    status = HCPgetcompinfo(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
+
+    /* Check compression method is enabled */
+    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
 		&comp_type, &c_info);
 
-    if (status != FAIL) {
-	    HCget_config_info( comp_type , &comp_config);
-	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-		/* coder not present?? */
-		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
-	    }
-	    if ((comp_config & COMP_DECODER_ENABLED) == 0) {
-		/* decoder not present?? */
-		HGOTO_ERROR(DFE_BADCODER, FAIL);
-	    }
-    }
+    if (status != FAIL)
+      {
+        HCget_config_info( comp_type , &comp_config);
+        if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+            /* coder not present?? */
+            HGOTO_ERROR(DFE_NOENCODER, FAIL);
+          }
+        if ((comp_config & COMP_DECODER_ENABLED) == 0) {
+	    /* decoder not present?? */
+	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+          }
+      }
 
     /* get ready to read */
     handle->xdrs->x_op = XDR_DECODE ;
    
     /* 
-     * figure out the index of the variable to read from
+     * figure out the index of the variable to read from,
      * the user might have passed us a dimension, in which
      * case we want to reade from its coordinate variable
      */
@@ -854,13 +867,6 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 #ifdef BIG_LONGS
     {
         int i;
-        NC_var * var = SDIget_var(handle, sdsid);
-        if(var == NULL)
-          {
-            ret_value = FAIL;
-            goto done;
-          }
-        
         for(i = 0; i < var->assoc->count; i++) 
           {
             Start[i]  = (long) start[i];
@@ -878,6 +884,32 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 
 #endif
 
+    /* Validate stride value if given - make sure we don't try to "stride" */
+    /* beyond the dimension's end */
+    if(stride != NULL)
+    {
+        int i;
+	int32 dimsize = (int32) var->shape[0];
+
+	/* Validate stride value of first dimension separately to catch */
+	/* unlimited dimension situation */
+	if (var->shape[0] == NC_UNLIMITED)
+	{
+	    /* get the actual size */
+	    if(handle->file_type == HDF_FILE)
+		dimsize = var->numrecs;
+	    else
+		dimsize = handle->numrecs;
+	}
+	if (Stride[0] >= (dimsize - Start[0]))
+	    HGOTO_ERROR(DFE_ARGS, FAIL);
+
+	/* validate subsequent dimensions if dataset is multi-dim */
+	for(i = 1; i < var->assoc->count; i++)
+	    if (Stride[i] >= ((int32) var->shape[i] - Start[i]))
+		HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+
     /* call the readg routines if a stride is given */
     if(stride == NULL)
         status = NCvario(handle, varid, Start, End, (Void *)data);
@@ -892,10 +924,8 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-
       }
     /* Normal cleanup */
-
 
     return ret_value;
 } /* SDreaddata */
@@ -932,6 +962,8 @@ SDnametoindex(int32 fid,  /* IN: file ID */
     fprintf(stderr, "SDnametoindex: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -1016,6 +1048,8 @@ SDgetrange(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetrange: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -1152,6 +1186,9 @@ SDcreate(int32  fid,      /* IN: file ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDcreate: I've been called\n");
 #endif
+
+    /* clear error stack */
+    HEclear();
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -1376,6 +1413,8 @@ SDgetdimid(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDgetdimid: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if(number < 0) 
@@ -1461,6 +1500,8 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
     fprintf(stderr, "SDsetdimname: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -1558,6 +1599,8 @@ SDendaccess(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDendaccess: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(id, SDSTYPE);
@@ -1758,6 +1801,8 @@ SDsetrange(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetrange: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -1934,6 +1979,8 @@ SDsetattr(int32 id,    /* IN: object ID */
     fprintf(stderr, "SDsetattr: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if(name == NULL) 
@@ -2033,6 +2080,8 @@ SDattrinfo(int32  id,    /* IN:  object ID */
     fprintf(stderr, "SDattrinfo: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if((name == NULL) || (nt == NULL) || (count == NULL))
@@ -2117,6 +2166,8 @@ SDreadattr(int32 id,    /* IN:  object ID */
     fprintf(stderr, "SDreadattr: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if(buf == NULL)
@@ -2188,7 +2239,7 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     comp_coder_t comp_type;
     comp_info c_info;
     uint32  comp_config;
-    NC_var *tvar;
+    NC_var *var;
     NC     *handle = NULL;
     NC_dim *dim = NULL;
 #ifdef BIG_LONGS
@@ -2207,6 +2258,8 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDwritedata: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     if((start == NULL) || (end == NULL) || (data == NULL))
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -2233,29 +2286,30 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
           goto done;
       }
 
-      tvar = SDIget_var(handle, sdsid);
+      var = SDIget_var(handle, sdsid);
 
-      if(tvar == NULL)
+      if(var == NULL)
          {
               ret_value = FAIL;
               goto done;
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompinfo(handle->hdf_file, tvar->data_tag, tvar->data_ref, 
+    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
 		&comp_type, &c_info);
 
-    if (status != FAIL) {
-	    HCget_config_info( comp_type , &comp_config);
-	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-		/* coder not present?? */
-		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
-	    }
-	    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-		/* encoder not present?? */
-		HGOTO_ERROR(DFE_BADCODER, FAIL);
-	    }
-    }
+    if (status != FAIL)
+      {
+	HCget_config_info( comp_type , &comp_config);
+	if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+	    /* coder not present?? */
+	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
+	}
+	if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	    /* encoder not present?? */
+	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+	}
+      }
 
     /* get ready to write */
     handle->xdrs->x_op = XDR_ENCODE;
@@ -2396,6 +2450,8 @@ SDsetdatastrs(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetdatastrs: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2500,6 +2556,8 @@ SDsetcal(int32   sdsid,/* IN: dataset ID */
     fprintf(stderr, "SDsetcal: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
     
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2595,6 +2653,8 @@ SDsetfillvalue(int32 sdsid, /* IN: dataset ID */
     fprintf(stderr, "SDsetfillvalue: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2665,6 +2725,8 @@ SDgetfillvalue(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetfillvalue: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if(val == NULL)
@@ -2742,6 +2804,8 @@ SDgetdatastrs(int32 sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetdatastrs: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -2873,6 +2937,8 @@ SDgetcal(int32    sdsid, /* IN:  dataset ID */
     fprintf(stderr, "SDgetcal: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -3134,6 +3200,8 @@ SDsetdimstrs(int32 id, /* IN: dimension ID */
     fprintf(stderr, "SDsetdimstrs: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3301,6 +3369,8 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     fprintf(stderr, "SDsetdimscales: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(id, DIMTYPE);
@@ -3397,6 +3467,8 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
     fprintf(stderr, "SDgetdimscale: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if(data == NULL)
@@ -3512,6 +3584,9 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     fprintf(stderr, "SDdiminfo: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
+
     handle = SDIhandle_from_id(id, DIMTYPE);
     if(handle == NULL)
       {
@@ -3623,6 +3698,8 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
     fprintf(stderr, "SDgetdimstrs: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     /* sanity check args */
     if(len < 0) HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -3779,6 +3856,8 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
     fprintf(stderr, "SDsetexternalfile: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     if(NULL == filename || offset < 0)
       {
@@ -3921,6 +4000,8 @@ SDsetnbitdataset(int32 id,       /* IN: dataset ID */
     fprintf(stderr, "SDsetnbitdataset: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     if(start_bit < 0 || bit_len <= 0)
       {
@@ -4041,6 +4122,9 @@ SDsetup_szip_parms( int32 id, NC *handle, comp_info *c_info, int32 *cdims)
     int32 nt;
     intn       ret_value = SUCCEED;
 
+    /* clear error stack */
+    HEclear();
+
     if(handle->vars == NULL)
       {
           ret_value = FAIL;
@@ -4106,6 +4190,8 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
     fprintf(stderr, "SDsetcompress: I've been called\n");
 #endif /* SDDEBUG */
 
+    /* clear error stack */
+    HEclear();
 
     if (comp_type < COMP_CODE_NONE || comp_type >= COMP_CODE_INVALID)
       {
@@ -4309,7 +4395,6 @@ SDgetcompress(int32     id,     /* IN: dataset ID */
     fprintf(stderr, "SDgetcompress: I've been called\n");
 #endif /* SDDEBUG */
 
-
     /* clear error stack */
     HEclear();
 
@@ -4382,7 +4467,6 @@ SDgetcompinfo(int32 sdsid,     /* IN: dataset ID */
     fprintf(stderr, "SDgetcompinfo: I've been called\n");
 #endif /* SDDEBUG */
 
-
     /* clear error stack */
     HEclear();
 
@@ -4450,6 +4534,8 @@ SDfindattr(int32 id,       /* IN: object ID */
     size_t      len;
     int32      ret_value = FAIL;
 
+    /* clear error stack */
+    HEclear();
 
     /* determine what type of ID we've been given */
     if(SDIapfromid(id, &handle, &app) == FAIL)
@@ -4518,6 +4604,8 @@ SDidtoref(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDidtoref: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
@@ -4577,6 +4665,8 @@ SDreftoindex(int32 fid, /* IN: file ID */
     fprintf(stderr, "SDreftoindex: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE) 
@@ -4638,6 +4728,8 @@ SDisrecord(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDisrecord: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
@@ -4706,6 +4798,8 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
     fprintf(stderr, "SDiscoordvar: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
@@ -4841,6 +4935,8 @@ SDsetrag(int32 sdsid,
     fprintf(stderr, "SDsetrag: I've been called\n");
 #endif
     
+    /* clear error stack */
+    HEclear();
 
     /* get the variable */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -4929,6 +5025,8 @@ SDsetaccesstype(int32 id,         /* IN: dataset ID */
     fprintf(stderr, "SDsetaccesstype: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     switch (accesstype)
       {
@@ -5006,6 +5104,8 @@ SDsetblocksize(int32 sdsid,      /* IN: dataset ID */
     fprintf(stderr, "SDsetblocksize: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
@@ -5062,6 +5162,8 @@ SDsetfillmode(int32 sd_id,  /* IN: HDF file ID, returned from SDstart */
     fprintf(stderr, "SDsetfillmode: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(sd_id, CDFTYPE);
@@ -5110,6 +5212,8 @@ SDsetdimval_comp(int32 dimid,    /* IN: dimension ID, returned from SDgetdimid *
     fprintf(stderr, "SDsetdimval_comp: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(dimid, DIMTYPE);
@@ -5172,6 +5276,8 @@ SDisdimval_bwcomp(int32 dimid /* IN: dimension ID, returned from SDgetdimid */)
     fprintf(stderr, "SDisdimval_bwcomp: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
     /* get the handle */
     handle = SDIhandle_from_id(dimid, DIMTYPE);
@@ -5350,6 +5456,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     fprintf(stderr,"SDsetchunk: called  \n");
 #endif
 
+    /* clear error stack */
+    HEclear();
 
      /* make sure this is cleared */
      memset(chunk,0,sizeof(chunk[0]));
@@ -5761,6 +5869,8 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     intn      i;                   /* loop variable */
     intn      ret_value = SUCCEED; /* return value */
 
+    /* clear error stack */
+    HEclear();
 
     /* Check args */
 
@@ -5896,6 +6006,8 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     static void  *tBuf = NULL;   /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
 
+    /* clear error stack */
+    HEclear();
 
     info_block.cdims = NULL;
 
@@ -6109,6 +6221,8 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     static void  *tBuf = NULL; /* static buffer used for conversion */
     intn       ret_value = SUCCEED;
 
+    /* clear error stack */
+    HEclear();
 
     info_block.cdims = NULL;
 
@@ -6330,6 +6444,8 @@ SDsetchunkcache(int32 sdsid,     /* IN: access aid to mess with */
     int16     special;              /* Special code */
     intn      ret_value = SUCCEED;
 
+    /* clear error stack */
+    HEclear();
 
     /* Check args */
     if (maxcache < 1 )
@@ -6425,6 +6541,9 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDcheckempty: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
+
     /* get the handle */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
@@ -6496,6 +6615,9 @@ SDidtype(int32 an_id)
     fprintf(stderr, "SDidtype: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
+
     /* Assuming that the id is an SD id, get and check the handle */
     handle = SDIhandle_from_id(an_id, CDFTYPE);
 
@@ -6556,6 +6678,9 @@ SDreset_maxopenfiles(intn req_max)
     fprintf(stderr, "SDreset_maxopenfiles: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
+
     /* Reset the max NC open and re-allocate cdf list appropriately */
     ret_value = NC_reset_maxopenfiles(req_max);
 
@@ -6601,6 +6726,9 @@ SDget_maxopenfiles(intn *curr_max,  /* OUT: current # of open files allowed */
 #ifdef SDDEBUG
     fprintf(stderr, "SDget_maxopenfiles: I've been called\n");
 #endif
+
+    /* clear error stack */
+    HEclear();
 
     /* Retrieve the current max and the system limit */
     if (curr_max != NULL)
@@ -6651,8 +6779,17 @@ SDget_numopenfiles()
     fprintf(stderr, "SDget_numopenfiles: I've been called\n");
 #endif
 
+    /* clear error stack */
+    HEclear();
+
     ret_value = (intn)NC_get_numopencdfs();
 
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
     return ret_value;
 } /* SDget_numopenfiles */
 
@@ -6687,6 +6824,9 @@ SDgetfilename(int32 fid,       /* IN:  file ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetfilename: I've been called\n");
 #endif
+
+    /* clear error stack */
+    HEclear();
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -6745,6 +6885,9 @@ SDgetnamelen(int32 id,		/* IN:  object ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetnamelen: I've been called\n");
 #endif
+
+    /* clear error stack */
+    HEclear();
 
     /* Assuming that the id is an SD id, get the file handle */
     handle = SDIhandle_from_id(id, CDFTYPE);
