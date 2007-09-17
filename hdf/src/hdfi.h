@@ -970,27 +970,6 @@ Please check your Makefile.
 #include <stddef.h>         /* for the 'fortran' pragma */
 #endif
 
-#if defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_)	/* Auto-link when possible */
-#	define HDF_LIB_VER	"421"
-#	if !defined(_DEBUG)
-#		if !defined(_HDFDLL_)
-#			define HDF_LIB_NAME	"HD" HDF_LIB_VER ".lib"
-#			pragma message( "Automatic linking with the static single-threaded HDF library - " HDF_LIB_NAME )
-#		else
-#			define HDF_LIB_NAME	"HD" HDF_LIB_VER "m.lib"
-#			pragma message( "Automatic linking with the multithreaded HDF DLL - " HDF_LIB_NAME )
-#		endif
-#	else
-#		if !defined(_HDFDLL_)
-#			define HDF_LIB_NAME	"HD" HDF_LIB_VER "d.lib"
-#			pragma message( "Automatic linking with the debug static single-threaded HDF library - " HDF_LIB_NAME  )
-#		else
-#			define HDF_LIB_NAME	"HD" HDF_LIB_VER "md.lib"
-#			pragma message( "Automatic linking with the debug multithreaded HDF DLL - " HDF_LIB_NAME  )
-#		endif
-#	endif
-#	pragma comment(lib, HDF_LIB_NAME )
-#endif /* defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_) */
 
 #if defined WIN386
 #ifndef GMEM_MOVEABLE       /* check if windows header is already included */

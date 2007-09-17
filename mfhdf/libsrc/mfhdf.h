@@ -28,27 +28,6 @@
 #include "local_nc.h"
 #endif /* OLD_WAY */
 
-#if defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_)	/* Auto-link when possible */
-#	define MFHDF_LIB_VER	"421"
-#	if !defined(_DEBUG)
-#		if !defined(_HDFDLL_)
-#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER ".lib"
-#			pragma message( "Automatic linking with the static single-threaded MFHDF library - " MFHDF_LIB_NAME )
-#		else
-#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER "m.lib"
-#			pragma message( "Automatic linking with the multithreaded MFHDF DLL - " MFHDF_LIB_NAME )
-#		endif
-#	else
-#		if !defined(_HDFDLL_)
-#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER "d.lib"
-#			pragma message( "Automatic linking with the debug static single-threaded MFHDF library - " MFHDF_LIB_NAME  )
-#		else
-#			define MFHDF_LIB_NAME	"HM" MFHDF_LIB_VER "md.lib"
-#			pragma message( "Automatic linking with the debug multithreaded MFHDF DLL - " MFHDF_LIB_NAME  )
-#		endif
-#	endif
-#	pragma comment(lib, MFHDF_LIB_NAME )
-#endif /* defined(_MSC_VER) && !defined(_MFHDFLIB_) && !defined(_HDFLIB_) */
 
 #define SD_UNLIMITED NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL    NC_NOFILL
