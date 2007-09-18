@@ -905,8 +905,6 @@
 ./mfhdf/hrepack/hrepack_main.c
 ./mfhdf/hrepack/hrepack_opttable.c
 ./mfhdf/hrepack/hrepack_opttable.h
-./mfhdf/hrepack/hrepack_pal.c
-./mfhdf/hrepack/hrepack_pal.h
 ./mfhdf/hrepack/hrepack_parse.c
 ./mfhdf/hrepack/hrepack_parse.h
 ./mfhdf/hrepack/hrepack_sds.c
