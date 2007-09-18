@@ -520,27 +520,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_pal.c">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_parse.c">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -705,9 +684,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_opttable.h">
-			</File>
-			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_pal.h">
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_parse.h">

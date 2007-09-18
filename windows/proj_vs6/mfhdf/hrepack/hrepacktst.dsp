@@ -165,10 +165,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_opttable.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_pal.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_parse.c
 # End Source File
 # Begin Source File
@@ -242,10 +238,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_lsttable.h
 # Begin Source File
 
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_opttable.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_pal.h
 # End Source File
 # Begin Source File
 
