@@ -32,7 +32,7 @@ int list_gr (int32 infile_id,int32 outfile_id,int32 gr_id,int32 gr_out,list_tabl
 int list_sds(int32 infile_id,int32 outfile_id,int32 sd_id, int32 sd_out,list_table_t *list_tbl,dim_table_t *td1,dim_table_t *td2,options_t *options);
 int list_vs (int32 infile_id,int32 outfile_id,list_table_t *list_tbl,options_t *options);
 int list_glb(int32 infile_id,int32 outfile_id,int32 sd_id,int32 sd_out,int32 gr_id,int32 gr_out,list_table_t *list_tbl,options_t *options);
-int list_pal(const char* infname,const char* outfname,int32 infile_id,int32 outfile_id,list_table_t *list_tbl,options_t *options);
+int list_pal(const char* infname,const char* outfname,list_table_t *list_tbl,options_t *options);
 int list_an (int32 infile_id,int32 outfile_id,options_t *options);
 
 
@@ -168,10 +168,11 @@ int list(const char* infname,
         goto out;
     if (list_glb(infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,list_tbl,options)<0) 
         goto out;
-    if (list_pal(infname,outfname,infile_id,outfile_id,list_tbl,options)<0) 
+    if (list_pal(infname,outfname,list_tbl,options)<0) 
         goto out;
     if (list_an (infile_id,outfile_id,options)<0) 
         goto out;
+    
     
     if ( options->trip==1 ) 
     {
@@ -1390,8 +1391,6 @@ out:
 
 int list_pal(const char* infname,
              const char* outfname,
-             int32 infile_id,
-             int32 outfile_id,
              list_table_t *list_tbl,
              options_t *options)
 {

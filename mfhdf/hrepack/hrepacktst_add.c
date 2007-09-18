@@ -1750,9 +1750,21 @@ int add_an(int32 file_id, int32 tag, int32 ref)
 
 int add_pal(const char* fname)
 {
-    uint8  palette_data[256*3];
+    uint8  pal[256*3];
+    int i, n;
+
+   /*-------------------------------------------------------------------------
+    * define a palette, blue to red tones 
+    *-------------------------------------------------------------------------
+    */
+    for ( i=0, n=0; i< 256*3; i+=3, n++)
+    {
+        pal[i]  =n;      /* red */
+        pal[i+1]=0;      /* green */
+        pal[i+2]=255-n;  /* blue */
+    }
     
-    if (DFPaddpal(fname,palette_data)==FAIL){
+    if (DFPaddpal(fname,pal)==FAIL){
         printf( "Failed to write palette in <%s>\n", fname);
         return FAIL;
     }

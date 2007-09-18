@@ -53,25 +53,23 @@ PROGRAMS = $(bin_PROGRAMS)
 am_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hrepack_gr.$(OBJEXT) hrepack_list.$(OBJEXT) \
 	hrepack_lsttable.$(OBJEXT) hrepack_main.$(OBJEXT) \
-	hrepack_opttable.$(OBJEXT) hrepack_pal.$(OBJEXT) \
-	hrepack_parse.$(OBJEXT) hrepack_sds.$(OBJEXT) \
-	hrepack_sdutil.$(OBJEXT) hrepack_utils.$(OBJEXT) \
-	hrepack_vg.$(OBJEXT) hrepack_vs.$(OBJEXT) \
-	hrepack_dim.$(OBJEXT)
+	hrepack_opttable.$(OBJEXT) hrepack_parse.$(OBJEXT) \
+	hrepack_sds.$(OBJEXT) hrepack_sdutil.$(OBJEXT) \
+	hrepack_utils.$(OBJEXT) hrepack_vg.$(OBJEXT) \
+	hrepack_vs.$(OBJEXT) hrepack_dim.$(OBJEXT)
 hrepack_OBJECTS = $(am_hrepack_OBJECTS)
 am_hrepack_check_OBJECTS = hrepack_check.$(OBJEXT)
 hrepack_check_OBJECTS = $(am_hrepack_check_OBJECTS)
 am_test_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hrepack_gr.$(OBJEXT) hrepack_list.$(OBJEXT) \
 	hrepack_lsttable.$(OBJEXT) hrepack_opttable.$(OBJEXT) \
-	hrepack_pal.$(OBJEXT) hrepack_parse.$(OBJEXT) \
-	hrepack_sds.$(OBJEXT) hrepack_sdutil.$(OBJEXT) \
-	hrepack_utils.$(OBJEXT) hrepack_vg.$(OBJEXT) \
-	hrepack_dim.$(OBJEXT) hrepack_vs.$(OBJEXT) \
-	hrepacktst_add.$(OBJEXT) hrepacktst.$(OBJEXT) \
-	hrepacktst_verify.$(OBJEXT) hdiff.$(OBJEXT) \
-	hdiff_array.$(OBJEXT) hdiff_gattr.$(OBJEXT) hdiff_gr.$(OBJEXT) \
-	hdiff_list.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
+	hrepack_parse.$(OBJEXT) hrepack_sds.$(OBJEXT) \
+	hrepack_sdutil.$(OBJEXT) hrepack_utils.$(OBJEXT) \
+	hrepack_vg.$(OBJEXT) hrepack_dim.$(OBJEXT) \
+	hrepack_vs.$(OBJEXT) hrepacktst_add.$(OBJEXT) \
+	hrepacktst.$(OBJEXT) hrepacktst_verify.$(OBJEXT) \
+	hdiff.$(OBJEXT) hdiff_array.$(OBJEXT) hdiff_gattr.$(OBJEXT) \
+	hdiff_gr.$(OBJEXT) hdiff_list.$(OBJEXT) hdiff_mattbl.$(OBJEXT) \
 	hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) hdiff_table.$(OBJEXT) \
 	hdiff_vs.$(OBJEXT) hdiff_dim.$(OBJEXT)
 test_hrepack_OBJECTS = $(am_test_hrepack_OBJECTS)
@@ -215,7 +213,7 @@ DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
-                  hrepack_opttable.c hrepack_pal.c hrepack_parse.c          \
+                  hrepack_opttable.c hrepack_parse.c                        \
                   hrepack_sds.c hrepack_sdutil.c hrepack_utils.c            \
                   hrepack_vg.c hrepack_vs.c hrepack_dim.c
 
@@ -223,7 +221,7 @@ hrepack_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
 hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                  \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
-                       hrepack_pal.c hrepack_parse.c hrepack_sds.c          \
+                       hrepack_parse.c hrepack_sds.c                        \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
                        hrepack_dim.c                                        \
                        hrepack_vs.c hrepacktst_add.c hrepacktst.c           \
@@ -338,7 +336,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_lsttable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_opttable.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_pal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_sds.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hrepack_sdutil.Po@am__quote@
