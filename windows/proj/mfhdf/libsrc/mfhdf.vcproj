@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm421.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm422.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -86,7 +86,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm421d.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm422d.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCMIDLTool"/>
