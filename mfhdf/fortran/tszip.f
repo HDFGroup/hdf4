@@ -1,3 +1,15 @@
+C * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+C  Copyright by The HDF Group.                                               *
+C  Copyright by the Board of Trustees of the University of Illinois.         *
+C  All rights reserved.                                                      *
+C                                                                            *
+C  This file is part of HDF.  The full HDF copyright notice, including       *
+C  terms governing use, modification, and redistribution, is contained in    *
+C  the files COPYING and Copyright.html.  COPYING can be found at the root   *
+C  of the source code distribution tree; Copyright.html can be found at      *
+C  http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
+C  access to either file, you may request a copy from help@hdfgroup.org.     *
+C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
          program test_szip
          implicit none
 C
