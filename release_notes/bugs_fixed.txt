@@ -1,3 +1,5 @@
+This file contains some historical information; please do not edit.
+                                                        EIP 2007-09-23
 For bugs fixed in the current release see RELEASE.txt file
 For bugs fixed in all releases after HDF4.2r0-Beta see HISTORY.txt file.
 
