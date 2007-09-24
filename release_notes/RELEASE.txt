@@ -63,17 +63,19 @@ New Features and Changes:
           method is present and if encoding is available
         - Added support for SZIP compression in Fortran
                                                EIP - 2007/09/01
-	- The current SDgetcompress and GRgetcompress have severe flaws.
-	  Two new APIs, SDgetcompinfo and GRgetcompinfo, were added to 
-	  provide better functionality and will replace SDgetcompress and
-	  GRgetcompress, eventually. BMR - 2005/4/4
 	- The following APIs were added; see "Bugs fixed" section for details.
-		SDreset_maxopenfiles
-		SDget_maxopenfiles
-		SDget_numopenfiles
-	  BMR - 2005/10/21
-	- The API SDgetfilename was added to retrieve the name of a file, 
-	  given the file id. BMR - 2005/10/21
+          SDreset_maxopenfiles -- resets the maximum number of files can be
+                                  opened at a time.
+          SDget_maxopenfiles -- retrieves the current number of opened files
+                                allowed in HDF and the maximum number of opened
+                                files allowed on a system.
+          SDget_numopenfiles -- returns the number of files currently being
+                                opened
+          SDgetcompinfo -- replaces SDgetcompress
+          GRgetcompinfo -- replaces GRgetcompress
+          SDgetfilename -- retrieves the name of the file, given its ID.
+          SDgetnamelen -- retrieves the name length of the object, given its ID
+          BMR - 2007/09/23
 	- SDS' name is no longer limited to 64 characters, and so is vgroup's
 	  (bugzilla 516.)  Note that when an older version of the library 
 	  reads a new name that is longer than 64 characters, the name will
@@ -141,6 +143,10 @@ Bugs fixed since HDF4.2r1
     ========= 
 	- Added the display of compression method to hdp dumpsds and dumpgr.
 	  (bugzilla #130) BMR - 2005/4/4
+	- The current SDgetcompress and GRgetcompress have severe flaws.
+	  Two new APIs, SDgetcompinfo and GRgetcompinfo, were added to 
+	  provide better functionality and will replace SDgetcompress and
+	  GRgetcompress, eventually. BMR - 2005/4/4
 	- Applied user's patch to fix bug #602 - BMR - 2005/4/23
 	- Added a switch ('u') to ncdump to replace nonalpha-numerics 
 	  characters with underscores.  Thus, the SDS names won't be changed 
