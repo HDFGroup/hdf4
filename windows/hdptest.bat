@@ -51,7 +51,7 @@ call deleteline list-10.results 1
 call deleteline list-10.out 4
 
 cd fctemp
-fc list-1.results list-1.out >temp.txt
+fc list-1.results list-1.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list tdata.hdf                                             PASSED
 ) else (
@@ -60,7 +60,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-2.results list-2.out >temp.txt
+fc list-2.results list-2.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -l tdata.hdf                                          PASSED
 ) else (
@@ -69,7 +69,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-3.results list-3.out >temp.txt
+fc list-3.results list-3.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -d tdata.hdf                                          PASSED
 ) else (
@@ -78,7 +78,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-4.results list-4.out >temp.txt
+fc list-4.results list-4.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -e tdata.hdf                                          PASSED
 ) else (
@@ -87,7 +87,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-5.results list-5.out >temp.txt
+fc list-5.results list-5.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -t 720 tdata.hdf                                      PASSED
 ) else (
@@ -96,7 +96,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-6.results list-6.out >temp.txt
+fc list-6.results list-6.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -d -t Numeric Data Group tdata.hdf                    PASSED
 ) else (
@@ -105,7 +105,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-7.results list-7.out >temp.txt
+fc list-7.results list-7.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -g tdata.hdf                                          PASSED
 ) else (
@@ -114,7 +114,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-8.results list-8.out >temp.txt
+fc list-8.results list-8.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -a tdata.hdf                                          PASSED
 ) else (
@@ -123,7 +123,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-9.results list-9.out >temp.txt
+fc list-9.results list-9.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -a Example6.hdf                                       PASSED
 ) else (
@@ -132,7 +132,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc list-10.results list-10.out >temp.txt
+fc list-10.results list-10.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp list -n Example6.hdf                                       PASSED
 ) else (
@@ -221,7 +221,7 @@ call deleteline dumpsds-14.results 1
 call deleteline dumpsds-14.out 4
 
 cd fctemp
-fc dumpsds-1.results dumpsds-1.out >temp.txt
+fc dumpsds-1.results dumpsds-1.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds swf32.hdf                                          PASSED
 ) else (
@@ -230,7 +230,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-2.results dumpsds-2.out >temp.txt
+fc dumpsds-2.results dumpsds-2.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -i 2 swf32.hdf                                     PASSED
 ) else (
@@ -239,7 +239,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-3.results dumpsds-3.out >temp.txt
+fc dumpsds-3.results dumpsds-3.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -i 1,3 swf32.hdf                                   PASSED
 ) else (
@@ -248,7 +248,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-4.results dumpsds-4.out >temp.txt
+fc dumpsds-4.results dumpsds-4.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -n Time swf32.hdf                                  PASSED
 ) else (
@@ -257,7 +257,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-5.results dumpsds-5.out >temp.txt
+fc dumpsds-5.results dumpsds-5.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -n fakeDim0,Data-Set-2 swf32.hdf                   PASSED
 ) else (
@@ -266,7 +266,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-6.results dumpsds-6.out >temp.txt
+fc dumpsds-6.results dumpsds-6.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -r 3,2 swf32.hdf                                   PASSED
 ) else (
@@ -275,7 +275,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-7.results dumpsds-7.out >temp.txt
+fc dumpsds-7.results dumpsds-7.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -r 3,2 -d swf32.hdf                                PASSED
 ) else (
@@ -284,7 +284,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-8.results dumpsds-8.out >temp.txt
+fc dumpsds-8.results dumpsds-8.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -h swf32_fileattr.hdf                              PASSED
 ) else (
@@ -293,7 +293,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-9.results dumpsds-9.out >temp.txt
+fc dumpsds-9.results dumpsds-9.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -c swf32_fileattr.hdf                              PASSED
 ) else (
@@ -302,7 +302,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-10.results dumpsds-10.out >temp.txt
+fc dumpsds-10.results dumpsds-10.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -g swf32_fileattr.hdf                              PASSED
 ) else (
@@ -311,7 +311,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-11.results dumpsds-11.out >temp.txt
+fc dumpsds-11.results dumpsds-11.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -l swf32_fileattr.hdf                              PASSED
 ) else (
@@ -320,7 +320,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-12.results dumpsds-12.out >temp.txt
+fc dumpsds-12.results dumpsds-12.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds -h -n "The name of this 
    echo dataset is long and it is used to test the 
@@ -333,7 +333,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-13.results dumpsds-13.out >temp.txt
+fc dumpsds-13.results dumpsds-13.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds sds1_dim1_samename.hdf                             PASSED
 ) else (
@@ -342,7 +342,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpsds-14.results dumpsds-14.out >temp.txt
+fc dumpsds-14.results dumpsds-14.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpsds sds2_dim1_samename.hdf                             PASSED
 ) else (
@@ -381,7 +381,7 @@ call deleteline dumprig-6.results 1
 call deleteline dumprig-6.out 4
 
 cd fctemp
-fc dumprig-1.results dumprig-1.out >temp.txt
+fc dumprig-1.results dumprig-1.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumprig tdf24.hdf                                          PASSED
 ) else (
@@ -390,7 +390,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumprig-2.results dumprig-2.out >temp.txt
+fc dumprig-2.results dumprig-2.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumprig -i 1,2 tdf24.hdf                                   PASSED
 ) else (
@@ -399,7 +399,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumprig-3.results dumprig-3.out >temp.txt
+fc dumprig-3.results dumprig-3.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumprig -i 1,3 tdf24.hdf                                   PASSED
 ) else (
@@ -408,7 +408,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumprig-4.results dumprig-4.out >temp.txt
+fc dumprig-4.results dumprig-4.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumprig -m 24 tdf24.hdf                                    PASSED
 ) else (
@@ -417,7 +417,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumprig-5.results dumprig-5.out >temp.txt
+fc dumprig-5.results dumprig-5.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumprig -r 3,4 tdf24.hdf                                   PASSED
 ) else (
@@ -426,7 +426,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumprig-6.results dumprig-6.out >temp.txt
+fc dumprig-6.results dumprig-6.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumprig -r 3,4 -d tdf24.hdf                                PASSED
 ) else (
@@ -486,7 +486,7 @@ call deleteline dumpvd-12.results 1
 call deleteline dumpvd-12.out 4
 
 cd fctemp
-fc dumpvd-1.results dumpvd-1.out >temp.txt
+fc dumpvd-1.results dumpvd-1.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd tvset.hdf                                           PASSED
 ) else (
@@ -495,7 +495,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-2.results dumpvd-2.out >temp.txt
+fc dumpvd-2.results dumpvd-2.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -i 1,3,5 tvset.hdf                                  PASSED
 ) else (
@@ -504,7 +504,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-3.results dumpvd-3.out >temp.txt
+fc dumpvd-3.results dumpvd-3.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -r 1238,1239,1251,1252 tvset.hdf                    PASSED
 ) else (
@@ -513,7 +513,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-4.results dumpvd-4.out >temp.txt
+fc dumpvd-4.results dumpvd-4.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -n Multi-Order Vdata tvset.hdf                      PASSED
 ) else (
@@ -522,7 +522,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-5.results dumpvd-5.out >temp.txt
+fc dumpvd-5.results dumpvd-5.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -n Mixed Vdata,Integer Vdata tvset.hdf              PASSED
 ) else (
@@ -531,7 +531,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-6.results dumpvd-6.out >temp.txt
+fc dumpvd-6.results dumpvd-6.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -c Test object,No class specified tvset.hdf         PASSED
 ) else (
@@ -540,7 +540,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-7.results dumpvd-7.out >temp.txt
+fc dumpvd-7.results dumpvd-7.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -f B tvset.hdf                                      PASSED
 ) else (
@@ -549,7 +549,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-8.results dumpvd-8.out >temp.txt
+fc dumpvd-8.results dumpvd-8.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -f STATION_NAME,FLOATS tvset.hdf                    PASSED
 ) else (
@@ -558,7 +558,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-9.results dumpvd-9.out >temp.txt
+fc dumpvd-9.results dumpvd-9.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -f STATION_NAME,FLOATS -d tvset.hdf                 PASSED
 ) else (
@@ -567,7 +567,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-10.results dumpvd-10.out >temp.txt
+fc dumpvd-10.results dumpvd-10.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd tvattr.hdf                                          PASSED
 ) else (
@@ -576,7 +576,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-11.results dumpvd-11.out >temp.txt
+fc dumpvd-11.results dumpvd-11.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -c "SDSVar" sds1_dim1_samename.hdf                  PASSED
 ) else (
@@ -585,7 +585,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvd-12.results dumpvd-12.out >temp.txt
+fc dumpvd-12.results dumpvd-12.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvd -c "CoordVar" sds1_dim1_samename.hdf                PASSED
 ) else (
@@ -668,7 +668,7 @@ call deleteline dumpvg-15.results 1
 call deleteline dumpvg-15.out 4
 
 cd fctemp
-fc dumpvg-1.results dumpvg-1.out >temp.txt
+fc dumpvg-1.results dumpvg-1.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg tvset.hdf                                           PASSED
 ) else (
@@ -677,7 +677,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-2.results dumpvg-2.out >temp.txt
+fc dumpvg-2.results dumpvg-2.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -i 0,1 tvset.hdf                                    PASSED
 ) else (
@@ -686,7 +686,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-3.results dumpvg-3.out >temp.txt
+fc dumpvg-3.results dumpvg-3.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -r 3 tvset.hdf                                      PASSED
 ) else (
@@ -695,7 +695,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-4.results dumpvg-4.out >temp.txt
+fc dumpvg-4.results dumpvg-4.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -n Simple Vgroup tvset.hdf                          PASSED
 ) else (
@@ -704,7 +704,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-5.results dumpvg-5.out >temp.txt
+fc dumpvg-5.results dumpvg-5.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -c Test object tvset.hdf                            PASSED
 ) else (
@@ -713,7 +713,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-6.results dumpvg-6.out >temp.txt
+fc dumpvg-6.results dumpvg-6.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -i 1,3,5 tdata.hdf                                  PASSED
 ) else (
@@ -722,7 +722,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-7.results dumpvg-7.out >temp.txt
+fc dumpvg-7.results dumpvg-7.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -r 32,39 tdata.hdf                                  PASSED
 ) else (
@@ -731,7 +731,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-8.results dumpvg-8.out >temp.txt
+fc dumpvg-8.results dumpvg-8.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -n nsamp,tdata.hdf tdata.hdf                        PASSED
 ) else (
@@ -740,7 +740,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-9.results dumpvg-9.out >temp.txt
+fc dumpvg-9.results dumpvg-9.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -c CDF0.0 tdata.hdf                                 PASSED
 ) else (
@@ -749,7 +749,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-10.results dumpvg-10.out >temp.txt
+fc dumpvg-10.results dumpvg-10.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -h -c Dim0.0,Var0.0 tdata.hdf                       PASSED
 ) else (
@@ -758,7 +758,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-11.results dumpvg-11.out >temp.txt
+fc dumpvg-11.results dumpvg-11.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg tvattr.hdf                                          PASSED
 ) else (
@@ -767,7 +767,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-12.results dumpvg-12.out >temp.txt
+fc dumpvg-12.results dumpvg-12.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg VGlongname.hdf                                      PASSED
 ) else (
@@ -776,7 +776,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-13.results dumpvg-13.out >temp.txt
+fc dumpvg-13.results dumpvg-13.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg -n "SD Vgroup - this vgroup 
    echo has an sds as a member and it is actually meant 
@@ -789,7 +789,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-14.results dumpvg-14.out >temp.txt
+fc dumpvg-14.results dumpvg-14.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg sds1_dim1_samename.hdf                              PASSED
 ) else (
@@ -798,7 +798,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpvg-15.results dumpvg-15.out >temp.txt
+fc dumpvg-15.results dumpvg-15.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpvg sds2_dim1_samename.hdf                              PASSED
 ) else (
@@ -876,7 +876,7 @@ call deleteline dumpgr-19.results 1
 call deleteline dumpgr-19.out 4
 
 cd fctemp
-fc dumpgr-1.results dumpgr-1.out >temp.txt
+fc dumpgr-1.results dumpgr-1.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr grtdfui82.hdf                                       PASSED
 ) else (
@@ -885,7 +885,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-2.results dumpgr-2.out >temp.txt
+fc dumpgr-2.results dumpgr-2.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -i 0,1,3 grtdfui82.hdf                              PASSED
 ) else (
@@ -894,7 +894,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-3.results dumpgr-3.out >temp.txt
+fc dumpgr-3.results dumpgr-3.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -i 0 grtdfui82.hdf                                  PASSED
 ) else (
@@ -903,7 +903,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-4.results dumpgr-4.out >temp.txt
+fc dumpgr-4.results dumpgr-4.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -n Image_array_5 grtdfui82.hdf                      PASSED
 ) else (
@@ -912,7 +912,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-5.results dumpgr-5.out >temp.txt
+fc dumpgr-5.results dumpgr-5.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -r 6,2,3 grtdfui82.hdf                              PASSED
 ) else (
@@ -921,7 +921,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-6.results dumpgr-6.out >temp.txt
+fc dumpgr-6.results dumpgr-6.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -r 6 -d grtdfui82.hdf                               PASSED
 ) else (
@@ -930,7 +930,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-7.results dumpgr-7.out >temp.txt
+fc dumpgr-7.results dumpgr-7.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -o my.dat grtdfui82.hdf                             PASSED
 ) else (
@@ -939,7 +939,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-8.results dumpgr-8.out >temp.txt
+fc dumpgr-8.results dumpgr-8.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -o mybin.dat -b grtdfui82.hdf                       PASSED
 ) else (
@@ -948,7 +948,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-9.results dumpgr-9.out >temp.txt
+fc dumpgr-9.results dumpgr-9.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr grtdfui83.hdf                                       PASSED
 ) else (
@@ -957,7 +957,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-10.results dumpgr-10.out >temp.txt
+fc dumpgr-10.results dumpgr-10.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr grtdfui84.hdf                                       PASSED
 ) else (
@@ -966,7 +966,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-11.results dumpgr-11.out >temp.txt
+fc dumpgr-11.results dumpgr-11.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr grtdfui162.hdf                                      PASSED
 ) else (
@@ -975,7 +975,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-12.results dumpgr-12.out >temp.txt
+fc dumpgr-12.results dumpgr-12.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr grtdfi322.hdf                                       PASSED
 ) else (
@@ -984,7 +984,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-13.results dumpgr-13.out >temp.txt
+fc dumpgr-13.results dumpgr-13.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -p Image_with_Palette.hdf                           PASSED
 ) else (
@@ -993,7 +993,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-14.results dumpgr-14.out >temp.txt
+fc dumpgr-14.results dumpgr-14.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -h Image_with_Palette.hdf                           PASSED
 ) else (
@@ -1002,7 +1002,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-15.results dumpgr-15.out >temp.txt
+fc dumpgr-15.results dumpgr-15.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -r 2,4 -pd Image_with_Palette.hdf                   PASSED
 ) else (
@@ -1011,7 +1011,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-16.results dumpgr-16.out >temp.txt
+fc dumpgr-16.results dumpgr-16.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -r 6 -d -s grtdfui82.hdf                            PASSED
 ) else (
@@ -1020,7 +1020,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-17.results dumpgr-17.out >temp.txt
+fc dumpgr-17.results dumpgr-17.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -r 6 -m 1 grtdfui82.hdf                             PASSED
 ) else (
@@ -1029,7 +1029,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-18.results dumpgr-18.out >temp.txt
+fc dumpgr-18.results dumpgr-18.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -c grtdfi322.hdf                                    PASSED
 ) else (
@@ -1038,7 +1038,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc dumpgr-19.results dumpgr-19.out >temp.txt
+fc dumpgr-19.results dumpgr-19.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdp dumpgr -g -l grtdfi322.hdf                                 PASSED
 ) else (

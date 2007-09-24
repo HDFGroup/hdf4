@@ -61,6 +61,7 @@ copy ..\..\hdfimport.*ut* . > temp.txt 2>&1
 del temp.txt
 
 fc hdfls.tmp5 hdfimport.out1 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set error1=0
 ) else (
@@ -75,7 +76,8 @@ REM   Windows outputs the exponent of in scientific notation with a minimum
 REM   of 3 digits, while most other platforms use 2.  This causes false-positives
 REM   in our test results.  Rather than maintaining our over version of the testfiles,
 REM   we simply comment out the test.
-REM fc hdfed.tmp6 hdfimport.out2 > temp.txt 2>&1
+REM fc hdfed.tmp6 hdfimport.out2 ^> temp.txt 2^>&1
+REM find "FC: no diff" temp.txt ^> nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (

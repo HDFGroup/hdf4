@@ -34,6 +34,7 @@ echo *** Testing hdf24to8  ***
 hdf24to8 ..\testfiles\head.r24 head8.hdf
 hdftor8 head8.hdf
 fc /b img001-263.328 ..\testfiles\head.r8 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set error1=0
 ) else (
@@ -56,7 +57,8 @@ REM   Windows outputs the exponent of in scientific notation with a minimum
 REM   of 3 digits, while most other platforms use 2.  This causes false-positives
 REM   in our test results.  Rather than maintaining our over version of the testfiles,
 REM   we simply comment out the test.
-REM fc hdfed.tmp ..\..\..\hdf\util\hdfed.out1 > temp.txt 2>&1
+REM fc hdfed.tmp ..\..\..\hdf\util\hdfed.out1 ^> temp.txt 2^>&1
+REM find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -77,6 +79,7 @@ ristosds storm110.hdf storm120.hdf storm130.hdf -o storm.hdf > temp.txt 2>&1
 del temp.txt
 hdfed -batch < ..\ristosds.input1 > hdfed.tmp1 2>&1
 fc hdfed.tmp1 ..\ristosds.out1 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -100,6 +103,7 @@ findstr /V "library String" hdfls.tmp1 > hdfls_temp.tmp1
 del hdfls.tmp1
 rename hdfls_temp.tmp1 hdfls.tmp1
 fc hdfls.tmp1 ..\hdfpack.out1 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -120,6 +124,7 @@ del temp.txt
 paltohdf palette.raw palette.hdf
 hdftopal palette.hdf palette.raw.new
 fc /b palette.raw palette.raw.new > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -144,6 +149,7 @@ findstr /V "library String" hdfls.tmp2 > hdfls_temp.tmp2
 del hdfls.tmp2
 rename hdfls_temp.tmp2 hdfls.tmp2
 fc hdfls.tmp2 ..\..\..\hdf\util\hdftor8.out1 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -154,6 +160,7 @@ if %ERRORLEVEL%==0 (
 del temp.txt
 
 fc /b img001-057.057  storm110.raw > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -164,6 +171,7 @@ if %ERRORLEVEL%==0 (
 del temp.txt
 
 fc /b img002-057.057  storm120.raw > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -174,6 +182,7 @@ if %ERRORLEVEL%==0 (
 del temp.txt
 
 fc /b img003-057.057  storm130.raw > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -184,6 +193,7 @@ if %ERRORLEVEL%==0 (
 del temp.txt
 
 fc /b img004-057.057  storm140.raw > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -210,6 +220,7 @@ findstr /V "library String" hdfls.tmp3 > hdfls_temp.tmp3
 del hdfls.tmp3
 rename hdfls_temp.tmp3 hdfls.tmp3
 fc hdfls.tmp3 ..\hdfcomp.out1 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -234,6 +245,7 @@ findstr /V "library String" hdfls.tmp4 > hdfls_temp.tmp4
 del hdfls.tmp4
 rename hdfls_temp.tmp4 hdfls.tmp4
 fc hdfls.tmp4 ..\jpeg2hdf.out1 > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (
@@ -244,6 +256,7 @@ if %ERRORLEVEL%==0 (
 del temp.txt
 
 fc /b jpeg_img.jpg jpeg2.jpg > temp.txt 2>&1
+find "FC: no diff" temp.txt > nul
 if %ERRORLEVEL%==0 (
    set errors=%error1%
 ) else (

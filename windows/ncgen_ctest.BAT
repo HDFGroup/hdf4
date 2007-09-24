@@ -21,7 +21,7 @@ ctest0
 ..\..\ncdump\%1\ncdump -n test1 ctest0.nc > ctest1.cdl
 
 REM compare test1.cdl and ctest1.cdl
-fc test1.cdl ctest1.cdl >temp.txt
+fc test1.cdl ctest1.cdl | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo *** ncgen -c test successful ***
 ) else (

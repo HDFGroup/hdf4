@@ -56,7 +56,7 @@ pushd .\mfhdf\libsrc\Release
 copy ..\..\ncgen\Release\test0.nc test1.nc >temp.txt
 del temp.txt
 hdftest.exe > hdfout.new
-fc hdfout.new ..\hdfout.sav > temp.txt 2>&1
+fc hdfout.new ..\hdfout.sav | find "FC: no diff" > temp.txt 2>&1
 if %ERRORLEVEL%==0 (
    echo *** HDF passes formatted test ***
 ) else (
@@ -76,7 +76,7 @@ echo netCDF formatted tests
 echo =========================
 pushd .\mfhdf\libsrc\Release
 cdftest.exe > testout.new
-fc testout.new ..\testout.sav > temp.txt 2>&1
+fc testout.new ..\testout.sav | find "FC: no diff" > temp.txt 2>&1
 if %ERRORLEVEL%==0 (
    echo *** netCDF passes formatted test ***
 ) else (
@@ -102,7 +102,7 @@ del temp.txt
 ..\ncdump\release\ncdump test0.nc > test1.cdl
 ..\ncgen\release\ncgen -o test1.nc -n test1.cdl
 ..\ncdump\release\ncdump -n test0 test1.nc > test2.cdl
-fc test1.cdl test2.cdl > temp.txt 2>&1
+fc test1.cdl test2.cdl | find "FC: no diff" > temp.txt 2>&1
 if %ERRORLEVEL%==0 (
    echo *** ncdump test successful ***
 ) else (
@@ -122,7 +122,7 @@ echo =========================
 ..\ncdump\release\ncdump -n test1 test0.nc > test1.cdl
 ..\ncgen\release\ncgen -b test1.cdl
 ..\ncdump\release\ncdump test1.nc > test2.cdl
-fc test1.cdl test2.cdl >temp.txt
+fc test1.cdl test2.cdl | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo *** ncgen -b test successful ***
 ) else (
@@ -214,7 +214,7 @@ REM put the file test1.nc in this directory
 copy ..\..\ncgen\release\test0.nc test1.nc >temp.txt
 del temp.txt
 hdftest.exe > hdfout.new
-fc hdfout.new ..\hdfout.sav > temp.txt 2>&1
+fc hdfout.new ..\hdfout.sav | find "FC: no diff" > temp.txt 2>&1
 if %ERRORLEVEL%==0 (
    echo *** HDF passes formatted test ***
 ) else (
@@ -234,7 +234,7 @@ echo netCDF DLL formatted tests
 echo ==========================
 pushd .\mfhdf\libsrc\Release
 dllcdftest > testout.new
-fc testout.new ..\testout.sav > temp.txt 2>&1
+fc testout.new ..\testout.sav | find "FC: no diff" > temp.txt 2>&1
 if %ERRORLEVEL%==0 (
    echo *** netCDF passes formatted test ***
 ) else (

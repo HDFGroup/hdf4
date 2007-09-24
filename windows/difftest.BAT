@@ -98,7 +98,7 @@ call deleteline hdiff_14.out 0
 
 cd fctemp
 
-fc hdiff_01.txt hdiff_01.out >temp.txt
+fc hdiff_01.txt hdiff_01.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff                                                          PASSED
 ) else (
@@ -107,7 +107,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_02.txt hdiff_02.out >temp.txt
+fc hdiff_02.txt hdiff_02.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -g hdifftst1.hdf hdifftst2.hdf                           PASSED
 ) else (
@@ -116,7 +116,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_03.txt hdiff_03.out >temp.txt
+fc hdiff_03.txt hdiff_03.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -s hdifftst1.hdf hdifftst2.hdf                           PASSED
 ) else (
@@ -125,7 +125,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_04.txt hdiff_04.out >temp.txt
+fc hdiff_04.txt hdiff_04.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -d hdifftst1.hdf hdifftst2.hdf                           PASSED
 ) else (
@@ -134,7 +134,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_05.txt hdiff_05.out >temp.txt
+fc hdiff_05.txt hdiff_05.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -D hdifftst1.hdf hdifftst2.hdf                           PASSED
 ) else (
@@ -148,7 +148,7 @@ REM   Windows outputs the exponent of in scientific notation with a minimum
 REM   of 3 digits, while most other platforms use 2.  This causes false-positives
 REM   in our test results.  Rather than maintaining our over version of the testfiles,
 REM   we simply comment out the test.
-REM fc hdiff_06.txt hdiff_06.out >temp.txt
+REM fc hdiff_06.txt hdiff_06.out ^| find "FC: no diff" ^>temp.txt
 REM if %ERRORLEVEL%==0 (
 REM   echo Testing hdiff -d -S hdifftst1.hdf hdifftst2.hdf                        PASSED
 REM ) else (
@@ -157,7 +157,7 @@ REM   more temp.txt
 REM )
 REM del temp.txt
 
-fc hdiff_07.txt hdiff_07.out >temp.txt
+fc hdiff_07.txt hdiff_07.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -d -v dset1 hdifftst1.hdf hdifftst2.hdf                  PASSED
 ) else (
@@ -166,7 +166,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_08.txt hdiff_08.out >temp.txt
+fc hdiff_08.txt hdiff_08.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -D -u vdata1 hdifftst1.hdf hdifftst2.hdf                 PASSED
 ) else (
@@ -175,7 +175,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_09.txt hdiff_09.out >temp.txt
+fc hdiff_09.txt hdiff_09.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -d -e 2 hdifftst1.hdf hdifftst2.hdf                      PASSED
 ) else (
@@ -184,7 +184,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_10.txt hdiff_10.out >temp.txt
+fc hdiff_10.txt hdiff_10.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -d -t 2 hdifftst1.hdf hdifftst2.hdf                      PASSED
 ) else (
@@ -193,7 +193,7 @@ if %ERRORLEVEL%==0 (
 )
 del temp.txt
 
-fc hdiff_11.txt hdiff_11.out >temp.txt
+fc hdiff_11.txt hdiff_11.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff hdifftst1.hdf hdifftst2.hdf                              PASSED
 ) else (
@@ -201,7 +201,7 @@ if %ERRORLEVEL%==0 (
    more temp.txt
 )
 
-fc hdiff_12.txt hdiff_12.out >temp.txt
+fc hdiff_12.txt hdiff_12.out| find "FC: no diff"  >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff -d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf          PASSED
 ) else (
@@ -209,7 +209,7 @@ if %ERRORLEVEL%==0 (
    more temp.txt
 )
 
-fc hdiff_13.txt hdiff_13.out >temp.txt
+fc hdiff_13.txt hdiff_13.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff hdifftst3.hdf hdifftst4.hdf                              PASSED
 ) else (
@@ -217,7 +217,7 @@ if %ERRORLEVEL%==0 (
    more temp.txt
 )
 
-fc hdiff_14.txt hdiff_14.out >temp.txt
+fc hdiff_14.txt hdiff_14.out | find "FC: no diff" >temp.txt
 if %ERRORLEVEL%==0 (
    echo Testing hdiff hdifftst5.hdf hdifftst6.hdf                              PASSED
 ) else (
