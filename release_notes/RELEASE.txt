@@ -46,7 +46,7 @@ New Features and Changes:
           feature is enabled. Use --disable-netcdf configuration flag to 
           build HDF4 C and Fortran libraries that can be used by NetCDF-3
           applications. There is no need to specify -DHAVE_NETCDF compilation
-          flag anymore.
+          flag anymore.  This feature is not yet supported on Windows.
                                                 EIP - 2007/09/05
         - Updated versions of autotools. HDF4 now uses automake 1.10.0,
           autoconf 2.61, and libtool 1.5.22. MAM - 2007/7/25.
@@ -270,8 +270,8 @@ HDF 4.2 Release 2 has been tested on the following platforms:
                                   Intel(R) Fortran Compiler Version 8.0
 
     Windows XP                    Visual Studio 6.0
-                                  Visual Studio .NET (with Intel Fortran 9.0)
-                                  Visual Studio 2005 (with Intel Fortran 9.0)
+                                  Visual Studio .NET (with Intel Fortran 9.1)
+                                  Visual Studio 2005 (with Intel Fortran 9.1)
                                   cygwin (gcc 3.4.4)
 
     MAC OS X Intel                Darwin 8.10.1
