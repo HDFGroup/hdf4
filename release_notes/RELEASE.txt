@@ -75,7 +75,8 @@ New Features and Changes:
           GRgetcompinfo -- replaces GRgetcompress
           SDgetfilename -- retrieves the name of the file, given its ID.
           SDgetnamelen -- retrieves the name length of the object, given its ID
-          BMR - 2007/09/23
+	  Note: In this release, Fortran wrappers for these new APIs are not 
+	  yet available.  BMR - 2007/09/23
 	- SDS' name is no longer limited to 64 characters, and so is vgroup's
 	  (bugzilla 516.)  Note that when an older version of the library 
 	  reads a new name that is longer than 64 characters, the name will
