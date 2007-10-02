@@ -547,6 +547,203 @@ test_valid_args()
     return num_errs;
 }   /* test_valid_args */
 
+/*******************************************************************
+   Name: test_valid_args2() - tests that when some invalid argments were passed
+			    into SDreaddata, causing the function to attempt
+			    to read beyond the dimension size, can be caught 
+			    and handled properly. (more for bugzilla 150)
+   Description:
+	The main contents include:
+	- creates a file and three datasets:
+	  + "data1" dimsizes=[1] int32 read the one element
+	  + "data2" dimsizes=[202,271]
+	  + "data3" dimsizes=[10,3,2]
+	- close the file and reopen it to check reading data
+	- read the datasets as followed to test error checkings on parameters
+	  + "data1" - attempts to read with incorrect stride value
+	  + "data1" - attempts to read with incorrect count value
+	  + "data1" - reads again with all arguments in bounds
+	  + "data2" - attempts to read with strides[1]=D2_Y (correct: D2_Y-1)
+	  + "data2" - attempts to read with count[1]=3 (correct: 2)
+	  + "data3" - attempts to read with incorrect combination of stride and count
+	  + "data3" - reads again with all arguments in bounds
+                                                                 
+********************************************************************/
+#define D1_X 1
+#define D2_X 202
+#define D2_Y 271
+#define D3_X 10
+#define D3_Y 3
+#define D3_Z 2
+
+/* Helper function to test_valid_args2 creates and writes to a dataset */
+intn makeSDS(int32 sd_id, char* name, int32 dtype, int32 rank, 
+	     int32* dimsizes, int32* start, int32* strides, 
+	     int32* count, void* data)
+{
+    int32 sds_id;
+    intn status;
+    intn  num_errs = 0;         /* number of errors so far */
+
+    /* Create the named dataset */
+    sds_id = SDcreate(sd_id, name, dtype, rank, dimsizes);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Write to it */
+    status = SDwritedata(sds_id, start, strides, count, data); 
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Terminate access to the array. */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    return (status);
+}
+
+static intn
+test_valid_args2()
+{
+    int32 sd_id, sds_id;
+    int32 dim[1], dims2[2], dims3[3], d1start[1], d2start[2], d3start[3];
+    int32 d1count[1], d2count[2], d3count[3];
+    int32 d1stride[1], d2stride[2], d3stride[3];
+    float32 data1=32.0, outdata1;
+    int32 data2[D2_X][D2_Y], outdata2[D2_X][D2_Y];
+    int16 data3[D3_X][D3_Y][D3_Z], outdata3[D3_X][D3_Y][D3_Z];
+    intn i, j, k, status;
+    intn  num_errs = 0;         /* number of errors so far */
+
+    /* Create and open the file and initiate the SD interface. */
+    sd_id = SDstart("b150.hdf", DFACC_CREATE);
+    CHECK(status, FAIL, "SDstart");
+
+    /* Create the first dataset */
+    dim[0] = D1_X;
+    d1start[0] = 0;
+    d1count[0] = 1;
+    data1 = 32.0;
+    status = makeSDS(sd_id, "data1", DFNT_FLOAT32, 1, dim, d1start, NULL, d1count, &data1);
+    CHECK(status, FAIL, "makeSDS data1");
+
+    /* Create and write to second dataset */
+    dims2[0] = D2_X;
+    dims2[1] = D2_Y;
+    d2start[0] = d2start[1] = 0;
+    d2count[0] = dims2[0];
+    d2count[1] = dims2[1];
+    for (i = 0; i < D2_X; i++)
+	for (j = 0; j < D2_Y; j++)
+	    data2[i][j] = i * j;
+
+    status = makeSDS(sd_id, "data2", DFNT_INT32, 2, dims2, d2start, NULL, d2count, data2);
+    CHECK(status, FAIL, "makeSDS data2");
+
+    /* Create and write to third dataset */
+    dims3[0] = D3_X;
+    dims3[1] = D3_Y;
+    dims3[2] = D3_Z;
+    d3start[0] = d3start[1] = d3start[2] = 0;
+    d3count[0] = dims3[0];
+    d3count[1] = dims3[1];
+    d3count[2] = dims3[2];
+    for (i = 0; i < D3_X; i++)
+	for (j = 0; j < D3_Y; j++)
+	    for (k = 0; k < D3_Z; k++)
+		data3[i][j][k] = i * j * k;
+
+    status = makeSDS(sd_id, "data3", DFNT_INT16, 3, dims3, d3start, NULL, d3count, data3);
+    CHECK(status, FAIL, "makeSDS data3");
+
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Reopen the file and read in some of the data */
+    sd_id = SDstart("b150.hdf", DFACC_READ);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Read first dataset with incorrect stride value, but shouldn't fail */
+    sds_id = SDselect(sd_id, 0);
+    d1start[0] = 0;
+    d1stride[0] = 2; /* irrelevant because only 1 value to be read */
+    d1count[0] = 1;
+    status = SDreaddata(sds_id, d1start, d1stride, d1count, &outdata1);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* Read first dataset with incorrect count value */
+    d1start[0] = 0;
+    d1stride[0] = 1;
+    d1count[0] = 2; /* array only has 1 value */
+    status = SDreaddata(sds_id, d1start, d1stride, d1count, &outdata1);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Read again with "correct" arguments */
+    d1count[0] = 1;
+    status = SDreaddata(sds_id, d1start, d1stride, d1count, &outdata1);
+    CHECK(status, FAIL, "SDreaddata");
+    VERIFY(outdata1, data1, "SDreaddata first dataset");
+
+    /* Terminate access to the first dataset */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Read second dataset with out of bound stride */
+    sds_id = SDselect(sd_id, 1);
+    d2start[0] = d2start[0] = 0;
+    d2stride[0] = 1;
+    d2stride[1] = D2_Y;  /* should be D2_Y - 1 */
+    d2count[0] = D2_X;
+    d2count[1] = 2;
+    status = SDreaddata(sds_id, d2start, d2stride, d2count, (VOIDP)outdata2);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Read second dataset with too many values requested */
+    d2stride[1] = D2_Y - 1;
+    d2count[1] = 3;	/* should be 2 */
+    status = SDreaddata(sds_id, d2start, d2stride, d2count, (VOIDP)outdata2);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Terminate access to the second dataset */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Read third dataset with too many values requested */
+    sds_id = SDselect(sd_id, 2);
+    d3start[0] = 1;
+    d3start[1] = d3start[2] = 0;
+    d3stride[0] = 3;
+    d3stride[1] = 2;
+    d3stride[2] = 1;
+    d3count[0] = 4;  /* should be 3 max or smaller stride */
+    d3count[1] = 2;
+    d3count[2] = 2;
+    status = SDreaddata(sds_id, d3start, d3stride, d3count, (VOIDP)outdata3);
+    VERIFY(status, FAIL, "SDreaddata");
+
+    /* Read again with "correct" arguments */
+    d3start[0] = 1;
+    d3start[1] = d3start[2] = 0;
+    d3stride[0] = 3;
+    d3stride[1] = 2;
+    d3stride[2] = 1;
+    d3count[0] = 3;
+    d3count[1] = 2;
+    d3count[2] = 2;
+    status = SDreaddata(sds_id, d3start, d3stride, d3count, (VOIDP)outdata3);
+    CHECK(status, FAIL, "SDreaddata");
+
+    /* Terminate access to the third dataset */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of, so far */
+    return num_errs;
+} /* test_valid_args2 */
+
 /* Test driver for testing various SDS' properties. */
 extern int
 test_SDSprops()
@@ -557,6 +754,7 @@ test_SDSprops()
     num_errs = num_errs + test_unlim_dim();
     num_errs = num_errs + test_unlim_inloop();
     num_errs = num_errs + test_valid_args();
+    num_errs = num_errs + test_valid_args2();
 
     return num_errs;
 }

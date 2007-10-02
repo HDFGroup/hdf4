@@ -901,12 +901,12 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 	    else
 		dimsize = handle->numrecs;
 	}
-	if (Stride[0] >= (dimsize - Start[0]))
+	if ((Stride[0]*(End[0]-1)) >= (dimsize-Start[0]))
 	    HGOTO_ERROR(DFE_ARGS, FAIL);
 
 	/* validate subsequent dimensions if dataset is multi-dim */
 	for(i = 1; i < var->assoc->count; i++)
-	    if (Stride[i] >= ((int32) var->shape[i] - Start[i]))
+	     if ((Stride[i]*(End[i]-1)) >= ((int32)var->shape[i]-Start[i]))
 		HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
