@@ -1,6 +1,6 @@
 
                           HDF 4.2 Release 2
-                          September 23, 2007
+                          October 4, 2007
 
 INTRODUCTION
 
