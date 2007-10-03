@@ -1,11 +1,11 @@
-      Installation Instructions for HDF4.2r2 on Windows 2000/XP
+      Installation Instructions for HDF4.2r2 on Windows XP
 ========================================================================
 
 The instructions which follow assume that you will be using the HDF4 source code 
 archive from HDF website (http://hdfgroup.org).
 
-In building HDF4 from source code you may select between two buildenvironment 
-options ( with Fortran or without Fortran).  
+In building HDF4 from source code you may select between two build environment 
+options (with Fortran or without Fortran).  
 
 ***************************WARNINGS*************************************
 Please read CAREFULLY about the following preconditions first.
@@ -15,14 +15,14 @@ Preconditions
 To build the HDF4 and MFHDF libraries ( single-threaded static ormulti-threaded 
 DLL) and utilities, it is assumed that you have done the following:
       
-   1. Installed MicroSoft Visual Studio
+   1. Installed Microsoft Visual Studio
    
       1.1 Currently, Visual Studio 6.0, .NET 2003, and 2005 are supported.
           However, Visual Studio 6.0 project files will soon be phased out, so 
-          building with .NET or 2005 is recommended.
+          building with .NET 2003 or 2005 is recommended.
 
       1.2 To build Fortran libraries, you must install the Intel Fortran 9.1
-          compiler.  This requires Visual Studio using .NET or 2005.
+          compiler.  This requires Visual Studio using .NET 2003 or 2005.
 
    2. Set up a directory structure to unpack the source code archive.
       For example: 
@@ -50,7 +50,9 @@ DLL) and utilities, it is assumed that you have done the following:
       4.2 HDF4 uses JPEG release 6b for compression.  To use JPEG
           library, you have to install your own JPEG library or go to
           ftp://ftp.hdfgroup.org/lib-external/jpeg/bin to download
-          the JPEG library archive file jpeg-6b.exe.
+          the JPEG library archive file. For Visual Studio 6.0 or .NET 2003, 
+          download jpeg-6b.exe.  For Visual Studio 2005, download 
+          jpeg-6b-4.exe instead.
 
           JPEG compression feature inside HDF4 is required.
 
@@ -112,12 +114,14 @@ DLL) and utilities, it is assumed that you have done the following:
           If you cannot find your Zlib, JPEG, and Szip header path
           (for example, c:\zlib122\include, c:\jpeg-6b, 
           c:\szip\include) from the directory list, add the header
-          path (c:\zlib122\include, c:\jpeg-6b, c:\szip\include) to
+          path (c:\zlib122\include, c:\jpeg-6b (or c:\jpeg-6b-4\include),
+          c:\szip\include) to
           the included directories.
       
       6.2 Find the box "Show directories for", choose "Library files",
           If you cannot find your Zlib, JPEG, and Szip library path
-          (for example, c:\zlib122\lib, c:\jpeg-6b, c:\szip\dll)
+          (for example, c:\zlib122\lib, c:\jpeg-6b (or c:\jpeg-6b-4\lib), 
+          c:\szip\dll)
           from the directory list, add the library path
           (c:\zlib122\lib, c:\jpeg-6b, c:\szip\dll) to the library
           directories.
