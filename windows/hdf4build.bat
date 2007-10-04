@@ -257,8 +257,10 @@ rem This is where the magic happens
     if %errorlevel% neq 0 goto error
     
     rem If szip is disabled, we need to edit h4config.h
-    call :disableszip
-    if %errorlevel% neq 0 goto error
+    if "%hdf4_disableszip%"=="true" (
+        call :disableszip
+        if !errorlevel! neq 0 goto error
+    )
     
     rem If we are using VS2005, we need to upgrade project files first
     if defined hdf4_use_vs2005 call :convert

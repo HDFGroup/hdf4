@@ -1,4 +1,4 @@
-      Installation Instructions for HDF4.2r2 on Windows XP
+      Installation Instructions for HDF4.2r2 on Windows XP/Vista
 ========================================================================
 
 The instructions which follow assume that you will be using the HDF4 source code 
@@ -139,7 +139,8 @@ The following sections discuss installation procedures in detail:
    Section VII:  Use HDF4 with Original netCDF Library
    Section VIII: Build and Test HDF4 Library on the Command Line
    Section IX:   Build HDF4 Multithreaded Static Library
-   Section X:    Some Helpful Pointers
+   Section X:    Build HDF4 on Windows Vista
+   Section XI:   Some Helpful Pointers
    
 ************************************************************************
 
@@ -1194,7 +1195,7 @@ Step II (Optional): If building Fortran libraries, their project settings must
 
 
    
-Section X: Some Helpful Pointers
+Section XI: Some Helpful Pointers
 ======================================================================
 
 (as described in terms of installing the no fortran configuration)

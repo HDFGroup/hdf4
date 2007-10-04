@@ -279,7 +279,9 @@ HDF 4.2 Release 2 has been tested on the following platforms:
                                   Visual Studio .NET (with Intel Fortran 9.1)
                                   Visual Studio 2005 (with Intel Fortran 9.1)
                                   cygwin (gcc 3.4.4)
-
+                                  
+    Windows Vista                 Visual Studio 2005 (no fortran)
+                                  
     MAC OS X Intel                Darwin 8.10.1
                                   i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
                                   g95 0.91
