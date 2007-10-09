@@ -15,6 +15,7 @@
 
 List of the HDF4 releases
 
+4.2r2          October   2007
 4.2r1          February  2005
 4.2r0          December  2003
 4.2r0-Beta     September 2003
@@ -33,6 +34,330 @@ List of the HDF4 releases
 
 ==========================================================================    
  
+
+%%%4.2r2%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+                          HDF 4.2 Release 2
+                          October 4, 2007
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2r1 and
+HDF 4.2r2.  It is written for people who are familiar with
+previous releases of HDF and wish to migrate to HDF 4.2r2.
+
+The HDF 4.2r2 documentation can be found on the THG ftp server 
+(ftp.hdfgroup.org) in the directory:
+
+     ftp://ftp.hdfgroup.org/HDF/Documentation/
+
+First-time HDF users are encouraged to read the FAQ for this
+release for more information about HDF.  Also see the home page 
+for HDF at:
+
+     http://hdfgroup.org/
+
+If you have any questions or comments, please send them to:
+
+     help@hdfgroup.org
+
+CONTENTS
+
+- New features and changes
+  -- Configuration
+  -- Library
+  -- Utilities
+- Support for new platforms and compilers
+- Bugs fixed since HDF4.2r1
+  -- Utilities
+  -- Library
+- Documentation
+- Platforms tested
+- Known problems
+
+New features and changes
+========================
+    Configuration
+    ============= 
+        - The default installation directory name was changed from "NewHDF" 
+          to "hdf4".                            EIP - 2007/08/06
+        - Introduced --enable-netcdf configure flag to provide an option to
+          enable/disable "HDF4-NetCDF"-like interfaces. By default, the 
+          HDF4 netcdf feature is enabled.  Use the --disable-netcdf 
+          configuration flag to build HDF4 C and Fortran libraries that can 
+          be used by NetCDF-3 applications. There is no longer a need to 
+          specify the -DHAVE_NETCDF compilation flag.  This feature is not 
+          yet supported on Windows.             EIP - 2007/09/05
+        - Updated versions of autotools. HDF4 now uses automake 1.10.0,
+          autoconf 2.61, and libtool 1.5.22.    MAM - 2007/7/25.
+        - The Fortran part of the HDF4 library uses the F77_FUNC macro to 
+          mangle names of C functions called from Fortran APIs. This should 
+          help with HDF4 code portability to different Fortran compilers.
+                                                EIP - 2006/12/19
+     
+    Library
+    ========= 
+        - SZIP compression is supported now for GR C interfaces
+                                                EIP - 2007/09/15
+        - Added new Fortran function hconfinf that determines whether the 
+          SZIP compression method is present and whether encoding is available.
+        - Added support for SZIP compression in Fortran.
+                                                EIP - 2007/09/01
+        - The following APIs were added; see "Bugs fixed" section for details.
+          SDreset_maxopenfiles -- Resets the maximum number of files that can 
+                  be open at a time.
+          SDget_maxopenfiles -- Retrieves the current number of open files
+                  allowed in HDF and the maximum number of open files allowed 
+                  on a system.
+          SDget_numopenfiles -- Returns the number of files currently open.
+          SDgetcompinfo -- Replaces SDgetcompress.
+          GRgetcompinfo -- Replaces GRgetcompress.
+          SDgetfilename -- Retrieves the name of the file, given its ID.
+          SDgetnamelen -- Retrieves the name length of the object, given its ID.
+          Note: Fortran wrappers for these new APIs are not available in this 
+          release.  BMR - 2007/09/23
+        - SDS and vgroup names are no longer limited to 64 characters
+          (Bugzilla #516).  Note that when an older version of the library 
+          reads a new name that is longer than 64 characters, the name will
+          contain some garbage after 64 characters.  BMR - 2006/10/12
+        - User reported that SDreaddata went into an infinite loop when 
+          reading some corrupted compressed data.  This problem is fixed.
+          Two new error codes were added, consequently:
+                DFE_READCOMP  - when the zlib function returns
+                        Z_ERRNO        (-1) or
+                        Z_STREAM_ERROR (-2) or
+                        Z_DATA_ERROR   (-3) or
+                        Z_MEM_ERROR    (-4) or
+                        Z_BUF_ERROR    (-5)
+
+                DFE_COMPVERSION - when the zlib function returns
+                        Z_VERSION_ERROR (-6)
+
+
+    Utilities
+    ========= 
+        - hrepack repacks by hyperslabs for large (non-compressed) datasets.
+                                                         PVN - 2007/7/10
+        - hdiff enables reading by hyperslabs. This feature was added to 
+          handle very large datasets, where available memory is a isssue. 
+                                                         PVN - 2007/6/13
+        - hdiff now shows indices in multidimensional array notation. 
+                                                         PVN - 2007/4/5
+        - hdiff now shows the name of the array when printing differences. 
+                                                         PVN - 2007/4/5
+        - hdiff now shows a list of all objects in verbose mode. 
+                                                         PVN - 2007/4/5
+        - hdiff return code is now 1 if differences are found, 0 if no
+          differences are found, and -1 for an error.    PVN - 2007/4/5
+        - hdiff has a new option, -p, for relative error. See usage. 
+                                                         PVN - 2007/4/5
+        - hrepack now prints chunk information along with the compression 
+          type in verbose mode.                          PVN - 2007/4/5
+         
+
+Support for new platforms and compilers
+=======================================
+        - Added support for gfortran and g95 on Mac Intel.
+                                       EIP 2007/09/14
+        - Added support for gfortran on FreeBSD for both 32- and 64-bit. 
+        - Added support for FreeBSD on AMD64 with gcc compilers.
+                                       EIP 2007/05/24
+        - Added support for MAC OS X Intel with gcc and g95 compilers.
+        - Added support for SUNOS 5.10 on Intel with SUN compilers (32- and
+          64-bit modes).               EIP 2006/12/14
+        - Added support for HPUX 11.23 (32- and 64-bit modes).
+                                        EIP 2006/12/19
+
+Bugs fixed since HDF4.2r1
+=========================
+     Utilities
+    ========= 
+        - hrepack: Repeated vgroup insertions (duplicated links) were not being 
+          replicated.  PVN - 2007/9/10
+        - hrepack: Improved performance for large number of SDSs, through the 
+          elimination of redundant file open calls.  PVN - 2007/4/5
+        - hrepack: Fixed a bug in the -t option so that it now accepts multiple
+          comma-separated names.  PVN - 2007/4/5
+        - hrepack: Now duplicates dimension SDSs that are not accessed from any 
+          other SDSs.  PVN - 2007/4/5
+        - hrepack: Fixed a bug that caused the unchunking of a dataset when
+          uncompressing was requested.  PVN - 2007/4/5
+
+    Library
+    ========= 
+        - Added display of the compression method to hdp dumpsds and dumpgr
+          (Bugzilla #130).  BMR - 2005/4/4
+        - The current SDgetcompress and GRgetcompress APIs have severe flaws.
+          Two new APIs, SDgetcompinfo and GRgetcompinfo, were added to 
+          provide better functionality and will eventually replace 
+          SDgetcompress and GRgetcompress.  BMR - 2005/4/4
+        - Applied user's patch to fix bug #602.  BMR - 2005/4/23
+        - Added a switch ('u') to ncdump to replace nonalpha-numeric characters
+          with underscores.  Thus, the SDS names won't be changed automatically 
+          unless the user so requests (Access bug #934/Bugzilla #381).
+          BMR - 2005/7/17
+        - In HDF4.2r0, SDwritedata failed when the SDS had rank=0 (bug #1045).
+          This change was retracted; writing to an SDS with rank=0 is allowed 
+          again.  BMR - 2005/8/23
+        - When a dimension has the same name as an SDS, depending on the
+          order in which they were created, either the SDS or the dimension
+          will be corrupted if certain operations occur, such as a SDsetdimscale
+          or SDsetattr call to the dimension.  With this bugfix, the current 
+          situation can be summarized as below:
+              + Data that has already been corrupted cannot be recovered.
+              + For existing data that has not yet been corrupted, the problem 
+                has been fixed for multi-dimensional SDSs only.  If the SDS had
+                only one dimension, the results of subsequent accesses to the 
+                dimension would still be unpredictable (Bugzilla #328).  
+                BMR - 2005/8/23
+              + For future data, the problem has been fixed (Bugzilla #624).
+                BMR - 2007/6/24
+        - Allowing the maximum number of open files to be increased revealed
+          a problem: having more than 255 files open will cause file
+          corruption (Bugzilla #440).  Specifically, file number (255*m)+n 
+          will overwrite file number n, where n is [0..255] and m is [1..p], 
+          where (255*p) <= maximum system allowed.  This problem is fixed.
+          In addition, a new API is added for convenience:
+                SDgetfilename -- retrieves the name of the file given its ID.
+          BMR - 2005/10/05
+        - Prior to this release, the maximum number of files that can be open
+          at the same time was only 32. This limit was implemented as a 
+          defined constant in the library, which users could not change without 
+          recompiling the library. In this release, if this limit is reached, 
+          the library will increase it to the system limit, minus 3 to account 
+          for stdin, stdout, and stderr.  In addition, three APIs are added 
+          for more flexibility (Bugzilla #396/Access bug #935):  
+                SDreset_maxopenfiles -- Resets the maximum number of files 
+                        that can be open at a time.
+                SDget_maxopenfiles -- Retrieves the current number of open 
+                        files allowed in HDF and the maximum number of open 
+                        files allowed on a system.
+                SDget_numopenfiles -- Returns the number of files currently 
+                        open.
+          Note:
+            (1) Because there are also stdin, stdout, and stderr, the maximum
+                limit that can be set must only be (system limit) - 3.
+            (2) If the system maximum limit is reached, the library will 
+                push the error code DFE_TOOMANY onto the error stack.
+                The user application can detect this after an SDstart fails.
+          BMR - 2005/10/21
+        - The problem where ncgen failed with "too many attributes" on 
+          some user files is fixed (Bugzilla #373).  BMR - 2005/10/28
+        - The problem where SDcheckempty returns "not empty" for empty 
+          chunked and compressed datasets is fixed (Bugzilla #218).
+          BMR - 2005/10/31
+        - If a VSgetattr was called twice for an attribute, the second call 
+          would fail (Bugzilla #486).  This problem is fixed.  BMR - 2005/12/30
+        - A bug with reading metadata in hdfimport is fixed (Bugzilla #558).
+          BMR - 2006/9/23
+        - The problem of writing to two unlimited 1-D arrays is fixed
+          (Access bug #525).  BMR - 2006/11/11
+
+Documentation
+==============
+    Documentation contains multiple bug fixes and improvements. 
+
+Platforms tested
+================
+
+HDF 4.2 Release 2 has been tested on the following platforms:
+
+                                  
+    AIX 5.3 (32/64 bit)           xlc 7.0.0.0
+    (copper)                      xlf 9.1.0.3
+
+    FreeBSD 6.2 (32- and 64-bit)  gcc  and f77 GNU 3.4.6
+    (duty and liberty)            GNU Fortran (GCC) 4.2.2 20070905 
+
+    HP-UX B.11.23 (32- and 64-bit)HP aC++/ANSI C B3910B A.06.02
+    (sirius)                      HP F90 v3.1 
+
+    IRIX64 6.5                    MIPSpro cc 7.4.4m
+    (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m 
+
+    Linux 2.4.21-47.ELsmp #1 SMP  gcc and f77 3.2.3
+        i686 i386 GNU/Linux
+    (osage)
+
+    Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
+        SMP i686 i386             G95 (GCC 4.0.3 (g95 0.91!) Nov 21 2006)
+    (kagiso)                      PGI C, Fortran, C++ 6.2-5 32-bit 
+                                  icc (ICC) 9.1 
+                                  Intel(R) Fortran Compiler for 32-bit 
+                                      applications, Version 9.1 
+
+    Linux 2.6.16.46-0.12-debug #1 
+        SMP ia64 GNU/Linux        Intel(R) C++ Version 10.0.025
+    (ucar hir1)                   Intel(R) Fortran Itanium(R) Version 10.0.025
+
+    Linux 2.6.16.46-0.14-smp #1   Intel(R) C++ for Intel(R) EM64T Ver. 9.1.037
+        SMP x86_64 GNU/Linux      Intel(R) Fortran Intel(R) EM64T Ver. 9.1.031
+    (smirom)                      gcc (GCC) 4.1.2 20070115 (SUSE Linux)
+                                  G95 (GCC 4.0.3 (g95 0.91!) Apr 19 2007)
+
+    Linux 2.6.5-7.283-rtgfx Altix 
+        SMP ia64                  Intel(R) C++ Version 9.0
+    (cobalt)                      Intel(R) Fortran Itanium(R) Version 9.0
+
+
+    SunOS 5.8 32- and 64-bit      Sun WorkShop 6 update 2 C 5.3
+    (sol)                         Sun WorkShop 6 update 2 Fortran 95 6.2
+
+    SunOS 5.10 32- and 64-bit     Sun WorkShop 6 update 2 C 5.8
+    (linew)                       Sun WorkShop 6 update 2 Fortran 95 8.2
+                                  Patch 121019-06 
+
+
+    IA-64 Linux 2.4.21.SuSE_292.til1
+        ia64                      gcc (GCC) 3.2.2
+    (NCSA tg-login)               Intel(R) C++ Version 8.0
+                                  Intel(R) Fortran Compiler Version 8.0
+
+    Windows XP                    Visual Studio 6.0
+                                  Visual Studio .NET (with Intel Fortran 9.1)
+                                  Visual Studio 2005 (with Intel Fortran 9.1)
+                                  cygwin (gcc 3.4.4)
+                                  
+    Windows Vista                 Visual Studio 2005 (no fortran)
+                                  
+    MAC OS X Intel                Darwin 8.10.1
+                                  i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
+                                  g95 0.91
+                                  gfortran GNU Fortran (GCC) 4.3.0 20070518
+
+                                  
+
+Known problems
+==============
+
+o  hdfcomp fails on HPUX 11.23 for the 64-bit version of the library
+
+o  This release does not support VMS systems.
+
+o  N-Bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When a one-dimensional SDS has the same name as the dimension, subsequent
+   accesses to the dimension produce unpredictable results.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled 
+   with a PGI C compiler; linking with JPEG built with gcc causes JPEG library 
+   tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to 
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
 
 %%%4.2r1%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

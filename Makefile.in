@@ -16,6 +16,7 @@
 
 #############################################################################
 #############################################################################
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -58,6 +59,15 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(settingsdir)"
+settingsDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(settings_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -191,6 +201,9 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = hdf mfhdf man
+# install libhdf4.settings in lib directory
+settingsdir = $(libdir)
+settings_DATA = libhdf4.settings
 all: all-recursive
 
 .SUFFIXES:
@@ -229,6 +242,23 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 libhdf4.settings: $(top_builddir)/config.status $(srcdir)/libhdf4.settings.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
+install-settingsDATA: $(settings_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(settingsdir)" || $(MKDIR_P) "$(DESTDIR)$(settingsdir)"
+	@list='$(settings_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(settingsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(settingsdir)/$$f'"; \
+	  $(settingsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(settingsdir)/$$f"; \
+	done
+
+uninstall-settingsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(settings_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(settingsdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(settingsdir)/$$f"; \
+	done
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -505,9 +535,12 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile
+all-am: Makefile $(DATA)
 installdirs: installdirs-recursive
 installdirs-am:
+	for dir in "$(DESTDIR)$(settingsdir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -551,7 +584,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-settingsDATA
 
 install-dvi: install-dvi-recursive
 
@@ -587,7 +620,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-settingsDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
 	install-strip
@@ -602,10 +635,11 @@ uninstall-am:
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-recursive uninstall uninstall-am
+	install-settingsDATA install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-settingsDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
