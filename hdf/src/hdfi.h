@@ -921,8 +921,7 @@ void exit(int status);
 
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
 #if !(defined(macintosh) || defined(MAC) || defined (__APPLE__))
-
-#if defined _M_ALPHA || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
+#if defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
 #define INTEL86
 #endif /* INTEL86 */
@@ -999,7 +998,11 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+#ifdef _WIN64
+typedef long long         hdf_pint_t;   /* 8-byte pointer */
+#else
+typedef int               hdf_pint_t;   /* 4-byte pointer */
+#endif /* _WIN64 */
 
 #if defined _M_ALPHA
 #define FNAME_PRE_UNDERSCORE
