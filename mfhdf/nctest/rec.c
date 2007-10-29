@@ -39,7 +39,7 @@ numrecvars(ncid, recvarids)
       return 0;
     nrecvars = 0;
     for (iv = 0; iv < nvars; iv++) {
-	if (ncvarinq(ncid, iv, 0, 0, &ndims, dimids, 0) == -1)
+	if (ncvarinq(ncid, iv, NULL, NULL, &ndims, dimids, NULL) == -1)
 	  return -1;
 	if (ndims > 0 && dimids[0] == recdimid) {
 	    if (recvarids)
@@ -364,7 +364,7 @@ test_ncrecput(path)
     for (iv = 0; iv < nrvars; iv++) {
 	datap[iv] = emalloc(rvarsizes[iv]);
 	datar[iv] = emalloc(rvarsizes[iv]); /* for comparison values */
-	if (ncvarinq(ncid, rvarids[iv], 0, &vartype[iv], 0, 0, 0) == -1) {
+	if (ncvarinq(ncid, rvarids[iv], 0, &vartype[iv], 0, 0, NULL) == -1) {
 	    error("%s: ncvarinq failed", pname);
 	    ncclose(ncid);
 	    return;
@@ -609,4 +609,3 @@ test_ncrecget(path)
     else
       (void) fprintf(stderr,"ok ***\n");
 }
-
