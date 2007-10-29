@@ -999,7 +999,11 @@ typedef unsigned int      uintn;
 typedef float             float32;
 typedef double            float64;
 typedef long              intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+#ifdef _WIN64
+typedef long long         hdf_pint_t;   /* 8-byte pointer */
+#else
+typedef int               hdf_pint_t;   /* 4-byte pointer */
+#endif /* _WIN64 */
 
 #if defined _M_ALPHA
 #define FNAME_PRE_UNDERSCORE
