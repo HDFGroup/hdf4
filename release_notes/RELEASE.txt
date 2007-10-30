@@ -42,11 +42,15 @@ New features and changes
 ========================
     Configuration
     ============= 
-     
+
 
     Library
     ========= 
 
+    - Applications that are built with the HDF4 library configured with --disable-netcdf flag
+      are not required to be linked with the external NetCDF-3 library anymore. netcdf.h file that
+      comes with HDF4 is unstalled under hdf4_netcdf.h name.     
+									EIP 2007-10-30
 
     Utilities
     ========= 

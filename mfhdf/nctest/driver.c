@@ -4,7 +4,12 @@
  *   $Id$
  *********************************************************************/
 
+#ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
+#else
+#include "hdf4_netcdf.h"
+#endif
+
 #include "tests.h"
 
 /* #define MDEBUG 1 */
