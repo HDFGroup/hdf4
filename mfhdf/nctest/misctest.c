@@ -6,13 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
-#ifdef H$_HAVE_NETCDF
 #include "netcdf.h"
-#esle
-#include "hdf4_netcdf.h"
-#endif
-
 #include "testcdf.h"		/* defines in-memory test cdf structure */
 #include "add.h"		/* functions to update in-memory netcdf */
 #include "error.h"

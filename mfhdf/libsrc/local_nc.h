@@ -66,11 +66,7 @@
 #endif /* !macintosh */
 #endif /* NO_SYSTEM_XDR_INCLUDES */
 
-#ifdef H4_HAVE_NETCDF
 #include	"netcdf.h" /* needed for defs of nc_type, ncvoid, ... */
-#else
-#include "hdf4_netcdf.h"
-#endif
 
 /* ptr argument type in internal functions */
 #define Void    char

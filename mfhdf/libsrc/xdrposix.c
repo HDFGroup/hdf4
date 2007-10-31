@@ -58,7 +58,7 @@ typedef NETLONG     netlong;
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
 		      /* also obtains <stdio.h>, <rpc/types.h>, &
 		       * <rpc/xdr.h> */
-/*EIP #include "netcdf.h" */ 
+#include "netcdf.h" /* NC_ */
 #include "mfhdf.h"
 
 #if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C))

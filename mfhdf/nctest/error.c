@@ -12,12 +12,7 @@
 #include <varargs.h>
 #endif
 
-#ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
-#else
-#include "hdf4_netcdf.h"
-#endif
-
 #include "error.h"
 
 int	error_count = 0;

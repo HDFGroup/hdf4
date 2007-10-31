@@ -192,7 +192,7 @@ AC_PROG_YACC
 
 AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
 
-AC_CHECK_PROG([DIFF],     [dift],     [diff -w])
+AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
 AC_CHECK_PROG([TBL],      [tbl],      [tbl])
@@ -601,6 +601,7 @@ case "$host" in
   i686-pc-cygwin*)      BAR="linux"       ;;
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
+
 src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h
            mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
            mfhdf/fortran/config/netcdf-FOO.inc:mfhdf/fortran/netcdf.inc
@@ -633,10 +634,6 @@ for config_file in $src_files; do
     exit 1
   fi
 done
-  if test "X$BUILD_NETCDF" != "Xyes"; then
-  echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
-    mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
-  fi 
 
 AC_CONFIG_FILES([Makefile
                  libhdf4.settings
