@@ -46,6 +46,14 @@ struct rlimit rlim;
    the system allowed to account for stdin, stdout, and stderr */
 #define MAX_AVAIL_OPENFILES          (MAX_SYS_OPENFILES - 3)
 
+static int _curr_opened = 0 ; /* the number of files currently opened */
+/* NOTE: _ncdf might have been the number of files currently opened, yet it
+   is not decremented when ANY file is closed but only when the file that
+   has the same index as _ncdf-1 is closed.  Thus, it indicates the last
+   index in _cdfs intead of the number of files currently opened.  So, I 
+   added _curr_opened to keep track of the number of files currently opened. 
+   QAK suggested to use atom as in other interfaces and that would eliminate
+   similar issues.  - BMR - 11/03/07 */
 static int _ncdf = 0 ; /*  high water mark on open cdf's */
 static NC **_cdfs;
 
@@ -130,6 +138,7 @@ intn req_max;	/* requested max to allocate */
 	   new list and deallocate the old list of pointers */
 	if (_cdfs)
 	{
+	    /*for (i=0; i <= _ncdf; i++)*/
 	    for (i=0; i <= _ncdf; i++)
 		newlist[i] = _cdfs[i];
 	    HDfree((VOIDP)_cdfs);
@@ -169,7 +178,7 @@ NC_get_systemlimit()
 int
 NC_get_numopencdfs()
 {
-	return(_ncdf);
+	return(_curr_opened);
 } /* NC_get_numopencdfs */
 
 /*
@@ -225,10 +234,12 @@ const char	*path ;	/* file name */
 int mode ;
 {
 	NC *handle ;
-	int id ;
+	int id;
+	intn cdfs_size;
 
 	/* Allocate _cdfs, if it is already allocated, nothing will be done */
-	NC_reset_maxopenfiles(0);
+	if (!_cdfs)
+	    cdfs_size = NC_reset_maxopenfiles(0);
 
 	/* find first available id */
 	for(id = 0 ; id < _ncdf; id++)
@@ -274,6 +285,7 @@ int mode ;
 	_cdfs[id] = handle ;
 	if(id == _ncdf)
 		_ncdf++ ;
+	_curr_opened++;
 	return(id) ;
 }
 
@@ -403,6 +415,7 @@ int cdfid ;
                 if(handle->redefid == _ncdf - 1)
                     _ncdf-- ;
                 handle->redefid = -1 ;
+		_curr_opened--;
             }
       }
 	else if(handle->flags & NC_RDWR)
@@ -459,6 +472,7 @@ int cdfid ;
 
 	if(cdfid == _ncdf - 1)
 		_ncdf-- ;
+	_curr_opened--;
 
 	return(0) ;
 }
@@ -650,6 +664,7 @@ int cdfid ;
 	_cdfs[id] = handle ;
 	if(id == _ncdf)
 		_ncdf++ ;
+	_curr_opened++;
 
 	/* put the new handle in old id */
 	_cdfs[cdfid] = new ;
@@ -931,6 +946,7 @@ NC *handle ;
                 _cdfs[handle->redefid] = NULL ;
                 if(handle->redefid == _ncdf - 1)
                     _ncdf-- ;
+		_curr_opened--;
                 NC_free_cdf(handle) ;
                 return(-1) ;
             }
@@ -943,6 +959,7 @@ NC *handle ;
           _cdfs[handle->redefid] = NULL ;
           if(handle->redefid == _ncdf - 1)
               _ncdf-- ;
+	  _curr_opened--;
           handle->redefid = -1 ;
       }
 
@@ -1014,6 +1031,7 @@ int cdfid ;
 
 	if(cdfid == _ncdf - 1)
 		_ncdf-- ;
+	_curr_opened--;
 
 	return(0) ;
 }

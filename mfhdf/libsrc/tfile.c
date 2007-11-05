@@ -200,11 +200,25 @@ test_max_open_files()
        all should succeed */
     for (index=0; index < NUM_FILES_LOW; index++)
     {
-    /* Create a file */
+	/* Create a file */
 	sprintf(filename[index], "file%i", index);
 	fids[index] = SDstart(filename[index], DFACC_CREATE);
 	CHECK(fids[index], FAIL, "test_maxopenfiles: SDstart");
     }
+
+    /* Verify that NUM_FILES_LOW files are opened */
+    curr_opened = SDget_numopenfiles();
+    VERIFY(curr_opened, NUM_FILES_LOW, "test_maxopenfiles: SDget_numopenfiles");
+
+    /* Now randomly close 3 files and check number of opened files */
+    status = SDend(fids[5]);
+    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    status = SDend(fids[15]);
+    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    status = SDend(fids[25]);
+    CHECK(status, FAIL, "test_maxopenfiles: SDend");
+    curr_opened = SDget_numopenfiles();
+    VERIFY(curr_opened, NUM_FILES_LOW-3, "test_maxopenfiles: SDget_numopenfiles");
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
@@ -214,8 +228,15 @@ test_max_open_files()
     curr_max = SDreset_maxopenfiles(0);
     VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
 
-    /* Get the number of files currently being opened */
+    /* Reopen the 3 files above, and check the number of opened files again */
+    fids[5] = SDstart(filename[5], DFACC_RDWR);
+    CHECK(fids[5], FAIL, "test_maxopenfiles: SDstart");
+    fids[15] = SDstart(filename[15], DFACC_RDWR);
+    CHECK(fids[15], FAIL, "test_maxopenfiles: SDstart");
+    fids[25] = SDstart(filename[25], DFACC_RDWR);
+    CHECK(fids[25], FAIL, "test_maxopenfiles: SDstart");
     curr_opened = SDget_numopenfiles();
+    VERIFY(curr_opened, NUM_FILES_LOW, "test_maxopenfiles: SDget_numopenfiles");
 
     /* Reset current max to a value that is smaller than the current 
        number of opened files; it shouldn't reset */
