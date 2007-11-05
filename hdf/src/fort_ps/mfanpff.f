@@ -56,7 +56,7 @@ C----------------------------------------------------------------
 C     integer  afistart
       INTERFACE
          INTEGER FUNCTION afistart(file_id)
-            !MS$ATTRIBUTES C,reference,alias:'_AFISTART' :: afistart
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFISTART' :: afistart
             integer file_id
          END FUNCTION afistart
       END INTERFACE
@@ -87,7 +87,7 @@ C     integer  afifinf
       INTERFACE
          INTEGER FUNCTION afifinf(an_id,n_flable,n_fdesc,
      +                      n_olabel, n_odesc) 
-            !MS$ATTRIBUTES C,reference,alias:'_AFIFINF' :: afifinf
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIFINF' :: afifinf
             integer an_id, n_flable,n_fdesc,n_olabel, n_odesc
          END FUNCTION afifinf
       END INTERFACE
@@ -113,7 +113,7 @@ C----------------------------------------------------------------
 C     integer  afiend
       INTERFACE
          INTEGER FUNCTION afiend(an_id)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIEND' :: afiend
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIEND' :: afiend
             integer an_id
          END FUNCTION afiend
       END INTERFACE
@@ -142,7 +142,7 @@ C----------------------------------------------------------------
 C     integer  aficreat
       INTERFACE
          INTEGER FUNCTION aficreat(an_id, etag, eref, atype)
-            !MS$ATTRIBUTES C,reference,alias:'_AFICREAT' :: aficreat
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFICREAT' :: aficreat
             integer an_id, etag, eref, atype
          END FUNCTION aficreat
       END INTERFACE
@@ -168,7 +168,7 @@ C----------------------------------------------------------------
 C     integer  afifcreat
       INTERFACE
          INTEGER FUNCTION afifcreat(an_id, atype)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIFCREAT' :: afifcreat
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIFCREAT' :: afifcreat
             integer an_id, atype
          END FUNCTION afifcreat
       END INTERFACE
@@ -201,7 +201,7 @@ C----------------------------------------------------------------
 C     integer  afiselct
       INTERFACE
          INTEGER FUNCTION afiselct(an_id, index, atype)
-            !MS$ATTRIBUTES C,reference,alias:'_AFISELCT' :: afiselct
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFISELCT' :: afiselct
             integer an_id, index, atype
          END FUNCTION afiselct
       END INTERFACE
@@ -229,7 +229,7 @@ C-------------------------------------------------------------
 C      integer afinann
       INTERFACE
          INTEGER FUNCTION afinann(an_id, atype, etag, eref)
-            !MS$ATTRIBUTES C,reference,alias:'_AFINANN' :: afinann
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFINANN' :: afinann
             integer an_id, atype, etag, eref
          END FUNCTION afinann
       END INTERFACE
@@ -260,7 +260,7 @@ C-------------------------------------------------------------
 C      integer afialst
       INTERFACE
          INTEGER FUNCTION afialst(an_id,atype,etag,eref,alist)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIALST' :: afialst
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIALST' :: afialst
             integer an_id, atype, etag, eref, alist(*)
          END FUNCTION afialst
       END INTERFACE
@@ -283,7 +283,7 @@ C---------------------------------------------------------------------
 C      integer afialen
       INTERFACE
          INTEGER FUNCTION afialen(ann_id)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIALEN' :: afialen
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIALEN' :: afialen
             integer ann_id
          END FUNCTION afialen
       END INTERFACE
@@ -309,7 +309,7 @@ C--------------------------------------------------------------
 C      integer afiwann
       INTERFACE
          INTEGER FUNCTION afiwann(ann_id, ann, annlen)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIWANN' :: afiwann
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIWANN' :: afiwann
    	      !DEC$ ATTRIBUTES reference :: ann
             integer ann_id, annlen
             character*(*) ann
@@ -338,7 +338,7 @@ C--------------------------------------------------------------
 C      integer afirann
       INTERFACE
          INTEGER FUNCTION afirann(ann_id, ann, maxlen)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIRANN' :: afirann
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIRANN' :: afirann
 	      !DEC$ ATTRIBUTES reference :: ann
             integer ann_id, maxlen
             character*(*) ann
@@ -363,7 +363,7 @@ C------------------------------------------------------------
 C      integer afiendac
       INTERFACE
          INTEGER FUNCTION afiendac(ann_id)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIENDAC' :: afiendac
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIENDAC' :: afiendac
             integer ann_id
          END FUNCTION afiendac
       END INTERFACE
@@ -394,7 +394,7 @@ C-----------------------------------------------------------
 C      integer afigtr
       INTERFACE
          INTEGER FUNCTION afigtr(an_id,index,type,tag,ref)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIGTR' :: afigtr
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIGTR' :: afigtr
             integer an_id,index,type,tag,ref
          END FUNCTION afigtr
       END INTERFACE
@@ -420,7 +420,7 @@ C------------------------------------------------------------
 C      integer afiid2tr
       INTERFACE
          INTEGER FUNCTION afiid2tr(ann_id,tag,ref)
-            !MS$ATTRIBUTES C,reference,alias:'_AFIID2TR' :: afiid2tr
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFIID2TR' :: afiid2tr
             integer ann_id,tag,ref
          END FUNCTION afiid2tr
       END INTERFACE
@@ -446,7 +446,7 @@ C------------------------------------------------------------
 C      integer afitr2id
       INTERFACE
          INTEGER FUNCTION afitr2id(an_id,tag,ref)
-            !MS$ATTRIBUTES C,reference,alias:'_AFITR2ID' :: afitr2id
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFITR2ID' :: afitr2id
             integer an_id,tag,ref
          END FUNCTION afitr2id
       END INTERFACE
@@ -470,7 +470,7 @@ C------------------------------------------------------------
 C      integer afitp2tg
       INTERFACE
          INTEGER FUNCTION afitp2tg(atype)
-            !MS$ATTRIBUTES C,reference,alias:'_AFITP2TG' :: afitp2tg
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFITP2TG' :: afitp2tg
             integer atype
          END FUNCTION afitp2tg
       END INTERFACE
@@ -494,7 +494,7 @@ C------------------------------------------------------------
 C      integer afitg2tp
       INTERFACE
          INTEGER FUNCTION afitg2tp(tag)
-            !MS$ATTRIBUTES C,reference,alias:'_AFITG2TP' :: afitg2tp
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'AFITG2TP' :: afitg2tp
             integer tag
          END FUNCTION afitg2tp
       END INTERFACE

@@ -345,7 +345,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C		integer hisystem
       INTERFACE 
 	   INTEGER FUNCTION hisystem(cmd, cmdlen)
-	     !MS$ATTRIBUTES C, reference,alias:'_HISYSTEM' :: hisystem
+	     !MS$ATTRIBUTES C, reference,decorate,alias:'HISYSTEM' :: hisystem
 	     !DEC$ ATTRIBUTES reference :: cmd
 	     character*(*) cmd
 	     integer cmdlen
@@ -372,7 +372,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 	!MS$endif
       INTERFACE
       INTEGER FUNCTION fixnamec(name, len_name, name_out, name_out_len)
-           !MS$ATTRIBUTES C,reference,alias:'_FIXNAMEC' :: fixnamec
+ 	    !MS$ATTRIBUTES C,reference,decorate,alias:'FIXNAMEC' :: fixnamec
 	     !DEC$ ATTRIBUTES reference :: name, name_out
            integer len_name, name_out_len
 	     character*(*) name, name_out

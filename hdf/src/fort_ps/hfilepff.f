@@ -45,7 +45,7 @@ C-------------------------------------------------------------------
 C      integer       hiopen
       INTERFACE 
         INTEGER FUNCTION hiopen(filename,access, defdds, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_HIOPEN' :: hiopen
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'HIOPEN' :: hiopen
 	    !DEC$ ATTRIBUTES reference :: filename
           integer access, defdds, nmlen
           character*(*) filename
@@ -74,7 +74,7 @@ C-------------------------------------------------------------------
 C      integer       hiclose
       INTERFACE 
         INTEGER FUNCTION hiclose(fid)
-          !MS$ATTRIBUTES C, reference, alias: '_HICLOSE' :: hiclose
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'HICLOSE' :: hiclose
           integer fid
         END FUNCTION hiclose
       END INTERFACE
@@ -102,7 +102,7 @@ C-------------------------------------------------------------------
 C      integer       hinumbr
       INTERFACE 
         INTEGER FUNCTION hinumbr(fid, tag)
-          !MS$ATTRIBUTES C, reference, alias: '_HINUMBR' :: hinumbr
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'HINUMBR' :: hinumbr
           integer fid, tag
         END FUNCTION hinumbr
       END INTERFACE
@@ -129,7 +129,7 @@ C------------------------------------------------------------------
 C      integer       hxisdir
       INTERFACE
         INTEGER FUNCTION hxisdir(dir, dirlen)
-          !MS$ATTRIBUTES C, reference, alias: '_HXISDIR' :: hxisdir
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'HXISDIR' :: hxisdir
 	    !DEC$ ATTRIBUTES reference :: dir
           character*(*) dir
           integer dirlen
@@ -158,7 +158,7 @@ C--------------------------------------------------------------*/
 C      integer       hxiscdir
       INTERFACE
         INTEGER FUNCTION hxiscdir(dir, dirlen)
-          !MS$ATTRIBUTES C, reference, alias: '_HXISCDIR' :: hxiscdir
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'HXISCDIR' :: hxiscdir
 	    !DEC$ ATTRIBUTES reference :: dir
           character*(*) dir
           integer dirlen
@@ -190,7 +190,7 @@ C      integer hglibverc
       INTERFACE
         INTEGER FUNCTION hglibverc(major_v, minor_v, release, string,
      +	   stringlen)
-          !MS$ATTRIBUTES C, reference, alias: '_HGLIBVERC' :: hglibverc
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'HGLIBVERC' :: hglibverc
 	    !DEC$ ATTRIBUTES reference :: string
           integer major_v, minor_v, release, stringlen
           character*(*) string
@@ -224,7 +224,7 @@ C      integer hgfilverc
       INTERFACE
         INTEGER FUNCTION hgfilverc(file_id, major_v, minor_v, release,
      +	                             string, stringlen)
-          !MS$ATTRIBUTES C, reference, alias: '_HGFILVERC' :: hgfilverc
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'HGFILVERC' :: hgfilverc
 	    !DEC$ ATTRIBUTES reference :: string
           integer file_id, major_v, minor_v, release, stringlen
           character*(*) string
@@ -252,7 +252,7 @@ C----------------------------------------------------------------------------*/
 C      integer       hiishdf
 	INTERFACE
         INTEGER FUNCTION hiishdf(filename, length)
-          !MS$ATTRIBUTES C,reference,alias:'_HIISHDF' :: hiishdf
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'HIISHDF' :: hiishdf
 	    !DEC$ ATTRIBUTES reference :: filename
           integer length
 	    character*(*) filename
@@ -282,7 +282,7 @@ C-----------------------------------------------------------------------------*/
 
 	INTERFACE
         INTEGER FUNCTION hconfinfc(coder_type, info)
-          !MS$ATTRIBUTES C, reference, alias: '_HCONFINFC' :: hconfinfc
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'HCONFINFC' :: hconfinfc
           integer coder_type, info
         END FUNCTION hconfinfc
       END INTERFACE

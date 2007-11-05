@@ -12,7 +12,7 @@ Please read CAREFULLY about the following preconditions first.
 
 Preconditions
 
-To build the HDF4 and MFHDF libraries ( single-threaded static ormulti-threaded 
+To build the HDF4 and MFHDF libraries ( single-threaded static or multi-threaded 
 DLL) and utilities, it is assumed that you have done the following:
       
    1. Installed Microsoft Visual Studio
@@ -43,14 +43,16 @@ DLL) and utilities, it is assumed that you have done the following:
       4.1 HDF4 uses Zlib version 1.2.3 for compression.  To use Zlib
           library, you have to install your own Zlib DLL library or go
           to ftp://ftp.hdfgroup.org/lib-external/zlib/1.2/bin 
-          to download the Zlib library.
+          to download the Zlib library.  Be sure to choose the correct
+          binaries for your compiler.
 
           Zlib compression feature inside HDF4 is required.
       
       4.2 HDF4 uses JPEG release 6b for compression.  To use JPEG
           library, you have to install your own JPEG library or go to
           ftp://ftp.hdfgroup.org/lib-external/jpeg/bin to download
-          the JPEG library archive file. For Visual Studio 6.0 or .NET 2003, 
+          the JPEG library archive file.  Be sure to choose the correct
+          binaries for your compiler.  For Visual Studio 6.0 or .NET 2003, 
           download jpeg-6b.exe.  For Visual Studio 2005, download 
           jpeg-6b-4.exe instead.
 
@@ -59,6 +61,7 @@ DLL) and utilities, it is assumed that you have done the following:
       4.3 HDF4 uses Szip version 2.0 for compression. To use Szip
           library, you can download Szip source codes and binaries
           from ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/windows/
+          Be sure to choose the correct binaries for your compiler.
 
           Please note that Szip is not a totally open-source free
           software.  For licensing issue of Szip, please check 
@@ -88,7 +91,7 @@ DLL) and utilities, it is assumed that you have done the following:
       under "User Variables" box.
       
       In the New Variable window, set "Variable name" as HDF4_EXT_ZLIB
-      and "Variable value" as zdll.lib, then click OK.
+      and "Variable value" as zdll1.lib, then click OK.
       
       Similarly, you can set:
 
@@ -100,10 +103,9 @@ DLL) and utilities, it is assumed that you have done the following:
          a. You might have to close and reopen running programs for the
             new environment variable settings to take effect. 
 
-         b. c:\zlib122\zlib1.dll and c:\szlib\dll\szlibdll.dll should
+         b. c:\zlib\zlib1.dll and c:\szlib\dll\szlibdll.dll should
             be copied into the location that the application can find,
-            one suggestion is to use the c:\WINNT\system or
-            c:\WINDOWS\system
+            such as c:\WINDOWS\system
       
    6. Set up paths for external libraries and headers
  
@@ -112,18 +114,16 @@ DLL) and utilities, it is assumed that you have done the following:
       
       6.1 Find the box "Show directories for", choose "Include files",
           If you cannot find your Zlib, JPEG, and Szip header path
-          (for example, c:\zlib122\include, c:\jpeg-6b, 
+          (for example, c:\zlib\include, c:\jpeg\include, 
           c:\szip\include) from the directory list, add the header
-          path (c:\zlib122\include, c:\jpeg-6b (or c:\jpeg-6b-4\include),
-          c:\szip\include) to
+          path (c:\zlib\include, c:\jpeg\include, c:\szip\include) to
           the included directories.
       
       6.2 Find the box "Show directories for", choose "Library files",
           If you cannot find your Zlib, JPEG, and Szip library path
-          (for example, c:\zlib122\lib, c:\jpeg-6b (or c:\jpeg-6b-4\lib), 
-          c:\szip\dll)
+          (for example, c:\zlib\dll, c:\jpeg\lib, c:\szip\dll)
           from the directory list, add the library path
-          (c:\zlib122\lib, c:\jpeg-6b, c:\szip\dll) to the library
+          (c:\zlib\dll, c:\jpeg-6b, c:\szip\dll) to the library
           directories.
 
 ************************************************************************
@@ -152,9 +152,9 @@ Step 1: Build HDF4 Libraries and Utilities
 
 Notes:
 
-   a. These instructions are written for MicroSoft Visual Studio .NET 2003
+   a. These instructions are written for MicroSoft Visual Studio .NET 2005
       users.  For Visual Studio 6.0 users, please also read Section III.  For
-      Visual Studio 2005 users, please also read Section IV.  To also build
+      Visual Studio 2003 users, please also read Section IV.  To also build
       Fortran libraries using Intel Fortran 9.1, please also read Section V.
       
    b. To build HDF4 Multithreaded static library, please read Section IX.
@@ -178,14 +178,14 @@ Building Instructions:
              
    3. Select "Build", then Select "Configuration Manager".
    
-      3.1 To build debug versions of single-threaded static libraries, 
+      3.1 To build debug static libraries, 
           Debug multithreaded DLLs and tests:
             
           Under "Active Solution Configuration", select "Debug", select "Close". 
           Select "Build" -> "Build Solution" or "Rebuild Solution" to
           build debug version of HDF.
         
-      3.2 To build release versions of single-threaded static libraries, 
+      3.2 To build release static libraries, 
           multithreaded DLLs and tests:
         
           Under "Active Solution Configuration", select "Release", select "Close". 
@@ -196,186 +196,11 @@ Building Instructions:
        
       Warning messages can be ignored. 
 
-      When the debug build is done, the directories listed below will contain 
-      the following files:
-
-         c:\MyHDFstuff\HDF42r2\hdf\src\Debug -
-         
-            hd422d.lib
-            hd422md.dll
-            hd422md.lib
-            
-         c:\MyHDFstuff\HDF42r2\hdf\test\Debug -
-        
-            dlltesthdf.exe
-            testhdf.exe
-            
-         c:\MyHDFstuff\HDF42r2\hdf\util\Debug -
-         
-            gif2hdf.exe
-            hdf24to8.exe
-            hdf2gif.exe
-            hdf2jpeg.exe
-            hdf8to24.exe
-            hdfcomp.exe
-            hdfed.exe
-            hdfls.exe
-            hdfpack.exe
-            hdftopal.exe
-            hdftor8.exe
-            hdfunpac.exe
-            jpeg2hdf.exe
-            paltohdf.exe
-            r8tohdf.exe
-            ristosds.exe
-            vmake.exe
-            vshow.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\dumper\Debug -
-         
-            hdp.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\hdfimport\Debug -
-         
-            hdfimport.exe
-            hdfimporttest.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\hdiff\Debug -
-            
-            hdiff.exe
-            hdifftst.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\hrepack\Debug -
-         
-            hrepack.exe
-            hrepacktst.exe
-         
-         c:\MyHDFstuff\HDF42r2\mfhdf\libsrc\Debug -
-         
-            cdftest.exe
-            dllcdftest.exe
-            dllhdftest.exe
-            hdftest.exe
-            hm422d.lib
-            hm422md.dll
-            hm422md.lib
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\ncdump\Debug -
-         
-            ncdump.exe
- 
-         c:\MyHDFstuff\HDF42r2\mfhdf\ncgen\Debug -
-         
-            ncgen.exe
- 
-         c:\MyHDFstuff\HDF42r2\mfhdf\nctest\Debug -
-        
-            dllnctest.exe
-            nctest.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\util\Debug -
-         
-            getopt.lib
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\xdr\Debug -
-        
-            dllxdrtest.exe
-            xdr.lib
-            xdr_for_dll.lib
-            xdrtest.exe
+      When the debug build is done, output files will be built in directories
+      corresponding to their source code, in the .\Debug subdirectory.
       
-      When the release build is done the directories listed below will
-      contain the following files:
-
-         c:\MyHDFstuff\HDF42r2\hdf\src\Release -
-         
-            hd422.lib
-            hd422m.dll
-            hd422m.lib
-            
-         c:\MyHDFstuff\HDF42r2\hdf\test\Release -
-        
-            dlltesthdf.exe
-            testhdf.exe
-            
-         c:\MyHDFstuff\HDF42r2\hdf\util\Release -
-         
-            gif2hdf.exe
-            hdf24to8.exe
-            hdf2gif.exe
-            hdf2jpeg.exe
-            hdf8to24.exe
-            hdfcomp.exe
-            hdfed.exe
-            hdfls.exe
-            hdfpack.exe
-            hdftopal.exe
-            hdftor8.exe
-            hdfunpac.exe
-            jpeg2hdf.exe
-            paltohdf.exe
-            r8tohdf.exe
-            ristosds.exe
-            vmake.exe
-            vshow.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\dumper\Release -
-         
-            hdp.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\hdfimport\Release -
-         
-            hdfimport.exe
-            hdfimporttest.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\hdiff\Release -
-            
-            hdiff.exe
-            hdifftst.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\hrepack\Release -
-         
-            hrepack.exe
-            hrepacktst.exe
-         
-         c:\MyHDFstuff\HDF42r2\mfhdf\libsrc\Release -
-         
-            cdftest.exe
-            dllcdftest.exe
-            dllhdftest.exe
-            hdftest.exe
-            hm422.lib
-            hm422m.dll
-            hm422m.lib
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\ncdump\Release -
-         
-            ncdump.exe
- 
-         c:\MyHDFstuff\HDF42r2\mfhdf\ncgen\Release -
-         
-            ncgen.exe
- 
-         c:\MyHDFstuff\HDF42r2\mfhdf\nctest\Release -
-        
-            dllnctest.exe
-            nctest.exe
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\util\Release -
-         
-            getopt.lib
-            
-         c:\MyHDFstuff\HDF42r2\mfhdf\xdr\Release -
-        
-            dllxdrtest.exe
-            xdr.lib
-            xdr_for_dll.lib
-            xdrtest.exe
-       
-             
-Note: ws2_32.lib needs to be linked with your executable if using
-      the static mfhdf library.  ws2_32.lib can be found in your
-      Microsoft Visual C++ directory under the lib folder.
+      When the release build is done, output files will be built in directories
+      corresponding to their source code, in the .\Release subdirectory.
 
 
 Step 2: Test HDF4 Libraries and Utilities
@@ -394,9 +219,8 @@ We provide 2 options for users to test HDF4 libraries and utilities.
 
       c:\MyHDFstuff\HDF42r2\check_results.txt.
 
-   Use either Notepad or WordPad or whatever other Windows word processor to 
-   check the results.  You should not find any FAILED marks in 
-   check_results.txt.
+   Use a text editor to check the results.  You should not find any FAILED 
+   marks in check_results.txt.
 
    3.2 Option 2: Step-by-step HDF4 libraries and utilities testings
 
@@ -423,10 +247,9 @@ We provide 2 options for users to test HDF4 libraries and utilities.
        To test release version of HDF4 C library, run Win32releasetst.bat.
           
        We strongly suggest you to redirect your testing results into an
-       output file so that you can easily check the testing results.  You
-       may use either Notepad or WordPad or whatever other Windows word
-       processor to check the results.  You should not find any FAILED marks in 
-       your output files.
+       output file so that you can easily check the testing results.  Use a text 
+       editor to check the results.  You should not find any FAILED 
+       marks in check_results.txt.
        
       
 Step 3: ncgen -c test (Optional)
@@ -622,16 +445,16 @@ Under Project->Properties, select folder, Linker, and then Input:
       libraries listed above, users should also add the following libraries to 
       the list of Additional Dependencies:
       
-      For single-threaded release version:
+      For static release version:
         mfhdf_fortran.lib hdf_fortran.lib
 
-      For single-threaded debug version:
+      For static debug version:
         mfhdf_fortran.lib hdf_fortran.lib
 
-      For multi-threaded release version:
+      For shared DLL release version:
         mfhdf_fortrandll.lib hdf_fortrandll.lib
  
-      For multi-threaded debug version:
+      For shared DLL debug version:
         mfhdf_fortrandlld.lib hdf_fortrandlld.lib 
 
       HDF4_EXT_ZLIB
@@ -700,7 +523,11 @@ following modifications:
        Therefore, Fortran projects are disabled in the project files by default,
        and Fortran example projects are not included for Visual Studio 6.0.
     
-    3. Building and testing ctest0.exe requires on additional step with Visual
+    3. By default, single-threaded static libraries are built, along with Multi-
+       threaded DLLs.  If you would like to build all multithreaded libraries,
+       please read Section IX.
+       
+    4. Building and testing ctest0.exe requires on additional step with Visual
        Studio 6.0.  The build process in Visual Studio .NET 2003 and above 
        internally generates source file test0.c.  If you are using Visual Studio
        6.0, you must generate this file manually.  To do so, we provide a batch 
@@ -713,6 +540,8 @@ following modifications:
          
        After this script is run, you may build ctest0 by following the
        instructions in Section I.
+       
+       
     
 Section IV: Build HDF4 in Visual Studio 2005
 ======================================================================
@@ -720,38 +549,31 @@ Section IV: Build HDF4 in Visual Studio 2005
 The building procedure is almost identical as building HDF4 on .NET 2003. 
 Please refer to Section I, with a few minor changes:
 
-    1. When opening the project solution files for the first time, Visual Studio
-       needs to convert the projects to Visual Studio 2005 format.  Accept the
-       default options, and the conversions should be successful.  You may wish
-       to choose the option to backup projects before converting.
+Building HDF4 with Visual Studio 6.0 is very similar to building with .NET or
+2005.  Aside from subtle differences in the IDE terminology, very much is the 
+same.  Therefore, you may refer to the instructions in Section I, with the 
+following modifications:
+
+    1. Visual Studio requires project files in a different format; it uses
+       the same file extensions, but different internal format.  As a result, 
+       we have created seperate folders for Visual Studio 2003 project files for 
+       building libraries and examples.  When opening projects, look for the 
+       "proj_vnet" folder, rather than "proj".  For example, to open the main 
+       HDF4 workspace, you would look for "all.sln" in 
+       c:\MyHDFstuff\HDF42r2\windows\proj_vnet\all\.  Similarly, you can
+       build C example applications by opening "allexamples.sln" in
+       c:\MyHDFstuff\HDF422r2\windows\examples\cexamples\proj_vnet\.  Use
+       similar directories for building Fortran libraries.
+
+    2. Be sure to download the correct external library binaries from the FTP.  
+       Particularly, please use the jpeg library at
+       ftp://ftp.hdfgroup.org/lib-external/jpeg/bin/jpeg-6b.exe, rather than
+       jpeg-6b-4.exe.
        
-    2. The jpeg library supplied through the HDF ftp is not compatible with
-       Visual Studio 2005.  Please use the jpeg library at
-       ftp://ftp.hdfgroup.org/lib-external/jpeg/bin/jpeg-6b-4.exe
-       If you download the jpeg6b-4.exe, note that the directories are different,
-       For example if you installed to c:\jpeg6b-4, use c:\jpeg6b-4\include for 
-       your include directory, and c:\jpeg6b-4\lib for the library directory.
+    3. By default, single-threaded static libraries are built, along with Multi-
+       threaded DLLs.  If you would like to build all multithreaded libraries,
+       please read Section IX.
        
-    3. When building an application using the HDF4 libraries in Visual Studio
-       2005, there is an extra dependency that must be linked with. In addition 
-       to the dependencies listed in Section II, any application that statically 
-       links to HDF libraries and uses the xdr library needs to be linked with 
-       xdr.lib.  The example projects already include this dependency.  To link 
-       with xdr.lib in Visual Studio 2005:
-
-       1. Right click on a project and select "Properties"
-       2. In the top left corner, make sure the Configuration is set to "Debug"
-       3. In the left pane, select Linker -> General
-       4. In the right pane, under "Additional Library Directories", add a 
-          semi-colon after any existing directories, and then add 
-          "..\..\windows\xdr\xdr\Debug"
-       5. In the left pane, select Linker -> Input
-       6. In Additional Dependencies, add "xdr.lib" to the list
-       7. In the top left corner, change the Configuration to "Release"
-       8. Repeat steps 3-6, using "..\..\windows\xdr\xdr\Release" in step 4.
-
-       This needs to be done for each project that uses xdr functions.
-
 
 
 Section V. Build HDF4 Fortran Libraries
@@ -776,70 +598,8 @@ Building Instructions:
       You should see normal Visual Studio projects, as well as pre-converted
       Intel Fortran projects.
       
-   2. Once you have built debug and release versions of the library, the
-      directories listed below will contain the following files, in addition
-      to those listed in Section I.
-      
-      For debug version:
-      
-         c:\MyHDFstuff\HDF42r2\hdf\src\Debug -
-         
-            hdf_fcstubd.lib
-            hdf_fcstubdlld.dll
-            hdf_fcstubdlld.lib
-            hdf_fortran.lib
-            hdf_fortrandlld.dll
-            hdf_fortrandlld.lib
-            
-         c:\MyHDFstuff\HDF42r2\hdf\test\Debug -
-        
-            dllfortestf.exe
-            dlllibtest_fcstub.dll
-            dlllibtest_fcstub.lib
-            fortestf.exe
-            libtest_fcstub.lib
-                     
-         c:\MyHDFstuff\HDF42r2\mfhdf\fortran\Debug -
-         
-            dllhdftestf.exe
-            hdftestf.exe
-            mfhdf_fcstub.lib
-            mfhdf_fcstubdlld.dll
-            mfhdf_fcstubdlld.lib
-            mfhdf_fortran.lib
-            mfhdf_fortrandlld.dll
-            mfhdf_fortrandlld.lib
-            
-      
-      For release version:
-
-         c:\MyHDFstuff\HDF42r2\hdf\src\Release -
-         
-            hdf_fcstub.lib
-            hdf_fcstubdll.dll
-            hdf_fcstubdll.lib
-            hdf_fortran.lib
-            hdf_fortrandll.dll
-            hdf_fortrandll.lib
-            
-         c:\MyHDFstuff\HDF42r2\hdf\test\Release -
-        
-            dllfortestf.exe
-            dlllibtest_fcstub.dll
-            dlllibtest_fcstub.lib
-            fortestf.exe
-            libtest_fcstub.lib
-                     
-         c:\MyHDFstuff\HDF42r2\mfhdf\fortran\Release -
-         
-            dllhdftestf.exe
-            hdftestf.exe
-            mfhdf_fcstub.lib
-            mfhdf_fcstubdll.dll
-            mfhdf_fcstubdll.lib
-            mfhdf_fortran.lib
-            mfhdf_fortrandll.dll
-            mfhdf_fortrandll.lib
+   2. When the build is done, addition output files will be built in directories
+      corresponding to their Fortran source code.
         
 
 Step 2: Test HDF4 Libraries and Utilities
@@ -887,11 +647,11 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
    1. Invoke Visual Studio, go to "File" and select the "Open Solution" option.
 
       Then open the soltuion
-      c:\MyHDFstuff\HDF42r2\fortran\examples\allf90examples\allf90examples.sln.
+      c:\MyHDFstuff\HDF42r2\windows\examples\f90examples\proj\allf90examples.sln.
 
    2. Select "Build", then Select "Configuration Manager".
 
-      In "Active SOltuion Configuration", select the active configuration
+      In "Active Soltuion Configuration", select the active configuration
 
           "Debug" to build debug versions of the Fortran examples.
           
@@ -1025,6 +785,10 @@ netCDF C and Fortran APIs.
 Section VIII. Build and Test HDF4 Library on the Command Line    
 ======================================================================
 
+Note: Building HDF4 from the commandline is currently un-supported.  However,
+      the instructions below should work with simple modifications.  Therefore,
+      the following instrution is provided for testing purposes.
+
 For Visual Studio .NET and Visual Studio 2005, with or without Intel Fortran 
 Compiler 9.1, we support building from the command line.  For all other Windows 
 development tools, HDF4 should be built in the development environment following 
@@ -1064,8 +828,8 @@ the instructions in Section I.
        paths must be setup as well.  To define the nessessary variables, issue
        the following commands:
        
-            set INCLUDE=%INCLUDE%;c:\zlib122\include;c:\jpeg-6b;c:\szip\include
-            set LIB=%LIB%;c:\zlib122\lib;c:\jpeg-6b;c:\szip\dll
+            set INCLUDE=%INCLUDE%;c:\zlib\include;c:\jpeg-6b;c:\szip\include
+            set LIB=%LIB%;c:\zlib\lib;c:\jpeg-6b;c:\szip\dll
        
        Notes:
        
@@ -1163,8 +927,7 @@ some minor changes.  Therefore, follow the build instructions above, with the
 following considerations:
 
     1. Only Visual Studio 2005 is currently supported on Windows Vista.  This
-       is because Microsoft has ended their support for 6.0 and .NET.  Make sure
-       you read the notes for building with Visual Studio 2005 above.
+       is because Microsoft has ended their support for 6.0 and .NET.
        
     2. Building Fortran libraries has not been tested, and is therefore also
        unsupported.  You may attempt to build Fortran libraries following the
@@ -1191,9 +954,9 @@ Section IX: Build HDF4 Multithreaded Static Library
 In this section, we just briefly introduce how to build HDF4 multithreaded 
 static library.
 
-Note: In Visual Studio 2005, the singlethreaded runtime library is depreciated.
-      Therefore, multi-threaded is build by default, and no extra work needs to
-      be done.
+Note: In Visual Studio 2005, the single-threaded runtime library is depreciated.
+      Therefore, multithreaded is build by default, and no extra work needs to
+      be done.  These instructions apply only to Visual Studio 6.0 and .NET.
       
 
 Step I: The "Runtime library" settings for static projects should be

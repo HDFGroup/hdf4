@@ -38,7 +38,7 @@ c	related: Vattach--vatchc--VFATCH
 C      integer     vatchc
       INTERFACE
         INTEGER FUNCTION vatchc(f, vgref, accesstype)
-          !MS$ATTRIBUTES C,reference,alias:'_VATCHC' :: vatchc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VATCHC' :: vatchc
 	    !DEC$ ATTRIBUTES reference :: accesstype
           integer f, vgref
           character*1 accesstype
@@ -60,7 +60,7 @@ c	related: Vdetach--vdtchc--VFDTCH
 c      integer   vdtchc
       INTERFACE
         INTEGER FUNCTION vdtchc(vgid)
-          !MS$ATTRIBUTES C,reference,alias:'_VDTCHC' :: vdtchc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VDTCHC' :: vdtchc
           integer vgid
         END FUNCTION vdtchc
       END INTERFACE
@@ -81,7 +81,7 @@ c	related: Vgetname--vgnamc--VFGNAM
 c      integer         vgnamc
       INTERFACE
         INTEGER FUNCTION vgnamc(vg, vgname)
-          !MS$ATTRIBUTES C,reference,alias:'_VGNAMC' :: vgnamc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VGNAMC' :: vgnamc
 	    !DEC$ ATTRIBUTES reference :: vgname
           integer vg
           character*(*) vgname
@@ -104,7 +104,7 @@ c	related: Vgetclass--vgclsc--VFGCLS
 c      integer       vgclsc
       INTERFACE
         INTEGER FUNCTION vgclsc(vg, vgclass)
-          !MS$ATTRIBUTES C,reference,alias:'_VGCLSC' :: vgclsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VGCLSC' :: vgclsc
 	    !DEC$ ATTRIBUTES reference :: vgclass
           integer vg
           character*(*) vgclass
@@ -126,7 +126,7 @@ c	related: Vinquire--vinqc--VFINQ
 c      integer			vinqc
       INTERFACE
         INTEGER FUNCTION vinqc(vg, nentries, vgname)
-          !MS$ATTRIBUTES C,reference,alias:'_VINQC' :: vinqc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VINQC' :: vinqc
 	    !DEC$ ATTRIBUTES reference :: vgname
           integer vg, nentries
           character*(*) vgname
@@ -148,7 +148,7 @@ c	related: Vgetid--vgidc--VFGID
 c      integer		vgidc
       INTERFACE
         INTEGER FUNCTION vgidc(f, vgref)
-          !MS$ATTRIBUTES C,reference,alias:'_VGIDC' :: vgidc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VGIDC' :: vgidc
           integer f, vgref 
         END FUNCTION vgidc
       END INTERFACE
@@ -168,7 +168,7 @@ c	related: Vgetnext--vgnxtc--VFGNXT
 c      integer		vgnxtc
       INTERFACE
         INTEGER FUNCTION vgnxtc(vg, vref)
-          !MS$ATTRIBUTES C,reference,alias:'_VGNXTC' :: vgnxtc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VGNXTC' :: vgnxtc
           integer vg, vref
         END FUNCTION vgnxtc
       END INTERFACE
@@ -189,7 +189,7 @@ c	related: Vsetname--vsnamc--VFSNAM
 c      integer       vsnamc
       INTERFACE
         INTEGER FUNCTION vsnamc(vg, vgname, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSNAMC' :: vsnamc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSNAMC' :: vsnamc
 	    !DEC$ ATTRIBUTES reference :: vgname
           integer vg, nmlen
           character*(*) vgname
@@ -211,7 +211,7 @@ c	related: Vsetclass--vsclsc--VFSCLS
 c      integer      vsclsc
       INTERFACE
         INTEGER FUNCTION vsclsc(vg, vgclass, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSCLSC' :: vsclsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSCLSC' :: vsclsc
 	    !DEC$ ATTRIBUTES reference :: vgclass
           integer vg, clslen
           character*(*) vgclass
@@ -233,7 +233,7 @@ c	related: Vinsert--vinsrtc--VFINSRT
 c      integer		vinsrtc
       INTERFACE
         INTEGER FUNCTION vinsrtc(vg, vid)
-          !MS$ATTRIBUTES C,reference,alias:'_VINSRTC' :: vinsrtc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VINSRTC' :: vinsrtc
           integer vg, vid
         END FUNCTION vinsrtc
       END INTERFACE
@@ -253,7 +253,7 @@ c     related: Visvg--visvgc--vfisvg
 c      integer		visvgc
       INTERFACE
          INTEGER FUNCTION visvgc(vg, id)
-          !MS$ATTRIBUTES C,reference,alias:'_VISVGC' :: visvgc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VISVGC' :: visvgc
           integer vg, id
         END FUNCTION visvgc
       END INTERFACE
@@ -273,7 +273,7 @@ c     related: Visvs--visvsc--vfisvs
 c      integer		visvsc
       INTERFACE
          INTEGER FUNCTION visvsc(vg, id)
-          !MS$ATTRIBUTES C,reference,alias:'_VISVSC' :: visvsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VISVSC' :: visvsc
           integer vg, id
         END FUNCTION visvsc
       END INTERFACE
@@ -293,7 +293,7 @@ C     related:  Vstart -- vfistart -- vfstart
 C      integer vfistart
       INTERFACE 
         INTEGER FUNCTION vfistart(file_id)
-          !MS$ATTRIBUTES C,reference,alias:'_VFISTART' :: vfistart
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFISTART' :: vfistart
           integer file_id
         END FUNCTION vfistart
       END INTERFACE
@@ -313,7 +313,7 @@ C     related:  Vend -- vfiend -- vfend
 C      integer vfiend
       INTERFACE 
         INTEGER FUNCTION vfiend(file_id)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIEND' :: vfiend
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIEND' :: vfiend
           integer file_id
         END FUNCTION vfiend
       END INTERFACE
@@ -337,7 +337,7 @@ c     related: VSattach--vsatchc--vfatch
 c      integer		vsatchc
       INTERFACE
          INTEGER FUNCTION vsatchc(f, vsid, accesstype)
-          !MS$ATTRIBUTES C,reference,alias:'_VSATCHC' :: vsatchc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSATCHC' :: vsatchc
 	    !DEC$ ATTRIBUTES reference :: accesstype
           integer f, vsid
           character*1   accesstype
@@ -359,7 +359,7 @@ c     related: VSdetach--vsdtchc--vfdtch
 c      integer       vsdtchc
       INTERFACE
          INTEGER FUNCTION vsdtchc(vs)
-          !MS$ATTRIBUTES C,reference,alias:'_VSDTCHC' :: vsdtchc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSDTCHC' :: vsdtchc
           integer vs
         END FUNCTION vsdtchc
       END INTERFACE
@@ -379,7 +379,7 @@ c     related: VSQueryref -- vsiqref -- vsqref
 C     integer vsiqref
       INTERFACE
         INTEGER FUNCTION vsiqref(vsid)
-          !MS$ATTRIBUTES C,reference,alias:'_VSIQREF' :: vsiqref
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSIQREF' :: vsiqref
           integer vsid
         END FUNCTION vsiqref
       END INTERFACE 
@@ -398,7 +398,7 @@ c     related: VSQuerytag -- vsiqtag -- vsqtag
 C     integer vsiqtag
       INTERFACE
         INTEGER FUNCTION vsiqtag(vsid)
-          !MS$ATTRIBUTES C,reference,alias:'_VSIQTAG' :: vsiqtag
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSIQTAG' :: vsiqtag
           integer vsid
         END FUNCTION vsiqtag
       END INTERFACE
@@ -418,7 +418,7 @@ c     related: VSgetversion -- vsigver -- vsgver
 C     integer vsigver
       INTERFACE
         INTEGER FUNCTION vsigver(vsid)
-          !MS$ATTRIBUTES C,reference,alias:'_VSIGVER' :: vsigver
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSIGVER' :: vsigver
           integer vsid
         END FUNCTION vsigver
       END INTERFACE
@@ -437,7 +437,7 @@ c     related: VSseek--vsseekc--vsfseek
 c      integer		vsseekc
       INTERFACE
         INTEGER FUNCTION vsseekc(vs, eltpos)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSEEKC' :: vsseekc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSEEKC' :: vsseekc
           integer vs, eltpos
         END FUNCTION vsseekc
       END INTERFACE
@@ -458,7 +458,7 @@ c     related: VSgetname--vsgnamc--vsfgnam
 c      integer       vsgnamc
       INTERFACE
         INTEGER FUNCTION vsgnamc(vs, vsname, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSGNAMC' :: vsgnamc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSGNAMC' :: vsgnamc
 	    !DEC$ ATTRIBUTES reference :: vsname
           integer vs, nmlen
           character*(*) vsname
@@ -481,7 +481,7 @@ c     related: VSgetclass--vsgclsc--vsfgcls
 c      integer       vsgclsc
       INTERFACE
         INTEGER FUNCTION vsgclsc(vs, vsclass, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSGCLSC' :: vsgclsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSGCLSC' :: vsgclsc
 	    !DEC$ ATTRIBUTES reference :: vsclass
           integer vs, clslen
           character*(*) vsclass
@@ -505,7 +505,7 @@ c      integer			vsinqc
       INTERFACE
         INTEGER FUNCTION vsinqc(vs,nvs,il,flds,vsize, vsname,
      +                          fldlen, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSINQC' :: vsinqc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSINQC' :: vsinqc
 	    !DEC$ ATTRIBUTES reference :: vsname, flds
           integer vs,nvs,il,vsize, fldlen, nmlen
           character*(*) vsname, flds
@@ -529,7 +529,7 @@ c     related: VSfexist--vsfexc--vsfex
 c      integer			vsfexc
       INTERFACE
         INTEGER FUNCTION vsfexc(vs, fields, fldslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFEXC' :: vsfexc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFEXC' :: vsfexc
 	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldslen
           character*(*) fields
@@ -552,7 +552,7 @@ c     related: VSfind--vsfind--vsffnd
 c      integer vsfndc
       INTERFACE
         INTEGER FUNCTION vsfndc(vs, name, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFNDC' :: vsfndc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFNDC' :: vsfndc
 	    !DEC$ ATTRIBUTES reference :: name
           integer vs, nmlen
           character*(*) name
@@ -574,7 +574,7 @@ c     related: VSgetid--vsgidc--vsfgid
 c      integer     vsgidc
       INTERFACE
         INTEGER FUNCTION vsgidc(f, vsid)
-          !MS$ATTRIBUTES C,reference,alias:'_VSGIDC' :: vsgidc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSGIDC' :: vsgidc
           integer f, vsid
         END FUNCTION vsgidc
       END INTERFACE
@@ -594,7 +594,7 @@ c     related: VSdelete--vsdltc--vsfdlte
 c      integer     vsdltc
       INTERFACE
         INTEGER FUNCTION vsdltc(f, vsid)
-          !MS$ATTRIBUTES C,reference,alias:'_VSDLTC' :: vsdltc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSDLTC' :: vsdltc
           integer f, vsid
         END FUNCTION vsdltc
       END INTERFACE
@@ -615,7 +615,7 @@ c     related: VSsetname--vssnamc--vsfsnam
 c       integer       vssnamc
       INTERFACE
         INTEGER FUNCTION vssnamc(vs, vsname, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSNAMC' :: vssnamc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSNAMC' :: vssnamc
 	    !DEC$ ATTRIBUTES reference :: vsname
           integer vs, nmlen
           character*(*) vsname
@@ -638,7 +638,7 @@ c     related: VSsetclass--vssclsc--vsfscls
 c      integer vssclsc
       INTERFACE
         INTEGER FUNCTION vssclsc(vs, vsclass, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSCLSC' :: vssclsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSCLSC' :: vssclsc
 	    !DEC$ ATTRIBUTES reference :: vsclass
           integer vs, clslen
           character*(*) vsclass
@@ -661,7 +661,7 @@ c     related: VSsetfields--vssfldc--vsfsfld
 c      integer		vssfldc
       INTERFACE
         INTEGER FUNCTION vssfldc(vs, fields, fldlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSFLDC' :: vssfldc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSFLDC' :: vssfldc
 	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldlen
           character*(*) fields
@@ -683,7 +683,7 @@ c     related: VSsetinterlace--vssintc--vsfsint
 c      integer		vssintc
       INTERFACE
         INTEGER FUNCTION vssintc(vs, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSINTC' :: vssintc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSINTC' :: vssintc
           integer vs, interlace
         END FUNCTION vssintc
       END INTERFACE
@@ -705,7 +705,7 @@ c     related: VSfdefine--vsfdefc--vsffdef
 c      integer			vsfdefc
       INTERFACE
         INTEGER FUNCTION vsfdefc(vs, field, localtype, order, fldlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFDEFC' :: vsfdefc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFDEFC' :: vsfdefc
 	    !DEC$ ATTRIBUTES reference :: field
           integer vs, localtype, order, fldlen
           character*(*) field
@@ -730,7 +730,7 @@ c     related: VSread--vsreadc--vsfread
 c      integer			vsreadc
       INTERFACE
         INTEGER FUNCTION vsreadc(vs, buf, nelts, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSREADC' :: vsreadc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSREADC' :: vsreadc
 	    !DEC$ ATTRIBUTES reference :: buf
           integer vs, nelts, interlace
           character*(*) buf
@@ -753,7 +753,7 @@ c     related: VSread -- vsfirdc -- vsfrdc
 c      integer          vsfirdc
       INTERFACE 
         INTEGER FUNCTION vsfirdc(vsid, buf, nelts, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFIRDC' :: vsfirdc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFIRDC' :: vsfirdc
 	    !DEC$ ATTRIBUTES reference :: buf
           integer vsid, nelts, interlace
 		  character*(*)  buf
@@ -776,7 +776,7 @@ c     related: VSread--vsfird--vsfrd
 C      integer                   vsfird
       INTERFACE 
         INTEGER FUNCTION vsfird(vsid, buf, nelts, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFIRD' :: vsfird
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFIRD' :: vsfird
           integer vsid, nelts, interlace
           integer buf(*)
         END FUNCTION vsfird
@@ -798,7 +798,7 @@ c     related: VSwrite -- vsfiwrc -- vsfwrtc
 c      integer          vsfiwrc
       INTERFACE
         INTEGER FUNCTION vsfiwrc(vsid, buf, nelts, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFIWRC' :: vsfiwrc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFIWRC' :: vsfiwrc
 	    !DEC$ ATTRIBUTES reference :: buf
           integer vsid, nelts, interlace
 		  character*(*) buf
@@ -820,7 +820,7 @@ c     related: VSwrite -- vsfiwr -- vsfwrt
 c      integer          vsfiwr
       INTERFACE
         INTEGER FUNCTION vsfiwr(vsid, buf, nelts, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFIWR' :: vsfiwr
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFIWR' :: vsfiwr
           integer vsid, nelts, interlace, buf(*)
         END FUNCTION vsfiwr
       END INTERFACE
@@ -843,7 +843,7 @@ c     related: VSwrite--vswritc--vsfwrit
 C      integer			vswritc
       INTERFACE
         INTEGER FUNCTION vswritc(vsid, buf, nelts, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSWRITC' :: vswritc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSWRITC' :: vswritc
 	    !DEC$ ATTRIBUTES reference :: buf
           integer vsid, nelts, interlace
           character*(*)     buf
@@ -876,7 +876,7 @@ C----------------------------------------------------------------------
 c      integer       vssextfc
       INTERFACE
         INTEGER FUNCTION vssextfc(vid, fname, offset, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSEXTFC' :: vssextfc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSEXTFC' :: vssextfc
 	    !DEC$ ATTRIBUTES reference :: fname
           integer vid, offset, nmlen
           character*(*) fname
@@ -902,7 +902,7 @@ C     related: VFnfields -- vfinflds -- vfnflds
 C      integer vfinflds
       INTERFACE 
         INTEGER FUNCTION vfinflds(vsid)
-          !MS$ATTRIBUTES C,reference,alias:'_VFINFLDS' :: vfinflds
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFINFLDS' :: vfinflds
           integer vsid
         END FUNCTION vfinflds
       END INTERFACE
@@ -923,7 +923,7 @@ C     related: VFfieldname -- vfifnm -- vffname
 C      integer vfifnm
       INTERFACE 
         INTEGER FUNCTION vfifnm(vsid, findex, fname)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIFNM' :: vfifnm
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIFNM' :: vfifnm
 	    !DEC$ ATTRIBUTES reference :: fname
           integer vsid, findex
           character*(*) fname
@@ -945,7 +945,7 @@ C     related: VFfieldtype -- vfiftp -- vfftype
 C      integer vfifnm
       INTERFACE 
         INTEGER FUNCTION vfiftp(vsid, findex)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIFTP' :: vfiftp
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIFTP' :: vfiftp
           integer vsid, findex
         END FUNCTION vfiftp
       END INTERFACE
@@ -965,7 +965,7 @@ C     related: VFfieldisize -- vfifisz -- vffisiz
 C      integer vfifisz
       INTERFACE 
         INTEGER FUNCTION vfifisz(vsid, findex)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIFISZ' :: vfifisz
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIFISZ' :: vfifisz
           integer vsid, findex
         END FUNCTION vfifisz
       END INTERFACE
@@ -985,7 +985,7 @@ C     related: VFfieldesize -- vfifesz -- vffesiz
 C      integer vfifesz
       INTERFACE 
         INTEGER FUNCTION vfifesz(vsid, findex)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIFESZ' :: vfifesz
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIFESZ' :: vfifesz
           integer vsid, findex
         END FUNCTION vfifesz
       END INTERFACE
@@ -1005,7 +1005,7 @@ C     related: VFfieldorder -- vfifodr -- vffordr
 C      integer vfifodr
       INTERFACE 
         INTEGER FUNCTION vfifodr(vsid, findex)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIFODR' :: vfifodr
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIFODR' :: vfifodr
           integer vsid, findex
         END FUNCTION vfifodr
       END INTERFACE
@@ -1031,7 +1031,7 @@ c     related: VSgetinterlace--vsgintc--vsfgint
 c      integer		vsgintc
       INTERFACE
         INTEGER FUNCTION vsgintc(vs)
-          !MS$ATTRIBUTES C,reference,alias:'_VSGINTC' :: vsgintc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSGINTC' :: vsgintc
           integer vs
         END FUNCTION vsgintc
       END INTERFACE
@@ -1051,7 +1051,7 @@ c     related: VSelts--vseltsc--vsfelts
 c      integer	vseltsc
       INTERFACE
         INTEGER FUNCTION vseltsc(vs)
-          !MS$ATTRIBUTES C,reference,alias:'_VSELTSC' :: vseltsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSELTSC' :: vseltsc
           integer vs
         END FUNCTION vseltsc
       END INTERFACE
@@ -1072,7 +1072,7 @@ c     related: VSgetfields--vsgfldc--vsfgfld
 c      integer			vsgfldc
       INTERFACE
         INTEGER FUNCTION vsgfldc(vs, fields)
-          !MS$ATTRIBUTES C,reference,alias:'_VSGFLDC' :: vsgfldc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSGFLDC' :: vsgfldc
 	    !DEC$ ATTRIBUTES reference :: fields
           integer vs
           character*(*)   fields
@@ -1095,7 +1095,7 @@ c     related: VSsizeof--vssizc--vsfsiz
 c      integer			vssizc
       INTERFACE
         INTEGER FUNCTION vssizc(vs, fields, fldslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSSIZC' :: vssizc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSSIZC' :: vssizc
 	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldslen
           character*(*) fields
@@ -1117,7 +1117,7 @@ c     related: Ventries--ventsc--vfents
 c      integer	ventsc 
       INTERFACE
         INTEGER FUNCTION ventsc(f, vgid)
-          !MS$ATTRIBUTES C,reference,alias:'_VENTSC' :: ventsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VENTSC' :: ventsc
           integer f, vgid
         END FUNCTION ventsc
       END INTERFACE
@@ -1138,7 +1138,7 @@ c     related: Vlone--vlonec--vflone
 c      integer	vlonec
       INTERFACE
         INTEGER FUNCTION vlonec(f, idarray, asize)
-          !MS$ATTRIBUTES C,reference,alias:'_VLONEC' :: vlonec
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VLONEC' :: vlonec
           integer f, idarray(*), asize
         END FUNCTION vlonec
       END INTERFACE
@@ -1159,7 +1159,7 @@ c     related: VSlone--vslonec--vsflone
 c      integer	vslonec
       INTERFACE
         INTEGER FUNCTION vslonec(f, idarray, asize)
-          !MS$ATTRIBUTES C,reference,alias:'_VSLONEC' :: vslonec
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSLONEC' :: vslonec
           integer f, idarray(*), asize
         END FUNCTION vslonec
       END INTERFACE
@@ -1180,7 +1180,7 @@ c     related: Vfind--vfindc--VFIND
 C      integer vfindc 	
       INTERFACE
         INTEGER FUNCTION vfindc(f, name, namelen)
-          !MS$ATTRIBUTES C,reference,alias:'_VFINDC' :: vfindc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFINDC' :: vfindc
 	    !DEC$ ATTRIBUTES reference :: name
           integer f, namelen
           character*(*) name
@@ -1203,7 +1203,7 @@ c     related: Vfindclass--vfndclsc--VFNDCLS
 c      integer vfndclsc 	
       INTERFACE
         INTEGER FUNCTION vfndclsc(f, class, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VFNDCLSC' :: vfndclsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFNDCLSC' :: vfndclsc
 	    !DEC$ ATTRIBUTES reference :: class
           integer f, clslen
           character*(*) class
@@ -1230,7 +1230,7 @@ c      integer vhsdc
       INTERFACE
         INTEGER FUNCTION vhsdc(f,field,buf,n,dtype,vsname,vsclass,
      +                         fldlen, nmlen, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VHSDC' :: vhsdc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VHSDC' :: vhsdc
 	    !DEC$ ATTRIBUTES reference :: field, vsname, vsclass
           integer f, buf(*),n,dtype,fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
@@ -1258,7 +1258,7 @@ c      integer vhsdmc
       INTERFACE
         INTEGER FUNCTION vhsdmc(f,field,buf,n,dtype,vsname,vsclass,
      +                         order, fldlen, nmlen, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VHSDMC' :: vhsdmc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VHSDMC' :: vhsdmc
 	    !DEC$ ATTRIBUTES reference :: field,vsname,vsclass
           integer f, buf(*),n,dtype,order, fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
@@ -1286,7 +1286,7 @@ c      integer vhscdc
       INTERFACE
         INTEGER FUNCTION vhscdc(f,field,cbuf,n,dtype,vsname,vsclass,
      +                         fldlen, nmlen, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VHSCDC' :: vhscdc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VHSCDC' :: vhscdc
 	    !DEC$ ATTRIBUTES reference :: field,vsname,vsclass,cbuf
           integer f, n,dtype,fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
@@ -1316,7 +1316,7 @@ c      integer vhscdmc
       INTERFACE
         INTEGER FUNCTION vhscdmc(f,field,cbuf,n,dtype,vsname,vsclass,
      +                         order, fldlen, nmlen, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VHSCDMC' :: vhscdmc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VHSCDMC' :: vhscdmc
 	    !DEC$ ATTRIBUTES reference :: field,vsname,vsclass, cbuf
           integer f, n,dtype,order, fldlen,nmlen, clslen
           character*(*) field,vsname,vsclass
@@ -1344,7 +1344,7 @@ c      integer 		vhmkgpc
       INTERFACE
         INTEGER FUNCTION vhmkgpc(f,tagarray, refarray,n,vgname,
      +                         vgclass, nmlen, clslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VHMKGPC' :: vhmkgpc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VHMKGPC' :: vhmkgpc
 	    !DEC$ ATTRIBUTES reference :: vgname,vgclass
           integer f, tagarray(*), refarray(*),n,nmlen,clslen
           character*(*) vgname,vgclass
@@ -1370,7 +1370,7 @@ c     related: Vflocate--vflocc--vffloc
 c      integer 			vflocc
       INTERFACE
         INTEGER FUNCTION vflocc(vg, field, fldlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VFLOCC' :: vflocc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFLOCC' :: vflocc
 	    !DEC$ ATTRIBUTES reference :: field
           integer vg, fldlen
           character*(*) field
@@ -1392,7 +1392,7 @@ c     related: Vinqtagref--vinqtrc--vfinqtr
 c      integer		vinqtrc
       INTERFACE
         INTEGER FUNCTION vinqtrc(vg, tag,ref)
-          !MS$ATTRIBUTES C,reference,alias:'_VINQTRC' :: vinqtrc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VINQTRC' :: vinqtrc
           integer vg, tag,ref
         END FUNCTION vinqtrc
       END INTERFACE
@@ -1412,7 +1412,7 @@ c     related: Vntagrefs -- vntrc -- vfntr
 c      integer vntrc 
       INTERFACE
         INTEGER FUNCTION vntrc(vg)
-          !MS$ATTRIBUTES C,reference,alias:'_VNTRC' :: vntrc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VNTRC' :: vntrc
           integer vg
         END FUNCTION vntrc
       END INTERFACE
@@ -1431,7 +1431,7 @@ c     related: Vnrefs -- vfirefs -- vnrefs
 C      integer vfirefs
       INTERFACE
         INTEGER FUNCTION vfirefs(vgid, tag)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIREFS' :: vfirefs
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIREFS' :: vfirefs
           integer vgid, tag
         END FUNCTION vfirefs
       END INTERFACE
@@ -1451,7 +1451,7 @@ c     related: VQueryref -- vfiqref -- vqref
 C      integer vfiqref
       INTERFACE
         INTEGER FUNCTION vfiqref(vgid)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIQREF' :: vfiqref
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIQREF' :: vfiqref
           integer vgid
         END FUNCTION vfiqref
       END INTERFACE
@@ -1471,7 +1471,7 @@ c     related: VQuerytag -- vfiqtag -- vqtag
 C      integer vfiqtag
       INTERFACE
         INTEGER FUNCTION vfiqtag(vgid)
-          !MS$ATTRIBUTES C,reference,alias:'_VFIQTAG' :: vfiqtag
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VFIQTAG' :: vfiqtag
           integer vgid
         END FUNCTION vfiqtag
       END INTERFACE
@@ -1493,7 +1493,7 @@ c     related: Vgettagrefs--vgttrsc--vfgttrs
 c      integer		vgttrsc
       INTERFACE
         INTEGER FUNCTION vgttrsc(vg, tagarray,refarray, n)
-          !MS$ATTRIBUTES C,reference,alias:'_VGTTRSC' :: vgttrsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VGTTRSC' :: vgttrsc
           integer vg, tagarray(*),refarray(*)
         END FUNCTION vgttrsc
       END INTERFACE
@@ -1513,7 +1513,7 @@ c     related: Vgettagref--vgttrc--vfgttr
 c      integer		vgttrc
       INTERFACE
         INTEGER FUNCTION vgttrc(vg, which, tag,ref)
-          !MS$ATTRIBUTES C,reference,alias:'_VGTTRC' :: vgttrc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VGTTRC' :: vgttrc
           integer vg, which, tag,ref
         END FUNCTION vgttrc
       END INTERFACE
@@ -1533,7 +1533,7 @@ c     related: Vaddtagref--vadtrc--vfadtr
 c      integer vadtrc				
       INTERFACE
         INTEGER FUNCTION vadtrc(vg, tag,ref)
-          !MS$ATTRIBUTES C,reference,alias:'_VADTRC' :: vadtrc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VADTRC' :: vadtrc
           integer vg, tag,ref
         END FUNCTION vadtrc
       END INTERFACE
@@ -1553,7 +1553,7 @@ c     related: VSQuerycount -- vsiqnelt -- vsqfnelt
 c      integer                   vsiqnelt
       INTERFACE 
         INTEGER FUNCTION vsiqnelt(vsid, nelts)
-          !MS$ATTRIBUTES C,reference,alias:'_VSIQNELT' :: vsiqnelt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSIQNELT' :: vsiqnelt
           integer vsid, nelts
         END FUNCTION vsiqnelt
       END INTERFACE
@@ -1572,7 +1572,7 @@ c     related: VSQueryinterlace -- vsiqintr -- vsqfintr
 c      integer                   vsiqintr
       INTERFACE
         INTEGER FUNCTION vsiqintr(vsid, interlace)
-          !MS$ATTRIBUTES C,reference,alias:'_VSIQINTR' :: vsiqintr
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSIQINTR' :: vsiqintr
           integer vsid, interlace
         END FUNCTION vsiqintr
       END INTERFACE
@@ -1592,7 +1592,7 @@ c     related: VSQueryvsize -- vsiqvsz -- vsqfvsiz
 c      integer                   vsiqvsz
       INTERFACE 
         INTEGER FUNCTION vsiqvsz(vsid, size)
-          !MS$ATTRIBUTES C,reference,alias:'_VSIQVSZ' :: vsiqvsz
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSIQVSZ' :: vsiqvsz
           integer vsid, size
         END FUNCTION vsiqvsz
       END INTERFACE
@@ -1613,7 +1613,7 @@ c     related: VSQueryfields--vsqfldsc--vsqfflds
 c      integer			vsqfldsc
       INTERFACE
         INTEGER FUNCTION vsqfldsc(vs, fields, fldslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSQFLDSC' :: vsqfldsc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSQFLDSC' :: vsqfldsc
 	    !DEC$ ATTRIBUTES reference :: fields
           integer vs, fldslen
           character*(*) fields
@@ -1636,7 +1636,7 @@ c     related: VSQueryname--vsqnamec--vsqfname
 c      integer			vsqnamec
       INTERFACE
         INTEGER FUNCTION vsqnamec(vs, name, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSQNAMEC' :: vsqnamec
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSQNAMEC' :: vsqnamec
 	    !DEC$ ATTRIBUTES reference :: name
           integer vs, nmlen
           character*(*) name
@@ -1666,7 +1666,7 @@ c      integer vsfncpk
       INTERFACE
         INTEGER FUNCTION vsfncpk(vs,ptype,buflds,buf,bufsz,
      +               nrecs,pckfld, fldbuf, bfldslen,pfldlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFNCPK' :: vsfncpk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFNCPK' :: vsfncpk
 	    !DEC$ ATTRIBUTES reference :: buflds, pckfld
           integer vs,ptype,buf, bufsz,nrecs,fldbuf,bfldslen
           integer pfldlen
@@ -1698,7 +1698,7 @@ c      integer vsfccpk
       INTERFACE
         INTEGER FUNCTION vsfccpk(vs,ptype,buflds,buf,bufsz,
      +               nrecs,pckfld, fldbuf, bfldslen,pfldlen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSFCCPK' :: vsfccpk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSFCCPK' :: vsfccpk
 	    !DEC$ ATTRIBUTES reference :: buflds,fldbuf,  pckfld
           integer vs,ptype,buf, bufsz,nrecs,bfldslen
           integer pfldlen
@@ -1722,7 +1722,7 @@ c     related: vfdtr()-->vdtrc()-->Vdeletetagref()
 C      integer vdtrc				
       INTERFACE
         INTEGER FUNCTION vdtrc(vg, tag, ref)
-          !MS$ATTRIBUTES C,reference,alias:'_VDTRC' :: vdtrc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VDTRC' :: vdtrc
           integer vg, tag, ref
         END FUNCTION vdtrc
       END INTERFACE
@@ -1752,7 +1752,7 @@ C
 C         INTEGER vscfcls 
       INTERFACE
         INTEGER FUNCTION vscfcls(id, vdclass, vdclasslen)
-          !MS$ATTRIBUTES C,reference,alias:'_VSCFCLS' :: vscfcls
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VSCFCLS' :: vscfcls
 	    !DEC$ ATTRIBUTES reference :: vdclass
           integer id, vdclasslen
           character*(*) vdclass
@@ -1782,7 +1782,7 @@ C
  
       INTERFACE
         INTEGER FUNCTION vdeletec(id, vgid)
-          !MS$ATTRIBUTES C,reference,alias:'_VDELETEC' :: vdeletec
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'VDELETEC' :: vdeletec
           integer id, vgid
         END FUNCTION vdeletec
       END INTERFACE
@@ -1813,7 +1813,7 @@ C
 C
       INTERFACE
         INTEGER FUNCTION vscsetblsz(id, block_size)
-          !MS$ATTRIBUTES C,reference,alias:'_VSCSETBLSZ' :: vscsetblsz
+	   !MS$ATTRIBUTES C,reference,decorate,alias:'VSCSETBLSZ' :: vscsetblsz
           integer id, block_size
         END FUNCTION vscsetblsz
       END INTERFACE
@@ -1840,7 +1840,7 @@ C
          INTEGER id, num_blocks
       INTERFACE
         INTEGER FUNCTION vscsetnmbl(id, num_blocks)
-          !MS$ATTRIBUTES C,reference,alias:'_VSCSETNMBL' :: vscsetnmbl
+	   !MS$ATTRIBUTES C,reference,decorate,alias:'VSCSETNMBL' :: vscsetnmbl
           integer id, num_blocks
         END FUNCTION vscsetnmbl
       END INTERFACE
@@ -1870,7 +1870,7 @@ C
 C
       INTERFACE
         INTEGER FUNCTION vscgblinfo(id, block_size, num_blocks)
-          !MS$ATTRIBUTES C,reference,alias:'_VSCGBLINFO' :: vscgblinfo
+	   !MS$ATTRIBUTES C,reference,decorate,alias:'VSCGBLINFO' :: vscgblinfo
           integer id, block_size, num_blocks
         END FUNCTION vscgblinfo
       END INTERFACE

@@ -34,7 +34,7 @@ C----------------------------------------------------------------------
 C      integer       scstart
       INTERFACE
         INTEGER FUNCTION scstart(filename,access, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSTART' :: scstart
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSTART' :: scstart
 	    !DEC$ ATTRIBUTES reference :: filename
           integer access, nmlen
           character*(*) filename
@@ -62,7 +62,7 @@ C----------------------------------------------------------------------
 C      integer       scend
       INTERFACE
         INTEGER FUNCTION scend(file_id)
-          !MS$ATTRIBUTES C, reference, alias: '_SCEND' :: scend
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCEND' :: scend
           integer file_id
         END FUNCTION scend
       END INTERFACE
@@ -88,7 +88,7 @@ C----------------------------------------------------------------------
 C      integer       scendacc
       INTERFACE
         INTEGER FUNCTION scendacc(id)
-          !MS$ATTRIBUTES C, reference, alias: '_SCENDACC' :: scendacc
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCENDACC' :: scendacc
           integer id
         END FUNCTION scendacc
       END INTERFACE
@@ -115,7 +115,7 @@ C----------------------------------------------------------------------
 C      integer       scfinfo
       INTERFACE
         INTEGER FUNCTION scfinfo(file_id,datasets,gattr)
-          !MS$ATTRIBUTES C, reference, alias: '_SCFINFO' :: scfinfo
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCFINFO' :: scfinfo
           integer file_id,datasets, gattr
         END FUNCTION scfinfo
       END INTERFACE
@@ -142,7 +142,7 @@ C----------------------------------------------------------------------
 C      integer       scselct
       INTERFACE
         INTEGER FUNCTION scselct(file_id,index)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSELCT' :: scselct
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSELCT' :: scselct
           integer file_id, index
         END FUNCTION scselct
       END INTERFACE
@@ -169,7 +169,7 @@ C----------------------------------------------------------------------
 C      integer       scdimid
       INTERFACE
         INTEGER FUNCTION scdimid(id, index)
-          !MS$ATTRIBUTES C, reference, alias: '_SCDIMID' :: scdimid
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCDIMID' :: scdimid
           integer id, index
         END FUNCTION scdimid
       END INTERFACE
@@ -197,7 +197,7 @@ C----------------------------------------------------------------------
 C      integer       scgcal
       INTERFACE
         INTEGER FUNCTION scgcal(id,cal,cale,ioff,ioffe,nt)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGCAL' :: scgcal
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGCAL' :: scgcal
           integer id, nt
           real*8  cal, cale, ioff, ioffe
         END FUNCTION scgcal
@@ -227,7 +227,7 @@ C----------------------------------------------------------------------
 C      integer       scscal
       INTERFACE
         INTEGER FUNCTION scscal(id,cal,cale,ioff,ioffe,nt)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSCAL' :: scscal
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSCAL' :: scscal
           integer id, nt
           real*8  cal, cale, ioff, ioffe
         END FUNCTION scscal
@@ -257,7 +257,7 @@ C----------------------------------------------------------------------
 C      integer       scsdscale
       INTERFACE
         INTEGER FUNCTION scsdscale(id, count, nt , values)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSDSCALE' :: scsdscale
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSDSCALE' :: scsdscale
           integer id, count, nt, values
         END FUNCTION scsdscale
       END INTERFACE
@@ -283,7 +283,7 @@ C----------------------------------------------------------------------
 C      integer       scgdscale
       INTERFACE
         INTEGER FUNCTION scgdscale(id, values)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGDSCALE' :: scgdscale
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGDSCALE' :: scgdscale
           integer id, values
         END FUNCTION scgdscale
       END INTERFACE
@@ -311,7 +311,7 @@ C----------------------------------------------------------------------
 C      integer       scscfill
       INTERFACE
         INTEGER FUNCTION scscfill(id, val)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSCFILL' :: scscfill
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSCFILL' :: scscfill
 	    !DEC$ ATTRIBUTES reference :: val
           integer id
           character*1 val
@@ -341,7 +341,7 @@ C----------------------------------------------------------------------
 C      integer       scgcfill
       INTERFACE
         INTEGER FUNCTION scgcfill(id, val)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGCFILL' :: scgcfill
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGCFILL' :: scgcfill
 	    !DEC$ ATTRIBUTES reference :: val
           integer id
           character*1 val
@@ -370,7 +370,7 @@ C----------------------------------------------------------------
 C      integer       scsfill
       INTERFACE
         INTEGER FUNCTION scsfill(id, val)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSFILL' :: scsfill
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSFILL' :: scsfill
           integer id, val
         END FUNCTION scsfill
       END INTERFACE
@@ -397,7 +397,7 @@ C----------------------------------------------------------------------
 C      integer       scgfill
       INTERFACE
         INTEGER FUNCTION scgfill(id, val)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGFILL' :: scgfill
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGFILL' :: scgfill
           integer id, val
         END FUNCTION scgfill
       END INTERFACE
@@ -424,7 +424,7 @@ C----------------------------------------------------------------
 C      integer       scsrange
       INTERFACE
         INTEGER FUNCTION scsrange(id, max, min)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSRANGE' :: scsrange
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSRANGE' :: scsrange
           integer id, max, min
         END FUNCTION scsrange
       END INTERFACE
@@ -451,7 +451,7 @@ C----------------------------------------------------------------------
 C      integer       scgrange
       INTERFACE
         INTEGER FUNCTION scgrange(id, max, min)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGRANGE' :: scgrange
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGRANGE' :: scgrange
           integer id, max, min
         END FUNCTION scgrange
       END INTERFACE
@@ -479,7 +479,7 @@ C----------------------------------------------------------------------
 c      integer       scn2index
       INTERFACE
         INTEGER FUNCTION scn2index(id, name, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCN2INDEX' :: scn2index
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'SCN2INDEX' :: scn2index
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, nmlen
           character*(*) name
@@ -514,7 +514,7 @@ C----------------------------------------------------------------------
 C      integer       sccreate
       INTERFACE
         INTEGER FUNCTION sccreate(id,name,nt,rank,dims,nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCCREATE' :: sccreate
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCCREATE' :: sccreate
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, nt, rank, dims(*), nmlen
           character*(*) name
@@ -546,7 +546,7 @@ C      integer scsdimstr
       INTERFACE
         INTEGER FUNCTION scsdimstr(id, label, unit, format,
      +                       llen,ulen, flen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSDIMSTR' :: scsdimstr
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSDIMSTR' :: scsdimstr
 	    !DEC$ ATTRIBUTES reference :: label, unit, format
           integer id, llen, ulen, flen
           character*(*) label, unit, format
@@ -578,7 +578,7 @@ C----------------------------------------------------------------------
 C      integer scsdimname
       INTERFACE
         INTEGER FUNCTION scsdimname(id, name, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_SCSDIMNAME' :: scsdimname
+	   !MS$ATTRIBUTES C,reference,decorate,alias:'SCSDIMNAME' :: scsdimname
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, nmlen
           character*(*) name
@@ -611,7 +611,7 @@ C      integer scsdatstr
       INTERFACE
         INTEGER FUNCTION scsdatstr(id, l, u, f, c, llen, 
      +                         ulen, flen, clen)
-          !MS$ATTRIBUTES C,reference,alias:'_SCSDATSTR' :: scsdatstr
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'SCSDATSTR' :: scsdatstr
 	    !DEC$ ATTRIBUTES reference :: l,u,f,c
           integer id, llen, ulen, flen, clen
 	    character*(*) l,u,f,c
@@ -645,7 +645,7 @@ C       integer scgdatstrs
       INTERFACE
         INTEGER FUNCTION scgdatstrs(id,label,unit,format,coord,
      +                               llen,ulen,flen, clen,mlen)
-          !MS$ATTRIBUTES C,reference,alias:'_SCGDATSTRS' :: scgdatstrs
+	   !MS$ATTRIBUTES C,reference,decorate,alias:'SCGDATSTRS' :: scgdatstrs
 	    !DEC$ ATTRIBUTES reference :: label, unit, format, coord
           integer id, llen, ulen, flen, clen, mlen
           character*(*) label, unit, format, coord
@@ -678,7 +678,7 @@ C      integer scgdimstrs
       INTERFACE
         INTEGER FUNCTION scgdimstrs(id,label,unit,format,
      + 	  llen,ulen,flen,mlen)
-          !MS$ATTRIBUTES C,reference,alias:'_SCGDIMSTRS' :: scgdimstrs
+	   !MS$ATTRIBUTES C,reference,decorate,alias:'SCGDIMSTRS' :: scgdimstrs
 	    !DEC$ ATTRIBUTES reference :: label, unit, format
           integer id, llen, ulen, flen, mlen
           character*(*) label, unit, format
@@ -712,7 +712,7 @@ C----------------------------------------------------------------------
 c      integer scginfo
       INTERFACE
         INTEGER FUNCTION scginfo(id,name,rank,dims,nt,nattr,nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGINFO' :: scginfo
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGINFO' :: scginfo
 	    !DEC$ ATTRIBUTES reference :: name
           integer id,rank,dims(*),nt,nattr,nmlen
           character*(*) name
@@ -744,7 +744,7 @@ C----------------------------------------------------------------------
 c      integer scrcatt
       INTERFACE
         INTEGER FUNCTION scrcatt(id, index, buf)
-          !MS$ATTRIBUTES C, reference, alias: '_SCRCATT' :: scrcatt
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRCATT' :: scrcatt
 	    !DEC$ ATTRIBUTES reference :: buf
           integer id, index
           character   buf(*)
@@ -775,7 +775,7 @@ C----------------------------------------------------------------------
 c      integer scrnatt
       INTERFACE
         INTEGER FUNCTION scrnatt(id, index, buf)
-          !MS$ATTRIBUTES C, reference, alias: '_SCRNATT' :: scrnatt
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRNATT' :: scrnatt
           integer id, index, buf
         END FUNCTION scrnatt
       END INTERFACE
@@ -805,7 +805,7 @@ C----------------------------------------------------------------------
 c      integer scrattr
       INTERFACE
         INTEGER FUNCTION scrattr(id, index, buf)
-          !MS$ATTRIBUTES C, reference, alias: '_SCRATTR' :: scrattr
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRATTR' :: scrattr
 	    !DEC$ ATTRIBUTES reference :: buf
           integer id, index
           character*(*) buf
@@ -838,7 +838,7 @@ C----------------------------------------------------------------------
 c      integer scrdata
       INTERFACE
         INTEGER FUNCTION scrdata(id,start, stride, end, values) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCRDATA' :: scrdata
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRDATA' :: scrdata
           integer id, start(*), stride(*), end(*), values(*)
         END FUNCTION scrdata
       END INTERFACE
@@ -869,7 +869,7 @@ C----------------------------------------------------------------------
 c      integer scwdata
       INTERFACE
         INTEGER FUNCTION scwdata(id,start, stride, end, values) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCWDATA' :: scwdata
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCWDATA' :: scwdata
           integer id, start(*), stride(*), end(*), values(*)
         END FUNCTION scwdata
       END INTERFACE
@@ -901,7 +901,7 @@ C----------------------------------------------------------------------
 c      integer scrcdata
       INTERFACE
         INTEGER FUNCTION scrcdata(id,start, stride, end, values) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCRCDATA' :: scrcdata
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRCDATA' :: scrcdata
 	    !DEC$ ATTRIBUTES reference :: values
           integer id, start(*), stride(*), end(*)
           character *(*) values
@@ -935,7 +935,7 @@ C----------------------------------------------------------------------
 c      integer scwcdata
       INTERFACE
         INTEGER FUNCTION scwcdata(id,start, stride, end, values) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCWCDATA' :: scwcdata
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCWCDATA' :: scwcdata
 	    !DEC$ ATTRIBUTES reference :: values
           integer id, start(*), stride(*), end(*)
           character*(*) values
@@ -968,7 +968,7 @@ C----------------------------------------------------------------------
 C      integer scgainfo
       INTERFACE
         INTEGER FUNCTION scgainfo(id, number, name,nt, count,nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGAINFO' :: scgainfo
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGAINFO' :: scgainfo
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, number, nt, count, nmlen
           character*(*) name
@@ -999,7 +999,7 @@ C----------------------------------------------------------------------
 C      integer scgdinfo
       INTERFACE
         INTEGER FUNCTION scgdinfo(id,name, sz, nt, nattr,nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGDINFO' :: scgdinfo
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGDINFO' :: scgdinfo
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, sz, nt, nattr, nmlen
           character*(*) name
@@ -1031,7 +1031,7 @@ C----------------------------------------------------------------------
 C      integer scscatt
       INTERFACE
         INTEGER FUNCTION scscatt(id,name, nt, count,data, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSCATT' :: scscatt
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSCATT' :: scscatt
 	    !DEC$ ATTRIBUTES reference :: name,data
           integer id, nt, count, nmlen
           character*(*) name
@@ -1063,7 +1063,7 @@ C----------------------------------------------------------------------
 C      integer scsnatt
       INTERFACE
         INTEGER FUNCTION scsnatt(id,name, nt, count,data, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSNATT' :: scsnatt
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSNATT' :: scsnatt
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, nt, count, data, nmlen
           character*(*) name
@@ -1096,7 +1096,7 @@ C----------------------------------------------------------------------
 C      integer scsattr
       INTERFACE
         INTEGER FUNCTION scsattr(id,name, nt, count,data, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSATTR' :: scsattr
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSATTR' :: scsattr
 	    !DEC$ ATTRIBUTES reference :: name,data
           integer id, nt, count, nmlen
           character*(*) name, data
@@ -1127,7 +1127,7 @@ C----------------------------------------------------------------------
 C      integer       scfattr
       INTERFACE
         INTEGER FUNCTION scfattr(id,name, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCFATTR' :: scfattr
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCFATTR' :: scfattr
 	    !DEC$ ATTRIBUTES reference :: name
           integer id, nmlen
           character*(*) name
@@ -1155,7 +1155,7 @@ C----------------------------------------------------------------------
 C      integer       scid2ref
       INTERFACE
         INTEGER FUNCTION scid2ref(id)
-          !MS$ATTRIBUTES C, reference, alias: '_SCID2REF' :: scid2ref
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCID2REF' :: scid2ref
           integer id
         END FUNCTION scid2ref
       END INTERFACE
@@ -1182,7 +1182,7 @@ C----------------------------------------------------------------------
 C      integer       scr2idx
       INTERFACE
         INTEGER FUNCTION scr2idx(id, ref)
-          !MS$ATTRIBUTES C, reference, alias: '_SCR2IDX' :: scr2idx
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCR2IDX' :: scr2idx
           integer id, ref
         END FUNCTION scr2idx
       END INTERFACE
@@ -1208,7 +1208,7 @@ C----------------------------------------------------------------------
 C      integer       sciscvar
       INTERFACE
         INTEGER FUNCTION sciscvar(id)
-          !MS$ATTRIBUTES C, reference, alias: '_SCISCVAR' :: sciscvar
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCISCVAR' :: sciscvar
           integer id
         END FUNCTION sciscvar
       END INTERFACE
@@ -1238,7 +1238,7 @@ C----------------------------------------------------------------------
 C     integer       scsextf
       INTERFACE
         INTEGER FUNCTION scsextf(id, fname, offset, nmlen)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSEXTF' :: scsextf
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSEXTF' :: scsextf
 	    !DEC$ ATTRIBUTES reference :: fname
           integer id, offset, nmlen
           character*(*) fname
@@ -1269,8 +1269,8 @@ C----------------------------------------------------------------------
       integer       id,start_bit,bit_len,sign_ext,fill_one 
 C      integer       scsnbit
       INTERFACE
-        INTEGER FUNCTION scsnbit(id,start_bit,bit_len,sign_ext,fill_one) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCSNBIT' :: scsnbit
+        INTEGER FUNCTION scsnbit(id,start_bit,bit_len,sign_ext,fill_one)
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSNBIT' :: scsnbit
           integer id,start_bit,bit_len,sign_ext,fill_one
         END FUNCTION scsnbit
       END INTERFACE
@@ -1297,7 +1297,7 @@ C----------------------------------------------------------------------
 C      integer       scsacct
       INTERFACE
         INTEGER FUNCTION scsacct(id, acctype)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSACCT' :: scsacct
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSACCT' :: scsacct
           integer id, acctype
         END FUNCTION scsacct
       END INTERFACE
@@ -1326,7 +1326,7 @@ C----------------------------------------------------------------------
 C      integer       scsdmvc
       INTERFACE
         INTEGER FUNCTION scsdmvc(id, comptype)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSDMVC' :: scsdmvc
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSDMVC' :: scsdmvc
           integer id, comptype
         END FUNCTION scsdmvc
       END INTERFACE
@@ -1354,7 +1354,7 @@ C----------------------------------------------------------------------
 C      integer       scisdmvc
       INTERFACE
         INTEGER FUNCTION scisdmvc(id)
-          !MS$ATTRIBUTES C, reference, alias: '_SCISDMVC' :: scisdmvc
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCISDMVC' :: scisdmvc
           integer id
         END FUNCTION scisdmvc
       END INTERFACE
@@ -1383,7 +1383,7 @@ C----------------------------------------------------------------------
 C      integer       scsflmd
       INTERFACE
         INTEGER FUNCTION scsflmd(file_id, fillmode)
-          !MS$ATTRIBUTES C, reference, alias: '_SCSFLMD' :: scsflmd
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSFLMD' :: scsflmd
           integer file_id, fillmode
         END FUNCTION scsflmd
       END INTERFACE
@@ -1419,7 +1419,7 @@ C         INTEGER scgichnk
 
       INTERFACE
         INTEGER FUNCTION scgichnk(id, dim_length, comp_flag)
-          !MS$ATTRIBUTES C, reference, alias: '_SCGICHNK' :: scgichnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCGICHNK' :: scgichnk 
           integer id, dim_length(*), comp_flag 
         END FUNCTION scgichnk 
       END INTERFACE
@@ -1451,7 +1451,7 @@ C         INTEGER scrcchnk
 
       INTERFACE
         INTEGER FUNCTION  scrcchnk(id, start, char_data)
-          !MS$ATTRIBUTES C, reference, alias: '_SCRCCHNK' :: scrcchnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRCCHNK' :: scrcchnk 
             !DEC$ ATTRIBUTES reference :: char_data
           integer id, start(*)
           character*(*) char_data(*) 
@@ -1485,7 +1485,7 @@ C         INTEGER scrchnk
 
       INTERFACE
         INTEGER FUNCTION  scrchnk(id, start, num_data)
-          !MS$ATTRIBUTES C, reference, alias: '_SCRCHNK' :: scrchnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCRCHNK' :: scrchnk 
           integer id, start(*), num_data(*)
         END FUNCTION scrchnk 
       END INTERFACE
@@ -1518,7 +1518,7 @@ C         INTEGER scscchnk
 
       INTERFACE
         INTEGER FUNCTION scscchnk(id, maxcache, flags) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCSCCHNK' :: scscchnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSCCHNK' :: scscchnk 
           integer id, maxcache, flags 
         END FUNCTION scscchnk 
       END INTERFACE
@@ -1573,7 +1573,7 @@ C         INTEGER scschnk
 
       INTERFACE
         INTEGER FUNCTION scschnk(id, dim_length, comp_type, comp_prm) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCSCHNK' :: scschnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSCHNK' :: scschnk 
           integer id, dim_length(*), comp_type, comp_prm(*) 
         END FUNCTION scschnk 
       END INTERFACE
@@ -1605,7 +1605,7 @@ C         INTEGER scwcchnk
 
       INTERFACE
         INTEGER FUNCTION  scwcchnk(id, start, char_data)
-          !MS$ATTRIBUTES C, reference, alias: '_SCWCCHNK' :: scWcchnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCWCCHNK' :: scWcchnk 
             !DEC$ ATTRIBUTES reference :: char_data
           integer id, start(*)
           character*(*) char_data(*) 
@@ -1640,7 +1640,7 @@ C         INTEGER scwchnk
 
       INTERFACE
         INTEGER FUNCTION  scwchnk(id, start, num_data)
-          !MS$ATTRIBUTES C, reference, alias: '_SCWCHNK' :: scwchnk 
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCWCHNK' :: scwchnk 
           integer id, start(*), num_data(*)
         END FUNCTION scwchnk 
       END INTERFACE
@@ -1683,7 +1683,7 @@ C         INTEGER scscompress
 
       INTERFACE
         INTEGER FUNCTION scscompress(id, comp_type, comp_prm) 
-      !MS$ATTRIBUTES C, reference, alias: '_SCSCOMPRESS' :: scscompress 
+	!MS$ATTRIBUTES C,reference,decorate,alias: 'SCSCOMPRESS' :: scscompress
           integer id, comp_type, comp_prm(*) 
         END FUNCTION scscompress
       END INTERFACE
@@ -1721,7 +1721,7 @@ C-------------------------------------------------------------------------
          INTEGER id, comp_type, comp_prm(*)
       INTERFACE
         INTEGER FUNCTION scgcompress(id, comp_type, comp_prm) 
-      !MS$ATTRIBUTES C, reference, alias: '_SCGCOMPRESS' :: scgcompress 
+	!MS$ATTRIBUTES C,reference,decorate,alias: 'SCGCOMPRESS' :: scgcompress
           integer id, comp_type, comp_prm(*) 
         END FUNCTION scgcompress
       END INTERFACE
@@ -1749,7 +1749,7 @@ C
  
       INTERFACE
         INTEGER FUNCTION  scisrcrd(id)
-          !MS$ATTRIBUTES C, reference, alias: '_SCISRCRD' :: scisrcrd
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCISRCRD' :: scisrcrd
           integer id
         END FUNCTION scisrcrd
       END INTERFACE
@@ -1769,7 +1769,7 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     scsblsz (C stub for SDsetblocksize function)
 C        Users:     HDF Fortran programmers 
 C------------------------------------------------------------------------- 
-                                                                            
+                                                                        
          INTEGER function sfsblsz(id, block_size) 
 	     !MS$if defined(BUILD_HDF_DLL)
 	     !MS$attributes dllexport :: sfsblsz 
@@ -1779,7 +1779,7 @@ C
   
       INTERFACE 
         INTEGER FUNCTION  scsblsz(id, block_size) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCSBLSZ' :: scsblsz
+	    !MS$ATTRIBUTES C, reference, decorate,alias: 'SCSBLSZ' :: scsblsz
           integer id, block_size
         END FUNCTION scsblsz
       END INTERFACE 
@@ -1811,7 +1811,7 @@ C
 
       INTERFACE 
         INTEGER FUNCTION  scchempty(id, flag) 
-          !MS$ATTRIBUTES C, reference, alias: '_SCCHEMPTY' :: scchempty
+	  !MS$ATTRIBUTES C, reference, decorate,alias: 'SCCHEMPTY' :: scchempty
           integer id, flag
         END FUNCTION scchempty
       END INTERFACE 

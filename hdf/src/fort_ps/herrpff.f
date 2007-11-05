@@ -16,7 +16,7 @@ C      integer hestringc
 
       INTERFACE
         INTEGER FUNCTION hestringc(error_code, error_message, length)
-          !MS$ATTRIBUTES C,reference,alias:'_HESTRINGC' :: hestringc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'HESTRINGC' :: hestringc
           !DEC$ ATTRIBUTES reference :: error_message 
           integer error_code, length
 	  character*(*) error_message
@@ -44,7 +44,7 @@ C-----------------------------------------------------------------------------*/
 
       INTERFACE
         INTEGER FUNCTION heprntc(filename, print_levels, namelen)
-          !MS$ATTRIBUTES C,reference,alias:'_HEPRNTC' :: heprntc
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'HEPRNTC' :: heprntc
           !DEC$ ATTRIBUTES reference :: filename
           integer print_levels 
           character*(*) filename

@@ -43,7 +43,7 @@ C     integer  mgicreat
       INTERFACE 
          INTEGER FUNCTION mgicreat(grid,name,ncomp,nt,il,dimsizes,
      +                             nmlen)
-            !MS$ATTRIBUTES C,reference,alias:'_MGICREAT' :: mgicreat
+  	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGICREAT' :: mgicreat
 	      !DEC$ ATTRIBUTES reference :: name
             integer grid, ncomp,nt,il,dimsizes, nmlen
             character*(*) name
@@ -75,7 +75,7 @@ C------------------------------------------------------------------------------
 C     integer mgin2ndx
       INTERFACE
         INTEGER FUNCTION mgin2ndx(grid,name,nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIN2NDX' :: mgin2ndx
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIN2NDX' :: mgin2ndx
 	    !DEC$ ATTRIBUTES reference :: name
           integer grid, nmlen
           character*(*) name
@@ -107,7 +107,7 @@ C-------------------------------------------------------------
 C      integer mgisxfil
       INTERFACE
         INTEGER FUNCTION mgisxfil(riid,filename,offset, nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_MGISXFIL' :: mgisxfil
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGISXFIL' :: mgisxfil
 	    !DEC$ ATTRIBUTES reference :: filename
           integer riid, offset, nmlen
           character*(*) filename
@@ -143,7 +143,7 @@ C      integer mgiscatt
       INTERFACE
         INTEGER FUNCTION mgiscatt(riid,name,nt,count,data,
      +                             nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_MGISCATT' :: mgiscatt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGISCATT' :: mgiscatt
 	    !DEC$ ATTRIBUTES reference :: name, data
           integer riid,nt,count, nmlen
           character*(*) name, data
@@ -179,7 +179,7 @@ C      integer mgisattr
       INTERFACE
         INTEGER FUNCTION mgisattr(riid,name,nt,count,data,
      +                             nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_MGISATTR' :: mgisattr
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGISATTR' :: mgisattr
 	    !DEC$ ATTRIBUTES reference :: name
           integer riid, nt,count,data, nmlen
           character*(*) name
@@ -215,7 +215,7 @@ C      integer mgisattr
 C      INTERFACE
 C        INTEGER FUNCTION mgisattr(riid,name,nt,count,data,
 C     +                             nmlen)
-C          !MS$ATTRIBUTES C,reference,alias:'_MGISATTR' :: mgisattr
+C	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGISATTR' :: mgisattr
 C  	     !DEC$ ATTRIBUTES reference :: name, data
 C          integer riid, nt,count, nmlen
 C          character*(*) name, data
@@ -245,7 +245,7 @@ C----------------------------------------------------------------
 C      integer mgifndat
       INTERFACE
         INTEGER FUNCTION mgifndat(riid,name,nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIFNDAT' :: mgifndat
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIFNDAT' :: mgifndat
 	    !DEC$ ATTRIBUTES reference :: name
           integer riid, nmlen
           character*(*) name
@@ -277,7 +277,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mgcgichnk 
       INTERFACE
         INTEGER FUNCTION mgcgichnk(riid, dim_length, comp_type)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCGICHNK' :: mgcgichnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCGICHNK' :: mgcgichnk
           integer riid, dim_length(*), comp_type
         END FUNCTION mgcgichnk
       END INTERFACE
@@ -307,7 +307,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mgcrcchnk 
       INTERFACE
         INTEGER FUNCTION mgcrcchnk(riid, start, char_data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCRCCHNK' :: mgcrcchnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCRCCHNK' :: mgcrcchnk
           integer riid, start(*)
 	    CHARACTER*(*) char_data(*)
         END FUNCTION mgcrcchnk
@@ -337,7 +337,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mgcrchnk 
       INTERFACE
         INTEGER FUNCTION mgcrchnk(riid, start, num_data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCRCHNK' :: mgcrchnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCRCHNK' :: mgcrchnk
           integer riid, start(*), num_data(*)
         END FUNCTION mgcrchnk
       END INTERFACE
@@ -368,7 +368,7 @@ C
 C         INTEGER mgcscchnk 
       INTERFACE
         INTEGER FUNCTION mgcscchnk(riid,name,nmlen)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCSCCHNK' :: mgcscchnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCSCCHNK' :: mgcscchnk
           integer riid, maxcache, flags
         END FUNCTION mgcscchnk
       END INTERFACE
@@ -404,7 +404,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mgcschnk 
       INTERFACE
         INTEGER FUNCTION mgcschnk(riid, dim_length, comp_type, comp_prm)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCSCHNK' :: mgcschnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCSCHNK' :: mgcschnk
           integer riid, dim_length(*), comp_type, comp_prm(*)
         END FUNCTION mgcschnk
       END INTERFACE
@@ -423,7 +423,7 @@ C---------------------------------------------------------------
 C        integer mgistrt
       INTERFACE
         INTEGER FUNCTION mgistrt(fid)
-          !MS$ATTRIBUTES C,reference,alias:'_MGISTRT' :: mgistrt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGISTRT' :: mgistrt
           integer fid
         END FUNCTION mgistrt
       END INTERFACE
@@ -441,7 +441,7 @@ C------------------------------------------------------------------
 C        integer mgifinf
       INTERFACE
         INTEGER FUNCTION mgifinf(grid,datasets,attrs)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIFINF' :: mgifinf
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIFINF' :: mgifinf
           integer grid,datasets,attrs
         END FUNCTION mgifinf
       END INTERFACE
@@ -459,7 +459,7 @@ C------------------------------------------------------------------
 C        integer mgiend
       INTERFACE
         INTEGER FUNCTION mgiend(grid)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIEND' :: mgiend
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIEND' :: mgiend
           integer grid
         END FUNCTION mgiend
       END INTERFACE
@@ -477,7 +477,7 @@ C------------------------------------------------------------------
 C        integer mgislct
       INTERFACE
         INTEGER FUNCTION mgislct(grid,index)
-          !MS$ATTRIBUTES C,reference,alias:'_MGISLCT' :: mgislct
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGISLCT' :: mgislct
           integer grid,index
         END FUNCTION mgislct
       END INTERFACE
@@ -497,7 +497,7 @@ C        integer mgigiinf
       INTERFACE
         INTEGER FUNCTION mgigiinf(riid,name,ncomp,nt,il,
      +                            dimsizes,attrs)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIGIINF' :: mgigiinf
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIGIINF' :: mgigiinf
 	    !DEC$ ATTRIBUTES reference :: name
           integer riid,ncomp,nt,il,dimsizes,attrs
           character*(*) name
@@ -519,7 +519,7 @@ C        integer mgiwcim
       INTERFACE
         INTEGER FUNCTION mgiwcim(riid,start,stride,count,
      +                            cdata)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIWCIM' :: mgiwcim
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIWCIM' :: mgiwcim
 	    !DEC$ ATTRIBUTES reference :: cdata
           integer riid,start,stride,count
           character*(*) cdata
@@ -540,7 +540,7 @@ C        integer mgiwimg
       INTERFACE
         INTEGER FUNCTION mgiwimg(riid,start,stride,count,
      +                            data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIWIMG' :: mgiwimg
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIWIMG' :: mgiwimg
           integer riid,start,stride,count,data
         END FUNCTION mgiwimg
       END INTERFACE
@@ -561,7 +561,7 @@ C        integer mgircim
       INTERFACE
         INTEGER FUNCTION mgircim(riid,start,stride,count,
      +                            cdata)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIRCIM' :: mgircim
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIRCIM' :: mgircim
 	    !DEC$ ATTRIBUTES reference :: cdata
           integer riid,start,stride,count
           character*(*) cdata
@@ -582,7 +582,7 @@ C        integer mgirimg
       INTERFACE
         INTEGER FUNCTION mgirimg(riid,start,stride,count,
      +                            data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIRIMG' :: mgirimg
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIRIMG' :: mgirimg
           integer riid,start,stride,count,data
         END FUNCTION mgirimg
       END INTERFACE
@@ -601,7 +601,7 @@ C------------------------------------------------------------------
 C        integer mgiendac
       INTERFACE
         INTEGER FUNCTION mgiendac(riid)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIENDAC' :: mgiendac
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIENDAC' :: mgiendac
           integer riid
         END FUNCTION mgiendac
       END INTERFACE
@@ -619,7 +619,7 @@ C------------------------------------------------------------------
 C        integer mgiid2r
       INTERFACE
         INTEGER FUNCTION mgiid2r(riid)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIID2R' :: mgiid2r
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIID2R' :: mgiid2r
           integer riid
         END FUNCTION mgiid2r
       END INTERFACE
@@ -637,7 +637,7 @@ C------------------------------------------------------------------
 C        integer mgir2dx
       INTERFACE
         INTEGER FUNCTION mgir2dx(grid,ref)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIR2DX' :: mgir2dx
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIR2DX' :: mgir2dx
           integer grid, ref
         END FUNCTION mgir2dx
       END INTERFACE
@@ -655,7 +655,7 @@ C------------------------------------------------------------------
 C        integer mgiltil
       INTERFACE
         INTEGER FUNCTION mgiltil(riid, il)
-          !MS$ATTRIBUTES C,reference,alias:'_MGILTIL' :: mgiltil
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGILTIL' :: mgiltil
           integer riid, il
         END FUNCTION mgiltil
       END INTERFACE
@@ -673,7 +673,7 @@ C------------------------------------------------------------------
 C        integer mgiimil
       INTERFACE
         INTEGER FUNCTION mgiimil(riid, il)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIIMIL' :: mgiimil
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIIMIL' :: mgiimil
           integer riid, il
         END FUNCTION mgiimil
       END INTERFACE
@@ -691,7 +691,7 @@ C------------------------------------------------------------------
 C        integer mgiglid
       INTERFACE
         INTEGER FUNCTION mgiglid(riid, lut_index)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIGLID' :: mgiglid
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIGLID' :: mgiglid
           integer riid, lut_index
         END FUNCTION mgiglid
       END INTERFACE
@@ -709,7 +709,7 @@ C------------------------------------------------------------------
 C        integer mgiglinf
       INTERFACE
         INTEGER FUNCTION mgiglinf(lutid,ncomp,nt,il,nentries)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIGLINF' :: mgiglinf
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIGLINF' :: mgiglinf
           integer lutid, ncomp, nt, il, nentries
         END FUNCTION mgiglinf
       END INTERFACE
@@ -728,7 +728,7 @@ C------------------------------------------------------------------
 C        integer mgiwclt
       INTERFACE
         INTEGER FUNCTION mgiwclt(lutid,ncomp,nt,il,nentries,cdata)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIWCLT' :: mgiwclt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIWCLT' :: mgiwclt
 	    !DEC$ ATTRIBUTES reference :: cdata
           integer lutid, ncomp, nt, il, nentries
           character*(*) cdata
@@ -748,7 +748,7 @@ C------------------------------------------------------------------
 C        integer mgiwrlt
       INTERFACE
         INTEGER FUNCTION mgiwrlt(lutid,ncomp,nt,il,nentries,data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIWRLT' :: mgiwrlt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIWRLT' :: mgiwrlt
           integer lutid, ncomp, nt, il, nentries, data
         END FUNCTION mgiwrlt
       END INTERFACE
@@ -767,7 +767,7 @@ C------------------------------------------------------------------
 C        integer mgirclt
       INTERFACE
         INTEGER FUNCTION mgirclt(lutid,cdata)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIRCLT' :: mgirclt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIRCLT' :: mgirclt
 	    !DEC$ ATTRIBUTES reference :: cdata
           integer lutid
           character*(*) cdata
@@ -787,7 +787,7 @@ C------------------------------------------------------------------
 C        integer mgirdlt
       INTERFACE
         INTEGER FUNCTION mgirdlt(lutid,data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIRDLT' :: mgirdlt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIRDLT' :: mgirdlt
           integer lutid, data
         END FUNCTION mgirdlt
       END INTERFACE
@@ -805,7 +805,7 @@ C------------------------------------------------------------------
 C        integer mgiactp
       INTERFACE
         INTEGER FUNCTION mgiactp(riid,acctype)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIACTP' :: mgiactp
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIACTP' :: mgiactp
           integer riid,acctype
         END FUNCTION mgiactp
       END INTERFACE
@@ -824,7 +824,7 @@ C------------------------------------------------------------------
 C        integer mgiainf
       INTERFACE
         INTEGER FUNCTION mgiainf(riid,index,name,nt,count)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIAINF' :: mgiainf
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIAINF' :: mgiainf
 	    !DEC$ ATTRIBUTES reference :: name
           integer riid,index,nt,count
           character*(*) name
@@ -856,7 +856,7 @@ C-------------------------------------------------------------
 C      integer mgigcat
       INTERFACE
         INTEGER FUNCTION mgigcat(riid,index,cdata)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIGCAT' :: mgigcat
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIGCAT' :: mgigcat
 	    !DEC$ ATTRIBUTES reference :: cdata
           integer riid,index
           character*(*)  cdata
@@ -888,7 +888,7 @@ C-------------------------------------------------------------
 C      integer mgignat
       INTERFACE
         INTEGER FUNCTION mgignat(riid,index,data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIGNAT' :: mgignat
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIGNAT' :: mgignat
           integer riid, index,data
         END FUNCTION mgignat
       END INTERFACE
@@ -917,7 +917,7 @@ C-------------------------------------------------------------
 C      integer mgigatt
       INTERFACE
         INTEGER FUNCTION mgigatt(riid,index,data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGIGATT' :: mgigatt
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGIGATT' :: mgigatt
           integer riid, index,data
         END FUNCTION mgigatt
       END INTERFACE
@@ -947,7 +947,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mgcwcchnk 
       INTERFACE
         INTEGER FUNCTION mgcwcchnk(riid,start,char_data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCWCCHNK' :: mgcwcchnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCWCCHNK' :: mgcwcchnk
           INTEGER riid, start(*)
 	    CHARACTER*(*) char_data(*)
         END FUNCTION mgcwcchnk
@@ -976,7 +976,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mymgcwchnk 
 	INTERFACE
         INTEGER FUNCTION mgcwchnk(riid,start,num_data)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCWCHNK' :: mgcwchnk
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCWCHNK' :: mgcwchnk
           INTEGER riid, start(*), num_data(*)
         END FUNCTION mgcwchnk
       END INTERFACE
@@ -1016,7 +1016,7 @@ C-------------------------------------------------------------------------
 C         INTEGER mgcscompress 
       INTERFACE
         INTEGER FUNCTION mgcscompress(riid, comp_type, comp_prm)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCSCOMPRESS'::mgcscompress
+	 !MS$ATTRIBUTES C,reference,decorate,alias:'MGCSCOMPRESS'::mgcscompress
           integer riid, comp_type, comp_prm
         END FUNCTION mgcscompress
       END INTERFACE
@@ -1052,7 +1052,7 @@ C-------------------------------------------------------------------------
          INTEGER riid, comp_type, comp_prm(1)
       INTERFACE
         INTEGER FUNCTION mgcgcompress(riid, comp_type, comp_prm)
-          !MS$ATTRIBUTES C,reference,alias:'_MGCGCOMPRESS'::mgcgcompress
+	 !MS$ATTRIBUTES C,reference,decorate,alias:'MGCGCOMPRESS'::mgcgcompress
           integer riid, comp_type, comp_prm(1)
         END FUNCTION mgcgcompress
       END INTERFACE
@@ -1077,7 +1077,7 @@ C-------------------------------------------------------------------------
          INTEGER riid
       INTERFACE
         INTEGER FUNCTION mgcgnluts(riid) 
-          !MS$ATTRIBUTES C,reference,alias:'_MGCGNLUTS'::mgcgnluts
+	    !MS$ATTRIBUTES C,reference,decorate,alias:'MGCGNLUTS'::mgcgnluts
           integer riid
         END FUNCTION mgcgnluts
       END INTERFACE

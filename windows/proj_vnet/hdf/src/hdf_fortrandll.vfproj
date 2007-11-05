@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll - Converted from CVF" Version="9.10" ProjectIdGuid="{FA3394C2-9170-4B0D-A8A3-178CD4FFD53C}">
+	<Platforms>
+		<Platform Name="Win32"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" OutputDirectory="..\..\..\..\hdf\src\Debug" IntermediateDirectory="..\..\..\..\hdf\src\Debug\hdf_fortrandll" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" ConfigurationType="typeDynamicLibrary" Command="$(TargetPath)">
+				<Tool Name="VFMidlTool" PreprocessorDefinitions="_DEBUG" MkTypLibCompatible="true" SuppressStartupBanner="true" TargetEnvironment="midlTargetWin32" TypeLibraryName="$(OUTDIR)/hdf_fortrandll.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="/dll" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" PreprocessorDefinitions="BUILD_HDF_DLL" WarnArgMismatch="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtSingleThreadedDebug" CompileOnly="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="..\..\..\..\hdf\src\Debug\hdf_fortrandlld.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/hdf_fortrandlld.pdb" SubSystem="subSystemWindows" ImportLibrary="$(OUTDIR)/hdf_fortrandlld.lib" LinkDLL="true" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/></Configuration>
+		<Configuration Name="Release|Win32" OutputDirectory="..\..\..\..\hdf\src\Release" IntermediateDirectory="..\..\..\..\hdf\src\Release\hdf_fortrandll" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" ConfigurationType="typeDynamicLibrary" Command="$(TargetPath)">
+				<Tool Name="VFMidlTool" PreprocessorDefinitions="NDEBUG" MkTypLibCompatible="true" SuppressStartupBanner="true" TargetEnvironment="midlTargetWin32" TypeLibraryName="$(OUTDIR)/hdf_fortrandll.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="/dll" SuppressStartupBanner="true" PreprocessorDefinitions="BUILD_HDF_DLL" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtSingleThreaded" CompileOnly="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/hdf_fortrandll.dll" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" ProgramDatabaseFile="$(OUTDIR)/hdf_fortrandll.pdb" SubSystem="subSystemWindows" ImportLibrary="$(OUTDIR)/hdf_fortrandll.lib" LinkDLL="true" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp">
+		<File RelativePath="..\..\..\..\hdf\src\fort_ps\herrpff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\fort_ps\hfilepff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\fort_ps\mfanpff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\fort_ps\mfgrpff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\fort_ps\vattrpff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\fort_ps\vgpff.f"/></Filter>
+		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
+		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/></Files>
+	<Globals/></VisualStudioProject>
