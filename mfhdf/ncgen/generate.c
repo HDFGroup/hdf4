@@ -101,7 +101,12 @@ gen_c(filename)
     int ntypes = (sizeof ctypes) / (sizeof ctypes[0]);
 
     /* wrap in main program */
+    cline("#ifdef H4_HAVE_NETCDF");
     cline("#include \"netcdf.h\"");
+    cline("#else");
+    cline("#include \"hdf4_netcdf.h\"");
+    cline("#endif");
+/*    cline("#include \"netcdf.h\""); */
     cline("");
     cline("int");
     sprintf(stmnt, "main() {\t\t\t/* create %s */", filename);

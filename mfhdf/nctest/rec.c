@@ -5,7 +5,13 @@
  *********************************************************************/
 
 #include <stdio.h>
+
+#ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
+#else
+#include "hdf4_netcdf.h"
+#endif
+
 #include "testcdf.h"		/* defines in-memory test cdf structure */
 #include "val.h"
 #include "error.h"

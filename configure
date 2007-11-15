@@ -6019,8 +6019,8 @@ done
 test -n "$AR" || AR=":"
 
 
-# Extract the first word of "diff", so it can be a program name with args.
-set dummy diff; ac_word=$2
+# Extract the first word of "dift", so it can be a program name with args.
+set dummy dift; ac_word=$2
 { echo "$as_me:$LINENO: checking for $ac_word" >&5
 echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
 if test "${ac_cv_prog_DIFF+set}" = set; then
@@ -9835,7 +9835,6 @@ case "$host" in
   i686-pc-cygwin*)      BAR="linux"       ;;
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
-
 src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h
            mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
            mfhdf/fortran/config/netcdf-FOO.inc:mfhdf/fortran/netcdf.inc
@@ -9868,6 +9867,10 @@ for config_file in $src_files; do
     exit 1
   fi
 done
+  if test "X$BUILD_NETCDF" != "Xyes"; then
+  echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
+    mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
+  fi
 
 ac_config_files="$ac_config_files Makefile libhdf4.settings hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/port/Makefile"
 

@@ -47,6 +47,11 @@ New features and changes
     Library
     ========= 
 
+	- Modified library and configure to work in absence of the
+	  NetCDF-3 header files when HDF4 library is configured with the --disable-netcdf
+	  flag. This feature was requested by the HDF-EOS developer. In this case
+	  HDF4 netcdf.h file is used and installed under the "hdf4_netcdf.h" name.
+							EIP 2007-10-30
 
     Utilities
     ========= 
