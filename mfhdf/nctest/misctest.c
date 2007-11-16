@@ -7,9 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
-#esle
+#else
 #include "hdf4_netcdf.h"
 #endif
 

@@ -12,6 +12,7 @@
 #include <varargs.h>
 #endif
 
+#include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else

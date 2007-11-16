@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#include "h4config.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else
