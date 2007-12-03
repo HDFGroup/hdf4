@@ -22,7 +22,7 @@
 #ifndef _HLIMITS_H
 #define _HLIMITS_H
 
-#ifndef WIN32
+#ifndef _WIN32
 #define HDsetvbuf(F,S,M,Z)	setvbuf(F,S,M,Z)
 #endif
 /**************************************************************************

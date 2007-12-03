@@ -31,7 +31,7 @@ static char sccsid[] = "@(#)xdr_float.c 1.12 87/08/11 Copyr 1984 Sun Micro";
 #ifdef __FreeBSD__
 #define SWAP_DOUBLES
 #endif
-#if defined WIN32 | defined WINNT
+#if defined _WIN32 | defined WINNT
 #define SWAP_DOUBLES
 #endif
 

@@ -455,7 +455,7 @@ extern intn SDsetchunkcache
 #ifndef MFSD_FNAMES
 #   define  MFSD_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #   define nscstart    FNAME(SCSTART)
 #   define nsfend      FNAME(SFEND)
 #   define nsfendacc   FNAME(SFENDACC)
@@ -551,7 +551,7 @@ extern intn SDsetchunkcache
 #   define nscisdmvc   FNAME(SCISDMVC)
 #  endif   /* Fortran PowerStation */
 #else   /* DF_CAPFNAMES */
-#  if !(defined INTEL86) && !(defined WIN32)
+#  if !(defined INTEL86) && !(defined _WIN32)
 #   define nscstart    FNAME(scstart)
 #   define nsfend      FNAME(sfend)
 #   define nsfendacc   FNAME(sfendacc)

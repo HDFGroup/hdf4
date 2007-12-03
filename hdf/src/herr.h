@@ -92,13 +92,13 @@
 
 /* always points to the next available slot; the last error record is in slot (top-1) */
 #ifndef _H_ERR_MASTER_
-#if defined WIN32 && defined HDFAPDLL
+#if defined _WIN32 && defined HDFAPDLL
 __declspec(dllimport)
 #else
 extern
 #endif
 #else
-#if defined WIN32 && defined HDFLIBDLL
+#if defined _WIN32 && defined HDFLIBDLL
 __declspec(dllexport)
 #endif
 #endif /* _H_ERR_MASTER_ */

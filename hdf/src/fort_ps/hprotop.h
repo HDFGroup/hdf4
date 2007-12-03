@@ -2000,7 +2000,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #ifndef HFILE_FNAMES
 #   define HFILE_FNAMES
 #ifdef DF_CAPFNAMES
-#  if !(defined INTEL86) && !(defined WIN32)
+#  if !(defined INTEL86) && !(defined _WIN32)
 #   define nhiopen   FNAME(HIOPEN)
 #   define nhclose   FNAME(HCLOSE)
 #   define nhnumber  FNAME(HNUMBER)
@@ -2014,7 +2014,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #   define nhxiscdir FNAME(HXISCDIR)
 #  endif
 #else
-#  if !(defined INTEL86) && !(defined WIN32)
+#  if !(defined INTEL86) && !(defined _WIN32)
 #   define nhiopen   FNAME(hiopen)
 #   define nhclose   FNAME(hclose)
 #   define nhnumber  FNAME(hnumber)
@@ -2080,7 +2080,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #ifndef MFAN_FNAMES
 #   define  MFAN_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #  define nafstart      FNAME(AFSTART)
 #  define naffileinfo   FNAME(AFFILEINFO)
 #  define nafend        FNAME(AFEND)
@@ -2118,7 +2118,7 @@ intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 #  define nafitg2tp     FNAME(AFITG2TP)
 # endif
 #else  /* !DF_CAPFNAMES */
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #  define nafstart      FNAME(afstart)
 #  define naffileinfo   FNAME(affileinfo)
 #  define nafend        FNAME(afend)
@@ -2258,7 +2258,7 @@ extern intn ANdestroy(void);
 #ifndef MFGR_FNAMES
 #   define  MFGR_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #  define nmgstart      FNAME(MGSTART)
 #  define nmgfinfo      FNAME(MGFINFO)
 #  define nmgend        FNAME(MGEND)
@@ -2324,7 +2324,7 @@ extern intn ANdestroy(void);
 #  define nmgifndat     FNAME(MGIFNDAT)
 # endif
 #else  /* !DF_CAPFNAMES */
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #  define nmgstart      FNAME(mgstart)
 #  define nmgfinfo      FNAME(mgfinfo)
 #  define nmgend        FNAME(mgend)
@@ -2954,7 +2954,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #ifndef VG_FNAMES
 #   define VG_FNAMES
 #ifdef DF_CAPFNAMES
-#  if !(defined INTEL86) && !(defined WIN32)
+#  if !(defined INTEL86) && !(defined _WIN32)
 #   define  ndfivopn FNAME(DFIVOPN)
 #   define  ndfvclos FNAME(DFVCLOS)
 #   define  nvatchc  FNAME(VATCHC)
@@ -3117,7 +3117,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #   define  nvsfncpk    FNAME(VSFNCPK)
 #  endif
 #else                    /* !DF_CAPFNAMES */
-#  if !(defined INTEL86) && !(defined WIN32)
+#  if !(defined INTEL86) && !(defined _WIN32)
 #   define  ndfivopn FNAME(dfivopn)
 #   define  ndfvclos FNAME(dfvclos)
 #   define  nvatchc  FNAME(vatchc)
@@ -3605,7 +3605,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #ifndef VATTR_FNAMES
 #  define VATTR_FNAMES
 #ifdef DF_CAPFNAMES
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #  define nvsfcfdx   FNAME(VSFCFDX)
 #  define nvsfcsat   FNAME(VSFCSAT)
 #  define nvsfcsca   FNAME(VSFCSCA)
@@ -3645,7 +3645,7 @@ extern int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create */
 #  define nvfcgver   FNAME(VFCGVER)
 # endif
 #else       /* !DF_CAPFNAMES  */
-# if !(defined INTEL86) && !(defined WIN32)
+# if !(defined INTEL86) && !(defined _WIN32)
 #  define nvsfcfdx   FNAME(vsfcfdx)
 #  define nvsfcsat   FNAME(vsfcsat)
 #  define nvsfcsca   FNAME(vsfcsca)

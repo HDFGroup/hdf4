@@ -19,7 +19,7 @@
 #         include <string.h>
 #       else
 #   	  include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	  if !defined MSDOS & !defined WIN32
+#   	  if !defined MSDOS & !defined _WIN32
 #            include <netinet/in.h>	/* for htonl() */
 #   	  endif
 #	endif

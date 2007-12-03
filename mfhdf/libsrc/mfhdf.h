@@ -468,7 +468,7 @@ HDFLIBAPI intn SDsetchunkcache
 
 /* Define the FORTRAN names */
 
-#ifdef WIN32 /* windows specific cstub functions*/
+#ifdef _WIN32 /* windows specific cstub functions*/
 
 #define nscend          H4_F77_FUNC(scend,SCEND)
 #define nscendacc       H4_F77_FUNC(scendacc,SCENDACC)

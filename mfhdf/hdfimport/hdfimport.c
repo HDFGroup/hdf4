@@ -207,7 +207,7 @@
 #include <ctype.h>
 #include <mfhdf.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <sys/stat.h>
 #include <fcntl.h>
 #endif

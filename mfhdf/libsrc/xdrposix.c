@@ -34,7 +34,7 @@ typedef NETLONG     netlong;
 #   include <unixio.h>
 #   include <file.h>
 #else
-#   if defined MSDOS || defined WINNT || defined WIN32
+#   if defined MSDOS || defined WINNT || defined _WIN32
 #       include <io.h>
 #   else
 #       if defined (__MWERKS__)
