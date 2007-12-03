@@ -57,6 +57,7 @@ copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.lib
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.lib
+copy ..\..\..\mfhdf\xdr\Debug\xdr_for_dll.lib
 popd
 
 mkdir include
@@ -93,6 +94,7 @@ copy ..\..\..\hdf\src\Debug\hdf_fortran.lib .
 copy ..\..\..\mfhdf\libsrc\Debug\hm422d.lib .
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubd.lib .
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortran.lib .
+copy ..\..\..\mfhdf\xdr\Debug\xdr.lib .
 popd
 
 popd
@@ -146,6 +148,7 @@ copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.lib
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.dll
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.lib
+copy ..\..\..\mfhdf\xdr\Release\xdr_for_dll.lib
 popd
 
 mkdir include
@@ -182,6 +185,7 @@ copy ..\..\..\hdf\src\Release\hdf_fortran.lib .
 copy ..\..\..\mfhdf\libsrc\Release\hm422.lib .
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstub.lib .
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortran.lib .
+copy ..\..\..\mfhdf\xdr\Release\xdr.lib .
 popd
 
 popd
