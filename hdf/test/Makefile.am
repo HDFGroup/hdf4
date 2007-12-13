@@ -22,22 +22,22 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   tdupimgs.c testhdf.c tree.c tszip.c tvattr.c tvset.c      \
 		  tvsfpack.c vers.c
 testhdf_LDADD = ../src/libdf.a
-testhdf_DEPENDENCIES = testdir ../src/libdf.a
+testhdf_DEPENDENCIES = testdir ../src/libdf.a 
 
 buffer_LDADD = ../src/libdf.a
 buffer_DEPENDENCIES = ../src/libdf.a
 
 if HDF_BUILD_FORTRAN
 fortest_SOURCES = fortest.c
-fortest_LDADD = ../src/libdf.a
-fortest_DEPENDENCIES = testdir fortestF ../src/libdf.a
+fortest_LDADD = ../../mfhdf/libsrc/libmfhdf.a ../src/libdf.a
+fortest_DEPENDENCIES = testdir fortestF ../../mfhdf/libsrc/libmfhdf.a ../src/libdf.a
 
 fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
                    tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
                    tvattrf.f tvsetf.f
-fortestF_LDADD = ../src/libdf.a
-fortestF_DEPENDENCIES = testdir ../src/libdf.a
+fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.a ../src/libdf.a
+fortestF_DEPENDENCIES = testdir ../../mfhdf/libsrc/libmfhdf.a ../src/libdf.a
 endif
 
 testdir:
