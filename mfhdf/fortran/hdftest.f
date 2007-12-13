@@ -16,6 +16,10 @@ C
 
       implicit none
 
+      include 'mffunc.inc'
+      integer hxsdir, hxscdir
+      external hxsdir, hxscdir
+
       integer fid1, fid2
       integer fid_empty
 
@@ -39,19 +43,6 @@ C
       character catt(2), icatt(2)
       integer*4   i32(2), ii32(2), max32, min32
       integer*4 natt(2), inatt(2)
-
-C      integer sfstart,  sfcreate,  sfendacc, sfend,    sfsfill
-C      integer sfrdata,  sfwdata,   sfdimid,  sfsdmname
-C      integer sffinfo,  sfn2index, sfsdmstr, sfsdtstr, sfsdscale
-C      integer sfscal,   sfselect,  sfginfo,  sfgdinfo, sfgainfo
-C      integer sffattr,  sfsrange,  sfgrange, sfgfill,  sfsflmd
-C      integer sfgcal,   sfgdscale, sfgdtstr, sfgdmstr
-C      integer sfid2ref, sfref2index, sfsdmvc, sfisdmvc
-C      integer sfsextf,  hxsdir,    hxscdir
-C      integer sfwcdata, sfrcdata,  sfscfill, sfgcfill
-C      integer sfscatt,  sfrcatt,   sfsnatt,  sfrnatt
-C      integer sfchempty
-      include 'mffunc.inc'
       integer SD_UNLIMITED, SD_DIMVAL_BW_INCOMP, DFNT_INT32
       integer DFNT_FLOAT32, DFNT_CHAR8
       integer SD_DIMVAL_BW_COMP, SD_FILL, SD_NOFILL
