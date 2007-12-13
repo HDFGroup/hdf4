@@ -115,7 +115,3 @@ C
       external sfscfill
       integer  sfsflmd
       external sfsflmd
-      integer  hxsdir
-      external hxsdir
-      integer  hxscdir
-      external hxscdir
