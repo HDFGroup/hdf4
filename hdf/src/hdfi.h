@@ -106,7 +106,7 @@
  **/
 #	if defined(_MT) &&	defined(_DLL) &&!defined(_HDFDLL_)
 /*		If the user really meant to use _HDFDLL_, but he forgot, just define it. */
-#		define _HDFDLL_
+#/*		define _HDFDLL_*/
 #	endif
 
 #	if !defined(_MT) && defined(_HDFDLL_)
