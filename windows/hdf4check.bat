@@ -2,8 +2,8 @@
 @REM File Name: hdf4check.bat
 @REM This batch file is used to test HDF4 Libraries and Utilities.
 @REM There are 3 options for this batch file:
-@REM   1. hdf5check                -- HDF5 tools and c library tests
-@REM   2. hdf5check enablefortran  -- HDF5 tools and c/fortran library tests
+@REM   1. hdf4check                -- HDF4 tools and c library tests
+@REM   2. hdf4check enablefortran  -- HDF4 tools and c/fortran library tests
 @REM   3. hdf4check /?             -- Help information
 @REM By Xuan Bai
 @REM Created: 11/08/2004

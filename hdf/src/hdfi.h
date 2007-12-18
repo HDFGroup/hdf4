@@ -106,7 +106,7 @@
  **/
 #	if defined(_MT) &&	defined(_DLL) &&!defined(_HDFDLL_)
 /*		If the user really meant to use _HDFDLL_, but he forgot, just define it. */
-#/*		define _HDFDLL_*/
+/*#		define _HDFDLL_*/
 #	endif
 
 #	if !defined(_MT) && defined(_HDFDLL_)
@@ -114,7 +114,7 @@
 #		error Undefine the macro "_HDFDLL_"
 #	endif
 
-#	if defined(_HDFDLL_)
+#	if defined(_DLL)
 #		pragma warning( disable: 4273 )	/* Disable the stupid dll linkage warnings */
 
 #		if !defined(_HDFLIB_)
