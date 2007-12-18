@@ -1041,6 +1041,13 @@ Building:
            the right pane, select "Intel(R) Fortran", "General".  In the 
            "Target Platform" box, select "x64".
            
+        4.For 64-bit fortran users; if you find linking redefiniation errors 
+          at project fortestf.vfproj and project hdftestf.vfproj; you may do 
+          the followings:
+          right click fortestf.vfproj->properties->Linker->Input->Ignore Specific
+           library and fill in with msvcrt.lib.
+          
+           
         
 Testing:
     
