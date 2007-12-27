@@ -118,6 +118,8 @@
 #define MAX_VXR_ENTRIES                 10
 #endif /* MAX_VXR_ENTRIES */
 
+typedef enum {IS_SDSVAR=0, IS_CRDVAR=1, UNKNOWN=2} vartype_t;
+
 #ifdef HDF
 /* VIX record for CDF variable data storage */
 typedef struct vix_t_def {
