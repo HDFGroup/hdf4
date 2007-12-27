@@ -1710,3 +1710,142 @@ HCget_config_info( comp_coder_t coder_type,  /* IN: compression type */
 	}
     return SUCCEED;
 }
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPgetcomptype -- Retrieves compression type of an element
+ USAGE
+    intn HCPgetcomptype(aid, coder_type)
+    int32 aid;                  IN: access record ID
+    comp_coder_t* coder_type;   OUT: the type of compression
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    This routine retrieves the compression type of the element, identified 
+    by 'aid'.  It is very similar to HCPgetcompinfo except that it only
+    retrieves the compression type and not the compression information.  The 
+    routine is used by GRgetcomptype and SDgetcomptype.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    Dec. 2007: Added so that applications can get the compression method only.
+		The immediate intention is to avoid the need for external 
+		libraries to be present when only compression type is desired
+		and not compression information. -BMR
+--------------------------------------------------------------------------*/
+intn
+HCPgetcomptype(int32 file_id,
+              uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+              comp_coder_t* comp_type)  /* OUT: compression type */
+{
+    CONSTR(FUNC, "HCPgetcomptype");	/* for HGOTO_ERROR */
+    uint16      ctag, cref;	/* tag/ref for the special info header object */
+    int32       data_id;	/* temporary AID for header info */
+    int32	temp_aid;	/* temporary AID for header info */
+    int32	data_len;	/* offset of the data we are checking */
+    uint8      *p;		/* pointers to the temporary buffer */
+    uint8      *local_ptbuf;	/* temporary buffer */
+    uint16	sptag;		/* special tag */
+    uint16	c_type;		/* compression type */
+    filerec_t  *file_rec;	/* file record */
+    int32       ret_value=SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* convert file id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get access element from dataset's tag/ref */
+    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
+    {
+	/* get the info for the dataset */
+	if(HTPinquire(data_id,&ctag,&cref,NULL,&data_len)==FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	/* if element is not special, return COMP_CODE_NONE */
+	if (!SPECIALTAG(ctag))	
+	{
+	    *comp_type = COMP_CODE_NONE;
+	    HGOTO_DONE(SUCCEED);
+	}
+
+	/* element is special, proceed with reading special info header */
+	if((local_ptbuf=(uint8 *)HDmalloc(data_len))==NULL)
+	    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	/* Get the special info header */
+	if ((temp_aid=Hstartaccess(file_id,MKSPECIALTAG(ctag),cref,DFACC_READ)) == FAIL)
+	    HGOTO_ERROR(DFE_BADAID, FAIL);
+	if (Hread(temp_aid,2,local_ptbuf) == FAIL)
+	    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+	/* Get special tag */
+	p = local_ptbuf;
+	INT16DECODE(p, sptag);
+
+	/* If it is a compressed element, move forward until compression
+	   coder and get it */
+	switch (sptag)
+	{
+	  case SPECIAL_COMP:
+	      if (Hread(temp_aid,0,local_ptbuf) == FAIL)
+		  HGOTO_ERROR(DFE_READERROR, FAIL);
+
+	      /* Skip comp version, length, ref#, and model type */
+	      p = local_ptbuf + 2 + 4 + 2 + 2;
+	      UINT16DECODE(p, c_type);     /* get encoding type */
+	      *comp_type=(comp_coder_t)c_type;
+	      break;
+
+	  /* If element is chunked, hand over to the chunk interface to check 
+	     if it is compressed and get the type */
+	  case SPECIAL_CHUNKED:
+	      if (HMCgetcomptype(temp_aid, comp_type)==FAIL)
+		  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	      break;
+
+	  /* return COMP_CODE_NONE for a non-compressed element */
+	  /* Developer's Note: SPECIAL_COMPRAS may need special handling */
+	  case SPECIAL_LINKED:
+	  case SPECIAL_EXT:
+	  case SPECIAL_VLINKED:
+	  case SPECIAL_BUFFERED:
+	  case SPECIAL_COMPRAS:
+	  case 0:
+	      *comp_type = COMP_CODE_NONE;
+	      break;
+
+	  /* flag the error when special tag is not something valid */
+	  default:
+	      *comp_type = COMP_CODE_INVALID;
+	      HGOTO_ERROR(DFE_ARGS, FAIL);
+	}
+
+	if(Hendaccess(temp_aid)==FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+	/* end access to the aid appropriately */
+	if (HTPendaccess(data_id)== FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+       /* end access to the aid's if they've been accessed */
+        if (temp_aid != 0)
+            if (Hendaccess(temp_aid)== FAIL)
+                HERROR(DFE_CANTENDACCESS);
+        if (data_id != 0)
+            if (Hendaccess(data_id)== FAIL)
+                HERROR(DFE_CANTENDACCESS);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+} /* HCPgetcomptype */

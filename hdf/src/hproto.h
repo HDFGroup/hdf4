@@ -464,6 +464,10 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 file_id, uint16 data_tag, uint16 data_ref, 
 		 comp_coder_t *coder_type, comp_info * c_info);
 
+    HDFLIBAPI intn HCPgetcomptype
+                (int32 file_id, uint16 data_tag, uint16 data_ref, 
+		 comp_coder_t *coder_type);
+
     HDFPUBLIC intn HCget_config_info ( comp_coder_t coder_type, uint32 *compression_config_info);
 
     HDFLIBAPI int32 HCPquery_encode_header(comp_model_t model_type, model_info * m_info,

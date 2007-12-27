@@ -183,6 +183,10 @@ extern      "C"
 	 comp_coder_t* comp_type, /* OUT: compression type */
          comp_info* c_info        /* OUT: retrieved compression info */);
 
+    HDFLIBAPI int32 HMCgetcomptype
+	(int32 access_id,	  /* IN: access record */
+	 comp_coder_t* comp_type  /* OUT: compression type */);
+
     HDFLIBAPI int32 HMCsetMaxcache
         (int32 access_id, /* IN: access aid to mess with */
          int32 maxcache,  /* IN: max number of pages to cache */

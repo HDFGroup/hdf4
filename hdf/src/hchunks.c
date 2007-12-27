@@ -2068,6 +2068,135 @@ HMCgetcompress( accrec_t*    access_rec, /* IN: access record */
 
 /*--------------------------------------------------------------------------
 NAME
+     HMCgetcomptype - get compression information for chunked element
+
+DESCRIPTION
+     Checks if the given element is compressed then get the compression
+     information using HCPdecode_header.
+     This routine is used by HCgetcompress for the chunked element part.
+
+RETURNS
+     Returns SUCCEED/FAIL
+
+REVISION LOG
+     September 2001: Added to fix bug #307 - BMR
+
+-------------------------------------------------------------------------- */
+int32
+HMCgetcomptype(int32 dd_aid, /* IN: access id of header info */
+		comp_coder_t* comp_type) /* OUT: compression type */
+{
+    CONSTR(FUNC, "HMCgetcomptype");   /* for HERROR */
+    uint8* bufp;		/* pointer to buffer */
+    uint8       version;      /* Version of this Chunked element */
+    int32       flag;         /* flag for multiply specialness ...*/
+    uint16 c_type;    /* compression type */
+    uint8       *c_sp_header = NULL; /* special element header */
+    int32       sp_tag_header_len = 0; /* length of special header */
+    int32       comp_sp_tag_head_len; /* Compression header length */
+    VOID        *comp_sp_tag_header = NULL;  /* compression header */
+    uint8       local_ptbuf[6];      /* 6 bytes for special header length */
+    int32       ret_value = SUCCEED;
+
+    /* first read special tag header length which is 4 bytes */
+    if (Hread(dd_aid, 4, local_ptbuf) == FAIL)
+	HGOTO_ERROR(DFE_READERROR, FAIL);
+
+    /* Decode it */
+    bufp = local_ptbuf;
+    INT32DECODE(bufp, sp_tag_header_len);   /* 4 bytes */
+
+    /* Sanity check */
+    if (sp_tag_header_len < 0)
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+/* removed this:
+#if 0 * dynamic alocation causes a problem on HPUX, removed for now -GV */
+    /* Allocate buffer space for rest of special header */
+    if ((c_sp_header = (uint8 *) HDcalloc(sp_tag_header_len,1))==NULL)
+	HGOTO_ERROR(DFE_NOSPACE, FAIL);
+ /* #endif
+ */ 
+    /* read special info header in */
+    if (Hread(dd_aid, sp_tag_header_len, c_sp_header) == FAIL)
+	HGOTO_ERROR(DFE_READERROR, FAIL);
+
+    /* decode special info header */
+    bufp = c_sp_header;
+
+    /* version info */
+    HDmemcpy(&version, bufp, 1);      /* 1 byte  */
+    bufp = bufp + 1;
+
+    /* Should check version here to see if we can handle
+    this version of special format header before we go on */
+    if (version != _HDF_CHK_HDR_VER)
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* flag indicating multiple specialness */
+    INT32DECODE(bufp, flag);         /* 4 bytes */
+
+    /* check for further specialness */
+    switch(flag & 0xff)
+      {
+	/* if the element is also compressed, read the compress special info
+	   header and decode to get the compression coder */
+	case SPECIAL_COMP:
+	{
+	    uint16     sp_tag;
+
+	    /* Read compression special tag and header length, 2+4 bytes */
+	    if (Hread(dd_aid, 6, local_ptbuf) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+
+	    /* Decode compression header length */
+		bufp = local_ptbuf;
+		UINT16DECODE(bufp, sp_tag);		/* 2 bytes */
+		INT32DECODE(bufp, comp_sp_tag_head_len);   /* 4 bytes */ 
+
+	    /* Sanity check */
+	    if (comp_sp_tag_head_len < 0 || sp_tag != SPECIAL_COMP)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	    /* Allocate buffer space for compression special header */
+	    if ((comp_sp_tag_header = HDcalloc(comp_sp_tag_head_len,1))==NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Read compression special header in */
+	    if (Hread(dd_aid, comp_sp_tag_head_len, comp_sp_tag_header) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+
+	    /* Decode header to get compression type */
+	    bufp = comp_sp_tag_header;
+	    bufp = bufp + 2;	/* skip model type */
+	    UINT16DECODE(bufp, c_type);     /* get encoding type */
+	    *comp_type=(comp_coder_t)c_type;
+	    break;
+	}
+	/* It's not compressed */
+	default:
+	    *comp_type = COMP_CODE_NONE;
+      } /* switch flag */
+
+  done:
+    if(ret_value == FAIL)
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    /* Free special element headers */
+    if (c_sp_header != NULL)
+        HDfree(c_sp_header);
+    if (comp_sp_tag_header != NULL)
+        HDfree(comp_sp_tag_header);
+
+    return ret_value;
+} /* HMCgetcomptype() */
+
+
+/*--------------------------------------------------------------------------
+NAME
      HMCsetMaxcache - maximum number of chunks to cache 
 
 DESCRIPTION
