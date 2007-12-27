@@ -54,6 +54,9 @@ status = SDcheckempty(sdsid, ...);
         --- retrieve the compression information of an SDS
 status = SDgetcompinfo(sdsid, ...);
 
+        --- retrieve the compression method of an SDS
+status = SDgetcomptype(sdsid, ...);
+
         --- take an id and determine if it is an SD id, SDS id, dim id, ---
         --- or none of the above ---
 id_type =  SDidtype(an_id);
@@ -4508,6 +4511,78 @@ done:
 
     return ret_value;    
 } /* SDgetcompinfo */
+
+/******************************************************************************
+ NAME
+	SDgetcomptype -- Retrieves compression method of a dataset
+
+ DESCRIPTION
+    This routine uses HCPgetcomptype to retrieve the compression type
+    of the identified dataset.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ MODIFICATION
+    Dec 2007: Added to work around the problem where an external library is 
+	      missing, SDgetcompinfo will fail.  This new API will not need
+	      to get the compression information but only the compression type,
+	      which sometime is the only thing an application needs - BMR
+
+******************************************************************************/ 
+intn 
+SDgetcomptype(int32 sdsid,		/* IN: dataset ID */
+              comp_coder_t* comp_type	/* OUT: the type of compression */)
+{
+    CONSTR(FUNC, "SDgetcomptype");    /* for HGOTO_ERROR */
+    NC        *handle;
+    NC_var    *var;
+    intn       status = FAIL;
+    intn       ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetcomptype: I've been called\n");
+#endif /* SDDEBUG */
+
+    /* clear error stack */
+    HEclear();
+
+    if(comp_type == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* return with SUCCEED if the data set is empty and not compressed - when
+       the data set was set to be compressed, the data would have had a 
+       valid reference number even there was no data written */
+    if(!var->data_ref) 
+    {
+	*comp_type = COMP_CODE_NONE;
+	HGOTO_DONE(SUCCEED);
+    }
+
+    /* use lower-level routine to get the compression method */
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref, 
+		comp_type);
+
+    if(status==FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;    
+} /* SDgetcomptype */
 
 /******************************************************************************
  NAME
