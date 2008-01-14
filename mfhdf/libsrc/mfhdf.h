@@ -32,6 +32,7 @@
 #include "local_nc.h"
 #endif /* OLD_WAY */
 
+#include "mfhdfi.h"
 
 #define SD_UNLIMITED NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL    NC_NOFILL
@@ -39,6 +40,13 @@
 #define SD_DIMVAL_BW_COMP   1
 #define SD_DIMVAL_BW_INCOMP  0
 #define SD_RAGGED    -1  /* marker for ragged dimension */
+
+/* used to indicate the type of the variable at an index */
+typedef struct hdf_varlist
+{
+    int32 var_index;     /* index of the current variable */
+    hdf_vartype_t var_type; /* type of a variable (IS_SDSVAR, IS_CRDVAR, or UNKNOWN */
+} hdf_varlist_t;
 
 /* enumerated types for various types of ids in SD interface */
 typedef enum
@@ -79,6 +87,12 @@ HDFLIBAPI uint16 SDgerefnumber
 
 HDFLIBAPI int32 SDnametoindex
     (int32 fid, const char *name);
+
+HDFLIBAPI intn SDnametoindices
+    (int32 fid, const char *name, hdf_varlist_t *var_list);
+
+HDFLIBAPI intn SDgetnumvars_byname
+    (int32 fid, const char *name, int32 *n_vars);
 
 HDFLIBAPI intn SDgetrange
     (int32 sdsid, void * pmax, void * pmin);

@@ -28,15 +28,16 @@ file - mfsd.c
 
   Defining SDDEBUG will print status messages to stderr
 
-Reading interface:
+SD interface:
 ------------------
 
 fid    = SDstart(file name, access);
 
-        --- get the number of data-sets in the file ---
-num    = SDnumber(fid);
+        --- get number of data sets and number of attributes in the file ---
+status = SDfileinfo(fid, *n_datasets, *n_attrs); 
         
-sdsid  = SDselect(fid, i, ...);   0 <= i < num
+	--- select a data set for access ---
+sdsid  = SDselect(fid, i, ...);   0 <= i < n_datasets
 
         --- return the name, rank, dimsizes, #of attr, datatype ---
 status = SDgetinfo(sdsid, ...); 
@@ -49,6 +50,7 @@ status = SDend(fid);
 
 status = SDisdimval_bwcomp(dimid);
 
+	--- check whether a data set is empty
 status = SDcheckempty(sdsid, ...);
 
         --- retrieve the compression information of an SDS
@@ -59,7 +61,7 @@ status = SDgetcomptype(sdsid, ...);
 
         --- take an id and determine if it is an SD id, SDS id, dim id, ---
         --- or none of the above ---
-id_type =  SDidtype(an_id);
+id_type = SDidtype(an_id);
 
 	--- reset the maximum number of files can be opened at a time.
 max_files = SDreset_maxopenfiles(req_max);
@@ -68,8 +70,17 @@ max_files = SDreset_maxopenfiles(req_max);
 	--- the maximum number of opened files allowed on a system.
 status = SDget_maxopenfiles(&curr_max, &sys_limit);
 
-	--- return the number of files currently being opened
+	--- return the number of files currently being opened.
 num_files = SDget_numopenfiles();
+
+	--- get the number of variables in the file having the given name.
+status = SDgetnumvars_byname(fid,...);
+
+	--- map a dataset name to an index.
+index = SDnametoindex(int32 fid,...);
+
+	--- retrieve a list of variables having the given name.
+status = SDnametoindices(fid,...);
 
 NOTE: This file needs to have the comments cleaned up for most of the
        functions here. -GV 9/10/97
@@ -85,7 +96,7 @@ NOTE: This file needs to have the comments cleaned up for most of the
 #include "mfhdf.h"
 #include "hfile.h"
 
-#ifdef H4_HAVE_LIBSZ          /* we have the library */
+#ifdef H4_HAVE_LIBSZ          /* we have the szip library */
 #include "szlib.h"
 #ifndef MIN
 #define MIN(a,b)    (((a)<(b)) ? (a) : (b))
@@ -654,8 +665,8 @@ done:
  DESCRIPTION
     The user is repsonsible for allocating space to hold
     the dataset name.  It can be at most H4_MAX_NC_NAME 
-    characters in length.  NULL can be passed for the name
-    if it is not required.
+    characters in length.  NULL can be passed for any of
+    of the parameters if it is not required.
 
     dimsizes should be an array to hold the dimension sizes
     a dataset can have at most H4_MAX_VAR_DIMS dimensions.
@@ -670,7 +681,7 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
           int32 *rank,    /* OUT: rank of the dataset */
           int32 *dimsizes,/* OUT: array of dimension siszes */ 
           int32 *nt,      /* OUT: number type of data */
-          int32 *nattr    /* OUT: the number of local attributes */)
+          int32 *nattrs   /* OUT: the number of local attributes */)
 {
     CONSTR(FUNC, "SDgetinfo");    /* for HGOTO_ERROR */
     intn    i;
@@ -685,60 +696,56 @@ SDgetinfo(int32  sdsid,   /* IN:  dataset ID */
     /* clear error stack */
     HEclear();
 
-    if( rank == NULL || dimsizes == NULL || nt == NULL || nattr == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
+    /* obtain the variable structure */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if(handle->vars == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* get sds name if it's requested */
     if(name != NULL) 
       {
           HDmemcpy(name, var->name->values, var->name->len);
-#if 0
-          HDstrncpy(name, var->name->values, var->name->len);
-#endif
           name[var->name->len] = '\0';
       }
 
-    *rank  = var->assoc->count;
-    if(!var->HDFtype)
-        *nt    = hdf_map_type(var->type);
-    else
-        *nt    = var->HDFtype;
+    /* get sds' rank if it is requested */
+    if(rank != NULL)
+	*rank = var->assoc->count;
 
-    *nattr = (var->attrs ? var->attrs->count : 0);
+    /* get sds' number type if it is requested */
+    if(nt != NULL)
+    {
+	if(!var->HDFtype)
+	    *nt    = hdf_map_type(var->type);
+	else
+	    *nt    = var->HDFtype;
+    }
 
-    for(i = 0; i < *rank; i++)
-        dimsizes[i] = (int32) var->shape[i];
+    /* get sds' number of attributes if it is requested */
+    if(nattrs != NULL)
+	*nattrs = (var->attrs ? var->attrs->count : 0);
 
-    if(dimsizes[0] == NC_UNLIMITED) 
-      {
-          if(handle->file_type == HDF_FILE)
-              dimsizes[0] = var->numrecs;
-          else
-              dimsizes[0] = handle->numrecs;
-      }
+    /* get sds' dimension sizes if they are requested */
+    if(dimsizes != NULL)
+    {
+	for(i = 0; i < var->assoc->count; i++)
+	    dimsizes[i] = (int32) var->shape[i];
 
-#ifdef SDDEBUG
-    fprintf(stderr, "SDgetinfo: looked up handle as %d\n", handle);
-#endif
+	if(dimsizes[0] == NC_UNLIMITED) 
+	{
+	    if(handle->file_type == HDF_FILE)
+		dimsizes[0] = var->numrecs;
+	    else
+		dimsizes[0] = handle->numrecs;
+	}
+    }
 
 done:
     if (ret_value == FAIL)
@@ -746,7 +753,6 @@ done:
 
       }
     /* Normal cleanup */
-
 
     return ret_value;
 } /* SDgetinfo */
@@ -835,7 +841,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     if (status != FAIL)
       {
         HCget_config_info( comp_type , &comp_config);
-        if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+        if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
             /* coder not present?? */
             HGOTO_ERROR(DFE_NOENCODER, FAIL);
           }
@@ -943,7 +949,7 @@ done:
     first data set whose name matches.
 
     There can be multiple data sets with the same name.  In 
-    such a case we only ever return the index of the first
+    such a case, we only ever return the index of the first
     such dataset.
     Wildcards are not supported
 
@@ -965,8 +971,6 @@ SDnametoindex(int32 fid,  /* IN: file ID */
     fprintf(stderr, "SDnametoindex: I've been called\n");
 #endif
 
-    /* clear error stack */
-    HEclear();
 
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
@@ -987,17 +991,11 @@ SDnametoindex(int32 fid,  /* IN: file ID */
     for(ii = 0 ; ii < handle->vars->count ; ii++, dp++) 
       {
         if( len == (*dp)->name->len 
-            && HDstrncmp(name, (*dp)->name->values, len) == 0) 
-
-	    /* make sure that this is not a coordinate var - BMR - 05/14/2007 */
-	    /* Note: this means that if the data was created before the fix of
-	       bugzilla 624, the index of the variable will still be returned 
-	       regardless whether or not it is an SDS or coordinate variable. */
-	    if ((*dp)->var_type != IS_CRDVAR)
-	      {
-		ret_value = (int32)ii;
-		goto done;
-	      }
+            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
+          {
+            ret_value = (int32)ii;
+            goto done;
+          }
       }
 
     ret_value = FAIL;
@@ -1012,6 +1010,156 @@ done:
     return ret_value;    
 } /* SDnametoindex */
 
+
+/******************************************************************************
+ NAME
+	SDgetnumvars_byname -- get the number of variables in the file having 
+			the given name.
+
+ DESCRIPTION
+    Given a data set name, retrieve the number of variables in the file having
+    the same name.  Sometime, more than one SDS are named 'name' or a 
+    dimension of the SDS 'name' is also named 'name.'  The user can use
+    this function to find out how many of those having the same name.
+
+ RETURNS
+        SUCCEED / FAIL
+
+ MODIFICATION
+
+******************************************************************************/
+intn
+SDgetnumvars_byname(int32 fid,  /* IN: file ID */
+              const char *name,  /* IN: name of dataset to search for */
+	      int32* n_vars)
+{
+    unsigned ii;
+    intn     len;
+    int32    count = 0;
+    NC      *handle = NULL;
+    NC_var **dp = NULL;
+    intn     ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetnumvars_byname: I've been called\n");
+#endif
+
+    /* clear error stack */
+    HEclear();
+
+    /* check that fid is valid */
+    handle = SDIhandle_from_id(fid, CDFTYPE);
+    if(handle == NULL) 
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    if(handle->vars == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    len = HDstrlen(name) ;
+    dp = (NC_var**)handle->vars->values ;
+    for(ii = 0 ; ii < handle->vars->count; ii++, dp++) 
+      {
+        if( len == (*dp)->name->len 
+            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
+	    count++;
+      }
+    *n_vars = count;
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;    
+} /* SDgetnumvars_byname */
+
+
+/******************************************************************************
+ NAME
+	SDnametoindices -- retrieves a list of variables having the given name.
+
+ DESCRIPTION
+    Given a data set name, retrieve a list of structures, each of which 
+    contains the index of a variable whose name matches the given name, and 
+    the type of the variable, which is either data set (IS_SDSVAR) or 
+    coordinate variable (IS_CRDVAR,) or (UNKNOWN.)  UNKNOW is for data 
+    created before the fix of a data corruption bug due to the library's
+    inability to distinguish between those two types of variables.  The
+    fix was available starting in HDF4.2r2.
+
+    This API is added to allow the user to examine all the variables having
+    the given name and decide the correct one to gain access on.
+
+ RETURNS
+        SUCCEED / FAIL
+
+ MODIFICATION
+
+******************************************************************************/
+intn
+SDnametoindices(int32 fid,  /* IN: file ID */
+		const char *name,  /* IN: name of dataset to search for */
+		hdf_varlist_t* var_list)
+{
+    unsigned ii;
+    intn     len;
+    NC      *handle = NULL;
+    NC_var **dp = NULL;
+    hdf_varlist_t* varlistp;
+    int32    ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDnametoindices: I've been called\n");
+#endif
+
+    /* clear error stack */
+    HEclear();
+
+    /* check that fid is valid */
+    handle = SDIhandle_from_id(fid, CDFTYPE);
+    if(handle == NULL) 
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    if(handle->vars == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    len = HDstrlen(name) ;
+    dp = (NC_var**)handle->vars->values ;
+    varlistp = var_list;
+    for(ii = 0 ; ii < handle->vars->count; ii++, dp++) 
+      {
+        if( len == (*dp)->name->len 
+            && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
+	  {
+	    varlistp->var_index = (int32)ii;
+	    varlistp->var_type = (*dp)->var_type;
+	    varlistp++;
+	  }
+      }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;    
+} /* SDnametoindices */
 
 
 /******************************************************************************
@@ -1528,7 +1676,7 @@ SDsetdimname(int32  id,   /* IN: dataset ID */
     for(ii = 0 ; ii < handle->dims->count ; ii++, dp++) 
       {
           if( len == (*dp)->name->len 
-              && HDstrncmp(name, (*dp)->name->values, (size_t)len) == 0) 
+              && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0) 
             {
                 if(dim != (*dp)) 
                   {
@@ -3739,7 +3887,7 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
 	      if((*dp)->assoc->count == 1) 
                   if( namelen == (*dp)->name->len 
-                    && HDstrncmp(name, (*dp)->name->values, (size_t)namelen) == 0)
+                    && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
 		    /* because a dim was given, make sure that this is a 
 		       coordinate var */
 		/* only proceed if this variable is a coordinate var or when
@@ -4637,7 +4785,7 @@ SDfindattr(int32 id,       /* IN: object ID */
     for(attrid = 0 ; attrid < ap->count ; attrid++, attr++)
       {
           if( len == (*attr)->name->len 
-              && HDstrncmp(attrname, (*attr)->name->values, (size_t)len) == 0)
+              && HDstrncmp(attrname, (*attr)->name->values, HDstrlen(attrname)) == 0)
             {
                 ret_value = attrid ; /* found it */
                 goto done;

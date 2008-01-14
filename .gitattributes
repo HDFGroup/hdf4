@@ -94,6 +94,7 @@ mfhdf/hrepack/hrepacktst.c -text
 mfhdf/hrepack/hrepacktst.h -text
 mfhdf/hrepack/hrepacktst_add.c -text
 mfhdf/hrepack/hrepacktst_verify.c -text
+mfhdf/libsrc/mfhdfi.h -text
 mfhdf/libsrc/tchunk.c -text
 mfhdf/libsrc/tcomp.c -text
 mfhdf/libsrc/tdim.c -text

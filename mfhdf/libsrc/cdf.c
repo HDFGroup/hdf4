@@ -2329,7 +2329,7 @@ hdf_read_vars(XDR *xdrs,
     int32    ndg_ref = 0;
     int32    rag_ref = 0;
     intn     nattrs;
-    vartype_t var_type = UNKNOWN;
+    hdf_vartype_t var_type = UNKNOWN;
     register int     t, i;
     register nc_type type;
     register int32   var, sub;
