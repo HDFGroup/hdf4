@@ -960,6 +960,7 @@
 ./mfhdf/libsrc/local_nc.h
 ./mfhdf/libsrc/make.com
 ./mfhdf/libsrc/mfhdf.h
+./mfhdf/libsrc/mfhdfi.h
 ./mfhdf/libsrc/mfhdflib.project.hqx
 ./mfhdf/libsrc/mfsd.c
 ./mfhdf/libsrc/msoft.mk
