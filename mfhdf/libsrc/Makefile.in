@@ -113,7 +113,7 @@ SOURCES = $(libmfhdf_a_SOURCES) $(cdftest_SOURCES) $(hdftest_SOURCES)
 DIST_SOURCES = $(am__libmfhdf_a_SOURCES_DIST) $(cdftest_SOURCES) \
 	$(hdftest_SOURCES)
 am__include_HEADERS_DIST = hdf2netcdf.h local_nc.h mfhdf.h \
-	hdf4_netcdf.h netcdf.h
+	hdf4_netcdf.h mfhdfi.h netcdf.h
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(include_HEADERS)
 ETAGS = etags
@@ -256,8 +256,8 @@ XDRSOURCES = ../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
 @HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@libmfhdf_a_SOURCES = $(CSOURCES) $(XDRSOURCES)
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_FALSE@libmfhdf_a_SOURCES = $(CSOURCES) $(FSOURCES)
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@libmfhdf_a_SOURCES = $(CSOURCES) $(FSOURCES) $(XDRSOURCES)
-@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h
-@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
+@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h
+@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\

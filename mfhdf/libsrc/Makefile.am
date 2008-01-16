@@ -47,9 +47,9 @@ endif
 endif
 
 if HDF_BUILD_NETCDF
-include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h 
+include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h
 else
-include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h
+include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h
 endif
 
 #############################################################################
