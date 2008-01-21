@@ -130,8 +130,8 @@ The following sections discuss installation procedures in detail:
 
    Section I:    Build and Test HDF4 Libraries and Utilities
    Section II:   Build an Application Using the HDF4 Library
-   Section III:  Build HDF4 in VS 6.0
-   Section IV:   Build HDF4 in VS .NET 2003
+   Section III:  Build HDF4 in Visual Studio 6.0
+   Section IV:   Build HDF4 in Visual Studio .NET 2003
    Section V:    Build HDF4 with Fortran Libraries
    Section VI:   Disable Szip Compression Feature inside HDF4
    Section VII:  Use HDF4 with Original netCDF Library
@@ -399,7 +399,7 @@ To build and test HDF4 C examples:
 
 
    
-Section II. Build an Application Using the HDF4 Library or DLLs
+Section II. Build an Application Using the HDF4 Library
 ======================================================================
 
 If you are building an application that uses the HDF4 library, the
@@ -567,7 +567,7 @@ Please refer to Section I, with a few minor changes:
        
 
 
-Section V. Build HDF4 Fortran Libraries
+Section V. Build HDF4 with Fortran Libraries
 ======================================================================
 
 Currently, HDF4 is supported with Intel Fortran Compilers 9.1, which requires
@@ -927,35 +927,6 @@ HDF4 libraries and tools into c:\MyHDFstuff\hdf4\hdf4lib directory.
 
 
 
-Section XI: Build HDF4 on Windows Vista
-======================================================================
-
-Building on Windows Vista is very similar to building on Windows XP, with
-some minor changes.  Therefore, follow the build instructions above, with the
-following considerations:
-
-    1. Only Visual Studio 2005 is currently supported on Windows Vista.  This
-       is because Microsoft has ended their support for 6.0 and .NET.
-       
-    2. Building Fortran libraries has not been tested, and is therefore also
-       unsupported.  You may attempt to build Fortran libraries following the
-       instructions above, but they should be considered experimental and used
-       for testing only.
-       
-    3. Elevated security permissions are required to test the HDF4 libraries.
-       This is because DLLs are installed in the system directory.  To enable
-       elevated security:
-       
-            1. In the Start menu, search for "Command Prompt".  Right click on
-               the "Command Prompt" program, and select "Run as administrator."
-               
-            2. A security dialog will pop up.  Make sure you select "Continue."
-            
-            3. Test HDF4 libraries and tools as usual using "hdf4check.bat"
-               script.
-
-
-
 Section IX: Build HDF4 Multithreaded Static Library
 ======================================================================
 
@@ -1066,6 +1037,36 @@ Installing:
  
 
  
+Section XI: Build HDF4 on Windows Vista
+======================================================================
+
+Building on Windows Vista is very similar to building on Windows XP, with
+some minor changes.  Therefore, follow the build instructions above, with the
+following considerations:
+
+    1. Only Visual Studio 2005 is currently supported on Windows Vista.  This
+       is because Microsoft has ended their support for 6.0 and .NET.
+       
+    2. Building Fortran libraries has not been tested, and is therefore also
+       unsupported.  You may attempt to build Fortran libraries following the
+       instructions above, but they should be considered experimental and used
+       for testing only.
+       
+    3. Elevated security permissions are required to test the HDF4 libraries.
+       This is because DLLs are installed in the system directory.  To enable
+       elevated security:
+       
+            1. In the Start menu, search for "Command Prompt".  Right click on
+               the "Command Prompt" program, and select "Run as administrator."
+               
+            2. A security dialog will pop up.  Make sure you select "Continue."
+            
+            3. Test HDF4 libraries and tools as usual using "hdf4check.bat"
+               script.
+
+
+
+
 Section XII: Some Helpful Pointers
 ======================================================================
 
