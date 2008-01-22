@@ -123,10 +123,12 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r2.
 
   4.2 To build and run the tests
 
+        export EXEEXT=
         make -e check >& check.out
         
-      Make sure the '-e' flag is specified, specifically if building Fortran
-      libraries.  This is so the "EXEEXT" variable is detected by make.
+      Note: We must export EXEEXT and use the -e flag for make due to a bug in
+            Cygwin and make.  This is especially important for testing Fortran 
+            libraries.
 
 5. To Install:
 
