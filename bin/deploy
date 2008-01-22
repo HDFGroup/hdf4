@@ -45,7 +45,8 @@ fi
 installdir=$1
 # create installdir if it does not exist yet.
 if [ -d $installdir ] || mkdir $installdir ; then
-    ${MAKE:-gmake} install prefix=$installdir
+    ${MAKE:-gmake} install prefix=$installdir && \
+        ( cd $installdir/bin; ./h4redeploy -force)
     exit $?
 else
     echo $installdir is not a valid directory
