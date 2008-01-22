@@ -160,6 +160,9 @@
 				RelativePath="..\..\..\..\mfhdf\libsrc\mfhdf.h">
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfhdfi.h">
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\netcdf.h">
 			</File>
 		</Filter>

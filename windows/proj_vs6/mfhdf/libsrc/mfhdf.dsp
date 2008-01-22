@@ -97,12 +97,12 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\AlphaLib"
 # PROP Intermediate_Dir "AlphaDbg"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "_DEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /YX /FD /c
-# ADD CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "_DEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /D "SWAP" /YX /FD /c
 F90=df.exe
 # ADD BASE F90 /compile_only /debug:full /include:"AlphaDbg/" /nologo /I "..\..\..\..\mfhdf\Debug/"
 # ADD F90 /compile_only /debug:full /include:"AlphaDbg/" /nologo /I "..\..\..\..\mfhdf\Debug/"
+CPP=cl.exe
+# ADD BASE CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "_DEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /YX /FD /c
+# ADD CPP /nologo /Gt0 /W3 /GX /Zi /Od /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "_DEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /D "SWAP" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -122,12 +122,12 @@ LIB32=link.exe -lib
 # PROP Output_Dir "..\AlphaLib"
 # PROP Intermediate_Dir "AlphaRel"
 # PROP Target_Dir ""
-CPP=cl.exe
-# ADD BASE CPP /nologo /Gt0 /W3 /GX /O2 /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "NDEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /YX /FD /c
-# ADD CPP /nologo /Gt0 /W3 /GX /O2 /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "NDEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /D "SWAP" /YX /FD /c
 F90=df.exe
 # ADD BASE F90 /compile_only /include:"AlphaRel/" /nologo /I "..\..\..\..\mfhdf\Release/"
 # ADD F90 /compile_only /include:"AlphaRel/" /nologo /I "..\..\..\..\mfhdf\Release/"
+CPP=cl.exe
+# ADD BASE CPP /nologo /Gt0 /W3 /GX /O2 /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "NDEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /YX /FD /c
+# ADD CPP /nologo /Gt0 /W3 /GX /O2 /I "..\..\..\..\hdf\src" /I "..\..\..\..\mfhdf\xdr" /I "..\..\..\..\mfhdf\libsrc" /D "NDEBUG" /D "_WINDOWS" /D "HDF" /D "NO_SYS_XDR_INC" /D "INTEL86" /D "WIN32" /D "DOS_FS" /D "_MFHDFLIB_" /D "SWAP" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -420,6 +420,10 @@ SOURCE=..\..\..\..\mfhdf\libsrc\local_nc.h
 # Begin Source File
 
 SOURCE=..\..\..\..\mfhdf\libsrc\mfhdf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\mfhdf\libsrc\mfhdfi.h
 # End Source File
 # Begin Source File
 

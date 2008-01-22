@@ -192,6 +192,10 @@ SOURCE=..\..\..\..\mfhdf\libsrc\mfhdf.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\mfhdf\libsrc\mfhdfi.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\mfhdf\libsrc\netcdf.h
 # End Source File
 # End Group
