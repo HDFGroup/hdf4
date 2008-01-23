@@ -52,6 +52,27 @@ New features and changes
 	  flag. This feature was requested by the HDF-EOS developer. In this case
 	  HDF4 netcdf.h file is used and installed under the "hdf4_netcdf.h" name.
 							EIP 2007-10-30
+	- Note that the previous change on SDnametoindex was backed out.  It 
+	  only returns the first variable of the requested name, as the 
+	  original version of this function.  The variable can be an SDS or 
+	  a coordinate variable.  With this behavior, if there are more than
+	  one variable with the same name in the file, care must be taken to
+	  retrieve the desired variable.  Please see new APIs in the next 
+	  item for a way to handle non-uniquely named variables.  The behavior 
+	  of SDnametoindex will be documented in FAQs, documentation, and 
+	  Newsletter.
+							BMR 2008-01-17
+
+	- Added new APIs to SD interface:
+	  + SDgetnumvars_byname: Given a name, returns the number of variables 
+		in a file with that same name
+	  + SDnametoindices: Given a name, returns a list of indices of all 
+		the variables in a file with that same name
+	  With these new APIs, users can check if an SDS name or coordinate 
+	  variable's name is not unique and retrieve the named variables and 
+	  examine them.
+							BMR 2008-01-17
+
 
     Utilities
     ========= 
@@ -158,8 +179,11 @@ o  N-Bit compression is not supported with Fortran APIs.
 
 o  Using both fill-value and compression on SD datasets does not work.
 
-o  When a one-dimensional SDS has the same name as the dimension, subsequent
-   accesses to the dimension produce unpredictable results.
+o  For existing data prior to HDF 4.2r2, when a one-dimensional SDS has the 
+   same name as the dimension scale, subsequent accesses to the dimension scale
+   or the SDS might produce undesired results.  It is recommended to check
+   for name duplication first.  See "New features and changes" section for 
+   details.
 
 o  When using PGI compilers, make sure that the JPEG library is also compiled 
    with a PGI C compiler; linking with JPEG built with gcc causes JPEG library 
