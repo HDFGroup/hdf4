@@ -1,4 +1,4 @@
-               README for HDF 4.2r2
+               README for HDF 4.2r3
                -------------------
 
 Obtaining the latest version
@@ -19,7 +19,7 @@ Distribution Layout
              image interface, HDF command line utilities (hdp, the hdf 
              dumper is in mfhdf/), 
              and a test suite. It also contains the software
-             distributions for IJPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
+             distributions for JPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
              which are required by the HDF library. 
              Please see the README in each directory for further info
              on each package. 
@@ -41,7 +41,7 @@ Third Party Software Requirements:
     for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
 
- 2. ZLIB 1.1.3(libz.a) or later  distribution.  
+ 2. ZLIB 1.1.4(libz.a) or later  distribution.  
 
 System Requirements
 -------------------

@@ -1,14 +1,14 @@
 
-                          HDF 4.2 Release 2-post*
-                          October 4, 2007
+                          HDF 4.2 Release 3
+                          January 24, 2008
 
 INTRODUCTION
 
 This document describes the differences between HDF 4.2r2 and
-HDF 4.2r2-post*.  It is written for people who are familiar with
-previous releases of HDF and wish to migrate to HDF 4.2r2.
+HDF 4.2r3.  It is written for people who are familiar with
+previous releases of HDF and wish to migrate to HDF 4.2r3.
 
-The HDF 4.2r2 documentation can be found on the THG ftp server 
+The HDF 4.2r3 documentation can be found on the THG ftp server 
 (ftp.hdfgroup.org) in the directory:
 
      ftp://ftp.hdfgroup.org/HDF/Documentation/
@@ -42,16 +42,19 @@ New features and changes
 ========================
     Configuration
     ============= 
-     
+    None 
 
     Library
     ========= 
 
-	- Modified library and configure to work in absence of the
+	- Modified HDF4 mfhdf library and configure to work in the absence of the
 	  NetCDF-3 header files when HDF4 library is configured with the --disable-netcdf
-	  flag. This feature was requested by the HDF-EOS developer. In this case
-	  HDF4 netcdf.h file is used and installed under the "hdf4_netcdf.h" name.
+	  flag. This feature is required to build ESDIS Toolkit in the presence of 
+          the NetCDF-3 library. In this case HDF4 netcdf.h file is used to build HDF4 libraies
+          and it is installed under the "hdf4_netcdf.h" name to avoid name
+          clashing with NetCDF-3 netcdf.h.
 							EIP 2007-10-30
+
 	- Note that the previous change on SDnametoindex was backed out.  It 
 	  only returns the first variable of the requested name, as the 
 	  original version of this function.  The variable can be an SDS or 
@@ -76,18 +79,21 @@ New features and changes
 
     Utilities
     ========= 
-         
+        None 
 
 Support for new platforms and compilers
 =======================================
+        None
 
 Bugs fixed since HDF4.2r2
 =========================
     Utilities
     ========= 
+        None
 
     Library
     ========= 
+        None
 
     Configuration
     ============= 
@@ -97,11 +103,13 @@ Bugs fixed since HDF4.2r2
 
 Documentation
 ==============
+     Description for new functions SDgetnumvars_byname and SDnametoindices
+     have been added to the documentation. 
 
 Platforms tested
 ================
 
-HDF 4.2 Release 2 has been tested on the following platforms:
+HDF 4.2 Release 3 has been tested on the following platforms:
 
                                   
     AIX 5.3 (32/64 bit)           xlc 7.0.0.0
@@ -109,9 +117,6 @@ HDF 4.2 Release 2 has been tested on the following platforms:
 
     FreeBSD 6.2 (32- and 64-bit)  gcc  and f77 GNU 3.4.6
     (duty and liberty)            GNU Fortran (GCC) 4.2.2 20070905 
-
-    HP-UX B.11.23 (32- and 64-bit)HP aC++/ANSI C B3910B A.06.02
-    (sirius)                      HP F90 v3.1 
 
     IRIX64 6.5                    MIPSpro cc 7.4.4m
     (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m 

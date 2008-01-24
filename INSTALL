@@ -1,7 +1,7 @@
 
-    Installation Instructions for HDF4.2r2 on UNIX and MacOSX Platforms
+    Installation Instructions for HDF4.2r3 on UNIX and MacOSX Platforms
     ===================================================================
-                         September 23, 2007
+                         january 24, 2008
 
 
 CONTENTS
@@ -30,7 +30,7 @@ CONTENTS
 1. Optional SZIP compression Library
    =================================
 
-   x HDF4.2r2 may be configured to use the SZIP compression Library.
+   x HDF4.2r3 may be configured to use the SZIP compression Library.
      For more information about the SZIP library, see this site:
 
          http://hdfgroup.org/doc_resource/SZIP/ 
@@ -53,6 +53,9 @@ CONTENTS
    the binaries, install the SZIP Library on your system. You may download 
    precompiled SZIP binaries from 
          ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/
+   Source code for SZIP library can be found under
+	 ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
+   To build the library follow instructions in the SZIP source code distribution.
 
 3. UNIX and MacOSX configuration and build
    =======================================
@@ -68,12 +71,12 @@ CONTENTS
    2)  Optional: Install the SZIP version 2.1 Library (you may use 
        SZIP 2.0 binaries). 
 
-   3)  Extract the source from the hdf4.2r2.tar file and change
-       directory to hdf4.2r2.
+   3)  Extract the source from the hdf4.2r3.tar file and change
+       directory to hdf4.2r3.
 
    To Configure:
 
-   4)  Use the configure command in the top level HDF4 directory hdf4.2r2:
+   4)  Use the configure command in the top level HDF4 directory hdf4.2r3:
 
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
@@ -117,11 +120,11 @@ CONTENTS
        environment variables that have an affect on building the
        library.
 
-   9)  You may build HDF4 in a directory other than hdf4.2r2 by
+   9)  You may build HDF4 in a directory other than hdf4.2r3 by
        using the "srcdir" option. Simply create a build directory and
        type:
 
-       <path_to_hdf4.2r2>/configure ...
+       <path_to_hdf4.2r3>/configure ...
 
        where "..." are your configuration options.
  
@@ -132,9 +135,10 @@ CONTENTS
    original netCDF library (libnetcdf.a), the HDF4 distribution
    must be configured with the --disable-netcdf configuration flag. 
    This will rename the HDF version of the C-interface (ncxxx) of 
-   the netCDF API to sd_ncxxx and disbale NC Fortran interfaces to 
-   avoid clashing with the original netCDF C and Fortran APIs from 
-   libnetcdf.a. 
+   the HDF4 netCDF APIs to sd_ncxxx and disable HDF4 NC Fortran interfaces to 
+   avoid name clashing with the original netCDF C and Fortran APIs from 
+   libnetcdf.a.  HDF4.2r3 DOES NOT require the presence of the
+   NetCDF-3 header files on the system.
 
 
 

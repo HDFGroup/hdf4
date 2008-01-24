@@ -67,7 +67,7 @@ Preconditions:
 
 4. Optional SZIP compression Library
      
-    HDF4.2r2 may be configured to use the SZIP compression Library.
+    HDF4.2r3 may be configured to use the SZIP compression Library.
     For more information about the SZIP library, see
 
                http://hdfgroup.org/doc_resource/SZIP/ 
@@ -80,7 +80,7 @@ Preconditions:
 Build, Test and Install HDF4 on Cygwin
 --------------------------------------
 
-Notes: Use the configure command in the top level HDF4 directory hdf4.2r2.
+Notes: Use the configure command in the top level HDF4 directory hdf4.2r3.
 
 1. HDF4 Source code and precompiled binaries
      
@@ -92,7 +92,7 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r2.
   
 2. Unpacking the distribution
 
-   gzip -cd <HDF4.2r2.tar.gz>| tar xvf -
+   gzip -cd <HDF4.2r3.tar.gz>| tar xvf -
 
 3. To configure 
      
@@ -134,11 +134,11 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r2.
 
          make install
 
-6.  You may build HDF4 in a directory other than hdf4.2r2 by
+6.  You may build HDF4 in a directory other than hdf4.2r3 by
       using the "srcdir" option. Simply create a build directory and
       type:
 
-        <path_to_hdf4.2r2>/configure ...
+        <path_to_hdf4.2r3>/configure ...
 
         where "..." are your configuration options.
 
