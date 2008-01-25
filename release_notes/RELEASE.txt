@@ -112,8 +112,8 @@ Platforms tested
 HDF 4.2 Release 3 has been tested on the following platforms:
 
                                   
-    AIX 5.3 (32/64 bit)           xlc 7.0.0.0
-    (copper)                      xlf 9.1.0.3
+    AIX 5.2 (32/64 bit)           xlc 8.0.0.11
+    (datstar)                     xlf 10.01.0000.0002
 
     FreeBSD 6.2 (32- and 64-bit)  gcc  and f77 GNU 3.4.6
     (duty and liberty)            GNU Fortran (GCC) 4.2.2 20070905 
