@@ -192,7 +192,7 @@ AC_PROG_YACC
 
 AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
 
-AC_CHECK_PROG([DIFF],     [dift],     [diff -w])
+AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
 AC_CHECK_PROG([NEQN],     [neqn],     [neqn])
 AC_CHECK_PROG([TBL],      [tbl],      [tbl])
