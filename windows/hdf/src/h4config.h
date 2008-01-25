@@ -91,13 +91,13 @@
 #define H4_PACKAGE_NAME "HDF"
 
 /* Define to the full name and version of this package. */
-#define H4_PACKAGE_STRING "HDF 4.2r1"
+#define H4_PACKAGE_STRING "HDF 4.2r3"
 
 /* Define to the one symbol short name of this package. */
 #define H4_PACKAGE_TARNAME "hdf"
 
 /* Define to the version of this package. */
-#define H4_PACKAGE_VERSION "4.2r1"
+#define H4_PACKAGE_VERSION "4.2r3"
 
 /* The size of `int*', as computed by sizeof. */
 #define H4_SIZEOF_INTP 4
@@ -106,7 +106,7 @@
 #define H4_STDC_HEADERS 1
 
 /* Version number of package */
-#define H4_VERSION "4.2r1"
+#define H4_VERSION "4.2r3"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
