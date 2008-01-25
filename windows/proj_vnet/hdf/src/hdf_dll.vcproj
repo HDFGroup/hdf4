@@ -39,13 +39,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\hdf\src\release\hd422m.dll"
+				OutputFile="..\..\..\..\hdf\src\release\hd423m.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="libc.lib"
-				ProgramDatabaseFile=".\..\..\..\..\hdf\src\Release/hd422m.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\src\Release/hd423m.pdb"
 				SubSystem="2"
-				ImportLibrary=".\..\..\..\..\hdf\src\Release/hd422m.lib"
+				ImportLibrary=".\..\..\..\..\hdf\src\Release/hd423m.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -103,14 +103,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\hdf\src\debug\hd422md.dll"
+				OutputFile="..\..\..\..\hdf\src\debug\hd423md.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcrt.lib,libc.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\..\..\hdf\src\Debug/hd422md.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\src\Debug/hd423md.pdb"
 				SubSystem="2"
-				ImportLibrary=".\..\..\..\..\hdf\src\Debug/hd422md.lib"
+				ImportLibrary=".\..\..\..\..\hdf\src\Debug/hd423md.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"

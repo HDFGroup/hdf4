@@ -5,8 +5,8 @@
 @REM Last Updated: 7/30/2007
 
 @echo OFF
-copy hdf\src\Debug\hd422md.dll %systemroot%\system >temp.txt
-copy mfhdf\libsrc\Debug\hm422md.dll %systemroot%\system >temp.txt
-copy hdf\src\Release\hd422m.dll %systemroot%\system >temp.txt
-copy mfhdf\libsrc\release\hm422m.dll %systemroot%\system >temp.txt
+copy hdf\src\Debug\hd423md.dll %systemroot%\system >temp.txt
+copy mfhdf\libsrc\Debug\hm423md.dll %systemroot%\system >temp.txt
+copy hdf\src\Release\hd423m.dll %systemroot%\system >temp.txt
+copy mfhdf\libsrc\release\hm423m.dll %systemroot%\system >temp.txt
 del temp.txt

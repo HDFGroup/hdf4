@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd422d.lib hm422d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd423d.lib hm423d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\Debug/readtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd422.lib hm422.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd423.lib hm423.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\Release/readtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -259,7 +259,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd422d.lib hm422d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd423d.lib hm423d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\Debug/readtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -354,7 +354,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd422.lib hm422.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd423.lib hm423.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\Release/readtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

@@ -78,12 +78,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm422m.dll"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm423m.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Release/hm422m.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Release/hm423m.pdb"
 				SubSystem="2"
-				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Release/hm422m.lib"
+				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Release/hm423m.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -173,12 +173,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm422m.dll"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm423m.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Release/hm422m.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Release/hm423m.pdb"
 				SubSystem="2"
-				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Release/hm422m.lib"
+				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Release/hm423m.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -266,14 +266,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm422md.dll"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm423md.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Debug/hm422md.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Debug/hm423md.pdb"
 				SubSystem="2"
-				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Debug/hm422md.lib"
+				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Debug/hm423md.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -361,14 +361,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm422md.dll"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm423md.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Debug/hm422md.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\libsrc\Debug/hm423md.pdb"
 				SubSystem="2"
-				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Debug/hm422md.lib"
+				ImportLibrary=".\..\..\..\..\mfhdf\libsrc\Debug/hm423md.lib"
 				TargetMachine="17"
 			/>
 			<Tool

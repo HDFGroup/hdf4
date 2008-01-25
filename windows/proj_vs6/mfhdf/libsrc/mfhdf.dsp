@@ -55,7 +55,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\..\..\..\mfhdf\libsrc\Release\hm422.lib" /NODEFAULTLIB
+# ADD LIB32 /nologo /out:"..\..\..\..\mfhdf\libsrc\Release\hm423.lib" /NODEFAULTLIB
 
 !ELSEIF  "$(CFG)" == "mfhdf - Win32 Debug"
 
@@ -83,7 +83,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\..\..\..\mfhdf\libsrc\Debug\hm422d.lib" /NODEFAULTLIB
+# ADD LIB32 /nologo /out:"..\..\..\..\mfhdf\libsrc\Debug\hm423d.lib" /NODEFAULTLIB
 
 !ELSEIF  "$(CFG)" == "mfhdf - Win32 AlphaDbg"
 

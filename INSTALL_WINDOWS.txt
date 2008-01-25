@@ -434,11 +434,11 @@ Under "Show directories for", select "Library files":
 Under Project->Properties, select folder, Linker, and then Input:
    Add the following libraries to the beginning of the list of "Additional
    Dependencies":
-      hd422.lib hm422.lib xdr.lib Ws2_32.lib (single-threaded release version)
-      hd422d.lib hm422d.lib xdr.lib Ws2_32.lib (single-threaded debug version)
+      hd423.lib hm423.lib xdr.lib Ws2_32.lib (single-threaded release version)
+      hd423d.lib hm423d.lib xdr.lib Ws2_32.lib (single-threaded debug version)
 
-      hd422m.lib hm422m.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded release version)
-      hd422md.lib hm422md.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded debug version)
+      hd423m.lib hm423m.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded release version)
+      hd423md.lib hm423md.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded debug version)
 
       (Optional) For applications which use HDF4 Fortran libraries, except the 
       libraries listed above, users should also add the following libraries to 
@@ -516,7 +516,7 @@ following modifications:
        example, to open the main HDF4 workspace, you would look for "all.dsw"
        in c:\MyHDFstuff\HDF42r3\windows\proj_vs6\all\.  Similarly, you can
        build C example applications by opening "allexamples.dsw" in
-       c:\MyHDFstuff\HDF422r3\windows\examples\cexamples\proj_vs6\.
+       c:\MyHDFstuff\HDF423r3\windows\examples\cexamples\proj_vs6\.
        
     2. Building Fortran libraries with Visual Studio 6.0 is not supported.
        Therefore, Fortran projects are disabled in the project files by default,
@@ -556,7 +556,7 @@ Please refer to Section I, with a few minor changes:
        HDF4 workspace, you would look for "all.sln" in 
        c:\MyHDFstuff\HDF42r3\windows\proj_vnet\all\.  Similarly, you can
        build C example applications by opening "allexamples.sln" in
-       c:\MyHDFstuff\HDF422r3\windows\examples\cexamples\proj_vnet\.  Use
+       c:\MyHDFstuff\HDF423r3\windows\examples\cexamples\proj_vnet\.  Use
        similar directories for building Fortran libraries.
 
     2. Be sure to download the correct external library binaries from the FTP.  
