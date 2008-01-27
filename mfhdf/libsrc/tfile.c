@@ -190,10 +190,12 @@ test_max_open_files()
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
+    CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
     VERIFY(curr_max, H4_MAX_NC_OPEN, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Reset current max to an arbitrary number and check */
     curr_max = SDreset_maxopenfiles(33);
+    CHECK(status, FAIL, "test_maxopenfiles: SDreset_maxopenfiles");
     VERIFY(curr_max, 33, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Try to create more files than the default max (currently, 32) and
@@ -222,6 +224,7 @@ test_max_open_files()
 
     /* Get the current max and system limit */
     status = SDget_maxopenfiles(&curr_max, &sys_limit);
+    CHECK(status, FAIL, "test_maxopenfiles: SDget_maxopenfiles");
     VERIFY(curr_max, sys_limit, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Get the current max another way, it should be the system limit */
@@ -303,6 +306,7 @@ test_max_open_files()
 	CHECK(status, FAIL, "test_maxopenfiles: SDend");
 	remove(filename[index]);
     }
+printf("end of test_max_open_files\n\n");
     return num_errs;
 }
 

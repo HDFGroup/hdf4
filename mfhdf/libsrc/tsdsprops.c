@@ -118,6 +118,9 @@ test_SDSnames()
     status = SDendaccess(dset1);
     CHECK(status, FAIL, "SDendaccess");
 
+    /* Release allocated memory */
+    HDfree(ds_name);
+
     /* Get access to the second dataset */
     dset2 = SDselect(fid, 1);
     CHECK(dset2, FAIL, "SDselect");
@@ -140,6 +143,9 @@ test_SDSnames()
     /* Close the datasets */
     status = SDendaccess(dset2);
     CHECK(status, FAIL, "SDendaccess");
+
+    /* Release allocated memory */
+    HDfree(ds_name);
 
     /* Close the file */
     status = SDend(fid);
@@ -615,7 +621,7 @@ test_valid_args2()
 
     /* Create and open the file and initiate the SD interface. */
     sd_id = SDstart("b150.hdf", DFACC_CREATE);
-    CHECK(status, FAIL, "SDstart");
+    CHECK(sd_id, FAIL, "SDstart");
 
     /* Create the first dataset */
     dim[0] = D1_X;
@@ -637,6 +643,7 @@ test_valid_args2()
 
     status = makeSDS(sd_id, "data2", DFNT_INT32, 2, dims2, d2start, NULL, d2count, data2);
     CHECK(status, FAIL, "makeSDS data2");
+
 
     /* Create and write to third dataset */
     dims3[0] = D3_X;

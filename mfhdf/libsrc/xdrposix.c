@@ -103,9 +103,8 @@ static void
 free_biobuf(abuf)
 biobuf *abuf;
 {
-    if(abuf == NULL)
-        return;
-    HDfree((VOIDP)abuf) ;
+    if(abuf != NULL)
+	HDfree((VOIDP)abuf) ;
 }
 
 

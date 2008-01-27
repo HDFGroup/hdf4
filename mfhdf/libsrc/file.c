@@ -24,6 +24,7 @@
 #include	<errno.h>
 #include	"local_nc.h"
 #include	"alloc.h"
+#include	"herr.h"
 #ifdef vms
 #   include <unixio.h>
 #   include <unixlib.h>
@@ -76,6 +77,19 @@ static NC **_cdfs;
 static intn max_NC_open = H4_MAX_NC_OPEN;	/* current netCDF default */
 
 /*
+ * Resets _cdfs 
+ */
+static void
+ncreset_cdflist()
+{
+    if (_cdfs != NULL)
+    {
+	HDfree((VOIDP)_cdfs);
+	_cdfs = NULL;
+    }
+}
+
+/*
  *  Allocates _cdfs and returns the allocated size
  */
 intn
@@ -83,9 +97,10 @@ NC_reset_maxopenfiles(req_max)
 intn req_max;	/* requested max to allocate */
 {
 	intn sys_limit = MAX_AVAIL_OPENFILES;
-	intn alloc_size = req_max;
+	intn alloc_size;
 	NC **newlist;
 	intn i;
+	int ret_value = SUCCEED;
 
 	/* If requested max is 0, allocate _cdfs with the default,
 	   max_NC_open, if _cdfs is not yet allocated, otherwise, keep 
@@ -94,7 +109,7 @@ intn req_max;	/* requested max to allocate */
 	{
 	    if (!_cdfs)
 	    {
-		_cdfs = (NC **)HDmalloc(sizeof(NC *) * max_NC_open);
+		_cdfs = (NC **)HDmalloc(sizeof(NC *) * (max_NC_open));
 
 		/* If allocation fails, return 0 for no allocation */
 		if (_cdfs == NULL)
@@ -102,25 +117,27 @@ intn req_max;	/* requested max to allocate */
 		    /* NC_EINVAL is Invalid Argument, but must decide if
 		       we just want to return 0 without error or not */
 		    NCadvise(NC_EINVAL, "Unable to allocate a cdf list of %d elements", max_NC_open);
-		    return(0) ;
+		    HGOTO_DONE(-1) ;
 		}
 		else
-		    return(max_NC_open);
+		    HGOTO_DONE(max_NC_open);
 	    }
 	    else  /* return the current limit */
-		return (max_NC_open);
+		HGOTO_DONE (max_NC_open);
 	} /* if req_max == 0 */
 
 	/* If the requested max is less than the current max but there are
 	   more than the requested max number of files opened, do not reset
 	   the current max, since this will cause information lost. */
 	if (req_max < max_NC_open && req_max <= _ncdf)
-	    return(max_NC_open);
+	    HGOTO_DONE(max_NC_open);
 
 	/* If the requested max exceeds system limit, only allocate up
 	   to system limit */
 	if (req_max > sys_limit)
 	    alloc_size = sys_limit;
+	else
+	    alloc_size = req_max;
 
 	/* Allocate a new list */
 	newlist = (NC **)HDmalloc(sizeof(NC *) * alloc_size);
@@ -131,17 +148,16 @@ intn req_max;	/* requested max to allocate */
 	    /* NC_EINVAL is Invalid Argument, but must decide if
 	       we just want to return 0 without error or not */
 	    NCadvise(NC_EINVAL, "Unable to allocate a cdf list of %d elements", alloc_size) ;
-	    return(0) ;
+	    HGOTO_DONE(-1) ;
 	}
 
 	/* If _cdfs is already allocated, transfer pointers over to the
 	   new list and deallocate the old list of pointers */
-	if (_cdfs)
+	if (_cdfs != NULL)
 	{
-	    /*for (i=0; i <= _ncdf; i++)*/
-	    for (i=0; i <= _ncdf; i++)
+	    for (i=0; i < _ncdf; i++)
 		newlist[i] = _cdfs[i];
-	    HDfree((VOIDP)_cdfs);
+	    HDfree(_cdfs);
 	}
 
 	/* Set _cdfs to the new list */
@@ -151,7 +167,18 @@ intn req_max;	/* requested max to allocate */
 	/* Reset current max files opened allowed in HDF to the new max */
 	max_NC_open = alloc_size;
 
-	return(max_NC_open);
+	HGOTO_DONE(max_NC_open);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+	/* Deallocate _cdfs */
+	ncreset_cdflist();
+      }
+     /* Normal cleanup */
+
+    return ret_value;
 } /* NC_reset_maxopenfiles */
 
 /*
@@ -238,7 +265,7 @@ int mode ;
 	intn cdfs_size;
 
 	/* Allocate _cdfs, if it is already allocated, nothing will be done */
-	if (!_cdfs)
+	if (_cdfs == NULL)
 	    cdfs_size = NC_reset_maxopenfiles(0);
 
 	/* find first available id */
@@ -367,6 +394,12 @@ int id ;
             {
                 nc_serror("xdr_cdf") ;
                 NC_free_cdf(handle) ; /* ?? what should we do now? */
+
+#if 0 /* not sure if we need this here, will check again - 1/26/08 BMR */
+		/* if the _cdf list is empty, deallocate and reset it to NULL */
+		if (_ncdf == 0)
+		    ncreset_cdflist();
+#endif
                 return(-1) ;
             }
           if( NC_computeshapes(handle) == -1)
@@ -405,7 +438,7 @@ int cdfid ;
 
 	/* NC_CREAT implies NC_INDEF, in both cases need to remove handle->path */
 	if(flags & (NC_INDEF | NC_CREAT))
-      {
+        {
           (void)strncpy(path, handle->path, FILENAME_MAX) ; /* stash path */
           if(!(flags & NC_CREAT)) /* redef */
             {
@@ -415,11 +448,15 @@ int cdfid ;
                 if(handle->redefid == _ncdf - 1)
                     _ncdf-- ;
                 handle->redefid = -1 ;
-		_curr_opened--;
+		_curr_opened--;	/* one less file currently opened */
+
+		/* if the _cdf list is empty, deallocate and reset it to NULL */
+		if (_ncdf == 0)
+		    ncreset_cdflist();
             }
-      }
+        }
 	else if(handle->flags & NC_RDWR)
-      {
+        {
           handle->xdrs->x_op = XDR_ENCODE ;
           if(handle->flags & NC_HDIRTY)
             {
@@ -431,20 +468,16 @@ int cdfid ;
                 if(!xdr_numrecs(handle->xdrs, handle) )
                     return(-1) ;
             }
-      }
-
+        }
 
 #ifdef HDF
     file_type = handle->file_type;
 #endif
-
 	NC_free_cdf(handle) ; /* calls fclose */
-
 
 #ifdef HDF
     switch(file_type) 
       {
-
       case netCDF_FILE:
           if(flags & (NC_INDEF | NC_CREAT))
             {
@@ -468,14 +501,19 @@ int cdfid ;
       }
 #endif
 
-	_cdfs[cdfid] = NULL ;
+	_cdfs[cdfid] = NULL ; /* reset pointer */
 
+	/* if current file is at the top of the list, adjust the water mark */
 	if(cdfid == _ncdf - 1)
-		_ncdf-- ;
-	_curr_opened--;
+	    _ncdf-- ;
+	_curr_opened--;	/* one less file currently being opened */
+
+	/* if the _cdf list is empty, deallocate and reset it to NULL */
+	if (_ncdf == 0)
+	    ncreset_cdflist();
 
 	return(0) ;
-}
+} /* ncabort */
 
 
 /* 
@@ -946,8 +984,13 @@ NC *handle ;
                 _cdfs[handle->redefid] = NULL ;
                 if(handle->redefid == _ncdf - 1)
                     _ncdf-- ;
-		_curr_opened--;
+		_curr_opened--;	/* one less file currently opened */
                 NC_free_cdf(handle) ;
+
+		/* if the _cdf list is empty, deallocate and reset it to NULL */
+		if (_ncdf == 0)
+		    ncreset_cdflist();
+
                 return(-1) ;
             }
           (void) strncpy(handle->path, realpath, FILENAME_MAX) ;
@@ -959,8 +1002,12 @@ NC *handle ;
           _cdfs[handle->redefid] = NULL ;
           if(handle->redefid == _ncdf - 1)
               _ncdf-- ;
-	  _curr_opened--;
+	  _curr_opened--;	/* one less file currently opened */
           handle->redefid = -1 ;
+
+	  /* if the _cdf list is empty, deallocate and reset it to NULL */
+	  if (_ncdf == 0)
+	      ncreset_cdflist();
       }
 
 done:
@@ -999,40 +1046,43 @@ int cdfid ;
 		return(-1) ;
 
 	if( handle->flags & NC_INDEF)
-      {
-          if( NC_endef(cdfid, handle) == -1 )
+        {
+	    if( NC_endef(cdfid, handle) == -1 )
             {
                 return( ncabort(cdfid) ) ;
             }
-      }
+        }
 	else if(handle->flags & NC_RDWR)
-      {
-          handle->xdrs->x_op = XDR_ENCODE ;
-          if(handle->flags & NC_HDIRTY)
+        {
+	    handle->xdrs->x_op = XDR_ENCODE ;
+	    if(handle->flags & NC_HDIRTY)
             {
                 if(!xdr_cdf(handle->xdrs, &handle) )
                     return(-1) ;
             }
-          else if(handle->flags & NC_NDIRTY)
+	    else if(handle->flags & NC_NDIRTY)
             {
                 if(!xdr_numrecs(handle->xdrs, handle) )
                     return(-1) ;
             }
-      }
+	}
 
 #ifdef HDF
-    if(handle->file_type == HDF_FILE) 
-        hdf_close(handle);
+	if(handle->file_type == HDF_FILE) 
+	    hdf_close(handle);
 #endif
 
-    NC_free_cdf(handle) ; /* calls fclose */
+	NC_free_cdf(handle) ; /* calls fclose */
 
-	_cdfs[cdfid] = NULL ;
+	_cdfs[cdfid] = NULL ;	/* reset pointer */
 
 	if(cdfid == _ncdf - 1)
-		_ncdf-- ;
-	_curr_opened--;
+	    _ncdf-- ;
+	_curr_opened--;	/* one less file currently opened */
 
+	/* if the _cdf list is empty, deallocate and reset it to NULL */
+	if (_ncdf == 0)
+	    ncreset_cdflist();
 	return(0) ;
 }
 
