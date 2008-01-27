@@ -1,75 +1,91 @@
-               README for HDF 4.2r3
-               -------------------
+                          README for HDF 4.2r3
+                          --------------------
 
-Obtaining the latest version
-----------------------------
+Obtaining the latest version of HDF4
+------------------------------------
  The most recent version of the distribution can be obtained from
- the THG ftp archive site at:
+ the THG FTP site:
 
      ftp://ftp.hdfgroup.org/HDF/HDF_Current/
 
-Distribution Layout
--------------------
- There are five subdirectories in this directory:
 
-   config -- contains machine dependent makefile fragments(mh-<os>). 
+Source Distribution Layout
+--------------------------
+ The top level of the source code distribution contains the following 
+ subdirectories:
 
-   hdf    -- contains the source code for the HDF 'base library', the 
-             the multi_file annotation interface, the multi_file raster
-             image interface, HDF command line utilities (hdp, the hdf 
-             dumper is in mfhdf/), 
-             and a test suite. It also contains the software
-             distributions for JPEG(hdf/jpeg) and ZLIB(hdf/zlib) 
-             which are required by the HDF library. 
-             Please see the README in each directory for further info
-             on each package. 
+   bin    -- Scripts for maintenance.
 
-   mfhdf  -- contains the netCDF(mfhdf) part of the HDF/mfhdf distribution
-             and HDF dumper utility (hdp).
+   config -- Machine dependent makefile fragments(mh-<os>). 
 
-   man    -- incomplete set of man page(s) for HDF.
+   hdf    -- The source code for the HDF 'base library', the multi-file 
+             annotation interface, the multi-file raster image interface, 
+             HDF command line utilities (hdp, the hdf dumper is in mfhdf/), 
+             and a test suite. 
+             This directory also contains the software distributions for 
+             JPEG(hdf/jpeg) and ZLIB(hdf/zlib) which are required by the 
+             HDF library. 
+             Please see the README in each directory for further 
+             information on each package. 
 
-   release_notes -- descriptions on new features and bug fixes in this
-                    release. Files in this sub-directory can be used 
-                    as supplemental documentation for HDF. These files 
-                    are also available on the THG ftp server, 
-                    in /HDF/HDF_Current/release_notes/.
+   mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
+             the HDF dumper utility (hdp).
 
-Third Party Software Requirements:
+   man    -- An incomplete set of man page(s) for HDF.
+
+   release_notes -- 
+             Descriptions of new features and bug fixes in this release.
+             Files in this sub-directory can be used as supplemental 
+             documentation for HDF. 
+             These files are also available on the THG FTP server: 
+             ftp://ftp.hdfgroup.org/HDF/HDF_Current/src/unpacked/release_notes
+
+   windows-- Files related to Windows support.
+
+
+Third Party Software Requirements
 ---------------------------------
  1. JPEG distribution release 6b(libjpeg.a). The "official" site 
     for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
-
  2. ZLIB 1.1.4(libz.a) or later  distribution.  
+
 
 System Requirements
 -------------------
  To build the HDF library from source, you need:
 
-   * an ANSI C compiler. The native ANSI compilers on the above 
+   * An ANSI C compiler. The native ANSI compilers on the above 
      platforms are supported. On platforms where no ANSI compiler
-     was available the free GNU ANSI compiler GCC was used.
+     was available, the free GNU ANSI compiler GCC was used.
+
 
 Configuring/Testing/Installing 
 ------------------------------
- See the INSTALL file for instructions on configuring,
- testing and installing for Unix and non-UNIX systems.
+ See the INSTALL file for instructions on configuring, testing, 
+ and installing this software on  Unix and non-UNIX systems.
+
 
 DOCUMENTATION/FAQ/HELP
 ----------------------
- The HDF documentation can be found on the THG ftp server
- in the directory /HDF/HDF/Documentation.  The HDF home page is at:
+ The HDF4 documentation can be found on the THG FTP server and on 
+ the THG website:
+
+      ftp://ftp.hdfgroup.org/HDF/Documentation  
+      http://hdfgroup.org/doc.html
+
+ The HDF home page is at:
 
       http://hdfgroup.org
 
- An FAQ is available on our ftp server, as well as under
- "Information about HDF" in the home page.
+ An FAQ is available on the FTP server and as under "Information about 
+ HDF" on the website.
 
- If you have any questions or comments, or would like to be
- added to or removed from our hdfnews email list, contact us
- at:
+      http://hdfgroup.org/products/hdf4/index.html
 
-      help@hdfgroup.org
+ If you have any questions or comments, or would like to be added to 
+ or removed from our hdfnews email list, contact us at:
+
+      http://hdfgroup.org/about/contact.html
 
 
