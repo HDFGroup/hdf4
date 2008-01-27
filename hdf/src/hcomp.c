@@ -1826,6 +1826,10 @@ HCPgetcomptype(int32 file_id,
 	      HGOTO_ERROR(DFE_ARGS, FAIL);
 	}
 
+	/* release allocated memory */
+	if (local_ptbuf != NULL)
+	    HDfree(local_ptbuf);
+
 	if(Hendaccess(temp_aid)==FAIL)
 	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
@@ -1844,6 +1848,8 @@ done:
         if (data_id != 0)
             if (Hendaccess(data_id)== FAIL)
                 HERROR(DFE_CANTENDACCESS);
+	if (local_ptbuf != NULL)
+	    HDfree(local_ptbuf);
     } /* end if */
 
   /* Normal function cleanup */

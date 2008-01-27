@@ -191,6 +191,7 @@ intn HAdestroy_group(group_t grp       /* IN: Group to destroy */
       } /* end block */
 #endif /* ATOMS_ARE_CACHED */
         HDfree(grp_ptr->atom_list);
+	grp_ptr->atom_list = NULL;
       } /* end if */
 
 done:

@@ -640,6 +640,9 @@ vdestroynode(VOIDP n /* IN: node to free */)
                 HDfree((VOIDP) vg->tag);
                 HDfree((VOIDP) vg->ref);
 
+                if (vg->vgname != NULL)
+                    HDfree((VOIDP) vg->vgname);
+
                 if (vg->alist != NULL)
                     HDfree((VOIDP) vg->alist);
 
