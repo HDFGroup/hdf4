@@ -1,27 +1,26 @@
 
                           HDF 4.2 Release 3
-                          January 27, 2008
+                          =================
+                          January 28, 2008
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2r2 and
-HDF 4.2r3.  It is written for people who are familiar with
-previous releases of HDF and wish to migrate to HDF 4.2r3.
+This document describes the differences between HDF 4.2r2 and HDF 4.2r3.  
+It is written for people who are familiar with previous releases of HDF 
+and wish to migrate to HDF 4.2r3.
 
-The HDF 4.2r3 documentation can be found on the THG ftp server 
-(ftp.hdfgroup.org) in the directory:
+The HDF 4.2r3 documentation can be found on the THG ftp server:
 
      ftp://ftp.hdfgroup.org/HDF/Documentation/
 
-First-time HDF users are encouraged to read the FAQ for this
-release for more information about HDF.  Also see the home page 
-for HDF at:
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+  
+     http://hdfgroup.org/products/hdf4/
 
-     http://hdfgroup.org/
+If you have any questions or comments, please see the HDF Support page:
 
-If you have any questions or comments, please send them to:
-
-     help@hdfgroup.org
+     http://hdfgroup.org/services/support.html
 
 CONTENTS
 
@@ -38,6 +37,7 @@ CONTENTS
 - Platforms tested
 - Known problems
 
+
 New features and changes
 ========================
     Configuration
@@ -47,43 +47,46 @@ New features and changes
     Library
     ========= 
 
-	- Modified HDF4 mfhdf library and configure to work in the absence of the
-	  NetCDF-3 header files when HDF4 library is configured with the --disable-netcdf
-	  flag. This feature is required to build ESDIS Toolkit in the presence of 
-          the NetCDF-3 library. In this case HDF4 netcdf.h file is used to build HDF4 libraies
-          and it is installed under the "hdf4_netcdf.h" name to avoid name
-          clashing with NetCDF-3 netcdf.h.
+	- Modified the HDF4 mfhdf library and configure to work in the 
+	  absence of the NetCDF-3 header files when the HDF4 library 
+	  is configured with the --disable-netcdf flag. This feature is 
+	  required when building the ESDIS Toolkit in the presence of the
+	  NetCDF-3 library. In this case, the HDF4 file netcdf.h is used 
+	  to build the HDF4 libraries and is installed under the name 
+	  "hdf4_netcdf.h" to avoid a name clash with the NetCDF-3 file 
+	  netcdf.h.
 							EIP 2007-10-30
 
-	- Note that the previous change on SDnametoindex was backed out.  It 
-	  only returns the first variable of the requested name, as the 
+	- Note that the previous change to SDnametoindex was backed out.  It 
+	  only returns the first variable of the requested name, as did the 
 	  original version of this function.  The variable can be an SDS or 
-	  a coordinate variable.  With this behavior, if there are more than
+	  a coordinate variable.  With this behavior, if there is more than
 	  one variable with the same name in the file, care must be taken to
 	  retrieve the desired variable.  Please see new APIs in the next 
 	  item for a way to handle non-uniquely named variables.  The behavior 
-	  of SDnametoindex will be documented in FAQs, documentation, and 
-	  Newsletter.
+	  of SDnametoindex will be documented in FAQs, documentation, and the
+	  newsletter.
 							BMR 2008-01-17
 
 	- Added new APIs to SD interface:
-	  + SDgetnumvars_byname: Given a name, returns the number of variables 
-		in a file with that same name
-	  + SDnametoindices: Given a name, returns a list of indices of all 
-		the variables in a file with that same name
-	  With these new APIs, users can check if an SDS name or coordinate 
-	  variable's name is not unique and retrieve the named variables and 
-	  examine them.
+	  + SDgetnumvars_byname: Given a name, returns the number of 
+	    variables in a file with that same name.
+	  + SDnametoindices: Given a name, returns a list of indices of 
+	    all the variables in a file with that same name.
+	  With these new APIs, users can determine when an SDS name or 
+	  a coordinate variable's name is not unique, retrieve the named 
+	  variables, and examine them.
 							BMR 2008-01-17
-
 
     Utilities
     ========= 
         None 
 
+
 Support for new platforms and compilers
 =======================================
         None
+
 
 Bugs fixed since HDF4.2r2
 =========================
@@ -101,10 +104,12 @@ Bugs fixed since HDF4.2r2
          fixed
                                                          EIP, 2007-10-09
 
+
 Documentation
 ==============
-     Description for new functions SDgetnumvars_byname and SDnametoindices
+     Descriptions of the new functions SDgetnumvars_byname and SDnametoindices
      have been added to the documentation. 
+
 
 Platforms tested
 ================
@@ -132,19 +137,18 @@ HDF 4.2 Release 3 has been tested on the following platforms:
                                   Intel(R) Fortran Compiler for 32-bit 
                                       applications, Version 9.1 
 
-    Linux 2.6.16.46-0.12-debug #1 
-        SMP ia64 GNU/Linux        Intel(R) C++ Version 10.0.025
-    (ucar hir1)                   Intel(R) Fortran Itanium(R) Version 10.0.025
+    Linux 2.6.16.46-0.12-debug #1 Intel(R) C++ Version 10.0.025
+        SMP ia64 GNU/Linux        Intel(R) Fortran Itanium(R) Version 10.0.025
+    (ucar hir1)                   
 
     Linux 2.6.16.46-0.14-smp #1   Intel(R) C++ for Intel(R) EM64T Ver. 9.1.037
         SMP x86_64 GNU/Linux      Intel(R) Fortran Intel(R) EM64T Ver. 9.1.031
     (smirom)                      gcc (GCC) 4.1.2 20070115 (SUSE Linux)
                                   G95 (GCC 4.0.3 (g95 0.91!) Apr 19 2007)
 
-    Linux 2.6.5-7.283-rtgfx Altix 
-        SMP ia64                  Intel(R) C++ Version 9.0
-    (cobalt)                      Intel(R) Fortran Itanium(R) Version 9.0
-
+    Linux 2.6.5-7.283-rtgfx Altix Intel(R) C++ Version 9.0
+        SMP ia64                  Intel(R) Fortran Itanium(R) Version 9.0
+    (cobalt)                      
 
     SunOS 5.8 32- and 64-bit      Sun WorkShop 6 update 2 C 5.3
     (sol)                         Sun WorkShop 6 update 2 Fortran 95 6.2
@@ -152,7 +156,6 @@ HDF 4.2 Release 3 has been tested on the following platforms:
     SunOS 5.10 32- and 64-bit     Sun WorkShop 6 update 2 C 5.8
     (linew)                       Sun WorkShop 6 update 2 Fortran 95 8.2
                                   Patch 121019-06 
-
 
     IA-64 Linux 2.4.21.SuSE_292.til1
         ia64                      gcc (GCC) 3.2.2
@@ -171,12 +174,11 @@ HDF 4.2 Release 3 has been tested on the following platforms:
                                   g95 0.91
                                   gfortran GNU Fortran (GCC) 4.3.0 20070518
 
-                                  
 
 Known problems
 ==============
 
-o  hdfcomp fails on HPUX 11.23 for the 64-bit version of the library
+o  hdfcomp fails on HPUX 11.23 for the 64-bit version of the library.
 
 o  This release does not support VMS systems.
 
@@ -191,8 +193,8 @@ o  For existing data prior to HDF 4.2r2, when a one-dimensional SDS has the
    details.
 
 o  When using PGI compilers, make sure that the JPEG library is also compiled 
-   with a PGI C compiler; linking with JPEG built with gcc causes JPEG library 
-   tests to fail.  To bypass the problem:
+   with a PGI C compiler; linking with a JPEG library built with gcc causes 
+   JPEG library tests to fail.  To bypass the problem:
 
        x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
          where $PGI_JPEG_INSTALL_DIR points to the installation directory

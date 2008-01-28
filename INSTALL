@@ -1,7 +1,7 @@
 
     Installation Instructions for HDF4.2r3 on UNIX and MacOSX Platforms
     ===================================================================
-                         january 24, 2008
+                             January 28, 2008
 
 
 CONTENTS
@@ -21,11 +21,10 @@ CONTENTS
          ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
 
    x ZLIB 1.1.4(libz.a) or later. Source code and binaries may be 
-     downloaded from 
+     downloaded from this site:
          http://www.gzip.org/ 
-     or from the The HDF Group ftp server 
+     They are also available on The HDF Group's FTP server:
          ftp://ftp.hdfgroup.org/lib-external/zlib/
-
 
 1. Optional SZIP compression Library
    =================================
@@ -42,20 +41,23 @@ CONTENTS
 2. HDF4 source code and precompiled binaries
    =========================================
    The HDF Group (THG) provides a "tar source ball" and precompiled 
-   binaries from the THG ftp server: 
+   binaries from the THG FTP server: 
 
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
 
    IMPORTANT:
    ==========
-   HDF4 prebuilt binaries come with the SZIP compression. In order to use
-   the binaries, install the SZIP Library on your system. You may download 
-   precompiled SZIP binaries from 
+   HDF4 prebuilt binaries come with SZIP compression. To use these binaries, 
+   you must install the SZIP Library on your system. 
+
+   You may download precompiled SZIP binaries from the THG FTP site:
          ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/
-   Source code for SZIP library can be found under
-	 ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
-   To build the library follow instructions in the SZIP source code distribution.
+   Source code for the SZIP library can be found on the same server:
+         ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
+
+   To build the library, follow the instructions in the SZIP source code 
+   distribution.
 
 3. UNIX and MacOSX configuration and build
    =======================================
@@ -64,7 +66,7 @@ CONTENTS
        tested for this release.
 
    Before you start:
- 
+
    1)  Make sure that the ZLIB and JPEG Libraries are installed on your
        system.
 
@@ -109,36 +111,33 @@ CONTENTS
 
        gmake install
 
-   8)  By default the current configuration uses vendor compilers; to use
-       another compiler, run the following commands before running
-       configure: 
- 
+   8)  By default, the current configuration uses vendor compilers; to use
+       another compiler, run the following commands before running configure: 
+
        setenv CC   "foo -flags"
        setenv F77  "fffoo -flags"
- 
-       See the configure help page (configure --help) for a list of
-       environment variables that have an affect on building the
-       library.
 
-   9)  You may build HDF4 in a directory other than hdf4.2r3 by
-       using the "srcdir" option. Simply create a build directory and
-       type:
+       See the configure help page (configure --help) for a list of
+       environment variables that have an affect on building the library.
+
+   9)  You may build HDF4 in a directory other than hdf4.2r3 by using
+       the "srcdir" option. Simply create a build directory and type:
 
        <path_to_hdf4.2r3>/configure ...
 
        where "..." are your configuration options.
- 
+
 4. Using HDF/MFHDF libraries with original netCDF library 
    ======================================================
 
-   To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the
-   original netCDF library (libnetcdf.a), the HDF4 distribution
-   must be configured with the --disable-netcdf configuration flag. 
-   This will rename the HDF version of the C-interface (ncxxx) of 
-   the HDF4 netCDF APIs to sd_ncxxx and disable HDF4 NC Fortran interfaces to 
-   avoid name clashing with the original netCDF C and Fortran APIs from 
-   libnetcdf.a.  HDF4.2r3 DOES NOT require the presence of the
-   NetCDF-3 header files on the system.
+   To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the original
+   netCDF library (libnetcdf.a), the HDF4 distribution must be configured 
+   with the --disable-netcdf configuration flag.  This will rename the HDF 
+   version of the C interface (ncxxx) of the HDF4 netCDF APIs to sd_ncxxx 
+   and will disable the HDF4 NC Fortran interfaces to avoid name clashes 
+   with the original netCDF C and Fortran APIs from libnetcdf.a.  
+   HDF4.2r3 DOES NOT require the presence of the NetCDF-3 header files on 
+   the system.
 
 
 
