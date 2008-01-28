@@ -1,5 +1,7 @@
+
                           README for HDF 4.2r3
-                          --------------------
+                          ====================
+                            January 28, 2008
 
 Obtaining the latest version of HDF4
 ------------------------------------
@@ -84,8 +86,9 @@ DOCUMENTATION/FAQ/HELP
       http://hdfgroup.org/products/hdf4/index.html
 
  If you have any questions or comments, or would like to be added to 
- or removed from our hdfnews email list, contact us at:
+ or removed from our hdfnews email list, contact information and other 
+ resource information can be found on the HDF Support page:
 
-      http://hdfgroup.org/about/contact.html
+     http://hdfgroup.org/services/support.html
 
 
