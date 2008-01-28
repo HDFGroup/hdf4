@@ -276,9 +276,9 @@ rem Build the HDF4 libraries.  By default, C libraries are built.
         if "%hdf4_use_vs6%"=="true" (
             set hdf4_config=/MAKE "all - Win32 %%a" /REBUILD
         ) else if "%hdf4_use_vnet%"=="true" (
-            set hdf4_config="/Rebuild %%a"
+            set hdf4_config=/Rebuild "%%a"
         ) else (
-            set hdf4_config="/Rebuild %%a|Win32"
+            set hdf4_config=/Rebuild "%%a|Win32"
         )
         echo.       Building %%a libraries...
         echo.       Building %%a libraries... >> %build_results%
