@@ -85,7 +85,7 @@
 #define H4_PACKAGE "hdf"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define H4_PACKAGE_BUGREPORT "hdfhelp@ncsa.uiuc.edu"
+#define H4_PACKAGE_BUGREPORT "help@hdfgroup.org"
 
 /* Define to the full name of this package. */
 #define H4_PACKAGE_NAME "HDF"
