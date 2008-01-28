@@ -306,7 +306,6 @@ test_max_open_files()
 	CHECK(status, FAIL, "test_maxopenfiles: SDend");
 	remove(filename[index]);
     }
-printf("end of test_max_open_files\n\n");
     return num_errs;
 }
 

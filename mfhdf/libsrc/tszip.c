@@ -142,7 +142,6 @@ test_szip_SDS8bit()
     status = SDgetcompinfo(sds_id, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompinfo");
- printf("SDgetcompinfo seemed to work\n");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
