@@ -89,7 +89,7 @@ DLL) and utilities, it is assumed that you have done the following:
       under "User Variables" box.
       
       In the New Variable window, set "Variable name" as HDF4_EXT_ZLIB
-      and "Variable value" as zdll1.lib, then click OK.
+      and "Variable value" as zlib1.lib, then click OK.
       
       Similarly, you can set:
 
@@ -792,7 +792,7 @@ For all other Windows development tools, HDF4 should be built in the development
        
        Building from the command line requires environment variables for Visual
        Studio.  These are generally setup when Visual Studio is installed, but you
-       can verify by testing the variables.  For Visual Studio 6.0:
+       can verify by testing the variables from command prompt.  For Visual Studio 6.0:
        
             if not defined msdevdir echo not defined!
        
@@ -809,7 +809,7 @@ For all other Windows development tools, HDF4 should be built in the development
        HDF4 uses environmental variables to recognize external libraries.  To
        define the necessary variables, issue the following commands:
 
-            set HDF4_EXT_ZLIB=zdll.lib
+            set HDF4_EXT_ZLIB=zlib1.lib
             set HDF4_EXT_JPEG=libjpeg.lib
             set HDF4_EXT_SZIP=szlibdll.lib
         
