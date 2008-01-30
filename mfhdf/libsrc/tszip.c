@@ -28,6 +28,9 @@
 #define WIDTH		6
 #define LENGTH		9
 
+/* global, so all tests can use */
+static uint32 comp_config = 0;
+
 static intn 
 test_szip_SDS8bit()
 {
@@ -45,7 +48,6 @@ test_szip_SDS8bit()
    int    	num_errs = 0;   /* number of errors so far */
    comp_coder_t comp_type;      /* to retrieve compression type into */
    comp_info    cinfo;          /* compression information structure */
-   uint32       comp_config;
    int8         out_data[LENGTH][WIDTH];
    int8         in_data[LENGTH][WIDTH]={
 	   			 1,1,2,2,3,4,
@@ -60,8 +62,6 @@ test_szip_SDS8bit()
 
     /********************* End of variable declaration ***********************/
 
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
-    
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME8, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -103,7 +103,7 @@ test_szip_SDS8bit()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip_SD8: SKIPPED\n");
+        printf("Test szip_SD8: SKIPPED\n");
         return num_errs;
     }
 
@@ -191,7 +191,6 @@ test_szip_SDS16bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
-   uint32       comp_config;
     int32       start[2], edges[2];
     int16       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -210,7 +209,6 @@ test_szip_SDS16bit()
 
     /********************* End of variable declaration ***********************/
 
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME16, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -252,7 +250,7 @@ test_szip_SDS16bit()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip_SD16: SKIPPED\n");
+        printf("Test szip_SD16: SKIPPED\n");
         return num_errs;
     }
 
@@ -332,7 +330,6 @@ test_szip_SDS32bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
-   uint32       comp_config;
     int32       start[2], edges[2];
     int32       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -351,7 +348,6 @@ test_szip_SDS32bit()
 
     /********************* End of variable declaration ***********************/
 
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME32, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -393,7 +389,7 @@ test_szip_SDS32bit()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip_SD32: SKIPPED\n");
+        printf("Test szip_SD32: SKIPPED\n");
         return num_errs;
     }
 
@@ -608,7 +604,6 @@ test_szip_SDSfl64bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
-   uint32       comp_config;
     int32       start[2], edges[2];
     float64     fill_value = 0;   /* Fill value */
     int         i,j;
@@ -627,7 +622,6 @@ test_szip_SDSfl64bit()
 
     /********************* End of variable declaration ***********************/
 
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAMEfl64, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -669,7 +663,7 @@ test_szip_SDSfl64bit()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip_SD64: SKIPPED\n");
+        printf("Test szip_SD64: SKIPPED\n");
         return num_errs;
     }
 
@@ -758,7 +752,6 @@ test_szip_chunk()
    int32         flag, maxcache, new_maxcache;
    int32         dim_sizes[2], origin[2];
    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
-   uint32       comp_config;
    int32         comp_flag;
    int16         all_data[LENGTH_CH][WIDTH_CH];
    int32         start[2], edges[2];
@@ -803,7 +796,6 @@ test_szip_chunk()
     c_def.comp.chunk_lengths[0] = CLENGTH;
     c_def.comp.chunk_lengths[1] = CWIDTH;
 
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface. */
     sd_id = SDstart (FILE_NAME, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -839,7 +831,7 @@ test_szip_chunk()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip chunk: SKIPPED\n");
+        printf("Test szip chunk: SKIPPED\n");
         return num_errs;
     }
 
@@ -1029,7 +1021,6 @@ test_szip_chunk_3d()
     intn          status;
     int32         dim_sizes[3];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
-    uint32        comp_config;
     int32         comp_flag;
     int32         start[3], edges[3];
     int16         fill_value = 0;   /* Fill value */
@@ -1049,7 +1040,6 @@ test_szip_chunk_3d()
     c_def.comp.chunk_lengths[1] = CHK_DIM1;
     c_def.comp.chunk_lengths[2] = CHK_DIM2;
 
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
     /* Create the file and initialize SD interface. */
     sd_id = SDstart (FILE_NAME_3D, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
@@ -1094,7 +1084,7 @@ test_szip_chunk_3d()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip chunk 3d: SKIPPED\n");
+        printf("Test szip chunk 3d: SKIPPED\n");
         return num_errs;
     }
 
@@ -1198,7 +1188,6 @@ test_szip_unlimited()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
-    uint32       comp_config;
     int32       start[2], edges[2];
     int32       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -1216,8 +1205,6 @@ test_szip_unlimited()
 				   0,  0,600,600,300,400};
 
     /********************* End of variable declaration ***********************/
-
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
 
     /* Create the file and initialize SD interface */
     sd_id = SDstart (FILE_NAME_UNLIM, DFACC_CREATE);
@@ -1262,7 +1249,7 @@ test_szip_unlimited()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip_SD unlimited: SKIPPED\n");
+        printf("Test szip_SD unlimited: SKIPPED\n");
         return num_errs;
     }
 
@@ -1370,7 +1357,6 @@ test_getcomptype()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
-   uint32       comp_config;
     int32       start[2], edges[2];
     int16       fill_value = 0;   /* Fill value */
     int         i,j;
@@ -1389,8 +1375,6 @@ test_getcomptype()
 
     /********************* End of variable declaration ***********************/
 
- /*     HCget_config_info(COMP_CODE_SZIP,&comp_config);
- */ 
     sd_id = SDstart (FILE_NAME16, DFACC_CREATE);
     CHECK(sd_id, FAIL, "SDstart");
 
@@ -1431,7 +1415,7 @@ test_getcomptype()
 
         status = SDend (sd_id);
         CHECK(status, FAIL, "SDend");
-        printf("szip_SD16: SKIPPED\n");
+        printf("Test getcomptype: SKIPPED\n");
         return num_errs;
     }
 
@@ -1507,7 +1491,10 @@ extern int
 test_szip_compression ()
 {
     int num_errs = 0;
+
 #ifdef H4_HAVE_LIBSZ
+    HCget_config_info(COMP_CODE_SZIP,&comp_config);
+
     num_errs = num_errs + test_szip_SDS8bit();
     num_errs = num_errs + test_szip_SDS16bit();
     num_errs = num_errs + test_szip_SDS32bit();
