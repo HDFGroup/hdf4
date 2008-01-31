@@ -85,8 +85,9 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-        None
-
+        
+    Support for Windows XP 64-bit with Visual Studio 2005 and 
+    Intel Fortran compiler was added. 
 
 Bugs fixed since HDF4.2r2
 =========================
