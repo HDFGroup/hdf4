@@ -1051,8 +1051,12 @@ following considerations:
        unsupported.  You may attempt to build Fortran libraries following the
        instructions above, but they should be considered experimental and used
        for testing only.
+
+    3. You need to use jpeg6b-4 to link with HDF4. You may get the library
+       from ftp://ftp.hdfgroup.org/lib-external/jpeg/bin/windows/ and find jpeg6b-4
+       zip file for vista and install it on your machine.
        
-    3. Elevated security permissions are required to test the HDF4 libraries.
+    4. Elevated security permissions are required to test the HDF4 libraries.
        This is because DLLs are installed in the system directory.  To enable
        elevated security:
        
