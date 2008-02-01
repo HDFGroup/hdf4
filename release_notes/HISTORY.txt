@@ -15,6 +15,7 @@
 
 List of the HDF4 releases
 
+4.2r3          January   2008
 4.2r2          October   2007
 4.2r1          February  2005
 4.2r0          December  2003
@@ -34,6 +35,220 @@ List of the HDF4 releases
 
 ==========================================================================    
  
+%%%4.2r3%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+                          HDF 4.2 Release 3
+                          =================
+                          January 28, 2008
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2r2 and HDF 4.2r3.  
+It is written for people who are familiar with previous releases of HDF 
+and wish to migrate to HDF 4.2r3.
+
+The HDF 4.2r3 documentation can be found on the THG ftp server:
+
+     ftp://ftp.hdfgroup.org/HDF/Documentation/
+
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+  
+     http://hdfgroup.org/products/hdf4/
+
+If you have any questions or comments, please see the HDF Support page:
+
+     http://hdfgroup.org/services/support.html
+
+CONTENTS
+
+- New features and changes
+  -- Configuration
+  -- Library
+  -- Utilities
+- Support for new platforms and compilers
+- Bugs fixed since HDF4.2r2
+  -- Utilities
+  -- Library
+  -- Configuration
+- Documentation
+- Platforms tested
+- Known problems
+
+
+New features and changes
+========================
+    Configuration
+    ============= 
+    None 
+
+    Library
+    ========= 
+
+	- Modified the HDF4 mfhdf library and configure to work in the 
+	  absence of the NetCDF-3 header files when the HDF4 library 
+	  is configured with the --disable-netcdf flag. This feature is 
+	  required when building the ESDIS Toolkit in the presence of the
+	  NetCDF-3 library. In this case, the HDF4 file netcdf.h is used 
+	  to build the HDF4 libraries and is installed under the name 
+	  "hdf4_netcdf.h" to avoid a name clash with the NetCDF-3 file 
+	  netcdf.h.
+							EIP 2007-10-30
+
+	- Note that the previous change to SDnametoindex was backed out.  It 
+	  only returns the first variable of the requested name, as did the 
+	  original version of this function.  The variable can be an SDS or 
+	  a coordinate variable.  With this behavior, if there is more than
+	  one variable with the same name in the file, care must be taken to
+	  retrieve the desired variable.  Please see new APIs in the next 
+	  item for a way to handle non-uniquely named variables.  The behavior 
+	  of SDnametoindex will be documented in FAQs, documentation, and the
+	  newsletter.
+							BMR 2008-01-17
+
+	- Added new APIs to SD interface:
+	  + SDgetnumvars_byname: Given a name, returns the number of 
+	    variables in a file with that same name.
+	  + SDnametoindices: Given a name, returns a list of indices of 
+	    all the variables in a file with that same name.
+	  With these new APIs, users can determine when an SDS name or 
+	  a coordinate variable's name is not unique, retrieve the named 
+	  variables, and examine them.
+							BMR 2008-01-17
+
+    Utilities
+    ========= 
+        None 
+
+
+Support for new platforms and compilers
+=======================================
+        
+    Support for Windows XP 64-bit with Visual Studio 2005 and 
+    Intel Fortran compiler was added. 
+
+Bugs fixed since HDF4.2r2
+=========================
+    Utilities
+    ========= 
+        None
+
+    Library
+    ========= 
+        None
+
+    Configuration
+    ============= 
+       - libhdf4.settings file was not installed by make install command;
+         fixed
+                                                         EIP, 2007-10-09
+
+
+Documentation
+==============
+     Descriptions of the new functions SDgetnumvars_byname and SDnametoindices
+     have been added to the documentation. 
+
+
+Platforms tested
+================
+
+HDF 4.2 Release 3 has been tested on the following platforms:
+
+                                  
+    AIX 5.2 (32/64 bit)           xlc 8.0.0.11
+    (datstar)                     xlf 10.01.0000.0002
+
+    FreeBSD 6.2 (32- and 64-bit)  gcc  and f77 GNU 3.4.6
+    (duty and liberty)            GNU Fortran (GCC) 4.2.3 20080123 
+
+    IRIX64 6.5                    MIPSpro cc 7.4.4m
+    (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m 
+
+    Linux 2.4.21-47.ELsmp #1 SMP  gcc and g77 3.2.3
+        i686 i386 GNU/Linux
+    (osage)
+
+    Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
+        SMP i686 i386             G95 (GCC 4.0.3 (g95 0.91!) April 18 2007)
+    (kagiso)                      PGI C, Fortran 7.0-7 32-bit 
+                                  icc (ICC) 9.1 
+                                  Intel(R) Fortran Compiler for 32-bit 
+                                      applications, Version 9.1 
+
+    Linux 2.6.16.46-0.12-debug #1 Intel(R) C++ Version 10.0.025
+        SMP ia64 GNU/Linux        Intel(R) Fortran Itanium(R) Version 10.0.025
+    (ucar hir1)                   
+
+    Linux 2.6.16.46-0.14-smp #1   Intel(R) C for Intel(R) EM64T Ver. 9.1.037
+        SMP x86_64 GNU/Linux      Intel(R) Fortran Intel(R) EM64T Ver. 9.1.031
+    (smirom)                      gcc (GCC) 4.1.2 20070115 (SUSE Linux)
+                                  G95 (GCC 4.0.3 (g95 0.91!) Apr 19 2007)
+
+    Linux 2.6.5-7.283-rtgfx Altix Intel(R) C++ Version 9.0.032
+        SMP ia64                  Intel(R) Fortran Itanium(R) Version 9.0.033
+    (cobalt)                      
+
+    SunOS 5.8 32- and 64-bit      Sun WorkShop 6 update 2 C 5.3
+    (sol)                         Sun WorkShop 6 update 2 Fortran 77 5.3
+
+    SunOS 5.10 32- and 64-bit     Sun WorkShop 6 update 2 C 5.8 
+                                  Patch 121015-06
+    (linew)                       Sun WorkShop 6 update 2 Fortran 95 8.2
+                                  Patch 121019-09 
+
+    IA-64 Linux 2.4.21.SuSE_292.til1
+        ia64                      
+    (NCSA tg-login)               Intel(R) C++ Version 8.1.037
+                                  Intel(R) Fortran Compiler Version 8.1.033
+
+    Windows XP                    Visual Studio 6.0
+                                  Visual Studio .NET (with Intel Fortran 9.1)
+                                  Visual Studio 2005 (with Intel Fortran 9.1)
+                                  cygwin (gcc 3.4.4)
+
+    Windows XP(64 bit)            Visual Studio 2005(with Intel Fortran 9.1)
+                                  
+    Windows Vista                 Visual Studio 2005 (no fortran)
+                                  
+    MAC OS X Intel                Darwin 8.10.1
+                                  i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
+                                  g95 0.91
+                                  gfortran GNU Fortran (GCC) 4.3.0 20070518
+
+
+Known problems
+==============
+
+o  hdfcomp fails on HPUX 11.23 for the 64-bit version of the library.
+
+o  This release does not support VMS systems.
+
+o  N-Bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  For existing data prior to HDF 4.2r2, when a one-dimensional SDS has the 
+   same name as the dimension scale, subsequent accesses to the dimension scale
+   or the SDS might produce undesired results.  It is recommended to check
+   for name duplication first.  See "New features and changes" section for 
+   details.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled 
+   with a PGI C compiler; linking with a JPEG library built with gcc causes 
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to 
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
 
 %%%4.2r2%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -1,13 +1,13 @@
 
-                          HDF 4.2 Release 3
+                          HDF 4.2 Release 3  - snap*
                           =================
-                          January 28, 2008
+                          January 31, 2008
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2r2 and HDF 4.2r3.  
+This document describes the differences between HDF 4.2r3 and HDF 4.2r3-snap*.  
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2r3.
+and wish to migrate to HDF 4.2r3-snap*.
 
 The HDF 4.2r3 documentation can be found on the THG ftp server:
 
@@ -29,7 +29,7 @@ CONTENTS
   -- Library
   -- Utilities
 - Support for new platforms and compilers
-- Bugs fixed since HDF4.2r2
+- Bugs fixed since HDF4.2r3
   -- Utilities
   -- Library
   -- Configuration
@@ -42,41 +42,11 @@ New features and changes
 ========================
     Configuration
     ============= 
-    None 
+        None 
 
     Library
     ========= 
-
-	- Modified the HDF4 mfhdf library and configure to work in the 
-	  absence of the NetCDF-3 header files when the HDF4 library 
-	  is configured with the --disable-netcdf flag. This feature is 
-	  required when building the ESDIS Toolkit in the presence of the
-	  NetCDF-3 library. In this case, the HDF4 file netcdf.h is used 
-	  to build the HDF4 libraries and is installed under the name 
-	  "hdf4_netcdf.h" to avoid a name clash with the NetCDF-3 file 
-	  netcdf.h.
-							EIP 2007-10-30
-
-	- Note that the previous change to SDnametoindex was backed out.  It 
-	  only returns the first variable of the requested name, as did the 
-	  original version of this function.  The variable can be an SDS or 
-	  a coordinate variable.  With this behavior, if there is more than
-	  one variable with the same name in the file, care must be taken to
-	  retrieve the desired variable.  Please see new APIs in the next 
-	  item for a way to handle non-uniquely named variables.  The behavior 
-	  of SDnametoindex will be documented in FAQs, documentation, and the
-	  newsletter.
-							BMR 2008-01-17
-
-	- Added new APIs to SD interface:
-	  + SDgetnumvars_byname: Given a name, returns the number of 
-	    variables in a file with that same name.
-	  + SDnametoindices: Given a name, returns a list of indices of 
-	    all the variables in a file with that same name.
-	  With these new APIs, users can determine when an SDS name or 
-	  a coordinate variable's name is not unique, retrieve the named 
-	  variables, and examine them.
-							BMR 2008-01-17
+        None
 
     Utilities
     ========= 
@@ -85,9 +55,8 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
+        None
         
-    Support for Windows XP 64-bit with Visual Studio 2005 and 
-    Intel Fortran compiler was added. 
 
 Bugs fixed since HDF4.2r2
 =========================
@@ -101,15 +70,10 @@ Bugs fixed since HDF4.2r2
 
     Configuration
     ============= 
-       - libhdf4.settings file was not installed by make install command;
-         fixed
-                                                         EIP, 2007-10-09
-
+        None
 
 Documentation
 ==============
-     Descriptions of the new functions SDgetnumvars_byname and SDnametoindices
-     have been added to the documentation. 
 
 
 Platforms tested
