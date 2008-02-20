@@ -399,6 +399,31 @@ RUNSNAPTEST()
     fi
 }
 
+TIMELIMIT_PARSE()
+{
+    while read x y ; do
+        # Scan for entry for this weekday.
+        xd=`echo $x | cut -f1 -d/`
+        if [ "$xd" = ${WEEKDAY} ]; then
+            # strip away the weekday/ part.
+            timelimit=`echo $x | cut -f2 -d/`
+            break
+        fi
+        case "$x" in
+           '' | '#'*)
+                # blank or comment lines.  Continue.
+                ;;
+            ???/*)
+                # Ignore any entry not of this weekday.
+                ;;
+            *)
+                echo "Set timelimit to $x"
+                timelimit="$x"
+                ;;
+        esac
+    done
+}
+
 
 # configuration parsing.
 # Taking configuration from input.
@@ -630,12 +655,14 @@ FAILEDLOG=${LOGDIR}/FAILED_LOG_${TODAY}
 FAILEDDETAIL=${LOGDIR}/FAILED_DETAIL_${TODAY}
 SKIPPEDLOG=${LOGDIR}/SKIPPED_LOG_${TODAY}
 TIMELOG=${LOGDIR}/TIME_LOG_${TODAY}
+TIMEKEEPERLOG=${LOGDIR}/TIMEKEEPER_LOG_${TODAY}
 CVSLOG=${LOGDIR}/CVS_LOG_${TODAY}
 CVSLOG_LOCK=${LOGDIR}/CVS_LOG_LOCK_${TODAY}
 DIFFLOG=${LOGDIR}/DIFF_LOG_${TODAY}
 # Snap Test hosts and Configuration files
 ALLHOSTSFILE=${SNAPYARD}/allhostfile
 SNAPTESTCFG=${SNAPYARD}/snaptest.cfg
+TIMELIMIT=${SNAPYARD}/timelimit
 TMPFILE="${LOGDIR}/#runtest.${TODAY}.$$"
 
 # more processing of setup option if requested
@@ -770,6 +797,13 @@ if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
     PRINT_BLANK
     TEST_TYPE="launching"
     cd ${SNAPYARD}/log
+    # Fork off timekeeper if concurrent tests will be used.
+    if [ -n "$SRCDIR" ]; then
+        #timelimit=`grep -v '^#' $TIMELIMIT`
+        TIMELIMIT_PARSE < $TIMELIMIT
+        ($SNAPYARD/current/bin/timekeeper $timelimit > $TIMEKEEPERLOG 2>&1 &)
+        PRINT "    Fork off timekeeper $timelimit"
+    fi
     n_test=0
     runtest_type="hosts"
     for h in $TESTHOST; do
