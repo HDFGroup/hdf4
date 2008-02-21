@@ -47,6 +47,7 @@
 ./bin/reconfigure
 ./bin/runtest
 ./bin/snapshot
+./bin/timekeeper
 ./bin/yodconfigure
 
 ./config/BlankForm
