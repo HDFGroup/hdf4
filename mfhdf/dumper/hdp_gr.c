@@ -253,13 +253,13 @@ grdumpfull(int32        ri_id,
    buf = (VOIDP) HDmalloc(read_nelts * eltsz);
    CHECK_ALLOC( buf, "buf", "grdumpfull" );
 
-   start = (int32 *) HDmalloc(ncomps * sizeof(int32));
+   start = (int32 *) HDmalloc(2 * sizeof(int32));
    CHECK_ALLOC( start, "start", "grdumpfull" );
 
-   edge = (int32 *) HDmalloc(ncomps * sizeof(int32));
+   edge = (int32 *) HDmalloc(2 * sizeof(int32));
    CHECK_ALLOC( edge, "edge", "grdumpfull" );
 
-   stride = (int32 *) HDmalloc(ncomps * sizeof(int32));
+   stride = (int32 *) HDmalloc(2 * sizeof(int32));
    CHECK_ALLOC( stride, "stride", "grdumpfull" );
 
    start[0]=start[1]=0;
