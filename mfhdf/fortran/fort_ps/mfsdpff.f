@@ -1,14 +1,15 @@
-C****************************************************************************
-C* NCSA HDF                                                                 *
-C* Software Development Group                                               *
-C* National Center for Supercomputing Applications                          *
-C* University of Illinois at Urbana-Champaign                               *
-C* 605 E. Springfield, Champaign IL 61820                                   *
-C*                                                                          *
-C* For conditions of distribution and use, see the accompanying             *
-C* hdf/COPYING file.                                                        *
-C*                                                                          *
-C****************************************************************************
+C * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+C  Copyright by The HDF Group.                                               *
+C  Copyright by the Board of Trustees of the University of Illinois.         *
+C  All rights reserved.                                                      *
+C                                                                            *
+C  This file is part of HDF.  The full HDF copyright notice, including       *
+C  terms governing use, modification, and redistribution, is contained in    *
+C  the files COPYING and Copyright.html.  COPYING can be found at the root   *
+C  of the source code distribution tree; Copyright.html can be found at      *
+C  http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
+C  access to either file, you may request a copy from help@hdfgroup.org.     *
+C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 C
 C $Id$
 C
@@ -1402,7 +1403,7 @@ C                   comp_flag:
 C                               -1 - SDS is non-chunked
 C                                0 - SDS is chunked without compression
 C                                1 - SDS is chunked and compressed with
-C                                    RLE, GZIP or SKPHUFF 
+C                                    RLE, GZIP, SZIP or SKPHUFF 
 C                                2 - SDS is chunked and compressed with
 C                                    NBIT
 C        Returns:   0 on success, -1 on failure
@@ -1543,6 +1544,7 @@ C                            COMP_CODE_RLE = 1
 C                            COMP_CODE_NBIT = 2 
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_SZIP = 5
 C                   comp_prm  - compression parameters array
 C        For
 C        Adaptive Huffman 
@@ -1554,7 +1556,10 @@ C                   comp_prm(1) = nbit_sign_ext
 C                   comp_prm(2) = nbit_fill_one
 C                   comp_prm(3) = nbit_start_bit
 C                   comp_prm(4) = nbit_bit_len 
-C          
+C         
+C        SZIP
+C                   comp_prm(1) = options_mask
+C                   comp_prm(2) = pixels_per_block 
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C
@@ -1663,9 +1668,12 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_SZIP =  5
 C                   comp_prm - compression parameter array:
 C                   comp_prm(1) = deflate_level for GZIP
 C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C                   comp_prm(1) = options_mask for SZIP
+C                   comp_prm(2) = bits_per_block for SZIP
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C
@@ -1703,9 +1711,15 @@ C                            COMP_CODE_NONE = 0
 C                            COMP_CODE_RLE =1
 C                            COMP_CODE_SKPHUFF = 3
 C                            COMP_CODE_DEFLATE = 4 
+C                            COMP_CODE_SZIP =  5
 C                   comp_prm - compression parameter array:
 C                   comp_prm(1) = deflate_level for GZIP
 C                   comp_prm(1) = skphuff_skp_size for ADAPTIVE HUFFMAN
+C                   comp_prm(1) = options_mask for SZIP
+C                   comp_prm(2) = bits_per_block for SZIP
+C                   comp_prm(3) = pixels_per_scanline for SZIP
+C                   comp_prm(4) = bits_per_pixel for SZIP
+C                   comp_prm(5) = pixels for SZIP
 C        NOTE: IT IS USER's responsibility to pass correct compression
 C              parameters for each type of compression
 C

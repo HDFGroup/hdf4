@@ -1,15 +1,15 @@
-/****************************************************************************
- * NCSA HDF                                                                 *
- * Software Development Group                                               *
- * National Center for Supercomputing Applications                          *
- * University of Illinois at Urbana-Champaign                               *
- * 605 E. Springfield, Champaign IL 61820                                   *
- *                                                                          *
- * For conditions of distribution and use, see the accompanying             *
- * hdf/COPYING file.                                                        *
- *                                                                          *
- ****************************************************************************/
-
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*  Copyright by The HDF Group.                                               *
+*  Copyright by the Board of Trustees of the University of Illinois.         *
+*  All rights reserved.                                                      *
+*                                                                            *
+*  This file is part of HDF.  The full HDF copyright notice, including       *
+*  terms governing use, modification, and redistribution, is contained in    *
+*  the files COPYING and Copyright.html.  COPYING can be found at the root   *
+*  of the source code distribution tree; Copyright.html can be found at      *
+*  http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
+*  access to either file, you may request a copy from help@hdfgroup.org.     *
+* * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 #ifdef RCSID
 static char RcsId[] = "@(#)$Revision$";
 #endif
@@ -1746,6 +1746,8 @@ switch (cflags)
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ *          comp_prm[0] = option_mask:      SZIP option mask parameter
+ *          comp_prm[1] = pixels_per_block  SZIP parameter 
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -1833,6 +1835,16 @@ switch (CASE)  {
 
           break;
 
+       case 5:      /* SZIP compression */  
+         cflags = HDF_CHUNK | HDF_COMP;
+          for (i=0; i < rank; i++)
+                 chunk_def.comp.chunk_lengths[i] = dim_length[rank-i-1];
+           
+          chunk_def.comp.comp_type = COMP_CODE_SZIP;
+          chunk_def.comp.cinfo.szip.options_mask     = comp_prm[0];
+          chunk_def.comp.cinfo.szip.pixels_per_block = comp_prm[1];
+          break;
+
        default:
 
           return FAIL;
@@ -1840,7 +1852,6 @@ switch (CASE)  {
                      }
 
 ret = SDsetchunk(sdsid, chunk_def, cflags);
- 
 return(ret);
 
 }   
@@ -1937,9 +1948,13 @@ return(ret);
  *                      COMP_CODE_RLE  = 1
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
+ *                      COMP_CODE_SZIP = 5
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
  *          comp_prm[0] = deflate_level:    GZIP  compression parameter
+ *          SZIP:
+ *          comp_prm[0] = options_mask    
+ *          comp_prm[1] = pixels_per_block 
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -1986,6 +2001,11 @@ switch (CASE)  {
           c_info.deflate.level = comp_prm[0]; 
           break;
 
+       case COMP_CODE_SZIP:      /* SZIP compression */  
+          c_type = COMP_CODE_SZIP;
+          c_info.szip.options_mask = comp_prm[0]; 
+          c_info.szip.pixels_per_block = comp_prm[1]; 
+          break;
        default:
 
           return FAIL;
@@ -2068,6 +2088,7 @@ nscchempty(id, flag)
  *                      COMP_CODE_NBIT = 2
  *                      COMP_CODE_SKPHUFF = 3
  *                      COMP_CODE_DEFLATE = 4
+ *                      COMP_CODE_SZIP = 5
  *          SKPHUFF:
  *          comp_prm[0] = skphuff_skp_size: size of individual elements for 
  *                            Adaptive Huffman compression algorithm
@@ -2078,6 +2099,12 @@ nscchempty(id, flag)
  *          comp_prm[1] = nbit_fill_one
  *          comp_prm[2] = nbit_start_bit
  *          comp_prm[3] = nbit_bit_len
+ *          SZIP:
+ *          comp_prm[0] = options_mask             IN
+ *          comp_prm[1] = pixels_per_block         IN
+ *          comp_prm[2] = pixels_per_scanline      OUT
+ *          comp_prm[3] = bits_per_pixel           OUT
+ *          comp_prm[4] = pixels                   OUT
  * Returns: 0 on success, -1 on failure with error set
  * Users:   HDF Fortran programmers          
  *-------------------------------------------------------------------------*/
@@ -2135,6 +2162,16 @@ nscchempty(id, flag)
        case COMP_CODE_DEFLATE:      /* GZIP compression */  
           *comp_type = 4;
           comp_prm[0] = c_info.deflate.level; 
+	  ret = 0;
+          break;
+
+       case COMP_CODE_SZIP:      /* SZIP encoding */
+          *comp_type = 5;
+          comp_prm[0] = c_info.szip.options_mask;
+          comp_prm[1] = c_info.szip.pixels_per_block;
+          comp_prm[2] = c_info.szip.pixels_per_scanline; 
+          comp_prm[3] = c_info.szip.bits_per_pixel; 
+          comp_prm[4] = c_info.szip.pixels; 
 	  ret = 0;
           break;
 
