@@ -54,7 +54,7 @@ STANDARD_OPT=""
 ENABLE_PARALLEL="--enable-parallel"
 CONFIGNAME=$HOSTNAME	# Name used in the SNAPTESTCFG file
 
-# test hosts default as local host.
+# test host defaults as local host.
 TESTHOST=""
 
 #################################
@@ -809,8 +809,10 @@ if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
     n_test=0
     runtest_type="hosts"
     for h in $TESTHOST; do
+        CONFIGNAME=`echo $h | cut -f2 -d/`
+        h=`echo $h | cut -f1 -d/`
 	n_test=`expr $n_test + 1`
-	TMP_OUTPUT="#$h.out"
+	TMP_OUTPUT="${h}_${CONFIGNAME}.out"
 	(PRINT "=============="
 	 PRINT "Testing $h"
 	 PRINT "==============") > $TMP_OUTPUT
@@ -818,24 +820,22 @@ if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
 	# run the remote shell command with output to $TMP_OUTPUT
 	case "$RSH" in
 	    rsh|ssh)
-		CMD="$RSH $h -n $PROGNAME -configname $h"
+		CMD="$RSH $h -n $PROGNAME -configname $CONFIGNAME"
 		PRINT $CMD
-		# kludge: some how eirene and houdin can not have
-                # rsh connections too close.  wait a few seconds
-		test $h = houdin && echo "wait 10 sec for houdin" && sleep 10
 
 		# launch concurrent tests only if srcdir is used
 		if [ -n "$SRCDIR" ]; then
 		    $CMD || REPORT_ERR "****FAILED ${h}: Abnormal exit from runtest****" && PRINT_BLANK &
+                    echo $! > PID.${h}_${CONFIGNAME}
 		else
 		    $CMD || REPORT_ERR "****FAILED ${h}: Abnormal exit from runtest****" && PRINT_BLANK 
 		fi
 		;;
 	    NoRemoteCommand)
-		PRINT $h does not accept Remote Command
+		PRINT $h does not accept Remote Command "(`date`)"
 		;;
 	    NotReachable)
-		PRINT $h is not reachable 
+		PRINT $h is not reachable "(`date`)"
 		;;
 	    *)
 		PRINT "CHECK_RSH for $h returned unknow result ($RSH)"
@@ -845,13 +845,17 @@ if [ -n "$TESTHOST" -a $HOSTNAME != "$TESTHOST" ]; then
     # wait for all launched tests to finish, then cat them back out.
     wait
     for h in $TESTHOST; do
-	TMP_OUTPUT="#$h.out"
+        CONFIGNAME=`echo $h | cut -f2 -d/`
+        h=`echo $h | cut -f1 -d/`
+        TMP_OUTPUT="#${h}_${CONFIGNAME}.out"
+	#TMP_OUTPUT="#$h.out"
 	cat $TMP_OUTPUT
 	# Verify test script did complete by checking the last lines
 	(tail -5 $TMP_OUTPUT | grep -s 'Grand total' > /dev/null 2>&1) ||
 	    (REPORT_ERR "****FAILED ${h}: snaptest did not complete****" &&
 		PRINT_BLANK)
-	rm $TMP_OUTPUT
+        rm -f $TMP_OUTPUT PID.${h}_${CONFIGNAME}
+	#rm $TMP_OUTPUT
     done
     exit 0
 fi
