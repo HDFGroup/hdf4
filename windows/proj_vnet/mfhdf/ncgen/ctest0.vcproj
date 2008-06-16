@@ -57,7 +57,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate test0.c"
-				CommandLine="..\..\..\..\ctest0_gen release"/>
+				CommandLine="cd $(TargetDir).. &amp;&amp; if not exist test0.c $(ConfigurationName)\ncgen -c -o ctest0.nc test0.cdl &gt; test0.c"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -122,7 +122,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Generate test0.c"
-				CommandLine="..\..\..\..\ctest0_gen debug"/>
+				CommandLine="cd $(TargetDir).. &amp;&amp; if not exist test0.c $(ConfigurationName)\ncgen -c -o ctest0.nc test0.cdl &gt; test0.c"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -148,7 +148,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp">
 			<File
-				RelativePath="..\..\..\..\mfhdf\test0.c">
+				RelativePath="..\..\..\..\mfhdf\ncgen\test0.c">
 				<FileConfiguration
 					Name="Release|Win32">
 					<Tool

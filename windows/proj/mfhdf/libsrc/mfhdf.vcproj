@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="mfhdf"
 	ProjectGUID="{0BCAA368-76C8-4BB7-B218-C4280DC012BD}"
+	RootNamespace="mfhdf"
 	>
 	<Platforms>
 		<Platform
@@ -709,6 +710,10 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\fortran\jackets.c"
+				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\mfsd.c"

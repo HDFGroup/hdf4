@@ -1164,23 +1164,14 @@
 ./release_notes/misc_docs.txt
 
 ./windows/copy_hdf.bat
-./windows/ctest0_gen.BAT
-./windows/deleteline.bat
-./windows/difftest.BAT
 ./windows/hdf4bt.bat
 ./windows/hdf4build.bat
 ./windows/hdf4check.bat
-./windows/hdptest.bat
 ./windows/InstallExamples.bat
 ./windows/Installf90Examples.BAT
-./windows/importtest.bat
 ./windows/install_dll.bat
 ./windows/install_fortrandll.BAT
 ./windows/installhdf4lib.BAT
-./windows/ncgen_ctest.BAT
-./windows/utiltest.BAT
-./windows/win32debugtst.bat
-./windows/win32releasetst.bat
 
 ./windows/examples/cexamples/sd_addvg.c
 ./windows/examples/cexamples/sd_create.c
@@ -1303,7 +1294,10 @@
 ./windows/proj/mfhdf/nctest/nctest.vcproj
 ./windows/proj/mfhdf/ncdump/ncdump.vcproj
 ./windows/proj/mfhdf/ncgen/ncgen.vcproj
+./windows/proj/mfhdf/ncgen/ftest0.vfproj
 ./windows/proj/mfhdf/ncgen/ctest0.vcproj
+./windows/proj/mfhdf/fortran/ftest.vfproj
+./windows/proj/mfhdf/fortran/tszip.vfproj
 ./windows/proj/mfhdf/fortran/mfhdf_fcstub.vcproj
 ./windows/proj/mfhdf/fortran/mfhdf_fortrandll.vfproj
 ./windows/proj/mfhdf/fortran/mfhdf_fortran.vfproj
@@ -1368,6 +1362,9 @@
 ./windows/proj_vnet/mfhdf/ncdump/ncdump.vcproj
 ./windows/proj_vnet/mfhdf/ncgen/ncgen.vcproj
 ./windows/proj_vnet/mfhdf/ncgen/ctest0.vcproj
+./windows/proj_vnet/mfhdf/ncgen/ftest0.vfproj
+./windows/proj_vnet/mfhdf/fortran/ftest.vfproj
+./windows/proj_vnet/mfhdf/fortran/tszip.vfproj
 ./windows/proj_vnet/mfhdf/fortran/mfhdf_fcstub.vcproj
 ./windows/proj_vnet/mfhdf/fortran/mfhdf_fortrandll.vfproj
 ./windows/proj_vnet/mfhdf/fortran/mfhdf_fortran.vfproj
@@ -1454,5 +1451,15 @@
 ./windows/proj_vs6/mfhdf/libsrc/dllcdftest.dsp
 
 ./windows/hdf/src/h4config.h
+./windows/hdf/util/testutil.bat
+./windows/mfhdf/fortran/ftest.f
+./windows/mfhdf/fortran/jackets.c
+./windows/mfhdf/fortran/netcdf.inc
 ./windows/mfhdf/libsrc/netcdf.h
+./windows/mfhdf/libsrc/testinterface.bat
+./windows/mfhdf/hdiff/testhdiff.bat
+./windows/mfhdf/hdfimport/testutil.bat
+./windows/mfhdf/ncdump/testncdump.bat
+./windows/mfhdf/ncgen/testncgen.bat
+./windows/mfhdf/dumper/testhdp.bat
 

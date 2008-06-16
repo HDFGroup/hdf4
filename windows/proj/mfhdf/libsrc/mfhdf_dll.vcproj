@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="mfhdf_dll"
 	ProjectGUID="{8EB00279-B030-4D34-BFB1-FA38A4255F67}"
+	RootNamespace="mfhdf_dll"
 	>
 	<Platforms>
 		<Platform
@@ -826,6 +827,10 @@
 						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\fortran\jackets.c"
+				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\mfsd.c"

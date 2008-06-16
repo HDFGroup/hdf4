@@ -24,6 +24,7 @@ rem Create an "exclude file", which contains this file, itself, and the proj dir
 echo.\exclude.txt > exclude.txt
 echo.\%~nx0 >> exclude.txt
 echo.\proj\ >> exclude.txt
+echo.\proj_vnet\ >> exclude.txt
 echo.\proj_vs6\ >> exclude.txt
 echo.\examples\ >> exclude.txt
 

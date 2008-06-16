@@ -341,6 +341,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\fortran\jackets.c">
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\mfsd.c">
 				<FileConfiguration
 					Name="Release|Win32">
