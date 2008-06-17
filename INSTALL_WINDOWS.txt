@@ -779,10 +779,11 @@ Section VIII. Build and Test HDF4 Library on the Command Line
 We support command-line builds for the following configurations:
     
     -- Visual Studio 6.0 (no Fortran)
-    -- Visual Studio .NET 2003 (with or without Fortran)
-    -- Visual Studio 2005 (with or without Fortran)
+    -- Visual Studio .NET 2003 (no Fortran)
+    -- Visual Studio 2005 (with or without Fortran) (32- or 64-bit)
     
-For all other Windows development tools, HDF4 should be built in the development environment following the instructions in Section I.
+For all other Windows development tools, HDF4 should be built in the development 
+environment following the instructions in Section I.
 
 1. Preconditions: 
 
@@ -791,8 +792,13 @@ For all other Windows development tools, HDF4 should be built in the development
        1.1.1 Verify Visual Studio
        
        Building from the command line requires environment variables for Visual
-       Studio.  These are generally setup when Visual Studio is installed, but you
-       can verify by testing the variables from command prompt.  For Visual Studio 6.0:
+       Studio.  These are generally setup when Visual Studio is installed, but 
+       you can verify by testing the variables from command prompt.  If you are
+       build Fortran libraries, you will also need your environment set up for
+       Intel Visual Fortran 9.1.  You may verify using the following commands in
+       a terminal:
+       
+       For Visual Studio 6.0:
        
             if not defined msdevdir echo not defined!
        
@@ -803,6 +809,10 @@ For all other Windows development tools, HDF4 should be built in the development
        For Visual Studio 2005:
        
             if not defined vs80comntools echo not defined!
+            
+       For Intel Visual Fortran 9.1:
+       
+            if not defined ifort_compiler91 echo not defined!
                   
        1.1.2 Add External Libraries
        
@@ -821,8 +831,8 @@ For all other Windows development tools, HDF4 should be built in the development
        If you wish to specify directories from the command line, set the INCLUDE
        and LIB environment variables as follows:
        
-            set INCLUDE=%INCLUDE%;c:\zlib\include;c:\jpeg-6b;c:\szip\include
-            set LIB=%LIB%;c:\zlib\lib;c:\jpeg-6b;c:\szip\dll
+            set INCLUDE=%INCLUDE%;C:\zlib\include;C:\jpeg-6b;C:\szip\include
+            set LIB=%LIB%;C:\zlib\dll;C:\jpeg-6b;C:\szip\dll
        
        Notes:
        
@@ -841,7 +851,7 @@ For all other Windows development tools, HDF4 should be built in the development
            
    1.2 Run batch file copy_hdf.bat.
 
-   Go to  c:\MyHDFstuff\hdf4\windows and run copy_hdf.bat. 
+   Go to C:\MyHDFstuff\hdf4\windows and run copy_hdf.bat. 
       
 2. Building and testing HDF4 libraries and tools
 
@@ -862,17 +872,14 @@ For all other Windows development tools, HDF4 should be built in the development
             vs6                     Build using Visual Studio 6.0
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
-            disableszip             Disable szip library in HDF4
             useenv                  Build using variables set in the environment.
 
          Invoke a command prompt window and run hdf4bt with the appropriate
-         parameters.  You must specify one of "vs8", "vnet", or "vs6".  Test 
-         results are saved in:
-
-            c:\MyHDFstuff\hdf4\check_results.txt   
+         parameters.  You must specify one of "vs8", "vnet", or "vs6".  It is
+         recommended that you pipe your results into a text file for reviewing.
 
          You may use a text-editor to verify results.  There should be no
-         "FAILED" marks in check_results.txt.
+         "FAILED" marks.
 
     2.2 Options B: Build and test in two steps 
 
@@ -892,14 +899,13 @@ For all other Windows development tools, HDF4 should be built in the development
             vs6                     Build using Visual Studio 6.0
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
-            disableszip             Disable szip library in HDF4
             useenv                  Build using variables set in the environment.
 
             Invoke a command prompt window and run hdf4build with the 
             appropriate parameters.  You must specify one of "vs8", "vnet", or 
-            "vs6".  Compiling outputs are saved in 
-            c:\MyHDFstuff\hdf4\build_results.txt.  You can check the file to 
-            find out whether there are any compilation errors.
+            "vs6".  It is recommended that you pipe your results into a text 
+            file for reviewing  You can check the file to find out whether there
+            are any compilation errors.
 
          Step 2) Test HDF4 Libraries and Tools
    
@@ -911,14 +917,11 @@ For all other Windows development tools, HDF4 should be built in the development
             enablefortran   Test HDF4 C/Fortran Libraries
 
             Invoke a command prompt window and run hdf4check with apropriate 
-            options.
+            options.It is recommended that you pipe your results into a text 
+            file for reviewing.
 
-            Test results are saved in:
-
-               c:\MyHDFstuff\hdf4\check_results.txt.
-            
-             You may use a text-editor to verify results.  There should be no
-             "FAILED" marks in check_results.txt.
+            You may use a text-editor to verify results.  There should be no
+            "FAILED" marks.
 
 3. Installing HDF4 Libraries
 
