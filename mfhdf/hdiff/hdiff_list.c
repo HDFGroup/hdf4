@@ -19,7 +19,7 @@
 #include "mfhdf.h"
 #include "hdiff_list.h"
 
-static int is_reserved(char*vgroup_class);
+static int is_reserved(char*vg_class);
 static char *get_path(char*path_name, char*obj_name);
 static int insert_an_data(int32 file_id,
                           int32 ref_in, 
@@ -162,17 +162,18 @@ int hdiff_list_vg(const char* fname,
                   diff_dim_table_t *td1,   /* dimension table 1 */
                   diff_dim_table_t *td2)   /* dimension table 2 */
 {
-    int32 vgroup_id,      /* vgroup identifier */
-          nlones = 0,     /* number of lone vgroups */
-          ntagrefs,       /* number of tag/ref pairs in a vgroup */
-          *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
-          *tags=NULL,     /* buffer to hold the tag numbers of vgroups   */
-          *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
-          tag_vg,
-          ref_vg;
-    char  vgroup_name[VGNAMELENMAX];
-    char  vgroup_class[VGNAMELENMAX];
-    int   i;
+    int32  vg_id;          /* vgroup identifier */
+    int32  nlones = 0;     /* number of lone vgroups */
+    int32  ntagrefs;       /* number of tag/ref pairs in a vgroup */
+    int32  *ref_array=NULL;/* buffer to hold the ref numbers of lone vgroups   */
+    int32  *tags=NULL;     /* buffer to hold the tag numbers of vgroups   */
+    int32  *refs=NULL;     /* buffer to hold the ref numbers of vgroups   */
+    int32  tag_vg;
+    int32  ref_vg;
+    char   *vg_name;
+    char   vg_class[VGNAMELENMAX];
+    uint16 name_len;
+    int32  i;
     
     /* initialize the V interface */
     if (Vstart (file_id)==FAIL) 
@@ -207,60 +208,70 @@ int hdiff_list_vg(const char* fname,
         */
         for (i = 0; i < nlones; i++)
         {
+            
+            int32 ref = ref_array[i];
        /*
         * attach to the current vgroup then get its
         * name and class. note: the current vgroup must be detached before
         * moving to the next.
         */
-            if ((vgroup_id = Vattach (file_id, ref_array[i], "r"))==FAIL)
+            if ((vg_id = Vattach (file_id, ref, "r"))==FAIL)
             {
-                printf("Error: Could not attach group with ref <%ld>\n", ref_array[i]);
+                printf("Error: Could not attach group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+            if (Vgetnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+            vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
+            
+            if (Vgetname (vg_id, vg_name)==FAIL)
+            {
+                printf("Error: Could not get name for group with ref <%ld>\n", ref);
                 goto out;
             }
             
-            if (Vgetname (vgroup_id, vgroup_name)==FAIL)
+            if (Vgetclass (vg_id, vg_class)==FAIL)
             {
-                printf("Error: Could not get name for group with ref <%ld>\n", ref_array[i]);
-                goto out;
-            }
-            
-            if (Vgetclass (vgroup_id, vgroup_class)==FAIL)
-            {
-                printf("Error: Could not get class for group with ref <%ld>\n", ref_array[i]);
+                printf("Error: Could not get class for group with ref <%ld>\n", ref);
                 goto out;
             }
             
             /* ignore reserved HDF groups/vdatas */
-            if( is_reserved(vgroup_class))
+            if( is_reserved(vg_class))
             {
-                if (Vdetach (vgroup_id)==FAIL)
+                if (Vdetach (vg_id)==FAIL)
                 {
-                    printf("Error: Could not detach group <%s>\n", vgroup_class);
+                    printf("Error: Could not detach group <%s>\n", vg_class);
                     goto out;
                 }
                 continue;
             }
             
-            if(strcmp(vgroup_name,GR_NAME)==0) 
+            if(strcmp(vg_name,GR_NAME)==0) 
             {
-                if (Vdetach (vgroup_id)==FAIL)
+                if (Vdetach (vg_id)==FAIL)
                 {
-                    printf("Error: Could not detach group <%s>\n", vgroup_class);
+                    printf("Error: Could not detach group <%s>\n", vg_class);
                     goto out;
                 }
                 continue;
             }
             
             /* get ref and tag */
-            if ((ref_vg = VQueryref(vgroup_id))==FAIL)
+            if ((ref_vg = VQueryref(vg_id))==FAIL)
             {
-                printf( "Failed to get ref for <%s>\n", vgroup_name);
+                printf( "Failed to get ref for <%s>\n", vg_name);
                 goto out;
             }
 
-            if ((tag_vg = VQuerytag(vgroup_id))==FAIL)
+            if ((tag_vg = VQuerytag(vg_id))==FAIL)
             {
-                printf( "Failed to get tag for <%s>\n", vgroup_name);
+                printf( "Failed to get tag for <%s>\n", vg_name);
                 goto out;
             }
 
@@ -268,25 +279,25 @@ int hdiff_list_vg(const char* fname,
       
                   
             /* add object to table */
-            dtable_add(table,tag_vg,ref_vg,vgroup_name);
+            dtable_add(table,tag_vg,ref_vg,vg_name);
             
-            insert_vg_attrs(vgroup_id,vgroup_name);
-            insert_vg_an(file_id,vgroup_id,vgroup_name);
+            insert_vg_attrs(vg_id,vg_name);
+            insert_vg_an(file_id,vg_id,vg_name);
 
             
             /* insert objects for this group */
-            ntagrefs = Vntagrefs(vgroup_id);
+            ntagrefs = Vntagrefs(vg_id);
             if ( ntagrefs > 0 )
             {
                 tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
                 refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
+                Vgettagrefs(vg_id, tags, refs, ntagrefs);
                 
                 insert_vg(fname,
                     file_id,
                     sd_id,
                     gr_id,
-                    vgroup_name,
+                    vg_name,
                     tags,
                     refs,
                     ntagrefs,
@@ -300,11 +311,13 @@ int hdiff_list_vg(const char* fname,
                     free (refs);
             }
             
-            if(Vdetach (vgroup_id)==FAIL)
+            if(Vdetach (vg_id)==FAIL)
             {
-                printf("Error: Could not detach group <%s>\n", vgroup_name);
+                printf("Error: Could not detach group <%s>\n", vg_name);
                 goto out;
             }
+
+            free (vg_name);
             
         } /* for */
         
@@ -318,7 +331,7 @@ int hdiff_list_vg(const char* fname,
    /* terminate access to the V interface */
    if (Vend (file_id)==FAIL) 
    {
-       printf("Error: Could not end group interface in <%s>\n", vgroup_name);
+       printf("Error: Could not end group interface\n");
    }
  
  return 0;
@@ -357,13 +370,13 @@ int insert_vg(const char* fname,
               diff_dim_table_t *td2)        /* dimension table 2 */
              
 {
-    int32 vgroup_id,             /* vgroup identifier */
+    int32 vg_id,             /* vgroup identifier */
           ntagrefs,              /* number of tag/ref pairs in a vgroup */
           tag,                   /* temporary tag */
           ref,                   /* temporary ref */
           *tags,                 /* buffer to hold the tag numbers of vgroups   */
           *refs;                 /* buffer to hold the ref numbers of vgroups   */
-    char  vgroup_name[VGNAMELENMAX], vgroup_class[VGNAMELENMAX];
+    char  vg_name[VGNAMELENMAX], vg_class[VGNAMELENMAX];
     char  *path=NULL;
     int   i;
     
@@ -386,40 +399,40 @@ int insert_vg(const char* fname,
                 break;
             }
            
-            vgroup_id = Vattach (file_id, ref, "r");
-            Vgetname (vgroup_id, vgroup_name);
-            Vgetclass (vgroup_id, vgroup_class);
+            vg_id = Vattach (file_id, ref, "r");
+            Vgetname (vg_id, vg_name);
+            Vgetclass (vg_id, vg_class);
             
             /* ignore reserved HDF groups/vdatas */
-            if( is_reserved(vgroup_class))
+            if( is_reserved(vg_class))
             {
-                Vdetach (vgroup_id);
+                Vdetach (vg_id);
                 break;
             }
             
-            if(strcmp(vgroup_name,GR_NAME)==0) 
+            if(strcmp(vg_name,GR_NAME)==0) 
             {
-                Vdetach (vgroup_id);
+                Vdetach (vg_id);
                 break;
             }
 
          
             /* initialize path */
-            path=get_path(path_name,vgroup_name);
+            path=get_path(path_name,vg_name);
             
             /* add object to table */
             dtable_add(table,tag,ref,path);
     
-            insert_vg_attrs(vgroup_id,path);
-            insert_vg_an(file_id,vgroup_id,path);
+            insert_vg_attrs(vg_id,path);
+            insert_vg_an(file_id,vg_id,path);
             
             /* get objects for this group */
-            ntagrefs  = Vntagrefs(vgroup_id);
+            ntagrefs  = Vntagrefs(vg_id);
             if ( ntagrefs > 0 )
             {
                 tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
                 refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                Vgettagrefs(vgroup_id, tags, refs, ntagrefs);
+                Vgettagrefs(vg_id, tags, refs, ntagrefs);
                 
                 /* recurse */
                 insert_vg(fname,
@@ -437,9 +450,9 @@ int insert_vg(const char* fname,
                 free (tags);
                 free (refs);
             }
-            if(Vdetach (vgroup_id)==FAIL)
+            if(Vdetach (vg_id)==FAIL)
             {
-                printf("Error: Could not detach group <%s>\n", vgroup_name);
+                printf("Error: Could not detach group <%s>\n", vg_name);
             }
             if (path)
                 free(path);
@@ -848,19 +861,19 @@ int hdiff_list_an(int32 file_id)
  */
 
 int insert_vg_an(int32 file_id,
-                 int32 vgroup_id,
+                 int32 vg_id,
                  char *path) 
 {
     int32 ref_in,
           tag_in;
     
-    if ((ref_in = VQueryref(vgroup_id))==FAIL)
+    if ((ref_in = VQueryref(vg_id))==FAIL)
     {
         printf( "Failed to get ref for <%s>\n", path);
         return -1;
     }
 
-    if ((tag_in = VQuerytag(vgroup_id))==FAIL){
+    if ((tag_in = VQuerytag(vg_id))==FAIL){
         printf( "Failed to get tag for <%s>\n", path);
         return -1;
     }
@@ -1427,29 +1440,29 @@ out:
  */
 
 static
-int is_reserved(char*vgroup_class)
+int is_reserved(char*vg_class)
 {
     int ret=0;
     
     /* ignore reserved HDF groups/vdatas */
-    if(vgroup_class != NULL) 
+    if(vg_class != NULL) 
     {
-        if( (strcmp(vgroup_class,_HDF_ATTRIBUTE)==0) ||
-            (strcmp(vgroup_class,_HDF_VARIABLE) ==0) || 
-            (strcmp(vgroup_class,_HDF_DIMENSION)==0) ||
-            (strcmp(vgroup_class,_HDF_UDIMENSION)==0) ||
-            (strcmp(vgroup_class,DIM_VALS)==0) ||
-            (strcmp(vgroup_class,DIM_VALS01)==0) ||
-            (strcmp(vgroup_class,_HDF_CDF)==0) ||
-            (strcmp(vgroup_class,GR_NAME)==0) ||
-            (strcmp(vgroup_class,RI_NAME)==0) || 
-            (strcmp(vgroup_class,RIGATTRNAME)==0) ||
-            (strcmp(vgroup_class,RIGATTRCLASS)==0) ){
+        if( (strcmp(vg_class,_HDF_ATTRIBUTE)==0) ||
+            (strcmp(vg_class,_HDF_VARIABLE) ==0) || 
+            (strcmp(vg_class,_HDF_DIMENSION)==0) ||
+            (strcmp(vg_class,_HDF_UDIMENSION)==0) ||
+            (strcmp(vg_class,DIM_VALS)==0) ||
+            (strcmp(vg_class,DIM_VALS01)==0) ||
+            (strcmp(vg_class,_HDF_CDF)==0) ||
+            (strcmp(vg_class,GR_NAME)==0) ||
+            (strcmp(vg_class,RI_NAME)==0) || 
+            (strcmp(vg_class,RIGATTRNAME)==0) ||
+            (strcmp(vg_class,RIGATTRCLASS)==0) ){
             ret=1;
         }
         
         /* class and name(partial) for chunk table i.e. Vdata */
-        if( (strncmp(vgroup_class,"_HDF_CHK_TBL_",13)==0))
+        if( (strncmp(vg_class,"_HDF_CHK_TBL_",13)==0))
         {
             ret=1;
         }
