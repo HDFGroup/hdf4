@@ -314,18 +314,21 @@ int list_vg(int32 infile_id,
             dim_table_t *td2,
             options_t *options)
 {
-    int32 vgroup_id,      /* vgroup identifier */
-          nlones = 0,     /* number of lone vgroups */
-          ntagrefs,       /* number of tag/ref pairs in a vgroup */
-          *ref_array=NULL,/* buffer to hold the ref numbers of lone vgroups   */
-          *tags=NULL,     /* buffer to hold the tag numbers of vgroups   */
-          *refs=NULL,     /* buffer to hold the ref numbers of vgroups   */
-          vgroup_id_out=0,  /* vgroup identifier */
-          ref_vg,
-          tag_vg;
-    char  vgroup_name[VGNAMELENMAX];
-    char  vgroup_class[VGNAMELENMAX];
-    int   i;
+   
+
+    int32  vg_id;          /* vgroup identifier */
+    int32  nlones = 0;     /* number of lone vgroups */
+    int32  ntagrefs;       /* number of tag/ref pairs in a vgroup */
+    int32  *ref_array=NULL;/* buffer to hold the ref numbers of lone vgroups   */
+    int32  *tags=NULL;     /* buffer to hold the tag numbers of vgroups   */
+    int32  *refs=NULL;     /* buffer to hold the ref numbers of vgroups   */
+    int32  vgroup_id_out=0;/* vgroup identifier */
+    int32  tag_vg;
+    int32  ref_vg;
+    char   *vg_name;
+    char   vg_class[VGNAMELENMAX];
+    uint16 name_len;
+    int32  i;
     
    /*-------------------------------------------------------------------------
     * initialize the V interface
@@ -372,37 +375,54 @@ int list_vg(int32 infile_id,
         */
         for (i = 0; i < nlones; i++)
         {
+
+            int32 ref = ref_array[i];
            /*
             * attach to the current vgroup then get its
             * name and class. note: the current vgroup must be detached before
             * moving to the next.
             */
-            vgroup_id = Vattach (infile_id, ref_array[i], "r");
-            if (Vgetname (vgroup_id, vgroup_name)==FAIL)
+            if ((vg_id = Vattach (infile_id, ref, "r"))==FAIL)
+            {
+                printf("Error: Could not attach group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+            if (Vgetnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+
+            vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
+
+
+            if (Vgetname (vg_id, vg_name)==FAIL)
             {
                 printf( "Could not get name for group\n");
                 goto out;
                 
             }
-            if (Vgetclass (vgroup_id, vgroup_class)==FAIL)
+            if (Vgetclass (vg_id, vg_class)==FAIL)
             {
                 printf( "Could not get class for group\n");
                 goto out;
             }
             
             /* ignore reserved HDF groups/vdatas */
-            if( is_reserved(vgroup_class))
+            if( is_reserved(vg_class))
             {
-                if (Vdetach (vgroup_id)==FAIL)
+                if (Vdetach (vg_id)==FAIL)
                 {
                     printf( "Could not detach group\n");
                     goto out;
                 }
                 continue;
             }
-            if(strcmp(vgroup_name,GR_NAME)==0) 
+            if(strcmp(vg_name,GR_NAME)==0) 
             {
-                if (Vdetach (vgroup_id)==FAIL)
+                if (Vdetach (vg_id)==FAIL)
                 {
                     printf( "Could not detach group\n");
                     goto out;
@@ -411,14 +431,14 @@ int list_vg(int32 infile_id,
             }
             
             /* get ref, tag */
-            if ((ref_vg = VQueryref(vgroup_id))==FAIL)
+            if ((ref_vg = VQueryref(vg_id))==FAIL)
             {
-                printf( "Failed to get ref for <%s>\n", vgroup_name);
+                printf( "Failed to get ref for <%s>\n", vg_name);
                 goto out;
             }
-            if ((tag_vg = VQuerytag(vgroup_id))==FAIL)
+            if ((tag_vg = VQuerytag(vg_id))==FAIL)
             {
-                printf( "Failed to get tag for <%s>\n", vgroup_name);
+                printf( "Failed to get tag for <%s>\n", vg_name);
                 goto out;
             }
             
@@ -426,10 +446,10 @@ int list_vg(int32 infile_id,
             * add object to table
             *-------------------------------------------------------------------------
             */
-            list_table_add(list_tbl,tag_vg,ref_vg,vgroup_name);
+            list_table_add(list_tbl,tag_vg,ref_vg,vg_name);
             
             if (options->verbose)
-                printf(PFORMAT,"","",vgroup_name);  
+                printf(PFORMAT,"","",vg_name);  
             
             if (options->trip==1)
             {
@@ -439,32 +459,32 @@ int list_vg(int32 infile_id,
                 * to -1 for creating and the access mode is "w" for writing 
                 */
                 vgroup_id_out = Vattach (outfile_id, -1, "w");
-                if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
+                if (Vsetname (vgroup_id_out, vg_name)==FAIL)
                 {
-                    printf("Error: Could not create group <%s>\n", vgroup_name);
+                    printf("Error: Could not create group <%s>\n", vg_name);
                     goto out;
                 }
-                if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
+                if (Vsetclass (vgroup_id_out, vg_class)==FAIL)
                 {
-                    printf("Error: Could not create group <%s>\n", vgroup_name);
+                    printf("Error: Could not create group <%s>\n", vg_name);
                     goto out;
                 }
                 
-                if (copy_vgroup_attrs(vgroup_id,vgroup_id_out,vgroup_name,options)<0)
+                if (copy_vgroup_attrs(vg_id,vgroup_id_out,vg_name,options)<0)
                     goto out;
-                if (copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,vgroup_name,options)<0)
+                if (copy_vg_an(infile_id,outfile_id,vg_id,vgroup_id_out,vg_name,options)<0)
                     goto out;
             }
             
             
             
             /* insert objects for this group */
-            ntagrefs = Vntagrefs(vgroup_id);
+            ntagrefs = Vntagrefs(vg_id);
             if ( ntagrefs > 0 )
             {
                 tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
                 refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                if (Vgettagrefs(vgroup_id, tags, refs, ntagrefs)<0)
+                if (Vgettagrefs(vg_id, tags, refs, ntagrefs)<0)
                     goto out;
                 
                 if (vgroup_insert(infile_id,
@@ -474,7 +494,7 @@ int list_vg(int32 infile_id,
                     gr_id,
                     gr_out,
                     vgroup_id_out,
-                    vgroup_name,
+                    vg_name,
                     tags,
                     refs,
                     ntagrefs,
@@ -491,19 +511,21 @@ int list_vg(int32 infile_id,
                 refs=NULL;
             }
             
-            if(Vdetach (vgroup_id)==FAIL)
+            if(Vdetach (vg_id)==FAIL)
             {
-                printf("Error: Could not detach group <%s>\n", vgroup_name);
+                printf("Error: Could not detach group <%s>\n", vg_name);
                 goto out;
             }
             if (options->trip==1)
             {
                 if (Vdetach (vgroup_id_out)==FAIL)
                 {
-                    printf("Error: Could not detach group <%s>\n", vgroup_name);
+                    printf("Error: Could not detach group <%s>\n", vg_name);
                     goto out;
                 }
             }
+
+            free (vg_name);
             
   } /* for nlones */
   
@@ -522,13 +544,13 @@ int list_vg(int32 infile_id,
  
  if (Vend (infile_id)==FAIL)
  {
-     printf("Error: Could not end group interface in <%s>\n", vgroup_name);
+     printf("Error: Could not end group interface in <%s>\n", vg_name);
      return FAIL;
  }
  if (options->trip==1)
  {
      if (Vend (outfile_id)==FAIL){
-         printf("Error: Could not end group interface in <%s>\n", vgroup_name);
+         printf("Error: Could not end group interface in <%s>\n", vg_name);
          return FAIL;
      }
  }
@@ -580,13 +602,13 @@ int vgroup_insert(int32 infile_id,
                   dim_table_t *td2,
                   options_t *options)
 {
-    int32 vgroup_id;             /* vgroup identifier for opened group in input */
+    int32 vg_id;             /* vgroup identifier for opened group in input */
     int32 ntagrefs;              /* number of tag/ref pairs in a vgroup */
     int32 *tags=NULL;            /* buffer to hold the tag numbers of vgroups   */
     int32 *refs=NULL;            /* buffer to hold the ref numbers of vgroups   */
     int32 vgroup_id_out =-1;         /* vgroup identifier for the created group in output */
-    char  vgroup_name[VGNAMELENMAX];
-    char  vgroup_class[VGNAMELENMAX];
+    char  vg_name[VGNAMELENMAX];
+    char  vg_class[VGNAMELENMAX];
     char  *path=NULL;
     int   visited;
     int32 tag;                   
@@ -614,32 +636,32 @@ int vgroup_insert(int32 infile_id,
             *-------------------------------------------------------------------------
             */
                     
-            vgroup_id = Vattach (infile_id, ref, "r");
-            if (Vgetname (vgroup_id, vgroup_name)==FAIL)
+            vg_id = Vattach (infile_id, ref, "r");
+            if (Vgetname (vg_id, vg_name)==FAIL)
             {
                 printf( "Could not get name for group\n");
                 goto out;
                 
             }
-            if (Vgetclass (vgroup_id, vgroup_class)==FAIL)
+            if (Vgetclass (vg_id, vg_class)==FAIL)
             {
                 printf( "Could not get class for group\n");
                 goto out;
             }
             
             /* ignore reserved HDF groups/vdatas */
-            if( is_reserved(vgroup_class))
+            if( is_reserved(vg_class))
             {
-                if (Vdetach (vgroup_id)==FAIL)
+                if (Vdetach (vg_id)==FAIL)
                 {
                     printf( "Could not detach group\n");
                     goto out;
                 }
                 continue;
             }
-            if(strcmp(vgroup_name,GR_NAME)==0) 
+            if(strcmp(vg_name,GR_NAME)==0) 
             {
-                if (Vdetach (vgroup_id)==FAIL)
+                if (Vdetach (vg_id)==FAIL)
                 {
                     printf( "Could not detach group\n");
                     goto out;
@@ -665,20 +687,20 @@ int vgroup_insert(int32 infile_id,
                     * is set to -1 for creating and the access mode is "w" for writing 
                     */
                     vgroup_id_out = Vattach (outfile_id, -1, "w");
-                    if (Vsetname (vgroup_id_out, vgroup_name)==FAIL)
+                    if (Vsetname (vgroup_id_out, vg_name)==FAIL)
                     {
-                        printf("Error: Could not create group <%s>\n", vgroup_name);
+                        printf("Error: Could not create group <%s>\n", vg_name);
                         goto out;
                     }
-                    if (Vsetclass (vgroup_id_out, vgroup_class)==FAIL)
+                    if (Vsetclass (vgroup_id_out, vg_class)==FAIL)
                     {
-                        printf("Error: Could not create group <%s>\n", vgroup_name);
+                        printf("Error: Could not create group <%s>\n", vg_name);
                         goto out;
                     }
                     
-                    if (copy_vgroup_attrs(vgroup_id,vgroup_id_out,path,options)<0)
+                    if (copy_vgroup_attrs(vg_id,vgroup_id_out,path,options)<0)
                         goto out;
-                    if (copy_vg_an(infile_id,outfile_id,vgroup_id,vgroup_id_out,path,options)<0)
+                    if (copy_vg_an(infile_id,outfile_id,vg_id,vgroup_id_out,path,options)<0)
                         goto out;
                     
                 }
@@ -696,7 +718,7 @@ int vgroup_insert(int32 infile_id,
                 /* insert the created (or opened) vgroup into its parent */
                 if (Vinsert (vgroup_id_out_par, vgroup_id_out)==FAIL)
                 {
-                    printf("Could not insert group <%s>\n", vgroup_name);
+                    printf("Could not insert group <%s>\n", vg_name);
                     goto out;
                 }
                     
@@ -716,7 +738,7 @@ int vgroup_insert(int32 infile_id,
             {
                 
                 /* initialize path */
-                path=get_path(path_name,vgroup_name);
+                path=get_path(path_name,vg_name);
                 
                 /* add object to table */
                 list_table_add(list_tbl,tag,ref,path);
@@ -731,12 +753,12 @@ int vgroup_insert(int32 infile_id,
                 
                 
                 /* insert objects for this group */
-                ntagrefs  = Vntagrefs(vgroup_id);
+                ntagrefs  = Vntagrefs(vg_id);
                 if ( ntagrefs > 0 )
                 {
                     tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
                     refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                    if (Vgettagrefs(vgroup_id, tags, refs, ntagrefs)<0)
+                    if (Vgettagrefs(vg_id, tags, refs, ntagrefs)<0)
                         goto out;
                     /* recurse */
                     if (vgroup_insert(
@@ -770,16 +792,16 @@ int vgroup_insert(int32 infile_id,
             } /* check if already visited */
             
             
-            if(Vdetach (vgroup_id)==FAIL)
+            if(Vdetach (vg_id)==FAIL)
             {
-                printf("Error: Could not detach group <%s>\n", vgroup_name);
+                printf("Error: Could not detach group <%s>\n", vg_name);
                 goto out;
             }
             if (options->trip==1)
             {
                 if (Vdetach (vgroup_id_out)==FAIL)
                 {
-                    printf("Error: Could not detach group <%s>\n", vgroup_name);
+                    printf("Error: Could not detach group <%s>\n", vg_name);
                     goto out;
                 }
             }
