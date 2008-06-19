@@ -873,10 +873,15 @@ environment following the instructions in Section I.
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
             useenv                  Build using variables set in the environment.
+            log                     Log the build and test results in files 
+                                    defined by environment variables 
+                                    HDF4BUILD_LOG and HDF4CHECK_LOG, or 
+                                    hdf4build.log and hdf4check.log if undefined
 
          Invoke a command prompt window and run hdf4bt with the appropriate
          parameters.  You must specify one of "vs8", "vnet", or "vs6".  It is
-         recommended that you pipe your results into a text file for reviewing.
+         recommended that you pipe your results into a text file or use the
+         "log" parameter.
 
          You may use a text-editor to verify results.  There should be no
          "FAILED" marks.
