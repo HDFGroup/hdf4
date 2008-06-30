@@ -2,18 +2,18 @@
 rem File Name: hdf4build.bat
 rem This batch file is used to build HDF4 Libraries and Tools.
 rem There batch file takes the following options:
-rem      Usage: hdf4build [/?] ^| ^(vs8 ^| vnet ^| vs6^) [enablefortran] [disableszip] [useenv]
-rem      Options:
 rem         vs8               Build using Visual Studio 2005
 rem         vnet              Build using Visual Studio .NET
 rem         vs6               Build using Visual Studio 6.0
 rem         enablefortran     Build HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
+rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
+rem                           [default Intel Visual Fortran 9.1]
 rem         useenv            Build using variables set in the environment.
 rem
 rem By Xuan Bai
 rem Created: 11/08/2004
-rem Last Updated: Scott Wegner, 6/16/08
+rem Last Updated: Scott Wegner, 6/30/08
 
 rem This batch file makes the following assumptions:
 rem    - The appropriate version of Visual Studio is installed and setup
@@ -55,6 +55,8 @@ rem Print a help message
     echo.   vs6                     Build using Visual Studio 6.0
     echo.   enablefortran           Build HDF4 C/Fortran Library and Tools 
     echo.                           [default C only]
+    echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
+    echo.                           [default Intel Visual Fortran 9.1]
     echo.   useenv                  Build using variables set in the environment.
     echo.
     echo.Specifying useenv requires you to set the INCLUDE and LIB variables to the
@@ -84,6 +86,10 @@ rem Parse through the parameters sent to file, and set appropriate variables
             rem Enable Fortran
             set hdf4_enablefortran=true
             
+        ) else if "%%a"=="ivf101" (
+            rem Enable Fortran
+            set hdf4_use_ivf101=true
+            
         ) else if "%%a"=="useenv" (
             rem Tell the compiler to use variable settings in the environment 
             set hdf4_useenv=true
@@ -109,6 +115,13 @@ rem Setup our environment
     if defined hdf4_enablefortran (
         if defined hdf4_use_vs6 (
             echo.Error: Building Fortran libraries with Visual Studio 6 is unsupported.
+            exit /b 1
+        )
+    )
+    rem Only Intel Fortran 9.1 is supported on VS.NET
+    if defined hdf4_use_ivf101 (
+        if defined hdf4_use_vnet (
+            echo.Error: Intel Visual Fortran 10.1 is not supported under Visual Studio .NET.
             exit /b 1
         )
     )
@@ -142,10 +155,18 @@ rem Setup our environment
             exit /b 1
         )
     ) else if defined hdf4_enablefortran (
-        if not defined ifort_compiler91 (
-            echo.Error: Cannot setup Intel Visual Fortran 9.1 environment.  Please
-            echo.make sure IFORT_COMPILER91 is defined in the environment.
-            exit /b 1
+        if defined hdf4_use_ivf101 (
+            if not defined ifort_compiler10 (
+                echo.Error: Cannot setup Intel Visual Fortran 10.1 environment.  Please
+                echo.make sure IFORT_COMPILER10 is defined in the environment.
+                exit /b 1
+            )
+        ) else (
+            if not defined ifort_compiler91 (
+                echo.Error: Cannot setup Intel Visual Fortran 9.1 environment.  Please
+                echo.make sure IFORT_COMPILER91 is defined in the environment.
+                exit /b 1
+            )
         )
     ) else if defined hdf4_use_vnet (
         if not defined vs71comntools (
@@ -200,10 +221,18 @@ rem Setup our environment
         rem Visual Studio 2005 is more complicated, because we can have either
         rem Fortran or not, and 32- or 64-bit.  Check for 4 possible situations
         if defined hdf4_enablefortran (
-            if %hdf4_platform%==Win32 (
-                call "%ifort_compiler91%\IA32\Bin\ifortvars.bat"
+            if defined hdf4_use_ivf101 (
+                if %hdf4_platform%==Win32 (
+                    call "%ifort_compiler10%\IA32\Bin\ifortvars.bat"
+                ) else (
+                    call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
+                )
             ) else (
-                call "%ifort_compiler91%\em64t\Bin\ifortvars.bat"
+                if %hdf4_platform%==Win32 (
+                    call "%ifort_compiler91%\IA32\Bin\ifortvars.bat"
+                ) else (
+                    call "%ifort_compiler91%\em64t\Bin\ifortvars.bat"
+                )
             )
             set hdf4_sln="%CD%\windows\proj\all_fortran\all_fortran.sln"
         ) else (
@@ -237,7 +266,11 @@ rem This function returns 0 if everything is OK, and 1 otherwise.
     if defined hdf4_use_vnet (
         call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr ".NET 2003" > nul
     ) else (
-        call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "2005" > nul
+        if defined hdf4_use_ivf101 (
+            call "%ifort_compiler10%\IA32\Bin\ifortvars.bat" | findstr "2005" > nul
+        ) else (
+            call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "2005" > nul
+        )
     )
     endlocal && exit /b %errorlevel%
         

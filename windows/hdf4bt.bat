@@ -8,6 +8,8 @@ rem         vnet              Build using Visual Studio .NET
 rem         vs6               Build using Visual Studio 6.0 
 rem         enablefortran     Build and test HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
+rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
+rem                           [default Intel Visual Fortran 9.1]
 rem         useenv            Build using variables set in the environment.
 rem         log               Log the build and test results in files defined by
 rem                           environment variables HDF4BUILD_LOG and
@@ -16,7 +18,7 @@ rem                           if undefined
 rem
 rem By Xuan Bai
 rem Created: 11/08/2004
-rem Last Updated: Scott Weegner, 6/17/08
+rem Last Updated: Scott Weegner, 6/30/08
 
 rem This batch file makes the following assumptions:
 rem    - The appropriate version of Visual Studio is installed and setup
@@ -58,6 +60,8 @@ rem Print a help message
     echo.   vs6                     Build using Visual Studio 6.0 
     echo.   enablefortran           Build and testHDF4 C/Fortran Library and 
     echo.                           Tools [default C only]
+    echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
+    echo.                           [default Intel Visual Fortran 9.1]
     echo.   useenv                  Build using variables set in the environment.
     echo.   log                     Log the build and test results in files defined by
     echo.                           environment variables HDF4BUILD_LOG and
@@ -92,6 +96,10 @@ rem Parse through the parameters sent to file, and set appropriate variables
             rem Enable Fortran
             set hdf4build_params=!hdf4build_params! enablefortran
             set hdf4check_params=!hdf4check_params! enablefortran
+            
+        ) else if "%%a"=="ivf101" (
+            rem Enable Fortran
+            set hdf4build_params=!hdf4build_params! ivf101
             
         ) else if "%%a"=="log" (
             rem Log our results to files defined in environment

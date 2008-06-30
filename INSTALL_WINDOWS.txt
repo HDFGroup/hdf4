@@ -21,8 +21,10 @@ DLL) and utilities, it is assumed that you have done the following:
           However, Visual Studio 6.0 project files will soon be phased out, so 
           building with .NET 2003 or 2005 is recommended.
 
-      1.2 To build Fortran libraries, you must install the Intel Fortran 9.1
-          compiler.  This requires Visual Studio using .NET 2003 or 2005.
+      1.2 To build Fortran libraries, you must install the Intel Fortran 9.1 or 
+          10.1 compiler.  This requires Visual Studio using .NET 2003 or 2005.
+          Intel Fortran 10.1 is not supported under Visual Studio .NET 2003, and
+          thus requires Visual Studio 2005.
 
    2. Set up a directory structure to unpack the source code archive.
       For example: 
@@ -154,7 +156,8 @@ Notes:
    a. These instructions are written for MicroSoft Visual Studio .NET 2005
       users.  For Visual Studio 6.0 users, please also read Section III.  For
       Visual Studio .NET 2003 users, please also read Section IV.  To also build
-      Fortran libraries using Intel Fortran 9.1, please also read Section V.
+      Fortran libraries using Intel Fortran 9.1 or 10.1, please also read 
+      Section V.
       
    b. To build HDF4 Multithreaded static library, please read Section IX.
 
@@ -498,9 +501,9 @@ Notes:
     Visual Studio 2005 Express is available from Microsoft.
     
  2. Building Fortran libraries is not supported in Visual Studio 6.0.  We
-    support the Intel Fortran Compiler 9.1, which requires Visual Studio .NET
-    or 2005.  For more information on building Fortran libraries, please see
-    Section V.
+    support the Intel Fortran Compiler 9.1or 10.1, which requires Visual Studio 
+    .NET or 2005.  For more information on building Fortran libraries, please 
+    see Section V.
 
 
 Building HDF4 with Visual Studio 6.0 is very similar to building with .NET or
@@ -570,8 +573,9 @@ Please refer to Section I, with a few minor changes:
 Section V. Build HDF4 with Fortran Libraries
 ======================================================================
 
-Currently, HDF4 is supported with Intel Fortran Compilers 9.1, which requires
-Visual Studio .NET or 2005.
+Currently, HDF4 is supported with Intel Fortran Compilers 9.1 or 10.1.  Intel
+Fortran 9.1 is supported under Visual Studio .NET or 2005.  Intel Fortran 10.1
+is supported only under Visual Studio 2005.
 
 The build process for Fortran libraries is very similar to building without.  
 Therefore, you may follow the instuctions presented in Section I, with the
@@ -795,7 +799,7 @@ environment following the instructions in Section I.
        Studio.  These are generally setup when Visual Studio is installed, but 
        you can verify by testing the variables from command prompt.  If you are
        build Fortran libraries, you will also need your environment set up for
-       Intel Visual Fortran 9.1.  You may verify using the following commands in
+       Intel Visual Fortran.  You may verify using the following commands in
        a terminal:
        
        For Visual Studio 6.0:
@@ -813,6 +817,10 @@ environment following the instructions in Section I.
        For Intel Visual Fortran 9.1:
        
             if not defined ifort_compiler91 echo not defined!
+                  
+       For Intel Visual Fortran 10.1:
+       
+            if not defined ifort_compiler10 echo not defined!
                   
        1.1.2 Add External Libraries
        
@@ -872,6 +880,8 @@ environment following the instructions in Section I.
             vs6                     Build using Visual Studio 6.0
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
+            ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
+                                    [default Intel Visual Fortran 9.1]
             useenv                  Build using variables set in the environment.
             log                     Log the build and test results in files 
                                     defined by environment variables 
@@ -904,6 +914,8 @@ environment following the instructions in Section I.
             vs6                     Build using Visual Studio 6.0
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
+            ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
+                                    [default Intel Visual Fortran 9.1]
             useenv                  Build using variables set in the environment.
 
             Invoke a command prompt window and run hdf4build with the 
