@@ -11,6 +11,15 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/****************************************************************************
+ * tcomp.c - tests various compression functionality
+ * Structure of the file:
+ *    test_compression - test driver
+ *	  test_various_comps - creates several data sets with different
+ *		compression methods.
+ *
+****************************************************************************/
+
 #include "mfhdf.h"
 
 #ifdef macintosh
@@ -21,6 +30,147 @@
 
 #include "hdftest.h"
 
+/********************************************************************
+   Name: test_various_comps() - creates several data sets with different
+		compression methods.
+
+   Description:
+	This function creates and writes data to 3 data sets using three
+	compression methods, deflate, skipping huffman, and szip, in that
+	order.  The output file can be used to test display tools like
+	hdp.
+
+   Return value:
+        The number of errors occurred in this routine.
+
+   BMR - May 18, 2007
+*********************************************************************/
+
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
+
+#define FILE_NAME      "sds_compressed.hdf"
+#define SDS1_NAME      "SDSgzip"
+#define SDS2_NAME      "SDSskiphuff"
+#define SDS3_NAME      "SDSszip"
+#define X_LENGTH       5
+#define Y_LENGTH       16
+#define RANK           2
+
+
+static intn
+test_various_comps()
+{
+    /************************* Variable declaration **************************/
+
+    int32     sd_id, sds_id, sds_index;
+    intn      status;
+    int32     comp_type;    /* Compression flag */
+    comp_info c_info;   /* Compression structure */
+    int32     start[2], edges[2], dim_sizes[2];
+    int32     data[Y_LENGTH][X_LENGTH];
+    int32     pixels_per_scanline;
+    intn      num_errs = 0;    /* number of errors in compression test so far */
+    int       i, j;
+
+    /********************* End of variable declaration ***********************/
+
+    /* Buffer array data and define array dimensions. */
+    for (j = 0; j < Y_LENGTH; j++) 
+    {
+	for (i = 0; i < X_LENGTH; i++)
+		data[j][i] = (i + j) + 1;
+    }
+    dim_sizes[0] = Y_LENGTH;
+    dim_sizes[1] = X_LENGTH;
+
+    /* Create the file and initialize the SD interface. */
+    sd_id = SDstart (FILE_NAME, DFACC_CREATE);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    /* Define the location and size of the data set to be written to the file. */
+    start[0] = 0;
+    start[1] = 0;
+    edges[0] = Y_LENGTH;
+    edges[1] = X_LENGTH;
+
+    /* Create 1st data set for GZIP compression. */ 
+    sds_id = SDcreate (sd_id, SDS1_NAME, DFNT_INT32, RANK, dim_sizes);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Set data set SDS1_NAME to use GZIP compression. */
+    HDmemset(&c_info, 0, sizeof(c_info));
+    comp_type = COMP_CODE_DEFLATE;
+    c_info.deflate.level = 6;
+    status = SDsetcompress (sds_id, comp_type, &c_info); 
+    CHECK(status, FAIL, "SDsetcompress");
+
+    /* Write the stored data to the 1st data set. */
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Terminate access to the 1st data set. */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Create 2nd data set for Skipping Huffman compression. */
+    sds_id = SDcreate (sd_id, SDS2_NAME, DFNT_INT32, RANK, dim_sizes);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Set data set SDS2_NAME to use Skipping Huffman compression. */
+    HDmemset(&c_info, 0, sizeof(c_info));
+    comp_type = COMP_CODE_SKPHUFF;
+    c_info.skphuff.skp_size = 4;
+    status = SDsetcompress (sds_id, comp_type, &c_info); 
+    CHECK(status, FAIL, "SDsetcompress");
+ 
+    /* Write the stored data to the 2nd data set. */
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Terminate access to the 2nd data set. */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+#ifdef H4_HAVE_LIBSZ
+    /* Create 3rd data set for SZIP compression. */
+    sds_id = SDcreate (sd_id, SDS3_NAME, DFNT_INT32, RANK, dim_sizes);
+    CHECK(sds_id, FAIL, "SDcreate");
+
+    /* Set data set SDS3_NAME to use SZIP compression. */
+    comp_type = COMP_CODE_SZIP;
+    pixels_per_scanline = dim_sizes[1];
+    c_info.szip.pixels = dim_sizes[0]*dim_sizes[1];;
+    c_info.szip.pixels_per_block = 2;
+    if(pixels_per_scanline >=2048)
+	c_info.szip.pixels_per_scanline = 512;
+    else
+	c_info.szip.pixels_per_scanline = dim_sizes[1];
+
+    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
+    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
+    c_info.szip.bits_per_pixel = 64;
+    status = SDsetcompress (sds_id, comp_type, &c_info); 
+    CHECK(status, FAIL, "SDsetcompress");
+
+    /* Write the stored data to the 3rd data set. */
+    status = SDwritedata (sds_id, start, NULL, edges, (VOIDP)data);
+    CHECK(status, FAIL, "SDwritedata");
+
+    /* Terminate access to the 3rd data set. */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+#endif
+
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend (sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}   /* test_various_comps */
+
 #define COMPFILE1 "comptst1.hdf"
 #define COMPFILE2 "comptst2.hdf"
 #define COMPFILE3 "comptst3.hdf"
@@ -28,8 +178,8 @@
 #define COMPFILE5 "comptst5.hdf"
 #define COMPFILE6 "comptst6.hdf"
 #define COMPFILE7 "comptst7.hdf"
-extern int
-test_compression()
+static int
+test_compressed_data()
 {
     int32 fcomp; /* File handle */
     int32 index;             /* Index of a dataset */
@@ -38,13 +188,13 @@ test_compression()
     int32 newsds, newsds2; 	/* SDS handles */
     comp_coder_t comp_type;	/* to retrieve compression type into */
     comp_info cinfo;            /* compression information structure */
-    int32   idata[100];
-    int32   rdata[100];
-    int32   fillval;
+    int32 idata[100];
+    int32 rdata[100];
+    int32 fillval;
     intn  i;
-    int   num_errs = 0;    /* number of errors in compression test so far */
+    intn  num_errs = 0;    /* number of errors in compression test so far */
     intn  status;      /* status flag */
-    int32   start[10], end[10]; /* start and end arrays */
+    int32 start[10], end[10]; /* start and end arrays */
 
     /*
      * Writing 1st compressed dataset, basic skipping huffman.
@@ -668,6 +818,20 @@ test_compression()
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 
-}   /* end test_compression */
+}   /* end test_compressed_data */
+
+extern int
+test_compression()
+{
+    intn num_errs = 0;         /* number of errors */
+
+    /* create various data sets with different compression methods */
+    num_errs = num_errs + test_various_comps();
+
+    /* test writing and reading data sets with compression */
+    num_errs = num_errs + test_compressed_data();
+
+    return num_errs;
+}
 
 #endif /* HDF */

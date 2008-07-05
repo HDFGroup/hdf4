@@ -24,6 +24,10 @@ static char RcsId[] = "@(#)Revision";
 #include <math.h>
 #endif /* MIPSEL */
 
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
+
 void 
 dumpsds_usage(intn argc, 
               char *argv[])
@@ -499,7 +503,7 @@ print_SDattrs( int32 sd_id,
       /* display the attribute's information */
       fprintf(fp,"\t Attr%i: Name = %s\n", (int) attr_index, attr_name);
       fprintf(fp,"\t\t Type = %s \n\t\t Count= %i\n", attr_nt_desc, (int) attr_count);
-      resetBuff(( VOIDP *) &attr_nt_desc );
+      resetBuff((VOIDP) &attr_nt_desc);
 
       /* display the attribute's values unless user chose to suppress them or
 	there are no values stored */
@@ -598,7 +602,7 @@ print_SDSattrs( int32 sds_id,
 			attr_nt_desc, (int) attr_count);
 
       /* free buffer and reset it to NULL */
-      resetBuff((VOIDP *) &attr_nt_desc );
+      resetBuff((VOIDP) &attr_nt_desc);
 
       /* display the attribute's values unless user chose to suppress them 
 	 or there are no values stored */
@@ -659,9 +663,145 @@ resetSDS(
    }
 }  /* end of resetSDS */
 
-/* printSDS_ASCII (yea, not SD_ASCII) prints all of the requested SDSs in
-   the file
-*/
+/*
+ * When the SZIP library is available, forms a string containing all the 
+ * szip encoding schemes and other options that are set in the parameter 
+ * options_mask.  - BMR - bugzilla 1202 - Jul, 2008
+ */
+#ifdef H4_HAVE_LIBSZ
+intn option_mask_string(int32 options_mask, char* opt_mask_strg)
+{
+    intn ret_value = SUCCEED;
+
+    strcpy(opt_mask_strg, "");	/* init string to empty string */
+
+    /* just in case options_mask is invalid */
+    if (options_mask == 0)
+	ret_value = FAIL;
+
+    /* mask options_mask with each szip encoding schemes and options to 
+       form the associate option mask string */
+    if ((options_mask & SZ_ALLOW_K13_OPTION_MASK) != 0)
+	strcpy(opt_mask_strg, "SZ_ALLOW_K13_OPTION_MASK");
+    if ((options_mask & SZ_CHIP_OPTION_MASK) != 0)
+    {
+	if (strlen(opt_mask_strg) > 0)
+	{
+	    strcat(opt_mask_strg, "|");
+	    strcat(opt_mask_strg, "SZ_CHIP_OPTION_MASK");
+	}
+	else
+	    strcpy(opt_mask_strg, "SZ_CHIP_OPTION_MASK");
+    }
+    if ((options_mask & SZ_EC_OPTION_MASK) != 0)
+    {
+	if (strlen(opt_mask_strg) > 0)
+	{
+	    strcat(opt_mask_strg, "|");
+	    strcat(opt_mask_strg, "SZ_EC_OPTION_MASK");
+	}
+	else
+	    strcpy(opt_mask_strg, "SZ_EC_OPTION_MASK");
+    }
+    if ((options_mask & SZ_LSB_OPTION_MASK) != 0)
+    {
+	if (strlen(opt_mask_strg) > 0)
+	{
+	    strcat(opt_mask_strg, "|");
+	    strcat(opt_mask_strg, "SZ_LSB_OPTION_MASK");
+	}
+	else
+	    strcpy(opt_mask_strg, "SZ_LSB_OPTION_MASK");
+    }
+    if ((options_mask & SZ_MSB_OPTION_MASK) != 0)
+    {
+	if (strlen(opt_mask_strg) > 0)
+	{
+	    strcat(opt_mask_strg, "|");
+	    strcat(opt_mask_strg, "SZ_MSB_OPTION_MASK");
+	}
+	else
+	    strcpy(opt_mask_strg, "SZ_MSB_OPTION_MASK");
+    }
+    if ((options_mask & SZ_NN_OPTION_MASK) != 0)
+    {
+	if (strlen(opt_mask_strg) > 0)
+	{
+	    strcat(opt_mask_strg, "|");
+	    strcat(opt_mask_strg, "SZ_NN_OPTION_MASK");
+	}
+	else
+	    strcpy(opt_mask_strg, "SZ_NN_OPTION_MASK");
+    }
+    if ((options_mask & SZ_RAW_OPTION_MASK) != 0)
+    {
+	if (strlen(opt_mask_strg) > 0)
+	{
+	    strcat(opt_mask_strg, "|");
+	    strcat(opt_mask_strg, "SZ_RAW_OPTION_MASK");
+	}
+	else
+	    strcpy(opt_mask_strg, "SZ_RAW_OPTION_MASK");
+    }
+    return(ret_value);
+}   /* option_mask_string */
+#endif
+
+/*
+ * Prints compression method and compression information of a data set.
+ * BMR - bugzilla 1202 - Jul, 2008
+ */
+intn
+print_comp_info(
+	FILE *fp,
+	int32 sds_id)
+{
+   comp_coder_t comp_type = COMP_CODE_NONE; /* Compression flag */
+   comp_info c_info;            /* Compression structure */
+   intn status = SUCCEED;	/* returned status from a called function */
+
+   /* get compression method and info */
+   HDmemset(&c_info, 0, sizeof(c_info));
+   status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+   if (status != FAIL)
+   {
+      /* print compression method or "NONE" */
+      fprintf(fp, "\t Compression method = %s\n", comp_method_txt(comp_type));
+      switch (comp_type)
+      {
+        case COMP_CODE_SKPHUFF:
+            fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
+	    break;
+	case COMP_CODE_DEFLATE:
+            fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
+	    break;
+	case COMP_CODE_SZIP:
+	{
+#ifdef H4_HAVE_LIBSZ
+	    char mask_strg[138]; /* 137 is the max if all options */
+	    if (option_mask_string(c_info.szip.options_mask, mask_strg) != FAIL)
+		fprintf(fp, "\t\t Option mask = %s\n", mask_strg);
+	    else
+		fprintf(fp, "\t\t Option mask might be invalid = %d\n", (int)c_info.szip.options_mask);
+	    fprintf(fp, "\t\t Pixels per block = %d\n", (int)c_info.szip.pixels_per_block);
+	    fprintf(fp, "\t\t Pixels per scanline = %d\n", (int)c_info.szip.pixels_per_scanline);
+	    fprintf(fp, "\t\t Bits per pixel = %d\n", (int)c_info.szip.bits_per_pixel);
+	    fprintf(fp, "\t\t Pixels = %d\n", (int)c_info.szip.pixels);
+	    break;
+#else
+	    fprintf(fp, "\t\t SZIP library is not available.\n");
+#endif
+	}
+        default:
+	    /* nothing */
+	    break;
+      } /* switch */
+   }
+   return(status);
+} /* print_comp_info */
+
+
+/* printSD_ASCII prints all of the requested SDSs in the file */
 intn printSD_ASCII( 
 	int32 sd_id,
 	dump_info_t *dumpsds_opts,
@@ -805,34 +945,27 @@ intn printSD_ASCII(
                fprintf(fp, "%d\n\t Type= %s\n", (int)sds_index, nt_desc);
             }
 
-            resetBuff(( VOIDP *) &nt_desc );  /* done with nt_desc */
+            resetBuff((VOIDP) &nt_desc );  /* done with nt_desc */
 
 	    /* If the current file is not a netCDF, print the SDS' ref#
 	       and compression information */
 	    if(!isnetCDF)
 	    {
-                comp_coder_t comp_type;         /* Compression flag */
-                comp_info    c_info;            /* Compression structure */
-
 		/* get SDS's ref# from its id */
 		if ((sds_ref = SDidtoref(sds_id)) == FAIL)
 		    ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
 			"printSD_ASCII", "SDidtoref", (int)sds_index, FAIL );
 		fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
 
-                /* print compression method or "NONE" */
-                comp_type = COMP_CODE_NONE;  /* reset variables */
-                HDmemset(&c_info, 0, sizeof(c_info));
-
-                status = SDgetcompinfo(sds_id, &comp_type, &c_info);
-                if( status == FAIL )
-                {
-                    resetSDS( &sds_id, sds_index, curr_file_name );
+                /* print compression method and info or "NONE" */
+		status = print_comp_info(fp, sds_id);
+		if (status == FAIL)
+		{
+		    resetSDS( &sds_id, sds_index, curr_file_name );
                     ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
                        "printSD_ASCII", "SDgetcompress", (int)sds_index );
                 }
-                fprintf(fp, "\t Compression method = %s\n",
-                                        comp_method_txt(comp_type));
+
             }
             fprintf(fp, "\t Rank = %d\n\t Number of attributes = %d\n",
                                         (int) rank, (int) nattrs);
@@ -872,7 +1005,7 @@ intn printSD_ASCII(
 
                   fprintf(fp, "\t\t Scale Type = %s\n", attr_nt_desc);
                   fprintf(fp, "\t\t Number of attributes = %d\n", (int) dimnattr[j]);
-                  resetBuff(( VOIDP *) &attr_nt_desc);
+                  resetBuff((VOIDP) &attr_nt_desc);
                }
             } /* end each for dimension */
 
