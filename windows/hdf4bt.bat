@@ -3,7 +3,8 @@ rem File Name: hdf4bt.bat
 rem This batch file is used to build and test HDF4 Libraries and Utilities.
 rem There batch file takes the following options:
 rem      Options:
-rem         vs8               Build using Visual Studio 2005 
+rem         vs9               Build using Visual Studio 2008
+rem         vs8               Build using Visual Studio 2005
 rem         vnet              Build using Visual Studio .NET 
 rem         vs6               Build using Visual Studio 6.0 
 rem         enablefortran     Build and test HDF4 C/Fortran Library and Tools 
@@ -18,7 +19,7 @@ rem                           if undefined
 rem
 rem By Xuan Bai
 rem Created: 11/08/2004
-rem Last Updated: Scott Weegner, 6/30/08
+rem Last Updated: Scott Weegner, 7/7/08
 
 rem This batch file makes the following assumptions:
 rem    - The appropriate version of Visual Studio is installed and setup
@@ -55,7 +56,8 @@ rem Print a help message
     echo.Options:
     echo.
     echo.   /?                      Help information
-    echo.   vs8                     Build using Visual Studio 2005 
+    echo.   vs9                     Build using Visual Studio 2008
+    echo.   vs8                     Build using Visual Studio 2005
     echo.   vnet                    Build using Visual Studio .NET 
     echo.   vs6                     Build using Visual Studio 6.0 
     echo.   enablefortran           Build and testHDF4 C/Fortran Library and 
@@ -80,7 +82,11 @@ rem Parse through the parameters sent to file, and set appropriate variables
 :parse_params
 
     for %%a in (%*) do (
-        if "%%a"=="vs8" (
+        if "%%a"=="vs9" (
+            rem Use VS2008 as our compiler
+            set hdf4build_params=!hdf4build_params! vs9
+            
+        ) else if "%%a"=="vs8" (
             rem Use VS2005 as our compiler
             set hdf4build_params=!hdf4build_params! vs8
             

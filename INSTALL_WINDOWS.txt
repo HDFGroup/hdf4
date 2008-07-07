@@ -17,14 +17,14 @@ DLL) and utilities, it is assumed that you have done the following:
       
    1. Installed Microsoft Visual Studio
    
-      1.1 Currently, Visual Studio 6.0, .NET 2003, and 2005 are supported.
+      1.1 Currently, Visual Studio 6.0, .NET 2003, 2005, and 2008 are supported.
           However, Visual Studio 6.0 project files will soon be phased out, so 
-          building with .NET 2003 or 2005 is recommended.
+          building with .NET 2003, 2005, or 2008 is recommended.
 
       1.2 To build Fortran libraries, you must install the Intel Fortran 9.1 or 
-          10.1 compiler.  This requires Visual Studio using .NET 2003 or 2005.
-          Intel Fortran 10.1 is not supported under Visual Studio .NET 2003, and
-          thus requires Visual Studio 2005.
+          10.1 compiler.  This requires Visual Studio using .NET 2003, 2005, or
+          2008.  Intel Fortran 10.1 is not supported under Visual Studio .NET 
+          2003, and thus requires Visual Studio 2005 or 2008.
 
    2. Set up a directory structure to unpack the source code archive.
       For example: 
@@ -77,7 +77,7 @@ DLL) and utilities, it is assumed that you have done the following:
           HDF4_EXT_SZIP
       
       In this section, Szip compression software is assumed to be used.
-      Please read section VI as well as this section if you do not
+      Please read Section VII as well as this section if you do not
       want to use Szip compression feature inside HDF4.
       
       To define these environment variables:
@@ -134,14 +134,15 @@ The following sections discuss installation procedures in detail:
    Section II:   Build an Application Using the HDF4 Library
    Section III:  Build HDF4 in Visual Studio 6.0
    Section IV:   Build HDF4 in Visual Studio .NET 2003
-   Section V:    Build HDF4 with Fortran Libraries
-   Section VI:   Disable Szip Compression Feature inside HDF4
-   Section VII:  Use HDF4 with Original netCDF Library
-   Section VIII: Build and Test HDF4 Library on the Command Line
-   Section IX:   Build HDF4 Multithreaded Static Library
-   Section X:    Build HDF4 for 64-bit Windows
-   Section XI:   Build HDF4 on Windows Vista
-   Section XII:  Some Helpful Pointers
+   Section V:    Build HDF4 in Visual Studio 2008
+   Section VI:   Build HDF4 with Fortran Libraries
+   Section VII:  Disable Szip Compression Feature inside HDF4
+   Section VIII: Use HDF4 with Original netCDF Library
+   Section IX:   Build and Test HDF4 Library on the Command Line
+   Section X:    Build HDF4 Multithreaded Static Library
+   Section XI:   Build HDF4 for 64-bit Windows
+   Section XII:  Build HDF4 on Windows Vista
+   Section XIII: Some Helpful Pointers
    
 ************************************************************************
 
@@ -155,11 +156,11 @@ Notes:
 
    a. These instructions are written for MicroSoft Visual Studio .NET 2005
       users.  For Visual Studio 6.0 users, please also read Section III.  For
-      Visual Studio .NET 2003 users, please also read Section IV.  To also build
-      Fortran libraries using Intel Fortran 9.1 or 10.1, please also read 
-      Section V.
+      Visual Studio .NET 2003 users, please also read Section IV.  For Visual
+      Studio 2008 users, please also read SEction V.  To also build Fortran 
+      libraries using Intel Fortran 9.1 or 10.1, please also read Section VI.
       
-   b. To build HDF4 Multithreaded static library, please read Section IX.
+   b. To build HDF4 Multithreaded static library, please read Section X.
 
 Building Instructions:
 
@@ -352,7 +353,7 @@ Step 5: Building HDF4 C examples (Optional)
 Simple examples have been provided for users to test HDF4 C library and 
 utilities.
 
-Note: To build HDF4 Fortran examples, please refer to Section V.
+Note: To build HDF4 Fortran examples, please refer to Section VI.
       
 To build and test HDF4 C examples:
 
@@ -422,7 +423,7 @@ If you have installed HDF4 library in Section I, Step 5.
 We assume that you will use the Szip compression with HDF4 library.
 
 To specify these locations in the settings for your VC++ project with
-Microsoft Visual Studio .NET:
+Microsoft Visual Studio 2005:
 
 Under Tools->Options, select the folder "Projects", and then "VC++ Directories":
    Under "Show directories for", select "Include files".
@@ -488,7 +489,7 @@ Note: You can also follow the above instructions in this section if want to
       Also, these binary distributions were pre-compiled with Szip compression 
       feature inside HDF4 library.  If you do not want to use the Szip 
       compression feature, you will have to build HDF4 libraries and utilities 
-      from the source code following the instructions in Section VI.
+      from the source code following the instructions in Section VII.
      
 
 Section III. Build HDF4 in Visual Studio 6.0
@@ -497,18 +498,18 @@ Section III. Build HDF4 in Visual Studio 6.0
 Notes: 
  1. Although Visual Studio 6.0 project files are currently provided, Visual
     Studio 6.0 support is marked for depreciation.  It is recommended that you
-    use Visual Studio .NET 2003 or 2005 to build HDF4 instead.  A free version of
-    Visual Studio 2005 Express is available from Microsoft.
+    use Visual Studio .NET 2003, 2005, or 2008 to build HDF4 instead.  A free 
+    version of Visual Studio 2005 Express is available from Microsoft.
     
  2. Building Fortran libraries is not supported in Visual Studio 6.0.  We
-    support the Intel Fortran Compiler 9.1or 10.1, which requires Visual Studio 
-    .NET or 2005.  For more information on building Fortran libraries, please 
-    see Section V.
+    support the Intel Fortran Compiler 9.1 or 10.1, which requires Visual Studio 
+    .NET, 2005, or 2008.  For more information on building Fortran libraries, 
+    please see Section VI.
 
 
-Building HDF4 with Visual Studio 6.0 is very similar to building with .NET or
-2005.  Aside from subtle differences in the IDE terminology, very much is the 
-same.  Therefore, you may refer to the instructions in Section I, with the 
+Building HDF4 with Visual Studio 6.0 is very similar to building with Visual
+Studio 2005.  Aside from subtle differences in the IDE terminology, very much is
+the same.  Therefore, you may refer to the instructions in Section I, with the 
 following modifications:
 
     1. Visual Studio requires project files in a different format; it uses
@@ -527,7 +528,7 @@ following modifications:
     
     3. By default, single-threaded static libraries are built, along with Multi-
        threaded DLLs.  If you would like to build all multithreaded libraries,
-       please read Section IX.
+       please read Section X.
        
     4. Building and testing ctest0.exe requires on additional step with Visual
        Studio 6.0.  The build process in Visual Studio .NET 2003 and above 
@@ -566,16 +567,42 @@ Please refer to Section I, with a few minor changes:
        
     3. By default, single-threaded static libraries are built, along with Multi-
        threaded DLLs.  If you would like to build all multithreaded libraries,
-       please read Section IX.
+       please read Section X.
        
 
 
-Section V. Build HDF4 with Fortran Libraries
+Section V: Build HDF4 in Visual Studio 2008
+======================================================================
+Building with Visual Studio 2008 is very similar to building with Visual Studio
+2005, with some minor changes.  Therefore, follow the build instructions above, 
+with the following considerations:
+
+    1. Visual Studio 2008 uses a new format for project files, but Visual Studio
+       2005 project files can be easily converted.  The HDF5 project files
+       will need to be converted on first use.  To do so:
+       
+       1.1. Open the HDF4 Visual Studio 2005 solution file as in Section II
+            (either all.sln or all_fortran.sln if building Fortran.)
+            
+       1.2. You will be prompted with an automatic conversion wizard.  Click
+            through, accepting the default values.  You may choose to create
+            backups of the project files, although it isn't necessary.
+            
+       1.3. When it is finished, it should state that all projects were
+            converted successfully with no errors.  Warnings can be ignored.
+            
+    2. Once the project files have been converted, build and test normally.
+       Note that the converted project files aren't backwards compatible with
+       previous versions of Visual Studio.
+
+
+
+Section VI. Build HDF4 with Fortran Libraries
 ======================================================================
 
 Currently, HDF4 is supported with Intel Fortran Compilers 9.1 or 10.1.  Intel
-Fortran 9.1 is supported under Visual Studio .NET or 2005.  Intel Fortran 10.1
-is supported only under Visual Studio 2005.
+Fortran 9.1 is supported under Visual Studio .NET, 2005 or 2008.  Intel Fortran 
+10.1 is supported only under Visual Studio 2005 or 2008.
 
 The build process for Fortran libraries is very similar to building without.  
 Therefore, you may follow the instuctions presented in Section I, with the
@@ -681,7 +708,7 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
       sattrtest.exe due to the dependencies among these files.
 
 
-Section VI. Disable Szip Compression Feature inside HDF4
+Section VII. Disable Szip Compression Feature inside HDF4
 ======================================================================
 
 Warning: When you modify the h4config.h file as described below,
@@ -754,7 +781,7 @@ Option 2: Remove Szip Compression in HDF4
       2. Run-compile HDF4 library according to Section I.
       
       
-Section VII:  Use HDF4 with Original netCDF Library
+Section VIII:  Use HDF4 with Original netCDF Library
 ======================================================================
 Note: This option has not been extensively tested in HDF4.2r3, and is therefore
       unsupported.  However, we provide documentation for users that would like
@@ -777,14 +804,15 @@ netCDF C and Fortran APIs.
       
       
       
-Section VIII. Build and Test HDF4 Library on the Command Line    
+Section IX. Build and Test HDF4 Library on the Command Line    
 ======================================================================
 
 We support command-line builds for the following configurations:
     
     -- Visual Studio 6.0 (no Fortran)
-    -- Visual Studio .NET 2003 (no Fortran)
+    -- Visual Studio .NET 2003 (with or without Fortran)
     -- Visual Studio 2005 (with or without Fortran) (32- or 64-bit)
+    -- Visual Studio 2008 (with or without Fortran) (32- or 64-bit)
     
 For all other Windows development tools, HDF4 should be built in the development 
 environment following the instructions in Section I.
@@ -813,6 +841,10 @@ environment following the instructions in Section I.
        For Visual Studio 2005:
        
             if not defined vs80comntools echo not defined!
+            
+       For Visual Studio 2008:
+        
+            if not defined vs90comntools echo not defined!
             
        For Intel Visual Fortran 9.1:
        
@@ -875,6 +907,7 @@ environment following the instructions in Section I.
          hdf4bt.bat takes the following options:
 
             /?                      Help information
+            vs9                     Build using Visual Studio 2008
             vs8                     Build using Visual Studio 2005
             vnet                    Build using Visual Studio .NET
             vs6                     Build using Visual Studio 6.0
@@ -909,6 +942,7 @@ environment following the instructions in Section I.
             hdf4build.bat takes the following options:
 
             /?                      Help information
+            vs9                     Build using Visual Studio 2008
             vs8                     Build using Visual Studio 2005
             vnet                    Build using Visual Studio .NET
             vs6                     Build using Visual Studio 6.0
@@ -947,15 +981,16 @@ HDF4 libraries and tools into c:\MyHDFstuff\hdf4\hdf4lib directory.
 
 
 
-Section IX: Build HDF4 Multithreaded Static Library
+Section X: Build HDF4 Multithreaded Static Library
 ======================================================================
 
 In this section, we just briefly introduce how to build HDF4 multithreaded 
 static library.
 
-Note: In Visual Studio 2005, the single-threaded runtime library is depreciated.
-      Therefore, multithreaded is build by default, and no extra work needs to
-      be done.  These instructions apply only to Visual Studio 6.0 and .NET.
+Note: In Visual Studio 2005 and 2008, the single-threaded runtime library is 
+      depreciated.  Therefore, multithreaded is build by default, and no extra 
+      work needs to be done.  These instructions apply only to Visual Studio 6.0 
+      and .NET.
       
 
 Step I: The "Runtime library" settings for static projects should be
@@ -987,13 +1022,13 @@ Step II (Optional): If building Fortran libraries, their project settings must
 
    
 
-Section X: Build HDF4 for 64-bit Windows
+Section XI: Build HDF4 for 64-bit Windows
 ======================================================================
 
-HDF4 can be built for 64-bit Windows in Visual Studio 2005.  Visual Studio .NET
-has very primative 64-bit support, but it is very difficult to setup, and
-debugging is not supported.  Therefore, we recommend all users switch to 
-Visual Studio 2005 for 64-bit builds.  
+HDF4 can be built for 64-bit Windows in Visual Studio 2005 or 2008.  Visual 
+Studio .NET has very primative 64-bit support, but it is very difficult to set 
+up, and debugging is not supported.  Therefore, we recommend all users switch to 
+Visual Studio 2005 or 2008 for 64-bit builds.  
 
 Notes:
   
@@ -1006,7 +1041,7 @@ Prerequisites:
 
     1. A 64-bit Windows machine.
     
-    2. Microsoft Visual Studio 2005 installed with x64 Extensions.
+    2. Microsoft Visual Studio 2005 or 2008 installed with x64 Extensions.
            
 
 Building:
@@ -1020,7 +1055,7 @@ Building:
            library paths for x64 configurations as you have in the 
            "Prerequisites" section.  This is also true for Intel Fortran if
            Fortran libraries are to be built.  If you do not wish to use
-           szip, please read Section VI about disabling it.     
+           szip, please read Section VII about disabling it.     
            
         2. The x64 platform must be selected in the build configuration for
            debug and release versions.  Before building, go to "Build", 
@@ -1057,15 +1092,16 @@ Installing:
  
 
  
-Section XI: Build HDF4 on Windows Vista
+Section XII: Build HDF4 on Windows Vista
 ======================================================================
 
 Building on Windows Vista is very similar to building on Windows XP, with
 some minor changes.  Therefore, follow the build instructions above, with the
 following considerations:
 
-    1. Only Visual Studio 2005 is currently supported on Windows Vista.  This
-       is because Microsoft has ended their support for 6.0 and .NET.
+    1. Only Visual Studio 2005 and 2008 are currently supported on Windows 
+       Vista.  This is because Microsoft has ended their support for 6.0 and 
+       .NET.
        
     2. Building Fortran libraries has not been tested, and is therefore also
        unsupported.  You may attempt to build Fortran libraries following the
@@ -1091,7 +1127,7 @@ following considerations:
 
 
 
-Section XII: Some Helpful Pointers
+Section XIII: Some Helpful Pointers
 ======================================================================
 
 (as described in terms of installing the no fortran configuration)

@@ -2,6 +2,7 @@
 rem File Name: hdf4build.bat
 rem This batch file is used to build HDF4 Libraries and Tools.
 rem There batch file takes the following options:
+rem         vs9               Build using Visual Studio 2008
 rem         vs8               Build using Visual Studio 2005
 rem         vnet              Build using Visual Studio .NET
 rem         vs6               Build using Visual Studio 6.0
@@ -13,7 +14,7 @@ rem         useenv            Build using variables set in the environment.
 rem
 rem By Xuan Bai
 rem Created: 11/08/2004
-rem Last Updated: Scott Wegner, 6/30/08
+rem Last Updated: Scott Wegner, 7/7/08
 
 rem This batch file makes the following assumptions:
 rem    - The appropriate version of Visual Studio is installed and setup
@@ -50,7 +51,8 @@ rem Print a help message
     echo.Usage: %~nx0 [OPTIONS]
     echo.
     echo.   /?                      Help information
-    echo.   vs8                     Build using Visual Studio 2005 
+    echo.   vs9                     Build using Visual Studio 2008
+    echo.   vs8                     Build using Visual Studio 2005
     echo.   vnet                    Build using Visual Studio .NET
     echo.   vs6                     Build using Visual Studio 6.0
     echo.   enablefortran           Build HDF4 C/Fortran Library and Tools 
@@ -70,7 +72,11 @@ rem Parse through the parameters sent to file, and set appropriate variables
 :parse_params
 
     for %%a in (%*) do (
-        if "%%a"=="vs8" (
+        if "%%a"=="vs9" (
+            rem Use VS2008 as our compiler
+            set hdf4_use_vs2008=true
+            
+        ) else if "%%a"=="vs8" (
             rem Use VS2005 as our compiler
             set hdf4_use_vs2005=true
             
@@ -125,16 +131,25 @@ rem Setup our environment
             exit /b 1
         )
     )
-    rem Only VS2005 is supported on x64
+    rem Only Intel Fortran 10.1 is supported on VS2008
+    if defined hdf4_use_vs2008 (
+        if defined hdf4_enablefortran (
+            if not defined hdf4_use_ivf101 (
+                echo.Error: Intel Visual Fortran 9.1 is not supported under Visual Studio 2008.
+                exit /b 1
+            )
+        )
+    )
+    rem Only VS2005 and VS 2008 are supported on x64
     if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
-        if not defined hdf4_use_vs2005 (
-            echo.Error: Only Visual Studio 2005 is supported on 64-bit Windows.
+        if not "%hdf4_use_vs2005%%hdf4_use_vs2008%"=="true" (
+            echo.Error: Only Visual Studio 2005 and 2008 are supported on 64-bit Windows.
             exit /b 1
         )
     )
     rem Make sure we chose exactly one compiler above
-    if not "%hdf4_use_vs2005%%hdf4_use_vnet%%hdf4_use_vs6%"=="true" (
-        echo.Error: Must specify exactly one compiler to build with.
+    if not "%hdf4_use_vs2008%%hdf4_use_vs2005%%hdf4_use_vnet%%hdf4_use_vs6%"=="true" (
+        echo.Error: Must specify exactly one C++ compiler to build with.
         exit /b 1
     )
     rem Make sure PROCESSOR_ARCHITECURE is set to either x86 or AMD64
@@ -174,11 +189,17 @@ rem Setup our environment
             echo.make sure VS71COMNTOOLS is defined in the environment.
             exit /b 1
         )
-    ) else (
-        rem Assume Visual Studio 2005
+    ) else if defined hdf4_use_vs2005 (
         if not defined vs80comntools (
             echo.Error: Cannot setup Visual Studio 2005 environment.  Please
             echo.make sure VS80COMNTOOLS is defined in the environment.
+            exit /b 1
+        )
+    ) else (
+        rem Assume Visual Studio 2008
+        if not defined vs90comntools (
+            echo.Error: Cannot setup Visual Studio 2008 environment.  Please
+            echo.make sure VS90COMNTOOLS is defined in the environment.
             exit /b 1
         )
     )
@@ -215,8 +236,7 @@ rem Setup our environment
             set hdf4_sln="%CD%\windows\proj_vnet\all\all.sln"
         )
     
-    ) else (
-        rem Assume VS2005
+    ) else if defined hdf4_use_vs2005 (
         echo.Using Visual Studio 2005
         rem Visual Studio 2005 is more complicated, because we can have either
         rem Fortran or not, and 32- or 64-bit.  Check for 4 possible situations
@@ -243,6 +263,27 @@ rem Setup our environment
             )
             set hdf4_sln="%CD%\windows\proj\all\all.sln"
         )
+        
+    ) else (
+        rem Assume VS2008
+        echo.Using Visual Studio 2008
+        rem Visual Studio 2008 is more complicated, because we can have either
+        rem Fortran or not, and 32- or 64-bit.
+        if defined hdf4_enablefortran (
+            if %hdf4_platform%==Win32 (
+                call "%ifort_compiler10%\IA32\Bin\ifortvars.bat"
+            ) else (
+                call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
+            )
+            set hdf4_sln="%CD%\windows\proj\all_fortran\all_fortran.sln"
+        ) else (
+            if %hdf4_platform%==Win32 (
+                call "%vs90comntools%\..\..\VC\vcvarsall.bat" x86
+            ) else (
+                call "%vs90comntools%\..\..\VC\vcvarsall.bat" x86_amd64
+            )
+            set hdf4_sln="%CD%\windows\proj\all\all.sln"
+        )
     )
             
     rem See if "useenv" was specified
@@ -264,18 +305,32 @@ rem This function returns 0 if everything is OK, and 1 otherwise.
 
     setlocal enabledelayedexpansion
     if defined hdf4_use_vnet (
-        call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr ".NET 2003" > nul
-    ) else (
+        call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio .NET 2003" > nul
+        
+    ) else if defined hdf4_use_vs2005 (
         if defined hdf4_use_ivf101 (
-            call "%ifort_compiler10%\IA32\Bin\ifortvars.bat" | findstr "2005" > nul
+            call "%ifort_compiler10%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio 8" > nul
         ) else (
-            call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "2005" > nul
+            call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio 8" > nul
         )
+        
+    ) else (
+        rem Assume VS2008
+        call "%ifort_compiler10%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio 9.0" > nul
     )
     endlocal && exit /b %errorlevel%
         
     
+
+rem Upgrade the project files to the latest format for Visual Studio
+:upgrade
     
+    echo.Upgrading project files
+    devenv %hdf4_sln% /Upgrade /NoLogo
+    
+    exit /b
+
+
 rem Build the HDF4 libraries.  By default, C libraries are built.
 :all
 
@@ -295,7 +350,7 @@ rem Build the HDF4 libraries.  By default, C libraries are built.
         ) else if defined hdf4_use_vnet (
             devenv %hdf4_sln% %hdf4_cflags% /Build %%a
         ) else (
-            rem Assume Visual Studio 2005
+            rem Assume Visual Studio 2005/2008
             devenv %hdf4_sln% %hdf4_cflags% /Build "%%a|%hdf4_platform%"
         )
         if !errorlevel! neq 0 ( 
@@ -332,6 +387,15 @@ rem This is where the magic happens
     if %errorlevel% neq 0 (
         echo.Error setting up build environment.
         goto error
+    )
+    
+    rem Upgrade project files if needed
+    if defined hdf4_use_vs2008 (
+        call :upgrade
+        if !errorlevel! neq 0 (
+            echo.Error upgrading project files!
+            goto error
+        )
     )
 
     call :all
