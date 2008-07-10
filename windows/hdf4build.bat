@@ -303,22 +303,21 @@ rem the version that has been set up with the Intel Visual Fortran.
 rem This function returns 0 if everything is OK, and 1 otherwise.
 :check-ifort-vs
 
-    setlocal enabledelayedexpansion
     if defined hdf4_use_vnet (
-        call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio .NET 2003" > nul
+        findstr /c:"Microsoft Visual Studio .NET 2003" "%ifort_compiler91%\IA32\Bin\ifortvars.bat" > nul
         
     ) else if defined hdf4_use_vs2005 (
         if defined hdf4_use_ivf101 (
-            call "%ifort_compiler10%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio 8" > nul
+            findstr /c:"Microsoft Visual Studio 8" "%ifort_compiler10%\IA32\Bin\ifortvars.bat" > nul
         ) else (
-            call "%ifort_compiler91%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio 8" > nul
+            findstr /c:"Microsoft Visual Studio 8" "%ifort_compiler91%\IA32\Bin\ifortvars.bat" > nul
         )
         
     ) else (
         rem Assume VS2008
-        call "%ifort_compiler10%\IA32\Bin\ifortvars.bat" | findstr "Microsoft Visual Studio 9.0" > nul
+        findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler10%\IA32\Bin\ifortvars.bat" > nul
     )
-    endlocal && exit /b %errorlevel%
+    exit /b %errorlevel%
         
     
 
