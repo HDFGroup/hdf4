@@ -66,7 +66,9 @@ Bugs fixed since HDF4.2r2
 
     Library
     ========= 
-        None
+        - SDreaddata now checks for out-of-range values in parameter 'stride'
+	  and fails when invalid values are given (bugzilla 150.)  This bug 
+	  was actually fixed right before HDF4.2r2 release - BMR 2008/07/14
 
     Configuration
     ============= 
