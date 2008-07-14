@@ -533,7 +533,7 @@ test_valid_args()
 
     /* Show that the error was also caught for the dataset with unlimited 
 	dimension */
-    status = SDreaddata(dset1, start, strides, edges, (VOIDP) outdata);
+    status = SDreaddata(dset2, start, strides, edges, (VOIDP) outdata);
     VERIFY(status, FAIL, "SDreaddata");
     VERIFY(HEvalue(1), DFE_ARGS, "SDreaddata");
 
