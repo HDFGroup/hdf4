@@ -36,3 +36,21 @@ Variable Name = SDSskiphuff
 		 Size = 5
 		 Scale Type = number-type not set
 		 Number of attributes = 0
+
+Variable Name = SDSszip
+	 Index = 2
+	 Type= 32-bit signed integer
+	 Ref. = 6
+	 Compression method = SZIP
+		 <SZIP library is not available>
+		 <Unable to get SZIP compression information>
+	 Rank = 2
+	 Number of attributes = 0
+	 Dim0: Name=fakeDim4
+		 Size = 16
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=fakeDim5
+		 Size = 5
+		 Scale Type = number-type not set
+		 Number of attributes = 0
