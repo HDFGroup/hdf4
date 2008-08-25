@@ -760,24 +760,41 @@ print_comp_info(
    comp_info c_info;            /* Compression structure */
    intn status = SUCCEED;	/* returned status from a called function */
 
-   /* get compression method and info */
-   HDmemset(&c_info, 0, sizeof(c_info));
-   status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+   /* get compression method first and only get compression info if associated
+      compression library is available (only worry about szlib at this time) */
+   status = SDgetcomptype(sds_id, &comp_type);
+
    if (status != FAIL)
    {
+      HDmemset(&c_info, 0, sizeof(c_info)); /* allocate for comp info */
+
       /* print compression method or "NONE" */
       fprintf(fp, "\t Compression method = %s\n", comp_method_txt(comp_type));
       switch (comp_type)
       {
         case COMP_CODE_SKPHUFF:
-            fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
+	    /* get compression info */
+	    status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+	    if (status != FAIL)
+		fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
+	    else
+		fprintf(fp, "\t\t Unable to get Skipping unit size\n");
 	    break;
 	case COMP_CODE_DEFLATE:
-            fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
+	    /* get compression info */
+	    status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+	    if (status != FAIL)
+		fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
+	    else
+		fprintf(fp, "\t\t Unable to get Deflate level\n");
 	    break;
 	case COMP_CODE_SZIP:
 	{
 #ifdef H4_HAVE_LIBSZ
+	  /* get compression info */
+	  status = SDgetcompinfo(sds_id, &comp_type, &c_info);
+	  if (status != FAIL)
+	  {
 	    char mask_strg[138]; /* 137 is the max if all options */
 	    if (option_mask_string(c_info.szip.options_mask, mask_strg) != FAIL)
 		fprintf(fp, "\t\t Option mask = %s\n", mask_strg);
@@ -787,9 +804,13 @@ print_comp_info(
 	    fprintf(fp, "\t\t Pixels per scanline = %d\n", (int)c_info.szip.pixels_per_scanline);
 	    fprintf(fp, "\t\t Bits per pixel = %d\n", (int)c_info.szip.bits_per_pixel);
 	    fprintf(fp, "\t\t Pixels = %d\n", (int)c_info.szip.pixels);
-	    break;
+	  }
+	  else
+	    fprintf(fp, "\t\t Unable to get SZIP compression information\n");
+	  break;
 #else
-	    fprintf(fp, "\t\t SZIP library is not available.\n");
+	  fprintf(fp, "\t\t <SZIP library is not available>\n");
+	  fprintf(fp, "\t\t <Unable to get SZIP compression information>\n");
 #endif
 	}
         default:
@@ -797,6 +818,8 @@ print_comp_info(
 	    break;
       } /* switch */
    }
+   else
+      fprintf(fp, "\t Compression method = <Unable to get compression method>\n");
    return(status);
 } /* print_comp_info */
 
