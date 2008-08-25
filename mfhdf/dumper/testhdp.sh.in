@@ -6,6 +6,9 @@
 srcdir=@srcdir@
 currentdir=`pwd`
 
+# Determine whether the szip library is available
+USE_COMP_SZIP="@USE_COMP_SZIP@"
+
 # Definitions of commands and variables
 HDP='./hdp'               # The tool name
 HDP_BIN="${TESTS_ENVIRONMENT} "`pwd`/$HDP        # The path of the tool binary
@@ -237,6 +240,15 @@ TEST dumpsds-13.out dumpsds sds1_dim1_samename.hdf
 # Test 14 prints contents of file when a dimension has the same name as 
 # that of another SDS
 TEST dumpsds-14.out dumpsds sds2_dim1_samename.hdf
+
+# Test 15 prints headers of all data sets with various compression method to
+# test displaying compression information
+
+if test $USE_COMP_SZIP != "yes"; then
+TEST dumpsds-15.out dumpsds -h sds_compressed.hdf
+else
+TEST dumpsds-15szip.out dumpsds -h sds_compressed.hdf
+fi
 
 else
 MESG 3 "$TestName <<<SKIPPED>>>"

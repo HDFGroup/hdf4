@@ -9,8 +9,14 @@ A file named testhdf.sh and a group of .hdf files are included for
 testing.   Run the test with the command "make test".
 
 Please send your bug reports, comments and suggestions to 
-hdfhelp@ncsa.uiuc.edu.
+hdfhelp@hdfgroup.org
 
+----------------- History of data files ------------------
+
+Below is a list describing how some of the hdf files in this directory
+were generated.
+
+sds_compressed.hdf: by test_various_comps() in mfhdf/libsrc/tcomp.c
 
 
 
