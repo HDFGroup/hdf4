@@ -348,7 +348,8 @@ case "$withval" in
 esac
 
 dnl ----------------------------------------------------------------------
-dnl Is the SZip library present?
+dnl Is the szip library present?
+AC_SUBST(USE_COMP_SZIP) USE_COMP_SZIP="no"
 AC_ARG_WITH([szlib],
             [AC_HELP_STRING([--with-szlib=DIR],
                             [Use szlib library [default=no]])],,
@@ -406,6 +407,8 @@ case "$withval" in
 
     if test -z "$HAVE_SZIP"; then
       AC_MSG_ERROR([couldn't find szlib library])
+    else
+      USE_COMP_SZIP="yes"
     fi
     ;;
 esac
