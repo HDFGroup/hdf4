@@ -1,0 +1,59 @@
+#############################
+Expected output for './hdp dumpsds -h sds_compressed.hdf
+#############################
+File name: sds_compressed.hdf 
+
+Variable Name = SDSgzip
+	 Index = 0
+	 Type= 32-bit signed integer
+	 Ref. = 2
+	 Compression method = DEFLATE
+		 Deflate level = 6
+	 Rank = 2
+	 Number of attributes = 0
+	 Dim0: Name=fakeDim0
+		 Size = 16
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=fakeDim1
+		 Size = 5
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+
+Variable Name = SDSskiphuff
+	 Index = 1
+	 Type= 32-bit signed integer
+	 Ref. = 4
+	 Compression method = SKPHUFF
+		 Skipping unit size = 4
+	 Rank = 2
+	 Number of attributes = 0
+	 Dim0: Name=fakeDim2
+		 Size = 16
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=fakeDim3
+		 Size = 5
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+
+Variable Name = SDSszip
+	 Index = 2
+	 Type= 32-bit signed integer
+	 Ref. = 6
+	 Compression method = SZIP
+		 Option mask = SZ_EC_OPTION_MASK|SZ_RAW_OPTION_MASK
+		 Pixels per block = 2
+		 Pixels per scanline = 5
+		 Bits per pixel = 32
+		 Pixels = 80
+	 Rank = 2
+	 Number of attributes = 0
+	 Dim0: Name=fakeDim4
+		 Size = 16
+		 Scale Type = number-type not set
+		 Number of attributes = 0
+	 Dim1: Name=fakeDim5
+		 Size = 5
+		 Scale Type = number-type not set
+		 Number of attributes = 0
