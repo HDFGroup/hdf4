@@ -27,6 +27,15 @@ pushd %~dp0
 set srcdir=%CD%
 set currentdir=%CD%
 
+rem Determine whether the szip library is available
+rem On Windows, this is determined by parsing h4config.h
+findstr /b /i /c:"#define H4_HAVE_LIBSZ" ..\..\hdf\src\h4config.h > nul
+if %errorlevel% equ 0 (
+    set use_comp_szip=yes
+) else (
+    set use_comp_szip=no
+)
+
 rem Definitions of commands and variables
 rem The tool name
 set hdp=hdp
@@ -259,46 +268,55 @@ rem parse arguments
         call :mesg 3 %testName% SKIPPED
     ) else (
         call :mesg 3 %testName%
-        rem call :test 1 prints all datasets
+        rem Test 1 prints all datasets
         call :test dumpsds-1.out dumpsds swf32.hdf
 
-        rem call :tests 2 and 3 print datasets given their indices
+        rem Tests 2 and 3 print datasets given their indices
         call :test dumpsds-2.out dumpsds -i 2 swf32.hdf
         call :test dumpsds-3.out dumpsds -i 1,3 swf32.hdf
 
-        rem call :test 4 should fail with error message: "SD with name Time: not found"
+        rem Test 4 should fail with error message: "SD with name Time: not found"
         call :test dumpsds-4.out dumpsds -n Time swf32.hdf
 
-        rem call :test 5 prints datasets given their names 
+        rem Test 5 prints datasets given their names 
         call :test dumpsds-5.out dumpsds -n fakeDim0,Data-Set-2 swf32.hdf
 
-        rem call :test 6 prints datasets given their ref numbers
+        rem Test 6 prints datasets given their ref numbers
         call :test dumpsds-6.out dumpsds -r 3,2 swf32.hdf
 
-        rem call :test 7 prints only data of the datasets selected by their ref numbers
+        rem Test 7 prints only data of the datasets selected by their ref numbers
         call :test dumpsds-7.out dumpsds -r 3,2 -d swf32.hdf
 
-        rem call :test 8 prints only header information
+        rem Test 8 prints only header information
         call :test dumpsds-8.out dumpsds -h swf32_fileattr.hdf
 
-        rem call :test 9 prints data in clean format, no \digit's
+        rem Test 9 prints data in clean format, no \digit's
         call :test dumpsds-9.out dumpsds -c swf32_fileattr.hdf
 
-        rem call :test 10 prints contents of file without file attribute's data
+        rem Test 10 prints contents of file without file attribute's data
         call :test dumpsds-10.out dumpsds -g swf32_fileattr.hdf
 
-        rem call :test 11 prints contents of file without local attribute's data
+        rem Test 11 prints contents of file without local attribute's data
         call :test dumpsds-11.out dumpsds -l swf32_fileattr.hdf
 
-        rem call :test 12 prints a dataset by name and the name is very long
+        rem Test 12 prints a dataset by name and the name is very long
         call :test dumpsds-12.out dumpsds -h -n "The name of this dataset is long and it is used to test the new variable length name feature." SDSlongname.hdf
 
-        rem call :test 13 prints contents of file when a dimension has the same name as its SDS
+        rem Test 13 prints contents of file when a dimension has the same name as its SDS
         call :test dumpsds-13.out dumpsds sds1_dim1_samename.hdf
 
-        rem call :test 14 prints contents of file when a dimension has the same name as 
+        rem Test 14 prints contents of file when a dimension has the same name as 
         rem that of another SDS
         call :test dumpsds-14.out dumpsds sds2_dim1_samename.hdf
+        
+        rem Test 15 prints headers of all data sets with various compression method to
+        rem test displaying compression information
+
+        if not "%use_comp_szip%"=="yes" (
+            call :test dumpsds-15.out dumpsds -h sds_compressed.hdf
+        ) else (
+            call :test dumpsds-15szip.out dumpsds -h sds_compressed.hdf
+        )
     )
     
     rem Test command dumprig
