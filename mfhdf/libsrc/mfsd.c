@@ -59,6 +59,9 @@ status = SDgetcompinfo(sdsid, ...);
         --- retrieve the compression method of an SDS
 status = SDgetcomptype(sdsid, ...);
 
+        --- retrieve the compressed and uncompressed sizes of an SDS' data
+status = SDgetdatasize(sdsid, ...);
+
         --- take an id and determine if it is an SD id, SDS id, dim id, ---
         --- or none of the above ---
 id_type = SDidtype(an_id);
@@ -4731,6 +4734,83 @@ done:
 
     return ret_value;    
 } /* SDgetcomptype */
+
+/******************************************************************************
+ NAME
+	SDgetdatasize -- Retrieves compression method of a dataset
+
+ DESCRIPTION
+    This routine uses HCPgetdatasize to retrieve the compression type
+    of the identified dataset.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ MODIFICATION
+    Dec 2007: Added to work around the problem where an external library is 
+	      missing, SDgetcompinfo will fail.  This new API will not need
+	      to get the compression information but only the compression type,
+	      which sometime is the only thing an application needs - BMR
+
+******************************************************************************/ 
+intn 
+SDgetdatasize(int32 sdsid,		/* IN: dataset ID */
+              int32* comp_size,         /* OUT  - size of compressed data */
+              int32* uncomp_size)       /* OUT  - size of uncompressed data */
+
+{
+    CONSTR(FUNC, "SDgetdatasize");    /* for HGOTO_ERROR */
+    NC     *handle;
+    NC_var *var;
+    int32 *comp_size_tmp = comp_size, *uncomp_size_tmp = uncomp_size;
+    intn   status = FAIL;
+    intn   ret_value = SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+    if (comp_size == NULL && uncomp_size == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* if the data ref# of the SDS is 0, it indicates that the SDS has 
+	not been written with data because no storage is created 
+	for the SDS data */
+    if (var->data_ref == 0)
+    {
+	*comp_size_tmp = *uncomp_size_tmp = 0;
+    }
+    else
+    {
+    /* use lower-level routine to get the data size */
+	status = HCPgetdatasize(handle->hdf_file, var->data_tag, var->data_ref, 
+		comp_size_tmp, uncomp_size_tmp);
+	if (status == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+    /* Return requested sizes */
+    if (comp_size != NULL)
+        *comp_size = *comp_size_tmp;
+    if (uncomp_size != NULL)
+        *uncomp_size = *uncomp_size_tmp;
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+    return ret_value;    
+} /* SDgetdatasize */
 
 /******************************************************************************
  NAME

@@ -101,6 +101,7 @@ mfhdf/hrepack/hrepacktst_verify.c -text
 mfhdf/libsrc/mfhdfi.h -text
 mfhdf/libsrc/tchunk.c -text
 mfhdf/libsrc/tcomp.c -text
+mfhdf/libsrc/tdatasizes.c -text
 mfhdf/libsrc/tdim.c -text
 mfhdf/libsrc/test1.nc -text
 mfhdf/libsrc/test_cdf.sav -text

@@ -753,12 +753,13 @@ test_szip_chunk()
    int32         dim_sizes[2], origin[2];
    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
    int32         comp_flag;
-   int16         all_data[LENGTH_CH][WIDTH_CH];
+   int32         all_data[LENGTH_CH][WIDTH_CH];
    int32         start[2], edges[2];
-   int16         chunk_out[CLENGTH][CWIDTH];
-   int16         row[CWIDTH] = { 5, 5 };
-   int16         column[CLENGTH] = { 4, 4, 4 };
-   int16         fill_value = 0;   /* Fill value */
+   int32	 comp_size=0, uncomp_size=0;
+   int32         chunk_out[CLENGTH][CWIDTH];
+   int32         row[CWIDTH] = { 5, 5 };
+   int32         column[CLENGTH] = { 4, 4, 4 };
+   int32         fill_value = 0;   /* Fill value */
    comp_coder_t  comp_type;        /* to retrieve compression type into */
    comp_info     cinfo;            /* compression information structure */
    int    	 num_errs = 0;     /* number of errors so far */
@@ -768,29 +769,30 @@ test_szip_chunk()
    * only to verify the read data.  The 'row' and 'column' are used
    * to write in the place of these chunks.
    */
-          int16 chunk1[CLENGTH][CWIDTH] = { 1, 1,
+          int32 chunk1[CLENGTH][CWIDTH] = { 1, 1,
                                             1, 1,
                                             1, 1 }; 
 
-          int16 chunk2[CLENGTH][CWIDTH] = { 2, 2,
+          int32 chunk2[CLENGTH][CWIDTH] = { 2, 2,
                                             2, 2,
                                             2, 2 }; 
 
-          int16 chunk3[CLENGTH][CWIDTH] = { 3, 3,
+          int32 chunk3[CLENGTH][CWIDTH] = { 3, 3,
                                             3, 3,
                                             3, 3 }; 
 
-          int16 chunk4[CLENGTH][CWIDTH] = { 0, 4,
+          int32 chunk4[CLENGTH][CWIDTH] = { 0, 4,
                                             0, 4,
                                             0, 4 }; 
 
-          int16 chunk5[CLENGTH][CWIDTH] = { 0, 0,
+          int32 chunk5[CLENGTH][CWIDTH] = { 0, 0,
                                             5, 5,
                                             0, 0 }; 
 
-          int16 chunk6[CLENGTH][CWIDTH] = { 6, 6,
+          int32 chunk6[CLENGTH][CWIDTH] = { 6, 6,
                                             6, 6,
                                             6, 6 };
+
 
     /* Initialize chunk lengths. */
     c_def.comp.chunk_lengths[0] = CLENGTH;
@@ -803,7 +805,7 @@ test_szip_chunk()
     /* Create LENGTH_CHxWIDTH_CH SDS. */
     dim_sizes[0] = LENGTH_CH;
     dim_sizes[1] = WIDTH_CH;
-    sds_id = SDcreate (sd_id, SDS_NAME_CH,DFNT_INT16, RANK_CH, dim_sizes);
+    sds_id = SDcreate (sd_id, SDS_NAME_CH,DFNT_INT32, RANK_CH, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for chunking/szip compression testing");
 
     /* Fill the SDS array with the fill value. */
@@ -979,6 +981,10 @@ test_szip_chunk()
 		num_errs++;
 	    }
     }
+
+    /* Get the data sizes */
+    status = SDgetdatasize(sds_id, &comp_size, &uncomp_size);
+    CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatasize");
 
     /* Terminate access to the data set. */
     status = SDendaccess (sds_id);

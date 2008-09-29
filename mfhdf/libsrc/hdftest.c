@@ -73,6 +73,7 @@ extern int test_coordvar();
 extern int test_chunk();
 extern int test_compression();
 extern int test_dimension();
+extern int test_datasizes();
 
 int 
 main(int argc, char *argv[])
@@ -1477,7 +1478,7 @@ main(int argc, char *argv[])
        very long main program so, instead, I added this routine, which can
        be appended with other dimension tests in the future.  Also, some
        day, the main program can be shortened and some of its dimension-related
-       tests can be moved into this test routine - 04/18/01 */
+       tests can be moved into this test routine (in tdims.c) - 04/18/01 */
     status = test_dimensions();
     num_errs = num_errs + status;
 
@@ -1485,7 +1486,13 @@ main(int argc, char *argv[])
     status = test_checkempty();
     num_errs = num_errs + status;
 
-    /* BMR: Added a test routine dedicated for testing SDidtype. 01/21/05 */
+    /* BMR: Added a test routine dedicated for testing SDgetdatasize (in 
+	tdatasizes.c) - 09/17/08 */
+    status = test_datasizes();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing SDidtype (in tidtypes.c)
+	- 01/21/05 */
     status = test_idtype();
     num_errs = num_errs + status;
 
@@ -1495,7 +1502,7 @@ main(int argc, char *argv[])
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing the behavior of
-     * several functions when the SDS has rank=0. 02/4/05 */
+     * several functions when the SDS has rank=0. (in trank0.c) - 02/4/05 */
     /* BMR: SDcreate fails on Copper when rank=0.  EP decided to remove
      * this test until further study can be made on this feature.
     status = test_rank0();
@@ -1512,7 +1519,7 @@ main(int argc, char *argv[])
     num_errs = num_errs + status;
 
 #ifdef H4_HAVE_LIBSZ
-    status = test_szip_compression();  /* defined in tszip.c */
+    status = test_szip_compression();  /* in tszip.c */
     num_errs = num_errs + status;
 #else
    /*  printf("****** SD Szip test skipped *****\n"); */
@@ -1520,8 +1527,8 @@ main(int argc, char *argv[])
 
     /* BMR: This test fails on some systems when the user are logged in
      * as root.  We decided to comment it out until further work can be
-     * attempted.  11/04/05 */
-    /* status = test_sd(); */ /* defined in tsd.c */
+     * attempted. (in tsd.c) 11/04/05 */
+    /* status = test_sd(); */
     /* num_errs = num_errs + status; */
 
     printf("num_err == %d\n", num_errs);
