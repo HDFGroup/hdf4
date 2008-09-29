@@ -759,7 +759,7 @@ HCIread_header(accrec_t * access_rec,
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     p = local_ptbuf+2;
-    UINT16DECODE(p, header_version);    /* get header length */
+    UINT16DECODE(p, header_version);    /* get compression version */
     INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
     UINT16DECODE(p, info->comp_ref);    /* get ref # of comp. data */
 
@@ -897,7 +897,6 @@ HCcreate(int32 file_id, uint16 tag, uint16 ref, comp_model_t model_type,
     /* compress the old DD and get rid of it, if there was one */
     if (data_id != FAIL)
       {
-
           /* write the data through to the compression layer */
           if (HCPwrite(access_rec, data_len, buf) == FAIL)
               HGOTO_ERROR(DFE_MODEL, FAIL);
@@ -1016,8 +1015,6 @@ done:
        /* end access to the aid if it's been accessed */
         if (aid != 0)
             if (Hendaccess(aid)== FAIL)
-       /* EIP 9/16/03 This causes infinite loop since HGOTO_ERROR has goto done in it 
-                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL); Replaced with HERROR call*/
                 HERROR(DFE_CANTENDACCESS);
     } /* end if */
 
@@ -1747,7 +1744,7 @@ HCPgetcomptype(int32 file_id,
     int32	data_len;	/* offset of the data we are checking */
     uint8      *p;		/* pointers to the temporary buffer */
     uint8      *local_ptbuf;	/* temporary buffer */
-    uint16	sptag;		/* special tag */
+    uint16	sp_tag;		/* special tag */
     uint16	c_type;		/* compression type */
     filerec_t  *file_rec;	/* file record */
     int32       ret_value=SUCCEED;
@@ -1786,11 +1783,11 @@ HCPgetcomptype(int32 file_id,
 
 	/* Get special tag */
 	p = local_ptbuf;
-	INT16DECODE(p, sptag);
+	INT16DECODE(p, sp_tag);
 
 	/* If it is a compressed element, move forward until compression
 	   coder and get it */
-	switch (sptag)
+	switch (sp_tag)
 	{
 	  case SPECIAL_COMP:
 	      if (Hread(temp_aid,0,local_ptbuf) == FAIL)
@@ -1855,3 +1852,141 @@ done:
   /* Normal function cleanup */
   return ret_value;
 } /* HCPgetcomptype */
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPgetdatasize -- Retrieves compression type of an element
+ USAGE
+    intn HCPgetdatasize(aid, coder_type)
+    int32 aid;                  IN: access record ID
+    comp_coder_t* coder_type;   OUT: the type of compression
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    This routine retrieves the compression type of the element, identified 
+    by 'aid'.  It is very similar to HCPgetcompinfo except that it only
+    retrieves the compression type and not the compression information.  The 
+    routine is used by GRgetcomptype and SDgetcomptype.
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    Dec. 2007: Added so that applications can get the compression method only.
+		The immediate intention is to avoid the need for external 
+		libraries to be present when only compression type is desired
+		and not compression information. -BMR
+--------------------------------------------------------------------------*/
+intn
+HCPgetdatasize(int32 file_id,
+              uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+              int32* comp_size,		/* OUT  - size of compressed data */
+              int32* uncomp_size)	/* OUT  - size of uncompressed data */
+{
+    CONSTR(FUNC, "HCPgetdatasize");	/* for HGOTO_ERROR */
+    int32	data_len;	/* offset of the data we are checking */
+    uint8      *local_ptbuf=NULL, *p;
+    uint16	sp_tag;		/* special tag */
+    uint16 comp_ref = 0;
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
+    int32	drec_aid;	/* description record access id */
+    atom_t      data_id = FAIL;	/* dd ID of existing regular element */
+    int32 len = 0;
+    filerec_t  *file_rec;	/* file record */
+    int32       ret_value=SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* convert file id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get access element from dataset's tag/ref */
+    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
+    {
+	/* if the element is not special, that means dataset's tag/ref 
+	   specifies the actual data that was written to the dataset, so
+	   we don't need to check further */
+	if (HTPis_special(data_id)==FALSE)
+            {
+	       if ((len = Hlength(file_id, data_tag, data_ref)) == FAIL)
+		  HGOTO_ERROR(DFE_BADLEN, FAIL);
+		*uncomp_size = *comp_size = len;
+            }
+	else
+	{
+	    /* get the info for the dataset (description record) */
+	    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&data_len) == FAIL)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Get the special info header */
+	    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
+	    if (drec_aid == FAIL)
+		HGOTO_ERROR(DFE_BADAID, FAIL);
+	    if (Hread(drec_aid,0,local_ptbuf) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+	    if(Hendaccess(drec_aid)==FAIL)
+		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+	    /* get special tag */
+	    p = local_ptbuf;
+	    INT16DECODE(p, sp_tag);
+
+	    /* if it is a compressed element, get the data length */
+	    if (sp_tag == SPECIAL_COMP)
+	    {
+		/* skip 2byte header_version */
+		p = p + 2;
+		INT32DECODE(p, len);   /* get _uncompressed_ data length */
+	      *uncomp_size = len;
+	      /* There is no data written, send 0 back for both parameters */
+	      if (len == 0)
+	      {
+		  *comp_size = len;
+	      }
+	      /* Data has been written, get compressed data size */
+	      else
+	      {
+		  /* Get ref of compressed data */
+		  UINT16DECODE(p, comp_ref);
+	       if ((len = Hlength(file_id, DFTAG_COMPRESSED, comp_ref)) == FAIL)
+		  HGOTO_ERROR(DFE_BADLEN, FAIL);
+	       *comp_size = len;
+	      }
+	    }
+
+	    /* if it is a chunked element, get the number of records in
+	       the chunk table (vdata) to determine the sizes */
+	    else if (sp_tag == SPECIAL_CHUNKED)
+	    {
+	     if (HMCgetdatasize(file_id, p, comp_size, uncomp_size)==FAIL)
+		  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+	} /* else, data_id is special */
+
+	/* end access to the aid */
+	if (HTPendaccess(data_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }  /* end if data_id != FAIL */
+    else
+    {
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+    }
+ 
+done:
+    if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+    /* Normal function cleanup */
+    if (local_ptbuf != NULL) 
+	HDfree(local_ptbuf);
+
+    return ret_value;
+
+} /* HCPgetdatasize */
