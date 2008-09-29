@@ -978,6 +978,7 @@
 ./mfhdf/libsrc/tchunk.c
 ./mfhdf/libsrc/tcomp.c
 ./mfhdf/libsrc/tcoordvar.c
+./mfhdf/libsrc/tdatasizes.c
 ./mfhdf/libsrc/tdim.c
 ./mfhdf/libsrc/temptySDSs.c
 ./mfhdf/libsrc/tfile.c
