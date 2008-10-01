@@ -4737,40 +4737,47 @@ done:
 
 /******************************************************************************
  NAME
-	SDgetdatasize -- Retrieves compression method of a dataset
+	SDgetdatasize -- Retrieves the sizes of original and compressed data.
 
  DESCRIPTION
-    This routine uses HCPgetdatasize to retrieve the compression type
-    of the identified dataset.
+    This routine uses HCPgetdatasize to retrievethe original data and 
+    compressed data sizes of the identified dataset.  At least of the OUT
+    arguments must be non-null and a null argument will be unchanged.
 
  RETURNS
     SUCCEED/FAIL
 
  MODIFICATION
-    Dec 2007: Added to work around the problem where an external library is 
-	      missing, SDgetcompinfo will fail.  This new API will not need
-	      to get the compression information but only the compression type,
-	      which sometime is the only thing an application needs - BMR
 
 ******************************************************************************/ 
 intn 
 SDgetdatasize(int32 sdsid,		/* IN: dataset ID */
-              int32* comp_size,         /* OUT  - size of compressed data */
-              int32* uncomp_size)       /* OUT  - size of uncompressed data */
+              int32* comp_size,		/* OUT: size of compressed data */
+              int32* orig_size)		/* OUT: size of original data */
 
 {
     CONSTR(FUNC, "SDgetdatasize");    /* for HGOTO_ERROR */
     NC     *handle;
     NC_var *var;
-    int32 *comp_size_tmp = comp_size, *uncomp_size_tmp = uncomp_size;
+    int32  *comp_size_tmp=NULL, *orig_size_tmp=NULL;
     intn   status = FAIL;
     intn   ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
-    if (comp_size == NULL && uncomp_size == NULL)
+
+    /* must have at least one non-null argument */
+    if (comp_size == NULL && orig_size == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* allocate temporary buffers so user's arguments can be kept intact 
+       until finished */
+    if (comp_size != NULL)
+        comp_size_tmp = (int32 *) HDmalloc(sizeof(int32));
+    if (orig_size != NULL)
+        orig_size_tmp = (int32 *) HDmalloc(sizeof(int32));
+
+    /* get NC_var record */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4785,22 +4792,22 @@ SDgetdatasize(int32 sdsid,		/* IN: dataset ID */
 	for the SDS data */
     if (var->data_ref == 0)
     {
-	*comp_size_tmp = *uncomp_size_tmp = 0;
+	*comp_size_tmp = *orig_size_tmp = 0;
     }
     else
     {
-    /* use lower-level routine to get the data size */
+	/* use lower-level routine to get the data sizes */
 	status = HCPgetdatasize(handle->hdf_file, var->data_tag, var->data_ref, 
-		comp_size_tmp, uncomp_size_tmp);
+		comp_size_tmp, orig_size_tmp);
 	if (status == FAIL)
 	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
-    /* Return requested sizes */
+    /* Return the requested sizes */
     if (comp_size != NULL)
         *comp_size = *comp_size_tmp;
-    if (uncomp_size != NULL)
-        *uncomp_size = *uncomp_size_tmp;
+    if (orig_size != NULL)
+        *orig_size = *orig_size_tmp;
 
 done:
     if (ret_value == FAIL)
@@ -4808,6 +4815,10 @@ done:
 
       }
     /* Normal cleanup */
+    if (comp_size_tmp != NULL)
+        HDfree(comp_size_tmp);
+    if (orig_size_tmp != NULL)
+        HDfree(orig_size_tmp);
 
     return ret_value;    
 } /* SDgetdatasize */
