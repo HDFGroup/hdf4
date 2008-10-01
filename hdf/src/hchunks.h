@@ -178,25 +178,25 @@ extern      "C"
          HCHUNK_DEF *chk_array /* IN: structure describing chunk distribution
                                  can be an array? but we only handle 1 level */);
 
-    HDFLIBAPI int32 HMCgetcompress
+    HDFLIBAPI intn HMCgetcompress
 	(accrec_t* access_rec,    /* IN: access record */
 	 comp_coder_t* comp_type, /* OUT: compression type */
          comp_info* c_info        /* OUT: retrieved compression info */);
 
-    HDFLIBAPI int32 HMCgetcomptype
+    HDFLIBAPI intn HMCgetcomptype
 	(int32 access_id,	  /* IN: access record */
 	 comp_coder_t* comp_type  /* OUT: compression type */);
 
-    HDFLIBAPI int32 HMCgetdatasize
-        (int32 file_id,      /* IN: file in which element is located */
-         uint8 *p,           /* IN: buffer of special info header */
-         int32 *comp_size,   /* OUT: size of compressed data */
-         int32 *uncomp_size  /* OUT: size of non-compressed data */);
+    HDFLIBAPI intn HMCgetdatasize
+        (int32 file_id,    /* IN: file in which element is located */
+         uint8 *p,         /* IN: buffer of special info header */
+         int32 *comp_size, /* OUT: size of compressed data */
+         int32 *orig_size  /* OUT: size of non-compressed data */);
 
     HDFLIBAPI int32 HMCsetMaxcache
-        (int32 access_id, /* IN: access aid to mess with */
-         int32 maxcache,  /* IN: max number of pages to cache */
-         int32 flags      /* IN: flags = 0, HMC_PAGEALL */);
+        (int32 access_id,  /* IN: access aid to mess with */
+         int32 maxcache,   /* IN: max number of pages to cache */
+         int32 flags       /* IN: flags = 0, HMC_PAGEALL */);
 
     HDFLIBAPI int32 HMCwriteChunk
         (int32 access_id,  /* IN: access aid to mess with */
