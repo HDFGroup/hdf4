@@ -2058,3 +2058,250 @@ nscchempty(id, flag)
     *flag = flag_c;
     return(status);
 }   
+/*-----------------------------------------------------------------------------
+ * Name:    scgetfname
+ * Purpose: Retrieves the name of the file given file identifier
+ * Inputs:  file_id: file identifier
+ * Outputs: file_name: file name 
+ *          namelen: length of file name
+ * Returns: real length on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgetfname(intf *file_id, _fcd name, intf *namelen)
+#else
+nscgetfname(file_id, name, namelen)
+     intf *file_id;
+     _fcd name;
+     intf *namelen;
+#endif /* PROTOTYPE */
+
+{
+    char   *fn;
+    intn    ret;
+    
+    fn = HDf2cstring(name, *namelen);
+    if (!fn) return(FAIL);
+    ret = (intn) SDgetfilename(*file_id, fn);
+    HDpackFstring(fn,  _fcdtocp(name),  *namelen);    
+    
+    HDfree((VOIDP)fn);
+    return(ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scgetnamelen
+ * Purpose: Retrieves the length of the object name
+ * Inputs:  obj_id: object identifier
+ * Outputs: namelen: name length
+ * Returns: 0 on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgetnamelen(intf *obj_id, intf *namelen)
+#else
+nscgetnamelen(obj_id, namelen)
+     intf *obj_id;
+     intf *namelen;
+#endif /* PROTOTYPE */
+
+{
+    intn    ret;
+    uint16  c_namelen;
+    
+    ret = (intn) SDgetnamelen(*obj_id, &c_namelen);
+
+    *namelen = (intf)c_namelen; 
+    return(ret);
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scidtype
+ * Purpose: Retrieves type pf the object give an identifier
+ * Inputs:  obj_id: object identifier
+ * Outputs: obj_type: object type  -1 for invalide
+ *                                  0 for file
+ *                                  1 for data set
+ *                                  2 for dimension scale
+ * Returns: 0 on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscidtype(intf *obj_id, intf *obj_type)
+#else
+nscidtype(obj_id, obj_type)
+     intf *obj_id;
+     intf *obj_type;
+#endif /* PROTOTYPE */
+
+{
+    intn    ret = -1;
+    hdf_idtype_t  c_obj_type;;
+    
+    c_obj_type = SDidtype(*obj_id);
+
+    *obj_type = (intf)c_obj_type; 
+    if (c_obj_type >= 0) ret = 0;
+    return(ret);
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scrmaxopenf
+ * Purpose: Resets the max numebr of files can be opened at the same time
+ * Inputs:  req_max: requested max number of files
+ * Returns: current max number of opened files on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscrmaxopenf(intf *req_max)
+#else
+nscrmaxopenf(req_max)
+     intf *req_max;
+#endif /* PROTOTYPE */
+
+{
+    intf    cur_max;
+    
+    cur_max = (intf) SDreset_maxopenfiles(*req_max);
+    return(cur_max);
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scgmaxopenf
+ * Purpose: Retrieves current and maximum number of open files. 
+ * Outputs: cat_max: current max of opened files
+ *          sys_limit: system limit on open files
+ * Returns: 0 on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgmaxopenf(intf *cur_max, intf *sys_limit)
+#else
+nscgmaxopenf(cur_max, sys_limit)
+     intf *cur_max;
+     intf *sys_limit;
+#endif /* PROTOTYPE */
+
+{
+    intf ret = 0;
+    intn c_cur_max, c_sys_limit;
+    
+    ret = (intf) SDget_maxopenfiles(&c_cur_max, &c_sys_limit);
+    if (ret < 0) return(FAIL);
+    *cur_max = (intf)c_cur_max;
+    *sys_limit = (intf)c_sys_limit;
+    return(ret);
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scgnumopenf
+ * Purpose: Returns the number of files currently being opened
+ * Outputs: cur_num: number of files currently being opened
+ * Returns: 0 on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgnumopenf(intf *cur_num)
+#else
+nscgnumopenf(cur_num)
+     intf *cur_num;
+#endif /* PROTOTYPE */
+
+{
+    intf    ret = 0;
+    intn    c_cur_num;
+    
+    c_cur_num = SDget_numopenfiles();
+    if (c_cur_num < 1) ret = -1;
+    *cur_num = (intf)c_cur_num;
+    return(ret);
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scname2ind
+ * Purpose: Retrieves indices of all variables with the same name. 
+ * Inputs:  sd_id: SD interface identifier
+ *          sds_name: data set name
+ *          namelen:  length of the name
+ *          n_vars:   number of variables (sizes of var_list and type_list 
+ *                    arrays)
+ * Outputs: var_list: list of indices
+ *          type_list: list of types         
+ * Returns: 0 on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscname2ind(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_listi, intf *n_vars)
+#else
+nscname2ind(sd_id, name, namelen, var_list, type_list, n_vars)
+     intf *sd_id;
+     _fcd name;
+     intf *namelen;
+     intf *var_list;
+     intf *type_list;
+     intf *n_vars;
+#endif /* PROTOTYPE */
+
+{
+    char   *fn;
+    intn    ret;
+    hdf_varlist_t *c_var_list; 
+    int i, idx;
+    
+    fn = HDf2cstring(name, *namelen);
+    if (!fn) return(FAIL);
+    c_var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+    if (!c_var_list) return(FAIL);
+
+    ret = (intn) SDnametoindices(*sd_id, fn, c_var_list);
+    
+    if (ret == 0) {
+	    for (idx = 0; idx < *n_vars; idx++) {
+         	var_list[i] = (intf)c_var_list[idx].var_index;
+         	type_list[i] = (intf)c_var_list[idx].var_type;
+    	    }
+    } /*endif*/
+    HDfree(c_var_list);
+    HDfree((VOIDP)fn);
+    return(ret);
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scgnvars_byname
+ * Purpose: Gets the number of data sets having the same name
+ * Inputs:  sd_id: SD interface identifier
+ *          sds_name: data set name
+ *          namelen:  length of the name
+ * Outputs: n_vars: number of data sets
+ * Returns: 0 on success, -1 on failure 
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgnvars_byname(intf *sd_id, _fcd name, intf *namelen, intf *n_vars)
+#else
+nscgnvars_byname(sd_id, name, namelen, n_vars)
+     intf *sd_id;
+     _fcd name;
+     intf *namelen;
+     intf *n_vars;
+#endif /* PROTOTYPE */
+
+{
+    char   *fn;
+    int32   c_n_vars;
+    intn    ret;
+    
+    fn = HDf2cstring(name, *namelen);
+    if (!fn) return(FAIL);
+
+    ret = (intn) SDgetnumvars_byname(*sd_id, fn, &c_n_vars);
+
+    HDfree((VOIDP)fn);
+    if(ret == FAIL) return FAIL;
+    *n_vars = (intf)c_n_vars;
+    return(ret);
+}
+
+

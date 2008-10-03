@@ -361,10 +361,10 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     scgichnk (C stub for SDgetchunkinfo function)
 C-------------------------------------------------------------------------
 
-         INTEGER function sfgichnk(id, dim_length, comp_flag)
+         integer function sfgichnk(id, dim_length, comp_flag)
 
-         INTEGER id, dim_length(*), comp_flag
-         INTEGER scgichnk 
+         integer id, dim_length(*), comp_flag
+         integer scgichnk 
 
          sfgichnk = scgichnk(id, dim_length, comp_flag)
          return
@@ -382,11 +382,11 @@ C        Calls:     scrcchnk (C stub for SDreadchunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
-         INTEGER function sfrcchnk(id, start, char_data)
+         integer function sfrcchnk(id, start, char_data)
 C
-         INTEGER id, start(*)
-         CHARACTER*(*) char_data(*)
-         INTEGER scrcchnk 
+         integer id, start(*)
+         character*(*) char_data(*)
+         integer scrcchnk 
 C
          sfrcchnk = scrcchnk(id, start, char_data) 
 C
@@ -405,10 +405,10 @@ C        Calls:     scrchnk (C stub for SDreadchunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
-         INTEGER function sfrchnk(id, start, num_data)
+         integer function sfrchnk(id, start, num_data)
 C
-         INTEGER id, start(*), num_data(*)
-         INTEGER scrchnk 
+         integer id, start(*), num_data(*)
+         integer scrchnk 
 C
          sfrchnk = scrchnk(id, start, num_data) 
 C
@@ -428,10 +428,10 @@ C        Calls:     scscchnk (C stub for SDsetchunkcache function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
-         INTEGER function sfscchnk(id, maxcache, flags)
+         integer function sfscchnk(id, maxcache, flags)
 C
-         INTEGER id, maxcache, flags 
-         INTEGER scscchnk 
+         integer id, maxcache, flags 
+         integer scscchnk 
 C
          sfscchnk = scscchnk(id, maxcache, flags) 
 C
@@ -477,10 +477,10 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     scschnk (C stub for SDsetchunk function)
 C-------------------------------------------------------------------------
 
-         INTEGER function sfschnk(id, dim_length, comp_type,comp_prm)
+         integer function sfschnk(id, dim_length, comp_type,comp_prm)
 
-         INTEGER id, dim_length(*), comp_type, comp_prm(*)
-         INTEGER scschnk 
+         integer id, dim_length(*), comp_type, comp_prm(*)
+         integer scschnk 
 
          sfschnk = scschnk(id, dim_length, comp_type, comp_prm)
          return
@@ -498,11 +498,11 @@ C        Calls:     scwcchnk (C stub for SDwritechunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
-         INTEGER function sfwcchnk(id, start, char_data)
+         integer function sfwcchnk(id, start, char_data)
 C
-         INTEGER id, start(*) 
-         CHARACTER*(*) char_data(*)
-         INTEGER scwcchnk 
+         integer id, start(*) 
+         character*(*) char_data(*)
+         integer scwcchnk 
 C
          sfwcchnk = scwcchnk(id, start, char_data) 
 C
@@ -521,10 +521,10 @@ C        Calls:     scwchnk (C stub for SDwritechunk function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
-         INTEGER function sfwchnk(id, start, num_data)
+         integer function sfwchnk(id, start, num_data)
 C
-         INTEGER id, start(*), num_data(*)
-         INTEGER scwchnk 
+         integer id, start(*), num_data(*)
+         integer scwchnk 
 C
          sfwchnk = scwchnk(id, start, num_data) 
 C
@@ -556,10 +556,10 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     scscompress (C stub for SDsetcompress function)
 C-------------------------------------------------------------------------
 
-         INTEGER function sfscompress(id, comp_type,comp_prm)
+         integer function sfscompress(id, comp_type,comp_prm)
 
-         INTEGER id, comp_type, comp_prm(*)
-         INTEGER scscompress 
+         integer id, comp_type, comp_prm(*)
+         integer scscompress 
          sfscompress = scscompress(id, comp_type, comp_prm)
          return
          end
@@ -591,10 +591,10 @@ C        Returns:   0 on success, -1 on failure
 C        Calls:     scgcompress (C stub for SDsetcompress function)
 C-------------------------------------------------------------------------
 
-         INTEGER function sfgcompress(id, comp_type,comp_prm)
+         integer function sfgcompress(id, comp_type,comp_prm)
 
-         INTEGER id, comp_type, comp_prm(*)
-         INTEGER scgcompress 
+         integer id, comp_type, comp_prm(*)
+         integer scgcompress 
          sfgcompress = scgcompress(id, comp_type, comp_prm)
          return
          end
@@ -610,13 +610,196 @@ C        Calls:     scchempty (C stub for SDcheckempty function)
 C        Users:     HDF Fortran programmers
 C-------------------------------------------------------------------------
 
-         INTEGER function sfchempty(id, flag)
+         integer function sfchempty(id, flag)
 C
-         INTEGER id, flag 
-         INTEGER scchempty 
+         integer id, flag 
+         integer scchempty 
 C
          sfchempty = scchempty(id, flag) 
 C
          return 
          end
+           
+C----------------------------------------------------------------------
+C     Name:     sfgetfname
+C     Purpose:  Retrieves the name of the file given file identifier
+C     Inputs:   file_id: file identifier
+C     Input/Outputs: filename: character variable to hold 
+C                    the name of the file
+C     Returns:  the length of the name if successfull, -1 if fails
+C     Calls:    scgetfname
+C     Users:    Fortran stub routine
+C----------------------------------------------------------------------
+
+      integer function sfgetfname(file_id, filename)
+
+      character*(*) filename
+      integer       file_id
+      integer       scgetfname
+
+      sfgetfname = scgetfname(file_id, filename, len(filename))
+      return
+      end
+
+C-------------------------------------------------------------------------
+C        Name:      sfgetnamelen
+C        Purpose:   Retrieves the length of the name of 
+C                   a file, a dataset, or a dimension.
+C        Inputs:    obj_id   - object identifier
+C        Outputs:   length   - length of the object's name
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgetnamelen
+C        Users:     Fortran stub routine
+C-------------------------------------------------------------------------
+
+         integer function sfgetnamelen(obj_id, length)
+C
+         integer obj_id, length
+         integer scgetnamelen
+C
+         sfgetnamelen = scgetnamelen(obj_id, length) 
+C
+         return 
+         end
+
+C-------------------------------------------------------------------------
+C        Name:      sfidtype
+C        Purpose:   Returns the type of object
+C        Inputs:    obj_id   - object identifier
+C        Outputs:   obj_type - type of the object
+C                       Can be one of the following
+C                      -1 - if obj_id is not valid SD type
+C                       0 - SD (file)
+C                       1 - SDS (data set)
+C                       2 - DIM_ID (dimension scale)
+C                       see mfhdf.h file for definition of hdf_idtype_t
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scidtype
+C        Users:     Fortran stub routine
+C-------------------------------------------------------------------------
+
+         integer function sfidtype(obj_id, obj_type)
+C
+         integer obj_id, obj_type
+         integer scidtype
+C
+         sfidtype = scidtype(obj_id, obj_type) 
+C
+         return 
+         end
+           
+C----------------------------------------------------------------------
+C     Name:     sfgnvars_byname
+C     Purpose:  Gets the number of data sets having the same name
+C     Inputs:   sd_id: SD interface identifier 
+C               sds_name:  name of a data set
+C     Output:   n_vars: number of data sets with name "name"
+C     Returns:  0 on success, -1 on failure
+C     Calls:    scgnvars_byname
+C     Users:    Fortran stub routine
+C----------------------------------------------------------------------
+
+      integer function sfgnvars_byname(sd_id, sds_name, n_vars)
+
+      character*(*) sds_name
+      integer       sd_id, n_vars
+      integer       scgnvars_byname
+
+      sfgnvars_byname = scgnvars_byname(sd_id, sds_name, len(sds_name),
+     +                  n_vars)
+      return
+      end
+
+C----------------------------------------------------------------------
+C     Name:     sfname2ind
+C     Purpose:  Retrieves indices and types of all variables with 
+C               the same name
+C     Inputs:   sd_id: SD interface identifier 
+C               sds_name:  name of a data set
+C     Input/Output:   var_list: array to store indices 
+C                     type_list: array to store variable type
+C                                elements may have values 
+C                                0 - for data set,
+C                                1 - for dimension scale
+C                                2 - unknown type
+C     Returns:  0 on success, -1 on failure
+C     Calls:    scname2ind
+C     Users:    Fortran stub routine
+C----------------------------------------------------------------------
+
+      integer function sfname2ind(sd_id, sds_name, var_list, 
+     +                            type_list, n_vars)
+
+      character*(*) sds_name
+      integer       sd_id
+      integer       var_list(*), type_list(*)
+      integer       n_vars;
+      integer       scname2ind
+
+      sfname2ind = scname2ind(sd_id, sds_name, len(sds_name), var_list, 
+     +                        type_list, n_vars)
+      return
+      end
+
+C-------------------------------------------------------------------------
+C        Name:      sfgmaxopenf
+C        Purpose:   Retrieves current and maximum number of open files 
+C        Outputs:   cur_max: current number of open files 
+C                   sys_limit: maximum number of open files 
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgmaxopenf
+C        Users:     Fortran stub routine
+C-------------------------------------------------------------------------
+
+         integer function sfgmaxopenf(cur_max, sys_limit)
+C
+         integer cur_max, sys_limit
+         integer scgmaxopenf
+C
+         sfgmaxopenf = scgmaxopenf(cur_max, sys_limit) 
+C
+         return 
+         end
+           
+C-------------------------------------------------------------------------
+C        Name:      sfgnumopenf
+C        Purpose:   Returns the number of files currently being opened
+C        Outputs:   cur_num: current number of open files 
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scgnumopenf
+C        Users:     Fortran stub routine
+C-------------------------------------------------------------------------
+
+         integer function sfgnumopenf(cur_num)
+C
+         integer cur_num
+         integer scgnumopenf
+C
+         sfgnumopenf = scgnumopenf(cur_num) 
+C
+         return 
+         end
+           
+C-------------------------------------------------------------------------
+C        Name:      sfrmaxopenf
+C        Purpose:   Resets the maximum number of files can be opened 
+C                   at the same time
+C        Outputs:   req_max: requested maximum number of opened files allowed 
+C        Returns:   0 on success, -1 on failure
+C        Calls:     scrmaxopenf
+C        Users:     Fortran stub routine
+C-------------------------------------------------------------------------
+
+         integer function sfrmaxopenf(req_max)
+C
+         integer req_max
+         integer scrmaxopenf
+C
+         sfrmaxopenf = scrmaxopenf(req_max) 
+C
+         return 
+         end
+           
+           
+           
            

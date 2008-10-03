@@ -115,3 +115,20 @@ C
       external sfscfill
       integer  sfsflmd
       external sfsflmd
+      integer  sfgetfname
+      external sfgetfname
+      integer  sfgetnamelen
+      external sfgetnamelen
+      integer  sfidtype
+      external sfidtype
+      integer  sfgnvars_byname
+      external sfgnvars_byname
+      integer  sfname2ind
+      external sfname2ind
+      integer  sfgmaxopenf
+      external sfgmaxopenf
+      integer  sfgnumopenf
+      external sfgnumopenf
+      integer  sfrmaxopenf
+      external sfrmaxopenf
+      
