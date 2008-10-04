@@ -16,10 +16,10 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 if HDF_BUILD_NETCDF
 include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
-check_PROGRAMS = ftest hdftest tszip
+check_PROGRAMS = ftest hdftest tszip hdftest1
 else
 include_HEADERS = mffunc.inc mffunc.f90
-check_PROGRAMS =  hdftest tszip
+check_PROGRAMS =  hdftest tszip hdftest1
 endif
 
 if HDF_BUILD_NETCDF
@@ -33,6 +33,10 @@ endif
 hdftest_SOURCES = hdftest.f
 hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+
+hdftest1_SOURCES = hdftest1.f
+hdftest1_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 
 tszip_SOURCES = tszip.f
 tszip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
@@ -48,16 +52,23 @@ check:
 	@echo "==================================="
 	@echo "HDF-SD Fortran interfaces tests"
 	@echo "==================================="
+	@echo "                                   "
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
+	@echo "                                   "
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest1
 if HDF_BUILD_NETCDF
+	@echo "                                   "
 	@echo "==================================="
 	@echo "HDF-NetCDF Fortran interfaces tests"
 	@echo "==================================="
+	@echo "                                   "
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
-	@echo "==================================="
 endif
+	@echo "                                   "
+	@echo "==================================="
 	@echo "SZIP Fortran interfaces tests"
 	@echo "==================================="
+	@echo "                                   "
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 
 #############################################################################

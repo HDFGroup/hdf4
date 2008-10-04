@@ -75,6 +75,7 @@ mfhdf/dumper/testfiles/tdfr8f.hdf -text
 mfhdf/dumper/testfiles/test.hdf -text
 mfhdf/dumper/testfiles/tvattr.hdf -text
 mfhdf/dumper/testfiles/tvset.hdf -text
+mfhdf/fortran/hdftest1.f -text
 mfhdf/fortran/mffunc.inc -text
 mfhdf/fortran/test_nc.nc -text
 mfhdf/hdfimport/SDSfloat2.hdf -text

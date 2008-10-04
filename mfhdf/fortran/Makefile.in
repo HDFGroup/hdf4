@@ -36,9 +36,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @HDF_BUILD_NETCDF_FALSE@check_PROGRAMS = hdftest$(EXEEXT) \
-@HDF_BUILD_NETCDF_FALSE@	tszip$(EXEEXT)
+@HDF_BUILD_NETCDF_FALSE@	tszip$(EXEEXT) hdftest1$(EXEEXT)
 @HDF_BUILD_NETCDF_TRUE@check_PROGRAMS = ftest$(EXEEXT) \
-@HDF_BUILD_NETCDF_TRUE@	hdftest$(EXEEXT) tszip$(EXEEXT)
+@HDF_BUILD_NETCDF_TRUE@	hdftest$(EXEEXT) tszip$(EXEEXT) \
+@HDF_BUILD_NETCDF_TRUE@	hdftest1$(EXEEXT)
 subdir = mfhdf/fortran
 DIST_COMMON = README $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -54,6 +55,8 @@ am__ftest_SOURCES_DIST = ftest.f
 ftest_OBJECTS = $(am_ftest_OBJECTS)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
+am_hdftest1_OBJECTS = hdftest1.$(OBJEXT)
+hdftest1_OBJECTS = $(am_hdftest1_OBJECTS)
 am_tszip_OBJECTS = tszip.$(OBJEXT)
 tszip_OBJECTS = $(am_tszip_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)/hdf/src@am__isrc@
@@ -61,9 +64,10 @@ F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
 F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
-SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES) $(tszip_SOURCES)
-DIST_SOURCES = $(am__ftest_SOURCES_DIST) $(hdftest_SOURCES) \
+SOURCES = $(ftest_SOURCES) $(hdftest_SOURCES) $(hdftest1_SOURCES) \
 	$(tszip_SOURCES)
+DIST_SOURCES = $(am__ftest_SOURCES_DIST) $(hdftest_SOURCES) \
+	$(hdftest1_SOURCES) $(tszip_SOURCES)
 am__include_HEADERS_DIST = mffunc.inc mffunc.f90 netcdf.inc netcdf.f90
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -139,6 +143,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 TBL = @TBL@
+USE_COMP_SZIP = @USE_COMP_SZIP@
 VERSION = @VERSION@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
@@ -216,6 +221,9 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 hdftest_SOURCES = hdftest.f
 hdftest_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+hdftest1_SOURCES = hdftest1.f
+hdftest1_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
+hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
 tszip_SOURCES = tszip.f
 tszip_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a @LIBS@
 tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
@@ -266,6 +274,9 @@ ftest$(EXEEXT): $(ftest_OBJECTS) $(ftest_DEPENDENCIES)
 hdftest$(EXEEXT): $(hdftest_OBJECTS) $(hdftest_DEPENDENCIES) 
 	@rm -f hdftest$(EXEEXT)
 	$(F77LINK) $(hdftest_OBJECTS) $(hdftest_LDADD) $(LIBS)
+hdftest1$(EXEEXT): $(hdftest1_OBJECTS) $(hdftest1_DEPENDENCIES) 
+	@rm -f hdftest1$(EXEEXT)
+	$(F77LINK) $(hdftest1_OBJECTS) $(hdftest1_LDADD) $(LIBS)
 tszip$(EXEEXT): $(tszip_OBJECTS) $(tszip_DEPENDENCIES) 
 	@rm -f tszip$(EXEEXT)
 	$(F77LINK) $(tszip_OBJECTS) $(tszip_LDADD) $(LIBS)
@@ -485,14 +496,21 @@ check:
 	@echo "==================================="
 	@echo "HDF-SD Fortran interfaces tests"
 	@echo "==================================="
+	@echo "                                   "
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
+	@echo "                                   "
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest1
+@HDF_BUILD_NETCDF_TRUE@	@echo "                                   "
 @HDF_BUILD_NETCDF_TRUE@	@echo "==================================="
 @HDF_BUILD_NETCDF_TRUE@	@echo "HDF-NetCDF Fortran interfaces tests"
 @HDF_BUILD_NETCDF_TRUE@	@echo "==================================="
+@HDF_BUILD_NETCDF_TRUE@	@echo "                                   "
 @HDF_BUILD_NETCDF_TRUE@	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
-@HDF_BUILD_NETCDF_TRUE@	@echo "==================================="
+	@echo "                                   "
+	@echo "==================================="
 	@echo "SZIP Fortran interfaces tests"
 	@echo "==================================="
+	@echo "                                   "
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
