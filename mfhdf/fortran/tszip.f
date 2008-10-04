@@ -121,13 +121,13 @@ C-------------------IS SZIP compression present with encoder?--------
             goto 1111
          endif 
          if(info .EQ. 0 ) then
-          print *,'Skipping tszip test: compression is not available'
+          print *,'Skipping test_szip: compression is not available'
           print *,' '
           goto 3333
          endif
 
        if(info .EQ. 1) then
-         print *,'Skipping tszip test: szip encoding is not available'
+         print *,'Skipping test_szip: szip encoding is not available'
           print *,' '
          goto 3333
        endif
@@ -386,11 +386,11 @@ C
             endif
 1111     continue
          if (err_szip .ne. 0) then
-            print *, 'tszip failed with ', err_szip, ' errors'
+            print *, 'test_szip failed with ', err_szip, ' errors'
             print *,' '
          endif
          if (err_szip .eq. 0) then
-            print *, 'tszip...................... PASSED'
+            print *, 'test_szip.................. PASSED'
             print *,' '
          endif
 3333     continue
