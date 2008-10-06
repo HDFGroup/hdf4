@@ -16,7 +16,7 @@ C
 C------- Begin Variables declarations -----------------------------------
 C
          integer   N_COMP_ARG, N_TYPES
-         parameter (N_COMP_ARG = 2, N_TYPES = 4)
+         parameter (N_COMP_ARG = 5, N_TYPES = 4)
          integer   sd_id, sds_id(N_TYPES), sds_index(N_TYPES)
          integer   type(N_TYPES)
          integer   RANK, comp_type, comp_type_out
@@ -277,6 +277,11 @@ C
      .                compressed dataset'
                 err_szip = err_szip + 1
                 endif
+C            write(*,*) comp_arg(1), comp_prm_out(1)
+C            write(*,*) comp_arg(2), comp_prm_out(2)
+C            write(*,*) comp_prm_out(3)
+C            write(*,*) comp_prm_out(4)
+C            write(*,*) comp_prm_out(5)
             
 C                if ((comp_arg(1) .ne. comp_prm_out(1)) .or. 
 C     .              (comp_arg(2) .ne. comp_prm_out(2))) then

@@ -368,6 +368,7 @@ case "$withval" in
   no)
     AC_MSG_CHECKING([for szlib])
     AC_MSG_RESULT([suppressed])
+    SZIP_INFO="${SZIP_INFO}disabled"
     ;;
   *)
     HAVE_SZIP="yes"
@@ -442,17 +443,17 @@ if test "X$HAVE_SZIP" = "Xyes"; then
 
     dnl Add "szip" to external filter list
     if test "X$CAN_ENCODE" = "Xyes"; then
-        if test "X$EXTERNAL_FILTERS" != "X"; then
-            EXTERNAL_FILTERS="${EXTERNAL_FILTERS},"
+        if test "X$SZIP_INFO" != "X"; then
+            SZIP_INFO="${SZIP_INFO}"
         fi
-        EXTERNAL_FILTERS="${EXTERNAL_FILTERS}szip(encoder)"
+        SZIP_INFO="${SZIP_INFO}enabled with encoder"
     fi
 
     if test "X$CAN_ENCODE" = "Xno"; then
-        if test "X$EXTERNAL_FILTERS" != "X"; then
-            EXTERNAL_FILTERS="${EXTERNAL_FILTERS},"
+        if test "X$SZIP_INFO" != "X"; then
+            SZIP_INFO="${SZIP_INFO}"
         fi
-        EXTERNAL_FILTERS="${EXTERNAL_FILTERS}szip(no encoder)"
+        SZIP_INFO="${SZIP_INFO}enabled with decoder only"
     fi
 
     dnl Create macro to specify if encoder is present
@@ -838,8 +839,8 @@ PRINT ""
 PRINT "Features:"
 PRINT "---------"
 
-PRINT_N "         I/O filters (external)"
-PRINT "$EXTERNAL_FILTERS"
+PRINT_N "               SZIP compression"
+PRINT "$SZIP_INFO"
 
 PRINT ""
 PRINT "HDF support for NetCDF-3 APIs:"

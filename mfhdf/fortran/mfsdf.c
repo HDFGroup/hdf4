@@ -1943,7 +1943,7 @@ switch (cflags)
     intf ret = -1;
 
 
-    c_ret = SDgetcompress(*id, &c_type, &c_info);
+    c_ret = SDgetcompinfo(*id, &c_type, &c_info);
     if (c_ret == 0) {
     CASE = (int)c_type;
     switch (CASE)  {
@@ -1960,33 +1960,33 @@ switch (cflags)
 
        case COMP_CODE_NBIT:      /* NBIT encoding */
           *comp_type = 2;
-          comp_prm[0] = c_info.nbit.sign_ext; 
-          comp_prm[1] = c_info.nbit.fill_one; 
-          comp_prm[2] = c_info.nbit.start_bit; 
-          comp_prm[3] = c_info.nbit.bit_len; 
+          comp_prm[0] = (intf)c_info.nbit.sign_ext; 
+          comp_prm[1] = (intf)c_info.nbit.fill_one; 
+          comp_prm[2] = (intf)c_info.nbit.start_bit; 
+          comp_prm[3] = (intf)c_info.nbit.bit_len; 
 	  ret = 0;
           break;
 
  
        case COMP_CODE_SKPHUFF:      /* Skipping Huffman encoding */
           *comp_type = 3;
-          comp_prm[0] = c_info.skphuff.skp_size; 
+          comp_prm[0] = (intf)c_info.skphuff.skp_size; 
 	  ret = 0;
           break;
 
        case COMP_CODE_DEFLATE:      /* GZIP compression */  
           *comp_type = 4;
-          comp_prm[0] = c_info.deflate.level; 
+          comp_prm[0] = (intf)c_info.deflate.level; 
 	  ret = 0;
           break;
 
        case COMP_CODE_SZIP:      /* SZIP encoding */
           *comp_type = 5;
-          comp_prm[0] = c_info.szip.options_mask;
-          comp_prm[1] = c_info.szip.pixels_per_block;
-          comp_prm[2] = c_info.szip.pixels_per_scanline; 
-          comp_prm[3] = c_info.szip.bits_per_pixel; 
-          comp_prm[4] = c_info.szip.pixels; 
+          comp_prm[0] = (intf)c_info.szip.options_mask;
+          comp_prm[1] = (intf)c_info.szip.pixels_per_block;
+          comp_prm[2] = (intf)c_info.szip.pixels_per_scanline; 
+          comp_prm[3] = (intf)c_info.szip.bits_per_pixel; 
+          comp_prm[4] = (intf)c_info.szip.pixels; 
 	  ret = 0;
           break;
 
