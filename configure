@@ -8158,6 +8158,105 @@ echo "$as_me: error: couldn't find szlib library" >&2;}
     ;;
 esac
 
+if test "X$HAVE_SZIP" = "Xyes"; then
+        { echo "$as_me:$LINENO: checking for szlib encoder" >&5
+echo $ECHO_N "checking for szlib encoder... $ECHO_C" >&6; }
+
+    if test "$cross_compiling" = yes; then
+  { { echo "$as_me:$LINENO: error: cannot run test program while cross compiling
+See \`config.log' for more details." >&5
+echo "$as_me: error: cannot run test program while cross compiling
+See \`config.log' for more details." >&2;}
+   { (exit 1); exit 1; }; }
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+    #include <stdlib.h>
+    #include <szlib.h>
+
+    int main(void)
+    {
+        /* SZ_encoder_enabled returns 1 if encoder is present */
+        if (SZ_encoder_enabled() == 1)
+            exit(0);
+        else
+            exit(1);
+    }
+
+_ACEOF
+rm -f conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_try") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  CAN_ENCODE="yes"
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+CAN_ENCODE="no"
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+
+
+        if test "X$CAN_ENCODE" = "Xyes"; then
+        { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+    fi
+    if test "$CAN_ENCODE" = "Xno"; then
+        { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+    fi
+
+        if test "X$CAN_ENCODE" = "Xyes"; then
+        if test "X$EXTERNAL_FILTERS" != "X"; then
+            EXTERNAL_FILTERS="${EXTERNAL_FILTERS},"
+        fi
+        EXTERNAL_FILTERS="${EXTERNAL_FILTERS}szip(encoder)"
+    fi
+
+    if test "X$CAN_ENCODE" = "Xno"; then
+        if test "X$EXTERNAL_FILTERS" != "X"; then
+            EXTERNAL_FILTERS="${EXTERNAL_FILTERS},"
+        fi
+        EXTERNAL_FILTERS="${EXTERNAL_FILTERS}szip(no encoder)"
+    fi
+
+        if test "X$CAN_ENCODE" = "Xyes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_SZIP_ENCODER 1
+_ACEOF
+
+        SZIP_HAS_ENCODER="yes"
+    fi
+fi
+
+
 { echo "$as_me:$LINENO: checking for xdr library support" >&5
 echo $ECHO_N "checking for xdr library support... $ECHO_C" >&6; }
 cat >conftest.$ac_ext <<_ACEOF
@@ -11468,6 +11567,13 @@ if test X$BUILD_FORTRAN = Xyes; then
    PRINT_N "                         FFLAGS"
    PRINT "$FFLAGS"
 fi
+
+PRINT ""
+PRINT "Features:"
+PRINT "---------"
+
+PRINT_N "         I/O filters (external)"
+PRINT "$EXTERNAL_FILTERS"
 
 PRINT ""
 PRINT "HDF support for NetCDF-3 APIs:"

@@ -413,6 +413,57 @@ case "$withval" in
     ;;
 esac
 
+dnl Check to see if SZIP has encoder 
+if test "X$HAVE_SZIP" = "Xyes"; then
+    dnl SZLIB library is available. Check if it can encode.
+    AC_MSG_CHECKING([for szlib encoder])
+    
+    AC_TRY_RUN([
+    #include <stdlib.h>
+    #include <szlib.h>
+
+    int main(void)
+    {
+        /* SZ_encoder_enabled returns 1 if encoder is present */
+        if (SZ_encoder_enabled() == 1)
+            exit(0);
+        else
+            exit(1);
+    }
+    ], [CAN_ENCODE="yes"], [CAN_ENCODE="no"],)
+
+    dnl Report szip encoder test results
+    if test "X$CAN_ENCODE" = "Xyes"; then
+        AC_MSG_RESULT([yes])
+    fi
+    if test "$CAN_ENCODE" = "Xno"; then
+        AC_MSG_RESULT([no])
+    fi
+
+    dnl Add "szip" to external filter list
+    if test "X$CAN_ENCODE" = "Xyes"; then
+        if test "X$EXTERNAL_FILTERS" != "X"; then
+            EXTERNAL_FILTERS="${EXTERNAL_FILTERS},"
+        fi
+        EXTERNAL_FILTERS="${EXTERNAL_FILTERS}szip(encoder)"
+    fi
+
+    if test "X$CAN_ENCODE" = "Xno"; then
+        if test "X$EXTERNAL_FILTERS" != "X"; then
+            EXTERNAL_FILTERS="${EXTERNAL_FILTERS},"
+        fi
+        EXTERNAL_FILTERS="${EXTERNAL_FILTERS}szip(no encoder)"
+    fi
+
+    dnl Create macro to specify if encoder is present
+    if test "X$CAN_ENCODE" = "Xyes"; then
+        AC_DEFINE(HAVE_SZIP_ENCODER, 1,
+                [Define if szip has encoder])
+        SZIP_HAS_ENCODER="yes"
+    fi
+fi
+
+
 dnl ----------------------------------------------------------------------
 dnl Is XDR support present? The TRY_LINK info was gotten from the
 dnl mfhdf/libsrc/local_nc.c file.
@@ -782,6 +833,13 @@ if test X$BUILD_FORTRAN = Xyes; then
    PRINT_N "                         FFLAGS"
    PRINT "$FFLAGS"
 fi
+
+PRINT ""
+PRINT "Features:"
+PRINT "---------"
+
+PRINT_N "         I/O filters (external)"
+PRINT "$EXTERNAL_FILTERS"
 
 PRINT ""
 PRINT "HDF support for NetCDF-3 APIs:"

@@ -62,6 +62,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define if szip has encoder */
+#undef HAVE_SZIP_ENCODER
+
 /* Define to 1 if you have the <szlib.h> header file. */
 #undef HAVE_SZLIB_H
 
