@@ -721,9 +721,10 @@ can be removed completely, or szip can be used without encoding.
 Option 1: Remove Szip compression completely:
 
    1. Open the H4config.h file from the c:\MyHDFstuff\HDF42r3\hdf\src
-      directory and remove(or comment out) the following two lines: 
+      directory and remove(or comment out) the following three lines: 
 
          #define H4_HAVE_LIBSZ 1
+         #define HAVE_SZIP_ENCODER 1
          #define H4_HAVE_SZLIB_H 1
 
       Then save the file.
@@ -778,7 +779,14 @@ Option 2: Remove Szip Compression in HDF4
           The Szip library and header path should also be set up accordingly 
           (refer to precondition 6).
 
-      2. Run-compile HDF4 library according to Section I.
+      2. Open the H4config.h file from the c:\MyHDFstuff\HDF42r3\hdf\src
+         directory and remove(or comment out) the following line: 
+
+         #define HAVE_SZIP_ENCODER 1
+
+         Then save the file.
+
+      3. Run-compile HDF4 library according to Section I.
       
       
 Section VIII:  Use HDF4 with Original netCDF Library
