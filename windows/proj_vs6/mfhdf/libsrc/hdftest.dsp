@@ -296,6 +296,21 @@ SOURCE=..\..\..\..\mfhdf\libsrc\tcoordvar.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\mfhdf\libsrc\tdatasizes.c
+
+!IF  "$(CFG)" == "hdftest - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "hdftest - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "hdftest - Win32 AlphaRel"
+
+!ELSEIF  "$(CFG)" == "hdftest - Win32 AlphaDbg"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\mfhdf\libsrc\tdim.c
 
 !IF  "$(CFG)" == "hdftest - Win32 Release"

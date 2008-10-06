@@ -177,6 +177,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\tdatasizes.c">
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\tdim.c">
 			</File>
 			<File
