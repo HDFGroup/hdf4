@@ -30,6 +30,11 @@
 #define H4TOOLS_MALLOCSIZE     (1024 * 1024)
 
 
+void print_compression( int chunk_flags,
+                        HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
+                        int comp_type,
+                        char *path);
+
 /*-------------------------------------------------------------------------
  * Function: copy_sds
  *
@@ -360,6 +365,7 @@ int copy_sds(int32 sd_in,
         
  } /* empty_sds */
  
+#if defined (OLD_PRINT)
   /*-------------------------------------------------------------------------
    * print the PATH, COMP and CHUNK information
    *-------------------------------------------------------------------------
@@ -391,7 +397,20 @@ int copy_sds(int32 sd_in,
            (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
            path);                                         /*name*/
    }
-   
+
+#else
+
+   if ( options->trip==0 && options->verbose)
+   {
+       
+       print_compression(chunk_flags_in,
+           &chunk_def,      
+           comp_type,
+           path);
+   } 
+
+    
+#endif
   /*-------------------------------------------------------------------------
    * check if the requested compression is valid
    * SDSs do not support JPEG
@@ -663,6 +682,18 @@ int copy_sds(int32 sd_in,
  
   
    } /* empty_sds */
+
+#if !defined(OLD_PRINT)
+
+   if ( options->trip==1 && options->verbose)
+   {
+      
+           print_compression(chunk_flags,
+               &chunk_def,      
+               comp_type,
+               path);           
+   } 
+#endif
    
   /*-------------------------------------------------------------------------
    * copy attributes
@@ -873,5 +904,34 @@ out:
     return FAIL;
 
 
+}
+
+
+
+void print_compression( int chunk_flags,
+                        HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
+                        int comp_type,
+                        char *path)
+{
+    int pr_comp_type=0;
+    int pr_chunk_flags;
+    
+    pr_chunk_flags=chunk_flags;
+    
+    if (comp_type>0)
+    {
+        pr_comp_type=comp_type;
+    }
+    else
+    {
+        if (pr_chunk_flags == (HDF_CHUNK | HDF_COMP) )
+        {
+            pr_comp_type=chunk_def->comp.comp_type;
+        }
+    }
+    printf(PFORMAT,
+        (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
+        (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
+        path);                                         /*name*/
 }
 
