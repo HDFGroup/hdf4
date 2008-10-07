@@ -2078,15 +2078,16 @@ nscgetfname(file_id, name, namelen)
 #endif /* PROTOTYPE */
 
 {
-    char   *fn;
-    intn    ret;
+    char *fn;
+    intn ret;
     
-    fn = HDf2cstring(name, *namelen);
-    if (!fn) return(FAIL);
+    fn = NULL;
+    if(*namelen) fn = (char *)HDmalloc((uint32)*namelen + 1);
+
     ret = (intn) SDgetfilename(*file_id, fn);
     HDpackFstring(fn,  _fcdtocp(name),  *namelen);    
     
-    HDfree((VOIDP)fn);
+    if(fn) HDfree((VOIDP)fn);
     return(ret);
 }
 
@@ -2233,7 +2234,7 @@ nscgnumopenf(cur_num)
 
    FRETVAL(intf)
 #ifdef PROTOTYPE
-nscname2ind(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_listi, intf *n_vars)
+nscname2ind(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_list, intf *n_vars)
 #else
 nscname2ind(sd_id, name, namelen, var_list, type_list, n_vars)
      intf *sd_id;
@@ -2248,19 +2249,19 @@ nscname2ind(sd_id, name, namelen, var_list, type_list, n_vars)
     char   *fn;
     intn    ret;
     hdf_varlist_t *c_var_list; 
-    int i, idx;
+    int idx;
     
     fn = HDf2cstring(name, *namelen);
     if (!fn) return(FAIL);
-    c_var_list = (hdf_varlist_t *)HDmalloc(n_vars * sizeof(hdf_varlist_t));
+    c_var_list = (hdf_varlist_t *)HDmalloc(*n_vars * sizeof(hdf_varlist_t));
     if (!c_var_list) return(FAIL);
 
     ret = (intn) SDnametoindices(*sd_id, fn, c_var_list);
     
     if (ret == 0) {
 	    for (idx = 0; idx < *n_vars; idx++) {
-         	var_list[i] = (intf)c_var_list[idx].var_index;
-         	type_list[i] = (intf)c_var_list[idx].var_type;
+         	var_list[idx] = (intf)c_var_list[idx].var_index;
+         	type_list[idx] = (intf)c_var_list[idx].var_type;
     	    }
     } /*endif*/
     HDfree(c_var_list);
