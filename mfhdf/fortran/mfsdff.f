@@ -652,15 +652,15 @@ C        Calls:     scgetnamelen
 C        Users:     Fortran stub routine
 C-------------------------------------------------------------------------
 
-         integer function sfgetnamelen(obj_id, length)
+      integer function sfgetnamelen(obj_id, length)
 C
-         integer obj_id, length
-         integer scgetnamelen
+      integer obj_id, length
+      integer scgetnamelen
 C
-         sfgetnamelen = scgetnamelen(obj_id, length) 
+      sfgetnamelen = scgetnamelen(obj_id, length) 
 C
-         return 
-         end
+      return 
+      end
 
 C-------------------------------------------------------------------------
 C        Name:      sfidtype
@@ -678,15 +678,15 @@ C        Calls:     scidtype
 C        Users:     Fortran stub routine
 C-------------------------------------------------------------------------
 
-         integer function sfidtype(obj_id, obj_type)
+      integer function sfidtype(obj_id, obj_type)
 C
-         integer obj_id, obj_type
-         integer scidtype
+      integer obj_id, obj_type
+      integer scidtype
 C
-         sfidtype = scidtype(obj_id, obj_type) 
+      sfidtype = scidtype(obj_id, obj_type) 
 C
-         return 
-         end
+      return 
+      end
            
 C----------------------------------------------------------------------
 C     Name:     sfgnvars_byname
@@ -751,15 +751,15 @@ C        Calls:     scgmaxopenf
 C        Users:     Fortran stub routine
 C-------------------------------------------------------------------------
 
-         integer function sfgmaxopenf(cur_max, sys_limit)
+      integer function sfgmaxopenf(cur_max, sys_limit)
 C
-         integer cur_max, sys_limit
-         integer scgmaxopenf
+      integer cur_max, sys_limit
+      integer scgmaxopenf
 C
-         sfgmaxopenf = scgmaxopenf(cur_max, sys_limit) 
+      sfgmaxopenf = scgmaxopenf(cur_max, sys_limit) 
 C
-         return 
-         end
+      return 
+      end
            
 C-------------------------------------------------------------------------
 C        Name:      sfgnumopenf
@@ -770,15 +770,15 @@ C        Calls:     scgnumopenf
 C        Users:     Fortran stub routine
 C-------------------------------------------------------------------------
 
-         integer function sfgnumopenf(cur_num)
+      integer function sfgnumopenf(cur_num)
 C
-         integer cur_num
-         integer scgnumopenf
+      integer cur_num
+      integer scgnumopenf
 C
-         sfgnumopenf = scgnumopenf(cur_num) 
+      sfgnumopenf = scgnumopenf(cur_num) 
 C
-         return 
-         end
+      return 
+      end
            
 C-------------------------------------------------------------------------
 C        Name:      sfrmaxopenf
@@ -790,15 +790,15 @@ C        Calls:     scrmaxopenf
 C        Users:     Fortran stub routine
 C-------------------------------------------------------------------------
 
-         integer function sfrmaxopenf(req_max)
+      integer function sfrmaxopenf(req_max)
 C
-         integer req_max
-         integer scrmaxopenf
+      integer req_max
+      integer scrmaxopenf
 C
-         sfrmaxopenf = scrmaxopenf(req_max) 
+      sfrmaxopenf = scrmaxopenf(req_max) 
 C
-         return 
-         end
+      return 
+      end
            
            
            
