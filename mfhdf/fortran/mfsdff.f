@@ -733,7 +733,7 @@ C----------------------------------------------------------------------
       character*(*) sds_name
       integer       sd_id
       integer       var_list(*), type_list(*)
-      integer       n_vars;
+      integer       n_vars
       integer       scname2ind
 
       sfname2ind = scname2ind(sd_id, sds_name, len(sds_name), var_list, 
