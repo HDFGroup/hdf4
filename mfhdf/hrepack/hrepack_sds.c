@@ -687,11 +687,21 @@ int copy_sds(int32 sd_in,
 
    if ( options->trip==1 && options->verbose)
    {
-      
-           print_compression(chunk_flags,
-               &chunk_def,      
-               comp_type,
-               path);           
+       int32 comp_size;
+       int32 uncomp_size;
+       
+       if (SDgetdatasize(sds_out, &comp_size, &uncomp_size) == FAIL) 
+       {
+           printf( "Could not get data sizes for <%s>\n", sds_name);
+           goto out;
+       }
+       
+       
+       
+       print_compression(chunk_flags,
+           &chunk_def,      
+           comp_type,
+           path);           
    } 
 #endif
    
