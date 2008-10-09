@@ -42,6 +42,7 @@
 ./bin/deploy
 ./bin/install-sh
 ./bin/locate_sw
+./bin/ltmain.sh
 ./bin/missing
 ./bin/mkinstalldirs
 ./bin/reconfigure
@@ -51,6 +52,7 @@
 ./bin/yodconfigure
 
 ./config/BlankForm
+./config/commence.am
 ./config/freebsd
 ./config/hpux11.00
 ./config/i686-pc-cygwin

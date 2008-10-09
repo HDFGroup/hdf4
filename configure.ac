@@ -182,6 +182,20 @@ case "$enableval" in
 esac
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
 
+dnl -------------------------------------------------------------------------
+dnl Build static libraries by default. Furthermore, fortran shared libraries
+dnl are unsupported. Disallow a user from enabling both shared libraries and
+dnl fortran.
+if test "X${enable_shared}" != "Xyes"; then
+    enable_shared="no"
+fi
+
+if test "X${enable_shared}" = "Xyes"; then
+    if test "X${BUILD_FORTRAN}" = "Xyes"; then
+        AC_MSG_ERROR([Cannot build shared fortran libraries. Please configure with --disable-fortran flag.])
+    fi
+fi
+
 AC_PROG_INSTALL
 AM_PROG_LEX
 AC_PROG_INSTALL
@@ -199,6 +213,11 @@ AC_CHECK_PROG([TBL],      [tbl],      [tbl])
 
 AC_SUBST([AR])
 AC_SUBST([DIFF])
+AC_SUBST(STATIC_SHARED)
+AC_SUBST([SHARED_EXTENSION])
+AC_SUBST(enable_shared)
+AC_SUBST(enable_static)
+
 
 dnl ======================================================================
 dnl Checks for libraries
@@ -622,6 +641,12 @@ AC_TRY_LINK([#include <math.h>], [sinh(37.927)],
 AC_CHECK_FUNCS(fork system vfork wait)
 
 dnl ======================================================================
+dnl Libtool initialization
+dnl ======================================================================
+LT_INIT(dlopen)
+LT_OUTPUT
+
+dnl ======================================================================
 dnl Checks for system services
 dnl ======================================================================
 
@@ -692,6 +717,29 @@ done
   echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
     mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
   fi 
+
+dnl ------------------------------------------------------------------------
+dnl Check to see if libtool has enabled shared libraries. Set a conditional
+dnl as some Makefiles will build based on availability of shared libraries.
+if (./libtool --features | grep '^enable shared libraries' > /dev/null); then
+  enable_shared=yes
+else
+  enable_shared=no
+fi
+
+dnl ------------------------------------------------------------------------
+dnl Specify shared library extension the host machine should recognize.
+case "$host_os" in
+  *-mac-*)
+      SHARED_EXTENSION="dylib"
+      ;;
+  *)
+      SHARED_EXTENSION="so"
+      ;;
+esac
+
+
+AM_CONDITIONAL([HDF_BUILD_SHARED], [test "X$enable_shared" = "Xyes"])
 
 AC_CONFIG_FILES([Makefile
                  libhdf4.settings
@@ -820,6 +868,11 @@ PRINT "$CPPFLAGS"
 PRINT_N "                        LDFLAGS"
 PRINT "$LDFLAGS"
 
+PRINT_N "               Shared Libraries"
+PRINT "$enable_shared"
+
+PRINT_N "               Static Libraries"
+PRINT "$enable_static"
 
 PRINT ""
 PRINT "Languages:"

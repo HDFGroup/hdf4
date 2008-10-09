@@ -1,3 +1,5 @@
+include $(top_srcdir)/config/commence.am
+
 if HDF_BUILD_FORTRAN
 SUBDIRS=port fortran libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
 else

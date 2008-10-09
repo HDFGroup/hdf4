@@ -25,10 +25,10 @@
 # When upgrading automake's version, don't forget to also update its
 # helper utilities, especially depcomp.
 AUTOCONF_VERSION="autoconf (GNU Autoconf) 2.61"
-AUTOMAKE_VERSION="automake (GNU automake) 1.10"
+AUTOMAKE_VERSION="automake (GNU automake) 1.10.1"
 AUTOHEADER_VERSION="autoheader (GNU Autoconf) 2.61"
-ACLOCAL_VERSION="aclocal (GNU automake) 1.10"
-LIBTOOL_VERSION="(GNU libtool) 1.5.22"
+ACLOCAL_VERSION="aclocal (GNU automake) 1.10.1"
+LIBTOOL_VERSION="(GNU libtool) 2.2.6"
 
 # If the user has defined environment variables pointing to the autotools,
 # use those (but check their versions first!).  Otherwise, assume that
@@ -37,7 +37,7 @@ if test "X$AUTOCONF" = "X"; then
   AUTOCONF=/home1/packages/autoconf/autoconf-2.61/bin/autoconf
 fi
 if test "X$AUTOMAKE" = "X"; then
-  AUTOMAKE=/home1/packages/automake/automake-1.10.0/bin/automake-1.10
+  AUTOMAKE=/home1/packages/automake/automake-1.10.1/bin/automake-1.10
 fi
 if test "X$AUTOHEADER" = "X"; then
   AUTOHEADER=/home1/packages/autoconf/autoconf-2.61/bin/autoheader
@@ -47,40 +47,40 @@ fi
   # autom4ate and complain about an
   # "unknown language": Autoconf-without-aclocal-m4.
 if test "X$ACLOCAL" = "X"; then
-  ACLOCAL=/home1/packages/automake/automake-1.10.0/bin/aclocal-1.10
+  ACLOCAL=/home1/packages/automake/automake-1.10.1/bin/aclocal-1.10
   PATH=/home1/packages/autoconf/autoconf-2.61/bin:$PATH
-  PATH=/home1/packages/m4/m4-1.4.7/bin:/home1/packages/m4/m4-1.4.7/share:$PATH
+  PATH=/home1/packages/m4/m4-1.4.11/bin:/home1/packages/m4/m4-1.4.11/share:$PATH
 fi
   # Libtool is used to supply macros that aclocal uses
 if test "X$LIBTOOL_DIR" = "X"; then
-  LIBTOOL_DIR=/home1/packages/libtool/libtool-1.5.22
+  LIBTOOL_DIR=/home1/packages/libtool/libtool-2.2.6a
 fi
 
 
 # Check version numbers of all autotools against the "correct" versions
 AC_VERS=`${AUTOCONF} --version 2>&1 | grep "^${AUTOCONF_VERSION}"`
 if test -z "${AC_VERS}"; then
-   echo "${AUTOCONF} version is not 2.59"
+   echo "${AUTOCONF} version is not 2.61"
    exit 1
 fi
 AM_VERS=`${AUTOMAKE} --version 2>&1 | grep "^${AUTOMAKE_VERSION}"`
 if test -z "${AM_VERS}"; then
-   echo "${AUTOMAKE} version is not 1.9.5"
+   echo "${AUTOMAKE} version is not 1.10.1"
    exit 1
 fi
 AH_VERS=`${AUTOHEADER} --version 2>&1 | grep "^${AUTOHEADER_VERSION}"`
 if test -z "${AH_VERS}"; then
-   echo "${AUTOHEADER} version is not 2.59"
+   echo "${AUTOHEADER} version is not 2.61"
    exit 1
 fi
 AL_VERS=`${ACLOCAL} --version 2>&1 | grep "^${ACLOCAL_VERSION}"`
 if test -z "${AL_VERS}"; then
-   echo "${ACLOCAL} version is not 1.9.5"
+   echo "${ACLOCAL} version is not 1.10.1"
    exit 1
 fi
 LT_VERS=`${LIBTOOL_DIR}/bin/libtool --version 2>&1 | grep "${LIBTOOL_VERSION}"`
 if test -z "${LT_VERS}"; then
-   echo "${LIBTOOL_DIR}/bin/libtool version is not 1.5.14"
+   echo "${LIBTOOL_DIR}/bin/libtool version is not 2.2.6"
    exit 1
 fi
 

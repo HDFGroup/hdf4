@@ -1,5 +1,7 @@
 * text=auto !eol
+bin/ltmain.sh -text
 bin/timekeeper -text
+config/commence.am -text
 config/ia64-hp-hpux11.23 -text
 hdf/src/dfufp2if.c -text
 hdf/src/dfufp2iff.f -text

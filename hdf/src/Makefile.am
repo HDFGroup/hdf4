@@ -2,7 +2,9 @@
 ##                          Library to build                               ##
 #############################################################################
 
-lib_LIBRARIES = libdf.a
+include $(top_srcdir)/config/commence.am
+
+lib_LTLIBRARIES = libdf.la
 
 FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
            dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \
@@ -27,11 +29,22 @@ CHEADERS = atom.h bitvect.h cdeflate.h cnbit.h cnone.h cskphuff.h crle.h    \
 FHEADERS = dffunc.f90 hdf.f90 dffunc.inc hdf.inc
 
 if HDF_BUILD_FORTRAN
-libdf_a_SOURCES = $(CSOURCES) $(FSOURCES)
+libdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
 include_HEADERS = $(CHEADERS) hproto_fortran.h $(FHEADERS)
 else
-libdf_a_SOURCES = $(CSOURCES)
+libdf_la_SOURCES = $(CSOURCES)
 include_HEADERS = $(CHEADERS)
+endif
+
+# The following is a workaround. Since Fortran is included in this 
+# Makefile.am, automake will always try to use the Fortran linker, even when
+# fortran has been disabled in configure. The Fortran linker gets confused 
+# when shared libraries are enabled, so when Fortran is not enabled,
+# this replaces the Fortran link macro with the C link macro.
+if HDF_BUILD_FORTRAN
+    # do nothing
+else
+    F77LINK = $(LINK)
 endif
 
 SUFFIXES = .inc .f90

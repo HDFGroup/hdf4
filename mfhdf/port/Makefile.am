@@ -1,2 +1,4 @@
-noinst_LIBRARIES = libudport.a
-libudport_a_SOURCES = uddummy.c
+include $(top_srcdir)/config/commence.am
+
+noinst_LTLIBRARIES = libudport.la
+libudport_la_SOURCES = uddummy.c

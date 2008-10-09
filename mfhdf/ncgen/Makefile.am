@@ -2,6 +2,14 @@
 ##                      Setup for building programs                        ##
 #############################################################################
 
+include $(top_srcdir)/config/commence.am
+
+if HDF_BUILD_SHARED
+    SHLIBLOC = ../libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
+else
+    SHLIBLOC = ../libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
+endif
+
 ## Setup the different includes and preprocessor #defines we need.
 INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
@@ -29,11 +37,14 @@ endif
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
-ncgen_LDADD = ../libsrc/libmfhdf.a $(top_builddir)/hdf/src/libdf.a
-ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.a ../libsrc/libmfhdf.a
+ncgen_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
 ctest0_SOURCES=
+ctest0_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+
 ftest0_SOURCES=
+
 ## Recipe for building the ncgentab.c file
 ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
 	$(YACC) -d $(srcdir)/ncgen.y
@@ -102,7 +113,7 @@ f-check:	test1.cdl ftest0
 
 ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
-	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
+	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 endif
 
 endif
@@ -118,7 +129,8 @@ test0.nc:	ncgen $(srcdir)/test0.cdl
 
 ctest0$(EXEEXT):		ncgen $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
-	$(COMPILE) -o $@ test0.c $(LDFLAGS) $(ncgen_LDADD) $(LIBS)
+	$(COMPILE) -c -o ctest0$(EXEEXT).o test0.c
+	$(LINK) ctest0$(EXEEXT).o $(ctest0_LDADD) $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 
 #############################################################################
 ##                            Miscellaneous                                ##
