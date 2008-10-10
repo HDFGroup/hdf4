@@ -954,6 +954,7 @@
 ./mfhdf/libsrc/error.c
 ./mfhdf/libsrc/error.h
 ./mfhdf/libsrc/file.c
+./mfhdf/libsrc/gen_sds_szipped.c
 ./mfhdf/libsrc/globdef.c
 ./mfhdf/libsrc/hdf2netcdf.h
 ./mfhdf/libsrc/hdfout.sav
@@ -976,6 +977,7 @@
 ./mfhdf/libsrc/ntohs.mar
 ./mfhdf/libsrc/putget.c
 ./mfhdf/libsrc/putgetg.c
+./mfhdf/libsrc/sds_szipped.hdf
 ./mfhdf/libsrc/sharray.c
 ./mfhdf/libsrc/string.c
 ./mfhdf/libsrc/tchunk.c
