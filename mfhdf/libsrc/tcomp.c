@@ -133,7 +133,7 @@ test_various_comps()
     status = SDendaccess (sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER     /* we have szip library with encoder */
     /* Create 3rd data set for SZIP compression. */
     sds_id = SDcreate (sd_id, SDS3_NAME, DFNT_INT32, RANK, dim_sizes);
     CHECK(sds_id, FAIL, "SDcreate");
@@ -287,7 +287,7 @@ test_compressed_data()
 
     for(i = 0; i < 25; i++)
         if(idata[i] != rdata[i]) {
-            fprintf(stderr,"Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
+            fprintf(stderr,"thisone: Bogus val in loc %d in compressed dset want %ld got %ld\n", i, (long)idata[i], (long)rdata[i]);
             num_errs++;
         }
 

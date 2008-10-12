@@ -28,13 +28,10 @@
 #define WIDTH		6
 #define LENGTH		9
 
-/* global, so all tests can use */
-static uint32 comp_config = 0;
-
-static intn 
-test_szip_SDS8bit()
+#ifdef H4_HAVE_SZIP_ENCODER /* only compile all these test functions when 
+				encoder is available */
+static intn test_szip_SDS8bit()
 {
-#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
    int32	sd_id, sds_id;
@@ -93,19 +90,7 @@ test_szip_SDS8bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
        CHECK(status, FAIL, "SDsetcompress");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip_SD8: SKIPPED\n");
-        return num_errs;
-    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -175,15 +160,10 @@ test_szip_SDS8bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
 } /* test_szip_SDS8bit */
 
-static intn 
-test_szip_SDS16bit()
+static intn test_szip_SDS16bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -240,19 +220,7 @@ test_szip_SDS16bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
        CHECK(status, FAIL, "SDsetcompress");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip_SD16: SKIPPED\n");
-        return num_errs;
-    }
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -314,15 +282,10 @@ test_szip_SDS16bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
 }  /* test_szip_SDS16bit */
 
-static intn 
-test_szip_SDS32bit()
+static intn test_szip_SDS32bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -379,19 +342,7 @@ test_szip_SDS32bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
-       CHECK(status, FAIL, "SDsetcompress");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip_SD32: SKIPPED\n");
-        return num_errs;
-    }
+    CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -453,15 +404,10 @@ test_szip_SDS32bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
 }  /* test_szip_SDS32bit */
 
-static intn 
-test_szip_SDSfl32bit()
+static intn test_szip_SDSfl32bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -469,9 +415,6 @@ test_szip_SDSfl32bit()
     int32	dim_sizes[2], array_rank, num_type, attributes;
     char	name[H4_MAX_NC_NAME];
     comp_info	c_info;
-/*
-    int32	pixels_per_scanline;
-*/
     int32       start[2], edges[2];
     float32     fill_value = 0;   /* Fill value */
     int         i,j;
@@ -521,12 +464,7 @@ test_szip_SDSfl32bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if (SZ_encoder_enabled()) {
-	/* should pass */
-        CHECK(status, FAIL, "SDsetcompress");
-    } else {
-        return num_errs;
-    }
+    CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -588,15 +526,10 @@ test_szip_SDSfl32bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
 }  /* test_szip_SDSfl32bit */
 
-static intn 
-test_szip_SDSfl64bit()
+static intn test_szip_SDSfl64bit()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -653,19 +586,7 @@ test_szip_SDSfl64bit()
 
     /* Set the compression */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
-       CHECK(status, FAIL, "SDsetcompress");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip_SD64: SKIPPED\n");
-        return num_errs;
-    }
+    CHECK(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -727,9 +648,6 @@ test_szip_SDSfl64bit()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
 }  /* test_szip_SDSfl64bit */
 
 
@@ -741,10 +659,8 @@ test_szip_SDSfl64bit()
 #define CWIDTH		2	/* width of the chunk */
 #define CLENGTH		3	/* length of the chunk */
 
-static intn 
-test_szip_chunk()
+static intn test_szip_chunk()
 {
-#ifdef H4_HAVE_LIBSZ
    /************************* Variable declaration **************************/
 
    int32         sd_id, sds_id, sds_index;
@@ -823,19 +739,7 @@ test_szip_chunk()
     c_def.comp.cinfo.szip.pixels_per_scanline = 0;
     comp_flag = HDF_CHUNK | HDF_COMP;
     status = SDsetchunk (sds_id, c_def, comp_flag);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
        CHECK(status, FAIL, "SDsetchunk");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip chunk: SKIPPED\n");
-        return num_errs;
-    }
 
     /* Set chunk cache to hold maximum of 3 chunks. */
     maxcache = 3;
@@ -996,10 +900,6 @@ test_szip_chunk()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
-#else
-    return 0;
-#endif
 }   /* test_szip_chunk */ 
 
 
@@ -1017,10 +917,8 @@ test_szip_chunk()
 int16         all_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
 int16         out_data[SDS_DIM0][SDS_DIM1][SDS_DIM2];
 
-static intn 
-test_szip_chunk_3d()
+static intn test_szip_chunk_3d()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32         sd_id, sds_id0, sds_id, sds_index;
@@ -1078,22 +976,7 @@ test_szip_chunk_3d()
     comp_flag = HDF_CHUNK | HDF_COMP;
     status = SDsetchunk (sds_id0, c_def, comp_flag);
     status = SDsetchunk (sds_id, c_def, comp_flag);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
-       CHECK(status, FAIL, "SDsetchunk");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id0);
-        CHECK(status, FAIL, "SDendaccess");
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip chunk 3d: SKIPPED\n");
-        return num_errs;
-    }
-
+    CHECK(status, FAIL, "SDsetchunk");
 
     start[0] = 0;
     start[1] = 0;
@@ -1170,10 +1053,6 @@ test_szip_chunk_3d()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-
-#else
-    return 0;
-#endif
 }   /* test_szip_chunk_3D */ 
 
 /* 
@@ -1183,10 +1062,8 @@ test_szip_chunk_3d()
  */
 #define FILE_NAME_UNLIM	"SDSunlimitedsziped.hdf"
 #define SDS_NAME_UNLIM	"UnlimitedData"
-static intn 
-test_szip_unlimited()
+static intn test_szip_unlimited()
 {
-#ifdef H4_HAVE_LIBSZ
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -1245,19 +1122,7 @@ test_szip_unlimited()
     /* Attempting to set SZIP compression will fail because SZIP is 
      * not available with unlimited dimension yet */
     status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
-       VERIFY(status, FAIL, "SDsetcompress");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test szip_SD unlimited: SKIPPED\n");
-        return num_errs;
-    }
+    VERIFY(status, FAIL, "SDsetcompress");
 
     /* Write data to the SDS; data will be uncompressed */
     status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
@@ -1319,43 +1184,169 @@ test_szip_unlimited()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
 }  /* test_szip_unlimited */
 
+#endif /* only compile all the above test functions when encoder is available */
+
+/* Generate the correct name for the test file, by prepending the source path
+   if it exists, otherwise, assume it is the local directory */
+   /* NOTE: should move all utilities into mfutil.c or something like that */
+static intn make_datafilename(char* basename, char* testfile, unsigned int size)
+{
+    char *srcdir = getenv("srcdir");
+
+    /* Generate the correct name for the test file, by prepending the source path */
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size))
+    {
+        strcpy(testfile, srcdir);
+        strcat(testfile, "/");
+    }
+
+    /* Windows doesn't set srcdir, and generates files in a different relative
+       path, so we need to special case here.  It is best to look for the
+       testfile in the same path, and the Windows test script will make sure
+       to put it there first.  - SJW 2007/09/19 (from tnetcdf.c) */
+#ifndef _WIN32
+    /* This is to get to the file 'sds_szipped.hdf' when the library was built 
+       without srcdir option and the test is ran by ./hdftest in the src 
+       directory hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */
+    if (srcdir == NULL)
+        strcpy(testfile, "./");
+#endif /* _WIN32 */
+
+    /* Name of data file */
+    strcat(testfile, basename);
+}
+
 /********************************************************************
-   Name: test_getcomptype() - verifies that some functions will not
-			fail even though SZIP library is not present.
+   Name: test_getszipinfo() - verifies that some functions will not 
+		fail even though SZIP library is not present or only 
+		decoder is available.
 
    Description:
-	In the past, SDcheckempty will fail if szlib was not present.  This
-	function tests that SDcheckempty is no longer depending on SZIP
-	library to determine whether a dataset is empty.
-
-	In addition, this function tests that SDgetcomptype also does not
-	depend on SZIP library to retrieve the compression method used
-	on a dataset.  SDgetcompinfo can be used to get additional compression
-	information (beside compression method) and does depend on the presence
-	of SZIP library.
+	In the past, some SD APIs will fail if szlib was not present.  These
+	functions have been revised so that they are no longer depending on 
+	SZIP library.  New APIs are designed to function correctly as well.
+	The functions below are being tested here:
+	- SDgetcomptype
+	- SDgetdatasize
 
 	This test function opens an existing file containing datasets with 
-	SZIP compression and verify that SDgetcomptype and SDcheckempty can
-	work with or without SZIP library.
+	SZIP compression and verifies that the above APIs will work with or 
+	without SZIP library.
 
-	The input file, comp_nolibs.hdf, is generated by the program
-	mfhdf/libsrc/gen_nolib_tests.c.
+	The input file, sds_szipped.hdf, is generated by the program
+	mfhdf/libsrc/gen_sds_szipped.c
 
    Return value:
         The number of errors occurred in this routine.
 
-   BMR - Dec 20, 2007
+   BMR - Oct 10, 2008
 *********************************************************************/
 
-static intn 
-test_getcomptype()
+#define SZIP_FILE	"sds_szipped.hdf" /* generated by gen_sds_szipped.c */
+#define SDS1_NAME	"TwoDimsInt32"
+#define RANK		2
+#define SZ_WIDTH	5
+#define SZ_LENGTH	16
+
+static intn test_getszipinfo()
 {
-#ifdef H4_HAVE_LIBSZ
+    /************************* Variable declaration **************************/
+
+    int32	sd_id, sds_id, sds_index;
+    intn 	status;
+    int32	dim_sizes[2], array_rank, num_type, attributes;
+    char	name[H4_MAX_NC_NAME];
+    comp_info	c_info;
+    int32       start[2], edges[2];
+    comp_coder_t comp_type;
+    int32	comp_size, uncomp_size;
+    int16       fill_value = 0;   /* Fill value */
+    int         i,j;
+    int		num_errs = 0;    /* number of errors so far */
+    char	testfile[512] = "";
+    int32      *out_data = NULL;
+    char *basename = "sds_szipped.hdf";
+
+    /********************* End of variable declaration ***********************/
+
+    /* Make the name for the test file */
+    make_datafilename(basename, testfile, sizeof(testfile));
+
+    /* Open the file and select dataset SDS1_NAME */
+    sd_id = SDstart (testfile, DFACC_RDONLY);
+    CHECK(sd_id, FAIL, "SDstart");
+
+    sds_index = SDnametoindex(sd_id, SDS1_NAME);
+    CHECK(sds_index, FAIL, "SDnametoindex");
+
+    sds_id = SDselect (sd_id, sds_index);
+    CHECK(sds_id, FAIL, "SDselect:Failed to select a data set for szip compression testing");
+
+    /* Retrieve and verify information of the data set */
+    status = SDgetinfo(sds_id, name, &array_rank, dim_sizes, &num_type, &attributes);
+    CHECK(status, FAIL, "SDgetinfo");
+    VERIFY(array_rank, RANK, "SDgetinfo");
+    VERIFY(dim_sizes[0], SZ_LENGTH, "SDgetinfo");
+    VERIFY(dim_sizes[1], SZ_WIDTH, "SDgetinfo");
+    VERIFY(num_type, DFNT_INT32, "SDgetinfo");
+    VERIFY(attributes, 0, "SDgetinfo");
+
+    /* Get the compression method and verify it */
+    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
+    status = SDgetcomptype(sds_id, &comp_type);
+    CHECK(status, FAIL, "SDgetcompinfo");
+    VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcomptype");
+
+    /* Get the compressed data size and non-compressed data size */
+    status = SDgetdatasize(sds_id, &comp_size, &uncomp_size);
+    CHECK(status, FAIL, "SDgetdatasize");
+
+    /* In this test, compressed data size should be smaller than non-compressed
+       data size */
+    if (comp_size >= uncomp_size)
+    {
+        printf("*** Routine test_getszipinfo: FAILED at line %d ***\n", __LINE__);
+        printf("    In this test, compressed data size (%d) should be smaller than non-compressed data size (%d)\n", comp_size, uncomp_size);
+        num_errs++;
+    }
+
+    /* Terminate access to the data set */
+    status = SDendaccess (sds_id);
+    CHECK(status, FAIL, "SDendaccess");
+
+    /* Terminate access to the SD interface and close the file */
+    status = SDend (sd_id);
+    CHECK(status, FAIL, "SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}  /* test_getszipinfo */
+
+
+/********************************************************************
+   Name: test_getszipdata() - verifies that SZIP compressed data can be read
+		when either SZIP library encoder or only decoder is present
+
+   Description:
+	This test function opens the existing file "sds_szipped.hdf" that 
+	contains a dataset with SZIP compression and verifies that the SZIP 
+	compressed data can be read with or without the encoder as long as
+	the szlib is available.
+
+	The input file, sds_szipped.hdf, is generated by the program
+	mfhdf/libsrc/gen_sds_szipped.c
+
+   Return value:
+        The number of errors occurred in this routine.
+
+   BMR - Oct 10, 2008
+*********************************************************************/
+
+#ifdef H4_HAVE_LIBSZ	/* needed to read data, either decoder or encoder */
+static intn test_getszipdata()
+{
     /************************* Variable declaration **************************/
 
     int32	sd_id, sds_id;
@@ -1367,85 +1358,39 @@ test_getcomptype()
     int16       fill_value = 0;   /* Fill value */
     int         i,j;
     int		num_errs = 0;    /* number of errors so far */
-    int16	out_data[LENGTH][WIDTH];
-    int16	in_data[LENGTH][WIDTH]={
-	   			 100,100,200,200,300,400,
-	   			 100,100,200,200,300,400,
-				 100,100,200,200,300,400,
-				 300,300,  0,400,300,400,
-				 300,300,  0,400,300,400,
-				 300,300,  0,400,300,400,
-				   0,  0,600,600,300,400,
-				 500,500,600,600,300,400,
-				   0,  0,600,600,300,400};
+    int32       out_data[SZ_LENGTH][SZ_WIDTH];
+    char	testfile[512] = "";
+    char       *basename = "sds_szipped.hdf";
+
+    /* data to compare against read data from sds_szipped.hdf */
+    int32	in_data[SZ_LENGTH][SZ_WIDTH]={
+                                100,100,200,200,300,
+                                0, 0, 0, 0, 0,
+                                100,100,200,200,300,
+                                400,300,200,100,0,
+                                300,300,  0,400,300,
+                                300,300,  0,400,300,
+                                300,300,  0,400,300,
+                                0,  0,600,600,300,
+                                500,500,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                0,  0,600,600,300,
+                                500,500,600,600,300,
+                                500,500,600,600,300,
+                                500,500,600,600,300 };
 
     /********************* End of variable declaration ***********************/
 
-    sd_id = SDstart (FILE_NAME16, DFACC_CREATE);
+    /* Make the name for the test file */
+    make_datafilename(basename, testfile, sizeof(testfile));
+
+    /* Open the file */
+    sd_id = SDstart (testfile, DFACC_READ);
     CHECK(sd_id, FAIL, "SDstart");
 
-    /* Create the SDS */
-    dim_sizes[0] = LENGTH;
-    dim_sizes[1] = WIDTH;
-    sds_id = SDcreate (sd_id, SDS_NAME, DFNT_INT16, RANK, dim_sizes);
-    CHECK(sds_id, FAIL, "SDcreate:Failed to create a data set for szip compression testing");
-
-    /* Define the location, pattern, and size of the data set */
-    for (i = 0; i < RANK; i++) {
-	start[i] = 0;
-	edges[i] = dim_sizes[i];
-	}
-
-    /* Fill the SDS array with the fill value */
-    status = SDsetfillvalue (sds_id, (VOIDP)&fill_value);
-    CHECK(status, FAIL, "SDsetfillvalue");
-
-    /* Initialize for SZIP */
-    c_info.szip.pixels_per_block = 2;
-
-    c_info.szip.options_mask = SZ_EC_OPTION_MASK;
-    c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
-    c_info.szip.bits_per_pixel = 0;
-    c_info.szip.pixels = 0;
-    c_info.szip.pixels_per_scanline = 0;
-
-    /* Set the compression */
-    status = SDsetcompress (sds_id, COMP_CODE_SZIP, &c_info);
-    if ((comp_config & COMP_ENCODER_ENABLED) == COMP_ENCODER_ENABLED) {
-	/* should work */
-       CHECK(status, FAIL, "SDsetcompress");
-    } else {
-       /* skip rest of test?? */
-        status = SDendaccess (sds_id);
-        CHECK(status, FAIL, "SDendaccess");
-
-        status = SDend (sd_id);
-        CHECK(status, FAIL, "SDend");
-        printf("Test getcomptype: SKIPPED\n");
-        return num_errs;
-    }
-
-    /* Write data to the SDS */
-    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)in_data);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* Terminate access to the data set */
-    status = SDendaccess (sds_id);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Terminate access to the SD interface and close the file to 
-       flush the compressed info to the file */
-    status = SDend (sd_id);
-    CHECK(status, FAIL, "SDend");
-
-    /*
-    * Verify the compressed data
-    */
-
-    /* Reopen the file and select the first SDS */
-    sd_id = SDstart (FILE_NAME16, DFACC_READ);
-    CHECK(sd_id, FAIL, "SDstart");
-
+    /* Get the first SDS */
     sds_id = SDselect (sd_id, 0);
     CHECK(sds_id, FAIL, "SDselect:Failed to select a data set for szip compression testing");
 
@@ -1453,24 +1398,26 @@ test_getcomptype()
     status = SDgetinfo(sds_id, name, &array_rank, dim_sizes, &num_type, &attributes);
     CHECK(status, FAIL, "SDgetinfo");
 
+    /* Prepare for reading */
+    start[0] = 0;
+    start[1] = 0;
+    edges[0] = dim_sizes[0];
+    edges[1] = dim_sizes[1];
+
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
 
     /* Read the data set */
-    start[0] = 0;
-    start[1] = 0;
-    edges[0] = LENGTH;
-    edges[1] = WIDTH;
     status = SDreaddata (sds_id, start, NULL, edges, (VOIDP)out_data);
     CHECK(status, FAIL, "SDreaddata");
 
     /* Compare read data against input data */
-    for (j=0; j<LENGTH; j++) 
+    for (j=0; j<SZ_LENGTH; j++) 
     {
-        for (i=0; i<WIDTH; i++)
-	    if (out_data[j][i] != in_data[j][i])
+        for (i=0; i<SZ_WIDTH; i++)
+	     if (out_data[j][i] != in_data[j][i])
 	    {
-		fprintf(stderr,"Bogus val in loc [%d][%d] in compressed dset, want %ld got %ld\n", j, i, (long)in_data[j][i], (long)out_data[j][i]);
+		 fprintf(stderr,"This one: Bogus val in loc [%d][%d] in compressed dset, want %ld got %ld\n", j, i, (long)in_data[j][i], (long)out_data[j][i]);
 		num_errs++;
 	    }
     }
@@ -1485,10 +1432,8 @@ test_getcomptype()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-#else
-    return 0;
-#endif
-}  /* test_szip_SDS16bit */
+}  /* test_getszipdata */
+#endif /* ifdef H4_HAVE_LIBSZ */
 
 /* 
  * Test drive for testing the szip compression feature with SD interface 
@@ -1498,9 +1443,9 @@ test_szip_compression ()
 {
     int num_errs = 0;
 
-#ifdef H4_HAVE_LIBSZ
-    HCget_config_info(COMP_CODE_SZIP,&comp_config);
-
+#ifdef H4_HAVE_SZIP_ENCODER
+    /* Test creating and writing SZIP compressed data only when szlib encoder
+	is available */
     num_errs = num_errs + test_szip_SDS8bit();
     num_errs = num_errs + test_szip_SDS16bit();
     num_errs = num_errs + test_szip_SDS32bit();
@@ -1510,9 +1455,19 @@ test_szip_compression ()
     num_errs = num_errs + test_szip_unlimited();
     num_errs = num_errs + test_szip_chunk_3d();
 #else
-    printf("SKIPPING SZIP compression tests\n");
+    /* printf("Test creating and writing SZIP compressed data \tSKIPPED\n"); */
 #endif
-    /* tests should pass with or without SZIP library */
-    num_errs = num_errs + test_getcomptype();
+
+#ifdef H4_HAVE_LIBSZ
+    /* Test reading szipped data when szlib is available, either with encoder
+	or only decoder */
+    num_errs = num_errs + test_getszipdata();
+#else
+    /* printf("Test reading SZIP compressed data \tSKIPPED\n"); */
+#endif
+
+    /* Test reading szip compression information and should pass with or 
+	without SZIP library */
+    num_errs = num_errs + test_getszipinfo();
     return num_errs;
 }

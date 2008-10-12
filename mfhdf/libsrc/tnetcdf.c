@@ -35,24 +35,24 @@ char    testfile[512] = "";
 extern intn
 test_netcdf_reading()
 {
-	int32 sd_id;
+    int32 sd_id;
     int32 sds_id;
     int32 n_datasets;
     int32 n_file_attrs;
     int32 index;
-	int32 rank;
+    int32 rank;
     int32 num_type;
     int32 attributes;
-	int32 dim_sizes[H4_MAX_VAR_DIMS];
+    int32 dim_sizes[H4_MAX_VAR_DIMS];
     int32 start[H4_MAX_VAR_DIMS];
     int32 edges[H4_MAX_VAR_DIMS];
     int16 array_data[2][3];
-	char name[H4_MAX_NC_NAME];
+    char  name[H4_MAX_NC_NAME];
     int32 status;
-    intn i, j;
-    int     num_errs = 0;    /* number of errors so far */
+    intn  i, j;
+    int   num_errs = 0;    /* number of errors so far */
     const char *basename = "test1.nc";
-    char   *srcdir = getenv("srcdir");
+    char  *srcdir = getenv("srcdir");
 
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) 
@@ -75,12 +75,12 @@ test_netcdf_reading()
 
     strcat(testfile, basename);
 
-    /* Open the file 'test1.nc' and initialize the SDxxx interface. */
+    /* Open the file 'test1.nc' and initialize the SD interface. */
     sd_id = SDstart(testfile, DFACC_RDONLY);
     CHECK(sd_id, FAIL, "netCDF Read Test 1. SDstart failed on file test1.nc");
 
-	/* Determine the contents of the file. */
-	status = SDfileinfo(sd_id, &n_datasets, &n_file_attrs);
+    /* Determine the contents of the file. */
+    status = SDfileinfo(sd_id, &n_datasets, &n_file_attrs);
     CHECK(status, FAIL, "netCDF Read Test 1. SDfileinfo failed on file test1.nc");
 
     /* There should be 8 datasets in the file and 1 file level attribute */
@@ -96,10 +96,10 @@ test_netcdf_reading()
           num_errs++;
       }
 
-	/* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16). 
+    /* Access and find the 2-dim dataset of data-type shorts(DFNT_INT16). 
        in the file while querying every data set in the file. 
        There should only be one dataset that matches and is named 'order'.*/
-	for (index = 0; index < n_datasets; index++) 
+    for (index = 0; index < n_datasets; index++) 
       {
           sds_id = SDselect(sd_id, index);
           CHECK(sds_id, FAIL, "netCDF Read Test 1. SDselect failed for dataset in  file test1.nc");
@@ -135,8 +135,8 @@ test_netcdf_reading()
           CHECK(status, FAIL, "netCDF Read Test 1. SDendaccess failed for dataset in  file test1.nc");
       } /* end querying every dataset in file */
 
-	/* Terminate access to the SD interface and close the file. */
-	status = SDend(sd_id);
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend(sd_id);
     CHECK(status, FAIL, "netCDF Read Test 1. SDend failed for file test1.nc");
 
     return num_errs;

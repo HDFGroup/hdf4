@@ -51,19 +51,30 @@ intn main()
     int32     comp_type;    /* Compression flag */
     comp_info c_info;   /* Compression structure */
     int32     start[2], edges[2], dim_sizes[2];
-    int32     data[Y_LENGTH][X_LENGTH];
     int32     pixels_per_scanline;
     intn      num_errs = 0;    /* number of errors in compression test so far */
     int       i, j;
+    int32     data[Y_LENGTH][X_LENGTH]={
+				100,100,200,200,300,
+				0, 0, 0, 0, 0,
+				100,100,200,200,300,
+				400,300,200,100,0,
+				300,300,  0,400,300,
+				300,300,  0,400,300,
+				300,300,  0,400,300,
+				0,  0,600,600,300,
+				500,500,600,600,300,
+				0,  0,600,600,300,
+				0,  0,600,600,300,
+				0,  0,600,600,300,
+				0,  0,600,600,300,
+				500,500,600,600,300,
+				500,500,600,600,300,
+				500,500,600,600,300 };
+
 
     /********************* End of variable declaration ***********************/
 
-    /* Buffer array data and define array dimensions. */
-    for (j = 0; j < Y_LENGTH; j++) 
-    {
-	for (i = 0; i < X_LENGTH; i++)
-		data[j][i] = (i + j) + 1;
-    }
     dim_sizes[0] = Y_LENGTH;
     dim_sizes[1] = X_LENGTH;
 
@@ -94,6 +105,7 @@ intn main()
     c_info.szip.options_mask = SZ_EC_OPTION_MASK;
     c_info.szip.options_mask |= SZ_RAW_OPTION_MASK;
     c_info.szip.bits_per_pixel = 64;
+
     status = SDsetcompress (sds_id, comp_type, &c_info); 
     CHECK(status, FAIL, "SDsetcompress");
 
