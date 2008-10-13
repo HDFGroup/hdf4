@@ -17,7 +17,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 lib_LTLIBRARIES = libmfhdf.la
 
-## Information for building the "libmfhdf.a" library
+## Information for building the "libmfhdf.la" library
 CSOURCES=array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
          globdef.c mfsd.c nssdc.c putget.c putgetg.c sharray.c string.c \
          var.c xdrposix.c
@@ -28,24 +28,15 @@ else
 FSOURCES=../fortran/mfsdf.c ../fortran/mfsdff.f
 endif
 
-XDRSOURCES=../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
-
 if HDF_BUILD_FORTRAN
-
-if HDF_BUILD_XDR
-libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES) $(XDRSOURCES)
-else
 libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
-endif
-
-else
-
-if HDF_BUILD_XDR
-libmfhdf_la_SOURCES = $(CSOURCES) $(XDRSOURCES)
 else
 libmfhdf_la_SOURCES = $(CSOURCES)
 endif
 
+if HDF_BUILD_XDR
+XDRLIB = ../xdr/libxdr.la
+libmfhdf_la_LIBADD = $(XDRLIB)
 endif
 
 if HDF_BUILD_NETCDF
@@ -72,12 +63,12 @@ endif
 check_PROGRAMS = cdftest hdftest
 
 cdftest_SOURCES = cdftest.c
-cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
 		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
 		  tsd.c tsdsprops.c tszip.c tdatasizes.c
-hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 check:
 	@echo "============================"

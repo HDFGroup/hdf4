@@ -488,20 +488,39 @@ dnl ----------------------------------------------------------------------
 dnl Is XDR support present? The TRY_LINK info was gotten from the
 dnl mfhdf/libsrc/local_nc.c file.
 AC_MSG_CHECKING([for xdr library support])
-AC_TRY_LINK([
-#ifdef VMS
-#define STDC_INCLUDES
-#endif
-#ifdef __ultrix
-#define GCC_FIX
-#endif 
-#include <rpc/types.h>
-#ifdef __ultrix
-#undef GCC_FIX
-#endif
-#include <rpc/xdr.h>], [xdr_int],
-            [AC_MSG_RESULT([yes]); build_xdr="no"],
-            [AC_MSG_RESULT([no]); build_xdr="yes"])
+
+
+AC_ARG_ENABLE([hdf4-xdr],
+              [AC_HELP_STRING([--enable-hdf4-xdr],
+                              [Build HDF4's XDR instead of system XDR [default=no]])],,
+              enableval="no")
+
+case "$enableval" in
+  yes)
+    build_xdr="yes"
+    AC_MSG_RESULT([using HDF4 XDR]);
+    ;;
+  no)
+    ;;
+esac
+
+if test "X$build_xdr" != "Xyes"; then
+    AC_TRY_LINK([
+    #ifdef VMS
+    #define STDC_INCLUDES
+    #endif
+    #ifdef __ultrix
+    #define GCC_FIX
+    #endif 
+    #include <rpc/types.h>
+    #ifdef __ultrix
+    #undef GCC_FIX
+    #endif
+    #include <rpc/xdr.h>], [xdr_int],
+                [AC_MSG_RESULT([yes]); build_xdr="no"],
+                [AC_MSG_RESULT([no]); build_xdr="yes"])
+fi
+
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$build_xdr" = "Xyes"])
 
 dnl For Solaris and Fuji systems, add the -nsl for XDR support
@@ -894,6 +913,9 @@ PRINT "---------"
 
 PRINT_N "               SZIP compression"
 PRINT "$SZIP_INFO"
+
+PRINT_N "                       HDF4 XDR"
+PRINT "$build_xdr"
 
 PRINT ""
 PRINT "HDF support for NetCDF-3 APIs:"

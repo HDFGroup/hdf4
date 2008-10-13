@@ -54,8 +54,8 @@ RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = port libsrc ncdump ncgen dumper hdfimport hdiff hrepack \
-	nctest fortran
+DIST_SUBDIRS = port fortran xdr libsrc ncdump ncgen dumper hdfimport \
+	hdiff hrepack nctest
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -192,9 +192,13 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs
-@HDF_BUILD_FORTRAN_FALSE@SUBDIRS = port libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
-@HDF_BUILD_FORTRAN_TRUE@SUBDIRS = port fortran libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
+@HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
+@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
+@HDF_BUILD_FORTRAN_FALSE@FORTRAN_DIR = 
+@HDF_BUILD_FORTRAN_TRUE@FORTRAN_DIR = fortran
+@HDF_BUILD_XDR_FALSE@XDR_DIR = 
+@HDF_BUILD_XDR_TRUE@XDR_DIR = xdr
+SUBDIRS = port $(FORTRAN_DIR) $(XDR_DIR) libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
 all: all-recursive
 
 .SUFFIXES:

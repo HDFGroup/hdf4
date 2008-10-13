@@ -17,8 +17,12 @@
 ## Contains definitions, etc. used across multiple Makefiles.
 
 
+if HDF_BUILD_XDR
+    XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
+endif
+
 if HDF_BUILD_SHARED
-    AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs
+    AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 endif
 
 

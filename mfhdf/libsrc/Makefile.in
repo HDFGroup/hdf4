@@ -59,40 +59,32 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libmfhdf_la_LIBADD =
+@HDF_BUILD_XDR_TRUE@libmfhdf_la_DEPENDENCIES = $(XDRLIB)
 am__libmfhdf_la_SOURCES_DIST = array.c attr.c cdf.c dim.c file.c \
 	hdfsds.c iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
-	putgetg.c sharray.c string.c var.c xdrposix.c ../xdr/xdr.c \
-	../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c \
+	putgetg.c sharray.c string.c var.c xdrposix.c \
 	../fortran/mfsdf.c ../fortran/mfsdff.f ../fortran/jackets.c
 am__objects_1 = array.lo attr.lo cdf.lo dim.lo file.lo hdfsds.lo \
 	iarray.lo error.lo globdef.lo mfsd.lo nssdc.lo putget.lo \
 	putgetg.lo sharray.lo string.lo var.lo xdrposix.lo
-am__objects_2 = xdr.lo xdrfloat.lo xdrstdio.lo xdrarray.lo
-@HDF_BUILD_NETCDF_FALSE@am__objects_3 = mfsdf.lo mfsdff.lo
-@HDF_BUILD_NETCDF_TRUE@am__objects_3 = jackets.lo mfsdf.lo mfsdff.lo
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_FALSE@am_libmfhdf_la_OBJECTS = $(am__objects_1)
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@am_libmfhdf_la_OBJECTS =  \
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@	$(am__objects_1) \
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@	$(am__objects_2)
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_FALSE@am_libmfhdf_la_OBJECTS =  \
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_FALSE@	$(am__objects_1) \
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_FALSE@	$(am__objects_3)
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@am_libmfhdf_la_OBJECTS =  \
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@	$(am__objects_1) \
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@	$(am__objects_3) \
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@	$(am__objects_2)
+@HDF_BUILD_NETCDF_FALSE@am__objects_2 = mfsdf.lo mfsdff.lo
+@HDF_BUILD_NETCDF_TRUE@am__objects_2 = jackets.lo mfsdf.lo mfsdff.lo
+@HDF_BUILD_FORTRAN_FALSE@am_libmfhdf_la_OBJECTS = $(am__objects_1)
+@HDF_BUILD_FORTRAN_TRUE@am_libmfhdf_la_OBJECTS = $(am__objects_1) \
+@HDF_BUILD_FORTRAN_TRUE@	$(am__objects_2)
 libmfhdf_la_OBJECTS = $(am_libmfhdf_la_OBJECTS)
 am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
-cdftest_DEPENDENCIES = libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+cdftest_DEPENDENCIES = libmfhdf.la $(top_builddir)/hdf/src/libdf.la \
+	$(XDRLIB)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tchunk.$(OBJEXT) \
 	tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) tdim.$(OBJEXT) \
 	temptySDSs.$(OBJEXT) tfile.$(OBJEXT) tidtypes.$(OBJEXT) \
 	tnetcdf.$(OBJEXT) trank0.$(OBJEXT) tsd.$(OBJEXT) \
 	tsdsprops.$(OBJEXT) tszip.$(OBJEXT) tdatasizes.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
-hdftest_DEPENDENCIES = libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+hdftest_DEPENDENCIES = libmfhdf.la $(top_builddir)/hdf/src/libdf.la \
+	$(XDRLIB)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
@@ -254,7 +246,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs
+@HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
+@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_srcdir)/mfhdf/port
@@ -271,21 +264,20 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
 
 @HDF_BUILD_NETCDF_FALSE@FSOURCES = ../fortran/mfsdf.c ../fortran/mfsdff.f
 @HDF_BUILD_NETCDF_TRUE@FSOURCES = ../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
-XDRSOURCES = ../xdr/xdr.c ../xdr/xdrfloat.c ../xdr/xdrstdio.c ../xdr/xdrarray.c
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_FALSE@libmfhdf_la_SOURCES = $(CSOURCES)
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_XDR_TRUE@libmfhdf_la_SOURCES = $(CSOURCES) $(XDRSOURCES)
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_FALSE@libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_XDR_TRUE@libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES) $(XDRSOURCES)
+@HDF_BUILD_FORTRAN_FALSE@libmfhdf_la_SOURCES = $(CSOURCES)
+@HDF_BUILD_FORTRAN_TRUE@libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
+@HDF_BUILD_XDR_TRUE@XDRLIB = ../xdr/libxdr.la
+@HDF_BUILD_XDR_TRUE@libmfhdf_la_LIBADD = $(XDRLIB)
 @HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h
 @HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h
 @HDF_BUILD_FORTRAN_FALSE@F77LINK = $(LINK)
 cdftest_SOURCES = cdftest.c
-cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
 		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
 		  tsd.c tsdsprops.c tszip.c tdatasizes.c
 
-hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 #############################################################################
 #############################################################################
@@ -405,11 +397,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsdsprops.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/var.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrarray.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrfloat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrposix.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrstdio.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -431,34 +419,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-xdr.lo: ../xdr/xdr.c
-@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdr.lo -MD -MP -MF $(DEPDIR)/xdr.Tpo -c -o xdr.lo `test -f '../xdr/xdr.c' || echo '$(srcdir)/'`../xdr/xdr.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/xdr.Tpo $(DEPDIR)/xdr.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdr.c' object='xdr.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdr.lo `test -f '../xdr/xdr.c' || echo '$(srcdir)/'`../xdr/xdr.c
-
-xdrfloat.lo: ../xdr/xdrfloat.c
-@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrfloat.lo -MD -MP -MF $(DEPDIR)/xdrfloat.Tpo -c -o xdrfloat.lo `test -f '../xdr/xdrfloat.c' || echo '$(srcdir)/'`../xdr/xdrfloat.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/xdrfloat.Tpo $(DEPDIR)/xdrfloat.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrfloat.c' object='xdrfloat.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrfloat.lo `test -f '../xdr/xdrfloat.c' || echo '$(srcdir)/'`../xdr/xdrfloat.c
-
-xdrstdio.lo: ../xdr/xdrstdio.c
-@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrstdio.lo -MD -MP -MF $(DEPDIR)/xdrstdio.Tpo -c -o xdrstdio.lo `test -f '../xdr/xdrstdio.c' || echo '$(srcdir)/'`../xdr/xdrstdio.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/xdrstdio.Tpo $(DEPDIR)/xdrstdio.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrstdio.c' object='xdrstdio.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrstdio.lo `test -f '../xdr/xdrstdio.c' || echo '$(srcdir)/'`../xdr/xdrstdio.c
-
-xdrarray.lo: ../xdr/xdrarray.c
-@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdrarray.lo -MD -MP -MF $(DEPDIR)/xdrarray.Tpo -c -o xdrarray.lo `test -f '../xdr/xdrarray.c' || echo '$(srcdir)/'`../xdr/xdrarray.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/xdrarray.Tpo $(DEPDIR)/xdrarray.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../xdr/xdrarray.c' object='xdrarray.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o xdrarray.lo `test -f '../xdr/xdrarray.c' || echo '$(srcdir)/'`../xdr/xdrarray.c
 
 mfsdf.lo: ../fortran/mfsdf.c
 @am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mfsdf.lo -MD -MP -MF $(DEPDIR)/mfsdf.Tpo -c -o mfsdf.lo `test -f '../fortran/mfsdf.c' || echo '$(srcdir)/'`../fortran/mfsdf.c

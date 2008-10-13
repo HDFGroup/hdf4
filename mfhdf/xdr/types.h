@@ -23,9 +23,11 @@
 
 #if defined __STDC__ || defined PC || defined _WINDOWS || defined _WIN32
 #define STDC_INCLUDES
-#if !(defined vms || defined UNIX386 || defined __FreeBSD__ || defined WINNT || defined _WIN32 || defined __ultrix || (defined __sun__ && defined __i386__) || defined _CRAYMPP)
+#if !(defined vms || defined UNIX386 || defined __FreeBSD__ || defined WINNT || defined _WIN32 || defined __ultrix || (defined __sun__ && defined __i386__) || defined _CRAYMPP || defined __linux__ )
+/* Unneeded in most (all?) supported machines, and causing problems on some platforms.
 long ntohl(long);
 long htonl(long);
+*/
 #endif /* !unix */
 #ifdef vms
 #define ntohl decc$ntohl

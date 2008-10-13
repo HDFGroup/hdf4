@@ -257,7 +257,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs
+@HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
+@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 lib_LTLIBRARIES = libdf.la
 FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
            dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c herrf.c hfilef.c  \

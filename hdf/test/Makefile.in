@@ -243,7 +243,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs
+@HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
+@HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
