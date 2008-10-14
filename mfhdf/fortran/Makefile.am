@@ -27,21 +27,21 @@ endif
 if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-              ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+              ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
                      $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 endif
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest1_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
 tszip_SOURCES = tszip.f
-tszip_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+tszip_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
 testdir:

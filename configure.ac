@@ -201,7 +201,6 @@ AM_PROG_LEX
 AC_PROG_INSTALL
 AM_PROG_LEX
 AC_PROG_LN_S
-AC_PROG_RANLIB
 AC_PROG_YACC
 
 AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
@@ -489,11 +488,7 @@ dnl Is XDR support present? The TRY_LINK info was gotten from the
 dnl mfhdf/libsrc/local_nc.c file.
 AC_MSG_CHECKING([for xdr library support])
 
-
-AC_ARG_ENABLE([hdf4-xdr],
-              [AC_HELP_STRING([--enable-hdf4-xdr],
-                              [Build HDF4's XDR instead of system XDR [default=no]])],,
-              enableval="no")
+AC_ARG_ENABLE([hdf4-xdr],,,enableval="no")
 
 case "$enableval" in
   yes)
@@ -913,9 +908,6 @@ PRINT "---------"
 
 PRINT_N "               SZIP compression"
 PRINT "$SZIP_INFO"
-
-PRINT_N "                       HDF4 XDR"
-PRINT "$build_xdr"
 
 PRINT ""
 PRINT "HDF support for NetCDF-3 APIs:"

@@ -46,7 +46,7 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                  \
                        ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_misc.c        \
                        ../hdiff/hdiff_sds.c ../hdiff/hdiff_table.c          \
                        ../hdiff/hdiff_vs.c ../hdiff/hdiff_dim.c
-test_hrepack_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+test_hrepack_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la -lm
 test_hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
 hrepack_check_SOURCES = hrepack_check.c

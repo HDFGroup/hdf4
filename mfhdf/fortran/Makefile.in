@@ -236,19 +236,19 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 @HDF_BUILD_NETCDF_TRUE@include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
 @HDF_BUILD_NETCDF_TRUE@ftest_SOURCES = ftest.f
 @HDF_BUILD_NETCDF_TRUE@ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-@HDF_BUILD_NETCDF_TRUE@              ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+@HDF_BUILD_NETCDF_TRUE@              ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 
 @HDF_BUILD_NETCDF_TRUE@ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
 @HDF_BUILD_NETCDF_TRUE@                     $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest1_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 tszip_SOURCES = tszip.f
-tszip_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+tszip_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ -lg2c
 tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 SUFFIXES = .inc .f90
 
