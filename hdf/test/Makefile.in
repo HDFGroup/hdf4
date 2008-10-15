@@ -264,7 +264,7 @@ buffer_DEPENDENCIES = ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
 @HDF_BUILD_FORTRAN_TRUE@                   tvattrf.f tvsetf.f
 
-@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la -lg2c
+@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 #############################################################################
 #############################################################################
