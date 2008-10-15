@@ -778,12 +778,8 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/ncdump/Makefile
                  mfhdf/ncgen/Makefile
                  mfhdf/nctest/Makefile
-			 mfhdf/port/Makefile])
-
-dnl If we're building the XDR library, then generate its Makefile.
-if test "X$build_xdr" = "Xyes"; then
-  AC_CONFIG_FILES([mfhdf/xdr/Makefile])
-fi
+                 mfhdf/port/Makefile
+                 mfhdf/xdr/Makefile])
 
 AC_OUTPUT
 
