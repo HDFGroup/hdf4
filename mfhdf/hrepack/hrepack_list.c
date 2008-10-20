@@ -157,6 +157,22 @@ int list(const char* infname,
     * iterate tru HDF interfaces 
     *-------------------------------------------------------------------------
     */
+
+    if (options->verbose) 
+    {
+        if ( options->trip==0 )
+        {
+            printf("-----------------------------------------------\n");
+            printf(" Chunk   Filter              Name\n");
+            printf("-----------------------------------------------\n");
+        }
+        else
+        {
+            printf("-----------------------------------------------\n");
+            printf(" Chunk   Filter(compression) Name\n");
+            printf("-----------------------------------------------\n");
+        }
+    }
     
     if (list_vg (infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,list_tbl,td1,td2,options)<0) 
         goto out;
@@ -449,7 +465,7 @@ int list_vg(int32 infile_id,
             list_table_add(list_tbl,tag_vg,ref_vg,vg_name);
             
             if (options->verbose)
-                printf(PFORMAT,"","",vg_name);  
+                printf(PFORMAT,"","","",vg_name);  
             
             if (options->trip==1)
             {
@@ -744,7 +760,7 @@ int vgroup_insert(int32 infile_id,
                 list_table_add(list_tbl,tag,ref,path);
                 
                 if (options->verbose)
-                    printf(PFORMAT,"","",path);    
+                    printf(PFORMAT,"","","",path);    
                 
                 if ( options->trip==0 ) 
                 {

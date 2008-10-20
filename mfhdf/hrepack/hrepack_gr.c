@@ -353,6 +353,7 @@ int  copy_gr(int32 infile_id,
   printf(PFORMAT,
    (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
    (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
+   "",                                            /*compression ratio */                     
    path);                                         /*name*/
  }
 

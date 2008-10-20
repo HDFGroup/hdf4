@@ -529,8 +529,9 @@ static int gen_dim(char* name,              /* name of SDS */
            }
        }
        printf(PFORMAT,
-           (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
-           (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
+           (pr_chunk_flags>0)?"chunk":"",                 /*chunk information */
+           (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information */
+           "",                                            /*compression ratio */                     
            name);                                         /*name*/
    }
    

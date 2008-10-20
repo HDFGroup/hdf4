@@ -96,7 +96,7 @@ int copy_vs( int32 infile_id,
  
  if (options->verbose)
  {
-  printf(PFORMAT,"","",path);    
+  printf(PFORMAT,"","","",path);    
  }
  
  /* check inspection mode */

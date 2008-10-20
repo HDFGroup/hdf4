@@ -19,7 +19,7 @@
 #include "hdf.h"
 #include "mfhdf.h"
 
-#define PFORMAT  "  %-7s %-7s %-7s\n" /*chunk info, compression info, name*/
+#define PFORMAT  "  %-7s %-4s %-10s %-7s\n" /*chunk info, compression info, ratio, name*/
 #define PFORMAT1 "  %-7s %-7s %-7s"   /*chunk info, compression info, name*/
 
 #ifdef __cplusplus

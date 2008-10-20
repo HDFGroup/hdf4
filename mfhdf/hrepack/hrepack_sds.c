@@ -33,7 +33,8 @@
 void print_compression( int chunk_flags,
                         HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
                         int comp_type,
-                        char *path);
+                        char *path,
+                        char *ratio);
 
 /*-------------------------------------------------------------------------
  * Function: copy_sds
@@ -365,40 +366,7 @@ int copy_sds(int32 sd_in,
         
  } /* empty_sds */
  
-#if defined (OLD_PRINT)
-  /*-------------------------------------------------------------------------
-   * print the PATH, COMP and CHUNK information
-   *-------------------------------------------------------------------------
-   */ 
-   
-   if (options->verbose)
-   {
-       int pr_comp_type=0;
-       int pr_chunk_flags;
-       
-       if ( options->trip==0 )
-           pr_chunk_flags=chunk_flags_in;
-       else
-           pr_chunk_flags=chunk_flags;
-       
-       if (comp_type>0)
-       {
-           pr_comp_type=comp_type;
-       }
-       else
-       {
-           if (pr_chunk_flags == (HDF_CHUNK | HDF_COMP) )
-           {
-               pr_comp_type=chunk_def.comp.comp_type;
-           }
-       }
-       printf(PFORMAT,
-           (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
-           (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
-           path);                                         /*name*/
-   }
 
-#else
 
    if ( options->trip==0 && options->verbose)
    {
@@ -406,11 +374,11 @@ int copy_sds(int32 sd_in,
        print_compression(chunk_flags_in,
            &chunk_def,      
            comp_type,
-           path);
+           path,
+           "");
    } 
 
     
-#endif
   /*-------------------------------------------------------------------------
    * check if the requested compression is valid
    * SDSs do not support JPEG
@@ -683,18 +651,7 @@ int copy_sds(int32 sd_in,
   
    } /* empty_sds */
 
-#if !defined(OLD_PRINT)
 
-   if ( options->trip==1 && options->verbose)
-   {
-       
-       
-       print_compression(chunk_flags,
-           &chunk_def,      
-           comp_type,
-           path);           
-   } 
-#endif
    
   /*-------------------------------------------------------------------------
    * copy attributes
@@ -804,6 +761,12 @@ int copy_sds(int32 sd_in,
        goto out;
    }
    
+
+  /*-------------------------------------------------------------------------
+   * close
+   *-------------------------------------------------------------------------
+   */ 
+   
    
    if (SDendaccess(sds_id)== FAIL )
        printf( "Failed to close SDS <%s>\n", path);
@@ -811,10 +774,67 @@ int copy_sds(int32 sd_in,
        if (SDendaccess (sds_out)== FAIL )
            printf( "Failed to close SDS <%s>\n", path);
    }
+  
+   /*-------------------------------------------------------------------------
+   * print compression
+   *-------------------------------------------------------------------------
+   */ 
+   
+
+   
+   if ( options->trip==1 && options->verbose)
+   {
+       
+       int32  comp_size;
+       int32  uncomp_size;
+       int32  sds_idx;
+       double a, b, r=0;
+       char   comp_str[255];
+       
+       if ((sds_idx = SDnametoindex (sd_out, sds_name))==FAIL) 
+           goto out;
+       if ((sds_out = SDselect (sd_out, sds_idx))==FAIL) 
+           goto out;
+       
+       if (SDgetdatasize(sds_out, &comp_size, &uncomp_size) == FAIL) 
+       {
+           printf( "Could not get data sizes for <%s>\n", sds_name);
+           goto out;
+       }
+
+       sprintf(comp_str,"\0");
+
+       if ( comp_type > COMP_CODE_NONE )
+           
+       {
+           
+           /* compression ratio = uncompressed size /  compressed size */
+           a = uncomp_size; 
+           b = comp_size;
+           if ( b != 0 )
+               r = a / b;
+           
+           if (SDendaccess (sds_out)== FAIL )
+               goto out;
+           
+           sprintf(comp_str,"(%.2f:1)", r);
+           
+       }
+       
+       
+       print_compression(chunk_flags,
+           &chunk_def,      
+           comp_type,           
+           path,
+           comp_str);           
+   } 
+
+
    if (path)
        free(path);
    if (buf)
        free(buf);
+
    
    return SUCCEED;
    
@@ -907,12 +927,16 @@ out:
 
 }
 
-
+/*-------------------------------------------------------------------------
+ * print_compression
+ *-------------------------------------------------------------------------
+ */
 
 void print_compression( int chunk_flags,
                         HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
                         int comp_type,
-                        char *path)
+                        char *path,
+                        char *ratio)
 {
     int pr_comp_type=0;
     int pr_chunk_flags;
@@ -933,6 +957,7 @@ void print_compression( int chunk_flags,
     printf(PFORMAT,
         (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
         (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
+        ratio,                                         /* ratio */
         path);                                         /*name*/
 }
 
