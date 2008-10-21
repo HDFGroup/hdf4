@@ -705,7 +705,8 @@ C----------------------------------------------------------------------
       integer       sd_id, n_vars
       integer       scgnvars_byname
 
-      sfgnvars_byname = scgnvars_byname(sd_id, sds_name, len(sds_name),
+      sfgnvars_byname = scgnvars_byname(sd_id, sds_name, 
+     +                  len(sds_name),
      +                  n_vars)
       return
       end
