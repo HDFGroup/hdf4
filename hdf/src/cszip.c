@@ -20,6 +20,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* General HDF includes */
 
 #include "hdf.h"
+#include <assert.h>
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
@@ -74,9 +75,18 @@ HCIcszip_init(accrec_t * access_rec)
     CONSTR(FUNC, "HCIcszip_init");
     compinfo_t *info;           /* special element information */
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
+    intn       ret_value = SUCCEED;
 
-#ifndef H4_HAVE_LIBSZ
-    HRETURN_ERROR(DFE_CANTCOMP, FAIL);
+#ifdef H4_HAVE_LIBSZ
+    /* Sanity check to make certain that we haven't drifted out of date with
+     * the mask options from the SZIP ricehdf.h header */
+    assert(H4_SZ_ALLOW_K13_OPTION_MASK==SZ_ALLOW_K13_OPTION_MASK);
+    assert(H4_SZ_CHIP_OPTION_MASK==SZ_CHIP_OPTION_MASK);
+    assert(H4_SZ_EC_OPTION_MASK==SZ_EC_OPTION_MASK);
+    assert(H4_SZ_LSB_OPTION_MASK==SZ_LSB_OPTION_MASK);
+    assert(H4_SZ_MSB_OPTION_MASK==SZ_MSB_OPTION_MASK);
+    assert(H4_SZ_NN_OPTION_MASK==SZ_NN_OPTION_MASK);
+    assert(H4_SZ_RAW_OPTION_MASK==SZ_RAW_OPTION_MASK);
 #endif
 
     info = (compinfo_t *) access_rec->special_info;
@@ -97,7 +107,8 @@ HCIcszip_init(accrec_t * access_rec)
     szip_info->offset = 0;   /* offset into the file */
     szip_info->szip_dirty=SZIP_CLEAN;
 
-    return (SUCCEED);
+done:
+    return(ret_value);
 }   /* end HCIcszip_init() */
 
 /*--------------------------------------------------------------------------
@@ -355,7 +366,7 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
     int32 buffer_size;
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     if (SZ_encoder_enabled() == 0) 
         HRETURN_ERROR(DFE_NOENCODER, FAIL);
 
@@ -384,11 +395,11 @@ HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
 
     return (SUCCEED);
 
-#else /* ifdef H4_HAVE_LIBSZ */
+#else /* ifdef H4_HAVE_SZIP_ENCODER */
 
     HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
 
-#endif /* H4_HAVE_LIBSZ */
+#endif /* H4_HAVE_SZIP_ENCODER */
 
 }   /* end HCIcszip_encode() */
 
@@ -425,14 +436,14 @@ HCIcszip_term(compinfo_t * info)
     uint16 tag,ref;
     int32 len1;
     int32 aid;
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     SZ_com_t sz_param;
 #endif
     size_t size_out;
     int32 status;
     uint8 *cp;
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
 
     szip_info = &(info->cinfo.coder_info.szip_info);
     if (szip_info->szip_state != SZIP_RUN)
@@ -603,11 +614,11 @@ HCIcszip_term(compinfo_t * info)
 
     return (SUCCEED);
 
-#else /* H4_HAVE_LIBSZ */
+#else /* H4_HAVE_SZIP_ENCODER */
 
     HRETURN_ERROR(DFE_CANTCOMP, FAIL);
 
-#endif /* H4_HAVE_LIBSZ */
+#endif /* H4_HAVE_SZIP_ENCODER */
 
 }   /* end HCIcszip_term() */
 
@@ -637,32 +648,26 @@ HCIcszip_staccess(accrec_t * access_rec, int16 acc_mode)
     CONSTR(FUNC, "HCIcszip_staccess");
     compinfo_t *info;           /* special element information */
 
-#ifdef H4_HAVE_LIBSZ
-
     info = (compinfo_t *) access_rec->special_info;
-
     if (acc_mode == DFACC_READ)
         info->aid = Hstartread(access_rec->file_id, DFTAG_COMPRESSED,
                                info->comp_ref);
     else
+#ifdef H4_HAVE_SZIP_ENCODER
 	{
 	    if (SZ_encoder_enabled() == 0) 
 		HRETURN_ERROR(DFE_NOENCODER, FAIL);
 	    info->aid = Hstartaccess(access_rec->file_id, DFTAG_COMPRESSED,
                        info->comp_ref, DFACC_RDWR|DFACC_APPENDABLE);
 	}
+#else /* H4_HAVE_SZIP_ENCODER */
+    HRETURN_ERROR(DFE_DENIED, FAIL);
+#endif /* H4_HAVE_SZIP_ENCODER */
 
     if (info->aid == FAIL)
         HRETURN_ERROR(DFE_DENIED, FAIL);
 
     return (HCIcszip_init(access_rec));  /* initialize the SZIP info */
-
-#else /* H4_HAVE_LIBSZ */
-
-    HRETURN_ERROR(DFE_DENIED, FAIL);
-
-#endif /* H4_HAVE_LIBSZ */
-
 }   /* end HCIcszip_staccess() */
 
 /*--------------------------------------------------------------------------
@@ -863,7 +868,7 @@ HCPcszip_write(accrec_t * access_rec, int32 length, const void * data)
     compinfo_t *info;           /* special element information */
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     if (SZ_encoder_enabled() == 0) 
 	HRETURN_ERROR(DFE_NOENCODER, FAIL);
     info = (compinfo_t *) access_rec->special_info;
@@ -880,11 +885,11 @@ HCPcszip_write(accrec_t * access_rec, int32 length, const void * data)
         HRETURN_ERROR(DFE_CENCODE, FAIL);
 
     return (length);
-#else /* ifdef H4_HAVE_LIBSZ */
+#else /* ifdef H4_HAVE_SZIP_ENCODER */
 
     HRETURN_ERROR(DFE_CANTDECOMP, FAIL);
 
-#endif /* H4_HAVE_LIBSZ */
+#endif /* H4_HAVE_SZIP_ENCODER */
 }   /* HCPcszip_write() */
 
 /*--------------------------------------------------------------------------
@@ -1018,7 +1023,7 @@ HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int3
     int i;
     intn       ret_value = SUCCEED;
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     if (ndims <= 0) {
           ret_value = FAIL;
           goto done;

@@ -33,6 +33,16 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
+/* Special parameters for szip compression */
+/* [These are aliases for the similar definitions in ricehdf.h header file] */
+#define H4_SZ_ALLOW_K13_OPTION_MASK     1
+#define H4_SZ_CHIP_OPTION_MASK          2
+#define H4_SZ_EC_OPTION_MASK            4
+#define H4_SZ_LSB_OPTION_MASK           8
+#define H4_SZ_MSB_OPTION_MASK           16
+#define H4_SZ_NN_OPTION_MASK            32
+#define H4_SZ_RAW_OPTION_MASK           128
+
 /*
     ** from cszip.c
   */

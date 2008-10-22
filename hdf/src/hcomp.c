@@ -231,8 +231,9 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
 
 	      /* when libsz presents, initialize other info - BMR, 08/25/2007
 		 (changed from eliminating this case completely) */
+	      /* completely removed the libsz limitation, we shouldn't need 
+		 szip library to initialize here - BMR, 10/21/2008 */
 
-#ifdef H4_HAVE_LIBSZ
               /* set the szip func. ptrs */
               cinfo->coder_funcs = cszip_funcs;
 
@@ -248,8 +249,6 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
               cinfo->coder_info.szip_info.szip_state = SZIP_INIT;
               cinfo->coder_info.szip_info.szip_dirty = SZIP_CLEAN;
               break;
-
-#endif /* H4_HAVE_LIBSZ */
 
           default:
               HRETURN_ERROR(DFE_BADCODER, FAIL)
