@@ -19,6 +19,25 @@ Variable Name = SDSgzip
 		 Size = 5
 		 Scale Type = number-type not set
 		 Number of attributes = 0
+	 Data : 
+                1 2 3 4 5 
+                2 3 4 5 6 
+                3 4 5 6 7 
+                4 5 6 7 8 
+                5 6 7 8 9 
+                6 7 8 9 10 
+                7 8 9 10 11 
+                8 9 10 11 12 
+                9 10 11 12 13 
+                10 11 12 13 14 
+                11 12 13 14 15 
+                12 13 14 15 16 
+                13 14 15 16 17 
+                14 15 16 17 18 
+                15 16 17 18 19 
+                16 17 18 19 20 
+
+
 
 Variable Name = SDSskiphuff
 	 Index = 1
@@ -36,13 +55,32 @@ Variable Name = SDSskiphuff
 		 Size = 5
 		 Scale Type = number-type not set
 		 Number of attributes = 0
+	 Data : 
+                1 2 3 4 5 
+                2 3 4 5 6 
+                3 4 5 6 7 
+                4 5 6 7 8 
+                5 6 7 8 9 
+                6 7 8 9 10 
+                7 8 9 10 11 
+                8 9 10 11 12 
+                9 10 11 12 13 
+                10 11 12 13 14 
+                11 12 13 14 15 
+                12 13 14 15 16 
+                13 14 15 16 17 
+                14 15 16 17 18 
+                15 16 17 18 19 
+                16 17 18 19 20 
+
+
 
 Variable Name = SDSszip
 	 Index = 2
 	 Type= 32-bit signed integer
 	 Ref. = 6
 	 Compression method = SZIP
-		 Option mask = SZ_EC_OPTION_MASK|SZ_RAW_OPTION_MASK
+		 Option mask = H4_SZ_EC_OPTION_MASK|H4_SZ_RAW_OPTION_MASK (65668)
 		 Pixels per block = 2
 		 Pixels per scanline = 5
 		 Bits per pixel = 32
@@ -57,3 +95,22 @@ Variable Name = SDSszip
 		 Size = 5
 		 Scale Type = number-type not set
 		 Number of attributes = 0
+	 Data : 
+                1 2 3 4 5 
+                2 3 4 5 6 
+                3 4 5 6 7 
+                4 5 6 7 8 
+                5 6 7 8 9 
+                6 7 8 9 10 
+                7 8 9 10 11 
+                8 9 10 11 12 
+                9 10 11 12 13 
+                10 11 12 13 14 
+                11 12 13 14 15 
+                12 13 14 15 16 
+                13 14 15 16 17 
+                14 15 16 17 18 
+                15 16 17 18 19 
+                16 17 18 19 20 
+
+
