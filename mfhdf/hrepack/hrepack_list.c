@@ -160,18 +160,9 @@ int list(const char* infname,
 
     if (options->verbose) 
     {
-        if ( options->trip==0 )
-        {
-            printf("-----------------------------------------------\n");
-            printf(" Chunk   Filter              Name\n");
-            printf("-----------------------------------------------\n");
-        }
-        else
-        {
-            printf("-----------------------------------------------\n");
-            printf(" Chunk   Filter(compression) Name\n");
-            printf("-----------------------------------------------\n");
-        }
+        printf("-----------------------------------------------\n");
+        printf(" Chunk   Filter(compression) Name\n");
+        printf("-----------------------------------------------\n");
     }
     
     if (list_vg (infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,list_tbl,td1,td2,options)<0) 

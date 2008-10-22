@@ -30,11 +30,18 @@
 #define H4TOOLS_MALLOCSIZE     (1024 * 1024)
 
 
-void print_compression( int chunk_flags,
-                        HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
-                        int comp_type,
-                        char *path,
-                        char *ratio);
+void print_info( int chunk_flags,
+                 HDF_CHUNK_DEF *chunk_def,      
+                 int comp_type,
+                 char *path,
+                 char *ratio);
+
+int get_print_info(  int chunk_flags,
+                     HDF_CHUNK_DEF *chunk_def,      
+                     int comp_type,
+                     char *path,
+                     char *sds_name,
+                     int32 sd_id);
 
 /*-------------------------------------------------------------------------
  * Function: copy_sds
@@ -366,18 +373,6 @@ int copy_sds(int32 sd_in,
         
  } /* empty_sds */
  
-
-
-   if ( options->trip==0 && options->verbose)
-   {
-       
-       print_compression(chunk_flags_in,
-           &chunk_def,      
-           comp_type,
-           path,
-           "");
-   } 
-
     
   /*-------------------------------------------------------------------------
    * check if the requested compression is valid
@@ -413,8 +408,26 @@ int copy_sds(int32 sd_in,
    */ 
    
    /* check inspection mode */
-   if ( options->trip==0 ) {
+   if ( options->trip==0 ) 
+   {
+       /* close sds before get info */
        SDendaccess(sds_id);
+       
+       if ( options->verbose)
+       {
+           
+           if (get_print_info(chunk_flags_in,
+               &chunk_def,      
+               comp_type,
+               path,
+               sds_name,
+               sd_in)==FAIL)
+               goto out;
+       }          
+
+
+
+
        if (path) free(path);
        return SUCCEED;
    }
@@ -779,55 +792,20 @@ int copy_sds(int32 sd_in,
    * print compression
    *-------------------------------------------------------------------------
    */ 
-   
 
-   
-   if ( options->trip==1 && options->verbose)
+   assert( options->trip==1 );
+   if ( options->verbose)
    {
        
-       int32  comp_size;
-       int32  uncomp_size;
-       int32  sds_idx;
-       double a, b, r=0;
-       char   comp_str[255];
-       
-       if ((sds_idx = SDnametoindex (sd_out, sds_name))==FAIL) 
-           goto out;
-       if ((sds_out = SDselect (sd_out, sds_idx))==FAIL) 
-           goto out;
-       
-       if (SDgetdatasize(sds_out, &comp_size, &uncomp_size) == FAIL) 
-       {
-           printf( "Could not get data sizes for <%s>\n", sds_name);
-           goto out;
-       }
-
-       sprintf(comp_str,"\0");
-
-       if ( comp_type > COMP_CODE_NONE )
-           
-       {
-           
-           /* compression ratio = uncompressed size /  compressed size */
-           a = uncomp_size; 
-           b = comp_size;
-           if ( b != 0 )
-               r = a / b;
-           
-           if (SDendaccess (sds_out)== FAIL )
-               goto out;
-           
-           sprintf(comp_str,"(%.2f:1)", r);
-           
-       }
-       
-       
-       print_compression(chunk_flags,
+       if (get_print_info(chunk_flags_in,
            &chunk_def,      
-           comp_type,           
+           comp_type,
            path,
-           comp_str);           
-   } 
+           sds_name,
+           sd_out)==FAIL)
+           goto out;
+   }          
+   
 
 
    if (path)
@@ -927,16 +905,81 @@ out:
 
 }
 
+
 /*-------------------------------------------------------------------------
- * print_compression
+ * get_print_info
  *-------------------------------------------------------------------------
  */
 
-void print_compression( int chunk_flags,
-                        HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
-                        int comp_type,
-                        char *path,
-                        char *ratio)
+int get_print_info(  int chunk_flags,
+                     HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
+                     int comp_type,
+                     char *path,
+                     char *sds_name,
+                     int32 sd_id)
+                    
+{
+    
+    int32  comp_size;
+    int32  uncomp_size;
+    int32  sds_idx;
+    int32  sds_id;
+    double a, b, r=0;
+    char   comp_str[255];
+    
+    if ((sds_idx = SDnametoindex (sd_id, sds_name))==FAIL) 
+        goto out;
+    if ((sds_id = SDselect (sd_id, sds_idx))==FAIL) 
+        goto out;
+    if (SDgetdatasize(sds_id, &comp_size, &uncomp_size) == FAIL) 
+    {
+        printf( "Could not get data sizes for <%s>\n", sds_name);
+        goto out;
+    }   
+    if (SDendaccess (sds_id)== FAIL )
+        goto out;
+    
+    sprintf(comp_str,"\0");
+    
+    if ( comp_type > COMP_CODE_NONE )
+        
+    {
+        
+        /* compression ratio = uncompressed size /  compressed size */
+        a = uncomp_size; 
+        b = comp_size;
+        if ( b != 0 )
+            r = a / b;
+      
+        
+        sprintf(comp_str,"(%.2f:1)", r);
+        
+    }
+    
+    
+    print_info(chunk_flags,
+        chunk_def,      
+        comp_type,           
+        path,
+        comp_str);  
+
+    return SUCCEED;
+    
+out:
+    return FAIL;
+    
+} 
+
+/*-------------------------------------------------------------------------
+ * print_info
+ *-------------------------------------------------------------------------
+ */
+
+void print_info( int chunk_flags,
+                 HDF_CHUNK_DEF *chunk_def,      /* chunk definition */
+                 int comp_type,
+                 char *path,
+                 char *ratio)
 {
     int pr_comp_type=0;
     int pr_chunk_flags;
@@ -957,7 +1000,7 @@ void print_compression( int chunk_flags,
     printf(PFORMAT,
         (pr_chunk_flags>0)?"chunk":"",                 /*chunk information*/
         (pr_comp_type>0)?get_scomp(pr_comp_type):"",   /*compression information*/
-        ratio,                                         /* ratio */
+        ratio,                                         /*ratio */
         path);                                         /*name*/
 }
 
