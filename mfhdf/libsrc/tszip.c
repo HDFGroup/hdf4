@@ -1261,7 +1261,7 @@ static intn test_getszipinfo()
     comp_info	c_info;
     int32       start[2], edges[2];
     comp_coder_t comp_type;
-    int32	comp_size, uncomp_size;
+    int32	comp_size, uncomp_size, orig_size;
     int16       fill_value = 0;   /* Fill value */
     int         i,j;
     int		num_errs = 0;    /* number of errors so far */
@@ -1302,6 +1302,10 @@ static intn test_getszipinfo()
     /* Get the compressed data size and non-compressed data size */
     status = SDgetdatasize(sds_id, &comp_size, &uncomp_size);
     CHECK(status, FAIL, "SDgetdatasize");
+
+    /* Compute the uncompressed/original size of the data for comparision */
+    orig_size = SZ_WIDTH * SZ_LENGTH * SIZE_INT32;
+    VERIFY(uncomp_size, orig_size, "SDgetdatasize");
 
     /* In this test, compressed data size should be smaller than non-compressed
        data size */

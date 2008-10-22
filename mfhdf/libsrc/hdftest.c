@@ -1518,12 +1518,10 @@ main(int argc, char *argv[])
     status = test_coordvar();
     num_errs = num_errs + status;
 
-#ifdef H4_HAVE_LIBSZ
+    /* BMR: Verifies that some functions will not fail even though SZIP 
+       library is not present or only decoder is available. */
     status = test_szip_compression();  /* in tszip.c */
     num_errs = num_errs + status;
-#else
-   /*  printf("****** SD Szip test skipped *****\n"); */
-#endif /* H4_HAVE_LIBSZ */
 
     /* BMR: This test fails on some systems when the user are logged in
      * as root.  We decided to comment it out until further work can be
