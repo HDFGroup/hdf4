@@ -245,9 +245,9 @@ TEST dumpsds-14.out dumpsds sds2_dim1_samename.hdf
 # test displaying compression information
 
 if test $USE_COMP_SZIP != "yes"; then
-TEST dumpsds-15.out dumpsds -h sds_compressed.hdf
+TEST dumpsds-15.out dumpsds sds_compressed.hdf
 else
-TEST dumpsds-15szip.out dumpsds -h sds_compressed.hdf
+TEST dumpsds-15szip.out dumpsds sds_compressed.hdf
 fi
 
 else
