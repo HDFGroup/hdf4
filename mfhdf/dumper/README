@@ -17,7 +17,5 @@ Below is a list describing how some of the hdf files in this directory
 were generated.
 
 sds_compressed.hdf: by test_various_comps() in mfhdf/libsrc/tcomp.c
-
-
-
+sds_szipped.hdf: by gen_sds_szipped.c
 
