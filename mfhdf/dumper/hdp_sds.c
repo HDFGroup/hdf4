@@ -771,43 +771,31 @@ print_comp_info(
 	int32 sds_id,
 	comp_coder_t *comp_type)
 {
-   comp_info c_info;            /* Compression structure */
-   intn status = SUCCEED;	/* returned status from a called function */
+   comp_info c_info;                /* Compression structure */
+   int32 comp_size=0, orig_size=0;  /* compressed and original sizes */
+   intn status = SUCCEED;	    /* returned status from a called function */
 
-   /* get compression method first and only get compression info if associated
-      compression library is available (only worry about szlib at this time) */
-   status = SDgetcomptype(sds_id, comp_type);
+   /* get compression info */
+   HDmemset(&c_info, 0, sizeof(c_info));
+   status = SDgetcompinfo(sds_id, comp_type, &c_info);
 
+   /* if getting comp info succeeds, proceed to print out appropriate 
+      compression information */
    if (status != FAIL)
    {
-      HDmemset(&c_info, 0, sizeof(c_info)); /* allocate for comp info */
-
       /* print compression method or "NONE" */
       fprintf(fp, "\t Compression method = %s\n", comp_method_txt(*comp_type));
+
       switch (*comp_type)
       {
         case COMP_CODE_SKPHUFF:
-	    /* get compression info */
-	    status = SDgetcompinfo(sds_id, comp_type, &c_info);
-	    if (status != FAIL)
-		fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
-	    else
-		fprintf(fp, "\t\t Unable to get Skipping unit size\n");
+	    fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
 	    break;
 	case COMP_CODE_DEFLATE:
-	    /* get compression info */
-	    status = SDgetcompinfo(sds_id, comp_type, &c_info);
-	    if (status != FAIL)
-		fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
-	    else
-		fprintf(fp, "\t\t Unable to get Deflate level\n");
+	    fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
 	    break;
 	case COMP_CODE_SZIP:
 	{
-	  /* get compression info */
-	  status = SDgetcompinfo(sds_id, comp_type, &c_info);
-	  if (status != FAIL)
-	  {
 	    char mask_strg[160]; /* 160 is to cover all options and number val*/
 	    if (option_mask_string(c_info.szip.options_mask, mask_strg) != FAIL)
 		fprintf(fp, "\t\t Option mask = %s\n", mask_strg);
@@ -817,10 +805,7 @@ print_comp_info(
 	    fprintf(fp, "\t\t Pixels per scanline = %d\n", (int)c_info.szip.pixels_per_scanline);
 	    fprintf(fp, "\t\t Bits per pixel = %d\n", (int)c_info.szip.bits_per_pixel);
 	    fprintf(fp, "\t\t Pixels = %d\n", (int)c_info.szip.pixels);
-	  }
-	  else
-	    fprintf(fp, "\t\t Unable to get SZIP compression information\n");
-	  break;
+	    break;
 	}
         default:
 	    /* nothing */
@@ -829,6 +814,30 @@ print_comp_info(
    }
    else
       fprintf(fp, "\t Compression method = <Unable to get compression method>\n");
+
+   /* print compression ratio */
+   if (*comp_type != COMP_CODE_NONE)
+   {
+   status = SDgetdatasize(sds_id, &comp_size, &orig_size);
+   if (status != FAIL)
+   {
+      /* calculate and print compression ratio */
+      if (comp_size > 0 && orig_size > 0)
+      {
+         double orig=orig_size, comp=comp_size, ratio = 0.00;
+	 ratio = orig/comp;
+	 fprintf(fp, "\t Compression ratio (original:compressed) = %.2f:1\n", ratio);
+      }
+      else if (comp_size == 0 && orig_size == 0)
+      {
+	 fprintf(fp, "\t Compression ratio = <No data written yet!\n");
+      }
+      else  /* any size < 0 means something wrong */
+	 fprintf(fp, "\t Compression ratio = <Unable to get data sizes\n");
+   }
+   else
+      fprintf(fp, "\t Compression ratio = <Unable to determine compression ratio>\n");
+   }
    return(status);
 } /* print_comp_info */
 
