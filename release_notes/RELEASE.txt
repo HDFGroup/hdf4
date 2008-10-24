@@ -42,7 +42,16 @@ New features and changes
 ========================
     Configuration
     ============= 
-        None 
+        - Automake 1.10.1 used to generate Makefile.in files, and 
+          Autoconf 2.61 used to generate configure script. MAM - 2008/10/09
+        - Libtool support (2.2.6a) has been added, and HDF4 shared C 
+          libraries can now be built. To build, use the --enable-shared 
+          configuration flag. This needs to be used in conjunction with 
+          the --disable-fortran flag, as fortran shared libraries are not 
+          supported. Shared libraries are disabled by default. 
+          MAM - 2008/10/09
+        - Added szip information to end of configure summary, which indicates
+          if both szip presence and encoder presence.  MAM - 2008/10/06
 
     Library
     ========= 
@@ -72,7 +81,7 @@ Bugs fixed since HDF4.2r2
 
     Configuration
     ============= 
-        None
+        - h5diff_array.c now gets linked against libm. 
 
 Documentation
 ==============
