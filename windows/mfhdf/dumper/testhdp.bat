@@ -313,9 +313,9 @@ rem parse arguments
         rem test displaying compression information
 
         if not "%use_comp_szip%"=="yes" (
-            call :test dumpsds-15.out dumpsds -h sds_compressed.hdf
+            call :test dumpsds-15.out dumpsds sds_compressed.hdf
         ) else (
-            call :test dumpsds-15szip.out dumpsds -h sds_compressed.hdf
+            call :test dumpsds-15szip.out dumpsds sds_compressed.hdf
         )
     )
     
