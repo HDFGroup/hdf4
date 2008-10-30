@@ -59,7 +59,8 @@ New features and changes
 
     Utilities
     ========= 
-        None 
+        - hrepack: output compression ratio (PVN - 2008/10/30)
+ 
 
 
 Support for new platforms and compilers
