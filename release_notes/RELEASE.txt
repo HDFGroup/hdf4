@@ -97,48 +97,55 @@ HDF 4.2 Release 3 has been tested on the following platforms:
     AIX 5.2 (32/64 bit)           xlc 8.0.0.11
     (datstar)                     xlf 10.01.0000.0002
 
-    FreeBSD 6.2 (32- and 64-bit)  gcc  and f77 GNU 3.4.6
-    (duty and liberty)            GNU Fortran (GCC) 4.2.3 20080123 
+    FreeBSD 6.2-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
+                                  gcc 4.2.5 20080702 (prerelease)
+                                  gfortran 4.2.1 20070620
+
+    FreeBSD 6.2-STABLE amd64      gcc 3.4.6 [FreeBSD] 20060305
+                                  gcc 4.2.5 20080702 (prerelease)
+                                  gfortran 4.2.1 20080123
 
     IRIX64 6.5                    MIPSpro cc 7.4.4m
     (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m 
 
-    Linux 2.4.21-47.ELsmp #1 SMP  gcc and g77 3.2.3
-        i686 i386 GNU/Linux
-    (osage)
 
     Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
-        SMP i686 i386             G95 (GCC 4.0.3 (g95 0.91!) April 18 2007)
-    (kagiso)                      PGI C, Fortran 7.0-7 32-bit 
-                                  icc (ICC) 9.1 
-                                  Intel(R) Fortran Compiler for 32-bit 
-                                      applications, Version 9.1 
+         SMP i686 i386            G95 (GCC 4.0.3 (g95 0.92!) April 18 2007)
+    (kagiso)                      PGI C, Fortran, C++ 7.2-1 32-bit
+                                  Intel(R) C Compiler for 32-bit
+                                      applications, Version 10.1
+                                  Intel(R) Fortran Compiler for 32-bit
+                                      applications, Version 10.1
+                                  Absoft 32-bit Fortran 95 10.0.4
 
-    Linux 2.6.16.46-0.12-debug #1 Intel(R) C++ Version 10.0.025
+    Linux 2.6.16.46-0.12-debug #1 Intel(R) C Compiler Version 10.0.025
         SMP ia64 GNU/Linux        Intel(R) Fortran Itanium(R) Version 10.0.025
     (ucar hir1)                   
 
-    Linux 2.6.16.46-0.14-smp #1   Intel(R) C for Intel(R) EM64T Ver. 9.1.037
-        SMP x86_64 GNU/Linux      Intel(R) Fortran Intel(R) EM64T Ver. 9.1.031
-    (smirom)                      gcc (GCC) 4.1.2 20070115 (SUSE Linux)
-                                  G95 (GCC 4.0.3 (g95 0.91!) Apr 19 2007)
+    Linux 2.6.16.46-0.14-smp #1   Intel(R) C Compiler for Intel(R) EM64T Ver. 10.1.013
+        SMP x86_64 GNU/Linux      Intel(R) Fortran Intel(R) EM64T Ver. 10.1.013
+    (smirom)                      PGI C, Fortran Version 7.2-1
+                                         for 64-bit target on x86-64
+                                  tested for both 32- and 64-bit binaries
 
-    Linux 2.6.5-7.283-rtgfx Altix Intel(R) C++ Version 9.0.032
-        SMP ia64                  Intel(R) Fortran Itanium(R) Version 9.0.033
-    (cobalt)                      
-
-    SunOS 5.8 32- and 64-bit      Sun WorkShop 6 update 2 C 5.3
-    (sol)                         Sun WorkShop 6 update 2 Fortran 77 5.3
+    Linux 2.6.16.54-0.2.5 #1      Intel(R) C Compiler Version 10.1.017
+        Altix SMP ia64            Intel(R) Fortran Itanium(R) Version 10.1.017
+    (cobalt)                      SGI MPI 1.16
 
     SunOS 5.10 32- and 64-bit     Sun WorkShop 6 update 2 C 5.8 
                                   Patch 121015-06
     (linew)                       Sun WorkShop 6 update 2 Fortran 95 8.2
                                   Patch 121019-09 
 
+    Xeon Linux 2.6.9-42.0.10.EL_lustre-1.4.10.1smp
+    (abe)                         Intel(R) C Compiler Version 10.0.026
+                                  Intel(R) Fortran Compiler Version 10.0.026
+
     IA-64 Linux 2.4.21.SuSE_292.til1
         ia64                      
-    (NCSA tg-login)               Intel(R) C++ Version 8.1.037
+    (NCSA tg-login)               Intel(R) C Compiler Version 8.1.037
                                   Intel(R) Fortran Compiler Version 8.1.033
+
 
     Windows XP                    Visual Studio 6.0
                                   Visual Studio .NET (with Intel Fortran 9.1)
