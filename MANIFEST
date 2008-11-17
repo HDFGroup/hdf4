@@ -932,10 +932,6 @@
 ./mfhdf/hrepack/info.txt
 ./mfhdf/hrepack/pal_rgb.h
 ./mfhdf/hrepack/hrepacktst.c
-./mfhdf/hrepack/hrepacktst.h
-./mfhdf/hrepack/hrepacktst_verify.c
-./mfhdf/hrepack/hrepacktst_add.c
-
 
 
 ./mfhdf/libsrc/Makefile.am

@@ -849,71 +849,6 @@ int sds_verifiy_chunk_all(int32 in_chunk_flags,
     
 }
 
-/*-------------------------------------------------------------------------
- * Function: cmp_grs
- *
- * Purpose: compare all GR images in 2 files, assumed to be identical
- *
- * Return: void
- *
- * Programmer: Pedro Vicente, pvn@ncsa.uiuc.edu
- *
- * Date: September 03, 2003
- *
- *-------------------------------------------------------------------------
- */
-static
-void cmp_grs(char* file1_name,char* file2_name)
-{
-    int32 file1_id,          /* file identifier */
-        file2_id,          /* file identifier */
-        gr1_id,            /* GR interface identifier */
-        gr2_id,            /* GR interface identifier */
-        ri1_id,            /* raster image identifier */
-        ri2_id,            /* raster image identifier */
-        n_rimages,         /* number of raster images in the file */
-        n_file_attrs,      /* number of file attributes */
-        ri_index;          /* index of a image */
-    
-    /* open the files for read  */
-    file1_id = Hopen (file1_name,DFACC_READ,(int16)0);
-    file2_id = Hopen (file2_name,DFACC_READ,(int16)0);
-    
-    /* initialize the GR interface */
-    gr1_id = GRstart (file1_id);
-    gr2_id = GRstart (file2_id);
-    
-    /* determine the contents of the file */
-    if (GRfileinfo (gr1_id, &n_rimages, &n_file_attrs)==FAIL){
-        printf("Error: Cannot get GR info\n");
-        goto out;
-    }
-    
-    for (ri_index = 0; ri_index < n_rimages; ri_index++)
-    {
-        ri1_id = GRselect (gr1_id, ri_index);
-        ri2_id = GRselect (gr2_id, ri_index);
-        
-        /* compare GR  */
-        cmp_gr(ri1_id,ri2_id);
-        
-        /* terminate access to the current raster image */
-        GRendaccess (ri1_id);
-        GRendaccess (ri2_id);
-    }
-    
-out:
-    /* terminate access to the GR interface */
-    GRend (gr2_id);
-    GRend (gr2_id);
-    /* close the HDF files */
-    if (Hclose (file1_id)== FAIL )
-        printf( "Failed to close file <%s>\n", file1_name);
-    if (Hclose (file2_id)== FAIL )
-        printf( "Failed to close file <%s>\n", file2_name);
-    
-    
-}
 
 
 /*-------------------------------------------------------------------------
@@ -1914,7 +1849,44 @@ int add_empty_sd(int32 sd_id,             /* SD id */
     
 }
 
+/*-------------------------------------------------------------------------
+ * Function: add_unl_sd
+ *
+ * Purpose: utility function to create a sds with unlimited dimension
+ *
+ *-------------------------------------------------------------------------
+ */
+static
+int add_unl_sd(int32 sd_id,             /* SD id */
+                 const char* sds_name     /* sds name */
+                )
 
+{
+    int32  sds_id,       /* data set identifier */
+           dim_sds[2],   /* dimension of the data set */
+           rank = 2;     /* rank of the data set array */
+    
+    /* set the size of the SDS's dimension */
+    dim_sds[0] = SD_UNLIMITED;
+    dim_sds[1] = X_DIM;
+    
+    /* create the SDS */
+    if ((sds_id = SDcreate (sd_id, sds_name, DFNT_INT32, rank, dim_sds))<0)
+    {
+        printf( "Could not create SDS <%s>\n",sds_name);
+        return FAIL;
+    }
+    
+    /* terminate access to the SDS */
+    if (SDendaccess (sds_id)==FAIL)
+    {
+        printf( "Failed to end SDS <%s>\n", sds_name);
+        return FAIL;
+    } 
+    
+    return SUCCEED;
+    
+}
 
 
 /*-------------------------------------------------------------------------
@@ -2328,42 +2300,6 @@ fail:
 
 
 /*-------------------------------------------------------------------------
- * write an image to file FNAME
- *-------------------------------------------------------------------------
- */
-
-static 
-int do_file_image(char* fname) 
-{
-    int32 file_id;
-    
-    /* create a HDF file */
-    if ((file_id = Hopen (fname, DFACC_CREATE, (int16)0))<0)
-    {
-        printf("Error: Could not create file <%s>\n",fname);
-        return FAIL;
-    }
-    
-    /* Scan Plane Interlacing */
-    if (add_r24(DATA_FILE3,fname,file_id,DFIL_PLANE,0)<0)
-        goto out;  
-    
-    /* close the HDF file */
-    if (Hclose (file_id)==FAIL)
-    {
-        printf( "Could not close file\n");
-        return FAIL;
-    }
-    
-    
-    return SUCCEED;
-    
-out:
-    return FAIL;
-    
-}
-
-/*-------------------------------------------------------------------------
  * Function: do_file_all
  *
  * Purpose: writes all types of HDF objects 
@@ -2545,6 +2481,13 @@ int do_file_all(char* fname)
     *-------------------------------------------------------------------------
     */ 
     if (add_empty_sd(sd_id,"dset_empty")<0)
+        goto out;
+
+    /*-------------------------------------------------------------------------
+    * add a sds with unlimited dimension
+    *-------------------------------------------------------------------------
+    */ 
+    if (add_unl_sd(sd_id,"dset_unl")<0)
         goto out;
     
    /*-------------------------------------------------------------------------
@@ -3001,38 +2944,7 @@ out:
      
 }
 
-/*-------------------------------------------------------------------------
- * Function: generate_files
- *
- * Purpose: writes several HDF objects to the files 
- *  HREPACK_FILE1
- *  HREPACK_FILE2
- *  HREPACK_FILE3
- *
- * Return: SUCCEED, FAIL
- *
- *-------------------------------------------------------------------------
- */
 
-
-int generate_files(void)
-{
-    TESTING("generating files");
-    
-    if (do_file_all(HREPACK_FILE1)<0)
-        return FAIL;
-    
-    if (do_file_hyperslab(HREPACK_FILE2)<0)
-        return FAIL;
-    
-    if (do_file_groups(HREPACK_FILE3)<0)
-        return FAIL;
-
-    PASSED();
-    
-    return SUCCEED;
-    
-}
 
 /*-------------------------------------------------------------------------
  * Function: test_files
@@ -3087,7 +2999,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
         goto out;
@@ -3111,7 +3023,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
         goto out;
@@ -3134,7 +3046,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 )
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
         goto out;
@@ -3161,7 +3073,7 @@ int test_files(void)
         PASSED();
         
         TESTING(HDIFF_TSTSTR);
-        if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+        if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
             goto out;
         if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
             goto out;
@@ -3196,7 +3108,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
         goto out;
@@ -3233,7 +3145,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
         goto out;
@@ -3277,7 +3189,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
         goto out;
@@ -3311,7 +3223,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
         goto out;
@@ -3336,7 +3248,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
         goto out;
@@ -3358,7 +3270,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR);
-    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE1,HREPACK_FILE1_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
         goto out;
@@ -3379,7 +3291,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR2);
-    if (hdiff(HREPACK_FILE2,HREPACK_FILE2_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE2,HREPACK_FILE2_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     PASSED();
 
@@ -3397,7 +3309,7 @@ int test_files(void)
     PASSED();
     
     TESTING(HDIFF_TSTSTR3);
-    if (hdiff(HREPACK_FILE3,HREPACK_FILE3_OUT,&fspec) > 0)
+    if (hdiff(HREPACK_FILE3,HREPACK_FILE3_OUT,&fspec) > 0 || fspec.err_stat)
         goto out;
     if (vg_verifygrpdep(HREPACK_FILE3,HREPACK_FILE3_OUT) != 0 )
         goto out;
@@ -3409,6 +3321,39 @@ int test_files(void)
 out:
     H4_FAILED();
     return FAIL;
+    
+}
+
+/*-------------------------------------------------------------------------
+ * Function: generate_files
+ *
+ * Purpose: writes several HDF objects to the files 
+ *  HREPACK_FILE1
+ *  HREPACK_FILE2
+ *  HREPACK_FILE3
+ *
+ * Return: SUCCEED, FAIL
+ *
+ *-------------------------------------------------------------------------
+ */
+
+static
+int generate_files(void)
+{
+    TESTING("generating files");
+    
+    if (do_file_all(HREPACK_FILE1)<0)
+        return FAIL;
+    
+    if (do_file_hyperslab(HREPACK_FILE2)<0)
+        return FAIL;
+    
+    if (do_file_groups(HREPACK_FILE3)<0)
+        return FAIL;
+
+    PASSED();
+    
+    return SUCCEED;
     
 }
 

@@ -202,17 +202,22 @@ uint32 diff_sds(int32 sd1_id,
   printf( "Failed to check empty SDS <%s>\n", sds1_name);
   goto out;
  }
- if (empty1_sds==1 && opt->verbose) {
-  printf( "Empty SDS <%s>\n", sds1_name);
-  goto do_nothing;
+ if (empty1_sds==1) 
+ {
+     if (opt->verbose)
+         printf( "Empty SDS <%s>\n", sds1_name);
+     goto do_nothing;
  }
+
  if (SDcheckempty( sds2_id, &empty2_sds ) == FAIL) {
   printf( "Failed to check empty SDS <%s>\n", sds2_name);
   goto out;
  }
- if (empty2_sds==1 && opt->verbose) {
-  printf( "Empty SDS <%s>\n", sds2_name);
-  goto do_nothing;
+ if (empty2_sds==1 ) 
+ {
+     if (opt->verbose)
+         printf( "Empty SDS <%s>\n", sds2_name);
+     goto do_nothing;
  }
 
 
