@@ -39,8 +39,8 @@ test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                  \
                        hrepack_parse.c hrepack_sds.c                        \
                        hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
                        hrepack_dim.c                                        \
-                       hrepack_vs.c hrepacktst_add.c hrepacktst.c           \
-                       hrepacktst_verify.c ../hdiff/hdiff.c                 \
+                       hrepack_vs.c  hrepacktst.c                           \
+                       ../hdiff/hdiff.c                                     \
                        ../hdiff/hdiff_array.c ../hdiff/hdiff_gattr.c        \
                        ../hdiff/hdiff_gr.c ../hdiff/hdiff_list.c            \
                        ../hdiff/hdiff_mattbl.c ../hdiff/hdiff_misc.c        \
