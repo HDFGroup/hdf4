@@ -648,12 +648,6 @@
 			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst.c">
 			</File>
-			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst_add.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst_verify.c">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -702,9 +696,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\hrepack_vs.h">
-			</File>
-			<File
-				RelativePath="..\..\..\..\mfhdf\hrepack\hrepacktst.h">
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\hrepack\pal_rgb.h">

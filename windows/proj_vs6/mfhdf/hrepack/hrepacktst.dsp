@@ -191,14 +191,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_vs.c
 
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst.c
 # End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst_add.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst_verify.c
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -262,10 +254,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_vg.h
 # Begin Source File
 
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_vs.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepacktst.h
 # End Source File
 # Begin Source File
 
