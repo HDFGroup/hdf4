@@ -577,6 +577,7 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
     int           info;
     intn          empty_sds;
     int           status;
+    int           is_record = 0;
     
     /* initialize the sd interface */
     sd_id  = SDstart (HREPACK_FILE1_OUT, DFACC_READ);
@@ -628,49 +629,59 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
             
             comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
             HDmemset(&comp_info, 0, sizeof(comp_info)) ;
-            
-            status = SDgetcompress(sds_id, &comp_type, &comp_info);
-            if (status < 0) {
-                printf("Warning: can't read compression for SDS <%s>",name);
-            } else {
-                if ( comp_type != in_comp_type )
-                {
-                    printf("Error: compression type does not match <%s>",name);
-                    SDendaccess (sds_id);
-                    SDend (sd_id);
-                    return -1;
-                }
-                if (in_comp_type) 
-                {
-                    switch (in_comp_type)
+
+            if (SDisrecord(sds_id))
+                is_record = 1;
+
+            /* unlimited dimensions don't work with compression */
+            if ( ! is_record )
+            {
+                
+                
+                status = SDgetcompress(sds_id, &comp_type, &comp_info);
+                if (status < 0) {
+                    printf("Warning: can't read compression for SDS <%s>",name);
+                } else {
+                    if ( comp_type != in_comp_type )
                     {
-                    case COMP_CODE_NONE:
-                        break;
-                    case COMP_CODE_RLE:
-                        break;
-                    case COMP_CODE_SZIP:
-                        break;
-                    case COMP_CODE_SKPHUFF:
-                        info  = comp_info.skphuff.skp_size;
-                        break;
-                    case COMP_CODE_DEFLATE:
-                        info  = comp_info.deflate.level;
-                        break;
-                    default:
-                        printf("Error: Unrecognized compression code %d\n",in_comp_type);
-                        info = -1;
-                        break;
-                    };
-                    
-                    if ( info != in_comp_info )
-                    {
-                        printf("Error: compresion information does not match for <%s>",name);
+                        printf("Error: compression type does not match <%s>",name);
                         SDendaccess (sds_id);
                         SDend (sd_id);
                         return -1;
                     }
+                    if (in_comp_type) 
+                    {
+                        switch (in_comp_type)
+                        {
+                        case COMP_CODE_NONE:
+                            break;
+                        case COMP_CODE_RLE:
+                            break;
+                        case COMP_CODE_SZIP:
+                            break;
+                        case COMP_CODE_SKPHUFF:
+                            info  = comp_info.skphuff.skp_size;
+                            break;
+                        case COMP_CODE_DEFLATE:
+                            info  = comp_info.deflate.level;
+                            break;
+                        default:
+                            printf("Error: Unrecognized compression code %d\n",in_comp_type);
+                            info = -1;
+                            break;
+                        };
+                        
+                        if ( info != in_comp_info )
+                        {
+                            printf("Error: compresion information does not match for <%s>",name);
+                            SDendaccess (sds_id);
+                            SDend (sd_id);
+                            return -1;
+                        }
+                    }
                 }
-            }
+                
+            } /* is_record */
             
         } /* empty_sds */
         
@@ -1858,7 +1869,8 @@ int add_empty_sd(int32 sd_id,             /* SD id */
  */
 static
 int add_unl_sd(int32 sd_id,             /* SD id */
-                 const char* sds_name     /* sds name */
+               const char* sds_name,    /* sds name */
+               int do_write
                 )
 
 {
@@ -1876,6 +1888,37 @@ int add_unl_sd(int32 sd_id,             /* SD id */
         printf( "Could not create SDS <%s>\n",sds_name);
         return FAIL;
     }
+
+    if ( do_write )
+    {
+        
+        int32 start[2],     /* write start */
+            edges[2],       /* write edges */
+            buf[Y_DIM][X_DIM];
+        int i, j;
+        
+        /* data set data initialization */
+        for (j = 0; j < Y_DIM; j++) 
+        {
+            for (i = 0; i < X_DIM; i++)
+            {
+                buf[j][i] = (i + j) + 1;
+            }
+        }
+        /* define the location and size of the data to be written to the data set */
+        start[0] = 0;
+        start[1] = 0;
+        edges[0] = Y_DIM;
+        edges[1] = X_DIM;
+        
+        /* write the stored data to the data set */
+        if (SDwritedata (sds_id, start, NULL, edges, (VOIDP)buf)==FAIL)
+        {
+            printf( "Failed to set write for SDS <%s>\n", sds_name);
+            goto fail;
+        } 
+        
+    }
     
     /* terminate access to the SDS */
     if (SDendaccess (sds_id)==FAIL)
@@ -1885,6 +1928,11 @@ int add_unl_sd(int32 sd_id,             /* SD id */
     } 
     
     return SUCCEED;
+
+fail:
+
+    SDendaccess (sds_id);
+    return FAIL;
     
 }
 
@@ -2484,10 +2532,12 @@ int do_file_all(char* fname)
         goto out;
 
     /*-------------------------------------------------------------------------
-    * add a sds with unlimited dimension
+    * add 2 SDSs with unlimited dimensions, one written
     *-------------------------------------------------------------------------
     */ 
-    if (add_unl_sd(sd_id,"dset_unl")<0)
+    if (add_unl_sd(sd_id,"dset_unl", 0)<0)
+        goto out;
+    if (add_unl_sd(sd_id,"dset_unlw", 1)<0)
         goto out;
     
    /*-------------------------------------------------------------------------

@@ -106,6 +106,7 @@ int copy_sds(int32 sd_in,
     int              have_info=0;
     size_t           need;	         /* read size needed */
     void             *sm_buf=NULL;
+    int              is_record = 0;
     
     sds_index = SDreftoindex(sd_in,ref);
     sds_id    = SDselect(sd_in,sds_index);
@@ -434,12 +435,40 @@ int copy_sds(int32 sd_in,
    
   /*-------------------------------------------------------------------------
    * create new SDS
+   * check for unlimited dimension
+   * SDisrecord determines whether the data set identified by the parameter sds_id 
+   * is appendable, which means that the slowest-changing dimension of the SDS array 
+   * is declared unlimited when the data set is created.
    *-------------------------------------------------------------------------
    */
-   
-   if ((sds_out = SDcreate(sd_out,sds_name,dtype,rank,dimsizes)) == FAIL) {
-       printf( "Failed to create new SDS <%s>\n", path);
-       goto out;
+
+   if (SDisrecord(sds_id)) 
+   {
+       int32 dimsizes_cre[H4_MAX_VAR_DIMS];
+
+       is_record = 1;
+
+       for (j = 0; j < rank; j++) 
+       {
+           dimsizes_cre[j] = dimsizes[j];
+       }
+       dimsizes_cre[0] = SD_UNLIMITED;
+
+       if ((sds_out = SDcreate(sd_out,sds_name,dtype,rank,dimsizes_cre)) == FAIL) 
+       {
+           printf( "Failed to create new SDS <%s>\n", path);
+           goto out;
+       }
+       
+   }
+   else
+   {
+       
+       if ((sds_out = SDcreate(sd_out,sds_name,dtype,rank,dimsizes)) == FAIL) 
+       {
+           printf( "Failed to create new SDS <%s>\n", path);
+           goto out;
+       }
    }
    
    
@@ -458,10 +487,18 @@ int copy_sds(int32 sd_in,
        /* set chunk */
        if ( (chunk_flags == HDF_CHUNK) || (chunk_flags == (HDF_CHUNK | HDF_COMP)) )
        {
-           if (SDsetchunk (sds_out, chunk_def, chunk_flags)==FAIL)
+
+           /* unlimited dimensions don't work with chunking */
+           if ( ! is_record )
            {
-               printf( "Error: Failed to set chunk dimensions for <%s>\n", path);
-               goto out;
+               
+               
+               if (SDsetchunk (sds_out, chunk_def, chunk_flags)==FAIL)
+               {
+                   printf( "Error: Failed to set chunk dimensions for <%s>\n", path);
+                   goto out;
+               }
+               
            }
            
        }
@@ -512,11 +549,16 @@ int copy_sds(int32 sd_in,
                    printf( "Error: Unrecognized compression code %d\n", comp_type);
                    goto out;
                }
-               
-               if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
+
+               /* unlimited dimensions don't work with compression */
+               if ( ! is_record )
                {
-                   printf( "Error: Failed to set compression for <%s>\n", path);
-                   goto out;
+                   
+                   if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
+                   {
+                       printf( "Error: Failed to set compression for <%s>\n", path);
+                       goto out;
+                   }
                }
            }
        }
