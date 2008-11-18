@@ -237,7 +237,7 @@ static int gen_dim(char* name,              /* name of SDS */
         nelms;                       /* number of elements */
     char             sds_name[H4_MAX_NC_NAME]; 
     VOIDP            buf=NULL;
-    int              i, j, ret=1,stat;
+    int              i, j, ret=1;
     int              info;           /* temporary int compression information */
     comp_coder_t     comp_type;      /* compression type requested  */
     comp_coder_t     comp_type_in;   /* compression type original  */
@@ -297,16 +297,16 @@ static int gen_dim(char* name,              /* name of SDS */
     {
         comp_type_in = COMP_CODE_NONE;  /* reset variables before retrieving information */
         HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
-        stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
-        if (stat==FAIL && comp_type_in>0){
+        if ( SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL ) 
+        {
             printf( "Could not get compression information for SDS <%s>\n",sds_name);
             SDendaccess(sds_id);
             return -1;
         }
         
         /* get chunk lengths */
-        stat=SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
-        if (stat==FAIL){
+        if ( SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in) == FAIL )
+        {
             printf( "Could not get chunking information for SDS <%s>\n",sds_name);
             SDendaccess(sds_id);
             return -1;

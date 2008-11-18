@@ -91,7 +91,7 @@ int copy_sds(int32 sd_in,
     char             *path=NULL;
     VOIDP            buf=NULL;
     VOIDP            dim_buf=NULL;
-    int              i, j, stat;
+    int              i, j;
     int              info;           /* temporary int compression information */
     comp_coder_t     comp_type;      /* compression type requested  */
     comp_coder_t     comp_type_in;   /* compression type original  */
@@ -168,18 +168,19 @@ int copy_sds(int32 sd_in,
     if (empty_sds==0 )
     {
         HDmemset(&c_info_in, 0, sizeof(comp_info)) ;
-        stat=SDgetcompress(sds_id, &comp_type_in, &c_info_in);
-        if (stat==FAIL && comp_type_in>0){
+        if ( SDgetcompinfo(sds_id, &comp_type_in, &c_info_in) == FAIL )
+        {
             printf( "Could not get compression information for SDS <%s>\n",path);
             goto out;
         }
         
         /* get chunk lengths */
-        stat=SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in);
-        if (stat==FAIL){
+        if ( SDgetchunkinfo(sds_id, &chunk_def_in, &chunk_flags_in)== FAIL )
+        {
             printf( "Could not get chunking information for SDS <%s>\n",path);
             goto out;
         }
+      
         
         /* retrieve the compress information if so */
         if ( (HDF_CHUNK | HDF_COMP) == chunk_flags_in )
@@ -500,6 +501,12 @@ int copy_sds(int32 sd_in,
                }
                
            }
+           else if ( is_record && options->verbose )
+           {
+               printf("Warning: chunking not applied, <%s> has unlimited dimensions\n",
+                   path);
+               
+           }
            
        }
        
@@ -519,11 +526,14 @@ int copy_sds(int32 sd_in,
            {
                /* reset to the original values . we don't want to uncompress if it was */
                comp_type=COMP_CODE_NONE;
-               if (options->verbose) {
+               if (options->verbose) 
+               {
                    printf("Warning: object size smaller than %d bytes. Not compressing <%s>\n",
                        options->threshold,path);
                } 
-           } else  {
+           } 
+           else  
+           {
                
                /* setup compression factors */
                switch(comp_type) 
@@ -550,6 +560,7 @@ int copy_sds(int32 sd_in,
                    goto out;
                }
 
+             
                /* unlimited dimensions don't work with compression */
                if ( ! is_record )
                {
@@ -559,6 +570,12 @@ int copy_sds(int32 sd_in,
                        printf( "Error: Failed to set compression for <%s>\n", path);
                        goto out;
                    }
+               }
+               else if ( is_record && options->verbose )
+               {
+                   printf("Warning: compression not applied, <%s> has unlimited dimensions\n",
+                       path);
+                   
                }
            }
        }

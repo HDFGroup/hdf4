@@ -517,7 +517,7 @@ int sds_verifiy_comp(const char *sds_name,
     
     comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
     HDmemset(&comp_info, 0, sizeof(comp_info)) ;
-    SDgetcompress(sds_id, &comp_type, &comp_info);
+    SDgetcompinfo(sds_id, &comp_type, &comp_info);
     if ( comp_type != in_comp_type )
     {
         printf("Error: Compression type does not match ");
@@ -576,14 +576,14 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
     char          name[H4_MAX_GR_NAME];      /* name of dataset */
     int           info;
     intn          empty_sds;
-    int           status;
     int           is_record = 0;
     
     /* initialize the sd interface */
     sd_id  = SDstart (HREPACK_FILE1_OUT, DFACC_READ);
     
     /* determine the number of data sets in the file */
-    if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) {
+    if (SDfileinfo (sd_id, &n_datasets, &n_file_attrs)==FAIL) 
+    {
         printf("Error: Cannot get file information");
         SDend (sd_id);
         return -1;
@@ -594,14 +594,15 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
         sds_id   = SDselect (sd_id, sds_index);
         
         /* skip dimension scales */
-        if ( SDiscoordvar(sds_id) ) {
+        if ( SDiscoordvar(sds_id) ) 
+        {
             SDendaccess(sds_id);
             continue;
         }
         
         name[0] = '\0';
-        status=SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs);
-        if (status < 0) {
+        if ( SDgetinfo(sds_id, name, &rrank, dim_sizes, &data_type, &n_attrs) == FAIL )
+        {
             printf("Error: can't read info for SDS <%s>",name);
             SDendaccess (sds_id);
             SDend (sd_id);
@@ -612,7 +613,8 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
         * check if the input SDS is empty
         *-------------------------------------------------------------------------
         */ 
-        if (SDcheckempty( sds_id, &empty_sds ) == FAIL) {
+        if (SDcheckempty( sds_id, &empty_sds ) == FAIL) 
+        {
             printf( "Failed to check empty SDS <%s>\n", name);
             SDendaccess (sds_id);
             SDend (sd_id);
@@ -638,10 +640,12 @@ int sds_verifiy_comp_all(comp_coder_t in_comp_type,
             {
                 
                 
-                status = SDgetcompress(sds_id, &comp_type, &comp_info);
-                if (status < 0) {
+                if ( SDgetcompinfo(sds_id, &comp_type, &comp_info) == FAIL )
+                {
                     printf("Warning: can't read compression for SDS <%s>",name);
-                } else {
+                } 
+                else 
+                {
                     if ( comp_type != in_comp_type )
                     {
                         printf("Error: compression type does not match <%s>",name);

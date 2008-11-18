@@ -117,7 +117,7 @@ int sds_get_compck(char *fname, char *sds_name)
  
  comp_type = COMP_CODE_NONE;  /* reset variables before retrieving info */
  HDmemset(&comp_info, 0, sizeof(comp_info)) ;
- SDgetcompress(sds_id, &comp_type, &comp_info);
+ SDgetcompinfo(sds_id, &comp_type, &comp_info);
  
  printf("compression type:  %s \n", get_scomp(comp_type));
  if (COMP_CODE_NONE != comp_type )
