@@ -994,7 +994,10 @@ int get_print_info(  int chunk_flags,
 
     /* unlimited dimensions don't work with compression */
     if ( is_record )
+    {
         comp_type = COMP_CODE_NONE;
+        chunk_flags = HDF_NONE;
+    }
     
     if ( comp_type > COMP_CODE_NONE )
         
