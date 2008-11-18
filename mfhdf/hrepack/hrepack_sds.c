@@ -842,7 +842,7 @@ int copy_sds(int32 sd_in,
    */ 
 
    assert( options->trip==1 );
-   if ( options->verbose)
+   if ( options->verbose )              
    {
        
        if (get_print_info(chunk_flags_in,
@@ -974,11 +974,14 @@ int get_print_info(  int chunk_flags,
     int32  sds_id;
     double a, b, r=0;
     char   comp_str[255];
+    int    is_record = 0;
     
     if ((sds_idx = SDnametoindex (sd_id, sds_name))==FAIL) 
         goto out;
     if ((sds_id = SDselect (sd_id, sds_idx))==FAIL) 
         goto out;
+    if (SDisrecord(sds_id))
+        is_record = 1;
     if (SDgetdatasize(sds_id, &comp_size, &uncomp_size) == FAIL) 
     {
         printf( "Could not get data sizes for <%s>\n", sds_name);
@@ -988,6 +991,10 @@ int get_print_info(  int chunk_flags,
         goto out;
     
     sprintf(comp_str,"\0");
+
+    /* unlimited dimensions don't work with compression */
+    if ( is_record )
+        comp_type = COMP_CODE_NONE;
     
     if ( comp_type > COMP_CODE_NONE )
         
@@ -998,8 +1005,7 @@ int get_print_info(  int chunk_flags,
         b = comp_size;
         if ( b != 0 )
             r = a / b;
-      
-        
+       
         sprintf(comp_str,"(%.2f:1)", r);
         
     }
