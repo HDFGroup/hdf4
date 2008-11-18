@@ -18,7 +18,6 @@
 #include "hrepack_utils.h"
 #include "hrepack_parse.h"
 #include "hrepack_opttable.h"
-#include "hrepack_sdutil.h"
 #include "hrepack_sds.h"
 #include "hrepack_gr.h"
 #include "hrepack_vs.h"

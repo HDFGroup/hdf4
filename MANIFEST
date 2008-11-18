@@ -916,8 +916,6 @@
 ./mfhdf/hrepack/hrepack_parse.h
 ./mfhdf/hrepack/hrepack_sds.c
 ./mfhdf/hrepack/hrepack_sds.h
-./mfhdf/hrepack/hrepack_sdutil.c
-./mfhdf/hrepack/hrepack_sdutil.h
 ./mfhdf/hrepack/hrepack_utils.c
 ./mfhdf/hrepack/hrepack_utils.h
 ./mfhdf/hrepack/hrepack_vg.c

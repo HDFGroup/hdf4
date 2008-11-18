@@ -15,7 +15,7 @@
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
-#include "hrepack_sdutil.h"
+#include "hrepack_utils.h"
 #include "hrepack_sds.h"
 #include "hrepack_dim.h"
 

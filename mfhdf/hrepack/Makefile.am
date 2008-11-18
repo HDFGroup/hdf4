@@ -22,7 +22,7 @@ bin_PROGRAMS = hrepack
 hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
                   hrepack_opttable.c hrepack_parse.c                        \
-                  hrepack_sds.c hrepack_sdutil.c hrepack_utils.c            \
+                  hrepack_sds.c hrepack_utils.c                             \
                   hrepack_vg.c hrepack_vs.c hrepack_dim.c
 hrepack_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
@@ -37,7 +37,7 @@ TESTS = test_hrepack
 test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                  \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
                        hrepack_parse.c hrepack_sds.c                        \
-                       hrepack_sdutil.c hrepack_utils.c hrepack_vg.c        \
+                       hrepack_utils.c hrepack_vg.c                         \
                        hrepack_dim.c                                        \
                        hrepack_vs.c  hrepacktst.c                           \
                        ../hdiff/hdiff.c                                     \

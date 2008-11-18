@@ -17,7 +17,6 @@
 #include "hdf.h"
 #include "mfhdf.h"
 #include "hrepack.h"
-#include "hrepack_sdutil.h"
 #include "hrepack_sds.h"
 #include "hrepack_an.h"
 #include "hrepack_utils.h"
@@ -501,12 +500,7 @@ int copy_sds(int32 sd_in,
                }
                
            }
-           else if ( is_record && options->verbose )
-           {
-               printf("Warning: chunking not applied, <%s> has unlimited dimensions\n",
-                   path);
-               
-           }
+          
            
        }
        
@@ -571,12 +565,7 @@ int copy_sds(int32 sd_in,
                        goto out;
                    }
                }
-               else if ( is_record && options->verbose )
-               {
-                   printf("Warning: compression not applied, <%s> has unlimited dimensions\n",
-                       path);
-                   
-               }
+              
            }
        }
        
