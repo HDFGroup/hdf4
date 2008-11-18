@@ -32,28 +32,28 @@ LIBTOOL_VERSION="(GNU libtool) 2.2.6"
 
 # If the user has defined environment variables pointing to the autotools,
 # use those (but check their versions first!).  Otherwise, assume that
-# we're running on kagiso with access to the autotools in home1/packages.
+# we're running on kagiso with access to the autotools in mnt/hdf/packages.
 if test "X$AUTOCONF" = "X"; then
-  AUTOCONF=/home1/packages/autoconf/autoconf-2.61/bin/autoconf
+  AUTOCONF=/mnt/hdf/packages/autoconf/autoconf-2.61/bin/autoconf
 fi
 if test "X$AUTOMAKE" = "X"; then
-  AUTOMAKE=/home1/packages/automake/automake-1.10.1/bin/automake-1.10
+  AUTOMAKE=/mnt/hdf/packages/automake/automake-1.10.1/bin/automake-1.10
 fi
 if test "X$AUTOHEADER" = "X"; then
-  AUTOHEADER=/home1/packages/autoconf/autoconf-2.61/bin/autoheader
+  AUTOHEADER=/mnt/hdf/packages/autoconf/autoconf-2.61/bin/autoheader
 fi
   # When using the default settings, add the correct version of autoconf
   # binaries to path (otherwise aclocal may find an outdated version of
   # autom4ate and complain about an
   # "unknown language": Autoconf-without-aclocal-m4.
 if test "X$ACLOCAL" = "X"; then
-  ACLOCAL=/home1/packages/automake/automake-1.10.1/bin/aclocal-1.10
-  PATH=/home1/packages/autoconf/autoconf-2.61/bin:$PATH
-  PATH=/home1/packages/m4/m4-1.4.11/bin:/home1/packages/m4/m4-1.4.11/share:$PATH
+  ACLOCAL=/mnt/hdf/packages/automake/automake-1.10.1/bin/aclocal-1.10
+  PATH=/mnt/hdf/packages/autoconf/autoconf-2.61/bin:$PATH
+  PATH=/mnt/hdf/packages/m4/m4-1.4.11/bin:/mnt/hdf/packages/m4/m4-1.4.11/share:$PATH
 fi
   # Libtool is used to supply macros that aclocal uses
 if test "X$LIBTOOL_DIR" = "X"; then
-  LIBTOOL_DIR=/home1/packages/libtool/libtool-2.2.6a
+  LIBTOOL_DIR=/mnt/hdf/packages/libtool/libtool-2.2.6a
 fi
 
 
