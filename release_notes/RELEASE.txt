@@ -72,7 +72,7 @@ Bugs fixed since HDF4.2r2
 =========================
     Utilities
     ========= 
-        None
+        - hrepack: unlimited dimensions were not preserved (PVN - 2008/11/19)
 
     Library
     ========= 
@@ -82,7 +82,7 @@ Bugs fixed since HDF4.2r2
 
     Configuration
     ============= 
-        - h5diff_array.c now gets linked against libm. 
+        - hdiff_array.c now gets linked against libm. 
 
 Documentation
 ==============
