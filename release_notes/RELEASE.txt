@@ -55,7 +55,13 @@ New features and changes
 
     Library
     ========= 
-        None
+	- Added new API SDgetdatasize to retrieve the compressed and original
+	  sizes of an SDS' data.  Its limitation is listed in the Known problems
+	  section at the end of this document.
+	  intn SDgetdatasize(int32 sdsid, int32* comp_size, int32* orig_size)
+		sdsid     - IN: dataset ID
+		comp_size - OUT: size of compressed data
+		orig_size - OUT: size of original data (BMR - 2008/10/15)
 
     Utilities
     ========= 
@@ -194,3 +200,6 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
 
          ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
 
+o  In order for the new API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed or read, after being written
+   and before SDgetdatasize is called.
