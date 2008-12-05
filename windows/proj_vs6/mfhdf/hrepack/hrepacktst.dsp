@@ -173,10 +173,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_sds.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_sdutil.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_utils.c
 # End Source File
 # Begin Source File
@@ -238,10 +234,6 @@ SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_parse.h
 # Begin Source File
 
 SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_sds.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\mfhdf\hrepack\hrepack_sdutil.h
 # End Source File
 # Begin Source File
 
