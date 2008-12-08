@@ -1390,7 +1390,6 @@ SDcreate(int32  fid,      /* IN: file ID */
 
           num = (handle->dims ? handle->dims->count : 0);
           sprintf(dimname, "fakeDim%d", num);
-
           newdim = (NC_dim *) NC_new_dim(dimname, dimsizes[i]);
           if(newdim == NULL) 
             {
@@ -1554,13 +1553,13 @@ done:
 ******************************************************************************/
 int32
 SDgetdimid(int32 sdsid,  /* IN: dataset ID */
-           intn  number  /* IN: index of dimension */)
+           intn  number  /* IN: index of dimension, in the SDS, ie. <= rank-1 */)
 {
     CONSTR(FUNC, "SDgetdimid");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var = NULL;
     int32   id;
-    int32   dimindex;
+    int32   dimindex; /* index of dim in the file, ie. dims of all SDSs */
     int32   ret_value = FAIL;
 
 #ifdef SDDEBUG
@@ -1847,10 +1846,7 @@ SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
     
     if ((type = hdf_unmap_type((int)nt)) == FAIL)
       {
-#ifdef SDDEBUG
           /* replace it with NCAdvice or HERROR? */
-          fprintf(stderr "SDIputattr: hdf_unmap_type failed for %d\n", nt);
-#endif
           ret_value = FAIL;
           goto done;
       }
@@ -2431,9 +2427,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         dim = SDIget_dim(handle, sdsid);
       }
 
-#ifdef QAK
-    fprintf(stderr, "SDwritedata: check 1.0\n");
-#endif
     if(handle->vars == NULL)
       {
           ret_value = FAIL;
@@ -2483,9 +2476,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
         varid = (intn)sdsid & 0xffff;
       }
 
-#ifdef QAK
-    fprintf(stderr, "SDwritedata: check 2.0\n");
-#endif
     /* Check for strides all set to '1', so it acts like NULL was passed */
     if(stride!=NULL)
       {
@@ -3260,10 +3250,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
 
     if ((nctype = hdf_unmap_type((int)nt)) == FAIL)
       {
-#ifdef SDDEBUG
           /* replace it with NCAdvice or HERROR? */
-          fprintf(stderr "SDIgetcoordvar: hdf_unmap_type failed for %d\n", nt);
-#endif
           ret_value = FAIL;
           goto done;
       }
@@ -6887,9 +6874,22 @@ SDcheckempty(int32 sdsid,  /* IN: dataset ID */
     else
     { /* data_ref is not 0, so must check on special SDSs to determine if
 	 the SDS is empty */
-	ret_value = HDcheck_empty(handle->hdf_file, var->data_tag, 
-				  var->data_ref, emptySDS);
-	if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	/* check for unlimited dimension, assuming that unlimited dimension is
+	   still not allowed with other specialness, according to GeorgeV */
+	if (var->shape != NULL && var->shape[0] == NC_UNLIMITED)
+	{
+	    /* if data has been written, var->numrecs will show the size 
+	       of the unlimited dimension */
+	    if(var->numrecs <= 0)
+		*emptySDS = TRUE;
+	}
+	/* handle other specialness via lower level functions */
+	else
+	{
+	    ret_value = HDcheck_empty(handle->hdf_file, var->data_tag, 
+				      var->data_ref, emptySDS);
+	    if (ret_value == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	}
     } /* var->data_ref != 0 */
 
 done:
