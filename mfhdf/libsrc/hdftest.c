@@ -103,7 +103,7 @@ main(int argc, char *argv[])
     int32   fillval, readval;
     int32   idata[100];
     int32   rdata[100];
-    int16   sdata[100];
+    int16   sdata[100], outdata[100];
     int32   ndg_saved_ref;  /* used to save a ref of an SDS in one of the test */
     uint8   iuval;
     float32 data[1000], max, min, imax, imin;
@@ -534,6 +534,7 @@ main(int argc, char *argv[])
     for(i = 0; i < 50; i++)
         sdata[i] = i;
 
+
     /* Write data to dataset 'DataSetBeta' in file 'test2.hdf' */
     start[0] = start[1] = 0;
     end[0]   = 8;
@@ -576,7 +577,7 @@ main(int argc, char *argv[])
       }
 
     for(i = 0; i < 50; i++)
-        sdata[i] = 0;
+        outdata[i] = 0;
 
     /* read data back in from 'DataSetBeta' from file 'test2.hdf' */
     start[0] = start[1] = 1;
@@ -584,13 +585,27 @@ main(int argc, char *argv[])
     end[1]   = 3;
     stride[0] = 2;
     stride[1] = 2;
-    status = SDreaddata(newsds2, start, stride, end, (VOIDP) sdata);
+    status = SDreaddata(newsds2, start, stride, end, (VOIDP) outdata);
     CHECK(status, FAIL, "SDreaddata");
 
-    /* why do we print these 10 values here?....*/
-    for(i = 0; i < 10; i++)
-        printf("%d := %d\n", i, sdata[i]);
-    
+    { /* verify read values; should be
+		7 9 11 19 21 23 31 33 35 */
+      int i,j; /* indexing the two dimensions */
+      int k,l; /* counters = number of elements read on each dimension */
+      int m=0; /* indexing the outdata array */
+      for(i = 1,l=0; l<3; i=i+2,l++)
+	for (j =(i*6)+1,k=0; k<3; j=j+2,k++,m++)
+	{
+	    if (m < 10) /* number of elements read is 9 */
+	    if (outdata[m] != sdata[j])
+	    {
+		fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
+                           __LINE__, sdata[j], outdata[m]);
+		num_errs++;
+	    }
+	}
+    }
+
     /* why do we set calibration info and then use SDgetcal() 
        on dataset 'DataSetGamma' ? */
     cal   = 1.0;

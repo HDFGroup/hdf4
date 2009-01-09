@@ -11,6 +11,20 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/*
+ * The name of the test is printed by saying TESTING("something") which will
+ * result in the string `Testing something' being flushed to standard output.
+ * If a test passes, fails, or is skipped then the PASSED(), H4_FAILED(), or
+ * SKIPPED() macro should be called.  After H4_FAILED(), the caller
+ * should print additional information to stdout indented by at least four
+ * spaces.
+ */
+#define TESTING(WHAT)   {printf("Testing %-62s",WHAT); fflush(stdout);}
+#define PASSED()        {puts(" PASSED");fflush(stdout);}
+#define H4_FAILED()     {puts("*FAILED*");fflush(stdout);}
+#define H4_WARNING()    {puts("*WARNING*");fflush(stdout);}
+#define SKIPPED()       {puts(" -SKIP-");fflush(stdout);}
+
 /* Check status value and print error message */
 #define CHECK(status, fail_value, name) {if(status == fail_value) { \
     printf("*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_errs++;}}

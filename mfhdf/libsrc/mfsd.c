@@ -31,6 +31,7 @@ file - mfsd.c
 SD interface:
 ------------------
 
+	--- open a file ---
 fid    = SDstart(file name, access);
 
         --- get number of data sets and number of attributes in the file ---
@@ -798,6 +799,10 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     long    *Stride = NULL;
 #endif
     intn    ret_value = SUCCEED;
+
+    /* this decides how a dataset with unlimited dimension is read along the
+       unlimited dimension; the behavior is different between SD and nc APIs */
+    cdf_routine_name = "SDreaddata";
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDreaddata: I've been called\n");
@@ -2408,6 +2413,10 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     fprintf(stderr, "SDwritedata: I've been called\n");
 #endif
 
+    /* this decides how a dataset with unlimited dimension is written along the
+       unlimited dimension; the behavior is different between SD and nc APIs */
+    cdf_routine_name = "SDwritedata";
+
     /* clear error stack */
     HEclear();
 
@@ -3510,6 +3519,10 @@ SDsetdimscale(int32 id,    /* IN: dimension ID */
     fprintf(stderr, "SDsetdimscales: I've been called\n");
 #endif
 
+    /* this decides how a dataset with unlimited dimension is written along the
+       unlimited dimension; the behavior is different between SD and nc APIs */
+    cdf_routine_name = "SDsetdimscales";
+
     /* clear error stack */
     HEclear();
 
@@ -3575,7 +3588,7 @@ done:
 
 
     return ret_value;    
-} /* SDsetdimsacle */
+} /* SDsetdimscale */
 
 
 /******************************************************************************
@@ -3607,6 +3620,10 @@ SDgetdimscale(int32 id,   /* IN:  dimension ID */
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetdimscale: I've been called\n");
 #endif
+
+    /* this decides how a dataset with unlimited dimension is read along the
+       unlimited dimension; the behavior is different between SD and nc APIs */
+    cdf_routine_name = "SDgetdimscale";
 
     /* clear error stack */
     HEclear();
@@ -3689,7 +3706,7 @@ done:
 
 
     return ret_value;    
-} /* SDsetdimsacle */
+} /* SDgetdimscale */
 
 
 /******************************************************************************

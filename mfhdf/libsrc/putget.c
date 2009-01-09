@@ -77,6 +77,18 @@ const long array[] ;
 #define xdr_NCsetpos(xdrs, pos) xdr_setpos((xdrs),(pos))
 
 /*
+ * Check if an ncxxx function has called the current function
+ */
+static bool_t nc_API(caller)
+const char *caller;
+{
+    char *nc_api=NULL;
+    nc_api = strstr(caller, "nc");
+    if (nc_api == caller)
+        return TRUE;
+}
+
+/*
  * At the current position, add a record containing the fill values.
  */
 static bool_t
@@ -102,10 +114,18 @@ unsigned numvars ;
 }
 
 
-/* 
+/*
  * Check whether coords are valid for the variable.
- * For 'record' variables add and fill records out
- * to the requested recno == coords[0] as a side effect.
+ * For 'record' variables:
+ *    + if the accessing is writing, add and fill records out with
+ *	user-provided fill values or predefined fill values to the
+ *	requested recno == coords[0], as a side effect.
+ *    + if the accessing is reading, fill records with fill values up
+ *	to the requested recno when an nc API (ie. ncvarget) leads to
+ *	this, and flag as an error when an SD API (ie. SDreaddata) does.
+ *    + update NC_var.numrecs to reflect the filled records
+ *    + update NC.numrecs to NC_var.numrecs if NC_var.numrecs is larger
+ * -BMR, 12/09/2008
  */
 bool_t
 NCcoordck(handle, vp, coords)
@@ -116,7 +136,7 @@ const long *coords ;
 	const long *ip ;
 	unsigned long *up ;
 	const long *boundary ;
-	long unfilled ;
+	long unfilled ;	/* number of records that need to be filled */
 
 	if( IS_RECVAR(vp) )
       {
@@ -128,6 +148,7 @@ const long *coords ;
 	
 	up = vp->shape + vp->assoc->count - 1 ;
 	ip = coords + vp->assoc->count - 1 ;
+
 #ifdef CDEBUG
 	fprintf(stderr,"	NCcoordck: coords %p, *coords %ld, count %ld, ip %p, boundary %p, *ip %ld\n",
             coords, *coords, vp->assoc->count, ip , boundary, *ip) ;
@@ -142,7 +163,13 @@ const long *coords ;
               goto bad ;
       }
 
+    /********************************************************************/
+    /* The following block (#ifdef HDF) is for hdf4 API and hdf4/nc API */
+    /********************************************************************/
+
 #ifdef HDF
+    /* If file is an HDF file (ie., not netCDF, created with HDF API or
+	HDF/nc API) and the variable has unlimited dimension */
     if(handle->file_type == HDF_FILE && IS_RECVAR(vp)) 
       {
           void     *strg = NULL;
@@ -151,36 +178,57 @@ const long *coords ;
           int count, byte_count;
           int len;
             
+        /* Determine if fill values need to be written.  For example, if
+           vp's numrecs is 5, and the accessed index is 8 (*ip), then recs
+           #5,6,7 will be filled with fill value.  Note: maybe '<' should be
+	   "<=", but adding it alone caused ill-effects so a through study
+	   is needed, plus '<' doesn't really cause problem, it just meant
+	   when unfilled = 0, we'll fill 0 record below. -BMR, 12/8/2008*/
           if((unfilled = *ip - vp->numrecs) < 0) 
               return TRUE;   
 
 #ifdef CDEBUG
 fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
 #endif /* CDEBUG */
+
+        /* If we get here from an nc API, then reading beyond the end of the
+           current variable will write fill values to the gap between the end
+           of this variable and the max numrecs in the file.  It will only fail
+           for reading beyond the end if the calling function is from the SD
+           API. */
+
           /* check to see if we are trying to read beyond the end */
           if(handle->xdrs->x_op != XDR_ENCODE)
-              goto bad ;
+	  {
+	     if (!nc_API(cdf_routine_name)) /* from an SD API call */
+                  goto bad ; /* cannot read beyong the end of var */
+	     else	/* from an nc API call */
+		if (*ip >= handle->numrecs)
+                  goto bad ; /* only fail if reading pass max numrecs in file */
+	  }
 
-          /* else */
+          /* If NOFILL is not requested, proceed to write fill values */
           if ((handle->flags & NC_NOFILL) == 0) 
             {
-                /* make sure we can write to this sucker */
+                /* make sure we can write to this variable */
                 if(vp->aid == FAIL && hdf_get_vp_aid(handle, vp) == FAIL) 
                     return(FALSE);
             
-                /*
-                 * Set up the array strg to hold the fill values
-                 */
+		/* strg and strg1 are to hold fill value and its conversion */
                 len = (vp->len / vp->HDFsize) * vp->szof;
                 strg = (Void *) HDmalloc(len);
                 strg1 = (Void *) HDmalloc(len);
                 if (NULL == strg || NULL == strg1)
                     return FALSE;
 
+		/* Find the attribute _FillValue to get the user's fill value */
                 attr = NC_findattr(&vp->attrs, _FillValue);
 
+		/* If the attribute is found, fill strg with the fill value */
                 if(attr != NULL)
                     HDmemfill(strg,(*attr)->data->values,vp->szof,(vp->len/vp->HDFsize));
+		/* otherwise, fill strg with predefined fill values such as
+                FILL_SHORT, FILL_BYTE,... */
                 else 
                     NC_arrayfill(strg, len, vp->type);
 
@@ -213,6 +261,7 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
                 if (FAIL == DFKconvert(strg, strg1, vp->HDFtype, count, DFACC_WRITE, 0, 0))
                     return FALSE;
 
+		/* Write fill value to each record for all "unfilled" records */
                 for(; unfilled >= 0; unfilled--, vp->numrecs++)
                   {
                       if (FAIL == Hwrite(vp->aid, byte_count, (uint8 *) strg1))
@@ -241,8 +290,11 @@ fprintf(stderr, "NCcoordck: check 10.0, vp->numrecs=%d\n",vp->numrecs);
     }
 #endif /* HDF */
 
+    /**********************************************/
+    /* The following block is for netCDF API file */
+    /**********************************************/
 
-	if( IS_RECVAR(vp) && (unfilled = *ip - handle->numrecs) >= 0 )
+    if( IS_RECVAR(vp) && (unfilled = *ip - handle->numrecs) >= 0 )
       {
           /* check to see if we are trying to read beyond the end */
           if(handle->xdrs->x_op != XDR_ENCODE)
@@ -1043,9 +1095,7 @@ hdf_xdr_NCvdata(NC *handle,
            * Fail if there is no data *AND* we were trying to read...
            * Otherwise, we should fill with the fillvalue
            */
-#ifdef DEBUG
           fprintf(stderr, "hdf_xdr_NCvdata creating new data, check for fill value, vp->data_ref=%d\n",(int)vp->data_ref);
-#endif
           if(vp->data_ref == 0) 
             {
                 if(handle->hdf_mode == DFACC_RDONLY) 
@@ -2061,8 +2111,10 @@ Void *values ;
 #ifdef HDF
 	if(newrecs > 0)
       {
-          handle->numrecs += newrecs ;
+	/* Update var's numrecs first and then handle->numrecs if the first
+	   exceeds the latter (part of bugzilla 1378) - BMR, 12/30/2008 */
 	  vp->numrecs += newrecs;
+	  handle->numrecs = MAX(vp->numrecs, handle->numrecs);
           if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
             {
                 if(!xdr_numrecs(handle->xdrs, handle) )
