@@ -951,6 +951,7 @@
 ./mfhdf/libsrc/gen_sds_szipped.c
 ./mfhdf/libsrc/globdef.c
 ./mfhdf/libsrc/hdf2netcdf.h
+./mfhdf/libsrc/hdfnctest.c
 ./mfhdf/libsrc/hdfout.sav
 ./mfhdf/libsrc/hdfsds.c
 ./mfhdf/libsrc/hdftest.c
@@ -985,11 +986,13 @@
 ./mfhdf/libsrc/test1.nc
 ./mfhdf/libsrc/test_cdf.sav
 ./mfhdf/libsrc/testout.sav
+./mfhdf/libsrc/tncunlim.c
 ./mfhdf/libsrc/tnetcdf.c
 ./mfhdf/libsrc/trank0.c
 ./mfhdf/libsrc/tsd.c
 ./mfhdf/libsrc/tsdsprops.c
 ./mfhdf/libsrc/tszip.c
+./mfhdf/libsrc/tunlim.c
 ./mfhdf/libsrc/var.c
 ./mfhdf/libsrc/win32cdf.h
 ./mfhdf/libsrc/win32cdf.mak
