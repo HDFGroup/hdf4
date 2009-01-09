@@ -60,10 +60,13 @@ endif
 ##                              Testing                                    ##
 #############################################################################
 
-check_PROGRAMS = cdftest hdftest
+check_PROGRAMS = cdftest hdfnctest hdftest
 
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
+
+hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
+hdfnctest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
 		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
@@ -72,7 +75,7 @@ hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 check:
 	@echo "============================"
-	@echo "HDF-SD C interfaces tests"
+	@echo "HDF-SD C interface tests"
 	@echo "============================"
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest > hdfout.new
 	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
@@ -84,6 +87,12 @@ check:
 	    echo "The above differences are OK if small";               \
 	    exit 0;                                                     \
 	  fi
+	@echo
+	@echo "============================"
+	@echo "HDF-nc C interface tests"
+	@echo "============================"
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdfnctest
+	@echo
 	@echo "========================="
 	@echo "netCDF formatted tests"
 	@echo "========================="

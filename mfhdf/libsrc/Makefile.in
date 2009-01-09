@@ -41,7 +41,7 @@ DIST_COMMON = README $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 F77LINK = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-check_PROGRAMS = cdftest$(EXEEXT) hdftest$(EXEEXT)
+check_PROGRAMS = cdftest$(EXEEXT) hdfnctest$(EXEEXT) hdftest$(EXEEXT)
 subdir = mfhdf/libsrc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -77,6 +77,11 @@ am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = libmfhdf.la $(top_builddir)/hdf/src/libdf.la \
 	$(XDRLIB)
+am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tunlim.$(OBJEXT) \
+	tncunlim.$(OBJEXT)
+hdfnctest_OBJECTS = $(am_hdfnctest_OBJECTS)
+hdfnctest_DEPENDENCIES = libmfhdf.la $(top_builddir)/hdf/src/libdf.la \
+	$(XDRLIB)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tchunk.$(OBJEXT) \
 	tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) tdim.$(OBJEXT) \
 	temptySDSs.$(OBJEXT) tfile.$(OBJEXT) tidtypes.$(OBJEXT) \
@@ -101,9 +106,10 @@ F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
 LTF77COMPILE = $(LIBTOOL) --tag=F77 $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=compile $(F77) $(AM_FFLAGS) $(FFLAGS)
 F77LD = $(F77)
-SOURCES = $(libmfhdf_la_SOURCES) $(cdftest_SOURCES) $(hdftest_SOURCES)
+SOURCES = $(libmfhdf_la_SOURCES) $(cdftest_SOURCES) \
+	$(hdfnctest_SOURCES) $(hdftest_SOURCES)
 DIST_SOURCES = $(am__libmfhdf_la_SOURCES_DIST) $(cdftest_SOURCES) \
-	$(hdftest_SOURCES)
+	$(hdfnctest_SOURCES) $(hdftest_SOURCES)
 am__include_HEADERS_DIST = hdf2netcdf.h local_nc.h mfhdf.h \
 	hdf4_netcdf.h mfhdfi.h netcdf.h
 includeHEADERS_INSTALL = $(INSTALL_HEADER)
@@ -273,6 +279,8 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
 @HDF_BUILD_FORTRAN_FALSE@F77LINK = $(LINK)
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
+hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
+hdfnctest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
 		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
 		  tsd.c tsdsprops.c tszip.c tdatasizes.c
@@ -354,6 +362,9 @@ clean-checkPROGRAMS:
 cdftest$(EXEEXT): $(cdftest_OBJECTS) $(cdftest_DEPENDENCIES) 
 	@rm -f cdftest$(EXEEXT)
 	$(LINK) $(cdftest_OBJECTS) $(cdftest_LDADD) $(LIBS)
+hdfnctest$(EXEEXT): $(hdfnctest_OBJECTS) $(hdfnctest_DEPENDENCIES) 
+	@rm -f hdfnctest$(EXEEXT)
+	$(LINK) $(hdfnctest_OBJECTS) $(hdfnctest_LDADD) $(LIBS)
 hdftest$(EXEEXT): $(hdftest_OBJECTS) $(hdftest_DEPENDENCIES) 
 	@rm -f hdftest$(EXEEXT)
 	$(LINK) $(hdftest_OBJECTS) $(hdftest_LDADD) $(LIBS)
@@ -372,6 +383,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/globdef.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfnctest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfsds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdftest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iarray.Plo@am__quote@
@@ -391,11 +403,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tidtypes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tncunlim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tnetcdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trank0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsdsprops.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tunlim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/var.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdrposix.Plo@am__quote@
 
@@ -662,7 +676,7 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 
 check:
 	@echo "============================"
-	@echo "HDF-SD C interfaces tests"
+	@echo "HDF-SD C interface tests"
 	@echo "============================"
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest > hdfout.new
 	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
@@ -674,6 +688,12 @@ check:
 	    echo "The above differences are OK if small";               \
 	    exit 0;                                                     \
 	  fi
+	@echo
+	@echo "============================"
+	@echo "HDF-nc C interface tests"
+	@echo "============================"
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdfnctest
+	@echo
 	@echo "========================="
 	@echo "netCDF formatted tests"
 	@echo "========================="
