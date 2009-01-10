@@ -34,7 +34,7 @@
 ****************************************************************************/
 
 #include "mfhdf.h"
-#include "/mnt/hdf/bmribler/srcdir/hdf4/mfhdf/libsrc/hdftest.h"
+#include "hdftest.h"
 
 #define DIM0 20
 

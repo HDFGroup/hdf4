@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 #include "mfhdf.h"
-#include "/mnt/hdf/bmribler/srcdir/hdf4/mfhdf/libsrc/hdftest.h"
+#include "hdftest.h"
 
 /********************************************************************
    Name: test_1dim_singlevar() - tests on a single variable with only 1 dimension
