@@ -582,7 +582,7 @@ edges[0] = 2;
 	}
     } /* end read data */
 
-#if 0
+#if NOTRUN
 /* The following test is to verify that attempting to read pass the maximum 
    number of records in the file will fail.  However, because ncvarget leads
    to the internal function NCcoordck which uses NCadvise to display the 
