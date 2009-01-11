@@ -62,7 +62,7 @@ static int test_1dim_singlevar()
     char  varname[10];		/* variable name */
     nc_type rh_type;		/* variable type */
     int   rh_ndims;		/* number of dims */
-    int   rh_dims[MAX_VAR_DIMS];	/* variable shape */
+    int   rh_dims[H4_MAX_VAR_DIMS];	/* variable shape */
     int   rh_natts;		/* number of attributes */
     int   ii;
     short fillval = 99;		/* fill value for the variable */
@@ -294,7 +294,7 @@ static int test_1dim_multivars()
     char  varname[10];		/* variable name */
     nc_type rh_type;		/* variable type */
     int   rh_ndims;		/* number of dims */
-    int   rh_dims[MAX_VAR_DIMS];	/* variable shape */
+    int   rh_dims[H4_MAX_VAR_DIMS];	/* variable shape */
     int   rh_natts;		/* number of attributes */
     int   ii;
     short var1_fillval=-1;	/* fill value for the variable */
@@ -649,7 +649,7 @@ static int test_multidim_singlevar()
     char  varname[10];		/* variable name */
     nc_type rh_type;		/* variable type */
     int   rh_ndims;		/* number of dims */
-    int   rh_dims[MAX_VAR_DIMS];	/* variable shape */
+    int   rh_dims[H4_MAX_VAR_DIMS];	/* variable shape */
     int   rh_natts;		/* number of attributes */
     int   ii, jj, kk;
     short fillval = -3;		/* fill value for the variable */
