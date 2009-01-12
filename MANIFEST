@@ -1322,8 +1322,10 @@
 ./windows/proj/mfhdf/xdr/dllxdrtest.vcproj
 ./windows/proj/mfhdf/libsrc/cdftest.vcproj
 ./windows/proj/mfhdf/libsrc/dllhdftest.vcproj
+./windows/proj/mfhdf/libsrc/dllhdfnctest.vcproj
 ./windows/proj/mfhdf/libsrc/mfhdf_dll.vcproj
 ./windows/proj/mfhdf/libsrc/hdftest.vcproj
+./windows/proj/mfhdf/libsrc/hdfnctest.vcproj
 ./windows/proj/mfhdf/libsrc/mfhdf.vcproj
 ./windows/proj/mfhdf/libsrc/dllcdftest.vcproj
 
