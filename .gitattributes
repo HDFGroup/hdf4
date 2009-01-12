@@ -260,7 +260,9 @@ windows/proj/mfhdf/hrepack/hrepack.vcproj -text
 windows/proj/mfhdf/hrepack/hrepacktst.vcproj -text
 windows/proj/mfhdf/libsrc/cdftest.vcproj -text
 windows/proj/mfhdf/libsrc/dllcdftest.vcproj -text
+windows/proj/mfhdf/libsrc/dllhdfnctest.vcproj -text
 windows/proj/mfhdf/libsrc/dllhdftest.vcproj -text
+windows/proj/mfhdf/libsrc/hdfnctest.vcproj -text
 windows/proj/mfhdf/libsrc/hdftest.vcproj -text
 windows/proj/mfhdf/libsrc/mfhdf.vcproj -text
 windows/proj/mfhdf/libsrc/mfhdf_dll.vcproj -text

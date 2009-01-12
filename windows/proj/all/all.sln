@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
+﻿Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "all", "all.vcproj", "{BA6025DE-5DD6-42DB-B06B-946CF4304297}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -275,6 +275,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xdrtest", "..\mfhdf\xdr\xdr
 	ProjectSection(ProjectDependencies) = postProject
 		{0EDF9BE9-551A-499C-BE2D-C0FDE645C150} = {0EDF9BE9-551A-499C-BE2D-C0FDE645C150}
 		{E722778C-6CE7-4F03-9A5B-F0E683ECC129} = {E722778C-6CE7-4F03-9A5B-F0E683ECC129}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dllhdfnctest", "..\mfhdf\libsrc\dllhdfnctest.vcproj", "{68491BCD-68DD-41A5-9F02-5416421D693C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D67C5C6B-691B-4641-AFF2-BDAF58BC09BA} = {D67C5C6B-691B-4641-AFF2-BDAF58BC09BA}
+		{8EB00279-B030-4D34-BFB1-FA38A4255F67} = {8EB00279-B030-4D34-BFB1-FA38A4255F67}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hdfnctest", "..\mfhdf\libsrc\hdfnctest.vcproj", "{FDDA9164-AAAC-42A6-892C-9C5575FE1492}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E722778C-6CE7-4F03-9A5B-F0E683ECC129} = {E722778C-6CE7-4F03-9A5B-F0E683ECC129}
+		{0BCAA368-76C8-4BB7-B218-C4280DC012BD} = {0BCAA368-76C8-4BB7-B218-C4280DC012BD}
 	EndProjectSection
 EndProject
 Global
@@ -645,6 +657,22 @@ Global
 		{95F561E8-63EA-4E79-AC54-A22183F462AC}.Release|Win32.Build.0 = Release|Win32
 		{95F561E8-63EA-4E79-AC54-A22183F462AC}.Release|x64.ActiveCfg = Release|x64
 		{95F561E8-63EA-4E79-AC54-A22183F462AC}.Release|x64.Build.0 = Release|x64
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Debug|Win32.Build.0 = Debug|Win32
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Debug|x64.ActiveCfg = Debug|x64
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Debug|x64.Build.0 = Debug|x64
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Release|Win32.ActiveCfg = Release|Win32
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Release|Win32.Build.0 = Release|Win32
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Release|x64.ActiveCfg = Release|x64
+		{68491BCD-68DD-41A5-9F02-5416421D693C}.Release|x64.Build.0 = Release|x64
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Debug|Win32.Build.0 = Debug|Win32
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Debug|x64.ActiveCfg = Debug|x64
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Debug|x64.Build.0 = Debug|x64
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Release|Win32.ActiveCfg = Release|Win32
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Release|Win32.Build.0 = Release|Win32
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Release|x64.ActiveCfg = Release|x64
+		{FDDA9164-AAAC-42A6-892C-9C5575FE1492}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
