@@ -1,15 +1,15 @@
 
-                          HDF 4.2 Release 3  - snap*
+                          HDF 4.2 Release 4  
                           =================
-                          January 31, 2008
+                          January 13, 2008
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2r3 and HDF 4.2r3-snap*.  
+This document describes the differences between HDF 4.2r3 and HDF 4.2r4
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2r3-snap*.
+and wish to migrate to HDF 4.2r4
 
-The HDF 4.2r3 documentation can be found on the THG ftp server:
+The HDF 4.2r4 documentation can be found on the THG ftp server:
 
      ftp://ftp.hdfgroup.org/HDF/Documentation/
 
@@ -97,11 +97,9 @@ Documentation
 Platforms tested
 ================
 
-HDF 4.2 Release 3 has been tested on the following platforms:
+HDF 4.2 Release 4 has been tested on the following platforms:
 
                                   
-    AIX 5.2 (32/64 bit)           xlc 8.0.0.11
-    (datstar)                     xlf 10.01.0000.0002
 
     FreeBSD 6.2-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
                                   gcc 4.2.5 20080702 (prerelease)

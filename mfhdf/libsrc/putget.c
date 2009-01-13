@@ -140,6 +140,12 @@ const long *coords ;
 
 	if( IS_RECVAR(vp) )
       {
+      /* For the variable with unlimited dimension we need to check that 
+         the size of the first dimension is non-negative, there is no
+         upper bound for it; the sizes of the rest of the dimensions are 
+         checked as for the regular fixed size variable (see the "for" loop 
+         further down) 
+                                                    EIP 01/13/09    */
           boundary = coords + 1 ;
           if(*coords < 0)
               goto bad ;
