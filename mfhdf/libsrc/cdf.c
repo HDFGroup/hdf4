@@ -434,14 +434,9 @@ int mode ;
           cdf->hdf_mode = hdf_mode;
           cdf->vgid = 0; /* invalid ref */
 
-          HDstrncpy(cdf->path, name, FILENAME_MAX);
-#if 0            
-          HDmemcpy(cdf->path, name, FILENAME_MAX);
-#endif
-            
-#ifdef DEBUG
-          printf("value returned from Hopen() : %d\n", cdf->hdf_file);
-#endif
+	  /* copy filename only up to its length instead of FILENAME_MAX as
+	     used to be */
+          HDstrncpy(cdf->path, name, strlen(name)+1);
           break;
       case netCDF_FILE:
           /* Nothing */
@@ -3493,10 +3488,8 @@ hdf_close(handle)
 
                 if (FAIL == Vdetach(dim))
                   {
-#ifdef HDF_CLOSE
                       fprintf(stderr,"hdf_close: Vdetach failed for vgroup ref %d\n",
                               id);
-#endif
                       ret_value = FAIL;
                       goto done;
                   }

@@ -152,7 +152,7 @@ static vginstance_t *vginstance_free_list = NULL;
     VIget_vgroup_node -- allocate a new VGROUP record
 
  DESCRIPTION
-    Return an pointer to a new VGROUP to use for a new VGID.
+    Return a pointer to a new VGROUP to use for a new VGID.
 
  RETURNS
     returns VGROUP record pointer or NULL if failed.
@@ -879,7 +879,7 @@ NAME
    vpackvg
 
 DESCRIPTION
-   extracts fields from  a VGROUP struct vg and pack the fields
+   Extracts fields from a VGROUP struct vg and packs the fields
    into array buf in preparation for storage in the HDF file.
 
 RETRUNS   
@@ -1350,9 +1350,13 @@ Vdetach(int32 vkey /* IN: vgroup key */)
     /* no reason to check for access... (I hope) -QAK */
     if (vg->marked == 1)
       {
-          size_t need;
+          size_t need, vgnamelen=0;
+	  if (vg->vgname != NULL)
+	      vgnamelen = strlen(vg->vgname);
 
-          need = sizeof(VGROUP)+ (size_t)vg->nvelt*4 + (size_t)vg->nattrs*sizeof(vg_attr_t) + 1;
+          need = sizeof(VGROUP)
+		+ vgnamelen	/* vgname dynamic, vpackvg omits null */
+		+ (size_t)vg->nvelt*4 + (size_t)vg->nattrs*sizeof(vg_attr_t) + 1;
           if(need > Vgbufsize)
             {
                 Vgbufsize = need;

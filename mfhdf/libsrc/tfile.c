@@ -174,8 +174,7 @@ test_file_inuse()
 #define NUM_FILES_LOW 35
 #define NUM_FILES_HI  1024
 
-static int
-test_max_open_files()
+static int test_max_open_files()
 {
     int32 fids[NUM_FILES_HI];		/* holds IDs of opened files */
     char  filename[NUM_FILES_HI][10];	/* holds generated file names */
@@ -309,6 +308,62 @@ test_max_open_files()
     return num_errs;
 }
 
+/********************************************************************
+   Name: test_longfilename() - tests that the library can handle a very
+				long file name (bugzilla 1331.)
+
+   Description: 
+	The main contents include:
+	- create a file with very long name
+	- create a dataset and close it (this is to activate the failure)
+	- SDend to close the file, and it would cause segfault before the
+	  fix was applied.
+
+   Return value:
+	The number of errors occurred in this routine.
+
+   BMR - Jan 16, 2009
+*********************************************************************/
+
+#define NX 2
+#define NY 3
+static int
+test_longfilename()
+{
+    int32 fid;                  /* file id */
+    int32 dset1;                /* dataset ids */
+    int32 dims[2];              /* variable shapes */
+    int   ii;
+    char dsname[10];
+    char filename[256];
+    intn  status = 0;           /* status returned by called functions */
+    intn  num_errs = 0;         /* number of errors so far */
+
+    strcpy(dsname, "dataset 1");
+    strcpy(filename, "This file name has quite a few characters because it is used to test the fix of bugzilla 1331. It has to be at least this long to see.");
+
+    /* enter define mode */
+    fid = SDstart(filename, DFACC_CREATE);
+    CHECK(fid, FAIL, "test_longfilename: SDstart");
+
+    /* Define dimension of the data set to be created. */
+    dims[0] = NX;
+    dims[1] = NY;
+
+    /* Create a dataset to reproduce the problem before the fix */
+    dset1 = SDcreate(fid, dsname, DFNT_FLOAT32, 2, dims);
+    CHECK(dset1, FAIL, "test_longfilename: SDcreate");
+
+    status = SDendaccess(dset1);
+    CHECK(status, FAIL, "test_longfilename: SDendaccess");
+
+    status = SDend(fid);
+    CHECK(fid, FAIL, "test_longfilename: SDend");
+
+    return num_errs;
+}
+
+
 /* Test driver for testing miscellaneous file related APIs. */
 extern int
 test_files()
@@ -322,6 +377,9 @@ test_files()
     /* test APIs that were added for fixing bugzilla 396 and 440.  
        09/07/05 - BMR */
     num_errs = num_errs + test_max_open_files();
+
+    /* test the fix of bugzzila 1331. 01/16/09 - BMR */
+    num_errs = num_errs + test_longfilename();
 
     return num_errs;
 }
