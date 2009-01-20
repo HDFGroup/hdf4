@@ -11,7 +11,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * This program generates the data file "sds_szipped.hdf" which contains
+ * This program generates the data file "sds_szipped.dat" which contains
  * some szipped compressed SDSs. (currently only one dataset but more can be 
  * added for future tests.)  This data file is used by the following test
  * files:
@@ -33,7 +33,7 @@
 
 #include "hdftest.h"
 
-#define FILE_NAME      "sds_szipped.hdf"
+#define FILE_NAME      "sds_szipped.dat"
 #define SDS1_NAME      "TwoDimsInt32"
 #define X_LENGTH       5
 #define Y_LENGTH       16
