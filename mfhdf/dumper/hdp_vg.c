@@ -1194,11 +1194,12 @@ dvg(dump_info_t *dumpvg_opts,
     int32      *vg_chosen = NULL;
     int32       vg_count;
     int32       num_vg_chosen;
-    int32       i, j;
+    int32       j;
     int32       vg_ref = -1;
     int32       vg_tag;
     int32       n_entries;
     int32       level;
+    int32	curr_vg=0;
     int32       max_vgs=0;
     int32       num_nodes = 0;
     int         index_error = 0;
@@ -1313,15 +1314,15 @@ dvg(dump_info_t *dumpvg_opts,
 
       /* for each vgroup: go thru each vgroup in the file or until the 
          number of vgs being printed reaches the number of vgs chosen */
-      for (i = 0; (vg_ref = Vgetid(file_id, vg_ref)) != FAIL 
-                   && (dumpall || vg_count < num_vg_chosen); i++)
+      for (curr_vg = 0; (vg_ref = Vgetid(file_id, vg_ref)) != FAIL 
+                   && (dumpall || vg_count < num_vg_chosen); curr_vg++)
       {
          int32       skipvg = FALSE;
          intn isvdata; /* TRUE if a vdata being processed, FALSE if vg */
 
          /* if not to dump all vgroups but the current vgroup is not
             one of the selected ones */
-         if ((!dumpall) && (i != vg_chosen[vg_count]))
+         if ((!dumpall) && (curr_vg != vg_chosen[vg_count]))
             skipvg = TRUE;  /* skip printing this vg's info and data but
                              include it in the graphical representation */
 
@@ -1354,8 +1355,8 @@ dvg(dump_info_t *dumpvg_opts,
             CHECK_ALLOC( list, "list", "dvg" );
          }
 
-         list[i] = (vg_info_t *) HDmalloc(sizeof(vg_info_t));
-         CHECK_ALLOC( list[i], "list[i]", "dvg" );
+         list[curr_vg] = (vg_info_t *) HDmalloc(sizeof(vg_info_t));
+         CHECK_ALLOC( list[curr_vg], "list[curr_vg]", "dvg" );
 
          /* if this vgroup is to be skipped, do not print the info here; 
             go to the data part to add the vgroup to the node list for 
@@ -1366,7 +1367,7 @@ dvg(dump_info_t *dumpvg_opts,
                ERROR_NOTIFY_3("in dvg: %s failed on vgroup with ref=%d in file %s", 
 		         "VQuerytag", (int) vg_ref, file_name);
             fprintf(fp, "\n");
-            fprintf(fp, "\nVgroup:%d\n", (int) i);
+            fprintf(fp, "\nVgroup:%d\n", (int) curr_vg);
             if( vg_tag == DFTAG_VG )
                /* when have time, change to this one, not now because
                   it takes time to fix the testfiles */
@@ -1398,7 +1399,7 @@ dvg(dump_info_t *dumpvg_opts,
 
          if( skipvg || dumpvg_opts->contents == DHEADER )
          {
-            status = vgBuildGraph(vg_id, file_id, n_entries, file_name, list[i], &skipfile );
+            status = vgBuildGraph(vg_id, file_id, n_entries, file_name, list[curr_vg], &skipfile );
             if( status == FAIL )
                ERROR_NOTIFY_3( "in dvg: %s failed for vgroup with ref#=%d in file %s", 
 			     "vgBuildGraph", (int) vg_ref, file_name );
@@ -1407,13 +1408,13 @@ dvg(dump_info_t *dumpvg_opts,
          {
             fprintf(fp, "Entries:-\n");
             status = vgdumpfull(vg_id, dumpvg_opts, file_id, n_entries,
-                                  fp, list[i], &skipfile );
+                                  fp, list[curr_vg], &skipfile );
             if( FAIL == status )
             {
                ERROR_NOTIFY_3( "in dvg: %s failed for vgroup with ref#=%d in file %s", 
 			      "vgdumpfull", (int) vg_ref, file_name);
 
-               /* do not continue so list[i] can be set */
+               /* do not continue so list[curr_vg] can be set */
             }
          } /* neither skipped nor header only */
 
@@ -1427,11 +1428,11 @@ dvg(dump_info_t *dumpvg_opts,
          resetVG( &vg_id, file_name );
   
          /* fill the graph. rep. node for this vgroup */
-         list[i]->index = i;
-	 list[i]->vg_name = (char *) HDmalloc(sizeof(char *) * (HDstrlen(vgname)+1));
-         HDstrcpy(list[i]->vg_name, vgname);
-         list[i]->displayed = FALSE;
-         list[i]->treedisplayed = FALSE;  /* BMR - 01/16/99 */
+         list[curr_vg]->index = curr_vg;
+	 list[curr_vg]->vg_name = (char *) HDmalloc(sizeof(char *) * (HDstrlen(vgname)+1));
+         HDstrcpy(list[curr_vg]->vg_name, vgname);
+         list[curr_vg]->displayed = FALSE;
+         list[curr_vg]->treedisplayed = FALSE;  /* BMR - 01/16/99 */
       }	/* for all vgroups */
 
       /* print the graphical representation part */
@@ -1456,8 +1457,9 @@ dvg(dump_info_t *dumpvg_opts,
           }		/* for */
        } /* if the file is not to be skipped */
 
-      /* free the list of vg_info_t nodes */
-      list = free_vginfo_list( list, max_vgs );
+      /* free allocated resources */
+      list = free_vginfo_list( list, curr_vg );
+      if (vgname != NULL) HDfree(vgname);
 
       /* free vg_chosen, and terminate access to and close the input file */
       closeVG( &file_id, &vg_chosen, file_name );
@@ -1468,16 +1470,12 @@ dvg(dump_info_t *dumpvg_opts,
 
    } /* while (more file to process) */
 
-   /* clean up allocated memory */
-   if (vgname != NULL) HDfree(vgname);
-   list = free_vginfo_list(list, max_vgs);
-
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
           closeVG( &file_id, &vg_chosen, file_name );
           resetVG( &vg_id, file_name );
-          list = free_vginfo_list( list, max_vgs );
+          list = free_vginfo_list(list, curr_vg);
 	  if (vgname != NULL) HDfree(vgname);
       }
     /* Normal cleanup */
