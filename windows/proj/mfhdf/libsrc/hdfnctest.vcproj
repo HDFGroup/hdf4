@@ -108,8 +108,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory=".\..\..\..\..\mfhdf\libsrc\Debug"
+			IntermediateDirectory=".\..\..\..\..\mfhdf\libsrc\Debug\hdfnctest"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -286,8 +286,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory=".\..\..\..\..\mfhdf\libsrc\Release"
+			IntermediateDirectory=".\..\..\..\..\mfhdf\libsrc\Release\hdfnctest"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -423,10 +423,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\mfhdf\libsrc\tunlim.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\tncunlim.c"
 				>
 				<FileConfiguration
@@ -467,6 +463,10 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\tunlim.c"
+				>
 			</File>
 		</Filter>
 		<Filter

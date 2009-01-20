@@ -27,7 +27,7 @@ set srcdir=%CD%
 set diff=fc /w
 
 echo.============================
-echo.HDF-SD C interfaces tests
+echo.HDF-SD C interface tests
 echo.============================
 %CD%\%1\%2hdftest > hdfout.new
 set cmd=%diff% hdfout.new %srcdir%\hdfout.sav
@@ -37,9 +37,14 @@ if %errorlevel% equ 0 (
     echo.*** HDF passes formatted test ***
 ) else (
     echo.*** HDF fails formatted test ***
-    %cmd%
     echo.The above differences are OK if small
 )
+echo.
+echo.============================
+echo.HDF-nc C interface tests
+echo.============================
+%CD%\%1\%2hdfnctest
+echo.
 echo.=========================
 echo.netCDF formatted tests
 echo.=========================
