@@ -85,6 +85,10 @@ Bugs fixed since HDF4.2r2
         - SDreaddata now checks for out-of-range values in parameter 'stride'
 	  and fails when invalid values are given (bugzilla 150.)  This bug 
 	  was actually fixed right before HDF4.2r2 release - BMR 2008/07/14
+	- Reading a record variable using nc API fills the buffer with fill
+	  values up to the maximum number of records of all unlimited
+	  dimension variables in the file, as in netCDF.  It used to fail
+	  before (bugzilla 1378.) - BMR 2009/01/21
 
     Configuration
     ============= 
