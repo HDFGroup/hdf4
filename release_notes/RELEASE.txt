@@ -172,7 +172,8 @@ HDF 4.2 Release 4 has been tested on the following platforms:
 
     Linux 2.6.27.9-159.fc10.x86_64 #1 SMP 
         x86_64 GNU/Linux          gcc (GCC) 4.3.2
-     (Fedora 10)                  
+     (Fedora 10)                  gfortran GNU Fortran (GCC) 4.3.2 20081105 
+                                                       (Red Hat 4.3.2-7)
 
 
 Known problems
@@ -210,3 +211,7 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
 o  In order for the new API SDgetdatasize to get the correct compressed size
    of the data, the dataset needs to be closed or read, after being written
    and before SDgetdatasize is called.
+
+o  On a fedora x86_64 GNU/Linux machine with gfortran 4.3.2, the flag
+   "-fno-range-check" needs to be used to work around old code.
+   
