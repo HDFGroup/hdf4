@@ -163,11 +163,16 @@ HDF 4.2 Release 4 has been tested on the following platforms:
     Windows XP(64 bit)            Visual Studio 2005(with Intel Fortran 9.1)
                                   
     Windows Vista                 Visual Studio 2005 (no fortran)
+                                  Visual Studio 2008 (no fortran)
                                   
     MAC OS X Intel                Darwin 8.10.1
                                   i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
                                   g95 0.91
                                   gfortran GNU Fortran (GCC) 4.3.0 20070518
+
+    Linux 2.6.27.9-159.fc10.x86_64 #1 SMP 
+        x86_64 GNU/Linux          gcc (GCC) 4.3.2
+     (Fedora 10)                  
 
 
 Known problems
