@@ -289,7 +289,7 @@ hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 #############################################################################
 #############################################################################
-DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h
+DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h This*
 all: all-am
 
 .SUFFIXES:

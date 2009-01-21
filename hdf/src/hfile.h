@@ -50,7 +50,7 @@
 #define LIBVER_MAJOR    4
 #define LIBVER_MINOR    2 
 #define LIBVER_RELEASE  4 
-#define LIBVER_STRING   "HDF Version 4.2 Release 4-pre1, January 13, 2009"
+#define LIBVER_STRING   "HDF Version 4.2 Release 4-pre2, January 20, 2009"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
