@@ -102,7 +102,6 @@ mfhdf/libsrc/gen_sds_szipped.c -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfhdfi.h -text
 mfhdf/libsrc/sds_szipped.dat -text
-mfhdf/libsrc/sds_szipped.hdf -text
 mfhdf/libsrc/tchunk.c -text
 mfhdf/libsrc/tcomp.c -text
 mfhdf/libsrc/tdatasizes.c -text
