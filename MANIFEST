@@ -972,7 +972,7 @@
 ./mfhdf/libsrc/ntohs.mar
 ./mfhdf/libsrc/putget.c
 ./mfhdf/libsrc/putgetg.c
-./mfhdf/libsrc/sds_szipped.hdf
+./mfhdf/libsrc/sds_szipped.dat
 ./mfhdf/libsrc/sharray.c
 ./mfhdf/libsrc/string.c
 ./mfhdf/libsrc/tchunk.c
