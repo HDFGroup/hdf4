@@ -1101,7 +1101,9 @@ hdf_xdr_NCvdata(NC *handle,
            * Fail if there is no data *AND* we were trying to read...
            * Otherwise, we should fill with the fillvalue
            */
+#ifdef DEBUG
           fprintf(stderr, "hdf_xdr_NCvdata creating new data, check for fill value, vp->data_ref=%d\n",(int)vp->data_ref);
+#endif
           if(vp->data_ref == 0) 
             {
                 if(handle->hdf_mode == DFACC_RDONLY) 
