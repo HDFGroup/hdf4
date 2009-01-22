@@ -143,6 +143,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name cdftest
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name dllhdfnctest
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name hdfnctest
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -217,6 +223,27 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name hdf_fortrandll
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "dllhdfnctest"="..\MFHDF\LIBSRC\dllhdfnctest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf_dll
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdr_for_dll
     End Project Dependency
 }}}
 
@@ -451,7 +478,6 @@ Package=<4>
     End Project Dependency
 }}}
 
-
 ###############################################################################
 
 Project: "hdf_dll"="..\hdf\src\hdf_dll.dsp" - Package Owner=<4>
@@ -602,6 +628,27 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name hdf
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "hdfnctest"="..\MFHDF\LIBSRC\hdfnctest.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name hdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name mfhdf
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name xdr
     End Project Dependency
 }}}
 
@@ -838,7 +885,6 @@ Package=<4>
     Project_Dep_Name xdr
     End Project Dependency
 }}}
-
 
 ###############################################################################
 

@@ -1390,8 +1390,10 @@
 ./windows/proj_vnet/mfhdf/xdr/xdr_for_dll.vcproj
 ./windows/proj_vnet/mfhdf/xdr/dllxdrtest.vcproj
 ./windows/proj_vnet/mfhdf/libsrc/cdftest.vcproj
+./windows/proj_vnet/mfhdf/libsrc/dllhdfnctest.vcproj
 ./windows/proj_vnet/mfhdf/libsrc/dllhdftest.vcproj
 ./windows/proj_vnet/mfhdf/libsrc/mfhdf_dll.vcproj
+./windows/proj_vnet/mfhdf/libsrc/hdfnctest.vcproj
 ./windows/proj_vnet/mfhdf/libsrc/hdftest.vcproj
 ./windows/proj_vnet/mfhdf/libsrc/mfhdf.vcproj
 ./windows/proj_vnet/mfhdf/libsrc/dllcdftest.vcproj
@@ -1452,8 +1454,10 @@
 ./windows/proj_vs6/mfhdf/xdr/xdr_for_dll.dsp
 ./windows/proj_vs6/mfhdf/xdr/dllxdrtest.dsp
 ./windows/proj_vs6/mfhdf/libsrc/cdftest.dsp
+./windows/proj_vs6/mfhdf/libsrc/dllhdfnctest.dsp
 ./windows/proj_vs6/mfhdf/libsrc/dllhdftest.dsp
 ./windows/proj_vs6/mfhdf/libsrc/mfhdf_dll.dsp
+./windows/proj_vs6/mfhdf/libsrc/hdfnctest.dsp
 ./windows/proj_vs6/mfhdf/libsrc/hdftest.dsp
 ./windows/proj_vs6/mfhdf/libsrc/mfhdf.dsp
 ./windows/proj_vs6/mfhdf/libsrc/dllcdftest.dsp

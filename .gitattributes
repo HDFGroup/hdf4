@@ -328,7 +328,9 @@ windows/proj_vnet/mfhdf/hrepack/hrepack.vcproj -text
 windows/proj_vnet/mfhdf/hrepack/hrepacktst.vcproj -text
 windows/proj_vnet/mfhdf/libsrc/cdftest.vcproj -text
 windows/proj_vnet/mfhdf/libsrc/dllcdftest.vcproj -text
+windows/proj_vnet/mfhdf/libsrc/dllhdfnctest.vcproj -text
 windows/proj_vnet/mfhdf/libsrc/dllhdftest.vcproj -text
+windows/proj_vnet/mfhdf/libsrc/hdfnctest.vcproj -text
 windows/proj_vnet/mfhdf/libsrc/hdftest.vcproj -text
 windows/proj_vnet/mfhdf/libsrc/mfhdf.vcproj -text
 windows/proj_vnet/mfhdf/libsrc/mfhdf_dll.vcproj -text
@@ -390,7 +392,9 @@ windows/proj_vs6/mfhdf/hrepack/hrepack.dsp -text
 windows/proj_vs6/mfhdf/hrepack/hrepacktst.dsp -text
 windows/proj_vs6/mfhdf/libsrc/cdftest.dsp -text
 windows/proj_vs6/mfhdf/libsrc/dllcdftest.dsp -text
+windows/proj_vs6/mfhdf/libsrc/dllhdfnctest.dsp -text
 windows/proj_vs6/mfhdf/libsrc/dllhdftest.dsp -text
+windows/proj_vs6/mfhdf/libsrc/hdfnctest.dsp -text
 windows/proj_vs6/mfhdf/libsrc/hdftest.dsp -text
 windows/proj_vs6/mfhdf/libsrc/mfhdf.dsp -text
 windows/proj_vs6/mfhdf/libsrc/mfhdf_dll.dsp -text
