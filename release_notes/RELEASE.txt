@@ -209,8 +209,8 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
          ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
 
 o  In order for the new API SDgetdatasize to get the correct compressed size
-   of the data, the dataset needs to be closed or read, after being written
-   and before SDgetdatasize is called.
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata,) after being written and before SDgetdatasize is called.
 
 o  On a fedora x86_64 GNU/Linux machine with gfortran 4.3.2, the flag
    "-fno-range-check" needs to be used to work around old code.
