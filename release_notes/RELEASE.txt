@@ -9,7 +9,7 @@ This document describes the differences between HDF 4.2r3 and HDF 4.2r4
 It is written for people who are familiar with previous releases of HDF 
 and wish to migrate to HDF 4.2r4
 
-The HDF 4.2r4 documentation can be found on the THG ftp server:
+The HDF 4.2r4 documentation can be found on the The HDF Group's FTP server:
 
      ftp://ftp.hdfgroup.org/HDF/Documentation/
 
@@ -47,28 +47,31 @@ New features and changes
         - Libtool support (2.2.6a) has been added, and HDF4 shared C 
           libraries can now be built. To build, use the --enable-shared 
           configuration flag. This needs to be used in conjunction with 
-          the --disable-fortran flag, as fortran shared libraries are not 
+          the --disable-fortran flag, as Fortran shared libraries are not 
           supported. Shared libraries are disabled by default. 
           MAM - 2008/10/09
-        - Added szip information to end of configure summary, which indicates
-          if both szip presence and encoder presence.  MAM - 2008/10/06
+        - Added SZIP information to end of configure summary, which indicates
+          whether SZIP is present and, if SZIP is present, whether the SZIP
+          encoder is present.  MAM - 2008/10/06
 
     Library
     ========= 
-	- Added new API SDgetdatasize to retrieve the compressed and original
-	  sizes of an SDS' data.  Its limitation is listed in the Known problems
-	  section at the end of this document.
-	  intn SDgetdatasize(int32 sdsid, int32* comp_size, int32* orig_size)
-		sdsid     - IN: dataset ID
-		comp_size - OUT: size of compressed data
-		orig_size - OUT: size of original data (BMR - 2008/10/15)
+        - Added new API SDgetdatasize to retrieve the compressed and original
+          sizes of an SDS' data.  Its limitation is listed in the "Known 
+          problems" section at the end of this document.
+          intn SDgetdatasize(int32 sdsid, int32* comp_size, int32* orig_size)
+                sdsid     - IN: dataset ID
+                comp_size - OUT: size of compressed data
+                orig_size - OUT: size of original data 
+          BMR - 2008/10/15
 
     Utilities
     ========= 
-        - hrepack: output compression ratio (PVN - 2008/10/30)
-	- hdp now displays various parameters of Gzip, Szip, and Skipping
-	  Huffman compressions when a dataset is compressed. (Bugzilla 1202)
-	  BMR - 2008/10/03
+        - hrepack output now includes dataset compression ratios.
+          PVN - 2008/10/30
+        - hdp now displays various parameters of Gzip, Szip, and Skipping
+          Huffman compressions when a dataset is compressed. (Bugzilla 1202)
+          BMR - 2008/10/03
 
 
 Support for new platforms and compilers
@@ -76,41 +79,42 @@ Support for new platforms and compilers
         Linux 2.6.27 x86_64 Fedora 10 with GNU C and gfortran
 
         Mac Intel with GNU C, gfortran, g95 and Intel 10.1 32-bit 
-        C and Fortran compilers.
+        C and Fortran compilers
 
-          Note: Only 32-bit version of Intel compiler is supported. 
+          Note: Only the 32-bit version of the Intel compiler is supported. 
 
-          One has to run configuration scripts that can be found under 
+          One has to run configuration scripts, which can be found under 
           the bin directories in the Intel compiler installation directory 
           tree (e.g., /opt/intel/cc/10.1.006/bin/iccvars.csh and 
-          /opt/intel/fc/10.1.006/bin/ifortvars.csh) to enable
-          32-bit version of compiler before configuring and building HDF4.
+          /opt/intel/fc/10.1.006/bin/ifortvars.csh), to enable the
+          32-bit version of the compiler before configuring and building HDF4.
 
           Known problems: 
           Due to a known bug in the Intel 10.1 icc compiler, one has to use
           -no-multibyte-chars flag with icc. O0 flag with ifort is required
           to build Fortran APIs and tests. This restriction is probably due
-          to a very old Fortran code and will be lifted for the future 
-          releases.  
+          to very old Fortran code and will be lifted for future releases.  
         
 
 Bugs fixed since HDF4.2r3
 =========================
     Utilities
     ========= 
-        - hrepack: unlimited dimensions were not preserved (PVN - 2008/11/19)
+        - hrepack previously failed to preserve unlimited dataset dimensions; 
+          they are now preserved.  PVN - 2008/11/19
 
     Library
     ========= 
-        - SDreaddata now checks for out-of-range values in parameter 'stride'
-	  and fails when invalid values are given (bugzilla 150.)  This bug 
-	  was actually fixed right before HDF4.2r2 release - BMR 2008/07/14
-	- Reading a record variable using nc API fills the buffer with fill
-	  values up to the maximum number of records of all unlimited
-	  dimension variables in the file, as in netCDF.  It used to fail
-	  before (bugzilla 1378.) - BMR 2009/01/21
-	- When the file name is too long, some SD APIs got seg. fault
-	  (bugzilla 1331.)  This problem is now fixed. - BMR 2009/01/23
+        - SDreaddata now checks for out-of-range values in the parameter 
+          'stride' and fails when invalid values are given (Bugzilla 150.)  
+          This bug was actually fixed right before the HDF4.2r2 release.  
+          BMR - 2008/07/14
+        - Reading a record variable using nc API fills the buffer with fill
+          values up to the maximum number of records of all unlimited
+          dimension variables in the file, as in netCDF.  It used to fail
+          before (Bugzilla 1378.) - BMR 2009/01/21
+        - When the file name is too long, some SD APIs caused a segmentation 
+          fault (Bugzilla 1331.)  This problem is now fixed. - BMR 2009/01/23
 
     Configuration
     ============= 
@@ -118,7 +122,7 @@ Bugs fixed since HDF4.2r3
 
 Documentation
 ==============
-Updated HDF Reference Manual is available in the HTML format now.
+The updated HDF Reference Manual is now available in HTML format.
 
 Platforms tested
 ================
@@ -186,8 +190,8 @@ HDF 4.2 Release 4 has been tested on the following platforms:
 
     Windows XP(64 bit)            Visual Studio 2005(with Intel Fortran 9.1)
                                   
-    Windows Vista                 Visual Studio 2005 (no fortran)
-                                  Visual Studio 2008 (no fortran)
+    Windows Vista                 Visual Studio 2005 (no Fortran)
+                                  Visual Studio 2008 (no Fortran)
                                   
     MAC OS X Intel                Darwin 9.4.0
                                   i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
@@ -233,8 +237,8 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
 
 o  In order for the new API SDgetdatasize to get the correct compressed size
    of the data, the dataset needs to be closed (SDendaccess) or read
-   (SDreaddata,) after being written and before SDgetdatasize is called.
+   (SDreaddata), after being written and before SDgetdatasize is called.
 
 o  On a fedora x86_64 GNU/Linux machine with gfortran 4.3.2, the flag
-   "-fno-range-check" needs to be used to work around old code.
+   -fno-range-check needs to be used to work around old code.
    
