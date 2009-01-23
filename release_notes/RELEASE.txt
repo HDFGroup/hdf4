@@ -107,6 +107,8 @@ Bugs fixed since HDF4.2r3
 	  values up to the maximum number of records of all unlimited
 	  dimension variables in the file, as in netCDF.  It used to fail
 	  before (bugzilla 1378.) - BMR 2009/01/21
+	- When the file name is too long, some SD APIs got seg. fault
+	  (bugzilla 1331.)  This problem is now fixed. - BMR 2009/01/23
 
     Configuration
     ============= 
