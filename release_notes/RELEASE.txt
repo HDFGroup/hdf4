@@ -71,10 +71,28 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-        None
+        Linux 2.6.27 x86_64 Fedora 10 with GNU C and gfortran
+
+        Mac Intel with GNU C, gfortran, g95 and Intel 10.1 32-bit 
+        C and Fortran compilers.
+
+          Note: Only 32-bit version of Intel compiler is supported. 
+
+          One has to run configuration scripts that can be found under 
+          the bin directories in the Intel compiler installation directory 
+          tree (e.g., /opt/intel/cc/10.1.006/bin/iccvars.csh and 
+          /opt/intel/fc/10.1.006/bin/ifortvars.csh) to enable
+          32-bit version of compiler before configuring and building HDF4.
+
+          Known problems: 
+          Due to a known bug in the Intel 10.1 icc compiler, one has to use
+          -no-multibyte-chars flag with icc. O0 flag with ifort is required
+          to build Fortran APIs and tests. This restriction is probably due
+          to a very old Fortran code and will be lifted for the future 
+          releases.  
         
 
-Bugs fixed since HDF4.2r2
+Bugs fixed since HDF4.2r3
 =========================
     Utilities
     ========= 
@@ -92,26 +110,28 @@ Bugs fixed since HDF4.2r2
 
     Configuration
     ============= 
-        - hdiff_array.c now gets linked against libm. 
+        - hdiff_array.c now gets linked against libm.a library. 
 
 Documentation
 ==============
-
+Updated HDF Reference Manual is available in the HTML format now.
 
 Platforms tested
 ================
 
 HDF 4.2 Release 4 has been tested on the following platforms:
 
-                                  
+    FreeBSD 6.3-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
+    (duty)                        g++ 3.4.6 [FreeBSD] 20060305
+                                  gcc 4.2.5 20080702
+                                  g++ 4.2.5 20080702
+                                  gfortran 4.2.5 20080702
 
-    FreeBSD 6.2-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
-                                  gcc 4.2.5 20080702 (prerelease)
-                                  gfortran 4.2.1 20070620
-
-    FreeBSD 6.2-STABLE amd64      gcc 3.4.6 [FreeBSD] 20060305
-                                  gcc 4.2.5 20080702 (prerelease)
-                                  gfortran 4.2.1 20080123
+    FreeBSD 6.3-STABLE amd64      gcc 3.4.6 [FreeBSD] 20060305
+    (liberty)                     g++ 3.4.6 [FreeBSD] 20060305
+                                  gcc 4.2.5 20080702
+                                  g++ 4.2.5 20080702
+                                  gfortran 4.2.5 20080702
 
     IRIX64 6.5                    MIPSpro cc 7.4.4m
     (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m 
@@ -119,7 +139,7 @@ HDF 4.2 Release 4 has been tested on the following platforms:
 
     Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
          SMP i686 i386            G95 (GCC 4.0.3 (g95 0.92!) April 18 2007)
-    (kagiso)                      PGI C, Fortran, C++ 7.2-1 32-bit
+    (jam)                         PGI C, Fortran, C++ 7.2-1 32-bit
                                   Intel(R) C Compiler for 32-bit
                                       applications, Version 10.1
                                   Intel(R) Fortran Compiler for 32-bit
@@ -165,10 +185,11 @@ HDF 4.2 Release 4 has been tested on the following platforms:
     Windows Vista                 Visual Studio 2005 (no fortran)
                                   Visual Studio 2008 (no fortran)
                                   
-    MAC OS X Intel                Darwin 8.10.1
+    MAC OS X Intel                Darwin 9.4.0
                                   i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
-                                  g95 0.91
-                                  gfortran GNU Fortran (GCC) 4.3.0 20070518
+                                  G95 (GCC 4.0.3 (g95 0.91!) Apr 24 2008)
+                                  gfortran GNU Fortran (GCC) 4.3.0 20070810
+                                  Intel 10.1 32-bit version
 
     Linux 2.6.27.9-159.fc10.x86_64 #1 SMP 
         x86_64 GNU/Linux          gcc (GCC) 4.3.2
@@ -178,8 +199,6 @@ HDF 4.2 Release 4 has been tested on the following platforms:
 
 Known problems
 ==============
-
-o  hdfcomp fails on HPUX 11.23 for the 64-bit version of the library.
 
 o  This release does not support VMS systems.
 
