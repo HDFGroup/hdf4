@@ -137,7 +137,7 @@ static int test_1dim_singlevar()
 
     /* enter define mode */
     fid = SDstart(FILENAME1, DFACC_CREATE);
-    CHECK(fid, -1, "SDstart");
+    CHECK(fid, FAIL, "SDstart");
 
     /* Define dimension of the data set to be created. */
     dimsizes[0] = SD_UNLIMITED;
@@ -260,7 +260,7 @@ static int test_1dim_multivars()
 
     /* enter define mode */
     fid = SDstart(FILENAME2, DFACC_CREATE);
-    CHECK(fid, -1, "SDstart");
+    CHECK(fid, FAIL, "SDstart");
 
     /* Define dimension of the data set to be created. */
     dimsizes[0] = SD_UNLIMITED;
@@ -421,7 +421,7 @@ static int test_multidim_singlevar()
 
     /* enter define mode */
     fid = SDstart(FILENAME3, DFACC_CREATE);
-    CHECK(fid, -1, "SDstart");
+    CHECK(fid, FAIL, "SDstart");
 
     /* Define dimension of the data set to be created. */
     dimsizes[0] = SD_UNLIMITED;
@@ -474,11 +474,11 @@ static int test_multidim_singlevar()
 
     /* Reopen file and dataset */
     fid = SDstart(FILENAME3, DFACC_RDWR);
-    CHECK(fid, -1, "SDstart");
+    CHECK(fid, FAIL, "SDstart");
     dset_index = SDnametoindex(fid, "Variable 3D");
-    CHECK(dset1, -1, "SDnametoindex");
+    CHECK(dset_index, FAIL, "SDnametoindex");
     dset1 = SDselect(fid, dset_index);
-    CHECK(dset1, -1, "SDselect");
+    CHECK(dset1, FAIL, "SDselect");
 
     { /* Append data to the dataset pass the end */
 	int16 data[] = {400, 401};
@@ -607,7 +607,7 @@ static int test_1dim_multivars_addon()
 
     /* enter define mode */
     fid = SDstart(FILENAME2, DFACC_RDWR);
-    CHECK(fid, -1, "SDstart");
+    CHECK(fid, FAIL, "SDstart");
 
     /* Define dimension of the data set to be created. */
     dimsizes[0] = SD_UNLIMITED;
@@ -628,11 +628,11 @@ static int test_1dim_multivars_addon()
 
     /* Reopen file and dataset */
     fid = SDstart(FILENAME2, DFACC_RDWR);
-    CHECK(fid, -1, "SDstart");
+    CHECK(fid, FAIL, "SDstart");
     dset_index = SDnametoindex(fid, "Variable 3");
-    CHECK(dset1, -1, "SDnametoindex");
+    CHECK(dset_index, FAIL, "SDnametoindex");
     dset1 = SDselect(fid, dset_index);
-    CHECK(dset1, -1, "SDselect");
+    CHECK(dset1, FAIL, "SDselect");
 
     /* Create another dataset */
     dset2 = SDcreate(fid, "Variable 4", DFNT_INT16, 1, dimsizes);
@@ -707,9 +707,9 @@ static int test_1dim_multivars_addon()
 
 	/* Get access to dataset "Variable 2" */
 	dset_index = SDnametoindex(fid, "Variable 2");
-	CHECK(dset, -1, "SDnametoindex");
+	CHECK(dset_index, FAIL, "SDnametoindex");
 	dset = SDselect(fid, dset_index);
-	CHECK(dset1, -1, "SDselect");
+	CHECK(dset, FAIL, "SDselect");
 
 	/* Get its information and verify its data and dimension size */
 	num_errs = num_errs + verify_info_data(dset, 15, result2);
