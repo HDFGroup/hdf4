@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="hrepacktst"
+	ProjectGUID="{1E45B21C-9DE7-42D6-8B92-7337FE8279AB}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
