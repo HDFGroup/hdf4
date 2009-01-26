@@ -220,19 +220,26 @@ HDF 4.2 Release 4 has been tested on the following platforms:
 Known problems
 ==============
 
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale were created with
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might corrupt the data.
+
+   HDF4 Library Releases 4.2r2 and later do not allow this conflict to
+   occur.  On the other hand, recent libraries are also unable to detect
+   such conflicts that already exist in a file.  It is therefore STRONGLY
+   recommended to check for and correct such name duplication before
+   working with data created with a pre-4.2r2 library. 
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help identify and correct such name conflicts; see their entries 
+   in the HDF Reference Manual for further details. 
+
 o  This release does not support VMS systems.
 
 o  N-Bit compression is not supported with Fortran APIs.
 
 o  Using both fill-value and compression on SD datasets does not work.
-
-o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
-   When a one-dimensional SDS and a dimension scale were created with the
-   same name, subsequent accesses to the dimension scale or to the SDS might 
-   produce undesired results.  It is strongly recommended to check for such 
-   name duplication before working with data created with a pre-4.2r2 library.
-   HDF4 Library Releases 4.2r2 and later do not allow this conflict to occur.  
-   See the user documentation for further details.
 
 o  When using PGI compilers, make sure that the JPEG library is also compiled 
    with a PGI C compiler; linking with a JPEG library built with gcc causes 
