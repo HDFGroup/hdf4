@@ -174,9 +174,11 @@ HDF 4.2 Release 4 has been tested on the following platforms:
         SMP ia64 GNU/Linux        Intel(R) Fortran Itanium(R) Version 10.0.025
     (ucar hir1)                   
 
-    Linux 2.6.16.46-0.14-smp #1   Intel(R) C Compiler for Intel(R) EM64T Ver. 10.1.013
-        SMP x86_64 GNU/Linux      Intel(R) Fortran Intel(R) EM64T Ver. 10.1.013
-    (smirom)                      PGI C, Fortran Version 7.2-1
+    Linux 2.6.16.46-0.14-smp #1   gcc (GCC) 4.1.2 20070115 (SUSE Linux) 
+        SMP x86_64 GNU/Linux      G95 (GCC 4.0.3 (g95 0.92!) July 1 2008)
+    (smirom)                      Intel(R) C Compiler for Intel(R) EM64T Ver. 10.1.013
+                                  Intel(R) Fortran Intel(R) EM64T Ver. 10.1.013
+                                  PGI C, Fortran Version 7.2-1
                                          for 64-bit target on x86-64
                                   tested for both 32- and 64-bit binaries
 
