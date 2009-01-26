@@ -712,7 +712,7 @@ C----------------------------------------------------------------------
       end
 
 C----------------------------------------------------------------------
-C     Name:     sfname2ind
+C     Name:     sfn2indices
 C     Purpose:  Retrieves indices and types of all variables with 
 C               the same name
 C     Inputs:   sd_id: SD interface identifier 
@@ -724,21 +724,21 @@ C                                0 - for data set,
 C                                1 - for dimension scale
 C                                2 - unknown type
 C     Returns:  0 on success, -1 on failure
-C     Calls:    scname2ind
+C     Calls:    scn2indices
 C     Users:    Fortran stub routine
 C----------------------------------------------------------------------
 
-      integer function sfname2ind(sd_id, sds_name, var_list, 
+      integer function sfn2indices(sd_id, sds_name, var_list, 
      +                            type_list, n_vars)
 
       character*(*) sds_name
       integer       sd_id
       integer       var_list(*), type_list(*)
       integer       n_vars
-      integer       scname2ind
+      integer       scn2indices
 
-      sfname2ind = scname2ind(sd_id, sds_name, len(sds_name), var_list, 
-     +                        type_list, n_vars)
+      sfn2indices = scn2indices(sd_id, sds_name, len(sds_name), 
+     +                    var_list, type_list, n_vars)
       return
       end
 

@@ -161,7 +161,7 @@ C=============================================================
 C This new subroutine tests the following SD Fortran functions
 C       sfidtype
 C       sfgnvars_byname
-C       sfname2ind
+C       sfn2indices
 C
 C=============================================================
       subroutine test_vars(err)
@@ -355,16 +355,17 @@ C        Get index of dataset VAR1_NAME
          endif
       else
 C        Get the list of all variables of named VAR1_NAME
-         status=sfname2ind(sd_id,VAR1_NAME,var_list,type_list,n_vars)
+         status=sfn2indices(sd_id,VAR1_NAME,var_list,type_list,
+     +                      n_vars)
          if( status .lt. 0)then
-            print*, 'sfname2ind failed'
+            print*, 'sfn2indices failed'
             err = err + 1
          endif
 C        In this case, the first and third variable is a dataset
          do i = 1, n_vars
             if (type_list(i) .eq. 0)then
                if( var_list(i) .ne. i-1)then
-                  print*, 'sfname2ind failed in indices'
+                  print*, 'sfn2indices failed in indices'
                   err = err + 1
                endif
             endif

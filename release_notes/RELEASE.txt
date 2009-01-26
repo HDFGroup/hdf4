@@ -1,7 +1,7 @@
 
                           HDF 4.2 Release 4  
                           =================
-                          January 20, 2009
+                          January 25, 2009
 
 INTRODUCTION
 
@@ -64,6 +64,18 @@ New features and changes
                 comp_size - OUT: size of compressed data
                 orig_size - OUT: size of original data 
           BMR - 2008/10/15
+
+        - The following Fortran APIs were added in this release:
+                sfgetname
+                sfgetnamelen
+                sfgmaxopenf
+                sfgnumopenf
+                sfrmaxopenf
+                sfidtype
+                sfgnvars_byname
+                sfn2indices
+          Please see HDF Reference Manual for functions description.
+          Note: These APIs are not available on Windows.
 
     Utilities
     ========= 

@@ -123,8 +123,8 @@ C
       external sfidtype
       integer  sfgnvars_byname
       external sfgnvars_byname
-      integer  sfname2ind
-      external sfname2ind
+      integer  sfn2indices
+      external sfn2indices
       integer  sfgmaxopenf
       external sfgmaxopenf
       integer  sfgnumopenf

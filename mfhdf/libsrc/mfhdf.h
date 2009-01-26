@@ -587,7 +587,7 @@ HDFLIBAPI intn SDsetchunkcache
 #   define nscgetnamelen H4_F77_FUNC(scgetnamelen,SCGETNAMELEN)
 #   define nscidtype     H4_F77_FUNC(scidtype,SCIDTYPE)
 #   define nscgnvars_byname H4_F77_FUNC_(scgnvars_byname,SCGNVARS_BYNAME)
-#   define nscname2ind   H4_F77_FUNC(scname2ind,SCNAME2IND)
+#   define nscn2indices  H4_F77_FUNC(scn2indices,SCN2INDICES)
 #   define nscgmaxopenf  H4_F77_FUNC(scgmaxopenf,SCGMAXOPENF)
 #   define nscgnumopenf  H4_F77_FUNC(scgnumopenf,SCGNUMOPENF)
 #   define nscrmaxopenf  H4_F77_FUNC(scrmaxopenf,SCRMAXOPENF)

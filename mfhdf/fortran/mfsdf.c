@@ -2220,7 +2220,7 @@ nscgnumopenf(cur_num)
     return(ret);
 }
 /*-----------------------------------------------------------------------------
- * Name:    scname2ind
+ * Name:    scn2indices
  * Purpose: Retrieves indices of all variables with the same name. 
  * Inputs:  sd_id: SD interface identifier
  *          sds_name: data set name
@@ -2234,9 +2234,9 @@ nscgnumopenf(cur_num)
 
    FRETVAL(intf)
 #ifdef PROTOTYPE
-nscname2ind(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_list, intf *n_vars)
+nscn2indices(intf *sd_id, _fcd name, intf *namelen, intf *var_list, intf *type_list, intf *n_vars)
 #else
-nscname2ind(sd_id, name, namelen, var_list, type_list, n_vars)
+nscn2indices(sd_id, name, namelen, var_list, type_list, n_vars)
      intf *sd_id;
      _fcd name;
      intf *namelen;

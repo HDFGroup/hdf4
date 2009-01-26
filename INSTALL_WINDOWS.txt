@@ -1,4 +1,4 @@
-      Installation Instructions for HDF4.2r3 on Windows XP/Vista
+     Installation Instructions for HDF4.2r4 on Windows XP/Vista
 ========================================================================
 
 The instructions which follow assume that you will be using the HDF4 source code 
@@ -32,11 +32,11 @@ DLL) and utilities, it is assumed that you have done the following:
          c:\                             (any drive)
          MyHDFstuff\                     (any folder name)
 
-   3. Download the HDF4.2r3 source code archive HDF4.2r3.tar.gz from
+   3. Download the HDF4.2r4 source code archive HDF4.2r4.tar.gz from
       ftp://ftp.hdfgroup.org/HDF/HDF_Current/src and use 7zip or WinZip
       to extract HDF4 source code into c:\MyHDFstuff.  This creates a 
-      directory called 'HDF4.2r3' under MyHDFstuff which contains 
-      several files and directories.  Rename "HDF4.2r3" to "HDF42r3".  
+      directory called 'HDF4.2r4' under MyHDFstuff which contains 
+      several files and directories.  Rename "HDF4.2r4" to "HDF42r4".  
 
    4. HDF4 provides options to do in-memory compress within HDF4
       library.  Currently, three external compression libraries ZLIB,
@@ -166,15 +166,15 @@ Building Instructions:
 
    1. Run batch file copy_hdf.bat
 
-      Go to  c:\MyHDFstuff\HDF42r3\windows and run copy_hdf.bat. This process will 
+      Go to  c:\MyHDFstuff\HDF42r4\windows and run copy_hdf.bat. This process will 
       copy all the necessary batch files and Windows-specific source code saved 
-      under c:\MyHDFstuff\HDF42r3\windows directory to the corresponding directories 
+      under c:\MyHDFstuff\HDF42r4\windows directory to the corresponding directories 
       under MyHDFstuff.
 
    2. Invoke Microsoft Visual Studio, go to "File" and select the "Open 
       Solution" option. 
 
-      Then open the c:\MyHDFstuff\HDF42r3\windows\proj\all\all.sln solution. 
+      Then open the c:\MyHDFstuff\HDF42r4\windows\proj\all\all.sln solution. 
 
       You should find windows project files listed as "all files, 
       big files etc." on the left.        
@@ -216,11 +216,11 @@ We provide 2 options for users to test HDF4 libraries and utilities.
    3.1 Option 1: Automatic testings
 
    HDF4 comes with various test suites, all of which can be tested with 
-   hdf4check.bat batch file in c:\MyHDFstuff\HDF42r3\ directory.
+   hdf4check.bat batch file in c:\MyHDFstuff\HDF42r4\ directory.
    
    Invoke a command prompt and run hdf4check.bat.  Test results are saved in:
 
-      c:\MyHDFstuff\HDF42r3\check_results.txt.
+      c:\MyHDFstuff\HDF42r4\check_results.txt.
 
    Use a text editor to check the results.  You should not find any FAILED 
    marks in check_results.txt.
@@ -235,14 +235,14 @@ We provide 2 options for users to test HDF4 libraries and utilities.
        User who want to test ONLY HDF4 C libraries and utilities, the
        following DLLs should be placed into the Windows system directory.
        
-       Batch file c:\MyHDFstuff\HDF42r3\install_dll.bat will copy all of 
+       Batch file c:\MyHDFstuff\HDF42r4\install_dll.bat will copy all of 
        following DLLS into system directory.
        
-        HDF42r3\hdf\src\Debug\hd423md.dll
-        HDF42r3\mfhdf\libsrc\Debug\hm423md.dll
+        HDF42r4\hdf\src\Debug\hd423md.dll
+        HDF42r4\mfhdf\libsrc\Debug\hm423md.dll
                                                         
-        HDF42r3\hdf\src\Release\hd423m.dll
-        HDF42r3\mfhdf\libsrc\release\hm423m.dll
+        HDF42r4\hdf\src\Release\hd423m.dll
+        HDF42r4\mfhdf\libsrc\release\hm423m.dll
           
        3.2.2 Test HDF4 C library
        
@@ -280,7 +280,7 @@ Follow the instructions below to run "ncgen -c test" on Windows.
       Invoke Microsoft Visual Studio, go to "File" and select the
       "Open Solution" option. 
 
-      Then open the c:\MyHDFstuff\HDF42r3\windows\proj\all\all.sln solution. 
+      Then open the c:\MyHDFstuff\HDF42r4\windows\proj\all\all.sln solution. 
 
    2. Build ctest0.exe
 
@@ -303,17 +303,17 @@ Follow the instructions below to run "ncgen -c test" on Windows.
       When the debug build is done the directories listed below will
       contain the following files:
 
-         c:\MyHDFstuff\HDF42r3\mfhdf\ncgen\Debug
+         c:\MyHDFstuff\HDF42r4\mfhdf\ncgen\Debug
 
                ctest0.exe - Debug version
 
-         c:\MyHDFstuff\HDF42r3\mfhdf\ncgen\Release
+         c:\MyHDFstuff\HDF42r4\mfhdf\ncgen\Release
 
                ctest0.exe - Release version
 
    3. Run ncgen -c Test
 
-      A batch file named ncgen_ctest.bat under c:\MyHDFstuff\HDF42r3\
+      A batch file named ncgen_ctest.bat under c:\MyHDFstuff\HDF42r4\
       is provided to run "ncgen -c test".
 
       ncgen_ctest.bat has 2 options:
@@ -335,8 +335,8 @@ Step 4:  Install HDF4 Library
 
 We provide a batch file for users to relocate all HDF4 libraries in one
 folder.  The file is called installhdf4lib.bat under
-c:\MyHDFstuff\HDF42r3 directory.  Run the batch file, you may see a
-folder called hdf4lib under c:\MyHDFstuff\HDF42r3.  
+c:\MyHDFstuff\HDF42r4 directory.  Run the batch file, you may see a
+folder called hdf4lib under c:\MyHDFstuff\HDF42r4.  
     
 The <release> layout of <hdf4lib> should be:
     
@@ -361,7 +361,7 @@ To build and test HDF4 C examples:
       Solution" option. 
       
       Then open the solution
-      c:\MyHDFstuff\HDF42r3\windows\examples\cexamples\proj\allexamples.sln
+      c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\proj\allexamples.sln
 
    2. Select "Build", then Select "Set Active Configuration".
 
@@ -375,7 +375,7 @@ To build and test HDF4 C examples:
 
       When the debug build or release build is done, there should be the 
       following output files in 
-      c:\MyHDFstuff\HDF42r3\windows\examples\cexamples\Debug
+      c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\Debug
 
           chgnamtest.exe
           createtest.exe
@@ -391,9 +391,9 @@ To build and test HDF4 C examples:
        Similar output will be in the Release directory for release build.
 
    3. Invoke a command prompt window and run the batch file InstallExamples.bat 
-      which resides in the top level directory (c:\MyHDFstuff\HDF42r3\).  This 
+      which resides in the top level directory (c:\MyHDFstuff\HDF42r4\).  This 
       file creates 2 new directories, examplesREL and examplesDBG in the 
-      c:\MyHDFstuff\HDF42r3\windows\examples\cexamples directory and places all 
+      c:\MyHDFstuff\HDF42r4\windows\examples\cexamples directory and places all 
       the executables in it.  Both the release and debug versions of the 
       examples should be built before this step is done.  The examples should be 
       tested in these 2 new directories due to some dependencies between the 
@@ -415,8 +415,8 @@ and linking in the HDF4 libraries:
    <top-level HDF directory>\include
 
 where <top-level HDF directory> may be
-c:\MyHDFstuff\HDF42r3\hdf4lib\release or
-c:\MyHDFstuff\HDF42r3\hdf4lib\debug
+c:\MyHDFstuff\HDF42r4\hdf4lib\release or
+c:\MyHDFstuff\HDF42r4\hdf4lib\debug
 
 If you have installed HDF4 library in Section I, Step 5.
 
@@ -476,7 +476,7 @@ HDF4 DLLs should also be copied to the system directory (for example,
 C:\Windows\system) where the application can find. 
 
 Note: You can also follow the above instructions in this section if want to 
-      build an application using the HDF42r3 binary distributions available from
+      build an application using the HDF42r4 binary distributions available from
       ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin/windows.
 
       Make sure to download appropriate binary distribution based on your 
@@ -518,9 +518,9 @@ following modifications:
        6.0 project files for building libraries and examples.  When opening
        projects, look for the "proj_vs6" folder, rather than "proj".  For
        example, to open the main HDF4 workspace, you would look for "all.dsw"
-       in c:\MyHDFstuff\HDF42r3\windows\proj_vs6\all\.  Similarly, you can
+       in c:\MyHDFstuff\HDF42r4\windows\proj_vs6\all\.  Similarly, you can
        build C example applications by opening "allexamples.dsw" in
-       c:\MyHDFstuff\HDF423r3\windows\examples\cexamples\proj_vs6\.
+       c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\proj_vs6\.
        
     2. Building Fortran libraries with Visual Studio 6.0 is not supported.
        Therefore, Fortran projects are disabled in the project files by default,
@@ -534,7 +534,7 @@ following modifications:
        Studio 6.0.  The build process in Visual Studio .NET 2003 and above 
        internally generates source file test0.c.  If you are using Visual Studio
        6.0, you must generate this file manually.  To do so, we provide a batch 
-       file "ctest0_gen.bat" under c:\MyHDFstuff\HDF42r3\ directory.  Run this 
+       file "ctest0_gen.bat" under c:\MyHDFstuff\HDF42r4\ directory.  Run this 
        script from a command prompt with the following options:
       
          ctest0_gen debug    -- generate test0.c with debug ncgen 
@@ -558,9 +558,9 @@ Please refer to Section I, with a few minor changes:
        building libraries and examples.  When opening projects, look for the 
        "proj_vnet" folder, rather than "proj".  For example, to open the main 
        HDF4 workspace, you would look for "all.sln" in 
-       c:\MyHDFstuff\HDF42r3\windows\proj_vnet\all\.  Similarly, you can
+       c:\MyHDFstuff\HDF42r4\windows\proj_vnet\all\.  Similarly, you can
        build C example applications by opening "allexamples.sln" in
-       c:\MyHDFstuff\HDF423r3\windows\examples\cexamples\proj_vnet\.  Use
+       c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\proj_vnet\.  Use
        similar directories for building Fortran libraries.
 
     2. Be sure to download the correct external library binaries from the FTP.  
@@ -615,7 +615,7 @@ Step 1: Build HDF4 Libraries and Utilities
 Building Instructions:
 
    1. Rather than using the solution "all.sln", open "all_fortran.sln" which
-      is located in c:\MyHDFstuff\HDF42r3\windows\proj\all_fortran\ directory.
+      is located in c:\MyHDFstuff\HDF42r4\windows\proj\all_fortran\ directory.
 
       You should see normal Visual Studio projects, as well as pre-converted
       Intel Fortran projects.
@@ -634,20 +634,20 @@ Step 2: Test HDF4 Libraries and Utilities
     2. You can also test debug and release versions of HDF4 Fortran and C 
        libraries and utilities seperately.  The following DLLs should be placed
        in the Windows system directory, in addition to those listed in Section 
-       I.  A batch file, c:\MyHDFstuff\HDF42r3\install_fortrandll.BAT, will
+       I.  A batch file, c:\MyHDFstuff\HDF42r4\install_fortrandll.BAT, will
        copy all of the DLLs for you.
        
-        c:\MyHDFstuff\HDF42r3\hdf\src\Debug\hdf_fcstubdlld.dll
-        c:\MyHDFstuff\HDF42r3\hdf\src\Debug\hdf_fortrandlld.dll
-        c:\MyHDFstuff\HDF42r3\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
-        c:\MyHDFstuff\HDF42r3\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
-        c:\MyHDFstuff\HDF42r3\hdf\test\Debug\dlllibtest_fcstubd.dll
+        c:\MyHDFstuff\HDF42r4\hdf\src\Debug\hdf_fcstubdlld.dll
+        c:\MyHDFstuff\HDF42r4\hdf\src\Debug\hdf_fortrandlld.dll
+        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
+        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
+        c:\MyHDFstuff\HDF42r4\hdf\test\Debug\dlllibtest_fcstubd.dll
 
-        c:\MyHDFstuff\HDF42r3\hdf\src\Release\hdf_fcstubdll.dll
-        c:\MyHDFstuff\HDF42r3\hdf\src\Release\hdf_fortrandll.dll
-        c:\MyHDFstuff\HDF42r3\mfhdf\fortran\Release\mfhdf_fortrandll.dll
-        c:\MyHDFstuff\HDF42r3\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
-        c:\MyHDFstuff\HDF42r3\hdf\test\Release\dlllibtest_fcstub.dll      
+        c:\MyHDFstuff\HDF42r4\hdf\src\Release\hdf_fcstubdll.dll
+        c:\MyHDFstuff\HDF42r4\hdf\src\Release\hdf_fortrandll.dll
+        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Release\mfhdf_fortrandll.dll
+        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
+        c:\MyHDFstuff\HDF42r4\hdf\test\Release\dlllibtest_fcstub.dll      
         
        To test debug version of HDF4 C and Fortran libraries, run 
        Win32debugtst.bat with the following command:
@@ -669,7 +669,7 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
    1. Invoke Visual Studio, go to "File" and select the "Open Solution" option.
 
       Then open the soltuion
-      c:\MyHDFstuff\HDF42r3\windows\examples\f90examples\proj\allf90examples.sln.
+      c:\MyHDFstuff\HDF42r4\windows\examples\f90examples\proj\allf90examples.sln.
 
    2. Select "Build", then Select "Configuration Manager".
 
@@ -683,7 +683,7 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
 
       When the debug build or release build is done, there should be the 
       following output files in 
-      c:\MyHDFstuff\HDF42r3\windows\examples\f90examples\Debug
+      c:\MyHDFstuff\HDF42r4\windows\examples\f90examples\Debug
 
           createtest.exe
           gitest.exe
@@ -697,9 +697,9 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
        Similar output will be in the Release directory for release build.
        
    3. Invoke a command prompt and run the batch file Installf90Examples.bat 
-      which resides in the top level directory (c:\MyHDFstuff\HDF42r3\).  This 
+      which resides in the top level directory (c:\MyHDFstuff\HDF42r4\).  This 
       file creates 2 new directories, f90examplesREL and f90examplesDBG in the 
-      c:\MyHDFstuff\HDF42r3\windows\f90xamples\cexamples directory and places 
+      c:\MyHDFstuff\HDF42r4\windows\f90xamples\cexamples directory and places 
       all the executables in them.  Both the release and debug versions of the 
       examples should be built before this step is done.  The examples should be 
       tested in these 2 new directories due to some dependencies between the 
@@ -720,7 +720,7 @@ can be removed completely, or szip can be used without encoding.
 
 Option 1: Remove Szip compression completely:
 
-   1. Open the H4config.h file from the c:\MyHDFstuff\HDF42r3\hdf\src
+   1. Open the H4config.h file from the c:\MyHDFstuff\HDF42r4\hdf\src
       directory and remove(or comment out) the following three lines: 
 
          #define H4_HAVE_LIBSZ 1
@@ -779,7 +779,7 @@ Option 2: Remove Szip Compression in HDF4
           The Szip library and header path should also be set up accordingly 
           (refer to precondition 6).
 
-      2. Open the H4config.h file from the c:\MyHDFstuff\HDF42r3\hdf\src
+      2. Open the H4config.h file from the c:\MyHDFstuff\HDF42r4\hdf\src
          directory and remove(or comment out) the following line: 
 
          #define HAVE_SZIP_ENCODER 1
@@ -791,7 +791,7 @@ Option 2: Remove Szip Compression in HDF4
       
 Section VIII:  Use HDF4 with Original netCDF Library
 ======================================================================
-Note: This option has not been extensively tested in HDF4.2r3, and is therefore
+Note: This option has not been extensively tested in HDF4.2r4, and is therefore
       unsupported.  However, we provide documentation for users that would like
       to test this feature.
 
@@ -799,7 +799,7 @@ HDF4 Contains its own implementation of the netCDF library.  To use HDF4 in an
 application also utilizing the original netCDF library, make the following
 change:
 
-      Open the H4config.h file from the c:\MyHDFstuff\HDF42r3\hdf\src
+      Open the H4config.h file from the c:\MyHDFstuff\HDF42r4\hdf\src
       directory and remove(or comment out) the following line: 
 
          #define H4_HAVE_NETCDF
@@ -1148,7 +1148,7 @@ Project name and location issues:
    The file Win32.zip is now depreciated.  Instead, use copy_hdf.BAT in the 
    .\windows directory.
 
-   If you must install project files in another directory relative to HDF42r3\ , 
+   If you must install project files in another directory relative to HDF42r4\ , 
    you will be asked to locate all sub-project files when you open the project 
    all.sln.
 
