@@ -157,14 +157,18 @@ HDF 4.2 Release 4 has been tested on the following platforms:
     (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m 
 
 
-    Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
-         SMP i686 i386            G95 (GCC 4.0.3 (g95 0.92!) April 18 2007)
-    (jam)                         PGI C, Fortran, C++ 7.2-1 32-bit
+    Linux 2.6.18-92.1.22.el5xen   gcc (GCC) 4.1.2
+         #1 SMP i686 i686 i386    G95 (GCC 4.0.3 (g95 0.92!) July 1 2008)
+    (jam)                         PGI C, Fortran, C++ 7.2-5 32-bit
                                   Intel(R) C Compiler for 32-bit
-                                      applications, Version 10.1
+                                      applications, Version 10.1.018
                                   Intel(R) Fortran Compiler for 32-bit
-                                      applications, Version 10.1
-                                  Absoft 32-bit Fortran 95 10.0.4
+                                      applications, Version 10.1.018
+                                  Absoft 32-bit Fortran 95 10.0.7
+
+    Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
+         SMP i686 i386            g++ (GCC) 3.4.6
+    (kagiso)                      G95 (GCC 4.0.3 (g95 0.92!) April 18 2007)
 
     Linux 2.6.16.46-0.12-debug #1 Intel(R) C Compiler Version 10.0.025
         SMP ia64 GNU/Linux        Intel(R) Fortran Itanium(R) Version 10.0.025
@@ -185,9 +189,9 @@ HDF 4.2 Release 4 has been tested on the following platforms:
     (linew)                       Sun WorkShop 6 update 2 Fortran 95 8.2
                                   Patch 121019-09 
 
-    Xeon Linux 2.6.9-42.0.10.EL_lustre-1.4.10.1smp
-    (abe)                         Intel(R) C Compiler Version 10.0.026
-                                  Intel(R) Fortran Compiler Version 10.0.026
+    Xeon Linux 2.6.18-92.1.10.el5_lustre.1.6.6smp-perfctr
+         #2 SMP x86_64            Intel(R) C Compiler Version 10.0.026
+    (abe)                         Intel(R) Fortran Compiler Version 10.0.026
 
     IA-64 Linux 2.4.21.SuSE_292.til1
         ia64                      
