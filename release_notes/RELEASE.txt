@@ -238,8 +238,9 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    working with data created with a pre-4.2r2 library. 
 
    The functions SDgetnumvars_byname and SDnametoindices are provided
-   to help identify and correct such name conflicts; see their entries 
-   in the HDF Reference Manual for further details. 
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for 
+   further details.
 
 o  This release does not support VMS systems.
 
