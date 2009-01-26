@@ -234,8 +234,8 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    HDF4 Library Releases 4.2r2 and later do not allow this conflict to
    occur.  On the other hand, recent libraries are also unable to detect
    such conflicts that already exist in a file.  It is therefore STRONGLY
-   recommended to check for and correct such name duplication before
-   working with data created with a pre-4.2r2 library. 
+   recommended to check for such name duplication before working with data 
+   created with a pre-4.2r2 library. 
 
    The functions SDgetnumvars_byname and SDnametoindices are provided
    to help detect such name conflicts and select the correct object to
