@@ -206,13 +206,17 @@ HDF 4.2 Release 4 has been tested on the following platforms:
 
     Windows XP                    Visual Studio 6.0
                                   Visual Studio .NET (with Intel Fortran 9.1)
-                                  Visual Studio 2005 (with Intel Fortran 9.1)
-                                  cygwin (gcc 3.4.4)
+                                  Visual Studio 2005 (with Intel Fortran 9.1/10.1)
+                                  Visual Studio 2008 (with Intel Fortran 10.1)
+                                  cygwin (gcc 3.4.4 and g95 0.90!)
 
-    Windows XP(64 bit)            Visual Studio 2005(with Intel Fortran 9.1)
+    Windows XP(64 bit)            Visual Studio 2005 (with Intel Fortran 9.1/10.1)
+                                  Visual Studio 2008 (with Intel Fortran 10.1)
                                   
-    Windows Vista                 Visual Studio 2005 (no Fortran)
-                                  Visual Studio 2008 (no Fortran)
+    Windows Vista                 Visual Studio 2008 (with Intel Fortran 10.1)
+                                  cygwin (gcc 3.4.4 and g95 0.90!)
+                                  
+    Windows Vista(64 bit)         Visual Studio 2008 (with Intel Fortran 10.1)
                                   
     MAC OS X Intel                Darwin 9.4.0
                                   i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
