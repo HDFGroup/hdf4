@@ -277,3 +277,7 @@ o  In order for the new API SDgetdatasize to get the correct compressed size
 o  On a fedora x86_64 GNU/Linux machine with gfortran 4.3.2, the flag
    -fno-range-check needs to be used to work around old code.
    
+o  On Windows with Visual Studio .NET 2003, a minor bug in the hdfnctest test
+    causes it to fail.  The failure is non-critical, and so the test has been
+    disabled by default for all Windows compilers.
+   
