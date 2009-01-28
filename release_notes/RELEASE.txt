@@ -228,6 +228,9 @@ HDF 4.2 Release 4 has been tested on the following platforms:
         x86_64 GNU/Linux          gcc (GCC) 4.3.2
      (Fedora 10)                  gfortran GNU Fortran (GCC) 4.3.2 20081105 
                                                        (Red Hat 4.3.2-7)
+    Linux 2.6.27.9-generic #1 SMP 
+        x86_64 GNU/Linux          gcc (GCC) 4.3.2
+     (Ubuntu 8.10)                gfortran GNU Fortran (GCC) 4.3.2 
 
 
 Known problems
