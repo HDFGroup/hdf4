@@ -89,6 +89,8 @@ New features and changes
 Support for new platforms and compilers
 =======================================
         Linux 2.6.27 x86_64 Fedora 10 with GNU C and gfortran
+                            Ubuntu 8.10 with GNU C and gfortran
+                            OpenSuse 11.1 with GNU C and gfortran
 
         Mac Intel with GNU C, gfortran, g95 and Intel 10.1 32-bit 
         C and Fortran compilers
@@ -228,9 +230,13 @@ HDF 4.2 Release 4 has been tested on the following platforms:
         x86_64 GNU/Linux          gcc (GCC) 4.3.2
      (Fedora 10)                  gfortran GNU Fortran (GCC) 4.3.2 20081105 
                                                        (Red Hat 4.3.2-7)
-    Linux 2.6.27.9-generic #1 SMP 
+    Linux 2.6.27-9-generic #1 SMP 
         x86_64 GNU/Linux          gcc (GCC) 4.3.2
      (Ubuntu 8.10)                gfortran GNU Fortran (GCC) 4.3.2 
+                                                       
+    Linux 2.6.27.7-9-default #1 SMP 
+        x86_64 GNU/Linux          gcc (GCC) 4.3.2
+     (OpenSuse 11.1)              gfortran GNU Fortran (GCC) 4.3.2 
 
 
 Known problems
