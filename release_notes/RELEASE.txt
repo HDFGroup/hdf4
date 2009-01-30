@@ -1,13 +1,13 @@
 
-                          HDF 4.2 Release 4  
+                          HDF 4.2 Release 4-post*  
                           =================
-                          January 25, 2009
+                          January 30, 2009
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2r3 and HDF 4.2r4
+This document describes the differences between HDF 4.2r4 and HDF 4.2r4-post*
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2r4
+and wish to migrate to HDF 4.2r4-post*
 
 The HDF 4.2r4 documentation can be found on the The HDF Group's FTP server:
 
@@ -29,7 +29,7 @@ CONTENTS
   -- Library
   -- Utilities
 - Support for new platforms and compilers
-- Bugs fixed since HDF4.2r3
+- Bugs fixed since HDF4.2r4
   -- Utilities
   -- Library
   -- Configuration
@@ -42,97 +42,35 @@ New features and changes
 ========================
     Configuration
     ============= 
-        - Automake 1.10.1 used to generate Makefile.in files, and 
-          Autoconf 2.61 used to generate configure script. MAM - 2008/10/09
-        - Libtool support (2.2.6a) has been added, and HDF4 shared C 
-          libraries can now be built. To build, use the --enable-shared 
-          configuration flag. This needs to be used in conjunction with 
-          the --disable-fortran flag, as Fortran shared libraries are not 
-          supported. Shared libraries are disabled by default. 
-          MAM - 2008/10/09
-        - Added SZIP information to end of configure summary, which indicates
-          whether SZIP is present and, if SZIP is present, whether the SZIP
-          encoder is present.  MAM - 2008/10/06
+        - 
+          EIP - YEAR/MO/DA
 
     Library
     ========= 
-        - Added new API SDgetdatasize to retrieve the compressed and original
-          sizes of an SDS' data.  Its limitation is listed in the "Known 
-          problems" section at the end of this document.
-          intn SDgetdatasize(int32 sdsid, int32* comp_size, int32* orig_size)
-                sdsid     - IN: dataset ID
-                comp_size - OUT: size of compressed data
-                orig_size - OUT: size of original data 
-          BMR - 2008/10/15
-
-        - The following Fortran APIs were added in this release:
-                sfgetname
-                sfgetnamelen
-                sfgmaxopenf
-                sfgnumopenf
-                sfrmaxopenf
-                sfidtype
-                sfgnvars_byname
-                sfn2indices
-          Please see HDF Reference Manual for functions description.
-          Note: These APIs are not available on Windows.
+        - 
 
     Utilities
     ========= 
-        - hrepack output now includes dataset compression ratios.
-          PVN - 2008/10/30
-        - hdp now displays various parameters of Gzip, Szip, and Skipping
-          Huffman compressions when a dataset is compressed. (Bugzilla 1202)
-          BMR - 2008/10/03
+        - 
 
 
 Support for new platforms and compilers
 =======================================
-        Linux 2.6.27 x86_64 Fedora 10 with GNU C and gfortran
-                            Ubuntu 8.10 with GNU C and gfortran
-                            OpenSuse 11.1 with GNU C and gfortran
-
-        Mac Intel with GNU C, gfortran, g95 and Intel 10.1 32-bit 
-        C and Fortran compilers
-
-          Note: Only the 32-bit version of the Intel compiler is supported. 
-
-          One has to run configuration scripts, which can be found under 
-          the bin directories in the Intel compiler installation directory 
-          tree (e.g., /opt/intel/cc/10.1.006/bin/iccvars.csh and 
-          /opt/intel/fc/10.1.006/bin/ifortvars.csh), to enable the
-          32-bit version of the compiler before configuring and building HDF4.
-
-          Known problems: 
-          Due to a known bug in the Intel 10.1 icc compiler, one has to use
-          -no-multibyte-chars flag with icc. O0 flag with ifort is required
-          to build Fortran APIs and tests. This restriction is probably due
-          to very old Fortran code and will be lifted for future releases.  
         
 
-Bugs fixed since HDF4.2r3
+Bugs fixed since HDF4.2r4
 =========================
     Utilities
     ========= 
-        - hrepack previously failed to preserve unlimited dataset dimensions; 
-          they are now preserved.  PVN - 2008/11/19
+        - 
 
     Library
     ========= 
-        - SDreaddata now checks for out-of-range values in the parameter 
-          'stride' and fails when invalid values are given (Bugzilla 150.)  
-          This bug was actually fixed right before the HDF4.2r2 release.  
-          BMR - 2008/07/14
-        - Reading a record variable using nc API fills the buffer with fill
-          values up to the maximum number of records of all unlimited
-          dimension variables in the file, as in netCDF.  It used to fail
-          before (Bugzilla 1378.) - BMR 2009/01/21
-        - When the file name is too long, some SD APIs caused a segmentation 
-          fault (Bugzilla 1331.)  This problem is now fixed. - BMR 2009/01/23
+        - 
 
     Configuration
     ============= 
-        - hdiff_array.c now gets linked against libm.a library. 
+        - 
 
 Documentation
 ==============
