@@ -19,8 +19,12 @@
  *	  test_empty_SDSs      - tests on empty chunked and chunked/comp SDSs
  *	  test_chunked_partial - tests on chunked and partially written SDS
  *	  test_chkcmp_SDSs     - tests chunked/compressed SDSs
+ *	  test_extend_SDSs     - tests SDSs with unlimited dimensions
  *    check_datasizes - utility routine that calls SDgetdatasize and verifies 
  *		the retrieved data sizes.
+ * NOTE: At this time, SDgetdatasize will not return the correct compressed
+ *	size unless SDreaddata or SDendaccess is called between SDwritedata
+ *	and SDgetdatasize.
 ****************************************************************************/
 
 #include "mfhdf.h"
@@ -504,6 +508,81 @@ static intn test_chkcmp_SDSs(int32 fid)
     return num_errs;
 } /* test_chkcmp_SDSs */
 
+/* Test SDSs with unlimited dimensions.  This routine creates SDSs with
+   unlimited dimensions, writes data to it, and checks the sizes returned 
+   by SDgetdatasize
+ */
+static intn test_extend_SDSs(int32 fid)
+{
+    int32 sds_id, sds_index;
+    int32 dimsize[2], start[2], edges[2];
+    int32 dimsize1[1], start1[1], edges1[1];
+    int32 data[Y_LENGTH][X_LENGTH];
+    float fdata[Y_LENGTH];
+    int32 output[Y_LENGTH][X_LENGTH];
+    intn  status;
+    int   i, j;
+    int   num_errs = 0;		/* number of errors so far */
+
+    /* Initialize data for the dataset */
+    for (j = 0; j < Y_LENGTH; j++) {
+        for (i = 0; i < X_LENGTH; i++)
+            data[j][i] = (i + j) + 1;
+    }
+
+    /* Create a 2x2 dataset called "EmptyDataset" */
+    dimsize[0] = SD_UNLIMITED;
+    dimsize[1] = X_LENGTH;
+    sds_id = SDcreate(fid, "AppendableDataset 1", DFNT_INT32, 2, dimsize);
+    CHECK(sds_id, FAIL, "test_extend_SDSs: SDcreate 'AppendableDataset 1'");
+
+    /* Write the stored data to the dataset */
+    start[0] = start[1] = 0;
+    edges[0] = Y_LENGTH;
+    edges[1] = X_LENGTH;
+    status = SDwritedata(sds_id, start, NULL, edges, (VOIDP)data);
+    CHECK(sds_id, FAIL, "test_extend_SDSs: SDwritedata");
+
+    /* Check data. */
+    HDmemset(&output, 0, sizeof(output));
+    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP)output);
+    CHECK(sds_id, FAIL, "test_extend_SDSs: SDreaddata");
+    /* Initialize data for the dataset */
+    for (j = 0; j < Y_LENGTH; j++)
+        for (i = 0; i < X_LENGTH; i++)
+	    if (output[j][i] != data[j][i])
+		fprintf(stderr, "Read value (%d) differs from written (%d) at [%d,%d]\n", output[j][i], data[j][i], j, i);
+
+    /* Close this SDS */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+
+    /* Check that this SDS is empty */
+    check_datasizes(fid, "AppendableDataset 1", Y_LENGTH*X_LENGTH*SIZE_INT32, Y_LENGTH*X_LENGTH*SIZE_INT32, &num_errs);
+
+    /* Create another dataset with 1 unlimited dimension */
+    sds_id = SDcreate(fid, "AppendableDataset 2", DFNT_FLOAT64, 1, dimsize);
+    CHECK(sds_id, FAIL, "test_extend_SDSs: SDcreate 'AppendableDataset 2'");
+
+    /* Define the location and size of the data to be written to the dataset */
+    start1[0] = 0;
+    edges1[0] = Y_LENGTH;
+
+    /* Write the stored data to the dataset */
+    status = SDwritedata(sds_id, start1, NULL, edges1, (VOIDP)fdata);
+    CHECK(sds_id, FAIL, "test_extend_SDSs: SDwritedata");
+
+    /* Close this SDS */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+
+    /* Check the size of the data of this SDS */
+    check_datasizes(fid, "AppendableDataset 2", Y_LENGTH*SIZE_FLOAT64, Y_LENGTH*SIZE_FLOAT64, &num_errs);
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+} /* test_extend_SDSs */
+
 /* Test driver for testing the API SDgetdatasize. */
 extern int test_datasizes()
 {
@@ -525,6 +604,8 @@ extern int test_datasizes()
     num_errs = num_errs + test_chunked_partial(fid);
     /* Test chunked SDSs */
     num_errs = num_errs + test_chkcmp_SDSs(fid);
+    /* Test extendable SDSs */
+    num_errs = num_errs + test_extend_SDSs(fid);
 
     /* Close the file */
     status = SDend(fid);
