@@ -1974,6 +1974,13 @@ HCPgetdatasize(int32 file_id,
 	     if (HMCgetdatasize(file_id, p, comp_size, orig_size)==FAIL)
 		  HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	    }
+
+	    /* unlimited dimension falls in here */
+	    else if (sp_tag == SPECIAL_LINKED)
+	    {
+		INT32DECODE(p, len);	/* get total data length */
+		*orig_size = *comp_size = len;	/* set data sizes */
+	    }
 	} /* else, data_id is special */
 
 	/* end access to the aid */
