@@ -55,7 +55,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\..\..\..\hdf\src\Release\hd423.lib" /NODEFAULTLIB
+# ADD LIB32 /nologo /out:"..\..\..\..\hdf\src\Release\hd424.lib" /NODEFAULTLIB
 
 !ELSEIF  "$(CFG)" == "hdf - Win32 Debug"
 
@@ -83,7 +83,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\..\..\..\hdf\src\Debug\hd423d.lib" /NODEFAULTLIB
+# ADD LIB32 /nologo /out:"..\..\..\..\hdf\src\Debug\hd424d.lib" /NODEFAULTLIB
 
 !ELSEIF  "$(CFG)" == "hdf - Win32 AlphaDbg"
 

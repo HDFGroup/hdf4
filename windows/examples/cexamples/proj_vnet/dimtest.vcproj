@@ -39,7 +39,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd423.lib hm423.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\Release/dimtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd423d.lib hm423d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\Debug/dimtest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\hdf\src\Release\hd423.lib"
+				OutputFile="..\..\..\..\hdf\src\Release\hd424.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -141,7 +141,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\hdf\src\Debug\hd423d.lib"
+				OutputFile="..\..\..\..\hdf\src\Debug\hd424d.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -215,7 +215,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\hdf\src\Release\hd423.lib"
+				OutputFile="..\..\..\..\hdf\src\Release\hd424.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -287,7 +287,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\hdf\src\Debug\hd423d.lib"
+				OutputFile="..\..\..\..\hdf\src\Debug\hd424d.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
