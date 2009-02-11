@@ -102,10 +102,6 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r4.
                    <--with-szlib=/path_to_SZIP_install_directory>
                    --prefix=/path_to_HDF4_install_directory
 
-       * When building Fortran libraries, the Fortran compiler may be specified
-         by setting F77 in the environment prior to running configure.  Also,
-         you must set the environment variable EXEEXT as empty.  This is due to
-         a cygwin-specific bug in configure.
        * Please note that when szlib option is not used, SZIP Library will not
          be configured in and SZIP compression will not be enabled.
        * If your system has ZLIB and/or JPEG libraries installed under a
@@ -123,12 +119,7 @@ Notes: Use the configure command in the top level HDF4 directory hdf4.2r4.
 
   4.2 To build and run the tests
 
-        export EXEEXT=
-        make -e check >& check.out
-        
-      Note: We must export EXEEXT and use the -e flag for make due to a bug in
-            Cygwin and make.  This is especially important for testing Fortran 
-            libraries.
+        make check >& check.out
 
 5. To Install:
 

@@ -258,7 +258,7 @@ buffer_LDADD = ../src/libdf.la
 buffer_DEPENDENCIES = ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@fortest_SOURCES = fortest.c
 @HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
 @HDF_BUILD_FORTRAN_TRUE@                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
 @HDF_BUILD_FORTRAN_TRUE@                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \

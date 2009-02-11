@@ -32,7 +32,7 @@ buffer_DEPENDENCIES = ../src/libdf.la
 if HDF_BUILD_FORTRAN
 fortest_SOURCES = fortest.c
 fortest_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-fortest_DEPENDENCIES = testdir fortestF ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 
 fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
