@@ -238,11 +238,11 @@ We provide 2 options for users to test HDF4 libraries and utilities.
        Batch file c:\MyHDFstuff\HDF42r4\install_dll.bat will copy all of 
        following DLLS into system directory.
        
-        HDF42r4\hdf\src\Debug\hd423md.dll
-        HDF42r4\mfhdf\libsrc\Debug\hm423md.dll
+        HDF42r4\hdf\src\Debug\hd424md.dll
+        HDF42r4\mfhdf\libsrc\Debug\hm424md.dll
                                                         
-        HDF42r4\hdf\src\Release\hd423m.dll
-        HDF42r4\mfhdf\libsrc\release\hm423m.dll
+        HDF42r4\hdf\src\Release\hd424m.dll
+        HDF42r4\mfhdf\libsrc\release\hm424m.dll
           
        3.2.2 Test HDF4 C library
        
@@ -438,11 +438,11 @@ Under "Show directories for", select "Library files":
 Under Project->Properties, select folder, Linker, and then Input:
    Add the following libraries to the beginning of the list of "Additional
    Dependencies":
-      hd423.lib hm423.lib xdr.lib Ws2_32.lib (single-threaded release version)
-      hd423d.lib hm423d.lib xdr.lib Ws2_32.lib (single-threaded debug version)
+      hd424.lib hm424.lib xdr.lib Ws2_32.lib (single-threaded release version)
+      hd424d.lib hm424d.lib xdr.lib Ws2_32.lib (single-threaded debug version)
 
-      hd423m.lib hm423m.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded release version)
-      hd423md.lib hm423md.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded debug version)
+      hd424m.lib hm424m.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded release version)
+      hd424md.lib hm424md.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded debug version)
 
       (Optional) For applications which use HDF4 Fortran libraries, except the 
       libraries listed above, users should also add the following libraries to 
