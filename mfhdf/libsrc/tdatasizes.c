@@ -504,6 +504,13 @@ static intn test_chkcmp_SDSs(int32 fid)
 	num_errs++;
     }
 
+    /* Terminate access to the data sets. */
+    status = SDendaccess(sds_id);
+    CHECK(sds_id, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedNoDeflateData'");
+
+    status = SDendaccess(cmpsds_id);
+    CHECK(sds_id, FAIL, "test_chkcmp_SDSs: SDendaccess 'ChunkedDeflateData'");
+
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 } /* test_chkcmp_SDSs */
