@@ -785,8 +785,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     NC_dim *dim = NULL;
     intn    varid;
     int32   status;
-    comp_coder_t comp_type;
-    comp_info c_info;
+    comp_coder_t comp_type=COMP_CODE_INVALID;
     uint32  comp_config;
     NC_var * var;
 #ifdef BIG_LONGS
@@ -843,16 +842,14 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
      }
 
     /* Check compression method is enabled */
-    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
-		&comp_type, &c_info);
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+                &comp_type);
 
     if (status != FAIL)
+	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
       {
+	/* Must have decoder to read data */
         HCget_config_info( comp_type , &comp_config);
-        if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
-            /* coder not present?? */
-            HGOTO_ERROR(DFE_NOENCODER, FAIL);
-          }
         if ((comp_config & COMP_DECODER_ENABLED) == 0) {
 	    /* decoder not present?? */
 	    HGOTO_ERROR(DFE_BADCODER, FAIL);
@@ -938,6 +935,8 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     else
         ret_value = SUCCEED;
 
+  /* fprintf(stderr, "done SDreaddata...\n");
+ */ 
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -2451,20 +2450,18 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
-		&comp_type, &c_info);
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+                &comp_type);
 
     if (status != FAIL)
+	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
       {
-	HCget_config_info( comp_type , &comp_config);
-	if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-	    /* coder not present?? */
-	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
-	}
-	if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	/* Must have decoder to write data */
+        HCget_config_info( comp_type , &comp_config);
+        if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
 	    /* encoder not present?? */
 	    HGOTO_ERROR(DFE_BADCODER, FAIL);
-	}
+          }
       }
 
     /* get ready to write */
@@ -4357,11 +4354,8 @@ SDsetcompress(int32 id,                /* IN: dataset ID */
           goto done;
       }
 
+    /* Must have encoder to set compression */
     HCget_config_info(comp_type, &comp_config);
-    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-	/* coder not present?? */
-	HGOTO_ERROR(DFE_BADCODER, FAIL);
-    }
     if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
 	/* encoder not present?? */
 	HGOTO_ERROR(DFE_NOENCODER, FAIL);
@@ -6359,20 +6353,19 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
-		&comp_type, &c_info);
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+                &comp_type);
 
-    if (status != FAIL) {
-	    HCget_config_info( comp_type , &comp_config);
-	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-		/* coder not present?? */
-		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
-	    }
-	    if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-		/* encoder not present?? */
-		HGOTO_ERROR(DFE_BADCODER, FAIL);
-	    }
-    }
+    if (status != FAIL)
+	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+      {
+	/* Must have encoder to write */
+        HCget_config_info( comp_type , &comp_config);
+        if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+	    /* encoder not present?? */
+	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+          }
+      }
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -6573,20 +6566,19 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
       }
 
     /* Check compression method is enabled */
-    status = HCPgetcompinfo(handle->hdf_file, var->data_tag, var->data_ref, 
-		&comp_type, &c_info);
+    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+                &comp_type);
 
-    if (status != FAIL) {
-	    HCget_config_info( comp_type , &comp_config);
-	    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-		/* coder not present?? */
-		    HGOTO_ERROR(DFE_NOENCODER, FAIL);
-	    }
-	    if ((comp_config & COMP_DECODER_ENABLED) == 0) {
-		/* decoder not present?? */
-		HGOTO_ERROR(DFE_BADCODER, FAIL);
-	    }
-    }
+    if (status != FAIL)
+	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+      {
+	/* Must have decoder to read data */
+        HCget_config_info( comp_type , &comp_config);
+        if ((comp_config & COMP_DECODER_ENABLED) == 0) {
+	    /* decoder not present?? */
+	    HGOTO_ERROR(DFE_BADCODER, FAIL);
+          }
+      }
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
