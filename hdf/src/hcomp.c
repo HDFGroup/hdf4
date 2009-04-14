@@ -1738,11 +1738,11 @@ HCPgetcomptype(int32 file_id,
 {
     CONSTR(FUNC, "HCPgetcomptype");	/* for HGOTO_ERROR */
     uint16      ctag, cref;	/* tag/ref for the special info header object */
-    int32       data_id;	/* temporary AID for header info */
-    int32	temp_aid;	/* temporary AID for header info */
+    int32       data_id=0;	/* temporary AID for header info */
+    int32	temp_aid=0;	/* temporary AID for header info */
     int32	data_len;	/* offset of the data we are checking */
     uint8      *p;		/* pointers to the temporary buffer */
-    uint8      *local_ptbuf;	/* temporary buffer */
+    uint8      *local_ptbuf=NULL;	/* temporary buffer */
     uint16	sp_tag;		/* special tag */
     uint16	c_type;		/* compression type */
     filerec_t  *file_rec;	/* file record */
@@ -1833,6 +1833,10 @@ HCPgetcomptype(int32 file_id,
 	if (HTPendaccess(data_id)== FAIL)
 	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }
+    else /* no special element */
+    {
+        *comp_type = COMP_CODE_NONE;
+    }
 
 done:
   if(ret_value == FAIL)
@@ -1842,7 +1846,7 @@ done:
             if (Hendaccess(temp_aid)== FAIL)
                 HERROR(DFE_CANTENDACCESS);
         if (data_id != 0)
-            if (Hendaccess(data_id)== FAIL)
+            if (HTPendaccess(data_id)== FAIL)
                 HERROR(DFE_CANTENDACCESS);
 	if (local_ptbuf != NULL)
 	    HDfree(local_ptbuf);
