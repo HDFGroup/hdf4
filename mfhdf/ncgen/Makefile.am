@@ -90,7 +90,7 @@ b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
 	fi
 
 ## Test the "-c" option of ncgen
-c-check:	test2.cdl ctest0
+c-check:	b-check ctest0
 	$(TESTS_ENVIRONMENT) ./ctest0        # tests `-c' option, creates ctest0.nc
 	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
 	@if $(DIFF) test1.cdl ctest1.cdl; then                              \
@@ -102,7 +102,7 @@ if HDF_BUILD_NETCDF
 
 if HDF_BUILD_FORTRAN
 ## Test the "-f" option of ncgen
-f-check:	test1.cdl ftest0
+f-check:	b-check ftest0
 	$(TESTS_ENVIRONMENT) ./ftest0
 	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
 	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
