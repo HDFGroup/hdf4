@@ -4,7 +4,7 @@ Hierarchical Data Format (HDF) Software Library and Utilities
 ---------------------------------------------------------------------------
 
 Hierarchical Data Format (HDF) Software Library and Utilities
-Copyright 2006-2009 by The HDF Group (THG).
+Copyright 2006-2009 by The HDF Group.
 
 NCSA Hierarchical Data Format (HDF) Software Library and Utilities
 Copyright 1988-2006 by the Board of Trustees of the University of Illinois.
@@ -34,15 +34,15 @@ provided that the following conditions are met:
 
 5. Neither the name of The HDF Group, the name of the University, nor the 
    name of any Contributor may be used to endorse or promote products derived 
-   from this software without specific prior written permission from THG, 
-   the University, or the Contributor, respectively.
+   from this software without specific prior written permission from The HDF
+   Group, the University, or the Contributor, respectively.
 
 DISCLAIMER:
-THIS SOFTWARE IS PROVIDED BY THE HDF GROUP (THG) AND THE CONTRIBUTORS 
-"AS IS" WITH NO WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.  In no 
-event shall THG or the Contributors be liable for any damages suffered by 
-the users arising out of the use of this software, even if advised of the 
-possibility of such damage. 
+THIS SOFTWARE IS PROVIDED BY THE HDF GROUP AND THE CONTRIBUTORS "AS IS" 
+WITH NO WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.  In no event 
+shall The HDF Group or the Contributors be liable for any damages suffered 
+by the users arising out of the use of this software, even if advised of 
+the possibility of such damage. 
 
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
