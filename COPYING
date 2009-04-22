@@ -11,11 +11,6 @@ Copyright 1988-2006 by the Board of Trustees of the University of Illinois.
 
 All rights reserved.
 
-Contributors:   National Center for Supercomputing Applications (NCSA) at
-the University of Illinois, Fortner Software, Unidata Program Center (netCDF), 
-The Independent JPEG Group (JPEG), Jean-loup Gailly and Mark Adler (gzip), 
-and Digital Equipment Corporation (DEC).
-
 Redistribution and use in source and binary forms, with or without 
 modification, are permitted for any purpose (including commercial purposes) 
 provided that the following conditions are met:
@@ -50,6 +45,13 @@ the users arising out of the use of this software, even if advised of the
 possibility of such damage. 
 
 ---------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
+Contributors:   National Center for Supercomputing Applications (NCSA) at
+the University of Illinois, Fortner Software, Unidata Program Center (netCDF), 
+The Independent JPEG Group (JPEG), Jean-loup Gailly and Mark Adler (gzip), 
+and Digital Equipment Corporation (DEC).
+
+---------------------------------------------------------------------------
 
 
