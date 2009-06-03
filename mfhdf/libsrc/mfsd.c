@@ -322,11 +322,11 @@ done:
     0 if not OK to overwrite
 
 ******************************************************************************/
-int SDI_can_clobber(const char *name)
+PRIVATE int SDI_can_clobber(const char *name)
 {
-int res;
-struct stat buf;
-FILE *ff;
+    int res;
+    struct stat buf;
+    FILE *ff;
 
     res = stat(name, &buf);
 
@@ -2391,7 +2391,6 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
     intn    varid;
     int32   status;
     comp_coder_t comp_type;
-    comp_info c_info;
     uint32  comp_config;
     NC_var *var;
     NC     *handle = NULL;
@@ -6203,8 +6202,16 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
         goto done;
       }
 
+     /* Data set is empty and not special */
+    if(var->data_ref == 0)
+      {
+	*flags = HDF_NONE; /* regular SDS */
+	ret_value = SUCCEED;
+	goto done;
+      }
+
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
-    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
       {
         ret_value = FAIL;
         goto done;
