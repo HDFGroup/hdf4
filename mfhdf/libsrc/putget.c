@@ -1071,9 +1071,9 @@ hdf_xdr_NCvdata(NC *handle,
                 void * values)
 {
     NC_attr **attr = NULL;  /* pointer to the fill-value attribute */
-    int32   status;
+    int32  status;
     int32  byte_count;	/* total # of bytes of data to be processed */
-    int32  elements_left;/* number of elements still left to be processed */
+    int32  elements_left=0;/* number of elements still left to be processed */
     int32  data_size;	/* size of data block being processed in bytes */
     int32  new_count;	/* computed by dividing number of elements 'count' by 2 since 'count' is too big to allocate temporary buffer */
     int32  bytes_left;
@@ -1081,6 +1081,7 @@ hdf_xdr_NCvdata(NC *handle,
     int8   platntsubclass;  /* the machine type of the current platform */
     int8   outntsubclass;   /* the data's machine type */
     uintn  convert;         /* whether to convert or not */
+    uint8 *pvalues;	    /* pointer to traverse user's buffer "values" */
     int16  isspecial;
     intn   ret_value = SUCCEED;
     int32 alloc_status = FAIL;	/* no successful allocation yet */
@@ -1101,9 +1102,6 @@ hdf_xdr_NCvdata(NC *handle,
            * Fail if there is no data *AND* we were trying to read...
            * Otherwise, we should fill with the fillvalue
            */
-#ifdef DEBUG
-          fprintf(stderr, "hdf_xdr_NCvdata creating new data, check for fill value, vp->data_ref=%d\n",(int)vp->data_ref);
-#endif
           if(vp->data_ref == 0) 
             {
                 if(handle->hdf_mode == DFACC_RDONLY) 
@@ -1444,9 +1442,14 @@ this routine */
 	  /* repeatedly read, convert, and store blocks of data_size
 	     bytes of data into the user's buffer until no more elements
 	     left */
-             elements_left = count;  /* 'count' is number of elements to
-be processed */
-             while( elements_left > 0 )
+
+	    /* number of elements left to be processed */
+            elements_left = count;
+
+	    /* put a ptr at the beginning of the user buffer for read data */
+	    pvalues = values;
+
+	    while( elements_left > 0 )
              {
                 status = Hread(vp->aid, data_size, tBuf);
                 if(status != data_size)  /* amount read != amount specified */
@@ -1455,8 +1458,8 @@ be processed */
                       goto done;
                   }    
                 /* convert and store new_count elements in tBuf into 
-                   the buffer values */
-                if (FAIL == DFKconvert(tBuf, values, vp->HDFtype, (uint32) new_count, DFACC_READ, 0, 0))
+                   the buffer values, pointed to by pvalues */
+                if (FAIL == DFKconvert(tBuf, pvalues, vp->HDFtype, (uint32) new_count, DFACC_READ, 0, 0))
                   {
                       ret_value = FAIL;
                       goto done;
@@ -1472,8 +1475,12 @@ be processed */
                    new_count = elements_left; 
                    data_size = new_count * vp->szof;
                 }
+
+		/* advance pvalues on buffer "values" for next batch of data */
+		pvalues = pvalues + data_size;
               } /* while more elements left to be processed */
-              SDPfreebuf();
+
+              SDPfreebuf();  /* free tBuf and tValues if any exist */
             } /* end if convert */
           else  /* no convert, read directly into the user's buffer */
             {
@@ -1514,12 +1521,18 @@ be processed */
             /* repeatedly convert, store blocks of data_size bytes of data
                from the user's buffer into the temporary buffer, and write 
                out the temporary buffer until no more bytes left */
-            elements_left = count;   /* all elements are left to be processed */
+
+	    /* number of elements left to be processed */
+            elements_left = count;
+
+	     /* put a ptr at the beginning of the user buffer for read data */
+	    pvalues = values;
+
             while( elements_left > 0 )
             {
                /* convert new_count elements in the user's buffer values and 
                   write them into the temporary buffer */
-               if (FAIL == DFKconvert(values, tBuf, vp->HDFtype, (uint32) new_count, DFACC_WRITE, 0, 0))
+               if (FAIL == DFKconvert(pvalues, tBuf, vp->HDFtype, (uint32) new_count, DFACC_WRITE, 0, 0))
                {
                    ret_value = FAIL;
                    goto done;
@@ -1540,23 +1553,22 @@ be processed */
                    new_count = elements_left; 
                    data_size = new_count * vp->szof;
                 }
+
+		/* advance pvalues on buffer "values" for next batch of data */
+		pvalues = pvalues + data_size;
               } /* while more elements left to be processed */
+
             SDPfreebuf();  /* free tBuf and tValues if any exist */
             } /* end if convert */
           else 
           { /* no convert, write directly from the user's buffer */
               status = Hwrite(vp->aid, byte_count, values);
 
-#ifdef DEBUG
-          fprintf(stderr, "hdf_xdr_NCvdata: status=%d\n",(int)status);
-          if(status==FAIL)
-              HEprint(stdout,0);
-#endif
-          if(status != byte_count) 
-            {
-                ret_value = FAIL;
-                goto done;
-            }
+	      if(status != byte_count) 
+	      {
+		ret_value = FAIL;
+		goto done;
+	      }
           } /* no convert */
       } /* XDR_ENCODE */
 
@@ -2217,9 +2229,6 @@ void *values ;
 	/* now accumulate max count for a single io operation */
 	edp = edges + vp->assoc->count - 1 ; /* count is > 0 at this point */
 	iocount = 1 ;
-#ifdef VDEBUG
-	fprintf(stderr, "edp\t%ld\n", (unsigned long)edp - (unsigned long)edges) ;
-#endif /* VDEBUG */
 	for( ; edp >= edp0 ; edp--)
 		iocount *= *edp ;
 	/* now edp = edp0 - 1 */
