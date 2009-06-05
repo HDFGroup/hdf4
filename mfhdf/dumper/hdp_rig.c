@@ -445,12 +445,15 @@ drig(dump_info_t *dumprig_opts,
                                         fprintf(fp, "IMCOMP conmpression.\n");
                                         break;
                                     case DFTAG_JPEG:
-                                        fprintf(fp, "JPEG conmpression (24-bit data).\n");
+                                    case DFTAG_JPEG5:
+                                        fprintf(fp, "JPEG conmpression (24-bit data.)\n");
                                         break;
                                     case DFTAG_GREYJPEG:
-                                        fprintf(fp, "JPEG conmpression (8-bit data).\n");
+                                    case DFTAG_GREYJPEG5:
+                                        fprintf(fp, "JPEG conmpression (8-bit data.)\n");
                                         break;
                                     default:
+                                        fprintf(fp, "Unknown.");
                                         break;
                                     }		/* switch */
                                   fprintf(fp, "\n");
