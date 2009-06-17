@@ -122,9 +122,9 @@ static intn test_szip_SDS8bit()
 
     /* Retrieve compression informayion about the dataset */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    HDmemset(&c_info, 0, sizeof(c_info)) ;
 
-    status = SDgetcompinfo(sds_id, &comp_type, &cinfo);
+    status = SDgetcompinfo(sds_id, &comp_type, &c_info);
     CHECK(status, FAIL, "SDgetcompinfo");
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcompinfo");
 
@@ -668,7 +668,8 @@ static intn test_szip_chunk()
    int32         flag, maxcache, new_maxcache;
    int32         dim_sizes[2], origin[2];
    HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
-   int32         comp_flag;
+   HDF_CHUNK_DEF c_def_out; /* Chunking definitions */ 
+   int32         c_flags, c_flags_out;
    int32         all_data[LENGTH_CH][WIDTH_CH];
    int32         start[2], edges[2];
    int32	 comp_size=0, uncomp_size=0;
@@ -680,6 +681,7 @@ static intn test_szip_chunk()
    comp_info     cinfo;            /* compression information structure */
    int    	 num_errs = 0;     /* number of errors so far */
    int           i,j;
+
    /*
    * Define all chunks.  Note that chunks 4 & 5 are not used to write,
    * only to verify the read data.  The 'row' and 'column' are used
@@ -737,8 +739,8 @@ static intn test_szip_chunk()
     c_def.comp.cinfo.szip.bits_per_pixel = 0;
     c_def.comp.cinfo.szip.pixels = 0;
     c_def.comp.cinfo.szip.pixels_per_scanline = 0;
-    comp_flag = HDF_CHUNK | HDF_COMP;
-    status = SDsetchunk (sds_id, c_def, comp_flag);
+    c_flags = HDF_CHUNK | HDF_COMP;
+    status = SDsetchunk (sds_id, c_def, c_flags);
        CHECK(status, FAIL, "SDsetchunk");
 
     /* Set chunk cache to hold maximum of 3 chunks. */
@@ -746,6 +748,13 @@ static intn test_szip_chunk()
     flag = 0;
     new_maxcache = SDsetchunkcache (sds_id, maxcache, flag);
     CHECK(new_maxcache, FAIL, "SDsetchunkcache");
+
+    HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(sds_id, &c_def_out, &c_flags_out);
+    CHECK(status, FAIL, "SDgetchunkinfo");
+    VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
+    VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
 
     /* 
      * Write chunks using SDwritechunk function.  Chunks can be written 
@@ -925,7 +934,8 @@ static intn test_szip_chunk_3d()
     intn          status;
     int32         dim_sizes[3];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */ 
-    int32         comp_flag;
+    HDF_CHUNK_DEF c_def_out; /* Chunking definitions */ 
+    int32         c_flags, c_flags_out;
     int32         start[3], edges[3];
     int16         fill_value = 0;   /* Fill value */
     comp_coder_t  comp_type;        /* to retrieve compression type into */
@@ -970,12 +980,12 @@ static intn test_szip_chunk_3d()
 
     c_def.comp.cinfo.szip.options_mask = SZ_EC_OPTION_MASK;
     c_def.comp.cinfo.szip.options_mask |= SZ_MSB_OPTION_MASK;
-    c_def.comp.cinfo.szip.bits_per_pixel = 0;
-    c_def.comp.cinfo.szip.pixels = 0;
-    c_def.comp.cinfo.szip.pixels_per_scanline = 0;
-    comp_flag = HDF_CHUNK | HDF_COMP;
-    status = SDsetchunk (sds_id0, c_def, comp_flag);
-    status = SDsetchunk (sds_id, c_def, comp_flag);
+    c_def.comp.cinfo.szip.bits_per_pixel = 2;
+    c_def.comp.cinfo.szip.pixels = 16;
+    c_def.comp.cinfo.szip.pixels_per_scanline = 2;
+    c_flags = HDF_CHUNK | HDF_COMP;
+    status = SDsetchunk (sds_id0, c_def, c_flags);
+    status = SDsetchunk (sds_id, c_def, c_flags);
     CHECK(status, FAIL, "SDsetchunk");
 
     start[0] = 0;
@@ -986,6 +996,20 @@ static intn test_szip_chunk_3d()
     edges[2] = SDS_DIM2;
     status = SDwritedata (sds_id, start, NULL, edges, (VOIDP) out_data); 
     CHECK(status, FAIL, "SDwritedata");
+
+    HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(sds_id0, &c_def_out, &c_flags_out);
+    CHECK(status, FAIL, "SDgetchunkinfo");
+    VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
+    VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
+
+    HDmemset(&c_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(sds_id, &c_def_out, &c_flags_out);
+    CHECK(status, FAIL, "SDgetchunkinfo");
+    VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
+    VERIFY(c_def_out.comp.comp_type, COMP_CODE_SZIP, "SDgetchunkinfo");
 
     /* Terminate access to the data sets. */
     status = SDendaccess (sds_id0);
@@ -1296,7 +1320,7 @@ static intn test_getszipinfo()
     /* Get the compression method and verify it */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     status = SDgetcomptype(sds_id, &comp_type);
-    CHECK(status, FAIL, "SDgetcompinfo");
+    CHECK(status, FAIL, "SDgetcomptype");
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcomptype");
 
     /* Get the compressed data size and non-compressed data size */

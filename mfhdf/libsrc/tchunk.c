@@ -179,10 +179,13 @@ test_chunk()
     int32   *rcdims;             /* for SDgetchunkinfo() */
     uint16  fill_u16 = 0;        /* fill value */
     HDF_CHUNK_DEF chunk_def;     /* Chunk defintion set */ 
+    HDF_CHUNK_DEF chunk_def_out; /* Chunk defintion set */ 
     HDF_CHUNK_DEF rchunk_def;    /* Chunk defintion read */ 
     comp_coder_t comp_type;      /* to retrieve compression type into */
     comp_info cinfo;             /* compression information structure */
     int32   cflags;              /* chunk flags */
+    int32   c_flags;             /* chunk flags to set */
+    int32   c_flags_out;         /* chunk flags retrieved */
     int32   index;       /* Index of dataset in file */
     intn    status;      /* status flag */
     intn    i,j,k;       /* loop variables */
@@ -226,6 +229,14 @@ test_chunk()
         num_errs++;
         goto test2;
       }
+
+    /* Check getting compression info with SDgetchunkinfo */
+    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(newsds8, &chunk_def_out, &c_flags_out);
+    CHECK(status, FAIL, "Chunk Test 1. SDgetchunkinfo");
+    VERIFY(chunk_def_out.chunk_lengths[0], chunk_def.chunk_lengths[0], "SDgetchunkinfo");
+    VERIFY(chunk_def_out.chunk_lengths[1], chunk_def.chunk_lengths[1], "SDgetchunkinfo");
 
     /* Set Chunk cache to hold 2 chunks */
     status = SDsetchunkcache(newsds8, 2, 0);
@@ -960,7 +971,6 @@ test_chunk()
 #endif
     chunk_def.comp.comp_type = COMP_CODE_SKPHUFF; /* Skipping Huffman */
     chunk_def.comp.cinfo.skphuff.skp_size = sizeof(uint16);
-
     status = SDsetchunk(newsds6, chunk_def, HDF_CHUNK | HDF_COMP);
     if(status == FAIL) 
       {
@@ -1000,22 +1010,15 @@ test_chunk()
 
     /*
      * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
+     * Updated: SDgetcompress replaced by SDgetcompinfo - bugzilla# 130,
+     *		4/17/05 -BMR
      */
-    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
-    status = SDgetcompress(newsds6, &comp_type, &cinfo);
-    CHECK(status, FAIL, "Chunk Test 6. SDgetcompress");
-    VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompress");
-    VERIFY(cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "Chunk Test 6. SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds6, &comp_type, &cinfo);
     CHECK(status, FAIL, "Chunk Test 6. SDgetcompinfo");
     VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompinfo");
     VERIFY(cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "Chunk Test 6. SDgetcompinfo");
-    /* end of test for bug#307/bugzilla #130 */
 
     /* Write data use SDwriteChunk */
     start_dims[0] = 0;
@@ -1243,6 +1246,14 @@ test_chunk()
             }
        }
 
+    /* Check getting compression info with SDgetchunkinfo */
+    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(newsds6, &chunk_def_out, &c_flags_out);
+    CHECK(status, FAIL, "Chunk Test 6. SDgetchunkinfo");
+    VERIFY(chunk_def_out.comp.comp_type, comp_type, "Chunk Test 6. SDgetchunkinfo");
+    VERIFY(chunk_def_out.comp.cinfo.skphuff.skp_size, chunk_def.comp.cinfo.skphuff.skp_size, "Chunk Test 6. chunkinfo_new");
+
     /* Close down SDS*/    
     status = SDendaccess(newsds6);
     CHECK(status, FAIL, "Chunk Test 6. SDendaccess");
@@ -1330,6 +1341,11 @@ test_chunk()
         goto test8;
       }
 
+    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(newsds7, &chunk_def_out, &c_flags_out);
+    CHECK(status, FAIL, "Chunk Test 7. SDgetchunkinfo");
+    VERIFY(chunk_def_out.comp.cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "Chunk Test 7. SDgetchunkinfo");
 
     /* Write data */
     start_dims[0] = 0;
@@ -1411,15 +1427,9 @@ test_chunk()
 
     /*
      * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
+     * Updated: SDgetcompress replaced by SDgetcompinfo - bugzilla# 130,
+     *		4/17/05 -BMR
      */
-    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
-    status = SDgetcompress(newsds7, &comp_type, &cinfo);
-    CHECK(status, FAIL, "Chunk Test 6. SDgetcompress");
-    VERIFY(comp_type, chunk_def.comp.comp_type, "Chunk Test 6. SDgetcompress");
-    VERIFY(cinfo.deflate.level, chunk_def.comp.cinfo.deflate.level, "Chunk Test 6. SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds7, &comp_type, &cinfo);
@@ -1479,7 +1489,8 @@ test_chunk()
     chunk_def.nbit.bit_len   = 7;
     chunk_def.nbit.sign_ext  = FALSE;
     chunk_def.nbit.fill_one  = FALSE;
-    status = SDsetchunk(newsds, chunk_def, HDF_CHUNK | HDF_NBIT);
+    c_flags = HDF_CHUNK | HDF_NBIT;
+    status = SDsetchunk(newsds, chunk_def, c_flags);
     if(status == FAIL) 
       {
         fprintf(stderr, "Chunk Test 8. SDsetchunk Failed to create new chunked, NBIT data set\n");
@@ -1492,6 +1503,17 @@ test_chunk()
     end[0]   = end[1]   = 5;
     status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
     CHECK(status, FAIL, "Chunk Test 8. SDwritedata");
+
+    /* Check getting compression info with SDgetchunkinfo */
+    HDmemset(&chunk_def_out, 0, sizeof(HDF_CHUNK_DEF));
+    c_flags_out = 0;
+    status = SDgetchunkinfo(newsds, &chunk_def_out, &c_flags_out);
+    CHECK(status, FAIL, "Chunk Test 8. SDgetchunkinfo");
+    VERIFY(c_flags_out, c_flags, "SDgetchunkinfo");
+    VERIFY(chunk_def_out.nbit.start_bit, chunk_def.nbit.start_bit, "SDgetchunkinfo");
+    VERIFY(chunk_def_out.nbit.bit_len, chunk_def.nbit.bit_len, "SDgetchunkinfo");
+    VERIFY(chunk_def_out.nbit.sign_ext, chunk_def.nbit.sign_ext, "SDgetchunkinfo");
+    VERIFY(chunk_def_out.nbit.fill_one, chunk_def.nbit.fill_one, "SDgetchunkinfo");
 
     /* end access to SDS */
     status = SDendaccess(newsds);
@@ -1565,22 +1587,9 @@ test_chunk()
 
     /*
      * Retrieve and verify the compression info - bug# 307, 10/10/01 - BMR
+     * Updated: SDgetcompress replaced by SDgetcompinfo - bugzilla# 130,
+     *		4/17/05 -BMR
      */
-    comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
-    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
-    status = SDgetcompress(newsds2, &comp_type, &cinfo);
-    CHECK(status, FAIL, "Chunk Test 8. SDgetcompress");
-
-    /* Note: the struct nbit in the union HDF_CHUNK_DEF seems like an extra
-	thing since comp_info also has nbit, but the HDF_CHUNK_DEF.nbit was
-	used to set the compression info so it's also used here to verify */ 
-    VERIFY(comp_type, COMP_CODE_NBIT, "Chunk Test 8. SDgetcompress");
-    VERIFY(cinfo.nbit.sign_ext, chunk_def.nbit.sign_ext, "SDgetcompress");
-    VERIFY(cinfo.nbit.fill_one, chunk_def.nbit.fill_one, "SDgetcompress");
-    VERIFY(cinfo.nbit.start_bit, chunk_def.nbit.start_bit, "SDgetcompress");
-    VERIFY(cinfo.nbit.bit_len, chunk_def.nbit.bit_len, "SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
@@ -1594,7 +1603,7 @@ test_chunk()
     VERIFY(cinfo.nbit.fill_one, chunk_def.nbit.fill_one, "Chunk Test 8. SDgetcompinfo");
     VERIFY(cinfo.nbit.start_bit, chunk_def.nbit.start_bit, "Chunk Test 8. SDgetcompinfo");
     VERIFY(cinfo.nbit.bit_len, chunk_def.nbit.bit_len, "Chunk Test 8. SDgetcompinfo");
-    /* end of test for bug#307 */
+    /* end of test for bug# 307 and bugzilla# 130 */
 
     /* end access to SDS */
     status = SDendaccess(newsds2);

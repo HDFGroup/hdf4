@@ -935,8 +935,6 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
     else
         ret_value = SUCCEED;
 
-  /* fprintf(stderr, "done SDreaddata...\n");
- */ 
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -5813,7 +5811,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
       case (HDF_CHUNK | HDF_COMP):
       /*  EIP 9/11/03 
        *  We have to take special care if SZIP library is not available;
-       *  Fow all other compression types do
+       *  For all other compression types do
        */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
 
@@ -6140,7 +6138,7 @@ done:
 
 /******************************************************************************
  NAME
-     SDgetchunkinfo -- get Info on SDS
+     SDgetchunkinfo_old -- get Info on SDS
 
  DESCRIPTION
      This routine gets any special information on the SDS. If its chunked,
@@ -6158,7 +6156,7 @@ done:
      HDF_CHUNK_DEF rchunk_def;
      int32   cflags;
      ...
-     SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
+     SDgetchunkinfo_old(sdsid, &rchunk_def, &cflags);
      ...
      }
 
@@ -6169,7 +6167,7 @@ done:
         -GeorgeV
 ******************************************************************************/
 intn 
-SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
+SDgetchunkinfo_old(int32          sdsid,      /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
                int32         *flags       /* IN/OUT: flags */)
 {
@@ -6262,6 +6260,185 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
               *flags = HDF_NONE; /* regular SDS */
             }
       }
+
+  done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+
+
+    return ret_value;
+} /* SDgetchunkinfo_old() */
+
+
+/******************************************************************************
+ NAME
+     SDgetchunkinfo -- get Info on SDS
+
+ DESCRIPTION
+     This routine gets any special information on the SDS. If its chunked,
+     chunked and compressed or just a regular SDS. Currently it will only
+     fill the array of chunk lengths for each dimension as specified in
+     the 'HDF_CHUNK_DEF' union. It does not tell you the type of compression
+     or the compression parameters used. You can pass in a NULL for 'chunk_def'
+     if don't want the chunk lengths for each dimension.
+     If successfull it will return a bit-or'd value in 'flags' indicating 
+     if the SDS is  chunked(HDF_CHUNK), chunked and compressed(HDF_CHUNK | HDF_COMP) 
+     or non-chunked(HDF_NONE).
+ 
+     e.g. 4x4 array - Pseudo-C
+     {
+     HDF_CHUNK_DEF rchunk_def;
+     int32   cflags;
+     ...
+     SDgetchunkinfo(sdsid, &rchunk_def, &cflags);
+     ...
+     }
+
+ RETURNS
+        SUCCEED/FAIL
+
+ AUTHOR 
+        -GeorgeV
+******************************************************************************/
+intn 
+SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
+               HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
+               int32         *flags       /* IN/OUT: flags */)
+{
+    NC       *handle = NULL;       /* file handle */
+    NC_var   *var    = NULL;       /* SDS variable */
+    sp_info_block_t info_block;    /* special info block */
+    comp_coder_t comp_type;
+    comp_info c_info;
+    int16     special;             /* Special code */
+    intn      i;                   /* loop variable */
+    intn      ret_value = SUCCEED; /* return value */
+
+    /* clear error stack */
+    HEclear();
+
+    /* Check args */
+
+    /* get file handle and verify it is an HDF file 
+       we only handle dealing with SDS only not coordinate variables */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* get variable from id */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+     /* Data set is empty and not special */
+    if(var->data_ref == 0)
+      {
+	*flags = HDF_NONE; /* regular SDS */
+	ret_value = SUCCEED;
+	goto done;
+      }
+
+    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
+    if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
+      {
+        ret_value = FAIL;
+        goto done;
+      }
+
+    /* inquire about element */
+    ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
+    if (ret_value != FAIL)
+    {   /* make sure it is chunked element */
+	if (special == SPECIAL_CHUNKED)
+	{   /* get info about chunked element */
+	    if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
+	    {   /* Does user want chunk/comp info back? */
+		if (chunk_def != NULL)
+		{
+		   /* If no compression, fill in chunk length, otherwise, fill
+		      in chunk length and compression info. */
+                   switch(info_block.comp_type)
+                     {
+                     case COMP_CODE_NONE:
+                         *flags = HDF_CHUNK;
+
+                         /* copy chunk lengths over */
+                         for (i = 0; i < info_block.ndims; i++)
+                           {
+                               chunk_def->chunk_lengths[i] = info_block.cdims[i];
+                           }
+                         break;
+                     case COMP_CODE_NBIT:
+                         *flags = (HDF_CHUNK | HDF_NBIT);
+
+                         /* copy chunk lengths over */
+                         for (i = 0; i < info_block.ndims; i++)
+                           {
+                               chunk_def->nbit.chunk_lengths[i] = info_block.cdims[i];
+                           }
+			 /* get the NBIT compression info */
+			 ret_value = HCPgetcompinfo(handle->hdf_file,
+					var->data_tag, var->data_ref,
+					&comp_type, &c_info);
+			 /* This check may break old applications unneccessarily
+			    because getting comp info here is new feature.  So,
+			    it would be good to be able to check for version or
+			    something similar - BMR, June 2009 */
+			 if (ret_value == FAIL)
+			 {
+			    ret_value = FAIL;
+			    goto done;
+			 }
+			 chunk_def->nbit.start_bit = c_info.nbit.start_bit;
+			 chunk_def->nbit.bit_len = c_info.nbit.bit_len;
+			 chunk_def->nbit.sign_ext = c_info.nbit.sign_ext;
+			 chunk_def->nbit.fill_one = c_info.nbit.fill_one;
+                         break;
+                     default:
+                         *flags = (HDF_CHUNK | HDF_COMP);
+
+                         /* copy chunk lengths over */
+                         for (i = 0; i < info_block.ndims; i++)
+                         {
+                             chunk_def->comp.chunk_lengths[i] = info_block.cdims[i];
+                         }
+
+			 /* get the compression info */
+			 ret_value = HCPgetcompinfo(handle->hdf_file,
+					var->data_tag, var->data_ref,
+					&comp_type, &(chunk_def->comp.cinfo));
+			 /* This check may break old applications unneccessarily
+			    because getting comp info here is new feature.  So,
+			    it would be good to be able to check for version or
+			    something similar - BMR, June 2009 */
+			 if (ret_value == FAIL)
+			 {
+			    ret_value = FAIL;
+			    goto done;
+			 }
+			 chunk_def->comp.comp_type = (int32)comp_type;
+                         break;
+                     } /* end of switch info_block.comp_type */
+		}
+                   /* dont forget to free up info in special info block 
+                      This space was allocated by the library */
+                   HDfree(info_block.cdims);
+	    }
+	}
+	else /* not special chunked element */
+	{
+	    *flags = HDF_NONE; /* regular SDS */
+	}
+    }
 
   done:
     if (ret_value == FAIL)

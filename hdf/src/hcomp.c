@@ -357,7 +357,7 @@ HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
               coder_len+=2;
               break;
 
-          case COMP_CODE_SZIP:   /* Szip coding ...? */
+          case COMP_CODE_SZIP: /* Szip coding stores various szip parameters */
 	      coder_len += 14;
 	      break;
 
@@ -457,7 +457,7 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
               UINT16ENCODE(p, (uint16) c_info->deflate.level);
               break;
 
-          case COMP_CODE_SZIP:  /* Szip coding ...? */
+          case COMP_CODE_SZIP: /* Szip coding stores various szip parameters */
               UINT32ENCODE(p, (uint32) c_info->szip.pixels);
               UINT32ENCODE(p, (uint32) c_info->szip.pixels_per_scanline);
               UINT32ENCODE(p, (uint32) (c_info->szip.options_mask | SZ_H4_REV_2));
@@ -528,30 +528,30 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
     /* read any additional information needed for coding type */
     switch (*coder_type)
       {
-          case COMP_CODE_NBIT:      /* N-bit coding needs info */
+          case COMP_CODE_NBIT:      /* Obtain info for N-bit coding */
               {
                   uint16      s_ext;    /* temp. var for sign extend */
                   uint16      f_one;    /* temp. var for fill one */
                   int32       m_off, m_len;     /* temp. var for mask offset and len */
 
-                  /* specify number-type of N-bit data */
+                  /* number-type of N-bit data */
                   INT32DECODE(p, c_info->nbit.nt);
                   /* next is the flag to indicate whether to sign extend */
                   UINT16DECODE(p, s_ext);
                   c_info->nbit.sign_ext = (intn) s_ext;
-                  /* the flag to indicate whether to fill with 1's or 0's */
+                  /* flag to indicate whether to fill with 1's or 0's */
                   UINT16DECODE(p, f_one);
                   c_info->nbit.fill_one = (intn) f_one;
-                  /* the offset of the bits extracted */
+                  /* offset of the bits extracted */
                   INT32DECODE(p, m_off);
                   c_info->nbit.start_bit = (intn) m_off;
-                  /* the number of bits extracted */
+                  /* number of bits extracted */
                   INT32DECODE(p, m_len);
                   c_info->nbit.bit_len = (intn) m_len;
               }     /* end case */
               break;
 
-          case COMP_CODE_SKPHUFF:   /* Skipping Huffman  coding needs info */
+          case COMP_CODE_SKPHUFF: /* Obtain info for Skipping Huffman coding */
               {
                   uint32      skp_size,     /* size of skipping unit */
                               comp_size;    /* # of bytes to compress */
@@ -564,7 +564,7 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
               }     /* end case */
               break;
 
-          case COMP_CODE_DEFLATE:   /* Deflation coding stores deflation level */
+          case COMP_CODE_DEFLATE: /* Obtains deflation level for Deflation coding */
               {
                   uint16      level;    /* deflation level */
 
@@ -574,7 +574,7 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
               }     /* end case */
               break;
 
-          case COMP_CODE_SZIP:   /* Szip coding stores the following values*/
+          case COMP_CODE_SZIP: /* Obtains szip parameters for Szip coding */
 	      {
                   UINT32DECODE(p, c_info->szip.pixels);
                   UINT32DECODE(p, c_info->szip.pixels_per_scanline);
@@ -670,11 +670,11 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
               break;
 
           case COMP_CODE_SZIP:
-              UINT32ENCODE(p, (uint32) c_info->szip.pixels);
-              UINT32ENCODE(p, (uint32) c_info->szip.pixels_per_scanline);
-              UINT32ENCODE(p, (uint32) c_info->szip.options_mask);
-              UINT8ENCODE(p, (uint8) c_info->szip.bits_per_pixel);
-              UINT8ENCODE(p, (uint8) c_info->szip.pixels_per_block);
+              INT32ENCODE(p, (int32) c_info->szip.pixels);
+              INT32ENCODE(p, (int32) c_info->szip.pixels_per_scanline);
+              INT32ENCODE(p, (int32) c_info->szip.options_mask);
+              INT32ENCODE(p, (int32) c_info->szip.bits_per_pixel);
+              INT32ENCODE(p, (int32) c_info->szip.pixels_per_block);
               break;
 
           default:      /* no additional information needed */
