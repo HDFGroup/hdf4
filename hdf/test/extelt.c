@@ -454,7 +454,7 @@ test_hextelt(void)
     CHECK_VOID(fid, FAIL, "Hopen");
 
     ret = Hgetelement(fid, (uint16) 1000, (uint16) 5, inbuf);
-    VERIFY(ret, FAIL, "Hgetelement");
+    VERIFY_VOID(ret, FAIL, "Hgetelement");
 
     ret = HXsetdir("nosuchdir|testdir");
     CHECK_VOID(ret, FAIL, "HXsetdir");

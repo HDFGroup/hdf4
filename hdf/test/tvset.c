@@ -1741,13 +1741,13 @@ test_emptyvdata(void)
       }
 
     status=VFnfields(vs1);
-    VERIFY(status,0,"VFnfields");
+    VERIFY_VOID(status,0,"VFnfields");
 
     /* Verify that VSgetfields will return FAIL when passing in a NULL
        for field name list (from bug #554), although this might never 
        happen - BMR 5/17/01 */
     status = VSgetfields(vs1, NULL);
-    VERIFY(status, FAIL, "VSgetfields");
+    VERIFY_VOID(status, FAIL, "VSgetfields");
 
     status=VSgetfields(vs1,fields);
     CHECK_VOID(status,FAIL,"VSgetfields");
@@ -1825,7 +1825,7 @@ test_emptyvdata(void)
     CHECK_VOID(vs1,FAIL,"VSattach");
 
     status=VFnfields(vs1);
-    VERIFY(status,2,"VFnfields");
+    VERIFY_VOID(status,2,"VFnfields");
 
     status=VSgetfields(vs1,fields);
     CHECK_VOID(status,FAIL,"VSgetfields");
@@ -1957,9 +1957,9 @@ test_blockinfo(void)
 
     /* Test for invalid arguments passed in these functions */
     status_n = VSsetblocksize(vdata1_id, -2);
-    VERIFY(status_n, FAIL, "VSsetblocksize");
+    VERIFY_VOID(status_n, FAIL, "VSsetblocksize");
     status_n = VSsetnumblocks(vdata1_id, 0);
-    VERIFY(status_n, FAIL, "VSsetnumblocks");
+    VERIFY_VOID(status_n, FAIL, "VSsetnumblocks");
 
     /* Set the block size and the number of blocks the first vdata */
     status_n = VSsetblocksize(vdata1_id, BLOCK_SIZE);
@@ -1970,7 +1970,7 @@ test_blockinfo(void)
     /* Write the data from data_buf1 to the vdata with full interlacing mode. */
     num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, 
 				FULL_INTERLACE);
-    VERIFY(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
+    VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
 
     /******************************************************************
      * Creates and writes another vdata right after APPENDABLE_VDATA.
@@ -2004,7 +2004,7 @@ test_blockinfo(void)
        interlacing mode. */
     num_of_records = VSwrite(vdata2_id, (uint8 *)data_buf2, N_RECORDS, 
 				FULL_INTERLACE);
-    VERIFY(num_of_records, N_RECORDS, "VSwrite:vdata2_id");
+    VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata2_id");
 
     /******************************************************************
      * Writes more data to APPENDABLE_VDATA, i.e. first vdata.  Its
@@ -2024,14 +2024,14 @@ test_blockinfo(void)
     /* Write the data from data_buf1 to the vdata with full interlacing mode. */
     num_of_records = VSwrite(vdata1_id, (uint8 *)data_buf1, N_RECORDS, 
 				FULL_INTERLACE); 
-    VERIFY(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
+    VERIFY_VOID(num_of_records, N_RECORDS, "VSwrite:vdata1_id");
 
     /* Retrieve the first vdata's block size and number of blocks and 
        verify them */
     status_n = VSgetblockinfo (vdata1_id, &block_size, &num_blocks);
     CHECK_VOID(status_n, FAIL, "VSsetfields");
-    VERIFY(block_size, BLOCK_SIZE, "VSgetblockinfo");
-    VERIFY(num_blocks, NUM_BLOCKS, "VSgetblockinfo");
+    VERIFY_VOID(block_size, BLOCK_SIZE, "VSgetblockinfo");
+    VERIFY_VOID(num_blocks, NUM_BLOCKS, "VSgetblockinfo");
 
     /* Terminate access to the vdatas and to the VS interface, then 
        close the HDF file. */

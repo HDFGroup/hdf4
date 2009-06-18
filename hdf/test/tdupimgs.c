@@ -164,7 +164,7 @@ extern void test_mgr_dup_images()
     /* There currently should only be 3 images in the file */
     status = GRfileinfo(grid,&n_datasets,&n_attrs);
     CHECK_VOID(status, FAIL, "GRfileinfo");
-    VERIFY(n_datasets, N_IMAGES, "GRfileinfo");
+    VERIFY_VOID(n_datasets, N_IMAGES, "GRfileinfo");
 
     /* Terminate access to the file */
     status = GRend(grid);

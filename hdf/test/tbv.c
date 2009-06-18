@@ -59,7 +59,7 @@ static void test_1(void)
     CHECK_VOID(b,NULL,"bv_new");
     size=bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
-    VERIFY(size,BV_DEFAULT_BITS,"bv_size");
+    VERIFY_VOID(size,BV_DEFAULT_BITS,"bv_size");
     flags=bv_flags(b);
     CHECK_VOID(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
@@ -71,7 +71,7 @@ static void test_1(void)
     CHECK_VOID(b,NULL,"bv_new");
     size=bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
-    VERIFY(size,80000,"bv_size");
+    VERIFY_VOID(size,80000,"bv_size");
     flags=bv_flags(b);
     CHECK_VOID(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
@@ -94,7 +94,7 @@ static void test_2(void)
     CHECK_VOID(b,NULL,"bv_new");
     size=bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
-    VERIFY(size,BV_DEFAULT_BITS,"bv_size");
+    VERIFY_VOID(size,BV_DEFAULT_BITS,"bv_size");
     flags=bv_flags(b);
     CHECK_VOID(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
@@ -104,18 +104,18 @@ static void test_2(void)
     ret=bv_set(b,3,BV_TRUE);
     CHECK_VOID(ret,FAIL,"bv_set");
     ret=bv_set(b,150,BV_TRUE);
-    VERIFY(ret,FAIL,"bv_set");
+    VERIFY_VOID(ret,FAIL,"bv_set");
     /* Check getting bits */
     ret=bv_get(b,2);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,3);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_get(b,0);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,13);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_get(b,-1);
-    VERIFY(ret,FAIL,"bv_get");
+    VERIFY_VOID(ret,FAIL,"bv_get");
     ret=bv_delete(b);
     CHECK_VOID(ret,FAIL,"bv_delete");
 
@@ -124,7 +124,7 @@ static void test_2(void)
     CHECK_VOID(b,NULL,"bv_new");
     size=bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
-    VERIFY(size,1000,"bv_size");
+    VERIFY_VOID(size,1000,"bv_size");
     flags=bv_flags(b);
     CHECK_VOID(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
@@ -137,17 +137,17 @@ static void test_2(void)
     CHECK_VOID(ret,FAIL,"bv_set");
     /* Check getting bits */
     ret=bv_get(b,2);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,3);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_get(b,0);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,13);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_get(b,1040);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,1050);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_delete(b);
     CHECK_VOID(ret,FAIL,"bv_delete");
 } /* end test_2 */
@@ -167,7 +167,7 @@ static void test_3(void)
     CHECK_VOID(b,NULL,"bv_new");
     size=bv_size(b);
     MESSAGE(8, printf("Bit-vector size=%d\n",(int)size););
-    VERIFY(size,BV_DEFAULT_BITS,"bv_size");
+    VERIFY_VOID(size,BV_DEFAULT_BITS,"bv_size");
     flags=bv_flags(b);
     CHECK_VOID(flags,(uint32)FAIL,"bv_flags");
     MESSAGE(8, printf("Bit-vector flags=%lx\n",(unsigned long)flags););
@@ -182,17 +182,17 @@ static void test_3(void)
 
     /* Check getting bits */
     ret=bv_get(b,2);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,3);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_get(b,0);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,13);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
     ret=bv_get(b,140);
-    VERIFY(ret,BV_FALSE,"bv_get");
+    VERIFY_VOID(ret,BV_FALSE,"bv_get");
     ret=bv_get(b,150);
-    VERIFY(ret,BV_TRUE,"bv_get");
+    VERIFY_VOID(ret,BV_TRUE,"bv_get");
 
     size=bv_find(b,-1,BV_FALSE);
     CHECK_VOID(size,FAIL,"bv_find");

@@ -121,7 +121,7 @@ test_bitio_write(void)
     for (i = 0; i < BUFSIZE; i++)
       {
           ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
 
     ret = Hendbitaccess(bitid1, 0);
@@ -133,7 +133,7 @@ test_bitio_write(void)
     for (i = 0; i < BUFSIZE; i++)
       {
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitread");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitread");
       }     /* end for */
     if (HDmemcmp(outbuf2, inbuf2, sizeof(int32) * BUFSIZE))
       {
@@ -194,7 +194,7 @@ test_bitio_read(void)
     for (i = 0; i < DATASIZE; i++)
       {
           ret = Hbitread(bitid1, 8, &inbuf2[i]);
-          VERIFY(ret, 8, "Hbitread");
+          VERIFY_VOID(ret, 8, "Hbitread");
       }     /* end for */
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");
@@ -219,12 +219,12 @@ test_bitio_read(void)
       {
           inbits = ((RAND() >> 4) % NUM_BITS) + 1;  /* number of bits to input */
           ret = Hbitread(bitid1, inbits, &inbuf2[i]);
-          VERIFY(ret, inbits, "Hbitread");
+          VERIFY_VOID(ret, inbits, "Hbitread");
           if (inbits < NUM_BITS)
             {   /* if we've already grabbed 32-bit don't try for more */
                 inbits = NUM_BITS - inbits;
                 ret = Hbitread(bitid1, inbits, &tempbuf);
-                VERIFY(ret, inbits, "Hbitread");
+                VERIFY_VOID(ret, inbits, "Hbitread");
                 inbuf2[i] <<= inbits;
                 inbuf2[i] |= tempbuf;
             }   /* end if */
@@ -277,7 +277,7 @@ test_bitio_seek(void)
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitread");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -295,7 +295,7 @@ test_bitio_seek(void)
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitread");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -318,7 +318,7 @@ test_bitio_seek(void)
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
 
     ret = Hendbitaccess(bitid1, 0);
@@ -334,7 +334,7 @@ test_bitio_seek(void)
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           RESULT("Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitread");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -357,7 +357,7 @@ test_bitio_seek(void)
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           RESULT("Hbitseek");
           ret = Hbitwrite(bitid1, (intn)outbuf[i], (uint32) outbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitwrite");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitwrite");
       }     /* end for */
 
     ret = Hendbitaccess(bitid1, 0);
@@ -373,7 +373,7 @@ test_bitio_seek(void)
           ret = Hbitseek(bitid1, (int32)(totbits[i] / 8), (intn) (totbits[i] % 8));
           CHECK_VOID(ret, FAIL, "Hbitseek");
           ret = Hbitread(bitid1, (intn)outbuf[i], &inbuf2[i]);
-          VERIFY((uint8) ret, outbuf[i], "Hbitread");
+          VERIFY_VOID((uint8) ret, outbuf[i], "Hbitread");
           if (outbuf2[i] != inbuf2[i])
               printf("outbuf[%d]=%u, outbuf2[%d]=%lu inbuf2[%d]=%lu, totbits[%d]=%lu\n", i, outbuf[i], i, (long) outbuf2[i], i, (long) inbuf2[i], i, (long) totbits[i]);
       }     /* end for */
@@ -392,15 +392,15 @@ test_bitio_seek(void)
     MESSAGE(9, printf("Writing 35 bits of data out\n"); );
 
     ret = Hbitwrite(bitid1, 8, (uint32) outbuf[0]);
-    VERIFY((uint8) ret, 8, "Hbitwrite");
+    VERIFY_VOID((uint8) ret, 8, "Hbitwrite");
     ret = Hbitwrite(bitid1, 8, (uint32) outbuf[1]);
-    VERIFY((uint8) ret, 8, "Hbitwrite");
+    VERIFY_VOID((uint8) ret, 8, "Hbitwrite");
     ret = Hbitwrite(bitid1, 8, (uint32) outbuf[2]);
-    VERIFY((uint8) ret, 8, "Hbitwrite");
+    VERIFY_VOID((uint8) ret, 8, "Hbitwrite");
     ret = Hbitwrite(bitid1, 8, (uint32) outbuf[3]);
-    VERIFY((uint8) ret, 8, "Hbitwrite");
+    VERIFY_VOID((uint8) ret, 8, "Hbitwrite");
     ret = Hbitwrite(bitid1, 3, (uint32) outbuf[4]);
-    VERIFY((uint8) ret, 3, "Hbitwrite");
+    VERIFY_VOID((uint8) ret, 3, "Hbitwrite");
 
     ret = Hbitseek(bitid1, 0, 0);
     RESULT("Hbitseek");
@@ -413,21 +413,21 @@ test_bitio_seek(void)
     CHECK_VOID(bitid1, FAIL, "Hstartbitread");
 
     ret = Hbitread(bitid1, 8, &inbuf2[0]);
-    VERIFY((uint8) ret, 8, "Hbitread");
+    VERIFY_VOID((uint8) ret, 8, "Hbitread");
     ret = Hbitread(bitid1, 8, &inbuf2[1]);
-    VERIFY((uint8) ret, 8, "Hbitread");
+    VERIFY_VOID((uint8) ret, 8, "Hbitread");
     ret = Hbitread(bitid1, 8, &inbuf2[2]);
-    VERIFY((uint8) ret, 8, "Hbitread");
+    VERIFY_VOID((uint8) ret, 8, "Hbitread");
     ret = Hbitread(bitid1, 8, &inbuf2[3]);
-    VERIFY((uint8) ret, 8, "Hbitread");
+    VERIFY_VOID((uint8) ret, 8, "Hbitread");
     ret = Hbitread(bitid1, 3, &inbuf2[4]);
-    VERIFY((uint8) ret, 3, "Hbitread");
+    VERIFY_VOID((uint8) ret, 3, "Hbitread");
 
-    VERIFY(outbuf[0],inbuf2[0],"I/O Transfer");
-    VERIFY(outbuf[1],inbuf2[1],"I/O Transfer");
-    VERIFY(outbuf[2],inbuf2[2],"I/O Transfer");
-    VERIFY(outbuf[3],inbuf2[3],"I/O Transfer");
-    VERIFY((outbuf[4]&maskbuf[3]),inbuf2[4],"I/O Transfer");
+    VERIFY_VOID(outbuf[0],inbuf2[0],"I/O Transfer");
+    VERIFY_VOID(outbuf[1],inbuf2[1],"I/O Transfer");
+    VERIFY_VOID(outbuf[2],inbuf2[2],"I/O Transfer");
+    VERIFY_VOID(outbuf[3],inbuf2[3],"I/O Transfer");
+    VERIFY_VOID((outbuf[4]&maskbuf[3]),inbuf2[4],"I/O Transfer");
 
     ret = Hendbitaccess(bitid1, 0);
     RESULT("Hbitendaccess");

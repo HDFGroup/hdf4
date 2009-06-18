@@ -200,7 +200,7 @@ test_ref_limits(void)
               CHECK_VOID(ret, FAIL, "Hread");
               ret=Hinquire(aid1,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
               CHECK_VOID(ret, FAIL, "Hinquire");
-              VERIFY((uint16)data,ref,"Hread");
+              VERIFY_VOID((uint16)data,ref,"Hread");
 
               /* Read in data from tag2 */
               aid2=Hstartread(fid,TAG2,DFREF_WILDCARD);
@@ -209,7 +209,7 @@ test_ref_limits(void)
               CHECK_VOID(ret, FAIL, "Hread");
               ret=Hinquire(aid2,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
               CHECK_VOID(ret, FAIL, "Hinquire");
-              VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
+              VERIFY_VOID((uint32)data,(((uint32)ref)<<16),"Hread");
 
               while(Hnextread(aid1,TAG1,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
                 {
@@ -217,7 +217,7 @@ test_ref_limits(void)
                     CHECK_VOID(ret, FAIL, "Hread");
                     ret=Hinquire(aid1,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
                     CHECK_VOID(ret, FAIL, "Hinquire");
-                    VERIFY((uint16)data,ref,"Hread");
+                    VERIFY_VOID((uint16)data,ref,"Hread");
 
                   if(Hnextread(aid2,TAG2,DFTAG_WILDCARD,DF_CURRENT)!=FAIL)
                     {
@@ -225,7 +225,7 @@ test_ref_limits(void)
                         CHECK_VOID(ret, FAIL, "Hread");
                         ret=Hinquire(aid2,NULL,NULL,&ref,NULL,NULL,NULL,NULL,NULL);
                         CHECK_VOID(ret, FAIL, "Hinquire");
-                        VERIFY((uint32)data,(((uint32)ref)<<16),"Hread");
+                        VERIFY_VOID((uint32)data,(((uint32)ref)<<16),"Hread");
                     } /* end while */
                 } /* end while */
               ret=Hendaccess(aid1);

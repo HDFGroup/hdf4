@@ -416,7 +416,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 16, inbuf);
-    VERIFY(ret, 16, "Hread");
+    VERIFY_VOID(ret, 16, "Hread");
     if (ret != 16)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -526,7 +526,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 16, inbuf);
-    VERIFY(ret, 16, "Hread");
+    VERIFY_VOID(ret, 16, "Hread");
     if (ret != 16)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -599,7 +599,7 @@ test_chunks(void)
 
     /* write 16 bytes out */
     ret = Hwrite(aid1, 16, outbuf);
-    VERIFY(ret, 16, "Hwrite");
+    VERIFY_VOID(ret, 16, "Hwrite");
     if (ret != 16)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -650,7 +650,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 16, inbuf);
-    VERIFY(ret, 16, "Hread");
+    VERIFY_VOID(ret, 16, "Hread");
     if (ret != 16)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -729,7 +729,7 @@ test_chunks(void)
 
     /* write only 112 bytes out */
     ret = Hwrite(aid1, 112, outbuf);
-    VERIFY(ret, 112, "Hwrite");
+    VERIFY_VOID(ret, 112, "Hwrite");
     if (ret != 112)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -817,7 +817,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 112, inbuf);
-    VERIFY(ret, 112, "Hread");
+    VERIFY_VOID(ret, 112, "Hread");
     if (ret != 112)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -902,11 +902,11 @@ test_chunks(void)
     /* Set max chunks to cache to 3x4 = 12 chunks */
     MESSAGE(5, printf("Set max # of chunks to cache for chunked element to 12 \n"); );
     ret = HMCsetMaxcache(aid1, 12, 0);
-    VERIFY(ret, 12, "HMCsetMaxcache");
+    VERIFY_VOID(ret, 12, "HMCsetMaxcache");
     
     /* write 112 bytes out */
     ret = Hwrite(aid1, 112, outbuf);
-    VERIFY(ret, 112, "Hwrite");
+    VERIFY_VOID(ret, 112, "Hwrite");
     if (ret != 112)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -957,7 +957,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 112, inbuf);
-    VERIFY(ret, 112, "Hread");
+    VERIFY_VOID(ret, 112, "Hread");
     if (ret != 112)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -982,7 +982,7 @@ test_chunks(void)
     /* read back 20 bytes now, they should be filled with fill values */
     MESSAGE(5, printf("reading some more data\n"););
     ret = Hread(aid1, 20, inbuf);
-    VERIFY(ret, 20, "Hread");
+    VERIFY_VOID(ret, 20, "Hread");
     if (ret != 20)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -1209,7 +1209,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 24, inbuf_u8);
-    VERIFY(ret, 24, "Hread");
+    VERIFY_VOID(ret, 24, "Hread");
     if (ret != 24)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -1447,7 +1447,7 @@ test_chunks(void)
 
     /* write 48 bytes out */
     ret = Hwrite(aid1, 48, u16_data);
-    VERIFY(ret, 48, "Hwrite");
+    VERIFY_VOID(ret, 48, "Hwrite");
     if (ret != 48)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -1477,7 +1477,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 48, inbuf_u16);
-    VERIFY(ret, 48, "Hread");
+    VERIFY_VOID(ret, 48, "Hread");
     if (ret != 48)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -1580,7 +1580,7 @@ test_chunks(void)
 
     /* write 96 bytes out */
     ret = Hwrite(aid1, 96, f32_data);
-    VERIFY(ret, 96, "Hwrite");
+    VERIFY_VOID(ret, 96, "Hwrite");
     if (ret != 96)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -1610,7 +1610,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 96, inbuf_f32);
-    VERIFY(ret, 96, "Hread");
+    VERIFY_VOID(ret, 96, "Hread");
     if (ret != 96)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -1717,7 +1717,7 @@ test_chunks(void)
 
     /* write 5000 bytes out */
     ret = Hwrite(aid1, 5000, outbuf);
-    VERIFY(ret, 5000, "Hwrite");
+    VERIFY_VOID(ret, 5000, "Hwrite");
     if (ret != 5000)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -1771,7 +1771,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 5000, inbuf);
-    VERIFY(ret, 5000, "Hread");
+    VERIFY_VOID(ret, 5000, "Hread");
     if (ret != 5000)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -1795,11 +1795,11 @@ test_chunks(void)
 
     /* seek past initial write  buffer  */
     ret = Hseek(aid1, 7000, 0);
-    VERIFY(ret, 0, "Hseek");
+    VERIFY_VOID(ret, 0, "Hseek");
 
     /* read back in buffer  */
     ret = Hread(aid1, 1000, inbuf);
-    VERIFY(ret, 1000, "Hread");
+    VERIFY_VOID(ret, 1000, "Hread");
     if (ret != 1000)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -1940,7 +1940,7 @@ test_chunks(void)
             {
                 /* seek to next buffer  */
                 ret = Hseek(aid1, 12000, 1);
-                VERIFY(ret, 0, "Hseek");
+                VERIFY_VOID(ret, 0, "Hseek");
             }
       }
 
@@ -1951,7 +1951,7 @@ test_chunks(void)
     printf("seek to initial byte postion = %d \n",nseek);
     /* seek to next buffer  */
     ret = Hseek(aid1, nseek, 0);
-    VERIFY(ret, 0, "Hseek");
+    VERIFY_VOID(ret, 0, "Hseek");
 
     for (j = 0; j < 11; j++)
       {
@@ -1970,7 +1970,7 @@ test_chunks(void)
 
                 /* seek to next buffer  */
                 ret = Hseek(aid1, 10000, 1);
-                VERIFY(ret, 0, "Hseek");
+                VERIFY_VOID(ret, 0, "Hseek");
             }
 
           x = x + 100;
@@ -1979,7 +1979,7 @@ test_chunks(void)
           printf("seek to next byte postion = %d\n",nseek);
           /* seek to next buffer  */
           ret = Hseek(aid1, nseek, 0);
-          VERIFY(ret, 0, "Hseek");
+          VERIFY_VOID(ret, 0, "Hseek");
       }
 
     /* end access and close file */
@@ -2050,7 +2050,7 @@ test_chunks(void)
 
     /* write 16 bytes out */
     ret = Hwrite(aid1, 16, outbuf);
-    VERIFY(ret, 16, "Hwrite");
+    VERIFY_VOID(ret, 16, "Hwrite");
     if (ret != 16)
       {
           fprintf(stderr, "ERROR: Hwrite returned the wrong length: %d\n", (int) ret);
@@ -2101,7 +2101,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 16, inbuf);
-    VERIFY(ret, 16, "Hread");
+    VERIFY_VOID(ret, 16, "Hread");
     if (ret != 16)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);
@@ -2332,7 +2332,7 @@ test_chunks(void)
 
     /* read back in buffer  */
     ret = Hread(aid1, 24, inbuf_u8);
-    VERIFY(ret, 24, "Hread");
+    VERIFY_VOID(ret, 24, "Hread");
     if (ret != 24)
       {
           fprintf(stderr, "ERROR: Hread returned the wrong length: %d\n", (int) ret);

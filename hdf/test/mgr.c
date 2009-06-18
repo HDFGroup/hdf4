@@ -2412,7 +2412,7 @@ test_mgr_lut_a(int flag)
 
         /* Get the number of palettes */
         ret=GRgetnluts(riid);
-        VERIFY(ret,0,"GRgetnluts");
+        VERIFY_VOID(ret,0,"GRgetnluts");
 
         lutid=GRgetlutid(riid,0);
         CHECK_VOID(lutid,FAIL,"GRgetlutid");
@@ -2502,7 +2502,7 @@ test_mgr_lut_a(int flag)
 
 	/* Now, this bogus lutid should cause GRluttoref to return a 0 - BMR */
         pal_ref=GRluttoref(0);
-        VERIFY(pal_ref,0,"GRluttoref");
+        VERIFY_VOID(pal_ref,0,"GRluttoref");
         
         /* End access to the image */
         ret=GRendaccess(riid);
@@ -3554,11 +3554,11 @@ static void test_mgr_compress_c(int flag)
  
     status = GRgetiminfo (ri_id, gname, &nc, &dt, &im, dims, &na);
     CHECK_VOID(status,FAIL,"GRreadimage");
-    VERIFY(nc,3,"GRgetiminfo");
-    VERIFY(dt,DFNT_UINT8,"GRgetiminfo");
-    VERIFY(dim_sizes[0],dims[0],"GRgetiminfo");
-    VERIFY(dim_sizes[1],dims[1],"GRgetiminfo");
-    VERIFY(na,0,"GRgetiminfo");
+    VERIFY_VOID(nc,3,"GRgetiminfo");
+    VERIFY_VOID(dt,DFNT_UINT8,"GRgetiminfo");
+    VERIFY_VOID(dim_sizes[0],dims[0],"GRgetiminfo");
+    VERIFY_VOID(dim_sizes[1],dims[1],"GRgetiminfo");
+    VERIFY_VOID(na,0,"GRgetiminfo");
  
     start[0] = start[1] = 0;
     edges[0] = 128;
@@ -3690,7 +3690,7 @@ static void test_get_compress(int flag)
      */
 
     /* Create an hdf file, and initiate the GR interface */
-    fid = Hopen(COMPFILE, DFACC_CREATE, 0);
+    fid = Hopen(COMPFILE, DFACC_CREATE, (int16)0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
     grid = GRstart(fid);
@@ -3756,7 +3756,7 @@ static void test_get_compress(int flag)
        retrieved */
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
 
     /* end access to the first image */
     status = GRendaccess(riid);
@@ -3776,8 +3776,8 @@ static void test_get_compress(int flag)
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
-    VERIFY(cinfo.skphuff.skp_size, SKPHUFF_SKIPSIZE, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.skphuff.skp_size, SKPHUFF_SKIPSIZE, "GRgetcompinfo");
 
     /* end access to the second image */
     status = GRendaccess(riid);
@@ -3797,8 +3797,8 @@ static void test_get_compress(int flag)
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
-    VERIFY(cinfo.deflate.level, DEFLATE_LEVEL, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.deflate.level, DEFLATE_LEVEL, "GRgetcompinfo");
 
     /* Terminate access to the third image */
     status = GRendaccess(riid);
@@ -3815,9 +3815,9 @@ static void test_get_compress(int flag)
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = GRgetcompinfo(riid, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
-    VERIFY(cinfo.jpeg.quality, 0, "GRgetcompinfo");
-    VERIFY(cinfo.jpeg.force_baseline, 0, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.jpeg.quality, 0, "GRgetcompinfo");
+    VERIFY_VOID(cinfo.jpeg.force_baseline, 0, "GRgetcompinfo");
 
     /* Terminate access to the third image */
     status = GRendaccess(riid);
@@ -4067,25 +4067,25 @@ test_mgr_chunk_compress()
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
     switch (img_num) {
 	case 0: 
-	    VERIFY(comp_type, COMP_CODE_NONE, "GRgetcompinfo");
+	    VERIFY_VOID(comp_type, COMP_CODE_NONE, "GRgetcompinfo");
 	    break;
 	case 1 :
-	    VERIFY(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
+	    VERIFY_VOID(comp_type, COMP_CODE_RLE, "GRgetcompinfo");
 	    break;
 	case 2 :
-	    VERIFY(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
-	    VERIFY(cinfo.skphuff.skp_size, 
+	    VERIFY_VOID(comp_type, COMP_CODE_SKPHUFF, "GRgetcompinfo");
+	    VERIFY_VOID(cinfo.skphuff.skp_size, 
 		   chunk_def[img_num].comp.cinfo.skphuff.skp_size, "GRgetcompinfo");
 	    break;
 	case 3 :
-	    VERIFY(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
-	    VERIFY(cinfo.deflate.level, 
+	    VERIFY_VOID(comp_type, COMP_CODE_DEFLATE, "GRgetcompinfo");
+	    VERIFY_VOID(cinfo.deflate.level, 
 		   chunk_def[img_num].comp.cinfo.deflate.level, "GRgetcompinfo");
 	    break;
 #ifdef NOT_WORKING
 	/* JPEG is not working correctly yet.  Add test here when it is */
 	case 4 :  /* only return comp type for JPEG */
-	    VERIFY(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
+	    VERIFY_VOID(comp_type, COMP_CODE_JPEG, "GRgetcompinfo");
 	    break;
 #endif
 	default:
@@ -4216,10 +4216,10 @@ static void test_mgr_r24_a(int flag)
         /* Check the image information */
         ret=GRgetiminfo(riid,NULL,&ncomp,&nt,NULL,dimsizes,NULL);
         CHECK_VOID(ret,FAIL,"GRgetiminfo");
-        VERIFY(ncomp,3,"GRgetiminfo");
-        VERIFY(nt,DFNT_UCHAR8,"GRgetiminfo");
-        VERIFY(dimsizes[0],dims[0],"GRgetiminfo");
-        VERIFY(dimsizes[1],dims[1],"GRgetiminfo");
+        VERIFY_VOID(ncomp,3,"GRgetiminfo");
+        VERIFY_VOID(nt,DFNT_UCHAR8,"GRgetiminfo");
+        VERIFY_VOID(dimsizes[0],dims[0],"GRgetiminfo");
+        VERIFY_VOID(dimsizes[1],dims[1],"GRgetiminfo");
 
         /* Read the whole image in */
         start[0]=start[1]=0;
@@ -4340,10 +4340,10 @@ static void test_mgr_r8_a(int flag)
         /* Check the image information */
         ret=GRgetiminfo(riid,NULL,&ncomp,&nt,NULL,dimsizes,NULL);
         CHECK_VOID(ret,FAIL,"GRgetiminfo");
-        VERIFY(ncomp,1,"GRgetiminfo");
-        VERIFY(nt,DFNT_UCHAR8,"GRgetiminfo");
-        VERIFY(dimsizes[0],dims[0],"GRgetiminfo");
-        VERIFY(dimsizes[1],dims[1],"GRgetiminfo");
+        VERIFY_VOID(ncomp,1,"GRgetiminfo");
+        VERIFY_VOID(nt,DFNT_UCHAR8,"GRgetiminfo");
+        VERIFY_VOID(dimsizes[0],dims[0],"GRgetiminfo");
+        VERIFY_VOID(dimsizes[1],dims[1],"GRgetiminfo");
 
         /* Read the whole image in */
         start[0]=start[1]=0;
@@ -4363,10 +4363,10 @@ static void test_mgr_r8_a(int flag)
         ncomp=nt=0;
         ret = GRgetlutinfo(pal_id, &ncomp, &nt, &interlace, &num_entries);
         CHECK_VOID(ret,FAIL,"GRgetlutinfo");
-        VERIFY(ncomp,3,"GRgetlutinfo");
-        VERIFY(nt,DFNT_UINT8,"GRgetlutinfo");
-        VERIFY(interlace,0,"GRgetlutinfo");
-        VERIFY(num_entries,256,"GRgetlutinfo");
+        VERIFY_VOID(ncomp,3,"GRgetlutinfo");
+        VERIFY_VOID(nt,DFNT_UINT8,"GRgetlutinfo");
+        VERIFY_VOID(interlace,0,"GRgetlutinfo");
+        VERIFY_VOID(num_entries,256,"GRgetlutinfo");
 
         /* Close the empty image */
         ret=GRendaccess(riid);
@@ -4472,10 +4472,10 @@ static void test_mgr_pal_a(int flag)
         /* Check the image information */
         ret=GRgetiminfo(riid,NULL,&ncomp,&nt,NULL,dimsizes,NULL);
         CHECK_VOID(ret,FAIL,"GRgetiminfo");
-        VERIFY(ncomp,3,"GRgetiminfo");
-        VERIFY(nt,DFNT_UCHAR8,"GRgetiminfo");
-        VERIFY(dimsizes[0],dims[0],"GRgetiminfo");
-        VERIFY(dimsizes[1],dims[1],"GRgetiminfo");
+        VERIFY_VOID(ncomp,3,"GRgetiminfo");
+        VERIFY_VOID(nt,DFNT_UCHAR8,"GRgetiminfo");
+        VERIFY_VOID(dimsizes[0],dims[0],"GRgetiminfo");
+        VERIFY_VOID(dimsizes[1],dims[1],"GRgetiminfo");
 
         /* Read the whole image in */
         start[0]=start[1]=0;
