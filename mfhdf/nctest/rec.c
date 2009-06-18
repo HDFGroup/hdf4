@@ -76,7 +76,7 @@ ncrecsize(ncid,vid)
 
     if (ncinquire(ncid, 0, 0, 0, &recdimid) == -1)
       return -1;
-    if (ncvarinq(ncid, vid, 0, &type, &ndims, dimids, 0) == -1)
+    if (ncvarinq(ncid, vid, 0, &type, &ndims, dimids, NULL) == -1)
       return -1;
     if (ndims == 0 || dimids[0] != recdimid)
       return 0;
@@ -244,7 +244,7 @@ dimsizes(ncid, varid, sizes)
     int id;
     int dimids[H4_MAX_VAR_DIMS];
 
-    if (ncvarinq(ncid, varid, 0, 0, &ndims, dimids, 0) == -1)
+    if (ncvarinq(ncid, varid, 0, 0, &ndims, dimids, NULL) == -1)
       return -1;
     if (ndims == 0 || sizes == 0)
       return 0;
@@ -371,7 +371,7 @@ test_ncrecput(path)
     for (iv = 0; iv < nrvars; iv++) {
 	datap[iv] = emalloc(rvarsizes[iv]);
 	datar[iv] = emalloc(rvarsizes[iv]); /* for comparison values */
-	if (ncvarinq(ncid, rvarids[iv], 0, &vartype[iv], 0, 0, NULL) == -1) {
+	if (ncvarinq(ncid, rvarids[iv], 0, &vartype[iv], NULL, 0, NULL) == -1) {
 	    error("%s: ncvarinq failed", pname);
 	    ncclose(ncid);
 	    return;
@@ -527,7 +527,7 @@ test_ncrecget(path)
     for (iv = 0; iv < nrvars; iv++) {
 	datap[iv] = emalloc(rvarsizes[iv]);
 	datar[iv] = emalloc(rvarsizes[iv]); /* for comparison values */
-	if (ncvarinq(ncid, rvarids[iv], 0, &vartype[iv], 0, 0, 0) == -1) {
+	if (ncvarinq(ncid, rvarids[iv], 0, &vartype[iv], NULL, 0, NULL) == -1) {
 	    error("%s: ncvarinq failed", pname);
 	    ncclose(ncid);
 	    return;
