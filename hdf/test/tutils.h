@@ -52,6 +52,12 @@ if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n
 /* Used to make certain a return value _is_ a value */
 #define VERIFY(x, val, where) \
 do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\
+if(x != val) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return(num_errs);} \
+} while(0)
+
+/* Same as VERIFY except return without a value. */
+#define VERIFY_VOID(x, val, where) \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\
 if(x != val) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return;} \
 } while(0)
 
