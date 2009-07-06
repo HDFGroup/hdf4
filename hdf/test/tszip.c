@@ -187,7 +187,7 @@ test_szip_RI8bit()
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -354,7 +354,7 @@ test_szip_RI16bit()
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -521,7 +521,7 @@ test_szip_RI32bit()
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -690,7 +690,7 @@ test_szip_RIfl32bit()
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -859,7 +859,7 @@ test_szip_RIfl64bit()
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Wipe out the output buffer */
     HDmemset(&out_data, 0, sizeof(out_data));
@@ -1063,7 +1063,7 @@ test_szip_chunk()
 
     status = GRgetcompinfo(ri_id, &comp_type, &cinfo_out);
     CHECK_VOID(status, FAIL, "GRgetcompinfo");
-    VERIFY(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
+    VERIFY_VOID(comp_type, COMP_CODE_SZIP, "GRgetcompinfo");
 
     /* Read first chunk back and compare with input chunk. */
     origin[0] = 0; origin[1] = 0;
