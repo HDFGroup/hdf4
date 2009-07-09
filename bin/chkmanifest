@@ -98,6 +98,21 @@ else
     fi
 fi
 
+# Check for duplicate entries.  This can be done at any time, but it may as
+# well be sooner so that if something else fails the presence of duplicates
+# will already be known.
+errcode=0
+DUPLICATES=`perl -ne 's/#.*//; next if /^\s*$/; if ($uniq{$_}++) { print $_; }' MANIFEST`
+if [ "$DUPLICATES" ]; then
+   cat 1>&2 <<EOF
+These entries appear more than once in the MANIFEST:
+$DUPLICATES
+Please remove the duplicate lines and try again.
+
+EOF
+errcode=1
+fi
+
 # Copy the manifest file to get a list of file names.
 grep '^\.' MANIFEST | expand | cut -f1 -d' ' >$MANIFEST
 
@@ -121,7 +136,7 @@ if head -1 $svn_entry_file | grep 'xml version="1.0"' > /dev/null 2>&1;then
 elif grep '^file$' $svn_entry_file > /dev/null 2>&1; then
     getsvnentries=GETSVNENTRIES_14
 else
-    echo "Unknow svn entries format. Aborted"
+    echo "Unknown svn entries format. Aborted"
     exit 1
 fi
 
@@ -144,6 +159,10 @@ longer exist; files marked with a plus sign (+) are SVN-managed but do
 not appear in the MANIFEST.  Please remedy the situation and try again.
 EOF
     exit 1
+fi
+
+if [ $errcode > 0 ]; then
+    exit $errcode
 fi
 
 test "$verbose" && echo "   The MANIFEST is up to date." 1>&2
