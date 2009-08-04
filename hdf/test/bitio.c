@@ -159,19 +159,13 @@ test_bitio_read(void)
     uint32      tempbuf;
     intn        i;
     uint8      *test_ptr;
-    char        datafile[512] = "";
-    char       *srcdir = getenv("srcdir");
+    char        datafile[512] = "./";
 
     SEED((uintn) time(NULL));
 
     MESSAGE(6, printf("Testing bitio read routines\n");
         );
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(DATAFILE_NAME) + 1) < sizeof(datafile))) {
-        strcpy(datafile, srcdir);
-        strcat(datafile, "/");
-    }
     strcat(datafile, DATAFILE_NAME);
 
     fid = Hopen(datafile, DFACC_READ, 0);

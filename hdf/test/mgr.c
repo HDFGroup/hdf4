@@ -280,19 +280,13 @@ test_mgr_init(void)
     int32 n_datasets;       /* number of datasets */
     int32 n_attrs;          /* number of attributes */
     int32 ret;              /* generic return value */
-    char datafile[512] = "";
-    char *srcdir = getenv("srcdir");
+    char datafile[512] = "./";
 
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Initialization routines\n"););
 
     MESSAGE(8, printf("Try creating a new file and checking it out\n"););
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(DATAFILE) + 1) < sizeof(datafile))) {
-        strcpy(datafile, srcdir);
-        strcat(datafile, "/");
-    }
     strcat(datafile, DATAFILE);
 
     /* Ok, now create a new file */
@@ -1812,17 +1806,11 @@ static void test_mgr_image_b2b1(int flag)
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-    char datafile[512] = "";
-    char *srcdir = getenv("srcdir");
+    char datafile[512] = "./";
 
 /* B2b1 - Read/Write images - with real Data - Existing Image - Whole Image */
     MESSAGE(8, printf("Check out I/O from Existing Image - Whole Image\n"););
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(DATAFILE) + 1) < sizeof(datafile))) {
-        strcpy(datafile, srcdir);
-        strcat(datafile, "/");
-    }
     strcat(datafile, DATAFILE);
 
     /* Open up the existing datafile and get the image information from it */
@@ -2914,14 +2902,8 @@ static void test_mgr_old_a(int flag)
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-    char oldrlefile[512] = "";
-    char *srcdir = getenv("srcdir");
+    char oldrlefile[512] = "./";
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(OLDRLEFILE) + 1) < sizeof(oldrlefile))) {
-        strcpy(oldrlefile, srcdir);
-        strcat(oldrlefile, "/");
-    }
     strcat(oldrlefile, OLDRLEFILE);
 
 /* A - Read RLE compressed data from old raster image file */
@@ -2984,14 +2966,8 @@ static void test_mgr_old_c(int flag)
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-    char oldgreyjpegfile[512] = "";
-    char *srcdir = getenv("srcdir");
+    char oldgreyjpegfile[512] = "./";
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(OLDGREYJPEGFILE) + 1) < sizeof(oldgreyjpegfile))) {
-        strcpy(oldgreyjpegfile, srcdir);
-        strcat(oldgreyjpegfile, "/");
-    }
     strcat(oldgreyjpegfile, OLDGREYJPEGFILE);
 
 /* C - Read 8-bit JPEG compressed data from old raster image file */
@@ -3047,14 +3023,8 @@ static void test_mgr_old_e(int flag)
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-    char oldjpegfile[512] = "";
-    char *srcdir = getenv("srcdir");
+    char oldjpegfile[512] = "./";
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(OLDJPEGFILE) + 1) < sizeof(oldjpegfile))) {
-        strcpy(oldjpegfile, srcdir);
-        strcat(oldjpegfile, "/");
-    }
     strcat(oldjpegfile, OLDJPEGFILE);
 
 /* E - Read 24-bit JPEG compressed data from old raster image file */
@@ -4170,14 +4140,8 @@ static void test_mgr_r24_a(int flag)
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-    char gr_r24file[512] = "";
-    char *srcdir = getenv("srcdir");
+    char gr_r24file[512] = "./";
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(GR_R24FILE) + 1) < sizeof(gr_r24file))) {
-        strcpy(gr_r24file, srcdir);
-        strcat(gr_r24file, "/");
-    }
     strcat(gr_r24file, GR_R24FILE);
 
 /* A - Write/Read DF24 image */
@@ -4426,14 +4390,8 @@ static void test_mgr_pal_a(int flag)
     int32 fid;              /* HDF file ID */
     int32 grid;             /* GRID for the interface */
     int32 ret;              /* generic return value */
-    char gr_r24file[512] = "";
-    char *srcdir = getenv("srcdir");
+    char gr_r24file[512] = "./";
 
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(GR_R24FILE) + 1) < sizeof(gr_r24file))) {
-        strcpy(gr_r24file, srcdir);
-        strcat(gr_r24file, "/");
-    }
     strcat(gr_r24file, GR_R24FILE);
 
 /* A - Write/Read DFP palette */
