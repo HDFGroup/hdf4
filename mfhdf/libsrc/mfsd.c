@@ -3889,24 +3889,25 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
 	      if((*dp)->assoc->count == 1) 
                   if( namelen == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
-		    /* because a dim was given, make sure that this is a 
-		       coordinate var */
-		/* only proceed if this variable is a coordinate var or when
-		   its status is unknown due to its being created prior to
-		   the fix of bugzilla 624 - BMR - 05/14/2007 */
-		   if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
+	      /* because a dim was given, make sure that this is a coord var */
+	      /* only proceed if this variable is a coordinate var or when
+		  its status is unknown due to its being created prior to
+		  the fix of bugzilla 624 - BMR - 05/14/2007 */
+		  if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
                   {
                       var = (*dp);
+                  }
+		  /* if it is an SDS, the function will fail */
+		  else if ((*dp)->var_type == IS_SDSVAR)
+                  {
+		      ret_value = FAIL;
+		      goto done;
                   }
             }
       }
 
-    if(!var)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
-
+    if(var != NULL)
+    {
     if(l) 
       {
           attr = (NC_attr **) NC_findattr(&(var->attrs), _HDF_LongName);
@@ -3951,6 +3952,18 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
           else 
               f[0] = '\0';
       }
+    }
+    /* the given dimension is not a coordinate variable, that means it
+       doesn't have attribute attached to it, because if it did, then it
+       would have been promoted to be a coordinate variable. */
+    else
+    {
+      if(l) l[0] = '\0';
+
+      if(u) u[0] = '\0';
+
+      if(f) f[0] = '\0';
+    }
 
 done:
     if (ret_value == FAIL)
