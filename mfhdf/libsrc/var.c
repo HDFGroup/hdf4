@@ -510,20 +510,20 @@ int *nattrsp ;
 		name[vp->name->len] = 0 ;
 	}
 
-	if(typep != 0)
+	if(typep != NULL)
 		*typep = vp->type ;
-	if(ndimsp != 0)
+	if(ndimsp != NULL)
 	{
 		*ndimsp = vp->assoc->count ;
 	}
-	if(dims != 0)
+	if(dims != NULL)
 	{
 		for(ii = 0 ; ii < vp->assoc->count ; ii++)
 		{
 			dims[ii] = vp->assoc->values[ii] ;
 		}
 	}
-	if(nattrsp != 0)
+	if(nattrsp != NULL)
 	{
 		if( vp->attrs != NULL)
 		{
