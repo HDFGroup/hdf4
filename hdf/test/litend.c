@@ -23,7 +23,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define CDIM_X  7
 #define CDIM_Y  9
 
-#define FILENAME    "litend.dat"
+#define FILENAME    "test_files/litend.dat"
 #define TMPFILE     "temp.hdf"
 
 /* for those machines with imprecise IEEE<-> conversions, this should be */

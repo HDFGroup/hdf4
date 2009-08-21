@@ -41,7 +41,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <time.h>
 
 #define TESTFILE_NAME "tbitio.hdf"
-#define DATAFILE_NAME "bitio.dat"
+#define DATAFILE_NAME "test_files/bitio.dat"
 
 /* Last ditch attempt to define this value... */
 #ifndef UINT_MAX

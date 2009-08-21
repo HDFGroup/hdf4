@@ -41,7 +41,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #include "tproto.h"
 #define TESTFILE_NAME "tnbit.hdf"
-#define DATAFILE_NAME "nbit.dat"
+#define DATAFILE_NAME "test_files/nbit.dat"
 
 #define NBIT_TAG1   1000
 #define NBIT_REF1   1000

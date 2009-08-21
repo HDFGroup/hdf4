@@ -24,7 +24,7 @@ C *************************************************
 C       program tvattrf 
 C Test Program:
 C   Tests the vdata and vgroup attribute interface
-C Input file: tvattr.dat
+C Input file: test_files/tvattr.dat
 C Output file: tvattrf.hdf
 
       implicit none
@@ -36,7 +36,7 @@ C Output file: tvattrf.hdf
       character*1024 ifn_out
       character*20 myname, ifn, ofn
       parameter (myname = 'vattrf',
-     +           ifn = 'tvattr.dat' ,
+     +           ifn = 'test_files/tvattr.dat' ,
      +           ofn = 'tvattrf.hdf'
      +          )  
       integer vsffidx, vsfsnat, vsfscat, vsfnats

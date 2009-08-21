@@ -47,12 +47,12 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 
 /* Local definitions of filenames and tag/refs of data in them. */
-#define BITIO_NAME  "bitio.dat"
+#define BITIO_NAME  "test_files/bitio.dat"
 #define BITIO_TAG1  1000
 #define BITIO_REF1  1000
 #define BITIO_SIZE1 4096
 
-#define NBIT_NAME   "nbit.dat"
+#define NBIT_NAME   "test_files/nbit.dat"
 #define NBIT_TAG1   (uint16)1000
 #define NBIT_REF1   (uint16)1000
 #define NBIT_SIZE1  4096

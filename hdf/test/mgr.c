@@ -27,7 +27,7 @@ static char RcsId[] = "$Revision$";
 
 #define TESTFILE "tmgr.hdf"
 #define TESTFILE2 "tmgrchk.hdf"
-#define DATAFILE "tmgr.dat"
+#define DATAFILE "test_files/tmgr.dat"
 
 #define MFGR_TESTER
 #include "tproto.h"
@@ -47,7 +47,7 @@ const struct {
     int32 dimsizes[2];
     int32 n_attr;
 } datafile_info[]=
-  { /* This information applies to the "tmgr.dat" file */
+  { /* This information applies to the "test_files/tmgr.dat" file */
     {"Raster Image #0", 3, DFNT_UCHAR8, MFGR_INTERLACE_PIXEL, {13,15}, 2},
     {"Raster Image #1", 3, DFNT_UCHAR8, MFGR_INTERLACE_LINE, {13,15}, 2},
     {"Raster Image #2", 3, DFNT_UCHAR8, MFGR_INTERLACE_COMPONENT, {13,15}, 2},
@@ -2683,9 +2683,9 @@ test_mgr_attr(int flag)
 /* I believe that these are adequately tested in the test_mgr_image routine -QAK */
 }   /* end test_mgr_attr() */
 
-#define OLDRLEFILE  "8bit.dat"
-#define OLDGREYJPEGFILE  "greyjpeg.dat"
-#define OLDJPEGFILE  "jpeg.dat"
+#define OLDRLEFILE  "test_files/8bit.dat"
+#define OLDGREYJPEGFILE  "test_files/greyjpeg.dat"
+#define OLDJPEGFILE  "test_files/jpeg.dat"
 #define JPEGX   46
 #define JPEGY   23
 
@@ -4160,7 +4160,7 @@ test_mgr_compress(int flag)
 
 }   /* end test_mgr_compress() */
 
-#define GR_R24FILE    "gr_r24.dat"
+#define GR_R24FILE    "test_files/gr_r24.dat"
 #define GR_R24XDIM      8
 #define GR_R24YDIM      10
 

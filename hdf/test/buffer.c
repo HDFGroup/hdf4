@@ -60,7 +60,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hfile.h"
 
 #define TESTFILE_NAME "tbuffer.hdf"
-#define EXTFILE_NAME "tbuffer.dat"
+#define EXTFILE_NAME "test_files/tbuffer.dat"
 
 /* Size of data elements to create */
 #ifdef __CRAY_XT3__
