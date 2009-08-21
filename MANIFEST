@@ -313,11 +313,11 @@
 ./hdf/test/MAKENOF.COM
 ./hdf/test/README
 ./hdf/test/SETUPTEST.COM
-./hdf/test/8bit.dat
+./hdf/test/test_files/8bit.dat
 ./hdf/test/an.c
 ./hdf/test/anfile.c
 ./hdf/test/bitio.c
-./hdf/test/bitio.dat
+./hdf/test/test_files/bitio.dat
 ./hdf/test/blocks.c
 ./hdf/test/buffer.c
 ./hdf/test/chunks.c
@@ -337,11 +337,11 @@
 ./hdf/test/fortest.inc
 ./hdf/test/fortest.sav
 ./hdf/test/gentest.c
-./hdf/test/greyjpeg.dat
-./hdf/test/gr_r24.dat
-./hdf/test/jpeg.dat
+./hdf/test/test_files/greyjpeg.dat
+./hdf/test/test_files/gr_r24.dat
+./hdf/test/test_files/jpeg.dat
 ./hdf/test/litend.c
-./hdf/test/litend.dat
+./hdf/test/test_files/litend.dat
 ./hdf/test/macros.c
 ./hdf/test/makepc.386
 ./hdf/test/makepc.msc
@@ -353,7 +353,7 @@
 ./hdf/test/mgrf.f
 ./hdf/test/mgrf_sunOS.f
 ./hdf/test/nbit.c
-./hdf/test/nbit.dat
+./hdf/test/test_files/nbit.dat
 ./hdf/test/rig.c
 ./hdf/test/sdmms.c
 ./hdf/test/sdnmms.c
@@ -371,7 +371,7 @@
 ./hdf/test/testhdf.lnk
 ./hdf/test/testhdf.pc
 ./hdf/test/testhdf.project.hqx
-./hdf/test/tmgr.dat
+./hdf/test/test_files/tmgr.dat
 ./hdf/test/tpf.f
 ./hdf/test/tproto.h
 ./hdf/test/tr8f.f
@@ -387,7 +387,7 @@
 ./hdf/test/tv1.res
 ./hdf/test/tv2.res
 ./hdf/test/tvattr.c
-./hdf/test/tvattr.dat
+./hdf/test/test_files/tvattr.dat
 ./hdf/test/tvattrf.f
 ./hdf/test/tvset.c
 ./hdf/test/tvsetf.f
