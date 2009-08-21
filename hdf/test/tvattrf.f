@@ -66,13 +66,14 @@ C iattrg, GATTR1 are for float64 values
       character*10  iattrc
       character*20 iattrnm
      
-      integer DFACC_CREATE, DFACC_RDWR, DFNT_CHAR
+      integer DFACC_CREATE, DFACC_RDWR, DFACC_READ, DFNT_CHAR
       integer DFNT_INT32, DFNT_FLOAT32 
       integer VSET_VERSION, VSET_NEW_VERSION
       integer HDF_VDATA
 
       parameter (DFACC_CREATE = 4,
      +           DFACC_RDWR = 3,
+     +           DFACC_READ = 1,
      +           DFNT_CHAR = 4,
      +           DFNT_INT32 = 24,
      +           DFNT_FLOAT32 = 5,
@@ -93,7 +94,7 @@ C      number_failed = 0
 C Open the file 
       len_in = len(ifn_out)
       ret = fixname(ifn, ifn_out, len_in)
-      fid1 = hopen(ifn_out(1:len_in), DFACC_RDWR, 0)
+      fid1 = hopen(ifn_out(1:len_in), DFACC_READ, 0)
       call VRFY(fid1, 'hopen', number_failed)
       ret = vfstart(fid1)
       call VRFY(ret, 'vfstart', number_failed)
