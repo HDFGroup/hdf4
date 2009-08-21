@@ -253,24 +253,22 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
 		  tvsfpack.c vers.c
 
 testhdf_LDADD = ../src/libdf.la
-testhdf_DEPENDENCIES = copyfiles testdir ../src/libdf.la 
+testhdf_DEPENDENCIES = testdir ../src/libdf.la 
 buffer_LDADD = ../src/libdf.la
 buffer_DEPENDENCIES = ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@fortest_SOURCES = fortest.c
 @HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = copyfiles testdir fortestF$(EXEEXT) ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
 @HDF_BUILD_FORTRAN_TRUE@                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
 @HDF_BUILD_FORTRAN_TRUE@                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
 @HDF_BUILD_FORTRAN_TRUE@                   tvattrf.f tvsetf.f
 
 @HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = copyfiles testdir ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 #############################################################################
 #############################################################################
-DISTCLEANFILES = fortest.arg Fortran_err.dat 8bit.dat bitio.dat greyjpeg.dat gr_r24.dat jpeg.dat \
-	litend.dat nbit.dat tmgr.dat tvattr.dat testdir/t5.hdf
-
+DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
 all: all-am
 
 .SUFFIXES:
@@ -651,12 +649,6 @@ uninstall-am:
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am
 
-
-# Copy the data files (*.dat) to the build directory and make sure they have rw permissions. Do this to
-# avoid modifying *.dat files in the source directory when running the tests.
-copyfiles:
-	-cp $(top_srcdir)/hdf/test/*.dat ./
-	-chmod 666 ./*.dat
 
 testdir:
 	-mkdir testdir
