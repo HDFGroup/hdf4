@@ -34,7 +34,7 @@ C Output file: tvattrf.hdf
 
       integer len_in
       character*1024 ifn_out
-      character*20 myname, ifn, ofn
+      character*25 myname, ifn, ofn
       parameter (myname = 'vattrf',
      +           ifn = 'test_files/tvattr.dat' ,
      +           ofn = 'tvattrf.hdf'
