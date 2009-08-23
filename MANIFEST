@@ -704,6 +704,26 @@
 ./mfhdf/dumper/testfiles/tdfr8f.hdf
 ./mfhdf/dumper/testfiles/tvset.hdf
 
+./mfhdf/examples/Makefile.am
+./mfhdf/examples/Makefile.in
+./mfhdf/examples/alter_sds_values.c
+./mfhdf/examples/chunking_example.c
+./mfhdf/examples/compress_sds.c
+./mfhdf/examples/dimscale_vs_sds.c
+./mfhdf/examples/find_sds_by_name.c
+./mfhdf/examples/get_attr.c
+./mfhdf/examples/get_info.c
+./mfhdf/examples/mv_sds_to_external.c
+./mfhdf/examples/read_from_sds.c
+./mfhdf/examples/read_subsets.c
+./mfhdf/examples/set_attr.c
+./mfhdf/examples/set_get_dim_info.c
+./mfhdf/examples/testexamples.sh.in
+./mfhdf/examples/unlimited_sds.c
+./mfhdf/examples/write_slab.c
+./mfhdf/examples/write_to_sds.c
+
+
 ./mfhdf/fortran/Linux.m4
 ./mfhdf/fortran/Makefile.am
 ./mfhdf/fortran/Makefile.in
