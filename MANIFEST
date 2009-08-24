@@ -709,6 +709,7 @@
 ./mfhdf/examples/alter_sds_values.c
 ./mfhdf/examples/chunking_example.c
 ./mfhdf/examples/compress_sds.c
+./mfhdf/examples/create_sds.c
 ./mfhdf/examples/dimscale_vs_sds.c
 ./mfhdf/examples/find_sds_by_name.c
 ./mfhdf/examples/get_attr.c
