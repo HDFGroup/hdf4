@@ -769,6 +769,8 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
+                 mfhdf/examples/Makefile
+                 mfhdf/examples/testexamples.sh
                  mfhdf/fortran/Makefile
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh

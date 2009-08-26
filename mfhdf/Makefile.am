@@ -13,3 +13,8 @@ XDR_DIR =
 endif
 
 SUBDIRS=port $(FORTRAN_DIR) $(XDR_DIR) libsrc ncdump ncgen dumper hdfimport hdiff hrepack nctest
+DIST_SUBDIRS=$(SUBDIRS) examples
+
+installcheck-local:
+	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
+

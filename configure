@@ -25167,7 +25167,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile libhdf4.settings hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
+ac_config_files="$ac_config_files Makefile libhdf4.settings hdf/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/examples/Makefile mfhdf/examples/testexamples.sh mfhdf/fortran/Makefile mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hrepack/Makefile mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncgen/Makefile mfhdf/nctest/Makefile mfhdf/port/Makefile mfhdf/xdr/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -26251,6 +26251,8 @@ do
     "mfhdf/Makefile") CONFIG_FILES="$CONFIG_FILES mfhdf/Makefile" ;;
     "mfhdf/dumper/Makefile") CONFIG_FILES="$CONFIG_FILES mfhdf/dumper/Makefile" ;;
     "mfhdf/dumper/testhdp.sh") CONFIG_FILES="$CONFIG_FILES mfhdf/dumper/testhdp.sh" ;;
+    "mfhdf/examples/Makefile") CONFIG_FILES="$CONFIG_FILES mfhdf/examples/Makefile" ;;
+    "mfhdf/examples/testexamples.sh") CONFIG_FILES="$CONFIG_FILES mfhdf/examples/testexamples.sh" ;;
     "mfhdf/fortran/Makefile") CONFIG_FILES="$CONFIG_FILES mfhdf/fortran/Makefile" ;;
     "mfhdf/hdfimport/Makefile") CONFIG_FILES="$CONFIG_FILES mfhdf/hdfimport/Makefile" ;;
     "mfhdf/hdfimport/testutil.sh") CONFIG_FILES="$CONFIG_FILES mfhdf/hdfimport/testutil.sh" ;;
