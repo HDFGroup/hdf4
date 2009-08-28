@@ -84,7 +84,7 @@ main(int argc, char *argv[])
             1,    /* compare SD data */
             1,    /* compare GR data */
             1,    /* compare Vdata */
-            -1,   /* no limit on the difference to be printed */
+            MAX_DIFF,   /* no limit on the difference to be printed */
             0.0,  /* exact equal */
             0,    /* if -v specified, number of variables */
             0,    /* if -v specified, list of variable names */

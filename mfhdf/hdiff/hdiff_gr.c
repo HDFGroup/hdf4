@@ -251,10 +251,9 @@ uint32 diff_gr( int32 gr1_id,
      cmp = HDmemcmp(buf1,buf2,data_size);
      if (cmp!=0)
      {
-         
-     /* if max_err_cnt is set (i.e. not its default -1), use it otherwise set it
-        to tot_err_cnt so it doesn't trip  */
-         max_err_cnt = (opt->max_err_cnt >= 0) ? opt->max_err_cnt : nelms;
+     /* if the given max_err_cnt is set (i.e. not its default MAX_DIFF),
+	use it, otherwise, use the total number of elements in the dataset */
+         max_err_cnt = (opt->max_err_cnt != MAX_DIFF) ? opt->max_err_cnt : nelms;
          nfound=array_diff(
              buf1, 
              buf2, 

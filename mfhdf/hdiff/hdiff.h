@@ -17,7 +17,8 @@
 
 #define  Printf  (void) printf
 
-
+/* Maximum value for max_err_cnt */
+#define	MAX_DIFF	0x7FFFFFFF
 
 struct ncdim {   /* dimension */
     char name[H4_MAX_NC_NAME];
