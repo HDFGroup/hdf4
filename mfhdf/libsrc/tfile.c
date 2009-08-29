@@ -370,6 +370,9 @@ test_files()
 {
     intn num_errs = 0;         /* number of errors */
 
+    /* Output message about test being performed */
+    TESTING("miscellaneous file related functions (tfile.c)");
+
     /* test that an in-use file is not removed in certain failure 
        cleanup. 06/21/05 - bugzilla 376 - BMR */
     num_errs = num_errs + test_file_inuse();
@@ -381,6 +384,7 @@ test_files()
     /* test the fix of bugzzila 1331. 01/16/09 - BMR */
     num_errs = num_errs + test_longfilename();
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
 

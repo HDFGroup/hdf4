@@ -38,6 +38,9 @@ test_sd()
     FILE *ff;
     intn      num_errs = 0;         /* number of errors so far */
 
+    /* Output message about test being performed */
+    TESTING("SDstart for file with no write permission (tsd.c)");
+
     /* delete the file just to be sure */
     unlink(FILE_NAME);
 
@@ -77,7 +80,7 @@ test_sd()
     status = chmod(FILE_NAME, mode);
     CHECK(status, FAIL, "chmod");
 
-    /* Return the number of errors that's been kept track of so far */
+    if (num_errs == 0) PASSED();
     return num_errs;
 }   /* test_SDAPI_ids */
 #endif /* HDF */

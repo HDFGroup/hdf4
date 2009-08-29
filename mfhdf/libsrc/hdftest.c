@@ -1544,7 +1544,8 @@ main(int argc, char *argv[])
     /* status = test_sd(); */
     /* num_errs = num_errs + status; */
 
-    printf("num_err == %d\n", num_errs);
+    if (num_errs > 0)
+        printf("num_err == %d\n", num_errs);
 
     exit(num_errs);
     return num_errs;

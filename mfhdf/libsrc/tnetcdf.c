@@ -54,6 +54,9 @@ test_netcdf_reading()
     const char *basename = "test1.nc";
     char  *srcdir = getenv("srcdir");
 
+    /* Output message about test being performed */
+    TESTING("reading of netCDF file using the SDxxx inteface (tnetcdf.c)");
+
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < sizeof(testfile))) 
     {
@@ -139,6 +142,7 @@ test_netcdf_reading()
     status = SDend(sd_id);
     CHECK(status, FAIL, "netCDF Read Test 1. SDend failed for file test1.nc");
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 } /* test_netcdf_reading() */
 #endif /* NETCDF_READ_TEST */

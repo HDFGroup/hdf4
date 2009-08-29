@@ -207,9 +207,13 @@ test_idtype()
 {
     intn num_errs = 0;         /* number of errors */
 
+    /* Output message about test being performed */
+    TESTING("SDidtype (tidtypes.c)");
+
     num_errs = num_errs + test_SDAPI_ids();
     num_errs = num_errs + test_nonSDAPI_ids();
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
 

@@ -860,7 +860,7 @@ extern int test_ncunlim()
     int num_errs = 0;
 
     /* Output message about test being performed */
-    TESTING("read/write variables with unlimited dimensions via nc API");
+    TESTING("read/write variables with unlimited dims via nc API (tncunlim.c)");
 
     /* Test single variable with 1 unlimited dimension */
     num_errs = num_errs + test_1dim_singlevar();
@@ -871,8 +871,6 @@ extern int test_ncunlim()
     /* Test multiple variables with multiple dimensions */
     num_errs = num_errs + test_multidim_singlevar();
 
-    if (num_errs == 0)
-        PASSED();
-
+    if (num_errs == 0) PASSED();
     return num_errs;
 }

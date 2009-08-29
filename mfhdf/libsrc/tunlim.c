@@ -740,7 +740,7 @@ extern int test_unlim()
     int num_errs = 0;
 
     /* Output message about test being performed */
-    TESTING("read/write datasets with unlimited dimensions via SD API");
+    TESTING("read/write datasets with unlimited dims via SD API (tunlim.c)");
 
     /* Test single variable with 1 unlimited dimension */
     num_errs = num_errs + test_1dim_singlevar();
@@ -754,8 +754,6 @@ extern int test_unlim()
     /* Test multiple variables created at different time */
     num_errs = num_errs + test_1dim_multivars_addon();
 
-    if (num_errs == 0)
-	PASSED();
-
+    if (num_errs == 0) PASSED();
     return num_errs;
 }

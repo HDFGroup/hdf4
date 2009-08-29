@@ -597,6 +597,9 @@ extern int test_datasizes()
     intn status;
     int num_errs = 0;
 
+    /* Output message about test being performed */
+    TESTING("getting data size of special data (tdatasizes.c)");
+
     /* Open the file and initialize the SD interface */
     fid = SDstart(FILE_NAME, DFACC_CREATE);
     CHECK(fid, FAIL, "test_datasizes: SDstart");
@@ -618,6 +621,7 @@ extern int test_datasizes()
     status = SDend(fid);
     CHECK(status, FAIL, "test_datasizes: SDend");
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
 

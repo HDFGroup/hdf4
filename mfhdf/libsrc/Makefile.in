@@ -678,16 +678,7 @@ check:
 	@echo "============================"
 	@echo "HDF-SD C interface tests"
 	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest > hdfout.new
-	@cmd="$(DIFF) hdfout.new $(srcdir)/hdfout.sav";                 \
-	  echo $$cmd;                                                   \
-	  if $$cmd; then                                                \
-	    echo "*** HDF passes formatted test ***";                   \
-	  else                                                          \
-	    echo "*** HDF fails formatted test ***";                    \
-	    echo "The above differences are OK if small";               \
-	    exit 0;                                                     \
-	  fi
+	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
 	@echo
 	@echo "============================"
 	@echo "HDF-nc C interface tests"

@@ -637,10 +637,16 @@ test_coordvar()
 {
     intn num_errs = 0;         /* number of errors */
 
+    /* Output message about test being performed */
+    TESTING("various coordinate variable features (tcoordvar.c)");
+
     /* test when a dimension being named the same as an SDS */
     num_errs = num_errs + test_dim1_SDS1();
     num_errs = num_errs + test_dim1_SDS2();
     num_errs = num_errs + test_named_vars();
+
+    if (num_errs == 0)
+        PASSED();
 
     return num_errs;
 }

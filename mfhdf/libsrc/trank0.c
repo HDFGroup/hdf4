@@ -45,6 +45,9 @@ test_rank0()
     int32     status_32;
     intn      num_errs = 0;	/* number of errors so far */
 
+    /* Output message about test being performed */
+    TESTING("several APIs with SDS having rank = 0 (trank0.c)");
+
     /* Create a file */
     fid = SDstart(FILE_NAME, DFACC_CREATE);
     CHECK(fid, FAIL, "test_rank0: SDstart");
@@ -153,6 +156,7 @@ test_rank0()
     status = SDend(fid);
     CHECK(status, FAIL, "test_rank0: SDend");
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
 

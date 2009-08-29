@@ -468,6 +468,9 @@ test_checkempty()
     intn status;
     int num_errs = 0;
 
+    /* Output message about test being performed */
+    TESTING("SDcheckempty on various types of data storage (temptySDSs.c)");
+
     /* Open the file and initialize the SD interface */
     fid = SDstart(FILE_NAME, DFACC_CREATE);
     CHECK(fid, FAIL, "In test_checkempty: SDstart");
@@ -484,6 +487,7 @@ test_checkempty()
     /* This function will reopen the file and check the SDSs in it */
     num_errs = num_errs + test_SDSs_infile();
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
 

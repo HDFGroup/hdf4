@@ -825,11 +825,17 @@ test_compression()
 {
     intn num_errs = 0;         /* number of errors */
 
+    /* Output message about test being performed */
+    TESTING("create/read/write compressed datasets (tcomp.c)");
+
     /* create various data sets with different compression methods */
     num_errs = num_errs + test_various_comps();
 
     /* test writing and reading data sets with compression */
     num_errs = num_errs + test_compressed_data();
+
+    if (num_errs == 0)
+        PASSED();
 
     return num_errs;
 }

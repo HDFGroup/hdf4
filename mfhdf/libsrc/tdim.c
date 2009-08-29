@@ -233,7 +233,6 @@ static intn test_basic_dim()
 
     status = SDdiminfo(dim0_id, dim_name, &size, &dim_data_type, &dim_num_attrs);
     CHECK(status, FAIL, "SDdiminfo");
- fprintf(stderr, "dim_name = %s\n", dim_name);
     VERIFY(HDstrcmp(dim_name, "fakeDim2"), 0, "SDdiminfo");
 
     /* Set the first dimension name to DIM2_NAME */
@@ -779,8 +778,7 @@ extern int test_dimensions()
     int num_errs = 0;
 
     /* Output message about test being performed */
-    /* Will uncomment when test result checking is modified accordingly
-	TESTING("functionality of dimensions"); */
+    TESTING("functionality of dimensions (tdim.c)");
 
     /* Test basic dimension functionality */
     num_errs = num_errs + test_basic_dim();
@@ -791,6 +789,7 @@ extern int test_dimensions()
     /* Test SD[set/get]dimstrs */
     num_errs = num_errs + test_dim_strs();
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
     

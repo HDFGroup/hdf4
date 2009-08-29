@@ -1471,6 +1471,9 @@ test_szip_compression ()
 {
     int num_errs = 0;
 
+    /* Output message about test being performed */
+    TESTING("szip compression for datasets (tszip.c)");
+
 #ifdef H4_HAVE_SZIP_ENCODER
     /* Test creating and writing SZIP compressed data only when szlib encoder
 	is available */
@@ -1497,5 +1500,7 @@ test_szip_compression ()
     /* Test reading szip compression information and should pass with or 
 	without SZIP library */
     num_errs = num_errs + test_getszipinfo();
+
+    if (num_errs == 0) PASSED();
     return num_errs;
 }

@@ -757,12 +757,16 @@ test_SDSprops()
 {
     intn num_errs = 0;         /* number of errors */
 
+    /* Output message about test being performed */
+    TESTING("various SDS' properties (tsdsprops.c)");
+
     num_errs = num_errs + test_SDSnames();
     num_errs = num_errs + test_unlim_dim();
     num_errs = num_errs + test_unlim_inloop();
     num_errs = num_errs + test_valid_args();
     num_errs = num_errs + test_valid_args2();
 
+    if (num_errs == 0) PASSED();
     return num_errs;
 }
 

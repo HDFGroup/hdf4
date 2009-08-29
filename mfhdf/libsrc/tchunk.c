@@ -195,6 +195,9 @@ test_chunk()
     float32 max;
     int     num_errs = 0;    /* number of errors so far */
 
+    /* Output message about test being performed */
+    TESTING("create/read/write chunked datasets (tchunk.c)");
+
     /* Create file 'chktst.hdf' */
     fchk = SDstart(CHKFILE, DFACC_CREATE);
     CHECK(fchk, FAIL, "SDstart");
@@ -1613,8 +1616,10 @@ test_chunk()
     status = SDend(fchk);
     CHECK(status, FAIL, "Chunk Test 8. SDend");
 
-  done:
+    if (num_errs == 0)
+        PASSED();
 
+  done:
     return num_errs;
 } /* test_chunk() */
 #endif /* HDF */
