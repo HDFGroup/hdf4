@@ -973,7 +973,6 @@
 ./mfhdf/libsrc/globdef.c
 ./mfhdf/libsrc/hdf2netcdf.h
 ./mfhdf/libsrc/hdfnctest.c
-./mfhdf/libsrc/hdfout.sav
 ./mfhdf/libsrc/hdfsds.c
 ./mfhdf/libsrc/hdftest.c
 ./mfhdf/libsrc/hdftest.h
