@@ -57,48 +57,6 @@ else
 endif
 
 #############################################################################
-##                              Testing                                    ##
-#############################################################################
-
-check_PROGRAMS = cdftest hdfnctest hdftest
-
-cdftest_SOURCES = cdftest.c
-cdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
-hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
-hdfnctest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
-hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c		\
-		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c	\
-		  tsd.c tsdsprops.c tszip.c tdatasizes.c
-hdftest_LDADD = libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
-check:
-	@echo "============================"
-	@echo "HDF-SD C interface tests"
-	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
-	@echo
-	@echo "============================"
-	@echo "HDF-nc C interface tests"
-	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdfnctest
-	@echo
-	@echo "========================="
-	@echo "netCDF formatted tests"
-	@echo "========================="
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./cdftest > cdfout.new
-	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
-	  echo $$cmd;                                                   \
-	  if $$cmd; then                                                \
-	    echo "*** netCDF passes formatted test ***";                \
-	  else                                                          \
-	    echo "*** netCDF fails formatted test ***";                 \
-	    echo "The above differences are OK if small";               \
-	    exit 0;                                                     \
-	  fi
-
-#############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
 

@@ -148,6 +148,7 @@ mfhdf/test/tdatasizes.c -text
 mfhdf/test/tdim.c -text
 mfhdf/test/temptySDSs.c -text
 mfhdf/test/test1.nc -text
+mfhdf/test/testout.sav -text
 mfhdf/test/tfile.c -text
 mfhdf/test/tidtypes.c -text
 mfhdf/test/tncunlim.c -text

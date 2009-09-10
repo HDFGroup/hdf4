@@ -781,6 +781,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/ncgen/Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/port/Makefile
+                 mfhdf/test/Makefile
                  mfhdf/xdr/Makefile])
 
 AC_OUTPUT
