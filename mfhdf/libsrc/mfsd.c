@@ -3202,10 +3202,12 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
 	if((*dp)->assoc->count == 1) 
             if( len == (*dp)->name->len 
               && HDstrncmp(name->values, (*dp)->name->values, (size_t)len) == 0) 
-		/* only proceed if this variable is a coordinate var or when
+		/* only proceed if the file is a netCDF file (bugz 1644)
+		   or if this variable is a coordinate var or when
 		   the status is unknown due to its being created prior to
 		   the fix of bugzilla 624 - BMR 05/14/2007 */
-		if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
+		if ((handle->file_type != HDF_FILE) ||
+		    (*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
 		{
 		    /* see if we need to change the number type */
 		    if((nt != 0) && (nt != (*dp)->type)) 
@@ -3772,6 +3774,13 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 
     *size  = dim->size;
 
+    /* assuming no number type and no attributes */
+    *nt    = 0;
+    *nattr = 0;
+
+    /* In HDF files, number type and attribute info are only stored in the
+       coordinate var of the dimension; so, if there is no coord var associated
+       with the dimension being inquired, these info will not be available. */
     if(handle->vars) 
       {
           len = dim->name->len;
@@ -3780,29 +3789,34 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
             {
 	      /* eliminate vars with rank > 1, coord vars only have rank 1 */
 	      if((*dp)->assoc->count == 1) 
+	      {
+		 /* check if this variable matches the searched name */
                  if( len == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, (*dp)->name->len) == 0)
-		   /* only proceed if this variable is a coordinate var or when
-		      its status is unknown due to its being created prior to
-		      the fix of bugzilla 624 - BMR - 05/14/2007 */
-		   if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
-                  {
-                      if (handle->file_type == HDF_FILE)
-                          *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
-                      else 
-                          *nt = (*dp)->HDFtype;
-
-                      *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
-                      ret_value = SUCCEED;
-                      goto done;
-                  }
+		 {
+		    if (handle->file_type == HDF_FILE) /* HDF file */
+		    {
+			/* only proceed if this variable is a coordinate var or
+			when its status is unknown due to its being created
+			prior to the fix of bugzilla 624 - BMR - 05/14/2007 */
+			if ((*dp)->var_type == IS_CRDVAR ||
+			    (*dp)->var_type == UNKNOWN)
+			{
+			    *nt = ((*dp)->numrecs ? (*dp)->HDFtype : 0);
+			    *nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
+			    goto done;
+			}
+		    }
+		    else /* netCDF file */
+		    {
+			*nt = (*dp)->HDFtype;
+			*nattr = ((*dp)->attrs ? (*dp)->attrs->count : 0);
+			goto done;
+		    }
+		 } /* name matched */
+	      } /* rank = 1 */
             }
       }
-
-    /* no var so return NULL values */
-    *nt    = 0;
-    *nattr = 0;
-
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
