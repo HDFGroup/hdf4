@@ -1,5 +1,7 @@
 * text=auto !eol
+bin/h4vers -text
 bin/ltmain.sh -text
+bin/release -text
 bin/timekeeper -text
 config/commence.am -text
 config/ia64-hp-hpux11.23 -text

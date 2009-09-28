@@ -1,7 +1,5 @@
-
-                          README for HDF 4.2r4
-                          ====================
-                            January 25, 2009
+HDF version 4.2.4-snap0 currently under development
+===================================================
 
 Obtaining the latest version of HDF4
 ------------------------------------

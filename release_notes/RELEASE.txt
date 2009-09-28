@@ -1,7 +1,5 @@
-
-                          HDF 4.2 Release 4-post*  
-                          =================
-                          January 30, 2009
+HDF version 4.2.4-snap0 currently under development
+===================================================
 
 INTRODUCTION
 
@@ -52,7 +50,10 @@ New features and changes
     Utilities
     ========= 
         - 
-
+ 
+    Daily Test and Release
+    ======================
+    Added h4vers and release scripts and Snapshot Release capability.
 
 Support for new platforms and compilers
 =======================================

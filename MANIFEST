@@ -26,8 +26,9 @@
 ./INSTALL_WINDOWS.txt
 ./Makefile.am
 ./Makefile.in
+./Makefile.dist
 ./MAKEVMS.COM
-./README
+./README.txt
 ./aclocal.m4
 ./configure
 ./configure.ac
@@ -50,6 +51,8 @@
 ./bin/snapshot
 ./bin/timekeeper
 ./bin/yodconfigure
+./bin/h4vers
+./bin/release
 
 ./config/BlankForm
 ./config/commence.am
