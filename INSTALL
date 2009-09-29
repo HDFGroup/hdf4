@@ -1,8 +1,6 @@
 
-    Installation Instructions for HDF4.2r4 on UNIX and MacOSX Platforms
+    Installation Instructions for HDF4 on UNIX and MacOSX Platforms
     ===================================================================
-                             January 25, 2009
-
 
 CONTENTS
 
@@ -29,7 +27,7 @@ CONTENTS
 1. Optional SZIP compression Library
    =================================
 
-   x HDF4.2r4 may be configured to use the SZIP compression Library.
+   x HDF4 may be configured to use the SZIP compression Library.
      For more information about the SZIP library, see this site:
 
          http://hdfgroup.org/doc_resource/SZIP/ 
@@ -73,12 +71,12 @@ CONTENTS
    2)  Optional: Install the SZIP version 2.1 Library (you may use 
        SZIP 2.0 binaries). 
 
-   3)  Extract the source from the hdf4.2r4.tar file and change
-       directory to hdf4.2r4.
+   3)  Extract the source from the hdf-X.Y.Z.tar file and change
+       directory to hdf-X.Y.Z.
 
    To Configure:
 
-   4)  Use the configure command in the top level HDF4 directory hdf4.2r4:
+   4)  Use the configure command in the top level HDF4 directory hdf-4.2.4:
 
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
@@ -120,10 +118,10 @@ CONTENTS
        See the configure help page (configure --help) for a list of
        environment variables that have an affect on building the library.
 
-   9)  You may build HDF4 in a directory other than hdf4.2r4 by using
+   9)  You may build HDF4 in a directory other than hdf-4.2.4 by using
        the "srcdir" option. Simply create a build directory and type:
 
-       <path_to_hdf4.2r4>/configure ...
+       <path_to_hdf-4.2.4>/configure ...
 
        where "..." are your configuration options.
 
@@ -136,7 +134,7 @@ CONTENTS
    version of the C interface (ncxxx) of the HDF4 netCDF APIs to sd_ncxxx 
    and will disable the HDF4 NC Fortran interfaces to avoid name clashes 
    with the original netCDF C and Fortran APIs from libnetcdf.a.  
-   HDF4.2r3 and later DO NOT require the presence of the NetCDF-3 
+   HDF 4.2r3 and later DO NOT require the presence of the NetCDF-3 
    header files on the system.
 
 
