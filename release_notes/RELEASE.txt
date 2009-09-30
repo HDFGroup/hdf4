@@ -3,11 +3,11 @@ HDF version 4.2.4-snap0 currently under development
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2r4 and HDF 4.2r4-post*
+This document describes the differences between HDF 4.2.4 and HDF 4.2.4-snap*
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2r4-post*
+and wish to migrate to HDF 4.2.4-snap*
 
-The HDF 4.2r4 documentation can be found on the The HDF Group's FTP server:
+The HDF 4.2.4 documentation can be found on the The HDF Group's FTP server:
 
      ftp://ftp.hdfgroup.org/HDF/Documentation/
 
@@ -27,7 +27,7 @@ CONTENTS
   -- Library
   -- Utilities
 - Support for new platforms and compilers
-- Bugs fixed since HDF4.2r4
+- Bugs fixed since HDF4.2.4
   -- Utilities
   -- Library
   -- Configuration
@@ -59,7 +59,7 @@ Support for new platforms and compilers
 =======================================
         
 
-Bugs fixed since HDF4.2r4
+Bugs fixed since HDF4.2.4
 =========================
     Utilities
     ========= 

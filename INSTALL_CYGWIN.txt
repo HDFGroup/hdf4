@@ -113,7 +113,7 @@ Notes: Use the configure command in the top level HDF4 directory.
   
 2. Unpacking the distribution
 
-   gzip -cd <HDF4.2r4.tar.gz>| tar xvf -
+   gzip -cd <HDF-X.Y.Z.tar.gz>| tar xvf -
 
 3. To configure 
      
@@ -146,7 +146,7 @@ Notes: Use the configure command in the top level HDF4 directory.
 
          make install
 
-6.  You may build HDF4 in a directory other than hdf4.2r4 by
+6.  You may build HDF4 in a directory other than hdf-X.Y.Z by
       using the "srcdir" option. Simply create a build directory and
       type:
 

@@ -1,4 +1,4 @@
-     Installation Instructions for HDF4.2r4 on Windows XP/Vista
+     Installation Instructions for HDF4 on Windows XP/Vista
 ========================================================================
 
 The instructions which follow assume that you will be using the HDF4 source code 
@@ -32,11 +32,11 @@ DLL) and utilities, it is assumed that you have done the following:
          c:\                             (any drive)
          MyHDFstuff\                     (any folder name)
 
-   3. Download the HDF4.2r4 source code archive HDF4.2r4.tar.gz from
+   3. Download the HDF-X.Y.Z source code archive HDF-X.Y.Z.tar.gz from
       ftp://ftp.hdfgroup.org/HDF/HDF_Current/src and use 7zip or WinZip
       to extract HDF4 source code into c:\MyHDFstuff.  This creates a 
-      directory called 'HDF4.2r4' under MyHDFstuff which contains 
-      several files and directories.  Rename "HDF4.2r4" to "HDF42r4".  
+      directory called 'HDF-X.Y.Z' under MyHDFstuff which contains 
+      several files and directories.  Rename "HDF-X.Y.Z" to "HDF-XYZ".  
 
    4. HDF4 provides options to do in-memory compress within HDF4
       library.  Currently, three external compression libraries ZLIB,
@@ -791,7 +791,7 @@ Option 2: Remove Szip Compression in HDF4
       
 Section VIII:  Use HDF4 with Original netCDF Library
 ======================================================================
-Note: This option has not been extensively tested in HDF4.2r4, and is therefore
+Note: This option has not been extensively tested in HDF4, and is therefore
       unsupported.  However, we provide documentation for users that would like
       to test this feature.
 

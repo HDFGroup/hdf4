@@ -76,7 +76,7 @@ CONTENTS
 
    To Configure:
 
-   4)  Use the configure command in the top level HDF4 directory hdf-4.2.4:
+   4)  Use the configure command in the top level HDF4 directory hdf-X.Y.Z:
 
        ./configure --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
@@ -118,10 +118,10 @@ CONTENTS
        See the configure help page (configure --help) for a list of
        environment variables that have an affect on building the library.
 
-   9)  You may build HDF4 in a directory other than hdf-4.2.4 by using
+   9)  You may build HDF4 in a directory other than hdf-X.Y.Z by using
        the "srcdir" option. Simply create a build directory and type:
 
-       <path_to_hdf-4.2.4>/configure ...
+       <path_to_hdf-X.Y.Z>/configure ...
 
        where "..." are your configuration options.
 
