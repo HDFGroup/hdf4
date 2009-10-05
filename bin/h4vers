@@ -387,7 +387,7 @@ sub gen_h5pubconf {
     for (my $i = 0; $i < $#contents; ++$i) {
         if ($contents[$i] =~ /\#\s*define\s+H4_PACKAGE\s+/) {
             $contents[$i] = "\#define H4_PACKAGE \"$namelc\"\n";
-        } elsif ($contents[$i] =~ /\#\s*define\s+H5_PACKAGE_NAME\s+/) {
+        } elsif ($contents[$i] =~ /\#\s*define\s+H4_PACKAGE_NAME\s+/) {
             $contents[$i] = "\#define H4_PACKAGE_NAME \"$nameuc\"\n";
         } elsif ($contents[$i] =~ /\#\s*define\s+H4_PACKAGE_STRING\s+/) {
             $contents[$i] = sprintf("\#define H4_PACKAGE_STRING \"$nameuc %d.%d.%d%s\"\n",

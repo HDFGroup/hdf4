@@ -61,18 +61,18 @@ for compressing the resulting tar archive (if none are given then
 Examples:
 
     $ release
-    releases/hdf4-4.2.4.tar
-    releases/hdf4-4.2.4.tar.md5
+    releases/hdf-4.2.4.tar
+    releases/hdf-4.2.4.tar.md5
 
     $ release gzip
-    releases/hdf4-4.2.4.tar.gz
+    releases/hdf-4.2.4.tar.gz
 
     $ release -d /tmp tar compress gzip bzip2 md5
-    /tmp/hdf4-4.2.4.tar
-    /tmp/hdf4-4.2.4.tar.Z
-    /tmp/hdf4-4.2.4.tar.gz
-    /tmp/hdf4-4.2.4.tar.bz2
-    /tmp/hdf4-4.2.4.tar.md5
+    /tmp/hdf-4.2.4.tar
+    /tmp/hdf-4.2.4.tar.Z
+    /tmp/hdf-4.2.4.tar.gz
+    /tmp/hdf-4.2.4.tar.bz2
+    /tmp/hdf-4.2.4.tar.md5
 
 EOF
 
@@ -174,8 +174,8 @@ if [ X$pmode = Xyes ]; then
     bin/h4vers -s $VERS
 fi
 
-# Store hdf4-$VERS ("hdf4-4.2.4", e.g.) to a variable to avoid typos
-HDF4_VERS=hdf4-$VERS
+# Store hdf4-$VERS ("hdf-4.2.4", e.g.) to a variable to avoid typos
+HDF4_VERS=hdf-$VERS
 
 test "$verbose" && echo "Releasing $HDF4_VERS to $DEST" 1>&2
 if [ ! -d $DEST ]; then
@@ -194,7 +194,7 @@ if [ "X$fail" = "Xyes" ]; then
 fi
 
 # Create a manifest that contains only files for distribution.
-MANIFEST=$tmpdir/H5_MANIFEST
+MANIFEST=$tmpdir/H4_MANIFEST
 grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
 
 # Prepare the source tree for a release.
@@ -205,7 +205,7 @@ cp -p Makefile.dist Makefile
 # Update README.txt and release_notes/RELEASE.txt with release information in
 # line 1.
 for f in README.txt release_notes/RELEASE.txt; do
-    echo "HDF4 version $VERS released on `date`" >$f.x
+    echo "HDF version $VERS released on `date`" >$f.x
     sed -e 1d $f >>$f.x
     mv $f.x $f
     # Make sure new files are of the right access mode
@@ -217,7 +217,7 @@ test "$verbose" && echo "   Running tar..." 1>&2
 ( \
     cd $tmpdir; \
     tar cf $HDF4_VERS.tar $HDF4_VERS/Makefile \
-	`sed 's/^\.\//hdf4-'$VERS'\//' $MANIFEST` || exit 1 \
+	`sed 's/^\.\//hdf-'$VERS'\//' $MANIFEST` || exit 1 \
 )
 
 # Compress
