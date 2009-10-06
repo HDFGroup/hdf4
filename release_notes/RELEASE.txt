@@ -1,4 +1,4 @@
-HDF version 4.2.4-snap1 currently under development
+HDF version 4.2.4-snap2 currently under development
 ===================================================
 
 INTRODUCTION
