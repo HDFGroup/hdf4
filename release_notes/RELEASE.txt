@@ -45,7 +45,7 @@ New features and changes
 
     Library
     ========= 
-        - 
+	- SD examples were added to mfhdf/examples.  (BMR - 2009/08/28)
 
     Utilities
     ========= 
@@ -67,7 +67,11 @@ Bugs fixed since HDF4.2.4
 
     Library
     ========= 
-        - 
+	- The problem where incorrect result occurred when attempting
+	  to retrieve the dimension scale's number type from a netCDF file
+	  was fixed (bugzilla #1644.) (BMR - 2009/09/25)
+	- SD tests were moved from mfhdf/libsrc to mfhdf/test.
+	  (BMR - 2009/09/10)
 
     Configuration
     ============= 
