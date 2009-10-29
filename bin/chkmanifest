@@ -161,7 +161,7 @@ EOF
     exit 1
 fi
 
-if [ $errcode > 0 ]; then
+if [ $errcode -gt 0 ]; then
     exit $errcode
 fi
 
