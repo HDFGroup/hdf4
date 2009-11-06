@@ -220,6 +220,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+H4CC = $(bindir)/h4cc
 @HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 @HDF_BUILD_SHARED_FALSE@SHLIBLOC = ../libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a

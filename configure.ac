@@ -758,6 +758,7 @@ AM_CONDITIONAL([HDF_BUILD_SHARED], [test "X$enable_shared" = "Xyes"])
 AC_CONFIG_FILES([Makefile
                  libhdf4.settings
                  hdf/Makefile
+                 hdf/examples/Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
