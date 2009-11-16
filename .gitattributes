@@ -76,6 +76,7 @@ hdf/test/test_files/litend.dat -text
 hdf/test/test_files/nbit.dat -text
 hdf/test/test_files/tmgr.dat -text
 hdf/test/test_files/tvattr.dat -text
+hdf/test/tmgrattr.c -text
 hdf/util/testfiles/SunWheel.gif -text
 hdf/util/testfiles/bttrfly.gif -text
 hdf/util/testfiles/fp2hdf/h100x100 -text

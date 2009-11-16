@@ -67,6 +67,12 @@ do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had 
 if(x != val) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
+/* Same as VERIFY except that the value has type char* */
+#define VERIFY_CHAR(x, val, where) \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\
+if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return(num_errs);} \
+} while(0)
+
 #define RESULT(a) \
 do { \
 if (Verbosity>8) printf("   Call to HDF routine: %15s at line %4d in %s returned %ld \n",a,(int)__LINE__,__FILE__,(long)ret); \
@@ -81,6 +87,12 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define SKIP_STR	"Skip"
 #define TEST_STR	"Test"
 #define CLEAN_STR	"Cleanup"
+
+/* Output notices */
+#define PASSED()        {puts(" PASSED");fflush(stdout);}
+#define FAILED()        {puts("*FAILED*");fflush(stdout);}
+#define WARNING()       {puts("*WARNING*");fflush(stdout);}
+#define SKIPPED()       {puts(" -SKIP-");fflush(stdout);}
 
 /* System command to use for Cleanup */
 #ifdef VMS
