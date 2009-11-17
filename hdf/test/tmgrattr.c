@@ -454,13 +454,25 @@ static int test_mgr_userattr()
     return(num_errs);
 } /* test_mgr_userattr */
 
+/****************************************************************
+**
+**  test_mgr_attr(): Main multi-file raster attribute test routine
+**
+**  VII. Atribute Functions
+**      A. GRattrinfo
+**      B. Read/Write Attributes
+**          1. GRsetattr
+**          2. GRgetattr
+**      C. GRfindattr
+**
+****************************************************************/
 /* Test driver for testing attributes in multi-file GR interface */
 extern void test_mgr_attr()
 {
     int num_errs = 0;
 
     /* Output message about test being performed */
-    MESSAGE(5, printf("Testing Multi-file Raster routines\n"););
+    MESSAGE(5, printf("Testing Multi-file Raster Attribute routines\n"););
 
     /* Test attribute functions with fill-values attributes */
     num_errs = num_errs + test_mgr_fillvalues();

@@ -169,7 +169,7 @@ static void test_mgr_index(int flag);
 static void test_mgr_interlace(int flag);
 static void test_mgr_lut(int flag);
 static void test_mgr_special(int flag);
-static void test_mgr_attr(int flag);
+extern void test_mgr_attr();
 extern void test_mgr_dup_images();
 
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
@@ -2664,7 +2664,7 @@ test_mgr_special(int flag)
 
 /****************************************************************
 **
-**  test_mgr_attr(): Multi-file Raster Attribute Test Routine
+**  test_mgr_attr_old(): Multi-file Raster Attribute Test Routine
 ** 
 **  VII. Atribute Functions
 **      A. GRattrinfo
@@ -2675,13 +2675,13 @@ test_mgr_special(int flag)
 ** 
 ****************************************************************/
 static void
-test_mgr_attr(int flag)
+test_mgr_attr_old(int flag)
 {
     /* Output message about test being performed */
     MESSAGE(6, printf("Testing Multi-file Raster Attribute routines\n"););
 
 /* I believe that these are adequately tested in the test_mgr_image routine -QAK */
-}   /* end test_mgr_attr() */
+}   /* end test_mgr_attr_old() */
 
 #define OLDRLEFILE  "test_files/8bit.dat"
 #define OLDGREYJPEGFILE  "test_files/greyjpeg.dat"
@@ -5067,7 +5067,7 @@ test_mgr(void)
         IV. Interlace Functions          - test_mgr_interlace
         V. Palette Functions             - test_mgr_lut
         VI. Special Element Functions    - test_mgr_special
-        VII. Atribute Functions          - test_mgr_attr
+        VII. Atribute Functions          - test_mgr_attr (tmgrattr.c)
         VIII. Access to old-style images - test_mgr_old
         IX. Compressed Image Functions   - test_mgr_compress
         X. DF24 Compatibility tests      - test_mgr_r24
@@ -5089,7 +5089,7 @@ test_mgr(void)
     test_mgr_interlace(1); /* read from chunked GR */
     test_mgr_lut(0);
     test_mgr_special(0);
-    test_mgr_attr(0);
+    test_mgr_attr();
     test_mgr_old(0);
     test_mgr_compress(0);
     test_mgr_r24(0);
