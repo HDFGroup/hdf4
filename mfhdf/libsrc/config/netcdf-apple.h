@@ -304,7 +304,7 @@ typedef double        ncdouble;
  */
 #if defined _CRAYMPP
 typedef short	nclong;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64)
+#elif defined __alpha || (_MIPS_SZLONG == 64) || defined IA64 || (defined __sun && defined _LP64) || defined (__LP64__)
 typedef int     nclong;   
 #else
 typedef long    nclong;         /* default, compatible type */

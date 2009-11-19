@@ -752,7 +752,11 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #ifndef __APPLE__
 #define __APPLE__
 #endif
-
+#ifdef __LITTLE_ENDIAN__
+#define DF_MT DFMT_APPLE_INTEL
+#else
+#define DF_MT DFMT_APPLE
+#endif
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.
 Please check your Makefile.
@@ -770,9 +774,6 @@ Please check your Makefile.
 #ifndef INTEL86
 #define INTEL86   /* we need this Intel define or bad things happen later */
 #endif /* INTEL86 */
-#define DF_MT   DFMT_APPLE_INTEL
-#else
-#define DF_MT   DFMT_APPLE
 #endif /* __i386 */
 
 typedef void            VOID;
@@ -791,7 +792,7 @@ typedef unsigned int    uintn;
 typedef float           float32;
 typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
+typedef long            hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #ifdef  HAVE_FMPOOL
 #define FILELIB PAGEBUFIO  /* enable page buffering */
@@ -1346,7 +1347,7 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /*power PC 5 64 */
 /* Linux 64 */
-#if defined __x86_64__  && !(defined  SUN) /* i.e. not SunOS on Intel */
+#if defined(__linux__) && defined __x86_64__  && !(defined  SUN) /* i.e. not SunOS on Intel */
 
 #ifdef GOT_MACHINE
 If you get an error on this line more than one machine type has been defined.

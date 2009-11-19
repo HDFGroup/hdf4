@@ -57,7 +57,9 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-        
+   Added support for the 64-bit Mac OS 10.5.6 with gcc 4.0.1 and 
+   Intel C compilers version 10.1.
+   Known problems: stubs test (fortest) fails.       
 
 Bugs fixed since HDF4.2.4
 =========================
