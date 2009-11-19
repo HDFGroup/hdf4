@@ -58,8 +58,11 @@ New features and changes
 Support for new platforms and compilers
 =======================================
    Added support for the 64-bit Mac OS 10.5.6 with gcc 4.0.1 and 
-   Intel C compilers version 10.1.
-   Known problems: stubs test (fortest) fails.       
+   Intel C and Fortran compilers version 10.1.
+   Known problems: 
+   Due to a known bug in the Intel 10.1 icc compiler, one has to use
+   -no-multibyte-chars flag with icc. If using 32-bit ifort, O0 flag 
+   is required to build Fortran APIs and tests. 
 
 Bugs fixed since HDF4.2.4
 =========================
@@ -165,11 +168,11 @@ HDF 4.2 Release 4 has been tested on the following platforms:
                                   
     Windows Vista(64 bit)         Visual Studio 2008 (with Intel Fortran 10.1)
                                   
-    MAC OS X Intel                Darwin 9.4.0
+    MAC OS X Intel 10.5.8         Darwin 9.4.0
                                   i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
                                   G95 (GCC 4.0.3 (g95 0.91!) Apr 24 2008)
                                   gfortran GNU Fortran (GCC) 4.3.0 20070810
-                                  Intel 10.1 32-bit version
+                                  Intel 10.1 32 and 64-bit versions
 
     Linux 2.6.27.9-159.fc10.x86_64 #1 SMP 
         x86_64 GNU/Linux          gcc (GCC) 4.3.2

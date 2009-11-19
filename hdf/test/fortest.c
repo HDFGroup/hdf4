@@ -91,7 +91,11 @@ main(int argc, char *argv[])
     num_tests=InitTest("vsetf", "tvsetf", "");
     num_tests=InitTest("vsetblock", "tvsetblock", "");
     num_tests=InitTest("vattrf", "tvattrf", "");
-#if defined DEC_ALPHA || (defined SUN && defined _LP64) || defined __ia64  ||defined AIX5L64
+/* The test is skipped when size of fortran integer is smaller than
+   the size of C pointer; this happens on the 64-bit DEC Alpha, Solaris, Altix
+   AIX and Mac Intel. We need a better fix; see Bugzilla #1694.
+*/ 
+#if defined DEC_ALPHA || (defined SUN && defined _LP64) || defined __ia64  ||defined AIX5L64 || (__APPLE__ && __LP64__)
     printf("   Skipping stubs\n");
 #else
     num_tests=InitTest("stubs", "tstubsf", "");
