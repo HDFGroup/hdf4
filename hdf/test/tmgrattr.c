@@ -480,5 +480,5 @@ extern void test_mgr_attr()
     /* Test attribute functions with user-defined attributes */
     num_errs = num_errs + test_mgr_userattr();
 
-    if (num_errs != 0) { FAILED(); }
+    if (num_errs != 0) { H4_FAILED(); }
 }   /* test_mgr_attr() */

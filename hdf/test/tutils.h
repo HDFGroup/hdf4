@@ -89,10 +89,10 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define CLEAN_STR	"Cleanup"
 
 /* Output notices */
-#define PASSED()        {puts(" PASSED");fflush(stdout);}
-#define FAILED()        {puts("*FAILED*");fflush(stdout);}
-#define WARNING()       {puts("*WARNING*");fflush(stdout);}
-#define SKIPPED()       {puts(" -SKIP-");fflush(stdout);}
+#define H4_PASSED()        {puts(" PASSED");fflush(stdout);}
+#define H4_FAILED()        {puts("*FAILED*");fflush(stdout);}
+#define H4_WARNING()       {puts("*WARNING*");fflush(stdout);}
+#define H4_SKIPPED()       {puts(" -SKIP-");fflush(stdout);}
 
 /* System command to use for Cleanup */
 #ifdef VMS
