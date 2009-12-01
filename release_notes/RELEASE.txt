@@ -46,6 +46,7 @@ New features and changes
     Library
     ========= 
 	- SD examples were added to mfhdf/examples.  (BMR - 2009/08/28)
+	- HDF C examples were added to hdf/examples.  (BMR - 2009/11/07)
 
     Utilities
     ========= 
