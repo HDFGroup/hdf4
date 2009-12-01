@@ -48,6 +48,11 @@ New features and changes
 	- SD examples were added to mfhdf/examples.  (BMR - 2009/08/28)
 	- HDF C examples were added to hdf/examples.  (BMR - 2009/11/07)
 
+    Test
+    ====
+	- Added tests for GRfindattr, GRattrinfo, and GRgetattr
+	  (BMR - 2009/11/15)
+
     Utilities
     ========= 
         - 
