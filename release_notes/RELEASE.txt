@@ -83,6 +83,10 @@ Bugs fixed since HDF4.2.4
 	  was fixed (bugzilla #1644.) (BMR - 2009/09/25)
 	- SD tests were moved from mfhdf/libsrc to mfhdf/test.
 	  (BMR - 2009/09/10)
+	- The problem where pieces of an image get written multiple times
+	  at different locations in the 2-D array had been fixed.  The
+	  cause was the pointer to user's buffer was not advanced properly.
+	  This was part of bugzilla 1547.  (BMR - 2009/06/10)
 
     Configuration
     ============= 
