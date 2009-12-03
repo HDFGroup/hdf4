@@ -15,24 +15,39 @@ rem
 rem  File Name: hdf4check.bat
 rem  This batch file is used to test HDF4 Libraries and Tools.
 rem  This script has the following options:
-rem    hdf4check [enablefortan]
+rem    hdf4check [enablefortan | disabledebug]
 rem             enablefortran   Also test HDF4 Fortran libraries [default C only]
-rem  Created:       Scott Wegner, 6/9/08
-rem  Last Updated:  Scott Wegner, 6/16/08
+rem             disabledebug    can be added to not test debug versions
 
 setlocal enabledelayedexpansion
 pushd %~dp0
+set chkdebug=debug
+set chkrelease=release
+
 set nerrors=0
+
 if "%1"=="/?" (
     goto help
+) else if "%1"=="enablefortran" (
+    set build_fortran_conditional=true
+) else if /i "%1" equ "disabledebug" (
+    set chkdebug=
+) else if not "%1"=="" (
+    call :help
+    exit /b 1
 )
+if /i "%2" equ "disabledebug" (
+    set chkdebug=
+)
+    
 goto main
 
 
 rem Print a help message, then exist
 :help
-    echo.hdf4check [enablefortan]
+    echo.hdf4check [enablefortan | disabledebug]
     echo.         enablefortran   Also test HDF4 Fortran libraries [default C only]
+	echo.         disabledebug    can be added to not test debug versions
     exit /b 0
 
 
@@ -157,7 +172,7 @@ rem     %1 - release or debug, the configuration to test
     )
     
     rem testinterface.bat
-    call :exec_test mfhdf\libsrc testinterface.bat %1
+    call :exec_test mfhdf\test testinterface.bat %1
     
     rem testncdump.bat
     call :exec_test mfhdf\ncdump testncdump.bat %1
@@ -225,7 +240,7 @@ rem     %1 - release or debug, the configuration to test
     )
     
     rem testinterface.bat
-    call :exec_test mfhdf\libsrc testinterface.bat %1 dll
+    call :exec_test mfhdf\test testinterface.bat %1 dll
     
     rem dllnctest
     copy /y mfhdf\nctest\test_unlim.nc mfhdf\nctest\%1 > nul 2>&1
@@ -245,15 +260,6 @@ rem are setup in the run_tests function, and actually run in the exec_test
 rem function
 :main
     
-    rem See if we have built Fortran libraries, and set 
-    rem BUILD_FORTRAN_CONDITIONAL appropriately
-    if "%1"=="enablefortran" (
-        set build_fortran_conditional=true
-    ) else if not "%1"=="" (
-        call :help
-        exit /b 1
-    )
-    
     rem Put built DLLs in the system folder for testing
     call install_dll.BAT
     if defined build_fortran_conditional (
@@ -262,7 +268,7 @@ rem function
     
     
     rem Call run_tests to actually spawn all of our tests
-    for %%a in (debug release) do (
+    for %%a in (%chkdebug% %chkrelease%) do (
         call :run_tests %%a
     )
     

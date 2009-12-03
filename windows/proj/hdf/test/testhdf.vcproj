@@ -473,11 +473,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\hdf\test\tmgrcomp.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\hdf\test\tproto.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\hdf\test\tszip.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\test\tutils.c"
 				>
 			</File>
 			<File

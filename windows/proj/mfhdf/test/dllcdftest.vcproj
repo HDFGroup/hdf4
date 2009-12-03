@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="dlltesthdf"
-	ProjectGUID="{C91A7530-ED3A-43D8-99B2-B2F4D3076FBD}"
+	Name="dllcdftest"
+	ProjectGUID="{287916A4-F339-410D-A703-553B5A69ED82}"
 	>
 	<Platforms>
 		<Platform
@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\..\..\hdf\test\Release"
-			IntermediateDirectory=".\..\..\..\..\hdf\test\Release\dlltesthdf"
+			OutputDirectory=".\..\..\..\..\mfhdf\test\Release"
+			IntermediateDirectory=".\..\..\..\..\mfhdf\test\Release\dllcdftest"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -39,19 +39,19 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\..\..\..\..\hdf\test\Release/dlltesthdf.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\test\Release/dllcdftest.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="4"
-				AdditionalIncludeDirectories="..\..\..\..\hdf\src"
-				PreprocessorDefinitions="_CONSOLE;NDEBUG;INTEL86;WIN32;DOS_FS;_HDFDLL_"
+				AdditionalIncludeDirectories="..\..\..\..\mfhdf\test,..\..\..\..\mfhdf\xdr,..\..\..\..\hdf\src,..\..\..\..\mfhdf\libsrc"
+				PreprocessorDefinitions="_CONSOLE;HDF;NO_SYS_XDR_INC;NDEBUG;INTEL86;WIN32;DOS_FS"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\..\..\..\..\hdf\test\Release\dlltesthdf/dlltesthdf.pch"
-				AssemblerListingLocation=".\..\..\..\..\hdf\test\Release\dlltesthdf/"
-				ObjectFile=".\..\..\..\..\hdf\test\Release\dlltesthdf/"
-				ProgramDataBaseFileName=".\..\..\..\..\hdf\test\Release\dlltesthdf/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\test\Release\dllcdftest/dllcdftest.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\test\Release\dllcdftest/"
+				ObjectFile=".\..\..\..\..\mfhdf\test\Release\dllcdftest/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\test\Release\dllcdftest/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -69,12 +69,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile=".\..\..\..\..\hdf\test\Release/dlltesthdf.exe"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				OutputFile=".\..\..\..\..\mfhdf\test\Release/dllcdftest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\windows\lib\release\multithreaded"
-				ProgramDatabaseFile=".\..\..\..\..\hdf\test\Release/dlltesthdf.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\test\Release/dllcdftest.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -105,8 +105,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\..\..\hdf\test\Debug"
-			IntermediateDirectory=".\..\..\..\..\hdf\test\Debug\dlltesthdf"
+			OutputDirectory=".\..\..\..\..\mfhdf\test\Debug"
+			IntermediateDirectory=".\..\..\..\..\mfhdf\test\Debug\dllcdftest"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -126,19 +126,19 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\..\..\..\..\hdf\test\Debug/dlltesthdf.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\test\Debug/dllcdftest.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\hdf\src"
-				PreprocessorDefinitions="_CONSOLE;_DEBUG;INTEL86;WIN32;DOS_FS;_HDFDLL_"
+				AdditionalIncludeDirectories="..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\test,..\..\..\..\hdf\src,..\..\..\..\mfhdf\libsrc"
+				PreprocessorDefinitions="_CONSOLE;HDF;NO_SYS_XDR_INC;_DEBUG;INTEL86;WIN32;DOS_FS"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\..\..\..\hdf\test\Debug\dlltesthdf/dlltesthdf.pch"
-				AssemblerListingLocation=".\..\..\..\..\hdf\test\Debug\dlltesthdf/"
-				ObjectFile=".\..\..\..\..\hdf\test\Debug\dlltesthdf/"
-				ProgramDataBaseFileName=".\..\..\..\..\hdf\test\Debug\dlltesthdf/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/dllcdftest.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/"
+				ObjectFile=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -157,13 +157,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile=".\..\..\..\..\hdf\test\Debug/dlltesthdf.exe"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				OutputFile=".\..\..\..\..\mfhdf\test\Debug/dllcdftest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\windows\lib\debug\multithreaded"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\..\..\hdf\test\Debug/dlltesthdf.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\test\Debug/dllcdftest.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -216,19 +216,19 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\..\..\..\..\hdf\test\Release/dlltesthdf.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\test\Release/dllcdftest.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="4"
-				AdditionalIncludeDirectories="..\..\..\..\hdf\src"
-				PreprocessorDefinitions="_CONSOLE;NDEBUG;INTEL86;WIN32;DOS_FS;_HDFDLL_"
+				AdditionalIncludeDirectories="..\..\..\..\mfhdf\test,..\..\..\..\mfhdf\xdr,..\..\..\..\hdf\src,..\..\..\..\mfhdf\libsrc"
+				PreprocessorDefinitions="_CONSOLE;HDF;NO_SYS_XDR_INC;NDEBUG;INTEL86;WIN32;DOS_FS"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\..\..\..\..\hdf\test\Release\dlltesthdf/dlltesthdf.pch"
-				AssemblerListingLocation=".\..\..\..\..\hdf\test\Release\dlltesthdf/"
-				ObjectFile=".\..\..\..\..\hdf\test\Release\dlltesthdf/"
-				ProgramDataBaseFileName=".\..\..\..\..\hdf\test\Release\dlltesthdf/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\test\Release\dllcdftest/dllcdftest.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\test\Release\dllcdftest/"
+				ObjectFile=".\..\..\..\..\mfhdf\test\Release\dllcdftest/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\test\Release\dllcdftest/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -246,12 +246,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile=".\..\..\..\..\hdf\test\Release/dlltesthdf.exe"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				OutputFile=".\..\..\..\..\mfhdf\test\Release/dllcdftest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\windows\lib\release\multithreaded"
-				ProgramDatabaseFile=".\..\..\..\..\hdf\test\Release/dlltesthdf.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\test\Release/dllcdftest.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -304,19 +304,19 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\..\..\..\..\hdf\test\Debug/dlltesthdf.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\test\Debug/dllcdftest.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\hdf\src"
-				PreprocessorDefinitions="_CONSOLE;_DEBUG;INTEL86;WIN32;DOS_FS;_HDFDLL_"
+				AdditionalIncludeDirectories="..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\test,..\..\..\..\hdf\src,..\..\..\..\mfhdf\libsrc"
+				PreprocessorDefinitions="_CONSOLE;HDF;NO_SYS_XDR_INC;_DEBUG;INTEL86;WIN32;DOS_FS"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\..\..\..\hdf\test\Debug\dlltesthdf/dlltesthdf.pch"
-				AssemblerListingLocation=".\..\..\..\..\hdf\test\Debug\dlltesthdf/"
-				ObjectFile=".\..\..\..\..\hdf\test\Debug\dlltesthdf/"
-				ProgramDataBaseFileName=".\..\..\..\..\hdf\test\Debug\dlltesthdf/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/dllcdftest.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/"
+				ObjectFile=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\test\Debug\dllcdftest/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -335,13 +335,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile=".\..\..\..\..\hdf\test\Debug/dlltesthdf.exe"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				OutputFile=".\..\..\..\..\mfhdf\test\Debug/dllcdftest.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\windows\lib\debug\multithreaded"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\..\..\..\..\hdf\test\Debug/dlltesthdf.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\test\Debug/dllcdftest.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -379,131 +379,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90"
 			>
 			<File
-				RelativePath="..\..\..\..\hdf\test\an.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\anfile.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\bitio.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\blocks.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\chunks.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\comp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\conv.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\extelt.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\file.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\file1.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\litend.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\macros.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\man.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\mgr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\nbit.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\rig.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\sdmms.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\sdnmms.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\sdstr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\slab.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tdupimgs.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\testhdf.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tmgrattr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tmgrcomp.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tproto.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tszip.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tutils.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tutils.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tvattr.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tvset.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tvsfpack.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\vers.c"
+				RelativePath="..\..\..\..\mfhdf\test\cdftest.c"
 				>
 			</File>
 		</Filter>

@@ -5,12 +5,10 @@ rem There batch file takes the following options:
 rem      Options:
 rem         vs9               Build using Visual Studio 2008
 rem         vs8               Build using Visual Studio 2005
-rem         vnet              Build using Visual Studio .NET 
-rem         vs6               Build using Visual Studio 6.0 
 rem         enablefortran     Build and test HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
 rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
-rem                           [default Intel Visual Fortran 9.1]
+rem         ivf91             Note: Default is Intel Visual Fortran 9.1
 rem         useenv            Build using variables set in the environment.
 rem         log               Log the build and test results in files defined by
 rem                           environment variables HDF4BUILD_LOG and
@@ -58,12 +56,10 @@ rem Print a help message
     echo.   /?                      Help information
     echo.   vs9                     Build using Visual Studio 2008
     echo.   vs8                     Build using Visual Studio 2005
-    echo.   vnet                    Build using Visual Studio .NET 
-    echo.   vs6                     Build using Visual Studio 6.0 
     echo.   enablefortran           Build and testHDF4 C/Fortran Library and 
     echo.                           Tools [default C only]
     echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
-    echo.                           [default Intel Visual Fortran 9.1]
+    echo.   ivf91                   Note: Default is Intel Visual Fortran 9.1
     echo.   useenv                  Build using variables set in the environment.
     echo.   log                     Log the build and test results in files defined by
     echo.                           environment variables HDF4BUILD_LOG and
@@ -90,14 +86,6 @@ rem Parse through the parameters sent to file, and set appropriate variables
             rem Use VS2005 as our compiler
             set hdf4build_params=!hdf4build_params! vs8
             
-        ) else if "%%a"=="vnet" (
-            rem Use VS.NET as our compiler
-            set hdf4build_params=!hdf4build_params! vnet
-            
-        ) else if "%%a"=="vs6" (
-            rem Use VS 6.0 as our compiler
-            set hdf4build_params=!hdf4build_params! vs6
-            
         ) else if "%%a"=="enablefortran" (
             rem Enable Fortran
             set hdf4build_params=!hdf4build_params! enablefortran
@@ -106,6 +94,10 @@ rem Parse through the parameters sent to file, and set appropriate variables
         ) else if "%%a"=="ivf101" (
             rem Enable Fortran
             set hdf4build_params=!hdf4build_params! ivf101
+            
+        ) else if "%%a"=="ivf91" (
+            rem Enable Fortran
+            set hdf4build_params=!hdf4build_params! ivf91
             
         ) else if "%%a"=="log" (
             rem Log our results to files defined in environment
