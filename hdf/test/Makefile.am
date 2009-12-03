@@ -21,8 +21,8 @@ endif
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
-                  tdupimgs.c testhdf.c tmgrattr.c tree.c tszip.c tvattr.c  \
-		  tvset.c tvsfpack.c vers.c
+                  tdupimgs.c testhdf.c tmgrattr.c tmgrcomp.c tree.c tszip.c \
+		  tutils.c tvattr.c tvset.c tvsfpack.c vers.c
 testhdf_LDADD = ../src/libdf.la
 testhdf_DEPENDENCIES = testdir ../src/libdf.la 
 

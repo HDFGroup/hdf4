@@ -848,39 +848,9 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
     255, 103, 2, 255, 103, 2, 255, 103, 2, 255, 103, 2 
 };
 
-#define ABS(x)  ((int)(x)<0 ? (-x) : x)
-
-static intn
-fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
 static VOID
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
              uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal);
-
-static intn
-fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
-{
-    const uint8 *t1 = (const uint8 *) s1;
-    const uint8 *t2 = (const uint8 *) s2;
-
-    while (len > 0 && (int) ABS(*t2 - *t1) <= fuzz_factor)
-      {
-          t1++;
-          t2++;
-          len--;
-      }     /* end while */
-    if (len == 0)
-        return (0);
-    else
-      {
-          return ((intn) (*t1 - *t2));
-      }
-}   /* end fuzzy_memcmp() */
-
-#ifdef DEC_ALPHA
-#define JPEG_FUZZ 13
-#else
-#define JPEG_FUZZ 1
-#endif
 
 /* ------------------------------- test_r24 ------------------------------- */
 

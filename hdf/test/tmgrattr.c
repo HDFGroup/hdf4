@@ -19,9 +19,12 @@
  *
 ****************************************************************************/
 
-#define TESTFILE "tmgratt.hdf"
+#include "hdf.h"
+#include <stdio.h>
+#include "tutils.h"
 
 #include "tproto.h"
+#define TESTFILE "tmgratt.hdf"
 
 #define	F_ATT1_VAL	"Contents of First FILE Attribute"
 #define	IMAGE1_NAME	"Image 1"
@@ -464,6 +467,8 @@ static int test_mgr_userattr()
 **          1. GRsetattr
 **          2. GRgetattr
 **      C. GRfindattr
+**
+**  test_mgr_attr is invoked by test_mgr in mgr.c.
 **
 ****************************************************************/
 /* Test driver for testing attributes in multi-file GR interface */
