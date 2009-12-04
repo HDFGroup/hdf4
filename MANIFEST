@@ -435,6 +435,7 @@
 ./hdf/test/testhdf.project.hqx
 ./hdf/test/test_files/tmgr.dat
 ./hdf/test/tmgrattr.c
+./hdf/test/tmgrcomp.c
 ./hdf/test/tpf.f
 ./hdf/test/tproto.h
 ./hdf/test/tr8f.f
@@ -446,6 +447,7 @@
 ./hdf/test/tsdstrf.f
 ./hdf/test/tstubsf.f
 ./hdf/test/tszip.c
+./hdf/test/tutils.c
 ./hdf/test/tutils.h
 ./hdf/test/tv1.res
 ./hdf/test/tv2.res
