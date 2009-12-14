@@ -93,6 +93,11 @@ Bugs fixed since HDF4.2.4
 
     Configuration
     =============
+    - Configure will no longer try to use a Fortran compiler to set up
+      aspects of the build environment when Fortran has been disabled, as
+      configure now deliberately sets the F77 environment variable to 'no'
+      when Fortran is disabled. This should no longer cause build problems 
+      on Cygwin when no Fortran compiler is available. (MAM - 2009/12/14)
     - './configure --help' will now correctly indicate that shared libraries
       are disabled by default. (MAM - 2009/12/14)
     

@@ -178,6 +178,7 @@ case "$enableval" in
     ;;
   no)
     BUILD_FORTRAN="no"
+    F77="no"
     ;;
 esac
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
