@@ -45,7 +45,7 @@ static void usage()
 {
 
  (void) fprintf(stdout,
-  "hdiff [-b] [-g] [-s] [-d] [-S] [-v ...] [-e counnt] [-t limit] [-p relative] file1 file2\n");
+  "hdiff [-b] [-g] [-s] [-d] [-D] [-S] [-v var1[,...]] [-u var1[,...]] [-e count] [-t limit] [-p relative] file1 file2\n");
  fprintf(stdout,"  [-b]              Verbose mode\n");
  fprintf(stdout,"  [-g]              Compare global attributes only\n");
  fprintf(stdout,"  [-s]              Compare SD local attributes only\n");
