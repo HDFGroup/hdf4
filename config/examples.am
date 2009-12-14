@@ -46,7 +46,7 @@ CLEANFILES=$(TEST_PROG)
 
 # How to create EXAMPLEDIR if it doesn't already exist
 $(EXAMPLEDIR):
-	-$(top_srcdir)/bin/mkdirs $@
+	mkdir -p $@
 
 # Install and uninstall rules.  We install the source files, not the
 # example programs themselves.

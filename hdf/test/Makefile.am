@@ -48,4 +48,4 @@ testdir:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
+DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf testdir

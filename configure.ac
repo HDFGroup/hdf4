@@ -657,7 +657,7 @@ AC_CHECK_FUNCS(fork system vfork wait)
 dnl ======================================================================
 dnl Libtool initialization
 dnl ======================================================================
-LT_INIT(dlopen)
+LT_INIT(dlopen disable-shared) 
 LT_OUTPUT
 
 dnl ======================================================================
@@ -752,6 +752,13 @@ case "$host_os" in
       ;;
 esac
 
+dnl We don't need to say when we're entering directories if we're using
+dnl GNU make because make does it for us.
+if test "X$GMAKE" = "Xyes"; then
+  AC_SUBST([SETX]) SETX=":"
+else
+  AC_SUBST([SETX]) SETX="set -x"
+fi
 
 AM_CONDITIONAL([HDF_BUILD_SHARED], [test "X$enable_shared" = "Xyes"])
 
@@ -759,6 +766,8 @@ AC_CONFIG_FILES([Makefile
                  libhdf4.settings
                  hdf/Makefile
                  hdf/examples/Makefile
+                 hdf/fortran/Makefile
+                 hdf/fortran/examples/Makefile
                  hdf/src/Makefile
                  hdf/test/Makefile
                  hdf/util/Makefile
@@ -773,6 +782,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/examples/Makefile
                  mfhdf/examples/testexamples.sh
                  mfhdf/fortran/Makefile
+                 mfhdf/fortran/examples/Makefile
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh
                  mfhdf/hdiff/Makefile

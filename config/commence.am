@@ -16,7 +16,12 @@
 ## Textually included in the beginning of every HDF4 Makefile.am.
 ## Contains definitions, etc. used across multiple Makefiles.
 
+# Shell commands used in Makefiles
+RM=rm -f
+CP=cp
+
 H4CC=$(bindir)/h4cc
+H4FC=$(bindir)/h4fc
 
 if HDF_BUILD_XDR
     XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs

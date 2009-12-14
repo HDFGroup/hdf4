@@ -12,6 +12,8 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
+DIST_SUBDIRS = examples
+
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
@@ -73,8 +75,26 @@ endif
 	@echo "                                   "
 	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 
+# Recurse into examples directory for examples tests.
+installcheck-local:
+
+# 'make install-all' also installs examples
+install-all:
+	@$(MAKE) $(AM_MAKEFLAGS) install
+	@$(MAKE) $(AM_MAKEFLAGS) install-examples
+uninstall-all:
+	@$(MAKE) $(AM_MAKEFLAGS) uninstall
+	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
+	
+# Install examples recursively
+install-examples uninstall-examples:
+	@@SETX@; for d in examples; do \
+	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
+	done
+
+
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf testdir

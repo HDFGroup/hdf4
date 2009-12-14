@@ -60,4 +60,5 @@ check:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This*
+DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
+               onedimonevar.nc multidimvar.nc

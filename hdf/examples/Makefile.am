@@ -4,11 +4,7 @@
 
 include $(top_srcdir)/config/commence.am
 
-#INCLUDES=-I$(top_srcdir)/hdf/src	\
-#	-I$(top_srcdir)/mfhdf/libsrc
-
 DEFINES=-DNDEBUG -DHDF
-#AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -26,9 +22,7 @@ TEST_PROG = VD_create_vdatas VD_write_mixed_vdata		\
 	GR_write_palette GR_image_info GR_read_image		\
 	AN_create_annotation AN_get_annotation_info AN_read_annotation
 
-#TEST_SCRIPT = testh4cc.sh
-
-# These are the example files to be installed
+# These are the C example files to be installed
 INSTALL_FILES= VD_read_from_vdata.c VD_read_mixed_vdata.c	\
 	VD_set_get_vdata_attr.c VD_write_mixed_vdata.c		\
 	VD_write_mixed_vdata_struct.c VD_write_to_vdata.c	\
@@ -43,23 +37,18 @@ INSTALL_FILES= VD_read_from_vdata.c VD_read_mixed_vdata.c	\
 	GR_write_palette.c AN_create_annotation.c		\
 	AN_get_annotation_info.c AN_read_annotation.c
 
-# Some of the examples depend on files created by running other examples
-# Will add later
-# readdata.chkexe_: create.chkexe_
-# chunks.chkexe_: extend_ds.chkexe_
+# Where to install example files
+EXAMPLEDIR=$(prefix)/examples/c
 
-# Where to install examples
-# EXAMPLEDIR=$(docdir)/hdf5/examples/c++  // from C++ example, will fix
-
-# How to build programs using h4cc
+# How to build C programs using h4cc
 $(EXTRA_PROG): $(H4CC)
 	$(H4CC) $(H4CCFLAGS) $(CFLAGS) -o $@ $(srcdir)/$@.c;
 
 # List dependencies for each program.  Normally, automake would take
 # care of this for us, but if we tell automake about the programs it
-# will try to build them with the normal C++ compiler, not h4cc.  This is
-# an inelegant way of solving the problem, unfortunately. - copied
-# from hdf5/c++/examples (BMR - 2009/10/27)
+# will try to build them with the normal C compiler, not h4cc.
+
+# C Programs
 VD_read_from_vdata: $(srcdir)/VD_read_from_vdata.c
 VD_read_mixed_vdata: $(srcdir)/VD_read_mixed_vdata.c
 VD_set_get_vdata_attr: $(srcdir)/VD_set_get_vdata_attr.c
@@ -90,3 +79,5 @@ AN_read_annotation: $(srcdir)/AN_read_annotation.c
 
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
+
+DISTCLEANFILES = *.chkexe *.chklog

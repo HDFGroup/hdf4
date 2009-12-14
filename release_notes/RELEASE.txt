@@ -40,11 +40,14 @@ New features and changes
 ========================
     Configuration
     ============= 
-        - 
-          EIP - YEAR/MO/DA
+    - Configure suite now built with the following versions of the autotools:
+        Automake 1.11.1, Autoconf 2.65, and Libtool 2.2.6b  
+        (MAM - 2009/12/14)
 
     Library
     ========= 
+    - HDF Fortran examples were added to hdf/fortran/examples. 
+      (MAM - 2009/12/14)
 	- SD examples were added to mfhdf/examples.  (BMR - 2009/08/28)
 	- HDF C examples were added to hdf/examples.  (BMR - 2009/11/07)
 
@@ -89,8 +92,11 @@ Bugs fixed since HDF4.2.4
 	  This was part of bugzilla 1547.  (BMR - 2009/06/10)
 
     Configuration
-    ============= 
-        - 
+    =============
+    - './configure --help' will now correctly indicate that shared libraries
+      are disabled by default. (MAM - 2009/12/14)
+    
+        
 
 Documentation
 ==============

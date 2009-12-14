@@ -1,9 +1,29 @@
 include $(top_srcdir)/config/commence.am
 
-SUBDIRS=src test util
+if HDF_BUILD_FORTRAN
+FORTRAN_DIR = fortran
+else
+FORTRAN_DIR = 
+endif
 
-DIST_SUBDIRS=$(SUBDIRS) examples
+SUBDIRS = src test util $(FORTRAN_DIR)
+
+DIST_SUBDIRS = src test util fortran examples
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
 
+# 'make install-all' also installs examples
+install-all:
+	@$(MAKE) $(AM_MAKEFLAGS) install
+	@$(MAKE) $(AM_MAKEFLAGS) install-examples
+uninstall-all:
+	@$(MAKE) $(AM_MAKEFLAGS) uninstall
+	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
+
+
+# Install examples recursively
+install-examples uninstall-examples:
+	@@SETX@; for d in examples $(FORTRAN_DIR); do \
+	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
+	done
