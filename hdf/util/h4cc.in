@@ -52,7 +52,7 @@ LIBS="@LIBS@"
 CC="${HDF4_CC:-$CCBASE}"
 CLINKER="${HDF4_CLINKER:-$CLINKERBASE}"
 
-USE_SHARED_LIB="${HDF5_USE_SHLIB:-no}"
+USE_SHARED_LIB="${HDF4_USE_SHLIB:-no}"
 
 usage() {
   # A wonderfully informative "usage" message.
@@ -77,7 +77,7 @@ usage() {
   echo " "
   echo "   HDF4_CC                  -  use a different C compiler"
   echo "   HDF4_CLINKER             -  use a different linker"
-  echo "   HDF4_USE_SHLIB=[yes|no]  -  use shared or static version of the HDF5 library"
+  echo "   HDF4_USE_SHLIB=[yes|no]  -  use shared or static version of the HDF4 library"
   echo "                                 [default: no]"
   echo " "
   exit 1
