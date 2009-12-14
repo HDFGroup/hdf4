@@ -52,6 +52,9 @@ int main(int argc, char **argv)
         else if (strcmp(argv[i], "-o") == 0) {       
             outfile = argv[++i]; 
         }
+        else if (strcmp(argv[i], "-h") == 0) {       
+	    goto out;
+        }
         else if (strcmp(argv[i], "-v") == 0) {       
             options.verbose = 1;
         }
@@ -135,9 +138,10 @@ static
 void usage(void)
 {
 
- printf("usage: hrepack -i input -o output [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f cfile] [-m size]\n");
+ printf("usage: hrepack -i input -o output [-h] [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f cfile] [-m size]\n");
  printf("  -i input          input HDF File\n");
  printf("  -o output         output HDF File\n");
+ printf("  [-h]              prints this usage\n");
  printf("  [-v]              verbose mode\n");
  printf("  [-t 'comp_info']  compression type: 'comp_info' is a string with the format\n");
  printf("\t\t     <object list>:<type of compression><parameters>\n");
