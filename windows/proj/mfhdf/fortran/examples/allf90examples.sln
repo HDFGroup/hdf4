@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "allf90examples", "allf90examples.vcproj", "{F9A92DA4-4FD5-4569-9D98-FB77A5E7B23B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{331A6712-873A-4427-AAC2-34F415718C61} = {331A6712-873A-4427-AAC2-34F415718C61}
+	EndProjectSection
+EndProject
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "sd_create", "sd_create.vfproj", "{331A6712-873A-4427-AAC2-34F415718C61}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{331A6712-873A-4427-AAC2-34F415718C61}.Debug|Win32.ActiveCfg = Debug|Win32
+		{331A6712-873A-4427-AAC2-34F415718C61}.Debug|Win32.Build.0 = Debug|Win32
+		{331A6712-873A-4427-AAC2-34F415718C61}.Debug|x64.ActiveCfg = Debug|x64
+		{331A6712-873A-4427-AAC2-34F415718C61}.Debug|x64.Build.0 = Debug|x64
+		{331A6712-873A-4427-AAC2-34F415718C61}.Release|Win32.ActiveCfg = Release|Win32
+		{331A6712-873A-4427-AAC2-34F415718C61}.Release|Win32.Build.0 = Release|Win32
+		{331A6712-873A-4427-AAC2-34F415718C61}.Release|x64.ActiveCfg = Release|x64
+		{331A6712-873A-4427-AAC2-34F415718C61}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
