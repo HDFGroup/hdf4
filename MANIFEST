@@ -1295,6 +1295,7 @@
 ./windows/copy_hdf.bat
 ./windows/hdf4bt.bat
 ./windows/hdf4build.bat
+./windows/hdf4build_examples.BAT
 ./windows/hdf4check.bat
 ./windows/InstallExamples.bat
 ./windows/Installf90Examples.BAT
