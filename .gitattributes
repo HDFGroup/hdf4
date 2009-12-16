@@ -278,6 +278,7 @@ windows/hdf/src/h4config.h -text
 windows/hdf/util/testutil.bat -text
 windows/hdf4bt.bat -text
 windows/hdf4build.bat -text
+windows/hdf4build_examples.BAT -text
 windows/hdf4check.bat -text
 windows/install_dll.bat -text
 windows/install_fortrandll.BAT -text
