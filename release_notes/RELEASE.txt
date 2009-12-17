@@ -93,6 +93,15 @@ Bugs fixed since HDF4.2.4
 
     Configuration
     =============
+    - The mfhdf/ncgen/Makefile.in now has $(EXEEXT) appended to the ncgen
+      program whenever it is referenced in a build rule dependency. This 
+      fixes some compile problems on Cygwin, where the .exe is necessary.
+      (MAM - 2009/12/17). 
+    - Configure will now fail if the yacc or flex utilities are not available
+      (as opposed to failing sometime during make when they are used).
+      (MAM - 2009/12/17).
+    - Configure will now properly check for the rpc library when on
+      Cygwin, and fail gracefully if it is not found. (MAM - 2009/12/17)
     - Configure will no longer try to use a Fortran compiler to set up
       aspects of the build environment when Fortran has been disabled, as
       configure now deliberately sets the F77 environment variable to 'no'

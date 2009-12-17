@@ -198,13 +198,21 @@ if test "X${enable_shared}" = "Xyes"; then
 fi
 
 AC_PROG_INSTALL
-AM_PROG_LEX
-AC_PROG_INSTALL
-AM_PROG_LEX
 AC_PROG_LN_S
-AC_PROG_YACC
 
 AC_CHECK_PROGS([AR], [ar xar], [:], [$PATH])
+
+AC_CHECK_PROGS([YACC], ['bison -y' byacc yacc], [none], [])
+
+if test "$YACC" = "none"; then
+  AC_MSG_ERROR([cannot find yacc utility])
+fi
+
+AC_CHECK_PROGS([LEX], [flex lex], [none], [])
+
+if test "$LEX" = "none"; then
+  AC_MSG_ERROR([cannot find lex utility])
+fi
 
 AC_CHECK_PROG([DIFF],     [diff],     [diff -w])
 AC_CHECK_PROG([MAKEINFO], [makeinfo], [makeinfo])
@@ -534,6 +542,20 @@ dnl ======================================================================
 
 dnl Always put the /usr/include/rpc directory first in the search list.
 CPPFLAGS="-I/usr/include/rpc $CPPFLAGS"
+
+dnl ----------------------------------------------------------------------
+dnl We're trying to link against the rpc library when building on Cygwin,
+dnl but we need to make sure that it is present on the system. Do that here.
+case "$host" in
+  i686-pc-cygwin*)
+    HAVE_RPC="yes"
+    AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
+    AC_CHECK_LIB([rpc], [xdr_opaque],[:], [unset HAVE_RPC])
+    if test -z "$HAVE_RPC"; then
+      AC_MSG_ERROR([couldn't find rpc library])
+    fi
+    ;;
+esac
 
 AC_HEADER_STDC
 

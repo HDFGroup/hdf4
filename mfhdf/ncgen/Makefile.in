@@ -152,8 +152,6 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
-LEXLIB = @LEXLIB@
-LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -190,7 +188,6 @@ TBL = @TBL@
 USE_COMP_SZIP = @USE_COMP_SZIP@
 VERSION = @VERSION@
 YACC = @YACC@
-YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -688,12 +685,12 @@ ncgenyy.c: ncgen.l
 	$(LEX) $(srcdir)/ncgen.l
 	mv lex.yy.c ncgenyy.c
 
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
-@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_NETCDF_TRUE@check: ncgen $(srcdir)/test0.cdl b-check c-check
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check f-check
+@HDF_BUILD_FORTRAN_FALSE@@HDF_BUILD_NETCDF_TRUE@check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
 
-@HDF_BUILD_NETCDF_FALSE@check: ncgen $(srcdir)/test0.cdl b-check c-check
+@HDF_BUILD_NETCDF_FALSE@check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
 
-b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
+b-check:	ncgen$(EXEEXT) $(srcdir)/test0.cdl test1.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -b test1.cdl
 	$(TESTS_ENVIRONMENT) $(NCDUMP) test1.nc > test2.cdl
 	@if $(DIFF) test1.cdl test2.cdl; then                               \
@@ -720,7 +717,7 @@ c-check:	b-check ctest0
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	fi
 
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 
@@ -730,10 +727,10 @@ netcdf.inc:
 test1.cdl:	test0.nc
 	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 test0.nc > $@
 
-test0.nc:	ncgen $(srcdir)/test0.cdl
+test0.nc:	ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -b -o test0.nc $(srcdir)/test0.cdl
 
-ctest0$(EXEEXT):		ncgen $(srcdir)/test0.cdl
+ctest0$(EXEEXT):		ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -c -o ctest0$(EXEEXT).o test0.c
 	$(LINK) ctest0$(EXEEXT).o $(ctest0_LDADD) $(LDFLAGS) $(SHLIBLOC) $(LIBS)

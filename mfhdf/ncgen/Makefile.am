@@ -70,17 +70,17 @@ NCDUMP=../ncdump/ncdump
 if HDF_BUILD_NETCDF
 
 if HDF_BUILD_FORTRAN
-check: ncgen $(srcdir)/test0.cdl b-check c-check f-check
+check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check f-check
 else
-check: ncgen $(srcdir)/test0.cdl b-check c-check
+check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
 endif
 
 else
-check: ncgen $(srcdir)/test0.cdl b-check c-check
+check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
 endif
 
 ## Test the "-b" option of ncgen
-b-check:	ncgen $(srcdir)/test0.cdl test1.cdl
+b-check:	ncgen$(EXEEXT) $(srcdir)/test0.cdl test1.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -b test1.cdl
 	$(TESTS_ENVIRONMENT) $(NCDUMP) test1.nc > test2.cdl
 	@if $(DIFF) test1.cdl test2.cdl; then                               \
@@ -111,7 +111,7 @@ f-check:	b-check ftest0
 	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
 	fi
 
-ftest0$(EXEEXT):		ncgen test0.cdl netcdf.inc
+ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 endif
@@ -124,10 +124,10 @@ netcdf.inc:
 test1.cdl:	test0.nc
 	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 test0.nc > $@
 
-test0.nc:	ncgen $(srcdir)/test0.cdl
+test0.nc:	ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -b -o test0.nc $(srcdir)/test0.cdl
 
-ctest0$(EXEEXT):		ncgen $(srcdir)/test0.cdl
+ctest0$(EXEEXT):		ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -c -o ctest0$(EXEEXT).o test0.c
 	$(LINK) ctest0$(EXEEXT).o $(ctest0_LDADD) $(LDFLAGS) $(SHLIBLOC) $(LIBS)
