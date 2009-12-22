@@ -889,13 +889,6 @@
 ./mfhdf/fortran/fort_ps/mfsdpf.c
 ./mfhdf/fortran/fort_ps/mfsdpff.f
 
-./mfhdf/fortran/msoft/NOTES
-./mfhdf/fortran/msoft/fslen.asm
-./mfhdf/fortran/msoft/ftest.for
-./mfhdf/fortran/msoft/jackets.c
-./mfhdf/fortran/msoft/msoft.int
-./mfhdf/fortran/msoft/netcdf.inc
-
 ./mfhdf/fortran/vms/ftest.for
 ./mfhdf/fortran/vms/ftest.m4
 ./mfhdf/fortran/vms/hdftest.for
