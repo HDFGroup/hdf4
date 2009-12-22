@@ -190,8 +190,6 @@ mfhdf/hdiff/testfiles/hdifftst7.hdf -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfhdfi.h -text
-mfhdf/libsrc/test1.nc -text
-mfhdf/libsrc/test_cdf.sav -text
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/test/Makefile.am -text
 mfhdf/test/Makefile.in -text
