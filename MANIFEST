@@ -796,45 +796,25 @@
 ./mfhdf/examples/write_to_sds.c
 
 
-./mfhdf/fortran/Linux.m4
 ./mfhdf/fortran/Makefile.am
 ./mfhdf/fortran/Makefile.in
-./mfhdf/fortran/README
-./mfhdf/fortran/aix.m4
 ./mfhdf/fortran/common.inc
-./mfhdf/fortran/common.m4
-./mfhdf/fortran/convex.m4
-./mfhdf/fortran/craympp.m4
 ./mfhdf/fortran/depend
-./mfhdf/fortran/descrip.mms
 ./mfhdf/fortran/fortc
 ./mfhdf/fortran/fortc1.sed
 ./mfhdf/fortran/fortc2.sed
-./mfhdf/fortran/freebsd.m4
 ./mfhdf/fortran/ftest.lnk
 ./mfhdf/fortran/ftest.src
-./mfhdf/fortran/fujivp.m4
 ./mfhdf/fortran/hdftest.f
 ./mfhdf/fortran/hdftest1.f
 ./mfhdf/fortran/hdftst.sav
-./mfhdf/fortran/hpux.m4
-./mfhdf/fortran/irix.m4
 ./mfhdf/fortran/jackets.src
 ./mfhdf/fortran/mffunc.inc
 ./mfhdf/fortran/mfsdf.c
 ./mfhdf/fortran/mfsdff.f
-./mfhdf/fortran/msoft.m4
-./mfhdf/fortran/msoft.mk
-./mfhdf/fortran/osf.m4
-./mfhdf/fortran/solaris.m4
-./mfhdf/fortran/sunos.m4
 ./mfhdf/fortran/test_nc.cdl
 ./mfhdf/fortran/test_nc.nc
 ./mfhdf/fortran/tszip.f
-./mfhdf/fortran/ultrix.m4
-./mfhdf/fortran/unicos.m4
-./mfhdf/fortran/vax-ultrix.m4
-./mfhdf/fortran/vms.m4
 
 ./mfhdf/fortran/config/ftest-aix.f
 ./mfhdf/fortran/config/ftest-alpha.f
