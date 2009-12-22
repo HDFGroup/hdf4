@@ -457,7 +457,6 @@
 ./hdf/util/fp2hdf.c
 ./hdf/util/fp2hdf.input1
 ./hdf/util/fp2hdf.input1-32
-./hdf/util/fp2hdf.mak
 ./hdf/util/fp2hdf.out1
 ./hdf/util/fp2hdf.out1-32
 ./hdf/util/fp2hdf.out2
