@@ -1010,7 +1010,6 @@
 
 ./mfhdf/libsrc/Makefile.am
 ./mfhdf/libsrc/Makefile.in
-./mfhdf/libsrc/README
 ./mfhdf/libsrc/alloc.h
 ./mfhdf/libsrc/array.c
 ./mfhdf/libsrc/attr.c
