@@ -568,25 +568,13 @@
 ./man/hdf.1
 ./man/hdfunpac.1
 
-./mfhdf/CHANGES
 ./mfhdf/COPYRIGHT
-./mfhdf/CUSTOMIZE
 ./mfhdf/FAQ
-./mfhdf/INSTALL
 ./mfhdf/Makefile.am
 ./mfhdf/Makefile.in
-./mfhdf/MANIFEST
-./mfhdf/ORIGIN
-./mfhdf/README
-./mfhdf/README.HDF
-./mfhdf/README.HDF.33
 ./mfhdf/THANKS
-./mfhdf/VERSION
 ./mfhdf/build.bat
-./mfhdf/macros.mk
 ./mfhdf/make.com
-./mfhdf/mfhdf.mak
-./mfhdf/msoft.mk
 
 ./mfhdf/c++/Makefile
 ./mfhdf/c++/README
