@@ -289,16 +289,9 @@
 ./hdf/src/hcompri.c
 ./hdf/src/hconv.h
 ./hdf/src/hdfalloc.c
-./hdf/src/hdf.bld
 ./hdf/src/hdf.h
 ./hdf/src/hdfi.h
 ./hdf/src/hdf.inc
-./hdf/src/hdflib.project.hqx
-./hdf/src/hdfnof.bld
-./hdf/src/hdfnofw3.lbc
-./hdf/src/hdfnofwc.lbc
-./hdf/src/hdfw386.lbc
-./hdf/src/hdfwcc.lbc
 ./hdf/src/herr.c
 ./hdf/src/herrf.c
 ./hdf/src/herr.h
@@ -319,10 +312,6 @@
 ./hdf/src/.indent.pro
 ./hdf/src/linklist.c
 ./hdf/src/linklist.h
-./hdf/src/makepc.386
-./hdf/src/makepc.msc
-./hdf/src/makepc.wcc
-./hdf/src/makewin.msc
 ./hdf/src/maldebug.c
 ./hdf/src/maldebug.h
 ./hdf/src/mcache.c
@@ -358,7 +347,6 @@
 ./hdf/src/vparse.c
 ./hdf/src/vrw.c
 ./hdf/src/vsfld.c
-./hdf/src/win32hdf.mak
 
 ./hdf/src/fort_ps/herrpf.c
 ./hdf/src/fort_ps/herrpff.f
