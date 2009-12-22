@@ -197,7 +197,6 @@
 ./hdf/fortran/examples/VG_set_get_vgroup_attr.f
 ./hdf/fortran/examples/VG_vgroup_contents.f
 
-./hdf/src/INSTALL
 ./hdf/src/Makefile.am
 ./hdf/src/Makefile.in
 ./hdf/src/MAKEFS.COM
