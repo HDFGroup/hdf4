@@ -358,7 +358,6 @@
 ./hdf/src/fort_ps/vgpff.f
 
 ./hdf/test/MAKE.COM
-./hdf/test/MAKECOM.OLD
 ./hdf/test/Makefile.am
 ./hdf/test/Makefile.in
 ./hdf/test/MAKENOF.COM
@@ -394,10 +393,6 @@
 ./hdf/test/litend.c
 ./hdf/test/test_files/litend.dat
 ./hdf/test/macros.c
-./hdf/test/makepc.386
-./hdf/test/makepc.msc
-./hdf/test/makewin.msc
-./hdf/test/makewin.new
 ./hdf/test/man.c
 ./hdf/test/manf.f
 ./hdf/test/mgr.c
@@ -416,12 +411,7 @@
 ./hdf/test/tanfilef.f
 ./hdf/test/tbv.c
 ./hdf/test/tdupimgs.c
-./hdf/test/testhdf.386
 ./hdf/test/testhdf.c
-./hdf/test/testhdf.def
-./hdf/test/testhdf.lnk
-./hdf/test/testhdf.pc
-./hdf/test/testhdf.project.hqx
 ./hdf/test/test_files/tmgr.dat
 ./hdf/test/tmgrattr.c
 ./hdf/test/tmgrcomp.c
@@ -447,7 +437,6 @@
 ./hdf/test/tvsetf.f
 ./hdf/test/tvsfpack.c
 ./hdf/test/vers.c
-./hdf/test/win32tst.mak
 
 ./hdf/test/fort_ps/forsupffp.f
 ./hdf/test/fort_ps/fortest.arg
