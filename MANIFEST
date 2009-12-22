@@ -74,12 +74,8 @@
 ./config/unicos10.0.X
 ./config/unicosmk2.0.6.X
 
-./hdf/COPYING
-./hdf/COPYRIGHT
 ./hdf/Makefile.am
 ./hdf/Makefile.in
-./hdf/README
-./hdf/README.33r4
 
 ./hdf/examples/AN_create_annotation.c
 ./hdf/examples/AN_get_annotation_info.c
