@@ -1044,7 +1044,6 @@
 ./mfhdf/libsrc/hdf2netcdf.h
 ./mfhdf/libsrc/hdfnctest.c
 ./mfhdf/libsrc/hdfsds.c
-./mfhdf/libsrc/hdftest.c
 ./mfhdf/libsrc/iarray.c
 ./mfhdf/libsrc/local_nc.h
 ./mfhdf/libsrc/make.com
