@@ -800,10 +800,6 @@
 ./mfhdf/fortran/Makefile.in
 ./mfhdf/fortran/common.inc
 ./mfhdf/fortran/depend
-./mfhdf/fortran/fortc
-./mfhdf/fortran/fortc1.sed
-./mfhdf/fortran/fortc2.sed
-./mfhdf/fortran/ftest.lnk
 ./mfhdf/fortran/ftest.src
 ./mfhdf/fortran/hdftest.f
 ./mfhdf/fortran/hdftest1.f
