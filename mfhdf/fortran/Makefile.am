@@ -77,6 +77,7 @@ endif
 
 # Recurse into examples directory for examples tests.
 installcheck-local:
+	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
 
 # 'make install-all' also installs examples
 install-all:
