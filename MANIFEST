@@ -50,7 +50,7 @@
 ./bin/reconfigure
 ./bin/runtest
 ./bin/snapshot
-./bin/timekeeper
+./bin/timekeeper			_DO_NOT_DISTRIBUTE_
 ./bin/yodconfigure
 ./bin/h4vers
 ./bin/release
@@ -818,7 +818,22 @@
 
 ./mfhdf/fortran/examples/Makefile.am
 ./mfhdf/fortran/examples/Makefile.in
-./mfhdf/fortran/examples/sd_create.f
+./mfhdf/fortran/examples/SD_write_to_sds.f
+./mfhdf/fortran/examples/SD_read_from_sds.f
+./mfhdf/fortran/examples/SD_get_attr.f
+./mfhdf/fortran/examples/SD_create_sds.f
+./mfhdf/fortran/examples/SD_chunking_example.f
+./mfhdf/fortran/examples/SD_read_subsets.f
+./mfhdf/fortran/examples/SD_find_sds_by_name.f
+./mfhdf/fortran/examples/SD_set_attr.f
+./mfhdf/fortran/examples/SD_get_info.f
+./mfhdf/fortran/examples/SD_write_slab.f
+./mfhdf/fortran/examples/SD_set_get_dim_info.f
+./mfhdf/fortran/examples/SD_mv_sds_to_external.f
+./mfhdf/fortran/examples/SD_alter_sds_values.f
+./mfhdf/fortran/examples/SD_dimscale_vs_sds.f
+./mfhdf/fortran/examples/SD_unlimited_sds.f
+./mfhdf/fortran/examples/SD_compress_sds.f
 
 ./mfhdf/fortran/fort_ps/hdftestp.f
 ./mfhdf/fortran/fort_ps/mfhdfp.h
