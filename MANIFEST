@@ -21,9 +21,6 @@
 
 ./MANIFEST
 ./COPYING
-./INSTALL
-./INSTALL_CYGWIN.txt
-./INSTALL_WINDOWS.txt
 ./Makefile.am
 ./Makefile.in
 ./Makefile.dist
@@ -1178,6 +1175,9 @@
 
 ./release_notes/HISTORY.txt
 ./release_notes/RELEASE.txt
+./release_notes/INSTALL
+./release_notes/INSTALL_CYGWIN.txt
+./release_notes/INSTALL_WINDOWS.txt
 ./release_notes/bugs_fixed.txt
 ./release_notes/misc_docs.txt
 

@@ -234,6 +234,9 @@ mfhdf/test/tsdsprops.c -text
 mfhdf/test/tszip.c -text
 mfhdf/test/tunlim.c -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
+release_notes/INSTALL -text
+release_notes/INSTALL_CYGWIN.txt -text
+release_notes/INSTALL_WINDOWS.txt -text
 windows/InstallExamples.bat -text
 windows/Installf90Examples.BAT -text
 windows/copy_hdf.bat -text
