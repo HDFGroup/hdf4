@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="chunking_example"
-	ProjectGUID="{B581B392-8D54-4606-8092-DA60A993D094}"
+	Name="SD_dimscale_vs_sds"
+	ProjectGUID="{21E24F4F-AA61-471C-B90C-BB4545E89508}"
 	>
 	<Platforms>
 		<Platform
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/chunking_example.tlb"
+				TypeLibraryName=".\Release/SD_dimscale_vs_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,7 +53,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/chunking_example.pch"
+				PrecompiledHeaderFile=".\Release/SD_dimscale_vs_sds.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -75,11 +75,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/chunking_example.exe"
+				OutputFile="..\Release/SD_dimscale_vs_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/chunking_example.pdb"
+				ProgramDatabaseFile=".\Release/SD_dimscale_vs_sds.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -132,7 +132,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/chunking_example.tlb"
+				TypeLibraryName=".\Debug/SD_dimscale_vs_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -143,7 +143,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/chunking_example.pch"
+				PrecompiledHeaderFile=".\Debug/SD_dimscale_vs_sds.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -166,13 +166,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/chunking_example.exe"
+				OutputFile="..\Debug/SD_dimscale_vs_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/chunking_example.pdb"
+				ProgramDatabaseFile=".\Debug/SD_dimscale_vs_sds.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -226,7 +226,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/chunking_example.tlb"
+				TypeLibraryName=".\Release/SD_dimscale_vs_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -239,7 +239,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/chunking_example.pch"
+				PrecompiledHeaderFile=".\Release/SD_dimscale_vs_sds.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -261,11 +261,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/chunking_example.exe"
+				OutputFile="..\Release/SD_dimscale_vs_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/chunking_example.pdb"
+				ProgramDatabaseFile=".\Release/SD_dimscale_vs_sds.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -319,7 +319,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/chunking_example.tlb"
+				TypeLibraryName=".\Debug/SD_dimscale_vs_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -330,7 +330,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/chunking_example.pch"
+				PrecompiledHeaderFile=".\Debug/SD_dimscale_vs_sds.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -353,13 +353,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/chunking_example.exe"
+				OutputFile="..\Debug/SD_dimscale_vs_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/chunking_example.pdb"
+				ProgramDatabaseFile=".\Debug/SD_dimscale_vs_sds.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -393,7 +393,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\mfhdf\examples\chunking_example.c"
+			RelativePath="..\..\..\..\mfhdf\examples\SD_dimscale_vs_sds.c"
 			>
 		</File>
 	</Files>

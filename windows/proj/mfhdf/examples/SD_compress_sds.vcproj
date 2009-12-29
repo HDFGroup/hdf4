@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="compress_sds"
+	Name="SD_compress_sds"
 	ProjectGUID="{23CA9AE5-1E8D-4191-85DD-B4AAFC22C66A}"
 	>
 	<Platforms>
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/compress_sds.tlb"
+				TypeLibraryName=".\Release/SD_compress_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,7 +53,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/compress_sds.pch"
+				PrecompiledHeaderFile=".\Release/SD_compress_sds.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -75,11 +75,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/compress_sds.exe"
+				OutputFile="..\Release/SD_compress_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/compress_sds.pdb"
+				ProgramDatabaseFile=".\Release/SD_compress_sds.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -132,7 +132,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/compress_sds.tlb"
+				TypeLibraryName=".\Debug/SD_compress_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -143,7 +143,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/compress_sds.pch"
+				PrecompiledHeaderFile=".\Debug/SD_compress_sds.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -166,13 +166,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/compress_sds.exe"
+				OutputFile="..\Debug/SD_compress_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/compress_sds.pdb"
+				ProgramDatabaseFile=".\Debug/SD_compress_sds.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -226,7 +226,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/compress_sds.tlb"
+				TypeLibraryName=".\Release/SD_compress_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -239,7 +239,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/compress_sds.pch"
+				PrecompiledHeaderFile=".\Release/SD_compress_sds.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -261,11 +261,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/compress_sds.exe"
+				OutputFile="..\Release/SD_compress_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/compress_sds.pdb"
+				ProgramDatabaseFile=".\Release/SD_compress_sds.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -319,7 +319,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/compress_sds.tlb"
+				TypeLibraryName=".\Debug/SD_compress_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -330,7 +330,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/compress_sds.pch"
+				PrecompiledHeaderFile=".\Debug/SD_compress_sds.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -353,13 +353,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/compress_sds.exe"
+				OutputFile="..\Debug/SD_compress_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/compress_sds.pdb"
+				ProgramDatabaseFile=".\Debug/SD_compress_sds.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -393,7 +393,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\mfhdf\examples\compress_sds.c"
+			RelativePath="..\..\..\..\mfhdf\examples\SD_compress_sds.c"
 			>
 		</File>
 	</Files>

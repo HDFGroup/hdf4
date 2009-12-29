@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="mv_sds_to_external"
+	Name="SD_mv_sds_to_external"
 	ProjectGUID="{A1041BF3-836D-4A1F-8268-7C34841A5BE1}"
 	>
 	<Platforms>
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/mv_sds_to_external.tlb"
+				TypeLibraryName=".\Release/SD_mv_sds_to_external.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,7 +53,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/mv_sds_to_external.pch"
+				PrecompiledHeaderFile=".\Release/SD_mv_sds_to_external.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -75,11 +75,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/mv_sds_to_external.exe"
+				OutputFile="..\Release/SD_mv_sds_to_external.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/mv_sds_to_external.pdb"
+				ProgramDatabaseFile=".\Release/SD_mv_sds_to_external.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -132,7 +132,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/mv_sds_to_external.tlb"
+				TypeLibraryName=".\Debug/SD_mv_sds_to_external.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -143,7 +143,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/mv_sds_to_external.pch"
+				PrecompiledHeaderFile=".\Debug/SD_mv_sds_to_external.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -166,13 +166,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/mv_sds_to_external.exe"
+				OutputFile="..\Debug/SD_mv_sds_to_external.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/mv_sds_to_external.pdb"
+				ProgramDatabaseFile=".\Debug/SD_mv_sds_to_external.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -226,7 +226,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/mv_sds_to_external.tlb"
+				TypeLibraryName=".\Release/SD_mv_sds_to_external.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -239,7 +239,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/mv_sds_to_external.pch"
+				PrecompiledHeaderFile=".\Release/SD_mv_sds_to_external.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -261,11 +261,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/mv_sds_to_external.exe"
+				OutputFile="..\Release/SD_mv_sds_to_external.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/mv_sds_to_external.pdb"
+				ProgramDatabaseFile=".\Release/SD_mv_sds_to_external.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -319,7 +319,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/mv_sds_to_external.tlb"
+				TypeLibraryName=".\Debug/SD_mv_sds_to_external.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -330,7 +330,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/mv_sds_to_external.pch"
+				PrecompiledHeaderFile=".\Debug/SD_mv_sds_to_external.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -353,13 +353,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/mv_sds_to_external.exe"
+				OutputFile="..\Debug/SD_mv_sds_to_external.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/mv_sds_to_external.pdb"
+				ProgramDatabaseFile=".\Debug/SD_mv_sds_to_external.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -393,7 +393,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\mfhdf\examples\mv_sds_to_external.c"
+			RelativePath="..\..\..\..\mfhdf\examples\SD_mv_sds_to_external.c"
 			>
 		</File>
 	</Files>

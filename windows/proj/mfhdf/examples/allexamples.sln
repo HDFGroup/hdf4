@@ -14,37 +14,37 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "allexamples", "allexamples.
 		{2BD44168-9D3D-4E57-AB70-D0ED9FD36FAA} = {2BD44168-9D3D-4E57-AB70-D0ED9FD36FAA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "get_info", "get_info.vcproj", "{5D9A9B88-562B-445C-9B94-C72857B490FA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_get_info", "SD_get_info.vcproj", "{5D9A9B88-562B-445C-9B94-C72857B490FA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "get_attr", "get_attr.vcproj", "{FB7C9BD7-14C4-41AF-A1E5-9CF03C935725}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_get_attr", "SD_get_attr.vcproj", "{FB7C9BD7-14C4-41AF-A1E5-9CF03C935725}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "find_sds_by_name", "find_sds_by_name.vcproj", "{4F3326D5-2E43-4132-92A5-055351776F3D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_find_sds_by_name", "SD_find_sds_by_name.vcproj", "{4F3326D5-2E43-4132-92A5-055351776F3D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dimscale_vs_sds", "dimscale_vs_sds.vcproj", "{21E24F4F-AA61-471C-B90C-BB4545E89508}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_dimscale_vs_sds", "SD_dimscale_vs_sds.vcproj", "{21E24F4F-AA61-471C-B90C-BB4545E89508}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "create_sds", "create_sds.vcproj", "{344C5F7D-59A0-492E-B929-C818AC792D6E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_create_sds", "SD_create_sds.vcproj", "{344C5F7D-59A0-492E-B929-C818AC792D6E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "read_from_sds", "read_from_sds.vcproj", "{2BD44168-9D3D-4E57-AB70-D0ED9FD36FAA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_read_from_sds", "SD_read_from_sds.vcproj", "{2BD44168-9D3D-4E57-AB70-D0ED9FD36FAA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mv_sds_to_external", "mv_sds_to_external.vcproj", "{A1041BF3-836D-4A1F-8268-7C34841A5BE1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_mv_sds_to_external", "SD_mv_sds_to_external.vcproj", "{A1041BF3-836D-4A1F-8268-7C34841A5BE1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "alter_sds_values", "alter_sds_values.vcproj", "{A4196E75-8B3B-4391-ACF6-168D6A8BB94F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_alter_sds_values", "SD_alter_sds_values.vcproj", "{A4196E75-8B3B-4391-ACF6-168D6A8BB94F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chunking_example", "chunking_example.vcproj", "{B581B392-8D54-4606-8092-DA60A993D094}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_chunking_example", "SD_chunking_example.vcproj", "{B581B392-8D54-4606-8092-DA60A993D094}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compress_sds", "compress_sds.vcproj", "{23CA9AE5-1E8D-4191-85DD-B4AAFC22C66A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_compress_sds", "SD_compress_sds.vcproj", "{23CA9AE5-1E8D-4191-85DD-B4AAFC22C66A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "read_subsets", "read_subsets.vcproj", "{650A9411-B3F2-4781-B52F-B83B2D538735}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_read_subsets", "SD_read_subsets.vcproj", "{650A9411-B3F2-4781-B52F-B83B2D538735}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "set_attr", "set_attr.vcproj", "{586C02D6-9993-4654-82EC-F02570A36CCC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_set_attr", "SD_set_attr.vcproj", "{586C02D6-9993-4654-82EC-F02570A36CCC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "set_get_dim_info", "set_get_dim_info.vcproj", "{1177B7AB-2DC0-420D-93FE-43409AAD8F5B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_set_get_dim_info", "SD_set_get_dim_info.vcproj", "{1177B7AB-2DC0-420D-93FE-43409AAD8F5B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unlimited_sds", "unlimited_sds.vcproj", "{443A9B73-2514-43D8-BE93-B272CA965941}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_unlimited_sds", "SD_unlimited_sds.vcproj", "{443A9B73-2514-43D8-BE93-B272CA965941}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "write_slab", "write_slab.vcproj", "{4796E60A-9657-47A3-AB6A-B1B504C9C08C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_write_slab", "SD_write_slab.vcproj", "{4796E60A-9657-47A3-AB6A-B1B504C9C08C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "write_to_sds", "write_to_sds.vcproj", "{6BA3D9F3-177F-40AD-AF8D-A36091C5508F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD_write_to_sds", "SD_write_to_sds.vcproj", "{6BA3D9F3-177F-40AD-AF8D-A36091C5508F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

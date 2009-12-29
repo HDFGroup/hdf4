@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="unlimited_sds"
+	Name="SD_unlimited_sds"
 	ProjectGUID="{443A9B73-2514-43D8-BE93-B272CA965941}"
 	>
 	<Platforms>
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/unlimited_sds.tlb"
+				TypeLibraryName=".\Release/SD_unlimited_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,7 +53,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/unlimited_sds.pch"
+				PrecompiledHeaderFile=".\Release/SD_unlimited_sds.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -75,11 +75,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/unlimited_sds.exe"
+				OutputFile="..\Release/SD_unlimited_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/unlimited_sds.pdb"
+				ProgramDatabaseFile=".\Release/SD_unlimited_sds.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -133,7 +133,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/unlimited_sds.tlb"
+				TypeLibraryName=".\Release/SD_unlimited_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -146,7 +146,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/unlimited_sds.pch"
+				PrecompiledHeaderFile=".\Release/SD_unlimited_sds.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -168,11 +168,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/unlimited_sds.exe"
+				OutputFile="..\Release/SD_unlimited_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/unlimited_sds.pdb"
+				ProgramDatabaseFile=".\Release/SD_unlimited_sds.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/unlimited_sds.tlb"
+				TypeLibraryName=".\Debug/SD_unlimited_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -236,7 +236,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/unlimited_sds.pch"
+				PrecompiledHeaderFile=".\Debug/SD_unlimited_sds.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -259,13 +259,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/unlimited_sds.exe"
+				OutputFile="..\Debug/SD_unlimited_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/unlimited_sds.pdb"
+				ProgramDatabaseFile=".\Debug/SD_unlimited_sds.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -319,7 +319,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/unlimited_sds.tlb"
+				TypeLibraryName=".\Debug/SD_unlimited_sds.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -330,7 +330,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/unlimited_sds.pch"
+				PrecompiledHeaderFile=".\Debug/SD_unlimited_sds.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -353,13 +353,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/unlimited_sds.exe"
+				OutputFile="..\Debug/SD_unlimited_sds.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/unlimited_sds.pdb"
+				ProgramDatabaseFile=".\Debug/SD_unlimited_sds.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -393,7 +393,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\mfhdf\examples\unlimited_sds.c"
+			RelativePath="..\..\..\..\mfhdf\examples\SD_unlimited_sds.c"
 			>
 		</File>
 	</Files>

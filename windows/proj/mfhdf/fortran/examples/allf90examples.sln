@@ -5,7 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "allf90examples", "allf90exa
 		{331A6712-873A-4427-AAC2-34F415718C61} = {331A6712-873A-4427-AAC2-34F415718C61}
 	EndProjectSection
 EndProject
-Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "sd_create", "sd_create.vfproj", "{331A6712-873A-4427-AAC2-34F415718C61}"
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "SD_create_sds", "SD_create_sds.vfproj", "{331A6712-873A-4427-AAC2-34F415718C61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

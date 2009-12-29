@@ -41,5 +41,5 @@
 				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
 				<Tool Name="VFPreLinkEventTool"/></Configuration></Configurations>
 	<Files>
-		<File RelativePath="..\..\..\..\..\mfhdf\fortran\examples\sd_create.f"/></Files>
+		<File RelativePath="..\..\..\..\..\mfhdf\fortran\examples\SD_create_sds.f"/></Files>
 	<Globals/></VisualStudioProject>
