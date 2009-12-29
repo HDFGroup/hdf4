@@ -23,6 +23,7 @@ If you have any questions or comments, please see the HDF Support page:
 CONTENTS
 
 - New features and changes
+  -- Source distribution
   -- Configuration
   -- Library
   -- Utilities
@@ -34,10 +35,19 @@ CONTENTS
 - Documentation
 - Platforms tested
 - Known problems
+- Appendix: List of the removed files
 
 
 New features and changes
 ========================
+    Source distribution
+    ===================
+    - INSTALL* files were moved to the release_notes directory
+        (EIP - 2009/12/29)
+    - SD tests were moved from mfhdf/libsrc to mfhdf/test.
+	  (BMR - 2009/09/10)
+    - For the list of the removed obsolete files see Appendix.
+
     Configuration
     ============= 
     - Configure suite now built with the following versions of the autotools:
@@ -46,14 +56,16 @@ New features and changes
 
     Library
     ========= 
+    - "make installcheck" builds and tests examples using h4cc and h4fc
+      scripts (MAM, BMR and MSB - 2009/12)
     - HDF Fortran examples were added to hdf/fortran/examples. 
       (MAM - 2009/12/14)
-	- SD examples were added to mfhdf/examples.  (BMR - 2009/08/28)
-	- HDF C examples were added to hdf/examples.  (BMR - 2009/11/07)
+    - SD examples were added to mfhdf/examples.  (BMR - 2009/08/28)
+    - HDF C examples were added to hdf/examples.  (BMR - 2009/11/07)
 
     Test
     ====
-	- Added tests for GRfindattr, GRattrinfo, and GRgetattr
+    - Added tests for GRfindattr, GRattrinfo, and GRgetattr
 	  (BMR - 2009/11/15)
 
     Utilities
@@ -84,8 +96,6 @@ Bugs fixed since HDF4.2.4
 	- The problem where incorrect result occurred when attempting
 	  to retrieve the dimension scale's number type from a netCDF file
 	  was fixed (bugzilla #1644.) (BMR - 2009/09/25)
-	- SD tests were moved from mfhdf/libsrc to mfhdf/test.
-	  (BMR - 2009/09/10)
 	- The problem where pieces of an image get written multiple times
 	  at different locations in the 2-D array had been fixed.  The
 	  cause was the pointer to user's buffer was not advanced properly.
@@ -268,3 +278,132 @@ o  On Windows with Visual Studio .NET 2003, a minor bug in the hdfnctest test
     causes it to fail.  The failure is non-critical, and so the test has been
     disabled by default for all Windows compilers.
    
+Appendix: List of the removed files 
+===================================
+
+	mfhdf/CHANGES
+	mfhdf/CUSTOMIZE
+	mfhdf/INSTALL
+	mfhdf/MANIFEST
+	mfhdf/ORIGIN
+	mfhdf/README
+	mfhdf/README.HDF
+	mfhdf/README.HDF.33
+	mfhdf/VERSION
+	mfhdf/macros.mk
+	mfhdf/mfhdf.mak
+	mfhdf/msoft.mk 
+
+	mfhdf/fortran/fortc
+	mfhdf/fortran/fortc1.sed
+	mfhdf/fortran/fortc2.sed
+	mfhdf/fortran/ftest.lnk
+	mfhdf/fortran/msoft/
+
+	mfhdf/fortran/Linux.m4
+	mfhdf/fortran/README
+	mfhdf/fortran/aix.m4
+	mfhdf/fortran/common.m4
+	mfhdf/fortran/convex.m4
+	mfhdf/fortran/craympp.m4
+	mfhdf/fortran/descrip.mms
+	mfhdf/fortran/freebsd.m4
+	mfhdf/fortran/fujivp.m4
+	mfhdf/fortran/hpux.m4
+	mfhdf/fortran/irix.m4
+	mfhdf/fortran/msoft.m4
+	mfhdf/fortran/msoft.mk
+	mfhdf/fortran/osf.m4
+	mfhdf/fortran/solaris.m4
+	mfhdf/fortran/sunos.m4
+	mfhdf/fortran/ultrix.m4
+	mfhdf/fortran/unicos.m4
+	mfhdf/fortran/vax-ultrix.m4
+	mfhdf/fortran/vms.m4
+	mfhdf/libsrc/README
+
+	mfhdf/libsrc/cdftest.c
+	mfhdf/libsrc/cdftest.mak
+	mfhdf/libsrc/cdftest.project.hqx
+	mfhdf/libsrc/descrip.mms
+	mfhdf/libsrc/gen_sds_szipped.c
+	mfhdf/libsrc/hdftest.c
+	mfhdf/libsrc/hdftest.h
+	mfhdf/libsrc/hdftest.mak
+	mfhdf/libsrc/hdftest.project.hqx
+	mfhdf/libsrc/htons.mar
+	mfhdf/libsrc/mfhdflib.project.hqx
+	mfhdf/libsrc/msoft.mk
+	mfhdf/libsrc/ntohs.mar
+	mfhdf/libsrc/sds_szipped.dat
+	mfhdf/libsrc/tchunk.c
+	mfhdf/libsrc/tcomp.c
+	mfhdf/libsrc/tcoordvar.c
+	mfhdf/libsrc/tdatasizes.c
+	mfhdf/libsrc/tdim.c
+	mfhdf/libsrc/temptySDSs.c
+	mfhdf/libsrc/tfile.c
+	mfhdf/libsrc/tidtypes.c
+	mfhdf/libsrc/tncunlim.c
+	mfhdf/libsrc/tnetcdf.c
+	mfhdf/libsrc/trank0.c
+	mfhdf/libsrc/tsd.c
+	mfhdf/libsrc/tsdsprops.c
+	mfhdf/libsrc/tszip.c
+	mfhdf/libsrc/tunlim.c
+	mfhdf/libsrc/win32cdf.h
+	mfhdf/libsrc/win32cdf.mak
+
+	hdf/COPYING
+	hdf/COPYRIGHT
+	hdf/README
+	hdf/README.33r4
+
+	hdf/src/hdf.bld
+	hdf/src/hdflib.project.hqx
+	hdf/src/hdfnof.bld
+	hdf/src/hdfnofw3.lbc
+	hdf/src/hdfnofwc.lbc
+	hdf/src/hdfw386.lbc
+	hdf/src/hdfwcc.lbc
+	hdf/src/makepc.386
+        hdf/src/makepc.msc
+	hdf/src/makepc.wcc
+	hdf/src/makewin.msc
+	hdf/src/win32hdf.mak
+
+        hdf/util/fp2hdf.mak
+	hdf/util/hdf24to8.mak
+	hdf/util/hdf2jpeg.mak
+	hdf/util/hdf8to24.mak
+	hdf/util/hdfcomp.mak
+	hdf/util/hdfed.mak
+	hdf/util/hdfls.mak
+	hdf/util/hdfpack.mak
+	hdf/util/hdftopal.mak
+	hdf/util/hdftor8.mak
+	hdf/util/hdfunpac.mak
+	hdf/util/jpeg2hdf.mak
+	hdf/util/makepc.386
+	hdf/util/makepc.msc
+	hdf/util/paltohdf.mak
+	hdf/util/r8tohdf.mak
+	hdf/util/ristosds.mak
+	hdf/util/vcompat.mak
+	hdf/util/vmake.mak
+	hdf/util/vshow.mak
+
+	hdf/test/MAKECOM.OLD
+	hdf/test/makepc.386
+	hdf/test/makepc.msc
+	hdf/test/makewin.msc
+	hdf/test/makewin.new
+	hdf/test/testhdf.386
+	hdf/test/testhdf.def
+	hdf/test/testhdf.lnk
+	hdf/test/testhdf.pc
+	hdf/test/testhdf.project.hqx
+	hdf/test/win32tst.mak
+
+
+ 
