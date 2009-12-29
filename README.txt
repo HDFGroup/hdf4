@@ -16,15 +16,12 @@ Source Distribution Layout
 
    bin    -- Scripts for maintenance.
 
-   config -- Machine dependent makefile fragments(mh-<os>). 
+   config -- Configuration files to be used by conifgure script.
 
    hdf    -- The source code for the HDF 'base library', the multi-file 
              annotation interface, the multi-file raster image interface, 
              HDF command line utilities (hdp, the hdf dumper is in mfhdf/), 
              and a test suite. 
-             This directory also contains the software distributions for 
-             JPEG(hdf/jpeg) and ZLIB(hdf/zlib) which are required by the 
-             HDF library. 
              Please see the README in each directory for further 
              information on each package. 
 
@@ -34,6 +31,7 @@ Source Distribution Layout
    man    -- An incomplete set of man page(s) for HDF.
 
    release_notes -- 
+             Installation instructions for UNIX and Windows.
              Descriptions of new features and bug fixes in this release.
              Files in this sub-directory can be used as supplemental 
              documentation for HDF. 
@@ -55,9 +53,8 @@ System Requirements
 -------------------
  To build the HDF library from source, you need:
 
-   * An ANSI C compiler. The native ANSI compilers on the above 
-     platforms are supported. On platforms where no ANSI compiler
-     was available, the free GNU ANSI compiler GCC was used.
+   * C and Fortran compilers. For list of the supported compilers
+     check release_notes/RELEASE.txt file.
 
 
 Configuring/Testing/Installing 
