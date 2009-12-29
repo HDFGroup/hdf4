@@ -1366,7 +1366,22 @@
 
 ./windows/proj/mfhdf/fortran/examples/allf90examples.sln
 ./windows/proj/mfhdf/fortran/examples/allf90examples.vcproj
+./windows/proj/mfhdf/fortran/examples/SD_alter_sds_values.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_chunking_example.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_compress_sds.vfproj
 ./windows/proj/mfhdf/fortran/examples/SD_create_sds.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_dimscale_vs_sds.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_find_sds_by_name.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_get_attr.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_get_info.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_mv_sds_to_external.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_read_from_sds.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_read_subsets.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_set_attr.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_set_get_dim_info.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_unlimited_sds.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_write_slab.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_write_to_sds.vfproj
 
 ./windows/proj/mfhdf/dumper/hdp.vcproj
 ./windows/proj/mfhdf/fortran/dllhdftestf.vfproj
