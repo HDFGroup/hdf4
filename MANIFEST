@@ -717,23 +717,23 @@
 
 ./mfhdf/examples/Makefile.am
 ./mfhdf/examples/Makefile.in
-./mfhdf/examples/alter_sds_values.c
-./mfhdf/examples/chunking_example.c
-./mfhdf/examples/compress_sds.c
-./mfhdf/examples/create_sds.c
-./mfhdf/examples/dimscale_vs_sds.c
-./mfhdf/examples/find_sds_by_name.c
-./mfhdf/examples/get_attr.c
-./mfhdf/examples/get_info.c
-./mfhdf/examples/mv_sds_to_external.c
-./mfhdf/examples/read_from_sds.c
-./mfhdf/examples/read_subsets.c
-./mfhdf/examples/set_attr.c
-./mfhdf/examples/set_get_dim_info.c
+./mfhdf/examples/SD_alter_sds_values.c
+./mfhdf/examples/SD_chunking_example.c
+./mfhdf/examples/SD_compress_sds.c
+./mfhdf/examples/SD_create_sds.c
+./mfhdf/examples/SD_dimscale_vs_sds.c
+./mfhdf/examples/SD_find_sds_by_name.c
+./mfhdf/examples/SD_get_attr.c
+./mfhdf/examples/SD_get_info.c
+./mfhdf/examples/SD_mv_sds_to_external.c
+./mfhdf/examples/SD_read_from_sds.c
+./mfhdf/examples/SD_read_subsets.c
+./mfhdf/examples/SD_set_attr.c
+./mfhdf/examples/SD_set_get_dim_info.c
+./mfhdf/examples/SD_unlimited_sds.c
+./mfhdf/examples/SD_write_slab.c
+./mfhdf/examples/SD_write_to_sds.c
 ./mfhdf/examples/testexamples.sh.in
-./mfhdf/examples/unlimited_sds.c
-./mfhdf/examples/write_slab.c
-./mfhdf/examples/write_to_sds.c
 
 
 ./mfhdf/fortran/Makefile.am

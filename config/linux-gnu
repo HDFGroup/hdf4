@@ -142,7 +142,7 @@ esac
 
 case $F77_BASENAME in 
   g77)
-    FFLAGS="$FFLAGS -Wsign-compare"
+    FFLAGS="$FFLAGS "
     DEBUG_FFLAGS="-g"
     PROD_FFLAGS="-O3 -fomit-frame-pointer"
     PROFILE_FFLAGS="-pg"
