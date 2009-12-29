@@ -1347,26 +1347,26 @@
 
 ./windows/proj/mfhdf/examples/allexamples.sln
 ./windows/proj/mfhdf/examples/allexamples.vcproj
-./windows/proj/mfhdf/examples/alter_sds_values.vcproj
-./windows/proj/mfhdf/examples/chunking_example.vcproj
-./windows/proj/mfhdf/examples/compress_sds.vcproj
-./windows/proj/mfhdf/examples/create_sds.vcproj
-./windows/proj/mfhdf/examples/dimscale_vs_sds.vcproj
-./windows/proj/mfhdf/examples/find_sds_by_name.vcproj
-./windows/proj/mfhdf/examples/get_attr.vcproj
-./windows/proj/mfhdf/examples/get_info.vcproj
-./windows/proj/mfhdf/examples/mv_sds_to_external.vcproj
-./windows/proj/mfhdf/examples/read_from_sds.vcproj
-./windows/proj/mfhdf/examples/read_subsets.vcproj
-./windows/proj/mfhdf/examples/set_attr.vcproj
-./windows/proj/mfhdf/examples/set_get_dim_info.vcproj
-./windows/proj/mfhdf/examples/unlimited_sds.vcproj
-./windows/proj/mfhdf/examples/write_slab.vcproj
-./windows/proj/mfhdf/examples/write_to_sds.vcproj
+./windows/proj/mfhdf/examples/SD_alter_sds_values.vcproj
+./windows/proj/mfhdf/examples/SD_chunking_example.vcproj
+./windows/proj/mfhdf/examples/SD_compress_sds.vcproj
+./windows/proj/mfhdf/examples/SD_create_sds.vcproj
+./windows/proj/mfhdf/examples/SD_dimscale_vs_sds.vcproj
+./windows/proj/mfhdf/examples/SD_find_sds_by_name.vcproj
+./windows/proj/mfhdf/examples/SD_get_attr.vcproj
+./windows/proj/mfhdf/examples/SD_get_info.vcproj
+./windows/proj/mfhdf/examples/SD_mv_sds_to_external.vcproj
+./windows/proj/mfhdf/examples/SD_read_from_sds.vcproj
+./windows/proj/mfhdf/examples/SD_read_subsets.vcproj
+./windows/proj/mfhdf/examples/SD_set_attr.vcproj
+./windows/proj/mfhdf/examples/SD_set_get_dim_info.vcproj
+./windows/proj/mfhdf/examples/SD_unlimited_sds.vcproj
+./windows/proj/mfhdf/examples/SD_write_slab.vcproj
+./windows/proj/mfhdf/examples/SD_write_to_sds.vcproj
 
 ./windows/proj/mfhdf/fortran/examples/allf90examples.sln
 ./windows/proj/mfhdf/fortran/examples/allf90examples.vcproj
-./windows/proj/mfhdf/fortran/examples/sd_create.vfproj
+./windows/proj/mfhdf/fortran/examples/SD_create_sds.vfproj
 
 ./windows/proj/mfhdf/dumper/hdp.vcproj
 ./windows/proj/mfhdf/fortran/dllhdftestf.vfproj
