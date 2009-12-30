@@ -122,6 +122,7 @@ rem     %1 - release or debug, the configuration to test
     copy /y hdf\test\test_files\*.dat hdf\test\%1\test_files > nul 2>&1
     call :exec_test hdf\test\%1 testhdf
     del /f /q hdf\test\%1\test_files\*.dat hdf\test\%1\test_files\*.hdf 2> nul
+	del /f /q hdf\test\%1\*.hdf 2> nul
     rmdir /s /q hdf\test\%1\test_files 2> nul
     rmdir /s /q hdf\test\%1\testdir 2> nul
     
@@ -139,6 +140,7 @@ rem     %1 - release or debug, the configuration to test
         copy /y hdf\test\fort_ps\fortest.arg hdf\test\%1 >nul 2>&1
         call :exec_test hdf\test\%1 fortestf
         del /f /q hdf\test\%1\test_files\*.dat hdf\test\%1\fortest.arg 2> nul
+		del /f /q hdf\test\%1\*.hdf 2> nul
         rmdir /s /q hdf\test\%1\test_files 2> nul
         rmdir /s /q hdf\test\%1\testdir 2> nul
     )
@@ -216,6 +218,7 @@ rem     %1 - release or debug, the configuration to test
     copy /y %CD%\hdf\test\test_files\*.dat %CD%\hdf\test\%1\test_files > nul 2>&1
     call :exec_test %CD%\hdf\test\%1 dlltesthdf
     del /f /q %CD%\hdf\test\%1\test_files\*.dat %CD%\hdf\test\%1\test_files\*.hdf 2> nul
+	del /f /q %CD%\hdf\test\%1\*.hdf 2> nul
     rmdir /s /q %CD%\hdf\test\%1\test_files 2> nul
     rmdir /s /q %CD%\hdf\test\%1\testdir 2> nul
     
@@ -227,6 +230,7 @@ rem     %1 - release or debug, the configuration to test
         copy /y hdf\test\fort_ps\fortest.arg hdf\test\%1 >nul 2>&1
         call :exec_test hdf\test\%1 dllfortestf
         del /f /q hdf\test\%1\test_files\*.dat hdf\test\%1\fortest.arg 2> nul
+		del /f /q hdf\test\%1\*.hdf 2> nul
         rmdir /s /q hdf\test\%1\test_files 2> nul
         rmdir /s /q hdf\test\%1\testdir 2> nul
     )
