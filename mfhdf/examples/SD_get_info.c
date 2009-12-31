@@ -9,9 +9,9 @@ int main()
    int32 sd_id, sds_id;
    intn  status;
    int32 n_datasets, n_file_attrs, index;
-   int32 dim_sizes[MAX_VAR_DIMS];
+   int32 dim_sizes[H4_MAX_VAR_DIMS];
    int32 rank, data_type, n_attrs;
-   char  name[MAX_NC_NAME];
+   char  name[H4_MAX_NC_NAME];
    int   i;
 
    /********************* End of variable declaration ***********************/

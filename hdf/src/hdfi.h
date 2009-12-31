@@ -81,10 +81,6 @@
 #define UNIXUNBUFIO 1
 #define UNIXBUFIO   2
 #define MACIO       3
-#define PCIO        4    /* 16-bit MS-DOS File I/O (deprecated) */
-#define WINIO       5    /* 16-bit Windows File I/O (deprecated) */
-#define PAGEBUFIO   6    /* page buffering - fmpool */
-#define WINNTIO     7    /* 32-bit Windows File I/O (deprecated, WinNT now uses UNIXBUFIO) */ 
 
 
 /* Standard header files needed all the time */
@@ -216,11 +212,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #endif
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -273,11 +265,7 @@ typedef double            float64;
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -338,11 +326,7 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #endif /*AIX5L64 */
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -406,11 +390,7 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #endif
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -475,11 +455,7 @@ typedef int                intf;     /* size of INTEGERs in Fortran compiler */
 typedef long               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 /*
 #ifdef IRIX64
 #define BIG_LONGS
@@ -545,11 +521,7 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 
 #define DF_CAPFNAMES            /* fortran names are in all caps */
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -607,11 +579,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #define _HUGE              /* This should only be defined to a value on the PC */
 #define DF_CAPFNAMES            /* fortran names are in all caps */
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -728,11 +696,7 @@ typedef double            float64;
 typedef int               intf;     /* size of INTEGERs in Fortran compiler */
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -794,11 +758,7 @@ typedef double          float64;
 typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef long            hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -848,11 +808,7 @@ typedef int             intf;     /* size of INTEGERs in Fortran compiler */
 typedef int             hdf_pint_t;   /* an integer the same size as a pointer */
 #define _fcdtocp(desc) (desc)
 #define FNAME_POST_UNDERSCORE
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1022,11 +978,7 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 #endif
 #define _fcdtocp(desc) (desc)
 
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1079,11 +1031,7 @@ typedef double            float64;
 typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1183,11 +1131,7 @@ typedef double            float64;
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1333,11 +1277,7 @@ typedef long              hdf_pint_t;   /* an integer the same size as a pointer
 #define FNAME_POST_UNDERSCORE
 #endif
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1384,11 +1324,7 @@ typedef double            float64;
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1437,11 +1373,7 @@ typedef double            float64;
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 
@@ -1490,11 +1422,7 @@ typedef double            float64;
 typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
 #define FNAME_POST_UNDERSCORE
 #define _fcdtocp(desc) (desc)
-#ifdef  HAVE_FMPOOL
-#define FILELIB PAGEBUFIO  /* enable page buffering */
-#else
 #define FILELIB UNIXBUFIO
-#endif
 
 /* JPEG #define's - Look in the JPEG docs before changing - (Q) */
 

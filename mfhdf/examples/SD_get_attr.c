@@ -12,7 +12,7 @@ int main()
    int32   sd_id, sds_id, dim_id;
    intn    status;
    int32   attr_index, data_type, n_values; 
-   char    attr_name[MAX_NC_NAME];
+   char    attr_name[H4_MAX_NC_NAME];
    int8    *file_data;
    int8    *dim_data;
    float32 *sds_data;
