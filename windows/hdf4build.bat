@@ -6,9 +6,10 @@ rem         vs9               Build using Visual Studio 2008
 rem         vs8               Build using Visual Studio 2005
 rem         enablefortran     Build HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
+rem         ivf111            Build HDF4 Fortran using Intel Visual Fortran 11.1
 rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
 rem         ivf91             Build HDF4 Fortran using Intel Visual Fortran 9.1
-rem                           [default Intel Visual Fortran 9.1]
+rem                           [default Intel Visual Fortran 10.1]
 rem         nodebug           Note: Default is to build debug and release versions
 rem         useenv            Build using variables set in the environment.
 rem
@@ -57,9 +58,10 @@ rem Print a help message
     echo.   vs8                     Build using Visual Studio 2005
     echo.   enablefortran           Build HDF4 C/Fortran Library and Tools 
     echo.                           [default C only]
+    echo.   ivf111                  Build HDF4 Fortran using Intel Visual Fortran 11.1
     echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
     echo.   ivf91                   Build HDF4 Fortran using Intel Visual Fortran 9.1
-    echo.                           [default Intel Visual Fortran 9.1]
+    echo.                           [default Intel Visual Fortran 10.1]
     echo.   nodebug                 Note: Default is to build debug and release versions
     echo.   useenv                  Build using variables set in the environment.
     echo.
@@ -94,11 +96,15 @@ rem Parse through the parameters sent to file, and set appropriate variables
             rem Enable Fortran
             set hdf4_use_ivf101=true
             
-         ) else if "%%a"=="nodebug" (
+        ) else if "%%a"=="ivf111" (
+            rem Enable Fortran
+            set hdf4_use_ivf111=true
+            
+        ) else if "%%a"=="nodebug" (
             rem Enable Fortran
             set blddebug=
             
-       ) else if "%%a"=="useenv" (
+        ) else if "%%a"=="useenv" (
             rem Tell the compiler to use variable settings in the environment 
             set hdf4_useenv=true
             
@@ -119,10 +125,10 @@ rem Setup our environment
     echo.Setting up environment
     
     rem Sanity checks
-    rem Only Intel Fortran 10.1 is supported on VS2008
+    rem Only Intel Fortran 10.1 and 11.1 is supported on VS2008
     if defined hdf4_use_vs2008 (
         if defined hdf4_enablefortran (
-            if not defined hdf4_use_ivf101 (
+            if defined hdf4_use_ivf91 (
                 echo.Error: Intel Visual Fortran 9.1 is not supported under Visual Studio 2008.
                 exit /b 1
             )
@@ -152,16 +158,22 @@ rem Setup our environment
     )
     rem Make sure we have environment variables specified for our compilers
     if defined hdf4_enablefortran (
-        if defined hdf4_use_ivf101 (
-            if not defined ifort_compiler10 (
-                echo.Error: Cannot setup Intel Visual Fortran 10.1 environment.  Please
-                echo.make sure IFORT_COMPILER10 is defined in the environment.
+        if defined hdf4_use_ivf111 (
+            if not defined ifort_compiler11 (
+                echo.Error: Cannot setup Intel Visual Fortran 11.1 environment.  Please
+                echo.make sure IFORT_COMPILER11 is defined in the environment.
                 exit /b 1
             )
-        ) else (
+        ) else if defined hdf4_use_ivf91 (
             if not defined ifort_compiler91 (
                 echo.Error: Cannot setup Intel Visual Fortran 9.1 environment.  Please
                 echo.make sure IFORT_COMPILER91 is defined in the environment.
+                exit /b 1
+            )
+        ) else (
+            if not defined ifort_compiler10 (
+                echo.Error: Cannot setup Intel Visual Fortran 10.1 environment.  Please
+                echo.make sure IFORT_COMPILER10 is defined in the environment.
                 exit /b 1
             )
         )
@@ -204,7 +216,7 @@ rem Setup our environment
                 ) else (
                     call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
                 )
-            ) else (
+            ) else if defined hdf4_use_ivf91 (
                 if %hdf4_platform%==Win32 (
                     call "%ifort_compiler91%\IA32\Bin\ifortvars.bat"
                 ) else (
@@ -227,10 +239,18 @@ rem Setup our environment
         rem Visual Studio 2008 is more complicated, because we can have either
         rem Fortran or not, and 32- or 64-bit.
         if defined hdf4_enablefortran (
-            if %hdf4_platform%==Win32 (
-                call "%ifort_compiler10%\IA32\Bin\ifortvars.bat"
-            ) else (
-                call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
+			if defined hdf4_use_ivf111 (
+				if %hdf4_platform%==Win32 (
+					call "%ifort_compiler11%\Bin\IA32\ifortvars_ia32.bat"
+				) else (
+					call "%ifort_compiler11%\Bin\IA32_Intel64\ifortvars_ia32_intel64.bat"
+				)
+            ) else if defined hdf4_use_ivf101 (
+				if %hdf4_platform%==Win32 (
+					call "%ifort_compiler10%\IA32\Bin\ifortvars.bat"
+				) else (
+					call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
+				)
             )
             set hdf4_sln="%CD%\windows\proj\all_fortran\all_fortran.sln"
         ) else (
@@ -269,21 +289,15 @@ rem This function returns 0 if everything is OK, and 1 otherwise.
         
     ) else (
         rem Assume VS2008
-        findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler10%\IA32\Bin\ifortvars.bat" > nul
+        if defined hdf4_use_ivf101 (
+            findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler10%IA32\\Bin\ifortvars.bat" > nul
+        ) else (
+            findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler11%\Bin\IA32\ifortvars_ia32.bat" > nul
+        )
     )
     exit /b %errorlevel%
         
     
-
-rem Upgrade the project files to the latest format for Visual Studio
-:upgrade
-    
-    echo.Upgrading project files
-    devenv %hdf4_sln% /Upgrade /NoLogo
-    
-    exit /b
-
-
 rem Build the HDF4 libraries.  By default, C libraries are built.
 :all
 
@@ -336,15 +350,6 @@ rem This is where the magic happens
         goto error
     )
     
-    rem Upgrade project files if needed
-    if defined hdf4_use_vs2008 (
-        call :upgrade
-        if !errorlevel! neq 0 (
-            echo.Error upgrading project files!
-            goto error
-        )
-    )
-
     call :all
     if %errorlevel% neq 0 (
         echo.Error building HDF4 libraries!

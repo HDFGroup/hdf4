@@ -15,9 +15,9 @@ rem
 rem  File Name: hdf4check.bat
 rem  This batch file is used to test HDF4 Libraries and Tools.
 rem  This script has the following options:
-rem    hdf4check [enablefortan | disabledebug]
+rem    hdf4check [enablefortan | nodebug]
 rem             enablefortran   Also test HDF4 Fortran libraries [default C only]
-rem             disabledebug    can be added to not test debug versions
+rem             nodebug         can be added to not test debug versions
 
 setlocal enabledelayedexpansion
 pushd %~dp0
@@ -30,13 +30,13 @@ if "%1"=="/?" (
     goto help
 ) else if "%1"=="enablefortran" (
     set build_fortran_conditional=true
-) else if /i "%1" equ "disabledebug" (
+) else if /i "%1" equ "nodebug" (
     set chkdebug=
 ) else if not "%1"=="" (
     call :help
     exit /b 1
 )
-if /i "%2" equ "disabledebug" (
+if /i "%2" equ "nodebug" (
     set chkdebug=
 )
     
@@ -45,9 +45,9 @@ goto main
 
 rem Print a help message, then exist
 :help
-    echo.hdf4check [enablefortan | disabledebug]
+    echo.hdf4check [enablefortan | nodebug]
     echo.         enablefortran   Also test HDF4 Fortran libraries [default C only]
-	echo.         disabledebug    can be added to not test debug versions
+	echo.         nodebug         can be added to not test debug versions
     exit /b 0
 
 

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application - Converted from CVF" Version="9.10" ProjectIdGuid="{B0328E1C-B490-4113-AE99-E08B7B2B337C}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Release|Win32" OutputDirectory="..\..\..\..\hdf\test\Release" IntermediateDirectory="..\..\..\..\hdf\test\Release\dllfortestf" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" Command="c:\hdf\hdf4\vs6\dotNet_split\fortran_split\windows\proj\hdf\test\$(OUTDIR)\dllfortestf.exe">
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/dllfortestf.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I " SuppressStartupBanner="true" AdditionalIncludeDirectories=".\dllfortestf\Release/;..\..\..\..\hdf\test" PreprocessorDefinitions="BUILD_HDF_DLL" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL" CompileOnly="true"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/dllfortestf.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories=".\proj\lib\release\multithreaded" ProgramDatabaseFile="$(OUTDIR)/dllfortestf.pdb" SubSystem="subSystemConsole" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
+				<Tool Name="VFPreLinkEventTool"/></Configuration>
+		<Configuration Name="Debug|Win32" OutputDirectory="..\..\..\..\hdf\test\Debug" IntermediateDirectory="..\..\..\..\hdf\test\Debug\dllfortestf" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" Command="c:\hdf\hdf4\vs6\dotNet_split\fortran_split\windows\proj\hdf\test\$(OUTDIR)\dllfortestf.exe">
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/dllfortestf.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I " SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories=".\dllfortestf\Debug/;..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDebugDLL" CompileOnly="true"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/dllfortestf.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories=".\proj\lib\debug\multithreaded" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/dllfortestf.pdb" SubSystem="subSystemConsole" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
+				<Tool Name="VFPreLinkEventTool"/></Configuration>
+		<Configuration Name="Release|x64" OutputDirectory="..\..\..\..\hdf\test\Release" IntermediateDirectory="..\..\..\..\hdf\test\Release\dllfortestf" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" MustRebuild="true" Command="c:\hdf\hdf4\vs6\dotNet_split\fortran_split\windows\proj\hdf\test\$(OUTDIR)\dllfortestf.exe">
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/dllfortestf.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I " SuppressStartupBanner="true" AdditionalIncludeDirectories=".\dllfortestf\Release/;..\..\..\..\hdf\test" PreprocessorDefinitions="BUILD_HDF_DLL" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL" CompileOnly="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" SwitchesHaveChanged="true" OutputFile="$(OUTDIR)/dllfortestf.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories=".\proj\lib\release\multithreaded" ProgramDatabaseFile="$(OUTDIR)/dllfortestf.pdb" SubSystem="subSystemConsole" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/></Configuration>
+		<Configuration Name="Debug|x64" OutputDirectory="..\..\..\..\hdf\test\Debug" IntermediateDirectory="..\..\..\..\hdf\test\Debug\dllfortestf" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" MustRebuild="true" Command="c:\hdf\hdf4\vs6\dotNet_split\fortran_split\windows\proj\hdf\test\$(OUTDIR)\dllfortestf.exe">
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/dllfortestf.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I " SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories=".\dllfortestf\Debug/;..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDebugDLL" CompileOnly="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" SwitchesHaveChanged="true" OutputFile="$(OUTDIR)/dllfortestf.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories=".\proj\lib\debug\multithreaded" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/dllfortestf.pdb" SubSystem="subSystemConsole" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90">
+		<File RelativePath="..\..\..\..\hdf\test\fort_ps\forsupffp.f">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration></File>
+		<File RelativePath="..\..\..\..\hdf\test\fort_ps\fortestFp.f">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration></File>
+		<File RelativePath="..\..\..\..\hdf\test\fort_ps\manpf.f">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration></File>
+		<File RelativePath="..\..\..\..\hdf\test\mgrf.f">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration></File>
+		<File RelativePath="..\..\..\..\hdf\test\tvattrf.f">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration></File>
+		<File RelativePath="..\..\..\..\hdf\test\tvsetf.f">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Debug/&quot;  /I  &quot;..\..\..\..\dllfortestf\Debug/&quot;  /I "/></FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I  &quot;..\..\..\..\dllfortestf\Release/&quot;  /I "/></FileConfiguration></File></Filter>
+		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
+		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"/></Files>
+	<Globals/></VisualStudioProject>

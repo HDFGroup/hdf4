@@ -12,19 +12,17 @@ Please read CAREFULLY about the following preconditions first.
 
 Preconditions
 
-To build the HDF4 and MFHDF libraries ( single-threaded static or multi-threaded 
+To build the HDF4 and MFHDF libraries ( multi-threaded static or multi-threaded 
 DLL) and utilities, it is assumed that you have done the following:
       
    1. Installed Microsoft Visual Studio
    
-      1.1 Currently, Visual Studio 6.0, .NET 2003, 2005, and 2008 are supported.
-          However, Visual Studio 6.0 project files will soon be phased out, so 
-          building with .NET 2003, 2005, or 2008 is recommended.
+      1.1 Currently, Visual Studio 2005, and 2008 are supported.
 
-      1.2 To build Fortran libraries, you must install the Intel Fortran 9.1 or 
-          10.1 compiler.  This requires Visual Studio using .NET 2003, 2005, or
-          2008.  Intel Fortran 10.1 is not supported under Visual Studio .NET 
-          2003, and thus requires Visual Studio 2005 or 2008.
+      1.2 To build Fortran libraries, you must install the Intel Fortran 9.1, 
+	      10.1 or 11.1 compiler.  This requires Visual Studio 2005, or
+          2008.  Intel Fortran 11.1 is not supported under Visual Studio 
+          2005, and thus requires Visual Studio 2008.
 
    2. Set up a directory structure to unpack the source code archive.
       For example: 
@@ -132,14 +130,14 @@ The following sections discuss installation procedures in detail:
 
    Section I:    Build and Test HDF4 Libraries and Utilities
    Section II:   Build an Application Using the HDF4 Library
-   Section III:  Build HDF4 in Visual Studio 6.0
-   Section IV:   Build HDF4 in Visual Studio .NET 2003
+   Section III:  Building HDF4 in Visual Studio 6.0 is no longer supported
+   Section IV:   Building HDF4 in Visual Studio .NET 2003 is no longer supported
    Section V:    Build HDF4 in Visual Studio 2008
    Section VI:   Build HDF4 with Fortran Libraries
    Section VII:  Disable Szip Compression Feature inside HDF4
    Section VIII: Use HDF4 with Original netCDF Library
    Section IX:   Build and Test HDF4 Library on the Command Line
-   Section X:    Build HDF4 Multithreaded Static Library
+   Section X:    Building HDF4 Multithreaded Static Library is default
    Section XI:   Build HDF4 for 64-bit Windows
    Section XII:  Build HDF4 on Windows Vista
    Section XIII: Some Helpful Pointers
@@ -154,27 +152,29 @@ Step 1: Build HDF4 Libraries and Utilities
 
 Notes:
 
-   a. These instructions are written for MicroSoft Visual Studio .NET 2005
-      users.  For Visual Studio 6.0 users, please also read Section III.  For
-      Visual Studio .NET 2003 users, please also read Section IV.  For Visual
-      Studio 2008 users, please also read SEction V.  To also build Fortran 
-      libraries using Intel Fortran 9.1 or 10.1, please also read Section VI.
+   a. These instructions are written for MicroSoft Visual Studio 2005
+      users.  For Visual Studio 2008 users, please also read SEction V.  
+	  To also build Fortran libraries using Intel Fortran 9.1, 10.1 or 11.1, 
+	  please also read Section VI.
       
-   b. To build HDF4 Multithreaded static library, please read Section X.
+   b. Building HDF4 Multithreaded static library is the default.
 
 Building Instructions:
 
    1. Run batch file copy_hdf.bat
 
-      Go to  c:\MyHDFstuff\HDF42r4\windows and run copy_hdf.bat. This process will 
+      Go to c:\MyHDFstuff\HDF-42x\windows and run copy_hdf.bat. This process will 
       copy all the necessary batch files and Windows-specific source code saved 
-      under c:\MyHDFstuff\HDF42r4\windows directory to the corresponding directories 
-      under MyHDFstuff.
+      under c:\MyHDFstuff\HDF-42x\windows directory to the corresponding directories 
+      under MyHDFstuff. copy_hdf.bat requires Visual Studio and/or Intel Fortran 
+	  version parameters to setup up the correct project files. 
+	  
+	  To setup for Visual Studio 2008: copy_hdf vs9 
 
    2. Invoke Microsoft Visual Studio, go to "File" and select the "Open 
       Solution" option. 
 
-      Then open the c:\MyHDFstuff\HDF42r4\windows\proj\all\all.sln solution. 
+      Then open the c:\MyHDFstuff\HDF-42x\windows\proj\all\all.sln solution. 
 
       You should find windows project files listed as "all files, 
       big files etc." on the left.        
@@ -216,11 +216,11 @@ We provide 2 options for users to test HDF4 libraries and utilities.
    3.1 Option 1: Automatic testings
 
    HDF4 comes with various test suites, all of which can be tested with 
-   hdf4check.bat batch file in c:\MyHDFstuff\HDF42r4\ directory.
+   hdf4check.bat batch file in c:\MyHDFstuff\HDF-42x\ directory.
    
    Invoke a command prompt and run hdf4check.bat.  Test results are saved in:
 
-      c:\MyHDFstuff\HDF42r4\check_results.txt.
+      c:\MyHDFstuff\HDF-42x\check_results.txt.
 
    Use a text editor to check the results.  You should not find any FAILED 
    marks in check_results.txt.
@@ -235,14 +235,14 @@ We provide 2 options for users to test HDF4 libraries and utilities.
        User who want to test ONLY HDF4 C libraries and utilities, the
        following DLLs should be placed into the Windows system directory.
        
-       Batch file c:\MyHDFstuff\HDF42r4\install_dll.bat will copy all of 
+       Batch file c:\MyHDFstuff\HDF-42x\install_dll.bat will copy all of 
        following DLLS into system directory.
        
-        HDF42r4\hdf\src\Debug\hd424md.dll
-        HDF42r4\mfhdf\libsrc\Debug\hm424md.dll
+        HDF-42x\hdf\src\Debug\hd42xmd.dll
+        HDF-42x\mfhdf\libsrc\Debug\hm42xmd.dll
                                                         
-        HDF42r4\hdf\src\Release\hd424m.dll
-        HDF42r4\mfhdf\libsrc\release\hm424m.dll
+        HDF-42x\hdf\src\Release\hd42xm.dll
+        HDF-42x\mfhdf\libsrc\release\hm42xm.dll
           
        3.2.2 Test HDF4 C library
        
@@ -280,7 +280,7 @@ Follow the instructions below to run "ncgen -c test" on Windows.
       Invoke Microsoft Visual Studio, go to "File" and select the
       "Open Solution" option. 
 
-      Then open the c:\MyHDFstuff\HDF42r4\windows\proj\all\all.sln solution. 
+      Then open the c:\MyHDFstuff\HDF-42x\windows\proj\all\all.sln solution. 
 
    2. Build ctest0.exe
 
@@ -303,17 +303,17 @@ Follow the instructions below to run "ncgen -c test" on Windows.
       When the debug build is done the directories listed below will
       contain the following files:
 
-         c:\MyHDFstuff\HDF42r4\mfhdf\ncgen\Debug
+         c:\MyHDFstuff\HDF-42x\mfhdf\ncgen\Debug
 
                ctest0.exe - Debug version
 
-         c:\MyHDFstuff\HDF42r4\mfhdf\ncgen\Release
+         c:\MyHDFstuff\HDF-42x\mfhdf\ncgen\Release
 
                ctest0.exe - Release version
 
    3. Run ncgen -c Test
 
-      A batch file named ncgen_ctest.bat under c:\MyHDFstuff\HDF42r4\
+      A batch file named ncgen_ctest.bat under c:\MyHDFstuff\HDF-42x\
       is provided to run "ncgen -c test".
 
       ncgen_ctest.bat has 2 options:
@@ -335,8 +335,8 @@ Step 4:  Install HDF4 Library
 
 We provide a batch file for users to relocate all HDF4 libraries in one
 folder.  The file is called installhdf4lib.bat under
-c:\MyHDFstuff\HDF42r4 directory.  Run the batch file, you may see a
-folder called hdf4lib under c:\MyHDFstuff\HDF42r4.  
+c:\MyHDFstuff\HDF-42x directory.  Run the batch file, you may see a
+folder called hdf4lib under c:\MyHDFstuff\HDF-42x.  
     
 The <release> layout of <hdf4lib> should be:
     
@@ -361,7 +361,7 @@ To build and test HDF4 C examples:
       Solution" option. 
       
       Then open the solution
-      c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\proj\allexamples.sln
+      c:\MyHDFstuff\HDF-42x\windows\proj\examples\allexamples.sln
 
    2. Select "Build", then Select "Set Active Configuration".
 
@@ -373,27 +373,10 @@ To build and test HDF4 C examples:
 	
           "Release" to build release versions the C examples.
 
-      When the debug build or release build is done, there should be the 
-      following output files in 
-      c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\Debug
-
-          chgnamtest.exe
-          createtest.exe
-          dimtest.exe
-          gitest.exe
-          rattrtest.exe
-          readtest.exe
-          sattrest.exe
-          sds2grouptest.exe
-          sh_dimtest.exe
-          unltest.exe
-          
-       Similar output will be in the Release directory for release build.
-
    3. Invoke a command prompt window and run the batch file InstallExamples.bat 
-      which resides in the top level directory (c:\MyHDFstuff\HDF42r4\).  This 
+      which resides in the top level directory (c:\MyHDFstuff\HDF-42x\).  This 
       file creates 2 new directories, examplesREL and examplesDBG in the 
-      c:\MyHDFstuff\HDF42r4\windows\examples\cexamples directory and places all 
+      c:\MyHDFstuff\HDF-42x\windows\examples directory and places all 
       the executables in it.  Both the release and debug versions of the 
       examples should be built before this step is done.  The examples should be 
       tested in these 2 new directories due to some dependencies between the 
@@ -415,8 +398,8 @@ and linking in the HDF4 libraries:
    <top-level HDF directory>\include
 
 where <top-level HDF directory> may be
-c:\MyHDFstuff\HDF42r4\hdf4lib\release or
-c:\MyHDFstuff\HDF42r4\hdf4lib\debug
+c:\MyHDFstuff\HDF-42x\hdf4lib\release or
+c:\MyHDFstuff\HDF-42x\hdf4lib\debug
 
 If you have installed HDF4 library in Section I, Step 5.
 
@@ -438,11 +421,11 @@ Under "Show directories for", select "Library files":
 Under Project->Properties, select folder, Linker, and then Input:
    Add the following libraries to the beginning of the list of "Additional
    Dependencies":
-      hd424.lib hm424.lib xdr.lib Ws2_32.lib (single-threaded release version)
-      hd424d.lib hm424d.lib xdr.lib Ws2_32.lib (single-threaded debug version)
+      hd42x.lib hm42x.lib xdr.lib Ws2_32.lib (single-threaded release version)
+      hd42xd.lib hm42xd.lib xdr.lib Ws2_32.lib (single-threaded debug version)
 
-      hd424m.lib hm424m.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded release version)
-      hd424md.lib hm424md.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded debug version)
+      hd42xm.lib hm42xm.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded release version)
+      hd42xmd.lib hm42xmd.lib xdr_for_dll.lib Ws2_32.lib(multi-threaded debug version)
 
       (Optional) For applications which use HDF4 Fortran libraries, except the 
       libraries listed above, users should also add the following libraries to 
@@ -476,7 +459,7 @@ HDF4 DLLs should also be copied to the system directory (for example,
 C:\Windows\system) where the application can find. 
 
 Note: You can also follow the above instructions in this section if want to 
-      build an application using the HDF42r4 binary distributions available from
+      build an application using the HDF42x binary distributions available from
       ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin/windows.
 
       Make sure to download appropriate binary distribution based on your 
@@ -492,117 +475,28 @@ Note: You can also follow the above instructions in this section if want to
       from the source code following the instructions in Section VII.
      
 
-Section III. Build HDF4 in Visual Studio 6.0
+Section III. Building HDF4 in Visual Studio 6.0 is no longer supported
 ======================================================================
-
-Notes: 
- 1. Although Visual Studio 6.0 project files are currently provided, Visual
-    Studio 6.0 support is marked for depreciation.  It is recommended that you
-    use Visual Studio .NET 2003, 2005, or 2008 to build HDF4 instead.  A free 
-    version of Visual Studio 2005 Express is available from Microsoft.
-    
- 2. Building Fortran libraries is not supported in Visual Studio 6.0.  We
-    support the Intel Fortran Compiler 9.1 or 10.1, which requires Visual Studio 
-    .NET, 2005, or 2008.  For more information on building Fortran libraries, 
-    please see Section VI.
-
-
-Building HDF4 with Visual Studio 6.0 is very similar to building with Visual
-Studio 2005.  Aside from subtle differences in the IDE terminology, very much is
-the same.  Therefore, you may refer to the instructions in Section I, with the 
-following modifications:
-
-    1. Visual Studio requires project files in a different format; it uses
-       .dsw and .dsp files, while more recent versions use .sln and .vcproj
-       files.  As a result, we have created seperate folders for Visual Studio
-       6.0 project files for building libraries and examples.  When opening
-       projects, look for the "proj_vs6" folder, rather than "proj".  For
-       example, to open the main HDF4 workspace, you would look for "all.dsw"
-       in c:\MyHDFstuff\HDF42r4\windows\proj_vs6\all\.  Similarly, you can
-       build C example applications by opening "allexamples.dsw" in
-       c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\proj_vs6\.
-       
-    2. Building Fortran libraries with Visual Studio 6.0 is not supported.
-       Therefore, Fortran projects are disabled in the project files by default,
-       and Fortran example projects are not included for Visual Studio 6.0.
-    
-    3. By default, single-threaded static libraries are built, along with Multi-
-       threaded DLLs.  If you would like to build all multithreaded libraries,
-       please read Section X.
-       
-    4. Building and testing ctest0.exe requires on additional step with Visual
-       Studio 6.0.  The build process in Visual Studio .NET 2003 and above 
-       internally generates source file test0.c.  If you are using Visual Studio
-       6.0, you must generate this file manually.  To do so, we provide a batch 
-       file "ctest0_gen.bat" under c:\MyHDFstuff\HDF42r4\ directory.  Run this 
-       script from a command prompt with the following options:
       
-         ctest0_gen debug    -- generate test0.c with debug ncgen 
-
-         ctest0_gen release  -- generate test0.c with release ncgen
-         
-       After this script is run, you may build ctest0 by following the
-       instructions in Section I.
-       
-       
     
-Section IV: Build HDF4 in Visual Studio .NET 2003
+Section IV: Building HDF4 in Visual Studio .NET 2003 is no longer supported
 ======================================================================
-
-The building procedure is almost identical as building HDF4 Visual Studio 2005. 
-Please refer to Section I, with a few minor changes:
-
-    1. Visual Studio requires project files in a different format; it uses
-       the same file extensions, but different internal format.  As a result, 
-       we have created seperate folders for Visual Studio 2003 project files for 
-       building libraries and examples.  When opening projects, look for the 
-       "proj_vnet" folder, rather than "proj".  For example, to open the main 
-       HDF4 workspace, you would look for "all.sln" in 
-       c:\MyHDFstuff\HDF42r4\windows\proj_vnet\all\.  Similarly, you can
-       build C example applications by opening "allexamples.sln" in
-       c:\MyHDFstuff\HDF42r4\windows\examples\cexamples\proj_vnet\.  Use
-       similar directories for building Fortran libraries.
-
-    2. Be sure to download the correct external library binaries from the FTP.  
-       
-    3. By default, single-threaded static libraries are built, along with Multi-
-       threaded DLLs.  If you would like to build all multithreaded libraries,
-       please read Section X.
-       
 
 
 Section V: Build HDF4 in Visual Studio 2008
 ======================================================================
 Building with Visual Studio 2008 is very similar to building with Visual Studio
-2005, with some minor changes.  Therefore, follow the build instructions above, 
-with the following considerations:
-
-    1. Visual Studio 2008 uses a new format for project files, but Visual Studio
-       2005 project files can be easily converted.  The HDF5 project files
-       will need to be converted on first use.  To do so:
-       
-       1.1. Open the HDF4 Visual Studio 2005 solution file as in Section II
-            (either all.sln or all_fortran.sln if building Fortran.)
-            
-       1.2. You will be prompted with an automatic conversion wizard.  Click
-            through, accepting the default values.  You may choose to create
-            backups of the project files, although it isn't necessary.
-            
-       1.3. When it is finished, it should state that all projects were
-            converted successfully with no errors.  Warnings can be ignored.
-            
-    2. Once the project files have been converted, build and test normally.
-       Note that the converted project files aren't backwards compatible with
-       previous versions of Visual Studio.
+2005, with some minor changes.  The copy_hdf.bat script file will copy the correct
+project files to the windows\proj folder.
 
 
 
 Section VI. Build HDF4 with Fortran Libraries
 ======================================================================
 
-Currently, HDF4 is supported with Intel Fortran Compilers 9.1 or 10.1.  Intel
-Fortran 9.1 is supported under Visual Studio .NET, 2005 or 2008.  Intel Fortran 
-10.1 is supported only under Visual Studio 2005 or 2008.
+Currently, HDF4 is supported with Intel Fortran Compilers 9.1, 10.1 or 11.1.  
+Inte Fortran 9.1, 10.1 is supported under Visual Studio 2005 or 2008.  Intel 
+Fortran 11.1 is supported only under Visual Studio 2008.
 
 The build process for Fortran libraries is very similar to building without.  
 Therefore, you may follow the instuctions presented in Section I, with the
@@ -615,7 +509,7 @@ Step 1: Build HDF4 Libraries and Utilities
 Building Instructions:
 
    1. Rather than using the solution "all.sln", open "all_fortran.sln" which
-      is located in c:\MyHDFstuff\HDF42r4\windows\proj\all_fortran\ directory.
+      is located in c:\MyHDFstuff\HDF-42x\windows\proj\all_fortran\ directory.
 
       You should see normal Visual Studio projects, as well as pre-converted
       Intel Fortran projects.
@@ -634,30 +528,30 @@ Step 2: Test HDF4 Libraries and Utilities
     2. You can also test debug and release versions of HDF4 Fortran and C 
        libraries and utilities seperately.  The following DLLs should be placed
        in the Windows system directory, in addition to those listed in Section 
-       I.  A batch file, c:\MyHDFstuff\HDF42r4\install_fortrandll.BAT, will
+       I.  A batch file, c:\MyHDFstuff\HDF-42x\install_fortrandll.BAT, will
        copy all of the DLLs for you.
        
-        c:\MyHDFstuff\HDF42r4\hdf\src\Debug\hdf_fcstubdlld.dll
-        c:\MyHDFstuff\HDF42r4\hdf\src\Debug\hdf_fortrandlld.dll
-        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
-        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
-        c:\MyHDFstuff\HDF42r4\hdf\test\Debug\dlllibtest_fcstubd.dll
+        c:\MyHDFstuff\HDF-42x\hdf\src\Debug\hdf_fcstubdlld.dll
+        c:\MyHDFstuff\HDF-42x\hdf\src\Debug\hdf_fortrandlld.dll
+        c:\MyHDFstuff\HDF-42x\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
+        c:\MyHDFstuff\HDF-42x\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
+        c:\MyHDFstuff\HDF-42x\hdf\test\Debug\dlllibtest_fcstubd.dll
 
-        c:\MyHDFstuff\HDF42r4\hdf\src\Release\hdf_fcstubdll.dll
-        c:\MyHDFstuff\HDF42r4\hdf\src\Release\hdf_fortrandll.dll
-        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Release\mfhdf_fortrandll.dll
-        c:\MyHDFstuff\HDF42r4\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
-        c:\MyHDFstuff\HDF42r4\hdf\test\Release\dlllibtest_fcstub.dll      
+        c:\MyHDFstuff\HDF-42x\hdf\src\Release\hdf_fcstubdll.dll
+        c:\MyHDFstuff\HDF-42x\hdf\src\Release\hdf_fortrandll.dll
+        c:\MyHDFstuff\HDF-42x\mfhdf\fortran\Release\mfhdf_fortrandll.dll
+        c:\MyHDFstuff\HDF-42x\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
+        c:\MyHDFstuff\HDF-42x\hdf\test\Release\dlllibtest_fcstub.dll      
         
-       To test debug version of HDF4 C and Fortran libraries, run 
-       Win32debugtst.bat with the following command:
+       To test debug and release version of HDF4 C and Fortran libraries, run 
+       hdf4check.bat with the following command:
        
-        Win32debugtst enablefortran
+        hdf4check enablefortran 
         
-       To test release version of HDF4 C and Fortran libraries, run 
-       Win32releasetst.bat with the following command:
+       To test just the release version of HDF4 C and Fortran libraries, run 
+       hdf4check.bat with the following command:
           
-        Win32releasetst enablefortran
+        hdf4check enablefortran nodebug
 
 
 
@@ -669,7 +563,7 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
    1. Invoke Visual Studio, go to "File" and select the "Open Solution" option.
 
       Then open the soltuion
-      c:\MyHDFstuff\HDF42r4\windows\examples\f90examples\proj\allf90examples.sln.
+      c:\MyHDFstuff\HDF-42x\windows\proj\fortran\examples\allf90examples.sln.
 
    2. Select "Build", then Select "Configuration Manager".
 
@@ -681,25 +575,11 @@ to test the HDF4 Fortran libraries.  To build and test HDF4 Fortran example:
             
           "Release" to build release versions the Fortran examples.
 
-      When the debug build or release build is done, there should be the 
-      following output files in 
-      c:\MyHDFstuff\HDF42r4\windows\examples\f90examples\Debug
-
-          createtest.exe
-          gitest.exe
-          rattrtest.exe
-          readtest.exe
-          sattrest.exe 
-          sds2grouptest.exe
-          sh_dimtest.exe
-          unltest.exe
-
-       Similar output will be in the Release directory for release build.
        
    3. Invoke a command prompt and run the batch file Installf90Examples.bat 
-      which resides in the top level directory (c:\MyHDFstuff\HDF42r4\).  This 
+      which resides in the top level directory (c:\MyHDFstuff\HDF-42x\).  This 
       file creates 2 new directories, f90examplesREL and f90examplesDBG in the 
-      c:\MyHDFstuff\HDF42r4\windows\f90xamples\cexamples directory and places 
+      c:\MyHDFstuff\HDF-42x\windows\fortran\examples directory and places 
       all the executables in them.  Both the release and debug versions of the 
       examples should be built before this step is done.  The examples should be 
       tested in these 2 new directories due to some dependencies between the 
@@ -720,7 +600,7 @@ can be removed completely, or szip can be used without encoding.
 
 Option 1: Remove Szip compression completely:
 
-   1. Open the H4config.h file from the c:\MyHDFstuff\HDF42r4\hdf\src
+   1. Open the H4config.h file from the c:\MyHDFstuff\HDF-42x\hdf\src
       directory and remove(or comment out) the following three lines: 
 
          #define H4_HAVE_LIBSZ 1
@@ -742,9 +622,8 @@ Option 1: Remove Szip compression completely:
 
       This message can be ignored.
 
-      When you run HDF4 testing batch file Win32debugtst.bat or
-      Win32releasetst.bat, you should get the following failed messages
-      for HDF-SD c interfaces tests:
+      When you run HDF4 testing batch file hdf4check.bat, you should get 
+	  the following failed messages for HDF-SD c interfaces tests:
 
          ============================
          HDF-SD C interfaces tests
@@ -779,7 +658,7 @@ Option 2: Remove Szip Compression in HDF4
           The Szip library and header path should also be set up accordingly 
           (refer to precondition 6).
 
-      2. Open the H4config.h file from the c:\MyHDFstuff\HDF42r4\hdf\src
+      2. Open the H4config.h file from the c:\MyHDFstuff\HDF-42x\hdf\src
          directory and remove(or comment out) the following line: 
 
          #define HAVE_SZIP_ENCODER 1
@@ -799,7 +678,7 @@ HDF4 Contains its own implementation of the netCDF library.  To use HDF4 in an
 application also utilizing the original netCDF library, make the following
 change:
 
-      Open the H4config.h file from the c:\MyHDFstuff\HDF42r4\hdf\src
+      Open the H4config.h file from the c:\MyHDFstuff\HDF-42x\hdf\src
       directory and remove(or comment out) the following line: 
 
          #define H4_HAVE_NETCDF
@@ -817,8 +696,6 @@ Section IX. Build and Test HDF4 Library on the Command Line
 
 We support command-line builds for the following configurations:
     
-    -- Visual Studio 6.0 (no Fortran)
-    -- Visual Studio .NET 2003 (with or without Fortran)
     -- Visual Studio 2005 (with or without Fortran) (32- or 64-bit)
     -- Visual Studio 2008 (with or without Fortran) (32- or 64-bit)
     
@@ -837,14 +714,6 @@ environment following the instructions in Section I.
        build Fortran libraries, you will also need your environment set up for
        Intel Visual Fortran.  You may verify using the following commands in
        a terminal:
-       
-       For Visual Studio 6.0:
-       
-            if not defined msdevdir echo not defined!
-       
-       For Visual Studio .NET:
-            
-            if not defined vs71comntools echo not defined!
             
        For Visual Studio 2005:
        
@@ -861,6 +730,10 @@ environment following the instructions in Section I.
        For Intel Visual Fortran 10.1:
        
             if not defined ifort_compiler10 echo not defined!
+                  
+       For Intel Visual Fortran 11.1:
+       
+            if not defined ifort_compiler11 echo not defined!
                   
        1.1.2 Add External Libraries
        
@@ -899,7 +772,7 @@ environment following the instructions in Section I.
            
    1.2 Run batch file copy_hdf.bat.
 
-   Go to C:\MyHDFstuff\hdf4\windows and run copy_hdf.bat. 
+   Go to C:\MyHDFstuff\HDF-42x\windows and run copy_hdf.bat vs[8|9] ivf[91|101|111]. 
       
 2. Building and testing HDF4 libraries and tools
 
@@ -917,12 +790,12 @@ environment following the instructions in Section I.
             /?                      Help information
             vs9                     Build using Visual Studio 2008
             vs8                     Build using Visual Studio 2005
-            vnet                    Build using Visual Studio .NET
-            vs6                     Build using Visual Studio 6.0
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
+            ivf111                  Build HDF4 Fortran using Intel Visual Fortran 11.1
             ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
-                                    [default Intel Visual Fortran 9.1]
+            ivf91                   Build HDF4 Fortran using Intel Visual Fortran 9.1
+                                    [default Intel Visual Fortran 10.1]
             useenv                  Build using variables set in the environment.
             log                     Log the build and test results in files 
                                     defined by environment variables 
@@ -930,7 +803,7 @@ environment following the instructions in Section I.
                                     hdf4build.log and hdf4check.log if undefined
 
          Invoke a command prompt window and run hdf4bt with the appropriate
-         parameters.  You must specify one of "vs8", "vnet", or "vs6".  It is
+         parameters.  You must specify one of "vs8", "vs9".  It is
          recommended that you pipe your results into a text file or use the
          "log" parameter.
 
@@ -944,7 +817,7 @@ environment following the instructions in Section I.
    
          Step 1) Build HDF4 Libraries and Tools
 
-            A batch file named hdf4build.bat in c:\MyHDFstuff\hdf4 directory is 
+            A batch file named hdf4build.bat in c:\MyHDFstuff\HDF-42x directory is 
             provided for users to build HDF4 library and tools from command line.
 
             hdf4build.bat takes the following options:
@@ -952,31 +825,33 @@ environment following the instructions in Section I.
             /?                      Help information
             vs9                     Build using Visual Studio 2008
             vs8                     Build using Visual Studio 2005
-            vnet                    Build using Visual Studio .NET
-            vs6                     Build using Visual Studio 6.0
             enablefortran           Build and testHDF4 C/Fortran Library and
                                     Tools [default C only]
+            ivf111                  Build HDF4 Fortran using Intel Visual Fortran 11.1
             ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
-                                    [default Intel Visual Fortran 9.1]
+            ivf91                   Build HDF4 Fortran using Intel Visual Fortran 9.1
+                                    [default Intel Visual Fortran 10.1]
+            nodebug                 Note: Default is to build debug and release versions
             useenv                  Build using variables set in the environment.
 
             Invoke a command prompt window and run hdf4build with the 
-            appropriate parameters.  You must specify one of "vs8", "vnet", or 
-            "vs6".  It is recommended that you pipe your results into a text 
+            appropriate parameters.  You must specify one of "vs8", or 
+            "vs9".  It is recommended that you pipe your results into a text 
             file for reviewing  You can check the file to find out whether there
             are any compilation errors.
 
          Step 2) Test HDF4 Libraries and Tools
    
-            A batch file named hdf4check.bat in c:\MyHDFstuff\hdf4 directory is 
+            A batch file named hdf4check.bat in c:\MyHDFstuff\HDF-42x directory is 
             provided for users to test HDF4 library and tools from command line.
 
-            hdf4check.bat takes the following option:
+            hdf4check.bat takes the following options:
             
             enablefortran   Test HDF4 C/Fortran Libraries
+            nodebug         can be added to not test debug versions
 
             Invoke a command prompt window and run hdf4check with apropriate 
-            options.It is recommended that you pipe your results into a text 
+            options. It is recommended that you pipe your results into a text 
             file for reviewing.
 
             You may use a text-editor to verify results.  There should be no
@@ -984,59 +859,24 @@ environment following the instructions in Section I.
 
 3. Installing HDF4 Libraries
 
-Run the batch file c:\MyHDFstuff\hdf4\installhdf4lib.bat to install all
-HDF4 libraries and tools into c:\MyHDFstuff\hdf4\hdf4lib directory.
+Run the batch file c:\MyHDFstuff\HDF-42x\installhdf4lib.bat to install all
+HDF4 libraries and tools into c:\MyHDFstuff\HDF-42x\hdf4lib directory.
 
 
 
-Section X: Build HDF4 Multithreaded Static Library
+Section X: Building HDF4 Multithreaded Static Library is the default
 ======================================================================
 
-In this section, we just briefly introduce how to build HDF4 multithreaded 
-static library.
-
-Note: In Visual Studio 2005 and 2008, the single-threaded runtime library is 
-      depreciated.  Therefore, multithreaded is build by default, and no extra 
-      work needs to be done.  These instructions apply only to Visual Studio 6.0 
-      and .NET.
+In Visual Studio 2005 and 2008, the single-threaded runtime library is 
+depreciated.  Therefore, multithreaded is built by default, and no extra 
+work needs to be done.
       
-
-Step I: The "Runtime library" settings for static projects should be
-         modified as multithreaded.  Please following the instructions
-         below to modify the "Runtime library" settings.
-
-1. Right click project "hdf", go to Properties->C/C++->Code Generation;
-   In the "Configuration:" text box, select "Debug";
-   In the "Runtime Library" text box, select "Multi-threaded Debug (/MTD)";
-   In the "Configuration:" text box, select "Release"; 
-   In the "Runtime Library" text box, select "Multi-threaded (/MT)";
-   Then press "OK".
-
-2. Repeat step 1 to set the settings for "Runtime Library" for all static 
-   projects.
-
-Step II (Optional): If building Fortran libraries, their project settings must
-          be similiarly changed to use multithreaded runtime libraries.
-          
-1. Right click project "hdf_fortran", go to Properties->Fortran->Libraries;
-   In the "Configuration:" text box, select "Debug";
-   In the "Runtime Library" text box, select "Debug Multi-threaded";
-   In the "Configuration:" text box, select "Debug";
-   In the "Runtime Library" text box, select "Multi-threaded";
-   Then press "OK".
-
-2. Repeat step 1 to set the settings for "Runtime Library" for all static 
-   Fortran projects.
-
-   
+  
 
 Section XI: Build HDF4 for 64-bit Windows
 ======================================================================
 
-HDF4 can be built for 64-bit Windows in Visual Studio 2005 or 2008.  Visual 
-Studio .NET has very primative 64-bit support, but it is very difficult to set 
-up, and debugging is not supported.  Therefore, we recommend all users switch to 
-Visual Studio 2005 or 2008 for 64-bit builds.  
+HDF4 can be built for 64-bit Windows in Visual Studio 2005 or 2008.  
 
 Notes:
   
@@ -1108,19 +948,13 @@ some minor changes.  Therefore, follow the build instructions above, with the
 following considerations:
 
     1. Only Visual Studio 2005 and 2008 are currently supported on Windows 
-       Vista.  This is because Microsoft has ended their support for 6.0 and 
-       .NET.
+       Vista.
        
-    2. Building Fortran libraries has not been tested, and is therefore also
-       unsupported.  You may attempt to build Fortran libraries following the
-       instructions above, but they should be considered experimental and used
-       for testing only.
-
-    3. You need to use jpeg6b-4 to link with HDF4. You may get the library
+    2. You need to use jpeg6b-4 to link with HDF4. You may get the library
        from ftp://ftp.hdfgroup.org/lib-external/jpeg/bin/windows/ and find jpeg6b-4
        zip file for vista and install it on your machine.
        
-    4. Elevated security permissions are required to test the HDF4 libraries.
+    3. Elevated security permissions are required to test the HDF4 libraries.
        This is because DLLs are installed in the system directory.  To enable
        elevated security:
        
@@ -1145,10 +979,9 @@ with using the Visual Studio environment.
 
 Project name and location issues: 
 
-   The file Win32.zip is now depreciated.  Instead, use copy_hdf.BAT in the 
-   .\windows directory.
+   The copy_hdf.BAT file in the .\windows directory now requires parameters.
 
-   If you must install project files in another directory relative to HDF42r4\ , 
+   If you must install project files in another directory relative to HDF-42x\ , 
    you will be asked to locate all sub-project files when you open the project 
    all.sln.
 
@@ -1170,8 +1003,8 @@ Settings... details:
          C/C++
            Code Generation
               Runtime Library
-                 These are all set to use Single-Threaded
-                                       or Single-Threaded debug
+                 These are all set to use Multi-Threaded
+                                       or Multi-Threaded debug
                                        or Multi-Threaded DLL
                                        or Multi-Threaded debug DLL
 
