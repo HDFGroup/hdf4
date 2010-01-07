@@ -18,6 +18,14 @@ EXIT_BANNER()
 TIMESTAMP "Exit $PROGNAME with status=$?"
 }
 
+# Show current total disk usage.
+DISKUSAGE()
+{
+    du -ks | \
+    ( read x y; echo "Disk Usage=$x KB" )
+}
+
+
 # MAIN
 # SGI /bin/sh replaces $0 as function name if used in a function.
 # Set the name here to avoid that ambiguity and better style too.
@@ -42,7 +50,9 @@ echo ===Done Dumping environment variables before option parsing ===
 PATH="/usr/local/bin:$PATH"
 
 # Where are the snapshots stored?
-ARCHIVES_default=/afs/ncsa/ftp/HDF/pub/outgoing/hdf4/snapshots
+#ARCHIVES_default=/afs/ncsa/ftp/HDF/pub/outgoing/hdf4/snapshots
+# Default relative to $BASEDIR.
+ARCHIVES_default=../release_dir
 ARCHIVES=$ARCHIVES_default
 
 # Where is the zlib library?
@@ -52,7 +62,7 @@ ZLIB_default=
 ZLIB=$ZLIB_default
 
 # What compression methods to use?
-METHODS="gzip bzip2"
+METHODS="gzip bzip2 md5"
 
 # Hard set to gmake.
 # No parallel make (-j) because dependences are not set correctly for it.
@@ -105,6 +115,31 @@ while [ $# -gt 0 ] ; do
 	    cmdtest="test"
 	    cmd=""
 	    ;;
+        setenv)
+            # set environment variable
+            shift
+            eval $1="$2"
+            export $1
+            shift
+            ;;
+        setenvN)
+            # set environment variable with $1 values
+            # e.g., setenvN 3 x a b c is same as setenv x="a b c".
+            # a kludge now--the extra single quotes are needed
+            # else eval complains.
+            shift
+            envN=$1
+            shift
+            envname=$1
+            envalue=
+            while test $envN -gt 0; do
+                shift
+                envalue="$envalue $1"
+                envN=`expr $envN - 1`
+            done
+            eval $envname="'$envalue'"
+            export $envname
+            ;;
 	srcdir)
 	    #use srcdir option for test
 	    srcdir="yes"
@@ -201,6 +236,11 @@ Usage: $PROGNAME [all] [checkout] [diff] [test] [srcdir] [release] [help]
     release:  Run release
     clean:    Run make clean
     distclean:Run make distclean
+    setenv <name> <value>:
+              Set environment variable <name> to <value>.
+    setenvN <N> <name> <value> ...:
+              Set environment variable with <N> values.
+              E.g., setenvN 3 x a b c is same as setenv x="a b c".
     srcdir:   Use srcdir option (does not imply other commands)
               "snapshot srcdir" is equivalent to "snapshot srcdir all"
               "snapshot srcdir checkout" is equivalent to "snapshot checkout"
@@ -241,6 +281,7 @@ H4VERSION=hdf4
 BASEDIR=${HOME}/snapshots-${H4VERSION}
 CURRENT=${BASEDIR}/current
 PREVIOUS=${BASEDIR}/previous
+ARCHIVES=${ARCHIVES:=${ARCHIVES_default}}
 HOSTNAME=`hostname | cut -f1 -d.`	# no domain part
 if [ $H4VERSION != hdf4 ]; then
     SVNVERSION="hdf4/branches/$H4VERSION"
@@ -275,7 +316,7 @@ if [ "$cmd" = "all" -o -n "$cmdcheckout" ]; then
     # regardless of the return code of distclean.
     ( cd ${CURRENT}; test -f Makefile && ${MAKE} distclean)
 
-    SVNROOT=http://svn.hdfgroup.uiuc.edu
+    SVNROOT=https://svn.hdfgroup.uiuc.edu
     # Check out the current version from source repository.
     (cd $BASEDIR; svn -q co ${SVNROOT}/${SVNVERSION} current ) || exit 1
 fi # Do source checkout
@@ -354,6 +395,8 @@ if [ "$cmd" = "all" -o -n "$cmdtest" -o -n "$cmddiff" ]; then
 	    ${MAKE} check && \
 	    TIMESTAMP "install" && \
 	    ${MAKE} install && \
+	    TIMESTAMP "installcheck" && \
+	    ${MAKE} installcheck && \
 	    TIMESTAMP "uninstall" && \
 	    rm -rf $INSTALLDIR ); then
 	    :
@@ -372,7 +415,12 @@ fi # Test the HDF4 library
 if [ -n "$DEPLOYDIRNAME" ]; then
     if [ "$snapshot" = "yes" ]; then
 	TIMESTAMP "deploy"
-	if (cd ${TESTDIR} && ${CURRENT}/bin/deploy ${deploydir}/${DEPLOYDIRNAME}); then
+	if (cd ${TESTDIR} && \
+            ${CURRENT}/bin/deploy ${deploydir}/${DEPLOYDIRNAME} && \
+            TIMESTAMP "clean" && \
+            ${MAKE} clean && \
+            TIMESTAMP "installcheck prefix=${deploydir}/${DEPLOYDIRNAME}" && \
+            ${MAKE} installcheck prefix=${deploydir}/${DEPLOYDIRNAME}); then
 	    errcode=$?
 	    exit $errcode
 	fi
@@ -384,7 +432,6 @@ fi # Deploy
 # Run Release snapshot, update version, and commit to source repository
 #=============================
 if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
-  if [ -n "$needmorework" ]; then
     if [ "$snapshot" = "yes" ]; then
 	TIMESTAMP "release"
 	(cd ${CURRENT} && ${MAKE} distclean)
@@ -393,18 +440,13 @@ if [ "$cmd" = "all" -o -n "$cmdrel" ]; then
 	    # commit source if errors encounter here.
 	    set -e
 	    cd ${CURRENT}
-	    bin/release -d $ARCHIVES $METHODS
 	    RELEASE_VERSION="`perl bin/h4vers -v`"
+	    bin/release -d $ARCHIVES $METHODS
 	    perl bin/h4vers -i
-	    echo "***SVN commit SKIPPED***"
-	    echo svn -q commit -m "Snapshot $RELEASE_VERSION"
+	    svn -q commit -m "Snapshot $RELEASE_VERSION"
 	)
 	errcode=$?
     fi
-  else
-    echo "need real release steps.  For now, only move current version to previous"
-  fi
-
 
     # Replace the previous version with the current version.
     # Should check if the errcode of the release process but there

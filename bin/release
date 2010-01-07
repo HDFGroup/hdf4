@@ -273,6 +273,6 @@ if [ X$pmode = Xyes ]; then
 fi
 
 # Remove temporary things
-#rm -rf $tmpdir
+rm -rf $tmpdir
 
 exit 0
