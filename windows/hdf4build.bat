@@ -241,9 +241,9 @@ rem Setup our environment
         if defined hdf4_enablefortran (
 			if defined hdf4_use_ivf111 (
 				if %hdf4_platform%==Win32 (
-					call "%ifort_compiler11%\Bin\IA32\ifortvars_ia32.bat"
+					call "%ifort_compiler11%Bin\IA32\ifortvars_ia32.bat"
 				) else (
-					call "%ifort_compiler11%\Bin\IA32_Intel64\ifortvars_ia32_intel64.bat"
+					call "%ifort_compiler11%Bin\intel64\ifortvars_intel64.bat"
 				)
             ) else if defined hdf4_use_ivf101 (
 				if %hdf4_platform%==Win32 (
@@ -290,9 +290,9 @@ rem This function returns 0 if everything is OK, and 1 otherwise.
     ) else (
         rem Assume VS2008
         if defined hdf4_use_ivf101 (
-            findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler10%IA32\\Bin\ifortvars.bat" > nul
+            findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler10%IA32\Bin\ifortvars.bat" > nul
         ) else (
-            findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler11%\Bin\IA32\ifortvars_ia32.bat" > nul
+            findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler11%Bin\IA32\ifortvars_ia32.bat" > nul
         )
     )
     exit /b %errorlevel%
