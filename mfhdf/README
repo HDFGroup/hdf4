@@ -1,6 +1,19 @@
-			       Unidata netCDF
-				Version 2.3.2
-				 June 1993
+Unidata netCDF was integrated with HDF early in HDF's history.  
+
+The COPYRIGHT file in this directory is the Unidata netCDF copyright and
+license file from Version 2.3.2, in 1993.  For those interested, the 
+Unidata netCDF README from the same release appears below. 
+
+Unidata netCDF Version 2.3.2 is the version integrated with this version 
+of HDF.
+
+--------------------------------------------------------------------------
+Unidata netCDF README
+--------------------------------------------------------------------------
+
+                               Unidata netCDF
+                               Version 2.3.2
+                                 June 1993
 
 The Unidata network Common Data Form (netCDF) is an interface for scientific
 data access and a freely-distributed software library that provides an
@@ -30,7 +43,7 @@ display data in netCDF form.
 You can obtain a copy of the latest version of netCDF software using
 anonymous FTP from
 
-	host: unidata.ucar.edu
+        host: unidata.ucar.edu
         file: pub/netcdf/netcdf.tar.Z
 
 Included in this distribution are: the C source for the netCDF data
@@ -47,8 +60,8 @@ unidata.ucar.edu include
 
  README                 general information about netCDF
 
- FAQ			Frequently Asked Questions (with answers) about
-			netCDF.
+ FAQ                    Frequently Asked Questions (with answers) about
+                        netCDF.
 
  utilities.txt          a list of software packages currently available or
                         under development for manipulating and displaying
@@ -60,7 +73,7 @@ unidata.ucar.edu include
 
  ncprogs.ps             a draft PostScript document describing an initial
                         set of netCDF operator and utility programs under
-			development
+                        development
                         
  ncprogs.txt            an ASCII version of ncprogs.ps
 
@@ -74,10 +87,10 @@ unidata.ucar.edu include
                         from the sources in netcdf.tar.Z, if you have the
                         necessary Microsoft compilers.
 
- mac/			a directory containing notes and Macintosh MPW
-			makefiles for porting netCDF to an Apple Macintosh.
-			These were contributed by Chuck Denham, U.S.
-			Geological Survey.
+ mac/                   a directory containing notes and Macintosh MPW
+                        makefiles for porting netCDF to an Apple Macintosh.
+                        These were contributed by Chuck Denham, U.S.
+                        Geological Survey.
 
 Current netCDF plans include the design and implementation of a
 C++ interface, implementation of netCDF operator and utility programs,
