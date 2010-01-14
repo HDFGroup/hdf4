@@ -101,7 +101,7 @@ int main(int argc, char **argv)
         goto out;
     
     /* zip it */
-    ret=hrepack(infile,outfile,&options);
+    ret=hrepack_main(infile,outfile,&options);
     
     /* free tables */
     hrepack_end(&options);

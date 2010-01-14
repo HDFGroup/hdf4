@@ -3047,7 +3047,7 @@ int test_files(void)
     hrepack_init (&options,verbose);
     hrepack_addcomp("dset7:HUFF 1",&options);
     hrepack_addchunk("dset7:10x8x6",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3071,7 +3071,7 @@ int test_files(void)
     hrepack_init (&options,verbose);
     hrepack_addcomp("dset4:RLE",&options);
     hrepack_addchunk("dset4:10x8",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3094,7 +3094,7 @@ int test_files(void)
     hrepack_init (&options,verbose);
     hrepack_addcomp("dset4:GZIP 6",&options);
     hrepack_addchunk("dset4:10x8",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3121,7 +3121,7 @@ int test_files(void)
         hrepack_init (&options,verbose);
         hrepack_addcomp("dset4:SZIP 8,EC",&options);
         hrepack_addchunk("dset4:10x8",&options);
-        if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+        if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
             goto out;
         hrepack_end (&options);
         PASSED();
@@ -3156,7 +3156,7 @@ int test_files(void)
     hrepack_addcomp("dset_chunk:NONE",&options);
     hrepack_addchunk("dset_chunk_comp:NONE",&options);
     hrepack_addchunk("dset_chunk:NONE",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3193,7 +3193,7 @@ int test_files(void)
     hrepack_addchunk("dset4:10x8",&options);
     hrepack_addchunk("dset5:10x8",&options);
     hrepack_addchunk("dset6:10x8",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3237,7 +3237,7 @@ int test_files(void)
         hrepack_addcomp("dset7:SZIP 4,EC",&options);
     }
 #endif
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3271,7 +3271,7 @@ int test_files(void)
     hrepack_addcomp("*:GZIP 1",&options);
     hrepack_addchunk("dset_chunk_comp:NONE",&options);
     hrepack_addchunk("dset_chunk:NONE",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3296,7 +3296,7 @@ int test_files(void)
     TESTING("hrepack -c *:10x8");
     hrepack_init (&options,verbose);
     hrepack_addchunk("*:10x8",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3318,7 +3318,7 @@ int test_files(void)
     TESTING("hrepack -t *:GZIP 1");
     hrepack_init (&options,verbose);
     hrepack_addcomp("*:GZIP 1",&options);
-    if (hrepack(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE1,HREPACK_FILE1_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3339,7 +3339,7 @@ int test_files(void)
     
     TESTING("hyperslab repacking");
     hrepack_init (&options,verbose);
-    if (hrepack(HREPACK_FILE2,HREPACK_FILE2_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE2,HREPACK_FILE2_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();
@@ -3357,7 +3357,7 @@ int test_files(void)
     
     TESTING("vgroups dependencies");
     hrepack_init (&options,verbose);
-    if (hrepack(HREPACK_FILE3,HREPACK_FILE3_OUT,&options)<0)
+    if (hrepack_main(HREPACK_FILE3,HREPACK_FILE3_OUT,&options)<0)
         goto out;
     hrepack_end (&options);
     PASSED();

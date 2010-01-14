@@ -39,7 +39,7 @@ int print_options(options_t *options);
  *
  *-------------------------------------------------------------------------
  */
-int hrepack(const char* infile, 
+int hrepack_main(const char* infile, 
             const char* outfile, 
             options_t *options)
 {
@@ -50,7 +50,7 @@ int hrepack(const char* infile,
         return FAIL;
     
     /* first check for objects in input that are in the file */
-    if (list(infile,outfile,options)<0)
+    if (list_main(infile,outfile,options)<0)
         return FAIL;
     
     /* the real deal now */
@@ -60,7 +60,7 @@ int hrepack(const char* infile,
         printf("Making new file %s...\n",outfile);
     
     /* this can fail for different reasons */
-    if (list(infile,outfile,options)<0)
+    if (list_main(infile,outfile,options)<0)
         return FAIL;
     
     return SUCCEED;

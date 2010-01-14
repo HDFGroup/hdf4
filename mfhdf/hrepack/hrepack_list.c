@@ -76,7 +76,7 @@ int list_an (int32 infile_id,int32 outfile_id,options_t *options);
  */
 
 
-int list(const char* infname,
+int list_main(const char* infname,
          const char* outfname, 
          options_t *options)
 {

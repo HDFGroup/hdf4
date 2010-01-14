@@ -203,7 +203,10 @@ int  copy_gr(int32 infile_id,
         info  = c_info_in.deflate.level;
         break;
     case COMP_CODE_JPEG:
-        info  = c_info_in.jpeg.quality;
+	/* JPEG's quality factor was not saved to the file and 75 is
+	   recommended by http://www.faqs.org/faqs/jpeg-faq/part1 - BMR 1/2009*/
+        info = 75;  /* a constant should be defined somewhere in the library */
+	c_info_in.jpeg.quality = 75;
         break;
     };
     
