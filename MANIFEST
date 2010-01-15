@@ -597,6 +597,8 @@
 ./mfhdf/dumper/testfiles/dumpsds-14.out
 ./mfhdf/dumper/testfiles/dumpsds-15.out
 ./mfhdf/dumper/testfiles/dumpsds-15szip.out
+./mfhdf/dumper/testfiles/dumpsds-16.out
+./mfhdf/dumper/testfiles/dumpsds-17.out
 ./mfhdf/dumper/testfiles/dumpvd-10.out
 ./mfhdf/dumper/testfiles/dumpvd-11.out
 ./mfhdf/dumper/testfiles/dumpvd-12.out
@@ -639,7 +641,9 @@
 ./mfhdf/dumper/testfiles/list-7.out
 ./mfhdf/dumper/testfiles/list-8.out
 ./mfhdf/dumper/testfiles/list-9.out
+./mfhdf/dumper/testfiles/manySDSs.c
 ./mfhdf/dumper/testfiles/sds_compressed.hdf
+./mfhdf/dumper/testfiles/sds_empty_many.hdf
 ./mfhdf/dumper/testfiles/sds1_dim1_samename.hdf
 ./mfhdf/dumper/testfiles/sds2_dim1_samename.hdf
 ./mfhdf/dumper/testfiles/swf32.hdf
@@ -823,8 +827,6 @@
 ./mfhdf/hdiff/testhdiff.sh
 ./mfhdf/hdiff/hdiff_mattbl.c
 ./mfhdf/hdiff/hdiff_mattbl.h
-
-
 
 
 
