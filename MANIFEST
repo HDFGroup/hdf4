@@ -511,6 +511,7 @@
 ./mfhdf/FAQ
 ./mfhdf/Makefile.am
 ./mfhdf/Makefile.in
+./mfhdf/README
 ./mfhdf/THANKS
 ./mfhdf/build.bat
 ./mfhdf/make.com
