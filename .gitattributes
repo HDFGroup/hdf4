@@ -121,6 +121,8 @@ mfhdf/dumper/testfiles/dumpsds-13.out -text
 mfhdf/dumper/testfiles/dumpsds-14.out -text
 mfhdf/dumper/testfiles/dumpsds-15.out -text
 mfhdf/dumper/testfiles/dumpsds-15szip.out -text
+mfhdf/dumper/testfiles/dumpsds-16.out -text
+mfhdf/dumper/testfiles/dumpsds-17.out -text
 mfhdf/dumper/testfiles/dumpvd-11.out -text
 mfhdf/dumper/testfiles/dumpvd-12.out -text
 mfhdf/dumper/testfiles/dumpvg-13.out -text
@@ -131,9 +133,11 @@ mfhdf/dumper/testfiles/grtdfui162.hdf -text
 mfhdf/dumper/testfiles/grtdfui82.hdf -text
 mfhdf/dumper/testfiles/grtdfui83.hdf -text
 mfhdf/dumper/testfiles/grtdfui84.hdf -text
+mfhdf/dumper/testfiles/manySDSs.c -text
 mfhdf/dumper/testfiles/sds1_dim1_samename.hdf -text
 mfhdf/dumper/testfiles/sds2_dim1_samename.hdf -text
 mfhdf/dumper/testfiles/sds_compressed.hdf -text
+mfhdf/dumper/testfiles/sds_empty_many.hdf -text
 mfhdf/dumper/testfiles/star.hdf -text
 mfhdf/dumper/testfiles/swf32.hdf -text
 mfhdf/dumper/testfiles/swf32_fileattr.hdf -text

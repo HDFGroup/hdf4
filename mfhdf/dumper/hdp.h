@@ -307,6 +307,13 @@ typedef enum
   }
 filter_t;
 
+/* What type of information being stored */
+typedef enum
+  {
+	  IS_INDEX=0, IS_REFNUM, IS_NAME, IS_CLASS, IS_FIELD
+  }
+info_type_t;
+
 /* Which contents to dump */
 typedef enum
   {
@@ -321,8 +328,9 @@ typedef enum
   }
 file_type_t;
 
-/* BMR: numerical filter structure; used to hold a list of indices or reference numbers 
-   and the number of indices or reference numbers given - 1/23/99 */
+/* BMR: numerical filter structure; used to hold a list of indices or
+   reference numbers and the number of indices or reference numbers
+   given - 1/23/99 */
 typedef struct
 {
 	int32 *num_list;
@@ -339,6 +347,16 @@ typedef struct
 }
 char_filter_t;
 
+typedef struct
+{
+	int index;
+	int refnum;
+	char name[MAXFNLEN];
+	char classname[MAXFNLEN];
+	info_type_t type_of_info;
+}
+sds_chosen_t;
+
 /* 'dumpsds' command option structure */
 /* BMR: added fields to hold indices, reference numbers, names, and classes
    separately - 1/23/99 */
@@ -352,8 +370,12 @@ typedef struct
    char_filter_t by_name;	/* data objects requested by name */
    char_filter_t by_class;	/* data objects requested by class name */
    char_filter_t by_field;	/* data objects requested by field - only VD */
-   int32       num_chosen;	/* number of items chosen, totally (-1==ALL) */
+   sds_chosen_t  *all_types;	/* list of all datasets chosen and in the order
+				   specified by the user */
+   int32       num_chosen;	/* number of items chosen, totally (-1==NO_SPECIFIC) */
    content_t   contents;        /* what contents to dump */
+   intn        keep_order;	/* whether to dump the datasets in the same
+				   order as specified by the user */
    intn        dump_to_file;	/* whether to dump to a file */
    file_type_t file_type;	/* Is data written in ASCII or binary */
    intn	       as_stream;	/* whether carriage return added to output data lines */
@@ -473,8 +495,18 @@ intn print_data_labels( const char *fname, int32 an_id, uint16 tag, uint16 ref);
 intn print_data_descs( const char *fname, int32 an_id, uint16 tag, uint16 ref);
 
 /* hdp_sds.c */
-extern intn do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help);
+void dumpsds_usage(intn argc, char *argv[]);
+intn parse_dumpsds_opts(dump_info_t *dumpsds_opts, intn *curr_arg, intn argc, char *argv[]);
+intn do_dumpsds(intn curr_arg, intn argc, char *argv[], intn help);
+intn dsd(dump_info_t *dumpsds_opts, intn curr_arg, intn argc, char *argv[]);
+int32 sdsdumpfull(int32 sds_id, dump_info_t *dumpsds_opts, int32 rank, int32 dimsizes[], int32 nt, FILE *fp);
+intn printSDS_ASCII(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, FILE *fp);
+intn printSDS_BINARY(int32 sd_id, dump_info_t *dumpsds_opts, int32 sds_index, FILE *fp);
+intn get_SDSindex_list(int32 sd_id, dump_info_t *dumpsds_opts, int32 **sds_chosen, intn *index_error);
 char *comp_method_txt(comp_coder_t comp_type);
+intn option_mask_string(int32 options_mask, char* opt_mask_strg);
+intn print_comp_info(FILE *fp, int32 sds_id, comp_coder_t *comp_type);
+void resetSDS(int32 *sds_id, int32 sds_index, char *curr_file_name);
 
 /* hdp_rig.c */
 extern intn do_dumprig(intn curr_arg, intn argc, char *argv[], intn help);
@@ -486,12 +518,12 @@ extern intn print_file_annotations( int32 file_id, const char *file_name );
 void print_fields( char *fields, char *field_title, FILE *fp );
 
 /* hdp_vd.c */
-extern intn do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help);
-extern intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc, char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
+intn do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help);
+intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc, char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
 
 /* hdp_gr.c */
-extern intn do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help);
-
+intn do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help);
+intn parse_dumpgr_opts(dump_info_t *dumpgr_opts, intn *curr_arg, intn argc, char *argv[]);
 
 /* hdp_dump.c */
 extern intn fmtchar(VOIDP x, file_type_t ft, FILE * ofp);
@@ -523,6 +555,8 @@ extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *f
 void init_dump_opts(dump_info_t *dump_opts);
 void parse_number_opts( char *argv[], int *curr_arg, number_filter_t *filter);
 void parse_string_opts( char *argv[], int *curr_arg, char_filter_t *filter);
+void parse_value_opts( char *argv[], int *curr_arg, dump_info_t *dump_opts,
+                   info_type_t info_type);
 extern char *tagnum_to_name(intn num);
 extern intn tagname_to_num(const char *name);
 extern void sort(int32 *chosen, int32 choices);
@@ -532,10 +566,13 @@ int int32_compare(const void *, const void *);
 	/* filename list functions */
 extern filelist_t *make_file_list(intn curr_arg, intn argc, char *argv[]);
 extern char *get_next_file(filelist_t * f_list, intn advance);
+
+	/* memory management functions */
 extern int32* free_num_list(int32 *num_list);
 extern char** free_str_list(char **str_list, int32 num_items);
 extern vg_info_t** free_vginfo_list(vg_info_t** list, int32 num_items);
 extern vg_info_t* free_node_vg_info_t(vg_info_t* aNode);
+sds_chosen_t ** free_sds_chosen_t_list(sds_chosen_t **nodelist, int32 num_items);
 extern void free_file_list(filelist_t * f_list);
 
 	/* group list functions */

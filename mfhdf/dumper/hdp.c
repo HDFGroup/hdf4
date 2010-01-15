@@ -59,6 +59,9 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->file_type = DASCII;    /* default output is ASCII file */
     dump_opts->print_pal = FALSE;     /* GR only, don't print palette */
 
+    dump_opts->keep_order = FALSE;
+    dump_opts->all_types = NULL;
+
     /* no specific dataset requested, default to dump all datasets */
     dump_opts->num_chosen = NO_SPECIFIC;
 

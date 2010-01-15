@@ -32,8 +32,7 @@ intn have_szip = 0;
 #endif
 #include "cszip.h"
 
-void 
-dumpsds_usage(intn argc, 
+void dumpsds_usage(intn argc, 
               char *argv[])
 {
     printf("Usage:\n");
@@ -55,8 +54,7 @@ dumpsds_usage(intn argc,
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }	/* end list_usage() */
 
-intn 
-parse_dumpsds_opts(dump_info_t *dumpsds_opts, 
+intn parse_dumpsds_opts(dump_info_t *dumpsds_opts, 
                    intn *curr_arg, 
                    intn argc,
                    char *argv[])
@@ -73,6 +71,12 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
    {
       switch (argv[*curr_arg][1])
       {
+	 case 'k':	/* dump SDSs in the order they were given */
+/* need to document that this option must be provided before any -i, -r, -n */
+	    dumpsds_opts->keep_order = TRUE;
+            (*curr_arg)++;
+	    break;
+
          case 'a':	/* dump all, default */
             dumpsds_opts->filter = DALL;
 
@@ -82,29 +86,27 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
             break;
 
          case 'i':	/* dump by index */
-            dumpsds_opts->filter |= DINDEX;  /* set bit DINDEX */
-            (*curr_arg)++;
+/* need to re-evaluate the use of this enum, may not need anymore */
+            (*curr_arg)++; /* go to the parameters for this flag */
 
-            /* parse and store the given indices in structure by_index */
-            parse_number_opts( argv, curr_arg, &dumpsds_opts->by_index);
+            /* Parse and store the given indices in structure all_types */
+	    parse_value_opts(argv, curr_arg, dumpsds_opts, IS_INDEX);
             (*curr_arg)++;
             break;
 
          case 'r':	/* dump by reference */
-            dumpsds_opts->filter |= DREFNUM;  /* set bit DREFNUM */
-            (*curr_arg)++;
+            (*curr_arg)++; /* go to the parameters for this flag */
 
-            /* parse and store the given ref numbers in structure by_ref */
-            parse_number_opts( argv, curr_arg, &dumpsds_opts->by_ref);
-           (*curr_arg)++;
+            /* Parse and store the given ref numbers in structure all_types */
+	    parse_value_opts(argv, curr_arg, dumpsds_opts, IS_REFNUM);
+            (*curr_arg)++;
             break;
 
          case 'n':	/* dump by names */
-            dumpsds_opts->filter |= DNAME;   /* set bit DNAME */
-            (*curr_arg)++;
+            (*curr_arg)++; /* go to the parameters for this flag */
 
-            /* parse and store the given names in structure by_name */
-            parse_string_opts( argv, curr_arg, &dumpsds_opts->by_name);
+            /* Parse and store the given names in structure all_types */
+	    parse_value_opts(argv, curr_arg, dumpsds_opts, IS_NAME);
             (*curr_arg)++;
             break;
 
@@ -164,32 +166,22 @@ parse_dumpsds_opts(dump_info_t *dumpsds_opts,
 
          default:    /* invalid dumpsds option */
                 printf("HDP ERROR>>> Invalid dumpsds option %s\n", argv[*curr_arg]);
-                HGOTO_DONE( FAIL );
+                HGOTO_DONE(FAIL);
             }	/* end switch */
       }		/* end while */
-
-   /* add the number of datasets requested by index, by ref#, and by name
-      to have a total number of requested datasets */
-   dumpsds_opts->num_chosen = dumpsds_opts->by_index.num_items +
-                             dumpsds_opts->by_ref.num_items +
-                             dumpsds_opts->by_name.num_items;
 
 done:
    if (ret_value == FAIL)
    { /* Failure cleanup */
-      /* free the lists for given indices, ref#s, and names if
-         they had been allocated */
-      free_num_list(dumpsds_opts->by_index.num_list );
-      free_num_list(dumpsds_opts->by_ref.num_list );
-      free_str_list(dumpsds_opts->by_name.str_list, dumpsds_opts->by_name.num_items);
+      /* free the list if it had been allocated */
+      free_sds_chosen_t_list(&dumpsds_opts->all_types, dumpsds_opts->num_chosen);
    }
    /* Normal cleanup */
    return (ret_value);
 }	/* end parse_dumpsds_opts */
 
 /* sdsdumpfull prints a single SDS */
-int32 
-sdsdumpfull( int32        sds_id, 
+int32 sdsdumpfull( int32        sds_id, 
              dump_info_t *dumpsds_opts,
              int32        rank, 
              int32        dimsizes[], 
@@ -385,78 +377,82 @@ intn get_SDSindex_list(
         int32 **sds_chosen,/* array of indices of SDSs to be processed */
         intn *index_error )
 {
-   intn     i;
-   int32    index,          /* index of an SDS */
-            sds_count = 0,  /* number of SDSs to be processed */
-            num_sds_chosen = dumpsds_opts->num_chosen;
-   filter_t filter = dumpsds_opts->filter; /* temporary name */
-   intn     ret_value = 0;  /* assume that no SDS will be processed */
+    intn     ii;
+    int32    sds_index,          /* index of an SDS */
+             sds_count = 0,  /* number of SDSs to be processed */
+             num_sds_chosen = dumpsds_opts->num_chosen;
+    intn     ret_value = 0;  /* assume that no SDS will be processed */
 
-   /* if no specific datasets are requested, return the SDS count as 
-      NO_SPECIFIC (-1) to indicate that all datasets are to be dumped */
-   if( filter == DALL )
-      HGOTO_DONE( NO_SPECIFIC );
+    /* if no specific datasets are requested, return the SDS count as 
+       NO_SPECIFIC (-1) to indicate that all datasets are to be dumped */
+    if( dumpsds_opts->num_chosen == NO_SPECIFIC )
+	HGOTO_DONE( NO_SPECIFIC );
 
-   /* if specific datasets were requested, allocate space for the array
-      of indices */
-   if (num_sds_chosen > 0)
-      alloc_index_list( sds_chosen, num_sds_chosen );
+    /* if specific datasets were requested, allocate space for the array
+       of indices */
+    if (num_sds_chosen > 0)
+	alloc_index_list( sds_chosen, num_sds_chosen );
 
-   /* else, no chosen SDSs but filter is not DALL, it shouldn't be this
-      combination, return SDS count as NO_SPECIFIC to dump all */
-   else
-      HGOTO_DONE( NO_SPECIFIC );
+    /* else, no chosen SDSs but filter is not DALL, it shouldn't be this
+       combination, return SDS count as NO_SPECIFIC to dump all */
+    else
+	HGOTO_DONE( NO_SPECIFIC );
 
-   /* if there are some SDSs requested by index, store the indices in
-      the array sds_chosen */
-   if( filter & DINDEX )
-         /* Note: Don't replace this with HDmemcpy unless you change 
-                  the sizes of the objects correctly -QAK */
-      for (i = 0; i < dumpsds_opts->by_index.num_items; i++)
-      {
-         (*sds_chosen)[sds_count] = dumpsds_opts->by_index.num_list[i];
-         sds_count++;
-      }
+    for (ii = 0; ii < num_sds_chosen; ii++)
+    {
+	/* if there are some SDSs requested by index, store the indices in
+	the array sds_chosen */
+	switch (dumpsds_opts->all_types[ii].type_of_info)
+	{
+	  case IS_INDEX:
+	    (*sds_chosen)[ii] = dumpsds_opts->all_types[ii].index;
+	    sds_count++;
+	  break;
 
-   /* if there are some SDSs requested by ref#, convert the ref#s to indices
-      and store the indices in the array provided by the caller, sds_chosen */
-   if( filter & DREFNUM )
-      for (i = 0; i < dumpsds_opts->by_ref.num_items; i++)
-      {
-         index = SDreftoindex(sd_id, dumpsds_opts->by_ref.num_list[i]);
-         if (index == FAIL)
-         {
-            printf( "SDS with reference number %d: not found\n",
-                               (int)dumpsds_opts->by_ref.num_list[i]);
-            *index_error = TRUE; /* error */
-         }
-         else
-         {
-            (*sds_chosen)[sds_count] = index;
-            sds_count++;
-         }
-      }
+	  /* if there are some SDSs requested by ref#, convert the ref#s to
+	     indices and store the indices in the array provided by the caller,
+	     sds_chosen */
+	  case IS_REFNUM:
+	    sds_index = SDreftoindex(sd_id, dumpsds_opts->all_types[ii].refnum);
+	    if (sds_index == FAIL)
+	    {
+	        printf( "SDS with reference number %d: not found\n",
+                               (int)dumpsds_opts->all_types[ii].refnum);
+	        *index_error = TRUE; /* error */
+	    }
+	    else
+	    {
+	        (*sds_chosen)[sds_count] = sds_index;
+	        sds_count++;
+	    }
+	    break;
 
-   /* if there are some SDSs requested by name, convert the names to indices 
-      and store the indices in the array provided by the caller, sds_chosen */
-   if( filter & DNAME )
-      for (i = 0; i < dumpsds_opts->by_name.num_items; i++)
-      {
-         index = SDnametoindex(sd_id, dumpsds_opts->by_name.str_list[i]);
-         if (index == FAIL)
-         {
-            printf( "SDS with name '%s': not found\n",
-                              dumpsds_opts->by_name.str_list[i]);
-            *index_error = TRUE; /* error */
-         }
-         else
-         {
-            (*sds_chosen)[sds_count] = index;
-            sds_count++;
-         }
-      }
+	  /* if there are some SDSs requested by name, convert the names to
+	     indices and store the indices in the array provided by the caller,
+	     sds_chosen */
+	  case IS_NAME:
+	    sds_index = SDnametoindex(sd_id, dumpsds_opts->all_types[ii].name);
+/* NOTE: should handle the case of more than one var of the same name too */
+	    if (sds_index == FAIL)
+	    {
+                printf( "SDS with name '%s': not found\n",
+                              dumpsds_opts->all_types[ii].name);
+                *index_error = TRUE; /* error */
+	    }
+	    else
+	    {
+                (*sds_chosen)[sds_count] = sds_index;
+                sds_count++;
+	    }
+	    break;
 
-   ret_value = sds_count;
+	  default:
+	    fprintf(stderr, "in get_SDSindex_list: Info should only be an index, ref number, or name of an SDS\n");
+	    *index_error = TRUE; /* error */
+	} /* end switch */
+    } /* end for loop */
+
+    ret_value = sds_count;
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -466,8 +462,7 @@ done:
 } /* end of get_SDSindex_list */
 
 /* Displays all SD file attributes */
-intn
-print_SDattrs( int32 sd_id,
+intn print_SDattrs( int32 sd_id,
                FILE *fp,
                int32 n_file_attrs,
 	       dump_info_t* dumpsds_opts )
@@ -564,8 +559,7 @@ print_SDattrs( int32 sd_id,
    return( ret_value );
 }   /* end of print_SDattrs */
 
-intn
-print_SDSattrs( int32 sds_id,
+intn print_SDSattrs( int32 sds_id,
                 int32 nattrs,
                 FILE *fp,
 	        dump_info_t *dumpsds_opts)
@@ -654,8 +648,7 @@ print_SDSattrs( int32 sds_id,
    return( ret_value );
 } /* end of print_SDSattrs */
 
-void
-resetSDS(
+void resetSDS(
 	int32 *sds_id,
 	int32  sds_index,
 	char  *curr_file_name )
@@ -765,8 +758,7 @@ intn option_mask_string(int32 options_mask, char* opt_mask_strg)
  * Prints compression method and compression information of a data set.
  * BMR - bugzilla 1202 - Jul, 2008
  */
-intn
-print_comp_info(
+intn print_comp_info(
 	FILE *fp,
 	int32 sds_id,
 	comp_coder_t *comp_type)
@@ -842,19 +834,15 @@ print_comp_info(
 } /* print_comp_info */
 
 
-/* printSD_ASCII prints all of the requested SDSs in the file */
-intn printSD_ASCII( 
+/* printSDS_ASCII prints all of the requested SDSs in the file */
+intn printSDS_ASCII( 
 	int32 sd_id,
 	dump_info_t *dumpsds_opts,
-	int32 ndsets,         /* # of datasets in the file */
-	int32 *sds_chosen,    /* list of indices of SDSs */
-	int32 num_sds_chosen, /* # of items in sds_chosen */
+	int32 sds_index,    /* index of the SDS */
 	FILE *fp )
 {
    int32 sds_id = FAIL, /* SDS id, always reset to FAIL when not used */
          sds_ref,       /* ref# of an SDS */
-         sds_count,     /* count of SDSs being printed */
-         sds_index,     /* index of SDSs in the file */
          dim_id = FAIL, /* id of an SDS dimension */
          rank,          /* number of dimensions of an SDS */
          nt,            /* number type of an SDS */
@@ -871,35 +859,9 @@ intn printSD_ASCII(
    comp_coder_t comp_type = COMP_CODE_NONE;
    intn  isdimvar,      /* TRUE if curr SDS is used for a dim */
          j,
-         dumpall = FALSE,	/* TRUE if all SDSs are to be dumped */
 	 isnetCDF = FALSE,	/* TRUE when the file is netCDF */
          status,		/* status returned from a routine */
-         ret_value = SUCCEED;	/* returned value of printSD_ASCII */
-
-   /* temp. name for curr input file name for ease of use */
-/* curr_file_name can be removed from this routine after changing resetSDS API */
-   HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
-   isnetCDF = HDisnetcdf(curr_file_name);   /* find out if file is netCDF */
-
-   /* when there are no SDS specified, dumper dumps all datasets */
-   if (num_sds_chosen == (NO_SPECIFIC))  /* NO_SPECIFIC = -1 */
-      dumpall = TRUE;
-   else		/* otherwise, sort index list */
-      sort(sds_chosen, num_sds_chosen);
-
-   /* for each valid index, if the user request to dump all SDSs or if
-      there are more requested SDSs to be processed, process the curr SDS */
-   sds_count = 0;   /* no SDS has been processed yet */
-   for (sds_index = 0; sds_index < ndsets  /* validate index */
-        && (dumpall                /* either all datasets are dumped or */
-        || sds_count < num_sds_chosen); /* or more requested datasets */
-        sds_index++)
-   {
-      /* if the user neither requests dump all nor the current dataset */
-      if ((!dumpall) && (sds_index != sds_chosen[sds_count]))
-         continue; /* skip */
-
-      sds_count++;   /* count the # of datasets being processed */
+         ret_value = SUCCEED;	/* returned value of printSDS_ASCII */
 
       /* Reset variables. */
       HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
@@ -909,28 +871,26 @@ intn printSD_ASCII(
       /* get access to the current dataset */
       sds_id = SDselect(sd_id, sds_index);
       if (sds_id == FAIL)
-         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
-                      "printSD_ASCII", "SDselect", (int)sds_index );
+         ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
+                      "printSDS_ASCII", "SDselect", (int)sds_index );
 
       status = SDgetnamelen(sds_id, &name_len);
       if( FAIL == status )
       {
-         resetSDS( &sds_id, sds_index, curr_file_name );
-         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
-			"printSD_BINARY", "SDgetnamelen", (int)sds_index );
+         ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
+			"printSDS_ASCII", "SDgetnamelen", (int)sds_index );
       }
 
       /* allocate space for sds name */
       sdsname = (char *) HDmalloc(name_len+1);
-      CHECK_ALLOC( sdsname, "sdsname", "printSD_BINARY" );
+      CHECK_ALLOC( sdsname, "sdsname", "printSDS_ASCII" );
 
       /* get dataset's information */
       status = SDgetinfo(sds_id, sdsname, &rank, dimsizes, &nt, &nattrs);
       if( status == FAIL )
       {
-         resetSDS( &sds_id, sds_index, curr_file_name );
-         ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
-                       "printSD_ASCII", "SDgetinfo", (int)sds_index );
+         ERROR_GOTO_3( "in %s: %s failed for %d'th SDS", 
+                       "printSDS_ASCII", "SDgetinfo", (int)sds_index );
       }
 
       /* BMR: it seems like this whole block of code is to get number
@@ -945,17 +905,15 @@ intn printSD_ASCII(
          dim_id = SDgetdimid(sds_id, 0);
          if( dim_id == FAIL )
          {
-            resetSDS( &sds_id, sds_index, curr_file_name );
-            ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
-                       "printSD_ASCII", "SDgetdimid", (int)sds_index );
+            ERROR_GOTO_3( "in %s: %s failed for %d'th SDS", 
+                       "printSDS_ASCII", "SDgetdimid", (int)sds_index );
          }
 
          /* get information of current dimension */
          if( SDdiminfo(dim_id, NULL, &size, &nt, &num_attrs) == FAIL )
          {
-            resetSDS( &sds_id, sds_index, curr_file_name );
-            ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
-                       "printSD_ASCII", "SDdiminfo", (int)sds_index );
+            ERROR_GOTO_3( "in %s: %s failed for %d'th SDS", 
+                       "printSDS_ASCII", "SDdiminfo", (int)sds_index );
          }
       }                                                       
       /* print the current SDS's as specified by user's options */
@@ -967,7 +925,7 @@ intn printSD_ASCII(
             if (nt_desc == NULL)
             {
                ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
-			"printSD_ASCII", "HDgetNTdesc", (int)sds_index, FAIL );
+			"printSDS_ASCII", "HDgetNTdesc", (int)sds_index, FAIL );
                /* did this one fail on allocation and need exit(1)? */
             }
 
@@ -996,16 +954,15 @@ intn printSD_ASCII(
 		/* get SDS's ref# from its id */
 		if ((sds_ref = SDidtoref(sds_id)) == FAIL)
 		    ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
-			"printSD_ASCII", "SDidtoref", (int)sds_index, FAIL );
+			"printSDS_ASCII", "SDidtoref", (int)sds_index, FAIL );
 		fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
 
                 /* print compression method and info or "NONE" */
 		status = print_comp_info(fp, sds_id, &comp_type);
 		if (status == FAIL)
 		{
-		    resetSDS( &sds_id, sds_index, curr_file_name );
-                    ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
-                       "printSD_ASCII", "SDgetcompress", (int)sds_index );
+                    ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
+                       "printSDS_ASCII", "SDgetcompress", (int)sds_index );
                 }
 
             }
@@ -1020,13 +977,13 @@ intn printSD_ASCII(
                /* get current dimension id for access */
                if (FAIL == (dim_id = SDgetdimid(sds_id, j)))
                   ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
-			"printSD_ASCII", "SDgetdimid", (int)sds_index, FAIL );
+			"printSDS_ASCII", "SDgetdimid", (int)sds_index, FAIL );
 
                /* get information of current dimension */
                ret_value = SDdiminfo(dim_id,dim_nm,&size,&(dimNT[j]),&(dimnattr[j]));
                if (FAIL == ret_value )
                   ERROR_BREAK_4( "in %s: %s failed for %d'th dimension of %d'th SDS", 
-			"printSD_ASCII", "SDdiminfo", j, (int)sds_index, FAIL );
+			"printSDS_ASCII", "SDdiminfo", j, (int)sds_index, FAIL );
 
                fprintf(fp, "\t Dim%d: Name=%s\n", (int) j, dim_nm);
                if (size == 0)
@@ -1043,7 +1000,7 @@ intn printSD_ASCII(
                   attr_nt_desc = HDgetNTdesc(dimNT[j]);
                   if (attr_nt_desc == NULL)
                      ERROR_BREAK_4( "in %s: %s failed for %d'th dimension of %d'th SDS", 
-		     "printSD_ASCII", "HDgetNTdesc", j, (int)sds_index, FAIL);
+		     "printSDS_ASCII", "HDgetNTdesc", j, (int)sds_index, FAIL);
 
                   fprintf(fp, "\t\t Scale Type = %s\n", attr_nt_desc);
                   fprintf(fp, "\t\t Number of attributes = %d\n", (int) dimnattr[j]);
@@ -1055,7 +1012,7 @@ intn printSD_ASCII(
             status = print_SDSattrs(sds_id, nattrs, fp, dumpsds_opts);
             if( status == FAIL )
                ERROR_BREAK_3( "in %s: %s failed for %d'th SDS",
-		"printSD_ASCII", "print_SDSattrs", (int)sds_index, FAIL );
+		"printSDS_ASCII", "print_SDSattrs", (int)sds_index, FAIL );
 
             /* header only, don't go into case DDATA */
             if (dumpsds_opts->contents == DHEADER)
@@ -1078,7 +1035,7 @@ intn printSD_ASCII(
                   status = sdsdumpfull( sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
                   if( FAIL == status )
                      ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
-			"printSD_ASCII", "sdsdumpfull", (int)sds_index, FAIL );
+			"printSDS_ASCII", "sdsdumpfull", (int)sds_index, FAIL );
                }
             } }
             break;
@@ -1088,115 +1045,83 @@ intn printSD_ASCII(
 
       resetSDS( &sds_id, sds_index, curr_file_name ); /* end access to current SDS */
 
-   }	/* for each SDS in the file */
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (sds_id != FAIL)
+              SDendaccess(sds_id);
+      }
+    /* Normal cleanup */
 
-   return( ret_value );
-} /* end of printSD_ASCII() */
+    return ret_value;
+} /* end of printSDS_ASCII() */
 
-intn
-printSD_BINARY( int32 sd_id,
-             FILE *fp,
-             dump_info_t *dumpsds_opts,
-             int32 *sds_chosen,
-             int32 num_sds_chosen,
-             int32 ndsets )
+intn printSDS_BINARY(
+	int32 sd_id,
+	dump_info_t *dumpsds_opts,
+	int32 sds_index,    /* index of the SDS */
+	FILE *fp )
 {
    int32 sds_id,
-         sds_index,
-         sds_count,
          dimsizes[MAXRANK],
-         dimNT[MAXRANK],
-         dimnattr[MAXRANK],
          rank,
          nt,
          nattrs;
-   char *sdsname,
-         curr_file_name[MAXFNLEN];
-   uint16 name_len=0;
+   char  curr_file_name[MAXFNLEN];
    comp_coder_t comp_type=COMP_CODE_NONE;
-   intn  dumpall = FALSE,
-         status,
+   intn  status,
          ret_value = SUCCEED;
    
-   /* temp. names for file type and curr input file name for ease of use */
-   HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
+    /* temp. names for file type and curr input file name for ease of use */
+    HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
 
-   /* when there are no datasets specified, dumper dumps all datasets */
-   if (num_sds_chosen == NO_SPECIFIC )
-      dumpall = TRUE;
-   else
-      sort(sds_chosen, num_sds_chosen);
+    /* Reset variable */
+    HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
 
-   /* for each valid index, if the user request to dump all datasets or
-      if there are more requested datasets to be processed, process the
-      indexed dataset */
-   sds_count = 0;   /* no requested dataset has been processed yet */
-   for (sds_index = 0; sds_index < ndsets  /* validate index */
-        && (dumpall                /* either all datasets are dumped or */
-        || sds_count < num_sds_chosen); /* more requested datasets */
-        sds_index++)
-   {
-      /* if the user neither requests dump all nor the current dataset */
-      if ((!dumpall) && (sds_index != sds_chosen[sds_count]))
-         continue; /* skip */
+    sds_id = SDselect(sd_id, sds_index);
+    if (sds_id == FAIL)
+         ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
+			"printSDS_BINARY", "SDselect", (int)sds_index );
 
-      sds_count++;   /* count the # of datasets have been processed */
+    status = SDgetinfo(sds_id, NULL, &rank, dimsizes, &nt, &nattrs);
+    if( FAIL == status )
+    {
+	resetSDS( &sds_id, sds_index, curr_file_name );
+	ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
+			"printSDS_BINARY", "SDgetinfo", (int)sds_index );
+    }
 
-      /* Reset variables. */
-      HDmemset(dimsizes, 0, sizeof(int32) * MAXRANK);
-      HDmemset(dimNT, 0, sizeof(int32) * MAXRANK);
-      HDmemset(dimnattr, 0, sizeof(int32) * MAXRANK);
-
-      sds_id = SDselect(sd_id, sds_index);
-      if (sds_id == FAIL)
-         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
-			"printSD_BINARY", "SDselect", (int)sds_index );
-
-      status = SDgetnamelen(sds_id, &name_len);
-      if( FAIL == status )
-      {
-         resetSDS( &sds_id, sds_index, curr_file_name );
-         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
-			"printSD_BINARY", "SDgetnamelen", (int)sds_index );
-      }
-
-      /* allocate space for sds name */
-      sdsname = (char *) HDmalloc(name_len+1);
-      CHECK_ALLOC( sdsname, "sdsname", "printSD_BINARY" );
-
-      status = SDgetinfo(sds_id, sdsname, &rank, dimsizes, &nt, &nattrs);
-      if( FAIL == status )
-      {
-         resetSDS( &sds_id, sds_index, curr_file_name );
-         ERROR_CONT_3( "in %s: %s failed for %d'th SDS",
-			"printSD_BINARY", "SDgetinfo", (int)sds_index );
-      }
-      if (sdsname != NULL) HDfree(sdsname);  /* why do we need sds name? */
-
-      /* get compression method and if szipped compressed data is being read,
-	 make sure that szip library is available before reading */
-      status = SDgetcomptype(sds_id, &comp_type);
-      if (comp_type == COMP_CODE_SZIP && have_szip == 0)
-      {
-	  fprintf(fp, "\t\t <SZIP library is not available>\n");
-	  fprintf(fp, "\t\t <Unable to read SZIP compressed data>\n");
-      }
-      else { /* can output data to binary file   */
-	 if (rank > 0 && dimsizes[0] != 0)
-	 {
+    /* get compression method and if szipped compressed data is being read,
+       make sure that szip library is available before reading */
+    status = SDgetcomptype(sds_id, &comp_type);
+    if (comp_type == COMP_CODE_SZIP && have_szip == 0)
+    {
+	fprintf(fp, "\t\t <SZIP library is not available>\n");
+	fprintf(fp, "\t\t <Unable to read SZIP compressed data>\n");
+    }
+    else { /* can output data to binary file   */
+	if (rank > 0 && dimsizes[0] != 0)
+	{
 	    status = sdsdumpfull(sds_id, dumpsds_opts, rank, dimsizes, nt, fp);
             if( FAIL == status )
-               ERROR_CONT_3( "in %s: %s failed for %d'th SDS", 
-			"printSD_BINARY", "sdsdumpfull", (int)sds_index );
-	 }} /* can output data */
-      resetSDS( &sds_id, sds_index, curr_file_name );
-   }  /* for each dataset in file */
+               ERROR_GOTO_3( "in %s: %s failed for %d'th SDS", 
+			"printSDS_BINARY", "sdsdumpfull", (int)sds_index );
+	}
+    } /* can output data */
+    resetSDS( &sds_id, sds_index, curr_file_name );
 
-   return( ret_value );
-} /* end of printSD_BINARY */
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+          if (sds_id != FAIL)
+              SDendaccess(sds_id);
+      }
+    /* Normal cleanup */
 
-intn 
-dsd(dump_info_t *dumpsds_opts, 
+    return ret_value;
+} /* end of printSDS_BINARY */
+
+intn dsd(dump_info_t *dumpsds_opts, 
     intn         curr_arg, 
     intn         argc, 
     char        *argv[])
@@ -1210,6 +1135,7 @@ dsd(dump_info_t *dumpsds_opts,
    FILE  *fp = NULL;
    file_type_t ft = dumpsds_opts->file_type;
    intn   index_error = 0,
+	  ii,
           status,
           ret_value = SUCCEED;
 
@@ -1254,7 +1180,8 @@ dsd(dump_info_t *dumpsds_opts,
       }
 
       /* compose the list of indices of SDSs to be processed in the current 
-         file: sds_chosen is the list and return the number of items in it */
+         file: sds_chosen is the list and return value is the number of items
+	 in the list */
       num_sds_chosen = get_SDSindex_list( sd_id, dumpsds_opts, &sds_chosen, &index_error );
 
       /* if there are errors with the given indices, ref#s, or names of the
@@ -1274,12 +1201,12 @@ dsd(dump_info_t *dumpsds_opts,
          continue; /* to the next file */
       } /* end if */
 
-      /* obtain number of datasets in the file and number of file attributes,
-         ndsets will be used to process the datasets, n_file_attrs will be
-         used to print file attributes */
-      status = SDfileinfo(sd_id, &ndsets, &n_file_attrs);
-      if (status == FAIL)
-         ERROR_GOTO_2( "in dsd: %s failed for file %s", "SDfileinfo", file_name);
+	    /* obtain number of datasets in the file and number of file
+		attributes, ndsets will be used to process the datasets,
+		n_file_attrs will be used to print file attributes */
+		status = SDfileinfo(sd_id, &ndsets, &n_file_attrs);
+		if (status == FAIL)
+		ERROR_GOTO_2( "in dsd: %s failed for file %s", "SDfileinfo", file_name);
 
       fp = stdout;                /* assume no output file given */
 
@@ -1302,26 +1229,118 @@ dsd(dump_info_t *dumpsds_opts,
                if( status == FAIL )
                   ERROR_CONT_2( "in dsd: %s failed for file %s", file_name, "print_SDattrs" );
             }
-            status = printSD_ASCII( sd_id, dumpsds_opts, ndsets, sds_chosen, num_sds_chosen, fp );
-            if( status == FAIL )
-               fprintf( stderr, "HDP ERROR>>> in dsd: %s failed for file %s\n", 
-				"printSD_ASCII", file_name );
 
-            /* close output file only if option -o is given */
+	    /* If the user requests to dump the SDSs in the order they were
+	       given, -k given */
+	    if (dumpsds_opts->keep_order)
+	    {
+		for (ii = 0; ii < num_sds_chosen; ii++)
+		{
+		    /* Print the current SDS in ASCII format */
+		    status = printSDS_ASCII(sd_id, dumpsds_opts, sds_chosen[ii], fp);
+		    if( status == FAIL )
+			fprintf( stderr, "HDP ERROR>>> in dsd: %s failed for file %s\n", 
+				"printSDS_ASCII", file_name );
+		}
+	    } /* if: -k given */
+
+	    else /* no -k */
+	    {
+		int32 sds_count, sds_index;
+		intn dumpall = FALSE;
+
+		/* if only specific datasets were requested, sort the list
+		   to dump them in index order */
+		if (num_sds_chosen == NO_SPECIFIC )
+		    dumpall = TRUE;
+		else
+		    sort(sds_chosen, num_sds_chosen);
+
+		sds_count = 0;   /* no SDS has been processed yet */
+		/* For each index, if the user requests to dump all SDSs or if
+		   there are more requested SDSs, process the curr SDS */
+		for (sds_index = 0; sds_index < ndsets  /* validate index */
+		     && (dumpall      /* either all datasets are dumped or */
+		     || sds_count < num_sds_chosen);/* or more requested SDSs */
+		     sds_index++)
+		{
+		/* If the user neither requests dump all nor the current SDS */
+		if ((!dumpall) && (sds_index != sds_chosen[sds_count]))
+		    continue; /* skip */
+
+		/* Count the # of datasets being processed */
+		sds_count++;
+
+		/* Print the current SDS in ASCII format */
+		status = printSDS_ASCII(sd_id, dumpsds_opts, sds_index, fp);
+		if( status == FAIL )
+		    fprintf(stderr,
+				"HDP ERROR>>> in dsd: %s failed for file %s\n", 
+				"printSDS_ASCII", file_name );
+		}
+	    } /* else: no -k */
+
+            /* Close output file only if option -o is given */
             if (dumpsds_opts->dump_to_file)
                fclose(fp);                       
             break;
 
          case DBINARY:       /* binary file */
-             /* get output file name  */
+             /* Get output file name  */
              if (dumpsds_opts->dump_to_file)
                  fp = fopen(dumpsds_opts->file_name, "wb");
-            status = printSD_BINARY( sd_id, fp, dumpsds_opts, sds_chosen, num_sds_chosen, ndsets );
-            if( status == FAIL )
-               fprintf( stderr, "HDP ERROR>>> in dsd: %s failed for file %s\n", 
-			"printSD_BINARY", file_name );
 
-            /* close output file only if option -o is given */
+	    /* If the user requests to dump the SDSs in the order they were
+	       given, -k given */
+	    if (dumpsds_opts->keep_order)
+	    {
+		for (ii = 0; ii < num_sds_chosen; ii++)
+		{
+		    /* Print the current SDS in BINARY format */
+		    status = printSDS_BINARY(sd_id, dumpsds_opts, sds_chosen[ii], fp);
+		    if( status == FAIL )
+			fprintf( stderr, "HDP ERROR>>> in dsd: %s failed for file %s\n", 
+				"printSDS_BINARY", file_name );
+		}
+	    } /* if: -k given */
+
+	    else /* no -k */
+	    {
+		int32 sds_count, sds_index;
+		intn dumpall = FALSE;
+
+		/* if only specific datasets were requested, sort the list
+		   to dump them in index order */
+		if (num_sds_chosen == NO_SPECIFIC )
+		    dumpall = TRUE;
+		else
+		    sort(sds_chosen, num_sds_chosen);
+
+		sds_count = 0;   /* no SDS has been processed yet */
+		/* For each index, if the user requests to dump all SDSs or if
+		   there are more requested SDSs, process the curr SDS */
+		for (sds_index = 0; sds_index < ndsets  /* validate index */
+		     && (dumpall      /* either all datasets are dumped or */
+		     || sds_count < num_sds_chosen);/* or more requested SDSs */
+		     sds_index++)
+		{
+		/* If the user neither requests dump all nor the current SDS */
+		if ((!dumpall) && (sds_index != sds_chosen[sds_count]))
+		    continue; /* skip */
+
+		/* Count the # of datasets being processed */
+		sds_count++;
+
+		/* Print the current SDS in BINARY format */
+		status = printSDS_BINARY(sd_id, dumpsds_opts, sds_index, fp);
+		if( status == FAIL )
+		    fprintf(stderr,
+				"HDP ERROR>>> in dsd: %s failed for file %s\n", 
+				"printSDS_BINARY", file_name );
+		}
+	    } /* else: no -k */
+
+            /* Close output file only if option -o is given */
             if (dumpsds_opts->dump_to_file)
                fclose(fp);                       
             break;
@@ -1359,8 +1378,7 @@ done:
 }	/* dsd */
 
 /* Exported */
-intn
-do_dumpsds(intn  curr_arg, 
+intn do_dumpsds(intn  curr_arg, 
            intn  argc, 
            char *argv[], 
            intn  help )
@@ -1368,7 +1386,8 @@ do_dumpsds(intn  curr_arg,
     dump_info_t dumpsds_opts;	/* dumpsds options */
     intn status, ret_value = SUCCEED;
 
-    /* initialize the structure that holds user's options and inputs */                                     init_dump_opts(&dumpsds_opts);        
+   /* initialize the structure that holds user's options and inputs */
+   init_dump_opts(&dumpsds_opts);
 
    /* command line: hdp help */
    if (help == TRUE)

@@ -122,12 +122,30 @@ vg_info_t ** free_vginfo_list(
    intn i;
 
    /* if the list is not NULL, free each node then reset the list to NULL */
-   if( nodelist != NULL)
+   if (nodelist != NULL)
    {
-      for( i = 0; i < num_items; i++ )
-         if( nodelist[i] != NULL )
-            HDfree( nodelist[i] );
-      HDfree( nodelist );
+      for (i = 0; i < num_items; i++)
+         if (nodelist[i] != NULL)
+            HDfree(nodelist[i]);
+      HDfree(nodelist);
+   }
+   return( NULL );
+}  /* end of free_vginfo_list */
+
+/* free_struct_list use HDfree to free the list of vgroup info structs */
+sds_chosen_t ** free_sds_chosen_t_list( 
+		sds_chosen_t **nodelist,
+		int32 num_items )
+{
+   intn i;
+
+   /* if the list is not NULL, free each node then reset the list to NULL */
+   if (nodelist != NULL)
+   {
+      for (i = 0; i < num_items; i++)
+         if (nodelist[i] != NULL)
+            HDfree(nodelist[i]);
+      HDfree(nodelist);
    }
    return( NULL );
 }  /* end of free_vginfo_list */
@@ -280,16 +298,10 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                             return (NULL);
                         }	/* end if */
 
-/*
-printf("make_group_list for tag/ref = %d/%d\n", tag, ref );
-*/
                       for (i = 0; i < nobj; i++)
                         {
                             ret->dd_arr[i].tag = (uint16) temp_tag[i];
                             ret->dd_arr[i].ref = (uint16) temp_ref[i];
-/*
-printf("element %d: tag/ref = %d/%d\n", i, temp_tag[i], temp_ref[i] );
-*/
                         }	/* end for */
 
                       HDfree(temp_tag);
@@ -657,6 +669,7 @@ parse_number_opts( char *argv[],
    int32 numItems = 0, i;
    char *tempPtr = NULL;
    char *ptr = NULL;
+   int32 *newlist;
 
    /* put a temp ptr at the beginning of the given list of numbers, 
       separated by commas, for example, 1,2,3 */
@@ -678,9 +691,35 @@ parse_number_opts( char *argv[],
    if (*ptr != '\0')	/* count the last item */
       numItems++;
 
-   /* allocate space to hold all the items in the list */
-   filter->num_list = (int32 *) HDmalloc(sizeof(intn) * numItems);
-   CHECK_ALLOC( filter->num_list, "filter->num_list", "parse_number_opts" );
+   if (filter->num_list != NULL)
+   {
+	/* Update number of items that will be in the list */
+	numItems = numItems + filter->num_items;
+
+        /* Allocate a new list */
+        newlist = (int32 *) HDmalloc(sizeof(intn) * numItems);
+	CHECK_ALLOC(newlist, "newlist", "parse_number_opts" );
+
+        /* If filter->num_list is already allocated, transfer pointers over
+	   to the new list and deallocate the old list of pointers */
+        if (filter->num_list != NULL)
+        {
+            for (i=0; i < filter->num_items; i++)
+                newlist[i] = filter->num_list[i];
+            HDfree(filter->num_list);
+        }
+
+        /* Set _cdfs to the new list */
+        filter->num_list = newlist;
+        newlist = NULL;
+   }
+
+   else
+   {
+	/* allocate space to hold all the items in the list */
+	filter->num_list = (int32 *) HDmalloc(sizeof(intn) * numItems);
+	CHECK_ALLOC(filter->num_list, "filter->num_list", "parse_number_opts" );
+   }
 
    /* go back to the beginning of the list and read in the numbers */
    ptr = argv[*curr_arg];
@@ -755,6 +794,106 @@ parse_string_opts( char *argv[],
    filter->num_items = numItems;	/* save the number of items */
 
 } /* parse_string_opts */
+
+void parse_value_opts( char *argv[],
+                   int *curr_arg, 
+                   dump_info_t *dump_opts,
+		   info_type_t info_type)
+{
+   int32 numItems = 0, i;
+   char *tempPtr = NULL;
+   char *ptr = NULL;
+   sds_chosen_t *newlist;
+
+   /* put a temp ptr at the beginning of the given list of numbers, 
+      separated by commas, for example, 1,2,3 */
+   ptr = argv[*curr_arg];
+
+   /* check if it's the end of the command */
+   if( ptr == NULL )
+   {
+      printf("Missing values for option\n");
+      exit(1);
+   }
+
+   /* then traverse the list and count the number of items in it */
+   while ((tempPtr = HDstrchr(ptr, ',')) != NULL)
+   {
+      numItems++;       /* count number of items in the list */
+      ptr = tempPtr + 1;/* forward pointer to next item, after a comma */
+   }  /* end while */
+   if (*ptr != '\0')	/* count the last item */
+      numItems++;
+
+   if (dump_opts->all_types != NULL)
+   {
+	/* Update number of chosen SDSs so far */
+	numItems = numItems + dump_opts->num_chosen;
+ 
+
+        /* Allocate a new list */
+        newlist = (sds_chosen_t *) HDmalloc(sizeof(sds_chosen_t) * numItems);
+	CHECK_ALLOC(newlist, "newlist", "parse_value_opts" );
+
+        /* If dump_opts->all_types is already allocated, transfer pointers over
+	   to the new list and deallocate the old list of pointers */
+        if (dump_opts->all_types != NULL)
+        {
+            for (i=0; i < dump_opts->num_chosen; i++)
+                newlist[i] = dump_opts->all_types[i];
+            HDfree(dump_opts->all_types);
+        }
+
+        /* Set dump_opts->all_types to the new list */
+        dump_opts->all_types = newlist;
+        newlist = NULL;
+   }
+   else
+   {
+	/* allocate space to hold all the items in the list */
+	dump_opts->all_types = (sds_chosen_t *) HDmalloc(sizeof(sds_chosen_t) * numItems);
+	CHECK_ALLOC(dump_opts->all_types, "filter", "parse_value_opts" );
+   }
+
+   /* go back to the beginning of the list and read in the numbers */
+   ptr = argv[*curr_arg];
+
+   /* index of the list, it should start at 0 or at the number of SDSs chosen so far */
+   i = dump_opts->num_chosen != NO_SPECIFIC ? dump_opts->num_chosen : 0;
+   while ( i < numItems )
+   {
+	tempPtr = HDstrchr(ptr, ',');
+	if (tempPtr != NULL)
+	    *tempPtr = '\0';  /* end the string of digits */
+	switch (info_type)
+	{
+	  case IS_INDEX:
+	  /* convert the string of characters to digits and store for refnum */
+	    dump_opts->all_types[i].index = atoi(ptr);
+	    break;
+
+	  case IS_REFNUM:
+	  /* convert the string of characters to digits and store for refnum */
+	    dump_opts->all_types[i].refnum = atoi(ptr);
+	    break;
+
+	  case IS_NAME:
+	  /* get the current string of characters for name */
+	    HDstrcpy(dump_opts->all_types[i].name, ptr);
+	    break;
+
+	  default:
+	  /* shouldn't be anything else */
+	    fprintf(stderr, "Calling function passed in incorrect info_type_t: %%d\n", info_type);
+	    exit(1);
+	    break;
+	} /* end of switch */
+	dump_opts->all_types[i].type_of_info = info_type;
+	ptr = tempPtr + 1;
+	i++;
+   }
+   dump_opts->num_chosen = numItems;   /* save the number of chosen SDSs so far */
+}  /* parse_value_opts */
 
 /* validate_pos makes sure that number is > 0 so we are not going to
    allocate 0 elements

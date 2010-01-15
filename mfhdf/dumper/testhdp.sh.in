@@ -250,6 +250,13 @@ else
 TEST dumpsds-15szip.out dumpsds sds_compressed.hdf
 fi
 
+# Test 16 prints SDSs in index order, by default
+TEST dumpsds-16.out dumpsds -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf
+
+# Test 17 prints SDSs in the order they were specified, when flag -k is present
+# as a request to 'k'eep the specified order
+TEST dumpsds-17.out dumpsds -k -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
