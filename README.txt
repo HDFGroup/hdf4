@@ -1,4 +1,4 @@
-HDF version 4.2.4-snap7 currently under development
+HDF version 4.2.4-snap8 currently under development
 ===================================================
 
 Obtaining the latest version of HDF4
