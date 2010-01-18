@@ -516,20 +516,6 @@
 ./mfhdf/build.bat
 ./mfhdf/make.com
 
-./mfhdf/c++/Makefile
-./mfhdf/c++/README
-./mfhdf/c++/example.c
-./mfhdf/c++/example.cc
-./mfhdf/c++/example.cdl
-./mfhdf/c++/expected
-./mfhdf/c++/nc.info
-./mfhdf/c++/nctst.cc
-./mfhdf/c++/nc.txn
-./mfhdf/c++/ncvalues.cc
-./mfhdf/c++/ncvalues.hh
-./mfhdf/c++/netcdf.cc
-./mfhdf/c++/netcdf.hh
-
 ./mfhdf/dumper/Makefile.am
 ./mfhdf/dumper/Makefile.in
 ./mfhdf/dumper/README
@@ -1041,23 +1027,6 @@
 ./mfhdf/nctest/vartests.c
 ./mfhdf/nctest/vputget.c
 ./mfhdf/nctest/vputgetg.c
-
-./mfhdf/port/COPYRIGHT
-./mfhdf/port/CUSTOMIZE
-./mfhdf/port/HISTORY
-./mfhdf/port/Makefile.am
-./mfhdf/port/Makefile.in
-./mfhdf/port/VERSION
-./mfhdf/port/aclocal.m4
-./mfhdf/port/configure
-./mfhdf/port/configure.in
-./mfhdf/port/depend
-./mfhdf/port/master.mk.in
-./mfhdf/port/mast_mk.in
-./mfhdf/port/uddummy.c
-./mfhdf/port/udposix.h.in
-./mfhdf/port/udposixh.in
-./mfhdf/port/which
 
 ./mfhdf/test/Makefile.am
 ./mfhdf/test/Makefile.in
