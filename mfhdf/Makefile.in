@@ -233,8 +233,8 @@ H4FC = $(bindir)/h4fc
 @HDF_BUILD_FORTRAN_TRUE@FORTRAN_DIR = fortran
 @HDF_BUILD_XDR_FALSE@XDR_DIR = 
 @HDF_BUILD_XDR_TRUE@XDR_DIR = xdr
-SUBDIRS = port $(FORTRAN_DIR) $(XDR_DIR) libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest
-DIST_SUBDIRS = port fortran xdr libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest examples
+SUBDIRS = $(FORTRAN_DIR) $(XDR_DIR) libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest
+DIST_SUBDIRS = fortran xdr libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest examples
 all: all-recursive
 
 .SUFFIXES:

@@ -42,6 +42,9 @@ New features and changes
 ========================
     Source distribution
     ===================
+    - Removed obsolete mfhdf/port and mfhdf/c++ directories and related 
+      code
+        (EIP - 2010/1/18)
     - Removed obsolete hdf/fmpool directory and related code
     - Removed obsolete constants PCIO, WINIO, PAGEBIFIO, and WINNTIO from
       hdfi.h and hfile.h 
@@ -297,6 +300,20 @@ Appendix: List of the removed files
 	mfhdf/macros.mk
 	mfhdf/mfhdf.mak
 	mfhdf/msoft.mk 
+ 
+
+        mfhdf/c++/README
+        mfhdf/c++/example.c
+        mfhdf/c++/example.cc
+        mfhdf/c++/example.cdl
+        mfhdf/c++/expected
+        mfhdf/c++/nc.info
+        mfhdf/c++/nc.txn
+        mfhdf/c++/nctst.cc
+        mfhdf/c++/ncvalues.cc
+        mfhdf/c++/ncvalues.hh
+        mfhdf/c++/netcdf.cc
+        mfhdf/c++/netcdf.hh
 
 	mfhdf/fortran/fortc
 	mfhdf/fortran/fortc1.sed
@@ -357,6 +374,23 @@ Appendix: List of the removed files
 	mfhdf/libsrc/tunlim.c
 	mfhdf/libsrc/win32cdf.h
 	mfhdf/libsrc/win32cdf.mak
+
+        mfhdf/port/COPYRIGHT
+        mfhdf/port/CUSTOMIZE
+        mfhdf/port/HISTORY
+        mfhdf/port/Makefile.am
+        mfhdf/port/Makefile.in
+        mfhdf/port/VERSION
+        mfhdf/port/aclocal.m4
+        mfhdf/port/configure
+        mfhdf/port/configure.in
+        mfhdf/port/depend
+        mfhdf/port/mast_mk.in
+        mfhdf/port/master.mk.in
+        mfhdf/port/uddummy.c
+        mfhdf/port/udposix.h.in
+        mfhdf/port/udposixh.in
+        mfhdf/port/which
 
 	hdf/COPYING
 	hdf/COPYRIGHT

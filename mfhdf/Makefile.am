@@ -12,9 +12,9 @@ else
 XDR_DIR = 
 endif
 
-SUBDIRS = port $(FORTRAN_DIR) $(XDR_DIR) libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest
+SUBDIRS = $(FORTRAN_DIR) $(XDR_DIR) libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest
 
-DIST_SUBDIRS = port fortran xdr libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest examples
+DIST_SUBDIRS = fortran xdr libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest examples
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;
