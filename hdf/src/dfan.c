@@ -146,7 +146,7 @@ DFANgetlabel(const char *filename, uint16 tag, uint16 ref, char *label,
 {
   intn ret_value;
 
-  ret_value = (DFANIgetann(filename, tag, ref, (uint8 *) label, maxlen, DFAN_LABEL));
+  ret_value = (DFANIgetann(filename, tag, ref, (uint8 *) label, maxlen, DFAN_LABEL, 0));
 
   return ret_value;
 }
@@ -210,7 +210,7 @@ DFANgetdesc(const char *filename, uint16 tag, uint16 ref, char *desc,
 {
   intn ret_value;
 
-  ret_value = (DFANIgetann(filename, tag, ref, (uint8 *) desc, maxlen, DFAN_DESC));
+  ret_value = (DFANIgetann(filename, tag, ref, (uint8 *) desc, maxlen, DFAN_DESC, 0));
 
   return ret_value;
 }
@@ -1011,7 +1011,7 @@ done:
        uint8 *ann;       OUT: space to return annotation in
        int32 maxlen;     IN: size of space to return annotation in
        int type;         IN: DFAN_LABEL for labels, DFAN_DESC for descriptions
-
+       int isfortran;    IN: 0 if C, 1 if Fortran
  RETURNS
        SUCCEED (0) if successful and FAIL (-1) otherwise
  DESCRIPTION
@@ -1020,12 +1020,14 @@ done:
  GLOBAL VARIABLES
        Lastref.
  COMMENTS, BUGS, ASSUMPTIONS
+       BUG 1640: Added isfortran flag to avoid termination of the string with 
+       the null character when the routine is call from FORTRAN.
  EXAMPLES
  REVISION LOG
  *------------------------------------------------------------------------*/
 intn
 DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
-            int32 maxlen, int type)
+            int32 maxlen, int type, int isfortran)
 {
   CONSTR(FUNC, "DFANIgetann");
   int32       file_id, aid;
@@ -1074,18 +1076,24 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
   annlen -= 4;    /* first four bytes were tag/ref, so they don't count */
 
   /* check length, if not enough space, truncate annotation */
-  /* labels need space for null terminator, descriptions don't */
-  if (type == DFAN_LABEL)
+  /* In C labels need space for null terminator, descriptions don't */
+  if (isfortran)
     {
-      if (annlen > maxlen - 1)
-        annlen = maxlen - 1;
+      if (annlen > maxlen )
+	annlen = maxlen;
     }
   else
-    {
-      if (annlen > maxlen)
-        annlen = maxlen;
-    }
-
+    if (type == DFAN_LABEL)
+      {
+	if (annlen > maxlen - 1)
+	  annlen = maxlen - 1;
+      }
+    else
+      {
+	if (annlen > maxlen)
+	  annlen = maxlen;
+      }
+  
   /* read annotation */
   if ((int32) FAIL == Hread(aid, (int32) 4, datadi))
     {     /* go past tag/ref */
@@ -1097,8 +1105,10 @@ DFANIgetann(const char *filename, uint16 tag, uint16 ref, uint8 *ann,
       Hendaccess(aid);
       HCLOSE_GOTO_ERROR(file_id,DFE_READERROR,FAIL);
     }
+  /* add null for C */
   if (type == DFAN_LABEL)
-    ann[annlen] = '\0';     /* terminate string properly */
+    if (!isfortran)
+      ann[annlen] = '\0'; /* terminate string properly for C */
 
   Lastref = annref;   /* remember ref last accessed */
   Hendaccess(aid);

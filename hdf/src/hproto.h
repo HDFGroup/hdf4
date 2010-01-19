@@ -876,7 +876,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     HDFLIBAPI intn DFANIgetann
                 (const char * filename, uint16 tag, uint16 ref, uint8 * ann,
-                 int32 maxlen, int type);
+                 int32 maxlen, int type, int isfortran);
 
     HDFLIBAPI intn DFANIputann
                 (const char * filename, uint16 tag, uint16 ref, uint8 * ann,

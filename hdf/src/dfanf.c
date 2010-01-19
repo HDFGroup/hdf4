@@ -134,7 +134,7 @@ ndaigann(_fcd filename, intf * tag, intf * ref, _fcd annotation, intf * maxlen,
     if (!fn)
 	return(-1);
     ret = DFANIgetann(fn, (uint16) *tag, (uint16) *ref,
-             (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type);
+		      (uint8 *) _fcdtocp(annotation), (int32) *maxlen, (intn) *type, 1);
     HDfree((VOIDP) fn);
 
     return (ret);

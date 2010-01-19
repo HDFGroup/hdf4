@@ -29,6 +29,11 @@ C  Possible bug:  When reading in a label, we have to give it a
 C                 length that is one greater than MAXLEN_LAB. This
 C                 may be due to a bug in dfan.c in DFANIgetann().
 C
+C                 This was addressed in BUG 1640: Added isfortran 
+C                 flag to DFANIgetann to avoid termination 
+C                 of the string with the null character when the routine 
+C                 is call from FORTRAN, hence no longer need to add one.
+C
 
       implicit none
       include 'fortest.inc'
@@ -197,7 +202,7 @@ C**************************************************************
           number_failed = number_failed + 1
       endif
 
-      ret = daglab(filename, tag, ref, inlabel, MAXLEN_LAB+1)
+      ret = daglab(filename, tag, ref, inlabel, MAXLEN_LAB)
       call VRFY(ret, 'daglab', number_failed)
       if (inlabel .ne. label) then
           print *,'   >>>BAD LABEL.'
