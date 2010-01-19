@@ -222,7 +222,6 @@ H4FC = $(bindir)/h4fc
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF

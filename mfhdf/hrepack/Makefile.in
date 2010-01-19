@@ -243,7 +243,6 @@ H4FC = $(bindir)/h4fc
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/hdiff    \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I$(top_srcdir)/mfhdf/port     \
          -I../libsrc
 
 DEFINES = -DNDEBUG -DHDF

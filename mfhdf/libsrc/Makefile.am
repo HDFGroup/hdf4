@@ -6,8 +6,7 @@ include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
 INCLUDES=-I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   \
-         -I$(top_srcdir)/mfhdf/port
+         -I$(top_srcdir)/mfhdf/libsrc   
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
