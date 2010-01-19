@@ -52,4 +52,4 @@ SD_chunking_example: $(srcdir)/SD_chunking_example.f
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
 
-DISTCLEANFILES = *.chkexe *.chklog
+DISTCLEANFILES = *.chkexe *.chklog ExternalSDS

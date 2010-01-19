@@ -48,4 +48,9 @@ testdir:
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf testdir
+# Automake's distclean won't remove directories, so we can add an additional
+# hook target which will do so during 'make distclean'.
+distclean-local:
+	-rm -rf testdir
+
+DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf

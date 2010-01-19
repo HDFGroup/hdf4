@@ -247,7 +247,7 @@ PROGS = $(bin_PROGRAMS) $(bin_SCRIPTS) $(noinst_PROGRAMS) $(noinst_SCRIPTS)   \
 
 TEST_PROG_CHKEXE = $(TEST_PROG:=.chkexe_)
 TEST_SCRIPT_CHKSH = $(TEST_SCRIPT:=.chkexe_)
-DISTCLEANFILES = *.chkexe *.chklog
+DISTCLEANFILES = *.chkexe *.chklog ExternalSDS
 all: all-am
 
 .SUFFIXES:

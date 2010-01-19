@@ -279,9 +279,7 @@ buffer_DEPENDENCIES = ../src/libdf.la
 
 @HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
 @HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-#############################################################################
-#############################################################################
-DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf testdir
+DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
 all: all-am
 
 .SUFFIXES:
@@ -631,7 +629,7 @@ distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-tags
+	distclean-local distclean-tags
 
 dvi: dvi-am
 
@@ -698,13 +696,13 @@ uninstall-am:
 .PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
 	clean-checkPROGRAMS clean-generic clean-libtool ctags \
 	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	distclean-libtool distclean-local distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am
@@ -712,6 +710,14 @@ uninstall-am:
 
 testdir:
 	-mkdir testdir
+
+#############################################################################
+#############################################################################
+
+# Automake's distclean won't remove directories, so we can add an additional
+# hook target which will do so during 'make distclean'.
+distclean-local:
+	-rm -rf testdir
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
