@@ -150,6 +150,7 @@ case "$enableval" in
     ;;
 esac
 AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
+AC_SUBST([BUILD_NETCDF])
 
 dnl ======================================================================
 dnl Checks for programs
@@ -182,6 +183,7 @@ case "$enableval" in
     ;;
 esac
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
+AC_SUBST([BUILD_FORTRAN])
 
 dnl -------------------------------------------------------------------------
 dnl Build static libraries by default. Furthermore, fortran shared libraries
@@ -490,6 +492,7 @@ if test "X$HAVE_SZIP" = "Xyes"; then
         SZIP_HAS_ENCODER="yes"
     fi
 fi
+AC_SUBST([SZIP_INFO])
 
 
 dnl ----------------------------------------------------------------------
@@ -594,6 +597,14 @@ if test $ac_cv_sizeof_intp -ge 8; then
   esac
 fi
 
+dnl ----------------------------------------------------------------------
+dnl Set some variables for general configuration information to be saved
+dnl and installed with the libraries.
+dnl
+ 
+dnl HDF4 version from the first line of the README.txt file.
+H4_VERSION="`cut -d' ' -f3 $srcdir/README.txt | head -1`"
+AC_SUBST([H4_VERSION])
 
 dnl Configuration date
 AC_SUBST([CONFIG_DATE]) CONFIG_DATE="`date`"
@@ -825,125 +836,6 @@ if test "X$BUILD_FORTRAN" = "Xyes"; then
   chmod 755 hdf/util/h4fc
 fi
 
-dnl ----------------------------------------------------------------------
-dnl Print out a summary of what we are going to build.
-dnl
-if test -z "$ECHO_N" -o -z "$ECHO_C"; then
-  if (echo "testing\c"; echo 1,2,3) | grep c >/dev/null; then
-    if (echo -n testing; echo 1,2,3) | sed s/-n/xn/ | grep xn >/dev/null; then
-      ECHO_N=''
-      ECHO_C='
-'
-    else
-      ECHO_N=-n
-      ECHO_C=''
-    fi
-  else
-    ECHO_N=''
-    ECHO_C='\c'
-  fi
-fi
+dnl show the configure settings
+cat libhdf4.settings
 
-PRINT_PLAIN() {
-  echo $ECHO_N "$1$ECHO_C"
-  echo $ECHO_N "$1$ECHO_C" 1>>libhdf4.settings
-}
-
-PRINT_N() {
-  echo $ECHO_N "$1:  $ECHO_C"
-  echo $ECHO_N "$1:  $ECHO_C" 1>>libhdf4.settings
-}
-
-PRINT() {
-  echo "$1"
-  echo "$1" 1>>libhdf4.settings
-}
-
-dnl ----------------------------------------------------------------------
-dnl Print "Yes" if all arguments are "yes", otherwise "No"
-dnl
-IF_YES_NO() {
-  if test $# -lt 1; then
-    PRINT "No"
-    return
-  else
-    while test $# -gt 0; do
-      if test "$1" != "yes"; then
-        PRINT "No"
-        return
-      fi
-      shift
-    done
-  fi
-  PRINT "Yes"
-}
-
-IF_ENABLED_DISABLED() {
-  if test "$1" = "yes"; then
-    PRINT "Enabled"
-  else
-    PRINT "Disabled"
-  fi
-}
-
-PRINT ""
-PRINT "                       Configure Summary"
-PRINT "                       ================="
-PRINT ""
-PRINT "Compiling Options:"
-PRINT "------------------"
-
-PRINT_N "               Compilation Mode"
-case "X-$enable_production" in
-  X-yes)        PRINT "Production" ;;
-  X-no)         PRINT "Development" ;;
-  X-profile)    PRINT "Profile" ;;
-  X-)           PRINT "Default" ;;
-  *)            PRINT "$enable_production" ;;
-esac
-
-PRINT_N "                     C Compiler"
-PRINT "$CC"
-
-PRINT_N "                         CFLAGS"
-PRINT "$CFLAGS"
-
-PRINT_N "                       CPPFLAGS"
-PRINT "$CPPFLAGS"
-
-PRINT_N "                        LDFLAGS"
-PRINT "$LDFLAGS"
-
-PRINT_N "               Shared Libraries"
-PRINT "$enable_shared"
-
-PRINT_N "               Static Libraries"
-PRINT "$enable_static"
-
-PRINT ""
-PRINT "Languages:"
-PRINT "----------"
-
-PRINT_N "                        Fortran"
-IF_YES_NO "$BUILD_FORTRAN"
-if test X$BUILD_FORTRAN = Xyes; then
-   PRINT_N "               Fortran Compiler"
-   PRINT "$F77"
-
-   PRINT_N "                         FFLAGS"
-   PRINT "$FFLAGS"
-fi
-
-PRINT ""
-PRINT "Features:"
-PRINT "---------"
-
-PRINT_N "               SZIP compression"
-PRINT "$SZIP_INFO"
-
-PRINT ""
-PRINT "HDF support for NetCDF-3 APIs:"
-PRINT "------------------------------"
-
-PRINT_N "                    HDF4-NetCDF"
-IF_YES_NO "$BUILD_NETCDF"
