@@ -8,7 +8,7 @@ Cygwin.  See detailed information in hdf4/INSTALL.
 Preconditions:
 --------------
 
-1. Installed Cygwin 1.5.17 or higher
+1. Installed Cygwin 1.7.1 or higher
 
    To install the Cygwin net release, go to http://www.cygwin.com and 
    click on "Install or update now!" icon. This will download a GUI 
@@ -31,27 +31,13 @@ Preconditions:
     
     The following compilers are supported by HDF4 and included in the Cygwin
     package system:
-       gcc (3.4.4), which includes:
-            gcc-core    : C compiler
-            gcc-g++     : C++ compiler
+       gcc (4.3.4), which includes:
+            gcc4-core    : C compiler
+            gcc4-g++     : C++ compiler
+            gcc4-fortran : fortran compiler
             
-    To build HDF4, even without Fortran libraries, you will need to install the
-    g77 compiler.  This is because of the way HDF4 configure script detects
-    environment dependencies.  The compiler is available in the 'gcc-g77'
-    package.
-            
-    2.1.1 Fortran Compilers Supported
-            
-    To compile HDF4 Fortran libraries, you will need to install g95, which is
-    not distributed in the Cygwin packaging system.  
-    
-    To install g95, please visit:
-        http://www.g95.org/downloads.shtml
-    and download from there.  There are many binary versions available, but we 
-    support and recommend the "Stable Version" (currently 0.91), 
-    "Self-extracting Cygwin x86" binary.
 
-   2.1.2 Using Compilers Not Supported
+   2.1.1 Using Compilers Not Supported
        
        By default the current configuration uses vendor compilers; to use
         another compiler run the following commands before running
