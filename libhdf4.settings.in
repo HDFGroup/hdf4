@@ -14,6 +14,7 @@ General Information:
 Compiling Options:
 ------------------
                Compilation Mode: @CONFIG_MODE@
+                     C compiler: @CC@
                          CFLAGS: @CFLAGS@
                        CPPFLAGS: @CPPFLAGS@
                Shared Libraries: @enable_shared@
@@ -27,7 +28,7 @@ Languages:
 ----------
                         Fortran: @BUILD_FORTRAN@
 @HDF_BUILD_FORTRAN_TRUE@               Fortran Compiler: @F77@
-@HDF_BUILD_FORTRAN_TRUE@                  Fortran Flags: @FFLAGS@
+@HDF_BUILD_FORTRAN_TRUE@                         FFLAGS: @FFLAGS@
 
 Features:
 ---------
