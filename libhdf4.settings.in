@@ -8,13 +8,14 @@ General Information:
 		  Configured by: @CONFIG_USER@
 		 Configure mode: @CONFIG_MODE@
 		    Host system: @host_cpu@-@host_vendor@-@host_os@
+              Uname information: @UNAME_INFO@
 		      Libraries: @STATIC_SHARED@
 	     Installation point: @prefix@
 
 Compiling Options:
 ------------------
                Compilation Mode: @CONFIG_MODE@
-                     C compiler: @CC@
+                     C compiler: @CC_VERSION@
                          CFLAGS: @CFLAGS@
                        CPPFLAGS: @CPPFLAGS@
                Shared Libraries: @enable_shared@
@@ -27,7 +28,7 @@ Compiling Options:
 Languages:
 ----------
                         Fortran: @BUILD_FORTRAN@
-@HDF_BUILD_FORTRAN_TRUE@               Fortran Compiler: @F77@
+@HDF_BUILD_FORTRAN_TRUE@               Fortran Compiler: @F77_VERSION@
 @HDF_BUILD_FORTRAN_TRUE@                         FFLAGS: @FFLAGS@
 
 Features:

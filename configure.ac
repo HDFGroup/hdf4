@@ -131,6 +131,55 @@ if test "X$host_config" != "Xnone"; then
   . $host_config
 fi
 
+dnl Compiler with version information. This consists of the full path
+dnl name of the compiler and the reported version number.
+dnl Strip anything that looks like a flag off of $CC
+CC_NOFLAGS=`echo $CC | sed 's/ -.*//'`
+
+if `echo $CC_NOFLAGS | grep ^/ >/dev/null 2>&1`; then
+  CC_VERSION="$CC"
+else
+  CC_VERSION="$CC";
+  for x in `echo $PATH | sed -e 's/:/ /g'`; do
+    if test -x $x/$CC_NOFLAGS; then
+      CC_VERSION="$x/$CC"
+      break
+    fi
+  done
+fi
+dnl This part doesn't work yet since HDF4 config files do not contain
+dnl information for cc_vendor and cc_version as HDF5 similar files do.
+dnl Needs to be fixed EIP 2010-01-21
+if test -n "$cc_vendor" && test -n "$cc_version"; then
+  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"
+fi
+AC_SUBST([CC_VERSION])
+
+
+dnl Fortran compiler with version information. This consists of the full path
+dnl name of the compiler and the reported version number.
+dnl Strip anything that looks like a flag off of $F77
+F77_NOFLAGS=`echo $F77 | sed 's/ -.*//'`
+
+if `echo $F77_NOFLAGS | grep ^/ >/dev/null 2>&1`; then
+  F77_VERSION="$F77"
+else
+  F77_VERSION="$F77";
+  for x in `echo $PATH | sed -e 's/:/ /g'`; do
+    if test -x $x/$F77_NOFLAGS; then
+      F77_VERSION="$x/$F77"
+      break
+    fi
+  done
+fi
+dnl This part doesn't work yet since HDF4 config files do not contain
+dnl information for fortran_vendor and fortran_version. 
+dnl Needs to be fixed EIP 2010-01-21
+dnl if test -n "$fortran_vendor" && test -n "$fortran_version"; then
+dnl   F77_VERSION="$F77_VERSION ($fortran_vendor-$fortran_version)"
+dnl fi
+AC_SUBST([F77_VERSION])
+
 dnl ======================================================================
 dnl Checks for NetCDF-3 support 
 dnl ======================================================================
@@ -227,6 +276,7 @@ AC_SUBST(STATIC_SHARED)
 AC_SUBST([SHARED_EXTENSION])
 AC_SUBST(enable_shared)
 AC_SUBST(enable_static)
+AC_SUBST(UNAME_INFO) UNAME_INFO=`uname -a`
 
 
 dnl ======================================================================
