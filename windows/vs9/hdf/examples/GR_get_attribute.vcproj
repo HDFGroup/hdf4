@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\..\..\..\..\hdf\examples\Release"
+			IntermediateDirectory=".\..\..\..\..\hdf\examples\Release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -41,7 +41,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/GR_get_attribute.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Release/GR_get_attribute.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -54,10 +54,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/GR_get_attribute.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Release/GR_get_attribute.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Release\GR_get_attribute/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Release\GR_get_attribute/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Release\GR_get_attribute/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -80,7 +80,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/GR_get_attribute.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Release/GR_get_attribute.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -133,7 +133,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/GR_get_attribute.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Release/GR_get_attribute.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -146,10 +146,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/GR_get_attribute.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Release/GR_get_attribute.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Release\GR_get_attribute/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Release\GR_get_attribute/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Release\GR_get_attribute/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -172,7 +172,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/GR_get_attribute.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Release/GR_get_attribute.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -202,8 +202,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\..\..\..\..\hdf\examples\Debug"
+			IntermediateDirectory=".\..\..\..\..\hdf\examples\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -224,7 +224,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/GR_get_attribute.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Debug/GR_get_attribute.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -235,10 +235,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/GR_get_attribute.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Debug/GR_get_attribute.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Debug\GR_get_attribute/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Debug\GR_get_attribute/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Debug\GR_get_attribute/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -264,7 +264,7 @@
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/GR_get_attribute.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Debug/GR_get_attribute.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -317,7 +317,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/GR_get_attribute.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Debug/GR_get_attribute.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -328,10 +328,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/GR_get_attribute.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Debug/GR_get_attribute.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Debug\GR_get_attribute/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Debug\GR_get_attribute/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Debug\GR_get_attribute/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -357,7 +357,7 @@
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/GR_get_attribute.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Debug/GR_get_attribute.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"

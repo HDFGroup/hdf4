@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="."
+			IntermediateDirectory="."
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/allcexamples.tlb"
+				TypeLibraryName="./allcexamples.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -52,10 +52,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/allcexamples.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./allcexamples.pch"
+				AssemblerListingLocation="."
+				ObjectFile="."
+				ProgramDataBaseFileName="."
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -72,10 +72,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Release/allcexamples.exe"
+				OutputFile="./allcexamples.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\Release/allcexamples.pdb"
+				ProgramDatabaseFile="./allcexamples.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -106,8 +106,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="."
+			IntermediateDirectory="."
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/allcexamples.tlb"
+				TypeLibraryName="./allcexamples.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -138,10 +138,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/allcexamples.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./allcexamples.pch"
+				AssemblerListingLocation="."
+				ObjectFile="."
+				ProgramDataBaseFileName="."
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -159,11 +159,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Debug/allcexamples.exe"
+				OutputFile="./allcexamples.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/allcexamples.pdb"
+				ProgramDatabaseFile="./allcexamples.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -217,7 +217,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/allcexamples.tlb"
+				TypeLibraryName="./allcexamples.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -229,10 +229,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/allcexamples.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile="./allcexamples.pch"
+				AssemblerListingLocation="."
+				ObjectFile="."
+				ProgramDataBaseFileName="."
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 			/>
@@ -249,10 +249,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Release/allcexamples.exe"
+				OutputFile="./allcexamples.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				ProgramDatabaseFile=".\Release/allcexamples.pdb"
+				ProgramDatabaseFile="./allcexamples.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -306,7 +306,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/allcexamples.tlb"
+				TypeLibraryName="./allcexamples.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -316,10 +316,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/allcexamples.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile="./allcexamples.pch"
+				AssemblerListingLocation="."
+				ObjectFile="."
+				ProgramDataBaseFileName="."
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -337,11 +337,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile=".\Debug/allcexamples.exe"
+				OutputFile="./allcexamples.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/allcexamples.pdb"
+				ProgramDatabaseFile="./allcexamples.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>

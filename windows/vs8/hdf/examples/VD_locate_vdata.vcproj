@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\..\..\..\..\hdf\examples\Release"
+			IntermediateDirectory=".\..\..\..\..\hdf\examples\Release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/VD_locate_vdata.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Release/VD_locate_vdata.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,10 +53,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/VD_locate_vdata.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Release/VD_locate_vdata.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Release\VD_locate_vdata/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Release\VD_locate_vdata/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Release\VD_locate_vdata/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -75,11 +75,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/VD_locate_vdata.exe"
+				OutputFile="..\..\..\..\hdf\examples\Release/VD_locate_vdata.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/VD_locate_vdata.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Release/VD_locate_vdata.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -133,7 +133,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/VD_locate_vdata.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Release/VD_locate_vdata.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -146,10 +146,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/VD_locate_vdata.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Release/VD_locate_vdata.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Release\VD_locate_vdata/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Release\VD_locate_vdata/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Release\VD_locate_vdata/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -168,11 +168,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/VD_locate_vdata.exe"
+				OutputFile="..\..\..\..\hdf\examples\Release/VD_locate_vdata.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/VD_locate_vdata.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Release/VD_locate_vdata.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -203,8 +203,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\..\..\..\..\hdf\examples\Debug"
+			IntermediateDirectory=".\..\..\..\..\hdf\examples\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/VD_locate_vdata.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Debug/VD_locate_vdata.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -236,10 +236,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/VD_locate_vdata.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Debug/VD_locate_vdata.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Debug\VD_locate_vdata/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Debug\VD_locate_vdata/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Debug\VD_locate_vdata/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -259,13 +259,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/VD_locate_vdata.exe"
+				OutputFile="..\..\..\..\hdf\examples\Debug/VD_locate_vdata.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/VD_locate_vdata.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Debug/VD_locate_vdata.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -319,7 +319,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/VD_locate_vdata.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Debug/VD_locate_vdata.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -330,10 +330,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/VD_locate_vdata.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Debug/VD_locate_vdata.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Debug\VD_locate_vdata/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Debug\VD_locate_vdata/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Debug\VD_locate_vdata/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -353,13 +353,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/VD_locate_vdata.exe"
+				OutputFile="..\..\..\..\hdf\examples\Debug/VD_locate_vdata.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/VD_locate_vdata.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Debug/VD_locate_vdata.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>

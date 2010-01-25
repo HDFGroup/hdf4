@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\..\..\..\..\mfhdf\examples\Release"
+			IntermediateDirectory=".\..\..\..\..\mfhdf\examples\Release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -41,7 +41,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/SD_alter_sds_values.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -54,10 +54,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/SD_alter_sds_values.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\examples\Release\SD_alter_sds_values/"
+				ObjectFile=".\..\..\..\..\mfhdf\examples\Release\SD_alter_sds_values/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\examples\Release\SD_alter_sds_values/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -76,11 +76,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/SD_alter_sds_values.exe"
+				OutputFile="..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/SD_alter_sds_values.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -133,7 +133,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/SD_alter_sds_values.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -146,10 +146,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/SD_alter_sds_values.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\examples\Release\SD_alter_sds_values/"
+				ObjectFile=".\..\..\..\..\mfhdf\examples\Release\SD_alter_sds_values/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\examples\Release\SD_alter_sds_values/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -168,11 +168,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/SD_alter_sds_values.exe"
+				OutputFile="..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/SD_alter_sds_values.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\examples\Release/SD_alter_sds_values.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -202,8 +202,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\..\..\..\..\mfhdf\examples\Debug"
+			IntermediateDirectory=".\..\..\..\..\mfhdf\examples\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -224,7 +224,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/SD_alter_sds_values.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -235,10 +235,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/SD_alter_sds_values.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\examples\Debug\SD_alter_sds_values/"
+				ObjectFile=".\..\..\..\..\mfhdf\examples\Debug\SD_alter_sds_values/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\examples\Debug\SD_alter_sds_values/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -258,13 +258,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/SD_alter_sds_values.exe"
+				OutputFile="..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/SD_alter_sds_values.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -317,7 +317,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/SD_alter_sds_values.tlb"
+				TypeLibraryName=".\..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -328,10 +328,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/SD_alter_sds_values.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.pch"
+				AssemblerListingLocation=".\..\..\..\..\mfhdf\examples\Debug\SD_alter_sds_values/"
+				ObjectFile=".\..\..\..\..\mfhdf\examples\Debug\SD_alter_sds_values/"
+				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\examples\Debug\SD_alter_sds_values/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -351,13 +351,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/SD_alter_sds_values.exe"
+				OutputFile="..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/SD_alter_sds_values.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\mfhdf\examples\Debug/SD_alter_sds_values.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"

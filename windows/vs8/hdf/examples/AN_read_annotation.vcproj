@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\..\..\..\..\hdf\examples\Debug"
+			IntermediateDirectory=".\..\..\..\..\hdf\examples\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/AN_read_annotation.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Debug/AN_read_annotation.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -51,10 +51,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/AN_read_annotation.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Debug/AN_read_annotation.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Debug\AN_read_annotation/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Debug\AN_read_annotation/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Debug\AN_read_annotation/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -74,13 +74,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/AN_read_annotation.exe"
+				OutputFile="..\..\..\..\hdf\examples\Debug/AN_read_annotation.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/AN_read_annotation.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Debug/AN_read_annotation.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -111,8 +111,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory=".\..\..\..\..\hdf\examples\Release"
+			IntermediateDirectory=".\..\..\..\..\hdf\examples\Release"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -133,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/AN_read_annotation.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Release/AN_read_annotation.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -146,10 +146,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/AN_read_annotation.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Release/AN_read_annotation.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Release\AN_read_annotation/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Release\AN_read_annotation/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Release\AN_read_annotation/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -168,11 +168,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/AN_read_annotation.exe"
+				OutputFile="..\..\..\..\hdf\examples\Release/AN_read_annotation.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/AN_read_annotation.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Release/AN_read_annotation.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -226,7 +226,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/AN_read_annotation.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Debug/AN_read_annotation.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -237,10 +237,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Debug/AN_read_annotation.pch"
-				AssemblerListingLocation=".\Debug/"
-				ObjectFile=".\Debug/"
-				ProgramDataBaseFileName=".\Debug/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Debug/AN_read_annotation.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Debug\AN_read_annotation/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Debug\AN_read_annotation/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Debug\AN_read_annotation/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -260,13 +260,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Debug/AN_read_annotation.exe"
+				OutputFile="..\..\..\..\hdf\examples\Debug/AN_read_annotation.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Debug,..\..\..\..\mfhdf\libsrc\Debug,..\..\..\..\mfhdf\xdr\Debug"
 				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/AN_read_annotation.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Debug/AN_read_annotation.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
@@ -320,7 +320,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/AN_read_annotation.tlb"
+				TypeLibraryName=".\..\..\..\..\hdf\examples\Release/AN_read_annotation.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -333,10 +333,10 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/AN_read_annotation.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\..\..\..\..\hdf\examples\Release/AN_read_annotation.pch"
+				AssemblerListingLocation=".\..\..\..\..\hdf\examples\Release\AN_read_annotation/"
+				ObjectFile=".\..\..\..\..\hdf\examples\Release\AN_read_annotation/"
+				ProgramDataBaseFileName=".\..\..\..\..\hdf\examples\Release\AN_read_annotation/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -355,11 +355,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-				OutputFile="..\Release/AN_read_annotation.exe"
+				OutputFile="..\..\..\..\hdf\examples\Release/AN_read_annotation.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\..\hdf\src\Release,..\..\..\..\mfhdf\libsrc\Release,..\..\..\..\mfhdf\xdr\Release"
-				ProgramDatabaseFile=".\Release/AN_read_annotation.pdb"
+				ProgramDatabaseFile=".\..\..\..\..\hdf\examples\Release/AN_read_annotation.pdb"
 				SubSystem="1"
 				TargetMachine="17"
 			/>
