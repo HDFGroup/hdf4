@@ -79,8 +79,8 @@ New features and changes
 
     Utilities
     ========= 
-    - Added -V flag to hdiff, hrepack, himport, ncdump and ncgen; when
-      specified, tool prints library version string and exits.
+    - Added -V flag to hdiff, hrepack, hdfimport, ncdump and ncgen; 
+      when specified, tool prints library version string and exits.
           (EIP - 2010/01/28) 
  
     Daily Test and Release
