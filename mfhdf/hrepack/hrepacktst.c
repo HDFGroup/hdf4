@@ -172,7 +172,8 @@ int vg_getngrpdep( HFILEID f)
     int32       vsno = 0;
     int32       vstag;
     int32       i, nvg, n, ne, nlnk;
-    char        vgname[VGNAMELENMAX];
+    uint16      name_len;
+    char        *vgname;
 
     Vstart(f);
     
@@ -185,6 +186,14 @@ int vg_getngrpdep( HFILEID f)
         {
             printf("cannot open vg id=%d\n", (int) vgid);
         }
+        /* Get vgroup's name */
+        if (Vgetnamelen(vg, &name_len)==FAIL)
+        {
+            printf("Error: Could not get name length for group with ref <%ld>\n", vgid);
+            continue;
+        }
+        vgname = (char *) HDmalloc(sizeof(char) * (name_len+1));
+
         Vinquire(vg, &n, vgname);
         vgotag = VQuerytag(vg);
         vgoref = VQueryref(vg);

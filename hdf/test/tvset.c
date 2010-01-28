@@ -38,6 +38,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define FNAME2   "tvset2.hdf"
 #define EXTFNM	 "tvsetext.hdf"
 #define EMPTYNM  "tvsempty.hdf"
+#define LONGNAMES "tlongnames.hdf"
 #define BLKINFO  "tvsblkinfo.hdf"
 
 #define FIELD1       "FIELD_name_HERE"
@@ -49,6 +50,9 @@ static char RcsId[] = "@(#)$Revision$";
 #define FL "FLOATS"
 #define MX "STATION_NAME,VALUES,FLOATS"
 #define EMPTY_VDATA "Empty"
+#define VGROUP1 "VGROUP1"
+#define VG_LONGNAME "Vgroup with more than 64 characters in length, 74 characters to be exact!"
+#define VG_LONGCLASS "Very long class name to classify all Vgroups with more than 64 characters in name"
 #define APPENDABLE_VDATA "Appendable"
 
 static int32 write_vset_stuff(void);
@@ -57,6 +61,7 @@ static void test_vsdelete(void);
 static void test_vdelete(void);
 static void test_vdeletetagref(void);
 static void test_emptyvdata(void);
+static void test_vglongnames(void);
 
 /* write some stuff to the file */
 static int32
@@ -570,7 +575,8 @@ read_vset_stuff(void)
     char        gbuf[2000];     /* generic buffer */
     int32       list[50];
     int32       tags[100], refs[100], tag, ref;
-    char        name[512], class[512], fields[512];
+    char        vsname[512], vsclass[512], fields[512];
+    char       *vgname, *vgclass;
     char       *p;
     int32       fid;
     int32       vg1;
@@ -579,6 +585,7 @@ read_vset_stuff(void)
     float32     fl_expected;
     int32       in_expected;
     char8       c_expected;
+    uint16	name_len;
 
     fid = Hopen(FNAME0, DFACC_RDONLY, 0);
     if (fid == FAIL)
@@ -615,22 +622,34 @@ if(status==FAIL)
           printf(">>> Was not able to attach (r) Vgroup %d\n", (int) list[0]);
       }
 
-    status = Vgetname(vg1, name);
+    status = Vgetnamelen(vg1, &name_len);
+    CHECK(status,FAIL,"Vgetnamelen:vg1");
+
+    vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK(vgname, "vgname", "HDmalloc");
+    
+    status = Vgetname(vg1, vgname);
     CHECK(status,FAIL,"Vgetname:vg1");
 
-    status = Vgetclass(vg1, class);
+    status = Vgetclassnamelen(vg1, &name_len);
+    CHECK(status,FAIL,"Vgetclassnamelen:vg1");
+
+    vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK(vgclass, "vgclass", "HDmalloc");
+    
+    status = Vgetclass(vg1, vgclass);
     CHECK(status,FAIL,"Vgetclass:vg1");
 
-    if (HDstrcmp(name, "Second Vgroup"))
+    if (HDstrcmp(vgname, "Second Vgroup"))
       {
           num_errs++;
-          printf(">>> Got bogus Vgroup name : %s\n", name);
+          printf(">>> Got bogus Vgroup name : %s\n", vgname);
       }
 
-    if (HDstrcmp(class, "Test object"))
+    if (HDstrcmp(vgclass, "Test object"))
       {
           num_errs++;
-          printf(">>> Got bogus Vgroup class : %s\n", class);
+          printf(">>> Got bogus Vgroup class : %s\n", vgclass);
       }
 
     num = 3;
@@ -700,35 +719,35 @@ if(status==FAIL)
     vs1 = VSattach(fid, ref, "r");
     CHECK(vs1,FAIL,"VSattach:vs1");
 
-    status = VSgetname(vs1, name);
+    status = VSgetname(vs1, vsname);
     CHECK(status,FAIL,"VSgetname:vs1");
 
-    status = VSgetclass(vs1, class);
+    status = VSgetclass(vs1, vsclass);
     CHECK(status,FAIL,"VSgetclass:vs1");
 
-    if (HDstrcmp(name, "Float Vdata"))
+    if (HDstrcmp(vsname, "Float Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
       }
 
-    if (HDstrcmp(class, "Test object"))
+    if (HDstrcmp(vsclass, "Test object"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata class : %s\n", class);
+          printf(">>> Got bogus Vdata class : %s\n", vsclass);
       }
 
-    status = VSinquire(vs1, &count, &intr, fields, &sz, name);
+    status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
     if (status == FAIL)
       {
           num_errs++;
           printf(">>> VSinquire failed on float Vdata\n");
       }
 
-    if (HDstrcmp(name, "Float Vdata"))
+    if (HDstrcmp(vsname, "Float Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Float Vdata name (VSinquire) : %s\n", name);
+          printf(">>> Got bogus Float Vdata name (VSinquire) : %s\n", vsname);
       }
 
     if (count != 100)
@@ -792,35 +811,35 @@ if(status==FAIL)
     vs1 = VSattach(fid, ref, "r");
     CHECK(vs1,FAIL,"VSattach:vs1");
 
-    status = VSgetname(vs1, name);
+    status = VSgetname(vs1, vsname);
     CHECK(status,FAIL,"VSgetname:vs1");
 
-    status = VSgetclass(vs1, class);
+    status = VSgetclass(vs1, vsclass);
     CHECK(status,FAIL,"VSgetclass:vs1");
 
-    if (HDstrcmp(name, "Integer Vdata"))
+    if (HDstrcmp(vsname, "Integer Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
       }
 
-    if (HDstrcmp(class, "Test object"))
+    if (HDstrcmp(vsclass, "Test object"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata class : %s\n", class);
+          printf(">>> Got bogus Vdata class : %s\n", vsclass);
       }
 
-    status = VSinquire(vs1, &count, &intr, fields, &sz, name);
+    status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
     if (status == FAIL)
       {
           num_errs++;
           printf(">>> VSinquire failed on float Vdata\n");
       }
 
-    if (HDstrcmp(name, "Integer Vdata"))
+    if (HDstrcmp(vsname, "Integer Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Integer Vdata name (VSinquire) : %s\n", name);
+          printf(">>> Got bogus Integer Vdata name (VSinquire) : %s\n", vsname);
       }
 
     if (count != 100)
@@ -930,35 +949,35 @@ if(status==FAIL)
     vs1 = VSattach(fid, ref, "r");
     CHECK(vs1,FAIL,"VSattach:vs1");
 
-    status = VSgetname(vs1, name);
+    status = VSgetname(vs1, vsname);
     CHECK(status,FAIL,"VSgetname:vs1");
 
-    status = VSgetclass(vs1, class);
+    status = VSgetclass(vs1, vsclass);
     CHECK(status,FAIL,"VSgetclass:vs1");
 
-    if (HDstrcmp(name, "Mixed Vdata"))
+    if (HDstrcmp(vsname, "Mixed Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
       }
 
-    if (HDstrcmp(class, "No class specified"))
+    if (HDstrcmp(vsclass, "No class specified"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata class : %s\n", class);
+          printf(">>> Got bogus Vdata class : %s\n", vsclass);
       }
 
-    status = VSinquire(vs1, &count, &intr, fields, &sz, name);
+    status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
     if (status == FAIL)
       {
           num_errs++;
           printf(">>> VSinquire failed on float Vdata\n");
       }
 
-    if (HDstrcmp(name, "Mixed Vdata"))
+    if (HDstrcmp(vsname, "Mixed Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Mixed Vdata name (VSinquire) : %s\n", name);
+          printf(">>> Got bogus Mixed Vdata name (VSinquire) : %s\n", vsname);
       }
 
     if (count != 100)
@@ -1029,25 +1048,25 @@ if(status==FAIL)
     vs1 = VSattach(fid, ref, "r");
     CHECK(vs1,FAIL,"VSattach:vs1");
 
-    status = VSgetname(vs1, name);
+    status = VSgetname(vs1, vsname);
     CHECK(status,FAIL,"VSgetname:vs1");
 
-    status = VSgetclass(vs1, class);
+    status = VSgetclass(vs1, vsclass);
     CHECK(status,FAIL,"VSgetclass:vs1");
 
-    if (HDstrcmp(name, "Multi-Order Vdata"))
+    if (HDstrcmp(vsname, "Multi-Order Vdata"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", name);
+          printf(">>> Got bogus Vdata name (VSgetname) : %s\n", vsname);
       }
 
-    if (HDstrcmp(class, "No class specified"))
+    if (HDstrcmp(vsclass, "No class specified"))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata class : %s\n", class);
+          printf(">>> Got bogus Vdata class : %s\n", vsclass);
       }
 
-    status = VSinquire(vs1, &count, &intr, fields, &sz, name);
+    status = VSinquire(vs1, &count, &intr, fields, &sz, vsname);
     if (status == FAIL)
       {
           num_errs++;
@@ -1681,10 +1700,10 @@ test_emptyvdata(void)
     int32 vs1;          /* Vdata ID */
     int32 ref;          /* Vdata ref */
 #ifndef macintosh
-    char  name[VSNAMELENMAX], fields[FIELDNAMELENMAX*VSFIELDMAX];
+    char  vsname[VSNAMELENMAX], fields[FIELDNAMELENMAX*VSFIELDMAX];
 #else
 	// fields is too big - Mac has a 32K local data limit.
-    char  name[VSNAMELENMAX], *fields;
+    char  vsname[VSNAMELENMAX], *fields;
     
     fields = HDmalloc(FIELDNAMELENMAX*VSFIELDMAX*sizeof(char));
     if (fields == NULL)		return;
@@ -1731,13 +1750,13 @@ test_emptyvdata(void)
     vs1 = VSattach(fid, ref, "r");
     CHECK_VOID(vs1,FAIL,"VSattach");
 
-    status=VSgetname(vs1, name);
+    status=VSgetname(vs1, vsname);
     CHECK_VOID(status,FAIL,"VSgetname");
 
-    if (HDstrcmp(name, EMPTY_VDATA))
+    if (HDstrcmp(vsname, EMPTY_VDATA))
       {
           num_errs++;
-          printf(">>> Got bogus Vdata name : %s\n", name);
+          printf(">>> Got bogus Vdata name : %s\n", vsname);
       }
 
     status=VFnfields(vs1);
@@ -1795,7 +1814,7 @@ test_emptyvdata(void)
     if (status == FAIL)
       {
           num_errs++;
-          printf(">>> Vsetfields failed for %s\n", name);
+          printf(">>> Vsetfields failed for %s\n", vsname);
       }
 
     status = VSdetach(vs1);
@@ -1899,7 +1918,7 @@ static void
 test_blockinfo(void) 
 {
    intn	 status_n;	/* returned status for functions returning an intn  */
-   int32 status_32;	/* returned status for functions returning an int32 */
+   int32 status;	/* returned status for functions returning an int32 */
    int16 rec_num;	/* current record number */
    int32 file_id, vdata1_id, vdata2_id,
 	 vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
@@ -1921,10 +1940,10 @@ test_blockinfo(void)
     CHECK_VOID(vdata1_id, FAIL, "VSattach");
 
     /* Set name and class name of the vdata. */
-    status_32 = VSsetname (vdata1_id, APPENDABLE_VD);
-    CHECK_VOID(status_32, FAIL, "VSsetname");
-    status_32 = VSsetclass (vdata1_id, CLASS_NAME);
-    CHECK_VOID(status_32, FAIL, "VSsetclass");
+    status = VSsetname (vdata1_id, APPENDABLE_VD);
+    CHECK_VOID(status, FAIL, "VSsetname");
+    status = VSsetclass (vdata1_id, CLASS_NAME);
+    CHECK_VOID(status, FAIL, "VSsetclass");
 
     /* Introduce each field's name, data type, and order.  This is the first
       part in defining a field.  */
@@ -1983,10 +2002,10 @@ test_blockinfo(void)
     CHECK_VOID(vdata2_id, FAIL, "VSattach");
 
     /* Set name and class name of the vdata. */
-    status_32 = VSsetname (vdata2_id, ANOTHER_VD);
-    CHECK_VOID(status_32, FAIL, "VSsetname");
-    status_32 = VSsetclass (vdata2_id, CLASS_NAME);
-    CHECK_VOID(status_32, FAIL, "VSsetclass");
+    status = VSsetname (vdata2_id, ANOTHER_VD);
+    CHECK_VOID(status, FAIL, "VSsetname");
+    status = VSsetclass (vdata2_id, CLASS_NAME);
+    CHECK_VOID(status, FAIL, "VSsetclass");
 
     /* Define the vdata's field. */
     status_n = VSfdefine (vdata2_id, ANOTHER_FD, DFNT_INT32, ORDER_2);
@@ -2035,18 +2054,168 @@ test_blockinfo(void)
 
     /* Terminate access to the vdatas and to the VS interface, then 
        close the HDF file. */
-    status_32 = VSdetach (vdata1_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach");
+    status = VSdetach (vdata1_id);
+    CHECK_VOID(status, FAIL, "Vdetach");
 
-    status_32 = VSdetach (vdata2_id);
-    CHECK_VOID(status_32, FAIL, "Vdetach");
+    status = VSdetach (vdata2_id);
+    CHECK_VOID(status, FAIL, "Vdetach");
 
     status_n = Vend (file_id);
     CHECK_VOID(status_n, FAIL, "Vend");
 
-    status_32 = Hclose (file_id);
-    CHECK_VOID(status_32, FAIL, "Hclose");
+    status = Hclose (file_id);
+    CHECK_VOID(status, FAIL, "Hclose");
 } /* test_blockinfo() */
+
+static void
+test_vglongnames(void)
+{
+    int32 status;       /* Status values from routines */
+    int32 fid;          /* File ID */
+    int32 vg1;          /* Vdata ID */
+    int32 ref;          /* Vdata ref */
+    uint16 name_len;	/* Length of a vgroup's name or class name */
+    char *vgname, *vgclass;
+
+    /* Open the HDF file. */
+    fid = Hopen(LONGNAMES, DFACC_CREATE, 0);
+    CHECK_VOID(fid,FAIL,"Hopen");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(fid);
+    CHECK_VOID(status,FAIL,"Vstart");
+
+    /* Create a new vgroup. */
+    vg1 = Vattach(fid, -1, "w");
+    CHECK_VOID(vg1,FAIL,"VSattach");
+
+    status=Vsetname(vg1, VG_LONGNAME);
+    CHECK_VOID(status,FAIL,"VSsetname");
+
+    status=Vsetclass(vg1, VG_LONGCLASS);
+    CHECK_VOID(status,FAIL,"VSsetname");
+
+    status = Vdetach(vg1);
+    CHECK_VOID(status,FAIL,"Vdetach");
+    
+    /* Create another vgroup of the same class. */
+    vg1 = Vattach(fid, -1, "w");
+    CHECK_VOID(vg1,FAIL,"VSattach");
+
+    status=Vsetname(vg1, VGROUP1);
+    CHECK_VOID(status,FAIL,"VSsetname");
+
+    status=Vsetclass(vg1, VG_LONGCLASS);
+    CHECK_VOID(status,FAIL,"VSsetname");
+
+    status = Vdetach(vg1);
+    CHECK_VOID(status,FAIL,"Vdetach");
+    
+    status = Vend(fid);
+    CHECK_VOID(status,FAIL,"Vend");
+
+    status = Hclose(fid);
+    CHECK_VOID(status,FAIL,"Hclose");
+
+    /* Re-open the HDF file. */
+    fid = Hopen(LONGNAMES, DFACC_RDWR, 0);
+    CHECK_VOID(fid,FAIL,"Hopen");
+
+    /* Initialize HDF for subsequent vgroup/vdata access. */
+    status = Vstart(fid);
+    CHECK_VOID(status,FAIL,"Vstart");
+
+    /* Find the long name vgroup. */
+    ref=Vfind(fid,VG_LONGNAME);
+    CHECK_VOID(ref,FAIL,"VSfind");
+
+    vg1 = Vattach(fid, ref, "r");
+    CHECK_VOID(vg1,FAIL,"VSattach");
+
+    /* get the vgroup's name */
+    status = Vgetnamelen(vg1, &name_len);
+    CHECK_VOID(status,FAIL,"Vgetnamelen");
+
+    vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(vgname, "vgname", "test_vglongnames" );
+
+    status=Vgetname(vg1, vgname);
+    CHECK_VOID(status,FAIL,"VSgetname");
+
+    if (HDstrcmp(vgname, VG_LONGNAME))
+      {
+          num_errs++;
+          printf(">>> Got bogus Vgroup name : %s\n", vgname);
+      }
+
+    /* get the vgroup's class */
+    status = Vgetclassnamelen(vg1, &name_len);
+    CHECK_VOID(status,FAIL,"Vgetnamelen");
+
+    vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames" );
+
+    status=Vgetclass(vg1, vgclass);
+    CHECK_VOID(status,FAIL,"VSgetclass");
+
+    if (HDstrcmp(vgclass, VG_LONGCLASS))
+      {
+          num_errs++;
+          printf(">>> Got bogus Vgroup class : %s\n", vgclass);
+      }
+
+    status = Vdetach(vg1);
+    CHECK_VOID(status,FAIL,"Vdetach");
+    
+    /* Find the vgroup VGROUP1. */
+    ref=Vfind(fid,VGROUP1);
+    CHECK_VOID(ref,FAIL,"VSfind");
+
+    vg1 = Vattach(fid, ref, "r");
+    CHECK_VOID(vg1,FAIL,"VSattach");
+
+    /* get the vgroup's name */
+    status = Vgetnamelen(vg1, &name_len);
+    CHECK_VOID(status,FAIL,"Vgetnamelen");
+
+    vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(vgname, "vgname", "test_vglongnames" );
+
+    status=Vgetname(vg1, vgname);
+    CHECK_VOID(status,FAIL,"VSgetname");
+
+    if (HDstrcmp(vgname, VGROUP1))
+      {
+          num_errs++;
+          printf(">>> Got bogus Vgroup name : %s\n", vgname);
+      }
+
+    /* get the vgroup's class */
+    status = Vgetclassnamelen(vg1, &name_len);
+    CHECK_VOID(status,FAIL,"Vgetnamelen");
+
+    vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(vgclass, "vgclass", "test_vglongnames" );
+
+    status=Vgetclass(vg1, vgclass);
+    CHECK_VOID(status,FAIL,"VSgetclass");
+
+    if (HDstrcmp(vgclass, VG_LONGCLASS))
+      {
+          num_errs++;
+          printf(">>> Got bogus Vgroup class : %s\n", vgclass);
+      }
+
+    status = Vdetach(vg1);
+    CHECK_VOID(status,FAIL,"Vdetach");
+    
+    status = Vend(fid);
+    CHECK_VOID(status,FAIL,"Vend");
+
+    status = Hclose(fid);
+    CHECK_VOID(status,FAIL,"Hclose");
+
+} /* test_vglongnames() */
 
 /* main test driver */
 void
@@ -2073,6 +2242,9 @@ test_vsets(void)
 
     /* test Vdatas with no fields defined */
     test_emptyvdata();
+
+    /* test Vgroups with name and class that have more than 64 characters */
+    test_vglongnames();
 
     /* test functionality about set/get linked-block information */
     test_blockinfo();

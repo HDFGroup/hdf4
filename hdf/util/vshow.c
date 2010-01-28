@@ -88,15 +88,16 @@ main(int ac, char **av)
     int32       i, t, nvg, n, ne, nv, interlace, vsize;
     int32      *lonevs;         /* array to store refs of all lone vdatas */
     int32       nlone;          /* total number of lone vdatas */
+    uint16	name_len;	/* length of vgroup's name or classname */
 
 #if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
     char        *fields = NULL;
 #else
     char        fields[VSFIELDMAX*FIELDNAMELENMAX];
 #endif
-    char        vgname[VGNAMELENMAX];
+    char        *vgname, *vgclass;
     char        vsname[VSNAMELENMAX];
-    char        vgclass[VGNAMELENMAX], vsclass[VSNAMELENMAX];
+    char        vsclass[VSNAMELENMAX];
     char *name;
     int32       fulldump = 0, full;
 
@@ -160,12 +161,33 @@ main(int ac, char **av)
             {
                 printf("cannot open vg id=%d\n", (int) vgid);
             }
+          /* get the length of the vgname to allocate enough space */
+          Vgetnamelen(vg, &name_len);
+          vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+	  if (vgname == NULL)
+	  {
+             printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len+1);
+             return(0);
+          }
           Vinquire(vg, &n, vgname);
-          vgotag = VQuerytag(vg);
-          vgoref = VQueryref(vg);
-          Vgetclass(vg, vgclass);
           if (HDstrlen(vgname) == 0)
               HDstrcat(vgname, "NoName");
+
+          vgotag = VQuerytag(vg);
+          vgoref = VQueryref(vg);
+
+          /* get the length of the vgname to allocate enough space */
+          Vgetclassnamelen(vg, &name_len);
+          vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+	  if (vgclass == NULL)
+	  {
+             printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len+1);
+             return(0);
+          }
+          Vgetclass(vg, vgclass);
+          if (HDstrlen(vgclass) == 0)
+              HDstrcat(vgclass, "NoClass");
+
           printf("\nvg:%d <%d/%d> (%s {%s}) has %d entries:\n",
            (int) nvg, (int) vgotag, (int) vgoref, vgname, vgclass, (int) n);
           dumpattr(vg, fulldump, 0);
@@ -214,6 +236,26 @@ main(int ac, char **av)
                             continue;
                         }
 
+                      /* get length of the vgclass to allocate enough space */
+                      Vgetclassnamelen(vgt, &name_len);
+                      vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+	              if (vgclass == NULL)
+	              {
+                         printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len+1);
+                         return(0);
+                      }
+                      Vgetclass(vg, vgclass);
+                      if (HDstrlen(vgclass) == 0)
+                          HDstrcat(vgclass, "NoClass");
+
+                      /* get length of the vgname to allocate enough space */
+                      Vgetnamelen(vgt, &name_len);
+                      vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+	              if (vgname == NULL)
+	              {
+                         printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", name_len+1);
+                         return(0);
+                      }
                       Vinquire(vgt, &ne, vgname);
                       if (HDstrlen(vgname) == 0)
                           HDstrcat(vgname, "NoName");

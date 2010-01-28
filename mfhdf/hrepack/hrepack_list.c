@@ -332,7 +332,7 @@ int list_vg(int32 infile_id,
     int32  tag_vg;
     int32  ref_vg;
     char   *vg_name;
-    char   vg_class[VGNAMELENMAX];
+    char   *vg_class;
     uint16 name_len;
     int32  i;
     
@@ -383,6 +383,8 @@ int list_vg(int32 infile_id,
         {
 
             int32 ref = ref_array[i];
+	    uint16 name_len;
+
            /*
             * attach to the current vgroup then get its
             * name and class. note: the current vgroup must be detached before
@@ -394,15 +396,13 @@ int list_vg(int32 infile_id,
                 goto out;
             }
 
+	    /* Get vgroup's name */
             if (Vgetnamelen(vg_id, &name_len)==FAIL)
             {
                 printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
                 goto out;
             }
-
-
             vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
-
 
             if (Vgetname (vg_id, vg_name)==FAIL)
             {
@@ -410,6 +410,17 @@ int list_vg(int32 infile_id,
                 goto out;
                 
             }
+
+	    /* Get vgroup's class name */
+            if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+
+            vg_class = (char *) HDmalloc(sizeof(char) * (name_len+1));
+
             if (Vgetclass (vg_id, vg_class)==FAIL)
             {
                 printf( "Could not get class for group\n");
@@ -613,9 +624,10 @@ int vgroup_insert(int32 infile_id,
     int32 *tags=NULL;            /* buffer to hold the tag numbers of vgroups   */
     int32 *refs=NULL;            /* buffer to hold the ref numbers of vgroups   */
     int32 vgroup_id_out =-1;         /* vgroup identifier for the created group in output */
-    char  vg_name[VGNAMELENMAX];
-    char  vg_class[VGNAMELENMAX];
+    char  *vg_name;
+    char  *vg_class;
     char  *path=NULL;
+    uint16 name_len;
     int   visited;
     int32 tag;                   
     int32 ref; 
@@ -643,12 +655,29 @@ int vgroup_insert(int32 infile_id,
             */
                     
             vg_id = Vattach (infile_id, ref, "r");
+
+	    /* Get vgroup's name */
+            if (Vgetnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
+                goto out;
+            }
+            vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
             if (Vgetname (vg_id, vg_name)==FAIL)
             {
                 printf( "Could not get name for group\n");
                 goto out;
                 
             }
+
+	    /* Get vgroup's class name */
+            if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+            vg_class = (char *) HDmalloc(sizeof(char) * (name_len+1));
             if (Vgetclass (vg_id, vg_class)==FAIL)
             {
                 printf( "Could not get class for group\n");

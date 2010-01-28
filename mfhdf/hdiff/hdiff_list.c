@@ -171,7 +171,7 @@ int hdiff_list_vg(const char* fname,
     int32  tag_vg;
     int32  ref_vg;
     char   *vg_name;
-    char   vg_class[VGNAMELENMAX];
+    char   *vg_class;
     uint16 name_len;
     int32  i;
     
@@ -223,7 +223,7 @@ int hdiff_list_vg(const char* fname,
 
             if (Vgetnamelen(vg_id, &name_len)==FAIL)
             {
-                printf("Error: Could not get name lenght for group with ref <%ld>\n", ref);
+                printf("Error: Could not get name length for group with ref <%ld>\n", ref);
                 goto out;
             }
 
@@ -234,6 +234,14 @@ int hdiff_list_vg(const char* fname,
                 printf("Error: Could not get name for group with ref <%ld>\n", ref);
                 goto out;
             }
+            
+            if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get classname length for group with ref <%ld>\n", ref);
+                goto out;
+            }
+
+            vg_class = (char *) HDmalloc(sizeof(char) * (name_len+1));
             
             if (Vgetclass (vg_id, vg_class)==FAIL)
             {
@@ -376,9 +384,10 @@ int insert_vg(const char* fname,
           ref,                   /* temporary ref */
           *tags,                 /* buffer to hold the tag numbers of vgroups   */
           *refs;                 /* buffer to hold the ref numbers of vgroups   */
-    char  vg_name[VGNAMELENMAX], vg_class[VGNAMELENMAX];
+    char  *vg_name, *vg_class;
     char  *path=NULL;
     int   i;
+    uint16 name_len;
     
     for ( i = 0; i < npairs; i++ ) 
     {
@@ -400,7 +409,24 @@ int insert_vg(const char* fname,
             }
            
             vg_id = Vattach (file_id, ref, "r");
+            if (Vgetnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get name length for group with ref <%ld>\n", ref);
+                break;
+            }
+
+            vg_name = (char *) HDmalloc(sizeof(char) * (name_len+1));
+            
             Vgetname (vg_id, vg_name);
+
+            if (Vgetclassnamelen(vg_id, &name_len)==FAIL)
+            {
+                printf("Error: Could not get classname length for group with ref <%ld>\n", ref);
+                break;
+            }
+
+            vg_class = (char *) HDmalloc(sizeof(char) * (name_len+1));
+            
             Vgetclass (vg_id, vg_class);
             
             /* ignore reserved HDF groups/vdatas */
