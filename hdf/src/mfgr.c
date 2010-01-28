@@ -179,11 +179,6 @@ MODIFICATION HISTORY
 #define XDIM    0
 #define YDIM    1
 
-/* This was moved from hlimits.h temporarily because, as of Jan 2010,
-it is not used anywhere else but in this file.  The reason was vgroup
-name and class were changed to dynamic memory. */
-#define VGNAMELENMAX        64  /* vgroup name : 64 chars max */
-
 /*
    * --------------------------------------------------------------------
    * PRIVATE  data structure and routines.
