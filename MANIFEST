@@ -967,7 +967,6 @@
 ./mfhdf/ncgen/ncgen.1
 ./mfhdf/ncgen/ncgen.h
 ./mfhdf/ncgen/ncgen.l
-./mfhdf/ncgen/ncgen.opt
 ./mfhdf/ncgen/ncgen.y
 ./mfhdf/ncgen/test0.cdl
 ./mfhdf/ncgen/test.com
