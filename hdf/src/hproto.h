@@ -1939,6 +1939,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI int32 Vgetnamelen
                 (int32 vkey, uint16 * name_len);
 
+    HDFLIBAPI int32 Vgetclassnamelen
+                (int32 vkey, uint16 * classname_len);
+
     HDFLIBAPI int32 Vgetclass
                 (int32 vkey, char  * vgclass);
 

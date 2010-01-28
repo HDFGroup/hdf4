@@ -179,6 +179,11 @@ MODIFICATION HISTORY
 #define XDIM    0
 #define YDIM    1
 
+/* This was moved from hlimits.h temporarily because, as of Jan 2010,
+it is not used anywhere else but in this file.  The reason was vgroup
+name and class were changed to dynamic memory. */
+#define VGNAMELENMAX        64  /* vgroup name : 64 chars max */
+
 /*
    * --------------------------------------------------------------------
    * PRIVATE  data structure and routines.
@@ -2743,7 +2748,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     uint32     comp_config;
     comp_coder_t comp_type; 
     comp_info cinfo;
-    intn status;
+    intn status=FAIL;
     intn convert=FALSE;         /* true if machine NT != NT to be written */
     uint8 platnumsubclass;      /* class of this NT for this platform */
     intn new_image=FALSE;       /* whether we are writing a new image out */
@@ -3217,7 +3222,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     uint32     comp_config;
     comp_coder_t comp_type; 
     comp_info cinfo;
-    intn status;
+    intn status=FAIL;
     intn  ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -5863,7 +5868,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     uint32     comp_config;
     comp_coder_t comp_type; 
     comp_info cinfo;
-    intn       status;
+    intn       status=FAIL;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 
@@ -6076,7 +6081,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     uint32     comp_config;
     comp_coder_t comp_type; 
     comp_info cinfo;
-    intn       status;
+    intn       status=FAIL;
     intn       switch_interlace = FALSE;/* whether the memory interlace needs to be switched around */
     intn       ret_value = SUCCEED;
 

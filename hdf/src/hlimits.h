@@ -67,7 +67,7 @@
 #define FIELDNAMELENMAX    128  /* fieldname   : 128 chars max */
 #define VSFIELDMAX         256  /* max no of fields per vdata */
 #define VSNAMELENMAX        64  /* vdata name  : 64 chars max */
-#define VGNAMELENMAX        64  /* vgroup name : 64 chars max */
+ /* #define VGNAMELENMAX        64  vgroup name : 64 chars max */
 
 /*
  * default max no of objects in a vgroup
