@@ -12,6 +12,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdf.h"
+#include "hfile.h"
 #include "mfhdf.h"
 #include "hrepack.h"
 #include "hrepack_parse.h"
@@ -57,6 +58,10 @@ int main(int argc, char **argv)
         }
         else if (strcmp(argv[i], "-v") == 0) {       
             options.verbose = 1;
+        }
+        else if (strcmp(argv[i], "-V") == 0) {       
+            printf("%s, %s\n\n", argv[0], LIBVER_STRING );
+            exit(0);
         }
         else if (strcmp(argv[i], "-t") == 0) {  
             
@@ -138,9 +143,10 @@ static
 void usage(void)
 {
 
- printf("usage: hrepack -i input -o output [-h] [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f cfile] [-m size]\n");
+ printf("usage: hrepack -i input -o output [-V] [-h] [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f cfile] [-m size]\n");
  printf("  -i input          input HDF File\n");
  printf("  -o output         output HDF File\n");
+ printf("  [-V]              prints version of the HDF4 library and exits\n");
  printf("  [-h]              prints this usage\n");
  printf("  [-v]              verbose mode\n");
  printf("  [-t 'comp_info']  compression type: 'comp_info' is a string with the format\n");

@@ -469,7 +469,7 @@ main(int argc, char *argv[])
 
     Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
 
-    printf("Built with HDF Library Version: %u.%ur%u, %s\n\n", (unsigned) lmajor,
+    printf("Built with HDF Library Version: %u.%u.%u, %s\n\n", (unsigned) lmajor,
            (unsigned) lminor, (unsigned) lrelease, lstring);
 
     MESSAGE(6, printf("Starting buffered element test (elemsize=%d)\n", elemsize);

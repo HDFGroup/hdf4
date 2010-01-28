@@ -45,7 +45,7 @@ C Show library version.
 	endif
 C
 C assume majorv, minorv, releaseno are single digit numbers
-101	format('Built with HDF Library Version: ',I1,'.',I1,'r',I1,/A80)
+101	format('Built with HDF Library Version: ',I1,'.',I1,'.',I1,/A80)
 
 
 C Open command file

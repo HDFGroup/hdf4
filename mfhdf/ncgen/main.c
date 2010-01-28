@@ -27,7 +27,7 @@ extern FILE *yyin, *yyout;
 
 void usage()
 {
-    derror("Usage: %s [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
+    derror("Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
 	   progname);
     exit(8);
 }
@@ -61,8 +61,11 @@ char *argv[];
     fortran_flag = 0;
     netcdf_flag = 0;
 
-    while ((c = getopt(argc, argv, "bcfno:")) != EOF)
+    while ((c = getopt(argc, argv, "Vbcfno:")) != EOF)
       switch(c) {
+	case 'V':		/* for c output */
+	  printf("%s, %s\n\n", argv[0], LIBVER_STRING );;
+	  exit(EXIT_SUCCESS);
 	case 'c':		/* for c output */
 	  c_flag = 1;
 	  break;

@@ -1,7 +1,8 @@
 #############################
 Expected output for 'hdiff '
 #############################
-hdiff [-b] [-g] [-s] [-d] [-D] [-S] [-v var1[,...]] [-u var1[,...]] [-e count] [-t limit] [-p relative] file1 file2
+hdiff [-V] [-b] [-g] [-s] [-d] [-D] [-S] [-v var1[,...]] [-u var1[,...]] [-e count] [-t limit] [-p relative] file1 file2
+  [-V]              Display version of the HDF4 library and exit
   [-b]              Verbose mode
   [-g]              Compare global attributes only
   [-s]              Compare SD local attributes only

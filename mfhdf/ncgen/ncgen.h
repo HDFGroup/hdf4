@@ -4,17 +4,12 @@
  *   $Id$
  *********************************************************************/
 
-#include "h4config.h"
-#ifdef H4_HAVE_NETCDF
-#include "netcdf.h"
-#else
-#include "hdf4_netcdf.h"
-#endif
-
+#include "local_nc.h"
 #include "generic.h"		/* defines union generic */
 #ifdef VMS
 #include <stdlib.h>
 #endif
+
 #define H4_MAX_NC_ATTSIZE    2000	/* max size in bytes of an attribute */
 #define MAXTRST		   500	/* maximum size of a single string value */
 #define FORT_MAX_LINES	20	/* max lines in FORTRAN statement */

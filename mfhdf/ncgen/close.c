@@ -6,7 +6,9 @@
 
 #include <stdio.h>
 #include "ncgen.h"
+#ifdef EIP
 #include "genlib.h"
+#endif
 
 extern void fline(), cline();
 extern int netcdf_flag;

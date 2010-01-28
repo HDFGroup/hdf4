@@ -25,6 +25,7 @@ static void
 usage()
 {
 #define USAGE   "\
+  [-V]             Display version of the HDF4 library and exit\n\
   [-c]             Coordinate variable data and header information\n\
   [-h]             Header information only, no data\n\
   [-u]             Replace nonalpha-numerics in names with underscores\n\
@@ -37,7 +38,7 @@ usage()
   file             File name of input netCDF file\n"
 
     (void) fprintf(stderr,
-		   "%s [-c|-h|-u] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-d n[,n]] file\n%s",
+		   "%s [-V|-c|-h|-u] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-d n[,n]] file\n%s",
 		   progname,
 		   USAGE);
     exit(EXIT_FAILURE);
@@ -654,9 +655,15 @@ char *argv[];
 
     opterr = 1;
     progname = argv[0];
+    
+    if (1 == argc)             /* if no arguments given, print help and exit */
+      usage();
 
-    while ((c = getopt(argc, argv, "b:cf:hul:n:v:d:")) != EOF)
+    while ((c = getopt(argc, argv, "b:cf:hul:n:v:d:V")) != EOF)
       switch(c) {
+	case 'V':		/* display version of the library */
+	  printf("%s, %s\n\n", argv[0], LIBVER_STRING );
+	  exit(EXIT_SUCCESS);
 	case 'h':		/* dump header only, no data */
 	  fspec.header_only = true;
 	  break;

@@ -199,6 +199,7 @@
  */
 
 #include "hdf.h"
+#include "hfile.h"
 #include <stdio.h>
 #ifndef MIPSEL
 #include <math.h>
@@ -546,6 +547,11 @@ main(int argc, char *argv[])
      */
     for (i = 1; i < argc; i++)
       {
+          if (strcmp(argv[i], "-V") == 0) {
+            printf("%s, %s\n\n", argv[0], LIBVER_STRING );
+            exit(0);
+          }
+
           if ((token = gtoken(argv[i])) == ERR)
             {
                 usage(argv[0]);
@@ -2029,17 +2035,17 @@ help(char *name)
     (void) printf("storing the results\n");
     (void) printf("\tin an HDF file.  The image data can be scaled ");
     (void) printf("about a mean value.\n\n");
-    (void) printf("Version:\n");
-    (void) printf("\tv1.2 (Jan 10, 2002)\n\n");
 
     (void) fprintf (stderr, "Synopsis:");
-    (void) fprintf (stderr, "\n\t%s -h[elp], OR", name);
+    (void) fprintf (stderr, "\n\t%s -h[elp]", name);
+    (void) fprintf (stderr, "\n\t\tPrint this summary of usage and exit.");
+    (void) fprintf (stderr, "\n\t\t");
+    (void) fprintf (stderr, "\n\t%s -V", name);
+    (void) fprintf (stderr, "\n\t\tPrint version of the HDF4 library and exit.");
+    (void) fprintf (stderr, "\n\t\t");
     (void) fprintf (stderr, "\n\t%s <infile> [ [-t[ype] <output-type> | -n] [<infile> [-t[ype] <output-type> | -n]...]", name);
     (void) fprintf (stderr, "\n\t\t\t\t\t-o[utfile] <outfile> [-r[aster] [ras_opts ...]] [-f[loat]]");
 
-    (void) fprintf (stderr, "\n\n\t-h[elp]:");
-    (void) fprintf (stderr, "\n\t\tPrint this summary of usage, and exit.");
-    (void) fprintf (stderr, "\n\t\t");
     (void) fprintf (stderr, "\n\n\t<infile(s)>:");
     (void) fprintf (stderr, "\n\t\tName of the input file(s), containing a single ");
     (void) fprintf (stderr, "\n\t\ttwo-dimensional or three-dimensional floating point array ");
@@ -3646,6 +3652,7 @@ void
 usage(char *name)
 {
     (void) fprintf(stderr, "\nUsage:\t%s -h[elp], OR\n", name);
+    (void) fprintf(stderr, "\t%s -V, OR\n", name);
     (void) fprintf(stderr, "\t%s <infile> [ [-t[ype] <output-type> | -n] ", name);
     (void) fprintf(stderr, "[<infile> [-t[ype] <output-type> | -n ]]...]\n");
     (void) fprintf(stderr, "\t\t\t\t\t-o[utfile] <outfile> [options..]\n");
