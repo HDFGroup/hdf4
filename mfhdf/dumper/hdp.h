@@ -310,7 +310,7 @@ filter_t;
 /* What type of information being stored */
 typedef enum
   {
-	  IS_INDEX=0, IS_REFNUM, IS_NAME, IS_CLASS, IS_FIELD
+	  INVALID=0, IS_INDEX, IS_REFNUM, IS_NAME, IS_CLASS, IS_FIELD
   }
 info_type_t;
 
@@ -351,11 +351,11 @@ typedef struct
 {
 	int index;
 	int refnum;
-	char name[MAXFNLEN];
-	char classname[MAXFNLEN];
+	char *name;
+	char *classname;
 	info_type_t type_of_info;
 }
-sds_chosen_t;
+obj_chosen_t;
 
 /* 'dumpsds' command option structure */
 /* BMR: added fields to hold indices, reference numbers, names, and classes
@@ -370,9 +370,11 @@ typedef struct
    char_filter_t by_name;	/* data objects requested by name */
    char_filter_t by_class;	/* data objects requested by class name */
    char_filter_t by_field;	/* data objects requested by field - only VD */
-   sds_chosen_t  *all_types;	/* list of all datasets chosen and in the order
+   obj_chosen_t  *all_types;	/* list of all datasets chosen and in the order
 				   specified by the user */
-   int32       num_chosen;	/* number of items chosen, totally (-1==NO_SPECIFIC) */
+   int32       num_chosen;	/* number of items specified at command line,
+	which can be different from the number of objects being printed due
+	to multiple objects of the same name or class name (-1==NO_SPECIFIC) */
    content_t   contents;        /* what contents to dump */
    intn        keep_order;	/* whether to dump the datasets in the same
 				   order as specified by the user */
@@ -516,7 +518,6 @@ extern intn do_dumpvg(intn curr_arg, intn argc, char *argv[], intn help);
 extern intn print_data_annots(int32 file_id, const char *file_name, int32 tag, int32 ref);
 extern intn print_file_annotations( int32 file_id, const char *file_name );
 void print_fields( char *fields, char *field_title, FILE *fp );
-
 /* hdp_vd.c */
 intn do_dumpvd(intn curr_arg, intn argc, char *argv[], intn help);
 intn parse_dumpvd_opts(dump_info_t * dumpvd_opts, intn *curr_arg, intn argc, char *argv[], char *flds_chosen[MAXCHOICES], int *dumpallfields);
@@ -555,7 +556,7 @@ extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *f
 void init_dump_opts(dump_info_t *dump_opts);
 void parse_number_opts( char *argv[], int *curr_arg, number_filter_t *filter);
 void parse_string_opts( char *argv[], int *curr_arg, char_filter_t *filter);
-void parse_value_opts( char *argv[], int *curr_arg, dump_info_t *dump_opts,
+void parse_value_opts( char *argv[], int *curr_arg, dump_info_t **dump_opts,
                    info_type_t info_type);
 extern char *tagnum_to_name(intn num);
 extern intn tagname_to_num(const char *name);
@@ -572,7 +573,7 @@ extern int32* free_num_list(int32 *num_list);
 extern char** free_str_list(char **str_list, int32 num_items);
 extern vg_info_t** free_vginfo_list(vg_info_t** list, int32 num_items);
 extern vg_info_t* free_node_vg_info_t(vg_info_t* aNode);
-sds_chosen_t ** free_sds_chosen_t_list(sds_chosen_t **nodelist, int32 num_items);
+void free_obj_chosen_t_list(obj_chosen_t **nodelist, int32 num_items);
 extern void free_file_list(filelist_t * f_list);
 
 	/* group list functions */

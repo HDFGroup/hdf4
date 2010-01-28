@@ -126,28 +126,58 @@ vg_info_t ** free_vginfo_list(
    {
       for (i = 0; i < num_items; i++)
          if (nodelist[i] != NULL)
-            HDfree(nodelist[i]);
+            nodelist[i] = free_node_vg_info_t(nodelist[i]);
       HDfree(nodelist);
    }
    return( NULL );
 }  /* end of free_vginfo_list */
 
 /* free_struct_list use HDfree to free the list of vgroup info structs */
-sds_chosen_t ** free_sds_chosen_t_list( 
-		sds_chosen_t **nodelist,
+obj_chosen_t ** free_node_obj_chosen_t( 
+		obj_chosen_t *aNode)
+{
+   intn i;
+
+   if( aNode != NULL )
+   {
+      if (aNode->name != NULL)
+      {
+		fprintf(stderr, " namd = %s \n", aNode->name);
+         HDfree( aNode->name );
+      }
+      if (aNode->classname != NULL)
+      {
+         HDfree( aNode->classname );
+      }
+      HDfree(aNode);
+   }
+   return(NULL);
+}  /* end of free_vginfo_list */
+
+/* free_struct_list use HDfree to free the list of vgroup info structs */
+void free_obj_chosen_t_list( 
+		obj_chosen_t **nodelist,
 		int32 num_items )
 {
    intn i;
 
    /* if the list is not NULL, free each node then reset the list to NULL */
-   if (nodelist != NULL)
+   if ((*nodelist) != NULL)
    {
       for (i = 0; i < num_items; i++)
-         if (nodelist[i] != NULL)
-            HDfree(nodelist[i]);
-      HDfree(nodelist);
+      {
+	    if ((*nodelist)[i].name != NULL)
+	    {
+		HDfree((*nodelist)[i].name);
+	    }
+	    if ((*nodelist)[i].classname != NULL)
+	    {
+		HDfree((*nodelist)[i].classname);
+	    }
+      }
+    HDfree((*nodelist));
    }
-   return( NULL );
+   (*nodelist) = NULL;
 }  /* end of free_vginfo_list */
 
 /* free_str_list use HDfree to free the list of strings of characters */
@@ -205,7 +235,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
               return (NULL);
           if ((ret = (groupinfo_t *) HDmalloc(sizeof(groupinfo_t))) == NULL)
             {
-              fprintf(stderr, "make_group_list: space allocation failed\n");
+                fprintf(stderr, "make_group_list: space allocation failed\n");
                 return (NULL);
             }
           ret->max_dds = nobj;
@@ -214,7 +244,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
             {
                 if ((ret->dd_arr = (DFdi *) HDmalloc(sizeof(DFdi) * nobj)) == NULL)
                   {
-                  fprintf(stderr, "make_group_list: space allocation failed\n");
+                      fprintf(stderr, "make_group_list: space allocation failed\n");
                       HDfree(ret);
                       return (NULL);
                   }		/* end if */
@@ -255,13 +285,13 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 
                       if ((temp_tag = (int32 *) HDmalloc(sizeof(int32) * nobj)) == NULL)
                         {
-                  fprintf(stderr, "make_group_list: space allocation failed\n");
+			    fprintf(stderr, "make_group_list: space allocation failed\n");
                             Vdetach(vkey);
                             return (NULL);
                         }	/* end if */
                       if ((temp_ref = (int32 *) HDmalloc(sizeof(int32) * nobj)) == NULL)
                         {
-                  fprintf(stderr, "make_group_list: space allocation failed\n");
+			    fprintf(stderr, "make_group_list: space allocation failed\n");
 
                             Vdetach(vkey);
                             HDfree(temp_tag);
@@ -278,7 +308,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
 
                       if ((ret = (groupinfo_t *) HDmalloc(sizeof(groupinfo_t))) == NULL)
                         {
-                  fprintf(stderr, "make_group_list: space allocation failed\n");
+			    fprintf(stderr, "make_group_list: space allocation failed\n");
 
                             Vdetach(vkey);
                             HDfree(temp_tag);
@@ -289,7 +319,7 @@ make_group_list(int32 fid, uint16 tag, uint16 ref)
                       ret->curr_dd = 0;
                       if ((ret->dd_arr = (DFdi *) HDmalloc(sizeof(DFdi) * nobj)) == NULL)
                         {
-                  fprintf(stderr, "make_group_list: space allocation failed\n");
+			    fprintf(stderr, "make_group_list: space allocation failed\n");
 
                             Vdetach(vkey);
                             HDfree(temp_tag);
@@ -374,7 +404,7 @@ make_obj_list(int32 fid, uint32 options)
    /* allocate space for the object list - exit at failure??? */
     if ((obj_ret = (objlist_t *) HDmalloc(sizeof(objlist_t))) == NULL)
       {
-      fprintf(stderr, "make_obj_list: space allocation failed\n");
+	  fprintf(stderr, "make_obj_list: space allocation failed\n");
           return (NULL);
       }
 
@@ -385,7 +415,7 @@ make_obj_list(int32 fid, uint32 options)
 /* should it exit on failure ??? */
     if( obj_ret->raw_obj_arr == NULL)
       {
-      fprintf(stderr, "make_obj_list: space allocation failed\n");
+	  fprintf(stderr, "make_obj_list: space allocation failed\n");
           HDfree(obj_ret);
           return (NULL);
       }		/* end if */
@@ -795,15 +825,24 @@ parse_string_opts( char *argv[],
 
 } /* parse_string_opts */
 
+void init_obj_chosen_node(obj_chosen_t *aNode)
+{
+    aNode->index = -1;
+    aNode->refnum = -1;
+    aNode->name = NULL;
+    aNode->classname = NULL;
+    aNode->type_of_info = INVALID;
+}
+
 void parse_value_opts( char *argv[],
                    int *curr_arg, 
-                   dump_info_t *dump_opts,
+                   dump_info_t **dump_opts,
 		   info_type_t info_type)
 {
    int32 numItems = 0, i;
    char *tempPtr = NULL;
    char *ptr = NULL;
-   sds_chosen_t *newlist;
+   obj_chosen_t *newlist;
 
    /* put a temp ptr at the beginning of the given list of numbers, 
       separated by commas, for example, 1,2,3 */
@@ -825,41 +864,42 @@ void parse_value_opts( char *argv[],
    if (*ptr != '\0')	/* count the last item */
       numItems++;
 
-   if (dump_opts->all_types != NULL)
+   if ((*dump_opts)->all_types != NULL)
    {
 	/* Update number of chosen SDSs so far */
-	numItems = numItems + dump_opts->num_chosen;
+	numItems = numItems + (*dump_opts)->num_chosen;
  
-
         /* Allocate a new list */
-        newlist = (sds_chosen_t *) HDmalloc(sizeof(sds_chosen_t) * numItems);
+        newlist = (obj_chosen_t *) HDmalloc(sizeof(obj_chosen_t) * numItems);
 	CHECK_ALLOC(newlist, "newlist", "parse_value_opts" );
 
-        /* If dump_opts->all_types is already allocated, transfer pointers over
-	   to the new list and deallocate the old list of pointers */
-        if (dump_opts->all_types != NULL)
-        {
-            for (i=0; i < dump_opts->num_chosen; i++)
-                newlist[i] = dump_opts->all_types[i];
-            HDfree(dump_opts->all_types);
-        }
+        /* transfer pointers from (*dump_opts)->all_types over to the new list
+	   and deallocate the old list of pointers */
+        for (i=0; i < (*dump_opts)->num_chosen; i++)
+            newlist[i] = (*dump_opts)->all_types[i];
+	for (i=(*dump_opts)->num_chosen; i < numItems; i++)
+		init_obj_chosen_node(&newlist[i]);
 
-        /* Set dump_opts->all_types to the new list */
-        dump_opts->all_types = newlist;
+        /* Set (*dump_opts)->all_types to the new list */
+        (*dump_opts)->all_types = newlist;
         newlist = NULL;
    }
    else
    {
 	/* allocate space to hold all the items in the list */
-	dump_opts->all_types = (sds_chosen_t *) HDmalloc(sizeof(sds_chosen_t) * numItems);
-	CHECK_ALLOC(dump_opts->all_types, "filter", "parse_value_opts" );
+	(*dump_opts)->all_types = (obj_chosen_t *) HDmalloc(sizeof(obj_chosen_t) * numItems);
+	CHECK_ALLOC((*dump_opts)->all_types, "filter", "parse_value_opts" );
+
+	/* Initialize all nodes */
+	for (i=0; i < numItems; i++)
+	    init_obj_chosen_node(&(*dump_opts)->all_types[i]);
    }
 
    /* go back to the beginning of the list and read in the numbers */
    ptr = argv[*curr_arg];
 
    /* index of the list, it should start at 0 or at the number of SDSs chosen so far */
-   i = dump_opts->num_chosen != NO_SPECIFIC ? dump_opts->num_chosen : 0;
+   i = (*dump_opts)->num_chosen != NO_SPECIFIC ? (*dump_opts)->num_chosen : 0;
    while ( i < numItems )
    {
 	tempPtr = HDstrchr(ptr, ',');
@@ -869,17 +909,26 @@ void parse_value_opts( char *argv[],
 	{
 	  case IS_INDEX:
 	  /* convert the string of characters to digits and store for refnum */
-	    dump_opts->all_types[i].index = atoi(ptr);
+	    (*dump_opts)->all_types[i].index = atoi(ptr);
 	    break;
 
 	  case IS_REFNUM:
 	  /* convert the string of characters to digits and store for refnum */
-	    dump_opts->all_types[i].refnum = atoi(ptr);
+	    (*dump_opts)->all_types[i].refnum = atoi(ptr);
 	    break;
 
 	  case IS_NAME:
 	  /* get the current string of characters for name */
-	    HDstrcpy(dump_opts->all_types[i].name, ptr);
+	    (*dump_opts)->all_types[i].name = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr)+1));
+	    CHECK_ALLOC((*dump_opts)->all_types[i].name, "(*dump_opts)->all_types[i].name", "parse_string_opts" );
+	    HDstrcpy((*dump_opts)->all_types[i].name, ptr);
+	    break;
+
+	  case IS_CLASS:
+	  /* get the current string of characters for class name */
+	    (*dump_opts)->all_types[i].classname = (char *)HDmalloc(sizeof(char) * (HDstrlen(ptr)+1));
+	    CHECK_ALLOC((*dump_opts)->all_types[i].classname, "(*dump_opts)->all_types[i].classname", "parse_string_opts" );
+	    HDstrcpy((*dump_opts)->all_types[i].classname, ptr);
 	    break;
 
 	  default:
@@ -888,11 +937,11 @@ void parse_value_opts( char *argv[],
 	    exit(1);
 	    break;
 	} /* end of switch */
-	dump_opts->all_types[i].type_of_info = info_type;
+	(*dump_opts)->all_types[i].type_of_info = info_type;
 	ptr = tempPtr + 1;
 	i++;
    }
-   dump_opts->num_chosen = numItems;   /* save the number of chosen SDSs so far */
+   (*dump_opts)->num_chosen = numItems;   /* save the number of chosen SDSs so far */
 }  /* parse_value_opts */
 
 /* validate_pos makes sure that number is > 0 so we are not going to

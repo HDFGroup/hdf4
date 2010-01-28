@@ -86,11 +86,10 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,
             break;
 
          case 'i':	/* dump by index */
-/* need to re-evaluate the use of this enum, may not need anymore */
             (*curr_arg)++; /* go to the parameters for this flag */
 
             /* Parse and store the given indices in structure all_types */
-	    parse_value_opts(argv, curr_arg, dumpsds_opts, IS_INDEX);
+	    parse_value_opts(argv, curr_arg, &dumpsds_opts, IS_INDEX);
             (*curr_arg)++;
             break;
 
@@ -98,7 +97,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,
             (*curr_arg)++; /* go to the parameters for this flag */
 
             /* Parse and store the given ref numbers in structure all_types */
-	    parse_value_opts(argv, curr_arg, dumpsds_opts, IS_REFNUM);
+	    parse_value_opts(argv, curr_arg, &dumpsds_opts, IS_REFNUM);
             (*curr_arg)++;
             break;
 
@@ -106,7 +105,7 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,
             (*curr_arg)++; /* go to the parameters for this flag */
 
             /* Parse and store the given names in structure all_types */
-	    parse_value_opts(argv, curr_arg, dumpsds_opts, IS_NAME);
+	    parse_value_opts(argv, curr_arg, &dumpsds_opts, IS_NAME);
             (*curr_arg)++;
             break;
 
@@ -174,7 +173,7 @@ done:
    if (ret_value == FAIL)
    { /* Failure cleanup */
       /* free the list if it had been allocated */
-      free_sds_chosen_t_list(&dumpsds_opts->all_types, dumpsds_opts->num_chosen);
+      free_obj_chosen_t_list(&dumpsds_opts->all_types, dumpsds_opts->num_chosen);
    }
    /* Normal cleanup */
    return (ret_value);
@@ -385,7 +384,7 @@ intn get_SDSindex_list(
 
     /* if no specific datasets are requested, return the SDS count as 
        NO_SPECIFIC (-1) to indicate that all datasets are to be dumped */
-    if( dumpsds_opts->num_chosen == NO_SPECIFIC )
+    if (dumpsds_opts->num_chosen == NO_SPECIFIC)
 	HGOTO_DONE( NO_SPECIFIC );
 
     /* if specific datasets were requested, allocate space for the array
@@ -400,8 +399,9 @@ intn get_SDSindex_list(
 
     for (ii = 0; ii < num_sds_chosen; ii++)
     {
-	/* if there are some SDSs requested by index, store the indices in
-	the array sds_chosen */
+int jj;
+	/* if the current chosen SDS was requested by its index, store the
+	index in the array sds_chosen */
 	switch (dumpsds_opts->all_types[ii].type_of_info)
 	{
 	  case IS_INDEX:
@@ -409,9 +409,8 @@ intn get_SDSindex_list(
 	    sds_count++;
 	  break;
 
-	  /* if there are some SDSs requested by ref#, convert the ref#s to
-	     indices and store the indices in the array provided by the caller,
-	     sds_chosen */
+	  /* if the current chosen SDS was requested by its ref#, convert the
+	     ref# to index and store the index in the array sds_chosen */
 	  case IS_REFNUM:
 	    sds_index = SDreftoindex(sd_id, dumpsds_opts->all_types[ii].refnum);
 	    if (sds_index == FAIL)
@@ -427,9 +426,8 @@ intn get_SDSindex_list(
 	    }
 	    break;
 
-	  /* if there are some SDSs requested by name, convert the names to
-	     indices and store the indices in the array provided by the caller,
-	     sds_chosen */
+	  /* if the current chosen SDS was requested by its name, convert the
+	     name to index and store the index in the array sds_chosen */
 	  case IS_NAME:
 	    sds_index = SDnametoindex(sd_id, dumpsds_opts->all_types[ii].name);
 /* NOTE: should handle the case of more than one var of the same name too */
@@ -1201,12 +1199,12 @@ intn dsd(dump_info_t *dumpsds_opts,
          continue; /* to the next file */
       } /* end if */
 
-	    /* obtain number of datasets in the file and number of file
-		attributes, ndsets will be used to process the datasets,
-		n_file_attrs will be used to print file attributes */
-		status = SDfileinfo(sd_id, &ndsets, &n_file_attrs);
-		if (status == FAIL)
-		ERROR_GOTO_2( "in dsd: %s failed for file %s", "SDfileinfo", file_name);
+      /* obtain number of datasets in the file and number of file
+	attributes, ndsets will be used to process the datasets,
+	n_file_attrs will be used to print file attributes */
+      status = SDfileinfo(sd_id, &ndsets, &n_file_attrs);
+      if (status == FAIL)
+	  ERROR_GOTO_2( "in dsd: %s failed for file %s", "SDfileinfo", file_name);
 
       fp = stdout;                /* assume no output file given */
 
@@ -1358,6 +1356,7 @@ intn dsd(dump_info_t *dumpsds_opts,
       if (FAIL == SDend(sd_id))
          ERROR_CONT_1( "in dsd: SDend failed for file %s", file_name );
       sd_id = FAIL; /* reset */
+
    }  /* while processing files  */
 
 done:
@@ -1365,6 +1364,9 @@ done:
       { /* Failure cleanup */
           if (sd_id != FAIL)
               SDend(sd_id);
+
+          if (fp != stdout)
+              fclose(fp);                       
 
           if (sds_chosen != NULL)
             {
@@ -1423,11 +1425,8 @@ intn do_dumpsds(intn  curr_arg,
       }
     /* Normal cleanup */
 
-   /* free the lists for given indices, ref#s, and names if
-      they had been allocated */
-   free_num_list(dumpsds_opts.by_index.num_list );
-   free_num_list(dumpsds_opts.by_ref.num_list );
-   free_str_list(dumpsds_opts.by_name.str_list, dumpsds_opts.by_name.num_items);
+    /* free the list of structs containg info of selected SDSs */
+    free_obj_chosen_t_list(&dumpsds_opts.all_types, dumpsds_opts.num_chosen);
 
    return ret_value;
 }	/* end do_dumpsds() */

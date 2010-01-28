@@ -49,6 +49,14 @@ do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s retu
 if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
+/* Used to validate that 'buffer' has been successfully allocated */
+#define CHECK_ALLOC(buffer, buf_name, func_name ) { \
+      if (buffer == NULL) {\
+         fprintf(stderr,"in %s: space allocation for %s failed.  Terminated!\n",\
+                func_name, buf_name ); \
+         exit(1); }  \
+}
+
 /* Used to make certain a return value _is_ a value */
 #define VERIFY(x, val, where) \
 do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\

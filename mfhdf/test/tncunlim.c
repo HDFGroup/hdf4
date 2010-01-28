@@ -291,7 +291,7 @@ static int test_1dim_multivars()
     int   dims[1];		/* variable shapes */
     long  dimsize = 0;		/* dimension size buffer */
     short outdata[DIM0];	/* data read back */
-    char  varname[10];		/* variable name */
+    char  varname[11];		/* variable name */
     nc_type rh_type;		/* variable type */
     int   rh_ndims;		/* number of dims */
     int   rh_dims[H4_MAX_VAR_DIMS];	/* variable shape */
@@ -646,7 +646,7 @@ static int test_multidim_singlevar()
     long  dimsize = 0,		/* unlimited dimension size */
 	  dimsize1 = 0, dimsize2 = 0; /* other dimension sizes */
     short outdata[DIM0][DIM1][DIM2];	/* data read back */
-    char  varname[10];		/* variable name */
+    char  varname[12];		/* variable name */
     nc_type rh_type;		/* variable type */
     int   rh_ndims;		/* number of dims */
     int   rh_dims[H4_MAX_VAR_DIMS];	/* variable shape */
