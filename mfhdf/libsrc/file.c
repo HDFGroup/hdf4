@@ -90,7 +90,8 @@ ncreset_cdflist()
 }
 
 /*
- *  Allocates _cdfs and returns the allocated size
+ *  Allocates _cdfs and returns the allocated size if succeeds;
+ *  otherwise return FAIL(-1).
  */
 intn
 NC_reset_maxopenfiles(req_max)
@@ -172,9 +173,7 @@ intn req_max;	/* requested max to allocate */
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-
-	/* Deallocate _cdfs */
-	ncreset_cdflist();
+	/* Nothing yet. */
       }
      /* Normal cleanup */
 
@@ -265,8 +264,13 @@ int mode ;
 	intn cdfs_size;
 
 	/* Allocate _cdfs, if it is already allocated, nothing will be done */
-	if (_cdfs == NULL)
-	    cdfs_size = NC_reset_maxopenfiles(0);
+	if (_cdfs == NULL){
+	    if (FAIL == (cdfs_size = NC_reset_maxopenfiles(0)))
+	    {
+		NCadvise(NC_ENFILE, "Could not reset max open files limit");
+		return(-1); 
+	    }
+	}
 
 	/* find first available id */
 	for(id = 0 ; id < _ncdf; id++)
@@ -284,7 +288,11 @@ int mode ;
 		return(-1); 
 	    }
 	    /* otherwise, increase the current max to the system limit */
-	    max_NC_open = NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES);
+	    if (FAIL == NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES))
+	    {
+		NCadvise(NC_ENFILE, "Could not reset max open files limit");
+		return(-1); 
+	    }
 	}
 
 	handle = NC_new_cdf(path, mode) ;
