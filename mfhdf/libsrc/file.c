@@ -288,7 +288,7 @@ int mode ;
 		return(-1); 
 	    }
 	    /* otherwise, increase the current max to the system limit */
-	    if (FAIL == NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES))
+	    if (FAIL == (max_NC_open=NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES)))
 	    {
 		NCadvise(NC_ENFILE, "Could not reset max open files limit");
 		return(-1); 
