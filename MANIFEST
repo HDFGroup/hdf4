@@ -54,6 +54,7 @@
 
 ./config/BlankForm
 ./config/aix
+./config/apple
 ./config/commence.am
 ./config/conclude.am
 ./config/examples.am
