@@ -209,6 +209,9 @@ mfhdf/hdiff/testfiles/hdifftst7.hdf -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfhdfi.h -text
+mfhdf/ncgen/msofttab.c -text
+mfhdf/ncgen/msofttab.h -text
+mfhdf/ncgen/msoftyy.c -text
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/test/Makefile.am -text
 mfhdf/test/Makefile.in -text

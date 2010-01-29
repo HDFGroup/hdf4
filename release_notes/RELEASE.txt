@@ -382,12 +382,9 @@ Appendix: List of the removed files
         mfhdf/ncgen/test0.lnk
         mfhdf/ncgen/ncgen.opt
         mfhdf/ncgen/msoft.mk
-        mfhdf/ncgen/msofttab.c
         mfhdf/ncgen/ncgen.mak
-        mfhdf/ncgen/msofttab.h
         mfhdf/ncgen/ctest0.mak
         mfhdf/ncgen/descrip.mms
-        mfhdf/ncgen/msoftyy.c
 
 
         mfhdf/port/COPYRIGHT
