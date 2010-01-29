@@ -5,6 +5,7 @@ bin/ltmain.sh -text
 bin/newer -text
 bin/release -text
 bin/timekeeper -text
+config/aix -text
 config/commence.am -text
 config/conclude.am -text
 config/examples.am -text

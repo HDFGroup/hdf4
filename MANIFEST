@@ -53,6 +53,7 @@
 ./bin/release
 
 ./config/BlankForm
+./config/aix
 ./config/commence.am
 ./config/conclude.am
 ./config/examples.am

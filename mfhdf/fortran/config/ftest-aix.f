@@ -483,7 +483,7 @@ c     byte
 c
       
       bvalidrg(1) = 1
-      bvalidrg(2) = 250
+      bvalidrg(2) = 127 
       call ncapt (ncid, bid, 'valid range', NCBYTE, 2,
      +bvalidrg, iret)
 
