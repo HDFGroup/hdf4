@@ -126,7 +126,7 @@ rem
     )
     rem Make sure that params is defined, so we don't encounter errors later
     if not defined params (
-        set params=""
+        set params=
     )
 
     rem Run test.
@@ -135,7 +135,7 @@ rem
     (
         echo.#############################
         rem Remove quotes here, because Linux 'echo' command strips them
-        echo.Expected output for 'hdiff %params:"=%'
+        echo.Expected output for 'hdiff %params%'
         echo.#############################
         pushd %srcdir%\testfiles
         %hdiff_bin% %params%
