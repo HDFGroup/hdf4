@@ -1,25 +1,27 @@
 .\" $Id$
-.TH HDF 1 "July 1996" "NCSA HDF 4.1"
+.TH HDF 1 "February 2010" "THG HDF 4.2.5"
 .SH NAME
 hdf \- Hierarchical Data Format library
 .SH SYNOPSIS
 .ft B
--lmfhdf -ldf -ljpeg -lz
+-lmfhdf -ldf -ljpeg -lz [ -lsz ]
 .sp 0
-{HDFLIBDIR}/libmfhdf.a {HDFLIBDIR}/libdf.a {HDFLIBDIR}/libjpeg.a {HDFLIBDIR}/libz.a
+{HDFLIBDIR}/libmfhdf.a {HDFLIBDIR}/libdf.a {JPEGLIBDIR}/libjpeg.a 
+.sp 0
+{GZIPLIBDIR}/libz.a [ {SZIPLIBDIR}/libsz.a ]
 
 .SH DESCRIPTION
 HDF is a multi-object file format that facilitates the transfer of various 
-types of scientific data between machines and operating systems.  Machines currently 
-supported include the Cray, HP, Vax, Sun, IBM RS/6000, Silicon Graphics,
-Macintosh, and IBM PC computers.  HDF allows self-definitions of data content
+types of scientific data between machines and operating systems. 
+Platforms currently supported include Linux 32 and 64-bit, SunOS 32 and 64-bit,
+Windows, FreeBSD, and Mac Intel.  HDF allows self-definitions of data content
 and easy extensibility for future enhancements or compatibility with other
-standard formats. HDF includes Fortran and C calling interfaces,and utilities to 
-prepare raw image of data files or for use with other NCSA software.  The HDF 
+standard formats. HDF includes Fortran and C calling interfaces, and utilities 
+for manipulating, viewing, and analyzing data in HDF files. The HDF 
 library contains interfaces for storing and retrieving compressed or 
 uncompressed 8-bit and 24-bit raster images with palettes,  
 n-Dimensional scientific datasets and binary tables. An interface is
-also included that allows arbitray grouping of other HDF objects.
+also included that allows arbitrary grouping of other HDF objects.
 
 .SS "HDF Raster Images"
 HDF supports the storing of both 8-bit and 24-bit raster images.  As well as
@@ -88,114 +90,102 @@ included instead in in the C source file. Fortran programs should
 use "dffunc.inc" and "hdf.inc".
 
 To compile a program that makes HDF calls on most Unix platforms.
-.nf
-
-   HDFLIBDIR = /usr/local/lib/hdf
-   HDFINC    = /usr/local/include/hdf
 
    (FORTRAN):
 .na 
-   f77 myprog.f \-I{HDFINC} \-o myprog {HDFLIBDIR}/libmfhdf.a \\
-   {HDFLIBDIR}/libdf.a  {HDFLIBDIR}/libjpeg.a {HDFLIBDIR}/libz.a
+   {HDFLIBDIR}/bin/h4fc myprog.f 
 
    (C):
 .na 
-   cc myprog.c \-I{HDFINC} \-o myprog {HDFLIBDIR}/libmfhdf.a \\
-   {HDFLIBDIR}/libdf.a  {HDFLIBDIR}/libjpeg.a {HDFLIBDIR}/libz.a  
+   {HDFLIBDIR}/bin/h4cc myprog.c 
 
 .fi
 
 .SH DOCUMENTATION
 
-The HDF WWW page is located at http://hdf.ncsa.uiuc.edu/
+The HDF WWW page is located at http://hdfgroup.org
 
 For the vast majority of users, the "Users Guide" documents and the "Reference"
 manuals should be sufficient. 
 
-You may download the documentation via ftp on NCSA's anonymous 
-ftp server. (ftp.ncsa.uiuc.edu:/HDF). On anonymous ftp there the documentation 
-is available in Postscript, PDF and MIF.
+These documents can be viewed or downloaded at
+http://hdfgroup.org/products/hdf4/.
 
 
 .SH VENDOR
-NCSA Software Development Division
+The HDF Group
 .sp 0
-Hierarchical Data Format Group
+1901 South First Street, Suite C-2
 .sp 0
-152 Computing Applications Bldg.
+Champaign, IL 61801
 .sp 0
-605 E. Springfield Ave.
-.sp 0
-Champaign, IL 61820
+USA 
 
 .SH VERSION
-4.1
+4.2.5
 .SH LICENSE & SOURCE AVAILABILITY
-UNIVERSITY OF ILLINOIS (UI), NATIONAL CENTER FOR SUPERCOMPUTING
-APPLICATIONS (NCSA), Software Distribution Policy for Public Domain
-Software
+Hierarchical Data Format (HDF) Software Library and Utilities
+Copyright 2006-2010 by The HDF Group (THG).
 
-NCSA HDF Version 4.1 source code and documentation are in the public
-domain, available without fee for education, research, non-commercial and
-commercial purposes.  Users may distribute the binary or source code to
-third parties provided that this statement appears on all copies and that
-no charge is made for such copies.  
+NCSA Hierarchical Data Format (HDF) Software Library and Utilities
+Copyright 1988-2006 by the Board of Trustees of the University of Illinois.
 
-UI MAKES NO REPRESENTATIONS ABOUT THE SUITABILITY OF THE SOFTWARE FOR ANY
-PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR IMPLIED WARRANTY.  THE
-UI SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY THE USER OF THIS
-SOFTWARE.  The software may have been developed under agreements between
-the UI and the Federal Government which entitle the Government to certain
-rights.
+All rights reserved.
 
-We ask, but do not require that the following message be include in all
-derived works:
+Contributors:   National Center for Supercomputing Applications (NCSA) at
+the University of Illinois, Fortner Software, Unidata Program Center (netCDF), 
+The Independent JPEG Group (JPEG), Jean-loup Gailly and Mark Adler (gzip), 
+and Digital Equipment Corporation (DEC).
 
-  Portions developed at the National Center for Supercomputing 
-  Applications at the University of Illinois at Urbana-Champaign.
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted for any purpose (including commercial purposes) 
+provided that the following conditions are met:
 
-By copying this program, you, the user, agree to abide by the conditions
-and understandings with respect to any software which is marked with a
-public domain notice.
+1. Redistributions of source code must retain the above copyright notice, 
+   this list of conditions, and the following disclaimer.
 
-Acknowledgements:
-----------------
+2. Redistributions in binary form must reproduce the above copyright notice, 
+   this list of conditions, and the following disclaimer in the documentation 
+   and/or materials provided with the distribution.
 
-Portions of this software were developed by the Unidata Program at the 
-University Corporation for Atmospheric Research, specifically the 
-NETCDF distribution used.
+3. In addition, redistributions of modified forms of the source or binary 
+   code must carry prominent notices stating that the original code was 
+   changed and the date of the change.
 
-This product also includes software developed by the Independent JPEG
-Group, specifically the IJPEG library libjpeg.a.
+4. All publications or advertising materials mentioning features or use of 
+   this software are asked, but not required, to acknowledge that it was 
+   developed by The HDF Group and by the National Center for Supercomputing 
+   Applications at the University of Illinois at Urbana-Champaign and 
+   credit the contributors.
 
-This product also includes software developed by Jean-loup Gailly 
-and Mark Adler , specifically the ZLIB library libz.a.
+5. Neither the name of The HDF Group, the name of the University, nor the 
+   name of any Contributor may be used to endorse or promote products derived 
+   from this software without specific prior written permission from THG, 
+   the University, or the Contributor, respectively.
 
-This product includes software developed by the University of
-California, Berkeley and its contributors.
+DISCLAIMER:
+THIS SOFTWARE IS PROVIDED BY THE HDF GROUP (THG) AND THE CONTRIBUTORS 
+"AS IS" WITH NO WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.  In no 
+event shall THG or the Contributors be liable for any damages suffered by 
+the users arising out of the use of this software, even if advised of the 
+possibility of such damage. 
+
 
 .SH CONTACT & HELP
-NCSA Software Deveopment Division
+The HDF Group
 .sp 0
-Hierarchical Data Format Group
-.sp 0
-email: hdfhelp@ncsa.uiuc.edu
+Email: help@hdfgroup.org
 
 .SH FILES
 .PD 0
 .TP 30
-.B /usr/local/lib/hdf/{libmfhdf.a,libdf.a,libjpeg.a,libz.a}
+.B /usr/local/lib/hdf/{libmfhdf.a,libdf.a,libjpeg.a,libz.a,[ libsz.a ]}
 hdf libraries
 .TP 30
 .B /usr/local/bin
 Location of most hdf utilities
 .TP 30
 .B /usr/local/include/hdf
-Location of include file hdf.h and others
+Location of include file hdf.h, mfhdf.h, and others
 .PD
 
-.SH SEE ALSO
-.BR hdfls (1),
-.BR hdfpack (1),
-.BR hdfunpac (1),
-.BR hdp (1)
