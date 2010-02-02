@@ -1,3 +1,3 @@
 include $(top_srcdir)/config/commence.am
 
-man1_MANS = hdf.1 hdfunpac.1
+man1_MANS = hdf.1 
