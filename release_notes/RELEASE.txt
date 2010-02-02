@@ -42,6 +42,7 @@ New features and changes
 ========================
     Source distribution
     ===================
+    - For the complete list of the removed obsolete files see Appendix.
     - Removed obsolete mfhdf/port and mfhdf/c++ directories and related 
       code
         (EIP - 2010/1/18)
@@ -53,7 +54,6 @@ New features and changes
         (EIP - 2009/12/29)
     - SD tests were moved from mfhdf/libsrc to mfhdf/test.
 	  (BMR - 2009/09/10)
-    - For the list of the removed obsolete files see Appendix.
 
     Configuration
     ============= 
@@ -65,6 +65,11 @@ New features and changes
 
     Library
     ========= 
+    - SDreset_maxopenfiles allowes to reset the number of the files that 
+      can be open at the same time to the system limit minus 3. On AIX 6.1
+      system limit is 2GB-1 causing HDF4 to choke. Source code was modified 
+      to put a cap on the system limit to not exceed 
+      H4_MAX_AVAIL_OPENFILES (currently 20000).  (EIP - 2010/02/01) 
     - "make installcheck" builds and tests examples using h4cc and h4fc
       scripts (MAM, BMR and MSB - 2009/12)
     - HDF Fortran examples were added to hdf/fortran/examples. 
