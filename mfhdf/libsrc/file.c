@@ -45,7 +45,13 @@ struct rlimit rlim;
 
 /* Maximum number of files can be opened at one time; subtract 3 from
    the system allowed to account for stdin, stdout, and stderr */
-#define MAX_AVAIL_OPENFILES          (MAX_SYS_OPENFILES - 3)
+/* On AIX 6.1 system the limit is 2GB-1; it caused our library to choke.
+   For now we will use a cap H4_MAX_AVAIL_OPENFILES on the maximum number 
+   of files can be open at one time. This limit should probably
+   be in hlimits.h file in the future. EIP 2010-02-01*/
+
+#define H4_MAX_AVAIL_OPENFILES 20000
+#define MAX_AVAIL_OPENFILES  (((MAX_SYS_OPENFILES - 3) > H4_MAX_AVAIL_OPENFILES) ? H4_MAX_AVAIL_OPENFILES : (MAX_SYS_OPENFILES - 3)) 
 
 static int _curr_opened = 0 ; /* the number of files currently opened */
 /* NOTE: _ncdf might have been the number of files currently opened, yet it
@@ -102,6 +108,14 @@ intn req_max;	/* requested max to allocate */
 	NC **newlist;
 	intn i;
 	int ret_value = SUCCEED;
+
+        /* Verify arguments */
+        if (req_max < 0)
+        {
+            NCadvise(NC_EINVAL, "Invalid request: %d for maximum files", req_max);
+            HGOTO_DONE(-1) ;
+        }
+
 
 	/* If requested max is 0, allocate _cdfs with the default,
 	   max_NC_open, if _cdfs is not yet allocated, otherwise, keep 
@@ -288,7 +302,7 @@ int mode ;
 		return(-1); 
 	    }
 	    /* otherwise, increase the current max to the system limit */
-	    if (FAIL == (max_NC_open=NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES)))
+	    if (FAIL == NC_reset_maxopenfiles(MAX_AVAIL_OPENFILES))
 	    {
 		NCadvise(NC_ENFILE, "Could not reset max open files limit");
 		return(-1); 
