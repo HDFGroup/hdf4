@@ -18,8 +18,6 @@ rem This batch file takes the following options:
 rem         vs8               Build using Visual Studio 2005
 rem         vs9               Build using Visual Studio 2008
 rem                           [default Visual Studio 2008]
-rem         enablefortran     Build HDF4 C/Fortran Library and Tools 
-rem                           [default C only]
 rem         ivf91             Build HDF4 Fortran using Intel Visual Fortran 9.1
 rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
 rem         ivf111            Build HDF4 Fortran using Intel Visual Fortran 11.1
