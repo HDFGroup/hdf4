@@ -35,8 +35,7 @@ tagnum_to_name(intn num)
     return (ret);
 }	/* end tagnum_to_name() */
 
-intn 
-tagname_to_num(const char *name)
+intn tagname_to_num(const char *name)
 {
     return (HDgettagnum(name));
 }	/* end tagname_to_num() */
@@ -75,8 +74,7 @@ make_file_list(intn curr_arg, intn argc, char *argv[])
     return (ret);
 }	/* end make_file_list() */
 
-char       *
-get_next_file(filelist_t * f_list, intn advance)
+char * get_next_file(filelist_t * f_list, intn advance)
 {
     if (advance)
         f_list->curr_file++;
@@ -97,19 +95,31 @@ vg_info_t* free_node_vg_info_t(
       {
          for (i = 0; i < aNode->n_entries; i++)
             if (aNode->children[i] != NULL)
+	    {
                 HDfree(aNode->children[i]);
+		aNode->children[i] = NULL;
+	    }
          HDfree( aNode->children );
+	 aNode->children = NULL;
       }
       if (aNode->type != NULL)
       {
          for (i = 0; i < aNode->n_entries; i++)
             if (aNode->type[i] != NULL)
+	    {
                 HDfree(aNode->type[i]);
+		aNode->type[i] = NULL;
+	    }
          HDfree( aNode->type );
+	 aNode->type = NULL;
       }
       if (aNode->vg_name != NULL)
+      {
          HDfree(aNode->vg_name);
+	 aNode->vg_name = NULL;
+      }
       HDfree(aNode);
+      aNode = NULL;
    }
    return(NULL);
 }  /* end of free_node_vg_info_t */
@@ -175,9 +185,9 @@ void free_obj_chosen_t_list(
 		HDfree((*nodelist)[i].classname);
 	    }
       }
-    HDfree((*nodelist));
+      HDfree((*nodelist));
+      (*nodelist) = NULL;
    }
-   (*nodelist) = NULL;
 }  /* end of free_vginfo_list */
 
 /* free_str_list use HDfree to free the list of strings of characters */

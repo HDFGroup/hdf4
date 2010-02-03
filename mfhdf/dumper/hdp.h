@@ -51,6 +51,12 @@ intn        vinit_done
 #define DATA_CONT_INDENT  16	/* # of spaces in front of dataset data 
 					on a continuous line */
 
+/* Free a char pointer if it's not NULL, then set it to NULL */
+#define SAFE_FREE(ptr) {	\
+	if (ptr != NULL)	\
+	{ HDfree((VOIDP)ptr);	\
+	  ptr = NULL; }}
+
 /* ERROR_GOTO_n macros are used to facilitate error printing.  Each
    macro prints the given message to the stderr, then uses the HDF 
    library macro HGOTO_DONE to set the variable ret_value to FAIL

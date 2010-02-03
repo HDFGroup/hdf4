@@ -200,8 +200,8 @@ int32 sdsdumpfull( int32        sds_id,
    int32   *edge = NULL;
    intn     emptySDS = TRUE;
    file_type_t ft;
-   intn     status;
-   int32    status32;
+   intn     status = FAIL;
+   int32    status32 = FAIL;
    int32    ret_value = SUCCEED;
 
    /* temp. names for ease of use */
@@ -473,7 +473,7 @@ intn print_SDattrs( int32 sd_id,
         *attr_nt_desc = NULL;
    VOIDP attr_buf=NULL;
    intn  printed = FALSE; /* whether file attr title has been printed */
-   intn  status,          /* status from a called routine */
+   intn  status = FAIL,          /* status from a called routine */
          ret_value = SUCCEED;
 
    /* for each file attribute, print its info and values */
@@ -569,7 +569,7 @@ intn print_SDSattrs( int32 sds_id,
    char  attr_name[MAXNAMELEN],
         *attr_nt_desc = NULL;
    VOIDP attr_buf=NULL;
-   intn  status,   /* status returned from a called routine */
+   intn  status = FAIL,   /* status returned from a called routine */
          ret_value = SUCCEED; /* returned value of print_SDSattrs */
 
    /* for each attribute, display its info and data */
@@ -661,12 +661,9 @@ void resetSDS(
 }  /* end of resetSDS */
 
 /*
- * When the SZIP library is available, forms a string containing all the 
- * szip encoding schemes and other options that are set in the parameter 
- * options_mask.  - BMR - bugzilla 1202 - Jul, 2008
+ * Forms a string containing all the szip encoding schemes and other options
+ * that are set in the parameter options_mask.  BMR - bugzilla 1202 - Jul, 2008
  */
- /* #ifdef H4_HAVE_LIBSZ
- */ 
 intn option_mask_string(int32 options_mask, char* opt_mask_strg)
 {
     intn ret_value = SUCCEED;
@@ -763,7 +760,7 @@ intn print_comp_info(
 {
    comp_info c_info;                /* Compression structure */
    int32 comp_size=0, orig_size=0;  /* compressed and original sizes */
-   intn status = SUCCEED;	    /* returned status from a called function */
+   intn status = FAIL;	    /* returned status from a called function */
 
    /* get compression info */
    HDmemset(&c_info, 0, sizeof(c_info));
@@ -849,7 +846,7 @@ intn printSDS_ASCII(
          dimNT[MAXRANK],        /* number type of dimension */
          dimnattr[MAXRANK];     /* # of attributes of a dim */
    char  dim_nm[MAXNAMELEN],    /* dimension name */
-         *sdsname,			/* SDS name */
+         *sdsname = NULL,	/* SDS name */
          *nt_desc = NULL,       /* SDS's or dim's num type description */
          *attr_nt_desc = NULL,  /* attr's nt description */
          curr_file_name[MAXFNLEN]; /* curr hdf file name */
@@ -858,7 +855,7 @@ intn printSDS_ASCII(
    intn  isdimvar,      /* TRUE if curr SDS is used for a dim */
          j,
 	 isnetCDF = FALSE,	/* TRUE when the file is netCDF */
-         status,		/* status returned from a routine */
+         status = FAIL,		/* status returned from a routine */
          ret_value = SUCCEED;	/* returned value of printSDS_ASCII */
 
       /* Reset variables. */
@@ -950,7 +947,8 @@ intn printSDS_ASCII(
 	    if(!isnetCDF)
 	    {
 		/* get SDS's ref# from its id */
-		if ((sds_ref = SDidtoref(sds_id)) == FAIL)
+		sds_ref = SDidtoref(sds_id);
+		if (sds_ref == FAIL)
 		    ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
 			"printSDS_ASCII", "SDidtoref", (int)sds_index, FAIL );
 		fprintf(fp, "\t Ref. = %d\n", (int) sds_ref);
@@ -1042,15 +1040,16 @@ intn printSDS_ASCII(
       }	 /* switch  */
 
       resetSDS( &sds_id, sds_index, curr_file_name ); /* end access to current SDS */
+      SAFE_FREE(sdsname);
 
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-          if (sds_id != FAIL)
-              SDendaccess(sds_id);
+        if (sds_id != FAIL)
+            SDendaccess(sds_id);
+	SAFE_FREE(sdsname);
       }
     /* Normal cleanup */
-
     return ret_value;
 } /* end of printSDS_ASCII() */
 
@@ -1060,15 +1059,15 @@ intn printSDS_BINARY(
 	int32 sds_index,    /* index of the SDS */
 	FILE *fp )
 {
-   int32 sds_id,
+   int32 sds_id=FAIL,
          dimsizes[MAXRANK],
          rank,
          nt,
          nattrs;
    char  curr_file_name[MAXFNLEN];
    comp_coder_t comp_type=COMP_CODE_NONE;
-   intn  status,
-         ret_value = SUCCEED;
+   intn  status=FAIL,
+         ret_value=SUCCEED;
    
     /* temp. names for file type and curr input file name for ease of use */
     HDstrcpy( curr_file_name, dumpsds_opts->ifile_name );
@@ -1124,18 +1123,18 @@ intn dsd(dump_info_t *dumpsds_opts,
     intn         argc, 
     char        *argv[])
 {
-   int32  sd_id = FAIL,
-         *sds_chosen = NULL,
+   int32  sd_id=FAIL,
+         *sds_chosen=NULL,
           num_sds_chosen,
           ndsets,
           n_file_attrs;
    char   file_name[MAXFNLEN];
-   FILE  *fp = NULL;
+   FILE  *fp=NULL;
    file_type_t ft = dumpsds_opts->file_type;
-   intn   index_error = 0,
+   intn   index_error=0,
 	  ii,
-          status,
-          ret_value = SUCCEED;
+          status=FAIL,
+          ret_value=SUCCEED;
 
    /* check for missing input file name */
    if( curr_arg >= argc )
@@ -1368,14 +1367,9 @@ done:
           if (fp != stdout)
               fclose(fp);                       
 
-          if (sds_chosen != NULL)
-            {
-                HDfree(sds_chosen);
-                sds_chosen=NULL;
-            } /* end if */
+	  SAFE_FREE(sds_chosen);
       }
     /* Normal cleanup */
-
     return ret_value;
 }	/* dsd */
 
@@ -1386,7 +1380,7 @@ intn do_dumpsds(intn  curr_arg,
            intn  help )
 {
     dump_info_t dumpsds_opts;	/* dumpsds options */
-    intn status, ret_value = SUCCEED;
+    intn status=FAIL, ret_value=SUCCEED;
 
    /* initialize the structure that holds user's options and inputs */
    init_dump_opts(&dumpsds_opts);
