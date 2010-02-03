@@ -94,18 +94,14 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-   Added support for the 64-bit Mac OS 10.5.6 with gcc 4.0.1 and 
-   Intel C and Fortran compilers version 10.1.
-   Known problems: 
-   Due to a known bug in the Intel 10.1 icc compiler, one has to use
-   -no-multibyte-chars flag with icc. If using 32-bit ifort, O0 flag 
-   is required to build Fortran APIs and tests. 
+   Added support for 64-bit Mac Intel with gcc, gfortran and Intel C
+   and Fortran compilers.
 
 Bugs fixed since HDF4.2.4
 =========================
     Utilities
     ========= 
-        - 
+        - None 
 
     Library
     ========= 
@@ -145,60 +141,46 @@ The updated HDF Reference Manual is now available in HTML format.
 Platforms tested
 ================
 
-HDF 4.2 Release 4 has been tested on the following platforms:
+HDF 4.2 Release 5 has been tested on the following platforms:
 
     FreeBSD 6.3-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
-    (duty)                        g++ 3.4.6 [FreeBSD] 20060305
-                                  f77 (gcc) 3.4.6
-                                  gcc 4.2.5 20080702
-                                  g++ 4.2.5 20080702
-                                  gfortran 4.2.5 20080702
+    (duty)                        f77 (gcc) 3.4.6
+                                  gcc (GCC) 4.4.4 20100126 (prerelease)
+                                  GNU Fortran (GCC) 4.4.4 20100126
+                                  (prerelease) 
 
     FreeBSD 6.3-STABLE amd64      gcc 3.4.6 [FreeBSD] 20060305
-    (liberty)                     g++ 3.4.6 [FreeBSD] 20060305
-                                  f77 (gcc) 3.4.6
-                                  gcc 4.2.5 20080702
-                                  g++ 4.2.5 20080702
-                                  gfortran 4.2.5 20080702
-
-    IRIX64 6.5                    MIPSpro cc 7.4.4m
-    (ucar mop1 64 & n32)          F90 MIPSpro 7.4.4m
+    (liberty)                     f77 (gcc) 3.4.6
+                                  gcc (GCC) 4.4.4 20100126 (prerelease)
+                                  GNU Fortran (GCC) 4.4.4 20100126
+                                  (prerelease)
 
 
-    Linux 2.6.18-92.1.22.el5xen   gcc (GCC) 4.1.2 20071124
-         #1 SMP i686 i686 i386    gG95 (GCC 4.0.3 (g95 0.92!) July 1 2008)
+    Linux jam 2.6.18-164.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-46)
+         SMP i686 i386            G95 (GCC 4.0.3 (g95 0.92!) Jun 24 2009)
     (jam)                         g77 (GCC) 3.4.6 20060404
-                                  PGI C, Fortran, C++ 7.2-5 32-bit
-                                  Intel(R) C Compiler for 32-bit
-                                      applications, Version 10.1.018
-                                  Intel(R) Fortran Compiler for 32-bit
-                                      applications, Version 10.1.018
+                                  pgcc and pgf90 8.0-5 32-bit target 
+                                  on x86 Linux -tp penryn
+                                  Intel(R) C Compiler, Version 11.0
+                                  Intel(R) Fortran Compiler, Version 11.0
 
-    Linux 2.6.9-42.0.10.ELsmp #1  gcc (GCC) 3.4.6
-         SMP i686 i386            g++ (GCC) 3.4.6
-    (kagiso)                      G95 (GCC 4.0.3 (g95 0.92!) April 18 2007)
 
-    Linux 2.6.16.46-0.12-debug #1 Intel(R) C Compiler Version 10.0.025
-        SMP ia64 GNU/Linux        Intel(R) Fortran Itanium(R) Version 10.0.025
-    (ucar hir1)
+    Linux 2.6.18-164.11.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-46)
+        SMP x86_64 GNU/Linux      G95 (GCC 4.0.3 (g95 0.92!) Jun 24 2009)
+    (amani)                       icc (ICC) 11.1 20090827
+                                  ifort (IFORT) 11.1 20090827
+                                  pgcc and pgf90 9.0-4 64-bit target 
+                                  on x86-64 Linux -tp k8-64e
+                                  GNU Fortran (GCC) 4.1.2 20080704 
+                                  (Red Hat 4.1.2-46)
 
-    Linux 2.6.16.46-0.14-smp #1   gcc (GCC) 4.1.2 20070115 (SUSE Linux)
-        SMP x86_64 GNU/Linux      G95 (GCC 4.0.3 (g95 0.92!) July 1 2008)
-    (smirom)                      Intel(R) C Compiler for Intel(R) EM64T Ver.
-10.1.013
-                                  Intel(R) Fortran Intel(R) EM64T Ver.
-10.1.013
-                                  PGI C, Fortran Version 7.2-1
-                                         for 64-bit target on x86-64
+    SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-12 
+    (linew)                       Sun Fortran 95 8.3 SunOS_sparc 
+                                  Patch 127000-12 
 
     Linux 2.6.16.54-0.2.5 #1      Intel(R) C Compiler Version 10.1.017
         Altix SMP ia64            Intel(R) Fortran Itanium(R) Version 10.1.017
     (cobalt)                      SGI MPI 1.16
-
-    SunOS 5.10 32- and 64-bit     Sun WorkShop 6 update 2 C 5.8
-                                  Patch 121015-06
-    (linew)                       Sun WorkShop 6 update 2 Fortran 95 8.2
-                                  Patch 121019-09
 
     Xeon Linux 2.6.18-92.1.10.el5_lustre.1.6.6smp-perfctr
          #2 SMP x86_64            Intel(R) C Compiler Version 10.0.026
@@ -208,6 +190,9 @@ HDF 4.2 Release 4 has been tested on the following platforms:
         ia64
     (NCSA tg-login)               Intel(R) C Compiler Version 8.1.037
                                   Intel(R) Fortran Compiler Version 8.1.033
+
+    AIX 6.1                       IBM XL C/C++ for AIX, V10.1
+                                  IBM XL Fortran for AIX, V12.1
 
 
     Windows XP                    Visual Studio 2005 (with Intel Fortran 9.1/10.1)
@@ -221,11 +206,12 @@ HDF 4.2 Release 4 has been tested on the following platforms:
                                   
     Windows Vista(64 bit)         Visual Studio 2008 (with Intel Fortran 10.1)
                                   
-    MAC OS X Intel 10.5.8         Darwin 9.4.0
-                                  i686-apple-darwin8-gcc-4.0.1 (GCC) 4.0.1
-                                  G95 (GCC 4.0.3 (g95 0.91!) Apr 24 2008)
-                                  gfortran GNU Fortran (GCC) 4.3.0 20070810
-                                  Intel 10.1 32 and 64-bit versions
+    MAC OS X Intel 10.6.2         Darwin 10.2.0
+                                  Intel C icc (ICC) 11.1 20091130
+                                  Intel Fortran ifort (IFORT) 11.1 20091130 
+                                  i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+                                  GNU Fortran (GCC) 4.5.0 20090910
+                              
 
     Linux 2.6.27.9-159.fc10.x86_64 #1 SMP 
         x86_64 GNU/Linux          gcc (GCC) 4.3.2
