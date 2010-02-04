@@ -71,6 +71,13 @@ New features and changes
       that no compression information is retrieved, instead of SDgetchunkinfo
       simply fails.  This is to support backward compatibily.
       (BMR - 2010/02/04)
+    - Vgroup name and class name can now be more than the previous limit
+      of 64 characters.  Two public functions are provided for applications
+      to be able to allocate sufficient space for these items.
+        int32 Vgetnamelen (int32 vkey, uint16 *name_len);
+        int32 Vgetclassnamelen (int32 vkey, uint16 *classname_len);
+      Please refer to the Reference Manual and User's Guide for details.
+      (BMR - 2010/01/27)
     - SDreset_maxopenfiles allows users to reset the number of the files that 
       can be open at the same time to the system limit minus 3. On AIX 6.1
       system limit is 2GB-1 causing HDF4 to choke. Source code was modified 
