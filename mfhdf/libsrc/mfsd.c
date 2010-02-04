@@ -6329,6 +6329,10 @@ SDgetchunkinfo_old(int32          sdsid,      /* IN: sds access id */
 
  AUTHOR 
         -GeorgeV
+
+ MODIFICATION
+	Jun, 2009: Added compression type and compression parameters.- BMR
+
 ******************************************************************************/
 intn 
 SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
@@ -6383,98 +6387,135 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
-    if (ret_value != FAIL)
-    {   /* make sure it is chunked element */
-	if (special == SPECIAL_CHUNKED)
-	{   /* get info about chunked element */
-	    if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
-	    {   /* Does user want chunk/comp info back? */
-		if (chunk_def != NULL)
-		{
-		   /* If no compression, fill in chunk length, otherwise, fill
-		      in chunk length and compression info. */
-                   switch(info_block.comp_type)
-                     {
-                     case COMP_CODE_NONE:
-                         *flags = HDF_CHUNK;
+    if (ret_value == FAIL)
+	goto done;
 
-                         /* copy chunk lengths over */
-                         for (i = 0; i < info_block.ndims; i++)
-                           {
-                               chunk_def->chunk_lengths[i] = info_block.cdims[i];
-                           }
-                         break;
-                     case COMP_CODE_NBIT:
-                         *flags = (HDF_CHUNK | HDF_NBIT);
+    /* make sure it is chunked element */
+    if (special == SPECIAL_CHUNKED)
+    {   /* get info about chunked element */
+	if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
+	{   /* Does user want chunk/comp info back? */
+	    if (chunk_def != NULL)
+	    {
+		/* If no compression, fill in chunk length, otherwise, fill
+		   in chunk length and compression info. */
+                switch(info_block.comp_type)
+                {
+                  case COMP_CODE_NONE:
+                      *flags = HDF_CHUNK;
 
-                         /* copy chunk lengths over */
-                         for (i = 0; i < info_block.ndims; i++)
-                           {
-                               chunk_def->nbit.chunk_lengths[i] = info_block.cdims[i];
-                           }
-			 /* get the NBIT compression info */
-			 ret_value = HCPgetcompinfo(handle->hdf_file,
+                      /* copy chunk lengths over */
+                      for (i = 0; i < info_block.ndims; i++)
+                      {
+                           chunk_def->chunk_lengths[i] = info_block.cdims[i];
+                      }
+                      break;
+                  case COMP_CODE_NBIT:
+                      *flags = (HDF_CHUNK | HDF_NBIT);
+
+                      /* copy chunk lengths over */
+                      for (i = 0; i < info_block.ndims; i++)
+                      {
+                          chunk_def->nbit.chunk_lengths[i] = info_block.cdims[i];
+                      }
+		      /* get the NBIT compression info */
+		      ret_value = HCPgetcompinfo(handle->hdf_file,
 					var->data_tag, var->data_ref,
 					&comp_type, &c_info);
-			 /* This check may break old applications unneccessarily
-			    because getting comp info here is new feature.  So,
-			    it would be good to be able to check for version or
-			    something similar - BMR, June 2009 */
-			 if (ret_value == FAIL)
-			 {
-			    ret_value = FAIL;
-			    goto done;
-			 }
-			 chunk_def->nbit.start_bit = c_info.nbit.start_bit;
-			 chunk_def->nbit.bit_len = c_info.nbit.bit_len;
-			 chunk_def->nbit.sign_ext = c_info.nbit.sign_ext;
-			 chunk_def->nbit.fill_one = c_info.nbit.fill_one;
-                         break;
-                     default:
-                         *flags = (HDF_CHUNK | HDF_COMP);
+		      /* This check may break old applications unneccessarily
+			 because getting comp info here is new feature.  So,
+			 it would be good to be able to check for version or
+			 something similar - BMR, June 2009 */
+		      if (ret_value == FAIL)
+		      {
+			  chunk_def->nbit.start_bit =
+			  chunk_def->nbit.bit_len =
+			  chunk_def->nbit.sign_ext =
+			  chunk_def->nbit.fill_one = -1;
+		      }
+		      else
+		      {
+			  chunk_def->nbit.start_bit = c_info.nbit.start_bit;
+			  chunk_def->nbit.bit_len = c_info.nbit.bit_len;
+			  chunk_def->nbit.sign_ext = c_info.nbit.sign_ext;
+			  chunk_def->nbit.fill_one = c_info.nbit.fill_one;
+		      }
+                      break;
+                  default:
+                      *flags = (HDF_CHUNK | HDF_COMP);
 
-                         /* copy chunk lengths over */
-                         for (i = 0; i < info_block.ndims; i++)
-                         {
-                             chunk_def->comp.chunk_lengths[i] = info_block.cdims[i];
-                         }
+                      /* copy chunk lengths over */
+                      for (i = 0; i < info_block.ndims; i++)
+                      {
+                          chunk_def->comp.chunk_lengths[i] = info_block.cdims[i];
+                      }
 
-			 /* get the compression info */
-			 ret_value = HCPgetcompinfo(handle->hdf_file,
+		      /* get the compression info */
+		      ret_value = HCPgetcompinfo(handle->hdf_file,
 					var->data_tag, var->data_ref,
-					&comp_type, &(chunk_def->comp.cinfo));
-			 /* This check may break old applications unneccessarily
-			    because getting comp info here is new feature.  So,
-			    it would be good to be able to check for version or
-			    something similar - BMR, June 2009 */
-			 if (ret_value == FAIL)
-			 {
-			    ret_value = FAIL;
-			    goto done;
-			 }
-			 chunk_def->comp.comp_type = (int32)comp_type;
-                         break;
-                     } /* end of switch info_block.comp_type */
-		}
-                   /* dont forget to free up info in special info block 
-                      This space was allocated by the library */
-                   HDfree(info_block.cdims);
-	    }
+					&comp_type, &c_info);
+
+		      /* For backward compatibility, it will not fail here.
+			 However, the compression information parameters will
+			 be set to -1 to indicate that there are no compression
+			 information retrieved - EIP/BMR - 2010/02 */
+		      if (ret_value == FAIL)
+		      {
+			  chunk_def->comp.comp_type = info_block.comp_type;
+			  switch (info_block.comp_type)
+			  {
+			    case COMP_CODE_NBIT:
+				chunk_def->comp.cinfo.nbit.nt =
+				chunk_def->comp.cinfo.nbit.sign_ext =
+				chunk_def->comp.cinfo.nbit.fill_one =
+				chunk_def->comp.cinfo.nbit.start_bit =
+				chunk_def->comp.cinfo.nbit.bit_len = -1;
+				break;
+
+			    case COMP_CODE_SKPHUFF:
+				chunk_def->comp.cinfo.skphuff.skp_size = -1;
+ fprintf(stderr, "set chunk_def->comp.cinfo.skphuff.skp_size to -1\n");
+				break;
+
+			    case COMP_CODE_DEFLATE:
+				chunk_def->comp.cinfo.deflate.level = -1;
+				break;
+
+			    case COMP_CODE_SZIP:
+				chunk_def->comp.cinfo.szip.pixels =
+				chunk_def->comp.cinfo.szip.pixels_per_scanline =
+				chunk_def->comp.cinfo.szip.options_mask =
+				chunk_def->comp.cinfo.szip.bits_per_pixel =
+				chunk_def->comp.cinfo.szip.pixels_per_block = -1;
+				break;
+
+        /* What about JPEG? - BMR */
+			    default:  /* no additional info needed */
+				break;
+			  }  /* end switch */
+		      }
+		      else
+		      {
+			  HDmemcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
+			  chunk_def->comp.comp_type = (int32)comp_type;
+		      }
+                      break; /* default */
+                } /* end of switch info_block.comp_type */
+	    }  /* chunk_def != NULL */
+            /* Free up info in special info block, allocated by the library */
+            HDfree(info_block.cdims);
 	}
-	else /* not special chunked element */
-	{
+    }
+    else /* not special chunked element */
+    {
 	    *flags = HDF_NONE; /* regular SDS */
-	}
     }
 
   done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-
       }
     /* Normal cleanup */
-
-
     return ret_value;
 } /* SDgetchunkinfo() */
 
