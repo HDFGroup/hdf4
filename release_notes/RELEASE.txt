@@ -65,7 +65,13 @@ New features and changes
 
     Library
     ========= 
-    - SDreset_maxopenfiles allowes to reset the number of the files that 
+    - SDgetchunkinfo now contains compression type and compression
+      information.  If failure occurs while getting compression information,
+      the associate compression parameters will be set to -1 to indicate
+      that no compression information is retrieved, instead of SDgetchunkinfo
+      simply fails.  This is to support backward compatibily.
+      (BMR - 2010/02/04)
+    - SDreset_maxopenfiles allows users to reset the number of the files that 
       can be open at the same time to the system limit minus 3. On AIX 6.1
       system limit is 2GB-1 causing HDF4 to choke. Source code was modified 
       to put a cap on the system limit to not exceed 
@@ -79,14 +85,22 @@ New features and changes
 
     Test
     ====
-    - Added tests for GRfindattr, GRattrinfo, and GRgetattr
-	  (BMR - 2009/11/15)
+    - Added tests for GRfindattr, GRattrinfo, and GRgetattr (BMR - 2009/11/15)
+    - Moved SD tests out of mfhdf/libsrc into the new directory mfhdf/test
+      (BMR - 2009/09/10)
 
     Utilities
     ========= 
+    - Added flag -k to hdp dumpsds to keep the order of the outputted
+      SDSs the same as the order they were specified on the command
+      line.  The default (without -k) is SDSs are printed in the order
+      in which they were added to the file (ie., indices.) (BMR - 2010/02/03)
     - Added -V flag to hdiff, hrepack, hdfimport, ncdump and ncgen; 
       when specified, tool prints library version string and exits.
           (EIP - 2010/01/28) 
+    - Hrepack: set default value for JPEG's quality factor to 75 to
+      prevent image distortion when the factor is not provided by user
+      (BMR - 2010/01/14)
  
     Daily Test and Release
     ======================
@@ -105,13 +119,18 @@ Bugs fixed since HDF4.2.4
 
     Library
     ========= 
-	- The problem where incorrect result occurred when attempting
-	  to retrieve the dimension scale's number type from a netCDF file
-	  was fixed (bugzilla #1644.) (BMR - 2009/09/25)
-	- The problem where pieces of an image get written multiple times
-	  at different locations in the 2-D array had been fixed.  The
-	  cause was the pointer to user's buffer was not advanced properly.
-	  This was part of bugzilla 1547.  (BMR - 2009/06/10)
+    - The problem where incorrect result occurred when attempting
+      to retrieve the dimension scale's number type from a netCDF file
+      was fixed (bugzilla #1644.) (BMR - 2009/09/25)
+    - The problem where pieces of an image get written multiple times
+      at different locations in the 2-D array had been fixed.  The
+      cause was the pointer to user's buffer was not advanced properly.
+      This was part of bugzilla 1547.  (BMR - 2009/06/10)
+    - The problem which SDgetdimstrs failed if there are no attributes
+      attached to the dimension had been fixed.  SDgetdimstrs now returns
+      the attribute strings containing '\0' for the first character, as
+      specified in the documentation. (BMR - 2009/08/28)
+
 
     Configuration
     =============
