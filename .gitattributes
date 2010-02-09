@@ -1,16 +1,32 @@
 * text=auto !eol
+/CMakeLists.txt -text svneol=unset#text/plain
+/CTestConfig.cmake -text
+/ConfigureChecks.cmake -text
 /Makefile.dist -text
+Resources/CMake/FindSZIP.cmake -text
+Resources/CheckTypeSize.cmake -text
+Resources/ConversionTests.c -text svneol=unset#text/plain
+Resources/GetTimeOfDayTest.cpp -text svneol=unset#text/plain
+Resources/HDF4Macros.cmake -text
+Resources/HDF4Tests.c -text svneol=unset#text/plain
+Resources/LibSources.cmake -text
+Resources/h4config.h.in -text
+Resources/hdf4_zlib.h.in -text
+Resources/netcdf.h.in -text
 bin/h4vers -text
 bin/ltmain.sh -text
 bin/newer -text
 bin/release -text
 bin/timekeeper -text
+/c_flag_overrides.cmake -text
 config/aix -text
 config/apple -text
 config/commence.am -text
 config/conclude.am -text
 config/examples.am -text
 config/ia64-hp-hpux11.23 -text
+/cxx_flag_overrides.cmake -text
+hdf/CMakeLists.txt -text svneol=unset#text/plain
 hdf/examples/AN_create_annotation.c -text
 hdf/examples/AN_get_annotation_info.c -text
 hdf/examples/AN_read_annotation.c -text
@@ -70,9 +86,12 @@ hdf/fortran/examples/VG_get_vgroup_info.f -text
 hdf/fortran/examples/VG_insert_vdatas_to_vgroup.f -text
 hdf/fortran/examples/VG_set_get_vgroup_attr.f -text
 hdf/fortran/examples/VG_vgroup_contents.f -text
+hdf/src/CMakeLists.txt -text svneol=unset#text/plain
 hdf/src/dfufp2if.c -text
 hdf/src/dfufp2iff.f -text
+hdf/src/fort_ps/CMakeLists.txt -text svneol=unset#text/plain
 hdf/src/hproto_fortran.h -text
+hdf/test/CMakeLists.txt -text svneol=unset#text/plain
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text
@@ -85,6 +104,7 @@ hdf/test/test_files/tvattr.dat -text
 hdf/test/tmgrattr.c -text
 hdf/test/tmgrcomp.c -text
 hdf/test/tutils.c -text
+hdf/util/CMakeLists.txt -text svneol=unset#text/plain
 hdf/util/testfiles/SunWheel.gif -text
 hdf/util/testfiles/bttrfly.gif -text
 hdf/util/testfiles/fp2hdf/h100x100 -text
@@ -112,6 +132,8 @@ hdf/util/testfiles/storm140.raw -text svneol=unset#application/octet-stream
 hdf/util/testfiles/test.cdf -text
 hdf/util/testfiles/test.hdf -text
 hdf/util/testfiles/tvattr.hdf -text
+mfhdf/CMakeLists.txt -text svneol=unset#text/plain
+mfhdf/dumper/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/dumper/testfiles/Example6.hdf -text
 mfhdf/dumper/testfiles/Image_with_Palette.hdf -text
 mfhdf/dumper/testfiles/LongDataset.hdf -text
@@ -170,6 +192,7 @@ mfhdf/examples/SD_unlimited_sds.c -text
 mfhdf/examples/SD_write_slab.c -text
 mfhdf/examples/SD_write_to_sds.c -text
 mfhdf/examples/testexamples.sh.in -text
+mfhdf/fortran/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/fortran/examples/Makefile.am -text
 mfhdf/fortran/examples/Makefile.in -text
 mfhdf/fortran/examples/SD_alter_sds_values.f -text
@@ -188,14 +211,17 @@ mfhdf/fortran/examples/SD_set_get_dim_info.f -text
 mfhdf/fortran/examples/SD_unlimited_sds.f -text
 mfhdf/fortran/examples/SD_write_slab.f -text
 mfhdf/fortran/examples/SD_write_to_sds.f -text
+mfhdf/fortran/fort_ps/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/fortran/hdftest1.f -text
 mfhdf/fortran/mffunc.inc -text
 mfhdf/fortran/test_nc.nc -text
+mfhdf/hdfimport/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/hdfimport/SDSfloat2.hdf -text
 mfhdf/hdfimport/SDSfloat3.hdf -text
 mfhdf/hdfimport/crtSDSfloats.c -text
 mfhdf/hdfimport/gen_sds_floats.c -text
 mfhdf/hdfimport/hdfimport.out3 -text
+mfhdf/hdiff/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/hdiff/hdiff_dim.c -text
 mfhdf/hdiff/hdiff_dim.h -text
 mfhdf/hdiff/testfiles/hdiff_13.txt -text
@@ -208,13 +234,19 @@ mfhdf/hdiff/testfiles/hdifftst4.hdf -text
 mfhdf/hdiff/testfiles/hdifftst5.hdf -text
 mfhdf/hdiff/testfiles/hdifftst6.hdf -text
 mfhdf/hdiff/testfiles/hdifftst7.hdf -text
+mfhdf/hrepack/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/hrepack/hrepacktst.c -text
+mfhdf/libsrc/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfhdfi.h -text
+mfhdf/ncdump/CMakeLists.txt -text svneol=unset#text/plain
+mfhdf/ncgen/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/ncgen/msofttab.c -text
 mfhdf/ncgen/msofttab.h -text
 mfhdf/ncgen/msoftyy.c -text
+mfhdf/nctest/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/nctest/test_unlim.nc -text
+mfhdf/test/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/test/Makefile.am -text
 mfhdf/test/Makefile.in -text
 mfhdf/test/cdftest.c -text
@@ -242,6 +274,7 @@ mfhdf/test/tsd.c -text
 mfhdf/test/tsdsprops.c -text
 mfhdf/test/tszip.c -text
 mfhdf/test/tunlim.c -text
+mfhdf/xdr/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/xdr/test_xdr.sav svneol=native#unset
 release_notes/INSTALL -text
 release_notes/INSTALL_CYGWIN.txt -text
