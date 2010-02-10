@@ -219,7 +219,7 @@ HDF 4.2.5 has been tested on the following platforms:
     (NCSA tg-login)               Intel(R) C Compiler Version 8.1.037
                                   Intel(R) Fortran Compiler Version 8.1.033
 
-    AIX 6.1                       IBM XL C/C++ for AIX, V10.1
+    AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V10.1
     (NCSA bp-login)               IBM XL Fortran for AIX, V12.1
 
 
