@@ -117,6 +117,8 @@ Support for new platforms and compilers
 =======================================
    Added support for 64-bit Mac Intel with gcc, gfortran and Intel C
    and Fortran compilers.
+   Added support for AIX 6.1 using IBM XL C and Fortran compilers.
+   (EIP - 2010/1/29)
 
 Bugs fixed since HDF4.2.4
 =========================
@@ -167,7 +169,7 @@ The updated HDF Reference Manual is now available in HTML format.
 Platforms tested
 ================
 
-HDF 4.2 Release 5 has been tested on the following platforms:
+HDF 4.2.5 has been tested on the following platforms:
 
     FreeBSD 6.3-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
     (duty)                        f77 (gcc) 3.4.6
@@ -218,7 +220,7 @@ HDF 4.2 Release 5 has been tested on the following platforms:
                                   Intel(R) Fortran Compiler Version 8.1.033
 
     AIX 6.1                       IBM XL C/C++ for AIX, V10.1
-                                  IBM XL Fortran for AIX, V12.1
+    (NCSA bp-login)               IBM XL Fortran for AIX, V12.1
 
 
     Windows XP                    Visual Studio 2005 (with Intel Fortran 9.1/10.1)
