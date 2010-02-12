@@ -2,7 +2,7 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE
    ${CMAKE_CURRENT_SOURCE_DIR}/c_flag_overrides.cmake)
 set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
    ${CMAKE_CURRENT_SOURCE_DIR}/cxx_flag_overrides.cmake)
-PROJECT(HDF4 C CXX Fortran)
+PROJECT(HDF4 C CXX)
 cmake_minimum_required(VERSION 2.6)
 
 #-----------------------------------------------------------------------------
@@ -316,136 +316,11 @@ ENDIF ( HDF4_BUILD_CPP_LIB )
 #-----------------------------------------------------------------------------
 OPTION(HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
 IF (HDF4_BUILD_FORTRAN)
-
-  #-----------------------------------------------------------------------------
-  # Fortran support is best served using cmake 2.8.0
-  #-----------------------------------------------------------------------------
-  #cmake_minimum_required(VERSION 2.8)
-
-  #-----------------------------------------------------------------------------
-  # Detect name mangling convention used between Fortran and C
-  #-----------------------------------------------------------------------------
-  include(FortranCInterface)
-  FortranCInterface_HEADER(${HDF4_F90_BINARY_DIR}/FCMangle.h
-                         MACRO_NAMESPACE "H4_FC_"
-                         SYMBOL_NAMESPACE "H4_FC_"
-                         SYMBOLS mysub mymod:my_sub)
-
-  FILE(STRINGS ${HDF4_F90_BINARY_DIR}/FCMangle.h CONTENTS REGEX "H4_FC_GLOBAL\\(.*,.*\\) +(.*)") 
-  STRING(REGEX MATCH "H4_FC_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-  SET(H5_FC_FUNC "H4_FC_FUNC(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
-
-  FILE(STRINGS ${HDF4_F90_BINARY_DIR}/FCMangle.h CONTENTS REGEX "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)") 
-  STRING(REGEX MATCH "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-  SET(H5_FC_FUNC_ "H4_FC_FUNC_(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
-
-  #-----------------------------------------------------------------------------
-  # The provided CMake Fortran macros don't provide a general check function
-  # so this one is used for a sizeof test.
-  #-----------------------------------------------------------------------------
-  macro(CHECK_FORTRAN_FEATURE FUNCTION CODE VARIABLE)
-    if(NOT DEFINED ${VARIABLE})
-      message(STATUS "Testing Fortran ${FUNCTION}")
-      if(CMAKE_REQUIRED_LIBRARIES)
-        set(CHECK_FUNCTION_EXISTS_ADD_LIBRARIES
-            "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-      else(CMAKE_REQUIRED_LIBRARIES)
-        set(CHECK_FUNCTION_EXISTS_ADD_LIBRARIES)
-      endif(CMAKE_REQUIRED_LIBRARIES)
-      FILE(WRITE
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
-        "${CODE}"
-      )
-      try_compile(${VARIABLE}
-        ${CMAKE_BINARY_DIR}
-        ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
-        CMAKE_FLAGS "${CHECK_FUNCTION_EXISTS_ADD_LIBRARIES}"
-        OUTPUT_VARIABLE OUTPUT
-      )
-
-  #    MESSAGE( "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ")
-  #    MESSAGE( "Test result ${OUTPUT}")
-  #    MESSAGE( "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ")
-
-      if(${VARIABLE})
-        set(${VARIABLE} 1 CACHE INTERNAL "Have Fortran function ${FUNCTION}")
-        message(STATUS "Testing Fortran ${FUNCTION} - OK")
-        file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
-          "Determining if the Fortran ${FUNCTION} exists passed with the following output:\n"
-          "${OUTPUT}\n\n")
-      else(${VARIABLE})
-        message(STATUS "Testing Fortran ${FUNCTION} - Fail")
-        set(${VARIABLE} "" CACHE INTERNAL "Have Fortran function ${FUNCTION}")
-        file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log 
-          "Determining if the Fortran ${FUNCTION} exists failed with the following output:\n"
-          "${OUTPUT}\n\n")
-      endif(${VARIABLE})
-    endif(NOT DEFINED ${VARIABLE})
-  endmacro(CHECK_FORTRAN_FEATURE)
-
-  #-----------------------------------------------------------------------------
-  # Configure Checks which require Fortran compilation must go in here
-  # not in the main ConfigureChecks.cmake files, because if the user has
-  # no Fortran compiler, problems arise.
-  #
-  # Be careful with leading spaces here, do not remove them.
-  #-----------------------------------------------------------------------------
-  CHECK_FORTRAN_FEATURE(sizeof 
-  "
-       PROGRAM main
-       i = sizeof(x)       
-       END PROGRAM
-  " 
-  FORTRAN_HAVE_SIZEOF
-  )  
-
-  CHECK_FORTRAN_FEATURE(RealIsNotDouble 
-  "
-       MODULE type_mod
-         INTERFACE h4t	
-           MODULE PROCEDURE h4t_real
-           MODULE PROCEDURE h4t_dble
-         END INTERFACE
-       CONTAINS
-         SUBROUTINE h4t_real(r)
-           REAL :: r
-         END SUBROUTINE h4t_real
-         SUBROUTINE h4t_dble(d)
-           DOUBLE PRECISION :: d
-         END SUBROUTINE h4t_dble
-       END MODULE type_mod
-       PROGRAM main
-         USE type_mod
-         REAL :: r
-         DOUBLE PRECISION :: d
-         CALL h4t(r)
-         CALL h4t(d)
-       END PROGRAM main
-  " 
-  FORTRAN_DEFAULT_REAL_NOT_DOUBLE
-  )  
-
-  #-----------------------------------------------------------------------------
-  # Auto-generated files will be placed and included from here
-  #-----------------------------------------------------------------------------
-  INCLUDE_DIRECTORIES(${HDF4_F90_BINARY_DIR})
-
-  #-----------------------------------------------------------------------------
-  # Fortran Real Size
-  #-----------------------------------------------------------------------------
-  IF (FORTRAN_DEFAULT_REAL_NOT_DOUBLE)
-    # default real is 4 bytes, so include double signatures
-    SET (F_DBLE "Include")
-  ELSE (FORTRAN_DEFAULT_REAL_NOT_DOUBLE)
-    # default real is 8 bytes, so exclude double signatures
-    SET (F_DBLE "Exclude")
-  ENDIF (FORTRAN_DEFAULT_REAL_NOT_DOUBLE)
-
   # Set default name mangling : overridden by Fortran detection in fortran dir
   SET(H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
   SET(H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
 #  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
+#  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
 ELSE ( HDF4_BUILD_FORTRAN )
   SET(H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
   SET(H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
