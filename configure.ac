@@ -806,7 +806,7 @@ fi
 dnl ------------------------------------------------------------------------
 dnl Specify shared library extension the host machine should recognize.
 case "$host_os" in
-  *-mac-*)
+  darwin*)
       SHARED_EXTENSION="dylib"
       ;;
   *)
