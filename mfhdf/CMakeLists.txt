@@ -30,6 +30,10 @@ IF(HDF4_BUILD_TOOLS)
   ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/ncdump   ncdump)
 ENDIF(HDF4_BUILD_TOOLS)
 
+IF (HDF4_BUILD_FORTRAN)
+#  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
+ENDIF (HDF4_BUILD_FORTRAN)
+
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
 #-----------------------------------------------------------------------------

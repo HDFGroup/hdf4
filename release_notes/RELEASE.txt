@@ -1,11 +1,11 @@
-HDF version 4.2.5-pre1 currently under development
+HDF version 4.2.5-pre2 currently under development
 ===================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.4 and HDF 4.2.4-snap*
+This document describes the differences between HDF 4.2.4 and HDF 4.2.5
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.4-snap*
+and wish to migrate to HDF 4.2.5
 
 The HDF 4.2.4 documentation can be found on the The HDF Group's FTP server:
 
@@ -117,6 +117,8 @@ Support for new platforms and compilers
 =======================================
    Added support for 64-bit Mac Intel with gcc, gfortran and Intel C
    and Fortran compilers.
+   Added support for AIX 6.1 using IBM XL C and Fortran compilers.
+   (EIP - 2010/1/29)
 
 Bugs fixed since HDF4.2.4
 =========================
@@ -167,7 +169,7 @@ The updated HDF Reference Manual is now available in HTML format.
 Platforms tested
 ================
 
-HDF 4.2 Release 5 has been tested on the following platforms:
+HDF 4.2.5 has been tested on the following platforms:
 
     FreeBSD 6.3-STABLE i386       gcc 3.4.6 [FreeBSD] 20060305
     (duty)                        f77 (gcc) 3.4.6
@@ -217,8 +219,8 @@ HDF 4.2 Release 5 has been tested on the following platforms:
     (NCSA tg-login)               Intel(R) C Compiler Version 8.1.037
                                   Intel(R) Fortran Compiler Version 8.1.033
 
-    AIX 6.1                       IBM XL C/C++ for AIX, V10.1
-                                  IBM XL Fortran for AIX, V12.1
+    AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V10.1
+    (NCSA bp-login)               IBM XL Fortran for AIX, V12.1
 
 
     Windows XP                    Visual Studio 2005 (with Intel Fortran 9.1/10.1)
@@ -255,6 +257,14 @@ HDF 4.2 Release 5 has been tested on the following platforms:
 Known problems
 ==============
 
+o  When building on Linux/UNIX platforms, the szip shared library files must be in 
+   the system library path. This can be done by
+   adding a link to the libsz.* files into the /usr/lib folder or by adding
+   the library location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+   
 o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    When a one-dimensional SDS and a dimension scale were created with
    the same name, subsequent accesses to the dimension scale or to the
@@ -292,18 +302,10 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
 
          ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
 
-o  In order for the new API SDgetdatasize to get the correct compressed size
+o  In order for the API SDgetdatasize to get the correct compressed size
    of the data, the dataset needs to be closed (SDendaccess) or read
    (SDreaddata), after being written and before SDgetdatasize is called.
 
-o  On the fedora, ubuntu, and suse x86_64 GNU/Linux machines, the szip shared
-   library files must be in the system library path. This can be done by
-   adding a link to the libsz.* files into the /usr/lib folder or by adding
-   the library location to the LD_LIBRARY_PATH environment variable.
-      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
-   Optionally, you can use the static szip library files by adding '-static'
-   to the CFLAGS environment variable.
-   
   
 Appendix: List of the removed files 
 ===================================

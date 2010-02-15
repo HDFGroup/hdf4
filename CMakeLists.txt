@@ -274,15 +274,15 @@ OPTION(HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF)
 IF (HDF4_ENABLE_SZIP_SUPPORT)
   find_package(SZIP)
   if (SZIP_FOUND)
-    SET (H4_HAVE_FILTER_SZIP 1)
-    SET (H4_HAVE_SZLIB_H 1)
-    SET (H4_HAVE_LIBSZ 1)
+    SET (H4_HAVE_FILTER_SZIP "1")
+    SET (H4_HAVE_SZLIB_H "1")
+    SET (H4_HAVE_LIBSZ "1")
     SET (LINK_LIBS ${LINK_LIBS} ${SZIP_LIBRARIES} )
     include_directories(${SZIP_INCLUDE_DIRS})
     message(STATUS "Filter SZIP is ON")
     OPTION(HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding" OFF)  
     IF (HDF4_ENABLE_SZIP_ENCODING)
-      SET (H4_HAVE_SZIP_ENCODER 1)
+      SET (H4_HAVE_SZIP_ENCODER "1")
     ENDIF ()
   ENDIF ()
 ENDIF ()
@@ -319,8 +319,6 @@ IF (HDF4_BUILD_FORTRAN)
   # Set default name mangling : overridden by Fortran detection in fortran dir
   SET(H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
   SET(H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
-#  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
-#  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
 ELSE ( HDF4_BUILD_FORTRAN )
   SET(H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
   SET(H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
@@ -339,21 +337,8 @@ OPTION(HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------
-#CONFIGURE_FILE(${HDF4_SOURCE_DIR}/Resources/h4config.h.in
-#  ${HDF4_BINARY_DIR}/h4config.h     @ONLY IMMEDIATE)
-
-#-----------------------------------------------------------------------------
-# Generate the netcdf.h file containing user settings needed by compilation
-#-----------------------------------------------------------------------------
-IF(WIN32)
-  SET(H4_WINDOWS_INCLUDE_FILE "#include <hdfi.h>")
-  SET(NETCDF_EXTERN HDFLIBAPI)
-ELSE(WIN32)
-  SET(NETCDF_EXTERN extern)
-ENDIF()
-SET(NC_OLD_FILLVALUES 0)
-#CONFIGURE_FILE(${HDF4_SOURCE_DIR}/Resources/netcdf.h.in
-#  ${HDF4_BINARY_DIR}/netcdf.h     @ONLY IMMEDIATE)
+CONFIGURE_FILE(${HDF4_SOURCE_DIR}/Resources/h4config.h.in
+  ${HDF4_BINARY_DIR}/h4config.h)
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings

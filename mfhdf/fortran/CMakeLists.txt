@@ -20,6 +20,24 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
   CACHE PATH
   "Single Directory for all static libraries."
   )
+   
+string(TOLOWER ${CMAKE_SYSTEM_NAME} mf_f90_sys)
+
+MESSAGE(STATUS "System Name ${CMAKE_SYSTEM_NAME}")
+ADD_CUSTOM_COMMAND(
+   OUTPUT ${HDF4_BINARY_DIR}/jackets.c
+   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_DIR}/config/jackets-${mf_f90_sys}.c ${HDF4_BINARY_DIR}/jackets.c
+   COMMENT " Copying jackets Name jackets-${mf_f90_sys}.c to jackets.c")
+
+ADD_CUSTOM_COMMAND(
+   OUTPUT ${HDF4_BINARY_DIR}/ftest.f
+   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_DIR}/config/ftest-${mf_f90_sys}.f ${HDF4_BINARY_DIR}/ftest.f
+   COMMENT " Copying ftest Name ftest-${mf_f90_sys}.f to ftest.f")
+
+ADD_CUSTOM_COMMAND(
+   OUTPUT ${HDF4_BINARY_DIR}/netcdf.inc
+   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_DIR}/config/netcdf-${mf_f90_sys}.inc ${HDF4_BINARY_DIR}/netcdf.inc
+   COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.inc to netcdf.inc")
 
 #-----------------------------------------------------------------------------
 # f90CStub lib
@@ -30,6 +48,12 @@ SET(f90CStub_C_SRCS
 
 SET(f90CStub_C_HDRS
   ${HDF4_MFHDF_FORTRAN_DIR}/?.c 
+)
+
+SET (HDF4_MFHDF_FORTRAN_FSRCS
+    ${HDF4_BINARY_DIR}/jackets.c
+    ${HDF4_MFHDF_FORTRAN_DIR}/mfsdf.c
+    ${HDF4_MFHDF_FORTRAN_DIR}/mfsdff.f
 )
 
 SET_SOURCE_FILES_PROPERTIES( ${f90CStub_C_SRCS} PROPERTIES LANGUAGE C) 

@@ -21,6 +21,26 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
   "Single Directory for all static libraries."
   )
 
+#-----------------------------------------------------------------------------
+# Generate the netcdf.h file containing user settings needed by compilation
+#-----------------------------------------------------------------------------
+IF(WIN32)
+  SET(H4_WINDOWS_INCLUDE_FILE "#include <hdfi.h>")
+  SET(NETCDF_EXTERN HDFLIBAPI)
+ELSE(WIN32)
+  SET(NETCDF_EXTERN extern)
+ENDIF(WIN32)
+
+SET(NC_OLD_FILLVALUES 0)
+   
+string(TOLOWER ${CMAKE_SYSTEM_NAME} netcdf_sys)
+
+MESSAGE(STATUS "System Name ${CMAKE_SYSTEM_NAME}")
+ADD_CUSTOM_COMMAND(
+   OUTPUT ${HDF4_BINARY_DIR}/netcdf.h
+   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${netcdf_sys}.h ${HDF4_BINARY_DIR}/netcdf.h
+   COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.h to netcdf.h")
+
 SET (HDF4_MFHDF_LIBSRC_CSRCS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/array.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/attr.c
@@ -42,19 +62,13 @@ SET (HDF4_MFHDF_LIBSRC_CSRCS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/xdrposix.c
 )
 
-SET (HDF4_MFHDF_LIBSRC_FSRCS
-    ${HDF4_MFHDF_FORTRAN_DIR}/jackets.c
-    ${HDF4_MFHDF_FORTRAN_DIR}/mfsdf.c
-    ${HDF4_MFHDF_FORTRAN_DIR}/mfsdff.f
-)
-
 SET (HDF4_MFHDF_LIBSRC_CHDRS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/alloc.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/error.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/local_nc.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfhdf.h
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfhdfi.h
-    ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/netcdf.h
+    ${HDF4_BINARY_DIR}/netcdf.h
 )
 
 

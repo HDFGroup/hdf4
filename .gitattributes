@@ -12,7 +12,6 @@ Resources/HDF4Tests.c -text svneol=unset#text/plain
 Resources/LibSources.cmake -text
 Resources/h4config.h.in -text
 Resources/hdf4_zlib.h.in -text
-Resources/netcdf.h.in -text
 bin/h4vers -text
 bin/ltmain.sh -text
 bin/newer -text
