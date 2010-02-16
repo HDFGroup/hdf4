@@ -40,6 +40,10 @@ ADD_CUSTOM_COMMAND(
    OUTPUT ${HDF4_BINARY_DIR}/netcdf.h
    COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${netcdf_sys}.h ${HDF4_BINARY_DIR}/netcdf.h
    COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.h to netcdf.h")
+ADD_CUSTOM_COMMAND(
+   OUTPUT ${HDF4_BINARY_DIR}/jackets.c
+   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_DIR}/config/jackets-${netcdf_sys}.c ${HDF4_BINARY_DIR}/jackets.c
+   COMMENT " Copying jackets Name jackets-${netcdf_sys}.c to jackets.c")
 
 SET (HDF4_MFHDF_LIBSRC_CSRCS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/array.c
@@ -51,7 +55,7 @@ SET (HDF4_MFHDF_LIBSRC_CSRCS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/globdef.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/hdfsds.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/iarray.c
-#    ${HDF4_MFHDF_FORTRAN_DIR}/jackets.c
+    ${HDF4_BINARY_DIR}/jackets.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/mfsd.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/nssdc.c
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/putget.c
@@ -90,9 +94,13 @@ IF (HDF4_BUILD_XDR_LIB)
   INCLUDE_DIRECTORIES( ${HDF4_MFHDF_XDR_DIR} )
 ENDIF ( HDF4_BUILD_XDR_LIB )
 
+  IF(WIN32)
+    add_definitions(-DDOS_FS -D_MFHDFLIB_ -DSWAP)
+  ENDIF(WIN32)
+
 IF (BUILD_SHARED_LIBS)
   IF(WIN32)
-    add_definitions(-D_MFHDFLIB_ -D_HDFDLL_ -DHDFAPDLL -D_HDFLIB_)
+    add_definitions(-D_HDFDLL_ -DHDFAPDLL)
   ENDIF(WIN32)
   ADD_LIBRARY(${HDF4_MF_LIB_NAME} SHARED ${HDF4_MFHDF_LIBSRC_CSRCS} ${HDF4_MFHDF_LIBSRC_CHDRS} )
   # Help CMake 2.6.x and lower (not necessary for 2.8 and above, but doesn't hurt):

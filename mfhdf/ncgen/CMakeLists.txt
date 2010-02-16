@@ -19,21 +19,11 @@ INCLUDE_DIRECTORIES( ${HDF4_HDF_SOURCE_DIR} )
 INCLUDE_DIRECTORIES( ${HDF4_HDF_SOURCE_DIR}/lib )
 INCLUDE_DIRECTORIES( ${HDF4_MFHDF_SOURCE_DIR} )
 
-IF(WIN32)
-  foreach(flag_var
-        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
-    if(${flag_var} MATCHES "/MD")
-      string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-    endif(${flag_var} MATCHES "/MD")
-    if(${flag_var} MATCHES "/MDd")
-      string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-    endif(${flag_var} MATCHES "/MDd")
-  endforeach(flag_var)
-  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
-ENDIF()
-
 ADD_DEFINITIONS(-DHDF)
+
+IF(WIN32)
+  ADD_DEFINITIONS(-DDOS_FS)
+ENDIF(WIN32)
 
 SET (ncgen_SRCS
   ${HDF4_SOURCE_DIR}/mfhdf/ncgen/close.c
