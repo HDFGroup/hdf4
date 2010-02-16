@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd425.lib hm425.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\..\..\..\hdf\examples\Release/GR_image_info.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -165,7 +165,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd425d.lib hm425d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\..\..\..\hdf\examples\Debug/GR_image_info.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -260,7 +260,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424.lib hm424.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd425.lib hm425.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\..\..\..\hdf\examples\Release/GR_image_info.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -352,7 +352,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd424d.lib hm424d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd425d.lib hm425d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
 				OutputFile="..\..\..\..\hdf\examples\Debug/GR_image_info.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

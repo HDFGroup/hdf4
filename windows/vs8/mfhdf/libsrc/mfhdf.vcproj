@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm424.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm425.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -145,7 +145,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm424.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm425.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -216,7 +216,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm424d.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm425d.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -288,7 +288,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm424d.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm425d.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
