@@ -1,4 +1,4 @@
-PROJECT ( HDF4_HDF_SRC)
+PROJECT ( HDF4_HDF_SRC C Fortran)
 
 # ---------- Setup output Directories -------------------------
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY

@@ -334,6 +334,10 @@ OPTION(HDF4_BUILD_TOOLS  "Build HDF4 Tools" OFF)
 #-----------------------------------------------------------------------------
 OPTION(HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
 
+IF (MSVC)
+  SET(H4_HDSETVBUF "HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))")
+ENDIF ( MSVC )
+
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------

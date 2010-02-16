@@ -124,3 +124,8 @@
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 #cmakedefine H4_YYTEXT_POINTER @H4_YYTEXT_POINTER@
+
+/* Visual Studio 2005 doesn't support size of setvbuf to be less than 1.
+ * This is a hacking, we would like to wait for Visual Studio 2005 to fix this 
+ * problem. */
+#define @H4_HDSETVBUF@
