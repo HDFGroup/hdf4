@@ -22,13 +22,14 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
   )
 
 ADD_SUBDIRECTORY(${HDF4_HDF_SOURCE_DIR}/src      src)
+
 IF (HDF4_BUILD_UTILS)
   ADD_SUBDIRECTORY(${HDF4_HDF_SOURCE_DIR}/util ${PROJECT_BINARY_DIR}/hdf/util)
 ENDIF ( HDF4_BUILD_UTILS )
 
-IF (HDF4_BUILD_FORTRAN)
+#IF (HDF4_BUILD_FORTRAN)
 #  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
-ENDIF (HDF4_BUILD_FORTRAN)
+#ENDIF (HDF4_BUILD_FORTRAN)
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings

@@ -2,8 +2,8 @@ set(CMAKE_USER_MAKE_RULES_OVERRIDE
    ${CMAKE_CURRENT_SOURCE_DIR}/c_flag_overrides.cmake)
 set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
    ${CMAKE_CURRENT_SOURCE_DIR}/cxx_flag_overrides.cmake)
-PROJECT(HDF4 C CXX)
-cmake_minimum_required(VERSION 2.6)
+PROJECT(HDF4 C CXX Fortran)
+cmake_minimum_required(VERSION 2.8)
 
 #-----------------------------------------------------------------------------
 # Instructions for use :
@@ -132,8 +132,8 @@ ELSE(BUILD_SHARED_LIBS)
   ENDIF (NOT WIN32)
 ENDIF (BUILD_SHARED_LIBS)
 
-    ADD_DEFINITIONS(-DBIG_LONGS -DSWAP)
-    ADD_DEFINITIONS(-DHAVE_CONFIG_H)
+ADD_DEFINITIONS(-DBIG_LONGS -DSWAP)
+ADD_DEFINITIONS(-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
 # Include the main src and config directories
@@ -184,7 +184,7 @@ IF (HDF4_DISABLE_COMPILER_WARNINGS)
   IF (MSVC)
     SET (HDF4_WARNINGS_BLOCKED 1)
     STRING(REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " "
-      CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+           CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
     SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
   ENDIF (MSVC)
   IF(WIN32)
@@ -336,6 +336,8 @@ OPTION(HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
 
 IF (MSVC)
   SET(H4_HDSETVBUF "HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))")
+ELSE (MSVC)
+  SET(H4_HDSETVBUF "NOP")
 ENDIF ( MSVC )
 
 #-----------------------------------------------------------------------------

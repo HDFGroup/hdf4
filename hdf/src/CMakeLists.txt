@@ -1,4 +1,4 @@
-PROJECT ( HDF4_HDF_SRC C Fortran)
+PROJECT ( HDF4_HDF_SRC C CXX Fortran)
 
 # ---------- Setup output Directories -------------------------
 SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
@@ -20,6 +20,127 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
   CACHE PATH
   "Single Directory for all static libraries."
   )
+
+INCLUDE_DIRECTORIES( ${HDF4_HDF_SOURCE_DIR} )
+
+IF (HDF4_BUILD_FORTRAN)
+
+#-----------------------------------------------------------------------------
+# Detect name mangling convention used between Fortran and C
+#-----------------------------------------------------------------------------
+include(FortranCInterface)
+FortranCInterface_HEADER(${HDF4_HDF_SRC_BINARY_DIR}/FCMangle.h
+                         MACRO_NAMESPACE "H4_FC_"
+                         SYMBOL_NAMESPACE "H4_FC_"
+                         SYMBOLS mysub mymod:my_sub)
+
+FILE(STRINGS ${HDF4_HDF_SRC_BINARY_DIR}/FCMangle.h CONTENTS REGEX "H4_FC_GLOBAL\\(.*,.*\\) +(.*)") 
+STRING(REGEX MATCH "H4_FC_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
+SET(H4_FC_FUNC "H4_FC_FUNC(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
+
+FILE(STRINGS ${HDF4_HDF_SRC_BINARY_DIR}/FCMangle.h CONTENTS REGEX "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)") 
+STRING(REGEX MATCH "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
+SET(H4_FC_FUNC_ "H4_FC_FUNC_(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
+
+#-----------------------------------------------------------------------------
+# The provided CMake Fortran macros don't provide a general check function
+# so this one is used for a sizeof test.
+#-----------------------------------------------------------------------------
+macro(CHECK_FORTRAN_FEATURE FUNCTION CODE VARIABLE)
+  if(NOT DEFINED ${VARIABLE})
+    message(STATUS "Testing Fortran ${FUNCTION}")
+    if(CMAKE_REQUIRED_LIBRARIES)
+      set(CHECK_FUNCTION_EXISTS_ADD_LIBRARIES
+        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
+    else(CMAKE_REQUIRED_LIBRARIES)
+      set(CHECK_FUNCTION_EXISTS_ADD_LIBRARIES)
+    endif(CMAKE_REQUIRED_LIBRARIES)
+    FILE(WRITE
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
+      "${CODE}"
+    )
+    try_compile(${VARIABLE}
+      ${CMAKE_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/testFortranCompiler.f
+      CMAKE_FLAGS "${CHECK_FUNCTION_EXISTS_ADD_LIBRARIES}"
+      OUTPUT_VARIABLE OUTPUT
+    )
+
+#    MESSAGE( "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ")
+#    MESSAGE( "Test result ${OUTPUT}")
+#    MESSAGE( "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ")
+
+    if(${VARIABLE})
+      set(${VARIABLE} 1 CACHE INTERNAL "Have Fortran function ${FUNCTION}")
+      message(STATUS "Testing Fortran ${FUNCTION} - OK")
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log 
+        "Determining if the Fortran ${FUNCTION} exists passed with the following output:\n"
+        "${OUTPUT}\n\n")
+    else(${VARIABLE})
+      message(STATUS "Testing Fortran ${FUNCTION} - Fail")
+      set(${VARIABLE} "" CACHE INTERNAL "Have Fortran function ${FUNCTION}")
+      file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log 
+        "Determining if the Fortran ${FUNCTION} exists failed with the following output:\n"
+        "${OUTPUT}\n\n")
+    endif(${VARIABLE})
+  endif(NOT DEFINED ${VARIABLE})
+endmacro(CHECK_FORTRAN_FEATURE)
+
+#-----------------------------------------------------------------------------
+# Configure Checks which require Fortran compilation must go in here
+# not in the main ConfigureChecks.cmake files, because if the user has
+# no Fortran compiler, problems arise.
+#
+# Be careful with leading spaces here, do not remove them.
+#-----------------------------------------------------------------------------
+CHECK_FORTRAN_FEATURE(sizeof 
+  "
+       PROGRAM main
+       i = sizeof(x)       
+       END PROGRAM
+  " 
+  FORTRAN_HAVE_SIZEOF
+)  
+
+CHECK_FORTRAN_FEATURE(RealIsNotDouble 
+  "
+       MODULE type_mod
+         INTERFACE h4t	
+           MODULE PROCEDURE h4t_real
+           MODULE PROCEDURE h4t_dble
+         END INTERFACE
+       CONTAINS
+         SUBROUTINE h4t_real(r)
+           REAL :: r
+         END SUBROUTINE h4t_real
+         SUBROUTINE h4t_dble(d)
+           DOUBLE PRECISION :: d
+         END SUBROUTINE h4t_dble
+       END MODULE type_mod
+       PROGRAM main
+         USE type_mod
+         REAL :: r
+         DOUBLE PRECISION :: d
+         CALL h4t(r)
+         CALL h4t(d)
+       END PROGRAM main
+  " 
+  FORTRAN_DEFAULT_REAL_NOT_DOUBLE
+)  
+
+#-----------------------------------------------------------------------------
+# Fortran Real Size
+#-----------------------------------------------------------------------------
+IF (FORTRAN_DEFAULT_REAL_NOT_DOUBLE)
+  # default real is 4 bytes, so include double signatures
+  SET (F_DBLE "Include")
+ELSE (FORTRAN_DEFAULT_REAL_NOT_DOUBLE)
+  # default real is 8 bytes, so exclude double signatures
+  SET (F_DBLE "Exclude")
+ENDIF (FORTRAN_DEFAULT_REAL_NOT_DOUBLE)
+
+ENDIF (HDF4_BUILD_FORTRAN)
+
 
 SET (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/atom.c
@@ -100,20 +221,6 @@ SET (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/vgf.c
 )
 
-SET (HDF4_HDF_SRC_FSRCS
-    ${HDF4_HDF_SRC_SOURCE_DIR}/df24ff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfanff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfpff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfr8ff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfsdff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2iff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/hfileff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/mfgrff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/vattrff.f
-    ${HDF4_HDF_SRC_SOURCE_DIR}/vgff.f
-)
-
 SET (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/atom.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/bitvect.h
@@ -165,23 +272,14 @@ SET (HDF4_HDF_SRC_FHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdf.inc
 )
 
-INCLUDE_DIRECTORIES( ${HDF4_HDF_SOURCE_DIR} )
-
 IF (HDF4_BUILD_FORTRAN)
   SET_SOURCE_FILES_PROPERTIES( ${HDF4_HDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C) 
-  SET_SOURCE_FILES_PROPERTIES( ${HDF4_HDF_SRC_FSRCS} PROPERTIES LANGUAGE FORTRAN) 
 
   IF(MSVC)
-    ADD_SUBDIRECTORY(${HDF4_HDF_SOURCE_DIR}/src/fort_ps ${PROJECT_BINARY_DIR}/src/fort_ps)
-    SET (HDF4_HDF_SRC_SRCS ${HDF4_HDF_SRC_CSRCS})
-    SET (HDF4_HDF_SRC_HDRS ${HDF4_HDF_SRC_CHDRS})
-  ELSE(MSVC)
-    SET (HDF4_HDF_SRC_SRCS ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_FSRCS})
-    SET (HDF4_HDF_SRC_HDRS ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDF_SRC_SOURCE_DIR}/hproto_fortran.h ${HDF4_HDF_SRC_FHDRS})
+#    ADD_SUBDIRECTORY(${HDF4_HDF_SOURCE_DIR}/src/fort_ps ${PROJECT_BINARY_DIR}/src/fort_ps)
   ENDIF(MSVC)
-ELSE (HDF4_BUILD_FORTRAN)
-    SET (HDF4_HDF_SRC_SRCS ${HDF4_HDF_SRC_CSRCS})
-    SET (HDF4_HDF_SRC_HDRS ${HDF4_HDF_SRC_CHDRS})
+  
+  SET(FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 ENDIF (HDF4_BUILD_FORTRAN)
 
 IF(WIN32)
@@ -192,7 +290,7 @@ IF (BUILD_SHARED_LIBS)
   IF(WIN32)
     ADD_DEFINITIONS(-D_HDFDLL_ -DHDFLIBDLL)
   ENDIF(WIN32)
-  ADD_LIBRARY(${HDF4_SRC_LIB_NAME} SHARED ${HDF4_HDF_SRC_SRCS} ${HDF4_HDF_SRC_HDRS} )
+  ADD_LIBRARY(${HDF4_SRC_LIB_NAME} SHARED ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} )
   IF(MSVC)
     SET_TARGET_PROPERTIES(${HDF4_SRC_LIB_NAME} PROPERTIES COMPILE_FLAGS "${SHARED_C_FLAGS_RELEASE}")
   ENDIF(MSVC)
@@ -201,34 +299,59 @@ IF (BUILD_SHARED_LIBS)
   SET_TARGET_PROPERTIES(${HDF4_SRC_LIB_NAME} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 ENDIF (BUILD_SHARED_LIBS)
 
-ADD_LIBRARY(${HDF4_SRC_LIB_NAME}-static STATIC  ${HDF4_HDF_SRC_SRCS} ${HDF4_HDF_SRC_HDRS})
+ADD_LIBRARY(${HDF4_SRC_LIB_NAME}-static STATIC  ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS})
 SET_TARGET_PROPERTIES(${HDF4_SRC_LIB_NAME}-static PROPERTIES OUTPUT_NAME "${HDF4_SRC_LIB_NAME}")
 SET_TARGET_PROPERTIES(${HDF4_SRC_LIB_NAME}-static PROPERTIES PREFIX "lib")
 
 # Help CMake 2.6.x and lower (not necessary for 2.8 and above, but doesn't hurt):
 SET_TARGET_PROPERTIES(${HDF4_SRC_LIB_NAME}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 
+IF (HDF4_BUILD_FORTRAN)
+  ADD_LIBRARY(${HDF4_SRC_FCSTUB_LIB_NAME}-static STATIC  ${HDF4_HDF_SRC_CSTUB_FSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDF_SRC_SOURCE_DIR}/hproto_fortran.h)
+  SET_TARGET_PROPERTIES(${HDF4_SRC_FCSTUB_LIB_NAME}-static PROPERTIES OUTPUT_NAME "${HDF4_SRC_FCSTUB_LIB_NAME}")
+  SET_TARGET_PROPERTIES(${HDF4_SRC_FCSTUB_LIB_NAME}-static PROPERTIES PREFIX "lib")
+  TARGET_LINK_LIBRARIES(${HDF4_SRC_FCSTUB_LIB_NAME}-static ${HDF4_SRC_LIB_NAME}-static)
+
+#-----------------------------------------------------------------------------
+ADD_LIBRARY(H4DF24F   STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/df24ff.f )
+ADD_LIBRARY(H4DFAN    STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/dfanff.f )
+ADD_LIBRARY(H4DFP     STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/dfpff.f )
+ADD_LIBRARY(H4DFR8    STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/dfr8ff.f )
+ADD_LIBRARY(H4DFSD    STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/dfsdff.f )
+ADD_LIBRARY(H4DFUFP2I STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2iff.f )
+ADD_LIBRARY(H4HFILE   STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/hfileff.f )
+ADD_LIBRARY(H4MFGR    STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/mfgrff.f )
+ADD_LIBRARY(H4VATTR   STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/vattrff.f )
+ADD_LIBRARY(H4FG      STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/vgff.f )
+
+ADD_LIBRARY(${HDF4_SRC_FORTRAN_LIB_NAME}-static STATIC ${HDF4_HDF_SRC_SOURCE_DIR}/dfff.f )
+add_dependencies(${HDF4_SRC_FORTRAN_LIB_NAME}-static
+  H4DF24F H4DFAN H4DFP H4DFR8 
+  H4DFSD H4DFUFP2I H4HFILE H4MFGR 
+  H4VATTR H4FG
+  ${HDF4_SRC_FCSTUB_LIB_NAME}-static
+)
+  SET_TARGET_PROPERTIES(${HDF4_SRC_FORTRAN_LIB_NAME}-static PROPERTIES OUTPUT_NAME "${HDF4_SRC_FORTRAN_LIB_NAME}")
+  SET_TARGET_PROPERTIES(${HDF4_SRC_FORTRAN_LIB_NAME}-static PROPERTIES PREFIX "lib")
+ENDIF (HDF4_BUILD_FORTRAN)
+
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
 INSTALL(
-  TARGETS 
-    ${HDF4_SRC_LIB_NAME}-static
-  EXPORT 
-    hdf4-targets
+  TARGETS ${HDF4_SRC_LIB_NAME}-static
+  EXPORT hdf4-targets
   LIBRARY DESTINATION lib 
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
 IF (BUILD_SHARED_LIBS)
-INSTALL(
-  TARGETS 
-    ${HDF4_SRC_LIB_NAME}
-  EXPORT 
-    hdf4-targets
-  LIBRARY DESTINATION lib 
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-)
+  INSTALL(
+    TARGETS ${HDF4_SRC_LIB_NAME}
+    EXPORT hdf4-targets
+    LIBRARY DESTINATION lib 
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
 ENDIF (BUILD_SHARED_LIBS)
