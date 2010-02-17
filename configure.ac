@@ -25,7 +25,7 @@ dnl
 dnl NOTE: Don't forget to change the version number here when we do a
 dnl release!!!
 dnl
-AC_INIT([HDF], [4.2.5-pre2], [help@hdfgroup.org])
+AC_INIT([HDF], [4.2.5], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
