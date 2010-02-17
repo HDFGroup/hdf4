@@ -114,60 +114,55 @@ ENDIF(NOT WIN32)
 IF (HDF4_BUILD_FORTRAN)
   SET(FORTRAN_SRC_DIR ${HDF4_HDF_TEST_SOURCE_DIR})
 
-SET (TEST_MODULE_LIST ${HDF4_SRC_FORTRAN_LIB_NAME}-static
-  H4DF24F H4DFAN H4DFP H4DFR8 
-  H4DFSD H4DFUFP2I H4HFILE H4MFGR 
-  H4VATTR H4FG
-  ${HDF4_SRC_FCSTUB_LIB_NAME}-static
-)
-#-- Adding test for fortest
-IF(NOT WIN32)
- ADD_EXECUTABLE(fortest ${HDF4_HDF_TEST_SOURCE_DIR}/fortest.c)
- TARGET_LINK_LIBRARIES(fortest ${HDF4_SRC_LIB_NAME}-static ${HDF4_MF_LIB_NAME}-static )
- ADD_TEST(fortest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/fortest)
-ENDIF(NOT WIN32)
+  #-- Adding test for fortest
+  IF(NOT WIN32)
+    ADD_EXECUTABLE(fortest ${HDF4_HDF_TEST_SOURCE_DIR}/fortest.c)
+    TARGET_LINK_LIBRARIES(fortest ${HDF4_SRC_LIB_NAME}-static ${HDF4_MF_LIB_NAME}-static )
+    ADD_TEST(fortest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/fortest)
+  ENDIF(NOT WIN32)
 
-#-----------------------------------------------------------------------------
-#-- Adding test for fortestF
-IF(WIN32)
-  ADD_LIBRARY(${HDF4_SRC_TEST_LIB_NAME}-static STATIC ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c )
-  SET_TARGET_PROPERTIES(${HDF4_SRC_TEST_LIB_NAME}-static PROPERTIES OUTPUT_NAME "${HDF4_SRC_TEST_LIB_NAME}")
-  SET_TARGET_PROPERTIES(${HDF4_SRC_TEST_LIB_NAME}-static PROPERTIES PREFIX "lib")
+  #-----------------------------------------------------------------------------
+  #-- Adding test for fortestF
+  IF(WIN32)
+    ADD_LIBRARY(${HDF4_SRC_TEST_LIB_NAME}-static STATIC ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c )
+    SET_TARGET_PROPERTIES(${HDF4_SRC_TEST_LIB_NAME}-static PROPERTIES OUTPUT_NAME "${HDF4_SRC_TEST_LIB_NAME}")
+    SET_TARGET_PROPERTIES(${HDF4_SRC_TEST_LIB_NAME}-static PROPERTIES PREFIX "lib")
+ 
+    SET(FORTEST_FSRCS ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/fortestFp.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/forsupffp.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/manpf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/fortest.inc
+    )
+  ELSE(WIN32)
+    SET(FORTEST_FSRCS ${HDF4_HDF_TEST_SOURCE_DIR}/fortestF.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/forsupff.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/manf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/slabwf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/t24f.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tanf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tanfilef.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tpf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tr8f.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdmmsf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnmmsf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnntf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdntf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdstrf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tstubsf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
+                      ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
+    )
+  ENDIF(WIN32)
 
-  ADD_EXECUTABLE(fortestF ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/fortestFp.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/forsupffp.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/manpf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
- 			   ${HDF4_HDF_TEST_SOURCE_DIR}/fortest.inc
- )
-  TARGET_LINK_LIBRARIES(fortestF ${HDF4_SRC_TEST_LIB_NAME}-static ${TEST_MODULE_LIST} ${LINK_LIBS} ${HDF4_MF_LIB_NAME}-static )
-ELSE(WIN32)
-  ADD_EXECUTABLE(fortestF ${HDF4_HDF_TEST_SOURCE_DIR}/fortestF.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/forsupff.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c
-               ${HDF4_HDF_TEST_SOURCE_DIR}/manf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/slabwf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/t24f.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tanf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tanfilef.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tpf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tr8f.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tsdmmsf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnmmsf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnntf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tsdntf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tsdstrf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tstubsf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
-               ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
-  )
-  TARGET_LINK_LIBRARIES(fortestF  ${TEST_MODULE_LIST} ${LINK_LIBS} ${HDF4_MF_LIB_NAME}-static )
-ENDIF(WIN32)
+  ADD_EXECUTABLE(fortestF ${FORTEST_FSRCS} )
+  TARGET_LINK_LIBRARIES(fortestF  ${HDF4_SRC_FORTRAN_LIB_NAME}-static ${HDF4_SRC_FCSTUB_LIB_NAME}-static ${HDF4_MF_LIB_NAME}-static ${HDF4_SRC_LIB_NAME}-static ${LINK_LIBS} )
 
-ADD_TEST(fortestF ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/fortestF)
+  ADD_TEST(fortestF ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/fortestF)
   
 ENDIF (HDF4_BUILD_FORTRAN)
   
