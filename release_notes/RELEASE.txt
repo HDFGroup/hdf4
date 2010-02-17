@@ -219,9 +219,11 @@ HDF 4.2.5 has been tested on the following platforms:
     (NCSA tg-login)               Intel(R) C Compiler Version 8.1.037
                                   Intel(R) Fortran Compiler Version 8.1.033
 
+    AIX 5.3 (32/64 bit)           IBM XL C/C++ for AIX, V9.0
+    (LLNL Up)                     IBM XL Fortran for AIX, V11.1
+
     AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V10.1
     (NCSA bp-login)               IBM XL Fortran for AIX, V12.1
-
 
     Windows XP                    Visual Studio 2005 (with Intel Fortran 9.1/10.1)
                                   Visual Studio 2008 (with Intel Fortran 10.1)
@@ -256,6 +258,13 @@ HDF 4.2.5 has been tested on the following platforms:
 
 Known problems
 ==============
+
+o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+   fails when checking for the jpeglib.h header due to the duplicated
+   macro definition of HAVE_STDLIB_H.  This is because some newer builds
+   of jpeg library has HAVE_STDLIB_H defined in its jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc (e.g., V7.0) still fails but
+   newer xlc (e.g., V9.0) passes. (AKC - 2010/02/17)
 
 o  When building on Linux/UNIX platforms, the szip shared library files must be in 
    the system library path. This can be done by
