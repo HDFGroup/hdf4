@@ -1,4 +1,4 @@
-HDF version 4.2.5 currently under development
+HDF version 4.2.5 released on Wed Feb 24 13:00:16 CST 2010
 ===================================================
 
 INTRODUCTION
