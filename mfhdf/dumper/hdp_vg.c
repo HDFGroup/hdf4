@@ -380,7 +380,7 @@ void display(vg_info_t *ptr,
    if (!ptr->displayed)
    {
       ptr->displayed = TRUE;  /* so this item will not be printed again */
-      for (i = 0; i < ptr->n_entries; i++)
+      for (i = 0; i < ptr->n_entries && ptr->children[i] != NULL; i++)
       {
          if (i == 0)
             firstchild = TRUE;
