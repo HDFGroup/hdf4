@@ -468,6 +468,15 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 file_id, uint16 data_tag, uint16 data_ref, 
 		 comp_coder_t *coder_type);
 
+    HDFLIBAPI intn HCPgetdatainfo
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+                 uintn info_count, uintn start_block,
+		 hdf_datainfo_t* data_info);
+
+    HDFLIBAPI intn HCPgetdatainfo_count
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+		 uintn* info_count);
+
     HDFLIBAPI intn HCPgetdatasize
                 (int32 file_id, uint16 data_tag, uint16 data_ref, 
 		 int32* comp_size, int32* orig_size);

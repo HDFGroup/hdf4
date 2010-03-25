@@ -1847,6 +1847,311 @@ done:
   return ret_value;
 } /* HCPgetcomptype */
 
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPgetdatainfo_count -- Retrieves the sizes of original and compressed data.
+ USAGE
+    int32 HCPgetdatainfo_count(file_id, data_tag, data_ref, comp_size, orig_size)	
+		int32 file_id;		IN: file id
+		uint16 data_tag;	IN: tag of the element
+		uint16 data_ref;	IN: ref of element
+		int32* comp_size;	OUT: size of compressed data
+		int32* orig_size;	OUT: size of non-compressed data
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    This routine gets access to the element pointed to by the dataset's 
+    tag/ref pair, then proceeds as followed:
+    - If the element is not special, HCPgetdatainfo will use Hlength to get 
+      the length of the data then return.
+    - If the element is compressed, HCPgetdatainfo will read the element's
+      special header and decode it for the uncompressed data length and the 
+      compressed data ref#, then use Hlength to get the length of the 
+      compressed data.
+    - If the element is chunked, HCPgetdatainfo will let the chunking layer
+      retrieve the sizes (HMCgetdatainfo.)
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn
+HCPgetdatainfo_count(int32 file_id,
+              uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+              uintn* info_count)	/* OUT  - number of data blocks */
+{
+    CONSTR(FUNC, "HCPgetdatainfo_count");	/* for HGOTO_ERROR */
+    int32	data_len;	/* offset of the data we are checking */
+    uint16	sp_tag;		/* special tag */
+    uint16 comp_ref = 0;
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
+    int32	drec_aid;	/* description record access id */
+    atom_t      data_id = FAIL;	/* dd ID of existing regular element */
+    uint8      *drec_buf=NULL, *p;
+    filerec_t  *file_rec;	/* file record */
+    intn        ret_value=SUCCEED;
+
+int32 offset, len;
+    /* clear error stack */
+    HEclear();
+
+    /* convert file id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get access element from dataset's tag/ref */
+    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
+    {
+	/* if the element is not special, that means dataset's tag/ref 
+	   specifies the actual data that was written to the dataset, so
+	   we don't need to check further */
+	if (HTPis_special(data_id)==FALSE)
+        {
+	    *info_count = 1;
+        }
+
+	/* if the element is special, get the special info header and decode
+	   for the uncompressed data length and the compressed data ref#, which
+	   will be used with DFTAG_COMPRESSED to get the compressed data len */
+	else
+	{
+            /* get the info for the dataset (description record) */
+            HPread_drec(file_id, data_id, &drec_buf);
+
+            /* get special tag */
+            p = drec_buf;
+
+	    /* get special tag */
+	    p = drec_buf;
+	    INT16DECODE(p, sp_tag);
+
+	    /* verify that it is a compressed element, then get the data len */
+	    if (sp_tag == SPECIAL_COMP)
+	    {
+		/* skip 2byte header_version */
+		p = p + 2;
+		INT32DECODE(p, len);	/* get _uncompressed_ data length */
+
+		/* No data written */
+		if (len == 0)
+		    *info_count = 0;
+
+		/* Data has been written to one block of data */
+		else
+		{
+		    *info_count = 1;
+		} /* data written */
+	    } /* element is compressed */
+
+	    /* if it is a chunked element, hand the task over to the chunking
+		layer. */
+	    else if (sp_tag == SPECIAL_CHUNKED)
+	    {
+	     if (HMCgetdatainfo_count(file_id, p, info_count)==FAIL)
+		  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+
+	    /* unlimited dimension falls in here, not implemented yet -BMR */
+	    else if (sp_tag == SPECIAL_LINKED)
+	    {
+		INT32DECODE(p, len);	/* get total data length */
+		*info_count=0;
+	    }
+	} /* else, data_id is special */
+
+	/* end access to the aid */
+	if (HTPendaccess(data_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }  /* end if data_id != FAIL */
+
+    else /* HTPselect failed */
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+ 
+done:
+    if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+    } /* end if */
+
+    /* Normal function cleanup */
+    if (drec_buf != NULL) 
+	HDfree(drec_buf);
+
+    return ret_value;
+} /* HCPgetdatainfo_count */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+    HCPgetdatainfo -- Retrieves the sizes of original and compressed data.
+ USAGE
+    int32 HCPgetdatainfo(file_id, data_tag, data_ref, comp_size, orig_size)	
+		int32 file_id;		IN: file id
+		uint16 data_tag;	IN: tag of the element
+		uint16 data_ref;	IN: ref of element
+		int32* comp_size;	OUT: size of compressed data
+		int32* orig_size;	OUT: size of non-compressed data
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    This routine gets access to the element pointed to by the dataset's 
+    tag/ref pair, then proceeds as followed:
+    - If the element is not special, HCPgetdatainfo will use Hlength to get 
+      the length of the data then return.
+    - If the element is compressed, HCPgetdatainfo will read the element's
+      special header and decode it for the uncompressed data length and the 
+      compressed data ref#, then use Hlength to get the length of the 
+      compressed data.
+    - If the element is chunked, HCPgetdatainfo will let the chunking layer
+      retrieve the sizes (HMCgetdatainfo.)
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn
+HCPgetdatainfo(int32 file_id,
+		uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+		uintn info_count,	/* IN: number of info records */
+		uintn start_block,	/* IN: data block to start at, 0 base */
+		hdf_datainfo_t* data_info) /* OUT: offset/length lists */
+{
+    CONSTR(FUNC, "HCPgetdatainfo");	/* for HGOTO_ERROR */
+    int32	data_len;	/* offset of the data we are checking */
+    uint8      *local_ptbuf=NULL, *p;
+    uint16	sp_tag;		/* special tag */
+    uint16 comp_ref = 0;
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
+    int32	drec_aid;	/* description record access id */
+    atom_t      data_id = FAIL;	/* dd ID of existing regular element */
+    filerec_t  *file_rec;	/* file record */
+    intn        ret_value=SUCCEED;
+
+int32 offset, len;
+    /* clear error stack */
+    HEclear();
+
+    /* convert file id to file rec and check for validity */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get access element from dataset's tag/ref */
+    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
+    {
+	/* if the element is not special, that means dataset's tag/ref 
+	   specifies the actual data that was written to the dataset, get
+	   the offset and length of the data */
+	if (HTPis_special(data_id)==FALSE)
+        {
+	    if ((offset = Hoffset(file_id, data_tag, data_ref)) == FAIL)
+		HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+	    if ((len = Hlength(file_id, data_tag, data_ref)) == FAIL)
+		HGOTO_ERROR(DFE_BADLEN, FAIL);
+
+	    /* Only one data block here, starting offset cannot be > 1 */
+	    if (start_block > 1)
+		HGOTO_ERROR(DFE_ARGS, FAIL);
+
+	    data_info->offsets[0] = offset;
+	    data_info->lengths[0] = len;
+        }
+
+	/* if the element is special, get the special info header and decode
+	   for the uncompressed data length and the compressed data ref#, which
+	   will be used with DFTAG_COMPRESSED to get the compressed data len */
+	else
+	{
+	    /* get the info for the dataset (description record) */
+	    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&data_len) == FAIL)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* get the special info header */
+	    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
+	    if (drec_aid == FAIL)
+		HGOTO_ERROR(DFE_BADAID, FAIL);
+	    if (Hread(drec_aid,0,local_ptbuf) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+	    if(Hendaccess(drec_aid)==FAIL)
+		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+	    /* get special tag */
+	    p = local_ptbuf;
+	    INT16DECODE(p, sp_tag);
+
+	    /* verify that it is a compressed element, then get the data len */
+	    if (sp_tag == SPECIAL_COMP)
+	    {
+		/* skip 2byte header_version */
+		p = p + 2;
+		INT32DECODE(p, len);	/* get _uncompressed_ data length */
+
+		/* No data written */
+		if (len == 0)
+		{
+		    ret_value = 0;
+		}
+		/* Data has been written, get its offset and length */
+		else
+		{
+		    /* get offset and length of the compressed element */
+		    UINT16DECODE(p, comp_ref);
+		    if ((offset = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref)) == FAIL)
+			HGOTO_ERROR(DFE_BADLEN, FAIL);
+
+		    if ((len = Hlength(file_id, DFTAG_COMPRESSED, comp_ref)) == FAIL)
+			HGOTO_ERROR(DFE_BADLEN, FAIL);
+
+		    /* Only one data block, starting offset cannot be > 1 */
+		    if (start_block > 1)
+			HGOTO_ERROR(DFE_ARGS, FAIL);
+
+		    data_info->offsets[0] = offset;
+		    data_info->lengths[0] = len;
+		    ret_value = 1;
+		} /* data written */
+	    } /* element is compressed */
+
+	    /* if it is a chunked element, hand the task over to the chunking
+		layer. */
+	    else if (sp_tag == SPECIAL_CHUNKED)
+	    {
+	     if (HMCgetdatainfo(file_id, p, info_count, start_block, data_info)==FAIL)
+		  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+
+	    /* unlimited dimension falls in here, not implemented yet -BMR */
+	    else if (sp_tag == SPECIAL_LINKED)
+	    {
+		INT32DECODE(p, len);	/* get total data length */
+		ret_value = 0;
+	    }
+	} /* else, data_id is special */
+
+	/* end access to the aid */
+	if (HTPendaccess(data_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    }  /* end if data_id != FAIL */
+
+    else /* HTPselect failed */
+        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
+ 
+done:
+    if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+    } /* end if */
+
+    /* Normal function cleanup */
+    if (local_ptbuf != NULL) 
+	HDfree(local_ptbuf);
+
+    return ret_value;
+} /* HCPgetdatainfo */
+
+
 /*--------------------------------------------------------------------------
  NAME
     HCPgetdatasize -- Retrieves the sizes of original and compressed data.

@@ -2191,6 +2191,368 @@ HMCgetcomptype(int32 dd_aid, /* IN: access id of header info */
     return ret_value;
 } /* HMCgetcomptype() */
 
+
+/*--------------------------------------------------------------------------
+NAME
+     HMCgetdatainfo_count - get data info (offset & length) of the chunked element
+
+DESCRIPTION
+     This routine was intented to be used by HCPgetdatainfo_count for the chunked 
+     element part.  
+
+     HMCgetdatainfo_count proceeds as followed:
+     - decode the chunking info special header to get the chunk table info
+     - get access to the chunk table via Vdata interface
+     - get the size of the chunk table to determine if the data has been written
+     - if the element is also compressed, read each vdata record to obtain the
+	tag/ref pair of the compression special header and read the header
+     - decode the compression special header to get the compressed data ref# and
+	retrieve the compressed data offset/length via Hoffset/Hlength
+     - if uncompressed size is requested by the caller, calculate the actual 
+	size of the uncompressed data by (chunk size * number of records)
+     - if compressed size is requested by the caller, calculate the total 
+	compressed size by accumulating the compressed size of all chunks.
+
+RETURNS
+     Returns SUCCEED/FAIL
+
+REVISION LOG
+     March 2008: Added during hmap project. - BMR
+
+-------------------------------------------------------------------------- */
+intn
+HMCgetdatainfo_count(int32 file_id,
+		uint8 *p, /* IN: access id of header info */
+		uintn *info_count) /* OUT: number of data blocks */
+{
+    CONSTR(FUNC, "HMCgetdatainfo_count");	/* for HERROR */
+    chunkinfo_t* chkinfo=NULL;		/* chunked element information */
+    int32        num_recs=0,		/* number of records in chunk table */
+		 chktab_id=-1;		/* chunk table (vdata) id */
+    intn	 ret_value = SUCCEED;
+
+    /* Skip 4byte header len */
+    p = p + 4;
+
+    /* Allocate and fill in special chunk info struct for CHUNKs */
+    if (( chkinfo = (chunkinfo_t *) HDmalloc(sizeof(chunkinfo_t)))==NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* Version info */
+    HDmemcpy(&chkinfo->version, p, 1);      /* 1 byte  */
+    p = p + 1;
+
+    /* Should check version here to see if we can handle this version of
+       special format header before we go on */
+    if (chkinfo->version != _HDF_CHK_HDR_VER)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Flag indicating multiple specialness, used to find out if this element
+       is also compressed or something else */
+    INT32DECODE(p, chkinfo->flag);         /* 4 bytes */
+
+    /* Length of uncompressed data as a whole, size of each chunk, and size of
+       number type */
+    /* Skip length, chunk_size, and nt_size */
+    p = p + 4 + 4 + 4;
+
+    /* Get tag/ref of chunk table, 2 bytes each */
+    INT16DECODE(p, chkinfo->chktbl_tag);
+    INT16DECODE(p, chkinfo->chktbl_ref);
+
+    /* Skip sp_tag and sp_ref then get ndims for use in skipping origins */
+    p  = p + 2 + 2;
+    INT32DECODE(p, chkinfo->ndims);        /* 4 bytes */
+
+    /* Make sure it is really a vdata */
+    if (chkinfo->chktbl_tag == DFTAG_VH)
+    {
+	/* Use Vdata interface to access chunk table */
+
+	/* Start access on Vdata */
+	if(Vstart(file_id) == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	/* Attach to the chunk table vdata and get its num of records */
+	if ((chktab_id = VSattach(file_id,(int32)chkinfo->chktbl_ref,"r")) == FAIL)
+	    HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+
+	if ((VSinquire(chktab_id, &num_recs, NULL, NULL, NULL, NULL)) == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	*info_count = num_recs;
+
+	if (VSdetach(chktab_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+    } /* it is a vdata */
+    else
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+  done:
+    if(ret_value == FAIL)
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    /* Free special chunk info struct */
+    if (chkinfo != NULL)
+	HDfree(chkinfo);
+
+    return ret_value;
+} /* HMCgetdatainfo_count */
+
+/*--------------------------------------------------------------------------
+NAME
+     HMCgetdatainfo - get data info (offset & length) of the chunked element
+
+DESCRIPTION
+     This routine was intented to be used by HCPgetdatainfo for the chunked 
+     element part.  
+
+     HMCgetdatainfo proceeds as followed:
+     - decode the chunking info special header to get the chunk table info
+     - get access to the chunk table via Vdata interface
+     - get the size of the chunk table to determine if the data has been written
+     - if the element is also compressed, read each vdata record to obtain the
+	tag/ref pair of the compression special header and read the header
+     - decode the compression special header to get the compressed data ref# and
+	retrieve the compressed data offset/length via Hoffset/Hlength
+     - if uncompressed size is requested by the caller, calculate the actual 
+	size of the uncompressed data by (chunk size * number of records)
+     - if compressed size is requested by the caller, calculate the total 
+	compressed size by accumulating the compressed size of all chunks.
+
+RETURNS
+     Returns SUCCEED/FAIL
+
+REVISION LOG
+     March 2008: Added during hmap project. - BMR
+
+-------------------------------------------------------------------------- */
+intn
+HMCgetdatainfo(int32 file_id,
+		uint8 *p,
+		uintn info_count, /* IN: size of offset/length lists */
+		uintn start_block, /* IN: data block to start at, 0 base */
+		hdf_datainfo_t* data_info) /* OUT: offset/length lists */
+{
+    CONSTR(FUNC, "HMCgetdatainfo");	/* for HERROR */
+    uint16	 comp_ref = 0;		/* ref# of compressed data */
+    char         vsname[VSNAMELENMAX + 1];  /* Vdata name */
+    char         v_class[VSNAMELENMAX + 1] = ""; /* Vdata class for comparison */
+    char         vsclass[VSNAMELENMAX + 1]; /* Vdata class */
+    int32        vdata_size;		/* size of Vdata */
+    chunkinfo_t* chkinfo=NULL;		/* chunked element information */
+    uint8       *v_data = NULL;		/* Vdata record */
+    int32        num_recs=0,		/* number of records in chunk table */
+		 chktab_id=-1,		/* chunk table (vdata) id */
+		 chk_aid=-1,		/* a single chunk aid */
+    		 offset, len;		/* temporary variables */
+    uint8	 chk_spbuf[10];		/* 10 bytes for special tag, version, 
+					   uncomp len, comp ref# */
+    int		 k;
+    intn	 ret_value = SUCCEED;
+
+    /* Skip 4byte header len */
+    p = p + 4;
+
+    /* Allocate and fill in special chunk info struct for CHUNKs */
+    if (( chkinfo = (chunkinfo_t *) HDmalloc(sizeof(chunkinfo_t)))==NULL)
+        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* Version info */
+    HDmemcpy(&chkinfo->version, p, 1);      /* 1 byte  */
+    p = p + 1;
+
+    /* Should check version here to see if we can handle this version of
+       special format header before we go on */
+    if (chkinfo->version != _HDF_CHK_HDR_VER)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Flag indicating multiple specialness, used to find out if this element
+       is also compressed or something else */
+    INT32DECODE(p, chkinfo->flag);         /* 4 bytes */
+
+    /* Length of uncompressed data as a whole, size of each chunk, and size of
+       number type */
+    /* Skip length, chunk_size, and nt_size */
+    p = p + 4 + 4 + 4;
+
+    /* Get tag/ref of chunk table, 2 bytes each */
+    INT16DECODE(p, chkinfo->chktbl_tag);
+    INT16DECODE(p, chkinfo->chktbl_ref);
+
+    /* Skip sp_tag and sp_ref then get ndims for use in skipping origins */
+    p  = p + 2 + 2;
+    INT32DECODE(p, chkinfo->ndims);        /* 4 bytes */
+
+    /* Make sure it is really a vdata */
+    if (chkinfo->chktbl_tag == DFTAG_VH)
+    {
+	/* Use Vdata interface to access chunk table */
+
+	/* Start access on Vdata */
+	if(Vstart(file_id) == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	/* Attach to the chunk table vdata and get its num of records */
+	if ((chktab_id = VSattach(file_id,(int32)chkinfo->chktbl_ref,"r")) == FAIL)
+	    HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+
+	if ((VSinquire(chktab_id, &num_recs, NULL, NULL, &vdata_size, vsname)) == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	/* Note: start_block is based 0, so it must be < num_recs to be valid */
+	if (start_block >= num_recs)
+	    HGOTO_ERROR(DFE_ARGS, FAIL);
+
+	/* Only continue reading the chunk table to get compressed data size 
+	   if it is requested and if data had been written, i.e. chunk table is
+	   not empty */
+	if (num_recs > 0)
+	{
+	    uint16     sp_tag;
+	    int32 chk_num;
+	    int	idx = 0;	/* index to offset and length lists */
+
+	    /* Get class of Vdata */
+	    if ((VSgetclass(chktab_id, vsclass)) == FAIL)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	    /* Verify class and version */
+	    sprintf(v_class,"%s%d",_HDF_CHK_TBL_CLASS,_HDF_CHK_TBL_CLASS_VER);
+	    if (HDstrncmp(vsclass,v_class,HDstrlen(v_class)) != 0 )
+	    {
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+
+	    /* Set the fields to read */
+	    if(VSsetfields(chktab_id,_HDF_CHK_FIELD_NAMES)==FAIL)
+		HGOTO_ERROR(DFE_BADFIELDS,FAIL);
+
+	    /* Allocate space for a single Vdata record */
+	    if ((v_data = HDmalloc((size_t)vdata_size)) == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Read in the tag/ref of each chunk, and get offset and length */
+	    for (chk_num = start_block; chk_num < num_recs; chk_num++)
+	    {
+		uint8 *pntr = NULL;       /* temp pointer to vdata record */
+		uint16 chk_tag, chk_ref;  /* each chunk's tag/ref */
+
+		/* Read single record */
+		if(VSread(chktab_id,v_data,1,FULL_INTERLACE)==FAIL)
+		    HGOTO_ERROR(DFE_VSREAD,FAIL);
+		pntr = v_data; /* set pointer to vdata record */
+
+		/* Skip origin first */
+		for (k = 0; k < chkinfo->ndims; k++)
+		{
+		    pntr += sizeof(int32);
+		}
+
+		/* Get the chunk's tag and ref */
+		HDmemcpy(&chk_tag, pntr, sizeof(uint16));
+		pntr += sizeof(uint16);
+		HDmemcpy(&chk_ref, pntr, sizeof(uint16));
+
+		/* Element is also compressed, read and decode the compression 
+		   special info header of the chunk and get the compressed 
+		   data reference number, which is then used to get 
+		   offset/length of this chunk of data */
+		if ((chkinfo->flag & 0xff) == SPECIAL_COMP)
+		{
+		    /* Prepare to read the info which the tag/ref points to */
+		    chk_aid = Hstartaccess(file_id, MKSPECIALTAG(chk_tag), chk_ref, DFACC_READ);
+		    if (chk_aid == FAIL)
+			HGOTO_ERROR(DFE_BADAID, FAIL);
+
+		    /* Read 10 bytes: special tag (2), comp. version (2), 
+			uncomp length (4), and comp. ref# (2) */
+		    if (Hread(chk_aid, 10, chk_spbuf) == FAIL)
+			HGOTO_ERROR(DFE_READERROR, FAIL);
+
+		    /* Decode and check the special tag to be sure */
+		    p = chk_spbuf;
+		    UINT16DECODE(p, sp_tag);             /* 2 bytes */
+		    if (sp_tag == SPECIAL_COMP)
+		    {
+			/* Skip compression version (2 bytes) and 
+			   uncompressed data length (4 bytes) */
+			p = p + 2 + 4;
+
+			/* Get ref # of compressed data (2 bytes) */
+			UINT16DECODE(p, comp_ref);
+
+			/* Get offset/length of compressed data.  Note that
+			    this length is specified as compressed chunk
+			    size times nt_size */
+			offset = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
+			if (offset == FAIL)
+			    HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+			data_info->offsets[idx] = offset;
+
+			len = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
+			if (len == FAIL)
+			    HGOTO_ERROR(DFE_BADLEN, FAIL);
+			data_info->lengths[idx] = len;
+			idx++;
+		    }
+
+		    /* sp_tag is not SPECIAL_COMP, while 'chkinfo->flag' 
+			   above is SPECIAL_COMP, something must be wrong */
+		    else
+			    HGOTO_ERROR(DFE_COMPINFO, FAIL);
+
+		    /* End access to special info of an individual chunk */
+		    if(Hendaccess(chk_aid)==FAIL)
+			    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+		} /* if chunk is compressed */
+		else /* chunk is not compress, just get its off/length */
+		{
+		    /* Get offset/length of the data chunk */
+		    if ((offset = Hoffset(file_id, chk_tag, chk_ref)) == FAIL)
+			HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+		    data_info->offsets[idx] = offset;
+
+		    if ((len = Hlength(file_id, chk_tag, chk_ref)) == FAIL)
+			HGOTO_ERROR(DFE_BADLEN, FAIL);
+		    data_info->lengths[idx] = len;
+		    idx++;
+		}
+	    } /* for each record in the chunk table */
+
+	    /* record the number of offset/length pairs to be returned */
+	    ret_value = idx + 1; /* idx is based 0 */
+	} /* if num_recs >= 0 */
+
+	/* Close access to the chunk table */
+	if (VSdetach(chktab_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    } /* it is a vdata */
+    else
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+  done:
+    if(ret_value == FAIL)
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    /* Free allocated space for vdata record */
+    if (v_data != NULL)
+        HDfree(v_data);
+
+    /* Free special chunk info struct */
+    if (chkinfo != NULL)
+	HDfree(chkinfo);
+
+    return ret_value;
+} /* HMCgetdatainfo */
+
 /*--------------------------------------------------------------------------
 NAME
      HMCgetdatasize - get data sizes of the chunked element
