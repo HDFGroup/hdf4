@@ -1140,6 +1140,7 @@ do_list(intn curr_arg,
                o_info = get_next_obj(o_list, 0);  /* get first DD object */
                while (o_info != NULL)
                {
+ fprintf(stderr, "\no_info->tag = %d\n", o_info->tag);
                   if( (list_opts.limit == LGROUP || list_opts.limit == LNONE) 
                       || list_opts.limit_tag == o_info->tag)
                   {
@@ -1148,6 +1149,7 @@ do_list(intn curr_arg,
                         s = HDgettagsname(o_info->tag);
                         if( s == NULL )
                            s = HDstrdup("Unknown");
+ fprintf(stderr, "\no_info->tag = %d, s = %s\n", o_info->tag, s);
 
                         printf("%s%-*s: (tag %d)\n", 
 				(last_tag == 0 ? "" : "\n"),

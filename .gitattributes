@@ -228,6 +228,7 @@ mfhdf/test/smallslice.0000.nc -text
 mfhdf/test/tchunk.c -text
 mfhdf/test/tcomp.c -text
 mfhdf/test/tcoordvar.c -text
+mfhdf/test/tdatainfo.c -text
 mfhdf/test/tdatasizes.c -text
 mfhdf/test/tdim.c -text
 mfhdf/test/temptySDSs.c -text

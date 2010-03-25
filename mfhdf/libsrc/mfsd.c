@@ -63,6 +63,12 @@ status = SDgetcomptype(sdsid, ...);
         --- retrieve the compressed and uncompressed sizes of an SDS' data
 status = SDgetdatasize(sdsid, ...);
 
+	--- get the number of blocks the data is stored in
+status = SDgetdatainfo_count(sdsid, ...);
+
+	--- retrieve location and size of data blocks
+status = SDgetdatainfo(sdsid, ...);
+
         --- take an id and determine if it is an SD id, SDS id, dim id, ---
         --- or none of the above ---
 id_type = SDidtype(an_id);
@@ -4844,6 +4850,136 @@ done:
 
     return ret_value;    
 } /* SDgetdatasize */
+
+
+/******************************************************************************
+ NAME
+	SDgetdatainfo_count -- Gets the number of blocks the data is stored in.
+
+ DESCRIPTION
+    This routine uses HCPgetdatainfo_count to retrieve the number of blocks
+    that the identified dataset's data is stored in.
+
+ RETURNS
+    SUCCEED/FAIL
+
+ MODIFICATION
+    BMR - 2010/03/20
+
+******************************************************************************/
+intn
+SDgetdatainfo_count(int32 sdsid, /* IN: dataset ID */
+              uintn* info_count) /* OUT: Num of blocks that data is stored in */
+{
+    CONSTR(FUNC, "SDgetdatainfo_count");    /* for HGOTO_ERROR */
+    NC     *handle;
+    NC_var *var;
+    intn   status = FAIL;
+    intn   ret_value = SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* validate arguments */
+    if (info_count == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get NC_var record */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* if the data ref# of the SDS is 0, there is no storage is created yet */
+    if (var->data_ref == 0)
+    {
+	*info_count = 0;
+    }
+    else
+    {
+	status = HCPgetdatainfo_count(handle->hdf_file, var->data_tag, var->data_ref, info_count);
+	if (status == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+    return ret_value;
+} /* SDgetdatainfo_count */
+
+/******************************************************************************
+ NAME
+	SDgetdatainfo -- Retrieves location and size of data blocks.
+
+ DESCRIPTION
+    This routine uses HCPgetdatainfo to retrieve the offset and length
+    of data blocks in the specified data set.
+
+ RETURNS
+    The actual number of data blocks if successful and FAIL, otherwise.
+
+ MODIFICATION
+    BMR - 2010/03/20
+
+******************************************************************************/
+intn
+SDgetdatainfo(int32 sdsid,	/* IN: dataset ID */
+              uintn info_count,	/* IN: Number of data blocks */
+              int32 start_block,	/* IN: indicating where to start */
+	      hdf_datainfo_t *data_info) /* OUT: offset/length lists */
+{
+    CONSTR(FUNC, "SDgetdatainfo");    /* for HGOTO_ERROR */
+    NC     *handle;
+    NC_var *var;
+    intn   count = FAIL;  /* number of data blocks returned by HCPgetdatainfo */
+    intn   ret_value = 0;
+
+    /* clear error stack */
+    HEclear();
+
+    /* validate arguments */
+    if (data_info == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (start_block < 0)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get NC_var record */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* if the data ref# of the SDS is 0, there is no storage is created yet */
+    if (var->data_ref == 0)
+    {
+	ret_value = 0;
+    }
+    else
+    {
+	count = HCPgetdatainfo(handle->hdf_file, var->data_tag, var->data_ref, info_count, start_block, data_info);
+	if (count == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+    /* Normal cleanup */
+    return ret_value;
+} /* SDgetdatainfo */
+
 
 /******************************************************************************
  NAME

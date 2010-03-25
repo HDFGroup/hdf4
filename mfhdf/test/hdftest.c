@@ -74,6 +74,8 @@ extern int test_chunk();
 extern int test_compression();
 extern int test_dimension();
 extern int test_datasizes();
+extern int test_datainfo();
+extern int test_readdata();
 
 int 
 main(int argc, char *argv[])
@@ -1504,6 +1506,11 @@ main(int argc, char *argv[])
     /* BMR: Added a test routine dedicated for testing SDgetdatasize (in 
 	tdatasizes.c) - 09/17/08 */
     status = test_datasizes();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in 
+	tdatainfo.c) - 03/20/10 */
+    status = test_datainfo();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing SDidtype (in tidtypes.c)
