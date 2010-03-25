@@ -79,6 +79,7 @@ static char RcsId[] = "@(#)$Revision$";
    Hgetfileversion -- return version info on HDF file
    HPgetdiskblock  -- Get the offset of a free block in the file.
    HPfreediskblock -- Release a block in a file to be re-used.
+   HDread_drec -- reads a description record
    HDcheck_empty   -- determines if an element has been written with data
    HDget_special_info -- get information about a special element
    HDset_special_info -- reset information about a special element
@@ -3924,6 +3925,64 @@ done:
   return ret_value;
 } /* end HP_write() */
 
+
+/*--------------------------------------------------------------------------
+ NAME
+    HDread_drec -- reads a description record
+ USAGE
+    int32 HDread_drec(file_id, data_id, drec_buf)
+    int32 file_id;		IN: id of file
+    atom_t data_id;		IN: id of an element
+    uint8** drec_buf		OUT: buffer containing special info header
+ RETURNS
+    Returns the length of the info read
+ DESCRIPTION
+    This private function contains code that was repeated in several places
+    throughout the library.  It gets access to the element's description
+    record and read the special info header.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    03-20-2010 BMR: Factored out repeated code
+--------------------------------------------------------------------------*/
+int32
+HPread_drec(int32 file_id, atom_t data_id, uint8** drec_buf)
+{
+    CONSTR(FUNC, "HDread_drec");	/* for HERROR */
+    int32       drec_len=0;		/* length of the description record */
+    int32	drec_aid=-1;		/* description record access id */
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
+    int32       ret_value=0;
+
+    /* get the info for the dataset (description record) */
+    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&drec_len) == FAIL)
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    if ((*drec_buf = (uint8 *)HDmalloc(drec_len)) == NULL)
+	HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* get the special info header */
+    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
+    if (drec_aid == FAIL)
+	HGOTO_ERROR(DFE_BADAID, FAIL);
+    if (Hread(drec_aid,0,*drec_buf) == FAIL)
+	HGOTO_ERROR(DFE_READERROR, FAIL);
+    if(Hendaccess(drec_aid)==FAIL)
+	HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+    ret_value = drec_len;
+
+done:
+    if(ret_value == FAIL)
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value;
+} /* HPread_drec */
+
 /*--------------------------------------------------------------------------
  NAME
     HDcheck_empty -- determines if an element has been written with data
@@ -3990,20 +4049,12 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
             }
 	else
 	{
-	    /* get the info for the dataset (description record) */
-	    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&data_len) == FAIL)
-		HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	    if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+	    int32 rec_len=0;
 
-	    /* Get the special info header */
-	    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
-	    if (drec_aid == FAIL)
-		HGOTO_ERROR(DFE_BADAID, FAIL);
-	    if (Hread(drec_aid,0,local_ptbuf) == FAIL)
-		HGOTO_ERROR(DFE_READERROR, FAIL);
-	    if(Hendaccess(drec_aid)==FAIL)
-		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	    /* Get the compression header (description record) */
+	    rec_len = HPread_drec(file_id, data_id, &local_ptbuf);
+	    if (rec_len <= 0)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 	    /* get special tag */
 	    p = local_ptbuf;

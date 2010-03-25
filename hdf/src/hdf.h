@@ -130,6 +130,14 @@ typedef enum
 #define FULL_INTERLACE  0
 #define NO_INTERLACE    1
 
+/* Location and size of an element's data */
+typedef struct
+  {
+	int32* offsets; /* list of offsets */
+	int32* lengths; /* list of lengths */
+  }
+hdf_datainfo_t;
+
 /* type for File ID to send to Hlevel from Vxx interface */
 typedef int32 HFILEID;
 

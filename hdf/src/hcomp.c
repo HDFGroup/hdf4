@@ -584,6 +584,7 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
 	      }
               break;
 
+	/* What about JPEG? - BMR */
           default:      /* no additional information needed */
               break;
       }     /* end switch */
@@ -743,20 +744,10 @@ HCIread_header(accrec_t * access_rec,
     /* shut compiler up */
     m_info = m_info;
 
-    /* get the info for the dataset */
-    if(HTPinquire(access_rec->ddid,&ctag,&cref,NULL,&data_len)==FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    if((local_ptbuf=(uint8 *)HDmalloc(data_len))==NULL)
-        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    /* Get the compression header (description record) */
+    HPread_drec(access_rec->file_id, access_rec->ddid, &local_ptbuf);
 
-    /* Get the compression header */
-    if ((temp_aid=Hstartaccess(access_rec->file_id,MKSPECIALTAG(ctag),cref,DFACC_READ)) == FAIL)
-        HGOTO_ERROR(DFE_BADAID, FAIL);
-    if (Hread(temp_aid,0,local_ptbuf) == FAIL)
-        HGOTO_ERROR(DFE_READERROR, FAIL);
-    if(Hendaccess(temp_aid)==FAIL)
-        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-
+    /* Extract info */
     p = local_ptbuf+2;
     UINT16DECODE(p, header_version);    /* get compression version */
     INT32DECODE(p, info->length);   /* get _uncompressed_ data length */
@@ -1928,20 +1919,12 @@ HCPgetdatasize(int32 file_id,
 	   will be used with DFTAG_COMPRESSED to get the compressed data len */
 	else
 	{
-	    /* get the info for the dataset (description record) */
-	    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&data_len) == FAIL)
-		HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	    if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+	    int32 rec_len=0;
 
-	    /* get the special info header */
-	    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
-	    if (drec_aid == FAIL)
-		HGOTO_ERROR(DFE_BADAID, FAIL);
-	    if (Hread(drec_aid,0,local_ptbuf) == FAIL)
-		HGOTO_ERROR(DFE_READERROR, FAIL);
-	    if(Hendaccess(drec_aid)==FAIL)
-		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	    /* Get the compression header (description record) */
+	    rec_len = HPread_drec(file_id, data_id, &local_ptbuf);
+	    if (rec_len <= 0)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 	    /* get special tag */
 	    p = local_ptbuf;

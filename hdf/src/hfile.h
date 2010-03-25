@@ -505,6 +505,9 @@ extern      "C"
     HDFLIBAPI intn HP_write
                 (filerec_t *file_rec,const void * buf,int32 bytes);
 
+    HDFLIBAPI int32 HPread_rec
+                (int32 file_id, atom_t data_id, uint8** drec_buf);
+
     HDFLIBAPI intn tagcompare
                 (void * k1, void * k2, intn cmparg);
 
