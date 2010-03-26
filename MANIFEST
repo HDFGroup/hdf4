@@ -1031,6 +1031,7 @@
 ./mfhdf/test/tchunk.c
 ./mfhdf/test/tcomp.c
 ./mfhdf/test/tcoordvar.c
+./mfhdf/test/tdatainfo.c
 ./mfhdf/test/tdatasizes.c
 ./mfhdf/test/tdim.c
 ./mfhdf/test/temptySDSs.c
