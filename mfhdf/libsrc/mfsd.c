@@ -6531,29 +6531,30 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     {   /* get info about chunked element */
 	if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
 	{   /* Does user want chunk/comp info back? */
-	    if (chunk_def != NULL)
-	    {
 		/* If no compression, fill in chunk length, otherwise, fill
 		   in chunk length and compression info. */
-                switch(info_block.comp_type)
-                {
-                  case COMP_CODE_NONE:
-                      *flags = HDF_CHUNK;
+	    switch(info_block.comp_type) {
+	      case COMP_CODE_NONE:
+		  *flags = HDF_CHUNK;
 
-                      /* copy chunk lengths over */
+                  /* if chunk info is requested */
+		  if (chunk_def != NULL)
+		  {
+		      /* copy chunk lengths over */
                       for (i = 0; i < info_block.ndims; i++)
-                      {
                            chunk_def->chunk_lengths[i] = info_block.cdims[i];
-                      }
-                      break;
-                  case COMP_CODE_NBIT:
-                      *flags = (HDF_CHUNK | HDF_NBIT);
+		  }
+                  break;
 
-                      /* copy chunk lengths over */
+	      case COMP_CODE_NBIT:
+                  *flags = (HDF_CHUNK | HDF_NBIT);
+
+                  /* if chunk info is requested */
+		  if (chunk_def != NULL)
+		  {
+		      /* copy chunk lengths over */
                       for (i = 0; i < info_block.ndims; i++)
-                      {
                           chunk_def->nbit.chunk_lengths[i] = info_block.cdims[i];
-                      }
 		      /* get the NBIT compression info */
 		      ret_value = HCPgetcompinfo(handle->hdf_file,
 					var->data_tag, var->data_ref,
@@ -6576,11 +6577,16 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 			  chunk_def->nbit.sign_ext = c_info.nbit.sign_ext;
 			  chunk_def->nbit.fill_one = c_info.nbit.fill_one;
 		      }
-                      break;
-                  default:
-                      *flags = (HDF_CHUNK | HDF_COMP);
+		  }
+                  break;
 
-                      /* copy chunk lengths over */
+	      default:
+                  *flags = (HDF_CHUNK | HDF_COMP);
+
+                  /* if chunk info is requested */
+		  if (chunk_def != NULL)
+		  {
+		      /* copy chunk lengths over */
                       for (i = 0; i < info_block.ndims; i++)
                       {
                           chunk_def->comp.chunk_lengths[i] = info_block.cdims[i];
@@ -6610,7 +6616,6 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 
 			    case COMP_CODE_SKPHUFF:
 				chunk_def->comp.cinfo.skphuff.skp_size = -1;
- fprintf(stderr, "set chunk_def->comp.cinfo.skphuff.skp_size to -1\n");
 				break;
 
 			    case COMP_CODE_DEFLATE:
@@ -6635,9 +6640,9 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 			  HDmemcpy(&(chunk_def->comp.cinfo), &c_info, sizeof(comp_info));
 			  chunk_def->comp.comp_type = (int32)comp_type;
 		      }
-                      break; /* default */
+		  }  /* chunk_def != NULL */
+                  break; /* default */
                 } /* end of switch info_block.comp_type */
-	    }  /* chunk_def != NULL */
             /* Free up info in special info block, allocated by the library */
             HDfree(info_block.cdims);
 	}
