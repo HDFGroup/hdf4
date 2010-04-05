@@ -397,6 +397,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\test\tdatainfo.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\test\tdatasizes.c"
 				>
 			</File>
