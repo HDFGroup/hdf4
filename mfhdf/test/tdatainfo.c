@@ -33,7 +33,7 @@
 #define Y_LENGTH      10
 #define RANK          2
 
-void alloc_info(hdf_datainfo_t *info, uintn info_count)
+ /* void alloc_info(hdf_datainfo_t *info, uintn info_count)
 {
     HDmemset(info, 0, sizeof(info));
     info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
@@ -50,8 +50,9 @@ void free_info(hdf_datainfo_t *info)
 	    HDfree(info->lengths);
     }
 }
+ */ 
 
-/* This is used to temporarily verify results.  Will remove when finallized.*/
+/* This is used to temporarily verify results.  Will remove when finallized.
 static void print_info(char* name, uintn info_count, hdf_datainfo_t data_info)
 {
     int ii;
@@ -60,6 +61,7 @@ static void print_info(char* name, uintn info_count, hdf_datainfo_t data_info)
     for (ii = 0; ii < info_count; ii++)
 	fprintf(stderr, "%d: %d   %d\n", ii, data_info.offsets[ii], data_info.lengths[ii]);
 }
+ */ 
 
 /* Test non-special SDSs.  This routine creates non-special SDSs, writes
  * data to one of the SDSs, and checks the returned value by SDgetdatainfo_count
@@ -115,7 +117,7 @@ static intn test_nonspecial_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 1, "test_nonspecial_SDSs: SDgetdatainfo");
@@ -125,7 +127,7 @@ static intn test_nonspecial_SDSs(int32 fid)
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDendaccess");
 
-    free_info(&data_info);
+    HDfreeinfo(&data_info);
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
@@ -187,7 +189,7 @@ static intn test_compressed_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(esds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo");
@@ -207,7 +209,7 @@ static intn test_compressed_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(usds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo");
@@ -230,7 +232,7 @@ static intn test_compressed_SDSs(int32 fid)
     VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo_count");
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo");
@@ -394,7 +396,7 @@ static intn test_chunked_partial(int32 fid)
     VERIFY(info_count, 2, "test_chunked_partial: SDgetdatainfo_count");
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_chunked_partial: SDgetdatainfo");
 	VERIFY(info_count, 2, "test_chunked_partial: SDgetdatainfo");
@@ -518,7 +520,7 @@ static intn test_chkcmp_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 0, "test_chkcmp_SDSs: SDgetdatainfo");
@@ -530,7 +532,7 @@ static intn test_chkcmp_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 0, "test_chkcmp_SDSs: SDgetdatainfo");
@@ -582,7 +584,7 @@ static intn test_chkcmp_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 3, "test_chkcmp_SDSs: SDgetdatainfo");
@@ -597,7 +599,7 @@ static intn test_chkcmp_SDSs(int32 fid)
 
     if (info_count > 0)
     {
-	alloc_info(&data_info, info_count);
+	HDallocinfo(&data_info, info_count);
 	status = SDgetdatainfo(sds_id, info_count, 0, &data_info);
 	CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 	VERIFY(info_count, 3, "test_chkcmp_SDSs: SDgetdatainfo");

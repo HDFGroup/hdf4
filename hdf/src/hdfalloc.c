@@ -287,3 +287,31 @@ HDstrdup(const char *s)
 
 #endif /* VMS | macinosh */
 
+void HDallocinfo(hdf_datainfo_t *info, uintn info_count)
+{
+    HDmemset(info, 0, sizeof(info));
+    info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
+    info->lengths = (int32 *) HDmalloc(info_count * sizeof(int32));
+}
+
+void HDfreeinfo(hdf_datainfo_t *info)
+{
+    if (info != NULL)
+    {
+        if (info->offsets != NULL)
+            HDfree(info->offsets);
+        if (info->lengths != NULL)
+            HDfree(info->lengths);
+    }
+}
+
+/* This is used to temporarily verify results.  Will remove when finallized.*/
+void HDprintinfo(char* name, uintn info_count, hdf_datainfo_t data_info)
+{
+    int ii;
+
+    fprintf(stderr, "offset/length of '%s'\n", name);
+    for (ii = 0; ii < info_count; ii++)
+        fprintf(stderr, "%d: %d   %d\n", ii, data_info.offsets[ii], data_info.lengths[ii]);
+}
+

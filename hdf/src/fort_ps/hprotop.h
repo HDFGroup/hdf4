@@ -2252,7 +2252,8 @@ extern uint16 ANatype2tag(ann_type atype);
 
 extern ann_type ANtag2atype(uint16 atag);
 
-extern intn ANdestroy(void);
+/* Removed because this function is meant to be private.
+extern intn ANdestroy(void); */ 
 
 /* for Multi-file fortran GR interface */
 #ifndef MFGR_FNAMES

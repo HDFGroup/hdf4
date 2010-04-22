@@ -955,7 +955,8 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
-HDFLIBAPI intn ANdestroy(void);
+/* Removed because this function is meant to be private.
+HDFLIBAPI intn ANdestroy(void); */
 
 /* for Multi-file fortran GR interface */
 /* 

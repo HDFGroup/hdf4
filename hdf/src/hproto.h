@@ -382,6 +382,12 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI int32 HDspaceleft
                 (void);
 
+    HDFLIBAPI void HDallocinfo
+		(hdf_datainfo_t *info, uintn info_count);
+
+    HDFLIBAPI void HDfreeinfo
+		(hdf_datainfo_t *info);
+
 #if defined(MALLOC_CHECK)
     HDFPUBLIC extern void * HDmalloc
                 (uint32 qty);
@@ -1306,8 +1312,8 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
-HDFLIBAPI intn ANdestroy(void);
-
+/* BMR: Removed because this function is meant to be private.
+HDFLIBAPI intn ANdestroy(void); */ 
 
 /* Multi-file Raster C-routines found in mfgr.c */
 HDFLIBAPI intn rigcompare(void * k1, void * k2, intn cmparg);

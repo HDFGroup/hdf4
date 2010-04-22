@@ -98,18 +98,6 @@ typedef struct ANentry
 
 /******************************************************************************
  NAME
-    ANdestroy -- Un-Initialize Annotation Interface
-
- DESCRIPTION
-    Unallocates global annotaton node list and file list.
-
- RETURNS
-    SUCCEED or FAIL
-*******************************************************************************/
-extern intn ANdestroy(void);
-
-/******************************************************************************
- NAME
    ANstart - open file for annotation handling
 
  DESCRIPTION
