@@ -169,7 +169,7 @@ SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
         goto done;
       }
 
-    /* get the file from top 8 bits*/
+    /* get the file from top 12 bits*/
     tmp = (id >> 20) & 0xfff;
     ret_value = NC_check_id((int)tmp);
 
