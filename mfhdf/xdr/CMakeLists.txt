@@ -1,0 +1,44 @@
+cmake_minimum_required (VERSION 2.8)
+PROJECT (HDF4_MFHDF_XDR C CXX)
+
+SET (HDF4_MFHDF_XDR_SRCS
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrfloat.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrstdio.c
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdrarray.c
+)
+
+SET (HDF4_MFHDF_XDR_HDRS
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.h
+    ${HDF4_MFHDF_XDR_SOURCE_DIR}/types.h
+)
+
+INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
+
+ADD_DEFINITIONS (-DHDF)
+
+IF (WIN32)
+  ADD_DEFINITIONS (-DDOS_FS -DNO_SYS_XDR_INC)
+ENDIF (WIN32)
+
+IF(MSVC)
+  ADD_LIBRARY(${HDF4_MF_XDR_LIB_TARGET} ${LIB_TYPE} ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS} ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.def)
+  TARGET_LINK_LIBRARIES(${HDF4_MF_XDR_LIB_TARGET} "ws2_32.lib")
+ELSE(MSVC)
+  ADD_LIBRARY(${HDF4_MF_XDR_LIB_TARGET} ${LIB_TYPE} ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS} )
+ENDIF(MSVC)
+H4_SET_LIB_OPTIONS (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_MF_XDR_LIB_NAME} ${LIB_TYPE})
+
+#-----------------------------------------------------------------------------
+# Add library to CMake Install : Installs lib and cmake config info
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS 
+        ${HDF4_MF_XDR_LIB_TARGET}
+    EXPORT 
+        ${HDF4_EXPORTED_TARGETS}
+    LIBRARY DESTINATION lib COMPONENT libraries
+    ARCHIVE DESTINATION lib COMPONENT libraries
+    RUNTIME DESTINATION bin COMPONENT libraries
+)
