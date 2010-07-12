@@ -1,0 +1,24 @@
+LIBRARY XDR
+EXPORTS
+ xdr_free
+ xdr_void
+ xdr_int
+ xdr_u_int
+ xdr_long
+ xdr_u_long
+ xdr_short
+ xdr_u_short
+ xdr_char
+ xdr_u_char
+ xdr_bool
+ xdr_enum
+ xdr_opaque
+ xdr_bytes
+ xdr_netobj
+ xdr_union
+ xdr_string
+ xdr_wrapstring
+ xdr_array
+ xdr_vector
+ xdr_float
+ xdr_double

@@ -58,6 +58,13 @@ FOREACH (example ${examples})
                 LINK_FLAGS "/SUBSYSTEM:CONSOLE"
         )
       ENDIF (MSVC)
+    ELSE (BUILD_SHARED_LIBS)
+      IF (MSVC)
+        SET_TARGET_PROPERTIES (f_ex_${example}
+            PROPERTIES
+                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+        ) 
+      ENDIF (MSVC)
     ENDIF (BUILD_SHARED_LIBS)
     SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   ENDIF (WIN32)

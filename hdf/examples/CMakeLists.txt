@@ -36,6 +36,16 @@ SET (examples
 FOREACH (example ${examples})
   ADD_EXECUTABLE (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (hdf_${example})
+  IF (WIN32)
+    IF (MSVC)
+      IF (NOT BUILD_SHARED_LIBS)
+        SET_TARGET_PROPERTIES (hdf_${example}
+            PROPERTIES
+                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+        ) 
+      ENDIF (NOT BUILD_SHARED_LIBS)
+    ENDIF (MSVC)
+  ENDIF (WIN32)
   TARGET_LINK_LIBRARIES (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME hdftest_${example} COMMAND $<TARGET_FILE:hdf_${example}>)
 ENDFOREACH (example ${examples})
