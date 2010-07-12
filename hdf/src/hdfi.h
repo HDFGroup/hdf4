@@ -95,6 +95,111 @@
  * In addition it provides error lines if the configuration is incorrect.
  **/
 
+
+/* This will only be defined if HDF4 was built with CMake */
+#ifdef H4_BUILT_AS_DYNAMIC_LIB
+#define HDFPUBLIC
+#define HDFLIBAPI extern
+#define HDFFCLIBAPI extern
+
+#if defined(hdf_EXPORTS)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    #define HDFPUBLIC __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFPUBLIC __attribute__ ((visibility("default")))
+  #endif
+#else
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    #define HDFPUBLIC __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFPUBLIC __attribute__ ((visibility("default")))
+  #endif
+#endif
+
+#ifndef HDFPUBLIC
+  #define HDFPUBLIC
+#endif /* hdf_EXPORTS */
+
+#if defined(hdf_fcstub_EXPORTS)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFFCLIBAPI extern __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#else
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFFCLIBAPI extern __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif
+
+#ifndef HDFFCLIBAPI
+  #define HDFFCLIBAPI extern
+#endif /* hdf_fcstub_EXPORTS */
+
+#if defined(hdf_test_EXPORTS)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFFCLIBAPI extern __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#else
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFFCLIBAPI extern __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif
+
+#ifndef HDFFCLIBAPI
+  #define HDFFCLIBAPI extern
+#endif /* hdf_fcstub_EXPORTS */
+
+#if !defined(mfhdf_EXPORTS) && !defined(hdf_EXPORTS)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFLIBAPI extern __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#else
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFLIBAPI extern __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif
+
+#ifndef HDFLIBAPI
+  #define HDFLIBAPI extern
+#endif /* hdf_fcstub_EXPORTS */
+
+#if defined(mfhdf_fcstub_EXPORTS)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFFCLIBAPI extern __declspec(dllexport)
+    define HDFLIBAPI extern __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#else
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    define HDFFCLIBAPI extern __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif
+
+#ifndef HDFFCLIBAPI
+  #define HDFFCLIBAPI extern
+#endif /* hdf_fcstub_EXPORTS */
+
+#else
+/* This is the original HDFGroup defined preprocessor code which should still work
+ * with the VS projects that are maintained by "The HDF Group"
+ * This will be removed after the next release.
+ */
+
 #ifdef _WIN32
 /**
  * Under _WIN32 we have single threaded static libraries, or
@@ -141,6 +246,8 @@
 #	define HDFLIBAPI extern
 #   define HDFFCLIBAPI extern
 #endif
+
+#endif /*H4_BUILT_AS_DYNAMIC_LIB  */
 
 
 /*-------------------------------------------------------------------------
