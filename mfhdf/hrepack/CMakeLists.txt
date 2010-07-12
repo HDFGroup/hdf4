@@ -42,6 +42,16 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hrepack)
+IF (WIN32)
+  IF (MSVC)
+    IF (NOT BUILD_SHARED_LIBS)
+      SET_TARGET_PROPERTIES (hrepack
+          PROPERTIES
+              LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+      ) 
+    ENDIF (NOT BUILD_SHARED_LIBS)
+  ENDIF (MSVC)
+ENDIF (WIN32)
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
@@ -60,6 +70,16 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES(hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hrepack_check)
+  IF (WIN32)
+    IF (MSVC)
+      IF (NOT BUILD_SHARED_LIBS)
+        SET_TARGET_PROPERTIES (hrepack_check
+            PROPERTIES
+                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+        ) 
+      ENDIF (NOT BUILD_SHARED_LIBS)
+    ENDIF (MSVC)
+  ENDIF (WIN32)
 
 #  ADD_TEST (NAME hrepack_check COMMAND $<TARGET_FILE:hrepack_check>)
 
@@ -99,6 +119,16 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (test_hrepack)
+  IF (WIN32)
+    IF (MSVC)
+      IF (NOT BUILD_SHARED_LIBS)
+        SET_TARGET_PROPERTIES (test_hrepack
+            PROPERTIES
+                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+        ) 
+      ENDIF (NOT BUILD_SHARED_LIBS)
+    ENDIF (MSVC)
+  ENDIF (WIN32)
   
   ADD_TEST (NAME test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
  

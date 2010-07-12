@@ -52,5 +52,15 @@ ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
 TARGET_NAMING (hdf_VG_add_sds_to_vgroup)
+  IF (WIN32)
+    IF (MSVC)
+      IF (NOT BUILD_SHARED_LIBS)
+        SET_TARGET_PROPERTIES (hdf_VG_add_sds_to_vgroup
+            PROPERTIES
+                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+        ) 
+      ENDIF (NOT BUILD_SHARED_LIBS)
+    ENDIF (MSVC)
+  ENDIF (WIN32)
 TARGET_LINK_LIBRARIES (hdf_VG_add_sds_to_vgroup ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ADD_TEST (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)

@@ -83,6 +83,13 @@ IF (WIN32)
               LINK_FLAGS "/SUBSYSTEM:CONSOLE"
       ) 
     ENDIF (MSVC)
+  ELSE (BUILD_SHARED_LIBS)
+    IF (MSVC)
+      SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup
+          PROPERTIES
+              LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+      ) 
+    ENDIF (MSVC)
   ENDIF (BUILD_SHARED_LIBS)
   SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 ENDIF (WIN32)

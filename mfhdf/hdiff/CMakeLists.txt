@@ -39,6 +39,16 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES(hdiff ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hdiff)
+IF (WIN32)
+  IF (MSVC)
+    IF (NOT BUILD_SHARED_LIBS)
+      SET_TARGET_PROPERTIES (hdiff
+          PROPERTIES
+              LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+      ) 
+    ENDIF (NOT BUILD_SHARED_LIBS)
+  ENDIF (MSVC)
+ENDIF (WIN32)
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
@@ -56,6 +66,16 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hdifftst)
+  IF (WIN32)
+    IF (MSVC)
+      IF (NOT BUILD_SHARED_LIBS)
+        SET_TARGET_PROPERTIES (hdifftst
+            PROPERTIES
+                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+        ) 
+      ENDIF (NOT BUILD_SHARED_LIBS)
+    ENDIF (MSVC)
+  ENDIF (WIN32)
 
   ADD_TEST (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
 
