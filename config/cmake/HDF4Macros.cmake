@@ -15,7 +15,7 @@ MACRO (H4_SET_LIB_OPTIONS libtarget libname libtype)
   IF (APPLE)
     OPTION (HDF4_BUILD_WITH_INSTALL_NAME "Build with library install_name set to the installation path" OFF)
     IF (HDF4_BUILD_WITH_INSTALL_NAME)
-      SET_TARGET_PROPERTIES(${libtarget} PROPERTIES
+      SET_TARGET_PROPERTIES (${libtarget} PROPERTIES
           LINK_FLAGS "-current_version ${HDF4_PACKAGE_VERSION} -compatibility_version ${HDF4_PACKAGE_VERSION}"
           INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
           BUILD_WITH_INSTALL_RPATH ${HDF4_BUILD_WITH_INSTALL_NAME}

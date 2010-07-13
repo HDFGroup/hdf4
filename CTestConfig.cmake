@@ -4,10 +4,10 @@
 ## # The following are required to uses Dart and the Cdash dashboard
 ##   ENABLE_TESTING()
 ##   INCLUDE(CTest)
-set(CTEST_PROJECT_NAME "HDF4")
-set(CTEST_NIGHTLY_START_TIME "20:00:00 EST")
+SET (CTEST_PROJECT_NAME "HDF4")
+SET (CTEST_NIGHTLY_START_TIME "20:00:00 EST")
 
-set(CTEST_DROP_METHOD "http")
-set(CTEST_DROP_SITE "nei.hdfgroup.uiuc.edu")
-set(CTEST_DROP_LOCATION "/cdash/submit.php?project=HDF4")
-set(CTEST_DROP_SITE_CDASH TRUE)
+SET (CTEST_DROP_METHOD "http")
+SET (CTEST_DROP_SITE "nei.hdfgroup.uiuc.edu")
+SET (CTEST_DROP_LOCATION "/cdash/submit.php?project=HDF4")
+SET (CTEST_DROP_SITE_CDASH TRUE)

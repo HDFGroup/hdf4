@@ -39,10 +39,7 @@ FOREACH (example ${examples})
   IF (WIN32)
     IF (MSVC)
       IF (NOT BUILD_SHARED_LIBS)
-        SET_TARGET_PROPERTIES (hdf_${example}
-            PROPERTIES
-                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
-        ) 
+        SET_TARGET_PROPERTIES (hdf_${example} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
       ENDIF (NOT BUILD_SHARED_LIBS)
     ENDIF (MSVC)
   ENDIF (WIN32)
@@ -55,10 +52,7 @@ TARGET_NAMING (hdf_VG_add_sds_to_vgroup)
   IF (WIN32)
     IF (MSVC)
       IF (NOT BUILD_SHARED_LIBS)
-        SET_TARGET_PROPERTIES (hdf_VG_add_sds_to_vgroup
-            PROPERTIES
-                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
-        ) 
+        SET_TARGET_PROPERTIES (hdf_VG_add_sds_to_vgroup PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
       ENDIF (NOT BUILD_SHARED_LIBS)
     ENDIF (MSVC)
   ENDIF (WIN32)

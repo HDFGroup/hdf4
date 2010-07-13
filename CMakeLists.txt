@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-PROJECT(HDF4 C CXX)
+PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
@@ -33,45 +33,46 @@ PROJECT(HDF4 C CXX)
 #   name conflicts with system versions, then a prefix may be added
 #   to ensure that the correct versions configured are used.
 #
-# Consider this examplet, it builds its own zlib
+# Consider this example, it builds its own zlib
 # library and tells HDF4 to add it as a dependency - this ensures that
 # any project making use of this build of HDF4 will use the correct zlib
 #
 #   # Tell hdf4 that we are manually overriding certain settings
-#   SET(HDF4_EXTERNALLY_CONFIGURED 1)
+#   SET (HDF4_EXTERNALLY_CONFIGURED 1)
 #   # Avoid duplicating names of installed libraries
-#   SET(HDF4_EXTERNAL_LIB_PREFIX "prj")
+#   SET (HDF4_EXTERNAL_LIB_PREFIX "prj")
 #   # Targets linking to the HDF4 libs need to know their names
 #   # if they are changed in the sub project, they should be here too
-#   SET(HDF4_LIB_NAME "prjhdf4")
-#   SET(HDF4_MF_LIB_NAME "prjhdf4_mf")
-#   SET(HDF4_LIBRARY "${HDF4_LIB_NAME};${HDF4_MF_LIB_NAME}")
+#   SET (HDF4_LIB_NAME "prjhdf4")
+#   SET (HDF4_MF_LIB_NAME "prjhdf4_mf")
+#   SET (HDF4_LIBRARY "${HDF4_LIB_NAME};${HDF4_MF_LIB_NAME}")
 #   # Export configuration to this export variable
-#   SET(HDF4_EXPORTED_TARGETS "project-targets")
+#   SET (HDF4_EXPORTED_TARGETS "project-targets")
 #
 #   # Setup all necessary overrides for zlib so that HDF4 uses our
 #   # internally compiled zlib rather than any other version
-#   IF(HDF4_ENABLE_Z_LIB_SUPPORT)
+#   IF (HDF4_ENABLE_Z_LIB_SUPPORT)
 #    # We must tell the main HDF4 library that it depends on our zlib 
-#     SET(HDF4_LIB_DEPENDENCIES prjzlib)    
+#     SET (HDF4_LIB_DEPENDENCIES prjzlib)    
 #     # Override the zlib header file
-#     IF(PRJ_USE_SYSTEM_ZLIB)
-#       SET(H4_ZLIB_HEADER "zlib.h")
-#     ELSE(PRJ_USE_SYSTEM_ZLIB)
-#      SET(H4_ZLIB_HEADER "prj_zlib.h")
+#     IF (PRJ_USE_SYSTEM_ZLIB)
+#       SET (H4_ZLIB_HEADER "zlib.h")
+#     ELSE (PRJ_USE_SYSTEM_ZLIB)
+#      SET (H4_ZLIB_HEADER "prj_zlib.h")
 #       # Set vars that FindZlib would have set if used in sub project
-#       SET(ZLIB_INCLUDE_DIRS "${PRJ_ZLIB_INCLUDE_DIRS}")
-#       SET(ZLIB_LIBRARIES prjzlib)
-#     ENDIF(PRJ_USE_SYSTEM_ZLIB)
-#  ENDIF(HDF4_ENABLE_Z_LIB_SUPPORT)
+#       SET (ZLIB_INCLUDE_DIRS "${PRJ_ZLIB_INCLUDE_DIRS}")
+#       SET (ZLIB_LIBRARIES prjzlib)
+#     ENDIF (PRJ_USE_SYSTEM_ZLIB)
+#  ENDIF (HDF4_ENABLE_Z_LIB_SUPPORT)
 #   
 #   # Add the sub project
-#   ADD_SUBDIRECTORY(Utilities/hdf4.2.5)
+#   ADD_SUBDIRECTORY (Utilities/hdf4.2.5)
 #   # Add the HDF4 dirs to our include path
-#   SET(HDF4_INCLUDE_DIR 
-#     ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/hdf/src
-#     ${PROJECT_BINARY_DIR}/Utilities/hdf4.2.5
-#     ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/mfhdf/libsrc)
+#   SET (HDF4_INCLUDE_DIR 
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/hdf/src
+#       ${PROJECT_BINARY_DIR}/Utilities/hdf4.2.5
+#       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/mfhdf/libsrc
+#   )
 #
 #-----------------------------------------------------------------------------
 
@@ -136,7 +137,7 @@ INCLUDE (${HDF4_RESOURCES_DIR}/HDFMacros.cmake)
 INCLUDE (${HDF4_RESOURCES_DIR}/HDF4Macros.cmake)
 
 #-----------------------------------------------------------------------------
-# Setup output Directories 
+# Setup output Directories
 #-----------------------------------------------------------------------------
 IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY
@@ -161,15 +162,14 @@ ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Targets built within this project are exported at Install time for use
-# by other projects using FindHDF4. If HDF4 is configured as a sub-project
-# then we do not override the setting provided by the parent project
+# by other projects using FindHDF4.
 #-----------------------------------------------------------------------------
-IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+IF (NOT HDF4_EXPORTED_TARGETS)
   SET (HDF4_EXPORTED_TARGETS "hdf4-targets")
-ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
+ENDIF (NOT HDF4_EXPORTED_TARGETS)
 
 #-----------------------------------------------------------------------------
-# To include a library in the list exported by the project AT BUILD TIME, 
+# To include a library in the list exported by the project AT BUILD TIME,
 # add it to this variable. This is NOT used by Make Install, but for projects
 # which include hdf4 as a sub-project within their build tree
 #-----------------------------------------------------------------------------
@@ -417,7 +417,7 @@ ENDIF (HDF4_ENABLE_Z_LIB_SUPPORT)
 SET (CMAKE_MODULE_PATH ${HDF4_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 OPTION (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF)
 IF (HDF4_ENABLE_SZIP_SUPPORT)
-  FIND_PACKAGE (SZIP_REQUIRED)
+  FIND_PACKAGE (SZIP REQUIRED)
   IF (SZIP_FOUND)
     SET (H4_HAVE_FILTER_SZIP 1)
     SET (H4_HAVE_SZLIB_H 1)
@@ -532,14 +532,14 @@ INSTALL (
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
 INSTALL (
-    EXPORT 
+    EXPORT
         ${HDF4_EXPORTED_TARGETS}
     DESTINATION
         lib
     FILE
         HDF4-targets.cmake
 )
-  
+
 #-----------------------------------------------------------------------------
 # Export all exported targets to the build tree for use by parent project
 #-----------------------------------------------------------------------------
