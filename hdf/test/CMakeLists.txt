@@ -139,7 +139,7 @@ IF (HDF4_BUILD_FORTRAN)
   #-- Adding test for fortestF
   IF (WIN32)
     ADD_LIBRARY (fortestF_cstub ${LIB_TYPE} ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c)
-    H4_SET_LIB_OPTIONS (fortestF "fortestF" ${LIB_TYPE})
+    H4_SET_LIB_OPTIONS (fortestF_cstub "fortestF" ${LIB_TYPE})
  
     SET (FORTEST_FSRCS 
         ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/fortestFp.f
