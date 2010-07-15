@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-PROJECT (HDF4_HDF_FORTRAN C CXX Fortran)
+PROJECT (HDF4_HDF_FORTRAN)
 
 #-----------------------------------------------------------------------------
 # Build the Fortran Examples

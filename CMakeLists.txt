@@ -445,28 +445,11 @@ IF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
 ENDIF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
-# Dashboard and Testing Settings
-#-----------------------------------------------------------------------------
-OPTION (BUILD_TESTING "Build HDF4 Unit Testing" OFF)
-IF (BUILD_TESTING)
-  SET (DART_TESTING_TIMEOUT 1200
-      CACHE INTEGER
-      "Timeout in seconds for each test (default 1200=20minutes)"
-  )
-  ENABLE_TESTING ()
-  INCLUDE (CTest)
-  IF (NOT HDF4_EXTERNALLY_CONFIGURED)
-    ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/hdf/test ${PROJECT_BINARY_DIR}/test)
-  ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
-  INCLUDE (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
-ENDIF (BUILD_TESTING)
-
-#-----------------------------------------------------------------------------
 # Option to build Fortran bindings/tests/examples
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
 #-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_FORTRAN "Build FORTRAN support" OFF)
+OPTION (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
 IF (HDF4_BUILD_FORTRAN)
   # Set default name mangling : overridden by Fortran detection in fortran dir
   SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
@@ -483,9 +466,21 @@ ELSE (MSVC)
 ENDIF (MSVC)
 
 #-----------------------------------------------------------------------------
-# Generate the H4config.h file containing user settings needed by compilation
+# Dashboard and Testing Settings
 #-----------------------------------------------------------------------------
-CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/h4config.h.in ${HDF4_BINARY_DIR}/h4config.h)
+OPTION (BUILD_TESTING "Build HDF4 Unit Testing" OFF)
+IF (BUILD_TESTING)
+  SET (DART_TESTING_TIMEOUT 1200
+      CACHE INTEGER
+      "Timeout in seconds for each test (default 1200=20minutes)"
+  )
+  ENABLE_TESTING ()
+  INCLUDE (CTest)
+  IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+    ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/hdf/test ${PROJECT_BINARY_DIR}/test)
+  ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  INCLUDE (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
+ENDIF (BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
@@ -515,6 +510,11 @@ OPTION (HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
 # Option to build HDF4 Examples
 #-----------------------------------------------------------------------------
 OPTION (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
+
+#-----------------------------------------------------------------------------
+# Generate the H4config.h file containing user settings needed by compilation
+#-----------------------------------------------------------------------------
+CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/h4config.h.in ${HDF4_BINARY_DIR}/h4config.h)
 
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install

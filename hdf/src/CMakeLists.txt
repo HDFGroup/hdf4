@@ -1,6 +1,16 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_HDF_SRC C CXX Fortran)
 
+#-----------------------------------------------------------------------------
+# Setup include Directories
+#-----------------------------------------------------------------------------
+INCLUDE_DIRECTORIES (${CMAKE_Fortran_MODULE_DIRECTORY} ${HDF4_HDF_BINARY_DIR} ${HDF4_HDF_SOURCE_DIR}/src)
+LINK_DIRECTORIES (
+    ${CMAKE_Fortran_MODULE_DIRECTORY}
+    ${HDF4_HDF_BINARY_DIR}
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+)
+
 INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
 
 SET (HDF4_HDF_SRC_CSRCS
