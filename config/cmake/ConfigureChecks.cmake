@@ -21,12 +21,12 @@ IF (APPLE)
 ENDIF (APPLE)
 
 #-----------------------------------------------------------------------------
-# Option to Clear File Buffers before write --enable-clear-file-buffers
+# Option to Build HDF4 versions of NetCDF-3 APIS
 #-----------------------------------------------------------------------------
-OPTION (HDF4_Enable_NetCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
-IF (HDF4_Enable_NetCDF)
+OPTION (HDF4_ENABLE_NETCDF "Build HDF4 versions of NetCDF-3 APIS" ON)
+IF (HDF4_ENABLE_NETCDF)
   SET (H4_HAVE_NETCDF 1)
-ENDIF (HDF4_Enable_NetCDF)
+ENDIF (HDF4_ENABLE_NETCDF)
 
 SET (LINUX_LFS 0)
 SET (HDF_EXTRA_FLAGS)
