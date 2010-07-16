@@ -483,18 +483,18 @@ IF (BUILD_TESTING)
 ENDIF (BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
-# Add the HDF4 Library Target to the build
-#-----------------------------------------------------------------------------
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf ${PROJECT_BINARY_DIR}/hdf)
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
-
-#-----------------------------------------------------------------------------
 # Option to build HDF4 xdr Library
 #-----------------------------------------------------------------------------
 OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" ON)
 IF (HDF4_BUILD_XDR_LIB)
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
 ENDIF (HDF4_BUILD_XDR_LIB)
+
+#-----------------------------------------------------------------------------
+# Add the HDF4 Library Target to the build
+#-----------------------------------------------------------------------------
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf ${PROJECT_BINARY_DIR}/hdf)
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Tools
