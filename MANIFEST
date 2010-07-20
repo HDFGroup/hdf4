@@ -1109,6 +1109,8 @@
 
 ./config/cmake/HDF4-config.cmake.install.in
 ./config/cmake/ConfigureChecks.cmake
+./config/cmake/FortranConfigureChecks.cmake
+./config/cmake/CTestCustom.ctest
 ./config/cmake/runTest.cmake
 ./config/cmake/HDFMacros.cmake
 ./config/cmake/ConversionTests.c
