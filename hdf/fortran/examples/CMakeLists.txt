@@ -18,11 +18,11 @@ FortranCInterface_HEADER (
 
 FILE (STRINGS ${HDF4_HDF_FORTRAN_EXAMPLES_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL\\(.*,.*\\) +(.*)")
 STRING (REGEX MATCH "H4_F77_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-SET (H4_FC_FUNC "H4_F77_FUNC(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
+SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
 
 FILE (STRINGS ${HDF4_HDF_FORTRAN_EXAMPLES_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL_\\(.*,.*\\) +(.*)")
 STRING (REGEX MATCH "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-SET (H4_FC_FUNC_ "H4_F77_FUNC_(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
+SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
 
 #-----------------------------------------------------------------------------
 # Add debug information (intel Fortran : JB)
