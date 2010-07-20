@@ -179,7 +179,9 @@ SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "")
 # Run all the CMake configuration tests for our build environment
 #-----------------------------------------------------------------------------
 INCLUDE (${HDF4_RESOURCES_DIR}/ConfigureChecks.cmake)
-
+IF (HDF4_BUILD_FORTRAN)
+  INCLUDE (${HDF4_RESOURCES_DIR}/FortranConfigureChecks.cmake)
+ENDIF (HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Option to use legacy naming for windows libs/programs, default is legacy
 #-----------------------------------------------------------------------------
@@ -379,8 +381,8 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
     # This project is being called from within another and JPEGLib is already configured
     SET (H4_HAVE_JPEGLIB_H 1)
   ENDIF (NOT H4_JPEGLIB_HEADER)
-  SET (LINK_LIBS ${LINK_LIBS} ${JPEG_LIBRARIES})
-  INCLUDE_DIRECTORIES (${JPEG_INCLUDE_DIRS})
+  SET (LINK_LIBS ${LINK_LIBS} ${JPEG_LIBRARY})
+  INCLUDE_DIRECTORIES (${JPEG_INCLUDE_DIR})
   MESSAGE (STATUS "JPEGLIB is ON")
 ENDIF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
 
@@ -452,8 +454,13 @@ ENDIF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
 OPTION (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
 IF (HDF4_BUILD_FORTRAN)
   # Set default name mangling : overridden by Fortran detection in fortran dir
-  SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
-  SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
+  IF (WIN32)
+    SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
+    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME ##_")
+  ELSE (WIN32)
+    SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
+    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
+  ENDIF (WIN32)
 ELSE (HDF4_BUILD_FORTRAN )
   SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
   SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")

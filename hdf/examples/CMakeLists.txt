@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-PROJECT (HDF4_HDF_EXAMPLES)
+PROJECT (HDF4_HDF_EXAMPLES C CXX)
 
 #-----------------------------------------------------------------------------
 # Define Sources

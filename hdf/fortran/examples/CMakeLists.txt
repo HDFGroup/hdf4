@@ -6,6 +6,35 @@ cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_HDF_FORTRAN_EXAMPLES C CXX Fortran)
 
 #-----------------------------------------------------------------------------
+# Detect name mangling convention used between Fortran and C
+#-----------------------------------------------------------------------------
+INCLUDE (FortranCInterface)
+FortranCInterface_HEADER (
+    ${HDF4_HDF_BINARY_DIR}/F77Mangle.h
+    MACRO_NAMESPACE "H4_F77_"
+    SYMBOL_NAMESPACE "H4_F77_"
+    SYMBOLS mysub mymod:my_sub
+)
+
+FILE (STRINGS ${HDF4_HDF_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL\\(.*,.*\\) +(.*)")
+STRING (REGEX MATCH "H4_F77_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
+SET (H4_FC_FUNC "H4_F77_FUNC(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
+
+FILE (STRINGS ${HDF4_HDF_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL_\\(.*,.*\\) +(.*)")
+STRING (REGEX MATCH "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
+SET (H4_FC_FUNC_ "H4_F77_FUNC_(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
+
+#-----------------------------------------------------------------------------
+# Add debug information (intel Fortran : JB)
+#-----------------------------------------------------------------------------
+IF (CMAKE_Fortran_COMPILER MATCHES ifort)
+  IF (WIN32)
+    SET (CMAKE_Fortran_FLAGS_DEBUG "/debug:full /dbglibs " CACHE "flags" STRING FORCE)
+    SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG" CACHE "flags" STRING FORCE)
+  ENDIF (WIN32)
+ENDIF (CMAKE_Fortran_COMPILER MATCHES ifort)
+
+#-----------------------------------------------------------------------------
 # Setup include Directories
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES (${CMAKE_Fortran_MODULE_DIRECTORY} ${HDF4_HDF_BINARY_DIR} ${HDF4_HDF_SOURCE_DIR}/src)
