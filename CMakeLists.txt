@@ -77,19 +77,6 @@ PROJECT (HDF4 C CXX)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Basic HDF4 stuff here
-#-----------------------------------------------------------------------------
-SET (HDF4_PACKAGE "hdf4")
-SET (HDF4_PACKAGE_NAME "HDF")
-SET (HDF4_PACKAGE_VERSION "${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}")
-SET (HDF4_PACKAGE_VERSION_MAJOR "${H4_VERS_MAJOR}.${H4_VERS_MINOR}")
-SET (HDF4_PACKAGE_VERSION_MINOR "${H4_VERS_RELEASE}")
-SET (HDF4_PACKAGE_STRING "${HDF4_PACKAGE_NAME} ${HDF4_PACKAGE_VERSION}-${H4_VERS_SUBRELEASE}")
-SET (HDF4_PACKAGE_TARNAME "hdf")
-SET (HDF4_PACKAGE_URL "http://www.hdfgroup.org")
-SET (HDF4_PACKAGE_BUGREPORT "help@hdfgroup.org")
-
-#-----------------------------------------------------------------------------
 # Set the core names of all the libraries
 #-----------------------------------------------------------------------------
 SET (HDF4_LIB_CORENAME              "hdf4")
@@ -120,6 +107,21 @@ SET (HDF4_MF_TEST_LIB_NAME      "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_MF_TEST_LIB_C
 SET (HDF4_TOOLS_LIB_NAME        "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_TOOLS_LIB_CORENAME}")
 
 #-----------------------------------------------------------------------------
+# Set the target names of all the libraries
+#-----------------------------------------------------------------------------
+SET (HDF4_LIB_TARGET              ${HDF4_LIB_CORENAME})
+SET (HDF4_SRC_LIB_TARGET          ${HDF4_SRC_LIB_CORENAME})
+SET (HDF4_SRC_FCSTUB_LIB_TARGET   ${HDF4_SRC_FCSTUB_LIB_CORENAME})
+SET (HDF4_SRC_FORTRAN_LIB_TARGET  ${HDF4_SRC_FORTRAN_LIB_CORENAME})
+SET (HDF4_MF_LIB_TARGET           ${HDF4_MF_LIB_CORENAME})
+SET (HDF4_MF_XDR_LIB_TARGET       ${HDF4_MF_XDR_LIB_CORENAME})
+SET (HDF4_HDF_TEST_LIB_TARGET     ${HDF4_HDF_LIB_CORENAME})
+SET (HDF4_MF_FCSTUB_LIB_TARGET    ${HDF4_MF_FCSTUB_LIB_CORENAME})
+SET (HDF4_MF_FORTRAN_LIB_TARGET   ${HDF4_MF_FORTRAN_LIB_CORENAME})
+SET (HDF4_MF_TEST_LIB_TARGET      ${HDF4_MF_TEST_LIB_CORENAME})
+SET (HDF4_TOOLS_LIB_TARGET        ${HDF4_TOOLS_LIB_CORENAME})
+
+#-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
 SET (HDF4_RESOURCES_DIR       ${HDF4_SOURCE_DIR}/config/cmake)
@@ -129,6 +131,33 @@ SET (HDF4_MFHDF_SOURCE_DIR    ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
 SET (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
 SET (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
+
+#-----------------------------------------------------------------------------
+# parse the full version number from hfile.h and include in H4_VERS_INFO
+#-----------------------------------------------------------------------------
+FILE (READ ${HDF4_HDF_SOURCE_DIR}/hfile.h _hfile_h_contents)
+STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_MAJOR[ \t]+([0-9]*).*$"
+    "\\1" H4_VERS_MAJOR ${_hfile_h_contents})
+STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"
+    "\\1" H4_VERS_MINOR ${_hfile_h_contents})
+STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_RELEASE[ \t]+([0-9]*).*$"
+    "\\1" H4_VERS_RELEASE ${_hfile_h_contents})
+STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z.]*)\".*$"
+    "\\1" H4_VERS_SUBRELEASE ${_hfile_h_contents})
+#MESSAGE (STATUS "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
+
+#-----------------------------------------------------------------------------
+# Basic HDF4 stuff here
+#-----------------------------------------------------------------------------
+SET (HDF4_PACKAGE "hdf4")
+SET (HDF4_PACKAGE_NAME "HDF")
+SET (HDF4_PACKAGE_VERSION "${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}")
+SET (HDF4_PACKAGE_VERSION_MAJOR "${H4_VERS_MAJOR}.${H4_VERS_MINOR}")
+SET (HDF4_PACKAGE_VERSION_MINOR "${H4_VERS_RELEASE}")
+SET (HDF4_PACKAGE_STRING "${HDF4_PACKAGE_NAME} ${HDF4_PACKAGE_VERSION}-${H4_VERS_SUBRELEASE}")
+SET (HDF4_PACKAGE_TARNAME "hdf")
+SET (HDF4_PACKAGE_URL "http://www.hdfgroup.org")
+SET (HDF4_PACKAGE_BUGREPORT "help@hdfgroup.org")
 
 #-----------------------------------------------------------------------------
 # Include some macros for reusable code
@@ -242,21 +271,6 @@ IF (HDF4_ENABLE_COVERAGE)
 ENDIF (HDF4_ENABLE_COVERAGE)
 
 #-----------------------------------------------------------------------------
-# Set the target names of all the libraries
-#-----------------------------------------------------------------------------
-SET (HDF4_LIB_TARGET              ${HDF4_LIB_CORENAME})
-SET (HDF4_SRC_LIB_TARGET          ${HDF4_SRC_LIB_CORENAME})
-SET (HDF4_SRC_FCSTUB_LIB_TARGET   ${HDF4_SRC_FCSTUB_LIB_CORENAME})
-SET (HDF4_SRC_FORTRAN_LIB_TARGET  ${HDF4_SRC_FORTRAN_LIB_CORENAME})
-SET (HDF4_MF_LIB_TARGET           ${HDF4_MF_LIB_CORENAME})
-SET (HDF4_MF_XDR_LIB_TARGET       ${HDF4_MF_XDR_LIB_CORENAME})
-SET (HDF4_HDF_TEST_LIB_TARGET     ${HDF4_HDF_LIB_CORENAME})
-SET (HDF4_MF_FCSTUB_LIB_TARGET    ${HDF4_MF_FCSTUB_LIB_CORENAME})
-SET (HDF4_MF_FORTRAN_LIB_TARGET   ${HDF4_MF_FORTRAN_LIB_CORENAME})
-SET (HDF4_MF_TEST_LIB_TARGET      ${HDF4_MF_TEST_LIB_CORENAME})
-SET (HDF4_TOOLS_LIB_TARGET        ${HDF4_TOOLS_LIB_CORENAME})
-
-#-----------------------------------------------------------------------------
 # Include the main src and config directories
 #-----------------------------------------------------------------------------
 SET (HDF4_INCLUDE_DIRECTORIES
@@ -348,20 +362,6 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 IF (CMAKE_COMPILER_IS_GNUCXX)
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
-
-#-----------------------------------------------------------------------------
-# parse the full version number from hfile.h and include in H4_VERS_INFO
-#-----------------------------------------------------------------------------
-FILE (READ ${HDF4_HDF_SOURCE_DIR}/hfile.h _hfile_h_contents)
-STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_MAJOR[ \t]+([0-9]*).*$"
-    "\\1" H4_VERS_MAJOR ${_hfile_h_contents})
-STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"
-    "\\1" H4_VERS_MINOR ${_hfile_h_contents})
-STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_RELEASE[ \t]+([0-9]*).*$"
-    "\\1" H4_VERS_RELEASE ${_hfile_h_contents})
-STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_SUBRELEASE[ \t]+\"([0-9A-Za-z.]*)\".*$"
-    "\\1" H4_VERS_SUBRELEASE ${_hfile_h_contents})
-#MESSAGE (STATUS "VERSION: ${H4_VERS_MAJOR}.${H4_VERS_MINOR}.${H4_VERS_RELEASE}-${H4_VERS_SUBRELEASE}")
 
 #-----------------------------------------------------------------------------
 # Option for LibJpeg support
