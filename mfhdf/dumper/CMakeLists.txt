@@ -368,3 +368,15 @@ IF (BUILD_TESTING)
   ADD_H4_TEST (dumpgr-19 0 dumpgr -g -l grtdfi322.hdf)
   
 ENDIF (BUILD_TESTING)
+
+#-----------------------------------------------------------------------------
+# Rules for Installation of tools using make Install target
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS
+        hdp
+    RUNTIME DESTINATION
+        bin/tools
+    COMPONENT
+        toolsapplications
+)

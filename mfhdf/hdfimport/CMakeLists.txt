@@ -108,3 +108,15 @@ IF (BUILD_TESTING)
 
   ADD_TEST (NAME gen_sds_floats COMMAND $<TARGET_FILE:gen_sds_floats>)
 ENDIF (BUILD_TESTING)
+
+#-----------------------------------------------------------------------------
+# Rules for Installation of tools using make Install target
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS
+        hdfimport
+    RUNTIME DESTINATION
+        bin/tools
+    COMPONENT
+        toolsapplications
+)

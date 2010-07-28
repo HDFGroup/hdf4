@@ -634,17 +634,12 @@ ENDIF (HDF4_BUILD_FORTRAN)
 IF (HDF4_BUILD_TOOLS)
   CPACK_ADD_COMPONENT (toolsapplications 
       DISPLAY_NAME "HDF4 Tools Applications" 
-      DEPENDS toolslibraries
-      GROUP Applications
-  )
-  CPACK_ADD_COMPONENT (toolslibraries 
-      DISPLAY_NAME "HDF4 Tools Libraries" 
       DEPENDS libraries
-      GROUP Runtime
+      GROUP Applications
   )
   CPACK_ADD_COMPONENT (toolsheaders 
       DISPLAY_NAME "HDF4 Tools Headers" 
-      DEPENDS toolslibraries
+      DEPENDS libraries
       GROUP Development
   )
 ENDIF (HDF4_BUILD_TOOLS)

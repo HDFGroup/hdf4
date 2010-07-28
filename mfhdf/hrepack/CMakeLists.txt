@@ -144,3 +144,15 @@ IF (BUILD_TESTING)
   ENDFOREACH (h4_file ${HDF4_REPACK_TEST_FILES})
 
 ENDIF (BUILD_TESTING)
+
+#-----------------------------------------------------------------------------
+# Rules for Installation of tools using make Install target
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS
+        hrepack
+    RUNTIME DESTINATION
+        bin/tools
+    COMPONENT
+        toolsapplications
+)

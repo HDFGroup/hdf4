@@ -58,4 +58,14 @@ ENDIF (WIN32)
 #      
 #ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
-
+#-----------------------------------------------------------------------------
+# Rules for Installation of tools using make Install target
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS
+        ncgen
+    RUNTIME DESTINATION
+        bin/tools
+    COMPONENT
+        toolsapplications
+)

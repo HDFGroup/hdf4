@@ -184,3 +184,14 @@ IF (BUILD_TESTING)
 
 ENDIF (BUILD_TESTING)
 
+#-----------------------------------------------------------------------------
+# Rules for Installation of tools using make Install target
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS
+        hdiff
+    RUNTIME DESTINATION
+        bin/tools
+    COMPONENT
+        toolsapplications
+)

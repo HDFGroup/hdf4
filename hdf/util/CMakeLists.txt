@@ -486,3 +486,32 @@ ENDIF (WIN32)
 TARGET_LINK_LIBRARIES (vshow ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #ADD_TEST (NAME vshow COMMAND $<TARGET_FILE:vshow>)
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+INSTALL (
+    TARGETS
+        gif2hdf
+        hdf2gif
+        hdf2jpeg
+        hdf24to8
+        hdf8to24
+        hdfcomp
+        hdfed
+        hdfls
+        hdfpack
+        hdftopal
+        hdftor8
+        hdfunpac
+        jpeg2hdf
+        paltohdf
+        r8tohdf
+        ristosds
+        vmake
+        vshow
+    RUNTIME DESTINATION
+        bin/utils
+    COMPONENT
+        utilsapplications
+)
