@@ -8,7 +8,7 @@ SET (HDF4_INCLUDE_DIRS "@HDF4_INCLUDES_BUILD_TIME@")
 # Don't include targets if this file is being picked up by another
 # project which has already build hdf4 as a subproject
 #-----------------------------------------------------------------------------
-IF (NOT TARGET "hdf5" AND NOT HDF4_INSTALL_SKIP_TARGETS)
+IF (NOT TARGET "hdf4" AND NOT HDF4_INSTALL_SKIP_TARGETS)
   GET_FILENAME_COMPONENT (SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
   INCLUDE (${SELF_DIR}/HDF4-targets.cmake)
 ENDIF (NOT TARGET "hdf4" AND NOT HDF4_INSTALL_SKIP_TARGETS)

@@ -98,6 +98,18 @@ SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF
 H4_SET_LIB_OPTIONS (${HDF4_MF_LIB_TARGET} ${HDF4_MF_LIB_NAME} ${LIB_TYPE})
 
 #-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+INSTALL (
+    FILES
+        ${HDF4_MFHDF_LIBSRC_CHDRS}
+    DESTINATION
+        include
+    COMPONENT
+        headers
+)
+
+#-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
 INSTALL (

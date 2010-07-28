@@ -93,7 +93,7 @@ SET (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/glist.h
-    ${HDF4_BINARY_DIR}/h4config.h
+    #${HDF4_BINARY_DIR}/h4config.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hbitio.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp.h
@@ -120,7 +120,7 @@ SET (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/vgint.h
 )
 
-ADD_LIBRARY (${HDF4_SRC_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS})
+ADD_LIBRARY (${HDF4_SRC_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
 IF (WIN32)
   ADD_DEFINITIONS (-DDOS_FS)
 ENDIF (WIN32)
@@ -213,7 +213,7 @@ IF (HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Add Main fortran library
 #-----------------------------------------------------------------------------
-  ADD_LIBRARY (${HDF4_SRC_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSTUB_FSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDF_SRC_SOURCE_DIR}/hproto_fortran.h)
+  ADD_LIBRARY (${HDF4_SRC_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSTUB_FSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDF_SRC_SOURCE_DIR}/hproto_fortran.h ${HDF4_BINARY_DIR}/h4config.h)
   SET_TARGET_PROPERTIES (${HDF4_SRC_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
   IF (WIN32)
     ADD_DEFINITIONS (-DDOS_FS)
@@ -264,6 +264,18 @@ IF (HDF4_BUILD_FORTRAN)
   SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_FORTRAN_LIB_TARGET}")
   H4_SET_LIB_OPTIONS (${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_NAME} ${LIB_TYPE})
 ENDIF (HDF4_BUILD_FORTRAN)
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+INSTALL (
+    FILES
+        ${HDF4_HDF_SRC_CHDRS}
+    DESTINATION
+        include
+    COMPONENT
+        headers
+)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects

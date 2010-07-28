@@ -528,7 +528,7 @@ CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/h4config.h.in ${HDF4_BINARY_DIR}/h4config.
 #-----------------------------------------------------------------------------
 INSTALL (
     FILES
-        ${PROJECT_BINARY_DIR}/H4config.h
+        ${PROJECT_BINARY_DIR}/h4config.h
     DESTINATION
         include
     COMPONENT
