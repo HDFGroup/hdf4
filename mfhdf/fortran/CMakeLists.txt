@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_MFHDF_FORTRAN C CXX Fortran)
 
+ENABLE_LANGUAGE (Fortran)
 #-----------------------------------------------------------------------------
 # Detect name mangling convention used between Fortran and C
 #-----------------------------------------------------------------------------
