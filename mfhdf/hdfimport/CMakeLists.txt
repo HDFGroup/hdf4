@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_MFHDF_HDFIMPORT)
 
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR}/lib)
-INCLUDE_DIRECTORIES (${HDF4_MFHDF_SOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 IF (WIN32)
   SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
@@ -24,7 +23,7 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 SET (hdfimport_SRCS
-    ${HDF4_SOURCE_DIR}/mfhdf/hdfimport/hdfimport.c
+    ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.c
 )
   
 ADD_EXECUTABLE (hdfimport ${hdfimport_SRCS})
@@ -45,7 +44,7 @@ ENDIF (WIN32)
 IF (BUILD_TESTING)
   #-- Adding test for hdfimporttest
   SET (hdfimporttest_SRCS
-      ${HDF4_SOURCE_DIR}/mfhdf/hdfimport/hdfimporttest.c
+      ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimporttest.c
   )
   
   ADD_EXECUTABLE (hdfimporttest ${hdfimporttest_SRCS})
@@ -88,7 +87,7 @@ IF (BUILD_TESTING)
   #-- Adding test for gen_sds_floats
 
   SET (gen_sds_floats_SRCS
-      ${HDF4_SOURCE_DIR}/mfhdf/hdfimport/gen_sds_floats.c
+      ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/gen_sds_floats.c
   )
   
   ADD_EXECUTABLE (gen_sds_floats ${gen_sds_floats_SRCS})

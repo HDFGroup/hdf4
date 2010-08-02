@@ -125,9 +125,9 @@ SET (HDF4_TOOLS_LIB_TARGET        ${HDF4_TOOLS_LIB_CORENAME})
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
 SET (HDF4_RESOURCES_DIR       ${HDF4_SOURCE_DIR}/config/cmake)
-SET (HDF4_HDF_SOURCE_DIR      ${HDF4_SOURCE_DIR}/hdf/src)
-SET (HDF4_HDF_TEST_SOURCE_DIR ${HDF4_SOURCE_DIR}/hdf/test)
-SET (HDF4_MFHDF_SOURCE_DIR    ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
+SET (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
+SET (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
+SET (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
 SET (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
 SET (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
@@ -135,7 +135,7 @@ SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
 #-----------------------------------------------------------------------------
-FILE (READ ${HDF4_HDF_SOURCE_DIR}/hfile.h _hfile_h_contents)
+FILE (READ ${HDF4_HDFSOURCE_DIR}/hfile.h _hfile_h_contents)
 STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_MAJOR[ \t]+([0-9]*).*$"
     "\\1" H4_VERS_MAJOR ${_hfile_h_contents})
 STRING (REGEX REPLACE ".*#define[ \t]+LIBVER_MINOR[ \t]+([0-9]*).*$"
@@ -274,8 +274,8 @@ ENDIF (HDF4_ENABLE_COVERAGE)
 # Include the main src and config directories
 #-----------------------------------------------------------------------------
 SET (HDF4_INCLUDE_DIRECTORIES
-    ${HDF4_HDF_SOURCE_DIR} 
-    ${HDF4_MFHDF_SOURCE_DIR} 
+    ${HDF4_HDFSOURCE_DIR} 
+    ${HDF4_MFHDFSOURCE_DIR} 
     ${HDF4_SOURCE_DIR} 
     ${HDF4_BINARY_DIR}
 )
@@ -457,6 +457,7 @@ IF (HDF4_BUILD_FORTRAN)
   IF (WIN32)
     SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
     SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME ##_")
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
   ELSE (WIN32)
     SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
     SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
@@ -484,7 +485,8 @@ IF (BUILD_TESTING)
   ENABLE_TESTING ()
   INCLUDE (CTest)
   IF (NOT HDF4_EXTERNALLY_CONFIGURED)
-    ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/hdf/test ${PROJECT_BINARY_DIR}/test)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/test   ${PROJECT_BINARY_DIR}/hdf/test)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
   ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
   INCLUDE (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
 ENDIF (BUILD_TESTING)
@@ -500,7 +502,7 @@ ENDIF (HDF4_BUILD_XDR_LIB)
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf ${PROJECT_BINARY_DIR}/hdf)
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
 ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
 
 #-----------------------------------------------------------------------------
@@ -517,11 +519,18 @@ OPTION (HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
 # Option to build HDF4 Examples
 #-----------------------------------------------------------------------------
 OPTION (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
+IF (HDF4_BUILD_EXAMPLES)
+  IF (HDF4_BUILD_FORTRAN)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran     ${PROJECT_BINARY_DIR}/hdf/fortran)
+  ENDIF (HDF4_BUILD_FORTRAN)
+
+  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
+ENDIF (HDF4_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------
-CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/h4config.h.in ${HDF4_BINARY_DIR}/h4config.h)
+CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/h4config.h.in      ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
 
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install

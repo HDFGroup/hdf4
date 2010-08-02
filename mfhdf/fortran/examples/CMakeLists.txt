@@ -8,7 +8,11 @@ PROJECT (HDF4_MFHDF_FORTRAN_EXAMPLES C CXX Fortran)
 #-----------------------------------------------------------------------------
 # Setup include Directories
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (${CMAKE_Fortran_MODULE_DIRECTORY} ${HDF4_HDF_BINARY_DIR} ${HDF4_HDF_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES (
+    ${CMAKE_Fortran_MODULE_DIRECTORY}
+    ${HDF4_HDF_BINARY_DIR}
+    ${HDF4_HDFSOURCE_DIR}
+)
 LINK_DIRECTORIES (
     ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_MFHDF_BINARY_DIR}

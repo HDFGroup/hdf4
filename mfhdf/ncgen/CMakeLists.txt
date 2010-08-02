@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_MFHDF_NCGEN)
 
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR}/lib)
-INCLUDE_DIRECTORIES (${HDF4_MFHDF_SOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 ADD_DEFINITIONS (-DHDF)
 
@@ -12,15 +11,15 @@ IF (WIN32)
 ENDIF (WIN32)
 
 SET (ncgen_SRCS
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/close.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/escapes.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/generate.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/genlib.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/getfill.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/init.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/load.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/main.c
-    ${HDF4_SOURCE_DIR}/mfhdf/ncgen/ncgentab.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/close.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/escapes.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/generate.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/genlib.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/getfill.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/init.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/load.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/main.c
+    ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/ncgentab.c
 )
   
 ADD_EXECUTABLE (ncgen ${ncgen_SRCS})

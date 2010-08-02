@@ -1,28 +1,9 @@
 cmake_minimum_required (VERSION 2.8)
+PROJECT (HDF4_HDF_FORTRAN_EXAMPLES C CXX Fortran)
 # --------------------------------------------------------------------
 # Notes: When creating examples they should be prefixed
 # with "f_ex_". This allows for easier filtering of the examples.
 # --------------------------------------------------------------------
-PROJECT (HDF4_HDF_FORTRAN_EXAMPLES C CXX Fortran)
-
-#-----------------------------------------------------------------------------
-# Detect name mangling convention used between Fortran and C
-#-----------------------------------------------------------------------------
-INCLUDE (FortranCInterface)
-FortranCInterface_HEADER (
-    ${HDF4_HDF_FORTRAN_EXAMPLES_BINARY_DIR}/F77Mangle.h
-    MACRO_NAMESPACE "H4_F77_"
-    SYMBOL_NAMESPACE "H4_F77_"
-    SYMBOLS mysub mymod:my_sub
-)
-
-FILE (STRINGS ${HDF4_HDF_FORTRAN_EXAMPLES_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL\\(.*,.*\\) +(.*)")
-STRING (REGEX MATCH "H4_F77_GLOBAL\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
-
-FILE (STRINGS ${HDF4_HDF_FORTRAN_EXAMPLES_BINARY_DIR}/F77Mangle.h CONTENTS REGEX "H4_F77_GLOBAL_\\(.*,.*\\) +(.*)")
-STRING (REGEX MATCH "H4_FC_GLOBAL_\\(.*,.*\\) +(.*)" RESULT ${CONTENTS})
-SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) ${CMAKE_MATCH_1}" PARENT_SCOPE)
 
 #-----------------------------------------------------------------------------
 # Add debug information (intel Fortran : JB)
@@ -37,10 +18,15 @@ ENDIF (CMAKE_Fortran_COMPILER MATCHES ifort)
 #-----------------------------------------------------------------------------
 # Setup include Directories
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES (${CMAKE_Fortran_MODULE_DIRECTORY} ${HDF4_HDF_BINARY_DIR} ${HDF4_HDF_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES (
+    ${CMAKE_Fortran_MODULE_DIRECTORY}
+    ${HDF4_HDF_BINARY_DIR}
+    ${HDF4_HDFSOURCE_DIR}
+)
 LINK_DIRECTORIES (
     ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
+    ${HDF4_MFHDF_BINARY_DIR}
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )
 

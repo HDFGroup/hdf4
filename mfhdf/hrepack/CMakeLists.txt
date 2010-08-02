@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_MFHDF_HREPACK)
 
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR}/lib)
-INCLUDE_DIRECTORIES (${HDF4_MFHDF_SOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_SOURCE_DIR}/mfhdf/hdiff)
 
 ADD_DEFINITIONS (-DHDF)
@@ -20,19 +19,19 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 SET (hrepack_SRCS
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_an.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_gr.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_list.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_lsttable.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_main.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_opttable.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_parse.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_sds.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_utils.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_vg.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_vs.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_dim.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_an.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_gr.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_list.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_lsttable.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_main.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_opttable.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_parse.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_sds.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_utils.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vg.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vs.c
+    ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_dim.c
 )
   
 ADD_EXECUTABLE (hrepack ${hrepack_SRCS})
@@ -57,7 +56,7 @@ IF (BUILD_TESTING)
 #-- Adding test for hrepack_check
 
   SET (hrepack_check_SRCS
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_check.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c
   )
   
   ADD_EXECUTABLE (hrepack_check ${hrepack_check_SRCS})
@@ -80,19 +79,19 @@ IF (BUILD_TESTING)
 #-- Adding test for test_hrepack
 
   SET (test_hrepack_SRCS
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_an.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_gr.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_list.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_lsttable.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_opttable.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_parse.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_sds.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_utils.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_vg.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_dim.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepack_vs.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hrepack/hrepacktst.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_an.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_gr.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_list.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_lsttable.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_opttable.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_parse.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_sds.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_utils.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vg.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_dim.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vs.c
+      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c
       ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff.c
       ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_array.c
       ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_gattr.c
@@ -133,12 +132,12 @@ IF (BUILD_TESTING)
  
   FOREACH (h4_file ${HDF4_REPACK_TEST_FILES})
     SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #MESSAGE (STATUS " Copying ${HDF4_SOURCE_DIR}/mfhdf/hrepack/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    #MESSAGE (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
     ADD_CUSTOM_COMMAND (
         TARGET     test_hrepack 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_SOURCE_DIR}/mfhdf/hrepack/${h4_file} ${dest}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
     )
       
   ENDFOREACH (h4_file ${HDF4_REPACK_TEST_FILES})

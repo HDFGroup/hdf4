@@ -1,15 +1,14 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_HDF_UTIL C CXX)
 
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR}/lib)
+INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 
 IF (WIN32)
   ADD_DEFINITIONS (-DDOS_FS)
 ENDIF (WIN32)
 
 #-- Adding utility hdfls
-ADD_EXECUTABLE (hdfls ${HDF4_HDF_SOURCE_DIR}/util/hdfls.c)
+ADD_EXECUTABLE (hdfls ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfls.c)
 TARGET_NAMING (hdfls)
 IF (WIN32)
   IF (MSVC)
@@ -25,8 +24,8 @@ TARGET_LINK_LIBRARIES (hdfls ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK
 #-- Adding utility hdf2gif
 
 SET (hdf2gif_SRCS
-    ${HDF4_HDF_SOURCE_DIR}/util/hdf2gif.c
-    ${HDF4_HDF_SOURCE_DIR}/util/hdfgifwr.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf2gif.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfgifwr.c
 )
   
 ADD_EXECUTABLE (hdf2gif ${hdf2gif_SRCS})
@@ -60,11 +59,11 @@ ENDFOREACH (h4_file ${HDF4_HDF2GIF_TEST_FILES})
 #-- Adding utility gif2hdf
 
 SET (gif2hdf_SRCS
-    ${HDF4_HDF_SOURCE_DIR}/util/gif2hdf.c
-    ${HDF4_HDF_SOURCE_DIR}/util/gif2mem.c
-    ${HDF4_HDF_SOURCE_DIR}/util/gifread.c
-    ${HDF4_HDF_SOURCE_DIR}/util/decompress.c
-    ${HDF4_HDF_SOURCE_DIR}/util/writehdf.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/gif2hdf.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/gif2mem.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/gifread.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/decompress.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/writehdf.c
 )
   
 ADD_EXECUTABLE (gif2hdf ${gif2hdf_SRCS})
@@ -98,7 +97,7 @@ FOREACH (h4_file ${HDF4_GIF2HDF_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_GIF2HDF_TEST_FILES})
 
 #-- Adding utility hdf24to8
-ADD_EXECUTABLE (hdf24to8 ${HDF4_HDF_SOURCE_DIR}/util/hdf24to8.c)
+ADD_EXECUTABLE (hdf24to8 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf24to8.c)
 TARGET_NAMING (hdf24to8)
 IF (WIN32)
   IF (MSVC)
@@ -112,7 +111,7 @@ TARGET_LINK_LIBRARIES (hdf24to8 ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${L
 ADD_TEST (NAME testhdf24to8 COMMAND $<TARGET_FILE:hdf24to8> head.r24 head8.hdf)
 
 #-- Adding utility hdftor8
-ADD_EXECUTABLE (hdftor8 ${HDF4_HDF_SOURCE_DIR}/util/hdftor8.c)
+ADD_EXECUTABLE (hdftor8 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftor8.c)
 TARGET_NAMING (hdftor8)
 IF (WIN32)
   IF (MSVC)
@@ -145,10 +144,10 @@ ENDFOREACH (h4_file ${HDF4_HDFTOR8_TEST_FILES})
 #-- Adding utility hdfed
 
 SET (hdfed_SRCS
-    ${HDF4_HDF_SOURCE_DIR}/util/he_cntrl.c
-    ${HDF4_HDF_SOURCE_DIR}/util/he_disp.c
-    ${HDF4_HDF_SOURCE_DIR}/util/he_file.c
-    ${HDF4_HDF_SOURCE_DIR}/util/he_main.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/he_cntrl.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/he_disp.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/he_file.c
+    ${HDF4_HDF_UTIL_SOURCE_DIR}/he_main.c
 )
   
 ADD_EXECUTABLE (hdfed ${hdfed_SRCS})
@@ -182,7 +181,7 @@ FOREACH (h4_file ${HDF4_HDFED_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_HDFED_TEST_FILES})
 
 #-- Adding utility ristosds
-ADD_EXECUTABLE (ristosds ${HDF4_HDF_SOURCE_DIR}/util/ristosds.c)
+ADD_EXECUTABLE (ristosds ${HDF4_HDF_UTIL_SOURCE_DIR}/ristosds.c)
 TARGET_NAMING (ristosds)
 IF (WIN32)
   IF (MSVC)
@@ -215,7 +214,7 @@ FOREACH (h4_file ${HDF4_RISTOSDS_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_RISTOSDS_TEST_FILES})
 
 #-- Adding utility hdfpack
-ADD_EXECUTABLE (hdfpack ${HDF4_HDF_SOURCE_DIR}/util/hdfpack.c)
+ADD_EXECUTABLE (hdfpack ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfpack.c)
 TARGET_NAMING (hdfpack)
 IF (WIN32)
   IF (MSVC)
@@ -254,7 +253,7 @@ FOREACH (h4_file ${HDF4_HDFPACK_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_HDFPACK_TEST_FILES})
 
 #-- Adding utility paltohdf
-ADD_EXECUTABLE (paltohdf ${HDF4_HDF_SOURCE_DIR}/util/paltohdf.c)
+ADD_EXECUTABLE (paltohdf ${HDF4_HDF_UTIL_SOURCE_DIR}/paltohdf.c)
 TARGET_NAMING (paltohdf)
 IF (WIN32)
   IF (MSVC)
@@ -266,7 +265,7 @@ ENDIF (WIN32)
 TARGET_LINK_LIBRARIES (paltohdf ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdftopal
-ADD_EXECUTABLE (hdftopal ${HDF4_HDF_SOURCE_DIR}/util/hdftopal.c)
+ADD_EXECUTABLE (hdftopal ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftopal.c)
 TARGET_NAMING (hdftopal)
 IF (WIN32)
   IF (MSVC)
@@ -297,7 +296,7 @@ FOREACH (h4_file ${HDF4_PALTOHDF_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_PALTOHDF_TEST_FILES})
 
 #-- Adding utility r8tohdf
-ADD_EXECUTABLE (r8tohdf ${HDF4_HDF_SOURCE_DIR}/util/r8tohdf.c)
+ADD_EXECUTABLE (r8tohdf ${HDF4_HDF_UTIL_SOURCE_DIR}/r8tohdf.c)
 TARGET_NAMING (r8tohdf)
 IF (WIN32)
   IF (MSVC)
@@ -313,10 +312,10 @@ ADD_TEST (NAME testr8tohdf-palette COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hd
 ADD_TEST (NAME testhdftor8-storm COMMAND $<TARGET_FILE:hdftor8> storm.hdf)
 IF (WIN32)
 #  ADD_TEST (hdfls -l storm.hdf | findstr /v "library String") > hdfls.tmp2 2>&1)
-#  ADD_TEST (fc hdfls.tmp2 ${HDF4_HDF_SOURCE_DIR}/hdftor8.out1 > nul)
+#  ADD_TEST (fc hdfls.tmp2 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftor8.out1 > nul)
 ELSE (WIN32)
 #  ADD_TEST (hdfls -l storm.hdf | $SED) > hdfls.tmp2 2>&1)
-#  ADD_TEST (diff hdfls.tmp2 ${HDF4_HDF_SOURCE_DIR}/hdftor8.out1)
+#  ADD_TEST (diff hdfls.tmp2 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftor8.out1)
 ENDIF (WIN32)
 #ADD_TEST (cmp img001-057.057  storm110.raw)
 #ADD_TEST (cmp img002-057.057  storm120.raw)
@@ -341,7 +340,7 @@ FOREACH (h4_file ${HDF4_R8TOHDF_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_R8TOHDF_TEST_FILES})
 
 #-- Adding utility hdfcomp
-ADD_EXECUTABLE (hdfcomp ${HDF4_HDF_SOURCE_DIR}/util/hdfcomp.c)
+ADD_EXECUTABLE (hdfcomp ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfcomp.c)
 TARGET_NAMING (hdfcomp)
 IF (WIN32)
   IF (MSVC)
@@ -357,11 +356,11 @@ ADD_TEST (NAME testhdfcomp COMMAND $<TARGET_FILE:hdfcomp> allcomp.hdf storm110.h
 IF (WIN32)
 #  ADD_TEST (hdfls -l allstorms.hdf | findstr /v "library String" ) > hdfls.tmp3 2>&1)
 #  ADD_TEST (hdfls -l allcomp.hdf | findstr /v "library String" ) >> hdfls.tmp3 2>&1)
-#  ADD_TEST (fc hdfls.tmp3 ${HDF4_HDF_SOURCE_DIR}/hdfcomp.out1 > nul)
+#  ADD_TEST (fc hdfls.tmp3 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfcomp.out1 > nul)
 ELSE (WIN32)
 #  ADD_TEST (hdfls -l allstorms.hdf | $SED) > hdfls.tmp3 2>&1)
 #  ADD_TEST (hdfls -l allcomp.hdf | $SED) >> hdfls.tmp3 2>&1)
-#  ADD_TEST (diff hdfls.tmp3 ${HDF4_HDF_SOURCE_DIR}/hdfcomp.out1)
+#  ADD_TEST (diff hdfls.tmp3 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfcomp.out1)
 ENDIF (WIN32)
 #-- Copy all the data files from the test directory into the source directory
 SET (HDF4_HDFCOMP_TEST_FILES
@@ -382,7 +381,7 @@ FOREACH (h4_file ${HDF4_HDFCOMP_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_HDFCOMP_TEST_FILES})
 
 #-- Adding utility jpeg2hdf
-ADD_EXECUTABLE (jpeg2hdf ${HDF4_HDF_SOURCE_DIR}/util/jpeg2hdf.c)
+ADD_EXECUTABLE (jpeg2hdf ${HDF4_HDF_UTIL_SOURCE_DIR}/jpeg2hdf.c)
 TARGET_NAMING (jpeg2hdf)
 IF (WIN32)
   IF (MSVC)
@@ -394,7 +393,7 @@ ENDIF (WIN32)
 TARGET_LINK_LIBRARIES (jpeg2hdf ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdf2jpeg
-ADD_EXECUTABLE (hdf2jpeg ${HDF4_HDF_SOURCE_DIR}/util/hdf2jpeg.c)
+ADD_EXECUTABLE (hdf2jpeg ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf2jpeg.c)
 TARGET_NAMING (hdf2jpeg)
 IF (WIN32)
   IF (MSVC)
@@ -409,11 +408,11 @@ ADD_TEST (NAME testjpeg2hdf COMMAND $<TARGET_FILE:jpeg2hdf> jpeg_img.jpg jpeg.hd
 ADD_TEST (NAME testhdf2jpeg COMMAND $<TARGET_FILE:hdf2jpeg> jpeg.hdf jpeg2.jpg)
 IF (WIN32)
 #  ADD_TEST (hdfls -l jpeg.hdf | findstr /v "library String" ) > hdfls.tmp4 2>&1)
-#  ADD_TEST (fc hdfls.tmp4 ${HDF4_HDF_SOURCE_DIR}/jpeg2hdf.out1)
+#  ADD_TEST (fc hdfls.tmp4 ${HDF4_HDF_UTIL_SOURCE_DIR}/jpeg2hdf.out1)
 #  ADD_TEST (fc jpeg_img.jpg jpeg2.jpg)
 ELSE (WIN32)
 #  ADD_TEST (hdfls -l jpeg.hdf | $SED) > hdfls.tmp4 2>&1)
-#  ADD_TEST (diff hdfls.tmp4 ${HDF4_HDF_SOURCE_DIR}/jpeg2hdf.out1)
+#  ADD_TEST (diff hdfls.tmp4 ${HDF4_HDF_UTIL_SOURCE_DIR}/jpeg2hdf.out1)
 #  ADD_TEST (cmp jpeg_img.jpg jpeg2.jpg)
 ENDIF (WIN32)
 #-- Copy all the data files from the test directory into the source directory
@@ -432,7 +431,7 @@ FOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
 ENDFOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
 
 #-- Adding utility hdf8to24
-ADD_EXECUTABLE (hdf8to24 ${HDF4_HDF_SOURCE_DIR}/util/hdf8to24.c)
+ADD_EXECUTABLE (hdf8to24 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf8to24.c)
 TARGET_NAMING (hdf8to24)
 IF (WIN32)
   IF (MSVC)
@@ -446,7 +445,7 @@ TARGET_LINK_LIBRARIES (hdf8to24 ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${L
 #ADD_TEST (NAME hdf8to24 COMMAND $<TARGET_FILE:hdf8to24>)
 
 #-- Adding utility hdfunpac
-ADD_EXECUTABLE (hdfunpac ${HDF4_HDF_SOURCE_DIR}/util/hdfunpac.c)
+ADD_EXECUTABLE (hdfunpac ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfunpac.c)
 TARGET_NAMING (hdfunpac)
 IF (WIN32)
   IF (MSVC)
@@ -460,7 +459,7 @@ TARGET_LINK_LIBRARIES (hdfunpac ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${L
 #ADD_TEST (NAME hdfunpac COMMAND $<TARGET_FILE:hdfunpac>)
 
 #-- Adding utility vmake
-ADD_EXECUTABLE (vmake ${HDF4_HDF_SOURCE_DIR}/util/vmake.c)
+ADD_EXECUTABLE (vmake ${HDF4_HDF_UTIL_SOURCE_DIR}/vmake.c)
 TARGET_NAMING (vmake)
 IF (WIN32)
   IF (MSVC)
@@ -474,7 +473,7 @@ TARGET_LINK_LIBRARIES (vmake ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK
 #ADD_TEST (NAME vmake COMMAND $<TARGET_FILE:vmake>)
 
 #-- Adding utility vshow
-ADD_EXECUTABLE (vshow ${HDF4_HDF_SOURCE_DIR}/util/vshow.c)
+ADD_EXECUTABLE (vshow ${HDF4_HDF_UTIL_SOURCE_DIR}/vshow.c)
 TARGET_NAMING (vshow)
 IF (WIN32)
   IF (MSVC)

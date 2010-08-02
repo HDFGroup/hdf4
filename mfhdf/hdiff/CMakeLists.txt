@@ -1,9 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_MFHDF_HDIFF)
 
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${HDF4_HDF_SOURCE_DIR}/lib)
-INCLUDE_DIRECTORIES (${HDF4_MFHDF_SOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 IF (WIN32)
   SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
@@ -17,18 +16,18 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 SET (hdiff_SRCS
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_array.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_gr.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_list.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_main.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_mattbl.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_gattr.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_misc.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_sds.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_table.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_vs.c
-    ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_dim.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_array.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_gr.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_list.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_main.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_mattbl.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_gattr.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_misc.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_sds.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_table.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_vs.c
+    ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_dim.c
     ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
 )
   
@@ -53,7 +52,7 @@ ENDIF (WIN32)
 IF (BUILD_TESTING)
   #-- Adding test for hdifftst
   SET (hdifftst_SRCS
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdifftst.c
+      ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdifftst.c
   )
   
   ADD_EXECUTABLE (hdifftst ${hdifftst_SRCS})
