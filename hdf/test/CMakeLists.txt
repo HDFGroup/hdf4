@@ -55,14 +55,10 @@ IF (WIN32)
 ENDIF (WIN32)
 
 #-- Adding test for testhdf
-IF (WIN32)
-  ADD_EXECUTABLE (testhdf ${testhdf_SRCS})
-ELSE (WIN32)
-  ADD_EXECUTABLE (testhdf ${testhdf_SRCS}
-      ${HDF4_HDF_TEST_SOURCE_DIR}/tbv.c
-      ${HDF4_HDF_TEST_SOURCE_DIR}/tree.c
-  )
-ENDIF (WIN32)
+ADD_EXECUTABLE (testhdf ${testhdf_SRCS}
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tbv.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tree.c
+)
 TARGET_NAMING (testhdf)
 IF (WIN32)
   IF (MSVC)
@@ -161,42 +157,27 @@ IF (HDF4_BUILD_FORTRAN)
 
   #-----------------------------------------------------------------------------
   #-- Adding test for fortestF
-  IF (WIN32)
-    ADD_LIBRARY (fortestF_cstub ${LIB_TYPE} ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c)
-    H4_SET_LIB_OPTIONS (fortestF_cstub "fortestF" ${LIB_TYPE})
- 
-    SET (FORTEST_FSRCS 
-        ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/fortestFp.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/forsupffp.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/fort_ps/manpf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/fortest.inc
-    )
-  ELSE (WIN32)
-    SET (FORTEST_FSRCS 
-        ${HDF4_HDF_TEST_SOURCE_DIR}/fortestF.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/forsupff.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c
-        ${HDF4_HDF_TEST_SOURCE_DIR}/manf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/slabwf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/t24f.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tanf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tanfilef.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tpf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tr8f.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tsdmmsf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnmmsf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnntf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tsdntf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tsdstrf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tstubsf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
-        ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
-    )
-  ENDIF (WIN32)
+  SET (FORTEST_FSRCS 
+      ${HDF4_HDF_TEST_SOURCE_DIR}/fortestF.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/forsupff.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/forsupf.c
+      ${HDF4_HDF_TEST_SOURCE_DIR}/manf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/mgrf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/slabwf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/t24f.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tanf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tanfilef.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tpf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tr8f.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdmmsf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnmmsf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdnntf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdntf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tsdstrf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tstubsf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tvattrf.f
+      ${HDF4_HDF_TEST_SOURCE_DIR}/tvsetf.f
+  )
 
   ADD_EXECUTABLE (fortestF ${FORTEST_FSRCS} )
   TARGET_NAMING (fortestF)
@@ -215,10 +196,8 @@ IF (HDF4_BUILD_FORTRAN)
         ENDIF (MSVC)
       ENDIF (BUILD_SHARED_LIBS)
     ENDIF (MSVC)
-    TARGET_LINK_LIBRARIES (fortestF fortestF_cstub ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
-  ELSE (WIN32)
-    TARGET_LINK_LIBRARIES (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
   ENDIF (WIN32)
+  TARGET_LINK_LIBRARIES (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
   SET_TARGET_PROPERTIES (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
   ADD_TEST (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
