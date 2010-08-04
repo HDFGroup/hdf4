@@ -208,9 +208,6 @@ SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "")
 # Run all the CMake configuration tests for our build environment
 #-----------------------------------------------------------------------------
 INCLUDE (${HDF4_RESOURCES_DIR}/ConfigureChecks.cmake)
-IF (HDF4_BUILD_FORTRAN)
-  INCLUDE (${HDF4_RESOURCES_DIR}/FortranConfigureChecks.cmake)
-ENDIF (HDF4_BUILD_FORTRAN)
 #-----------------------------------------------------------------------------
 # Option to use legacy naming for windows libs/programs, default is legacy
 #-----------------------------------------------------------------------------
@@ -447,6 +444,20 @@ IF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
 ENDIF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
+# Option to build HDF4 xdr Library
+#-----------------------------------------------------------------------------
+OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" ON)
+IF (HDF4_BUILD_XDR_LIB)
+  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
+ENDIF (HDF4_BUILD_XDR_LIB)
+
+#-----------------------------------------------------------------------------
+# Add the HDF4 Library Target to the build
+#-----------------------------------------------------------------------------
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/src    ${PROJECT_BINARY_DIR}/hdf/src )
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/libsrc)
+
+#-----------------------------------------------------------------------------
 # Option to build Fortran bindings/tests/examples
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
@@ -462,6 +473,7 @@ IF (HDF4_BUILD_FORTRAN)
     SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
   ENDIF (WIN32)
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
+  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
 ELSE (HDF4_BUILD_FORTRAN )
   SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
   SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
@@ -492,14 +504,6 @@ IF (BUILD_TESTING)
 ENDIF (BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 xdr Library
-#-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" ON)
-IF (HDF4_BUILD_XDR_LIB)
-  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
-ENDIF (HDF4_BUILD_XDR_LIB)
-
-#-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
 #-----------------------------------------------------------------------------
 ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
@@ -521,7 +525,7 @@ OPTION (HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
 OPTION (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
 IF (HDF4_BUILD_EXAMPLES)
   IF (HDF4_BUILD_FORTRAN)
-    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran     ${PROJECT_BINARY_DIR}/hdf/fortran)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran/examples     ${PROJECT_BINARY_DIR}/hdf/fortran/examples)
   ENDIF (HDF4_BUILD_FORTRAN)
 
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
