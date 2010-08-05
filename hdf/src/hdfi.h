@@ -98,9 +98,6 @@
 
 /* This will only be defined if HDF4 was built with CMake */
 #ifdef H4_BUILT_AS_DYNAMIC_LIB
-#define HDFPUBLIC
-#define HDFLIBAPI extern
-#define HDFFCLIBAPI extern
 
 #if defined(hdf_EXPORTS)
   #if defined (_MSC_VER)  /* MSVC Compiler Case */
@@ -187,6 +184,16 @@
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
 #endif/* hdf_test_fcstub_EXPORTS */
+
+#if !defined(HDFPUBLIC)
+    #define HDFPUBLIC
+#endif
+#if !defined(HDFLIBAPI)
+    #define HDFLIBAPI extern
+#endif
+#if !defined(HDFFCLIBAPI)
+    #define HDFFCLIBAPI extern
+#endif
 
 #else
 /* This is the original HDFGroup defined preprocessor code which should still work
