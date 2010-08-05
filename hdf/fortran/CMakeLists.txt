@@ -21,34 +21,23 @@ IF (CMAKE_Fortran_COMPILER MATCHES ifort)
   ENDIF (WIN32)
 ENDIF (CMAKE_Fortran_COMPILER MATCHES ifort)
   
-IF (WIN32)
-  SET (HDF4_HDF_SRC_CSTUB_FSRCS 
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/herrpf.c
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/hfilepf.c
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/mfanpf.c
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/mfgrpf.c
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/vattrpf.c
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/vgpf.c
-  )
-ELSE (WIN32)
-  SET (HDF4_HDF_SRC_CSTUB_FSRCS
-      ${HDF4_HDFSOURCE_DIR}/dfanf.c
-      ${HDF4_HDFSOURCE_DIR}/dff.c
-      ${HDF4_HDFSOURCE_DIR}/dfpf.c
-      ${HDF4_HDFSOURCE_DIR}/dfr8f.c
-      ${HDF4_HDFSOURCE_DIR}/dfsdf.c
-      ${HDF4_HDFSOURCE_DIR}/dfufp2i.c
-      ${HDF4_HDFSOURCE_DIR}/dfutilf.c
-      ${HDF4_HDFSOURCE_DIR}/herrf.c
-      ${HDF4_HDFSOURCE_DIR}/hfilef.c
-      ${HDF4_HDFSOURCE_DIR}/df24f.c
-      ${HDF4_HDFSOURCE_DIR}/dfufp2if.c
-      ${HDF4_HDFSOURCE_DIR}/mfanf.c
-      ${HDF4_HDFSOURCE_DIR}/mfgrf.c
-      ${HDF4_HDFSOURCE_DIR}/vattrf.c
-      ${HDF4_HDFSOURCE_DIR}/vgf.c
-  )
-ENDIF (WIN32)
+SET (HDF4_HDF_SRC_CSTUB_FSRCS
+    ${HDF4_HDFSOURCE_DIR}/dfanf.c
+    ${HDF4_HDFSOURCE_DIR}/dff.c
+    ${HDF4_HDFSOURCE_DIR}/dfpf.c
+    ${HDF4_HDFSOURCE_DIR}/dfr8f.c
+    ${HDF4_HDFSOURCE_DIR}/dfsdf.c
+    ${HDF4_HDFSOURCE_DIR}/dfufp2i.c
+    ${HDF4_HDFSOURCE_DIR}/dfutilf.c
+    ${HDF4_HDFSOURCE_DIR}/df24f.c
+    ${HDF4_HDFSOURCE_DIR}/dfufp2if.c
+    ${HDF4_HDFSOURCE_DIR}/herrf.c
+    ${HDF4_HDFSOURCE_DIR}/hfilef.c
+    ${HDF4_HDFSOURCE_DIR}/mfanf.c
+    ${HDF4_HDFSOURCE_DIR}/mfgrf.c
+    ${HDF4_HDFSOURCE_DIR}/vattrf.c
+    ${HDF4_HDFSOURCE_DIR}/vgf.c
+)
 
 SET (HDF4_HDF_SRC_FHDRS
     ${HDF4_HDFSOURCE_DIR}/dffunc.inc
@@ -71,30 +60,19 @@ TARGET_LINK_LIBRARIES (${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_FCSTUB_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_NAME} ${LIB_TYPE})
 
-IF (WIN32)
-  SET (HDF4_F_FORTRAN_SRCS 
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/herrpff.f
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/hfilepff.f
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/mfanpff.f
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/mfgrpff.f
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/vattrpff.f
-      ${HDF4_HDFSOURCE_DIR}/fort_ps/vgpff.f
-  )
-ELSE (WIN32)
-  SET (HDF4_F_FORTRAN_SRCS 
-      ${HDF4_HDFSOURCE_DIR}/df24ff.f  
-      ${HDF4_HDFSOURCE_DIR}/dfanff.f 
-      ${HDF4_HDFSOURCE_DIR}/dfpff.f 
-      ${HDF4_HDFSOURCE_DIR}/dfr8ff.f
-      ${HDF4_HDFSOURCE_DIR}/dfsdff.f 
-      ${HDF4_HDFSOURCE_DIR}/dfufp2iff.f
-      ${HDF4_HDFSOURCE_DIR}/hfileff.f 
-      ${HDF4_HDFSOURCE_DIR}/mfgrff.f
-      ${HDF4_HDFSOURCE_DIR}/vattrff.f 
-      ${HDF4_HDFSOURCE_DIR}/vgff.f 
-      ${HDF4_HDFSOURCE_DIR}/dfff.f 
-  )
-ENDIF (WIN32)
+SET (HDF4_F_FORTRAN_SRCS 
+    ${HDF4_HDFSOURCE_DIR}/df24ff.f  
+    ${HDF4_HDFSOURCE_DIR}/dfanff.f 
+    ${HDF4_HDFSOURCE_DIR}/dfpff.f 
+    ${HDF4_HDFSOURCE_DIR}/dfr8ff.f
+    ${HDF4_HDFSOURCE_DIR}/dfsdff.f 
+    ${HDF4_HDFSOURCE_DIR}/dfufp2iff.f
+    ${HDF4_HDFSOURCE_DIR}/dfff.f 
+    ${HDF4_HDFSOURCE_DIR}/hfileff.f 
+    ${HDF4_HDFSOURCE_DIR}/mfgrff.f
+    ${HDF4_HDFSOURCE_DIR}/vattrff.f 
+    ${HDF4_HDFSOURCE_DIR}/vgff.f 
+)
 #-----------------------------------------------------------------------------
 ADD_LIBRARY (${HDF4_SRC_FORTRAN_LIB_TARGET} ${LIB_TYPE} ${HDF4_F_FORTRAN_SRCS})
 IF (WIN32)
@@ -114,6 +92,19 @@ SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF
 H4_SET_LIB_OPTIONS (${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_NAME} ${LIB_TYPE})
   
 IF (BUILD_TESTING)
+
+  SET (FORTRAN_SRC_DIR ${HDF4_HDF_TEST_SOURCE_DIR})
+
+  #-----------------------------------------------------------------------------
+  # Add test fortran stub library
+  #-----------------------------------------------------------------------------
+  ADD_LIBRARY (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
+  SET_TARGET_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
+  IF (WIN32)
+    ADD_DEFINITIONS (-DDOS_FS)
+  ENDIF (WIN32)
+  TARGET_LINK_LIBRARIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
+  H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}  ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} ${LIB_TYPE})
   
   #-- Adding test for fortest
   IF (NOT WIN32)
@@ -145,7 +136,6 @@ IF (BUILD_TESTING)
   SET (FORTEST_FSRCS 
       ${HDF4_HDF_TESTSOURCE_DIR}/fortestF.f
       ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f
-      ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c
       ${HDF4_HDF_TESTSOURCE_DIR}/manf.f
       ${HDF4_HDF_TESTSOURCE_DIR}/mgrf.f
       ${HDF4_HDF_TESTSOURCE_DIR}/slabwf.f
@@ -182,7 +172,7 @@ IF (BUILD_TESTING)
       ENDIF (BUILD_SHARED_LIBS)
     ENDIF (MSVC)
   ENDIF (WIN32)
-  TARGET_LINK_LIBRARIES (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
+  TARGET_LINK_LIBRARIES (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
   SET_TARGET_PROPERTIES (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
   ADD_TEST (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
