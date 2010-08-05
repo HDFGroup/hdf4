@@ -64,21 +64,21 @@ IF (HDF4_ENABLE_NETCDF)
   )
   ADD_CUSTOM_COMMAND (
       OUTPUT ${HDF4_BINARY_DIR}/netcdf.h
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${netcdf_sys}.h ${HDF4_BINARY_DIR}/netcdf.h
-      COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.h to netcdf.h"
+      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${mf_f90_sys}.h ${HDF4_BINARY_DIR}/netcdf.h
+      COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.h to netcdf.h"
   )
 ELSE (HDF4_ENABLE_NETCDF)
   ADD_CUSTOM_COMMAND (
       OUTPUT ${HDF4_BINARY_DIR}/hdf4_netcdf.h
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${netcdf_sys}.h ${HDF4_BINARY_DIR}/hdf4_netcdf.h
-      COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.h to hdf4_netcdf.h"
+      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${mf_f90_sys}.h ${HDF4_BINARY_DIR}/hdf4_netcdf.h
+      COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.h to hdf4_netcdf.h"
   )
 ENDIF (HDF4_ENABLE_NETCDF)
 
 ADD_CUSTOM_COMMAND (
    OUTPUT ${HDF4_BINARY_DIR}/netcdf.inc
-   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/config/netcdf-${netcdf_sys}.inc ${HDF4_BINARY_DIR}/netcdf.inc
-   COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.inc to netcdf.inc")
+   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/config/netcdf-${mf_f90_sys}.inc ${HDF4_BINARY_DIR}/netcdf.inc
+   COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.inc to netcdf.inc")
 
 ADD_DEFINITIONS (-DHDF)
 
