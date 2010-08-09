@@ -179,25 +179,26 @@ extern      "C"
                                  can be an array? but we only handle 1 level */);
 
     HDFLIBAPI intn HMCgetcompress
-	(accrec_t* access_rec,    /* IN: access record */
-	 comp_coder_t* comp_type, /* OUT: compression type */
+        (accrec_t* access_rec,    /* IN: access record */
+         comp_coder_t* comp_type, /* OUT: compression type */
          comp_info* c_info        /* OUT: retrieved compression info */);
 
     HDFLIBAPI intn HMCgetcomptype
-	(int32 access_id,	  /* IN: access record */
-	 comp_coder_t* comp_type  /* OUT: compression type */);
+        (int32 access_id,         /* IN: access record */
+         comp_coder_t* comp_type  /* OUT: compression type */);
 
     HDFLIBAPI intn HMCgetdatainfo
         (int32 file_id,    /* IN: file in which element is located */
          uint8 *p,         /* IN: buffer of special info header */
-         uintn info_count, /* IN: size of offset/length lists */
          uintn start_block,/* IN: data block to start at, 0 base */
-         hdf_datainfo_t* data_info /* OUT: offset/length lists */);
+         uintn info_count, /* IN: size of offset/length lists */
+         int32 *offsetarray,     /* OUT: array to hold offsets */
+         int32 *lengtharray);    /* OUT: array to hold lengths */
 
     HDFLIBAPI intn HMCgetdatainfo_count
         (int32 file_id,    /* IN: file in which element is located */
          uint8 *p,         /* IN: buffer of special info header */
-         uintn *info_count /* OUT: number of data blocks */);
+         uintn *info_count /* OUT: data info count */);
 
     HDFLIBAPI intn HMCgetdatasize
         (int32 file_id,    /* IN: file in which element is located */
