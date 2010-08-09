@@ -224,6 +224,8 @@
 ./hdf/src/hcompi.h
 ./hdf/src/hcompri.c
 ./hdf/src/hconv.h
+./hdf/src/hdatainfo.c
+./hdf/src/hdatainfo.h
 ./hdf/src/hdfalloc.c
 ./hdf/src/hdf.h
 ./hdf/src/hdfi.h
@@ -351,6 +353,7 @@
 ./hdf/test/tanf.f
 ./hdf/test/tanfilef.f
 ./hdf/test/tbv.c
+./hdf/test/tdatainfo.c
 ./hdf/test/tdupimgs.c
 ./hdf/test/testhdf.c
 ./hdf/test/test_files/tmgr.dat
@@ -903,8 +906,10 @@
 ./mfhdf/libsrc/iarray.c
 ./mfhdf/libsrc/local_nc.h
 ./mfhdf/libsrc/make.com
+./mfhdf/libsrc/mfdatainfo.c
 ./mfhdf/libsrc/mfhdf.h
 ./mfhdf/libsrc/mfhdfi.h
+./mfhdf/libsrc/mfprivate.h
 ./mfhdf/libsrc/mfsd.c
 ./mfhdf/libsrc/netcdf.h.in
 ./mfhdf/libsrc/nssdc.c
