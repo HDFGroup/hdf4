@@ -29,6 +29,10 @@
 #define CHECK(status, fail_value, name) {if(status == fail_value) { \
     fprintf(stderr, "*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_errs++;}}
 
+/* Check status value and print error message, including index */
+#define CHECK_IND(status, fail_value, name, index) {if(status == fail_value) { \
+    fprintf(stderr, "*** Routine %s FAILED at line %d for SDS index %d ***\n", name, __LINE__, index); num_errs++;}}
+
 /* Verify that a value is as expected and, if not, print error message */
 #define VERIFY(item, value, test_name) {if(item != value) { \
     fprintf(stderr, "*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name, (long)item,(int)__LINE__,__FILE__); num_errs++;}}

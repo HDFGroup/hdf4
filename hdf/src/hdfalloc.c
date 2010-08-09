@@ -287,11 +287,42 @@ HDstrdup(const char *s)
 
 #endif /* VMS | macinosh */
 
-void HDallocinfo(hdf_datainfo_t *info, uintn info_count)
+/*--------------------------------------------------------------------------
+ NAME
+    HDallocinfo -- dynamically allocates memory for hdf_datainfo_t's members
+ USAGE
+    void * HDallocinfo(info, info_count)
+        hdf_datainfo_t *info;	 IN: structure containing lists to be allocated
+	uintn info_count;	OUT: number of elements to allocate
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    Dynamically allocates info_count elements for the lists in structure
+    *info, which will be reset to 0 when no failure occur.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn HDallocinfo(hdf_datainfo_t *info, uintn info_count)
 {
+    char FUNC[]="HDallocinfo";
+    uintn size = info_count * sizeof(int32);
+
+    info->offsets = (int32 *) HDmalloc(size);
+    if (info->offsets != NULL) {
+        HEreport("Attempted to allocate %d bytes for offsets", size);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
+    } /* end if */
+
+    info->lengths = (int32 *) HDmalloc(size);
+    if (info->lengths != NULL) {
+        HEreport("Attempted to allocate %d bytes for lengths", size);
+        HRETURN_ERROR(DFE_NOSPACE, NULL);
+    } /* end if */
+
     HDmemset(info, 0, sizeof(info));
-    info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
-    info->lengths = (int32 *) HDmalloc(info_count * sizeof(int32));
+    return(SUCCEED);
 }
 
 void HDfreeinfo(hdf_datainfo_t *info)

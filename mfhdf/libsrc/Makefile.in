@@ -77,12 +77,12 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 @HDF_BUILD_XDR_TRUE@libmfhdf_la_DEPENDENCIES = $(XDRLIB)
 am__libmfhdf_la_SOURCES_DIST = array.c attr.c cdf.c dim.c file.c \
-	hdfsds.c iarray.c error.c globdef.c mfsd.c nssdc.c putget.c \
-	putgetg.c sharray.c string.c var.c xdrposix.c \
+	hdfsds.c iarray.c error.c globdef.c mfsd.c mfdatainfo.c \
+	nssdc.c putget.c putgetg.c sharray.c string.c var.c xdrposix.c \
 	../fortran/mfsdf.c ../fortran/mfsdff.f ../fortran/jackets.c
 am__objects_1 = array.lo attr.lo cdf.lo dim.lo file.lo hdfsds.lo \
-	iarray.lo error.lo globdef.lo mfsd.lo nssdc.lo putget.lo \
-	putgetg.lo sharray.lo string.lo var.lo xdrposix.lo
+	iarray.lo error.lo globdef.lo mfsd.lo mfdatainfo.lo nssdc.lo \
+	putget.lo putgetg.lo sharray.lo string.lo var.lo xdrposix.lo
 @HDF_BUILD_NETCDF_FALSE@am__objects_2 = mfsdf.lo mfsdff.lo
 @HDF_BUILD_NETCDF_TRUE@am__objects_2 = jackets.lo mfsdf.lo mfsdff.lo
 @HDF_BUILD_FORTRAN_FALSE@am_libmfhdf_la_OBJECTS = $(am__objects_1)
@@ -274,8 +274,8 @@ AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 #############################################################################
 lib_LTLIBRARIES = libmfhdf.la
 CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
-         globdef.c mfsd.c nssdc.c putget.c putgetg.c sharray.c string.c \
-         var.c xdrposix.c
+         globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c	\
+	 sharray.c string.c var.c xdrposix.c
 
 @HDF_BUILD_NETCDF_FALSE@FSOURCES = ../fortran/mfsdf.c ../fortran/mfsdff.f
 @HDF_BUILD_NETCDF_TRUE@FSOURCES = ../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
@@ -374,6 +374,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfsds.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iarray.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jackets.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mfdatainfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mfsd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mfsdf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nssdc.Plo@am__quote@

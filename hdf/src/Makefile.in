@@ -83,23 +83,23 @@ am__libdf_la_SOURCES_DIST = atom.c bitvect.c cdeflate.c cnbit.c \
 	dfkcray.c dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfr8.c \
 	dfrle.c dfsd.c dfstubs.c dfufp2i.c dfunjpeg.c dfutil.c \
 	dynarray.c glist.c hbitio.c hblocks.c hbuffer.c hchunks.c \
-	hcomp.c hcompri.c hdfalloc.c herr.c hextelt.c hfile.c \
-	hfiledd.c hkit.c linklist.c mcache.c mfan.c mfgr.c mstdio.c \
-	tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c vio.c vparse.c vrw.c \
-	vsfld.c df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f \
-	dfr8f.c dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f dfutilf.c \
-	herrf.c hfilef.c df24f.c dfufp2if.c hfileff.f mfanf.c mfgrf.c \
-	mfgrff.f vattrf.c vattrff.f vgf.c vgff.f
+	hcomp.c hcompri.c hdatainfo.c hdfalloc.c herr.c hextelt.c \
+	hfile.c hfiledd.c hkit.c linklist.c mcache.c mfan.c mfgr.c \
+	mstdio.c tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c vio.c \
+	vparse.c vrw.c vsfld.c df24ff.f dfanf.c dfanff.f dff.c dfff.f \
+	dfpf.c dfpff.f dfr8f.c dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f \
+	dfutilf.c herrf.c hfilef.c df24f.c dfufp2if.c hfileff.f \
+	mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f vgf.c vgff.f
 am__objects_1 = atom.lo bitvect.lo cdeflate.lo cnbit.lo cnone.lo \
 	crle.lo cskphuff.lo cszip.lo df24.lo dfan.lo dfcomp.lo \
 	dfconv.lo dfgr.lo dfgroup.lo dfimcomp.lo dfjpeg.lo dfkconv.lo \
 	dfkcray.lo dfkfuji.lo dfknat.lo dfkswap.lo dfkvms.lo dfp.lo \
 	dfr8.lo dfrle.lo dfsd.lo dfstubs.lo dfufp2i.lo dfunjpeg.lo \
 	dfutil.lo dynarray.lo glist.lo hbitio.lo hblocks.lo hbuffer.lo \
-	hchunks.lo hcomp.lo hcompri.lo hdfalloc.lo herr.lo hextelt.lo \
-	hfile.lo hfiledd.lo hkit.lo linklist.lo mcache.lo mfan.lo \
-	mfgr.lo mstdio.lo tbbt.lo vattr.lo vconv.lo vg.lo vgp.lo \
-	vhi.lo vio.lo vparse.lo vrw.lo vsfld.lo
+	hchunks.lo hcomp.lo hcompri.lo hdatainfo.lo hdfalloc.lo \
+	herr.lo hextelt.lo hfile.lo hfiledd.lo hkit.lo linklist.lo \
+	mcache.lo mfan.lo mfgr.lo mstdio.lo tbbt.lo vattr.lo vconv.lo \
+	vg.lo vgp.lo vhi.lo vio.lo vparse.lo vrw.lo vsfld.lo
 am__objects_2 = df24ff.lo dfanf.lo dfanff.lo dff.lo dfff.lo dfpf.lo \
 	dfpff.lo dfr8f.lo dfr8ff.lo dfsdf.lo dfsdff.lo dfufp2iff.lo \
 	dfutilf.lo herrf.lo hfilef.lo df24f.lo dfufp2if.lo hfileff.lo \
@@ -300,10 +300,10 @@ CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
            dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c dfkfuji.c dfknat.c       \
            dfkswap.c dfkvms.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c         \
            dfufp2i.c dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c        \
-           hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c hdfalloc.c       \
-           herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c mcache.c    \
-           mfan.c mfgr.c mstdio.c tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c   \
-           vio.c vparse.c vrw.c vsfld.c
+           hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c hdatainfo.c      \
+	   hdfalloc.c herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c  \
+	   mcache.c mfan.c mfgr.c mstdio.c tbbt.c vattr.c vconv.c vg.c	    \
+	   vgp.c vhi.c vio.c vparse.c vrw.c vsfld.c
 
 CHEADERS = atom.h bitvect.h cdeflate.h cnbit.h cnone.h cskphuff.h crle.h    \
            cszip.h df.h dfan.h dfi.h dfgr.h dfrig.h dfsd.h dfstubs.h        \
@@ -461,6 +461,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hchunks.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hcomp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hcompri.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdatainfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfalloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/herr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/herrf.Plo@am__quote@

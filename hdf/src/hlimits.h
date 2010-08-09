@@ -257,7 +257,16 @@
 #define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
 #endif /* _HCHUNKS_MAIN_ */
 
+/*
+#define NUM_INTERNAL_VGS	6
+char *INTERNAL_HDF_VGS[] = {_HDF_VARIABLE, _HDF_DIMENSION, _HDF_UDIMENSION,
+		 _HDF_CDF, GR_NAME, RI_NAME}; 
 
+#define NUM_INTERNAL_VDS	8
+char *INTERNAL_HDF_VDS[] = {DIM_VALS, DIM_VALS01, _HDF_ATTRIBUTE, _HDF_SDSVAR,
+		 _HDF_CRDVAR, "_HDF_CHK_TBL_", RIGATTRNAME, RIGATTRCLASS};
+
+*/
 /* ------------  pre-defined attribute names ---------------- */
 /* For MFGR interface */
 #define FILL_ATTR    "FillValue"   

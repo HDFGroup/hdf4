@@ -382,7 +382,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI int32 HDspaceleft
                 (void);
 
-    HDFLIBAPI void HDallocinfo
+    HDFLIBAPI intn HDallocinfo
 		(hdf_datainfo_t *info, uintn info_count);
 
     HDFLIBAPI void HDfreeinfo
@@ -441,6 +441,11 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI intn HLgetblockinfo
                 (int32 aid, int32* block_size, int32* num_blocks);
 
+    HDFLIBAPI int32 HLgetdatainfo
+		(int32 file_id, uint16 link_ref, int32 num_blocks,
+		 int32 *offsetarray, int32 *lengtharray);
+
+
 /*
    ** from hextelt.c
  */
@@ -474,15 +479,6 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 file_id, uint16 data_tag, uint16 data_ref, 
 		 comp_coder_t *coder_type);
 
-    HDFLIBAPI intn HCPgetdatainfo
-                (int32 file_id, uint16 data_tag, uint16 data_ref,
-                 uintn info_count, uintn start_block,
-		 hdf_datainfo_t* data_info);
-
-    HDFLIBAPI intn HCPgetdatainfo_count
-                (int32 file_id, uint16 data_tag, uint16 data_ref,
-		 uintn* info_count);
-
     HDFLIBAPI intn HCPgetdatasize
                 (int32 file_id, uint16 data_tag, uint16 data_ref, 
 		 int32* comp_size, int32* orig_size);
@@ -514,6 +510,17 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
  */
     HDFLIBAPI int32 HRPconvert
                 (int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 scheme, comp_info *cinfo, uintn pixel_size);
+
+/*
+   ** from hdatainfo.c
+ */
+    HDFLIBAPI intn HDgetdatainfo
+                (int32 file_id, uint16 data_tag, uint16 data_ref,
+                 uintn start_block, uintn info_count,
+		 int32 *offsetarray, int32 *lengtharray);
+
+    HDFLIBAPI intn HDgetdatainfo_count
+                (int32 file_id, uint16 data_tag, uint16 data_ref);
 
 /*
    ** from herr.c
@@ -1857,6 +1864,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI intn VSgetblockinfo
                 (int32 vkey, int32* block_size, int32* num_blocks);
 
+    HDFLIBAPI intn VSgetattdatainfo
+		(int32 vkey, int32 *offset, int32 *length);
+
     HDFLIBAPI void Vsetzap
                 (void);
 
@@ -1914,6 +1924,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI int32 Vgettagrefs
                 (int32 vkey, int32  tagarray[], int32  refarray[], int32 n);
+
+    HDFLIBAPI int32 Vgetuservgs
+                (int32 id, int32 start_ref, int32 n_vgs, int32 *refarray); 
 
     HDFLIBAPI intn Vgettagref
                 (int32 vkey, int32 which, int32  * tag, int32  * ref);

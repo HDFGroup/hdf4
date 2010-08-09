@@ -63,12 +63,6 @@ status = SDgetcomptype(sdsid, ...);
         --- retrieve the compressed and uncompressed sizes of an SDS' data
 status = SDgetdatasize(sdsid, ...);
 
-	--- get the number of blocks the data is stored in
-status = SDgetdatainfo_count(sdsid, ...);
-
-	--- retrieve location and size of data blocks
-status = SDgetdatainfo(sdsid, ...);
-
         --- take an id and determine if it is an SD id, SDS id, dim id, ---
         --- or none of the above ---
 id_type = SDidtype(an_id);
@@ -117,32 +111,19 @@ NOTE: This file needs to have the comments cleaned up for most of the
 #define CHK_DEBUG
 */
 
-/* Local function prototypes */
+#ifndef MFSD_INTERNAL
+#define MFSD_INTERNAL
+#endif
 
-PRIVATE NC_dim * SDIget_dim
-    (NC *handle, int32 id);
-
-PRIVATE NC * SDIhandle_from_id 
-    (int32 id, intn typ);
-
-PRIVATE NC_var *SDIget_var
-    (NC *handle, int32 sdsid);
-
-PRIVATE intn SDIputattr 
-    (NC_array **ap, const char *name, int32 nt, intn count, const void * data);
-
-PRIVATE int32 SDIgetcoordvar 
-    (NC *handle, NC_dim *dim, int32 id, int32 nt);
-
-PRIVATE int32 SDIfreevarAID 
-    (NC * handle, int32 index);
-
-PRIVATE intn SDIapfromid
-    (int32 id, NC ** handlep, NC_array *** app);
+#ifdef MFSD_INTERNAL
+/* Private function prototypes */
+#include "mfprivate.h"
+#endif
 
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
 
+#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
 	SDIhandle_from_id -- get the handle from this object
@@ -154,7 +135,7 @@ PRIVATE intn library_terminate = FALSE;
     NULL or the handle
 
 ******************************************************************************/
-PRIVATE NC *
+NC *
 SDIhandle_from_id(int32 id, /* IN: an object (file, dim, dataset) ID */
                   intn  typ /* IN: IN: the type of ID this is */)
 {
@@ -195,7 +176,7 @@ done:
     NULL or the variable object
 
 ******************************************************************************/
-PRIVATE NC_var *
+NC_var *
 SDIget_var(NC   *handle, /* IN: the handle for this file */
            int32 sdsid   /* IN: a dataset ID */)
 {
@@ -243,7 +224,7 @@ done:
     NULL or the variable object
 
 ******************************************************************************/
-PRIVATE NC_dim *
+NC_dim *
 SDIget_dim(NC   *handle,/* IN: the handle for this file */
            int32 id     /* IN: a dimension ID */)
 {
@@ -278,7 +259,7 @@ done:
 
     return ret_value;    
 } /* SDIget_dim */
-
+#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -313,6 +294,7 @@ done:
     return(ret_value);
 } /* end SDIstart() */
 
+#ifdef MFSD_INTERNAL
 
 /******************************************************************************
  NAME
@@ -328,7 +310,7 @@ done:
     0 if not OK to overwrite
 
 ******************************************************************************/
-PRIVATE int SDI_can_clobber(const char *name)
+int SDI_can_clobber(const char *name)
 {
     int res;
     struct stat buf;
@@ -352,6 +334,7 @@ PRIVATE int SDI_can_clobber(const char *name)
     /* no permission to write, don't do the create */
     return(0);
 }
+#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -623,6 +606,8 @@ SDselect(int32 fid,  /* IN: file ID */
     NC    *handle = NULL;
     int32  sdsid;         /* the id we're gonna build */
     int32  ret_value = FAIL;
+
+NC_var *var;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDselect: I've been called (index: %d) \n", index);
@@ -1823,6 +1808,8 @@ done:
     return ret_value;    
 } /* SDendaccess */
 
+#ifdef MFSD_INTERNAL
+
 /******************************************************************************
  NAME
 	SDIputattr -- put an attribute in an attribute list
@@ -1835,7 +1822,7 @@ done:
      SUCCEED / FAIL
 
 ******************************************************************************/
-PRIVATE intn
+intn
 SDIputattr(NC_array **ap,   /* IN/OUT: attribute list */
            const char *name, /* IN:     attribute name */
            int32      nt,   /* IN:     attribute number type */
@@ -1926,6 +1913,7 @@ done:
     return ret_value;    
 } /* SDIputattr */
 
+#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -2013,7 +2001,7 @@ done:
     return ret_value;    
 } /* SDsetrange */
 
-
+#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
 	SDIapfromid -- get the attribute list
@@ -2026,7 +2014,7 @@ done:
      On error FAIL else SUCCEED.
 
 ******************************************************************************/
-PRIVATE intn
+intn
 SDIapfromid(int32       id,      /* IN:  object ID */
             NC        **handlep, /* IN:  handle for this file */
             NC_array ***app      /* OUT: attribute list */)
@@ -2107,6 +2095,7 @@ done:
     return ret_value;    
 } /* SDIapfromid */
 
+#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -3164,7 +3153,7 @@ done:
     return ret_value;    
 } /* SDgetcal */
 
-
+#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
 	SDgetcoordvar -- get index of coordinate variable
@@ -3183,7 +3172,7 @@ done:
      A variable index or FAIL on error
 
 ******************************************************************************/ 
-PRIVATE int32
+int32
 SDIgetcoordvar(NC     *handle, /* IN: file handle */
                NC_dim *dim,    /* IN: dimension to find coord var of */
                int32   id,     /* IN: dimension ID */
@@ -3322,6 +3311,7 @@ done:
     return ret_value;    
 } /* SDIgetcoordvar */
 
+#endif /* MFSD_INTERNAL */
 
 /******************************************************************************
  NAME
@@ -3432,7 +3422,7 @@ done:
     return ret_value;    
 } /* SDsetdimstrs */
 
-
+#ifdef MFSD_INTERNAL
 /******************************************************************************
  NAME
 	SDIfreevarAID -- free a variables AID
@@ -3444,7 +3434,7 @@ done:
     SUCCEED / FAIL 
 
 ******************************************************************************/
-PRIVATE int32
+int32
 SDIfreevarAID(NC   *handle, /* IN: file handle */
               int32 index   /* IN: variable index */)
 {
@@ -3489,7 +3479,7 @@ done:
 
     return ret_value;    
 } /* SDIfreevarAID */
- 
+#endif /* MFSD_INTERNAL */ 
 
 /******************************************************************************
  NAME
@@ -4850,135 +4840,6 @@ done:
 
     return ret_value;    
 } /* SDgetdatasize */
-
-
-/******************************************************************************
- NAME
-	SDgetdatainfo_count -- Gets the number of blocks the data is stored in.
-
- DESCRIPTION
-    This routine uses HCPgetdatainfo_count to retrieve the number of blocks
-    that the identified dataset's data is stored in.
-
- RETURNS
-    SUCCEED/FAIL
-
- MODIFICATION
-    BMR - 2010/03/20
-
-******************************************************************************/
-intn
-SDgetdatainfo_count(int32 sdsid, /* IN: dataset ID */
-              uintn* info_count) /* OUT: Num of blocks that data is stored in */
-{
-    CONSTR(FUNC, "SDgetdatainfo_count");    /* for HGOTO_ERROR */
-    NC     *handle;
-    NC_var *var;
-    intn   status = FAIL;
-    intn   ret_value = SUCCEED;
-
-    /* clear error stack */
-    HEclear();
-
-    /* validate arguments */
-    if (info_count == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* get NC_var record */
-    handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-    if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    var = SDIget_var(handle, sdsid);
-    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* if the data ref# of the SDS is 0, there is no storage is created yet */
-    if (var->data_ref == 0)
-    {
-	*info_count = 0;
-    }
-    else
-    {
-	status = HCPgetdatainfo_count(handle->hdf_file, var->data_tag, var->data_ref, info_count);
-	if (status == FAIL)
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    }
-
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-      }
-    /* Normal cleanup */
-    return ret_value;
-} /* SDgetdatainfo_count */
-
-/******************************************************************************
- NAME
-	SDgetdatainfo -- Retrieves location and size of data blocks.
-
- DESCRIPTION
-    This routine uses HCPgetdatainfo to retrieve the offset and length
-    of data blocks in the specified data set.
-
- RETURNS
-    The actual number of data blocks if successful and FAIL, otherwise.
-
- MODIFICATION
-    BMR - 2010/03/20
-
-******************************************************************************/
-intn
-SDgetdatainfo(int32 sdsid,	/* IN: dataset ID */
-              uintn info_count,	/* IN: Number of data blocks */
-              int32 start_block,	/* IN: indicating where to start */
-	      hdf_datainfo_t *data_info) /* OUT: offset/length lists */
-{
-    CONSTR(FUNC, "SDgetdatainfo");    /* for HGOTO_ERROR */
-    NC     *handle;
-    NC_var *var;
-    intn   count = FAIL;  /* number of data blocks returned by HCPgetdatainfo */
-    intn   ret_value = 0;
-
-    /* clear error stack */
-    HEclear();
-
-    /* validate arguments */
-    if (data_info == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (start_block < 0)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* get NC_var record */
-    handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL || handle->file_type != HDF_FILE)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-    if(handle->vars == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    var = SDIget_var(handle, sdsid);
-    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* if the data ref# of the SDS is 0, there is no storage is created yet */
-    if (var->data_ref == 0)
-    {
-	ret_value = 0;
-    }
-    else
-    {
-	count = HCPgetdatainfo(handle->hdf_file, var->data_tag, var->data_ref, info_count, start_block, data_info);
-	if (count == FAIL)
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    }
-
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-      }
-    /* Normal cleanup */
-    return ret_value;
-} /* SDgetdatainfo */
 
 
 /******************************************************************************

@@ -113,6 +113,7 @@ EXPORTED ROUTINES
 
    HLcreate       -- create a linked block element
    HLconvert      -- convert an AID into a linked block element
+   HLgetdatainfo  -- get data information of linked blocks
    HDinqblockinfo -- return info about linked blocks
    HLPstread      -- open an access record for reading
    HLPstwrite     -- open an access record for writing
@@ -809,6 +810,90 @@ done:
   return ret_value;
 }   /* HLIstaccess */
 
+/* ----------------------------- HLgetdatainfo --------------------------- */
+/*
+NAME
+   HLgetdatainfo -- get data information from linked blocks
+USAGE
+   int32 HLgetdatainfo(file_id, link_ref, num_blocks, offsetarray, lengtharray)
+   int32  file_id;             IN: the file
+   uint16 link_ref;            IN: ref number of the link table
+   int32  num_blocks;          IN: number of blocks in the table
+   int32 *offsetarray;         OUT: offsets of data blocks
+   int32 *lengtharray;         OUT: lengths of data blocks
+RETURNS
+   The number of actual data blocks, if successful, FAIL, otherwise
+DESCRIPTION
+   Use HLIgetlink to get the list of ref#s of actual data blocks.  Blocks
+   which don't point to actual data blocks will have ref# as 0.  Go through
+   the block list to record offset and length of these data blocks.
+   Aug 08, 2010 -BMR
+
+---------------------------------------------------------------------------*/
+int32
+HLgetdatainfo(int32 file_id,
+           uint16 link_ref, 
+           int32  num_blocks,
+	   int32 *offsetarray,     /* OUT: array to hold offsets */
+	   int32 *lengtharray)     /* OUT: array to hold lengths */
+{
+    CONSTR(FUNC, "HLgetlink");	/* for HERROR */
+    filerec_t *file_rec;	/* file record */
+    link_t    *link_info;	/* link information, only interested in ref#s*/
+    int32      num_data_blocks;	/* number of blocks that actually have data */
+    int        ii;
+    int32      ret_value = SUCCEED;
+
+    /* validate file record id */
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get the block table pointed to by link_ref; the table contains
+       ref#s of the blocks */
+    link_info = HLIgetlink(file_id, link_ref, num_blocks);
+    if (!link_info)
+        HGOTO_DONE(FAIL);
+
+    /* get offset/length of blocks that actually point to a data element,
+       until all blocks with valid ref#s are processed */
+    num_data_blocks = 0;
+    for (ii = 0; ii < num_blocks && link_info->block_list[ii].ref != 0; ii++)
+    {
+	int32 offset, length;
+	uint16 block_ref = link_info->block_list[ii].ref; /* shortcut */
+	if (block_ref != 0)
+	{
+	    if (offsetarray != NULL)
+	    {
+		if ((offset=Hoffset(file_id, DFTAG_LINKED, block_ref)) == FAIL)
+		    HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+		offsetarray[ii] = offset;
+	    }
+	    if (lengtharray != NULL)
+	    {
+		if ((length=Hlength(file_id, DFTAG_LINKED, block_ref)) == FAIL)
+		    HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+		lengtharray[ii] = length;
+	    }
+	    num_data_blocks++;	/* count number of blocks with data */
+	}
+    }
+
+    /* return the number of blocks with actual data */
+    ret_value = num_data_blocks;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+        if(link_info != NULL)
+            HDfree(link_info);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* HLgetdatainfo */
+
 /* ------------------------------ HLPstread ------------------------------- */
 /*
 NAME
@@ -1452,7 +1537,7 @@ HLInewlink(int32  file_id,
         UINT16ENCODE(p, 0);
         t_link->block_list[0].ref = first_block_ref;
         UINT16ENCODE(p, first_block_ref);
-
+/* why is this first_block_ref = 0? */
         for (i = 1; i < number_blocks; i++)
           {     /* set up each block in this link */
               t_link->block_list[i].ref = 0;

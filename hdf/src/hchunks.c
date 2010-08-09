@@ -2222,8 +2222,8 @@ REVISION LOG
 -------------------------------------------------------------------------- */
 intn
 HMCgetdatainfo_count(int32 file_id,
-		uint8 *p, /* IN: access id of header info */
-		uintn *info_count) /* OUT: number of data blocks */
+		uint8 *p,
+		uintn *info_count) /* IN: access id of header info */
 {
     CONSTR(FUNC, "HMCgetdatainfo_count");	/* for HERROR */
     chunkinfo_t* chkinfo=NULL;		/* chunked element information */
@@ -2280,7 +2280,7 @@ HMCgetdatainfo_count(int32 file_id,
 	if ((VSinquire(chktab_id, &num_recs, NULL, NULL, NULL, NULL)) == FAIL)
 	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-	*info_count = num_recs;
+	*info_count = (intn)num_recs; 
 
 	if (VSdetach(chktab_id) == FAIL)
 	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
@@ -2328,15 +2328,18 @@ RETURNS
      Returns SUCCEED/FAIL
 
 REVISION LOG
-     March 2008: Added during hmap project. - BMR
+     March 2009: Added during hmap project. - BMR
+     August 2010: Modified according to revised SDgetdatainfo - BMR
 
 -------------------------------------------------------------------------- */
 intn
 HMCgetdatainfo(int32 file_id,
 		uint8 *p,
-		uintn info_count, /* IN: size of offset/length lists */
-		uintn start_block, /* IN: data block to start at, 0 base */
-		hdf_datainfo_t* data_info) /* OUT: offset/length lists */
+		uintn start_block,	/* IN: data block to start at, 0 base */
+		uintn info_count,	/* IN: size of offset/length lists */
+                int32 *offsetarray,	/* OUT: array to hold offsets */
+                int32 *lengtharray)	/* OUT: array to hold lengths */
+
 {
     CONSTR(FUNC, "HMCgetdatainfo");	/* for HERROR */
     uint16	 comp_ref = 0;		/* ref# of compressed data */
@@ -2492,12 +2495,12 @@ HMCgetdatainfo(int32 file_id,
 			offset = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
 			if (offset == FAIL)
 			    HGOTO_ERROR(DFE_BADOFFSET, FAIL);
-			data_info->offsets[idx] = offset;
+			offsetarray[idx] = offset;
 
 			len = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
 			if (len == FAIL)
 			    HGOTO_ERROR(DFE_BADLEN, FAIL);
-			data_info->lengths[idx] = len;
+			lengtharray[idx] = len;
 			idx++;
 		    }
 
@@ -2510,16 +2513,18 @@ HMCgetdatainfo(int32 file_id,
 		    if(Hendaccess(chk_aid)==FAIL)
 			    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 		} /* if chunk is compressed */
-		else /* chunk is not compress, just get its off/length */
+		else if ((chkinfo->flag & 0xff) == SPECIAL_LINKED)
+		{/* not implemented yet - BMR */}
+		else /* chunk is not special, just get its off/length - verify */
 		{
 		    /* Get offset/length of the data chunk */
 		    if ((offset = Hoffset(file_id, chk_tag, chk_ref)) == FAIL)
 			HGOTO_ERROR(DFE_BADOFFSET, FAIL);
-		    data_info->offsets[idx] = offset;
+		    offsetarray[idx] = offset;
 
 		    if ((len = Hlength(file_id, chk_tag, chk_ref)) == FAIL)
 			HGOTO_ERROR(DFE_BADLEN, FAIL);
-		    data_info->lengths[idx] = len;
+		    lengtharray[idx] = len;
 		    idx++;
 		}
 	    } /* for each record in the chunk table */

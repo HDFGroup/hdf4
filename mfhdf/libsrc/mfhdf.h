@@ -225,9 +225,8 @@ HDFLIBAPI intn SDget_numopenfiles
     ();
 
 HDFLIBAPI intn SDgetdatainfo
-    (int32 sdsid, uintn info_count, int32 start_block, hdf_datainfo_t *data_info);
-HDFLIBAPI intn SDgetdatainfo_count
-    (int32 sdsid, uintn* info_count);
+    (int32 sdsid, uintn start_block, uintn info_count, int32 *offsetarray,
+	int32 *lengtharray);
 
 HDFLIBAPI intn SDgetdatasize
     (int32 sdsid, int32 *comp_size, int32 *uncomp_size);
