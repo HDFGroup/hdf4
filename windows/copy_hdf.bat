@@ -15,11 +15,8 @@ rem
 rem File Name   : copy_hdf.bat
 rem Purpose     : Copy all Files in the current directory to its parent directory
 rem This batch file takes the following options:
-rem         vs8               Build using Visual Studio 2005
 rem         vs9               Build using Visual Studio 2008
 rem                           [default Visual Studio 2008]
-rem         ivf91             Build HDF4 Fortran using Intel Visual Fortran 9.1
-rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
 rem         ivf111            Build HDF4 Fortran using Intel Visual Fortran 11.1
 rem                           [default Intel Visual Fortran 11.1]
 
@@ -40,11 +37,8 @@ rem Print a help message
     echo.Usage: %~nx0 [OPTIONS]
     echo.
     echo.   /?                      Help information
-    echo.   vs8                     Build using Visual Studio 2005
     echo.   vs9                     Build using Visual Studio 2008
     echo.                           [default Visual Studio 2008]
-    echo.   ivf91                   Build HDF4 Fortran using Intel Visual Fortran 9.1
-    echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
     echo.   ivf111                  Build HDF4 Fortran using Intel Visual Fortran 11.1
     echo.                           [default Intel Visual Fortran 11.1]
 
@@ -59,20 +53,6 @@ rem Parse through the parameters sent to file, and set appropriate variables
             rem Use VS2008 as our compiler
             set VS_VERSION=vs9
             
-        ) else if "%%a"=="vs8" (
-            rem Use VS2005 as our compiler
-            set VS_VERSION=vs8
-                        
-        ) else if "%%a"=="ivf91" (
-            rem Enable Fortran
-            set IVF_VERSION=ivf91
-            set hdf4_enablefortran=true
-            
-        ) else if "%%a"=="ivf101" (
-            rem Enable Fortran
-            set IVF_VERSION=ivf101
-            set hdf4_enablefortran=true
-           
         ) else if "%%a"=="ivf111" (
             rem Enable Fortran
             set IVF_VERSION=ivf111
@@ -102,12 +82,7 @@ rem This is where the magic happens
 	echo.\exclude.txt > exclude.txt
 	echo.\%~nx0 >> exclude.txt
 	echo.\proj\ >> exclude.txt
-	echo.\vs8\ >> exclude.txt
 	echo.\vs9\ >> exclude.txt
-	echo.\ivf91\ >> exclude.txt
-	echo.\ivf101\ >> exclude.txt
-	echo.\vs8ivf101\ >> exclude.txt
-	echo.\vs9ivf101\ >> exclude.txt
 	echo.\ivf111\ >> exclude.txt
 	echo.\examples\ >> exclude.txt
 
@@ -127,11 +102,6 @@ rem This is where the magic happens
 		xcopy . ..\proj /e /i /y
 		popd
 		
-		if "%IVF_VERSION%"=="ivf101" (
-			pushd %VS_VERSION%%IVF_VERSION%
-			xcopy . ..\proj /e /i /y
-			popd
-		)
 	)
 
     rem Fall throught to end

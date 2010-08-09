@@ -17,11 +17,8 @@ rem File Name: hdf4build_examples.bat
 rem This batch file is used to build HDF4 C/Fortran examples.
 rem This batch file takes the following options:
 rem .  vs9               Build examples using Visual Studio 2008
-rem .  vs8               Build examples using Visual Studio 2005
 rem .  ivf111            Build HDF4 Fortran examples using Intel Visual Fortran 11.1
-rem .  ivf101            Build HDF4 Fortran examples using Intel Visual Fortran 10.1
-rem .  ivf91             Build HDF4 Fortran examples using Intel Visual Fortran 9.1
-rem                           [default Intel Visual Fortran 10.1]
+rem                           [default Intel Visual Fortran 110.1]
 rem .  enablefortran     Build HDF4 examples, including Fortran
 rem                           [default C only]
 rem .  useenv            Build HDF4 examples using compiler settings defined
@@ -59,11 +56,8 @@ rem Print a help message
     echo.Usage: %~nx0 [OPTION]
     echo.
     echo.   vs9              Build using Visual Studio 2008
-    echo.   vs8              Build using Visual Studio 2005
     echo.   ivf111           Build HDF4 Fortran using Intel Visual Fortran 11.1
-    echo.   ivf101           Build HDF4 Fortran using Intel Visual Fortran 10.1
-    echo.   ivf91            Build HDF4 Fortran using Intel Visual Fortran 9.1
-    echo.                           [default Intel Visual Fortran 10.1]
+    echo.                           [default Intel Visual Fortran 11.1]
     echo.   enablefortran    Build HDF4 examples, including Fortran
     echo.                           [default C only]
     echo.   nodebug          Note: Default is to build debug and release versions
@@ -82,21 +76,9 @@ rem Parse through the parameters sent to file, and set appropriate variables
             rem Use VS2008 as our compiler
             set hdf4_use_vs2008=true
             
-        ) else if "%%a"=="vs8" (
-            rem Use VS2005 as our compiler
-            set hdf4_use_vs2005=true
-                        
         ) else if "%%a"=="enablefortran" (
             rem Enable Fortran
             set hdf4_enablefortran=true
-            
-        ) else if "%%a"=="ivf91" (
-            rem Enable Fortran
-            set hdf4_use_ivf91=true
-            
-        ) else if "%%a"=="ivf101" (
-            rem Enable Fortran
-            set hdf4_use_ivf101=true
             
         ) else if "%%a"=="ivf111" (
             rem Enable Fortran
@@ -127,27 +109,6 @@ rem Setup our environment
     echo.Setting up environment
     
     rem Sanity checks
-    rem Only Intel Fortran 10.1 and 11.1 is supported on VS2008
-    if defined hdf4_use_vs2008 (
-        if defined hdf4_enablefortran (
-            if defined hdf4_use_ivf91 (
-                echo.Error: Intel Visual Fortran 9.1 is not supported under Visual Studio 2008.
-                exit /b 1
-            )
-        )
-    )
-    rem Only VS2005 and VS 2008 are supported on x64
-    if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
-        if not "%hdf4_use_vs2005%%hdf4_use_vs2008%"=="true" (
-            echo.Error: Only Visual Studio 2005 and 2008 are supported on 64-bit Windows.
-            exit /b 1
-        )
-    )
-    rem Make sure we chose exactly one compiler above
-    if not "%hdf4_use_vs2008%%hdf4_use_vs2005%"=="true" (
-        echo.Error: Must specify exactly one C++ compiler to build with.
-        exit /b 1
-    )
     rem Make sure PROCESSOR_ARCHITECURE is set to either x86 or AMD64
     if "%PROCESSOR_ARCHITECTURE%"=="x86" (
         set hdf4_platform=Win32
@@ -166,24 +127,6 @@ rem Setup our environment
                 echo.make sure IFORT_COMPILER11 is defined in the environment.
                 exit /b 1
             )
-        ) else if defined hdf4_use_ivf91 (
-            if not defined ifort_compiler91 (
-                echo.Error: Cannot setup Intel Visual Fortran 9.1 environment.  Please
-                echo.make sure IFORT_COMPILER91 is defined in the environment.
-                exit /b 1
-            )
-        ) else (
-            if not defined ifort_compiler10 (
-                echo.Error: Cannot setup Intel Visual Fortran 10.1 environment.  Please
-                echo.make sure IFORT_COMPILER10 is defined in the environment.
-                exit /b 1
-            )
-        )
-    ) else if defined hdf4_use_vs2005 (
-        if not defined vs80comntools (
-            echo.Error: Cannot setup Visual Studio 2005 environment.  Please
-            echo.make sure VS80COMNTOOLS is defined in the environment.
-            exit /b 1
         )
     ) else (
         rem Assume Visual Studio 2008
@@ -207,33 +150,6 @@ rem Setup our environment
 
     rem Figure out which solution file to use based on configuration, and
     rem setup Visual Studio environment
-    if defined hdf4_use_vs2005 (
-        echo.Using Visual Studio 2005
-        rem Visual Studio 2005 is more complicated, because we can have either
-        rem Fortran or not, and 32- or 64-bit.  Check for 4 possible situations
-        if defined hdf4_enablefortran (
-            if defined hdf4_use_ivf101 (
-                if %hdf4_platform%==Win32 (
-                    call "%ifort_compiler10%\IA32\Bin\ifortvars.bat"
-                ) else (
-                    call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
-                )
-            ) else if defined hdf4_use_ivf91 (
-                if %hdf4_platform%==Win32 (
-                    call "%ifort_compiler91%\IA32\Bin\ifortvars.bat"
-                ) else (
-                    call "%ifort_compiler91%\em64t\Bin\ifortvars.bat"
-                )
-            )
-        ) else (
-            if %hdf4_platform%==Win32 (
-                call "%vs80comntools%\..\..\VC\vcvarsall.bat" x86
-            ) else (
-                call "%vs80comntools%\..\..\VC\vcvarsall.bat" x86_amd64
-            )
-        )
-        
-    ) else (
         rem Assume VS2008
         echo.Using Visual Studio 2008
         rem Visual Studio 2008 is more complicated, because we can have either
@@ -245,12 +161,6 @@ rem Setup our environment
 				) else (
 					call "%ifort_compiler11%Bin\intel64\ifortvars_intel64.bat"
 				)
-            ) else if defined hdf4_use_ivf101 (
-				if %hdf4_platform%==Win32 (
-					call "%ifort_compiler10%\IA32\Bin\ifortvars.bat"
-				) else (
-					call "%ifort_compiler10%\em64t\Bin\ifortvars.bat"
-				)
             )
         ) else (
             if %hdf4_platform%==Win32 (
@@ -259,7 +169,6 @@ rem Setup our environment
                 call "%vs90comntools%\..\..\VC\vcvarsall.bat" x86_amd64
             )
         )
-    )
     
     rem Setup variables for our SLN files
     set C_SLN=%CD%\windows\proj\hdf\examples\allcexamples.sln
@@ -289,21 +198,12 @@ rem the version that has been set up with the Intel Visual Fortran.
 rem This function returns 0 if everything is OK, and 1 otherwise.
 :check-ifort-vs
 
-    if defined hdf4_use_vs2005 (
-        if defined hdf4_use_ivf101 (
-            findstr /c:"Microsoft Visual Studio 8" "%ifort_compiler10%\IA32\Bin\ifortvars.bat" > nul
-        ) else (
-            findstr /c:"Microsoft Visual Studio 8" "%ifort_compiler91%\IA32\Bin\ifortvars.bat" > nul
-        )
-        
-    ) else (
         rem Assume VS2008
         if defined hdf4_use_ivf101 (
             findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler10%IA32\Bin\ifortvars.bat" > nul
         ) else (
             findstr /c:"Microsoft Visual Studio 9.0" "%ifort_compiler11%Bin\IA32\ifortvars_ia32.bat" > nul
         )
-    )
     exit /b %errorlevel%
 
  

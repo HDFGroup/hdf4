@@ -873,6 +873,50 @@
 					/>
 				</FileConfiguration>
 			</File>
+            <File
+                RelativePath="..\..\..\..\mfhdf\libsrc\mfdatainfo.c"
+                >
+                <FileConfiguration
+                    Name="Release|Win32"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="2"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
+                    />
+                </FileConfiguration>
+                <FileConfiguration
+                    Name="Release|x64"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="2"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
+                    />
+                </FileConfiguration>
+                <FileConfiguration
+                    Name="Debug|Win32"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="0"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
+                    />
+                </FileConfiguration>
+                <FileConfiguration
+                    Name="Debug|x64"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="0"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
+                    />
+                </FileConfiguration>
+            </File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\nssdc.c"
 				>

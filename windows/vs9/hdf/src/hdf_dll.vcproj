@@ -423,10 +423,14 @@
 				RelativePath="..\..\..\..\hdf\src\cskphuff.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\src\cszip.h"
-				>
-			</File>
+            <File
+                RelativePath="..\..\..\..\hdf\src\cszip.h"
+                >
+            </File>
+            <File
+                RelativePath="..\..\..\..\hdf\src\datainfo.h"
+                >
+            </File>
 			<File
 				RelativePath="..\..\..\..\hdf\src\dfan.h"
 				>
@@ -2127,6 +2131,50 @@
 					/>
 				</FileConfiguration>
 			</File>
+            <File
+                RelativePath="..\..\..\..\hdf\src\hdatainfo.c"
+                >
+                <FileConfiguration
+                    Name="Release|Win32"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="2"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_HDFDLL_;_HDFLIB_;HDFLIBDLL;$(NoInherit)"
+                    />
+                </FileConfiguration>
+                <FileConfiguration
+                    Name="Release|x64"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="2"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_HDFDLL_;_HDFLIB_;HDFLIBDLL;$(NoInherit)"
+                    />
+                </FileConfiguration>
+                <FileConfiguration
+                    Name="Debug|Win32"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="0"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_HDFDLL_;_HDFLIB_;HDFLIBDLL;$(NoInherit)"
+                    />
+                </FileConfiguration>
+                <FileConfiguration
+                    Name="Debug|x64"
+                    >
+                    <Tool
+                        Name="VCCLCompilerTool"
+                        Optimization="0"
+                        AdditionalIncludeDirectories=""
+                        PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_HDFDLL_;_HDFLIB_;HDFLIBDLL;$(NoInherit)"
+                    />
+                </FileConfiguration>
+            </File>
 			<File
 				RelativePath="..\..\..\..\hdf\src\hdfalloc.c"
 				>

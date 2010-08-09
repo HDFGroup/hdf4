@@ -53,6 +53,7 @@ SET (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hchunks.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcompri.c
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hdatainfo.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdfalloc.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/hextelt.c
@@ -101,6 +102,7 @@ SET (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcomp.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hcompi.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hconv.h
+    ${HDF4_HDF_SRC_SOURCE_DIR}/hdatainfo.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdf.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/hdfi.h
     ${HDF4_HDF_SRC_SOURCE_DIR}/herr.h
