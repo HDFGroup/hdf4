@@ -109,12 +109,6 @@
     #define HDFLIBAPI extern __attribute__ ((visibility("default")))
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
-#else
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
-    #define HDFPUBLIC __declspec(dllimport)
-  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
-    #define HDFPUBLIC __attribute__ ((visibility("default")))
-  #endif
 #endif /* hdf_EXPORTS */
 
 #if defined(hdf_fcstub_EXPORTS)
@@ -125,12 +119,6 @@
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFPUBLIC __attribute__ ((visibility("default")))
     #define HDFLIBAPI extern __attribute__ ((visibility("default")))
-    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
-  #endif
-#else
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
-    #define HDFFCLIBAPI extern __declspec(dllimport)
-  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
 #endif /* hdf_fcstub_EXPORTS */
@@ -145,12 +133,6 @@
     #define HDFLIBAPI extern __attribute__ ((visibility("default")))
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
-#else
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
-    #define HDFLIBAPI extern __declspec(dllimport)
-  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
-    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
-  #endif
 #endif /* mfhdf_EXPORTS */
 
 #if defined(mfhdf_fcstub_EXPORTS)
@@ -163,12 +145,6 @@
     #define HDFLIBAPI extern __attribute__ ((visibility("default")))
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
-#else
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
-    #define HDFFCLIBAPI extern __declspec(dllimport)
-  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
-    #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
-  #endif
 #endif /* mfhdf_fcstub_EXPORTS */
 
 #if defined(hdf_test_fcstub_EXPORTS)
@@ -177,22 +153,28 @@
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
-#else
+#endif/* hdf_test_fcstub_EXPORTS */
+
+#if !defined(HDFPUBLIC)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    #define HDFPUBLIC __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFPUBLIC __attribute__ ((visibility("default")))
+  #endif
+#endif
+#if !defined(HDFLIBAPI)
+  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+    #define HDFLIBAPI extern __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif
+#if !defined(HDFFCLIBAPI)
   #if defined (_MSC_VER)  /* MSVC Compiler Case */
     #define HDFFCLIBAPI extern __declspec(dllimport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
-#endif/* hdf_test_fcstub_EXPORTS */
-
-#if !defined(HDFPUBLIC)
-    #define HDFPUBLIC
-#endif
-#if !defined(HDFLIBAPI)
-    #define HDFLIBAPI extern
-#endif
-#if !defined(HDFFCLIBAPI)
-    #define HDFFCLIBAPI extern
 #endif
 
 #else
