@@ -26,13 +26,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifdef H4_HAVE_LIBSZ
-#include "szlib.h"
-#endif
-
 #include "mfhdf.h"
 
 #ifdef HDF
+
+#ifdef H4_HAVE_LIBSZ
+#include "szlib.h"
+#endif
 
 #include "hdftest.h"
 
@@ -579,7 +579,7 @@ static intn test_compressed_SDSs()
 	for (jj=0; jj < LENGTH2_Y; jj++)
 	    data2[ii][jj] = 500.50 * (ii+jj);
 
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     /* 
      * Create a 2-dim 5x8 element SDS, type float32, set SZIP compression,
      * then write 5x8 values to it
@@ -605,6 +605,7 @@ static intn test_compressed_SDSs()
     status = SDsetcompress (sds_id, comp_type, &c_info);
     CHECK(status, FAIL, "SDsetcompress 'SZIP-Data'");
 
+    starts[0] = starts[1] = 0;
     edges[0] = LENGTH2_X;
     edges[1] = LENGTH2_Y;
     status = SDwritedata(sds_id, starts, NULL, edges, (VOIDP)data2);
