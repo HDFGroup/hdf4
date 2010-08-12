@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /* $Id$ */
 /*****************************************************************************
 
@@ -107,6 +103,12 @@ EXPORTED ROUTINES
 
 #define VSET_INTERFACE
 #include "hdf.h"
+
+/* These are used to determine whether a vgroup had been created by the
+   library internally, that is, not created by user's application */
+#define HDF_NUM_INTERNAL_VGS        6
+const char *HDF_INTERNAL_VGS[] = {_HDF_VARIABLE, _HDF_DIMENSION, _HDF_UDIMENSION,
+                 _HDF_CDF, GR_NAME, RI_NAME};
 
 /* Prototypes */
 extern VOID vprint(VOIDP k1);
@@ -3238,3 +3240,263 @@ done:
     return ret_value;
 } /* end VPshutdown() */
 
+
+/*******************************************************************************
+ NAME
+    Visinternal  --  Determine if a vgroup's class name is for internal only
+
+ RETURNS
+    Returns TRUE (1) if "classname" is one of the class names used for
+    vgroups created by the the library and FALSE (0) otherwise.
+
+*******************************************************************************/
+intn
+Visinternal(const char *classname)
+{
+    int  i;
+    intn ret_value = FALSE;
+
+    /* Check if this class name is one of the internal class name and return
+	TRUE, otherwise, return FALSE */
+    for (i=0; i < HDF_NUM_INTERNAL_VGS; i++) {
+        if (HDstrncmp(HDF_INTERNAL_VGS[i], classname, HDstrlen(HDF_INTERNAL_VGS[i])) == 0 ) {
+            ret_value = TRUE;
+            break;
+        }
+    }
+    return ret_value;
+}
+
+/*******************************************************************************
+NAME
+   Vgetvgroups -- Get user-created vgroups in a file or in a vgroup
+
+USAGE
+    intn VSgetvgroups(id, start_vg, n_vgs, *refarray)
+        int32 id         IN: file id or vgroup id
+        uintn start_vg   IN: vgroup number to start retrieving
+        uintn n_vgs      IN: number of user-created vgs to return
+        uint16 *refarray IN/OUT: ref array to fill
+
+DESCRIPTION
+    Find all the user-created vgroups in the given file or vgroup and return
+    the reference numbers of those that meet the specification of the caller
+    regarding where to start searching and how many to retrieve.
+
+    Vgetvgroups retrieves n_vgs vgroups by their reference numbers via the
+    caller-supplied array refarray.  When a vgroup id is specified, Vgetvgroups
+    will only retrieve the vgroups immediately belong to the specified vgroup,
+    and not any sub-vgroups.
+
+    The parameter n_vgs provides the number of values that the refarray list
+    can hold and can be any positive number smaller than MAX_REF (65535).  If
+    n_vgs is larger than the actual number of user-created vgroups, then only
+    the actual number of reference numbers will be retrieved.
+
+    The parameter start_vg indicates the vgroup number to start at.
+    - When start_vg is 0, the retrieval starts at the beginning.
+    - When start_vg is between 0 and the number of user-created vgroups in
+      the file or the specified vgroup, Vgetvgroups will start retrieving
+      vgroups from the vgroup number start_vg.
+    - When start_vg is greater than the number of user-created vgroups in the
+      file or the vgroup, Vgetvgroups will return FAIL.
+
+    When refarray argument is NULL, Vgetvgroups will return the actual number
+    of user-created vgroups without further processing.  This allows application
+    to find out the size of the array for proper allocation.
+
+RETURNS
+    The number of (0 or +ve #) user-created vgroups returned.
+   
+*******************************************************************************/
+intn
+Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
+	    uintn start_vg,	/* IN: reference number to start retrieving */
+            uintn n_vgs,	/* IN: number of user-created vgs to return */
+            uint16 *refarray	/* IN/OUT: ref array to fill */)
+{
+    CONSTR(FUNC, "Vgetvgroups");
+    vginstance_t *v = NULL;
+    int32    vg_ref, vkey;
+    intn     nactual_vgs, user_vgs, ii;
+    VGROUP  *vg = NULL;
+    vfile_t *vf = NULL;
+    intn     ret_value = SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* Make sure that proper size is passed in for the non-null array */
+    if (refarray != NULL && n_vgs == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check if id is a file id */
+    if (HAatom_group(id) == FIDGROUP)
+    {
+	/* Get file record */
+	if (NULL == (vf = Get_vfile(id)))
+	    HGOTO_ERROR(DFE_FNF, FAIL);
+
+	/* Look through all vgs, searching for user-created vgroups until
+	   no more vgroups in the file or the number of vgroups to be
+	   retrieved is reached */
+	nactual_vgs = 0;/* number of user-created vgroups to be retrieved */
+	user_vgs = 0;	/* number of user-created vgroups */
+	vg_ref = Vgetid(id, -1);  /* get ref number of first vg in the file */
+	while ((vg_ref != FAIL) && ((nactual_vgs < n_vgs) || (n_vgs == 0))
+			&& (nactual_vgs <= user_vgs))
+	{
+	    vkey = Vattach(id, vg_ref, "r"); /* attach to current vgroup */
+	    if (vkey == FAIL)
+		HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+
+	    /* get instance of vgroup */
+	    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
+		HGOTO_ERROR(DFE_NOVS, FAIL);
+
+	    /* get vgroup itself and check */
+	    vg = v->vg;
+	    if (vg == NULL)
+		HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+	    /* If this vgroup is internally created by the lib, then just skip
+		it; otherwise, record its ref# according to caller's
+		specification of where to start and how many to retrieve */
+	    if (vg->vgclass != NULL)
+	    {
+		if (Visinternal(vg->vgclass) == FALSE)
+		{
+		    /* make sure to count only from vgroup number start_vg */
+		    if (user_vgs >= start_vg)
+			/* if caller requests for reference numbers */
+			if (refarray != NULL)
+			{
+			    refarray[nactual_vgs] = (uint16)vg_ref;
+
+			    /* increment the actual number of user-created vgs
+			       to be retrieved */
+			    nactual_vgs++;
+			}
+		    /* increment the number of user-created vgs */
+		    user_vgs++;
+		}
+	    }
+	    if (Vdetach(vkey) == FAIL)
+		HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+
+	    /* Move forward to the next vgroup in the file */
+	    vg_ref = Vgetid(id, vg_ref);
+	} /* while more vgroups in file */
+
+	/* Flag if start_vg is beyong the number of user-created vgroups */
+	if (user_vgs < start_vg)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+
+	/* If caller is asking for the number of vgroups only, return the
+	   number of user-created vgroups, otherwise, return the number of
+	   vgroups that are actually stored in refarray */
+	if (refarray == NULL)
+	    ret_value = user_vgs;
+	else
+	    ret_value = nactual_vgs;
+    } /* file id is given */
+
+    /* check if the given is a vgroup id */
+    else if (HAatom_group(id)==VGIDGROUP)
+    { /* vgroup id is given */
+
+	/* get the number of sub-vgroups belong to this vgroup */
+	int32 n_subvgs = Vnrefs(id, DFTAG_VG);
+	if (n_subvgs == FAIL)
+	    HGOTO_ERROR(DFE_GENAPP, FAIL);
+
+	/* get instance of vgroup */
+	if (NULL == (v = (vginstance_t *) HAatom_object(id)))
+	    HGOTO_ERROR(DFE_NOVS, FAIL);
+
+	/* get vgroup itself and check */
+	vg = v->vg;
+	if (vg == NULL)
+	    HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+	/* Go through the tag list vg->tag and find user-created vgroups, until
+	   no more sub-vgroups or the number of vgroups to be retrieved is
+	   reached */
+	nactual_vgs = 0;/* number of user-created vgroups to be retrieved */
+	user_vgs = 0;	/* number of user-created vgroups */
+        for (ii = 0; ii < n_subvgs && ((nactual_vgs < n_vgs) || (n_vgs == 0))
+			&& nactual_vgs <= user_vgs; ii++)
+        {
+	    /* If an element is a vgroup, then get access to it */
+            if (vg->tag[ii] == DFTAG_VG)
+	    {
+		int32 subvkey;
+		vginstance_t *subv = NULL;
+		VGROUP       *subvg = NULL;
+
+		/* attach to sub-vgroup */
+	    	subvkey = Vattach(vg->f, vg->ref[ii], "r");
+		if (subvkey == FAIL)
+		    HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+
+		/* get instance of vgroup */
+		if (NULL == (subv = (vginstance_t *) HAatom_object(subvkey)))
+		    HGOTO_ERROR(DFE_NOVS, FAIL);
+
+		/* get vgroup itself and check */
+		subvg = subv->vg;
+		if (subvg == NULL)
+		    HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+		/* If this vgroup is internally created by the lib, then just
+		   skip it; otherwise, record its ref# according to caller's
+		   specification of where to start and how many to retrieve */
+		if (subvg->vgclass != NULL)
+		{
+		    /* make sure this vgroup is not an internal one */
+		    if (Visinternal(subvg->vgclass) == FALSE)
+		    {
+			/* make sure to count only from vg number start_vg */
+			if (user_vgs >= start_vg)
+			    /* if caller requests for reference numbers */
+			    if (refarray != NULL)
+			    {
+				refarray[nactual_vgs] = (uint16)vg->ref[ii];
+
+				/* increment the actual number of user-created
+				   vgs to be retrieved */
+				nactual_vgs++;
+			    }
+
+			/* increment the number of user-created vgs */
+			user_vgs++;
+		    }
+		}
+		if (Vdetach(subvkey) == FAIL)
+		    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+	    } /* this sub element is a vgroup */
+        } /* for */
+
+	/* If caller is asking for the number of vgroups only, return the
+	   number of user-created vgroups, otherwise, return the number of
+	   vgroups that are actually stored in refarray */
+	if (refarray == NULL)
+	    ret_value = user_vgs;
+	else
+	    ret_value = nactual_vgs;
+    } /* vgroup id is given */
+    else
+    {
+ 	fprintf(stderr, "The given ID must be a file ID or a vgroup ID\n");
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* Vgetvgroups */

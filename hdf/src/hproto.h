@@ -1979,6 +1979,13 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI int32 Vdelete
                 (int32 f, int32 ref);
 
+    HDFLIBAPI intn Visinternal
+		(const char *classname);
+
+    HDFLIBAPI intn Vgetvgroups
+		(int32 id, uintn start_vg, uintn n_vgs, uint16 *refarray);
+
+
 /*******************************************************************************
 NAME
    Vdeletetagref - delete tag/ref pair in Vgroup
