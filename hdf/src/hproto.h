@@ -2067,6 +2067,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     HDFLIBAPI int32 VSappendable
                 (int32 vkey, int32 blk);
 
+    HDFLIBAPI intn Vgetvdatas
+		(int32 id, uintn start_vd, uintn n_vds, uint16 *refarray);
+
 /*
    ** from vsfld.c
  */

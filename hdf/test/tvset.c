@@ -62,6 +62,8 @@ static void test_vdelete(void);
 static void test_vdeletetagref(void);
 static void test_emptyvdata(void);
 static void test_vglongnames(void);
+static void test_getvgroups(void);
+static void test_getvdatas(void);
 
 /* write some stuff to the file */
 static int32
@@ -2241,7 +2243,7 @@ test_getvgroups(void)
     status = Vstart(fid);
     CHECK_VOID(status, FAIL, "Vstart");
 
-    /* Create NUM_VGROUPS vgroups and set name/classname */
+    /* Create NUM_VGROUPS vgroups and set classname */
     for (ii = 0; ii < NUM_VGROUPS; ii++)
     {
 	/* Create a vgroup. */
@@ -2492,6 +2494,413 @@ test_getvgroups(void)
     CHECK_VOID(status_n, FAIL, "Hclose");
 } /* test_getvgroups() */
 
+intn check_vgs(int32 id,
+	   uintn start_vg,
+	   uintn n_vgs,
+	   char *ident_text, /* just for debugging, remove when done */
+	   uintn resultcount,   /* expected number of vgroups */
+	   uint16 *resultarray) /* array containing expected values */
+{
+    uint16 *refarray=NULL;
+    uintn count=0, ii;
+    char message[30];
+    intn ret_value=SUCCEED;
+
+    HDstrcpy(message, "Vgetvgroups: ");
+    HDstrcat(message, ident_text);
+
+    /* Get and verify the number of vgroups in the file */
+    count = Vgetvgroups(id, start_vg, n_vgs, NULL);
+    CHECK(count, FAIL, "Vgetvgroups");
+    VERIFY(count, resultcount, "Vgetvgroups");
+
+    /* Allocate space to retrieve the reference numbers of 'count' vgroups */
+    refarray = (uint16 *)HDmalloc(sizeof(uint16)*count);
+    if (refarray == NULL)
+    {
+	fprintf(stderr, "check_vgs: Allocation refarray failed\n");
+	return (-1);
+    }
+
+    /* Get all the vgroups in the file */
+    count = Vgetvgroups(id, start_vg, count, refarray);
+    CHECK(count, FAIL, "Vgetvgroups");
+    VERIFY(count, resultcount, "Vgetvgroups");
+
+    for (ii = 0; ii < count; ii++)
+	if (refarray[ii] != resultarray[ii])
+	    fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n",
+		ident_text, ii, refarray[ii], resultarray[ii]);
+
+    return ret_value;
+}
+
+intn check_vds(int32 id,
+	   uintn start_vd,
+	   uintn n_vds,
+	   char *ident_text, /* just for debugging, remove when done */
+	   uintn resultcount,   /* expected number of vdatas */
+	   uint16 *resultarray) /* array containing expected values */
+{
+    uint16 *refarray=NULL;
+    uintn count=0, ii;
+    char message[30];
+    intn ret_value=SUCCEED;
+
+    HDstrcpy(message, "VSgetvdatas: ");
+    HDstrcat(message, ident_text);
+
+    /* Get and verify the number of vdatas in the file */
+    count = VSgetvdatas(id, start_vd, n_vds, NULL);
+    CHECK(count, FAIL, message);
+    VERIFY(count, resultcount, message);
+
+    /* Allocate space to retrieve the reference numbers of 'count' vdatas */
+    refarray = (uint16 *)HDmalloc(sizeof(uint16)*count);
+    if (refarray == NULL)
+    {
+	fprintf(stderr, "check_vds: Allocation refarray failed\n");
+	return (-1);
+    }
+
+    /* Get all the vdatas in the file */
+    count = VSgetvdatas(id, start_vd, count, refarray);
+    CHECK(count, FAIL, message);
+    VERIFY(count, resultcount, message);
+
+    for (ii = 0; ii < count; ii++)
+	if (refarray[ii] != resultarray[ii])
+	    fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n",
+		ident_text, ii, refarray[ii], resultarray[ii]);
+
+    return ret_value;
+}
+
+#define USERVDATAS "tuservds.hdf"
+#define NUM_VDATAS 8
+static void
+test_getvdatas(void)
+{
+    int32 fid, sd_id;          /* File ID */
+    int32 vgroup0_id, vgroup1_id, vgroup2_id, vgroup4_id,
+	  vgroup6_id, vgroup7_id, vgroup9_id;	/* Various vgroup IDs */
+    int32 vdata1_id, vdata2_id, vdata3_id, vdata4_id, vdata5_id,
+	  vdata6_id, vdata7_id;    /* Various vdata IDs */
+    uintn n_vgs=0;
+    uint16 *refarray;
+    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
+    char vgclass[20], vdclass[20];
+    int ii;
+    int32 status;       /* Status values from routines */
+    intn  status_n;	/* returned status for functions returning an intn  */
+
+    /* Create HDF file and initialize the interface. */
+    fid = Hopen(USERVDATAS, DFACC_CREATE, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    status = Vstart(fid);
+    CHECK_VOID(status, FAIL, "Vstart");
+
+    /* Create NUM_VGROUPS vgroups and set classname */
+    for (ii = 0; ii < NUM_VGROUPS; ii++)
+    {
+	/* Create a vgroup. */
+	int32 vgroup_id = Vattach(fid, -1, "w");
+	CHECK_VOID(vgroup_id, FAIL, "Vattach");
+
+	/* Record its reference number for later access */
+	int32 vgroup_ref = VQueryref(vgroup_id);
+	CHECK_VOID(vgroup_ref, FAIL, "VQueryref:vgroup_id");
+	ref_list[ii] = vgroup_ref;
+
+	/* Set its class name */
+	sprintf(vgclass, "VG-CLASS-%d", ii);
+	status = Vsetclass(vgroup_id, vgclass);
+	CHECK_VOID(status, FAIL, "Vsetclass");
+
+	/* Detach it */
+	status = Vdetach(vgroup_id);
+	CHECK_VOID(status, FAIL, "Vdetach");
+    }
+
+    /* Create NUM_VDATAS vgroups and set classname */
+    for (ii = 0; ii < NUM_VDATAS; ii++)
+    {
+	/* Create a vdata. */
+	int32 vdata_id = VSattach(fid, -1, "w");
+	CHECK_VOID(vdata_id, FAIL, "VSattach");
+
+	/* Record its reference number for later access */
+	int32 vdata_ref = VSQueryref(vdata_id);
+	CHECK_VOID(vdata_ref, FAIL, "VSQueryref:vdata_id");
+	vdref_list[ii] = vdata_ref;
+
+	/* Set its class name */
+	sprintf(vgclass, "VS-CLASS-%d", ii);
+	status = VSsetclass(vdata_id, vgclass);
+	CHECK_VOID(status, FAIL, "VSsetclass");
+
+	/* Detach it */
+	status = VSdetach(vdata_id);
+	CHECK_VOID(status, FAIL, "VSdetach");
+    }
+
+    /* Insert some vdatas/vgroups into some other vgroups to build some sort of
+	vgroup/vdata structure */
+
+    /* Insert "VD-CLASS-1" and "VD-CLASS-2" into "VG-CLASS-0" */
+    vgroup0_id = Vattach(fid, ref_list[0], "w");  /* "VG-CLASS-0" */
+    CHECK_VOID(vgroup0_id, FAIL, "Vattach");
+    vdata1_id = VSattach(fid, vdref_list[1], "w");  /* "VD-CLASS-1" */
+    CHECK_VOID(vdata1_id, FAIL, "VSattach");
+    vdata2_id = VSattach(fid, vdref_list[2], "w");  /* "VD-CLASS-2" */
+    CHECK_VOID(vdata2_id, FAIL, "VSattach");
+
+    status = Vinsert(vgroup0_id, vdata1_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata1_id into vgroup0_id");
+    status = Vinsert(vgroup0_id, vdata2_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata2_id into vgroup0_id");
+
+    /* Insert "VG-CLASS-7" and "VG-CLASS-9" into "VG-CLASS-0" */
+    vgroup7_id = Vattach(fid, ref_list[7], "w");
+    CHECK_VOID(vgroup7_id, FAIL, "Vattach");
+    vgroup9_id = Vattach(fid, ref_list[9], "w");
+    CHECK_VOID(vgroup9_id, FAIL, "Vattach");
+
+    status = Vinsert(vgroup0_id, vgroup7_id);
+    CHECK_VOID(status, FAIL, "Vinsert vgroup7_id into vgroup0_id");
+    status = Vinsert(vgroup0_id, vgroup9_id);
+    CHECK_VOID(status, FAIL, "Vinsert vgroup9_id into vgroup0_id");
+
+    /* Insert "VD-CLASS-3", "VD-CLASS-4", and "VD-CLASS-5" into "VG-CLASS-9" */
+    vdata3_id = VSattach(fid, vdref_list[3], "w");
+    CHECK_VOID(vdata3_id, FAIL, "Vattach");
+    vdata4_id = VSattach(fid, vdref_list[4], "w");
+    CHECK_VOID(vdata4_id, FAIL, "Vattach");
+    vdata5_id = VSattach(fid, vdref_list[5], "w");
+    CHECK_VOID(vdata4_id, FAIL, "Vattach");
+
+    status = Vinsert(vgroup9_id, vdata3_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata3_id into vgroup9_id");
+    status = Vinsert(vgroup9_id, vdata4_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata4_id into vgroup9_id");
+    status = Vinsert(vgroup9_id, vdata5_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata5_id into vgroup9_id");
+
+    /* Insert "VG-CLASS-4", "VG-CLASS-6", and "VD-CLASS-7" into "VG-CLASS-1" */
+    vgroup1_id = Vattach(fid, ref_list[1], "w");
+    CHECK_VOID(vgroup1_id, FAIL, "Vattach");
+    vgroup4_id = Vattach(fid, ref_list[4], "w");
+    CHECK_VOID(vgroup4_id, FAIL, "Vattach");
+    vgroup6_id = Vattach(fid, ref_list[6], "w");
+    CHECK_VOID(vgroup6_id, FAIL, "Vattach");
+    vdata7_id = VSattach(fid, vdref_list[7], "w");
+    CHECK_VOID(vdata7_id, FAIL, "VSattach");
+
+    status = Vinsert(vgroup1_id, vgroup4_id);
+    CHECK_VOID(status, FAIL, "Vinsert vgroup4_id into vgroup1_id");
+    status = Vinsert(vgroup1_id, vgroup6_id);
+    CHECK_VOID(status, FAIL, "Vinsert vgroup6_id into vgroup1_id");
+    status = Vinsert(vgroup1_id, vdata7_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata7_id into vgroup1_id");
+
+    /* Insert "VD-CLASS-6", "VG-CLASS-2" into "VG-CLASS-6" */
+    vdata6_id = VSattach(fid, vdref_list[6], "w");
+    CHECK_VOID(vdata6_id, FAIL, "VSattach");
+    vgroup2_id = Vattach(fid, ref_list[2], "w");
+    CHECK_VOID(vgroup2_id, FAIL, "Vattach");
+
+    status = Vinsert(vgroup6_id, vgroup2_id);
+    CHECK_VOID(status, FAIL, "Vinsert vgroup2_id into vgroup6_id");
+    status = Vinsert(vgroup6_id, vdata6_id);
+    CHECK_VOID(status, FAIL, "Vinsert vdata6_id into vgroup6_id");
+
+    status = Vdetach(vgroup0_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup0_id");
+    status = Vdetach(vgroup1_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup1_id");
+    status = Vdetach(vgroup2_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup2_id");
+    status = Vdetach(vgroup4_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup4_id");
+    status = Vdetach(vgroup6_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup6_id");
+    status = Vdetach(vgroup7_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup7_id");
+    status = Vdetach(vgroup9_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup9_id");
+
+    status = VSdetach(vdata1_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata1_id");
+    status = VSdetach(vdata2_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata2_id");
+    status = VSdetach(vdata3_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata3_id");
+    status = VSdetach(vdata4_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata4_id");
+    status = VSdetach(vdata5_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata5_id");
+    status = VSdetach(vdata6_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata6_id");
+    status = VSdetach(vdata7_id);
+    CHECK_VOID(status, FAIL, "VSdetach vdata7_id");
+
+    /* Terminate access to the V interface and close the HDF file.  */
+    status_n = Vend (fid);
+    CHECK_VOID(status_n, FAIL, "Vend");
+    status_n = Hclose (fid);
+    CHECK_VOID(status_n, FAIL, "Hclose");
+
+    /**************************************************************
+	The vgroup structure should look like this:
+	       vg0	            vg1 
+                |                    |
+	   +--+-+-----+            / | \
+           |          |           /  |  \
+          /\         / \        vg4 vg6 vd7
+         /  \       /   \            |
+        vd1 vd2   vg7  vg9          / \  
+                        |          /   \     
+                      / | \       /     \     
+                     /  |  \     vd6   vg2   
+                  vd3  vd4  vd5
+                  
+
+    Calling Vgetvgroups on the file should return all NUM_VGROUPS vgroups
+    Calling VSgetvdatas on the file should return all NUM_VDATAS vdatas
+    Calling Vgetvgroups on vg0 should return 2, vg7 and vg9
+    Calling VSgetvdatas on vg0 should return 2, vd1 and vd2
+    Calling Vgetvgroups on vg1 should return 2, vg4 and vg6
+    Calling VSgetvdatas on vg1 should return 1, vd7
+    Calling Vgetvgroups on vg6 should return 1, vg2
+    Calling VSgetvdatas on vg6 should return 1, vd6
+    Calling Vgetvgroups on vg9 should return 0
+    Calling Vgetvgroups on vg7 should return 0
+    Calling VSgetvdatas on vg9 starting at 2, with n_vds=2, should return 1, vd5
+    Calling Vgetvgroups on vg1 starting at 1, with n_vgs=3, should return 1, vg6
+
+    ***************************************************************/
+
+    /* Open the file to test Vgetvgroups and Vgetdatas */
+    fid = Hopen(USERVDATAS, DFACC_RDWR, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    status = Vstart(fid);
+    CHECK_VOID(status, FAIL, "Vstart");
+
+    /* Test getting all vgroups in the file: fid, start_vg=0, n_vgs=0 */
+    {
+	uint16 result[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+	status = check_vgs(fid, 0, 0, "file, 0, 0", NUM_VGROUPS, result);
+	CHECK_VOID(status, FAIL, "Vgetvgroups fid");
+    }
+
+    /* Test getting all vdatas in the file: fid, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {12, 13, 14, 15, 16, 17, 18, 19};
+	status = check_vds(fid, 0, 0, "file, 0, 0", NUM_VDATAS, result);
+	CHECK_VOID(status, FAIL, "VSgetvdatas fid");
+    }
+
+    vgroup0_id = Vattach(fid, ref_list[0], "w");  /* "VG-CLASS-0" */
+    CHECK_VOID(vgroup0_id, FAIL, "Vattach vgroup0_id");
+
+    /* Test getting vgroups in vg0: vgroup0_id, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {9, 11};
+	status = check_vgs(vgroup0_id, 0, 0, "vgroup0_id, 0, 0", 2, result);
+	CHECK_VOID(status, FAIL, "VSgetvgroups vgroup0_id");
+    }
+
+    /* Test getting vdatas in vg0: vgroup0_id, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {13, 14};
+	status = check_vds(vgroup0_id, 0, 0, "vgroup0_id, 0, 0", 2, result);
+	CHECK_VOID(status, FAIL, "VSgetvdatas fid");
+    }
+
+    vgroup1_id = Vattach(fid, ref_list[1], "w");  /* "VG-CLASS-1" */
+    CHECK_VOID(vgroup1_id, FAIL, "Vattach vgroup1_id");
+
+    /* Test getting vgroups in vg1: vgroup1_id, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {6, 8}; /* vg4 and vg6 */
+	status = check_vgs(vgroup1_id, 0, 0, "vgroup1_id, 0, 0", 2, result);
+	CHECK_VOID(status, FAIL, "Vgetvgroups vgroup1_id");
+    }
+
+    /* Test getting vdatas in vg1: vgroup1_id, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {19}; /* vd7 */
+	status = check_vds(vgroup1_id, 0, 0, "vgroup1_id, 0, 0", 1, result);
+	CHECK_VOID(status, FAIL, "VSgetvdata vgroup1_id");
+    }
+
+    vgroup6_id = Vattach(fid, ref_list[6], "w");  /* "VG-CLASS-6" */
+    CHECK_VOID(vgroup6_id, FAIL, "Vattach vgroup6_id");
+
+    /* Test getting vgroups in vg6: vgroup6_id, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {4}; /* vg2 */
+	status = check_vgs(vgroup6_id, 0, 0, "vgroup6_id, 0, 0", 1, result);
+	CHECK_VOID(status, FAIL, "Vgetvgroups vgroup6_id");
+    }
+
+    /* Test getting vdatas in vg6: vgroup6_id, start_vd=0, n_vds=0 */
+    {
+	uint16 result[] = {18}; /* vd6 */
+	status = check_vds(vgroup6_id, 0, 0, "vgroup6_id, 0, 0", 1, result);
+	CHECK_VOID(status, FAIL, "VSgetvdata vgroup6_id");
+    }
+
+    /* Test getting vgroups in vg9: vgroup9_id, start_vd=0, n_vds=0 */
+    vgroup9_id = Vattach(fid, ref_list[9], "w");  /* "VG-CLASS-9" */
+    CHECK_VOID(vgroup9_id, FAIL, "Vattach vgroup9_id");
+    {
+	n_vgs = Vgetvgroups(vgroup9_id, 0, 0, NULL);
+	CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup9_id");
+	VERIFY_VOID(n_vgs, 0, "Vgetvgroups vgroup9_id");
+    }
+
+    /* Test getting vgroups in vg7: vgroup7_id, start_vd=0, n_vds=0 */
+    vgroup7_id = Vattach(fid, ref_list[7], "w");  /* "VG-CLASS-7" */
+    CHECK_VOID(vgroup7_id, FAIL, "Vattach vgroup7_id");
+    {
+	n_vgs = Vgetvgroups(vgroup7_id, 0, 0, NULL);
+	CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup7_id");
+	VERIFY_VOID(n_vgs, 0, "Vgetvgroups vgroup7_id");
+    }
+
+    /* Test getting vdatas in vg9: vgroup9_id, start_vd=2, n_vds=2 */
+    {
+	uint16 result[] = {17}; /* vd5 */
+	status = check_vds(vgroup9_id, 2, 2, "vgroup9_id, 2, 2", 1, result);
+	CHECK_VOID(status, FAIL, "VSgetvdata vgroup9_id");
+    }
+
+    /* Test getting vgroups in vg1: vgroup1_id, start_vd=1, n_vds=3 */
+    {
+	uint16 result[] = {8}; /* vg6 */
+	status = check_vgs(vgroup1_id, 1, 3, "vgroup1_id, 1, 3", 1, result);
+	CHECK_VOID(status, FAIL, "Vgetvgroups vgroup1_id");
+    }
+
+    status = Vdetach(vgroup0_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup0_id");
+    status = Vdetach(vgroup1_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup1_id");
+    status = Vdetach(vgroup6_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup6_id");
+    status = Vdetach(vgroup7_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup7_id");
+    status = Vdetach(vgroup9_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup9_id");
+
+    /* Terminate access to the V interface and close the HDF file.  */
+    status_n = Vend (fid);
+    CHECK_VOID(status_n, FAIL, "Vend");
+    status_n = Hclose (fid);
+    CHECK_VOID(status_n, FAIL, "Hclose");
+} /* test_getvgroups() */
+
 /* main test driver */
 void
 test_vsets(void)
@@ -2524,8 +2933,11 @@ test_vsets(void)
     /* test functionality about set/get linked-block information */
     test_blockinfo();
 
-    /* test functionality about getting user-created vgroups */
+    /* test Vgetgroups - getting user-created vgroups */
     test_getvgroups();
+
+    /* test VSgetvdatas - getting user-created vdatas */
+    test_getvdatas();
 
 }   /* test_vsets */
 
