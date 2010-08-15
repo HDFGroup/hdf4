@@ -734,9 +734,6 @@ HCIread_header(accrec_t * access_rec,
 {
     CONSTR(FUNC, "HCIread_header");     /* for HERROR */
     uint16      header_version; /* version of the compression header */
-    uint16      ctag, cref;     /* tag/ref for the object */
-    int32       temp_aid;       /* temporary AID for header info */
-    int32       data_len;		/* offset of the data we are checking */
     uint8      *p;              /* pointer to the temporary buffer */
     uint8      *local_ptbuf;
     int32       ret_value=SUCCEED;
@@ -1883,12 +1880,9 @@ HCPgetdatasize(int32 file_id,
               int32* orig_size)	/* OUT  - size of non-compressed data */
 {
     CONSTR(FUNC, "HCPgetdatasize");	/* for HGOTO_ERROR */
-    int32	data_len;	/* offset of the data we are checking */
     uint8      *local_ptbuf=NULL, *p;
     uint16	sp_tag;		/* special tag */
     uint16 comp_ref = 0;
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
-    int32	drec_aid;	/* description record access id */
     atom_t      data_id = FAIL;	/* dd ID of existing regular element */
     int32 len = 0;
     filerec_t  *file_rec;	/* file record */

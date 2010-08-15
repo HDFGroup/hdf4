@@ -308,6 +308,7 @@ intn HDallocinfo(hdf_datainfo_t *info, uintn info_count)
 {
     char FUNC[]="HDallocinfo";
     uintn size = info_count * sizeof(int32);
+    intn ret_value = SUCCEED;
 
     info->offsets = (int32 *) HDmalloc(size);
     if (info->offsets != NULL) {
@@ -322,7 +323,7 @@ intn HDallocinfo(hdf_datainfo_t *info, uintn info_count)
     } /* end if */
 
     HDmemset(info, 0, sizeof(info));
-    return(SUCCEED);
+    return(ret_value);
 }
 
 void HDfreeinfo(hdf_datainfo_t *info)

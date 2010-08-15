@@ -739,7 +739,7 @@ static intn test_compressed_SDSs()
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     status = SDgetcomptype(sds_id, &comp_type);
     CHECK(status, FAIL, "SDgetcomptype");
-#ifdef H4_HAVE_LIBSZ
+#ifdef H4_HAVE_SZIP_ENCODER
     VERIFY(comp_type, COMP_CODE_SZIP, "SDgetcomptype");
 #else
     VERIFY(comp_type, COMP_CODE_NBIT, "SDgetcomptype");

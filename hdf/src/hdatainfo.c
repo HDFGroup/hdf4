@@ -55,13 +55,11 @@ intn HDgetdatainfo_count(
     CONSTR(FUNC, "HDgetdatainfo_count");	/* for HGOTO_ERROR */
     int32	data_len;	/* offset of the data we are checking */
     uint16	sp_tag;		/* special tag */
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
-    int32	drec_aid;	/* description record access id */
     atom_t      data_id = FAIL;	/* dd ID of existing regular element */
     uint8      *drec_buf=NULL, *p;
     filerec_t  *file_rec;	/* file record */
     uintn	info_count = 0;
-    int32	offset, length; /* offset and length of a data block */
+    int32	length; /* offset and length of a data block */
     intn        ret_value=SUCCEED;
 
     /* clear error stack */
@@ -189,9 +187,7 @@ HDgetdatainfo(int32 file_id,
     int32	data_len;	/* offset of the data we are checking */
     uint16	sp_tag;		/* special tag */
     uint16	comp_ref = 0;
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
     uint8      *drec_buf=NULL, *p;	/* description record buffer */
-    int32	drec_aid;	/* description record access id */
     atom_t      data_id = FAIL;	/* dd ID of existing element */
     int32	offset, length; /* offset and length of a data block */
     filerec_t  *file_rec;	/* file record */
