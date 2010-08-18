@@ -118,10 +118,6 @@ SDgetdatainfo(int32 sdsid,		/* IN: dataset ID */
     /* clear error stack */
     HEclear();
 
-    /* validate arguments */
-    if (start_block < 0)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
     /* get NC_var record */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
@@ -170,4 +166,96 @@ done:
     return ret_value;
 } /* SDgetdatainfo */
 
+intn
+SDgetattdatainfo(int32 sdsid,	/* IN: dataset ID */
+        	 int32 findex,
+		 intn attrindex,
+		 char *attrname,/* IN: attribute name */
+		 int32 *offset, /* OUT: buffer for offset */
+		 int32 *length) /* OUT: buffer for length */
+{
+    CONSTR(FUNC, "SDgetattdatainfo");
+    NC     *handle;
+    NC_var *var;
+    int32   n_elements;
+    int32   vsid, elem_tag, elem_ref;
+    char    vsclass[H4_MAX_NC_CLASS] = "", vsname[H4_MAX_NC_CLASS] = "";
+    int     ii;
+    intn    status;
+    intn    ret_value = FAIL;
+
+    /* get NC_var record */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    if (var->vgid == 0) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    n_elements = Vntagrefs(var->vgid);
+    if (n_elements == FAIL)
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    /*
+     * look through for a Vdata of class _HDF_ATTRIBUTE
+     */
+    for (ii = 0; ii < n_elements; ii++) 
+      {
+          if (Vgettagref(var->vgid, ii, &elem_tag, &elem_ref) == FAIL)
+            {
+                ret_value = FAIL;
+                goto done;
+            }
+      
+          if(elem_tag == DFTAG_VH) 
+            {
+                vsid = VSattach(handle->hdf_file, elem_ref, "r");
+                if(vsid == FAIL) 
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }
+          
+                if (VSgetclass(vsid, vsclass) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }
+
+/* This might include field's attribute as well so maybe no need for
+field case - need verify */
+                if(!HDstrcmp(vsclass, _HDF_ATTRIBUTE)) 
+		{
+		    status = VSgetname(vsid, vsname);
+		    if (!HDstrcmp(attrname, vsname))
+		    {
+			status = VSgetdatainfo(vsid, 0, 1, offset, length);
+			if (status == FAIL)
+			    HGOTO_ERROR(DFE_GENAPP, FAIL);
+		    }
+		}
+
+                if (VSdetach(vsid) == FAIL)
+                  {
+                      ret_value = FAIL;
+                      goto done;
+                  }
+            }
+      }
+  
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+      }
+     /* Normal cleanup */
+
+    return ret_value;
+} /* hdf_num_attrs */
 #endif /* HDF */

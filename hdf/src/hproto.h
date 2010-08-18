@@ -522,6 +522,14 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI intn HDgetdatainfo_count
                 (int32 file_id, uint16 data_tag, uint16 data_ref);
 
+    HDFLIBAPI intn VSgetdatainfo
+		(int32 vsid, uintn start_block, uintn n_blocks,
+		 int32 *offsetarray, int32 *lengtharray);
+
+    HDFLIBAPI intn VSgetattdatainfo
+		(int32 vsid, int32 findex, intn attrindex, char *attrname,
+		 int32 *offset, int32 *length);
+
 /*
    ** from herr.c
  */
@@ -1863,9 +1871,6 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI intn VSgetblockinfo
                 (int32 vkey, int32* block_size, int32* num_blocks);
-
-    HDFLIBAPI intn VSgetattdatainfo
-		(int32 vkey, int32 *offset, int32 *length);
 
     HDFLIBAPI void Vsetzap
                 (void);

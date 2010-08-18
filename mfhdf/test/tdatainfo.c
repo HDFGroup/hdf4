@@ -51,7 +51,7 @@ typedef struct
   }
 t_hdf_datainfo_t;
 
-/* alloc_info is a utility function that allocates */
+/* alloc_info is a utility function that allocates hdf_datainfo_t's members*/
 intn alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
 {
     info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
@@ -64,6 +64,7 @@ intn alloc_info(t_hdf_datainfo_t *info, uintn info_count, int32 n_dims)
     if (info->dimsizes == NULL)
 	return -1;
     HDmemset(info, 0, sizeof(info));
+    return 0;
 }
 
 void free_info(t_hdf_datainfo_t *info)
@@ -74,6 +75,8 @@ void free_info(t_hdf_datainfo_t *info)
 	    HDfree(info->offsets);
 	if (info->lengths != NULL)
 	    HDfree(info->lengths);
+	if (info->dimsizes != NULL)
+	    HDfree(info->dimsizes);
     }
 }
 

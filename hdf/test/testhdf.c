@@ -170,6 +170,7 @@ main(int argc, char *argv[])
     InitTest("vset", test_vsets, "VSET InterfaceTest");
     InitTest("vattr", test_vset_attr, "VSET AttributeTest");
     InitTest("vsfpack", test_vspack, "Vdata fields pack Test");
+    InitTest("datainfo", test_datainfo, "Getting Raw Data Space Information");
     InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 
     Verbosity = 4;  /* Default Verbosity is Low */
