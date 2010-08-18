@@ -455,10 +455,14 @@
 				RelativePath="..\..\..\..\hdf\test\slab.c"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\..\hdf\test\tdupimgs.c"
-				>
-			</File>
+            <File
+                RelativePath="..\..\..\..\hdf\test\tdatainfo.c"
+                >
+            </File>
+            <File
+                RelativePath="..\..\..\..\hdf\test\tdupimgs.c"
+                >
+            </File>
 			<File
 				RelativePath="..\..\..\..\hdf\test\testhdf.c"
 				>
