@@ -1,7 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
- * Copyright by the Board of Trustees of the University of Illinois.         *
- * All rights reserved.                                                      *
  *                                                                           *
  * This file is part of HDF.  The full HDF copyright notice, including       *
  * terms governing use, modification, and redistribution, is contained in    *
@@ -11,34 +9,38 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: tvset.c 5334 2010-01-28 06:10:50Z bmribler $ */
+/* $Id: tdatainfo.c 5334 2010-01-28 06:10:50Z bmribler $ */
 
 #include "hdf.h"
-#include "hfile.h"
+
+#define DATAINFO_MASTER
+#include "hdatainfo.h"
+#include "tdatainfo.h"
 #include "tproto.h"
 
 /************ Draft - still need a little more of clean up ***********/
 
-#define VDATA_COUNT  256   /* make this many Vdatas to check for memory leaks */
+/***********************************************************************
+  NOTE: At this time, many of the offsets in these tests are verified
+	by hard-coding.  When adding new data to the files in exiting
+	tests, please either add data at the bottom of the files or
+	change the hard-coded offsets appropriately, using the values
+	from the error messages.  However, you'll need to verify the
+	correctness of these values first using the command 'od' on
+	the hdf file.
+*************************************************************************/
 
-typedef struct
-  {
-        int32 numtype;  /* number type of the vdata's data */
-        int32 n_values; /* number of values */
-        int32* offsets; /* offset(s) of data block(s) */
-        int32* lengths; /* length(s) of data block(s) */
-  }
-t_hdf_datainfo_t;
+/*********** Functions to access t_hdfdatainfo_t **********************/
 
 /* alloc_info is a utility function that allocates hdf_datainfo_t's members*/
 intn alloc_info(t_hdf_datainfo_t *info, uintn info_count)
 {
     info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
-        return -1;
+	return -1;
     info->lengths = (int32 *) HDmalloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
-        return -1;
+	return -1;
     return 0;
 }
 
@@ -46,22 +48,12 @@ void free_info(t_hdf_datainfo_t *info)
 {
     if (info != NULL)
     {
-        if (info->offsets != NULL)
-            HDfree(info->offsets);
-        if (info->lengths != NULL)
-            HDfree(info->lengths);
+	if (info->offsets != NULL)
+	    HDfree(info->offsets);
+	if (info->lengths != NULL)
+	    HDfree(info->lengths);
     }
 }
-
-/***********************************************************************
-  NOTE: At this time, many of the offsets in these tests are verified
-	by hard-coded.  When adding new data to the files in exiting
-	tests, please either add data at the bottom of the files or
-	change the hard-coded offsets appropriately, using the values
-	from the error messages.  However, you'll need to verify the
-	correctness of these values first using the command 'od' on
-	the hdf file.
-*************************************************************************/
 
 /****************************************************************************
    Name: test_simple_vs() - tests non-special Vdatas
@@ -107,10 +99,9 @@ test_simple_vs(void)
     char  data_buf2[N_RECORDS] = {'H', '4', 'M', 'A', 'P'};
     int16 rec_num;	/* current record number */
     int32 offset, length; /* offset/length buffers for single block of data */
-    intn  n_blocks,	/* number of blocks a vdata has */
-	  ii;
+    intn  n_blocks;	/* number of blocks a vdata has */
     t_hdf_datainfo_t vs_info; /* data structure to hold offset/length arrays and
-	some other information about the data, defined locally in this file to*/
+	some other information about the data */
     int32 status;	/* Status values from routines */
     intn status_n;	/* Status values from routines */
 
@@ -272,7 +263,9 @@ test_simple_vs(void)
 
     /* Open the file with fopen, read data at the offset obtained and verify
        the values */
-    readnoVS_char(SIMPLE_FILE, &vs_info, data_buf2);
+    status_n = readnoHDF_char(SIMPLE_FILE, &vs_info, data_buf2);
+    if (status_n == FAIL)
+	fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
 } /* test_simple_vs() */
 
 #define APPEND_FILE	"datainfo_linkblock.hdf"   /* data file */
@@ -280,16 +273,13 @@ test_simple_vs(void)
 static void
 test_append_vs()
 {
-    int32 fid;          /* File ID */
-    int32 vsid, apvsid; /* Vdata IDs */
-    int32 vs1_ref,
-   	 n_records,  /* number of records actually written to vdata */
+    int32 fid;       /* file ID */
+    int32 apvsid;    /* vdata IDs */
+    int32 vs1_ref,   /* vdata ref# */
+   	 n_records,  /* number of records written to vdata */
          data_buf0[N_RECORDS][N_VALS_PER_REC_1], /* for "Very Simple Vdata" */
          data_buf1[N_RECORDS][N_VALS_PER_REC_2]; /* for first vdata's data */
-    int32 ref;          /* Vdata ref */
     int16 rec_num;      /* current record number */
-    int16 buffer_index; /* indexing the data buffer to be written */
-    int32 *offsets, *lengths;
     intn n_blocks;
     t_hdf_datainfo_t vs_info;
     int32 status;       /* Status values from routines */
@@ -301,7 +291,7 @@ test_append_vs()
 
     /* Initialize HDF for subsequent vgroup/vdata access. */
     status_n = Vstart(fid);
-    CHECK_VOID(status,FAIL,"Vstart");
+    CHECK_VOID(status_n,FAIL,"Vstart");
 
     /* Create the first vdata */
     apvsid = VSattach (fid, -1, "w");
@@ -452,77 +442,68 @@ test_append_vs()
     CHECK_VOID(status,FAIL,"Vend");
     status = Hclose(fid);
     CHECK_VOID(status,FAIL,"Hclose");
-
- rename("datainfo_linkblock.hdf", "datainfo_linkblock");
 } /* test_append_vs */
 
 
 /*******************************************************************
- Read data using previously obtained data info without HDF4 library
+ Read and verify char data using previously obtained data info,
+ without HDF4 library
 ********************************************************************/
-intn readnoVS_char(char *filename, t_hdf_datainfo_t *info, char *orig_buf)
+intn readnoHDF_char(const char *filename, const t_hdf_datainfo_t *info, const char *orig_buf)
 {
     /* Open file and read in data without using VS API */
+    FILE  *fd;		/* file descriptor */
+    size_t readlen=0;	/* number of bytes actually read */
+    char *readcbuf;
+    int ii;
+
+    /* Open the file for reading without SD API */
+    fd = fopen(filename, "r");
+    if (fd == NULL)
     {
-	FILE  *fd;		/* file descriptor */
-        size_t readlen=0;	/* number of bytes actually read */
-        char *readcbuf;
-	int ii, jj, kk;
-
-	/* Open the file for reading without SD API */
-	fd = fopen(filename, "r");
-	if (fd == NULL)
-	{
-	    fprintf(stderr, "readnoVS_char: unable to open file %s", filename);
-	    num_errs++;
-            return num_errs;
-	}
-
-	/* Forward to the position of the first block of data */
-        if (fseek(fd, (off_t)info->offsets[0], SEEK_SET) == -1)
-        {
-            fprintf(stderr, "readnoVS_char: unable to seek offset %d\n",
-                (int)info->offsets[0]);
-	    num_errs++;
-            return num_errs;
-        }
-
-	/* Allocate buffers for SDS' data */
-        readcbuf = (char *) HDmalloc(info->n_values * sizeof(char));
-	if (readcbuf == NULL)
-	    fprintf(stderr, "readnoVS_char: allocation readcbuf failed\n");
-
-	/* Read in this block of data */
-	readlen = fread((void*)readcbuf, 1, 5, fd);
-
-	if (readlen > 0)
-	{
-            /* Compare data read without VS API against the original buffer */
-            for (ii = 0; ii < readlen; ii++)
-            {
-		if (readcbuf[ii] != orig_buf[ii])
-		    fprintf(stderr, "At value# %d: written = %c read = %c\n",
-					 ii, orig_buf[ii], readcbuf[ii]);
-            }
-	}
-	/* Close the file */
-	if (fclose(fd) == -1)
-	{
-	    fprintf(stderr, "readnoVS_char: unable to close file %s", SIMPLE_FILE);
-	    num_errs++;
-            return num_errs;
-	}
+	fprintf(stderr, "readnoHDF_char: unable to open file %s", filename);
+        return FAIL;
     }
+
+    /* Forward to the position of the first block of data */
+    if (fseek(fd, (off_t)info->offsets[0], SEEK_SET) == -1)
+    {
+        fprintf(stderr, "readnoHDF_char: unable to seek offset %d\n",
+                (int)info->offsets[0]);
+        return FAIL;
+    }
+
+    /* Allocate buffers for SDS' data */
+    readcbuf = (char *) HDmalloc(info->n_values * sizeof(char));
+    if (readcbuf == NULL)
+	fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
+
+    /* Read in this block of data */
+    readlen = fread((void*)readcbuf, 1, info->n_values, fd);
+    if (readlen > 0)
+    {
+        /* Compare data read without VS API against the original buffer */
+        for (ii = 0; ii < readlen; ii++)
+        {
+	    if (readcbuf[ii] != orig_buf[ii])
+	    fprintf(stderr, "At value# %d: written = %c read = %c\n",
+					 ii, orig_buf[ii], readcbuf[ii]);
+        }
+    }
+    /* Close the file */
+    if (fclose(fd) == -1)
+    {
+	fprintf(stderr, "readnoHDF_char: unable to close file %s", SIMPLE_FILE);
+        return FAIL;
+    }
+    return SUCCEED;
 }
 
 /* Test driver for testing the public functions VSgetdatainfo,
    VSgetattdatainfo, Vgetattdatainfo. */
 void
-test_datainfo()
+test_datainfo(void)
 {
-    intn status;
-    int num_errs = 0;
-
     /* Test Vdatas where data is stored in one contiguous block */
     test_simple_vs();
 

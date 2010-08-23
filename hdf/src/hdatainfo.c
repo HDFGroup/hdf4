@@ -22,30 +22,39 @@ FILE
    hdatainfo.c
    HDF data information routines
 
-REMARKS
-   These functions are the low-level functions of the "datainfo" functions,
-   such as SDgetdatainfo, VSgetdatainfo, VSgetattrdatainfo...
+LOW-LEVEL ROUTINES
+    - Gets the number of data blocks in an element.
+HDgetdatainfo_count(file_id, data_tag, data_ref)
 
+    - Gets the offset(s) and length(s) of the data in the data element.
+HDgetdatainfo(file_id, data_tag, data_ref, start_block, info_count, *offsetarray, *lengtharray)
+
+EXPORTED ROUTINES
+    - Gets the offset(s)/length(s) of a vdata's data.
+VSgetdatainfo(vsid, start_block, info_count, *offsetarray, *lengtharray)
+
+    - Gets the offset(s)/length(s) of the data of an image
+GRgetdatainfo(riid, start_block, info_count, *offsetarray, *lengtharray)
+
+    - Gets the offset/length of the data of a vdata's attribute
+VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)
+
+    - Gets the offset/length of the data of a vgroup's attribute
+Vgetattdatainfo(vgid, attrindex, *offset, *length)
+
+    - Gets the offset/length of the data of an image's attribute
+GRgetattdatainfo(id, attrindex, *attrname, *offset, *length)
 */
 
-#define MFGR_MASTER
+#define MFGR_MASTER	/* for GRgetdatainfo and GRgetattdatainfo */
 #include "hdf.h"
 #include "hlimits.h"
 #include "vgint.h"
+#include "hdatainfo.h"
 
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
 #include "szlib.h"
 #endif
-
-/*
-#define MFGR_MASTER
-#ifdef H4_HAVE_LIBSZ
-#include "szlib.h"
-#endif
-
-#include "atom.h"
-#include "mfgr.h"
-*/
 
 /*--------------------------------------------------------------------------
  NAME
@@ -68,13 +77,11 @@ intn HDgetdatainfo_count(
     CONSTR(FUNC, "HDgetdatainfo_count");	/* for HGOTO_ERROR */
     int32	data_len;	/* offset of the data we are checking */
     uint16	sp_tag;		/* special tag */
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
-    int32	drec_aid;	/* description record access id */
     atom_t      data_id = FAIL;	/* dd ID of existing regular element */
     uint8      *drec_buf=NULL, *p;
     filerec_t  *file_rec;	/* file record */
     uintn	info_count = 0;
-    int32	offset, length; /* offset and length of a data block */
+    int32	length; /* offset and length of a data block */
     intn        ret_value=SUCCEED;
 
     /* clear error stack */
@@ -173,18 +180,18 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-    HDgetdatainfo -- Retrieves the offset(s) and length(s) of the data in
+    HDgetdatainfo -- Gets the offset(s) and length(s) of the data in
 		      the data element.
  USAGE
     int32 HDgetdatainfo(file_id, data_tag, data_ref, start_block, info_count,
 			 *offsetarray, *lengtharray)	
-		int32  file_id;		IN: file id
-		uint16 data_tag;	IN: tag of the element
-		uint16 data_ref;	IN: ref of element
-		uintn  start_block;	IN: data block to start at, 0 base
-		uintn  info_count;	IN: number of info records
-		int32 *offsetarray;	OUT: array to hold offsets
-		int32 *lengtharray;	OUT: array to hold lengths
+	int32  file_id;		IN: file id
+	uint16 data_tag;	IN: tag of the element
+	uint16 data_ref;	IN: ref of element
+	uintn  start_block;	IN: data block to start at, 0 base
+	uintn  info_count;	IN: number of info records
+	int32 *offsetarray;	OUT: array to hold offsets
+	int32 *lengtharray;	OUT: array to hold lengths
  RETURNS
     SUCCEED/FAIL
  DESCRIPTION
@@ -203,9 +210,7 @@ HDgetdatainfo(int32 file_id,
     int32	data_len;	/* offset of the data we are checking */
     uint16	sp_tag;		/* special tag */
     uint16	comp_ref = 0;
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
     uint8      *drec_buf=NULL, *p;	/* description record buffer */
-    int32	drec_aid;	/* description record access id */
     atom_t      data_id = FAIL;	/* dd ID of existing element */
     int32	offset, length; /* offset and length of a data block */
     filerec_t  *file_rec;	/* file record */
@@ -348,27 +353,27 @@ done:
 
 /*------------------------------------------------------ 
 NAME
-   VSgetdatainfo - gets the offset/length of a vdata's data
+   VSgetdatainfo - Gets the offset/length of a vdata's data
 
 DESCRIPTION
 
 RETURNS
    SUCCEED/FAIL
 TODO
-    - start_block and n_blocks
+    - not tested with start_block and info_count
     - additional comments/header
  NOTES
-    Aug 17, 2010: Tested in hdf/test/tdatainfo.c -BMR
+    Aug 17, 2010: Tested some in hdf/test/tdatainfo.c -BMR
 ----------------------------------------------------------*/
 intn 
 VSgetdatainfo(int32 vsid,	/* IN: vdata key */
 	uintn start_block,	/* IN: indicating where to start */
-	uintn n_blocks,		/* IN: number of blocks to be retrieved */
+	uintn info_count,	/* IN: number of blocks to be retrieved */
 	int32 *offsetarray,	/* OUT: buffer for offset(s) */
 	int32 *lengtharray)	/* OUT: buffer for length(s) */
 {
     CONSTR(FUNC, "VSgetdatainfo");
-    vsinstance_t *w = NULL;
+    vsinstance_t *vs_inst = NULL;
     VDATA        *vs = NULL;
     accrec_t     *access_rec;
     intn	  count;
@@ -379,11 +384,11 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get vdata instance */
-    if (NULL == (w = (vsinstance_t *) HAatom_object(vsid)))
+    if (NULL == (vs_inst = (vsinstance_t *) HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* get vdata itself and check it */
-    vs = w->vs;
+    vs = vs_inst->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
@@ -403,7 +408,7 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
 	}
 	else
 	{
-	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, start_block, n_blocks, offsetarray, lengtharray);
+	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, start_block, info_count, offsetarray, lengtharray);
 	}
 	if (count == FAIL)
 	    HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -430,7 +435,7 @@ done:
 
 /*------------------------------------------------------ 
 NAME
-   Vgetattdatainfo - gets the offset/length of the data
+   Vgetattdatainfo - Gets the offset/length of the data
 		      of a vgroup's attribute
 
 DESCRIPTION
@@ -438,38 +443,36 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 TODO
-    - not tested
-    - not documented
+    - additional tests for types other than char, maybe
+    - not throughly documented
 ----------------------------------------------------------*/
 intn 
 Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
-	intn attrindex,
-	char *attrname,		/* IN: attribute name */
-	int32 *offsetarray,	/* OUT: buffer for offset(s) */
-	int32 *lengtharray)	/* OUT: buffer for length(s) */
+	intn attrindex,		/* IN: attribute index */
+	int32 *offset,		/* OUT: buffer for offset */
+	int32 *length)		/* OUT: buffer for length */
 {
     CONSTR(FUNC, "Vgetattdatainfo");
-    VGROUP *vg, *attr_vg;
+    VGROUP *vg;
     vg_attr_t *vg_alist;
-    vginstance_t *vg_inst, *attr_inst;
-    int32 attr_vgid, nattrs;
-    intn i, a_index, found;
-    int32 offset, length;
+    vginstance_t *vg_inst;
+    int32 attr_vsid, nattrs;
+    intn i, attr_index, found;
     intn status;
-    char *fldname;
     intn ret_value = SUCCEED;
 
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
        HGOTO_ERROR(DFE_ARGS, FAIL);
-    /* locate vg's index in vgtab */
+    /* Locate vg's index in vgtab */
     if (NULL == (vg_inst = (vginstance_t *)HAatom_object(vgid)))
        HGOTO_ERROR(DFE_VTAB, FAIL);
     if (NULL == (vg = vg_inst->vg))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
+    /* Validate arguments */
     nattrs = vg->nattrs;
-    if (nattrs <= attrindex || vg->alist == NULL)
+    if (attrindex <0 || attrindex >= nattrs)
         /* not that many attrs or bad attr list */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -478,30 +481,35 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
           /* no attrs or bad attr list */
             HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* Search for the attribute index given by caller */
     found = 0;
-    a_index = -1; 
-    for (i=0; i<nattrs; i++)  {
-           a_index++; 
-           if (a_index == attrindex) {
-              found = 1;
-              break;
-           }
-        vg_alist++;
+    for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
+    {
+	if (attr_index == attrindex)
+	    found = 1;
+	if (!found) vg_alist++;
     }
+    /* If this happened, it would have been detected by the check for range
+       of attrindex above already, but check it anyway */
     if (!found)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* found. get attr info */
-    if (FAIL == (attr_vgid = VSattach(vg->f, (int32)vg_alist->aref, "r")))
+    /* Attribute is found.  Get access to the vdata that stores the attribute's
+       data, retrieve the offset and length of the data, then close access. */
+
+    /* Get vdata */
+    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist->aref, "r")))
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-    status = VSgetdatainfo(attr_vgid, 0, 1, &offset, &length);
+    /* Get offset and length of attribute's data.  Note that start_block is 0
+       and info_count is 1 because attribute's data is only stored in 1 block */
+    status = VSgetdatainfo(attr_vsid, 0, 1, offset, length);
     if (status == FAIL)
         HGOTO_ERROR(DFE_GENAPP, FAIL);
 
-    if (FAIL == VSdetach(attr_vgid))
+    /* Close vdata */
+    if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
-
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -514,78 +522,89 @@ done:
 
 /*------------------------------------------------------ 
 NAME
-   VSgetattdatainfo - gets the offset/length of the data
+    VSgetattdatainfo - Gets the offset/length of the data
 		      of a vdata's attribute
 
 DESCRIPTION
+    VSgetattdatainfo retrieves the offset and length of the data that belongs
+    to an attribute.  If findex is _HDF_VDATA (or -1), then the attribute is
+    associated with the vdata vsid.  If findex is an index of the vdata field,
+    then the attribute is one that is associated with the vdata field.  The
+    parameter attrindex specifies the attribute's index within the vdata's
+    or the field's attribute list.  Thus, its valid value must be within
+    [0-nattrs of the associated list].
+
+    VSgetattdatainfo uses VSgetdatainfo once it locates the vdata that stores
+    the attribute.
 
 RETURNS
    SUCCEED/FAIL
 TODO
-    - not tested
-    - not documented
+    - additional tests for types other than char, maybe
+    - not throughly documented
 ----------------------------------------------------------*/
 intn 
 VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
 	int32 findex, intn attrindex,
-	char *attrname,		/* IN: attribute name */
-	int32 *offsetarray,	/* OUT: buffer for offset(s) */
-	int32 *lengtharray)	/* OUT: buffer for length(s) */
+	int32 *offset,	/* OUT: buffer for offset */
+	int32 *length)	/* OUT: buffer for length */
 {
     CONSTR(FUNC, "VSgetattdatainfo");
-    intn          ret_value = SUCCEED;
-
-
-     VDATA *vs, *attr_vs;
-     vs_attr_t *vs_alist;
-     vsinstance_t *vs_inst, *attr_inst;
-     int32 attr_vsid;
-     intn i, nattrs, a_index, found;
-    int32 offset, length;
+    VDATA *vs;
+    vs_attr_t *vs_alist;
+    vsinstance_t *vs_inst;
+    int32 attr_vsid;
+    intn nattrs, attr_index, found;
     intn status;
-     DYN_VWRITELIST *w;
-     char *fldname;
+    intn ret_value = SUCCEED;
 
-     HEclear();
+    HEclear();
 
-     if (HAatom_group(vsid) != VSIDGROUP)
+    if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-     /* locate vs' index in vstab */
-     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
+    /* locate vs' index in vstab */
+    if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if (NULL == (vs = vs_inst->vs))
+    if (NULL == (vs = vs_inst->vs))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_VDATA))
+    if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
-     nattrs = vs->nattrs;
-     if (attrindex <0 || attrindex >= nattrs)
+    nattrs = vs->nattrs;
+    if (attrindex <0 || attrindex >= nattrs)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-     vs_alist = vs->alist;
-     if (nattrs == 0 || vs_alist == NULL)
+    vs_alist = vs->alist;
+    if (nattrs == 0 || vs_alist == NULL)
           /* no attrs or bad attr list */
             HGOTO_ERROR(DFE_ARGS, FAIL);
     found = 0;
-    a_index = -1; 
-    for (i=0; i<nattrs; i++)  {
-        if (vs_alist->findex == findex)  {
-           a_index++; 
-           if (a_index == attrindex) {
-              found = 1;
-              break;
-           }
+    for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
+    {
+	if (vs_alist->findex == findex)
+	{
+	    if (attr_index == attrindex)
+		found = 1;
         }
-        vs_alist++;
+	if (!found) vs_alist++;
     }
+    /* If this happened, it would have been detected by the check for range
+       of attrindex above already, but check it anyway */
     if (!found)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-    /* found. get attr info */
+
+    /* Attribute is found.  Get access to the vdata that stores the attribute's
+       data, retrieve the offset and length of the data, then close access. */
+
+    /* Get vdata */
     if (FAIL == (attr_vsid = VSattach(vs->f, (int32)vs_alist->aref, "r")))
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-    status = VSgetdatainfo(attr_vsid, 0, 1, &offset, &length);
+    /* Get offset and length of attribute's data.  Note that start_block is 0
+       and info_count is 1 because attribute's data is only stored in 1 block */
+    status = VSgetdatainfo(attr_vsid, 0, 1, offset, length);
     if (status == FAIL)
         HGOTO_ERROR(DFE_GENAPP, FAIL);
 
+    /* Close vdata */
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
@@ -600,10 +619,10 @@ done:
 }   /* VSgetattdatainfo */
 
 
-/*------------------------------------------------------ 
+/*------------------------------------------------------------ 
 NAME
-   GRgetattdatainfo - gets the offset/length of the data
-		      of a vgroup's attribute
+   GRgetattdatainfo - Gets the offset/length of the data of a
+			GR file's or an image's attribute
 
 DESCRIPTION
 
@@ -612,25 +631,25 @@ RETURNS
 TODO
     - not tested
     - not documented
-----------------------------------------------------------*/
+--------------------------------------------------------------*/
 intn 
 GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
-	intn attrindex,
+	intn attrindex,		/* IN: attribute index */
 	char *attrname,		/* IN: attribute name */
-	int32 *offset,	/* OUT: buffer for attribute's data's offset */
-	int32 *length)	/* OUT: buffer for attribute's data's length */
+	int32 *offset,		/* OUT: buffer for attribute's data's offset */
+	int32 *length)		/* OUT: buffer for attribute's data's length */
 {
     CONSTR(FUNC, "GRgetattdatainfo");
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    int32 hdf_file_id;
-    int32 attr_vgid;
-    void * *t;                   /* temp. ptr to the image found */
-    int found = FALSE;
-    TBBT_TREE *search_tree;     /* attribute tree to search through */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
-    intn status; 
-    intn   ret_value = SUCCEED;
+    int32      hdf_file_id;	/* file id */
+    int32      attr_vsid;	/* id of vdata that stores the attribute */
+    void     **aentry;		/* temp. ptr to the image found */
+    int        found = FALSE;	/* TRUE when the searched attribute is found */
+    TBBT_TREE *search_tree;	/* attribute tree to search through */
+    at_info_t *at_ptr=NULL;	/* ptr to the attribute to work with */
+    intn       status; 
+    intn       ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
@@ -666,27 +685,27 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Search for an attribute with the same name */
-    if((t = (void **)tbbtfirst((TBBT_NODE *)*search_tree)) != NULL)
+    if((aentry = (void **)tbbtfirst((TBBT_NODE *)*search_tree)) != NULL)
       {
           do {
-              at_ptr = (at_info_t *)*t;
+              at_ptr = (at_info_t *)*aentry;
               if (at_ptr != NULL && HDstrcmp(at_ptr->name, attrname) == 0)  /* ie. the name matches */
                 {
                     found = TRUE;
                     break;
                 } /* end if */
-          } while ((t = (void **)tbbtnext((TBBT_NODE *)t)) != NULL);
+          } while ((aentry = (void **)tbbtnext((TBBT_NODE *)aentry)) != NULL);
       } /* end if */
 
-    if ((attr_vgid = VSattach(hdf_file_id, (int32)at_ptr->ref, "w")) == FAIL)
+    if ((attr_vsid = VSattach(hdf_file_id, (int32)at_ptr->ref, "w")) == FAIL)
                     HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
 /* Can RI have linked block?  Need to verify */
-    status = VSgetdatainfo(attr_vgid, 0, 1, offset, length);
+    status = VSgetdatainfo(attr_vsid, 0, 1, offset, length);
     if (status == FAIL)
         HGOTO_ERROR(DFE_GENAPP, FAIL);
 
-    if (FAIL == VSdetach(attr_vgid))
+    if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 done:
@@ -700,10 +719,9 @@ done:
 }   /* GRgetattdatainfo */
 
 
-/*------------------------------------------------------ 
+/*--------------------------------------------------------------- 
 NAME
-   GRgetdatainfo - gets the offset/length of the data
-		      of a vgroup's attribute
+   GRgetdatainfo - Gets the offsets/lengths of the data of an image
 
 DESCRIPTION
 
@@ -712,18 +730,16 @@ RETURNS
 TODO
     - not tested
     - not documented
-----------------------------------------------------------*/
+----------------------------------------------------------------*/
 intn 
 GRgetdatainfo(int32 riid,	/* IN: raster image ID */
 	uintn start_block,	/* IN: start retrieving data at */
-	uintn n_blocks,		/* IN: number of data blocks to retrieve */
+	uintn info_count,	/* IN: number of data blocks to retrieve */
 	int32 *offsetarray,	/* OUT: buffer for offset(s) */
 	int32 *lengtharray)	/* OUT: buffer for length(s) */
 {
     CONSTR(FUNC, "GRgetdatainfo");
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    at_info_t *at_ptr;          /* ptr to the attribute to work with */
     uint16 ref;
     intn   ret_value = SUCCEED;
 

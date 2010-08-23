@@ -22,20 +22,39 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
+#if 0
+typedef struct
+  {
+	int32 numtype;  /* number type of data */
+	int32 n_values; /* number of values in an SDS, a vdata, or an RI image*/
+	int32* offsets; /* offset(s) of data block(s) */
+	int32* lengths; /* length(s) of data block(s) */
+  }
+t_hdf_datainfo_t;
+
+/* Utility functions to allocate and deallocate hdf_datainfo_t's members*/
+intn alloc_info(t_hdf_datainfo_t *info, uintn info_count);
+void free_info(t_hdf_datainfo_t *info);
+#endif
+
+/* Public functions for getting raw data information */
+
     HDFLIBAPI intn HDgetdatainfo
                 (int32 file_id, uint16 data_tag, uint16 data_ref,
                  uintn start_block, uintn info_count,
-		 hdf_datainfo_t* data_info);
+                 int32 *offsetarray, int32 *lengtharray);
 
     HDFLIBAPI intn HDgetdatainfo_count
-                (int32 file_id, uint16 data_tag, uint16 data_ref,
-		 uintn* info_count);
+                (int32 file_id, uint16 data_tag, uint16 data_ref);
 
     HDFLIBAPI intn VSgetdatainfo
-		(int32 vdata_id, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+		(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
 
     HDFLIBAPI intn VSgetattdatainfo
-		(int32 vkey, int32 *offsetarray, int32 *lengtharray);
+		(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
+
+    HDFLIBAPI intn Vgetattdatainfo
+		(int32 vgid, intn attrindex, int32 *offset, int32 *length);
 
 #if defined c_plusplus || defined __cplusplus
 }
