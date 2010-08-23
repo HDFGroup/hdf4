@@ -354,6 +354,8 @@
 ./hdf/test/tanfilef.f
 ./hdf/test/tbv.c
 ./hdf/test/tdatainfo.c
+./hdf/test/tdatainfo.h
+./hdf/test/tattdatainfo.c
 ./hdf/test/tdupimgs.c
 ./hdf/test/testhdf.c
 ./hdf/test/test_files/tmgr.dat
