@@ -212,6 +212,7 @@
 ./hdf/src/dynarray.h
 ./hdf/src/glist.c
 ./hdf/src/glist.h
+./hdf/src/H4api_adpt.h
 ./hdf/src/h4config.h.in
 ./hdf/src/hbitio.c
 ./hdf/src/hbitio.h
@@ -684,6 +685,7 @@
 ./mfhdf/fortran/jackets.src
 ./mfhdf/fortran/mffunc.inc
 ./mfhdf/fortran/mfsdf.c
+./mfhdf/fortran/mfsdf.h
 ./mfhdf/fortran/mfsdff.f
 ./mfhdf/fortran/test_nc.cdl
 ./mfhdf/fortran/test_nc.nc
@@ -1124,7 +1126,6 @@
 ./config/cmake/CheckTypeSize.cmake
 ./config/cmake/h4config.h.in
 ./config/cmake/xlatefile.c
-./config/cmake/hdf4_zlib.h.in
 ./config/cmake/GetTimeOfDayTest.c
 ./config/cmake/HDFTests.c
 ./config/cmake/FindSZIP.cmake

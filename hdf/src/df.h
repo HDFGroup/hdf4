@@ -112,86 +112,86 @@ extern      "C"
 #endif                          /* c_plusplus || __cplusplus */
 
 /* prototypes for dfstubs.c */
-    extern DF  *DFopen
+    HDFLIBAPI DF  *DFopen
                 (char *name, int acc_mode, int ndds);
 
-    extern int  DFclose
+    HDFLIBAPI int  DFclose
                 (DF * dfile);
 
-    extern int  DFdescriptors
+    HDFLIBAPI int  DFdescriptors
                 (DF * dfile, DFdesc ptr[], int begin, int num);
 
-    extern int  DFnumber
+    HDFLIBAPI int  DFnumber
                 (DF * dfile, uint16 tag);
 
-    extern int  DFsetfind
+    HDFLIBAPI int  DFsetfind
                 (DF * dfile, uint16 tag, uint16 ref);
 
-    extern int  DFfind
+    HDFLIBAPI int  DFfind
                 (DF * dfile, DFdesc * ptr);
 
-    extern int  DFaccess
+    HDFLIBAPI int  DFaccess
                 (DF * dfile, uint16 tag, uint16 ref, char *acc_mode);
 
-    extern int  DFstart
+    HDFLIBAPI int  DFstart
                 (DF * dfile, uint16 tag, uint16 ref, char *acc_mode);
 
-    extern int32 DFread
+    HDFLIBAPI int32 DFread
                 (DF * dfile, char *ptr, int32 len);
 
-    extern int32 DFseek
+    HDFLIBAPI int32 DFseek
                 (DF * dfile, int32 offset);
 
-    extern int32 DFwrite
+    HDFLIBAPI int32 DFwrite
                 (DF * dfile, char *ptr, int32 len);
 
-    extern int  DFupdate
+    HDFLIBAPI int  DFupdate
                 (DF * dfile);
 
-    extern int  DFstat
+    HDFLIBAPI int  DFstat
                 (DF * dfile, DFdata * dfinfo);
 
-    extern int32 DFgetelement
+    HDFLIBAPI int32 DFgetelement
                 (DF * dfile, uint16 tag, uint16 ref, char *ptr);
 
-    extern int32 DFputelement
+    HDFLIBAPI int32 DFputelement
                 (DF * dfile, uint16 tag, uint16 ref, char *ptr, int32 len);
 
-    extern int  DFdup
+    HDFLIBAPI int  DFdup
                 (DF * dfile, uint16 itag, uint16 iref, uint16 otag, uint16 oref);
 
-    extern int  DFdel
+    HDFLIBAPI int  DFdel
                 (DF * dfile, uint16 tag, uint16 ref);
 
-    extern uint16 DFnewref
+    HDFLIBAPI uint16 DFnewref
                 (DF * dfile);
 
-    extern int  DFishdf
+    HDFLIBAPI int  DFishdf
                 (char *filename);
 
-    extern int  DFerrno
+    HDFLIBAPI int  DFerrno
                 (void);
 
-    extern int  DFIerr
+    HDFLIBAPI int  DFIerr
                 (DF * dfile);
 
-    extern int  DFImemcopy
+    HDFLIBAPI int  DFImemcopy
                 (char *from, char *to, int length);
 
-    extern void *DFIgetspace
+    HDFLIBAPI void *DFIgetspace
                 (uint32 qty);
 
-    extern void *DFIfreespace
+    HDFLIBAPI void *DFIfreespace
                 (void *ptr);
 
-    extern int  DFIc2fstr
+    HDFLIBAPI int  DFIc2fstr
                 (char *str, int len);
 
-    extern char *DFIf2cstring
+    HDFLIBAPI char *DFIf2cstring
                 (_fcd fdesc, intn len);
 
 /* prototypes for dfconv.c */
-    extern int  DFconvert
+    HDFLIBAPI int  DFconvert
                 (uint8 *source, uint8 *dest, int ntype, int sourcetype, int desttype, int32 size);
 
 #if defined c_plusplus || defined __cplusplus
@@ -202,7 +202,7 @@ extern      "C"
 /*                          Global Variables                                */
 
 #ifndef DFMASTER
-extern
+HDFLIBAPI
 #endif                          /*DFMASTER */
 int DFerror;            /* Error code for DF routines */
 

@@ -19,11 +19,11 @@
 #define _NC_ERROR_
 
 #ifndef NO_STDARG
-void nc_serror(const char *fmt, ...) ;
-void NCadvise(int err, const char *fmt,...) ;
+HDFLIBAPI void nc_serror(const char *fmt, ...) ;
+HDFLIBAPI void NCadvise(int err, const char *fmt,...) ;
 #else
-void nc_serror() ;
-void NCadvise() ;
+HDFLIBAPI void nc_serror() ;
+HDFLIBAPI void NCadvise() ;
 #endif /* NO_STDARG */
 
 #endif /* _NC_ERROR_ */

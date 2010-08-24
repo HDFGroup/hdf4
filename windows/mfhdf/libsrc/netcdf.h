@@ -343,7 +343,7 @@ typedef long    nclong;         /* default, compatible type */
 #define	NC_SYSERR	-1
 
 #include "hdf2netcdf.h"
-extern int ncerr ;
+HDFLIBAPI int ncerr ;
 
 /*
  * Global options variable. Used to determine behavior of error handler.

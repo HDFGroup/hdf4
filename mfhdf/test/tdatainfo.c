@@ -26,6 +26,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#if WIN32
+#define snprintf sprintf_s
+#define ssize_t int32
+#endif 
+
 #include "mfhdf.h"
 
 #ifdef HDF

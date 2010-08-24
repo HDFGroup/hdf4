@@ -28,7 +28,7 @@ static char RcsId[] = "@(#)$Revision$";
 */
 
 #ifdef HDF
-#include "mfhdf.h"
+#include "mfsdf.h"
 
 #ifdef PROTOTYPE
 HDFFCLIBAPI FRETVAL(intf) nscstart(_fcd name, intf *access, intf *namelen);

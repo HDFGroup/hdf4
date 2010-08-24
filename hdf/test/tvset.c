@@ -2581,6 +2581,10 @@ intn check_vds(int32 id,
 static void
 test_getvdatas(void)
 {
+    int32 vgroup_id;
+    int32 vgroup_ref;
+    int32 vdata_id;
+    int32 vdata_ref;
     int32 fid, sd_id;          /* File ID */
     int32 vgroup0_id, vgroup1_id, vgroup2_id, vgroup4_id,
 	  vgroup6_id, vgroup7_id, vgroup9_id;	/* Various vgroup IDs */
@@ -2604,11 +2608,11 @@ test_getvdatas(void)
     for (ii = 0; ii < NUM_VGROUPS; ii++)
     {
 	/* Create a vgroup. */
-	int32 vgroup_id = Vattach(fid, -1, "w");
+	vgroup_id = Vattach(fid, -1, "w");
 	CHECK_VOID(vgroup_id, FAIL, "Vattach");
 
 	/* Record its reference number for later access */
-	int32 vgroup_ref = VQueryref(vgroup_id);
+	vgroup_ref = VQueryref(vgroup_id);
 	CHECK_VOID(vgroup_ref, FAIL, "VQueryref:vgroup_id");
 	ref_list[ii] = vgroup_ref;
 
@@ -2626,11 +2630,11 @@ test_getvdatas(void)
     for (ii = 0; ii < NUM_VDATAS; ii++)
     {
 	/* Create a vdata. */
-	int32 vdata_id = VSattach(fid, -1, "w");
+	vdata_id = VSattach(fid, -1, "w");
 	CHECK_VOID(vdata_id, FAIL, "VSattach");
 
 	/* Record its reference number for later access */
-	int32 vdata_ref = VSQueryref(vdata_id);
+	vdata_ref = VSQueryref(vdata_id);
 	CHECK_VOID(vdata_ref, FAIL, "VSQueryref:vdata_id");
 	vdref_list[ii] = vdata_ref;
 

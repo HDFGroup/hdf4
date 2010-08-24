@@ -30,9 +30,9 @@ static char RcsId[] = "@(#)$Revision$";
   sfxxxx and the one in here will be nscxxx and again be FNAME()ed
 
 */
+#include "mfsdf.h"
 
 #ifdef HDF
-#include "mfhdf.h"
 
 #ifdef PROTOTYPE
 FRETVAL(intf) nsfscfill(intf *id, _fcd val);
@@ -50,6 +50,772 @@ FRETVAL(intf) nscsnatt();
 FRETVAL(intf) nsfsflmd();
 #endif /* PROTOTYPE */
 
+#ifdef _WIN32
+
+/*-----------------------------------------------------------------------------
+ * Name:    scend
+ * Purpose: Call SDend close to close HDF file
+ * Inputs:  file_id: handle to HDF file to close
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscend(intf *file_id)
+#else
+nscend(file_id)
+    intf *file_id;
+#endif /* PROTOTYPE */
+{
+    return(SDend(*file_id));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scendacc
+ * Purpose: Call SDendaccess close to end access on a dataset 
+ * Inputs:  id: id of the data set
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscendacc(intf *id)
+#else
+nscendacc(id)
+    intf *id;
+#endif /* PROTOTYPE */
+{
+    return(SDendaccess(*id));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scfinfo
+ * Purpose: Call SDfileinfo to get number of datasets and global attrs in the file
+ * Inputs:  file_id: handle to HDF file
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscfinfo(intf *file_id, intf *datasets, intf *gattr)
+#else
+nscfinfo(file_id, datasets, gattr)
+     intf *file_id;
+     intf *datasets;
+     intf *gattr;
+#endif /* PROTOTYPE */
+{
+  int32 dset, nattr, status;
+
+  status = SDfileinfo((int32) *file_id, &dset, &nattr);
+
+  *datasets = (intf) dset;
+  *gattr    = (intf) nattr;
+
+  return (status);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scselct
+ * Purpose: Call SDselect to return a handle to a data set in the given file
+ * Inputs:  file_id: handle to HDF file
+ *          index:   number of data set to chose
+ * Returns: sdsid on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscselct(intf *file_id, intf *index)
+#else
+nscselct(file_id, index)
+     intf *file_id;
+     intf *index;
+#endif /* PROTOTYPE */
+{
+    return(SDselect(*file_id, *index));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scdimid
+ * Purpose: Get an id for a dimension of a given data set
+ * Inputs:  id: handle to a data set
+ *          index: number of dimension to chose
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscdimid(intf *id, intf *index)
+#else
+nscdimid(id, index)
+     intf *id;
+     intf *index;
+#endif /* PROTOTYPE */
+{
+    int32 rank, nt, dims[100], status, cdim, nattrs;
+
+    status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
+    if(status == FAIL) return FAIL;
+    cdim = rank - (*index) -1;
+
+    return(SDgetdimid(*id, cdim));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scgcal
+ * Purpose: Call SDgetcal to get the calibration information
+ * Inputs:  id: handle to a data set
+ * Outputs: cal, cale, ioff, ioffe : calibration factors and error
+ *          nt: number type of data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgcal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+#else
+nscgcal(id, cal, cale, ioff, ioffe, nt)
+     intf *id;
+     float64 *cal, *cale, *ioff, *ioffe;
+     intf *nt;
+#endif /* PROTOTYPE */
+{
+  int32 nt32, status;
+  
+  status = SDgetcal((int32) *id, cal, cale, ioff, ioffe, &nt32);
+  
+  *nt = (intf) nt32;
+
+  return (status);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scscal
+ * Purpose: Call SDsetcal to set the calibration information
+ * Inputs:  id: handle to a data set
+ *          cal, cale, ioff, ioffe : calibration factors and error
+ *          nt: number type of data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscscal(intf *id, float64 *cal, float64 *cale, float64 *ioff, float64 *ioffe, intf *nt)
+#else
+nscscal(id, cal, cale, ioff, ioffe, nt)
+     intf *id;
+     float64 *cal, *cale, *ioff, *ioffe;
+     intf *nt;
+#endif /* PROTOTYPE */
+{
+    return(SDsetcal(*id, *cal, *cale, *ioff, *ioffe, *nt));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scsdscale
+ * Purpose: Call SDsetdimscale to set the values for a dimension
+ * Inputs:  id: handle to a dimension
+ *          count: size of the dimension
+ *          nt: number type of data
+ *          values: data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsdscale(intf *id, intf *count, intf *nt, VOIDP values)
+#else
+nscsdscale(id, count, nt, values)
+     intf *id;
+     intf *count, *nt;
+     VOIDP values;
+#endif /* PROTOTYPE */
+{
+    return(SDsetdimscale(*id, *count, *nt, values));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scgdscale
+ * Purpose: Call SDgetdimscale to get the values for a dimension
+ * Inputs:  id: handle to a dimension
+ * Output   values: data
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgdscale(intf *id, VOIDP values)
+#else
+nscgdscale(id, values)
+     intf *id;
+     VOIDP values;
+#endif /* PROTOTYPE */
+{
+    return(SDgetdimscale(*id, values));
+}
+
+/*----------------------------------------------------------
+ * Name:    scscfill
+ * Purpose: Call nsfsnfill to set the char fill value
+ * Inputs:  id: handle to a dimension
+ *          val: the fill value
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *----------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscscfill(intf *id, _fcd val)
+#else
+nscscfill(id, val)
+     intf *id;
+     _fcd val;
+#endif /* PROTOTYPE */
+{
+    return(nscsfill(id, (VOIDP) _fcdtocp(val)));
+}
+
+/*------------------------------------------------------------
+ * Name:    scgcfill
+ * Purpose: Call sfgfill to get the char fill value
+ * Inputs:  id: handle to a dimension
+ * Output:  val: the fill value
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *-----------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgcfill(intf *id, _fcd val)
+#else
+nscgcfill(id, val)
+     intf *id;
+     _fcd val;
+#endif /* PROTOTYPE */
+{
+    return(nscgfill(id, (VOIDP) _fcdtocp(val)));
+}
+
+/*---------------------------------------------------------
+ * Name:    scsfill
+ * Purpose: Call SDsetfillvalue to set the numeric fill value
+ * Inputs:  id: handle to a dimension
+ *          val: the fill value
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsfill(intf *id, VOIDP val)
+#else
+nscsfill(id, val)
+     intf *id;
+     VOIDP val;
+#endif /* PROTOTYPE */
+{
+    return(SDsetfillvalue(*id, val));
+}
+
+/*----------------------------------------------------------
+ * Name:    scgfill
+ * Purpose: Call SDgetfillvalue to get the fill value. 
+ * Inputs:  id: handle to a dimension
+ * Output:  val: the fill value
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgfill(intf *id, VOIDP val)
+#else
+nscgfill(id, val)
+     intf *id;
+     VOIDP val;
+#endif /* PROTOTYPE */
+{
+    return(SDgetfillvalue(*id, val));
+}
+
+/*------------------------------------------------------------
+ * Name:    scgrange
+ * Purpose: Call SDgetrange to get the valid range info
+ * Inputs:  id: handle to a dataset
+ * Output:  min: the min
+ *          max: the max
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscgrange(intf *id, VOIDP max, VOIDP min)
+#else
+nscgrange(id, max, min)
+     intf *id;
+     VOIDP max;
+     VOIDP min;
+#endif /* PROTOTYPE */
+{
+    return(SDgetrange(*id, max, min));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scsrange
+ * Purpose: Call SDsetrange to set the valid range info
+ * Inputs:  id: handle to a dataset
+ *          min: the min
+ *          max: the max
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsrange(intf *id, VOIDP max, VOIDP min)
+#else
+nscsrange(id, max, min)
+     intf *id;
+     VOIDP max;
+     VOIDP min;
+#endif /* PROTOTYPE */
+{
+    return(SDsetrange(*id, max, min));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scrcatt
+ * Purpose: Call sfrnatt to get the contents of a char attribute
+ * Inputs:  id: handle to a dataset
+ *          index: index of the attribute to read
+ *          buf: space to hold info
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscrcatt(intf *id, intf *index, _fcd buf)
+#else
+nscrcatt(id, index, buf)
+     intf *id;
+     intf *index;
+     _fcd buf;
+#endif /* PROTOTYPE */
+{
+    return(nscrnatt(id, index, (VOIDP) _fcdtocp(buf)));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scrnatt
+ * Purpose: Call SDreadattr to get the contents of a numeric attribute
+ * Inputs:  id: handle to a dataset
+ *          index: index of the attribute to read
+ *          buf: space to hold info
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscrnatt(intf *id, intf *index, VOIDP buf)
+#else
+nscrnatt(id, index, buf)
+     intf *id;
+     intf *index;
+     VOIDP buf;
+#endif /* PROTOTYPE */
+{
+    return(SDreadattr(*id, *index, buf));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scrattr
+ * Purpose: Call SDreadattr to get the contents of an attribute
+ * Inputs:  id: handle to a dataset
+ *          index: index of the attribute to read
+ *          buf: space to hold info
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscrattr(intf *id, intf *index, VOIDP buf)
+#else
+nscrattr(id, index, buf)
+     intf *id;
+     intf *index;
+     VOIDP buf;
+#endif /* PROTOTYPE */
+{
+    return(nscrnatt(id, index, buf));
+}
+
+/*------------------------------------------------------------
+ * Name:    scrdata
+ * Purpose: read a section of numeric data
+ * Inputs:  id: dataset id
+ *          start: start location
+ *          stride: stride along each dimension
+ *          end: number of values along each dim to read
+ *          values: data 
+ * Remarks: need to flip the dimensions to account for array ordering
+ *          differences
+ * Returns: 0 on success, -1 on failure with error set
+ *----------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscrdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
+#else
+nscrdata(id, start, stride, end, values)
+     intf *id;
+     intf *start, *stride, *end;
+     VOIDP values;
+#endif /* PROTOTYPE */
+{
+    intf    ret;
+    int32   i, rank, dims[100], nt, nattrs, status;
+    int32   cstart[100], cstride[100], cend[100];
+    int     nostride;
+    
+    status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
+    if(status == FAIL) return FAIL;
+
+    nostride = TRUE;
+
+    for(i = 0; i < rank; i++) {
+        cstart[i] = start[rank - i - 1];
+        cend[i]   = end[rank - i - 1];
+        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+    }
+    
+    ret = (intf) SDreaddata(*id, cstart, (nostride? NULL : cstride), cend, values);
+    return(ret);
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scwdata
+ * Purpose: write a section of data
+ * Inputs:  id: dataset id
+ *          start: start location
+ *          stride: stride along each dimension
+ *          end: number of values along each dim to write
+ *          values: data 
+ * Remarks: need to flip the dimensions to account for array ordering
+ *          differences
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscwdata(intf *id, intf *start, intf *stride, intf *end, VOIDP values)
+#else
+nscwdata(id, start, stride, end, values)
+     intf *id;
+     intf *start, *stride, *end;
+     VOIDP values;
+#endif /* PROTOTYPE */
+{
+    intf    ret;
+    int32   i, rank, dims[100], nt, nattrs, status;
+    int32   cstart[100], cstride[100], cend[100];
+    intn    nostride;
+    
+    status = SDgetinfo(*id, NULL, &rank, dims, &nt, &nattrs);
+    if(status == FAIL) return FAIL;
+
+    nostride = TRUE;
+
+    for(i = 0; i < rank; i++) {
+        cstart[i] = start[rank - i - 1];
+        cend[i]   = end[rank - i - 1];
+        if((cstride[i] = stride[rank - i - 1]) != 1) nostride = FALSE;
+    }
+
+    ret = (intf) SDwritedata(*id, cstart, (nostride? NULL : cstride), cend, values);
+    return(ret);
+}
+
+/*--------------------------------------------------------
+ * Name:    scrcdata
+ * Purpose: read a section of char data
+ * Inputs:  id: dataset id
+ *          start: start location
+ *          stride: stride along each dimension
+ *          end: number of values along each dim to read
+ *          values: data 
+ * Remarks: need to flip the dimensions to account for array ordering
+ *          differences
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscrcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
+#else
+nscrcdata(id, start, stride, end, values)
+     intf *id;
+     intf *start, *stride, *end;
+     _fcd values;
+#endif /* PROTOTYPE */
+{
+     return(nscrdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+}
+
+/*--------------------------------------------------------
+ * Name:    scwcdata
+ * Purpose: write a section of char data
+ * Inputs:  id: dataset id
+ *          start: start location
+ *          stride: stride along each dimension
+ *          end: number of values along each dim to read
+ *          values: data 
+ * Remarks: need to flip the dimensions to account for array ordering
+ *          differences
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscwcdata(intf *id, intf *start, intf *stride, intf *end, _fcd values)
+#else
+nscwcdata(id, start, stride, end, values)
+     intf *id;
+     intf *start, *stride, *end;
+     _fcd values;
+#endif /* PROTOTYPE */
+{
+     return(nscwdata(id, start, stride, end, (VOIDP) _fcdtocp(values)));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scid2ref
+ * Purpose: call SDidtoref to map an id to ref
+ * Inputs:  id: variable id
+ * Returns: reference number of a NDG representing this dataset
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscid2ref(intf *id)
+#else
+nscid2ref(id)
+    intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDidtoref(*id));
+}
+
+
+/*-----------------------------------------------------------------------------
+ * Name:    scfr2idx
+ * Purpose: call SDreftoindex to map a reference number to an index of a 
+ *          dataset
+ * Inputs:  id: file id
+ *          ref: reference number to look up
+ * Returns: index of a NDG representing this dataset
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscr2idx(intf *id, intf *ref)
+#else
+nscr2idx(id, ref)
+     intf *id;
+     intf *ref;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDreftoindex(*id, (int32) *ref));
+}
+
+
+/*-----------------------------------------------------------------------------
+ * Name:    sciscvar
+ * Purpose: call SDiscoordvar to see if a dataset is a coordinate variable
+ *          dataset
+ * Inputs:  id: sds id
+ * Returns: TRUE/FALSE
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsciscvar(intf *id)
+#else
+nsciscvar(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDiscoordvar(*id));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scsnbit
+ * Purpose: store data in n-bit data element
+ * Inputs:  id: sds id
+ *          start_bit: starting bit offset
+ *          bit_len: # of bits to write
+ *          sign_ext: whether to use the top bit as a sign extender
+ *          fill_one: whether to fill the "background bits" with ones
+ * Returns: 0 on success, -1 on failure with error set
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsnbit(intf *id, intf *start_bit, intf *bit_len, intf *sign_ext, intf *fill_one)
+#else
+nscsnbit(id, start_bit, bit_len, sign_ext, fill_one)
+     intf *id;
+     intf *start_bit;
+     intf *bit_len;
+     intf *sign_ext;
+     intf *fill_one;
+#endif /* PROTOTYPE */
+{
+    return((intf)SDsetnbitdataset((int32)*id,(intn)*start_bit,(intn)*bit_len,
+    (intn)*sign_ext,(intn)*fill_one));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scsacct
+ * Purpose: Call SDsetaccesstype to set the access type
+ * Inputs:  id: sds id
+ *          type: the access type
+ * Returns: 0 on success, FAIL on failure with error set
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsacct(intf *id, intf *type)
+#else
+nscsacct(id, type)
+     intf *id;
+     intf *type;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetaccesstype(*id, *type));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scsdmvc
+ * Purpose: Call SDsetdimval_comp to set the dim value backward 
+ *            compatibility type
+ * Inputs:  id: dim id
+ *          compmode: backward compatibility:
+ *                    SD_DIMVAL_BW_COMP -- compatible (in mfhdf.h)
+ *                    SD_DIMVAL_BW_INCOMP -- incompatible.
+ *
+ * Returns: SUCCESS on success, FAIL on failure 
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsdmvc(intf *id, intf *compmode)
+#else
+nscsdmvc(id, compmode)
+     intf *id;
+     intf *compmode;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetdimval_comp(*id, *compmode));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scisdmvc
+ * Purpose: Call SDisdimval_bwcomp to get the dim value backward 
+ *            compatibility 
+ * Inputs:  id: dim id
+ *
+ * Returns: SD_DIMVAL_BW_COMP (1) if dimval is backward compatible;
+            SD_DIMVAL_BW_INCOMP (0) for not compatible; (in mfhdf.h)
+            FAIL (-1) for error.
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscisdmvc(intf *id)
+#else
+nscisdmvc(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDisdimval_bwcomp(*id));
+}
+
+/*-----------------------------------------------------------------------------
+ * Name:    scsflmd
+ * Purpose: Call SDsetfillmode to set for the file fill mode 
+ *            as fill or nofill
+ * Inputs:  id: file id
+ *          fillmode: Desired fill mode for the file,
+ *                                 either SD_FILL or SD_NOFILL.
+ *                                 SD_FILL is the default mode.
+ *
+ * Returns: The current (before the new mode is set) fill mode;
+ *          FAIL (-1) for error. 
+ * Users:   HDF Fortran programmers
+ *---------------------------------------------------------------------------*/
+
+    FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsflmd(intf *id, intf *fillmode)
+#else
+nscsflmd(id, fillmode)
+    intf *id, *fillmode;
+#endif  /* PROTOTYPE */
+{
+    return((intf) SDsetfillmode(*id, *fillmode));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scisrcrd
+ * Purpose: call SDisrecord to see if a dataset is a record variable
+ * Inputs:  id: sds id
+ * Returns: TRUE/FALSE (1/0))
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nsfisrcrd(intf *id)
+#else
+nscisrcrd(id)
+     intf *id;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDisrecord(*id));
+}
+/*-----------------------------------------------------------------------------
+ * Name:    scsblsz
+ * Purpose: call SDsetblocksize
+ * Inputs:  id:          sd id
+            block_size:  block size  in bytes
+ * Returns: SUCCEED/FAIL (0/-1)
+ *---------------------------------------------------------------------------*/
+
+   FRETVAL(intf)
+#ifdef PROTOTYPE
+nscsblsz(intf *id, intf *block_size)
+#else
+nscsblsz(id, block_size)
+     intf *id;
+     intf *block_size;
+#endif /* PROTOTYPE */
+{
+    return((intf) SDsetblocksize(*id, *block_size));
+}
+
+#endif /* _WIN32 */
 /*-----------------------------------------------------------------------------
  * Name:    scstart
  * Purpose: call SDstart to open HDF file
@@ -845,7 +1611,7 @@ nscgdimstrs(dim, label, unit, format, llabel, lunit, lformat, mlen)
      intf *dim;
      _fcd label, unit, format;
      intf *llabel, *lunit, *lformat;
-     int *mlen;
+     intf *mlen;
 #endif /* PROTOTYPE */
 {
     char *ilabel, *iunit, *iformat;

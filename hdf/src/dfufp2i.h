@@ -56,26 +56,26 @@ extern      "C"
 /* prototypes for dfufp2im.c */
 
 #ifdef OLD_WAY
-    extern int  duif2i_(int32 *hdim, int32 *vdim, float32 *max, float32 *min,
+    HDFFCLIBAPI int  duif2i_(int32 *hdim, int32 *vdim, float32 *max, float32 *min,
                         float32 hscale[], float32 vscale[], float32 data[],
                   _fcd palette, _fcd outfile, int *ct_method, int32 *hres,
                         int32 *vres, int *compress, int *lenfn);
-    extern int  DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
+    HDFFCLIBAPI int  DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
                              float32 *hscale, float32 *vscale, float32 *data,
                              uint8 *palette, char *outfile, int ct_method,
                              int32 hres, int32 vres, int compress);
 #endif
-    extern int  process
+    HDFFCLIBAPI int  process
                 (Input * in, Output * out);
-    extern int  generate_scale
+    HDFFCLIBAPI int  generate_scale
                 (int32 dim, float32 *scale);
-    extern int  convert_interp
+    HDFFCLIBAPI int  convert_interp
                 (Input * in, Output * out);
-    extern int  pixrep_scaled
+    HDFFCLIBAPI int  pixrep_scaled
                 (Input * in, Output * out);
-    extern int  compute_offsets
+    HDFFCLIBAPI int  compute_offsets
                 (float32 *scale, int32 dim, int32 *offsets, int32 res);
-    extern int  pixrep_simple
+    HDFFCLIBAPI int  pixrep_simple
                 (Input * in, Output * out);
 
 #if defined c_plusplus || defined __cplusplus

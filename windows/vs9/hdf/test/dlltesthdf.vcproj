@@ -456,6 +456,10 @@
 				>
 			</File>
             <File
+                RelativePath="..\..\..\..\hdf\test\tattdatainfo.c"
+                >
+            </File>
+            <File
                 RelativePath="..\..\..\..\hdf\test\tdatainfo.c"
                 >
             </File>

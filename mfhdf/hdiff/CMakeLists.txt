@@ -78,7 +78,7 @@ IF (BUILD_TESTING)
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_PROGRAM=$<TARGET_FILE:hdiff>"
             -D "TEST_ARGS:STRING=${ARGN}"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/testfiles"
             -D "TEST_OUTPUT=${resultfile}.out"
             -D "TEST_EXPECT=${resultcode}"
             -D "TEST_REFERENCE=${resultfile}.txt"
@@ -86,7 +86,7 @@ IF (BUILD_TESTING)
     )
   ENDMACRO (ADD_H4_TEST file)
  
-  #-- Copy all the dat files from the test directory into the source directory
+  #-- Copy all the data files from the test directory into the source directory
   SET (HDF4_REFERENCE_TEST_FILES
       hdifftst1.hdf
       hdifftst2.hdf
@@ -115,8 +115,8 @@ IF (BUILD_TESTING)
   )
  
   FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #MESSAGE(STATUS " Copying ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    SET (dest "${PROJECT_BINARY_DIR}/testfiles/${h4_file}")
+    #MESSAGE(STATUS " Copying ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/testfiles/")
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff 
         POST_BUILD
@@ -126,7 +126,7 @@ IF (BUILD_TESTING)
   ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
   FOREACH (out_file ${HDF4_REFERENCE_FILES})
-    SET (outdest "${PROJECT_BINARY_DIR}/${out_file}")
+    SET (outdest "${PROJECT_BINARY_DIR}/testfiles/${out_file}")
     #MESSAGE (STATUS " Translating ${out_file}")
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
@@ -173,7 +173,7 @@ IF (BUILD_TESTING)
   ADD_H4_TEST (hdiff_12 1 -d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf)
 
   # hyperslab reading 
-  ADD_H4_TEST (hdiff_13 1 hdifftst3.hdf hdifftst4.hdf)
+  ADD_H4_TEST (hdiff_13 0 hdifftst3.hdf hdifftst4.hdf)
 
   # lone dim
   ADD_H4_TEST (hdiff_14 1 hdifftst5.hdf hdifftst6.hdf)

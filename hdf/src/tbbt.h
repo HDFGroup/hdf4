@@ -150,7 +150,7 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
-    TBBT_TREE  *tbbtdmake
+HDFLIBAPI TBBT_TREE  *tbbtdmake
                 (intn (*compar) (VOIDP, VOIDP, intn), intn arg, uintn fast_compare);
 /* Allocates and initializes an empty threaded, balanced, binary tree and
  * returns a pointer to the control structure for it.  You can also create
@@ -212,14 +212,14 @@ extern      "C"
  * of ANY tree.  Never use tbbtdfree() except on a tbbtdmake()d tree.
  */
 
-    TBBT_NODE  *tbbtdfind
+HDFLIBAPI TBBT_NODE  *tbbtdfind
                 (TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp);
-    TBBT_NODE  *tbbtfind
+HDFLIBAPI TBBT_NODE  *tbbtfind
                 (TBBT_NODE * root, VOIDP key, intn (*cmp) (VOIDP, VOIDP, intn),
                  intn arg, TBBT_NODE ** pp);
-    TBBT_NODE  *tbbtdless
+HDFLIBAPI TBBT_NODE  *tbbtdless
                 (TBBT_TREE * tree, VOIDP key, TBBT_NODE ** pp);
-    TBBT_NODE  *tbbtless
+HDFLIBAPI TBBT_NODE  *tbbtless
                 (TBBT_NODE * root, VOIDP key, intn (*cmp) (VOIDP, VOIDP, intn),
                  intn arg, TBBT_NODE ** pp);
 /* Locate a node based on the key given.  A pointer to the node in the tree
@@ -235,7 +235,7 @@ extern      "C"
  * or equal to the key given to them.
  */
 
-    TBBT_NODE  *tbbtindx
+HDFLIBAPI TBBT_NODE  *tbbtindx
                 (TBBT_NODE * root, int32 indx);
 /* Locate the node that has `indx' nodes with lesser key values.  This is like
  * an array lookup with the first item in the list having index 0.  For large
@@ -244,9 +244,9 @@ extern      "C"
  * as fast as) `tbbtfirst(root)'.
  */
 
-    TBBT_NODE  *tbbtdins
+HDFLIBAPI TBBT_NODE  *tbbtdins
                 (TBBT_TREE * tree, VOIDP item, VOIDP key);
-    TBBT_NODE  *tbbtins
+HDFLIBAPI TBBT_NODE  *tbbtins
                 (TBBT_NODE ** root, VOIDP item, VOIDP key, intn (*cmp) (VOIDP, VOIDP, intn), intn arg);
 /* Insert a new node to the tree having a key value of `key' and a data pointer
  * of `item'.  If a node already exists in the tree with key value `key' or if
@@ -254,7 +254,7 @@ extern      "C"
  * to the inserted node is returned.  `cmp' and `arg' are as for tbbtfind().
  */
 
-    VOIDP       tbbtrem
+HDFLIBAPI VOIDP       tbbtrem
                 (TBBT_NODE ** root, TBBT_NODE * node, VOIDP *kp);
 /* Remove the node pointed to by `node' from the tree with root `root'.  The
  * data pointer for the deleted node is returned.  If the second argument is
@@ -265,9 +265,9 @@ extern      "C"
  *     data= tbbtrem( &tree->root, tbbtdfind(tree,key), NULL );
  */
 
-    TBBT_NODE  *tbbtfirst
+HDFLIBAPI TBBT_NODE  *tbbtfirst
                 (TBBT_NODE * root);
-    TBBT_NODE  *tbbtlast
+HDFLIBAPI TBBT_NODE  *tbbtlast
                 (TBBT_NODE * root);
 /* Returns a pointer to node from the tree with the lowest(first)/highest(last)
  * key value.  If the tree is empy NULL is returned.  Examples:
@@ -277,18 +277,18 @@ extern      "C"
  *     node= tbbtlast(node);        (* Last node in a sub-tree *)
  */
 
-    TBBT_NODE  *tbbtnext
+HDFLIBAPI TBBT_NODE  *tbbtnext
                 (TBBT_NODE * node);
-    TBBT_NODE  *tbbtprev
+HDFLIBAPI TBBT_NODE  *tbbtprev
                 (TBBT_NODE * node);
 /* Returns a pointer the node from the tree with the next highest (previous
  * lowest) key value relative to the node pointed to by `node'.  If `node'
  * points the last (first) node of the tree, NULL is returned.
  */
 
-    TBBT_TREE  *tbbtdfree
+HDFLIBAPI TBBT_TREE  *tbbtdfree
                 (TBBT_TREE * tree, VOID(*fd) (VOIDP), VOID(*fk) (VOIDP));
-    VOID        tbbtfree
+HDFLIBAPI VOID        tbbtfree
                 (TBBT_NODE ** root, VOID(*fd) (VOIDP), VOID(*fk) (VOIDP));
 /* Frees up an entire tree.  `fd' is a pointer to a function that frees/
  * destroys data items, and `fk' is the same for key values.
@@ -302,11 +302,11 @@ extern      "C"
  * tbbtfree() always sets `root' to be NULL.
  */
 
-    VOID        tbbtprint
+HDFLIBAPI VOID        tbbtprint
                 (TBBT_NODE * node);
 /* Prints out the data in a node */
 
-    VOID        tbbtdump
+HDFLIBAPI VOID        tbbtdump
                 (TBBT_TREE * tree, intn method);
 /* Prints an entire tree.  The method variable determines which sort of
  * traversal is used:
@@ -315,11 +315,11 @@ extern      "C"
  *       0 : In-Order Traversal
  */
 
-    long        tbbtcount
+HDFLIBAPI long        tbbtcount
                 (TBBT_TREE * tree);
 
 /* Terminate the buffers used in the tbbt*() interface */
-    intn tbbt_shutdown(void);
+HDFPUBLIC intn tbbt_shutdown(void);
 
 #if defined c_plusplus || defined __cplusplus
 }

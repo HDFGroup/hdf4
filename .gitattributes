@@ -23,7 +23,6 @@ config/cmake/HDFMacros.cmake -text
 config/cmake/HDFTests.c -text
 config/cmake/cacheinit.cmake -text
 config/cmake/h4config.h.in -text
-config/cmake/hdf4_zlib.h.in -text
 config/cmake/runTest.cmake -text
 config/cmake/xlatefile.c -text
 config/commence.am -text
@@ -94,6 +93,7 @@ hdf/fortran/examples/VG_insert_vdatas_to_vgroup.f -text
 hdf/fortran/examples/VG_set_get_vgroup_attr.f -text
 hdf/fortran/examples/VG_vgroup_contents.f -text
 hdf/src/CMakeLists.txt -text
+hdf/src/H4api_adpt.h -text
 hdf/src/dfufp2if.c -text
 hdf/src/dfufp2iff.f -text
 hdf/src/hdatainfo.c -text
@@ -229,6 +229,7 @@ mfhdf/fortran/examples/SD_write_slab.f -text
 mfhdf/fortran/examples/SD_write_to_sds.f -text
 mfhdf/fortran/hdftest1.f -text
 mfhdf/fortran/mffunc.inc -text
+mfhdf/fortran/mfsdf.h -text
 mfhdf/fortran/test_nc.nc -text
 mfhdf/hdfimport/CMakeLists.txt -text
 mfhdf/hdfimport/SDSfloat2.hdf -text

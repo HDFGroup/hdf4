@@ -91,6 +91,20 @@
 
 
 /* always points to the next available slot; the last error record is in slot (top-1) */
+#if defined(H4_BUILT_AS_DYNAMIC_LIB)
+#ifdef _H_ERR_MASTER_
+#if defined _WIN32 && defined hdf_EXPORTS
+__declspec(dllexport)
+#endif
+#else
+HDFERRPUBLIC
+#endif /* _H_ERR_MASTER_ */
+int32       error_top
+#ifdef _H_ERR_MASTER_
+= 0
+#endif /* _H_ERR_MASTER_ */
+;
+#else /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
 #ifndef _H_ERR_MASTER_
 #if defined _WIN32 && defined HDFAPDLL
 __declspec(dllimport)
@@ -107,6 +121,7 @@ int32       error_top
 = 0
 #endif /* _H_ERR_MASTER_ */
 ;
+#endif /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
 
 /* Macro to wrap around calls to HEPclear, so it doesn't get called zillions of times */
 #define HEclear() {if(error_top!=0) HEPclear(); }

@@ -52,6 +52,8 @@ ELSE (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 ADD_TEST (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)
+SET (passRegex "HDF-SD test passes")
+SET_PROPERTY (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
 
 #-- Copy all the dat files from the test directory into the source directory
 SET (HDF4_REFERENCE_TEST_FILES
@@ -122,6 +124,8 @@ ELSE (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 ADD_TEST (NAME hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
+SET (NCpassRegex "HDF-nc test passes")
+SET_PROPERTY (TEST hdfnctest PROPERTY PASS_REGULAR_EXPRESSION "${NCpassRegex}")
 
 #-- Adding test for xdrtest
 IF (HDF4_BUILD_XDR_LIB)

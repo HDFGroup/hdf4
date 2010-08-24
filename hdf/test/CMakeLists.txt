@@ -37,6 +37,8 @@ SET (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/sdnmms.c 
     ${HDF4_HDF_TEST_SOURCE_DIR}/sdstr.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/slab.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tattdatainfo.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tdatainfo.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tdupimgs.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tmgrattr.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tmgrcomp.c
@@ -67,6 +69,8 @@ IF (WIN32)
 ENDIF (WIN32)
 TARGET_LINK_LIBRARIES (testhdf ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ADD_TEST (NAME testhdf COMMAND $<TARGET_FILE:testhdf>)
+SET (passRegex "All tests were successful")
+SET_PROPERTY (TEST testhdf PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
 
 #-- Copy all the dat files from the test directory into the source directory
 SET (HDF4_REFERENCE_TEST_FILES

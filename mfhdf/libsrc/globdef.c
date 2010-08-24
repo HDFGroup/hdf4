@@ -22,6 +22,8 @@
  * to allow the creation of SunOS sharable-libraries.
  */
 #include "h4config.h"
+#include "H4api_adpt.h"
+
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else

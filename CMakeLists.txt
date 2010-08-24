@@ -366,7 +366,7 @@ ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 #-----------------------------------------------------------------------------
 # Option for LibJpeg support
 #-----------------------------------------------------------------------------
-OPTION (HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg" OFF)
+OPTION (HDF4_ENABLE_JPEG_LIB_SUPPORT "Enable libjpeg" ON)
 IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
   IF (NOT H4_JPEGLIB_HEADER)
     FIND_PACKAGE (JPEG REQUIRED)
@@ -389,7 +389,7 @@ ENDIF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
 #-----------------------------------------------------------------------------
 # Option for ZLib support
 #-----------------------------------------------------------------------------
-OPTION (HDF4_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" OFF)
+OPTION (HDF4_ENABLE_Z_LIB_SUPPORT "Enable Zlib Filters" ON)
 IF (HDF4_ENABLE_Z_LIB_SUPPORT)
   IF (NOT H4_ZLIB_HEADER)
     FIND_PACKAGE (ZLIB REQUIRED)
@@ -407,7 +407,6 @@ IF (HDF4_ENABLE_Z_LIB_SUPPORT)
     SET (H4_HAVE_ZLIB_H 1)
     SET (H4_HAVE_LIBZ 1)
   ENDIF (NOT H4_ZLIB_HEADER)
-  CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/hdf4_zlib.h.in ${HDF4_BINARY_DIR}/hdf4_zlib.h @ONLY IMMEDIATE)
   SET (LINK_LIBS ${LINK_LIBS} ${ZLIB_LIBRARIES})
   INCLUDE_DIRECTORIES (${ZLIB_INCLUDE_DIRS})
   MESSAGE (STATUS "Filter ZLIB is ON")
@@ -467,7 +466,10 @@ ENDIF (BUILD_TESTING)
 #-----------------------------------------------------------------------------
 # Option to build HDF4 xdr Library
 #-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" ON)
+OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
+IF (WIN32)
+  SET (HDF4_BUILD_XDR_LIB ON)
+ENDIF (WIN32)
 IF (HDF4_BUILD_XDR_LIB)
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
 ENDIF (HDF4_BUILD_XDR_LIB)
@@ -488,16 +490,16 @@ IF (HDF4_BUILD_FORTRAN)
   # Set default name mangling : overridden by Fortran detection in fortran dir
   IF (WIN32)
     SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
-    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME ##_")
+    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
   ELSE (WIN32)
-    SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
-    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
+    SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name_")
+    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
   ENDIF (WIN32)
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
 ELSE (HDF4_BUILD_FORTRAN )
   SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
-  SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## _")
+  SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
 ENDIF (HDF4_BUILD_FORTRAN)
 
 IF (MSVC)

@@ -111,10 +111,9 @@ IF (BUILD_TESTING)
     ADD_EXECUTABLE (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
     TARGET_NAMING (fortest)
     TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
-    ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
     IF (WIN32)
       IF (MSVC)
-        #TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
+        TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
         IF (BUILD_SHARED_LIBS)
           SET_TARGET_PROPERTIES (fortest
               PROPERTIES
@@ -128,7 +127,9 @@ IF (BUILD_TESTING)
         ENDIF (BUILD_SHARED_LIBS)
       ENDIF (MSVC)
     ENDIF (WIN32)
-    SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE Fortran)
+    SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
+
+    ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
   ENDIF (NOT WIN32)
 
   #-----------------------------------------------------------------------------
@@ -175,7 +176,32 @@ IF (BUILD_TESTING)
   TARGET_LINK_LIBRARIES (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
   SET_TARGET_PROPERTIES (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
+  #-- Copy all the dat files from the test directory into the source directory
+  SET (HDF4_REFERENCE_TEST_FILES
+    8bit.dat
+    bitio.dat
+    gr_r24.dat
+    greyjpeg.dat
+    jpeg.dat
+    litend.dat
+    nbit.dat
+    tmgr.dat
+    tvattr.dat
+  )
+  FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/test_files/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} to ${PROJECT_BINARY_DIR}/test_files/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     fortestF 
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+
   ADD_TEST (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
+  SET (passRegex "All Fortran Interface Tests Passed")
+  SET_PROPERTY (TEST fortestF PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
   
 ENDIF (BUILD_TESTING)
 

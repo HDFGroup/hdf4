@@ -244,50 +244,50 @@ extern      "C"
 
     void VSIrelease_vdata_node(VDATA *v);
 
-    extern vsinstance_t *VSIget_vsinstance_node(void);
+    HDFLIBAPI vsinstance_t *VSIget_vsinstance_node(void);
 
-    extern void VSIrelease_vsinstance_node(vsinstance_t *vs);
+    HDFLIBAPI void VSIrelease_vsinstance_node(vsinstance_t *vs);
 
     VGROUP *VIget_vgroup_node(void);
 
     void VIrelease_vgroup_node(VGROUP *v);
 
-    extern vginstance_t *VIget_vginstance_node(void);
+    HDFLIBAPI vginstance_t *VIget_vginstance_node(void);
 
-    extern void VIrelease_vginstance_node(vginstance_t *vg);
+    HDFLIBAPI void VIrelease_vginstance_node(vginstance_t *vg);
 
-    extern intn VPparse_shutdown(void);
+    HDFLIBAPI intn VPparse_shutdown(void);
 
-    extern vfile_t *Get_vfile(HFILEID f);
+    HDFLIBAPI vfile_t *Get_vfile(HFILEID f);
 
-    extern vsinstance_t *vsinst
+    HDFLIBAPI vsinstance_t *vsinst
                 (HFILEID f, uint16 vsid);
 
-    extern vginstance_t *vginst
+    HDFLIBAPI vginstance_t *vginst
             (HFILEID f, uint16 vgid);
 
-    extern DYN_VWRITELIST *vswritelist
+    HDFLIBAPI DYN_VWRITELIST *vswritelist
                 (int32 vskey);
 
-    extern intn vpackvg
+    HDFLIBAPI intn vpackvg
                 (VGROUP * vg, uint8 buf[], int32 * size);
 
-    extern int32 vinsertpair
+    HDFLIBAPI int32 vinsertpair
                 (VGROUP * vg, uint16 tag, uint16 ref);
 
-    extern intn vpackvs
+    HDFLIBAPI intn vpackvs
                 (VDATA * vs, uint8 buf[], int32 * size);
 
-    extern VGROUP *VPgetinfo
+    HDFLIBAPI VGROUP *VPgetinfo
                 (HFILEID f,uint16 ref);
 
-    extern VDATA *VSPgetinfo
+    HDFLIBAPI VDATA *VSPgetinfo
                 (HFILEID f,uint16 ref);
 
-    extern int16 map_from_old_types
+    HDFLIBAPI int16 map_from_old_types
                 (intn type);
 
-    extern void trimendblanks
+    HDFLIBAPI void trimendblanks
                 (char *ss);
 
 #if defined c_plusplus || defined __cplusplus

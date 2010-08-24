@@ -1844,7 +1844,10 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
-
+    
+    HDFLIBAPI intn VSgetvdatas
+                (int32, uintn, uintn, uint16*);
+    
     HDFLIBAPI intn VSsetblocksize
                 (int32 vkey, int32 block_size);
 

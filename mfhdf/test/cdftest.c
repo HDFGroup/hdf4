@@ -32,6 +32,7 @@ static char mrcsid[] = "Id: cdftest.c,v 1.11 1994/01/10 23:07:27 chouck Exp ";
 /* #define NOBUF */
 #include <stdio.h>
 #include "h4config.h"
+#include "H4api_adpt.h"
 #ifdef H4_HAVE_NETCDF
 #include "netcdf.h"
 #else

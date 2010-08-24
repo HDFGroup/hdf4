@@ -20,11 +20,7 @@
 #ifndef _NETCDF_
 #define _NETCDF_
 
-#ifdef __MWERKS__
-#ifndef HDF
-#define HDF
-#endif
-#endif /* __MWERKS__ */
+#include "H4api_adpt.h"
 
 /*
  * The definitions ncvoid, USE_ENUM, and MAX_NC_OPEN, may need to be set
@@ -344,7 +340,7 @@ typedef long    nclong;         /* default, compatible type */
 #define	NC_SYSERR	-1
 
 #include "hdf2netcdf.h"
-extern int ncerr ;
+HDFLIBAPI int ncerr ;
 
 /*
  * Global options variable. Used to determine behavior of error handler.
@@ -353,7 +349,7 @@ extern int ncerr ;
 #define	NC_FATAL	1
 #define	NC_VERBOSE	2
 
-extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
+HDFLIBAPI int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 
 /*
  * NB: The following feature-test line is too long in order to accomodate a 
@@ -377,71 +373,71 @@ extern int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 extern "C" {
 #endif
 
-extern int nccreate	PROTO((
+HDFLIBAPI int nccreate	PROTO((
     const char*	path,
     int		cmode
 ));
-extern int ncopen	PROTO((
+HDFLIBAPI int ncopen	PROTO((
     const char*	path,
     int		mode
 ));
-extern int ncredef	PROTO((
+HDFLIBAPI int ncredef	PROTO((
     int		cdfid
 ));
-extern int ncendef	PROTO((
+HDFLIBAPI int ncendef	PROTO((
     int		cdfid
 ));
-extern int ncclose	PROTO((
+HDFLIBAPI int ncclose	PROTO((
     int		cdfid
 ));
-extern int ncinquire	PROTO((
+HDFLIBAPI int ncinquire	PROTO((
     int		cdfid,
     int*	ndims,
     int*	nvars,
     int*	natts, 
     int*	recdim
 ));
-extern int ncsync	PROTO((
+HDFLIBAPI int ncsync	PROTO((
     int		cdfid
 ));
-extern int ncabort	PROTO((
+HDFLIBAPI int ncabort	PROTO((
     int		cdfid
 ));
-extern int ncnobuf	PROTO((
+HDFLIBAPI int ncnobuf	PROTO((
     int		cdfid
 ));
-extern int ncdimdef	PROTO((
+HDFLIBAPI int ncdimdef	PROTO((
     int		cdfid,
     const char*	name,
     long	length
 ));
-extern int ncdimid	PROTO((
+HDFLIBAPI int ncdimid	PROTO((
     int		cdfid,
     const char*	name
 ));
-extern int ncdiminq	PROTO((
+HDFLIBAPI int ncdiminq	PROTO((
     int		cdfid,
     int		dimid,
     char*	name,
     long*	length
 ));
-extern int ncdimrename	PROTO((
+HDFLIBAPI int ncdimrename	PROTO((
     int		cdfid,
     int		dimid,
     const char*	name
 ));
-extern int ncvardef	PROTO((
+HDFLIBAPI int ncvardef	PROTO((
     int		cdfid,
     const char*	name,
     nc_type	datatype, 
     int		ndims,
     const int*	dim
 ));
-extern int ncvarid	PROTO((
+HDFLIBAPI int ncvarid	PROTO((
     int		cdfid,
     const char*	name
 ));
-extern int ncvarinq	PROTO((
+HDFLIBAPI int ncvarinq	PROTO((
     int		cdfid,
     int		varid,
     char*	name,
@@ -450,33 +446,33 @@ extern int ncvarinq	PROTO((
     int*	dim,
     int*	natts
 ));
-extern int ncvarput1	PROTO((
+HDFLIBAPI int ncvarput1	PROTO((
     int		cdfid,
     int		varid,
     const long*	coords,
     const void*	value
 ));
-extern int ncvarget1	PROTO((
+HDFLIBAPI int ncvarget1	PROTO((
     int		cdfid,
     int		varid,
     const long*	coords,
     void*	value
 ));
-extern int ncvarput	PROTO((
+HDFLIBAPI int ncvarput	PROTO((
     int		cdfid,
     int		varid,
     const long*	start,
     const long*	count, 
     void*	value
 ));
-extern int ncvarget	PROTO((
+HDFLIBAPI int ncvarget	PROTO((
     int		cdfid,
     int		varid,
     const long*	start,
     const long*	count, 
     void*	value
 ));
-extern int ncvarputs	PROTO((
+HDFLIBAPI int ncvarputs	PROTO((
     int		cdfid,
     int		varid,
     const long*	start,
@@ -484,7 +480,7 @@ extern int ncvarputs	PROTO((
     const long*	stride,
     void*	values
 ));
-extern int ncvargets	PROTO((
+HDFLIBAPI int ncvargets	PROTO((
     int		cdfid,
     int		varid,
     const long*	start,
@@ -492,7 +488,7 @@ extern int ncvargets	PROTO((
     const long*	stride,
     void*	values
 ));
-extern int ncvarputg	PROTO((
+HDFLIBAPI int ncvarputg	PROTO((
     int		cdfid,
     int		varid,
     const long*	start,
@@ -501,7 +497,7 @@ extern int ncvarputg	PROTO((
     const long*	imap,
     void* values
 ));
-extern int ncvargetg	PROTO((
+HDFLIBAPI int ncvargetg	PROTO((
     int		cdfid,
     int		varid,
     const long*	start,
@@ -510,12 +506,12 @@ extern int ncvargetg	PROTO((
     const long*	imap,
     void*	values
 ));
-extern int ncvarrename	PROTO((
+HDFLIBAPI int ncvarrename	PROTO((
     int		cdfid,
     int		varid,
     const char*	name
 ));
-extern int ncattput	PROTO((
+HDFLIBAPI int ncattput	PROTO((
     int		cdfid,
     int		varid,
     const char*	name, 
@@ -523,62 +519,62 @@ extern int ncattput	PROTO((
     int		len,
     const void*	value
 ));
-extern int ncattinq	PROTO((
+HDFLIBAPI int ncattinq	PROTO((
     int		cdfid,
     int		varid,
     const char*	name, 
     nc_type*	datatype,
     int*	len
 ));
-extern int ncattget	PROTO((
+HDFLIBAPI int ncattget	PROTO((
     int		cdfid,
     int		varid,
     const char*	name, 
     void*	value
 ));
-extern int ncattcopy	PROTO((
+HDFLIBAPI int ncattcopy	PROTO((
     int		incdf,
     int		invar,
     const char*	name, 
     int		outcdf,
     int		outvar
 ));
-extern int ncattname	PROTO((
+HDFLIBAPI int ncattname	PROTO((
     int		cdfid,
     int		varid,
     int		attnum,
     char*	name
 ));
-extern int ncattrename	PROTO((
+HDFLIBAPI int ncattrename	PROTO((
     int		cdfid,
     int		varid,
     const char*	name, 
     const char*	newname
 ));
-extern int ncattdel	PROTO((
+HDFLIBAPI int ncattdel	PROTO((
     int		cdfid,
     int		varid,
     const char*	name
 ));
-extern int nctypelen	PROTO((
+HDFLIBAPI int nctypelen	PROTO((
     nc_type	datatype
 ));
-extern int ncsetfill	PROTO((
+HDFLIBAPI int ncsetfill	PROTO((
     int		cdfid,
     int		fillmode
 ));
-extern int ncrecinq		PROTO((
+HDFLIBAPI int ncrecinq		PROTO((
     int		cdfid,
     int*	nrecvars,
     int*	recvarids,
     long*	recsizes
 ));
-extern int ncrecget		PROTO((
+HDFLIBAPI int ncrecget		PROTO((
     int		cdfid,
     long	recnum,
     void**	datap
 ));
-extern int ncrecput		PROTO((
+HDFLIBAPI int ncrecput		PROTO((
     int		cdfid,
     long	recnum,
     void* * datap

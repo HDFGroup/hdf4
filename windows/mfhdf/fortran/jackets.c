@@ -90,10 +90,10 @@ struct ncfils {			/* This will be a common block from Fortran */
  * global integer used for suppressing error messages and determining
  * the fatality of errors.
  */
-extern int ncopts;		/* default is (NC_FATAL | NC_VERBOSE) */
+HDFLIBAPI int ncopts;		/* default is (NC_FATAL | NC_VERBOSE) */
 
 /* global integer that contains a netCDF-specific error code */
-extern int ncerr;
+HDFLIBAPI int ncerr;
 
 /* blank fill C string to make FORTRAN string */
 static void
