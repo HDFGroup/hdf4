@@ -28,6 +28,8 @@
 #ifndef _MFAN_H  /* avoid re-inclusion */
 #define _MFAN_H
 
+#include "H4api_adpt.h"
+
 #include "hdf.h"
 
 #if 0

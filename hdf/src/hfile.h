@@ -20,6 +20,8 @@
 #ifndef HFILE_H
 #define HFILE_H
 
+#include "H4api_adpt.h"
+
 #include "tbbt.h"
 #include "bitvect.h"
 #include "atom.h"

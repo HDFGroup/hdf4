@@ -20,6 +20,8 @@
 #include        <string.h>
 #include	<stdlib.h>
 #include	<stdio.h>
+
+#include "H4api_adpt.h"
 #ifdef HDF
 #include        "local_nc.h"
 #else /* HDF */

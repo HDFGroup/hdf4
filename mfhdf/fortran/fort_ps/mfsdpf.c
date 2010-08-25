@@ -28,6 +28,8 @@ static char RcsId[] = "@(#)$Revision$";
 */
 
 #ifdef HDF
+
+#include "H4api_adpt.h"
 #include "mfsdf.h"
 
 #ifdef PROTOTYPE

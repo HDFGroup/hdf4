@@ -14,6 +14,8 @@
 #ifndef _MFSDF_H_
 #define _MFSDF_H_
 
+#include "H4api_adpt.h"
+
 #include "mfhdf.h"
 
 #ifdef __cplusplus

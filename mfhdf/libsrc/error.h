@@ -18,6 +18,8 @@
 #ifndef _NC_ERROR_
 #define _NC_ERROR_
 
+#include "H4api_adpt.h"
+
 #ifndef NO_STDARG
 HDFLIBAPI void nc_serror(const char *fmt, ...) ;
 HDFLIBAPI void NCadvise(int err, const char *fmt,...) ;

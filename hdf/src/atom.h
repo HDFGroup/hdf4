@@ -27,6 +27,8 @@
 #ifndef __ATOM_H
 #define __ATOM_H
 
+#include "H4api_adpt.h"
+
 /* Atom Features control */
 /* Define the following macro for fast hash calculations (but limited hash sizes) */
 #define HASH_SIZE_POWER_2

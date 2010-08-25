@@ -31,6 +31,8 @@
 #ifndef DF_H    /* avoid re-inclusion */
 #define DF_H
 
+#include "H4api_adpt.h"
+
 /* include DF (internal) header information */
 #include "hdf.h"
 

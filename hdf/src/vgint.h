@@ -30,6 +30,8 @@
 #ifndef _VGINT_H
 #define _VGINT_H
 
+#include "H4api_adpt.h"
+
 #include "hfile.h"
 
 /* Include file for Threaded, Balanced Binary Tree implementation */

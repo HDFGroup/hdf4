@@ -15,7 +15,8 @@
 
 #ifndef _H_PROTO
 #define _H_PROTO
-#include "h4config.h"
+
+#include "H4api_adpt.h"
 
 /* Usefull macros, which someday might become actual functions */
 /* Wrappers for Hinquire. feb-2-92 */

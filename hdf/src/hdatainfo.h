@@ -15,7 +15,8 @@
 
 #ifndef _H_DATAINFO
 #define _H_DATAINFO
-#include "h4config.h"
+
+#include "H4api_adpt.h"
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"

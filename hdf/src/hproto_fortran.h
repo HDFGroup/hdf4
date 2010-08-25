@@ -15,7 +15,8 @@
 
 #ifndef _H_PROTO_FORTRAN
 #define _H_PROTO_FORTRAN
-#include "h4config.h"
+
+#include "H4api_adpt.h"
 
 
 #if defined c_plusplus || defined __cplusplus

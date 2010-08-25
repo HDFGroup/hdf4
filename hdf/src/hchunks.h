@@ -28,6 +28,8 @@
 #ifndef __HCHUNKS_H
 #define __HCHUNKS_H
 
+#include "H4api_adpt.h"
+
 /* required includes */
 #include "hfile.h"  /* special info stuff */
 

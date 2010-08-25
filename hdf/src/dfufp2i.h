@@ -16,6 +16,8 @@
 #ifndef DFUFP2IM_H  /* avoid re-inclusion */
 #define DFUFP2IM_H
 
+#include "H4api_adpt.h"
+
 /* Input structure */
 typedef struct
   {

@@ -19,6 +19,8 @@
 #ifndef TBBT_H
 #define TBBT_H
 
+#include "H4api_adpt.h"
+
 #ifdef lint     /* lint always complains but may complain more if... */
 # define   TBBT_INTERNALS   /* TBBT_INTERNALS not always defined */
 #endif /* lint */

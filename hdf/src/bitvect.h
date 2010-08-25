@@ -27,6 +27,8 @@
 #ifndef __BITVECT_H
 #define __BITVECT_H
 
+#include "H4api_adpt.h"
+
 #include "hdf.h"
 
 /* Boolean values used */

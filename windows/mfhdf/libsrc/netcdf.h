@@ -20,11 +20,7 @@
 #ifndef _NETCDF_
 #define _NETCDF_
 
-#ifdef __MWERKS__
-#ifndef HDF
-#define HDF
-#endif
-#endif /* __MWERKS__ */
+#include "H4api_adpt.h"
 
 #include "hdfi.h"
 

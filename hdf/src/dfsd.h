@@ -29,6 +29,8 @@
 #ifndef _DFSD_H   /* avoid re-inclusion */
 #define _DFSD_H
 
+#include "H4api_adpt.h"
+
 #include "hdf.h"
 
 /* include numbertype and aid for 3.2   S. Xu   */

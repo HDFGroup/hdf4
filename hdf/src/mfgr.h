@@ -27,6 +27,8 @@
 #ifndef __MFGR_H
 #define __MFGR_H
 
+#include "H4api_adpt.h"
+
 /* Interlace types available */
 typedef int16 gr_interlace_t;
 #define MFGR_INTERLACE_PIXEL		0    /* pixel interlacing scheme */

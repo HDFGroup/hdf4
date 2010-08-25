@@ -17,7 +17,8 @@
 /* $Id$ */
 #ifndef _LOCAL_NC_
 #define _LOCAL_NC_
-#include "h4config.h"
+
+#include "H4api_adpt.h"
 /*
  *	netcdf library 'private' data structures, objects and interfaces
  */
