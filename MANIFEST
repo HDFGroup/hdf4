@@ -835,6 +835,7 @@
 ./mfhdf/hdiff/testfiles/hdiff_04.txt
 ./mfhdf/hdiff/testfiles/hdiff_05.txt
 ./mfhdf/hdiff/testfiles/hdiff_06.txt
+./mfhdf/hdiff/testfiles/hdiff_06w.txt
 ./mfhdf/hdiff/testfiles/hdiff_07.txt
 ./mfhdf/hdiff/testfiles/hdiff_08.txt
 ./mfhdf/hdiff/testfiles/hdiff_09.txt
@@ -1116,7 +1117,7 @@
 ./CTestConfig.cmake
 ./CMakeLists.txt
 
-./config/cmake/HDF4-config.cmake.install.in
+./config/cmake/hdf4-config.cmake.install.in
 ./config/cmake/ConfigureChecks.cmake
 ./config/cmake/FortranConfigureChecks.cmake
 ./config/cmake/CTestCustom.ctest
@@ -1131,7 +1132,8 @@
 ./config/cmake/FindSZIP.cmake
 ./config/cmake/cacheinit.cmake
 ./config/cmake/HDF4Macros.cmake
-./config/cmake/HDF4-config.cmake.build.in
+./config/cmake/hdf4-config.cmake.build.in
+./config/cmake/hdf4-config-version.cmake.in
 
 ./release_notes/HISTORY.txt
 ./release_notes/RELEASE.txt
