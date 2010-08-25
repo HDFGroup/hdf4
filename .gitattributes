@@ -16,13 +16,14 @@ config/cmake/ConversionTests.c -text
 config/cmake/FindSZIP.cmake -text
 config/cmake/FortranConfigureChecks.cmake -text
 config/cmake/GetTimeOfDayTest.c -text
-config/cmake/HDF4-config.cmake.build.in -text
-config/cmake/HDF4-config.cmake.install.in -text
 config/cmake/HDF4Macros.cmake -text
 config/cmake/HDFMacros.cmake -text
 config/cmake/HDFTests.c -text
 config/cmake/cacheinit.cmake -text
 config/cmake/h4config.h.in -text
+config/cmake/hdf4-config-version.cmake.in -text
+config/cmake/hdf4-config.cmake.build.in -text
+config/cmake/hdf4-config.cmake.install.in -text
 config/cmake/runTest.cmake -text
 config/cmake/xlatefile.c -text
 config/commence.am -text

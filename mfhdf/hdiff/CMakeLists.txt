@@ -141,14 +141,14 @@ IF (BUILD_TESTING)
         TARGET     hdiff
         POST_BUILD
         COMMAND    ${XLATE_UTILITY}
-        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/hdiff_06.txt -l3
+        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt -l3
     )
   ELSE (WIN32)
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
         COMMAND    ${XLATE_UTILITY}
-        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/hdiff_06.txt -l3
+        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt -l3
     )
   ENDIF (WIN32)
 

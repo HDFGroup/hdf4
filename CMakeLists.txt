@@ -135,6 +135,19 @@ SET (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
 SET (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 
+# set default prefix location
+SET (CMAKE_INSTALL_PREFIX "./hdf4" CACHE PATH "Install path prefix, prepended onto install directories")
+
+IF (NOT HDF4_INSTALL_BIN_DIR)
+  SET (HDF4_INSTALL_BIN_DIR bin)
+ENDIF (NOT HDF4_INSTALL_BIN_DIR)
+IF (NOT HDF4_INSTALL_LIB_DIR)
+  SET (HDF4_INSTALL_LIB_DIR lib)
+ENDIF (NOT HDF4_INSTALL_LIB_DIR)
+IF (NOT HDF4_INSTALL_INCLUDE_DIR)
+  SET (HDF4_INSTALL_INCLUDE_DIR include)
+ENDIF (NOT HDF4_INSTALL_INCLUDE_DIR)
+
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
 #-----------------------------------------------------------------------------
@@ -457,8 +470,12 @@ IF (BUILD_TESTING)
   ENABLE_TESTING ()
   INCLUDE (CTest)
   IF (NOT HDF4_EXTERNALLY_CONFIGURED)
-    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/test   ${PROJECT_BINARY_DIR}/hdf/test)
-    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
+    IF (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
+      ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/test   ${PROJECT_BINARY_DIR}/hdf/test)
+    ENDIF (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
+    IF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
+      ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
+    ENDIF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
   ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
   INCLUDE (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
 ENDIF (BUILD_TESTING)
@@ -485,22 +502,20 @@ ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
 #-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
-IF (HDF4_BUILD_FORTRAN)
-  # Set default name mangling : overridden by Fortran detection in fortran dir
-  IF (WIN32)
-    SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
-    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
-  ELSE (WIN32)
-    SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name_")
-    SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-  ENDIF (WIN32)
-  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
-  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
-ELSE (HDF4_BUILD_FORTRAN )
-  SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
-  SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
-ENDIF (HDF4_BUILD_FORTRAN)
+# Set default name mangling : overridden by Fortran detection in fortran dir
+SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) name ## _")
+SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
+IF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
+  OPTION (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
+  IF (HDF4_BUILD_FORTRAN)
+    IF (WIN32)
+      SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
+      SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
+    ENDIF (WIN32)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
+  ENDIF (HDF4_BUILD_FORTRAN)
+ENDIF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
 
 IF (MSVC)
   SET (H4_HDSETVBUF "HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))")
@@ -515,26 +530,20 @@ ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
 ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
 
 #-----------------------------------------------------------------------------
-# Option to build HDF4 Tools
-#-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_TOOLS  "Build HDF4 Tools" OFF)
-
-#-----------------------------------------------------------------------------
-# Option to build HDF4 Utilities
-#-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_UTILS  "Build HDF4 Utilities" OFF)
-
-#-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
 #-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
-IF (HDF4_BUILD_EXAMPLES)
-  IF (HDF4_BUILD_FORTRAN)
-    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran/examples     ${PROJECT_BINARY_DIR}/hdf/fortran/examples)
-  ENDIF (HDF4_BUILD_FORTRAN)
+IF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/examples")
+  OPTION (HDF4_BUILD_EXAMPLES  "Build HDF4 Examples" OFF)
+  IF (HDF4_BUILD_EXAMPLES)
+    IF (HDF4_BUILD_FORTRAN)
+      IF (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
+        ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran/examples     ${PROJECT_BINARY_DIR}/hdf/fortran/examples)
+      ENDIF (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
+    ENDIF (HDF4_BUILD_FORTRAN)
 
-  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
-ENDIF (HDF4_BUILD_EXAMPLES)
+    ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
+  ENDIF (HDF4_BUILD_EXAMPLES)
+ENDIF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/examples")
 
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation
@@ -544,39 +553,45 @@ CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/h4config.h.in      ${PROJECT_BINARY_DIR}/h
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
-INSTALL (
-    FILES
-        ${PROJECT_BINARY_DIR}/h4config.h
-    DESTINATION
-        include
-    COMPONENT
-        headers
-)
+IF (NOT HDF4_INSTALL_NO_DEVELOPMENT)
+  INSTALL (
+      FILES
+          ${PROJECT_BINARY_DIR}/h4config.h
+      DESTINATION
+          ${HDF4_INSTALL_INCLUDE_DIR}
+      COMPONENT
+          headers
+  )
+ENDIF (NOT HDF4_INSTALL_NO_DEVELOPMENT)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
-INSTALL (
-    EXPORT
-        ${HDF4_EXPORTED_TARGETS}
-    DESTINATION
-        lib
-    FILE
-        HDF4-targets.cmake
-)
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  INSTALL (
+      EXPORT
+          ${HDF4_EXPORTED_TARGETS}
+      DESTINATION
+          lib/cmake/hdf4-${HDF4_PACKAGE_VERSION}
+      FILE
+          hdf4-targets.cmake
+  )
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Export all exported targets to the build tree for use by parent project
 #-----------------------------------------------------------------------------
-EXPORT (
-    TARGETS
-        ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES}
-    FILE
-        HDF4-targets.cmake
-)
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  EXPORT (
+      TARGETS
+          ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES}
+      FILE
+          hdf4-targets.cmake
+  )
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
-# Configure the HDF4-config.cmake file for the build directory
+# Configure the hdf4-config.cmake file for the build directory
 #-----------------------------------------------------------------------------
 SET (HDF4_INCLUDES_BUILD_TIME
     ${HDF4_HDF_SOURCE_DIR}
@@ -589,75 +604,110 @@ SET (HDF4_VERSION_MAJOR  @HDF4_PACKAGE_VERSION_MAJOR@)
 SET (HDF4_VERSION_MINOR  @HDF4_PACKAGE_VERSION_MINOR@)
 
 CONFIGURE_FILE (
-    ${HDF4_RESOURCES_DIR}/HDF4-config.cmake.build.in 
-    ${HDF4_BINARY_DIR}/HDF4-config.cmake @ONLY
+    ${HDF4_RESOURCES_DIR}/hdf4-config.cmake.build.in 
+    ${HDF4_BINARY_DIR}/hdf4-config.cmake @ONLY
 )
 
 #-----------------------------------------------------------------------------
 # Configure the HDF5-config.cmake file for the install directory
 #-----------------------------------------------------------------------------
-INSTALL (CODE
-    "SET (HDF4_INSTALL_SKIP_TARGETS 1)
-     INCLUDE (${HDF4_BINARY_DIR}/HDF4-config.cmake) 
-     CONFIGURE_FILE (
-         \"${HDF4_RESOURCES_DIR}/HDF4-config.cmake.install.in\" 
-         \"${CMAKE_INSTALL_PREFIX}/lib/HDF4-config.cmake\" @ONLY
-     )
-    "
-)
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  CONFIGURE_FILE (
+      ${HDF4_RESOURCES_DIR}/hdf4-config.cmake.install.in
+      ${HDF4_BINARY_DIR}/CMakeFiles/hdf4-config.cmake @ONLY
+  )
+  INSTALL (
+      FILES
+          ${HDF4_BINARY_DIR}/CMakeFiles/hdf4-config.cmake
+      DESTINATION
+          lib/cmake/hdf4-${HDF4_PACKAGE_VERSION}
+  )
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
+
+#-----------------------------------------------------------------------------
+# Configure the hdf4-config-version .cmake file for the install directory
+#-----------------------------------------------------------------------------
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  CONFIGURE_FILE (
+      ${HDF4_RESOURCES_DIR}/hdf4-config-version.cmake.in
+      ${HDF4_BINARY_DIR}/CMakeFiles/hdf4-config-version.cmake @ONLY
+  )
+  INSTALL (
+      FILES
+          ${HDF4_BINARY_DIR}/CMakeFiles/hdf4-config-version.cmake
+      DESTINATION
+          lib/cmake/hdf4-${HDF4_PACKAGE_VERSION}
+  )
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Set the cpack variables
 #-----------------------------------------------------------------------------
-SET (CPACK_PACKAGE_VENDOR "The HDF Group")
-SET (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
-SET (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
-SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
-SET (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
-SET (CPACK_PACKAGE_VERSION_PATCH "")
-SET (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+IF (NOT HDF4_EXTERNALLY_CONFIGURED AND EXISTS "${HDF4_SOURCE_DIR}/release_notes")
+  SET (CPACK_PACKAGE_VENDOR "The HDF Group")
+  SET (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
+  SET (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
+  SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
+  SET (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
+  SET (CPACK_PACKAGE_VERSION_PATCH "")
+  SET (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 
-IF (WIN32)
-  SET (CPACK_NSIS_PACKAGE_NAME "HDF4 ${HDF4_PACKAGE_VERSION}")
-ENDIF (WIN32)
+  IF (WIN32)
+    SET (CPACK_NSIS_PACKAGE_NAME "HDF4 ${HDF4_PACKAGE_VERSION}")
+  ENDIF (WIN32)
 
-INCLUDE (CPack)
+  INCLUDE (CPack)
 
-#-----------------------------------------------------------------------------
-# Now list the cpack commands
-#-----------------------------------------------------------------------------
-CPACK_ADD_COMPONENT (applications 
-    DISPLAY_NAME "HDF4 Applications" 
-    DEPENDS libraries
-    GROUP Applications
-)
-CPACK_ADD_COMPONENT (libraries 
-    DISPLAY_NAME "HDF4 Libraries"
-    GROUP Runtime
-)
-CPACK_ADD_COMPONENT (headers 
-    DISPLAY_NAME "HDF4 Headers" 
-    DEPENDS libraries
-    GROUP Development
-)
-
-IF (HDF4_BUILD_FORTRAN)
-  CPACK_ADD_COMPONENT (fortlibraries 
-      DISPLAY_NAME "HDF4 Fortran Libraries" 
-      DEPENDS libraries
-      GROUP Runtime
-  )
-ENDIF (HDF4_BUILD_FORTRAN)
-
-IF (HDF4_BUILD_TOOLS)
-  CPACK_ADD_COMPONENT (toolsapplications 
-      DISPLAY_NAME "HDF4 Tools Applications" 
+  #-----------------------------------------------------------------------------
+  # Now list the cpack commands
+  #-----------------------------------------------------------------------------
+  CPACK_ADD_COMPONENT (applications 
+      DISPLAY_NAME "HDF4 Applications" 
       DEPENDS libraries
       GROUP Applications
   )
-  CPACK_ADD_COMPONENT (toolsheaders 
-      DISPLAY_NAME "HDF4 Tools Headers" 
+  CPACK_ADD_COMPONENT (libraries 
+      DISPLAY_NAME "HDF4 Libraries"
+      GROUP Runtime
+  )
+  CPACK_ADD_COMPONENT (headers 
+      DISPLAY_NAME "HDF4 Headers" 
       DEPENDS libraries
       GROUP Development
   )
-ENDIF (HDF4_BUILD_TOOLS)
+
+  IF (HDF4_BUILD_FORTRAN)
+    CPACK_ADD_COMPONENT (fortlibraries 
+        DISPLAY_NAME "HDF4 Fortran Libraries" 
+        DEPENDS libraries
+        GROUP Runtime
+    )
+  ENDIF (HDF4_BUILD_FORTRAN)
+
+  IF (HDF4_BUILD_TOOLS)
+    CPACK_ADD_COMPONENT (toolsapplications 
+        DISPLAY_NAME "HDF4 Tools Applications" 
+        DEPENDS libraries
+        GROUP Applications
+    )
+    CPACK_ADD_COMPONENT (toolsheaders 
+        DISPLAY_NAME "HDF4 Tools Headers" 
+        DEPENDS libraries
+        GROUP Development
+    )
+  ENDIF (HDF4_BUILD_TOOLS)
+
+  IF (HDF4_BUILD_UTILS)
+    CPACK_ADD_COMPONENT (utilsapplications 
+        DISPLAY_NAME "HDF4 Utility Applications" 
+        DEPENDS libraries
+        GROUP Applications
+    )
+    CPACK_ADD_COMPONENT (utilsheaders 
+        DISPLAY_NAME "HDF4 Utility Headers" 
+        DEPENDS libraries
+        GROUP Development
+    )
+  ENDIF (HDF4_BUILD_UTILS)
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED AND EXISTS "${HDF4_SOURCE_DIR}/release_notes")
+  
