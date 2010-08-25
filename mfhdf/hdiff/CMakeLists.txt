@@ -102,7 +102,7 @@ IF (BUILD_TESTING)
       hdiff_03.txt
       hdiff_04.txt
       hdiff_05.txt
-      hdiff_06.txt
+#      hdiff_06.txt
       hdiff_07.txt
       hdiff_08.txt
       hdiff_09.txt
@@ -135,6 +135,22 @@ IF (BUILD_TESTING)
         ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${out_file} ${outdest} -l3
     )
   ENDFOREACH (out_file ${HDF4_REFERENCE_FILES})
+
+  IF (WIN32)
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdiff
+        POST_BUILD
+        COMMAND    ${XLATE_UTILITY}
+        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/hdiff_06.txt -l3
+    )
+  ELSE (WIN32)
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdiff
+        POST_BUILD
+        COMMAND    ${XLATE_UTILITY}
+        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/hdiff_06.txt -l3
+    )
+  ENDIF (WIN32)
 
   # help message
   ADD_H4_TEST (hdiff_01 1) 

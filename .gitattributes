@@ -240,6 +240,7 @@ mfhdf/hdfimport/hdfimport.out3 -text
 mfhdf/hdiff/CMakeLists.txt -text
 mfhdf/hdiff/hdiff_dim.c -text
 mfhdf/hdiff/hdiff_dim.h -text
+mfhdf/hdiff/testfiles/hdiff_06w.txt -text
 mfhdf/hdiff/testfiles/hdiff_13.txt -text
 mfhdf/hdiff/testfiles/hdiff_14.txt -text
 mfhdf/hdiff/testfiles/hdiff_15.txt -text
