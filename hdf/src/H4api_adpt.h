@@ -79,7 +79,7 @@
 #if defined(mfhdf_fcstub_EXPORTS)
   #if defined (_MSC_VER)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllimport)
-    #define HDFLIBAPI extern __declspec(dllexport)
+    #define HDFLIBAPI extern __declspec(dllimport)
     #define HDFFCLIBAPI extern __declspec(dllexport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFPUBLIC __attribute__ ((visibility("default")))

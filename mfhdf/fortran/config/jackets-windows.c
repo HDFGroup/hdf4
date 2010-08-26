@@ -85,16 +85,6 @@ struct ncfils {			/* This will be a common block from Fortran */
 
 #endif	/* NC_OLD_FILLVALUES above */
 
-
-/*
- * global integer used for suppressing error messages and determining
- * the fatality of errors.
- */
-extern int ncopts;		/* default is (NC_FATAL | NC_VERBOSE) */
-
-/* global integer that contains a netCDF-specific error code */
-extern int ncerr;
-
 /* blank fill C string to make FORTRAN string */
 static void
 fcdcpy (fstring, fslen, sstring)
