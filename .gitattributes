@@ -299,6 +299,7 @@ mfhdf/test/tunlim.c -text
 mfhdf/xdr/CMakeLists.txt -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
 mfhdf/xdr/xdr.def -text
+mfhdf/xdr/xdrtest.out -text
 release_notes/INSTALL -text
 release_notes/INSTALL_CYGWIN.txt -text
 release_notes/INSTALL_WINDOWS.txt -text

@@ -1089,6 +1089,7 @@
 ./mfhdf/xdr/xdrtest.c
 ./mfhdf/xdr/xdrtest.mak
 ./mfhdf/xdr/xdrtest.opt
+./mfhdf/xdr/xdrtest.out
 ./mfhdf/xdr/xdrtest.project.hqx
 
 ./mfhdf/ncdump/CMakeLists.txt

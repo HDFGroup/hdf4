@@ -139,7 +139,25 @@ IF (HDF4_BUILD_XDR_LIB)
     ENDIF (MSVC)
   ENDIF (WIN32)
   TARGET_LINK_LIBRARIES (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ADD_TEST (NAME xdrtest COMMAND $<TARGET_FILE:xdrtest>)
+
+  ADD_CUSTOM_COMMAND (
+      TARGET     xdrtest 
+      POST_BUILD
+      COMMAND    ${CMAKE_COMMAND}
+      ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/xdrtest.out
+  )
+
+  ADD_TEST (
+      NAME xdrtest
+      COMMAND "${CMAKE_COMMAND}"
+          -D "TEST_PROGRAM=$<TARGET_FILE:xdrtest>"
+          -D "TEST_ARGS:STRING="
+          -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+          -D "TEST_OUTPUT=xdrtest.tst"
+          -D "TEST_EXPECT=0"
+          -D "TEST_REFERENCE=xdrtest.out"
+          -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+  )
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 
