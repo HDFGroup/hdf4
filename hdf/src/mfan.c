@@ -87,8 +87,8 @@ static char RcsId[] = "@(#)$Revision$";
  *
  *---------------------------------------------------------------------------*/
 
-#ifndef MFAN_C  /* define main annoation source file */
-#define MFAN_C
+#ifndef MFAN_MASTER  /* define main annotation source file */
+#define MFAN_MASTER
 
 #include "mfan.h"
 #include "atom.h"
@@ -2278,4 +2278,4 @@ ANtag2atype(uint16 atag /* IN: annotation tag */)
     return atype;
 } /* ANtag2atype */
 
-#endif /* MFAN_C */
+#endif /* MFAN_MASTER */

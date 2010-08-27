@@ -258,6 +258,7 @@ typedef enum
       DFE_RINOTFOUND,           /* Can't find raster image */
       DFE_BADATTR,              /* Bad Attribute */
       DFE_LUTNOTFOUND,          /* No palette information for RIG */
+      DFE_GRNOTFOUND,           /* Can't find specified GR */
 
 /* SDG/NDG errors */
       DFE_BADTABLE,             /* the nsdg table is wrong */

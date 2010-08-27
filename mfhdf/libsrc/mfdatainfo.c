@@ -52,6 +52,9 @@ status = SDgetattdatainfo(sdsid, ...);
 #include "hfile.h"
 #include "vgint.h"
 
+#define DATAINFO_MASTER
+#include "hdatainfo.h"
+
 #ifdef H4_HAVE_LIBSZ          /* we have the szip library */
 #include "szlib.h"
 #endif

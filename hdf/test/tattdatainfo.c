@@ -13,7 +13,7 @@
 
 #include "hdf.h"
 
-#define DATAINFO_MASTER
+#define DATAINFO_TESTER
 #include "hdatainfo.h"
 #include "tdatainfo.h"
 #include "tutils.h"
@@ -73,9 +73,9 @@ test_vvsattrs(void)
     int32 vdata0_id, vdata1_id, vdata2_id;    /* Various vdata IDs */
     int32 fldindex;
     int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
+    int32 offset, length;
     char vgclass[20];
     int ii;
-    t_hdf_datainfo_t attdata_info;
     int32 status;       /* Status values from routines */
     intn  status_n;	/* returned status for functions returning an intn  */
 
@@ -252,54 +252,40 @@ test_vvsattrs(void)
     vdata1_id = VSattach(fid, vdref_list[1], "w");  /* "VD-CLASS-1" */
     CHECK_VOID(vdata1_id, FAIL, "VSattach");
 
-    /* Allocate space to record the attribute's data info */
-    alloc_info(&attdata_info, 1);
-
     /* Get data info of the first attribute from vdata0 */
-    status = VSgetattdatainfo(vdata0_id, _HDF_VDATA, 0, attdata_info.offsets, attdata_info.lengths);
+    status = VSgetattdatainfo(vdata0_id, _HDF_VDATA, 0, &offset, &length);
     CHECK_VOID(status, FAIL, "VSgetattdatainfo");
 
-    /* Number of values is same as length since size is 1 byte */
-    attdata_info.n_values = attdata_info.lengths[0];
-
     /* Read and verify an attribute without using HDF4 library */
-    status_n = readnoHDF_char(ATTRFILE, &attdata_info, attr3);
+    status_n = readnoHDF_char(ATTRFILE, offset, length, attr3);
     if (status_n == FAIL)
 	fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
 
-    /* Reset attdata_info */
-    HDmemset(&attdata_info, 0, sizeof(attdata_info));
-    alloc_info(&attdata_info, 1);
+    /* Reset offset/length */
+    offset = length = 0;
 
     /* Get data info of the first attribute from vdata1/FLDNAME1 */
-    status = VSgetattdatainfo(vdata1_id, 0, 0, attdata_info.offsets, attdata_info.lengths);
+    status = VSgetattdatainfo(vdata1_id, 0, 0, &offset, &length);
     CHECK_VOID(status, FAIL, "VSgetattdatainfo");
 
-    /* Number of values is same as length since size is 1 byte */
-    attdata_info.n_values = attdata_info.lengths[0];
-
     /* Read and verify an attribute without using HDF4 library */
-    status_n = readnoHDF_char(ATTRFILE, &attdata_info, attr4);
+    status_n = readnoHDF_char(ATTRFILE, offset, length, attr4);
     if (status_n == FAIL)
 	fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
 
     /* Get data info of the first attributes from vgroup0 */
-    status = Vgetattdatainfo(vgroup0_id, 0, attdata_info.offsets, attdata_info.lengths);
+    status = Vgetattdatainfo(vgroup0_id, 0, &offset, &length);
     CHECK_VOID(status, FAIL, "VSgetattdatainfo");
 
-    /* Reset attdata_info */
-    HDmemset(&attdata_info, 0, sizeof(attdata_info));
-    alloc_info(&attdata_info, 1);
+    /* Reset offset/length */
+    offset = length = 0;
 
     /* Get data info of the second attributes from vgroup0 */
-    status = Vgetattdatainfo(vgroup0_id, 1, attdata_info.offsets, attdata_info.lengths);
+    status = Vgetattdatainfo(vgroup0_id, 1, &offset, &length);
     CHECK_VOID(status, FAIL, "VSgetattdatainfo");
 
-    /* Number of values is same as length since size is 1 byte */
-    attdata_info.n_values = attdata_info.lengths[0];
-
     /* Read and verify an attribute without using HDF4 library */
-    status_n = readnoHDF_char("tattdatainfo.hdf", &attdata_info, attr2);
+    status_n = readnoHDF_char("tattdatainfo.hdf", offset, length, attr2);
     if (status_n == FAIL)
 	fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
 

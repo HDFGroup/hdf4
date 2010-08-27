@@ -44,7 +44,7 @@ typedef enum
 } ann_type;
 #endif
 
-#ifdef MFAN_C
+#if defined MFAN_MASTER | defined MFAN_TESTER
 /* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
 
 /* PRIVATE variables and definitions */
@@ -93,7 +93,7 @@ typedef struct ANentry
 /* Obtain Annotation type from key */
 #define AN_KEY2TYPE(k)     ((int32)((int32)k >> 16))
 
-#else /* !MFAN_C */
+#else /* !defined MFAN_MASTER && !defined MFAN_TESTER */
 /* WE are NOT in main ANNOTATION source file
  * Nothing EXPORTED except Public fcns */
 
@@ -358,6 +358,6 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
 HDFLIBAPI ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
 
 
-#endif /* !MFAN_C */
+#endif /* !defined MFAN_MASTER && !MFAN_TESTER */
 
 #endif /* _MFAN_H */

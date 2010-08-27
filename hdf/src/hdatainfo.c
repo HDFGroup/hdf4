@@ -46,10 +46,20 @@ Vgetattdatainfo(vgid, attrindex, *offset, *length)
 GRgetattdatainfo(id, attrindex, *attrname, *offset, *length)
 */
 
+#ifndef MFGR_MASTER
 #define MFGR_MASTER	/* for GRgetdatainfo and GRgetattdatainfo */
+#endif			/* mfgr.h is included in hdf.h */
+
+#ifndef MFAN_MASTER
+#define MFAN_MASTER	/* for ANgetdatainfo */
+#endif			/* mfan.h is included here */
+
 #include "hdf.h"
 #include "hlimits.h"
 #include "vgint.h"
+#include "mfan.h"
+
+#define DATAINFO_MASTER
 #include "hdatainfo.h"
 
 #ifdef H4_HAVE_LIBSZ          /* we have the library */
@@ -200,11 +210,11 @@ done:
 --------------------------------------------------------------------------*/
 intn
 HDgetdatainfo(int32 file_id,
-		uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
-		uintn start_block,	/* IN: data block to start at, 0 base */
-		uintn info_count,	/* IN: number of info records */
-		int32 *offsetarray,	/* OUT: array to hold offsets */
-		int32 *lengtharray)	/* OUT: array to hold lengths */
+	uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+	uintn start_block,	/* IN: data block to start at, 0 base */
+	uintn info_count,	/* IN: number of info records */
+	int32 *offsetarray,	/* OUT: array to hold offsets */
+	int32 *lengtharray)	/* OUT: array to hold lengths */
 {
     CONSTR(FUNC, "HDgetdatainfo");	/* for HGOTO_ERROR */
     int32	data_len;	/* offset of the data we are checking */
@@ -662,7 +672,7 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
       {
           /* locate GR's object in hash table */
           if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
           if(attrindex < 0 || attrindex >= gr_ptr->gattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -674,7 +684,7 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
       {
           /* locate RI's object in hash table */
           if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
           if(attrindex < 0 || attrindex >= ri_ptr->lattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL); 
@@ -685,23 +695,26 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Search for an attribute with the same name */
-    if((aentry = (void **)tbbtfirst((TBBT_NODE *)*search_tree)) != NULL)
-      {
-          do {
-              at_ptr = (at_info_t *)*aentry;
-              if (at_ptr != NULL && HDstrcmp(at_ptr->name, attrname) == 0)  /* ie. the name matches */
-                {
-                    found = TRUE;
-                    break;
-                } /* end if */
-          } while ((aentry = (void **)tbbtnext((TBBT_NODE *)aentry)) != NULL);
-      } /* end if */
+    aentry = (void **)tbbtfirst((TBBT_NODE *)*search_tree);
+    found = FALSE;
+    while (!found && (aentry != NULL))
+    {
+	at_ptr = (at_info_t *)*aentry;
+	/* If index is found */
+	if ((at_ptr != NULL) && (at_ptr->index == attrindex))
+	    found = TRUE;
+	else
+	    aentry = (void **)tbbtnext((TBBT_NODE *)aentry);
+    } /* end while */
 
-    if ((attr_vsid = VSattach(hdf_file_id, (int32)at_ptr->ref, "w")) == FAIL)
-                    HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+    attr_vsid = VSattach(hdf_file_id, (int32)at_ptr->ref, "r");
+    if (attr_vsid == FAIL)
+	HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-/* Can RI have linked block?  Need to verify */
+    /* Get offset and length of attribute's data.  Note that start_block is 0
+       and info_count is 1 because attribute's data is only stored in 1 block */
     status = VSgetdatainfo(attr_vsid, 0, 1, offset, length);
+ fprintf(stderr, "offset = %d, length = %d \n", *offset, *length);
     if (status == FAIL)
         HGOTO_ERROR(DFE_GENAPP, FAIL);
 
@@ -740,22 +753,46 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
 {
     CONSTR(FUNC, "GRgetdatainfo");
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
-    uint16 ref;
+    int32 hdf_file_id;		/* short cut for file id */
+    int32 length = 0;
     intn   ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
     HEclear();
 
-    /* check the validity of the ID, the index is checked below */
-    if (HAatom_group(riid)==RIIDGROUP)
-      {
-          /* locate RI's object in hash table */
-          ri_ptr = (ri_info_t *) HAatom_object(riid);
-          if (NULL == ri_ptr)
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+    /* check the validity of the ID */
+    if (HAatom_group(riid) != RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-          ref = ri_ptr->ri_ref;
-      } /* end if */
+    /* locate RI's object in hash table */
+    ri_ptr = (ri_info_t *) HAatom_object(riid);
+    if (NULL == ri_ptr)
+	HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
+
+    hdf_file_id = ri_ptr->gr_ptr->hdf_file_id;	/* alias for file id */
+
+    /* Check for no data in the image */
+
+    /* If the image has no tag/ref pair assigned to it yet, return 0 for
+       info count */
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+    {
+	HGOTO_DONE(0);
+    }
+    /* If the image already had a tag/ref pair, make sure it has actual data,
+       if not, return 0 for info count */
+    else
+    {
+        length = Hlength(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
+        if (length <= 0)
+            HGOTO_DONE(0);
+    } /* end else */
+/*
+    if only one block, call Hoffset length then done 
+    how do we know no special?  maybe from ri_ptr->img_aid
+
+*/
+/* Can RI have linked block?  Need to verify */
 
 done:
   if(ret_value == 0)   
@@ -766,3 +803,135 @@ done:
   /* Normal function cleanup */
   return ret_value;
 }   /* GRgetdatainfo */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+    ANgetdatainfo -- Gets the offset(s) and length(s) locating the data of
+		      the annotation.
+ USAGE
+    int32 ANgetdatainfo(ann_id, *offset, *length)	
+	int32  ann_id;	IN: annotation ID
+	int32 *offset;	OUT: buffer for offset
+	int32 *length;	OUT: buffer for length
+ RETURNS
+    SUCCEED/FAIL
+ DESCRIPTION
+    
+ NOTES
+    Aug 25, 2010: Tested in tdatainfo.c/test_annotation -BMR
+--------------------------------------------------------------------------*/
+intn
+ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
+	int32 *offset,	/* OUT: buffer for offset */
+	int32 *length)	/* OUT: buffer for length */
+{
+    CONSTR(FUNC, "ANgetdatainfo");
+    filerec_t  *file_rec = NULL;		/* file record pointer */
+    TBBT_NODE  *entry  = NULL;
+    ANentry    *ann_entry  = NULL;
+    ANnode     *ann_node   = NULL;
+    int32       file_id = FAIL;
+    int32       type;
+    int32       ann_key;
+    int         newflag = 0;
+    uint16      ann_tag;
+    uint16      ann_ref;
+    uint16      elem_tag;
+    uint16      elem_ref;
+    intn        ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Get annotation record */
+    ann_node = HAatom_object(ann_id);
+    if (NULL == ann_node)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Convert file_id to file rec and check for validity */
+    file_id = ann_node->file_id;
+    file_rec = HAatom_object(file_id);
+    if (BADFREC(file_rec))
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Get annotation key, type, and ref# */
+    ann_key = ann_node->ann_key;
+    type    = AN_KEY2TYPE(ann_key);
+    ann_ref = AN_KEY2REF(ann_key);
+
+    /* Set type tag */
+    switch((int32)type)
+      {
+      case AN_DATA_LABEL:
+          ann_tag = DFTAG_DIL;
+          break;
+      case AN_DATA_DESC:
+          ann_tag = DFTAG_DIA;
+          break;
+      case AN_FILE_LABEL:
+          ann_tag = DFTAG_FID;
+          break;
+      case AN_FILE_DESC:
+          ann_tag = DFTAG_FD;
+          break;
+      default:
+          HE_REPORT_GOTO("Bad annotation type for this call",FAIL);
+      }
+
+#ifdef NEED_ELEMENT_TAG_REF
+/* Keep these here just in case we end up need the object's tag/ref -BMR */
+    /* Get annotation entry so that we can get object's tag/ref later */
+    if ((entry = tbbtdfind(file_rec->an_tree[type], &ann_key, NULL)) == NULL)
+	HE_REPORT_GOTO("failed to retrieve annotation of 'type' tree", FAIL);
+
+    ann_entry = (ANentry *) entry->data;
+
+    elem_tag = ann_entry->elmtag;
+    elem_ref = ann_entry->elmref;
+#endif
+
+    /* If annotation exists, try to get offset/length */
+    newflag  = ann_node->new_ann;
+    if (newflag == 0)
+    {
+	int32 off=0, len=0;
+
+	off = Hoffset(file_id, ann_tag, ann_ref);
+	if (off == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL)
+	else
+	{
+	    if (offset != NULL)
+	    *offset = off;
+	}
+
+	len = Hlength(file_id, ann_tag, ann_ref);
+	if (len == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL)
+	else
+	{
+	    if (length != NULL)
+	    *length = len;
+	}
+
+	/* Because for Data label/description, the object's tag/ref were
+	written to the file before the annotation data, 4 bytes must be
+	taken into account for them */
+	if (ann_tag == DFTAG_DIL || ann_tag == DFTAG_DIA)
+	{
+	    *offset = *offset + 4;
+	    *length = *length - 4;
+	}
+    }
+
+  done:
+    if(ret_value == FAIL)   
+      { /* Error condition cleanup */
+      } /* end if */
+
+    /* Normal function cleanup */
+
+    return ret_value;
+} /* ANgetdatainfo */
+

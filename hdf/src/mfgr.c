@@ -1646,7 +1646,7 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
 /* Get the number of datasets & global attributes from the memory structures */
     if(n_datasets!=NULL)
@@ -2098,7 +2098,7 @@ intn GRend(int32 grid)
     
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
     if (--gr_ptr->access)
         HGOTO_DONE(SUCCEED);
@@ -2340,7 +2340,7 @@ int32 GRselect(int32 grid,int32 index)
     
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
     /* check the index range validity */
     if(!VALIDRIINDEX(index,gr_ptr))
@@ -2415,7 +2415,7 @@ int32 GRcreate(int32 grid,const char *name,int32 ncomp,int32 nt,int32 il,int32 d
     
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
     /* Allocate space for the new image information */
     if((ri_ptr=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
@@ -2534,7 +2534,7 @@ int32 GRnametoindex(int32 grid,const char *name)
     
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
     if((t = (void **)tbbtfirst((TBBT_NODE *)* (gr_ptr->grtree)))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
@@ -2602,7 +2602,7 @@ intn GRgetiminfo(int32 riid,char *name,int32 *ncomp,int32 *nt,int32 *il,
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     if(name!=NULL)
         HDstrcpy(name, ri_ptr->name);
@@ -2674,7 +2674,7 @@ intn GRgetnluts(int32 riid)
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     if(ri_ptr->lut_ref==DFREF_WILDCARD) /* check for no palette defined currently */
         ret_value=0;
@@ -2774,7 +2774,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     gr_ptr=ri_ptr->gr_ptr;
     hdf_file_id=gr_ptr->hdf_file_id;
 
@@ -3244,7 +3244,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
     gr_ptr=ri_ptr->gr_ptr;
     hdf_file_id=gr_ptr->hdf_file_id;
 
@@ -3488,7 +3488,7 @@ intn GRendaccess(int32 riid)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     if(!(ri_ptr->access>0))
         HGOTO_ERROR(DFE_CANTENDACCESS,FAIL);
@@ -3518,7 +3518,7 @@ intn GRendaccess(int32 riid)
 
     /* Delete the atom for the RI ID */
     if(NULL==HAremove_atom(riid))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
 done:
   if(ret_value == FAIL)   
@@ -3567,7 +3567,7 @@ uint16 GRidtoref(int32 riid)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, 0);
+        HGOTO_ERROR(DFE_RINOTFOUND, 0);
 
 #ifdef OLD_WAY
     ret_value = (ri_ptr->ri_ref!=DFREF_WILDCARD ? ri_ptr->ri_ref : ri_ptr->rig_ref);
@@ -3637,7 +3637,7 @@ int32 GRreftoindex(int32 grid,uint16 ref)
     
     /* locate GR's object in hash table */
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
     if((t = (void **)tbbtfirst((TBBT_NODE *) *(gr_ptr->grtree)))==NULL)
         HGOTO_ERROR(DFE_RINOTFOUND,FAIL);
@@ -3702,7 +3702,7 @@ intn GRreqlutil(int32 riid,intn il)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* Assign interlacing scheme */
     ri_ptr->lut_il=(gr_interlace_t)il;   
@@ -3760,7 +3760,7 @@ intn GRreqimageil(int32 riid,intn il)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* Assign interlacing scheme */
     ri_ptr->im_il=(gr_interlace_t)il;   
@@ -3863,7 +3863,7 @@ uint16 GRluttoref(int32 lutid)
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
-        HGOTO_ERROR(DFE_NOVS, 0);	/* return 0 for invalid ref # - BMR */
+        HGOTO_ERROR(DFE_LUTNOTFOUND, 0); /* return 0 for invalid ref # - BMR */
 
     ret_value=ri_ptr->lut_ref;
 
@@ -3918,7 +3918,7 @@ intn GRgetlutinfo(int32 lutid,int32 *ncomp,int32 *nt,int32 *il,int32 *nentries)
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
 
     if(ri_ptr->lut_ref==DFREF_WILDCARD) { /* check for no palette defined currently */
         if(ncomp!=NULL)
@@ -3996,7 +3996,7 @@ intn GRwritelut(int32 lutid,int32 ncomps,int32 nt,int32 il,int32 nentries,void *
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
     hdf_file_id=ri_ptr->gr_ptr->hdf_file_id;
 
     /* Check if this is compatible with older-style palettes */
@@ -4087,7 +4087,7 @@ intn GRreadlut(int32 lutid,void * data)
     
     /* locate LUT's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(lutid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_LUTNOTFOUND, FAIL);
     hdf_file_id=ri_ptr->gr_ptr->hdf_file_id;
 
     if(ri_ptr->lut_tag!=DFTAG_NULL && ri_ptr->lut_ref!=DFREF_WILDCARD)
@@ -4169,7 +4169,7 @@ intn GRsetexternalfile(int32 riid,const char *filename,int32 offset)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     if((ri_ptr->ext_name=(char *)HDmalloc(HDstrlen(filename)+1))==NULL)
         HGOTO_ERROR(DFE_NOSPACE,FAIL);
@@ -4253,7 +4253,7 @@ intn GRsetaccesstype(int32 riid,uintn accesstype)
     
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* Mark the image as having an access-mode and cache args */
     ri_ptr->acc_img=TRUE;
@@ -4367,7 +4367,7 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* Check if the image is already special (all special elements use the buffered driver) */
     if (ri_ptr->use_buf_drvr)
@@ -4677,7 +4677,7 @@ intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * 
       {
           /* locate GR's object in hash table */
           if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
           hdf_file_id=gr_ptr->hdf_file_id;
           search_tree=gr_ptr->gattree;
@@ -4691,7 +4691,7 @@ intn GRsetattr(int32 id,const char *name,int32 attr_nt,int32 count,const void * 
 
           /* locate RI's object in hash table */
           if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
           gr_ptr=ri_ptr->gr_ptr;
 
           hdf_file_id=gr_ptr->hdf_file_id;
@@ -4883,7 +4883,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
       {
           /* locate GR's object in hash table */
           if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
           if(index<0 || index>=gr_ptr->gattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4894,7 +4894,7 @@ intn GRattrinfo(int32 id,int32 index,char *name,int32 *attr_nt,int32 *count)
       {
           /* locate RI's object in hash table */
           if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
           if(index<0 || index>=ri_ptr->lattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL); 
@@ -4971,7 +4971,7 @@ intn GRgetattr(int32 id,int32 index,void * data)
       {
           /* locate GR's object in hash table */
           if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
           if(index<0 || index>=gr_ptr->gattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -4982,7 +4982,7 @@ intn GRgetattr(int32 id,int32 index,void * data)
       {
           /* locate RI's object in hash table */
           if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
           gr_ptr=ri_ptr->gr_ptr;
 
           if(index<0 || index>=ri_ptr->lattr_count)
@@ -5087,7 +5087,7 @@ int32 GRfindattr(int32 id,const char *name)
       {
           /* locate GR's object in hash table */
           if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
           search_tree=gr_ptr->gattree;
       } /* end if */
@@ -5095,7 +5095,7 @@ int32 GRfindattr(int32 id,const char *name)
       {
           /* locate RI's object in hash table */
           if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
-              HGOTO_ERROR(DFE_NOVS, FAIL);
+              HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
           search_tree=ri_ptr->lattree;
       } /* end if */
@@ -5461,7 +5461,7 @@ GRsetchunk(int32 riid,              /* IN: raster access id */
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* initialize important values */
     gr_ptr = ri_ptr->gr_ptr;
@@ -5746,7 +5746,7 @@ GRgetchunkinfo(int32 riid,               /* IN: sds access id */
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* check if access id exists already */
     if(ri_ptr->img_aid == 0)
@@ -5886,7 +5886,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* check if access id exists already */
     if(ri_ptr->img_aid == 0)
@@ -6099,7 +6099,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* check if access id exists already */
     if(ri_ptr->img_aid == 0)
@@ -6332,7 +6332,7 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
 
     /* locate RI's object in hash table */
     if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
-        HGOTO_ERROR(DFE_NOVS, FAIL);
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
     /* check if access id exists already */
     if(ri_ptr->img_aid == 0)
