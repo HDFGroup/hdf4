@@ -7,6 +7,7 @@ rem         vs9               Build using Visual Studio 2008
 rem         enablefortran     Build and test HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
 rem         ivf111            Build HDF4 Fortran using Intel Visual Fortran 11.1
+rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
 rem         useenv            Build using variables set in the environment.
 rem         log               Log the build and test results in files defined by
 rem                           environment variables HDF4BUILD_LOG and
@@ -56,6 +57,7 @@ rem Print a help message
     echo.   enablefortran           Build and testHDF4 C/Fortran Library and 
     echo.                           Tools [default C only]
     echo.   ivf111                  Build HDF4 Fortran using Intel Visual Fortran 11.1
+    echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
     echo.   useenv                  Build using variables set in the environment.
     echo.   log                     Log the build and test results in files defined by
     echo.                           environment variables HDF4BUILD_LOG and
@@ -86,6 +88,10 @@ rem Parse through the parameters sent to file, and set appropriate variables
         ) else if "%%a"=="ivf111" (
             rem Enable Fortran
             set hdf4build_params=!hdf4build_params! ivf111
+            
+        ) else if "%%a"=="ivf101" (
+            rem Enable Fortran
+            set hdf4build_params=!hdf4build_params! ivf101
             
         ) else if "%%a"=="log" (
             rem Log our results to files defined in environment

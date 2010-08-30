@@ -5,6 +5,7 @@ rem There batch file takes the following options:
 rem         vs9               Build using Visual Studio 2008
 rem         enablefortran     Build HDF4 C/Fortran Library and Tools 
 rem                           [default C only]
+rem         ivf101            Build HDF4 Fortran using Intel Visual Fortran 10.1
 rem         ivf111            Build HDF4 Fortran using Intel Visual Fortran 11.1
 rem                           [default Intel Visual Fortran 11.1]
 rem         nodebug           Note: Default is to build debug and release versions
@@ -54,6 +55,7 @@ rem Print a help message
     echo.   vs9                     Build using Visual Studio 2008
     echo.   enablefortran           Build HDF4 C/Fortran Library and Tools 
     echo.                           [default C only]
+    echo.   ivf101                  Build HDF4 Fortran using Intel Visual Fortran 10.1
     echo.   ivf111                  Build HDF4 Fortran using Intel Visual Fortran 11.1
     echo.                           [default Intel Visual Fortran 11.1]
     echo.   nodebug                 Note: Default is to build debug and release versions
@@ -81,6 +83,10 @@ rem Parse through the parameters sent to file, and set appropriate variables
         ) else if "%%a"=="ivf111" (
             rem Enable Fortran
             set hdf4_use_ivf111=true
+            
+        ) else if "%%a"=="ivf101" (
+            rem Enable Fortran
+            set hdf4_use_ivf101=true
             
         ) else if "%%a"=="nodebug" (
             rem Enable Fortran
@@ -123,6 +129,12 @@ rem Setup our environment
             if not defined ifort_compiler11 (
                 echo.Error: Cannot setup Intel Visual Fortran 11.1 environment.  Please
                 echo.make sure IFORT_COMPILER11 is defined in the environment.
+                exit /b 1
+            )
+        ) else (
+            if not defined ifort_compiler10 (
+                echo.Error: Cannot setup Intel Visual Fortran 10.1 environment.  Please
+                echo.make sure IFORT_COMPILER10 is defined in the environment.
                 exit /b 1
             )
         )
