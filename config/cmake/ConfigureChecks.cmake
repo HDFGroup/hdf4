@@ -475,8 +475,7 @@ ENDIF (INLINE_TEST___inline__)
 #-----------------------------------------------------------------------------
 # Check how to print a Long Long integer
 #-----------------------------------------------------------------------------
-SET (H4_PRINTF_LL_WIDTH "H4_PRINTF_LL_WIDTH")
-IF (H4_PRINTF_LL_WIDTH MATCHES "^H4_PRINTF_LL_WIDTH$")
+IF (NOT H4_PRINTF_LL_WIDTH OR H4_PRINTF_LL_WIDTH MATCHES "unknown")
   SET (PRINT_LL_FOUND 0)
   MESSAGE (STATUS "Checking for appropriate format for 64 bit long:")
   FOREACH (HDF4_PRINTF_LL l64 l L q I64 ll)
@@ -512,7 +511,7 @@ IF (H4_PRINTF_LL_WIDTH MATCHES "^H4_PRINTF_LL_WIDTH$")
         "Width for printf for type `long long' or `__int64', us. `ll"
     )
   ENDIF (PRINT_LL_FOUND)
-ENDIF (H4_PRINTF_LL_WIDTH MATCHES "^H4_PRINTF_LL_WIDTH$")
+ENDIF (NOT H4_PRINTF_LL_WIDTH OR H4_PRINTF_LL_WIDTH MATCHES "unknown")
 
 #-----------------------------------------------------------------------------
 # Set the flag to indicate that the machine can handle converting

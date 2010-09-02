@@ -451,6 +451,39 @@ IF (HDF4_ENABLE_SZIP_SUPPORT)
 ENDIF (HDF4_ENABLE_SZIP_SUPPORT)
 
 #-----------------------------------------------------------------------------
+# Option for external libraries on windows
+#-----------------------------------------------------------------------------
+IF (WIN32)
+  OPTION (HDF4_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
+  IF (BUILD_SHARED_LIBS)
+    FILE (MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BLDTYPE})
+    
+    IF (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+      GET_FILENAME_COMPONENT(ZLIB_DLL_NAME ${ZLIB_LIBRARY} NAME_WE)
+      # MESSAGE (STATUS "ZLIB_DLL_NAME: ${ZLIB_DLL_NAME}")
+      GET_FILENAME_COMPONENT(ZLIB_BIN_PATH ${ZLIB_LIBRARY} PATH)
+      # MESSAGE (STATUS "ZLIB_BIN_PATH: ${ZLIB_BIN_PATH}")
+      ADD_CUSTOM_TARGET (ZLIB-Release-Copy ALL
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ZLIB_BIN_PATH}/${ZLIB_DLL_NAME}.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/
+          COMMENT "Copying ${ZLIB_BIN_PATH}/${ZLIB_DLL_NAME}.dll to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/"
+      )
+    ENDIF (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+    
+    IF (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+      GET_FILENAME_COMPONENT(SZIP_DLL_NAME ${SZIP_LIBRARY} NAME_WE)
+      # MESSAGE (STATUS "SZIP_DLL_NAME: ${SZIP_DLL_NAME}")
+      GET_FILENAME_COMPONENT(SZIP_BIN_PATH ${SZIP_LIBRARY} PATH)
+      # MESSAGE (STATUS "SZIP_BIN_PATH: ${SZIP_BIN_PATH}")
+      ADD_CUSTOM_TARGET (SZIP-Release-Copy ALL
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SZIP_BIN_PATH}/${SZIP_DLL_NAME}.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/
+          COMMENT "Copying ${SZIP_BIN_PATH}/${SZIP_DLL_NAME}.dll to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}/"
+      )
+    ENDIF (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+    
+  ENDIF (BUILD_SHARED_LIBS)
+ENDIF (WIN32)
+
+#-----------------------------------------------------------------------------
 # Build utility to copy and strip X lines of file
 #-----------------------------------------------------------------------------
 IF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
@@ -563,6 +596,72 @@ IF (NOT HDF4_INSTALL_NO_DEVELOPMENT)
           headers
   )
 ENDIF (NOT HDF4_INSTALL_NO_DEVELOPMENT)
+
+#-----------------------------------------------------------------------------
+# Option for external libraries on windows
+#-----------------------------------------------------------------------------
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  IF (HDF4_PACKAGE_EXTLIBS)
+    IF (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
+      INSTALL (
+          FILES ${JPEG_INCLUDE_DIR}/jconfig.h ${JPEG_INCLUDE_DIR}/jerror.h ${JPEG_INCLUDE_DIR}/jmorecfg.h ${JPEG_INCLUDE_DIR}/jpeglib.h
+          DESTINATION ${HDF4_INSTALL_INCLUDE_DIR}
+          COMPONENT headers
+      )
+      INSTALL(
+          FILES ${JPEG_LIBRARY}
+          DESTINATION ${HDF4_INSTALL_LIB_DIR}
+          COMPONENT libraries
+      )
+    ENDIF (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
+    IF (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+      INSTALL (
+          FILES ${ZLIB_INCLUDE_DIR}/zconf.h ${ZLIB_INCLUDE_DIR}/zlib.h
+          DESTINATION ${HDF4_INSTALL_INCLUDE_DIR}
+          COMPONENT headers
+      )
+      INSTALL(
+          FILES ${ZLIB_LIBRARY}
+          DESTINATION ${HDF4_INSTALL_LIB_DIR}
+          COMPONENT libraries
+      )
+      IF (BUILD_SHARED_LIBS)
+        GET_FILENAME_COMPONENT(ZLIB_DLL_NAME ${ZLIB_LIBRARY} NAME_WE)
+        # message(STATUS "ZLIB_DLL_NAME: ${ZLIB_DLL_NAME}")
+        GET_FILENAME_COMPONENT(ZLIB_BIN_PATH ${ZLIB_LIBRARY} PATH)
+        # message(STATUS "ZLIB_BIN_PATH: ${ZLIB_BIN_PATH}")
+        INSTALL(
+            FILES ${ZLIB_BIN_PATH}/${ZLIB_DLL_NAME}.dll
+            DESTINATION ${HDF4_INSTALL_BIN_DIR}
+            COMPONENT libraries
+        )
+      ENDIF (BUILD_SHARED_LIBS)
+    ENDIF (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+    IF (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+      INSTALL (
+          FILES ${SZIP_INCLUDE_DIR}/SZconfig.h ${SZIP_INCLUDE_DIR}/szlib.h ${SZIP_INCLUDE_DIR}/szip_adpt.h ${SZIP_INCLUDE_DIR}/ricehdf.h
+          DESTINATION ${HDF4_INSTALL_INCLUDE_DIR}
+          COMPONENT headers
+      )
+      INSTALL(
+          FILES ${SZIP_LIBRARY}
+          DESTINATION ${HDF4_INSTALL_LIB_DIR}
+          COMPONENT libraries
+      )
+      IF (BUILD_SHARED_LIBS)
+        GET_FILENAME_COMPONENT(SZIP_DLL_NAME ${SZIP_LIBRARY} NAME_WE)
+        # message(STATUS "SZIP_DLL_NAME: ${SZIP_DLL_NAME}")
+        GET_FILENAME_COMPONENT(SZIP_BIN_PATH ${SZIP_LIBRARY} PATH)
+        # message(STATUS "SZIP_BIN_PATH: ${ZLIB_BIN_PATH}")
+        INSTALL(
+            FILES ${SZIP_BIN_PATH}/${SZIP_DLL_NAME}.dll
+            DESTINATION ${HDF4_INSTALL_BIN_DIR}
+            COMPONENT libraries
+        )
+      ENDIF (BUILD_SHARED_LIBS)
+    ENDIF (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
+  ENDIF (HDF4_PACKAGE_EXTLIBS)
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects
