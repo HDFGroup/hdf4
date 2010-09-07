@@ -567,6 +567,12 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI intn HPbitshutdown(void);
 
 /*
+ ** from dfutil.c
+ */
+    HDFLIBAPI uint16 DFfindnextref
+                (int32 file_id, uint16 tag, uint16 lref);
+
+/*
    ** from dfcomp.c
  */
     HDFLIBAPI intn DFputcomp

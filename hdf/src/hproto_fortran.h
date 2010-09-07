@@ -633,12 +633,6 @@ extern      "C"
                 (_fcd name, intf  * namelen);
 
 /*
-   ** from dfutil.c
- */
-    HDFFCLIBAPI uint16 DFfindnextref
-                (int32 file_id, uint16 tag, uint16 lref);
-
-/*
    ** from dfutilF.c
  */
 #   define ndfindnr          H4_F77_FUNC(dfindnr, DFINDNR)
