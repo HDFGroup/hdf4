@@ -315,7 +315,7 @@ main(int argc, char *argv[])
 #ifdef VMS   
        system("delete *.tmp;*");
 #else        /* VMS */
-#if !(defined DOS386 | defined WIN386)
+#if !(defined DOS386 || defined WIN386)
           system("rm -f *.hdf *.tmp");
 #else   /* OLD_WAY */
           remove("*.hdf");

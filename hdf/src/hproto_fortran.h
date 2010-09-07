@@ -670,7 +670,7 @@ extern      "C"
  *  and C wrapper function hiclose called by hclose   
  *                                                                                    EIP 2007-09-14
  */
-# ifndef _WIN32
+# if !defined _WIN32 || defined CMAKE_INTDIR
 #   define nhiopen       H4_F77_FUNC(hiopen, HIOPEN)
 #   define nhclose       H4_F77_FUNC(hclose, HCLOSE)
 #   define nhnumber      H4_F77_FUNC(hnumber, HNUMBER)
@@ -760,7 +760,7 @@ extern      "C"
  *  and C wrapper function hiclose called by hclose   
  *                                                                                    EIP 2007-09-14
  */
-# ifndef _WIN32
+# if !defined _WIN32 || defined CMAKE_INTDIR
 #  define nafstart      H4_F77_FUNC(afstart, AFSTART)
 #  define naffileinfo   H4_F77_FUNC(affileinfo, AFFILEINFO)
 #  define nafend        H4_F77_FUNC(afend, AFEND)
@@ -962,7 +962,7 @@ HDFLIBAPI intn ANdestroy(void); */
  *  and C wrapper function hiclose called by hclose   
  *                                                                                    EIP 2007-09-14
  */
-# ifndef _WIN32
+# if !defined _WIN32 || defined CMAKE_INTDIR
 #  define nmgstart         H4_F77_FUNC(mgstart, MGSTART)
 #  define nmgfinfo         H4_F77_FUNC(mgfinfo, MGFINFO)
 #  define nmgend           H4_F77_FUNC(mgend, MGEND)
@@ -1187,7 +1187,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen);
     HDFFCLIBAPI FRETVAL (intf)
        nmgcgnluts(intf *id);
 
-#ifdef _WIN32
+# if defined _WIN32 && !defined CMAKE_INTDIR
 /* Multi-file GR C-stubs for FORTRAN interface found in mfgrf.c */
  HDFFCLIBAPI FRETVAL(intf)
 nmgistrt(intf * fid);
@@ -1268,7 +1268,7 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
  *  and C wrapper function hiclose called by hclose   
  *                                                                                    EIP 2007-09-14
  */
-# ifndef _WIN32
+# if !defined _WIN32 || defined CMAKE_INTDIR
 #   define  ndfivopn       H4_F77_FUNC(dfivopn, DFIVOPN)
 #   define  ndfvclos       H4_F77_FUNC(dfvclos, DFVCLOS)
 #   define  nvatchc        H4_F77_FUNC(vatchc, VATCHC)
@@ -1797,7 +1797,7 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
  *  and C wrapper function hiclose called by hclose   
  *                                                                                    EIP 2007-09-14
  */
-# ifndef _WIN32
+# if !defined _WIN32 || defined CMAKE_INTDIR
 #  define nvsfcfdx   H4_F77_FUNC(vsfcfdx, VSFCFDX)
 #  define nvsfcsat   H4_F77_FUNC(vsfcsat, VSFCSAT)
 #  define nvsfcsca   H4_F77_FUNC(vsfcsca, VSFCSCA)

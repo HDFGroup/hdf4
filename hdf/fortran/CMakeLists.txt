@@ -107,30 +107,28 @@ IF (BUILD_TESTING)
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}  ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} ${LIB_TYPE})
   
   #-- Adding test for fortest
-  IF (NOT WIN32)
-    ADD_EXECUTABLE (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
-    TARGET_NAMING (fortest)
-    TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
-    IF (WIN32)
-      IF (MSVC)
-        TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
-        IF (BUILD_SHARED_LIBS)
-          SET_TARGET_PROPERTIES (fortest
-              PROPERTIES
-                  COMPILE_FLAGS "/dll"
-                  LINK_FLAGS "/SUBSYSTEM:CONSOLE"
-          )
-        ELSE (BUILD_SHARED_LIBS)
-          IF (MSVC)
-            SET_TARGET_PROPERTIES (fortest PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
-          ENDIF (MSVC)
-        ENDIF (BUILD_SHARED_LIBS)
-      ENDIF (MSVC)
-    ENDIF (WIN32)
-    SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
+  ADD_EXECUTABLE (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
+  TARGET_NAMING (fortest)
+  TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
+  IF (WIN32)
+    IF (MSVC)
+      TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
+      IF (BUILD_SHARED_LIBS)
+        SET_TARGET_PROPERTIES (fortest
+            PROPERTIES
+                COMPILE_FLAGS "/dll"
+                LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+        )
+      ELSE (BUILD_SHARED_LIBS)
+        IF (MSVC)
+          SET_TARGET_PROPERTIES (fortest PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
+        ENDIF (MSVC)
+      ENDIF (BUILD_SHARED_LIBS)
+    ENDIF (MSVC)
+  ENDIF (WIN32)
+  SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
 
-    ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
-  ENDIF (NOT WIN32)
+  ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
 
   #-----------------------------------------------------------------------------
   #-- Adding test for fortestF

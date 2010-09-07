@@ -24,7 +24,7 @@ extern "C" {
 
 /* Define the FORTRAN names */
 
-#ifdef _WIN32 /* windows specific cstub functions*/
+#if defined _WIN32 && !defined CMAKE_INTDIR /* windows specific cstub functions*/
 
 #define nscend          H4_F77_FUNC(scend,SCEND)
 #define nscendacc       H4_F77_FUNC(scendacc,SCENDACC)
@@ -100,7 +100,7 @@ HDFFCLIBAPI FRETVAL(intf) nscsflmd(intf *id, intf *fillmode);
 HDFFCLIBAPI FRETVAL(intf)  nscisrcrd(intf *id);
 HDFFCLIBAPI FRETVAL(intf) nscsblsz(intf *id, intf *block_size);
 
-#endif
+#endif /* WIN32 && !CMAKE_INTDIR */
 
 #   define nscstart      H4_F77_FUNC(scstart, SCSTART)
 #   define nsfend        H4_F77_FUNC(sfend, SFEND)
