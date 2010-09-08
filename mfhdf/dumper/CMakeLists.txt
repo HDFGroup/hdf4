@@ -32,30 +32,15 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_LINK_LIBRARIES (hdp ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 TARGET_NAMING (hdp)
-IF (WIN32)
-  IF (MSVC)
-    IF (NOT BUILD_SHARED_LIBS)
-      SET_TARGET_PROPERTIES (hdp  PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
-    ENDIF (NOT BUILD_SHARED_LIBS)
-  ENDIF (MSVC)
-ENDIF (WIN32)
+TARGET_WIN_PROPERTIES (hdp)
 
-#-- Adding test for hdp
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
+
 IF (BUILD_TESTING)
-
-  MACRO (ADD_H4_TEST resultfile resultcode)
-    ADD_TEST (
-        NAME HDP-${resultfile}
-        COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdp>"
-            -D "TEST_ARGS:STRING=${ARGN}"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_OUTPUT=${resultfile}.tst"
-            -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_REFERENCE=${resultfile}.out"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-    )
-  ENDMACRO (ADD_H4_TEST file)
   
   #-- Copy all the dat files from the test directory into the source directory
   SET (HDF4_REFERENCE_TEST_FILES
@@ -191,6 +176,32 @@ IF (BUILD_TESTING)
         ARGS       ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${out_file} ${outdest} -l3
     )
   ENDFOREACH (out_file ${HDF4_REFERENCE_FILES})
+  
+##############################################################################
+##############################################################################
+###           T H E   T E S T S  M A C R O S                               ###
+##############################################################################
+##############################################################################
+
+  MACRO (ADD_H4_TEST resultfile resultcode)
+    ADD_TEST (
+        NAME HDP-${resultfile}
+        COMMAND "${CMAKE_COMMAND}"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hdp>"
+            -D "TEST_ARGS:STRING=${ARGN}"
+            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_OUTPUT=${resultfile}.tst"
+            -D "TEST_EXPECT=${resultcode}"
+            -D "TEST_REFERENCE=${resultfile}.out"
+            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+    )
+  ENDMACRO (ADD_H4_TEST file)
+
+##############################################################################
+##############################################################################
+###           T H E   T E S T S                                            ###
+##############################################################################
+##############################################################################
 
   ADD_H4_TEST (list-1 0 list tdata.hdf)
   ADD_H4_TEST (list-2 0 list -l tdata.hdf)
@@ -367,6 +378,12 @@ IF (BUILD_TESTING)
   ADD_H4_TEST (dumpgr-19 0 dumpgr -g -l grtdfi322.hdf)
   
 ENDIF (BUILD_TESTING)
+
+##############################################################################
+##############################################################################
+###           I N S T A L L A T I O N                                      ###
+##############################################################################
+##############################################################################
 
 #-----------------------------------------------------------------------------
 # Rules for Installation of tools using make Install target

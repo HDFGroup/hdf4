@@ -64,43 +64,16 @@ SET (examples
 FOREACH (example ${examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example})
-  IF (WIN32)
-    IF (BUILD_SHARED_LIBS)
-      IF (MSVC)
-        SET_TARGET_PROPERTIES (f_ex_${example}
-            PROPERTIES
-                COMPILE_FLAGS "/dll"
-                LINK_FLAGS "/SUBSYSTEM:CONSOLE"
-        )
-      ENDIF (MSVC)
-    ELSE (BUILD_SHARED_LIBS)
-      IF (MSVC)
-        SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
-      ENDIF (MSVC)
-    ENDIF (BUILD_SHARED_LIBS)
-    SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
-  ENDIF (WIN32)
+  TARGET_FORTRAN_WIN_PROPERTIES (f_ex_${example})
+  SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME f_extest_${example} COMMAND $<TARGET_FILE:f_ex_${example}>)
 ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
 TARGET_NAMING (f_ex_VG_add_sds_to_vgroup)
-IF (WIN32)
-  IF (BUILD_SHARED_LIBS)
-    IF (MSVC)
-      SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup
-          PROPERTIES
-              COMPILE_FLAGS "/dll"
-              LINK_FLAGS "/SUBSYSTEM:CONSOLE"
-      ) 
-    ENDIF (MSVC)
-  ELSE (BUILD_SHARED_LIBS)
-    IF (MSVC)
-      SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRT") 
-    ENDIF (MSVC)
-  ENDIF (BUILD_SHARED_LIBS)
-  SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
-ENDIF (WIN32)
+TARGET_FORTRAN_WIN_PROPERTIES (f_ex_VG_add_sds_to_vgroup)
+SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 TARGET_LINK_LIBRARIES (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+
 ADD_TEST (NAME f_extest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:f_ex_VG_add_sds_to_vgroup>)
