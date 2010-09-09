@@ -319,7 +319,7 @@ intn HDallocinfo(hdf_datainfo_t *info, uintn info_count)
     info->lengths = (int32 *) HDmalloc(size);
     if (info->lengths != NULL) {
         HEreport("Attempted to allocate %d bytes for lengths", size);
-        HRETURN_ERROR(DFE_NOSPACE, NULL);
+        HRETURN_ERROR(DFE_NOSPACE, FAIL);
     } /* end if */
 
     HDmemset(info, 0, sizeof(info));

@@ -48,6 +48,10 @@ extern      "C"
     HDFLIBAPI intn Vgetattdatainfo
 		(int32 vgid, intn attrindex, int32 *offset, int32 *length);
 
+    HDFLIBAPI intn GRgetdatainfo
+		(int32 riid, uintn start_block, uintn info_count,
+		 int32 *offsetarray, int32 *lengtharray);
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif				/* c_plusplus || __cplusplus */

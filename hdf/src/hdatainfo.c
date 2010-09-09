@@ -207,6 +207,7 @@ done:
  DESCRIPTION
  NOTES
     Aug 17, 2010: Tested with SDgetdatainfo and VSgetdatainfo -BMR
+    Sep 7, 2010: Tested with GRgetdatainfo, but not linked-block yet -BMR
 --------------------------------------------------------------------------*/
 intn
 HDgetdatainfo(int32 file_id,
@@ -251,10 +252,13 @@ HDgetdatainfo(int32 file_id,
 	   the offset and length of the data */
 	if (HTPis_special(data_id)==FALSE)
         {
-	    if ((offset = Hoffset(file_id, data_tag, data_ref)) == FAIL)
-		HGOTO_ERROR(DFE_BADOFFSET, FAIL);
-	    if ((length = Hlength(file_id, data_tag, data_ref)) == FAIL)
-		HGOTO_ERROR(DFE_BADLEN, FAIL);
+	    uint16 find_tag = 0;
+	    uint16 find_ref = 0;
+
+	    if (Hfind(file_id, data_tag, data_ref, &find_tag, &find_ref, &offset, &length, DF_FORWARD) == FAIL)
+	    {
+		HGOTO_ERROR(DFE_NOMATCH, FAIL);
+	    }
 
 	    /* Only one data block here, starting offset cannot be > 1 */
 	    if (start_block > 1)
@@ -467,7 +471,7 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     vg_attr_t *vg_alist;
     vginstance_t *vg_inst;
     int32 attr_vsid, nattrs;
-    intn i, attr_index, found;
+    intn attr_index, found;
     intn status;
     intn ret_value = SUCCEED;
 
@@ -741,7 +745,7 @@ DESCRIPTION
 RETURNS
    SUCCEED/FAIL
 TODO
-    - not tested
+    - not tested with linked-block element yet
     - not documented
 ----------------------------------------------------------------*/
 intn 
@@ -755,6 +759,7 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32 hdf_file_id;		/* short cut for file id */
     int32 length = 0;
+    uintn count;
     intn   ret_value = SUCCEED;
 
     /* clear error stack and check validity of args */
@@ -775,7 +780,8 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
 
     /* If the image has no tag/ref pair assigned to it yet, return 0 for
        info count */
-    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
+    if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_tag==DFREF_WILDCARD
+	|| ri_ptr->img_ref==DFREF_WILDCARD)
     {
 	HGOTO_DONE(0);
     }
@@ -783,23 +789,39 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
        if not, return 0 for info count */
     else
     {
-        length = Hlength(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
-        if (length <= 0)
-            HGOTO_DONE(0);
-    } /* end else */
-/*
-    if only one block, call Hoffset length then done 
-    how do we know no special?  maybe from ri_ptr->img_aid
+	length = Hlength(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
+	if (length <= 0)
+	    HGOTO_DONE(0);
 
-*/
-/* Can RI have linked block?  Need to verify */
+        /* if both arrays are NULL, get the number of data blocks and return */
+        if ((offsetarray == NULL && lengtharray == NULL) && (info_count == 0))
+        {
+            count = HDgetdatainfo_count(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
+            if (count == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
+
+        /* just in case user forgets to allocate space for arrays */
+        else if ((offsetarray == NULL && lengtharray == NULL) && (info_count > 0))
+        {
+            HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
+        }
+
+        /* application requests actual offsets/lengths */
+        else
+        {
+            count = HDgetdatainfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, start_block, info_count, offsetarray, lengtharray);
+            if (count == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
+    } /* end else */
+
+    ret_value = count;
 
 done:
   if(ret_value == 0)   
     { /* Error condition cleanup */
-
     } /* end if */
-
   /* Normal function cleanup */
   return ret_value;
 }   /* GRgetdatainfo */
@@ -828,8 +850,6 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
 {
     CONSTR(FUNC, "ANgetdatainfo");
     filerec_t  *file_rec = NULL;		/* file record pointer */
-    TBBT_NODE  *entry  = NULL;
-    ANentry    *ann_entry  = NULL;
     ANnode     *ann_node   = NULL;
     int32       file_id = FAIL;
     int32       type;
@@ -837,8 +857,6 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
     int         newflag = 0;
     uint16      ann_tag;
     uint16      ann_ref;
-    uint16      elem_tag;
-    uint16      elem_ref;
     intn        ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -929,9 +947,6 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
     if(ret_value == FAIL)   
       { /* Error condition cleanup */
       } /* end if */
-
     /* Normal function cleanup */
-
     return ret_value;
 } /* ANgetdatainfo */
-

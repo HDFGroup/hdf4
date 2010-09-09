@@ -3354,6 +3354,9 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
                 HGOTO_ERROR(DFE_SEEKERROR,FAIL);
 
             /* Read the entire image in */
+
+	    /* This offset is relative to the element not the file and this */
+	    /* is where it reads and decompresses the data -BMR 09/2010 */
             if(Hread(ri_ptr->img_aid,(int32)pixel_disk_size*count[XDIM]*count[YDIM],
                     (uint8 *)img_data)==FAIL)
                 HGOTO_ERROR(DFE_READERROR,FAIL);
@@ -4415,6 +4418,8 @@ intn GRsetcompress(int32 riid,comp_coder_t comp_type,comp_info *cinfo)
         ri_ptr->comp_type=comp_type;
       } /* end else */
 
+    /* Todo: Application may send in COMP_CODE_NONE -BMR 9/2010 */
+
     /* Store compression parameters */
     HDmemcpy(&(ri_ptr->cinfo),&cinfo_x,sizeof(comp_info));
 
@@ -5241,6 +5246,8 @@ PRIVATE intn GRIgetaid(ri_info_t *ri_ptr, intn acc_perm)
 
 
                 pixel_size=(uintn)(ri_ptr->img_dim.ncomps*DFKNTsize(ri_ptr->img_dim.nt));
+
+/* BMR: HRPconvert made access_rec->special = SPECIAL_COMPRAS */
                 if((ri_ptr->img_aid=HRPconvert(hdf_file_id,ri_ptr->img_tag,
                     ri_ptr->img_ref,ri_ptr->img_dim.xdim,ri_ptr->img_dim.ydim,
                     ri_ptr->img_dim.comp_tag,&(ri_ptr->cinfo),pixel_size))==FAIL)
@@ -5269,7 +5276,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-} /* end GRIupdatemeta() */
+} /* end GRIgetaid() */
 
 /*--------------------------------------------------------------------------
  NAME

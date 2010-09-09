@@ -33,11 +33,11 @@
 
 /* Structure to hold annotation datainfo temporarily */
 typedef struct
-	{
-	    char anntext[100]; /* values of the annotation */
-	    int32 offset; /* offset of data block */
-	    int32 length; /* length of data block */
-	} t_ann_info_t;
+  {
+	char anntext[100]; /* values of the annotation */
+	int32 offset; /* offset of data block */
+	int32 length; /* length of data block */
+  } t_ann_info_t;
 
 /*********** Functions to access t_hdfdatainfo_t **********************/
 
@@ -410,19 +410,12 @@ test_append_vs()
 
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
     {
-        data_buf1[rec_num][0] = 2;	/* easier to inspect the bin file */
-        data_buf1[rec_num][1] = 2;
-        data_buf1[rec_num][2] = 2;
-        data_buf1[rec_num][3] = 2;
-        data_buf1[rec_num][4] = 2;
-        data_buf1[rec_num][5] = 2;
-         /* data_buf1[rec_num][0] = 100 + rec_num;
+        data_buf1[rec_num][0] = 100 + rec_num;
         data_buf1[rec_num][1] = 200 + rec_num;
         data_buf1[rec_num][2] = 300 + rec_num;
         data_buf1[rec_num][3] = 1000 + rec_num;
         data_buf1[rec_num][4] = 1000;
         data_buf1[rec_num][5] = 6500;
- */ 
     }
     /* Write the data to vdata APPENDABLE_VD the second time */
     n_records = VSwrite(apvsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
@@ -477,7 +470,6 @@ test_append_vs()
 	by caller.  If any mis-match occurs, an error message will be
 	displayed but the process will continue.
   Parameters:
-const char *filename, const int32 offset, const int32 length, const char *orig_buf
 	char *filename	IN: name of the file
 	int32 offset	IN: where to start read data
 	int32 length	IN: how long to read the data
@@ -532,7 +524,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
     /* Close the file */
     if (fclose(fd) == -1)
     {
-	fprintf(stderr, "readnoHDF_char: unable to close file %s", SIMPLE_FILE);
+	fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
         ret_value = FAIL;
     }
     return ret_value;
@@ -623,16 +615,16 @@ static void
 test_annotation()
 {
     int32 fid,		/* file ID */
-	  an_id, 	/* AN interface identifier */
-	  file_label_id, 	/* file label identifier */
-	  file_desc_id, 	/* file description identifier */
-	  data_label_id, 	/* data label identifier */
-	  data_desc_id, 	/* data description identifier */
-	  vgroup_id;
-    uint16 vgroup_tag, vgroup_ref;
-    t_ann_info_t ann_info[4];
-    intn   status_n;	/* returned status for functions returning an intn  */
-    int32  status;	/* returned status for functions returning an int32 */
+	  an_id, 	/* AN interface ID */
+	  file_label_id, 	/* file label ID */
+	  file_desc_id, 	/* file description ID */
+	  data_label_id, 	/* data label ID */
+	  data_desc_id, 	/* data description ID */
+	  vgroup_id;	/* vgroup ID */
+    uint16 vgroup_tag, vgroup_ref; /* vgroup tag/ref */
+    t_ann_info_t ann_info[4];	/* temporary storage of annotation info */
+    intn  status_n;	/* returned status for functions returning an intn  */
+    int32 status;	/* returned status for functions returning an int32 */
 
     /* Create the HDF file. */
     fid = Hopen (ANNOT_FILE, DFACC_CREATE, 0);
@@ -784,6 +776,310 @@ test_annotation()
     }
 } /* test_annotation */
 
+/****************************************************************************
+   Name: test_oneblock_ri() - tests non-linked-block images
+
+   Description:
+	This routine creates and writes data to images and verifies
+        some data and data information with GRgetdatainfo.  The tests include
+        the following images:
+	- a simple, non-compressed image
+	- three images with RLE, Skipping-Huffman, and Deflate compression
+	Only the non-compressed image's values are verified against the original
+	buffer.  The other three were verified by debugging, additional
+	decompression code needed for further verification (Todo 2)
+   BMR - Aug 2010
+ ****************************************************************************/
+#define IMAGE_FILE	"datainfo_images.hdf"   /* data file */
+#define	NONCOMP_IMAGE	"Image with No Compression"
+#define	RLE_IMAGE	"Image with RLE Compression"
+#define	DEFLATE_IMAGE	"Image with Deflate Compression"
+#define	SKPHUFF_IMAGE	"Image with Skphuff Compression"
+#define	JPEG_IMAGE	"Image with JPEG Compression"
+#define	SKPHUFF_SKIPSIZE	28
+#define	DEFLATE_LEVEL	7
+#define WIDTH		5
+#define LENGTH		5
+#define N_IMAGES	4
+
+/* Convenient function to create and write to an image, used by
+   test_oneblock_ri */
+static intn make_comp_image( 
+	int32 grid,
+	char* img_name,
+	char start_char,  /* first value in the image, for variety of data */
+	int32 comp_type,  /* compression method */
+	comp_info* cinfo) /* compression parameters */
+{
+    int32 riid;         /* raster image ID */
+    int32 riidx;        /* raster image index */
+    int32 dims[2]={WIDTH,LENGTH};	/* dimensions for the image */
+    char image0[WIDTH][LENGTH];		/* image data */
+    int32 start[2];	/* start of image data to grab */
+    int32 stride[2];	/* stride of image data to grab */
+    intn ii, jj;	/* indices */
+    intn status;        /* generic return value */
+    intn ret_value=SUCCEED;
+
+    /* Initialize data we are going to write out, each image created by this
+       convenient function will use the same data pattern with the first value
+       given by the caller  */
+    for (ii = 0; ii < WIDTH; ii++)
+        for (jj = 0; jj < LENGTH; jj++)
+            image0[ii][jj] = start_char + jj;
+
+    /* Create the image with 1 component, type char, pixel interlace, and
+       dimension WIDTHxLENGTH */
+    riid = GRcreate(grid, img_name, 1, DFNT_CHAR, MFGR_INTERLACE_PIXEL, dims);
+    CHECK(riid, FAIL, "GRcreate");
+
+    /* Set compression as instructed */
+    if (comp_type != COMP_CODE_NONE)
+    {
+	status = GRsetcompress(riid, comp_type, cinfo);
+	CHECK(status, FAIL, "GRsetcompress");
+    }
+
+    /* Write the entire image data out */
+    start[0] = start[1] = 0;
+    stride[0] = stride[1] = 1;
+    status = GRwriteimage(riid, start, stride, dims, image0);
+    CHECK(status, FAIL, "GRreadimage");
+
+    /* Close the first image */
+    status = GRendaccess(riid);
+    CHECK(status, FAIL, "GRendaccess");
+
+    return ret_value;
+}
+
+static void
+test_oneblock_ri(void)
+{
+    int32 fid, grid,	/* file ID and GR interface ID */
+	  riid,		/* raster image ID */
+	  ri_ref;	/* raster image ref# */
+    int32 offset, length; /* offset/length buffers for single block of data */
+    intn  status;	/* status returned from routines */
+    intn ii;		/* indices */
+    int32 n_images, n_fattrs;
+    comp_info cinfo;    /* Compression parameters - union */
+    /* offsets/lengths to be used to verify offsets/lengths returned by
+       GRgetdatainfo - confirmed by the command "od" on the hdf file */
+    static int32 image_data_offsets[N_IMAGES] = {309, 363, 426, 486};
+    static int32 image_data_lengths[N_IMAGES] = {25, 26, 29, 16};
+
+    /****************************************************************
+      Create a file in GR interface then create and write several
+      images with and without compression.
+    ****************************************************************/
+
+    /* Create the HDF file and initialize the interface. */
+    fid = Hopen(IMAGE_FILE, DFACC_CREATE, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+
+    grid = GRstart(fid);
+    CHECK_VOID(grid, FAIL, "GRstart");
+
+    /* Create and write the non-compressed image to this file */
+    status = make_comp_image(grid, NONCOMP_IMAGE, 'n', COMP_CODE_NONE, &cinfo);
+
+    /* Create and write 3 more images: RLE, Deflate, and Skipping Huffman */
+
+    /* No compression info for the RLE image */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+
+    /* Create and write the RLE compressed image to this file, starting the
+       data values with the letter 'r' */
+    status = make_comp_image(grid, RLE_IMAGE, 'r', COMP_CODE_RLE, &cinfo);
+
+    /* Set the compression info for the image with Skipping Huffman method */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    cinfo.skphuff.skp_size = SKPHUFF_SKIPSIZE;
+
+    /* Create and write the Skipping Huffman compressed image to this file,
+       starting the data values with the letter 's' */
+    status = make_comp_image(grid, SKPHUFF_IMAGE, 's', COMP_CODE_SKPHUFF, &cinfo);
+
+    /* Set the compression info for the image with Deflate method */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    cinfo.deflate.level = DEFLATE_LEVEL;
+
+    /* Create and write the Deflate compressed image to this file, starting the
+       data values with the letter 'd' */
+    status = make_comp_image(grid, DEFLATE_IMAGE, 'd', COMP_CODE_DEFLATE, &cinfo);
+
+    /* Set the compression method for the image with JPEG method */
+    HDmemset(&cinfo, 0, sizeof(cinfo)) ;
+    cinfo.jpeg.quality = 100;
+    cinfo.jpeg.force_baseline = 1;
+
+    /* Create and write the JPEG compressed image to this file, starting the
+       data values with the letter 'j' - more work to be done for JPEG */
+     /* status = make_comp_image(grid, JPEG_IMAGE, 'j', COMP_CODE_JPEG, &cinfo);
+ */ 
+
+    /* Terminate access to the GR interface and close the file */
+    status = GRend(grid);
+    CHECK_VOID(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+
+    /****************************************************************
+      Re-open the file to read the images and their data information
+    ****************************************************************/
+
+   /* Re-open the file and initialize the GR interface */
+    fid = Hopen (IMAGE_FILE, DFACC_RDONLY, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    grid = GRstart (fid);
+    CHECK_VOID(grid, FAIL, "GRstart");
+
+    /* Get the number of images in the file */
+    status = GRfileinfo(grid, &n_images, &n_fattrs);
+    CHECK_VOID(status, FAIL, "GRfileinfo");
+    VERIFY_VOID(n_images, N_IMAGES, "GRfileinfo");
+
+    /* Open each image then get and verify its data information.  Note that
+	currently, the offsets and lengths are obtained from debugging
+	and the command od on the file */
+    for (ii = 0; ii < n_images; ii++)
+    {
+	riid = GRselect(grid, ii);
+	CHECK_VOID(riid, FAIL, "GRselect");
+
+	status = GRgetdatainfo(riid, 0, 1, &offset, &length);
+	CHECK_VOID(status, FAIL, "GRgetdatainfo");
+	VERIFY_VOID(offset, image_data_offsets[ii], "GRgetdatainfo");
+	VERIFY_VOID(length, image_data_lengths[ii], "GRgetdatainfo");
+
+	/* Only verify data of the first image, which has non-compressed data. */
+	if (ii == 0)
+	{
+	    intn jj, kk;
+	    char check_image[WIDTH][LENGTH];
+	    for (kk = 0; kk < WIDTH; kk++)
+		for (jj = 0; jj < LENGTH; jj++)
+		    check_image[kk][jj] = 'n' + jj;
+
+	    /* Open the file with fopen, read data at the offset obtained and verify
+	       the values */
+	    status = readnoHDF_char(IMAGE_FILE, offset, length, check_image);
+	    if (status == FAIL)
+		fprintf(stderr, "Attempt reading data without HDF4 library failed at line %d\n", __LINE__);
+	}
+
+	/* Close the image */
+	status = GRendaccess(riid);
+	CHECK_VOID(status, FAIL, "GRendaccess");
+    } /* for n_images */
+
+    /* Terminate access to the GR interface and close the file */
+    status = GRend(grid);
+    CHECK_VOID(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+} /* end test_oneblock_ri */
+
+#define IMAGE_DF_FILE	"datainfo_dfri.hdf"	/* data file for DFR APIs */
+#define N_DF_IMAGES	2	/* number of DF images in the file, 1 RI8 &
+				   1 RI24 */
+static void
+test_dfr8_24(void)
+{
+    int32 fid, grid,	/* file ID and GR interface ID */
+	  riid,		/* raster image ID */
+	  ri_ref;	/* raster image ref# */
+    int32 offset, length; /* offset/length buffers for single block of data */
+    intn  status;	/* status returned from routines */
+    intn ii, jj;	/* indices */
+    int32 n_images, n_fattrs;
+    char  buf[WIDTH][LENGTH][3];
+
+    /* offsets/lengths to be used to verify offsets/lengths returned by
+       GRgetdatainfo - confirmed by the command "od" on the hdf file */
+    static int32 image_data_offsets[N_IMAGES] = {294, 1132};
+    static int32 image_data_lengths[N_IMAGES] = {30, 75};
+
+    /* Initialize the 8-bit image array */
+    static uint8 raster_data[WIDTH][LENGTH] =
+	{ 1, 2, 3, 4, 5,
+	  5, 4, 3, 2, 1,
+	  1, 2, 3, 4, 5,
+	  5, 4, 3, 2, 1,
+	  6, 4, 2, 0, 2 };
+
+   /* Write the 8-bit raster image to file */
+   status = DFR8putimage(IMAGE_DF_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
+
+    /* Initialize the 24-bit image array */
+    for (ii = 0; ii < WIDTH; ii++)
+	for (jj = 0; jj < LENGTH; jj++)
+	{
+	    buf[ii][jj][0] = buf[ii][jj][1] = buf[ii][jj][2] = (char)(ii + jj);
+	}
+
+    /* Set interlace for the 24-bit RI */
+    status = DF24setil(DFIL_PIXEL);
+
+    /* Make sure that no compression is being used - the variable Grcompr is
+       global in dfgr.c so its value is inherited from other tests in the lib
+       and causes this image to be compressed with JPEG unintentionally.  We
+       want to be able to see the data to verify it with "od" */
+    status = DF24setcompress(COMP_NONE, NULL);
+
+    /* Write the 24-bit raster image to file */
+    status = DF24addimage(IMAGE_DF_FILE, &(buf[0][0][0]), WIDTH, LENGTH);
+
+
+    /****************************************************************
+      Re-open the file to read the images and their data information
+     ****************************************************************/
+    /* Re-open the file and initialize the GR interface */
+    fid = Hopen (IMAGE_DF_FILE, DFACC_RDONLY, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    grid = GRstart (fid);
+    CHECK_VOID(grid, FAIL, "GRstart");
+
+    /* Get the number of images in the file */
+    status = GRfileinfo(grid, &n_images, &n_fattrs);
+    CHECK_VOID(status, FAIL, "GRfileinfo");
+    VERIFY_VOID(n_images, N_DF_IMAGES, "GRfileinfo");
+
+    /* Open each image then get and verify its data information.  Note that
+	currently, the offsets and lengths are obtained from debugging
+	and the command od on the file */
+    for (ii = 0; ii < n_images; ii++)
+    {
+	uintn info_count = 0;
+
+	riid = GRselect(grid, ii);
+	CHECK_VOID(riid, FAIL, "GRselect");
+
+	/* Get the number of data blocks and verify; should be 1 */
+	info_count = GRgetdatainfo(riid, 0, 0, NULL, NULL);
+	CHECK_VOID(status, FAIL, "GRgetdatainfo");
+	VERIFY_VOID(info_count, 1, "GRgetdatainfo");
+
+	/* Get offset/length of the image and verify with pre-determined
+	   values */
+	status = GRgetdatainfo(riid, 0, info_count, &offset, &length);
+	CHECK_VOID(status, FAIL, "GRgetdatainfo");
+	VERIFY_VOID(offset, image_data_offsets[ii], "GRgetdatainfo");
+	VERIFY_VOID(length, image_data_lengths[ii], "GRgetdatainfo");
+
+	/* Close the image */
+	status = GRendaccess(riid);
+	CHECK_VOID(status, FAIL, "GRendaccess");
+    } /* for n_images */
+
+    /* Terminate access to the GR interface and close the file */
+    status = GRend(grid);
+    CHECK_VOID(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+}  /* test_dfr8 */
+
 /* Test driver for testing the public functions VSgetdatainfo, ANgetdatainfo. */
 void
 test_datainfo(void)
@@ -796,4 +1092,11 @@ test_datainfo(void)
 
     /* Test ANgetdatainfo */
     test_annotation();
+
+    /* Test GRgetdatainfo with images stored in one contiguous block, with
+       and without compression */
+    test_oneblock_ri();
+
+    /* Test GRgetdatainfo with RI8 and RI24 */
+    test_dfr8_24();
 }
