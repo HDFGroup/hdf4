@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 MACRO (H4_SET_LIB_OPTIONS libtarget libname libtype)
   HDF_SET_LIB_OPTIONS (${libtarget} ${libname} ${libtype})
-  IF (BUILD_SHARED_LIBS)
+  IF (${libtype} MATCHES "SHARED")
     IF (WIN32)
       SET (LIBHDF_VERSION ${HDF4_PACKAGE_VERSION_MAJOR})
     ELSE (WIN32)
@@ -9,7 +9,7 @@ MACRO (H4_SET_LIB_OPTIONS libtarget libname libtype)
     ENDIF (WIN32)
     SET_TARGET_PROPERTIES (${libtarget} PROPERTIES VERSION ${LIBHDF_VERSION})
     SET_TARGET_PROPERTIES (${libtarget} PROPERTIES SOVERSION ${LIBHDF_VERSION})
-  ENDIF (BUILD_SHARED_LIBS)
+  ENDIF (${libtype} MATCHES "SHARED")
 
   #-- Apple Specific install_name for libraries
   IF (APPLE)

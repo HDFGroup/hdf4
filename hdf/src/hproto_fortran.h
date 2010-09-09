@@ -17,7 +17,7 @@
 #define _H_PROTO_FORTRAN
 
 #include "H4api_adpt.h"
-
+#include "df.h"
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
@@ -628,6 +628,9 @@ extern      "C"
 
     HDFFCLIBAPI      FRETVAL(intf) ndfnumber
                 (intf  * dfile, intf  * tag);
+
+    HDFFCLIBAPI      FRETVAL(intf) ndfstat
+                (intf * dfile, DFdata * dfinfo);
 
     HDFFCLIBAPI      FRETVAL(intf) ndfiishdf
                 (_fcd name, intf  * namelen);

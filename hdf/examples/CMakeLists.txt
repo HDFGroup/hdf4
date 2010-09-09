@@ -35,14 +35,14 @@ SET (examples
 
 FOREACH (example ${examples})
   ADD_EXECUTABLE (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
-  TARGET_NAMING (hdf_${example})
-  TARGET_WIN_PROPERTIES (hdf_${example})
+  TARGET_NAMING (hdf_${example} ${LIB_TYPE})
+  TARGET_WIN_PROPERTIES (hdf_${example} ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME hdftest_${example} COMMAND $<TARGET_FILE:hdf_${example}>)
 ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
-TARGET_NAMING (hdf_VG_add_sds_to_vgroup)
-  TARGET_WIN_PROPERTIES (hdf_VG_add_sds_to_vgroup)
+TARGET_NAMING (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
+TARGET_WIN_PROPERTIES (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdf_VG_add_sds_to_vgroup ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ADD_TEST (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)

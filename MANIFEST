@@ -427,12 +427,16 @@
 ./hdf/util/hdf8to24.c
 ./hdf/util/hdfcomp.c
 ./hdf/util/hdfcomp.out1
+./hdf/util/hdfcomp.out1.1
+./hdf/util/hdfcomp.out1.2
 ./hdf/util/hdfed.input1
 ./hdf/util/hdfed.out1
 ./hdf/util/hdfgifwr.c
 ./hdf/util/hdfls.c
 ./hdf/util/hdfpack.c
 ./hdf/util/hdfpack.out1
+./hdf/util/hdfpack.out1.1
+./hdf/util/hdfpack.out1.2
 ./hdf/util/hdfrseq.c
 ./hdf/util/hdftopal.c
 ./hdf/util/hdftor8.c
@@ -804,6 +808,22 @@
 ./mfhdf/hdfimport/hdfimporttest.c
 ./mfhdf/hdfimport/testutil.sh.in
 ./mfhdf/hdfimport/gen_sds_floats.c
+./mfhdf/hdfimport/testfiles/cb16i2.tst
+./mfhdf/hdfimport/testfiles/cb16i3.tst
+./mfhdf/hdfimport/testfiles/cb32i2.tst
+./mfhdf/hdfimport/testfiles/cb32i3.tst
+./mfhdf/hdfimport/testfiles/cb32r2.tst
+./mfhdf/hdfimport/testfiles/cb32r3.tst
+./mfhdf/hdfimport/testfiles/cb64r2_ris.tst
+./mfhdf/hdfimport/testfiles/cb64r2.tst
+./mfhdf/hdfimport/testfiles/cb64r2-n.tst
+./mfhdf/hdfimport/testfiles/cb64r3.tst
+./mfhdf/hdfimport/testfiles/cb64r3-n.tst
+./mfhdf/hdfimport/testfiles/ctxtr2_ris.tst
+./mfhdf/hdfimport/testfiles/ctxtr2.tst
+./mfhdf/hdfimport/testfiles/ctxtr3.tst
+./mfhdf/hdfimport/testfiles/SDSfloat2.tst
+./mfhdf/hdfimport/testfiles/SDSfloat3.tst
 
 
 

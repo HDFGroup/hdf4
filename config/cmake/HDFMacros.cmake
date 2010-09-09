@@ -34,16 +34,16 @@ MACRO (IDE_SOURCE_PROPERTIES SOURCE_PATH HEADERS SOURCES)
 ENDMACRO (IDE_SOURCE_PROPERTIES)
 
 #-------------------------------------------------------------------------------
-MACRO (TARGET_NAMING target)
+MACRO (TARGET_NAMING target libtype)
   IF (WIN32 AND NOT MINGW)
-    IF (BUILD_SHARED_LIBS)
+    IF (${libtype} MATCHES "SHARED")
       IF (HDF_LEGACY_NAMING)
         SET_TARGET_PROPERTIES (${target} PROPERTIES OUTPUT_NAME "dll")
         SET_TARGET_PROPERTIES (${target} PROPERTIES PREFIX "${target}")
       ELSE (HDF_LEGACY_NAMING)
         SET_TARGET_PROPERTIES (${target} PROPERTIES OUTPUT_NAME "${target}dll")
       ENDIF (HDF_LEGACY_NAMING)
-    ENDIF (BUILD_SHARED_LIBS)
+    ENDIF (${libtype} MATCHES "SHARED")
   ENDIF (WIN32 AND NOT MINGW)
 ENDMACRO (TARGET_NAMING)
 
@@ -87,35 +87,35 @@ MACRO (HDF_SET_LIB_OPTIONS libtarget libname libtype)
   )
   
   #----- Use MSVC Naming conventions for Shared Libraries
-  IF (MINGW AND BUILD_SHARED_LIBS)
+  IF (MINGW AND ${libtype} MATCHES "SHARED")
     SET_TARGET_PROPERTIES (${libtarget}
         PROPERTIES
         IMPORT_SUFFIX ".lib"
         IMPORT_PREFIX ""
         PREFIX ""
     )
-  ENDIF (MINGW AND BUILD_SHARED_LIBS)
+  ENDIF (MINGW AND ${libtype} MATCHES "SHARED")
 
 ENDMACRO (HDF_SET_LIB_OPTIONS)
 
 #-------------------------------------------------------------------------------
-MACRO (TARGET_WIN_PROPERTIES target)
+MACRO (TARGET_WIN_PROPERTIES target libtype)
   IF (WIN32)
     IF (MSVC)
-      IF (NOT BUILD_SHARED_LIBS)
+      IF (${libtype} MATCHES "STATIC")
         SET_TARGET_PROPERTIES (${target}
             PROPERTIES
                 LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
         ) 
-      ENDIF (NOT BUILD_SHARED_LIBS)
+      ENDIF (${libtype} MATCHES "STATIC")
     ENDIF (MSVC)
   ENDIF (WIN32)
 ENDMACRO (TARGET_WIN_PROPERTIES)
 
 #-------------------------------------------------------------------------------
-MACRO (TARGET_FORTRAN_WIN_PROPERTIES target)
+MACRO (TARGET_FORTRAN_WIN_PROPERTIES target libtype)
   IF (WIN32)
-    IF (BUILD_SHARED_LIBS)
+    IF (${libtype} MATCHES "SHARED")
       IF (MSVC)
         SET_TARGET_PROPERTIES (${target}
             PROPERTIES
@@ -123,13 +123,13 @@ MACRO (TARGET_FORTRAN_WIN_PROPERTIES target)
                 LINK_FLAGS "/SUBSYSTEM:CONSOLE"
         ) 
       ENDIF (MSVC)
-    ELSE (BUILD_SHARED_LIBS)
+    ELSE (${libtype} MATCHES "SHARED")
       IF (MSVC)
         SET_TARGET_PROPERTIES (${target}
             PROPERTIES
                 LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
         ) 
       ENDIF (MSVC)
-    ENDIF (BUILD_SHARED_LIBS)
+    ENDIF (${libtype} MATCHES "SHARED")
   ENDIF (WIN32)
 ENDMACRO (TARGET_FORTRAN_WIN_PROPERTIES)

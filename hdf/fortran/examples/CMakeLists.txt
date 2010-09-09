@@ -30,6 +30,11 @@ LINK_DIRECTORIES (
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )
 
+SET (F_LIB_TYPE ${LIB_TYPE})
+IF (WIN32)
+  SET (F_LIB_TYPE STATIC)
+ENDIF (WIN32)
+
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
@@ -63,16 +68,16 @@ SET (examples
 
 FOREACH (example ${examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_ex_${example})
-  TARGET_FORTRAN_WIN_PROPERTIES (f_ex_${example})
+  TARGET_NAMING (f_ex_${example} ${F_LIB_TYPE})
+  TARGET_FORTRAN_WIN_PROPERTIES (f_ex_${example} ${F_LIB_TYPE})
   SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME f_extest_${example} COMMAND $<TARGET_FILE:f_ex_${example}>)
 ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
-TARGET_NAMING (f_ex_VG_add_sds_to_vgroup)
-TARGET_FORTRAN_WIN_PROPERTIES (f_ex_VG_add_sds_to_vgroup)
+TARGET_NAMING (f_ex_VG_add_sds_to_vgroup ${F_LIB_TYPE})
+TARGET_FORTRAN_WIN_PROPERTIES (f_ex_VG_add_sds_to_vgroup ${F_LIB_TYPE})
 SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 TARGET_LINK_LIBRARIES (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 

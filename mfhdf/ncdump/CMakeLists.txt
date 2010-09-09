@@ -30,11 +30,10 @@ IF (HDF4_BUILD_XDR_LIB)
 ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (ncdump ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (ncdump)
-TARGET_WIN_PROPERTIES (ncdump)
+TARGET_NAMING (ncdump ${LIB_TYPE})
+TARGET_WIN_PROPERTIES (ncdump ${LIB_TYPE})
 
 #-- Adding test for ncdump
-
 #ADD_TEST (NAME testncdump COMMAND $<TARGET_FILE:testncdump>)
 # 
 ##-- Copy all the dat files from the test directory into the source directory

@@ -20,6 +20,11 @@ LINK_DIRECTORIES (
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )
 
+SET (F_LIB_TYPE ${LIB_TYPE})
+IF (WIN32)
+  SET (F_LIB_TYPE STATIC)
+ENDIF (WIN32)
+
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
@@ -44,8 +49,8 @@ SET (examples
 
 FOREACH (example ${examples})
   ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example})
-  TARGET_FORTRAN_WIN_PROPERTIES (f_exmf_${example})
+  TARGET_NAMING (f_exmf_${example} ${F_LIB_TYPE})
+  TARGET_FORTRAN_WIN_PROPERTIES (f_exmf_${example} ${F_LIB_TYPE})
   SET_TARGET_PROPERTIES (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   IF (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})

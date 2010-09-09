@@ -40,8 +40,8 @@ IF (HDF4_BUILD_XDR_LIB)
 ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (hrepack)
-TARGET_WIN_PROPERTIES (hrepack)
+TARGET_NAMING (hrepack ${LIB_TYPE})
+TARGET_WIN_PROPERTIES (hrepack ${LIB_TYPE})
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
@@ -59,8 +59,8 @@ IF (BUILD_TESTING)
   ELSE (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (hrepack_check)
-  TARGET_WIN_PROPERTIES (hrepack_check)
+  TARGET_NAMING (hrepack_check ${LIB_TYPE})
+  TARGET_WIN_PROPERTIES (hrepack_check ${LIB_TYPE})
 
 #  ADD_TEST (NAME hrepack_check COMMAND $<TARGET_FILE:hrepack_check>)
 
@@ -99,8 +99,8 @@ IF (BUILD_TESTING)
   ELSE (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (test_hrepack)
-  TARGET_WIN_PROPERTIES (test_hrepack)
+  TARGET_NAMING (test_hrepack ${LIB_TYPE})
+  TARGET_WIN_PROPERTIES (test_hrepack ${LIB_TYPE})
   
   ADD_TEST (NAME test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
  
