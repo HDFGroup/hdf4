@@ -137,6 +137,14 @@ ADD_EXECUTABLE (vshow ${HDF4_HDF_UTIL_SOURCE_DIR}/vshow.c)
 TARGET_NAMING (vshow ${LIB_TYPE})
 TARGET_WIN_PROPERTIES (vshow ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (vshow ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
+
+IF (BUILD_TESTING)
   
 ##############################################################################
 # --------------------------------------------------------------------
@@ -144,198 +152,190 @@ TARGET_LINK_LIBRARIES (vshow ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK
 # --------------------------------------------------------------------
 ##############################################################################
 
-#-- Copy all the hdfls data files from the source directory into the test directory
-SET (HDF4_LS_TEST_FILES
-    hdfcomp.out1.1
-    hdfcomp.out1.2
-    hdfed.input1
-    hdfed.out1
-    hdfpack.out1.1
-    hdfpack.out1.2
-    hdftor8.out1
-    jpeg2hdf.out1
-    ristosds.input1
-    ristosds.out1
-)
-FOREACH (h4_file ${HDF4_LS_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     hdfls
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} ${dest}
-   )
+  #-- Copy all the hdfls data files from the source directory into the test directory
+  SET (HDF4_LS_TEST_FILES
+      hdfcomp.out1.1
+      hdfcomp.out1.2
+      hdfed.input1
+      hdfed.out1
+      hdfpack.out1.1
+      hdfpack.out1.2
+      hdftor8.out1
+      jpeg2hdf.out1
+      ristosds.input1
+      ristosds.out1
+  )
+  
+  FOREACH (h4_file ${HDF4_LS_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfls
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_LS_TEST_FILES})
 
-ENDFOREACH (h4_file ${HDF4_LS_TEST_FILES})
+  #-- Copy all the hdf2gif data files from the source directory into the test directory
+  SET (HDF4_HDF2GIF_TEST_FILES
+      skull.hdf
+  )
+  FOREACH (h4_file ${HDF4_HDF2GIF_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdf2gif
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_HDF2GIF_TEST_FILES})
 
-#-- Copy all the hdf2gif data files from the source directory into the test directory
-SET (HDF4_HDF2GIF_TEST_FILES
-    skull.hdf
-)
-FOREACH (h4_file ${HDF4_HDF2GIF_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     hdf2gif
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
+  #-- Copy all the gif2hdf data files from the source directory into the test directory
+  SET (HDF4_GIF2HDF_TEST_FILES
+      SunWheel.gif
+      bttrfly.gif
+  )
+  FOREACH (h4_file ${HDF4_GIF2HDF_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     gif2hdf
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_GIF2HDF_TEST_FILES})
 
-ENDFOREACH (h4_file ${HDF4_HDF2GIF_TEST_FILES})
+  #-- Copy all the hdftor8 data files from the source directory into the test directory
+  SET (HDF4_HDFTOR8_TEST_FILES
+      head.r24
+      head.r8
+  )
+  FOREACH (h4_file ${HDF4_HDFTOR8_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdftor8
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_HDFTOR8_TEST_FILES})
 
-#-- Copy all the gif2hdf data files from the source directory into the test directory
-SET (HDF4_GIF2HDF_TEST_FILES
-    SunWheel.gif
-    bttrfly.gif
-)
-FOREACH (h4_file ${HDF4_GIF2HDF_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     gif2hdf
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
+  #-- Copy all the hdfed data files from the source directory into the test directory
+  SET (HDF4_HDFED_TEST_FILES
+      storm110.hdf
+      ntcheck.hdf
+  )
+  FOREACH (h4_file ${HDF4_HDFED_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfed
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_HDFED_TEST_FILES})
 
-ENDFOREACH (h4_file ${HDF4_GIF2HDF_TEST_FILES})
+  #-- Copy all the ristosds data files from the source directory into the test directory
+  SET (HDF4_RISTOSDS_TEST_FILES
+      storm110.hdf
+      storm120.hdf
+      storm130.hdf
+  )
+  FOREACH (h4_file ${HDF4_RISTOSDS_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     ristosds
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_RISTOSDS_TEST_FILES})
 
-#-- Copy all the hdftor8 data files from the source directory into the test directory
-SET (HDF4_HDFTOR8_TEST_FILES
-    head.r24
-    head.r8
-)
-FOREACH (h4_file ${HDF4_HDFTOR8_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     hdftor8
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
+  #-- Copy all the hdfpack data files from the source directory into the test directory
+  SET (HDF4_HDFPACK_TEST_FILES
+      test.hdf
+  )
+  FOREACH (h4_file ${HDF4_HDFPACK_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfpack
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_HDFPACK_TEST_FILES})
 
-ENDFOREACH (h4_file ${HDF4_HDFTOR8_TEST_FILES})
+  #-- Copy all the paltohdf data files from the source directory into the test directory
+  SET (HDF4_PALTOHDF_TEST_FILES
+      palette.raw
+  )
+  FOREACH (h4_file ${HDF4_PALTOHDF_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     paltohdf
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_PALTOHDF_TEST_FILES})
 
-#-- Copy all the hdfed data files from the source directory into the test directory
-SET (HDF4_HDFED_TEST_FILES
-    storm110.hdf
-    ntcheck.hdf
-)
-FOREACH (h4_file ${HDF4_HDFED_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     hdfed
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
+  #-- Copy all the r8tohdf data files from the source directory into the test directory
+  SET (HDF4_R8TOHDF_TEST_FILES
+      storm110.raw
+      storm120.raw
+      storm130.raw
+      storm140.raw
+  )
+  FOREACH (h4_file ${HDF4_R8TOHDF_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     r8tohdf
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_R8TOHDF_TEST_FILES})
 
-ENDFOREACH (h4_file ${HDF4_HDFED_TEST_FILES})
+  #-- Copy all the hdfcomp data files from the source directory into the test directory
+  SET (HDF4_HDFCOMP_TEST_FILES
+      storm110.hdf
+      storm120.hdf
+      storm130.hdf
+  )
+  FOREACH (h4_file ${HDF4_HDFCOMP_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfcomp
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_HDFCOMP_TEST_FILES})
 
-#-- Copy all the ristosds data files from the source directory into the test directory
-SET (HDF4_RISTOSDS_TEST_FILES
-    storm110.hdf
-    storm120.hdf
-    storm130.hdf
-)
-FOREACH (h4_file ${HDF4_RISTOSDS_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     ristosds
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
-
-ENDFOREACH (h4_file ${HDF4_RISTOSDS_TEST_FILES})
-
-#-- Copy all the hdfpack data files from the source directory into the test directory
-SET (HDF4_HDFPACK_TEST_FILES
-    test.hdf
-)
-FOREACH (h4_file ${HDF4_HDFPACK_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     hdfpack
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
-
-ENDFOREACH (h4_file ${HDF4_HDFPACK_TEST_FILES})
-
-#-- Copy all the paltohdf data files from the source directory into the test directory
-SET (HDF4_PALTOHDF_TEST_FILES
-    palette.raw
-)
-FOREACH (h4_file ${HDF4_PALTOHDF_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     paltohdf
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
-
-ENDFOREACH (h4_file ${HDF4_PALTOHDF_TEST_FILES})
-
-#-- Copy all the r8tohdf data files from the source directory into the test directory
-SET (HDF4_R8TOHDF_TEST_FILES
-    storm110.raw
-    storm120.raw
-    storm130.raw
-    storm140.raw
-)
-FOREACH (h4_file ${HDF4_R8TOHDF_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     r8tohdf
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
-ENDFOREACH (h4_file ${HDF4_R8TOHDF_TEST_FILES})
-
-#-- Copy all the hdfcomp data files from the source directory into the test directory
-SET (HDF4_HDFCOMP_TEST_FILES
-    storm110.hdf
-    storm120.hdf
-    storm130.hdf
-)
-FOREACH (h4_file ${HDF4_HDFCOMP_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     hdfcomp
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
-
-ENDFOREACH (h4_file ${HDF4_HDFCOMP_TEST_FILES})
-
-#-- Copy all the jpeg2hdf data files from the source directory into the test directory
-SET (HDF4_JPEG2HDF_TEST_FILES
-    jpeg_img.jpg
-)
-FOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
-   SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
-       TARGET     jpeg2hdf
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
-   )
-ENDFOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
+  #-- Copy all the jpeg2hdf data files from the source directory into the test directory
+  SET (HDF4_JPEG2HDF_TEST_FILES
+      jpeg_img.jpg
+  )
+  FOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
+    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #MESSAGE (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+    ADD_CUSTOM_COMMAND (
+        TARGET     jpeg2hdf
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
+    )
+  ENDFOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
   
 ##############################################################################
 ##############################################################################
@@ -378,8 +378,9 @@ ENDFOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
         NAME HEDIT-${testfile}
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
-            -D "TEST_ARGS:STRING=-batch;${testfile}"
+            -D "TEST_ARGS:STRING=-batch"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_INPUT=${testfile}"
             -D "TEST_OUTPUT=${testfile}.tmp"
             -D "TEST_EXPECT=${resultcode}"
             -D "TEST_REFERENCE=${resultfile}"
@@ -393,56 +394,105 @@ ENDFOREACH (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
 ##############################################################################
 ##############################################################################
 
-ADD_TEST (NAME testhdf2gif COMMAND $<TARGET_FILE:hdf2gif> skull.hdf skull.gif)
-ADD_TEST (NAME testgif2hdf-sunwheel COMMAND $<TARGET_FILE:gif2hdf> SunWheel.gif SunWheel.hdf)
-ADD_TEST (NAME testgif2hdf-butterfly COMMAND $<TARGET_FILE:gif2hdf> bttrfly.gif bttrfly.hdf)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME hdfgif-clear-refs
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          ./skull.gif
+          ./SunWheel.hdf
+          ./bttrfly.hdf
+          ./head8.hdf
+          ./img001-263.328
+          ./*.tmp
+          ./*.err
+  )
 
-ADD_TEST (NAME testhdf24to8 COMMAND $<TARGET_FILE:hdf24to8> head.r24 head8.hdf)
-ADD_TEST (NAME testhdftor8 COMMAND $<TARGET_FILE:hdftor8> head8.hdf)
-ADD_TEST (NAME hdfr8comp COMMAND ${CMAKE_COMMAND} -E compare_files img001-263.328 head.r8)
+  ADD_TEST (NAME testhdf2gif COMMAND $<TARGET_FILE:hdf2gif> skull.hdf skull.gif)
+  ADD_TEST (NAME testgif2hdf-sunwheel COMMAND $<TARGET_FILE:gif2hdf> SunWheel.gif SunWheel.hdf)
+  ADD_TEST (NAME testgif2hdf-butterfly COMMAND $<TARGET_FILE:gif2hdf> bttrfly.gif bttrfly.hdf)
 
-#ADD_H4_TEST_ED (hdfed.input1 hdfed.out1 0)
+  ADD_TEST (NAME testhdf24to8 COMMAND $<TARGET_FILE:hdf24to8> head.r24 head8.hdf)
+  ADD_TEST (NAME testhdftor8 COMMAND $<TARGET_FILE:hdftor8> head8.hdf)
+  ADD_TEST (NAME hdfr8comp COMMAND ${CMAKE_COMMAND} -E compare_files img001-263.328 head.r8)
 
-#ADD_TEST (NAME testristosds COMMAND $<TARGET_FILE:ristosds> storm*.hdf -o storm.hdf > /dev/null 2>&1)
-#ADD_TEST (NAME hdfed COMMAND $<TARGET_FILE:hdfed> "< ${HDF4_HDF_UTIL_SOURCE_DIR}/ristosds.input1 > hdfed.tmp1 2>&1")
-#ADD_TEST (diff  "hdfed.tmp1 ${HDF4_HDF_UTIL_SOURCE_DIR}/ristosds.out1")
+  ADD_H4_TEST_ED (hdfed.input1 hdfed.out1 0)
 
-ADD_TEST (NAME testhdfpack COMMAND $<TARGET_FILE:hdfpack> test.hdf test.pck)
-ADD_TEST (NAME testhdfpack-block COMMAND $<TARGET_FILE:hdfpack> -b test.hdf test.blk)
-ADD_LS_TEST_NOL (test.hdf hdfpack.out1.1 0)
-ADD_LS_TEST_NOL (test.pck hdfpack.out1.2 0)
+  ADD_TEST (NAME testristosds COMMAND $<TARGET_FILE:ristosds> storm110.hdf storm120.hdf storm130.hdf -o storm.hdf > /dev/null 2>&1)
+  ADD_H4_TEST_ED (ristosds.input1 ristosds.out1 0)
 
-ADD_TEST (NAME testpaltohdf COMMAND $<TARGET_FILE:paltohdf> palette.raw palette.hdf)
-ADD_TEST (NAME testhdftopal COMMAND $<TARGET_FILE:hdftopal> palette.hdf palette.raw.new)
-ADD_TEST (NAME palettecomp COMMAND ${CMAKE_COMMAND} -E compare_files palette.raw palette.raw.new)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME hdfpack-clear-refs
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          ./test.pck
+          ./test.blk
+  )
 
-ADD_TEST (NAME testr8tohdf-storm COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hdf storm110.raw storm120.raw storm130.raw storm140.raw)
-ADD_TEST (NAME testr8tohdf-palette COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hdf -p palette.raw -i storm110.raw)
-ADD_TEST (NAME testhdftor8-storm COMMAND $<TARGET_FILE:hdftor8> storm.hdf)
-ADD_LS_TEST (storm.hdf hdftor8.out1 0)
+  ADD_TEST (NAME testhdfpack COMMAND $<TARGET_FILE:hdfpack> test.hdf test.pck)
+  ADD_TEST (NAME testhdfpack-block COMMAND $<TARGET_FILE:hdfpack> -b test.hdf test.blk)
+  ADD_LS_TEST_NOL (test.hdf hdfpack.out1.1 0)
+  ADD_LS_TEST_NOL (test.pck hdfpack.out1.2 0)
 
-ADD_TEST (NAME storm110comp COMMAND ${CMAKE_COMMAND} -E compare_files img001-057.057  storm110.raw)
-ADD_TEST (NAME storm120comp COMMAND ${CMAKE_COMMAND} -E compare_files img002-057.057  storm120.raw)
-ADD_TEST (NAME storm130comp COMMAND ${CMAKE_COMMAND} -E compare_files img003-057.057  storm130.raw)
-ADD_TEST (NAME storm140comp COMMAND ${CMAKE_COMMAND} -E compare_files img004-057.057  storm140.raw)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME hdfpalette-clear-refs
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          ./palette.hdf
+          ./palette.raw.new
+          ./storm.hdf
+          ./img001-057.057
+          ./img002-057.057
+          ./img003-057.057
+          ./img004-057.057
+          ./allstorms.hdf
+          ./allcomp.hdf
+  )
 
-ADD_TEST (NAME testhdfcomp-storms COMMAND $<TARGET_FILE:hdfcomp> allstorms.hdf storm110.hdf storm120.hdf storm130.hdf)
-ADD_TEST (NAME testhdfcomp COMMAND $<TARGET_FILE:hdfcomp> allcomp.hdf storm110.hdf storm120.hdf storm130.hdf)
-ADD_LS_TEST (allstorms.hdf hdfcomp.out1.1 0)
-ADD_LS_TEST (allcomp.hdf hdfcomp.out1.2 0)
+  ADD_TEST (NAME testpaltohdf COMMAND $<TARGET_FILE:paltohdf> palette.raw palette.hdf)
+  ADD_TEST (NAME testhdftopal COMMAND $<TARGET_FILE:hdftopal> palette.hdf palette.raw.new)
+  ADD_TEST (NAME palettecomp COMMAND ${CMAKE_COMMAND} -E compare_files palette.raw palette.raw.new)
 
-ADD_TEST (NAME testjpeg2hdf COMMAND $<TARGET_FILE:jpeg2hdf> jpeg_img.jpg jpeg.hdf)
-ADD_TEST (NAME testhdf2jpeg COMMAND $<TARGET_FILE:hdf2jpeg> jpeg.hdf jpeg2.jpg)
-ADD_LS_TEST (jpeg.hdf jpeg2hdf.out1 0)
-ADD_TEST (NAME jpeg2comp COMMAND ${CMAKE_COMMAND} -E compare_files jpeg_img.jpg jpeg2.jpg)
+  ADD_TEST (NAME testr8tohdf-storm COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hdf storm110.raw storm120.raw storm130.raw storm140.raw)
+  ADD_TEST (NAME testr8tohdf-palette COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hdf -p palette.raw -i storm110.raw)
+  ADD_TEST (NAME testhdftor8-storm COMMAND $<TARGET_FILE:hdftor8> storm.hdf)
+  ADD_LS_TEST (storm.hdf hdftor8.out1 0)
 
-#ADD_TEST (NAME hdf8to24 COMMAND $<TARGET_FILE:hdf8to24>)
+  ADD_TEST (NAME storm110comp COMMAND ${CMAKE_COMMAND} -E compare_files img001-057.057  storm110.raw)
+  ADD_TEST (NAME storm120comp COMMAND ${CMAKE_COMMAND} -E compare_files img002-057.057  storm120.raw)
+  ADD_TEST (NAME storm130comp COMMAND ${CMAKE_COMMAND} -E compare_files img003-057.057  storm130.raw)
+  ADD_TEST (NAME storm140comp COMMAND ${CMAKE_COMMAND} -E compare_files img004-057.057  storm140.raw)
 
-#ADD_TEST (NAME hdfunpac COMMAND $<TARGET_FILE:hdfunpac>)
+  ADD_TEST (NAME testhdfcomp-storms COMMAND $<TARGET_FILE:hdfcomp> allstorms.hdf storm110.hdf storm120.hdf storm130.hdf)
+  ADD_TEST (NAME testhdfcomp COMMAND $<TARGET_FILE:hdfcomp> allcomp.hdf -c storm110.hdf storm120.hdf storm130.hdf)
+  ADD_LS_TEST (allstorms.hdf hdfcomp.out1.1 0)
+  ADD_LS_TEST (allcomp.hdf hdfcomp.out1.2 0)
 
-#ADD_TEST (NAME vmake COMMAND $<TARGET_FILE:vmake>)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME hdfjpeg-clear-refs
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          ./jpeg.hdf
+          ./jpeg2.jpg
+  )
 
-#ADD_TEST (NAME vshow COMMAND $<TARGET_FILE:vshow>)
+  ADD_TEST (NAME testjpeg2hdf COMMAND $<TARGET_FILE:jpeg2hdf> jpeg_img.jpg jpeg.hdf)
+  ADD_TEST (NAME testhdf2jpeg COMMAND $<TARGET_FILE:hdf2jpeg> jpeg.hdf jpeg2.jpg)
+  ADD_LS_TEST (jpeg.hdf jpeg2hdf.out1 0)
+  ADD_TEST (NAME jpeg2comp COMMAND ${CMAKE_COMMAND} -E compare_files jpeg_img.jpg jpeg2.jpg)
+
+#  ADD_TEST (NAME hdf8to24 COMMAND $<TARGET_FILE:hdf8to24>)
+
+#  ADD_TEST (NAME hdfunpac COMMAND $<TARGET_FILE:hdfunpac>)
+
+#  ADD_TEST (NAME vmake COMMAND $<TARGET_FILE:vmake>)
+
+#  ADD_TEST (NAME vshow COMMAND $<TARGET_FILE:vshow>)
+
+ENDIF (BUILD_TESTING)
 
 ##############################################################################
 ##############################################################################

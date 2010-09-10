@@ -33,6 +33,14 @@ ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (ncdump ${LIB_TYPE})
 TARGET_WIN_PROPERTIES (ncdump ${LIB_TYPE})
 
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
+
+IF (BUILD_TESTING)
+
 #-- Adding test for ncdump
 #ADD_TEST (NAME testncdump COMMAND $<TARGET_FILE:testncdump>)
 # 
@@ -55,9 +63,25 @@ TARGET_WIN_PROPERTIES (ncdump ${LIB_TYPE})
 #  )
 #      
 #ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  IF (NCGEN_UTILITY)
+#    $(TESTS_ENVIRONMENT) ../ncgen/ncgen -o test0.nc -n $(srcdir)/test0.cdl
+#    $(TESTS_ENVIRONMENT) ./ncdump test0.nc > test1.cdl
+#    $(TESTS_ENVIRONMENT) ../ncgen/ncgen -o test1.nc -n test1.cdl
+#    $(TESTS_ENVIRONMENT) ./ncdump -n test0 test1.nc > test2.cdl
+#    @cmp test1.cdl test2.cdl && echo "*** ncdump test successful ***" ;     \
+#        rm -f test1.nc test1.cdl test2.cdl
+  ENDIF (NCGEN_UTILITY)
+
+ENDIF (BUILD_TESTING)
+
+##############################################################################
+##############################################################################
+###           I N S T A L L A T I O N                                      ###
+##############################################################################
+##############################################################################
 
 #-----------------------------------------------------------------------------
-# Rules for Installation of tools using make Install target
+# Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
 INSTALL (
     TARGETS

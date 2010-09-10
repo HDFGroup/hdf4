@@ -176,9 +176,10 @@ IF (BUILD_TESTING)
         NAME HIMPORT-EDIT
         COMMAND "${CMAKE_COMMAND}"
             -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
-            -D "TEST_ARGS:STRING=-batch;${testfile}"
+            -D "TEST_ARGS:STRING=-batch"
             -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_OUTPUT=himport.tmp"
+            -D "TEST_INPUT=${testfile}"
+            -D "TEST_OUTPUT=${testfile}.tmp"
             -D "TEST_EXPECT=${resultcode}"
             -D "TEST_REFERENCE=${resultfile}"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
@@ -190,6 +191,15 @@ IF (BUILD_TESTING)
 ###           T H E   T E S T S                                            ###
 ##############################################################################
 ##############################################################################
+
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME hdfimport-clear-refs
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          ./*.tmp
+          ./*.err
+  )
 
   ADD_TEST (NAME HIMPORTtest COMMAND $<TARGET_FILE:hdfimporttest>)
 
@@ -226,7 +236,7 @@ IF (BUILD_TESTING)
   ADD_H4_TEST_OUT (SDSfloat2 0)
   ADD_H4_TEST_OUT (SDSfloat3 0)
 
-  #ADD_H4_TEST_ED (hdfimport.input1 hdfimport.out2 0)
+  ADD_H4_TEST_ED (hdfimport.input1 hdfimport.out2 0)
 
 ENDIF (BUILD_TESTING)
 
