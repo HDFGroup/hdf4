@@ -40,7 +40,8 @@ extern      "C"
 		(int32 file_id, uint16 data_tag, uint16 data_ref);
 
     HDFLIBAPI intn VSgetdatainfo
-		(int32 vsid, uintn start_block, uintn info_count, int32 *offsetarray, int32 *lengtharray);
+		(int32 vsid, uintn start_block, uintn info_count,
+		 int32 *offsetarray, int32 *lengtharray);
 
     HDFLIBAPI intn VSgetattdatainfo
 		(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
@@ -51,6 +52,9 @@ extern      "C"
     HDFLIBAPI intn GRgetdatainfo
 		(int32 riid, uintn start_block, uintn info_count,
 		 int32 *offsetarray, int32 *lengtharray);
+
+    HDFLIBAPI intn GRgetattdatainfo
+		(int32 id, intn attrindex, char *attrname, int32 *offset, int32 *length);
 
 #if defined c_plusplus || defined __cplusplus
 }

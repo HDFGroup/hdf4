@@ -40,13 +40,6 @@
 #define	RI_ATT1_N_VALUES	36
 #define	RI_ATT2_N_VALUES	6
 
-/* Local data to verify image information in file */
-static const char* file_attrs[]=
-  { /* This information applies to the tmgr.hdf file's file attributes */
-    "Contents of First FILE Attribute",
-    "Contents of Second FILE Attribute"
-  };
-
 /* Pixel with fill values */
 static float32 fill_pixel[RI_ATT_N_VALUES]={1.3,-2.4,1000.3,.25};
 static uint8 file_attr_2[F_ATT2_N_VALUES] = {1, 2, 3, 4, 5};
@@ -72,13 +65,12 @@ static int test_mgr_fillvalues()
     uint16 ref;		/* RI reference number */
     int32 ri_index;	/* RI index */
     float32 image[7][5][N_COMPS]; /* space for the image data */
-    VOIDP read_fill_vals;   /* space for fill values read from attr */
+    VOIDP read_fill_vals=NULL;   /* space for fill values read from attr */
     float32 image0[7][5][N_COMPS]; /* space for the image data */
     int32 start[2]; /* start of image data to grab */
     int32 stride[2];/* stride of image data to grab */
     char attr_name[H4_MAX_GR_NAME];
     int32 ntype, n_values;
-    int   ii;		/* loop index */
     int32 ret;		/* generic return value */
     int   num_errs = 0;    /* number of errors so far */
 
@@ -151,7 +143,7 @@ static int test_mgr_fillvalues()
 	 * part of the test where the correspondent GRsetattr was called. */
 	if (ntype == DFNT_FLOAT32)
 	{
-	    read_fill_vals = malloc (n_values * sizeof (float32));
+	    read_fill_vals = HDmalloc (n_values * sizeof (float32));
 	    if (read_fill_vals == NULL)
 	    {
 		fprintf (stderr, "Unable to allocate space for attribute data.\n");
@@ -206,7 +198,6 @@ static int test_mgr_userattr()
           f_att_index,     /* index of file attributes */
           ri_att_index,    /* index of raster image attributes */
           n_values,        /* number of values in an attribute */
-          value_index,     /* index of values in an attribute */
           n_rimages,       /* number of raster images in the file */
           n_file_attrs;    /* number of file attributes */
     char  attr_name[H4_MAX_GR_NAME];  /* buffer to hold the attribute name */
@@ -231,12 +222,10 @@ static int test_mgr_userattr()
     CHECK(grid, FAIL, "GRstart");
 
     /* Set two file attributes. */
-    status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, 
-                      (VOIDP)F_ATT1_VAL); 
+    status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, F_ATT1_VAL); 
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, 
-                      (VOIDP)file_attr_2);
+    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (VOIDP)file_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Obtain the index of the image named IMAGE1_NAME. */
@@ -248,12 +237,10 @@ static int test_mgr_userattr()
     CHECK(riid, FAIL, "GRselect");
 
     /* Set two attributes to the image. */
-    status = GRsetattr(riid, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, 
-                      (VOIDP)RI_ATT1_VAL);
+    status = GRsetattr(riid, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, RI_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, 
-                      (VOIDP)ri_attr_2);
+    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Terminate accesses, and close the HDF file. */

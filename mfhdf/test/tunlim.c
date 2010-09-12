@@ -71,7 +71,6 @@ int verify_info_data(
     char  info[40];		/* holds brief info where failure occurs */
     int16 outdata[DIM0];	/* data read back */
     char  ds_name[20];		/* dataset name */
-    int   ii;
     intn  status = 0;		/* returned by called functions */
     intn  num_errs = 0;		/* number of errors */
 
@@ -120,13 +119,9 @@ static int test_1dim_singlevar()
 {
     int32 fid;			/* file id */
     int32 dset1;		/* dataset ids */
-    int   dims[1];		/* variable shapes */
     int32 dimsizes[1];		/* dimension size buffer */
     int32 start[1],		/* where to start writing */
 	  edges[1];		/* length of data to be read/written */
-    int16 outdata[DIM0];	/* data read back */
-    char  ds_name[10];		/* variable name */
-    int   ii;
     int16 fillval = 99;		/* fill value for the variable */
     intn  status = 0;		/* returned by called functions */
     intn  num_errs = 0;		/* number of errors so far */
@@ -242,13 +237,10 @@ static int test_1dim_multivars()
 {
     int32 fid;			/* file id */
     int32 dset1, dset2;		/* dataset ids */
-    int   dims[1];		/* variable shapes */
     int32 dimsizes[1];		/* dimension size buffer */
     int32 start[1],		/* where to start writing */
 	  edges[1];		/* length of data to be read/written */
     int16 outdata[DIM0];	/* data read back */
-    char  ds_name[10];		/* variable name */
-    int   ii;
     int16 fillval1 = -1;	/* fill value for the variable */
     int16 fillval2 = -2;	/* fill value for the variable */
     intn  status = 0;		/* returned by called functions */
@@ -402,13 +394,10 @@ static int test_multidim_singlevar()
     int32 fid;			/* file id */
     int32 dset1;		/* dataset id */
     int32 dset_index;		/* dataset index */
-    int   dims[1];		/* variable shapes */
     int32 dimsizes[3];		/* dimension size buffer */
     int32 start[3],		/* where to start reading */
 	  edges[3];		/* length of data to be read */
     int16 outdata[DIM0][DIM1][DIM2];	/* data read back */
-    char  ds_name[10];		/* variable name */
-    int   ii, jj, kk;
     int16 fillval = -3;		/* fill value for the variable */
     intn  status = 0;		/* returned by called functions */
     intn  num_errs = 0;		/* number of errors so far */
@@ -590,13 +579,9 @@ static int test_1dim_multivars_addon()
     int32 fid;			/* file id */
     int32 dset1, dset2;		/* dataset ids */
     int32 dset_index;		/* dataset index */
-    int   dims[1];		/* variable shapes */
     int32 dimsizes[1];		/* dimension size buffer */
     int32 start[1],		/* where to start writing */
 	  edges[1];		/* length of data to be read/written */
-    int16 outdata[DIM0];	/* data read back */
-    char  ds_name[10];		/* variable name */
-    int   ii;
     int16 fillval = -3;		/* fill value for the variable */
     intn  status = 0;		/* returned by called functions */
     intn  num_errs = 0;		/* number of errors so far */

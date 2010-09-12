@@ -464,11 +464,13 @@ test_append_vs()
 /*******************************************************************
   Name: readnoHDF_char - utility routine to read and verify character
 			data without HDF4 library
+
   Description:
 	readnoHDF_char opens the file and reads in data at the specified
 	offset.  The read data is compared against the original data passed
 	by caller.  If any mis-match occurs, an error message will be
 	displayed but the process will continue.
+
   Parameters:
 	char *filename	IN: name of the file
 	int32 offset	IN: where to start read data
@@ -476,13 +478,13 @@ test_append_vs()
 
   Return value:
 	SUCCEED/FAIL
+  BMR - Jul 2010
 ********************************************************************/
 intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)
 {
     FILE  *fd;		/* file descriptor */
     size_t readlen=0;	/* number of bytes actually read */
     char *readcbuf;
-    int ii;
     intn ret_value = SUCCEED;
 
     /* Open the file for reading without SD API */
@@ -514,12 +516,8 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
     if (readlen > 0)
     {
         /* Compare data read without HDF4 lib against the original buffer */
-        for (ii = 0; ii < readlen; ii++)
-        {
-	    if (readcbuf[ii] != orig_buf[ii])
-	    fprintf(stderr, "At value# %d: written = %c read = %c\n",
-					 ii, orig_buf[ii], readcbuf[ii]);
-        }
+	if (HDstrncmp(readcbuf, orig_buf, readlen) != 0)
+	    fprintf(stderr, "Failure: non-HDF reading got different values than written values\n   >>> written = %s\n   >>> read = %s\n", orig_buf, readcbuf);
     }
     /* Close the file */
     if (fclose(fd) == -1)
@@ -531,13 +529,16 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 }
 
 /*******************************************************************
-  Name: get_annot_datainfo - utility routine to get datainfo of an annotation
+  Name: get_annot_datainfo - utility routine to get datainfo of
+	an annotation
+
   Description:
 	get_annot_datainfo gets access to each annotation, then attempts to 
 	get the offset/length of its data.  If successful, increment the
 	data info count and eventually returns that number to caller.  If
 	failure occurs, simply return FAIL and all the previous data info
 	will be discarded by the caller.
+
   Parameters:
 	int32 an_id		IN: annotation ID
 	ann_type annot_type	IN: type of the annotations
@@ -558,7 +559,6 @@ intn get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_
 {
     int32 ann_id, ann_index;
     intn status_n, ret_value = 0;
-    char annot_type_str[4][20]={"AN_DATA_LABEL", "AN_DATA_DESC", "AN_FILE_LABEL", "AN_FILE_DESC"};
 
     /* Get the annotation. */
     for (ann_index = 0; ann_index < num_anns; ann_index++)
@@ -695,14 +695,11 @@ test_annotation()
     /* Open the file and read in location/size of all annotations */
 
     {
-	int32 ann_id,		/* annotation ID */
-	      ann_index,	/* annotation index */
+	int32 ann_index,	/* annotation index */
 	      n_file_labels,	/* numbers of file labels */
 	      n_file_descs,	/* numbers of file descs */
 	      n_data_labels,	/* numbers of data labels */
 	      n_data_descs;	/* numbers of data descs */
-	int32 offset[4],
-	      length[4];	/* offsets/lengths of an annotation */
 	intn  num_anns = 0, ann_info_num = 0;
 
 	/* Open the file. */
@@ -812,7 +809,6 @@ static intn make_comp_image(
 	comp_info* cinfo) /* compression parameters */
 {
     int32 riid;         /* raster image ID */
-    int32 riidx;        /* raster image index */
     int32 dims[2]={WIDTH,LENGTH};	/* dimensions for the image */
     char image0[WIDTH][LENGTH];		/* image data */
     int32 start[2];	/* start of image data to grab */
@@ -857,8 +853,7 @@ static void
 test_oneblock_ri(void)
 {
     int32 fid, grid,	/* file ID and GR interface ID */
-	  riid,		/* raster image ID */
-	  ri_ref;	/* raster image ref# */
+	  riid;		/* raster image ID */
     int32 offset, length; /* offset/length buffers for single block of data */
     intn  status;	/* status returned from routines */
     intn ii;		/* indices */
@@ -988,8 +983,7 @@ static void
 test_dfr8_24(void)
 {
     int32 fid, grid,	/* file ID and GR interface ID */
-	  riid,		/* raster image ID */
-	  ri_ref;	/* raster image ref# */
+	  riid;		/* raster image ID */
     int32 offset, length; /* offset/length buffers for single block of data */
     intn  status;	/* status returned from routines */
     intn ii, jj;	/* indices */

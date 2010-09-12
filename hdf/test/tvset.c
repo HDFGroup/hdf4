@@ -2585,15 +2585,14 @@ test_getvdatas(void)
     int32 vgroup_ref;
     int32 vdata_id;
     int32 vdata_ref;
-    int32 fid, sd_id;          /* File ID */
+    int32 fid;          /* File ID */
     int32 vgroup0_id, vgroup1_id, vgroup2_id, vgroup4_id,
 	  vgroup6_id, vgroup7_id, vgroup9_id;	/* Various vgroup IDs */
     int32 vdata1_id, vdata2_id, vdata3_id, vdata4_id, vdata5_id,
 	  vdata6_id, vdata7_id;    /* Various vdata IDs */
     uintn n_vgs=0;
-    uint16 *refarray;
     int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
-    char vgclass[20], vdclass[20];
+    char vgclass[20];
     int ii;
     int32 status;       /* Status values from routines */
     intn  status_n;	/* returned status for functions returning an intn  */

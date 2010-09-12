@@ -49,6 +49,11 @@ do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s retu
 if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
+/* If values match, display message supplied by caller. */
+#define CHECK_STATUS(status, val, msg) \
+do { if(status == val) printf("   %s failed at line %4d in %s\n", msg,(int)__LINE__,__FILE__);\
+} while(0)
+
 /* Used to validate that 'buffer' has been successfully allocated */
 #define CHECK_ALLOC(buffer, buf_name, func_name ) { \
       if (buffer == NULL) {\

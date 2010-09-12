@@ -53,6 +53,7 @@ void        test_bitvect(void);
 void        test_chunks(void);
 void        test_buffer(void);
 void        test_datainfo(void);
+void        test_datainfo(void);
 void        test_attdatainfo(void);
 
 #endif /* _TPROTO_H */
