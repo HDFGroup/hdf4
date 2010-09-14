@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <math.h>
 
 #if WIN32
 #define snprintf sprintf_s
@@ -103,31 +104,6 @@ int32 comp_n_values(int32 rank, int32 *dimsizes)
     for (ii = 0; ii < rank; ii++)
 	n_values = n_values * dimsizes[ii];
     return(n_values);
-}
-
-/* Compares two floating point numbers by converting them to strings of
-   characters then comparing the strings
-   Return value: 0 if the two numbers are equal up to the number of digits
-	specified; 1, otherwise.
-*/
-int compare_floats(float num1, float num2, int n_digits)
-{
-    char *str1, *str2;
-    int ret;
-    int num_errs = 0;
-
-    str1 = (char *) HDmalloc((n_digits+1) * sizeof(char));
-    str2 = (char *) HDmalloc((n_digits+1) * sizeof(char));
-
-    /* Convert the floating point numbers to strings */
-    ret = snprintf(str1, n_digits, "%f", num1);
-    CHECK(ret, FAIL, "snprintf failed");
-    ret = snprintf(str2, n_digits, "%f", num2);
-    CHECK(ret, FAIL, "snprintf failed");
-    if (strncmp(str1, str2, n_digits) == 0)
-	return 0;
-    else
-	return 1;
 }
 
 /****************************************************************************
@@ -443,8 +419,8 @@ static intn test_nonspecial_SDSs()
 	for (jj = 0; jj < sds2_info.dimsizes[0]; jj++)
             for (ii = 0; ii < sds2_info.dimsizes[1]; ii++)
             {
-		/* Flag if the two numbers are not the same up to 10 digits */
-		if (compare_floats(readfbuf_swapped[kk], data2[jj][ii], 10) != 0)
+		/* Flag if the two numbers are not close enough */
+		if (fabs(readfbuf_swapped[kk] - data2[jj][ii]) > 0.00001)
 		    fprintf(stderr, "At value# %d: written = %f read = %f\n",
 				 ii, data2[jj][ii], readfbuf_swapped[kk]);
 		if (kk < sds2_info.n_values) kk++;
