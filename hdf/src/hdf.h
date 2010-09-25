@@ -138,6 +138,14 @@ typedef struct
   }
 hdf_datainfo_t;
 
+/* Some information about a number type - character strings to be displayed */
+typedef struct hdf_ntinfo_t
+  {
+      char type_name[9];    /* longest possible string "float128" */
+      char byte_order[13];   /* "bigEndian" or "littleEndian" */
+  }
+hdf_ntinfo_t;
+
 /* type for File ID to send to Hlevel from Vxx interface */
 typedef int32 HFILEID;
 

@@ -1074,6 +1074,63 @@ test_dfr8_24(void)
     CHECK_VOID(status, FAIL, "Hclose");
 }  /* test_dfr8 */
 
+
+/****************************************************************************
+   Name: test_getntinfo() - tests getting number type's information
+
+   Description:
+	This routine simply calls Hgetntinfo with various types and verifies
+	the information retrieved.
+   BMR - Aug 2010
+ ****************************************************************************/
+static void
+test_getntinfo(void)
+{
+    hdf_ntinfo_t nt_info;
+    intn status = SUCCEED;
+
+    status = Hgetntinfo(DFNT_UINT8, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_UINT8");
+    VERIFY_CHAR_VOID(nt_info.type_name, "uint8", "Hgetntinfo DFNT_UINT8");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_UINT8");
+    
+    status = Hgetntinfo(DFNT_CHAR16, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_CHAR16");
+    VERIFY_CHAR_VOID(nt_info.type_name, "char16", "Hgetntinfo DFNT_CHAR16");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_CHAR16");
+    
+    /* Native */
+    status = Hgetntinfo(DFNT_NFLOAT32, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NFLOAT32");
+    VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_NFLOAT32");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NFLOAT32");
+    
+    /* Little endian */
+    status = Hgetntinfo(DFNT_LFLOAT32, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LFLOAT32");
+    VERIFY_CHAR_VOID(nt_info.type_name, "float32", "Hgetntinfo DFNT_LFLOAT32");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LFLOAT32");
+    
+    /* Little endian backward compatible */
+    status = Hgetntinfo(DFNT_LCHAR, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_LCHAR");
+    VERIFY_CHAR_VOID(nt_info.type_name, "char8", "Hgetntinfo DFNT_LCHAR");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "littleEndian", "Hgetntinfo DFNT_LCHAR");
+    
+    /* Backward compatible */
+    status = Hgetntinfo(DFNT_DOUBLE, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_DOUBLE");
+    VERIFY_CHAR_VOID(nt_info.type_name, "float64", "Hgetntinfo DFNT_DOUBLE");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_DOUBLE");
+    
+    /* Native backward compatible */
+    status = Hgetntinfo(DFNT_NUCHAR, &nt_info);
+    CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NUCHAR");
+    VERIFY_CHAR_VOID(nt_info.type_name, "uchar8", "Hgetntinfo DFNT_NUCHAR");
+    VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NUCHAR");
+    
+} /* test_getntinfo */
+
 /* Test driver for testing the public functions VSgetdatainfo, ANgetdatainfo. */
 void
 test_datainfo(void)
@@ -1093,4 +1150,7 @@ test_datainfo(void)
 
     /* Test GRgetdatainfo with RI8 and RI24 */
     test_dfr8_24();
+
+    /* Test Hgetntinfo */
+    test_getntinfo();
 }

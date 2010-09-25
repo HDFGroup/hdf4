@@ -184,6 +184,9 @@ extern      "C"
     HDFLIBAPI const char *HDfidtoname
                 (int32 fid);
 
+    HDFLIBAPI intn Hgetntinfo
+                (int32 numbertype, hdf_ntinfo_t *nt_info);
+
     HDFLIBAPI intn Hishdf
                 (const char * filename);
 

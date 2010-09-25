@@ -121,6 +121,7 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #define HFILE_MASTER
 #include "hfile.h"
+#include "hkit.h"	/* for Hntypeinfo */
 #include <errno.h>
 #include "glist.h" /* for double-linked lists, stacks and queues */
 
@@ -4129,6 +4130,107 @@ done:
 
     return ret_value;
 } /* end HDcheck_empty() */
+
+
+/* ------------------------------- Hgetntinfo ------------------------------ */
+/*
+NAME
+   Hgetntinfo -- retrieves some information of a number type in text format
+USAGE
+   intn Hgetntinfo(numbertype, nt_info)
+   int32 numbertype;      IN: HDF-supported number type
+   hdf_ntinfo_t *nt_info; OUT: structure containing number type's info
+RETURNS
+   FAIL if there is no match for the number type, otherwise, SUCCEED.
+DESCRIPTION
+   Load the structure hdf_ntinfo_t with the number type's name and byte
+   order in array of characters format.  When the "default:" is reached,
+   it means that a supported number type is missing from the switch statement
+   or an unrecognized value is encountered.  The type will be verified and
+   added or appropriate error handling will be added.  The structure
+   hdf_ntinfo_t is defined in hdf.h.
+
+   Design note: Passing the struct hdf_ntinfo_t into this function instead
+   of individual strings will allow expandability without changing the
+   function's prototype in the event of more information is desired.
+   -BMR (Sep 2010)
+
+---------------------------------------------------------------------------*/
+intn
+Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
+{
+    /* Clear error stack */
+    HEclear();
+
+    /* Get byte order string */
+    if ((DFNT_LITEND & numbertype) > 0)
+    {
+        HDstrcpy(nt_info->byte_order, "littleEndian");
+    }
+    else
+        HDstrcpy(nt_info->byte_order, "bigEndian");
+
+    /* Get type name string; must mask native and little-endian to make
+       sure we get standard type */
+    switch((numbertype & ~DFNT_NATIVE) & ~DFNT_LITEND)
+    {
+      case DFNT_UCHAR8:
+        HDstrcpy(nt_info->type_name, "uchar8");
+        break;
+      case DFNT_CHAR8:
+        HDstrcpy(nt_info->type_name, "char8");
+        break;
+      case DFNT_FLOAT32:
+        HDstrcpy(nt_info->type_name, "float32");
+        break;
+      case DFNT_FLOAT64:
+        HDstrcpy(nt_info->type_name, "float64");
+        break;
+      case DFNT_FLOAT128:
+        HDstrcpy(nt_info->type_name, "float128");
+        break;
+      case DFNT_INT8:
+        HDstrcpy(nt_info->type_name, "int8");
+        break;
+      case DFNT_UINT8:
+        HDstrcpy(nt_info->type_name, "uint8");
+        break;
+      case DFNT_INT16:
+        HDstrcpy(nt_info->type_name, "int16");
+        break;
+      case DFNT_UINT16:
+        HDstrcpy(nt_info->type_name, "uint16");
+        break;
+      case DFNT_INT32:
+        HDstrcpy(nt_info->type_name, "int32");
+        break;
+      case DFNT_UINT32:
+        HDstrcpy(nt_info->type_name, "uint32");
+        break;
+      case DFNT_INT64:
+        HDstrcpy(nt_info->type_name, "int64");
+        break;
+      case DFNT_UINT64:
+        HDstrcpy(nt_info->type_name, "uint64");
+        break;
+      case DFNT_INT128:
+        HDstrcpy(nt_info->type_name, "int128");
+        break;
+      case DFNT_UINT128:
+        HDstrcpy(nt_info->type_name, "uint128");
+        break;
+      case DFNT_CHAR16:
+        HDstrcpy(nt_info->type_name, "char16");
+        break;
+      case DFNT_UCHAR16:
+        HDstrcpy(nt_info->type_name, "uchar16");
+        break;
+      default:
+	return FAIL;
+    } /* end switch */
+    return SUCCEED;
+} /* Hgetntinfo */
+
 
 #ifdef HAVE_FMPOOL
 /******************************************************************************

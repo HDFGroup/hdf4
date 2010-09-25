@@ -67,12 +67,13 @@ static int test_mgr_fillvalues()
     float32 image[7][5][N_COMPS]; /* space for the image data */
     VOIDP read_fill_vals=NULL;   /* space for fill values read from attr */
     float32 image0[7][5][N_COMPS]; /* space for the image data */
-    int32 start[2]; /* start of image data to grab */
-    int32 stride[2];/* stride of image data to grab */
+    int32 start[2];	/* start of image data to grab */
+    int32 stride[2];	/* stride of image data to grab */
     char attr_name[H4_MAX_GR_NAME];
     int32 ntype, n_values;
+    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
     int32 ret;		/* generic return value */
-    int   num_errs = 0;    /* number of errors so far */
+    int   num_errs = 0; /* number of errors so far */
 
     MESSAGE(8, printf("Reading fill-value attribute\n"););
 
@@ -138,18 +139,18 @@ static int test_mgr_fillvalues()
 	VERIFY(n_values, RI_ATT_N_VALUES, "GRattrinfo");
 	VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
-	/* Allocate a buffer to hold the attribute data.  Knowledge about
-	 * the data type is assumed to be available from the previous
-	 * part of the test where the correspondent GRsetattr was called. */
-	if (ntype == DFNT_FLOAT32)
+	/* Allocate a buffer to hold the attribute data. */
+	read_fill_vals = HDmalloc (n_values * sizeof (float32));
+	if (read_fill_vals == NULL)
 	{
-	    read_fill_vals = HDmalloc (n_values * sizeof (float32));
-	    if (read_fill_vals == NULL)
-	    {
-		fprintf (stderr, "Unable to allocate space for attribute data.\n");
-		exit (1);
-	    }
+	    fprintf (stderr, "Unable to allocate space for attribute data.\n");
+	    exit (1);
 	}
+
+	/* Piggy-back a test for Hgetntinfo */
+	ret = Hgetntinfo(ntype, &nt_info);
+	CHECK(ret, FAIL, "Hgetntinfo");
+	VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo");
 
 	/* Read and verify the attribute's data */
 	ret = GRgetattr(riid, attr_index, (VOIDP)read_fill_vals);
@@ -209,6 +210,7 @@ static int test_mgr_userattr()
     int32 n_attrs;         /* number of attributes with each image */
     int16 ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
     VOIDP data_buf;        /* buffer to hold the attribute values */
+    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
     intn  status;          /* status for functions returning an intn */
     int   num_errs = 0;    /* number of errors so far */
 
@@ -312,6 +314,11 @@ static int test_mgr_userattr()
 				attr_name););
 		    num_errs++;
 		} /* end if */
+
+		/* Piggy-back a test for Hgetntinfo */
+		status = Hgetntinfo(ntype, &nt_info);
+		CHECK(status, FAIL, "Hgetntinfo");
+		VERIFY_CHAR(nt_info.type_name, "char8", "Hgetntinfo");
 		break;
 	      case DFNT_UINT8:
 		if (HDmemcmp(data_buf, file_attr_2, n_values) != 0)
@@ -320,6 +327,11 @@ static int test_mgr_userattr()
 				attr_name););
 		    num_errs++;
 		} /* end if */
+
+		/* Piggy-back a test for Hgetntinfo */
+		status = Hgetntinfo(ntype, &nt_info);
+		CHECK(status, FAIL, "Hgetntinfo");
+		VERIFY_CHAR(nt_info.type_name, "uint8", "Hgetntinfo");
 		break;
 	      default:
 		{
