@@ -431,6 +431,7 @@
 ./hdf/util/hdfcomp.out1.2
 ./hdf/util/hdfed.input1
 ./hdf/util/hdfed.out1
+./hdf/util/hdfed-w.out1
 ./hdf/util/hdfgifwr.c
 ./hdf/util/hdfls.c
 ./hdf/util/hdfpack.c
@@ -804,6 +805,7 @@
 ./mfhdf/hdfimport/hdfimport.input1
 ./mfhdf/hdfimport/hdfimport.out1
 ./mfhdf/hdfimport/hdfimport.out2
+./mfhdf/hdfimport/hdfimport-w.out2
 ./mfhdf/hdfimport/hdfimport.out3
 ./mfhdf/hdfimport/hdfimporttest.c
 ./mfhdf/hdfimport/testutil.sh.in
