@@ -194,7 +194,7 @@ INSTALL (
     TARGETS
         hdiff
     RUNTIME DESTINATION
-        bin/tools
+        ${HDF4_INSTALL_BIN_DIR}/tools
     COMPONENT
         toolsapplications
 )

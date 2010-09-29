@@ -119,6 +119,7 @@ hdf/test/tutils.c -text
 hdf/util/CMakeLists.txt -text
 hdf/util/hdfcomp.out1.1 -text
 hdf/util/hdfcomp.out1.2 -text
+hdf/util/hdfed-w.out1 -text
 hdf/util/hdfpack.out1.1 -text
 hdf/util/hdfpack.out1.2 -text
 hdf/util/testfiles/SunWheel.gif -text
@@ -241,6 +242,7 @@ mfhdf/hdfimport/SDSfloat2.hdf -text
 mfhdf/hdfimport/SDSfloat3.hdf -text
 mfhdf/hdfimport/crtSDSfloats.c -text
 mfhdf/hdfimport/gen_sds_floats.c -text
+mfhdf/hdfimport/hdfimport-w.out2 -text
 mfhdf/hdfimport/hdfimport.out3 -text
 mfhdf/hdfimport/testfiles/SDSfloat2.tst -text
 mfhdf/hdfimport/testfiles/SDSfloat3.tst -text

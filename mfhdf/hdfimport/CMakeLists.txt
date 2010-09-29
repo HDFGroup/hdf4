@@ -46,7 +46,7 @@ IF (BUILD_TESTING)
   SET (HDF4_REFERENCE_TEST_FILES
       hdfimport.input1
       hdfimport.out1
-      hdfimport.out2
+#      hdfimport.out2
       hdfimport.out3
       SDSfloat2.hdf
       SDSfloat3.hdf
@@ -62,6 +62,22 @@ IF (BUILD_TESTING)
           ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file} ${dest}
      )      
   ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  
+  IF (WIN32)
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfimport
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport-w.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
+    )
+  ELSE (WIN32)
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfimport
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
+    )
+  ENDIF (WIN32)
  
   #-- Copy all the hdfls tst files from the test directory into the source directory
   SET (HDF4_LS_TEST_FILES
@@ -247,7 +263,7 @@ INSTALL (
     TARGETS
         hdfimport
     RUNTIME DESTINATION
-        bin/tools
+        ${HDF4_INSTALL_BIN_DIR}/tools
     COMPONENT
         toolsapplications
 )

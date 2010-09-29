@@ -113,7 +113,7 @@ ENDIF (WIN32)
       TARGETS
           ncgen
       RUNTIME DESTINATION
-          bin/tools
+          ${HDF4_INSTALL_BIN_DIR}/tools
       COMPONENT
           toolsapplications
   )

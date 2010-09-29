@@ -157,7 +157,7 @@ IF (BUILD_TESTING)
       hdfcomp.out1.1
       hdfcomp.out1.2
       hdfed.input1
-      hdfed.out1
+#      hdfed.out1
       hdfpack.out1.1
       hdfpack.out1.2
       hdftor8.out1
@@ -176,6 +176,22 @@ IF (BUILD_TESTING)
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} ${dest}
     )
   ENDFOREACH (h4_file ${HDF4_LS_TEST_FILES})
+  
+  IF (WIN32)
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfls
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed-w.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
+    )
+  ELSE (WIN32)
+    ADD_CUSTOM_COMMAND (
+        TARGET     hdfls
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
+    )
+  ENDIF (WIN32)
 
   #-- Copy all the hdf2gif data files from the source directory into the test directory
   SET (HDF4_HDF2GIF_TEST_FILES
@@ -524,7 +540,7 @@ INSTALL (
         vmake
         vshow
     RUNTIME DESTINATION
-        bin/utils
+        ${HDF4_INSTALL_BIN_DIR}/utils
     COMPONENT
         utilsapplications
 )
