@@ -7,14 +7,14 @@ INCLUDE_DIRECTORIES (${HDF4_SOURCE_DIR}/mfhdf/hdiff)
 
 ADD_DEFINITIONS (-DHDF)
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
@@ -43,9 +43,12 @@ ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hrepack ${LIB_TYPE})
 TARGET_WIN_PROPERTIES (hrepack ${LIB_TYPE})
 
-#-----------------------------------------------------------------------------
-# Dashboard and Testing Settings
-#-----------------------------------------------------------------------------
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
+
 IF (BUILD_TESTING)
 #-- Adding test for hrepack_check
 
@@ -61,8 +64,6 @@ IF (BUILD_TESTING)
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hrepack_check ${LIB_TYPE})
   TARGET_WIN_PROPERTIES (hrepack_check ${LIB_TYPE})
-
-#  ADD_TEST (NAME hrepack_check COMMAND $<TARGET_FILE:hrepack_check>)
 
 #-- Adding test for test_hrepack
 
@@ -101,8 +102,6 @@ IF (BUILD_TESTING)
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (test_hrepack ${LIB_TYPE})
   TARGET_WIN_PROPERTIES (test_hrepack ${LIB_TYPE})
-  
-  ADD_TEST (NAME test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
  
 #-- Copy all the dat files from the test directory into the source directory
   SET (HDF4_REPACK_TEST_FILES
@@ -121,10 +120,37 @@ IF (BUILD_TESTING)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
     )
-      
   ENDFOREACH (h4_file ${HDF4_REPACK_TEST_FILES})
 
+##############################################################################
+##############################################################################
+###           T H E   T E S T S                                            ###
+##############################################################################
+##############################################################################
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME hrepack-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          hrepacktst1.hdf
+          hrepacktst1_out.hdf
+          hrepacktst2.hdf
+          hrepacktst2_out.hdf
+          hrepacktst3.hdf
+          hrepacktst3_out.hdf
+  )
+
+#  ADD_TEST (NAME hrepack_check COMMAND $<TARGET_FILE:hrepack_check>)
+  
+  ADD_TEST (NAME test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
+
 ENDIF (BUILD_TESTING)
+
+##############################################################################
+##############################################################################
+###           I N S T A L L A T I O N                                      ###
+##############################################################################
+##############################################################################
 
 #-----------------------------------------------------------------------------
 # Rules for Installation of tools using make Install target

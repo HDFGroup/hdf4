@@ -20,13 +20,13 @@ SET (hdp_SRCS
 )
   
 ADD_EXECUTABLE (hdp ${hdp_SRCS})
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
   TARGET_LINK_LIBRARIES (hdp ${HDF4_MF_XDR_LIB_TARGET})
 ENDIF (HDF4_BUILD_XDR_LIB)
@@ -202,6 +202,180 @@ IF (BUILD_TESTING)
 ###           T H E   T E S T S                                            ###
 ##############################################################################
 ##############################################################################
+  
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME HDP_tst-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          dumpgr-1.tst
+          dumpgr-10.tst
+          dumpgr-11.tst
+          dumpgr-12.tst
+          dumpgr-13.tst
+          dumpgr-14.tst
+          dumpgr-15.tst
+          dumpgr-16.tst
+          dumpgr-17.tst
+          dumpgr-18.tst
+          dumpgr-19.tst
+          dumpgr-2.tst
+          dumpgr-3.tst
+          dumpgr-4.tst
+          dumpgr-5.tst
+          dumpgr-6.tst
+          dumpgr-7.tst
+          dumpgr-8.tst
+          dumpgr-9.tst
+          dumprig-1.tst
+          dumprig-2.tst
+          dumprig-3.tst
+          dumprig-4.tst
+          dumprig-5.tst
+          dumprig-6.tst
+          dumpsds-1.tst
+          dumpsds-10.tst
+          dumpsds-11.tst
+          dumpsds-12.tst
+          dumpsds-13.tst
+          dumpsds-14.tst
+          dumpsds-15.tst
+          dumpsds-15szip.tst
+          dumpsds-16.tst
+          dumpsds-17.tst
+          dumpsds-2.tst
+          dumpsds-3.tst
+          dumpsds-4.tst
+          dumpsds-5.tst
+          dumpsds-6.tst
+          dumpsds-7.tst
+          dumpsds-8.tst
+          dumpsds-9.tst
+          dumpvd-1.tst
+          dumpvd-10.tst
+          dumpvd-11.tst
+          dumpvd-12.tst
+          dumpvd-2.tst
+          dumpvd-3.tst
+          dumpvd-4.tst
+          dumpvd-5.tst
+          dumpvd-6.tst
+          dumpvd-7.tst
+          dumpvd-8.tst
+          dumpvd-9.tst
+          dumpvg-1.tst
+          dumpvg-10.tst
+          dumpvg-11.tst
+          dumpvg-12.tst
+          dumpvg-13.tst
+          dumpvg-14.tst
+          dumpvg-15.tst
+          dumpvg-2.tst
+          dumpvg-3.tst
+          dumpvg-4.tst
+          dumpvg-5.tst
+          dumpvg-6.tst
+          dumpvg-7.tst
+          dumpvg-8.tst
+          dumpvg-9.tst
+          list-1.tst
+          list-10.tst
+          list-2.tst
+          list-3.tst
+          list-4.tst
+          list-5.tst
+          list-6.tst
+          list-7.tst
+          list-8.tst
+          list-9.tst
+  )
+  
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME HDP_tst_err-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          dumpgr-1.tst.err
+          dumpgr-10.tst.err
+          dumpgr-11.tst.err
+          dumpgr-12.tst.err
+          dumpgr-13.tst.err
+          dumpgr-14.tst.err
+          dumpgr-15.tst.err
+          dumpgr-16.tst.err
+          dumpgr-17.tst.err
+          dumpgr-18.tst.err
+          dumpgr-19.tst.err
+          dumpgr-2.tst.err
+          dumpgr-3.tst.err
+          dumpgr-4.tst.err
+          dumpgr-5.tst.err
+          dumpgr-6.tst.err
+          dumpgr-7.tst.err
+          dumpgr-8.tst.err
+          dumpgr-9.tst.err
+          dumprig-1.tst.err
+          dumprig-2.tst.err
+          dumprig-3.tst.err
+          dumprig-4.tst.err
+          dumprig-5.tst.err
+          dumprig-6.tst.err
+          dumpsds-1.tst.err
+          dumpsds-10.tst.err
+          dumpsds-11.tst.err
+          dumpsds-12.tst.err
+          dumpsds-13.tst.err
+          dumpsds-14.tst.err
+          dumpsds-15.tst.err
+          dumpsds-15szip.tst.err
+          dumpsds-16.tst.err
+          dumpsds-17.tst.err
+          dumpsds-2.tst.err
+          dumpsds-3.tst.err
+          dumpsds-4.tst.err
+          dumpsds-5.tst.err
+          dumpsds-6.tst.err
+          dumpsds-7.tst.err
+          dumpsds-8.tst.err
+          dumpsds-9.tst.err
+          dumpvd-1.tst.err
+          dumpvd-10.tst.err
+          dumpvd-11.tst.err
+          dumpvd-12.tst.err
+          dumpvd-2.tst.err
+          dumpvd-3.tst.err
+          dumpvd-4.tst.err
+          dumpvd-5.tst.err
+          dumpvd-6.tst.err
+          dumpvd-7.tst.err
+          dumpvd-8.tst.err
+          dumpvd-9.tst.err
+          dumpvg-1.tst.err
+          dumpvg-10.tst.err
+          dumpvg-11.tst.err
+          dumpvg-12.tst.err
+          dumpvg-13.tst.err
+          dumpvg-14.tst.err
+          dumpvg-15.tst.err
+          dumpvg-2.tst.err
+          dumpvg-3.tst.err
+          dumpvg-4.tst.err
+          dumpvg-5.tst.err
+          dumpvg-6.tst.err
+          dumpvg-7.tst.err
+          dumpvg-8.tst.err
+          dumpvg-9.tst.err
+          list-1.tst.err
+          list-10.tst.err
+          list-2.tst.err
+          list-3.tst.err
+          list-4.tst.err
+          list-5.tst.err
+          list-6.tst.err
+          list-7.tst.err
+          list-8.tst.err
+          list-9.tst.err
+  )
 
   ADD_H4_TEST (list-1 0 list tdata.hdf)
   ADD_H4_TEST (list-2 0 list -l tdata.hdf)

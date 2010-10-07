@@ -31,9 +31,9 @@ LINK_DIRECTORIES (
 )
 
 SET (F_LIB_TYPE ${LIB_TYPE})
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (F_LIB_TYPE STATIC)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 #-----------------------------------------------------------------------------
 # Define Sources
@@ -66,13 +66,32 @@ SET (examples
     # VD_set_get_vdata_attr
 )
 
+IF (BUILD_TESTING)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME HDF_FORTRAN_EXAMPLES-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          General_HDFobjects.hdf
+          General_RImages.hdf
+          General_Vdatas.hdf
+          General_Vgroups.hdf
+          Image_with_Palette.hdf
+          Packed_Vdata.hdf
+          Two_Vdatas.hdf
+          Two_Vgroups.hdf
+  )
+ENDIF (BUILD_TESTING)
+
 FOREACH (example ${examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example} ${F_LIB_TYPE})
   TARGET_FORTRAN_WIN_PROPERTIES (f_ex_${example} ${F_LIB_TYPE})
   SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ADD_TEST (NAME f_extest_${example} COMMAND $<TARGET_FILE:f_ex_${example}>)
+  IF (BUILD_TESTING)
+    ADD_TEST (NAME f_extest_${example} COMMAND $<TARGET_FILE:f_ex_${example}>)
+  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
@@ -81,4 +100,6 @@ TARGET_FORTRAN_WIN_PROPERTIES (f_ex_VG_add_sds_to_vgroup ${F_LIB_TYPE})
 SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 TARGET_LINK_LIBRARIES (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
-ADD_TEST (NAME f_extest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:f_ex_VG_add_sds_to_vgroup>)
+IF (BUILD_TESTING)
+  ADD_TEST (NAME f_extest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:f_ex_VG_add_sds_to_vgroup>)
+ENDIF (BUILD_TESTING)

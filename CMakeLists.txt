@@ -227,9 +227,9 @@ INCLUDE (${HDF4_RESOURCES_DIR}/ConfigureChecks.cmake)
 #-----------------------------------------------------------------------------
 # Option to use legacy naming for windows libs/programs, default is legacy
 #-----------------------------------------------------------------------------
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   OPTION (HDF_LEGACY_NAMING "Use Legacy Names for Libraries and Programs" ON)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 #-----------------------------------------------------------------------------
 # Option to Build Shared/Static libs, default is static
@@ -303,8 +303,10 @@ INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIRECTORIES} )
 SET (EXE_EXT "")
 IF (WIN32)
   SET (EXE_EXT ".exe")
-  ADD_DEFINITIONS (-DBIND_TO_CURRENT_VCLIBS_VERSION=1)
-  ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
+  IF (NOT CYGWIN)
+    ADD_DEFINITIONS (-DBIND_TO_CURRENT_VCLIBS_VERSION=1)
+    ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
+  ENDIF (NOT CYGWIN)
 ENDIF (WIN32)
 
 SET (MAKE_SYSTEM)
@@ -350,9 +352,9 @@ IF (HDF4_DISABLE_COMPILER_WARNINGS)
         CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
     SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
   ENDIF (MSVC)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   # Borland uses -w- to suppress warnings.
   IF (BORLAND)
     SET (HDF4_WARNINGS_BLOCKED 1)
@@ -554,7 +556,7 @@ ENDIF (HDF4_ENABLE_SZIP_SUPPORT)
 #-----------------------------------------------------------------------------
 # Option for external libraries on windows
 #-----------------------------------------------------------------------------
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   OPTION (HDF4_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
   IF (BUILD_SHARED_LIBS)
     FILE (MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${BLDTYPE})
@@ -582,7 +584,7 @@ IF (WIN32)
     ENDIF (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
     
   ENDIF (BUILD_SHARED_LIBS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 #-----------------------------------------------------------------------------
 # Build utility to copy and strip X lines of file
@@ -612,15 +614,16 @@ IF (BUILD_TESTING)
     ENDIF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
   ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
   INCLUDE (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
+  CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
 ENDIF (BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 xdr Library
 #-----------------------------------------------------------------------------
 OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 IF (HDF4_BUILD_XDR_LIB)
   ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
 ENDIF (HDF4_BUILD_XDR_LIB)
@@ -654,10 +657,10 @@ SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) name ## __")
 IF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
   OPTION (HDF4_BUILD_FORTRAN "Build FORTRAN support" ON)
   IF (HDF4_BUILD_FORTRAN)
-    IF (WIN32)
+    IF (WIN32 AND NOT CYGWIN)
       SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
-    ENDIF (WIN32)
+    ENDIF (WIN32 AND NOT CYGWIN)
     ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
     ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
   ENDIF (HDF4_BUILD_FORTRAN)

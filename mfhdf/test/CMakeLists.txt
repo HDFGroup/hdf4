@@ -6,14 +6,14 @@ INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 ADD_DEFINITIONS (-DHDF)
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
@@ -45,10 +45,6 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
-ADD_TEST (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)
-SET (passRegex "HDF-SD test passes")
-SET_PROPERTY (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
-
 #-- Copy all the dat files from the test directory into the source directory
 SET (HDF4_REFERENCE_TEST_FILES
     sds_szipped.dat
@@ -79,16 +75,6 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
-ADD_TEST (NAME cdftest COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:cdftest>"
-            -D "TEST_ARGS:STRING="
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_OUTPUT=cdfout.new"
-            -D "TEST_EXPECT=0"
-            -D "TEST_REFERENCE=testout.sav"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-)
-
 SET (hdfnctest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdfnctest.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tunlim.c
@@ -104,6 +90,83 @@ IF (HDF4_BUILD_XDR_LIB)
 ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hdfnctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
+
+##############################################################################
+##############################################################################
+###           T H E   T E S T S                                            ###
+##############################################################################
+##############################################################################
+# Remove any output file left over from previous test run
+ADD_TEST (
+    NAME hrepack-clearall-objects
+    COMMAND    ${CMAKE_COMMAND}
+        -E remove 
+        b150.hdf
+        bug376.hdf
+        cdfout.new
+        cdfout.new.err
+        chkbit.hdf
+        chktst.hdf
+        comptst1.hdf
+        comptst2.hdf
+        comptst3.hdf
+        comptst4.hdf
+        comptst5.hdf
+        comptst6.hdf
+        comptst7.hdf
+        datainfo_chk.hdf
+        datainfo_chkcmp.hdf
+        datainfo_cmp.hdf
+        datainfo_extend.hdf
+        datainfo_nodata.hdf
+        datainfo_simple.hdf
+        datasizes.hdf
+        dim.hdf
+        emptySDSs.hdf
+        extfile.hdf
+        exttst.hdf
+        idtypes.hdf
+        multidimvar.nc
+        nbit.hdf
+        onedimmultivars.nc
+        onedimonevar.nc
+        scaletst.hdf
+        sds1_dim1_samename.hdf
+        sds2_dim1_samename.hdf
+        SDS_8_sziped.hdf
+        SDS_16_sziped.hdf
+        SDS_32_sziped.hdf
+        sds_compressed.hdf
+        SDS_fl32_sziped.hdf
+        SDS_fl64_sziped.hdf
+        sds_szipped.hdf
+        SDSchunkedsziped.hdf
+        SDSchunkedsziped3d.hdf
+        SDSlongname.hdf
+        SDSunlimitedsziped.hdf
+        test.cdf
+        test1.hdf
+        test2.hdf
+        test_arguments.hdf
+        'This file name has quite a few characters because it is used to test the fix of bugzilla 1331. It has to be at least this long to see.'
+        Unlim_dim.hdf
+        Unlim_inloop.hdf
+        vars_samename.hdf
+)
+
+ADD_TEST (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)
+SET (passRegex "HDF-SD test passes")
+SET_PROPERTY (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+
+ADD_TEST (NAME cdftest COMMAND "${CMAKE_COMMAND}"
+            -D "TEST_PROGRAM=$<TARGET_FILE:cdftest>"
+            -D "TEST_ARGS:STRING="
+            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_OUTPUT=cdfout.new"
+            -D "TEST_EXPECT=0"
+            -D "TEST_REFERENCE=testout.sav"
+            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+)
 
 ADD_TEST (NAME hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
 SET (NCpassRegex "HDF-nc test passes")

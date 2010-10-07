@@ -4,20 +4,20 @@ PROJECT (HDF4_MFHDF_HDFIMPORT)
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 ADD_DEFINITIONS (-DHDF)
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
@@ -63,21 +63,21 @@ IF (BUILD_TESTING)
      )      
   ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
   
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfimport
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport-w.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
     )
-  ELSE (WIN32)
+  ELSE (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfimport
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
     )
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
  
   #-- Copy all the hdfls tst files from the test directory into the source directory
   SET (HDF4_LS_TEST_FILES
@@ -213,8 +213,66 @@ IF (BUILD_TESTING)
       NAME hdfimport-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
-          ./*.tmp
-          ./*.err
+          ctxtr2 
+          ctxtr3 
+          cb32i2 
+          cb32i3 
+          cb16i2 
+          cb16i3 
+          cb32r2 
+          cb32r3 
+          cb64r2 
+          cb64r3 
+          cb64r2-n
+          cb64r3-n 
+          ctxtr2_ris
+          cb64r2_ris
+          ctxtr2.hdf 
+          ctxtr3.hdf 
+          cb32i2.hdf 
+          cb32i3.hdf 
+          cb16i2.hdf 
+          cb16i3.hdf 
+          cb32r2.hdf 
+          cb32r3.hdf 
+          cb64r2.hdf 
+          cb64r3.hdf 
+          cb64r2-n.hdf 
+          cb64r3-n.hdf 
+          ctxtr2_ris.hdf
+          cb64r2_ris.hdf
+          ctxtr2.tmp 
+          ctxtr3.tmp 
+          cb32i2.tmp 
+          cb32i3.tmp 
+          cb16i2.tmp 
+          cb16i3.tmp 
+          cb32r2.tmp 
+          cb32r3.tmp 
+          cb64r2.tmp 
+          cb64r3.tmp 
+          cb64r2-n.tmp 
+          cb64r3-n.tmp 
+          ctxtr2_ris.tmp
+          cb64r2_ris.tmp
+          SDSfloat2.tmp
+          SDSfloat3.tmp
+          ctxtr2.tmp.err 
+          ctxtr3.tmp.err 
+          cb32i2.tmp.err 
+          cb32i3.tmp.err 
+          cb16i2.tmp.err 
+          cb16i3.tmp.err 
+          cb32r2.tmp.err 
+          cb32r3.tmp.err 
+          cb64r2.tmp.err 
+          cb64r3.tmp.err 
+          cb64r2-n.tmp.err 
+          cb64r3-n.tmp.err 
+          ctxtr2_ris.tmp.err
+          cb64r2_ris.tmp.err
+          SDSfloat2.tmp.err
+          SDSfloat3.tmp.err
   )
 
   ADD_TEST (NAME HIMPORTtest COMMAND $<TARGET_FILE:hdfimporttest>)
@@ -255,6 +313,12 @@ IF (BUILD_TESTING)
   ADD_H4_TEST_ED (hdfimport.input1 hdfimport.out2 0)
 
 ENDIF (BUILD_TESTING)
+
+##############################################################################
+##############################################################################
+###           I N S T A L L A T I O N                                      ###
+##############################################################################
+##############################################################################
 
 #-----------------------------------------------------------------------------
 # Rules for Installation of tools using make Install target

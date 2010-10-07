@@ -21,9 +21,9 @@ LINK_DIRECTORIES (
 )
 
 SET (F_LIB_TYPE ${LIB_TYPE})
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (F_LIB_TYPE STATIC)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 #-----------------------------------------------------------------------------
 # Define Sources
@@ -47,6 +47,20 @@ SET (examples
     SD_chunking_example
 )
 
+IF (BUILD_TESTING)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME MFHDF_FORTRAN_EXAMPLES-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          SDS.hdf
+          SDSchunked.hdf
+          SDScompressed.hdf
+          SDSUNLIMITED.hdf
+          SLABS.hdf
+  )
+ENDIF (BUILD_TESTING)
+
 FOREACH (example ${examples})
   ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${F_LIB_TYPE})
@@ -57,5 +71,7 @@ FOREACH (example ${examples})
   ELSE (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
-  ADD_TEST (NAME f_exmftest_${example} COMMAND $<TARGET_FILE:f_exmf_${example}>)
+  IF (BUILD_TESTING)
+    ADD_TEST (NAME f_exmftest_${example} COMMAND $<TARGET_FILE:f_exmf_${example}>)
+  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})

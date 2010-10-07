@@ -12,9 +12,9 @@ INCLUDE_DIRECTORIES (
 )
 
 SET (F_LIB_TYPE ${LIB_TYPE})
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (F_LIB_TYPE STATIC)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 #-----------------------------------------------------------------------------
 # Add debug information (intel Fortran : JB)
@@ -58,9 +58,9 @@ SET (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 #-----------------------------------------------------------------------------
 ADD_LIBRARY (${HDF4_SRC_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSTUB_FSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDFSOURCE_DIR}/hproto_fortran.h ${HDF4_BINARY_DIR}/h4config.h)
 SET_TARGET_PROPERTIES (${HDF4_SRC_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 TARGET_LINK_LIBRARIES (${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_FCSTUB_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_NAME} ${LIB_TYPE})
@@ -85,6 +85,12 @@ SET_TARGET_PROPERTIES (${HDF4_SRC_FORTRAN_LIB_TARGET} PROPERTIES LINKER_LANGUAGE
 TARGET_LINK_LIBRARIES (${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${LINK_LIBS})
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_FORTRAN_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_NAME} ${F_LIB_TYPE})
+
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
   
 IF (BUILD_TESTING)
 
@@ -95,9 +101,9 @@ IF (BUILD_TESTING)
   #-----------------------------------------------------------------------------
   ADD_LIBRARY (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
   SET_TARGET_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DDOS_FS)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   TARGET_LINK_LIBRARIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}  ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} ${LIB_TYPE})
   
@@ -106,14 +112,10 @@ IF (BUILD_TESTING)
   TARGET_NAMING (fortest ${LIB_TYPE})
   TARGET_WIN_PROPERTIES (fortest ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
-  IF (WIN32)
-    IF (MSVC)
-      TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
-    ENDIF (MSVC)
-  ENDIF (WIN32)
+  IF (WIN32 AND MSVC)
+    TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
+  ENDIF (WIN32 AND MSVC)
   SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
-
-  ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
 
   #-----------------------------------------------------------------------------
   #-- Adding test for fortestF
@@ -167,11 +169,45 @@ IF (BUILD_TESTING)
     )
   ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
+##############################################################################
+##############################################################################
+###           T H E   T E S T S                                            ###
+##############################################################################
+##############################################################################
+
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME HDF_FORTRAN-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          fortest.arg
+          Fortran_err.dat
+          GRcompressed.hdf
+          GRchunked1.hdf
+          GRchunked2.hdf
+          manf.hdf
+          slab1wf.hdf
+          slab4wf.hdf
+          slabwf.hdf
+          tdf24f.hdf
+          tdfanF.hdf
+          tdfanflF.hdf
+          tmgrf.hdf
+  )
+
+  ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
+
   ADD_TEST (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
   SET (passRegex "All Fortran Interface Tests Passed")
   SET_PROPERTY (TEST fortestF PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
   
 ENDIF (BUILD_TESTING)
+
+##############################################################################
+##############################################################################
+###           I N S T A L L A T I O N                                      ###
+##############################################################################
+##############################################################################
 
 #-----------------------------------------------------------------------------
 # Add Target(s) to CMake Install for import into other projects

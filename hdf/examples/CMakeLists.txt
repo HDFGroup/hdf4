@@ -33,16 +33,37 @@ SET (examples
     AN_read_annotation
 )
 
+IF (BUILD_TESTING)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME HDF_EXAMPLES-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          General_HDFobjects.hdf
+          General_Rimages.hdf
+          General_Vdatas.hdf
+          General_Vgroups.hdf
+          Image_with_Palette.hdf
+          Packed_Vdata.hdf
+          Two_Vdatas.hdf
+          Two_Vgroups.hdf
+  )
+ENDIF (BUILD_TESTING)
+
 FOREACH (example ${examples})
   ADD_EXECUTABLE (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (hdf_${example} ${LIB_TYPE})
   TARGET_WIN_PROPERTIES (hdf_${example} ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ADD_TEST (NAME hdftest_${example} COMMAND $<TARGET_FILE:hdf_${example}>)
+  IF (BUILD_TESTING)
+    ADD_TEST (NAME hdftest_${example} COMMAND $<TARGET_FILE:hdf_${example}>)
+  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
 TARGET_NAMING (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
 TARGET_WIN_PROPERTIES (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdf_VG_add_sds_to_vgroup ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ADD_TEST (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
+IF (BUILD_TESTING)
+  ADD_TEST (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
+ENDIF (BUILD_TESTING)

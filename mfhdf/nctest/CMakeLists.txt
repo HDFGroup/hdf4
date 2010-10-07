@@ -6,14 +6,14 @@ INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 ADD_DEFINITIONS (-DHDF)
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
@@ -48,10 +48,6 @@ ELSE (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (nctest ${LIB_TYPE})
 TARGET_WIN_PROPERTIES (nctest ${LIB_TYPE})
-
-#-- Adding test for nctest
-
-ADD_TEST (NAME nctest COMMAND $<TARGET_FILE:nctest>)
  
 #-- Copy all the dat files from the test directory into the source directory
 SET (HDF4_NC_TEST_FILES
@@ -71,4 +67,14 @@ FOREACH (h4_file ${HDF4_NC_TEST_FILES})
       
 ENDFOREACH (h4_file ${HDF4_NC_TEST_FILES})
 
+# Remove any output file left over from previous test run
+ADD_TEST (
+    NAME NC_TEST-clearall-objects
+    COMMAND    ${CMAKE_COMMAND}
+        -E remove 
+        test.nc
+        test2.nc
+)
 
+#-- Adding test for nctest
+ADD_TEST (NAME nctest COMMAND $<TARGET_FILE:nctest>)

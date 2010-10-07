@@ -23,6 +23,21 @@ SET (examples
     SD_chunking_example
 )
 
+IF (BUILD_TESTING)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME MFHDF_EXAMPLES-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          SDS.hdf
+          SDSchunked.hdf
+          SDScompressed.hdf
+          SDSUNLIMITED.hdf
+          SLABS.hdf
+          ExternalSDS
+  )
+ENDIF (BUILD_TESTING)
+
 FOREACH (example ${examples})
   ADD_EXECUTABLE (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (mf_${example} ${LIB_TYPE})
@@ -32,5 +47,7 @@ FOREACH (example ${examples})
   ELSE (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (mf_${example} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
-  ADD_TEST (NAME mftest_${example} COMMAND $<TARGET_FILE:mf_${example}>)
+  IF (BUILD_TESTING)
+    ADD_TEST (NAME mftest_${example} COMMAND $<TARGET_FILE:mf_${example}>)
+  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})

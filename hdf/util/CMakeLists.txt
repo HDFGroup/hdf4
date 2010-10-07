@@ -3,9 +3,9 @@ PROJECT (HDF4_HDF_UTIL C CXX)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 #-- Adding utility hdfls
 ADD_EXECUTABLE (hdfls ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfls.c)
@@ -177,21 +177,21 @@ IF (BUILD_TESTING)
     )
   ENDFOREACH (h4_file ${HDF4_LS_TEST_FILES})
   
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfls
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed-w.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
     )
-  ELSE (WIN32)
+  ELSE (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfls
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
     )
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
 
   #-- Copy all the hdf2gif data files from the source directory into the test directory
   SET (HDF4_HDF2GIF_TEST_FILES
@@ -415,13 +415,15 @@ IF (BUILD_TESTING)
       NAME hdfgif-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
-          ./skull.gif
-          ./SunWheel.hdf
-          ./bttrfly.hdf
-          ./head8.hdf
-          ./img001-263.328
-          ./*.tmp
-          ./*.err
+          skull.gif
+          SunWheel.hdf
+          bttrfly.hdf
+          head8.hdf
+          img001-263.328
+          hdfed.input1.tmp
+          hdfed.input1.tmp.err
+          ristosds.input1.tmp
+          ristosds.input1.tmp.err
   )
 
   ADD_TEST (NAME testhdf2gif COMMAND $<TARGET_FILE:hdf2gif> skull.hdf skull.gif)
@@ -442,8 +444,12 @@ IF (BUILD_TESTING)
       NAME hdfpack-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
-          ./test.pck
-          ./test.blk
+          test.pck
+          test.blk
+          test.hdf.tmp
+          test.hdf.tmp.err
+          test.pck.tmp
+          test.pck.tmp.err
   )
 
   ADD_TEST (NAME testhdfpack COMMAND $<TARGET_FILE:hdfpack> test.hdf test.pck)
@@ -456,15 +462,24 @@ IF (BUILD_TESTING)
       NAME hdfpalette-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
-          ./palette.hdf
-          ./palette.raw.new
-          ./storm.hdf
-          ./img001-057.057
-          ./img002-057.057
-          ./img003-057.057
-          ./img004-057.057
-          ./allstorms.hdf
-          ./allcomp.hdf
+          pal001
+          pal005
+          palette.hdf
+          palette.raw.new
+          storm.hdf
+          storm.hdf.tmp
+          storm.hdf.tmp.err
+          img001-057.057
+          img002-057.057
+          img003-057.057
+          img004-057.057
+          img005-057.057
+          allstorms.hdf
+          allstorms.hdf.tmp
+          allstorms.hdf.tmp.err
+          allcomp.hdf
+          allcomp.hdf.tmp
+          allcomp.hdf.tmp.err
   )
 
   ADD_TEST (NAME testpaltohdf COMMAND $<TARGET_FILE:paltohdf> palette.raw palette.hdf)
@@ -491,8 +506,10 @@ IF (BUILD_TESTING)
       NAME hdfjpeg-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
-          ./jpeg.hdf
-          ./jpeg2.jpg
+          jpeg.hdf
+          jpeg.hdf.tmp
+          jpeg.hdf.tmp.err
+          jpeg2.jpg
   )
 
   ADD_TEST (NAME testjpeg2hdf COMMAND $<TARGET_FILE:jpeg2hdf> jpeg_img.jpg jpeg.hdf)

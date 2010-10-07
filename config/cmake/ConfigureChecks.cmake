@@ -17,7 +17,15 @@ MESSAGE (STATUS "  GetConsoleScreenBufferInfo function for Windows")
 # Always SET this for now IF we are on an OS X box
 #-----------------------------------------------------------------------------
 IF (APPLE)
-  SET (H4_AC_APPLE_UNIVERSAL_BUILD 1)
+  LIST(LENGTH CMAKE_OSX_ARCHITECTURES ARCH_LENGTH)
+  IF(ARCH_LENGTH GREATER 1)
+    set (CMAKE_OSX_ARCHITECTURES "" CACHE STRING "" FORCE)
+    message(FATAL_ERROR "Building Universal Binaries on OS X is NOT supported by the HDF5 project. This is"
+    "due to technical reasons. The best approach would be build each architecture in separate directories"
+    "and use the 'lipo' tool to combine them into a single executable or library. The 'CMAKE_OSX_ARCHITECTURES'"
+    "variable has been set to a blank value which will build the default architecture for this system.")
+  ENDIF()
+  SET (H5_AC_APPLE_UNIVERSAL_BUILD 0)
 ENDIF (APPLE)
 
 #-----------------------------------------------------------------------------
@@ -46,13 +54,6 @@ IF (LINUX_LFS)
 ENDIF (LINUX_LFS)
 ADD_DEFINITIONS (${HDF_EXTRA_FLAGS})
 
-SET (WINDOWS)
-IF (WIN32)
-  IF (NOT UNIX)
-    SET (WINDOWS 1)
-  ENDIF (NOT UNIX)
-ENDIF (WIN32)
-
 #-----------------------------------------------------------------------------
 # This MACRO checks IF the symbol exists in the library and IF it
 # does, it appends library to the list.
@@ -65,14 +66,59 @@ MACRO (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
   ENDIF (${VARIABLE})
 ENDMACRO (CHECK_LIBRARY_EXISTS_CONCAT)
 
+# ----------------------------------------------------------------------
+# WINDOWS Hard code Values
+# ----------------------------------------------------------------------
+
+SET (WINDOWS)
+IF (WIN32)
+  IF (NOT UNIX AND NOT CYGWIN)
+    SET (WINDOWS 1)
+  ENDIF (NOT UNIX AND NOT CYGWIN)
+ENDIF (WIN32)
+
+IF (WINDOWS)
+  SET (H4_HAVE_LIBM 1)
+  SET (H4_HAVE_IO_H 1)
+  SET (H4_HAVE_SETJMP_H 1)
+  SET (H4_HAVE_STDDEF_H 1)
+  SET (H4_HAVE_SYS_STAT_H 1)
+  SET (H4_HAVE_SYS_TIMEB_H 1)
+  SET (H4_HAVE_SYS_TYPES_H 1)
+  SET (H4_HAVE_WINSOCK_H 1)
+  SET (H4_HAVE_STRDUP 1)
+  SET (H4_HAVE_SYSTEM 1)
+  SET (H4_HAVE_DIFFTIME 1)
+  SET (H4_HAVE_LONGJMP 1)
+  SET (H4_STDC_HEADERS 1)
+  SET (H4_HAVE_GETHOSTNAME 1)
+  SET (H4_HAVE_TIMEZONE 1)
+  SET (H4_HAVE_FUNCTION 1)
+ENDIF (WINDOWS)
+
+#-----------------------------------------------------------------------------
+# These tests need to be manually SET for windows since there is currently
+# something not quite correct with the actual test implementation. This affects
+# the 'dt_arith' test and most likely lots of other code
+# ----------------------------------------------------------------------------
+IF (WINDOWS)
+  SET (H4_FP_TO_ULLONG_RIGHT_MAXIMUM "" CACHE INTERNAL "")
+ENDIF (WINDOWS)
+
+# ----------------------------------------------------------------------
+# END of WINDOWS Hard code Values
+# ----------------------------------------------------------------------
+
+IF (CYGWIN)
+  SET (H4_HAVE_LSEEK64 0)
+ENDIF (CYGWIN)
+
 #-----------------------------------------------------------------------------
 #  Check for the math library "m"
 #-----------------------------------------------------------------------------
-IF (WINDOWS)
-  SET (H4_HAVE_LIBM 1)
-ELSE (WINDOWS)
+IF (NOT WINDOWS)
   CHECK_LIBRARY_EXISTS_CONCAT ("m" printf     H4_HAVE_LIBM)
-ENDIF (WINDOWS)
+ENDIF (NOT WINDOWS)
 CHECK_LIBRARY_EXISTS_CONCAT ("ws2_32" printf  H4_HAVE_LIBWS2_32)
 CHECK_LIBRARY_EXISTS_CONCAT ("wsock32" printf H4_HAVE_LIBWSOCK32)
 #CHECK_LIBRARY_EXISTS_CONCAT ("dl"     dlopen       H4_HAVE_LIBDL)
@@ -96,19 +142,6 @@ MACRO (CHECK_INCLUDE_FILE_CONCAT FILE VARIABLE)
     SET (USE_INCLUDES ${USE_INCLUDES} ${FILE})
   ENDIF (${VARIABLE})
 ENDMACRO (CHECK_INCLUDE_FILE_CONCAT)
-
-#-----------------------------------------------------------------------------
-# If we are on Windows we know some of the answers to these tests already
-#-----------------------------------------------------------------------------
-IF (WINDOWS)
-  SET (H4_HAVE_IO_H 1)
-  SET (H4_HAVE_SETJMP_H 1)
-  SET (H4_HAVE_STDDEF_H 1)
-  SET (H4_HAVE_SYS_STAT_H 1)
-  SET (H4_HAVE_SYS_TIMEB_H 1)
-  SET (H4_HAVE_SYS_TYPES_H 1)
-  SET (H4_HAVE_WINSOCK_H 1)
-ENDIF (WINDOWS)
 
 #-----------------------------------------------------------------------------
 #  Check for the existence of certain header files
@@ -144,9 +177,11 @@ CHECK_INCLUDE_FILE_CONCAT ("memory.h"        H4_HAVE_MEMORY_H)
 CHECK_INCLUDE_FILE_CONCAT ("dlfcn.h"         H4_HAVE_DLFCN_H)
 CHECK_INCLUDE_FILE_CONCAT ("features.h"      H4_HAVE_FEATURES_H)
 CHECK_INCLUDE_FILE_CONCAT ("inttypes.h"      H4_HAVE_INTTYPES_H)
-CHECK_INCLUDE_FILE_CONCAT ("winsock.h"       H4_HAVE_WINSOCK_H)
 CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    H4_HAVE_NETINET_IN_H)
 
+IF (NOT CYGWIN)
+  CHECK_INCLUDE_FILE_CONCAT ("winsock2.h"      H5_HAVE_WINSOCK_H)
+ENDIF (NOT CYGWIN)
 
 # IF the c compiler found stdint, check the C++ as well. On some systems this
 # file will be found by C but not C++, only do this test IF the C++ compiler
@@ -179,7 +214,7 @@ H4_CHECK_TYPE_SIZE (short          H4_SIZEOF_SHORT)
 H4_CHECK_TYPE_SIZE (int            H4_SIZEOF_INT)
 H4_CHECK_TYPE_SIZE (unsigned       H4_SIZEOF_UNSIGNED)
 IF (NOT APPLE)
-  H4_CHECK_TYPE_SIZE (long       H4_SIZEOF_LONG)
+  H4_CHECK_TYPE_SIZE (long         H4_SIZEOF_LONG)
 ENDIF (NOT APPLE)
 H4_CHECK_TYPE_SIZE ("long long"    H4_SIZEOF_LONG_LONG)
 H4_CHECK_TYPE_SIZE (__int64        H4_SIZEOF___INT64)
@@ -233,15 +268,7 @@ SET (CMAKE_REQUIRED_LIBRARIES ${LINK_LIBS})
 
 #-----------------------------------------------------------------------------
 # Check for some functions that are used
-IF (WINDOWS)
-  SET (H4_HAVE_STRDUP 1)
-  SET (H4_HAVE_SYSTEM 1)
-  SET (H4_HAVE_DIFFTIME 1)
-  SET (H4_HAVE_LONGJMP 1)
-  SET (H4_STDC_HEADERS 1)
-  SET (H4_HAVE_GETHOSTNAME 1)
-ENDIF (WINDOWS)
-
+#
 CHECK_FUNCTION_EXISTS (alarm             H4_HAVE_ALARM)
 CHECK_FUNCTION_EXISTS (fork              H4_HAVE_FORK)
 CHECK_FUNCTION_EXISTS (frexpf            H4_HAVE_FREXPF)
@@ -280,6 +307,8 @@ CHECK_FUNCTION_EXISTS (ioctl             H4_HAVE_IOCTL)
 CHECK_FUNCTION_EXISTS (difftime          H4_HAVE_DIFFTIME)
 CHECK_FUNCTION_EXISTS (fseeko            H4_HAVE_FSEEKO)
 CHECK_FUNCTION_EXISTS (ftello            H4_HAVE_FTELLO)
+CHECK_FUNCTION_EXISTS (fseeko64          H4_HAVE_FSEEKO64)
+CHECK_FUNCTION_EXISTS (ftello64          H4_HAVE_FTELLO64)
 CHECK_FUNCTION_EXISTS (fstat64           H4_HAVE_FSTAT64)
 CHECK_FUNCTION_EXISTS (stat64            H4_HAVE_STAT64)
 
@@ -313,13 +342,13 @@ IF (NOT MSVC)
 
   IF ("H4_HAVE_SYS_TIME_GETTIMEOFDAY" MATCHES "^H4_HAVE_SYS_TIME_GETTIMEOFDAY$")
     TRY_COMPILE (HAVE_SYS_TIME_GETTIMEOFDAY
-       ${CMAKE_BINARY_DIR}
-       ${HDF4_RESOURCES_DIR}/GetTimeOfDayTest.c
-       COMPILE_DEFINITIONS -DTRY_SYS_TIME_H
-       OUTPUT_VARIABLE OUTPUT
+        ${CMAKE_BINARY_DIR}
+        ${HDF4_RESOURCES_DIR}/GetTimeOfDayTest.c
+        COMPILE_DEFINITIONS -DTRY_SYS_TIME_H
+        OUTPUT_VARIABLE OUTPUT
     )
     IF (HAVE_SYS_TIME_GETTIMEOFDAY STREQUAL "TRUE")
-        SET (H4_HAVE_SYS_TIME_GETTIMEOFDAY "1" CACHE INTERNAL "H4_HAVE_SYS_TIME_GETTIMEOFDAY")
+      SET (H4_HAVE_SYS_TIME_GETTIMEOFDAY "1" CACHE INTERNAL "H4_HAVE_SYS_TIME_GETTIMEOFDAY")
     ENDIF (HAVE_SYS_TIME_GETTIMEOFDAY STREQUAL "TRUE")
   ENDIF ("H4_HAVE_SYS_TIME_GETTIMEOFDAY" MATCHES "^H4_HAVE_SYS_TIME_GETTIMEOFDAY$")
 ENDIF (NOT MSVC)
@@ -354,7 +383,6 @@ IF (HDF4_STREAM_VFD)
   CHECK_INCLUDE_FILE_CONCAT ("sys/filio.h"   H4_HAVE_SYS_FILIO_H)
   SET (H4_HAVE_STREAM 1)
 ENDIF (HDF4_STREAM_VFD)
-
 
 # For other other specific tests, use this MACRO.
 MACRO (HDF4_FUNCTION_TEST OTHER_TEST)
@@ -412,10 +440,7 @@ ENDMACRO (HDF4_FUNCTION_TEST)
 #-----------------------------------------------------------------------------
 # Check a bunch of other functions
 #-----------------------------------------------------------------------------
-IF (WINDOWS)
-  SET (H4_HAVE_TIMEZONE 1)
-  SET (H4_HAVE_FUNCTION 1)
-ELSE (WINDOWS)
+IF (NOT WINDOWS)
   FOREACH (test
       TIME_WITH_SYS_TIME
       STDC_HEADERS
@@ -424,7 +449,7 @@ ELSE (WINDOWS)
       HAVE_ATTRIBUTE
       HAVE_FUNCTION
       HAVE_TM_GMTOFF
-      HAVE_TIMEZONE
+#      HAVE_TIMEZONE
       HAVE_STRUCT_TIMEZONE
       HAVE_STAT_ST_BLOCKS
       HAVE_FUNCTION
@@ -439,8 +464,12 @@ ELSE (WINDOWS)
       CXX_HAVE_OFFSETOF
   )
     HDF4_FUNCTION_TEST (${test})
+    IF (NOT CYGWIN)
+      HDF4_FUNCTION_TEST (HAVE_TIMEZONE)
+#      HDF4_FUNCTION_TEST (HAVE_STAT_ST_BLOCKS)
+    ENDIF (NOT CYGWIN)
   ENDFOREACH (test)
-ENDIF (WINDOWS)
+ENDIF (NOT WINDOWS)
 
 #-----------------------------------------------------------------------------
 # Look for 64 bit file stream capability
@@ -518,7 +547,7 @@ ENDIF (NOT H4_PRINTF_LL_WIDTH OR H4_PRINTF_LL_WIDTH MATCHES "unknown")
 # denormalized floating-point values.
 # (This flag should be set for all machines, except for the Crays, where
 # the cache value is set in it's config file)
-#-----------------------------------------------------------------------------
+#
 SET (H4_CONVERT_DENORMAL_FLOAT 1)
 
 #-----------------------------------------------------------------------------
@@ -527,10 +556,6 @@ SET (H4_CONVERT_DENORMAL_FLOAT 1)
 IF (HDF4_ENABLE_HSIZET)
   SET (H4_HAVE_LARGE_HSIZET 1)
 ENDIF (HDF4_ENABLE_HSIZET)
-
-IF (CYGWIN)
-  SET (H4_HAVE_LSEEK64 0)
-ENDIF (CYGWIN)
 
 #-----------------------------------------------------------------------------
 # Macro to determine the various conversion capabilities
@@ -551,8 +576,7 @@ MACRO (HDFConversionTests TEST msg)
       ELSE (${TEST}_RUN  MATCHES 0)
         SET (${TEST} "" CACHE INTERNAL ${msg})
         MESSAGE (STATUS "${msg}... no")
-        FILE (APPEND
-            ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+        FILE (APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
             "Test ${TEST} Run failed with the following output and exit code:\n ${OUTPUT}\n"
         )
       ENDIF (${TEST}_RUN  MATCHES 0)
@@ -563,6 +587,7 @@ MACRO (HDFConversionTests TEST msg)
           "Test ${TEST} Compile failed with the following output:\n ${OUTPUT}\n"
       )
     ENDIF (${TEST}_COMPILE)
+
   ENDIF ("${TEST}" MATCHES "^${TEST}$")
 ENDMACRO (HDFConversionTests)
 
@@ -658,11 +683,15 @@ IF (H4_ULLONG_TO_FP_CAST_WORKS MATCHES ^H4_ULLONG_TO_FP_CAST_WORKS$)
   SET (H4_ULLONG_TO_FP_CAST_WORKS 1 CACHE INTERNAL "Checking IF compiling unsigned long long to floating-point typecasts work")
   MESSAGE (STATUS "Checking IF compiling unsigned long long to floating-point typecasts work... yes")
 ENDIF (H4_ULLONG_TO_FP_CAST_WORKS MATCHES ^H4_ULLONG_TO_FP_CAST_WORKS$)
-
-IF (H4_INTEGER_TO_LDOUBLE_ACCURATE MATCHES ^H4_INTEGER_TO_LDOUBLE_ACCURATE$)
+# ----------------------------------------------------------------------
+# Set the flag to indicate that the machine can _compile_
+# 'long long' to 'float' and 'double' typecasts.
+# (This flag should be set for all machines.)
+#
+IF (H4_LLONG_TO_FP_CAST_WORKS MATCHES ^H4_LLONG_TO_FP_CAST_WORKS$)
   SET (H4_LLONG_TO_FP_CAST_WORKS 1 CACHE INTERNAL "Checking IF compiling long long to floating-point typecasts work")
   MESSAGE (STATUS "Checking IF compiling long long to floating-point typecasts work... yes")
-ENDIF (H4_INTEGER_TO_LDOUBLE_ACCURATE MATCHES ^H4_INTEGER_TO_LDOUBLE_ACCURATE$)
+ENDIF (H4_LLONG_TO_FP_CAST_WORKS MATCHES ^H4_LLONG_TO_FP_CAST_WORKS$)
 # ----------------------------------------------------------------------
 # Set the flag to indicate that the machine can convert from
 # 'unsigned long long' to 'long double' without precision loss.
@@ -699,11 +728,8 @@ HDFConversionTests (H4_LDOUBLE_TO_LLONG_ACCURATE "Checking IF correctly converti
 HDFConversionTests (H4_LLONG_TO_LDOUBLE_CORRECT "Checking IF correctly converting (unsigned) long long to long double values")
 HDFConversionTests (H4_NO_ALIGNMENT_RESTRICTIONS "Checking IF alignment restrictions are strictly enforced")
 
-#-----------------------------------------------------------------------------
-# These tests need to be manually SET for windows since there is currently
-# something not quite correct with the actual test implementation. This affects
-# the 'dt_arith' test and most likely lots of other code
-# ----------------------------------------------------------------------------
-IF (WINDOWS)
-  SET (H4_FP_TO_ULLONG_RIGHT_MAXIMUM "" CACHE INTERNAL "")
-ENDIF (WINDOWS)
+# Define a macro for Cygwin (on XP only) where the compiler has rounding
+#   problem converting from unsigned long long to long double */
+IF (CYGWIN)
+  SET (H4_CYGWIN_ULLONG_TO_LDOUBLE_ROUND_PROBLEM 1)
+ENDIF (CYGWIN)

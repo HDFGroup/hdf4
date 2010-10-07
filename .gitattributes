@@ -9,7 +9,7 @@ bin/release -text
 bin/timekeeper -text
 config/aix -text
 config/apple -text
-config/cmake/CTestCustom.ctest -text
+config/cmake/CTestCustom.cmake -text
 config/cmake/CheckTypeSize.cmake -text
 config/cmake/ConfigureChecks.cmake -text
 config/cmake/ConversionTests.c -text

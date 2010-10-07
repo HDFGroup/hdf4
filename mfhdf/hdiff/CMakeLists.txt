@@ -4,14 +4,14 @@ PROJECT (HDF4_MFHDF_HDIFF)
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
@@ -40,9 +40,12 @@ ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hdiff ${LIB_TYPE})
 TARGET_WIN_PROPERTIES (hdiff ${LIB_TYPE})
 
-#-----------------------------------------------------------------------------
-# Dashboard and Testing Settings
-#-----------------------------------------------------------------------------
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
+
 IF (BUILD_TESTING)
   #-- Adding test for hdifftst
   SET (hdifftst_SRCS
@@ -124,21 +127,63 @@ IF (BUILD_TESTING)
     )
   ENDFOREACH (out_file ${HDF4_REFERENCE_FILES})
 
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
         COMMAND    ${XLATE_UTILITY}
         ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt -l3
     )
-  ELSE (WIN32)
+  ELSE (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
         COMMAND    ${XLATE_UTILITY}
         ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt -l3
     )
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
+
+##############################################################################
+##############################################################################
+###           T H E   T E S T S                                            ###
+##############################################################################
+##############################################################################
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME HDIFF-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          hdiff_01.out
+          hdiff_02.out
+          hdiff_03.out
+          hdiff_04.out
+          hdiff_05.out
+          hdiff_06.out
+          hdiff_07.out
+          hdiff_08.out
+          hdiff_09.out
+          hdiff_10.out
+          hdiff_11.out
+          hdiff_12.out
+          hdiff_13.out
+          hdiff_14.out
+          hdiff_15.out
+          hdiff_01.out.err
+          hdiff_02.out.err
+          hdiff_03.out.err
+          hdiff_04.out.err
+          hdiff_05.out.err
+          hdiff_06.out.err
+          hdiff_07.out.err
+          hdiff_08.out.err
+          hdiff_09.out.err
+          hdiff_10.out.err
+          hdiff_11.out.err
+          hdiff_12.out.err
+          hdiff_13.out.err
+          hdiff_14.out.err
+          hdiff_15.out.err
+  )
 
   # help message
   ADD_H4_TEST (hdiff_01 1) 
@@ -186,6 +231,12 @@ IF (BUILD_TESTING)
   ADD_H4_TEST (hdiff_15 0 -b hdifftst7.hdf hdifftst7.hdf)
 
 ENDIF (BUILD_TESTING)
+
+##############################################################################
+##############################################################################
+###           I N S T A L L A T I O N                                      ###
+##############################################################################
+##############################################################################
 
 #-----------------------------------------------------------------------------
 # Rules for Installation of tools using make Install target

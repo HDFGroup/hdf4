@@ -39,9 +39,9 @@ LINK_DIRECTORIES (
 )
 
 SET (F_LIB_TYPE ${LIB_TYPE})
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   SET (F_LIB_TYPE STATIC)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 ADD_DEFINITIONS (-DHDF)
 
@@ -117,13 +117,13 @@ SET (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 #-----------------------------------------------------------------------------
 ADD_LIBRARY (${HDF4_MF_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_MFHDF_LIBSRC_CSTUB_FSRCS} ${HDF4_MFHDF_LIBSRC_CSTUB_FHDRS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_HDFSOURCE_DIR}/hproto_fortran.h)
 SET_TARGET_PROPERTIES (${HDF4_MF_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
-IF (WIN32)
+IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32)
+  IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32)
+  ENDIF (WIN32 AND NOT CYGWIN)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
   TARGET_LINK_LIBRARIES (${HDF4_MF_FCSTUB_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
 ENDIF (HDF4_BUILD_XDR_LIB)
@@ -141,6 +141,12 @@ SET_TARGET_PROPERTIES (${HDF4_MF_FORTRAN_LIB_TARGET} PROPERTIES LINKER_LANGUAGE 
 TARGET_LINK_LIBRARIES (${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_MF_FCSTUB_LIB_TARGET} ${LINK_LIBS})
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_FORTRAN_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_MF_FORTRAN_LIB_NAME} ${F_LIB_TYPE})
+
+##############################################################################
+##############################################################################
+###           T E S T I N G                                                ###
+##############################################################################
+##############################################################################
 
 IF (BUILD_TESTING)
   FILE (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/testdir)
@@ -190,10 +196,6 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (f_hdftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
 
-  ADD_TEST (NAME f_hdftest COMMAND $<TARGET_FILE:f_hdftest>)
-  SET (passRegex "Total errors : [ ]+0")
-  SET_PROPERTY (TEST f_hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
-
   #-- Adding test for f_hdftest1
   ADD_EXECUTABLE (f_hdftest1 hdftest1.f)
   TARGET_NAMING (f_hdftest1 ${F_LIB_TYPE})
@@ -205,10 +207,6 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (f_hdftest1 ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
 
-  ADD_TEST (NAME f_hdftest1 COMMAND $<TARGET_FILE:f_hdftest1>)
-  SET (failRegex "failed" "errors")
-  SET_PROPERTY (TEST f_hdftest1 PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
-
   #-- Adding test for f_tszip
   ADD_EXECUTABLE (f_tszip tszip.f)
   TARGET_NAMING (f_tszip ${F_LIB_TYPE})
@@ -219,6 +217,83 @@ IF (BUILD_TESTING)
   ELSE (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_tszip ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
+
+##############################################################################
+##############################################################################
+###           T H E   T E S T S                                            ###
+##############################################################################
+##############################################################################
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME MFHDF_FORTRAN-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          cchunk_gz.hdf
+          cchunk_nb.hdf
+          cchunk_no.hdf
+          cchunk_rl.hdf
+          cchunk_sk.hdf
+          chunk_gz.hdf
+          chunk_nb.hdf
+          chunk_no.hdf
+          chunk_rl.hdf
+          chunk_sk.hdf
+          comp_gz.hdf
+          comp_no.hdf
+          comp_rl.hdf
+          comp_sk.hdf
+          comp_szip.hdf
+          copy.nc
+          test.nc
+          test1.hdf
+          test2.hdf
+          test_empty.hdf
+          test_var.hdf
+          test_file.hdf
+          test_file01.hdf
+          test_file02.hdf
+          test_file03.hdf
+          test_file04.hdf
+          test_file05.hdf
+          test_file06.hdf
+          test_file07.hdf
+          test_file08.hdf
+          test_file09.hdf
+          test_file10.hdf
+          test_file11.hdf
+          test_file12.hdf
+          test_file13.hdf
+          test_file14.hdf
+          test_file15.hdf
+          test_file16.hdf
+          test_file17.hdf
+          test_file18.hdf
+          test_file19.hdf
+          test_file20.hdf
+          test_file21.hdf
+          test_file22.hdf
+          test_file23.hdf
+          test_file24.hdf
+          test_file25.hdf
+          test_file26.hdf
+          test_file27.hdf
+          test_file28.hdf
+          test_file29.hdf
+          test_file30.hdf
+          test_file31.hdf
+          test_file32.hdf
+          test_file33.hdf
+          test_file34.hdf
+          test_file35.hdf
+  )
+
+  ADD_TEST (NAME f_hdftest COMMAND $<TARGET_FILE:f_hdftest>)
+  SET (passRegex "Total errors : [ ]+0")
+  SET_PROPERTY (TEST f_hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+
+  ADD_TEST (NAME f_hdftest1 COMMAND $<TARGET_FILE:f_hdftest1>)
+  SET (failRegex "failed" "errors")
+  SET_PROPERTY (TEST f_hdftest1 PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
 
   ADD_TEST (NAME f_tszip COMMAND $<TARGET_FILE:f_tszip>)
   SET (failRegex "failed" "errors")
