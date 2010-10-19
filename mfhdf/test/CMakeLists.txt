@@ -98,7 +98,7 @@ ENDIF (HDF4_BUILD_XDR_LIB)
 ##############################################################################
 # Remove any output file left over from previous test run
 ADD_TEST (
-    NAME hrepack-clearall-objects
+    NAME MFHDF_TEST-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
         b150.hdf
