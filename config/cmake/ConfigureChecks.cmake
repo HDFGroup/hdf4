@@ -117,15 +117,13 @@ ENDIF (CYGWIN)
 #  Check for the math library "m"
 #-----------------------------------------------------------------------------
 IF (NOT WINDOWS)
-  CHECK_LIBRARY_EXISTS_CONCAT ("m" printf     H4_HAVE_LIBM)
+  CHECK_LIBRARY_EXISTS_CONCAT ("m" random     H4_HAVE_LIBM)
 ENDIF (NOT WINDOWS)
-CHECK_LIBRARY_EXISTS_CONCAT ("ws2_32" printf  H4_HAVE_LIBWS2_32)
-CHECK_LIBRARY_EXISTS_CONCAT ("wsock32" printf H4_HAVE_LIBWSOCK32)
+CHECK_LIBRARY_EXISTS_CONCAT ("ws2_32" WSAStartup  H4_HAVE_LIBWS2_32)
 #CHECK_LIBRARY_EXISTS_CONCAT ("dl"     dlopen       H4_HAVE_LIBDL)
 CHECK_LIBRARY_EXISTS_CONCAT ("ucb"    gethostname  H4_HAVE_LIBUCB)
 CHECK_LIBRARY_EXISTS_CONCAT ("socket" connect      H4_HAVE_LIBSOCKET)
 CHECK_LIBRARY_EXISTS ("c" gethostbyname "" NOT_NEED_LIBNSL)
-
 
 IF (NOT NOT_NEED_LIBNSL)
   CHECK_LIBRARY_EXISTS_CONCAT ("nsl"    gethostbyname  H4_HAVE_LIBNSL)
