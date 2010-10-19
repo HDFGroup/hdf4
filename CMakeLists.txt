@@ -414,6 +414,13 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
       SET (H4_JPEGLIB_HEADER "jpeglib.h")
     ELSE (JPEG_FOUND)
       IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN")
+        # May need to build JPEG with PIC on x64 machines with gcc
+        # Need to use CMAKE_ANSI_CFLAGS define so that compiler test works
+        IF (BUILD_JPEG_WITH_PIC)
+          SET (JPEG_CMAKE_C_FLAGS "-fPIC")
+        ELSE (BUILD_JPEG_WITH_PIC)
+          SET (JPEG_CMAKE_C_FLAGS "")
+        ENDIF (BUILD_JPEG_WITH_PIC)
         EXTERNALPROJECT_ADD (JPEG
             SVN_REPOSITORY ${JPEG_SVN_URL}
             # [SVN_REVISION rev] 
@@ -421,6 +428,8 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
             CMAKE_ARGS
                 -DBLDTYPE:STRING="Release"
                 -DBUILD_SHARED_LIBS:BOOL=OFF
+                -DCMAKE_BUILD_TYPE:STRING="Release"
+                -DCMAKE_ANSI_CFLAGS:STRING="${JPEG_CMAKE_C_FLAGS}"
         ) 
         EXTERNALPROJECT_GET_PROPERTY (JPEG BINARY_DIR SOURCE_DIR) 
 

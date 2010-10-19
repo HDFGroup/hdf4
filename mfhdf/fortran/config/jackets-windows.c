@@ -532,6 +532,7 @@ ltoig(longs, ints, dims, imap, ndims)
 /* ------------ Linux FORTRAN jackets for netCDF Functions ------------ */
 
 /* used to set the C global variable ncopts from Fortran */
+void
 nncpopt(val)
     int		*val;	
 {
@@ -572,6 +573,7 @@ nnccre(pathname, clobmode, rcode, pathnamelen)
 
 
 /* opens an existing netCDF file for access */
+int
 nncopn(pathname, rwmode, rcode, pathnamelen)
     char	*pathname;	
     int		pathnamelen;

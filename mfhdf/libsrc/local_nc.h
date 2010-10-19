@@ -730,6 +730,90 @@ HDFLIBAPI intn HDiscdf
 HDFLIBAPI intn HDisnetcdf
     (const char *filename);
 
+HDFFCLIBAPI void nncpopt
+    PROTO((int* val));
+HDFFCLIBAPI void nncgopt
+    PROTO((int* val));
+HDFFCLIBAPI int nnccre
+    PROTO((char* pathname, int* clobmode, int* rcode, int pathnamelen));
+HDFFCLIBAPI int nncopn
+    PROTO((char* pathname, int* rwmode, int* rcode, int pathnamelen));
+HDFFCLIBAPI int nncddef
+    PROTO((int* cdfid, char* dimname, int* dimlen, int* rcode, int dimnamelen));
+HDFFCLIBAPI int nncdid
+    PROTO((int* cdfid, char* dimname, int* rcode, int dimnamelen));
+HDFFCLIBAPI int nncvdef
+    PROTO((int* cdfid, char* varname, int* datatype, int* ndims, int* dimarray, int* rcode, int varnamelen));
+HDFFCLIBAPI int nncvid
+    PROTO((int* cdfid, char* varname, int* rcode, int varnamelen));
+HDFFCLIBAPI int nnctlen
+    PROTO((int* datatype, int* rcode));
+HDFFCLIBAPI void nncclos
+    PROTO((int* cdfid, int* rcode));
+HDFFCLIBAPI void nncredf
+    PROTO((int* cdfid, int* rcode));
+HDFFCLIBAPI void nncendf
+    PROTO((int* cdfid, int* rcode));
+HDFFCLIBAPI void nncinq
+    PROTO((int* cdfid, int* ndims, int* nvars, int* natts, int* recdim, int* rcode));
+HDFFCLIBAPI void nncsnc
+    PROTO((int* cdfid, int* rcode));
+HDFFCLIBAPI void nncabor
+    PROTO((int* cdfid, int* rcode));
+HDFFCLIBAPI void nncdinq
+    PROTO((int* cdfid, int* dimid, char* dimname, int* size, int* rcode, int dimnamelen));
+HDFFCLIBAPI void nncdren
+    PROTO((int* cdfid, int* dimid, char* dimname, int* rcode, int dimnamelen));
+HDFFCLIBAPI void nncvinq
+    PROTO((int* cdfid, int* varid, char* varname, int* datatype, int* ndims, int* dimarray, int* natts, int* rcode, int varnamelen));
+HDFFCLIBAPI void nncvpt1
+    PROTO((int* cdfid, int* varid, int* indices, void* value, int* rcode));
+HDFFCLIBAPI void nncvp1c
+    PROTO((int* cdfid, int* varid, int* indices, char* chval, int* rcode, int chvallen));
+HDFFCLIBAPI void nncvpt
+    PROTO((int* cdfid, int* varid, int* start, int* count, void* value, int* rcode));
+HDFFCLIBAPI void nncvptc
+    PROTO((int* cdfid, int* varid, int* start, int* count, char* string, int* lenstr, int* rcode, int stringlen));
+HDFFCLIBAPI void nncvptg
+    PROTO((int* cdfid, int* varid, int* start, int* count, int* stride, int* basis, void* value, int* rcode));
+HDFFCLIBAPI void nncvpgc
+    PROTO((int* cdfid, int* varid, int* start, int* count, int* stride, int* basis, char* string, int* rcode, int stringlen));
+HDFFCLIBAPI void nncvgt1
+    PROTO((int* cdfid, int* varid, int* indices, void* value, int* rcode));
+HDFFCLIBAPI void nncvg1c
+    PROTO((int* cdfid, int* varid, int* indices, char* chval, int* rcode, int chvallen));
+HDFFCLIBAPI void nncvgt
+    PROTO((int* cdfid, int* varid, int* start, int* count, void* value, int* rcode));
+HDFFCLIBAPI void nncvgtc
+    PROTO((int* cdfid, int* varid, int* start, int* count, char* string, int* lenstr, int* rcode, int stringlen));
+HDFFCLIBAPI void nncvgtg
+    PROTO((int* cdfid, int* varid, int* start, int* count, int* stride, int* basis, void* value, int* rcode));
+HDFFCLIBAPI void nncvggc
+    PROTO((int* cdfid, int* varid, int* start, int* count, int* stride, int* basis, char* string, int* rcode, int stringlen));
+HDFFCLIBAPI void nncvren
+    PROTO((int* cdfid, int* varid, char* varname, int* rcode, int varnamelen));
+HDFFCLIBAPI void nncapt
+    PROTO((int* cdfid, int* varid, char* attname, int* datatype, int* attlen, void* value, int* rcode, int attnamelen));
+HDFFCLIBAPI void nncaptc
+    PROTO((int* cdfid, int* varid, char* attname, int* datatype, int* lenstr, char* string, int* rcode, int attnamelen, int stringlen));
+HDFFCLIBAPI void nncainq
+    PROTO((int* cdfid, int* varid, char* attname, int* datatype, int* attlen, int* rcode, int attnamelen));
+HDFFCLIBAPI void nncagt
+    PROTO((int* cdfid, int* varid, char* attname, void* value, int* rcode, int attnamelen));
+HDFFCLIBAPI void nncagtc
+    PROTO((int* cdfid, int* varid, char* attname, char* string, int* lenstr, int* rcode, int attnamelen, int stringlen));
+HDFFCLIBAPI void nncacpy
+    PROTO((int* incdfid, int* invarid, char* attname, int* outcdfid, int* outvarid, int* rcode, int attnamelen));
+HDFFCLIBAPI void nncanam
+    PROTO((int* cdfid, int* varid, int* attnum, char* attname, int* rcode, int attnamelen));
+HDFFCLIBAPI void nncaren
+    PROTO((int* cdfid, int* varid, char* attname, char* newname, int* rcode, int attnamelen, int newnamelen));
+HDFFCLIBAPI void nncadel
+    PROTO((int* cdfid, int* varid, char* attname, int* rcode, int attnamelen));
+HDFFCLIBAPI int nncsfil
+    PROTO((int* cdfid, int* fillmode, int* rcode));
+
+
 #endif /* HDF */
 
 #ifdef __cplusplus
