@@ -25,7 +25,7 @@ IF (APPLE)
     "and use the 'lipo' tool to combine them into a single executable or library. The 'CMAKE_OSX_ARCHITECTURES'"
     "variable has been set to a blank value which will build the default architecture for this system.")
   ENDIF()
-  SET (H5_AC_APPLE_UNIVERSAL_BUILD 0)
+  SET (H4_AC_APPLE_UNIVERSAL_BUILD 0)
 ENDIF (APPLE)
 
 #-----------------------------------------------------------------------------
@@ -179,7 +179,7 @@ CHECK_INCLUDE_FILE_CONCAT ("inttypes.h"      H4_HAVE_INTTYPES_H)
 CHECK_INCLUDE_FILE_CONCAT ("netinet/in.h"    H4_HAVE_NETINET_IN_H)
 
 IF (NOT CYGWIN)
-  CHECK_INCLUDE_FILE_CONCAT ("winsock2.h"      H5_HAVE_WINSOCK_H)
+  CHECK_INCLUDE_FILE_CONCAT ("winsock2.h"      H4_HAVE_WINSOCK_H)
 ENDIF (NOT CYGWIN)
 
 # IF the c compiler found stdint, check the C++ as well. On some systems this
