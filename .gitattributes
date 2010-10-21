@@ -93,6 +93,7 @@ hdf/fortran/examples/VG_get_vgroup_info.f -text
 hdf/fortran/examples/VG_insert_vdatas_to_vgroup.f -text
 hdf/fortran/examples/VG_set_get_vgroup_attr.f -text
 hdf/fortran/examples/VG_vgroup_contents.f -text
+hdf/fortran/hdf_fortrandll.def -text
 hdf/src/CMakeLists.txt -text
 hdf/src/H4api_adpt.h -text
 hdf/src/dfufp2if.c -text
@@ -235,6 +236,7 @@ mfhdf/fortran/examples/SD_write_slab.f -text
 mfhdf/fortran/examples/SD_write_to_sds.f -text
 mfhdf/fortran/hdftest1.f -text
 mfhdf/fortran/mffunc.inc -text
+mfhdf/fortran/mfhdf_fortrandll.def -text
 mfhdf/fortran/mfsdf.h -text
 mfhdf/fortran/test_nc.nc -text
 mfhdf/hdfimport/CMakeLists.txt -text

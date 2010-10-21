@@ -108,6 +108,7 @@
 
 ./hdf/fortran/Makefile.am
 ./hdf/fortran/Makefile.in
+./hdf/fortran/hdf_fortrandll.def
 
 ./hdf/fortran/examples/AN_create_annotation.f
 ./hdf/fortran/examples/AN_get_annotation_info.f
@@ -681,6 +682,7 @@
 
 ./mfhdf/fortran/Makefile.am
 ./mfhdf/fortran/Makefile.in
+./mfhdf/fortran/mfhdf_fortrandll.def
 ./mfhdf/fortran/common.inc
 ./mfhdf/fortran/depend
 ./mfhdf/fortran/ftest.src

@@ -40,36 +40,37 @@ TARGET_WIN_PROPERTIES (ncdump ${LIB_TYPE})
 ##############################################################################
 
 IF (BUILD_TESTING)
+  # Remove any output file left over from previous test run
+  ADD_TEST (
+      NAME ncdump-clearall-objects
+      COMMAND    ${CMAKE_COMMAND}
+          -E remove 
+          test0.nc
+          test1.nc
+          test1.cdl
+          test2.cdl
+  )
 
-#-- Adding test for ncdump
-#ADD_TEST (NAME testncdump COMMAND $<TARGET_FILE:testncdump>)
-# 
-##-- Copy all the dat files from the test directory into the source directory
-#SET (HDF4_REFERENCE_TEST_FILES
-#    sds_szipped.dat
-#    smallslice.0000.nc
-#    test1.nc
-#    testout.sav
-#)
-# 
-#FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
-#  SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-#  #MESSAGE (STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-#  ADD_CUSTOM_COMMAND (
-#      TARGET     ncdumptest 
-#      POST_BUILD
-#      COMMAND    ${CMAKE_COMMAND}
-#      ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-#  )
-#      
-#ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  #-- Copy all the data files from the test directory into the source directory
+  #MESSAGE (STATUS " Copying ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
+  ADD_CUSTOM_COMMAND (
+      TARGET     ncdump
+      POST_BUILD
+      COMMAND    ${CMAKE_COMMAND}
+      ARGS       -E copy_if_different ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/test0.cdl ${PROJECT_BINARY_DIR}/test0.cdl
+  )
+
   IF (NCGEN_UTILITY)
-#    $(TESTS_ENVIRONMENT) ../ncgen/ncgen -o test0.nc -n $(srcdir)/test0.cdl
-#    $(TESTS_ENVIRONMENT) ./ncdump test0.nc > test1.cdl
-#    $(TESTS_ENVIRONMENT) ../ncgen/ncgen -o test1.nc -n test1.cdl
-#    $(TESTS_ENVIRONMENT) ./ncdump -n test0 test1.nc > test2.cdl
-#    @cmp test1.cdl test2.cdl && echo "*** ncdump test successful ***" ;     \
-#        rm -f test1.nc test1.cdl test2.cdl
+#    ncdump test0.cdl
+#    $<TARGET_FILE:ncgen> -o test0.nc -n test0.cdl
+#    $<TARGET_FILE:ncdump> test0.nc > test1.cdl
+#    $<TARGET_FILE:ncgen> -o test1.nc -n test1.cdl
+#    $<TARGET_FILE:ncdump> -n test0 test1.nc > test2.cdl
+#    ADD_TEST (
+#        NAME  ncdump-comp
+#        COMMAND  ${CMAKE_COMMAND}
+#            -E compare test1.cdl test2.cdl
+#    )
   ENDIF (NCGEN_UTILITY)
 
 ENDIF (BUILD_TESTING)
