@@ -446,8 +446,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 aid, int32* block_size, int32* num_blocks);
 
     HDFLIBAPI int32 HLgetdatainfo
-		(int32 file_id, uint16 link_ref, int32 num_blocks,
-		 int32 *offsetarray, int32 *lengtharray);
+		(int32 file_id, uint8 *buf, int32 *offsetarray, int32 *lengtharray);
 
 
 /*

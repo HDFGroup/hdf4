@@ -282,6 +282,7 @@ mfhdf/libsrc/CMakeLists.txt -text
 mfhdf/libsrc/config/netcdf-windows.h -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfdatainfo.c -text
+mfhdf/libsrc/mfdatainfo.h -text
 mfhdf/libsrc/mfhdfi.h -text
 mfhdf/libsrc/mfprivate.h -text
 mfhdf/ncdump/CMakeLists.txt -text
@@ -302,6 +303,7 @@ mfhdf/test/hdftest.c -text
 mfhdf/test/hdftest.h -text
 mfhdf/test/sds_szipped.dat -text
 mfhdf/test/smallslice.0000.nc -text
+mfhdf/test/tattdatainfo.c -text
 mfhdf/test/tchunk.c -text
 mfhdf/test/tcomp.c -text
 mfhdf/test/tcoordvar.c -text

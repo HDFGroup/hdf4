@@ -204,8 +204,10 @@ HCIcdeflate_encode(compinfo_t * info, int32 length, void * buf)
           if(deflate_info->deflate_context.avail_out==0)
             {
                 if(deflate_info->deflate_context.next_out!=NULL)
+{
                     if(Hwrite(info->aid,DEFLATE_BUF_SIZE,deflate_info->io_buf)==FAIL)
                         HRETURN_ERROR(DFE_WRITEERROR,FAIL);
+}
                 deflate_info->deflate_context.next_out=deflate_info->io_buf;
                 deflate_info->deflate_context.avail_out=DEFLATE_BUF_SIZE;
             } /* end if */

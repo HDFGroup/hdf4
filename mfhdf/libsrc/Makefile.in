@@ -109,7 +109,7 @@ F77LD = $(F77)
 SOURCES = $(libmfhdf_la_SOURCES)
 DIST_SOURCES = $(am__libmfhdf_la_SOURCES_DIST)
 am__include_HEADERS_DIST = hdf2netcdf.h local_nc.h mfhdf.h \
-	hdf4_netcdf.h mfhdfi.h netcdf.h
+	hdf4_netcdf.h mfhdfi.h mfdatainfo.h netcdf.h
 HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -283,8 +283,8 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
 @HDF_BUILD_FORTRAN_TRUE@libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
 @HDF_BUILD_XDR_TRUE@XDRLIB = ../xdr/libxdr.la
 @HDF_BUILD_XDR_TRUE@libmfhdf_la_LIBADD = $(XDRLIB)
-@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h
-@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h
+@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h mfdatainfo.h
+@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h
 @HDF_BUILD_FORTRAN_FALSE@F77LINK = $(LINK)
 
 #############################################################################
@@ -661,6 +661,7 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 	tags uninstall uninstall-am uninstall-includeHEADERS \
 	uninstall-libLTLIBRARIES
 
+# mfdatainfo.h should be added conditionally only; should local_nc.h even be here? -BMR
 
 # The following is a workaround. Since Fortran is included in this 
 # Makefile.am, automake will always try to use the Fortran linker, even when

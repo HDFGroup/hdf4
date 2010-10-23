@@ -429,6 +429,7 @@ test_append_vs()
 
     n_blocks = VSgetdatainfo(apvsid, 0, 0, NULL, NULL);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    VERIFY_VOID(n_blocks, 3, "VSgetdatainfo:apvsid");
 
     /* Allocate space to record the vdata's data info */
     alloc_info(&vs_info, n_blocks);
@@ -443,7 +444,7 @@ test_append_vs()
     {
 	int ii;
 	int32 check_offsets[] = {294, 556, 636};
-	int32 check_lengths[] = {120, 80, 80};
+	int32 check_lengths[] = {120, 80, 40}; /* last chunk is not completely filled */
 	for (ii = 0; ii < n_blocks; ii++)
 	{
 	    VERIFY_VOID(vs_info.offsets[ii], check_offsets[ii], "VSgetdatainfo offset");

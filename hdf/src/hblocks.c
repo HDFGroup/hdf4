@@ -816,11 +816,10 @@ NAME
    HLgetdatainfo -- get data information from linked blocks
 USAGE
    int32 HLgetdatainfo(file_id, link_ref, num_blocks, offsetarray, lengtharray)
-   int32  file_id;             IN: the file
-   uint16 link_ref;            IN: ref number of the link table
-   int32  num_blocks;          IN: number of blocks in the table
-   int32 *offsetarray;         OUT: offsets of data blocks
-   int32 *lengtharray;         OUT: lengths of data blocks
+   int32  file_id;	IN: the file
+   uint8 *buf;		IN: special header info read from the file by caller
+   int32 *offsetarray;	OUT: offsets of data blocks
+   int32 *lengtharray;	OUT: lengths of data blocks
 RETURNS
    The number of actual data blocks, if successful, FAIL, otherwise
 DESCRIPTION
@@ -828,26 +827,31 @@ DESCRIPTION
    which don't point to actual data blocks will have ref# as 0.  Go through
    the block list to record offset and length of these data blocks.
    Aug 08, 2010 -BMR
+TODO
+   - No start_block and info_count yet
 
 ---------------------------------------------------------------------------*/
 int32
 HLgetdatainfo(int32 file_id,
-           uint16 link_ref, 
-           int32  num_blocks,
+           uint8 *buf, 
 	   int32 *offsetarray,     /* OUT: array to hold offsets */
 	   int32 *lengtharray)     /* OUT: array to hold lengths */
 {
-    CONSTR(FUNC, "HLgetlink");	/* for HERROR */
-    filerec_t *file_rec;	/* file record */
+    CONSTR(FUNC, "HLgetdatainfo");	/* for HERROR */
     link_t    *link_info;	/* link information, only interested in ref#s*/
     int32      num_data_blocks;	/* number of blocks that actually have data */
     int        ii;
     int32      ret_value = SUCCEED;
+    uint16 link_ref;
+    uint8 *p;
+    int32 num_blocks, block_length, accum_length, total_length;
 
-    /* validate file record id */
-    file_rec = HAatom_object(file_id);
-    if (BADFREC(file_rec))
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* decode special information retrieved from file into info struct */
+    p = &buf[0];
+    INT32DECODE(p, total_length);
+    INT32DECODE(p, block_length);
+    INT32DECODE(p, num_blocks);     /* get number of blocks in link table */
+    UINT16DECODE(p, link_ref);      /* get ref# link table */
 
     /* get the block table pointed to by link_ref; the table contains
        ref#s of the blocks */
@@ -858,6 +862,7 @@ HLgetdatainfo(int32 file_id,
     /* get offset/length of blocks that actually point to a data element,
        until all blocks with valid ref#s are processed */
     num_data_blocks = 0;
+    accum_length = 0;
     for (ii = 0; ii < num_blocks && link_info->block_list[ii].ref != 0; ii++)
     {
 	int32 offset, length;
@@ -874,6 +879,12 @@ HLgetdatainfo(int32 file_id,
 	    {
 		if ((length=Hlength(file_id, DFTAG_LINKED, block_ref)) == FAIL)
 		    HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+
+		if (link_info->block_list[ii+1].ref != 0) /* to make sure last link is reached */
+		    accum_length = accum_length + length;
+		else
+		    if (length == block_length)
+			length = total_length - accum_length;
 		lengtharray[ii] = length;
 	    }
 	    num_data_blocks++;	/* count number of blocks with data */
@@ -1453,6 +1464,7 @@ HLPwrite(accrec_t   *access_rec,
         if (tmp > info->length)
             info->length = tmp;
         INT32ENCODE(p, info->length);
+
     }
     if (Hwrite(dd_aid, 4, local_ptbuf) == FAIL)
         HGOTO_ERROR(DFE_READERROR, FAIL);

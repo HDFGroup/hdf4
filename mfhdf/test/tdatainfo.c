@@ -133,7 +133,7 @@ int32 comp_n_values(int32 rank, int32 *dimsizes)
 #define LENGTH1_X	10
 #define LENGTH2_X	5
 #define LENGTH2_Y	8
-#define LENGTH3_X	20
+#define LENGTH3_X	21
 
 static intn test_nonspecial_SDSs()
 {
@@ -170,7 +170,7 @@ static intn test_nonspecial_SDSs()
     /* Open that first dataset and verify that number of data block is 0 */
     sds_id = SDselect(sd_id, 0);
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDselect");
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
     VERIFY(info_count, 0, "test_nonspecial_SDSs: SDgetdatainfo");
 
@@ -247,7 +247,7 @@ static intn test_nonspecial_SDSs()
     sds_id = SDselect(sd_id, 1);
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDselect SDS index 1");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
     VERIFY(info_count, 1, "test_nonspecial_SDSs: SDgetdatainfo");
 
@@ -266,7 +266,7 @@ static intn test_nonspecial_SDSs()
     sds1_info.n_values = comp_n_values(rank, sds1_info.dimsizes);
 
     /* Retrieve the offset and length of the data block */
-    status = SDgetdatainfo(sds_id, 0, info_count, sds1_info.offsets, sds1_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds1_info.offsets, sds1_info.lengths);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 
     status = SDendaccess(sds_id);
@@ -277,7 +277,7 @@ static intn test_nonspecial_SDSs()
     sds_id = SDselect(sd_id, 2);
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDselect SDS index 2");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
     VERIFY(info_count, 1, "test_nonspecial_SDSs: SDgetdatainfo");
 
@@ -296,7 +296,7 @@ static intn test_nonspecial_SDSs()
     sds2_info.n_values = comp_n_values(rank, sds2_info.dimsizes);
 
     /* Retrieve the offset and length of the data block */
-    status = SDgetdatainfo(sds_id, 0, info_count, sds2_info.offsets, sds2_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds2_info.offsets, sds2_info.lengths);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 
     /* Close SDS index 2 */
@@ -308,7 +308,7 @@ static intn test_nonspecial_SDSs()
     sds_id = SDselect(sd_id, 3);
     CHECK(sds_id, FAIL, "test_nonspecial_SDSs: SDselect SDS index 3");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
     VERIFY(info_count, 1, "test_nonspecial_SDSs: SDgetdatainfo");
 
@@ -327,7 +327,7 @@ static intn test_nonspecial_SDSs()
     sds3_info.n_values = comp_n_values(rank, sds3_info.dimsizes);
 
     /* Retrieve the offset and length of the data block */
-    status = SDgetdatainfo(sds_id, 0, info_count, sds3_info.offsets, sds3_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds3_info.offsets, sds3_info.lengths);
     CHECK(status, FAIL, "test_nonspecial_SDSs: SDgetdatainfo");
 
     /* Close SDS index 3 */
@@ -667,7 +667,7 @@ static intn test_compressed_SDSs()
     sds_id = SDselect(sd_id, 0);
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDselect SDS index 0");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_compressed_SDSs: SDgetdatainfo");
     VERIFY(info_count, 0, "test_compressed_SDSs: SDgetdatainfo");
 
@@ -681,7 +681,7 @@ static intn test_compressed_SDSs()
     sds_id = SDselect(sd_id, 1);
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDselect SDS index 1");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_compressed_SDSs: SDgetdatainfo");
     VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo");
 
@@ -705,7 +705,7 @@ static intn test_compressed_SDSs()
     sds1_info.n_values = comp_n_values(rank, sds1_info.dimsizes);
 
     /* Retrieve the offset and length of the data block */
-    status = SDgetdatainfo(sds_id, 0, info_count, sds1_info.offsets, sds1_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds1_info.offsets, sds1_info.lengths);
     CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 
     status = SDendaccess(sds_id);
@@ -716,7 +716,7 @@ static intn test_compressed_SDSs()
     sds_id = SDselect(sd_id, 2);
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDselect SDS index 2");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_compressed_SDSs: SDgetdatainfo");
     VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo");
 
@@ -744,7 +744,7 @@ static intn test_compressed_SDSs()
     sds2_info.n_values = comp_n_values(rank, sds2_info.dimsizes);
 
     /* Retrieve the offset and length of the data block */
-    status = SDgetdatainfo(sds_id, 0, info_count, sds2_info.offsets, sds2_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds2_info.offsets, sds2_info.lengths);
     CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 
     /* Close SDS index 2 */
@@ -757,7 +757,7 @@ static intn test_compressed_SDSs()
     sds_id = SDselect(sd_id, 3);
     CHECK(sds_id, FAIL, "test_compressed_SDSs: SDselect SDS index 3");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_compressed_SDSs: SDgetdatainfo");
     VERIFY(info_count, 1, "test_compressed_SDSs: SDgetdatainfo");
 
@@ -781,7 +781,7 @@ static intn test_compressed_SDSs()
     sds3_info.n_values = comp_n_values(rank, sds3_info.dimsizes);
 
     /* Retrieve the offset and length of the data block */
-    status = SDgetdatainfo(sds_id, 0, info_count, sds3_info.offsets, sds3_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds3_info.offsets, sds3_info.lengths);
     CHECK(status, FAIL, "test_compressed_SDSs: SDgetdatainfo");
 
     /* Close SDS index 3 */
@@ -1019,7 +1019,7 @@ static intn test_empty_SDSs()
 	sds_id = SDselect(sd_id, ii);
 	CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
 
-	info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+	info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
 	CHECK_IND(info_count, FAIL, "test_empty_SDSs: SDgetdatainfo", ii);
 	VERIFY(info_count, 0, "test_empty_SDSs: SDgetdatainfo");
 
@@ -1042,7 +1042,7 @@ static intn test_empty_SDSs()
 	sds_id = SDselect(sd_id, ii);
 	CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
 
-	info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+	info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
 	CHECK_IND(info_count, FAIL, "test_empty_SDSs: SDgetdatainfo", ii);
 	VERIFY(info_count, 0, "test_empty_SDSs: SDgetdatainfo");
 
@@ -1177,7 +1177,7 @@ static intn test_chunked_partial()
     CHECK(sds_id, FAIL, "test_chunked_partial: SDselect 'Chunked-Partial-Data'");
 
     /* Verify that only two chunks had been written */
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chunked_partial: SDgetdatainfo");
     VERIFY(info_count, 2, "test_chunked_partial: SDgetdatainfo");
 
@@ -1193,7 +1193,7 @@ static intn test_chunked_partial()
     CHECK(sds_id, FAIL, "test_chunked_partial: SDselect 'Chunked-Partial-Data'");
 
     /* Verify new number of chunks written */
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chunked_partial: SDgetdatainfo");
     VERIFY(info_count, 3, "test_chunked_partial: SDgetdatainfo");
 
@@ -1213,7 +1213,7 @@ static intn test_chunked_partial()
     /* Record number of values the SDS can have */
     sds_info.n_values = 1 * 10; /* chunk has 1 dim of size 10 */
 
-    status = SDgetdatainfo(sds_id, 0, info_count, sds_info.offsets, sds_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds_info.offsets, sds_info.lengths);
     CHECK(status, FAIL, "test_chunked_partial: SDgetdatainfo");
 
     status = SDendaccess(sds_id);
@@ -1398,11 +1398,11 @@ static intn test_chkcmp_SDSs()
     sds_id = SDselect(sd_id, sds_index);
     CHECK(cmpsds_id, FAIL, "test_chkcmp_SDSs: SDselect");
 
-    info_count = SDgetdatainfo(cmpsds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(cmpsds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
     VERIFY(info_count, 0, "test_chkcmp_SDSs: SDgetdatainfo");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
     VERIFY(info_count, 0, "test_chkcmp_SDSs: SDgetdatainfo");
 
@@ -1456,7 +1456,7 @@ static intn test_chkcmp_SDSs()
     /*
      * "Chunked-NoDeflate-Data"
      */
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
     VERIFY(info_count, 3, "test_chkcmp_SDSs: SDgetdatainfo");
 
@@ -1474,7 +1474,7 @@ static intn test_chkcmp_SDSs()
     /* Record number of values the SDS can have */
     sds_info.n_values = comp_n_values(rank, sds_info.dimsizes);
 
-    status = SDgetdatainfo(sds_id, 0, info_count, sds_info.offsets, sds_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds_info.offsets, sds_info.lengths);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 
     status = SDendaccess(sds_id);
@@ -1483,7 +1483,7 @@ static intn test_chkcmp_SDSs()
     /*
      * "Chunked-NoDeflate-Data"
      */
-    info_count = SDgetdatainfo(cmpsds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(cmpsds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
     VERIFY(info_count, 3, "test_chkcmp_SDSs: SDgetdatainfo");
 
@@ -1501,7 +1501,7 @@ static intn test_chkcmp_SDSs()
     /* Record number of values the SDS can have */
     cmpsds_info.n_values = comp_n_values(rank, cmpsds_info.dimsizes);
 
-    status = SDgetdatainfo(cmpsds_id, 0, info_count, cmpsds_info.offsets, cmpsds_info.lengths);
+    status = SDgetdatainfo(cmpsds_id, NULL, 0, info_count, cmpsds_info.offsets, cmpsds_info.lengths);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 
     status = SDendaccess(cmpsds_id);
@@ -1653,7 +1653,7 @@ static intn test_extend_SDSs()
     sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDselect");
 
-    info_count = SDgetdatainfo(sds_id, 0, 0, NULL, NULL);
+    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_extend_SDSs: SDgetdatainfo");
     VERIFY(info_count, 3, "test_extend_SDSs: SDgetdatainfo");
 
@@ -1671,7 +1671,7 @@ static intn test_extend_SDSs()
     /* Record number of values the SDS can have */
     sds_info.n_values = comp_n_values(rank, sds_info.dimsizes);
 
-    status = SDgetdatainfo(sds_id, 0, info_count, sds_info.offsets, sds_info.lengths);
+    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds_info.offsets, sds_info.lengths);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
 
     /* Close this SDS */

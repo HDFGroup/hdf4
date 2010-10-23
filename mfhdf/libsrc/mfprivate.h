@@ -19,7 +19,6 @@ file - mfprivate.h
   separately from the rest of the API.  These functions were introduced by
   the hmap project.
 
-  Tests of these functions are located in mfhdf/test/tdatainfo.c
   Aug 8, 2010 -BMR
 ******************************************************************************/
 

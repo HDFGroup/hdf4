@@ -191,7 +191,9 @@ extern      "C"
 
     HDFLIBAPI intn HMCgetdatainfo
         (int32 file_id,    /* IN: file in which element is located */
-         uint8 *p,         /* IN: buffer of special info header */
+         uint16 data_tag,
+         uint16 data_ref,
+	 int32 *chk_coord, /* IN: chunk coord array or NULL for non-chunk SDS */
          uintn start_block,/* IN: data block to start at, 0 base */
          uintn info_count, /* IN: size of offset/length lists */
          int32 *offsetarray,     /* OUT: array to hold offsets */

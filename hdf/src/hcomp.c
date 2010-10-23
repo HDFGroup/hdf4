@@ -1770,7 +1770,7 @@ HCPgetcomptype(int32 file_id,
 
 	/* Get special tag */
 	p = local_ptbuf;
-	INT16DECODE(p, sp_tag);
+	UINT16DECODE(p, sp_tag);
 
 	/* If it is a compressed element, move forward until compression
 	   coder and get it */

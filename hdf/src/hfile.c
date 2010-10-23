@@ -450,9 +450,6 @@ done:
           HIrelease_filerec_node(file_rec);
     } /* end if */
 
-/*
-fprintf(stderr, "Hopen normal cleanup: prints HEvalue(1) = %d\n", HEvalue(1));
-*/
   /* Normal function cleanup */
   return ret_value;
 }	/* Hopen */
@@ -4159,6 +4156,8 @@ DESCRIPTION
 intn
 Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
 {
+    CONSTR(FUNC, "Hgetntinfo");	/* for HERROR */
+
     /* Clear error stack */
     HEclear();
 

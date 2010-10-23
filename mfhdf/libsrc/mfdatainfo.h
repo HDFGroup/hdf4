@@ -11,10 +11,8 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: hproto.h 5400 2010-04-22 03:45:32Z bmribler $ */
-
-#ifndef _H_DATAINFO
-#define _H_DATAINFO
+#ifndef _MF_DATAINFO
+#define _MF_DATAINFO
 
 #include "H4api_adpt.h"
 
@@ -26,39 +24,20 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
+ /* #include "mfhdfi.h"
+ */ 
+
 /* Public functions for getting raw data information */
 
-    HDFLIBAPI intn ANgetdatainfo
-		(int32 ann_id, int32 *offset, int32 *length);
+HDFLIBAPI intn SDgetdatainfo
+    (int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray,
+	int32 *lengtharray);
 
-    HDFLIBAPI intn HDgetdatainfo
-		(int32 file_id, uint16 data_tag, uint16 data_ref,
-		 int32 *chk_coord, uintn start_block, uintn info_count,
-		 int32 *offsetarray, int32 *lengtharray);
-
-    HDFLIBAPI intn HDgetdatainfo_count
-		(int32 file_id, uint16 data_tag, uint16 data_ref, int32 *chk_coord);
-
-    HDFLIBAPI intn VSgetdatainfo
-		(int32 vsid, uintn start_block, uintn info_count,
-		 int32 *offsetarray, int32 *lengtharray);
-
-    HDFLIBAPI intn VSgetattdatainfo
-		(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length);
-
-    HDFLIBAPI intn Vgetattdatainfo
-		(int32 vgid, intn attrindex, int32 *offset, int32 *length);
-
-    HDFLIBAPI intn GRgetdatainfo
-		(int32 riid, uintn start_block, uintn info_count,
-		 int32 *offsetarray, int32 *lengtharray);
-
-    HDFLIBAPI intn GRgetattdatainfo
-		(int32 id, intn attrindex, char *attrname, int32 *offset, int32 *length);
+HDFLIBAPI intn SDgetattdatainfo
+    (int32 id, int32 attrindex, int32 *offset, int32 *length);
 
 #if defined c_plusplus || defined __cplusplus
 }
-#endif				/* c_plusplus || __cplusplus */
-#endif				/* DATAINFO_MASTER || DATAINFO_TESTER */
-#endif                          /* _H_DATAINFO */
-
+#endif /* c_plusplus || __cplusplus */
+#endif /* DATAINFO_MASTER || DATAINFO_TESTER */
+#endif /* _MF_DATAINFO */

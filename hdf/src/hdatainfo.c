@@ -24,10 +24,10 @@ FILE
 
 LOW-LEVEL ROUTINES
     - Gets the number of data blocks in an element.
-HDgetdatainfo_count(file_id, data_tag, data_ref)
+HDgetdatainfo_count(file_id, data_tag, data_ref, NULL)
 
     - Gets the offset(s) and length(s) of the data in the data element.
-HDgetdatainfo(file_id, data_tag, data_ref, start_block, info_count, *offsetarray, *lengtharray)
+HDgetdatainfo(file_id, data_tag, data_ref, *chk_coord, start_block, info_count, *offsetarray, *lengtharray)
 
 EXPORTED ROUTINES
     - Gets the offset(s)/length(s) of a vdata's data.
@@ -74,6 +74,7 @@ GRgetattdatainfo(id, attrindex, *offset, *length)
 		int32  file_id;		IN: file id
 		uint16 data_tag;	IN: tag of the element
 		uint16 data_ref;	IN: ref of element
+		int32 *chk_coord	IN: chunk coord array or NULL for non-chunk SDS
  RETURNS
     The number of data blocks in the element, if successful, and FAIL, otherwise
  DESCRIPTION
@@ -82,7 +83,8 @@ GRgetattdatainfo(id, attrindex, *offset, *length)
 --------------------------------------------------------------------------*/
 intn HDgetdatainfo_count(
 	int32 file_id,
-	uint16 data_tag, uint16 data_ref) /* IN: tag/ref of element */
+	uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+	int32 *chk_coord)		  /* IN: chunk coord array or NULL for non-chunk SDS */
 {
     CONSTR(FUNC, "HDgetdatainfo_count");	/* for HGOTO_ERROR */
     int32	data_len;	/* offset of the data we are checking */
@@ -162,7 +164,7 @@ intn HDgetdatainfo_count(
 		UINT16DECODE(p, link_ref);
 
 		/* get data information from the linked blocks */
-		info_count = HLgetdatainfo(file_id, link_ref, num_blocks, NULL, NULL);
+		info_count = HLgetdatainfo(file_id, p, NULL, NULL);
     } /* element is SPECIAL_LINKED */
 	} /* else, data_id is special */
 
@@ -198,6 +200,7 @@ done:
 	int32  file_id;		IN: file id
 	uint16 data_tag;	IN: tag of the element
 	uint16 data_ref;	IN: ref of element
+	int32 *chk_coord;	IN: coordinate array of the inquired chunk
 	uintn  start_block;	IN: data block to start at, 0 base
 	uintn  info_count;	IN: number of info records
 	int32 *offsetarray;	OUT: array to hold offsets
@@ -208,25 +211,31 @@ done:
  NOTES
     Aug 17, 2010: Tested with SDgetdatainfo and VSgetdatainfo -BMR
     Sep 7, 2010: Tested with GRgetdatainfo, but not linked-block yet -BMR
+    Oct 5, 2010: Modified to handle compressed/linked-block element -BMR
 --------------------------------------------------------------------------*/
 intn
 HDgetdatainfo(int32 file_id,
 	uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+	int32 *chk_coord,
 	uintn start_block,	/* IN: data block to start at, 0 base */
 	uintn info_count,	/* IN: number of info records */
 	int32 *offsetarray,	/* OUT: array to hold offsets */
 	int32 *lengtharray)	/* OUT: array to hold lengths */
 {
     CONSTR(FUNC, "HDgetdatainfo");	/* for HGOTO_ERROR */
-    int32	data_len;	/* offset of the data we are checking */
-    uint16	sp_tag;		/* special tag */
-    uint16	comp_ref = 0;
-    uint8      *drec_buf=NULL, *p;	/* description record buffer */
-    atom_t      data_id = FAIL;	/* dd ID of existing element */
-    int32	offset, length; /* offset and length of a data block */
     filerec_t  *file_rec;	/* file record */
+    uint16	sp_tag;		/* special tag */
+    uint16	comp_ref = 0;	/* ref for compressed data or compression header */
+    int32	drec_aid=-1;	/* description record access id */
+    uint16	dtag, dref;	/* description record tag/ref */
+    int32	dlen=0, doff=0;	/* offset/length of the description record */
+    uint8	lbuf[4], *p=NULL;	/* description record buffer and a pointer to it */
+    atom_t	data_id = FAIL;	/* dd ID of existing element */
+    int32	length; /* uncompressed data length to check if data had been written */
     uintn	count=0;
     intn	ret_value=SUCCEED;
+    uint16	spec_code=0;
+    int32	comp_aid=-1;
 
     /* clear error stack */
     HEclear();
@@ -234,9 +243,7 @@ HDgetdatainfo(int32 file_id,
     /* validate arguments */
     if (start_block < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (info_count <= 0)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (offsetarray == NULL && lengtharray == NULL) /* one can be NULL */
+    if (info_count <= 0 && offsetarray != NULL && lengtharray != NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* convert file id to file rec and check for validity */
@@ -247,25 +254,25 @@ HDgetdatainfo(int32 file_id,
     /* get access element from dataset's tag/ref */
     if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
     {
+	/* get the info pointed to by this dd, which could point to data or
+	   description record */
+	if (HTPinquire(data_id, &dtag, &dref, &doff, &dlen) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
 	/* if the element is not special, that means dataset's tag/ref 
 	   specifies the actual data that was written to the dataset, get
-	   the offset and length of the data */
+	   the offset and length of the data if they were requested */
 	if (HTPis_special(data_id)==FALSE)
         {
-	    uint16 find_tag = 0;
-	    uint16 find_ref = 0;
-
-	    if (Hfind(file_id, data_tag, data_ref, &find_tag, &find_ref, &offset, &length, DF_FORWARD) == FAIL)
-	    {
-		HGOTO_ERROR(DFE_NOMATCH, FAIL);
-	    }
-
 	    /* Only one data block here, starting offset cannot be > 1 */
 	    if (start_block > 1)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	    offsetarray[0] = offset;
-	    lengtharray[0] = length;
+	    if (offsetarray != NULL && lengtharray != NULL)
+	    {
+		offsetarray[0] = doff;
+		lengtharray[0] = dlen;
+	    }
 	    count = 1;
         }
 
@@ -274,18 +281,33 @@ HDgetdatainfo(int32 file_id,
 	else
 	{
 	    /* get the info for the dataset (description record) */
-            data_len = HPread_drec(file_id, data_id, &drec_buf);
-	    if (data_len <= 0)
-		HGOTO_ERROR(DFE_READERROR, FAIL);
+	    if ((drec_aid = HTPselect(file_rec, dtag, dref)) == FAIL)
+                      HE_REPORT_GOTO("HTPselect failed ", FAIL);
 
-	    /* get special tag */
-	    p = drec_buf;
+	    if (HTPis_special(drec_aid)!=TRUE)
+            {
+                HTPendaccess(drec_aid);
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            }   /* end if */
+
+	    if (HPseek(file_rec, doff) == FAIL)
+		HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+	    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+	    if(HTPendaccess(drec_aid)==FAIL)
+		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+	    p = &lbuf[0];
 	    INT16DECODE(p, sp_tag);
 
 	    /* if this is a compressed element, then it should only be none or
 	       one block of data */
 	    if (sp_tag == SPECIAL_COMP)
 	    {
+		if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+		HGOTO_ERROR(DFE_READERROR, FAIL);
+
+		p = &lbuf[0];
 		/* skip 2byte header_version */
 		p = p + 2;
 		INT32DECODE(p, length);	/* get _uncompressed_ data length */
@@ -298,22 +320,59 @@ HDgetdatainfo(int32 file_id,
 		/* Data has been written, get its offset and length */
 		else
 		{
-		    /* Only one data block for compressed data, starting offset
-			cannot be > 1 */
-		    if (start_block > 1)
-			HGOTO_ERROR(DFE_ARGS, FAIL);
-
-		    /* get offset and length of the compressed element */
 		    UINT16DECODE(p, comp_ref);
-		    if ((offset = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref)) == FAIL)
-			HGOTO_ERROR(DFE_BADLEN, FAIL);
 
-		    if ((length = Hlength(file_id, DFTAG_COMPRESSED, comp_ref)) == FAIL)
-			HGOTO_ERROR(DFE_BADLEN, FAIL);
+		if ((comp_aid = HTPselect(file_rec, DFTAG_COMPRESSED, comp_ref)) == FAIL)
+		    HE_REPORT_GOTO("HTPselect failed ", FAIL);
 
-		    offsetarray[0] = offset;
-		    lengtharray[0] = length;
+		if (HTPis_special(comp_aid)!=TRUE)
+		{
+		    /* this element is not further special, only compressed, get its offset
+		       and length */
+		    if (offsetarray != NULL && lengtharray != NULL)
+		    {
+			offsetarray[0] = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
+			lengtharray[0] = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
+		    }
 		    count = 1;
+		}   /* end if */
+		else
+		{ /* this element is further special, read in the special code to see what
+		     the specialness is then process appropriately */
+		    int32 num_blocks=0;
+		    uint16 link_ref=0;
+		    if(HTPinquire(comp_aid, NULL, NULL, &doff, NULL)==FAIL)
+		    {
+			HTPendaccess(comp_aid);
+			HGOTO_ERROR(DFE_INTERNAL, FAIL);
+		    } /* end if */
+		    if (HPseek(file_rec, doff) == FAIL)
+			HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+		    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
+			HGOTO_ERROR(DFE_READERROR, FAIL);
+
+		    /* use special code to determine how to retrieve offsets/lengths of data */
+		    p = &lbuf[0];
+		    INT16DECODE(p, spec_code);
+
+		    if (spec_code == SPECIAL_LINKED)
+		    {
+			if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+			    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+			/* pass the special header info to the linked-block API to get the data
+			   info if they are requested or the info count only, otherwise */ 
+			p = &lbuf[0];
+			if (offsetarray != NULL && lengtharray != NULL)
+			    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+			else  /* get data information from the linked blocks */
+			    count = HLgetdatainfo(file_id, p, NULL, NULL);
+		    } /* this element is also stored in linked blocks */
+		} /* this element is further special */
+
+		if(HTPendaccess(comp_aid)==FAIL)
+		    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
 		} /* compressed data written */
 	    } /* element is compressed */
 
@@ -321,25 +380,30 @@ HDgetdatainfo(int32 file_id,
 		layer. */
 	    else if (sp_tag == SPECIAL_CHUNKED)
 	    {
-		count = HMCgetdatainfo(file_id, p, start_block, info_count, offsetarray, lengtharray);
-		if (count == FAIL) HGOTO_ERROR(DFE_INTERNAL, FAIL);
+		if (chk_coord != NULL)
+		    count = HMCgetdatainfo(file_id, data_tag, data_ref, chk_coord,
+					start_block, info_count, offsetarray, lengtharray);
+		else
+		{
+		    fprintf(stderr, "\nThis is a chunked element, the chunk's coordinates must be specified\n");
+		    exit(0); /* BMR: check to see what should be done here */
+		}
 	    }
 
 	    /* unlimited dimension; extract the number of blocks and the ref #
 		of the link table then hand over to linked block layer */
 	    else if (sp_tag == SPECIAL_LINKED)
 	    {
-		int32 num_blocks;
-		uint16 link_ref;
+		if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+		    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-		p = p + 4 + 4; /* skip length, block_size */
-		INT32DECODE(p, num_blocks);
-		UINT16DECODE(p, link_ref);
-
-		/* get data information from the linked blocks */
-		count = HLgetdatainfo(file_id, link_ref, num_blocks,
-						offsetarray, lengtharray);
-
+		/* pass the special header info to the linked-block API to get the data
+		   info if they are requested or the info count only, otherwise */ 
+		p = &lbuf[0];
+		if (offsetarray != NULL && lengtharray != NULL)
+		    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+		else  /* get data information from the linked blocks */
+		    count = HLgetdatainfo(file_id, p, NULL, NULL);
 	    } /* element is SPECIAL_LINKED */
 	} /* else, data_id is special */
 
@@ -358,9 +422,6 @@ done:
     } /* end if */
 
     /* Normal function cleanup */
-    if (drec_buf != NULL) 
-	HDfree(drec_buf);
-
     return ret_value;
 } /* HDgetdatainfo */
 
@@ -418,11 +479,11 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
     {
 	if (offsetarray == NULL && lengtharray == NULL)
 	{
-	    count = HDgetdatainfo_count(vs->f, VSDATATAG, vs->oref);
+	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, NULL, start_block, info_count, NULL, NULL);
 	}
 	else
 	{
-	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, start_block, info_count, offsetarray, lengtharray);
+	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, NULL, start_block, info_count, offsetarray, lengtharray);
 	}
 	if (count == FAIL)
 	    HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -818,7 +879,7 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
         /* if both arrays are NULL, get the number of data blocks and return */
         if ((offsetarray == NULL && lengtharray == NULL) && (info_count == 0))
         {
-            count = HDgetdatainfo_count(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
+            count = HDgetdatainfo_count(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, NULL);
             if (count == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
@@ -832,7 +893,7 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
         /* application requests actual offsets/lengths */
         else
         {
-            count = HDgetdatainfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, start_block, info_count, offsetarray, lengtharray);
+            count = HDgetdatainfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, NULL, start_block, info_count, offsetarray, lengtharray);
             if (count == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
