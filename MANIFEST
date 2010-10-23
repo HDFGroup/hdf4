@@ -936,6 +936,7 @@
 ./mfhdf/libsrc/local_nc.h
 ./mfhdf/libsrc/make.com
 ./mfhdf/libsrc/mfdatainfo.c
+./mfhdf/libsrc/mfdatainfo.h
 ./mfhdf/libsrc/mfhdf.h
 ./mfhdf/libsrc/mfhdfi.h
 ./mfhdf/libsrc/mfprivate.h
@@ -1065,6 +1066,7 @@
 ./mfhdf/test/hdftest.h
 ./mfhdf/test/sds_szipped.dat
 ./mfhdf/test/smallslice.0000.nc
+./mfhdf/test/tattdatainfo.c
 ./mfhdf/test/tchunk.c
 ./mfhdf/test/tcomp.c
 ./mfhdf/test/tcoordvar.c
