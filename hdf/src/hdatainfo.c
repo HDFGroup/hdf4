@@ -66,129 +66,6 @@ GRgetattdatainfo(id, attrindex, *offset, *length)
 #include "szlib.h"
 #endif
 
-/*--------------------------------------------------------------------------
- NAME
-    HDgetdatainfo_count -- Gets the number of data blocks in an element
- USAGE
-    int32 HDgetdatainfo(file_id, data_tag, data_ref)
-		int32  file_id;		IN: file id
-		uint16 data_tag;	IN: tag of the element
-		uint16 data_ref;	IN: ref of element
-		int32 *chk_coord	IN: chunk coord array or NULL for non-chunk SDS
- RETURNS
-    The number of data blocks in the element, if successful, and FAIL, otherwise
- DESCRIPTION
- NOTES
-    Aug 17, 2010: Tested with SDgetdatainfo and VSgetdatainfo -BMR
---------------------------------------------------------------------------*/
-intn HDgetdatainfo_count(
-	int32 file_id,
-	uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
-	int32 *chk_coord)		  /* IN: chunk coord array or NULL for non-chunk SDS */
-{
-    CONSTR(FUNC, "HDgetdatainfo_count");	/* for HGOTO_ERROR */
-    int32	data_len;	/* offset of the data we are checking */
-    uint16	sp_tag;		/* special tag */
-    atom_t      data_id = FAIL;	/* dd ID of existing regular element */
-    uint8      *drec_buf=NULL, *p;
-    filerec_t  *file_rec;	/* file record */
-    uintn	info_count = 0;
-    int32	length; /* offset and length of a data block */
-    intn        ret_value=SUCCEED;
-
-    /* clear error stack */
-    HEclear();
-
-    /* convert file id to file rec and check for validity */
-    file_rec = HAatom_object(file_id);
-    if (BADFREC(file_rec))
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* get access element from dataset's tag/ref */
-    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
-    {
-	/* if the element is not special, that means dataset's tag/ref 
-	   specifies the actual data that was written to the dataset in
-	   one block, so we don't need to check further */
-	if (HTPis_special(data_id)==FALSE)
-        {
-	    info_count = 1;
-        }
-
-	/* if the element is special, get the special info header and decode
-	   for special tag to detect compression/chunking/linked blocks */
-	else
-	{
-            /* get the info for the dataset (description record) */
-            data_len = HPread_drec(file_id, data_id, &drec_buf);
-	    if (data_len <= 0)
-		HGOTO_ERROR(DFE_READERROR, FAIL);
-
-	    /* get special tag */
-	    p = drec_buf;
-	    INT16DECODE(p, sp_tag);
-
-	    /* if this is a compressed element, then it should only be none or
-	       one block of data */
-	    if (sp_tag == SPECIAL_COMP)
-	    {
-		/* skip 2byte header_version */
-		p = p + 2;
-		INT32DECODE(p, length);	/* get _uncompressed_ data length */
-
-		/* No data written */
-		if (length == 0)
-		    info_count = 0;
-
-		/* Data has been written to one block of data */
-		else
-		    info_count = 1;
-	    } /* element is compressed */
-
-	    /* if this is a chunked element, hand the task over to the chunking
-		layer. */
-	    else if (sp_tag == SPECIAL_CHUNKED)
-	    {
-		if (HMCgetdatainfo_count(file_id, p, &info_count)==FAIL)
-		    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	    }
-
-	    /* if this is a linked block element, get the number of blocks */
-	    else if (sp_tag == SPECIAL_LINKED) /* unlimited dimension here */
-	    {
-		int32 num_blocks;
-		uint16 link_ref;
-
-		p = p + 4 + 4; /* skip length, block_size */
-		INT32DECODE(p, num_blocks);
-		UINT16DECODE(p, link_ref);
-
-		/* get data information from the linked blocks */
-		info_count = HLgetdatainfo(file_id, p, NULL, NULL);
-    } /* element is SPECIAL_LINKED */
-	} /* else, data_id is special */
-
-	/* end access to the aid */
-	if (HTPendaccess(data_id) == FAIL)
-	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-    }  /* end if data_id != FAIL */
-
-    else /* HTPselect failed */
-        HGOTO_ERROR(DFE_CANTACCESS, FAIL);
-
-    ret_value = info_count; 
-done:
-    if(ret_value == FAIL)   
-    { /* Error condition cleanup */
-    } /* end if */
-
-    /* Normal function cleanup */
-    if (drec_buf != NULL) 
-	HDfree(drec_buf);
-
-    return ret_value;
-} /* HDgetdatainfo_count */
-
 
 /*--------------------------------------------------------------------------
  NAME
@@ -879,7 +756,7 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
         /* if both arrays are NULL, get the number of data blocks and return */
         if ((offsetarray == NULL && lengtharray == NULL) && (info_count == 0))
         {
-            count = HDgetdatainfo_count(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, NULL);
+            count = HDgetdatainfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, NULL, start_block, 0, NULL, NULL);
             if (count == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
