@@ -109,64 +109,64 @@ static int test_mgr_fillvalues()
         riid = GRselect(grid, ri_index);
         CHECK(riid, FAIL, "GRselect");
 
-	/* Buffer to read image's data in */
+        /* Buffer to read image's data in */
         HDmemset(image, 0, (size_t)(dims[0]*dims[1]* N_COMPS)*sizeof(float32));
 
         /* Fill the memory-only with the default pixel fill-value */
-        HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0)/sizeof(fill_pixel));
+        HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
 
-	/* Read and verify image's data, should only be fill-values */
-        start[0]=start[1]=0;
-        stride[0]=stride[1]=1;
+        /* Read and verify image's data, should only be fill-values */
+        start[0] = start[1] = 0;
+        stride[0] = stride[1] = 1;
         ret = GRreadimage(riid, start, stride, dims, image);
         CHECK(ret, FAIL, "GRreadimage");
 
-        if (HDmemcmp(image, image0, sizeof(image0)) != 0)
-        {
-	    MESSAGE(3, printf("Error reading data for image with user defined fill-values\n"););
-	    num_errs++;
+        if (HDmemcmp(image, image0, sizeof(image0)) != 0) {
+            MESSAGE(3, printf("Error reading data for image with user defined fill-values\n"););
+            num_errs++;
         }
 
-	/* Find the image's attribute named FILL_ATTR */
-	attr_index = GRfindattr(riid, FILL_ATTR);
-	VERIFY(attr_index, 0, "GRfindattr");
+        /* Find the image's attribute named FILL_ATTR */
+        attr_index = GRfindattr(riid, FILL_ATTR);
+        VERIFY(attr_index, 0, "GRfindattr");
 
         /* Get information about the current attribute. */
-        ret = GRattrinfo (riid, attr_index, attr_name, &ntype, &n_values);
+        ret = GRattrinfo(riid, attr_index, attr_name, &ntype, &n_values);
         CHECK(ret, FAIL, "GRattrinfo");
-	VERIFY(attr_index, 0, "GRattrinfo");
-	VERIFY(ntype, DFNT_FLOAT32, "GRattrinfo");
-	VERIFY(n_values, RI_ATT_N_VALUES, "GRattrinfo");
-	VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
+        VERIFY(attr_index, 0, "GRattrinfo");
+        VERIFY(ntype, DFNT_FLOAT32, "GRattrinfo");
+        VERIFY(n_values, RI_ATT_N_VALUES, "GRattrinfo");
+        VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
-	/* Allocate a buffer to hold the attribute data. */
-	read_fill_vals = HDmalloc (n_values * sizeof (float32));
-	if (read_fill_vals == NULL)
-	{
-	    fprintf (stderr, "Unable to allocate space for attribute data.\n");
-	    exit (1);
-	}
+        /* Allocate a buffer to hold the attribute data. */
+        read_fill_vals = HDmalloc (n_values * sizeof (float32));
+        if (read_fill_vals == NULL) {
+            fprintf(stderr, "Unable to allocate space for attribute data.\n");
+            exit(1);
+        }
 
-	/* Piggy-back a test for Hgetntinfo */
-	ret = Hgetntinfo(ntype, &nt_info);
-	CHECK(ret, FAIL, "Hgetntinfo");
-	VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo");
+        /* Piggy-back a test for Hgetntinfo */
+        ret = Hgetntinfo(ntype, &nt_info);
+        CHECK(ret, FAIL, "Hgetntinfo");
+        VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo");
 
-	/* Read and verify the attribute's data */
-	ret = GRgetattr(riid, attr_index, (VOIDP)read_fill_vals);
+        /* Read and verify the attribute's data */
+        ret = GRgetattr(riid, attr_index, (VOIDP) read_fill_vals);
         CHECK(ret, FAIL, "GRgetattr");
 
-	if (HDmemcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0)
-          {
-              MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
-              num_errs++;
-          } /* end if */
+        if (HDmemcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
+            MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
+            num_errs++;
+        } /* end if */
+    
+        if (read_fill_vals != NULL)
+            HDfree(read_fill_vals);
 
         /* Close the empty image */
         ret = GRendaccess(riid);
         CHECK(ret, FAIL, "GRendaccess");
     }
-    
+
     /* Shut down the GR interface */
     ret = GRend(grid);
     CHECK(ret, FAIL, "GRend");

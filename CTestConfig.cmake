@@ -11,3 +11,11 @@ SET (CTEST_DROP_METHOD "http")
 SET (CTEST_DROP_SITE "nei.hdfgroup.uiuc.edu")
 SET (CTEST_DROP_LOCATION "/cdash/submit.php?project=HDF4")
 SET (CTEST_DROP_SITE_CDASH TRUE)
+
+set(UPDATE_TYPE svn)
+
+set(VALGRIND_COMMAND "/usr/bin/valgrind")
+set(VALGRIND_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes")
+set(CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")
+set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes")
+set(CTEST_TESTING_TIMEOUT 3600)

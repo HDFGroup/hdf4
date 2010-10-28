@@ -642,48 +642,50 @@ if(status==FAIL)
     status = Vgetclass(vg1, vgclass);
     CHECK(status,FAIL,"Vgetclass:vg1");
 
-    if (HDstrcmp(vgname, "Second Vgroup"))
-      {
-          num_errs++;
-          printf(">>> Got bogus Vgroup name : %s\n", vgname);
-      }
+    if (HDstrcmp(vgname, "Second Vgroup")) {
+        num_errs++;
+        printf(">>> Got bogus Vgroup name : %s\n", vgname);
+    }
 
-    if (HDstrcmp(vgclass, "Test object"))
-      {
-          num_errs++;
-          printf(">>> Got bogus Vgroup class : %s\n", vgclass);
-      }
+    if (vgname != NULL)
+        HDfree(vgname);
+
+    if (HDstrcmp(vgclass, "Test object")) {
+        num_errs++;
+        printf(">>> Got bogus Vgroup class : %s\n", vgclass);
+    }
+
+    if (vgclass != NULL)
+        HDfree(vgclass);
 
     num = 3;
     status = Vgettagrefs(vg1, tags, refs, 100);
-    if (status == FAIL)
-      {
-          num_errs++;
-          printf(">>> Vgettagrefs found %d was expecting %d\n", (int) status, (int) num);
-      }
+    if (status == FAIL) {
+        num_errs++;
+        printf(">>> Vgettagrefs found %d was expecting %d\n", (int) status,
+                (int) num);
+    }
 
-    for (i = 0; i < num; i++)
-      {
-          status = Vgettagref(vg1, i, &tag, &ref);
-          if (status == FAIL)
-            {
-                num_errs++;
-                printf(">>> Vgettagref failed on call %d\n", (int) i);
-            }
+    for (i = 0; i < num; i++) {
+        status = Vgettagref(vg1, i, &tag, &ref);
+        if (status == FAIL) {
+            num_errs++;
+            printf(">>> Vgettagref failed on call %d\n", (int) i);
+        }
 
-          if (tag != tags[i])
-            {
-                num_errs++;
-                printf(">>> Vgettagref Tag #%d disagrees %d %d\n", (int) i, (int) tag, (int) tags[i]);
-            }
+        if (tag != tags[i]) {
+            num_errs++;
+            printf(">>> Vgettagref Tag #%d disagrees %d %d\n", (int) i,
+                    (int) tag, (int) tags[i]);
+        }
 
-          if (ref != refs[i])
-            {
-                num_errs++;
-                printf(">>> Vgettagref Ref #%d disagrees %d %d\n", (int) i, (int) ref, (int) refs[i]);
-            }
+        if (ref != refs[i]) {
+            num_errs++;
+            printf(">>> Vgettagref Ref #%d disagrees %d %d\n", (int) i,
+                    (int) ref, (int) refs[i]);
+        }
 
-      }
+    }
 
     status = Vdetach(vg1);
     CHECK(status,FAIL,"Vdetach:vg1");
@@ -2144,11 +2146,13 @@ test_vglongnames(void)
     status=Vgetname(vg1, vgname);
     CHECK_VOID(status,FAIL,"VSgetname");
 
-    if (HDstrcmp(vgname, VG_LONGNAME))
-      {
-          num_errs++;
-          printf(">>> Got bogus Vgroup name : %s\n", vgname);
-      }
+    if (HDstrcmp(vgname, VG_LONGNAME)) {
+        num_errs++;
+        printf(">>> Got bogus Vgroup name : %s\n", vgname);
+    }
+
+    if (vgname != NULL)
+        HDfree(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -2160,11 +2164,13 @@ test_vglongnames(void)
     status=Vgetclass(vg1, vgclass);
     CHECK_VOID(status,FAIL,"VSgetclass");
 
-    if (HDstrcmp(vgclass, VG_LONGCLASS))
-      {
-          num_errs++;
-          printf(">>> Got bogus Vgroup class : %s\n", vgclass);
-      }
+    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
+        num_errs++;
+        printf(">>> Got bogus Vgroup class : %s\n", vgclass);
+    }
+
+    if (vgclass != NULL)
+        HDfree(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
@@ -2186,11 +2192,13 @@ test_vglongnames(void)
     status=Vgetname(vg1, vgname);
     CHECK_VOID(status,FAIL,"VSgetname");
 
-    if (HDstrcmp(vgname, VGROUP1))
-      {
-          num_errs++;
-          printf(">>> Got bogus Vgroup name : %s\n", vgname);
-      }
+    if (HDstrcmp(vgname, VGROUP1)) {
+        num_errs++;
+        printf(">>> Got bogus Vgroup name : %s\n", vgname);
+    }
+
+    if (vgname != NULL)
+        HDfree(vgname);
 
     /* get the vgroup's class */
     status = Vgetclassnamelen(vg1, &name_len);
@@ -2202,11 +2210,13 @@ test_vglongnames(void)
     status=Vgetclass(vg1, vgclass);
     CHECK_VOID(status,FAIL,"VSgetclass");
 
-    if (HDstrcmp(vgclass, VG_LONGCLASS))
-      {
-          num_errs++;
-          printf(">>> Got bogus Vgroup class : %s\n", vgclass);
-      }
+    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
+        num_errs++;
+        printf(">>> Got bogus Vgroup class : %s\n", vgclass);
+    }
+
+    if (vgclass != NULL)
+        HDfree(vgclass);
 
     status = Vdetach(vg1);
     CHECK_VOID(status,FAIL,"Vdetach");
@@ -2244,25 +2254,24 @@ test_getvgroups(void)
     CHECK_VOID(status, FAIL, "Vstart");
 
     /* Create NUM_VGROUPS vgroups and set classname */
-    for (ii = 0; ii < NUM_VGROUPS; ii++)
-    {
-	/* Create a vgroup. */
-	vgroup_id = Vattach(fid, -1, "w");
-	CHECK_VOID(vgroup_id, FAIL, "Vattach");
+    for (ii = 0; ii < NUM_VGROUPS; ii++) {
+        /* Create a vgroup. */
+        vgroup_id = Vattach(fid, -1, "w");
+        CHECK_VOID(vgroup_id, FAIL, "Vattach");
 
-	/* Record its reference number for later access */
-	vgroup_ref = VQueryref(vgroup_id);
-	CHECK_VOID(vgroup_ref, FAIL, "VQueryref:vgroup_id");
-	ref_list[ii] = vgroup_ref;
+        /* Record its reference number for later access */
+        vgroup_ref = VQueryref(vgroup_id);
+        CHECK_VOID(vgroup_ref, FAIL, "VQueryref:vgroup_id");
+        ref_list[ii] = vgroup_ref;
 
-	/* Set its class name */
-	sprintf(vgclass, "VG-CLASS-%d", ii);
-	status = Vsetclass(vgroup_id, vgclass);
-	CHECK_VOID(status, FAIL, "Vsetclass");
+        /* Set its class name */
+        sprintf(vgclass, "VG-CLASS-%d", ii);
+        status = Vsetclass(vgroup_id, vgclass);
+        CHECK_VOID(status, FAIL, "Vsetclass");
 
-	/* Detach it */
-	status = Vdetach(vgroup_id);
-	CHECK_VOID(status, FAIL, "Vdetach");
+        /* Detach it */
+        status = Vdetach(vgroup_id);
+        CHECK_VOID(status, FAIL, "Vdetach");
     }
 
     /* Insert some vgroups into some other vgroups to build some sort of
@@ -2327,10 +2336,10 @@ test_getvgroups(void)
     /* Verify refarray from this Vgetvgroups, it should contain:
 	2  3  4  5  6  7  8  9  10  11 */ 
     {
-	uint16 result[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Get 5 vgroups starting from vgroup number 5 */
@@ -2341,10 +2350,10 @@ test_getvgroups(void)
     /* Verify refarray from this Vgetvgroups, it should contain:
 	7  8  9  10  11 */
     {
-	uint16 result[] = {7, 8, 9, 10, 11};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = {7, 8, 9, 10, 11};
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Get and verify the number of vgroups in vgroup0_id */
@@ -2359,10 +2368,10 @@ test_getvgroups(void)
 
     /* Verify refarray from this Vgetvgroups, it should contain: 3  4 */ 
     {
-	uint16 result[] = {3, 4};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = {3, 4};
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Get and verify the number of vgroups in vgroup1_id */
@@ -2377,10 +2386,10 @@ test_getvgroups(void)
 
     /* Verify refarray from this Vgetvgroups, it should contain: 5  6  7 */ 
     {
-	uint16 result[] = {5, 6, 7};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = {5, 6, 7};
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* These vgroups are not needed anymore.  */
@@ -2427,10 +2436,10 @@ test_getvgroups(void)
     /* Verify refarray from this Vgetvgroups, it should contain:
 	2  3  4  5  6  7  10  11 */ 
     {
-	uint16 result[] = {2, 3, 4, 5, 6, 7, 10, 11};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = { 2, 3, 4, 5, 6, 7, 10, 11 };
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Get 5 vgroups starting from vgroup number 5, the result shouldn't
@@ -2441,10 +2450,10 @@ test_getvgroups(void)
 
     /* Verify refarray from this Vgetvgroups, it should contain: 7  10  11 */ 
     {
-	uint16 result[] = {7, 10, 11};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = { 7, 10, 11 };
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Check on vgroup0_id again */
@@ -2458,10 +2467,10 @@ test_getvgroups(void)
 
     /* Verify refarray from this Vgetvgroups, it should contain: 3  4 */ 
     {
-	uint16 result[] = {3, 4};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = { 3, 4 };
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Passing in more info count (3) than the actual number of vgrous to
@@ -2472,10 +2481,10 @@ test_getvgroups(void)
 
     /* Verify refarray from this Vgetvgroups, it should contain: 7 */ 
     {
-	uint16 result[] = {7};
-	for (ii = 0; ii < n_vgs; ii++)
-	    if (refarray[ii] != result[ii])
-		fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
+        uint16 result[] = { 7 };
+        for (ii = 0; ii < n_vgs; ii++)
+            if (refarray[ii] != result[ii])
+                fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
     /* Passing in info count as 0 for a non-null array, should fail */
@@ -2486,6 +2495,9 @@ test_getvgroups(void)
        should fail */
     n_vgs = Vgetvgroups(fid, 9, 3, refarray);
     VERIFY_VOID(n_vgs, FAIL, "Vgetvgroups with start_vg = 9");
+
+    if (refarray != NULL)
+        HDfree(refarray);
 
     /* Terminate access to the V interface and close the HDF file.  */
     status_n = Vend (fid);
@@ -2516,10 +2528,9 @@ intn check_vgs(int32 id,
 
     /* Allocate space to retrieve the reference numbers of 'count' vgroups */
     refarray = (uint16 *)HDmalloc(sizeof(uint16)*count);
-    if (refarray == NULL)
-    {
-	fprintf(stderr, "check_vgs: Allocation refarray failed\n");
-	return (-1);
+    if (refarray == NULL) {
+        fprintf(stderr, "check_vgs: Allocation refarray failed\n");
+        return (-1);
     }
 
     /* Get all the vgroups in the file */
@@ -2531,6 +2542,9 @@ intn check_vgs(int32 id,
 	if (refarray[ii] != resultarray[ii])
 	    fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n",
 		ident_text, ii, refarray[ii], resultarray[ii]);
+
+    if (refarray != NULL)
+        HDfree(refarray);
 
     return ret_value;
 }
@@ -2557,10 +2571,9 @@ intn check_vds(int32 id,
 
     /* Allocate space to retrieve the reference numbers of 'count' vdatas */
     refarray = (uint16 *)HDmalloc(sizeof(uint16)*count);
-    if (refarray == NULL)
-    {
-	fprintf(stderr, "check_vds: Allocation refarray failed\n");
-	return (-1);
+    if (refarray == NULL) {
+        fprintf(stderr, "check_vds: Allocation refarray failed\n");
+        return (-1);
     }
 
     /* Get all the vdatas in the file */
@@ -2573,6 +2586,9 @@ intn check_vds(int32 id,
 	    fprintf(stderr, "%s: at index %d - read value=%d, should be %d\n",
 		ident_text, ii, refarray[ii], resultarray[ii]);
 
+    if (refarray != NULL)
+        HDfree(refarray);
+    
     return ret_value;
 }
 

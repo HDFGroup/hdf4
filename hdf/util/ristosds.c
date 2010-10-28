@@ -145,12 +145,15 @@ main(int argc, char *argv[])
           nimg--;
       }
 
+    HDfree(indata);
+    
     dimsizes[0] = nimg0;
     dimsizes[1] = h;
     dimsizes[2] = w;
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
         finishing();
     ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP) outdata0);
+    HDfree(outdata);
     if (ret != 0)
         finishing();
     return (0);

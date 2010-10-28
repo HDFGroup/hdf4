@@ -774,75 +774,69 @@ static void test_readattrtwice(void)
 
     /* get the first vdata */
     vsref = VSgetid(file_id, -1);
-    if (vsref == FAIL)
-    {
-	num_errs++;
-	printf(">>> VSgetid was unable to find first Vdata\n");
+    if (vsref == FAIL) {
+        num_errs++;
+        printf(">>> VSgetid was unable to find first Vdata\n");
     }
 
     /* read attributes of each vdata and its fields, then go to next vdata */
-    while (vsref != -1)
-    {
-	vsid = VSattach(file_id, vsref, "r");
-	CHECK_VOID(vsid,FAIL,"VSattach");
+    while (vsref != -1) {
+        vsid = VSattach(file_id, vsref, "r");
+        CHECK_VOID(vsid,FAIL,"VSattach");
 
-	num_attrs =  VSfnattrs(vsid, _HDF_VDATA);
-	CHECK_VOID(num_attrs,FAIL,"VSfnattrs");
+        num_attrs = VSfnattrs(vsid, _HDF_VDATA);
+        CHECK_VOID(num_attrs,FAIL,"VSfnattrs");
 
-	for (k = 0; k < num_attrs; k++)
-	{
-	    ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
-	    CHECK_VOID(ret,FAIL,"VSattrinfo");
+        for (k = 0; k < num_attrs; k++) {
+            ret = VSattrinfo(vsid, _HDF_VDATA, k, name, &data_type, &count, &size);
+            CHECK_VOID(ret,FAIL,"VSattrinfo");
 
-	    buffer = HDmalloc(size+1);
-	    CHECK_VOID(buffer,NULL,"HDmalloc");
+            buffer = HDmalloc(size+1);
+            CHECK_VOID(buffer,NULL,"HDmalloc");
 
-	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
-	    CHECK_VOID(ret,FAIL,"VSgetattr");
+            ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
+            CHECK_VOID(ret,FAIL,"VSgetattr");
 
-	    ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
-	    if (ret == FAIL)
-	    {
-		num_errs++;
-		printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
-	    }
-	    HDfree(buffer);
+            ret = VSgetattr(vsid, _HDF_VDATA, k, buffer);
+            if (ret == FAIL) {
+                num_errs++;
+                printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
+            }
+            HDfree(buffer);
 
-	    nfields = VFnfields(vsid);
-	    CHECK_VOID(nfields,FAIL,"VFnfields");
+            nfields = VFnfields(vsid);
+            CHECK_VOID(nfields,FAIL,"VFnfields");
 
-	    for (findex = 0; findex < nfields; findex++)
-	    {
-		num_fattrs = VSfnattrs(vsid, findex);
-		CHECK_VOID(num_fattrs,FAIL,"VSfnattrs");
+            for (findex = 0; findex < nfields; findex++) {
+                num_fattrs = VSfnattrs(vsid, findex);
+                CHECK_VOID(num_fattrs,FAIL,"VSfnattrs");
 
-		for (fattr_index = 0; fattr_index < num_fattrs; fattr_index++)
-		{
-		    ret = VSattrinfo(vsid, findex, fattr_index, name, 
-						&data_type, &count, &size);
-		    CHECK_VOID(ret,FAIL,"VSattrinfo");
+                for (fattr_index = 0; fattr_index < num_fattrs; fattr_index++) {
+                    ret = VSattrinfo(vsid, findex, fattr_index, name, &data_type, &count, &size);
+                    CHECK_VOID(ret,FAIL,"VSattrinfo");
 
-		    buffer = HDmalloc(size);
-		    CHECK_VOID(buffer,NULL,"HDmalloc");
+                    buffer = HDmalloc(size);
+                    CHECK_VOID(buffer,NULL,"HDmalloc");
 
-		    ret = VSgetattr(vsid, findex, fattr_index, buffer);
-		    CHECK_VOID(ret,FAIL,"VSgetattr");
+                    ret = VSgetattr(vsid, findex, fattr_index, buffer);
+                    CHECK_VOID(ret,FAIL,"VSgetattr");
 
-		    ret = VSgetattr(vsid, findex, fattr_index, buffer);
-		    if (ret == FAIL)
-		    {
-			num_errs++;
-			printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
-		    }
-		}   /* for fattr_index */
-	    }   /* for findex */
-	}   /* for k */
+                    ret = VSgetattr(vsid, findex, fattr_index, buffer);
+                    if (ret == FAIL) {
+                        num_errs++;
+                        printf(">>> Reading attribute twice failed - (bugzilla 486)\n");
+                    }
 
-	ret = VSdetach(vsid);
-	CHECK_VOID(ret,FAIL,"VSdetach");
+                    HDfree(buffer);
+                } /* for fattr_index */
+            } /* for findex */
+        } /* for k */
 
-	/* find next vdata */
-	vsref = VSgetid(file_id, vsref);
+        ret = VSdetach(vsid);
+        CHECK_VOID(ret,FAIL,"VSdetach");
+
+        /* find next vdata */
+        vsref = VSgetid(file_id, vsref);
     }
     ret = Vend(file_id);
     CHECK_VOID(ret,FAIL,"VSdetach");

@@ -864,57 +864,51 @@ HLgetdatainfo(int32 file_id,
         HGOTO_DONE(FAIL);
 
     /* Go through all the linked-block tables of this element */
-    while (link_info != NULL)
-    { 
-	uint16 next_ref = link_info->nextref; /* shortcut */
+    while (link_info != NULL) {
+        uint16 next_ref = link_info->nextref; /* shortcut */
 
-	/* Get offset/length of blocks that actually point to a data element,
-	   until all blocks in this table with valid ref#s are processed */
-	for (ii = 0; ii < num_blocks && link_info->block_list[ii].ref != 0; ii++)
-	{
-	    int32 offset, length;
-	    uint16 block_ref = link_info->block_list[ii].ref; /* shortcut */
+        /* Get offset/length of blocks that actually point to a data element,
+         until all blocks in this table with valid ref#s are processed */
+        for (ii = 0; ii < num_blocks && link_info->block_list[ii].ref != 0; ii++) {
+            int32 offset, length;
+            uint16 block_ref = link_info->block_list[ii].ref; /* shortcut */
 
-	    /* If this block has a valid reference number then get the offset/length of
-		the data if they are requested, and increment the number of data blocks */
-	    if (block_ref != 0)
-	    {
-		if (offsetarray != NULL)
-		{
-		    if ((offset=Hoffset(file_id, DFTAG_LINKED, block_ref)) == FAIL)
-		    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-  		    offsetarray[num_data_blocks] = offset;
-		}
-  		if (lengtharray != NULL)
-		{
-		    if ((length=Hlength(file_id, DFTAG_LINKED, block_ref)) == FAIL)
-			HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            /* If this block has a valid reference number then get the offset/length of
+             the data if they are requested, and increment the number of data blocks */
+            if (block_ref != 0) {
+                if (offsetarray != NULL) {
+                    if ((offset = Hoffset(file_id, DFTAG_LINKED, block_ref)) == FAIL)
+                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                    offsetarray[num_data_blocks] = offset;
+                }
+                if (lengtharray != NULL) {
+                    if ((length = Hlength(file_id, DFTAG_LINKED, block_ref)) == FAIL)
+                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-		    /* Make sure to detect when the last block of the element is reached
-			and calculate the length of the actual data in it */
-		    if (next_ref != 0)
-			accum_length = accum_length + length;
-		    else
-		    {
-			if (ii < num_blocks-1 && link_info->block_list[ii+1].ref != 0)
-			    accum_length = accum_length + length;
-			else
-			    if (length == block_length)
-				length = total_length - accum_length;
-		    }
-  		    lengtharray[num_data_blocks] = length;
-		}
-		num_data_blocks++;	/* count number of blocks with data */
-	    }
-	}
-	/* Free allocated memory before getting the next block table if there is one */
-        if(link_info != NULL)
-	{
+                    /* Make sure to detect when the last block of the element is reached
+                     and calculate the length of the actual data in it */
+                    if (next_ref != 0)
+                        accum_length = accum_length + length;
+                    else {
+                        if (ii < num_blocks - 1 && link_info->block_list[ii + 1].ref != 0)
+                            accum_length = accum_length + length;
+                        else if (length == block_length)
+                            length = total_length - accum_length;
+                    }
+                    lengtharray[num_data_blocks] = length;
+                }
+                num_data_blocks++; /* count number of blocks with data */
+            }
+        }
+        /* Free allocated memory before getting the next block table if there is one */
+        if (link_info != NULL) {
+            if (link_info->block_list != NULL)
+                HDfree(link_info->block_list);
             HDfree(link_info);
-	    link_info = NULL;
-	}
-	if (next_ref != 0)
-	    link_info = HLIgetlink(file_id, next_ref, num_blocks);
+            link_info = NULL;
+        }
+        if (next_ref != 0)
+            link_info = HLIgetlink(file_id, next_ref, num_blocks);
     }
     
 
@@ -925,6 +919,8 @@ done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(link_info != NULL)
+            if (link_info->block_list != NULL)
+                HDfree(link_info->block_list);
             HDfree(link_info);
     } /* end if */
 

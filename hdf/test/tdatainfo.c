@@ -46,21 +46,20 @@ intn alloc_info(t_hdf_datainfo_t *info, uintn info_count)
 {
     info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
     if (info->offsets == NULL)
-	return -1;
+        return -1;
     info->lengths = (int32 *) HDmalloc(info_count * sizeof(int32));
     if (info->lengths == NULL)
-	return -1;
+        return -1;
     return 0;
 }
 
 void free_info(t_hdf_datainfo_t *info)
 {
-    if (info != NULL)
-    {
-	if (info->offsets != NULL)
-	    HDfree(info->offsets);
-	if (info->lengths != NULL)
-	    HDfree(info->lengths);
+    if (info != NULL) {
+        if (info->offsets != NULL)
+            HDfree(info->offsets);
+        if (info->lengths != NULL)
+            HDfree(info->lengths);
     }
 }
 
@@ -109,8 +108,10 @@ test_simple_vs(void)
     int16 rec_num;	/* current record number */
     int32 offset, length; /* offset/length buffers for single block of data */
     intn  n_blocks;	/* number of blocks a vdata has */
+#ifdef NOTUSED
     t_hdf_datainfo_t vs_info; /* data structure to hold offset/length arrays and
 	some other information about the data */
+#endif
     int32 status;	/* Status values from routines */
     intn status_n;	/* Status values from routines */
 
@@ -249,13 +250,14 @@ test_simple_vs(void)
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
     VERIFY_VOID(n_blocks, 1, "VSgetdatainfo NONSPECIAL_VS");
 
+#ifdef NOTUSED
     /* Allocate space to record the vdata's data info */
     alloc_info(&vs_info, n_blocks);
 
     /* Record various info */
     vs_info.n_values = 5;
     vs_info.numtype = DFNT_CHAR;
-
+#endif
     /* Get offset/length */
     n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
@@ -394,6 +396,7 @@ test_append_vs()
 
     n_blocks = VSgetdatainfo(apvsid, 0, n_blocks, vs_info.offsets, vs_info.lengths);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
+    free_info(&vs_info);
 
     vs1_ref = VSQueryref(apvsid);
     CHECK_VOID(vs1_ref, FAIL, "VSQueryref:apvsid");
@@ -451,6 +454,7 @@ test_append_vs()
 	    VERIFY_VOID(vs_info.lengths[ii], check_lengths[ii], "VSgetdatainfo length");
 	}
     }
+    free_info(&vs_info);
 
     /* Close everything. */
     status = VSdetach (apvsid);
@@ -520,6 +524,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
 	if (HDstrncmp(readcbuf, orig_buf, readlen) != 0)
 	    fprintf(stderr, "Failure: non-HDF reading got different values than written values\n   >>> written = %s\n   >>> read = %s\n", orig_buf, readcbuf);
     }
+    HDfree(readcbuf);
     /* Close the file */
     if (fclose(fd) == -1)
     {

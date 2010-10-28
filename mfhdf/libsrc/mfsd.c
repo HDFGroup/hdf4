@@ -6120,6 +6120,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                              (HCHUNK_DEF *)chunk      /* chunk definition */);
       }
 
+    if (tBuf != NULL)
+        HDfree(tBuf);
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetchunk: ret_value =%d \n", ret_value);
 #endif
@@ -6151,6 +6153,8 @@ done:
     /* free fill value */
     if (fill_val != NULL)
         HDfree(fill_val);
+    if (tBuf != NULL)
+        HDfree(tBuf);
 
     /* free chunk dims */
     if (chunk[0].pdims != NULL)
@@ -6715,6 +6719,8 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
 
                           goto done; /* done */
                         }
+                      if (tBuf != NULL)
+                          HDfree(tBuf);
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */
@@ -6732,6 +6738,8 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
+    if (tBuf != NULL)
+        HDfree(tBuf);
 
     return ret_value;
 } /* SDwritechunk() */
@@ -6927,6 +6935,8 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
                           goto done; /* done */
                         }
+                      if (tBuf != NULL)
+                          HDfree(tBuf);
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */
@@ -6944,6 +6954,8 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
 
+    if (tBuf != NULL)
+        HDfree(tBuf);
 
     return ret_value;
 } /* SDreadchunk() */
