@@ -5780,8 +5780,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     int8       platntsubclass;     /* the machine type of the current platform */
     int8       outntsubclass;      /* the data's machine type */
     uintn      convert;            /* whether to convert or not */
-    static     int32 tBuf_size = 0;/* statc conversion buffer size */
-    static     void  *tBuf = NULL; /* static buffer used for conversion */
+    int32 tBuf_size = 0;	   /* conversion buffer size */
+    void  *tBuf = NULL;		   /* buffer used for conversion */
     intn       i;                  /* loop variable */
     intn       ret_value = SUCCEED;   /* return value */
 
@@ -6120,8 +6120,6 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
                              (HCHUNK_DEF *)chunk      /* chunk definition */);
       }
 
-    if (tBuf != NULL)
-        HDfree(tBuf);
 #ifdef CHK_DEBUG
     fprintf(stderr,"SDsetchunk: ret_value =%d \n", ret_value);
 #endif
@@ -6572,8 +6570,8 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     int32 status;
     intn       i;
     sp_info_block_t info_block; /* special info block */
-    static uint32 tBuf_size = 0; /* statc conversion buffer size */
-    static void  *tBuf = NULL;   /* static buffer used for conversion */
+    uint32 tBuf_size = 0;	/* conversion buffer size */
+    void  *tBuf = NULL;		/* buffer used for conversion */
     intn       ret_value = SUCCEED;
 
     /* clear error stack */
@@ -6719,8 +6717,6 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
 
                           goto done; /* done */
                         }
-                      if (tBuf != NULL)
-                          HDfree(tBuf);
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */
@@ -6790,8 +6786,8 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     int32 status;
     intn       i;
     sp_info_block_t info_block; /* special info block */
-    static uint32 tBuf_size = 0; /* statc conversion buffer size */
-    static void  *tBuf = NULL; /* static buffer used for conversion */
+    uint32 tBuf_size = 0; /* conversion buffer size */
+    void  *tBuf = NULL; /* buffer used for conversion */
     intn       ret_value = SUCCEED;
 
     /* clear error stack */
@@ -6935,8 +6931,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
                           goto done; /* done */
                         }
-                      if (tBuf != NULL)
-                          HDfree(tBuf);
                   } /* end if get special info block */
             }
           else /* not special CHUNKED */

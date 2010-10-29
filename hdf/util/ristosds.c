@@ -144,8 +144,6 @@ main(int argc, char *argv[])
                   *outdata++ = *indata++;
           nimg--;
       }
-
-    HDfree(indata);
     
     dimsizes[0] = nimg0;
     dimsizes[1] = h;
@@ -154,6 +152,7 @@ main(int argc, char *argv[])
         finishing();
     ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP) outdata0);
     HDfree(outdata);
+    HDfree(indata);
     if (ret != 0)
         finishing();
     return (0);

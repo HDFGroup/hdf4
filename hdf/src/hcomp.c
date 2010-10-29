@@ -1777,7 +1777,7 @@ HCPgetcomptype(int32 file_id,
 	switch (sp_tag)
 	{
 	  case SPECIAL_COMP:
-	      if (Hread(temp_aid,0,local_ptbuf) == FAIL)
+	      if (Hread(temp_aid,12,local_ptbuf) == FAIL)
 		  HGOTO_ERROR(DFE_READERROR, FAIL);
 
 	      /* Skip comp version, length, ref#, and model type */
@@ -1810,10 +1810,6 @@ HCPgetcomptype(int32 file_id,
 	      HGOTO_ERROR(DFE_ARGS, FAIL);
 	}
 
-	/* release allocated memory */
-	if (local_ptbuf != NULL)
-	    HDfree(local_ptbuf);
-
 	if(Hendaccess(temp_aid)==FAIL)
 	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
@@ -1836,6 +1832,8 @@ done:
         if (data_id != 0)
             if (HTPendaccess(data_id)== FAIL)
                 HERROR(DFE_CANTENDACCESS);
+
+	/* release allocated memory */
 	if (local_ptbuf != NULL)
 	    HDfree(local_ptbuf);
     } /* end if */
