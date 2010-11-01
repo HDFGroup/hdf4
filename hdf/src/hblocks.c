@@ -53,23 +53,19 @@ static char RcsId[] = "@(#)$Revision$";
                                     \______________/
    __________________________________________|
    V
-   LINKED BLOCK DESCRIPTION RECORD(LBDR - 22 bytes)
+   LINKED BLOCK DESCRIPTION RECORD(LBDR - 16 bytes)
    ===============================================
-   <-  4 bytes -> <- 4 bytes  -> <-   4 bytes  -> <- 4bytes ->
-   --------------------------------------------------------------
-   |ext_tag_desc | elem_tot_len | blk_first_len  | blk_length |   ... cont'd
-   --------------------------------------------------------------
+   <-  2 bytes -> <- 4 bytes  -> <- 4 bytes -> <- 4 bytes -> <- 2 bytes ->
+   ---------------------------------------------- ------------------------
+   |ext_tag_desc | elem_tot_len | blk_length  |   num_blk   | link_ref   |
+   ---------------------------------------------- ------------------------
     
-   <- 4 bytes -> <- 2 bytes ->
-   --------------------------
-...  num_blk   | link_ref   |
-   --------------------------
 
    ext_tag_desc   - SPECIAL_LINKED(16 bit constant), identifies this as
                     a linked block description record
    elem_tot_len   - Length of the entire element(32 bit field)
-   blk_first_len  - Length of the first data block(32 bit field)
-   blk_length     - Length of successive data blocks(32 bit field)
+   blk_length     - Length of successive data blocks(32 bit field) after first block,
+			first block is calculated.
    num_blk        - Number of blocks per block table(32 bit field)
    link_ref       - Reference number of the first block table(16 bit field)
 
@@ -881,6 +877,7 @@ HLgetdatainfo(int32 file_id,
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     offsetarray[num_data_blocks] = offset;
                 }
+/* probably info->block_length can be used here instead of calling Hlength! -BMR */
                 if (lengtharray != NULL) {
                     if ((length = Hlength(file_id, DFTAG_LINKED, block_ref)) == FAIL)
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -910,7 +907,6 @@ HLgetdatainfo(int32 file_id,
         if (next_ref != 0)
             link_info = HLIgetlink(file_id, next_ref, num_blocks);
     }
-    
 
     /* return the number of blocks with actual data */
     ret_value = num_data_blocks;

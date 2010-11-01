@@ -199,11 +199,6 @@ extern      "C"
          int32 *offsetarray,     /* OUT: array to hold offsets */
          int32 *lengtharray);    /* OUT: array to hold lengths */
 
-    HDFLIBAPI intn HMCgetdatainfo_count
-        (int32 file_id,    /* IN: file in which element is located */
-         uint8 *p,         /* IN: buffer of special info header */
-         uintn *info_count /* OUT: data info count */);
-
     HDFLIBAPI intn HMCgetdatasize
         (int32 file_id,    /* IN: file in which element is located */
          uint8 *p,         /* IN: buffer of special info header */

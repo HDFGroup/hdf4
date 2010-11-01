@@ -23,9 +23,6 @@ FILE
    HDF data information routines
 
 LOW-LEVEL ROUTINES
-    - Gets the number of data blocks in an element.
-HDgetdatainfo_count(file_id, data_tag, data_ref, NULL)
-
     - Gets the offset(s) and length(s) of the data in the data element.
 HDgetdatainfo(file_id, data_tag, data_ref, *chk_coord, start_block, info_count, *offsetarray, *lengtharray)
 
@@ -106,21 +103,20 @@ HDgetdatainfo(int32 file_id,
     int32	drec_aid=-1;	/* description record access id */
     uint16	dtag, dref;	/* description record tag/ref */
     int32	dlen=0, doff=0;	/* offset/length of the description record */
-    uint8	lbuf[4], *p=NULL;	/* description record buffer and a pointer to it */
+    uint8	lbuf[COMP_HEADER_LENGTH],
+		*p=NULL;	/* description record buffer and a pointer to it */
     atom_t	data_id = FAIL;	/* dd ID of existing element */
     int32	length; /* uncompressed data length to check if data had been written */
-    uintn	count=0;
+    uintn	count=0;	/* number of data blocks returned by getdatainfo functions */
+    uint16	spec_code=0;	/* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
+    int32	comp_aid=-1;	/* compressed element access id */
     intn	ret_value=SUCCEED;
-    uint16	spec_code=0;
-    int32	comp_aid=-1;
 
     /* clear error stack */
     HEclear();
 
     /* validate arguments */
-    if (start_block < 0)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (info_count <= 0 && offsetarray != NULL && lengtharray != NULL)
+    if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* convert file id to file rec and check for validity */
@@ -157,23 +153,12 @@ HDgetdatainfo(int32 file_id,
 	   for special tag to detect compression/chunking/linked blocks */
 	else
 	{
-	    /* get the info for the dataset (description record) */
-	    if ((drec_aid = HTPselect(file_rec, dtag, dref)) == FAIL)
-                      HE_REPORT_GOTO("HTPselect failed ", FAIL);
-
-	    if (HTPis_special(drec_aid)!=TRUE)
-            {
-                HTPendaccess(drec_aid);
-                HGOTO_ERROR(DFE_INTERNAL, FAIL);
-            }   /* end if */
-
 	    if (HPseek(file_rec, doff) == FAIL)
 		HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 	    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
 		HGOTO_ERROR(DFE_READERROR, FAIL);
-	    if(HTPendaccess(drec_aid)==FAIL)
-		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
+	    /* Decode the special tag */
 	    p = &lbuf[0];
 	    INT16DECODE(p, sp_tag);
 
@@ -181,7 +166,7 @@ HDgetdatainfo(int32 file_id,
 	       one block of data */
 	    if (sp_tag == SPECIAL_COMP)
 	    {
-		if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+		if (HP_read(file_rec, lbuf, (int)COMP_HEADER_LENGTH) == FAIL)
 		HGOTO_ERROR(DFE_READERROR, FAIL);
 
 		p = &lbuf[0];
@@ -262,7 +247,7 @@ HDgetdatainfo(int32 file_id,
 					start_block, info_count, offsetarray, lengtharray);
 		else
 		{
-		    fprintf(stderr, "\nThis is a chunked element, the chunk's coordinates must be specified\n");
+		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", data_tag, data_ref);
 		    exit(0); /* BMR: check to see what should be done here */
 		}
 	    }

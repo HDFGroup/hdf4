@@ -146,6 +146,7 @@
 
 /* Set the following macro to the value the highest compression scheme is */
 #define COMP_MAX_COMP   12
+#define COMP_HEADER_LENGTH  14
 
 /* ----------------- Constants for DGROUP interface --------------------- */
 #define MAX_GROUPS 8

@@ -90,7 +90,6 @@ MODIFICATION HISTORY
 
 /* Local defines */
 #define COMP_HEADER_VERSION 0
-#define COMP_HEADER_LENGTH  14
 #ifdef OLD_WAY
 #define COMP_START_BLOCK    1
 #else /* OLD_WAY */
