@@ -106,6 +106,7 @@ MACRO (TARGET_WIN_PROPERTIES target libtype)
         SET_TARGET_PROPERTIES (${target}
             PROPERTIES
                 LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+                LINK_FLAGS_DEBUG "/NODEFAULTLIB:MSVCRTD"
         ) 
       ENDIF (${libtype} MATCHES "STATIC")
     ENDIF (MSVC)
@@ -128,6 +129,7 @@ MACRO (TARGET_FORTRAN_WIN_PROPERTIES target libtype)
         SET_TARGET_PROPERTIES (${target}
             PROPERTIES
                 LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
+                LINK_FLAGS_DEBUG "/NODEFAULTLIB:MSVCRTD"
         ) 
       ENDIF (MSVC)
     ENDIF (${libtype} MATCHES "SHARED")
