@@ -12,10 +12,12 @@ SET (CTEST_DROP_SITE "nei.hdfgroup.uiuc.edu")
 SET (CTEST_DROP_LOCATION "/cdash/submit.php?project=HDF4")
 SET (CTEST_DROP_SITE_CDASH TRUE)
 
-set(UPDATE_TYPE svn)
+SET (UPDATE_TYPE svn)
 
-set(VALGRIND_COMMAND "/usr/bin/valgrind")
-set(VALGRIND_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes")
-set(CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")
-set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes")
-set(CTEST_TESTING_TIMEOUT 3600)
+SET (VALGRIND_COMMAND "/usr/bin/valgrind")
+SET (VALGRIND_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes")
+SET (CTEST_MEMORYCHECK_COMMAND "/usr/bin/valgrind")
+SET (CTEST_MEMORYCHECK_COMMAND_OPTIONS "--tool=memcheck --leak-check=full --show-reachable=yes --track-origins=yes")
+
+SET (CTEST_TESTING_TIMEOUT 3600) 
+SET (DART_TESTING_TIMEOUT 3600) 
