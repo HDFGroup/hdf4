@@ -2279,9 +2279,7 @@ HMCgetdatainfo(int32 file_id,
     /* find chunk record in TBBT */
     if ((entry = (tbbtdfind(chkinfo->chk_tree, &chk_num, NULL))) == NULL)
     { /* does not exist */
-    /* not sure why this is here, copied from other place, need to verify -BMR */
-	for (ii = 0; ii < chkinfo->ndims; ii++)
-	    HE_REPORT_GOTO("failed to find chunk record", FAIL);
+	HE_REPORT_GOTO("failed to find chunk record", FAIL);
     }
 
     /* get chunk record from node */

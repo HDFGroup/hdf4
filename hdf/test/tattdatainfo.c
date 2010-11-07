@@ -272,14 +272,14 @@ test_vvsattrs(void)
 
     /* Get data info of the first attributes from vgroup0 */
     status = Vgetattdatainfo(vgroup0_id, 0, &offset, &length);
-    CHECK_VOID(status, FAIL, "VSgetattdatainfo");
+    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
 
     /* Reset offset/length */
     offset = length = 0;
 
     /* Get data info of the second attributes from vgroup0 */
     status = Vgetattdatainfo(vgroup0_id, 1, &offset, &length);
-    CHECK_VOID(status, FAIL, "VSgetattdatainfo");
+    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
 
     /* Read and verify an attribute without using HDF4 library */
     status = readnoHDF_char("tattdatainfo.hdf", offset, length, attr2);

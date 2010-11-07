@@ -491,7 +491,7 @@ VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
     vs_attr_t *vs_alist;
     vsinstance_t *vs_inst;
     int32 attr_vsid;
-    intn nattrs, attr_index, found;
+    intn nattrs, attr_index, a_index, found;
     intn status;
     intn ret_value = SUCCEED;
 
@@ -507,18 +507,23 @@ VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
     if ((findex >= vs->wlist.n || findex < 0) && (findex != _HDF_VDATA))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     nattrs = vs->nattrs;
+
     if (attrindex <0 || attrindex >= nattrs)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     vs_alist = vs->alist;
+
+    /* no attrs or bad attr list */
     if (nattrs == 0 || vs_alist == NULL)
-          /* no attrs or bad attr list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
     found = 0;
+    a_index = -1;
     for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
     {
 	if (vs_alist->findex == findex)
 	{
-	    if (attr_index == attrindex)
+	    a_index++;
+	    if (a_index == attrindex)
 		found = 1;
         }
 	if (!found) vs_alist++;

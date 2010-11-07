@@ -363,6 +363,7 @@ hdf_read_ndgs(NC *handle)
                  *        ref number and read the element once this while loop
                  *        is finished.
                  */
+
                 while (!DFdiget(GroupID, &tmpTag, &tmpRef)) 
                   {
                       switch(tmpTag) 
@@ -1136,7 +1137,9 @@ hdf_read_ndgs(NC *handle)
 			    /* Indicate that it is unknown whether the current
 			       variable is an SDS or a coordinate variable.
 			       bugzilla 624 - BMR - 05/16/2007 */
-			    vars[current_var]->var_type  = UNKNOWN;
+			    /* vars[current_var]->var_type  = UNKNOWN; */ 
+			    /* It looks like this is a dimension variable for sure! -BMR 10/26/2010 */
+			    vars[current_var]->var_type  = IS_CRDVAR;
 
                             /*
                              * See if a scales record has been stored and if there have

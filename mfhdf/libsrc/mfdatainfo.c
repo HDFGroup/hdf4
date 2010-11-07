@@ -247,21 +247,28 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 	    if(dim == NULL)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	    /* Note: there is a vgid in NC_dim, unfortunately, the vgroup id wasn't recorded
-		there during the reading of the file; remove this block later when that bug
-		is fixed -BMR 2010/10/17 */
-	    /* look for the variable representing this dimension, ie. coordinate variable */
-	    var_idx = SDIgetcoordvar(handle, dim, id, (int32)0);
-	    if(var_idx == FAIL)
+	     /* if (dim->vgid > 0)
+                vg_ref = dim->vgid;
+	    else
+ */ 
+	    {
+		/* Note: there is a vgid in NC_dim, unfortunately, the vgroup id
+		   wasn't recorded there during the reading of the file; remove
+		   this block later when that bug is fixed -BMR 2010/10/17 */
+		/* look for the variable representing this dimension,
+		   ie. coordinate variable */
+		var_idx = SDIgetcoordvar(handle, dim, id, (int32)0);
+		if(var_idx == FAIL)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	    /* get the variable object */
-	    var = NC_hlookupvar(handle, var_idx);
-	    if(var == NULL)
+		/* get the variable object */
+		var = NC_hlookupvar(handle, var_idx);
+		if(var == NULL)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	    /* get the reference number of the vgroup representing this dimension */
-	    vg_ref = var->vgid;
+		/* get the ref number of the vgroup representing this dim */
+		vg_ref = var->vgid;
+	    }
 	}
 	/* SDS id is given */
 	else

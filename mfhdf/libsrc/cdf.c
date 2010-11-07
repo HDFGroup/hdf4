@@ -1966,8 +1966,11 @@ hdf_read_dims(XDR *xdrs, NC *handle, int32 vg)
 #endif
                                         if (!HDstrcmp(vsclass, DIM_VALS01)) /* dimvals01 only  */
                                             dimension[count]->dim00_compat = 0;
-/* dimension[count]->vgid = id; records vgroup id here so we can use later, particularly
-in SDgetattdatainfo */
+
+					/* record vgroup id here so we can use later */
+					/* Note: this is only for later file -BMR */
+					dimension[count]->vgid = id;
+
                                         count++;
                                     }  /* found */
                               }    /* is vs  */
