@@ -20,8 +20,6 @@
 #include        <string.h>
 #include	<stdlib.h>
 #include	<stdio.h>
-
-#include "H4api_adpt.h"
 #ifdef HDF
 #include        "local_nc.h"
 #else /* HDF */
@@ -86,16 +84,6 @@ struct ncfils {			/* This will be a common block from Fortran */
 };
 
 #endif	/* NC_OLD_FILLVALUES above */
-
-
-/*
- * global integer used for suppressing error messages and determining
- * the fatality of errors.
- */
-HDFLIBAPI int ncopts;		/* default is (NC_FATAL | NC_VERBOSE) */
-
-/* global integer that contains a netCDF-specific error code */
-HDFLIBAPI int ncerr;
 
 /* blank fill C string to make FORTRAN string */
 static void
@@ -544,6 +532,7 @@ ltoig(longs, ints, dims, imap, ndims)
 /* ------------ Linux FORTRAN jackets for netCDF Functions ------------ */
 
 /* used to set the C global variable ncopts from Fortran */
+void
 nncpopt(val)
     int		*val;	
 {
@@ -584,6 +573,7 @@ nnccre(pathname, clobmode, rcode, pathnamelen)
 
 
 /* opens an existing netCDF file for access */
+int
 nncopn(pathname, rwmode, rcode, pathnamelen)
     char	*pathname;	
     int		pathnamelen;
