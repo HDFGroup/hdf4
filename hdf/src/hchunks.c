@@ -2233,8 +2233,7 @@ HMCgetdatainfo(int32 file_id,
 
 {
     CONSTR(FUNC, "HMCgetdatainfo");	/* for HERROR */
-    uint16	 comp_ref = 0,		/* ref# of compressed data */
-		 chk_tag, chk_ref;
+    uint16	 comp_ref = 0;		/* ref# of compressed data */
     chunkinfo_t* chkinfo=NULL;		/* chunked element information */
     atom_t       ddid=FAIL;            /* description record access id */
     atom_t       cmpddid=FAIL;            /* description record access id */
@@ -2250,7 +2249,6 @@ HMCgetdatainfo(int32 file_id,
     int16       spec_code=0;
     uint8       lbuf[16];      /* temporary buffer */
     uint8      *p;                /* tmp buf ptr */
-    int		 ii;
     intn	 ret_value = SUCCEED;
 
     file_rec = HAatom_object(file_id);
@@ -2276,105 +2274,111 @@ HMCgetdatainfo(int32 file_id,
     /* calculate chunk number from origin */
     calculate_chunk_num(&chk_num, chkinfo->ndims, chk_coord, chkinfo->ddims);
 
-    /* find chunk record in TBBT */
+    /* Find chunk record in TBBT */
     if ((entry = (tbbtdfind(chkinfo->chk_tree, &chk_num, NULL))) == NULL)
-    { /* does not exist */
-	HE_REPORT_GOTO("failed to find chunk record", FAIL);
+    { /* chunk had not been written */
+	if (offsetarray != NULL && lengtharray != NULL)
+	{
+	    offsetarray[0] = 0;
+	    lengtharray[0] = 0;
+	}
+	count = 0;
     }
+    else
+    { /* chunk record exists, chunk had been written */
 
-    /* get chunk record from node */
-    chk_rec = (CHUNK_REC *) entry->data;
+        /* get chunk record from node */
+        chk_rec = (CHUNK_REC *) entry->data;
 
-    /* check to see if it has been written to */
-    if (chk_rec->chk_tag != DFTAG_NULL && BASETAG(chk_rec->chk_tag) == DFTAG_CHUNK)
-    { /* valid chunk in file */
-	/* Start read on chunk */
- 	if (Hfind(file_id,chk_rec->chk_tag,chk_rec->chk_ref,&new_tag,&new_ref,
-               &new_off,&new_len,DF_FORWARD)==FAIL)
-	    HE_REPORT_GOTO("Hfind failed ", FAIL);
+        /* check to see if it has been written to */
+        if (chk_rec->chk_tag != DFTAG_NULL && BASETAG(chk_rec->chk_tag) == DFTAG_CHUNK)
+        { /* valid chunk in file */
+	    /* Checking for further specialness */
+ 	    if (Hfind(file_id,chk_rec->chk_tag,chk_rec->chk_ref,&new_tag,&new_ref,
+                   &new_off,&new_len,DF_FORWARD)==FAIL)
+	        HE_REPORT_GOTO("Hfind failed ", FAIL);
 
-	if ((ddid = HTPselect(file_rec, new_tag, new_ref)) == FAIL)
-	    HE_REPORT_GOTO("HTPselect failed ", FAIL);
+	    if ((ddid = HTPselect(file_rec, new_tag, new_ref)) == FAIL)
+	        HE_REPORT_GOTO("HTPselect failed ", FAIL);
 
-	if (HTPis_special(ddid)!=TRUE)
-	{ /* this chunk is not special */
-	    if (offsetarray != NULL && lengtharray != NULL)
-	    {
-		offsetarray[0] = Hoffset(file_id, chk_rec->chk_tag, chk_rec->chk_ref);
-		lengtharray[0] = Hlength(file_id, chk_rec->chk_tag, chk_rec->chk_ref);
-	    }
-	    count = 1;
-	}   /* end if */
-	else
-	{ /* this chunk is special */
-	    if (HPseek(file_rec, new_off) == FAIL)
-		HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-	    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
-		HGOTO_ERROR(DFE_READERROR, FAIL);
-
-	    /* use special code to determine how to retrieve offsets/lengths of data next */
-	    p = &lbuf[0];
-	    INT16DECODE(p, spec_code);
-
-	    if (spec_code == SPECIAL_COMP)
-	    {
-		if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+	    if (HTPis_special(ddid)!=TRUE)
+	    { /* this chunk is not special */
+	        if (offsetarray != NULL && lengtharray != NULL)
+	        {
+		    offsetarray[0] = Hoffset(file_id, chk_rec->chk_tag, chk_rec->chk_ref);
+		    lengtharray[0] = Hlength(file_id, chk_rec->chk_tag, chk_rec->chk_ref);
+	        }
+	        count = 1;
+	    }   /* end if */
+	    else
+	    { /* this chunk is special */
+	        if (HPseek(file_rec, new_off) == FAIL)
+		    HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+	        if (HP_read(file_rec, lbuf, (int)2) == FAIL)
 		    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-		p = &lbuf[0];
-		p = p + 2 + 4;	/* skip version and _uncompressed_ data length */
-		UINT16DECODE(p, comp_ref);	/* get ref# of compressed data */
+	        /* use special code to determine how to retrieve offsets/lengths of data next */
+	        p = &lbuf[0];
+	        INT16DECODE(p, spec_code);
 
-		if (Hfind(file_id, DFTAG_COMPRESSED, comp_ref, &new_tag,&new_ref, &new_off,&new_len,DF_FORWARD)==FAIL)
-		    HE_REPORT_GOTO("Hfind failed ", FAIL);
+	        if (spec_code == SPECIAL_COMP)
+	        {
+		    if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+		        HGOTO_ERROR(DFE_READERROR, FAIL);
 
-		if ((cmpddid = HTPselect(file_rec, new_tag, new_ref)) == FAIL)
-		    HE_REPORT_GOTO("HTPselect failed ", FAIL);
-
-		if (HTPis_special(cmpddid)!=TRUE)
-		{ /* this chunk is not further special, only compressed */
-		    if (offsetarray != NULL && lengtharray != NULL)
-		    {
-			offsetarray[0] = new_off;
-			lengtharray[0] = new_len;
-		    }
-		    count = 1;
-		}   /* end if */
-		else
-		{ /* this chunk is further special */
-		    int32 num_blocks=0;
-		    uint16 link_ref=0;
-		    if (HPseek(file_rec, new_off) == FAIL)
-			HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-		    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
-			HGOTO_ERROR(DFE_READERROR, FAIL);
-
-		    /* using special code, look up function table in associative table */
 		    p = &lbuf[0];
-		    INT16DECODE(p, spec_code);
+		    p = p + 2 + 4;	/* skip version and _uncompressed_ data length */
+		    UINT16DECODE(p, comp_ref);	/* get ref# of compressed data */
 
-		    if (spec_code == SPECIAL_LINKED)
-		    {
-			if (HP_read(file_rec, lbuf, (int)14) == FAIL)
-			HGOTO_ERROR(DFE_READERROR, FAIL);
+		    if (Hfind(file_id, DFTAG_COMPRESSED, comp_ref, &new_tag,&new_ref, &new_off,&new_len,DF_FORWARD)==FAIL)
+		        HE_REPORT_GOTO("Hfind failed ", FAIL);
 
-			/* decode special information retrieved from file into info struct */
-			p = &lbuf[0];
+		    if ((cmpddid = HTPselect(file_rec, new_tag, new_ref)) == FAIL)
+		        HE_REPORT_GOTO("HTPselect failed ", FAIL);
 
-			/* get data information from the linked blocks */
-			if (offsetarray != NULL && lengtharray != NULL)
-			    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
-			else
-			    count = HLgetdatainfo(file_id, p, NULL, NULL);
-		    } /* this chunk is also stored in linked blocks */
-		} /* this element is further special */
-		if (HTPendaccess(cmpddid) == FAIL)
-		    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-	    } /* spec_code is SPECIAL_COMP */
-	} /* this chunk is special */
-	if (HTPendaccess(ddid) == FAIL)
-	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-    } /* if valid chunk in file */
+		    if (HTPis_special(cmpddid)!=TRUE)
+		    { /* this chunk is not further special, only compressed */
+		        if (offsetarray != NULL && lengtharray != NULL)
+		        {
+			    offsetarray[0] = new_off;
+			    lengtharray[0] = new_len;
+		        }
+		        count = 1;
+		    }   /* end if */
+		    else
+		    { /* this chunk is further special */
+		        if (HPseek(file_rec, new_off) == FAIL)
+			    HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+		        if (HP_read(file_rec, lbuf, (int)2) == FAIL)
+			    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+		        /* using special code, look up function table in associative table */
+		        p = &lbuf[0];
+		        INT16DECODE(p, spec_code);
+
+		        if (spec_code == SPECIAL_LINKED)
+		        {
+			    if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+			        HGOTO_ERROR(DFE_READERROR, FAIL);
+
+			    /* decode special information retrieved from file into info struct */
+			    p = &lbuf[0];
+
+			    /* get data information from the linked blocks */
+			    if (offsetarray != NULL && lengtharray != NULL)
+			        count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+			    else
+			        count = HLgetdatainfo(file_id, p, NULL, NULL);
+		        } /* this chunk is also stored in linked blocks */
+		    } /* this element is further special */
+		    if (HTPendaccess(cmpddid) == FAIL)
+		        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	        } /* spec_code is SPECIAL_COMP */
+	    } /* this chunk is special */
+	    if (HTPendaccess(ddid) == FAIL)
+	        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+        } /* if valid chunk in file */
+    } /* chunk record exists */
 
     /* End access to the aid returned by Hstartread */
     if (Hendaccess(new_aid)==FAIL)
@@ -3209,6 +3213,7 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
       {
           /* for debuging */
 #ifdef CHK_DEBUG_3
+	  int i;
           printf(" Seek start(in chunk array):(");
           for (i = 0; i < info->ndims; i++)
               printf("%d%s", info->seek_chunk_indices[i], i!= info->ndims-1 ? ",":NULL);
@@ -3229,9 +3234,6 @@ HMCPread(accrec_t * access_rec, /* IN: access record to mess with */
                                     read_len,bytes_read,
                                     info->seek_chunk_indices,
                                     info->seek_pos_chunk,info->ddims);
-#ifdef CHK_DEBUG_3
-          printf("  reading chunk(%d) with %d bytes\n", chunk_num, chunk_size);
-#endif
 
           /* would be nice to get Chunk record from TBBT based on chunk number 
              and then get chunk data base on chunk vdata number but
