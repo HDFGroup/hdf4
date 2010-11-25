@@ -427,7 +427,7 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
             # [SVN_REVISION rev] 
             INSTALL_COMMAND ""
             CMAKE_ARGS
-                -DBLDTYPE:STRING="Release"
+                -DBLDTYPE:STRING=Release
                 -DBUILD_SHARED_LIBS:BOOL=OFF
                 -DCMAKE_BUILD_TYPE:STRING="Release"
                 -DCMAKE_ANSI_CFLAGS:STRING="${JPEG_CMAKE_C_FLAGS}"
@@ -485,7 +485,7 @@ IF (HDF4_ENABLE_Z_LIB_SUPPORT)
             # [SVN_REVISION rev] 
             INSTALL_COMMAND ""
             CMAKE_ARGS
-                -DBLDTYPE:STRING="Release"
+                -DBLDTYPE:STRING=Release
                 -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
         ) 
         EXTERNALPROJECT_GET_PROPERTY (ZLIB BINARY_DIR SOURCE_DIR) 
@@ -561,7 +561,7 @@ IF (HDF4_ENABLE_SZIP_SUPPORT)
           # [SVN_REVISION rev] 
           INSTALL_COMMAND ""
           CMAKE_ARGS
-              -DBLDTYPE:STRING="Release"
+              -DBLDTYPE:STRING=Release
               -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
               -DSZIP_ENABLE_ENCODING:BOOL=${HDF4_ENABLE_SZIP_ENCODING}
       ) 
