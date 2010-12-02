@@ -1854,8 +1854,12 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
     
+    HDFLIBAPI intn VSofclass
+                (int32 id, const char *vsclass, const uintn start_vd,
+                 const uintn array_size, uint16 *refarray);
+
     HDFLIBAPI intn VSgetvdatas
-                (int32, uintn, uintn, uint16*);
+                (int32 id, uintn start_vd, uintn array_size, uint16 *refarray);
     
     HDFLIBAPI intn VSsetblocksize
                 (int32 vkey, int32 block_size);
@@ -2065,9 +2069,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 
     HDFLIBAPI int32 VSappendable
                 (int32 vkey, int32 blk);
-
-    HDFLIBAPI intn Vgetvdatas
-		(int32 id, uintn start_vd, uintn n_vds, uint16 *refarray);
 
 /*
    ** from vsfld.c

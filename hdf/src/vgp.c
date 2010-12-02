@@ -3312,7 +3312,7 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
             uint16 *refarray	/* IN/OUT: ref array to fill */)
 {
     CONSTR(FUNC, "Vgetvgroups");
-    vginstance_t *v = NULL;
+    vginstance_t *vg_inst = NULL;
     int32    vg_ref, vkey;
     intn     nactual_vgs, user_vgs, ii;
     VGROUP  *vg = NULL;
@@ -3329,29 +3329,23 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
     /* Check if id is a file id */
     if (HAatom_group(id) == FIDGROUP)
     {
-	/* Get file record */
-	if (NULL == (vf = Get_vfile(id)))
-	    HGOTO_ERROR(DFE_FNF, FAIL);
-
 	/* Look through all vgs, searching for user-created vgroups until
 	   no more vgroups in the file or the number of vgroups to be
 	   retrieved is reached */
 	nactual_vgs = 0;/* number of user-created vgroups to be retrieved */
 	user_vgs = 0;	/* number of user-created vgroups */
 	vg_ref = Vgetid(id, -1);  /* get ref number of first vg in the file */
-	while ((vg_ref != FAIL) && ((nactual_vgs < n_vgs) || (n_vgs == 0))
-			&& (nactual_vgs <= user_vgs))
+	while ((vg_ref != FAIL)   /* there are more vgroups */
+		&& ((nactual_vgs < n_vgs) || (n_vgs == 0))
+		&& (nactual_vgs <= user_vgs))
 	{
-	    vkey = Vattach(id, vg_ref, "r"); /* attach to current vgroup */
-	    if (vkey == FAIL)
-		HGOTO_ERROR(DFE_CANTATTACH, FAIL);
-
-	    /* get instance of vgroup */
-	    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
-		HGOTO_ERROR(DFE_NOVS, FAIL);
+            /* get instance of vgroup; if it's not found, continue to look for
+                other vgroups */
+            if((vg_inst = vginst(id, (uint16)vg_ref)) == NULL)
+                continue;
 
 	    /* get vgroup itself and check */
-	    vg = v->vg;
+	    vg = vg_inst->vg;
 	    if (vg == NULL)
 		HGOTO_ERROR(DFE_BADPTR, FAIL);
 
@@ -3377,8 +3371,6 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
 		    user_vgs++;
 		}
 	    }
-	    if (Vdetach(vkey) == FAIL)
-		HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
 	    /* Move forward to the next vgroup in the file */
 	    vg_ref = Vgetid(id, vg_ref);
@@ -3407,11 +3399,11 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
 	    HGOTO_ERROR(DFE_GENAPP, FAIL);
 
 	/* get instance of vgroup */
-	if (NULL == (v = (vginstance_t *) HAatom_object(id)))
+	if (NULL == (vg_inst = (vginstance_t *) HAatom_object(id)))
 	    HGOTO_ERROR(DFE_NOVS, FAIL);
 
 	/* get vgroup itself and check */
-	vg = v->vg;
+	vg = vg_inst->vg;
 	if (vg == NULL)
 	    HGOTO_ERROR(DFE_BADPTR, FAIL);
 
@@ -3420,27 +3412,24 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
 	   reached */
 	nactual_vgs = 0;/* number of user-created vgroups to be retrieved */
 	user_vgs = 0;	/* number of user-created vgroups */
-        for (ii = 0; ii < n_elements && ((nactual_vgs < n_vgs) || (n_vgs == 0))
-			&& nactual_vgs <= user_vgs; ii++)
+        for (ii = 0;
+             ii < n_elements && ((nactual_vgs < n_vgs)|| (n_vgs == 0))
+                             && (nactual_vgs <= user_vgs);
+             ii++)
         {
 	    /* If an element is a vgroup, then get access to it */
             if (vg->tag[ii] == DFTAG_VG)
 	    {
-		int32 subvkey;
-		vginstance_t *subv = NULL;
+		vginstance_t *subv_inst = NULL;
 		VGROUP       *subvg = NULL;
 
-		/* attach to sub-vgroup */
-	    	subvkey = Vattach(vg->f, vg->ref[ii], "r");
-		if (subvkey == FAIL)
-		    HGOTO_ERROR(DFE_CANTATTACH, FAIL);
-
-		/* get instance of vgroup */
-		if (NULL == (subv = (vginstance_t *) HAatom_object(subvkey)))
-		    HGOTO_ERROR(DFE_NOVS, FAIL);
+                /* get instance of vgroup; if it's not found, continue to look for
+                   other vgroups */
+                if((subv_inst = vginst(vg->f, (uint16)vg->ref[ii])) == NULL)
+                    continue;
 
 		/* get vgroup itself and check */
-		subvg = subv->vg;
+		subvg = subv_inst->vg;
 		if (subvg == NULL)
 		    HGOTO_ERROR(DFE_BADPTR, FAIL);
 
@@ -3468,8 +3457,6 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
 			user_vgs++;
 		    }
 		}
-		if (Vdetach(subvkey) == FAIL)
-		    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 	    } /* this sub element is a vgroup */
         } /* for */
 

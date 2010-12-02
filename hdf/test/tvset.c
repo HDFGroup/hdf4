@@ -1921,15 +1921,17 @@ to promote the vdata to a linked-block element.
 static void
 test_blockinfo(void) 
 {
-   intn	 status_n;	/* returned status for functions returning an intn  */
-   int32 status;	/* returned status for functions returning an int32 */
-   int16 rec_num;	/* current record number */
-   int32 fid, vdata1_id, vdata2_id,
-	 vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
-   	 num_of_records,  /* number of records actually written to vdata */
-         data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
-	 data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
-	 block_size, num_blocks; /* retrieved by VSgetblockinfo */
+    intn  status_n;	/* returned status for functions returning an intn  */
+    int32 status;	/* returned status for functions returning an int32 */
+    int16 rec_num;	/* current record number */
+    int32 fid, vdata1_id, vdata2_id,
+	  vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
+   	  num_of_records,  /* number of records actually written to vdata */
+          data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
+	  data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
+	  block_size, num_blocks; /* retrieved by VSgetblockinfo */
+    intn  n_vds = 0;
+    uint16 *refarray = NULL;
 
     /* Create the HDF file for data used in this test routine */
     fid = Hopen (FILE_NAME, DFACC_CREATE, 0);
@@ -2063,6 +2065,30 @@ test_blockinfo(void)
 
     status = VSdetach (vdata2_id);
     CHECK_VOID(status, FAIL, "Vdetach");
+
+    /* Test VSofclass on the file */
+    n_vds = VSofclass(fid, CLASS_NAME, 0, 0, NULL);
+    VERIFY_VOID(n_vds, 2, "VSofclass");
+
+    refarray = (uint16 *)HDmalloc(sizeof(uint16) * n_vds);
+    CHECK_ALLOC(refarray, "refarray", "test_blockinfo" );
+
+    /* The following tests rely on the reference numbers of the two vdatas of
+       class CLASS_NAME.  If data is added to the file before these vdatas,
+       the reference numbers (2 and 3 below) need to be adjusted accordingly or
+       tests will fail -BMR */
+    n_vds = VSofclass(fid, CLASS_NAME, 0, n_vds, refarray);
+    VERIFY_VOID(refarray [0], 2, "VSofclass");
+    VERIFY_VOID(refarray [1], 3, "VSofclass");
+
+    refarray [0] = refarray[1] = 0;
+    n_vds = VSofclass(fid, CLASS_NAME, 0, 1, refarray);
+    VERIFY_VOID(refarray [0], 2, "VSofclass");
+    VERIFY_VOID(refarray [1], 0, "VSofclass");
+
+    n_vds = VSofclass(fid, CLASS_NAME, 1, n_vds, refarray);
+    VERIFY_VOID(refarray [0], 3, "VSofclass");
+    VERIFY_VOID(refarray [1], 0, "VSofclass");
 
     status_n = Vend (fid);
     CHECK_VOID(status_n, FAIL, "Vend");
