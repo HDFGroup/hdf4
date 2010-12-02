@@ -136,7 +136,9 @@ SET (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 
 # set default prefix location
-SET (CMAKE_INSTALL_PREFIX "./hdf4" CACHE PATH "Install path prefix, prepended onto install directories")
+IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  SET(CMAKE_INSTALL_PREFIX "hdf4" CACHE PATH "Install path prefix, prepended onto install directories" FORCE)
+ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 IF (NOT HDF4_INSTALL_BIN_DIR)
   SET (HDF4_INSTALL_BIN_DIR bin)
