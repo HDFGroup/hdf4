@@ -1393,28 +1393,12 @@ VSisinternal(const char *classname)
 
 /*------------------------------------------------------------------
 NAME
-   VSofclass -- returns ref# of the vdatas of a specified class from
-		the file or a vgroup
-
-DESCRIPTION
-   Finds the vdatas with the specified class and returns their refs
-   if successful.
-
-RETURNS
-   Returns
-	- 0 if none is found, or
-	- FAIL(-1) if error occurs, or
-	- the number of refs returned in refarray
-
-NOTE
-   This function was added originally to accommodate a bug fix in
-   VSnattrs. -BMR (Nov 11, 2010)
-NAME
    VSofclass -- Get vdatas of a given class in a file or in a vgroup.
 
 USAGE
-    intn VSofclass(id, start_vd, n_vds, *refarray)
+    intn VSofclass(id, vsclass, start_vd, n_vds, *refarray)
 	int32 id	  IN: file id or vgroup id
+	int32 vsclass	  IN: the searched class
 	uintn start_vd	  IN: vdata number to start retrieving
         uintn n_vds	  IN: number of user-created vds to return
         uint16 *refarray  IN/OUT: ref array to fill
@@ -1431,26 +1415,33 @@ DESCRIPTION
 
     The parameter start_vd indicates the vdata number to start at.
     - When start_vd is 0, the retrieval starts at the beginning.
-    - When start_vd is between 0 and the number of user-created vdatas in
-      the file or the vgroup, VSofclass will start retrieving vdatas from
+    - When start_vd is between 0 and the number of vdatas that meet the
+      search criteria, VSofclass will start retrieving vdatas from
       the vdata number start_vd.
-    - When start_vd is greater than the number of user-created vdatas in the
-      file or the vgroup, VSofclass will return FAIL.
+    - When start_vd is greater than the number of vdatas that meet the
+      search criteria, VSofclass will return FAIL.
 
     When refarray argument is NULL, VSofclass will return the actual number
-    of user-created vdatas without further processing.  This allows application
-    to find out the size of the array for proper allocation.
+    of vdatas that meet the search criteria without further processing.  This
+    allows application to find out the size of the array for proper allocation.
    
 RETURNS
-    The number of user-created vdatas if successful and FAIL, otherwise.
-    BMR - 2010/07/10
+   Returns
+	- 0 if none is found, or
+	- FAIL(-1) if error occurs, or
+	- the number of refs returned in refarray
+
+NOTE
+   This function was added originally to assist the hdf4 map writer because
+   Vnattrs does not handle attributes created via VHstoredatam and Vaddtagref.
+   BMR - 2010/11/21)
 ---------------------------------------------------------------------*/
 intn
-VSofclass(int32 id,		/* IN: file id or vgroup id */
+VSofclass(int32 id,              /* IN: file id or vgroup id */
 	    const char *vsclass, /* IN: class to be queried */
 	    const uintn start_vd,/* IN: vdata number to start retrieving */
-            const uintn n_vds,	/* IN: number of user-created vds to return */
-            uint16 *refarray	/* IN/OUT: ref array to fill */)
+            const uintn n_vds,	 /* IN: number of user-created vds to return */
+            uint16 *refarray	 /* IN/OUT: ref array to fill */)
 {
     CONSTR(FUNC, "VSofclass");
     intn      ret_value = 0;
