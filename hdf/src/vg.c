@@ -1398,7 +1398,7 @@ NAME
 USAGE
     intn VSofclass(id, vsclass, start_vd, n_vds, *refarray)
 	int32 id	  IN: file id or vgroup id
-	int32 vsclass	  IN: the searched class
+	char *vsclass	  IN: the searched class
 	uintn start_vd	  IN: vdata number to start retrieving
         uintn n_vds	  IN: number of user-created vds to return
         uint16 *refarray  IN/OUT: ref array to fill
@@ -1549,7 +1549,7 @@ NAME
 USAGE
     intn VSIgetvdatas(id, char* vsclass, start_vd, n_vds, *refarray)
 	int32 id	  IN: file id or vgroup id
-	int32 vsclass	  IN: a specific class or NULL for user-created classes
+	char *vsclass	  IN: a specific class or NULL for user-created classes
 	uintn start_vd	  IN: vdata number to start retrieving
         uintn n_vds	  IN: number of user-created vds to return
         uint16 *refarray  IN/OUT: ref array to fill

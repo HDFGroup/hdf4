@@ -731,8 +731,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                            linked block or chunked images to go into the if
                            statement below in order for the duplicate image be
                            eliminated - bug #814, BMR Feb, 2005 */
-                        intn special_type = GRIisspecial_type(file_id,img_info[i
-].img_tag,img_info[i].img_ref);
+                        intn special_type = GRIisspecial_type(file_id,img_info[i].img_tag,img_info[i].img_ref);
 
                         if (((img_info[i].offset!= INVALID_OFFSET && img_info[i]
 .offset!=0)
@@ -1600,6 +1599,7 @@ int32 GRstart(int32 hdf_file_id)
     /* Return handle to the GR interface to the user */
     ret_value=HAregister_atom(GRIDGROUP,gr_ptr);
 
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -1648,12 +1648,13 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
-/* Get the number of datasets & global attributes from the memory structures */
+    /* Get the number of datasets & global attributes from the memory structures */
     if(n_datasets!=NULL)
         *n_datasets=gr_ptr->gr_count;
     if(n_attrs!=NULL)
         *n_attrs=gr_ptr->gattr_count;
         
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -2790,7 +2791,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -3257,10 +3258,11 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	cinfo.jpeg.quality = 0;
 	cinfo.jpeg.force_baseline = 0;
     }
+/* Should RLE be checked here too?  For DFR8? -BMR 2010/12/3 */
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -4601,6 +4603,10 @@ intn GRgetcompinfo(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
 	cinfo->jpeg.quality = 0;
 	cinfo->jpeg.force_baseline = 0;
     }
+    /* Added the RLE case for old images, new image with RLE would be taken care by
+       HCPgetcompinfo as with other compressions */
+    else if (scheme == DFTAG_RLE) /* old image */
+	*comp_type = COMP_CODE_RLE;
     else
     {
 	/* use lower-level routine to get the compression information */
@@ -5920,7 +5926,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -6134,7 +6140,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
