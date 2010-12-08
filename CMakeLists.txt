@@ -136,9 +136,9 @@ SET (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 
 # set default prefix location
-IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  SET(CMAKE_INSTALL_PREFIX "hdf4" CACHE PATH "Install path prefix, prepended onto install directories" FORCE)
-ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+#IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+#  SET(CMAKE_INSTALL_PREFIX "hdf4" CACHE PATH "Install path prefix, prepended onto install directories" FORCE)
+#ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 IF (NOT HDF4_INSTALL_BIN_DIR)
   SET (HDF4_INSTALL_BIN_DIR bin)
@@ -149,6 +149,9 @@ ENDIF (NOT HDF4_INSTALL_LIB_DIR)
 IF (NOT HDF4_INSTALL_INCLUDE_DIR)
   SET (HDF4_INSTALL_INCLUDE_DIR include)
 ENDIF (NOT HDF4_INSTALL_INCLUDE_DIR)
+IF (NOT HDF4_INSTALL_DATA_DIR)
+  SET (HDF4_INSTALL_DATA_DIR share)
+ENDIF (NOT HDF4_INSTALL_DATA_DIR)
 
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
@@ -909,7 +912,7 @@ ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   INSTALL (
       EXPORT ${HDF4_EXPORTED_TARGETS}
-      DESTINATION ${HDF4_INSTALL_LIB_DIR}/cmake/hdf4-${HDF4_PACKAGE_VERSION}
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/hdf4-${HDF4_PACKAGE_VERSION}
       FILE hdf4-targets.cmake
   )
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
@@ -952,7 +955,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   INSTALL (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/hdf4-config.cmake
-      DESTINATION ${HDF4_INSTALL_LIB_DIR}/cmake/hdf4-${HDF4_PACKAGE_VERSION}
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/hdf4-${HDF4_PACKAGE_VERSION}
   )
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
@@ -966,8 +969,43 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   INSTALL (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/hdf4-config-version.cmake
-      DESTINATION ${HDF4_INSTALL_LIB_DIR}/cmake/hdf4-${HDF4_PACKAGE_VERSION}
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/hdf4-${HDF4_PACKAGE_VERSION}
   )
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
+
+#-----------------------------------------------------------------------------
+# Add Document File(s) to CMake Install
+#-----------------------------------------------------------------------------
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  INSTALL (
+      FILES
+          ${HDF4_SOURCE_DIR}/COPYING
+          ${HDF4_SOURCE_DIR}/README.txt
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}
+  )
+  IF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
+    SET (release_files
+        ${HDF4_SOURCE_DIR}/release_notes/CMake.txt
+        ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
+        ${HDF4_SOURCE_DIR}/release_notes/INSTALL
+        ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
+    )
+    IF (WIN32 AND NOT CYGWIN)
+      SET (release_files
+          ${release_files}
+          ${HDF4_SOURCE_DIR}/release_notes/INSTALL_WINDOWS.txt
+      )
+    ELSE (WIN32 AND NOT CYGWIN)
+      SET (release_files
+          ${release_files}
+          ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CYGWIN.txt
+      )
+    ENDIF (WIN32 AND NOT CYGWIN)
+    INSTALL (
+        FILES ${release_files}
+        DESTINATION ${HDF4_INSTALL_DATA_DIR}/release_notes
+    )
+  ENDIF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
@@ -976,6 +1014,7 @@ ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   SET (CPACK_PACKAGE_VENDOR "The HDF Group")
   SET (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
+  SET (CPACK_PACKAGE_INSTALL_DIRECTORY "${HDF4_PACKAGE_NAME}")
   SET (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
   SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   SET (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
@@ -983,6 +1022,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   SET (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 
   IF (WIN32)
+    SET (CPACK_NSIS_MODIFY_PATH ON)
     SET (CPACK_NSIS_PACKAGE_NAME "HDF4 ${HDF4_PACKAGE_VERSION}")
   ENDIF (WIN32)
 
