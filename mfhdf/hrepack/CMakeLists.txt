@@ -41,7 +41,6 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hrepack ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hrepack ${LIB_TYPE})
 
 ##############################################################################
 ##############################################################################
@@ -63,7 +62,6 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hrepack_check ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (hrepack_check ${LIB_TYPE})
 
 #-- Adding test for test_hrepack
 
@@ -101,7 +99,6 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (test_hrepack ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (test_hrepack ${LIB_TYPE})
  
 #-- Copy all the dat files from the test directory into the source directory
   SET (HDF4_REPACK_TEST_FILES

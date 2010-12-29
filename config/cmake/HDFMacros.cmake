@@ -105,21 +105,6 @@ MACRO (HDF_SET_LIB_OPTIONS libtarget libname libtype)
 ENDMACRO (HDF_SET_LIB_OPTIONS)
 
 #-------------------------------------------------------------------------------
-MACRO (TARGET_WIN_PROPERTIES target libtype)
-  IF (WIN32)
-    IF (MSVC)
-      IF (${libtype} MATCHES "STATIC")
-        SET_TARGET_PROPERTIES (${target}
-            PROPERTIES
-                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
-                LINK_FLAGS_DEBUG "/NODEFAULTLIB:MSVCRTD"
-        ) 
-      ENDIF (${libtype} MATCHES "STATIC")
-    ENDIF (MSVC)
-  ENDIF (WIN32)
-ENDMACRO (TARGET_WIN_PROPERTIES)
-
-#-------------------------------------------------------------------------------
 MACRO (TARGET_FORTRAN_WIN_PROPERTIES target libtype)
   IF (WIN32)
     IF (${libtype} MATCHES "SHARED")
@@ -128,14 +113,6 @@ MACRO (TARGET_FORTRAN_WIN_PROPERTIES target libtype)
             PROPERTIES
                 COMPILE_FLAGS "/dll"
                 LINK_FLAGS "/SUBSYSTEM:CONSOLE"
-        ) 
-      ENDIF (MSVC)
-    ELSE (${libtype} MATCHES "SHARED")
-      IF (MSVC)
-        SET_TARGET_PROPERTIES (${target}
-            PROPERTIES
-                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
-                LINK_FLAGS_DEBUG "/NODEFAULTLIB:MSVCRTD"
         ) 
       ENDIF (MSVC)
     ENDIF (${libtype} MATCHES "SHARED")

@@ -60,7 +60,6 @@ ADD_EXECUTABLE (testhdf ${testhdf_SRCS}
     ${HDF4_HDF_TEST_SOURCE_DIR}/tree.c
 )
 TARGET_NAMING (testhdf ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (testhdf ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (testhdf ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 ##############################################################################
@@ -218,7 +217,6 @@ SET_PROPERTY (TEST testhdf PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
 IF (NOT WIN32)
   ADD_EXECUTABLE (buffer ${HDF4_HDF_TEST_SOURCE_DIR}/buffer.c)
   TARGET_NAMING (buffer ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (buffer ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (buffer ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME buffer COMMAND $<TARGET_FILE:buffer>)
 ENDIF (NOT WIN32)

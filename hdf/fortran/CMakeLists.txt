@@ -115,7 +115,6 @@ IF (BUILD_TESTING)
   #-- Adding test for fortest
   ADD_EXECUTABLE (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
   TARGET_NAMING (fortest ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (fortest ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
   IF (WIN32 AND MSVC)
     TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")

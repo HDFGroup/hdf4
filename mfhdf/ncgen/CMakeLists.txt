@@ -65,7 +65,6 @@ ENDIF (WIN32 AND NOT CYGWIN)
     TARGET_LINK_LIBRARIES (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (ncgen ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (ncgen ${LIB_TYPE})
 
 ##############################################################################
 ##############################################################################

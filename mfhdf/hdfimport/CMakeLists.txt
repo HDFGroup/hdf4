@@ -32,7 +32,6 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hdfimport ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hdfimport ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdfimport ${LIB_TYPE})
 
 ##############################################################################
 ##############################################################################
@@ -122,7 +121,6 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (hdfimporttest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hdfimporttest ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (hdfimporttest ${LIB_TYPE})
 
   #-- gen_sds_floats
   SET (gen_sds_floats_SRCS
@@ -136,7 +134,6 @@ IF (BUILD_TESTING)
     TARGET_LINK_LIBRARIES (gen_sds_floats ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (gen_sds_floats ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (gen_sds_floats ${LIB_TYPE})
   
 ##############################################################################
 ##############################################################################

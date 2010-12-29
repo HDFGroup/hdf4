@@ -47,7 +47,6 @@ ELSE (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 ENDIF (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (nctest ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (nctest ${LIB_TYPE})
  
 #-- Copy all the dat files from the test directory into the source directory
 SET (HDF4_NC_TEST_FILES
