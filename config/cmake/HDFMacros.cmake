@@ -119,8 +119,8 @@ MACRO (TARGET_FORTRAN_WIN_PROPERTIES target libtype)
       IF (MSVC)
         SET_TARGET_PROPERTIES (${target}
             PROPERTIES
-                LINK_FLAGS "/NODEFAULTLIB:MSVCRT"
-                LINK_FLAGS_DEBUG "/NODEFAULTLIB:MSVCRTD"
+                COMPILE_FLAGS "/dll"
+                LINK_FLAGS "/SUBSYSTEM:CONSOLE"
         ) 
       ENDIF (MSVC)
     ENDIF (${libtype} MATCHES "SHARED")
