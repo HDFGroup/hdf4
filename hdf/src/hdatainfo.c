@@ -24,7 +24,7 @@ FILE
 
 LOW-LEVEL ROUTINES
     - Gets the offset(s) and length(s) of the data in the data element.
-HDgetdatainfo(file_id, data_tag, data_ref, *chk_coord, start_block, info_count, *offsetarray, *lengtharray)
+HDgetdatainfo(file_id, tag, ref, *chk_coord, start_block, info_count, *offsetarray, *lengtharray)
 
 EXPORTED ROUTINES
     - Gets the offset(s)/length(s) of a vdata's data.
@@ -69,11 +69,11 @@ GRgetattdatainfo(id, attrindex, *offset, *length)
     HDgetdatainfo -- Gets the offset(s) and length(s) of the data in
 		      the data element.
  USAGE
-    int32 HDgetdatainfo(file_id, data_tag, data_ref, start_block, info_count,
+    int32 HDgetdatainfo(file_id, tag, ref, start_block, info_count,
 			 *offsetarray, *lengtharray)	
 	int32  file_id;		IN: file id
-	uint16 data_tag;	IN: tag of the element
-	uint16 data_ref;	IN: ref of element
+	uint16 tag;		IN: tag of the element
+	uint16 ref;		IN: ref of element
 	int32 *chk_coord;	IN: coordinate array of the inquired chunk
 	uintn  start_block;	IN: data block to start at, 0 base
 	uintn  info_count;	IN: number of info records
@@ -89,7 +89,7 @@ GRgetattdatainfo(id, attrindex, *offset, *length)
 --------------------------------------------------------------------------*/
 intn
 HDgetdatainfo(int32 file_id,
-	uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
+	uint16 tag, uint16 ref, /* IN: tag/ref of element */
 	int32 *chk_coord,
 	uintn start_block,	/* IN: data block to start at, 0 base */
 	uintn info_count,	/* IN: number of info records */
@@ -125,7 +125,7 @@ HDgetdatainfo(int32 file_id,
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get access element from dataset's tag/ref */
-    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
+    if ((data_id=HTPselect(file_rec, tag, ref))!=FAIL)
     {
 	/* get the info pointed to by this dd, which could point to data or
 	   description record */
@@ -189,12 +189,19 @@ HDgetdatainfo(int32 file_id,
 
 		if (HTPis_special(comp_aid)!=TRUE)
 		{
-		    /* this element is not further special, only compressed, get its offset
-		       and length */
+		    /* this element is not further special, only compressed,
+		       get its offset and length */
 		    if (offsetarray != NULL && lengtharray != NULL)
 		    {
-			offsetarray[0] = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
-			lengtharray[0] = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
+			int32 off=0, len=0;
+			off = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
+			if (off == FAIL)
+			    HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+			len = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
+			if (len == FAIL)
+			    HGOTO_ERROR(DFE_BADLEN, FAIL);
+			offsetarray[0] = off;
+			lengtharray[0] = len;
 		    }
 		    count = 1;
 		}   /* end if */
@@ -213,7 +220,7 @@ HDgetdatainfo(int32 file_id,
 		    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
 			HGOTO_ERROR(DFE_READERROR, FAIL);
 
-		    /* use special code to determine how to retrieve offsets/lengths of data */
+		    /* use special code to determine how to retrieve off/len */
 		    p = &lbuf[0];
 		    INT16DECODE(p, spec_code);
 
@@ -222,8 +229,9 @@ HDgetdatainfo(int32 file_id,
 			if (HP_read(file_rec, lbuf, (int)14) == FAIL)
 			    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-			/* pass the special header info to the linked-block API to get the data
-			   info if they are requested or the info count only, otherwise */ 
+			/* pass the special header info to the linked-block API
+			   to get the data info if they are requested or the
+			   info count only, otherwise */ 
 			p = &lbuf[0];
 			if (offsetarray != NULL && lengtharray != NULL)
 			    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
@@ -243,11 +251,11 @@ HDgetdatainfo(int32 file_id,
 	    else if (sp_tag == SPECIAL_CHUNKED)
 	    {
 		if (chk_coord != NULL)
-		    count = HMCgetdatainfo(file_id, data_tag, data_ref, chk_coord,
-					start_block, info_count, offsetarray, lengtharray);
+		    count = HMCgetdatainfo(file_id, tag, ref, chk_coord,
+			    start_block, info_count, offsetarray, lengtharray);
 		else
 		{
-		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", data_tag, data_ref);
+		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", tag, ref);
 		    exit(0); /* BMR: check to see what should be done here */
 		}
 	    }
@@ -352,12 +360,16 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
     }
     else
     {
-	if (offsetarray != NULL)
-	    if ((*offsetarray = Hoffset(vs->f, VSDATATAG, vs->oref)) == FAIL)
+	if (offsetarray != NULL && lengtharray != NULL)
+	{
+	    int32 off=0, len=0;
+	    if ((off = Hoffset(vs->f, VSDATATAG, vs->oref)) == FAIL)
 		HGOTO_ERROR(DFE_BADOFFSET, FAIL);
-	if (lengtharray != NULL)
-	    if ((*lengtharray = Hlength(vs->f, VSDATATAG, vs->oref)) == FAIL)
+	    if ((len = Hlength(vs->f, VSDATATAG, vs->oref)) == FAIL)
 		HGOTO_ERROR(DFE_BADLEN, FAIL);
+	    *offsetarray = off;
+	    *lengtharray = len;
+	}
 	count = 1;
     }
     ret_value = count;
@@ -740,7 +752,7 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
     else
     {
 	length = Hlength(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
-	if (length <= 0)
+	if (length == FAIL)
 	    HGOTO_DONE(0);
 
         /* if both arrays are NULL, get the number of data blocks and return */
@@ -864,22 +876,15 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
     if (newflag == 0)
     {
 	int32 off=0, len=0;
-
-	off = Hoffset(file_id, ann_tag, ann_ref);
-	if (off == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL)
-	else
+	if (offset != NULL && length != NULL)
 	{
-	    if (offset != NULL)
+	    off = Hoffset(file_id, ann_tag, ann_ref);
+	    if (off == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    len = Hlength(file_id, ann_tag, ann_ref);
+	    if (len == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	    *offset = off;
-	}
-
-	len = Hlength(file_id, ann_tag, ann_ref);
-	if (len == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL)
-	else
-	{
-	    if (length != NULL)
 	    *length = len;
 	}
 

@@ -38,6 +38,7 @@ long size ;
 
 	ret->size = size ;
 #ifdef HDF
+        ret->vgid = 0;	/* no vgroup representing this dimension yet -BMR 2010/12/29 */
         ret->count = 1;
 /*        ret->dim00_compat = (size == NC_UNLIMITED)? 0 : 1;  */
         ret->dim00_compat = 0;

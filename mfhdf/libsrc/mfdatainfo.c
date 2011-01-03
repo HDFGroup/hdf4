@@ -70,6 +70,8 @@ status = SDgetattdatainfo(sdsid, ...);
 #include "mfprivate.h"
 #endif
 
+PRIVATE intn get_attr_tag(char *attr_name, uint16* attr_tag);
+
 /******************************************************************************
  NAME
     SDgetdatainfo -- Retrieves location and size of data blocks.
@@ -172,6 +174,7 @@ done:
     return ret_value;
 } /* SDgetdatainfo */
 
+
 /******************************************************************************
  NAME
     SDgetattdatainfo -- Retrieves location and size of attribute's data.
@@ -182,11 +185,12 @@ done:
 	int32 *offset		OUT: offset of attribute's data
 	int32 *length		OUT: length of attribute's data
  RETURNS
-    The number of data blocks retrieved, which should be 1, if successful and FAIL,
-    otherwise.
+    The number of data blocks retrieved, which should be 1, if successful
+    and FAIL, otherwise.
 
  DESCRIPTION
-    SDgetattdatainfo retrieves the location of the attribute's data and its length.
+    SDgetattdatainfo retrieves the location of the attribute's data and its
+    length.
 
  MODIFICATION
     2010/10/14: Revised to remove the parameter attrname because, for hmap
@@ -203,9 +207,9 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
     NC     *handle;
     NC_var *var;
     NC_dim *dim;
-    int32   vg_ref=0,	/* ref# of the vgroup that represents a file, an SDS, or a dimension */
+    int32   vg_ref=0,	/* ref# of the VG representing a file, an SDS, or a dimension */
 	    n_elements,	/* number of elements in the file/SDS/dimension vgroup */
-	    vs_id,	/* vdata id, attached to a vdata while looking for _HDF_ATTRIBUTE */
+	    vs_id,	/* VS id, attached to a VS while looking for _HDF_ATTRIBUTE */
 	    vg_id,	/* id of the file/SDS/dimension vgroup */
 	    var_idx;	/* index of the variable representing the given dimension */
     char    vsclass[H4_MAX_NC_CLASS] = "", /* vs class to see if it is _HDF_ATTRIBUTE */
@@ -247,28 +251,26 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 	    if(dim == NULL)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	     /* if (dim->vgid > 0)
-                vg_ref = dim->vgid;
-	    else
- */ 
-	    {
-		/* Note: there is a vgid in NC_dim, unfortunately, the vgroup id
-		   wasn't recorded there during the reading of the file; remove
-		   this block later when that bug is fixed -BMR 2010/10/17 */
-		/* look for the variable representing this dimension,
+	    /* look for the variable representing this dimension,
 		   ie. coordinate variable */
-		var_idx = SDIgetcoordvar(handle, dim, id, (int32)0);
-		if(var_idx == FAIL)
+	    var_idx = SDIgetcoordvar(handle, dim, id, (int32)0);
+	    if(var_idx == FAIL)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-		/* get the variable object */
-		var = NC_hlookupvar(handle, var_idx);
-		if(var == NULL)
+	    /* get the variable object */
+	    var = NC_hlookupvar(handle, var_idx);
+	    if(var == NULL)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
-		/* get the ref number of the vgroup representing this dim */
-		vg_ref = var->vgid;
-	    }
+	    /* get the ref number of the vgroup representing this dim */
+	    vg_ref = var->vgid;
+
+            /* If this dimension is not represented by a vgroup (old dimension,
+               HDF 3.2, released in 1993) return to caller with error code
+               DFE_DIMNOVG so caller can call SDgetdimattdatainfo to get
+               to its attributes manually */
+		if (vg_ref == 0)
+		    HGOTO_DONE(DFE_DIMNOVG);
 	}
 	/* SDS id is given */
 	else
@@ -363,5 +365,211 @@ done:
 
     return ret_value;
 } /* SDgetattdatainfo */
+
+
+/******************************************************************************
+ NAME
+    get_attr_tag -- Convert the name of attribute label, unit, or format to its
+			   associated hdf tag (Private)
+ USAGE
+    intn get_attr_tag(attr_name, *attr_tag)
+	char *attr_name		IN: name of the luf attributes
+	uint16 *attr_tag	OUT: associated tag of luf
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    In some older files, when dimensions were not stored as vgroup yet, the
+    pre-defined attributes that belong to the dimensions were written following
+    the same pre-defined attributes of the dataset.
+    This function gives the associated tag of one of the luf attributes so that
+    application can use tag/ref to read the luf string.
+ 
+******************************************************************************/
+PRIVATE intn 
+get_attr_tag(char *attr_name, uint16* attr_tag)
+{
+    intn ret_value = SUCCEED;
+
+    if (HDstrcmp(_HDF_LongName, attr_name) == 0)
+        *attr_tag = DFTAG_SDL;
+    else if (HDstrcmp(_HDF_Units, attr_name) == 0)
+        *attr_tag = DFTAG_SDU;
+    else if (HDstrcmp(_HDF_Format, attr_name) == 0)
+        *attr_tag = DFTAG_SDF;
+    else
+    {
+        ret_value = FAIL;
+        fprintf(stderr, "get_attr_tag: attr_tag= %d, attr_name = %s\n", *attr_tag, attr_name);
+    }
+    return ret_value;
+} /* get_attr_tag */
+
+/******************************************************************************
+ NAME
+    SDgetdimattdatainfo -- Retrieves location and size of dimension attribute's
+			   data.
+ USAGE
+    intn SDgetdimattdatainfo(id, sds_id, attr_name, offset, length)
+	int32 dim_id		IN: dimension ID
+	int32 sds_id		IN: SDS ID that dim_id belongs
+	char *attr_name		IN: name of the attribute being inquired
+	int32 *offset		OUT: offset of attribute's data
+	int32 *length		OUT: length of attribute's data
+ RETURNS
+    The number of data blocks retrieved, which should be 1, if successful
+    and FAIL, otherwise.
+
+ DESCRIPTION
+    In some older files, when dimensions were not stored as vgroup yet, the
+    pre-defined attributes that belong to the dimensions were written following
+    the same pre-defined attributes of the dataset.
+ 
+ SDgetdimattdatainfo retrieves the location of the attribute's data and its
+    length.
+
+ MODIFICATION
+    2010/10/14: Revised to remove the parameter attrname because, for hmap
+	project, it makes sense to just provide the attribute index. -BMR
+
+******************************************************************************/
+intn
+SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
+		    int32 sds_id,	/* IN: ID of dataset the dim belongs to */
+		    char  *attr_name,    /* IN: name of attribute to be inquired */
+		    int32 *offset,      /* OUT: buffer for offset */
+		    int32 *length)      /* OUT: buffer for length */
+{
+    CONSTR(FUNC, "SDgetdimattdatainfo");
+    NC     *handle;
+    NC_var *var;
+    NC_dim *dim;
+    int32   off, len,
+            dim_att_len=0,
+            sdsluf_len=0,
+            offp = 0;
+    char   *lufbuf=NULL, *lufp=NULL;
+    uint16  att_tag, att_ref;
+    intn    dimidx_infile=0, dimidx_invar=0;
+    int     ii;
+    intn    status,	/* returned value */
+	    ret_value = 0;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Check if the given dimension id really is a dimension id */
+    handle = SDIhandle_from_id(dim_id, DIMTYPE);
+    if(handle == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check if the given dataset id really is a dataset id */
+    handle = SDIhandle_from_id(sds_id, SDSTYPE);
+    if(handle == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get the variable object of the dataset */
+    var = SDIget_var(handle, sds_id);
+    if(var == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* If this variable doesn't have a valid NDG ref, we cannot proceed */
+    if (var->ndg_ref == 0)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    att_tag = 0;
+    att_ref = var->ndg_ref; /* all elements of this var have the same ref# */
+
+    /* Convert a luf name into its corresponding HDF tag */
+    status = get_attr_tag(attr_name, &att_tag);
+    if (status == FAIL)
+    {
+        fprintf(stderr, "attribute name is invalid for old dimension: %s\n", attr_name);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+
+    if (att_tag != 0 && att_ref != 0)
+    {
+        /* Get offset/length of the luf string, which includes luf of the dataset
+           and its dimensions all together */
+        off = Hoffset(handle->hdf_file, att_tag, att_ref);
+        if (off == FAIL)
+            HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+
+        len = Hlength(handle->hdf_file, att_tag, att_ref);
+        if (len == FAIL)
+            HGOTO_ERROR(DFE_BADLEN, FAIL);
+
+        if (len == 0)
+        {
+            HGOTO_DONE(0);
+        }
+
+        /* Read the luf string */
+        lufbuf = (char *)HDmalloc(len+1);
+        if (lufbuf == NULL)
+            HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        Hgetelement(handle->hdf_file, att_tag, att_ref, lufbuf);
+
+        /*
+         * Parse the luf string to obtain the offset/length of the requested
+         * dimension's luf
+         */
+        /* Start at the beginning of the dataset's luf */
+        lufp = lufbuf;
+
+        /* Skip dataset's luf using the first null character in the string */
+        sdsluf_len = HDstrlen(lufbuf);
+
+        /* Move cursor forward to the first dimension's attribute */
+        lufp += sdsluf_len + 1;
+
+        /* Convert dimension id back to index */
+        dimidx_infile = dim_id & 0xffff;
+
+        /* Find the index of dimension within the variable */
+        dimidx_invar = -1;
+        for (ii = 0; ii < var->assoc->count && dimidx_invar != ii; ii++)
+            if (var->assoc->values[ii] == dimidx_infile)
+                dimidx_invar = ii;
+
+        /* Walk through each dimension to find requested luf */
+        offp = 0;
+        for (ii = 0; ii <= dimidx_invar; ii++)
+        {
+            char dim_att[100];
+
+            /* Extract dimension 1 label */
+            HDstrcpy(dim_att, (char *) lufp);
+            dim_att_len = HDstrlen(dim_att);
+
+            /* Move forward if this is not the dimension we're looking for */
+            if (ii != dimidx_invar)
+	    {
+                lufp += dim_att_len + 1;
+	        offp += dim_att_len + 1;
+	    }
+        }
+
+        /* Calculate offset and length of the requested dimension's luf   */
+        /* - off: offset where luf string starts, returned by Hoffset     */
+        /* - sdsluf_len: length of the dataset luf + 1 for the null space */
+        /* - offp: offset accummulated of all dimension lufs before the   */
+        /*   requested one */
+        *offset = off + sdsluf_len + 1 + offp;
+        *length = dim_att_len;
+        ret_value = 1;
+    }
+    if (lufbuf) HDfree(lufbuf);
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+        if (lufbuf) HDfree(lufbuf);
+      }
+     /* Normal cleanup */
+
+    return ret_value;
+} /* SDgetdimattdatainfo */
 
 #endif /* HDF */

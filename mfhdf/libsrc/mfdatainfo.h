@@ -36,6 +36,9 @@ HDFLIBAPI intn SDgetdatainfo
 HDFLIBAPI intn SDgetattdatainfo
     (int32 id, int32 attrindex, int32 *offset, int32 *length);
 
+HDFLIBAPI intn SDgetdimattdatainfo
+    (int32 dim_id, int32 sds_id, char *attr_name, int32 *offset, int32 *length);
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif /* c_plusplus || __cplusplus */
