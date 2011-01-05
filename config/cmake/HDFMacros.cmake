@@ -105,13 +105,13 @@ MACRO (HDF_SET_LIB_OPTIONS libtarget libname libtype)
 ENDMACRO (HDF_SET_LIB_OPTIONS)
 
 #-------------------------------------------------------------------------------
-MACRO (TARGET_FORTRAN_WIN_PROPERTIES target)
+MACRO (TARGET_FORTRAN_WIN_PROPERTIES target add_link_flags)
   IF (WIN32)
     IF (MSVC)
       SET_TARGET_PROPERTIES (${target}
           PROPERTIES
               COMPILE_FLAGS "/dll"
-              LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+              LINK_FLAGS "/SUBSYSTEM:CONSOLE ${add_link_flags}"
       ) 
     ENDIF (MSVC)
   ENDIF (WIN32)
