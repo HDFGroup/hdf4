@@ -131,7 +131,7 @@ SET (HDF4_MF_FORTRAN_SRCS
 )
 #-----------------------------------------------------------------------------
 ADD_LIBRARY (${HDF4_MF_FORTRAN_LIB_TARGET} ${LIB_TYPE} ${HDF4_MF_FORTRAN_SRCS})
-SET (SHARED_LINK_FLAGS "")
+SET (SHARED_LINK_FLAGS " ")
 IF (WIN32)
   IF (${LIB_TYPE} MATCHES "SHARED")
     IF (MSVC)
