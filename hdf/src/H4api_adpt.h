@@ -132,7 +132,7 @@
   #endif
 #endif
 
-#elif (H4_BUILT_AS_STATIC_LIB)
+#elif defined(H4_BUILT_AS_STATIC_LIB)
   #define XDRLIBAPI extern
   #define HDFERRPUBLIC extern
   #define HDFPUBLIC
