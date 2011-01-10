@@ -38,7 +38,8 @@ EXPORTED ROUTINES
 status = SDgetdatainfo(sdsid, ...);
 
 	--- retrieve location and size of data blocks - not included yet
-status = SDgetattdatainfo(sdsid, ...);
+status = SDgetattdatainfo(id, ...);
+status = SDgetanndatainfo(id, ...);
 
 ******************************************************************************/
 
@@ -134,7 +135,8 @@ SDgetdatainfo(int32 sdsid,		/* IN: dataset ID */
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
-    if(var == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(var == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* if the data ref# of the SDS is 0, there is no storage is created yet */
     if (var->data_ref == 0)
@@ -410,9 +412,9 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
     SDgetdimattdatainfo -- Retrieves location and size of dimension attribute's
 			   data.
  USAGE
-    intn SDgetdimattdatainfo(id, sds_id, attr_name, offset, length)
+    intn SDgetdimattdatainfo(id, sdsid, attr_name, offset, length)
 	int32 dim_id		IN: dimension ID
-	int32 sds_id		IN: SDS ID that dim_id belongs
+	int32 sdsid		IN: SDS ID that dim_id belongs
 	char *attr_name		IN: name of the attribute being inquired
 	int32 *offset		OUT: offset of attribute's data
 	int32 *length		OUT: length of attribute's data
@@ -435,7 +437,7 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
 ******************************************************************************/
 intn
 SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
-		    int32 sds_id,	/* IN: ID of dataset the dim belongs to */
+		    int32 sdsid,	/* IN: ID of dataset the dim belongs to */
 		    char  *attr_name,    /* IN: name of attribute to be inquired */
 		    int32 *offset,      /* OUT: buffer for offset */
 		    int32 *length)      /* OUT: buffer for length */
@@ -464,12 +466,12 @@ SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check if the given dataset id really is a dataset id */
-    handle = SDIhandle_from_id(sds_id, SDSTYPE);
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get the variable object of the dataset */
-    var = SDIget_var(handle, sds_id);
+    var = SDIget_var(handle, sdsid);
     if(var == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
@@ -571,5 +573,124 @@ done:
 
     return ret_value;
 } /* SDgetdimattdatainfo */
+
+
+/******************************************************************************
+ NAME
+    SDgetanndatainfo -- Retrieves location and size of annotations' data.
+ USAGE
+    intn SDgetanndatainfo(sdsid, annot_type, size, offsetarray, lengtharray)
+	int32 sdsid		IN: SDS ID
+	ann_type annot_type	IN: type of annotations to retrieve data
+	uintn size		IN: size of offsetarray and lengtharray
+	int32 *offsetarray	OUT: offsets of annotations' data
+	int32 *lengtharray	OUT: lengths of annotations' data
+ RETURNS
+    The number of annotation data info retrieved, if successful
+    and FAIL, otherwise.
+
+ DESCRIPTION
+    SDgetanndatainfo retrieves the location and size specifying data of the
+    annotations of the specified type from the dataset sdsid.
+
+ IMPORTANT NOTE
+    If caller provides buffers that are smaller than the number of annotations
+    then SDgetanndatainfo only fills the buffers up to its size, and returns
+    the number of annotations retrieved.  That means, the rest of the
+    annotations are not retrievable.  However, this function is designed for
+    hmap writer at this point, and such insufficient buffers situation is not
+    anticipated beside the fact that we're running out of time.  In the future,
+    or when such need arises, the function should be modified to include
+    another parameter to allow retrieving partial annotations.
+
+ MODIFICATION
+
+******************************************************************************/
+intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray, int32* lengtharray)
+{
+    CONSTR(FUNC, "SDgetanndatainfo");
+    int32   file_id=FAIL, an_id=FAIL; /* file ID and AN API ID */
+    NC     *handle = NULL;	/* file structure */
+    NC_var *var = NULL;		/* variable structure of sds, to get NDG ref */
+    int32  *dannots = NULL;	/* list of data annotation IDs */
+    uint16  elem_tag, elem_ref; /* tag/ref of dataset's NDG */
+    intn    num_annots,		/* number of annotation of requested type */
+            ii,
+            ret_value = 0;
+
+    /* Annotation type must only be data label or description */
+    if (annot_type != AN_DATA_LABEL && annot_type != AN_DATA_DESC)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check if the given dataset id really is a dataset id */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get the NDG ref of this dataset */
+    elem_ref = SDidtoref(sdsid);
+    elem_tag = DFTAG_NDG;
+
+    /* If this variable doesn't have a valid NDG ref, we cannot proceed */
+    if (elem_ref <= 0)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Open file to start Annotation inteface */
+    if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
+        HGOTO_ERROR(DFE_BADOPEN, FAIL);
+    if ((an_id = ANstart(file_id)) == FAIL)
+        HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+    /* Get number of data descs or labels with this tag/ref */
+    num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
+    if (num_annots == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* If offsets and lengths are not desired, return the number of annots */
+    if (offsetarray == NULL || lengtharray == NULL)
+	HGOTO_DONE(num_annots);
+
+    /* If more annotations than space in user's buffers, only fill up buffers */
+    if (num_annots > size)
+        num_annots = size;
+
+    /* Retrieve annotations */
+    if (num_annots != 0)
+    {
+        /* Allocate space for list of annotation IDs on this tag/ref */
+        if ((dannots = (int32 *)HDmalloc(num_annots * sizeof(int32))) == NULL)
+	    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+        /* Get list of annotations IDs on this tag/ref */
+        if (ANannlist(an_id, annot_type, elem_tag, elem_ref, dannots) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* Loop through the annotation list and get their offsets/lengths */
+        for (ii = 0; ii < num_annots; ii++)
+        {
+            /* Get annotation's offset and length */
+            ret_value = ANgetdatainfo(dannots[ii], &offsetarray[ii], &lengtharray[ii]);
+	    if (ret_value == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
+
+        /* Return the number of annotations retrieved */
+        ret_value = num_annots;
+
+        /* Terminate access to the AN API and close the file */
+        if(an_id != FAIL)
+            ANend(an_id);
+        if(file_id != FAIL)
+            Hclose(file_id);
+    } /* if there are annotations */
+
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+        if (dannots) HDfree(dannots);
+      }
+     /* Normal cleanup */
+    return ret_value;
+} /* SDgetanndatainfo */
 
 #endif /* HDF */

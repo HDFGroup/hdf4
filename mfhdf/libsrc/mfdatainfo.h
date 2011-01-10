@@ -30,14 +30,18 @@ extern      "C"
 /* Public functions for getting raw data information */
 
 HDFLIBAPI intn SDgetdatainfo
-    (int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count, int32 *offsetarray,
-	int32 *lengtharray);
+    (int32 sdsid, int32 *chk_coord, uintn start_block, uintn info_count,
+	int32 *offsetarray, int32 *lengtharray);
 
 HDFLIBAPI intn SDgetattdatainfo
     (int32 id, int32 attrindex, int32 *offset, int32 *length);
 
 HDFLIBAPI intn SDgetdimattdatainfo
-    (int32 dim_id, int32 sds_id, char *attr_name, int32 *offset, int32 *length);
+    (int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
+
+HDFLIBAPI intn SDgetanndatainfo
+    (int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray,
+	int32* lengtharray);
 
 #if defined c_plusplus || defined __cplusplus
 }

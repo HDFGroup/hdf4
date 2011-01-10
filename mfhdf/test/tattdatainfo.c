@@ -11,43 +11,27 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * tdatainfo.c - tests the function SDgetattdatainfo.
+ * tattdatainfo.c - tests the functions SDgetattdatainfo & SDgetanndatainfo.
  * Structure of the file:
  *    test_attdatainfo - test driver
- *	  test_nonspecial_SDSs - tests nonspecial SDSs
+ *	  test_attrs - tests getting SDS attribute's data info
+ *	  test_annots - tests getting SDS annotation's data info
 ****************************************************************************/
 
- /* #include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <math.h>
-
-#if WIN32
-#define snprintf sprintf_s
-#define ssize_t int32
-#endif 
- */ 
-
-#include "mfhdf.h"
 
 #ifdef HDF
 
+#define DATAINFO_TESTER
+
+#include "mfhdf.h"
 #include "hdftest.h"
 
 #define ATTR_FILE     "attdatainfo.hdf"	/* data file */
 #define X_LENGTH      10
 #define Y_LENGTH      10
 #define RANK          2
-
-/* Calculates the number of values in an SDS using the dimensions and rank */
-int32 comp_n_values(int32 rank, int32 *dimsizes)
-{
-    int ii;
-    int32 n_values = 1;
-    for (ii = 0; ii < rank; ii++)
-	n_values = n_values * dimsizes[ii];
-    return(n_values);
-}
+#define ISFIRST    (int)1
+#define NOTFIRST   (int)0
 
 /****************************************************************************
    Name: test_attrs() - tests getting attribute's data info
@@ -60,7 +44,7 @@ int32 comp_n_values(int32 rank, int32 *dimsizes)
 	- a 1-dim 10-element SDS, int32, with 10 values
 	- a 2-dim 5x8 element SDS, float32, with 5x8 values
 	- a 1-dim 20-element SDS, char, with 20 values
-	SDgetattdatainfo will retrieve the number of blocks in the datasets
+	SDgetattdatainfo will retrieve the number of blocks in the data sets
 	and the offsets and lengths of the blocks.  Then the data will be read
 	back from the file at the previously retrieved offsets/lengths, without
 	the use of the HDF4 library, and will be verified against the original
@@ -114,7 +98,7 @@ static intn test_attrs()
      Create and write non-special SDSs
      ***************************************************************/
 
-    /* Create a 2x2 dataset called "EmptyDataset" */
+    /* Create a 2x2 data set called "EmptyDataset" */
     dimsizes[0] = LENGTH2_X;
     dimsizes[1] = LENGTH2_Y;
 
@@ -139,11 +123,9 @@ static intn test_attrs()
 
     /* Assign two attributes to the first SDS. */
     n_values  = 2;
-  fprintf(stderr, "set_attr.c: SDsetattr %s \n", SDS_ATTR_NAME1);
     status = SDsetattr (sds_id, SDS_ATTR_NAME1, DFNT_FLOAT32, n_values,
                        (VOIDP)sds_values);
     CHECK(status, FAIL, "SDsetattr")
- fprintf(stderr, "done SDsetattr %s \n", SDS_ATTR_NAME1);
     n_values = 7;
     status = SDsetattr (sds_id, SDS_ATTR_NAME2, DFNT_CHAR8, n_values,
                        (VOIDP)dim_values);
@@ -183,11 +165,18 @@ static intn test_attrs()
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "SDendaccess");
 
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "SDend");
+
     /***********************************************************************
      Read data info for later accessing data without the use of HDF4 library
      ***********************************************************************/
 
-    /* Open the second dataset, verify that number of data block is 1, then
+    /* Re-open the file */
+    sd_id = SDstart(ATTR_FILE, DFACC_RDWR);
+    CHECK(sd_id, FAIL, "test_attrs: SDstart");
+
+    /* Open the second data set, verify that number of data block is 1, then
 	retrieve and record the offset/length */
     sds_id = SDselect(sd_id, 0);
     CHECK(sds_id, FAIL, "test_attrs: SDselect SDS index 1");
@@ -197,13 +186,10 @@ static intn test_attrs()
     CHECK(status, FAIL, "test_attrs: SDgetinfo SDS index 0");
     VERIFY(nattrs, 2, "test_attrs: SDgetinfo SDS index 0");
 
-     /* check_offsets[0] = ;
- */ 
     for (att_idx=0; att_idx < nattrs; att_idx++)
     {
 	status = SDgetattdatainfo(sds_id, att_idx, &offset, &length);
 	CHECK(status, FAIL, "test_attrs: SDgetattdatainfo");
- fprintf(stderr, "sds '%s', attribute #%d: offset = %d, length = %d\n", sds_name, att_idx, offset, length);
     }
 
     status = SDendaccess(sds_id);
@@ -350,19 +336,361 @@ static intn test_attrs()
 } /* test_attrs */
 
 
+#define DFAN_FILE "tdfanndg.hdf"
+#define MAXLEN_LAB     50
+#define MAXLEN_DESC   200
+#define ROWS           10
+#define COLS           10
+#define REPS           2
+
+/* Utility functions: */
+/* to generate data set's data */
+static VOID gen2Dfloat (int height, int width, float *data);
+/* to verify data of labels and descriptions */
+static intn check_lab_desc (uint16 tag, uint16 ref, char *label, char *desc);
+
+/****************************************************************
+**
+**  gen2Dfloat:  generate 2-D data array
+**
+****************************************************************/
+static      VOID
+gen2Dfloat(int height, int width, float *data)
+{
+    int         i, j;
+    float      *pdata;
+
+    /* store one value per row, increasing by one for each row */
+    pdata = data;
+    for (i = 0; i < height; i++)
+        for (j = 0; j < width; j++)
+            *pdata++ = (float) (i + 1);
+
+}
+
+/****************************************************************
+**
+**  genimage:  generate image from 2-D float array
+**
+****************************************************************/
+static      VOID
+genimage(int height, int width, float *data, uint8 *image)
+{
+    int         i, limit;
+    float      *pdata, max, min, multiplier;
+
+    limit = height * width;
+    pdata = data;
+    max = min = *pdata;
+    for (i = 0; i < limit; i++, pdata++)
+      {
+          max = (max > *pdata) ? max : *pdata;
+          min = (min < *pdata) ? min : *pdata;
+      }
+    /* store one value per row, increasing by one for each row */
+    pdata = data;
+    multiplier = (float32) 255.0 / (max - min);
+    for (i = 0; i < limit; i++)
+        *image++ = (uint8) (((*pdata++) - min) * multiplier);
+
+}
+
+/****************************************************************
+**
+**  check_lab_desc:  read and compare label and description
+**                   with expected ones
+**
+****************************************************************/
+static      intn
+check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
+{
+    int32       inlablen, indesclen, ret;
+    char        inlabel[MAXLEN_LAB], *indesc;
+    intn num_errs=0;
+
+    inlablen = DFANgetlablen(DFAN_FILE, tag, ref);
+    CHECK(inlablen, FAIL, "check_lab_desc: DFANgetlablen");
+
+    ret = DFANgetlabel(DFAN_FILE, tag, ref, inlabel, MAXLEN_LAB);
+    CHECK(ret, FAIL, "check_lab_desc: DFANgetlabel");
+    VERIFY_CHAR(inlabel, label, "check_lab_desc: DFANgetlabel");
+
+    indesclen = DFANgetdesclen(DFAN_FILE, tag, ref);
+    CHECK(indesclen, FAIL, "check_lab_desc: DFANgetdesclen");
+    if (indesclen >= 0)
+    {
+        indesc = (char *) HDmalloc(indesclen + 1);
+        ret = DFANgetdesc(DFAN_FILE, tag, ref, indesc, MAXLEN_DESC);
+        CHECK(ret, FAIL, "check_lab_desc: DFANgetdesc");
+
+        indesc[indesclen] = '\0';
+        VERIFY_CHAR(indesc, desc, "check_lab_desc: DFANgetdesc");
+        HDfree((VOIDP) indesc);
+    }
+    return(num_errs);
+}
+
+
+intn add_sdfile_annotations()
+{
+    int32  file_id;
+    char   labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC], tempstr[MAXLEN_DESC];
+    intn   ret;
+    intn num_errs=0;
+
+/* set up file labels and descriptions */
+
+    HDstrcpy(labels[0], "File Label #1");
+    HDstrcpy(labels[1], "File Label #2");
+    HDstrcpy(descs[0], "File Descr #1: This is a file label, added\n");
+    HDstrcat(descs[0], "       by the DFAN interface...**END SDS 1 DESCR**\n");
+    HDstrcpy(descs[1], "File Descr #2: This is another file label added\n");
+    HDstrcat(descs[1], "       by the DFAN API as well.**END SDS 2 DESCR**\n");
+
+/********  Write file labels and descriptions *********/
+
+    file_id = Hopen(DFAN_FILE, DFACC_CREATE, 0);
+    if (file_id == FAIL)
+        printf("\nUnable to open file %s for writing.\n\n", DFAN_FILE);
+
+    ret = DFANaddfid(file_id, labels[0]);
+    CHECK(ret, FAIL, "DFANaddfid");
+
+    ret = DFANaddfid(file_id, labels[1]);
+    CHECK(ret, FAIL, "DFANaddfid");
+
+    ret = DFANaddfds(file_id, descs[0], (int32)HDstrlen(descs[0]));
+    CHECK(ret, FAIL, "DFANaddfds");
+
+    ret = DFANaddfds(file_id, descs[1], (int32)HDstrlen(descs[1]));
+    CHECK(ret, FAIL, "DFANaddfds");
+
+    if (FAIL == Hclose(file_id))
+        printf("\nUnable to close file %s after writing.\n\n", DFAN_FILE);
+
+/********  Read file labels *********/
+
+    file_id = Hopen(DFAN_FILE, DFACC_READ, 0);
+    if (file_id == FAIL)
+        printf("\n\nUnable to open file %s for reading.\n\n", DFAN_FILE);
+
+    ret = DFANgetfidlen(file_id, ISFIRST);
+    CHECK(ret, FAIL, "DFANgetfidlen");
+    VERIFY(ret, strlen(labels[0]), "DFANgetfidlen first file label");
+
+    ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, ISFIRST);
+    CHECK(ret, FAIL, "DFANgetfid");
+    VERIFY_CHAR(labels[0], tempstr, "DFANgetfid first file label");
+
+    ret = DFANgetfidlen(file_id, NOTFIRST);
+    CHECK(ret, FAIL, "DFANgetfidlen");
+    VERIFY(ret, strlen(labels[1]), "DFANgetfidlen second file label");
+
+    ret = DFANgetfid(file_id, tempstr, MAXLEN_LAB, NOTFIRST);
+    CHECK(ret, FAIL, "DFANgetfid");
+    VERIFY_CHAR(labels[1], tempstr, "DFANgetfid second file label");
+
+/********  Read file descriptions *********/
+
+    ret = DFANgetfdslen(file_id, ISFIRST);
+    CHECK(ret, FAIL, "DFANgetfdslen");
+    VERIFY(ret, strlen(descs[0]), "DFANgetfdslen first file description");
+
+    ret = DFANgetfds(file_id, tempstr, MAXLEN_DESC, ISFIRST);
+    CHECK(ret, FAIL, "DFANgetfds");
+    VERIFY_CHAR(tempstr, descs[0], "DFANgetfds first file description");
+
+    ret = DFANgetfdslen(file_id, NOTFIRST);
+    CHECK(ret, FAIL, "DFANgetfdslen");
+    VERIFY(ret, strlen(descs[1]), "DFANgetfdslen second file description");
+
+    ret = DFANgetfds(file_id, tempstr, MAXLEN_DESC, NOTFIRST);
+    CHECK(ret, FAIL, "DFANgetfds");
+    VERIFY_CHAR(tempstr, descs[1], "DFANgetfds second file description");
+
+    if (FAIL == Hclose(file_id))
+        printf("\n\nUnable to close file %s after reading.\n\n", DFAN_FILE);
+
+    return (num_errs);
+} /* add_sdfile_annotations */
+
+
+intn add_sds_annotations()
+{
+    char        labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC];
+    uint16      refnum;
+    int32       ret;
+    intn        rank;
+    int         jj;
+    int32       dimsizes[2];
+    float      *data;
+    intn num_errs=0;
+
+/* set up object labels and descriptions */
+
+    HDstrcpy(labels[0], "Object label #1: sds");
+    HDstrcpy(labels[1], "Object label #2: sds");
+    HDstrcpy(descs[0], "Object Descr #1: 1 2 3 4 5 6 7 8 9 10 11 12 \n");
+    HDstrcat(descs[0], "       13 14 15 16 17 18 19 20 **END SDS 1 DESCR**\n");
+    HDstrcpy(descs[1], "Object Descr #2: a b c d e f g h i j k l m n o p \n");
+    HDstrcat(descs[1], "       q r s t u v w x y z ??? **END SDS 2 DESCR**\n");
+
+/***** generate float array *****/
+
+    data = (float *) HDmalloc(ROWS * COLS * sizeof(float));
+    dimsizes[0] = ROWS;
+    dimsizes[1] = COLS;
+
+    /* Generate data for data sets */
+    gen2Dfloat(ROWS, COLS, data);
+
+    /* Set rank and dimension sizes for subsequent SDSs */
+    ret = DFSDsetdims(2, dimsizes);
+
+    /********  Write labels and descriptions *********/
+
+    /* Write REPS data sets and add a label and a description to each data set */
+    for (jj = 0; jj < REPS; jj++)
+    {
+        /* write out scientific data set */
+        ret = DFSDadddata(DFAN_FILE, 2, dimsizes, (VOIDP) data);
+        CHECK(ret, FAIL, "add_sds_annotations: DFSDadddata");
+        refnum = DFSDlastref();
+
+        /* Add label and description to this data set */
+        ret = DFANputlabel(DFAN_FILE, DFTAG_NDG, refnum, labels[jj]);
+        CHECK(ret, FAIL, "add_sds_annotations: DFANputlabel");
+
+        ret = DFANputdesc(DFAN_FILE, DFTAG_NDG, refnum,
+                              descs[jj], (int32)HDstrlen(descs[jj]));
+        CHECK(ret, FAIL, "add_sds_annotations: DFANputdesc");
+    }
+
+    /********  Read labels and descriptions *********/
+    for (jj = 0; jj < REPS; jj++)
+    {
+        ret = DFSDgetdims(DFAN_FILE, &rank, dimsizes, 3);
+        CHECK(ret, FAIL, "add_sds_annotations: DFSDgetdims");
+        refnum = DFSDlastref();
+
+        /* Verify data of labels and descriptions */
+        num_errs = check_lab_desc(DFTAG_NDG, refnum, labels[jj], descs[jj]);
+    }
+    HDfree((VOIDP) data);
+
+    return (num_errs);
+} /* add_sds_annotations */
+
+
+static int test_dfannots(void)
+{
+    int32 sd_id, sds_id, sds_index;
+    intn  ii, status, num_annots;
+    int32 rank, data_type, dim_sizes[MAX_VAR_DIMS];
+    int32 n_datasets, n_file_attr, n_attrs; 
+    int32 *offsetarray=NULL, *lengtharray=NULL;
+    ann_type annot_type;
+    char  sds_name[MAX_NC_NAME];
+    intn  num_errs = 0;
+
+    /* Add file annotations */
+    status = add_sdfile_annotations();
+    if (status > 0)
+        fprintf(stderr, "test_dfannots: errors while adding file annotations\n");
+
+    /* Add SDS annotations */
+    status = add_sds_annotations();
+    if (status > 0)
+        fprintf(stderr, "test_dfannots: errors while adding sds annotations\n");
+
+    /**********************************************************************
+     * Using SD API to get offset/length of data from data set annotations *
+     **********************************************************************/
+
+    /* Open the file and initialize the SD interface. */
+    sd_id = SDstart(DFAN_FILE, DFACC_READ);
+    CHECK(sd_id, FAIL, "test_dfannots: SDstart");
+
+    /* Obtain information about the file. */ 
+    status = SDfileinfo(sd_id, &n_datasets, &n_file_attr);
+    CHECK(status, FAIL, "test_dfannots: SDfileinfo");
+
+    /* Get annotation information of each SDS in the file. */
+    for (sds_index=0; sds_index< n_datasets; sds_index++) 
+    {
+	sds_id = SDselect (sd_id, sds_index);
+        CHECK(sds_id, FAIL, "test_dfannots: SDselect");
+
+        /* Only data sets have annotations */
+        if (!SDiscoordvar(sds_id))
+        {
+	    num_annots = SDgetanndatainfo(sds_id, AN_DATA_DESC, 0, NULL, NULL);
+            CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_DESC with NULL buffers");
+
+	    if (num_annots > 0)
+	    {
+	        offsetarray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+	        if (offsetarray == NULL)
+		    exit(-1);
+	        lengtharray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+	        if (lengtharray == NULL)
+		    exit(-1);
+
+	        num_annots = SDgetanndatainfo(sds_id, AN_DATA_DESC, num_annots,
+						offsetarray, lengtharray);
+                CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_DESC");
+
+	    }
+
+	    num_annots = SDgetanndatainfo(sds_id, AN_DATA_LABEL, 0, NULL, NULL);
+            CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_LABEL with NULL buffers");
+	    if (num_annots > 0)
+	    {
+	        offsetarray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+	        if (offsetarray == NULL)
+		    exit(-1);
+	        lengtharray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+	        if (lengtharray == NULL)
+		    exit(-1);
+
+	        num_annots = SDgetanndatainfo(sds_id, AN_DATA_LABEL, num_annots,
+						offsetarray, lengtharray);
+                CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_LABEL");
+
+	    }
+        } /* SDS is not coordinate var */
+
+        /* Terminate access to the selected data set. */
+        status = SDendaccess(sds_id);
+        CHECK(status, FAIL, "test_dfannots: SDendaccess");
+    } /* for each data set */
+
+    /* Terminate access to the SD interface and close the file. */
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "test_dfannots: SDend");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}
+
 /* Test driver for testing the public function SDgetattdatainfo. */
- /* extern int test_datainfo()
- */ 
-int main()
+extern int test_att_ann_datainfo()
 {
     intn status;
     int num_errs = 0;
 
     /* Output message about test being performed */
-    TESTING("getting location info of data (tdatainfo.c)");
+    TESTING("getting location info of attr and annot data (tattdatainfo.c)");
 
-    /* Test nonspecial SDSs */
+    /* Test getting data info of attributes for SDSs */
     num_errs = num_errs + test_attrs();
+
+    /* Test getting data info of annotations added by DFAN API */
+    num_errs = num_errs + test_dfannots();
+
+    /* Test getting data info of annotations added by AN API */
+     /* num_errs = num_errs + test_mfannots();
+ */ 
 
     if (num_errs == 0) PASSED();
     return num_errs;

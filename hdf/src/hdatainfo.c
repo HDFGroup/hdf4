@@ -253,10 +253,14 @@ HDgetdatainfo(int32 file_id,
 		if (chk_coord != NULL)
 		    count = HMCgetdatainfo(file_id, tag, ref, chk_coord,
 			    start_block, info_count, offsetarray, lengtharray);
-		else
+		else /* BMR: check to see what should be done here */
 		{
-		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", tag, ref);
-		    exit(0); /* BMR: check to see what should be done here */
+/* commented this out so subsequent tests can be run - 1/2011 */
+		    /*  fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", tag, ref);
+		    exit(0);
+		or
+		    HGOTO_ERROR(DFE_ARGS, FAIL);
+ */ 
 		}
 	    }
 

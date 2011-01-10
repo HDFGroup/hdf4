@@ -75,7 +75,7 @@ extern int test_compression();
 extern int test_dimension();
 extern int test_datasizes();
 extern int test_datainfo();
-extern int test_readdata();
+extern int test_att_ann_datainfo();
 
 int 
 main(int argc, char *argv[])
@@ -1511,6 +1511,11 @@ main(int argc, char *argv[])
     /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in 
 	tdatainfo.c) - 03/20/10 */
     status = test_datainfo();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing SDgetattdatainfo
+       and SDgetanndatainto (in tattdatainfo.c) - 1/7/10 */
+    status = test_att_ann_datainfo();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing SDidtype (in tidtypes.c)
