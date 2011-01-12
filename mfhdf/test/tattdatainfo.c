@@ -336,7 +336,10 @@ static intn test_attrs()
 } /* test_attrs */
 
 
-#define DFAN_FILE "tdfanndg.hdf"
+/* -----------  Need a bit clean up.  Check in now for Joe. -BMR */
+
+#define DFAN_NDG_FILE "tdfanndg.hdf"
+#define DFAN_SDG_FILE "tdfansdg.hdf" /* only for SDG annotation tests */
 #define MAXLEN_LAB     50
 #define MAXLEN_DESC   200
 #define ROWS           10
@@ -347,7 +350,7 @@ static intn test_attrs()
 /* to generate data set's data */
 static VOID gen2Dfloat (int height, int width, float *data);
 /* to verify data of labels and descriptions */
-static intn check_lab_desc (uint16 tag, uint16 ref, char *label, char *desc);
+static intn check_lab_desc (char* fname, uint16 tag, uint16 ref, char *label, char *desc);
 
 /****************************************************************
 **
@@ -402,25 +405,25 @@ genimage(int height, int width, float *data, uint8 *image)
 **
 ****************************************************************/
 static      intn
-check_lab_desc(uint16 tag, uint16 ref, char *label, char *desc)
+check_lab_desc(char* fname, uint16 tag, uint16 ref, char *label, char *desc)
 {
     int32       inlablen, indesclen, ret;
     char        inlabel[MAXLEN_LAB], *indesc;
     intn num_errs=0;
 
-    inlablen = DFANgetlablen(DFAN_FILE, tag, ref);
+    inlablen = DFANgetlablen(fname, tag, ref);
     CHECK(inlablen, FAIL, "check_lab_desc: DFANgetlablen");
 
-    ret = DFANgetlabel(DFAN_FILE, tag, ref, inlabel, MAXLEN_LAB);
+    ret = DFANgetlabel(fname, tag, ref, inlabel, MAXLEN_LAB);
     CHECK(ret, FAIL, "check_lab_desc: DFANgetlabel");
     VERIFY_CHAR(inlabel, label, "check_lab_desc: DFANgetlabel");
 
-    indesclen = DFANgetdesclen(DFAN_FILE, tag, ref);
+    indesclen = DFANgetdesclen(fname, tag, ref);
     CHECK(indesclen, FAIL, "check_lab_desc: DFANgetdesclen");
     if (indesclen >= 0)
     {
         indesc = (char *) HDmalloc(indesclen + 1);
-        ret = DFANgetdesc(DFAN_FILE, tag, ref, indesc, MAXLEN_DESC);
+        ret = DFANgetdesc(fname, tag, ref, indesc, MAXLEN_DESC);
         CHECK(ret, FAIL, "check_lab_desc: DFANgetdesc");
 
         indesc[indesclen] = '\0';
@@ -449,9 +452,9 @@ intn add_sdfile_annotations()
 
 /********  Write file labels and descriptions *********/
 
-    file_id = Hopen(DFAN_FILE, DFACC_CREATE, 0);
+    file_id = Hopen(DFAN_NDG_FILE, DFACC_CREATE, 0);
     if (file_id == FAIL)
-        printf("\nUnable to open file %s for writing.\n\n", DFAN_FILE);
+        printf("\nUnable to open file %s for writing.\n\n", DFAN_NDG_FILE);
 
     ret = DFANaddfid(file_id, labels[0]);
     CHECK(ret, FAIL, "DFANaddfid");
@@ -466,13 +469,13 @@ intn add_sdfile_annotations()
     CHECK(ret, FAIL, "DFANaddfds");
 
     if (FAIL == Hclose(file_id))
-        printf("\nUnable to close file %s after writing.\n\n", DFAN_FILE);
+        printf("\nUnable to close file %s after writing.\n\n", DFAN_NDG_FILE);
 
 /********  Read file labels *********/
 
-    file_id = Hopen(DFAN_FILE, DFACC_READ, 0);
+    file_id = Hopen(DFAN_NDG_FILE, DFACC_READ, 0);
     if (file_id == FAIL)
-        printf("\n\nUnable to open file %s for reading.\n\n", DFAN_FILE);
+        printf("\n\nUnable to open file %s for reading.\n\n", DFAN_NDG_FILE);
 
     ret = DFANgetfidlen(file_id, ISFIRST);
     CHECK(ret, FAIL, "DFANgetfidlen");
@@ -509,13 +512,13 @@ intn add_sdfile_annotations()
     VERIFY_CHAR(tempstr, descs[1], "DFANgetfds second file description");
 
     if (FAIL == Hclose(file_id))
-        printf("\n\nUnable to close file %s after reading.\n\n", DFAN_FILE);
+        printf("\n\nUnable to close file %s after reading.\n\n", DFAN_NDG_FILE);
 
     return (num_errs);
 } /* add_sdfile_annotations */
 
 
-intn add_sds_annotations()
+intn add_sdsNDG_annotations()
 {
     char        labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC];
     uint16      refnum;
@@ -553,34 +556,132 @@ intn add_sds_annotations()
     for (jj = 0; jj < REPS; jj++)
     {
         /* write out scientific data set */
-        ret = DFSDadddata(DFAN_FILE, 2, dimsizes, (VOIDP) data);
-        CHECK(ret, FAIL, "add_sds_annotations: DFSDadddata");
+        ret = DFSDadddata(DFAN_NDG_FILE, 2, dimsizes, (VOIDP) data);
+        CHECK(ret, FAIL, "add_sdsNDG_annotations: DFSDadddata");
         refnum = DFSDlastref();
 
         /* Add label and description to this data set */
-        ret = DFANputlabel(DFAN_FILE, DFTAG_NDG, refnum, labels[jj]);
-        CHECK(ret, FAIL, "add_sds_annotations: DFANputlabel");
+        ret = DFANputlabel(DFAN_NDG_FILE, DFTAG_NDG, refnum, labels[jj]);
+        CHECK(ret, FAIL, "add_sdsNDG_annotations: DFANputlabel");
 
-        ret = DFANputdesc(DFAN_FILE, DFTAG_NDG, refnum,
+        ret = DFANputdesc(DFAN_NDG_FILE, DFTAG_NDG, refnum,
                               descs[jj], (int32)HDstrlen(descs[jj]));
-        CHECK(ret, FAIL, "add_sds_annotations: DFANputdesc");
+        CHECK(ret, FAIL, "add_sdsNDG_annotations: DFANputdesc");
     }
 
     /********  Read labels and descriptions *********/
     for (jj = 0; jj < REPS; jj++)
     {
-        ret = DFSDgetdims(DFAN_FILE, &rank, dimsizes, 3);
-        CHECK(ret, FAIL, "add_sds_annotations: DFSDgetdims");
+        ret = DFSDgetdims(DFAN_NDG_FILE, &rank, dimsizes, 3);
+        CHECK(ret, FAIL, "add_sdsNDG_annotations: DFSDgetdims");
         refnum = DFSDlastref();
 
         /* Verify data of labels and descriptions */
-        num_errs = check_lab_desc(DFTAG_NDG, refnum, labels[jj], descs[jj]);
+        num_errs = check_lab_desc(DFAN_NDG_FILE, DFTAG_NDG, refnum, labels[jj], descs[jj]);
     }
     HDfree((VOIDP) data);
 
     return (num_errs);
-} /* add_sds_annotations */
+} /* add_sdsNDG_annotations */
 
+intn add_sdsSDG_annotations()
+{
+    char        labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC],
+                descris[MAXLEN_DESC];
+    uint8       pal[768];
+    uint16      refnum;
+    int32       ret;
+    intn        rank;
+    int         j;
+    int32       dimsizes[2];
+    float      *data;
+    intn num_errs=0;
+
+/* set up object labels and descriptions */
+
+    HDstrcpy(labsds, "sdsSDG label #1: sds");
+    HDstrcpy(descsds, "sdsSDG Descr #1: 1  2  3  4  5  6  7  8  9 10 11 12 \n");
+    HDstrcat(descsds, "             13 14 15 16 17 18 19 20 **END SDS DESCR**\n");
+    HDstrcpy(descris, "sdsSDG Descr #2: A B C D E F G H I J K L \n");
+    HDstrcat(descris, "                M N O **END IMAGE DESCR **\n");
+
+/***** generate float array and image *****/
+
+    data = (float *) HDmalloc(ROWS * COLS * sizeof(float));
+
+    dimsizes[0] = ROWS;
+    dimsizes[1] = COLS;
+
+    gen2Dfloat(ROWS, COLS, data);
+
+    ret = DFSDsetdims(2, dimsizes);
+
+/********  Write labels and descriptions *********/
+    for (j = 0; j < REPS; j++)
+      {
+
+          /* write out scientific data set */
+          ret = DFSDadddata(DFAN_SDG_FILE, 2, dimsizes, (VOIDP) data);
+
+            {   /* write out annotations for 2 out of every 3 */
+                refnum = DFSDlastref();
+                ret = DFANputlabel(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds);
+                ret = DFANputdesc(DFAN_SDG_FILE, DFTAG_SDG, refnum,
+                                  descsds, (int32)HDstrlen(descsds));
+            }
+      }
+
+/********  Read labels and descriptions *********/
+
+    for (j = 0; j < REPS; j++)
+      {
+          ret = DFSDgetdims(DFAN_SDG_FILE, &rank, dimsizes, 3);
+          refnum = DFSDlastref();
+
+          if ((j % 3) != 0)     /* read in annotations for 2 out of every 3 */
+              num_errs = check_lab_desc(DFAN_SDG_FILE, DFTAG_SDG, refnum, labsds, descsds);
+      }
+
+    HDfree((VOIDP) data);
+    return 0;
+}
+
+/* Common code to get data info of annotations and verify the offsets/lengths */
+static intn get_ann_datainfo(
+		int32 id,
+		ann_type annot_type,
+		int32 *chk_offsets,
+		int32 *chk_lengths)
+{
+    int32 *offsetarray=NULL, *lengtharray=NULL;
+    int32 num_annots;
+    intn  ii, num_errs = 0;
+
+    num_annots = SDgetanndatainfo(id, annot_type, 0, NULL, NULL);
+    CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo annot_type with NULL buffers");
+
+    if (num_annots > 0)
+    {
+	offsetarray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+	if (offsetarray == NULL) exit(-1);
+	lengtharray = (int32 *)HDmalloc(num_annots * sizeof(int32));
+	if (lengtharray == NULL) exit(-1);
+
+	num_annots = SDgetanndatainfo(id, annot_type, num_annots,
+			offsetarray, lengtharray);
+        CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo");
+
+	/* Verify offsets and lengths of annotations */
+	for (ii = 0; ii < num_annots; ii++)
+	{
+	    VERIFY(offsetarray[ii], chk_offsets[ii], "test_dfannots/get_ann_datainfo: SDgetanndatainfo");
+	    VERIFY(lengtharray[ii], chk_lengths[ii], "test_dfannots/get_ann_datainfo: SDgetanndatainfo");
+	}
+
+	HDfree(offsetarray);
+	HDfree(lengtharray);
+    }
+}
 
 static int test_dfannots(void)
 {
@@ -589,7 +690,10 @@ static int test_dfannots(void)
     int32 rank, data_type, dim_sizes[MAX_VAR_DIMS];
     int32 n_datasets, n_file_attr, n_attrs; 
     int32 *offsetarray=NULL, *lengtharray=NULL;
-    ann_type annot_type;
+    int32 chk_offsets[10], chk_lengths[10];
+    int32 num_labels = 0,      /* number of file or object labels */
+          num_descs = 0;       /* number of file or object descriptions */
+
     char  sds_name[MAX_NC_NAME];
     intn  num_errs = 0;
 
@@ -598,18 +702,38 @@ static int test_dfannots(void)
     if (status > 0)
         fprintf(stderr, "test_dfannots: errors while adding file annotations\n");
 
-    /* Add SDS annotations */
-    status = add_sds_annotations();
+    /* Add SDS annotations via NDG */
+    status = add_sdsNDG_annotations();
     if (status > 0)
-        fprintf(stderr, "test_dfannots: errors while adding sds annotations\n");
+        fprintf(stderr, "test_dfannots: errors while adding NDG annotations\n");
+
+    /* Add SDS annotations via SDG in a separate file */
+    status = add_sdsSDG_annotations();
+    if (status > 0)
+        fprintf(stderr, "test_dfannots: errors while adding SDG annotations\n");
 
     /**********************************************************************
-     * Using SD API to get offset/length of data from data set annotations *
+     * Using SD API to get offset/length of data from file annotations    *
+     * and data set annotations in file DFAN_NDG_FILE to test NDG annots  *
      **********************************************************************/
 
     /* Open the file and initialize the SD interface. */
-    sd_id = SDstart(DFAN_FILE, DFACC_READ);
+    sd_id = SDstart(DFAN_NDG_FILE, DFACC_READ);
     CHECK(sd_id, FAIL, "test_dfannots: SDstart");
+
+    /* BMR: need better checking algorithm here! */
+
+    /* Get data info of file labels and verify them against chk_offsets and
+	chk_lengths */
+    chk_offsets[0] = 307; chk_offsets[1] = 294; /* verified with UNIX command */
+    chk_lengths[0] = 13; chk_lengths[1] = 13;   /* "od --format=a" */
+    status = get_ann_datainfo(sd_id, AN_FILE_LABEL, chk_offsets, chk_lengths);
+
+    /* Get data info of file descs and verify them against chk_offsets and
+	chk_lengths */
+    chk_offsets[0] = 414; chk_offsets[1] = 320; /* verified with UNIX command */
+    chk_lengths[0] = 99; chk_lengths[1] = 94;   /* "od --format=a" */
+    status = get_ann_datainfo(sd_id, AN_FILE_DESC, chk_offsets, chk_lengths);
 
     /* Obtain information about the file. */ 
     status = SDfileinfo(sd_id, &n_datasets, &n_file_attr);
@@ -624,40 +748,34 @@ static int test_dfannots(void)
         /* Only data sets have annotations */
         if (!SDiscoordvar(sds_id))
         {
-	    num_annots = SDgetanndatainfo(sds_id, AN_DATA_DESC, 0, NULL, NULL);
-            CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_DESC with NULL buffers");
-
-	    if (num_annots > 0)
+            /* Get data info of object descs and verify them against
+               chk_offsets and chk_lengths */
+	    if (sds_index == 2) /* first data set, not dimension var */
 	    {
-	        offsetarray = (int32 *)HDmalloc(num_annots * sizeof(int32));
-	        if (offsetarray == NULL)
-		    exit(-1);
-	        lengtharray = (int32 *)HDmalloc(num_annots * sizeof(int32));
-	        if (lengtharray == NULL)
-		    exit(-1);
-
-	        num_annots = SDgetanndatainfo(sds_id, AN_DATA_DESC, num_annots,
-						offsetarray, lengtharray);
-                CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_DESC");
-
+                chk_offsets[0] = 987; /* verified with UNIX */
+		chk_lengths[0] = 96; /* command "od --format=a" */
 	    }
-
-	    num_annots = SDgetanndatainfo(sds_id, AN_DATA_LABEL, 0, NULL, NULL);
-            CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_LABEL with NULL buffers");
-	    if (num_annots > 0)
+	    else if (sds_index == 5) /* second data set, not dimension var */
 	    {
-	        offsetarray = (int32 *)HDmalloc(num_annots * sizeof(int32));
-	        if (offsetarray == NULL)
-		    exit(-1);
-	        lengtharray = (int32 *)HDmalloc(num_annots * sizeof(int32));
-	        if (lengtharray == NULL)
-		    exit(-1);
-
-	        num_annots = SDgetanndatainfo(sds_id, AN_DATA_LABEL, num_annots,
-						offsetarray, lengtharray);
-                CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo AN_DATA_LABEL");
-
+                chk_offsets[0] = 1729; /* verified with UNIX */
+		chk_lengths[0] = 101; /* command "od --format=a" */
 	    }
+					
+            status = get_ann_datainfo(sds_id, AN_DATA_DESC, chk_offsets, chk_lengths);
+
+            /* Get data info of object labels and verify them against
+               chk_offsets and chk_lengths */
+	    if (ii == 0) /* first data set */
+	    {
+                chk_offsets[0] = 936; /* verified with UNIX */
+		chk_lengths[0] = 20; /* command "od --format=a" */
+	    }
+	    else if (ii == 1) /* second data set */
+	    {
+                chk_offsets[0] = 1705; /* verified with UNIX */
+		chk_lengths[0] = 20; /* command "od --format=a" */
+	    }
+            status = get_ann_datainfo(sds_id, AN_DATA_DESC, chk_offsets, chk_lengths);
         } /* SDS is not coordinate var */
 
         /* Terminate access to the selected data set. */
@@ -669,6 +787,10 @@ static int test_dfannots(void)
     status = SDend(sd_id);
     CHECK(status, FAIL, "test_dfannots: SDend");
 
+    /**********************************************************************
+     * Using SD API to get offset/length of data from file annotations    *
+     * and data set annotations in file DFAN_NDG_FILE to test NDG annots  *
+     **********************************************************************/
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }

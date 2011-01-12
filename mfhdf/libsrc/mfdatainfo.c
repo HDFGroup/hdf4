@@ -269,10 +269,10 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 
             /* If this dimension is not represented by a vgroup (old dimension,
                HDF 3.2, released in 1993) return to caller with error code
-               DFE_DIMNOVG so caller can call SDgetdimattdatainfo to get
-               to its attributes manually */
-		if (vg_ref == 0)
-		    HGOTO_DONE(DFE_DIMNOVG);
+               DFE_NOVGREP so caller can call SDgetoldattdatainfo to get
+               to its attributes directly from the file */
+	    if (vg_ref == 0)
+		HGOTO_DONE(DFE_NOVGREP);
 	}
 	/* SDS id is given */
 	else
@@ -286,6 +286,13 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 
 	    /* get the reference number of the vgroup representing this SDS */
 	    vg_ref = var->vgid;
+
+            /* If this data set is not represented by a vgroup (old data set,
+               HDF 3.2, released in 1993) return to caller with error code
+               DFE_NOVGREP so caller can call SDgetoldattdatainfo to get
+               to its attributes directly from the file */
+	    if (vg_ref == 0)
+		HGOTO_DONE(DFE_NOVGREP);
 	}
     }
     /* File id is given */
@@ -297,6 +304,8 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 
 	/* get the reference number of the vgroup representing the file */
 	vg_ref = handle->vgid;
+        /* I believe file did not have the case of old pre-defined attributes, so
+           no special handling for DFE_NOVGREP here. -BMR 1/11/2011 */
     }
 
     /* Validate the vgroup ref# */
@@ -399,6 +408,33 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
         *attr_tag = DFTAG_SDU;
     else if (HDstrcmp(_HDF_Format, attr_name) == 0)
         *attr_tag = DFTAG_SDF;
+
+#if 0 /* finish annotation for SDG first */
+    else if (HDstrcmp(_HDF_CoordSys, attr_name) == 0)
+        *attr_tag = DFTAG_SDC;
+    else if ((HDstrcmp(_HDF_ValidMin, attr_name) == 0) ||
+             (HDstrcmp(_HDF_ValidMin, attr_name) == 0) ||
+             (HDstrcmp(_HDF_ValidRange, attr_name) == 0))
+        *attr_tag = DFTAG_SDM;
+    else if (HDstrcmp(_FillValue, attr_name) == 0)
+	*attr_tag = DFTAG_FV;
+    else if (HDstrcmp(_HDF_CalibratedNt, attr_name) == 0)
+	*attr_tag = DFTAG_CAL:
+ /* else if (HDstrcmp(_HDF_ScaleFactor, attr_name) == 0)
+found = TRUE;
+else if (HDstrcmp(_HDF_ScaleFactorErr, attr_name) == 0)
+found = TRUE;
+else if (HDstrcmp(_HDF_AddOffset, attr_name) == 0)
+found = TRUE;
+else if (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0)
+found = TRUE;
+ */
+/*
+    else 
+            case DFTAG_SDLNK:
+ fprintf(stderr, "    DFTAG_SDLNK / tmpRef=%d, attr_name = %s\n", tmpRef, attr_name);
+ */
+#endif
     else
     {
         ret_value = FAIL;
@@ -409,10 +445,10 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
 
 /******************************************************************************
  NAME
-    SDgetdimattdatainfo -- Retrieves location and size of dimension attribute's
+    SDgetoldattdatainfo -- Retrieves location and size of old predefined attribute's
 			   data.
  USAGE
-    intn SDgetdimattdatainfo(id, sdsid, attr_name, offset, length)
+    intn SDgetoldattdatainfo(id, sdsid, attr_name, offset, length)
 	int32 dim_id		IN: dimension ID
 	int32 sdsid		IN: SDS ID that dim_id belongs
 	char *attr_name		IN: name of the attribute being inquired
@@ -423,26 +459,33 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
     and FAIL, otherwise.
 
  DESCRIPTION
-    In some older files, when dimensions were not stored as vgroup yet, the
-    pre-defined attributes that belong to the dimensions were written following
-    the same pre-defined attributes of the dataset.
+    In some older files, when data sets and dimensions were not stored as
+    vgroup yet, the pre-defined attributes that belong to the data sets
+    and dimensions were written as followed:
+	attr_tag/attr_ref specify offset and length of the attribute string
+	such as:
+    "<SDS attribute values>b<dim0 attribute values>b<dim1 attribute values>b..."
+
+	Some examples of attr_tag are: (refer to htags.h for more)
+	DFTAG_SDL for Labels attribute
+	DFTAG_SDU for Units attribute
+	...
  
- SDgetdimattdatainfo retrieves the location of the attribute's data and its
-    length.
+    SDgetoldattdatainfo retrieves the offset and length of the attribute's
+    data.
 
  MODIFICATION
-    2010/10/14: Revised to remove the parameter attrname because, for hmap
-	project, it makes sense to just provide the attribute index. -BMR
+    2011/1/11: Revised to handle offset/length of SDS' attribute too. -BMR
 
 ******************************************************************************/
 intn
-SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
+SDgetoldattdatainfo(int32 dim_id,	/* IN: dimension ID */
 		    int32 sdsid,	/* IN: ID of dataset the dim belongs to */
 		    char  *attr_name,    /* IN: name of attribute to be inquired */
 		    int32 *offset,      /* OUT: buffer for offset */
 		    int32 *length)      /* OUT: buffer for length */
 {
-    CONSTR(FUNC, "SDgetdimattdatainfo");
+    CONSTR(FUNC, "SDgetoldattdatainfo");
     NC     *handle;
     NC_var *var;
     NC_dim *dim;
@@ -453,6 +496,7 @@ SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
     char   *lufbuf=NULL, *lufp=NULL;
     uint16  att_tag, att_ref;
     intn    dimidx_infile=0, dimidx_invar=0;
+    intn    isdim = 0;
     int     ii;
     intn    status,	/* returned value */
 	    ret_value = 0;
@@ -460,12 +504,13 @@ SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
     /* Clear error stack */
     HEclear();
 
-    /* Check if the given dimension id really is a dimension id */
+    /* Check if a dimension ID is given then set flag */
     handle = SDIhandle_from_id(dim_id, DIMTYPE);
-    if(handle == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    if(handle != NULL)
+	isdim = 1;
 
-    /* Check if the given dataset id really is a dataset id */
+    /* Check if the given dataset ID really is a dataset ID; dataset ID
+       must always be available */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -492,8 +537,8 @@ SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
 
     if (att_tag != 0 && att_ref != 0)
     {
-        /* Get offset/length of the luf string, which includes luf of the dataset
-           and its dimensions all together */
+        /* Get offset/length of the luf string, which includes luf of the
+	   data set and its dimensions all together */
         off = Hoffset(handle->hdf_file, att_tag, att_ref);
         if (off == FAIL)
             HGOTO_ERROR(DFE_BADOFFSET, FAIL);
@@ -514,52 +559,64 @@ SDgetdimattdatainfo(int32 dim_id,	/* IN: dimension ID */
         Hgetelement(handle->hdf_file, att_tag, att_ref, lufbuf);
 
         /*
-         * Parse the luf string to obtain the offset/length of the requested
-         * dimension's luf
+         * Parse the luf string to obtain the offset/length of the requested luf
          */
-        /* Start at the beginning of the dataset's luf */
+        /* Start at the beginning of the data set's luf */
         lufp = lufbuf;
 
-        /* Skip dataset's luf using the first null character in the string */
+        /* Get the length of the data set's luf */
         sdsluf_len = HDstrlen(lufbuf);
 
-        /* Move cursor forward to the first dimension's attribute */
-        lufp += sdsluf_len + 1;
+	/* If data set's attribute is being inquired, then return with offset
+	   and length of the SDS' attribute's data only */
+	if (!isdim)
+	{
+	    *offset = off;
+	    *length = sdsluf_len;
+	}
 
-        /* Convert dimension id back to index */
-        dimidx_infile = dim_id & 0xffff;
+	/* If a dimension's attribute is being inquired, then continue parsing
+	   the attribute string to get the appropriate dimension's attribute */
+	else
+	{
+            /* Move cursor forward to the first dimension's attribute */
+            lufp += sdsluf_len + 1;
 
-        /* Find the index of dimension within the variable */
-        dimidx_invar = -1;
-        for (ii = 0; ii < var->assoc->count && dimidx_invar != ii; ii++)
-            if (var->assoc->values[ii] == dimidx_infile)
-                dimidx_invar = ii;
+            /* Convert dimension id back to index */
+            dimidx_infile = dim_id & 0xffff;
 
-        /* Walk through each dimension to find requested luf */
-        offp = 0;
-        for (ii = 0; ii <= dimidx_invar; ii++)
-        {
-            char dim_att[100];
+            /* Find the index of dimension within the variable */
+            dimidx_invar = -1;
+            for (ii = 0; ii < var->assoc->count && dimidx_invar != ii; ii++)
+                if (var->assoc->values[ii] == dimidx_infile)
+                    dimidx_invar = ii;
 
-            /* Extract dimension 1 label */
-            HDstrcpy(dim_att, (char *) lufp);
-            dim_att_len = HDstrlen(dim_att);
+            /* Walk through each dimension to find requested luf */
+            offp = 0;
+            for (ii = 0; ii <= dimidx_invar; ii++)
+            {
+                char dim_att[100];
 
-            /* Move forward if this is not the dimension we're looking for */
-            if (ii != dimidx_invar)
-	    {
-                lufp += dim_att_len + 1;
-	        offp += dim_att_len + 1;
-	    }
-        }
+                /* Extract dimension 1 label */
+                HDstrcpy(dim_att, (char *) lufp);
+                dim_att_len = HDstrlen(dim_att);
 
-        /* Calculate offset and length of the requested dimension's luf   */
-        /* - off: offset where luf string starts, returned by Hoffset     */
-        /* - sdsluf_len: length of the dataset luf + 1 for the null space */
-        /* - offp: offset accummulated of all dimension lufs before the   */
-        /*   requested one */
-        *offset = off + sdsluf_len + 1 + offp;
-        *length = dim_att_len;
+                /* Move forward if this is not the dimension we're looking for */
+                if (ii != dimidx_invar)
+	        {
+                    lufp += dim_att_len + 1;
+	            offp += dim_att_len + 1;
+	        }
+            }
+
+            /* Calculate offset and length of the requested dimension's luf   */
+            /* - off: offset where luf string starts, returned by Hoffset     */
+            /* - sdsluf_len: length of the dataset luf + 1 for the null space */
+            /* - offp: offset accummulated of all dimension lufs before the   */
+            /*   requested one */
+            *offset = off + sdsluf_len + 1 + offp;
+            *length = dim_att_len;
+	}
         ret_value = 1;
     }
     if (lufbuf) HDfree(lufbuf);
@@ -572,7 +629,7 @@ done:
      /* Normal cleanup */
 
     return ret_value;
-} /* SDgetdimattdatainfo */
+} /* SDgetoldattdatainfo */
 
 
 /******************************************************************************
@@ -609,80 +666,148 @@ done:
 intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray, int32* lengtharray)
 {
     CONSTR(FUNC, "SDgetanndatainfo");
-    int32   file_id=FAIL, an_id=FAIL; /* file ID and AN API ID */
+    int32   file_id=FAIL,	/* file, AN API, annotation IDs */
+	    an_id=FAIL,
+	    ann_id=FAIL;
     NC     *handle = NULL;	/* file structure */
     NC_var *var = NULL;		/* variable structure of sds, to get NDG ref */
-    int32  *dannots = NULL;	/* list of data annotation IDs */
+    int32  *dannots = NULL,	/* list of data annotation IDs */
+	    n_flabels = 0,	/* number of file labels */
+	    n_fdescs = 0,	/* number of file descriptions */
+	    n_dlabels = 0,	/* number of object labels */
+	    n_ddescs = 0;	/* number of file descriptions */
     uint16  elem_tag, elem_ref; /* tag/ref of dataset's NDG */
     intn    num_annots,		/* number of annotation of requested type */
             ii,
             ret_value = 0;
 
-    /* Annotation type must only be data label or description */
-    if (annot_type != AN_DATA_LABEL && annot_type != AN_DATA_DESC)
+    /* Validate array size */
+    if (size == 0 && (offsetarray != NULL && lengtharray != NULL))
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Check if the given dataset id really is a dataset id */
-    handle = SDIhandle_from_id(sdsid, SDSTYPE);
-    if(handle == NULL)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* Check if the given id is a file id */
+    handle = SDIhandle_from_id(sdsid, CDFTYPE);
 
-    /* Get the NDG ref of this dataset */
-    elem_ref = SDidtoref(sdsid);
-    elem_tag = DFTAG_NDG;
-
-    /* If this variable doesn't have a valid NDG ref, we cannot proceed */
-    if (elem_ref <= 0)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* Open file to start Annotation inteface */
-    if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
-        HGOTO_ERROR(DFE_BADOPEN, FAIL);
-    if ((an_id = ANstart(file_id)) == FAIL)
-        HGOTO_ERROR(DFE_CANTINIT, FAIL);
-
-    /* Get number of data descs or labels with this tag/ref */
-    num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
-    if (num_annots == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
-    /* If offsets and lengths are not desired, return the number of annots */
-    if (offsetarray == NULL || lengtharray == NULL)
-	HGOTO_DONE(num_annots);
-
-    /* If more annotations than space in user's buffers, only fill up buffers */
-    if (num_annots > size)
-        num_annots = size;
-
-    /* Retrieve annotations */
-    if (num_annots != 0)
+    /* It is a file id, process its annotations appropriately */
+    if (handle != NULL)
     {
-        /* Allocate space for list of annotation IDs on this tag/ref */
-        if ((dannots = (int32 *)HDmalloc(num_annots * sizeof(int32))) == NULL)
-	    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+        /* Open file to start Annotation inteface */
+        if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
+            HGOTO_ERROR(DFE_BADOPEN, FAIL);
+        if ((an_id = ANstart(file_id)) == FAIL)
+            HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
-        /* Get list of annotations IDs on this tag/ref */
-        if (ANannlist(an_id, annot_type, elem_tag, elem_ref, dannots) == FAIL)
+        /* Validate annotation type */
+        if (annot_type != AN_FILE_LABEL && annot_type != AN_FILE_DESC)
+	    HGOTO_ERROR(DFE_ARGS, FAIL);
+
+        ret_value = ANfileinfo(an_id, &n_flabels, &n_fdescs, &n_dlabels, &n_ddescs);
+	if (ret_value == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-        /* Loop through the annotation list and get their offsets/lengths */
-        for (ii = 0; ii < num_annots; ii++)
-        {
+	if (annot_type == AN_FILE_LABEL)
+	    num_annots = n_flabels;
+	else
+	    num_annots = n_fdescs;
+
+        /* If offsets and lengths are not desired, return the number of annots */
+        if (offsetarray == NULL || lengtharray == NULL)
+	    HGOTO_DONE(num_annots);
+
+        /* If more annotations than space in user's buffers, only fill up buffers */
+        if (num_annots > size)
+            num_annots = size;
+
+        /* Get offset/length of each annotation of the specified type */
+	for (ii = 0; ii < num_annots; ii++)
+	{
+	    /* Get access to the label annotation */
+	    ann_id = ANselect(an_id, ii, annot_type);
+	    if (ann_id == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
             /* Get annotation's offset and length */
-            ret_value = ANgetdatainfo(dannots[ii], &offsetarray[ii], &lengtharray[ii]);
+            ret_value = ANgetdatainfo(ann_id, &offsetarray[ii], &lengtharray[ii]);
 	    if (ret_value == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
-        }
+	}
+    }
+    /* Not a file ID */
+    else
+    {
+        /* Check if the given dataset ID really is a dataset ID */
+        handle = SDIhandle_from_id(sdsid, SDSTYPE);
+        if(handle != NULL)
+        {
+            /* Validate annotation type */
+            if (annot_type != AN_DATA_LABEL && annot_type != AN_DATA_DESC)
+	        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-        /* Return the number of annotations retrieved */
-        ret_value = num_annots;
+            /* Get the NDG ref of this dataset */
+            elem_ref = SDidtoref(sdsid);
+            elem_tag = DFTAG_NDG;
 
-        /* Terminate access to the AN API and close the file */
-        if(an_id != FAIL)
-            ANend(an_id);
-        if(file_id != FAIL)
-            Hclose(file_id);
-    } /* if there are annotations */
+            /* If this variable doesn't have a valid NDG ref, we cannot proceed */
+            if (elem_ref <= 0)
+	        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+            /* Open file to start Annotation inteface */
+            if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
+                HGOTO_ERROR(DFE_BADOPEN, FAIL);
+            if ((an_id = ANstart(file_id)) == FAIL)
+                HGOTO_ERROR(DFE_CANTINIT, FAIL);
+
+            /* Get number of data descs or labels with this tag/ref */
+            num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
+            if (num_annots == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL)
+            else if (num_annots == 0) /* then try SDG */
+	    {
+		elem_tag = DFTAG_SDG;
+		num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
+
+		/* If there are no SDG annotations either then return 0 */
+		if (num_annots == 0)
+	            HGOTO_DONE(0);
+	    }
+
+            /* If offsets/lengths are not desired, return the number of annots */
+            if (offsetarray == NULL || lengtharray == NULL)
+	        HGOTO_DONE(num_annots);
+
+            /* If more annotations than space in user's buffers, only fill up buffers */
+            if (num_annots > size)
+                num_annots = size;
+
+            /* Allocate space for list of annotation IDs on this tag/ref */
+            if ((dannots = (int32 *)HDmalloc(num_annots * sizeof(int32))) == NULL)
+	        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+            /* Get list of annotations IDs on this tag/ref */
+            if (ANannlist(an_id, annot_type, elem_tag, elem_ref, dannots) == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+            /* Loop through the annotation list and get their offsets/lengths */
+            for (ii = 0; ii < num_annots; ii++)
+            {
+                /* Get annotation's offset and length */
+                ret_value = ANgetdatainfo(dannots[ii], &offsetarray[ii], &lengtharray[ii]);
+	        if (ret_value == FAIL)
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+            }
+
+
+        } /* ID is an SDS */
+    } /* Not a file ID */
+
+    /* Return the number of annotations retrieved */
+    ret_value = num_annots;
+
+    /* Terminate access to the AN API and close the file if they are opened */
+    if(an_id != FAIL)
+        ANend(an_id);
+    if(file_id != FAIL)
+        Hclose(file_id);
 
 done:
     if (ret_value == FAIL)

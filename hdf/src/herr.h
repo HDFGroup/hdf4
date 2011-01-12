@@ -224,7 +224,7 @@ typedef enum
       DFE_RANGE,                /* improper range for attempted acess */
       DFE_BADCONV,              /* Don't know how to convert data type */
       DFE_BADTYPE,              /* Incompatible types specified */
-      DFE_DIMNOVG,              /* Dimension not represented by a VGroup */
+      DFE_NOVGREP,              /* No Vgroup representation for SDS and dim */
 
 /* Compression errors */
       DFE_BADSCHEME,            /* Unknown compression scheme specified */

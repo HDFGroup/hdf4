@@ -36,7 +36,7 @@ HDFLIBAPI intn SDgetdatainfo
 HDFLIBAPI intn SDgetattdatainfo
     (int32 id, int32 attrindex, int32 *offset, int32 *length);
 
-HDFLIBAPI intn SDgetdimattdatainfo
+HDFLIBAPI intn SDgetoldattdatainfo
     (int32 dimid, int32 sdsid, char *attr_name, int32 *offset, int32 *length);
 
 HDFLIBAPI intn SDgetanndatainfo
