@@ -967,7 +967,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/COPYING
           ${HDF4_SOURCE_DIR}/README.txt
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
-      COMPONENT documents
+      COMPONENT hdfdocuments
   )
   IF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
     SET (release_files
@@ -990,7 +990,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
     INSTALL (
         FILES ${release_files}
         DESTINATION ${HDF4_INSTALL_DATA_DIR}/release_notes
-        COMPONENT documents
+        COMPONENT hdfdocuments
     )
   ENDIF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
@@ -1038,7 +1038,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
       DEPENDS libraries
       GROUP Development
   )
-  CPACK_ADD_COMPONENT (documents 
+  CPACK_ADD_COMPONENT (hdfdocuments 
       DISPLAY_NAME "HDF4 Documents"
       GROUP Documents
   )
