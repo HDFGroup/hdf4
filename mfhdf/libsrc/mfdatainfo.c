@@ -390,11 +390,13 @@ done:
     SUCCEED/FAIL
 
  DESCRIPTION
-    In some older files, when dimensions were not stored as vgroup yet, the
-    pre-defined attributes that belong to the dimensions were written following
-    the same pre-defined attributes of the dataset.
-    This function gives the associated tag of one of the luf attributes so that
-    application can use tag/ref to read the luf string.
+    In older files, when there were only pre-defined attributes, an attribute
+    was not stored in vdata, but was located by an attribute tag/ref pair, which
+    is an element of the group that represents the SDS.  The values of the SDS's
+    attribute are followed by the values of its dimensions' attributes, separated
+    by a null character.
+    This function gives the associated tag of one of the attributes so that
+    application can use tag/ref to read the attribute string.
  
 ******************************************************************************/
 PRIVATE intn 
@@ -408,37 +410,29 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
         *attr_tag = DFTAG_SDU;
     else if (HDstrcmp(_HDF_Format, attr_name) == 0)
         *attr_tag = DFTAG_SDF;
-
-#if 0 /* finish annotation for SDG first */
     else if (HDstrcmp(_HDF_CoordSys, attr_name) == 0)
         *attr_tag = DFTAG_SDC;
     else if ((HDstrcmp(_HDF_ValidMin, attr_name) == 0) ||
-             (HDstrcmp(_HDF_ValidMin, attr_name) == 0) ||
+             (HDstrcmp(_HDF_ValidMax, attr_name) == 0) ||
              (HDstrcmp(_HDF_ValidRange, attr_name) == 0))
         *attr_tag = DFTAG_SDM;
     else if (HDstrcmp(_FillValue, attr_name) == 0)
 	*attr_tag = DFTAG_FV;
-    else if (HDstrcmp(_HDF_CalibratedNt, attr_name) == 0)
-	*attr_tag = DFTAG_CAL:
- /* else if (HDstrcmp(_HDF_ScaleFactor, attr_name) == 0)
-found = TRUE;
-else if (HDstrcmp(_HDF_ScaleFactorErr, attr_name) == 0)
-found = TRUE;
-else if (HDstrcmp(_HDF_AddOffset, attr_name) == 0)
-found = TRUE;
-else if (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0)
-found = TRUE;
- */
+    else if ((HDstrcmp(_HDF_CalibratedNt, attr_name) == 0)
+	 || (HDstrcmp(_HDF_ScaleFactor, attr_name) == 0)
+	 || (HDstrcmp(_HDF_ScaleFactorErr, attr_name) == 0)
+	 || (HDstrcmp(_HDF_AddOffset, attr_name) == 0)
+	 || (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0))
+	*attr_tag = DFTAG_CAL;
 /*
     else 
             case DFTAG_SDLNK:
  fprintf(stderr, "    DFTAG_SDLNK / tmpRef=%d, attr_name = %s\n", tmpRef, attr_name);
  */
-#endif
     else
     {
         ret_value = FAIL;
-        fprintf(stderr, "get_attr_tag: attr_tag= %d, attr_name = %s\n", *attr_tag, attr_name);
+        fprintf(stderr, "get_attr_tag: attr_name = <%s> is not recognized currently\n", attr_name);
     }
     return ret_value;
 } /* get_attr_tag */
@@ -464,15 +458,24 @@ found = TRUE;
     and dimensions were written as followed:
 	attr_tag/attr_ref specify offset and length of the attribute string
 	such as:
-    "<SDS attribute values>b<dim0 attribute values>b<dim1 attribute values>b..."
+    "<SDS attribute values>null<dim0 attribute values>null<dim1 attribute values>null..."
 
 	Some examples of attr_tag are: (refer to htags.h for more)
 	DFTAG_SDL for Labels attribute
 	DFTAG_SDU for Units attribute
 	...
  
-    SDgetoldattdatainfo retrieves the offset and length of the attribute's
-    data.
+    SDgetoldattdatainfo retrieves the offset and length of the attribute that
+    belongs to a data set or a dimension.  Note that only Label, Units, and
+    Format (LUF) are applicable to dimensions.  The other attributes only
+    are only available to the data set.
+
+ DESIGN NOTE:
+    This function could be modified to return lists of offsets and lengths
+    for attributes of data set and dimension in one call, in the case of LUF.
+    That approach would reduce the need to go over the attribute strings
+    multiple times for each dimension.  However, it is pending on how Joe
+    uses the function. -BMR (2011/1/13)
 
  MODIFICATION
     2011/1/11: Revised to handle offset/length of SDS' attribute too. -BMR
@@ -481,7 +484,7 @@ found = TRUE;
 intn
 SDgetoldattdatainfo(int32 dim_id,	/* IN: dimension ID */
 		    int32 sdsid,	/* IN: ID of dataset the dim belongs to */
-		    char  *attr_name,    /* IN: name of attribute to be inquired */
+		    char  *attr_name,   /* IN: name of attribute to be inquired */
 		    int32 *offset,      /* OUT: buffer for offset */
 		    int32 *length)      /* OUT: buffer for length */
 {
@@ -527,18 +530,14 @@ SDgetoldattdatainfo(int32 dim_id,	/* IN: dimension ID */
     att_tag = 0;
     att_ref = var->ndg_ref; /* all elements of this var have the same ref# */
 
-    /* Convert a luf name into its corresponding HDF tag */
+    /* Convert a predefined attribute name into its corresponding HDF tag */
     status = get_attr_tag(attr_name, &att_tag);
     if (status == FAIL)
-    {
-        fprintf(stderr, "attribute name is invalid for old dimension: %s\n", attr_name);
         HGOTO_ERROR(DFE_ARGS, FAIL);
-    }
 
     if (att_tag != 0 && att_ref != 0)
     {
-        /* Get offset/length of the luf string, which includes luf of the
-	   data set and its dimensions all together */
+        /* Get offset/length of the attribut values. */
         off = Hoffset(handle->hdf_file, att_tag, att_ref);
         if (off == FAIL)
             HGOTO_ERROR(DFE_BADOFFSET, FAIL);
@@ -546,6 +545,19 @@ SDgetoldattdatainfo(int32 dim_id,	/* IN: dimension ID */
         len = Hlength(handle->hdf_file, att_tag, att_ref);
         if (len == FAIL)
             HGOTO_ERROR(DFE_BADLEN, FAIL);
+
+	/* If the attribute pointed to by "off" and "len" is a LUF string, which
+	   includes LUFs of the data set and its dimensions all together, then
+	   parse the string to obtain offsets/lengths of the data set's LUF and
+	   of the dimensions' LUFs.
+	   Otherwise, return "off" and "len" for the inquired attribute. */
+
+	if (att_tag != DFTAG_SDL && att_tag != DFTAG_SDU && att_tag != DFTAG_SDF)
+	{
+	    *offset = off;
+	    *length = len;
+            HGOTO_DONE(1);
+	}
 
         if (len == 0)
         {
