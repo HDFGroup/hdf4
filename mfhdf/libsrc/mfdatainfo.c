@@ -37,7 +37,7 @@ EXPORTED ROUTINES
 	--- retrieve location and size of data blocks
 status = SDgetdatainfo(sdsid, ...);
 
-	--- retrieve location and size of data blocks - not included yet
+	--- retrieve location and size of data of an attribute
 status = SDgetattdatainfo(id, ...);
 status = SDgetanndatainfo(id, ...);
 
@@ -50,9 +50,6 @@ status = SDgetanndatainfo(id, ...);
 
 #ifdef HDF
 #include "mfhdf.h"
- /* #include "hfile.h"
-#include "vgint.h"
- */ 
 
 #define DATAINFO_MASTER
 #include "hdatainfo.h"
@@ -693,6 +690,9 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
             ii,
             ret_value = 0;
 
+    /* Clear error stack */
+    HEclear();
+
     /* Validate array size */
     if (size == 0 && (offsetarray != NULL && lengtharray != NULL))
 	HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -807,8 +807,6 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 	        if (ret_value == FAIL)
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
-
-
         } /* ID is an SDS */
     } /* Not a file ID */
 
@@ -824,9 +822,12 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-        if (dannots) HDfree(dannots);
       }
      /* Normal cleanup */
+
+    /* Release allocated memory */
+    if (dannots) HDfree(dannots);
+
     return ret_value;
 } /* SDgetanndatainfo */
 

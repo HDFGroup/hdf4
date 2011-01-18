@@ -27,21 +27,25 @@ LOW-LEVEL ROUTINES
 HDgetdatainfo(file_id, tag, ref, *chk_coord, start_block, info_count, *offsetarray, *lengtharray)
 
 EXPORTED ROUTINES
-    - Gets the offset(s)/length(s) of a vdata's data.
+	--- Gets offset(s)/length(s) of a vdata's data.
 VSgetdatainfo(vsid, start_block, info_count, *offsetarray, *lengtharray)
 
-    - Gets the offset(s)/length(s) of the data of an image
+	--- Gets offset(s)/length(s) of the data of an image
 GRgetdatainfo(riid, start_block, info_count, *offsetarray, *lengtharray)
 
-    - Gets the offset/length of the data of a vdata's attribute
+	--- Gets offset/length of the data of a vdata's attribute
 VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)
 
-    - Gets the offset/length of the data of a vgroup's attribute
+	--- Gets offset/length of the data of a vgroup's attribute
 Vgetattdatainfo(vgid, attrindex, *offset, *length)
 
-    - Gets the offset/length of the data of an image's attribute
+	--- Gets offset/length of the data of an image's attribute
 GRgetattdatainfo(id, attrindex, *offset, *length)
+
+	--- Gets offset/length of the data of an annotation
+ANgetdatainfo(ann_id, *offset, *length)
 */
+
 
 #ifndef MFGR_MASTER
 #define MFGR_MASTER	/* for GRgetdatainfo and GRgetattdatainfo */
@@ -104,15 +108,15 @@ HDgetdatainfo(int32 file_id,
     uint16	dtag, dref;	/* description record tag/ref */
     int32	dlen=0, doff=0;	/* offset/length of the description record */
     uint8	lbuf[COMP_HEADER_LENGTH],
-		*p=NULL;	/* description record buffer and a pointer to it */
+		*p=NULL;	/* desc record buffer and a pointer to it */
     atom_t	data_id = FAIL;	/* dd ID of existing element */
-    int32	length; /* uncompressed data length to check if data had been written */
-    uintn	count=0;	/* number of data blocks returned by getdatainfo functions */
-    uint16	spec_code=0;	/* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
-    int32	comp_aid=-1;	/* compressed element access id */
+    int32	length; /* uncomp data len to check if data had been written */
+    uintn	count=0;/* num of data blocks returned by getdatainfo funcs */
+    uint16	spec_code=0;/* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
+    int32	comp_aid=-1;/* compressed element access id */
     intn	ret_value=SUCCEED;
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
     /* validate arguments */
@@ -131,6 +135,16 @@ HDgetdatainfo(int32 file_id,
 	   description record */
 	if (HTPinquire(data_id, &dtag, &dref, &doff, &dlen) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* return 0 if no data had been written */
+        if (doff == INVALID_OFFSET && dlen == INVALID_LENGTH)
+	{
+	    /* end access to the element */
+	    if (HTPendaccess(data_id) == FAIL)
+	        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+	    HGOTO_DONE(0);
+	}
 
 	/* if the element is not special, that means dataset's tag/ref 
 	   specifies the actual data that was written to the dataset, get
@@ -328,6 +342,9 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
     intn	  count;
     intn          ret_value = SUCCEED;
 
+    /* Clear error stack */
+    HEclear();
+
     /* check key is valid vdata */
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -410,13 +427,17 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     vg_attr_t *vg_alist;
     vginstance_t *vg_inst;
     int32 attr_vsid, nattrs;
-    intn attr_index, found;
+    intn idx, found;
     intn status;
     intn ret_value = SUCCEED;
 
+    /* Clear error stack */
     HEclear();
+
+    /* Validate Vgroup ID */
     if (HAatom_group(vgid) != VGIDGROUP)
        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Locate vg's index in vgtab */
     if (NULL == (vg_inst = (vginstance_t *)HAatom_object(vgid)))
        HGOTO_ERROR(DFE_VTAB, FAIL);
@@ -436,9 +457,9 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
 
     /* Search for the attribute index given by caller */
     found = 0;
-    for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
+    for (idx=0; idx<nattrs && found==0; idx++)
     {
-	if (attr_index == attrindex)
+	if (idx == attrindex)
 	    found = 1;
 	if (!found) vg_alist++;
     }
@@ -507,10 +528,11 @@ VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
     vs_attr_t *vs_alist;
     vsinstance_t *vs_inst;
     int32 attr_vsid;
-    intn nattrs, attr_index, a_index, found;
+    intn nattrs, idx, a_index, found;
     intn status;
     intn ret_value = SUCCEED;
 
+    /* Clear error stack */
     HEclear();
 
     if (HAatom_group(vsid) != VSIDGROUP)
@@ -534,7 +556,7 @@ VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
 
     found = 0;
     a_index = -1;
-    for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
+    for (idx=0; idx<nattrs && found==0; idx++)
     {
 	if (vs_alist->findex == findex)
 	{
@@ -610,7 +632,7 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
     intn       status; 
     intn       ret_value = SUCCEED;
 
-    /* clear error stack and check validity of args */
+    /* Clear error stack */
     HEclear();
 
     /* Use index to search but if index is -1 then attr name must be non-NULL */
@@ -728,7 +750,7 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
     uintn count;
     intn   ret_value = SUCCEED;
 
-    /* clear error stack and check validity of args */
+    /* Clear error stack */
     HEclear();
 
     /* check the validity of the ID */

@@ -338,8 +338,8 @@ static intn test_attrs()
 
 /* -----------  Need a bit clean up.  Check in now for Joe. -BMR */
 
-#define DFAN_NDG_FILE "tdfanndg.hdf"
-#define DFAN_SDG_FILE "tdfansdg.hdf" /* only for SDG annotation tests */
+#define DFAN_NDG_FILE "tdfanndg_hdf"
+#define DFAN_SDG_FILE "tdfansdg_hdf" /* only for SDG annotation tests */
 #define MAXLEN_LAB     50
 #define MAXLEN_DESC   200
 #define ROWS           10
@@ -765,17 +765,17 @@ static int test_dfannots(void)
 
             /* Get data info of object labels and verify them against
                chk_offsets and chk_lengths */
-	    if (ii == 0) /* first data set */
+	    if (sds_index == 2) /* first data set */
 	    {
-                chk_offsets[0] = 936; /* verified with UNIX */
+                chk_offsets[0] = 963; /* verified with UNIX */
 		chk_lengths[0] = 20; /* command "od --format=a" */
 	    }
-	    else if (ii == 1) /* second data set */
+	    else if (sds_index == 5) /* second data set */
 	    {
                 chk_offsets[0] = 1705; /* verified with UNIX */
 		chk_lengths[0] = 20; /* command "od --format=a" */
 	    }
-            status = get_ann_datainfo(sds_id, AN_DATA_DESC, chk_offsets, chk_lengths);
+            status = get_ann_datainfo(sds_id, AN_DATA_LABEL, chk_offsets, chk_lengths);
         } /* SDS is not coordinate var */
 
         /* Terminate access to the selected data set. */
