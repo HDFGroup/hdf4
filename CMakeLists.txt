@@ -75,6 +75,9 @@ PROJECT (HDF4 C CXX)
 #   )
 #
 #-----------------------------------------------------------------------------
+IF (SITE_NAME_VAR)
+  SET (SITE ${SITE_NAME_VAR})
+ENDIF (SITE_NAME_VAR)
 
 #-----------------------------------------------------------------------------
 # Set the core names of all the libraries
