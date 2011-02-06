@@ -136,6 +136,9 @@ struct vgroup_desc
                                    be written to the file */
       int32       nattrs;       /* number of attributes */
       vg_attr_t  *alist;        /* index of attributes */
+      vg_attr_t  *areflist;     /* refs of attributes - only used in memory to
+				prevent repeated code in making the list; see
+				Vattrinfo2's header for details -BMR 2/4/2011 */
       int16       version, more; /* version and "more" field */
       struct vgroup_desc *next; /* pointer to next node (for free list only) */
   };

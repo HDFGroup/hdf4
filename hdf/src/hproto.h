@@ -1752,12 +1752,19 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                  int32 count, const void * values);
    HDFLIBAPI intn Vnattrs
                 (int32 vgid);
+   HDFLIBAPI intn Vnattrs2
+                (int32 vgid);
    HDFLIBAPI intn Vfindattr
                 (int32 vgid, const char *attrname);
    HDFLIBAPI intn Vattrinfo
                 (int32 vgid, intn attrindex, char *name, 
                  int32 *datatype, int32 *count, int32 *size);
+   HDFLIBAPI intn Vattrinfo2 /* copy of Vattrinfo for old attributes */
+                (int32 vgid, intn attrindex, char *name, 
+                 int32 *datatype, int32 *count, int32 *size);
    HDFLIBAPI intn Vgetattr
+                (int32 vgid, intn attrindex, void * values);
+   HDFLIBAPI intn Vgetattr2 /* copy of Vgetattr for old attributes */
                 (int32 vgid, intn attrindex, void * values);
    HDFLIBAPI int32 Vgetversion
                 (int32 vgid);

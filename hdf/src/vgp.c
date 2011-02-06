@@ -1257,6 +1257,11 @@ Vattach(HFILEID f,             /* IN: file handle */
           vg->access = (intn)acc_mode;
 
           vg->marked = 1;
+
+	  /* list of refs of all attributes, it is only used when Vattrinfo2 is
+             invoked; see Vattrinfo2 function header for info. 2/4/2011 -BMR */
+          vg->areflist = NULL;
+
           vg->new_vg = 1;
           vg->version = VSET_VERSION;
 
@@ -1290,6 +1295,10 @@ Vattach(HFILEID f,             /* IN: file handle */
               vg=v->vg;
               vg->access = (intn)acc_mode;
               vg->marked = 0;
+
+	      /* list of refs of all attr, it is only used when Vattrinfo2 is
+                 invoked; see Vattrinfo2 func header for info. 2/4/2011 -BMR */
+              vg->areflist = NULL;
 
               /* attach vg to file's vgtab at the vg instance v */
               v->nattach = 1;

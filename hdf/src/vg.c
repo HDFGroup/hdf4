@@ -57,8 +57,9 @@ EXPORTED ROUTINES
 PRIVATE FUNCTIONS
 =================
      matchnocase    -- compares to strings, ignoring case
-     vscheckclass   -- checks if a given vdata has the specified class or if it is
-		       user-created, which means it has one of the predefined HDF classes.
+     vscheckclass   -- checks if a given vdata has the specified class or if
+                       it is user-created, which means its class name is not
+                       one of the predefined HDF classes.
 
 PRIVATE functions manipulate vsdir and are used only within this file.
 PRIVATE data structures in here pertain to vdata in vsdir only.
@@ -1499,17 +1500,17 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Make sure this vdata has a class name */
+    /* Make sure this vdata has a class name before checking */
     if (vs->vsclass != NULL && HDstrlen(vs->vsclass) != 0)
     {
-        /* If user-created vdatas are requested, then set flag
+        /* If user-created vdatas are being checked for, then set flag
            if this vdata is not internally created by the library */
         if (vsclass == NULL)
         {
             if (VSisinternal(vs->vsclass) == FALSE)
                 ret_value = TRUE;
         }
-        /* If a specific class is requested, set flag if this
+        /* If a specific class is searched, set flag if this
            vdata has that same class */
         else
         {
@@ -1533,6 +1534,18 @@ vscheckclass(int32 id, /* IN: vgroup id or file id */
                 ret_value = HDstrncmp(vsclass, vs->vsclass, len) ? FALSE : TRUE;
         }
     }
+    /* This vd doesn't have a class name, so it must be a user-created vd */
+    else
+    {
+        /* If user-created vdatas are being checked for, then set flag to
+           indicate that this vdata is user-created */
+        if (vsclass == NULL)
+            ret_value = TRUE;
+	/* If a specific class name is requested, then set flag to indicate
+	   that this vd is not what is being searched for */
+	else
+	    ret_value = FALSE;
+    }
 done:
   if(ret_value == FAIL)
     { /* Error condition cleanup */
@@ -1540,7 +1553,7 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-}
+} /* vscheckclass */
 
 /*******************************************************************************
 NAME

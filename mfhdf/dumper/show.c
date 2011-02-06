@@ -518,6 +518,9 @@ dumpattr(int32 vid,
         nattrs = VSfnattrs(vid, findex);
     else
         nattrs = Vnattrs(vid);
+         /* nattrs = Vnattrs2(vid); using new function will cause test failure,
+		need to decide if we want dumper to use new functions then
+		fix all the tests. -BMR 2/5/2011 */ 
 
     if (FAIL == nattrs)
       {

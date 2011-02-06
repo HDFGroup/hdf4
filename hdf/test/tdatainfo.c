@@ -149,7 +149,7 @@ test_simple_vs(void)
     VERIFY_VOID(length, 20, "VSgetdatainfo length from 'One Field One Order'");
 
     status = VSdetach (vsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
+    CHECK_VOID(status, FAIL, "VSdetach");
 
     /*
      * Create a multi-field/multi-order vdata, named NONSPECIAL_VS, in class
@@ -167,9 +167,9 @@ test_simple_vs(void)
 
     /* Record its reference number for later access before detaching it */
     vs_ref = VSQueryref(vsid);
-    CHECK_VOID(vs_ref, FAIL, "VSQueryref:vsid");
+    CHECK_VOID(vs_ref, FAIL, "VSQueryref");
     status = VSdetach (vsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
+    CHECK_VOID(status, FAIL, "VSdetach");
 
     /* Attach to vdata NONSPECIAL_VS to write data, but first verify that
 	number of data blocks is 0 */
@@ -221,11 +221,11 @@ test_simple_vs(void)
 
     /* Write the data from data_buf1 to the non special vdata */
     n_records = VSwrite(vsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
-    VERIFY_VOID(n_records, N_RECORDS, "VSwrite:vsid");
+    VERIFY_VOID(n_records, N_RECORDS, "VSwrite");
 
     n_blocks = VSgetdatainfo(vsid, 0, 0, NULL, NULL);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 1, "VSgetdatainfo:vsid");
+    VERIFY_VOID(n_blocks, 1, "VSgetdatainfo");
 
     n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
@@ -234,13 +234,14 @@ test_simple_vs(void)
     VERIFY_VOID(offset, 456, "VSgetdatainfo offset from NONSPECIAL_VS");
     VERIFY_VOID(length, 120, "VSgetdatainfo length from NONSPECIAL_VS");
 
-    status_n = VSdetach (vsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
+    status_n = VSdetach(vsid);
+    CHECK_VOID(status_n, FAIL, "VSdetach");
 
     /* Create and write to another simple vdata, named 'Characters Only', in
 	class CONTCLASS_NAME */
     vs_ref = VHstoredata(fid, "Only field", (const uint8 *)data_buf2,
 		 N_RECORDS, DFNT_CHAR, "Characters Only", CONTCLASS_NAME); 
+    CHECK_VOID(vs_ref, FAIL, "VHstoredata");
 
 
     /* Attach to vdata 'Characters Only' and get offset and length of its data */
@@ -258,19 +259,20 @@ test_simple_vs(void)
     vs_info.n_values = 5;
     vs_info.numtype = DFNT_CHAR;
 #endif
+
     /* Get offset/length */
     n_blocks = VSgetdatainfo(vsid, 0, n_blocks, &offset, &length);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Close everything */
     status = VSdetach (vsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
+    CHECK_VOID(status, FAIL, "VSdetach");
 
     status_n = Vend(fid);
-    CHECK_VOID(status,FAIL,"Vend");
+    CHECK_VOID(status_n,FAIL, "Vend");
 
     status_n = Hclose(fid);
-    CHECK_VOID(status,FAIL,"Hclose");
+    CHECK_VOID(status_n,FAIL, "Hclose");
 
     /* Open the file with fopen, read data at the offset obtained and verify
        the values */
@@ -312,11 +314,11 @@ test_append_vs()
 
     /* Open the HDF file. */
     fid = Hopen(APPEND_FILE, DFACC_CREATE, 0);
-    CHECK_VOID(fid,FAIL,"Hopen");
+    CHECK_VOID(fid,FAIL, "Hopen");
 
     /* Initialize HDF for subsequent vgroup/vdata access. */
     status_n = Vstart(fid);
-    CHECK_VOID(status_n,FAIL,"Vstart");
+    CHECK_VOID(status_n, FAIL, "Vstart");
 
     /* Create the first vdata */
     apvsid = VSattach (fid, -1, "w");
@@ -326,7 +328,7 @@ test_append_vs()
     CHECK_VOID(vs1_ref, FAIL, "VSQueryref:apvsid");
 
     status = VSdetach (apvsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
+    CHECK_VOID(status, FAIL, "VSdetach");
 
     apvsid = VSattach (fid, vs1_ref, "w");
     CHECK_VOID(apvsid, FAIL, "VSattach");
@@ -386,7 +388,7 @@ test_append_vs()
 
     /* Write the data from data_buf1 to vdata APPENDABLE_VD the first time */
     n_records = VSwrite(apvsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
-    VERIFY_VOID(n_records, N_RECORDS, "VSwrite:apvsid");
+    VERIFY_VOID(n_records, N_RECORDS, "VSwrite");
 
     n_blocks = VSgetdatainfo(apvsid, 0, 0, NULL, NULL);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
@@ -394,13 +396,16 @@ test_append_vs()
     /* Allocate space to record the vdata's data info */
     alloc_info(&vs_info, n_blocks);
 
+    /* Get offset and lengths of the data */
     n_blocks = VSgetdatainfo(apvsid, 0, n_blocks, vs_info.offsets, vs_info.lengths);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
     free_info(&vs_info);
 
+    /* Get the reference number of this vdata for later use */
     vs1_ref = VSQueryref(apvsid);
-    CHECK_VOID(vs1_ref, FAIL, "VSQueryref:apvsid");
+    CHECK_VOID(vs1_ref, FAIL, "VSQueryref");
 
+    /* Make another simple vdata to cause linked-blocks */
     {
 	int32 vd2_ref;
 
@@ -411,6 +416,7 @@ test_append_vs()
 	vd2_ref = VHstoredata(fid, "Field 1", (const uint8 *)data_buf0, N_RECORDS, DFNT_INT32, "Another One Field One Order", "Very Simple Vdata");
     }
 
+    /* Make up the second batch of data for the appendable vdata */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
     {
         data_buf1[rec_num][0] = 100 + rec_num;
@@ -422,25 +428,28 @@ test_append_vs()
     }
     /* Write the data to vdata APPENDABLE_VD the second time */
     n_records = VSwrite(apvsid, (uint8 *)data_buf1, N_RECORDS, FULL_INTERLACE);
-    VERIFY_VOID(n_records, N_RECORDS, "VSwrite:apvsid");
+    VERIFY_VOID(n_records, N_RECORDS, "VSwrite");
 
+    /* Detach this vdata and attach to it again, just to make sure meta-data
+       is recorded; it may not be necessary but it doesn't hurt */
     status = VSdetach (apvsid);
-    CHECK_VOID(status, FAIL, "Vdetach");
-
+    CHECK_VOID(status, FAIL, "VSdetach");
     apvsid = VSattach (fid, vs1_ref, "w");
     CHECK_VOID(apvsid, FAIL, "VSattach");
 
+    /* Get the number of data blocks the vdata currently has */
     n_blocks = VSgetdatainfo(apvsid, 0, 0, NULL, NULL);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
-    VERIFY_VOID(n_blocks, 3, "VSgetdatainfo:apvsid");
+    VERIFY_VOID(n_blocks, 3, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
     alloc_info(&vs_info, n_blocks);
 
-    /* Record various info */
+    /* Record various info to be used in verifying data later */
     vs_info.n_values = 30;
     vs_info.numtype = DFNT_INT32;
 
+    /* Get and verify offsets and lengths of data */
     n_blocks = VSgetdatainfo(apvsid, 0, n_blocks, vs_info.offsets, vs_info.lengths);
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
@@ -454,15 +463,19 @@ test_append_vs()
 	    VERIFY_VOID(vs_info.lengths[ii], check_lengths[ii], "VSgetdatainfo length");
 	}
     }
+    /* Verifying data read without HDF4 library */
+    /* NOT YET */
+
+    /* Release memory */
     free_info(&vs_info);
 
-    /* Close everything. */
+    /* Close everything */
     status = VSdetach (apvsid);
     CHECK_VOID(status, FAIL, "Vdetach");
     status = Vend(fid);
-    CHECK_VOID(status,FAIL,"Vend");
+    CHECK_VOID(status, FAIL, "Vend");
     status = Hclose(fid);
-    CHECK_VOID(status,FAIL,"Hclose");
+    CHECK_VOID(status, FAIL, "Hclose");
 } /* test_append_vs */
 
 
@@ -610,6 +623,11 @@ intn get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_
 	for an object or file.  get_annot_datainfo needs to be fixed to
 	accommodate this.
    BMR - Aug 2010
+   NOTE:
+	It is near the end of H4 Mapping project and Ruth had said there were
+	no annotation for Vgroup and Vdata, so the continuation of these tests
+	is not that critical anymore.  For SDS, SDgetanndatainfo handles
+	annotations already.  BMR - Jan 2011
  ****************************************************************************/
 #define ANNOT_FILE	"datainfo_annot.hdf"   /* data file */
 #define	VG_NAME		"AN Vgroup"
@@ -678,7 +696,7 @@ test_annotation()
     status = ANwriteann(data_desc_id, DATA_DESC_TXT, strlen(DATA_DESC_TXT));
     CHECK_VOID(status, FAIL, "ANwriteann");
 
-    /* Terminate access to each annotation explicitly. */
+    /* Terminate access to each annotation. */
     status_n = ANendaccess(file_label_id);
     CHECK_VOID(status_n, FAIL, "ANendaccess");
     status_n = ANendaccess(file_desc_id);
@@ -1058,13 +1076,13 @@ test_dfr8_24(void)
 
 	/* Get the number of data blocks and verify; should be 1 */
 	info_count = GRgetdatainfo(riid, 0, 0, NULL, NULL);
-	CHECK_VOID(status, FAIL, "GRgetdatainfo");
+	CHECK_VOID(info_count, FAIL, "GRgetdatainfo");
 	VERIFY_VOID(info_count, 1, "GRgetdatainfo");
 
 	/* Get offset/length of the image and verify with pre-determined
 	   values */
-	status = GRgetdatainfo(riid, 0, info_count, &offset, &length);
-	CHECK_VOID(status, FAIL, "GRgetdatainfo");
+	info_count = GRgetdatainfo(riid, 0, info_count, &offset, &length);
+	CHECK_VOID(info_count, FAIL, "GRgetdatainfo");
 	VERIFY_VOID(offset, image_data_offsets[ii], "GRgetdatainfo");
 	VERIFY_VOID(length, image_data_lengths[ii], "GRgetdatainfo");
 
@@ -1134,7 +1152,6 @@ test_getntinfo(void)
     CHECK_VOID(status, FAIL, "Hgetntinfo DFNT_NUCHAR");
     VERIFY_CHAR_VOID(nt_info.type_name, "uchar8", "Hgetntinfo DFNT_NUCHAR");
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NUCHAR");
-    
 } /* test_getntinfo */
 
 /* Test driver for testing the public functions VSgetdatainfo, ANgetdatainfo. */

@@ -444,16 +444,28 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     if (NULL == (vg = vg_inst->vg))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    /* Validate arguments */
-    nattrs = vg->nattrs;
-    if (attrindex <0 || attrindex >= nattrs)
-        /* not that many attrs or bad attr list */
+    /* Get number of attributes belongging to this vgroup; this number includes
+       attributes created by the attribute API functions or by other methods */
+    nattrs = Vnattrs2(vgid);
+    if (nattrs == -1)
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    if (nattrs == 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-     vg_alist = vg->alist;
-     if (nattrs == 0 || vg_alist == NULL)
-          /* no attrs or bad attr list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* Validate arguments */
+    if (attrindex < 0 || attrindex >= nattrs)
+        /* not that many attrs or bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    if (vg->areflist != NULL)
+	vg_alist = vg->areflist;
+    else 
+	vg_alist = vg->alist;
+
+    /* Bad attr list */
+    if (vg_alist == NULL)
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     /* Search for the attribute index given by caller */
     found = 0;
