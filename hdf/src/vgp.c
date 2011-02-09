@@ -652,6 +652,9 @@ vdestroynode(VOIDP n /* IN: node to free */)
                 if (vg->alist != NULL)
                     HDfree((VOIDP) vg->alist);
 
+                if (vg->all_alist != NULL)
+                    HDfree((VOIDP) vg->all_alist);
+
                 VIrelease_vgroup_node(vg);
             }
 
@@ -1260,7 +1263,7 @@ Vattach(HFILEID f,             /* IN: file handle */
 
 	  /* list of refs of all attributes, it is only used when Vattrinfo2 is
              invoked; see Vattrinfo2 function header for info. 2/4/2011 -BMR */
-          vg->areflist = NULL;
+          vg->all_alist = NULL;
 
           vg->new_vg = 1;
           vg->version = VSET_VERSION;
@@ -1298,7 +1301,7 @@ Vattach(HFILEID f,             /* IN: file handle */
 
 	      /* list of refs of all attr, it is only used when Vattrinfo2 is
                  invoked; see Vattrinfo2 func header for info. 2/4/2011 -BMR */
-              vg->areflist = NULL;
+              vg->all_alist = NULL;
 
               /* attach vg to file's vgtab at the vg instance v */
               v->nattach = 1;

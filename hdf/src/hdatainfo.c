@@ -445,7 +445,8 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Get number of attributes belongging to this vgroup; this number includes
-       attributes created by the attribute API functions or by other methods */
+       attributes created by the attribute API functions or by other methods,
+       as long as they are stored in vdatas of class _HDF_ATTRIBUTE */
     nattrs = Vnattrs2(vgid);
     if (nattrs == -1)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
@@ -454,17 +455,20 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Validate arguments */
+
     if (attrindex < 0 || attrindex >= nattrs)
-        /* not that many attrs or bad attr list */
+        /* invalid given attribute index or not that many attrs */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    if (vg->areflist != NULL)
-	vg_alist = vg->areflist;
+    /* If the list of refs for old- and new-style attributes together had
+       been established, use it, otherwise, use the new-style list */
+    if (vg->all_alist != NULL)
+	vg_alist = vg->all_alist;
     else 
 	vg_alist = vg->alist;
 
-    /* Bad attr list */
     if (vg_alist == NULL)
+        /* Bad attr list */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     /* Search for the attribute index given by caller */

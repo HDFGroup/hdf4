@@ -1832,10 +1832,11 @@ done:
             if (HTPendaccess(data_id)== FAIL)
                 HERROR(DFE_CANTENDACCESS);
 
-	/* release allocated memory */
-	if (local_ptbuf != NULL)
-	    HDfree(local_ptbuf);
     } /* end if */
+
+    /* release allocated memory */
+    if (local_ptbuf != NULL)
+        HDfree(local_ptbuf);
 
   /* Normal function cleanup */
   return ret_value;

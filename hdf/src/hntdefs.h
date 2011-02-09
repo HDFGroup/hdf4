@@ -54,7 +54,7 @@
 #define DFNT_UCHAR8      3  /* 3 chosen for backward compatibility */
 #define DFNT_UCHAR       3  /* uchar=uchar8 for backward combatibility */
 #define DFNT_CHAR8       4  /* 4 chosen for backward compatibility */
-#define DFNT_CHAR        4  /* uchar=uchar8 for backward combatibility */
+#define DFNT_CHAR        4  /* char=char8 for backward combatibility */
 #define DFNT_CHAR16     42  /* No current plans for support */
 #define DFNT_UCHAR16    43  /* No current plans for support */
 

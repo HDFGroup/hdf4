@@ -55,6 +55,9 @@ static void test_vvsattrs(void);
 #define ATTNAME2 "Attribute 2"
 #define ATTNAME3 "Attribute 3"
 #define ATTNAME4 "Attribute 4"
+#define ATTNAME5 "Attribute 5"
+#define ATTNAME6 "Attribute 6"
+#define ATTNAME7 "Attribute 7"
 
 #define FLDNAME1 "Field1"	/* contains one char */
 #define FLDNAME2 "Field2"	/* contains three chars */
@@ -143,6 +146,7 @@ test_vvsattrs(void)
     /* Insert "VD-CLASS-1" and "VD-CLASS-2" into "VG-CLASS-0" */
     vgroup0_id = Vattach(fid, ref_list[0], "w");  /* "VG-CLASS-0" */
     CHECK_VOID(vgroup0_id, FAIL, "Vattach");
+status = Vsetname(vgroup0_id, "vgroup0_id");
     vdata1_id = VSattach(fid, vdref_list[1], "w");  /* "VD-CLASS-1" */
     CHECK_VOID(vdata1_id, FAIL, "VSattach");
     vdata2_id = VSattach(fid, vdref_list[2], "w");  /* "VD-CLASS-2" */
@@ -299,6 +303,180 @@ test_vvsattrs(void)
     status = Hclose (fid);
     CHECK_VOID(status, FAIL, "Hclose");
 } /* test_vvsattrs() */
+
+static void
+test_vgmixedattrs(void)
+{
+    int32 fid;          /* File ID */
+    int32 vgroup_id, vgroup_ref;
+    int32 n_attrs;
+    int32 ref_list[NUM_VGROUPS], vdref_list[NUM_VDATAS];
+    int32 offset, length;
+    char vgclass[20];
+    int ii;
+    int32 attr_ref;
+    intn  status;	/* returned status */
+    intn  status_32;	/* returned status for functions returning an int32! */
+
+    /* Attribute names to be checked against */
+    char aname_check[5][20] = {ATTNAME1, ATTNAME2, ATTNAME5, ATTNAME6, ATTNAME7};
+
+    /* Attributes to be set for various elements */
+    char attr1[12] = {'V','G','0',' ','n','e','w','a','t','t','r','\0'};
+    char attr2[13] = {'V','G','0',' ','o','l','d','a','t','t','r','0','\0'};
+    char attr3[13] = {'V','G','0',' ','o','l','d','a','t','t','r','1','\0'};
+
+    /* Create HDF file and initialize the interface. */
+    fid = Hopen(ATTRFILE, DFACC_RDWR, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    status = Vstart(fid);
+    CHECK_VOID(status, FAIL, "Vstart");
+
+	/* Get access to first vgroup. */
+    vgroup_ref = Vgetid(fid, -1);
+    CHECK_VOID(vgroup_ref, FAIL, "Vgetid");
+    vgroup_id = Vattach(fid, vgroup_ref, "w");
+    CHECK_VOID(vgroup_id, FAIL, "Vattach");
+
+    /* Current number of attributes belong to this vgroup */
+    n_attrs = Vnattrs(vgroup_id);
+    CHECK_VOID(n_attrs, FAIL, "Vnattrs");
+    for (ii = 0; ii < n_attrs; ii++)
+    {
+	char aname[20];
+	int32 atype, acount, asize;
+	status = Vattrinfo(vgroup_id, ii, aname, &atype, &acount, &asize);
+        /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0) */
+    }
+    n_attrs = Vnattrs2(vgroup_id);
+    for (ii = 0; ii < n_attrs; ii++)
+    {
+	char aname[20];
+	int32 atype, acount, asize;
+	status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize);
+        /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0) */
+    }
+
+
+    /* Now, add one attribute with Vsetattr, and two attributes with
+	VHstoredatam/Vaddtagref combination */
+
+    /* Add one new-style attribute */
+    status = Vsetattr(vgroup_id, ATTNAME5, DFNT_CHAR8, 12, attr1);
+    CHECK_VOID(status, FAIL, "Vsetattr vgroup_id");
+
+    /* Add two old-style attributes */
+    attr_ref = VHstoredatam(fid, ATTR_FIELD_NAME, (unsigned char *) attr2, 1,
+                          DFNT_CHAR8, ATTNAME6, _HDF_ATTRIBUTE, 13);
+    CHECK_VOID(attr_ref, FAIL, "VHstoredatam");
+    status = Vaddtagref(vgroup_id, DFTAG_VH, attr_ref);
+    CHECK_VOID(status, FAIL, "Vaddtagref");
+
+    attr_ref = VHstoredatam(fid, ATTR_FIELD_NAME, (unsigned char *) attr3, 1,
+                          DFNT_CHAR8, ATTNAME7, _HDF_ATTRIBUTE, 13);
+    CHECK_VOID(attr_ref, FAIL, "VHstoredatam");
+    status = Vaddtagref(vgroup_id, DFTAG_VH, attr_ref);
+    CHECK_VOID(status, FAIL, "Vaddtagref");
+
+    /* Terminate access to any opened elements */
+    status_32 = Vdetach(vgroup_id);
+    CHECK_VOID(status_32, FAIL, "Vdetach vgroup_id");
+
+    /* Terminate access to the V interface and close the HDF file.  */
+    status = Vend (fid);
+    CHECK_VOID(status, FAIL, "Vend");
+    status = Hclose (fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+
+    /**************************************************************
+	The following element has changed:
+	vgroup0: 2 attrs from previous test function, then attr1 of
+	new style and attr2 and attr3 of old style here
+    ***************************************************************/
+
+
+    /* Open the file to test Vnattrs2, Vattrinfo2, Vgetattr2, and
+	Vgetattdatainfo */
+    fid = Hopen(ATTRFILE, DFACC_RDWR, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    status = Vstart(fid);
+    CHECK_VOID(status, FAIL, "Vstart");
+
+    /* Attach to vgroup0 for attribute info and data */
+    vgroup_id = Vattach(fid, vgroup_ref, "w");  /* "VG-CLASS-0" */
+    CHECK_VOID(vgroup_id, FAIL, "Vattach");
+
+     /* n_attrs = Vnattrs(vgroup_id);
+ fprintf(stderr, "Vnattrs returns %d\n", n_attrs);
+ */ 
+    n_attrs = Vnattrs2(vgroup_id);
+    VERIFY_VOID(n_attrs, 5, "Vnattrs2");
+
+#if 0
+    for (ii = 0; ii < n_attrs; ii++)
+    {
+	char aname[20];
+	int32 atype, acount, asize;
+	status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize);
+ fprintf(stderr, "attr %d: %s\n", ii, aname);
+        /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0 ||
+       i_type != DFNT_UINT32 || i_count != 2 ||)
+ */ 
+    }
+
+#endif
+
+#if 0
+    /* Get data info of the first attribute from vdata0 */
+    status = VSgetattdatainfo(vdata0_id, _HDF_VDATA, 0, &offset, &length);
+    CHECK_VOID(status, FAIL, "VSgetattdatainfo");
+
+    /* Read and verify an attribute without using HDF4 library */
+    status = readnoHDF_char(ATTRFILE, offset, length, attr3);
+    CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
+
+    /* Reset offset/length */
+    offset = length = 0;
+
+    /* Get data info of the first attribute from vdata1/FLDNAME1 */
+    status = VSgetattdatainfo(vdata1_id, 0, 0, &offset, &length);
+    CHECK_VOID(status, FAIL, "VSgetattdatainfo");
+
+    /* Read and verify an attribute without using HDF4 library */
+    status = readnoHDF_char(ATTRFILE, offset, length, attr4);
+    CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
+
+    /* Get data info of the first attributes from vgroup0 */
+    status = Vgetattdatainfo(vgroup0_id, 0, &offset, &length);
+    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
+
+    /* Reset offset/length */
+    offset = length = 0;
+
+    /* Get data info of the second attributes from vgroup0 */
+    status = Vgetattdatainfo(vgroup0_id, 1, &offset, &length);
+    CHECK_VOID(status, FAIL, "Vgetattdatainfo");
+
+    /* Read and verify an attribute without using HDF4 library */
+    status = readnoHDF_char("tattdatainfo.hdf", offset, length, attr2);
+    CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
+
+    status_32 = VSdetach(vdata0_id);
+    CHECK_VOID(status_32, FAIL, "VSdetach vdata0_id");
+    status_32 = VSdetach(vdata1_id);
+    CHECK_VOID(status_32, FAIL, "VSdetach vdata1_id");
+#endif
+
+    /* Terminate access to any opened elements */
+    status_32 = Vdetach(vgroup_id);
+    CHECK_VOID(status_32, FAIL, "Vdetach vgroup_id");
+
+    /* Terminate access to the V interface and close the HDF file.  */
+    status = Vend (fid);
+    CHECK_VOID(status, FAIL, "Vend");
+    status = Hclose (fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+} /* test_vgmixedattrs() */
 
 
 /****************************************************************************
@@ -472,6 +650,9 @@ test_attdatainfo()
 {
     /* Test attributes on vgroups and vdatas */
     test_vvsattrs();
+
+    /* Test handling vgroup attributes created without Vsetattr */
+    test_vgmixedattrs();
 
     /* Test GR API attributes */
     test_grattrs();

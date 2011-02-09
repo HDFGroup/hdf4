@@ -929,7 +929,7 @@ intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
     vg->marked = 1;
     /* list of refs of all attributes, it is only used when Vattrinfo2 is
        invoked; see Vattrinfo2 function header for info. 2/4/2011 -BMR */
-    vg->areflist = NULL;
+    vg->all_alist = NULL;
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
@@ -989,7 +989,7 @@ done:
   return ret_value;
 }  /* Vgetversion */
 
-/* ---------------- Vnattr ------------------------ 
+/* ---------------- Vnattrs ------------------------ 
 NAME
       Vnattrs  -- get number of attributes for a vgroup
 USAGE
@@ -1048,40 +1048,103 @@ DESCRIPTION
 	   VHstoredatam and Vaddtagref/Vinsert, most likely prior to
 	   the availability of the attribute API routines.
 
+      When old-style attributes exist in the file, Vnattrs2 will call
+      Load_attrs to make the list (struct vgroup_desc).all_alist.
+      This list will hold the refs of these attributes for easy access
+      in future calls to Vattrinfo2 and Vgetattr2.  If there are also
+      new-style attributes, Load_attrs will combine the refs of the
+      new-style attributes into the list as well.  Future calls to
+      Vattrinfo2, Vgetinfo2, and Vgetattdatainfo will access all_alist
+      if it had been established (not NULL,) or the original list
+      (struct vgroup_desc).alist, which means only new-style attributes
+      exist in the file.
+      It is not the best approach loading Vnattrs2 with other responsibility,
+      but it helps to avoid putting the burden on users with unneccessary
+      details.
+      -BMR 2011/2/8
+
 --------------------------------------------------  */
 intn Vnattrs2(int32 vgid)
 {
-    CONSTR(FUNC, "Vnattrs");
+    CONSTR(FUNC, "Vnattrs2");
     VGROUP *vg;
     vginstance_t *v;
+    intn n_new_attrs=0, n_old_attrs=0;
+    intn ii, jj;
+    uint16 *areflist=NULL;
     int32 ret_value = SUCCEED;
 
     HEclear();
     if (HAatom_group(vgid) != VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    if (Vgetversion(vgid) == VSET_NEW_VERSION)
+    /* Locate vg's index in vgtab */
+    if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
+        HGOTO_ERROR(DFE_VTAB, FAIL);
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+    if (vg->otag != DFTAG_VG)
+        HGOTO_ERROR(DFE_ARGS,FAIL);
+
+    if (vg->version == VSET_NEW_VERSION)
+        n_new_attrs = vg->nattrs;
+
+    /* Get number of old-style attributes */
+    n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, 0, NULL);
+
+    /* Combine the ref numbers of new-style attributes and old-style attributes
+       into one new list vg->all_alist, for easy access later by Vattrinfo2 and
+       Vgetattr2 */ 
+    if (n_old_attrs > 0)
     {
-        /* Locate vg's index in vgtab */
-        if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
-            HGOTO_ERROR(DFE_VTAB, FAIL);
-        vg = v->vg;
-        if (vg == NULL)
-            HGOTO_ERROR(DFE_BADPTR, FAIL);
-        if (vg->otag != DFTAG_VG)
-          HGOTO_ERROR(DFE_ARGS,FAIL);
-        ret_value = vg->nattrs;
-    }
-    else
-    {
-        ret_value = VSofclass(vgid, _HDF_ATTRIBUTE, 0, 0, NULL);
-    }
+	/* Establish the list of attribute refs if it is not done so already */
+	if (vg->all_alist == NULL)
+	{
+	    /* temporary list of attr refs to pass into VSofclass */
+            areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_old_attrs);
+	    if (areflist == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Get reference numbers of old-style attributes belonging to this vg */
+            n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, n_old_attrs, areflist);
+	    if (n_old_attrs == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+            vg->all_alist = (vg_attr_t *) HDmalloc(sizeof(vg_attr_t) * (n_old_attrs+n_new_attrs));
+	    if (vg->all_alist == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Transfer the ref nums to the vg_attr_t list for future accesses
+		by Vattrinfo2 and Vgetattr2 */
+            for (ii = 0; ii < n_old_attrs; ii++)
+	    {
+	        vg->all_alist[ii].aref = areflist[ii];
+	        /* atag is not needed */
+	    }
+	    if (n_new_attrs > 0)
+	        /* Add the new attr refs to the vg_attr_t list */
+                for (jj=0, ii=n_old_attrs;
+			jj < n_new_attrs && ii < (n_old_attrs+n_new_attrs);
+			jj++, ii++)
+	        {
+	            vg->all_alist[ii].aref = vg->alist[jj].aref;
+	            /* atag is not needed */
+	        }
+	} /* vg->all_alist is not loaded yet */
+    } /* there are some old attributes */
+
+    /* Total number of attributes */
+    ret_value = n_old_attrs + n_new_attrs;
 
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
+
+    if (areflist != NULL)
+	HDfree(areflist);
 
   /* Normal function cleanup */
   return ret_value;
@@ -1277,8 +1340,8 @@ DESCRIPTION
 	  attribute API functions or by other methods, such as the combination
 	  of VHstoredatam and Vaddtagref
 
-	Note that Vattrinfo2 must be used in conjunction with Vnattr2, which
-	is an updated version of Vnattr.
+	Note that Vattrinfo2 must be used in conjunction with Vnattrs2, which
+	is an updated version of Vnattrs.
 
 	Note that the arguments name, datatype or count can be NULL if which
 	is not interested.
@@ -1290,13 +1353,11 @@ intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
     VGROUP *vg;
     VDATA *vs;
     DYN_VWRITELIST  *w;
-    char *fldname;
-    vginstance_t *v;
+    vginstance_t *vg_inst;
     vsinstance_t *vs_inst;
-    int32 fid, vsid, ref, temp_ref;
-    int32 vgroup_ref, n_attrs;
-    uint16 *areflist;
-    intn ii, status;
+    vg_attr_t *vg_alist=NULL;
+    int32 vsid;
+    int32 n_attrs;
     int32 ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -1307,60 +1368,43 @@ intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
+    if (NULL == (vg_inst = (vginstance_t *)HAatom_object(vgid)))
        HGOTO_ERROR(DFE_VTAB, FAIL);
-    vg = v->vg;
+    vg = vg_inst->vg;
     if (vg == NULL)
        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Get number of attributes belongging to this vgroup; this number includes
-       attributes created by the attribute API functions or by other methods */
+    /* Get number of attributes belongging to this vgroup; this number may
+       includes attributes created by the attribute API functions or by other
+       methods, as long as they are stored in vdatas of class _HDF_ATTRIBUTE */
     n_attrs = Vnattrs2(vgid);
     if (n_attrs == -1)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* If there are attributes, get their vdata's refs */
-    if (n_attrs > 0)
-    {
-	/* Establish the list of attribute refs if it is not done so already */
-	if (vg->areflist == NULL)
-	{
-            vg->areflist = (vg_attr_t *) HDmalloc(sizeof(vg_attr_t) * n_attrs);
-	    if (vg->areflist == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if (n_attrs == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	    /* temporary list of attr refs to pass into VSofclass */
-            areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_attrs);
-	    if (areflist == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    /* Validate arguments */
 
-	/* Get reference numbers of all attributes belonging to this vg */
-        status = VSofclass(vgid, _HDF_ATTRIBUTE, 0, n_attrs, areflist);
-	if (status == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	if (status != n_attrs)
-	    fprintf(stderr, "VSofclass returns %d, but n_attrs = %d\n", status, n_attrs);
-        fprintf(stderr,
-                "Refs of attributes belong to vgroup id %d:\n", vgid);
-	/* Transfer the ref numbers to the vg_attr_t list for later accesses */
-        for (ii = 0; ii < n_attrs; ii++)
-	{
-            fprintf(stderr, "%d: %d\n", ii, vg->areflist[ii]);
-	    vg->areflist[ii].aref = areflist[ii];
-	    /* atag is not needed */
-	}
-	}
+    if (attrindex < 0 || attrindex >= n_attrs)
+        /* invalid attribute index given or not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    } /* n_attrs > 0 */
+    /* If the list of refs for old- and new-style attributes together had
+       been established, use it, otherwise, use the new-style list */
+    if (vg->all_alist != NULL)
+        vg_alist = vg->all_alist;
+    else
+        vg_alist = vg->alist;
 
-    if (n_attrs <= attrindex || vg->areflist == NULL) 
-         /* not that many attrs or bad attr ref list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-    
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
     /* Getting attribute information */
 
     /* Get access to the vdata storing the attr, and obtain requested info */
-    if ((vsid = VSattach(vg->f, (int32)vg->areflist[attrindex].aref, "r")) == FAIL)
+    if ((vsid = VSattach(vg->f, (int32)vg_alist[attrindex].aref, "r")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1495,8 +1539,8 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     char fields[FIELDNAMELENMAX];
     vginstance_t *v;
     vsinstance_t *vs_inst;
-    intn n_attrs, status, ii;
-    uint16 *areflist;
+    vg_attr_t *vg_alist=NULL;
+    intn n_attrs;
     int32 fid, vsid;
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
@@ -1514,68 +1558,53 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     if (vg == NULL)
        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Get number of attributes belongging to this vgroup; this number includes
-       attributes created by the attribute API functions or by other methods */
+    /* Get number of attributes belongging to this vgroup; this number may
+       includes attributes created by the attribute API functions or by other
+       methods, as long as they are stored in vdatas of class _HDF_ATTRIBUTE */
     n_attrs = Vnattrs2(vgid);
     if (n_attrs == -1)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    if (n_attrs == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Validate arguments */
+
+    if (attrindex < 0 || attrindex >= n_attrs)
+        /* invalid attribute index given or not that many attrs */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    /* If there are attributes, get their vdata's refs */
-    if (n_attrs > 0)
-    {
-	/* Establish the list of attribute refs if it is not done so already */
-	if (vg->areflist == NULL)
-	{
-            vg->areflist = (vg_attr_t *) HDmalloc(sizeof(vg_attr_t) * n_attrs);
-	    if (vg->areflist == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    /* If the list of refs for old- and new-style attributes together had
+       been established, use it, otherwise, use the new-style list */
+    if (vg->all_alist != NULL)
+        vg_alist = vg->all_alist;
+    else
+        vg_alist = vg->alist;
 
-	    /* temporary list of attr refs to pass into VSofclass */
-            areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_attrs);
-	    if (areflist == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-	/* Get reference numbers of all attributes belonging to this vg */
-        status = VSofclass(vgid, _HDF_ATTRIBUTE, 0, n_attrs, areflist);
-	if (status == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	if (status != n_attrs)
-	    fprintf(stderr, "VSofclass returns %d, but n_attrs = %d\n", status, n_attrs);
-        fprintf(stderr,
-                "Refs of attributes belong to vgroup id %d:\n", vgid);
-	/* Transfer the ref numbers to the vg_attr_t list for later accesses */
-        for (ii = 0; ii < n_attrs; ii++)
-	{
-            fprintf(stderr, "%d: %d\n", ii, vg->areflist[ii]);
-	    vg->areflist[ii].aref = areflist[ii];
-	    /* atag is not needed */
-	}
-	}
+    /* Reading attribute data */
 
-    } /* n_attrs > 0 */
-
-    if (n_attrs <= attrindex || vg->areflist == NULL) 
-         /* not that many attrs or bad attr ref list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-    
-    /* Getting attribute information */
-
-    /* Get access to the vdata storing the attr, and obtain requested info */
-    if ((vsid = VSattach(vg->f, (int32)vg->areflist[attrindex].aref, "r")) == FAIL)
+    /* Get access to the vdata storing the attr, and read the data */
+    if ((vsid = VSattach(vg->f, (int32)vg_alist[attrindex].aref, "r")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* check correctness of attr vdata */
+    /* Check correctness of attr vdata */
     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
     if (NULL == (vs = vs_inst->vs) ||
-          HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
+          HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* Get vdata information */
     if (FAIL == VSinquire(vsid, &n_recs, &il, fields, NULL, NULL))
         HGOTO_ERROR(DFE_BADATTR, FAIL);  
 
-    /* ready to read */
+    /* Ready to read */
     if (FAIL == VSsetfields(vsid, ATTR_FIELD_NAME))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     if (FAIL == VSread(vsid, (unsigned char *)values, n_recs, il))
