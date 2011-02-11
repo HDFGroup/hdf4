@@ -1541,7 +1541,7 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     vsinstance_t *vs_inst;
     vg_attr_t *vg_alist=NULL;
     intn n_attrs;
-    int32 fid, vsid;
+    int32 fid, vsid=-1;
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
     
@@ -1605,7 +1605,13 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
         HGOTO_ERROR(DFE_BADATTR, FAIL);  
 
     /* Ready to read */
-    if (FAIL == VSsetfields(vsid, ATTR_FIELD_NAME))
+    /* Some older attribute vdatas have field name as "AttrValues" instead
+       of the common "VALUES" (ATTR_FIELD_NAME) so we need to use what was
+       read by VSinquire instead of ATTR_FIELD_NAME -BMR 2011/2/11 (I'll look
+       for "AttrValues" in previous versions) */
+     /* if (FAIL == VSsetfields(vsid, ATTR_FIELD_NAME))
+ */ 
+    if (FAIL == VSsetfields(vsid, fields))
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     if (FAIL == VSread(vsid, (unsigned char *)values, n_recs, il))
         HGOTO_ERROR(DFE_VSREAD, FAIL);
@@ -1615,6 +1621,8 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
+    if (vsid != -1)
+        VSdetach(vsid);
     } /* end if */
   /* Normal function cleanup */
   return ret_value;
