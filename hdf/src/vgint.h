@@ -135,10 +135,14 @@ struct vgroup_desc
       uint32      flags;        /* indicate which version of VG should
                                    be written to the file */
       int32       nattrs;       /* number of attributes */
-      vg_attr_t  *alist;        /* index of attributes */
-      vg_attr_t  *all_alist;    /* refs of attributes - only used in memory to
+      vg_attr_t  *alist;        /* index of new-style attributes, by Vsetattr */
+      int32       noldattrs;    /* number of old-style attributes */
+      vg_attr_t  *old_alist;    /* refs of attributes - only used in memory to
 				prevent repeated code in making the list; see
-				Vnattrs2's header for details -BMR 2/4/2011 */
+				Voldnattrs's header for details -BMR 2/4/2011 */
+      vg_attr_t  *all_alist;    /* combined list; previous approach, only keep
+				just in case we come back to that approach; will
+				remove it once we decide not to go back 2/16/11 */
       int16       version, more; /* version and "more" field */
       struct vgroup_desc *next; /* pointer to next node (for free list only) */
   };

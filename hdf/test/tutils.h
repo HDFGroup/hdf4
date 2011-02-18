@@ -89,7 +89,7 @@ if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4
 /* Same as VERIFY_CHAR except return without a value. */
 #define VERIFY_CHAR_VOID(x, val, where) \
 do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n",where,(int)__LINE__,__FILE__,(long)x);\
-if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return;} \
+if(HDstrncmp(x, val, HDstrlen(val)) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return;} \
 } while(0)
 
 #define RESULT(a) \

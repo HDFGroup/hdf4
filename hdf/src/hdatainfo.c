@@ -444,51 +444,25 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     if (NULL == (vg = vg_inst->vg))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    /* Get number of attributes belongging to this vgroup; this number includes
-       attributes created by the attribute API functions or by other methods,
-       as long as they are stored in vdatas of class _HDF_ATTRIBUTE */
-    nattrs = Vnattrs2(vgid);
-    if (nattrs == -1)
-        HGOTO_ERROR(DFE_BADATTR, FAIL);
-
-    if (nattrs == 0)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
     /* Validate arguments */
 
-    if (attrindex < 0 || attrindex >= nattrs)
-        /* invalid given attribute index or not that many attrs */
-        HGOTO_ERROR(DFE_BADATTR, FAIL);
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
 
-    /* If the list of refs for old- and new-style attributes together had
-       been established, use it, otherwise, use the new-style list */
-    if (vg->all_alist != NULL)
-	vg_alist = vg->all_alist;
-    else 
-	vg_alist = vg->alist;
+    if (attrindex < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (attrindex >= vg->noldattrs &&
+             attrindex < vg->nattrs) /* index of new-style attributes */
+        vg_alist = vg->alist;        /* use new-attr list */
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     if (vg_alist == NULL)
         /* Bad attr list */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    /* Search for the attribute index given by caller */
-    found = 0;
-    for (idx=0; idx<nattrs && found==0; idx++)
-    {
-	if (idx == attrindex)
-	    found = 1;
-	if (!found) vg_alist++;
-    }
-    /* If this happened, it would have been detected by the check for range
-       of attrindex above already, but check it anyway */
-    if (!found)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    /* Attribute is found.  Get access to the vdata that stores the attribute's
-       data, retrieve the offset and length of the data, then close access. */
-
     /* Get vdata */
-    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist->aref, "r")))
+    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist[attrindex].aref, "r")))
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
     /* Get offset and length of attribute's data.  Note that start_block is 0

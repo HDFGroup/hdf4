@@ -929,7 +929,8 @@ intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
     vg->marked = 1;
     /* list of refs of all attributes, it is only used when Vattrinfo2 is
        invoked; see Vattrinfo2 function header for info. 2/4/2011 -BMR */
-    vg->all_alist = NULL;
+    vg->old_alist = NULL;
+    vg->noldattrs = 0;
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
@@ -1031,42 +1032,38 @@ done:
   return ret_value;
 }  /* Vnattrs */
 
-/* ---------------- Vnattrs2 ------------------------ 
+#if 0
+/* ---------------- Vnattrs2_combining_approach ------------------------ 
 NAME
-      Vnattrs2  -- get number of old and new attributes for a vgroup
+      Vnattrs2_combining_approach  -- get number of old-style attributes in a vgroup
 USAGE
-      intn Vnattrs2(int32 vgid)
+      intn Vnattrs2_combining_approach(int32 vgid)
       int32 vgid;    IN: access id of the vgroup
 RETURNS
-      Returns number of attributes when successful, FAIL, otherwise.
+      Returns number of old-style attributes when successful, FAIL, otherwise.
 DESCRIPTION
-      The returned number of attributes will include:
-	1. the attributes created by the Vgroup attribute API
-	   routines, that were added starting from Vgroups version
-	   VSET_NEW_VERSION, and
-	2. the attributes created using the combination of
-	   VHstoredatam and Vaddtagref/Vinsert, most likely prior to
-	   the availability of the attribute API routines.
+      This function returns the number of attributes that were created
+      using functions other than Vsetattr() such as a combination of
+      VHstoredatam and Vaddtagref/Vinsert.
 
-      When old-style attributes exist in the file, Vnattrs2 will call
-      Load_attrs to make the list (struct vgroup_desc).all_alist.
-      This list will hold the refs of these attributes for easy access
-      in future calls to Vattrinfo2 and Vgetattr2.  If there are also
-      new-style attributes, Load_attrs will combine the refs of the
-      new-style attributes into the list as well.  Future calls to
-      Vattrinfo2, Vgetinfo2, and Vgetattdatainfo will access all_alist
-      if it had been established (not NULL,) or the original list
-      (struct vgroup_desc).alist, which means only new-style attributes
-      exist in the file.
-      It is not the best approach loading Vnattrs2 with other responsibility,
+      When old-style attributes exist in the file, Vnattrs2_combining_approach will make
+      the list (struct vgroup_desc).all_alist.  This list will hold the
+      refs of these attributes for easy access in future calls to
+      Vattrinfo2 and Vgetattr2.  If there are also new-style attributes,
+      Vnattrs2_combining_approach will combine the refs of the new-style attributes into
+      the list as well.  Future calls to Vattrinfo2, Vgetinfo2, and
+      Vgetattdatainfo will access all_alist if it had been established
+      (i.e., not NULL,) or the original list (struct vgroup_desc).alist,
+      which means only new-style attributes exist in the file.
+      It is not the best approach loading Vnattrs2_combining_approach with other responsibility,
       but it helps to avoid putting the burden on users with unneccessary
       details.
       -BMR 2011/2/8
 
 --------------------------------------------------  */
-intn Vnattrs2(int32 vgid)
+intn Vnattrs2_combining_approach(int32 vgid)
 {
-    CONSTR(FUNC, "Vnattrs2");
+    CONSTR(FUNC, "Vnattrs2_combining_approach");
     VGROUP *vg;
     vginstance_t *v;
     intn n_new_attrs=0, n_old_attrs=0;
@@ -1078,18 +1075,6 @@ intn Vnattrs2(int32 vgid)
     if (HAatom_group(vgid) != VGIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Locate vg's index in vgtab */
-    if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
-        HGOTO_ERROR(DFE_VTAB, FAIL);
-    vg = v->vg;
-    if (vg == NULL)
-        HGOTO_ERROR(DFE_BADPTR, FAIL);
-    if (vg->otag != DFTAG_VG)
-        HGOTO_ERROR(DFE_ARGS,FAIL);
-
-    if (vg->version == VSET_NEW_VERSION)
-        n_new_attrs = vg->nattrs;
-
     /* Get number of old-style attributes */
     n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, 0, NULL);
 
@@ -1098,6 +1083,15 @@ intn Vnattrs2(int32 vgid)
        Vgetattr2 */ 
     if (n_old_attrs > 0)
     {
+        /* Locate vg's index in vgtab */
+        if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
+            HGOTO_ERROR(DFE_VTAB, FAIL);
+        vg = v->vg;
+        if (vg == NULL)
+            HGOTO_ERROR(DFE_BADPTR, FAIL);
+        if (vg->otag != DFTAG_VG)
+            HGOTO_ERROR(DFE_ARGS,FAIL);
+
 	/* Establish the list of attribute refs if it is not done so already */
 	if (vg->all_alist == NULL)
 	{
@@ -1112,6 +1106,7 @@ intn Vnattrs2(int32 vgid)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             vg->all_alist = (vg_attr_t *) HDmalloc(sizeof(vg_attr_t) * (n_old_attrs+n_new_attrs));
+
 	    if (vg->all_alist == NULL)
 		HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1132,10 +1127,9 @@ intn Vnattrs2(int32 vgid)
 	            /* atag is not needed */
 	        }
 	} /* vg->all_alist is not loaded yet */
+	/* Total number of attributes */
+	ret_value = n_old_attrs + vg->nattrs;
     } /* there are some old attributes */
-
-    /* Total number of attributes */
-    ret_value = n_old_attrs + n_new_attrs;
 
 done:
     if (ret_value == FAIL)
@@ -1146,6 +1140,158 @@ done:
     if (areflist != NULL)
 	HDfree(areflist);
 
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vnattrs2_combining_approach */
+#endif
+
+/* ---------------- Vnoldattrs ------------------------ 
+NAME
+      Vnoldattrs  -- get number of old-style attributes in a vgroup
+USAGE
+      intn Vnoldattrs(int32 vgid)
+      int32 vgid;    IN: access id of the vgroup
+RETURNS
+      Returns number of old-style attributes when successful, FAIL, otherwise.
+DESCRIPTION
+      New-style attributes are those created and accessed by the attribute API
+      functions, such as Vsetattr, Vattrinfo...  The attribute API became
+      available in 8/1996.
+      Old-style attributes are those that are created by methods other than
+      Vsetattr, such as the combination of VHstoredatam and Vaddtagref.
+
+      This function returns the number of old-style attributes.
+
+      When old-style attributes exist in the file, Vnoldattrs will make
+      the list (struct vgroup_desc).old_alist and set the number of old-style
+      attribute ((struct vgroup_desc).noldattrs.  This list will hold the
+      refs of these attributes for easy access in future calls to
+      Vattrinfo2 and Vgetattr2.
+
+      -BMR 2011/2/16
+
+--------------------------------------------------  */
+intn Vnoldattrs(int32 vgid)
+{
+    CONSTR(FUNC, "Vnoldattrs");
+    VGROUP *vg;
+    vginstance_t *v;
+    intn n_new_attrs=0, n_old_attrs=0;
+    intn ii, jj;
+    uint16 *areflist=NULL;
+    int32 ret_value = 0;
+
+    HEclear();
+    if (HAatom_group(vgid) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get number of old-style attributes */
+    n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, 0, NULL);
+
+    /* Store the ref numbers of old-style attributes into the list
+       vg->old_alist, for easy access later by Voldattrinfo and Vgetoldattr */ 
+    if (n_old_attrs > 0)
+    {
+        /* Locate vg's index in vgtab */
+        if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
+            HGOTO_ERROR(DFE_VTAB, FAIL);
+        vg = v->vg;
+        if (vg == NULL)
+            HGOTO_ERROR(DFE_BADPTR, FAIL);
+        if (vg->otag != DFTAG_VG)
+            HGOTO_ERROR(DFE_ARGS,FAIL);
+
+	/* Establish the list of attribute refs if it is not done so already */
+	if (vg->old_alist == NULL)
+	{
+	    /* temporary list of attr refs to pass into VSofclass */
+            areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_old_attrs);
+	    if (areflist == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Get ref numbers of old-style attributes belonging to this vg */
+            n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, n_old_attrs, areflist);
+	    if (n_old_attrs == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+            vg->old_alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t) * (n_old_attrs));
+
+	    if (vg->old_alist == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Transfer ref nums to the vg_attr_t list for future accesses */
+            for (ii = 0; ii < n_old_attrs; ii++)
+	    {
+	        vg->old_alist[ii].aref = areflist[ii];
+	        /* atag is not needed */
+	    }
+	    vg->noldattrs = n_old_attrs; /* record number of old-style attrs */
+	} /* vg->old_alist is not loaded yet */
+
+	ret_value = vg->noldattrs;
+    } /* there are some old attributes */
+
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+    if (areflist != NULL)
+	HDfree(areflist);
+
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vnoldattrs */
+
+
+/* ---------------- Vnattrs2 ------------------------ 
+NAME
+      Vnattrs2  -- get number of old and new attributes for a vgroup
+USAGE
+      intn Vnattrs2(int32 vgid)
+      int32 vgid;    IN: access id of the vgroup
+RETURNS
+      Returns number of attributes when successful, FAIL, otherwise.
+DESCRIPTION
+      The returned number of attributes will include:
+	1. the attributes created by the Vgroup attribute API
+	   routines, that were added starting from Vgroups version
+	   VSET_NEW_VERSION, and
+	2. the attributes created using the combination of
+	   VHstoredatam and Vaddtagref/Vinsert, most likely prior to
+	   the availability of the attribute API routines.
+
+      This function was added specifically to assist the HDF Mapping
+      project.  -BMR 2011/2/8
+
+--------------------------------------------------  */
+intn Vnattrs2(int32 vgid)
+{
+    CONSTR(FUNC, "Vnattrs2");
+    intn n_new_attrs=0, n_old_attrs=0;
+    int32 ret_value = SUCCEED;
+
+    HEclear();
+
+    /* Get number of new-style attributes */
+    n_new_attrs = Vnattrs(vgid);
+    if (n_new_attrs == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Get number of old-style attributes */
+    n_old_attrs = Vnoldattrs(vgid);
+    if (n_old_attrs == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Total number of attributes */
+    ret_value = n_old_attrs + n_new_attrs;
+
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
   /* Normal function cleanup */
   return ret_value;
 }  /* Vnattrs2 */
@@ -1314,11 +1460,12 @@ done:
   return ret_value;
 }  /* Vattrinfo */
 
-/* ----------   Vattrinfo2 ----------------------
+#if 0
+/* ----------   Vattrinfo_combining_approach ----------------------
 NAME
-       Vattrinfo2 -- get info of a vgroup attribute
+       Vattrinfo_combining_approach -- get info of a vgroup attribute
 USAGE
-        intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
+        intn Vattrinfo_combining_approach(int32 vgid, intn attrindex, char *name,
                   int32 *datatype, int32 *count, int32 *size)
         int32 vgid;      IN: vgroup id
         intn attrindex;  IN: which attr's info we want
@@ -1331,25 +1478,25 @@ USAGE
 RETURNS
         Returns SUCCEED when successful, FAIL otherwise.
 DESCRIPTION
-	Vattrinfo2 is an updated version of Vattrinfo.  Both functions return
+	Vattrinfo_combining_approach is an updated version of Vattrinfo.  Both functions return
 	the number of attributes belongging to the given vgroup.  However, they
 	are different as described below:
 	- Vattrinfo returns the number of attributes created by the attribute
 	  API functions, which became available in 8/1996
-	- Vattrinfo2 returns the number of attributes created by either the
+	- Vattrinfo_combining_approach returns the number of attributes created by either the
 	  attribute API functions or by other methods, such as the combination
 	  of VHstoredatam and Vaddtagref
 
-	Note that Vattrinfo2 must be used in conjunction with Vnattrs2, which
+	Note that Vattrinfo_combining_approach must be used in conjunction with Vnattrs2, which
 	is an updated version of Vnattrs.
 
 	Note that the arguments name, datatype or count can be NULL if which
 	is not interested.
 --------------------------------------------------- */
-intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
+intn Vattrinfo_combining_approach(int32 vgid, intn attrindex, char *name,
              int32 *datatype, int32 *count, int32 *size)
 {
-    CONSTR(FUNC, "Vattrinfo2");
+    CONSTR(FUNC, "Vattrinfo_combining_approach");
     VGROUP *vg;
     VDATA *vs;
     DYN_VWRITELIST  *w;
@@ -1424,6 +1571,138 @@ intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
        *count = (int32)w->order[0];
     if (size)
        *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
+    if (FAIL == VSdetach(vsid))
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vattrinfo_combining_approach */
+#endif
+
+/* ----------   Vattrinfo2 ----------------------
+NAME
+       Vattrinfo2 -- get info of a vgroup attribute
+USAGE
+        intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
+                  int32 *datatype, int32 *count, int32 *size)
+        int32 vgid;      IN: vgroup id
+        intn attrindex;  IN: which attr's info we want
+                             attrindex is 0-based
+        char *name;      OUT: attribute name 
+        int32 *datatype; OUT: datatype of the attribute
+        int32 *count;    OUT: number of values
+        int32 *size;     OUT: size of the attr values on local machine.
+
+RETURNS
+        Returns SUCCEED when successful, FAIL otherwise.
+DESCRIPTION
+	Vattrinfo2 is an updated version of Vattrinfo.  Both functions return
+	the information of an attribute belongging to the given vgroup.
+	However, unlike Vattrinfo, which only processes new-style attributes,
+	i.e., attributes created by Vsetattr, Vattrinfo2 also handles old-style
+	attributes.  In addition, Vattrinfo2 was written to assist the HDF
+	Mapping writer.  Thus, it is assumed that Vattrinfo2 is to be used in
+	a loop going through all the attributes of the vgroup, including
+	old-style and, perhaps, new-style attributes, if they exist.  Refer to
+	the function header of Vnattrs2 and Vnoldattrs for more detail.
+
+	If the vgroup has both types of attributes, the old-style attributes 
+	will be listed first, hence, the need for Vattrinfo2 to be used in a
+	loop.
+
+	Note that Vattrinfo2 must be used in conjunction with Vnattrs2, which
+	is an updated version of Vnattrs, or Vnoldattrs, which is invoked by
+	Vnattrs2.  Vnoldattrs finds old-style attributes and establishes the
+	list of their ref numbers for Vattrinfo2 to access.
+
+	Note that the arguments name, datatype or count can be NULL if which
+	is not interested.
+-------------------------------------------------------------- */
+intn Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype,
+	int32 *count, int32 *size, int32 *nfields, uint16 *refnum)
+{
+    CONSTR(FUNC, "Vattrinfo2");
+    VGROUP *vg;
+    VDATA *vs;
+    DYN_VWRITELIST  *w;
+    vginstance_t *vg_inst;
+    vsinstance_t *vs_inst;
+    vg_attr_t *vg_alist=NULL;
+    int32 vsid;
+    int32 n_attrs;
+    intn adjusted_index;
+    int32 ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Make sure given object is a vgroup */
+    if (HAatom_group(vgid) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate vg's index in vgtab */
+    if (NULL == (vg_inst = (vginstance_t *)HAatom_object(vgid)))
+       HGOTO_ERROR(DFE_VTAB, FAIL);
+    vg = vg_inst->vg;
+    if (vg == NULL)
+       HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Validate arguments */
+
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
+
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs &&
+	     adjusted_index < (vg->nattrs+vg->noldattrs))
+		 /* index of new-style attributes */
+    {
+        /* Adjust the index to accommodate for the old-style attributes
+	   preceding the new-style attribute list */
+	adjusted_index = adjusted_index - vg->noldattrs;
+        vg_alist = vg->alist;        /* use new-attr list */
+    }
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* Getting attribute information */
+
+    /* Get access to the vdata storing the attr, and obtain requested info */
+    if ((vsid = VSattach(vg->f, (int32)vg_alist[adjusted_index].aref, "r")) == FAIL)
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+    if (HAatom_group(vsid) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    if (NULL == (vs = vs_inst->vs) ||
+          HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+    if (name)  {
+        HDstrncpy(name, vs->vsname, HDstrlen(vs->vsname));
+        name[HDstrlen(vs->vsname)] = '\0';
+    }
+    w = &(vs->wlist);
+    if (datatype)
+       *datatype =  (int32)w->type[0];
+    if (count)
+       *count = (int32)w->order[0];
+    if (size)
+       *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
+    if (nfields)
+       *nfields = (int32)w->n; /* Note: int32 to be consistent with VFnfields */
+    if (refnum)
+       *refnum = vs->oref;
     if (FAIL == VSdetach(vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 done:
@@ -1541,6 +1820,7 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     vsinstance_t *vs_inst;
     vg_attr_t *vg_alist=NULL;
     intn n_attrs;
+    intn adjusted_index;
     int32 fid, vsid=-1;
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
@@ -1558,37 +1838,34 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     if (vg == NULL)
        HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* Get number of attributes belongging to this vgroup; this number may
-       includes attributes created by the attribute API functions or by other
-       methods, as long as they are stored in vdatas of class _HDF_ATTRIBUTE */
-    n_attrs = Vnattrs2(vgid);
-    if (n_attrs == -1)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
-    if (n_attrs == 0)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
-
     /* Validate arguments */
 
-    if (attrindex < 0 || attrindex >= n_attrs)
-        /* invalid attribute index given or not that many attrs */
-        HGOTO_ERROR(DFE_BADATTR, FAIL);
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
 
-    /* If the list of refs for old- and new-style attributes together had
-       been established, use it, otherwise, use the new-style list */
-    if (vg->all_alist != NULL)
-        vg_alist = vg->all_alist;
-    else
-        vg_alist = vg->alist;
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs &&
+	     adjusted_index < (vg->nattrs+vg->noldattrs))
+		 /* index of new-style attributes */
+    {
+        /* Adjust the index to accommodate for the old-style attributes
+	   preceding the new-style attribute list */
+	adjusted_index = adjusted_index - vg->noldattrs;
+        vg_alist = vg->alist;        /* use new-attr list */
+    }
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     if (vg_alist == NULL)
         /* Bad attr list */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    /* Reading attribute data */
+    /* Getting attribute information */
 
-    /* Get access to the vdata storing the attr, and read the data */
-    if ((vsid = VSattach(vg->f, (int32)vg_alist[attrindex].aref, "r")) == FAIL)
+    /* Get access to the vdata storing the attr, and obtain requested info */
+    if ((vsid = VSattach(vg->f, (int32)vg_alist[adjusted_index].aref, "r")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1605,10 +1882,11 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
         HGOTO_ERROR(DFE_BADATTR, FAIL);  
 
     /* Ready to read */
+
     /* Some older attribute vdatas have field name as "AttrValues" instead
        of the common "VALUES" (ATTR_FIELD_NAME) so we need to use what was
        read by VSinquire instead of ATTR_FIELD_NAME -BMR 2011/2/11 (I'll look
-       for "AttrValues" in previous versions) */
+       for "AttrValues" in previous versions of the library, just in case) */
      /* if (FAIL == VSsetfields(vsid, ATTR_FIELD_NAME))
  */ 
     if (FAIL == VSsetfields(vsid, fields))

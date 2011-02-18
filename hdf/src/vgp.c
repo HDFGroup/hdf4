@@ -652,8 +652,13 @@ vdestroynode(VOIDP n /* IN: node to free */)
                 if (vg->alist != NULL)
                     HDfree((VOIDP) vg->alist);
 
-                if (vg->all_alist != NULL)
-                    HDfree((VOIDP) vg->all_alist);
+		/* Free the old-style attr list and reset associated fields */
+                if (vg->old_alist != NULL)
+		{
+                    HDfree((VOIDP) vg->old_alist);
+		    vg->old_alist = NULL;
+		    vg->noldattrs = 0;
+		}
 
                 VIrelease_vgroup_node(vg);
             }
@@ -1261,9 +1266,11 @@ Vattach(HFILEID f,             /* IN: file handle */
 
           vg->marked = 1;
 
-	  /* list of refs of all attributes, it is only used when Vattrinfo2 is
-             invoked; see Vattrinfo2 function header for info. 2/4/2011 -BMR */
-          vg->all_alist = NULL;
+	  /* number of old-style attributes and list of their refs, these
+	     are only used when Vnoldattrs is invoked; see Vnoldattrs func
+	     header for info. 2/4/2011 -BMR */
+          vg->old_alist = NULL;
+          vg->noldattrs = 0;
 
           vg->new_vg = 1;
           vg->version = VSET_VERSION;
@@ -1299,9 +1306,11 @@ Vattach(HFILEID f,             /* IN: file handle */
               vg->access = (intn)acc_mode;
               vg->marked = 0;
 
-	      /* list of refs of all attr, it is only used when Vattrinfo2 is
-                 invoked; see Vattrinfo2 func header for info. 2/4/2011 -BMR */
-              vg->all_alist = NULL;
+	      /* number of old-style attributes and list of their refs, these
+		 are only used when Vnoldattrs is invoked; see Vnoldattrs func
+		 header for info. 2/4/2011 -BMR */
+              vg->old_alist = NULL;
+              vg->noldattrs = 0;
 
               /* attach vg to file's vgtab at the vg instance v */
               v->nattach = 1;
@@ -1426,6 +1435,14 @@ Vdetach(int32 vkey /* IN: vgroup key */)
           vg->marked = 0;
           vg->new_vg = 0;
       }
+
+    /* Free the old-style attribute list and reset associated fields */
+    if (vg->old_alist != NULL)
+    {
+	HDfree((VOIDP) vg->old_alist);
+	vg->old_alist = NULL;
+	vg->noldattrs = 0;
+    }
 
     v->nattach--;
 
@@ -3499,3 +3516,4 @@ done:
   /* Normal function cleanup */
   return ret_value;
 }   /* Vgetvgroups */
+

@@ -208,8 +208,8 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
     NC_dim *dim;
     int32   vg_ref=0,	/* ref# of the VG representing a file, an SDS, or a dimension */
 	    n_elements,	/* number of elements in the file/SDS/dimension vgroup */
-	    vs_id,	/* VS id, attached to a VS while looking for _HDF_ATTRIBUTE */
-	    vg_id,	/* id of the file/SDS/dimension vgroup */
+	    vs_id=-1,	/* VS id, attached to a VS while looking for _HDF_ATTRIBUTE */
+	    vg_id=-1,	/* id of the file/SDS/dimension vgroup */
 	    var_idx;	/* index of the variable representing the given dimension */
     char    vsclass[H4_MAX_NC_CLASS] = "", /* vs class to see if it is _HDF_ATTRIBUTE */
 	    attrname[H4_MAX_NC_CLASS] = "",/* the given attribute's name */
@@ -363,11 +363,23 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 	    /* Close access to vdata */
 	    if (VSdetach(vs_id) == FAIL)
 		HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+	    vs_id = -1;
 	}
     }
+
+    /* Close access to the vgroup */
+    if (Vdetach(vg_id) == FAIL)
+         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
+	if (vs_id != -1)
+	    if (VSdetach(vs_id) == FAIL)
+		HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+	if (vg_id != -1)
+	    if (Vdetach(vg_id) == FAIL)
+		HGOTO_ERROR(DFE_CANTDETACH, FAIL);
       }
      /* Normal cleanup */
 
@@ -813,12 +825,6 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
     /* Return the number of annotations retrieved */
     ret_value = num_annots;
 
-    /* Terminate access to the AN API and close the file if they are opened */
-    if(an_id != FAIL)
-        ANend(an_id);
-    if(file_id != FAIL)
-        Hclose(file_id);
-
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
@@ -827,6 +833,12 @@ done:
 
     /* Release allocated memory */
     if (dannots) HDfree(dannots);
+
+    /* Terminate access to the AN API and close the file if they are opened */
+    if(an_id != FAIL)
+        ANend(an_id);
+    if(file_id != FAIL)
+        Hclose(file_id);
 
     return ret_value;
 } /* SDgetanndatainfo */

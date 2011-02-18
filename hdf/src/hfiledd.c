@@ -2228,6 +2228,8 @@ done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
+      if(tinfo_ptr->d!=NULL)
+          DAdestroy_array(tinfo_ptr->d,0);
     } /* end if */
 
   /* Normal function cleanup */

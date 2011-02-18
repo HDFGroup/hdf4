@@ -341,6 +341,7 @@ test_vgmixedattrs(void)
     /* Current number of attributes belong to this vgroup */
     n_attrs = Vnattrs(vgroup_id);
     CHECK_VOID(n_attrs, FAIL, "Vnattrs");
+    VERIFY_VOID(n_attrs, 2, "Vnattrs");
     for (ii = 0; ii < n_attrs; ii++)
     {
 	char aname[20];
@@ -348,15 +349,8 @@ test_vgmixedattrs(void)
 	status = Vattrinfo(vgroup_id, ii, aname, &atype, &acount, &asize);
         /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0) */
     }
-    n_attrs = Vnattrs2(vgroup_id);
-    for (ii = 0; ii < n_attrs; ii++)
-    {
-	char aname[20];
-	int32 atype, acount, asize;
-	status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize);
-        /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0) */
-    }
-
+    n_attrs = Vnoldattrs(vgroup_id);
+    VERIFY_VOID(n_attrs, 0, "Vnoldattrs");
 
     /* Now, add one attribute with Vsetattr, and two attributes with
 	VHstoredatam/Vaddtagref combination */
@@ -406,25 +400,28 @@ test_vgmixedattrs(void)
     vgroup_id = Vattach(fid, vgroup_ref, "w");  /* "VG-CLASS-0" */
     CHECK_VOID(vgroup_id, FAIL, "Vattach");
 
-     /* n_attrs = Vnattrs(vgroup_id);
- fprintf(stderr, "Vnattrs returns %d\n", n_attrs);
- */ 
+    n_attrs = Vnattrs(vgroup_id);
+    VERIFY_VOID(n_attrs, 3, "Vnattrs");
+
+    n_attrs = Vnoldattrs(vgroup_id);
+    VERIFY_VOID(n_attrs, 2, "Vnoldattrs");
+
     n_attrs = Vnattrs2(vgroup_id);
     VERIFY_VOID(n_attrs, 5, "Vnattrs2");
 
-#if 0
     for (ii = 0; ii < n_attrs; ii++)
     {
 	char aname[20];
-	int32 atype, acount, asize;
-	status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize);
- fprintf(stderr, "attr %d: %s\n", ii, aname);
-        /* HDstrncmp(iattrname, ATTNAME1, HDstrlen(ATTNAME1)) != 0 ||
-       i_type != DFNT_UINT32 || i_count != 2 ||)
- */ 
+	int32 atype, acount, asize, n_fields;
+	uint16 refnum;
+	char *check_attrs[5] = {"Attribute 6", "Attribute 7", "Attribute 1",
+					"Attribute 2", "Attribute 5"};
+	status = Vattrinfo2(vgroup_id, ii, aname, &atype, &acount, &asize,
+			&n_fields, &refnum);
+	VERIFY_CHAR_VOID(aname, check_attrs[ii], "Vattrinfo2");
+	VERIFY_VOID(n_fields, 1, "Vattrinfo2");
     }
 
-#endif
 
 #if 0
     /* Get data info of the first attribute from vdata0 */
