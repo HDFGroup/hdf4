@@ -2225,7 +2225,7 @@ intn
 HMCgetdatainfo(int32 file_id,
 		uint16 tag,
 		uint16 ref,
-		int32* chk_coord,         /* IN: chunk number to be processed */
+		int32* chk_coord,       /* IN: chunk number to be processed */
 		uintn start_block,	/* IN: data block to start at, 0 base */
 		uintn info_count,	/* IN: size of offset/length lists */
                 int32 *offsetarray,	/* OUT: array to hold offsets */
@@ -2250,6 +2250,13 @@ HMCgetdatainfo(int32 file_id,
     uint8       lbuf[16];      /* temporary buffer */
     uint8      *p;                /* tmp buf ptr */
     intn	 ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* validate arguments */
+    if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
@@ -2366,9 +2373,9 @@ HMCgetdatainfo(int32 file_id,
 
 			    /* get data information from the linked blocks */
 			    if (offsetarray != NULL && lengtharray != NULL)
-			        count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+			        count = HLgetdatainfo(file_id, p, start_block, info_count, offsetarray, lengtharray);
 			    else
-			        count = HLgetdatainfo(file_id, p, NULL, NULL);
+			        count = HLgetdatainfo(file_id, p, start_block, 0, NULL, NULL);
 		        } /* this chunk is also stored in linked blocks */
 		    } /* this element is further special */
 		    if (HTPendaccess(cmpddid) == FAIL)

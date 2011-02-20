@@ -1176,8 +1176,8 @@ intn Vnoldattrs(int32 vgid)
     CONSTR(FUNC, "Vnoldattrs");
     VGROUP *vg;
     vginstance_t *v;
-    intn n_new_attrs=0, n_old_attrs=0;
-    intn ii, jj;
+    intn n_old_attrs=0;
+    intn ii;
     uint16 *areflist=NULL;
     int32 ret_value = 0;
 
@@ -1634,7 +1634,6 @@ intn Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype,
     vsinstance_t *vs_inst;
     vg_attr_t *vg_alist=NULL;
     int32 vsid;
-    int32 n_attrs;
     intn adjusted_index;
     int32 ret_value = SUCCEED;
 
@@ -1819,9 +1818,8 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     vginstance_t *v;
     vsinstance_t *vs_inst;
     vg_attr_t *vg_alist=NULL;
-    intn n_attrs;
     intn adjusted_index;
-    int32 fid, vsid=-1;
+    int32 vsid=-1;
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
     

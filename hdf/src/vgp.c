@@ -3342,10 +3342,9 @@ Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
 {
     CONSTR(FUNC, "Vgetvgroups");
     vginstance_t *vg_inst = NULL;
-    int32    vg_ref, vkey;
+    int32    vg_ref;
     intn     nactual_vgs, user_vgs, ii;
     VGROUP  *vg = NULL;
-    vfile_t *vf = NULL;
     intn     ret_value = SUCCEED;
 
     /* clear error stack */

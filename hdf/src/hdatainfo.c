@@ -104,7 +104,6 @@ HDgetdatainfo(int32 file_id,
     filerec_t  *file_rec;	/* file record */
     uint16	sp_tag;		/* special tag */
     uint16	comp_ref = 0;	/* ref for compressed data or compression header */
-    int32	drec_aid=-1;	/* description record access id */
     uint16	dtag, dref;	/* description record tag/ref */
     int32	dlen=0, doff=0;	/* offset/length of the description record */
     uint8	lbuf[COMP_HEADER_LENGTH],
@@ -222,8 +221,6 @@ HDgetdatainfo(int32 file_id,
 		else
 		{ /* this element is further special, read in the special code to see what
 		     the specialness is then process appropriately */
-		    int32 num_blocks=0;
-		    uint16 link_ref=0;
 		    if(HTPinquire(comp_aid, NULL, NULL, &doff, NULL)==FAIL)
 		    {
 			HTPendaccess(comp_aid);
@@ -248,9 +245,9 @@ HDgetdatainfo(int32 file_id,
 			   info count only, otherwise */ 
 			p = &lbuf[0];
 			if (offsetarray != NULL && lengtharray != NULL)
-			    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+			    count = HLgetdatainfo(file_id, p, start_block, info_count, offsetarray, lengtharray);
 			else  /* get data information from the linked blocks */
-			    count = HLgetdatainfo(file_id, p, NULL, NULL);
+			    count = HLgetdatainfo(file_id, p, start_block, 0, NULL, NULL);
 		    } /* this element is also stored in linked blocks */
 		} /* this element is further special */
 
@@ -289,9 +286,9 @@ HDgetdatainfo(int32 file_id,
 		   info if they are requested or the info count only, otherwise */ 
 		p = &lbuf[0];
 		if (offsetarray != NULL && lengtharray != NULL)
-		    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+		    count = HLgetdatainfo(file_id, p, start_block, info_count, offsetarray, lengtharray);
 		else  /* get data information from the linked blocks */
-		    count = HLgetdatainfo(file_id, p, NULL, NULL);
+		    count = HLgetdatainfo(file_id, p, start_block, 0, NULL, NULL);
 	    } /* element is SPECIAL_LINKED */
 	} /* else, data_id is special */
 
@@ -426,8 +423,7 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     VGROUP *vg;
     vg_attr_t *vg_alist;
     vginstance_t *vg_inst;
-    int32 attr_vsid, nattrs;
-    intn idx, found;
+    int32 attr_vsid;
     intn status;
     intn ret_value = SUCCEED;
 

@@ -1197,7 +1197,6 @@ NC_var **var;
     int32      ret_value = SUCCEED;
     register unsigned  i, count;
     register Void *attribute = NULL;
-int myi;
 
     count = 0;
     assoc = (*var)-> assoc;
@@ -2439,7 +2438,6 @@ hdf_read_vars(XDR *xdrs,
                         {
 			    char dimclass[H4_MAX_NC_CLASS] = "";
 			    char vsclass[H4_MAX_NC_CLASS] = "";
-			    char vsname[H4_MAX_NC_CLASS] = "";
                             if (Vgettagref(var, t, &tag, &sub_id) == FAIL)
                               {
 #ifdef HDF_READ_VARS

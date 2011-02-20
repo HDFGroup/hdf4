@@ -1604,9 +1604,8 @@ VSIgetvdatas(int32 id,		 /* IN: file id or vgroup id */
     CONSTR(FUNC, "VSIgetvdatas");
     vginstance_t *vg_inst = NULL;
     group_t id_type = HAatom_group(id);    /* id is FIDGROUP or VGIDGROUP */
-    intn        nactual_vds, nfound_vds, ii;
+    intn        nactual_vds=0, nfound_vds=0, ii;
     VGROUP     *vg = NULL;
-    VDATA      *vs = NULL;
     vfile_t    *vf = NULL;
     int32	vs_ref;
     int32       ret_value = SUCCEED;
@@ -1699,8 +1698,6 @@ VSIgetvdatas(int32 id,		 /* IN: file id or vgroup id */
 	    /* If an element is a vdata, then get access to it */
             if (vg->tag[ii] == DFTAG_VH)
 	    {
-		int32 subvkey;
-		VDATA *subvs = NULL;
 	        intn found = FALSE;
 
 	        found = vscheckclass((int32)vg->f, vg->ref[ii], vsclass);
@@ -1865,13 +1862,11 @@ VSgetvdatas_old(int32 id,		/* IN: file id or vgroup id */
             uint16 *refarray	/* IN/OUT: ref array to fill */)
 {
     CONSTR(FUNC, "VSgetvdatas_old");
-    int32       vkey;
     vsinstance_t *vs_inst = NULL, *subvs_inst = NULL;
     vginstance_t *vg_inst = NULL;
     intn          nactual_vds, user_vds, ii;
     VDATA      *vs = NULL;
     VGROUP     *vg = NULL;
-    vfile_t    *vf = NULL;
     int32	vs_ref;
     int32       ret_value = SUCCEED;
 
