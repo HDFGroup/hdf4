@@ -289,18 +289,24 @@ IF (BUILD_TESTING)
           test_file34.hdf
           test_file35.hdf
   )
+  IF (HDF4_ENABLE_NETCDF)
+    SET_TESTS_PROPERTIES (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest)
+  ENDIF (HDF4_ENABLE_NETCDF)
 
   ADD_TEST (NAME f_hdftest COMMAND $<TARGET_FILE:f_hdftest>)
   SET (passRegex "Total errors : [ ]+0")
   SET_PROPERTY (TEST f_hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+  SET_TESTS_PROPERTIES (f_hdftest PROPERTIES DEPENDS MFHDF_FORTRAN-clearall-objects)
 
   ADD_TEST (NAME f_hdftest1 COMMAND $<TARGET_FILE:f_hdftest1>)
   SET (failRegex "failed" "errors")
   SET_PROPERTY (TEST f_hdftest1 PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
+  SET_TESTS_PROPERTIES (f_hdftest1 PROPERTIES DEPENDS f_hdftest)
 
   ADD_TEST (NAME f_tszip COMMAND $<TARGET_FILE:f_tszip>)
   SET (failRegex "failed" "errors")
   SET_PROPERTY (TEST f_tszip PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
+  SET_TESTS_PROPERTIES (f_tszip PROPERTIES DEPENDS f_hdftest1)
 
 ENDIF (BUILD_TESTING)
 

@@ -60,6 +60,7 @@ IF (BUILD_TESTING)
   TARGET_NAMING (hdifftst ${LIB_TYPE})
 
   ADD_TEST (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
+  SET (last_test "hdifftst")
 
   MACRO (ADD_H4_TEST resultfile resultcode)
     ADD_TEST (
@@ -73,6 +74,10 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}.txt"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "HDIFF-${resultfile}")
   ENDMACRO (ADD_H4_TEST file)
  
   #-- Copy all the data files from the test directory into the source directory
@@ -182,6 +187,10 @@ IF (BUILD_TESTING)
           hdiff_14.out.err
           hdiff_15.out.err
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDIFF-clearall-objects PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HDIFF-clearall-objects")
 
   # help message
   ADD_H4_TEST (hdiff_01 1) 

@@ -93,6 +93,10 @@ ENDIF (WIN32 AND NOT CYGWIN)
           test1.nc
           test2.cdl
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (ncgen-clearall-objects PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "ncgen-clearall-objects")
 
   #-- Copy all the data files from the test directory into the source directory
   #MESSAGE (STATUS " Copying ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")

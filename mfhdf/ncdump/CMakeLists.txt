@@ -70,6 +70,7 @@ IF (BUILD_TESTING)
 #        COMMAND  ${CMAKE_COMMAND}
 #            -E compare test1.cdl test2.cdl
 #    )
+#    SET_TESTS_PROPERTIES (ncdump-comp PROPERTIES DEPENDS ncdump-clearall-objects)
   ENDIF (NCGEN_UTILITY)
 
 ENDIF (BUILD_TESTING)

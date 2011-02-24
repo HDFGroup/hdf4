@@ -152,6 +152,9 @@ IF (BUILD_TESTING)
     ELSE ( NOT ${testtype} STREQUAL "")
       ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf)
     ENDIF ( NOT ${testtype} STREQUAL "")
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HIMPORT-${testtfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
 
     ADD_TEST (
         NAME HIMPORTLS-${testtfile}
@@ -165,10 +168,15 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${testtfile}.tst"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    SET_TESTS_PROPERTIES (HIMPORTLS-${testtfile} PROPERTIES DEPENDS HIMPORT-${testtfile})
+    SET (last_test "HIMPORTLS-${testtfile}")
   ENDMACRO (ADD_H4_TEST)
 
   MACRO (ADD_H4_TEST_OUT resultfile resultcode)
     ADD_TEST (NAME HIMPORT-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile}.hdf -o ${resultfile}.out)
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HIMPORT-OUT-${resultfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
 
     ADD_TEST (
         NAME HIMPORTLS-OUT-${resultfile}
@@ -182,6 +190,8 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}.tst"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    SET_TESTS_PROPERTIES (HIMPORTLS-OUT-${resultfile} PROPERTIES DEPENDS HIMPORT-OUT-${resultfile})
+    SET (last_test "HIMPORTLS-OUT-${resultfile}")
   ENDMACRO (ADD_H4_TEST_OUT)
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
@@ -197,6 +207,10 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "HIMPORT-EDIT")
   ENDMACRO (ADD_H4_TEST_ED)
 
 ##############################################################################
@@ -271,8 +285,16 @@ IF (BUILD_TESTING)
           SDSfloat2.tmp.err
           SDSfloat3.tmp.err
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (hdfimport-clear-refs PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "hdfimport-clear-refs")
 
   ADD_TEST (NAME HIMPORTtest COMMAND $<TARGET_FILE:hdfimporttest>)
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HIMPORTtest PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HIMPORTtest")
 
   # "Testing for 32-bit floating point ASCII (2D data)" 
   ADD_H4_TEST (ctxtr2 0 ctxtr2 "")

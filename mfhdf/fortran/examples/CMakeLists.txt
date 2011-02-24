@@ -32,12 +32,12 @@ SET (examples
     SD_mv_sds_to_external 
     SD_read_from_sds 
     SD_read_subsets 
-    SD_get_info
+    #SD_get_info
     SD_find_sds_by_name 
     SD_set_get_dim_info 
-    SD_dimscale_vs_sds 
+    #SD_dimscale_vs_sds 
     SD_set_attr
-    SD_get_attr 
+    #SD_get_attr 
     SD_compress_sds 
     SD_chunking_example
 )

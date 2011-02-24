@@ -167,6 +167,11 @@ ADD_TEST (
         tvsetext.hdf
         tx.hdf
 )
+IF (NOT "${last_test}" STREQUAL "")
+  SET_TESTS_PROPERTIES (testhdf-clearall-objects PROPERTIES DEPENDS ${last_test})
+ENDIF (NOT "${last_test}" STREQUAL "")
+SET (last_test "testhdf-clearall-objects")
+
 ADD_TEST (
     NAME testhdf_thf0-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
@@ -182,6 +187,10 @@ ADD_TEST (
         thf8.hdf
         thf9.hdf
 )
+IF (NOT "${last_test}" STREQUAL "")
+  SET_TESTS_PROPERTIES (testhdf_thf0-clearall-objects PROPERTIES DEPENDS ${last_test})
+ENDIF (NOT "${last_test}" STREQUAL "")
+SET (last_test "testhdf_thf0-clearall-objects")
 
 SET (thf_decade
     1 2 3 4 5 6 7 8 9 10
@@ -207,11 +216,19 @@ FOREACH (decade ${thf_decade})
           thf${decade}8.hdf
           thf${decade}9.hdf
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (testhdf_thf${decade}-clearall-objects PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "testhdf_thf${decade}-clearall-objects")
 ENDFOREACH (decade ${thf_decade}) 
 
 ADD_TEST (NAME testhdf COMMAND $<TARGET_FILE:testhdf>)
 SET (passRegex "All tests were successful")
 SET_PROPERTY (TEST testhdf PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+IF (NOT "${last_test}" STREQUAL "")
+  SET_TESTS_PROPERTIES (testhdf PROPERTIES DEPENDS ${last_test})
+ENDIF (NOT "${last_test}" STREQUAL "")
+SET (last_test "testhdf")
 
 #-- Adding test for buffer
 IF (NOT WIN32)
@@ -219,6 +236,10 @@ IF (NOT WIN32)
   TARGET_NAMING (buffer ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (buffer ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME buffer COMMAND $<TARGET_FILE:buffer>)
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (buffer PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "buffer")
 ENDIF (NOT WIN32)
   
 FILE (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/testdir)

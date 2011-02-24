@@ -194,6 +194,10 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}.out"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HDP-${resultfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "HDP-${resultfile}")
   ENDMACRO (ADD_H4_TEST file)
 
 ##############################################################################
@@ -288,6 +292,10 @@ IF (BUILD_TESTING)
           list-8.tst
           list-9.tst
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDP_tst-clearall-objects PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HDP_tst-clearall-objects")
   
   # Remove any output file left over from previous test run
   ADD_TEST (
@@ -375,6 +383,10 @@ IF (BUILD_TESTING)
           list-8.tst.err
           list-9.tst.err
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDP_tst_err-clearall-objects PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HDP_tst_err-clearall-objects")
 
   ADD_H4_TEST (list-1 0 list tdata.hdf)
   ADD_H4_TEST (list-2 0 list -l tdata.hdf)
@@ -517,6 +529,10 @@ IF (BUILD_TESTING)
       -E remove 
       my.dat
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDP-clear-my.dat PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HDP-clear-my.dat")
   ADD_H4_TEST (dumpgr-8 0 dumpgr -o mybin.dat  -b grtdfui82.hdf)
   ADD_TEST (
       NAME HDP-clear-mybin.dat
@@ -524,6 +540,10 @@ IF (BUILD_TESTING)
       -E remove 
       mybin.dat
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDP-clear-mybin.dat PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HDP-clear-mybin.dat")
   ADD_H4_TEST (dumpgr-9 0 dumpgr grtdfui83.hdf)
   ADD_H4_TEST (dumpgr-10 0 dumpgr grtdfui84.hdf)
   ADD_H4_TEST (dumpgr-11 0 dumpgr grtdfui162.hdf)

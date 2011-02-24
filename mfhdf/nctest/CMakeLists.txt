@@ -77,3 +77,4 @@ ADD_TEST (
 
 #-- Adding test for nctest
 ADD_TEST (NAME nctest COMMAND $<TARGET_FILE:nctest>)
+SET_TESTS_PROPERTIES (nctest PROPERTIES DEPENDS NC_TEST-clearall-objects)

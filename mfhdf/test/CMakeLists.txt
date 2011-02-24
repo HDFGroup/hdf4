@@ -154,6 +154,7 @@ ADD_TEST (
 ADD_TEST (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)
 SET (passRegex "HDF-SD test passes")
 SET_PROPERTY (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+SET_TESTS_PROPERTIES (hdftest PROPERTIES DEPENDS MFHDF_TEST-clearall-objects)
 
 ADD_TEST (NAME cdftest COMMAND "${CMAKE_COMMAND}"
             -D "TEST_PROGRAM=$<TARGET_FILE:cdftest>"
@@ -164,10 +165,12 @@ ADD_TEST (NAME cdftest COMMAND "${CMAKE_COMMAND}"
             -D "TEST_REFERENCE=testout.sav"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
 )
+SET_TESTS_PROPERTIES (cdftest PROPERTIES DEPENDS hdftest)
 
 ADD_TEST (NAME hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
 SET (NCpassRegex "HDF-nc test passes")
 SET_PROPERTY (TEST hdfnctest PROPERTY PASS_REGULAR_EXPRESSION "${NCpassRegex}")
+SET_TESTS_PROPERTIES (hdfnctest PROPERTIES DEPENDS cdftest)
 
 #-- Adding test for xdrtest
 IF (HDF4_BUILD_XDR_LIB)
@@ -193,6 +196,7 @@ IF (HDF4_BUILD_XDR_LIB)
           -D "TEST_REFERENCE=xdrtest.out"
           -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
   )
+  SET_TESTS_PROPERTIES (xdrtest PROPERTIES DEPENDS hdfnctest)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 
