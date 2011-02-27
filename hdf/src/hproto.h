@@ -1391,6 +1391,9 @@ HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
 
 HDFLIBAPI intn GRPshutdown(void);
 
+/* This function was added for hmap project.  Feb-25-2011 */
+HDFLIBAPI intn GR2bmapped(int32 riid);
+
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
 /* Bit flags used for SDsetchunk(), SDgetchunkinfo() 

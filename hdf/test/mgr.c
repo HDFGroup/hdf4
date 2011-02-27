@@ -3150,7 +3150,8 @@ static void test_mgr_r24_a(int flag)
         int32 ncomp;        /* Number of components in the DF24 image */
         int32 nt;           /* Number-type of the DF24 image */
         int32 dimsizes[2];  /* Dimensions of the DF24 image */
-        intn i,j,k;                 /* indices */
+        intn  i,j,k;                 /* indices */
+	intn  is_mappedable;/* TRUE if the image is mapped-able (hmap project)*/
 
         /* Initialize data we are going to write out */
         for(i=0; i<GR_R24YDIM; i++)
@@ -3169,6 +3170,11 @@ static void test_mgr_r24_a(int flag)
         VERIFY_VOID(nt,DFNT_UCHAR8,"GRgetiminfo");
         VERIFY_VOID(dimsizes[0],dims[0],"GRgetiminfo");
         VERIFY_VOID(dimsizes[1],dims[1],"GRgetiminfo");
+
+	/* Test GR2bmapped on this image, should not be mapped-able because */
+	/* ncomp=3. (For hmap project only) */
+	is_mappedable = GR2bmapped(riid);
+        VERIFY_VOID(is_mappedable,FALSE,"GR2bmapped");
 
         /* Read the whole image in */
         start[0]=start[1]=0;
@@ -3226,7 +3232,7 @@ static void test_mgr_r8_a(int flag)
     int32 ret;              /* generic return value */
     uint8 palette[256][3];
     uint8 picture[GR_R8YDIM][GR_R8XDIM];
-    intn i,j;               /* indices */
+    intn  i,j;              /* indices */
 
 /* A - Write/Read DF8 image with palette */
     MESSAGE(8, printf("Operate on DF8 images\n"););
@@ -3276,6 +3282,7 @@ static void test_mgr_r8_a(int flag)
         int32 dimsizes[2];  /* Dimensions of the DFR8 image */
         int32 interlace;    /* Palette interlace */
         int32 num_entries;  /* Number of palette entries */
+	intn  is_mappedable;/* TRUE if the image is mapped-able (hmap project)*/
 
         /* Initialize data we are expecting to read in */
         for(i=0; i<GR_R8YDIM; i++)
@@ -3293,6 +3300,11 @@ static void test_mgr_r8_a(int flag)
         VERIFY_VOID(nt,DFNT_UCHAR8,"GRgetiminfo");
         VERIFY_VOID(dimsizes[0],dims[0],"GRgetiminfo");
         VERIFY_VOID(dimsizes[1],dims[1],"GRgetiminfo");
+
+	/* Test GR2bmapped on this image, should be mapped-able */
+	/* (For hmap project only) */
+	is_mappedable = GR2bmapped(riid);
+        VERIFY_VOID(is_mappedable,TRUE,"GR2bmapped");
 
         /* Read the whole image in */
         start[0]=start[1]=0;
@@ -3378,6 +3390,7 @@ static void test_mgr_pal_a(int flag)
     char gr_r24file[512] = "";
     char *srcdir = getenv("srcdir");
 
+ fprintf(stderr, "test_mgr_pal_a...\n");
     /* Generate the correct name for the test file, by prepending the source path */
     if (srcdir && ((strlen(srcdir) + strlen(GR_R24FILE) + 1) < sizeof(gr_r24file))) {
         strcpy(gr_r24file, srcdir);
@@ -3753,6 +3766,7 @@ test_mgr_chunkwr_pixel(int flag)
    int32 start[2],
          stride[2],
          edge[2];
+   intn  is_mappedable;  /* TRUE if the image is mapped-able (hmap project)*/
    int16 data_out[3*Y_LENGTH*X_LENGTH];
    char *image_name[] = { "Image_NO", "Image_RL", "Image_Sk", "Image_DF"};
    char *file_name[] = { "ChunkedGR_NO.hdf", 
@@ -3962,6 +3976,11 @@ test_mgr_chunkwr_pixel(int flag)
             num_errs++;
       } /* end if */
 
+   /* Test GR2bmapped on this image, should not be mapped-able because it has */
+   /* chunking storage. (For hmap project only) */
+   is_mappedable = GR2bmapped(ri_id[i]);
+   VERIFY_VOID(is_mappedable,FALSE,"GR2bmapped");
+
    status = GRendaccess (ri_id[i]);
    CHECK_VOID(status, FAIL, "GRendaccess");
 
@@ -3974,6 +3993,8 @@ test_mgr_chunkwr_pixel(int flag)
    status = Hclose (file_id);
    CHECK_VOID(status, FAIL, "Hclose");
 }
+
+
 /****************************************************************
 **
 **  test_mgr_chunkwr(): GR chunking test 
@@ -3999,6 +4020,7 @@ test_mgr_chunkwr(void)
     test_mgr_chunkwr_pixel(3);
 
 }   /* end test_mgr_chunkwr() */
+
 /****************************************************************
 **
 **  test_mgr(): Main multi-file raster image test routine

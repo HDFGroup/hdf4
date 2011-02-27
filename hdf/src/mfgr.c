@@ -6380,6 +6380,96 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     return ret_value;
 } /* GRsetchunkcache() */
 
+
+/*---------------------------------------------------------------
+NAME
+   GRmapped - Checks whether an RI is to be mapped (hmap project)
+
+DESCRIPTION
+   GRmapped checks if the given RI satisfies the following conditions:
+   + being an 8-bit RI
+   + being non-special or RLE compressed only, i.e., no other
+        compressions, no chunking,...
+
+RETURNS
+   TRUE if the image satisfies the above conditions, and FALSE, otherwise,
+   or when failure occurs.
+
+TODO
+    - need additional tests
+    Feb 24, 2011 -BMR
+----------------------------------------------------------------*/
+intn
+GR2bmapped(int32 riid)
+{
+    CONSTR(FUNC, "GR2bmapped");
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    intn   tobe_mapped = FALSE;	/* TRUE if the image should be mapped */
+    uint16 img_tag, img_ref;	/* shortcuts image's tag/ref */
+    int32  ritype;		/* image's type */
+    intn   special_type=0;	/* specialness of the image data */
+    int32  file_id;		/* shortcut file id */
+    intn   status;
+    intn   ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Check the validity of the ID */
+    if (HAatom_group(riid) != RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate RI's object in hash table */
+    ri_ptr = (ri_info_t *) HAatom_object(riid);
+    if (NULL == ri_ptr)
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
+
+    /* shortcuts */
+    img_tag = ri_ptr->img_tag;
+    img_ref = ri_ptr->img_ref;
+    file_id = ri_ptr->gr_ptr->hdf_file_id;
+
+    /* If the image has new image tag, then make sure that it has 8-bit data
+	and has no special storage except RLE compression before determining
+	that it is mapped-able */
+    if (img_tag == DFTAG_RI || img_tag == DFTAG_CI)
+    {
+	/* Get the image data's type */
+	status = GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
+
+	/* If it is 8-bit, set flag to check further for special storage */
+	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8)
+	{
+	    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
+	    if (special_type == 0)
+		tobe_mapped = TRUE;
+	    if (special_type == SPECIAL_COMP)
+	    {
+		if (ri_ptr->img_dim.comp_tag == DFTAG_RLE)
+		    tobe_mapped = TRUE;
+	    }
+	    /* Also make sure it only has one component */
+	    if (ri_ptr->img_dim.ncomps > 1)
+		tobe_mapped = FALSE;
+	}
+    }
+    /* If the image has old image tag, then make sure it is either regular or
+	compressed with RLE only */ 
+    else if (img_tag == DFTAG_RI8 || img_tag == DFTAG_CI8)
+    {
+	if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
+	    ri_ptr->img_dim.comp_tag == DFTAG_NULL)
+	    tobe_mapped = TRUE;
+    }
+    ret_value = tobe_mapped;
+
+done:
+  if(ret_value == 0)
+    { /* Error condition cleanup */
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+}   /* GR2bmapped */
 /*
 
 API functions to finish:
