@@ -1188,6 +1188,10 @@ intn Vnoldattrs(int32 vgid)
     /* Get number of old-style attributes */
     n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, 0, NULL);
 
+    /* Note: a new attribute is stored in vdata of class _HDF_ATTRIBUTE too, but
+       it is only saved in the file as attribute (by tag/ref,) not as an element
+       of the vgroup.  Hence, vg->nattrs = 1, but vg->nvelt = 0 -BMR Feb, 2011*/
+
     /* Store the ref numbers of old-style attributes into the list
        vg->old_alist, for easy access later by Voldattrinfo and Vgetoldattr */ 
     if (n_old_attrs > 0)

@@ -1640,6 +1640,8 @@ VSIgetvdatas(int32 id,		 /* IN: file id or vgroup id */
 	{
 	    intn found = FALSE;
 
+	    /* Check if the vdata either has the specified class (when vsclass
+	       is !NULL) or is a user-created vdata (when vsclass is NULL) */
 	    found = vscheckclass(id, (uint16)vs_ref, vsclass);
 
             /* If this vs met the search criteria, record its ref# according to
