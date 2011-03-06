@@ -941,6 +941,7 @@ vpackvg(VGROUP * vg, /* IN: */
     bb += temp_len;
 
     /* save the vgclasslen and vgclass- omit the null */
+    slen = 0;
     if (vg->vgclass != NULL)
         slen = HDstrlen(vg->vgclass);
     temp_len = slen > 0 ? slen : 0;

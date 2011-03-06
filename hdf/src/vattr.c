@@ -1827,6 +1827,7 @@ intn Vgetattr2(int32 vgid, intn attrindex, void * values)
     int32 n_recs, il;
     int32 ret_value = SUCCEED;
     
+    /* Clear error stack */
     HEclear();
 
     /* Make sure given object is a vgroup */

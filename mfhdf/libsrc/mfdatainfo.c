@@ -14,7 +14,9 @@
 /* $Id: mfdatainfo.c 5399 2010-04-22 01:49:49Z bmribler $ */
 
 /* NOTE: this file and other "datainfo" related files will be configured so
-that this feature will not be built by default. -BMR */
+	 that this feature will not be built by default. -BMR
+   Update: THG and NASA had decided to include all features developed for the
+	   HDF Mapping Project in the library -BMR (~Jan 2011) */
 
 /******************************************************************************
 FILE
@@ -26,10 +28,7 @@ FILE
   file without the use of HDF4 library.
 
   As with the rest of the SD functions, these functions have names beginning
-  with SD.  Routines beginning with SDI are internal routines and
-  should not be used outside of this module.
-
-  Defining SDDEBUG will print status messages to stderr
+  with SD.
 
 EXPORTED ROUTINES
 ------------------
@@ -476,26 +475,26 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
  
     SDgetoldattdatainfo retrieves the offset and length of the attribute that
     belongs to a data set or a dimension.  Note that only Label, Units, and
-    Format (LUF) are applicable to dimensions.  The other attributes only
-    are only available to the data set.
+    Format (LUF) are applicable to dimensions.  The other attributes are only
+    available to the data set.
 
  DESIGN NOTE:
     This function could be modified to return lists of offsets and lengths
     for attributes of data set and dimension in one call, in the case of LUF.
     That approach would reduce the need to go over the attribute strings
-    multiple times for each dimension.  However, it is pending on how Joe
-    uses the function. -BMR (2011/1/13)
+    multiple times for each dimension.  However, it is pending on how the map
+    writer uses the function. -BMR (2011/1/13)
 
  MODIFICATION
     2011/1/11: Revised to handle offset/length of SDS' attribute too. -BMR
 
 ******************************************************************************/
 intn
-SDgetoldattdatainfo(int32 dim_id,	/* IN: dimension ID */
-		    int32 sdsid,	/* IN: ID of dataset the dim belongs to */
-		    char  *attr_name,   /* IN: name of attribute to be inquired */
-		    int32 *offset,      /* OUT: buffer for offset */
-		    int32 *length)      /* OUT: buffer for length */
+SDgetoldattdatainfo(int32 dim_id,     /* IN: dimension ID */
+		    int32 sdsid,      /* IN: ID of dataset the dim belongs to */
+		    char  *attr_name, /* IN: name of attribute to be inquired */
+		    int32 *offset,    /* OUT: buffer for offset */
+		    int32 *length)    /* OUT: buffer for length */
 {
     CONSTR(FUNC, "SDgetoldattdatainfo");
     NC     *handle;
@@ -516,6 +515,7 @@ SDgetoldattdatainfo(int32 dim_id,	/* IN: dimension ID */
     /* Clear error stack */
     HEclear();
 
+/* Need to do something about dim_id == 0 or -1 */
     /* Check if a dimension ID is given then set flag */
     handle = SDIhandle_from_id(dim_id, DIMTYPE);
     if(handle != NULL)

@@ -424,6 +424,7 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     vg_attr_t *vg_alist;
     vginstance_t *vg_inst;
     int32 attr_vsid;
+    intn adjusted_index;
     intn status;
     intn ret_value = SUCCEED;
 
@@ -445,11 +446,18 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     if (attrindex < 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
 
-    if (attrindex < vg->noldattrs) /* index of old-style attribute */
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
         vg_alist = vg->old_alist;  /* use old-attr list */
-    else if (attrindex >= vg->noldattrs &&
-             attrindex < vg->nattrs) /* index of new-style attributes */
+    else if (adjusted_index >= vg->noldattrs &&
+             adjusted_index < (vg->nattrs+vg->noldattrs))
+                 /* index of new-style attributes */
+    {
+        /* Adjust the index to accommodate for the old-style attributes
+           preceding the new-style attribute list */
+        adjusted_index = adjusted_index - vg->noldattrs;
         vg_alist = vg->alist;        /* use new-attr list */
+    }
     else /* not that many attrs */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
@@ -457,8 +465,8 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
         /* Bad attr list */
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    /* Get vdata */
-    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist[attrindex].aref, "r")))
+    /* Get vdata holding the attribute */
+    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist[adjusted_index].aref, "r")))
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
     /* Get offset and length of attribute's data.  Note that start_block is 0
@@ -470,6 +478,8 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     /* Close vdata */
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+
+    ret_value = status;
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -589,6 +599,141 @@ done:
 NAME
    GRgetattdatainfo - Gets the offset/length of the data of a
 			GR file's or an image's attribute
+USAGE
+    intn GRgetattdatainfo(id, attrindex, offset, length)
+        int32 id                IN: either GR ID or RI ID
+        int32 attrindex         IN: index of the attribute being inquired
+        int32 *offset           OUT: buffer for offset of attribute's data
+        int32 *length           OUT: buffer for length of attribute's data
+RETURNS
+    The number of data blocks retrieved, which should be 1, if successful
+    and FAIL, otherwise.
+
+DESCRIPTION
+    GRgetattdatainfo retrieves the location of the attribute's data and its
+    length.
+
+MODIFICATION
+    2011/03/04: Revised to remove the parameter attrname because, for hmap
+        project, it makes sense to just provide the attribute index. -BMR
+
+--------------------------------------------------------------*/
+intn 
+GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
+	intn attrindex,		/* IN: attribute index */
+	int32 *offset,		/* OUT: buffer for offset */
+	int32 *length)		/* OUT: buffer for length */
+{
+    CONSTR(FUNC, "GRgetattdatainfo");
+    int32      hdf_file_id;	/* file id */
+    int32      attr_vsid;	/* id of vdata that stores the attribute */
+    group_t id_group=BADGROUP;	/* temporary group of id */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for gr id */
+    ri_info_t *ri_ptr;          /* ptr to the image information for ri id */
+    at_info_t *at_ptr=NULL;	/* ptr to the attribute information */
+    void     **aentry;		/* temp. ptr to the image found */
+    TBBT_TREE *search_tree;	/* attribute tree to search through */
+    int        found = FALSE;	/* TRUE when the searched attribute is found */
+    intn       status = 0; 
+    intn       ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Validate index */
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Validate ID */
+    id_group = HAatom_group(id);
+    if (id_group != RIIDGROUP && id_group != GRIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    
+    /* Get attribute info and validate index */
+
+    /* When file ID is given, check index against file's attribute count */
+    if (id_group == GRIDGROUP)
+      {
+          /* locate GR's object in hash table */
+          if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
+
+	  /* Check index against file's attribute count */
+          if(attrindex >= gr_ptr->gattr_count)
+              HGOTO_ERROR(DFE_ARGS, FAIL);
+
+          search_tree = gr_ptr->gattree;
+	  hdf_file_id = gr_ptr->hdf_file_id;
+      } /* end if */
+
+    /* When raster image ID is given, check index against image's attr count */
+    else if (id_group == RIIDGROUP)
+      {
+          /* locate RI's object in hash table */
+          if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
+              HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
+
+	  /* Check index against image's attribute count */
+          if(attrindex >= ri_ptr->lattr_count)
+              HGOTO_ERROR(DFE_ARGS, FAIL); 
+          search_tree = ri_ptr->lattree;
+	  hdf_file_id = ri_ptr->gr_ptr->hdf_file_id;
+      } /* end if */
+    else
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Search for an attribute with the same index */
+    aentry = (void **)tbbtfirst((TBBT_NODE *)*search_tree);
+    found = FALSE;
+    while (!found && (aentry != NULL))
+    {
+	at_ptr = (at_info_t *)*aentry;
+	if (at_ptr == NULL)
+	{
+	    HGOTO_ERROR(DFE_ARGS, FAIL); 
+	}
+
+	/* If index is found, set flag */
+	if (at_ptr->index == attrindex)
+	    found = TRUE;
+
+	/* Not found, go to the next entry */
+	if (!found)
+	    aentry = (void **)tbbtnext((TBBT_NODE *)aentry);
+    } /* end while */
+
+    /* If the attribute is found, get offset/length of its data */
+    if (found)
+    {
+	/* Get access to the vdata that stores the attribute */
+	attr_vsid = VSattach(hdf_file_id, (int32)at_ptr->ref, "r");
+	if (attr_vsid == FAIL)
+	    HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+
+	/* Get offset and length of attribute's data.  Note that start_block
+	   is 0 and info_count is 1 because attribute's data is only stored
+	   in 1 block */
+	status = VSgetdatainfo(attr_vsid, 0, 1, offset, length);
+	if (status == FAIL)
+	    HGOTO_ERROR(DFE_GENAPP, FAIL);
+
+	if (FAIL == VSdetach(attr_vsid))
+	    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+    }
+
+done:
+  if(ret_value == 0)   
+    { /* Error condition cleanup */
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+}   /* GRgetattdatainfo */
+
+
+/*------------------------------------------------------------ 
+NAME
+   GRgetattdatainfo_withname - Gets the offset/length of the data of a
+			GR file's or an image's attribute
 
 DESCRIPTION
 
@@ -599,13 +744,13 @@ TODO
     - not documented
 --------------------------------------------------------------*/
 intn 
-GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
+GRgetattdatainfo_withname(int32 id,	/* IN: either GR ID or RI ID */
 	intn attrindex,		/* IN: attribute index */
 	char *attrname,		/* IN: attribute name if index = -1 */
 	int32 *offset,		/* OUT: buffer for attribute's data's offset */
 	int32 *length)		/* OUT: buffer for attribute's data's length */
 {
-    CONSTR(FUNC, "GRgetattdatainfo");
+    CONSTR(FUNC, "GRgetattdatainfo_withname");
     gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32      hdf_file_id;	/* file id */
@@ -707,7 +852,7 @@ done:
     } /* end if */
   /* Normal function cleanup */
   return ret_value;
-}   /* GRgetattdatainfo */
+}   /* GRgetattdatainfo_withname */
 
 
 /*--------------------------------------------------------------- 

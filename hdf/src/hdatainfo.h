@@ -54,7 +54,7 @@ extern      "C"
 		 int32 *offsetarray, int32 *lengtharray);
 
     HDFLIBAPI intn GRgetattdatainfo
-		(int32 id, intn attrindex, char *attrname, int32 *offset, int32 *length);
+		(int32 id, intn attrindex, int32 *offset, int32 *length);
 
 #if defined c_plusplus || defined __cplusplus
 }

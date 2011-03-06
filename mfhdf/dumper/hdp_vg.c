@@ -504,6 +504,13 @@ intn get_VGandInfo( int32 *vg_id,
     {
 	*vgname = (char *) HDmalloc(sizeof(char) * (10));
 	HDstrcpy( *vgname, "<Unknown>" );
+	status = Vinquire(*vg_id, n_entries, NULL);
+	if (FAIL == status) /* go to done and return a FAIL */
+	{
+	    *n_entries = -1;
+	    ERROR_GOTO_2( "in %s: Vinquire failed for vg ref=%d",
+		"get_VGandInfo", (int) vg_ref );
+	}
     }
 
     /* get the length of the vgclass to allocate enough space */
