@@ -687,14 +687,11 @@ static int test_dfannots(void)
 {
     int32 sd_id, sds_id, sds_index;
     intn  ii, status, num_annots;
-    int32 rank, data_type, dim_sizes[MAX_VAR_DIMS];
     int32 n_datasets, n_file_attr, n_attrs; 
     int32 *offsetarray=NULL, *lengtharray=NULL;
     int32 chk_offsets[10], chk_lengths[10];
     int32 num_labels = 0,      /* number of file or object labels */
           num_descs = 0;       /* number of file or object descriptions */
-
-    char  sds_name[MAX_NC_NAME];
     intn  num_errs = 0;
 
     /* Add file annotations */
