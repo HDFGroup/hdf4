@@ -1149,6 +1149,7 @@
 ./config/cmake/ConfigureChecks.cmake
 ./config/cmake/FortranConfigureChecks.cmake
 ./config/cmake/CTestCustom.cmake
+./config/cmake/CTest.cmake
 ./config/cmake/runTest.cmake
 ./config/cmake/HDFMacros.cmake
 ./config/cmake/ConversionTests.c
@@ -1168,6 +1169,7 @@
 ./release_notes/INSTALL
 ./release_notes/INSTALL_CYGWIN.txt
 ./release_notes/INSTALL_WINDOWS.txt
+./release_notes/USING_WINDOWS.txt
 ./release_notes/bugs_fixed.txt
 ./release_notes/misc_docs.txt
 ./release_notes/CMake.txt
