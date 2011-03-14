@@ -19,8 +19,6 @@
 #include "tdatainfo.h"
 #include "tproto.h"
 
-/************ Draft - still need a little more clean up ***********/
-
 /***********************************************************************
   NOTE: At this time, many of the offsets in these tests are verified
 	by hard-coding.  When adding new data to the files in exiting
@@ -78,7 +76,7 @@ void free_info(t_hdf_datainfo_t *info)
 	od. (Todo 1)
    BMR - Jul 2010
  ****************************************************************************/
-#define SIMPLE_FILE	"datainfo_simple.hdf"   /* data file */
+#define SIMPLE_FILE	"tdatainfo_simple.hdf"   /* data file */
 #define NONSPECIAL_VS	"Non-Special Vdata"
 #define CONTCLASS_NAME	"Contiguous Vdata"
 #define LINKED_BLOCK	"Linked-block Vdata"
@@ -198,8 +196,8 @@ test_simple_vs(void)
      */
     for (rec_num = 0; rec_num < N_RECORDS; rec_num++)
     {
-        data_buf1[rec_num][0] = 2;	/* easier to inspect the bin file */
-        data_buf1[rec_num][1] = 2;
+        data_buf1[rec_num][0] = 2; /* easier to inspect the binary file using */
+        data_buf1[rec_num][1] = 2; /* a simple value */
         data_buf1[rec_num][2] = 2;
         data_buf1[rec_num][3] = 2;
         data_buf1[rec_num][4] = 2;
@@ -295,7 +293,7 @@ test_simple_vs(void)
 	- use VSgetdatainfo to get offsets/lengths of the linked-blocks of data
    BMR - Jul 2010
  ****************************************************************************/
-#define APPEND_FILE	"datainfo_linkblock.hdf"   /* data file */
+#define APPEND_FILE	"tdatainfo_linkblock.hdf"   /* data file */
 #define APPENDABLE_VD	"Appendable Vdata"
 static void
 test_append_vs()
@@ -629,7 +627,7 @@ intn get_annot_datainfo(int32 an_id, ann_type annot_type, int32 num_anns, t_ann_
 	is not that critical anymore.  For SDS, SDgetanndatainfo handles
 	annotations already.  BMR - Jan 2011
  ****************************************************************************/
-#define ANNOT_FILE	"datainfo_annot.hdf"   /* data file */
+#define ANNOT_FILE	"tdatainfo_annot.hdf"   /* data file */
 #define	VG_NAME		"AN Vgroup"
 #define	FILE_LABEL_TXT	"General HDF objects"
 #define	FILE_DESC_TXT	"This is an HDF file that contains general HDF objects"
@@ -809,9 +807,11 @@ test_annotation()
 	Only the non-compressed image's values are verified against the original
 	buffer.  The other three were verified by debugging, additional
 	decompression code needed for further verification (Todo 2)
+
+   Note: Incomplete, waiting for schema design
    BMR - Aug 2010
  ****************************************************************************/
-#define IMAGE_FILE	"datainfo_images.hdf"   /* data file */
+#define IMAGE_FILE	"tdatainfo_images.hdf"   /* data file */
 #define	NONCOMP_IMAGE	"Image with No Compression"
 #define	RLE_IMAGE	"Image with RLE Compression"
 #define	DEFLATE_IMAGE	"Image with Deflate Compression"
@@ -1000,7 +1000,7 @@ test_oneblock_ri(void)
     CHECK_VOID(status, FAIL, "Hclose");
 } /* end test_oneblock_ri */
 
-#define IMAGE_DF_FILE	"datainfo_dfri.hdf"	/* data file for DFR APIs */
+#define IMAGE_DF_FILE	"tdatainfo_dfri.hdf"	/* data file for DFR APIs */
 #define N_DF_IMAGES	2	/* number of DF images in the file, 1 RI8 &
 				   1 RI24 */
 static void

@@ -635,6 +635,7 @@ test_grattrs()
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
     /* Note: readnoHDF_char is defined in tdatainfo.c */
 
+system("mv tattdatainfo.hdf tattdatainfo_hdf");
 } /* test_grattrs() */
 
 /* Test driver for testing the public functions VSgetattdatainfo and

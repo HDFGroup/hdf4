@@ -17,7 +17,7 @@
  *    test_idtype - test driver
  *	  test_SDAPI_ids    - tests SDidtype on SD API ids: sd, sds, dim ids
  *	  test_nonSDAPI_ids - tests SDidtype on non SD API ids and invalid id.
- *	  test_getvgroups - tests Vgetvgroups and VSgetvdatas.
+ *	  test_vdatavgroups - tests Vgetvgroups and VSgetvdatas.
  *			(Here because it also uses non-SD API.  It's not a
  *			good reason, but will think about it later)
 ****************************************************************************/
@@ -212,7 +212,7 @@ test_nonSDAPI_ids ()
 
 
 /****************************************************************************
- * test_getvgroups - tests the API functions Vgetvgroups and VSgetvdatas.
+ * test_vdatavgroups - tests the API functions Vgetvgroups and VSgetvdatas.
  *   - Create an SD file and several datasets
  *   - Set attributes to some dimensions to promote them to coordinate
  *	  variables, which will be represented by internally created vgroups.
@@ -231,7 +231,8 @@ test_nonSDAPI_ids ()
  *     vdatas that were created by the application.
  * Mar 4, 2011 -BMR
 ****************************************************************************/
-#define FILE_NAME   "tgetvgroups.hdf"	/* data file to test getting vgs/vds */
+/* data file to test getting vgs/vds from an SD file */
+#define FILE_NAME   "tvdatasvgroups_SD.hdf"
 #define ATTR1_NAME  "Valid_range 1"
 #define ATTR2_NAME  "Unit"
 #define X_LENGTH    10
@@ -241,7 +242,7 @@ test_nonSDAPI_ids ()
 #define NUM_VDS     1
 
 static intn
-test_getvgroups()
+test_vdatavgroups()
 {
     int32   fid, dset1, dset2, dset3, dimid, vgroup_id, vdata_id;
     int32   num_allvgroups, num_allvdatas;
@@ -314,9 +315,10 @@ test_getvgroups()
     CHECK(num_vgroups, FAIL, "Vgetvgroups");
     VERIFY(num_vgroups, 0, "Vgetvgroups");
 
-    /*   num_allvdatas = Hnumber(fid, DFTAG_VH);
+    /* There are internally created vds because of attributes and dimensions */
+    num_allvdatas = Hnumber(fid, DFTAG_VH);
     CHECK(num_allvdatas, FAIL, "Hnumber");
-    keep for debugging only */ 
+    CHECK(num_allvdatas, 0, "Hnumber");  /* so num_allvdatas shouldn't be 0 */
 
     /* Get the number of user-created vdatas */
     num_vdatas = VSgetvdatas(fid, 0, 0, NULL);
@@ -440,7 +442,7 @@ test_getvgroups()
 
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
-}   /* test_getvgroups */
+}   /* test_vdatavgroups */
 
 /* Test driver for testing the API functions SDidtype, Vgetvgroups, and
    VSgetvdatas. */
@@ -456,7 +458,7 @@ test_idtype()
     num_errs = num_errs + test_nonSDAPI_ids();
 
     /* Test Vgetvgroups and VSgetvdatas */
-    num_errs = num_errs + test_getvgroups();
+    num_errs = num_errs + test_vdatavgroups();
 
     if (num_errs == 0) PASSED();
     return num_errs;

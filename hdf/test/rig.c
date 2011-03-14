@@ -848,6 +848,7 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
     255, 103, 2, 255, 103, 2, 255, 103, 2, 255, 103, 2 
 };
 
+void test_grgetcomptype(); /* in "tdfr8.c" */
 static VOID
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
              uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal);
@@ -1658,6 +1659,10 @@ test_r8(void)
     HDfree(pal2);
     HDfree(ipal);
     HDfree(jpeg_8bit_temp);
+
+    /* Temporarily call to test grgetcomptype() for hmap project; these tests
+       will need to be reformatted. Mar 13, 2011 -BMR */
+    test_grgetcomptype();
 }
 
 void

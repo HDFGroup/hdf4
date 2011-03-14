@@ -56,6 +56,10 @@ extern      "C"
     HDFLIBAPI intn GRgetattdatainfo
 		(int32 id, intn attrindex, int32 *offset, int32 *length);
 
+    /* For temporary use by hmap writer to detect IMCOMP.  -BMR, Mar 11, 2011 */
+    intn grgetcomptype
+		(int32 riid, int32 *comp_type);
+
 #if defined c_plusplus || defined __cplusplus
 }
 #endif				/* c_plusplus || __cplusplus */

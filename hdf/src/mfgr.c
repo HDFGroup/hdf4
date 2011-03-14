@@ -3259,6 +3259,8 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	cinfo.jpeg.force_baseline = 0;
     }
 /* Should RLE be checked here too?  For DFR8? -BMR 2010/12/3 */
+    else if (scheme == DFTAG_RLE) /* old image */
+	comp_type = COMP_CODE_RLE;
     else
     {
 	/* use lower-level routine to get the compression information */
@@ -4528,6 +4530,99 @@ done:
   /* Normal function cleanup */
   return ret_value;
 } /* end GRgetcompress() */
+
+/*--------------------------------------------------------------------------
+ NAME
+    grgetcomptype - only for hmap project
+
+ PURPOSE
+    Get the compression type of a raster image's data.
+
+ USAGE
+    intn grgetcomptype(riid, comp_type)
+        int32 riid;	   IN: RI ID from GRselect/GRcreate
+        int32* comp_type;  OUT: type of compression, including obsolete ones
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    This function is implemented specifically for the hmap project.  It gets
+    the compression type of the given RI's data.  The existing function
+    GRgetcompinfo did not detect the obsolete compression scheme IMCOMP.
+    Because the hmap writer needs to report when an image with IMCOMP exists
+    in the file and not to map it, it needs a way to detect such images.  One
+    option is to add COMP_CODE_IMCOMP to the enum type comp_coder_t.  However,
+    with the consideration of backward/forward compatibility, it would be
+    risky to change the existing public type comp_coder_t.  Instead, it was
+    decided that a function would be made for the hmap project only, and would
+    not be published in the HDF4 documentation.  The function, grgetcomptype,  
+    will return comp_type as COMP_IMCOMP or one of the values included in the
+    type comp_coder_t.  Mar 11, 2011 -BMR
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    At this time, hdp and other tools still use GRgetcompinfo.  We need to
+    discuss about how to handle its limitation.
+
+ EXAMPLES
+ REVISION LOG
+
+--------------------------------------------------------------------------*/
+intn grgetcomptype(int32 riid, int32* comp_type)
+{
+    CONSTR(FUNC, "grgetcomptype");	/* for HGOTO_ERROR */
+    ri_info_t *ri_ptr;          	/* ptr to the image to work with */
+    int32 file_id;
+    uint16 scheme;	/* compression scheme used for old images */
+    intn  ret_value = SUCCEED;
+
+    /* clear error */
+    HEclear();
+
+    /* Validate the RI ID */
+    if (HAatom_group(riid) != RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check the output argument */
+    if (comp_type == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    file_id = ri_ptr->gr_ptr->hdf_file_id;	/* temporary use */
+
+    /* Handle old compression schemes separately */
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	*comp_type = COMP_CODE_JPEG;
+    }
+    else if (scheme == DFTAG_RLE)
+	*comp_type = COMP_CODE_RLE;
+    else if (scheme == DFTAG_IMC || scheme == DFTAG_IMCOMP)
+	*comp_type = COMP_IMCOMP;
+
+    /* Use lower-level routine to get the new compression type */
+    else
+    {
+	comp_coder_t temp_comp_type = COMP_CODE_INVALID;
+	ret_value = HCPgetcomptype(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+                                &temp_comp_type);
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	*comp_type = (int32)temp_comp_type;
+    }
+done:
+  if(ret_value == 0)
+    { /* Error condition cleanup */
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+} /* end grgetcomptype() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -6392,8 +6487,8 @@ DESCRIPTION
         compressions, no chunking,...
 
 RETURNS
-   TRUE if the image satisfies the above conditions, and FALSE, otherwise,
-   or when failure occurs.
+   TRUE if the image satisfies the above conditions, and FALSE, otherwise.
+   When failure occurs, returns FAIL.
 
 TODO
     - need additional tests

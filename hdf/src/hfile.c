@@ -121,7 +121,6 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #define HFILE_MASTER
 #include "hfile.h"
-#include "hkit.h"	/* for Hntypeinfo */
 #include <errno.h>
 #include "glist.h" /* for double-linked lists, stacks and queues */
 
