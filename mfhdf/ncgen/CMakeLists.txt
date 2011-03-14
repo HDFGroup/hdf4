@@ -65,7 +65,6 @@ ENDIF (WIN32 AND NOT CYGWIN)
     TARGET_LINK_LIBRARIES (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (ncgen ${LIB_TYPE})
-  TARGET_WIN_PROPERTIES (ncgen ${LIB_TYPE})
 
 ##############################################################################
 ##############################################################################
@@ -94,6 +93,10 @@ ENDIF (WIN32 AND NOT CYGWIN)
           test1.nc
           test2.cdl
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (ncgen-clearall-objects PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "ncgen-clearall-objects")
 
   #-- Copy all the data files from the test directory into the source directory
   #MESSAGE (STATUS " Copying ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")

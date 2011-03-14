@@ -132,6 +132,13 @@
   #endif
 #endif
 
+#elif defined(H4_BUILT_AS_STATIC_LIB)
+  #define XDRLIBAPI extern
+  #define HDFERRPUBLIC extern
+  #define HDFPUBLIC
+  #define HDFLIBAPI extern
+  #define HDFFCLIBAPI extern
+
 #else
 /* This is the original HDFGroup defined preprocessor code which should still work
  * with the VS projects that are maintained by "The HDF Group"

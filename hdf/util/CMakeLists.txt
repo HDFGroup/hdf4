@@ -10,7 +10,6 @@ ENDIF (WIN32 AND NOT CYGWIN)
 #-- Adding utility hdfls
 ADD_EXECUTABLE (hdfls ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfls.c)
 TARGET_NAMING (hdfls ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdfls ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdfls ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdf2gif
@@ -22,7 +21,6 @@ SET (hdf2gif_SRCS
   
 ADD_EXECUTABLE (hdf2gif ${hdf2gif_SRCS})
 TARGET_NAMING (hdf2gif ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdf2gif ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdf2gif ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility gif2hdf
@@ -37,19 +35,16 @@ SET (gif2hdf_SRCS
   
 ADD_EXECUTABLE (gif2hdf ${gif2hdf_SRCS})
 TARGET_NAMING (gif2hdf ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (gif2hdf ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (gif2hdf ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdf24to8
 ADD_EXECUTABLE (hdf24to8 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf24to8.c)
 TARGET_NAMING (hdf24to8 ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdf24to8 ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdf24to8 ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdftor8
 ADD_EXECUTABLE (hdftor8 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftor8.c)
 TARGET_NAMING (hdftor8 ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdftor8 ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdftor8 ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdfed
@@ -63,79 +58,66 @@ SET (hdfed_SRCS
   
 ADD_EXECUTABLE (hdfed ${hdfed_SRCS})
 TARGET_NAMING (hdfed ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdfed ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdfed ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility ristosds
 ADD_EXECUTABLE (ristosds ${HDF4_HDF_UTIL_SOURCE_DIR}/ristosds.c)
 TARGET_NAMING (ristosds ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (ristosds ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (ristosds ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdfpack
 ADD_EXECUTABLE (hdfpack ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfpack.c)
 TARGET_NAMING (hdfpack ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdfpack ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdfpack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility paltohdf
 ADD_EXECUTABLE (paltohdf ${HDF4_HDF_UTIL_SOURCE_DIR}/paltohdf.c)
 TARGET_NAMING (paltohdf ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (paltohdf ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (paltohdf ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdftopal
 ADD_EXECUTABLE (hdftopal ${HDF4_HDF_UTIL_SOURCE_DIR}/hdftopal.c)
 TARGET_NAMING (hdftopal ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdftopal ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdftopal ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility r8tohdf
 ADD_EXECUTABLE (r8tohdf ${HDF4_HDF_UTIL_SOURCE_DIR}/r8tohdf.c)
 TARGET_NAMING (r8tohdf ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (r8tohdf ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (r8tohdf ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdfcomp
 ADD_EXECUTABLE (hdfcomp ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfcomp.c)
 TARGET_NAMING (hdfcomp ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdfcomp ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdfcomp ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility jpeg2hdf
 ADD_EXECUTABLE (jpeg2hdf ${HDF4_HDF_UTIL_SOURCE_DIR}/jpeg2hdf.c)
 TARGET_NAMING (jpeg2hdf ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (jpeg2hdf ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (jpeg2hdf ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdf2jpeg
 ADD_EXECUTABLE (hdf2jpeg ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf2jpeg.c)
 TARGET_NAMING (hdf2jpeg ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdf2jpeg ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdf2jpeg ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdf8to24
 ADD_EXECUTABLE (hdf8to24 ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf8to24.c)
 TARGET_NAMING (hdf8to24 ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdf8to24 ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdf8to24 ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility hdfunpac
 ADD_EXECUTABLE (hdfunpac ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfunpac.c)
 TARGET_NAMING (hdfunpac ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (hdfunpac ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (hdfunpac ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility vmake
 ADD_EXECUTABLE (vmake ${HDF4_HDF_UTIL_SOURCE_DIR}/vmake.c)
 TARGET_NAMING (vmake ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (vmake ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (vmake ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding utility vshow
 ADD_EXECUTABLE (vshow ${HDF4_HDF_UTIL_SOURCE_DIR}/vshow.c)
 TARGET_NAMING (vshow ${LIB_TYPE})
-TARGET_WIN_PROPERTIES (vshow ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (vshow ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 ##############################################################################
@@ -372,6 +354,10 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HDFLS_NOL-${testfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "HDFLS_NOL-${testfile}")
   ENDMACRO (ADD_LS_TEST_NOL)
 
   MACRO (ADD_LS_TEST testfile resultfile resultcode)
@@ -387,6 +373,10 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HDFLS-${testfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "HDFLS-${testfile}")
   ENDMACRO (ADD_LS_TEST)
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
@@ -402,7 +392,35 @@ IF (BUILD_TESTING)
             -D "TEST_REFERENCE=${resultfile}"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (HEDIT-${testfile} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "HEDIT-${testfile}")
   ENDMACRO (ADD_H4_TEST_ED)
+
+  MACRO (ADD_H4_TEST testname testfile)
+    ADD_TEST (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN})
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (${testname} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "${testname}")
+  ENDMACRO (ADD_H4_TEST)
+
+  MACRO (ADD_CMP_TEST testname reffile testfile)
+    ADD_TEST (NAME ${testname} COMMAND ${CMAKE_COMMAND} -E compare_files ${reffile} ${testfile})
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (${testname} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "${testname}")
+  ENDMACRO (ADD_CMP_TEST)
+
+  MACRO (ADD_H4Q_TEST testname testfile)
+    ADD_TEST (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN} > /dev/null 2>&1)
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (${testname} PROPERTIES DEPENDS ${last_test})
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "${testname}")
+  ENDMACRO (ADD_H4Q_TEST)
 
 ##############################################################################
 ##############################################################################
@@ -425,18 +443,22 @@ IF (BUILD_TESTING)
           ristosds.input1.tmp
           ristosds.input1.tmp.err
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (hdfgif-clear-refs PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "hdfgif-clear-refs")
 
-  ADD_TEST (NAME testhdf2gif COMMAND $<TARGET_FILE:hdf2gif> skull.hdf skull.gif)
-  ADD_TEST (NAME testgif2hdf-sunwheel COMMAND $<TARGET_FILE:gif2hdf> SunWheel.gif SunWheel.hdf)
-  ADD_TEST (NAME testgif2hdf-butterfly COMMAND $<TARGET_FILE:gif2hdf> bttrfly.gif bttrfly.hdf)
+  ADD_H4_TEST (testhdf2gif hdf2gif skull.hdf skull.gif)
+  ADD_H4_TEST (testgif2hdf-sunwheel gif2hdf SunWheel.gif SunWheel.hdf)
+  ADD_H4_TEST (testgif2hdf-butterfly gif2hdf bttrfly.gif bttrfly.hdf)
 
-  ADD_TEST (NAME testhdf24to8 COMMAND $<TARGET_FILE:hdf24to8> head.r24 head8.hdf)
-  ADD_TEST (NAME testhdftor8 COMMAND $<TARGET_FILE:hdftor8> head8.hdf)
-  ADD_TEST (NAME hdfr8comp COMMAND ${CMAKE_COMMAND} -E compare_files img001-263.328 head.r8)
+  ADD_H4_TEST (testhdf24to8 hdf24to8 head.r24 head8.hdf)
+  ADD_H4_TEST (testhdftor8 hdftor8 head8.hdf)
+  ADD_CMP_TEST (hdfr8comp img001-263.328 head.r8)
 
   ADD_H4_TEST_ED (hdfed.input1 hdfed.out1 0)
 
-  ADD_TEST (NAME testristosds COMMAND $<TARGET_FILE:ristosds> storm110.hdf storm120.hdf storm130.hdf -o storm.hdf > /dev/null 2>&1)
+  ADD_H4Q_TEST (testristosds ristosds storm110.hdf storm120.hdf storm130.hdf -o storm.hdf)
   ADD_H4_TEST_ED (ristosds.input1 ristosds.out1 0)
 
   # Remove any output file left over from previous test run
@@ -451,9 +473,13 @@ IF (BUILD_TESTING)
           test.pck.tmp
           test.pck.tmp.err
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (hdfpack-clear-refs PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "hdfpack-clear-refs")
 
-  ADD_TEST (NAME testhdfpack COMMAND $<TARGET_FILE:hdfpack> test.hdf test.pck)
-  ADD_TEST (NAME testhdfpack-block COMMAND $<TARGET_FILE:hdfpack> -b test.hdf test.blk)
+  ADD_H4_TEST (testhdfpack hdfpack test.hdf test.pck)
+  ADD_H4_TEST (testhdfpack-block hdfpack -b test.hdf test.blk)
   ADD_LS_TEST_NOL (test.hdf hdfpack.out1.1 0)
   ADD_LS_TEST_NOL (test.pck hdfpack.out1.2 0)
 
@@ -481,23 +507,27 @@ IF (BUILD_TESTING)
           allcomp.hdf.tmp
           allcomp.hdf.tmp.err
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (hdfpalette-clear-refs PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "hdfpalette-clear-refs")
 
-  ADD_TEST (NAME testpaltohdf COMMAND $<TARGET_FILE:paltohdf> palette.raw palette.hdf)
-  ADD_TEST (NAME testhdftopal COMMAND $<TARGET_FILE:hdftopal> palette.hdf palette.raw.new)
-  ADD_TEST (NAME palettecomp COMMAND ${CMAKE_COMMAND} -E compare_files palette.raw palette.raw.new)
+  ADD_H4_TEST (testpaltohdf paltohdf palette.raw palette.hdf)
+  ADD_H4_TEST (testhdftopal hdftopal palette.hdf palette.raw.new)
+  ADD_CMP_TEST (palettecomp palette.raw palette.raw.new)
 
-  ADD_TEST (NAME testr8tohdf-storm COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hdf storm110.raw storm120.raw storm130.raw storm140.raw)
-  ADD_TEST (NAME testr8tohdf-palette COMMAND $<TARGET_FILE:r8tohdf> 57 57 storm.hdf -p palette.raw -i storm110.raw)
-  ADD_TEST (NAME testhdftor8-storm COMMAND $<TARGET_FILE:hdftor8> storm.hdf)
+  ADD_H4_TEST (testr8tohdf-storm r8tohdf 57 57 storm.hdf storm110.raw storm120.raw storm130.raw storm140.raw)
+  ADD_H4_TEST (testr8tohdf-palette r8tohdf 57 57 storm.hdf -p palette.raw -i storm110.raw)
+  ADD_H4_TEST (testhdftor8-storm hdftor8 storm.hdf)
   ADD_LS_TEST (storm.hdf hdftor8.out1 0)
 
-  ADD_TEST (NAME storm110comp COMMAND ${CMAKE_COMMAND} -E compare_files img001-057.057  storm110.raw)
-  ADD_TEST (NAME storm120comp COMMAND ${CMAKE_COMMAND} -E compare_files img002-057.057  storm120.raw)
-  ADD_TEST (NAME storm130comp COMMAND ${CMAKE_COMMAND} -E compare_files img003-057.057  storm130.raw)
-  ADD_TEST (NAME storm140comp COMMAND ${CMAKE_COMMAND} -E compare_files img004-057.057  storm140.raw)
+  ADD_CMP_TEST (storm110comp img001-057.057  storm110.raw)
+  ADD_CMP_TEST (storm120comp img002-057.057  storm120.raw)
+  ADD_CMP_TEST (storm130comp img003-057.057  storm130.raw)
+  ADD_CMP_TEST (storm140comp img004-057.057  storm140.raw)
 
-  ADD_TEST (NAME testhdfcomp-storms COMMAND $<TARGET_FILE:hdfcomp> allstorms.hdf storm110.hdf storm120.hdf storm130.hdf)
-  ADD_TEST (NAME testhdfcomp COMMAND $<TARGET_FILE:hdfcomp> allcomp.hdf -c storm110.hdf storm120.hdf storm130.hdf)
+  ADD_H4_TEST (testhdfcomp-storms hdfcomp allstorms.hdf storm110.hdf storm120.hdf storm130.hdf)
+  ADD_H4_TEST (testhdfcomp hdfcomp allcomp.hdf -c storm110.hdf storm120.hdf storm130.hdf)
   ADD_LS_TEST (allstorms.hdf hdfcomp.out1.1 0)
   ADD_LS_TEST (allcomp.hdf hdfcomp.out1.2 0)
 
@@ -511,19 +541,23 @@ IF (BUILD_TESTING)
           jpeg.hdf.tmp.err
           jpeg2.jpg
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (hdfjpeg-clear-refs PROPERTIES DEPENDS ${last_test})
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "hdfjpeg-clear-refs")
 
-  ADD_TEST (NAME testjpeg2hdf COMMAND $<TARGET_FILE:jpeg2hdf> jpeg_img.jpg jpeg.hdf)
-  ADD_TEST (NAME testhdf2jpeg COMMAND $<TARGET_FILE:hdf2jpeg> jpeg.hdf jpeg2.jpg)
+  ADD_H4_TEST (testjpeg2hdf jpeg2hdf jpeg_img.jpg jpeg.hdf)
+  ADD_H4_TEST (testhdf2jpeg hdf2jpeg jpeg.hdf jpeg2.jpg)
   ADD_LS_TEST (jpeg.hdf jpeg2hdf.out1 0)
-  ADD_TEST (NAME jpeg2comp COMMAND ${CMAKE_COMMAND} -E compare_files jpeg_img.jpg jpeg2.jpg)
+  ADD_CMP_TEST (jpeg2comp jpeg_img.jpg jpeg2.jpg)
 
-#  ADD_TEST (NAME hdf8to24 COMMAND $<TARGET_FILE:hdf8to24>)
+#  ADD_H4_TEST (hdf8to24 hdf8to24)
 
-#  ADD_TEST (NAME hdfunpac COMMAND $<TARGET_FILE:hdfunpac>)
+#  ADD_H4_TEST (hdfunpac hdfunpac)
 
-#  ADD_TEST (NAME vmake COMMAND $<TARGET_FILE:vmake>)
+#  ADD_H4_TEST (vmake vmake)
 
-#  ADD_TEST (NAME vshow COMMAND $<TARGET_FILE:vshow>)
+#  ADD_H4_TEST (vshow vshow)
 
 ENDIF (BUILD_TESTING)
 
