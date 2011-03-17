@@ -6489,10 +6489,7 @@ DESCRIPTION
 RETURNS
    TRUE if the image satisfies the above conditions, and FALSE, otherwise.
    When failure occurs, returns FAIL.
-
-TODO
-    - need additional tests
-    Feb 24, 2011 -BMR
+   Feb 24, 2011 -BMR
 ----------------------------------------------------------------*/
 intn
 GR2bmapped(int32 riid)
@@ -6533,7 +6530,8 @@ GR2bmapped(int32 riid)
 	status = GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
 
 	/* If it is 8-bit, set flag to check further for special storage */
-	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8)
+	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
+	    ritype == DFNT_UINT8 || ritype == DFNT_INT8)
 	{
 	    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
 	    if (special_type == 0)
