@@ -501,7 +501,7 @@ test_vgmixedattrs(void)
 #define	RI_ATT2_COUNT	6
 #define	X_LENGTH	10	/* number of columns in the image */
 #define	Y_LENGTH	5	/* number of rows in the image */
-#define	N_COMPS		2	/* number of components in the image */
+#define	N_COMPS		1	/* number of components in the image */
 
 static void
 test_grattrs()
@@ -517,7 +517,7 @@ test_grattrs()
 	  ii, jj;
     intn  status;
     int16 ri_att2_val[RI_ATT2_COUNT] = {1, 2, 3, 4, 5, 6};
-    int16 image_buf[Y_LENGTH][X_LENGTH][N_COMPS];
+    int8  image_buf[Y_LENGTH][X_LENGTH][N_COMPS];
     int32 offsets[4], lengths[4];  /* offsets and lengths of attrs' data */
     /* Note: each array element is associated with an individual attribute, not
        a data element block; data of an attribute only has one pair of off/len*/
@@ -533,13 +533,12 @@ test_grattrs()
     CHECK_VOID(gr_id, FAIL, "GRstart");
 
     /* Set the number type, interlace mode, and dimensions of the image. */
-    num_type = DFNT_INT16;
     interlace_mode = MFGR_INTERLACE_LINE;
     dimsizes[0] = X_LENGTH;
     dimsizes[1] = Y_LENGTH;
 
     /* Create a raster image array. */
-    ri_id = GRcreate (gr_id, IMAGE_NAME, N_COMPS, num_type, 
+    ri_id = GRcreate(gr_id, IMAGE_NAME, N_COMPS, DFNT_INT8, 
    				interlace_mode, dimsizes);
     CHECK_VOID(ri_id, FAIL, "GRcreate");
 
@@ -549,7 +548,6 @@ test_grattrs()
       for (jj = 0; jj < X_LENGTH; jj++)
       {
          image_buf[ii][jj][0] = (ii + jj) + 1;     /* first component */
-         image_buf[ii][jj][1] = (ii + jj) + 1;     /* second component */
       }
     }
 
@@ -573,7 +571,7 @@ test_grattrs()
     status = GRsetattr(gr_id, F_ATT2_NAME, DFNT_CHAR8, F_ATT2_COUNT, F_ATT2_VAL);
     CHECK_VOID(status, FAIL, "GRsetattr F_ATT2_NAME");
 
-    /* Obtain the identifier of this image. */
+    /* Get access to the first and only image in the file */
     ri_id = GRselect(gr_id, 0);
     CHECK_VOID(ri_id, FAIL, "GRselect index 0");
 
@@ -619,8 +617,23 @@ test_grattrs()
     status = GRgetattdatainfo(ri_id, 1, &offsets[3], &lengths[3]);
     CHECK_VOID(status, FAIL, "GRgetattdatainfo");
 
+    /* This image should be mapped-able by the HDF4 map writer because even
+       though it was created by GR, it has 8-bit data, 1 compnonent, and no
+       compression */
+    {
+	intn is_mappedable;
+	intn name_generated;
+
+        status = GR2bmapped(ri_id, &is_mappedable, &name_generated);
+        CHECK_VOID(status, FAIL, "GR2bmapped");
+        VERIFY_VOID(is_mappedable, TRUE, "GR2bmapped");
+        VERIFY_VOID(name_generated, FALSE, "GR2bmapped");
+    }
+
     /* Terminate access to the image and to the GR interface and close the
      * HDF file. */
+    status = GRendaccess(ri_id);
+    CHECK_VOID(status, FAIL, "GRendaccess");
     status = GRend(gr_id);
     CHECK_VOID(status, FAIL, "GRend");
     status = Hclose(file_id);
@@ -634,8 +647,6 @@ test_grattrs()
     status = readnoHDF_char(ATTRFILE, offsets[2], lengths[2], RI_ATT1_VAL);
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
     /* Note: readnoHDF_char is defined in tdatainfo.c */
-
-system("mv tattdatainfo.hdf tattdatainfo_hdf");
 } /* test_grattrs() */
 
 /* Test driver for testing the public functions VSgetattdatainfo and

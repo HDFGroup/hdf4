@@ -70,8 +70,7 @@ ANgetdatainfo(ann_id, *offset, *length)
 
 /*--------------------------------------------------------------------------
  NAME
-    HDgetdatainfo -- Gets the offset(s) and length(s) of the data in
-		      the data element.
+    HDgetdatainfo -- Gets the offset(s) and length(s) of the data in an element.
  USAGE
     int32 HDgetdatainfo(file_id, tag, ref, start_block, info_count,
 			 *offsetarray, *lengtharray)	
@@ -84,8 +83,26 @@ ANgetdatainfo(ann_id, *offset, *length)
 	int32 *offsetarray;	OUT: array to hold offsets
 	int32 *lengtharray;	OUT: array to hold lengths
  RETURNS
-    SUCCEED/FAIL
+    Number of data blocks if successful, or FAIL, otherwise.
  DESCRIPTION
+    The tag/ref given could point to:
+    - no data then return 0,
+    - actual data written then return 1 for number of data blocks and
+      its offset/length if they are requested, or
+    - description record, which means this element is special, then act
+      appropriately depend upon the specialness
+      + compression
+	* if the compressed data is stored in one block, return 1 and
+	  the offset/length if they are requested
+	* if the compressed data is stored in linked-blocks,
+	  > read the linked-block special header info
+	  > call HLgetdatainfo to get data info of the blocks
+      + chunking
+	* call HMCgetdatainfo to get data info of the requested chunk
+      + linked-block
+	* read the linked-block special header info
+	* call HLgetdatainfo to get data info of the blocks
+
  NOTES
     Aug 17, 2010: Tested with SDgetdatainfo and VSgetdatainfo -BMR
     Sep 7, 2010: Tested with GRgetdatainfo, but not linked-block yet -BMR
@@ -94,7 +111,7 @@ ANgetdatainfo(ann_id, *offset, *length)
 intn
 HDgetdatainfo(int32 file_id,
 	uint16 tag, uint16 ref, /* IN: tag/ref of element */
-	int32 *chk_coord,
+	int32 *chk_coord,	/* chunk's coordinates or NULL if not chunked */
 	uintn start_block,	/* IN: data block to start at, 0 base */
 	uintn info_count,	/* IN: number of info records */
 	int32 *offsetarray,	/* OUT: array to hold offsets */
@@ -103,7 +120,7 @@ HDgetdatainfo(int32 file_id,
     CONSTR(FUNC, "HDgetdatainfo");	/* for HGOTO_ERROR */
     filerec_t  *file_rec;	/* file record */
     uint16	sp_tag;		/* special tag */
-    uint16	comp_ref = 0;	/* ref for compressed data or compression header */
+    uint16	comp_ref = 0;	/* ref for compressed data or comp header */
     uint16	dtag, dref;	/* description record tag/ref */
     int32	dlen=0, doff=0;	/* offset/length of the description record */
     uint8	lbuf[COMP_HEADER_LENGTH],
@@ -266,12 +283,8 @@ HDgetdatainfo(int32 file_id,
 			    start_block, info_count, offsetarray, lengtharray);
 		else /* BMR: check to see what should be done here */
 		{
-/* commented this out so subsequent tests can be run - 1/2011 */
-		    /*  fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", tag, ref);
-		    exit(0);
-		or
-		    HGOTO_ERROR(DFE_ARGS, FAIL);
- */ 
+		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", tag, ref);
+	 	    HGOTO_ERROR(DFE_ARGS, FAIL);
 		}
 	    }
 

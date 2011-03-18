@@ -1385,8 +1385,8 @@ HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
 
 HDFLIBAPI intn GRPshutdown(void);
 
-/* This function was added for hmap project.  Feb-25-2011 */
-HDFLIBAPI intn GR2bmapped(int32 riid);
+/* This function was added for hmap project only.  Feb-25-2011 */
+HDFLIBAPI intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *created_byGR);
 
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 

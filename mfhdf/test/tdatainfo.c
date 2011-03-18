@@ -936,6 +936,7 @@ static intn test_compressed_SDSs() {
 #define Y_LENGTH2  9
 #define CHK_X      3
 #define CHK_Y      2
+#define NUM_SDS    3
 #define	NODATA_FILE	"datainfo_nodata.hdf"	/* data file */
 
 static intn test_empty_SDSs() {
@@ -961,6 +962,12 @@ static intn test_empty_SDSs() {
     dimsizes[0] = Y_LENGTH2;
     dimsizes[1] = X_LENGTH2;
 
+    /* Contiguous-No-Data */
+    sds_id = SDcreate(sd_id, "Contiguous-No-Data", DFNT_INT16, RANK, dimsizes);
+    CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Contiguous-No-Data'");
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Contiguous-No-Data'");
+
     /* Compressed-No-Data */
     sds_id = SDcreate(sd_id, "Compressed-No-Data", DFNT_INT16, RANK, dimsizes);
     CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Compressed-No-Data'");
@@ -973,28 +980,6 @@ static intn test_empty_SDSs() {
     status = SDendaccess(sds_id);
     CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Compressed-No-Data'");
 
-    /* Chunked-No-Data */
-    sds_id = SDcreate(sd_id, "Chunked-No-Data", DFNT_INT16, RANK, dimsizes);
-    CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Chunked-No-Data'");
-    flag = HDF_CHUNK;
-    c_def.chunk_lengths[0] = CHK_X;
-    c_def.chunk_lengths[1] = CHK_Y;
-    status = SDsetchunk(sds_id, c_def, flag);
-    CHECK(status, FAIL, "test_empty_SDSs: SDsetchunk 'Chunked-No-Data'");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Chunked-No-Data'");
-
-    /* Chunked-Comp-No-Data */
-    sds_id = SDcreate(sd_id, "Chunked-Comp-No-Data", DFNT_INT16, RANK, dimsizes);
-    CHECK(sds_id, FAIL, "test_empty_SDSs: SDcreate 'Chunked-Comp-No-Data'");
-    flag = HDF_CHUNK | HDF_COMP;
-    c_def.comp.comp_type = COMP_CODE_DEFLATE;
-    c_def.comp.cinfo.deflate.level = 6;
-    status = SDsetchunk(sds_id, c_def, flag);
-    CHECK(status, FAIL, "test_empty_SDSs: SDsetchunk 'Chunked-Comp-No-Data'");
-    status = SDendaccess(sds_id);
-    CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Chunked-Comp-No-Data'");
-
     /* Extend-No-Data */
     dimsizes[0] = SD_UNLIMITED;
     sds_id = SDcreate(sd_id, "Extend-No-Data", DFNT_INT16, RANK, dimsizes);
@@ -1003,18 +988,18 @@ static intn test_empty_SDSs() {
     CHECK(status, FAIL, "test_empty_SDSs: SDendaccess 'Extend-No-Data'");
 
     /* Verify that the number of data block is 0 for all data sets */
-    for (ii = 0; ii < 4; ii++)
+    for (ii = 0; ii < NUM_SDS; ii++)
     {
-         sds_id = SDselect(sd_id, ii);
-         CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
+	sds_id = SDselect(sd_id, ii);
+	CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
 
-         info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
-         CHECK_IND(info_count, FAIL, "test_empty_SDSs: SDgetdatainfo", ii);
-         VERIFY(info_count, 0, "test_empty_SDSs: SDgetdatainfo");
+	info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
+	CHECK_IND(info_count, FAIL, "test_empty_SDSs: SDgetdatainfo", ii);
+	VERIFY(info_count, 0, "test_empty_SDSs: SDgetdatainfo");
 
-         status = SDendaccess(sds_id);
-         CHECK_IND(status, FAIL, "test_empty_SDSs: SDendaccess", ii);
-     }
+	status = SDendaccess(sds_id);
+	CHECK_IND(status, FAIL, "test_empty_SDSs: SDendaccess", ii);
+    }
 
     /* Close the file */
     status = SDend(sd_id);
@@ -1026,7 +1011,7 @@ static intn test_empty_SDSs() {
     CHECK(sd_id, FAIL, "test_empty_SDSs: SDstart");
 
     /* Verify that the number of data block is 0 for all data sets */
-    for (ii = 0; ii < 4; ii++) {
+    for (ii = 0; ii < NUM_SDS; ii++) {
         sds_id = SDselect(sd_id, ii);
         CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
 
@@ -1289,6 +1274,7 @@ static intn test_chkcmp_SDSs() {
     int32 fill_value = 0; /* Fill value */
     int32 comp_size1 = 0, uncomp_size1 = 0;
     int32 comp_size2 = 0, uncomp_size2 = 0;
+    int32 chk_coord[2];
     uintn info_count = 0;
     intn status;
     int num_errs = 0; /* number of errors so far */
@@ -1374,14 +1360,6 @@ static intn test_chkcmp_SDSs() {
     sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "test_chkcmp_SDSs: SDselect");
 
-    info_count = SDgetdatainfo(cmpsds_id, NULL, 0, 0, NULL, NULL);
-    CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
-    VERIFY(info_count, 0, "test_chkcmp_SDSs: SDgetdatainfo");
-
-    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
-    CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
-    VERIFY(info_count, 0, "test_chkcmp_SDSs: SDgetdatainfo");
-
     /* Write the chunk with the coordinates (0,0) */
     origin[0] = 0;
     origin[1] = 0;
@@ -1432,11 +1410,10 @@ static intn test_chkcmp_SDSs() {
     /*
      * "Chunked-NoDeflate-Data"
      */
-#if 0 /* need to figure out how to test this feature */
-    info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
+    chk_coord[0] = chk_coord[1] = 0;
+    info_count = SDgetdatainfo(sds_id, chk_coord, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
-    VERIFY(info_count, 3, "test_chkcmp_SDSs: SDgetdatainfo");
-#endif
+    VERIFY(info_count, 1, "test_chkcmp_SDSs: SDgetdatainfo");
 
     /* Get SDS' rank */
     status = SDgetinfo(sds_id, NULL, &rank, NULL, NULL, NULL);
@@ -1452,10 +1429,8 @@ static intn test_chkcmp_SDSs() {
     /* Record number of values the SDS can have */
     sds_info.n_values = comp_n_values(rank, sds_info.dimsizes);
 
-#if 0 /* need to figure out how to test this feature */
-    status = SDgetdatainfo(sds_id, NULL, 0, info_count, sds_info.offsets, sds_info.lengths);
+    status = SDgetdatainfo(sds_id, chk_coord, 0, info_count, sds_info.offsets, sds_info.lengths);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
-#endif
 
     free_info(&sds_info);
 
@@ -1463,13 +1438,13 @@ static intn test_chkcmp_SDSs() {
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDendaccess");
 
     /*
-     * "Chunked-NoDeflate-Data"
+     * "Chunked-Deflate-Data"
      */
-#if 0 /* need to figure out how to test this feature */
-    info_count = SDgetdatainfo(cmpsds_id, NULL, 0, 0, NULL, NULL);
+    chk_coord[0] = 0;
+    chk_coord[1] = 1;
+    info_count = SDgetdatainfo(cmpsds_id, chk_coord, 0, 0, NULL, NULL);
     CHECK(info_count, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
-    VERIFY(info_count, 3, "test_chkcmp_SDSs: SDgetdatainfo");
-#endif
+    VERIFY(info_count, 1, "test_chkcmp_SDSs: SDgetdatainfo");
 
     /* Get SDS' rank */
     status = SDgetinfo(cmpsds_id, NULL, &rank, NULL, NULL, NULL);
@@ -1485,10 +1460,8 @@ static intn test_chkcmp_SDSs() {
     /* Record number of values the SDS can have */
     cmpsds_info.n_values = comp_n_values(rank, cmpsds_info.dimsizes);
 
-#if 0 /* need to figure out how to test this feature */
-    status = SDgetdatainfo(cmpsds_id, NULL, 0, info_count, cmpsds_info.offsets, cmpsds_info.lengths);
+    status = SDgetdatainfo(cmpsds_id, chk_coord, 0, info_count, cmpsds_info.offsets, cmpsds_info.lengths);
     CHECK(status, FAIL, "test_chkcmp_SDSs: SDgetdatainfo");
-#endif
 
     free_info(&cmpsds_info);
 

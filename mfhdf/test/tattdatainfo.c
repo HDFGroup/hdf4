@@ -26,6 +26,8 @@
 #include "mfhdf.h"
 #include "hdftest.h"
 
+intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
+
 #define ATTR_FILE     "attdatainfo.hdf"	/* data file */
 #define X_LENGTH      10
 #define Y_LENGTH      10
@@ -336,8 +338,11 @@ static intn test_attrs()
 } /* test_attrs */
 
 
-/* -----------  Need a bit clean up.  Check in now for Joe. -BMR */
-
+/***************************************************************************
+   Test getting data info of annotations from DFAN
+   There are several utility functions to help generating and verifying the
+   data.  The actual test function is test_dfannots() that follows those.
+***************************************************************************/
 #define DFAN_NDG_FILE "tdfanndg_hdf"
 #define DFAN_SDG_FILE "tdfansdg_hdf" /* only for SDG annotation tests */
 #define MAXLEN_LAB     50
@@ -368,33 +373,6 @@ gen2Dfloat(int height, int width, float *data)
     for (i = 0; i < height; i++)
         for (j = 0; j < width; j++)
             *pdata++ = (float) (i + 1);
-
-}
-
-/****************************************************************
-**
-**  genimage:  generate image from 2-D float array
-**
-****************************************************************/
-static      VOID
-genimage(int height, int width, float *data, uint8 *image)
-{
-    int         i, limit;
-    float      *pdata, max, min, multiplier;
-
-    limit = height * width;
-    pdata = data;
-    max = min = *pdata;
-    for (i = 0; i < limit; i++, pdata++)
-      {
-          max = (max > *pdata) ? max : *pdata;
-          min = (min < *pdata) ? min : *pdata;
-      }
-    /* store one value per row, increasing by one for each row */
-    pdata = data;
-    multiplier = (float32) 255.0 / (max - min);
-    for (i = 0; i < limit; i++)
-        *image++ = (uint8) (((*pdata++) - min) * multiplier);
 
 }
 
@@ -433,7 +411,13 @@ check_lab_desc(char* fname, uint16 tag, uint16 ref, char *label, char *desc)
     return(num_errs);
 }
 
-
+/****************************************************************
+**
+**  add_sdfile_annotations: Adds file labels and descriptions with
+**	DFAN API, then reads them back and verifies that they are
+**      written correctly.  This function also creates the file.
+**
+****************************************************************/
 intn add_sdfile_annotations()
 {
     int32  file_id;
@@ -518,6 +502,14 @@ intn add_sdfile_annotations()
 } /* add_sdfile_annotations */
 
 
+/****************************************************************
+**
+**  add_sdsNDG_annotations: Adds data labels and descriptions with
+**	DFAN API, then reads them back and verifies that they are
+**	written correctly.  The data object in this function is 
+**	DFTAG_NDG.
+**
+****************************************************************/
 intn add_sdsNDG_annotations()
 {
     char        labels[2][MAXLEN_LAB], descs[2][MAXLEN_DESC];
@@ -584,6 +576,14 @@ intn add_sdsNDG_annotations()
     return (num_errs);
 } /* add_sdsNDG_annotations */
 
+/****************************************************************
+**
+**  add_sdsSDG_annotations: Adds data labels and descriptions with
+**	DFAN API, then reads them back and verifies that they are
+**	written correctly.  The data object in this function is 
+**	DFTAG_SDG.
+**
+****************************************************************/
 intn add_sdsSDG_annotations()
 {
     char        labsds[MAXLEN_LAB], labris[MAXLEN_LAB], descsds[MAXLEN_DESC],
@@ -646,8 +646,13 @@ intn add_sdsSDG_annotations()
     return 0;
 }
 
-/* Common code to get data info of annotations and verify the offsets/lengths */
-static intn get_ann_datainfo(
+/****************************************************************
+**
+**  get_ann_datainfo: Gets data info of annotations and verifies
+**	against the provided offsets/lengths.
+**
+****************************************************************/
+intn get_ann_datainfo(
 		int32 id,
 		ann_type annot_type,
 		int32 *chk_offsets,
@@ -658,7 +663,7 @@ static intn get_ann_datainfo(
     intn  ii, num_errs = 0;
 
     num_annots = SDgetanndatainfo(id, annot_type, 0, NULL, NULL);
-    CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo annot_type with NULL buffers");
+    CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo annot_type with NULL buffers");
 
     if (num_annots > 0)
     {
@@ -669,13 +674,13 @@ static intn get_ann_datainfo(
 
 	num_annots = SDgetanndatainfo(id, annot_type, num_annots,
 			offsetarray, lengtharray);
-        CHECK(num_annots, FAIL, "test_dfannots: SDgetanndatainfo");
+        CHECK(num_annots, FAIL, "get_ann_datainfo: SDgetanndatainfo");
 
 	/* Verify offsets and lengths of annotations */
 	for (ii = 0; ii < num_annots; ii++)
 	{
-	    VERIFY(offsetarray[ii], chk_offsets[ii], "test_dfannots/get_ann_datainfo: SDgetanndatainfo");
-	    VERIFY(lengtharray[ii], chk_lengths[ii], "test_dfannots/get_ann_datainfo: SDgetanndatainfo");
+	    VERIFY(offsetarray[ii], chk_offsets[ii], "get_ann_datainfo: SDgetanndatainfo");
+	    VERIFY(lengtharray[ii], chk_lengths[ii], "get_ann_datainfo: SDgetanndatainfo");
 	}
 
 	HDfree(offsetarray);
@@ -683,6 +688,15 @@ static intn get_ann_datainfo(
     }
 }
 
+/***************************************************************************
+   Name: test_dfannots() - tests getting data info of annotations from DFAN
+
+   Description:
+	This routine uses several utility routines to
+	- create various file's and data's annotations
+	- retrieve and verify the offsets/lengths of these annotations
+   BMR - Feb 2011
+***************************************************************************/
 static int test_dfannots(void)
 {
     int32 sd_id, sds_id, sds_index;
@@ -787,12 +801,274 @@ static int test_dfannots(void)
     /**********************************************************************
      * Using SD API to get offset/length of data from file annotations    *
      * and data set annotations in file DFAN_NDG_FILE to test NDG annots  *
+     * -Not doing now because there are no such data in NASA files and we *
+     * are running out of time.                                           *
      **********************************************************************/
     /* Return the number of errors that's been kept track of so far */
     return num_errs;
 }
 
-/* Test driver for testing the public function SDgetattdatainfo. */
+/***************************************************************************
+   Name: test_dfsdattrs() - tests getting data info of attributes from DFSD
+
+   Description:
+	This routine creates and writes a dataset and several attributes with
+	the DFSD API to test the API function SDgetoldattdatainfo.
+	In the DFSD API, an SDS attribute is stored using tag/ref approach,
+	unlike the newer attributes which were introduced in Apr, 1993 and are
+	stored in Vdatas.  The dimension attributes are stored following the
+	SDS attribute.  All attributes are separated by null characters.
+
+	In this test, SDgetoldattdatainfo will retrieve the offsets and lengths
+	of several attributes.  Then the data will be read back from the file
+	at the retrieved offsets/lengths, without the use of the HDF4 library,
+	and will be verified against the original data buffers.
+
+   BMR - Mar 2011
+***************************************************************************/
+#define OLDATTFILE "tdfsdatts.hdf"
+#define XX  6
+#define YY  6
+
+/* Compares a string against the original buffer, returns 0 if equals, or -1 */
+intn compare(const char *outstring, const char *instring);
+
+static intn test_dfsdattrs()
+{
+    int         i, j, ret;
+    intn        rank;
+    int32       dims[2], num_datasets;
+    float32     f32[XX][YY], tf32[XX][YY];
+    intn info_count=0;
+    int32 offset=0, length=0;
+    int32 fid=-1, sdsid=-1, dimid=-1;
+    intn status=0;
+    intn num_errs = 0; /* number of errors so far */
+    const char *datalabel = "Datalabel", *dataunit = "Dataunit", *datafmt = "Datafmt",
+               *coordsys = "coordsys";
+    char        in_datalabel[256], in_dataunit[256], in_datafmt[256], in_coordsys[256];
+
+    const char  *dimlabels[2], *dimunits[2], *dimfmts[2];
+    char        in_dimlabels[2][256], in_dimunits[2][256], in_dimfmts[2][256];
+    /*
+    float32  scplnf32[XX] = {(float32) 0.0, (float32) 100.0, (float32) 0.1,
+			(float32) 101.0, (float32) 0.2, (float32) 102.0};
+    float32  scrowf32[YY] = {(float32) 0.0, (float32) 10.0, (float32) 20.0,
+			(float32) 1.0, (float32) 11.0, (float32) 21.0};
+    uncomment these when the calls to DFSDsetdimscale are uncommented.
+    */ 
+
+    rank = 2;
+    dims[0] = XX;
+    dims[1] = YY;
+
+    dimlabels[0] = "";
+    dimunits[0] = "c_dim1_unit";
+    dimfmts[0] = "c_dim1_fmt";
+
+    dimlabels[1] = "c_dim2_label";
+    dimunits[1] = "c_dim2_unit";
+    dimfmts[1] = "c_dim2_fmt";
+
+    for (i = 0; i < XX; i++)
+    {
+	for (j = 0; j < YY; j++)
+	{
+	    f32[i][j] = (float32)((i * XX) + j);   /* range: 0 ~ 4-billion */
+	}
+    }
+
+    ret = DFSDsetdims(rank, dims);
+    CHECK(ret, FAIL, "DFSDsetdims");
+    /* individual files */
+
+    ret = DFSDsetNT(DFNT_NFLOAT32);
+    CHECK(ret, FAIL, "DFSDsetNT");
+    ret = DFSDsetdims(rank, dims);
+    CHECK(ret, FAIL, "DFSDsetdims");
+
+    /* Set attributes to the dataset and its dimensions */
+    ret = DFSDsetdatastrs(datalabel, dataunit, datafmt, coordsys);
+    CHECK(ret, FAIL, "DFSDsetdatastrs");
+    ret = DFSDsetdimstrs(1, dimlabels[0], dimunits[0], dimfmts[0]);
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
+    ret = DFSDsetdimstrs(2, dimlabels[1], dimunits[1], dimfmts[1]);
+    CHECK(ret, FAIL, "DFSDsetdimstrs");
+
+    /* Note: Setting attribute to a dimension with DFSD API doesn't make the
+	dimension become a coordinate variable, only setting dimension scale
+	does.  Thus, when no setting scale is done, the dumper will not show
+	the dimension variables.  However, the dimension attributes are there
+	and SDgetoldattdatainfo will still find them.  For a demo, the two
+	calls to DFSDsetdimscale can be uncommented, then dumper will show
+	the dimension variables and their attributes. -BMR, Mar 13, 2011 */
+
+    /* Set dimension scales */
+    /*
+    ret = DFSDsetdimscale(1, dims[0], (VOIDP) scplnf32);
+    CHECK(ret, FAIL, "DFSDsetdimscale");
+
+    ret = DFSDsetdimscale(2, dims[1], (VOIDP) scrowf32);
+    CHECK(ret, FAIL, "DFSDsetdimscale");
+    */ 
+
+    /* Write/Read data to/from SDS */
+    ret = DFSDputdata(OLDATTFILE, rank, dims, (VOIDP) f32);
+    CHECK(ret, FAIL, "DFSDputdata");
+    ret = DFSDgetdata(OLDATTFILE, rank, dims, (VOIDP) tf32);
+    CHECK(ret, FAIL, "DFSDgetdata");
+
+    /* Read attributes from the dataset and its dimensions */
+    ret = DFSDgetdatastrs(in_datalabel, in_dataunit, in_datafmt, in_coordsys);
+    CHECK(ret, FAIL, "DFSDgetdatastrs");
+    ret = DFSDgetdimstrs(1, in_dimlabels[0], in_dimunits[0], in_dimfmts[0]);
+    CHECK(ret, FAIL, "DFSDgetdimstrs");
+    ret = DFSDgetdimstrs(2, in_dimlabels[1], in_dimunits[1], in_dimfmts[1]);
+    CHECK(ret, FAIL, "DFSDgetdimstrs");
+
+    /* Verify a few */
+    ret = compare(in_datalabel, datalabel);	/* SDS' label */
+    CHECK(ret, FAIL, "compare");
+    ret = compare(in_dimunits[0], dimunits[0]); /* first dim's units */
+    CHECK(ret, FAIL, "compare");
+    ret = compare(in_dimlabels[1], dimlabels[1]); /* first dim's label */
+    CHECK(ret, FAIL, "compare");
+
+    /* Using SD API to get the offsets and lengths of various attributes, then
+       read them from the file without the use of HDF4 library and verify them
+       against the original buffers */
+
+    /* Open the file with SD API */
+    fid = SDstart(OLDATTFILE, DFACC_RDWR);
+    CHECK(fid, FAIL, "SDstart");
+
+    /* Get the first dataset (and only one) */
+    sdsid = SDselect(fid, 0);
+    CHECK(sdsid, FAIL, "SDselect");
+
+    /* Test SDgetoldattdatainfo with dataset's attribute string _HDF_LongName */
+    info_count = SDgetoldattdatainfo(0, sdsid, _HDF_LongName, &offset, &length);
+    CHECK(info_count, FAIL, "SDgetoldattdatainfo");
+    status = readnoHDF_char(OLDATTFILE, offset, length, datalabel);
+    CHECK(status, FAIL, "readnoHDF_char");
+
+    /* Test with attribute string _HDF_LongName of dataset's first dimension */
+    dimid = SDgetdimid(sdsid, 0);
+    CHECK(dimid, FAIL, "SDgetdimid");
+    info_count = SDgetoldattdatainfo(dimid, sdsid, _HDF_LongName, &offset, &length);
+    CHECK(info_count, FAIL, "SDgetoldattdatainfo");
+    status = readnoHDF_char(OLDATTFILE, offset, length, dimlabels[0]);
+    CHECK(status, FAIL, "readnoHDF_char");
+
+    /* Test with attribute string _HDF_Format of dataset's second dimension */
+    dimid = SDgetdimid(sdsid, 1);
+    CHECK(dimid, FAIL, "SDgetdimid");
+    info_count = SDgetoldattdatainfo(dimid, sdsid, _HDF_Format, &offset, &length);
+    CHECK(info_count, FAIL, "SDgetoldattdatainfo");
+    status = readnoHDF_char(OLDATTFILE, offset, length, dimfmts[1]);
+    CHECK(status, FAIL, "readnoHDF_char");
+
+    /* Test with dataset's attribute string _HDF_CoordSys */
+    info_count = SDgetoldattdatainfo(0, sdsid, _HDF_CoordSys, &offset, &length);
+    CHECK(info_count, FAIL, "SDgetoldattdatainfo");
+    status = readnoHDF_char(OLDATTFILE, offset, length, coordsys);
+    CHECK(status, FAIL, "readnoHDF_char");
+    /* Note: coordsys' length has 1 more than the number of actual chars.  We'll
+       need to study that to document better. */
+
+    /* Terminate access to the dataset and close the file */
+    status = SDendaccess(sdsid);
+    CHECK(status, FAIL, "SDendaccess");
+    status = SDend(fid);
+    CHECK(status, FAIL, "SDend");
+
+    return(num_errs);
+}
+
+intn compare(const char *outstring, const char *instring)
+{
+    intn status = 0;
+    if (HDstrcmp(outstring, instring) != 0)
+    {
+        fprintf(stderr, ">>> Test failed for %s\n", outstring);
+        fprintf(stderr, "    Input string =  %s\n", instring);
+	status = -1;
+    }
+    return(status);
+}
+
+/*******************************************************************
+  Name: readnoHDF_char - utility routine to read and verify character
+			data without HDF4 library
+
+  Description:
+	readnoHDF_char opens the file and reads in data at the specified
+	offset.  The read data is compared against the original data passed
+	by caller.  If any mis-match occurs, an error message will be
+	displayed but the process will continue.
+
+  Parameters:
+	char *filename	IN: name of the file
+	int32 offset	IN: where to start read data
+	int32 length	IN: how long to read the data
+	char *orig_buf	IN: original data buffer to compare against
+
+  Return value:
+	SUCCEED/FAIL
+  BMR - Jul 2010
+********************************************************************/
+intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf)
+{
+    FILE  *fd;		/* file descriptor */
+    size_t readlen=0;	/* number of bytes actually read */
+    char *readcbuf;
+    intn ret_value = SUCCEED;
+
+    /* Open the file for reading without SD API */
+    fd = fopen(filename, "r");
+    if (fd == NULL)
+    {
+	fprintf(stderr, "readnoHDF_char: unable to open file %s", filename);
+        ret_value = FAIL;
+    }
+
+    /* Forward to the position of the first block of data */
+    if (fseek(fd, (off_t)offset, SEEK_SET) == -1)
+    {
+        fprintf(stderr, "readnoHDF_char: unable to seek offset %d\n",
+                (int)offset);
+        ret_value = FAIL;
+    }
+
+    /* Allocate buffers for SDS' data */
+    readcbuf = (char *) HDmalloc(length * sizeof(char));
+    if (readcbuf == NULL)
+    {
+	fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
+        ret_value = FAIL;
+    }
+
+    /* Read in this block of data */
+    readlen = fread((void*)readcbuf, 1, length, fd);
+    if (readlen > 0)
+    {
+        /* Compare data read without HDF4 lib against the original buffer */
+	if (HDstrncmp(readcbuf, orig_buf, readlen) != 0)
+	    fprintf(stderr, "Failure: non-HDF reading got different values than written values\n   >>> written = %s\n   >>> read = %s\n", orig_buf, readcbuf);
+    }
+    HDfree(readcbuf);
+
+    /* Close the file */
+    if (fclose(fd) == -1)
+    {
+	fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
+        ret_value = FAIL;
+    }
+    return ret_value;
+}
+
+/* Test driver for testing the public functions SDgetattdatainfo() and
+   SDgetoldattdatainfo() */
 extern int test_att_ann_datainfo()
 {
     intn status;
@@ -808,8 +1084,11 @@ extern int test_att_ann_datainfo()
     num_errs = num_errs + test_dfannots();
 
     /* Test getting data info of annotations added by AN API */
-     /* num_errs = num_errs + test_mfannots();
+     /* num_errs = num_errs + test_mfannots(); not needed right now
  */ 
+
+    /* Test getting data info of old attributes added by DFSD API */
+    num_errs += test_dfsdattrs();
 
     if (num_errs == 0) PASSED();
     return num_errs;
