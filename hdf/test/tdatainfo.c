@@ -1,5 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
+ * All rights reserved.                                                      *
  *                                                                           *
  * This file is part of HDF.  The full HDF copyright notice, including       *
  * terms governing use, modification, and redistribution, is contained in    *
@@ -9,7 +10,20 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: tdatainfo.c 5334 2010-01-28 06:10:50Z bmribler $ */
+/****************************************************************************
+ * tdatainfo.c - tests the functions VSgetdatainfo, ANgetdatainfo,
+ *			GRgetdatainfo, and Hgetntinfo
+ * Structure of the file:
+ *    test_datainfo - test driver
+ *	test_simple_vs   - test VSgetdatainfo with data stored in one
+ *			   contiguous block
+ *	test_append_vs   - test VSgetdatainfo with data stored in linked blocks
+ *	test_annotation  - test ANgetdatainfo
+ *	test_oneblock_ri - test GRgetdatainfo with images stored in one
+ *			   contiguous block, with and without compression
+ *	test_dfr8_24     - test GRgetdatainfo with RI8 and RI24
+ *	test_getntinfo   - test Hgetntinfo
+ ****************************************************************************/
 
 #include "hdf.h"
 
@@ -19,8 +33,15 @@
 #include "tdatainfo.h"
 #include "tproto.h"
 
+static void test_simple_vs();
+static void test_append_vs();
+static void test_annotation();
+static void test_oneblock_ri();
+static void test_dfr8_24();
+static void test_getntinfo();
+
 /***********************************************************************
-  NOTE: At this time, many of the offsets in these tests are verified
+  NOTE: At this time, some of the offsets in these tests are verified
 	by hard-coding.  When adding new data to the files in exiting
 	tests, please either add data at the bottom of the files or
 	change the hard-coded offsets appropriately, using the values
@@ -37,9 +58,9 @@ typedef struct
 	int32 length; /* length of data block */
   } t_ann_info_t;
 
-/*********** Functions to access t_hdfdatainfo_t **********************/
+/* Functions to access t_hdfdatainfo_t, defined in ./tdatainfo.h */
 
-/* alloc_info is a utility function that allocates hdf_datainfo_t's members*/
+/* alloc_info is a utility function that allocates t_hdf_datainfo_t's members*/
 intn alloc_info(t_hdf_datainfo_t *info, uintn info_count)
 {
     info->offsets = (int32 *) HDmalloc(info_count * sizeof(int32));
@@ -94,7 +115,7 @@ void free_info(t_hdf_datainfo_t *info)
 #define N_RECORDS	5	/* number of records to be written to the
 				   vdatas at every write */
 static void
-test_simple_vs(void)
+test_simple_vs()
 {
     int32 fid,		/* File ID */
 	  vsid,		/* Vdata ID */
@@ -874,7 +895,7 @@ static intn make_comp_image(
 }
 
 static void
-test_oneblock_ri(void)
+test_oneblock_ri()
 {
     int32 fid, grid,	/* file ID and GR interface ID */
 	  riid;		/* raster image ID */
@@ -1004,7 +1025,7 @@ test_oneblock_ri(void)
 #define N_DF_IMAGES	2	/* number of DF images in the file, 1 RI8 &
 				   1 RI24 */
 static void
-test_dfr8_24(void)
+test_dfr8_24()
 {
     int32 fid, grid,	/* file ID and GR interface ID */
 	  riid;		/* raster image ID */
@@ -1108,7 +1129,7 @@ test_dfr8_24(void)
    BMR - Aug 2010
  ****************************************************************************/
 static void
-test_getntinfo(void)
+test_getntinfo()
 {
     hdf_ntinfo_t nt_info;
     intn status = SUCCEED;
@@ -1154,9 +1175,10 @@ test_getntinfo(void)
     VERIFY_CHAR_VOID(nt_info.byte_order, "bigEndian", "Hgetntinfo DFNT_NUCHAR");
 } /* test_getntinfo */
 
-/* Test driver for testing the public functions VSgetdatainfo, ANgetdatainfo. */
+/* Test driver for testing the public functions VSgetdatainfo, ANgetdatainfo,
+   GRgetdatainfo, and Hgetntinfo. */
 void
-test_datainfo(void)
+test_datainfo()
 {
     /* Test VSgetdatainfo with data stored in one contiguous block */
     test_simple_vs();

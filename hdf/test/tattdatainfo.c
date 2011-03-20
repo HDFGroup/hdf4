@@ -1,5 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
+ * All rights reserved.                                                      *
  *                                                                           *
  * This file is part of HDF.  The full HDF copyright notice, including       *
  * terms governing use, modification, and redistribution, is contained in    *
@@ -9,8 +10,17 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: tattdatainfo.c 5334 2010-01-28 06:10:50Z bmribler $ */
-
+/****************************************************************************
+ * tattdatainfo.c - tests the functions VSgetattdatainfo, Vgetattdatainfo,
+ *		    and GRgetattdatainfo.
+ * Structure of the file:
+ *    test_attdatainfo - test driver
+ *	test_vvsattrs     - tests attributes on vgroups and vdatas
+ *	test_vgmixedattrs - tests handling vgroup attributes created with and 
+ *			    without Vsetattr
+ *	test_grattrs      - tests attributes on GR file and raster images
+ * -BMR, Aug 2010
+ ****************************************************************************/
 #include "hdf.h"
 
 #define DATAINFO_TESTER
@@ -18,7 +28,9 @@
 #include "tdatainfo.h"
 #include "tutils.h"
 
-static void test_vvsattrs(void);
+static void test_vvsattrs();
+static void test_vgmixedattrs();
+static void test_grattrs();
 
 /****************************************************************************
    Name: test_vvsattrs() - tests getting attribute data information from
@@ -55,7 +67,7 @@ static void test_vvsattrs(void);
 #define	FIELD_NAME_LIST2	"Field3,Field4"
 
 static void
-test_vvsattrs(void)
+test_vvsattrs()
 {
     int32 fid;          /* File ID */
     int32 vgroup0_id, vgroup1_id, vgroup2_id; /* Various vgroup IDs */
@@ -292,7 +304,7 @@ test_vvsattrs(void)
 } /* test_vvsattrs() */
 
 static void
-test_vgmixedattrs(void)
+test_vgmixedattrs()
 {
     int32 fid;          /* File ID */
     int32 vgroup_id, vgroup_ref;
@@ -649,8 +661,8 @@ test_grattrs()
     /* Note: readnoHDF_char is defined in tdatainfo.c */
 } /* test_grattrs() */
 
-/* Test driver for testing the public functions VSgetattdatainfo and
-   Vgetattdatainfo. */
+/* Test driver for testing the public functions VSgetattdatainfo, 
+   Vgetattdatainfo, and GRgetattdatainfo. */
 void
 test_attdatainfo()
 {

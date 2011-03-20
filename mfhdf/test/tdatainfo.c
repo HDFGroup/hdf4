@@ -14,12 +14,13 @@
  * tdatainfo.c - tests the function SDgetdatainfo.
  * Structure of the file:
  *    test_datainfo - test driver
- *	  test_nonspecial_SDSs - tests nonspecial SDSs
- *	  test_compressed_SDSs - tests compressed SDSs without closing file
- *	  test_empty_SDSs      - tests on empty chunked and chunked/comp SDSs
- *	  test_chunked_partial - tests on chunked and partially written SDS
- *	  test_chkcmp_SDSs     - tests chunked/compressed SDSs
- *	  test_extend_SDSs     - tests SDSs with unlimited dimensions
+ *	test_nonspecial_SDSs - tests nonspecial SDSs
+ *	test_compressed_SDSs - tests compressed SDSs without closing file
+ *	test_empty_SDSs      - tests on empty chunked and chunked/comp SDSs
+ *	test_chunked_partial - tests on chunked and partially written SDS
+ *	test_chkcmp_SDSs     - tests chunked/compressed SDSs
+ *	test_extend_SDSs     - tests SDSs with unlimited dimensions
+ * -BMR, Jul 2010
  ****************************************************************************/
 
 #include <sys/types.h>
@@ -41,6 +42,13 @@
 #endif
 
 #include "hdftest.h"
+
+static intn test_nonspecial_SDSs();
+static intn test_compressed_SDSs();
+static intn test_empty_SDSs();
+static intn test_chunked_partial();
+static intn test_chkcmp_SDSs();
+static intn test_extend_SDSs();
 
 #define SIMPLE_FILE     "datainfo_simple.hdf"	/* data file */
 #define X_LENGTH      10
@@ -484,7 +492,8 @@ static intn test_nonspecial_SDSs() {
  BMR - Jul 2010
  ****************************************************************************/
 #define	COMP_FILE	"datainfo_cmp.hdf"	/* data file */
-static intn test_compressed_SDSs() {
+static intn test_compressed_SDSs()
+{
     int32 sd_id, sds_id, esds_id, usds_id;
     int32 starts[2], edges[2], dimsizes[2], rank = 0;
     comp_coder_t comp_type; /* Compression flag */
@@ -939,7 +948,8 @@ static intn test_compressed_SDSs() {
 #define NUM_SDS    3
 #define	NODATA_FILE	"datainfo_nodata.hdf"	/* data file */
 
-static intn test_empty_SDSs() {
+static intn test_empty_SDSs()
+{
     int32 sd_id, sds_id, sds_index;
     int32 dimsizes[RANK];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */
@@ -1052,7 +1062,8 @@ static intn test_empty_SDSs() {
  BMR - Jul 2010
  ****************************************************************************/
 #define	CHK_FILE	"datainfo_chk.hdf"	/* data file */
-static intn test_chunked_partial() {
+static intn test_chunked_partial()
+{
     int32 sd_id, sds_id, sds_index;
     int32 dimsizes[RANK], origin[RANK], starts[RANK], rank = 0, edges[RANK];
     HDF_CHUNK_DEF c_def; /* Chunking definitions */
@@ -1264,7 +1275,8 @@ static intn test_chunked_partial() {
  * data blocks.
  */
 #define CHKCMP_FILE     "datainfo_chkcmp.hdf"	/* data file */
-static intn test_chkcmp_SDSs() {
+static intn test_chkcmp_SDSs()
+{
     int32 sd_id, sds_id, sds_index;
     int32 cmpsds_id, cmpsds_index;
     int32 flag, maxcache, new_maxcache;
@@ -1481,7 +1493,8 @@ static intn test_chkcmp_SDSs() {
  * verify the number of data blocks.
  */
 #define EXTEND_FILE     "datainfo_extend.hdf"	/* data file */
-static intn test_extend_SDSs() {
+static intn test_extend_SDSs()
+{
     int32 sd_id, sds_id, sds_index;
     int32 dimsizes[2], starts[2], edges[2], rank = 0;
     int32 dimsize1[1], start1[1], edges1[1];

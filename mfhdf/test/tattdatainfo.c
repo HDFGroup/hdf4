@@ -11,21 +11,26 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * tattdatainfo.c - tests the functions SDgetattdatainfo & SDgetanndatainfo.
+ * tattdatainfo.c - tests the functions SDgetattdatainfo, SDgetoldattdatainfo,
+ *		    and SDgetanndatainfo.
  * Structure of the file:
  *    test_attdatainfo - test driver
- *	  test_attrs - tests getting SDS attribute's data info
- *	  test_annots - tests getting SDS annotation's data info
+ *	test_attrs     - tests getting SDS attribute's data info
+ *	test_annots    - tests getting SDS annotation's data info
+ *	test_dfsdattrs - tests getting data info of old attributes added by
+ *			 DFSD API
+ * -BMR, Jul 2010
 ****************************************************************************/
 
-
-#ifdef HDF
-
 #define DATAINFO_TESTER
-
 #include "mfhdf.h"
 #include "hdftest.h"
 
+static intn test_attrs();
+static intn test_dfannots();
+static intn test_dfsdattrs();
+
+/* Reads character string data from HDF file without the use of HDF4 library */
 intn readnoHDF_char(const char *filename, const int32 offset, const int32 length, const char *orig_buf);
 
 #define ATTR_FILE     "attdatainfo.hdf"	/* data file */
@@ -1067,8 +1072,8 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
     return ret_value;
 }
 
-/* Test driver for testing the public functions SDgetattdatainfo() and
-   SDgetoldattdatainfo() */
+/* Test driver for testing the public functions SDgetattdatainfo(),
+   SDgetoldattdatainfo(), and SDgetanndatainfo() */
 extern int test_att_ann_datainfo()
 {
     intn status;
@@ -1093,4 +1098,3 @@ extern int test_att_ann_datainfo()
     if (num_errs == 0) PASSED();
     return num_errs;
 }
-#endif /* HDF */

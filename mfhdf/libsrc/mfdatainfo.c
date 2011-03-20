@@ -1,6 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
- * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
  * This file is part of HDF.  The full HDF copyright notice, including       *
@@ -11,8 +10,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* $Id: mfdatainfo.c 5399 2010-04-22 01:49:49Z bmribler $ */
-
 /* NOTE: this file and other "datainfo" related files will be configured so
 	 that this feature will not be built by default. -BMR
    Update: THG and NASA had decided to include all features developed for the
@@ -22,28 +19,25 @@
 FILE
   mfdatainfo.c
 
-  This file contains the HDF/netCDF based multi-file interface for functions
-  that involve information about location and size of raw data.  This
-  type of information allows applications to extract raw data from an HDF
-  file without the use of HDF4 library.
+  This file contains the multi-file SD interface functions that provide
+  information about location and size of raw data.  This type of information
+  will allow applications to extract raw data from an HDF file without the
+  use of HDF4 library.  These features were developed to support the HDF4
+  Mapping project (2010-2011.)
 
-  As with the rest of the SD functions, these functions have names beginning
-  with SD.
+  As with the rest of the SD API, these functions have names beginning with SD.
 
 EXPORTED ROUTINES
-------------------
+-----------------
 
-	--- retrieve location and size of data blocks
-status = SDgetdatainfo(sdsid, ...);
+  SDgetdatainfo       -- retrieves location and size of an SDS' data
+  SDgetattdatainfo    -- retrieves location and size of an attribute's data
+  SDgetoldattdatainfo -- retrieves location and size of an old-style attribute's data
+  SDgetanndatainfo    -- retrieves location and size of an annotation's data
 
-	--- retrieve location and size of data of an attribute
-status = SDgetattdatainfo(id, ...);
-
-	--- retrieve location and size of data of an old-style attribute
-status = SDgetoldattdatainfo(id, ...);
-
-	--- retrieve location and size of data of an annotation
-status = SDgetanndatainfo(id, ...);
+LOCAL ROUTINES
+--------------
+  get_attr_tag        -- Convert the name of an attribute to its associated hdf tag
 
 ******************************************************************************/
 
@@ -78,15 +72,15 @@ PRIVATE intn get_attr_tag(char *attr_name, uint16* attr_tag);
  NAME
     SDgetdatainfo -- Retrieves location and size of data blocks.
  USAGE
-    intn SDgetdatainfo(sdsid, start_block, info_count, offsetarray, lengtharray)
+    intn SDgetdatainfo(sdsid, chk_coord, start_block, info_count, offsetarray, lengtharray)
 	int32 sdsid		IN: dataset ID
+	int32 *chk_coord	IN: chunk coord array or NULL for non-chunk SDS
 	int32 start_block	IN: indicating where to start reading offsets
 	uintn info_count	IN: number of data blocks the arrays can hold
 	int32 *offsetarray	OUT: array for offsets
 	int32 *lengtharray	OUT: array for lengths
  RETURNS
-    The actual number of data blocks retrieved if successful and FAIL,
-    otherwise.
+    The number of data blocks retrieved if successful and FAIL, otherwise.
 
  DESCRIPTION
     SDgetdatainfo retrieves two lists, one containing offsets to sdsid's data
@@ -112,12 +106,8 @@ PRIVATE intn get_attr_tag(char *attr_name, uint16* attr_tag);
 
 ******************************************************************************/
 intn
-SDgetdatainfo(int32 sdsid,		/* IN: dataset ID */
-	      int32 *chk_coord,		/* IN: chunk coord array or NULL for non-chunk SDS */
-              uintn start_block,	/* IN: indicating where to start */
-              uintn info_count,		/* IN: number of data blocks */
-	      int32 *offsetarray,	/* OUT: array for offsets */
-	      int32 *lengtharray)	/* OUT: array for lengths */
+SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
+              uintn info_count, int32 *offsetarray, int32 *lengtharray)
 {
     CONSTR(FUNC, "SDgetdatainfo");    /* for HGOTO_ERROR */
     NC     *handle;
@@ -195,8 +185,18 @@ done:
     and FAIL, otherwise.
 
  DESCRIPTION
-    SDgetattdatainfo retrieves the location of the attribute's data and its
-    length.
+    There are attributes created by SD API functions and those created by
+    the DFSD API functions.  When the searched attribute was created by the
+    SD API, the attribute would be stored in a vdata.  Thus, SDgetattdatainfo
+    will use VSgetdatainfo to get the location and length of the attribute's.
+
+    When the searched attribute was created by the DFSD API, it would
+    be stored with the SDS via an attribute tag/ref pair.  Refer to
+    the function header of SDgetoldattdatainfo for more details.
+    The application will need to call SDgetoldattdatainfo to get data
+    info for this type of attributes.  Thus, SDgetattdatainfo will
+    return to caller with error code DFE_NOVGREP so caller can call
+    SDgetoldattdatainfo to get to its attributes directly from the file.
 
  MODIFICATION
     2010/10/14: Revised to remove the parameter attrname because, for hmap
@@ -204,10 +204,7 @@ done:
 
 ******************************************************************************/
 intn
-SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
-		 int32 attrindex,/* IN: index of attribute to be inquired */
-		 int32 *offset, /* OUT: buffer for offset */
-		 int32 *length) /* OUT: buffer for length */
+SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "SDgetattdatainfo");
     NC     *handle;
@@ -311,7 +308,7 @@ SDgetattdatainfo(int32 id,	/* IN: dataset ID, dimension ID, or file ID */
 	vg_ref = handle->vgid;
 
         /* I believe file did not have the case of old pre-defined attributes,
-	   so no special handling for DFE_NOVGREP here. -BMR 1/11/2011 */
+	   so no special handling for DFE_NOVGREP here. -BMR 2011/1/11 */
 
 	/* Validate the vgroup ref# */
 	if (vg_ref == 0) HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -401,7 +398,7 @@ done:
 
 /******************************************************************************
  NAME
-    get_attr_tag -- Convert the name of attribute label, unit, or format to its
+    get_attr_tag -- Convert the name of a pre-defined attribute to its
 			   associated hdf tag (Private)
  USAGE
     intn get_attr_tag(attr_name, *attr_tag)
@@ -415,7 +412,7 @@ done:
     was not stored in vdata, but was located by an attribute tag/ref pair,
     which is an element of the group that represents the SDS.  The values of
     the SDS's attribute are followed by the values of its dimensions'
-    attributes, separated by a null character.
+    attributes, each separated by a null character.
 
     This function gives the associated tag of an attributes so that
     application can use tag/ref to read the attribute string.
@@ -446,11 +443,10 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
 	 || (HDstrcmp(_HDF_AddOffset, attr_name) == 0)
 	 || (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0))
 	*attr_tag = DFTAG_CAL;
-/*
+    /* We need to decide how to handle this attribute when we see it...
     else 
             case DFTAG_SDLNK:
- fprintf(stderr, "    DFTAG_SDLNK / tmpRef=%d, attr_name = %s\n", tmpRef, attr_name);
- */
+    */
     else
     {
         ret_value = FAIL;
@@ -461,15 +457,15 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
 
 /******************************************************************************
  NAME
-    SDgetoldattdatainfo -- Retrieves location and size of old predefined attribute's
-			   data.
+    SDgetoldattdatainfo -- Retrieves location and size of old predefined
+			   attribute's data.
  USAGE
     intn SDgetoldattdatainfo(id, sdsid, attr_name, offset, length)
 	int32 dim_id		IN: dimension ID
-	int32 sdsid		IN: SDS ID that dim_id belongs
+	int32 sdsid		IN: ID of dataset the dim belongs to
 	char *attr_name		IN: name of the attribute being inquired
-	int32 *offset		OUT: offset of attribute's data
-	int32 *length		OUT: length of attribute's data
+	int32 *offset		OUT: buffer for offset
+	int32 *length		OUT: buffer for length
  RETURNS
     The number of data blocks retrieved, which should be 1, if successful
     and FAIL, otherwise.
@@ -505,11 +501,8 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
 
 ******************************************************************************/
 intn
-SDgetoldattdatainfo(int32 dim_id,     /* IN: dimension ID */
-		    int32 sdsid,      /* IN: ID of dataset the dim belongs to */
-		    char  *attr_name, /* IN: name of attribute to be inquired */
-		    int32 *offset,    /* OUT: buffer for offset */
-		    int32 *length)    /* OUT: buffer for length */
+SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
+		    int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "SDgetoldattdatainfo");
     NC     *handle;
@@ -692,7 +685,7 @@ done:
  USAGE
     intn SDgetanndatainfo(sdsid, annot_type, size, offsetarray, lengtharray)
 	int32 sdsid		IN: SDS ID
-	ann_type annot_type	IN: type of annotations to retrieve data
+	ann_type annot_type	IN: type of annotations to retrieve data info
 	uintn size		IN: size of offsetarray and lengtharray
 	int32 *offsetarray	OUT: offsets of annotations' data
 	int32 *lengtharray	OUT: lengths of annotations' data
@@ -702,7 +695,8 @@ done:
 
  DESCRIPTION
     SDgetanndatainfo retrieves the location and size specifying data of the
-    annotations of the specified type from the dataset sdsid.
+    annotations of the specified type from the dataset.  There may be more
+    than one annotations, but each annotation has only one block of data.
 
  IMPORTANT NOTE
     If caller provides buffers that are smaller than the number of annotations
@@ -713,8 +707,7 @@ done:
     anticipated, beside the fact that we're running out of time.  In the future,
     or when such need arises, the function should be modified to include
     another parameter to allow retrieving partial annotations.
-
- MODIFICATION
+    -BMR 2011/1/9
 
 ******************************************************************************/
 intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray, int32* lengtharray)
@@ -779,15 +772,23 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
         /* Get offset/length of each annotation of the specified type */
 	for (ii = 0; ii < num_annots; ii++)
 	{
-	    /* Get access to the label annotation */
+	    intn status;
+
+	    /* Get access to an annotation of the specified type */
 	    ann_id = ANselect(an_id, ii, annot_type);
 	    if (ann_id == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /* Get annotation's offset and length */
             ret_value = ANgetdatainfo(ann_id, &offsetarray[ii], &lengtharray[ii]);
+	    /* Close the annotation (now, just in case ANgetdatainfo failed) */
+	    status = ANendaccess(ann_id);
+
 	    if (ret_value == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	    if (status == FAIL)
+                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 	}
     }
     /* Not a file ID */
@@ -844,6 +845,8 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
             /* Get list of annotations IDs on this tag/ref */
             if (ANannlist(an_id, annot_type, elem_tag, elem_ref, dannots) == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    /* Note: these ann IDs seem to be closed by HAdestroy_group() but
+		I'm not sure.  MFAN needs to take care of them if not. -BMR */
 
             /* Loop through the annotation list and get their offsets/lengths */
             for (ii = 0; ii < num_annots; ii++)
