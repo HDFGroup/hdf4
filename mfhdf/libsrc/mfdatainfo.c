@@ -118,6 +118,17 @@ SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
     /* Clear error stack */
     HEclear();
 
+    /* Validate arguments */
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Just in case user forgot to allocate buffers */
+    if ((offsetarray == NULL && lengtharray == NULL) && (info_count > 0))
+	HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
+
     /* Get NC_var record */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
@@ -137,18 +148,12 @@ SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
     else
     {
 	/* If both arrays are NULL, get the number of data blocks and return */
-	if ((offsetarray == NULL && lengtharray == NULL) && (info_count == 0))
+	if (offsetarray == NULL && lengtharray == NULL)
 	{
 	    count = HDgetdatainfo(handle->hdf_file, var->data_tag,
 		var->data_ref, chk_coord, start_block, info_count, NULL, NULL);
 	    if (count == FAIL)
 		HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	}
-
-	/* Just in case user forgets to allocate space for arrays */
-	else if ((offsetarray == NULL && lengtharray == NULL) && (info_count > 0))
-	{
-	    HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
 	}
 
 	/* Application requests actual offsets/lengths */
@@ -161,6 +166,7 @@ SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
 		HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	}
     }
+    /* Returning number of data blocks */
     ret_value = count;
 done:
     if (ret_value == FAIL)
@@ -227,6 +233,16 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 
     /* Clear error stack */
     HEclear();
+
+    /* Validate arguments */
+
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Index must be positive */
+    if (attrindex < 0)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get the attribute's name */
     status = SDattrinfo(id, attrindex, attrname, &ntype, &count);
@@ -523,6 +539,14 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
     /* Clear error stack */
     HEclear();
 
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Attribute name must be provided */
+    if (attr_name == NULL || attr_name[0] == '\0')
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Check if a dimension ID is given then set flag */
     handle = SDIhandle_from_id(dim_id, DIMTYPE);
     if(handle != NULL)
@@ -733,6 +757,11 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 
     /* Validate array size */
     if (size == 0 && (offsetarray != NULL && lengtharray != NULL))
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check if the given id is a file id */

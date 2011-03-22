@@ -133,8 +133,13 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
     /* Clear error stack */
     HEclear();
 
-    /* Validate arguments */
+    /* Validate array size */
     if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Convert file id to file rec and check for validity */
@@ -380,6 +385,15 @@ VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count,
     /* Clear error stack */
     HEclear();
 
+    /* Validate array size */
+    if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Check key is valid vdata */
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -506,6 +520,10 @@ Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
     /* Clear error stack */
     HEclear();
 
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Validate Vgroup ID */
     if (HAatom_group(vgid) != VGIDGROUP)
        HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -610,6 +628,10 @@ VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 
     /* Clear error stack */
     HEclear();
 
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     /* locate vs' index in vstab */
@@ -621,13 +643,14 @@ VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     nattrs = vs->nattrs;
 
+    /* No attrs or bad attr list */
+    if (nattrs == 0 || vs_alist == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Index must be positive and less than the number of attributes */
     if (attrindex <0 || attrindex >= nattrs)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     vs_alist = vs->alist;
-
-    /* no attrs or bad attr list */
-    if (nattrs == 0 || vs_alist == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     found = 0;
     a_index = -1;
@@ -721,6 +744,10 @@ GRgetattdatainfo(int32 id, intn attrindex, int32 *offset, int32 *length)
 
     /* Validate index */
     if (attrindex < 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Validate ID */
@@ -845,6 +872,15 @@ GRgetdatainfo(int32 riid, uintn start_block, uintn info_count,
     /* Clear error stack */
     HEclear();
 
+    /* Validate array size */
+    if (info_count == 0 && (offsetarray != NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Check the validity of the ID */
     if (HAatom_group(riid) != RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -938,6 +974,10 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
 
     /* Clear error stack */
     HEclear();
+
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get annotation record */
     ann_node = HAatom_object(ann_id);
