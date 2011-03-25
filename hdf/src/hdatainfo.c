@@ -643,14 +643,16 @@ VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     nattrs = vs->nattrs;
 
-    /* No attrs or bad attr list */
-    if (nattrs == 0 || vs_alist == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* No attrs */
+    if (nattrs == 0) HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Index must be positive and less than the number of attributes */
     if (attrindex <0 || attrindex >= nattrs)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     vs_alist = vs->alist;
+
+    /* Bad attr list */
+    if (vs_alist == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
 
     found = 0;
     a_index = -1;
