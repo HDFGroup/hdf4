@@ -25,11 +25,15 @@
  *	test_getntinfo   - test Hgetntinfo
  ****************************************************************************/
 
-#include "hdf.h"
+#ifndef DATAINFO_TESTER
+#define DATAINFO_TESTER /* to include hdatainfo.h */
+#endif
 
-#define DATAINFO_TESTER
-#define MFAN_TESTER
-#include "hdatainfo.h"
+#ifndef MFAN_TESTER
+#define MFAN_TESTER	/* to use MFAN API */
+#endif
+
+#include "hdf.h"
 #include "tdatainfo.h"
 #include "tproto.h"
 

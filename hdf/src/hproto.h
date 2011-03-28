@@ -1862,8 +1862,8 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (HFILEID f, const char  * vsclass);
     
     HDFLIBAPI intn VSofclass
-                (int32 id, const char *vsclass, const uintn start_vd,
-                 const uintn array_size, uint16 *refarray);
+                (int32 id, const char *vsclass, uintn start_vd,
+                 uintn array_size, uint16 *refarray);
 
     HDFLIBAPI intn VSgetvdatas
                 (int32 id, uintn start_vd, uintn array_size, uint16 *refarray);

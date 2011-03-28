@@ -21,10 +21,12 @@
  *	test_grattrs      - tests attributes on GR file and raster images
  * -BMR, Aug 2010
  ****************************************************************************/
-#include "hdf.h"
 
-#define DATAINFO_TESTER
-#include "hdatainfo.h"
+#ifndef DATAINFO_TESTER
+#define DATAINFO_TESTER	/* to include hdatainfo.h */
+#endif
+
+#include "hdf.h"
 #include "tdatainfo.h"
 #include "tutils.h"
 

@@ -52,13 +52,14 @@ LOW-LEVEL ROUTINES
 #define MFAN_MASTER	/* for ANgetdatainfo */
 #endif			/* mfan.h is included here */
 
+#ifndef DATAINFO_MASTER
+#define DATAINFO_MASTER	/* to include hdatainfo.h */
+#endif
+
 #include "hdf.h"
 #include "hlimits.h"
 #include "vgint.h"
 #include "mfan.h"
-
-#define DATAINFO_MASTER
-#include "hdatainfo.h"
 
 #ifdef H4_HAVE_LIBSZ	/* we have the szip library */
 #include "szlib.h"
@@ -726,7 +727,7 @@ done:
 
 --------------------------------------------------------------*/
 intn 
-GRgetattdatainfo(int32 id, intn attrindex, int32 *offset, int32 *length)
+GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "GRgetattdatainfo");
     int32      hdf_file_id;	/* file id */

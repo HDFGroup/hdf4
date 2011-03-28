@@ -1415,8 +1415,8 @@ NOTE
 intn
 VSofclass(int32 id,              /* IN: file id or vgroup id */
 	    const char *vsclass, /* IN: class to be queried */
-	    const uintn start_vd,/* IN: vdata number to start retrieving */
-            const uintn n_vds,	 /* IN: number of user-created vds to return */
+	    uintn start_vd,/* IN: vdata number to start retrieving */
+            uintn n_vds,	 /* IN: number of user-created vds to return */
             uint16 *refarray	 /* IN/OUT: ref array to fill */)
 {
     CONSTR(FUNC, "VSofclass");

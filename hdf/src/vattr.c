@@ -1111,7 +1111,7 @@ intn Vnoldattrs(int32 vgid)
 		HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
 	    /* Get ref numbers of old-style attributes belonging to this vg */
-            n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, n_old_attrs, areflist);
+            n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, (uintn)n_old_attrs, areflist);
 	    if (n_old_attrs == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 

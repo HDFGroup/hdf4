@@ -16,20 +16,6 @@
 #ifndef _TDATAINFO_H
 #define _TDATAINFO_H
 
-/* Define these for use in all the tests */
-#ifndef TESTMASTER
-extern
-#endif
-int         num_errs
-#ifdef TESTMASTER
-= 0
-#endif
-,           Verbosity
-#ifdef TESTMASTER
-= 0
-#endif
-           ;
-
 #ifdef DATAINFO_TESTER
 typedef struct
   {

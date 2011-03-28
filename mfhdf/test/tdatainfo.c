@@ -33,9 +33,11 @@
 #define ssize_t int32
 #endif 
 
-#include "mfhdf.h"
+#ifndef DATAINFO_TESTER
+#define DATAINFO_TESTER /* to include mfdatainfo.h */
+#endif
 
-#ifdef HDF
+#include "mfhdf.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
@@ -1733,4 +1735,3 @@ extern int test_datainfo() {
         PASSED();
     return num_errs;
 }
-#endif /* HDF */

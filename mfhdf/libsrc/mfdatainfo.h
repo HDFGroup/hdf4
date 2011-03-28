@@ -24,9 +24,6 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
- /* #include "mfhdfi.h"
- */ 
-
 /* Public functions for getting raw data information */
 
 HDFLIBAPI intn SDgetdatainfo

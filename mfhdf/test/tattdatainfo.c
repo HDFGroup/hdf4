@@ -22,7 +22,10 @@
  * -BMR, Jul 2010
 ****************************************************************************/
 
-#define DATAINFO_TESTER
+#ifndef DATAINFO_TESTER
+#define DATAINFO_TESTER /* to include mfdatainfo.h */
+#endif
+
 #include "mfhdf.h"
 #include "hdftest.h"
 

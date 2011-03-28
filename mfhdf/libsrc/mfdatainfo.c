@@ -47,11 +47,12 @@ LOCAL ROUTINES
 #endif
 
 #ifdef HDF
-#include "mfhdf.h"
 
+#ifndef DATAINFO_MASTER
 #define DATAINFO_MASTER
+#endif
 #include "hdatainfo.h"
-#include "mfdatainfo.h"
+#include "mfhdf.h"
 
 #ifdef H4_HAVE_LIBSZ          /* we have the szip library */
 #include "szlib.h"
@@ -523,7 +524,6 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
     CONSTR(FUNC, "SDgetoldattdatainfo");
     NC     *handle;
     NC_var *var;
-    NC_dim *dim;
     int32   off, len,
             dim_att_len=0,
             sdsluf_len=0,
@@ -790,12 +790,15 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 	else
 	    num_annots = n_fdescs;
 
+	if (num_annots < 0)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
         /* If offsets and lengths are not desired, return the number of annots */
         if (offsetarray == NULL || lengtharray == NULL)
 	    HGOTO_DONE(num_annots);
 
         /* If more annotations than space in user's buffers, only fill up buffers */
-        if (num_annots > size)
+        if ((uintn)num_annots > size)
             num_annots = size;
 
         /* Get offset/length of each annotation of the specified type */
