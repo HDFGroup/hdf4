@@ -1660,9 +1660,11 @@ test_r8(void)
     HDfree(ipal);
     HDfree(jpeg_8bit_temp);
 
+#ifdef DATAINFO_TESTER
     /* Temporarily call to test grgetcomptype() for hmap project; these tests
        will need to be reformatted. Mar 13, 2011 -BMR */
     test_grgetcomptype();
+#endif
 }
 
 void

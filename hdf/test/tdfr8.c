@@ -14,6 +14,14 @@
  * tdfr8.c - test file for images of DFR8 API
  *************************************************************************/
 
+/* This is only for testing and should be done in configuration later */
+#ifdef DATAINFO_MASTER
+   #ifndef DATAINFO_TESTER
+   #define DATAINFO_TESTER /* to include hmap project's features */
+   #endif
+#endif
+
+#ifdef DATAINFO_TESTER
 #include "hdf.h"
 #include "tproto.h"	/* for utility macros */
 
@@ -211,3 +219,4 @@ test_grgetcomptype()
     CHECK_VOID(status, FAIL, "Hclose");
 
 } /* test_grgetcomptype */
+#endif /* DATAINFO_TESTER */
