@@ -1147,7 +1147,6 @@
 
 ./config/cmake/hdf4-config.cmake.install.in
 ./config/cmake/ConfigureChecks.cmake
-./config/cmake/FortranConfigureChecks.cmake
 ./config/cmake/CTestCustom.cmake
 ./config/cmake/CTest.cmake
 ./config/cmake/runTest.cmake
@@ -1160,7 +1159,9 @@
 ./config/cmake/HDFTests.c
 ./config/cmake/FindSZIP.cmake
 ./config/cmake/cacheinit.cmake
+./config/cmake/mccacheinit.cmake
 ./config/cmake/HDF4Macros.cmake
+./config/cmake/HDF4UseFortran.cmake
 ./config/cmake/hdf4-config.cmake.build.in
 ./config/cmake/hdf4-config-version.cmake.in
 

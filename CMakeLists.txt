@@ -314,13 +314,10 @@ ENDIF (MAKE_SYSTEM)
 # Add some definitions for Debug Builds
 #-----------------------------------------------------------------------------
 IF (CMAKE_BUILD_TYPE MATCHES Debug)
-  ADD_DEFINITIONS(-DDEBUG)
   #-- NMake Makefiles will overwhelm the console with warnings if -Wall is used.
   IF (NOT WIN32)
     ADD_DEFINITIONS (-Wall)
   ENDIF (NOT WIN32)
-ELSE (CMAKE_BUILD_TYPE MATCHES Debug)
-  ADD_DEFINITIONS (-UH4_DEBUG_API -DNDEBUG)
 ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 
 #-----------------------------------------------------------------------------
@@ -638,6 +635,7 @@ IF (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
       SET (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       SET (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     ENDIF (WIN32 AND NOT CYGWIN)
+    INCLUDE (${HDF4_RESOURCES_DIR}/HDF4UseFortran.cmake)
     ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
     ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
   ENDIF (HDF4_BUILD_FORTRAN)

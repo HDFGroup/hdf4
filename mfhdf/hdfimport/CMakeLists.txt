@@ -156,18 +156,22 @@ IF (BUILD_TESTING)
       SET_TESTS_PROPERTIES (HIMPORT-${testtfile} PROPERTIES DEPENDS ${last_test})
     ENDIF (NOT "${last_test}" STREQUAL "")
 
-    ADD_TEST (
-        NAME HIMPORTLS-${testtfile}
-        COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
-            -D "TEST_ARGS:STRING=-l;${testtfile}.hdf"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_OUTPUT=${testtfile}.tmp"
-            -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
-            -D "TEST_REFERENCE=${testtfile}.tst"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-    )
+    IF (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (NAME HIMPORTLS-${testtfile} COMMAND $<TARGET_FILE:hdfls> -l ${testtfile}.hdf)
+    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (
+          NAME HIMPORTLS-${testtfile}
+          COMMAND "${CMAKE_COMMAND}"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
+              -D "TEST_ARGS:STRING=-l;${testtfile}.hdf"
+              -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+              -D "TEST_OUTPUT=${testtfile}.tmp"
+              -D "TEST_EXPECT=${resultcode}"
+              -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
+              -D "TEST_REFERENCE=${testtfile}.tst"
+              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+      )
+    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HIMPORTLS-${testtfile} PROPERTIES DEPENDS HIMPORT-${testtfile})
     SET (last_test "HIMPORTLS-${testtfile}")
   ENDMACRO (ADD_H4_TEST)
@@ -178,35 +182,43 @@ IF (BUILD_TESTING)
       SET_TESTS_PROPERTIES (HIMPORT-OUT-${resultfile} PROPERTIES DEPENDS ${last_test})
     ENDIF (NOT "${last_test}" STREQUAL "")
 
-    ADD_TEST (
-        NAME HIMPORTLS-OUT-${resultfile}
-        COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
-            -D "TEST_ARGS:STRING=${resultfile}.out"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_OUTPUT=${resultfile}.tmp"
-            -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
-            -D "TEST_REFERENCE=${resultfile}.tst"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-    )
+    IF (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (NAME HIMPORTLS-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfls> ${resultfile}.out)
+    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (
+          NAME HIMPORTLS-OUT-${resultfile}
+          COMMAND "${CMAKE_COMMAND}"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
+              -D "TEST_ARGS:STRING=${resultfile}.out"
+              -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+              -D "TEST_OUTPUT=${resultfile}.tmp"
+              -D "TEST_EXPECT=${resultcode}"
+              -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
+              -D "TEST_REFERENCE=${resultfile}.tst"
+              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+      )
+    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HIMPORTLS-OUT-${resultfile} PROPERTIES DEPENDS HIMPORT-OUT-${resultfile})
     SET (last_test "HIMPORTLS-OUT-${resultfile}")
   ENDMACRO (ADD_H4_TEST_OUT)
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
-    ADD_TEST (
-        NAME HIMPORT-EDIT
-        COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
-            -D "TEST_ARGS:STRING=-batch"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_INPUT=${testfile}"
-            -D "TEST_OUTPUT=${testfile}.tmp"
-            -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_REFERENCE=${resultfile}"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-    )
+    IF (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (NAME HIMPORT-EDIT COMMAND $<TARGET_FILE:hdfed> -batch)
+    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (
+          NAME HIMPORT-EDIT
+          COMMAND "${CMAKE_COMMAND}"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
+              -D "TEST_ARGS:STRING=-batch"
+              -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+              -D "TEST_INPUT=${testfile}"
+              -D "TEST_OUTPUT=${testfile}.tmp"
+              -D "TEST_EXPECT=${resultcode}"
+              -D "TEST_REFERENCE=${resultfile}"
+              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+      )
+    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
     IF (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test})
     ENDIF (NOT "${last_test}" STREQUAL "")
