@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 PROJECT (HDF4_HDF_FORTRAN C CXX Fortran)
 
-ENABLE_LANGUAGE (Fortran)
-
 #-----------------------------------------------------------------------------
 # Make sure generated files and modules are picked up correctly
 #-----------------------------------------------------------------------------
@@ -10,16 +8,6 @@ INCLUDE_DIRECTORIES (
     ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
 )
-
-#-----------------------------------------------------------------------------
-# Add debug information (intel Fortran : JB)
-#-----------------------------------------------------------------------------
-IF (CMAKE_Fortran_COMPILER MATCHES ifort)
-  IF (WIN32)
-    SET (CMAKE_Fortran_FLAGS_DEBUG "/debug:full /dbglibs " CACHE "flags" STRING FORCE)
-    SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG" CACHE "flags" STRING FORCE)
-  ENDIF (WIN32)
-ENDIF (CMAKE_Fortran_COMPILER MATCHES ifort)
   
 SET (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDFSOURCE_DIR}/dfanf.c

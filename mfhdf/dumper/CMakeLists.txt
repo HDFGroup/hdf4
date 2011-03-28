@@ -183,17 +183,21 @@ IF (BUILD_TESTING)
 ##############################################################################
 
   MACRO (ADD_H4_TEST resultfile resultcode)
-    ADD_TEST (
-        NAME HDP-${resultfile}
-        COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdp>"
-            -D "TEST_ARGS:STRING=${ARGN}"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-            -D "TEST_OUTPUT=${resultfile}.tst"
-            -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_REFERENCE=${resultfile}.out"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-    )
+    IF (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (NAME HDP-${resultfile} COMMAND $<TARGET_FILE:hdp> ${ARGN})
+    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (
+          NAME HDP-${resultfile}
+          COMMAND "${CMAKE_COMMAND}"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdp>"
+              -D "TEST_ARGS:STRING=${ARGN}"
+              -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+              -D "TEST_OUTPUT=${resultfile}.tst"
+              -D "TEST_EXPECT=${resultcode}"
+              -D "TEST_REFERENCE=${resultfile}.out"
+              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+      )
+    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
     IF (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HDP-${resultfile} PROPERTIES DEPENDS ${last_test})
     ENDIF (NOT "${last_test}" STREQUAL "")

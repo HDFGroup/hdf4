@@ -1,0 +1,55 @@
+# This is the CMakeCache file.
+
+########################
+# EXTERNAL cache entries
+########################
+
+SET (BUILD_SHARED_LIBS OFF CACHE BOOL "Build Shared Libraries" FORCE)
+
+SET (BUILD_TESTING ON CACHE BOOL "Build HDF4 Unit Testing" FORCE)
+
+SET (HDF4_BUILD_EXAMPLES ON CACHE BOOL "Build HDF4 Library Examples" FORCE)
+
+SET (HDF4_BUILD_FORTRAN ON CACHE BOOL "Build FORTRAN support" FORCE)
+
+SET (HDF4_BUILD_TOOLS ON CACHE BOOL "Build HDF4 Tools" FORCE)
+
+SET (HDF4_BUILD_UTILS ON CACHE BOOL "Build HDF4 Library Utilities" FORCE)
+
+SET (HDF4_ENABLE_NETCDF ON CACHE BOOL "Build HDF4 versions of NetCDF-3 APIS" FORCE)
+
+SET (HDF4_BUILD_XDR_LIB OFF CACHE BOOL "Build HDF4 XDR Library" FORCE)
+
+SET (HDF4_ENABLE_PARALLEL OFF CACHE BOOL "Enable parallel build (requires MPI)" FORCE)
+
+SET (HDF4_ENABLE_JPEG_LIB_SUPPORT ON CACHE BOOL "Enable Jpeg library" FORCE)
+
+SET (HDF4_ENABLE_Z_LIB_SUPPORT ON CACHE BOOL "Enable Zlib Filters" FORCE)
+
+SET (HDF4_ENABLE_SZIP_SUPPORT ON CACHE BOOL "Use SZip Filter" FORCE)
+
+SET (HDF4_ENABLE_SZIP_ENCODING ON CACHE BOOL "Use SZip Encoding" FORCE)
+
+SET (HDF4_ENABLE_COVERAGE OFF CACHE BOOL "Enable code coverage for Libraries and Programs" FORCE)
+
+SET (HDF4_ENABLE_USING_MEMCHECKER ON CACHE BOOL "Indicate that a memory checker is used" FORCE)
+
+SET (HDF4_DISABLE_COMPILER_WARNINGS OFF CACHE BOOL "Disable compiler warnings" FORCE)
+
+SET (HDF4_PACKAGE_EXTLIBS OFF CACHE BOOL "(WINDOWS)CPACK - include external libraries" FORCE)
+
+SET (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building" FORCE)
+
+SET (ZLIB_SVN_URL "http://svn.hdfgroup.uiuc.edu/zlib/trunk" CACHE STRING "Use ZLib from HDF repository" FORCE)
+
+SET (SZIP_SVN_URL "http://svn.hdfgroup.uiuc.edu/szip/trunk" CACHE STRING "Use SZip from HDF repository" FORCE)
+
+SET (JPEG_SVN_URL "http://svn.hdfgroup.uiuc.edu/jpeg/branches/jpeg6b" CACHE STRING "Use JPEG from HDF repository" FORCE)
+
+SET (ZLIB_TGZ_NAME "ZLib.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
+
+SET (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
+
+SET (JPEG_TGZ_NAME "JPEG6b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
+
+SET (CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build Debug" FORCE)

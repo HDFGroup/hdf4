@@ -185,17 +185,21 @@ IF (HDF4_BUILD_XDR_LIB)
       ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/xdrtest.out
   )
 
-  ADD_TEST (
-      NAME xdrtest
-      COMMAND "${CMAKE_COMMAND}"
-          -D "TEST_PROGRAM=$<TARGET_FILE:xdrtest>"
-          -D "TEST_ARGS:STRING="
-          -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
-          -D "TEST_OUTPUT=xdrtest.tst"
-          -D "TEST_EXPECT=0"
-          -D "TEST_REFERENCE=xdrtest.out"
-          -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-  )
+  IF (HDF4_ENABLE_USING_MEMCHECKER)
+    ADD_TEST (NAME xdrtest COMMAND $<TARGET_FILE:xdrtest>)
+  ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+    ADD_TEST (
+        NAME xdrtest
+        COMMAND "${CMAKE_COMMAND}"
+            -D "TEST_PROGRAM=$<TARGET_FILE:xdrtest>"
+            -D "TEST_ARGS:STRING="
+            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_OUTPUT=xdrtest.tst"
+            -D "TEST_EXPECT=0"
+            -D "TEST_REFERENCE=xdrtest.out"
+            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+    )
+  ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
   SET_TESTS_PROPERTIES (xdrtest PROPERTIES DEPENDS hdfnctest)
 ENDIF (HDF4_BUILD_XDR_LIB)
 

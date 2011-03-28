@@ -63,17 +63,24 @@ IF (BUILD_TESTING)
   SET (last_test "hdifftst")
 
   MACRO (ADD_H4_TEST resultfile resultcode)
-    ADD_TEST (
-        NAME HDIFF-${resultfile}
-        COMMAND "${CMAKE_COMMAND}"
-            -D "TEST_PROGRAM=$<TARGET_FILE:hdiff>"
-            -D "TEST_ARGS:STRING=${ARGN}"
-            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/testfiles"
-            -D "TEST_OUTPUT=${resultfile}.out"
-            -D "TEST_EXPECT=${resultcode}"
-            -D "TEST_REFERENCE=${resultfile}.txt"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
-    )
+    IF (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (NAME HDIFF-${resultfile} COMMAND $<TARGET_FILE:hdiff> ${ARGN})
+      IF (NOT ${resultcode} STREQUAL "0")
+        SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES WILL_FAIL "true")
+      ENDIF (NOT ${resultcode} STREQUAL "0")
+    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+      ADD_TEST (
+          NAME HDIFF-${resultfile}
+          COMMAND "${CMAKE_COMMAND}"
+              -D "TEST_PROGRAM=$<TARGET_FILE:hdiff>"
+              -D "TEST_ARGS:STRING=${ARGN}"
+              -D "TEST_FOLDER=${PROJECT_BINARY_DIR}/testfiles"
+              -D "TEST_OUTPUT=${resultfile}.out"
+              -D "TEST_EXPECT=${resultcode}"
+              -D "TEST_REFERENCE=${resultfile}.txt"
+              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+      )
+    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
     IF (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES DEPENDS ${last_test})
     ENDIF (NOT "${last_test}" STREQUAL "")

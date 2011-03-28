@@ -32,6 +32,12 @@ SET (examples
     AN_get_annotation_info 
     #AN_read_annotation
 )
+SET (skip_examples
+    VD_read_mixed_vdata
+    VG_get_vgroup_info 
+    GR_get_attribute
+    AN_read_annotation
+)
 
 IF (BUILD_TESTING)
   # Remove any output file left over from previous test run
@@ -67,3 +73,12 @@ IF (BUILD_TESTING)
   ADD_TEST (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
   SET_TESTS_PROPERTIES (hdftest_VG_add_sds_to_vgroup PROPERTIES DEPENDS HDF_EXAMPLES-clearall-objects)
 ENDIF (BUILD_TESTING)
+
+FOREACH (example ${skip_examples})
+  ADD_EXECUTABLE (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
+  TARGET_NAMING (hdf_${example} ${LIB_TYPE})
+  TARGET_LINK_LIBRARIES (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  IF (BUILD_TESTING)
+    ADD_TEST (NAME hdftest_${example} COMMAND ${CMAKE_COMMAND} -E echo "SKIP hdftest_${example}")
+  ENDIF (BUILD_TESTING)
+ENDFOREACH (example ${skip_examples})
