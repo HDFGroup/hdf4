@@ -13,8 +13,8 @@
 
 /* $Id: hproto.h 5400 2010-04-22 03:45:32Z bmribler $ */
 
-#ifndef _H_DATAINFO
-#define _H_DATAINFO
+#ifndef HDATAINFO_H
+#define HDATAINFO_H
 
 #include "H4api_adpt.h"
 

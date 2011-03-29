@@ -4539,7 +4539,6 @@ done:
   return ret_value;
 } /* end GRgetcompress() */
 
-#if defined DATAINFO_MASTER /* enable features used in hmap project */
 /*--------------------------------------------------------------------------
  NAME
     grgetcomptype - only for hmap project
@@ -4632,7 +4631,6 @@ done:
   /* Normal function cleanup */
   return ret_value;
 } /* end grgetcomptype() */
-#endif /* DATAINFO_MASTER || DATAINFO_TESTER */
 
 /*--------------------------------------------------------------------------
  NAME

@@ -11,13 +11,13 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _MF_DATAINFO
-#define _MF_DATAINFO
+#ifndef MFDATAINFO_H
+#define MFDATAINFO_H
 
 #include "H4api_adpt.h"
 
 /* Activate raw datainfo interface - added for hmap project in 2010 */
-#if defined DATAINFO_MASTER | defined DATAINFO_TESTER
+#if defined DATAINFO_MASTER || defined DATAINFO_TESTER
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"

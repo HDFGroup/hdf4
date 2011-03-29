@@ -51,7 +51,6 @@ LOCAL ROUTINES
 #ifndef DATAINFO_MASTER
 #define DATAINFO_MASTER
 #endif
-#include "hdatainfo.h"
 #include "mfhdf.h"
 
 #ifdef H4_HAVE_LIBSZ          /* we have the szip library */

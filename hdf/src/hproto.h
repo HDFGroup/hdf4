@@ -1843,6 +1843,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (int32 vkey, int32  * nelt, int32  * interlace,
            char  * fields, int32  * eltsize, char  * vsname);
 
+    HDFLIBAPI intn VSisinternal
+                (const char  *vsclass);
+
     HDFLIBAPI int32 VSlone
                 (HFILEID f, int32  * idarray, int32 asize);
 

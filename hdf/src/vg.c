@@ -40,6 +40,7 @@ EXPORTED ROUTINES
      VSgetname      -- gets the vdata's name
      VSgetclass     -- gets the vdata's class name
      VSinquire      -- gets information about a vdata
+     VSisinternal   -- determines if a class name is for internal use only
      VSlone         -- returns an array of refs of all lone vdatas in the file
      Vlone          -- returns an array of refs of all lone vgroups in the file
      Vfind          -- looks in the file for a vgroup with a given name 
