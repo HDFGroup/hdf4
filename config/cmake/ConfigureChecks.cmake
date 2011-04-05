@@ -397,14 +397,14 @@ MACRO (HDF4_FUNCTION_TEST OTHER_TEST)
     ENDFOREACH (def)
 
     FOREACH (def
-        H4_HAVE_SYS_TIME_H
-        H4_HAVE_UNISTD_H
-        H4_HAVE_SYS_TYPES_H
-        H4_HAVE_SYS_SOCKET_H
+        HAVE_SYS_TIME_H
+        HAVE_UNISTD_H
+        HAVE_SYS_TYPES_H
+        HAVE_SYS_SOCKET_H
     )
-      IF ("${def}")
+      IF ("${H4_${def}}")
         SET (MACRO_CHECK_FUNCTION_DEFINITIONS "${MACRO_CHECK_FUNCTION_DEFINITIONS} -D${def}")
-      ENDIF ("${def}")
+      ENDIF ("${H4_${def}}")
     ENDFOREACH (def)
     
     IF (LINUX_LFS)
