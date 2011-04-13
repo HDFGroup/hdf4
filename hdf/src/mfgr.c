@@ -476,6 +476,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
         uint16 img_tag,img_ref;         /* tag/ref of the image itself */
         uint16 aux_ref;                 /* ref of aux. info about an image */
         int32 offset;                   /* offset of the image data */
+	uint16 orig_tag;		/* original tag before the elimination of duplicates */
     } *img_info;
     uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
     int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
@@ -731,8 +732,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                            linked block or chunked images to go into the if
                            statement below in order for the duplicate image be
                            eliminated - bug #814, BMR Feb, 2005 */
-                        intn special_type = GRIisspecial_type(file_id,img_info[i
-].img_tag,img_info[i].img_ref);
+                        intn special_type = GRIisspecial_type(file_id,img_info[i].img_tag,img_info[i].img_ref);
 
                         if (((img_info[i].offset!= INVALID_OFFSET && img_info[i]
 .offset!=0)
@@ -747,15 +747,20 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                   case DFTAG_CI: /* Newer style raster image, found in RIG & Vgroup */
                                       if(img_info[j].grp_tag==DFTAG_RIG)
                                         {
+					  img_info[j].orig_tag = img_info[j].img_tag;
                                           img_info[j].img_tag=DFTAG_NULL;
                                           if(img_info[i].grp_tag==DFTAG_VG)
                                               img_info[i].aux_ref=img_info[j].grp_ref;
                                         } /* end if */
                                       else
                                           if(img_info[i].grp_tag==DFTAG_VG)
+					  {
+					      img_info[j].orig_tag = img_info[j].img_tag;
                                               img_info[j].img_tag=DFTAG_NULL;
+					  }
                                           else
                                             {
+					      img_info[j].orig_tag = img_info[j].img_tag;
                                               img_info[j].img_tag=DFTAG_NULL;
                                               if(img_info[i].grp_tag==DFTAG_RIG)
                                                   img_info[j].aux_ref=img_info[i].grp_ref;
@@ -1061,6 +1066,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                           if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                               HGOTO_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
+			  new_image->name_generated = TRUE;
 
                           /* Initialize the local attribute tree */
                           new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
@@ -1243,6 +1249,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                           if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
                               HGOTO_ERROR(DFE_NOSPACE,FAIL);
                           HDstrcpy(new_image->name,textbuf);
+			  new_image->name_generated = TRUE;
 
                           /* Initialize the local attribute tree */
                           new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
@@ -1600,6 +1607,7 @@ int32 GRstart(int32 hdf_file_id)
     /* Return handle to the GR interface to the user */
     ret_value=HAregister_atom(GRIDGROUP,gr_ptr);
 
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -1648,12 +1656,13 @@ intn GRfileinfo(int32 grid,int32 *n_datasets,int32 *n_attrs)
     if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(grid)))
         HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
-/* Get the number of datasets & global attributes from the memory structures */
+    /* Get the number of datasets & global attributes from the memory structures */
     if(n_datasets!=NULL)
         *n_datasets=gr_ptr->gr_count;
     if(n_attrs!=NULL)
         *n_attrs=gr_ptr->gattr_count;
         
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -2790,7 +2799,7 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -3257,10 +3266,13 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	cinfo.jpeg.quality = 0;
 	cinfo.jpeg.force_baseline = 0;
     }
+/* Should RLE be checked here too?  For DFR8? -BMR 2010/12/3 */
+    else if (scheme == DFTAG_RLE) /* old image */
+	comp_type = COMP_CODE_RLE;
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -4529,6 +4541,99 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
+    grgetcomptype - only for hmap project
+
+ PURPOSE
+    Get the compression type of a raster image's data.
+
+ USAGE
+    intn grgetcomptype(riid, comp_type)
+        int32 riid;	   IN: RI ID from GRselect/GRcreate
+        int32* comp_type;  OUT: type of compression, including obsolete ones
+
+ RETURNS
+    SUCCEED/FAIL
+
+ DESCRIPTION
+    This function is implemented specifically for the hmap project.  It gets
+    the compression type of the given RI's data.  The existing function
+    GRgetcompinfo did not detect the obsolete compression scheme IMCOMP.
+    Because the hmap writer needs to report when an image with IMCOMP exists
+    in the file and not to map it, it needs a way to detect such images.  One
+    option is to add COMP_CODE_IMCOMP to the enum type comp_coder_t.  However,
+    with the consideration of backward/forward compatibility, it would be
+    risky to change the existing public type comp_coder_t.  Instead, it was
+    decided that a function would be made for the hmap project only, and would
+    not be published in the HDF4 documentation.  The function, grgetcomptype,  
+    will return comp_type as COMP_IMCOMP or one of the values included in the
+    type comp_coder_t.  Mar 11, 2011 -BMR
+
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+    At this time, hdp and other tools still use GRgetcompinfo.  We need to
+    discuss about how to handle its limitation.
+
+ EXAMPLES
+ REVISION LOG
+
+--------------------------------------------------------------------------*/
+intn grgetcomptype(int32 riid, int32* comp_type)
+{
+    CONSTR(FUNC, "grgetcomptype");	/* for HGOTO_ERROR */
+    ri_info_t *ri_ptr;          	/* ptr to the image to work with */
+    int32 file_id;
+    uint16 scheme;	/* compression scheme used for old images */
+    intn  ret_value = SUCCEED;
+
+    /* clear error */
+    HEclear();
+
+    /* Validate the RI ID */
+    if (HAatom_group(riid) != RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check the output argument */
+    if (comp_type == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate RI's object in hash table */
+    if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(riid)))
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    file_id = ri_ptr->gr_ptr->hdf_file_id;	/* temporary use */
+
+    /* Handle old compression schemes separately */
+    scheme = ri_ptr->img_dim.comp_tag;
+    if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
+            || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
+    {
+	*comp_type = COMP_CODE_JPEG;
+    }
+    else if (scheme == DFTAG_RLE)
+	*comp_type = COMP_CODE_RLE;
+    else if (scheme == DFTAG_IMC || scheme == DFTAG_IMCOMP)
+	*comp_type = COMP_IMCOMP;
+
+    /* Use lower-level routine to get the new compression type */
+    else
+    {
+	comp_coder_t temp_comp_type = COMP_CODE_INVALID;
+	ret_value = HCPgetcomptype(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+                                &temp_comp_type);
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	*comp_type = (int32)temp_comp_type;
+    }
+done:
+  if(ret_value == 0)
+    { /* Error condition cleanup */
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+} /* end grgetcomptype() */
+
+/*--------------------------------------------------------------------------
+ NAME
     GRgetcompinfo
 
  PURPOSE
@@ -4601,6 +4706,10 @@ intn GRgetcompinfo(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
 	cinfo->jpeg.quality = 0;
 	cinfo->jpeg.force_baseline = 0;
     }
+    /* Added the RLE case for old images, new image with RLE would be taken care by
+       HCPgetcompinfo as with other compressions */
+    else if (scheme == DFTAG_RLE) /* old image */
+	*comp_type = COMP_CODE_RLE;
     else
     {
 	/* use lower-level routine to get the compression information */
@@ -5920,7 +6029,7 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -6134,7 +6243,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     else
     {
 	/* use lower-level routine to get the compression information */
-	status = HCPgetcompress(ri_ptr->gr_ptr->hdf_file_id,
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
@@ -6374,6 +6483,118 @@ GRsetchunkcache(int32 riid,     /* IN: access aid to mess with */
     return ret_value;
 } /* GRsetchunkcache() */
 
+
+/*---------------------------------------------------------------
+NAME
+   GRmapped - Checks whether an RI is to be mapped (hmap project)
+
+USAGE
+    intn GRmapped(riid, *tobe_mapped, *created_byGR)
+        int32 riid; 		IN: raster image ID
+        intn *tobe_mapped;	IN: TRUE if the image should be mapped
+	intn *created_byGR;	IN: TRUE if the image was created by GR API
+DESCRIPTION
+   GRmapped checks if the given RI satisfies the following conditions:
+   + being an 8-bit RI
+   + having one component
+   + being non-special or RLE compressed only, i.e., no other
+        compressions, no chunking,...
+
+   The function will set tobe_mapped to TRUE if the image satisfies the
+   above conditions, and FALSE, otherwise.
+
+   In addition, the function will set the flag name_generated to indicate
+   whether the image has name that was generated by the library.  Old images
+   (or images created with non-GR API) didn't have a name so the library
+   would generate a name for it while reading in the file.
+
+RETURNS
+   SUCCEED/FAIL
+   Feb 24, 2011 -BMR
+
+MODIFICATION
+   Mar 17, 2011: Changed the function from
+	intn GR2bmapped(int32 riid), returning TRUE/FALSE/FAIL, to
+	intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated),
+	returning SUCCEED/FAIL
+----------------------------------------------------------------*/
+intn
+GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
+{
+    CONSTR(FUNC, "GR2bmapped");
+    ri_info_t *ri_ptr;          /* ptr to the image to work with */
+    intn   should_map = FALSE;	/* TRUE if the image should be mapped */
+    uint16 img_tag, img_ref;	/* shortcuts image's tag/ref */
+    int32  ritype;		/* image's type */
+    intn   special_type=0;	/* specialness of the image data */
+    int32  file_id;		/* shortcut file id */
+    intn   status;
+    intn   ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Check the validity of the ID */
+    if (HAatom_group(riid) != RIIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate RI's object in hash table */
+    ri_ptr = (ri_info_t *) HAatom_object(riid);
+    if (NULL == ri_ptr)
+        HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
+
+    /* shortcuts */
+    img_tag = ri_ptr->img_tag;
+    img_ref = ri_ptr->img_ref;
+    file_id = ri_ptr->gr_ptr->hdf_file_id;
+
+    /* If the image has old image tag, then make sure it is either regular or
+	compressed with RLE only */ 
+    if (img_tag == DFTAG_RI8 || img_tag == DFTAG_CI8)
+    {
+	if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
+	    ri_ptr->img_dim.comp_tag == DFTAG_NULL)
+	    should_map = TRUE;
+    }
+    /* If the image has new image tag, then make sure that it has 8-bit data
+	and has no special storage except RLE compression before determining
+	that it is mapped-able */
+    else if (img_tag == DFTAG_RI || img_tag == DFTAG_CI)
+    {
+	/* Get the image data's type */
+	status = GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
+
+	/* If it is 8-bit, set flag to check further for special storage */
+	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
+	    ritype == DFNT_UINT8 || ritype == DFNT_INT8)
+	{
+	    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
+	    if (special_type == 0)
+		should_map = TRUE;
+	    if (special_type == SPECIAL_COMP)
+	    {
+		if (ri_ptr->img_dim.comp_tag == DFTAG_RLE)
+		    should_map = TRUE;
+	    }
+	    /* Also make sure it only has one component */
+	    if (ri_ptr->img_dim.ncomps > 1)
+		should_map = FALSE;
+	}
+    }
+    /* Set flag to return */
+    *tobe_mapped = should_map;
+
+    /* Copy flag that indicates whether this image has name that was
+       generated by library, and not given by application */
+    *name_generated = ri_ptr->name_generated;
+
+done:
+  if(ret_value == 0)
+    { /* Error condition cleanup */
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+}   /* GR2bmapped */
 /*
 
 API functions to finish:

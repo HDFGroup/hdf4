@@ -2196,21 +2196,13 @@ NAME
      HMCgetdatainfo - get data info (offset & length) of the chunked element
 
 DESCRIPTION
-     This routine was intented to be used by HCPgetdatainfo for the chunked 
-     element part.  
-
-     HMCgetdatainfo proceeds as followed: (need revised!)
-     - decode the chunking info special header to get the chunk table info
-     - get access to the chunk table via Vdata interface
-     - get the size of the chunk table to determine if the data has been written
-     - if the element is also compressed, read each vdata record to obtain the
-	tag/ref pair of the compression special header and read the header
-     - decode the compression special header to get the compressed data ref# and
-	retrieve the compressed data offset/length via Hoffset/Hlength
-     - if uncompressed size is requested by the caller, calculate the actual 
-	size of the uncompressed data by (chunk size * number of records)
-     - if compressed size is requested by the caller, calculate the total 
-	compressed size by accumulating the compressed size of all chunks.
+     - If the given chunk has data without any special storage, HMCgetdatainfo
+       will return one pair of offset/length of the data.
+     - If the chunk's data is compressed only, then HMCgetdatainfo will also
+       return one pair of offset/length to the compressed data
+     - If the chunk's data is compessed and is stored in linked-blocks, then
+       HMCgetdatainfo will return a number of offset/length pairs for the
+       the data's blocks.
 
 RETURNS
      Returns SUCCEED/FAIL
@@ -2218,19 +2210,20 @@ RETURNS
 REVISION LOG
      March 2009: Added during hmap project. -BMR
      August 2010: Modified according to revised SDgetdatainfo -BMR
-     Sept 2010: Mofified to handle chunk with compression and linked-blocks -BMR
+     Sept 2010: Mofified to handle chunk with comp and linked-blocks -BMR
+     March 2011: Added an "else" to flag as an error if the chunk has additional
+	specialness other than compression, just in case if there is. -BMR
 
 -------------------------------------------------------------------------- */
 intn
 HMCgetdatainfo(int32 file_id,
 		uint16 tag,
 		uint16 ref,
-		int32* chk_coord,         /* IN: chunk number to be processed */
+		int32* chk_coord,       /* IN: chunk number to be processed */
 		uintn start_block,	/* IN: data block to start at, 0 base */
 		uintn info_count,	/* IN: size of offset/length lists */
                 int32 *offsetarray,	/* OUT: array to hold offsets */
                 int32 *lengtharray)	/* OUT: array to hold lengths */
-
 {
     CONSTR(FUNC, "HMCgetdatainfo");	/* for HERROR */
     uint16	 comp_ref = 0;		/* ref# of compressed data */
@@ -2251,6 +2244,13 @@ HMCgetdatainfo(int32 file_id,
     uint8      *p;                /* tmp buf ptr */
     intn	 ret_value = SUCCEED;
 
+    /* Clear error stack */
+    HEclear();
+
+    /* Validate arguments */
+    if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
 	HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -2262,7 +2262,7 @@ HMCgetdatainfo(int32 file_id,
     if (access_rec == (accrec_t *) NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* It should be chunked, but verify anyway, just in case something terribly wrong! */
+    /* It should be chunked, but verify anyway, just in case */
     if (access_rec->special == SPECIAL_CHUNKED)
     {
 	if (access_rec->special_info != NULL)
@@ -2271,12 +2271,12 @@ HMCgetdatainfo(int32 file_id,
     else
 	HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* calculate chunk number from origin */
+    /* Calculate chunk number from origin */
     calculate_chunk_num(&chk_num, chkinfo->ndims, chk_coord, chkinfo->ddims);
 
     /* Find chunk record in TBBT */
     if ((entry = (tbbtdfind(chkinfo->chk_tree, &chk_num, NULL))) == NULL)
-    { /* chunk had not been written */
+    { /* chunk had not been written, no chunk record */
 	if (offsetarray != NULL && lengtharray != NULL)
 	{
 	    offsetarray[0] = 0;
@@ -2285,15 +2285,14 @@ HMCgetdatainfo(int32 file_id,
 	count = 0;
     }
     else
-    { /* chunk record exists, chunk had been written */
-
-        /* get chunk record from node */
+    { /* chunk record exists */
+        /* Get chunk record from node */
         chk_rec = (CHUNK_REC *) entry->data;
 
-        /* check to see if it has been written to */
+        /* Check to see if it has been written to */
         if (chk_rec->chk_tag != DFTAG_NULL && BASETAG(chk_rec->chk_tag) == DFTAG_CHUNK)
         { /* valid chunk in file */
-	    /* Checking for further specialness */
+	    /* Check for further specialness */
  	    if (Hfind(file_id,chk_rec->chk_tag,chk_rec->chk_ref,&new_tag,&new_ref,
                    &new_off,&new_len,DF_FORWARD)==FAIL)
 	        HE_REPORT_GOTO("Hfind failed ", FAIL);
@@ -2317,10 +2316,12 @@ HMCgetdatainfo(int32 file_id,
 	        if (HP_read(file_rec, lbuf, (int)2) == FAIL)
 		    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-	        /* use special code to determine how to retrieve offsets/lengths of data next */
+	        /* Use special code to determine if additional specialness is
+		   compression */
 	        p = &lbuf[0];
 	        INT16DECODE(p, spec_code);
 
+		/* Chunk is compressed */
 	        if (spec_code == SPECIAL_COMP)
 	        {
 		    if (HP_read(file_rec, lbuf, (int)14) == FAIL)
@@ -2328,14 +2329,15 @@ HMCgetdatainfo(int32 file_id,
 
 		    p = &lbuf[0];
 		    p = p + 2 + 4;	/* skip version and _uncompressed_ data length */
-		    UINT16DECODE(p, comp_ref);	/* get ref# of compressed data */
+		    UINT16DECODE(p, comp_ref);/* get ref# of compressed data */
 
+		    /* Get the special info header */
 		    if (Hfind(file_id, DFTAG_COMPRESSED, comp_ref, &new_tag,&new_ref, &new_off,&new_len,DF_FORWARD)==FAIL)
 		        HE_REPORT_GOTO("Hfind failed ", FAIL);
-
 		    if ((cmpddid = HTPselect(file_rec, new_tag, new_ref)) == FAIL)
 		        HE_REPORT_GOTO("HTPselect failed ", FAIL);
 
+		    /* Check for further specialness */
 		    if (HTPis_special(cmpddid)!=TRUE)
 		    { /* this chunk is not further special, only compressed */
 		        if (offsetarray != NULL && lengtharray != NULL)
@@ -2352,10 +2354,12 @@ HMCgetdatainfo(int32 file_id,
 		        if (HP_read(file_rec, lbuf, (int)2) == FAIL)
 			    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-		        /* using special code, look up function table in associative table */
+                        /* Get the special code */
 		        p = &lbuf[0];
 		        INT16DECODE(p, spec_code);
 
+                        /* If the special storage is in linked-blocks, use
+                           HLgetdatainfo to get data info */
 		        if (spec_code == SPECIAL_LINKED)
 		        {
 			    if (HP_read(file_rec, lbuf, (int)14) == FAIL)
@@ -2366,18 +2370,31 @@ HMCgetdatainfo(int32 file_id,
 
 			    /* get data information from the linked blocks */
 			    if (offsetarray != NULL && lengtharray != NULL)
-			        count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+			        count = HLgetdatainfo(file_id, p, start_block, info_count, offsetarray, lengtharray);
 			    else
-			        count = HLgetdatainfo(file_id, p, NULL, NULL);
+			        count = HLgetdatainfo(file_id, p, start_block, 0, NULL, NULL);
 		        } /* this chunk is also stored in linked blocks */
+			/* May not be any other specialness, but we should flag
+			   it, so that if there is, we'll be aware of */
+			else
+			    HE_REPORT_GOTO("Compressed chunk has specialness other than linked-blocks", FAIL);
 		    } /* this element is further special */
 		    if (HTPendaccess(cmpddid) == FAIL)
 		        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 	        } /* spec_code is SPECIAL_COMP */
+
+		/* May not be any other specialness, but we should flag it, so
+		   that if there is, we'll be aware of */
+		else
+		    HE_REPORT_GOTO("Chunk has specialness other than compression", FAIL);
 	    } /* this chunk is special */
 	    if (HTPendaccess(ddid) == FAIL)
 	        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
         } /* if valid chunk in file */
+
+	/* chunk record exists but chunk had not been written, could be error */
+	else
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
     } /* chunk record exists */
 
     /* End access to the aid returned by Hstartread */

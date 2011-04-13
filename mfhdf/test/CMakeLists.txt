@@ -31,6 +31,7 @@ SET (hdftest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tsd.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tsdsprops.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tszip.c
+    ${HDF4_MFHDF_TEST_SOURCE_DIR}/tattdatainfo.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tdatainfo.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tdatasizes.c
 )

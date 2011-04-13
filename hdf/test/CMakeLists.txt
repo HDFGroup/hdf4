@@ -38,10 +38,13 @@ SET (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/sdstr.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/slab.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tattdatainfo.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tbv.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tdatainfo.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tdfr8.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tdupimgs.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tmgrattr.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tmgrcomp.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tree.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tszip.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tutils.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tvattr.c
@@ -55,10 +58,7 @@ IF (WIN32 AND NOT CYGWIN)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 #-- Adding test for testhdf
-ADD_EXECUTABLE (testhdf ${testhdf_SRCS}
-    ${HDF4_HDF_TEST_SOURCE_DIR}/tbv.c
-    ${HDF4_HDF_TEST_SOURCE_DIR}/tree.c
-)
+ADD_EXECUTABLE (testhdf ${testhdf_SRCS})
 TARGET_NAMING (testhdf ${LIB_TYPE})
 TARGET_LINK_LIBRARIES (testhdf ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 

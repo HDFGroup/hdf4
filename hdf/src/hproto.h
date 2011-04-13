@@ -386,12 +386,6 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI int32 HDspaceleft
                 (void);
 
-    HDFLIBAPI intn HDallocinfo
-		(hdf_datainfo_t *info, uintn info_count);
-
-    HDFLIBAPI void HDfreeinfo
-		(hdf_datainfo_t *info);
-
 #if defined(MALLOC_CHECK)
     HDFPUBLIC extern void * HDmalloc
                 (uint32 qty);
@@ -446,7 +440,8 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 aid, int32* block_size, int32* num_blocks);
 
     HDFLIBAPI int32 HLgetdatainfo
-		(int32 file_id, uint8 *buf, int32 *offsetarray, int32 *lengtharray);
+		(int32 file_id, uint8 *buf, uintn start_block,
+		 uintn info_count, int32 *offsetarray, int32 *lengtharray);
 
 
 /*
@@ -1390,6 +1385,9 @@ HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
 
 HDFLIBAPI intn GRPshutdown(void);
 
+/* This function was added for hmap project only.  Feb-25-2011 */
+HDFLIBAPI intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *created_byGR);
+
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
 /* Bit flags used for SDsetchunk(), SDgetchunkinfo() 
@@ -1752,12 +1750,21 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                  int32 count, const void * values);
    HDFLIBAPI intn Vnattrs
                 (int32 vgid);
+   HDFLIBAPI intn Vnattrs2
+                (int32 vgid);
+   HDFLIBAPI intn Vnoldattrs
+                (int32 vgid);
    HDFLIBAPI intn Vfindattr
                 (int32 vgid, const char *attrname);
    HDFLIBAPI intn Vattrinfo
                 (int32 vgid, intn attrindex, char *name, 
                  int32 *datatype, int32 *count, int32 *size);
+   HDFLIBAPI intn Vattrinfo2 /* copy of Vattrinfo for old attributes */
+                (int32 vgid, intn attrindex, char *name, int32 *datatype,
+		 int32 *count, int32 *size, int32 *nfields, uint16 *refnum);
    HDFLIBAPI intn Vgetattr
+                (int32 vgid, intn attrindex, void * values);
+   HDFLIBAPI intn Vgetattr2 /* copy of Vgetattr for old attributes */
                 (int32 vgid, intn attrindex, void * values);
    HDFLIBAPI int32 Vgetversion
                 (int32 vgid);
@@ -1836,6 +1843,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (int32 vkey, int32  * nelt, int32  * interlace,
            char  * fields, int32  * eltsize, char  * vsname);
 
+    HDFLIBAPI intn VSisinternal
+                (const char  *vsclass);
+
     HDFLIBAPI int32 VSlone
                 (HFILEID f, int32  * idarray, int32 asize);
 
@@ -1854,8 +1864,12 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
     
+    HDFLIBAPI intn VSofclass
+                (int32 id, const char *vsclass, uintn start_vd,
+                 uintn array_size, uint16 *refarray);
+
     HDFLIBAPI intn VSgetvdatas
-                (int32, uintn, uintn, uint16*);
+                (int32 id, uintn start_vd, uintn array_size, uint16 *refarray);
     
     HDFLIBAPI intn VSsetblocksize
                 (int32 vkey, int32 block_size);
@@ -2065,9 +2079,6 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 
     HDFLIBAPI int32 VSappendable
                 (int32 vkey, int32 blk);
-
-    HDFLIBAPI intn Vgetvdatas
-		(int32 id, uintn start_vd, uintn n_vds, uint16 *refarray);
 
 /*
    ** from vsfld.c

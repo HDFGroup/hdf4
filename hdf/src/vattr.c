@@ -150,13 +150,23 @@ static char RcsId[] = "@(#)$Revision$";
 *        set attr for a vgroup
 *   intn Vnattrs(int32 vgid)
 *        number of attrs for a vgroup
+*   intn Vnattrs2(int32 vgid)
+*        number of attrs for a vgroup, also including attrs created prior
+*        to the availability of Vdata and Vgroup attribute API routines
 *   intn Vfindattr(int32 vgid, char *attrname)
 *        get index of an attribute with a given name
 *   intn Vattrinfo(int32 vgid, intn attrindex, char *name, 
 *                  int32 *datatype, int32 *count, int32 *size)
 *        get info about an attribute
+*   intn Vattrinfo2(int32 vgid, intn attrindex, char *name, 
+*                  int32 *datatype, int32 *count, int32 *size)
+*        get info about an attribute - this function processes attributes
+*	 that are counted by Vnattrs2.
 *   intn Vgetattr(int32 vgid, intn attrindex, void * values)
 *        get values of an attribute
+*   intn Vgetattr2(int32 vgid, intn attrindex, void * values)
+*        get values of an attribute - this function processes attributes
+*	 that are counted by Vnattrs2.
 *   int32 Vgetversion(int32 vgid)
 *        get vset version of a vgroup
 * Private routines:
@@ -248,31 +258,30 @@ done:
 
 /* -------------- VSsetattr ---------------------------------
 NAME
-      VSsetattr -- Set attribute for a vdata or a field of a
+   VSsetattr -- Set attribute for a vdata or a field of a
                      vdata
 USAGE
-     intn VSsetattr(int32 vsid, int32 findex, char *attrname,
+   intn VSsetattr(int32 vsid, int32 findex, char *attrname,
                  int32 datatype, int32 count, void * values)
-     int32 vsid;     IN: vdata access id
-     int32 findex; IN: number determined by assinging each field 
+   int32 vsid;     IN: vdata access id
+   int32 findex; IN: number determined by assinging each field 
                        in a record a number starting with 0; 
                        _HDF_VDATA (-1) represents the entire vdata. 
-     const char *attrname;   IN: name of the attribute
-     int32 datatype;   IN: data type of the attribute
-     int32 count;      IN: number of values the attribute has
-     const void * values;     IN: a buffer which contains the values of 
+   const char *attrname;   IN: name of the attribute
+   int32 datatype;   IN: data type of the attribute
+   int32 count;      IN: number of values the attribute has
+   const void * values;     IN: a buffer which contains the values of 
                            the attribute
 RETURNS
-     Returns SUCCEED if successful, FAIL otherwise.
+   Returns SUCCEED if successful, FAIL otherwise.
 DESCRIPTION
-        Create a vdata to store this attribute.
-        If the field already has an attribute with the same name,
-         replace the current values with the new values if the 
-         new data type and order are the same as the current ones;
-         changes in data type or order will be considered as 
-         errors.
-        No limit on max number of attributes. (int32 is the final
-           limit.
+   Create a vdata to store this attribute.
+   If the field already has an attribute with the same name,
+   replace the current values with the new values if the 
+   new data type and order are the same as the current ones;
+   changes in data type or order will be considered as errors.
+   No limit on max number of attributes. (int32 is the final
+   limit.)
 -----------------------------------------------------------  */
 intn VSsetattr(int32 vsid, int32 findex, const char *attrname,
                  int32 datatype, int32 count, const void * values)
@@ -377,21 +386,22 @@ done:
   /* Normal function cleanup */
   return ret_value;
 }  /* VSsetattr */
-/* ------------------------------------------------ 
+
+
+/* ------------------ VSnattrs ------------------------ 
 NAME
-      VSnattrs -- get total number of attributes assigned for
+   VSnattrs -- get total number of attributes assigned for
                   this vdata and its fields
 USAGE
-      intn VSnattrs(int32 vsid);
-      int32 vsid;   IN: access id of the vdata
+   intn VSnattrs(int32 vsid);
+   int32 vsid;   IN: access id of the vdata
 RETURNS
-      Returns total number of attributes assigned to this vdata
-      and its fields when successful, FAIL otherwise. 
+   Returns total number of attributes assigned to this vdata
+   and its fields when successful, FAIL otherwise. 
 DESCRIPTION
-      Use VSfnattrs to get number of attributes for a field
-          or for the vdata ifself.
+   Use VSfnattrs to get number of attributes for a field
+   or for the vdata ifself.
 --------------------------------------------------------  */
-
 intn VSnattrs(int32 vsid)
 {
     CONSTR(FUNC, "VSnattrs");
@@ -421,19 +431,19 @@ done:
 
 /* ---------------- VSfnattrs -------------------------
 NAME
-      VSfnattrs -- get the number of attributes assigned to
+   VSfnattrs -- get the number of attributes assigned to
                   a vdata or a field of a vdata.
 USAGE
-      intn VSfnattrs(int32 vsid, int32 findex);
-      int32 vsid;   IN: access id of the vdata
-      int32 findex; IN: index of the field, 0 based. 
-                        Use _HDF_VDATA (-1) for the vdata itself. 
+   intn VSfnattrs(int32 vsid, int32 findex);
+   int32 vsid;   IN: access id of the vdata
+   int32 findex; IN: index of the field, 0 based. 
+                     Use _HDF_VDATA (-1) for the vdata itself. 
 RETURNS
-      Returns the number of attributes assigned to 
-      the specified field when successful, FAIL otherwise.
+   Returns the number of attributes assigned to 
+   the specified field when successful, FAIL otherwise.
 DESCRIPTION
-      Use VSnattrs to get total number of attributes for all
-      fields and the vdata ifself.
+   Use VSnattrs to get total number of attributes for all
+   fields and the vdata ifself.
 --------------------------------------------------------  */
 intn VSfnattrs(int32 vsid, int32 findex)
 {
@@ -476,22 +486,20 @@ done:
 }  /* VSfattrs */
               
 /* --------------  VSfindattr ---------------------
- NAME
-        VSfindattr -- get index of an attribute with given name
+NAME
+   VSfindattr -- get index of an attribute with given name
                       for a field of a vdata or for the vdata itself
- USAGE
-        intn VSfindattr(int32 vsid, int32 findex, char *attrname)
-        int32 vsid;        IN: access id of the vdata
-        int32 findex;      IN: index of the field starting from 0;
-                               _HDF_VDATA (-1) for the vdata 
-        char *attrname;    IN: name of the attr
- RETURNS
-        Returns the index of the attr when successful,
-        FAIL otherwise.
- DESCRIPTION
+USAGE
+   intn VSfindattr(int32 vsid, int32 findex, char *attrname)
+   int32 vsid;        IN: access id of the vdata
+   int32 findex;      IN: index of the field starting from 0;
+                          _HDF_VDATA (-1) for the vdata 
+   char *attrname;    IN: name of the attr
+RETURNS
+   Returns the index of the attr when successful, FAIL otherwise.
+DESCRIPTION
 
 ------------------------------------------------------------  */
-
 intn VSfindattr(int32 vsid, int32 findex, const char *attrname)
 {
      CONSTR(FUNC, "VSfindattr");
@@ -572,23 +580,22 @@ done:
 
 /* ------------- VSattrinfo --------------------------
 NAME
-       VSattrinfo -- get info of an attribute of a vdata/field
+   VSattrinfo -- get info of an attribute of a vdata/field
 USAGE
-      intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
-           char *name, int32 *datatype, int32 *count, int32 *size);
-      int32 vsid;      IN: vdata id
-      int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
-      intn attrindex;  IN: which attr of the field/vdata 
-                           attrindex is 0-based
-      char *name;      OUT: attribute name
-      int32 *datatype; OUT: datatype of the attribute
-      int32 *count;    OUT: number of values
-      int32 *size;     OUT: size of the attr values on local machine
+   intn VSattrinfo(int32 vsid, int32 findex, intn attrindex,
+        char *name, int32 *datatype, int32 *count, int32 *size);
+   int32 vsid;      IN: vdata id
+   int32 findex;    IN: field index. _HDF_VDATA (-1) for the vdata
+   intn attrindex;  IN: which attr of the field/vdata 
+                        attrindex is 0-based
+   char *name;      OUT: attribute name
+   int32 *datatype; OUT: datatype of the attribute
+   int32 *count;    OUT: number of values
+   int32 *size;     OUT: size of the attr values on local machine
 RETURNS
-        Returns SUCCEED when successful, FAIL otherwise.
+   Returns SUCCEED when successful, FAIL otherwise.
 DESCRIPTION
-        name, datatype or count can be NULL if which is
-        not interested.
+   name, datatype or count can be NULL if which is not interested.
 --------------------------------------------------- */
 intn VSattrinfo(int32 vsid, int32 findex, intn attrindex, 
      char *name, int32 *datatype, int32 *count, int32 *size)
@@ -672,16 +679,16 @@ done:
 
 /* ----------------------  VSgetattr --------------------
 NAME
-       VSgetattr -- get values of a specified attribute
+   VSgetattr -- get values of a specified attribute
 USAGE
-       intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
+   intn VSgetattr(int32 vsid, int32 findex, intn attrindex,
                   void * values)
-       int32 vsid;     IN: vdata access id
-       int32 findex;   IN: field index; _HDF_VDATA (-1) for vdata
-       intn attrindex; IN: attribute index
-       void * values;   OUT: buffer holding attribute values.
+   int32 vsid;     IN: vdata access id
+   int32 findex;   IN: field index; _HDF_VDATA (-1) for vdata
+   intn attrindex; IN: attribute index
+   void * values;  OUT: buffer holding attribute values.
 RETURNS
-       Returns SUCCEED if successful, FAIL otherwise
+   Returns SUCCEED if successful, FAIL otherwise
 DESCRIPTION
 
 --------------------------------------------------------- */
@@ -763,16 +770,16 @@ done:
   return ret_value;
 }  /* VSgetattr */
 
-/* --------------------   VSisattr ----------------------
+/* -------------------- VSisattr ----------------------
 NAME
-        VSisattr -- test if a vdata is an attribute of 
+   VSisattr -- test if a vdata is an attribute of 
                     other object
 USAGE
-        intn VSisattr(int32 vsid)
-        int32 vsid;    IN: vdata access id
+   intn VSisattr(int32 vsid)
+   int32 vsid;    IN: vdata access id
 RETURNS
-        Returns TRUE if the vdata is an attribute,
-        FALSE otherwise
+   Returns TRUE if the vdata is an attribute,
+   FALSE otherwise
 DESCRIPTION
 
 -------------------------------------------------------- */
@@ -804,28 +811,27 @@ done:
 }  /* VSisattr */
 
 /* -----------------  Vsetattr  -------------------------
- NAME 
-        Vsetattr -- set an attribute for a vgroup
- USAGE 
-        intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
+NAME 
+   Vsetattr -- set an attribute for a vgroup
+USAGE 
+   intn Vsetattr(int32 vgid,  char *attrname, int32 datatype,
              int32 count, void * values) 
-        int32 vgid;        IN: access id of the vgroup
-        char *attrname;    IN: name of the attr
-        int32 datatype;    IN: datatype of the attr
-        int32 count;       IN: number of values the attr has
-        void * values;      IN: values of the attr
- RETURNS
-        Returns SUCCEED when successful, FAIL otherwise.
- DESCRIPTION
-        Create a vdata to store this attribute.
-        If the vgroup already has an attribute with the same name
-           and if the type and order are the same, use the new 
-           values to replace the current values. Any changes in 
-           datatype or order will be considered as an error.
-        No limit on max number of attributes. (int32 is the final
-           limit. 
+   int32 vgid;        IN: access id of the vgroup
+   char *attrname;    IN: name of the attr
+   int32 datatype;    IN: datatype of the attr
+   int32 count;       IN: number of values the attr has
+   void * values;      IN: values of the attr
+RETURNS
+   Returns SUCCEED when successful, FAIL otherwise.
+DESCRIPTION
+   Create a vdata to store this attribute.
+   If the vgroup already has an attribute with the same name
+      and if the type and order are the same, use the new 
+      values to replace the current values. Any changes in 
+      datatype or order will be considered as an error.
+   No limit on max number of attributes. (int32 is the final
+      limit. 
 ------------------------------------------------------------  */
-  
 intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
               int32 count, const void * values)
 {
@@ -917,6 +923,10 @@ intn Vsetattr(int32 vgid, const char *attrname, int32 datatype,
     vg->alist[vg->nattrs-1].atag = DFTAG_VH;
     vg->alist[vg->nattrs-1].aref = (uint16)attr_vs_ref; 
     vg->marked = 1;
+    /* list of refs of all attributes, it is only used when Vattrinfo2 is
+       invoked; see Vattrinfo2 function header for info. 2/4/2011 -BMR */
+    vg->old_alist = NULL;
+    vg->noldattrs = 0;
 done:
     if (ret_value == FAIL)
     { /* Error condition cleanup */
@@ -928,22 +938,21 @@ done:
 }  /* Vsetattr */
 
 /* -----------------  Vgetversion  -----------------------
- NAME 
-        Vgetversion -- gets vset version of a vgroup
- USAGE 
-        int32 Vgetversion(int32 vgid)
-        int32 vgid;     IN: vgroup access id
+NAME 
+   Vgetversion -- gets vset version of a vgroup
+USAGE 
+   int32 Vgetversion(int32 vgid)
+   int32 vgid;     IN: vgroup access id
 RETURNS
-     Returns vset version number if successful, FAIL otherwise.
+   Returns vset version number if successful, FAIL otherwise.
 DESCRIPTION
-     Version 4 (VSET_NEW_VERSION) allows attrs.
-     Version 2 (VSET_OLD_VERSION) is the old vset (before
-                 it was merged into HDF3.2?)
-     Version 3 (VSET_VERSION) is the version between
-                 HDF3.2 through HDF4.0r2.
+   Version 4 (VSET_NEW_VERSION) allows attrs.
+   Version 2 (VSET_OLD_VERSION) is the old vset (before
+             it was merged into HDF3.2?)
+   Version 3 (VSET_VERSION) is the version between
+             HDF3.2 through HDF4.0r2.
 
 ------------------------------------------------------------  */
-  
 int32 Vgetversion(int32 vgid)
 {
     CONSTR(FUNC, "Vgetversion");
@@ -976,14 +985,14 @@ done:
   return ret_value;
 }  /* Vgetversion */
 
-/* ---------------- Vnattr ------------------------ 
+/* ---------------- Vnattrs ------------------------ 
 NAME
-      Vnattrs  -- get number of attributes for a vgroup
+   Vnattrs  -- get number of attributes for a vgroup
 USAGE
-      intn Vnattrs(int32 vgid)
-      int32 vgid;    IN: access id of the vgroup
+   intn Vnattrs(int32 vgid)
+   int32 vgid;    IN: access id of the vgroup
 RETURNS
-      Returns number of attributes when successful, Fail otherwise.
+   Returns number of attributes when successful, Fail otherwise.
 DESCRIPTION
 
 --------------------------------------------------  */
@@ -1018,19 +1027,189 @@ done:
   return ret_value;
 }  /* Vnattrs */
 
+
+/* ---------------- Vnoldattrs ------------------------ 
+NAME
+   Vnoldattrs  -- get number of old-style attributes in a vgroup
+USAGE
+   intn Vnoldattrs(int32 vgid)
+   int32 vgid;    IN: access id of the vgroup
+RETURNS
+   Returns number of old-style attributes when successful, FAIL, otherwise.
+DESCRIPTION
+   There are two types of attributes for vgroups.  One is the old-style
+   that was created using methods other than the standard attribute API
+   function Vsetattr, which was introduced after HDF Version 4.0 Release
+   2, July 19, 1996.  Without the use of Vsetattr, an application could
+   simulate an attribute for a vgroup by creating and writing a vdata
+   of class _HDF_ATTRIBUTE and adding that vdata to the vgroup via
+   these calls:
+
+   vdata_ref = VHstoredatam(file_id, ATTR_FIELD_NAME, values, size, type,
+               attr_name, _HDF_ATTRIBUTE, order);
+   ret_value = Vaddtagref (vgroup_id, DFTAG_VH, vdata2_ref);
+
+   Note that a vgroup (and vdata) that has attribute created by Vsetattr
+   (and VSsetattr) will have a version number of VSET_NEW_VERSION (4)
+   while the other type will have version number of VSET_VERSION (3.)
+
+   While both types of attributes are stored as vdatas, the vdatas of
+   the new-style attributes are saved in a list of attribute tags/refs
+   of the vgroup, and the vdatas of the old-style attributes are saved
+   as elements of the vgroup.  Because of the different storages, the
+   new attribute functions would miss the old-style attributes.
+
+   Two new fields are added to the internal structure vgroup_desc,
+   noldattrs and old_alist, for holding the number of old-style attributes
+   and their ref#s, respectively.  Vnoldattrs calls VSofclass to get
+   the number of old-style attributes and their ref numbers, then sets
+   these two fields when old-style attributes exist in the file before
+   returning the number of old-style attributes to the caller.
+   -BMR 2011/2/16
+
+--------------------------------------------------  */
+intn Vnoldattrs(int32 vgid)
+{
+    CONSTR(FUNC, "Vnoldattrs");
+    VGROUP *vg;
+    vginstance_t *v;
+    intn n_old_attrs=0;
+    intn ii;
+    uint16 *areflist=NULL;
+    int32 ret_value = 0;
+
+    HEclear();
+    if (HAatom_group(vgid) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get number of old-style attributes */
+    n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, 0, NULL);
+
+    /* Note: a new attribute is stored in vdata of class _HDF_ATTRIBUTE too, but
+       it is only saved in the file as attribute (by tag/ref,) not as an element
+       of the vgroup.  Hence, vg->nattrs = 1, but vg->nvelt = 0 -BMR Feb, 2011*/
+
+    /* Store the ref numbers of old-style attributes into the list
+       vg->old_alist, for easy access later by Voldattrinfo and Vgetoldattr */ 
+    if (n_old_attrs > 0)
+    {
+        /* Locate vg's index in vgtab */
+        if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
+            HGOTO_ERROR(DFE_VTAB, FAIL);
+        vg = v->vg;
+        if (vg == NULL)
+            HGOTO_ERROR(DFE_BADPTR, FAIL);
+        if (vg->otag != DFTAG_VG)
+            HGOTO_ERROR(DFE_ARGS,FAIL);
+
+	/* Establish the list of attribute refs if it is not done so already */
+	if (vg->old_alist == NULL)
+	{
+	    /* temporary list of attr refs to pass into VSofclass */
+            areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_old_attrs);
+	    if (areflist == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Get ref numbers of old-style attributes belonging to this vg */
+            n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, (uintn)n_old_attrs, areflist);
+	    if (n_old_attrs == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+            vg->old_alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t) * (n_old_attrs));
+
+	    if (vg->old_alist == NULL)
+		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	    /* Transfer ref nums to the vg_attr_t list for future accesses */
+            for (ii = 0; ii < n_old_attrs; ii++)
+	    {
+	        vg->old_alist[ii].aref = areflist[ii];
+	        /* atag is not needed */
+	    }
+	    vg->noldattrs = n_old_attrs; /* record number of old-style attrs */
+	} /* vg->old_alist is not loaded yet */
+
+	ret_value = vg->noldattrs;
+    } /* there are some old attributes */
+
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+    if (areflist != NULL)
+	HDfree(areflist);
+
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vnoldattrs */
+
+
+/* ---------------- Vnattrs2 ------------------------ 
+NAME
+   Vnattrs2  -- get number of old and new attributes for a vgroup
+USAGE
+   intn Vnattrs2(int32 vgid)
+   int32 vgid;    IN: access id of the vgroup
+RETURNS
+   Returns number of attributes when successful, FAIL, otherwise.
+DESCRIPTION
+   The returned number of attributes will include:
+	1. the attributes created by the Vgroup attribute API
+	   routines, that were added starting from Vgroups version
+	   VSET_NEW_VERSION, and
+	2. the attributes created using the combination of
+	   VHstoredatam and Vaddtagref/Vinsert, most likely prior to
+	   the availability of the attribute API routines.
+   More detailed description is available in the header of Vnoldattrs.
+
+   This function was added specifically to assist the HDF Mapping
+   project.  -BMR 2011/2/8
+
+--------------------------------------------------  */
+intn Vnattrs2(int32 vgid)
+{
+    CONSTR(FUNC, "Vnattrs2");
+    intn n_new_attrs=0, n_old_attrs=0;
+    int32 ret_value = SUCCEED;
+
+    HEclear();
+
+    /* Get number of new-style attributes */
+    n_new_attrs = Vnattrs(vgid);
+    if (n_new_attrs == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Get number of old-style attributes */
+    n_old_attrs = Vnoldattrs(vgid);
+    if (n_old_attrs == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    /* Total number of attributes */
+    ret_value = n_old_attrs + n_new_attrs;
+
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vnattrs2 */
+
+
 /* -----------------  Vfindattr  -----------------------
  NAME
-        Vfindattr -- get index of an attribute with given name
+   Vfindattr -- get index of an attribute with given name
  USAGE
-        intn Vfindattr(int32 vgid, char *attrname)
-        int32 vgid;        IN: access id of the vgroup
-        const char *attrname;    IN: name of the attr
+   intn Vfindattr(int32 vgid, char *attrname)
+   int32 vgid;        IN: access id of the vgroup
+   const char *attrname;    IN: name of the attr
  RETURNS
-        Returns the index of the attr when successful, 
-        FAIL otherwise. 
+   Returns the index of the attr when successful, FAIL otherwise. 
  DESCRIPTION
 ------------------------------------------------------------  */
-
 intn Vfindattr(int32 vgid, const char *attrname)
 {
     CONSTR(FUNC, "Vfindattr");
@@ -1085,10 +1264,8 @@ intn Vfindattr(int32 vgid, const char *attrname)
 
 done:
     if (ret_value == FAIL)
-       { /*  Error condition cleanup */
-
+    { /*  Error condition cleanup */
     } /* end if */
-
   /* Normal function cleanup */
 
   return ret_value;
@@ -1096,23 +1273,23 @@ done:
         
 /* ----------   Vattrinfo ----------------------
 NAME
-       Vattrinfo -- get info of a vgroup attribute
+   Vattrinfo -- get info of a vgroup attribute
 USAGE
-        intn Vattrinfo(int32 vgid, intn attrindex, char *name,
+   intn Vattrinfo(int32 vgid, intn attrindex, char *name,
                   int32 *datatype, int32 *count, int32 *size)
-        int32 vgid;      IN: vgroup id
-        intn attrindex;  IN: which attr's info we want
+   int32 vgid;      IN: vgroup id
+   intn attrindex;  IN: which attr's info we want
                              attrindex is 0-based
-        char *name;      OUT: attribute name 
-        int32 *datatype; OUT: datatype of the attribute
-        int32 *count;    OUT: number of values
-        int32 *size;     OUT: size of the attr values on local machine.
+   char *name;      OUT: attribute name 
+   int32 *datatype; OUT: datatype of the attribute
+   int32 *count;    OUT: number of values
+   int32 *size;     OUT: size of the attr values on local machine.
 
 RETURNS
-        Returns SUCCEED when successful, FAIL otherwise.
+   Returns SUCCEED when successful, FAIL otherwise.
 DESCRIPTION
-        name, datatype or count can be NULL if which is
-        not interested.
+   name, datatype or count can be NULL if which is
+   not interested.
 --------------------------------------------------- */
 intn Vattrinfo(int32 vgid, intn attrindex, char *name,
              int32 *datatype, int32 *count, int32 *size)
@@ -1181,16 +1358,147 @@ done:
   return ret_value;
 }  /* Vattrinfo */
 
+
+/* ------------ Vattrinfo2 ----------------------
+NAME
+   Vattrinfo2 -- get info of a vgroup attribute
+USAGE
+   intn Vattrinfo2(int32 vgid, intn attrindex, char *name,
+                  int32 *datatype, int32 *count, int32 *size)
+   int32 vgid;      IN: vgroup id
+   intn attrindex;  IN: which attr's info we want, attrindex is 0-based
+   char *name;      OUT: attribute name 
+   int32 *datatype; OUT: datatype of the attribute
+   int32 *count;    OUT: number of values
+   int32 *size;     OUT: size of the attr values on local machine.
+
+RETURNS
+   Returns SUCCEED when successful, FAIL otherwise.
+DESCRIPTION
+   Vattrinfo2 is an updated version of Vattrinfo.  Both functions return
+   the information of an attribute belongging to the given vgroup.
+   However, unlike Vattrinfo, which only processes new-style attributes,
+   i.e., attributes created by Vsetattr, Vattrinfo2 also handles old-style
+   attributes.  In addition, Vattrinfo2 was written to assist the HDF
+   Mapping writer.  Thus, it is assumed that Vattrinfo2 is to be used in
+   a loop going through all the attributes of the vgroup, including
+   old-style and, perhaps, new-style attributes, if they exist.  Refer to
+   the function header of Vnattrs2 and Vnoldattrs for more detail.
+
+   If the vgroup has both types of attributes, the old-style attributes 
+   will be listed first, hence, the need for Vattrinfo2 to be used in a
+   loop.
+
+   Note that Vattrinfo2 must be used in conjunction with Vnattrs2, which
+   is an updated version of Vnattrs, or Vnoldattrs, which is invoked by
+   Vnattrs2.  Vnoldattrs finds old-style attributes and establishes the
+   list of their ref numbers for Vattrinfo2 to access.
+
+   Note that the arguments name, datatype or count can be NULL if which
+   is not interested.
+   -BMR 2011/2/16
+-------------------------------------------------------------- */
+intn Vattrinfo2(int32 vgid, intn attrindex, char *name, int32 *datatype,
+	int32 *count, int32 *size, int32 *nfields, uint16 *refnum)
+{
+    CONSTR(FUNC, "Vattrinfo2");
+    VGROUP *vg;
+    VDATA *vs;
+    DYN_VWRITELIST  *w;
+    vginstance_t *vg_inst;
+    vsinstance_t *vs_inst;
+    vg_attr_t *vg_alist=NULL;
+    int32 vsid;
+    intn adjusted_index;
+    int32 ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Make sure given object is a vgroup */
+    if (HAatom_group(vgid) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate vg's index in vgtab */
+    if (NULL == (vg_inst = (vginstance_t *)HAatom_object(vgid)))
+       HGOTO_ERROR(DFE_VTAB, FAIL);
+    vg = vg_inst->vg;
+    if (vg == NULL)
+       HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Validate arguments */
+
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
+
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs &&
+	     adjusted_index < (vg->nattrs+vg->noldattrs))
+		 /* index of new-style attributes */
+    {
+        /* Adjust the index to accommodate for the old-style attributes
+	   preceding the new-style attribute list */
+	adjusted_index = adjusted_index - vg->noldattrs;
+        vg_alist = vg->alist;        /* use new-attr list */
+    }
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* Getting attribute information */
+
+    /* Get access to the vdata storing the attr, and obtain requested info */
+    if ((vsid = VSattach(vg->f, (int32)vg_alist[adjusted_index].aref, "r")) == FAIL)
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+    if (HAatom_group(vsid) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    if (NULL == (vs = vs_inst->vs) ||
+          HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+    if (name)  {
+        HDstrncpy(name, vs->vsname, HDstrlen(vs->vsname));
+        name[HDstrlen(vs->vsname)] = '\0';
+    }
+    w = &(vs->wlist);
+    if (datatype)
+       *datatype =  (int32)w->type[0];
+    if (count)
+       *count = (int32)w->order[0];
+    if (size)
+       *size = w->order[0] * (DFKNTsize(w->type[0] | DFNT_NATIVE));
+    if (nfields)
+       *nfields = (int32)w->n; /* Note: int32 to be consistent with VFnfields */
+    if (refnum)
+       *refnum = vs->oref;
+    if (FAIL == VSdetach(vsid))
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vattrinfo2 */
+
 /* ----------  Vgetattr  -----------------------
 NAME
-      Vgetattr -- read values of a vgroup attribute
+   Vgetattr -- read values of a vgroup attribute
 USAGE
-      intn Vgetattr(int32 vgid, intn attrindex, void * values)
-      int32 vgid;      IN: vgroup id
-      intn attrindex;  IN: index of the attribute
-      void * values;    OUT: where the values go.      
+   intn Vgetattr(int32 vgid, intn attrindex, void * values)
+   int32 vgid;      IN: vgroup id
+   intn attrindex;  IN: index of the attribute
+   void * values;    OUT: where the values go
 RETURNS
-      Returns SUCCEED when successful, FAIL otherwise
+   Returns SUCCEED when successful, FAIL otherwise
 DESCRIPTION
 
 ------------------------------------------------- */
@@ -1255,4 +1563,121 @@ done:
   /* Normal function cleanup */
   return ret_value;
 }  /* Vgetattr */
+
+/* ----------  Vgetattr2  -----------------------
+NAME
+   Vgetattr2 -- read values of a vgroup attribute
+		   (updated of Vgetattr)
+USAGE
+   intn Vgetattr2(int32 vgid, intn attrindex, void * values)
+   int32 vgid;      IN: vgroup id
+   intn attrindex;  IN: index of the attribute
+   void * values;  OUT: buffer for attribute values
+RETURNS
+   Returns SUCCEED when successful, FAIL otherwise
+DESCRIPTION
+   This function is an updated version of Vgetattr because,
+   beside processing an attribute that was created by the
+   Vsetattr, it also reads values of an attribute that was
+   created prior to Vsetattr by other method such as the
+   combination of VHstoredatam and Vaddtagref/Vinsert.
+   More detailed description is available in the function
+   header of Vnattr2 and Vnoldattrs.
+   -BMR 2011/2/16
+------------------------------------------------- */
+intn Vgetattr2(int32 vgid, intn attrindex, void * values)
+{
+    CONSTR(FUNC, "Vgetattr2");
+    VGROUP *vg;
+    VDATA *vs;
+    char fields[FIELDNAMELENMAX];
+    vginstance_t *v;
+    vsinstance_t *vs_inst;
+    vg_attr_t *vg_alist=NULL;
+    intn adjusted_index;
+    int32 vsid=-1;
+    int32 n_recs, il;
+    int32 ret_value = SUCCEED;
+    
+    /* Clear error stack */
+    HEclear();
+
+    /* Make sure given object is a vgroup */
+    if (HAatom_group(vgid) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate vg's index in vgtab */
+    if (NULL == (v = (vginstance_t *)HAatom_object(vgid)))
+       HGOTO_ERROR(DFE_VTAB, FAIL);
+    vg = v->vg;
+    if (vg == NULL)
+       HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Validate arguments */
+
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
+
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs &&
+	     adjusted_index < (vg->nattrs+vg->noldattrs))
+		 /* index of new-style attributes */
+    {
+        /* Adjust the index to accommodate for the old-style attributes
+	   preceding the new-style attribute list */
+	adjusted_index = adjusted_index - vg->noldattrs;
+        vg_alist = vg->alist;        /* use new-attr list */
+    }
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* Getting attribute information */
+
+    /* Get access to the vdata storing the attr, and obtain requested info */
+    if ((vsid = VSattach(vg->f, (int32)vg_alist[adjusted_index].aref, "r")) == FAIL)
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+    if (HAatom_group(vsid) != VSIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check correctness of attr vdata */
+    if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+    if (NULL == (vs = vs_inst->vs) ||
+          HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* Get vdata information */
+    if (FAIL == VSinquire(vsid, &n_recs, &il, fields, NULL, NULL))
+        HGOTO_ERROR(DFE_BADATTR, FAIL);  
+
+    /* Ready to read */
+
+    /* Some older attribute vdatas have field name as "AttrValues" instead
+       of the common "VALUES" (ATTR_FIELD_NAME) so we need to use what was
+       read by VSinquire instead of ATTR_FIELD_NAME -BMR 2011/2/11 (I'll look
+       for "AttrValues" in previous versions of the library, just in case) */
+     /* if (FAIL == VSsetfields(vsid, ATTR_FIELD_NAME))
+ */ 
+    if (FAIL == VSsetfields(vsid, fields))
+        HGOTO_ERROR(DFE_BADFIELDS, FAIL);
+    if (FAIL == VSread(vsid, (unsigned char *)values, n_recs, il))
+        HGOTO_ERROR(DFE_VSREAD, FAIL);
+    if (FAIL == VSdetach(vsid))
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+
+done:
+    if (ret_value == FAIL)
+    { /* Error condition cleanup */
+    if (vsid != -1)
+        VSdetach(vsid);
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+}  /* Vgetattr2 */
 

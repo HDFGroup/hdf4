@@ -251,12 +251,12 @@
 
 /* The following vdata class name is reserved by the Chunking interface.
    originally defined in 'hchunks.h'. The full class name 
-   currently is "_HDF_CHK_TBL_0". -GV 9/25/97 */
-#ifdef   _HCHUNKS_MAIN_
-/* Private to 'hchunks.c' */
+   currently is "_HDF_CHK_TBL_0". -GV 9/25/97
+
+   Made the vdata class name available to other interfaces since it is needed
+   during hmap project. -BMR 11/11/2010 */
 #define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
 #define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
-#endif /* _HCHUNKS_MAIN_ */
 
 /*
 #define NUM_INTERNAL_VGS	6

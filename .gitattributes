@@ -107,6 +107,7 @@ hdf/test/CMakeLists.txt -text
 hdf/test/tattdatainfo.c -text
 hdf/test/tdatainfo.c -text
 hdf/test/tdatainfo.h -text
+hdf/test/tdfr8.c -text
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text

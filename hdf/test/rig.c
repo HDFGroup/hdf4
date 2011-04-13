@@ -848,6 +848,7 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
     255, 103, 2, 255, 103, 2, 255, 103, 2, 255, 103, 2 
 };
 
+void test_grgetcomptype(); /* in "tdfr8.c" */
 static VOID
 check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
              uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal);
@@ -1388,7 +1389,7 @@ check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
 #define YD2 11
 #define XD3 8
 #define YD3 12
-
+#define TESTFILE_R8  "tdfr8.hdf"
 void
 test_r8(void)
 {
@@ -1473,14 +1474,14 @@ test_r8(void)
 
     MESSAGE(5, printf("Putting image with no compression\n");
         );
-    ret = DFR8putimage(TESTFILE, im1, XD1, YD1, 0);
+    ret = DFR8putimage(TESTFILE_R8, im1, XD1, YD1, 0);
     RESULT("DFR8putimage");
     num_images++;
     ref1 = DFR8lastref();
 
     MESSAGE(5, printf("Putting image RLE compression\n");
         );
-    ret = DFR8addimage(TESTFILE, im2, XD2, YD2, DFTAG_RLE);
+    ret = DFR8addimage(TESTFILE_R8, im2, XD2, YD2, DFTAG_RLE);
     RESULT("DFR8addimage");
     num_images++;
     ref2 = DFR8lastref();
@@ -1490,13 +1491,13 @@ test_r8(void)
     RESULT("DFR8setpalette");
     MESSAGE(5, printf("Putting image IMCOMP compression\n");
         );
-    ret = DFR8addimage(TESTFILE, im3, XD3, YD3, DFTAG_IMCOMP);
+    ret = DFR8addimage(TESTFILE_R8, im3, XD3, YD3, DFTAG_IMCOMP);
     RESULT("DFR8addimage");
     num_images++;
     ref3 = DFR8lastref();
 #endif /* DONT_TEST_IMCOMP */     /* QAK */
 
-    ret = DFR8nimages(TESTFILE);
+    ret = DFR8nimages(TESTFILE_R8);
     if (ret != num_images)
       {
           fprintf(stderr, "        >>> WRONG NUMBER OF IMAGES <<<\n");
@@ -1512,55 +1513,55 @@ test_r8(void)
     MESSAGE(5, printf("Verifying uncompressed image\n");
         );
 
-    ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
+    ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
-    ret = DFR8getimage(TESTFILE, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
+    ret = DFR8getimage(TESTFILE_R8, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
     RESULT("DFR8getimage");
     check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal1, ipal);
 
     MESSAGE(5, printf("Verifying RLE compressed image\n");
         );
 
-    ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
+    ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
 
 #ifdef DONT_TEST_IMCOMP /* QAK */
     MESSAGE(5, printf("Verifying IMCOMP compressed image\n");
         );
 
-    ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
+    ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
-    ret = DFR8getimage(TESTFILE, (uint8 *) ii3, (int32) XD3, (int32) YD3, ipal);
+    ret = DFR8getimage(TESTFILE_R8, (uint8 *) ii3, (int32) XD3, (int32) YD3, ipal);
     RESULT("DFR8getimage");
 #endif /* DONT_TEST_IMCOMP */     /* QAK */
 
     MESSAGE(5, printf("Rechecking RLE image\n");
         );
 
-    ret = DFR8readref(TESTFILE, ref2);
+    ret = DFR8readref(TESTFILE_R8, ref2);
     RESULT("DFR8readref");
-    ret = DFR8getimage(TESTFILE, (uint8 *) ii2, (int32) XD2, (int32) YD2, ipal);
+    ret = DFR8getimage(TESTFILE_R8, (uint8 *) ii2, (int32) XD2, (int32) YD2, ipal);
     RESULT("DFR8getimage");
     check_im_pal(XD2, YD2, XD2, YD2, im2, ii2, pal1, ipal);
 
     MESSAGE(5, printf("Changing palette of first image\n");
         );
 
-    ret = DFR8writeref(TESTFILE, ref1);
+    ret = DFR8writeref(TESTFILE_R8, ref1);
     RESULT("DFR8writeref");
     ret = DFR8setpalette(pal2);
     RESULT("DFR8setpalette");
-    ret = DFR8addimage(TESTFILE, im1, XD1, YD1, DFTAG_RLE);
+    ret = DFR8addimage(TESTFILE_R8, im1, XD1, YD1, DFTAG_RLE);
     RESULT("DFR8addimage");
 
     MESSAGE(5, printf("Verifying palette change\n");
         );
 
-    ret = DFR8readref(TESTFILE, ref1);
+    ret = DFR8readref(TESTFILE_R8, ref1);
     RESULT("DFR8readref");
-    ret = DFR8getdims(TESTFILE, &xd, &yd, &ispal);
+    ret = DFR8getdims(TESTFILE_R8, &xd, &yd, &ispal);
     RESULT("DFR8getdims");
-    ret = DFR8getimage(TESTFILE, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
+    ret = DFR8getimage(TESTFILE_R8, (uint8 *) ii1, (int32) XD1, (int32) YD1, ipal);
     RESULT("DFR8getimage");
     check_im_pal(XD1, YD1, xd, yd, im1, ii1, pal2, ipal);
 
@@ -1658,6 +1659,12 @@ test_r8(void)
     HDfree(pal2);
     HDfree(ipal);
     HDfree(jpeg_8bit_temp);
+
+#ifdef DATAINFO_TESTER
+    /* Temporarily call to test grgetcomptype() for hmap project; these tests
+       will need to be reformatted. Mar 13, 2011 -BMR */
+    test_grgetcomptype();
+#endif
 }
 
 void

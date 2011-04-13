@@ -814,101 +814,153 @@ USAGE
    int32 HLgetdatainfo(file_id, link_ref, num_blocks, offsetarray, lengtharray)
    int32  file_id;	IN: the file
    uint8 *buf;		IN: special header info read from the file by caller
+   uintn start_block,   IN: data block to start at, 0 base
+   uintn info_count,    IN: size of offset/length lists
    int32 *offsetarray;	OUT: offsets of data blocks
    int32 *lengtharray;	OUT: lengths of data blocks
 RETURNS
    The number of actual data blocks, if successful, FAIL, otherwise
 DESCRIPTION
-   Use HLIgetlink to get the list of ref#s of actual data blocks.  Blocks
-   which don't point to actual data blocks will have ref# as 0.  Go through
-   the block list to record offset and length of these data blocks.
+   HLgetdatainfo uses HLIgetlink to get each block table in the element.
+   We're looking for actual data blocks which have a positive reference number.
+   Blocks with ref# as 0 will signal the end of the actual data blocks.
+   HLgetdatainfo goes through the block table to record offset and length of
+   the actual data blocks.
    Aug 08, 2010 -BMR
 TODO
-   - No start_block and info_count yet
-
+   - No effect from start_block yet; since it's not used in the HDF Mapping
+     project, and we're running out of time, I'm leaving it out.
+     Feb 18, 2011 -BMR
 ---------------------------------------------------------------------------*/
 int32
 HLgetdatainfo(int32 file_id,
-           uint8 *buf, 
+           uint8 *buf, 		   /* IN: special header info */
+           uintn start_block,      /* IN: data block to start at, 0 base */
+           uintn info_count,       /* IN: size of offset/length lists */
 	   int32 *offsetarray,     /* OUT: array to hold offsets */
 	   int32 *lengtharray)     /* OUT: array to hold lengths */
 {
     CONSTR(FUNC, "HLgetdatainfo");	/* for HERROR */
-    link_t    *link_info;	/* link information, only interested in ref#s*/
-    int32      num_data_blocks;	/* number of blocks that actually have data */
-    int        ii;
-    int32      ret_value = SUCCEED;
-    uint16 link_ref;
-    uint8 *p;
-    int32 num_blocks, block_length, accum_length, total_length;
+    link_t *link_info;       /* link information, to get block ref#s*/
+    int32   num_data_blocks; /* number of blocks that actually have data */
+    uint16  link_ref;        /* ref# pointing to a block table */
+    uint8  *p;               /* pointer to special info buffer */
+    int32   num_blocks,      /* number of blocks in each table */
+            block_length,    /* length of each block */
+            total_length,    /* total data length of the element */
+            accum_length;    /* accummulative length of actual data in blocks */
+    int     ii;
+    int32   ret_value = SUCCEED;
 
-    /* decode special information retrieved from file into info struct */
+    /* Clear error stack */
+    HEclear();
+
+    /* Validate arguments */
+    if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Decode special information retrieved from file */
     p = &buf[0];
     INT32DECODE(p, total_length);
     INT32DECODE(p, block_length);
     INT32DECODE(p, num_blocks);     /* get number of blocks in link table */
     UINT16DECODE(p, link_ref);      /* get ref# link table */
 
-    /* initialize number of actual data blocks and the accumulative data length */
+    /* Initialize number of actual data blocks and the accumulative data len */
     num_data_blocks = 0;
     accum_length = 0;
 
-    /* get the block table pointed to by link_ref; the table contains
-       ref#s of the blocks */
+    /* Get the block table pointed to by link_ref; the table contains ref#s of
+       the blocks */
     link_info = HLIgetlink(file_id, link_ref, num_blocks);
-    if (!link_info)
+    if (!link_info) /* no data */
         HGOTO_DONE(FAIL);
 
-    /* Go through all the linked-block tables of this element */
-    while (link_info != NULL) {
+    /* Go through all the linked-block tables of this element, as long as the
+       number of data blocks being collected has not reached the maximum length
+       of the non-NULL arrays provided */
+    while (link_info != NULL &&
+	(info_count == 0 ||	/* case of offset/length arrays being NULL */
+	 num_data_blocks < info_count))
+    {
         uint16 next_ref = link_info->nextref; /* shortcut */
 
-        /* Get offset/length of blocks that actually point to a data element,
-         until all blocks in this table with valid ref#s are processed */
-        for (ii = 0; ii < num_blocks && link_info->block_list[ii].ref != 0; ii++) {
+        /* Get offset/length of blocks that actually point to a data elem,
+           until all blocks in this table with valid ref#s are processed */
+        for (ii = 0; ii < num_blocks && link_info->block_list[ii].ref != 0;ii++)
+	{
             int32 offset, length;
             uint16 block_ref = link_info->block_list[ii].ref; /* shortcut */
 
-            /* If this block has a valid reference number then get the offset/length of
-             the data if they are requested, and increment the number of data blocks */
-            if (block_ref != 0) {
-                if (offsetarray != NULL) {
-                    if ((offset = Hoffset(file_id, DFTAG_LINKED, block_ref)) == FAIL)
+            /* If this block has a valid ref# then get the offset/length of
+               the data if they are requested, and increment the number of
+	       data blocks */
+            if (block_ref != 0)
+            {
+                if (offsetarray != NULL)
+		{
+                    offset = Hoffset(file_id, DFTAG_LINKED, block_ref);
+                    if (offset == FAIL)
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
                     offsetarray[num_data_blocks] = offset;
                 }
-/* probably info->block_length can be used here instead of calling Hlength! -BMR */
-                if (lengtharray != NULL) {
-                    if ((length = Hlength(file_id, DFTAG_LINKED, block_ref)) == FAIL)
+                if (lengtharray != NULL)
+		{
+                    length = Hlength(file_id, DFTAG_LINKED, block_ref);
+                    if (length == FAIL)
                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    
+                    /* Make sure to detect when the last block of the element is
+		       reached and calculate the len of the actual data in it */
 
-                    /* Make sure to detect when the last block of the element is reached
-                     and calculate the length of the actual data in it */
+		    /* Continue accumulating data length if there is
+		       another block table coming */
                     if (next_ref != 0)
                         accum_length = accum_length + length;
-                    else {
+
+		    /* When no more block table following this one, i.e., this
+                       is the last block table in the element */
+                    else
+                    {
+		        /* if this is NOT the last block having data in the
+                           current table, continue accumulating */
                         if (ii < num_blocks - 1 && link_info->block_list[ii + 1].ref != 0)
                             accum_length = accum_length + length;
-                        else if (length == block_length)
-                            length = total_length - accum_length;
+
+			/* else, i.e., this is the last block in the curr table,
+			      or the last block that points to actual data */
+                        else
+                        {
+			    /* then calculate the data's actual length when the
+                               length is the same as the default block length,
+                               because it might not be */
+                            if (length == block_length)
+                                length = total_length - accum_length;
+                        }
                     }
+                    /* Record the actual data length in the current block */
                     lengtharray[num_data_blocks] = length;
                 }
                 num_data_blocks++; /* count number of blocks with data */
             }
-        }
-        /* Free allocated memory before getting the next block table if there is one */
-        if (link_info != NULL) {
+        } /* for each block in the current table */
+
+        /* Free allocated memory before getting the next block table if
+	   there is one */
+        if (link_info != NULL)
+        {
             if (link_info->block_list != NULL)
                 HDfree(link_info->block_list);
             HDfree(link_info);
             link_info = NULL;
         }
+	/* Get next block table */
         if (next_ref != 0)
             link_info = HLIgetlink(file_id, next_ref, num_blocks);
-    }
+    } /* while there are more linked-block tables and the offset/length arrays
+	 are not full yet */
 
-    /* return the number of blocks with actual data */
+    /* Return the number of blocks with actual data */
     ret_value = num_data_blocks;
 
 done:

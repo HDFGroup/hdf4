@@ -607,8 +607,6 @@ SDselect(int32 fid,  /* IN: file ID */
     int32  sdsid;         /* the id we're gonna build */
     int32  ret_value = FAIL;
 
-NC_var *var;
-
 #ifdef SDDEBUG
     fprintf(stderr, "SDselect: I've been called (index: %d) \n", index);
 #endif
@@ -3900,18 +3898,17 @@ SDgetdimstrs(int32 id,  /* IN:  dataset ID */
                   if( namelen == (*dp)->name->len 
                     && HDstrncmp(name, (*dp)->name->values, HDstrlen(name)) == 0)
 	      /* because a dim was given, make sure that this is a coord var */
-	      /* only proceed if this variable is a coordinate var or when
-		  its status is unknown due to its being created prior to
-		  the fix of bugzilla 624 - BMR - 05/14/2007 */
-		  if ((*dp)->var_type == IS_CRDVAR || (*dp)->var_type == UNKNOWN)
+		  /* if it is an SDS, the function will fail */
+		  if ((*dp)->var_type == IS_SDSVAR)
+		      HGOTO_ERROR(DFE_ARGS, FAIL)
+	          /* only proceed if this variable is a coordinate var or when
+		      its status is unknown due to its being created prior to
+		      the fix of bugzilla 624 - BMR - 05/14/2007 */
+		  else
+		  /* i.e., (*dp)->var_type == IS_CRDVAR || 
+			   (*dp)->var_type == UNKNOWN) */ 
                   {
                       var = (*dp);
-                  }
-		  /* if it is an SDS, the function will fail */
-		  else if ((*dp)->var_type == IS_SDSVAR)
-                  {
-		      ret_value = FAIL;
-		      goto done;
                   }
             }
       }
@@ -5840,7 +5837,7 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
           cdef  = (HDF_CHUNK_DEF *)&chunk_def;
 
     HCget_config_info( (comp_coder_t)cdef->comp.comp_type , &comp_config);
-    if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+    if ((comp_config & (COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED)) == 0) {
 	/* coder not present?? */
 	    HGOTO_ERROR(DFE_NOENCODER, FAIL);
     }
@@ -6565,7 +6562,6 @@ SDwritechunk(int32       sdsid, /* IN: access aid to SDS */
     int8       outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
     comp_coder_t comp_type;
-    comp_info c_info;
     uint32  comp_config;
     int32 status;
     intn       i;
@@ -6781,7 +6777,6 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
     int8       outntsubclass;   /* the data's machine type */
     uintn      convert;         /* whether to convert or not */
     comp_coder_t comp_type;
-    comp_info c_info;
     uint32  comp_config;
     int32 status;
     intn       i;
@@ -7254,8 +7249,8 @@ SDidtype(int32 an_id)
 intn
 SDreset_maxopenfiles(intn req_max)
 {
-    intn ret_value = SUCCEED;
     CONSTR(FUNC, "SDreset_maxopenfiles");	/* for HGOTO_ERROR */
+    intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDreset_maxopenfiles: I've been called\n");
@@ -7303,8 +7298,8 @@ SDget_maxopenfiles(intn *curr_max,  /* OUT: current # of open files allowed */
 		   intn *sys_limit) /* OUT: max # of open files allowed on 
 					a system */
 {
-    intn ret_value = SUCCEED;
     CONSTR(FUNC, "SDget_maxopenfiles");	/* for HGOTO_ERROR */
+    intn ret_value = SUCCEED;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDget_maxopenfiles: I've been called\n");
@@ -7366,13 +7361,6 @@ SDget_numopenfiles()
     HEclear();
 
     ret_value = (intn)NC_get_numopencdfs();
-
-done:
-    if (ret_value == FAIL)
-      { /* Failure cleanup */
-
-      }
-    /* Normal cleanup */
     return ret_value;
 } /* SDget_numopenfiles */
 
@@ -7414,18 +7402,14 @@ SDgetfilename(int32 fid,       /* IN:  file ID */
     /* check that fid is valid */
     handle = SDIhandle_from_id(fid, CDFTYPE);
     if(handle == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     len = HDstrlen(handle->path);
     if(filename != NULL) 
-      {
-          HDmemcpy(filename, handle->path, len);
-          filename[len] = '\0';
-      }
-
+    {
+        HDmemcpy(filename, handle->path, len);
+        filename[len] = '\0';
+    }
     ret_value = len;
 
 done:
@@ -7490,10 +7474,7 @@ SDgetnamelen(int32 id,		/* IN:  object ID */
 	{
 	    var = SDIget_var(handle, id);
 	    if(var == NULL)
-	    {
-		ret_value = FAIL;
-		goto done;
-	    }
+		HGOTO_ERROR(DFE_ARGS, FAIL);
 	    *name_len = (uint16)var->name->len;
 	}
 
@@ -7505,17 +7486,11 @@ SDgetnamelen(int32 id,		/* IN:  object ID */
 	    {
 		dim = SDIget_dim(handle, id);
 		if(dim == NULL) 
-		{
-		    ret_value = FAIL;
-		    goto done;
-		}
+		    HGOTO_ERROR(DFE_ARGS, FAIL);
 		*name_len = (uint16)dim->name->len;
 	    }
 	    else	/* invalid id */
-	    {
-		ret_value = FAIL;
-		goto done;
-	    }
+		HGOTO_ERROR(DFE_ARGS, FAIL);
         }
     }
 

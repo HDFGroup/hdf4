@@ -41,6 +41,7 @@ SET (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfrle.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfsd.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfstubs.c
+    ${HDF4_HDF_SRC_SOURCE_DIR}/dfufp2i.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfunjpeg.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfutil.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dynarray.c

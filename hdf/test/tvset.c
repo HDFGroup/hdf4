@@ -1921,15 +1921,17 @@ to promote the vdata to a linked-block element.
 static void
 test_blockinfo(void) 
 {
-   intn	 status_n;	/* returned status for functions returning an intn  */
-   int32 status;	/* returned status for functions returning an int32 */
-   int16 rec_num;	/* current record number */
-   int32 fid, vdata1_id, vdata2_id,
-	 vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
-   	 num_of_records,  /* number of records actually written to vdata */
-         data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
-	 data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
-	 block_size, num_blocks; /* retrieved by VSgetblockinfo */
+    intn  status_n;	/* returned status for functions returning an intn  */
+    int32 status;	/* returned status for functions returning an int32 */
+    int16 rec_num;	/* current record number */
+    int32 fid, vdata1_id, vdata2_id,
+	  vdata_ref = -1,  /* ref number of a vdata, set to -1 to create  */
+   	  num_of_records,  /* number of records actually written to vdata */
+          data_buf1[N_RECORDS][N_VALS_PER_REC_1], /* for first vdata's data */
+	  data_buf2[N_RECORDS][N_VALS_PER_REC_2], /* for second vdata's data */
+	  block_size, num_blocks; /* retrieved by VSgetblockinfo */
+    intn  n_vds = 0;
+    uint16 *refarray = NULL;
 
     /* Create the HDF file for data used in this test routine */
     fid = Hopen (FILE_NAME, DFACC_CREATE, 0);
@@ -2063,6 +2065,30 @@ test_blockinfo(void)
 
     status = VSdetach (vdata2_id);
     CHECK_VOID(status, FAIL, "Vdetach");
+
+    /* Test VSofclass on the file */
+    n_vds = VSofclass(fid, CLASS_NAME, 0, 0, NULL);
+    VERIFY_VOID(n_vds, 2, "VSofclass");
+
+    refarray = (uint16 *)HDmalloc(sizeof(uint16) * n_vds);
+    CHECK_ALLOC(refarray, "refarray", "test_blockinfo" );
+
+    /* The following tests rely on the reference numbers of the two vdatas of
+       class CLASS_NAME.  If data is added to the file before these vdatas,
+       the reference numbers (2 and 3 below) need to be adjusted accordingly or
+       tests will fail -BMR */
+    n_vds = VSofclass(fid, CLASS_NAME, 0, n_vds, refarray);
+    VERIFY_VOID(refarray [0], 2, "VSofclass");
+    VERIFY_VOID(refarray [1], 3, "VSofclass");
+
+    refarray [0] = refarray[1] = 0;
+    n_vds = VSofclass(fid, CLASS_NAME, 0, 1, refarray);
+    VERIFY_VOID(refarray [0], 2, "VSofclass");
+    VERIFY_VOID(refarray [1], 0, "VSofclass");
+
+    n_vds = VSofclass(fid, CLASS_NAME, 1, n_vds, refarray);
+    VERIFY_VOID(refarray [0], 3, "VSofclass");
+    VERIFY_VOID(refarray [1], 0, "VSofclass");
 
     status_n = Vend (fid);
     CHECK_VOID(status_n, FAIL, "Vend");
@@ -2295,7 +2321,7 @@ test_getvgroups(void)
     vgroup4_id = Vattach(fid, ref_list[4], "w");
     CHECK_VOID(vgroup4_id, FAIL, "Vattach");
     vgroup5_id = Vattach(fid, ref_list[5], "w");
-    CHECK_VOID(vgroup4_id, FAIL, "Vattach");
+    CHECK_VOID(vgroup5_id, FAIL, "Vattach");
     status = Vinsert(vgroup1_id, vgroup3_id);
     CHECK_VOID(status, FAIL, "Vinsert vgroup3_id into vgroup1_id");
     status = Vinsert(vgroup1_id, vgroup4_id);
@@ -2392,6 +2418,11 @@ test_getvgroups(void)
                 fprintf(stderr, "test_getvgroups: incorrect vgroup retrieved at line %d - ref# %d should be %d\n", __LINE__, refarray[ii], result[ii]);
     }
 
+    /* This vgroup should have no sub-vgroup */
+    n_vgs = Vgetvgroups(vgroup5_id, 0, 0, NULL);
+    CHECK_VOID(n_vgs, FAIL, "Vgetvgroups vgroup5_id");
+    VERIFY_VOID(n_vgs, 0, "Vgetvgroups vgroup5_id");
+
     /* These vgroups are not needed anymore.  */
     status = Vdetach(vgroup2_id);
     CHECK_VOID(status, FAIL, "Vdetach vgroup2_id");
@@ -2399,6 +2430,8 @@ test_getvgroups(void)
     CHECK_VOID(status, FAIL, "Vdetach vgroup3_id");
     status = Vdetach(vgroup4_id);
     CHECK_VOID(status, FAIL, "Vdetach vgroup4_id");
+    status = Vdetach(vgroup5_id);
+    CHECK_VOID(status, FAIL, "Vdetach vgroup5_id");
 
     /* Change class name of vg6 and vg7 to an internal class name to
        simulate that they are internally created by the library. */

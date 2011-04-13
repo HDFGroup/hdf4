@@ -35,6 +35,7 @@
 #endif /* OLD_WAY */
 
 #include "mfhdfi.h"
+#include "mfdatainfo.h"
 
 #define SD_UNLIMITED NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL    NC_NOFILL

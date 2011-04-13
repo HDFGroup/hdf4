@@ -1,6 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
- * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
  * This file is part of HDF.  The full HDF copyright notice, including       *
@@ -11,128 +10,163 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision: 5393 $";
-#endif
+/* NOTE: this file and other "datainfo" related files will be configured so
+         that this feature will not be built by default. -BMR
+   Update: THG and NASA had decided to include all features developed for the
+           HDF Mapping Project in the library -BMR (~Jan 2011) */
 
-/* $Id: hdatainfo.c 5393 2010-03-25 18:38:17Z bmribler $ */
-
-/*
+/**********************************************************************
 FILE
-   hdatainfo.c
-   HDF data information routines
+  hdatainfo.c
+  HDF data information routines - added to support the HDF4 Mapping project
 
-LOW-LEVEL ROUTINES
-    - Gets the offset(s) and length(s) of the data in the data element.
-HDgetdatainfo(file_id, data_tag, data_ref, *chk_coord, start_block, info_count, *offsetarray, *lengtharray)
+  This file contains the multi-file HDF interface functions that provide
+  information about location and size of raw data.  This type of information
+  will allow applications to extract raw data from an HDF file without the
+  use of HDF4 library.  These features were developed to support the HDF4
+  Mapping project (2010-2011.)
+
+  As with the rest of the functions in the APIs, these functions have names
+  beginning with VG, VS, GR, and AN, appropriately.
 
 EXPORTED ROUTINES
-    - Gets the offset(s)/length(s) of a vdata's data.
-VSgetdatainfo(vsid, start_block, info_count, *offsetarray, *lengtharray)
+-----------------
+  VSgetdatainfo    -- retrieves offset(s) and length(s) of a vdata's data
+  GRgetdatainfo    -- retrieves offset(s) and length(s) of an image's data
+  VSgetattdatainfo -- retrieves offset and length of a vdata attribute's data
+  Vgetattdatainfo  -- retrieves offset and length of a vgroup attribute's data 
+  GRgetattdatainfo -- retrieves offset and length of an image attribute's data 
+  ANgetdatainfo    -- retrieves offset and length of an annotation's data
 
-    - Gets the offset(s)/length(s) of the data of an image
-GRgetdatainfo(riid, start_block, info_count, *offsetarray, *lengtharray)
+LOW-LEVEL ROUTINES
+------------------
+  HDgetdatainfo -- retrieves offset(s) and length(s) of the data in a data element
 
-    - Gets the offset/length of the data of a vdata's attribute
-VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)
-
-    - Gets the offset/length of the data of a vgroup's attribute
-Vgetattdatainfo(vgid, attrindex, *offset, *length)
-
-    - Gets the offset/length of the data of an image's attribute
-GRgetattdatainfo(id, attrindex, *offset, *length)
-*/
+**********************************************************************/
 
 #ifndef MFGR_MASTER
 #define MFGR_MASTER	/* for GRgetdatainfo and GRgetattdatainfo */
-#endif			/* mfgr.h is included in hdf.h */
+#endif			/* mfgr.h had been included in hdf.h */
 
 #ifndef MFAN_MASTER
 #define MFAN_MASTER	/* for ANgetdatainfo */
 #endif			/* mfan.h is included here */
+
+#ifndef DATAINFO_MASTER
+#define DATAINFO_MASTER	/* to include hdatainfo.h */
+#endif
 
 #include "hdf.h"
 #include "hlimits.h"
 #include "vgint.h"
 #include "mfan.h"
 
-#define DATAINFO_MASTER
-#include "hdatainfo.h"
-
-#ifdef H4_HAVE_LIBSZ          /* we have the library */
+#ifdef H4_HAVE_LIBSZ	/* we have the szip library */
 #include "szlib.h"
 #endif
 
 
-/*--------------------------------------------------------------------------
+/*----------------------------------------------------------------------------- 
  NAME
-    HDgetdatainfo -- Gets the offset(s) and length(s) of the data in
-		      the data element.
+    HDgetdatainfo -- Retrieves offset(s) and length(s) of the data in a
+		     data element.
  USAGE
-    int32 HDgetdatainfo(file_id, data_tag, data_ref, start_block, info_count,
+    intn HDgetdatainfo(file_id, tag, ref, start_block, info_count,
 			 *offsetarray, *lengtharray)	
-	int32  file_id;		IN: file id
-	uint16 data_tag;	IN: tag of the element
-	uint16 data_ref;	IN: ref of element
-	int32 *chk_coord;	IN: coordinate array of the inquired chunk
-	uintn  start_block;	IN: data block to start at, 0 base
-	uintn  info_count;	IN: number of info records
-	int32 *offsetarray;	OUT: array to hold offsets
-	int32 *lengtharray;	OUT: array to hold lengths
+	int32  file_id		IN: file id
+	uint16 tag		IN: tag of the element
+	uint16 ref		IN: ref of element
+	int32 *chk_coord	IN: chunk's coordinates or NULL if not chunked
+	uintn  start_block	IN: data block to start at, 0 base
+	uintn  info_count	IN: number of info records
+	int32 *offsetarray	OUT: array to hold offsets
+	int32 *lengtharray	OUT: array to hold lengths
  RETURNS
-    SUCCEED/FAIL
+    Number of data blocks if successful, or FAIL, otherwise.
+
  DESCRIPTION
+    HDgetdatainfo will use low-level functions to get data information
+    of element that is in chunk or linked-block storage.
+
+    If the given tag/ref point to:
+    - no data then the function will return 0 for number of data blocks,
+    - actual data written then the function will return 1 for number of
+      data blocks and its offset/length if they are requested, or
+    - description record, which means this element is special, then the
+      function will act appropriately depend upon the specialness
+      + compression
+	* if the compressed data is stored in one block, the function will
+          return 1 and the offset/length if they are requested
+	* if the compressed data is stored in linked-blocks,
+	  > read the linked-block special header info
+	  > call HLgetdatainfo to get data info of the blocks
+      + chunking
+	* call HMCgetdatainfo to get data info of the requested chunk
+      + linked-block
+	* read the linked-block special header info
+	* call HLgetdatainfo to get data info of the blocks
+
  NOTES
     Aug 17, 2010: Tested with SDgetdatainfo and VSgetdatainfo -BMR
     Sep 7, 2010: Tested with GRgetdatainfo, but not linked-block yet -BMR
     Oct 5, 2010: Modified to handle compressed/linked-block element -BMR
 --------------------------------------------------------------------------*/
 intn
-HDgetdatainfo(int32 file_id,
-	uint16 data_tag, uint16 data_ref, /* IN: tag/ref of element */
-	int32 *chk_coord,
-	uintn start_block,	/* IN: data block to start at, 0 base */
-	uintn info_count,	/* IN: number of info records */
-	int32 *offsetarray,	/* OUT: array to hold offsets */
-	int32 *lengtharray)	/* OUT: array to hold lengths */
+HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
+	uintn start_block, uintn info_count, int32 *offsetarray,
+	int32 *lengtharray)
 {
     CONSTR(FUNC, "HDgetdatainfo");	/* for HGOTO_ERROR */
     filerec_t  *file_rec;	/* file record */
     uint16	sp_tag;		/* special tag */
-    uint16	comp_ref = 0;	/* ref for compressed data or compression header */
-    int32	drec_aid=-1;	/* description record access id */
+    uint16	comp_ref = 0;	/* ref for compressed data or comp header */
     uint16	dtag, dref;	/* description record tag/ref */
     int32	dlen=0, doff=0;	/* offset/length of the description record */
     uint8	lbuf[COMP_HEADER_LENGTH],
-		*p=NULL;	/* description record buffer and a pointer to it */
+		*p=NULL;	/* desc record buffer and a pointer to it */
     atom_t	data_id = FAIL;	/* dd ID of existing element */
-    int32	length; /* uncompressed data length to check if data had been written */
-    uintn	count=0;	/* number of data blocks returned by getdatainfo functions */
-    uint16	spec_code=0;	/* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
-    int32	comp_aid=-1;	/* compressed element access id */
+    int32	length; /* uncomp data len to check if data had been written */
+    uintn	count=0;/* num of data blocks returned by getdatainfo funcs */
+    uint16	spec_code=0;/* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
+    int32	comp_aid=-1;/* compressed element access id */
     intn	ret_value=SUCCEED;
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
-    /* validate arguments */
+    /* Validate array size */
     if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* convert file id to file rec and check for validity */
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Convert file id to file rec and check for validity */
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
 	HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get access element from dataset's tag/ref */
-    if ((data_id=HTPselect(file_rec, data_tag, data_ref))!=FAIL)
+    /* Get access element from dataset's tag/ref */
+    if ((data_id=HTPselect(file_rec, tag, ref))!=FAIL)
     {
-	/* get the info pointed to by this dd, which could point to data or
+	/* Get the info pointed to by this dd, which could point to data or
 	   description record */
 	if (HTPinquire(data_id, &dtag, &dref, &doff, &dlen) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-	/* if the element is not special, that means dataset's tag/ref 
+        /* Return 0 if no data had been written */
+        if (doff == INVALID_OFFSET && dlen == INVALID_LENGTH)
+	{
+	    /* End access to the element */
+	    if (HTPendaccess(data_id) == FAIL)
+	        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+	    HGOTO_DONE(0);
+	}
+
+	/* If the element is not special, that means dataset's tag/ref 
 	   specifies the actual data that was written to the dataset, get
 	   the offset and length of the data if they were requested */
 	if (HTPis_special(data_id)==FALSE)
@@ -141,6 +175,7 @@ HDgetdatainfo(int32 file_id,
 	    if (start_block > 1)
 		HGOTO_ERROR(DFE_ARGS, FAIL);
 
+	    /* Offset and length are requested by caller */
 	    if (offsetarray != NULL && lengtharray != NULL)
 	    {
 		offsetarray[0] = doff;
@@ -149,7 +184,7 @@ HDgetdatainfo(int32 file_id,
 	    count = 1;
         }
 
-	/* if the element is special, get the special info header and decode
+	/* If the element is special, get the special info header and decode
 	   for special tag to detect compression/chunking/linked blocks */
 	else
 	{
@@ -162,16 +197,16 @@ HDgetdatainfo(int32 file_id,
 	    p = &lbuf[0];
 	    INT16DECODE(p, sp_tag);
 
-	    /* if this is a compressed element, then it should only be none or
-	       one block of data */
+	    /* This is a compressed element */
 	    if (sp_tag == SPECIAL_COMP)
 	    {
+		/* Read compression info header */
 		if (HP_read(file_rec, lbuf, (int)COMP_HEADER_LENGTH) == FAIL)
 		HGOTO_ERROR(DFE_READERROR, FAIL);
 
+		/* Decode header to get data length */
 		p = &lbuf[0];
-		/* skip 2byte header_version */
-		p = p + 2;
+		p = p + 2; /* skip 2byte header_version */
 		INT32DECODE(p, length);	/* get _uncompressed_ data length */
 
 		/* No data written */
@@ -179,97 +214,123 @@ HDgetdatainfo(int32 file_id,
 		{
 		    count = 0;
 		}
-		/* Data has been written, get its offset and length */
+		/* Data had been written, either in contiguous block or more
+		   special storage, in which case special code needs to be read */
 		else
 		{
+		    /* Decode for the compression ref# */
 		    UINT16DECODE(p, comp_ref);
 
-		if ((comp_aid = HTPselect(file_rec, DFTAG_COMPRESSED, comp_ref)) == FAIL)
-		    HE_REPORT_GOTO("HTPselect failed ", FAIL);
+		    /* Get access to the compression element */
+		    if ((comp_aid = HTPselect(file_rec, DFTAG_COMPRESSED, comp_ref)) == FAIL)
+		        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-		if (HTPis_special(comp_aid)!=TRUE)
-		{
-		    /* this element is not further special, only compressed, get its offset
-		       and length */
-		    if (offsetarray != NULL && lengtharray != NULL)
+		    /* If data had been written in one contiguous block */
+		    if (HTPis_special(comp_aid) != TRUE)
 		    {
-			offsetarray[0] = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
-			lengtharray[0] = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
-		    }
-		    count = 1;
-		}   /* end if */
-		else
-		{ /* this element is further special, read in the special code to see what
-		     the specialness is then process appropriately */
-		    int32 num_blocks=0;
-		    uint16 link_ref=0;
-		    if(HTPinquire(comp_aid, NULL, NULL, &doff, NULL)==FAIL)
-		    {
-			HTPendaccess(comp_aid);
-			HGOTO_ERROR(DFE_INTERNAL, FAIL);
-		    } /* end if */
-		    if (HPseek(file_rec, doff) == FAIL)
-			HGOTO_ERROR(DFE_SEEKERROR, FAIL);
-		    if (HP_read(file_rec, lbuf, (int)2) == FAIL)
-			HGOTO_ERROR(DFE_READERROR, FAIL);
+		        /* Only one data block here, starting offset cannot be > 1*/
+		        if (start_block > 1)
+			    HGOTO_ERROR(DFE_ARGS, FAIL);
 
-		    /* use special code to determine how to retrieve offsets/lengths of data */
-		    p = &lbuf[0];
-		    INT16DECODE(p, spec_code);
+		        /* This element is not further special, only compressed,
+		           get its offset and length if they are requested */
+		        if (offsetarray != NULL && lengtharray != NULL)
+		        {
+			    int32 off=0, len=0;
+			    off = Hoffset(file_id, DFTAG_COMPRESSED, comp_ref);
+			    if (off == FAIL)
+			        HGOTO_ERROR(DFE_BADOFFSET, FAIL);
+			    len = Hlength(file_id, DFTAG_COMPRESSED, comp_ref);
+			    if (len == FAIL)
+			        HGOTO_ERROR(DFE_BADLEN, FAIL);
 
-		    if (spec_code == SPECIAL_LINKED)
+			    offsetarray[0] = off;
+			    lengtharray[0] = len;
+		        }
+		        count = 1;
+		    }   /* end if */
+
+		    /* This element is further special, read in the special code
+		       to see what specialness is and process appropriately */
+		    else
 		    {
-			if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+			/* Get offset of the special header */
+		        if(HTPinquire(comp_aid, NULL, NULL, &doff, NULL)==FAIL)
+		        {
+			    HTPendaccess(comp_aid);
+			    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+		        }
+			/* Get to and read the special code from the header */
+		        if (HPseek(file_rec, doff) == FAIL)
+			    HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+		        if (HP_read(file_rec, lbuf, (int)2) == FAIL)
 			    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-			/* pass the special header info to the linked-block API to get the data
-			   info if they are requested or the info count only, otherwise */ 
-			p = &lbuf[0];
-			if (offsetarray != NULL && lengtharray != NULL)
-			    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
-			else  /* get data information from the linked blocks */
-			    count = HLgetdatainfo(file_id, p, NULL, NULL);
-		    } /* this element is also stored in linked blocks */
-		} /* this element is further special */
+		        /* Decode special code */
+		        p = &lbuf[0];
+		        INT16DECODE(p, spec_code);
 
-		if(HTPendaccess(comp_aid)==FAIL)
-		    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+			/* The element has linked-blocks */
+		        if (spec_code == SPECIAL_LINKED)
+		        {
+			    /* Read the rest of the linked-block info header */
+			    if (HP_read(file_rec, lbuf, (int)14) == FAIL)
+			        HGOTO_ERROR(DFE_READERROR, FAIL);
+
+			    /* Pass the header info to the linked-block API
+			       to get the data info if they are requested or the
+			       info count only, otherwise */ 
+			    p = &lbuf[0];
+			    if (offsetarray != NULL && lengtharray != NULL)
+			        count = HLgetdatainfo(file_id, p, start_block,
+					info_count, offsetarray, lengtharray);
+			    else  /* get number of data blocks only */
+			        count = HLgetdatainfo(file_id, p, start_block,
+					0, NULL, NULL);
+		        } /* this element is also stored in linked blocks */
+		    } /* this element is further special */
+
+		    /* Release the compression element */
+		    if(HTPendaccess(comp_aid)==FAIL)
+		        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 		} /* compressed data written */
 	    } /* element is compressed */
 
-	    /* if it is a chunked element, hand the task over to the chunking
+	    /* This is a chunked element, hand the task over to the chunking
 		layer. */
 	    else if (sp_tag == SPECIAL_CHUNKED)
 	    {
 		if (chk_coord != NULL)
-		    count = HMCgetdatainfo(file_id, data_tag, data_ref, chk_coord,
-					start_block, info_count, offsetarray, lengtharray);
-		else
+		    count = HMCgetdatainfo(file_id, tag, ref, chk_coord,
+			    start_block, info_count, offsetarray, lengtharray);
+		else /* BMR: check to see what should be done here */
 		{
-		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", data_tag, data_ref);
-		    exit(0); /* BMR: check to see what should be done here */
+		    fprintf(stderr, "\nERROR>>> Element with tag/ref %d/%d is a chunked element, the chunk's coordinates must be specified\n", tag, ref);
+	 	    HGOTO_ERROR(DFE_ARGS, FAIL);
 		}
 	    }
 
-	    /* unlimited dimension; extract the number of blocks and the ref #
+	    /* Unlimited dimension; extract the number of blocks and the ref #
 		of the link table then hand over to linked block layer */
 	    else if (sp_tag == SPECIAL_LINKED)
 	    {
+		/* Read the linked-block info header */
 		if (HP_read(file_rec, lbuf, (int)14) == FAIL)
 		    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-		/* pass the special header info to the linked-block API to get the data
-		   info if they are requested or the info count only, otherwise */ 
+		/* Pass the header info to the linked-block API to get the data
+		   info if they are requested or the info count only */ 
 		p = &lbuf[0];
 		if (offsetarray != NULL && lengtharray != NULL)
-		    count = HLgetdatainfo(file_id, p, offsetarray, lengtharray);
+		    count = HLgetdatainfo(file_id, p, start_block, info_count,
+			    offsetarray, lengtharray);
 		else  /* get data information from the linked blocks */
-		    count = HLgetdatainfo(file_id, p, NULL, NULL);
+		    count = HLgetdatainfo(file_id, p, start_block, 0, NULL, NULL);
 	    } /* element is SPECIAL_LINKED */
-	} /* else, data_id is special */
+	} /* else, data element is special */
 
-	/* end access to the element */
+	/* End access to the element */
 	if (HTPendaccess(data_id) == FAIL)
 	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }  /* end if data_id != FAIL */
@@ -277,6 +338,7 @@ HDgetdatainfo(int32 file_id,
     else /* HTPselect failed */
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
 
+    /* Return the number of data blocks */
     ret_value = count;
 done:
     if(ret_value == FAIL)   
@@ -289,25 +351,30 @@ done:
 
 
 /*------------------------------------------------------ 
-NAME
-   VSgetdatainfo - Gets the offset/length of a vdata's data
+ NAME
+    VSgetdatainfo - Gets the offset/length of a vdata's data
+ USAGE
+    intn VSgetdatainfo(vsid, start_block, info_count, offsetarray, lengtharray)	
+	int32  vsid		IN: vdata id
+	uintn  start_block	IN: data block to start at, 0 base
+	uintn  info_count	IN: number of blocks to be retrieved
+	int32 *offsetarray	OUT: array to hold offsets
+	int32 *lengtharray	OUT: array to hold lengths
+ RETURNS
+    The number of data blocks retrieved, if successful and FAIL, otherwise.
 
-DESCRIPTION
+ DESCRIPTION
+    This function uses the low-level function HDgetdatainfo to 
+    get the data info when the vdata is stored in linked-blocks.
 
-RETURNS
-   SUCCEED/FAIL
-TODO
+ TODO
     - not tested with start_block and info_count
-    - additional comments/header
  NOTES
     Aug 17, 2010: Tested some in hdf/test/tdatainfo.c -BMR
 ----------------------------------------------------------*/
 intn 
-VSgetdatainfo(int32 vsid,	/* IN: vdata key */
-	uintn start_block,	/* IN: indicating where to start */
-	uintn info_count,	/* IN: number of blocks to be retrieved */
-	int32 *offsetarray,	/* OUT: buffer for offset(s) */
-	int32 *lengtharray)	/* OUT: buffer for length(s) */
+VSgetdatainfo(int32 vsid, uintn start_block, uintn info_count,
+	int32 *offsetarray, int32 *lengtharray)
 {
     CONSTR(FUNC, "VSgetdatainfo");
     vsinstance_t *vs_inst = NULL;
@@ -316,19 +383,32 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
     intn	  count;
     intn          ret_value = SUCCEED;
 
-    /* check key is valid vdata */
+    /* Clear error stack */
+    HEclear();
+
+    /* Validate array size */
+    if (info_count == 0 && offsetarray != NULL && lengtharray != NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check key is valid vdata */
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get vdata instance */
+    /* Get vdata instance */
     if (NULL == (vs_inst = (vsinstance_t *) HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
-    /* get vdata itself and check it */
+    /* Get vdata info structure and check it */
     vs = vs_inst->vs;
     if (vs == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
+    /* Get access record of the vdata */
     access_rec = HAatom_object(vs->aid);
     if (access_rec == (accrec_t *) NULL)
 	HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -337,29 +417,40 @@ VSgetdatainfo(int32 vsid,	/* IN: vdata key */
     if (vs->nvertices <= 0)
 	HGOTO_DONE(0);
 
+    /* If the vdata is stored in linked-blocks, let the low-level function
+       handle it */
     if (access_rec->special == SPECIAL_LINKED)
     {
+	/* Application only wants the number of data blocks */
 	if (offsetarray == NULL && lengtharray == NULL)
 	{
 	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, NULL, start_block, info_count, NULL, NULL);
 	}
+	/* Application only wants the offset and length of the blocks too */
 	else
 	{
 	    count = HDgetdatainfo(vs->f, VSDATATAG, vs->oref, NULL, start_block, info_count, offsetarray, lengtharray);
 	}
 	if (count == FAIL)
-	    HGOTO_ERROR(DFE_ARGS, FAIL);
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
+
+    /* The vdata is stored in contiguous block */
     else
     {
-	if (offsetarray != NULL)
-	    if ((*offsetarray = Hoffset(vs->f, VSDATATAG, vs->oref)) == FAIL)
+	if (offsetarray != NULL && lengtharray != NULL)
+	{
+	    int32 off=0, len=0;
+	    if ((off = Hoffset(vs->f, VSDATATAG, vs->oref)) == FAIL)
 		HGOTO_ERROR(DFE_BADOFFSET, FAIL);
-	if (lengtharray != NULL)
-	    if ((*lengtharray = Hlength(vs->f, VSDATATAG, vs->oref)) == FAIL)
+	    if ((len = Hlength(vs->f, VSDATATAG, vs->oref)) == FAIL)
 		HGOTO_ERROR(DFE_BADLEN, FAIL);
+	    *offsetarray = off;
+	    *lengtharray = len;
+	}
 	count = 1;
     }
+    /* Return the number of data blocks */
     ret_value = count;
 
 done:
@@ -370,37 +461,74 @@ done:
   return ret_value;
 }   /* VSgetdatainfo */
 
-/*------------------------------------------------------ 
-NAME
-   Vgetattdatainfo - Gets the offset/length of the data
-		      of a vgroup's attribute
 
-DESCRIPTION
+/*----------------------------------------------------------------------------- 
+ NAME
+    Vgetattdatainfo - Gets the offset/length of the data of a vgroup's attribute
+ USAGE
+    intn Vgetattdatainfo(vgid, attrindex, *offset, *length)	
+	int32  vgid		IN: vgroup id
+	intn   attrindex	IN: attribute index
+	int32 *offset		OUT: buffer for offset
+	int32 *length		OUT: buffer for length
+ RETURNS
+    The number of data blocks retrieved, which should be 1, if successful
+    and FAIL, otherwise.
 
-RETURNS
-   SUCCEED/FAIL
-TODO
-    - additional tests for types other than char, maybe
-    - not throughly documented
+ DESCRIPTION
+    There are two types of attributes for vgroups.  One is the old-style
+    that was created using methods other than the standard attribute API
+    function Vsetattr, which was introduced after HDF Version 4.0 Release
+    2, July 19, 1996.  Without the use of Vsetattr, an application could
+    simulate an attribute for a vgroup by creating and writing a vdata
+    of class _HDF_ATTRIBUTE and adding that vdata to the vgroup via
+    these calls:
+
+    vdata_ref = VHstoredatam(file_id, ATTR_FIELD_NAME, values, size, type,
+		 attr_name, _HDF_ATTRIBUTE, order);
+    ret_value = Vaddtagref (vgroup_id, DFTAG_VH, vdata2_ref);
+
+    While both types of attributes are stored as vdatas, the vdatas of
+    the new-style attributes are saved in a list of attribute tags/refs
+    of the vgroup, and the vdatas of the old-style attributes are saved
+    as elements of the vgroup.  Because of the different storages, the
+    new attribute functions would miss the old-style attributes.
+
+    Two fields are added to the internal structure VGROUP for holding the
+    number of old-style attributes and their ref#s.  These fields are set
+    by Vnoldattrs when old-style attributes exist in the file.
+
+    When a vgroup has both type of attributes, the two list will be
+    combined with the old-style attributes preceeding the new ones.
+    The attribute indices will be adjusted accordingly.
+
+    This function uses the API function VSgetdatainfo to get the data
+    info of the attribute's data.
+    -BMR 2011/3/19
 ----------------------------------------------------------*/
 intn 
-Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
-	intn attrindex,		/* IN: attribute index */
-	int32 *offset,		/* OUT: buffer for offset */
-	int32 *length)		/* OUT: buffer for length */
+Vgetattdatainfo(int32 vgid, intn attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "Vgetattdatainfo");
     VGROUP *vg;
     vg_attr_t *vg_alist;
     vginstance_t *vg_inst;
-    int32 attr_vsid, nattrs;
-    intn attr_index, found;
+    int32 attr_vsid;
+    intn adjusted_index;
     intn status;
     intn ret_value = SUCCEED;
 
+    /* Clear error stack */
     HEclear();
+
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Validate Vgroup ID */
     if (HAatom_group(vgid) != VGIDGROUP)
        HGOTO_ERROR(DFE_ARGS, FAIL);
+
     /* Locate vg's index in vgtab */
     if (NULL == (vg_inst = (vginstance_t *)HAatom_object(vgid)))
        HGOTO_ERROR(DFE_VTAB, FAIL);
@@ -408,34 +536,31 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
         HGOTO_ERROR(DFE_NOVS, FAIL);
 
     /* Validate arguments */
-    nattrs = vg->nattrs;
-    if (attrindex <0 || attrindex >= nattrs)
-        /* not that many attrs or bad attr list */
-        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-     vg_alist = vg->alist;
-     if (nattrs == 0 || vg_alist == NULL)
-          /* no attrs or bad attr list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
 
-    /* Search for the attribute index given by caller */
-    found = 0;
-    for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs &&
+             adjusted_index < (vg->nattrs+vg->noldattrs))
+                 /* index of new-style attributes */
     {
-	if (attr_index == attrindex)
-	    found = 1;
-	if (!found) vg_alist++;
+        /* Adjust the index to accommodate for the old-style attributes
+           preceding the new-style attribute list */
+        adjusted_index = adjusted_index - vg->noldattrs;
+        vg_alist = vg->alist;        /* use new-attr list */
     }
-    /* If this happened, it would have been detected by the check for range
-       of attrindex above already, but check it anyway */
-    if (!found)
-        HGOTO_ERROR(DFE_ARGS, FAIL);
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    /* Attribute is found.  Get access to the vdata that stores the attribute's
-       data, retrieve the offset and length of the data, then close access. */
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
 
-    /* Get vdata */
-    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist->aref, "r")))
+    /* Get vdata holding the attribute */
+    if (FAIL == (attr_vsid = VSattach(vg->f, (int32)vg_alist[adjusted_index].aref, "r")))
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
     /* Get offset and length of attribute's data.  Note that start_block is 0
@@ -447,6 +572,9 @@ Vgetattdatainfo(int32 vgid,	/* IN: vdata key */
     /* Close vdata */
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+
+    /* Return the number of data blocks, which should be 1 */
+    ret_value = status;
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -457,12 +585,23 @@ done:
   return ret_value;
 }   /* Vgetattdatainfo */
 
-/*------------------------------------------------------ 
-NAME
-    VSgetattdatainfo - Gets the offset/length of the data
-		      of a vdata's attribute
 
-DESCRIPTION
+/*------------------------------------------------------ 
+ NAME
+    VSgetattdatainfo - Gets the offset/length of the data
+		      of a vdata's or vdata field's attribute
+ USAGE
+    intn VSgetattdatainfo(vsid, findex, attrindex, *offset, *length)	
+	int32  vsid		IN: vdata id
+	int32  findex		IN: vdata's field index or _HDF_VDATA
+	intn   attrindex	IN: attribute index
+	int32 *offset		OUT: buffer for offset
+	int32 *length		OUT: buffer for length
+ RETURNS
+    The number of data blocks retrieved, which should be 1, if successful
+    and FAIL, otherwise.
+
+ DESCRIPTION
     VSgetattdatainfo retrieves the offset and length of the data that belongs
     to an attribute.  If findex is _HDF_VDATA (or -1), then the attribute is
     associated with the vdata vsid.  If findex is an index of the vdata field,
@@ -473,29 +612,26 @@ DESCRIPTION
 
     VSgetattdatainfo uses VSgetdatainfo once it locates the vdata that stores
     the attribute.
-
-RETURNS
-   SUCCEED/FAIL
-TODO
-    - additional tests for types other than char, maybe
-    - not throughly documented
+    -BMR 2011/3/19
 ----------------------------------------------------------*/
 intn 
-VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
-	int32 findex, intn attrindex,
-	int32 *offset,	/* OUT: buffer for offset */
-	int32 *length)	/* OUT: buffer for length */
+VSgetattdatainfo(int32 vsid, int32 findex, intn attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "VSgetattdatainfo");
     VDATA *vs;
     vs_attr_t *vs_alist;
     vsinstance_t *vs_inst;
     int32 attr_vsid;
-    intn nattrs, attr_index, a_index, found;
+    intn nattrs, idx, a_index, found;
     intn status;
     intn ret_value = SUCCEED;
 
+    /* Clear error stack */
     HEclear();
+
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -508,17 +644,20 @@ VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
         HGOTO_ERROR(DFE_BADFIELDS, FAIL);
     nattrs = vs->nattrs;
 
+    /* No attrs */
+    if (nattrs == 0) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Index must be positive and less than the number of attributes */
     if (attrindex <0 || attrindex >= nattrs)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     vs_alist = vs->alist;
 
-    /* no attrs or bad attr list */
-    if (nattrs == 0 || vs_alist == NULL)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    /* Bad attr list */
+    if (vs_alist == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
 
     found = 0;
     a_index = -1;
-    for (attr_index=0; attr_index<nattrs && found==0; attr_index++)
+    for (idx=0; idx<nattrs && found==0; idx++)
     {
 	if (vs_alist->findex == findex)
 	{
@@ -550,6 +689,9 @@ VSgetattdatainfo(int32 vsid,	/* IN: vdata key */
     if (FAIL == VSdetach(attr_vsid))
         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
+    /* Return the number of data blocks, which should be 1 */
+    ret_value = status;
+
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
@@ -562,68 +704,85 @@ done:
 
 
 /*------------------------------------------------------------ 
-NAME
-   GRgetattdatainfo - Gets the offset/length of the data of a
+ NAME
+    GRgetattdatainfo - Gets the offset/length of the data of a
 			GR file's or an image's attribute
+ USAGE
+    intn GRgetattdatainfo(id, attrindex, offset, length)
+        int32 id		IN: either GR ID or RI ID
+        int32 attrindex		IN: index of the attribute being inquired
+        int32 *offset		OUT: buffer for offset
+        int32 *length		OUT: buffer for length
+ RETURNS
+    The number of data blocks retrieved, which should be 1, if successful
+    and FAIL, otherwise.
 
-DESCRIPTION
+ DESCRIPTION
+    GRgetattdatainfo retrieves the location and size of the attribute's data
+    and its length.
 
-RETURNS
-   SUCCEED/FAIL
-TODO
-    - not tested
-    - not documented
+ MODIFICATION
+    Apr 03, 2011: Revised to remove the parameter attrname because, for hmap
+        project, it makes sense to just provide the attribute index. -BMR
+
 --------------------------------------------------------------*/
 intn 
-GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
-	intn attrindex,		/* IN: attribute index */
-	char *attrname,		/* IN: attribute name if index = -1 */
-	int32 *offset,		/* OUT: buffer for attribute's data's offset */
-	int32 *length)		/* OUT: buffer for attribute's data's length */
+GRgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
     CONSTR(FUNC, "GRgetattdatainfo");
-    gr_info_t *gr_ptr;          /* ptr to the GR information for this grid */
-    ri_info_t *ri_ptr;          /* ptr to the image to work with */
     int32      hdf_file_id;	/* file id */
     int32      attr_vsid;	/* id of vdata that stores the attribute */
+    group_t id_group=BADGROUP;	/* temporary group of id */
+    gr_info_t *gr_ptr;          /* ptr to the GR information for gr id */
+    ri_info_t *ri_ptr;          /* ptr to the image information for ri id */
+    at_info_t *at_ptr=NULL;	/* ptr to the attribute information */
     void     **aentry;		/* temp. ptr to the image found */
-    int        found = FALSE;	/* TRUE when the searched attribute is found */
     TBBT_TREE *search_tree;	/* attribute tree to search through */
-    at_info_t *at_ptr=NULL;	/* ptr to the attribute to work with */
-    group_t id_group=BADGROUP;
-    intn       status; 
+    int        found = FALSE;	/* TRUE when the searched attribute is found */
+    intn       status = 0; 
     intn       ret_value = SUCCEED;
 
-    /* clear error stack and check validity of args */
+    /* Clear error stack */
     HEclear();
 
-    /* Use index to search but if index is -1 then attr name must be non-NULL */
-    if (attrindex < 0 && attrname == NULL)
+    /* Validate index */
+    if (attrindex < 0)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* check the validity of the ID, the index is checked below */
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Validate ID */
     id_group = HAatom_group(id);
     if (id_group != RIIDGROUP && id_group != GRIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     
+    /* Get attribute info and validate index */
+
+    /* When file ID is given, check index against file's attribute count */
     if (id_group == GRIDGROUP)
       {
           /* locate GR's object in hash table */
           if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(id)))
               HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
 
+	  /* Check index against file's attribute count */
           if(attrindex >= gr_ptr->gattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL);
 
           search_tree = gr_ptr->gattree;
 	  hdf_file_id = gr_ptr->hdf_file_id;
       } /* end if */
+
+    /* When raster image ID is given, check index against image's attr count */
     else if (id_group == RIIDGROUP)
       {
           /* locate RI's object in hash table */
           if (NULL == (ri_ptr = (ri_info_t *) HAatom_object(id)))
               HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
 
+	  /* Check index against image's attribute count */
           if(attrindex >= ri_ptr->lattr_count)
               HGOTO_ERROR(DFE_ARGS, FAIL); 
           search_tree = ri_ptr->lattree;
@@ -643,15 +802,8 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
 	    HGOTO_ERROR(DFE_ARGS, FAIL); 
 	}
 
-	/* Search by attribute index */
-	if (attrindex >= 0)
-	{
-	    /* If index is found, set flag */
-	    if (at_ptr->index == attrindex)
-		found = TRUE;
-	}
-	/* Search by attribute name */
-	else if (HDstrcmp(attrname, at_ptr->name) == 0)
+	/* If index is found, set flag */
+	if (at_ptr->index == attrindex)
 	    found = TRUE;
 
 	/* Not found, go to the next entry */
@@ -659,6 +811,7 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
 	    aentry = (void **)tbbtnext((TBBT_NODE *)aentry);
     } /* end while */
 
+    /* If the attribute is found, get offset/length of its data */
     if (found)
     {
 	/* Get access to the vdata that stores the attribute */
@@ -676,6 +829,7 @@ GRgetattdatainfo(int32 id,	/* IN: either GR ID or RI ID */
 	if (FAIL == VSdetach(attr_vsid))
 	    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
     }
+    ret_value = status; /* should be 1 */
 
 done:
   if(ret_value == 0)   
@@ -688,22 +842,28 @@ done:
 
 /*--------------------------------------------------------------- 
 NAME
-   GRgetdatainfo - Gets the offsets/lengths of the data of an image
+    GRgetdatainfo - Gets the offsets/lengths of the data of an image
+USAGE
+    intn GRgetdatainfo(riid, start_block, info_count, offsetarray, lengtharray)
+        int32 riid		IN: raster image ID
+	uintn start_block	IN: start retrieving data at
+	uintn info_count	IN: number of data blocks to retrieve
+	int32 *offsetarray	OUT: buffer for offset(s)
+	int32 *lengtharray	OUT: buffer for length(s)
+RETURNS
+    The number of data blocks retrieved, if successful and FAIL, otherwise.
 
 DESCRIPTION
+    This function uses the low-level function HDgetdatainfo to 
+    get the data info of an image.
 
-RETURNS
-   SUCCEED/FAIL
 TODO
     - not tested with linked-block element yet
-    - not documented
+    - need more documentation
 ----------------------------------------------------------------*/
 intn 
-GRgetdatainfo(int32 riid,	/* IN: raster image ID */
-	uintn start_block,	/* IN: start retrieving data at */
-	uintn info_count,	/* IN: number of data blocks to retrieve */
-	int32 *offsetarray,	/* OUT: buffer for offset(s) */
-	int32 *lengtharray)	/* OUT: buffer for length(s) */
+GRgetdatainfo(int32 riid, uintn start_block, uintn info_count,
+	int32 *offsetarray, int32 *lengtharray)
 {
     CONSTR(FUNC, "GRgetdatainfo");
     ri_info_t *ri_ptr;          /* ptr to the image to work with */
@@ -712,14 +872,23 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
     uintn count;
     intn   ret_value = SUCCEED;
 
-    /* clear error stack and check validity of args */
+    /* Clear error stack */
     HEclear();
 
-    /* check the validity of the ID */
+    /* Validate array size */
+    if (info_count == 0 && (offsetarray != NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Getting only offsets or lengths is not allowed */
+    if ((offsetarray != NULL && lengtharray == NULL) ||
+        (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check the validity of the ID */
     if (HAatom_group(riid) != RIIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* locate RI's object in hash table */
+    /* Locate RI's object in hash table */
     ri_ptr = (ri_info_t *) HAatom_object(riid);
     if (NULL == ri_ptr)
 	HGOTO_ERROR(DFE_RINOTFOUND, FAIL);
@@ -740,24 +909,18 @@ GRgetdatainfo(int32 riid,	/* IN: raster image ID */
     else
     {
 	length = Hlength(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
-	if (length <= 0)
+	if (length == FAIL)
 	    HGOTO_DONE(0);
 
-        /* if both arrays are NULL, get the number of data blocks and return */
-        if ((offsetarray == NULL && lengtharray == NULL) && (info_count == 0))
+        /* If both arrays are NULL, get the number of data blocks and return */
+        if ((offsetarray == NULL && lengtharray == NULL))
         {
             count = HDgetdatainfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, NULL, start_block, 0, NULL, NULL);
             if (count == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
         }
 
-        /* just in case user forgets to allocate space for arrays */
-        else if ((offsetarray == NULL && lengtharray == NULL) && (info_count > 0))
-        {
-            HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
-        }
-
-        /* application requests actual offsets/lengths */
+        /* Application requests offsets/lengths */
         else
         {
             count = HDgetdatainfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref, NULL, start_block, info_count, offsetarray, lengtharray);
@@ -778,19 +941,22 @@ done:
 
 
 /*--------------------------------------------------------------------------
- NAME
+NAME
     ANgetdatainfo -- Gets the offset(s) and length(s) locating the data of
 		      the annotation.
- USAGE
+USAGE
     int32 ANgetdatainfo(ann_id, *offset, *length)	
-	int32  ann_id;	IN: annotation ID
-	int32 *offset;	OUT: buffer for offset
-	int32 *length;	OUT: buffer for length
- RETURNS
+	int32  ann_id	IN: annotation ID
+	int32 *offset	OUT: buffer for offset
+	int32 *length	OUT: buffer for length
+RETURNS
     SUCCEED/FAIL
- DESCRIPTION
+
+DESCRIPTION
+    Annotations have contiguous data, so ANgetdatainfo only needs to use
+    Hoffset/Hlength to get the data info of an annotation.
     
- NOTES
+NOTES
     Aug 25, 2010: Tested in tdatainfo.c/test_annotation -BMR
 --------------------------------------------------------------------------*/
 intn
@@ -811,6 +977,10 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
 
     /* Clear error stack */
     HEclear();
+
+    /* Both buffers must be allocated */
+    if (offset == NULL || length == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get annotation record */
     ann_node = HAatom_object(ann_id);
@@ -864,22 +1034,15 @@ ANgetdatainfo(int32 ann_id,    /* IN: annotation id */
     if (newflag == 0)
     {
 	int32 off=0, len=0;
-
-	off = Hoffset(file_id, ann_tag, ann_ref);
-	if (off == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL)
-	else
+	if (offset != NULL && length != NULL)
 	{
-	    if (offset != NULL)
+	    off = Hoffset(file_id, ann_tag, ann_ref);
+	    if (off == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    len = Hlength(file_id, ann_tag, ann_ref);
+	    if (len == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	    *offset = off;
-	}
-
-	len = Hlength(file_id, ann_tag, ann_ref);
-	if (len == FAIL)
-            HGOTO_ERROR(DFE_INTERNAL, FAIL)
-	else
-	{
-	    if (length != NULL)
 	    *length = len;
 	}
 

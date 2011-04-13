@@ -130,14 +130,6 @@ typedef enum
 #define FULL_INTERLACE  0
 #define NO_INTERLACE    1
 
-/* Location and size of an element's data */
-typedef struct
-  {
-	int32* offsets; /* list of offsets */
-	int32* lengths; /* list of lengths */
-  }
-hdf_datainfo_t;
-
 /* Some information about a number type - character strings to be displayed */
 typedef struct hdf_ntinfo_t
   {
@@ -160,6 +152,7 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
+#include "hdatainfo.h"  /* Add the data info header */
 #include "vg.h"         /* Add the Vgroup/Vdata header so the users don't have to */
 #include "mfgr.h"       /* Add the GR header so the users don't have to */
 

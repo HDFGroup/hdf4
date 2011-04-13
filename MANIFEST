@@ -358,6 +358,7 @@
 ./hdf/test/tdatainfo.c
 ./hdf/test/tdatainfo.h
 ./hdf/test/tattdatainfo.c
+./hdf/test/tdfr8.c
 ./hdf/test/tdupimgs.c
 ./hdf/test/testhdf.c
 ./hdf/test/test_files/tmgr.dat

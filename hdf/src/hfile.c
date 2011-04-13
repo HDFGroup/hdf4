@@ -121,7 +121,6 @@ static char RcsId[] = "@(#)$Revision$";
 #undef HMASTER
 #define HFILE_MASTER
 #include "hfile.h"
-#include "hkit.h"	/* for Hntypeinfo */
 #include <errno.h>
 #include "glist.h" /* for double-linked lists, stacks and queues */
 
@@ -4015,15 +4014,10 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 	      intn  *emptySDS /* TRUE if data element is empty */)
 {
     CONSTR(FUNC, "HDcheck_empty");	/* for HERROR */
-    int32	aid;			/* access id */
     int32       length;			/* length of the element's data */
     atom_t      data_id = FAIL;	/* dd ID of existing regular element */
-    int32       data_len;	/* length of the data we are checking */
-    uint16      special_tag;	/* special version of tag */
     filerec_t  *file_rec;	/* file record pointer */
-    int32	drec_aid;	/* description record access id */
     uint8      *local_ptbuf=NULL, *p;
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
     int16	sptag = -1;	/* special tag read from desc record */
     int32       ret_value = SUCCEED;
 
@@ -4077,7 +4071,6 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 		int16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
 		int32 vdata_id = -1;	/* chunk table id */
 		int32 n_records = 0;	/* number of records in chunk table */
-		intn status = 0;
 
 		/* skip 4byte header len, 1byte chunking version, 4byte flag, */
 		/* 4byte elm_tot_length, 4byte chunk_size and 4byte nt_size */
@@ -4156,8 +4149,6 @@ DESCRIPTION
 intn
 Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
 {
-    CONSTR(FUNC, "Hgetntinfo");	/* for HERROR */
-
     /* Clear error stack */
     HEclear();
 
