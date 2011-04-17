@@ -375,6 +375,7 @@
 ./hdf/test/tsdstrf.f
 ./hdf/test/tstubsf.f
 ./hdf/test/tszip.c
+./hdf/test/tusejpegfuncs.c
 ./hdf/test/tutils.c
 ./hdf/test/tutils.h
 ./hdf/test/tv1.res
