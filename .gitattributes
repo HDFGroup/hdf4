@@ -119,6 +119,7 @@ hdf/test/test_files/tmgr.dat -text
 hdf/test/test_files/tvattr.dat -text
 hdf/test/tmgrattr.c -text
 hdf/test/tmgrcomp.c -text
+hdf/test/tusejpegfuncs.c -text
 hdf/test/tutils.c -text
 hdf/util/CMakeLists.txt -text
 hdf/util/hdfcomp.out1.1 -text

@@ -25,7 +25,9 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define JPEGX   46
 #define JPEGY   23
+#define NCOMPS  3
 #define JPEGFILE "tjpeg.hdf"
+#define NONHDF_JPEGFILE "tnonhdf_jpeg.hdf"
 
 static const uint8  jpeg_8bit_orig[JPEGY][JPEGX] =
 {
@@ -871,6 +873,7 @@ test_r24(void)
     int         i, j, ret;
     uint16      ref0, ref1, ref2;
     uint8      *jpeg_24bit_temp;
+    uint8      jpeglib_readbuf[JPEGY][JPEGX][NCOMPS];
 
     jpeg_24bit_temp = (uint8 *) HDmalloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp)
@@ -1282,12 +1285,28 @@ test_r24(void)
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 
+    /* Compress the same data using the JPEG library directly, with quality 80 */
+    comp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, 80, jpeg_24bit_orig);
+
+    /* Read back the data using JPEG library directly */
+    decomp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
+
+    /* Compare data read back by HDF against that by JPEG lib */
+    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS))
+    {
+	fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
+	print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS);
+	num_errs++;
+    }
+
+#if 0 /* will remove after finish revising JPEG tests */
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j80, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
           fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
           fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
           num_errs++;
       }
+#endif
 
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
@@ -1302,12 +1321,28 @@ test_r24(void)
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 
+    /* Compress the same data using the JPEG library directly, with quality 30 */
+    comp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, 30, jpeg_24bit_orig);
+
+    /* Read back the data using JPEG library directly */
+    decomp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
+
+    /* Compare data read back by HDF against that by JPEG lib */
+    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS))
+    {
+	fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
+	print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS);
+	num_errs++;
+    }
+
+#if 0
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j30, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
           fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
           fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
           num_errs++;
       }
+#endif
 
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
@@ -1322,12 +1357,28 @@ test_r24(void)
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 
+    /* Compress the same data using the JPEG library directly, with quality 75 */
+    comp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, 75, jpeg_24bit_orig);
+
+    /* Read back the data using JPEG library directly */
+    decomp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
+
+    /* Compare data read back by HDF against that by JPEG lib */
+    if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS))
+    {
+	fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
+	print_mismatched(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS);
+	num_errs++;
+    }
+
+#if 0
     if ((ret = fuzzy_memcmp(jpeg_24bit_temp, jpeg_24bit_j75, sizeof(jpeg_24bit_orig), JPEG_FUZZ)) != 0)
       {
           fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
           fprintf(stderr, "ret=%d, sizeof(jpeg_24bit_orig)=%u\n", (int) ret, (unsigned) sizeof(jpeg_24bit_orig));
           num_errs++;
       }
+#endif
 
     HDfree(jpeg_24bit_temp);
 }

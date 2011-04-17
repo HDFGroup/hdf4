@@ -33,3 +33,18 @@ intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
       }
 }   /* end fuzzy_memcmp() */
 
+void print_mismatched(const void *s1, const void *s2, int32 size2cmp)
+{
+    int ii, jj, nn=0, kk;
+    const uint8 *t1 = (const uint8 *) s1;
+    const uint8 *t2 = (const uint8 *) s2;
+
+    for (ii = 0; ii < size2cmp; ii++)
+      {
+        if (ABS(*t1 - *t2) > 0)
+            fprintf(stderr, "item#%d: HDF(%d) - JPEG(%d)\n", ii, *t1, *t2);
+          t1++;
+          t2++;
+      }
+}
+
