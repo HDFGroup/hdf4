@@ -1037,7 +1037,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
     if (fd == NULL)
     {
 	fprintf(stderr, "readnoHDF_char: unable to open file %s", filename);
-        ret_value = FAIL;
+        exit(1);
     }
 
     /* Forward to the position of the first block of data */
@@ -1045,16 +1045,12 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
     {
         fprintf(stderr, "readnoHDF_char: unable to seek offset %d\n",
                 (int)offset);
-        ret_value = FAIL;
+        exit(1);
     }
 
     /* Allocate buffers for SDS' data */
     readcbuf = (char *) HDmalloc(length * sizeof(char));
-    if (readcbuf == NULL)
-    {
-	fprintf(stderr, "readnoHDF_char: allocation readcbuf failed\n");
-        ret_value = FAIL;
-    }
+    CHECK_ALLOC(readcbuf, "readcbuf", "readnoHDF_char" );
 
     /* Read in this block of data */
     readlen = fread((void*)readcbuf, 1, length, fd);
@@ -1070,7 +1066,7 @@ intn readnoHDF_char(const char *filename, const int32 offset, const int32 length
     if (fclose(fd) == -1)
     {
 	fprintf(stderr, "readnoHDF_char: unable to close file %s", filename);
-        ret_value = FAIL;
+        exit(1);
     }
     return ret_value;
 }

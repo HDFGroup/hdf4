@@ -42,3 +42,12 @@
 #define VERIFY_CHAR(item, value, test_name) {if(HDstrcmp(item, value) != 0) { \
     fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> at line %4d in %s\n", test_name, item,(int)__LINE__,__FILE__); num_errs++;}}
 
+/* Used to validate that 'buffer' has been successfully allocated */
+#define CHECK_ALLOC(buffer, buf_name, func_name ) { \
+    if (buffer == NULL) {\
+        fprintf(stderr,"in %s: space allocation for %s failed.  Terminated!\n",\
+                func_name, buf_name ); \
+        exit(1); }  \
+}
+
+
