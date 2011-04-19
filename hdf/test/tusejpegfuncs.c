@@ -137,11 +137,15 @@ intn decomp_using_jpeglib(char * filename, int im_height, int im_width,
     int row_stride; /* physical row width in output buffer */
     int mm, nn;
     uint8 *local_buf = NULL;
-    local_buf = malloc(im_height * im_width * im_ncomps * sizeof(uint8));
 
     /* Open the output file to write binary data */
     if ((infile = fopen(filename, "rb")) == NULL) {
         fprintf(stderr, "can't open %s\n", filename);
+        return 0;
+    }
+    
+    if((local_buf = malloc(im_height * im_width * im_ncomps * sizeof(uint8)))==NULL) {
+        fprintf(stderr, "can't allocate local buffer\n");
         return 0;
     }
 
