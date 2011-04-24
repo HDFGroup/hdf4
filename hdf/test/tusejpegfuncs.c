@@ -9,29 +9,30 @@
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
 /************************************************************************
- Name: comp_using_jpeglib() - compresses a buffer using JPEG functions
+   Name: comp_using_jpeglib() - compresses a buffer using JPEG functions
 
- Description:
- This routine uses functions from the JPEG library directly to
- compress the provided image buffer and writes the compressed image
- to the specified file.
- Return value:
- The number of errors occurred in this routine.
- Apr 11, 2011 -BMR
- *************************************************************************/
-intn comp_using_jpeglib(char * filename, /* file to write compressed data in */
-int im_height, /* image's height */
-int im_width, /* image's width */
-int im_ncomps, /* image's number of components */
-int quality, /* JPEG quality value */
-uint8 *written_buffer) /* data to be compressed */
+   Description:
+        This routine uses functions from the JPEG library directly to
+	compress the provided image buffer and writes the compressed image
+	to the specified file.
+   Return value:
+        The number of errors occurred in this routine.
+   Apr 11, 2011 -BMR
+*************************************************************************/
+intn comp_using_jpeglib(
+	char * filename,	/* file to write compressed data in */
+	int im_height,		/* image's height */
+	int im_width,		/* image's width */
+	int im_ncomps,		/* image's number of components */
+	int quality,		/* JPEG quality value */
+	uint8 *written_buffer)	/* data to be compressed */
 {
-    FILE * outfile; /* target file */
-    JSAMPROW row_pointer[1]; /* pointer to JSAMPLE row[s] */
-    int row_stride; /* physical row width in image buffer */
+    FILE * outfile;		/* target file */
+    JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
+    int row_stride;		/* physical row width in image buffer */
 
     /* JPEG object for JPEG compression parameters and pointers to working space
-     (which is allocated as needed by the JPEG library). */
+       (which is allocated as needed by the JPEG library). */ 
     struct jpeg_compress_struct cinfo;
 
     /* This struct represents a JPEG error handler.  It is declared separately
@@ -43,40 +44,40 @@ uint8 *written_buffer) /* data to be compressed */
      * struct, to avoid dangling-pointer problems.
      */
     struct jpeg_error_mgr jerr;
-
+  
     /* Initialize JPEG compression object */
-
+  
     /* We have to set up the error handler first, in case the initialization
      * step fails.  (Unlikely, but it could happen if you are out of memory.)
      * This routine fills in the contents of struct jerr, and returns jerr's
      * address which we place into the link field in cinfo.
      */
     cinfo.err = jpeg_std_error(&jerr);
-
+  
     /* Initialize the JPEG compression object. */
     jpeg_create_compress(&cinfo);
-
+  
     /* Open the output file to write binary data */
     if ((outfile = fopen(filename, "wb")) == NULL) {
-        fprintf(stderr, "can't open %s\n", filename);
-        exit(1);
+      fprintf(stderr, "can't open %s\n", filename);
+      exit(1);
     }
-    /* Specify output file */
+      /* Specify output file */
     jpeg_stdio_dest(&cinfo, outfile);
-
+  
     /* Set parameters for compression */
-
+  
     /* Supply a description of the input image.
      * Four fields of the cinfo struct must be filled in:
      */
-    cinfo.image_width = im_width; /* image width and height, in pixels */
+    cinfo.image_width = im_width; 	/* image width and height, in pixels */
     cinfo.image_height = im_height;
     cinfo.input_components = im_ncomps;/* # of color components per pixel */
-    cinfo.in_color_space = JCS_RGB; /* colorspace of input image */
-
+    cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+  
     /* Set default compression parameters.  At least cinfo.in_color_space must
-     be set before calling jpeg_set_defaults, since the defaults depend on the
-     source color space */
+       be set before calling jpeg_set_defaults, since the defaults depend on the
+       source color space */
     jpeg_set_defaults(&cinfo);
 
     /* Set quality (quantization table) scaling */
@@ -91,13 +92,14 @@ uint8 *written_buffer) /* data to be compressed */
     row_stride = im_width * im_ncomps;/* JSAMPLEs per row in written_buffer */
 
     /* While there are more scan line in the buffer */
-    while (cinfo.next_scanline < cinfo.image_height) {
-        /* jpeg_write_scanlines expects an array of pointers to scanlines.
-         * Here the array is only one element long, but you could pass
-         * more than one scanline at a time if that's more convenient.
-         */
-        row_pointer[0] = &written_buffer[cinfo.next_scanline * row_stride];
-        (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    while (cinfo.next_scanline < cinfo.image_height)
+    {
+    /* jpeg_write_scanlines expects an array of pointers to scanlines.
+     * Here the array is only one element long, but you could pass
+     * more than one scanline at a time if that's more convenient.
+     */
+	row_pointer[0] = &written_buffer[cinfo.next_scanline * row_stride];
+	(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
     /* Finish compression */
@@ -114,37 +116,44 @@ uint8 *written_buffer) /* data to be compressed */
 } /* comp_using_jpeglib */
 
 /***************************************************************************
- Name: decomp_using_jpeglib() - decompresses a buffer using JPEG functions
+   Name: decomp_using_jpeglib() - decompresses a buffer using JPEG functions
 
- Description:
- This routine uses functions from the JPEG library directly to
- decompress the data read from the specified file and store the
- uncompressed data in the provided buffer.
- Return value:
- The number of errors occurred in this routine.
- Apr 11, 2011 -BMR
- ****************************************************************************/
-intn decomp_using_jpeglib(char * filename, int im_height, int im_width,
-        int im_ncomps, uint8 *read_buffer)
+   Description:
+        This routine uses functions from the JPEG library directly to
+	decompress the data read from the specified file and store the
+	uncompressed data in the provided buffer.
+   Return value:
+        The number of errors occurred in this routine.
+   Apr 11, 2011 -BMR
+****************************************************************************/
+intn decomp_using_jpeglib(
+	char * filename,
+	int im_height,
+	int im_width,
+	int im_ncomps,
+	uint8 *read_buffer)
 {
     /* This struct contains the JPEG decompression parameters and pointers to
      * working space (which is allocated as needed by the JPEG library).
      */
     struct jpeg_decompress_struct cinfo; /* JPEG compression info */
     struct jpeg_error_mgr jerr_pub; /* JPEG error handler */
-    FILE * infile; /* source file */
-    JSAMPARRAY buffer; /* Output row buffer */
-    int row_stride; /* physical row width in output buffer */
-    int mm, nn;
-    uint8 *local_buf = NULL;
+    FILE * infile;	/* source file */
+    JSAMPARRAY buffer;	/* Output row buffer */
+    int row_stride;	/* physical row width in output buffer */
+    uint8 *local_buf = NULL, *ptr = NULL;
 
     /* Open the output file to write binary data */
     if ((infile = fopen(filename, "rb")) == NULL) {
-        fprintf(stderr, "can't open %s\n", filename);
-        return 0;
+      fprintf(stderr, "can't open %s\n", filename);
+      return 0;
     }
-    
-    if((local_buf = malloc(im_height * im_width * im_ncomps * sizeof(uint8)))==NULL) {
+
+    /* Allocate local buffer to hold read values until all reading is done
+       before copying into caller's buffer */
+    local_buf = HDmalloc(im_height * im_width * im_ncomps * sizeof(uint8));
+    if (local_buf == NULL)
+    {
         fprintf(stderr, "can't allocate local buffer\n");
         return 0;
     }
@@ -175,23 +184,25 @@ intn decomp_using_jpeglib(char * filename, int im_height, int im_width,
     row_stride = cinfo.output_width * cinfo.output_components;
 
     /* Make a one-row-high array to read a row of values,  JSAMPLEs per row */
-    buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+    buffer = (*cinfo.mem->alloc_sarray)
+		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
-    nn = 0; /* index to each row */
+    ptr = local_buf; /* index into the buffer */
 
     /* Read each scanline until all are read */
-    while (cinfo.output_scanline < cinfo.output_height) {
-        /* jpeg_read_scanlines expects an array of pointers to scanlines. */
-        (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+    while (cinfo.output_scanline < cinfo.output_height)
+    {
+	/* jpeg_read_scanlines expects an array of pointers to scanlines. */
+	(void) jpeg_read_scanlines(&cinfo, buffer, 1);
 
-        /* Saved read line to a local buffer */
-        memcpy(&local_buf[nn], buffer[0], row_stride);
-        nn++;
+	/* Saved read line to the local buffer */
+	memcpy(ptr, buffer[0], row_stride); 
+	ptr = ptr + row_stride;
     }
 
     /* Copying values from local buffer to caller's buffer after success */
-    memcpy(read_buffer, local_buf, im_height * im_width * im_ncomps);
-    free(local_buf);
+    memcpy(read_buffer, local_buf, im_height*im_width*im_ncomps);
+    HDfree(local_buf);
 
     /* Finish decompression */
     (void) jpeg_finish_decompress(&cinfo);
