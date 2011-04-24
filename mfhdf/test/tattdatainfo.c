@@ -965,8 +965,9 @@ static intn test_dfsdattrs()
     CHECK(dimid, FAIL, "SDgetdimid");
     info_count = SDgetoldattdatainfo(dimid, sdsid, _HDF_LongName, &offset, &length);
     CHECK(info_count, FAIL, "SDgetoldattdatainfo");
-    status = readnoHDF_char(OLDATTFILE, offset, length, dimlabels[0]);
-    CHECK(status, FAIL, "readnoHDF_char");
+    /* This dimension doesn't have an _HDF_LongName attribute, so length must be 0,
+	and readnoHDF_char will not be needed to verify the attribute values */
+    VERIFY(length, 0, "SDgetoldattdatainfo");
 
     /* Test with attribute string _HDF_Format of dataset's second dimension */
     dimid = SDgetdimid(sdsid, 1);
