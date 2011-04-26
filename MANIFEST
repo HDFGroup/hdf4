@@ -47,7 +47,7 @@
 ./bin/reconfigure
 ./bin/runtest
 ./bin/snapshot
-./bin/timekeeper			_DO_NOT_DISTRIBUTE_
+./bin/timekeeper      _DO_NOT_DISTRIBUTE_
 ./bin/yodconfigure
 ./bin/h4vers
 ./bin/release
@@ -1165,6 +1165,8 @@
 ./config/cmake/HDF4UseFortran.cmake
 ./config/cmake/hdf4-config.cmake.build.in
 ./config/cmake/hdf4-config-version.cmake.in
+./config/cmake/CPack.cmake
+./config/cmake/NSIS.template.in
 
 ./release_notes/HISTORY.txt
 ./release_notes/RELEASE.txt
