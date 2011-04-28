@@ -6586,7 +6586,11 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
 		if (comp_type == COMP_CODE_RLE || comp_type == COMP_CODE_NONE)
 		{
 		    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
-		    if (special_type == 0) should_map = TRUE;
+		    /* In some cases, special_type = 0 for old image with RLE,
+			although the image has newer image tag.  Added the check
+			for 0 here, but this should be investigated more. -BMR*/
+		    if (special_type == SPECIAL_COMP || special_type == 0)
+			should_map = TRUE;
 		}
 	    }
 	}
