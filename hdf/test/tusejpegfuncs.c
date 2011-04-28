@@ -20,7 +20,9 @@
    Apr 11, 2011 -BMR
 *************************************************************************/
 intn comp_using_jpeglib(
-	char * filename,	/* file to write compressed data in */
+	char *filename,		/* file to write compressed data in */
+	long *file_offset,	/* end offset of previous data and indicating where
+				   to start writing data in this round */
 	int im_height,		/* image's height */
 	int im_width,		/* image's width */
 	int im_ncomps,		/* image's number of components */
@@ -58,11 +60,20 @@ intn comp_using_jpeglib(
     jpeg_create_compress(&cinfo);
   
     /* Open the output file to write binary data */
-    if ((outfile = fopen(filename, "wb")) == NULL) {
+    if ((outfile = fopen(filename, "ab")) == NULL)
+    {
       fprintf(stderr, "can't open %s\n", filename);
       exit(1);
     }
-      /* Specify output file */
+
+    /* Forward to the position to write data */
+    if (fseek(outfile, (off_t)*file_offset, SEEK_SET) == -1)
+    {
+        fprintf(stderr, "can't seek offset %d\n", (int)*file_offset);
+        exit(1);
+    }
+
+    /* Specify output file */
     jpeg_stdio_dest(&cinfo, outfile);
   
     /* Set parameters for compression */
@@ -105,6 +116,9 @@ intn comp_using_jpeglib(
     /* Finish compression */
     jpeg_finish_compress(&cinfo);
 
+    /* Get the current file offset to return */
+    *file_offset = ftell(outfile);
+
     /* Close the file */
     fclose(outfile);
 
@@ -127,11 +141,12 @@ intn comp_using_jpeglib(
    Apr 11, 2011 -BMR
 ****************************************************************************/
 intn decomp_using_jpeglib(
-	char * filename,
-	int im_height,
-	int im_width,
-	int im_ncomps,
-	uint8 *read_buffer)
+	char *filename,		/* file to read compressed data from */
+	long file_offset,	/* offset in the file to start reading */
+	int im_height,		/* image's height */
+	int im_width,		/* image's width */
+	int im_ncomps,		/* image's number of components */
+	uint8 *read_buffer)	/* buffer to store decompressed data */
 {
     /* This struct contains the JPEG decompression parameters and pointers to
      * working space (which is allocated as needed by the JPEG library).
@@ -144,19 +159,23 @@ intn decomp_using_jpeglib(
     uint8 *local_buf = NULL, *ptr = NULL;
 
     /* Open the output file to write binary data */
-    if ((infile = fopen(filename, "rb")) == NULL) {
-      fprintf(stderr, "can't open %s\n", filename);
-      return 0;
+    if ((infile = fopen(filename, "rb")) == NULL)
+    {
+	fprintf(stderr, "can't open %s\n", filename);
+	exit(1);
+    }
+
+    /* Forward to the specified position to write data */
+    if (fseek(infile, (off_t)file_offset, SEEK_SET) == -1)
+    {
+        fprintf(stderr, "can't seek offset %d\n", (int)file_offset);
+        exit(1);
     }
 
     /* Allocate local buffer to hold read values until all reading is done
        before copying into caller's buffer */
     local_buf = HDmalloc(im_height * im_width * im_ncomps * sizeof(uint8));
-    if (local_buf == NULL)
-    {
-        fprintf(stderr, "can't allocate local buffer\n");
-        return 0;
-    }
+    CHECK_ALLOC(local_buf, "local_buf", "decomp_using_jpeglib" );
 
     /* Set up the JPEG error routines */
     cinfo.err = jpeg_std_error(&jerr_pub);

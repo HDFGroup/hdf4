@@ -17,11 +17,15 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* $Id$ */
 
+#ifndef DATAINFO_TESTER
+#define DATAINFO_TESTER		/* for GRgetdatainfo */
+#endif
+
 #include "tproto.h"
 
 #define XSIZE 13
 #define YSIZE 15
-#define TESTFILE "tdf24.hdf"
+#define TESTFILE "tdf24_hdf"
 
 #define JPEGX   46
 #define JPEGY   23
@@ -851,9 +855,17 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
 };
 
 void test_grgetcomptype(); /* in "tdfr8.c" */
-static VOID
-check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
+static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
              uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal);
+
+/* These two functions are in tusejpegfuncs.c.  They use JPEG functions directly
+   to compress and decompress the same data as in test_r24_jpeg, to verify that
+   the DFR24 API work correctly regardless which JPEG library is used */
+intn comp_using_jpeglib(char *filename, long *file_offset, int im_height,
+        int im_width, int im_ncomps, int quality, uint8 *written_buffer);
+intn decomp_using_jpeglib(char *filename, long file_offset, int im_height,
+        int im_width, int im_ncomps, uint8 *read_buffer);
+void test_r24_jpeg(void);
 
 /* ------------------------------- test_r24 ------------------------------- */
 
@@ -1228,6 +1240,80 @@ test_r24(void)
           num_errs++;
       }
 
+    HDfree(jpeg_24bit_temp);
+
+    /* Test 24-bit images with JPEG compression */
+    test_r24_jpeg();
+}
+
+/**********************************************************************
+ Utility function: read_binary_block
+ Description:
+	read_binary_block opens the given file in binary mode, seeks
+	to the specified offset, then reads into the provided buffer
+	nitems of values.
+***********************************************************************/
+size_t
+read_binary_block(
+	const char *filename,	/* file to be read */
+	int32 offset,		/* position to start reading from */
+	size_t nitems,		/* number of bytes to read */
+	uint8 *buffer)		/* buffer to store the binary data in */
+{
+    FILE *fd;
+    size_t readlen=0;   /* number of bytes actually read */
+
+    /* Open the file to read binary data */
+    if ((fd = fopen(filename, "rb")) == NULL) {
+      fprintf(stderr, "can't open %s\n", filename);
+      exit(1);
+    }
+
+    /* Forward to the specified offset to start reading */
+    if (fseek(fd, (off_t)offset, SEEK_SET) == -1)
+    {
+        fprintf(stderr, "can't seek offset %d\n", (int)offset);
+        exit(1);
+    }
+
+    /* Read in the specified block of data */
+    readlen = fread((void*)buffer, 1, nitems, fd);
+    return(readlen);
+}
+
+/* ------------------------------- test_r24_jpeg ------------------------------- */
+
+#define N_IMAGES 3
+void
+test_r24_jpeg(void)
+{
+    int32     fid, grid,	/* file ID and GR interface ID */
+              riid;		/* raster image ID */
+    comp_info cinfo;		/* compression information for the JPEG */
+    int32     xd, yd;		/* image's dimensions */
+    intn      il;		/* image's interlace */
+    long      begin_offset=0,	/* offset at the beginning of image's data */
+	      end_offset=0;	/* offset at the end of image's data */
+    uint8    *jpeg_24bit_temp;	/* buffer for 24-bit image data */
+    uint8     jpeglib_readbuf[JPEGY][JPEGX][NCOMPS];
+				/* buffer for data read by JPEG function */
+    int32     offset, length;	/* offset/length in the HDF file */
+    int32     nonhdf_offset;	/* offset in the nonHDF file */
+    intn      status;		/* status returned from GR routines */
+    intn      ii;		/* indices */
+    int32     n_images, n_fattrs; /* number of images and number of file attrs */
+    uint8    *hdf_buffer,	/* buffer of data read from HDF file */
+	     *nonhdf_buffer;	/* buffer of data read from non-HDF file */
+    int       ret;
+
+    /* Allocate buffer for DF24getimage to store read data */
+    jpeg_24bit_temp = (uint8 *) HDmalloc(JPEGX * JPEGY * 3);
+    if (!jpeg_24bit_temp)
+      {
+          fprintf(stderr, "Out of memory!\n");
+          exit(1);
+      }
+
     MESSAGE(5, printf("\nStoring 24-bit images with JPEG compression\n");
         );
 
@@ -1272,6 +1358,8 @@ test_r24(void)
 
     ret = DF24reqil(DFIL_PIXEL);
     RESULT("DF24reqil");
+
+    /* Get dimensions of first image */
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
 
@@ -1286,12 +1374,13 @@ test_r24(void)
     RESULT("DF24getimage");
 
     /* Compress the same data using the JPEG library directly, with quality 80 */
-    comp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, 80, jpeg_24bit_orig);
+    comp_using_jpeglib(NONHDF_JPEGFILE, &end_offset, JPEGY, JPEGX, NCOMPS, 80, jpeg_24bit_orig);
 
     /* Read back the data using JPEG library directly */
-    decomp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
+    decomp_using_jpeglib(NONHDF_JPEGFILE, begin_offset, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
 
-    /* Compare data read back by HDF against that by JPEG lib */
+    /* Compare data decompressed by HDF against that by JPEG lib, the buffers
+       should be identical */
     if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS))
     {
 	fprintf(stderr, "24-bit JPEG quality 80 image was incorrect\n");
@@ -1308,6 +1397,7 @@ test_r24(void)
       }
 #endif
 
+    /* Get dimensions of second image */
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
 
@@ -1321,13 +1411,16 @@ test_r24(void)
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 
+    begin_offset = end_offset;
+
     /* Compress the same data using the JPEG library directly, with quality 30 */
-    comp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, 30, jpeg_24bit_orig);
+    comp_using_jpeglib(NONHDF_JPEGFILE, &end_offset, JPEGY, JPEGX, NCOMPS, 30, jpeg_24bit_orig);
 
     /* Read back the data using JPEG library directly */
-    decomp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
+    decomp_using_jpeglib(NONHDF_JPEGFILE, begin_offset, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
 
-    /* Compare data read back by HDF against that by JPEG lib */
+    /* Compare data decompressed by HDF against that by JPEG lib, the buffers
+       should be identical */
     if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS))
     {
 	fprintf(stderr, "24-bit JPEG quality 30 image was incorrect\n");
@@ -1344,6 +1437,7 @@ test_r24(void)
       }
 #endif
 
+    /* Get dimensions of third image */
     ret = DF24getdims(JPEGFILE, &xd, &yd, &il);
     RESULT("DF24getdims");
 
@@ -1357,13 +1451,16 @@ test_r24(void)
     ret = DF24getimage(JPEGFILE, jpeg_24bit_temp, JPEGX, JPEGY);
     RESULT("DF24getimage");
 
+    begin_offset = end_offset;
+
     /* Compress the same data using the JPEG library directly, with quality 75 */
-    comp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, 75, jpeg_24bit_orig);
+    comp_using_jpeglib(NONHDF_JPEGFILE, &end_offset, JPEGY, JPEGX, NCOMPS, 75, jpeg_24bit_orig);
 
     /* Read back the data using JPEG library directly */
-    decomp_using_jpeglib(NONHDF_JPEGFILE, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
+    decomp_using_jpeglib(NONHDF_JPEGFILE, begin_offset, JPEGY, JPEGX, NCOMPS, jpeglib_readbuf);
 
-    /* Compare data read back by HDF against that by JPEG lib */
+    /* Compare data decompressed by HDF against that by JPEG lib, the buffers
+       should be identical */
     if (HDmemcmp(jpeg_24bit_temp, jpeglib_readbuf, JPEGY*JPEGX*NCOMPS))
     {
 	fprintf(stderr, "24-bit JPEG quality 75 image was incorrect\n");
@@ -1381,6 +1478,80 @@ test_r24(void)
 #endif
 
     HDfree(jpeg_24bit_temp);
+
+
+    /********************************************************************
+      Verify raw data in HDF and NON-HDF files using offsets and lengths.
+    ********************************************************************/
+
+   /* Re-open the file with GR interface */
+    fid = Hopen (JPEGFILE, DFACC_RDONLY, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    grid = GRstart (fid);
+    CHECK_VOID(grid, FAIL, "GRstart");
+
+    /* Get the number of images in the file */
+    status = GRfileinfo(grid, &n_images, &n_fattrs);
+    CHECK_VOID(status, FAIL, "GRfileinfo");
+    VERIFY_VOID(n_images, N_IMAGES, "GRfileinfo");
+
+    /* Open each image and get its data information.  Read the block of
+       binary data from the HDF file and the non-HDF file.  Then, verify
+       that the two buffers are identical.  Note that the non-HDF file only
+       contains the image data, thus the offset will start at 0. */
+    nonhdf_offset = 0;
+    for (ii = 0; ii < n_images; ii++)
+    {
+	size_t read_len=0;
+
+	/* Get access to each image */
+	riid = GRselect(grid, ii);
+	CHECK_VOID(riid, FAIL, "GRselect");
+
+	/* Get the image's data information */
+	status = GRgetdatainfo(riid, 0, 1, &offset, &length);
+	CHECK_VOID(status, FAIL, "GRgetdatainfo");
+
+	/* Allocate buffers for the data from the HDF file and non-HDF file */
+	hdf_buffer = (uint8 *) HDmalloc(length * sizeof(uint8));
+	CHECK_ALLOC(hdf_buffer, "hdf_buffer", "test_r24_jpeg" );
+	nonhdf_buffer = (uint8 *) HDmalloc(length * sizeof(uint8));
+	CHECK_ALLOC(nonhdf_buffer, "nonhdf_buffer", "test_r24_jpeg" );
+
+	/* Read the block of data from the HDF file using offset/length returned by
+	   GRgetdatainfo and verify that the specified length of data was read */
+	read_len = read_binary_block(JPEGFILE, offset, length, hdf_buffer);
+	VERIFY_VOID(read_len, (size_t)length, "read_binary_block");
+
+	/* Read the block of data from the non-HDF file using nonhdf_offset and
+	   the length returned by GRgetdatainfo and verify that the specified
+	   length of data was read */
+	read_len = read_binary_block(NONHDF_JPEGFILE, nonhdf_offset, length, nonhdf_buffer);
+	VERIFY_VOID(read_len, (size_t)length, "read_binary_block");
+
+	/* Compare compressed data from the HDF file against that from the
+	   non-HDF file.  The two buffers should be identical */
+	if (HDmemcmp(hdf_buffer, nonhdf_buffer, length))
+	{
+	    /* Display any mismatched values for debugging */
+	    print_mismatched(hdf_buffer, nonhdf_buffer, length);
+	    num_errs++;
+	}
+
+	/* Move forward to the next set of non-HDF data, equivalent to the next
+	   image in the HDF file JPEGFILE */
+	nonhdf_offset = nonhdf_offset + length;
+
+	/* Close the image */
+	status = GRendaccess(riid);
+	CHECK_VOID(status, FAIL, "GRendaccess");
+    } /* for n_images */
+
+    /* Terminate access to the GR interface and close the file */
+    status = GRend(grid);
+    CHECK_VOID(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK_VOID(status, FAIL, "Hclose");
 }
 
 static VOID

@@ -842,6 +842,8 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                           case DFTAG_RI:    /* Regular image data */
                                               new_image->img_tag=(uint16)img_tag;
                                               new_image->img_ref=(uint16)img_ref;
+ /*  fprintf(stderr, "SPECIALTAG(%d/%d) = %d\n", new_image->img_tag, new_image->img_ref, SPECIALTAG(new_image->img_tag));
+ */ 
                                               if(SPECIALTAG(new_image->img_tag)==TRUE) {
                                                   new_image->use_buf_drvr=1;
                                               } /* end if */
@@ -4571,7 +4573,11 @@ done:
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     At this time, hdp and other tools still use GRgetcompinfo.  We need to
-    discuss about how to handle its limitation.
+    discuss about how to handle its limitation.  In addition, GR2bmapped is
+    using grgetcomptype until we have an official GRgetcomptype or will change
+    to use GRgetcompinfo if we decide not to have GRgetcomptype.  The fact that
+    grgetcomptype uses int32 for comp_type makes it not a good long term option
+    due to inconsistency in the library.
 
  EXAMPLES
  REVISION LOG
@@ -6550,6 +6556,8 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
 
     /* If the image has old image tag, then make sure it is either regular or
 	compressed with RLE only */ 
+ /*  fprintf(stderr, "img_tag = %d, DFTAG_RI8 = %d, DFTAG_CI8 = %d, DFTAG_RI = %d, DFTAG_CI = %d\n", img_tag, DFTAG_RI8, DFTAG_CI8, DFTAG_RI, DFTAG_CI);
+ */ 
     if (img_tag == DFTAG_RI8 || img_tag == DFTAG_CI8)
     {
 	if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
@@ -6568,17 +6576,19 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
 	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
 	    ritype == DFNT_UINT8 || ritype == DFNT_INT8)
 	{
-	    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
-	    if (special_type == 0)
-		should_map = TRUE;
-	    if (special_type == SPECIAL_COMP)
-	    {
-		if (ri_ptr->img_dim.comp_tag == DFTAG_RLE)
-		    should_map = TRUE;
-	    }
 	    /* Also make sure it only has one component */
-	    if (ri_ptr->img_dim.ncomps > 1)
-		should_map = FALSE;
+	    if (ri_ptr->img_dim.ncomps ==1)
+	    {
+		/* Note: int32 because grgetcomptype needs to handle IMCOMP
+		   beside what are defined in comp_coder_t */
+		int32 comp_type=COMP_CODE_NONE;
+		status = grgetcomptype(riid, &comp_type);
+		if (comp_type == COMP_CODE_RLE || comp_type == COMP_CODE_NONE)
+		{
+		    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
+		    if (special_type == 0) should_map = TRUE;
+		}
+	    }
 	}
     }
     /* Set flag to return */

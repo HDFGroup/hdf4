@@ -123,6 +123,7 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
 intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
+void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
 
 /* System command to use for Cleanup */
 #ifdef VMS
