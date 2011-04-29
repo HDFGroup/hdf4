@@ -18,7 +18,7 @@ static char RcsId[] = "@(#)$Revision$";
 /* $Id$ */
 
 #ifndef DATAINFO_TESTER
-#define DATAINFO_TESTER		/* for GRgetdatainfo */
+#define DATAINFO_TESTER		/* for GRgetdatainfo and grgetcomptype */
 #endif
 
 #include "tproto.h"
