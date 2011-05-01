@@ -36,7 +36,8 @@ void dumpsds_usage(intn argc,
               char *argv[])
 {
     printf("Usage:\n");
-    printf("%s dumpsds [-a|-i <indices>|-r <refs>|-n <names>] [-cdhvs] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("%s dumpsds [-k][-a|-i <indices>|-r <refs>|-n <names>] [-cdhvs] [-o <filename>] [-bx] <filelist>\n", argv[0]);
+    printf("\t-k\tDump SDSs in the given order, must be specified before -i/-r/-n\n");
     printf("\t-a\tDump all SDSs in the file (default)\n");
     printf("\t-i <indices>\tDump the SDSs at positions listed in <indices>\n");
     printf("\t-r <refs>\tDump the SDSs with reference number listed in <refs>\n");
