@@ -8,10 +8,8 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckSymbolExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
+INCLUDE (${CMAKE_ROOT}/Modules/CheckVariableExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckFortranFunctionExists.cmake)
-
-MESSAGE (STATUS "Configure Checks that still need to be implemented")
-MESSAGE (STATUS "  GetConsoleScreenBufferInfo function for Windows")
 
 #-----------------------------------------------------------------------------
 # Always SET this for now IF we are on an OS X box
@@ -36,24 +34,6 @@ IF (HDF4_ENABLE_NETCDF)
   SET (H4_HAVE_NETCDF 1)
 ENDIF (HDF4_ENABLE_NETCDF)
 
-SET (LINUX_LFS 0)
-SET (HDF_EXTRA_FLAGS)
-IF (CMAKE_SYSTEM MATCHES "Linux-([3-9]\\.[0-9]|2\\.[4-9])\\.")
-  # Linux Specific flags
-  ADD_DEFINITIONS (-D_POSIX_SOURCE -D_BSD_SOURCE)
-  OPTION (HDF_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
-  IF (HDF_ENABLE_LARGE_FILE)
-    SET (LARGEFILE 1)
-    SET (HDF_EXTRA_FLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
-    SET (CMAKE_REQUIRED_DEFINITIONS ${HDF_EXTRA_FLAGS})
-  ENDIF (HDF_ENABLE_LARGE_FILE)
-ENDIF (CMAKE_SYSTEM MATCHES "Linux-([3-9]\\.[0-9]|2\\.[4-9])\\.")
-IF (LINUX_LFS)
-  SET (HDF_EXTRA_FLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
-  SET (CMAKE_REQUIRED_DEFINITIONS ${HDF_EXTRA_FLAGS})
-ENDIF (LINUX_LFS)
-ADD_DEFINITIONS (${HDF_EXTRA_FLAGS})
-
 #-----------------------------------------------------------------------------
 # This MACRO checks IF the symbol exists in the library and IF it
 # does, it appends library to the list.
@@ -72,28 +52,32 @@ ENDMACRO (CHECK_LIBRARY_EXISTS_CONCAT)
 
 SET (WINDOWS)
 IF (WIN32)
-  IF (NOT UNIX AND NOT CYGWIN)
+  IF (NOT UNIX AND NOT CYGWIN AND NOT MINGW)
     SET (WINDOWS 1)
-  ENDIF (NOT UNIX AND NOT CYGWIN)
+  ENDIF (NOT UNIX AND NOT CYGWIN AND NOT MINGW)
 ENDIF (WIN32)
 
 IF (WINDOWS)
-  SET (H4_HAVE_LIBM 1)
-  SET (H4_HAVE_IO_H 1)
-  SET (H4_HAVE_SETJMP_H 1)
-  SET (H4_HAVE_STDDEF_H 1)
-  SET (H4_HAVE_SYS_STAT_H 1)
-  SET (H4_HAVE_SYS_TIMEB_H 1)
-  SET (H4_HAVE_SYS_TYPES_H 1)
-  SET (H4_HAVE_WINSOCK_H 1)
-  SET (H4_HAVE_STRDUP 1)
-  SET (H4_HAVE_SYSTEM 1)
-  SET (H4_HAVE_DIFFTIME 1)
-  SET (H4_HAVE_LONGJMP 1)
-  SET (H4_STDC_HEADERS 1)
-  SET (H4_HAVE_GETHOSTNAME 1)
-  SET (H4_HAVE_TIMEZONE 1)
-  SET (H4_HAVE_FUNCTION 1)
+  SET (H5_HAVE_IO_H 1)
+  SET (H5_HAVE_SETJMP_H 1)
+  SET (H5_HAVE_STDDEF_H 1)
+  SET (H5_HAVE_SYS_STAT_H 1)
+  SET (H5_HAVE_SYS_TIMEB_H 1)
+  SET (H5_HAVE_SYS_TYPES_H 1)
+  SET (H5_HAVE_WINSOCK_H 1)
+  SET (H5_HAVE_LIBM 1)
+  SET (H5_HAVE_STRDUP 1)
+  SET (H5_HAVE_SYSTEM 1)
+  SET (H5_HAVE_DIFFTIME 1)
+  SET (H5_HAVE_LONGJMP 1)
+  SET (H5_STDC_HEADERS 1)
+  SET (H5_HAVE_GETHOSTNAME 1)
+  SET (H5_HAVE_GETCONSOLESCREENBUFFERINFO 1)
+  SET (H5_HAVE_FUNCTION 1)
+  SET (H5_GETTIMEOFDAY_GIVES_TZ 1)
+  SET (H5_HAVE_TIMEZONE 1)
+  SET (H5_HAVE_GETTIMEOFDAY 1)
+  SET (H5_LONE_COLON 0)
 ENDIF (WINDOWS)
 
 #-----------------------------------------------------------------------------
@@ -121,7 +105,6 @@ IF (NOT WINDOWS)
 ENDIF (NOT WINDOWS)
 CHECK_LIBRARY_EXISTS_CONCAT ("ws2_32" WSAStartup  H4_HAVE_LIBWS2_32)
 CHECK_LIBRARY_EXISTS_CONCAT ("wsock32" gethostbyname H4_HAVE_LIBWSOCK32)
-#CHECK_LIBRARY_EXISTS_CONCAT ("dl"     dlopen       H4_HAVE_LIBDL)
 CHECK_LIBRARY_EXISTS_CONCAT ("ucb"    gethostname  H4_HAVE_LIBUCB)
 CHECK_LIBRARY_EXISTS_CONCAT ("socket" connect      H4_HAVE_LIBSOCKET)
 CHECK_LIBRARY_EXISTS ("c" gethostbyname "" NOT_NEED_LIBNSL)
@@ -132,6 +115,9 @@ ENDIF (NOT NOT_NEED_LIBNSL)
 
 
 SET (USE_INCLUDES "")
+IF (WINDOWS)
+  SET (USE_INCLUDES ${USE_INCLUDES} "windows.h")
+ENDIF (WINDOWS)
 #-----------------------------------------------------------------------------
 # Check IF header file exists and add it to the list.
 #-----------------------------------------------------------------------------
@@ -189,8 +175,30 @@ IF (H4_HAVE_STDINT_H AND CMAKE_CXX_COMPILER_LOADED)
   CHECK_INCLUDE_FILE_CXX ("stdint.h" H4_HAVE_STDINT_H_CXX)
   IF (NOT H4_HAVE_STDINT_H_CXX)
     SET (H4_HAVE_STDINT_H "" CACHE INTERNAL "Have includes HAVE_STDINT_H")
+    SET (USE_INCLUDES ${USE_INCLUDES} "stdint.h")
   ENDIF (NOT H4_HAVE_STDINT_H_CXX)
 ENDIF (H4_HAVE_STDINT_H AND CMAKE_CXX_COMPILER_LOADED)
+
+#-----------------------------------------------------------------------------
+#  Check for large file support
+#-----------------------------------------------------------------------------
+
+# The linux-lfs option is deprecated.
+SET (LINUX_LFS 0)
+
+SET (HDF_EXTRA_FLAGS)
+IF (CMAKE_SYSTEM MATCHES "Linux-([3-9]\\.[0-9]|2\\.[4-9])\\.")
+  # Linux Specific flags
+  SET (HDF_EXTRA_FLAGS -D_POSIX_SOURCE -D_BSD_SOURCE)
+  OPTION (HDF_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
+  IF (HDF_ENABLE_LARGE_FILE)
+    SET (LARGEFILE 1)
+    SET (HDF_EXTRA_FLAGS ${HDF_EXTRA_FLAGS} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
+  ENDIF (HDF_ENABLE_LARGE_FILE)
+  SET (CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} ${HDF_EXTRA_FLAGS})
+ENDIF (CMAKE_SYSTEM MATCHES "Linux-([3-9]\\.[0-9]|2\\.[4-9])\\.")
+
+ADD_DEFINITIONS (${HDF_EXTRA_FLAGS})
 
 #-----------------------------------------------------------------------------
 #  Check the size in bytes of all the int and float types
@@ -205,7 +213,6 @@ MACRO (H4_CHECK_TYPE_SIZE type var)
 #    MESSAGE (STATUS "Size of ${aType} was NOT Found")
   ENDIF (NOT ${aVar})
 ENDMACRO (H4_CHECK_TYPE_SIZE)
-
 
 
 H4_CHECK_TYPE_SIZE (char           H4_SIZEOF_CHAR)
@@ -336,6 +343,7 @@ IF (NOT MSVC)
     )
     IF (HAVE_TIME_GETTIMEOFDAY STREQUAL "TRUE")
       SET (H4_HAVE_TIME_GETTIMEOFDAY "1" CACHE INTERNAL "H4_HAVE_TIME_GETTIMEOFDAY")
+      SET (H4_HAVE_GETTIMEOFDAY "1" CACHE INTERNAL "H4_HAVE_GETTIMEOFDAY")
     ENDIF (HAVE_TIME_GETTIMEOFDAY STREQUAL "TRUE")
   ENDIF ("H4_HAVE_TIME_GETTIMEOFDAY" MATCHES "^H4_HAVE_TIME_GETTIMEOFDAY$")
 
@@ -348,18 +356,19 @@ IF (NOT MSVC)
     )
     IF (HAVE_SYS_TIME_GETTIMEOFDAY STREQUAL "TRUE")
       SET (H4_HAVE_SYS_TIME_GETTIMEOFDAY "1" CACHE INTERNAL "H4_HAVE_SYS_TIME_GETTIMEOFDAY")
+      SET (H4_HAVE_GETTIMEOFDAY "1" CACHE INTERNAL "H4_HAVE_GETTIMEOFDAY")
     ENDIF (HAVE_SYS_TIME_GETTIMEOFDAY STREQUAL "TRUE")
   ENDIF ("H4_HAVE_SYS_TIME_GETTIMEOFDAY" MATCHES "^H4_HAVE_SYS_TIME_GETTIMEOFDAY$")
-ENDIF (NOT MSVC)
 
-IF (NOT HAVE_SYS_TIME_GETTIMEOFDAY AND NOT H4_HAVE_GETTIMEOFDAY AND NOT MSVC)
-  MESSAGE (STATUS "---------------------------------------------------------------")
-  MESSAGE (STATUS "Function 'gettimeofday()' was not found. HDF4 will use its")
-  MESSAGE (STATUS "  own implementation.. This can happen on older versions of")
-  MESSAGE (STATUS "  MinGW on Windows. Consider upgrading your MinGW installation")
-  MESSAGE (STATUS "  to a newer version such as MinGW 3.12")
-  MESSAGE (STATUS "---------------------------------------------------------------")
-ENDIF (NOT HAVE_SYS_TIME_GETTIMEOFDAY AND NOT H4_HAVE_GETTIMEOFDAY AND NOT MSVC)
+  IF (NOT HAVE_SYS_TIME_GETTIMEOFDAY AND NOT H4_HAVE_GETTIMEOFDAY)
+    MESSAGE (STATUS "---------------------------------------------------------------")
+    MESSAGE (STATUS "Function 'gettimeofday()' was not found. HDF4 will use its")
+    MESSAGE (STATUS "  own implementation.. This can happen on older versions of")
+    MESSAGE (STATUS "  MinGW on Windows. Consider upgrading your MinGW installation")
+    MESSAGE (STATUS "  to a newer version such as MinGW 3.12")
+    MESSAGE (STATUS "---------------------------------------------------------------")
+  ENDIF (NOT HAVE_SYS_TIME_GETTIMEOFDAY AND NOT H4_HAVE_GETTIMEOFDAY)
+ENDIF (NOT MSVC)
 
 
 # Check for Symbols
@@ -407,13 +416,13 @@ MACRO (HDF4_FUNCTION_TEST OTHER_TEST)
       ENDIF ("${H4_${def}}")
     ENDFOREACH (def)
     
-    IF (LINUX_LFS)
+    IF (LARGEFILE)
       SET (MACRO_CHECK_FUNCTION_DEFINITIONS
           "${MACRO_CHECK_FUNCTION_DEFINITIONS} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE"
       )
-    ENDIF (LINUX_LFS)
+    ENDIF (LARGEFILE)
 
-    # (STATUS "Performing ${OTHER_TEST}")
+    #MESSAGE (STATUS "Performing ${OTHER_TEST}")
     TRY_COMPILE (${OTHER_TEST}
         ${CMAKE_BINARY_DIR}
         ${HDF4_RESOURCES_DIR}/HDFTests.c
@@ -427,8 +436,7 @@ MACRO (HDF4_FUNCTION_TEST OTHER_TEST)
     ELSE (${OTHER_TEST})
       MESSAGE (STATUS "Performing Other Test ${OTHER_TEST} - Failed")
       SET (H4_${OTHER_TEST} "" CACHE INTERNAL "Other test ${FUNCTION}")
-      FILE (APPEND
-          ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
+      FILE (APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
           "Performing Other Test ${OTHER_TEST} failed with the following output:\n"
           "${OUTPUT}\n"
       )
@@ -463,11 +471,11 @@ IF (NOT WINDOWS)
       CXX_HAVE_OFFSETOF
   )
     HDF4_FUNCTION_TEST (${test})
-    IF (NOT CYGWIN)
-      HDF4_FUNCTION_TEST (HAVE_TIMEZONE)
-#      HDF4_FUNCTION_TEST (HAVE_STAT_ST_BLOCKS)
-    ENDIF (NOT CYGWIN)
   ENDFOREACH (test)
+  IF (NOT CYGWIN AND NOT MINGW)
+    HDF4_FUNCTION_TEST (HAVE_TIMEZONE)
+#    HDF4_FUNCTION_TEST (HAVE_STAT_ST_BLOCKS)
+  ENDIF (NOT CYGWIN AND NOT MINGW)
 ENDIF (NOT WINDOWS)
 
 #-----------------------------------------------------------------------------

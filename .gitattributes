@@ -21,6 +21,7 @@ config/cmake/HDF4Macros.cmake -text
 config/cmake/HDF4UseFortran.cmake -text
 config/cmake/HDFMacros.cmake -text
 config/cmake/HDFTests.c -text
+config/cmake/NSIS.InstallOptions.ini.in -text
 config/cmake/NSIS.template.in -text
 config/cmake/cacheinit.cmake -text
 config/cmake/h4config.h.in -text
