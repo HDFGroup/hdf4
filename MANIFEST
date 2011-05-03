@@ -1167,7 +1167,7 @@
 ./config/cmake/hdf4-config-version.cmake.in
 ./config/cmake/CPack.cmake
 ./config/cmake/NSIS.template.in
-./config/cmake/InstallOptions.ini.in
+./config/cmake/NSIS.InstallOptions.ini.in
 
 ./release_notes/HISTORY.txt
 ./release_notes/RELEASE.txt
