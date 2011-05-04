@@ -50,7 +50,7 @@ MACRO (EXTERNAL_JPEG_LIBRARY compress_type jpeg_pic)
   ENDIF (${BLDTYPE} MATCHES "Debug")
 
   # Create imported target szip
-  ADD_LIBRARY(jpeg STATIC} IMPORTED)
+  ADD_LIBRARY(jpeg STATIC IMPORTED)
   ADD_DEPENDENCIES (jpeg JPEG)
 
    IF (WIN32 AND NOT MINGW)
