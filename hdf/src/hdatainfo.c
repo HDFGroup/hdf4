@@ -902,6 +902,8 @@ GRgetdatainfo(int32 riid, uintn start_block, uintn info_count,
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_tag==DFREF_WILDCARD
 	|| ri_ptr->img_ref==DFREF_WILDCARD)
     {
+        if ((offsetarray != NULL && lengtharray != NULL))
+	    *offsetarray = *lengtharray = 0;
 	HGOTO_DONE(0);
     }
     /* If the image already had a tag/ref pair, make sure it has actual data,
@@ -910,7 +912,11 @@ GRgetdatainfo(int32 riid, uintn start_block, uintn info_count,
     {
 	length = Hlength(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref);
 	if (length == FAIL)
+	{
+            if ((offsetarray != NULL && lengtharray != NULL))
+		*offsetarray = *lengtharray = 0;
 	    HGOTO_DONE(0);
+	}
 
         /* If both arrays are NULL, get the number of data blocks and return */
         if ((offsetarray == NULL && lengtharray == NULL))
