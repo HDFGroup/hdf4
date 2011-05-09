@@ -46,7 +46,7 @@
 	compression type will be verified against the list of compressions used.
    BMR - Mar 12, 2011
 **************************************************************************/
-#define FILE_NAME	"tgrgetcomptype_hdf"
+#define FILE_NAME	"tgrgetcomptype.hdf"
 #define HEIGHT		3
 #define WIDTH		8
 #define NUM_IMAGES	12

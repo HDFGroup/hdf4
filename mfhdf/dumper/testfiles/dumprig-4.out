@@ -3,8 +3,7 @@ Expected output for './hdp dumprig -m 24 tdf24.hdf'
 #############################
 File name: tdf24.hdf 
 
-ndsets=3, dumpall=1, num_chosen=-1
-Data model: 24-bit raster image with palette.
+Data model: 24-bit raster image without palette.
 	width=13;  height=15
 	reference=2
 	*data is not compressed.
@@ -35,7 +34,7 @@ Data model: 24-bit raster image with palette.
      22 22 23 23 23 24 24 24 25 25 25 14 14 14 15 15 15 16 16 16 17 
      17 17 18 18 18 19 19 19 20 20 20 21 21 21 22 22 22 23 23 23 24 
      24 24 25 25 25 26 26 26 
-Data model: 24-bit raster image with palette.
+Data model: 24-bit raster image without palette.
 	width=13;  height=15
 	reference=3
 	*data is not compressed.
@@ -65,7 +64,7 @@ Data model: 24-bit raster image with palette.
      13 13 13 13 15 15 15 15 15 15 13 13 13 14 14 14 15 15 15 14 14 
      14 15 15 15 14 14 14 15 15 15 14 14 14 15 15 15 14 14 14 15 15 
      15 14 14 14 15 15 15 14 14 14 
-Data model: 24-bit raster image with palette.
+Data model: 24-bit raster image without palette.
 	width=13;  height=15
 	reference=4
 	*data is not compressed.

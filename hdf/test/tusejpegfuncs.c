@@ -27,7 +27,7 @@ intn comp_using_jpeglib(
 	int im_width,		/* image's width */
 	int im_ncomps,		/* image's number of components */
 	int quality,		/* JPEG quality value */
-	uint8 *written_buffer)	/* data to be compressed */
+	const uint8 *written_buffer)	/* data to be compressed */
 {
     FILE * outfile;		/* target file */
     JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */

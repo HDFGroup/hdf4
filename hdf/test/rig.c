@@ -25,7 +25,7 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define XSIZE 13
 #define YSIZE 15
-#define TESTFILE "tdf24_hdf"
+#define TESTFILE "tdf24.hdf"
 
 #define JPEGX   46
 #define JPEGY   23
@@ -141,7 +141,9 @@ static const uint8  jpeg_8bit_j75[JPEGY][JPEGX] =
     {200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 201, 201, 202, 202, 202, 202, 201, 201, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200} 
 };
 
-static const uint8  jpeg_24bit_orig[JPEGY][JPEGX][3] =
+ /* const uint8  jpeg_24bit_orig[JPEGY][JPEGX][3] =
+ */ 
+const uint8  jpeg_24bit_orig[JPEGY*JPEGX*3] =
 {
     255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0,
     255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0, 255, 103, 0,
@@ -862,7 +864,7 @@ static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
    to compress and decompress the same data as in test_r24_jpeg, to verify that
    the DFR24 API work correctly regardless which JPEG library is used */
 intn comp_using_jpeglib(char *filename, long *file_offset, int im_height,
-        int im_width, int im_ncomps, int quality, uint8 *written_buffer);
+        int im_width, int im_ncomps, int quality, const uint8 *written_buffer);
 intn decomp_using_jpeglib(char *filename, long file_offset, int im_height,
         int im_width, int im_ncomps, uint8 *read_buffer);
 void test_r24_jpeg(void);
@@ -872,7 +874,6 @@ void test_r24_jpeg(void);
 void
 test_r24(void)
 {
-    comp_info   cinfo;          /* compression information for the JPEG */
     int32       xd, yd;
     intn        il;
     int         Error;
@@ -885,7 +886,6 @@ test_r24(void)
     int         i, j, ret;
     uint16      ref0, ref1, ref2;
     uint8      *jpeg_24bit_temp;
-    uint8      jpeglib_readbuf[JPEGY][JPEGX][NCOMPS];
 
     jpeg_24bit_temp = (uint8 *) HDmalloc(JPEGX * JPEGY * 3);
     if (!jpeg_24bit_temp)
@@ -1295,7 +1295,7 @@ test_r24_jpeg(void)
     long      begin_offset=0,	/* offset at the beginning of image's data */
 	      end_offset=0;	/* offset at the end of image's data */
     uint8    *jpeg_24bit_temp;	/* buffer for 24-bit image data */
-    uint8     jpeglib_readbuf[JPEGY][JPEGX][NCOMPS];
+    uint8     jpeglib_readbuf[JPEGY*JPEGX*NCOMPS];
 				/* buffer for data read by JPEG function */
     int32     offset, length;	/* offset/length in the HDF file */
     int32     nonhdf_offset;	/* offset in the nonHDF file */
