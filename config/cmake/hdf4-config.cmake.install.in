@@ -2,6 +2,9 @@
 # HDF4 Config file for compiling against hdf4 install directory
 #-----------------------------------------------------------------------------
 GET_FILENAME_COMPONENT (SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${SELF_DIR}" PATH)
+GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+GET_FILENAME_COMPONENT(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 
 #-----------------------------------------------------------------------------
 # User Options
@@ -20,22 +23,22 @@ SET (BUILD_SHARED_LIBS    @BUILD_SHARED_LIBS@)
 #-----------------------------------------------------------------------------
 # Directories
 #-----------------------------------------------------------------------------
-SET (HDF4_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
+SET (HDF4_INCLUDE_DIRS "${_IMPORT_PREFIX}/include")
 
 IF (HDF4_BUILD_FORTRAN)
-  SET (HDF4_INCLUDE_DIR_FORTRAN "@CMAKE_INSTALL_PREFIX@/include")
+  SET (HDF4_INCLUDE_DIR_FORTRAN "${_IMPORT_PREFIX}/include")
 ENDIF (HDF4_BUILD_FORTRAN)
   
 IF (HDF4_BUILD_XDR_LIB)
-  SET (HDF4_INCLUDE_DIR_XDR "@CMAKE_INSTALL_PREFIX@/include")
+  SET (HDF4_INCLUDE_DIR_XDR "${_IMPORT_PREFIX}/include")
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 IF (HDF4_BUILD_TOOLS)
-  SET (HDF4_INCLUDE_DIR_TOOLS "@CMAKE_INSTALL_PREFIX@/include")
+  SET (HDF4_INCLUDE_DIR_TOOLS "${_IMPORT_PREFIX}/include")
 ENDIF (HDF4_BUILD_TOOLS)
 
 IF (HDF4_BUILD_UTILS)
-  SET (HDF4_INCLUDE_DIR_UTILS "@CMAKE_INSTALL_PREFIX@/include")
+  SET (HDF4_INCLUDE_DIR_UTILS "${_IMPORT_PREFIX}/include")
 ENDIF (HDF4_BUILD_UTILS)
 
 #-----------------------------------------------------------------------------
