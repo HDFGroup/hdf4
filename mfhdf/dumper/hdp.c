@@ -37,7 +37,7 @@ usage(intn argc, char *argv[])
     printf("\t     dumpsds\tdisplays data of SDSs in <filelist>\n");
     printf("\t     dumpvd\tdisplays data of vdatas in <filelist>. \n");
     printf("\t     dumpvg\tdisplays data of vgroups in <filelist>. \n");
-    printf("\t     dumprig\tdisplays data of RIs in <filelist>. \n");
+    printf("\t     dumprig\tdisplays data of RIs (DFR8 and DFR24) in <filelist>. \n");
     printf("\t     dumpgr\tdisplays data of RIs in <filelist>. \n");
     printf("\t <filelist>\tlist of hdf file names, separated by spaces.\n");
 }
