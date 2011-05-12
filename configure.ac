@@ -387,33 +387,6 @@ case "$withval" in
     ;;
 esac
 
-dnl Check version number of jpeg library. Fail if higher than 7.
-dnl We are doing this because our tests are currently failing
-dnl with jpeg version 7. Until we can acceptably test and
-dnl support jpeg 7, we will require that users use an earlier
-dnl version of the library. (MAM - 1/26/2010).
-AC_MSG_CHECKING([for supported version of jpeg library])
-
-JPEG_7_ERROR="
-  jpeg library version 7 and higher is not currently supported.
-  Please use version 6b, obtainable at: 
-    http://www.hdfgroup.org/ftp/lib-external/jpeg/src/jpegsrc.v6b.tar.gz
-  For further questions, please contact help@hdfgroup.org."
-
-AC_RUN_IFELSE([
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <jpeglib.h>
-    int main(void)
-    {
-            #if JPEG_LIB_VERSION >= 70
-                exit(1);
-            #else
-                exit(0);
-            #endif
-    }
-    ], [AC_MSG_RESULT([yes])], [AC_MSG_ERROR([$JPEG_7_ERROR])],)
-
 dnl ----------------------------------------------------------------------
 dnl Is the szip library present?
 AC_SUBST(USE_COMP_SZIP) USE_COMP_SZIP="no"
