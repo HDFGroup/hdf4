@@ -1178,6 +1178,7 @@
 ./release_notes/bugs_fixed.txt
 ./release_notes/misc_docs.txt
 ./release_notes/CMake.txt
+./release_notes/Using_CMake.txt
 
 ./windows/copy_hdf.bat
 ./windows/hdf4bt.bat
