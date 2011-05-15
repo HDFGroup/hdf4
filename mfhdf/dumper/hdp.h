@@ -462,8 +462,8 @@ typedef struct
 	int32   vsize;			/* record size of the vdata */
 	int32   ref;			/* vdata ref# */
 	int32   tag;			/* vdata tag */
-	char    class[VSNAMELENMAX];	/* vdata class */
-	char    name[VSNAMELENMAX];	/* vdata name */
+	char    clss[VSNAMELENMAX+1];	/* vdata class */
+	char    name[VSNAMELENMAX+1];	/* vdata name */
   }
 vd_info_t;
 

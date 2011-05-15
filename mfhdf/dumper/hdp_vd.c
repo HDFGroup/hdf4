@@ -478,10 +478,10 @@ void printHeader(
       fprintf(fp, "   name = %s;", curr_vd->name);
 
    /* print class name - Note that vdclass can be NULL */
-   if( curr_vd->class[0] == '\0' || curr_vd->class == NULL )
+   if( curr_vd->clss[0] == '\0' || curr_vd->clss == NULL )
       fprintf(fp, " class = <Undefined>;\n");
    else
-      fprintf(fp, " class = %s;\n", curr_vd->class);
+      fprintf(fp, " class = %s;\n", curr_vd->clss);
 
 } /* end of printHeader */
 
@@ -583,8 +583,8 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
    int32       vsize;
    int32       vdata_ref = -1;
    int32       vdata_tag;
-   char        vdclass[VSNAMELENMAX];
-   char        vdname[VSNAMELENMAX];
+   char        vdclass[VSNAMELENMAX+1];
+   char        vdname[VSNAMELENMAX+1];
    char        fldstring[MAXNAMELEN];
    intn        dumpall = 0;
    file_type_t ft = DASCII;
@@ -697,7 +697,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
 		curr_vd.vsize = vsize;    	/* record size of the vdata */
 		curr_vd.ref = vdata_ref;  	/* vdata ref# */
 		curr_vd.tag = vdata_tag;  	/* vdata tag */
-		HDstrcpy( curr_vd.class, vdclass );   /* vdata class */
+		HDstrcpy( curr_vd.clss, vdclass );   /* vdata class */
 		HDstrcpy( curr_vd.name, vdname );     /* vdata name */
 		printHeader( fp, fldstring, fields, &curr_vd );
 
@@ -799,7 +799,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       nvf;
    int32       interlace;
    int32       vdata_ref = -1;
-   char        vdname[VSNAMELENMAX];
+   char        vdname[VSNAMELENMAX+1];
    intn        dumpall = 0;
    file_type_t ft = DBINARY;
    int32       vd_id = FAIL;

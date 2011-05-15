@@ -300,6 +300,9 @@ TEST dumpvd-10.out dumpvd tvattr.hdf
 TEST dumpvd-11.out dumpvd -c "SDSVar" sds1_dim1_samename.hdf
 TEST dumpvd-12.out dumpvd -c "CoordVar" sds1_dim1_samename.hdf
 
+# Added test #13 to test long vdata's name and class, HDFFR-1267 - BMR 5/15/11
+TEST dumpvd-13.out dumpvd vslongname.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi

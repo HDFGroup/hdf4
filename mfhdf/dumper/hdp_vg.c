@@ -503,7 +503,7 @@ intn get_VGandInfo( int32 *vg_id,
    else
     {
 	*vgname = (char *) HDmalloc(sizeof(char) * (10));
-	HDstrcpy( *vgname, "<Unknown>" );
+	HDstrcpy( *vgname, "<Undefined>" );
 	status = Vinquire(*vg_id, n_entries, NULL);
 	if (FAIL == status) /* go to done and return a FAIL */
 	{
@@ -537,7 +537,7 @@ intn get_VGandInfo( int32 *vg_id,
     else
     {
 	*vgclass = (char *) HDmalloc(sizeof(char) * (10));
-	HDstrcpy( *vgclass, "<Unknown>" );
+	HDstrcpy( *vgclass, "<Undefined>" );
     }
 
 done:
@@ -978,7 +978,7 @@ if (num_entries != 0)
 
 	 /* just in case vgroup name is null */
          if (HDstrlen(vgname) == 0)
-            HDstrcat(vgname, "NoName");
+            HDstrcat(vgname, "<Undefined>");
 
          resetVG( &vgt, file_name );
 
@@ -1018,9 +1018,9 @@ if (num_entries != 0)
 			"vgBuildGraph", (int) elem_ref );
          }  /* if VSattach doesn't fail */
 
-         /* vdata's name might be "" - is this same thing as <Unknown>? */
+         /* vdata has no name */
          if (HDstrlen(vsname) == 0)
-            HDstrcat(vsname, "NoName");
+            HDstrcat(vsname, "<Undefined>");
 
          /* add the name of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vsname );
@@ -1076,7 +1076,7 @@ intn vgdumpfull(int32        vg_id,
     int32  interlace;
     int32  vsize;
     char   vsname[MAXNAMELEN];
-    char   vsclass[VSNAMELENMAX];
+    char   vsclass[VSNAMELENMAX+1];
     char  *vgname = NULL;
     char  *vgclass = NULL;
     char  *name = NULL;
@@ -1141,7 +1141,7 @@ if (num_entries != 0)
          }
 	 /* just in case vgroup name is null */
          if (HDstrlen(vgname) == 0)
-            HDstrcat(vgname, "NoName");
+            HDstrcat(vgname, "<Undefined>");
 
          /* add the name and type of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vgname );
@@ -1190,14 +1190,15 @@ if (num_entries != 0)
 
 	 /* just in case vdata name is null */
          if (HDstrlen(vsname) == 0)
-               HDstrcat(vsname, "NoName");
+               HDstrcat(vsname, "<Undefined>");
    
          if (FAIL == VSgetclass(vs, vsclass))
                ERROR_CONT_2( "in %s: VSgetclass failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
+         /* vdata has no class */
          if (HDstrlen(vsclass) == 0)
-            HDstrcpy( vsclass, "<Unknown>" );
+            HDstrcpy( vsclass, "<Undefined>" );
 
          fprintf(fp, "     #%d (Vdata)\n", (int) entry_num);
          fprintf(fp, "\ttag = %d; ", (int) elem_tag);
@@ -1222,9 +1223,9 @@ if (num_entries != 0)
                ERROR_CONT_2( "in %s: VSdetach failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
-         /* vdata's name might be "" - is this same thing as <Unknown>? */
+         /* vdata has no name */
          if (HDstrlen(vsname) == 0)
-            HDstrcat(vsname, "NoName");
+            HDstrcat(vsname, "<Undefined>");
 
          /* add the name and type of this element to the list node */
          aNode->children[entry_num] = alloc_strg_of_chars( vsname );

@@ -33,7 +33,7 @@ dumpvd(int32       vd,
        int32       flds_indices[VSFIELDMAX], 
        int         dumpallfields)
 {
-    char        vdname[VSNAMELENMAX];
+    char        vdname[VSNAMELENMAX+1];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb = NULL;
     uint8      *b = NULL;

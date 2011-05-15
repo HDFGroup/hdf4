@@ -3723,9 +3723,11 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 {
     NC      *handle = NULL;
     NC_dim  *dim = NULL;
+    NC_var   *var = NULL;
     NC_var **dp = NULL;
     intn     ii;
     intn     len;
+    int32    varid;
     int      ret_value = SUCCEED;
 
 #ifdef SDDEBUG
@@ -3766,7 +3768,9 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
     else 
         name = dim->name->values;
 
-    *size  = dim->size;
+    /* Get dimension's size, which is the one application provided at SDcreate.
+       Application must use SDgetinfo to get current size of unlimited dim */
+    *size = dim->size;
 
     /* assuming no number type and no attributes */
     *nt    = 0;

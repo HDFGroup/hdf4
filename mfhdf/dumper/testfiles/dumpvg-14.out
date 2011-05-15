@@ -42,7 +42,7 @@ Entries:-
 	number of records = 0; interlace = 0;
 	fields = [SDS variable];
 	record size (in bytes) = 4;
-	name = NoName; class = SDSVar;
+	name = <Undefined>; class = SDSVar;
 	total number of attributes = 0.
      #3 (Number type)
 	tag = 106; reference = 8;
@@ -75,7 +75,7 @@ Entries:-
 	number of records = 0; interlace = 0;
 	fields = [Coordinate variable];
 	record size (in bytes) = 4;
-	name = NoName; class = CoordVar;
+	name = <Undefined>; class = CoordVar;
 	total number of attributes = 0.
      #3 (Number type)
 	tag = 106; reference = 12;
