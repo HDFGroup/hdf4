@@ -605,6 +605,7 @@
 ./mfhdf/dumper/testfiles/dumpvd-10.out
 ./mfhdf/dumper/testfiles/dumpvd-11.out
 ./mfhdf/dumper/testfiles/dumpvd-12.out
+./mfhdf/dumper/testfiles/dumpvd-13.out
 ./mfhdf/dumper/testfiles/dumpvd-1.out
 ./mfhdf/dumper/testfiles/dumpvd-2.out
 ./mfhdf/dumper/testfiles/dumpvd-3.out
@@ -660,6 +661,8 @@
 ./mfhdf/dumper/testfiles/tdata.hdf
 ./mfhdf/dumper/testfiles/tdfr8f.hdf
 ./mfhdf/dumper/testfiles/tvset.hdf
+./mfhdf/dumper/testfiles/vslongname.c
+./mfhdf/dumper/testfiles/vslongname.hdf
 
 ./mfhdf/examples/Makefile.am
 ./mfhdf/examples/Makefile.in
