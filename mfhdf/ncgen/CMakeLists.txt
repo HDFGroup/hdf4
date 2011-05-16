@@ -94,7 +94,9 @@ ENDIF (WIN32 AND NOT CYGWIN)
           test2.cdl
   )
   IF (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (ncgen-clearall-objects PROPERTIES DEPENDS ${last_test})
+    SET_TESTS_PROPERTIES (ncgen-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  ELSE (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (ncgen-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
   ENDIF (NOT "${last_test}" STREQUAL "")
   SET (last_test "ncgen-clearall-objects")
 

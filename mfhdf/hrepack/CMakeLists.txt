@@ -140,7 +140,7 @@ IF (BUILD_TESTING)
 #  ADD_TEST (NAME hrepack_check COMMAND $<TARGET_FILE:hrepack_check>)
   
   ADD_TEST (NAME test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
-  SET_TESTS_PROPERTIES (test_hrepack PROPERTIES DEPENDS hrepack-clearall-objects)
+  SET_TESTS_PROPERTIES (test_hrepack PROPERTIES DEPENDS hrepack-clearall-objects LABELS ${PROJECT_NAME})
 
 ENDIF (BUILD_TESTING)
 
