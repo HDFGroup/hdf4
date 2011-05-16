@@ -69,6 +69,7 @@ IF (BUILD_TESTING)
       tvattr.hdf
       tvset.hdf
       VGlongname.hdf
+      vslongname.hdf
   )
   
   SET (HDF4_REFERENCE_FILES
@@ -119,6 +120,7 @@ IF (BUILD_TESTING)
       dumpvd-10.out
       dumpvd-11.out
       dumpvd-12.out
+      dumpvd-13.out
       dumpvd-2.out
       dumpvd-3.out
       dumpvd-4.out
@@ -262,6 +264,7 @@ IF (BUILD_TESTING)
           dumpvd-10.tst
           dumpvd-11.tst
           dumpvd-12.tst
+          dumpvd-13.tst
           dumpvd-2.tst
           dumpvd-3.tst
           dumpvd-4.tst
@@ -353,6 +356,7 @@ IF (BUILD_TESTING)
           dumpvd-10.tst.err
           dumpvd-11.tst.err
           dumpvd-12.tst.err
+          dumpvd-13.tst.err
           dumpvd-2.tst.err
           dumpvd-3.tst.err
           dumpvd-4.tst.err
@@ -484,6 +488,9 @@ IF (BUILD_TESTING)
   # between SDS and coordinate variables)
   ADD_H4_TEST (dumpvd-11 0 dumpvd -c "SDSVar" sds1_dim1_samename.hdf)
   ADD_H4_TEST (dumpvd-12 0 dumpvd -c "CoordVar" sds1_dim1_samename.hdf)
+
+  # Added test #13 to test long vdata's name and class, HDFFR-1267 - BMR 5/15/11
+  ADD_H4_TEST (dumpvd-13 0 dumpvd vslongname.hdf)
 
   # Test command dumpvg
   ADD_H4_TEST (dumpvg-1 0 dumpvg tvset.hdf)
