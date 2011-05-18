@@ -23,6 +23,8 @@ static char RcsId[] = "@(#)$Revision$";
 #endif /* MIPSEL */
 #include "vg.h"
 
+#define NONAME_LEN 12
+
 void dumpvg_usage(intn argc, char *argv[]);
 int32 Vref_index(int32 file_id, int32 vg_ref);
 int32 Vname_ref(int32 file_id, char *searched_name, int32 *find_ref, int32 *index);
@@ -502,7 +504,7 @@ intn get_VGandInfo( int32 *vg_id,
     }
    else
     {
-	*vgname = (char *) HDmalloc(sizeof(char) * (10));
+	*vgname = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
 	HDstrcpy( *vgname, "<Undefined>" );
 	status = Vinquire(*vg_id, n_entries, NULL);
 	if (FAIL == status) /* go to done and return a FAIL */
@@ -536,7 +538,7 @@ intn get_VGandInfo( int32 *vg_id,
     }
     else
     {
-	*vgclass = (char *) HDmalloc(sizeof(char) * (10));
+	*vgclass = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
 	HDstrcpy( *vgclass, "<Undefined>" );
     }
 
@@ -976,9 +978,12 @@ if (num_entries != 0)
 			"vgBuildGraph", "get_VGandInfo", (int) entry_num );
          }
 
-	 /* just in case vgroup name is null */
-         if (HDstrlen(vgname) == 0)
+	 /* vgroup has no name */
+         if (HDstrlen(vgname) == 0 || vgname == NULL)
+	 {
+	    vgname = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
             HDstrcat(vgname, "<Undefined>");
+	 }
 
          resetVG( &vgt, file_name );
 
@@ -1139,9 +1144,12 @@ if (num_entries != 0)
 	    ERROR_GOTO_3( "in %s: %s failed to return a valid vgroup id for the %d'th entry",
                 "vgdumpfull", "get_VGandInfo", (int) entry_num );
          }
-	 /* just in case vgroup name is null */
-         if (HDstrlen(vgname) == 0)
+	 /* vgroup has no name */
+         if (HDstrlen(vgname) == 0 || vgname == NULL)
+	 {
+	    vgname = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
             HDstrcat(vgname, "<Undefined>");
+	 }
 
          /* add the name and type of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vgname );
@@ -1188,7 +1196,7 @@ if (num_entries != 0)
             ERROR_CONT_2( "in %s: VShdfsize failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
-	 /* just in case vdata name is null */
+	 /* vdata has no name */
          if (HDstrlen(vsname) == 0)
                HDstrcat(vsname, "<Undefined>");
    
@@ -1385,7 +1393,6 @@ intn dvg(dump_info_t *dumpvg_opts,
       /* otherwise, sort the list of reference numbers */
       else
          sort(vg_chosen, num_vg_chosen);
-
 
       /* allocate space for the list of nodes to be printed in the 
          Graphical Representation part */
