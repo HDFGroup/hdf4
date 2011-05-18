@@ -45,7 +45,8 @@ New features and changes
 
    Configuration
    ============= 
-   - [None]
+   - Specified explicit version of the netCDF API (v 2.3.2) used by HDF in
+     configure help and in configuration SUMMARY.
 
    Library
    ========= 

@@ -142,18 +142,18 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 dnl ======================================================================
-dnl Checks for NetCDF-3 support 
+dnl Checks for NetCDF-2.3.2 support 
 dnl ======================================================================
 
 AC_ARG_ENABLE([netcdf],
               [AC_HELP_STRING([--enable-netcdf],
-                              [Build HDF4 versions of NetCDF-3 APIS [default=yes]])],,
+                              [Build HDF4 versions of the NetCDF APIs (version 2.3.2) [default=yes]])],,
               enableval="yes")
 
 case "$enableval" in
   yes)
     BUILD_NETCDF="yes"
-    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF-3 APIs])
+    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF APIs version 2.3.2])
     ;;
   no)
     BUILD_NETCDF="no"

@@ -44,7 +44,7 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define if we support HDF NetCDF-3 APIs */
+/* Define if we support HDF NetCDF APIs version 2.3.2 */
 #undef HAVE_NETCDF
 
 /* Define to 1 if you have the <stdint.h> header file. */
