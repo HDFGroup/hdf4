@@ -14,6 +14,11 @@ CONTENTS
 0. Third party software requirements
    =================================
 
+   x C and Fortran compilers
+     If Fortran compiler is not available, use --disable-fortran configure flag
+     to build HDF4 C library and utilties. For the list of the supported 
+     compilers see RELEASE.txt in the release_notes directory.
+
    x JPEG distribution release 6b or later (libjpeg.a(so)). Source can be 
      downloaded from http://www.ijg.org/ 
 
