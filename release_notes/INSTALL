@@ -43,8 +43,8 @@ CONTENTS
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
    
-   Starting with the HDF 4.2.6 release binaries with the external
-   ZLIB, JPEG and SZIP libraries used to build the binaries. 
+   Starting with the HDF 4.2.6 release binaries are packed  with 
+   the ZLIB, JPEG and SZIP libraries used to build the binaries. 
 
    IMPORTANT:
    ==========
@@ -111,7 +111,15 @@ CONTENTS
 
        gmake install
 
-   8)  By default, the current configuration uses vendor compilers; to use
+   8)  To install C and Fortran examples
+    
+       gmake install-examples
+
+   9)  To test installation 
+
+       gmake installcheck
+
+   10) By default, the current configuration uses vendor compilers; to use
        another compiler, run the following commands before running configure: 
 
        setenv CC   "foo -flags"
@@ -120,7 +128,7 @@ CONTENTS
        See the configure help page (configure --help) for a list of
        environment variables that have an affect on building the library.
 
-   9)  You may build HDF4 in a directory other than hdf-X.Y.Z by using
+   11) You may build HDF4 in a directory other than hdf-X.Y.Z by using
        the "srcdir" option. Simply create a build directory and type:
 
        <path_to_hdf-X.Y.Z>/configure ...
@@ -138,10 +146,6 @@ CONTENTS
    (as of netCDF version 2.3.2) are renamed from ncxxx to sd_ncxxx, 
    and HDF Fortran netCDF wrappers are disabled to avoid name clashed with 
    the netCDF C and Fortran functions from libnetcdf.a
-
-   HDF 4.2r3 and later DO NOT require the presence of the NetCDF 
-   header files on the system.
-
 
    Please report all problems to help@hdfgroup.org.
 

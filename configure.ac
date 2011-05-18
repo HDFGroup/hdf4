@@ -147,7 +147,7 @@ dnl ======================================================================
 
 AC_ARG_ENABLE([netcdf],
               [AC_HELP_STRING([--enable-netcdf],
-                              [Build HDF4 versions of the NetCDF APIs (version 2.3.2) [default=yes]])],,
+                              [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
               enableval="yes")
 
 case "$enableval" in
