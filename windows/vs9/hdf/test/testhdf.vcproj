@@ -457,18 +457,26 @@
         RelativePath="..\..\..\..\hdf\test\slab.c"
         >
       </File>
-            <File
-                RelativePath="..\..\..\..\hdf\test\tattdatainfo.c"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\..\hdf\test\tdatainfo.c"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\..\hdf\test\tdupimgs.c"
-                >
-            </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tattdatainfo.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tbv.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tdatainfo.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tdfr8.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tdupimgs.c"
+        >
+      </File>
       <File
         RelativePath="..\..\..\..\hdf\test\testhdf.c"
         >
@@ -482,23 +490,19 @@
         >
       </File>
       <File
-        RelativePath="..\..\..\..\hdf\test\tproto.h"
+        RelativePath="..\..\..\..\hdf\test\tree.c"
         >
       </File>
-            <File
-                RelativePath="..\..\..\..\hdf\test\tszip.c"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\..\hdf\test\tusejpegfuncs.c"
-                >
-            </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tszip.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tusejpegfuncs.c"
+        >
+      </File>
       <File
         RelativePath="..\..\..\..\hdf\test\tutils.c"
-        >
-      </File>
-      <File
-        RelativePath="..\..\..\..\hdf\test\tutils.h"
         >
       </File>
       <File
@@ -522,6 +526,14 @@
       Name="Header Files"
       Filter="h;hpp;hxx;hm;inl;fi;fd"
       >
+      <File
+        RelativePath="..\..\..\..\hdf\test\tproto.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\test\tutils.h"
+        >
+      </File>
     </Filter>
     <Filter
       Name="Resource Files"
