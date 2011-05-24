@@ -179,6 +179,8 @@ mfhdf/dumper/testfiles/dumpvd-13.out -text
 mfhdf/dumper/testfiles/dumpvg-13.out -text
 mfhdf/dumper/testfiles/dumpvg-14.out -text
 mfhdf/dumper/testfiles/dumpvg-15.out -text
+mfhdf/dumper/testfiles/dumpvg-16.out -text
+mfhdf/dumper/testfiles/dumpvg-17.out -text
 mfhdf/dumper/testfiles/grtdfi322.hdf -text
 mfhdf/dumper/testfiles/grtdfui162.hdf -text
 mfhdf/dumper/testfiles/grtdfui82.hdf -text

@@ -963,7 +963,7 @@ if (num_entries != 0)
       {
          /* add the name and type of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars("***");
-         aNode->type[entry_num] = alloc_strg_of_chars("<ref=0>");
+         aNode->type[entry_num] = alloc_strg_of_chars("<vg/ref=0>");
       }
       else if (elem_tag == DFTAG_VG)
       { /* vgroup */
@@ -995,7 +995,7 @@ if (num_entries != 0)
 
          /* add the name and type of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vgname );
-         aNode->type[entry_num] = alloc_strg_of_chars( "<ref=0>" );
+         aNode->type[entry_num] = alloc_strg_of_chars( "vg" );
 
       }	/* if current element is vgroup */
       else if (elem_tag == VSDESCTAG)
@@ -1129,6 +1129,10 @@ if (num_entries != 0)
          fprintf(fp, "     #%d (Vgroup)\n", (int) entry_num );
          fprintf(fp, "\ttag = %d;", (int) elem_tag);
          fprintf(fp, "reference = %d;\n", (int) elem_ref );
+
+         /* add the name and type of this element to the current graph */
+         aNode->children[entry_num] = alloc_strg_of_chars("***");
+         aNode->type[entry_num] = alloc_strg_of_chars("<vg/ref=0>");
       }
 
       else if (elem_tag == DFTAG_VG)

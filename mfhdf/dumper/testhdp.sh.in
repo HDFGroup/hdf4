@@ -346,6 +346,10 @@ TEST dumpvg-14.out dumpvg sds1_dim1_samename.hdf
 # of another SDS
 TEST dumpvg-15.out dumpvg sds2_dim1_samename.hdf
 
+# Verify the fix for bug HDFFR-197 and a vgroup with ref=0 (some old RI stuff)
+TEST dumpvg-16.out dumpvg -h grtdfi322.hdf
+TEST dumpvg-17.out dumpvg grtdfi322.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
