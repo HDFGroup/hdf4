@@ -269,7 +269,7 @@ int32 Vstr_ref(int32 file_id,
                 "Vstr_ref", (int)*find_ref );
 	}
 	name = (char *) HDmalloc(sizeof(char) * (name_len+1));
-	/* If allocation fails, get_VGandInfo simply terminates hdp. */
+	/* If allocation fails, Vstr_ref simply terminates hdp. */
 	CHECK_ALLOC(name, "vgroup classname", "Vstr_ref");
 
 	if (name_len > 0)
@@ -959,7 +959,13 @@ if (num_entries != 0)
          ERROR_CONT_2( "in %s: Vgettagref failed for the %d'th entry", 
                 "vgBuildGraph", (int) entry_num );
 
-      if (elem_tag == DFTAG_VG)
+      if( elem_ref == 0 )  /* taken care of ref=0 in tdfr8f and tdf24 for now */
+      {
+         /* add the name and type of this element to the current graph */
+         aNode->children[entry_num] = alloc_strg_of_chars("***");
+         aNode->type[entry_num] = alloc_strg_of_chars("<ref=0>");
+      }
+      else if (elem_tag == DFTAG_VG)
       { /* vgroup */
 
          /* get the current vgroup and its information */
@@ -989,7 +995,7 @@ if (num_entries != 0)
 
          /* add the name and type of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vgname );
-         aNode->type[entry_num] = alloc_strg_of_chars( "vg" );
+         aNode->type[entry_num] = alloc_strg_of_chars( "<ref=0>" );
 
       }	/* if current element is vgroup */
       else if (elem_tag == VSDESCTAG)
@@ -1157,7 +1163,7 @@ if (num_entries != 0)
 
          /* print the entry's info */ 
          fprintf(fp, "     #%d (Vgroup)\n", (int) entry_num );
-         fprintf(fp, "\ttag = %d;", (int) elem_tag);
+         fprintf(fp, "\ttag = %d; ", (int) elem_tag);
          fprintf(fp, "reference = %d;\n", (int) elem_ref );
          fprintf(fp, "\tnumber of entries = %d;\n", (int) elem_n_entries);
          fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);

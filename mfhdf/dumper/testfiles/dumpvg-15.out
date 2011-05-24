@@ -56,7 +56,7 @@ Vgroup:3
    number of attributes = 0 
 Entries:-
      #0 (Vgroup)
-	tag = 1965;reference = 8;
+	tag = 1965; reference = 8;
 	number of entries = 1;
 	name = Variable 2; class = Dim0.0
    number of attributes = 0 
@@ -82,12 +82,12 @@ Vgroup:4
    number of attributes = 0 
 Entries:-
      #0 (Vgroup)
-	tag = 1965;reference = 10;
+	tag = 1965; reference = 10;
 	number of entries = 1;
 	name = fakeDim1; class = Dim0.0
    number of attributes = 0 
      #1 (Vgroup)
-	tag = 1965;reference = 12;
+	tag = 1965; reference = 12;
 	number of entries = 1;
 	name = fakeDim2; class = Dim0.0
    number of attributes = 0 
@@ -115,7 +115,7 @@ Vgroup:5
    number of attributes = 0 
 Entries:-
      #0 (Vgroup)
-	tag = 1965;reference = 8;
+	tag = 1965; reference = 8;
 	number of entries = 1;
 	name = Variable 2; class = Dim0.0
    number of attributes = 0 
@@ -143,32 +143,32 @@ Vgroup:6
    number of attributes = 0 
 Entries:-
      #0 (Vgroup)
-	tag = 1965;reference = 8;
+	tag = 1965; reference = 8;
 	number of entries = 1;
 	name = Variable 2; class = Dim0.0
    number of attributes = 0 
      #1 (Vgroup)
-	tag = 1965;reference = 10;
+	tag = 1965; reference = 10;
 	number of entries = 1;
 	name = fakeDim1; class = Dim0.0
    number of attributes = 0 
      #2 (Vgroup)
-	tag = 1965;reference = 12;
+	tag = 1965; reference = 12;
 	number of entries = 1;
 	name = fakeDim2; class = Dim0.0
    number of attributes = 0 
      #3 (Vgroup)
-	tag = 1965;reference = 15;
+	tag = 1965; reference = 15;
 	number of entries = 5;
 	name = Variable 1; class = Var0.0
    number of attributes = 0 
      #4 (Vgroup)
-	tag = 1965;reference = 18;
+	tag = 1965; reference = 18;
 	number of entries = 7;
 	name = Variable 2; class = Var0.0
    number of attributes = 0 
      #5 (Vgroup)
-	tag = 1965;reference = 21;
+	tag = 1965; reference = 21;
 	number of entries = 6;
 	name = Variable 2; class = Var0.0
    number of attributes = 0 

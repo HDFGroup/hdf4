@@ -20,7 +20,7 @@ Vgroup:1
    number of attributes = 0 
 Entries:-
      #0 (Vgroup)
-	tag = 1965;reference = 2;
+	tag = 1965; reference = 2;
 	number of entries = 0;
 	name = Simple Vgroup; class = Test object
    number of attributes = 0 
