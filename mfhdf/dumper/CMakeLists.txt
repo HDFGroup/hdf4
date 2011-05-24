@@ -136,6 +136,8 @@ IF (BUILD_TESTING)
       dumpvg-13.out
       dumpvg-14.out
       dumpvg-15.out
+      dumpvg-16.out
+      dumpvg-17.out
       dumpvg-2.out
       dumpvg-3.out
       dumpvg-4.out
@@ -531,6 +533,10 @@ IF (BUILD_TESTING)
   # Prints contents of file when a dimension has the same name as that 
   # of another SDS
   ADD_H4_TEST (dumpvg-15 0 dumpvg sds2_dim1_samename.hdf)
+
+# Verify the fix for bug HDFFR-197 and a vgroup with ref=0 (some old RI stuff)
+  ADD_H4_TEST (dumpvg-16 0 dumpvg -h grtdfi322.hdf)
+  ADD_H4_TEST (dumpvg-17 0 dumpvg grtdfi322.hdf)
   
   # Test command dumpgr
   ADD_H4_TEST (dumpgr-1 0 dumpgr grtdfui82.hdf)
