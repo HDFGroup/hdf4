@@ -17,7 +17,7 @@ DLL) and utilities, it is assumed that you have done the following:
       1.1 Currently only VS2008 is supported.
 
       1.2 To build Fortran libraries, you must install the Intel Fortran 
-	      10.1 or 11.1 compiler.
+        10.1 or 11.1 compiler.
 
    2. Set up a directory structure to unpack the binary archive.
       For example: 
@@ -35,10 +35,10 @@ DLL) and utilities, it is assumed that you have done the following:
       library.  Currently, three external compression libraries ZLIB,
       JPEG, and SZIP can be used with HDF4.
 
-      4.1 HDF4 uses Zlib version 1.2.3 for compression.  A Zlib
+      4.1 HDF4 uses Zlib version 1.2.5 for compression.  A Zlib
           library compiled for the binary is provided in the release.
       
-      4.2 HDF4 uses JPEG release 6b for compression.  A JPEG
+      4.2 HDF4 uses JPEG release 6b/8b for compression.  A JPEG
           library compiled for the binary is provided in the release.
 
       4.3 HDF4 uses Szip version 2.1 for compression. A Szip
