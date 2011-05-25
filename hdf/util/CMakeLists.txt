@@ -624,7 +624,7 @@ INSTALL (
         vmake
         vshow
     RUNTIME DESTINATION
-        ${HDF4_INSTALL_BIN_DIR}/utils
+        ${HDF4_INSTALL_UTILS_BIN_DIR}
     COMPONENT
         utilsapplications
 )

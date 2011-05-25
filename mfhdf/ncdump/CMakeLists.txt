@@ -88,7 +88,7 @@ INSTALL (
     TARGETS
         ncdump
     RUNTIME DESTINATION
-        ${HDF4_INSTALL_BIN_DIR}/tools
+        ${HDF4_INSTALL_TOOLS_BIN_DIR}
     COMPONENT
         toolsapplications
 )
