@@ -317,6 +317,7 @@ mfhdf/test/hdftest.h -text
 mfhdf/test/sds_szipped.dat -text
 mfhdf/test/smallslice.0000.nc -text
 mfhdf/test/tattdatainfo.c -text
+mfhdf/test/tattributes.c -text
 mfhdf/test/tchunk.c -text
 mfhdf/test/tcomp.c -text
 mfhdf/test/tcoordvar.c -text
