@@ -827,12 +827,17 @@ fi
 dnl This part doesn't work yet since HDF4 config files do not contain
 dnl information for cc_vendor and cc_version as HDF5 similar files do.
 dnl Needs to be fixed EIP 2010-01-21
-if test -n "$cc_vendor" && test -n "$cc_version"; then
-  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"
+dnl if test -n "$cc_vendor" && test -n "$cc_version"; then
+dnl  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"
+dnl fi
+
+if test -n "$cc_version_info"; then
+  CC_VERSION="$CC_VERSION ( $cc_version_info)"
 fi
 
 dnl Fortran compiler with version information. This consists of the full path
 dnl name of the compiler and the reported version number.
+AC_SUBST([F77_VERSION])
 dnl Strip anything that looks like a flag off of $F77
 F77_NOFLAGS=`echo $F77 | sed 's/ -.*//'`
 
@@ -847,6 +852,10 @@ else
     fi
   done
 fi
+if test -n "$fc_version_info"; then
+  F77_VERSION="$F77_VERSION ( $fc_version_info)"
+fi
+
 
 dnl This part doesn't work yet since HDF4 config files do not contain
 dnl information for fortran_vendor and fortran_version. 
@@ -854,7 +863,6 @@ dnl Needs to be fixed EIP 2010-01-21
 dnl if test -n "$fortran_vendor" && test -n "$fortran_version"; then
 dnl   F77_VERSION="$F77_VERSION ($fortran_vendor-$fortran_version)"
 dnl fi
-AC_SUBST([F77_VERSION])
 
 AC_CONFIG_FILES([Makefile
                  libhdf4.settings
