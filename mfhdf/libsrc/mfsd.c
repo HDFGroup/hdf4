@@ -2124,10 +2124,10 @@ SDsetattr(int32 id,    /* IN: object ID */
     fprintf(stderr, "SDsetattr: I've been called\n");
 #endif
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
-    /* sanity check args */
+    /* Sanity check args */
     if(name == NULL) 
       {
           ret_value = FAIL;
@@ -2136,6 +2136,13 @@ SDsetattr(int32 id,    /* IN: object ID */
 
     /* This release doesn't support native number types for attr  */
     if (nt & DFNT_NATIVE) 
+      {
+          ret_value = FAIL;
+          goto done;
+      }
+
+    /* Only positive count is valid (bug HDFFR-989) -BMR */
+    if (count <= 0)
       {
           ret_value = FAIL;
           goto done;

@@ -73,6 +73,7 @@ extern int test_coordvar();
 extern int test_chunk();
 extern int test_compression();
 extern int test_dimension();
+extern int test_attributes();
 extern int test_datasizes();
 extern int test_datainfo();
 extern int test_att_ann_datainfo();
@@ -1501,6 +1502,12 @@ main(int argc, char *argv[])
 
     /* BMR: Added a test routine dedicated for testing SDcheckempty. 09/17/04 */
     status = test_checkempty();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing attributes (currently
+	only SDsetattr with count=0, more will be moved here eventually
+	(in tattributes.c) - 05/31/11 */
+    status = test_attributes();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing SDgetdatasize (in 

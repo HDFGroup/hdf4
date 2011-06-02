@@ -59,10 +59,11 @@ hdfnctest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
 	$(top_builddir)/hdf/src/libdf.la
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tchunk.$(OBJEXT) \
 	tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) tdim.$(OBJEXT) \
-	temptySDSs.$(OBJEXT) tfile.$(OBJEXT) tidtypes.$(OBJEXT) \
-	tnetcdf.$(OBJEXT) trank0.$(OBJEXT) tsd.$(OBJEXT) \
-	tsdsprops.$(OBJEXT) tszip.$(OBJEXT) tattdatainfo.$(OBJEXT) \
-	tdatainfo.$(OBJEXT) tdatasizes.$(OBJEXT)
+	temptySDSs.$(OBJEXT) tattributes.$(OBJEXT) tfile.$(OBJEXT) \
+	tidtypes.$(OBJEXT) tnetcdf.$(OBJEXT) trank0.$(OBJEXT) \
+	tsd.$(OBJEXT) tsdsprops.$(OBJEXT) tszip.$(OBJEXT) \
+	tattdatainfo.$(OBJEXT) tdatainfo.$(OBJEXT) \
+	tdatasizes.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
 	$(top_builddir)/hdf/src/libdf.la
@@ -250,9 +251,9 @@ hdfnctest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la              \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c         \
-		  temptySDSs.c tfile.c tidtypes.c tnetcdf.c trank0.c    \
-		  tsd.c tsdsprops.c tszip.c tattdatainfo.c tdatainfo.c  \
-		  tdatasizes.c
+		  temptySDSs.c tattributes.c tfile.c tidtypes.c		\
+		  tnetcdf.c trank0.c tsd.c tsdsprops.c tszip.c		\
+		  tattdatainfo.c tdatainfo.c tdatasizes.c
 
 hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
@@ -326,6 +327,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdfnctest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdftest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tattdatainfo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tattributes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tchunk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcomp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcoordvar.Po@am__quote@
