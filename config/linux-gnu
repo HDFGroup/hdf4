@@ -119,26 +119,6 @@ case $F77 in
         ;;
 esac
 
-# get c++ version info
-case $CXX in
-    *g++*)
-        cxx_version_info=`$CXX $CXXFLAGS $H5_CXXFLAGS --version 2>&1 |\
-            grep 'GCC' | sed 's/\(.*(GCC) [-a-z0-9\. ]*\).*/\1/'`
-        ;;
-    *icpc*)
-        cxx_version_info=`$CXX $CXXFLAGS $H5_CXXFLAGS -V 2>&1 | grep 'Version' |\
-            sed 's/\(Intel.* Compiler\).*\( Version [a-z0-9\.]*\).*\( Build [0-9]*\)/\1\2\3/'`
-        ;;
-    *pgCC*)
-        cxx_version_info=`$CXX $CXXFLAGS $H5_CXXFLAGS -V 2>&1 | grep 'pgCC'`
-        ;;
-
-
-    *)
-        echo "No match to get cxx_version_info for $CXX"
-        ;;
-esac
-
 
 # C, Fortran, and C++ Compiler and Preprocessor Flags
 # ---------------------------------------------------

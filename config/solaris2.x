@@ -176,19 +176,6 @@ case $F77 in
 esac
 echo "Fortran compiler '$F77' is $fc_version_info"
 
-# get c++ version info
-case $CXX in
-    *CC*)
-        cxx_version_info=`$CXX $CXXFLAGS $H5_CXXFLAGS -V 2>&1 | grep 'Sun' |\
-            sed 's/.*\(Sun.*Sun.*\)/\1 /'`
-        ;;
-
-    *)
-        echo "No match to get cxx_version_info for $CXX"
-        ;;
-esac
-
-
 # Overriding Configure Tests
 # --------------------------
 #
