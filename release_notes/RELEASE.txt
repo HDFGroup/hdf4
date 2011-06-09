@@ -50,7 +50,38 @@ New features and changes
 
    Library
    ========= 
-   - [None]
+   - The function Vnattrs only processes attributes created by Vsetattr.  It is
+     not aware of attributes created by the pre-Vsetattr methods.  The following
+     functions are added to work around the limitation of Vnattrs:
+     + Vnattrs2 gives number of new- and old-style attributes
+     + Vattrinfo2 gives information about an old or new style attribute
+-> talk to Elena about the 2 customized arguments for hmap
+     + Vgetattr2 reads values of an old or new style attribute
+     BMR - 2011/06/09
+
+   - The following functions were specifically added to support the HDF4 Mapping
+     project:
+     + VSgetdatainfo gives offsets/lengths of a vdata's data
+     + ANgetdatainfo gives offset/length of an annotation's data
+     + SDgetdatainfo gives offsets/lengths of a data set's data
+     + GRgetdatainfo gives offsets/lengths of a raster image's data
+     + VSgetattdatainfo gives offset/length of vdata attribute's data
+     + VGgetattdatainfo gives offset/length of vgroup attribute's data
+     + GRgetattdatainfo gives offset/length of raster image attribute's data
+     + SDgetattdatainfo gives offset/length of data set attribute's data
+     + SDgetoldattdatainfo gives offset/length of a pre-defined attribute in
+       old format
+     + SDgetanndatainfo gives offset/lenth of an annotation belonging to an SDS
+     + Vgetvgroups gives a list of user-created vgroups
+     + VSgetvdatas gives a list of user-created vdatas
+     + VSofclass gives a list of vdatas of a specific class
+     + Hgetntinfo gives some information about a number type
+     + GR2bmapped indicates whether a raster image should be mapped
+     BMR - 2011/06/09
+
+   - Two functions are added to provide information of an external file:
+     VSgetexternalfile for a vdata and SDgetexternalfile for a data set.
+
 
    Test
    ====
@@ -68,11 +99,20 @@ Bugs fixed since HDF4.2.5
 =========================
    Utilities
    ========= 
-   - [None]
+   - The problem where hdiff displays zeroes for Vdata values that are non-zero
+     had been fixed.  BMR - 2011/06/09
+   - hdp had been fixed for the problems of
+     + dumpvd printing Name/Class incorrectly
+     + dumprig giving wrong info about RIS24 and palettes
+     + dumpvg missing some items in the Graphical representation
+     BMR - 2011/06/09
+
 
    Library
    ========= 
-   - [None]
+   - The JPEG test failure due to the different versions of the JPEG library
+     had been fixed.  HDF4 is expected to build and pass regression tests for
+     any version of the JPEG library available on the user's systems. 
 
 
    Configuration
