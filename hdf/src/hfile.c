@@ -83,6 +83,7 @@ static char RcsId[] = "@(#)$Revision$";
    HDcheck_empty   -- determines if an element has been written with data
    HDget_special_info -- get information about a special element
    HDset_special_info -- reset information about a special element
+   HDspecial_type -- return the special type if the given element is special
 
    File Memory Pool routines
    -------------------------
@@ -230,13 +231,13 @@ USAGE
    int32 Hopen(path, access, ndds)
    char *path;             IN: Name of file to be opened.
    int access;             IN: DFACC_READ, DFACC_WRITE, DFACC_CREATE
-							   or any bitwise-or of the above.
+				or any bitwise-or of the above.
    int16 ndds;             IN: Number of dds in a block if this
-							   file needs to be created.
+				file needs to be created.
 RETURNS
    On success returns file id, on failure returns -1.
 DESCRIPTION
-   Opens a HDF file.  Returns the the file ID on success, or -1
+   Opens an HDF file.  Returns the the file ID on success, or -1
    on failure.
 
    Access equals DFACC_CREATE means discard existing file and
@@ -4120,6 +4121,97 @@ done:
 
     return ret_value;
 } /* end HDcheck_empty() */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+    Hgetspecinfo
+ PURPOSE
+    Returns the special type if the given element is special.
+ USAGE
+    intn Hgetspecinfo(file_id, tag, ref)
+        int32 file_id;    IN: file id
+        uint16 tag;    IN: tag of the element
+        uint16 ref;    IN: ref of the element
+ RETURNS
+    Special type:
+  SPECIAL_LINKED
+  SPECIAL_EXT
+  SPECIAL_COMP
+  SPECIAL_VLINKED
+  SPECIAL_CHUNKED
+  SPECIAL_BUFFERED
+  SPECIAL_COMPRAS
+    or 0 if the element is not special element.
+ DESCRIPTION
+    Called internally by the GRIget_image_list to allow a chunked or
+    linked-block element to proceed eventhough its offset is 0.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+
+  *** Only called by library routines, should _not_ be called externally ***
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn
+Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
+{
+    CONSTR(FUNC, "Hgetspecinfo");
+    accrec_t* access_rec=NULL;/* access element record */
+    int32     aid;
+    intn      status=0, ret_value=0;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Start read access on the access record of the data element, which
+       is being inquired for its special information */
+    aid = Hstartread(file_id, tag, ref);
+
+    /* Get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Only return the valid special code, anything else return 0 */
+    ret_value = access_rec->special;
+    switch (access_rec->special)
+    {
+        case SPECIAL_LINKED:
+        case SPECIAL_EXT:
+        case SPECIAL_COMP:
+        case SPECIAL_CHUNKED:
+        case SPECIAL_BUFFERED:
+        case SPECIAL_COMPRAS:
+	    /* special elt, call special function */
+	    status = (*access_rec->special_func->info) (access_rec, info);
+	    /* return FAIL if special function fails eventhough special type
+		was OK */
+	    if (status == FAIL) ret_value = FAIL;
+            break;
+#ifdef LATER
+        case SPECIAL_VLINKED:
+            break;
+#endif /* LATER */
+        default:
+            ret_value = 0;
+    } /* switch */
+
+    /* End access to the aid */
+    if (Hendaccess(aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+	/* End access to the aid if it's been accessed */
+	if (aid != 0)
+	    if (Hendaccess(aid)== FAIL)
+		HERROR(DFE_CANTENDACCESS);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* Hgetspecinfo */
 
 
 /* ------------------------------- Hgetntinfo ------------------------------ */

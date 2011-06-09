@@ -704,6 +704,105 @@ done:
     return ret_value;
 } /* VSsetexternalfile */
 
+/* -------------------------- VSgetexternalfile --------------------------- */
+/*
+
+ NAME
+	VSgetexternalfile -- gets external file name and offset
+ USAGE
+	int32 VSgetexternalfile(id, name_len, filename, offset)
+        int32  vkey;            IN: vdata ID
+	size_t name_len;        IN: length of buffer for external file name
+        char  *extfilename;     IN: external file name
+        int32 *offset;          IN: offset in external file
+ RETURNS
+        Returns length of the external file name or FAIL.  If the vdata
+	does not have external element, the length will be 0.
+
+ DESCRIPTION
+        IMPORTANT:  It is the user's responsibility to see that the 
+        separate files are transported with the main file.
+ FORTRAN
+	N/A
+
+--------------------------------------------------------------------------- */
+
+intn VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset)
+{
+    CONSTR(FUNC, "VSgetexternalfile");
+    vsinstance_t *w;
+    VDATA *vs;
+    sp_info_block_t info_block;
+    intn  actual_len = 0;
+    accrec_t   *access_rec;               /* access record */
+    intn  ret_value = SUCCEED;
+
+    if (HAatom_group(vkey) != VSIDGROUP)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate vs's index in vstab */
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* Get the vdata structure */
+    vs = w->vs;
+
+    /* Vdata should have an aid */
+    if (vs->aid == 0 || vs->aid == FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL)
+    else
+    {
+	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+
+	/* HDget_special_info gets the special type and the special info */
+        if (HDget_special_info(vs->aid, &info_block) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL)
+
+	/* If the vdata has external element, return the external file info */
+	if (info_block.key == SPECIAL_EXT)
+	{
+	    /* If the file name is not available, the file is probably
+		corrupted, so we need to report it. */
+	    if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+		ret_value = FAIL;
+	    else
+	    {
+		size_t ext_file_len = HDstrlen(info_block.path);
+
+		/* If caller requests the length of the external file name
+		   only, return the length */
+		if (buf_size == 0)
+		    actual_len = (intn)ext_file_len;
+		else
+		{
+		    /* Caller requests file name, so buffer must not be NULL */
+		    if (ext_filename == NULL)
+			HGOTO_ERROR(DFE_ARGS, FAIL);
+
+		    /* Get the name and its length */
+		    HDstrncpy(ext_filename, info_block.path, buf_size);
+		    actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
+
+		    /* Get the offset in the external file if it's requested */
+		    if (offset != NULL)
+			*offset = info_block.offset;
+		} /* buf_size != 0 */
+		ret_value = actual_len;
+	    }
+	}
+	/* Not external */
+	else
+	    ret_value = FAIL;
+    }
+done:
+    if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+    /* Normal function cleanup */
+    return ret_value;
+} /* VSgetexternalfile */
+
 /*----------------------------------------------------------------- 
 NAME
     VSfpack -- pack into or unpack from a buf the values of fully

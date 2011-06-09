@@ -275,6 +275,10 @@ write_vset_stuff(void)
     status = VSwrite(vs1, (unsigned char *) fbuf, count, FULL_INTERLACE);
     CHECK(status,FAIL,"VSwrite:vs1");
 
+    /* Test VSgetexternalfile on a vdata without external element */
+    status = VSgetexternalfile(vs1, 0, NULL, NULL);
+    VERIFY_VOID(status, FAIL, "VSgetexternalfile");
+
     status = VSdetach(vs1);
     CHECK(status,FAIL,"Vdetach:vs1");
     
@@ -628,7 +632,7 @@ if(status==FAIL)
     CHECK(status,FAIL,"Vgetnamelen:vg1");
 
     vgname = (char *) HDmalloc(sizeof(char *) * (name_len+1));
-    CHECK(vgname, "vgname", "HDmalloc");
+    CHECK_ALLOC(vgname, "vgname", "read_vset_stuff");
     
     status = Vgetname(vg1, vgname);
     CHECK(status,FAIL,"Vgetname:vg1");
@@ -637,7 +641,7 @@ if(status==FAIL)
     CHECK(status,FAIL,"Vgetclassnamelen:vg1");
 
     vgclass = (char *) HDmalloc(sizeof(char *) * (name_len+1));
-    CHECK(vgclass, "vgclass", "HDmalloc");
+    CHECK_ALLOC(vgclass, "vgclass", "read_vset_stuff");
     
     status = Vgetclass(vg1, vgclass);
     CHECK(status,FAIL,"Vgetclass:vg1");
@@ -2953,6 +2957,167 @@ test_getvdatas(void)
     CHECK_VOID(status_n, FAIL, "Hclose");
 } /* test_getvgroups() */
 
+/*************************** test_extfile ***************************
+
+This test routine creates an hdf file, "tvset_ext.hdf" (excerpted and
+modified from Ruth's program used in hmap project), and creates and
+writes a vdata with external element.  The external file is named
+Tables_External_File.
+
+***********************************************************************/
+
+#define FILE2_NAME	"tvset_ext.hdf"
+#define EXTERNAL_FILE	"Tables_External_File"
+#define MULTI_NAME	"Table AR with Attributes in External File"
+#define CLASSMULTI_NAME	"Multi-Type, Multi-Entries per Cell, Store By Row in External File"
+#define NROWS		5	/* number of records to be written to the
+				   vdatas at every write */
+static void
+test_extfile(void) 
+{
+    int32   fid, vdata1_id,
+	    vdata_ref = -1;  /* ref number of a vdata, set to -1 to create  */
+    int32   vdata1_ref;
+    int32   offset;
+    char    hibuf[2] = "hi";
+    char    byebuf[3] = "bye";
+    char   *extfile_name;
+    void*   columnPtrs[3]; 
+    int	    bufsize;
+    void*   databuf;
+    void*   databuf2;
+    intn    name_len = 0;
+    intn    status_n;	/* returned status for functions returning an intn  */
+    int32   status;	/* returned status for functions returning an int32 */
+    char8   col1buf[NROWS][2] = { {'A', 'B'}, 
+				      {'B', 'C'},
+				      {'C', 'D'},
+				      {'D', 'E'},
+				      {'E', 'F'} };
+    uint16  col2buf[NROWS] = {1, 2, 3, 4, 5};	
+    float32 col3buf[NROWS][2] = { {.01, .1},
+				    {.02, .2},
+				    {.03, .3},
+				    {.04, .4},
+				    {.05, .5} };
+
+
+    /* Create the HDF file for data used in this test routine */
+    fid = Hopen (FILE2_NAME, DFACC_CREATE, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+
+    /* Initialize the VS interface */
+    status_n = Vstart (fid);
+    CHECK_VOID(status_n, FAIL, "Vstart");
+
+    /*
+     * Compute the buffer size that will be needed to hold the data for the
+     * mixed-data columns.   Allocate the buffers.
+     */
+    bufsize = (2*sizeof(char8) + sizeof(uint16) + 2*sizeof(float32)) * NROWS;
+    databuf = malloc( (unsigned)bufsize );
+
+    /* Initialize the pointers to the column data. */
+    columnPtrs[0] = &col1buf[0][0];
+    columnPtrs[1] = &col2buf[0];
+    columnPtrs[2] = &col3buf[0][0];
+
+    /* Create the first vdata */
+    vdata1_id = VSattach(fid, vdata_ref, "w");
+    CHECK_VOID(vdata1_id, FAIL, "VSattach");
+
+    /* Set name and class name of the vdata. */
+    status = VSsetname(vdata1_id, MULTI_NAME);
+    CHECK_VOID(status, FAIL, "VSsetname");
+    status = VSsetclass(vdata1_id, CLASSMULTI_NAME);
+    CHECK_VOID(status, FAIL, "VSsetclass");
+
+    status = VSsetexternalfile( vdata1_id, EXTERNAL_FILE, 10 );
+    CHECK_VOID(status, FAIL, "VSsetexternalfile");
+
+    /* Introduce each field's name, data type, and order.  This is the first
+      part in defining a field.  */
+    status_n = VSfdefine (vdata1_id, FIELD1_NAME, DFNT_CHAR8, ORDER_3);
+    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    status_n = VSfdefine (vdata1_id, FIELD2_NAME, DFNT_UINT16, ORDER_2);
+    CHECK_VOID(status_n, FAIL, "VSfdefine");
+    status_n = VSfdefine (vdata1_id, FIELD3_NAME, DFNT_LFLOAT32, ORDER_3);
+    CHECK_VOID(status_n, FAIL, "VSfdefine");
+
+    /* Finalize the definition of the fields. */
+    status_n = VSsetfields (vdata1_id, FIELD_NAME_LIST);
+    CHECK_VOID(status_n, FAIL, "VSsetfields");
+
+    /* Pack the buffer that will be used to write the data to the file. */
+    status = VSfpack( vdata1_id, _HDF_VSPACK, NULL, databuf, bufsize, NROWS, NULL, columnPtrs);
+    CHECK_VOID(status, FAIL, "VSfpack");
+
+    /* Write to the vdata in FULL_INTERLACE */
+    status = VSwrite( vdata1_id, databuf, NROWS, FULL_INTERLACE );
+    CHECK_VOID(status, FAIL, "VSwrite");
+
+    /* Add Attribute for vdata */
+    status = VSsetattr( vdata1_id, _HDF_VDATA, "HDF4 Attribute Table",
+                        DFNT_CHAR8, 2, &hibuf );
+    CHECK_VOID(status, FAIL, "VSsetattr");
+
+    /* Add Attribute for Column C */
+    status = VSsetattr( vdata1_id, 2, "HDF4 Attribute Field 3",
+                        DFNT_CHAR8, 3, &byebuf );
+    CHECK_VOID(status, FAIL, "VSsetattr");
+
+    /* Get vdata ref */
+    vdata1_ref = VSQueryref(vdata1_id);
+    CHECK_VOID(vdata1_ref, FAIL, "VSQueryref");
+
+    status_n = VSdetach( vdata1_id );
+    CHECK_VOID(status_n, FAIL, "VSdetach");
+
+    HDfree(databuf);
+
+    status_n = Vend (fid);
+    CHECK_VOID(status_n, FAIL, "Vend");
+
+    status = Hclose (fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+
+    /* Reopen the file and the vdata and verify external file information */
+
+    /* Open the HDF file */
+    fid = Hopen (FILE2_NAME, DFACC_RDONLY, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+
+    /* Initialize the VS interface */
+    status_n = Vstart (fid);
+    CHECK_VOID(status_n, FAIL, "Vstart");
+
+    /* Create the first vdata */
+    vdata1_id = VSattach(fid, vdata1_ref, "r");
+    CHECK_VOID(vdata1_id, FAIL, "VSattach");
+
+    /* Get the length of the external file name first */
+    name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
+    VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
+
+    extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
+    
+    /* Get the external file name */
+    name_len = VSgetexternalfile(vdata1_id, name_len+1, extfile_name, &offset);
+    VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
+
+    /* Release resources */
+    status_n = VSdetach( vdata1_id );
+    CHECK_VOID(status_n, FAIL, "VSdetach");
+
+    status_n = Vend (fid);
+    CHECK_VOID(status_n, FAIL, "Vend");
+
+    status = Hclose (fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+
+} /* test_extfile() */
+
 /* main test driver */
 void
 test_vsets(void)
@@ -2991,5 +3156,7 @@ test_vsets(void)
     /* test VSgetvdatas - getting user-created vdatas */
     test_getvdatas();
 
+    /* test_extfile - getting external file information */
+    test_extfile();
 }   /* test_vsets */
 

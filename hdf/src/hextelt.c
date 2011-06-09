@@ -188,7 +188,7 @@ DESCRIPTION
    element applies to the content of the external file.
 
    The AID which refers to this new external element, is returned upon
-   successiful execution.  FAIL is returned if any error is encountered.
+   successful execution.  FAIL is returned if any error is encountered.
 FORTRAN
    None
 
@@ -321,7 +321,7 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
         if (HTPdelete(data_id) == FAIL)
             HGOTO_ERROR(DFE_CANTDELDD, FAIL);
 
-    /* write the special info structure to fill */
+    /* write the special info structure to file */
     if((dd_aid=Hstartaccess(file_id,special_tag,ref,DFACC_ALL))==FAIL)
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
     if (Hwrite(dd_aid, 14+info->length_file_name, local_ptbuf) == FAIL)

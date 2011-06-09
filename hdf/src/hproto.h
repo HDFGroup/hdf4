@@ -2111,6 +2111,9 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
     HDFLIBAPI intn VSsetexternalfile
 		(int32 vkey, const char *filename, int32 offset);
 
+    HDFLIBAPI intn VSgetexternalfile
+		 (int32 vkey, uintn name_len, char *filename, int32* offset);
+
     HDFLIBAPI intn VSfpack
                 (int32 vsid, intn packtype, const char *fields_in_buf,
                 void * buf, intn bufsz, intn n_records, 

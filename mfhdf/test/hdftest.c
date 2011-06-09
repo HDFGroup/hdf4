@@ -85,7 +85,8 @@ main(int argc, char *argv[])
     int32 nt;                /* Number type */
     int32 dimsize[10];       /* dimension sizes */
     int32 newsds, newsds2, newsds3; /* SDS handles */
-    int32 sdsid;                    /* SDS handle */
+    int32 sdsid;                 /* SDS handle */
+    int32 noextsds;              /* no external SDS id */
     int32 dimid, dimid1, dimid2; /* Dimension handles */
     int32 num_sds;               /* number of SDS in file */
     int32 num_gattr;             /* Number of global attributes */
@@ -1288,8 +1289,6 @@ main(int argc, char *argv[])
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
 
-#ifdef EXTERNAL_TEST
-
     /*
      * Test the External File storage stuff
      */
@@ -1350,7 +1349,7 @@ main(int argc, char *argv[])
     newsds2 = SDcreate(fext, "WrapperDataSet", nt, 2, dimsize);
     CHECK(newsds2, FAIL, "SDcreate:Failed to create a new data set('WrapperDataSet') for external wrapping");
 
-    /* Promote the regular data set  to a "wrapper" one by making
+    /* Promote the regular data set to a "wrapper" one by making
        it point to where the real data is in the external file 'extfile.hdf'.
        Note that only a subset of the real data('ExternalDataSet') is pointed to
        by the "wrapper" data set. */
@@ -1385,12 +1384,82 @@ main(int argc, char *argv[])
     /* End access to data set "WrapperDataSet" */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
+ 
+    /* Create data set 'NoExteneralDataSet' in file 'exttst.hdf' */
+    nt = DFNT_INT32 | DFNT_NATIVE;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    noextsds = SDcreate(fext, "NoExternalDataSet", nt, 2, dimsize);
+    CHECK(noextsds, FAIL, "SDcreate: Failed to create a new data set 'NoExternalDataSet' for testing SDSgetexternalfile on a non-external element");
+
+    /* initialize data to write out */
+    for(i = 0; i < 25; i++)
+        idata[i] = i;
+
+    /* Write data to all of data set 'NoExternalDataSet' in file 'exttst.hdf' */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(noextsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    status = SDendaccess(noextsds);
+    CHECK(status, FAIL, "SDendaccess");
 
     /* Close file 'exttst.hdf' */
     status = SDend(fext);
     CHECK(status, FAIL, "SDend");
 
-#endif /* EXTERNAL_TEST */
+    /* Test getting external file info on data set "ExternalDataSet" and test
+       not able to get external file info on data set "NoExternalDataSet" */
+    {
+	intn name_len=0;
+	char *extfile_name;
+	int32 offset=0;
+	int32 sds_id, sds_index;
+
+	/* Open file 'exttst.hdf' again */
+	fext = SDstart(EXTTST, DFACC_RDWR);
+	CHECK(fext, FAIL, "SDstart (again)");
+
+	/* Get index of "ExternalDataSet" and get access to it */
+	sds_index = SDnametoindex(fext, "ExternalDataSet");
+	CHECK(sds_index, FAIL, "SDnametoindex");
+	sds_id = SDselect(fext, sds_index);
+	CHECK(sds_id, FAIL, "SDselect");
+
+	/* Call SDgetexternalfile the first time passing in 0 for external
+	   file name length to get the actual length */
+	name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
+	VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+
+	extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+	CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
+
+	/* Call SDgetexternalfile again and get the external file info */
+	name_len = SDgetexternalfile(sds_id, name_len+1, extfile_name, &offset);
+	VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+
+	status = SDendaccess(sds_id);
+	CHECK(status, FAIL, "SDendaccess");
+
+	/* Get index of "NoExternalDataSet" and get access to it */
+	sds_index = SDnametoindex(fext, "NoExternalDataSet");
+	CHECK(sds_index, FAIL, "SDnametoindex");
+	sds_id = SDselect(fext, sds_index);
+	CHECK(sds_id, FAIL, "SDselect");
+
+	/* Call SDgetexternalfile on the SDS that doesn't have external
+	   element, should fail */
+	name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
+	VERIFY(name_len, FAIL, "SDgetexternalfile");
+
+	status = SDendaccess(sds_id);
+	CHECK(status, FAIL, "SDendaccess");
+
+	/* Close file 'exttst.hdf' */
+	status = SDend(fext);
+	CHECK(status, FAIL, "SDend");
+    }
 
 
 #ifdef NBIT_TEST

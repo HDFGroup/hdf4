@@ -495,6 +495,9 @@ extern      "C"
     HDFLIBAPI int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
+    HDFLIBAPI intn HDgetspecinfo
+                (intn file_id, uint16 tag, uint16 ref, sp_info_block_t *info);
+
     HDFLIBAPI int32 HDset_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 

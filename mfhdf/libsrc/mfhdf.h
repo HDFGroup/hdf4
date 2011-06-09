@@ -167,6 +167,9 @@ HDFLIBAPI intn SDdiminfo
 HDFLIBAPI intn SDgetdimstrs
     (int32 id, char *l, char *u, char *f, intn len);
 
+HDFLIBAPI intn SDgetexternalfile
+    (int32 id, intn buf_size, char *ext_filename, int32 *offset);
+
 HDFLIBAPI intn SDsetexternalfile
     (int32 id, const char *filename, int32 offset);
 

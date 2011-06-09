@@ -4134,6 +4134,128 @@ done:
 
 /******************************************************************************
  NAME
+	SDgetexternalfile -- retrieves external file information
+ USAGE
+	int32 SDgetexternalfile(id, filename, offset)
+        int32 id;                  
+	intn  buf_size;
+        const char  * filename;            
+        int32 *offset;              
+
+ DESCRIPTION
+    SDgetexternalfile uses HDget_special_info to get the external
+    file's name and offset, which indicates where the data starts
+    in the external file.
+
+    When the element is not special, SDgetexternalfile will return
+    0.  If the element is SPECIAL_EXT, but the external file name
+    doesn't exist, SDgetexternalfile will fail.
+
+    IMPORTANT:  It is the user's responsibility to see that the 
+    separate files are transported when the main file is moved.
+
+    FORTRAN	N/A
+
+ RETURNS
+    Returns length of the external file name or FAIL.  If the SDS
+    does not have external element, the length will be 0.
+
+******************************************************************************/ 
+intn 
+SDgetexternalfile(int32 id,       /* IN: dataset ID */
+                  intn buf_size,   /* IN: name of external file */
+                  char *ext_filename, /* IN: name of external file */
+                  int32 *offset    /* IN: offset in external file */)
+{
+    CONSTR(FUNC, "SDsetcompress");    /* for HGOTO_ERROR */
+    NC     *handle = NULL;
+    NC_var *var = NULL;
+    intn    actual_len=0;
+    intn    status;
+    int     ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetexternalfile: I've been called\n");
+#endif
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Get the var structure */
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* SDS exists */
+    if(var->data_ref) 
+    {
+	int32 aid=-1;
+	int32 retcode=0;
+	sp_info_block_t info_block;    /* special info block */
+
+	/* Get the access id and then its special info */
+	aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+	retcode = HDget_special_info(aid, &info_block);
+
+	/* If the SDS has external element, return the external file info */
+        if (info_block.key == SPECIAL_EXT)
+        {
+	    /* If the file name is not available, the file is probably
+		corrupted, so we need to report it. */
+            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+                ret_value = FAIL;
+            else
+            {
+                size_t ext_file_len = HDstrlen(info_block.path);
+
+                /* If caller requests the length of the external file name
+                   only, return the length */
+                if (buf_size == 0)
+                    actual_len = (intn)ext_file_len;
+                else
+                {
+                    /* Caller requests file name, so buffer must not be NULL */
+                    if (ext_filename == NULL)
+                        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+                    /* Get the name and its length */
+                    HDstrncpy(ext_filename, info_block.path, buf_size);
+                    actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
+
+                    /* Get the offset in the external file if it's requested */
+                    if (offset != NULL)
+                        *offset = info_block.offset;
+                } /* buf_size != 0 */
+		ret_value = actual_len;
+            }
+        }
+	/* Not external */
+        else
+            ret_value = FAIL;
+
+	/* End access to the aid */
+	if (Hendaccess(aid) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    } 
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+
+      }
+    /* Normal cleanup */
+    return ret_value;    
+} /* SDgetexternalfile */
+
+
+/******************************************************************************
+ NAME
 	SDsetnbitdataset -- Create/convert a dataset to n-bit representation
 
 
