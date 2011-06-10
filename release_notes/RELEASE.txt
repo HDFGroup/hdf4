@@ -55,12 +55,11 @@ New features and changes
      functions are added to work around the limitation of Vnattrs:
      + Vnattrs2 gives number of new- and old-style attributes
      + Vattrinfo2 gives information about an old or new style attribute
--> talk to Elena about the 2 customized arguments for hmap
      + Vgetattr2 reads values of an old or new style attribute
      BMR - 2011/06/09
 
-   - The following functions were specifically added to support the HDF4 Mapping
-     project:
+   - The following functions were added to support the HDF4 Mapping
+     project specifically:
      + VSgetdatainfo gives offsets/lengths of a vdata's data
      + ANgetdatainfo gives offset/length of an annotation's data
      + SDgetdatainfo gives offsets/lengths of a data set's data
@@ -81,11 +80,8 @@ New features and changes
 
    - Two functions are added to provide information of an external file:
      VSgetexternalfile for a vdata and SDgetexternalfile for a data set.
+     BMR - 2011/06/09
 
-
-   Test
-   ====
-   - [None]
 
    Utilities
    ========= 
@@ -106,6 +102,9 @@ Bugs fixed since HDF4.2.5
      + dumprig giving wrong info about RIS24 and palettes
      + dumpvg missing some items in the Graphical representation
      BMR - 2011/06/09
+   - hdp dumpvd and dumpsds now provide the name of the external file in the
+     error message when reading fails due to missing the external file.
+     BMR - 2011/06/10
 
 
    Library
@@ -113,6 +112,7 @@ Bugs fixed since HDF4.2.5
    - The JPEG test failure due to the different versions of the JPEG library
      had been fixed.  HDF4 is expected to build and pass regression tests for
      any version of the JPEG library available on the user's systems. 
+     BMR - 2011/06/09
 
 
    Configuration
