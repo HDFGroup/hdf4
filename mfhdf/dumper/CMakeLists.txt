@@ -41,7 +41,7 @@ TARGET_NAMING (hdp ${LIB_TYPE})
 
 IF (BUILD_TESTING)
   
-  #-- Copy all the dat files from the test directory into the source directory
+  #-- Copy all the data files from the test directory into the source directory
   SET (HDF4_REFERENCE_TEST_FILES
       ctxtr2r.hdf
       Example6.hdf
@@ -62,6 +62,8 @@ IF (BUILD_TESTING)
       swf32.hdf
       swi16.hdf
       swi8.hdf
+      Tables.hdf
+      Tables_External_File
       tdata.hdf
       tdf24.hdf
       tdfr8f.hdf
@@ -121,6 +123,7 @@ IF (BUILD_TESTING)
       dumpvd-11.out
       dumpvd-12.out
       dumpvd-13.out
+      dumpvd-14.out
       dumpvd-2.out
       dumpvd-3.out
       dumpvd-4.out
@@ -499,6 +502,12 @@ IF (BUILD_TESTING)
 
   # Added test #13 to test long vdata's name and class, HDFFR-1267 - BMR 5/15/11
   ADD_H4_TEST (dumpvd-13 0 dumpvd vslongname.hdf)
+
+  # Added test #14 to test the detection of external file, HDFFR-1266.  The
+  # external file is Tables_External_File and when the file is removed from the
+  # current directory, the test will fail with the name of the file displayed in
+  # the error message. - BMR 6/10/11
+  ADD_H4_TEST (dumpvd-14 0 dumpvd Tables.hdf)
 
   # Test command dumpvg
   ADD_H4_TEST (dumpvg-1 0 dumpvg tvset.hdf)
