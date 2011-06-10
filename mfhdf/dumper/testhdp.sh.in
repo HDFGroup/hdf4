@@ -303,6 +303,12 @@ TEST dumpvd-12.out dumpvd -c "CoordVar" sds1_dim1_samename.hdf
 # Added test #13 to test long vdata's name and class, HDFFR-1267 - BMR 5/15/11
 TEST dumpvd-13.out dumpvd vslongname.hdf
 
+# Added test #14 to test the detection of external file, HDFFR-1266.  The
+# external file is Tables_External_File and when the file is removed from the
+# current directory, the test will fail with the name of the file displayed in
+# the error message. - BMR 6/10/11
+TEST dumpvd-14.out dumpvd Tables.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi

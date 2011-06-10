@@ -254,20 +254,34 @@ dumpvd(int32       vd,
           cnt1 = 0;
           cnt2 = 0;
           while (done != nv)
-            {
-                /* Determine the amount of data to be read this time. */
-                if ((nv - done) > chunk)
+          {
+              /* Determine the amount of data to be read this time. */
+              if ((nv - done) > chunk)
                     count = chunk;
-                else
+              else
                     count = nv - done;
 
-                /* read and update bookkeeping */
-                if (FAIL == VSread(vd, bb, count, interlace))
-                  {
-                      fprintf(stderr,"dumpvd: VSread failed for vd = %d \n",(int)vd);
-                      ret_value = FAIL;
-                      goto done;
-                  }
+              /* read and update bookkeeping */
+              if (FAIL == VSread(vd, bb, count, interlace))
+              {
+		 /* If the data set has external element, get the external file
+		 name to provide information */
+		 intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
+		 if (extfile_namelen > 0)
+		 {
+		    char *extfile_name = NULL;
+		    extfile_name = (char *)HDmalloc(sizeof(char *)*(extfile_namelen+1));
+		    CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd" );
+
+		    /* Get the external file info, we don't need offset here */
+		    extfile_namelen = VSgetexternalfile(vd, extfile_namelen+1, extfile_name, NULL);
+		    ERROR_GOTO_3( "in %s: VSread failed for vd(%d) with external file %s.  Please verify the file exists in the same directory.",
+                        "dumpvd", (int)vd, extfile_name);
+		 }
+		 else
+		    ERROR_GOTO_2( "in %s: VSread failed for vd(%d)",
+                        "dumpvd", (int)vd );
+                }
 
                 done += count;
                 b = bb;
@@ -391,11 +405,25 @@ dumpvd(int32       vd,
 
                 /* read and update bookkeeping */
                 if (FAIL == VSread(vd, bb, count, interlace))
-                  {
-                      fprintf(stderr,"dumpvd: VSread failed for vd = %d \n",(int)vd);
-                      ret_value = FAIL;
-                      goto done;
-                  }
+                {
+		   /* If the data set has external element, get the external
+		      file name to provide information */
+		   intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
+		   if (extfile_namelen > 0)
+		   {
+		      char *extfile_name = NULL;
+		      extfile_name = (char *)HDmalloc(sizeof(char *)*(extfile_namelen+1));
+		      CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd" );
+
+		      /* Get the external file info, we don't need offset here */
+		      extfile_namelen = VSgetexternalfile(vd, extfile_namelen+1, extfile_name, NULL);
+		      ERROR_GOTO_3( "in %s: VSread failed for vd(%d) with external file %s.  Please verify the file exists in the same directory",
+                        "dumpvd", (int)vd, extfile_name);
+		   }
+		   else
+		      ERROR_GOTO_2( "in %s: VSread failed for vd(%d)",
+                        "dumpvd", (int)vd );
+                }
 
                 done += count;
                 b = bb;

@@ -259,8 +259,25 @@ int32 sdsdumpfull( int32        sds_id,
    { /* If there is only one dimension, then dump the data
                and the job is done. */
       if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf))
-         ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
+      {
+	 /* If the data set has external element, get the external file
+	    name to provide information */
+	 intn extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
+	 if (extfile_namelen > 0)
+	 {
+	    char *extfile_name = NULL;
+	    extfile_name = (char *)HDmalloc(sizeof(char *)*(extfile_namelen+1));
+	    CHECK_ALLOC(extfile_name, "extfile_name", "sdsdumpfull" );
+
+	    /* Get the external file information, we don't need offset here */
+	    extfile_namelen = SDgetexternalfile(sds_id, extfile_namelen, extfile_name, NULL);
+            ERROR_GOTO_3( "in %s: SDreaddata failed for sds_id(%d) with external file %s.  Please verify the file exists in the same directory.",
+			"sdsdumpfull", (int)sds_id, extfile_name);
+	 }
+	 else
+            ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
 			"sdsdumpfull", (int)sds_id );
+      }
 
       /* if printing data only, print with no indentation */
       if( dumpsds_opts->contents == DDATA )
@@ -281,10 +298,26 @@ int32 sdsdumpfull( int32        sds_id,
 	accordingly(?) */
       while (!done)
       {
-         status = SDreaddata(sds_id, start, NULL, edge, buf);
-         if( FAIL == status )
-            ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
+         if (FAIL == SDreaddata(sds_id, start, NULL, edge, buf))
+         {
+	    /* If the data set has external element, get the external file
+	       name to provide information */
+	    intn extfile_namelen = SDgetexternalfile(sds_id, 0, NULL, NULL);
+	    if (extfile_namelen > 0)
+	    {
+	       char *extfile_name = NULL;
+	       extfile_name = (char *)HDmalloc(sizeof(char *)*(extfile_namelen+1));
+	       CHECK_ALLOC(extfile_name, "extfile_name", "sdsdumpfull" );
+
+	       /* Get the external file information, we don't need offset here */
+	       extfile_namelen = SDgetexternalfile(sds_id, extfile_namelen, extfile_name, NULL);
+               ERROR_GOTO_3( "in %s: SDreaddata failed for sds_id(%d) with external file %s.  Please verify the file exists in the same directory.",
+			"sdsdumpfull", (int)sds_id, extfile_name);
+	    }
+	    else
+               ERROR_GOTO_2( "in %s: SDreaddata failed for sds_id(%d)",
                         "sdsdumpfull", (int)sds_id );
+        }
 
          /* if printing data only, print with no indentation */
          if( dumpsds_opts->contents == DDATA )

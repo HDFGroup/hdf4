@@ -164,6 +164,8 @@ mfhdf/dumper/testfiles/Example6.hdf -text
 mfhdf/dumper/testfiles/Image_with_Palette.hdf -text
 mfhdf/dumper/testfiles/LongDataset.hdf -text
 mfhdf/dumper/testfiles/SDSlongname.hdf -text
+mfhdf/dumper/testfiles/Tables.hdf -text
+mfhdf/dumper/testfiles/Tables_External_File -text
 mfhdf/dumper/testfiles/VGlongname.hdf -text
 mfhdf/dumper/testfiles/ctxtr2r.hdf -text
 mfhdf/dumper/testfiles/dumpsds-12.out -text
@@ -176,6 +178,7 @@ mfhdf/dumper/testfiles/dumpsds-17.out -text
 mfhdf/dumper/testfiles/dumpvd-11.out -text
 mfhdf/dumper/testfiles/dumpvd-12.out -text
 mfhdf/dumper/testfiles/dumpvd-13.out -text
+mfhdf/dumper/testfiles/dumpvd-14.out -text
 mfhdf/dumper/testfiles/dumpvg-13.out -text
 mfhdf/dumper/testfiles/dumpvg-14.out -text
 mfhdf/dumper/testfiles/dumpvg-15.out -text
