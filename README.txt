@@ -1,4 +1,4 @@
-HDF version 4.2.5-post0 currently under development
+HDF version 4.2.6 currently under development
 ===================================================
 
 Obtaining the latest version of HDF4
