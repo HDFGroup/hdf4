@@ -47,6 +47,8 @@ New features and changes
    ============= 
    - Specified explicit version of the netCDF API (v 2.3.2) used by HDF in
      configure help and in configuration SUMMARY.
+     
+   - CMake support has been added. Current version recommemded is CMake 2.8.4.
 
    Library
    ========= 
@@ -164,16 +166,19 @@ HDF 4.2.5-post* has been tested in the following platforms:
    AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V10.1
    (NCSA bp-login)               IBM XL Fortran for AIX, V12.1
 
-   Windows XP                    Visual Studio 2005 (w/ Intel Fortran 9.1/10.1)
-                                 Visual Studio 2008 (w/ Intel Fortran 10.1)
-                                 cygwin (gcc 4.3.4)
+   Windows XP                    Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
+                                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 (cmake)
+                                 Cygwin(1.7.7 native gcc(4.3.4) compiler and gfortran)
 
-   Windows XP(64 bit)            Visual Studio 2005 (w/ Intel Fortran 9.1/10.1)
-                                 Visual Studio 2008 (w/ Intel Fortran 10.1)
-                                 
-   Windows Vista                 Visual Studio 2008 (w/ Intel Fortran 10.1)
-                                 
-   Windows Vista(64 bit)         Visual Studio 2008 (w/ Intel Fortran 10.1)
+   Windows XP x64                Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
+                                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 (cmake)
+                                 Cygwin(1.7.7 native gcc(4.3.4) compiler and gfortran)
+
+   Windows 7                     Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+
+   Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  
    MAC OS X Intel 10.6.2         Darwin 10.2.0
                                  Intel C icc (ICC) 11.1 20091130
@@ -182,17 +187,37 @@ HDF 4.2.5-post* has been tested in the following platforms:
                                  GNU Fortran (GCC) 4.5.0 20090910
                              
 
-   Linux 2.6.31.12-174.2.3.fc12.x86_64 #1 SMP 
-      x86_64 GNU/Linux           gcc (GCC) 4.4.2
-   (Fedora 12)                   gfortran GNU Fortran (GCC) 4.4.2 20091222 
-                                                      (Red Hat 4.4.2-20)
-   Linux 2.6.31-17-generic #54-Ubuntu SMP 
-      x86_64 GNU/Linux           gcc (GCC) 4.4.1
-   (Ubuntu 9.10)                 gfortran GNU Fortran (GCC) 4.4.1 
-                                                      
-   Linux 2.6.31.8-0.1-desktop #1 SMP 
-      x86_64 GNU/Linux           gcc (GCC) 4.4.1
-   (OpenSuse 11.2)               gfortran GNU Fortran (GCC) 4.4.1 
+   Debian6.01 2.6.32-5-686 #1 SMP i686 GNU/Linux
+                                 gcc (Debian 4.4.5-8) 4.4.5
+                                 GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+   Debian6.01 2.6.32-5-amd64 #1 SMP x86_64 GNU/Linux
+                                 gcc (Debian 4.4.5-8) 4.4.5
+                                 GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+   Fedora14 2.6.35.12-88.fc14.i686.PAE #1 SMP i686 i686 i386 GNU/Linux
+                                 gcc (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+                                 GNU Fortran (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+
+   Fedora14 2.6.35.12-88.fc14.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+                                 GNU Fortran (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+
+   SUSE 11.4 2.6.37.1-1.2-desktop #1 SMP PREEMPT i686 i686 i386 GNU/Linux
+                                 gcc (SUSE Linux) 4.5.1 20101208
+                                 GNU Fortran (SUSE Linux) 4.5.1 20101208
+
+   SUSE 11.4 2.6.37.1-1.2-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (SUSE Linux) 4.5.1 20101208
+                                 GNU Fortran (SUSE Linux) 4.5.1 20101208
+
+   Ubuntu 10.10 2.6.35-28-generic #50-Ubuntu SMP i686 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+                                 GNU Fortran (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+
+   Ubuntu 10.10 2.6.35-28-generic #50-Ubuntu SMP x86_64 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+                                 GNU Fortran (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
 
 
 Known problems
