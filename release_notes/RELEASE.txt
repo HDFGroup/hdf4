@@ -41,15 +41,16 @@ New features and changes
 ========================
    Source distribution
    ===================
-   - [None.  PPM - YYYY/MM/DD]
+   - [None]
 
    Configuration
    ============= 
+   - CMake support has been added. Current version recommemded is CMake 2.8.4.
+     ADB - 2011/06/14
+
    - Specified explicit version of the netCDF API (v 2.3.2) used by HDF in
      configure help and in configuration SUMMARY.
      
-   - CMake support has been added. Current version recommemded is CMake 2.8.4.
-
    Library
    ========= 
    - The function Vnattrs only processes attributes created by Vsetattr.  It is
@@ -97,6 +98,9 @@ Bugs fixed since HDF4.2.5
 =========================
    Utilities
    ========= 
+   - hdp dumpvd and dumpsds now provide the name of the external file in the
+     error message when reading fails due to missing the external file.
+     BMR - 2011/06/10
    - The problem where hdiff displays zeroes for Vdata values that are non-zero
      had been fixed.  BMR - 2011/06/09
    - hdp had been fixed for the problems of
@@ -104,9 +108,6 @@ Bugs fixed since HDF4.2.5
      + dumprig giving wrong info about RIS24 and palettes
      + dumpvg missing some items in the Graphical representation
      BMR - 2011/06/09
-   - hdp dumpvd and dumpsds now provide the name of the external file in the
-     error message when reading fails due to missing the external file.
-     BMR - 2011/06/10
 
 
    Library
@@ -160,11 +161,8 @@ HDF 4.2.5-post* has been tested in the following platforms:
       SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
    (ember)
 
-   AIX 5.3 (32/64 bit)           IBM XL C/C++ for AIX, V9.0
-   (LLNL Up)                     IBM XL Fortran for AIX, V11.1
-
-   AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V10.1
-   (NCSA bp-login)               IBM XL Fortran for AIX, V12.1
+   AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V11.1
+   (NCSA bp-login)               IBM XL Fortran for AIX, V13.1
 
    Windows XP                    Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
                                  Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
