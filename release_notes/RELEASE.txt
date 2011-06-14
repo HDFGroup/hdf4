@@ -178,11 +178,16 @@ HDF 4.2.5-post* has been tested in the following platforms:
 
    Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  
-   MAC OS X Intel 10.6.2         Darwin 10.2.0
-                                 Intel C icc (ICC) 11.1 20091130
-                                 Intel Fortran ifort (IFORT) 11.1 20091130 
+   MAC OS X Intel 10.6.2         Darwin 10.7.0
+   (32 bit)                      Intel C icc (ICC) 10.1 20070913
+   (tejeda)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+                                 GNU Fortran (GCC) 4.4.0 20090123
+
+   MAC OS X Intel 10.6.2         Darwin 10.7.0
+   (64 bit)                      Intel C icc (ICC) 12.0 20101110
+   (fred)                        Intel Fortran ifort (IFORT) 12.0 20101110 
                                  i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-                                 GNU Fortran (GCC) 4.5.0 20090910
+                                 GNU Fortran (GCC) 4.6.0
                              
 
    Debian6.01 2.6.32-5-686 #1 SMP i686 GNU/Linux
