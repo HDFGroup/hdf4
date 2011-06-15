@@ -414,6 +414,10 @@
         >
       </File>
       <File
+        RelativePath="..\..\..\..\mfhdf\test\tattributes.c"
+        >
+      </File>
+      <File
         RelativePath="..\..\..\..\mfhdf\test\tfile.c"
         >
       </File>

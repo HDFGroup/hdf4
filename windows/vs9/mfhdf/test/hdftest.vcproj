@@ -393,10 +393,10 @@
         RelativePath="..\..\..\..\mfhdf\test\tcoordvar.c"
         >
       </File>
-            <File
-                RelativePath="..\..\..\..\mfhdf\test\tattdatainfo.c"
-                >
-            </File>
+      <File
+        RelativePath="..\..\..\..\mfhdf\test\tattdatainfo.c"
+        >
+      </File>
       <File
         RelativePath="..\..\..\..\mfhdf\test\tdatainfo.c"
         >
@@ -411,6 +411,10 @@
       </File>
       <File
         RelativePath="..\..\..\..\mfhdf\test\temptySDSs.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\mfhdf\test\tattributes.c"
         >
       </File>
       <File

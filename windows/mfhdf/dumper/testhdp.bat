@@ -317,6 +317,13 @@ rem parse arguments
         ) else (
             call :test dumpsds-15szip.out dumpsds sds_compressed.hdf
         )
+
+        rem Test 16 prints SDSs in index order, by default
+        call :test dumpsds-16.out dumpsds -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf
+
+        rem Test 17 prints SDSs in the order they were specified, when flag -k is present
+        rem as a request to 'k'eep the specified order
+        call :test dumpsds-17.out dumpsds -k -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf
     )
     
     rem Test command dumprig
@@ -362,6 +369,15 @@ rem parse arguments
         rem between SDS and coordinate variables)
         call :test dumpvd-11.out dumpvd -c "SDSVar" sds1_dim1_samename.hdf
         call :test dumpvd-12.out dumpvd -c "CoordVar" sds1_dim1_samename.hdf
+
+        rem Added test #13 to test long vdata's name and class, HDFFR-1267 - BMR 5/15/11
+        call :test dumpvd-13.out dumpvd vslongname.hdf
+
+        rem Added test #14 to test the detection of external file, HDFFR-1266.  The
+        rem external file is Tables_External_File and when the file is removed from the
+        rem current directory, the test will fail with the name of the file displayed in
+        rem the error message. - BMR 6/10/11
+        call :test dumpvd-14.out dumpvd Tables.hdf
     )
     
     rem Test command dumpvg
@@ -405,6 +421,10 @@ rem parse arguments
         rem Prints contents of file when a dimension has the same name as that 
         rem of another SDS
         call :test dumpvg-15.out dumpvg sds2_dim1_samename.hdf
+
+        rem Verify the fix for bug HDFFR-197 and a vgroup with ref=0 (some old RI stuff)
+        call :test dumpvg-16.out dumpvg -h grtdfi322.hdf
+        call :test dumpvg-17.out dumpvg grtdfi322.hdf
     )
 
     rem Test command dumpgr
