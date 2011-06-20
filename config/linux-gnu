@@ -26,8 +26,8 @@ if test "X-$CC" = "X-"; then
 fi
 
 if test "X-$F77" = "X-"; then
-  F77=g77
-  F77_BASENAME=g77
+  F77=gfortran
+  F77_BASENAME=gfortran
 
 else
     case $F77 in
@@ -165,7 +165,7 @@ esac
 #
 #                     WARNING: flags do not have to be added to the CFLAGS
 #                     or FFLAGS variable if the compiler is the GNU gcc
-#                     and g77 compiler.
+#                     and gfortran compiler.
 #
 #                     FFLAGS and CFLAGS should contain *something* or else
 #                     configure will probably add `-g'. For most systems
@@ -204,6 +204,13 @@ case $CC_BASENAME in
 esac
 
 case $F77_BASENAME in 
+  gfortran)
+    FFLAGS="$FFLAGS"
+    DEBUG_FFLAGS="-g"
+    PROD_FFLAGS="-O"
+    PROFILE_FFLAGS="-pg"
+    ;;
+
   g77)
     FFLAGS="$FFLAGS "
     DEBUG_FFLAGS="-g"
