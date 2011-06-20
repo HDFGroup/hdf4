@@ -53,6 +53,11 @@ New features and changes
      
    Library
    ========= 
+   - Prior to HDF version 4.2.6, passing 0 for count caused failure; however,
+     the failure did not occur in SDsetattr but was delayed until SDend.  This
+     can potentially cause file corruption.  Starting from release 4.2.6,
+     SDsetattr will fail when count is 0. BMR - 2011/06/09
+
    - The function Vnattrs only processes attributes created by Vsetattr.  It is
      not aware of attributes created by the pre-Vsetattr methods.  The following
      functions are added to work around the limitation of Vnattrs:
