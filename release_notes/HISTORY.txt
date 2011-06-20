@@ -15,6 +15,7 @@
 
 List of the HDF4 releases
 
+4.2.6          June	 2011
 4.2.5          February  2010
 4.2r4          January   2009
 4.2r3          January   2008
@@ -36,7 +37,297 @@ List of the HDF4 releases
 
 
 ==========================================================================    
+
+%%%4.2.6%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HDF version 4.2.6 released on 2011-06-15
+===================================================
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2.5 and HDF 4.2.6.
+It is written for people who are familiar with previous releases of HDF 
+and wish to migrate to HDF 4.2.6.
+
+The HDF 4.2.6 documentation can be found on the The HDF Group's FTP server:
+
+    ftp://ftp.hdfgroup.org/HDF/Documentation/
+
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+  
+    http://hdfgroup.org/products/hdf4/
+
+If you have any questions or comments, please see the HDF Support page:
+
+    http://hdfgroup.org/services/support.html
+
+CONTENTS
+
+- New features and changes
+  -- Source distribution
+  -- Configuration
+  -- Library
+  -- Utilities
+- Support for new platforms and compilers
+- Bugs fixed since HDF4.2.5
+  -- Utilities
+  -- Library
+  -- Configuration
+- Documentation
+- Platforms tested
+- Known problems
+
+
+New features and changes
+========================
+   Source distribution
+   ===================
+   - [None]
+
+   Configuration
+   ============= 
+   - CMake support has been added. Current version recommemded is CMake 2.8.4.
+     ADB - 2011/06/14
+
+   - Specified explicit version of the netCDF API (v 2.3.2) used by HDF in
+     configure help and in configuration SUMMARY.
+     
+   Library
+   ========= 
+   - Prior to HDF version 4.2.6, passing 0 for count caused failure; however,
+     the failure did not occur in SDsetattr but was delayed until SDend.  This
+     can potentially cause file corruption.  Starting from release 4.2.6,
+     SDsetattr will fail when count is 0. BMR - 2011/06/09
+
+   - The function Vnattrs only processes attributes created by Vsetattr.  It is
+     not aware of attributes created by the pre-Vsetattr methods.  The following
+     functions are added to work around the limitation of Vnattrs:
+     + Vnattrs2 gives number of new- and old-style attributes
+     + Vattrinfo2 gives information about an old or new style attribute
+     + Vgetattr2 reads values of an old or new style attribute
+     BMR - 2011/06/09
+
+   - The following functions were added to support the HDF4 Mapping
+     project specifically:
+     + VSgetdatainfo gives offsets/lengths of a vdata's data
+     + ANgetdatainfo gives offset/length of an annotation's data
+     + SDgetdatainfo gives offsets/lengths of a data set's data
+     + GRgetdatainfo gives offsets/lengths of a raster image's data
+     + VSgetattdatainfo gives offset/length of vdata attribute's data
+     + VGgetattdatainfo gives offset/length of vgroup attribute's data
+     + GRgetattdatainfo gives offset/length of raster image attribute's data
+     + SDgetattdatainfo gives offset/length of data set attribute's data
+     + SDgetoldattdatainfo gives offset/length of a pre-defined attribute in
+       old format
+     + SDgetanndatainfo gives offset/lenth of an annotation belonging to an SDS
+     + Vgetvgroups gives a list of user-created vgroups
+     + VSgetvdatas gives a list of user-created vdatas
+     + VSofclass gives a list of vdatas of a specific class
+     + Hgetntinfo gives some information about a number type
+     + GR2bmapped indicates whether a raster image should be mapped
+     BMR - 2011/06/09
+
+   - Two functions are added to provide information of an external file:
+     VSgetexternalfile for a vdata and SDgetexternalfile for a data set.
+     BMR - 2011/06/09
+
+
+   Utilities
+   ========= 
+   - [None]
+
+Support for new platforms and compilers
+=======================================
+   - [None]
+
+Bugs fixed since HDF4.2.5
+=========================
+   Utilities
+   ========= 
+   - hdp dumpvd and dumpsds now provide the name of the external file in the
+     error message when reading fails due to missing the external file.
+     BMR - 2011/06/10
+   - The problem where hdiff displays zeroes for Vdata values that are non-zero
+     had been fixed.  BMR - 2011/06/09
+   - hdp had been fixed for the problems of
+     + dumpvd printing Name/Class incorrectly
+     + dumprig giving wrong info about RIS24 and palettes
+     + dumpvg missing some items in the Graphical representation
+     BMR - 2011/06/09
+
+
+   Library
+   ========= 
+   - The JPEG test failure due to the different versions of the JPEG library
+     had been fixed.  HDF4 is expected to build and pass regression tests for
+     any version of the JPEG library available on the user's systems. 
+     BMR - 2011/06/09
+
+
+   Configuration
+   =============
+   - [None]
+
+
+Documentation
+==============
+The updated HDF Reference Manual is now available in HTML format.
+
+Platforms tested
+================
+
+This version has been tested in the following platforms:
+
+   Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+      SMP i686 i386              G95 (GCC 4.0.3 (g95 0.92!) Jun 24 2009)
+   (jam)                         g77 (GCC) 3.4.6 20060404
+                                 pgcc and pgf90 10.6-0 32-bit target 
+                                 on x86 Linux -tp penryn
+                                 Intel(R) C Compiler, Version 11.1
+                                 Intel(R) Fortran Compiler, Version 11.1
+                                 GNU Fortran (GCC) 4.1.2 20080704
+                                 (Red Hat 4.1.2-50)
+
+
+   Linux 2.6.18-238.9.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+      SMP x86_64 GNU/Linux       G95 (GCC 4.0.3 (g95 0.93!) Apr 21 2010)
+   (koala)                       icc (ICC) 12.0.3 20110309
+                                 ifort (IFORT) 12.0.3 20110309
+                                 pgcc and pgf90 11.3-0 64-bit target 
+                                 on x86-64 Linux -tp nehalem
+                                 GNU Fortran (GCC) 4.1.2 20080704 
+                                 (Red Hat 4.1.2-50)
+
+   SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 
+   (linew)                       Sun Fortran 95 8.3 SunOS_sparc 
+                                 Patch 127000-13 
+
+   Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
+      #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073
+      SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
+   (ember)
+
+   AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V11.1
+   (NCSA bp-login)               IBM XL Fortran for AIX, V13.1
+
+   Windows XP                    Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
+                                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 (cmake)
+                                 Cygwin(1.7.7 native gcc(4.3.4) compiler and gfortran)
+
+   Windows XP x64                Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
+                                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 (cmake)
+                                 Cygwin(1.7.7 native gcc(4.3.4) compiler and gfortran)
+
+   Windows 7                     Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+
+   Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 
+   MAC OS X Intel 10.6.2         Darwin 10.7.0
+   (32 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+   (tejeda)                      GNU Fortran (GCC) 4.4.0 20090123
+
+   MAC OS X Intel 10.6.2         Darwin 10.7.0
+   (64 bit)                      Intel C icc (ICC) 12.0 20101110
+   (fred)                        Intel Fortran ifort (IFORT) 12.0 20101110 
+                                 i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+                                 GNU Fortran (GCC) 4.6.0
+                             
+
+   Debian6.01 2.6.32-5-686 #1 SMP i686 GNU/Linux
+                                 gcc (Debian 4.4.5-8) 4.4.5
+                                 GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+   Debian6.01 2.6.32-5-amd64 #1 SMP x86_64 GNU/Linux
+                                 gcc (Debian 4.4.5-8) 4.4.5
+                                 GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+   Fedora14 2.6.35.12-88.fc14.i686.PAE #1 SMP i686 i686 i386 GNU/Linux
+                                 gcc (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+                                 GNU Fortran (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+
+   Fedora14 2.6.35.12-88.fc14.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+                                 GNU Fortran (GCC) 4.5.1 20100924 (Red Hat 4.5.1-4)
+
+   SUSE 11.4 2.6.37.1-1.2-desktop #1 SMP PREEMPT i686 i686 i386 GNU/Linux
+                                 gcc (SUSE Linux) 4.5.1 20101208
+                                 GNU Fortran (SUSE Linux) 4.5.1 20101208
+
+   SUSE 11.4 2.6.37.1-1.2-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (SUSE Linux) 4.5.1 20101208
+                                 GNU Fortran (SUSE Linux) 4.5.1 20101208
+
+   Ubuntu 10.10 2.6.35-28-generic #50-Ubuntu SMP i686 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+                                 GNU Fortran (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+
+   Ubuntu 10.10 2.6.35-28-generic #50-Ubuntu SMP x86_64 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+                                 GNU Fortran (Ubuntu/Linaro 4.4.4-14ubuntu5) 4.4.5
+
+
+Known problems
+==============
+
+o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+   fails when checking for the jpeglib.h header due to the duplicated
+   macro definition of HAVE_STDLIB_H.  This is because some newer builds
+   of jpeg library has HAVE_STDLIB_H defined in its jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc (e.g., V7.0) still fails but
+   newer xlc (e.g., V9.0) passes.  AKC - 2010/02/17
+
+o  When building on Linux/UNIX platforms, the szip shared library files must
+   be in the system library path. This can be done by adding a link to
+   the libsz.* files into the /usr/lib folder or by adding the library
+   location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+   
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale were created with
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might corrupt the data.
+
+   HDF4 Library Releases 4.2r2 and later do not allow this conflict to
+   occur.  On the other hand, recent libraries are also unable to detect
+   such conflicts that already exist in a file.  It is therefore STRONGLY
+   recommended to check for such name duplication before working with data 
+   created with a pre-4.2r2 library. 
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for 
+   further details.
+
+o  This release does not support VMS systems.
+
+o  N-Bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled 
+   with a PGI C compiler; linking with a JPEG library built with gcc causes 
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to 
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
+
+o  In order for the API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata), after being written and before SDgetdatasize is called.
  
+
 %%%4.2.5%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HDF version 4.2.5 released on Wed Feb 24 13:00:16 CST 2010
 ===================================================
