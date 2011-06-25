@@ -196,19 +196,23 @@ o  When building on Linux/UNIX platforms, the szip shared library files must
    to the CFLAGS environment variable.
    
 o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
-   When a one-dimensional SDS and a dimension scale were created with
+   When a one-dimensional SDS and a dimension scale have
    the same name, subsequent accesses to the dimension scale or to the
-   SDS might corrupt the data.
+   SDS might produce undesired results because the libraries could not
+   distinguish between the two objects.  In the case of writing, data
+   might even be corrupted.  For example, SDS data might be written to a
+   dimension variable or vice versa.
 
-   HDF4 Library Releases 4.2r2 and later do not allow this conflict to
-   occur.  On the other hand, recent libraries are also unable to detect
-   such conflicts that already exist in a file.  It is therefore STRONGLY
-   recommended to check for such name duplication before working with data 
-   created with a pre-4.2r2 library. 
+   HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
+   and a dimension variable.  However, as older versions, these recent
+   versions are unable to detect such conflicts in existing files,
+   specifically, those created by earlier releases.  It is therefore STRONGLY
+   recommended to check for such name duplication before working with data
+   created with a pre-4.2r2 library.
 
    The functions SDgetnumvars_byname and SDnametoindices are provided
    to help detect such name conflicts and select the correct object to
-   access, respectively; see the HDF Reference Manual entries for 
+   access, respectively; see the HDF Reference Manual entries for
    further details.
 
 o  This release does not support VMS systems.
