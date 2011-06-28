@@ -43,7 +43,7 @@ SET (examples
     VD_get_vdata_info 
     VD_locate_vdata 
     VG_create_vgroup
-#    VG_add_sds_to_vgroup 
+    #VG_add_sds_to_vgroup
     VG_insert_vdatas_to_vgroup
     VG_set_get_vgroup_attr 
     VG_vgroup_contents
@@ -53,15 +53,17 @@ SET (examples
     GR_set_attribute 
     GR_get_attribute
     GR_write_palette 
-    #GR_image_info 
+    GR_image_info 
     GR_read_image
     AN_create_annotation 
     AN_get_annotation_info 
     AN_read_annotation
     #VD_set_get_vdata_attr
 )
+SET (mf_examples
+    VG_add_sds_to_vgroup
+)
 SET (skip_examples
-    GR_image_info 
     VD_set_get_vdata_attr
 )
 
@@ -80,6 +82,12 @@ IF (BUILD_TESTING)
           Two_Vdatas.hdf
           Two_Vgroups.hdf
   )
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
+  ELSE (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (HDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES LABELS EXAMPLES)
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "HDF_FORTRAN_EXAMPLES-clearall-objects")
 ENDIF (BUILD_TESTING)
 
 FOREACH (example ${examples})
@@ -90,7 +98,12 @@ FOREACH (example ${examples})
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   IF (BUILD_TESTING)
     ADD_TEST (NAME f_extest_${example} COMMAND $<TARGET_FILE:f_ex_${example}>)
-    SET_TESTS_PROPERTIES (f_extest_${example} PROPERTIES DEPENDS HDF_FORTRAN_EXAMPLES-clearall-objects LABELS ${PROJECT_NAME})
+    IF (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (f_extest_${example} PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
+    ELSE (NOT "${last_test}" STREQUAL "")
+      SET_TESTS_PROPERTIES (f_extest_${example} PROPERTIES LABELS EXAMPLES)
+    ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "f_extest_${example}")
   ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})
 
@@ -101,7 +114,12 @@ SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fort
 TARGET_LINK_LIBRARIES (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 IF (BUILD_TESTING)
   ADD_TEST (NAME f_extest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:f_ex_VG_add_sds_to_vgroup>)
-  SET_TESTS_PROPERTIES (f_extest_VG_add_sds_to_vgroup PROPERTIES DEPENDS HDF_FORTRAN_EXAMPLES-clearall-objects LABELS ${PROJECT_NAME})
+  IF (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (f_extest_VG_add_sds_to_vgroup PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
+  ELSE (NOT "${last_test}" STREQUAL "")
+    SET_TESTS_PROPERTIES (f_extest_VG_add_sds_to_vgroup PROPERTIES LABELS EXAMPLES)
+  ENDIF (NOT "${last_test}" STREQUAL "")
+  SET (last_test "f_extest_VG_add_sds_to_vgroup")
 ENDIF (BUILD_TESTING)
 
 FOREACH (example ${skip_examples})
