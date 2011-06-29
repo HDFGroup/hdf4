@@ -51,4 +51,5 @@ SET (HDF4_VERSION_MINOR  @HDF4_VERSION_MINOR@)
 #-----------------------------------------------------------------------------
 IF (NOT TARGET "hdf4")
   INCLUDE (${SELF_DIR}/hdf4-targets.cmake)
+  SET (HDF4_LIBRARIES "@HDF4_LIBRARIES_TO_EXPORT@")
 ENDIF (NOT TARGET "hdf4")
