@@ -87,17 +87,30 @@ DLL) and utilities, it is assumed that you have done the following:
       Invoke Microsoft Visual Studio and go to "Tools" and select
       "Options", find "Projects", and then "VC++ Directories"
       
-      6.1 Find the box "Show directories for", choose "Include files",
+      6.1 If you are building on 64-bit Windows, find the "Platform" dropdown
+          and select "x64".
+      
+      6.2 Find the box "Show directories for", choose "Include files",
           If you cannot find your HDF4, Zlib, JPEG, and Szip header path
           (for example, c:\MyHDFstuff\HDF42x\include) from the directory list, 
           add the header path (c:\MyHDFstuff\HDF42x\include) to
           the included directories.
       
-      6.2 Find the box "Show directories for", choose "Library files",
+      6.3 Find the box "Show directories for", choose "Library files",
           If you cannot find your HDF4, Zlib, JPEG, and Szip library path
           (for example, c:\MyHDFstuff\HDF42x\dll) from the directory list, 
           add the library path (c:\MyHDFstuff\HDF42x\dll) to the library
           directories.
+          
+      NOTE:
+          If you are using VS2010, the path settings will need to be in project
+          property sheets. Go to "Project" and select "Properties", find 
+          "Configuration Properties", and then "VC++ Directories".
+          
+          6.1 If you are building on 64-bit Windows, find the "Platform" dropdown
+              and select "x64".
+          6.2 Add the header path to the "Include Directories" setting.
+          6.3 Add the library path to the "Library Directories" setting.
 
 ************************************************************************
 
