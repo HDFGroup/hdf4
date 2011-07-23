@@ -116,9 +116,6 @@ This version has been tested in the following platforms:
       SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
    (ember)
 
-   AIX 6.1 (32/64 bit)           IBM XL C/C++ for AIX, V11.1
-   (NCSA bp-login)               IBM XL Fortran for AIX, V13.1
-
    Windows XP                    Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
                                  Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  Visual Studio 2010 (cmake)
