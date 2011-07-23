@@ -88,24 +88,20 @@ Platforms tested
 This version has been tested in the following platforms:
 
    Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
-      SMP i686 i386              G95 (GCC 4.0.3 (g95 0.92!) Jun 24 2009)
-   (jam)                         g77 (GCC) 3.4.6 20060404
+      SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
+   (jam)                             (Red Hat 4.1.2-50)
                                  pgcc and pgf90 10.6-0 32-bit target 
                                  on x86 Linux -tp penryn
                                  Intel(R) C Compiler, Version 11.1
                                  Intel(R) Fortran Compiler, Version 11.1
-                                 GNU Fortran (GCC) 4.1.2 20080704
-                                 (Red Hat 4.1.2-50)
 
-
-   Linux 2.6.18-238.9.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
-      SMP x86_64 GNU/Linux       G95 (GCC 4.0.3 (g95 0.93!) Apr 21 2010)
-   (koala)                       icc (ICC) 12.0.3 20110309
+   Linux 2.6.18-238.9.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+      SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
+   (koala)                           (Red Hat 4.1.2-50)
+                                 icc (ICC) 12.0.3 20110309
                                  ifort (IFORT) 12.0.3 20110309
                                  pgcc and pgf90 11.3-0 64-bit target 
                                  on x86-64 Linux -tp nehalem
-                                 GNU Fortran (GCC) 4.1.2 20080704 
-                                 (Red Hat 4.1.2-50)
 
    SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 
    (linew)                       Sun Fortran 95 8.3 SunOS_sparc 
