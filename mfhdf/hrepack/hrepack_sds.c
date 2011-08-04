@@ -442,7 +442,7 @@ int copy_sds(int32 sd_in,
    *-------------------------------------------------------------------------
    */
 
-   if (SDisrecord(sds_id)) 
+   if (0 && SDisrecord(sds_id)) 
    {
        int32 dimsizes_cre[H4_MAX_VAR_DIMS];
 
@@ -528,7 +528,6 @@ int copy_sds(int32 sd_in,
            } 
            else  
            {
-               
                /* setup compression factors */
                switch(comp_type) 
                {
@@ -554,18 +553,14 @@ int copy_sds(int32 sd_in,
                    goto out;
                }
 
-             
-               /* unlimited dimensions don't work with compression */
-               if ( ! is_record )
+               /* HDF4 2.6 does not allow the combination of unlimited dimensions
+                  and compression, which is wrong. See bug HDFFR-1280
+                */
+               if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
                {
-                   
-                   if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
-                   {
-                       printf( "Error: Failed to set compression for <%s>\n", path);
-                       goto out;
-                   }
+                   printf( "Error: Failed to set compression for <%s>\n", path);
+                   goto out;
                }
-              
            }
        }
        
