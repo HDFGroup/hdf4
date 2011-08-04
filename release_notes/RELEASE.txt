@@ -67,7 +67,8 @@ Bugs fixed since HDF4.2.6
 =========================
    Utilities
    ========= 
-   - [None]
+   - hrepack: Version HDF4 2.6 does not allow the combination of unlimited 
+     dimensions and compression, which is wrong. 
 
    Library
    ========= 
