@@ -29,6 +29,7 @@ AC_INIT([HDF], [4.2.6-post2], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE

@@ -31,3 +31,5 @@ if HDF_BUILD_SHARED
     AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 endif
 
+ACLOCAL_AMFLAGS="-I m4"
+
