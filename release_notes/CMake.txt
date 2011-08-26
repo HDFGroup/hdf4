@@ -107,8 +107,8 @@ Notes: This short instruction is written for users who want to quickly build
         <options> is:
             * SZIP_INCLUDE_DIR:PATH=<path to szip includes directory>
             * SZIP_LIBRARY:FILEPATH=<path to szip/library file>
-            * ZLIB_INCLUDE_DIR:PATH=<path to szip includes directory>
-            * ZLIB_LIBRARY:FILEPATH=<path to szip/library file>
+            * ZLIB_INCLUDE_DIR:PATH=<path to zlib includes directory>
+            * ZLIB_LIBRARY:FILEPATH=<path to zlib/library file>
             * JPEG_INCLUDE_DIR:PATH=<path to jpeg includes directory>
             * JPEG_LIBRARY:FILEPATH=<path to jpeg/library file>
             * <HDF4OPTION>:BOOL=[ON | OFF]
