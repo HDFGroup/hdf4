@@ -40,6 +40,7 @@ ENDIF (HDF4_BUILD_TOOLS)
 
 IF (HDF4_BUILD_UTILS)
   SET (HDF4_INCLUDE_DIR_UTILS "${_IMPORT_PREFIX}/include")
+  SET (HDF4_TOOLS_DIR "${_IMPORT_PREFIX}/bin" )
 ENDIF (HDF4_BUILD_UTILS)
 
 #-----------------------------------------------------------------------------
