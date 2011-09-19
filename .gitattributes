@@ -125,6 +125,7 @@ hdf/test/tmgrattr.c -text
 hdf/test/tmgrcomp.c -text
 hdf/test/tusejpegfuncs.c -text
 hdf/test/tutils.c -text
+hdf/test/tvnameclass.c -text
 hdf/util/CMakeLists.txt -text
 hdf/util/hdfcomp.out1.1 -text
 hdf/util/hdfcomp.out1.2 -text

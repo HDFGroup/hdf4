@@ -23,7 +23,7 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
                   tattdatainfo.c tdatainfo.c tdfr8.c tdupimgs.c testhdf.c   \
 		  tmgrattr.c tmgrcomp.c tree.c tszip.c tusejpegfuncs.c      \
-		  tutils.c tvattr.c tvset.c tvsfpack.c vers.c
+		  tutils.c tvattr.c tvnameclass.c tvset.c tvsfpack.c vers.c
 testhdf_LDADD = ../src/libdf.la
 testhdf_DEPENDENCIES = testdir ../src/libdf.la 
 

@@ -168,6 +168,7 @@ main(int argc, char *argv[])
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
     InitTest("vset", test_vsets, "VSET InterfaceTest");
+    InitTest("vnameclass", test_vnameclass, "VSET Name and Class");
     InitTest("vattr", test_vset_attr, "VSET AttributeTest");
     InitTest("vsfpack", test_vspack, "Vdata fields pack Test");
     InitTest("datainfo", test_datainfo, "Getting Raw Data's Spatial Information");

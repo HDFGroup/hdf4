@@ -85,7 +85,8 @@ am_testhdf_OBJECTS = an.$(OBJEXT) anfile.$(OBJEXT) bitio.$(OBJEXT) \
 	tdupimgs.$(OBJEXT) testhdf.$(OBJEXT) tmgrattr.$(OBJEXT) \
 	tmgrcomp.$(OBJEXT) tree.$(OBJEXT) tszip.$(OBJEXT) \
 	tusejpegfuncs.$(OBJEXT) tutils.$(OBJEXT) tvattr.$(OBJEXT) \
-	tvset.$(OBJEXT) tvsfpack.$(OBJEXT) vers.$(OBJEXT)
+	tvnameclass.$(OBJEXT) tvset.$(OBJEXT) tvsfpack.$(OBJEXT) \
+	vers.$(OBJEXT)
 testhdf_OBJECTS = $(am_testhdf_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
@@ -275,7 +276,7 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
                   tattdatainfo.c tdatainfo.c tdfr8.c tdupimgs.c testhdf.c   \
 		  tmgrattr.c tmgrcomp.c tree.c tszip.c tusejpegfuncs.c      \
-		  tutils.c tvattr.c tvset.c tvsfpack.c vers.c
+		  tutils.c tvattr.c tvnameclass.c tvset.c tvsfpack.c vers.c
 
 testhdf_LDADD = ../src/libdf.la
 testhdf_DEPENDENCIES = testdir ../src/libdf.la 
@@ -390,6 +391,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tusejpegfuncs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tutils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvattr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvnameclass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvsfpack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vers.Po@am__quote@
