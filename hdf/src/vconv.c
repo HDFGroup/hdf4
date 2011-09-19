@@ -229,7 +229,8 @@ vimakecompat(HFILEID f)
 
           oldunpackvg(vg, buf, &bsize);
           /* add new items */
-          vg->vgclass[0] = '\0';
+          vg->vgclass = NULL;
+          /* vg->vgclass[0] = '\0'; */ 
           vg->extag = 0;
           vg->exref = 0;
           vg->version = 2;  /* version 2 */

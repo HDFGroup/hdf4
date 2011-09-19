@@ -381,7 +381,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void * dest, const void * src, uint32 item_size, uint32 num_items);
 
     HDFLIBAPI char *HIstrncpy
-                (char * dest, const char * source, int32 len);
+                (char * dest, const char * source, intn len);
 
     HDFLIBAPI int32 HDspaceleft
                 (void);

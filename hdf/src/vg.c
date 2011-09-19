@@ -1110,10 +1110,13 @@ Vfindclass(HFILEID f,           /* IN: file id */
         vg = v->vg;
         if (vg == NULL)
             HGOTO_DONE(0);
+	/* Shouldn't we move on to the next vgroup instead of getting out?
+	   Same question for the above HGOTO_DONE. -BMR 9/12/2011 */
 
-        /* compare vgroup class to 'vgclass' */
-        if (!HDstrcmp(vgclass, v->vg->vgclass)) 
-            HGOTO_DONE((int32)(v->vg->oref));  /* found the vgroup */
+        /* compare vgroup class to 'vgclass' if it had been set */
+	if (v->vg->vgclass != NULL)
+	    if (!HDstrcmp(vgclass, v->vg->vgclass)) 
+		HGOTO_DONE((int32)(v->vg->oref));  /* found the vgroup */
       }
 
 done:
