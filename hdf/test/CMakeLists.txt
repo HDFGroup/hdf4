@@ -49,6 +49,7 @@ SET (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/tusejpegfuncs.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tutils.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tvattr.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/tvnameclass.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tvset.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tvsfpack.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/vers.c
