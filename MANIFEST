@@ -383,6 +383,7 @@
 ./hdf/test/tvattr.c
 ./hdf/test/test_files/tvattr.dat
 ./hdf/test/tvattrf.f
+./hdf/test/tvnameclass.c
 ./hdf/test/tvset.c
 ./hdf/test/tvsetf.f
 ./hdf/test/tvsfpack.c
