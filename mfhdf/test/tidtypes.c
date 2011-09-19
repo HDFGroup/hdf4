@@ -28,7 +28,7 @@
 
 #include "hdftest.h"
 
-#define FILE_NAME     "idtypes.hdf"	/* data file to test ID types */
+#define IDTYPE_FILE     "idtypes.hdf"	/* data file to test ID types */
 #define X_LENGTH      10
 #define Y_LENGTH      10
 #define RANK          2
@@ -46,7 +46,7 @@ test_SDAPI_ids()
     intn      num_errs = 0;         /* number of errors so far */
 
     /* Create a file */
-    fid = SDstart(FILE_NAME, DFACC_CREATE);
+    fid = SDstart(IDTYPE_FILE, DFACC_CREATE);
     CHECK(fid, FAIL, "SDstart");
 
     /* Create an X_LENGTH by Y_LENGTH dataset, called DataSet_1 */
@@ -74,7 +74,7 @@ test_SDAPI_ids()
     CHECK(status, FAIL, "SDend");
 
     /* Re-open the file to test SDidtype more */
-    fid = SDstart(FILE_NAME, DFACC_RDWR);
+    fid = SDstart(IDTYPE_FILE, DFACC_RDWR);
     CHECK(fid, FAIL, "SDstart");
 
     /* Test SDidtype on the SD id */
@@ -128,7 +128,7 @@ test_nonSDAPI_ids ()
     intn      num_errs = 0;     /* number of errors so far */
 
     /* Open the HDF file */
-    fid = Hopen(FILE_NAME, DFACC_RDWR, 0);
+    fid = Hopen(IDTYPE_FILE, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen: tidtype.hdf");
 
     /* Initialize HDF for subsequent vdata access */
@@ -152,7 +152,7 @@ test_nonSDAPI_ids ()
     CHECK(status, FAIL, "Hclose");
 
     /* Open the HDF file again to test SDidtype */
-    fid = Hopen(FILE_NAME, DFACC_RDWR, 0);
+    fid = Hopen(IDTYPE_FILE, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen: tidtype.hdf");
 
     /* Initialize HDF for subsequent vdata accesses */
@@ -182,7 +182,7 @@ test_nonSDAPI_ids ()
     /* Test SDidtype on a GR raster image */
 
     /* Open file and initialize the GR interface */
-    fid = Hopen(FILE_NAME, DFACC_RDWR, 0);
+    fid = Hopen(IDTYPE_FILE, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen: tidtype.hdf");
     gr_id = GRstart(fid);
     CHECK(gr_id, FAIL, "GRstart");
@@ -232,7 +232,7 @@ test_nonSDAPI_ids ()
  * Mar 4, 2011 -BMR
 ****************************************************************************/
 /* data file to test getting vgs/vds from an SD file */
-#define FILE_NAME   "tvdatasvgroups_SD.hdf"
+#define VVS_FILE   "tvdatasvgroups_SD.hdf"
 #define ATTR1_NAME  "Valid_range 1"
 #define ATTR2_NAME  "Unit"
 #define X_LENGTH    10
@@ -259,7 +259,7 @@ test_vdatavgroups()
     intn    num_errs = 0;     /* number of errors so far */
 
     /* Create a file */
-    fid = SDstart(FILE_NAME, DFACC_CREATE);
+    fid = SDstart(VVS_FILE, DFACC_CREATE);
     CHECK(fid, FAIL, "SDstart");
 
     /* Create an X_LENGTH by Y_LENGTH dataset, called DataSet_1 */
@@ -301,7 +301,7 @@ test_vdatavgroups()
     CHECK(status, FAIL, "SDend");
 
     /* Open the HDF file and initialize the V interface */
-    fid = Hopen(FILE_NAME, DFACC_RDWR, 0);
+    fid = Hopen(VVS_FILE, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen: tidtype.hdf");
     status = Vstart(fid);
     CHECK(status, FAIL, "Vstart");
@@ -361,7 +361,7 @@ test_vdatavgroups()
     CHECK(status, FAIL, "Hclose");
 
     /* Open the HDF file again to test Vgetvgroups */
-    fid = Hopen(FILE_NAME, DFACC_RDWR, 0);
+    fid = Hopen(VVS_FILE, DFACC_RDWR, 0);
     CHECK(fid, FAIL, "Hopen: tidtype.hdf");
     status = Vstart(fid);
     CHECK(status, FAIL, "Vstart");
@@ -377,7 +377,7 @@ test_vdatavgroups()
 
     /* Now, get the user-created vgroup refs */
     status = Vgetvgroups(fid, 0, num_vgroups, refarray);
-    CHECK(num_vgroups, FAIL, "Vgetvgroups");
+    CHECK(status, FAIL, "Vgetvgroups");
     VERIFY(status, num_vgroups, "Vgetvgroups");
 
     /* Verify the name of these user-created vgroups */
