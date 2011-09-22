@@ -549,7 +549,8 @@ VSsetname(int32 vkey,        /* IN: Vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata name */
-    curr_len = HDstrlen(vs->vsname);
+    if (vs->vsname != NULL)
+        curr_len = HDstrlen(vs->vsname);
 
     /* check length of new name against MAX length */
     if ((slen = HDstrlen(vsname)) > VSNAMELENMAX)
@@ -1005,9 +1006,10 @@ Vfind(HFILEID f,          /* IN: file id */
         if (vg == NULL)
             HGOTO_DONE(0);
 
-        /* compare vgroup name to 'vgname' */
-        if (!HDstrcmp(vgname, vg->vgname)) 
-            HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
+        /* compare vgroup name to 'vgname' if it had been set */
+	if (vg->vgname != NULL)
+            if (!HDstrcmp(vgname, vg->vgname)) 
+                HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
@@ -1058,7 +1060,7 @@ VSfind(HFILEID f,          /* IN: file id */
         if (vs == NULL)
             HGOTO_DONE(0);
 
-        /* compare vdata name to 'vsname' */
+        /* compare vdata name to 'vsname' if it had been set */
         if (!HDstrcmp(vsname, vs->vsname)) 
             HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
@@ -1114,9 +1116,9 @@ Vfindclass(HFILEID f,           /* IN: file id */
 	   Same question for the above HGOTO_DONE. -BMR 9/12/2011 */
 
         /* compare vgroup class to 'vgclass' if it had been set */
-	if (v->vg->vgclass != NULL)
-	    if (!HDstrcmp(vgclass, v->vg->vgclass)) 
-		HGOTO_DONE((int32)(v->vg->oref));  /* found the vgroup */
+	if (vg->vgclass != NULL)
+	    if (!HDstrcmp(vgclass, vg->vgclass)) 
+		HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
@@ -1167,9 +1169,9 @@ VSfindclass(HFILEID f,           /* IN: file id */
         if (vs == NULL)
             HGOTO_DONE(0);
 
-        /* compare vdata class to 'vsclass' */
-        if (!HDstrcmp(vsclass, v->vs->vsclass)) 
-            HGOTO_DONE((int32)(v->vs->oref));  /* found the vdata */
+        /* compare vdata class to 'vsclass' if it had been set */
+        if (!HDstrcmp(vsclass, vs->vsclass)) 
+            HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
 
 done:

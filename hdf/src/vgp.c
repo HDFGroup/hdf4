@@ -2360,14 +2360,19 @@ Vsetname(int32 vkey,         /* IN: vgroup key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* copy the name over; if name exists, overwrite it */
-    name_len = HDstrlen(vgname);
-    if (vg->vgname == NULL)
-	vg->vgname = (char *)HDmalloc(name_len+1);
-    else
-    {
-	HDfree(vg->vgname);
-	vg->vgname = (char *)HDmalloc(name_len+1);
-    }
+
+    name_len = HDstrlen(vgname); /* shortcut of length of the given name */
+
+    /* if name exists, release it */
+    if (vg->vgname != NULL) HDfree(vg->vgname);
+
+    /* allocate space for new name */
+    vg->vgname = (char *)HDmalloc(name_len+1);
+
+    /* check for unsuccessful allocation */
+    if (vg->vgname == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* copy given name after allocation succeeded, with \0 terminated */
     HIstrncpy(vg->vgname, vgname, name_len+1);
 
     vg->marked = TRUE;
@@ -2387,10 +2392,10 @@ NAME
    Vsetclass
 
 DESCRIPTION
-    assigns a class name to the VGROUP vg.
+    Assigns a class name to the VGROUP vg.
    
 RETURNS
-    RETURN VALUES: SUCCEED for success, FAIL for failure (big suprise, eh?)
+    RETURN VALUES: SUCCEED for success, FAIL for failure
 
 MODIFICATION
     2010/01/26 No longer truncates classname to max length of VGNAMELENMAX.
@@ -2426,15 +2431,22 @@ Vsetclass(int32 vkey,          /* IN: vgroup key */
     if (vg == NULL || vg->access != 'w')
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy the class over; if class exists, overwrite it */
-    classname_len = HDstrlen(vgclass);
-    if (vg->vgclass == NULL)
-	vg->vgclass = (char *)HDmalloc(classname_len+1);
-    else
-    {
-	HDfree(vg->vgclass);
-	vg->vgclass = (char *)HDmalloc(classname_len+1);
-    }
+    /*
+     * copy the class over; if class exists, overwrite it
+     */
+
+    classname_len = HDstrlen(vgclass); /* length of the given class name */
+
+    /* if name exists, release it */
+    if (vg->vgclass != NULL) HDfree(vg->vgclass);
+
+    /* allocate space for new name */
+    vg->vgclass = (char *)HDmalloc(classname_len+1);
+
+    /* check for unsuccessful allocation */
+    if (vg->vgclass == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* copy given class name after allocation succeeded, with \0 terminated */
     HIstrncpy(vg->vgclass, vgclass, classname_len+1);
 
     vg->marked = TRUE;
@@ -2761,7 +2773,6 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
 {
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
-    size_t       temp_len;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetnamelen");
 
@@ -2782,14 +2793,23 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* obtain the name length */
+    /*
+     * Obtain the name length
+     */
+
+    /* if there is no name... */
     if (vg->vgname == NULL)
 	*name_len = 0;
+    /* if name had been set... */
     else
     {
-        temp_len = HDstrlen(vg->vgname);
-        *name_len = temp_len > 0 ? (uint16)temp_len : 0;
-	ret_value = temp_len < 0 ? FAIL : ret_value; /* unlikely, but just in case */
+	size_t temp_len = HDstrlen(vg->vgname); /* shortcut */
+
+	/* return name's length if it is a valid value */
+	if (temp_len >= 0)
+            *name_len = (uint16)temp_len;
+	else /* unlikely, but just in case */
+	    ret_value = FAIL;
     }
 
 done:
@@ -2797,9 +2817,7 @@ done:
     { /* Error condition cleanup */
 
     } /* end if */
-
   /* Normal function cleanup */
-
   return ret_value;
 }   /* Vgetnamelen */
 
@@ -2844,12 +2862,17 @@ Vgetclassnamelen(int32 vkey,   /* IN: vgroup key */
 
     /* obtain the class name length */
     if (vg->vgclass == NULL)
-        *classname_len = 0;
+	*classname_len = 0;
+    /* if name had been set... */
     else
     {
-        temp_len = HDstrlen(vg->vgclass);
-        *classname_len = temp_len > 0 ? (uint16)temp_len : 0;
-	ret_value = temp_len < 0 ? FAIL : ret_value; /* unlikely, but just in case */
+	size_t temp_len = HDstrlen(vg->vgclass); /* shortcut */
+
+	/* return class name's length if it is a valid value */
+	if (temp_len >= 0)
+            *classname_len = (uint16)temp_len;
+	else /* unlikely, but just in case */
+	    ret_value = FAIL;
     }
 
 done:
