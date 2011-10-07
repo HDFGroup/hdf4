@@ -508,6 +508,10 @@
         >
       </File>
       <File
+        RelativePath="..\..\..\..\hdf\test\tvnameclass.c"
+        >
+      </File>
+      <File
         RelativePath="..\..\..\..\hdf\test\tvset.c"
         >
       </File>

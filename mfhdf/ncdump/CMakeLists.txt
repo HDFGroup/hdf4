@@ -61,6 +61,15 @@ IF (BUILD_TESTING)
 
   IF (NCGEN_UTILITY)
 #    ncdump test0.cdl
+#    SET (CMD $<TARGET_FILE:ncgen>)
+#    ADD_CUSTOM_COMMAND (
+#        OUTPUT ${PROJECT_BINARY_DIR}/test0.nc
+#        COMMAND ${CMD}
+#        ARGS > -o test0.nc -n test0.cdl
+#        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+#        DEPENDS test0.cdl
+#    )
+#
 #    $<TARGET_FILE:ncgen> -o test0.nc -n test0.cdl
 #    $<TARGET_FILE:ncdump> test0.nc > test1.cdl
 #    $<TARGET_FILE:ncgen> -o test1.nc -n test1.cdl
