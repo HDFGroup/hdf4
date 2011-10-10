@@ -924,7 +924,7 @@ done:
  DESCRIPTION
     This routine retrieves the compression type and the compression
     information of the element, identified by 'aid'.  The routine is 
-    used by GRgetcompress and SDgetcompress at this time.
+    used by GRgetcompinfo and SDgetcompinfo at this time.
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS

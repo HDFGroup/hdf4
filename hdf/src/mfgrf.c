@@ -48,7 +48,7 @@ static char RcsId[] = "@(#)$Revision$";
  *  mgsxfil:    Call GRsetexternalfile to move an image into an external file
  *  mgsactp:    Call GRsetaccesstype to set the access type for an image
  *  mgscomp:    Call GRsetcompress to compress an image in the file 
- *  mggcomp:    Call GRgetcompress to get image compression information 
+ *  mggcomp:    Call GRgetcompinfo to get image compression information 
  *  mgisattr:    Call GRsetattr to write an attribute for an object
  *  mgiscatt:   Call GRsetattr to write a char attribute for an obj.
  *  mgatinf:    Call GRattrinfo get information about an attribute
@@ -1195,7 +1195,7 @@ nmgifndat(intf * riid, _fcd name, intf *nlen)
 }   
 /*-------------------------------------------------------------------------
  * Name:    mgcgcompress
- * Puporse: Call GRgetcompress
+ * Puporse: Call GRgetcompinfo
  * Inputs:  id: access id to GR
  * Outputs: comp_type:  type of compression
  *                      COMP_CODE_NONE = 0

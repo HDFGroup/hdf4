@@ -3265,40 +3265,43 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  comp_type = COMP_CODE_JPEG;
-  cinfo.jpeg.quality = 0;
-  cinfo.jpeg.force_baseline = 0;
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
     }
 /* Should RLE be checked here too?  For DFR8? -BMR 2010/12/3 */
     else if (scheme == DFTAG_RLE) /* old image */
-  comp_type = COMP_CODE_RLE;
+	comp_type = COMP_CODE_RLE;
     else
     {
-  /* use lower-level routine to get the compression information */
-  status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
-                        ri_ptr->img_tag, ri_ptr->img_ref,
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompinfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
-    if (status != FAIL && comp_type != COMP_CODE_NONE) {
-      /* Check that the compression encoder is available */
-      HCget_config_info(comp_type, &comp_config);
-      if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-    /* coder not present?? */
-         HGOTO_ERROR(DFE_BADCODER,FAIL); 
-      }
-      if ((comp_config & COMP_DECODER_ENABLED) == 0) {
-    /* decoder not present?? */
-         HGOTO_ERROR(DFE_NOENCODER,FAIL); 
-      }
+    if (status != FAIL && comp_type != COMP_CODE_NONE)
+    {
+	/* Check that the compression encoder is available */
+	HCget_config_info(comp_type, &comp_config);
+	if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0)
+	{
+	    /* coder not present?? */
+	    HGOTO_ERROR(DFE_BADCODER,FAIL); 
+	}
+	if ((comp_config & COMP_DECODER_ENABLED) == 0)
+	{
+	    /* decoder not present?? */
+	    HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+	}
     }
     if(stride[XDIM]==1 && stride[YDIM]==1)
-      { /* solid block of data */
-          solid_block=TRUE;
-          if((start[XDIM]==0 && start[YDIM]==0) && (count[XDIM]==ri_ptr->img_dim.xdim
-                && count[YDIM]==ri_ptr->img_dim.ydim))
-              whole_image=TRUE;
-          else
-              whole_image=FALSE;
+    { /* solid block of data */
+	solid_block=TRUE;
+	if ((start[XDIM]==0 && start[YDIM]==0)
+	 && (count[XDIM]==ri_ptr->img_dim.xdim
+	  && count[YDIM]==ri_ptr->img_dim.ydim))
+	    whole_image=TRUE;
+	else
+	    whole_image=FALSE;
       } /* end if */
     else /* block of data spread out with strides */
         solid_block=FALSE;
@@ -3314,9 +3317,11 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
     /* Check if the image data is in the file */
     if(ri_ptr->img_tag==DFTAG_NULL || ri_ptr->img_ref==DFREF_WILDCARD)
         image_data=FALSE;
-    else {
-        /* Check if the actual image data is in the file yet, or if just the tag & ref are known */
-        if(Hlength(ri_ptr->gr_ptr->hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref)>0)
+    else
+    {
+        /* Check if the actual image data is in the file yet, or if just the
+	   tag & ref are known */
+        if(Hlength(hdf_file_id,ri_ptr->img_tag,ri_ptr->img_ref)>0)
             image_data=TRUE;
         else
             image_data=FALSE;
@@ -4485,7 +4490,9 @@ done:
 
  EXAMPLES
  REVISION LOG
-    July 2001: Added to fix bug #307 - BMR
+    July 2001: Added to fix bug #307 -BMR
+    Apr 2005: Replaced by GRgetcompinfo due to deficiency in handling some
+		special elements. -BMR
 --------------------------------------------------------------------------*/
 intn GRgetcompress(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
 {
@@ -4519,17 +4526,17 @@ intn GRgetcompress(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  *comp_type = COMP_CODE_JPEG;
-  cinfo->jpeg.quality = 0;
-  cinfo->jpeg.force_baseline = 0;
+	*comp_type = COMP_CODE_JPEG;
+	cinfo->jpeg.quality = 0;
+	cinfo->jpeg.force_baseline = 0;
     }
     else
     {
-  /* use lower-level routine to get the compression information */
-  ret_value = HCPgetcompress(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+	/* use lower-level routine to get the compression information */
+	ret_value = HCPgetcompress(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                                 comp_type, cinfo);
-  if (ret_value == FAIL)
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
 done:
@@ -4614,22 +4621,22 @@ intn grgetcomptype(int32 riid, int32* comp_type)
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  *comp_type = COMP_CODE_JPEG;
+	*comp_type = COMP_CODE_JPEG;
     }
     else if (scheme == DFTAG_RLE)
-  *comp_type = COMP_CODE_RLE;
+	*comp_type = COMP_CODE_RLE;
     else if (scheme == DFTAG_IMC || scheme == DFTAG_IMCOMP)
-  *comp_type = COMP_IMCOMP;
+	*comp_type = COMP_IMCOMP;
 
     /* Use lower-level routine to get the new compression type */
     else
     {
-  comp_coder_t temp_comp_type = COMP_CODE_INVALID;
-  ret_value = HCPgetcomptype(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+	comp_coder_t temp_comp_type = COMP_CODE_INVALID;
+	ret_value = HCPgetcomptype(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                                 &temp_comp_type);
-  if (ret_value == FAIL)
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
-  *comp_type = (int32)temp_comp_type;
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	*comp_type = (int32)temp_comp_type;
     }
 done:
   if(ret_value == 0)
@@ -4709,21 +4716,21 @@ intn GRgetcompinfo(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  *comp_type = COMP_CODE_JPEG;
-  cinfo->jpeg.quality = 0;
-  cinfo->jpeg.force_baseline = 0;
+	*comp_type = COMP_CODE_JPEG;
+	cinfo->jpeg.quality = 0;
+	cinfo->jpeg.force_baseline = 0;
     }
-    /* Added the RLE case for old images, new image with RLE would be taken care by
-       HCPgetcompinfo as with other compressions */
+    /* Added the RLE case for old images, new image with RLE would be taken
+       care by HCPgetcompinfo as with other compressions */
     else if (scheme == DFTAG_RLE) /* old image */
-  *comp_type = COMP_CODE_RLE;
+	*comp_type = COMP_CODE_RLE;
     else
     {
-  /* use lower-level routine to get the compression information */
-  ret_value = HCPgetcompinfo(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+	/* use lower-level routine to get the compression information */
+	ret_value = HCPgetcompinfo(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                                 comp_type, cinfo);
-  if (ret_value == FAIL)
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
     }
 
 done:

@@ -4033,13 +4033,26 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
     /* get access element from dataset's tag/ref */
     if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
     {
+	int32  dlen=0, doff=0; /* offset/length of the description record */
+
+        /* Get the info pointed to by this dd, which could point to data or
+           description record, or neither */
+        if (HTPinquire(data_id, NULL, NULL, &doff, &dlen) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* doff/dlen = -1 means no data had been written */
+        if (doff == INVALID_OFFSET && dlen == INVALID_LENGTH)
+        {
+	    *emptySDS = TRUE;
+        }
+
 	/* if the element is not special, that means dataset's tag/ref 
 	   specifies the actual data that was written to the dataset, so
 	   we don't need to check further */
-	if (HTPis_special(data_id)==FALSE)
-            {
-	       *emptySDS = FALSE;
-            }
+	else if (HTPis_special(data_id)==FALSE)
+        {
+	    *emptySDS = FALSE;
+        }
 	else
 	{
 	    int32 rec_len=0;
