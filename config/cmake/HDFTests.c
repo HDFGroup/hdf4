@@ -217,7 +217,9 @@ SIMPLE_TEST(struct tm tm; tm.tm_gmtoff=0);
 
 #ifdef HAVE_TIMEZONE
 
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <time.h>
 SIMPLE_TEST(timezone=0);
 
@@ -325,16 +327,6 @@ int main ()
 
 #endif /* DEV_T_IS_SCALAR */
 
-#if defined( INLINE_TEST_inline ) || defined( INLINE_TEST___inline__ ) || defined( INLINE_TEST___inline )
-#ifndef __cplusplus
-typedef int foo_t;
-static INLINE_TEST_INLINE foo_t static_foo () { return 0; }
-INLINE_TEST_INLINE foo_t foo () {return 0; }
-int main() { return 0; }
-#endif
-
-#endif /* INLINE_TEST */
-
 #ifdef HAVE_OFF64_T
 #include <sys/types.h>
 int main()
@@ -344,6 +336,37 @@ int main()
 }
 #endif
 
+#ifdef TEST_LFS_WORKS
+/* Return 0 when LFS is available and 1 otherwise.  */
+#define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE
+#define _LARGE_FILES
+#define _FILE_OFFSET_BITS 64
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <assert.h>
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+  /* check that off_t can hold 2^63 - 1 and perform basic operations... */
+#define OFF_T_64 (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+  if (OFF_T_64 % 2147483647 != 1)
+    return 1;
+
+  // stat breaks on SCO OpenServer
+  struct stat buf;
+  stat( argv[0], &buf );
+  if (!S_ISREG(buf.st_mode))
+    return 2;
+
+  FILE *file = fopen( argv[0], "r" );
+  off_t offset = ftello( file );
+  fseek( file, offset, SEEK_CUR );
+  fclose( file );
+  return 0;
+}
+#endif
 
 #ifdef GETTIMEOFDAY_GIVES_TZ
 #ifdef HAVE_SYS_TIME_H
@@ -364,3 +387,49 @@ int main(void)
 }
 #endif
 
+#ifdef LONE_COLON
+int main(int argc, char * argv) 
+{
+  return 0;
+}
+#endif
+
+#ifdef HAVE_GPFS
+
+#include <gpfs.h>
+int main ()
+{
+    int fd = 0; 
+    gpfs_fcntl(fd, (void *)0);
+}
+
+#endif /* HAVE_GPFS */
+
+#ifdef HAVE_IOEO
+
+#include <windows.h>
+typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+int main ()
+{
+  PGNSI pGNSI;
+  pGNSI = (PGNSI) GetProcAddress(
+      GetModuleHandle(TEXT("kernel32.dll")), 
+      "InitOnceExecuteOnce");
+  if(NULL == pGNSI)
+    return 1;
+  else
+    return 0;
+}
+
+#endif /* HAVE_IOEO */
+
+
+#if defined( INLINE_TEST_inline ) || defined( INLINE_TEST___inline__ ) || defined( INLINE_TEST___inline )
+#ifndef __cplusplus
+typedef int foo_t;
+static INLINE_TEST_INLINE foo_t static_foo () { return 0; }
+INLINE_TEST_INLINE foo_t foo () {return 0; }
+int main() { return 0; }
+#endif
+
+#endif /* INLINE_TEST */
