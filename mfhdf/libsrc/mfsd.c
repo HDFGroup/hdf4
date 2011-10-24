@@ -767,7 +767,7 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
            int32 *start,  /* IN:  coords of starting point */
            int32 *stride, /* IN:  stride along each dimension */
            int32 *end,    /* IN:  number of values to read per dimension */
-           void *  data    /* OUT: data buffer */)
+           void  *data    /* OUT: data buffer */)
 {
     CONSTR(FUNC, "SDreaddata");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
@@ -788,47 +788,38 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 #endif
     intn    ret_value = SUCCEED;
 
-    /* this decides how a dataset with unlimited dimension is read along the
+    /* This decides how a dataset with unlimited dimension is read along the
        unlimited dimension; the behavior is different between SD and nc APIs */
     cdf_routine_name = "SDreaddata";
 
-#ifdef SDDEBUG
-    fprintf(stderr, "SDreaddata: I've been called\n");
-#endif
-
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
     
+    /* Validate arguments */
     if((start == NULL) || (end == NULL) || (data == NULL))
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
+    /* Get the NC_dim or NC_var depending on which id is given */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL) 
       {
           handle = SDIhandle_from_id(sdsid, DIMTYPE);
           if(handle == NULL) 
-            {
-              ret_value = FAIL;
-              goto done;
-            }
+	      HGOTO_ERROR(DFE_ARGS, FAIL);
+
           dim = SDIget_dim(handle, sdsid);
       }
 
     if(handle->vars == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-     {
-            ret_value = FAIL;
-            goto done;
-     }
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Dev note: empty SDS should have been checked here and SDreaddata would
+       have failed, but since it wasn't, for backward compatibility, we won't
+       do it now either. -BMR 2011 */
 
     /* Check compression method is enabled */
     status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
@@ -845,11 +836,11 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
           }
       }
 
-    /* get ready to read */
+    /* Get ready to read */
     handle->xdrs->x_op = XDR_DECODE ;
    
     /* 
-     * figure out the index of the variable to read from,
+     * Figure out the index of the variable to read from,
      * the user might have passed us a dimension, in which
      * case we want to reade from its coordinate variable
      */
@@ -859,7 +850,8 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
       } 
     else 
       {
-          /* oops, how do we know this ? */
+          /* Derive the variable index from the SDS id, using the formula
+             described in SDselect */
           varid = (intn)sdsid & 0xffff;
       }
 
@@ -907,13 +899,13 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
 	if ((Stride[0]*(End[0]-1)) >= (dimsize-Start[0]))
 	    HGOTO_ERROR(DFE_ARGS, FAIL);
 
-	/* validate subsequent dimensions if dataset is multi-dim */
+	/* Validate subsequent dimensions if dataset is multi-dim */
 	for(i = 1; i < var->assoc->count; i++)
 	     if ((Stride[i]*(End[i]-1)) >= ((int32)var->shape[i]-Start[i]))
 		HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
-    /* call the readg routines if a stride is given */
+    /* Call the readg routines if a stride is given */
     if(stride == NULL)
         status = NCvario(handle, varid, Start, End, (Void *)data);
     else
@@ -6468,6 +6460,7 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
                HDF_CHUNK_DEF *chunk_def,  /* IN/OUT: chunk definition */
                int32         *flags       /* IN/OUT: flags */)
 {
+    CONSTR(FUNC, "SDgetchunkinfo");    /* for HGOTO_ERROR */
     NC       *handle = NULL;       /* file handle */
     NC_var   *var    = NULL;       /* SDS variable */
     sp_info_block_t info_block;    /* special info block */
@@ -6477,12 +6470,12 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
     intn      i;                   /* loop variable */
     intn      ret_value = SUCCEED; /* return value */
 
-    /* clear error stack */
+    /* Clear error stack */
     HEclear();
 
     /* Check args */
 
-    /* get file handle and verify it is an HDF file 
+    /* Get file handle and verify it is an HDF file 
        we only handle dealing with SDS only not coordinate variables */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE || handle->vars == NULL)
@@ -6491,15 +6484,13 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
         goto done;
       }
 
-    /* get variable from id */
+    /* Get variable from id */
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
-      {
-        ret_value = FAIL;
-        goto done;
-      }
+	 HGOTO_ERROR(DFE_ARGS, FAIL);
 
-     /* Data set is empty and not special */
+    /* If SDsetchunk had been called for this SDS, data_ref would have been a
+       valid one.  This is the case where data set is empty and not special */
     if(var->data_ref == 0)
       {
 	*flags = HDF_NONE; /* regular SDS */
@@ -6507,21 +6498,35 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 	goto done;
       }
 
-    /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
+#ifdef added_by_mistake
+    /* Replaced this if statement by if (var->aid == FAIL) because it seemed
+       that hdf_get_vp_aid was called here by mistake (perhaps, copy/paste.)
+       For more info, see SVN log messages and bug HDFFR-171. -BMR, 2011/10 */
+
+    /* Check if data aid exists; if not, set up an access elt for reading */
     if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL)
       {
         ret_value = FAIL;
         goto done;
       }
+#endif
 
-    /* inquire about element */
+    /* Need to get access id for the subsequent calls */
+    if (var->aid == FAIL)
+    {
+	var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+	if(var->aid == FAIL) /* catch FAIL from Hstartread */
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+    /* Inquire about element's specialness */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (ret_value == FAIL)
-	goto done;
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-    /* make sure it is chunked element */
+    /* Make sure it is chunked element */
     if (special == SPECIAL_CHUNKED)
-    {   /* get info about chunked element */
+    {   /* Get info about chunked element */
 	if ((ret_value = HDget_special_info(var->aid, &info_block)) != FAIL)
 	{   /* Does user want chunk/comp info back? */
 		/* If no compression, fill in chunk length, otherwise, fill
@@ -6552,10 +6557,10 @@ SDgetchunkinfo(int32          sdsid,      /* IN: sds access id */
 		      ret_value = HCPgetcompinfo(handle->hdf_file,
 					var->data_tag, var->data_ref,
 					&comp_type, &c_info);
-		      /* This check may break old applications unneccessarily
-			 because getting comp info here is new feature.  So,
-			 it would be good to be able to check for version or
-			 something similar - BMR, June 2009 */
+		      /* For backward compatibility, it will not fail here.
+			 However, the compression information parameters will
+			 be set to -1 to indicate that there are no compression
+			 information retrieved - BMR - 2009/06 */
 		      if (ret_value == FAIL)
 		      {
 			  chunk_def->nbit.start_bit =
@@ -6944,12 +6949,22 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
         goto done;
       }
 
+    /* Dev note: empty SDS should have been checked here and SDreadchunk would
+       have failed, but since it wasn't, for backward compatibility, we won't
+       do it now either. -BMR 2011 */
+
+#ifdef added_by_mistake
+    /* Replaced this if statement by if (var->aid == FAIL) because it seemed
+       that hdf_get_vp_aid was called here by mistake (perhaps, copy/paste.)
+       For more info, see SVN log messages and bug HDFFR-171. -BMR, 2011/10 */
+
     /* Check to see if data aid exists? i.e. may need to create a ref for SDS */
     if(var->aid == FAIL && hdf_get_vp_aid(handle, var) == FAIL) 
       {
         ret_value = FAIL;
         goto done;
       }
+#endif
 
     /* Check compression method is enabled */
     status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
@@ -6965,6 +6980,10 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 	    HGOTO_ERROR(DFE_BADCODER, FAIL);
           }
       }
+
+    /* Need to get access id for the following calls */
+    if (var->aid == FAIL)
+	var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
