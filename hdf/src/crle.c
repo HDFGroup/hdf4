@@ -137,7 +137,7 @@ HCIcrle_decode(compinfo_t * info, int32 length, uint8 *buf)
 {
     CONSTR(FUNC, "HCIcrle_decode");
     comp_coder_rle_info_t *rle_info;    /* ptr to RLE info */
-    int32       orig_length;    /* original length to write */
+    int32       orig_length;    /* original length to read */
     uintn       dec_len;        /* length to decode */
     intn        c;              /* character to hold a byte read in */
 
