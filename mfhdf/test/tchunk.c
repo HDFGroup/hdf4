@@ -186,7 +186,6 @@ test_chunk()
     int32   cflags;              /* chunk flags */
     int32   c_flags;             /* chunk flags to set */
     int32   c_flags_out;         /* chunk flags retrieved */
-int32 temp;
     int32   index;       /* Index of dataset in file */
     intn    status;      /* status flag */
     intn    i,j,k;       /* loop variables */
@@ -221,6 +220,15 @@ int32 temp;
     fill_u16 = 0;
     status = SDsetfillvalue(newsds1, (VOIDP) &fill_u16);
     CHECK(status, FAIL, "Chunk Test 1. SDsetfillvalue");
+
+    /* Added to verify that the problem reported in bug HDFFR-5 is gone.  The
+       fix was actually done for and documented in bug HDFFR-171.  It is
+       verified here that SDsetchunk works properly after SDgetchunkinfo
+       being called on an empty SDS prior to SDsetchunk. -BMR, 2011/10/25 */
+    c_flags_out = 0;
+    status = SDgetchunkinfo(newsds1, NULL, &c_flags_out);
+    CHECK(status, FAIL, "Chunk Test 1. SDgetchunkinfo on empty SDS");
+    VERIFY(c_flags_out, (HDF_NONE), "Chunk Test 1. SDgetchunkinfo on empty SDS");
 
     /* Create chunked SDS 
        chunk is 3x2 which will create 6 chunks */
