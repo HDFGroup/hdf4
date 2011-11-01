@@ -557,6 +557,7 @@
 ./mfhdf/dumper/testfiles/Example6.hdf
 ./mfhdf/dumper/testfiles/Image_with_Palette.hdf
 ./mfhdf/dumper/testfiles/LongDataset.hdf
+./mfhdf/dumper/testfiles/Roy.nc
 ./mfhdf/dumper/testfiles/SDSlongname.hdf
 ./mfhdf/dumper/testfiles/Tables.hdf
 ./mfhdf/dumper/testfiles/Tables_External_File
@@ -605,6 +606,7 @@
 ./mfhdf/dumper/testfiles/dumpsds-15szip.out
 ./mfhdf/dumper/testfiles/dumpsds-16.out
 ./mfhdf/dumper/testfiles/dumpsds-17.out
+./mfhdf/dumper/testfiles/dumpsds-18.out
 ./mfhdf/dumper/testfiles/dumpvd-10.out
 ./mfhdf/dumper/testfiles/dumpvd-11.out
 ./mfhdf/dumper/testfiles/dumpvd-12.out
