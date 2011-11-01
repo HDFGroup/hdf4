@@ -821,20 +821,26 @@ SDreaddata(int32  sdsid,  /* IN:  dataset ID */
        have failed, but since it wasn't, for backward compatibility, we won't
        do it now either. -BMR 2011 */
 
-    /* Check compression method is enabled */
-    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+    /* Check if compression method is enabled */
+
+    /* Make sure that the file is an HDF file before checking about compression */
+    if(handle->file_type == HDF_FILE) /* bug HDFFR-473 */
+    {
+	status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
                 &comp_type);
 
-    if (status != FAIL)
-	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
-      {
-	/* Must have decoder to read data */
-        HCget_config_info( comp_type , &comp_config);
-        if ((comp_config & COMP_DECODER_ENABLED) == 0) {
-	    /* decoder not present?? */
-	    HGOTO_ERROR(DFE_BADCODER, FAIL);
-          }
-      }
+	if (status != FAIL)
+	    if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+	    {
+		/* Must have decoder to read data */
+		HCget_config_info( comp_type , &comp_config);
+		if ((comp_config & COMP_DECODER_ENABLED) == 0)
+		{ /* decoder not present?? */
+		    HGOTO_ERROR(DFE_BADCODER, FAIL);
+		}
+	    }
+	/* The case status=FAIL is not handled, not sure if it's intentional. -BMR */
+    } /* file is HDF */
 
     /* Get ready to read */
     handle->xdrs->x_op = XDR_DECODE ;
@@ -2416,42 +2422,39 @@ SDwritedata(int32  sdsid,  /* IN: dataset ID */
       {
         handle = SDIhandle_from_id(sdsid, DIMTYPE);
         if(handle == NULL) 
-          {
-              ret_value = FAIL;
-              goto done;
-          }
+            HGOTO_ERROR(DFE_ARGS, FAIL);
 
         dim = SDIget_dim(handle, sdsid);
       }
 
     if(handle->vars == NULL)
-      {
-          ret_value = FAIL;
-          goto done;
-      }
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-      var = SDIget_var(handle, sdsid);
+    var = SDIget_var(handle, sdsid);
 
-      if(var == NULL)
-         {
-              ret_value = FAIL;
-              goto done;
-      }
+    if(var == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* Check compression method is enabled */
-    status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
+    /* Check if compression method is enabled */
+
+    /* Make sure that the file is an HDF file before checking about compression */
+    if(handle->file_type == HDF_FILE) /* bug HDFFR-473 */
+    {
+	status = HCPgetcomptype(handle->hdf_file, var->data_tag, var->data_ref,
                 &comp_type);
 
-    if (status != FAIL)
-	if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
-      {
-	/* Must have decoder to write data */
-        HCget_config_info( comp_type , &comp_config);
-        if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-	    /* encoder not present?? */
-	    HGOTO_ERROR(DFE_BADCODER, FAIL);
-          }
-      }
+	if (status != FAIL)
+	    if (comp_type != COMP_CODE_NONE && comp_type != COMP_CODE_INVALID)
+	    {
+		/* Must have encoder to write data */
+		HCget_config_info( comp_type , &comp_config);
+		if ((comp_config & COMP_ENCODER_ENABLED) == 0)
+		{ /* encoder not present?? */
+		    HGOTO_ERROR(DFE_BADCODER, FAIL);
+		}
+	    }
+	/* The case status=FAIL is not handled, not sure if it's intentional. -BMR */
+    } /* file is HDF */
 
     /* get ready to write */
     handle->xdrs->x_op = XDR_ENCODE;
@@ -4159,7 +4162,7 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
                   char *ext_filename, /* IN: name of external file */
                   int32 *offset    /* IN: offset in external file */)
 {
-    CONSTR(FUNC, "SDsetcompress");    /* for HGOTO_ERROR */
+    CONSTR(FUNC, "SDgetexternalfile");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var = NULL;
     intn    actual_len=0;
