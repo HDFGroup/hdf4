@@ -61,7 +61,7 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     dumprig_opts->num_chosen = (-1);	/* default dump all items */
     dumprig_opts->contents = DVERBOSE;	/* default dump all information */
     dumprig_opts->dump_to_file = FALSE;		/* don't dump to output file */
-    dumprig_opts->file_type = DASCII;	/* default output is ASCII file */
+    dumprig_opts->file_format = DASCII;	/* default output is ASCII file */
     dumprig_opts->as_stream = FALSE; /* print output aligned, using carriage returns */
     dumprig_opts->print_pal = FALSE;     /* GR only, don't print palette */
 
@@ -204,12 +204,12 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
                 break;
 
             case 'b':   /* dump data in binary */
-                dumprig_opts->file_type = DBINARY;
+                dumprig_opts->file_format = DBINARY;
                 (*curr_arg)++;
                 break;
 
             case 'x':   /* dump data in ascii, also default */
-                dumprig_opts->file_type = DASCII;
+                dumprig_opts->file_format = DASCII;
                 (*curr_arg)++;
                 break;
 
@@ -241,7 +241,7 @@ drig(dump_info_t *dumprig_opts,
     int         dumpall = 0;
     int         ncomps;
     int         il;
-    file_type_t ft;
+    file_format_t ff;
     intn        ret_value = SUCCEED;
 
     while (curr_arg < argc)
@@ -272,8 +272,8 @@ drig(dump_info_t *dumprig_opts,
             }	/* end if */
 
           /* ASCII or Binary? */
-          ft = dumprig_opts->file_type;
-          switch(ft)
+          ff = dumprig_opts->file_format;
+          switch(ff)
             {
             case DASCII:   /*  ASCII  file   */
 

@@ -31,6 +31,7 @@ intn have_szip = 1;
 intn have_szip = 0;
 #endif
 #include "cszip.h"
+#include "local_nc.h"	/* to use some definitions */
 
 void dumpsds_usage(intn argc, 
               char *argv[])
@@ -155,12 +156,12 @@ intn parse_dumpsds_opts(dump_info_t *dumpsds_opts,
                 break;
 
          case 'b':   /* dump data in binary */
-                dumpsds_opts->file_type = DBINARY;
+                dumpsds_opts->file_format = DBINARY;
                 (*curr_arg)++;
                 break;
 
          case 'x':   /* dump data in ascii, also default */
-                dumpsds_opts->file_type = DASCII;
+                dumpsds_opts->file_format = DASCII;
                 (*curr_arg)++;
                 break;
 
@@ -200,13 +201,13 @@ int32 sdsdumpfull( int32        sds_id,
    int32   *start = NULL;
    int32   *edge = NULL;
    intn     emptySDS = TRUE;
-   file_type_t ft;
+   file_format_t ff;
    intn     status = FAIL;
    int32    status32 = FAIL;
    int32    ret_value = SUCCEED;
 
    /* temp. names for ease of use */
-   ft = dumpsds_opts->file_type;
+   ff = dumpsds_opts->file_format;
 
    /* Compute the number of the bytes for each value. */
    numtype = nt & DFNT_MASK;
@@ -242,18 +243,24 @@ int32 sdsdumpfull( int32        sds_id,
    /* so that the last edge has many elements as the last dimension??? */
    edge[rank - 1] = dimsizes[rank - 1];
 
-   /* check if the SDS has data before proceeding */
-   status32 = SDcheckempty( sds_id, &emptySDS );
-   if( status32 == FAIL )
-      ERROR_GOTO_2( "in %s: SDcheckempty failed for sds_id(%d)",
-			"sdsdumpfull", (int) sds_id );
-   if( emptySDS )
+   /* check if the SDS has data before proceeding if the file is HDF file */
+   /* see bug HDFFR- regarding non-HDF files */
+   if (dumpsds_opts->file_type == HDF_FILE)
    {
-      if( ft == DASCII ) /* what about binary??? - BMR */
-         fprintf( fp, "                No data written.\n" );
-      HGOTO_DONE( SUCCEED );  /* because the dump for this SDS is */
+      status32 = SDcheckempty( sds_id, &emptySDS );
+      if( status32 == FAIL )
+         ERROR_GOTO_2( "in %s: SDcheckempty failed for sds_id(%d)",
+			"sdsdumpfull", (int) sds_id );
+      if( emptySDS )
+      {
+         if( ff == DASCII ) /* what about binary??? - BMR */
+            fprintf( fp, "                No data written.\n" );
+         HGOTO_DONE( SUCCEED );  /* because the dump for this SDS is */
       			/* successful although it's empty -> next SDS */
-   }
+      }
+   } /* file is HDF */
+
+   /* Should handle the case of rank==0 here. -BMR */
 
    if (rank == 1)
    { /* If there is only one dimension, then dump the data
@@ -364,8 +371,8 @@ int32 sdsdumpfull( int32        sds_id,
 		  this causes 1 extra line at the end of the output but I still
 		  don't understand the logic here so I left it alone; just 
 		  removed the spaces attempting to line up the data. BMR 7/13/00 */
-               /*if( ft==DASCII && !dumpsds_opts->as_stream )*/
-               if( ft==DASCII )
+               /*if( ff==DASCII && !dumpsds_opts->as_stream )*/
+               if( ff==DASCII )
                   if (j == rank - 2)
                      fprintf(fp, "\n");
             }
@@ -375,8 +382,8 @@ int32 sdsdumpfull( int32        sds_id,
 
    /* add an extra line between two datasets for pretty format 
       this also causes 1 extra line at the end of the output! */
-    /*if (ft == DASCII && !dumpsds_opts->as_stream )*/
-    if (ft == DASCII )
+    /*if (ff == DASCII && !dumpsds_opts->as_stream )*/
+    if (ff == DASCII )
         fprintf(fp, "\n");
 
 done:
@@ -888,7 +895,6 @@ intn printSDS_ASCII(
    comp_coder_t comp_type = COMP_CODE_NONE;
    intn  isdimvar,      /* TRUE if curr SDS is used for a dim */
          j,
-	 isnetCDF = FALSE,	/* TRUE when the file is netCDF */
          status = FAIL,		/* status returned from a routine */
          ret_value = SUCCEED;	/* returned value of printSDS_ASCII */
 
@@ -978,10 +984,10 @@ intn printSDS_ASCII(
 
 	    /* If the current file is not a netCDF, print the SDS' ref#
 	       and compression information */
-	    if(!isnetCDF)
+	    if(dumpsds_opts->file_type == HDF_FILE)
 	    {
 		/* get SDS's ref# from its id */
-		sds_ref = SDidtoref(sds_id);
+	  	sds_ref = SDidtoref(sds_id);
 		if (sds_ref == FAIL)
 		    ERROR_BREAK_3( "in %s: %s failed for %d'th SDS", 
 			"printSDS_ASCII", "SDidtoref", (int)sds_index, FAIL );
@@ -994,7 +1000,6 @@ intn printSDS_ASCII(
                     ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
                        "printSDS_ASCII", "SDgetcompress", (int)sds_index );
                 }
-
             }
             fprintf(fp, "\t Rank = %d\n\t Number of attributes = %d\n",
                                         (int) rank, (int) nattrs);
@@ -1164,7 +1169,7 @@ intn dsd(dump_info_t *dumpsds_opts,
           n_file_attrs;
    char   file_name[MAXFNLEN];
    FILE  *fp=NULL;
-   file_type_t ft = dumpsds_opts->file_type;
+   file_format_t ff = dumpsds_opts->file_format;
    intn   index_error=0,
 	  ii,
           status=FAIL,
@@ -1182,13 +1187,15 @@ intn dsd(dump_info_t *dumpsds_opts,
       display information and data of each SDS in the specified manner */
    while (curr_arg < argc)
    {
-      HDstrcpy(file_name, argv[curr_arg]);
+      HDstrcpy(file_name, argv[curr_arg]); /* get current file name */
       HDstrcpy( dumpsds_opts->ifile_name, file_name ); /* record file name */
-      curr_arg++;
+      curr_arg++; /* move argument pointer forward */
 
-      /* Print an informative message and skip this file if it is not
-         an HDF file */
-      if (!Hishdf(file_name) && !HDisnetcdf(file_name))
+      if (HDisnetcdf(file_name)) /* record if file is netCDF */
+         dumpsds_opts->file_type = netCDF_FILE;
+      else if (Hishdf(file_name)) /* record if file is HDF */
+         dumpsds_opts->file_type = HDF_FILE;
+      else
       {
          /* if there are no more files to be processed, print informative
             message, then returns with FAIL */
@@ -1197,7 +1204,7 @@ intn dsd(dump_info_t *dumpsds_opts,
          else /* print message, then continue processing the next file */
             {ERROR_CONT_1( "in dsd: %s is not an HDF or netCDF file", file_name);}
       }
-
+	 
       /* open current hdf file with error check, if fail, go to next file */
       sd_id = SDstart(file_name, DFACC_RDONLY);
       if (sd_id == FAIL)
@@ -1242,7 +1249,7 @@ intn dsd(dump_info_t *dumpsds_opts,
       fp = stdout;                /* assume no output file given */
 
       /* ASCII or binary dump? */
-      switch( ft )
+      switch( ff )
       {
          case DASCII:       /* ASCII file */
             /* open output file for ASCII or direct to standard output */

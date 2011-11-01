@@ -166,12 +166,12 @@ by_ref */
              break;
 
          case 'b':   /* dump data in binary */
-             dumpvd_opts->file_type = DBINARY;
+             dumpvd_opts->file_format = DBINARY;
              (*curr_arg)++;
              break;
 
          case 'x':   /* dump data in ascii, also default */
-             dumpvd_opts->file_type = DASCII;
+             dumpvd_opts->file_format = DASCII;
              (*curr_arg)++;
              break;
 
@@ -587,7 +587,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
    char        vdname[VSNAMELENMAX+1];
    char        fldstring[MAXNAMELEN];
    intn        dumpall = 0;
-   file_type_t ft = DASCII;
+   file_format_t ff = DASCII;
    vd_info_t   curr_vd;
    int32       vd_id = FAIL;
    int32       an_handle   = FAIL;
@@ -705,7 +705,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                 if (dumpvd_opts->contents != DHEADER)
                 {
                    /* dump vdata attributes */
-                   status = dumpattr(vd_id, _HDF_VDATA, 1, ft, fp);
+                   status = dumpattr(vd_id, _HDF_VDATA, 1, ff, fp);
                    if( FAIL == status )
                       ERROR_BREAK_3( "in %s: %s failed for attributes of vdata with ref#=%d",
                                     "dumpvd_ascii", "dumpattr", (int) vdata_ref, FAIL );
@@ -741,7 +741,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
                 }
 
                 /* Only the chosen or all fields will be dumped out. */
-                status = dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields);
+                status = dumpvd(vd_id, ff, data_only, fp, sep, flds_indices, dumpallfields);
                 if( FAIL == status )
                    ERROR_BREAK_2( "in %s: dumpvd failed for vdata with ref#=%d",
                                  "dumpvd_ascii", (int) vdata_ref, FAIL );
@@ -801,7 +801,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       vdata_ref = -1;
    char        vdname[VSNAMELENMAX+1];
    intn        dumpall = 0;
-   file_type_t ft = DBINARY;
+   file_format_t ff = DBINARY;
    int32       vd_id = FAIL;
    intn        status;
    intn        ret_value = SUCCEED;
@@ -887,7 +887,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
             HDstrcpy(sep, "");
 
             /* Only the chosen or all fields will be dumped out. */
-            if (FAIL == dumpvd(vd_id, ft, data_only, fp, sep, flds_indices, dumpallfields))
+            if (FAIL == dumpvd(vd_id, ff, data_only, fp, sep, flds_indices, dumpallfields))
                ERROR_CONT_END( "in %s: Failure in dumping data for vdata with ref#=%d", 
                               "dumpvd_binary", (int) vdata_ref, vd_id );
          }
@@ -958,7 +958,7 @@ dvd(dump_info_t * dumpvd_opts,
     FILE       *fp = NULL;
     int32       num_vd_chosen;
     intn        index_error = 0;
-    file_type_t ft;
+    file_format_t ff;
     intn        status;
     intn        ret_value = SUCCEED;
 
@@ -1019,9 +1019,9 @@ dvd(dump_info_t * dumpvd_opts,
          continue;   /* to the next file, closeVG before opening next file
                         takes care of Vend, Hclose, and free vg_chosen */
 
-      ft = dumpvd_opts->file_type;
+      ff = dumpvd_opts->file_format;
       fp = stdout;	/* default file pointer to the standard output */
-      switch(ft)
+      switch(ff)
       {
           case DASCII:  /*    ASCII file   */
 

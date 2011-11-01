@@ -150,7 +150,7 @@ intn parse_dumpvg_opts(dump_info_t *dumpvg_opts,
 	     exit(1);
 
          case 'x':   /* dump data in ascii, also default */
-             dumpvg_opts->file_type = DASCII;
+             dumpvg_opts->file_format = DASCII;
              (*curr_arg)++;
              break;
 
@@ -1173,7 +1173,7 @@ if (num_entries != 0)
          fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
 
          /* dump attributes for vgroup */
-         status = dumpattr(vgt, 0, 0, dumpvg_opts->file_type, fp);
+         status = dumpattr(vgt, 0, 0, dumpvg_opts->file_format, fp);
          if( FAIL == status )
             ERROR_CONT_3( "in %s: %s failed to dump attributes for vgroup with ref#=%d",
 		"vgdumpfull", "dumpattr", (int) elem_ref );
@@ -1494,7 +1494,7 @@ intn dvg(dump_info_t *dumpvg_opts,
                in this call, it's there as an index when dumping attributes
                of a vdata field */
             isvdata = FALSE;
-            status = dumpattr(vg_id, 0, isvdata, dumpvg_opts->file_type, fp);
+            status = dumpattr(vg_id, 0, isvdata, dumpvg_opts->file_format, fp);
             if (FAIL == status )
                ERROR_NOTIFY_3("in dvg: %s failed on vgroup with ref=%d in file %s", 
 		         "dumpattr", (int) vg_ref, file_name);

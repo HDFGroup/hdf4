@@ -27,9 +27,22 @@ static char RcsId[] = "@(#)Revision";
 
 #define  N_ENTRIES      256     /* number of elements of each color */
 
-void
-dumpgr_usage(intn  argc,
-             char *argv[])
+void dumpgr_usage(intn  argc, char *argv[]);
+int32 get_RIindex_list(int32 gr_id, dump_info_t *dumpgr_opts, 
+			int32 **gr_chosen, intn *index_error);
+intn print_PaletteInfo(int32 ri_id, int32 num_pals, FILE *fp);
+intn print_Palette(int32 ri_id, int32 num_pals, FILE *fp, dump_info_t *dumpgr_opts);
+intn printGR_ASCII(int32 gr_id, dump_info_t *dumpgr_opts, int32 ndsets,
+	int32 *gr_chosen, int32 num_ri_chosen, FILE *fp);
+intn printGR_BINARY(int32 gr_id, dump_info_t *dumpgr_opts, int32 num_ri_chosen,
+		int32 ndsets, int32 *gr_chosen, FILE *fp);
+const char* Il_mode_text(gr_interlace_t interlace_mode);
+intn grdumpfull(int32 ri_id, dump_info_t *dumpgr_opts, int32 ncomps,
+           int32 dimsizes[], int32 nt, FILE *fp);
+void closeGR(int32 *file_id, int32 *gr_id, int32 **gr_chosen);
+intn dgr(dump_info_t *dumpgr_opts, intn curr_arg, intn argc, char *argv[]);
+
+void dumpgr_usage(intn  argc, char *argv[])
 {
     printf("Usage:\n");
     printf("%s dumpgr [-a|-i <indices>|-r <refs>|-n <names>] [-m <interlace>] [-dhvcs] [-p|-pd] [-o <filename>] [-bx] <filelist>\n", argv[0]);
@@ -170,12 +183,12 @@ parse_dumpgr_opts(dump_info_t *dumpgr_opts,
              break;
 
          case 'b':   /* dump data in binary */
-             dumpgr_opts->file_type = DBINARY;
+             dumpgr_opts->file_format = DBINARY;
              (*curr_arg)++;
              break;
 
          case 'x':   /* dump data in ascii, also default */
-             dumpgr_opts->file_type = DASCII;
+             dumpgr_opts->file_format = DASCII;
              (*curr_arg)++;
              break;
 
@@ -220,8 +233,7 @@ done:
    return ret_value;
 }	/* end parse_dumpgr_opts */
 
-intn 
-grdumpfull(int32        ri_id, 
+intn grdumpfull(int32        ri_id, 
            dump_info_t  *dumpgr_opts,
            int32        ncomps,	/* "ncomps" is the number of components 
                                    in each element of the data set */
@@ -318,8 +330,7 @@ done:
         - NO_SPECIFIC if all vgroups are to be processed, or
         - 0 if none.
    If there are any errors, the parameter index_error will return TRUE */
-int32
-get_RIindex_list(
+int32 get_RIindex_list(
 	int32 gr_id,
 	dump_info_t *dumpgr_opts, 
 	int32 **gr_chosen,/* array of indices of RIs to be processed */
@@ -666,8 +677,7 @@ done:
    the buffer to hold the palette data can be static.  However,
    if more values or colors are added to the model, these parameters
    must be checked to allocate sufficient space when reading a palette */
-intn
-print_Palette(
+intn print_Palette(
 	int32 ri_id, 
 	int32 num_pals, /* number of palettes, currently only 1 */
 	FILE *fp,
@@ -764,8 +774,7 @@ done:
    return ret_value;
 }  /* end of print_Palette */
 
-char*
-Il_mode_text( gr_interlace_t interlace_mode )
+const char* Il_mode_text( gr_interlace_t interlace_mode )
 {
    switch( interlace_mode )
    {
@@ -780,8 +789,7 @@ Il_mode_text( gr_interlace_t interlace_mode )
    } /* end switch */
 }
 
-intn
-printGR_ASCII( 
+intn printGR_ASCII( 
 	int32 gr_id,
 	dump_info_t *dumpgr_opts,
 	int32 ndsets,        /* number of images in the file */
@@ -1074,10 +1082,9 @@ intn printGR_BINARY(
    message then resetting the ids as normal since these failures are
    highly unlikely and since the files are opened as read-only, it's 
    safe to go on. */
-void closeGR(
-    int32 *file_id,     /* will be returned as a FAIL */
-    int32 *gr_id,       /* will be returned as a FAIL */
-    int32 **gr_chosen ) /* will be returned as a NULL */
+void closeGR(int32 *file_id,     /* will be returned as a FAIL */
+	     int32 *gr_id,       /* will be returned as a FAIL */
+	     int32 **gr_chosen ) /* will be returned as a NULL */
 {
    if( *gr_id != FAIL )
    {
@@ -1101,11 +1108,10 @@ void closeGR(
 
 } /* end of closeGR */
 
-intn 
-dgr(	dump_info_t *dumpgr_opts, 
-	intn         curr_arg, 
-	intn         argc, 
-	char        *argv[] )
+intn dgr(dump_info_t *dumpgr_opts, 
+	 intn         curr_arg, 
+	 intn         argc, 
+	 char        *argv[] )
 {
     int32 file_id = FAIL,	/* current hdf file id */
           gr_id = FAIL,		/* interface id */
@@ -1113,7 +1119,7 @@ dgr(	dump_info_t *dumpgr_opts,
           num_ri_chosen,	/* # of requested images */
           nglb_attrs,		/* # of file attributes */
           ndsets;		/* # of images in the file */
-    FILE *fp;			/* output file pointer */
+    FILE *fp = NULL;		/* output file pointer */
     char  file_name[MAXFNLEN];	/* current hdf file name */
     intn  index_error=FALSE,	/* indicate an error in getting index list */
           status,		/* status returned from a called routine */
@@ -1190,7 +1196,7 @@ dgr(	dump_info_t *dumpgr_opts,
       fp = stdout;  /* assume that output option is not given */
 
       /* display images in requested format for the current file */
-      switch(dumpgr_opts->file_type)
+      switch(dumpgr_opts->file_format)
       {
          case DASCII:       /* ASCII file */
             /* open output file for ASCII or direct to standard output */
@@ -1263,7 +1269,7 @@ dgr(	dump_info_t *dumpgr_opts,
    }  /* while more files to process */
 
    /* close output file only if option -o is given */
-   if (dumpgr_opts->dump_to_file)
+   if (fp != NULL && dumpgr_opts->dump_to_file)
       fclose(fp);
 
 done:
@@ -1276,11 +1282,10 @@ done:
     return ret_value;
 }	/* dgr */
 
-intn 
-do_dumpgr(intn        curr_arg, 
-          intn        argc, 
-          char       *argv[], 
-          intn        help)
+intn do_dumpgr(intn  curr_arg, 
+               intn  argc, 
+               char *argv[], 
+               intn  help)
 {
    dump_info_t dumpgr_opts;	/* dumpgr options */
    intn status, ret_value = SUCCEED;

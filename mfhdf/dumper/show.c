@@ -26,7 +26,7 @@ static char *RcsId[] = "@(#)$Revision$";
 
 int32
 dumpvd(int32       vd, 
-       file_type_t ft, 
+       file_format_t ff, 
        int         data_only, 
        FILE       *fp, 
        char        separater[2],
@@ -38,7 +38,7 @@ dumpvd(int32       vd,
     uint8      *bb = NULL;
     uint8      *b = NULL;
     DYN_VWRITELIST *w = NULL;
-    intn       (*vfmtfn[VSFIELDMAX]) (VOIDP ,  file_type_t ft,  FILE *);
+    intn       (*vfmtfn[VSFIELDMAX]) (VOIDP ,  file_format_t ff,  FILE *);
     int32       off[VSFIELDMAX];
     int32       order[VSFIELDMAX];
     int32       nattrs[VSFIELDMAX];
@@ -127,7 +127,7 @@ dumpvd(int32       vd,
              data-only option. */
           if (!data_only)
           { 
-             if(ft==DASCII)
+             if(ff==DASCII)
              {
                 if ((dumpallfields) || (flds_indices[x] == i))
                 {
@@ -138,7 +138,7 @@ dumpvd(int32       vd,
              }
              /* display attributes - BMR moved this block inside if(!data_only) 
 		to keep the attributes from being printed - bug #231*/
-             if (FAIL == dumpattr(vd, i, 1, ft, fp))
+             if (FAIL == dumpattr(vd, i, 1, ff, fp))
              {
                 fprintf(stderr,"dumpvd: dumpattr() failed for vd = %d \n",(int)vd);
                 ret_value = FAIL;
@@ -199,7 +199,7 @@ dumpvd(int32       vd,
     cn = 0;
     done = count = 0;
     
-    if(ft==DASCII)
+    if(ff==DASCII)
       { 
 
           /* If not just the data will be dumped out, then put an address-type
@@ -305,7 +305,7 @@ dumpvd(int32       vd,
                             for (t = 0; t < order[i]; t++)
                               {
                                   if(display)
-                                      cn+=(vfmtfn[i]) (b, ft, fp);
+                                      cn+=(vfmtfn[i]) (b, ff, fp);
                                   b += off[i];
                                   if (display)
                                     {
@@ -447,7 +447,7 @@ dumpvd(int32       vd,
                             for (t = 0; t < order[i]; t++)
                               {
                                   if(display)
-                                      cn+=(vfmtfn[i]) (b, ft, fp);
+                                      cn+=(vfmtfn[i]) (b, ff, fp);
                                   b += off[i];
                                   if (display)
                                     {
@@ -510,7 +510,7 @@ intn
 dumpattr(int32 vid, 
          int32 findex, 
          intn isvs,
-         file_type_t ft, 
+         file_format_t ff, 
          FILE *fp)
 {
     intn          i, k;
@@ -523,7 +523,7 @@ dumpattr(int32 vid,
     int32         off;
     uint8         *buf = NULL;
     uint8         *ptr = NULL;
-    intn (*vfmtfn)(VOIDP, file_type_t ft, FILE *);
+    intn (*vfmtfn)(VOIDP, file_format_t ff, FILE *);
     intn          status;
     intn          ret_value = SUCCEED;
 
@@ -680,7 +680,7 @@ dumpattr(int32 vid,
           cn = 0;
           for (k = 0; k < i_count; k++)  
             {
-                cn += vfmtfn((uint8 *)ptr, ft, fp);
+                cn += vfmtfn((uint8 *)ptr, ff, fp);
                 ptr += off;
                 putchar(' ');
                 cn++;

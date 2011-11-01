@@ -28,6 +28,10 @@ static char RcsId[] = "$Revision$";
 #define	CARRIAGE_RETURN	13
 #define	LINE_FEED	10
 #define	HORIZONTAL_TAB	9
+
+typedef intn (*fmtfunct_t) (VOIDP, file_format_t, FILE *);
+fmtfunct_t select_func(int32 nt);
+
 /* 
  * printing functions copied from vshow.c and used by sdsdumpfull(). 
  *
@@ -38,12 +42,12 @@ static char RcsId[] = "$Revision$";
 
 intn 
 fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
-        file_type_t    ft, 
+        file_format_t    ff, 
         FILE          *ofp)
 {
     unsigned char s;
 
-    if(ft == DASCII)
+    if(ff == DASCII)
       return (fprintf(ofp, "%02x ", (unsigned) *x));
     else
       { 
@@ -54,12 +58,12 @@ fmtbyte(unsigned char *x, /* assumption: byte is the same as unsigned char */
 
 intn 
 fmtint8(VOIDP       x,  /* assumption: int8 is same as signed char */
-        file_type_t ft, 
+        file_format_t ff, 
         FILE       *ofp)
 {
     int8 s;
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%d", (int) *((signed char *) x)));
     else
       {
@@ -70,12 +74,12 @@ fmtint8(VOIDP       x,  /* assumption: int8 is same as signed char */
 
 intn 
 fmtuint8(VOIDP       x, /* assumption: uint8 is same as unsigned char */
-         file_type_t ft, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     uint8 s;
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%u", (unsigned) *((unsigned char *) x)));
     else
       { 
@@ -86,14 +90,14 @@ fmtuint8(VOIDP       x, /* assumption: uint8 is same as unsigned char */
 
 intn 
 fmtint16(VOIDP       x, 
-         file_type_t ft, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     int16 s;
 
     HDmemcpy(&s, x, sizeof(int16));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%d", (int) s));
     else
         return(fwrite(&s, sizeof(int16), 1, ofp));
@@ -101,14 +105,14 @@ fmtint16(VOIDP       x,
 
 intn 
 fmtuint16(VOIDP       x, 
-          file_type_t ft, 
+          file_format_t ff, 
           FILE       *ofp)
 {
     uint16      s;
 
     HDmemcpy(&s, x, sizeof(uint16));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%u", (unsigned) s));
     else
         return(fwrite(&s, sizeof(uint16), 1, ofp));
@@ -116,7 +120,7 @@ fmtuint16(VOIDP       x,
 
 intn 
 fmtchar(VOIDP       x, 
-        file_type_t ft, 
+        file_format_t ff, 
         FILE       *ofp)
 {
    if (isprint(*(unsigned char *) x))
@@ -133,12 +137,12 @@ fmtchar(VOIDP       x,
 
 intn 
 fmtuchar8(VOIDP       x, /* assumption: uchar8 is same as unsigned char */
-          file_type_t ft, 
+          file_format_t ff, 
           FILE       *ofp)
 {   
     uchar8 s;
 
-    if(ft == DASCII) 
+    if(ff == DASCII) 
 	/* replace %o with %d by Elena's suggestion: it doesn't make
 	   sense to print in octal - BMR 06/23/00 */
         return (fprintf(ofp, "%d", *((uchar8 *) x)));
@@ -151,14 +155,14 @@ fmtuchar8(VOIDP       x, /* assumption: uchar8 is same as unsigned char */
 
 intn 
 fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
-       file_type_t ft, 
+       file_format_t ff, 
        FILE       *ofp)
 {
     intn        i;
 
     HDmemcpy(&i, x, sizeof(intn));
 
-    if(ft == DASCII) 
+    if(ff == DASCII) 
         return (fprintf(ofp, "%d", (int) i));
     else
         return(fwrite(&i, sizeof(intn), 1, ofp));
@@ -167,14 +171,14 @@ fmtint(VOIDP       x, /* assumption: int is same as 'intn' */
 #define FLOAT32_EPSILON ((float32)1.0e-20)
 intn 
 fmtfloat32(VOIDP       x, 
-           file_type_t ft, 
+           file_format_t ff, 
            FILE       *ofp)
 {
     float32     fdata;
 
     HDmemcpy(&fdata, x, sizeof(float32));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
       {
           if (fabs(fdata - FILL_FLOAT) <= FLOAT32_EPSILON)
               return (fprintf(ofp, "FloatInf"));
@@ -189,14 +193,14 @@ fmtfloat32(VOIDP       x,
 
 intn 
 fmtint32(VOIDP       x, 
-         file_type_t ft, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     int32       l;
 
     HDmemcpy(&l, x, sizeof(int32));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%ld", (long) l));
     else
         return(fwrite(&l, sizeof(int32), 1, ofp));
@@ -204,14 +208,14 @@ fmtint32(VOIDP       x,
 
 intn 
 fmtuint32(VOIDP       x, 
-          file_type_t ft, 
+          file_format_t ff, 
           FILE       *ofp)
 {
     uint32      l;
 
     HDmemcpy(&l, x, sizeof(uint32));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%lu", (unsigned long) l));
     else
         return(fwrite(&l, sizeof(uint32), 1, ofp));
@@ -219,14 +223,14 @@ fmtuint32(VOIDP       x,
 
 intn 
 fmtshort(VOIDP       x, 
-         file_type_t ft, 
+         file_format_t ff, 
          FILE       *ofp)
 {
     short s;
 
     HDmemcpy(&s, x, sizeof(short));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
         return (fprintf(ofp, "%d", (int) s));
     else
         return(fwrite(&s, sizeof(short), 1, ofp));
@@ -235,14 +239,14 @@ fmtshort(VOIDP       x,
 #define FLOAT64_EPSILON ((float64)1.0e-20)
 intn 
 fmtfloat64(VOIDP       x, 
-           file_type_t ft, 
+           file_format_t ff, 
            FILE       *ofp)
 {
     float64     d;
 
     HDmemcpy(&d, x, sizeof(float64));
 
-    if(ft == DASCII)
+    if(ff == DASCII)
       {
           if (fabs(d - FILL_DOUBLE) <= FLOAT64_EPSILON)
               return (fprintf(ofp, "DoubleInf"));
@@ -255,9 +259,8 @@ fmtfloat64(VOIDP       x,
       }
 }
 
-typedef intn (*fmtfunct_t) (VOIDP, file_type_t, FILE *);
 fmtfunct_t select_func(
-		int32 nt )
+		int32 nt)
 {
    switch (nt & 0xff )
    {
@@ -311,7 +314,7 @@ dumpfull(int32       nt,
    fmtfunct_t fmtfunct = NULL;
    int32   off;
    intn    cn;
-   file_type_t ft = dump_opts->file_type;
+   file_format_t ff = dump_opts->file_format;
    intn    ret_value = SUCCEED;
 
    /* check inputs */
@@ -335,7 +338,7 @@ dumpfull(int32       nt,
 			where the data actually starts */
 
    /* check if we're dumping data in ASCII or Binary mode. */
-   if(ft == DASCII)
+   if(ff == DASCII)
    {
       /* print spaces in front of data on the first line */
       for (i = 0; i < indent; i++)
@@ -345,7 +348,7 @@ dumpfull(int32       nt,
       {
          for (i = 0; i < cnt && bufptr != NULL; i++)
          {
-            cn += fmtfunct(bufptr, ft, ofp); /* dump item to file */
+            cn += fmtfunct(bufptr, ff, ofp); /* dump item to file */
             bufptr = (char *) bufptr + off;
             putc(' ', ofp);
             cn++;
@@ -367,7 +370,7 @@ dumpfull(int32       nt,
       {
          for (i = 0; i < cnt && bufptr != NULL; i++)
          {
-            cn += fmtfunct(bufptr, ft, ofp); /* dump item to file */
+            cn += fmtfunct(bufptr, ff, ofp); /* dump item to file */
             bufptr = (char *) bufptr + off;
 	    if( !dump_opts->as_stream ) /* add \n after MAXPERLINE chars */
                if (cn > MAXPERLINE )
@@ -388,7 +391,7 @@ dumpfull(int32       nt,
    {
       for (i = 0; i < cnt && bufptr != NULL; i++)
       {
-         cn += fmtfunct(bufptr, ft, ofp); /* dump item to file */
+         cn += fmtfunct(bufptr, ff, ofp); /* dump item to file */
          bufptr = (char *) bufptr + off; /* increment by offset? */
          /* cn++; I don't see any reason of this increment being here 9/4/00*/
       } /* end for all items in buffer */
