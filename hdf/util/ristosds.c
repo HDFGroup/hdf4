@@ -161,9 +161,8 @@ main(int argc, char *argv[])
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
         finishing();
     ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP) outdata0);
-     /* HDfree(outdata);
-    HDfree(indata);
- */ 
+    HDfree(outdata0);
+    HDfree(indata0);
     if (ret != 0)
         finishing();
     return (0);
