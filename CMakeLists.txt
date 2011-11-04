@@ -82,6 +82,21 @@ ELSE (BUILD_SHARED_LIBS)
 ENDIF (BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
+# Allow Visual Studio solution directories
+#-----------------------------------------------------------------------------
+# Provide a way for Visual Studio Express users to turn OFF the new FOLDER
+# organization feature. Default to ON for non-Express users. Express users must
+# explicitly turn off this option to build HDF5 in the Express IDE...
+#
+OPTION (HDF4_USE_FOLDERS "Enable folder grouping of projects in IDEs." ON)
+MARK_AS_ADVANCED (HDF4_USE_FOLDERS)
+IF (HDF4_USE_FOLDERS)
+  SET_PROPERTY (GLOBAL PROPERTY USE_FOLDERS ON)
+ENDIF (HDF4_USE_FOLDERS)
+OPTION (HDF4_NO_PACKAGES "CPACK - Disable packaging" OFF)
+MARK_AS_ADVANCED (HDF4_NO_PACKAGES)
+
+#-----------------------------------------------------------------------------
 # Set the core names of all the libraries
 #-----------------------------------------------------------------------------
 SET (HDF4_LIB_CORENAME              "hdf4")
@@ -139,11 +154,6 @@ SET (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
 SET (HDF4_MFHDF_TEST_DIR      ${HDF4_SOURCE_DIR}/mfhdf/test)
 SET (HDF4_MFHDF_FORTRAN_DIR   ${HDF4_SOURCE_DIR}/mfhdf/fortran)
 SET (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
-
-# set default prefix location
-#IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-#  SET(CMAKE_INSTALL_PREFIX "hdf4" CACHE PATH "Install path prefix, prepended onto install directories" FORCE)
-#ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 IF (NOT HDF4_INSTALL_BIN_DIR)
   SET (HDF4_INSTALL_BIN_DIR bin)
@@ -239,6 +249,7 @@ SET (EXTERNAL_LIBRARYDLL_LIST "")
 # Run all the CMake configuration tests for our build environment
 #-----------------------------------------------------------------------------
 INCLUDE (${HDF4_RESOURCES_DIR}/ConfigureChecks.cmake)
+
 #-----------------------------------------------------------------------------
 # Option to use legacy naming for windows libs/programs, default is legacy
 #-----------------------------------------------------------------------------
@@ -309,6 +320,7 @@ IF (WIN32)
   IF (NOT CYGWIN)
     ADD_DEFINITIONS (-DBIND_TO_CURRENT_VCLIBS_VERSION=1)
     ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
+    ADD_DEFINITIONS (-D_CONSOLE)
   ENDIF (NOT CYGWIN)
 ENDIF (WIN32)
 
@@ -381,6 +393,34 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 IF (CMAKE_COMPILER_IS_GNUCXX)
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
+
+#-----------------------------------------------------------------------------
+# Option to Enable MPI Parallel
+#-----------------------------------------------------------------------------
+SET (CMAKE_MODULE_PATH ${HDF4_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
+OPTION (HDF4_ENABLE_PARALLEL "Enable parallel build (requires MPI)" OFF)
+IF (HDF4_ENABLE_PARALLEL)
+  INCLUDE (FindMPI)
+  INCLUDE_DIRECTORIES (${MPI_C_INCLUDE_PATH})
+  IF (MPI_C_FOUND)
+    SET (H4_HAVE_PARALLEL 1)
+    # MPI checks, only do these if MPI_C_FOUND is true, otherwise they always fail
+    # and once set, they are cached as false and not regenerated
+    SET (CMAKE_REQUIRED_LIBRARIES "${MPI_C_LIBRARIES}" )
+    CHECK_FUNCTION_EXISTS (MPI_File_get_size H4_HAVE_MPI_GET_SIZE) 
+    # Used by Fortran + MPI
+    CHECK_SYMBOL_EXISTS (MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Comm)
+    CHECK_SYMBOL_EXISTS (MPI_Info_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Info)
+  ENDIF (MPI_C_FOUND)
+ENDIF (HDF4_ENABLE_PARALLEL)
+
+# Parallel IO usage requires MPI to be Linked and Included
+IF (H4_HAVE_PARALLEL)
+  SET (LINK_LIBS ${LINK_LIBS} ${MPI_C_LIBRARIES})
+  IF (MPI_C_LINK_FLAGS)
+    SET (CMAKE_EXE_LINKER_FLAGS ${MPI_C_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS})
+  ENDIF (MPI_C_LINK_FLAGS)
+ENDIF (H4_HAVE_PARALLEL)
 
 INCLUDE (ExternalProject)
 OPTION (HDF4_ALLOW_EXTERNAL_SUPPORT "Allow External Library Building" "NO")
@@ -488,7 +528,6 @@ ENDIF (HDF4_ENABLE_Z_LIB_SUPPORT)
 #-----------------------------------------------------------------------------
 # Option for SzLib support
 #-----------------------------------------------------------------------------
-SET (CMAKE_MODULE_PATH ${HDF4_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
 OPTION (HDF4_ENABLE_SZIP_SUPPORT "Use SZip Filter" OFF)
 IF (HDF4_ENABLE_SZIP_SUPPORT)
   OPTION (HDF4_ENABLE_SZIP_ENCODING "Use SZip Encoding" OFF)
@@ -525,6 +564,7 @@ ENDIF (HDF4_ENABLE_SZIP_SUPPORT)
 OPTION (HDF4_PACKAGE_EXTLIBS "CPACK - include external libraries" OFF)
 IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   IF (HDF4_PACKAGE_EXTLIBS)
+    SET (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
     IF (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
       PACKAGE_JPEG_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
     ENDIF (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
@@ -779,7 +819,7 @@ ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 #-----------------------------------------------------------------------------
 # Set the cpack variables
 #-----------------------------------------------------------------------------
-IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   SET (CPACK_PACKAGE_VENDOR "HDF Group")
   SET (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
   SET (CPACK_PACKAGE_INSTALL_DIRECTORY "HDF4")
@@ -887,5 +927,5 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
         GROUP Development
     )
   ENDIF (HDF4_BUILD_UTILS)
-ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   

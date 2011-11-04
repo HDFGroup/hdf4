@@ -202,7 +202,7 @@ IF (NOT WINDOWS)
     IF (TEST_LFS_WORKS_COMPILE)
       IF (TEST_LFS_WORKS_RUN  MATCHES 0)
         SET (TEST_LFS_WORKS 1 CACHE INTERNAL ${msg})
-    SET (LARGEFILE 1)
+        SET (LARGEFILE 1)
         SET (HDF_EXTRA_FLAGS ${HDF_EXTRA_FLAGS} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE)
         MESSAGE (STATUS "${msg}... yes")
       ELSE (TEST_LFS_WORKS_RUN  MATCHES 0)
@@ -342,16 +342,6 @@ CHECK_FUNCTION_EXISTS (fseeko64          H4_HAVE_FSEEKO64)
 CHECK_FUNCTION_EXISTS (ftello64          H4_HAVE_FTELLO64)
 CHECK_FUNCTION_EXISTS (fstat64           H4_HAVE_FSTAT64)
 CHECK_FUNCTION_EXISTS (stat64            H4_HAVE_STAT64)
-
-# MPI checks
-SET (CMAKE_REQUIRED_INCLUDES "${MPI_INCLUDE_PATH}/mpi.h" )
-SET (CMAKE_REQUIRED_LIBRARIES "${MPI_LIBRARY}" )
-CHECK_FUNCTION_EXISTS (MPI_File_get_size H4_HAVE_MPI_GET_SIZE)
-
-# For Fortran+MPI
-CHECK_SYMBOL_EXISTS (MPI_Comm_c2f "${MPI_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Comm)
-CHECK_SYMBOL_EXISTS (MPI_Info_c2f "${MPI_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Info)
-
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

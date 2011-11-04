@@ -1172,6 +1172,7 @@
 ./config/cmake/HDFTests.c
 ./config/cmake/FindHDF4.cmake
 ./config/cmake/FindSZIP.cmake
+./config/cmake/FindMPI.cmake
 ./config/cmake/cacheinit.cmake
 ./config/cmake/mccacheinit.cmake
 ./config/cmake/HDF4Macros.cmake

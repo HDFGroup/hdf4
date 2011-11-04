@@ -1,0 +1,4 @@
+/build
+/cmake*.sh
+/config*.sh
+/redeploy*.sh
