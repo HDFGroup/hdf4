@@ -344,7 +344,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 IF (CMAKE_COMPILER_IS_GNUCXX)
-  SET (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
+  SET (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 #-----------------------------------------------------------------------------
