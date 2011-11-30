@@ -277,17 +277,6 @@ ADD_DEFINITIONS (-DBIG_LONGS -DSWAP)
 ADD_DEFINITIONS (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
-# Option to Build Static PIC
-#-----------------------------------------------------------------------------
-OPTION (BUILD_STATIC_PIC "Build Static PIC" OFF)
-IF (BUILD_STATIC_PIC)
-  IF (NOT WIN32)
-    SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-  ENDIF (NOT WIN32)
-ENDIF (BUILD_STATIC_PIC)
-
-#-----------------------------------------------------------------------------
 # Option to use code coverage
 #-----------------------------------------------------------------------------
 OPTION (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" OFF)
@@ -354,6 +343,9 @@ ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
+IF (CMAKE_COMPILER_IS_GNUCXX)
+  SET (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
+ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 #-----------------------------------------------------------------------------
 # Option to allow the user to disable compiler warnings
@@ -364,9 +356,10 @@ IF (HDF4_DISABLE_COMPILER_WARNINGS)
   # warning level is given, so remove it.
   IF (MSVC)
     SET (HDF4_WARNINGS_BLOCKED 1)
-    STRING (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " "
-        CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+    STRING (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
     SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
+    STRING (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} /w")
   ENDIF (MSVC)
   IF (WIN32 AND NOT CYGWIN)
     ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
@@ -380,6 +373,7 @@ IF (HDF4_DISABLE_COMPILER_WARNINGS)
   # Most compilers use -w to suppress warnings.
   IF (NOT HDF4_WARNINGS_BLOCKED)
     SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
   ENDIF (NOT HDF4_WARNINGS_BLOCKED)
 ENDIF (HDF4_DISABLE_COMPILER_WARNINGS)
 
@@ -467,7 +461,11 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
         IF (BUILD_JPEG_WITH_PIC)
           SET (JPEG_CMAKE_C_FLAGS "-fPIC")
         ELSE (BUILD_JPEG_WITH_PIC)
-          SET (JPEG_CMAKE_C_FLAGS " ")
+          IF (DEFINED CMAKE_ANSI_CFLAGS)
+            SET (JPEG_CMAKE_C_FLAGS ${CMAKE_ANSI_CFLAGS})
+          ELSE (DEFINED CMAKE_ANSI_CFLAGS)
+            SET (JPEG_CMAKE_C_FLAGS " ")
+          ENDIF (DEFINED CMAKE_ANSI_CFLAGS)
         ENDIF (BUILD_JPEG_WITH_PIC)
 
         EXTERNAL_JPEG_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT} ${JPEG_CMAKE_C_FLAGS})
