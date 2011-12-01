@@ -201,6 +201,7 @@ SET (HDF4_PACKAGE_BUGREPORT "help@hdfgroup.org")
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
 INCLUDE (${HDF4_RESOURCES_DIR}/HDFMacros.cmake)
+INCLUDE (${HDF4_RESOURCES_DIR}/HDFLibMacros.cmake)
 INCLUDE (${HDF4_RESOURCES_DIR}/HDF4Macros.cmake)
 
 #-----------------------------------------------------------------------------
