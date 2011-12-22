@@ -1,3 +1,5 @@
+/CTestDriver.cmake
+/HDF4-C-Trunk.cmake
 /build
 /buildstatic
 /cmake*.sh
