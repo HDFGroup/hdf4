@@ -66,6 +66,7 @@
 ./config/irix6.x
 ./config/linux-gnu
 ./config/osf5.x
+./config/powerpc64-linux-gnu
 ./config/powerpc-apple
 ./config/powerpc-ibm-aix5.x
 ./config/solaris2.x

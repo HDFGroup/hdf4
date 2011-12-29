@@ -88,6 +88,11 @@ Platforms tested
 
 This version has been tested in the following platforms:
 
+   Linux 2.6.32-220.2.1         gcc (GCC) 4.4.6 20110731 (Red Hat 4.4.6-3)
+   .el6.ppc64 #1                GNU Fortran (GCC) 4.4.6 20110731 
+   SMP ppc64 GNU/Linux
+   (ostrich)
+
    Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
       SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
    (jam)                             (Red Hat 4.1.2-50)
@@ -173,6 +178,8 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+
+o  On IBM PowerPC 64 hdftest failes when gcc 4.4.6 is used with -O3 optimization level. 
 
 o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    fails when checking for the jpeglib.h header due to the duplicated

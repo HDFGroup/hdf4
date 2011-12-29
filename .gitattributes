@@ -38,6 +38,7 @@ config/commence.am -text
 config/conclude.am -text
 config/examples.am -text
 config/ia64-hp-hpux11.23 -text
+config/powerpc64-linux-gnu -text
 hdf/CMakeLists.txt -text
 hdf/examples/AN_create_annotation.c -text
 hdf/examples/AN_get_annotation_info.c -text
