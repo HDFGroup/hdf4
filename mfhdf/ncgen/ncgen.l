@@ -134,7 +134,7 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		    yyerror(errstr);
 		}
 
-#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || __powerpc64__
 		if (dd < INT_MIN  ||  dd > INT_MAX) 
 #else
 #if defined (_CRAYMPP)
