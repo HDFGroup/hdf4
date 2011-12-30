@@ -1162,7 +1162,6 @@
 ./config/cmake/hdf4-config.cmake.install.in
 ./config/cmake/ConfigureChecks.cmake
 ./config/cmake/CTestCustom.cmake
-./config/cmake/CTest.cmake
 ./config/cmake/runTest.cmake
 ./config/cmake/HDFMacros.cmake
 ./config/cmake/HDFLibMacros.cmake

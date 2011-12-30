@@ -10,7 +10,6 @@ bin/timekeeper -text
 config/aix -text
 config/apple -text
 config/cmake/CPack.cmake -text
-config/cmake/CTest.cmake -text
 config/cmake/CTestCustom.cmake -text
 config/cmake/CheckTypeSize.cmake -text
 config/cmake/ConfigureChecks.cmake -text

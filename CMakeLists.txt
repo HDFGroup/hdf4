@@ -75,11 +75,6 @@ PROJECT (HDF4 C CXX)
 #   )
 #
 #-----------------------------------------------------------------------------
-IF (BUILD_SHARED_LIBS)
-  SET (BUILD_NAME_EXT "SHARED")
-ELSE (BUILD_SHARED_LIBS)
-  SET (BUILD_NAME_EXT "STATIC")
-ENDIF (BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
 # Allow Visual Studio solution directories
