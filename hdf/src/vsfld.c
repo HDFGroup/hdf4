@@ -734,7 +734,6 @@ intn VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
     VDATA *vs;
     sp_info_block_t info_block;
     intn  actual_len = 0;
-    accrec_t   *access_rec;               /* access record */
     intn  ret_value = SUCCEED;
 
     if (HAatom_group(vkey) != VSIDGROUP)
@@ -802,6 +801,124 @@ done:
     /* Normal function cleanup */
     return ret_value;
 } /* VSgetexternalfile */
+
+/* -------------------------- VSgetexternalinfo --------------------------- */
+/*
+
+ NAME
+	VSgetexternalinfo -- gets external file name and offset
+ USAGE
+	int32 VSgetexternalinfo(id, name_len, filename, offset)
+        int32  vkey;            IN: vdata ID
+	uintn  buf_size;        IN: length of buffer for external file name
+        char  *extfilename;     IN: external file name
+        int32 *offset;          IN: offset in external file, where data starts
+        int32 *length;          IN: length of data in external file
+ RETURNS
+        Returns length of the external file name or FAIL.  If the vdata
+	does not have external element, the length will be 0.
+
+ DESCRIPTION
+	VSgetexternalinfo gets the external file's name and the external data's
+	offset and length, which specify the location and size of the data in
+	the external file.
+
+	buf_size specifies the size of the buffer ext_filename.  When buf_size
+	is 0, VSgetexternalinfo will simply return the length of the external
+	file name, and not the file name itself.
+
+	When the element is not special, VSgetexternalinfo will return 0.  If
+	the element is SPECIAL_EXT, but the external file name doesn't exist,
+	VSgetexternalinfo will return FAIL.
+
+        IMPORTANT:  It is the user's responsibility to see that the 
+        separate files are transported with the main file.
+ FORTRAN
+	N/A
+
+--------------------------------------------------------------------------- */
+
+intn VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *offset, int32 *length)
+{
+    CONSTR(FUNC, "VSgetexternalinfo");
+    vsinstance_t *w;
+    VDATA *vs;
+    intn   actual_fname_len = 0;
+    intn   ret_value = SUCCEED;
+
+    if (HAatom_group(vkey) != VSIDGROUP)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Locate vs's index in vstab */
+    if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* Get the vdata structure */
+    vs = w->vs;
+
+    /* Vdata should have an aid */
+    if (vs->aid == 0 || vs->aid == FAIL)
+        HGOTO_ERROR(DFE_ARGS, FAIL)
+    else
+    {
+	int32 retcode=0;
+	sp_info_block_t info_block;
+	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+
+	/* Get the special info */
+	retcode = HDget_special_info(vs->aid, &info_block);
+
+	/* If the vdata has external element, get the external info */
+	if (retcode == SUCCEED && info_block.key == SPECIAL_EXT)
+	{
+	    /* If the file name is not available, the file is probably
+		corrupted, so we need to report it. */
+	    if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+		ret_value = FAIL;
+	    else
+	    {
+		intn tmp_len = (intn)info_block.length_file_name;
+
+		/* If caller requests the length of the external file name
+		   only, return the length */
+		if (buf_size == 0)
+		    actual_fname_len = tmp_len;
+		else
+		{
+		    /* Caller requests file name, so buffer must not be NULL */
+		    if (ext_filename == NULL)
+			HGOTO_ERROR(DFE_ARGS, FAIL);
+
+		    /* Compute the length of the name to be returned: if
+		       requested buffer size is smaller, use that value for
+		       name's length, but that means file name could be
+		       truncated! */
+		    actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
+
+		    /* Get the name */
+		    HDstrncpy(ext_filename, info_block.path, buf_size);
+
+		    /* Get offset/length of the external data if requested */
+		    if (offset != NULL)
+			*offset = info_block.offset;
+                    if (length != NULL)
+                        *length = info_block.length;
+		} /* buf_size != 0 */
+		ret_value = actual_fname_len;
+	    }
+	}
+	/* Not special or not external */
+	else
+	    ret_value = 0;	/* no external file name */
+    }
+done:
+    if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+    /* Normal function cleanup */
+    return ret_value;
+} /* VSgetexternalinfo */
 
 /*----------------------------------------------------------------- 
 NAME

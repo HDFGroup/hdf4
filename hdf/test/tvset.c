@@ -279,6 +279,10 @@ write_vset_stuff(void)
     status = VSgetexternalfile(vs1, 0, NULL, NULL);
     VERIFY_VOID(status, FAIL, "VSgetexternalfile");
 
+    /* Test VSgetexternal on a vdata without external element */
+    status = VSgetexternalinfo(vs1, 0, NULL, NULL, NULL);
+    VERIFY_VOID(status, 0, "VSgetexternalfile");
+
     status = VSdetach(vs1);
     CHECK(status,FAIL,"Vdetach:vs1");
     
@@ -1297,7 +1301,11 @@ if(status==FAIL)
     return SUCCEED;
 }   /* read_vset_stuff */
 
-/* Testing VSdelete for vdatas.*/
+/*
+   Testing VSdelete for vdatas.
+   Modification:
+	2011/12/22: added a test for VSgetexternalinfo on non-external vdata.
+ */
 static void
 test_vsdelete(void)
 {
@@ -1380,7 +1388,15 @@ test_vsdelete(void)
     vdata_id = VSattach(fid, v_ref, "w");
     CHECK_VOID(vdata_id,FAIL,"VSattach:vdata_id");
 
-    /* delete this Vdata */
+    /* Test VSgetexternalinfo on this vdata that doesn't have external
+       element, should return 0 for length of external file name */
+    {
+	intn name_len = 0;
+	name_len = VSgetexternalinfo(vdata_id, 0, NULL, NULL, NULL);
+	VERIFY_VOID(name_len, 0, "VSgetexternalinfo:vdata_id");
+    }
+
+    /* Delete this Vdata */
     status = VSdelete(fid, v_ref);
     CHECK_VOID(status,FAIL,"VSdelete:vdata_id");
 
@@ -2966,7 +2982,7 @@ Tables_External_File.
 
 ***********************************************************************/
 
-#define FILE2_NAME	"tvset_ext.hdf"
+#define EXTFILE		"tvset_ext.hdf"
 #define EXTERNAL_FILE	"Tables_External_File"
 #define MULTI_NAME	"Table AR with Attributes in External File"
 #define CLASSMULTI_NAME	"Multi-Type, Multi-Entries per Cell, Store By Row in External File"
@@ -2978,7 +2994,7 @@ test_extfile(void)
     int32   fid, vdata1_id,
 	    vdata_ref = -1;  /* ref number of a vdata, set to -1 to create  */
     int32   vdata1_ref;
-    int32   offset;
+    int32   offset = -1, length = -1;
     char    hibuf[2] = "hi";
     char    byebuf[3] = "bye";
     char   *extfile_name;
@@ -3003,7 +3019,7 @@ test_extfile(void)
 
 
     /* Create the HDF file for data used in this test routine */
-    fid = Hopen (FILE2_NAME, DFACC_CREATE, 0);
+    fid = Hopen (EXTFILE, DFACC_CREATE, 0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
     /* Initialize the VS interface */
@@ -3084,7 +3100,7 @@ test_extfile(void)
     /* Reopen the file and the vdata and verify external file information */
 
     /* Open the HDF file */
-    fid = Hopen (FILE2_NAME, DFACC_RDONLY, 0);
+    fid = Hopen (EXTFILE, DFACC_RDONLY, 0);
     CHECK_VOID(fid, FAIL, "Hopen");
 
     /* Initialize the VS interface */
@@ -3095,16 +3111,44 @@ test_extfile(void)
     vdata1_id = VSattach(fid, vdata1_ref, "r");
     CHECK_VOID(vdata1_id, FAIL, "VSattach");
 
-    /* Get the length of the external file name first */
+    /* Get the length of the external file name first - VSgetexternalfile
+       is deprecated as of 4.2.7 */
     name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
 
     extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
     CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
     
-    /* Get the external file name */
+    /* Old function: Get the external file name - VSgetexternalfile
+       is deprecated as of 4.2.7 */
     name_len = VSgetexternalfile(vdata1_id, name_len+1, extfile_name, &offset);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
+
+    /* Get the length of the external file name first */
+    name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);
+    VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
+
+    extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(extfile_name, "extfile_name", "test_extfile");
+    
+    /* Get the external file name */
+    name_len = VSgetexternalinfo(vdata1_id, name_len+1, extfile_name, &offset, &length);
+    VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
+
+    /* Test passing in smaller buffer for external file name than actual;
+       name should be truncated */
+    {
+        char short_name[name_len];
+        HDmemset(short_name, '\0', name_len);
+        HDstrncpy(short_name, EXTERNAL_FILE, name_len-2);
+        HDmemset(extfile_name, '\0', name_len);
+
+        /* Call VSgetexternalinfo again with smaller buffer size and make sure
+           VSgetexternalinfo reads the name truncated to the given buffer size*/
+        name_len = VSgetexternalinfo(vdata1_id, name_len-2, extfile_name, &offset, &length);
+        VERIFY_VOID(name_len, (intn)HDstrlen(extfile_name), "VSgetexternalinfo");
+        VERIFY_CHAR_VOID(short_name, extfile_name, "VSgetexternalinfo");
+    }
 
     /* Release resources */
     status_n = VSdetach( vdata1_id );

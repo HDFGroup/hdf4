@@ -31,7 +31,7 @@ static char RcsId[] = "@(#)$Revision: 5218 $";
 #define FILE1     "test1.hdf"
 #define FILE2     "test2.hdf"
 #define EXTTST    "exttst.hdf"    /* main file for external file test */
-#define EXTFILE   "extfile.hdf"   /* external file created in test */
+#define EXTFILE   "SD_externals"  /* external file created in test */
 #define NBITFILE  "nbit.hdf"
 #define COMPFILE1 "comptst1.hdf"
 #define COMPFILE2 "comptst2.hdf"
@@ -1414,7 +1414,7 @@ main(int argc, char *argv[])
     {
 	intn name_len=0;
 	char *extfile_name;
-	int32 offset=0;
+	int32 offset=0, length=0;
 	int32 sds_id, sds_index;
 
 	/* Open file 'exttst.hdf' again */
@@ -1428,16 +1428,58 @@ main(int argc, char *argv[])
 	CHECK(sds_id, FAIL, "SDselect");
 
 	/* Call SDgetexternalfile the first time passing in 0 for external
-	   file name length to get the actual length */
+	   file name length to get the actual length - SDgetexternalfile is
+	   deprecated as of 4.2.7 */
 	name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
 	VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
 
 	extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
 	CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
+	HDmemset(extfile_name, '\0', name_len+1);
 
 	/* Call SDgetexternalfile again and get the external file info */
 	name_len = SDgetexternalfile(sds_id, name_len+1, extfile_name, &offset);
 	VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+	VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
+
+	/* Call SDgetexternalinfo the first time passing in 0 for external
+	   file name length to get the actual length */
+	name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
+	VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+
+	/* Test passing in NULL pointer for external file name buffer, should
+	   fail gracefully */
+	{
+	    char *null_buffer=NULL;
+	    intn ret_code=0;
+	    ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
+	    VERIFY(ret_code, FAIL, "SDgetexternalinfo");
+	}
+
+	extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+	CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalinfo");
+	HDmemset(extfile_name, '\0', name_len+1);
+
+	/* Call SDgetexternalinfo again and get the external file info */
+	name_len = SDgetexternalinfo(sds_id, name_len+1, extfile_name, &offset, &length);
+	VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+	VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
+
+	/* Test passing in smaller buffer for external file name than actual;
+	   name should be truncated */
+	{
+	    char short_name[name_len];
+	    HDmemset(short_name, '\0', name_len);
+	    HDstrncpy(short_name, EXTFILE, name_len-2);
+	    HDmemset(extfile_name, '\0', name_len);
+
+	    /* Call SDgetexternalinfo again with smaller buffer size and verify
+	       that SDgetexternalinfo reads the name truncated to the given
+	       buffer size*/
+	    name_len = SDgetexternalinfo(sds_id, name_len-2, extfile_name, &offset, &length);
+	    VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
+	    VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
+	}
 
 	status = SDendaccess(sds_id);
 	CHECK(status, FAIL, "SDendaccess");
@@ -1449,9 +1491,15 @@ main(int argc, char *argv[])
 	CHECK(sds_id, FAIL, "SDselect");
 
 	/* Call SDgetexternalfile on the SDS that doesn't have external
-	   element, should fail */
+	   element, should fail - SDgetexternalfile is deprecated as of
+	   4.2.7 */
 	name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
 	VERIFY(name_len, FAIL, "SDgetexternalfile");
+
+	/* Call SDgetexternalinfo on the SDS that doesn't have external
+	   element, should return 0 for length of external file name */
+	name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
+	VERIFY(name_len, 0, "SDgetexternalinfo");
 
 	status = SDendaccess(sds_id);
 	CHECK(status, FAIL, "SDendaccess");

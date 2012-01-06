@@ -1021,6 +1021,8 @@ HXPinfo(accrec_t * access_rec, sp_info_block_t * info_block)
     info_block->key = SPECIAL_EXT;
 
     info_block->offset = info->extern_offset;
+    info_block->length = info->length;
+    info_block->length_file_name = info->length_file_name;
     info_block->path = info->extern_file_name;
 
 done:

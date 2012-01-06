@@ -3624,7 +3624,7 @@ HPfreediskblock(filerec_t * file_rec, int32 block_off, int32 block_size)
        SUCCEED / FAIL
  DESCRIPTION
        Fill in the given info_block with information about the special
-       element.  Return FAIL if it is not a speical element AND set
+       element.  Return FAIL if it is not a special element AND set
        the 'key' field to FAIL in info_block.
 
 --------------------------------------------------------------------------*/

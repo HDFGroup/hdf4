@@ -351,12 +351,16 @@ static accrec_t *accrec_free_list=NULL;
    interfaces when they need to know information about a given
    special element.  This is all information that would not be returned
    via Hinquire().  This should probably be a union of structures. */
+/* Added length of external element.  Note: this length is not returned
+   via Hinquire(). -BMR 2011/12/12 */
 typedef struct sp_info_block_t
   {
       int16       key;          /* type of special element this is */
 
       /* external elements */
       int32       offset;       /* offset in the file */
+      int32       length;       /* length of external data in the file */
+      int32       length_file_name;  /* length of external file name */
       char       *path;         /* file name - should not be freed by user */
 
       /* linked blocks */

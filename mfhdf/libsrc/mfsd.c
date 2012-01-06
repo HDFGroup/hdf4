@@ -4129,12 +4129,152 @@ done:
 
 /******************************************************************************
  NAME
+	SDgetexternalinfo -- retrieves external file and data information
+ USAGE
+	int32 SDgetexternalinfo(id, buf_size, filename, offset, length)
+        int32 id;                  
+	intn  buf_size;
+        char  *ext_filename;            
+        int32 *offset;              
+        int32 *length;              
+
+ DESCRIPTION
+    SDgetexternalinfo gets the external file's name and the external data's
+    offset and length, which specify the location and size of the data in
+    the external file.
+
+    buf_size specifies the size of the buffer ext_filename.  When buf_size
+    is 0, SDgetexternalinfo will simply return the length of the external file
+    name, and not the file name itself.
+
+    When the element is not special, SDgetexternalinfo will return
+    0.  If the element is SPECIAL_EXT, but the external file name
+    doesn't exist, SDgetexternalinfo will return FAIL.
+
+    IMPORTANT:  It is the user's responsibility to see that the 
+    external files are located in the same directory with the main
+    file.  SDgetexternalinfo does not check that.
+
+ RETURNS
+    Returns length of the external file name or FAIL.  If the SDS
+    does not have external element, this length will be 0.
+
+******************************************************************************/ 
+intn 
+SDgetexternalinfo(int32 id,      /* IN: dataset ID */
+              uintn buf_size,    /* IN: size of buffer for external file name */
+              char *ext_filename,/* IN: buffer for external file name */
+              int32 *offset,     /* IN: offset in external file */
+              int32 *length      /* IN: length of external data */)
+{
+    CONSTR(FUNC, "SDgetexternalinfo");    /* for HGOTO_ERROR */
+    NC     *handle = NULL;
+    NC_var *var = NULL;
+    int32   aid = FAIL;
+    intn    actual_fname_len = 0;
+    intn    ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetexternalinfo: I've been called\n");
+#endif
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Get the var structure of the SDS */
+    handle = SDIhandle_from_id(id, SDSTYPE);
+    if(handle == NULL || handle->file_type != HDF_FILE)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    if(handle->vars == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    var = SDIget_var(handle, id);
+    if(var == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* SDS exists */
+    if(var->data_ref) 
+    {
+	int32 retcode=0;
+	sp_info_block_t info_block;    /* special info block */
+	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+
+	/* Get the access id and then its special info */
+	aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+	if (aid == FAIL) /* catch FAIL from Hstartread */
+	    HGOTO_ERROR(DFE_ARGS, FAIL);
+	retcode = HDget_special_info(aid, &info_block);
+
+	/* If the SDS has external element, get the external info */
+        if (retcode == SUCCEED && info_block.key == SPECIAL_EXT)
+        {
+	    /* If the file name is not available, something must be wrong,
+		so we need to report it. */
+            if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+		ret_value = FAIL;
+            else
+            {
+                intn tmp_len = info_block.length_file_name;
+
+                /* If caller requests the length of the external file name
+                   only, return the length */
+                if (buf_size == 0)
+                    actual_fname_len  = tmp_len;
+                else
+                {
+                    /* Caller requests file name, so buffer must not be NULL */
+                    if (ext_filename == NULL)
+                        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+		    /* Compute the length of the name to be returned: if
+		       requested buffer size is smaller, use that value for
+		       name's length, but that means file name could be
+		       truncated! */
+                    actual_fname_len  = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
+
+                    /* Get the name */
+                    HDstrncpy(ext_filename, info_block.path, actual_fname_len);
+
+                    /* Get offset/length of the external data if requested */
+                    if (offset != NULL)
+                        *offset = info_block.offset;
+                    if (length != NULL)
+                        *length = info_block.length;
+                } /* buf_size != 0 */
+		ret_value = actual_fname_len ;
+            }
+        }
+	/* Not special or not external */
+        else
+            ret_value = 0;	/* no external file name */
+
+	/* End access to the aid */
+	if (Hendaccess(aid) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    } 
+    else /* SDS doesn't exist */
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+	/* End access to the aid if neccessary */
+	if (aid != FAIL)
+	    Hendaccess(aid);
+      }
+    /* Normal cleanup */
+    return ret_value;    
+} /* SDgetexternalinfo */
+
+
+/******************************************************************************
+ NAME
 	SDgetexternalfile -- retrieves external file information
  USAGE
 	int32 SDgetexternalfile(id, filename, offset)
         int32 id;                  
 	intn  buf_size;
-        const char  * filename;            
+        char  *filename;            
         int32 *offset;              
 
  DESCRIPTION
@@ -4165,9 +4305,8 @@ SDgetexternalfile(int32 id,       /* IN: dataset ID */
     CONSTR(FUNC, "SDgetexternalfile");    /* for HGOTO_ERROR */
     NC     *handle = NULL;
     NC_var *var = NULL;
-    intn    actual_len=0;
-    intn    status;
-    int     ret_value = SUCCEED;
+    intn    actual_len = 0;
+    int     ret_value = 0;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDgetexternalfile: I've been called\n");
