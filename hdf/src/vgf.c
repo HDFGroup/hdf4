@@ -1538,3 +1538,90 @@ nvdtrc(intf * vkey, intf * tag, intf * ref)
        }
        return(ret);
 } 
+/*------------------------------------------------------------------------
+ *       Name:      vcgvgrp
+ *       Purpose:   calls Vgetvgroups
+ *       Inputs:    id       - vdata identifier
+ *                  start_vg - size of the block
+ *                  vg_count - number of blocks
+ *       Outputs:   refarray - Array to hold reference numbers 
+ *                             of retrieved vgroups
+ *       Returns:   0 if succeeds, -1 if fails
+ *       Users:     HDF Fortran programmers
+ ---------------------------------------------------------------------*/
+     FRETVAL (intf)
+#ifdef PROTOTYPE
+       nvcgvgrp(intf *id, intf *start_vg, intf *vg_count, intf *refarray)
+#else
+       nvcgvgrp(id, start_vg, vg_count, refarray)
+               intf   *id;
+               intf   *start_vg; 
+               intf   *vg_count;
+	       intf   *refarray;
+#endif /* PROTOTYPE */
+
+{
+       intf  ret=-1;
+       uintn ii;
+       uint16 *c_refarray;
+
+       if(*vg_count == -1) {
+	 ret = (intf)Vgetvgroups((int32)*id, (uintn)*start_vg, 0, NULL );
+       }
+       else {
+	 c_refarray = (uint16 *)HDmalloc(sizeof(uint16)*(uintn)*vg_count);
+	 ret = (intf)Vgetvgroups((int32)*id, (uintn)*start_vg, (uintn)*vg_count, c_refarray );
+
+	 /* copy C refarray to the fortran refarray, converting uint16 to intf type */
+	 for (ii = 0; ii < (uintn)*vg_count; ii++)
+	   refarray[ii] = (intf)c_refarray[ii];
+	 
+	 if (c_refarray != NULL)
+	   HDfree(c_refarray);
+       }
+       return(ret);
+} 
+/*------------------------------------------------------------------------
+ *       Name:      vscgvdatas
+ *       Purpose:   calls  VSgetvdatas
+ *       Inputs:    id       - File identifier returned by Hopen or vgroup 
+ *                             identifier returned by Vattach
+ *                  start_vd - Vdata number to start retrieving at
+ *                  vd_count - Number of vdatas to be retrieved
+ *       Outputs:   refarray - Array to hold reference numbers of 
+ *                             retrieved vdatas 
+ *       Returns:   0 if succeeds, -1 if fails
+ *       Users:     HDF Fortran programmers
+ ---------------------------------------------------------------------*/
+     FRETVAL (intf)
+#ifdef PROTOTYPE
+       nvscgvdatas(intf *id, intf *start_vd, intf *vd_count, intf *refarray)
+#else
+       nvscgvdatas(id, start_vd, vd_count, refarray)
+               intf   *id;
+               intf   *start_vd; 
+               intf   *vd_count;
+	       intf   *refarray;
+#endif /* PROTOTYPE */
+
+{
+       intf   ret=-1;
+       uintn ii;
+       uint16 *c_refarray;
+
+       if(*vd_count == -1) {
+	 ret = (intf)VSgetvdatas((int32)*id, (uintn)*start_vd, 0, NULL );
+       }
+       else {
+	 c_refarray = (uint16 *)HDmalloc(sizeof(uint16)*(uintn)*vd_count);
+	 ret = (intf)VSgetvdatas((int32)*id, (uintn)*start_vd, (uintn)*vd_count, c_refarray );
+         /* copy C refarray to the fortran refarray, converting uint16 to intf type */
+	 for (ii = 0; ii < (uintn)*vd_count; ii++)
+	   refarray[ii] = (intf)c_refarray[ii];
+	 
+	 if (c_refarray != NULL)
+	   HDfree(c_refarray);
+       }
+
+       return(ret);
+} 

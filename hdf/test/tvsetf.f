@@ -706,3 +706,328 @@ C
 1000  continue
       return
       end
+C
+C This subroutine tests functions vfgvgroups and vsfgvdatas
+C
+      subroutine tvgroups(number_failed)
+
+      implicit none
+      include '../src/hdf.inc'
+
+      integer number_failed
+      integer fid 
+      integer vgroup_id, vgroup0_id, vgroup1_id, vgroup2_id
+      integer vgroup3_id, vgroup4_id, vgroup5_id 
+      integer vgroup_ref
+      integer vdata_id, vdata_ref
+      integer vdata1_id, vdata2_id
+      integer n_vgs, n_vds
+      integer num_vgroups
+      parameter (num_vgroups = 10)
+      integer refarray(num_vgroups)
+      integer num_vdatas
+      parameter (num_vdatas = 8)
+      character*12 uservgroups
+      parameter (uservgroups = 'tuservgs.hdf')
+      integer ref_list(num_vgroups), vdref_list(num_vdatas)
+      character*20 vgclass
+      integer ii
+      character*2 ichr2
+      integer status
+
+      character*20 myname
+      parameter (myname = 'vgroups')
+C
+C     Function declaration
+C
+      integer hopen, hclose, vfend
+      integer vfstart, vfatch, vqref, vfscls, vfdtch
+      integer vfinsrt, vfgvgroups
+      integer vsfgvdatas, vsqref, vsfatch, vsfscls, vsfdtch
+      integer result(10)
+
+      call ptestban('Testing', myname)
+
+      n_vgs=0
+
+C     Create HDF file and initialize the interface.
+      fid = hopen(uservgroups, DFACC_CREATE, 0)
+      call VRFY(fid,'hfopen',number_failed)
+      status = vfstart(fid)
+      call VRFY(fid,'vfstart',number_failed)
+C     Create NUM_VGROUPS vgroups and set classname
+      do ii = 1,  num_vgroups
+C       Create a vgroup.
+        vgroup_id = vfatch(fid, -1, "w")
+        call VRFY(vgroup_id,'vfatch',number_failed)
+
+C       Record its reference number for later access
+        vgroup_ref = vqref(vgroup_id)
+        call VRFY( vgroup_ref,'vqref',number_failed)
+        ref_list(ii) = vgroup_ref
+
+C       Set its class name
+        write(ichr2,'(I2.2)') ii
+        vgclass = "VG-CLASS-"//ichr2
+        status = vfscls(vgroup_id, vgclass)
+        call VRFY(status,'vfscls',number_failed)
+
+C       Detach it
+        status = vfdtch(vgroup_id)
+        call VRFY(status,'vfdtch',number_failed) 
+      enddo
+
+C Insert some vgroups into some other vgroups to build some sort of
+C vgroup structure
+
+C Insert "VG-CLASS-1" and "VG-CLASS-2" into "VG-CLASS-0"
+
+      vgroup0_id = vfatch(fid,  ref_list(1), "w")
+      call VRFY(vgroup0_id,'vfatch',number_failed)
+      vgroup1_id = vfatch(fid,  ref_list(2), "w")
+      call VRFY(vgroup1_id,'vfatch',number_failed)
+      vgroup2_id = vfatch(fid,  ref_list(3), "w")
+      call VRFY(vgroup2_id,'vfatch',number_failed)
+
+      status = vfinsrt(vgroup0_id, vgroup1_id)
+      call VRFY(status,'vfinsrt',number_failed)
+      status = vfinsrt(vgroup0_id, vgroup2_id)
+      call VRFY(status,'vfinsrt',number_failed)
+
+C Insert "VG-CLASS-3", "VG-CLASS-4", and "VG-CLASS-5" into "VG-CLASS-1"
+
+      vgroup3_id = vfatch(fid,  ref_list(4), "w")
+      call VRFY(vgroup3_id,'vfatch',number_failed)
+      vgroup4_id = vfatch(fid,  ref_list(5), "w")
+      call VRFY(vgroup4_id,'vfatch',number_failed)
+      vgroup5_id = vfatch(fid,  ref_list(6), "w")
+      call VRFY(vgroup5_id,'vfatch',number_failed)
+
+      status = vfinsrt(vgroup1_id, vgroup3_id)
+      call VRFY(status,'vfinsrt',number_failed)
+      status = vfinsrt(vgroup1_id, vgroup4_id)
+      call VRFY(status,'vfinsrt',number_failed)
+      status = vfinsrt(vgroup1_id, vgroup5_id)
+      call VRFY(status,'vfinsrt',number_failed)
+
+C     **************************************************************
+C      The vgroup structure should look like this:
+C     		vg0	vg6  vg7  vg8  vg9
+C     		 |
+C     		/ \
+C     	      vg1  vg2
+C                  |
+C                / | \
+C               /  |  \
+C            vg3  vg4  vg5
+C     
+C      Calling Vgetvgroups on the file should return all ten vgroups.
+C      Calling Vgetvgroups on vg0 should return 2, vg1 and vg2.
+C      Calling Vgetvgroups on vg1 should return 3, vg3, vg4, and vg5
+C      Calling Vgetvgroups on vg6, vg7, vg8, and vg9 should return 0
+C     ***************************************************************
+
+C     Get and verify the number of vgroups in the file
+      n_vgs = vfgvgroups(fid, 0, -1, refarray)
+      call VRFY(n_vgs,'vfgvgroups',number_failed)
+      if(n_vgs.ne.num_vgroups)then
+         call MESSAGE(3,'Wrong number of vgroups returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Check if setting start_vg to non-zero with vg_count = -1 returns
+C     the correct n_vgs
+
+      n_vgs = vfgvgroups(fid, 5, -1, refarray)
+      call VRFY(n_vgs,'vfgvgroups',number_failed)
+      if(n_vgs.ne.num_vgroups)then
+         call MESSAGE(3,'Wrong number of vgroups returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Get all the vgroups in the file
+      n_vgs = vfgvgroups(fid, 0,  n_vgs, refarray)
+      call VRFY(n_vgs,'vfgvgroups',number_failed)
+
+C     Verify refarray from this vfgvgroups, it should contain:
+C     2  3  4  5  6  7  10  11
+
+      result = (/2, 3, 4, 5, 6, 7, 8, 9, 10, 11/)
+
+      do ii = 1, n_vgs
+         if( refarray(ii).ne.result(ii) )then
+          call MESSAGE(3,'Incorrect vgroup retrieved ')
+          number_failed = number_failed + 1
+       endif
+      enddo
+
+      call VRFY(n_vgs,'vfgvgroups',number_failed)
+      if(n_vgs.ne.num_vgroups)then
+         call MESSAGE(3,'Wrong number of vgroups returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Get 5 vgroups starting from vgroup number 5, the result shouldn't
+C     include the simulated internal vgroups
+       
+      n_vgs = vfgvgroups(fid, 5, 5, refarray)
+      call VRFY(n_vgs,'vfgvgroups',number_failed)
+      if(n_vgs.ne.5)then
+         call MESSAGE(3,'Wrong number of vgroups returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Verify refarray from this Vgetvgroups, 
+C     it should contain: 7, 8, 9, 10, 11
+
+      result = (/7, 8, 9, 10, 11, 0, 0, 0, 0, 0/)
+      do ii = 1, n_vgs
+         if( refarray(ii).ne.result(ii) )then
+            call MESSAGE(3,'Incorrect vgroup retrieved ')
+            number_failed = number_failed + 1
+         endif
+      enddo
+      
+C     Passing in info count as 0, should fail
+      n_vgs = vfgvgroups(fid, 0, 0, refarray)
+      if(n_vgs.ne.-1)then
+         call MESSAGE(3,'Wrong number of vgroups status returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     This vgroup should have no sub-vgroup
+      n_vgs = vfgvgroups(vgroup5_id, 0, -1, refarray)
+      if(n_vgs.ne.0)then
+         call MESSAGE(3,'Wrong number of vgroups status returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Passing in the starting vgroup beyond the number of 
+C     user-created vgroups, should fail
+      n_vgs =  vfgvgroups(fid, 11, 3, refarray)
+      if(n_vgs.ne.-1)then
+         call MESSAGE(3,'Wrong number of vgroups status returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Create NUM_VDATAS vgroups and set classname
+
+      do ii = 1, num_vdatas
+	
+C       Create a vdata.
+	vdata_id = vsfatch(fid, -1, "w")
+        call VRFY(vdata_id,'vsfatch',number_failed)
+
+C       Record its reference number for later access
+	vdata_ref = vsqref(vdata_id)
+        call VRFY(vdata_ref,'vsqref',number_failed)
+	vdref_list(ii) = vdata_ref;
+
+C       Set its class name
+        write(ichr2,'(I2.2)') ii
+        vgclass = "VS-CLASS-"//ichr2
+        status = vsfscls(vdata_id, vgclass)
+        call VRFY(status,'vsfscls',number_failed)
+
+C       Detach it
+        status = vsfdtch(vdata_id)
+        call VRFY(status,'vsfdtch',number_failed)
+
+      end do
+
+      vdata1_id = vsfatch(fid, vdref_list(2), "w")
+      call VRFY(status,'vsfatch',number_failed)
+ 
+      vdata2_id = vsfatch(fid, vdref_list(3), "w")
+      call VRFY(status,'vsfatch',number_failed)
+
+      status = vfinsrt(vgroup0_id, vdata1_id)
+      call VRFY(status,'vfinsrt vdata1_id -> vgroup0_id',number_failed)
+      status = vfinsrt(vgroup0_id, vdata2_id)
+      call VRFY(status,'vfinsrt vdata2_id -> vgroup0_id',number_failed)
+
+      status = vfdtch(vgroup0_id)
+      call VRFY(status,'vfdtch vgroup0_id')
+      status = vfdtch(vgroup1_id)
+      call VRFY(status,'vfdtch vgroup1_id')
+
+C     Test getting all vdatas: fid, start_vd=0, n_vds=0
+
+      n_vds = vsfgvdatas(fid, 0, -1, refarray)
+      if(n_vds.ne.num_vdatas)then
+         call MESSAGE(3,'Wrong number of vdatas status returned ')
+         number_failed = number_failed + 1
+      endif
+
+      n_vds = vsfgvdatas(fid, 0, n_vds, refarray)
+      if(n_vds.ne.num_vdatas)then
+         call MESSAGE(3,'Wrong number of vdatas status returned ')
+         number_failed = number_failed + 1
+      endif
+      result = (/12, 13, 14, 15, 16, 17, 18, 19, 0, 0/)
+      do ii = 1, n_vds
+         if( refarray(ii).ne.result(ii) )then
+            call MESSAGE(3,'Incorrect vdatas retrieved ')
+            number_failed = number_failed + 1
+         endif
+      enddo
+      vgroup0_id = vfatch(fid,  ref_list(1), "w")
+      call VRFY(vgroup0_id,'vfatch',number_failed)
+
+C     Test getting vdatas in vg0: vgroup0_id, start_vd=0, n_vds=0
+
+      n_vds = vsfgvdatas(vgroup0_id, 0, -1, refarray)
+      if(n_vds.ne.2)then
+         call MESSAGE(3,'Wrong number of vdatas status returned ')
+         number_failed = number_failed + 1
+      endif
+
+      n_vds = vsfgvdatas(vgroup0_id, 0, n_vds, refarray)
+      if(n_vds.ne.2)then
+         call MESSAGE(3,'Wrong number of vdatas status returned ')
+         number_failed = number_failed + 1
+      endif
+      result = (/13, 14, 0, 0, 0, 0, 0, 0, 0, 0/)
+      do ii = 1, n_vds
+         if( refarray(ii).ne.result(ii) )then
+            call MESSAGE(3,'Incorrect vdatas retrieved ')
+            number_failed = number_failed + 1
+         endif
+      enddo
+
+C     Passing in vd_count as 0, should fail
+      n_vds = vsfgvdatas(fid, 0, 0, refarray)
+      if(n_vds.ne.-1)then
+         call MESSAGE(3,'Wrong number of vgroups status returned ')
+         number_failed = number_failed + 1
+      endif
+C     This vgroup should have no sub-vdatas
+      n_vds = vsfgvdatas(vgroup5_id, 0, -1, refarray)
+      if(n_vds.ne.0)then
+         call MESSAGE(3,'Wrong number of vgroups status returned ')
+         number_failed = number_failed + 1
+      endif
+C     Passing in the starting vgroup beyond the number 
+C     of user-created vgroups, should fail
+      n_vds = vsfgvdatas(fid, 10, 3, refarray)
+      if(n_vds.ne.-1)then
+         call MESSAGE(3,'Wrong number of vgroups status returned ')
+         number_failed = number_failed + 1
+      endif
+
+C     Terminate access
+      
+      status = vfdtch(vgroup0_id)
+      call VRFY(status,'vfdtch vgroup0_id')
+      status = vsfdtch(vdata1_id)
+      call VRFY(status,'vsfdtch vdata1_id')
+      status = vsfdtch(vdata2_id)
+      call VRFY(status,'vsfdtch vdata2_id')
+
+C     Terminate access to the V interface and close the HDF file.
+      status = vfend(fid)
+      call VRFY(status,'vfend',number_failed)
+      status = hclose(fid)
+      call VRFY(status,'vclose',number_failed)
+
+      end

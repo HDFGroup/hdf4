@@ -1356,6 +1356,8 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
 #   define  nvscsetblsz    H4_F77_FUNC(vscsetblsz, VSCSETBLSZ)
 #   define  nvscsetnmbl    H4_F77_FUNC(vscsetnmbl, VSCSETNMBL)
 #   define  nvscgblinfo    H4_F77_FUNC(vscgblinfo, VSCGBLINFO)
+#   define  nvcgvgrp       H4_F77_FUNC(vcgvgrp, VCGVGRP)
+#   define  nvscgvdatas    H4_F77_FUNC(vscgvdatas, VSCGVDATAS)
 #  else                                /* !sl */
 #   define  ndfivopn       H4_F77_FUNC(dfivopn, DFIVOPN)
 #   define  ndfvclos       H4_F77_FUNC(dfvclos, DFVCLOS)
@@ -1442,6 +1444,8 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
 #   define  nvscsetblsz    H4_F77_FUNC(vscsetblsz, VSCSETBLSZ)
 #   define  nvscsetnmbl    H4_F77_FUNC(vscsetnmbl, VSCSETNMBL)
 #   define  nvscgblinfo    H4_F77_FUNC(vscgblinfo, VSCGBLINFO)
+#   define  nvcgvgrp       H4_F77_FUNC(vcgvgrp, VCGVGRP)
+#   define  nvscgvdatas    H4_F77_FUNC(vscgvdatas, VSCGVDATAS)
 #  endif                                /* !sl */
 
     HDFFCLIBAPI      FRETVAL(intf) ndfivopn
@@ -1717,6 +1721,12 @@ nmgigatt(intf * riid, intf *index, VOIDP data);
 
     HDFFCLIBAPI      FRETVAL(intf) nvscgblinfo
                 (intf *id, intf *block_size, intf *num_blocks);
+
+    HDFFCLIBAPI      FRETVAL(intf) nvcgvgrp
+                (intf *id, intf *start_vg, intf *vg_count, intf *refarray);
+
+    HDFFCLIBAPI      FRETVAL(intf) nvscgvdatas
+                (intf *id, intf *start_vd, intf *vd_count, intf *refarray);
 
      HDFFCLIBAPI FRETVAL(intf) nvscfcls
                 (intf  * id, _fcd name, intf  * namelen);

@@ -90,6 +90,7 @@ main(int argc, char *argv[])
     num_tests=InitTest("sdstr", "tsdstrf", "");
     num_tests=InitTest("vsetf", "tvsetf", "");
     num_tests=InitTest("vsetblock", "tvsetblock", "");
+    num_tests=InitTest("vgroups", "tvgroups", "");
     num_tests=InitTest("vattrf", "tvattrf", "");
 /* The test is skipped when size of fortran integer is smaller than
    the size of C pointer; this happens on the 64-bit DEC Alpha, Solaris, Altix

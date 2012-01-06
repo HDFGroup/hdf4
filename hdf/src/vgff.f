@@ -829,3 +829,64 @@ C
          vsfgetblinfo = vscgblinfo(id, block_size, num_blocks) 
          return 
          end
+
+C-------------------------------------------------------------------------
+C        Name:      vfgvgroups
+C        Purpose:   Retrieves reference numbers of vgroups in a file 
+C                   or in a vgroup. 
+C                   
+C        Inputs:    id       - File identifier returned by Hopen or 
+C                              vgroup identifier returned by 
+C                              Vattachvdata identifier
+C                   start_vg - Vgroup index to start retrieving at
+C                   vg_count - Number of vgroups to be retrieved,  
+C                              if vg_count = -1, then only function value
+C                              will be return and refarray will be ignored.    
+C        Outputs:   refarray - Array to hold reference numbers 
+C                              of retrieved vgroups 
+C        Returns:   Returns the actual number of vgroups retrieved 
+C                   if successful, and FAIL (-1) otherwise.
+C        Calls:     vcgvgrp (C stub for Vgetvgroups function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vfgvgroups(id, start_vg, vg_count, refarray)
+C
+         IMPLICIT NONE
+         INTEGER id, start_vg, vg_count
+         INTEGER refarray(*)
+         INTEGER vcgvgrp
+C
+         vfgvgroups = vcgvgrp(id, start_vg, vg_count, refarray) 
+         return 
+         end
+
+C-------------------------------------------------------------------------
+C        Name:      vsfgvdatas
+C        Purpose:   Retrieves reference numbers of vdatas in a file or 
+C                   in a vgroup.
+C                   
+C        Inputs:    id       - File identifier returned by Hopen or vgroup 
+C                              identifier returned by Vattach
+C                   start_vd - Vdata number to start retrieving at
+C                   vd_count - Number of vdatas to be retrieved, 
+C                              if vd_count = -1, then only the function
+C                              will be return and refarray will be ignored.
+C        Outputs:   refarray - Array to hold reference numbers of 
+C                              retrieved vdatas 
+C        Returns:   Returns the actual number of user-created vdatas 
+C                   retrieved if successful, and FAIL (-1) otherwise.
+C        Calls:     vscgvdatas (C stub for VSgetvdatas function)
+C        Users:     HDF Fortran programmers
+C-------------------------------------------------------------------------
+
+         INTEGER function vsfgvdatas(id, start_vd, vd_count, refarray)
+C
+         IMPLICIT NONE
+         INTEGER id, start_vd, vd_count
+         INTEGER refarray(*)
+         INTEGER vscgvdatas
+C
+         vsfgvdatas = vscgvdatas(id, start_vd, vd_count, refarray) 
+         return 
+         end

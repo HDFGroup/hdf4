@@ -300,6 +300,8 @@ C
       external vfsnam
       integer  vfstart
       external vfstart
+      integer  vfgvgroups
+      external vfgvgroups
 
 C
 C     Declarations of return values for HDF high level Vdata/Vgroup
@@ -407,6 +409,8 @@ C
       integer  vsfsetnmbl
       external vsfgetblinfo
       integer  vsfgetblinfo
+      integer  vsfgvdatas
+      external vsfgvdatas
 C
 C     Declarations of return values for HDF Vdata Field Functions
 C
