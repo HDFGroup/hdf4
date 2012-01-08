@@ -3138,7 +3138,7 @@ test_extfile(void)
     /* Test passing in smaller buffer for external file name than actual;
        name should be truncated */
     {
-        char short_name[name_len];
+        char *short_name = (char *) HDmalloc(sizeof(char *) * (name_len));
         HDmemset(short_name, '\0', name_len);
         HDstrncpy(short_name, EXTERNAL_FILE, name_len-2);
         HDmemset(extfile_name, '\0', name_len);
@@ -3148,6 +3148,7 @@ test_extfile(void)
         name_len = VSgetexternalinfo(vdata1_id, name_len-2, extfile_name, &offset, &length);
         VERIFY_VOID(name_len, (intn)HDstrlen(extfile_name), "VSgetexternalinfo");
         VERIFY_CHAR_VOID(short_name, extfile_name, "VSgetexternalinfo");
+        HDfree(short_name);
     }
 
     /* Release resources */
