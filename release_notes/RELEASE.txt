@@ -49,7 +49,9 @@ New features and changes
      
    Library
    ========= 
-   - [None]
+   - Fortran wrappers vfgvgroups and vsfgvdatas added for 
+     Vgetvgroups and VSgetvdatas, respectively.
+     MSB - 2012/1/5
 
    Test
    ====
