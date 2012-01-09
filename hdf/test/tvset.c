@@ -3111,6 +3111,7 @@ test_extfile(void)
     vdata1_id = VSattach(fid, vdata1_ref, "r");
     CHECK_VOID(vdata1_id, FAIL, "VSattach");
 
+    { /* This is an old test, will be removed when VSgetexternalfile is */
     /* Get the length of the external file name first - VSgetexternalfile
        is deprecated as of 4.2.7 */
     name_len = VSgetexternalfile(vdata1_id, 0, NULL, NULL);
@@ -3123,6 +3124,9 @@ test_extfile(void)
        is deprecated as of 4.2.7 */
     name_len = VSgetexternalfile(vdata1_id, name_len+1, extfile_name, &offset);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalfile");
+    VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalfile");
+    HDfree(extfile_name);
+    } /* old test */
 
     /* Get the length of the external file name first */
     name_len = VSgetexternalinfo(vdata1_id, 0, NULL, NULL, NULL);
@@ -3134,21 +3138,28 @@ test_extfile(void)
     /* Get the external file name */
     name_len = VSgetexternalinfo(vdata1_id, name_len+1, extfile_name, &offset, &length);
     VERIFY_VOID(name_len, (intn)HDstrlen(EXTERNAL_FILE), "VSgetexternalinfo");
+    VERIFY_CHAR_VOID(extfile_name, EXTERNAL_FILE, "VSgetexternalinfo");
+    HDfree(extfile_name);
 
     /* Test passing in smaller buffer for external file name than actual;
        name should be truncated */
     {
+	/* Make a shorter string to verify later */
         char *short_name = (char *) HDmalloc(sizeof(char *) * (name_len));
         HDmemset(short_name, '\0', name_len);
         HDstrncpy(short_name, EXTERNAL_FILE, name_len-2);
+
+	/* Prepare buffer for external file name in the following test */
+	extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len-1));
         HDmemset(extfile_name, '\0', name_len);
 
         /* Call VSgetexternalinfo again with smaller buffer size and make sure
            VSgetexternalinfo reads the name truncated to the given buffer size*/
         name_len = VSgetexternalinfo(vdata1_id, name_len-2, extfile_name, &offset, &length);
         VERIFY_VOID(name_len, (intn)HDstrlen(extfile_name), "VSgetexternalinfo");
-        VERIFY_CHAR_VOID(short_name, extfile_name, "VSgetexternalinfo");
+        VERIFY_CHAR_VOID(extfile_name, short_name, "VSgetexternalinfo");
         HDfree(short_name);
+        HDfree(extfile_name);
     }
 
     /* Release resources */
