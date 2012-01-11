@@ -115,9 +115,11 @@ hdf/test/tdatainfo.c -text
 hdf/test/tdatainfo.h -text
 hdf/test/tdfr8.c -text
 hdf/test/test_files/8bit.dat -text
+hdf/test/test_files/README -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text
 hdf/test/test_files/greyjpeg.dat -text
+hdf/test/test_files/grtdfui83.hdf -text
 hdf/test/test_files/jpeg.dat -text
 hdf/test/test_files/litend.dat -text
 hdf/test/test_files/nbit.dat -text
@@ -336,7 +338,7 @@ mfhdf/test/temptySDSs.c -text
 mfhdf/test/test1.nc -text
 mfhdf/test/testout.sav -text
 mfhdf/test/tfile.c -text
-mfhdf/test/tidtypes.c -text
+mfhdf/test/tmixed_apis.c -text
 mfhdf/test/tncunlim.c -text
 mfhdf/test/tnetcdf.c -text
 mfhdf/test/trank0.c -text
@@ -344,6 +346,7 @@ mfhdf/test/tsd.c -text
 mfhdf/test/tsdsprops.c -text
 mfhdf/test/tszip.c -text
 mfhdf/test/tunlim.c -text
+mfhdf/test/tutils.c -text
 mfhdf/xdr/CMakeLists.txt -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
 mfhdf/xdr/xdr.def -text

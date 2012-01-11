@@ -1,6 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
- * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
  * This file is part of HDF.  The full HDF copyright notice, including       *
@@ -11,42 +10,8 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "hdf.h"
-#include "tutils.h"
-
-intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
-{
-    const uint8 *t1 = (const uint8 *) s1;
-    const uint8 *t2 = (const uint8 *) s2;
-
-    while (len > 0 && (int) ABS(*t2 - *t1) <= fuzz_factor)
-      {
-          t1++;
-          t2++;
-          len--;
-      }     /* end while */
-    if (len == 0)
-        return (0);
-    else
-      {
-          return ((intn) (*t1 - *t2));
-      }
-}   /* end fuzzy_memcmp() */
-
-void print_mismatched(const void *s1, const void *s2, int32 size2cmp)
-{
-    int ii, jj, nn=0, kk;
-    const uint8 *t1 = (const uint8 *) s1;
-    const uint8 *t2 = (const uint8 *) s2;
-
-    for (ii = 0; ii < size2cmp; ii++)
-      {
-        if (ABS(*t1 - *t2) > 0)
-            fprintf(stderr, "item#%d: HDF(%d) - JPEG(%d)\n", ii, *t1, *t2);
-          t1++;
-          t2++;
-      }
-}
+#include "mfhdf.h"
+#include "hdftest.h"
 
 /* Generate the correct name for the test file, by prepending the source path
    if it exists, otherwise, assume it is the local directory */

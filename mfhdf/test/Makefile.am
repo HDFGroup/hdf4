@@ -25,10 +25,10 @@ hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
 hdfnctest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la              \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
-hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c         \
-		  temptySDSs.c tattributes.c tfile.c tidtypes.c		\
-		  tnetcdf.c trank0.c tsd.c tsdsprops.c tszip.c		\
-		  tattdatainfo.c tdatainfo.c tdatasizes.c
+hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
+		  tdim.c temptySDSs.c tattributes.c tfile.c		\
+		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
+		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 

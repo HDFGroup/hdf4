@@ -49,5 +49,3 @@
                 func_name, buf_name ); \
         exit(1); }  \
 }
-
-

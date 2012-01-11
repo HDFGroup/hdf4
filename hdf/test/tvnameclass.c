@@ -17,6 +17,7 @@
 #include "hdf.h"
 #include "hfile.h"
 #include "tproto.h"
+#include "tutils.h"
 
 #define LONGNAMES "tlongnames.hdf"
 #define NONAMECLASS "tundefined.hdf"
@@ -30,12 +31,13 @@ static void test_novgclass(void);
 static void
 test_vglongnames(void)
 {
-    int32 status;       /* Status values from routines */
-    int32 file_id;          /* File ID */
+    int32 file_id;      /* File ID */
     int32 vg1;          /* Vdata ID */
     int32 ref;          /* Vdata ref */
     uint16 name_len;	/* Length of a vgroup's name or class name */
     char *vgname, *vgclass;
+    intn is_internal;
+    int32 status;       /* Status values from routines */
 
     /* Open the HDF file. */
     file_id = Hopen(LONGNAMES, DFACC_CREATE, 0);
@@ -92,6 +94,11 @@ test_vglongnames(void)
     vg1 = Vattach(file_id, ref, "r");
     CHECK_VOID(vg1,FAIL,"VSattach");
 
+    /* Test Vgisinternal */
+    is_internal = Vgisinternal(vg1);
+    CHECK_VOID(is_internal, FAIL, "Vgisinternal");
+    VERIFY_VOID(is_internal, FALSE, "Vgisinternal");
+    
     /* get the vgroup's name */
     status = Vgetnamelen(vg1, &name_len);
     CHECK_VOID(status,FAIL,"Vgetnamelen");
@@ -101,11 +108,7 @@ test_vglongnames(void)
 
     status=Vgetname(vg1, vgname);
     CHECK_VOID(status,FAIL,"VSgetname");
-
-    if (HDstrcmp(vgname, VG_LONGNAME)) {
-        num_errs++;
-        printf(">>> Got bogus Vgroup name : %s\n", vgname);
-    }
+    VERIFY_CHAR_VOID(vgname, VG_LONGNAME, "Vgetname");
 
     if (vgname != NULL)
         HDfree(vgname);
@@ -119,11 +122,7 @@ test_vglongnames(void)
 
     status=Vgetclass(vg1, vgclass);
     CHECK_VOID(status,FAIL,"VSgetclass");
-
-    if (HDstrcmp(vgclass, VG_LONGCLASS)) {
-        num_errs++;
-        printf(">>> Got bogus Vgroup class : %s\n", vgclass);
-    }
+    VERIFY_CHAR_VOID(vgclass, VG_LONGCLASS, "Vgetclass");
 
     if (vgclass != NULL)
         HDfree(vgclass);
@@ -192,6 +191,7 @@ test_undefined(void)
     int32 file_id;          /* File ID */
     int32 vg1;          /* Vdata ID */
     int32 ref;          /* Vdata ref */
+    intn is_internal;   /* to test Vgisinternal */
     uint16 name_len;	/* Length of a vgroup's name or class name */
     /* to simulate calls to Vgetclass/Vgetname in older applications */
     char vgname[VGNAMELENMAX+1], vgclass[VGNAMELENMAX+1];
@@ -245,6 +245,11 @@ test_undefined(void)
     vg1 = Vattach(file_id, ref, "r");
     CHECK_VOID(vg1,FAIL,"VSattach");
 
+    /* Test Vgisinternal */
+    is_internal = Vgisinternal(vg1);
+    CHECK_VOID(is_internal, FAIL, "Vgisinternal");
+    VERIFY_VOID(is_internal, FALSE, "Vgisinternal");
+    
     /* Try getting the vgroup's class without calling first Vgetclassnamelen.
        This shows that bug HDFFR-1288 is fixed. */
     status=Vgetclass(vg1, vgclass);
@@ -288,7 +293,69 @@ test_undefined(void)
 
 } /* test_undefined() */
 
-/* main test driver */
+
+/****************************************************************************
+ * test_vgisinternal - tests the API function Vgisinternal
+ *   - Use an existing GR file created during the period when GR vgroup had no
+ *	class name, and had name set to GR_NAME
+ *   - Get each vgroup, verify that it is internal or not
+ * Jan 6, 2012 -BMR
+****************************************************************************/
+
+#define GR_FILE    "test_files/grtdfui83.hdf"
+static void
+test_vgisinternal()
+{
+    int32   fid, vgroup_id;
+    intn    is_internal = FALSE;
+    int32   vref = -1;
+    intn    ii, status;
+    char testfile[H4_MAX_NC_NAME] = "";
+    char    internal_array2[2] = {TRUE, TRUE};
+    intn    num_errs = 0;     /* number of errors so far */
+
+    /* Use a GR file to test Vgisinternal on internal vgroups */
+
+    /* The file GR_FILE is an existing file in the test_files directory,
+       make_datafilename builds the file name with correct path */
+    if (make_datafilename(GR_FILE, testfile, H4_MAX_NC_NAME) != FAIL)
+    {
+	/* Open the old GR file and initialize the V interface */
+	fid = Hopen(testfile, DFACC_READ, 0);
+	CHECK_VOID(fid, FAIL, "Hopen: grtdfui83.hdf");
+	status = Vstart(fid);
+	CHECK_VOID(status, FAIL, "Vstart");
+
+	ii = 0;
+	while ((vref = Vgetid(fid, vref)) != FAIL)
+	{     /* until no more vgroups */
+	    vgroup_id = Vattach(fid, vref, "r"); /* attach to vgroup */
+
+	    /* Test that the current vgroup is or is not internal as specified
+	       in the array internal_array2 */
+	    is_internal = Vgisinternal(vgroup_id);
+	    CHECK_VOID(is_internal, FAIL, "Vgisinternal");
+  	    VERIFY_VOID(is_internal, internal_array2[ii], "Vgisinternal");
+
+	    status = Vdetach(vgroup_id);
+	    CHECK_VOID(status, FAIL, "Vdetach");
+
+	    ii++; /* increment vgroup index */
+	}
+
+	/* Terminate access to the V interface and close the file */
+	status = Vend(fid);
+	CHECK_VOID(status, FAIL, "Vend");
+	status = Hclose(fid);
+	CHECK_VOID(status, FAIL, "Hclose");
+    }
+    else
+    {
+	fprintf(stderr, "ERROR>>> Unable to make filename for %s\n", GR_FILE);
+	H4_FAILED()
+    }
+}   /* test_vgisinternal */
+
 void
 test_vnameclass(void)
 {
@@ -299,4 +366,7 @@ test_vnameclass(void)
 
     /* test Vgetname and Vgetclass when either name or class is not defined. */
     test_undefined();
+
+    /* test Vgisinternal when there is no class name */
+    test_vgisinternal();
 }   /* test_vnameclass */

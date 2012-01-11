@@ -66,7 +66,7 @@ extern int test_szip_compression();
 extern int test_checkempty();
 extern int test_idtest();
 /* extern int test_sd(); - removed temporarily, see note in main(...) */
-extern int test_idtype();
+extern int test_mixed_apis();
 extern int test_files();
 extern int test_SDSprops();
 extern int test_coordvar();
@@ -1629,12 +1629,12 @@ main(int argc, char *argv[])
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing SDgetdatasize (in 
-  tdatasizes.c) - 09/17/08 */
+       tdatasizes.c) - 09/17/08 */
     status = test_datasizes();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in 
-  tdatainfo.c) - 03/20/10 */
+       tdatainfo.c) - 03/20/10 */
     status = test_datainfo();
     num_errs = num_errs + status;
 
@@ -1644,8 +1644,9 @@ main(int argc, char *argv[])
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing SDidtype (in tidtypes.c)
-  - 01/21/05 */
-    status = test_idtype();
+       -01/21/05.  Changed file name to tmixed_apis.c and added tests for
+       Vgetvgroups, VSgetvdatas, and Vgisinternal -2011 & 01/2012 */
+    status = test_mixed_apis();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing miscellaneous 
@@ -1690,5 +1691,3 @@ main(int argc, char *argv[])
 }
 
 #endif /* HDF */
-
-

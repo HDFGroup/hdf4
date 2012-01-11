@@ -57,12 +57,12 @@ am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tunlim.$(OBJEXT) \
 hdfnctest_OBJECTS = $(am_hdfnctest_OBJECTS)
 hdfnctest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
 	$(top_builddir)/hdf/src/libdf.la
-am_hdftest_OBJECTS = hdftest.$(OBJEXT) tchunk.$(OBJEXT) \
-	tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) tdim.$(OBJEXT) \
-	temptySDSs.$(OBJEXT) tattributes.$(OBJEXT) tfile.$(OBJEXT) \
-	tidtypes.$(OBJEXT) tnetcdf.$(OBJEXT) trank0.$(OBJEXT) \
-	tsd.$(OBJEXT) tsdsprops.$(OBJEXT) tszip.$(OBJEXT) \
-	tattdatainfo.$(OBJEXT) tdatainfo.$(OBJEXT) \
+am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
+	tchunk.$(OBJEXT) tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) \
+	tdim.$(OBJEXT) temptySDSs.$(OBJEXT) tattributes.$(OBJEXT) \
+	tfile.$(OBJEXT) tmixed_apis.$(OBJEXT) tnetcdf.$(OBJEXT) \
+	trank0.$(OBJEXT) tsd.$(OBJEXT) tsdsprops.$(OBJEXT) \
+	tszip.$(OBJEXT) tattdatainfo.$(OBJEXT) tdatainfo.$(OBJEXT) \
 	tdatasizes.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
@@ -253,10 +253,10 @@ hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
 hdfnctest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la              \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
-hdftest_SOURCES = hdftest.c tchunk.c tcomp.c tcoordvar.c tdim.c         \
-		  temptySDSs.c tattributes.c tfile.c tidtypes.c		\
-		  tnetcdf.c trank0.c tsd.c tsdsprops.c tszip.c		\
-		  tattdatainfo.c tdatainfo.c tdatasizes.c
+hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
+		  tdim.c temptySDSs.c tattributes.c tfile.c		\
+		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
+		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 
 hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
@@ -339,7 +339,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tidtypes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmixed_apis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tncunlim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tnetcdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trank0.Po@am__quote@
@@ -347,6 +347,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsdsprops.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tunlim.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tutils.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

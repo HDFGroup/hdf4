@@ -26,7 +26,7 @@ SET (hdftest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/temptySDSs.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tattributes.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tfile.c
-    ${HDF4_MFHDF_TEST_SOURCE_DIR}/tidtypes.c
+    ${HDF4_MFHDF_TEST_SOURCE_DIR}/tmixed_apis.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tnetcdf.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/trank0.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tsd.c

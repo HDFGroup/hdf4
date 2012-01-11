@@ -1,0 +1,4 @@
+BMR: The file grtdfui83.hdf is added here to test Vgisinternal for the case
+     where a GR vgroup does not have a class name as "RIG0.0" but only a name
+     as such.  This is a very rare case because the file can only be generated
+     by the library versions sometimes in 1995.  2012/1/10

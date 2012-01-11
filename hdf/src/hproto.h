@@ -1992,7 +1992,10 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI int32 Vdelete
                 (int32 f, int32 ref);
 
-    HDFLIBAPI intn Visinternal
+    HDFLIBAPI intn Vgisinternal
+		(int32 vkey);
+
+    HDFLIBAPI intn Visinternal	/* this function is replaced by Vgisinternal */
 		(const char *classname);
 
     HDFLIBAPI intn Vgetvgroups

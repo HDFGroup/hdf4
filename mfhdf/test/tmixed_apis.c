@@ -12,14 +12,17 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * tidtypes.c - tests the API functions SDidtype, Vgetvgroups, and VSgetvdatas
+ * tmixed_apis.c - tests the API functions:
+ *	SDidtype
+ *	Vgetvgroups
+ *	VSgetvdatas
+ *	Vgisinternal
  * Structure of the file:
- *    test_idtype - test driver
+ *    test_mixed_apis - test driver
  *	  test_SDAPI_ids    - tests SDidtype on SD API ids: sd, sds, dim ids
- *	  test_nonSDAPI_ids - tests SDidtype on non SD API ids and invalid id.
- *	  test_vdatavgroups - tests Vgetvgroups and VSgetvdatas.
- *			(Here because it also uses non-SD API.  It's not a
- *			good reason, but will think about it later)
+ *	  test_nonSDAPI_ids - tests SDidtype on non SD API ids and invalid id
+ *	  test_vdatavgroups - tests Vgetvgroups and VSgetvdatas
+ *	  test_vgisinternal - tests Vgisinternal
 ****************************************************************************/
 
 #include "mfhdf.h"
@@ -254,8 +257,8 @@ test_vdatavgroups()
     uint16  name_len=0;
     intn    ii, status;
     char   *vg_name=NULL, vd_name[10];
-    char   *check_vg_names[3] = {"Vgroup_1", "Vgroup_2", "Vgroup_3"};
-    char   *check_vd_names[1] = {"Vdata_1"};
+    const char   *check_vg_names[3] = {"Vgroup_1", "Vgroup_2", "Vgroup_3"};
+    const char   *check_vd_names[1] = {"Vdata_1"};
     intn    num_errs = 0;     /* number of errors so far */
 
     /* Create a file */
@@ -444,21 +447,113 @@ test_vdatavgroups()
     return num_errs;
 }   /* test_vdatavgroups */
 
-/* Test driver for testing the API functions SDidtype, Vgetvgroups, and
-   VSgetvdatas. */
+
+/****************************************************************************
+ * test_vgisinternal - tests the API function Vgisinternal
+ *   - Use the existing files created by test_vdatavgroups
+ *   - Get the number of vgroups in the file
+ *   - For each vgroup, verify that it is internal or not
+ * Jan 6, 2012 -BMR
+****************************************************************************/
+
+#define VVS_FILE   "tvdatasvgroups_SD.hdf"
+#define GR_FILE    "grtdfui83.hdf"
+static intn
+test_vgisinternal()
+{
+    int32   fid, vgroup_id;
+    intn    is_internal = FALSE;
+    int32   vref = -1;
+    intn    ii, status;
+    char    internal_array1[20] = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+                         TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE};
+    char    internal_array2[9] = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+			 TRUE, TRUE};
+    intn    num_errs = 0;     /* number of errors so far */
+
+    /* Open the HDF file and initialize the V interface */
+    fid = Hopen(VVS_FILE, DFACC_READ, 0);
+    CHECK(fid, FAIL, "Hopen: tvdatasvgroups_SD.hdf");
+    status = Vstart(fid);
+    CHECK(status, FAIL, "Vstart");
+
+    ii = 0;
+    while ((vref = Vgetid(fid, vref)) != FAIL)
+    {     /* until no more vgroups */
+	vgroup_id = Vattach(fid, vref, "r"); /* attach to vgroup */
+
+	/* Test that the current vgroup is or is not internal as specified in
+	   the array */
+	is_internal = Vgisinternal(vgroup_id);
+	CHECK(is_internal, FAIL, "Vgisinternal");
+	VERIFY(is_internal, internal_array1[ii], "Vgisinternal");
+
+	status = Vdetach(vgroup_id);
+	CHECK(status, FAIL, "Vdetach");
+
+	ii++;
+    }
+
+    /* Terminate access to the V interface and close the file */
+    status = Vend(fid);
+    CHECK(status, FAIL, "Vend");
+    status = Hclose(fid);
+    CHECK(status, FAIL, "Hclose");
+
+    /* Use a GR file to test Vgisinternal on internal vgroups */
+
+    /* Open the old HDF file and initialize the V interface */
+    fid = Hopen(IDTYPE_FILE, DFACC_READ, 0);
+    CHECK(fid, FAIL, "Hopen: idtypes.hdf");
+    status = Vstart(fid);
+    CHECK(status, FAIL, "Vstart");
+
+    ii = 0;
+    while ((vref = Vgetid(fid, vref)) != FAIL)
+    {     /* until no more vgroups */
+	vgroup_id = Vattach(fid, vref, "r"); /* attach to vgroup */
+
+	/* Test that the current vgroup is or is not internal as specified in
+	   the array */
+	is_internal = Vgisinternal(vgroup_id);
+	CHECK(is_internal, FAIL, "Vgisinternal");
+  	VERIFY(is_internal, internal_array2[ii], "Vgisinternal");
+
+	status = Vdetach(vgroup_id);
+	CHECK(status, FAIL, "Vdetach");
+
+	ii++; /* increment vgroup index */
+    }
+
+    /* Terminate access to the V interface and close the file */
+    status = Vend(fid);
+    CHECK(status, FAIL, "Vend");
+    status = Hclose(fid);
+    CHECK(status, FAIL, "Hclose");
+
+    /* Return the number of errors that's been kept track of so far */
+    return num_errs;
+}   /* test_vgisinternal */
+
+
+/* Test driver for testing the API functions SDidtype, Vgetvgroups, 
+   VSgetvdatas, and Vgisinternal. */
 extern int
-test_idtype()
+test_mixed_apis()
 {
     intn num_errs = 0;         /* number of errors */
 
     /* Output message about test being performed */
-    TESTING("SDidtype, Vgetvgroups, and VSgetvdatas (tidtypes.c)");
+    TESTING("a mix of SD, V, and VS functions (tmixed_apis.c)");
 
     num_errs = num_errs + test_SDAPI_ids();
     num_errs = num_errs + test_nonSDAPI_ids();
 
     /* Test Vgetvgroups and VSgetvdatas */
     num_errs = num_errs + test_vdatavgroups();
+
+    /* Test Vgisinternal */
+    num_errs = num_errs + test_vgisinternal();
 
     if (num_errs == 0) PASSED();
     return num_errs;

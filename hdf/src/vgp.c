@@ -3338,6 +3338,86 @@ done:
 
 /*******************************************************************************
  NAME
+    Vgisinternal  --  Determine if a vgroup is internally created by the lib
+ RETURNS
+    Returns TRUE (1) if vkey is a vgroup that is internally created
+    by the library, FALSE (0) otherwise, and FAIL if failure occurs.
+
+ DESCRIPTION
+    Checks the class name of the given vgroup against the list of internal
+    vgroup class names, HDF_INTERNAL_VGS.
+
+    There is an exception where the vgroup does not have a class and has a name
+    set to GR_NAME.  The vgroup is actually an internal vgroup, representing a
+    GR file.  It was only a very brief gap in the revisions where this scenario
+    can happen, yet there is at least one test file generated during that
+    period, grtdfui83.hdf.
+*******************************************************************************/
+intn
+Vgisinternal(int32 vkey /* vgroup's identifier */)
+{
+    CONSTR(FUNC, "Vgisinternal");
+    vginstance_t *v = NULL;
+    VGROUP       *vg = NULL;
+    intn	  is_internal = FALSE;
+    intn	  ret_value = FALSE;
+
+    /* clear error stack */
+    HEclear();
+
+    /* Gheck if vgroup is valid */
+    if (HAatom_group(vkey) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get instance of vgroup */
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* Get vgroup itself and check */
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Check for internal class name if it has been set */
+    if (vg->vgclass != NULL)
+    {
+	int  ii;
+
+	/* If this class name is one of the internal class name then return
+	   TRUE, otherwise, return FALSE */
+	ii = 0;
+	while (ii < HDF_NUM_INTERNAL_VGS && is_internal == FALSE)
+	{
+            size_t len = HDstrlen(HDF_INTERNAL_VGS[ii]);
+            if (HDstrncmp(HDF_INTERNAL_VGS[ii], vg->vgclass, len) == 0)
+		is_internal = TRUE;
+	    ii++;
+        }
+    }
+    else /* no class defined */
+    {
+	/* If class name is not set, check the vgroup's name to catch the case
+	   when the vgroup's name was set to GR_NAME.  See HDFFR-1297 (?) for
+	   details. -BMR 2012/1/6 */
+	/* Check vgroup name */
+	if (vg->vgname != NULL)
+	    if (HDstrncmp(vg->vgname, GR_NAME, HDstrlen(GR_NAME)) == 0)
+		is_internal = TRUE;
+    }
+    ret_value = is_internal;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+} /* Vgisinternal */
+
+
+/*******************************************************************************
+ NAME
     Visinternal  --  Determine if a vgroup's class name is for internal only
  RETURNS
     Returns TRUE (1) if "classname" is one of the class names used for
