@@ -1212,35 +1212,6 @@ static intn test_szip_unlimited()
 
 #endif /* only compile all the above test functions when encoder is available */
 
-/* Generate the correct name for the test file, by prepending the source path
-   if it exists, otherwise, assume it is the local directory */
-   /* NOTE: should move all utilities into mfutil.c or something like that */
-static intn make_datafilename(char* basename, char* testfile, unsigned int size)
-{
-    char *srcdir = getenv("srcdir");
-
-    /* Generate the correct name for the test file, by prepending the source path */
-    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size))
-    {
-        strcpy(testfile, srcdir);
-        strcat(testfile, "/");
-    }
-
-    /* Windows doesn't set srcdir, and generates files in a different relative
-       path, so we need to special case here.  It is best to look for the
-       testfile in the same path, and the Windows test script will make sure
-       to put it there first.  - SJW 2007/09/19 (from tnetcdf.c) */
-#ifndef _WIN32
-    /* This is to get to the file 'sds_szipped.dat' when the library was built 
-       without srcdir option and the test is ran by ./hdftest in the src 
-       directory hdf4/mfhdf/libsrc instead of by make check.  - BMR 2007/08/09 */
-    if (srcdir == NULL)
-        strcpy(testfile, "./");
-#endif /* _WIN32 */
-
-    /* Name of data file */
-    strcat(testfile, basename);
-}
 
 /********************************************************************
    Name: test_getszipinfo() - verifies that some functions will not 
