@@ -382,6 +382,8 @@
 ./hdf/test/tv1.res
 ./hdf/test/tv2.res
 ./hdf/test/tvattr.c
+./hdf/test/test_files/README
+./hdf/test/test_files/grtdfui83.hdf
 ./hdf/test/test_files/tvattr.dat
 ./hdf/test/tvattrf.f
 ./hdf/test/tvnameclass.c
@@ -1092,7 +1094,7 @@
 ./mfhdf/test/test1.nc
 ./mfhdf/test/testout.sav
 ./mfhdf/test/tfile.c
-./mfhdf/test/tidtypes.c
+./mfhdf/test/tmixed_apis.c
 ./mfhdf/test/tncunlim.c
 ./mfhdf/test/tnetcdf.c
 ./mfhdf/test/trank0.c
@@ -1100,6 +1102,7 @@
 ./mfhdf/test/tsdsprops.c
 ./mfhdf/test/tszip.c
 ./mfhdf/test/tunlim.c
+./mfhdf/test/tutils.c
 
 ./mfhdf/util/getopt.c
 ./mfhdf/util/make.com
