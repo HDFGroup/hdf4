@@ -35,6 +35,7 @@ SET (hdftest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tattdatainfo.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tdatainfo.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tdatasizes.c
+    ${HDF4_MFHDF_TEST_SOURCE_DIR}/tutils.c
 )
 
 #-- Adding test for hdftest
