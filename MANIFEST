@@ -718,6 +718,7 @@
 ./mfhdf/fortran/config/ftest-alpha.f
 ./mfhdf/fortran/config/ftest-apple.f
 ./mfhdf/fortran/config/ftest-convex.f
+./mfhdf/fortran/config/ftest-cygwin.f
 ./mfhdf/fortran/config/ftest-dec.f
 ./mfhdf/fortran/config/ftest-fbsd.f
 ./mfhdf/fortran/config/ftest-fujivp.f
@@ -740,6 +741,7 @@
 ./mfhdf/fortran/config/jackets-alpha.c
 ./mfhdf/fortran/config/jackets-apple.c
 ./mfhdf/fortran/config/jackets-convex.c
+./mfhdf/fortran/config/jackets-cygwin.c
 ./mfhdf/fortran/config/jackets-dec.c
 ./mfhdf/fortran/config/jackets-fbsd.c
 ./mfhdf/fortran/config/jackets-fujivp.c
@@ -762,6 +764,7 @@
 ./mfhdf/fortran/config/netcdf-alpha.inc
 ./mfhdf/fortran/config/netcdf-apple.inc
 ./mfhdf/fortran/config/netcdf-convex.inc
+./mfhdf/fortran/config/netcdf-cygwin.inc
 ./mfhdf/fortran/config/netcdf-dec.inc
 ./mfhdf/fortran/config/netcdf-fbsd.inc
 ./mfhdf/fortran/config/netcdf-fujivp.inc
@@ -971,6 +974,7 @@
 ./mfhdf/libsrc/config/netcdf-alpha.h
 ./mfhdf/libsrc/config/netcdf-apple.h
 ./mfhdf/libsrc/config/netcdf-convex.h
+./mfhdf/libsrc/config/netcdf-cygwin.h
 ./mfhdf/libsrc/config/netcdf-dec.h
 ./mfhdf/libsrc/config/netcdf-fbsd.h
 ./mfhdf/libsrc/config/netcdf-fujivp.h

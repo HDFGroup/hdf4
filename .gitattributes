@@ -235,8 +235,11 @@ mfhdf/examples/SD_write_slab.c -text
 mfhdf/examples/SD_write_to_sds.c -text
 mfhdf/examples/testexamples.sh.in -text
 mfhdf/fortran/CMakeLists.txt -text
+mfhdf/fortran/config/ftest-cygwin.f -text
 mfhdf/fortran/config/ftest-windows.f -text
+mfhdf/fortran/config/jackets-cygwin.c -text
 mfhdf/fortran/config/jackets-windows.c -text
+mfhdf/fortran/config/netcdf-cygwin.inc -text
 mfhdf/fortran/config/netcdf-windows.inc -text
 mfhdf/fortran/examples/CMakeLists.txt -text
 mfhdf/fortran/examples/Makefile.am -text
@@ -302,6 +305,7 @@ mfhdf/hdiff/testfiles/hdifftst7.hdf -text
 mfhdf/hrepack/CMakeLists.txt -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/CMakeLists.txt -text
+mfhdf/libsrc/config/netcdf-cygwin.h -text
 mfhdf/libsrc/config/netcdf-windows.h -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfdatainfo.c -text
