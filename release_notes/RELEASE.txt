@@ -71,10 +71,33 @@ Bugs fixed since HDF4.2.6
    ========= 
    - hrepack: Version HDF4 2.6 does not allow the combination of unlimited 
      dimensions and compression, which is wrong. 
+   - Freeing incorrect buffers caused segfault.  It was previously commented
+     out, thus resulted in memory leaks.  This is now fixed.  (HDFFR-479)
+     BMR - 2011/11/3
+   - hdp: fixed to skip netCDF files when checking for compression.  (HDFFR-473)
+     BMR - 2011/11/1
+
 
    Library
    ========= 
-   - [None]
+   - VSgetexternalfile and SDgetexternalfile are superseded by VSgetexternalinfo
+     and SDgetexternalinfo because their prototypes missed the parameter
+     "length" for external data length.  (part 1 in bug HDFFR-1297)
+     BMR - 2012/1/15
+   - Visinternal is superseded by Vgisinternal, which allows the handling of
+     special cases in old data.  (part 2 in bug HDFFR-1297)
+     BMR - 2012/1/15
+   - SDgetchunkinfo and SDreadchunk failed on an empty SDS when the file is
+     opened as read-only (HDFFR-171).  This is now fixed.
+     BMR - 2011/10/20
+   - SDcheckempty was fixed to return "empty" when detecting a pair of
+     DFTAG_SD/<valid ref> that is associated with offset=INVALID_OFFSET and
+     length=INVALID_LENGTH.
+     BMR - 2011/10/9
+   - Vgetclass and Vgetname were fixed to return vgclass and vgname with null
+     terminated character when the class or name is not set. (HDFFR-1288)
+     BMR - 2011/9/19
+
 
    Configuration
    =============
@@ -83,7 +106,7 @@ Bugs fixed since HDF4.2.6
 
 Documentation
 ==============
-The updated HDF Reference Manual is now available in HTML format.
+   - [None]
 
 Platforms tested
 ================
