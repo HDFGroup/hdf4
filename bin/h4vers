@@ -197,6 +197,11 @@ my $RELEASE = $file;
 $RELEASE =~ s/[^\/]*$/..\/..\/release_notes\/RELEASE.txt/;
 die "unable to read file: $RELEASE\n" unless -r $file;
 #print $RELEASE, "\n";
+# man/hdf.1
+my $MANHDF1 = $file;
+$MANHDF1 =~ s/[^\/]*$/..\/..\/man\/hdf.1/;
+die "unable to read file: $MANHDF1\n" unless -r $file;
+#print $MANHDF1, "\n";
 # configure.in
 my $CONFIGURE = $file;
 $CONFIGURE =~ s/[^\/]*$/..\/..\/configure.ac/;
@@ -262,6 +267,7 @@ if ($set) {
   $RELEASE = "";
   $CONFIGURE = "";
   $H4WIN_CONF = "";
+  $MANHDF1 = "";
 #  $H5VMSPUBCONF = "";
 #  $LT_VERS = "";
   @newver = @curver;
@@ -336,6 +342,60 @@ if ($RELEASE) {
   open FILE, ">$RELEASE" or die "$RELEASE: $!\n";
   print FILE @contents;
   close FILE;
+}
+
+# Update the man/hdf.1 file
+# There are currently 2 occurrences of the version string in the man/hdf.1 file.
+# Since they aren't the top line of the file we search rewrite the file line by
+# line, searching for the current major.minor.release version string, and replacing
+# it with the new one.  In case someone changes the version string manually or it 
+# otherwise gets out of sync, or another match is found that should not be updated, 
+# we will track the changes in this file, issue an error message and exit at if
+# the number of changes is different than the 2 expected. 
+
+if ($MANHDF1) {
+  my $expected_updates = 2;
+  my $man_hdf1_updates = 0;
+  my $verstr = sprintf("%d.%d.%d", @curver[0,1,2]);
+  open FILE, $MANHDF1 or die "$MANHDF1: $!\n";
+  my @contents = <FILE>;
+  close FILE;
+  my @months = ('January', 'February', 'March', 'April', 'May', 'June', 'July',
+                'August', 'September', 'October', 'November', 'December');
+  my @date = (localtime(time));
+  my $newverstr = sprintf("%d.%d.%d-%d", @newver[0,1,2,3]);
+  my $newverstr = sprintf("%d.%d.%d%s %s",
+                          @newver[0,1,2,],
+                          $newver[3] eq "" ? "" : "-".$newver[3]." currently under development");
+  my $newverline = sprintf(".TH HDF 1 \"%s %d\" \"THG HDF %d.%d.%d%s\"",
+                           $months[@date[4]], 1900+@date[5],
+                           @newver[0,1,2,],
+                           $newver[3] eq "" ? "" : "-".$newver[3]);
+
+  open FILE, ">$MANHDF1" or die "$MANHDF1: $!\n";
+  foreach my $line (@contents) {
+    if ($line =~ m/THG HDF $verstr/) {
+      # match "THG HDF major.minor.release" in the second line, replace the line with the new line that has
+      # the current month and year and the updated version.
+      print FILE $newverline, "\n";
+      $man_hdf1_updates += 1;
+    } elsif ($line =~ m/^$verstr\s*$/ || $line =~ m/^$verstr-[a-z]{2,5}\d{1,3}\s*$/ || $line =~ m/^$verstr\scurrently under development\s*$/  || $line =~ m/^$verstr-[a-z]{2,5}\d{1,3}\scurrently under development$\s*/) {
+      # match the line further down that has just the version string, and replace it with the updated version string.
+      # this will match "major.minor.release" or "major.minor.release-subrelease" or  "major.minor.release currently 
+      # under development" or "major.minor.release-subrelease currently under development" (all followed by 
+      # any number of spaces), provided that the subrelease
+      # string is 2-5 letters and 1-3 digits.  This should not match any line with text before or after the version.
+      print FILE $newverstr, "\n";
+      $man_hdf1_updates += 1;
+    } else {
+      print FILE $line;
+    }   
+  }  
+  close FILE;
+  if ($man_hdf1_updates != $expected_updates) {
+    printf "ERROR: $expected_updates version updates were expected in $MANHDF1, but $man_hdf1_updates occurred.  Please check the changes to the $MANHDF1 file and correct the problem.\n";
+    exit 1;
+  }
 }
 
 sub gen_configure {
