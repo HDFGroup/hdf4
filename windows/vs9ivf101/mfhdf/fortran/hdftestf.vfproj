@@ -42,15 +42,8 @@
 				<Tool Name="VFPreLinkEventTool"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90">
-		<File RelativePath="..\..\..\..\mfhdf\fortran\fort_ps\hdftestp.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\hdftestf\Debug/&quot;  /I  &quot;..\..\..\..\hdftestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\hdftestf\Release/&quot;  /I  &quot;..\..\..\..\hdftestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\hdftestf\Debug/&quot;  /I  &quot;..\..\..\..\hdftestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="false" AdditionalOptions="&quot;..\..\..\..\hdftestf\Release/&quot;  /I  &quot;..\..\..\..\hdftestf\Release/&quot;  /I "/></FileConfiguration></File></Filter>
+		<File RelativePath="..\..\..\..\mfhdf\fortran\hdftest.f">
+        </File></Filter>
 		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
 		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"/></Files>
 	<Globals/></VisualStudioProject>
