@@ -117,6 +117,7 @@ ADD_TEST (
         gr_gzip.hdf
         gr_jpeg.hdf
         gr_r8.hdf
+        grtdfui83.hdf
         nntcheck.hdf
         ntcheck.hdf
         RI_8.hdf
