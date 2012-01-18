@@ -913,15 +913,15 @@ C     user-created vgroups, should fail
 C     Create NUM_VDATAS vgroups and set classname
 
       do ii = 1, num_vdatas
-	
+
 C       Create a vdata.
-	vdata_id = vsfatch(fid, -1, "w")
+        vdata_id = vsfatch(fid, -1, "w")
         call VRFY(vdata_id,'vsfatch',number_failed)
 
 C       Record its reference number for later access
-	vdata_ref = vsqref(vdata_id)
+        vdata_ref = vsqref(vdata_id)
         call VRFY(vdata_ref,'vsqref',number_failed)
-	vdref_list(ii) = vdata_ref;
+        vdref_list(ii) = vdata_ref;
 
 C       Set its class name
         write(ichr2,'(I2.2)') ii

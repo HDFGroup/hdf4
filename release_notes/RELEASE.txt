@@ -159,15 +159,17 @@ This version has been tested in the following platforms:
    Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  Visual Studio 2010 w/ Intel Fortran 12 (cmake)
                                  
-   MAC OS X Intel 10.6.2         Darwin 10.7.0
+   MAC OS X Intel 10.6.8         Darwin 10.8.0
    (32 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-   (tejeda)                      GNU Fortran (GCC) 4.4.0 20090123
+   (tejeda)                      GNU Fortran (GCC) 4.6.1
+                                 icc (ICC) 12.1.0 20110811
+                                 ifort (IFORT) 12.1.0 20110811
 
-   MAC OS X Intel 10.6.2         Darwin 10.7.0
-   (64 bit)                      Intel C icc (ICC) 12.0 20101110
-   (fred)                        Intel Fortran ifort (IFORT) 12.0 20101110 
+   MAC OS X Intel 10.6.8         Darwin 10.8.0
+   (64 bit)                      icc (ICC) 12.1.0 20110811 
+   (fred)                        ifort (IFORT) 12.1.0 20110811 
                                  i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-                                 GNU Fortran (GCC) 4.6.0
+                                 GNU Fortran (GCC) 4.6.1
                              
 
     Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
