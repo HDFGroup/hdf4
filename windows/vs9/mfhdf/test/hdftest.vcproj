@@ -422,7 +422,7 @@
         >
       </File>
       <File
-        RelativePath="..\..\..\..\mfhdf\test\tidtypes.c"
+        RelativePath="..\..\..\..\mfhdf\test\tmixed_apis.c"
         >
       </File>
       <File
@@ -439,6 +439,10 @@
       </File>
       <File
         RelativePath="..\..\..\..\mfhdf\test\tszip.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\mfhdf\test\tutils.c"
         >
       </File>
     </Filter>
