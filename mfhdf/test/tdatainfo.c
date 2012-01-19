@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
+#include <unistd.h>
 
 #if WIN32
 #define snprintf sprintf_s
