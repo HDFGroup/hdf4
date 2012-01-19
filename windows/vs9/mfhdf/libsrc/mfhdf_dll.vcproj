@@ -53,7 +53,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -64,7 +64,7 @@
 				ProgramDataBaseFileName=".\..\..\..\..\mfhdf\libsrc\Release\mfhdf_dll/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				CompileAs="0"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -147,7 +147,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -240,7 +240,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\libsrc\Debug\mfhdf_dll/mfhdf_dll.pch"
@@ -334,7 +334,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\..\..\..\..\mfhdf\libsrc\Debug\mfhdf_dll/mfhdf_dll.pch"
@@ -410,7 +410,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\hdf2netcdf.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\local_nc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfdatainfo.h"
 				>
 			</File>
 			<File
@@ -432,798 +440,74 @@
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\array.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\attr.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\cdf.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\dim.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\error.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\file.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\globdef.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\hdfsds.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\iarray.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\mfhdf\fortran\jackets.c"
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfdatainfo.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\mfsd.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
-            <File
-                RelativePath="..\..\..\..\mfhdf\libsrc\mfdatainfo.c"
-                >
-                <FileConfiguration
-                    Name="Release|Win32"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        Optimization="2"
-                        AdditionalIncludeDirectories=""
-                        PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Release|x64"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        Optimization="2"
-                        AdditionalIncludeDirectories=""
-                        PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Debug|Win32"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        Optimization="0"
-                        AdditionalIncludeDirectories=""
-                        PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-                    />
-                </FileConfiguration>
-                <FileConfiguration
-                    Name="Debug|x64"
-                    >
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        Optimization="0"
-                        AdditionalIncludeDirectories=""
-                        PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-                    />
-                </FileConfiguration>
-            </File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\nssdc.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\putget.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\putgetg.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\sharray.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\string.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\var.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\..\mfhdf\libsrc\xdrposix.c"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;HDFAPDLL;_HDFLIB_;$(NoInherit)"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

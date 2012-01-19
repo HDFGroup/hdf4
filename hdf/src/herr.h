@@ -109,7 +109,7 @@ int32       error_top
 #if defined _WIN32 && defined HDFAPDLL
 __declspec(dllimport)
 #else
-extern
+HDFERRPUBLIC
 #endif
 #else
 #if defined _WIN32 && defined HDFLIBDLL

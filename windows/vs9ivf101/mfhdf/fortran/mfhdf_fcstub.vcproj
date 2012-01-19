@@ -334,6 +334,30 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;fi;fd"
 			>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\hdf2netcdf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\hproto_fortran.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\local_nc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfhdf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfhdfi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\fortran\netcdf.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

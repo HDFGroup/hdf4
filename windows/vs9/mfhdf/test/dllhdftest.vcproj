@@ -393,10 +393,10 @@
         RelativePath="..\..\..\..\mfhdf\test\tcoordvar.c"
         >
       </File>
-            <File
-                RelativePath="..\..\..\..\mfhdf\test\tattdatainfo.c"
-                >
-            </File>
+      <File
+        RelativePath="..\..\..\..\mfhdf\test\tattdatainfo.c"
+        >
+      </File>
       <File
         RelativePath="..\..\..\..\mfhdf\test\tdatainfo.c"
         >
@@ -427,6 +427,10 @@
       </File>
       <File
         RelativePath="..\..\..\..\mfhdf\test\tnetcdf.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\mfhdf\test\trank0.c"
         >
       </File>
       <File

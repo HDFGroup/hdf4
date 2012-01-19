@@ -160,31 +160,48 @@
 #      error Undefine the macro "_HDFDLL_"
 #  endif
 
+#if defined(xdr_EXPORTS)
+#define XDRLIBAPI extern __declspec(dllexport)
+#endif /* xdr_EXPORTS */
+
 #  if defined(_HDFDLL_)
 #      pragma warning( disable: 4273 ) /* Disable the stupid dll linkage warnings */
-
-#      if !defined(_HDFLIB_)
-#          define HDFPUBLIC __declspec(dllimport)
-#      else
-#          define HDFPUBLIC __declspec(dllexport)
+#      if defined(_HDFLIB_)
+#define HDFPUBLIC __declspec(dllexport)
+#define HDFLIBAPI extern __declspec(dllexport)
 #      endif
 
-#      if !defined(_MFHDFLIB_) && !defined(_HDFLIB_)
-#          define HDFLIBAPI __declspec(dllimport) extern
-#      else
-#          define HDFLIBAPI __declspec(dllexport) extern
-#      endif 
+#      if defined(_MFHDFLIB_)
+#define HDFLIBAPI extern __declspec(dllexport)
+#      endif
 
 #      if defined(_HDFLIB_C_STUB_EXPORTS) || defined(_MFHDFLIB_C_STUB_EXPORTS) || defined(_DLLLIBTEST_FCSTUB_EXPORTS)
-#          define HDFFCLIBAPI __declspec(dllexport) extern
-#      else
-#          define HDFFCLIBAPI __declspec(dllimport) extern
+#define HDFFCLIBAPI extern __declspec(dllexport)
 #      endif 
 
-#       define XDRLIBAPI extern
+#      if defined(_HDFLIB_C_STUB_EXPORTS)
+#define HDFPUBLIC __declspec(dllexport)
+#      endif
+
+#if !defined(XDRLIBAPI)
+    #define XDRLIBAPI extern __declspec(dllimport)
+#endif
+#if !defined(HDFERRPUBLIC)
+    #define HDFERRPUBLIC extern __declspec(dllimport)
+#endif
+#if !defined(HDFPUBLIC)
+    #define HDFPUBLIC __declspec(dllimport)
+#endif
+#if !defined(HDFLIBAPI)
+    #define HDFLIBAPI extern __declspec(dllimport)
+#endif
+#if !defined(HDFFCLIBAPI)
+    #define HDFFCLIBAPI extern __declspec(dllimport)
+#endif
 
 #  else
-#       define XDRLIBAPI extern
+#      define XDRLIBAPI extern
+#      define HDFERRPUBLIC extern
 #      define HDFPUBLIC
 #      define HDFLIBAPI extern
 #      define HDFFCLIBAPI extern

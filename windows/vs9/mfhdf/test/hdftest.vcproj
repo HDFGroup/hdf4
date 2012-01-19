@@ -430,6 +430,10 @@
         >
       </File>
       <File
+        RelativePath="..\..\..\..\mfhdf\test\trank0.c"
+        >
+      </File>
+      <File
         RelativePath="..\..\..\..\mfhdf\test\tsd.c"
         >
       </File>

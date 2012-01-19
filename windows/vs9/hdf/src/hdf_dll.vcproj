@@ -64,7 +64,7 @@
         ProgramDataBaseFileName=".\..\..\..\..\hdf\src\Release\hdf_dll/"
         WarningLevel="3"
         SuppressStartupBanner="true"
-        CompileAs="0"
+        CompileAs="1"
       />
       <Tool
         Name="VCManagedResourceCompilerTool"
@@ -404,6 +404,14 @@
       Name="Header Files"
       >
       <File
+        RelativePath="..\..\..\..\hdf\src\atom.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\bitvect.h"
+        >
+      </File>
+      <File
         RelativePath="..\..\..\..\hdf\src\cdeflate.h"
         >
       </File>
@@ -428,7 +436,7 @@
         >
       </File>
       <File
-        RelativePath="..\..\..\..\hdf\src\datainfo.h"
+        RelativePath="..\..\..\..\hdf\src\df.h"
         >
       </File>
       <File
@@ -436,11 +444,11 @@
         >
       </File>
       <File
-        RelativePath="..\..\..\..\hdf\src\dfconvrt.h"
+        RelativePath="..\..\..\..\hdf\src\dfgr.h"
         >
       </File>
       <File
-        RelativePath="..\..\..\..\hdf\src\dfgr.h"
+        RelativePath="..\..\..\..\hdf\src\dfrig.h"
         >
       </File>
       <File
@@ -459,8 +467,15 @@
         RelativePath="..\..\..\..\hdf\src\dfufp2i.h"
         >
       </File>
+	  <File
+		RelativePath="..\..\..\..\hdf\src\dynarray.h">
+	  </File>
       <File
         RelativePath="..\..\..\..\hdf\src\glist.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\H4api_adpt.h"
         >
       </File>
       <File
@@ -468,7 +483,39 @@
         >
       </File>
       <File
+        RelativePath="..\..\..\..\hdf\src\hbitio.h"
+        >
+      </File>
+      <File
         RelativePath="..\..\..\..\hdf\src\hchunks.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hcomp.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hcompi.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hconv.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hdatainfo.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hdf.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hdfi.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\herr.h"
         >
       </File>
       <File
@@ -480,11 +527,47 @@
         >
       </File>
       <File
+        RelativePath="..\..\..\..\hdf\src\hlimits.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hntdefs.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hproto.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\hqueue.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\htags.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\linklist.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\mcache.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\mfan.h"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\mfgr.h"
+        >
+      </File>
+      <File
         RelativePath="..\..\..\..\hdf\src\mstdio.h"
         >
       </File>
       <File
-        RelativePath="..\..\..\..\hdf\src\patchlevel.h"
+        RelativePath="..\..\..\..\hdf\src\tbbt.h"
         >
       </File>
       <File
@@ -609,6 +692,10 @@
       </File>
       <File
         RelativePath="..\..\..\..\hdf\src\dfstubs.c"
+        >
+      </File>
+      <File
+        RelativePath="..\..\..\..\hdf\src\dfufp2i.c"
         >
       </File>
       <File
