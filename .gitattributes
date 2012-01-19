@@ -354,6 +354,7 @@ mfhdf/test/tutils.c -text
 mfhdf/xdr/CMakeLists.txt -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
 mfhdf/xdr/xdr.def -text
+mfhdf/xdr/xdrtest.cyg -text
 mfhdf/xdr/xdrtest.out -text
 release_notes/CMake.txt -text
 release_notes/INSTALL -text

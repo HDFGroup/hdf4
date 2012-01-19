@@ -62,6 +62,9 @@ Notes: This short instruction is written for users who want to quickly build
             TGZ_PATH:STRING="some_location"
          where "some_location" is the URL or full path to the compressed file and 
          ext is the type of compression file.
+                                                                         
+   3. If you are building under CYGWIN set the following option;
+            HDF4_BUILD_XDR_LIB:BOOL=ON
                                     
                                                                          
 ========================================================================

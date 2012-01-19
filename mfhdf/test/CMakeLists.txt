@@ -195,12 +195,21 @@ IF (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (xdrtest ${LIB_TYPE})
   TARGET_LINK_LIBRARIES (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 
-  ADD_CUSTOM_COMMAND (
-      TARGET     xdrtest 
-      POST_BUILD
-      COMMAND    ${CMAKE_COMMAND}
-      ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/xdrtest.out
-  )
+  IF (CYGWIN)
+    ADD_CUSTOM_COMMAND (
+        TARGET     xdrtest 
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/xdrtest.out
+    )
+  ELSE (CYGWIN)
+    ADD_CUSTOM_COMMAND (
+        TARGET     xdrtest 
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/xdrtest.out
+    )
+  ENDIF (CYGWIN)
 
   IF (HDF4_ENABLE_USING_MEMCHECKER)
     ADD_TEST (NAME xdrtest COMMAND $<TARGET_FILE:xdrtest>)

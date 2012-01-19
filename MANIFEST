@@ -1135,6 +1135,7 @@
 ./mfhdf/xdr/xdrlib.project.hqx
 ./mfhdf/xdr/xdrstdio.c
 ./mfhdf/xdr/xdrtest.c
+./mfhdf/xdr/xdrtest.cyg
 ./mfhdf/xdr/xdrtest.mak
 ./mfhdf/xdr/xdrtest.opt
 ./mfhdf/xdr/xdrtest.out
