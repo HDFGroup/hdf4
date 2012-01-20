@@ -45,10 +45,15 @@ New features and changes
 
    Configuration
    ============= 
-   - [None]
+   - Fortran fort_ps folders obsoleted and VS2008 project
+     files updated.
+     CMake tested on Windows, Linux, Cygwin
+     ADB - 2012/1/20
      
    Library
    ========= 
+   - Fortran fort_ps folders obsoleted and removed.
+     ADB - 2012/1/20
    - Fortran wrappers vfgvgroups and vsfgvdatas added for 
      Vgetvgroups and VSgetvdatas, respectively.
      MSB - 2012/1/5
