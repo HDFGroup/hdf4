@@ -14,20 +14,26 @@
  * tdatainfo.c - tests the function SDgetdatainfo.
  * Structure of the file:
  *    test_datainfo - test driver
- *	test_nonspecial_SDSs - tests nonspecial SDSs
- *	test_compressed_SDSs - tests compressed SDSs without closing file
- *	test_empty_SDSs      - tests on empty chunked and chunked/comp SDSs
- *	test_chunked_partial - tests on chunked and partially written SDS
- *	test_chkcmp_SDSs     - tests chunked/compressed SDSs
- *	test_extend_SDSs     - tests SDSs with unlimited dimensions
+ *  test_nonspecial_SDSs - tests nonspecial SDSs
+ *  test_compressed_SDSs - tests compressed SDSs without closing file
+ *  test_empty_SDSs      - tests on empty chunked and chunked/comp SDSs
+ *  test_chunked_partial - tests on chunked and partially written SDS
+ *  test_chkcmp_SDSs     - tests chunked/compressed SDSs
+ *  test_extend_SDSs     - tests SDSs with unlimited dimensions
  * -BMR, Jul 2010
  ****************************************************************************/
 
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
+#endif
 #include <fcntl.h>
 #include <math.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #if WIN32
 #define snprintf sprintf_s
@@ -53,7 +59,7 @@ static intn test_chunked_partial();
 static intn test_chkcmp_SDSs();
 static intn test_extend_SDSs();
 
-#define SIMPLE_FILE     "datainfo_simple.hdf"	/* data file */
+#define SIMPLE_FILE     "datainfo_simple.hdf"  /* data file */
 #define X_LENGTH      10
 #define Y_LENGTH      10
 #define RANK          2
@@ -130,15 +136,15 @@ static int32 comp_n_values(int32 rank, int32 *dimsizes) {
 
  BMR - Jul 2010
  ****************************************************************************/
-#define SDS1_NAME	"Simple_data_1dim_int32"
-#define SDS2_NAME	"Simple_data_2dims_float32"
-#define SDS3_NAME	"Simple_data_1dim_char"
-#define RANK1		1
-#define RANK2		2
-#define LENGTH1_X	10
-#define LENGTH2_X	5
-#define LENGTH2_Y	8
-#define LENGTH3_X	21
+#define SDS1_NAME  "Simple_data_1dim_int32"
+#define SDS2_NAME  "Simple_data_2dims_float32"
+#define SDS3_NAME  "Simple_data_1dim_char"
+#define RANK1    1
+#define RANK2    2
+#define LENGTH1_X  10
+#define LENGTH2_X  5
+#define LENGTH2_Y  8
+#define LENGTH3_X  21
 
 static intn test_nonspecial_SDSs() {
     int32 sd_id, sds_id;
@@ -494,7 +500,7 @@ static intn test_nonspecial_SDSs() {
 
  BMR - Jul 2010
  ****************************************************************************/
-#define	COMP_FILE	"datainfo_cmp.hdf"	/* data file */
+#define  COMP_FILE  "datainfo_cmp.hdf"  /* data file */
 static intn test_compressed_SDSs()
 {
     int32 sd_id, sds_id, esds_id, usds_id;
@@ -949,7 +955,7 @@ static intn test_compressed_SDSs()
 #define CHK_X      3
 #define CHK_Y      2
 #define NUM_SDS    3
-#define	NODATA_FILE	"datainfo_nodata.hdf"	/* data file */
+#define  NODATA_FILE  "datainfo_nodata.hdf"  /* data file */
 
 static intn test_empty_SDSs()
 {
@@ -1003,15 +1009,15 @@ static intn test_empty_SDSs()
     /* Verify that the number of data block is 0 for all data sets */
     for (ii = 0; ii < NUM_SDS; ii++)
     {
-	sds_id = SDselect(sd_id, ii);
-	CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
+  sds_id = SDselect(sd_id, ii);
+  CHECK_IND(sds_id, FAIL, "test_empty_SDSs: SDselect", ii);
 
-	info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
-	CHECK_IND(info_count, FAIL, "test_empty_SDSs: SDgetdatainfo", ii);
-	VERIFY(info_count, 0, "test_empty_SDSs: SDgetdatainfo");
+  info_count = SDgetdatainfo(sds_id, NULL, 0, 0, NULL, NULL);
+  CHECK_IND(info_count, FAIL, "test_empty_SDSs: SDgetdatainfo", ii);
+  VERIFY(info_count, 0, "test_empty_SDSs: SDgetdatainfo");
 
-	status = SDendaccess(sds_id);
-	CHECK_IND(status, FAIL, "test_empty_SDSs: SDendaccess", ii);
+  status = SDendaccess(sds_id);
+  CHECK_IND(status, FAIL, "test_empty_SDSs: SDendaccess", ii);
     }
 
     /* Close the file */
@@ -1064,7 +1070,7 @@ static intn test_empty_SDSs()
 
  BMR - Jul 2010
  ****************************************************************************/
-#define	CHK_FILE	"datainfo_chk.hdf"	/* data file */
+#define  CHK_FILE  "datainfo_chk.hdf"  /* data file */
 static intn test_chunked_partial()
 {
     int32 sd_id, sds_id, sds_index;
@@ -1097,11 +1103,11 @@ static intn test_chunked_partial()
     c_def.chunk_lengths[0] = 10;
 
     /*
-     -	Create a 1-dim 100-element SDS with chunk size 10, write 2 chunks, first and last, close it
-     -	Create a 2-dim (5x5)-element non-special SDS, write all the data, close it
-     -	Call SDgetdatainfo on the first dataset to locate the data written (what about fill values?)
-     -	Open first SDS then write 1 more chunk after the first chunk
-     -	Call SDgetdatainfo (investigate!)
+     -  Create a 1-dim 100-element SDS with chunk size 10, write 2 chunks, first and last, close it
+     -  Create a 2-dim (5x5)-element non-special SDS, write all the data, close it
+     -  Call SDgetdatainfo on the first dataset to locate the data written (what about fill values?)
+     -  Open first SDS then write 1 more chunk after the first chunk
+     -  Call SDgetdatainfo (investigate!)
      */
     /* Create a one-dim chunked SDS to be written partially */
     dimsizes[0] = 100;
@@ -1277,7 +1283,7 @@ static intn test_chunked_partial()
  * data to both.  It will then use SDgetdatainfo to verify the number of
  * data blocks.
  */
-#define CHKCMP_FILE     "datainfo_chkcmp.hdf"	/* data file */
+#define CHKCMP_FILE     "datainfo_chkcmp.hdf"  /* data file */
 static intn test_chkcmp_SDSs()
 {
     int32 sd_id, sds_id, sds_index;
@@ -1495,7 +1501,7 @@ static intn test_chkcmp_SDSs()
  * unlimited dimensions, writes data to them, and use SDgetdatainfo to
  * verify the number of data blocks.
  */
-#define EXTEND_FILE     "datainfo_extend.hdf"	/* data file */
+#define EXTEND_FILE     "datainfo_extend.hdf"  /* data file */
 static intn test_extend_SDSs()
 {
     int32 sd_id, sds_id, sds_index;
@@ -1623,8 +1629,8 @@ static intn test_extend_SDSs()
         for (i = 0; i < X_LENGTH; i++)
             if (output[j][i] != data1[j][i])
                 fprintf(stderr,
-		   "Read value (%d) differs from written (%d) at [%d,%d]\n",
-		   output[j][i], data1[j][i], j, i);
+       "Read value (%d) differs from written (%d) at [%d,%d]\n",
+       output[j][i], data1[j][i], j, i);
 
     /* Check against second batch */
     kk = Y_LENGTH;
@@ -1683,14 +1689,14 @@ static intn test_extend_SDSs()
       VERIFY(info_count, 3, "test_extend_SDSs: SDgetdatainfo");
       for (kk = 0; kk < info_count; kk++)
       {
-	if (sds_info.offsets[kk] != check_offsets[kk])
-	    fprintf(stderr,
-		"test_extend_SDSs: incorrect offset %d for block #%d\n",
-		sds_info.offsets[kk], kk);
-	if (sds_info.lengths[kk] != check_lengths[kk])
-	    fprintf(stderr,
-		"test_extend_SDSs: incorrect length %d for block #%d\n",
-		sds_info.lengths[kk], kk);
+  if (sds_info.offsets[kk] != check_offsets[kk])
+      fprintf(stderr,
+    "test_extend_SDSs: incorrect offset %d for block #%d\n",
+    sds_info.offsets[kk], kk);
+  if (sds_info.lengths[kk] != check_lengths[kk])
+      fprintf(stderr,
+    "test_extend_SDSs: incorrect length %d for block #%d\n",
+    sds_info.lengths[kk], kk);
       } } /* done verifying offsets and lengths */
 
     /* Release memory */
