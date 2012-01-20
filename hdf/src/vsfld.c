@@ -861,15 +861,28 @@ intn VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
         HGOTO_ERROR(DFE_ARGS, FAIL)
     else
     {
-	int32 retcode=0;
+	intn retcode = 0;
 	sp_info_block_t info_block;
 	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
 
 	/* Get the special info */
 	retcode = HDget_special_info(vs->aid, &info_block);
 
+	/* When HDget_special_info returns FAIL, it could be the element is not
+	   special or some failure occur internally, info_block.key will be
+	   FAIL in the former case */
+	if (retcode == FAIL)
+	{
+	    if (info_block.key == FAIL)
+		ret_value = 0;	/* not a special elem, no external file name */
+
+	    /* Some failure occurred in HDget_special_info */
+	    else
+		HGOTO_ERROR(DFE_ARGS, FAIL)
+	}
+
 	/* If the vdata has external element, get the external info */
-	if (retcode == SUCCEED && info_block.key == SPECIAL_EXT)
+	else if (info_block.key == SPECIAL_EXT)
 	{
 	    /* If the file name is not available, the file is probably
 		corrupted, so we need to report it. */
@@ -907,7 +920,7 @@ intn VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
 		ret_value = actual_fname_len;
 	    }
 	}
-	/* Not special or not external */
+	/* Special, but not external */
 	else
 	    ret_value = 0;	/* no external file name */
     }

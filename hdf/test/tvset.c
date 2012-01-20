@@ -84,6 +84,8 @@ write_vset_stuff(void)
     char8       c;
     float32     f;
 
+int32 ref=-1;
+
     /* allocate these buffers dynamically and not off the stack
        as they were previously handled */
     if (gbuf1 == NULL)
@@ -276,15 +278,16 @@ write_vset_stuff(void)
     CHECK(status,FAIL,"VSwrite:vs1");
 
     /* Test VSgetexternalfile on a vdata without external element */
-    status = VSgetexternalfile(vs1, 0, NULL, NULL);
+    /*  status = VSgetexternalfile(vs1, 0, NULL, NULL);
     VERIFY_VOID(status, FAIL, "VSgetexternalfile");
+ */ 
 
-    /* Test VSgetexternal on a vdata without external element */
+    /* Test VSgetexternalinfo on a vdata without external element */
     status = VSgetexternalinfo(vs1, 0, NULL, NULL, NULL);
-    VERIFY_VOID(status, 0, "VSgetexternalfile");
+    VERIFY_VOID(status, 0, "VSgetexternalinfo");
 
     status = VSdetach(vs1);
-    CHECK(status,FAIL,"Vdetach:vs1");
+    CHECK(status,FAIL,"VSdetach:vs1");
     
     MESSAGE(5, printf("created VDATA %s with %d elements\n", name, (int) count););
 
