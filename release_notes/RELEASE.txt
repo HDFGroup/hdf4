@@ -120,26 +120,25 @@ This version has been tested in the following platforms:
 
    Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
       SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
-   (jam)                             (Red Hat 4.1.2-50)
-                                 pgcc and pgf90 10.6-0 32-bit target 
+   (jam)                             (Red Hat 4.1.2-51)
+                                 pgcc and pgf90 11.8-0 32-bit target 
                                  on x86 Linux -tp penryn
-                                 Intel(R) C Compiler, Version 11.1
-                                 Intel(R) Fortran Compiler, Version 11.1
+                                 Intel(R) C Compiler, Version 12.0.4 20110427
+                                 Intel(R) Fortran Compiler, Version 12.0.4
 
-   Linux 2.6.18-238.9.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+   Linux 2.6.18-274.17.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-51)
       SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
-   (koala)                           (Red Hat 4.1.2-50)
-                                 icc (ICC) 12.0.3 20110309
-                                 ifort (IFORT) 12.0.3 20110309
-                                 pgcc and pgf90 11.3-0 64-bit target 
+   (koala)                           (Red Hat 4.1.2-51)
+                                 icc (ICC) 12.0.4 20110427
+                                 ifort (IFORT) 12.0.4 20110427
+                                 pgcc and pgf90 11.8-0 64-bit target 
                                  on x86-64 Linux -tp nehalem
 
-   SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 
-   (linew)                       Sun Fortran 95 8.3 SunOS_sparc 
-                                 Patch 127000-13 
+   SunOS 5.10 32- and 64-bit     Sun C 5.11 SunOS_sparc 2010/08/13 
+   (linew)                       Sun Fortran 95 8.5 SunOS_sparc 
 
    Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
-      #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073
+      #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073 20100806
       SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
    (ember)
 
@@ -208,18 +207,18 @@ This version has been tested in the following platforms:
 Known problems
 ==============
 
-o  On IBM PowerPC 64 hdftest failes when gcc 4.4.6 is used with -O3 optimization level. 
+o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization level. 
 
 o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    fails when checking for the jpeglib.h header due to the duplicated
    macro definition of HAVE_STDLIB_H.  This is because some newer builds
-   of jpeg library has HAVE_STDLIB_H defined in its jconfig.h header file.
+   of jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
    Without the -qlanglvl=ansi, some older xlc (e.g., V7.0) still fails but
    newer xlc (e.g., V9.0) passes.  AKC - 2010/02/17
 
 o  When building on Linux/UNIX platforms, the szip shared library files must
    be in the system library path. This can be done by adding a link to
-   the libsz.* files into the /usr/lib folder or by adding the library
+   the libsz.* files in the /usr/lib folder or by adding the library
    location to the LD_LIBRARY_PATH environment variable.
       Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
    Optionally, one can use the static szip library files by adding '-static'
