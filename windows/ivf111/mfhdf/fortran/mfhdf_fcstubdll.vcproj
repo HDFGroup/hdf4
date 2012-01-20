@@ -51,7 +51,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc,..\..\..\..\mfhdf\fortran"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -144,7 +144,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc,..\..\..\..\mfhdf\fortran"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -238,7 +238,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc,..\..\..\..\mfhdf\fortran"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;MFHDF_FCSTUBDLL_EXPORTS;HDFAP_USEDLL"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -331,7 +331,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src,..\..\..\..\mfhdf\xdr,..\..\..\..\mfhdf\libsrc,..\..\..\..\mfhdf\fortran"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;MFHDF_FCSTUBDLL_EXPORTS;HDFAP_USEDLL"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -398,56 +398,42 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp"
 			>
 			<File
-				RelativePath="..\..\..\..\mfhdf\fortran\fort_ps\mfsdpf.c"
+				RelativePath="..\..\..\..\mfhdf\fortran\jackets.c"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;_MFHDFLIB_C_STUB_EXPORTS;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;MFHDF_FCSTUBDLL_EXPORTS;HDFAP_USEDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;HDF;NO_SYS_XDR_INC;INTEL86;DOS_FS;_MFHDFLIB_;_HDFDLL_;SWAP;_USRDLL;MFHDF_FCSTUBDLL_EXPORTS;HDFAP_USEDLL;$(NoInherit)"
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\fortran\mfsdf.c"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;fi;fd"
 			>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\hdf2netcdf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\hproto_fortran.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\local_nc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfhdf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\libsrc\mfhdfi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\mfhdf\fortran\netcdf.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

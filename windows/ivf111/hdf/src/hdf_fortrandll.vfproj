@@ -44,10 +44,15 @@
 		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
 		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp">
-		<File RelativePath="..\..\..\..\hdf\src\fort_ps\herrpff.f"/>
-		<File RelativePath="..\..\..\..\hdf\src\fort_ps\hfilepff.f"/>
-		<File RelativePath="..\..\..\..\hdf\src\fort_ps\mfanpff.f"/>
-		<File RelativePath="..\..\..\..\hdf\src\fort_ps\mfgrpff.f"/>
-		<File RelativePath="..\..\..\..\hdf\src\fort_ps\vattrpff.f"/>
-		<File RelativePath="..\..\..\..\hdf\src\fort_ps\vgpff.f"/></Filter></Files>
+		<File RelativePath="..\..\..\..\hdf\src\df24ff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\dfanff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\dfff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\dfpff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\dfr8ff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\dfsdff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\dfufp2iff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\hfileff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\mfgrff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\vattrff.f"/>
+		<File RelativePath="..\..\..\..\hdf\src\vgff.f"/></Filter>
 	<Globals/></VisualStudioProject>

@@ -45,5 +45,5 @@
 	<Files>
 		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
 		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp">
-		<File RelativePath="..\..\..\..\mfhdf\fortran\fort_ps\mfsdpff.f"/></Filter></Files>
+		<File RelativePath="..\..\..\..\mfhdf\fortran\mfsdff.f"/></Filter></Files>
 	<Globals/></VisualStudioProject>

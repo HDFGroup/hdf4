@@ -48,12 +48,5 @@
 		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90">
 		<File RelativePath="..\..\..\..\mfhdf\fortran\tszip.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\tszip\Debug/&quot;  /I  &quot;..\..\..\..\tszip\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\tszip\Release/&quot;  /I  &quot;..\..\..\..\tszip\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\tszip\Debug/&quot;  /I  &quot;..\..\..\..\tszip\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\tszip\Release/&quot;  /I  &quot;..\..\..\..\tszip\Release/&quot;  /I "/></FileConfiguration></File></Filter></Files>
+		</File></Filter></Files>
 	<Globals/></VisualStudioProject>

@@ -47,58 +47,22 @@
 		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
 		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90">
-		<File RelativePath="..\..\..\..\hdf\test\fort_ps\forsupffp.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration></File>
-		<File RelativePath="..\..\..\..\hdf\test\fort_ps\fortestFp.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration></File>
-		<File RelativePath="..\..\..\..\hdf\test\fort_ps\manpf.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration></File>
-		<File RelativePath="..\..\..\..\hdf\test\mgrf.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration></File>
-		<File RelativePath="..\..\..\..\hdf\test\tvattrf.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration></File>
-		<File RelativePath="..\..\..\..\hdf\test\tvsetf.f">
-			<FileConfiguration Name="Debug|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Debug|x64">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Debug/&quot;  /I  &quot;..\..\..\..\fortestf\Debug/&quot;  /I "/></FileConfiguration>
-			<FileConfiguration Name="Release|Win32">
-				<Tool Name="VFFortranCompilerTool" AdditionalOptions="&quot;..\..\..\..\fortestf\Release/&quot;  /I  &quot;..\..\..\..\fortestf\Release/&quot;  /I "/></FileConfiguration></File></Filter></Files>
+		<File RelativePath="..\..\..\..\hdf\test\forsupff.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\fortestF.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\manf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\mgrf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\slabwf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\t24f.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tanf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tanfilef.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tpf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tr8f.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tsdmmsf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tsdnmmsf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tsdnntf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tsdntf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tsdstrf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tstubsf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tvattrf.f"/>
+		<File RelativePath="..\..\..\..\hdf\test\tvsetf.f"/></Filter>
 	<Globals/></VisualStudioProject>

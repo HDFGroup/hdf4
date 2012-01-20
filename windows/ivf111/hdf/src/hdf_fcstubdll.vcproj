@@ -240,7 +240,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDFDLL_;_HDFLIB_C_STUB_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -251,7 +251,7 @@
 				ProgramDataBaseFileName=".\..\..\..\..\hdf\src\Release\hdf_fcstubdll/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				CompileAs="0"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -333,7 +333,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\hdf\src"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDFDLL_;_HDFLIB_C_STUB_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -400,286 +400,61 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp"
 			>
 			<File
-				RelativePath="..\..\..\..\hdf\src\fort_ps\herrpf.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\hdf\src\dfanf.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\hdf\src\fort_ps\hfilepf.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\hdf\src\dff.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\hdf\src\fort_ps\mfanpf.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\hdf\src\dfpf.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\hdf\src\fort_ps\mfgrpf.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\hdf\src\dfr8f.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\hdf\src\fort_ps\vattrpf.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\hdf\src\dfsdf.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\hdf\src\fort_ps\vgpf.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;_;_HDFLIB_C_STUB_EXPORTS;_HDFDLL_;$(NoInherit)"
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;INTEL86;DOS_FS;_USRDLL;_HDF_USEDLL;HDF_FCSTUBDLL_EXPORTS;$(NoInherit)"
-					/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\hdf\src\dfufp2i.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\dfutilf.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\df24f.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\dfufp2if.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\herrf.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\hfilef.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\mfanf.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\mfgrf.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\vattrf.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\vgf.c">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;fi;fd"
 			>
+			<File
+				RelativePath="..\..\..\..\hdf\src\hproto_fortran.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\hdf\src\h4config.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
