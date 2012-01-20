@@ -289,20 +289,6 @@
 ./hdf/src/vrw.c
 ./hdf/src/vsfld.c
 
-./hdf/src/fort_ps/herrpf.c
-./hdf/src/fort_ps/herrpff.f
-./hdf/src/fort_ps/hfilepf.c
-./hdf/src/fort_ps/hfilepff.f
-./hdf/src/fort_ps/hprotop.h
-./hdf/src/fort_ps/mfanpf.c
-./hdf/src/fort_ps/mfanpff.f
-./hdf/src/fort_ps/mfgrpf.c
-./hdf/src/fort_ps/mfgrpff.f
-./hdf/src/fort_ps/vattrpf.c
-./hdf/src/fort_ps/vattrpff.f
-./hdf/src/fort_ps/vgpf.c
-./hdf/src/fort_ps/vgpff.f
-
 ./hdf/test/MAKE.COM
 ./hdf/test/Makefile.am
 ./hdf/test/Makefile.in
@@ -391,12 +377,6 @@
 ./hdf/test/tvsetf.f
 ./hdf/test/tvsfpack.c
 ./hdf/test/vers.c
-
-./hdf/test/fort_ps/forsupffp.f
-./hdf/test/fort_ps/fortest.arg
-./hdf/test/fort_ps/fortestFp.f
-./hdf/test/fort_ps/fortestp.c
-./hdf/test/fort_ps/manpf.f
 
 ./hdf/util/HELINK.OPT
 ./hdf/util/Makefile.am
@@ -802,11 +782,6 @@
 ./mfhdf/fortran/examples/SD_dimscale_vs_sds.f
 ./mfhdf/fortran/examples/SD_unlimited_sds.f
 ./mfhdf/fortran/examples/SD_compress_sds.f
-
-./mfhdf/fortran/fort_ps/hdftestp.f
-./mfhdf/fortran/fort_ps/mfhdfp.h
-./mfhdf/fortran/fort_ps/mfsdpf.c
-./mfhdf/fortran/fort_ps/mfsdpff.f
 
 ./mfhdf/fortran/vms/ftest.for
 ./mfhdf/fortran/vms/ftest.m4

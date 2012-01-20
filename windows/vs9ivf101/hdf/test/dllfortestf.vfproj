@@ -7,7 +7,7 @@
 		<Configuration Name="Release|Win32" OutputDirectory="..\..\..\..\hdf\test\Release" IntermediateDirectory="..\..\..\..\hdf\test\Release\dllfortestf" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" Command="c:\hdf\hdf4\vs6\dotNet_split\fortran_split\windows\proj\hdf\test\$(OUTDIR)\dllfortestf.exe">
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/dllfortestf.tlb"/>
 				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I " SuppressStartupBanner="true" AdditionalIncludeDirectories=".\dllfortestf\Release/;..\..\..\..\hdf\test" PreprocessorDefinitions="BUILD_HDF_DLL" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL" CompileOnly="true"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I " SuppressStartupBanner="true" AdditionalIncludeDirectories=".\dllfortestf\Release/;..\..\..\..\hdf\test" PreprocessorDefinitions="" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL" CompileOnly="true"/>
 				<Tool Name="VFPostBuildEventTool"/>
 				<Tool Name="VFCustomBuildTool"/>
 				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/dllfortestf.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories=".\proj\lib\release\multithreaded" ProgramDatabaseFile="$(OUTDIR)/dllfortestf.pdb" SubSystem="subSystemConsole" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
@@ -26,7 +26,7 @@
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/dllfortestf.tlb"/>
 				<Tool Name="VFPreBuildEventTool"/>
 				<Tool Name="VFPostBuildEventTool"/>
-				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I " SuppressStartupBanner="true" AdditionalIncludeDirectories=".\dllfortestf\Release/;..\..\..\..\hdf\test" PreprocessorDefinitions="BUILD_HDF_DLL" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL" CompileOnly="true"/>
+				<Tool Name="VFFortranCompilerTool" SwitchesHaveChanged="true" AdditionalOptions="&quot;..\..\..\..\dllfortestf\Release/&quot;  /I " SuppressStartupBanner="true" AdditionalIncludeDirectories=".\dllfortestf\Release/;..\..\..\..\hdf\test" PreprocessorDefinitions="" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreadedDLL" CompileOnly="true"/>
 				<Tool Name="VFCustomBuildTool"/>
 				<Tool Name="VFLinkerTool" SwitchesHaveChanged="true" OutputFile="$(OUTDIR)/dllfortestf.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories=".\proj\lib\release\multithreaded" ProgramDatabaseFile="$(OUTDIR)/dllfortestf.pdb" SubSystem="subSystemConsole" AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"/>
 				<Tool Name="VFPreLinkEventTool"/>
