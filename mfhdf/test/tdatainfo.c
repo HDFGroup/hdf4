@@ -23,15 +23,17 @@
  * -BMR, Jul 2010
  ****************************************************************************/
 
-#ifdef HAVE_SYS_TYPES_H
+#include "mfhdf.h"
+
+#ifdef H4_HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#ifdef HAVE_SYS_STAT_H
+#ifdef H4_HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <fcntl.h>
 #include <math.h>
-#ifdef HAVE_UNISTD_H
+#ifdef H4_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -43,8 +45,6 @@
 #ifndef DATAINFO_TESTER
 #define DATAINFO_TESTER /* to include mfdatainfo.h */
 #endif
-
-#include "mfhdf.h"
 
 #ifdef H4_HAVE_LIBSZ
 #include "szlib.h"
