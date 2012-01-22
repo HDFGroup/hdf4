@@ -694,6 +694,7 @@ intn get_ann_datainfo(
 	HDfree(offsetarray);
 	HDfree(lengtharray);
     }
+    return(num_errs);
 }
 
 /***************************************************************************
@@ -747,12 +748,16 @@ static int test_dfannots(void)
     chk_offsets[0] = 307; chk_offsets[1] = 294; /* verified with UNIX command */
     chk_lengths[0] = 13; chk_lengths[1] = 13;   /* "od --format=a" */
     status = get_ann_datainfo(sd_id, AN_FILE_LABEL, chk_offsets, chk_lengths);
+    if (status > 0)
+        fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
 
     /* Get data info of file descs and verify them against chk_offsets and
 	chk_lengths */
     chk_offsets[0] = 414; chk_offsets[1] = 320; /* verified with UNIX command */
     chk_lengths[0] = 99; chk_lengths[1] = 94;   /* "od --format=a" */
     status = get_ann_datainfo(sd_id, AN_FILE_DESC, chk_offsets, chk_lengths);
+    if (status > 0)
+        fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
 
     /* Obtain information about the file. */ 
     status = SDfileinfo(sd_id, &n_datasets, &n_file_attr);
@@ -781,6 +786,8 @@ static int test_dfannots(void)
 	    }
 					
             status = get_ann_datainfo(sds_id, AN_DATA_DESC, chk_offsets, chk_lengths);
+	    if (status > 0)
+	        fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
 
             /* Get data info of object labels and verify them against
                chk_offsets and chk_lengths */
@@ -795,6 +802,8 @@ static int test_dfannots(void)
 		chk_lengths[0] = 20; /* command "od --format=a" */
 	    }
             status = get_ann_datainfo(sds_id, AN_DATA_LABEL, chk_offsets, chk_lengths);
+	    if (status > 0)
+	        fprintf(stderr, "test_dfannots: errors while verifying annotations\n");
         } /* SDS is not coordinate var */
 
         /* Terminate access to the selected data set. */
