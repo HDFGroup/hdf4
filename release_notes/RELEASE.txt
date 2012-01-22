@@ -41,7 +41,8 @@ New features and changes
 ========================
    Source distribution
    ===================
-   - [None.  PPM - YYYY/MM/DD]
+   - None
+
 
    Configuration
    ============= 
@@ -54,17 +55,38 @@ New features and changes
    ========= 
    - Fortran fort_ps folders obsoleted and removed.
      ADB - 2012/1/20
+   - VSgetexternalfile and SDgetexternalfile are superseded by VSgetexternalinfo
+     and SDgetexternalinfo because their prototypes missed the parameter
+     "length" for external data length.  (part 1 in bug HDFFR-1297)
+     BMR - 2012/1/15
+   - Visinternal is superseded by Vgisinternal, which allows the handling of
+     special cases in old data.  (part 2 in bug HDFFR-1297)
+     BMR - 2012/1/15
    - Fortran wrappers vfgvgroups and vsfgvdatas added for 
      Vgetvgroups and VSgetvdatas, respectively.
      MSB - 2012/1/5
 
    Test
    ====
-   - [None]
+   - The following files were added:
+     ./hdf/test/test_files/README: special notes on data files in this directory
+     ./hdf/test/test_files/grtdfui83.hdf: file to test old data situations
+     ./mfhdf/test/tutils.c: added to provide common code for various tests
+     BMR - 2011/1/21
+
+   - The following file is removed:
+     ./mfhdf/test/tidtypes.c: changed to tmixed_apis.c for broader contents
+     BMR - 2011/1/21
 
    Utilities
    ========= 
-   - [None]
+   - The following files were added:
+     ./mfhdf/dumper/testfiles/Roy.nc: file to test skipping compression check
+      in a netCDF file
+     ./mfhdf/dumper/testfiles/dumpsds-18.out: output of testing netCDF file
+     ./hdf/test/tvnameclass.c: tests issues involving vgroup/vdata names/classes
+     BMR - 2011/1/21
+
 
 Support for new platforms and compilers
 =======================================
@@ -85,13 +107,6 @@ Bugs fixed since HDF4.2.6
 
    Library
    ========= 
-   - VSgetexternalfile and SDgetexternalfile are superseded by VSgetexternalinfo
-     and SDgetexternalinfo because their prototypes missed the parameter
-     "length" for external data length.  (part 1 in bug HDFFR-1297)
-     BMR - 2012/1/15
-   - Visinternal is superseded by Vgisinternal, which allows the handling of
-     special cases in old data.  (part 2 in bug HDFFR-1297)
-     BMR - 2012/1/15
    - SDgetchunkinfo and SDreadchunk failed on an empty SDS when the file is
      opened as read-only (HDFFR-171).  This is now fixed.
      BMR - 2011/10/20
@@ -111,7 +126,12 @@ Bugs fixed since HDF4.2.6
 
 Documentation
 ==============
-   - [None]
+   - The Reference Manual and User's Guide are updated to include new functions:
+     + VSgetexternalinfo and SDgetexternalinfo
+     + Vgisinternal
+     + Fortran wrappers vfgvgroups and vsfgvdatas
+     BMR - 2012/1/22
+
 
 Platforms tested
 ================
