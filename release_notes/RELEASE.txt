@@ -46,14 +46,14 @@ New features and changes
 
    Configuration
    ============= 
-   - Fortran fort_ps folders obsoleted and VS2008 project
-     files updated.
-     CMake tested on Windows, Linux, Cygwin
+   - Fortran fort_ps folders are now obsolete, and VS2008 project
+     files have been updated.
+     CMake was tested on Windows, Linux, and Cygwin.
      ADB - 2012/1/20
      
    Library
    ========= 
-   - Fortran fort_ps folders obsoleted and removed.
+   - Fortran fort_ps folders are obsolete and have been removed.
      ADB - 2012/1/20
    - VSgetexternalfile and SDgetexternalfile are superseded by VSgetexternalinfo
      and SDgetexternalinfo because their prototypes missed the parameter
@@ -62,7 +62,7 @@ New features and changes
    - Visinternal is superseded by Vgisinternal, which allows the handling of
      special cases in old data.  (part 2 in bug HDFFR-1297)
      BMR - 2012/1/15
-   - Fortran wrappers vfgvgroups and vsfgvdatas added for 
+   - Fortran wrappers vfgvgroups and vsfgvdatas have been added for 
      Vgetvgroups and VSgetvdatas, respectively.
      MSB - 2012/1/5
 
@@ -74,7 +74,7 @@ New features and changes
      ./mfhdf/test/tutils.c: added to provide common code for various tests
      BMR - 2011/1/21
 
-   - The following file is removed:
+   - The following file was removed:
      ./mfhdf/test/tidtypes.c: changed to tmixed_apis.c for broader contents
      BMR - 2011/1/21
 
@@ -126,7 +126,8 @@ Bugs fixed since HDF4.2.6
 
 Documentation
 ==============
-   - The Reference Manual and User's Guide are updated to include new functions:
+   - The Reference Manual and User's Guide have been updated to include 
+     new functions:
      + VSgetexternalinfo and SDgetexternalinfo
      + Vgisinternal
      + Fortran wrappers vfgvgroups and vsfgvdatas
@@ -234,7 +235,7 @@ Known problems
 
 o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization level. 
 
-o  Wnen buidling in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    fails when checking for the jpeglib.h header due to the duplicated
    macro definition of HAVE_STDLIB_H.  This is because some newer builds
    of jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
@@ -258,11 +259,10 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    dimension variable or vice versa.
 
    HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
-   and a dimension variable.  However, as older versions, these recent
-   versions are unable to detect such conflicts in existing files,
-   specifically, those created by earlier releases.  It is therefore STRONGLY
-   recommended to check for such name duplication before working with data
-   created with a pre-4.2r2 library.
+   and a dimension variable.  However, as with older versions, these recent
+   versions are unable to detect such conflicts in files created by earlier 
+   releases.  It is therefore STRONGLY recommended to check for such name 
+   duplication before working with data created with a pre-4.2r2 library.
 
    The functions SDgetnumvars_byname and SDnametoindices are provided
    to help detect such name conflicts and select the correct object to
@@ -271,7 +271,7 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
 
 o  This release does not support VMS systems.
 
-o  N-Bit compression is not supported with Fortran APIs.
+o  N-bit compression is not supported with Fortran APIs.
 
 o  Using both fill-value and compression on SD datasets does not work.
 
@@ -292,4 +292,4 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
 
 o  In order for the API SDgetdatasize to get the correct compressed size
    of the data, the dataset needs to be closed (SDendaccess) or read
-   (SDreaddata), after being written and before SDgetdatasize is called.
+   (SDreaddata) after being written and before SDgetdatasize is called.
