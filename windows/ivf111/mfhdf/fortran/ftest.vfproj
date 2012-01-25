@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{C0FFE26E-6682-43B4-942D-9F4A32C5F111}">
-	<Platforms>
-		<Platform Name="Win32"/>
-		<Platform Name="x64"/></Platforms>
-	<Configurations>
-		<Configuration Name="Debug|Win32" OutputDirectory="..\..\..\..\mfhdf\fortran\Debug" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Debug\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
-				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" IgnoreDefaultLibraryNames="LIBCMTD" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/ftest.pdb" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
-				<Tool Name="VFResourceCompilerTool"/>
-				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
-				<Tool Name="VFCustomBuildTool"/>
-				<Tool Name="VFPreLinkEventTool"/>
-				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool"/>
-				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
-		<Configuration Name="Release|Win32" OutputDirectory="..\..\..\..\mfhdf\fortran\Release" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Release\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/"/>
-				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
-				<Tool Name="VFResourceCompilerTool"/>
-				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
-				<Tool Name="VFCustomBuildTool"/>
-				<Tool Name="VFPreLinkEventTool"/>
-				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool"/>
-				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
-		<Configuration Name="Debug|x64" OutputDirectory="..\..\..\..\mfhdf\fortran\Debug" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Debug\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
-				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" IgnoreDefaultLibraryNames="LIBCMTD" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/ftest.pdb" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
-				<Tool Name="VFResourceCompilerTool"/>
-				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
-				<Tool Name="VFCustomBuildTool"/>
-				<Tool Name="VFPreLinkEventTool"/>
-				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool"/>
-				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
-		<Configuration Name="Release|x64" OutputDirectory="..\..\..\..\mfhdf\fortran\Release" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Release\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/"/>
-				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
-				<Tool Name="VFResourceCompilerTool"/>
-				<Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
-				<Tool Name="VFCustomBuildTool"/>
-				<Tool Name="VFPreLinkEventTool"/>
-				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool"/></Configuration></Configurations>
-	<Files>
-		<Filter Name="Header Files" Filter="fi;fd"/>
-		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
-		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
-		<File RelativePath="..\..\..\..\hdf\test\forsupff.f"/>
-		<File RelativePath="..\..\..\..\mfhdf\fortran\ftest.f"/></Filter></Files>
-	<Globals/></VisualStudioProject>
+  <Platforms>
+    <Platform Name="Win32"/>
+    <Platform Name="x64"/></Platforms>
+  <Configurations>
+    <Configuration Name="Debug|Win32" OutputDirectory="..\..\..\..\mfhdf\fortran\Debug" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Debug\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+        <Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
+        <Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" IgnoreDefaultLibraryNames="MSVCRTD" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/ftest.pdb" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
+        <Tool Name="VFResourceCompilerTool"/>
+        <Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+        <Tool Name="VFCustomBuildTool"/>
+        <Tool Name="VFPreLinkEventTool"/>
+        <Tool Name="VFPreBuildEventTool"/>
+        <Tool Name="VFPostBuildEventTool"/>
+        <Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+    <Configuration Name="Release|Win32" OutputDirectory="..\..\..\..\mfhdf\fortran\Release" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Release\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+        <Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/"/>
+        <Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" IgnoreDefaultLibraryNames="MSVCRT" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
+        <Tool Name="VFResourceCompilerTool"/>
+        <Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+        <Tool Name="VFCustomBuildTool"/>
+        <Tool Name="VFPreLinkEventTool"/>
+        <Tool Name="VFPreBuildEventTool"/>
+        <Tool Name="VFPostBuildEventTool"/>
+        <Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+    <Configuration Name="Debug|x64" OutputDirectory="..\..\..\..\mfhdf\fortran\Debug" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Debug\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+        <Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
+        <Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" IgnoreDefaultLibraryNames="MSVCRTD" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/ftest.pdb" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
+        <Tool Name="VFResourceCompilerTool"/>
+        <Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+        <Tool Name="VFCustomBuildTool"/>
+        <Tool Name="VFPreLinkEventTool"/>
+        <Tool Name="VFPreBuildEventTool"/>
+        <Tool Name="VFPostBuildEventTool"/>
+        <Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+    <Configuration Name="Release|x64" OutputDirectory="..\..\..\..\mfhdf\fortran\Release" IntermediateDirectory="..\..\..\..\mfhdf\fortran\Release\ftest" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+        <Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" AdditionalIncludeDirectories="..\..\..\..\hdf\test" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/"/>
+        <Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/ftest.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" IgnoreDefaultLibraryNames="MSVCRT" SubSystem="subSystemConsole" AdditionalDependencies="Ws2_32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"/>
+        <Tool Name="VFResourceCompilerTool"/>
+        <Tool Name="VFMidlTool" SuppressStartupBanner="true" HeaderFileName="$(InputName).h" TypeLibraryName="$(IntDir)/$(InputName).tlb"/>
+        <Tool Name="VFCustomBuildTool"/>
+        <Tool Name="VFPreLinkEventTool"/>
+        <Tool Name="VFPreBuildEventTool"/>
+        <Tool Name="VFPostBuildEventTool"/></Configuration></Configurations>
+  <Files>
+    <Filter Name="Header Files" Filter="fi;fd"/>
+    <Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+    <Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+    <File RelativePath="..\..\..\..\hdf\test\forsupff.f"/>
+    <File RelativePath="..\..\..\..\mfhdf\fortran\ftest.f"/></Filter></Files>
+  <Globals/></VisualStudioProject>

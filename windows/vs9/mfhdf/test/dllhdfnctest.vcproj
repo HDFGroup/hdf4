@@ -76,7 +76,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=".\windows\lib\debug\multithreaded"
-				IgnoreDefaultLibraryNames="libc.lib"
+				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\..\..\mfhdf\test\Debug/dllhdfnctest.pdb"
 				SubSystem="1"
