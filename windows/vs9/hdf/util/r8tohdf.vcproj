@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\util\Release/r8tohdf.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -159,7 +159,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\util\Release/r8tohdf.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -246,7 +246,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\util\Debug/r8tohdf.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -336,7 +336,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\util\Debug/r8tohdf.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

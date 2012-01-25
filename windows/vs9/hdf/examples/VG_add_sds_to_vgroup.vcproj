@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd426d.lib hm426d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd427d.lib hm427d.lib xdr.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\examples\Debug/VG_add_sds_to_vgroup.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd426d.lib hm426d.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd427d.lib hm427d.lib xdr.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\examples\Debug/VG_add_sds_to_vgroup.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -260,7 +260,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd426.lib hm426.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd427.lib hm427.lib xdr.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\examples\Release/VG_add_sds_to_vgroup.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -352,7 +352,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd426.lib hm426.lib xdr.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="odbc32.lib odbccp32.lib ws2_32.lib hd427.lib hm427.lib xdr.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\hdf\examples\Release/VG_add_sds_to_vgroup.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

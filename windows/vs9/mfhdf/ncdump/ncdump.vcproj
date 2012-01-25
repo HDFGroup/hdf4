@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\mfhdf\ncdump\Debug/ncdump.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\mfhdf\ncdump\Debug/ncdump.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -252,7 +252,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\mfhdf\ncdump\Release/ncdump.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -341,7 +341,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
+				AdditionalDependencies="wsock32.lib odbc32.lib odbccp32.lib lib$(HDF4_EXT_ZLIB) lib$(HDF4_EXT_SZIP) lib$(HDF4_EXT_JPEG)"
 				OutputFile=".\..\..\..\..\mfhdf\ncdump\Release/ncdump.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

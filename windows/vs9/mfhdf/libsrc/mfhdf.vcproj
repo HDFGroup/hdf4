@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm426.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm427.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm426.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Release\hm427.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -217,7 +217,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm426d.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm427d.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -289,7 +289,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm426d.lib"
+				OutputFile="..\..\..\..\mfhdf\libsrc\Debug\hm427d.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

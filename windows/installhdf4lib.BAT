@@ -45,14 +45,14 @@ popd
 mkdir dll
 pushd dll
 rem ./hdf4lib/debug/dll
-copy ..\..\..\hdf\src\Debug\hd426md.dll .
-copy ..\..\..\hdf\src\Debug\hd426md.lib .
+copy ..\..\..\hdf\src\Debug\hd427md.dll .
+copy ..\..\..\hdf\src\Debug\hd427md.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fcstubdlld.dll .
 copy ..\..\..\hdf\src\Debug\hdf_fcstubdlld.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fortrandlld.dll .
 copy ..\..\..\hdf\src\Debug\hdf_fortrandlld.lib .
-copy ..\..\..\mfhdf\libsrc\Debug\hm426md.dll .
-copy ..\..\..\mfhdf\libsrc\Debug\hm426md.lib .
+copy ..\..\..\mfhdf\libsrc\Debug\hm427md.dll .
+copy ..\..\..\mfhdf\libsrc\Debug\hm427md.lib .
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.lib
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
@@ -88,10 +88,10 @@ popd
 mkdir lib
 pushd lib
 rem ./hdf4lib/debug/lib
-copy ..\..\..\hdf\src\Debug\hd426d.lib .
+copy ..\..\..\hdf\src\Debug\hd427d.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fcstubd.lib .
 copy ..\..\..\hdf\src\Debug\hdf_fortran.lib .
-copy ..\..\..\mfhdf\libsrc\Debug\hm426d.lib .
+copy ..\..\..\mfhdf\libsrc\Debug\hm427d.lib .
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubd.lib .
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortran.lib .
 copy ..\..\..\mfhdf\xdr\Debug\xdr.lib .
@@ -136,14 +136,14 @@ popd
 mkdir dll
 pushd dll
 rem ./hdf4lib/release/dll
-copy ..\..\..\hdf\src\Release\hd426m.dll .
-copy ..\..\..\hdf\src\Release\hd426m.lib .
+copy ..\..\..\hdf\src\Release\hd427m.dll .
+copy ..\..\..\hdf\src\Release\hd427m.lib .
 copy ..\..\..\hdf\src\Release\hdf_fcstubdll.dll .
 copy ..\..\..\hdf\src\Release\hdf_fcstubdll.lib .
 copy ..\..\..\hdf\src\Release\hdf_fortrandll.dll .
 copy ..\..\..\hdf\src\Release\hdf_fortrandll.lib .
-copy ..\..\..\mfhdf\libsrc\Release\hm426m.dll .
-copy ..\..\..\mfhdf\libsrc\Release\hm426m.lib .
+copy ..\..\..\mfhdf\libsrc\Release\hm427m.dll .
+copy ..\..\..\mfhdf\libsrc\Release\hm427m.lib .
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.lib
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.dll
@@ -179,10 +179,10 @@ popd
 mkdir lib
 pushd lib
 rem ./hdf4lib/release/lib
-copy ..\..\..\hdf\src\Release\hd426.lib .
+copy ..\..\..\hdf\src\Release\hd427.lib .
 copy ..\..\..\hdf\src\Release\hdf_fcstub.lib .
 copy ..\..\..\hdf\src\Release\hdf_fortran.lib .
-copy ..\..\..\mfhdf\libsrc\Release\hm426.lib .
+copy ..\..\..\mfhdf\libsrc\Release\hm427.lib .
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstub.lib .
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortran.lib .
 copy ..\..\..\mfhdf\xdr\Release\xdr.lib .

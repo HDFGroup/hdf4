@@ -46,6 +46,8 @@ Notes: This short instruction is written for users who want to quickly build
          in a central location. For example on Windows, create a folder extlibs 
          and install the packages there. Windows users should also read Section V
          in INSTALL_Windows.txt.
+         NOTE: HDF has updated libraries (and source) for full use with CMake.
+         
       B. Use source packages from a SVN server by adding the following CMake 
          options:
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
@@ -53,6 +55,7 @@ Notes: This short instruction is written for users who want to quickly build
             ZLIB_SVN_URL:STRING="http://some_location/zlib/trunk"
             SZIP_SVN_URL:STRING="http://some_location/szip/trunk"
          where "some_location" is the URL to the SVN repository.
+         
       C. Use source packages from a compressed file by adding the following CMake 
          options:
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ"

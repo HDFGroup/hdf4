@@ -80,15 +80,15 @@
       <Tool
         Name="VCLinkerTool"
         AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-        OutputFile="..\..\..\..\hdf\src\release\hd426m.dll"
+        OutputFile="..\..\..\..\hdf\src\release\hd427m.dll"
         LinkIncremental="1"
         SuppressStartupBanner="true"
         IgnoreDefaultLibraryNames=""
-        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Release/hd426m.pdb"
+        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Release/hd427m.pdb"
         SubSystem="2"
         RandomizedBaseAddress="1"
         DataExecutionPrevention="0"
-        ImportLibrary=".\..\..\..\..\hdf\src\Release/hd426m.lib"
+        ImportLibrary=".\..\..\..\..\hdf\src\Release/hd427m.lib"
         TargetMachine="1"
       />
       <Tool
@@ -175,15 +175,15 @@
       <Tool
         Name="VCLinkerTool"
         AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-        OutputFile="..\..\..\..\hdf\src\release\hd426m.dll"
+        OutputFile="..\..\..\..\hdf\src\release\hd427m.dll"
         LinkIncremental="1"
         SuppressStartupBanner="true"
         IgnoreDefaultLibraryNames=""
-        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Release/hd426m.pdb"
+        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Release/hd427m.pdb"
         SubSystem="2"
         RandomizedBaseAddress="1"
         DataExecutionPrevention="0"
-        ImportLibrary=".\..\..\..\..\hdf\src\Release/hd426m.lib"
+        ImportLibrary=".\..\..\..\..\hdf\src\Release/hd427m.lib"
         TargetMachine="17"
       />
       <Tool
@@ -268,16 +268,16 @@
       <Tool
         Name="VCLinkerTool"
         AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-        OutputFile="..\..\..\..\hdf\src\debug\hd426md.dll"
+        OutputFile="..\..\..\..\hdf\src\debug\hd427md.dll"
         LinkIncremental="1"
         SuppressStartupBanner="true"
         IgnoreDefaultLibraryNames="libcmt.lib"
         GenerateDebugInformation="true"
-        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Debug/hd426md.pdb"
+        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Debug/hd427md.pdb"
         SubSystem="2"
         RandomizedBaseAddress="1"
         DataExecutionPrevention="0"
-        ImportLibrary=".\..\..\..\..\hdf\src\Debug/hd426md.lib"
+        ImportLibrary=".\..\..\..\..\hdf\src\Debug/hd427md.lib"
         TargetMachine="1"
       />
       <Tool
@@ -362,16 +362,16 @@
       <Tool
         Name="VCLinkerTool"
         AdditionalDependencies="odbc32.lib odbccp32.lib $(HDF4_EXT_ZLIB) $(HDF4_EXT_SZIP) $(HDF4_EXT_JPEG)"
-        OutputFile="..\..\..\..\hdf\src\debug\hd426md.dll"
+        OutputFile="..\..\..\..\hdf\src\debug\hd427md.dll"
         LinkIncremental="1"
         SuppressStartupBanner="true"
         IgnoreDefaultLibraryNames="libcmt.lib"
         GenerateDebugInformation="true"
-        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Debug/hd426md.pdb"
+        ProgramDatabaseFile=".\..\..\..\..\hdf\src\Debug/hd427md.pdb"
         SubSystem="2"
         RandomizedBaseAddress="1"
         DataExecutionPrevention="0"
-        ImportLibrary=".\..\..\..\..\hdf\src\Debug/hd426md.lib"
+        ImportLibrary=".\..\..\..\..\hdf\src\Debug/hd427md.lib"
         TargetMachine="17"
       />
       <Tool

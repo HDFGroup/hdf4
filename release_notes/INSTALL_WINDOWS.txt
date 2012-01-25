@@ -15,7 +15,8 @@ Preconditions
 To build the HDF4 and MFHDF libraries ( multi-threaded static or multi-threaded 
 DLL) and utilities, it is assumed that you have done the following:
       
-   1. Installed Microsoft Visual Studio
+   1. Installed Microsoft Visual Studio. Express Editions may work with the project files
+      but not from the command line. We do not support the Express Editions.
    
       1.1 Currently, Visual Studio 2008 is supported.
 
@@ -87,21 +88,20 @@ DLL) and utilities, it is assumed that you have done the following:
       under "User Variables" box.
       
       In the New Variable window, set "Variable name" as HDF4_EXT_ZLIB
-      and "Variable value" as zlib1.lib, then click OK.
+      and "Variable value" as zlib.lib, then click OK.
       
       Similarly, you can set:
 
-      HDF4_EXT_JPEG environment variable as libjpeg.lib
-      HDF4_EXT_SZIP environment variable as szlibdll.lib
+      HDF4_EXT_JPEG environment variable as jpeg.lib
+      HDF4_EXT_SZIP environment variable as szip.lib
 
       Notes:
 
          a. You might have to close and reopen running programs for the
             new environment variable settings to take effect. 
 
-         b. c:\zlib\zlib1.dll and c:\szlib\dll\szlibdll.dll should
-            be copied into the location that the application can find,
-            such as c:\WINDOWS\system
+         b. c:\jpeg\jpeg.dll, c:\zlib\zlib.dll and c:\szlib\dll\szip.dll 
+            should be copied into a location that the application can find.
       
    6. Set up paths for external libraries and headers
  
@@ -746,9 +746,9 @@ environment following the instructions in Section I.
        HDF4 uses environmental variables to recognize external libraries.  To
        define the necessary variables, issue the following commands:
 
-            set HDF4_EXT_ZLIB=zlib1.lib
-            set HDF4_EXT_JPEG=libjpeg.lib
-            set HDF4_EXT_SZIP=szlibdll.lib
+            set HDF4_EXT_ZLIB=zlib.lib
+            set HDF4_EXT_JPEG=jpeg.lib
+            set HDF4_EXT_SZIP=szip.lib
         
        Also, you have the option of specifying external library directories on
        the command line, or to use the settings from within the IDE.  If you

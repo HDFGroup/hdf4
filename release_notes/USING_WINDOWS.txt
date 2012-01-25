@@ -12,12 +12,14 @@ Preconditions
 To use the HDF4 and MFHDF libraries ( multi-threaded static or multi-threaded 
 DLL) and utilities, it is assumed that you have done the following:
       
-   1. Installed Microsoft Visual Studio
+   1. Installed Microsoft Visual Studio. Express Editions may work with the 
+      project files but not from the command line. We do not support the 
+      Express Editions.
    
-      1.1 Currently only VS2008 is supported.
+      1.1 This document is written for Visual Studio 2008.
 
       1.2 To build Fortran libraries, you must install the Intel Fortran 
-        10.1 or 11.1 compiler.
+          10.1 or 11.1 compiler.
 
    2. Set up a directory structure to unpack the binary archive.
       For example: 
@@ -66,12 +68,12 @@ DLL) and utilities, it is assumed that you have done the following:
       under "User Variables" box.
       
       In the New Variable window, set "Variable name" as HDF4_EXT_ZLIB
-      and "Variable value" as zlib1.lib, then click OK.
+      and "Variable value" as zlib.lib, then click OK.
       
       Similarly, you can set:
 
-      HDF4_EXT_JPEG environment variable as libjpeg.lib
-      HDF4_EXT_SZIP environment variable as szlibdll.lib
+      HDF4_EXT_JPEG environment variable as jpeg.lib
+      HDF4_EXT_SZIP environment variable as szip.lib
 
       Notes:
 
@@ -79,8 +81,8 @@ DLL) and utilities, it is assumed that you have done the following:
             new environment variable settings to take effect. 
 
          b. If you did not add HDF4 to the PATH after unzipping,
-            zlib1.dll and szlibdll.dll should be copied into the location 
-            that the application can find, such as c:\WINDOWS\system
+            jpeg.dll, zlib.dll and szip.dll should be copied into the location 
+            that the application can find.
       
    6. Set up paths for libraries and headers
  
@@ -187,7 +189,7 @@ Note: The above three environment variables should have been defined in
       and headers if you can not find them.
 
 If you did not add HDF4 to the PATH after unzipping, HDF4 DLLs should also be copied 
-to the system directory (for example, C:\Windows\system) where the application can find them. 
+to a directory where the application can find them. 
 
 Note: If you can not find the binary distribution matching with your Windows 
       platforms and compilers, you will have to build HDF4 libraries and 

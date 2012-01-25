@@ -5,8 +5,8 @@
 @REM Last Updated: 7/30/2007
 
 @echo OFF
-copy hdf\src\Debug\hd426md.dll %systemroot%\system >temp.txt
-copy mfhdf\libsrc\Debug\hm426md.dll %systemroot%\system >temp.txt
-copy hdf\src\Release\hd426m.dll %systemroot%\system >temp.txt
-copy mfhdf\libsrc\release\hm426m.dll %systemroot%\system >temp.txt
+copy hdf\src\Debug\hd427md.dll %systemroot%\system >temp.txt
+copy mfhdf\libsrc\Debug\hm427md.dll %systemroot%\system >temp.txt
+copy hdf\src\Release\hd427m.dll %systemroot%\system >temp.txt
+copy mfhdf\libsrc\release\hm427m.dll %systemroot%\system >temp.txt
 del temp.txt
