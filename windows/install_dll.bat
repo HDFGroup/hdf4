@@ -9,4 +9,5 @@ copy hdf\src\Debug\hd427md.dll %systemroot%\system >temp.txt
 copy mfhdf\libsrc\Debug\hm427md.dll %systemroot%\system >temp.txt
 copy hdf\src\Release\hd427m.dll %systemroot%\system >temp.txt
 copy mfhdf\libsrc\release\hm427m.dll %systemroot%\system >temp.txt
+copy mfhdf\xdr\release\xdr_for_dll.dll %systemroot%\system >temp.txt
 del temp.txt

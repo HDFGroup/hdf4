@@ -57,7 +57,8 @@ copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.dll
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fcstubdlld.lib
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.dll
 copy ..\..\..\mfhdf\fortran\Debug\mfhdf_fortrandlld.lib
-copy ..\..\..\mfhdf\xdr\Debug\xdr_for_dll.lib
+copy ..\..\..\mfhdf\xdr\Debug\xdr_for_dlld.dll
+copy ..\..\..\mfhdf\xdr\Debug\xdr_for_dlld.lib
 popd
 
 mkdir include
@@ -148,6 +149,7 @@ copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.dll
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fcstubdll.lib
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.dll
 copy ..\..\..\mfhdf\fortran\Release\mfhdf_fortrandll.lib
+copy ..\..\..\mfhdf\xdr\Release\xdr_for_dll.dll
 copy ..\..\..\mfhdf\xdr\Release\xdr_for_dll.lib
 popd
 
