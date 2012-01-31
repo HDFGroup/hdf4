@@ -160,8 +160,8 @@ This version has been tested in the following platforms:
                                  pgcc and pgf90 11.8-0 64-bit target 
                                  on x86-64 Linux -tp nehalem
 
-   SunOS 5.10 32- and 64-bit     Sun C 5.11 SunOS_sparc 2010/08/13 
-   (linew)                       Sun Fortran 95 8.5 SunOS_sparc 
+   SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 2010/08/11 
+   (linew)                       Sun Fortran 95 8.3 SunOS_sparc Patch 127000-13 2010/01/26
 
    Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
       #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073 20100806
