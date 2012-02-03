@@ -4082,15 +4082,15 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 	       the chunk table (vdata) to determine emptySDS value */
 	    else if (sptag == SPECIAL_CHUNKED)
 	    {
-		int16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
+		uint16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
 		int32 vdata_id = -1;	/* chunk table id */
 		int32 n_records = 0;	/* number of records in chunk table */
 
 		/* skip 4byte header len, 1byte chunking version, 4byte flag, */
 		/* 4byte elm_tot_length, 4byte chunk_size and 4byte nt_size */
 		p = p + 4 + 1 + 4 + 4 + 4 + 4;
-		INT16DECODE(p, chk_tbl_tag);
-		INT16DECODE(p, chk_tbl_ref);
+		UINT16DECODE(p, chk_tbl_tag);
+		UINT16DECODE(p, chk_tbl_ref);
 
 		/* make sure it is really the vdata */
 		if (chk_tbl_tag == DFTAG_VH)
