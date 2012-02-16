@@ -3,8 +3,9 @@
 =       This files conatins a history of the HDF4.* releases.            =
 =                                                                        =
 =       To find information about a particular release search            =
-=       for %%%4.#r# string, for example 4.1r2.                          =
-=       List of all releases is on the top of the file.                  =
+=       for %%%4.#.# string, for example 4.2.6, or                       =
+=       for %%%4.#r# string, for example 4.1r2, prior to 2010.           =
+=       List of all releases is at the top of this file.                 =
 =                                                                        =
 =       Documents in this file refer to several *.txt files that were    =
 =       originally stored in the release_notes directory of the HDF4     =
@@ -15,6 +16,7 @@
 
 List of the HDF4 releases
 
+4.2.7          February	 2012
 4.2.6          June	 2011
 4.2.5          February  2010
 4.2r4          January   2009
@@ -37,6 +39,305 @@ List of the HDF4 releases
 
 
 ==========================================================================    
+
+%%%4.2.7%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HDF version 4.2.7 released on 2012-02-06
+===================================================
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2.6 and HDF 4.2.7.
+It is written for people who are familiar with previous releases of HDF 
+and wish to migrate to HDF 4.2.7.
+
+The HDF 4.2.7 documentation can be found on the The HDF Group's FTP server:
+
+    ftp://ftp.hdfgroup.org/HDF/Documentation/
+
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+  
+    http://hdfgroup.org/products/hdf4/
+
+If you have any questions or comments, please see the HDF Support page:
+
+    http://hdfgroup.org/services/support.html
+
+CONTENTS
+
+- New features and changes
+  -- Source distribution
+  -- Configuration
+  -- Library
+  -- Utilities
+- Support for new platforms and compilers
+- Bugs fixed since HDF4.2.6
+  -- Utilities
+  -- Library
+  -- Configuration
+- Documentation
+- Platforms tested
+- Known problems
+
+
+New features and changes
+========================
+   Source distribution
+   ===================
+   - None
+
+
+   Configuration
+   ============= 
+   - Fortran fort_ps folders are now obsolete, and VS2008 project
+     files have been updated.
+     CMake was tested on Windows, Linux, and Cygwin.
+     ADB - 2012/1/20
+     
+   Library
+   ========= 
+   - Fortran fort_ps folders are obsolete and have been removed.
+     ADB - 2012/1/20
+   - VSgetexternalfile and SDgetexternalfile are superseded by VSgetexternalinfo
+     and SDgetexternalinfo because their prototypes missed the parameter
+     "length" for external data length.  (part 1 in bug HDFFR-1297)
+     BMR - 2012/1/15
+   - Visinternal is superseded by Vgisinternal, which allows the handling of
+     special cases in old data.  (part 2 in bug HDFFR-1297)
+     BMR - 2012/1/15
+   - Fortran wrappers vfgvgroups and vsfgvdatas have been added for 
+     Vgetvgroups and VSgetvdatas, respectively.
+     MSB - 2012/1/5
+
+   Test
+   ====
+   - The following files were added:
+     ./hdf/test/test_files/README: special notes on data files in this directory
+     ./hdf/test/test_files/grtdfui83.hdf: file to test old data situations
+     ./mfhdf/test/tutils.c: added to provide common code for various tests
+     BMR - 2011/1/21
+
+   - The following file was removed:
+     ./mfhdf/test/tidtypes.c: changed to tmixed_apis.c for broader contents
+     BMR - 2011/1/21
+
+   Utilities
+   ========= 
+   - The following files were added:
+     ./mfhdf/dumper/testfiles/Roy.nc: file to test skipping compression check
+      in a netCDF file
+     ./mfhdf/dumper/testfiles/dumpsds-18.out: output of testing netCDF file
+     ./hdf/test/tvnameclass.c: tests issues involving vgroup/vdata names/classes
+     BMR - 2011/1/21
+
+
+Support for new platforms and compilers
+=======================================
+   -  IBM XL Fortran for Linux 64-bit, V13.1 on Linux PowerPC 64
+      EIP - 2012-02-01
+
+Bugs fixed since HDF4.2.6
+=========================
+   Utilities
+   ========= 
+   - hrepack: Version HDF4 2.6 does not allow the combination of unlimited 
+     dimensions and compression, which is wrong. 
+   - Freeing incorrect buffers caused segfault.  It was previously commented
+     out, thus resulted in memory leaks.  This is now fixed.  (HDFFR-479)
+     BMR - 2011/11/3
+   - hdp: fixed to skip netCDF files when checking for compression.  (HDFFR-473)
+     BMR - 2011/11/1
+
+
+   Library
+   ========= 
+   - SDgetchunkinfo and SDreadchunk failed on an empty SDS when the file is
+     opened as read-only (HDFFR-171).  This is now fixed.
+     BMR - 2011/10/20
+   - SDcheckempty was fixed to return "empty" when detecting a pair of
+     DFTAG_SD/<valid ref> that is associated with offset=INVALID_OFFSET and
+     length=INVALID_LENGTH.
+     BMR - 2011/10/9
+   - Vgetclass and Vgetname were fixed to return vgclass and vgname with null
+     terminated character when the class or name is not set. (HDFFR-1288)
+     BMR - 2011/9/19
+
+
+   Configuration
+   =============
+   - [None]
+
+
+Documentation
+==============
+   - The Reference Manual and User's Guide have been updated to include 
+     new functions:
+     + VSgetexternalinfo and SDgetexternalinfo
+     + Vgisinternal
+     + Fortran wrappers vfgvgroups and vsfgvdatas
+     BMR - 2012/1/22
+
+
+Platforms tested
+================
+
+This version has been tested in the following platforms:
+
+   Linux 2.6.32-220.2.1         gcc (GCC) 4.4.6 20110731 (Red Hat 4.4.6-3)
+   .el6.ppc64 #1                GNU Fortran (GCC) 4.4.6 20110731 
+   SMP ppc64 GNU/Linux          IBM XL Fortran for Linux, V13.1 (64-bit mode)
+   (ostrich)
+
+   Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+      SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
+   (jam)                             (Red Hat 4.1.2-51)
+                                 pgcc and pgf90 11.8-0 32-bit target 
+                                 on x86 Linux -tp penryn
+                                 Intel(R) C Compiler, Version 12.0.4 20110427
+                                 Intel(R) Fortran Compiler, Version 12.0.4
+
+   Linux 2.6.18-274.17.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-51)
+      SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
+   (koala)                           (Red Hat 4.1.2-51)
+                                 icc (ICC) 12.0.4 20110427
+                                 ifort (IFORT) 12.0.4 20110427
+                                 pgcc and pgf90 11.8-0 64-bit target 
+                                 on x86-64 Linux -tp nehalem
+
+   SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 2010/08/11 
+   (linew)                       Sun Fortran 95 8.3 SunOS_sparc Patch 127000-13 2010/01/26
+
+   Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
+      #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073 20100806
+      SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
+   (ember)
+
+   Windows XP                    Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
+                                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 w/ Intel Fortran 12 (cmake)
+                                 Cygwin(1.7.9 native gcc(4.5.3) compiler and gfortran)
+
+   Windows XP x64                Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
+                                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 w/ Intel Fortran 12 (cmake)
+                                 Cygwin(1.7.9 native gcc(4.5.3) compiler and gfortran)
+
+   Windows 7                     Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 w/ Intel Fortran 12 (cmake)
+
+   Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 w/ Intel Fortran 12 (cmake)
+                                 
+   MAC OS X Intel 10.6.8         Darwin 10.8.0
+   (32 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+   (tejeda)                      GNU Fortran (GCC) 4.6.1
+                                 icc (ICC) 12.1.0 20110811
+                                 ifort (IFORT) 12.1.0 20110811
+
+   MAC OS X Intel 10.6.8         Darwin 10.8.0
+   (64 bit)                      icc (ICC) 12.1.0 20110811 
+   (fred)                        ifort (IFORT) 12.1.0 20110811 
+                                 i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+                                 GNU Fortran (GCC) 4.6.1
+                             
+
+    Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
+                                  gcc (Debian 4.4.5-8) 4.4.5
+                                  GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+    Debian6.0.3 2.6.32-5-amd64 #1 SMP x86_64 GNU/Linux
+                                  gcc (Debian 4.4.5-8) 4.4.5
+                                  GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+    Fedora15 2.6.41.4-1.fc15.i686.PAE #1 SMP i686 i686 i386 GNU/Linux
+                                  gcc (GCC) 4.6.1 20110908 (Red Hat 4.6.1-9)
+                                  GNU Fortran (GCC) 4.6.1 20110908 (Red Hat 4.6.1-9)
+
+    Fedora15 2.6.41.4-1.fc15.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
+                                  gcc (GCC) 4.6.1 20110908 (Red Hat 4.6.1-9)
+                                  GNU Fortran (GCC) 4.6.1 20110908 (Red Hat 4.6.1-9)
+
+    SUSE 11.4 2.6.37.6-0.9-desktop #1 SMP PREEMPT i686 i686 i386 GNU/Linux
+                                  gcc (SUSE Linux) 4.5.1 20101208
+                                  GNU Fortran (SUSE Linux) 4.5.1 20101208
+
+    SUSE 11.4 2.6.37.6-0.9-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
+                                  gcc (SUSE Linux) 4.5.1 20101208
+                                  GNU Fortran (SUSE Linux) 4.5.1 20101208
+
+    Ubuntu 11.10 3.0.0-14-generic #23-Ubuntu SMP i686 GNU/Linux
+                                  gcc (Ubuntu/Linaro 4.6.1-9ubuntu3) 4.6.1
+                                  GNU Fortran (Ubuntu/Linaro 4.6.4-9ubuntu3) 4.6.1
+
+    Ubuntu 11.10 3.0.0-14-generic #23-Ubuntu SMP x86_64 GNU/Linux
+                                  gcc (Ubuntu/Linaro 4.6.1-9ubuntu3) 4.6.1
+                                  GNU Fortran (Ubuntu/Linaro 4.6.1-9ubuntu3) 4.6.1
+
+
+Known problems
+==============
+
+o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization level. 
+
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+   fails when checking for the jpeglib.h header due to the duplicated
+   macro definition of HAVE_STDLIB_H.  This is because some newer builds
+   of jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc (e.g., V7.0) still fails but
+   newer xlc (e.g., V9.0) passes.  AKC - 2010/02/17
+
+o  When building on Linux/UNIX platforms, the szip shared library files must
+   be in the system library path. This can be done by adding a link to
+   the libsz.* files in the /usr/lib folder or by adding the library
+   location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+   
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale have
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might produce undesired results because the libraries could not
+   distinguish between the two objects.  In the case of writing, data
+   might even be corrupted.  For example, SDS data might be written to a
+   dimension variable or vice versa.
+
+   HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
+   and a dimension variable.  However, as with older versions, these recent
+   versions are unable to detect such conflicts in files created by earlier 
+   releases.  It is therefore STRONGLY recommended to check for such name 
+   duplication before working with data created with a pre-4.2r2 library.
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for
+   further details.
+
+o  This release does not support VMS systems.
+
+o  N-bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled 
+   with a PGI C compiler; linking with a JPEG library built with gcc causes 
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to 
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
+
+o  In order for the API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata) after being written and before SDgetdatasize is called.
+
 
 %%%4.2.6%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HDF version 4.2.6 released on 2011-06-15
