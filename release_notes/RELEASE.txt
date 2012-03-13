@@ -122,7 +122,11 @@ Bugs fixed since HDF4.2.6
 
    Configuration
    =============
-   - [None]
+   - configure.ac: compilers with paths or names containing '-' were added to
+     CFLAGS.  This issue was caused by a change in revision 5647, introduced
+     in version 4.2.6.  This issue (HDFFR-1310) is fixed in version 4.2.7-patch1 
+     by reverting the r 5647 change to configure.ac and configure that moved 
+     any flags in CC and F77 to CFLAGS and FFLAGS.  
 
 
 Documentation
