@@ -812,25 +812,25 @@ dnl Compiler with version information. This consists of the full path
 dnl name of the compiler and the reported version number.
 AC_SUBST([CC_VERSION])
 dnl Strip anything that looks like a flag off of $CC
-dnl Report anything stripped as a flag in CFLAGS and 
-dnl only the compiler in CC_VERSION.
 CC_NOFLAGS=`echo $CC | sed 's/ -.*//'`
-CFLAGS_TO_ADD=`echo $CC | grep - | sed 's/.* -/-/'`
-if test -n $CFLAGS_TO_ADD; then
-  CFLAGS="$CFLAGS_TO_ADD$CFLAGS"
-fi
 
 if `echo $CC_NOFLAGS | grep ^/ >/dev/null 2>&1`; then
-  CC_VERSION="$CC_NOFLAGS"
+  CC_VERSION="$CC"
 else
   CC_VERSION="$CC";
   for x in `echo $PATH | sed -e 's/:/ /g'`; do
     if test -x $x/$CC_NOFLAGS; then
-      CC_VERSION="$x/$CC_NOFLAGS"
+      CC_VERSION="$x/$CC"
       break
     fi
   done
 fi
+dnl This part doesn't work yet since HDF4 config files do not contain
+dnl information for cc_vendor and cc_version as HDF5 similar files do.
+dnl Needs to be fixed EIP 2010-01-21
+dnl if test -n "$cc_vendor" && test -n "$cc_version"; then
+dnl  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"
+dnl fi
 
 if test -n "$cc_version_info"; then
   CC_VERSION="$CC_VERSION ( $cc_version_info)"
@@ -840,21 +840,15 @@ dnl Fortran compiler with version information. This consists of the full path
 dnl name of the compiler and the reported version number.
 AC_SUBST([F77_VERSION])
 dnl Strip anything that looks like a flag off of $F77
-dnl Report anything stripped as a flag in RFLAGS and 
-dnl only the compiler in F77_VERSION.
 F77_NOFLAGS=`echo $F77 | sed 's/ -.*//'`
-FFLAGS_TO_ADD=`echo $F77 | grep - | sed 's/.* -/-/'`
-if test -n $FFLAGS_TO_ADD; then
- FFLAGS="$FFLAGS_TO_ADD$FFLAGS"
-fi
 
 if `echo $F77_NOFLAGS | grep ^/ >/dev/null 2>&1`; then
-  F77_VERSION="$F77_NOFLAGS"
+  F77_VERSION="$F77"
 else
   F77_VERSION="$F77";
   for x in `echo $PATH | sed -e 's/:/ /g'`; do
     if test -x $x/$F77_NOFLAGS; then
-      F77_VERSION="$x/$F77_NOFLAGS"
+      F77_VERSION="$x/$F77"
       break
     fi
   done
