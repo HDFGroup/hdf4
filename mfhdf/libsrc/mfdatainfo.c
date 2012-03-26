@@ -39,7 +39,7 @@ LOCAL ROUTINES
 --------------
   get_attr_tag        -- Convert the name of an attribute to its associated hdf tag
 
-******************************************************************************/
+ ******************************************************************************/
 
 #include "local_nc.h"
 #ifdef VMS
@@ -104,10 +104,10 @@ PRIVATE intn get_attr_tag(char *attr_name, uint16* attr_tag);
  MODIFICATION
     BMR - 2010/07/14: Revised to combine SDgetdatainfo and SDgetdatainfo_count
 
-******************************************************************************/
+ ******************************************************************************/
 intn
 SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
-              uintn info_count, int32 *offsetarray, int32 *lengtharray)
+        uintn info_count, int32 *offsetarray, int32 *lengtharray)
 {
     CONSTR(FUNC, "SDgetdatainfo");    /* for HGOTO_ERROR */
     NC     *handle;
@@ -122,19 +122,19 @@ SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
 
     /* Getting only offsets or lengths is not allowed */
     if ((offsetarray != NULL && lengtharray == NULL) ||
-        (offsetarray == NULL && lengtharray != NULL))
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+            (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Just in case user forgot to allocate buffers */
     if ((offsetarray == NULL && lengtharray == NULL) && (info_count > 0))
-  HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
+        HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
 
     /* Get NC_var record */
     handle = SDIhandle_from_id(sdsid, SDSTYPE);
     if(handle == NULL || handle->file_type != HDF_FILE)
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
     if(handle->vars == NULL)
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     var = SDIget_var(handle, sdsid);
     if(var == NULL)
@@ -143,35 +143,35 @@ SDgetdatainfo(int32 sdsid, int32 *chk_coord, uintn start_block,
     /* If the data ref# of the SDS is 0, there is no storage is created yet */
     if (var->data_ref == 0)
     {
-  count = 0; /* no blocks */
+        count = 0; /* no blocks */
     }
     else
     {
-  /* If both arrays are NULL, get the number of data blocks and return */
-  if (offsetarray == NULL && lengtharray == NULL)
-  {
-      count = HDgetdatainfo(handle->hdf_file, var->data_tag,
-    var->data_ref, chk_coord, start_block, info_count, NULL, NULL);
-      if (count == FAIL)
-    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-  }
+        /* If both arrays are NULL, get the number of data blocks and return */
+        if (offsetarray == NULL && lengtharray == NULL)
+        {
+            count = HDgetdatainfo(handle->hdf_file, var->data_tag,
+                    var->data_ref, chk_coord, start_block, info_count, NULL, NULL);
+            if (count == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
 
-  /* Application requests actual offsets/lengths */
-  else
-  {
-      count = HDgetdatainfo(handle->hdf_file, var->data_tag,
-    var->data_ref, chk_coord, start_block, info_count,
-    offsetarray, lengtharray);
-      if (count == FAIL)
-    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-  }
+        /* Application requests actual offsets/lengths */
+        else
+        {
+            count = HDgetdatainfo(handle->hdf_file, var->data_tag,
+                    var->data_ref, chk_coord, start_block, info_count,
+                    offsetarray, lengtharray);
+            if (count == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        }
     }
     /* Returning number of data blocks */
     ret_value = count;
-done:
+    done:
     if (ret_value == FAIL)
-      { /* Failure cleanup */
-      }
+    { /* Failure cleanup */
+    }
     /* Normal cleanup */
     return ret_value;
 } /* SDgetdatainfo */
@@ -208,7 +208,7 @@ done:
     2010/10/14: Revised to remove the parameter attrname because, for hmap
   project, it makes sense to just provide the attribute index. -BMR
 
-******************************************************************************/
+ ******************************************************************************/
 intn
 SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 {
@@ -217,19 +217,19 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     NC_var *var;
     NC_dim *dim;
     int32   vg_ref=0,  /* ref# of the VG representing a file, SDS, or dim */
-      n_elements,  /* number of elements in the file/SDS/dim vgroup */
-      vs_id=-1,  /* VS id, needed while looking for _HDF_ATTRIBUTE */
-      vg_id=-1,  /* id of the file/SDS/dimension vgroup */
-      var_idx;  /* index of the variable representing the given dim */
+            n_elements,  /* number of elements in the file/SDS/dim vgroup */
+            vs_id=-1,  /* VS id, needed while looking for _HDF_ATTRIBUTE */
+            vg_id=-1,  /* id of the file/SDS/dimension vgroup */
+            var_idx;  /* index of the variable representing the given dim */
     char    vsclass[H4_MAX_NC_CLASS] = "", /* vs class, is it _HDF_ATTRIBUTE? */
-      attrname[H4_MAX_NC_CLASS] = "",/* name of the given attribute */
-      vsname[H4_MAX_NC_CLASS] = "";  /* vs name to see if it's the inquired attr's name*/
+            attrname[H4_MAX_NC_CLASS] = "",/* name of the given attribute */
+            vsname[H4_MAX_NC_CLASS] = "";  /* vs name to see if it's the inquired attr's name*/
     int32   ntype=0,  /* need these because SDattrinfo doesn't... */
-      count=0;  /* ...take NULL pointers for not needed arguments */
+            count=0;  /* ...take NULL pointers for not needed arguments */
     int     ii;
     intn    status,  /* returned value */
-      found,  /* TRUE when attribute is found */
-      ret_value = SUCCEED;
+    found,  /* TRUE when attribute is found */
+    ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();
@@ -238,11 +238,11 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
 
     /* Both buffers must be allocated */
     if (offset == NULL || length == NULL)
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Index must be positive */
     if (attrindex < 0)
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Get the attribute's name */
     status = SDattrinfo(id, attrindex, attrname, &ntype, &count);
@@ -254,89 +254,89 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     /* not a file id */
     if(handle == NULL)
     {
-  /* then check if it's SDS id */
-  handle = SDIhandle_from_id(id, SDSTYPE);
-  /* not an SDS id */
-  if(handle == NULL)
-  {
-      /* then check if it's a dimension id */
-      handle = SDIhandle_from_id(id, DIMTYPE);
+        /* then check if it's SDS id */
+        handle = SDIhandle_from_id(id, SDSTYPE);
+        /* not an SDS id */
+        if(handle == NULL)
+        {
+            /* then check if it's a dimension id */
+            handle = SDIhandle_from_id(id, DIMTYPE);
 
-      /* not a dimension id either, return with an error */
-      if(handle == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+            /* not a dimension id either, return with an error */
+            if(handle == NULL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
-      /* dimension id is given, get the dimension info */
-      dim = SDIget_dim(handle, id);
-      if(dim == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+            /* dimension id is given, get the dimension info */
+            dim = SDIget_dim(handle, id);
+            if(dim == NULL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
-      /* look for the variable representing this dimension,
+            /* look for the variable representing this dimension,
        ie. coordinate variable */
-      var_idx = SDIgetcoordvar(handle, dim, id, (int32)0);
-      if(var_idx == FAIL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+            var_idx = SDIgetcoordvar(handle, dim, id, (int32)0);
+            if(var_idx == FAIL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
-      /* get the variable object */
-      var = NC_hlookupvar(handle, var_idx);
-      if(var == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+            /* get the variable object */
+            var = NC_hlookupvar(handle, var_idx);
+            if(var == NULL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
-      /* get the ref number of the vgroup representing this dim */
-      vg_ref = var->vgid;
+            /* get the ref number of the vgroup representing this dim */
+            vg_ref = var->vgid;
 
             /* If this dimension is not represented by a vgroup (old dimension,
                HDF 3.2, released in 1993) return to caller with error code
                DFE_NOVGREP so caller can call SDgetoldattdatainfo to get
                to its attributes directly from the file */
-      if (vg_ref == 0)
-    HGOTO_DONE(DFE_NOVGREP);
-  }
-  /* SDS id is given */
-  else
-  {
-      /* get the variable record */
-      if(handle->vars == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
-      var = SDIget_var(handle, id);
-      if(var == NULL)
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+            if (vg_ref == 0)
+                HGOTO_DONE(DFE_NOVGREP);
+        }
+        /* SDS id is given */
+        else
+        {
+            /* get the variable record */
+            if(handle->vars == NULL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
+            var = SDIget_var(handle, id);
+            if(var == NULL)
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
-      /* get the reference number of the vgroup representing this SDS */
-      vg_ref = var->vgid;
+            /* get the reference number of the vgroup representing this SDS */
+            vg_ref = var->vgid;
 
             /* If this data set is not represented by a vgroup (old data set,
                HDF 3.2, released in 1993) return to caller with error code
                DFE_NOVGREP so caller can call SDgetoldattdatainfo to get
                to its attributes directly from the file */
-      if (vg_ref == 0)
-    HGOTO_DONE(DFE_NOVGREP);
-  }
+            if (vg_ref == 0)
+                HGOTO_DONE(DFE_NOVGREP);
+        }
     }
     /* File id is given */
     else
     {
-  /* make sure it is an HDF file */
-  if(handle->file_type != HDF_FILE)
-      HGOTO_ERROR(DFE_ARGS, FAIL);
+        /* make sure it is an HDF file */
+        if(handle->file_type != HDF_FILE)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
 
-  /* get the reference number of the vgroup representing the file */
-  vg_ref = handle->vgid;
+        /* get the reference number of the vgroup representing the file */
+        vg_ref = handle->vgid;
 
         /* I believe file did not have the case of old pre-defined attributes,
      so no special handling for DFE_NOVGREP here. -BMR 2011/1/11 */
 
-  /* Validate the vgroup ref# */
-  if (vg_ref == 0) HGOTO_ERROR(DFE_ARGS, FAIL);
+        /* Validate the vgroup ref# */
+        if (vg_ref == 0) HGOTO_ERROR(DFE_ARGS, FAIL);
     }
 
     /* Get access to the vgroup and get the number of elements belong to it */
     vg_id = Vattach(handle->hdf_file, vg_ref, "r");
     if(vg_id == FAIL) 
-   HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+        HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     n_elements = Vntagrefs(vg_id);
     if (n_elements == FAIL)
-  HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     /* Look through the vgroup for vdatas of class _HDF_ATTRIBUTE.  If one is
        found, check to see if its name matches the searched attribute.  If it
@@ -345,68 +345,68 @@ SDgetattdatainfo(int32 id, int32 attrindex, int32 *offset, int32 *length)
     found = FALSE;
     for (ii = 0; ii < n_elements && !found; ii++) 
     {
-  int32 elem_tag, elem_ref;
+        int32 elem_tag, elem_ref;
 
-  /* get current tag/ref */
-  if (Vgettagref(vg_id, ii, &elem_tag, &elem_ref) == FAIL)
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      
-  /* current element is a vdata */
-  if(elem_tag == DFTAG_VH) 
-  {
-      vs_id = VSattach(handle->hdf_file, elem_ref, "r");
-      if(vs_id == FAIL) 
-     HGOTO_ERROR(DFE_CANTATTACH, FAIL);
-          
-      /* get the vdata's class */
-      if (VSgetclass(vs_id, vsclass) == FAIL)
-     HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        /* get current tag/ref */
+        if (Vgettagref(vg_id, ii, &elem_tag, &elem_ref) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-      /* current vdata represents an attribute */
-      if(!HDstrcmp(vsclass, _HDF_ATTRIBUTE)) 
-      {
-    /* get the vdata's name */
-    if (VSgetname(vs_id, vsname) == FAIL)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        /* current element is a vdata */
+        if(elem_tag == DFTAG_VH) 
+        {
+            vs_id = VSattach(handle->hdf_file, elem_ref, "r");
+            if(vs_id == FAIL) 
+                HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-    /* the searched attribute if found */
-    if (!HDstrcmp(attrname, vsname))
-    {
-        intn info_count=0;
+            /* get the vdata's class */
+            if (VSgetclass(vs_id, vsclass) == FAIL)
+                HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-        /* get offset/length of attribute's data */
-        info_count = VSgetdatainfo(vs_id, 0, 1, offset, length);
+            /* current vdata represents an attribute */
+            if(!HDstrcmp(vsclass, _HDF_ATTRIBUTE)) 
+            {
+                /* get the vdata's name */
+                if (VSgetname(vs_id, vsname) == FAIL)
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-        /* attribute data should only be in 1 block */
-        if (info_count != 1) /* attribute data should only be in 1 block */
-      HGOTO_ERROR(DFE_INTERNAL, FAIL);
+                /* the searched attribute if found */
+                if (!HDstrcmp(attrname, vsname))
+                {
+                    intn info_count=0;
 
-        /* set flag to terminate the search, and return info count*/
-        found = TRUE;
-        ret_value = info_count;
-    }
-      }
-      /* Close access to vdata */
-      if (VSdetach(vs_id) == FAIL)
-    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
-      vs_id = -1;
-  }
+                    /* get offset/length of attribute's data */
+                    info_count = VSgetdatainfo(vs_id, 0, 1, offset, length);
+
+                    /* attribute data should only be in 1 block */
+                    if (info_count != 1) /* attribute data should only be in 1 block */
+                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+                    /* set flag to terminate the search, and return info count*/
+                    found = TRUE;
+                    ret_value = info_count;
+                }
+            }
+            /* Close access to vdata */
+            if (VSdetach(vs_id) == FAIL)
+                HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+            vs_id = -1;
+        }
     }
     /* Close access to the vgroup */
     if (Vdetach(vg_id) == FAIL)
-         HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+        HGOTO_ERROR(DFE_CANTDETACH, FAIL);
 
-done:
+    done:
     if (ret_value == FAIL)
-      { /* Failure cleanup */
-  if (vs_id != -1)
-      if (VSdetach(vs_id) == FAIL)
-    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
-  if (vg_id != -1)
-      if (Vdetach(vg_id) == FAIL)
-    HGOTO_ERROR(DFE_CANTDETACH, FAIL);
-      }
-     /* Normal cleanup */
+    { /* Failure cleanup */
+        if (vs_id != -1)
+            if (VSdetach(vs_id) == FAIL)
+                HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+        if (vg_id != -1)
+            if (Vdetach(vg_id) == FAIL)
+                HGOTO_ERROR(DFE_CANTDETACH, FAIL);
+    }
+    /* Normal cleanup */
 
     return ret_value;
 } /* SDgetattdatainfo */
@@ -432,8 +432,8 @@ done:
 
     This function gives the associated tag of an attributes so that
     application can use tag/ref to read the attribute string.
- 
-******************************************************************************/
+
+ ******************************************************************************/
 PRIVATE intn 
 get_attr_tag(char *attr_name, uint16* attr_tag)
 {
@@ -448,21 +448,21 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
     else if (HDstrcmp(_HDF_CoordSys, attr_name) == 0)
         *attr_tag = DFTAG_SDC;
     else if ((HDstrcmp(_HDF_ValidMin, attr_name) == 0) ||
-             (HDstrcmp(_HDF_ValidMax, attr_name) == 0) ||
-             (HDstrcmp(_HDF_ValidRange, attr_name) == 0))
+            (HDstrcmp(_HDF_ValidMax, attr_name) == 0) ||
+            (HDstrcmp(_HDF_ValidRange, attr_name) == 0))
         *attr_tag = DFTAG_SDM;
     else if (HDstrcmp(_FillValue, attr_name) == 0)
-  *attr_tag = DFTAG_FV;
+        *attr_tag = DFTAG_FV;
     else if ((HDstrcmp(_HDF_CalibratedNt, attr_name) == 0)
-   || (HDstrcmp(_HDF_ScaleFactor, attr_name) == 0)
-   || (HDstrcmp(_HDF_ScaleFactorErr, attr_name) == 0)
-   || (HDstrcmp(_HDF_AddOffset, attr_name) == 0)
-   || (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0))
-  *attr_tag = DFTAG_CAL;
+            || (HDstrcmp(_HDF_ScaleFactor, attr_name) == 0)
+            || (HDstrcmp(_HDF_ScaleFactorErr, attr_name) == 0)
+            || (HDstrcmp(_HDF_AddOffset, attr_name) == 0)
+            || (HDstrcmp(_HDF_AddOffsetErr, attr_name) == 0))
+        *attr_tag = DFTAG_CAL;
     /* We need to decide how to handle this attribute when we see it...
     else 
             case DFTAG_SDLNK:
-    */
+     */
     else
     {
         ret_value = FAIL;
@@ -498,7 +498,7 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
   DFTAG_SDL for Labels attribute
   DFTAG_SDU for Units attribute
   ...
- 
+
     SDgetoldattdatainfo retrieves the offset and length of the attribute that
     belongs to a data set or a dimension.  Note that only Label, Units, and
     Format (LUF) are applicable to dimensions.  The other attributes are only
@@ -515,7 +515,7 @@ get_attr_tag(char *attr_name, uint16* attr_tag)
  MODIFICATION
     2011/1/11: Revised to handle offset/length of SDS' attribute too. -BMR
 
-******************************************************************************/
+ ******************************************************************************/
 intn
 SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
         int32 *offset, int32 *length)
@@ -692,7 +692,7 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
     }
     if (lufbuf) HDfree(lufbuf);
 
-done:
+    done:
     if (ret_value == FAIL)
     { /* Failure cleanup */
         if (lufbuf) HDfree(lufbuf);
@@ -733,36 +733,36 @@ done:
     another parameter to allow retrieving partial annotations.
     -BMR 2011/1/9
 
-******************************************************************************/
+ ******************************************************************************/
 intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offsetarray, int32* lengtharray)
 {
     CONSTR(FUNC, "SDgetanndatainfo");
     int32   file_id=FAIL,  /* file, AN API, annotation IDs */
-      an_id=FAIL,
-      ann_id=FAIL;
+            an_id=FAIL,
+            ann_id=FAIL;
     NC     *handle = NULL;  /* file structure */
     NC_var *var = NULL;    /* variable structure of sds, to get NDG ref */
     int32  *dannots = NULL,  /* list of data annotation IDs */
-      n_flabels = 0,  /* number of file labels */
-      n_fdescs = 0,  /* number of file descriptions */
-      n_dlabels = 0,  /* number of object labels */
-      n_ddescs = 0;  /* number of file descriptions */
+            n_flabels = 0,  /* number of file labels */
+            n_fdescs = 0,  /* number of file descriptions */
+            n_dlabels = 0,  /* number of object labels */
+            n_ddescs = 0;  /* number of file descriptions */
     uint16  elem_tag, elem_ref; /* tag/ref of dataset's NDG */
     intn    num_annots,    /* number of annotation of requested type */
-            ii,
-            ret_value = 0;
+    ii,
+    ret_value = 0;
 
     /* Clear error stack */
     HEclear();
 
     /* Validate array size */
     if (size == 0 && (offsetarray != NULL && lengtharray != NULL))
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Getting only offsets or lengths is not allowed */
     if ((offsetarray != NULL && lengtharray == NULL) ||
-        (offsetarray == NULL && lengtharray != NULL))
-  HGOTO_ERROR(DFE_ARGS, FAIL);
+            (offsetarray == NULL && lengtharray != NULL))
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Check if the given id is a file id */
     handle = SDIhandle_from_id(sdsid, CDFTYPE);
@@ -778,50 +778,50 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 
         /* Validate annotation type */
         if (annot_type != AN_FILE_LABEL && annot_type != AN_FILE_DESC)
-      HGOTO_ERROR(DFE_ARGS, FAIL);
+            HGOTO_ERROR(DFE_ARGS, FAIL);
 
-  /* Get numbers of file annotations */
+        /* Get numbers of file annotations */
         ret_value = ANfileinfo(an_id, &n_flabels, &n_fdescs, &n_dlabels, &n_ddescs);
-  if (ret_value == FAIL)
+        if (ret_value == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-  if (annot_type == AN_FILE_LABEL)
-      num_annots = n_flabels;
-  else
-      num_annots = n_fdescs;
+        if (annot_type == AN_FILE_LABEL)
+            num_annots = n_flabels;
+        else
+            num_annots = n_fdescs;
 
-  if (num_annots < 0)
+        if (num_annots < 0)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
         /* If offsets and lengths are not desired, return the number of annots */
         if (offsetarray == NULL || lengtharray == NULL)
-      HGOTO_DONE(num_annots);
+            HGOTO_DONE(num_annots);
 
         /* If more annotations than space in user's buffers, only fill up buffers */
         if ((uintn)num_annots > size)
             num_annots = size;
 
         /* Get offset/length of each annotation of the specified type */
-  for (ii = 0; ii < num_annots; ii++)
-  {
-      intn status;
+        for (ii = 0; ii < num_annots; ii++)
+        {
+            intn status;
 
-      /* Get access to an annotation of the specified type */
-      ann_id = ANselect(an_id, ii, annot_type);
-      if (ann_id == FAIL)
+            /* Get access to an annotation of the specified type */
+            ann_id = ANselect(an_id, ii, annot_type);
+            if (ann_id == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
             /* Get annotation's offset and length */
             ret_value = ANgetdatainfo(ann_id, &offsetarray[ii], &lengtharray[ii]);
-      /* Close the annotation (now, just in case ANgetdatainfo failed) */
-      status = ANendaccess(ann_id);
+            /* Close the annotation (now, just in case ANgetdatainfo failed) */
+            status = ANendaccess(ann_id);
 
-      if (ret_value == FAIL)
+            if (ret_value == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-      if (status == FAIL)
+            if (status == FAIL)
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-  }
+        }
     }
     /* Not a file ID */
     else
@@ -832,7 +832,7 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
         {
             /* Validate annotation type */
             if (annot_type != AN_DATA_LABEL && annot_type != AN_DATA_DESC)
-          HGOTO_ERROR(DFE_ARGS, FAIL);
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
             /* Get the NDG ref of this dataset */
             elem_ref = SDidtoref(sdsid);
@@ -840,7 +840,7 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 
             /* If this var doesn't have a valid NDG ref, we cannot proceed */
             if (elem_ref <= 0)
-          HGOTO_ERROR(DFE_ARGS, FAIL);
+                HGOTO_ERROR(DFE_ARGS, FAIL);
 
             /* Open file to start Annotation inteface */
             if ((file_id = Hopen(handle->path, DFACC_READ, 0)) == FAIL)
@@ -852,19 +852,19 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
             num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
             if (num_annots == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL)
-            else if (num_annots == 0) /* then try SDG */
-      {
-    elem_tag = DFTAG_SDG;
-    num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
+                else if (num_annots == 0) /* then try SDG */
+                {
+                    elem_tag = DFTAG_SDG;
+                    num_annots = ANnumann(an_id, annot_type, elem_tag, elem_ref);
 
-    /* If there are no SDG annotations either then return 0 */
-    if (num_annots == 0)
-              HGOTO_DONE(0);
-      }
+                    /* If there are no SDG annotations either then return 0 */
+                    if (num_annots == 0)
+                        HGOTO_DONE(0);
+                }
 
             /* If offsets/lengths are not desired, return the number of annots */
             if (offsetarray == NULL || lengtharray == NULL)
-          HGOTO_DONE(num_annots);
+                HGOTO_DONE(num_annots);
 
             /* If more annotations than space in user's buffers, only fill up buffers */
             if (num_annots > size)
@@ -872,12 +872,12 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
 
             /* Allocate space for list of annotation IDs on this tag/ref */
             if ((dannots = (int32 *)HDmalloc(num_annots * sizeof(int32))) == NULL)
-          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
             /* Get list of annotations IDs on this tag/ref */
             if (ANannlist(an_id, annot_type, elem_tag, elem_ref, dannots) == FAIL)
                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      /* Note: these ann IDs seem to be closed by HAdestroy_group() but
+            /* Note: these ann IDs seem to be closed by HAdestroy_group() but
     I'm not sure.  MFAN needs to take care of them if not. -BMR */
 
             /* Loop through the annotation list and get their offsets/lengths */
@@ -885,7 +885,7 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
             {
                 /* Get annotation's offset and length */
                 ret_value = ANgetdatainfo(dannots[ii], &offsetarray[ii], &lengtharray[ii]);
-          if (ret_value == FAIL)
+                if (ret_value == FAIL)
                     HGOTO_ERROR(DFE_INTERNAL, FAIL);
             }
         } /* ID is an SDS */
@@ -894,11 +894,11 @@ intn SDgetanndatainfo(int32 sdsid, ann_type annot_type, uintn size, int32* offse
     /* Return the number of annotations retrieved */
     ret_value = num_annots;
 
-done:
+    done:
     if (ret_value == FAIL)
-      { /* Failure cleanup */
-      }
-     /* Normal cleanup */
+    { /* Failure cleanup */
+    }
+    /* Normal cleanup */
 
     /* Release allocated memory */
     if (dannots) HDfree(dannots);
