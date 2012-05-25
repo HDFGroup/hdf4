@@ -6,6 +6,7 @@ SET (CTEST_CUSTOM_WARNING_EXCEPTION
     "jpeg.src.*:[ \t]*warning"
     "POSIX name for this item is deprecated"
     "disabling jobserver mode"
+    "config.cmake.xlatefile.c"
 )
  
  
