@@ -148,6 +148,9 @@ INSTALL (
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
 IF (HDF4_EXPORTED_TARGETS)
+
+  INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+  
   INSTALL (
       TARGETS 
           ${HDF4_SRC_LIB_TARGET}

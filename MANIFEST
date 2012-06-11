@@ -1148,11 +1148,9 @@
 ./config/cmake/runTest.cmake
 ./config/cmake/HDFMacros.cmake
 ./config/cmake/HDFLibMacros.cmake
-./config/cmake/ConversionTests.c
 ./config/cmake/CheckTypeSize.cmake
 ./config/cmake/h4config.h.in
 ./config/cmake/xlatefile.c
-./config/cmake/GetTimeOfDayTest.c
 ./config/cmake/HDFTests.c
 ./config/cmake/FindHDF4.cmake
 ./config/cmake/FindSZIP.cmake

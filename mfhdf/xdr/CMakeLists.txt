@@ -34,6 +34,9 @@ H4_SET_LIB_OPTIONS (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_MF_XDR_LIB_NAME} ${LIB_TYPE
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
+
+INSTALL_TARGET_PDB (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+  
 INSTALL (
     TARGETS 
         ${HDF4_MF_XDR_LIB_TARGET}

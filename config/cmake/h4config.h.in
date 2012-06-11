@@ -114,11 +114,14 @@
 /* Define to the one symbol short name of this package. */
 #define H4_PACKAGE_TARNAME "@HDF4_PACKAGE_TARNAME@"
 
+/* Define to the home page for this package. */
+#define H4_PACKAGE_URL "@HDF4_PACKAGE_URL@"
+
 /* Define to the version of this package. */
 #define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION@"
 
 /* The size of `int*', as computed by sizeof. */
-#define H4_SIZEOF_INTP @H4_SIZEOF_INTP@
+#cmakedefine H4_SIZEOF_INTP @H4_SIZEOF_INTP@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine H4_STDC_HEADERS @H4_STDC_HEADERS@
@@ -133,10 +136,5 @@
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 #cmakedefine H4_YYTEXT_POINTER @H4_YYTEXT_POINTER@
-
-/* Visual Studio 2005 doesn't support size of setvbuf to be less than 1.
- * This is a hacking, we would like to wait for Visual Studio 2005 to fix this 
- * problem. */
-#define @H4_HDSETVBUF@
 
 #endif

@@ -603,6 +603,26 @@ ENDIF (BUILD_TESTING)
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
+
+INSTALL_PROGRAM_PDB (gif2hdf ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdf2gif ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdf2jpeg ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdf24to8 ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdf8to24 ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdfcomp ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdfed ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdfls ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdfpack ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdftopal ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdftor8 ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (hdfunpac ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (jpeg2hdf ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (paltohdf ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (r8tohdf ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (ristosds ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (vmake ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+INSTALL_PROGRAM_PDB (vshow ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+  
 INSTALL (
     TARGETS
         gif2hdf

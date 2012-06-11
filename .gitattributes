@@ -13,11 +13,9 @@ config/cmake/CPack.cmake -text
 config/cmake/CTestCustom.cmake -text
 config/cmake/CheckTypeSize.cmake -text
 config/cmake/ConfigureChecks.cmake -text
-config/cmake/ConversionTests.c -text
 config/cmake/FindHDF4.cmake -text
 config/cmake/FindMPI.cmake -text
 config/cmake/FindSZIP.cmake -text
-config/cmake/GetTimeOfDayTest.c -text
 config/cmake/HDF4Macros.cmake -text
 config/cmake/HDF4UseFortran.cmake -text
 config/cmake/HDFLibMacros.cmake -text

@@ -187,6 +187,9 @@ ENDIF (WIN32 AND NOT CYGWIN)
   #-----------------------------------------------------------------------------
   # Add file(s) to CMake Install
   #-----------------------------------------------------------------------------
+
+  INSTALL_PROGRAM_PDB (ncgen ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+
   INSTALL (
       TARGETS
           ncgen

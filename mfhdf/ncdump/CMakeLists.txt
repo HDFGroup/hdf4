@@ -93,6 +93,9 @@ ENDIF (BUILD_TESTING)
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
+
+INSTALL_PROGRAM_PDB (ncdump ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+
 INSTALL (
     TARGETS
         ncdump
