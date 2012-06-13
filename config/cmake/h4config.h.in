@@ -137,4 +137,7 @@
    `char[]'. */
 #cmakedefine H4_YYTEXT_POINTER @H4_YYTEXT_POINTER@
 
+/* This define is set in the root CMakeLists.txt file to the correct construction. */
+#define @H4_HDSETVBUF@
+
 #endif
