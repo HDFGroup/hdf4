@@ -630,6 +630,8 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
          the attribute string to get the appropriate dimension's attribute */
         else
         {
+            char *dim_att=NULL; /* to hold a dimension's attribute */
+
             /* Move cursor forward to the first dimension's attribute */
             lufp += sdsluf_len + 1;
 
@@ -647,8 +649,6 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
             offp = 0; /* offset pointer */
             for (ii = 0; ii <= dimidx_invar; ii++)
             {
-                char *dim_att=NULL; /* to hold a dimension's attribute */
-
                 /* NOTE: Should make tests for all cases to make sure all
                      empty attributes are covered -BMR */
 
@@ -677,7 +677,11 @@ SDgetoldattdatainfo(int32 dim_id, int32 sdsid, char  *attr_name,
                     /* add the length to the offset so far */
                     offp += dim_att_len + 1;
                 }
-                if (dim_att != NULL) HDfree(dim_att);
+                if (dim_att != NULL)
+                {
+                    HDfree(dim_att);
+                    dim_att = NULL;
+                }
             }
 
             /* Calculate offset and length of the requested dimension's luf   */
