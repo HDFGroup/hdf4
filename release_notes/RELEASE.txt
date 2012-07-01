@@ -69,7 +69,12 @@ Bugs fixed since HDF 4.2.7
 =========================
    Configuration
    =============
-   - [None]
+   - The USE_ENUM in mfhdf/libsrc/netcdf.h, which is copied from
+     config/netcdf-apple.h, which generated an error due to xdr_enum overwrote
+     memory outside of its designated enum variable. This happened only to the
+     apple provided compiler (i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1).
+     We decided to not define USE_ENUM for all apple OS for now. (HDFFR-1318)
+     AKC - 2012/07/01
 
    Library
    ========= 
