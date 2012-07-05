@@ -6,6 +6,9 @@
 
 include $(top_srcdir)/config/commence.am
 
+## Setup the different includes and preprocessor #defines we need.
+INCLUDES=-I$(top_srcdir)/hdf/src
+
 # XDR Library
 lib_LTLIBRARIES = libxdr.la
 libxdr_la_SOURCES = xdr.c xdrfloat.c xdrstdio.c xdrarray.c
