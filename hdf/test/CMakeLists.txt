@@ -81,6 +81,7 @@ SET (HDF4_REFERENCE_TEST_FILES
     nbit.dat
     tmgr.dat
     tvattr.dat
+    grtdfui83.hdf
 )
 
 FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
@@ -117,7 +118,6 @@ ADD_TEST (
         gr_gzip.hdf
         gr_jpeg.hdf
         gr_r8.hdf
-        grtdfui83.hdf
         nntcheck.hdf
         ntcheck.hdf
         RI_8.hdf
