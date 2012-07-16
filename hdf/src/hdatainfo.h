@@ -13,18 +13,24 @@
 
 /* $Id: hproto.h 5400 2010-04-22 03:45:32Z bmribler $ */
 
-#ifndef HDATAINFO_H
-#define HDATAINFO_H
+#ifndef _HDATAINFO_H
+#define _HDATAINFO_H
 
 #include "H4api_adpt.h"
-
-/* Activate raw datainfo interface - added for hmap project in 2010 */
-#if defined DATAINFO_MASTER || defined DATAINFO_TESTER
 
 #if defined c_plusplus || defined __cplusplus
 extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
+
+/* Structure that holds a data descriptor.  First added for GRgetpalinfo. */
+typedef struct hdf_ddinfo_t
+{
+    uint16 tag;
+    uint16 ref;
+    int32 offset;
+    int32 length;
+} hdf_ddinfo_t;
 
 /* Public functions for getting raw data information */
 
@@ -53,13 +59,10 @@ extern      "C"
     HDFLIBAPI intn GRgetattdatainfo
 		(int32 id, int32 attrindex, int32 *offset, int32 *length);
 
-    /* For temporary use by hmap writer to detect IMCOMP.  -BMR, Mar 11, 2011 */
-    HDFLIBAPI intn grgetcomptype
-		(int32 riid, int32 *comp_type);
+    HDFLIBAPI intn GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array);
 
 #if defined c_plusplus || defined __cplusplus
 }
 #endif				/* c_plusplus || __cplusplus */
-#endif				/* DATAINFO_MASTER || DATAINFO_TESTER */
-#endif                          /* _H_DATAINFO */
+#endif                          /* _HDATAINFO */
 

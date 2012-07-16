@@ -52,10 +52,6 @@ LOW-LEVEL ROUTINES
 #define MFAN_MASTER	/* for ANgetdatainfo */
 #endif			/* mfan.h is included here */
 
-#ifndef DATAINFO_MASTER
-#define DATAINFO_MASTER	/* to include hdatainfo.h */
-#endif
-
 #include "hdf.h"
 #include "hlimits.h"
 #include "vgint.h"
@@ -944,6 +940,125 @@ done:
   /* Normal function cleanup */
   return ret_value;
 }   /* GRgetdatainfo */
+
+
+/*--------------------------------------------------------------- 
+NAME
+    GRgetpalinfo - Gets the palette data descriptors (DDs) in the
+		   file (i.e., palette tags, refs, offsets, and lengths)
+USAGE
+    intn GRgetpalinfo(gr_id, pal_count, palinfo_array)
+        int32 gr_id		IN: GR interface ID
+	uintn pal_count		IN: number of palette DDs to get
+	hdf_ddinfo_t *palinfo_array	OUT: array of palette DDs
+RETURNS
+    The number of palette DDs in the file or the actual number of palette
+    DDs retrieved, if successful, and FAIL, otherwise.
+
+DESCRIPTION
+    If the caller only requests the number of palette tags in the file,
+    i.e., when palinfo_array is NULL and pal_count is 0, we will simply
+    return the number of palette tags, including both DFTAG_IP8 and
+    DFTAG_LUT, without further processing.
+
+    Otherwise, the function will search the file for all tags DFTAG_IP8
+    and DFTAG_LUT, then retrieve the palette data information into the
+    provided array of structures.
+
+    -BMR 2012/6/19
+----------------------------------------------------------------*/
+intn 
+GRgetpalinfo(int32 gr_id, uintn pal_count, hdf_ddinfo_t *palinfo_array)
+{
+    CONSTR(FUNC, "GRgetpalinfo");
+    gr_info_t *gr_ptr;
+    int32 file_id;
+    int32 nbytes = 0;
+    int32 aid = FAIL;
+    intn  idx;
+    uintn count;
+    intn  ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* check the validity of the GR ID */
+    if (HAatom_group(gr_id)!=GRIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* locate GR's object in hash table */
+    if (NULL == (gr_ptr = (gr_info_t *) HAatom_object(gr_id)))
+        HGOTO_ERROR(DFE_GRNOTFOUND, FAIL);
+
+    file_id = gr_ptr->hdf_file_id; /* alias of the file id */
+
+    /* Validate array size.  Fail when count is a pos number but the array is
+       NULL, or when count is a neg number */
+    if ((pal_count > 0 && palinfo_array == NULL) || pal_count < 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* If only the number of palette tags is interested, return that */
+    if (pal_count == 0 && palinfo_array == NULL)
+    {
+	int32 n_IP8s = 0, n_LUTs = 0;
+
+	n_IP8s = Hnumber(file_id, DFTAG_IP8);
+	n_LUTs = Hnumber(file_id, DFTAG_LUT);
+	if (n_IP8s == FAIL || n_LUTs == FAIL)
+	{   HGOTO_ERROR(DFE_INTERNAL, FAIL); }
+	else 
+	    return(n_IP8s + n_LUTs);
+    }
+
+    /* Application requests data info of palettes.  Start checking tags in
+       the file and when a palette tag is encountered, retrieve its DD.  The
+       process continues until no more tags/refs in the file or the maxinum
+       size of the provided array is reached */
+    idx = 0;
+    ret_value = aid = Hstartread(file_id, DFTAG_WILDCARD, DFREF_WILDCARD);
+    while (ret_value != FAIL && idx < pal_count)
+    {
+	uint16 tag;
+
+	/* Get tag of this element */
+	ret_value = Hinquire(aid, NULL, &tag, NULL,NULL,NULL,NULL,NULL,NULL);
+	if (ret_value == FAIL)
+	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	if (tag == DFTAG_IP8 || tag == DFTAG_LUT)
+	{ /* a palette tag is found */
+
+	    /* Get the palette's data info */
+	    ret_value = Hinquire(aid, NULL, &palinfo_array[idx].tag,
+		&palinfo_array[idx].ref, &palinfo_array[idx].length,
+		&palinfo_array[idx].offset, NULL, NULL, NULL);
+	    if (ret_value == FAIL)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	    /* Move to next element in the array */
+	    idx++;
+	} /* a palette tag is found */
+
+	/* Get next element */
+	ret_value = Hnextread(aid, DFTAG_WILDCARD, DFREF_WILDCARD, DF_CURRENT);
+    } /* get data info of palettes */
+
+    /* Close access id */
+    if (aid != FAIL)
+	if (Hendaccess(aid) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+    ret_value = idx;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+      if (aid != FAIL)
+          Hendaccess(aid);
+    } /* end if */
+  /* Normal function cleanup */
+  return ret_value;
+}   /* GRgetpalinfo */
 
 
 /*--------------------------------------------------------------------------

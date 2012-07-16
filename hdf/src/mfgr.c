@@ -168,7 +168,6 @@ MODIFICATION HISTORY
  */
 
 #define MFGR_MASTER
-#define DATAINFO_MASTER
 #include "hdf.h"
 #include "hlimits.h"
 

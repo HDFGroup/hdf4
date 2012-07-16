@@ -22,10 +22,6 @@
  * -BMR, Aug 2010
  ****************************************************************************/
 
-#ifndef DATAINFO_TESTER
-#define DATAINFO_TESTER	/* to include hdatainfo.h */
-#endif
-
 #include "hdf.h"
 #include "tdatainfo.h"
 #include "tutils.h"

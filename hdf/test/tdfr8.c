@@ -14,11 +14,6 @@
  * tdfr8.c - test file for images of DFR8 API
  *************************************************************************/
 
-#ifndef DATAINFO_TESTER
-#define DATAINFO_TESTER    /* to use DATAINFO features, i.e., grgetcomptype, */
-#endif			   /* which is specifically for hmap project only    */
-			   /* until further decision can be made */
-
 #include "hdf.h"
 #include "tproto.h"	/* for utility macros */
 

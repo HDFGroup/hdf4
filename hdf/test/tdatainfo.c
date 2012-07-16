@@ -25,10 +25,6 @@
  *	test_getntinfo   - test Hgetntinfo
  ****************************************************************************/
 
-#ifndef DATAINFO_TESTER
-#define DATAINFO_TESTER /* to include hdatainfo.h */
-#endif
-
 #ifndef MFAN_TESTER
 #define MFAN_TESTER	/* to use MFAN API */
 #endif
@@ -43,6 +39,7 @@ static void test_annotation();
 static void test_oneblock_ri();
 static void test_dfr8_24();
 static void test_getntinfo();
+static void test_getpalinfo();
 
 /***********************************************************************
   NOTE: At this time, some of the offsets in these tests are verified
@@ -276,7 +273,8 @@ test_simple_vs()
 
 #ifdef NOTUSED
     /* Allocate space to record the vdata's data info */
-    alloc_info(&vs_info, n_blocks);
+    if (alloc_info(&vs_info, n_blocks) == -1)
+        exit(1);
 
     /* Record various info */
     vs_info.n_values = 5;
@@ -417,7 +415,8 @@ test_append_vs()
     CHECK_VOID(n_blocks, FAIL, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
-    alloc_info(&vs_info, n_blocks);
+    if (alloc_info(&vs_info, n_blocks) == -1)
+        exit(1);
 
     /* Get offset and lengths of the data */
     n_blocks = VSgetdatainfo(apvsid, 0, n_blocks, vs_info.offsets, vs_info.lengths);
@@ -466,7 +465,8 @@ test_append_vs()
     VERIFY_VOID(n_blocks, 3, "VSgetdatainfo");
 
     /* Allocate space to record the vdata's data info */
-    alloc_info(&vs_info, n_blocks);
+    if (alloc_info(&vs_info, n_blocks) == -1)
+        exit(1);
 
     /* Record various info to be used in verifying data later */
     vs_info.n_values = 30;
@@ -1121,7 +1121,361 @@ test_dfr8_24()
     CHECK_VOID(status, FAIL, "GRend");
     status = Hclose(fid);
     CHECK_VOID(status, FAIL, "Hclose");
-}  /* test_dfr8 */
+}  /* test_dfr8_24 */
+
+ /* intn check_dds(char *fname, char *msg)
+ */ 
+intn check_dds(int32 grid, char *msg)
+{
+    intn n_pals = 0;
+    hdf_ddinfo_t *palinfo_array = NULL;
+    uint8 *inbuf;
+    intn  status;       /* status returned from routines */
+    intn ii, jj;        /* indices */
+
+    n_pals = 0;
+    n_pals = GRgetpalinfo(grid, 0, NULL);
+    CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
+
+    palinfo_array = (hdf_ddinfo_t *) HDmalloc(n_pals * sizeof(hdf_ddinfo_t));
+    CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
+
+    n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
+    CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
+
+    fprintf(stderr, "GRgetpalinfo return pal count = %d\n", n_pals);
+    fprintf(stderr, "tag    ref    offset  length \n");
+    for (ii = 0; ii < n_pals; ii++)
+       fprintf(stderr, "%d    %d      %d       %d\n", palinfo_array[ii].tag,
+    palinfo_array[ii].ref, palinfo_array[ii].offset, palinfo_array[ii].length);
+
+    return 0;
+}
+
+
+/*************************************************************************
+ test_getpalinfo() - tests GRgetpalinfo
+ Need documentation
+**************************************************************************/
+#define  IMAGE_DFPAL_FILE  "tdatainfo_pal.hdf"
+#define  IMAGE_WITH_PAL    "GR Image with Palette"
+#define  IMAGE2_WITH_PAL   "Second GR Image w/pal"
+#define  ANO_IMAGE_NAME    "ANO_IMAGE_NAME"
+#define  LASTIMAGE_NOPAL   "Last GR Image: no pal"
+#define  N_COMPS_IMG       2       /* number of image components */
+#define  N_ENTRIES         256     /* number of entries in the palette */
+#define  N_COMPS_PAL       3       /* number of palette's components */
+
+static void
+test_getpalinfo()
+{
+    int32 fid, grid,	/* file ID and GR interface ID */
+	  riid, palid,  /* raster image ID and palette ID */
+          interlace_mode, 
+          start[2],     /* where to start to write for each dimension  */
+          edges[2],     /* specifies how long to write for each dimension */
+          dim_sizes[2];  /* sizes of the two dimensions of the image array */
+    uint8 image_buf[WIDTH][LENGTH][N_COMPS_IMG]; /* data of raster image */
+    uint8 palette_buf1[N_ENTRIES][N_COMPS_PAL];  /* for LUT mostly */
+    uint8 palette_buf2[N_ENTRIES][N_COMPS_PAL];
+    uint8 paletteA[N_ENTRIES*N_COMPS_PAL],  /* for IP8 mostly */
+	  paletteB[N_ENTRIES*N_COMPS_PAL],
+	  paletteD[N_ENTRIES*N_COMPS_PAL];
+    intn  n_pals = 0; /* number of palettes, returned by DFPnpals and GRgetpalinfo */
+    hdf_ddinfo_t *palinfo_array = NULL; /* list of palette DDs */
+    uint8 *inbuf;	/* palette data read back in */
+    intn ii, jj;	/* indices */
+    intn  status;	/* status returned from routines */
+     
+    /* Palettes are added in the following means and order:
+	paletteA (DFPputpal)
+	paletteB (DFPputpal)
+	paletteA (DFR8setpalette/DFR8addimage)
+	palette_buf1 (GRwritelut) for image named IMAGE_WITH_PAL
+	palette_buf2 (GRwritelut) for image named IMAGE2_WITH_PAL
+	paletteB (DFR8setpalette/DFR8addimage)
+	paletteD (DFPputpal)
+	paletteB (DFPputpal)
+	paletteD (DFPputpal)
+	palette_buf2 (GRwritelut) for image named IMAGE2_WITH_PAL
+	paletteD (DFPputpal)
+    */
+    /* Add two palettes with DFP API. */ 
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteA, 0, "w"); 
+    CHECK_VOID(status, FAIL, "DFPputpal");
+
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a"); 
+    CHECK_VOID(status, FAIL, "DFPputpal");
+
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 2, "DFPputpal");  /* 2 palettes from 2 DFPputpal's */
+
+    /* Initialize the 8-bit image array */
+    static uint8 raster_data[WIDTH][LENGTH] =
+	{ 1, 2, 3, 4, 5,
+	  5, 4, 3, 2, 1,
+	  1, 2, 3, 4, 5,
+	  5, 4, 3, 2, 1,
+	  6, 4, 2, 0, 2 };
+
+    /* Specify palette to be used with subsequent 8-bit images */
+    status = DFR8setpalette(paletteA);
+    CHECK_VOID(status, FAIL, "DFR8setpalette");
+
+    /* Write an 8-bit raster image to the file */
+    status = DFR8addimage(IMAGE_DFPAL_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
+    CHECK_VOID(status, FAIL, "DFR8addimage");
+
+    /* Get the number of palettes using DFP API */
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 3, "DFPputpal");
+    /* 3 palettes: 2 DFPputpal's + DFR8setpalette/DFR8addimage combo */
+
+    /* Write another 8-bit raster image to file, without calling another
+       DFR8setpalette, that means this image is using the same palette as the
+       previous image.  This is when only 201 is created */
+    status = DFR8addimage(IMAGE_DFPAL_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
+    CHECK_VOID(status, FAIL, "DFR8addimage");
+
+    /* Thus, the number of palettes returned by DFPnpals should be the same as
+       from the last call to DFPnpals */
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 3, "DFPputpal");
+
+    /****************************************************************
+	Re-open the file in GR interface, add a few images with
+	palettes, then test GRgetpalinfo on the palettes
+     ****************************************************************/
+
+    /* Re-open the file and initialize the GR interface */
+    fid = Hopen (IMAGE_DFPAL_FILE, DFACC_RDWR, 0);
+    CHECK_VOID(fid, FAIL, "Hopen");
+    grid = GRstart (fid);
+    CHECK_VOID(grid, FAIL, "GRstart");
+
+    /* Define the dimensions and interlace mode of the image */
+    dim_sizes[0] = LENGTH;
+    dim_sizes[1] = WIDTH;
+    interlace_mode = MFGR_INTERLACE_PIXEL;
+
+    /* Create an image named IMAGE_WITH_PAL */
+    riid = GRcreate (grid, IMAGE_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, 
+                     interlace_mode, dim_sizes);
+
+    /* Fill the image data buffer with values */
+    for (ii = 0; ii < WIDTH; ii++)
+    {
+       for (jj = 0; jj < LENGTH; jj++)
+       {
+          image_buf[ii][jj][0] = (ii + jj) + 1;
+          image_buf[ii][jj][1] = (ii + jj) + 2;
+       }
+     }
+
+    /* Define the size of the data to be written */
+    start[0] = start[1] = 0;
+    edges[0] = WIDTH;
+    edges[1] = LENGTH;
+
+    /* Write the data in the buffer into the image array */
+    status = GRwriteimage (riid, start, NULL, edges, (VOIDP)image_buf);
+
+    /* Initialize the palette data */
+    for (ii = 0; ii < N_ENTRIES; ii++) {
+        palette_buf1[ii][0] = ii;
+        palette_buf1[ii][1] = 0;
+        palette_buf1[ii][2] = 8;
+    }
+
+    /* Get the identifier of the palette attached to the image IMAGE_WITH_PAL */
+    palid = GRgetlutid (riid, 0);
+
+    /* Write data to the palette. */
+    status = GRwritelut (palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode,
+                         N_ENTRIES, (VOIDP)palette_buf1);
+
+    /* DFPnpals now sees another palette */
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 4, "DFPputpal");
+
+    /* Terminate access to the first image */
+    status = GRendaccess (riid);
+
+    /* Create another image named IMAGE2_WITH_PAL */
+    riid = GRcreate (grid, IMAGE2_WITH_PAL, N_COMPS_IMG, DFNT_UINT8, 
+                     interlace_mode, dim_sizes);
+
+    /* Write the data in the buffer into the image array */
+    status = GRwriteimage (riid, start, NULL, edges, (VOIDP)image_buf);
+
+    /* Get the id of the palette attached to the image IMAGE2_WITH_PAL */
+    palid = GRgetlutid (riid, 0);
+
+    /* Initialize the palette for second image */
+    for (ii = 0; ii < N_ENTRIES; ii++) {
+	palette_buf2[ii][0] = 2;
+	palette_buf2[ii][1] = 4;
+	palette_buf2[ii][2] = 8;
+    }
+
+    /* Write data to the palette */
+    status = GRwritelut (palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode,
+                         N_ENTRIES, (VOIDP)palette_buf2);
+
+    /* DFPnpals now sees another palette */
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 5, "DFPputpal");
+
+    /* Terminate access to this image */
+    status = GRendaccess (riid);
+    CHECK_VOID(status, FAIL, "GRendaccess");
+
+    /* Create another image named LASTIMAGE_NOPAL */
+    riid = GRcreate (grid, LASTIMAGE_NOPAL, N_COMPS_IMG, DFNT_UINT8, 
+                     interlace_mode, dim_sizes);
+    CHECK_VOID(riid, FAIL, "GRcreate");
+
+    /* Write the data in the buffer into the image array */
+    status = GRwriteimage (riid, start, NULL, edges, (VOIDP)image_buf);
+    CHECK_VOID(status, FAIL, "GRwriteimage");
+
+    /* Terminate access to the image */
+    status = GRendaccess (riid);
+    CHECK_VOID(status, FAIL, "GRendaccess");
+
+    status = DFR8setpalette(paletteB);
+    CHECK_VOID(status, FAIL, "DFR8setpalette");
+
+    /* Write another 8-bit raster image to file */
+    status = DFR8addimage(IMAGE_DFPAL_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
+    CHECK_VOID(status, FAIL, "DFR8addimage");
+
+    /* DFR8setpalette/DFR8addimage just added another palette, so DFPnpals now
+       returns 6 */
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 6, "DFPputpal");
+
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a"); 
+    CHECK_VOID(status, FAIL, "DFPputpal");
+
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 7, "DFPnpals");
+
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteB, 0, "a"); 
+    CHECK_VOID(status, FAIL, "DFPputpal");
+
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a"); 
+    CHECK_VOID(status, FAIL, "DFPputpal");
+
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 9, "DFPputpal");
+
+    /* Create another image named ANO_IMAGE_NAME. */
+    riid = GRcreate (grid, ANO_IMAGE_NAME, N_COMPS_IMG, DFNT_UINT8, 
+                      interlace_mode, dim_sizes);
+    CHECK_VOID(riid, FAIL, "GRcreate");
+
+    /* Write the data in the buffer into the image array. */
+    status = GRwriteimage (riid, start, NULL, edges, (VOIDP)image_buf);
+    CHECK_VOID(status, FAIL, "GRwriteimage");
+
+    /* Get the identifier of the palette attached to the image ANO_IMAGE_NAME */
+    palid = GRgetlutid (riid, 0);
+    CHECK_VOID(palid, FAIL, "GRgetlutid");
+
+    /* Write data to the palette. */
+    status = GRwritelut (palid, N_COMPS_PAL, DFNT_UINT8, interlace_mode,
+                         N_ENTRIES, (VOIDP)palette_buf2);
+
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 10, "DFPputpal");
+
+   status = GRendaccess (riid);
+
+    status = DFPputpal(IMAGE_DFPAL_FILE, paletteD, 0, "a"); 
+    CHECK_VOID(status, FAIL, "DFPputpal");
+
+    n_pals = DFPnpals(IMAGE_DFPAL_FILE);
+    CHECK_VOID(n_pals, FAIL, "DFPnpals");
+    VERIFY_VOID(n_pals, 11, "DFPputpal");
+
+    /* Assuming that this file has been written exactly in this manner, this
+       is what the palette DDs would look like at this point:
+	tag    ref    offset  length
+	201    1      294       768
+	301    1      294       768
+	201    2      1062      768
+	301    2      1062      768
+	301    3      1860      768
+	201    3      1860      768
+	201    4      1860      768
+	301    4      2973      768 <- cannot be read by DFPgetpal
+	301    5      3806      768 <- cannot be read by DFPgetpal
+	301    8      4669      768
+	201    8      4669      768
+	201    5      5449      768
+	201    6      6217      768
+	301    6      6217      768
+	201    7      7183      768
+	301    7      7183      768
+	301    9      8016      768 <- cannot be read by DFPgetpal
+	201    9      8784      768
+ */
+
+    /* Read some palettes */
+    {
+
+    /* Call GRgetpalinfo the first time, passing in NULL for the palette array, 
+       to get the number of palettes in the file */
+    n_pals = 0;
+    n_pals = GRgetpalinfo(grid, 0, NULL);
+    CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
+
+    palinfo_array = (hdf_ddinfo_t *) HDmalloc(n_pals * sizeof(hdf_ddinfo_t));
+    CHECK_ALLOC(palinfo_array, "palinfo_array", "test_getpalinfo");
+
+    n_pals = GRgetpalinfo(grid, n_pals, palinfo_array);
+    CHECK_VOID(n_pals, FAIL, "GRgetpalinfo");
+
+    /* Read and verify data of the first palette which is pointed to by both
+       data identifiers 201/ref and 301/ref */
+    inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
+    CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
+    status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
+    CHECK_VOID(status, FAIL, "Hgetelement");
+
+    if (HDmemcmp(inbuf, paletteA, palinfo_array[0].length * sizeof(uint8))!=0)
+	fprintf(stderr, "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n", palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset, palinfo_array[0].length);
+
+    /* Read and verify data of the palette pointed to by 301/4.  This is the
+       data element that was not revealed by DFPgetpal because the tag/ref pair
+       201/4 is associated with a different offset */
+
+    inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
+    CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
+    status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
+    CHECK_VOID(status, FAIL, "Hgetelement");
+
+    if (HDmemcmp(inbuf, palette_buf1, palinfo_array[7].length * sizeof(uint8))!=0)
+	fprintf(stderr, "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n", palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset, palinfo_array[7].length);
+    }
+
+    /* Terminate access to the GR interface and close the file */
+    status = GRend(grid);
+    CHECK_VOID(status, FAIL, "GRend");
+    status = Hclose(fid);
+    CHECK_VOID(status, FAIL, "Hclose");
+
+}  /* test_getpalinfo */
 
 
 /****************************************************************************
@@ -1199,6 +1553,9 @@ test_datainfo()
 
     /* Test GRgetdatainfo with RI8 and RI24 */
     test_dfr8_24();
+
+    /* Test GRgetpalinfo with RI8 and GR */
+    test_getpalinfo();
 
     /* Test Hgetntinfo */
     test_getntinfo();
