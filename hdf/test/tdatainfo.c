@@ -1170,7 +1170,7 @@ static void
 test_getpalinfo()
 {
     int32 fid, grid,	/* file ID and GR interface ID */
-	  riid, palid,  /* raster image ID and palette ID */
+	      riid, palid,  /* raster image ID and palette ID */
           interlace_mode, 
           start[2],     /* where to start to write for each dimension  */
           edges[2],     /* specifies how long to write for each dimension */
@@ -1179,13 +1179,21 @@ test_getpalinfo()
     uint8 palette_buf1[N_ENTRIES][N_COMPS_PAL];  /* for LUT mostly */
     uint8 palette_buf2[N_ENTRIES][N_COMPS_PAL];
     uint8 paletteA[N_ENTRIES*N_COMPS_PAL],  /* for IP8 mostly */
-	  paletteB[N_ENTRIES*N_COMPS_PAL],
-	  paletteD[N_ENTRIES*N_COMPS_PAL];
+	      paletteB[N_ENTRIES*N_COMPS_PAL],
+	      paletteD[N_ENTRIES*N_COMPS_PAL];
     intn  n_pals = 0; /* number of palettes, returned by DFPnpals and GRgetpalinfo */
     hdf_ddinfo_t *palinfo_array = NULL; /* list of palette DDs */
     uint8 *inbuf;	/* palette data read back in */
-    intn ii, jj;	/* indices */
+    intn  ii, jj;	/* indices */
     intn  status;	/* status returned from routines */
+
+    /* Initialize the 8-bit image array */
+    static uint8 raster_data[WIDTH][LENGTH] =
+	{ 1, 2, 3, 4, 5,
+	  5, 4, 3, 2, 1,
+	  1, 2, 3, 4, 5,
+	  5, 4, 3, 2, 1,
+	  6, 4, 2, 0, 2 };
      
     /* Palettes are added in the following means and order:
 	paletteA (DFPputpal)
@@ -1210,14 +1218,6 @@ test_getpalinfo()
     n_pals = DFPnpals(IMAGE_DFPAL_FILE);
     CHECK_VOID(n_pals, FAIL, "DFPnpals");
     VERIFY_VOID(n_pals, 2, "DFPputpal");  /* 2 palettes from 2 DFPputpal's */
-
-    /* Initialize the 8-bit image array */
-    static uint8 raster_data[WIDTH][LENGTH] =
-	{ 1, 2, 3, 4, 5,
-	  5, 4, 3, 2, 1,
-	  1, 2, 3, 4, 5,
-	  5, 4, 3, 2, 1,
-	  6, 4, 2, 0, 2 };
 
     /* Specify palette to be used with subsequent 8-bit images */
     status = DFR8setpalette(paletteA);
