@@ -1436,7 +1436,7 @@ correctly.
         (i) |= (uint16)(*(p) & 0xff); (p)++; }
 
 #   define INT32DECODE(p, i) \
-{ (i) = ((*(p) & 0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p) & 0xff) << 24); (p)++; \
+{ (i) = (int32)(((int32)*(p) & 0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p) & 0xff) << 24); (p)++; \
         (i) |= ((int32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((int32)(*(p) & 0xff) << 8); (p)++; \
         (i) |= (*(p) & 0xff); (p)++; }

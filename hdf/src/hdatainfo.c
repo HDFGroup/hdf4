@@ -122,7 +122,7 @@ HDgetdatainfo(int32 file_id, uint16 tag, uint16 ref, int32 *chk_coord,
 		*p=NULL;	/* desc record buffer and a pointer to it */
     atom_t	data_id = FAIL;	/* dd ID of existing element */
     int32	length; /* uncomp data len to check if data had been written */
-    uintn	count=0;/* num of data blocks returned by getdatainfo funcs */
+    intn	count=0;/* num of data blocks returned by getdatainfo funcs */
     uint16	spec_code=0;/* special code: SPECIAL_LINKED, SPECIAL_COMP,... */
     int32	comp_aid=-1;/* compressed element access id */
     intn	ret_value=SUCCEED;

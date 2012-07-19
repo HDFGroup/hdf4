@@ -852,7 +852,7 @@ static const uint8  jpeg_24bit_j75[JPEGY][JPEGX][3] =
     255, 103, 2, 255, 103, 2, 255, 103, 2, 255, 103, 2 
 };
 
-void test_grgetcomptype(); /* in "tdfr8.c" */
+void test_GRgetcomptype(); /* in "tdfr8.c" */
 static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
              uint8 *oldim, uint8 *newim, uint8 *oldpal, uint8 *newpal);
 
@@ -860,7 +860,7 @@ static VOID check_im_pal(int32 oldx, int32 oldy, int32 newx, int32 newy,
    to compress and decompress the same data as in test_r24_jpeg, to verify that
    the DFR24 API work correctly regardless which JPEG library is used */
 intn comp_using_jpeglib(char *filename, long *file_offset, int im_height,
-        int im_width, int im_ncomps, int quality, const uint8 *written_buffer);
+        int im_width, int im_ncomps, int quality, uint8 *written_buffer);
 intn decomp_using_jpeglib(char *filename, long file_offset, int im_height,
         int im_width, int im_ncomps, uint8 *read_buffer);
 void test_r24_jpeg(void);
@@ -1878,9 +1878,9 @@ test_r8(void)
     HDfree(ipal);
     HDfree(jpeg_8bit_temp);
 
-    /* Temporarily call to test grgetcomptype() for hmap project; these tests
+    /* Temporarily call to test GRgetcomptype() for hmap project; these tests
        will need to be reformatted. Mar 13, 2011 -BMR */
-    test_grgetcomptype();
+    test_GRgetcomptype();
 }
 
 void

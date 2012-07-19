@@ -1001,10 +1001,13 @@ test_oneblock_ri()
 	if (ii == 0)
 	{
 	    intn jj, kk;
-	    char check_image[WIDTH][LENGTH];
+	    char buffer[WIDTH][LENGTH], check_image[WIDTH*LENGTH];
 	    for (kk = 0; kk < WIDTH; kk++)
 		for (jj = 0; jj < LENGTH; jj++)
-		    check_image[kk][jj] = 'n' + jj;
+		    buffer[kk][jj] = 'n' + jj;
+
+	    /* Work around to pass check_image into readnoHDF_char w/o warning*/
+	    HDmemcpy(check_image, buffer, WIDTH*LENGTH);
 
 	    /* Open the file with fopen, read data at the offset obtained and verify
 	       the values */

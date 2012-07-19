@@ -18,7 +18,7 @@
 #include "tproto.h"	/* for utility macros */
 
 /************************************************************************
-   Name: test_grgetcomptype() - test grgetcomptype for hmap project
+   Name: test_GRgetcomptype() - test GRgetcomptype for hmap project
 
    Description:
 	This routine uses DFR8 API to create the following images:
@@ -37,38 +37,40 @@
 	All have same data in rasters and in palette (when used)
 	Note: This part of the test was adopted from Ruth's test program.  
 
-	The function grgetcomptype will be call on each image and the returned
+	The function GRgetcomptype will be call on each image and the returned
 	compression type will be verified against the list of compressions used.
    BMR - Mar 12, 2011
 **************************************************************************/
-#define FILE_NAME	"tgrgetcomptype.hdf"
+#define FILE_NAME	"tGRgetcomptype.hdf"
 #define HEIGHT		3
 #define WIDTH		8
-#define NUM_IMAGES	12
+#define N_IMAGES	12
+#define N_ENTRIES	256
+#define N_COMPONENTS	3
 
 void
-test_grgetcomptype()
+test_GRgetcomptype()
 {
+    intn  ii;
     int   row, col;
     int   entry, component;
-    comp_info compress_info;
-    intn  status;
     uint8 raster[HEIGHT][WIDTH];
-    uint8 palette[256][3];
-    uint8 image[10][10];
+    uint8 palette[N_ENTRIES*N_COMPONENTS],
+	  temp_pal[N_ENTRIES][N_COMPONENTS];
     int32 file_id, gr_id, ri_id;
-    int32 comp_type;
     int32 num_images=0, num_fattrs=0;
-    intn  ii;
+    intn  status;
+    comp_coder_t comp_type;
+    comp_info compress_info;
 
     /* used to verify the compression type of the images */
-    int32 check_comp[NUM_IMAGES] = {COMP_CODE_NONE, COMP_CODE_NONE,
+    comp_coder_t check_comp[N_IMAGES] = {COMP_CODE_NONE, COMP_CODE_NONE,
 		COMP_CODE_NONE, COMP_CODE_NONE, COMP_CODE_RLE, COMP_CODE_RLE,
-		COMP_IMCOMP, COMP_IMCOMP, COMP_CODE_JPEG, COMP_CODE_JPEG,
-		COMP_CODE_RLE, COMP_CODE_RLE};
+		COMP_CODE_IMCOMP, COMP_CODE_IMCOMP, COMP_CODE_JPEG,
+		COMP_CODE_JPEG, COMP_CODE_RLE, COMP_CODE_RLE};
 
     /* used to verify whether an image should be mapped */
-    intn maplist[12] = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE};
+    intn maplist[N_IMAGES] = {TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE};
 
     /* Initialize the raster image array */
     for ( row = 0; row < HEIGHT; row++ ) {
@@ -84,32 +86,35 @@ test_grgetcomptype()
      * Red for first row; Green for second row; Blue for third row
      * -RA
      */
-    for ( entry = 0; entry < 256; entry++ ) {
-        for ( component = 0; component < 3; component++ )
+    for ( entry = 0; entry < N_ENTRIES; entry++ ) {
+        for ( component = 0; component < N_COMPONENTS; component++ )
 	{
             if (( 0 <= entry ) && ( entry <= 7 ))
 	    {   /* values in first row of raster */
-                palette[entry][0] = 255;    /* Red */
-                palette[entry][1] = 0;      /* Green */
-                palette[entry][2] = 0;      /* Blue */
+                temp_pal[entry][0] = 255;    /* Red */
+                temp_pal[entry][1] = 0;      /* Green */
+                temp_pal[entry][2] = 0;      /* Blue */
             } else if (( 10 <= entry ) && ( entry <= 17)) 
 	    {   /* values in second row of raster */
-                palette[entry][0] = 0;       /* Red */
-                palette[entry][1] = 255;     /* Green */
-                palette[entry][2] = 0;       /* Blue */
+                temp_pal[entry][0] = 0;       /* Red */
+                temp_pal[entry][1] = 255;     /* Green */
+                temp_pal[entry][2] = 0;       /* Blue */
             } else if (( 20 <= entry ) && ( entry <= 27)) 
 	    {   /* values in third row of raster */
-                palette[entry][0] = 0;       /* Red */
-                palette[entry][1] = 0;       /* Green */
-                palette[entry][2] = 255;     /* Blue */
+                temp_pal[entry][0] = 0;       /* Red */
+                temp_pal[entry][1] = 0;       /* Green */
+                temp_pal[entry][2] = 255;     /* Blue */
             } else 
 	    {   /* all else (don't expect) will be black */
-                palette[entry][0] = 0;       /* Red */
-                palette[entry][1] = 0;       /* Green */
-                palette[entry][2] = 0;       /* Blue */
+                temp_pal[entry][0] = 0;       /* Red */
+                temp_pal[entry][1] = 0;       /* Green */
+                temp_pal[entry][2] = 0;       /* Blue */
             }
         }
     }
+
+    /* Work around to pass "palette" into DFR8setpalette w/o compiler warning.*/
+    HDmemcpy(palette, temp_pal, N_ENTRIES*N_COMPONENTS);
 
     /* Write image0 to the HDF4 file with no compression and no palette
      * Note that the order of args 3 and 4 is width then height.  */
@@ -198,8 +203,8 @@ test_grgetcomptype()
 	CHECK_VOID(ri_id, FAIL, "GRselect");
 
 	/* Get image's compression type */
-	status = grgetcomptype(ri_id, &comp_type);
-	CHECK_VOID(status, FAIL, "grgetcomptype");
+	status = GRgetcomptype(ri_id, &comp_type);
+	CHECK_VOID(status, FAIL, "GRgetcomptype");
 
         /* Test GR2bmapped on this image (For hmap project only) */
         status = GR2bmapped(ri_id, &is_mappedable, &name_generated);
@@ -209,7 +214,7 @@ test_grgetcomptype()
 
 	/* Verify compression type */
   	if (comp_type != check_comp[ii])
-	VERIFY_VOID(check_comp[ii], comp_type, "grgetcomptype");
+	VERIFY_VOID(check_comp[ii], comp_type, "GRgetcomptype");
 
 	status = GRendaccess(ri_id);
 	CHECK_VOID(status, FAIL, "GRendaccess");
@@ -221,4 +226,4 @@ test_grgetcomptype()
     status = Hclose(file_id);
     CHECK_VOID(status, FAIL, "Hclose");
 
-} /* test_grgetcomptype */
+} /* test_GRgetcomptype */

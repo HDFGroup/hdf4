@@ -832,7 +832,7 @@ TODO
      project, and we're running out of time, I'm leaving it out.
      Feb 18, 2011 -BMR
 ---------------------------------------------------------------------------*/
-int32
+intn
 HLgetdatainfo(int32 file_id,
            uint8 *buf, 		   /* IN: special header info */
            uintn start_block,      /* IN: data block to start at, 0 base */
@@ -841,16 +841,16 @@ HLgetdatainfo(int32 file_id,
 	   int32 *lengtharray)     /* OUT: array to hold lengths */
 {
     CONSTR(FUNC, "HLgetdatainfo");	/* for HERROR */
-    link_t *link_info;       /* link information, to get block ref#s*/
-    int32   num_data_blocks; /* number of blocks that actually have data */
+    link_t *link_info=NULL;  /* link information, to get block ref#s*/
+    intn    num_data_blocks; /* number of blocks that actually have data */
     uint16  link_ref;        /* ref# pointing to a block table */
-    uint8  *p;               /* pointer to special info buffer */
+    uint8  *p=NULL;          /* pointer to special info buffer */
     int32   num_blocks,      /* number of blocks in each table */
             block_length,    /* length of each block */
             total_length,    /* total data length of the element */
             accum_length;    /* accummulative length of actual data in blocks */
     int     ii;
-    int32   ret_value = SUCCEED;
+    intn   ret_value = SUCCEED;
 
     /* Clear error stack */
     HEclear();

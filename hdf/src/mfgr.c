@@ -2794,28 +2794,33 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  comp_type = COMP_CODE_JPEG;
-  cinfo.jpeg.quality = 0;
-  cinfo.jpeg.force_baseline = 0;
+        comp_type = COMP_CODE_JPEG;
+        cinfo.jpeg.quality = 0;
+        cinfo.jpeg.force_baseline = 0;
+    }
+    else if (scheme == DFTAG_IMC)
+    { /* coder no longer supported */
+        HGOTO_ERROR(DFE_BADCODER,FAIL);
     }
     else
     {
-  /* use lower-level routine to get the compression information */
-  status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
+        /* use lower-level routine to get the compression information */
+        status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
-    if (comp_type != COMP_CODE_NONE) {
-      /* Check that the compression encoder is available */
-      HCget_config_info(comp_type, &comp_config);
-      if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-    /* coder not present?? */
-         HGOTO_ERROR(DFE_BADCODER,FAIL); 
-      }
-      if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-    /* encoder not present?? */
-         HGOTO_ERROR(DFE_NOENCODER,FAIL); 
-      }
+    if (comp_type != COMP_CODE_NONE)
+    {
+        /* Check that the compression encoder is available */
+        HCget_config_info(comp_type, &comp_config);
+        if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+            /* coder not present?? */
+             HGOTO_ERROR(DFE_BADCODER,FAIL); 
+        }
+        if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+            /* encoder not present?? */
+             HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+        }
     }
 
     if(stride[XDIM]==1 && stride[YDIM]==1)
@@ -3268,27 +3273,27 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	cinfo.jpeg.quality = 0;
 	cinfo.jpeg.force_baseline = 0;
     }
-/* Should RLE be checked here too?  For DFR8? -BMR 2010/12/3 */
+    /* catch old images to avoid going into HCPgetcompinfo */
     else if (scheme == DFTAG_RLE) /* old image */
-	comp_type = COMP_CODE_RLE;
+        comp_type = COMP_CODE_RLE;
+    else if (scheme == DFTAG_IMC) /* old image */
+        comp_type = COMP_CODE_IMCOMP;
     else
     {
 	/* use lower-level routine to get the compression information */
 	status = HCPgetcompinfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
     }
-    if (status != FAIL && comp_type != COMP_CODE_NONE)
+    if (comp_type != COMP_CODE_NONE)
     {
 	/* Check that the compression encoder is available */
 	HCget_config_info(comp_type, &comp_config);
 	if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0)
-	{
-	    /* coder not present?? */
+	{ /* coder not present?? */
 	    HGOTO_ERROR(DFE_BADCODER,FAIL); 
 	}
 	if ((comp_config & COMP_DECODER_ENABLED) == 0)
-	{
-	    /* decoder not present?? */
+	{ /* decoder not present?? */
 	    HGOTO_ERROR(DFE_NOENCODER,FAIL); 
 	}
     }
@@ -4550,7 +4555,7 @@ done:
 
 /*--------------------------------------------------------------------------
  NAME
-    grgetcomptype - only for hmap project
+    GRgetcomptype
 
  PURPOSE
     Get the compression type of a raster image's data.
@@ -4558,24 +4563,34 @@ done:
  USAGE
     intn grgetcomptype(riid, comp_type)
         int32 riid;     IN: RI ID from GRselect/GRcreate
-        int32* comp_type;  OUT: type of compression, including obsolete ones
+        comp_coder_t* comp_type;  OUT: type of compression, including obsolete ones
 
  RETURNS
     SUCCEED/FAIL
 
  DESCRIPTION
-    This function is implemented specifically for the hmap project.  It gets
-    the compression type of the given RI's data.  The existing function
-    GRgetcompinfo did not detect the obsolete compression scheme IMCOMP.
-    Because the hmap writer needs to report when an image with IMCOMP exists
-    in the file and not to map it, it needs a way to detect such images.  One
-    option is to add COMP_CODE_IMCOMP to the enum type comp_coder_t.  However,
-    with the consideration of backward/forward compatibility, it would be
-    risky to change the existing public type comp_coder_t.  Instead, it was
-    decided that a function would be made for the hmap project only, and would
-    not be published in the HDF4 documentation.  The function, grgetcomptype,  
-    will return comp_type as COMP_IMCOMP or one of the values included in the
-    type comp_coder_t.  Mar 11, 2011 -BMR
+    Historical note:
+    This function (old name grgetcomptype) was implemented specifically
+    for the hmap project.  It gets the compression type of the given
+    RI's data.  The existing function GRgetcompinfo did not detect the
+    obsolete compression scheme IMCOMP.  Because the hmap writer needs
+    to report when an image with IMCOMP exists in the file, it needs a
+    way to detect such images.  One option is to add COMP_CODE_IMCOMP
+    to the enum type comp_coder_t.  However, with the consideration of
+    backward/forward compatibility, it would be risky to change the
+    existing public type comp_coder_t while running against deadlines.
+    Instead, it was decided that a function would be made for the hmap
+    project only, and would not be published in the HDF4 documentation.
+    The function, grgetcomptype, will return comp_type as COMP_IMCOMP
+    or one of the values included in the type comp_coder_t.  Mar 11, 2011 -BMR
+
+    Update:
+    Further investigation indicated that it is safe to add COMP_CODE_IMCOMP
+    to comp_coder_t, with the value of 12 (as DFTAG_IMC/DFTAG_IMCOMP), which
+    is after COMP_CODE_JPEG.  Extra care had been taken to ensure that GR
+    interface cannot create or write images using IMCOMP compression.
+    grgetcomptype is now changed to GRgetcomptype and published in
+    release 4.2.8.  Jul 11, 2012 -BMR
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -4584,15 +4599,19 @@ done:
     using grgetcomptype until we have an official GRgetcomptype or will change
     to use GRgetcompinfo if we decide not to have GRgetcomptype.  The fact that
     grgetcomptype uses int32 for comp_type makes it not a good long term option
-    due to inconsistency in the library.
+    due to inconsistency in the library.  Mar 11, 2011 -BMR
+
+    Update:
+    GRgetcomptype is now used in place of grgetcomptype and in hdp to detect
+    and report IMCOMP compression, in release 4.2.8.  Jul 11, 2012 -BMR
 
  EXAMPLES
  REVISION LOG
 
 --------------------------------------------------------------------------*/
-intn grgetcomptype(int32 riid, int32* comp_type)
+intn GRgetcomptype(int32 riid, comp_coder_t* comp_type)
 {
-    CONSTR(FUNC, "grgetcomptype");  /* for HGOTO_ERROR */
+    CONSTR(FUNC, "GRgetcomptype");  /* for HGOTO_ERROR */
     ri_info_t *ri_ptr;            /* ptr to the image to work with */
     int32 file_id;
     uint16 scheme;  /* compression scheme used for old images */
@@ -4620,22 +4639,22 @@ intn grgetcomptype(int32 riid, int32* comp_type)
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-	*comp_type = COMP_CODE_JPEG;
+        *comp_type = COMP_CODE_JPEG;
     }
     else if (scheme == DFTAG_RLE)
-	*comp_type = COMP_CODE_RLE;
+        *comp_type = COMP_CODE_RLE;
     else if (scheme == DFTAG_IMC || scheme == DFTAG_IMCOMP)
-	*comp_type = COMP_IMCOMP;
+        *comp_type = COMP_CODE_IMCOMP;
 
     /* Use lower-level routine to get the new compression type */
     else
     {
-	comp_coder_t temp_comp_type = COMP_CODE_INVALID;
-	ret_value = HCPgetcomptype(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
+        comp_coder_t temp_comp_type = COMP_CODE_INVALID;
+        ret_value = HCPgetcomptype(file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                                 &temp_comp_type);
-	if (ret_value == FAIL)
-	    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	*comp_type = (int32)temp_comp_type;
+        if (ret_value == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+        *comp_type = temp_comp_type;
     }
 done:
   if(ret_value == 0)
@@ -4643,7 +4662,7 @@ done:
     } /* end if */
   /* Normal function cleanup */
   return ret_value;
-} /* end grgetcomptype() */
+} /* end GRgetcomptype() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -6561,46 +6580,43 @@ GR2bmapped(int32 riid, intn *tobe_mapped, intn *name_generated)
     img_ref = ri_ptr->img_ref;
     file_id = ri_ptr->gr_ptr->hdf_file_id;
 
-    /* If the image has old image tag, then make sure it is either regular or
-  compressed with RLE only */ 
- /*  fprintf(stderr, "img_tag = %d, DFTAG_RI8 = %d, DFTAG_CI8 = %d, DFTAG_RI = %d, DFTAG_CI = %d\n", img_tag, DFTAG_RI8, DFTAG_CI8, DFTAG_RI, DFTAG_CI);
- */ 
+    /* If the image has old image tag, then make sure it is either non-special
+       or compressed with RLE only */ 
     if (img_tag == DFTAG_RI8 || img_tag == DFTAG_CI8)
     {
-  if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
-      ri_ptr->img_dim.comp_tag == DFTAG_NULL)
-      should_map = TRUE;
+	if (ri_ptr->img_dim.comp_tag == DFTAG_RLE ||
+	    ri_ptr->img_dim.comp_tag == DFTAG_NULL)
+	    should_map = TRUE;
     }
     /* If the image has new image tag, then make sure that it has 8-bit data
-  and has no special storage except RLE compression before determining
-  that it is mapped-able */
+       and has no special storage except RLE compression before determining
+       that it is mapped-able */
     else if (img_tag == DFTAG_RI || img_tag == DFTAG_CI)
     {
-  /* Get the image data's type */
-  status = GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
+	/* Get the image data's type */
+	status = GRgetiminfo(riid, NULL, NULL, &ritype, NULL, NULL, NULL);
 
-  /* If it is 8-bit, set flag to check further for special storage */
-  if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
-      ritype == DFNT_UINT8 || ritype == DFNT_INT8)
-  {
-      /* Also make sure it only has one component */
-      if (ri_ptr->img_dim.ncomps ==1)
-      {
-    /* Note: int32 because grgetcomptype needs to handle IMCOMP
-       beside what are defined in comp_coder_t */
-    int32 comp_type=COMP_CODE_NONE;
-    status = grgetcomptype(riid, &comp_type);
-    if (comp_type == COMP_CODE_RLE || comp_type == COMP_CODE_NONE)
-    {
-        special_type = GRIisspecial_type(file_id, img_tag, img_ref);
-        /* In some cases, special_type = 0 for old image with RLE,
-      although the image has newer image tag.  Added the check
-      for 0 here, but this should be investigated more. -BMR*/
-        if (special_type == SPECIAL_COMP || special_type == 0)
-      should_map = TRUE;
-    }
-      }
-  }
+	/* If it is 8-bit, set flag to check further for special storage */
+	if (ritype == DFNT_UCHAR8 || ritype == DFNT_CHAR8 ||
+	    ritype == DFNT_UINT8 || ritype == DFNT_INT8)
+	{
+	    /* Also make sure it only has one component */
+	    if (ri_ptr->img_dim.ncomps ==1)
+	    {
+		/* Make sure no specialness or only with RLE compression */
+		comp_coder_t comp_type=COMP_CODE_NONE;
+		status = GRgetcomptype(riid, &comp_type);
+		if (comp_type == COMP_CODE_RLE || comp_type == COMP_CODE_NONE)
+		{
+		    special_type = GRIisspecial_type(file_id, img_tag, img_ref);
+		    /* In some cases, special_type = 0 for old image with RLE,
+		    although the image has newer image tag.  Added the check
+		    for 0 here, but this should be investigated more. -BMR*/
+		    if (special_type == SPECIAL_COMP || special_type == 0)
+			should_map = TRUE;
+		}
+	    }
+	}
     }
     /* Set flag to return */
     *tobe_mapped = should_map;

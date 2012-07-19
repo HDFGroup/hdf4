@@ -439,7 +439,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI intn HLgetblockinfo
                 (int32 aid, int32* block_size, int32* num_blocks);
 
-    HDFLIBAPI int32 HLgetdatainfo
+    HDFLIBAPI intn HLgetdatainfo
 		(int32 file_id, uint8 *buf, uintn start_block,
 		 uintn info_count, int32 *offsetarray, int32 *lengtharray);
 
@@ -1382,6 +1382,8 @@ HDFLIBAPI intn GRattrinfo(int32 id,int32 idx,char *name,int32 *attr_nt,int32 *co
 HDFLIBAPI intn GRgetattr(int32 id,int32 idx,void * data);
 
 HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
+
+HDFLIBAPI intn GRgetcomptype (int32 riid, comp_coder_t *comp_type);
 
 HDFLIBAPI intn GRPshutdown(void);
 

@@ -2083,7 +2083,7 @@ REVISION LOG
 -------------------------------------------------------------------------- */
 intn
 HMCgetcomptype(int32 dd_aid, /* IN: access id of header info */
-		comp_coder_t* comp_type) /* OUT: compression type */
+	       comp_coder_t* comp_type) /* OUT: compression type */
 {
     CONSTR(FUNC, "HMCgetcomptype");   /* for HERROR */
     uint8 *bufp;		/* pointer to buffer */
@@ -2205,7 +2205,7 @@ DESCRIPTION
        the data's blocks.
 
 RETURNS
-     Returns SUCCEED/FAIL
+     Returns number of offset/length pairs retrieved or FAIL
 
 REVISION LOG
      March 2009: Added during hmap project. -BMR
@@ -2227,21 +2227,21 @@ HMCgetdatainfo(int32 file_id,
 {
     CONSTR(FUNC, "HMCgetdatainfo");	/* for HERROR */
     uint16	 comp_ref = 0;		/* ref# of compressed data */
-    chunkinfo_t* chkinfo=NULL;		/* chunked element information */
-    atom_t       ddid=FAIL;            /* description record access id */
-    atom_t       cmpddid=FAIL;            /* description record access id */
+    chunkinfo_t *chkinfo=NULL;		/* chunked element information */
+    atom_t       ddid=FAIL;             /* description record access id */
+    atom_t       cmpddid=FAIL;          /* description record access id */
     uint16	 new_tag=0, new_ref=0;
     int32	 new_off=0, new_len=0;
-    uintn	 count=0;		/* number of blocks */
+    intn	 count=0;		/* number of blocks */
     int32	 chk_num=0;
-    CHUNK_REC   *chk_rec = NULL; /* chunk record */
-    TBBT_NODE   *entry   = NULL; /* chunk node from TBBT */
+    CHUNK_REC   *chk_rec = NULL;	/* chunk record */
+    TBBT_NODE   *entry   = NULL;	/* chunk node from TBBT */
     accrec_t *access_rec;
     filerec_t *file_rec;
     int32 new_aid=FAIL;
-    int16       spec_code=0;
-    uint8       lbuf[16];      /* temporary buffer */
-    uint8      *p;                /* tmp buf ptr */
+    int16        spec_code=0;
+    uint8        lbuf[16];		/* temporary buffer */
+    uint8       *p;			/* tmp buf ptr */
     intn	 ret_value = SUCCEED;
 
     /* Clear error stack */
@@ -2501,8 +2501,8 @@ HMCgetdatasize(int32 file_id,
     chk_data_size = chkinfo->chunk_size * chkinfo->nt_size;
 
     /* Get tag/ref of chunk table, 2 bytes each */
-    INT16DECODE(p, chkinfo->chktbl_tag);
-    INT16DECODE(p, chkinfo->chktbl_ref);
+    UINT16DECODE(p, chkinfo->chktbl_tag);
+    UINT16DECODE(p, chkinfo->chktbl_ref);
 
     /* Skip sp_tag and sp_ref then get ndims for use in skipping origins */
     p  = p + 2 + 2;

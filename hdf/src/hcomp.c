@@ -152,6 +152,12 @@ funclist_t  comp_funcs =
 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
+    IMCOMP: Since IMCOMP is no longer supported in creating new data but the
+	    library still reads existing data, it may need to be added into
+	    this function somehow.  Yet, I'm not sure exactly how it should
+	    be added because this function is called in both cases, writing
+	    and reading.  At this time, the function will fail if it encounters
+	    COMP_CODE_IMCOMP. -BMR, Jul 11, 2012
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
@@ -169,7 +175,7 @@ HCIinit_coder(int16 acc_mode, comp_coder_info_t * cinfo, comp_coder_t coder_type
     }
 
     switch (coder_type)
-      {     /* determin the type of encoding */
+      {     /* determine the type of encoding */
           case COMP_CODE_NONE:      /* "none" (i.e. no) encoding */
               cinfo->coder_type = COMP_CODE_NONE;   /* set coding type */
               cinfo->coder_funcs = cnone_funcs;     /* set the "none" func. ptrs */
@@ -360,6 +366,10 @@ HCPquery_encode_header(comp_model_t model_type, model_info * m_info,
 	      coder_len += 14;
 	      break;
 
+          case COMP_CODE_IMCOMP: /* IMCOMP is no longer supported, can only be inquired */
+              HRETURN_ERROR(DFE_BADCODER, FAIL);
+              break;
+
           default:      /* no additional information needed */
               break;
       }     /* end switch */
@@ -462,6 +472,10 @@ HCPencode_header(uint8 *p, comp_model_t model_type, model_info * m_info,
               UINT32ENCODE(p, (uint32) (c_info->szip.options_mask | SZ_H4_REV_2));
               *p++ = (uint8) c_info->szip.bits_per_pixel;
               *p++ = (uint8) c_info->szip.pixels_per_block;
+              break;
+
+          case COMP_CODE_IMCOMP: /* IMCOMP is no longer supported, can only be inquired */
+              HRETURN_ERROR(DFE_BADCODER, FAIL);
               break;
 
           default:      /* no additional information needed */
@@ -583,8 +597,8 @@ HCPdecode_header(uint8 *p, comp_model_t *model_type, model_info * m_info,
 	      }
               break;
 
-	/* What about JPEG? - BMR */
           default:      /* no additional information needed */
+                        /* this includes RLE, JPEG, and IMCOMP */
               break;
       }     /* end switch */
 
@@ -675,6 +689,10 @@ HCIwrite_header(atom_t file_id, compinfo_t * info, uint16 special_tag, uint16 re
               INT32ENCODE(p, (int32) c_info->szip.options_mask);
               INT32ENCODE(p, (int32) c_info->szip.bits_per_pixel);
               INT32ENCODE(p, (int32) c_info->szip.pixels_per_block);
+              break;
+
+          case COMP_CODE_IMCOMP: /* IMCOMP is no longer supported, can only be inquired */
+              HRETURN_ERROR(DFE_BADCODER, FAIL);
               break;
 
           default:      /* no additional information needed */
@@ -1661,6 +1679,13 @@ HCget_config_info( comp_coder_t coder_type,  /* IN: compression type */
     *compression_config_info = 0;
     switch (coder_type)
       {     
+          case COMP_CODE_IMCOMP:    /* IMCOMP no longer supported */
+                *compression_config_info = 0;
+              break;
+          /* This block doesn't look intentional, for there is no "break;"
+             before case COMP_CODE_RLE:, which means *compression_config_info
+             was reassigned to something else even though it is "case
+             COMP_CODE_NONE:"  When I added "break;" for "case COMP_CODE_NONE:",             some tests failed.  It needs to be checked out.-BMR, Jul 16, 2012*/
           case COMP_CODE_NONE:      /* "none" (i.e. no) encoding */
 		*compression_config_info = 0;
           case COMP_CODE_RLE:   /* Run-length encoding */
