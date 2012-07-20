@@ -540,6 +540,7 @@
 
 ./mfhdf/dumper/testfiles/Example6.hdf
 ./mfhdf/dumper/testfiles/Image_with_Palette.hdf
+./mfhdf/dumper/testfiles/IMCOMP.hdf
 ./mfhdf/dumper/testfiles/LongDataset.hdf
 ./mfhdf/dumper/testfiles/Roy.nc
 ./mfhdf/dumper/testfiles/SDSlongname.hdf
@@ -557,6 +558,7 @@
 ./mfhdf/dumper/testfiles/dumpgr-17.out
 ./mfhdf/dumper/testfiles/dumpgr-18.out
 ./mfhdf/dumper/testfiles/dumpgr-19.out
+./mfhdf/dumper/testfiles/dumpgr-20.out
 ./mfhdf/dumper/testfiles/dumpgr-1.out
 ./mfhdf/dumper/testfiles/dumpgr-2.out
 ./mfhdf/dumper/testfiles/dumpgr-3.out
