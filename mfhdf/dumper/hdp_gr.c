@@ -789,6 +789,72 @@ const char* Il_mode_text( gr_interlace_t interlace_mode )
    } /* end switch */
 }
 
+
+/*
+ * Prints compression method and compression information of an image.
+ * Once, adding the compression information part, combine this and the SD
+ * version, print_comp_info.
+ * BMR - Jul, 2012
+ */
+intn print_grcomp_info(
+	FILE *fp,
+	int32 ri_id)
+{
+    comp_info c_info;                /* Compression structure */
+    comp_coder_t comp_type = COMP_CODE_NONE;
+    int32 comp_size=0, orig_size=0;  /* compressed and original sizes */
+    intn status = FAIL;	    /* returned status from a called function */
+
+    /* Get compression info */
+    HDmemset(&c_info, 0, sizeof(c_info));
+    status = GRgetcompinfo(ri_id, &comp_type, &c_info);
+
+   /* if getting comp info succeeds, proceed to print out appropriate 
+      compression information */
+   if (status != FAIL)
+   {
+      /* print compression method or "NONE" */
+      fprintf(fp, "\t Compression method = %s\n", comp_method_txt(comp_type));
+
+#if 0 /* need to fix output of tests after 4.2.8 to display comp info */
+      switch (comp_type)
+      {
+        case COMP_CODE_NONE:
+        case COMP_CODE_JPEG:
+        case COMP_CODE_RLE:
+        case COMP_CODE_IMCOMP:
+	    break;
+        case COMP_CODE_SKPHUFF:
+	    fprintf(fp, "\t\t Skipping unit size = %d\n", c_info.skphuff.skp_size);
+	    break;
+	case COMP_CODE_DEFLATE:
+	    fprintf(fp, "\t\t Deflate level = %d\n", c_info.deflate.level);
+	    break;
+	case COMP_CODE_SZIP:
+	{
+	    char mask_strg[160]; /* 160 is to cover all options and number val*/
+	    if (option_mask_string(c_info.szip.options_mask, mask_strg) != FAIL)
+		fprintf(fp, "\t\t Option mask = %s\n", mask_strg);
+	    else
+		fprintf(fp, "\t\t Option mask might be invalid = %d\n", (int)c_info.szip.options_mask);
+	    fprintf(fp, "\t\t Pixels per block = %d\n", (int)c_info.szip.pixels_per_block);
+	    fprintf(fp, "\t\t Pixels per scanline = %d\n", (int)c_info.szip.pixels_per_scanline);
+	    fprintf(fp, "\t\t Bits per pixel = %d\n", (int)c_info.szip.bits_per_pixel);
+	    fprintf(fp, "\t\t Pixels = %d\n", (int)c_info.szip.pixels);
+	    break;
+	}
+        default:
+	    /* nothing */
+	    break;
+      } /* switch */
+#endif
+   }
+   else
+      fprintf(fp, "\t Compression method = <Unable to get compression method>\n");
+
+    return(status);
+} /* print_grcomp_info */
+
 intn printGR_ASCII( 
 	int32 gr_id,
 	dump_info_t *dumpgr_opts,
@@ -910,22 +976,7 @@ intn printGR_ASCII(
 			"printGR_ASCII", (int)ri_index, FAIL );
 
 	       /* Print compression method or "NONE" */
-	       {
-		  comp_coder_t comp_type;         /* Compression flag */
-		  comp_info    c_info;            /* Compression structure */
-
-		  comp_type = COMP_CODE_NONE;  /* reset variables */
-		  HDmemset(&c_info, 0, sizeof(c_info));
-
-		  status = GRgetcompinfo(ri_id, &comp_type, &c_info);
-		  if( status == FAIL )
-		  {
-                     ERROR_CONT_3( "in %s: %s failed for %d'th RI",
-                       "printGR_ASCII", "GRgetcompinfo", (int)ri_index);
-		  }
-		  fprintf(fp, "\t Compression method = %s\n",
-                                        comp_method_txt(comp_type));
-	       }
+	       status = print_grcomp_info(fp, ri_id);
 
                /* Print image attributes */
                fprintf(fp, "\t Number of attributes = %d\n", (int) nattrs );

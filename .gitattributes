@@ -165,6 +165,7 @@ hdf/util/testfiles/tvattr.hdf -text
 mfhdf/CMakeLists.txt -text
 mfhdf/dumper/CMakeLists.txt -text
 mfhdf/dumper/testfiles/Example6.hdf -text
+mfhdf/dumper/testfiles/IMCOMP.hdf -text
 mfhdf/dumper/testfiles/Image_with_Palette.hdf -text
 mfhdf/dumper/testfiles/LongDataset.hdf -text
 mfhdf/dumper/testfiles/Roy.nc -text
@@ -173,6 +174,7 @@ mfhdf/dumper/testfiles/Tables.hdf -text
 mfhdf/dumper/testfiles/Tables_External_File -text
 mfhdf/dumper/testfiles/VGlongname.hdf -text
 mfhdf/dumper/testfiles/ctxtr2r.hdf -text
+mfhdf/dumper/testfiles/dumpgr-20.out -text
 mfhdf/dumper/testfiles/dumpsds-12.out -text
 mfhdf/dumper/testfiles/dumpsds-13.out -text
 mfhdf/dumper/testfiles/dumpsds-14.out -text

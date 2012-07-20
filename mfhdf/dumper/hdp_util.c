@@ -995,6 +995,8 @@ char
             return ("SZIP");
         case COMP_CODE_JPEG:
             return ("JPEG");
+        case COMP_CODE_IMCOMP:
+            return ("IMCOMP");
         default:
             return ("INVALID");
     }

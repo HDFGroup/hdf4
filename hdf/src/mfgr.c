@@ -2808,6 +2808,8 @@ intn GRwriteimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],vo
         status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
+	if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL,FAIL);
     }
     if (comp_type != COMP_CODE_NONE)
     {
@@ -3273,7 +3275,7 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	cinfo.jpeg.quality = 0;
 	cinfo.jpeg.force_baseline = 0;
     }
-    /* catch old images to avoid going into HCPgetcompinfo */
+    /* Catch old images to avoid going into HCPgetcompinfo */
     else if (scheme == DFTAG_RLE) /* old image */
         comp_type = COMP_CODE_RLE;
     else if (scheme == DFTAG_IMC) /* old image */
@@ -3283,9 +3285,13 @@ intn GRreadimage(int32 riid,int32 start[2],int32 in_stride[2],int32 count[2],voi
 	/* use lower-level routine to get the compression information */
 	status = HCPgetcompinfo(hdf_file_id, ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
+	if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL,FAIL);
     }
-    if (comp_type != COMP_CODE_NONE)
-    {
+    if (comp_type != COMP_CODE_NONE &&
+	comp_type != COMP_CODE_RLE &&
+	comp_type != COMP_CODE_IMCOMP)
+    {   /* This is reading, why do we need encoder? -BMR */
 	/* Check that the compression encoder is available */
 	HCget_config_info(comp_type, &comp_config);
 	if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0)
@@ -4561,7 +4567,7 @@ done:
     Get the compression type of a raster image's data.
 
  USAGE
-    intn grgetcomptype(riid, comp_type)
+    intn GRgetcomptype(riid, comp_type)
         int32 riid;     IN: RI ID from GRselect/GRcreate
         comp_coder_t* comp_type;  OUT: type of compression, including obsolete ones
 
@@ -4738,10 +4744,11 @@ intn GRgetcompinfo(int32 riid, comp_coder_t* comp_type, comp_info* cinfo)
 	cinfo->jpeg.quality = 0;
 	cinfo->jpeg.force_baseline = 0;
     }
-    /* Added the RLE case for old images, new image with RLE would be taken
-       care by HCPgetcompinfo as with other compressions */
+    /* Catch old images to avoid going into HCPgetcompinfo */
     else if (scheme == DFTAG_RLE) /* old image */
 	*comp_type = COMP_CODE_RLE;
+    else if (scheme == DFTAG_IMC) /* old image */
+        *comp_type = COMP_CODE_IMCOMP;
     else
     {
 	/* use lower-level routine to get the compression information */
@@ -6054,29 +6061,36 @@ GRwritechunk(int32 riid,       /* IN: access aid to GR */
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  comp_type = COMP_CODE_JPEG;
-  cinfo.jpeg.quality = 0;
-  cinfo.jpeg.force_baseline = 0;
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
+    }
+    else if (scheme == DFTAG_IMC)
+    { /* coder no longer supported */
+        HGOTO_ERROR(DFE_BADCODER,FAIL);
     }
     else
     {
-  /* use lower-level routine to get the compression information */
-  status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
+	if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL,FAIL);
     }
-    if (status != FAIL && comp_type != COMP_CODE_NONE) {
-      /* Check that the compression encoder is available */
-      HCget_config_info(comp_type, &comp_config);
-      if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
-    /* coder not present?? */
-         HGOTO_ERROR(DFE_BADCODER,FAIL); 
-      }
-      if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
-    /* encoder not present?? */
-         HGOTO_ERROR(DFE_NOENCODER,FAIL); 
-      } 
-   }
+    if (comp_type != COMP_CODE_NONE)
+    {
+        /* Check that the compression encoder is available */
+        HCget_config_info(comp_type, &comp_config);
+        if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+            /* coder not present?? */
+             HGOTO_ERROR(DFE_BADCODER,FAIL); 
+        }
+        if ((comp_config & COMP_ENCODER_ENABLED) == 0) {
+            /* encoder not present?? */
+             HGOTO_ERROR(DFE_NOENCODER,FAIL); 
+        }
+    }
 
    /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -6268,21 +6282,33 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     if (scheme == DFTAG_JPEG5 || scheme == DFTAG_GREYJPEG5
             || scheme==DFTAG_JPEG || scheme==DFTAG_GREYJPEG)
     {
-  comp_type = COMP_CODE_JPEG;
-  cinfo.jpeg.quality = 0;
-  cinfo.jpeg.force_baseline = 0;
+	comp_type = COMP_CODE_JPEG;
+	cinfo.jpeg.quality = 0;
+	cinfo.jpeg.force_baseline = 0;
     }
+    /* Catch old images to avoid going into HCPgetcompinfo.  Note: I don't
+       think old images have chunking, but just in case I'm wrong.  Should
+       verify these later. -BMR, Jul 2012 */
+    else if (scheme == DFTAG_RLE) /* old image */
+	comp_type = COMP_CODE_RLE;
+    else if (scheme == DFTAG_IMC) /* old image */
+        comp_type = COMP_CODE_IMCOMP;
     else
     {
-  /* use lower-level routine to get the compression information */
-  status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
+	/* use lower-level routine to get the compression information */
+	status = HCPgetcompinfo(ri_ptr->gr_ptr->hdf_file_id,
                         ri_ptr->img_tag, ri_ptr->img_ref,
                         &comp_type, &cinfo);
+	if (status == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL,FAIL);
     }
-    if (status != FAIL && comp_type != COMP_CODE_NONE) {
-      /* Check that the compression encoder is available */
-      HCget_config_info(comp_type, &comp_config);
-      if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
+    if (comp_type != COMP_CODE_NONE &&
+	comp_type != COMP_CODE_RLE &&
+	comp_type != COMP_CODE_IMCOMP)
+    {   /* BMR: this is reading, why do we need encoder? */
+	/* Check that the compression encoder is available */
+	HCget_config_info(comp_type, &comp_config);
+	if ((comp_config & COMP_DECODER_ENABLED|COMP_ENCODER_ENABLED) == 0) {
     /* coder not present?? */
          HGOTO_ERROR(DFE_BADCODER,FAIL); 
       }
@@ -6290,7 +6316,7 @@ GRreadchunk(int32 riid,    /* IN: access aid to GR */
     /* decoder not present?? */
          HGOTO_ERROR(DFE_NOENCODER,FAIL); 
       } 
-   }
+    }
     /* inquire about element */
     ret_value = Hinquire(ri_ptr->img_aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
     if (ret_value != FAIL)

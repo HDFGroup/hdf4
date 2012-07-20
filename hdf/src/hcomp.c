@@ -1065,11 +1065,16 @@ HCPgetcompinfo(int32 file_id,
     int32   aid=0, status;
     accrec_t*    access_rec=NULL;	/* access element record */
     compinfo_t*  info=NULL;		/* compressed element information */
+    comp_coder_t temp_coder=COMP_CODE_NONE;
     model_info  m_info;			/* modeling information - dummy */
     intn       ret_value=SUCCEED;
 
     /* clear error stack */
     HEclear();
+
+    /* check the output arguments */
+    if (comp_type == NULL || c_info == NULL)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* start read access on the access record of the data element, which
        is being inquired for its compression information */
@@ -1089,7 +1094,7 @@ HCPgetcompinfo(int32 file_id,
         if (status == FAIL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
 
         /* get the compression type */
-        *comp_type = info->cinfo.coder_type;
+        temp_coder = info->cinfo.coder_type;
 
     }  /* end if element is compressed */
 
@@ -1097,7 +1102,7 @@ HCPgetcompinfo(int32 file_id,
 	compression info as appropriate */
     else if (access_rec->special == SPECIAL_CHUNKED)
     {
-	status = HMCgetcompress(access_rec, comp_type, c_info);
+	status = HMCgetcompress(access_rec, &temp_coder, c_info);
         if (status == FAIL) HGOTO_ERROR(DFE_COMPINFO, FAIL);
     }
 
@@ -1110,18 +1115,20 @@ HCPgetcompinfo(int32 file_id,
              access_rec->special == SPECIAL_COMPRAS ||
              access_rec->special == 0)
     {
-        *comp_type = COMP_CODE_NONE;
+        temp_coder = COMP_CODE_NONE;
     }
 
     /* flag the error when access_rec->special is not something valid */
     else 
     {
-	*comp_type = COMP_CODE_INVALID; 
+	temp_coder = COMP_CODE_INVALID; 
         HGOTO_ERROR(DFE_ARGS, FAIL);
     }
     /* end access to the aid appropriately */
     if (Hendaccess(aid)== FAIL)
         HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+    if (comp_type != NULL) *comp_type = temp_coder;
 
 done:
   if(ret_value == FAIL)

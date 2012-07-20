@@ -405,6 +405,9 @@ TEST dumpgr-18.out dumpgr -c grtdfi322.hdf
 # Test 19: to test new options -g and -l (suppress all attribute data)
 TEST dumpgr-19.out dumpgr -g -l grtdfi322.hdf
 
+# Test 20: to test dumpgr successfully detect IMCOMP compression type
+TEST dumpgr-20.out dumpgr IMCOMP.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
