@@ -51,6 +51,7 @@ IF (BUILD_TESTING)
       grtdfui83.hdf
       grtdfui84.hdf
       Image_with_Palette.hdf
+      IMCOMP.hdf
       LongDataset.hdf
       sds_compressed.hdf
       sds_empty_many.hdf
@@ -88,6 +89,7 @@ IF (BUILD_TESTING)
       dumpgr-18.out
       dumpgr-19.out
       dumpgr-2.out
+      dumpgr-20.out
       dumpgr-3.out
       dumpgr-4.out
       dumpgr-5.out
@@ -430,6 +432,9 @@ IF (BUILD_TESTING)
 
   # Test 19: to test new options -g and -l (suppress all attribute data)
   ADD_H4_TEST (dumpgr-19 0 dumpgr -g -l grtdfi322.hdf)
+
+  # Test 20: to test dumpgr successfully detect IMCOMP compression type
+  ADD_H4_TEST (dumpgr-20 0 dumpgr IMCOMP.hdf)
   
 ENDIF (BUILD_TESTING)
 
