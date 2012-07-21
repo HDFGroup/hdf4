@@ -1451,24 +1451,28 @@ test_getpalinfo()
 
     /* Read and verify data of the first palette which is pointed to by both
        data identifiers 201/ref and 301/ref */
-    inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
+     /* inbuf = (uint8 *) HDmalloc(palinfo_array[0].length * sizeof(uint8));
+ */ 
+    inbuf = (uint8 *) HDmalloc(palinfo_array[0].length);
     CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
     status = Hgetelement(fid, palinfo_array[0].tag, palinfo_array[0].ref, inbuf);
     CHECK_VOID(status, FAIL, "Hgetelement");
 
-    if (HDmemcmp(inbuf, paletteA, palinfo_array[0].length * sizeof(uint8))!=0)
+    if (HDmemcmp(inbuf, paletteA, palinfo_array[0].length)!=0)
 	fprintf(stderr, "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n", palinfo_array[0].tag, palinfo_array[0].ref, palinfo_array[0].offset, palinfo_array[0].length);
 
     /* Read and verify data of the palette pointed to by 301/4.  This is the
        data element that was not revealed by DFPgetpal because the tag/ref pair
        201/4 is associated with a different offset */
 
-    inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
+     /* inbuf = (uint8 *) HDmalloc(palinfo_array[7].length * sizeof(uint8));
+ */ 
+    inbuf = (uint8 *) HDmalloc(palinfo_array[7].length);
     CHECK_ALLOC(inbuf, "inbuf", "test_getpalinfo");
     status = Hgetelement(fid, palinfo_array[7].tag, palinfo_array[7].ref, inbuf);
     CHECK_VOID(status, FAIL, "Hgetelement");
 
-    if (HDmemcmp(inbuf, palette_buf1, palinfo_array[7].length * sizeof(uint8))!=0)
+    if (HDmemcmp(inbuf, palette_buf1, palinfo_array[7].length)!=0)
 	fprintf(stderr, "palette data pointed by tag/ref = %d/%d at offset/length = %d/%d differs from written\n", palinfo_array[7].tag, palinfo_array[7].ref, palinfo_array[7].offset, palinfo_array[7].length);
     }
 
