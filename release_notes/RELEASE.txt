@@ -73,7 +73,7 @@ Bugs fixed since HDF 4.2.7
      set production CFLAGS to -O0 to eliminate the test errors encountered in
      Lion systems only. This one lets HDF4 to be build and run in Lion systems.
      More investigate needed to locate the exact locations of the errors.
-     (HDFFR-1327 and HDFFR-132*) AKC - 2012/07/03
+     (HDFFR-1327 and HDFFR-1328) AKC - 2012/07/03
 
    - The USE_ENUM in mfhdf/libsrc/netcdf.h, which is copied from
      config/netcdf-apple.h, which generated an error due to xdr_enum overwrote
@@ -158,6 +158,10 @@ This version has been tested in the following platforms:
                                  i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
                                  GNU Fortran (GCC) 4.6.1
                              
+   MAC OS X Intel 10.7.4         Darwin 11.4.0
+   (64 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+   (hdf-duck)                    gcc (GCC) 4.6.2
+                                 GNU Fortran (GCC) 4.6.2
 
     Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
                                   gcc (Debian 4.4.5-8) 4.4.5
@@ -194,6 +198,13 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+
+o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounter 2 erros,
+   when optimization is used, whether with the Apple GCC compiler or with the
+   GNU GCC compiler.  CFLAGS must be set to use no optimization (-O0 or -g) to
+   avoid these failures.  config/apple-darwin11.4.0 is added to direct configure
+   to use -O0 for CFLAGS for Mac OS X 10.7 Lion. We hope to fix the bug in the
+   next release.  (HDFFR-1327 and HDFFR-1328) AKC - 2012/07/03
 
 o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization level. 
 
