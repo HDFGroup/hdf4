@@ -203,7 +203,8 @@ ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
 mv Makefile $tmpdir/Makefile.x 2>/dev/null #might fail
 # This line caused Makefile to be included in the distribution.  I
 # commented it out and will let Larry check it out. -BMR 7/27/2012
-# cp -p Makefile.dist Makefile
+# It is not as simple as I thought.  The cp line is back in for now.
+cp -p Makefile.dist Makefile
 
 # Update README.txt and release_notes/RELEASE.txt with release information in
 # line 1.
