@@ -49,7 +49,21 @@ New features and changes
      
    Library
    ========= 
-   - [None]
+   - It was discovered by the HDF Mapping Project that there were certain
+     type of palettes that cannot be retrieved by existing functions.  A new
+     function, GRgetpalinfo, was added to allow applications to get information
+     about palettes.  Please refer to the HDF User's Guide and Reference Manual
+     for more information regarding this palette issue.  BMR - 2012/07/26
+
+   - It was also discovered that the IMCOMP compression was not detected.
+     Although IMCOMP is no longer supported in new data, HDF still needs to
+     detect IMCOMP compression from existing data.  We added COMP_CODE_IMCOMP
+     to comp_coder_t with value 12 (same as COMP_IMCOMP.)  The library and
+     hdp now can detect IMCOMP compression.  However, writing IMCOMP compressed
+     images is not allowed.  BMR - 2012/07/26
+
+   - Added GRgetcomptype to return image's compression, which can include
+     IMCOMP.  BMR - 2012/07/26
 
    Test
    ====
@@ -88,12 +102,18 @@ Bugs fixed since HDF 4.2.7
 
    Utilities
    ========= 
-   - [None]
+   - Added test file IMCOMP.hdf and sample file dumpgr-20.out for IMCOMP test
+     for testing the detection of IMCOMP compressed image in hdp.
+     BMR - 2012/07/26
 
 
 Documentation
 ==============
-   - [None]
+   - The Reference Manual and User's Guide have been updated to include
+     new functions:
+     + GRgetpalinfo
+     + GRgetcomptype
+     BMR - 2012/07/26
 
 
 Platforms tested
