@@ -121,8 +121,8 @@ Platforms tested
 
 This version has been tested in the following platforms:
 
-   Linux 2.6.32-220.2.1         gcc (GCC) 4.4.6 20110731 (Red Hat 4.4.6-3)
-   .el6.ppc64 #1                GNU Fortran (GCC) 4.4.6 20110731 
+   Linux 2.6.32-279.2.1         gcc (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
+   .el6.ppc64 #1                GNU Fortran (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
    SMP ppc64 GNU/Linux          IBM XL Fortran for Linux, V13.1 (64-bit mode)
    (ostrich)
 
@@ -148,7 +148,8 @@ This version has been tested in the following platforms:
    Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
       #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073 20100806
       SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
-   (ember)
+   (ember)                       gcc (SUSE Linux) 4.3.4 [gcc-4_3-branch revision 152973
+                                 GNU Fortran (SUSE Linux) 4.3.4 [gcc-4_3-branch revision 152973]
 
    Windows XP                    Visual Studio 2008 w/ Intel Fortran 10.1 (project files)
                                  Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
