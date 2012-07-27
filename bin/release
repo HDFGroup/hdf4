@@ -201,9 +201,8 @@ grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
 # Prepare the source tree for a release.
 ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
 mv Makefile $tmpdir/Makefile.x 2>/dev/null #might fail
-# This line caused Makefile to be included in the distribution.  I
-# commented it out and will let Larry check it out. -BMR 7/27/2012
-# It is not as simple as I thought.  The cp line is back in for now.
+# Save a backup copy of Makefile if exists.
+test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
 
 # Update README.txt and release_notes/RELEASE.txt with release information in
@@ -268,6 +267,7 @@ done
 cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
 
 # Restore previous Makefile if existed.
+rm -f Makefile
 test -f $tmpdir/Makefile.x && mv $tmpdir/Makefile.x Makefile
 
 # Restore OLD version information, then no need for trap.
