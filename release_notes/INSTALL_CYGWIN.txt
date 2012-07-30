@@ -5,6 +5,8 @@
 This document is a instruction on how to build, test and install HDF4 libary on 
 Cygwin.  See detailed information in hdf4/INSTALL. 
 
+NOTE: hdf4 can be built with CMake, see the CMake.txt file for more guidance.
+
 Preconditions:
 --------------
 

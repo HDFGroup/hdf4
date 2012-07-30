@@ -1,6 +1,12 @@
      Installation Instructions for HDF4 on Windows XP/Vista
 ========================================================================
 
+The preferred method of using the HDF4 libraries uses the binaries built using CMake.
+See the file USING_CMake.txt for further guidance.
+
+The following information is considered obsolete:
+
+
 The instructions which follow assume that you will be using the HDF4 source code 
 archive from HDF website (http://hdfgroup.org).
 
