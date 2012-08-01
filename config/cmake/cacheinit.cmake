@@ -8,6 +8,8 @@ SET (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries" FORCE)
 
 SET (BUILD_TESTING ON CACHE BOOL "Build HDF4 Unit Testing" FORCE)
 
+SET (HDF_PACKAGE_EXT "" CACHE STRING "Name of HDF package extension" FORCE)
+
 SET (HDF4_BUILD_EXAMPLES ON CACHE BOOL "Build HDF4 Library Examples" FORCE)
 
 SET (HDF4_BUILD_FORTRAN ON CACHE BOOL "Build FORTRAN support" FORCE)
@@ -53,3 +55,9 @@ SET (ZLIB_TGZ_NAME "ZLib.tar.gz" CACHE STRING "Use ZLib from compressed file" FO
 SET (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
 
 SET (JPEG_TGZ_NAME "JPEG8b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
+
+SET (ZLIB_PACKAGE_NAME "zLib" CACHE STRING "Name of ZLIB package" FORCE)
+
+SET (SZIP_PACKAGE_NAME "szip" CACHE STRING "Name of SZIP package" FORCE)
+
+SET (JPEG_PACKAGE_NAME "jpeg" CACHE STRING "Name of JPEG package" FORCE)

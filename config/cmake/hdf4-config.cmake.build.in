@@ -38,6 +38,12 @@ IF (HDF4_BUILD_UTILS)
   SET (HDF4_INCLUDE_DIR_UTILS ${HDF4_INCLUDE_DIR} )
 ENDIF (HDF4_BUILD_UTILS)
 
+IF (HDF4_BUILD_SHARED_LIBS)
+  SET (H4_BUILT_AS_DYNAMIC_LIB 1 )
+ELSE (HDF4_BUILD_SHARED_LIBS)
+  SET (H4_BUILT_AS_STATIC_LIB 1 )
+ENDIF (HDF4_BUILD_SHARED_LIBS)
+
 #-----------------------------------------------------------------------------
 # Version Strings
 #-----------------------------------------------------------------------------
@@ -49,7 +55,7 @@ SET (HDF4_VERSION_MINOR  @HDF4_VERSION_MINOR@)
 # Don't include targets if this file is being picked up by another
 # project which has already build hdf4 as a subproject
 #-----------------------------------------------------------------------------
-IF (NOT TARGET "hdf4")
-  INCLUDE (${SELF_DIR}/hdf4-targets.cmake)
+IF (NOT TARGET "@HDF4_PACKAGE@")
+  INCLUDE (${SELF_DIR}/@HDF4_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
   SET (HDF4_LIBRARIES "@HDF4_LIBRARIES_TO_EXPORT@")
-ENDIF (NOT TARGET "hdf4")
+ENDIF (NOT TARGET "@HDF4_PACKAGE@")
