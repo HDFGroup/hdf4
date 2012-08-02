@@ -1155,7 +1155,7 @@
 ./config/cmake/h4config.h.in
 ./config/cmake/xlatefile.c
 ./config/cmake/HDFTests.c
-./config/cmake/FindHDF4.cmake
+./config/cmake/FindHDF4.cmake.in
 ./config/cmake/FindSZIP.cmake
 ./config/cmake/FindMPI.cmake
 ./config/cmake/cacheinit.cmake

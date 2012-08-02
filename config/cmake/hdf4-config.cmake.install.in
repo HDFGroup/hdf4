@@ -24,7 +24,7 @@ SET (HDF4_PACKAGE_EXTLIBS @HDF4_PACKAGE_EXTLIBS@)
 #-----------------------------------------------------------------------------
 # Directories
 #-----------------------------------------------------------------------------
-SET (HDF4_INCLUDE_DIRS "${_IMPORT_PREFIX}/include")
+SET (HDF4_INCLUDE_DIR "${_IMPORT_PREFIX}/include")
 
 IF (HDF4_BUILD_FORTRAN)
   SET (HDF4_INCLUDE_DIR_FORTRAN "${_IMPORT_PREFIX}/include")
@@ -52,7 +52,7 @@ SET (HDF4_VERSION_MINOR  @HDF4_VERSION_MINOR@)
 
 #-----------------------------------------------------------------------------
 # Don't include targets if this file is being picked up by another
-# project which has already build hdf4 as a subproject
+# project which has already built hdf4 as a subproject
 #-----------------------------------------------------------------------------
 IF (NOT TARGET "@HDF4_PACKAGE@")
   IF (HDF4_ENABLE_JPEG_LIB_SUPPORT AND HDF4_PACKAGE_EXTLIBS AND NOT TARGET "jpeg")

@@ -341,10 +341,18 @@ ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 # Compiler specific flags : Shouldn't there be compiler tests for these
 #-----------------------------------------------------------------------------
 IF (CMAKE_COMPILER_IS_GNUCC)
-  SET (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
+  IF (CMAKE_BUILD_TYPE MATCHES Debug)
+    SET (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -finline-functions -fno-common")
+  ELSE (CMAKE_BUILD_TYPE MATCHES Debug)
+    SET (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
+  ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 IF (CMAKE_COMPILER_IS_GNUCXX)
-  SET (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
+  IF (CMAKE_BUILD_TYPE MATCHES Debug)
+    SET (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -finline-functions -fno-common")
+  ELSE (CMAKE_BUILD_TYPE MATCHES Debug)
+    SET (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
+  ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 #-----------------------------------------------------------------------------
@@ -449,7 +457,7 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
       FIND_PACKAGE (JPEG NAMES ${JPEG_PACKAGE_NAME}${HDF_PACKAGE_EXT})
     ENDIF (NOT JPEG_USE_EXTERNAL)
     IF (JPEG_FOUND)
-      SET (JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
+      SET (JPEG_INCLUDE_DIR ${JPEG_INCLUDE_DIRS})
       SET (H4_HAVE_JPEGLIB_H 1)
       SET (H4_HAVE_LIBJPEG 1)
       SET (H4_JPEGLIB_HEADER "jpeglib.h")
@@ -482,7 +490,7 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
     SET (H4_HAVE_JPEGLIB_H 1)
   ENDIF (NOT H4_JPEGLIB_HEADER)
   SET (LINK_LIBS ${LINK_LIBS} ${JPEG_LIBRARY})
-  INCLUDE_DIRECTORIES (${JPEG_INCLUDE_DIR})
+  INCLUDE_DIRECTORIES (${JPEG_INCLUDE_DIRS})
   MESSAGE (STATUS "JPEGLIB is ON")
 ENDIF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
 
@@ -519,7 +527,7 @@ IF (HDF4_ENABLE_Z_LIB_SUPPORT)
     SET (H4_HAVE_LIBZ 1)
   ENDIF (NOT H4_ZLIB_HEADER)
   SET (LINK_LIBS ${LINK_LIBS} ${ZLIB_LIBRARIES})
-  INCLUDE_DIRECTORIES (${ZLIB_INCLUDE_DIR})
+  INCLUDE_DIRECTORIES (${ZLIB_INCLUDE_DIRS})
   MESSAGE (STATUS "Filter ZLIB is ON")
 ENDIF (HDF4_ENABLE_Z_LIB_SUPPORT)
 
@@ -578,6 +586,25 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
+# Add the HDF4 Library Target to the build
+#-----------------------------------------------------------------------------
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/src    ${PROJECT_BINARY_DIR}/hdf/src )
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/libsrc)
+
+IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+  IF (JPEG_FOUND AND JPEG_USE_EXTERNAL)
+    ADD_DEPENDENCIES (${HDF4_SRC_LIB_TARGET} JPEG)
+  ENDIF (JPEG_FOUND AND JPEG_USE_EXTERNAL)
+  IF (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
+    ADD_DEPENDENCIES (${HDF4_SRC_LIB_TARGET} ZLIB)
+  ENDIF (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
+  IF (SZIP_FOUND AND SZIP_USE_EXTERNAL)
+    ADD_DEPENDENCIES (${HDF4_SRC_LIB_TARGET} SZIP)
+  ENDIF (SZIP_FOUND AND SZIP_USE_EXTERNAL)
+ENDIF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+
+
+#-----------------------------------------------------------------------------
 # Build utility to copy and strip X lines of file
 #-----------------------------------------------------------------------------
 IF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
@@ -620,22 +647,10 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
-# Add the HDF4 Library Target to the build
+# Library utilities
 #-----------------------------------------------------------------------------
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf/src    ${PROJECT_BINARY_DIR}/hdf/src )
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/libsrc)
-
-IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
-  IF (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-    ADD_DEPENDENCIES (${HDF4_SRC_LIB_TARGET} JPEG)
-  ENDIF (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-  IF (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-    ADD_DEPENDENCIES (${HDF4_SRC_LIB_TARGET} ZLIB)
-  ENDIF (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-  IF (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-    ADD_DEPENDENCIES (${HDF4_SRC_LIB_TARGET} SZIP)
-  ENDIF (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-ENDIF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
 
 #-----------------------------------------------------------------------------
 # Option to build Fortran bindings/tests/examples
@@ -663,12 +678,6 @@ IF (MSVC)
 ELSE (MSVC)
   SET (H4_HDSETVBUF "NOP")
 ENDIF (MSVC)
-
-#-----------------------------------------------------------------------------
-# Add the HDF4 Library Target to the build
-#-----------------------------------------------------------------------------
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
@@ -712,7 +721,7 @@ ENDIF (NOT HDF4_INSTALL_NO_DEVELOPMENT)
 IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   INSTALL (
       EXPORT ${HDF4_EXPORTED_TARGETS}
-      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/hdf4
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/${HDF4_PACKAGE}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
       COMPONENT configinstall
   )
@@ -743,8 +752,24 @@ SET (HDF4_VERSION_MINOR  @HDF4_PACKAGE_VERSION_MINOR@)
 
 CONFIGURE_FILE (
     ${HDF4_RESOURCES_DIR}/hdf4-config.cmake.build.in 
-    ${HDF4_BINARY_DIR}/hdf4-config.cmake @ONLY
+    ${HDF4_BINARY_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake @ONLY
 )
+
+#-----------------------------------------------------------------------------
+# Configure the FindHDF4.cmake file for the install directory
+#-----------------------------------------------------------------------------
+IF (NOT HDF4_EXTERNALLY_CONFIGURED)
+  CONFIGURE_FILE (
+      ${HDF4_RESOURCES_DIR}/FindHDF4.cmake.in 
+      ${HDF4_BINARY_DIR}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake @ONLY
+  )
+  INSTALL (
+      FILES ${HDF4_BINARY_DIR}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/${HDF4_PACKAGE}
+      COMPONENT configinstall
+  )
+ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
+
 
 #-----------------------------------------------------------------------------
 # Configure the HDF4-config.cmake file for the install directory
@@ -756,7 +781,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   INSTALL (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake
-      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/hdf4
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/${HDF4_PACKAGE}
       COMPONENT configinstall
   )
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
@@ -771,7 +796,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   INSTALL (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake
-      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/hdf4
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}/cmake/${HDF4_PACKAGE}
       COMPONENT configinstall
   )
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
@@ -820,7 +845,8 @@ ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   SET (CPACK_PACKAGE_VENDOR "HDF_Group")
   SET (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
-  SET (CPACK_PACKAGE_INSTALL_DIRECTORY "HDF4")
+  SET (CPACK_PACKAGE_INSTALL_DIRECTORY "${HDF4_PACKAGE_NAME}")
+  SET (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${HDF4_PACKAGE_NAME}-${HDF4_PACKAGE_VERSION}-${LIB_TYPE}")
   SET (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
   SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   SET (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
@@ -829,7 +855,6 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   SET (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
   SET (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
   SET (CPACK_PACKAGE_RELOCATABLE TRUE)
-  SET (CPACK_MONOLITHIC_INSTALL ON)
 
   IF (WIN32)
     SET (CPACK_MONOLITHIC_INSTALL ON)

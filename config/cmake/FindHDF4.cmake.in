@@ -49,18 +49,18 @@ SET (_HDF4_PATHS
     $ENV{HOME}/.local
     $ENV{HDF4_ROOT}
     $ENV{HDF4_ROOT_DIR_HINT}
-    /usr/lib/hdf
-    /usr/share/hdf
-    /usr/local/hdf
-    /usr/local/hdf/share
+    /usr/lib/@HDF4_PACKAGE@
+    /usr/share/@HDF4_PACKAGE@
+    /usr/local/@HDF4_PACKAGE@
+    /usr/local/@HDF4_PACKAGE@/share
 )
 
-FIND_PATH (HDF4_ROOT_DIR "hdf4-config.cmake"
+FIND_PATH (HDF4_ROOT_DIR "@HDF4_PACKAGE@@HDF_PACKAGE_EXT@-config.cmake"
     HINTS ${_HDF4_HINTS}
     PATHS ${_HDF4_PATHS}
     PATH_SUFFIXES
-        lib/cmake/hdf4
-        share/cmake/hdf4
+        lib/cmake/@HDF4_PACKAGE@
+        share/cmake/@HDF4_PACKAGE@
 )
 
 FIND_PATH (HDF4_INCLUDE_DIRS "hdf.h"
@@ -77,5 +77,5 @@ SET ( HDF4_INCLUDE_DIR "${HDF4_INCLUDE_DIRS}" )
 
 IF (HDF4_INCLUDE_DIR)
   SET (HDF4_FOUND "YES")
-  INCLUDE (${HDF4_ROOT_DIR}/hdf4-config.cmake)
+  INCLUDE (${HDF4_ROOT_DIR}/@HDF4_PACKAGE@@HDF_PACKAGE_EXT@-config.cmake)
 ENDIF (HDF4_INCLUDE_DIR)
