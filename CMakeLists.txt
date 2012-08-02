@@ -458,7 +458,6 @@ IF (HDF4_ENABLE_JPEG_LIB_SUPPORT)
       FIND_PACKAGE (JPEG NAMES ${JPEG_PACKAGE_NAME}${HDF_PACKAGE_EXT})
     ENDIF (NOT JPEG_USE_EXTERNAL)
     IF (JPEG_FOUND)
-      SET (JPEG_INCLUDE_DIR ${JPEG_INCLUDE_DIRS})
       SET (H4_HAVE_JPEGLIB_H 1)
       SET (H4_HAVE_LIBJPEG 1)
       SET (H4_JPEGLIB_HEADER "jpeglib.h")
@@ -651,12 +650,6 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
-# Library utilities
-#-----------------------------------------------------------------------------
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
-ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
-
-#-----------------------------------------------------------------------------
 # Option to build Fortran bindings/tests/examples
 # Make sure this appears before the CONFIGURE_FILE step
 # so that fortran name mangling is detected before writing H4config.h
@@ -682,6 +675,12 @@ IF (MSVC)
 ELSE (MSVC)
   SET (H4_HDSETVBUF "NOP")
 ENDIF (MSVC)
+
+#-----------------------------------------------------------------------------
+# Library utilities
+#-----------------------------------------------------------------------------
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/hdf   ${PROJECT_BINARY_DIR}/hdf)
+ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf ${PROJECT_BINARY_DIR}/mfhdf)
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Examples
