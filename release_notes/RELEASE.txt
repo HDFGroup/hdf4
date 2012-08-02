@@ -76,7 +76,7 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-   - [None]
+   -  Mac OS X 10.7.4 with GNU gcc and gfortran compilers
 
 
 Bugs fixed since HDF 4.2.7
@@ -169,7 +169,7 @@ This version has been tested in the following platforms:
    (64 bit)                      icc (ICC) 12.1.0 20110811 
    (fred)                        ifort (IFORT) 12.1.0 20110811 
                                  i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-                                 GNU Fortran (GCC) 4.6.1
+                                 GNU Fortran (GCC) 4.6.2
                              
    MAC OS X Intel 10.7.4         Darwin 11.4.0
    (64 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
