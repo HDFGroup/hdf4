@@ -606,6 +606,17 @@ IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
   ENDIF (SZIP_FOUND AND SZIP_USE_EXTERNAL)
 ENDIF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
 
+#-----------------------------------------------------------------------------
+# Option to build HDF4 xdr Library
+#-----------------------------------------------------------------------------
+OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
+IF (WIN32 AND NOT CYGWIN)
+  SET (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
+ENDIF (WIN32 AND NOT CYGWIN)
+IF (HDF4_BUILD_XDR_LIB)
+  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
+  ADD_DEPENDENCIES (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
+ENDIF (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
 # Build utility to copy and strip X lines of file
@@ -637,17 +648,6 @@ IF (BUILD_TESTING)
   INCLUDE (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
   CONFIGURE_FILE (${HDF4_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
 ENDIF (BUILD_TESTING)
-
-#-----------------------------------------------------------------------------
-# Option to build HDF4 xdr Library
-#-----------------------------------------------------------------------------
-OPTION (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
-IF (WIN32 AND NOT CYGWIN)
-  SET (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-ENDIF (WIN32 AND NOT CYGWIN)
-IF (HDF4_BUILD_XDR_LIB)
-  ADD_SUBDIRECTORY (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
-ENDIF (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
 # Option to build Fortran bindings/tests/examples
