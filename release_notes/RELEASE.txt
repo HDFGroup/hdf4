@@ -128,18 +128,18 @@ This version has been tested in the following platforms:
 
    Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
       SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
-   (jam)                             (Red Hat 4.1.2-51)
-                                 pgcc and pgf90 11.8-0 32-bit target 
+   (jam)                             (Red Hat 4.1.2-52)
+                                 pgcc and pgf90 11.9-0 32-bit target 
                                  on x86 Linux -tp penryn
-                                 Intel(R) C Compiler, Version 12.0.4 20110427
-                                 Intel(R) Fortran Compiler, Version 12.0.4
+                                 Intel(R) C Compiler, Version 12.1.0 20110811
+                                 Intel(R) Fortran Compiler, Version 12.1.0
 
    Linux 2.6.18-274.17.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-51)
       SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
    (koala)                           (Red Hat 4.1.2-51)
-                                 icc (ICC) 12.0.4 20110427
-                                 ifort (IFORT) 12.0.4 20110427
-                                 pgcc and pgf90 11.8-0 64-bit target 
+                                 icc (ICC) 12.1.0 20110811
+                                 ifort (IFORT) 12.1.0 20110811
+                                 pgcc and pgf90 11.9-0 64-bit target 
                                  on x86-64 Linux -tp nehalem
 
    SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 2010/08/11 
@@ -172,7 +172,7 @@ This version has been tested in the following platforms:
                                  GNU Fortran (GCC) 4.6.2
                              
    MAC OS X Intel 10.7.4         Darwin 11.4.0
-   (64 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+   (64 bit)                      i686-apple-darwin11-llvm-gcc-4.2.1 (GCC) 4.2.1
    (hdf-duck)                    gcc (GCC) 4.6.2
                                  GNU Fortran (GCC) 4.6.2
 
