@@ -28,6 +28,8 @@
 #ifndef _MFAN_H  /* avoid re-inclusion */
 #define _MFAN_H
 
+#include "H4api_adpt.h"
+
 #include "hdf.h"
 
 #if 0
@@ -42,7 +44,7 @@ typedef enum
 } ann_type;
 #endif
 
-#ifdef MFAN_C
+#if defined MFAN_MASTER | defined MFAN_TESTER
 /* WE ARE IN MAIN ANNOTATION SOURCE FILE "mfan.c" */
 
 /* PRIVATE variables and definitions */
@@ -91,22 +93,10 @@ typedef struct ANentry
 /* Obtain Annotation type from key */
 #define AN_KEY2TYPE(k)     ((int32)((int32)k >> 16))
 
-#else /* !MFAN_C */
+#else /* !defined MFAN_MASTER && !defined MFAN_TESTER */
 /* WE are NOT in main ANNOTATION source file
  * Nothing EXPORTED except Public fcns */
 
-
-/******************************************************************************
- NAME
-    ANdestroy -- Un-Initialize Annotation Interface
-
- DESCRIPTION
-    Unallocates global annotaton node list and file list.
-
- RETURNS
-    SUCCEED or FAIL
-*******************************************************************************/
-extern intn ANdestroy(void);
 
 /******************************************************************************
  NAME
@@ -118,7 +108,7 @@ extern intn ANdestroy(void);
  RETURNS
    A file ID or FAIL.
 *******************************************************************************/
-extern int32 ANstart(int32 file_id /* IN: file to start annotation access on */);
+HDFLIBAPI int32 ANstart(int32 file_id /* IN: file to start annotation access on */);
 
 /******************************************************************************
  NAME
@@ -133,7 +123,7 @@ extern int32 ANstart(int32 file_id /* IN: file to start annotation access on */)
    Returns SUCCEED if successful and FAIL othewise
 
 *******************************************************************************/
-extern intn  ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
+HDFLIBAPI intn  ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
                         int32 *n_file_label, /* OUT: the # of file labels */
                         int32 *n_file_desc,  /* OUT: the # of file descriptions */
                         int32 *n_obj_label,  /* OUT: the # of object labels */ 
@@ -149,7 +139,7 @@ extern intn  ANfileinfo(int32 an_id,         /* IN:  annotation interface id */
  RETURNS
    SUCCEED if successful and  FAIL otherwise.
 *******************************************************************************/
-extern int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
+HDFLIBAPI int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
 
 /******************************************************************************
  NAME
@@ -164,7 +154,7 @@ extern int32 ANend(int32 an_id /* IN: Annotation ID of file to close */);
  RETURNS
         An ID to an annotation which can either be a label or description.
 *******************************************************************************/
-extern int32 ANcreate(int32 an_id,     /* IN: annotation interface ID */
+HDFLIBAPI int32 ANcreate(int32 an_id,     /* IN: annotation interface ID */
                       uint16 elem_tag, /* IN: tag of item to be assigned annotation */
                       uint16 elem_ref, /* IN: reference number of itme to be assigned ann*/
                       ann_type type    /* IN: annotation type */);
@@ -183,7 +173,7 @@ extern int32 ANcreate(int32 an_id,     /* IN: annotation interface ID */
  RETURNS
         An ID to an annotation which can either be a file label or description
 *******************************************************************************/
-extern int32 ANcreatef(int32 an_id,  /* IN: annotation interface ID */
+HDFLIBAPI int32 ANcreatef(int32 an_id,  /* IN: annotation interface ID */
                        ann_type type /* IN:  annotation type */);
 
 /******************************************************************************
@@ -197,7 +187,7 @@ extern int32 ANcreatef(int32 an_id,  /* IN: annotation interface ID */
  RETURNS
     An ID to an annotation type which can either be a label or description 
 *******************************************************************************/
-extern int32 ANselect(int32 an_id,  /* IN: annotation interface ID */
+HDFLIBAPI int32 ANselect(int32 an_id,  /* IN: annotation interface ID */
                       int32 index,  /* IN: index of annottion to get ID for */
                       ann_type type /* IN: annotation type */);
 
@@ -214,7 +204,7 @@ extern int32 ANselect(int32 an_id,  /* IN: annotation interface ID */
    number of annotation found if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-extern intn  ANnumann(int32 an_id,     /* IN: annotation interface id */
+HDFLIBAPI intn  ANnumann(int32 an_id,     /* IN: annotation interface id */
                       ann_type type,   /* IN: annotation type */
                       uint16 elem_tag, /* IN: tag of item of which this is annotation */
                       uint16 elem_ref  /* IN: ref of item of which this is annotation*/);
@@ -232,7 +222,7 @@ extern intn  ANnumann(int32 an_id,     /* IN: annotation interface id */
    number of annotations ids found if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-extern intn  ANannlist(int32 an_id,     /* IN: annotation interface id */
+HDFLIBAPI intn  ANannlist(int32 an_id,     /* IN: annotation interface id */
                        ann_type type,   /* IN: annotation type */
                        uint16 elem_tag, /* IN: tag of item of which this is annotation */
                        uint16 elem_ref, /* IN: ref of item of which this is annotation*/
@@ -249,7 +239,7 @@ extern intn  ANannlist(int32 an_id,     /* IN: annotation interface id */
    length of annotation if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-extern int32 ANannlen(int32 ann_id /* IN: annotation id */);
+HDFLIBAPI int32 ANannlen(int32 ann_id /* IN: annotation id */);
 
 /******************************************************************************
  NAME
@@ -263,7 +253,7 @@ extern int32 ANannlen(int32 ann_id /* IN: annotation id */);
    SUCCEED (0) if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-extern int32 ANwriteann(int32 ann_id,    /* IN: annotation id */
+HDFLIBAPI int32 ANwriteann(int32 ann_id,    /* IN: annotation id */
                         const char *ann, /* IN: annotation to write */
                         int32 annlen     /* IN: length of annotation*/);
 
@@ -279,7 +269,7 @@ extern int32 ANwriteann(int32 ann_id,    /* IN: annotation id */
    SUCCEED (0) if successful and FAIL (-1) otherwise
 
 *******************************************************************************/
-extern int32 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
+HDFLIBAPI int32 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
                        char *ann,    /* OUT: space to return annotation in */
                        int32 maxlen  /* IN: size of space to return annotation in */);
 
@@ -293,7 +283,7 @@ extern int32 ANreadann(int32 ann_id, /* IN: annotation id (handle) */
  RETURNS
     SUCCEED(0) or FAIL(-1)
 *******************************************************************************/
-extern intn  ANendaccess(int32 ann_id /* IN: annotation id */);
+HDFLIBAPI intn  ANendaccess(int32 ann_id /* IN: annotation id */);
 
 /******************************************************************************
  NAME
@@ -308,7 +298,7 @@ extern intn  ANendaccess(int32 ann_id /* IN: annotation id */);
    label or description.
 
 *******************************************************************************/
-extern int32 ANget_tagref(int32 an_id,    /* IN: annotation interface ID */
+HDFLIBAPI int32 ANget_tagref(int32 an_id,    /* IN: annotation interface ID */
                           int32 index,    /* IN: index of annotation to get tag/ref for*/
                           ann_type type,  /* IN: annotation type */
                           uint16 *ann_tag,/* OUT: Tag for annotation */ 
@@ -324,7 +314,7 @@ extern int32 ANget_tagref(int32 an_id,    /* IN: annotation interface ID */
  RETURNS
    SUCCEED(0) if successful and FAIL (-1) otherwise. 
 *******************************************************************************/
-extern int32 ANid2tagref(int32 ann_id,    /* IN: annotation id */
+HDFLIBAPI int32 ANid2tagref(int32 ann_id,    /* IN: annotation id */
                          uint16 *ann_tag, /* OUT: Tag for annotation */
                          uint16 *ann_ref  /* OUT: ref for annotation */);
 
@@ -339,7 +329,7 @@ extern int32 ANid2tagref(int32 ann_id,    /* IN: annotation id */
  RETURNS
    Annotation id of annotation if successful and FAIL(-1) otherwise. 
 *******************************************************************************/
-extern int32 ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
+HDFLIBAPI int32 ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
                          uint16 ann_tag, /* IN: Tag for annotation */
                          uint16 ann_ref  /* IN: ref for annotation */);
 
@@ -353,7 +343,7 @@ extern int32 ANtagref2id(int32 an_id,    /* IN  Annotation interface id */
  RETURNS
    Returns TAG corresponding to annotatin type.
 *******************************************************************************/
-extern uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
+HDFLIBAPI uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
 
 /******************************************************************************
  NAME
@@ -365,9 +355,9 @@ extern uint16 ANatype2tag(ann_type atype /* IN: Annotation type */);
  RETURNS
    Returns type corresponding to annotatin TAG.
 *******************************************************************************/
-extern ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
+HDFLIBAPI ann_type ANtag2atype(uint16 atag /* IN: annotation tag */);
 
 
-#endif /* !MFAN_C */
+#endif /* !defined MFAN_MASTER && !MFAN_TESTER */
 
 #endif /* _MFAN_H */

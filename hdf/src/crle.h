@@ -74,6 +74,20 @@ extern      "C"
 #define RLE_MAX_RUN     (RLE_BUF_SIZE+RLE_MIN_RUN-1)
 /* minimum length of mix */
 #define RLE_MIN_MIX     1
+/*
+ * Notes on RLE_MIN_RUN and RLE_MIN_MIX:
+ * (excerpt from QAK's email to RA - see bug HDFFR-1261)
+ *
+ * These are [small] optimizations for improving the compression ratio. The
+ * algorithm won't encode a run of identical bytes unless it's at least
+ * RLE_MIN_RUN bytes long.  So, we can assume that all runs are at least
+ * that many bytes, and subtract RLE_MIN_RUN from the actual run length,
+ * allowing encoding of runs that are a little bit longer than otherwise
+ * allowed (i.e. runs up to 127+RLE_MIN_RUN bytes, instead of only 127 bytes).
+ * Similarly for RLE_MIN_MIX - there must be at least RLE_MIN_MIX bytes in a
+ * "mixed" sequence of bytes, so we can encode a little bit longer sequence
+ * of mixed bytes (127+RLE_MIN_MIX bytes, instead of only 127 bytes).
+ */
 
 /* RLE [en|de]coding information */
 typedef struct
@@ -86,11 +100,11 @@ typedef struct
                 second_byte;    /* the second to last byte stored in the buffer */
     enum
       {
-          RLE_INIT,             /* initial state, need to read a byte to determine
-                                   next state */
+          RLE_INIT,             /* initial state, need to read a byte to
+                                   determine the next state */
           RLE_RUN,              /* buffer up to the current position is a run */
-          RLE_MIX
-      }                         /* buffer up to the current position is a mix */
+          RLE_MIX		/* buffer up to the current position is a mix */
+      }
     rle_state;                  /* state of the buffer storage */
 }
 comp_coder_rle_info_t;

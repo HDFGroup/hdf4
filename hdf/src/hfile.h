@@ -20,6 +20,8 @@
 #ifndef HFILE_H
 #define HFILE_H
 
+#include "H4api_adpt.h"
+
 #include "tbbt.h"
 #include "bitvect.h"
 #include "atom.h"
@@ -49,10 +51,10 @@
 
 #define LIBVER_MAJOR    4
 #define LIBVER_MINOR    2 
-#define LIBVER_RELEASE  5 
-#define LIBVER_SUBRELEASE "pre2"   /* For pre-releases like snap0       */
+#define LIBVER_RELEASE  8 
+#define LIBVER_SUBRELEASE ""   /* For pre-releases like snap0       */
                                 /* Empty string for real releases.           */
-#define LIBVER_STRING   "HDF Version 4.2 Release 5-pre2, February 10, 2010"
+#define LIBVER_STRING   "HDF Version 4.2 Release 8, August 3, 2012"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
@@ -349,12 +351,16 @@ static accrec_t *accrec_free_list=NULL;
    interfaces when they need to know information about a given
    special element.  This is all information that would not be returned
    via Hinquire().  This should probably be a union of structures. */
+/* Added length of external element.  Note: this length is not returned
+   via Hinquire(). -BMR 2011/12/12 */
 typedef struct sp_info_block_t
   {
       int16       key;          /* type of special element this is */
 
       /* external elements */
       int32       offset;       /* offset in the file */
+      int32       length;       /* length of external data in the file */
+      int32       length_file_name;  /* length of external file name */
       char       *path;         /* file name - should not be freed by user */
 
       /* linked blocks */
@@ -493,6 +499,9 @@ extern      "C"
     HDFLIBAPI int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
+    HDFLIBAPI intn HDgetspecinfo
+                (intn file_id, uint16 tag, uint16 ref, sp_info_block_t *info);
+
     HDFLIBAPI int32 HDset_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
@@ -504,6 +513,9 @@ extern      "C"
 
     HDFLIBAPI intn HP_write
                 (filerec_t *file_rec,const void * buf,int32 bytes);
+
+    HDFLIBAPI int32 HPread_drec
+                (int32 file_id, atom_t data_id, uint8** drec_buf);
 
     HDFLIBAPI intn tagcompare
                 (void * k1, void * k2, intn cmparg);

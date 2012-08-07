@@ -14,6 +14,7 @@
 /* $Id$ */
 
 #include "h4config.h"
+#include "H4api_adpt.h"
 /* If we disable the HDF version of the netCDF API (ncxxx interface)
    (--disable-netcdf configure flag; the old way was to use -DHAVE_NETCDF compilation flag)
  ) we need to rename all the relevant function names 

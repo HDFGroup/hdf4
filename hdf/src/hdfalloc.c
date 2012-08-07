@@ -117,9 +117,11 @@ HDmemfill(void * dest, const void * src, uint32 item_size, uint32 num_items)
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
+    Sep 19, 11 - Changed last argument's type from int32 to intn.  It didn't
+	make sense to have to cast in most places. -BMR
 --------------------------------------------------------------------------*/
 char *
-HIstrncpy(char *dest, const char *source, int32 len)
+HIstrncpy(char *dest, const char *source, intn len)
 {
     char       *destp;
 
@@ -286,4 +288,3 @@ HDstrdup(const char *s)
 }   /* end HDstrdup() */
 
 #endif /* VMS | macinosh */
-

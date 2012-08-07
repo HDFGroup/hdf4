@@ -22,7 +22,7 @@ int main()
    int16   data_X_out[X_LENGTH];
    float64 data_Y[Y_LENGTH];  /* Y dimension dimension scale */
    float64 data_Y_out[Y_LENGTH]; 
-   char    dim_name[NAME_LENGTH];
+   char    dim_name[NAME_LENGTH+1];
    int     i, j, nrow;
 
    /********************* End of variable declaration ***********************/
@@ -66,17 +66,17 @@ int main()
        */
        switch (dim_index)
        {
-	case 0:	status = SDsetdimname (dim_id, DIM_NAME_Y);
+  case 0:  status = SDsetdimname (dim_id, DIM_NAME_Y);
                 n_values = Y_LENGTH;
                 status = SDsetdimscale (dim_id,n_values,DFNT_FLOAT64, \
                                        (VOIDP)data_Y);  
-		break;
-	case 1:	status = SDsetdimname (dim_id, DIM_NAME_X);
+    break;
+  case 1:  status = SDsetdimname (dim_id, DIM_NAME_X);
                 n_values = X_LENGTH; 
                 status = SDsetdimscale (dim_id,n_values,DFNT_INT16, \
                                        (VOIDP)data_X);  
-		break;
-	default: break;
+    break;
+  default: break;
        }
 
        /*

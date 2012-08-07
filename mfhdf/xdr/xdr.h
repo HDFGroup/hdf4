@@ -9,12 +9,7 @@
 #ifndef __XDR_HEADER__
 #define __XDR_HEADER__
 
-#if defined(__MWERKS__)	/* non-command line compiler */
-#ifndef HDF
-#define HDF
-#endif
-#endif
-
+#include "H4api_adpt.h"
 /*
  * XDR provides a conventional way for converting between C data
  * types and an external bit-string representation.  Library supplied
@@ -200,32 +195,36 @@ struct xdr_discrim {
 #define IXDR_PUT_SHORT(buf, v)		IXDR_PUT_LONG((buf), ((long)(v)))
 #define IXDR_PUT_U_SHORT(buf, v)	IXDR_PUT_LONG((buf), ((long)(v)))
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * These are the "generic" xdr routines.
  */
-extern void     xdr_free(xdrproc_t , char *);
-extern bool_t	xdr_void(void);
-extern bool_t	xdr_int(XDR *, int *);
-extern bool_t	xdr_u_int(XDR *, u_int *);
-extern bool_t	xdr_long(XDR *, long *);
-extern bool_t	xdr_u_long(XDR *, u_long *);
-extern bool_t	xdr_short(XDR *, short *);
-extern bool_t	xdr_u_short(XDR *, u_short *);
-extern bool_t	xdr_bool(XDR *, bool_t *);
-extern bool_t	xdr_enum(XDR *, enum_t *);
-extern bool_t	xdr_array(XDR *, caddr_t *, u_int *, u_int, u_int, xdrproc_t );
-extern bool_t	xdr_bytes(XDR *, char **, u_int *, u_int);
-extern bool_t	xdr_opaque(XDR *, caddr_t , u_int );
-extern bool_t	xdr_string(XDR *, char **, u_int);
-extern bool_t	xdr_union(XDR *, enum_t *, char *, struct xdr_discrim *, xdrproc_t );
-extern bool_t	xdr_char(XDR *, char *);
-extern bool_t	xdr_u_char(XDR *, char *);
-extern bool_t	xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t );
-extern bool_t	xdr_float(XDR *, float *);
-extern bool_t	xdr_double(XDR *, double *);
-extern bool_t	xdr_reference();
-extern bool_t	xdr_pointer();
-extern bool_t	xdr_wrapstring(XDR *, char **);
+XDRLIBAPI void     xdr_free(xdrproc_t , char *);
+XDRLIBAPI bool_t	xdr_void(void);
+XDRLIBAPI bool_t	xdr_int(XDR *, int *);
+XDRLIBAPI bool_t	xdr_u_int(XDR *, u_int *);
+XDRLIBAPI bool_t	xdr_long(XDR *, long *);
+XDRLIBAPI bool_t	xdr_u_long(XDR *, u_long *);
+XDRLIBAPI bool_t	xdr_short(XDR *, short *);
+XDRLIBAPI bool_t	xdr_u_short(XDR *, u_short *);
+XDRLIBAPI bool_t	xdr_bool(XDR *, bool_t *);
+XDRLIBAPI bool_t	xdr_enum(XDR *, enum_t *);
+XDRLIBAPI bool_t	xdr_array(XDR *, caddr_t *, u_int *, u_int, u_int, xdrproc_t );
+XDRLIBAPI bool_t	xdr_bytes(XDR *, char **, u_int *, u_int);
+XDRLIBAPI bool_t	xdr_opaque(XDR *, caddr_t , u_int );
+XDRLIBAPI bool_t	xdr_string(XDR *, char **, u_int);
+XDRLIBAPI bool_t	xdr_union(XDR *, enum_t *, char *, struct xdr_discrim *, xdrproc_t );
+XDRLIBAPI bool_t	xdr_char(XDR *, char *);
+XDRLIBAPI bool_t	xdr_u_char(XDR *, char *);
+XDRLIBAPI bool_t	xdr_vector(XDR *, char *, u_int, u_int, xdrproc_t );
+XDRLIBAPI bool_t	xdr_float(XDR *, float *);
+XDRLIBAPI bool_t	xdr_double(XDR *, double *);
+XDRLIBAPI bool_t	xdr_reference();
+XDRLIBAPI bool_t	xdr_pointer();
+XDRLIBAPI bool_t	xdr_wrapstring(XDR *, char **);
 
 /*
  * Common opaque bytes objects used by many rpc protocols;
@@ -237,18 +236,22 @@ struct netobj {
 	char	*n_bytes;
 };
 typedef struct netobj netobj;
-extern bool_t   xdr_netobj(XDR *,struct netobj *);
+XDRLIBAPI bool_t   xdr_netobj(XDR *,struct netobj *);
 
 /*
  * These are the public routines for the various implementations of
  * xdr streams.
  */
-extern void   xdrmem_create();		/* XDR using memory buffers */
-extern void   xdrstdio_create(XDR *, FILE *, enum xdr_op );	/* XDR using stdio library */
-extern void   xdrrec_create();		/* XDR pseudo records for tcp */
-extern bool_t xdrrec_endofrecord();	/* make end of xdr record */
-extern bool_t xdrrec_skiprecord();	/* move to beginning of next record */
-extern bool_t xdrrec_eof();		/* true if no more input */
+XDRLIBAPI void   xdrmem_create();		/* XDR using memory buffers */
+XDRLIBAPI void   xdrstdio_create(XDR *, FILE *, enum xdr_op );	/* XDR using stdio library */
+XDRLIBAPI void   xdrrec_create();		/* XDR pseudo records for tcp */
+XDRLIBAPI bool_t xdrrec_endofrecord();	/* make end of xdr record */
+XDRLIBAPI bool_t xdrrec_skiprecord();	/* move to beginning of next record */
+XDRLIBAPI bool_t xdrrec_eof();		/* true if no more input */
+
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef HDF
 #include "hdf.h"

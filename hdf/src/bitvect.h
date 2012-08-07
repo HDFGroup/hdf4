@@ -27,6 +27,8 @@
 #ifndef __BITVECT_H
 #define __BITVECT_H
 
+#include "H4api_adpt.h"
+
 #include "hdf.h"
 
 /* Boolean values used */
@@ -362,21 +364,21 @@ static const int8 bv_num_ones[256]={
 extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
-extern bv_ptr bv_new(int32 num_bits, uint32 flags);
+HDFLIBAPI bv_ptr bv_new(int32 num_bits, uint32 flags);
 
-extern intn bv_delete(bv_ptr b);
+HDFLIBAPI intn bv_delete(bv_ptr b);
 
-extern intn bv_set(bv_ptr b, int32 bit_num, bv_bool value);
+HDFLIBAPI intn bv_set(bv_ptr b, int32 bit_num, bv_bool value);
 
-extern intn bv_get(bv_ptr b, int32 bit_num);
+HDFLIBAPI intn bv_get(bv_ptr b, int32 bit_num);
 
-extern intn bv_clear(bv_ptr b, bv_bool value);
+HDFLIBAPI intn bv_clear(bv_ptr b, bv_bool value);
 
-extern int32 bv_size(bv_ptr b);
+HDFLIBAPI int32 bv_size(bv_ptr b);
 
-extern uint32 bv_flags(bv_ptr b);
+HDFLIBAPI uint32 bv_flags(bv_ptr b);
 
-extern int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
+HDFLIBAPI int32 bv_find(bv_ptr b, int32 last_find, bv_bool value);
 
 #if defined c_plusplus || defined __cplusplus
 }

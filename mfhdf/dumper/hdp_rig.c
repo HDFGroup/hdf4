@@ -61,7 +61,7 @@ init_dumprig_opts(dump_info_t * dumprig_opts)
     dumprig_opts->num_chosen = (-1);	/* default dump all items */
     dumprig_opts->contents = DVERBOSE;	/* default dump all information */
     dumprig_opts->dump_to_file = FALSE;		/* don't dump to output file */
-    dumprig_opts->file_type = DASCII;	/* default output is ASCII file */
+    dumprig_opts->file_format = DASCII;	/* default output is ASCII file */
     dumprig_opts->as_stream = FALSE; /* print output aligned, using carriage returns */
     dumprig_opts->print_pal = FALSE;     /* GR only, don't print palette */
 
@@ -204,12 +204,12 @@ parse_dumprig_opts(dump_info_t *dumprig_opts,
                 break;
 
             case 'b':   /* dump data in binary */
-                dumprig_opts->file_type = DBINARY;
+                dumprig_opts->file_format = DBINARY;
                 (*curr_arg)++;
                 break;
 
             case 'x':   /* dump data in ascii, also default */
-                dumprig_opts->file_type = DASCII;
+                dumprig_opts->file_format = DASCII;
                 (*curr_arg)++;
                 break;
 
@@ -241,7 +241,7 @@ drig(dump_info_t *dumprig_opts,
     int         dumpall = 0;
     int         ncomps;
     int         il;
-    file_type_t ft;
+    file_format_t ff;
     intn        ret_value = SUCCEED;
 
     while (curr_arg < argc)
@@ -272,8 +272,8 @@ drig(dump_info_t *dumprig_opts,
             }	/* end if */
 
           /* ASCII or Binary? */
-          ft = dumprig_opts->file_type;
-          switch(ft)
+          ff = dumprig_opts->file_format;
+          switch(ff)
             {
             case DASCII:   /*  ASCII  file   */
 
@@ -321,10 +321,6 @@ drig(dump_info_t *dumprig_opts,
                     dumpall = 1;
 
                 x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
-
-                /* is this normal output here or debugging? leave for now */
-                printf("ndsets=%d, dumpall=%d, num_chosen=%d\n",
-                       (int)ndsets,(int)dumpall,(int)dumprig_opts->num_chosen);
 
                 /* can only check index range here */
                 for(i=0; 
@@ -426,7 +422,8 @@ drig(dump_info_t *dumprig_opts,
                         case DVERBOSE:
                         case DHEADER:
                             fprintf(fp, "Data model: %d-bit raster image ", ncomps * 8);
-                            if (has_pal)
+			    /* 24-bit images do not have palette */
+                            if ((ncomps != 3) && has_pal)
                                 fprintf(fp, "with palette.\n");
                             else
                                 fprintf(fp, "without palette.\n");
@@ -435,25 +432,25 @@ drig(dump_info_t *dumprig_opts,
                             /* check compression if any */
                             if (compressed)
                               {
-                                  fprintf(fp, "\t*data is compressed and the compression scheme is ");
+                                  fprintf(fp, "\t*data is compressed with ");
                                   switch (compr_type)
                                     {
                                     case DFTAG_RLE:
-                                        fprintf(fp, "RLE compression.\n");
+                                        fprintf(fp, "RLE compression scheme.\n");
                                         break;
                                     case DFTAG_IMCOMP:
-                                        fprintf(fp, "IMCOMP conmpression.\n");
+                                        fprintf(fp, "IMCOMP conmpression scheme.\n");
                                         break;
                                     case DFTAG_JPEG:
                                     case DFTAG_JPEG5:
-                                        fprintf(fp, "JPEG conmpression (24-bit data.)\n");
+                                        fprintf(fp, "JPEG conmpression scheme (24-bit data.)\n");
                                         break;
                                     case DFTAG_GREYJPEG:
                                     case DFTAG_GREYJPEG5:
-                                        fprintf(fp, "JPEG conmpression (8-bit data.)\n");
+                                        fprintf(fp, "JPEG conmpression scheme (8-bit data.)\n");
                                         break;
                                     default:
-                                        fprintf(fp, "Unknown.");
+                                        fprintf(fp, "unknown scheme.");
                                         break;
                                     }		/* switch */
                                   fprintf(fp, "\n");
@@ -528,15 +525,11 @@ drig(dump_info_t *dumprig_opts,
                       ndsets += temp;
                   }
 
-                if (num_rig_chosen == -1)		/* If all RIGs will be dumped, set the flat. */
+		/* If all RIGs will be dumped, set the flag. */
+                if (num_rig_chosen == -1)
                     dumpall = 1;
 
                 x = 0;	/* Used as the index of the array of "rig_chosen[x]". */
-
-                /* why was this left here uncommented out for binary dump? */
-#if 0
-                printf("ndsets=%d, dumpall=%d, num_chosen=%d\n",(int)ndsets,(int)dumpall,(int)dumprig_opts->num_chosen);
-#endif
 
                 /* can only check index range here */
                 for(i=0; i < dumprig_opts->num_chosen && dumprig_opts->filter == DINDEX; i++)

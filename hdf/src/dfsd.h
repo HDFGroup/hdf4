@@ -29,6 +29,8 @@
 #ifndef _DFSD_H   /* avoid re-inclusion */
 #define _DFSD_H
 
+#include "H4api_adpt.h"
+
 #include "hdf.h"
 
 /* include numbertype and aid for 3.2   S. Xu   */
@@ -81,52 +83,52 @@ extern      "C"
 {
 #endif                          /* c_plusplus || __cplusplus */
 
-    extern int32 DFSDIopen
+    HDFLIBAPI int32 DFSDIopen
                 (const char * filename, int acc_mode);
 
-    extern int  DFSDIsdginfo
+    HDFLIBAPI int  DFSDIsdginfo
                 (int32 file_id);
 
-    extern int  DFSDIclear
+    HDFLIBAPI int  DFSDIclear
                 (DFSsdg * sdg);
 
-    extern int  DFSDIclearNT
+    HDFLIBAPI int  DFSDIclearNT
                 (DFSsdg * sdg);
 
-    extern int  DFSDIgetdata
+    HDFLIBAPI int  DFSDIgetdata
                 (const char * filename, intn rank, int32 maxsizes[], VOIDP data,
                  int isfortran);
 
-    extern int  DFSDIputdata
+    HDFLIBAPI int  DFSDIputdata
                 (const char * filename, intn rank, int32 * dimsizes, VOIDP data,
                  int accmode, int isfortran);
 
-    extern int  DFSDIgetslice
+    HDFLIBAPI int  DFSDIgetslice
                 (const char * filename, int32 winst[], int32 windims[], VOIDP data,
                  int32 dims[], int isfortran);
 
-    extern int  DFSDIputslice
+    HDFLIBAPI int  DFSDIputslice
                 (int32 windims[], VOIDP data, int32 dims[], int isfortran);
 
-    extern int  DFSDIendslice
+    HDFLIBAPI int  DFSDIendslice
                 (int isfortran);
 
-    extern intn DFSDIrefresh
+    HDFLIBAPI intn DFSDIrefresh
                 (char * filename);
 
-    extern int  DFSDIisndg
+    HDFLIBAPI int  DFSDIisndg
                 (intn * isndg);
 
-    extern int  DFSDIgetrrank
+    HDFLIBAPI int  DFSDIgetrrank
                 (intn * rank);
 
-    extern int  DFSDIgetwrank
+    HDFLIBAPI int  DFSDIgetwrank
                 (intn * rank);
 
-    extern int  DFSDIsetdimstrs
+    HDFLIBAPI int  DFSDIsetdimstrs
                 (int dim, const char * label, const char * unit, const char * format);
 
-    extern int  DFSDIsetdatastrs
+    HDFLIBAPI int  DFSDIsetdatastrs
                 (const char * label, const char * unit, const char * format,
                  const char * coordsys);
 

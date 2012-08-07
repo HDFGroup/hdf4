@@ -43,8 +43,8 @@ static char RcsId[] = "@(#)$Revision$";
  *         They are AN_FILE_LABEL, AN_FILE_DESC, AN_DATA_LABEL, AN_DATA_DESC
  *         The tag/ref refers to data tag/ref
  *
- *  ANinit      - Intialize the annotation interface
- *  ANdestroy   - Un-intialize the annotation interface
+ *  ANIinit      - Intialize the annotation interface
+ *  ANIdestroy   - Un-intialize the annotation interface
  *
  *  ANIanncmp    - compare two annotation handles(ann_id's) 
  *                  (used in annotation TBBTtree)
@@ -87,8 +87,8 @@ static char RcsId[] = "@(#)$Revision$";
  *
  *---------------------------------------------------------------------------*/
 
-#ifndef MFAN_C  /* define main annoation source file */
-#define MFAN_C
+#ifndef MFAN_MASTER  /* define main annotation source file */
+#define MFAN_MASTER
 
 #include "mfan.h"
 #include "atom.h"
@@ -180,6 +180,38 @@ ANIanncmp(void * i,   /* IN: annotation key(tag,ref) */
         return 1;
 } /* ANIanncmp */
 
+/* ------------------------------- ANIdestroy -------------------------------- 
+ NAME
+	ANIdestroy -- Un-Initialize Annotation Interface
+
+ DESCRIPTION
+    Destroys annotation Atom group ANIDGROUP. This routine is usually
+    registered with the atexit() rouinte.
+
+ RETURNS
+    SUCCEED or FAIL
+
+ AUTHOR
+    GeorgeV.
+
+--------------------------------------------------------------------------- */
+intn
+ANIdestroy(void)
+{
+#ifdef LATER
+    CONSTR(FUNC, "ANIdestroy");
+#endif /* LATER */
+    int32    ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Destroy the atom groups for annotations */
+    HAdestroy_group(ANIDGROUP);
+
+    return ret_value;
+} /* ANIdestroy () */
+
 /*--------------------------------------------------------------------------
  NAME
     ANIstart - AN-level initialization routine.
@@ -203,8 +235,8 @@ ANIstart(void)
     /* Don't call this routine again... */
     library_terminate = TRUE;
 
-    /* Install atexit() library cleanup routine ANdestroy() */
-    if (HPregister_term_func(&ANdestroy) != 0)
+    /* Install atexit() library cleanup routine ANIdestroy() */
+    if (HPregister_term_func(&ANIdestroy) != 0)
         HGOTO_ERROR(DFE_CANTINIT, FAIL);
 
   done:
@@ -218,9 +250,9 @@ ANIstart(void)
     return(ret_value);
 } /* end ANIstart() */
 
-/* ------------------------------- ANinit -------------------------------- 
+/* ------------------------------- ANIinit -------------------------------- 
  NAME
-	ANinit -- Initialize Annotation Interface
+	ANIinit -- Initialize Annotation Interface
 
  DESCRIPTION
     Initializes the annotation interface i.e. installs library
@@ -235,9 +267,9 @@ ANIstart(void)
 
 --------------------------------------------------------------------------- */
 PRIVATE int32
-ANinit(void)
+ANIinit(void)
 {
-    CONSTR(FUNC, "ANinit");
+    CONSTR(FUNC, "ANIinit");
     int32 ret_value = SUCCEED;
     
     /* Clear error stack */
@@ -262,39 +294,7 @@ ANinit(void)
     /* Normal function cleanup */
 
     return ret_value;
-} /* ANinit() */
-
-/* ------------------------------- ANdestroy -------------------------------- 
- NAME
-	ANdestroy -- Un-Initialize Annotation Interface
-
- DESCRIPTION
-    Destroys annotation Atom group ANIDGROUP. This routine is usually
-    registered with the atexit() rouinte.
-
- RETURNS
-    SUCCEED or FAIL
-
- AUTHOR
-    GeorgeV.
-
---------------------------------------------------------------------------- */
-intn
-ANdestroy(void)
-{
-#ifdef LATER
-    CONSTR(FUNC, "ANdestroy");
-#endif /* LATER */
-    int32    ret_value = SUCCEED;
-
-    /* Clear error stack */
-    HEclear();
-
-    /* Destroy the atom groups for annotations */
-    HAdestroy_group(ANIDGROUP);
-
-    return ret_value;
-} /* ANdestroy () */
+} /* ANIinit() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -1361,9 +1361,9 @@ ANstart(int32 file_id /* IN: file to start annotation access on*/)
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* call ANinit, should just register termination function once 
+    /* call ANIinit, should just register termination function once 
        no matter how many times it is called. */
-    ANinit();
+    ANIinit();
 
     ret_value = file_id;
 
@@ -2278,4 +2278,4 @@ ANtag2atype(uint16 atag /* IN: annotation tag */)
     return atype;
 } /* ANtag2atype */
 
-#endif /* MFAN_C */
+#endif /* MFAN_MASTER */

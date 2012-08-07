@@ -40,13 +40,6 @@
 #define	RI_ATT1_N_VALUES	36
 #define	RI_ATT2_N_VALUES	6
 
-/* Local data to verify image information in file */
-static const char* file_attrs[]=
-  { /* This information applies to the tmgr.hdf file's file attributes */
-    "Contents of First FILE Attribute",
-    "Contents of Second FILE Attribute"
-  };
-
 /* Pixel with fill values */
 static float32 fill_pixel[RI_ATT_N_VALUES]={1.3,-2.4,1000.3,.25};
 static uint8 file_attr_2[F_ATT2_N_VALUES] = {1, 2, 3, 4, 5};
@@ -72,15 +65,15 @@ static int test_mgr_fillvalues()
     uint16 ref;		/* RI reference number */
     int32 ri_index;	/* RI index */
     float32 image[7][5][N_COMPS]; /* space for the image data */
-    VOIDP read_fill_vals;   /* space for fill values read from attr */
+    VOIDP read_fill_vals=NULL;   /* space for fill values read from attr */
     float32 image0[7][5][N_COMPS]; /* space for the image data */
-    int32 start[2]; /* start of image data to grab */
-    int32 stride[2];/* stride of image data to grab */
+    int32 start[2];	/* start of image data to grab */
+    int32 stride[2];	/* stride of image data to grab */
     char attr_name[H4_MAX_GR_NAME];
     int32 ntype, n_values;
-    int   ii;		/* loop index */
+    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
     int32 ret;		/* generic return value */
-    int   num_errs = 0;    /* number of errors so far */
+    int   num_errs = 0; /* number of errors so far */
 
     MESSAGE(8, printf("Reading fill-value attribute\n"););
 
@@ -116,64 +109,64 @@ static int test_mgr_fillvalues()
         riid = GRselect(grid, ri_index);
         CHECK(riid, FAIL, "GRselect");
 
-	/* Buffer to read image's data in */
+        /* Buffer to read image's data in */
         HDmemset(image, 0, (size_t)(dims[0]*dims[1]* N_COMPS)*sizeof(float32));
 
         /* Fill the memory-only with the default pixel fill-value */
-        HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0)/sizeof(fill_pixel));
+        HDmemfill(image0, fill_pixel, sizeof(fill_pixel), sizeof(image0) / sizeof(fill_pixel));
 
-	/* Read and verify image's data, should only be fill-values */
-        start[0]=start[1]=0;
-        stride[0]=stride[1]=1;
+        /* Read and verify image's data, should only be fill-values */
+        start[0] = start[1] = 0;
+        stride[0] = stride[1] = 1;
         ret = GRreadimage(riid, start, stride, dims, image);
         CHECK(ret, FAIL, "GRreadimage");
 
-        if (HDmemcmp(image, image0, sizeof(image0)) != 0)
-        {
-	    MESSAGE(3, printf("Error reading data for image with user defined fill-values\n"););
-	    num_errs++;
+        if (HDmemcmp(image, image0, sizeof(image0)) != 0) {
+            MESSAGE(3, printf("Error reading data for image with user defined fill-values\n"););
+            num_errs++;
         }
 
-	/* Find the image's attribute named FILL_ATTR */
-	attr_index = GRfindattr(riid, FILL_ATTR);
-	VERIFY(attr_index, 0, "GRfindattr");
+        /* Find the image's attribute named FILL_ATTR */
+        attr_index = GRfindattr(riid, FILL_ATTR);
+        VERIFY(attr_index, 0, "GRfindattr");
 
         /* Get information about the current attribute. */
-        ret = GRattrinfo (riid, attr_index, attr_name, &ntype, &n_values);
+        ret = GRattrinfo(riid, attr_index, attr_name, &ntype, &n_values);
         CHECK(ret, FAIL, "GRattrinfo");
-	VERIFY(attr_index, 0, "GRattrinfo");
-	VERIFY(ntype, DFNT_FLOAT32, "GRattrinfo");
-	VERIFY(n_values, RI_ATT_N_VALUES, "GRattrinfo");
-	VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
+        VERIFY(attr_index, 0, "GRattrinfo");
+        VERIFY(ntype, DFNT_FLOAT32, "GRattrinfo");
+        VERIFY(n_values, RI_ATT_N_VALUES, "GRattrinfo");
+        VERIFY_CHAR(attr_name, FILL_ATTR, "GRattrinfo");
 
-	/* Allocate a buffer to hold the attribute data.  Knowledge about
-	 * the data type is assumed to be available from the previous
-	 * part of the test where the correspondent GRsetattr was called. */
-	if (ntype == DFNT_FLOAT32)
-	{
-	    read_fill_vals = malloc (n_values * sizeof (float32));
-	    if (read_fill_vals == NULL)
-	    {
-		fprintf (stderr, "Unable to allocate space for attribute data.\n");
-		exit (1);
-	    }
-	}
+        /* Allocate a buffer to hold the attribute data. */
+        read_fill_vals = HDmalloc (n_values * sizeof (float32));
+        if (read_fill_vals == NULL) {
+            fprintf(stderr, "Unable to allocate space for attribute data.\n");
+            exit(1);
+        }
 
-	/* Read and verify the attribute's data */
-	ret = GRgetattr(riid, attr_index, (VOIDP)read_fill_vals);
+        /* Piggy-back a test for Hgetntinfo */
+        ret = Hgetntinfo(ntype, &nt_info);
+        CHECK(ret, FAIL, "Hgetntinfo");
+        VERIFY_CHAR(nt_info.type_name, "float32", "Hgetntinfo");
+
+        /* Read and verify the attribute's data */
+        ret = GRgetattr(riid, attr_index, (VOIDP) read_fill_vals);
         CHECK(ret, FAIL, "GRgetattr");
 
-	if (HDmemcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0)
-          {
-              MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
-              num_errs++;
-          } /* end if */
+        if (HDmemcmp(fill_pixel, read_fill_vals, RI_ATT_N_VALUES) != 0) {
+            MESSAGE(3, printf("Error reading values of attribute FILL_ATTR\n"););
+            num_errs++;
+        } /* end if */
+    
+        if (read_fill_vals != NULL)
+            HDfree(read_fill_vals);
 
         /* Close the empty image */
         ret = GRendaccess(riid);
         CHECK(ret, FAIL, "GRendaccess");
     }
-    
+
     /* Shut down the GR interface */
     ret = GRend(grid);
     CHECK(ret, FAIL, "GRend");
@@ -206,7 +199,6 @@ static int test_mgr_userattr()
           f_att_index,     /* index of file attributes */
           ri_att_index,    /* index of raster image attributes */
           n_values,        /* number of values in an attribute */
-          value_index,     /* index of values in an attribute */
           n_rimages,       /* number of raster images in the file */
           n_file_attrs;    /* number of file attributes */
     char  attr_name[H4_MAX_GR_NAME];  /* buffer to hold the attribute name */
@@ -218,6 +210,7 @@ static int test_mgr_userattr()
     int32 n_attrs;         /* number of attributes with each image */
     int16 ri_attr_2[RI_ATT2_N_VALUES] = {1, 2, 3, 4, 5, 6};
     VOIDP data_buf;        /* buffer to hold the attribute values */
+    hdf_ntinfo_t nt_info;  /* struct containing name and byte order of a num type */
     intn  status;          /* status for functions returning an intn */
     int   num_errs = 0;    /* number of errors so far */
 
@@ -231,12 +224,10 @@ static int test_mgr_userattr()
     CHECK(grid, FAIL, "GRstart");
 
     /* Set two file attributes. */
-    status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, 
-                      (VOIDP)F_ATT1_VAL); 
+    status = GRsetattr(grid, F_ATT1_NAME, DFNT_CHAR8, F_ATT1_N_VALUES, F_ATT1_VAL); 
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, 
-                      (VOIDP)file_attr_2);
+    status = GRsetattr(grid, F_ATT2_NAME, DFNT_UINT8, F_ATT2_N_VALUES, (VOIDP)file_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Obtain the index of the image named IMAGE1_NAME. */
@@ -248,12 +239,10 @@ static int test_mgr_userattr()
     CHECK(riid, FAIL, "GRselect");
 
     /* Set two attributes to the image. */
-    status = GRsetattr(riid, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, 
-                      (VOIDP)RI_ATT1_VAL);
+    status = GRsetattr(riid, RI_ATT1_NAME, DFNT_CHAR8, RI_ATT1_N_VALUES, RI_ATT1_VAL);
     CHECK(status, FAIL, "GRsetattr");
 
-    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, 
-                      (VOIDP)ri_attr_2);
+    status = GRsetattr(riid, RI_ATT2_NAME, DFNT_INT16, RI_ATT2_N_VALUES, (VOIDP)ri_attr_2);
     CHECK(status, FAIL, "GRsetattr");
 
     /* Terminate accesses, and close the HDF file. */
@@ -325,6 +314,11 @@ static int test_mgr_userattr()
 				attr_name););
 		    num_errs++;
 		} /* end if */
+
+		/* Piggy-back a test for Hgetntinfo */
+		status = Hgetntinfo(ntype, &nt_info);
+		CHECK(status, FAIL, "Hgetntinfo");
+		VERIFY_CHAR(nt_info.type_name, "char8", "Hgetntinfo");
 		break;
 	      case DFNT_UINT8:
 		if (HDmemcmp(data_buf, file_attr_2, n_values) != 0)
@@ -333,6 +327,11 @@ static int test_mgr_userattr()
 				attr_name););
 		    num_errs++;
 		} /* end if */
+
+		/* Piggy-back a test for Hgetntinfo */
+		status = Hgetntinfo(ntype, &nt_info);
+		CHECK(status, FAIL, "Hgetntinfo");
+		VERIFY_CHAR(nt_info.type_name, "uint8", "Hgetntinfo");
 		break;
 	      default:
 		{

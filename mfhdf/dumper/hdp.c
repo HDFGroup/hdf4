@@ -23,6 +23,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define HDP_MASTER
 #define VSET_INTERFACE
 #include "hdp.h"
+#include "local_nc.h"	/* to use some definitions */
 
 /* Print the usage message about this utility */
 static void 
@@ -37,7 +38,7 @@ usage(intn argc, char *argv[])
     printf("\t     dumpsds\tdisplays data of SDSs in <filelist>\n");
     printf("\t     dumpvd\tdisplays data of vdatas in <filelist>. \n");
     printf("\t     dumpvg\tdisplays data of vgroups in <filelist>. \n");
-    printf("\t     dumprig\tdisplays data of RIs in <filelist>. \n");
+    printf("\t     dumprig\tdisplays data of RIs (DFR8 and DFR24) in <filelist>. \n");
     printf("\t     dumpgr\tdisplays data of RIs in <filelist>. \n");
     printf("\t <filelist>\tlist of hdf file names, separated by spaces.\n");
 }
@@ -56,9 +57,9 @@ init_dump_opts(dump_info_t * dump_opts)
     dump_opts->by_class.num_items = 0;
     dump_opts->contents = DVERBOSE;   /* default dump all information */
     dump_opts->dump_to_file = FALSE;          /* don't dump to output file */
-    dump_opts->file_type = DASCII;    /* default output is ASCII file */
+    dump_opts->file_format = DASCII;    /* default output is ASCII file */
+    dump_opts->file_type = HDF_FILE;    /* assuming an HDF file is provided */
     dump_opts->print_pal = FALSE;     /* GR only, don't print palette */
-
     dump_opts->keep_order = FALSE;
     dump_opts->all_types = NULL;
 

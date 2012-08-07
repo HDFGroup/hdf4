@@ -108,7 +108,7 @@ case $CC_BASENAME in
     ;;
 
   *)
-    CFLAGS="$CFLAGS -D_ALL_SOURCE -qlanglvl=ansi"
+    CFLAGS="$CFLAGS -D_ALL_SOURCE"
     DEBUG_CFLAGS="-g"
     DEBUG_CPPFLAGS=
     PROD_CFLAGS="-O"

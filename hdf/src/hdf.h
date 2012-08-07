@@ -130,6 +130,14 @@ typedef enum
 #define FULL_INTERLACE  0
 #define NO_INTERLACE    1
 
+/* Some information about a number type - character strings to be displayed */
+typedef struct hdf_ntinfo_t
+  {
+      char type_name[9];    /* longest possible string "float128" */
+      char byte_order[13];   /* "bigEndian" or "littleEndian" */
+  }
+hdf_ntinfo_t;
+
 /* type for File ID to send to Hlevel from Vxx interface */
 typedef int32 HFILEID;
 
@@ -144,6 +152,7 @@ typedef intn (*hdf_termfunc_t)(void);   /* termination function typedef */
 #include "hcomp.h"
 #include "herr.h"
 #include "hproto.h"
+#include "hdatainfo.h"  /* Add the data info header */
 #include "vg.h"         /* Add the Vgroup/Vdata header so the users don't have to */
 #include "mfgr.h"       /* Add the GR header so the users don't have to */
 

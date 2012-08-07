@@ -20,11 +20,7 @@
 #ifndef _NETCDF_
 #define _NETCDF_
 
-#ifdef __MWERKS__
-#ifndef HDF
-#define HDF
-#endif
-#endif /* __MWERKS__ */
+#include "H4api_adpt.h"
 
 #include "hdfi.h"
 
@@ -343,7 +339,7 @@ typedef long    nclong;         /* default, compatible type */
 #define	NC_SYSERR	-1
 
 #include "hdf2netcdf.h"
-extern int ncerr ;
+HDFLIBAPI int ncerr ;
 
 /*
  * Global options variable. Used to determine behavior of error handler.

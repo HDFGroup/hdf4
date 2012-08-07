@@ -146,8 +146,6 @@ vg_info_t ** free_vginfo_list(
 obj_chosen_t ** free_node_obj_chosen_t( 
 		obj_chosen_t *aNode)
 {
-   intn i;
-
    if( aNode != NULL )
    {
       if (aNode->name != NULL)
@@ -997,6 +995,8 @@ char
             return ("SZIP");
         case COMP_CODE_JPEG:
             return ("JPEG");
+        case COMP_CODE_IMCOMP:
+            return ("IMCOMP");
         default:
             return ("INVALID");
     }

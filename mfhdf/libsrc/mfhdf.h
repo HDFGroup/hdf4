@@ -20,6 +20,8 @@
 #define HDF 1
 #endif
 
+#include "H4api_adpt.h"
+
 /* change this back if it causes problems on other machines than the Alhpa-QAK */
 /* Reverse back to the previous way. AKC */
 #include "hdf.h"
@@ -33,6 +35,7 @@
 #endif /* OLD_WAY */
 
 #include "mfhdfi.h"
+#include "mfdatainfo.h"
 
 #define SD_UNLIMITED NC_UNLIMITED /* use this as marker for unlimited dimension */
 #define SD_NOFILL    NC_NOFILL
@@ -164,6 +167,12 @@ HDFLIBAPI intn SDdiminfo
 HDFLIBAPI intn SDgetdimstrs
     (int32 id, char *l, char *u, char *f, intn len);
 
+HDFLIBAPI intn SDgetexternalfile
+    (int32 id, intn buf_size, char *ext_filename, int32 *offset);
+
+HDFLIBAPI intn SDgetexternalinfo
+    (int32 id, uintn buf_size, char *ext_filename, int32 *offset, int32 *length);
+
 HDFLIBAPI intn SDsetexternalfile
     (int32 id, const char *filename, int32 offset);
 
@@ -232,12 +241,6 @@ HDFLIBAPI intn SDgetfilename
 
 HDFLIBAPI intn SDgetnamelen
     (int32 sdsid, uint16 *name_len);
-
-HDFLIBAPI intn HDiscdf
-    (const char *filename);
-
-HDFLIBAPI intn HDisnetcdf
-    (const char *filename);
 
 /*====================== Chunking Routines ================================*/
 
@@ -485,112 +488,6 @@ HDFLIBAPI intn SDsetchunkcache
     (int32 sdsid,     /* IN: sds access id */
      int32 maxcache,  /* IN: max number of chunks to cache */
      int32 flags      /* IN: flags = 0, HDF_CACHEALL */);
-
-/* Define the FORTRAN names */
-
-#ifdef _WIN32 /* windows specific cstub functions*/
-
-#define nscend          H4_F77_FUNC(scend,SCEND)
-#define nscendacc       H4_F77_FUNC(scendacc,SCENDACC)
-#define nscfinfo        H4_F77_FUNC(scfinfo,SCFINFO)
-#define nscselct       H4_F77_FUNC(scselect,SCSELCT)
-#define nscdimid        H4_F77_FUNC(scdimid,SCDIMID)
-#define nscgcal         H4_F77_FUNC(scgcal,SCGCAL)
-#define nscscal         H4_F77_FUNC(scscal, SCSCAL)
-#define nscgdscale      H4_F77_FUNC(scgdscale, SCGDSCALE)
-#define nscsdscale      H4_F77_FUNC(scsdscale, SCSDSCALE)
-#define nscgcfill       H4_F77_FUNC(scgcfill, SCGCFILL)
-#define nscgfill        H4_F77_FUNC(scgfill, SCGFILL)
-#define nscscfill       H4_F77_FUNC(scscfill, SCSCFILL)
-#define nscsfill        H4_F77_FUNC(scsfill, SCSFILL)
-#define nscsrange       H4_F77_FUNC(scsrange, SCSRANGE)
-#define nscgrange       H4_F77_FUNC(scgrange, SCGRANGE)
-#define nscrcatt        H4_F77_FUNC(scrcatt, SCRCATT)
-#define nscrnatt        H4_F77_FUNC(scrnatt, SCRNATT)
-#define nscrattr        H4_F77_FUNC(scrattr, SCRATTR)
-#define nscrcdata       H4_F77_FUNC(scrcdata, SCRCDATA)
-#define nscrdata        H4_F77_FUNC(scrdata, SCRDATA)
-#define nscwcdata       H4_F77_FUNC(scwcdata, SCWCDATA)
-#define nscwdata        H4_F77_FUNC(scwdata, SCWDATA)
-#define nscid2ref       H4_F77_FUNC(scid2ref, SCID2REF)
-#define nscref2index    H4_F77_FUNC(scref2index,SCREF2INDEX)
-#define nscr2idx        H4_F77_FUNC(scr2idx,SCR2IDX)
-#define nsciscvar       H4_F77_FUNC(sciscvar,SCISCVAR)
-#define nscsnbit        H4_F77_FUNC(scsnbit,SCSNBIT)
-#define nscsacct        H4_F77_FUNC(scsacct,SCSACCT)
-#define nscsdmvc        H4_F77_FUNC(scsdmvc,SCSDMVC)
-#define nscisdmvc       H4_F77_FUNC(scisdmvc,SCISDMVC)
-#define nscsflmd        H4_F77_FUNC(scsflmd,SCSFLMD)
-#define nscisrcrd       H4_F77_FUNC(scisrcrd,SCISRCRD)
-#define nscsblsz        H4_F77_FUNC(scsblsz,SCSBLSZ)
-#endif
-
-#   define nscstart      H4_F77_FUNC(scstart, SCSTART)
-#   define nsfend        H4_F77_FUNC(sfend, SFEND)
-#   define nsfendacc     H4_F77_FUNC(sfendacc, SFENDACC)
-#   define nsffinfo      H4_F77_FUNC(sffinfo, SFFINFO)
-#   define nsfselect     H4_F77_FUNC(sfselect, SFSELECT)
-#   define nscginfo      H4_F77_FUNC(scginfo, SCGINFO)
-#   define nscgainfo     H4_F77_FUNC(scgainfo, SCGAINFO)
-#   define nscgdinfo     H4_F77_FUNC(scgdinfo, SCGDINFO)
-#   define nsfgcal       H4_F77_FUNC(sfgcal, SFGCAL)
-#   define nsfscal       H4_F77_FUNC(sfscal, SFSCAL)
-#   define nsfgdscale    H4_F77_FUNC(sfgdscale, SFGDSCALE)
-#   define nsfsdscale    H4_F77_FUNC(sfsdscale, SFSDSCALE)
-#   define nsfgcfill     H4_F77_FUNC(sfgcfill, SFGCFILL)
-#   define nsfgfill      H4_F77_FUNC(sfgfill, SFGFILL)
-#   define nsfscfill     H4_F77_FUNC(sfscfill, SFSCFILL)
-#   define nsfsfill      H4_F77_FUNC(sfsfill, SFSFILL)
-#   define nsfsflmd      H4_F77_FUNC(sfsflmd, SFSFLMD)
-#   define nsfgrange     H4_F77_FUNC(sfgrange, SFGRANGE)
-#   define nsfsrange     H4_F77_FUNC(sfsrange, SFSRANGE)
-#   define nscn2index    H4_F77_FUNC(scn2index, SCN2INDEX)
-#   define nsccreate     H4_F77_FUNC(sccreate, SCCREATE)
-#   define nscsdimstr    H4_F77_FUNC(scsdimstr, SCSDIMSTR)
-#   define nscsdimname   H4_F77_FUNC(scsdimname, SCSDIMNAME)
-#   define nscsdatstr    H4_F77_FUNC(scsdatstr, SCSDATSTR)
-#   define nsfdimid      H4_F77_FUNC(sfdimid, SFDIMID)
-#   define nsfrcatt      H4_F77_FUNC(sfrcatt, SFRCATT)
-#   define nsfrnatt      H4_F77_FUNC(sfrnatt, SFRNATT)
-#   define nsfrattr      H4_F77_FUNC(sfrattr, SFRATTR)
-#   define nsfrcdata     H4_F77_FUNC(sfrcdata, SFRCDATA)
-#   define nsfrdata      H4_F77_FUNC(sfrdata, SFRDATA)
-#   define nsfwcdata     H4_F77_FUNC(sfwcdata, SFWCDATA)
-#   define nsfwdata      H4_F77_FUNC(sfwdata, SFWDATA)
-#   define nscgdatstrs   H4_F77_FUNC(scgdatstrs, SCGDATSTRS)
-#   define nscgdimstrs   H4_F77_FUNC(scgdimstrs, SCGDIMSTRS)
-#   define nscscatt      H4_F77_FUNC(scscatt, SCSCATT)
-#   define nscsnatt      H4_F77_FUNC(scsnatt, SCSNATT)
-#   define nscsattr      H4_F77_FUNC(scsattr, SCSATTR)
-#   define nscfattr      H4_F77_FUNC(scfattr, SCFATTR)
-#   define nsfid2ref     H4_F77_FUNC(sfid2ref, SFID2REF)
-#   define nsfref2index  H4_F77_FUNC(sfref2index, SFREF2INDEX)
-#   define nsfiscvar     H4_F77_FUNC(sfiscvar, SFISCVAR)
-#   define nscsextf      H4_F77_FUNC(scsextf, SCSEXTF)
-#   define nsfsacct      H4_F77_FUNC(sfsacct, SFSACCT)
-#   define nsfsdmvc      H4_F77_FUNC(sfsdmvc, SFSDMVC)
-#   define nsfisdmvc     H4_F77_FUNC(sfisdmvc, SFISDMVC)
-#   define nsfisrcrd     H4_F77_FUNC(sfisrcrd, SFISRCRD)
-#   define nscgichnk     H4_F77_FUNC(scgichnk, SCGICHNK)
-#   define nscrcchnk     H4_F77_FUNC(scrcchnk, SCRCCHNK)
-#   define nscrchnk      H4_F77_FUNC(scrchnk, SCRCHNK)
-#   define nscscchnk     H4_F77_FUNC(scscchnk, SCSCCHNK)
-#   define nscschnk      H4_F77_FUNC(scschnk, SCSCHNK)
-#   define nscwcchnk     H4_F77_FUNC(scwcchnk, SCWCCHNK) 
-#   define nscwchnk      H4_F77_FUNC(scwchnk, SCWCHNK)
-#   define nscscompress  H4_F77_FUNC(scscompress, SCSCOMPRESS)
-#   define nscgcompress  H4_F77_FUNC(scgcompress, SCGCOMPRESS)
-#   define nsfsnbit      H4_F77_FUNC(sfsnbit, SFSNBIT)
-#   define nsfsblsz      H4_F77_FUNC(sfsblsz, SFSBLSZ)
-#   define nscchempty    H4_F77_FUNC(scchempty, SCCHEMPTY)
-#   define nscgetfname   H4_F77_FUNC(scgetfname,SCGETFNAME)
-#   define nscgetnamelen H4_F77_FUNC(scgetnamelen,SCGETNAMELEN)
-#   define nscidtype     H4_F77_FUNC(scidtype,SCIDTYPE)
-#   define nscgnvars_byname H4_F77_FUNC_(scgnvars_byname,SCGNVARS_BYNAME)
-#   define nscn2indices  H4_F77_FUNC(scn2indices,SCN2INDICES)
-#   define nscgmaxopenf  H4_F77_FUNC(scgmaxopenf,SCGMAXOPENF)
-#   define nscgnumopenf  H4_F77_FUNC(scgnumopenf,SCGNUMOPENF)
-#   define nscrmaxopenf  H4_F77_FUNC(scrmaxopenf,SCRMAXOPENF)
 
 
 #ifdef __cplusplus

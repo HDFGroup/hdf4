@@ -29,6 +29,10 @@
 #define CHECK(status, fail_value, name) {if(status == fail_value) { \
     fprintf(stderr, "*** Routine %s FAILED at line %d ***\n", name, __LINE__); num_errs++;}}
 
+/* Check status value and print error message, including index */
+#define CHECK_IND(status, fail_value, name, index) {if(status == fail_value) { \
+    fprintf(stderr, "*** Routine %s FAILED at line %d for SDS index %d ***\n", name, __LINE__, index); num_errs++;}}
+
 /* Verify that a value is as expected and, if not, print error message */
 #define VERIFY(item, value, test_name) {if(item != value) { \
     fprintf(stderr, "*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", test_name, (long)item,(int)__LINE__,__FILE__); num_errs++;}}
@@ -38,3 +42,10 @@
 #define VERIFY_CHAR(item, value, test_name) {if(HDstrcmp(item, value) != 0) { \
     fprintf(stderr, "*** UNEXPECTED VALUE from %s is <%s> at line %4d in %s\n", test_name, item,(int)__LINE__,__FILE__); num_errs++;}}
 
+/* Used to validate that 'buffer' has been successfully allocated */
+#define CHECK_ALLOC(buffer, buf_name, func_name ) { \
+    if (buffer == NULL) {\
+        fprintf(stderr,"in %s: space allocation for %s failed.  Terminated!\n",\
+                func_name, buf_name ); \
+        exit(1); }  \
+}

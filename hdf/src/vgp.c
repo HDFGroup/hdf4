@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /* $Id$ */
 /*****************************************************************************
 
@@ -89,6 +85,7 @@ EXPORTED ROUTINES
  Vgetclassnamelen  -- Retrieves the length of the vgroup's classname.
  Vgetname     -- Returns the vgroup's name.
  Vgetclass    -- Returns the vgroup's class name .
+ Vgetvgroups  -- Gets user-created vgroups in a file or in a vgroup
  Vinquire     -- General inquiry routine for VGROUP. 
  Vopen        -- This routine opens the HDF file and initializes it for 
                   Vset operations.(i.e." Hopen(); Vinitialize(f)").
@@ -107,6 +104,12 @@ EXPORTED ROUTINES
 
 #define VSET_INTERFACE
 #include "hdf.h"
+
+/* These are used to determine whether a vgroup had been created by the
+   library internally, that is, not created by user's application */
+#define HDF_NUM_INTERNAL_VGS        6
+const char *HDF_INTERNAL_VGS[] = {_HDF_VARIABLE, _HDF_DIMENSION,
+		 _HDF_UDIMENSION, _HDF_CDF, GR_NAME, RI_NAME};
 
 /* Prototypes */
 extern VOID vprint(VOIDP k1);
@@ -650,6 +653,14 @@ vdestroynode(VOIDP n /* IN: node to free */)
                 if (vg->alist != NULL)
                     HDfree((VOIDP) vg->alist);
 
+		/* Free the old-style attr list and reset associated fields */
+                if (vg->old_alist != NULL)
+		{
+                    HDfree((VOIDP) vg->old_alist);
+		    vg->old_alist = NULL;
+		    vg->noldattrs = 0;
+		}
+
                 VIrelease_vgroup_node(vg);
             }
 
@@ -899,7 +910,7 @@ vpackvg(VGROUP * vg, /* IN: */
     CONSTR(FUNC, "vpackvg");
 #endif
     uintn  i;
-    int16 slen = 0;
+    size_t slen = 0;
     uint16 temp_len = 0;
     uint8 *bb = NULL;
     int32 ret_value = SUCCEED;
@@ -931,6 +942,7 @@ vpackvg(VGROUP * vg, /* IN: */
     bb += temp_len;
 
     /* save the vgclasslen and vgclass- omit the null */
+    slen = 0;
     if (vg->vgclass != NULL)
         slen = HDstrlen(vg->vgclass);
     temp_len = slen > 0 ? slen : 0;
@@ -1053,17 +1065,25 @@ vunpackvg(VGROUP * vg, /* IN/OUT: */
 
           /* retrieve vgname (and its len)  */
           UINT16DECODE(bb, uint16var);
-
-	  vg->vgname = (char *)HDmalloc(uint16var+1);
-          HIstrncpy(vg->vgname, (char *) bb, (int32) uint16var + 1);
-          bb += (size_t)uint16var;
+	  if (uint16var == 0)
+	      vg->vgname = NULL;
+	  else
+	  {
+	      vg->vgname = (char *)HDmalloc(uint16var+1);
+              HIstrncpy(vg->vgname, (char *) bb, (intn) uint16var + 1);
+              bb += (size_t)uint16var;
+	  }
 
           /* retrieve vgclass (and its len)  */
           UINT16DECODE(bb, uint16var);
-
-	  vg->vgclass = (char *)HDmalloc(uint16var+1);
-          HIstrncpy(vg->vgclass, (char *) bb, (int32) uint16var + 1);
-          bb += (size_t)uint16var;
+	  if (uint16var == 0)
+	      vg->vgclass = NULL;
+	  else
+	  {
+	      vg->vgclass = (char *)HDmalloc(uint16var+1);
+              HIstrncpy(vg->vgclass, (char *) bb, (intn) uint16var + 1);
+              bb += (size_t)uint16var;
+	  }
 
           UINT16DECODE(bb, vg->extag);  /* retrieve the vg's expansion tag */
           UINT16DECODE(bb, vg->exref);  /* retrieve the vg's expansion ref */
@@ -1243,6 +1263,9 @@ Vattach(HFILEID f,             /* IN: file handle */
           vg->tag = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
           vg->ref = (uint16 *) HDmalloc(vg->msize * sizeof(uint16));
 
+	  vg->vgname = NULL;
+	  vg->vgclass = NULL;
+
           if ((vg->tag == NULL) || (vg->ref == NULL))
               HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
@@ -1255,6 +1278,13 @@ Vattach(HFILEID f,             /* IN: file handle */
           vg->access = (intn)acc_mode;
 
           vg->marked = 1;
+
+	  /* number of old-style attributes and list of their refs, these
+	     are only used when Vnoldattrs is invoked; see Vnoldattrs func
+	     header for info. 2/4/2011 -BMR */
+          vg->old_alist = NULL;
+          vg->noldattrs = 0;
+
           vg->new_vg = 1;
           vg->version = VSET_VERSION;
 
@@ -1288,6 +1318,12 @@ Vattach(HFILEID f,             /* IN: file handle */
               vg=v->vg;
               vg->access = (intn)acc_mode;
               vg->marked = 0;
+
+	      /* number of old-style attributes and list of their refs, these
+		 are only used when Vnoldattrs is invoked; see Vnoldattrs func
+		 header for info. 2/4/2011 -BMR */
+              vg->old_alist = NULL;
+              vg->noldattrs = 0;
 
               /* attach vg to file's vgtab at the vg instance v */
               v->nattach = 1;
@@ -1412,6 +1448,14 @@ Vdetach(int32 vkey /* IN: vgroup key */)
           vg->marked = 0;
           vg->new_vg = 0;
       }
+
+    /* Free the old-style attribute list and reset associated fields */
+    if (vg->old_alist != NULL)
+    {
+	HDfree((VOIDP) vg->old_alist);
+	vg->old_alist = NULL;
+	vg->noldattrs = 0;
+    }
 
     v->nattach--;
 
@@ -2293,11 +2337,11 @@ int32
 Vsetname(int32 vkey,         /* IN: vgroup key */
          const char *vgname  /* IN: name to set for vgroup */) 
 {
+    CONSTR(FUNC, "Vsetname");
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
-    uint16 name_len;
-    int32      ret_value = SUCCEED;
-    CONSTR(FUNC, "Vsetname");
+    size_t	  name_len;
+    int32	  ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -2315,9 +2359,20 @@ Vsetname(int32 vkey,         /* IN: vgroup key */
     if (vg == NULL || vg->access!='w')
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy the name over */
-    name_len = HDstrlen(vgname);
+    /* copy the name over; if name exists, overwrite it */
+
+    name_len = HDstrlen(vgname); /* shortcut of length of the given name */
+
+    /* if name exists, release it */
+    if (vg->vgname != NULL) HDfree(vg->vgname);
+
+    /* allocate space for new name */
     vg->vgname = (char *)HDmalloc(name_len+1);
+
+    /* check for unsuccessful allocation */
+    if (vg->vgname == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* copy given name after allocation succeeded, with \0 terminated */
     HIstrncpy(vg->vgname, vgname, name_len+1);
 
     vg->marked = TRUE;
@@ -2337,10 +2392,10 @@ NAME
    Vsetclass
 
 DESCRIPTION
-    assigns a class name to the VGROUP vg.
+    Assigns a class name to the VGROUP vg.
    
 RETURNS
-    RETURN VALUES: SUCCEED for success, FAIL for failure (big suprise, eh?)
+    RETURN VALUES: SUCCEED for success, FAIL for failure
 
 MODIFICATION
     2010/01/26 No longer truncates classname to max length of VGNAMELENMAX.
@@ -2350,11 +2405,11 @@ int32
 Vsetclass(int32 vkey,          /* IN: vgroup key */
           const char *vgclass  /* IN: class to set for vgroup */)
 {
+    CONSTR(FUNC, "Vsetclass");
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
-    uint16       classname_len;
-    int32        ret_value = SUCCEED;
-    CONSTR(FUNC, "Vsetclass");
+    size_t        classname_len;
+    int32         ret_value = SUCCEED;
 
     /* clear error stack */
     HEclear();
@@ -2376,9 +2431,22 @@ Vsetclass(int32 vkey,          /* IN: vgroup key */
     if (vg == NULL || vg->access != 'w')
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy class over */
-    classname_len = HDstrlen(vgclass);
+    /*
+     * copy the class over; if class exists, overwrite it
+     */
+
+    classname_len = HDstrlen(vgclass); /* length of the given class name */
+
+    /* if name exists, release it */
+    if (vg->vgclass != NULL) HDfree(vg->vgclass);
+
+    /* allocate space for new name */
     vg->vgclass = (char *)HDmalloc(classname_len+1);
+
+    /* check for unsuccessful allocation */
+    if (vg->vgclass == NULL) HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* copy given class name after allocation succeeded, with \0 terminated */
     HIstrncpy(vg->vgclass, vgclass, classname_len+1);
 
     vg->marked = TRUE;
@@ -2705,7 +2773,6 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
 {
     vginstance_t *v = NULL;
     VGROUP       *vg = NULL;
-    size_t       temp_len;
     int32        ret_value = SUCCEED;
     CONSTR(FUNC, "Vgetnamelen");
 
@@ -2726,18 +2793,31 @@ Vgetnamelen(int32 vkey,   /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* obtain the name length */
-    temp_len = HDstrlen(vg->vgname);
-    *name_len = temp_len > 0 ? (uint16)temp_len : 0;
+    /*
+     * Obtain the name length
+     */
+
+    /* if there is no name... */
+    if (vg->vgname == NULL)
+	*name_len = 0;
+    /* if name had been set... */
+    else
+    {
+	size_t temp_len = HDstrlen(vg->vgname); /* shortcut */
+
+	/* return name's length if it is a valid value */
+	if (temp_len >= 0)
+            *name_len = (uint16)temp_len;
+	else /* unlikely, but just in case */
+	    ret_value = FAIL;
+    }
 
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
-
   /* Normal function cleanup */
-
   return ret_value;
 }   /* Vgetnamelen */
 
@@ -2780,9 +2860,20 @@ Vgetclassnamelen(int32 vkey,   /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* obtain the name length */
-    temp_len = HDstrlen(vg->vgclass);
-    *classname_len = temp_len > 0 ? (uint16)temp_len : 0;
+    /* obtain the class name length */
+    if (vg->vgclass == NULL)
+	*classname_len = 0;
+    /* if name had been set... */
+    else
+    {
+	size_t temp_len = HDstrlen(vg->vgclass); /* shortcut */
+
+	/* return class name's length if it is a valid value */
+	if (temp_len >= 0)
+            *classname_len = (uint16)temp_len;
+	else /* unlikely, but just in case */
+	    ret_value = FAIL;
+    }
 
 done:
   if(ret_value == FAIL)   
@@ -2834,8 +2925,11 @@ Vgetname(int32 vkey,   /* IN: vgroup key */
     if (vg == NULL)
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
-    /* copy vgroup name over */
-    HDstrcpy(vgname, vg->vgname);
+    /* copy vgroup name over if it had been set */
+    if (vg->vgname != NULL)
+	HDstrcpy(vgname, vg->vgname);
+    else
+	vgname[0] = '\0';
 
 done:
   if(ret_value == FAIL)   
@@ -2885,10 +2979,13 @@ Vgetclass(int32 vkey,    /* IN: vgroup key */
     /* get vgroup itself and check */
     vg = v->vg;
     if (vg == NULL)
-        HGOTO_ERROR(DFE_BADPTR, FAIL)
-            ;
-    /* copy class over */
-    HDstrcpy(vgclass, vg->vgclass);
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* copy class over if it had been set */
+    if (vg->vgclass != NULL)
+	HDstrcpy(vgclass, vg->vgclass);
+    else
+	vgclass[0] = '\0';
 
 done:
   if(ret_value == FAIL)   
@@ -3238,3 +3335,322 @@ done:
     return ret_value;
 } /* end VPshutdown() */
 
+
+/*******************************************************************************
+ NAME
+    Vgisinternal  --  Determine if a vgroup is internally created by the lib
+ RETURNS
+    Returns TRUE (1) if vkey is a vgroup that is internally created
+    by the library, FALSE (0) otherwise, and FAIL if failure occurs.
+
+ DESCRIPTION
+    Checks the class name of the given vgroup against the list of internal
+    vgroup class names, HDF_INTERNAL_VGS.
+
+    There is an exception where the vgroup does not have a class and has a name
+    set to GR_NAME.  The vgroup is actually an internal vgroup, representing a
+    GR file.  It was only a very brief gap in the revisions where this scenario
+    can happen, yet there is at least one test file generated during that
+    period, grtdfui83.hdf.
+*******************************************************************************/
+intn
+Vgisinternal(int32 vkey /* vgroup's identifier */)
+{
+    CONSTR(FUNC, "Vgisinternal");
+    vginstance_t *v = NULL;
+    VGROUP       *vg = NULL;
+    intn	  is_internal = FALSE;
+    intn	  ret_value = FALSE;
+
+    /* clear error stack */
+    HEclear();
+
+    /* Gheck if vgroup is valid */
+    if (HAatom_group(vkey) != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get instance of vgroup */
+    if (NULL == (v = (vginstance_t *) HAatom_object(vkey)))
+        HGOTO_ERROR(DFE_NOVS, FAIL);
+
+    /* Get vgroup itself and check */
+    vg = v->vg;
+    if (vg == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Check for internal class name if it has been set */
+    if (vg->vgclass != NULL)
+    {
+	int  ii;
+
+	/* If this class name is one of the internal class name then return
+	   TRUE, otherwise, return FALSE */
+	ii = 0;
+	while (ii < HDF_NUM_INTERNAL_VGS && is_internal == FALSE)
+	{
+            size_t len = HDstrlen(HDF_INTERNAL_VGS[ii]);
+            if (HDstrncmp(HDF_INTERNAL_VGS[ii], vg->vgclass, len) == 0)
+		is_internal = TRUE;
+	    ii++;
+        }
+    }
+    else /* no class defined */
+    {
+	/* If class name is not set, check the vgroup's name to catch the case
+	   when the vgroup's name was set to GR_NAME.  See HDFFR-1297 (?) for
+	   details. -BMR 2012/1/6 */
+	/* Check vgroup name */
+	if (vg->vgname != NULL)
+	    if (HDstrncmp(vg->vgname, GR_NAME, HDstrlen(GR_NAME)) == 0)
+		is_internal = TRUE;
+    }
+    ret_value = is_internal;
+
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+} /* Vgisinternal */
+
+
+/*******************************************************************************
+ NAME
+    Visinternal  --  Determine if a vgroup's class name is for internal only
+ RETURNS
+    Returns TRUE (1) if "classname" is one of the class names used for
+    vgroups created by the the library and FALSE (0) otherwise.
+
+ DESCRIPTION
+    Checks the given name against the list of internal vgroup class names,
+    HDF_INTERNAL_VGS.
+*******************************************************************************/
+intn
+Visinternal(const char *classname /* vgroup's class name */)
+{
+    int  i;
+    intn ret_value = FALSE;
+
+    /* Check if this class name is one of the internal class name and return
+	TRUE, otherwise, return FALSE */
+    for (i=0; i < HDF_NUM_INTERNAL_VGS; i++) {
+        if (HDstrncmp(HDF_INTERNAL_VGS[i], classname, HDstrlen(HDF_INTERNAL_VGS[i])) == 0 ) {
+            ret_value = TRUE;
+            break;
+        }
+    }
+    return ret_value;
+}
+
+/*******************************************************************************
+NAME
+    Vgetvgroups -- Get user-created vgroups in a file or in a vgroup
+RETURNS
+    The number of user-created vdatas if successful and FAIL, otherwise.
+
+DESCRIPTION
+    Vgetvgroups retrieves n_vgs vgroups by their reference numbers via the
+    caller-supplied array refarray.  When a vgroup id is specified, Vgetvgroups
+    will only retrieve the vgroups immediately belong to the specified vgroup,
+    and not any sub-vgroups.
+
+    The parameter n_vgs provides the number of values that the refarray list
+    can hold and can be any positive number smaller than MAX_REF (65535).  If
+    n_vgs is larger than the actual number of user-created vgroups, then only
+    the actual number of reference numbers will be retrieved.
+
+    The parameter start_vg indicates the vgroup number to start at.
+    - When start_vg is 0, the retrieval starts at the beginning.
+    - When start_vg is between 0 and the number of user-created vgroups in
+      the file or the specified vgroup, Vgetvgroups will start retrieving
+      vgroups from the vgroup number start_vg.
+    - When start_vg is greater than the number of user-created vgroups in the
+      file or the vgroup, Vgetvgroups will return FAIL.
+
+    When refarray argument is NULL, Vgetvgroups will return the actual number
+    of user-created vgroups without further processing.  This allows application
+    to find out the size of the array for proper allocation.
+
+    BMR - 2010/07/03
+*******************************************************************************/
+intn
+Vgetvgroups(int32 id,		/* IN: file id or vgroup id */
+	    uintn start_vg,	/* IN: reference number to start retrieving */
+            uintn n_vgs,	/* IN: number of user-created vgs to return */
+            uint16 *refarray	/* IN/OUT: ref array to fill */)
+{
+    CONSTR(FUNC, "Vgetvgroups");
+    vginstance_t *vg_inst = NULL;
+    int32    vg_ref;
+    intn     nactual_vgs, user_vgs, ii;
+    VGROUP  *vg = NULL;
+    intn     ret_value = SUCCEED;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Make sure that proper size is passed in for the non-null array */
+    if (refarray != NULL && n_vgs == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Check if id is a file id */
+    if (HAatom_group(id) == FIDGROUP)
+    {
+	/* Look through all vgs, searching for user-created vgroups until
+	   no more vgroups in the file or the number of vgroups to be
+	   retrieved is reached */
+	nactual_vgs = 0;/* number of user-created vgroups to be retrieved */
+	user_vgs = 0;	/* number of user-created vgroups */
+	vg_ref = Vgetid(id, -1);  /* get ref number of first vg in the file */
+	while ((vg_ref != FAIL)   /* there are more vgroups */
+		&& ((nactual_vgs < n_vgs) || (n_vgs == 0))
+		&& (nactual_vgs <= user_vgs))
+	{
+            /* Get instance of vgroup; if it's not found, continue to look for
+                other vgroups */
+            if((vg_inst = vginst(id, (uint16)vg_ref)) == NULL)
+                continue;
+
+	    /* Get vgroup itself and check */
+	    vg = vg_inst->vg;
+	    if (vg == NULL)
+		HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+	    /* If this vgroup either does not have a class name, which means
+		it is a user-created vgroup, or has a class name and the class
+		name is not one of the internal class names, then record its
+		ref# according to caller's specification of where to start and
+		how many to retrieve */
+	    if (vg->vgclass == NULL ||
+	       (vg->vgclass != NULL && Visinternal(vg->vgclass) == FALSE))
+		{
+		    /* Make sure to count only from vgroup number start_vg */
+		    if (user_vgs >= start_vg)
+			/* If caller requests for reference numbers */
+			if (refarray != NULL)
+			{
+			    refarray[nactual_vgs] = (uint16)vg_ref;
+
+			    /* Increment the actual number of user-created vgs
+			       to be retrieved */
+			    nactual_vgs++;
+			}
+		    /* Increment the number of user-created vgs */
+		    user_vgs++;
+		}
+	    /* Move forward to the next vgroup in the file */
+	    vg_ref = Vgetid(id, vg_ref);
+	} /* while more vgroups in file */
+
+	/* Flag if start_vg is beyond the number of user-created vgroups */
+	if (user_vgs < start_vg)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
+
+	/* If caller is asking for the number of vgroups only, return the
+	   number of user-created vgroups, otherwise, return the number of
+	   vgroups that are actually stored in refarray */
+	if (refarray == NULL)
+	    ret_value = user_vgs;
+	else
+	    ret_value = nactual_vgs;
+    } /* file id is given */
+
+    /* Check if the given is a vgroup id */
+    else if (HAatom_group(id)==VGIDGROUP)
+    { /* vgroup id is given */
+
+	/* Get the number of sub-vgroups belong to this vgroup */
+	int32 n_elements = Vntagrefs(id);
+	if (n_elements == FAIL)
+	    HGOTO_ERROR(DFE_GENAPP, FAIL);
+
+	/* Get instance of vgroup */
+	if (NULL == (vg_inst = (vginstance_t *) HAatom_object(id)))
+	    HGOTO_ERROR(DFE_NOVS, FAIL);
+
+	/* Get vgroup itself and check */
+	vg = vg_inst->vg;
+	if (vg == NULL)
+	    HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+	/* Go through the tag list vg->tag and find user-created vgroups, until
+	   no more sub-vgroups or the number of vgroups to be retrieved is
+	   reached */
+	nactual_vgs = 0;/* number of user-created vgroups to be retrieved */
+	user_vgs = 0;	/* number of user-created vgroups */
+        for (ii = 0;
+             ii < n_elements && ((nactual_vgs < n_vgs)|| (n_vgs == 0))
+                             && (nactual_vgs <= user_vgs);
+             ii++)
+        {
+	    /* If an element is a vgroup, then get access to it */
+            if (vg->tag[ii] == DFTAG_VG)
+	    {
+		vginstance_t *subv_inst = NULL;
+		VGROUP       *subvg = NULL;
+
+                /* Get instance of vgroup; if it's not found, continue to 
+		   other vgroups */
+                if((subv_inst = vginst(vg->f, (uint16)vg->ref[ii])) == NULL)
+                    continue;
+
+		/* Get vgroup itself and check */
+		subvg = subv_inst->vg;
+		if (subvg == NULL)
+		    HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+		/* If this vgroup is internally created by the lib, then just
+		   skip it; otherwise, record its ref# according to caller's
+		   specification of where to start and how many to retrieve */
+		if (subvg->vgclass != NULL)
+		{
+		    /* Make sure this vgroup is not an internal one */
+		    if (Visinternal(subvg->vgclass) == FALSE)
+		    {
+			/* Make sure to count only from vg number start_vg */
+			if (user_vgs >= start_vg)
+			    /* If caller requests for reference numbers */
+			    if (refarray != NULL)
+			    {
+				refarray[nactual_vgs] = (uint16)vg->ref[ii];
+
+				/* Increment the actual number of user-created
+				   vgs to be retrieved */
+				nactual_vgs++;
+			    }
+
+			/* Increment the number of user-created vgs */
+			user_vgs++;
+		    }
+		}
+	    } /* this sub element is a vgroup */
+        } /* for */
+
+	/* Flag if start_vg is beyond the number of user-created vgroups */
+	if (user_vgs < start_vg)
+	    HGOTO_ERROR(DFE_ARGS, FAIL);
+
+	/* If caller is asking for the number of vgroups only, return the
+	   number of user-created vgroups, otherwise, return the number of
+	   vgroups that are actually stored in refarray */
+	if (refarray == NULL)
+	    ret_value = user_vgs - (intn)start_vg;
+	else
+	    ret_value = nactual_vgs;
+    } /* vgroup id is given */
+    else
+    {
+ 	fprintf(stderr, "The given ID must be a file ID or a vgroup ID\n");
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+    }
+done:
+  if(ret_value == FAIL)   
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* Vgetvgroups */

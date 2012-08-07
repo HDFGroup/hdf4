@@ -25,10 +25,11 @@ dnl
 dnl NOTE: Don't forget to change the version number here when we do a
 dnl release!!!
 dnl
-AC_INIT([HDF], [4.2.5-pre2], [help@hdfgroup.org])
+AC_INIT([HDF], [4.2.8], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
@@ -142,18 +143,18 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 dnl ======================================================================
-dnl Checks for NetCDF-3 support 
+dnl Checks for NetCDF-2.3.2 support 
 dnl ======================================================================
 
 AC_ARG_ENABLE([netcdf],
               [AC_HELP_STRING([--enable-netcdf],
-                              [Build HDF4 versions of NetCDF-3 APIS [default=yes]])],,
+                              [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
               enableval="yes")
 
 case "$enableval" in
   yes)
     BUILD_NETCDF="yes"
-    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF-3 APIs])
+    AC_DEFINE([HAVE_NETCDF], [1], [Define if we support HDF NetCDF APIs version 2.3.2])
     ;;
   no)
     BUILD_NETCDF="no"
@@ -386,33 +387,6 @@ case "$withval" in
     fi
     ;;
 esac
-
-dnl Check version number of jpeg library. Fail if higher than 7.
-dnl We are doing this because our tests are currently failing
-dnl with jpeg version 7. Until we can acceptably test and
-dnl support jpeg 7, we will require that users use an earlier
-dnl version of the library. (MAM - 1/26/2010).
-AC_MSG_CHECKING([for supported version of jpeg library])
-
-JPEG_7_ERROR="
-  jpeg library version 7 and higher is not currently supported.
-  Please use version 6b, obtainable at: 
-    http://www.hdfgroup.org/ftp/lib-external/jpeg/src/jpegsrc.v6b.tar.gz
-  For further questions, please contact help@hdfgroup.org."
-
-AC_RUN_IFELSE([
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <jpeglib.h>
-    int main(void)
-    {
-            #if JPEG_LIB_VERSION >= 70
-                exit(1);
-            #else
-                exit(0);
-            #endif
-    }
-    ], [AC_MSG_RESULT([yes])], [AC_MSG_ERROR([$JPEG_7_ERROR])],)
 
 dnl ----------------------------------------------------------------------
 dnl Is the szip library present?
@@ -854,12 +828,17 @@ fi
 dnl This part doesn't work yet since HDF4 config files do not contain
 dnl information for cc_vendor and cc_version as HDF5 similar files do.
 dnl Needs to be fixed EIP 2010-01-21
-if test -n "$cc_vendor" && test -n "$cc_version"; then
-  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"
+dnl if test -n "$cc_vendor" && test -n "$cc_version"; then
+dnl  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"
+dnl fi
+
+if test -n "$cc_version_info"; then
+  CC_VERSION="$CC_VERSION ( $cc_version_info)"
 fi
 
 dnl Fortran compiler with version information. This consists of the full path
 dnl name of the compiler and the reported version number.
+AC_SUBST([F77_VERSION])
 dnl Strip anything that looks like a flag off of $F77
 F77_NOFLAGS=`echo $F77 | sed 's/ -.*//'`
 
@@ -874,6 +853,10 @@ else
     fi
   done
 fi
+if test -n "$fc_version_info"; then
+  F77_VERSION="$F77_VERSION ( $fc_version_info)"
+fi
+
 
 dnl This part doesn't work yet since HDF4 config files do not contain
 dnl information for fortran_vendor and fortran_version. 
@@ -881,7 +864,6 @@ dnl Needs to be fixed EIP 2010-01-21
 dnl if test -n "$fortran_vendor" && test -n "$fortran_version"; then
 dnl   F77_VERSION="$F77_VERSION ($fortran_vendor-$fortran_version)"
 dnl fi
-AC_SUBST([F77_VERSION])
 
 AC_CONFIG_FILES([Makefile
                  libhdf4.settings

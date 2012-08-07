@@ -5,6 +5,8 @@
 This document is a instruction on how to build, test and install HDF4 libary on 
 Cygwin.  See detailed information in hdf4/INSTALL. 
 
+NOTE: hdf4 can be built with CMake, see the CMake.txt file for more guidance.
+
 Preconditions:
 --------------
 
@@ -58,6 +60,18 @@ Preconditions:
         sunrpc          : RPC library
         zlib            : Zlib compression library
 
+    Note that HDF4 configure expects to find the sunrpc library with the name
+    librpc.a, but in Cygwin 1.7.7 and 1.7.9 the file for this library is named 
+    libtirpc.a.  A symbolic link with the expected name will allow hdf4
+    configure to find the library.  For example when the file in /usr/lib is 
+    named libtirpc.a, running the command "ln -s libtirpc.a librpc.a" in
+    /usr/lib will create the symbolic link librpc.a -> libtirpc.a for HDF4 to
+    use.
+
+    HDF4 also requires xdr support which is not provided by the Cygwin
+    version of sunrpc.  HDF4 provides a library for xdr support when the 
+    configure flag --enable-hdf4-xdr is specified (see note 3 in the section
+    "Build, Test and Install HDF4 on Cygwin").
     
     HDF4 may be configured to use the SZIP compression Library.
     For more information about the SZIP library, see
@@ -104,6 +118,7 @@ Notes: Use the configure command in the top level HDF4 directory.
 3. To configure 
      
        ./configure <--disable-fortran> 
+                   --enable-hdf4-xdr
                    --with-zlib=/path_to_ZLIB_install_directory 
                    --with-jpeg=/path_to_JPEG_install_directory 
                    <--with-szlib=/path_to_SZIP_install_directory>
@@ -132,7 +147,12 @@ Notes: Use the configure command in the top level HDF4 directory.
 
          make install
 
-6.  You may build HDF4 in a directory other than hdf-X.Y.Z by
+6. The --enable-hdf4-xdr configure option causes an incorrect include
+      path that could not be fixed in this version, breaking the "srcdir"
+      option.  Therefore this version of hdf4 must be built on Cygwin in the 
+      hdf4 source code directory.   
+
+      Normally you may build HDF4 in a directory other than hdf-X.Y.Z by
       using the "srcdir" option. Simply create a build directory and
       type:
 
@@ -142,7 +162,7 @@ Notes: Use the configure command in the top level HDF4 directory.
 
 Acknowledgements:
 -----------------
-HDF group would like to thank xinmin Hua(NASA/GSFC) for his help to 
+HDF group would like to thank Xinmin Hua(NASA/GSFC) for his help to 
 make HDF4 work on Cygwin.  
 
 -----------------------------------------------------------------------

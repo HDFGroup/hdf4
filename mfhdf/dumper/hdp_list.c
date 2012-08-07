@@ -31,7 +31,14 @@ static char RcsId[] = "@(#)$Revision$";
 #define LABEL_FIELD_WIDTH 15
 #define DESC_FIELD_WIDTH 15
 
-static void 
+static intn parse_list_opts(list_info_t * list_opts, intn curr_arg, 
+                intn argc, char *argv[]);
+intn print_annots_by_object(const char *fname, int32 an_id, 
+		ann_type annot_type, uint16 tag, uint16 ref);
+intn print_annots_in_file(int32 an_id, const char* fname,
+		int32 n_annotations, ann_type annot_type);
+
+static void
 list_usage(intn argc, 
            char *argv[])
 {
@@ -57,7 +64,7 @@ list_usage(intn argc,
     printf("\t<filelist>\tList of hdf file names, separated by spaces\n");
 }	/* end list_usage() */
 
-static void 
+static void
 init_list_opts(list_info_t * list_opts)
 {
     list_opts->order = OTAG;	/* default ordering is by tag */
@@ -71,13 +78,13 @@ init_list_opts(list_info_t * list_opts)
     list_opts->limit_tag = 0;	/* initialize... */
 }	/* end init_list_opts() */
 
-static intn 
+static intn
 parse_list_opts(list_info_t * list_opts, 
-                intn curr_arg, 
-                intn argc, 
-                char *argv[])
+		intn curr_arg, 
+		intn argc, 
+		char *argv[])
 {
-    intn        ret = SUCCEED;
+    intn ret = SUCCEED;
 
     for (; curr_arg < argc; curr_arg++)
       {
@@ -194,7 +201,7 @@ parse_list_opts(list_info_t * list_opts,
     return (ret);
 }	/* end parse_list_opts */
 
-static void 
+static void
 print_list_header(list_info_t * list_opts)
 {
     switch (list_opts->verbosity)
@@ -229,12 +236,11 @@ print_list_header(list_info_t * list_opts)
    This routine is used by print_data_labels and print_data_descs
    for common code */
 intn
-print_annots_by_object(
-		const char *fname,
-		int32 an_id, 
-		ann_type annot_type,
-		uint16 tag, 
-		uint16 ref)
+print_annots_by_object(const char *fname,
+                       int32 an_id, 
+                       ann_type annot_type,
+                       uint16 tag, 
+                       uint16 ref)
 {
    intn  i;
    char  *buf = NULL;
@@ -335,11 +341,10 @@ print_annots_by_object(
 
 /* print all data labels for object with tag/ref */
 intn
-print_data_labels(
-		const char *fname,
-		int32 an_id, 
-		uint16 tag, 
-		uint16 ref)
+print_data_labels(const char *fname,
+                  int32 an_id, 
+                  uint16 tag, 
+                  uint16 ref)
 {
    intn ret_value = SUCCEED;
 
@@ -358,11 +363,10 @@ print_data_labels(
 
 /* print all data descriptions for object with tag/ref */
 intn
-print_data_descs(
-		const char *fname,
-		int32 an_id, 
-		uint16 tag, 
-		uint16 ref)
+print_data_descs(const char *fname,
+                 int32 an_id, 
+                 uint16 tag, 
+                 uint16 ref)
 {
    intn ret_value = SUCCEED;
 
@@ -383,11 +387,10 @@ print_data_descs(
    This routine is used by print_all_data_labels, print_all_data_descs, 
 print_all_file_labels, and print_all_file_descs for the common code. */
 intn
-print_annots_in_file(
-		int32 an_id,
-		const char* fname,
-		int32 n_annotations,
-		ann_type annot_type )
+print_annots_in_file(int32 an_id,
+                     const char* fname,
+                     int32 n_annotations,
+                     ann_type annot_type)
 {
    intn i;
    int32 len;
@@ -461,7 +464,7 @@ print_annots_in_file(
 } /* end print_annots_in_file */
 
 /* Exported
- * prints all data labels in file */
+ * Prints all data labels in file */
 intn
 print_all_data_labels(const char *fname, 
                       int32 an_id)
@@ -493,7 +496,7 @@ print_all_data_labels(const char *fname,
 } /* print_all_data_labels() */
 
 /* Exported
- * prints all data descriptions in file */
+ * Prints all data descriptions in file */
 intn
 print_all_data_descs(const char *fname, 
                      int32 an_id)
@@ -664,9 +667,9 @@ print_all_file_labels(const char *fname,
     return ret_value;
 }	/* end print_all_file_labels() */
 
-intn 
+intn
 print_all_file_descs(const char *fname, 
-		     list_info_t* list_opts, /* for print_SDattrs */
+                     list_info_t* list_opts, /* for print_SDattrs */
                      int32 an_id)
 {
     /* file desc */
@@ -746,8 +749,8 @@ print_all_file_descs(const char *fname,
     /* all SDS global attributes are considered file descriptions */
     if ((sd_fid = SDstart(fname, DFACC_READ)) != FAIL)
       { /* SD global attributes */
-dump_info_t dump_opts;
-init_dump_opts( &dump_opts );
+	  dump_info_t dump_opts;
+	  init_dump_opts( &dump_opts );
           if (SDfileinfo(sd_fid, &ndsets, &nattrs) != FAIL)
 	  {
 	     /* BMR: installed input file name to opts for dumpfull 
@@ -1033,11 +1036,11 @@ printfilever(int32 file_id)
 }
 
 /* low level object listing routine for HDF file */
-intn 
+intn
 do_list(intn curr_arg, 
-        intn argc, 
-        char *argv[], 
-        intn  help )
+	intn argc, 
+	char *argv[], 
+	intn  help )
 {
    list_info_t list_opts;	/* list options */
    filelist_t *f_list = NULL;	/* list of files to dump */

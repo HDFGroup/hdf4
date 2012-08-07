@@ -92,6 +92,7 @@ VERS_OLD=
 test "$VERS" || exit 1
 verbose=yes
 check=yes
+release_date=`date +%F`
 today=`date +%Y%m%d`
 pmode='no'
 tmpdir="../#release_tmp.$$"	# tmp work directory
@@ -200,12 +201,14 @@ grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
 # Prepare the source tree for a release.
 ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
 mv Makefile $tmpdir/Makefile.x 2>/dev/null #might fail
+# Save a backup copy of Makefile if exists.
+test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
 
 # Update README.txt and release_notes/RELEASE.txt with release information in
 # line 1.
 for f in README.txt release_notes/RELEASE.txt; do
-    echo "HDF version $VERS released on `date`" >$f.x
+    echo "HDF version $VERS released on $release_date" >$f.x
     sed -e 1d $f >>$f.x
     mv $f.x $f
     # Make sure new files are of the right access mode
@@ -264,6 +267,7 @@ done
 cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
 
 # Restore previous Makefile if existed.
+rm -f Makefile
 test -f $tmpdir/Makefile.x && mv $tmpdir/Makefile.x Makefile
 
 # Restore OLD version information, then no need for trap.

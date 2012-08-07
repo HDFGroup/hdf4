@@ -46,7 +46,7 @@ static char RcsId[] = "@(#)$Revision$";
 #include <console.h>
 #endif
 
-#define MAXNUMOFTESTS 30
+#define MAXNUMOFTESTS 35
 #define TESTMASTER
 
 /* Internal Variables */
@@ -168,8 +168,11 @@ main(int argc, char *argv[])
     InitTest("nbit", test_nbit, "N-Bit Dataset Interface");
     InitTest("litend", test_litend, "LITTLE-ENDIAN INTERFACE");
     InitTest("vset", test_vsets, "VSET InterfaceTest");
+    InitTest("vnameclass", test_vnameclass, "VSET Name and Class");
     InitTest("vattr", test_vset_attr, "VSET AttributeTest");
     InitTest("vsfpack", test_vspack, "Vdata fields pack Test");
+    InitTest("datainfo", test_datainfo, "Getting Raw Data's Spatial Information");
+    InitTest("attdatainfo", test_attdatainfo, "Getting Raw Data's Spatial Information of Attributes");
     InitTest("mfgr", test_mgr, "Multi-File Generic Raster Image Interface");
 
     Verbosity = 4;  /* Default Verbosity is Low */
@@ -313,7 +316,7 @@ main(int argc, char *argv[])
 #ifdef VMS   
        system("delete *.tmp;*");
 #else        /* VMS */
-#if !(defined DOS386 | defined WIN386)
+#if !(defined DOS386 || defined WIN386)
           system("rm -f *.hdf *.tmp");
 #else   /* OLD_WAY */
           remove("*.hdf");

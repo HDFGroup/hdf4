@@ -49,6 +49,11 @@ do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s retu
 if(ret == val) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\n", where, (long)ret, (int)__LINE__,__FILE__); num_errs++;} \
 } while(0)
 
+/* If values match, display message supplied by caller. */
+#define CHECK_STATUS(status, val, msg) \
+do { if(status == val) printf("   %s failed at line %4d in %s\n", msg,(int)__LINE__,__FILE__);\
+} while(0)
+
 /* Used to validate that 'buffer' has been successfully allocated */
 #define CHECK_ALLOC(buffer, buf_name, func_name ) { \
       if (buffer == NULL) {\
@@ -77,8 +82,14 @@ if(x != val) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", 
 
 /* Same as VERIFY except that the value has type char* */
 #define VERIFY_CHAR(x, val, where) \
-do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %ld \n",where,(int)__LINE__,__FILE__,(long)x);\
-if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %ld at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return(num_errs);} \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n",where,(int)__LINE__,__FILE__,(long)x);\
+if(HDstrcmp(x, val) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return(num_errs);} \
+} while(0)
+
+/* Same as VERIFY_CHAR except return without a value. */
+#define VERIFY_CHAR_VOID(x, val, where) \
+do {if (Verbosity>9) printf("   Call to HDF routine: %15s at line %4d in %s had value %s \n",where,(int)__LINE__,__FILE__,(long)x);\
+if(HDstrncmp(x, val, HDstrlen(val)) != 0) {printf("*** UNEXPECTED VALUE from %s is %s at line %4d in %s\n", where, (long)x,(int)__LINE__,__FILE__); num_errs++; return;} \
 } while(0)
 
 #define RESULT(a) \
@@ -112,6 +123,11 @@ if(ret == FAIL) {printf("*** UNEXPECTED RETURN from %s is %ld at line %4d in %s\
 #define ABS(x)  ((int)(x)<0 ? (-x) : x)
 
 intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor);
+void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
+
+/* Generate the correct name for the test file, by prepending the source path
+   if it exists, otherwise, assume it is the local directory */
+intn make_datafilename(char* basename, char* testfile, unsigned int size);
 
 /* System command to use for Cleanup */
 #ifdef VMS

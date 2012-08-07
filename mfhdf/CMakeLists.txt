@@ -1,53 +1,21 @@
-PROJECT ( HDF4_MFHDF )
-
-# ---------- Setup output Directories -------------------------
-SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
-  ${PROJECT_BINARY_DIR}/Bin/mfhdf
-  CACHE PATH
-  "Single Directory for all Libraries"
-  )
-
-# --------- Setup the Executable output Directory -------------
-SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY
-  ${PROJECT_BINARY_DIR}/Bin/mfhdf
-  CACHE PATH
-  "Single Directory for all Executables."
-  )
-
-# --------- Setup the Executable output Directory -------------
-SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
-  ${PROJECT_BINARY_DIR}/Bin/mfhdf
-  CACHE PATH
-  "Single Directory for all static libraries."
-  )
-
-ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/libsrc   libsrc)
-IF(HDF4_BUILD_TOOLS)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/dumper   dumper)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/hdfimport   hdfimport)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/hdiff   hdiff)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/hrepack   hrepack)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/ncdump   ncdump)
-ENDIF(HDF4_BUILD_TOOLS)
-
-#IF (HDF4_BUILD_FORTRAN)
-#  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
-#ENDIF (HDF4_BUILD_FORTRAN)
+cmake_minimum_required (VERSION 2.8.6)
+PROJECT (HDF4_MFHDF)
 
 #-----------------------------------------------------------------------------
-# Dashboard and Testing Settings
+# Option to build HDF4 Tools
 #-----------------------------------------------------------------------------
-IF (BUILD_TESTING)
-  SET (DART_TESTING_TIMEOUT 1200 CACHE INTEGER  
-    "Timeout in seconds for each test (default 1200=20minutes)")
-  ENABLE_TESTING()
-  INCLUDE(CTest)
-  ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/test     test)
-    
-  IF(HDF4_BUILD_TOOLS)
-#    ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/ncgen   ncgen)
-    ADD_SUBDIRECTORY(${HDF4_SOURCE_DIR}/mfhdf/nctest   nctest)
-  ENDIF(HDF4_BUILD_TOOLS)
-  
-  include (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
-ENDIF ( BUILD_TESTING )
+IF (EXISTS "${HDF4_MFHDF_SOURCE_DIR}/dumper" AND IS_DIRECTORY "${HDF4_MFHDF_SOURCE_DIR}/dumper")
+  OPTION (HDF4_BUILD_TOOLS  "Build HDF4 Tools" OFF)
+  IF (HDF4_BUILD_TOOLS)
+    SET (NCGEN_UTILITY 0)
+    ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/dumper      ${HDF4_MFHDF_BINARY_DIR}/dumper)
+    ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/hdfimport   ${HDF4_MFHDF_BINARY_DIR}/hdfimport)
+    ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/hdiff       ${HDF4_MFHDF_BINARY_DIR}/hdiff)
+    ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/hrepack     ${HDF4_MFHDF_BINARY_DIR}/hrepack)
+#    ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/ncgen       ${HDF4_MFHDF_BINARY_DIR}/ncgen)
+    ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/ncdump      ${HDF4_MFHDF_BINARY_DIR}/ncdump)
+    IF (BUILD_TESTING)
+      ADD_SUBDIRECTORY (${HDF4_MFHDF_SOURCE_DIR}/nctest    ${HDF4_MFHDF_BINARY_DIR}/nctest)
+    ENDIF (BUILD_TESTING )
+  ENDIF (HDF4_BUILD_TOOLS)
+ENDIF (EXISTS "${HDF4_MFHDF_SOURCE_DIR}/dumper" AND IS_DIRECTORY "${HDF4_MFHDF_SOURCE_DIR}/dumper")

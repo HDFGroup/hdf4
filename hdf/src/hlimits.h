@@ -146,6 +146,7 @@
 
 /* Set the following macro to the value the highest compression scheme is */
 #define COMP_MAX_COMP   12
+#define COMP_HEADER_LENGTH  14
 
 /* ----------------- Constants for DGROUP interface --------------------- */
 #define MAX_GROUPS 8
@@ -250,14 +251,23 @@
 
 /* The following vdata class name is reserved by the Chunking interface.
    originally defined in 'hchunks.h'. The full class name 
-   currently is "_HDF_CHK_TBL_0". -GV 9/25/97 */
-#ifdef   _HCHUNKS_MAIN_
-/* Private to 'hchunks.c' */
+   currently is "_HDF_CHK_TBL_0". -GV 9/25/97
+
+   Made the vdata class name available to other interfaces since it is needed
+   during hmap project. -BMR 11/11/2010 */
 #define _HDF_CHK_TBL_CLASS "_HDF_CHK_TBL_" /* 13 bytes */
 #define _HDF_CHK_TBL_CLASS_VER  0          /* zero version number for class */
-#endif /* _HCHUNKS_MAIN_ */
 
+/*
+#define NUM_INTERNAL_VGS	6
+char *INTERNAL_HDF_VGS[] = {_HDF_VARIABLE, _HDF_DIMENSION, _HDF_UDIMENSION,
+		 _HDF_CDF, GR_NAME, RI_NAME}; 
 
+#define NUM_INTERNAL_VDS	8
+char *INTERNAL_HDF_VDS[] = {DIM_VALS, DIM_VALS01, _HDF_ATTRIBUTE, _HDF_SDSVAR,
+		 _HDF_CRDVAR, "_HDF_CHK_TBL_", RIGATTRNAME, RIGATTRCLASS};
+
+*/
 /* ------------  pre-defined attribute names ---------------- */
 /* For MFGR interface */
 #define FILL_ATTR    "FillValue"   

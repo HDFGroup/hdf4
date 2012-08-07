@@ -27,11 +27,11 @@ static char RcsId[] = "@(#)$Revision: 5218 $";
 
 #include "hdftest.h"
 
-#define UFOFILE   "file.UFO"	/* non-existing file */
+#define UFOFILE   "file.UFO"  /* non-existing file */
 #define FILE1     "test1.hdf"
 #define FILE2     "test2.hdf"
 #define EXTTST    "exttst.hdf"    /* main file for external file test */
-#define EXTFILE   "extfile.hdf"   /* external file created in test */
+#define EXTFILE   "SD_externals"  /* external file created in test */
 #define NBITFILE  "nbit.hdf"
 #define COMPFILE1 "comptst1.hdf"
 #define COMPFILE2 "comptst2.hdf"
@@ -66,14 +66,17 @@ extern int test_szip_compression();
 extern int test_checkempty();
 extern int test_idtest();
 /* extern int test_sd(); - removed temporarily, see note in main(...) */
-extern int test_idtype();
+extern int test_mixed_apis();
 extern int test_files();
 extern int test_SDSprops();
 extern int test_coordvar();
 extern int test_chunk();
 extern int test_compression();
 extern int test_dimension();
+extern int test_attributes();
 extern int test_datasizes();
+extern int test_datainfo();
+extern int test_att_ann_datainfo();
 
 int 
 main(int argc, char *argv[])
@@ -82,7 +85,8 @@ main(int argc, char *argv[])
     int32 nt;                /* Number type */
     int32 dimsize[10];       /* dimension sizes */
     int32 newsds, newsds2, newsds3; /* SDS handles */
-    int32 sdsid;                    /* SDS handle */
+    int32 sdsid;                 /* SDS handle */
+    int32 noextsds;              /* no external SDS id */
     int32 dimid, dimid1, dimid2; /* Dimension handles */
     int32 num_sds;               /* number of SDS in file */
     int32 num_gattr;             /* Number of global attributes */
@@ -112,22 +116,22 @@ main(int argc, char *argv[])
 
 
 #ifdef macintosh
-	Ptr	currStackBase, newApplLimit, currApplLimit, currHeapEnd;
+  Ptr  currStackBase, newApplLimit, currApplLimit, currHeapEnd;
 
 
-	/*	Expand the stack.  hdf_write_var( ) causes the stack to collide with 
-		the 68K application heap when only the default stack size is used. */
-	currStackBase = LMGetCurStackBase( );
-	newApplLimit = (Ptr) ( (long) currStackBase - 65536L );
-	currApplLimit = GetApplLimit( );
-	if ( newApplLimit > currApplLimit )	/* If we're about to shrink the stack, ... */
-		 newApplLimit = currApplLimit;	/* ... then don't. */
+  /*  Expand the stack.  hdf_write_var( ) causes the stack to collide with 
+    the 68K application heap when only the default stack size is used. */
+  currStackBase = LMGetCurStackBase( );
+  newApplLimit = (Ptr) ( (long) currStackBase - 65536L );
+  currApplLimit = GetApplLimit( );
+  if ( newApplLimit > currApplLimit )  /* If we're about to shrink the stack, ... */
+     newApplLimit = currApplLimit;  /* ... then don't. */
 
-	currHeapEnd = LMGetHeapEnd( );
-	if ( newApplLimit < currHeapEnd )	/* If we're about overlap the stack and heap, */
-		 newApplLimit = currHeapEnd;	/* ... then don't. */
+  currHeapEnd = LMGetHeapEnd( );
+  if ( newApplLimit < currHeapEnd )  /* If we're about overlap the stack and heap, */
+     newApplLimit = currHeapEnd;  /* ... then don't. */
 
-	SetApplLimit( newApplLimit );
+  SetApplLimit( newApplLimit );
 #endif
 
 #if defined __MWERKS__
@@ -589,21 +593,21 @@ main(int argc, char *argv[])
     CHECK(status, FAIL, "SDreaddata");
 
     { /* verify read values; should be
-		7 9 11 19 21 23 31 33 35 */
+    7 9 11 19 21 23 31 33 35 */
       int i,j; /* indexing the two dimensions */
       int k,l; /* counters = number of elements read on each dimension */
       int m=0; /* indexing the outdata array */
       for(i = 1,l=0; l<3; i=i+2,l++)
-	for (j =(i*6)+1,k=0; k<3; j=j+2,k++,m++)
-	{
-	    if (m < 10) /* number of elements read is 9 */
-	    if (outdata[m] != sdata[j])
-	    {
-		fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
+  for (j =(i*6)+1,k=0; k<3; j=j+2,k++,m++)
+  {
+      if (m < 10) /* number of elements read is 9 */
+      if (outdata[m] != sdata[j])
+      {
+    fprintf(stderr, "line %d, wrong value: should be %d, got %d\n",
                            __LINE__, sdata[j], outdata[m]);
-		num_errs++;
-	    }
-	}
+    num_errs++;
+      }
+  }
     }
 
     /* why do we set calibration info and then use SDgetcal() 
@@ -704,11 +708,11 @@ main(int argc, char *argv[])
     /* Test get compression info when the data set is empty and not set
        to be compressed */
     {
-	comp_coder_t comp_type;	/* type of compression */
-	comp_info cinfo;	/* compression information */
-	status = SDgetcompinfo(sdid, &comp_type, &cinfo);
-	CHECK(status, FAIL, "SDgetcompinfo");
-	VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
+  comp_coder_t comp_type;  /* type of compression */
+  comp_info cinfo;  /* compression information */
+  status = SDgetcompinfo(sdid, &comp_type, &cinfo);
+  CHECK(status, FAIL, "SDgetcompinfo");
+  VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
     }
 
     /* end access to data set 'FIXED1' */
@@ -740,11 +744,11 @@ main(int argc, char *argv[])
     /* Test get compression info when the data set is not empty and 
        compressed */
     {
-	comp_coder_t comp_type;	/* type of compression */
-	comp_info cinfo;	/* compression information */
-	status = SDgetcompinfo(sdid, &comp_type, &cinfo);
-	CHECK(status, FAIL, "SDgetcompinfo");
-	VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
+  comp_coder_t comp_type;  /* type of compression */
+  comp_info cinfo;  /* compression information */
+  status = SDgetcompinfo(sdid, &comp_type, &cinfo);
+  CHECK(status, FAIL, "SDgetcompinfo");
+  VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompinfo");
     }
 
     /* end access to data set 'FIXED1' */
@@ -1285,8 +1289,6 @@ main(int argc, char *argv[])
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
 
-#ifdef EXTERNAL_TEST
-
     /*
      * Test the External File storage stuff
      */
@@ -1347,7 +1349,7 @@ main(int argc, char *argv[])
     newsds2 = SDcreate(fext, "WrapperDataSet", nt, 2, dimsize);
     CHECK(newsds2, FAIL, "SDcreate:Failed to create a new data set('WrapperDataSet') for external wrapping");
 
-    /* Promote the regular data set  to a "wrapper" one by making
+    /* Promote the regular data set to a "wrapper" one by making
        it point to where the real data is in the external file 'extfile.hdf'.
        Note that only a subset of the real data('ExternalDataSet') is pointed to
        by the "wrapper" data set. */
@@ -1367,7 +1369,7 @@ main(int argc, char *argv[])
         if(idata[i] != (i + 2) * 10) 
           {
             fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n", 
-		    i, (i + 2) * 10, (long)idata[i]);
+        i, (i + 2) * 10, (long)idata[i]);
             num_errs++;
           }
       }
@@ -1375,19 +1377,138 @@ main(int argc, char *argv[])
     if(idata[8] != 10) 
       {
         fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %ld\n",
-		(long)idata[8]);
+    (long)idata[8]);
         num_errs++;
       }
 
     /* End access to data set "WrapperDataSet" */
     status = SDendaccess(newsds2);
     CHECK(status, FAIL, "SDendaccess");
+ 
+    /* Create data set 'NoExteneralDataSet' in file 'exttst.hdf' */
+    nt = DFNT_INT32 | DFNT_NATIVE;
+    dimsize[0] = 5;
+    dimsize[1] = 5;
+    noextsds = SDcreate(fext, "NoExternalDataSet", nt, 2, dimsize);
+    CHECK(noextsds, FAIL, "SDcreate: Failed to create a new data set 'NoExternalDataSet' for testing SDSgetexternalfile on a non-external element");
+
+    /* initialize data to write out */
+    for(i = 0; i < 25; i++)
+        idata[i] = i;
+
+    /* Write data to all of data set 'NoExternalDataSet' in file 'exttst.hdf' */
+    start[0] = start[1] = 0;
+    end[0]   = end[1]   = 5;
+    status = SDwritedata(noextsds, start, NULL, end, (VOIDP) idata);
+    CHECK(status, FAIL, "SDwritedata");
+
+    status = SDendaccess(noextsds);
+    CHECK(status, FAIL, "SDendaccess");
 
     /* Close file 'exttst.hdf' */
     status = SDend(fext);
     CHECK(status, FAIL, "SDend");
 
-#endif /* EXTERNAL_TEST */
+    /* Test getting external file info on data set "ExternalDataSet" and test
+       not able to get external file info on data set "NoExternalDataSet" */
+    {
+  intn name_len=0;
+  char *extfile_name;
+  int32 offset=0, length=0;
+  int32 sds_id, sds_index;
+
+  /* Open file 'exttst.hdf' again */
+  fext = SDstart(EXTTST, DFACC_RDWR);
+  CHECK(fext, FAIL, "SDstart (again)");
+
+  /* Get index of "ExternalDataSet" and get access to it */
+  sds_index = SDnametoindex(fext, "ExternalDataSet");
+  CHECK(sds_index, FAIL, "SDnametoindex");
+  sds_id = SDselect(fext, sds_index);
+  CHECK(sds_id, FAIL, "SDselect");
+
+  /* Call SDgetexternalfile the first time passing in 0 for external
+     file name length to get the actual length - SDgetexternalfile is
+     deprecated as of 4.2.7 */
+  name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
+  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+
+  extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+  CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
+  HDmemset(extfile_name, '\0', name_len+1);
+
+  /* Call SDgetexternalfile again and get the external file info */
+  name_len = SDgetexternalfile(sds_id, name_len+1, extfile_name, &offset);
+  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
+  VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
+
+  /* Call SDgetexternalinfo the first time passing in 0 for external
+     file name length to get the actual length */
+  name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
+  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+
+  /* Test passing in NULL pointer for external file name buffer, should
+     fail gracefully */
+  {
+      char *null_buffer=NULL;
+      intn ret_code=0;
+      ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
+      VERIFY(ret_code, FAIL, "SDgetexternalinfo");
+  }
+
+  extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+  CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalinfo");
+  HDmemset(extfile_name, '\0', name_len+1);
+
+  /* Call SDgetexternalinfo again and get the external file info */
+  name_len = SDgetexternalinfo(sds_id, name_len+1, extfile_name, &offset, &length);
+  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
+  VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
+
+  /* Test passing in smaller buffer for external file name than actual;
+     name should be truncated */
+  {
+      char *short_name = (char *) HDmalloc(sizeof(char *) * (name_len));
+      HDmemset(short_name, '\0', name_len);
+      HDstrncpy(short_name, EXTFILE, name_len-2);
+      HDmemset(extfile_name, '\0', name_len);
+
+      /* Call SDgetexternalinfo again with smaller buffer size and verify
+         that SDgetexternalinfo reads the name truncated to the given
+         buffer size*/
+      name_len = SDgetexternalinfo(sds_id, name_len-2, extfile_name, &offset, &length);
+      VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
+      VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
+      HDfree(short_name);
+  }
+
+  status = SDendaccess(sds_id);
+  CHECK(status, FAIL, "SDendaccess");
+
+  /* Get index of "NoExternalDataSet" and get access to it */
+  sds_index = SDnametoindex(fext, "NoExternalDataSet");
+  CHECK(sds_index, FAIL, "SDnametoindex");
+  sds_id = SDselect(fext, sds_index);
+  CHECK(sds_id, FAIL, "SDselect");
+
+  /* Call SDgetexternalfile on the SDS that doesn't have external
+     element, should fail - SDgetexternalfile is deprecated as of
+     4.2.7 */
+  name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
+  VERIFY(name_len, FAIL, "SDgetexternalfile");
+
+  /* Call SDgetexternalinfo on the SDS that doesn't have external
+     element, should return 0 for length of external file name */
+  name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
+  VERIFY(name_len, 0, "SDgetexternalinfo");
+
+  status = SDendaccess(sds_id);
+  CHECK(status, FAIL, "SDendaccess");
+
+  /* Close file 'exttst.hdf' */
+  status = SDend(fext);
+  CHECK(status, FAIL, "SDend");
+    }
 
 
 #ifdef NBIT_TEST
@@ -1450,7 +1571,7 @@ main(int argc, char *argv[])
         if((idata[i]&0x7f) != rdata[i]) 
           {
             fprintf(stderr,"Bogus val in loc %d in n-bit dset want %ld got %ld\n",
-		    i, (long)idata[i], (long)rdata[i]);
+        i, (long)idata[i], (long)rdata[i]);
             num_errs++;
           }
       }
@@ -1501,14 +1622,31 @@ main(int argc, char *argv[])
     status = test_checkempty();
     num_errs = num_errs + status;
 
+    /* BMR: Added a test routine dedicated for testing attributes (currently
+  only SDsetattr with count=0, more will be moved here eventually
+  (in tattributes.c) - 05/31/11 */
+    status = test_attributes();
+    num_errs = num_errs + status;
+
     /* BMR: Added a test routine dedicated for testing SDgetdatasize (in 
-	tdatasizes.c) - 09/17/08 */
+       tdatasizes.c) - 09/17/08 */
     status = test_datasizes();
     num_errs = num_errs + status;
 
+    /* BMR: Added a test routine dedicated for testing SDgetdatainfo (in 
+       tdatainfo.c) - 03/20/10 */
+    status = test_datainfo();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing SDgetattdatainfo
+       and SDgetanndatainto (in tattdatainfo.c) - 1/7/10 */
+    status = test_att_ann_datainfo();
+    num_errs = num_errs + status;
+
     /* BMR: Added a test routine dedicated for testing SDidtype (in tidtypes.c)
-	- 01/21/05 */
-    status = test_idtype();
+       -01/21/05.  Changed file name to tmixed_apis.c and added tests for
+       Vgetvgroups, VSgetvdatas, and Vgisinternal -2011 & 01/2012 */
+    status = test_mixed_apis();
     num_errs = num_errs + status;
 
     /* BMR: Added a test routine dedicated for testing miscellaneous 
@@ -1553,5 +1691,3 @@ main(int argc, char *argv[])
 }
 
 #endif /* HDF */
-
-

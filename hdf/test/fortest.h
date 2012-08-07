@@ -15,6 +15,8 @@
 
 #ifndef __FORTEST_H
 #define __FORTEST_H
+
+#include "H4api_adpt.h"
 #include "hdf.h"
 
 /* Verbosity Environment Variable */

@@ -81,10 +81,12 @@ am_testhdf_OBJECTS = an.$(OBJEXT) anfile.$(OBJEXT) bitio.$(OBJEXT) \
 	litend.$(OBJEXT) macros.$(OBJEXT) man.$(OBJEXT) mgr.$(OBJEXT) \
 	nbit.$(OBJEXT) rig.$(OBJEXT) sdmms.$(OBJEXT) sdnmms.$(OBJEXT) \
 	sdstr.$(OBJEXT) slab.$(OBJEXT) tbv.$(OBJEXT) \
+	tattdatainfo.$(OBJEXT) tdatainfo.$(OBJEXT) tdfr8.$(OBJEXT) \
 	tdupimgs.$(OBJEXT) testhdf.$(OBJEXT) tmgrattr.$(OBJEXT) \
 	tmgrcomp.$(OBJEXT) tree.$(OBJEXT) tszip.$(OBJEXT) \
-	tutils.$(OBJEXT) tvattr.$(OBJEXT) tvset.$(OBJEXT) \
-	tvsfpack.$(OBJEXT) vers.$(OBJEXT)
+	tusejpegfuncs.$(OBJEXT) tutils.$(OBJEXT) tvattr.$(OBJEXT) \
+	tvnameclass.$(OBJEXT) tvset.$(OBJEXT) tvsfpack.$(OBJEXT) \
+	vers.$(OBJEXT)
 testhdf_OBJECTS = $(am_testhdf_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
@@ -141,6 +143,7 @@ CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DIFF = @DIFF@
+DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
@@ -171,6 +174,7 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 NEQN = @NEQN@
 NM = @NM@
@@ -205,6 +209,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -241,7 +246,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -265,12 +269,14 @@ H4CC = $(bindir)/h4cc
 H4FC = $(bindir)/h4fc
 @HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
+ACLOCAL_AMFLAGS = "-I m4"
 AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
-                  tdupimgs.c testhdf.c tmgrattr.c tmgrcomp.c tree.c tszip.c \
-		  tutils.c tvattr.c tvset.c tvsfpack.c vers.c
+                  tattdatainfo.c tdatainfo.c tdfr8.c tdupimgs.c testhdf.c   \
+		  tmgrattr.c tmgrcomp.c tree.c tszip.c tusejpegfuncs.c      \
+		  tutils.c tvattr.c tvnameclass.c tvset.c tvsfpack.c vers.c
 
 testhdf_LDADD = ../src/libdf.la
 testhdf_DEPENDENCIES = testdir ../src/libdf.la 
@@ -372,15 +378,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdnmms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sdstr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/slab.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tattdatainfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tbv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdatainfo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdfr8.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdupimgs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testhdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmgrattr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmgrcomp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tszip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tusejpegfuncs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tutils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvattr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvnameclass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvset.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tvsfpack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vers.Po@am__quote@

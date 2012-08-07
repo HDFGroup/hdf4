@@ -44,7 +44,10 @@ typedef enum
       COMP_CODE_DEFLATE,        /* for gzip 'deflate' encoding */
       COMP_CODE_SZIP,		/* for szip encoding */
       COMP_CODE_INVALID,        /* invalid last code, for range checking */
-      COMP_CODE_JPEG            /* _Ugly_ hack to allow JPEG images to be created with GRsetcompress */
+      COMP_CODE_JPEG,           /* _Ugly_ hack to allow JPEG images to be created with GRsetcompress */
+      COMP_CODE_IMCOMP = 12     /* another _Ugly_ hack to allow IMCOMP images to
+                         be inquired, 12 to be the same as COMP_IMCOMP writing
+                         will not be allowed, however.  -BMR, Jul 2012 */
   }
 comp_coder_t;
 

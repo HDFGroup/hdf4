@@ -284,6 +284,11 @@ C Test command
 	    return
 	endif
 
+	if (param .EQ. 'vgroups') then
+	    call tvgroups(retcode)
+	    return
+	endif
+
 	if (param .EQ. 'vattrf') then
 	    call tvattrf(retcode)
 	    return

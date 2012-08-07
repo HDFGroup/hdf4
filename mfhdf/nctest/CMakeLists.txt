@@ -1,87 +1,80 @@
+cmake_minimum_required (VERSION 2.8.6)
 PROJECT (HDF4_MFHDF_NCTEST)
 
-#-----------------------------------------------------------------------------
-# Setup output Directories 
-#-----------------------------------------------------------------------------
-IF(NOT HDF4_EXTERNALLY_CONFIGURED)
-  SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY
-    ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Executables."
-  )
-  SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
-    ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Libraries"
-  )
-  SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
-    ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all static libraries."
-  )
-ENDIF(NOT HDF4_EXTERNALLY_CONFIGURED)
+INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
+INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
-INCLUDE_DIRECTORIES( ${HDF4_HDF_SOURCE_DIR} )
-INCLUDE_DIRECTORIES( ${HDF4_HDF_SOURCE_DIR}/lib )
-INCLUDE_DIRECTORIES( ${HDF4_MFHDF_SOURCE_DIR} )
+ADD_DEFINITIONS (-DHDF)
 
-ADD_DEFINITIONS(-DHDF)
-
-IF(WIN32)
-  ADD_DEFINITIONS(-DDOS_FS)
-ENDIF(WIN32)
+IF (WIN32 AND NOT CYGWIN)
+  ADD_DEFINITIONS (-DDOS_FS)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (HDF4_BUILD_XDR_LIB)
-  IF(WIN32)
-    add_definitions(-DNO_SYS_XDR_INC)
-  ENDIF()
-  INCLUDE_DIRECTORIES( ${HDF4_MFHDF_XDR_DIR} )
-ENDIF ( HDF4_BUILD_XDR_LIB )
-
-SET (nctest_SRCS
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/add.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/atttests.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/cdftests.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/dimtests.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/driver.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/emalloc.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/error.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/misctest.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/rec.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/slabs.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/val.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/varget_unlim.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/varget.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/vargetg.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/varput.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/varputg.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/vardef.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/vartests.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/vputget.c
-  ${HDF4_SOURCE_DIR}/mfhdf/nctest/vputgetg.c
-  )
-  
-ADD_EXECUTABLE(nctest ${nctest_SRCS})
-IF (HDF4_BUILD_XDR_LIB)
-  TARGET_LINK_LIBRARIES(nctest ${HDF4_MF_LIB_NAME}-static ${HDF4_SRC_LIB_NAME}-static ${LINK_LIBS} ${HDF4_MF_XDR_LIB_NAME}-static )
-ELSE (HDF4_BUILD_XDR_LIB)
-  TARGET_LINK_LIBRARIES(nctest ${HDF4_MF_LIB_NAME}-static ${HDF4_SRC_LIB_NAME}-static ${LINK_LIBS} )
+  IF (WIN32 AND NOT CYGWIN)
+    ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
+  ENDIF (WIN32 AND NOT CYGWIN)
+  INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 ENDIF (HDF4_BUILD_XDR_LIB)
 
-#-- Adding test for nctest
-
- ADD_TEST(nctest ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/nctest)
+SET (nctest_SRCS
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/add.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/atttests.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/cdftests.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/dimtests.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/driver.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/emalloc.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/error.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/misctest.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/rec.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/slabs.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/val.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/varget_unlim.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/varget.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vargetg.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/varput.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/varputg.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vardef.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vartests.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vputget.c
+    ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vputgetg.c
+)
+  
+ADD_EXECUTABLE (nctest ${nctest_SRCS})
+IF (HDF4_BUILD_XDR_LIB)
+  TARGET_LINK_LIBRARIES (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
+ELSE (HDF4_BUILD_XDR_LIB)
+  TARGET_LINK_LIBRARIES (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+ENDIF (HDF4_BUILD_XDR_LIB)
+TARGET_NAMING (nctest ${LIB_TYPE})
  
 #-- Copy all the dat files from the test directory into the source directory
- SET (HDF4_NC_TEST_FILES
-   test_unlim.cdl
-   test_unlim.nc
- )
+SET (HDF4_NC_TEST_FILES
+    test_unlim.cdl
+    test_unlim.nc
+)
  
- FOREACH ( h4_file ${HDF4_NC_TEST_FILES} )
-    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #MESSAGE(STATUS " Copying ${HDF4_SOURCE_DIR}/mfhdf/nctest/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
+FOREACH (h4_file ${HDF4_NC_TEST_FILES})
+  SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+  #MESSAGE (STATUS " Copying ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
+  ADD_CUSTOM_COMMAND (
       TARGET     nctest 
       POST_BUILD
       COMMAND    ${CMAKE_COMMAND}
-      ARGS       -E copy_if_different ${HDF4_SOURCE_DIR}/mfhdf/nctest/${h4_file} ${dest}
-      )
+      ARGS       -E copy_if_different ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} ${dest}
+  )
       
- ENDFOREACH ( h4_file ${HDF4_NC_TEST_FILES} )
+ENDFOREACH (h4_file ${HDF4_NC_TEST_FILES})
 
+# Remove any output file left over from previous test run
+ADD_TEST (
+    NAME NC_TEST-clearall-objects
+    COMMAND    ${CMAKE_COMMAND}
+        -E remove 
+        test.nc
+        test2.nc
+)
 
+#-- Adding test for nctest
+ADD_TEST (NAME NC_TEST-nctest COMMAND $<TARGET_FILE:nctest>)
+SET_TESTS_PROPERTIES (NC_TEST-nctest PROPERTIES DEPENDS NC_TEST-clearall-objects LABELS ${PROJECT_NAME})

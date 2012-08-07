@@ -34,4 +34,4 @@ Languages:
 Features:
 ---------
                SZIP compression: @SZIP_INFO@
-  HDF support for netCDF-3 APIs: @BUILD_NETCDF@
+   Support for netCDF API 2.3.2: @BUILD_NETCDF@

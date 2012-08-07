@@ -33,3 +33,59 @@ intn fuzzy_memcmp(const void *s1, const void *s2, int32 len, intn fuzz_factor)
       }
 }   /* end fuzzy_memcmp() */
 
+void print_mismatched(const void *s1, const void *s2, int32 size2cmp)
+{
+    int ii, jj, nn=0, kk;
+    const uint8 *t1 = (const uint8 *) s1;
+    const uint8 *t2 = (const uint8 *) s2;
+
+    for (ii = 0; ii < size2cmp; ii++)
+      {
+        if (ABS(*t1 - *t2) > 0)
+            fprintf(stderr, "item#%d: HDF(%d) - JPEG(%d)\n", ii, *t1, *t2);
+          t1++;
+          t2++;
+      }
+}
+
+/* Generate the correct name for the test file, by prepending the source path
+   if it exists, otherwise, assume it is the local directory */
+   /* NOTE: should move all utilities into mfutil.c or something like that */
+intn make_datafilename(char* basename, char* testfile, unsigned int size)
+{
+    char *srcdir = getenv("srcdir");
+    char *tempfile = NULL;
+
+    tempfile = (char *) HDmalloc(sizeof(char *) * (size+1));
+    HDmemset(tempfile, '\0', size+1);
+
+    /* Generate the correct name for the test file, by prepending the source path */
+    if (srcdir && ((strlen(srcdir) + strlen(basename) + 1) < size))
+    {
+        strcpy(tempfile, srcdir);
+        strcat(tempfile, "/");
+    }
+
+    /* Windows doesn't set srcdir, and generates files in a different relative
+       path, so we need to special case here.  It is best to look for the
+       testfile in the same path, and the Windows test script will make sure
+       to put it there first.  - SJW 2007/09/19 (from tnetcdf.c) */
+#ifndef _WIN32
+    /* This is to get to the file when the library was built without srcdir
+       option and the test is ran by ./hdftest in the test src directory
+       instead of by make check.  - BMR 2007/08/09 */
+    if (srcdir == NULL)
+        strcpy(tempfile, "./");
+#endif /* _WIN32 */
+
+    /* Name of data file */
+    strcat(tempfile, basename);
+
+    /* Verify that file name is not NULL */
+    if (tempfile == NULL || tempfile[0] == '\0')
+        return FAIL;
+
+    /* File name is generated, return it */
+    HDstrcpy(testfile, tempfile);
+    return SUCCEED;
+}

@@ -23,6 +23,8 @@ static char RcsId[] = "@(#)$Revision$";
 #endif /* MIPSEL */
 #include "vg.h"
 
+#define NONAME_LEN 12
+
 void dumpvg_usage(intn argc, char *argv[]);
 int32 Vref_index(int32 file_id, int32 vg_ref);
 int32 Vname_ref(int32 file_id, char *searched_name, int32 *find_ref, int32 *index);
@@ -148,7 +150,7 @@ intn parse_dumpvg_opts(dump_info_t *dumpvg_opts,
 	     exit(1);
 
          case 'x':   /* dump data in ascii, also default */
-             dumpvg_opts->file_type = DASCII;
+             dumpvg_opts->file_format = DASCII;
              (*curr_arg)++;
              break;
 
@@ -267,7 +269,7 @@ int32 Vstr_ref(int32 file_id,
                 "Vstr_ref", (int)*find_ref );
 	}
 	name = (char *) HDmalloc(sizeof(char) * (name_len+1));
-	/* If allocation fails, get_VGandInfo simply terminates hdp. */
+	/* If allocation fails, Vstr_ref simply terminates hdp. */
 	CHECK_ALLOC(name, "vgroup classname", "Vstr_ref");
 
 	if (name_len > 0)
@@ -380,7 +382,7 @@ void display(vg_info_t *ptr,
    if (!ptr->displayed)
    {
       ptr->displayed = TRUE;  /* so this item will not be printed again */
-      for (i = 0; i < ptr->n_entries; i++)
+      for (i = 0; i < ptr->n_entries && ptr->children[i] != NULL; i++)
       {
          if (i == 0)
             firstchild = TRUE;
@@ -502,8 +504,15 @@ intn get_VGandInfo( int32 *vg_id,
     }
    else
     {
-	*vgname = (char *) HDmalloc(sizeof(char) * (10));
-	HDstrcpy( *vgname, "<Unknown>" );
+	*vgname = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
+	HDstrcpy( *vgname, "<Undefined>" );
+	status = Vinquire(*vg_id, n_entries, NULL);
+	if (FAIL == status) /* go to done and return a FAIL */
+	{
+	    *n_entries = -1;
+	    ERROR_GOTO_2( "in %s: Vinquire failed for vg ref=%d",
+		"get_VGandInfo", (int) vg_ref );
+	}
     }
 
     /* get the length of the vgclass to allocate enough space */
@@ -529,8 +538,8 @@ intn get_VGandInfo( int32 *vg_id,
     }
     else
     {
-	*vgclass = (char *) HDmalloc(sizeof(char) * (10));
-	HDstrcpy( *vgclass, "<Unknown>" );
+	*vgclass = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
+	HDstrcpy( *vgclass, "<Undefined>" );
     }
 
 done:
@@ -950,7 +959,13 @@ if (num_entries != 0)
          ERROR_CONT_2( "in %s: Vgettagref failed for the %d'th entry", 
                 "vgBuildGraph", (int) entry_num );
 
-      if (elem_tag == DFTAG_VG)
+      if( elem_ref == 0 )  /* taken care of ref=0 in tdfr8f and tdf24 for now */
+      {
+         /* add the name and type of this element to the current graph */
+         aNode->children[entry_num] = alloc_strg_of_chars("***");
+         aNode->type[entry_num] = alloc_strg_of_chars("<vg/ref=0>");
+      }
+      else if (elem_tag == DFTAG_VG)
       { /* vgroup */
 
          /* get the current vgroup and its information */
@@ -969,9 +984,12 @@ if (num_entries != 0)
 			"vgBuildGraph", "get_VGandInfo", (int) entry_num );
          }
 
-	 /* just in case vgroup name is null */
-         if (HDstrlen(vgname) == 0)
-            HDstrcat(vgname, "NoName");
+	 /* vgroup has no name */
+         if (HDstrlen(vgname) == 0 || vgname == NULL)
+	 {
+	    vgname = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
+            HDstrcat(vgname, "<Undefined>");
+	 }
 
          resetVG( &vgt, file_name );
 
@@ -1011,9 +1029,9 @@ if (num_entries != 0)
 			"vgBuildGraph", (int) elem_ref );
          }  /* if VSattach doesn't fail */
 
-         /* vdata's name might be "" - is this same thing as <Unknown>? */
+         /* vdata has no name */
          if (HDstrlen(vsname) == 0)
-            HDstrcat(vsname, "NoName");
+            HDstrcat(vsname, "<Undefined>");
 
          /* add the name of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vsname );
@@ -1069,7 +1087,7 @@ intn vgdumpfull(int32        vg_id,
     int32  interlace;
     int32  vsize;
     char   vsname[MAXNAMELEN];
-    char   vsclass[VSNAMELENMAX];
+    char   vsclass[VSNAMELENMAX+1];
     char  *vgname = NULL;
     char  *vgclass = NULL;
     char  *name = NULL;
@@ -1111,6 +1129,10 @@ if (num_entries != 0)
          fprintf(fp, "     #%d (Vgroup)\n", (int) entry_num );
          fprintf(fp, "\ttag = %d;", (int) elem_tag);
          fprintf(fp, "reference = %d;\n", (int) elem_ref );
+
+         /* add the name and type of this element to the current graph */
+         aNode->children[entry_num] = alloc_strg_of_chars("***");
+         aNode->type[entry_num] = alloc_strg_of_chars("<vg/ref=0>");
       }
 
       else if (elem_tag == DFTAG_VG)
@@ -1132,9 +1154,12 @@ if (num_entries != 0)
 	    ERROR_GOTO_3( "in %s: %s failed to return a valid vgroup id for the %d'th entry",
                 "vgdumpfull", "get_VGandInfo", (int) entry_num );
          }
-	 /* just in case vgroup name is null */
-         if (HDstrlen(vgname) == 0)
-            HDstrcat(vgname, "NoName");
+	 /* vgroup has no name */
+         if (HDstrlen(vgname) == 0 || vgname == NULL)
+	 {
+	    vgname = (char *) HDmalloc(sizeof(char) * (NONAME_LEN));
+            HDstrcat(vgname, "<Undefined>");
+	 }
 
          /* add the name and type of this element to the current graph */
          aNode->children[entry_num] = alloc_strg_of_chars( vgname );
@@ -1142,13 +1167,13 @@ if (num_entries != 0)
 
          /* print the entry's info */ 
          fprintf(fp, "     #%d (Vgroup)\n", (int) entry_num );
-         fprintf(fp, "\ttag = %d;", (int) elem_tag);
+         fprintf(fp, "\ttag = %d; ", (int) elem_tag);
          fprintf(fp, "reference = %d;\n", (int) elem_ref );
          fprintf(fp, "\tnumber of entries = %d;\n", (int) elem_n_entries);
          fprintf(fp, "\tname = %s; class = %s\n", vgname, vgclass);
 
          /* dump attributes for vgroup */
-         status = dumpattr(vgt, 0, 0, dumpvg_opts->file_type, fp);
+         status = dumpattr(vgt, 0, 0, dumpvg_opts->file_format, fp);
          if( FAIL == status )
             ERROR_CONT_3( "in %s: %s failed to dump attributes for vgroup with ref#=%d",
 		"vgdumpfull", "dumpattr", (int) elem_ref );
@@ -1181,16 +1206,17 @@ if (num_entries != 0)
             ERROR_CONT_2( "in %s: VShdfsize failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
-	 /* just in case vdata name is null */
+	 /* vdata has no name */
          if (HDstrlen(vsname) == 0)
-               HDstrcat(vsname, "NoName");
+               HDstrcat(vsname, "<Undefined>");
    
          if (FAIL == VSgetclass(vs, vsclass))
                ERROR_CONT_2( "in %s: VSgetclass failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
+         /* vdata has no class */
          if (HDstrlen(vsclass) == 0)
-            HDstrcpy( vsclass, "<Unknown>" );
+            HDstrcpy( vsclass, "<Undefined>" );
 
          fprintf(fp, "     #%d (Vdata)\n", (int) entry_num);
          fprintf(fp, "\ttag = %d; ", (int) elem_tag);
@@ -1215,9 +1241,9 @@ if (num_entries != 0)
                ERROR_CONT_2( "in %s: VSdetach failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
-         /* vdata's name might be "" - is this same thing as <Unknown>? */
+         /* vdata has no name */
          if (HDstrlen(vsname) == 0)
-            HDstrcat(vsname, "NoName");
+            HDstrcat(vsname, "<Undefined>");
 
          /* add the name and type of this element to the list node */
          aNode->children[entry_num] = alloc_strg_of_chars( vsname );
@@ -1378,7 +1404,6 @@ intn dvg(dump_info_t *dumpvg_opts,
       else
          sort(vg_chosen, num_vg_chosen);
 
-
       /* allocate space for the list of nodes to be printed in the 
          Graphical Representation part */
       max_vgs = NUM_VGS;
@@ -1469,7 +1494,7 @@ intn dvg(dump_info_t *dumpvg_opts,
                in this call, it's there as an index when dumping attributes
                of a vdata field */
             isvdata = FALSE;
-            status = dumpattr(vg_id, 0, isvdata, dumpvg_opts->file_type, fp);
+            status = dumpattr(vg_id, 0, isvdata, dumpvg_opts->file_format, fp);
             if (FAIL == status )
                ERROR_NOTIFY_3("in dvg: %s failed on vgroup with ref=%d in file %s", 
 		         "dumpattr", (int) vg_ref, file_name);

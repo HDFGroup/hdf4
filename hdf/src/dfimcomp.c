@@ -66,7 +66,7 @@ struct box
       struct box *right;
   };
 
-uint8      *new_pal;            /* pointer to new palette           */
+static uint8      *new_pal;            /* pointer to new palette           */
 
 static int *hist = (int *) NULL;    /* histogram for distinct colors    */
 static struct box *frontier = (struct box *) NULL;  /* pointer to the */

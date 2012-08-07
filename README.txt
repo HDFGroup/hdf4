@@ -1,4 +1,4 @@
-HDF version 4.2.5-pre2 currently under development
+HDF version 4.2.8 released on 2012-08-03
 ===================================================
 
 Obtaining the latest version of HDF4
@@ -43,24 +43,26 @@ Source Distribution Layout
 
 Third Party Software Requirements
 ---------------------------------
- 1. JPEG distribution release 6b(libjpeg.a). The "official" site 
-    for this is ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
+ 1. JPEG distribution release 6b(libjpeg.a).  You may download the software
+    from http://www.hdfgroup.org/release4/obtain.html.
 
- 2. ZLIB 1.1.4(libz.a) or later  distribution.  
+ 2. ZLIB 1.1.4(libz.a) or later  distribution.  You may download the software
+    from the http://www.gzip.org/ site.
+
 
 
 System Requirements
 -------------------
  To build the HDF library from source, you need:
 
-   * C and Fortran compilers. For list of the supported compilers
-     check release_notes/RELEASE.txt file.
+   * C and Fortran compilers. For a list of the supported compilers,
+     see release_notes/RELEASE.txt file.
 
 
 Configuring/Testing/Installing 
 ------------------------------
  See the INSTALL file for instructions on configuring, testing, 
- and installing this software on  Unix and non-UNIX systems.
+ and installing this software on Unix and non-UNIX systems.
 
 
 DOCUMENTATION/FAQ/HELP
@@ -68,8 +70,8 @@ DOCUMENTATION/FAQ/HELP
  The HDF4 documentation can be found on the THG FTP server and on 
  the THG website:
 
-      ftp://ftp.hdfgroup.org/HDF/Documentation  
       http://hdfgroup.org/doc.html
+      ftp://ftp.hdfgroup.org/HDF/Documentation  
 
  The HDF home page is at:
 

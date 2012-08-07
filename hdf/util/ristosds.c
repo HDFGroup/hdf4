@@ -109,7 +109,17 @@ main(int argc, char *argv[])
     /* read in images from all input files.     */
 
     outdata0 = outdata = (uint8 *) HDmalloc((size_t)(nimg * w * h) * (sizeof(uint8)));
-    indata0 = indata = (uint8 *) HDmalloc((size_t)(w * h) * sizeof(char));
+    if (outdata0 == NULL)
+      {
+          printf("Not enough space. \n\n\n");
+          finishing();
+      }
+    indata0 = indata = (uint8 *) HDmalloc((size_t)(nimg * w * h) * sizeof(uint8));
+    if (indata0 == NULL)
+      {
+          printf("Not enough space. \n\n\n");
+          finishing();
+      }
     infile = *argv_infile;
     ret = DFR8getdims(infile, &w, &h, &ispal);
     if (ispal)
@@ -144,13 +154,15 @@ main(int argc, char *argv[])
                   *outdata++ = *indata++;
           nimg--;
       }
-
+    
     dimsizes[0] = nimg0;
     dimsizes[1] = h;
     dimsizes[2] = w;
     if (DFSDsetNT(DFNT_UINT8) == FAIL)
         finishing();
     ret = DFSDadddata(outfile, 3, dimsizes, (VOIDP) outdata0);
+    HDfree(outdata0);
+    HDfree(indata0);
     if (ret != 0)
         finishing();
     return (0);

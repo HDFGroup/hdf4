@@ -433,7 +433,7 @@ fmt_print(uint8 *x, int32 type)
   
  case DFNT_FLOAT64:
   HDmemcpy(&d, x, sizeof(float64));
-  printf("%f", f);
+  printf("%f", d);
   break;
   
  default: 

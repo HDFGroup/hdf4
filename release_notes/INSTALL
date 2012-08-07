@@ -8,15 +8,19 @@ CONTENTS
 1. Optional SZIP compression Library
 2. HDF4 source code and precompiled binaries 
 3. UNIX and MacOSX configuration and build
-4. Using HDF/MFHDF libraries with original netCDF library
+4. Using HDF/MFHDF libraries with the netCDF library (libnetcdf.a)
 
 
 0. Third party software requirements
    =================================
 
-   x JPEG distribution release 6b(libjpeg.a). The "official" site
-     for this is 
-         ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6b.tar.gz
+   x C and Fortran compilers
+     If Fortran compiler is not available, use --disable-fortran configure flag
+     to build HDF4 C library and utilties. For the list of the supported 
+     compilers see RELEASE.txt in the release_notes directory.
+
+   x JPEG distribution release 6b or later (libjpeg.a(so)). Source can be 
+     downloaded from http://www.ijg.org/ 
 
    x ZLIB 1.1.4(libz.a) or later. Source code and binaries may be 
      downloaded from this site:
@@ -43,10 +47,13 @@ CONTENTS
 
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
+   
+   Starting with the HDF 4.2.6 release binaries are packed  with 
+   the ZLIB, JPEG and SZIP libraries used to build the binaries. 
 
    IMPORTANT:
    ==========
-   HDF4 prebuilt binaries come with SZIP compression. To use these binaries, 
+   HDF4 prebuilt utilties come with SZIP compression. To use these binaries, 
    you must install the SZIP Library on your system. 
 
    You may download precompiled SZIP binaries from the THG FTP site:
@@ -54,7 +61,7 @@ CONTENTS
    Source code for the SZIP library can be found on the same server:
          ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
 
-   To build the library, follow the instructions in the SZIP source code 
+   To build the SZIP library, follow the instructions in the SZIP source code 
    distribution.
 
 3. UNIX and MacOSX configuration and build
@@ -109,7 +116,15 @@ CONTENTS
 
        gmake install
 
-   8)  By default, the current configuration uses vendor compilers; to use
+   8)  To install C and Fortran examples
+    
+       gmake install-examples
+
+   9)  To test installation 
+
+       gmake installcheck
+
+   10) By default, the current configuration uses vendor compilers; to use
        another compiler, run the following commands before running configure: 
 
        setenv CC   "foo -flags"
@@ -118,26 +133,24 @@ CONTENTS
        See the configure help page (configure --help) for a list of
        environment variables that have an affect on building the library.
 
-   9)  You may build HDF4 in a directory other than hdf-X.Y.Z by using
+   11) You may build HDF4 in a directory other than hdf-X.Y.Z by using
        the "srcdir" option. Simply create a build directory and type:
 
        <path_to_hdf-X.Y.Z>/configure ...
 
        where "..." are your configuration options.
 
-4. Using HDF/MFHDF libraries with original netCDF library 
-   ======================================================
+4. Using HDF/MFHDF libraries with the netCDF library (libnetcdf.a)
+   ===============================================================
 
-   To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the original
+   To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the 
    netCDF library (libnetcdf.a), the HDF4 distribution must be configured 
-   with the --disable-netcdf configuration flag.  This will rename the HDF 
-   version of the C interface (ncxxx) of the HDF4 netCDF APIs to sd_ncxxx 
-   and will disable the HDF4 NC Fortran interfaces to avoid name clashes 
-   with the original netCDF C and Fortran APIs from libnetcdf.a.  
-   HDF 4.2r3 and later DO NOT require the presence of the NetCDF-3 
-   header files on the system.
+   with the --disable-netcdf configuration flag. 
 
-
+   When this flag is used, the HDF versions of the C netCDF functions 
+   (as of netCDF version 2.3.2) are renamed from ncxxx to sd_ncxxx, 
+   and HDF Fortran netCDF wrappers are disabled to avoid name clashed with 
+   the netCDF C and Fortran functions from libnetcdf.a
 
    Please report all problems to help@hdfgroup.org.
 

@@ -38,6 +38,7 @@ void        test_vers(void);
 void        test_slab(void);
 void        test_litend(void);
 void        test_vsets(void);
+void        test_vnameclass(void);
 void        test_vset_attr(void);
 void        test_vspack(void);
 void        test_comp(void);
@@ -52,5 +53,8 @@ void        test_mgr_compress(void);
 void        test_bitvect(void);
 void        test_chunks(void);
 void        test_buffer(void);
+void        test_datainfo(void);
+void        test_datainfo(void);
+void        test_attdatainfo(void);
 
 #endif /* _TPROTO_H */

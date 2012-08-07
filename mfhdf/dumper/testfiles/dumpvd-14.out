@@ -1,0 +1,53 @@
+#############################
+Expected output for './hdp dumpvd Tables.hdf -external file: Tables_External_File
+#############################
+File name: Tables.hdf 
+
+Vdata: 0
+   tag = 1962; reference = 2;
+   number of records = 5; interlace = FULL_INTERLACE (0);
+   fields = [Column A, Column B, Column C, Column D];
+   record size (in bytes) = 13;
+   name = Table AR with Attributes in External File; class = Multi-Type, Multi-Entries per Cell, Store By Row in External Fil;
+   number of attributes = 1 
+    attr0: name=HDF4 Attribute Table Eight type=4 count=2 size=2
+	h i 
+- field index 0: [Column A], type=4, order=2
+   number of attributes = 0 
+- field index 1: [Column B], type=23, order=1
+   number of attributes = 0 
+- field index 2: [Column C], type=16389, order=2
+   number of attributes = 1 
+    attr0: name=HDF4 Attribute Column C type=4 count=3 size=3
+	b y e 
+- field index 3: [Column D], type=4, order=1
+   number of attributes = 0 
+Loc.     Data
+0        A B  1  0.010000 0.100000  a  ; B C  2  0.020000 0.200000  b  ; 
+2        C D  3  0.030000 0.300000  c  ; D E  4  0.040000 0.400000  d  ; 
+4        E F  5  0.050000 0.500000  e  ; 
+
+Vdata: 1
+   tag = 1962; reference = 3;
+   number of records = 1; interlace = FULL_INTERLACE (0);
+   fields = [VALUES];
+   record size (in bytes) = 2;
+   name = HDF4 Attribute Table Eight; class = Attr0.0;
+   number of attributes = 0 
+- field index 0: [VALUES], type=4, order=2
+   number of attributes = 0 
+Loc.     Data
+0        h i  ; 
+
+Vdata: 2
+   tag = 1962; reference = 4;
+   number of records = 1; interlace = FULL_INTERLACE (0);
+   fields = [VALUES];
+   record size (in bytes) = 3;
+   name = HDF4 Attribute Column C; class = Attr0.0;
+   number of attributes = 0 
+- field index 0: [VALUES], type=4, order=3
+   number of attributes = 0 
+Loc.     Data
+0        b y e  ; 
+

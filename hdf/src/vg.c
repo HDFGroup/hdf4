@@ -20,7 +20,14 @@ static char RcsId[] = "@(#)$Revision$";
 FILE  
      vg.c
      HDF vdata routines and some vgroup routines
+
+LOCAL ROUTINES
+==============
+ VSIgetvdatas      -- get vdatas of a specified class or created by user
+                      applications, i.e., not created by the library internally
+                      for storage.  Currently used by VSgetvdatas and VSofclass.
 EXPORTED ROUTINES
+=================
      VSelts         -- number of elements in a vdata
      VSgetinterlace -- returns the interlace type of the vdata
      VSsetinterlace -- sets the vdata's interlace to full or none
@@ -33,6 +40,7 @@ EXPORTED ROUTINES
      VSgetname      -- gets the vdata's name
      VSgetclass     -- gets the vdata's class name
      VSinquire      -- gets information about a vdata
+     VSisinternal   -- determines if a class name is for internal use only
      VSlone         -- returns an array of refs of all lone vdatas in the file
      Vlone          -- returns an array of refs of all lone vgroups in the file
      Vfind          -- looks in the file for a vgroup with a given name 
@@ -46,8 +54,13 @@ EXPORTED ROUTINES
      VSgetblockinfo -- retrieves the block size and the number of blocks 
 		       of a linked-block element.
      Vsetzap        -- maintaind for back compatibility
+
 PRIVATE FUNCTIONS
+=================
      matchnocase    -- compares to strings, ignoring case
+     vscheckclass   -- checks if a given vdata has the specified class or if
+                       it is user-created, which means its class name is not
+                       one of the predefined HDF classes.
 
 PRIVATE functions manipulate vsdir and are used only within this file.
 PRIVATE data structures in here pertain to vdata in vsdir only.
@@ -55,6 +68,12 @@ PRIVATE data structures in here pertain to vdata in vsdir only.
 
 #define VSET_INTERFACE
 #include "hdf.h"
+
+/* These are used to determine whether a vdata had been created by the
+   library internally, that is, not created by user's application */
+#define HDF_NUM_INTERNAL_VDS	8
+const char *HDF_INTERNAL_VDS[] = {DIM_VALS, DIM_VALS01, _HDF_ATTRIBUTE,
+	_HDF_SDSVAR, _HDF_CRDVAR, "_HDF_CHK_TBL_", RIGATTRNAME, RIGATTRCLASS};
 
 /* Private functions */
 #ifdef VDATA_FIELDS_ALL_UPPER
@@ -530,7 +549,8 @@ VSsetname(int32 vkey,        /* IN: Vdata key */
         HGOTO_ERROR(DFE_BADPTR, FAIL);
 
     /* get current length of vdata name */
-    curr_len = HDstrlen(vs->vsname);
+    if (vs->vsname != NULL)
+        curr_len = HDstrlen(vs->vsname);
 
     /* check length of new name against MAX length */
     if ((slen = HDstrlen(vsname)) > VSNAMELENMAX)
@@ -986,9 +1006,10 @@ Vfind(HFILEID f,          /* IN: file id */
         if (vg == NULL)
             HGOTO_DONE(0);
 
-        /* compare vgroup name to 'vgname' */
-        if (!HDstrcmp(vgname, vg->vgname)) 
-            HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
+        /* compare vgroup name to 'vgname' if it had been set */
+	if (vg->vgname != NULL)
+            if (!HDstrcmp(vgname, vg->vgname)) 
+                HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
@@ -1039,7 +1060,7 @@ VSfind(HFILEID f,          /* IN: file id */
         if (vs == NULL)
             HGOTO_DONE(0);
 
-        /* compare vdata name to 'vsname' */
+        /* compare vdata name to 'vsname' if it had been set */
         if (!HDstrcmp(vsname, vs->vsname)) 
             HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
@@ -1091,10 +1112,13 @@ Vfindclass(HFILEID f,           /* IN: file id */
         vg = v->vg;
         if (vg == NULL)
             HGOTO_DONE(0);
+	/* Shouldn't we move on to the next vgroup instead of getting out?
+	   Same question for the above HGOTO_DONE. -BMR 9/12/2011 */
 
-        /* compare vgroup class to 'vgclass' */
-        if (!HDstrcmp(vgclass, v->vg->vgclass)) 
-            HGOTO_DONE((int32)(v->vg->oref));  /* found the vgroup */
+        /* compare vgroup class to 'vgclass' if it had been set */
+	if (vg->vgclass != NULL)
+	    if (!HDstrcmp(vgclass, vg->vgclass)) 
+		HGOTO_DONE((int32)(vg->oref));  /* found the vgroup */
       }
 
 done:
@@ -1145,9 +1169,9 @@ VSfindclass(HFILEID f,           /* IN: file id */
         if (vs == NULL)
             HGOTO_DONE(0);
 
-        /* compare vdata class to 'vsclass' */
-        if (!HDstrcmp(vsclass, v->vs->vsclass)) 
-            HGOTO_DONE((int32)(v->vs->oref));  /* found the vdata */
+        /* compare vdata class to 'vsclass' if it had been set */
+        if (!HDstrcmp(vsclass, vs->vsclass)) 
+            HGOTO_DONE((int32)(vs->oref));  /* found the vdata */
       }
 
 done:
@@ -1164,11 +1188,6 @@ done:
 NAME
    VSsetblocksize -- sets the block size of the linked-block element.
 
-USAGE
-   intn VSsetblocksize(vkey, block_size)
-   int32 vkey;		IN: vdata key
-   int32 block_size	IN: length to be used for each linked-block
-   
 DESCRIPTION
    Sets the size of the blocks, that are after the first block, of a 
    linked-block element used for storing a vdata.  This routine is 
@@ -1226,12 +1245,6 @@ done:
 NAME
    VSsetnumblocks -- sets the number of blocks for a linked-block element.
 
-USAGE
-   intn VSsetnumblocks(vkey, num_blocks)
-   int32 vkey;		IN: vdata key
-   int32 num_blocks	IN: number of blocks to be used for the linked-block
-			    element
-   
 DESCRIPTION
    Sets the number of blocks of a linked-block element used for storing
    a vdata.  This routine is to be called before the first write to the
@@ -1290,12 +1303,6 @@ NAME
    VSgetblockinfo -- retrieves the block size and the number of blocks 
 		     of a linked-block element.
 
-USAGE
-   intn VSgetblockinfo(vkey, block_size, num_blocks)
-   int32 vkey		IN: vdata key
-   int32* block_size	OUT: the linked-block size
-   int32* num_blocks	OUT: the number of blocks the element has
-   
 DESCRIPTION
    Retrieves the block size and the number of blocks of a linked-block
    element used for storing a vdata.  A NULL can be passed in for
@@ -1347,6 +1354,437 @@ done:
   /* Normal function cleanup */
   return ret_value;
 }       /* VSgetblockinfo */
+
+/*******************************************************************************
+ NAME
+    VSisinternal  --  Determine if a vdata's class name is for internal only
+
+ RETURNS
+    Returns TRUE (1) if "classname" is one of the class names used for
+    vdata created by the the library and FALSE (0) otherwise.
+
+*******************************************************************************/
+intn
+VSisinternal(const char *classname)
+{
+    int  i;
+    intn ret_value = FALSE;
+
+    /* Check if this class name is one of the internal class name and return
+        TRUE, otherwise, return FALSE */
+    for (i=0; i < HDF_NUM_INTERNAL_VDS; i++) {
+        if (HDstrncmp(HDF_INTERNAL_VDS[i], classname, HDstrlen(HDF_INTERNAL_VDS[i])) == 0 ) {
+            ret_value = TRUE;
+            break;
+        }
+    }
+    return ret_value;
+}
+
+/*------------------------------------------------------------------
+NAME
+    VSofclass -- Get vdatas of a given class in a file or in a vgroup.
+
+DESCRIPTION
+    VSofclass retrieves n_vds vdatas by their reference numbers via the
+    caller-supplied array refarray.  It simply calls VSIgetvdatas to perform
+    the task.
+
+    The parameter n_vds provides the number of values that the refarray list
+    can hold and can be any positive number smaller than MAX_REF (65535).  If
+    n_vds is larger than the actual number of user-created vdatas, then only
+    the actual number of reference numbers will be retrieved.
+
+    The parameter start_vd indicates the vdata number to start at.
+    - When start_vd is 0, the retrieval starts at the beginning.
+    - When start_vd is between 0 and the number of vdatas that meet the
+      search criteria, VSofclass will start retrieving vdatas from
+      the vdata number start_vd.
+    - When start_vd is greater than the number of vdatas that meet the
+      search criteria, VSofclass will return FAIL.
+
+    When refarray argument is NULL, VSofclass will return the actual number
+    of vdatas that meet the search criteria without further processing.  This
+    allows application to find out the size of the array for proper allocation.
+   
+RETURNS
+    Returns
+	- 0 if none is found, or
+	- FAIL(-1) if error occurs, or
+	- the number of refs returned in refarray
+
+NOTE
+    This function was added originally to assist the hdf4 map writer because
+    Vnattrs does not handle attributes created via VHstoredatam and Vaddtagref.
+    -BMR - 2010/11/21
+---------------------------------------------------------------------*/
+intn
+VSofclass(int32 id,              /* IN: file id or vgroup id */
+	    const char *vsclass, /* IN: class to be queried */
+	    uintn start_vd,/* IN: vdata number to start retrieving */
+            uintn n_vds,	 /* IN: number of user-created vds to return */
+            uint16 *refarray	 /* IN/OUT: ref array to fill */)
+{
+    CONSTR(FUNC, "VSofclass");
+    intn      ret_value = 0;
+
+    /* clear error stack */
+    HEclear();
+
+    /* Make sure that proper size is passed in for the non-null array */
+    if (refarray != NULL && n_vds == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    ret_value = VSIgetvdatas(id, vsclass, start_vd, n_vds, refarray);
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* VSofclass */
+
+/*******************************************************************************
+NAME
+   vscheckclass - (PRIVATE) checks if the given vdata has the specified class
+		 or if it is a user-created vdata.
+
+DESCRIPTION
+   This is common code to be used in VSIgetvdatas.
+
+RETURNS
+   if the vdata has the same class as 'vsclass' or is a user-created vdata,
+   return TRUE, else FALSE.
+   BMR - 2010/11/30
+*******************************************************************************/
+PRIVATE intn
+vscheckclass(int32 id, /* IN: vgroup id or file id */
+	    uint16 vs_ref, /* IN: reference number of vdata being checked */
+	    const char *vsclass  /* IN: class name to be queried or NULL for
+					 non-internal vdata */)
+{
+    CONSTR(FUNC, "vscheckclass");
+    vsinstance_t *vs_inst = NULL;
+    VDATA        *vs = NULL;
+    intn ret_value = FALSE;
+
+    /* get instance of vdata; if it's not found, continue to look for
+       other vdatas */
+    if((vs_inst = vsinst(id, (uint16)vs_ref)) == NULL)
+        HGOTO_DONE(FALSE);
+
+    /* get vdata itself and check */
+    vs = vs_inst->vs;
+    if (vs == NULL)
+        HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+    /* Make sure this vdata has a class name before checking */
+    if (vs->vsclass != NULL && HDstrlen(vs->vsclass) != 0)
+    {
+        /* If user-created vdatas are being checked for, then set flag
+           if this vdata is not internally created by the library */
+        if (vsclass == NULL)
+        {
+            if (VSisinternal(vs->vsclass) == FALSE)
+                ret_value = TRUE;
+        }
+        /* If a specific class is searched, set flag if this
+           vdata has that same class */
+        else
+        {
+            size_t len = HDstrlen(_HDF_CHK_TBL_CLASS);
+
+            /* Explanation of the comparison below:
+               Because a class name that starts with _HDF_CHK_TBL_CLASS
+               may have variable information appended to the end after
+               _HDF_CHK_TBL_CLASS, we need to compare up to the length
+               of _HDF_CHK_TBL_CLASS so that we can get all occurences
+               of the classes starting with _HDF_CHK_TBL_CLASS.  For
+               the non-_HDF_CHK_TBL_CLASS classes, we want to compare
+               the entire array of characters.  However, if specific
+               version of _HDF_CHK_TBL_CLASS is requested, this code
+               will need to be modified properly */
+
+            /* vsclass != _HDF_CHK_TBL_CLASS..., compare entire string*/
+            if (HDstrncmp(vsclass, _HDF_CHK_TBL_CLASS, len))
+                ret_value = HDstrcmp(vsclass, vs->vsclass) ? FALSE : TRUE;
+            else
+                ret_value = HDstrncmp(vsclass, vs->vsclass, len) ? FALSE : TRUE;
+        }
+    }
+    /* This vd doesn't have a class name, so it must be a user-created vd */
+    else
+    {
+        /* If user-created vdatas are being checked for, then set flag to
+           indicate that this vdata is user-created */
+        if (vsclass == NULL)
+            ret_value = TRUE;
+	/* If a specific class name is requested, then set flag to indicate
+	   that this vd is not what is being searched for */
+	else
+	    ret_value = FALSE;
+    }
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+} /* vscheckclass */
+
+/*******************************************************************************
+NAME
+   VSIgetvdatas -- (PRIVATE) Get user-created vdata in a file or in a vgroup.
+
+DESCRIPTION
+    VSIgetvdatas retrieves n_vds vdatas by their reference numbers via the
+    caller-supplied array refarray.  When a vgroup id is specified, VSIgetvdatas
+    will only retrieve the vdatas immediately belong to the specified vgroup,
+    and not any sub-vgroups.
+
+    The parameter n_vds provides the number of values that the refarray list
+    can hold and can be any positive number smaller than MAX_REF (65535).  If
+    n_vds is larger than the actual number of user-created vdatas, then only
+    the actual number of reference numbers will be retrieved.
+
+    The parameter start_vd indicates the vdata number to start at.
+    - When start_vd is 0, the retrieval starts at the beginning.
+    - When start_vd is between 0 and the number of user-created vdatas in
+      the file or the vgroup, VSIgetvdatas will start retrieving vdatas from
+      the vdata number start_vd.
+    - When start_vd is greater than the number of user-created vdatas in the
+      file or the vgroup, VSIgetvdatas will return FAIL.
+
+    When refarray argument is NULL, VSIgetvdatas will return the actual number
+    of user-created vdatas without further processing.  This allows application
+    to find out the size of the array for proper allocation.
+   
+RETURNS
+    The number of user-created vdatas if successful and FAIL, otherwise.
+    BMR - 2010/07/10
+*******************************************************************************/
+intn
+VSIgetvdatas(int32 id,		 /* IN: file id or vgroup id */
+	    const char *vsclass, /* IN: a specific class or NULL for user-created vdatas */
+	    const uintn start_vd,/* IN: vdata number to start retrieving */
+            const uintn n_vds,	 /* IN: number of user-created vds to return */
+            uint16 *refarray	 /* IN/OUT: ref array to fill */)
+{
+    CONSTR(FUNC, "VSIgetvdatas");
+    vginstance_t *vg_inst = NULL;
+    group_t id_type = HAatom_group(id);    /* id is FIDGROUP or VGIDGROUP */
+    intn        nactual_vds=0, nfound_vds=0, ii;
+    VGROUP     *vg = NULL;
+    vfile_t    *vf = NULL;
+    int32	vs_ref;
+    int32       ret_value = SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* Make sure that proper size is passed in for the non-null array */
+    if (refarray != NULL && n_vds == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* The given id must be a file ID or a vgroup ID */
+    if (id_type != FIDGROUP && id_type != VGIDGROUP)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* If given id is a file id */
+    if (id_type == FIDGROUP)
+    {
+        /* get vdata file record */
+        if (NULL == (vf = Get_vfile(id)))
+            HGOTO_ERROR(DFE_FNF, FAIL);
+
+	/* Look through all vdatas, searching for user-created vdatas until
+	   no more vdatas in the file or the number of vdatas to be
+	   retrieved is reached */
+	nactual_vds = 0;/* number of user-created vdatas to be retrieved */
+	nfound_vds = 0;	/* number of user-created vdatas */
+	vs_ref = VSgetid(id, -1);  /* get ref number of first vd in the file */
+	while ((vs_ref != FAIL)	   /* there are more vdatas */
+		&& ((nactual_vds < n_vds) || (n_vds == 0))
+		&& (nactual_vds <= nfound_vds))
+	{
+	    intn found = FALSE;
+
+	    /* Check if the vdata either has the specified class (when vsclass
+	       is !NULL) or is a user-created vdata (when vsclass is NULL) */
+	    found = vscheckclass(id, (uint16)vs_ref, vsclass);
+
+            /* If this vs met the search criteria, record its ref# according to
+               caller's specifying of where to start and how many to retrieve */
+            if (found)
+            {
+                /* make sure to count only from vdata number start_vd */
+                if (nfound_vds >= start_vd)
+                    /* if caller requests for reference numbers */
+                    if (refarray != NULL)
+                    {
+                        refarray[nactual_vds] = (uint16)vs_ref;
+
+                        /* increment the actual number of user-created vds
+                           to be retrieved */
+                        nactual_vds++;
+                    }
+                    /* increment the number of user-created vds */
+                    nfound_vds++;
+                }
+	    /* Move forward to the next vdata in the file */
+	    vs_ref = VSgetid(id, vs_ref);
+	} /* while more vdatas in file */
+    } /* file id is given */
+
+    /* check if given id is a vgroup id */
+    else if (id_type == VGIDGROUP)
+    { /* vgroup id is given */
+
+	/* get the number of sub-vdatas belong to this vgroup */
+	int32 n_elements = Vntagrefs(id);
+	if (n_elements == FAIL)
+	    HGOTO_ERROR(DFE_GENAPP, FAIL);
+
+	/* get instance of vgroup */
+	if (NULL == (vg_inst = (vginstance_t *) HAatom_object(id)))
+	    HGOTO_ERROR(DFE_NOVS, FAIL);
+
+	/* get vgroup itself and check */
+	vg = vg_inst->vg;
+	if (vg == NULL)
+	    HGOTO_ERROR(DFE_BADPTR, FAIL);
+
+        /* get vdata file record */
+        if (NULL == (vf = Get_vfile(vg->f)))
+            HGOTO_ERROR(DFE_FNF, FAIL);
+
+	/* Go through the tag list vg->tag and find user-created vdatas, until
+	   no more sub-vdatas or the number of vdatas to be retrieved is
+	   reached */
+	nactual_vds = 0;/* number of user-created vdatas to be retrieved */
+	nfound_vds = 0;	/* number of user-created vdatas */
+        for (ii = 0; ii < n_elements && ((nactual_vds < n_vds) || (n_vds == 0))
+			&& nactual_vds <= nfound_vds; ii++)
+        {
+	    /* If an element is a vdata, then get access to it */
+            if (vg->tag[ii] == DFTAG_VH)
+	    {
+	        intn found = FALSE;
+
+	        found = vscheckclass((int32)vg->f, vg->ref[ii], vsclass);
+
+                /* If this vdata met the search criteria, record its ref#
+                   according to caller's specification of where to start and
+                   how many to retrieve */
+                if (found)
+		{
+		    /* Make sure to count only from vdata number start_vd */
+		    if (nfound_vds >= start_vd)
+			/* If caller requests for reference numbers */
+			if (refarray != NULL)
+			{
+			    refarray[nactual_vds] = (uint16)vg->ref[ii];
+
+			    /* Increment the actual number of vdatas to be
+			       retrieved */
+			    nactual_vds++;
+			}
+
+		    /* Increment number of vds that meet the search criteria */
+		    nfound_vds++;
+		}
+	    } /* this sub element is a vdata */
+        } /* for */
+    } /* vgroup id is given */
+
+    /* Flag if start_vd is beyond the number of user-created vdatas */
+    if (nfound_vds < start_vd)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* If caller is asking for the number of vdatas only, return the
+	number of user-created vdatas, otherwise, return the number of
+	vdatas that are actually stored in refarray */
+    if (refarray == NULL)
+	ret_value = nfound_vds - start_vd;
+    else
+	ret_value = nactual_vds;
+
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* VSIgetvdatas */
+
+/*******************************************************************************
+NAME
+   VSgetvdatas -- Get user-created vdata in a file or in a vgroup.
+
+DESCRIPTION
+    VSgetvdatas retrieves n_vds vdatas by their reference numbers via the
+    caller-supplied array refarray.  When a vgroup id is specified, VSgetvdatas
+    will only retrieve the vdatas immediately belong to the specified vgroup,
+    and not any sub-vgroups.
+
+    The parameter n_vds provides the number of values that the refarray list
+    can hold and can be any positive number smaller than MAX_REF (65535).  If
+    n_vds is larger than the actual number of user-created vdatas, then only
+    the actual number of reference numbers will be retrieved.
+
+    The parameter start_vd indicates the vdata number to start at.
+    - When start_vd is 0, the retrieval starts at the beginning.
+    - When start_vd is between 0 and the number of user-created vdatas in
+      the file or the vgroup, VSgetvdatas will start retrieving vdatas from
+      the vdata number start_vd.
+    - When start_vd is greater than the number of user-created vdatas in the
+      file or the vgroup, VSgetvdatas will return FAIL.
+
+    When refarray argument is NULL, VSgetvdatas will return the actual number
+    of user-created vdatas without further processing.  This allows application
+    to find out the size of the array for proper allocation.
+   
+RETURNS
+    The number of user-created vdatas if successful and FAIL, otherwise.
+    -BMR - 2010/07/10
+
+MODIFICATION
+    - Made the original VSgetvdatas into a private function VSIgetvdatas so
+      that the code can be reused by VSofclass.  VSgetvdatas now simply calls
+      VSIgetvdatas. -BMR - 2010/11/17
+*******************************************************************************/
+intn
+VSgetvdatas(int32 id,		/* IN: file id or vgroup id */
+	    const uintn start_vd,/* IN: vdata number to start retrieving */
+            const uintn n_vds,	/* IN: number of user-created vds to return */
+            uint16 *refarray	/* IN/OUT: ref array to fill */)
+{
+    CONSTR(FUNC, "VSgetvdatas");
+    int32       ret_value = SUCCEED;
+
+    /* clear error stack */
+    HEclear();
+
+    /* Make sure that proper size is passed in for the non-null array */
+    if (refarray != NULL && n_vds == 0)
+        HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Passing NULL in to VSIgetvdatas to get user-created vdatas */
+    ret_value = VSIgetvdatas(id, NULL, start_vd, n_vds, refarray);
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* VSgetvdatas */
+
 
 /* ------------------------------- Vsetzap -------------------------------- */
 /*

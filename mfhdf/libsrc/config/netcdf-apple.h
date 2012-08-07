@@ -49,7 +49,11 @@
  * an int and the valid values are #defined.
  */
 #ifndef __MWERKS__
-#define USE_ENUM
+/* xdr_enum does not work properly for Mac Lion using the Apple GCC compiler
+i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.1.00)
+ */
+/* Do not use it for all Macs for now. See ticket HDFFR-1318. */
+/*#define USE_ENUM*/
 #endif
 
 

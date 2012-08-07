@@ -28,6 +28,8 @@
 #ifndef __HCHUNKS_H
 #define __HCHUNKS_H
 
+#include "H4api_adpt.h"
+
 /* required includes */
 #include "hfile.h"  /* special info stuff */
 
@@ -179,13 +181,23 @@ extern      "C"
                                  can be an array? but we only handle 1 level */);
 
     HDFLIBAPI intn HMCgetcompress
-	(accrec_t* access_rec,    /* IN: access record */
-	 comp_coder_t* comp_type, /* OUT: compression type */
+        (accrec_t* access_rec,    /* IN: access record */
+         comp_coder_t* comp_type, /* OUT: compression type */
          comp_info* c_info        /* OUT: retrieved compression info */);
 
     HDFLIBAPI intn HMCgetcomptype
-	(int32 access_id,	  /* IN: access record */
-	 comp_coder_t* comp_type  /* OUT: compression type */);
+        (int32 access_id,         /* IN: access record */
+         comp_coder_t* comp_type  /* OUT: compression type */);
+
+    HDFLIBAPI intn HMCgetdatainfo
+        (int32 file_id,    /* IN: file in which element is located */
+         uint16 data_tag,
+         uint16 data_ref,
+	 int32 *chk_coord, /* IN: chunk coord array or NULL for non-chunk SDS */
+         uintn start_block,/* IN: data block to start at, 0 base */
+         uintn info_count, /* IN: size of offset/length lists */
+         int32 *offsetarray,     /* OUT: array to hold offsets */
+         int32 *lengtharray);    /* OUT: array to hold lengths */
 
     HDFLIBAPI intn HMCgetdatasize
         (int32 file_id,    /* IN: file in which element is located */

@@ -26,19 +26,19 @@ static char *RcsId[] = "@(#)$Revision$";
 
 int32
 dumpvd(int32       vd, 
-       file_type_t ft, 
+       file_format_t ff, 
        int         data_only, 
        FILE       *fp, 
        char        separater[2],
        int32       flds_indices[VSFIELDMAX], 
        int         dumpallfields)
 {
-    char        vdname[VSNAMELENMAX];
+    char        vdname[VSNAMELENMAX+1];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb = NULL;
     uint8      *b = NULL;
     DYN_VWRITELIST *w = NULL;
-    intn       (*vfmtfn[VSFIELDMAX]) (VOIDP ,  file_type_t ft,  FILE *);
+    intn       (*vfmtfn[VSFIELDMAX]) (VOIDP ,  file_format_t ff,  FILE *);
     int32       off[VSFIELDMAX];
     int32       order[VSFIELDMAX];
     int32       nattrs[VSFIELDMAX];
@@ -127,7 +127,7 @@ dumpvd(int32       vd,
              data-only option. */
           if (!data_only)
           { 
-             if(ft==DASCII)
+             if(ff==DASCII)
              {
                 if ((dumpallfields) || (flds_indices[x] == i))
                 {
@@ -138,7 +138,7 @@ dumpvd(int32       vd,
              }
              /* display attributes - BMR moved this block inside if(!data_only) 
 		to keep the attributes from being printed - bug #231*/
-             if (FAIL == dumpattr(vd, i, 1, ft, fp))
+             if (FAIL == dumpattr(vd, i, 1, ff, fp))
              {
                 fprintf(stderr,"dumpvd: dumpattr() failed for vd = %d \n",(int)vd);
                 ret_value = FAIL;
@@ -199,7 +199,7 @@ dumpvd(int32       vd,
     cn = 0;
     done = count = 0;
     
-    if(ft==DASCII)
+    if(ff==DASCII)
       { 
 
           /* If not just the data will be dumped out, then put an address-type
@@ -254,20 +254,34 @@ dumpvd(int32       vd,
           cnt1 = 0;
           cnt2 = 0;
           while (done != nv)
-            {
-                /* Determine the amount of data to be read this time. */
-                if ((nv - done) > chunk)
+          {
+              /* Determine the amount of data to be read this time. */
+              if ((nv - done) > chunk)
                     count = chunk;
-                else
+              else
                     count = nv - done;
 
-                /* read and update bookkeeping */
-                if (FAIL == VSread(vd, bb, count, interlace))
-                  {
-                      fprintf(stderr,"dumpvd: VSread failed for vd = %d \n",(int)vd);
-                      ret_value = FAIL;
-                      goto done;
-                  }
+              /* read and update bookkeeping */
+              if (FAIL == VSread(vd, bb, count, interlace))
+              {
+		 /* If the data set has external element, get the external file
+		 name to provide information */
+		 intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
+		 if (extfile_namelen > 0)
+		 {
+		    char *extfile_name = NULL;
+		    extfile_name = (char *)HDmalloc(sizeof(char *)*(extfile_namelen+1));
+		    CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd" );
+
+		    /* Get the external file info, we don't need offset here */
+		    extfile_namelen = VSgetexternalfile(vd, extfile_namelen+1, extfile_name, NULL);
+		    ERROR_GOTO_3( "in %s: VSread failed for vd(%d) with external file %s.  Please verify the file exists in the same directory.",
+                        "dumpvd", (int)vd, extfile_name);
+		 }
+		 else
+		    ERROR_GOTO_2( "in %s: VSread failed for vd(%d)",
+                        "dumpvd", (int)vd );
+                }
 
                 done += count;
                 b = bb;
@@ -291,7 +305,7 @@ dumpvd(int32       vd,
                             for (t = 0; t < order[i]; t++)
                               {
                                   if(display)
-                                      cn+=(vfmtfn[i]) (b, ft, fp);
+                                      cn+=(vfmtfn[i]) (b, ff, fp);
                                   b += off[i];
                                   if (display)
                                     {
@@ -391,11 +405,25 @@ dumpvd(int32       vd,
 
                 /* read and update bookkeeping */
                 if (FAIL == VSread(vd, bb, count, interlace))
-                  {
-                      fprintf(stderr,"dumpvd: VSread failed for vd = %d \n",(int)vd);
-                      ret_value = FAIL;
-                      goto done;
-                  }
+                {
+		   /* If the data set has external element, get the external
+		      file name to provide information */
+		   intn extfile_namelen = VSgetexternalfile(vd, 0, NULL, NULL);
+		   if (extfile_namelen > 0)
+		   {
+		      char *extfile_name = NULL;
+		      extfile_name = (char *)HDmalloc(sizeof(char *)*(extfile_namelen+1));
+		      CHECK_ALLOC(extfile_name, "extfile_name", "dumpvd" );
+
+		      /* Get the external file info, we don't need offset here */
+		      extfile_namelen = VSgetexternalfile(vd, extfile_namelen+1, extfile_name, NULL);
+		      ERROR_GOTO_3( "in %s: VSread failed for vd(%d) with external file %s.  Please verify the file exists in the same directory",
+                        "dumpvd", (int)vd, extfile_name);
+		   }
+		   else
+		      ERROR_GOTO_2( "in %s: VSread failed for vd(%d)",
+                        "dumpvd", (int)vd );
+                }
 
                 done += count;
                 b = bb;
@@ -419,7 +447,7 @@ dumpvd(int32       vd,
                             for (t = 0; t < order[i]; t++)
                               {
                                   if(display)
-                                      cn+=(vfmtfn[i]) (b, ft, fp);
+                                      cn+=(vfmtfn[i]) (b, ff, fp);
                                   b += off[i];
                                   if (display)
                                     {
@@ -482,7 +510,7 @@ intn
 dumpattr(int32 vid, 
          int32 findex, 
          intn isvs,
-         file_type_t ft, 
+         file_format_t ff, 
          FILE *fp)
 {
     intn          i, k;
@@ -495,7 +523,7 @@ dumpattr(int32 vid,
     int32         off;
     uint8         *buf = NULL;
     uint8         *ptr = NULL;
-    intn (*vfmtfn)(VOIDP, file_type_t ft, FILE *);
+    intn (*vfmtfn)(VOIDP, file_format_t ff, FILE *);
     intn          status;
     intn          ret_value = SUCCEED;
 
@@ -518,6 +546,9 @@ dumpattr(int32 vid,
         nattrs = VSfnattrs(vid, findex);
     else
         nattrs = Vnattrs(vid);
+         /* nattrs = Vnattrs2(vid); using new function will cause test failure,
+		need to decide if we want dumper to use new functions then
+		fix all the tests. -BMR 2/5/2011 */ 
 
     if (FAIL == nattrs)
       {
@@ -649,7 +680,7 @@ dumpattr(int32 vid,
           cn = 0;
           for (k = 0; k < i_count; k++)  
             {
-                cn += vfmtfn((uint8 *)ptr, ft, fp);
+                cn += vfmtfn((uint8 *)ptr, ff, fp);
                 ptr += off;
                 putchar(' ');
                 cn++;

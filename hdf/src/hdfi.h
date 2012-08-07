@@ -89,58 +89,7 @@
 #include <limits.h>
 #include <string.h>
 
-/**
- * Provide the macros to adapt the HDF public functions to
- * dll entry points.
- * In addition it provides error lines if the configuration is incorrect.
- **/
-
-#ifdef _WIN32
-/**
- * Under _WIN32 we have single threaded static libraries, or
- * mutli-threaded DLLs using the multithreaded runtime DLLs.
- **/
-#	if defined(_MT) &&	defined(_DLL) &&!defined(_HDFDLL_)
-/*		If the user really meant to use _HDFDLL_, but he forgot, just define it. */
-#		define _HDFDLL_
-#	endif
-
-#	if !defined(_MT) && defined(_HDFDLL_)
-#		error To use the HDF libraries from a single-threaded project, you must use static HDF libraries
-#		error Undefine the macro "_HDFDLL_"
-#	endif
-
-#	if defined(_HDFDLL_)
-#		pragma warning( disable: 4273 )	/* Disable the stupid dll linkage warnings */
-
-#		if !defined(_HDFLIB_)
-#			define HDFPUBLIC __declspec(dllimport)
-#		else
-#			define HDFPUBLIC __declspec(dllexport)
-#		endif
-
-#		if !defined(_MFHDFLIB_) && !defined(_HDFLIB_)
-#			define HDFLIBAPI __declspec(dllimport) extern
-#		else
-#			define HDFLIBAPI __declspec(dllexport) extern
-#		endif 
-
-#		if defined(_HDFLIB_C_STUB_EXPORTS) || defined(_MFHDFLIB_C_STUB_EXPORTS) || defined(_DLLLIBTEST_FCSTUB_EXPORTS)
-#			define HDFFCLIBAPI __declspec(dllexport) extern
-#		else
-#			define HDFFCLIBAPI __declspec(dllimport) extern
-#		endif 
-
-#	else
-#		define HDFPUBLIC
-#		define HDFLIBAPI extern
-#		define HDFFCLIBAPI extern
-#	endif
-#else	/* !defined( _WIN32 ) */
-#	define HDFPUBLIC
-#	define HDFLIBAPI extern
-#   define HDFFCLIBAPI extern
-#endif
+#include "H4api_adpt.h"
 
 
 /*-------------------------------------------------------------------------
@@ -1487,7 +1436,7 @@ correctly.
         (i) |= (uint16)(*(p) & 0xff); (p)++; }
 
 #   define INT32DECODE(p, i) \
-{ (i) = ((*(p) & 0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p) & 0xff) << 24); (p)++; \
+{ (i) = (int32)(((int32)*(p) & 0x80) ? ~0xffffffff : 0x00) | ((int32)(*(p) & 0xff) << 24); (p)++; \
         (i) |= ((int32)(*(p) & 0xff) << 16); (p)++; \
         (i) |= ((int32)(*(p) & 0xff) << 8); (p)++; \
         (i) |= (*(p) & 0xff); (p)++; }

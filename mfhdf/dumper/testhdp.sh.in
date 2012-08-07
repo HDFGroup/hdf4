@@ -257,6 +257,9 @@ TEST dumpsds-16.out dumpsds -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data
 # as a request to 'k'eep the specified order
 TEST dumpsds-17.out dumpsds -k -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf
 
+# Test 18 reads a few small datasets in a netCDF file
+TEST dumpsds-18.out dumpsds -i 0,1,2 Roy.nc
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
@@ -300,6 +303,15 @@ TEST dumpvd-10.out dumpvd tvattr.hdf
 TEST dumpvd-11.out dumpvd -c "SDSVar" sds1_dim1_samename.hdf
 TEST dumpvd-12.out dumpvd -c "CoordVar" sds1_dim1_samename.hdf
 
+# Added test #13 to test long vdata's name and class, HDFFR-1267 - BMR 5/15/11
+TEST dumpvd-13.out dumpvd vslongname.hdf
+
+# Added test #14 to test the detection of external file, HDFFR-1266.  The
+# external file is Tables_External_File and when the file is removed from the
+# current directory, the test will fail with the name of the file displayed in
+# the error message. - BMR 6/10/11
+TEST dumpvd-14.out dumpvd Tables.hdf
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi
@@ -342,6 +354,10 @@ TEST dumpvg-14.out dumpvg sds1_dim1_samename.hdf
 # Prints contents of file when a dimension has the same name as that 
 # of another SDS
 TEST dumpvg-15.out dumpvg sds2_dim1_samename.hdf
+
+# Verify the fix for bug HDFFR-197 and a vgroup with ref=0 (some old RI stuff)
+TEST dumpvg-16.out dumpvg -h grtdfi322.hdf
+TEST dumpvg-17.out dumpvg grtdfi322.hdf
 
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
@@ -388,6 +404,9 @@ TEST dumpgr-18.out dumpgr -c grtdfi322.hdf
 
 # Test 19: to test new options -g and -l (suppress all attribute data)
 TEST dumpgr-19.out dumpgr -g -l grtdfi322.hdf
+
+# Test 20: to test dumpgr successfully detect IMCOMP compression type
+TEST dumpgr-20.out dumpgr IMCOMP.hdf
 
 else
 MESG 3 "$TestName <<<SKIPPED>>>"

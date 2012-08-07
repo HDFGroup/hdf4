@@ -201,14 +201,14 @@ read_test(int32 aid)
 
         switch(timing) {
             case 0:     /* Read entire buffer in one I/O operation */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 ret=Hread(aid,elemsize,in_buf);
                 VERIFY(ret, elemsize, "Hread");
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 1:     /* Read entire buffer one byte at a time forwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=0; i<elemsize; i++) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -217,11 +217,11 @@ read_test(int32 aid)
                     ret=Hread(aid,1,&in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 2:     /* Read entire buffer one byte at a time every one byte forwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=0; i<elemsize; i+=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -238,11 +238,11 @@ read_test(int32 aid)
                     ret=Hread(aid,1,&in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 3:     /* Read entire buffer one byte at a time backwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=elemsize-1; i>=0; i--) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -251,11 +251,11 @@ read_test(int32 aid)
                     ret=Hread(aid,1,&in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 4:     /* Read entire buffer one byte at a time every one byte backwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=elemsize-1; i>=0; i-=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -272,7 +272,7 @@ read_test(int32 aid)
                     ret=Hread(aid,1,&in_buf[i]);
                     VERIFY(ret, 1, "Hread");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
         } /* end switch */
 
@@ -319,14 +319,14 @@ write_test(int32 aid,intn num_timings)
 
         switch(timing) {
             case 0:     /* Write entire buffer in one I/O operation */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 ret=Hwrite(aid,elemsize,out_buf);
                 VERIFY(ret, elemsize, "Hwrite");
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 1:     /* Write entire buffer one byte at a time forwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=0; i<elemsize; i++) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -335,11 +335,11 @@ write_test(int32 aid,intn num_timings)
                     ret=Hwrite(aid,1,&out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 2:     /* Write entire buffer one byte at a time every one byte forwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=0; i<elemsize; i+=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -356,11 +356,11 @@ write_test(int32 aid,intn num_timings)
                     ret=Hwrite(aid,1,&out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 3:     /* Write entire buffer one byte at a time backwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=elemsize-1; i>=0; i--) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -369,11 +369,11 @@ write_test(int32 aid,intn num_timings)
                     ret=Hwrite(aid,1,&out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
 
             case 4:     /* Write entire buffer one byte at a time every one byte backwards */
-                gettimeofday(&start_time,(struct timeval*)0);                
+                gettimeofday(&start_time,(struct timezone*)0);                
                 for(i=elemsize-1; i>=0; i-=2) {
                     /* Seek to correct location within element */
                     ret=Hseek(aid,i,DF_START);
@@ -390,7 +390,7 @@ write_test(int32 aid,intn num_timings)
                     ret=Hwrite(aid,1,&out_buf[i]);
                     VERIFY(ret, 1, "Hwrite");
                 } /* end for */
-                gettimeofday(&end_time,(struct timeval*)0);                
+                gettimeofday(&end_time,(struct timezone*)0);                
                 break;
         } /* end switch */
 

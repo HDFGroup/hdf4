@@ -79,9 +79,11 @@ static char RcsId[] = "@(#)$Revision$";
    Hgetfileversion -- return version info on HDF file
    HPgetdiskblock  -- Get the offset of a free block in the file.
    HPfreediskblock -- Release a block in a file to be re-used.
+   HDread_drec -- reads a description record
    HDcheck_empty   -- determines if an element has been written with data
    HDget_special_info -- get information about a special element
    HDset_special_info -- reset information about a special element
+   HDspecial_type -- return the special type if the given element is special
 
    File Memory Pool routines
    -------------------------
@@ -229,13 +231,13 @@ USAGE
    int32 Hopen(path, access, ndds)
    char *path;             IN: Name of file to be opened.
    int access;             IN: DFACC_READ, DFACC_WRITE, DFACC_CREATE
-							   or any bitwise-or of the above.
+				or any bitwise-or of the above.
    int16 ndds;             IN: Number of dds in a block if this
-							   file needs to be created.
+				file needs to be created.
 RETURNS
    On success returns file id, on failure returns -1.
 DESCRIPTION
-   Opens a HDF file.  Returns the the file ID on success, or -1
+   Opens an HDF file.  Returns the the file ID on success, or -1
    on failure.
 
    Access equals DFACC_CREATE means discard existing file and
@@ -448,9 +450,6 @@ done:
           HIrelease_filerec_node(file_rec);
     } /* end if */
 
-/*
-fprintf(stderr, "Hopen normal cleanup: prints HEvalue(1) = %d\n", HEvalue(1));
-*/
   /* Normal function cleanup */
   return ret_value;
 }	/* Hopen */
@@ -3625,7 +3624,7 @@ HPfreediskblock(filerec_t * file_rec, int32 block_off, int32 block_size)
        SUCCEED / FAIL
  DESCRIPTION
        Fill in the given info_block with information about the special
-       element.  Return FAIL if it is not a speical element AND set
+       element.  Return FAIL if it is not a special element AND set
        the 'key' field to FAIL in info_block.
 
 --------------------------------------------------------------------------*/
@@ -3924,6 +3923,64 @@ done:
   return ret_value;
 } /* end HP_write() */
 
+
+/*--------------------------------------------------------------------------
+ NAME
+    HDread_drec -- reads a description record
+ USAGE
+    int32 HDread_drec(file_id, data_id, drec_buf)
+    int32 file_id;		IN: id of file
+    atom_t data_id;		IN: id of an element
+    uint8** drec_buf		OUT: buffer containing special info header
+ RETURNS
+    Returns the length of the info read
+ DESCRIPTION
+    This private function contains code that was repeated in several places
+    throughout the library.  It gets access to the element's description
+    record and read the special info header.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+ EXAMPLES
+ REVISION LOG
+    03-20-2010 BMR: Factored out repeated code
+--------------------------------------------------------------------------*/
+int32
+HPread_drec(int32 file_id, atom_t data_id, uint8** drec_buf)
+{
+    CONSTR(FUNC, "HDread_drec");	/* for HERROR */
+    int32       drec_len=0;		/* length of the description record */
+    int32	drec_aid=-1;		/* description record access id */
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
+    int32       ret_value=0;
+
+    /* get the info for the dataset (description record) */
+    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&drec_len) == FAIL)
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+    if ((*drec_buf = (uint8 *)HDmalloc(drec_len)) == NULL)
+	HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+    /* get the special info header */
+    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
+    if (drec_aid == FAIL)
+	HGOTO_ERROR(DFE_BADAID, FAIL);
+    if (Hread(drec_aid,0,*drec_buf) == FAIL)
+	HGOTO_ERROR(DFE_READERROR, FAIL);
+    if(Hendaccess(drec_aid)==FAIL)
+	HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+
+    ret_value = drec_len;
+
+done:
+    if(ret_value == FAIL)
+      { /* Error condition cleanup */
+
+      } /* end if */
+
+    /* Normal function cleanup */
+    return ret_value;
+} /* HPread_drec */
+
 /*--------------------------------------------------------------------------
  NAME
     HDcheck_empty -- determines if an element has been written with data
@@ -3958,15 +4015,10 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 	      intn  *emptySDS /* TRUE if data element is empty */)
 {
     CONSTR(FUNC, "HDcheck_empty");	/* for HERROR */
-    int32	aid;			/* access id */
     int32       length;			/* length of the element's data */
     atom_t      data_id = FAIL;	/* dd ID of existing regular element */
-    int32       data_len;	/* length of the data we are checking */
-    uint16      special_tag;	/* special version of tag */
     filerec_t  *file_rec;	/* file record pointer */
-    int32	drec_aid;	/* description record access id */
     uint8      *local_ptbuf=NULL, *p;
-    uint16	drec_tag, drec_ref;	/* description record tag/ref */
     int16	sptag = -1;	/* special tag read from desc record */
     int32       ret_value = SUCCEED;
 
@@ -3981,29 +4033,34 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
     /* get access element from dataset's tag/ref */
     if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
     {
+	int32  dlen=0, doff=0; /* offset/length of the description record */
+
+        /* Get the info pointed to by this dd, which could point to data or
+           description record, or neither */
+        if (HTPinquire(data_id, NULL, NULL, &doff, &dlen) == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+        /* doff/dlen = -1 means no data had been written */
+        if (doff == INVALID_OFFSET && dlen == INVALID_LENGTH)
+        {
+	    *emptySDS = TRUE;
+        }
+
 	/* if the element is not special, that means dataset's tag/ref 
 	   specifies the actual data that was written to the dataset, so
 	   we don't need to check further */
-	if (HTPis_special(data_id)==FALSE)
-            {
-	       *emptySDS = FALSE;
-            }
+	else if (HTPis_special(data_id)==FALSE)
+        {
+	    *emptySDS = FALSE;
+        }
 	else
 	{
-	    /* get the info for the dataset (description record) */
-	    if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&data_len) == FAIL)
-		HGOTO_ERROR(DFE_INTERNAL, FAIL);
-	    if ((local_ptbuf = (uint8 *)HDmalloc(data_len)) == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+	    int32 rec_len=0;
 
-	    /* Get the special info header */
-	    drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
-	    if (drec_aid == FAIL)
-		HGOTO_ERROR(DFE_BADAID, FAIL);
-	    if (Hread(drec_aid,0,local_ptbuf) == FAIL)
-		HGOTO_ERROR(DFE_READERROR, FAIL);
-	    if(Hendaccess(drec_aid)==FAIL)
-		HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	    /* Get the compression header (description record) */
+	    rec_len = HPread_drec(file_id, data_id, &local_ptbuf);
+	    if (rec_len <= 0)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 	    /* get special tag */
 	    p = local_ptbuf;
@@ -4025,16 +4082,15 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
 	       the chunk table (vdata) to determine emptySDS value */
 	    else if (sptag == SPECIAL_CHUNKED)
 	    {
-		int16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
+		uint16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
 		int32 vdata_id = -1;	/* chunk table id */
 		int32 n_records = 0;	/* number of records in chunk table */
-		intn status = 0;
 
 		/* skip 4byte header len, 1byte chunking version, 4byte flag, */
 		/* 4byte elm_tot_length, 4byte chunk_size and 4byte nt_size */
 		p = p + 4 + 1 + 4 + 4 + 4 + 4;
-		INT16DECODE(p, chk_tbl_tag);
-		INT16DECODE(p, chk_tbl_ref);
+		UINT16DECODE(p, chk_tbl_tag);
+		UINT16DECODE(p, chk_tbl_ref);
 
 		/* make sure it is really the vdata */
 		if (chk_tbl_tag == DFTAG_VH)
@@ -4078,6 +4134,198 @@ done:
 
     return ret_value;
 } /* end HDcheck_empty() */
+
+
+/*--------------------------------------------------------------------------
+ NAME
+    Hgetspecinfo
+ PURPOSE
+    Returns the special type if the given element is special.
+ USAGE
+    intn Hgetspecinfo(file_id, tag, ref)
+        int32 file_id;    IN: file id
+        uint16 tag;    IN: tag of the element
+        uint16 ref;    IN: ref of the element
+ RETURNS
+    Special type:
+  SPECIAL_LINKED
+  SPECIAL_EXT
+  SPECIAL_COMP
+  SPECIAL_VLINKED
+  SPECIAL_CHUNKED
+  SPECIAL_BUFFERED
+  SPECIAL_COMPRAS
+    or 0 if the element is not special element.
+ DESCRIPTION
+    Called internally by the GRIget_image_list to allow a chunked or
+    linked-block element to proceed eventhough its offset is 0.
+ GLOBAL VARIABLES
+ COMMENTS, BUGS, ASSUMPTIONS
+
+  *** Only called by library routines, should _not_ be called externally ***
+
+ EXAMPLES
+ REVISION LOG
+--------------------------------------------------------------------------*/
+intn
+Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
+{
+    CONSTR(FUNC, "Hgetspecinfo");
+    accrec_t* access_rec=NULL;/* access element record */
+    int32     aid;
+    intn      status=0, ret_value=0;
+
+    /* Clear error stack */
+    HEclear();
+
+    /* Start read access on the access record of the data element, which
+       is being inquired for its special information */
+    aid = Hstartread(file_id, tag, ref);
+
+    /* Get the access_rec pointer */
+    access_rec = HAatom_object(aid);
+    if (access_rec == NULL) HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Only return the valid special code, anything else return 0 */
+    ret_value = access_rec->special;
+    switch (access_rec->special)
+    {
+        case SPECIAL_LINKED:
+        case SPECIAL_EXT:
+        case SPECIAL_COMP:
+        case SPECIAL_CHUNKED:
+        case SPECIAL_BUFFERED:
+        case SPECIAL_COMPRAS:
+	    /* special elt, call special function */
+	    status = (*access_rec->special_func->info) (access_rec, info);
+	    /* return FAIL if special function fails eventhough special type
+		was OK */
+	    if (status == FAIL) ret_value = FAIL;
+            break;
+#ifdef LATER
+        case SPECIAL_VLINKED:
+            break;
+#endif /* LATER */
+        default:
+            ret_value = 0;
+    } /* switch */
+
+    /* End access to the aid */
+    if (Hendaccess(aid) == FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+done:
+  if(ret_value == FAIL)
+    { /* Error condition cleanup */
+	/* End access to the aid if it's been accessed */
+	if (aid != 0)
+	    if (Hendaccess(aid)== FAIL)
+		HERROR(DFE_CANTENDACCESS);
+    } /* end if */
+
+  /* Normal function cleanup */
+  return ret_value;
+}   /* Hgetspecinfo */
+
+
+/* ------------------------------- Hgetntinfo ------------------------------ */
+/*
+NAME
+   Hgetntinfo -- retrieves some information of a number type in text format
+USAGE
+   intn Hgetntinfo(numbertype, nt_info)
+   int32 numbertype;      IN: HDF-supported number type
+   hdf_ntinfo_t *nt_info; OUT: structure containing number type's info
+RETURNS
+   FAIL if there is no match for the number type, otherwise, SUCCEED.
+DESCRIPTION
+   Load the structure hdf_ntinfo_t with the number type's name and byte
+   order in array of characters format.  When the "default:" is reached,
+   it means that a supported number type is missing from the switch statement
+   or an unrecognized value is encountered.  The type will be verified and
+   added or appropriate error handling will be added.  The structure
+   hdf_ntinfo_t is defined in hdf.h.
+
+   Design note: Passing the struct hdf_ntinfo_t into this function instead
+   of individual strings will allow expandability without changing the
+   function's prototype in the event of more information is desired.
+   -BMR (Sep 2010)
+
+---------------------------------------------------------------------------*/
+intn
+Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
+{
+    /* Clear error stack */
+    HEclear();
+
+    /* Get byte order string */
+    if ((DFNT_LITEND & numbertype) > 0)
+    {
+        HDstrcpy(nt_info->byte_order, "littleEndian");
+    }
+    else
+        HDstrcpy(nt_info->byte_order, "bigEndian");
+
+    /* Get type name string; must mask native and little-endian to make
+       sure we get standard type */
+    switch((numbertype & ~DFNT_NATIVE) & ~DFNT_LITEND)
+    {
+      case DFNT_UCHAR8:
+        HDstrcpy(nt_info->type_name, "uchar8");
+        break;
+      case DFNT_CHAR8:
+        HDstrcpy(nt_info->type_name, "char8");
+        break;
+      case DFNT_FLOAT32:
+        HDstrcpy(nt_info->type_name, "float32");
+        break;
+      case DFNT_FLOAT64:
+        HDstrcpy(nt_info->type_name, "float64");
+        break;
+      case DFNT_FLOAT128:
+        HDstrcpy(nt_info->type_name, "float128");
+        break;
+      case DFNT_INT8:
+        HDstrcpy(nt_info->type_name, "int8");
+        break;
+      case DFNT_UINT8:
+        HDstrcpy(nt_info->type_name, "uint8");
+        break;
+      case DFNT_INT16:
+        HDstrcpy(nt_info->type_name, "int16");
+        break;
+      case DFNT_UINT16:
+        HDstrcpy(nt_info->type_name, "uint16");
+        break;
+      case DFNT_INT32:
+        HDstrcpy(nt_info->type_name, "int32");
+        break;
+      case DFNT_UINT32:
+        HDstrcpy(nt_info->type_name, "uint32");
+        break;
+      case DFNT_INT64:
+        HDstrcpy(nt_info->type_name, "int64");
+        break;
+      case DFNT_UINT64:
+        HDstrcpy(nt_info->type_name, "uint64");
+        break;
+      case DFNT_INT128:
+        HDstrcpy(nt_info->type_name, "int128");
+        break;
+      case DFNT_UINT128:
+        HDstrcpy(nt_info->type_name, "uint128");
+        break;
+      case DFNT_CHAR16:
+        HDstrcpy(nt_info->type_name, "char16");
+        break;
+      case DFNT_UCHAR16:
+        HDstrcpy(nt_info->type_name, "uchar16");
+        break;
+      default:
+	return FAIL;
+    } /* end switch */
+    return SUCCEED;
+} /* Hgetntinfo */
+
 
 #ifdef HAVE_FMPOOL
 /******************************************************************************

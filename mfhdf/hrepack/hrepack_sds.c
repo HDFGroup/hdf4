@@ -441,8 +441,9 @@ int copy_sds(int32 sd_in,
    * is declared unlimited when the data set is created.
    *-------------------------------------------------------------------------
    */
-
-   if (SDisrecord(sds_id)) 
+   /* do not use unlimited if compression is needed since combination of unlimited 
+      and compression is not allowed. */
+   if (SDisrecord(sds_id) && comp_type<=COMP_CODE_NONE) 
    {
        int32 dimsizes_cre[H4_MAX_VAR_DIMS];
 
@@ -528,7 +529,6 @@ int copy_sds(int32 sd_in,
            } 
            else  
            {
-               
                /* setup compression factors */
                switch(comp_type) 
                {
@@ -554,18 +554,18 @@ int copy_sds(int32 sd_in,
                    goto out;
                }
 
-             
-               /* unlimited dimensions don't work with compression */
-               if ( ! is_record )
+                /*
+                  HDF4 2.6 does not allow the combination of unlimited dimensions
+                  and compression. See bug HDFFR-1280
+                  The fix: for the case of the combination of unlimited dimensions
+                  and compression, compressed will be applied but dimension is changed
+                  to limited size in hrepack.
+                */
+               if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
                {
-                   
-                   if (SDsetcompress (sds_out, comp_type, &c_info)==FAIL)
-                   {
-                       printf( "Error: Failed to set compression for <%s>\n", path);
-                       goto out;
-                   }
+                   printf( "Error: Failed to set compression for <%s>\n", path);
+                   goto out;
                }
-              
            }
        }
        

@@ -1,5 +1,5 @@
 .\" $Id$
-.TH HDF 1 "February 2010" "THG HDF 4.2.5"
+.TH HDF 1 "August 2012" "THG HDF 4.2.8"
 .SH NAME
 hdf \- Hierarchical Data Format library
 .SH SYNOPSIS
@@ -12,23 +12,27 @@ hdf \- Hierarchical Data Format library
 
 .SH DESCRIPTION
 HDF is a multi-object file format that facilitates the transfer of various 
-types of scientific data between machines and operating systems. 
-Platforms currently supported include Linux 32 and 64-bit, SunOS 32 and 64-bit,
-Windows, FreeBSD, and Mac Intel.  HDF allows self-definitions of data content
-and easy extensibility for future enhancements or compatibility with other
-standard formats. HDF includes Fortran and C calling interfaces, and utilities 
-for manipulating, viewing, and analyzing data in HDF files. The HDF 
-library contains interfaces for storing and retrieving compressed or 
-uncompressed 8-bit and 24-bit raster images with palettes,  
-n-Dimensional scientific datasets and binary tables. An interface is
-also included that allows arbitrary grouping of other HDF objects.
+types of scientific data between machines and operating systems.  See
+http://www.hdfgroup.org/release4/platforms.html for a list of platforms
+currently supported.
+
+HDF allows self-definitions of data content and easy extensibility for
+future enhancements or compatibility with other standard formats. HDF
+includes Fortran and C calling interfaces, and utilities for manipulating,
+viewing, and analyzing data in HDF files. The HDF library contains
+interfaces for storing and retrieving compressed or uncompressed 8-bit
+and 24-bit raster images with palettes, n-Dimensional scientific datasets
+and binary tables. An interface is also included that allows arbitrary
+grouping of other HDF objects.
 
 .SS "HDF Raster Images"
-HDF supports the storing of both 8-bit and 24-bit raster images.  As well as
+HDF supports the storing of both 8-bit and 24-bit raster images.  Beside
 storing information about the dimensions and palette of a raster image, HDF
-supports raster image compression.  In previous versions of HDF, Run-length
-encoding and Imcomp compression were both supported.  With HDF> 3.3 JPEG
-compression is also available. 
+supports raster image compression.  In previous versions of HDF
+(DF interfaces,) Run-length encoding and Imcomp compression were both
+supported.  The currently supported compression methods include simple
+RLE, N-bit, Skipping huffman, Gzip, Szip, and JPEG.  Although no longer
+support Imcomp compression, the library can read images with Imcomp compression.
 
 .SS "HDF Scientific Data Sets"
 Scientific Data Sets (SDSs) are useful for storing n-Dimensional gridded data.
@@ -45,9 +49,9 @@ SDS including:
   o The valid max and min values for the data. 
   o Calibration information for the data.
   o Fill or missing value information. 
-  o Ability of have more than one file open at a time.
+  o Ability of having more than one file open at a time.
   o A more general framework for meta-data within the SDS data-model
-    (allowing 'name = value' styel meta-data).
+    (allowing 'name = value' style meta-data.)
   o Support for an "unlimited dimension" in the SDS data-model, making
     it possible to append planes to an array along one dimension.
 .fi
@@ -68,8 +72,8 @@ The Vset module provides
 interfaces to two basic HDF building blocks.  Vgroups are generic grouping
 elements allowing a user to associate related objects within an HDF file.  As
 Vgroups can contain other Vgroups, it is possible to build a hierarchical file.
-Vdatas are data structures made up of fields and records.  Data is organized into 'fields' within each 
-Vdata.  Each field is identified by a unique 'fieldname'.  The type of each 
+Vdatas are data structures made up of fields and records.  Data is organized into "fields" within each 
+Vdata.  Each field is identified by a unique "fieldname".  The type of each 
 field may be any of the basic number types that HDF supports.  Fields of 
 different types may exist within the same Vdata.  
 
@@ -77,17 +81,23 @@ By combining Vdatas in Vgroups it is possible to represent higher level data
 constructs: mesh data, multi-variate datasets, sparse matrices, finite-element
 data, spreadsheets, splines, non-Cartesian coordinate data, etc.
 
-.SS "HDF > 3.3 and netCDF"
-HDF > 3.3 merges in the netCDF library produced by Unidata.  The full
-netCDF library is supported as is a new "multi-file" SDS interface.  Both of
-these interfaces can read old netCDF files and HDF files transparently.
+.SS "HDF and netCDF"
+Starting with HDF version 3.3, netCDF v.2.3.2 of Unidata is supported with the
+SD multifile interface. SD and netCDF interfaces can read both netCDF files
+and multi-dimensional arrays (SDS) stored in the HDF4 files transparently.
+For more information, see Chapter 3, "Scientific Data Sets", of the HDF
+User's Guide.
 
+To disable netCDF interfaces in the HDF library, configure the library using
+--disable-netcdf flag and rebuild it.
 
 .SS "EXAMPLES"
 All HDF routines require the header "hdf.h" to be included in the C
-source file. If using the SDS routines the header "mfhdf.h" should be 
-included instead in in the C source file. Fortran programs should 
-use "dffunc.inc" and "hdf.inc".
+source file, unless if the SD routines are used, then the header "mfhdf.h"
+should be included instead.
+
+Fortran programs should use "dffunc.inc" for all interfaces, "mffunc.inc"
+for the SD interfaces, and "hdf.inc" for non-SD interfaces.
 
 To compile a program that makes HDF calls on most Unix platforms.
 
@@ -116,7 +126,7 @@ http://www.hdfgroup.org/products/hdf4/.
 .SH VENDOR
 The HDF Group
 .sp 0
-1901 South First Street, Suite C-2
+1800 South Oak Street, Suite 203
 .sp 0
 Champaign, IL 61820
 .sp 0
@@ -125,7 +135,7 @@ USA
 www.hdfgroup.org
 
 .SH VERSION
-4.2.5
+4.2.8 
 .SH LICENSE & SOURCE AVAILABILITY
 Copyright by The HDF Group.
 .sp 0

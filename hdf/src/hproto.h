@@ -15,7 +15,8 @@
 
 #ifndef _H_PROTO
 #define _H_PROTO
-#include "h4config.h"
+
+#include "H4api_adpt.h"
 
 /* Usefull macros, which someday might become actual functions */
 /* Wrappers for Hinquire. feb-2-92 */
@@ -182,6 +183,9 @@ extern      "C"
 
     HDFLIBAPI const char *HDfidtoname
                 (int32 fid);
+
+    HDFLIBAPI intn Hgetntinfo
+                (int32 numbertype, hdf_ntinfo_t *nt_info);
 
     HDFLIBAPI intn Hishdf
                 (const char * filename);
@@ -377,7 +381,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (void * dest, const void * src, uint32 item_size, uint32 num_items);
 
     HDFLIBAPI char *HIstrncpy
-                (char * dest, const char * source, int32 len);
+                (char * dest, const char * source, intn len);
 
     HDFLIBAPI int32 HDspaceleft
                 (void);
@@ -434,6 +438,11 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
     HDFLIBAPI intn HLgetblockinfo
                 (int32 aid, int32* block_size, int32* num_blocks);
+
+    HDFLIBAPI intn HLgetdatainfo
+		(int32 file_id, uint8 *buf, uintn start_block,
+		 uintn info_count, int32 *offsetarray, int32 *lengtharray);
+
 
 /*
    ** from hextelt.c
@@ -500,6 +509,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
     HDFLIBAPI int32 HRPconvert
                 (int32 fid, uint16 tag, uint16 ref, int32 xdim, int32 ydim,int16 scheme, comp_info *cinfo, uintn pixel_size);
 
+
 /*
    ** from herr.c
  */
@@ -552,6 +562,12 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
                 (int32 bitfile_id, intn flushbit);
 
     HDFLIBAPI intn HPbitshutdown(void);
+
+/*
+ ** from dfutil.c
+ */
+    HDFLIBAPI uint16 DFfindnextref
+                (int32 file_id, uint16 tag, uint16 lref);
 
 /*
    ** from dfcomp.c
@@ -1297,8 +1313,8 @@ HDFLIBAPI uint16 ANatype2tag(ann_type atype);
 
 HDFLIBAPI ann_type ANtag2atype(uint16 atag);
 
-HDFLIBAPI intn ANdestroy(void);
-
+/* BMR: Removed because this function is meant to be private.
+HDFLIBAPI intn ANdestroy(void); */ 
 
 /* Multi-file Raster C-routines found in mfgr.c */
 HDFLIBAPI intn rigcompare(void * k1, void * k2, intn cmparg);
@@ -1367,7 +1383,12 @@ HDFLIBAPI intn GRgetattr(int32 id,int32 idx,void * data);
 
 HDFLIBAPI int32 GRfindattr(int32 id,const char *name);
 
+HDFLIBAPI intn GRgetcomptype (int32 riid, comp_coder_t *comp_type);
+
 HDFLIBAPI intn GRPshutdown(void);
+
+/* This function was added for hmap project only.  Feb-25-2011 */
+HDFLIBAPI intn GR2bmapped(int32 riid, intn *tobe_mapped, intn *created_byGR);
 
 /*=== HDF_CHUNK_DEF same as in mfhdf.h - moved here  ====*/
 
@@ -1731,12 +1752,21 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                  int32 count, const void * values);
    HDFLIBAPI intn Vnattrs
                 (int32 vgid);
+   HDFLIBAPI intn Vnattrs2
+                (int32 vgid);
+   HDFLIBAPI intn Vnoldattrs
+                (int32 vgid);
    HDFLIBAPI intn Vfindattr
                 (int32 vgid, const char *attrname);
    HDFLIBAPI intn Vattrinfo
                 (int32 vgid, intn attrindex, char *name, 
                  int32 *datatype, int32 *count, int32 *size);
+   HDFLIBAPI intn Vattrinfo2 /* copy of Vattrinfo for old attributes */
+                (int32 vgid, intn attrindex, char *name, int32 *datatype,
+		 int32 *count, int32 *size, int32 *nfields, uint16 *refnum);
    HDFLIBAPI intn Vgetattr
+                (int32 vgid, intn attrindex, void * values);
+   HDFLIBAPI intn Vgetattr2 /* copy of Vgetattr for old attributes */
                 (int32 vgid, intn attrindex, void * values);
    HDFLIBAPI int32 Vgetversion
                 (int32 vgid);
@@ -1815,6 +1845,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
                 (int32 vkey, int32  * nelt, int32  * interlace,
            char  * fields, int32  * eltsize, char  * vsname);
 
+    HDFLIBAPI intn VSisinternal
+                (const char  *vsclass);
+
     HDFLIBAPI int32 VSlone
                 (HFILEID f, int32  * idarray, int32 asize);
 
@@ -1832,7 +1865,14 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI int32 VSfindclass
                 (HFILEID f, const char  * vsclass);
+    
+    HDFLIBAPI intn VSofclass
+                (int32 id, const char *vsclass, uintn start_vd,
+                 uintn array_size, uint16 *refarray);
 
+    HDFLIBAPI intn VSgetvdatas
+                (int32 id, uintn start_vd, uintn array_size, uint16 *refarray);
+    
     HDFLIBAPI intn VSsetblocksize
                 (int32 vkey, int32 block_size);
 
@@ -1900,6 +1940,9 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
     HDFLIBAPI int32 Vgettagrefs
                 (int32 vkey, int32  tagarray[], int32  refarray[], int32 n);
 
+    HDFLIBAPI int32 Vgetuservgs
+                (int32 id, int32 start_ref, int32 n_vgs, int32 *refarray); 
+
     HDFLIBAPI intn Vgettagref
                 (int32 vkey, int32 which, int32  * tag, int32  * ref);
 
@@ -1950,6 +1993,16 @@ HDFLIBAPI int  Hmpget(int *pagesize, /*OUT: pagesize to used in last open/create
 
     HDFLIBAPI int32 Vdelete
                 (int32 f, int32 ref);
+
+    HDFLIBAPI intn Vgisinternal
+		(int32 vkey);
+
+    HDFLIBAPI intn Visinternal	/* this function is replaced by Vgisinternal */
+		(const char *classname);
+
+    HDFLIBAPI intn Vgetvgroups
+		(int32 id, uintn start_vg, uintn n_vgs, uint16 *refarray);
+
 
 /*******************************************************************************
 NAME
@@ -2062,6 +2115,13 @@ Vdeletetagref(int32 vkey, /* IN: vgroup key */
 
     HDFLIBAPI intn VSsetexternalfile
 		(int32 vkey, const char *filename, int32 offset);
+
+    HDFLIBAPI intn VSgetexternalfile
+		 (int32 vkey, uintn name_len, char *filename, int32* offset);
+
+    HDFLIBAPI intn VSgetexternalinfo
+		 (int32 vkey, uintn name_len, char *filename, int32* offset,
+		 int32* length);
 
     HDFLIBAPI intn VSfpack
                 (int32 vsid, intn packtype, const char *fields_in_buf,

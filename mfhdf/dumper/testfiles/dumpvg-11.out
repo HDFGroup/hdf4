@@ -6,7 +6,7 @@ File name: tvattr.hdf
 
 Vgroup:0
      tag = 1965; reference = 2;
-     name = vgname0; class = <Unknown>;
+     name = vgname0; class = <Undefined>;
      number of entries = 0;
    number of attributes = 2 
     attr0: name=attname1 type=25 count=2 size=8
@@ -19,7 +19,7 @@ Entries:-
 
 Vgroup:1
      tag = 1965; reference = 3;
-     name = vgname1; class = <Unknown>;
+     name = vgname1; class = <Undefined>;
      number of entries = 1;
    number of attributes = 0 
 Entries:-
@@ -28,7 +28,7 @@ Entries:-
 	number of records = 3; interlace = 0;
 	fields = [fldname1, fldname2];
 	record size (in bytes) = 2;
-	name = vsname1; class = <Unknown>;
+	name = vsname1; class = <Undefined>;
 	total number of attributes = 6.
 
 

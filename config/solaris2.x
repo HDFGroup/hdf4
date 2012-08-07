@@ -150,6 +150,32 @@ case $CXX_BASENAME in
     ;;
 esac
 
+# compiler version strings
+case $CC in
+    *cc*)
+        cc_version_info=`$CC $CFLAGS $H5_CFLAGS -V 2>&1 | grep 'Sun' |\
+            sed 's/.*\(Sun.*Sun.*\)/\1 /'`
+        ;;
+
+    *)
+        echo "No match to get cc_version_info for $CC"
+        ;;
+esac
+echo "C compiler '$CC' is $cc_version_info"
+
+case $F77 in
+    # The PGI and Intel compilers are automatically detected below
+    *f90*|*f77*)
+        fc_version_info=`$F77 $FFLAGS $H5_FFLAGS -V 2>&1 | grep 'Sun' |\
+            sed 's/.*\(Sun.*Sun.*\)/\1 /'`
+        ;;
+
+     *)
+        echo "No match to get fc_version_info for $F77"
+        ;;
+esac
+echo "Fortran compiler '$F77' is $fc_version_info"
+
 # Overriding Configure Tests
 # --------------------------
 #

@@ -91,7 +91,7 @@ HCIcszip_init(accrec_t * access_rec)
 
     info = (compinfo_t *) access_rec->special_info;
     if (Hseek(info->aid, 0, DF_START) == FAIL)  /* seek to beginning of element */
-        HRETURN_ERROR(DFE_SEEKERROR, FAIL);
+        HGOTO_ERROR(DFE_SEEKERROR, FAIL);
 
     szip_info = &(info->cinfo.coder_info.szip_info);
 
@@ -136,6 +136,7 @@ PRIVATE int32
 HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
 {
     CONSTR(FUNC, "HCIcszip_decode");
+#ifdef H4_HAVE_LIBSZ
     accrec_t *access_rec;
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
     uint8 *in_buffer;
@@ -152,7 +153,6 @@ HCIcszip_decode(compinfo_t * info, int32 length, uint8 *buf)
     uint8 *cp;
     int32 good_bytes;
     int32 old_way;
-#ifdef H4_HAVE_LIBSZ
     SZ_com_t sz_param;
 #endif
 
@@ -362,11 +362,11 @@ PRIVATE int32
 HCIcszip_encode(compinfo_t * info, int32 length, const uint8 *buf)
 {
     CONSTR(FUNC, "HCIcszip_encode");
+#ifdef H4_HAVE_SZIP_ENCODER
     int bytes_per_pixel;
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
     int32 buffer_size;
 
-#ifdef H4_HAVE_SZIP_ENCODER
     if (SZ_encoder_enabled() == 0) 
         HRETURN_ERROR(DFE_NOENCODER, FAIL);
 
@@ -426,6 +426,7 @@ PRIVATE int32
 HCIcszip_term(compinfo_t * info)
 {
     CONSTR(FUNC, "HCIcszip_term");
+#ifdef H4_HAVE_SZIP_ENCODER
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
     uint8 *out_buffer;
     uint8 *ob;
@@ -436,14 +437,10 @@ HCIcszip_term(compinfo_t * info)
     uint16 tag,ref;
     int32 len1;
     int32 aid;
-#ifdef H4_HAVE_SZIP_ENCODER
     SZ_com_t sz_param;
-#endif
     size_t size_out;
     int32 status;
     uint8 *cp;
-
-#ifdef H4_HAVE_SZIP_ENCODER
 
     szip_info = &(info->cinfo.coder_info.szip_info);
     if (szip_info->szip_state != SZIP_RUN)
@@ -865,10 +862,10 @@ int32
 HCPcszip_write(accrec_t * access_rec, int32 length, const void * data)
 {
     CONSTR(FUNC, "HCPcszip_write");
+#ifdef H4_HAVE_SZIP_ENCODER
     compinfo_t *info;           /* special element information */
     comp_coder_szip_info_t *szip_info;    /* ptr to SZIP info */
 
-#ifdef H4_HAVE_SZIP_ENCODER
     if (SZ_encoder_enabled() == 0) 
 	HRETURN_ERROR(DFE_NOENCODER, FAIL);
     info = (compinfo_t *) access_rec->special_info;
@@ -1017,13 +1014,13 @@ HCPcszip_endaccess(accrec_t * access_rec)
 intn 
 HCPsetup_szip_parms( comp_info *c_info, int32 nt, int32 ncomp, int32 ndims, int32 *dims, int32 *cdims)
 {
+#ifdef H4_HAVE_SZIP_ENCODER
     int32 scanline;
     int32 npoints;
     int32 sz;
     int i;
     intn       ret_value = SUCCEED;
 
-#ifdef H4_HAVE_SZIP_ENCODER
     if (ndims <= 0) {
           ret_value = FAIL;
           goto done;

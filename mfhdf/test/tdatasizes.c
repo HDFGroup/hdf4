@@ -141,7 +141,7 @@ static intn test_compressed_SDSs(int32 fid)
 {
     int32     sds_id, esds_id, usds_id;
     int32     start[2], edges[2], dim_sizes[2];
-    int32     comp_type;    /* Compression flag */
+    comp_coder_t comp_type;    /* Compression flag */
     comp_info c_info;	   /* Compression structure */
     int32     data[Y_LENGTH][X_LENGTH];
     intn      status;

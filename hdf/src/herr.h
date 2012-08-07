@@ -91,11 +91,25 @@
 
 
 /* always points to the next available slot; the last error record is in slot (top-1) */
+#if defined(H4_BUILT_AS_DYNAMIC_LIB)
+#ifdef _H_ERR_MASTER_
+#if defined _WIN32 && defined hdf_EXPORTS
+__declspec(dllexport)
+#endif
+#else
+HDFERRPUBLIC
+#endif /* _H_ERR_MASTER_ */
+int32       error_top
+#ifdef _H_ERR_MASTER_
+= 0
+#endif /* _H_ERR_MASTER_ */
+;
+#else /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
 #ifndef _H_ERR_MASTER_
 #if defined _WIN32 && defined HDFAPDLL
 __declspec(dllimport)
 #else
-extern
+HDFERRPUBLIC
 #endif
 #else
 #if defined _WIN32 && defined HDFLIBDLL
@@ -107,6 +121,7 @@ int32       error_top
 = 0
 #endif /* _H_ERR_MASTER_ */
 ;
+#endif /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
 
 /* Macro to wrap around calls to HEPclear, so it doesn't get called zillions of times */
 #define HEclear() {if(error_top!=0) HEPclear(); }
@@ -209,6 +224,7 @@ typedef enum
       DFE_RANGE,                /* improper range for attempted acess */
       DFE_BADCONV,              /* Don't know how to convert data type */
       DFE_BADTYPE,              /* Incompatible types specified */
+      DFE_NOVGREP,              /* No Vgroup representation for SDS and dim */
 
 /* Compression errors */
       DFE_BADSCHEME,            /* Unknown compression scheme specified */
@@ -243,6 +259,7 @@ typedef enum
       DFE_RINOTFOUND,           /* Can't find raster image */
       DFE_BADATTR,              /* Bad Attribute */
       DFE_LUTNOTFOUND,          /* No palette information for RIG */
+      DFE_GRNOTFOUND,           /* Can't find specified GR */
 
 /* SDG/NDG errors */
       DFE_BADTABLE,             /* the nsdg table is wrong */

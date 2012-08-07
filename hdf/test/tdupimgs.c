@@ -27,7 +27,6 @@
 extern void test_mgr_dup_images()
 {
     int32 fid, grid, riid, il = MFGR_INTERLACE_PIXEL;
-    int32 ncomp=1; 
     int32 start[2], stride[2], edges[2],dims[2];
     uint8 image_data[X_LENGTH][Y_LENGTH]; 
     intn i, j; 

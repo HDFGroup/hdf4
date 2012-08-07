@@ -332,7 +332,7 @@ typedef enum
   {
 	  DASCII, DBINARY
   }
-file_type_t;
+file_format_t;
 
 /* BMR: numerical filter structure; used to hold a list of indices or
    reference numbers and the number of indices or reference numbers
@@ -385,7 +385,7 @@ typedef struct
    intn        keep_order;	/* whether to dump the datasets in the same
 				   order as specified by the user */
    intn        dump_to_file;	/* whether to dump to a file */
-   file_type_t file_type;	/* Is data written in ASCII or binary */
+   file_format_t file_format;	/* Is data written in ASCII or binary */
    intn	       as_stream;	/* whether carriage return added to output data lines */
    intn	       clean_output;	/* whether to print space characters as they 
 				   are or to print in \digit format */
@@ -398,6 +398,7 @@ typedef struct
    gr_interlace_t interlace;	/* user's choice of interlace mode to print data in */
    intn	       no_lattr_data;	/* GR & SD only: TRUE if option -l selected */
    intn	       no_gattr_data;	/* GR & SD only: TRUE if option -g selected */
+   intn	       file_type;	/* netCDF, HDF, or other, which hdp doesn't process */
   }
 dump_info_t;
 
@@ -462,8 +463,8 @@ typedef struct
 	int32   vsize;			/* record size of the vdata */
 	int32   ref;			/* vdata ref# */
 	int32   tag;			/* vdata tag */
-	char    class[VSNAMELENMAX];	/* vdata class */
-	char    name[VSNAMELENMAX];	/* vdata name */
+	char    clss[VSNAMELENMAX+1];	/* vdata class */
+	char    name[VSNAMELENMAX+1];	/* vdata name */
   }
 vd_info_t;
 
@@ -533,28 +534,28 @@ intn do_dumpgr(intn curr_arg, intn argc, char *argv[], intn help);
 intn parse_dumpgr_opts(dump_info_t *dumpgr_opts, intn *curr_arg, intn argc, char *argv[]);
 
 /* hdp_dump.c */
-extern intn fmtchar(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtuchar8(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtbyte(unsigned char *x, file_type_t ft, FILE * ofp);
-extern intn fmtint(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtshort(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtint8(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtuint8(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtint16(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtuint16(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtint32(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtuint32(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtfloat32(VOIDP x, file_type_t ft, FILE * ofp);
-extern intn fmtfloat64(VOIDP x, file_type_t ft, FILE * ofp);
+extern intn fmtchar(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtuchar8(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtbyte(unsigned char *x, file_format_t ft, FILE * ofp);
+extern intn fmtint(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtshort(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtint8(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtuint8(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtint16(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtuint16(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtint32(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtuint32(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtfloat32(VOIDP x, file_format_t ft, FILE * ofp);
+extern intn fmtfloat64(VOIDP x, file_format_t ft, FILE * ofp);
 extern intn dumpfull(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp, intn indent, intn cont_indent );
 extern intn dumpclean(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp );
 extern int32 dumpGR_SDattr(int32 nt, dump_info_t * dump_opts, int32 cnt, VOIDP databuf, FILE * ofp);
 
 /* show.c */
-extern int32 dumpvd(int32 vd, file_type_t ft, int data_only, FILE *fp, 
+extern int32 dumpvd(int32 vd, file_format_t ft, int data_only, FILE *fp, 
                     char separater[2],int32 flds_indices[VSFIELDMAX], 
                     int dumpallfields);
-extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_type_t ft, FILE *fp);
+extern intn dumpattr(int32 vid, int32 findex, intn isvs, file_format_t ft, FILE *fp);
 
 /* hdp_util.c */
 	/* misc. functions */
