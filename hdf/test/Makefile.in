@@ -489,8 +489,11 @@ check-TESTS: $(TESTS)
 	srcdir=$(srcdir); export srcdir; \
 	list=' $(TESTS) '; \
 	$(am__tty_colors); \
+	echo "<?xml version="1.0" encoding="utf-8"?>"; \
+	echo "<testsuite name=\"$$list\">"; \
 	if test -n "$$list"; then \
 	  for tst in $$list; do \
+	    echo "<testcase name=\"$$tst\">"; \
 	    if test -f ./$$tst; then dir=./; \
 	    elif test -f $$tst; then dir=; \
 	    else dir="$(srcdir)/"; fi; \
@@ -501,6 +504,7 @@ check-TESTS: $(TESTS)
 		xpass=`expr $$xpass + 1`; \
 		failed=`expr $$failed + 1`; \
 		col=$$red; res=XPASS; \
+	        echo "<failure>XPASS</failure>"; \
 	      ;; \
 	      *) \
 		col=$$grn; res=PASS; \
@@ -512,10 +516,12 @@ check-TESTS: $(TESTS)
 	      *[\ \	]$$tst[\ \	]*) \
 		xfail=`expr $$xfail + 1`; \
 		col=$$lgn; res=XFAIL; \
+	        echo "<failure>XFAIL</failure>"; \
 	      ;; \
 	      *) \
 		failed=`expr $$failed + 1`; \
 		col=$$red; res=FAIL; \
+	        echo "<failure>FAIL</failure>"; \
 	      ;; \
 	      esac; \
 	    else \
@@ -523,6 +529,7 @@ check-TESTS: $(TESTS)
 	      col=$$blu; res=SKIP; \
 	    fi; \
 	    echo "$${col}$$res$${std}: $$tst"; \
+	    echo "</testcase>"; \
 	  done; \
 	  if test "$$all" -eq 1; then \
 	    tests="test"; \
@@ -567,14 +574,18 @@ check-TESTS: $(TESTS)
 	  if test "$$failed" -eq 0; then \
 	    echo "$$grn$$dashes"; \
 	  else \
+	    echo "<error message=\"$$banner\" type=\"failure\">"; \
 	    echo "$$red$$dashes"; \
+	    echo "</error>"; \
 	  fi; \
 	  echo "$$banner"; \
+#	  echo "<testsuite errors=\"$$failed\" skipped=\"$$skip\" tests=\"$$all\" time="0.1" failures=\"$$report\" name=\"$(TESTS)\"//>"; \
 	  test -z "$$skipped" || echo "$$skipped"; \
 	  test -z "$$report" || echo "$$report"; \
 	  echo "$$dashes$$std"; \
 	  test "$$failed" -eq 0; \
-	else :; fi
+	else :; fi; \
+	echo "</testsuite>";
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
