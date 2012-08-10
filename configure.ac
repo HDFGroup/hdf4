@@ -31,7 +31,7 @@ AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign parallel-tests color-tests])
 AM_MAINTAINER_MODE
 
 AC_PREFIX_DEFAULT([`pwd`/hdf4])

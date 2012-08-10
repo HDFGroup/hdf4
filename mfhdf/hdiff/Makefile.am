@@ -28,6 +28,10 @@ hdiff_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 ##                              Testing                                    ##
 #############################################################################
 
+TESTS = hdifftst testhdiff.sh
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =
 check_SCRIPTS = testhdiff.sh
 
 noinst_PROGRAMS = hdifftst
@@ -36,6 +40,6 @@ hdifftst_SOURCES = hdifftst.c
 hdifftst_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 hdifftst_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
-check: hdifftst
-	@srcdir="$(srcdir)" $(SHELL) $(srcdir)/testhdiff.sh
+#check: hdifftst
+#	@srcdir="$(srcdir)" $(SHELL) $(srcdir)/testhdiff.sh
  

@@ -26,7 +26,12 @@ hdp_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
+TESTS = testhdp.sh
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =
 check_SCRIPTS = testhdp.sh
 
-check:
-	@$(SHELL) ./testhdp.sh
+#check:
+#	@$(SHELL) ./testhdp.sh
+#

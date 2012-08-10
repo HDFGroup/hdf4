@@ -97,8 +97,14 @@ vshow_DEPENDENCIES = ../src/libdf.la
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
-check:  $(bin_PROGRAMS)
-	sh ./testutil.sh $(target_canonical)
+TESTS = testutil.sh
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS = $(target_canonical)
+check_SCRIPTS = testutil.sh
+check_PROGRAMS = $(bin_PROGRAMS)
+#check:  $(bin_PROGRAMS)
+#	@$(SHELL) ./testutil.sh $(target_canonical)
 
 #############################################################################
 ##                          And the cleanup                                ##

@@ -19,9 +19,11 @@ DIST_SUBDIRS = examples
 
 if HDF_BUILD_NETCDF
 include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
+TESTS = ftest hdftest tszip hdftest1
 check_PROGRAMS = ftest hdftest tszip hdftest1
 else
 include_HEADERS = mffunc.inc mffunc.f90
+TESTS =  hdftest tszip hdftest1
 check_PROGRAMS =  hdftest tszip hdftest1
 endif
 

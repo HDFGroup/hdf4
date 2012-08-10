@@ -15,6 +15,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 ##                              Testing                                    ##
 #############################################################################
 
+TESTS = cdftest hdfnctest hdftest
 check_PROGRAMS = cdftest hdfnctest hdftest
 
 cdftest_SOURCES = cdftest.c
