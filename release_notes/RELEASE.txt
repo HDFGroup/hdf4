@@ -1,11 +1,11 @@
-HDF version 4.2.8 released on 2012-08-03
+HDF version 4.2.8-post0 currently under development
 ===================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.7 and HDF 4.2.8.
+This document describes the differences between HDF 4.2.8 and HDF 4.2.8-post*.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.8.
+and wish to migrate to HDF 4.2.8-post*.
 
 The HDF 4.2.8 documentation can be found on the The HDF Group's FTP server:
 
@@ -28,7 +28,7 @@ CONTENTS
   -- Library
   -- Utilities
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.7
+- Bugs fixed since HDF 4.2.8
   -- Configuration
   -- Library
   -- Utilities
@@ -49,21 +49,7 @@ New features and changes
      
    Library
    ========= 
-   - It was discovered by the HDF Mapping Project that there were certain
-     type of palettes that cannot be retrieved by existing functions.  A new
-     function, GRgetpalinfo, was added to allow applications to get information
-     about palettes.  Please refer to the HDF User's Guide and Reference Manual
-     for more information regarding this palette issue.  BMR - 2012/07/26
-
-   - It was also discovered that the IMCOMP compression was not detected.
-     Although IMCOMP is no longer supported in new data, HDF still needs to
-     detect IMCOMP compression from existing data.  We added COMP_CODE_IMCOMP
-     to comp_coder_t with value 12 (same as COMP_IMCOMP.)  The library and
-     hdp now can detect IMCOMP compression.  However, writing IMCOMP compressed
-     images is not allowed.  BMR - 2012/07/26
-
-   - Added GRgetcomptype to return image's compression, which can include
-     IMCOMP.  BMR - 2012/07/26
+   - [None]
 
    Test
    ====
@@ -76,25 +62,14 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-   -  Mac OS X 10.7.4 with GNU gcc and gfortran compilers
+   - [None]
 
 
-Bugs fixed since HDF 4.2.7
+Bugs fixed since HDF 4.2.8
 =========================
    Configuration
    =============
-   - Add config/apple-darwin11.4.0 customized for Mac OS X 10.7 Lion. This one
-     set production CFLAGS to -O0 to eliminate the test errors encountered in
-     Lion systems only. This one lets HDF4 to be build and run in Lion systems.
-     More investigate needed to locate the exact locations of the errors.
-     (HDFFR-1327 and HDFFR-1328) AKC - 2012/07/03
-
-   - The USE_ENUM in mfhdf/libsrc/netcdf.h, which is copied from
-     config/netcdf-apple.h, which generated an error due to xdr_enum overwrote
-     memory outside of its designated enum variable. This happened only to the
-     apple provided compiler (i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1).
-     We decided to not define USE_ENUM for all apple OS for now. (HDFFR-1318)
-     AKC - 2012/07/01
+   - [None]
 
    Library
    ========= 
@@ -102,18 +77,12 @@ Bugs fixed since HDF 4.2.7
 
    Utilities
    ========= 
-   - Added test file IMCOMP.hdf and sample file dumpgr-20.out for IMCOMP test
-     for testing the detection of IMCOMP compressed image in hdp.
-     BMR - 2012/07/26
+   - [None]
 
 
 Documentation
 ==============
-   - The Reference Manual and User's Guide have been updated to include
-     new functions:
-     + GRgetpalinfo
-     + GRgetcomptype
-     BMR - 2012/07/26
+   - [None]
 
 
 Platforms tested
