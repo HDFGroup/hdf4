@@ -18,3 +18,6 @@ include_HEADERS = xdr.h types.h
 check_PROGRAMS = xdrtest
 TESTS = xdrtest
 xdrtest_SOURCES = xdrtest.c
+
+include $(top_srcdir)/config/conclude.am
+

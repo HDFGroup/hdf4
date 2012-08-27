@@ -15,8 +15,9 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 ##                              Testing                                    ##
 #############################################################################
 
-TESTS = cdftest hdfnctest hdftest
+TESTS = cdftest hdfnctest hdftest testmfhdf.sh
 check_PROGRAMS = cdftest hdfnctest hdftest
+check_SCRIPTS = testmfhdf.sh
 
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
@@ -33,30 +34,7 @@ hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
-check:
-	@echo "============================"
-	@echo "HDF-SD C interface tests"
-	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
-	@echo
-	@echo "============================"
-	@echo "HDF-nc C interface tests"
-	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdfnctest
-	@echo
-	@echo "========================="
-	@echo "netCDF formatted tests"
-	@echo "========================="
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./cdftest > cdfout.new
-	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
-	  echo $$cmd;                                                   \
-	  if $$cmd; then                                                \
-	    echo "*** netCDF passes formatted test ***";                \
-	  else                                                          \
-	    echo "*** netCDF fails formatted test ***";                 \
-	    echo "The above differences are OK if small";               \
-	    exit 0;                                                     \
-	  fi
+include $(top_srcdir)/config/conclude.am
 
 #############################################################################
 ##                          And the cleanup                                ##
@@ -64,3 +42,4 @@ check:
 
 DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
                onedimonevar.nc multidimvar.nc
+               

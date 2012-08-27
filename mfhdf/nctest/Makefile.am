@@ -26,6 +26,8 @@ nctest_SOURCES = add.c atttests.c cdftests.c dimtests.c driver.c emalloc.c  \
 nctest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 nctest_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
+include $(top_srcdir)/config/conclude.am
+
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################

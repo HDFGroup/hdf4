@@ -52,6 +52,8 @@ hrepack_check_SOURCES = hrepack_check.c
 hrepack_check_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
+include $(top_srcdir)/config/conclude.am
+
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################

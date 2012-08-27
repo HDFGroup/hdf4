@@ -25,7 +25,7 @@ dnl
 dnl NOTE: Don't forget to change the version number here when we do a
 dnl release!!!
 dnl
-AC_INIT([HDF], [4.2.8], [help@hdfgroup.org])
+AC_INIT([HDF], [4.2.8-post0], [help@hdfgroup.org])
 AC_CONFIG_SRCDIR([hdf/src/atom.c])
 AC_CONFIG_AUX_DIR([bin])
 AC_CONFIG_HEADER([hdf/src/h4config.h])
@@ -885,16 +885,22 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/examples/Makefile
                  mfhdf/examples/testexamples.sh
                  mfhdf/fortran/Makefile
+                 mfhdf/fortran/testfortran.sh
                  mfhdf/fortran/examples/Makefile
                  mfhdf/hdfimport/Makefile
                  mfhdf/hdfimport/testutil.sh
                  mfhdf/hdiff/Makefile
+                 mfhdf/hdiff/testhdiff.sh
                  mfhdf/hrepack/Makefile
+                 mfhdf/hrepack/hrepack_all.sh
                  mfhdf/libsrc/Makefile
                  mfhdf/ncdump/Makefile
+                 mfhdf/ncdump/testncdump.sh
                  mfhdf/ncgen/Makefile
+                 mfhdf/ncgen/testncgen.sh
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
+                 mfhdf/test/testmfhdf.sh
                  mfhdf/xdr/Makefile])
 
 AC_OUTPUT

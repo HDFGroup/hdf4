@@ -27,13 +27,19 @@ LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
       $(noinst_LTLIBRARIES) $(check_LIBRARIES) $(check_LTLIBRARIES) $(EXTRA_LIB)
 PROGS = $(bin_PROGRAMS) $(bin_SCRIPTS) $(noinst_PROGRAMS) $(noinst_SCRIPTS)   \
         $(EXTRA_PROG)
-TESTS = $(check_PROGRAMS) $(check_SCRIPTS) $(EXTRA_TEST) 
+chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS) $(EXTRA_TEST) 
+
+VERBOSE = debug
+
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =
 
 # lib/progs/tests targets recurse into subdirectories. build-* targets
 # build files in this directory.
 build-lib: $(LIB)
 build-progs: $(LIB) $(PROGS)
-build-tests: $(LIB) $(PROGS) $(TESTS)
+build-tests: $(LIB) $(PROGS) $(chk_TESTS)
 
 # General rule for recursive building targets.
 # BUILT_SOURCES contain targets that need to be built before anything else
@@ -59,7 +65,7 @@ check-clean ::
 # Tell Automake to build tests when the user types `make all' (this is
 # not its default behavior).  Also build EXTRA_LIB and EXTRA_PROG since
 # Automake won't build them automatically, either.
-all-local: $(EXTRA_LIB) $(EXTRA_PROG) $(TESTS)
+all-local: $(EXTRA_LIB) $(EXTRA_PROG) $(chk_TESTS)
 
 # make install-doc doesn't do anything outside of doc directory, but
 # Makefiles should recognize it.
@@ -81,16 +87,16 @@ check-install: installcheck
 # Run each test in order, passing $(TEST_FLAGS) to the program.
 # Since tests are done in a shell loop, "make -i" does apply inside it.
 #
-# Note that targets in TESTS (defined above) will be built when the user
+# Note that targets in chk_TESTS (defined above) will be built when the user
 # types 'make tests' or 'make check', but only programs in TEST_PROG,
 # or TEST_SCRIPT will actually be executed.
-check-TESTS: test
+#check-TESTS: test
 
 test _test:
 	@$(MAKE) build-check-s
 
 # Actual execution of check-s.
-build-check-s: $(LIB) $(PROGS) $(TESTS)
+build-check-s: $(LIB) $(PROGS) $(chk_TESTS)
 	@if test -n "$(TEST_PROG)$(TEST_SCRIPT)"; then      \
 	   echo "===Serial tests in `echo ${PWD} | sed -e s:.*/::` begin `date`==="; \
 	fi

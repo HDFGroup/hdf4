@@ -14,6 +14,8 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 #############################################################################
 ##                          Programs to build                              ##
 #############################################################################
+TESTS = testncdump.sh
+check_SCRIPTS = testncdump.sh
 
 bin_PROGRAMS = ncdump
 man1_MANS = ncdump.1
@@ -23,13 +25,7 @@ ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 ncdump_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
-check: ncdump $(srcdir)/test0.cdl
-	$(TESTS_ENVIRONMENT) ../ncgen/ncgen -o test0.nc -n $(srcdir)/test0.cdl
-	$(TESTS_ENVIRONMENT) ./ncdump test0.nc > test1.cdl
-	$(TESTS_ENVIRONMENT) ../ncgen/ncgen -o test1.nc -n test1.cdl
-	$(TESTS_ENVIRONMENT) ./ncdump -n test0 test1.nc > test2.cdl
-	@cmp test1.cdl test2.cdl && echo "*** ncdump test successful ***" ;     \
-	    rm -f test1.nc test1.cdl test2.cdl
+include $(top_srcdir)/config/conclude.am
 
 #############################################################################
 ##                          And the cleanup                                ##

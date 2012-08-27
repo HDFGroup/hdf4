@@ -63,56 +63,21 @@ man1_MANS = ncgen.1
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
+TESTS = testncgen.sh
+check_SCRIPTS = testncgen.sh
 
 NCDUMP=../ncdump/ncdump
 
 if HDF_BUILD_NETCDF
 
 if HDF_BUILD_FORTRAN
-check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check f-check
-else
-check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
-endif
-
-else
-check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
-endif
-
-## Test the "-b" option of ncgen
-b-check:	ncgen$(EXEEXT) $(srcdir)/test0.cdl test1.cdl
-	$(TESTS_ENVIRONMENT) ./ncgen -b test1.cdl
-	$(TESTS_ENVIRONMENT) $(NCDUMP) test1.nc > test2.cdl
-	@if $(DIFF) test1.cdl test2.cdl; then                               \
-	  echo "*** ncgen -b test successful ***";                          \
-	else                                                                \
-	  echo "*** ncgen -b test failed ***";                              \
-	fi
-
-## Test the "-c" option of ncgen
-c-check:	b-check ctest0
-	$(TESTS_ENVIRONMENT) ./ctest0        # tests `-c' option, creates ctest0.nc
-	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
-	@if $(DIFF) test1.cdl ctest1.cdl; then                              \
-	  echo "*** ncgen -c test successful ***";                          \
-	else                                                                \
-	  echo "*** ncgen -c test failed  ***";                             \
-	fi
-if HDF_BUILD_NETCDF
-
-if HDF_BUILD_FORTRAN
-## Test the "-f" option of ncgen
-f-check:	b-check ftest0
-	$(TESTS_ENVIRONMENT) ./ftest0
-	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
-	@if $(DIFF) test1.cdl ftest1.cdl; then                              \
-	  echo "*** ncgen -f test successful ***";                          \
-	else                                                                \
-	  echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
-	fi
+check_PROGRAMS = ctest0 ftest0 test1.cdl
 
 ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
+else
+check_PROGRAMS = ctest0
 endif
 
 endif
@@ -140,6 +105,14 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 	cp $(srcdir)/ncgentab.h vmstab.h
 	cp $(srcdir)/ncgentab.c vmstab.c
 	cp $(srcdir)/ncgenyy.c vms_yy.c
+
+#include $(top_srcdir)/config/conclude.am
+
+VERBOSE = debug
+
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =
 
 #############################################################################
 ##                          And the cleanup                                ##

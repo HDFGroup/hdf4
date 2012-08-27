@@ -6,6 +6,7 @@ bin/h4vers -text
 bin/ltmain.sh -text
 bin/newer -text
 bin/release -text
+bin/test-driver -text
 bin/timekeeper -text
 config/aix -text
 config/apple -text
@@ -266,6 +267,7 @@ mfhdf/fortran/mffunc.inc -text
 mfhdf/fortran/mfhdf_fortrandll.def -text
 mfhdf/fortran/mfsdf.h -text
 mfhdf/fortran/test_nc.nc -text
+mfhdf/fortran/testfortran.sh.in -text
 mfhdf/hdfimport/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/hdfimport/SDSfloat2.hdf -text
 mfhdf/hdfimport/SDSfloat3.hdf -text
@@ -303,7 +305,9 @@ mfhdf/hdiff/testfiles/hdifftst4.hdf -text
 mfhdf/hdiff/testfiles/hdifftst5.hdf -text
 mfhdf/hdiff/testfiles/hdifftst6.hdf -text
 mfhdf/hdiff/testfiles/hdifftst7.hdf -text
+mfhdf/hdiff/testhdiff.sh.in -text
 mfhdf/hrepack/CMakeLists.txt -text svneol=unset#text/plain
+mfhdf/hrepack/hrepack_all.sh.in -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/libsrc/config/netcdf-cygwin.h -text
@@ -314,10 +318,12 @@ mfhdf/libsrc/mfdatainfo.h -text
 mfhdf/libsrc/mfhdfi.h -text
 mfhdf/libsrc/mfprivate.h -text
 mfhdf/ncdump/CMakeLists.txt -text svneol=unset#text/plain
+mfhdf/ncdump/testncdump.sh.in -text
 mfhdf/ncgen/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/ncgen/msofttab.c -text
 mfhdf/ncgen/msofttab.h -text
 mfhdf/ncgen/msoftyy.c -text
+mfhdf/ncgen/testncgen.sh.in -text
 mfhdf/nctest/CMakeLists.txt -text svneol=unset#text/plain
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/test/CMakeLists.txt -text svneol=unset#text/plain
@@ -341,6 +347,7 @@ mfhdf/test/tdatasizes.c -text
 mfhdf/test/tdim.c -text
 mfhdf/test/temptySDSs.c -text
 mfhdf/test/test1.nc -text
+mfhdf/test/testmfhdf.sh.in -text
 mfhdf/test/testout.sav -text
 mfhdf/test/tfile.c -text
 mfhdf/test/tmixed_apis.c -text

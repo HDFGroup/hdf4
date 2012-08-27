@@ -19,13 +19,14 @@ DIST_SUBDIRS = examples
 
 if HDF_BUILD_NETCDF
 include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
-TESTS = ftest hdftest tszip hdftest1
+TESTS = ftest hdftest tszip hdftest1 testfortran.sh
 check_PROGRAMS = ftest hdftest tszip hdftest1
 else
 include_HEADERS = mffunc.inc mffunc.f90
-TESTS =  hdftest tszip hdftest1
+TESTS =  hdftest tszip hdftest1 testfortran.sh
 check_PROGRAMS =  hdftest tszip hdftest1
 endif
+check_SCRIPTS = testfortran.sh
 
 if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
@@ -53,28 +54,6 @@ testdir:
 SUFFIXES = .inc .f90
 .inc.f90:
 	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
-check:
-	@echo "==================================="
-	@echo "HDF-SD Fortran interfaces tests"
-	@echo "==================================="
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest1
-if HDF_BUILD_NETCDF
-	@echo "                                   "
-	@echo "==================================="
-	@echo "HDF-NetCDF Fortran interfaces tests"
-	@echo "==================================="
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
-endif
-	@echo "                                   "
-	@echo "==================================="
-	@echo "SZIP Fortran interfaces tests"
-	@echo "==================================="
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 
 # Recurse into examples directory for examples tests.
 installcheck-local:
@@ -94,6 +73,14 @@ install-examples uninstall-examples:
 	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
 	done
 
+
+#include $(top_srcdir)/config/conclude.am
+
+VERBOSE = debug
+
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =
 
 #############################################################################
 ##                          And the cleanup                                ##

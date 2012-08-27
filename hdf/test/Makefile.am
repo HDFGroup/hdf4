@@ -45,6 +45,15 @@ endif
 
 testdir:
 	-mkdir testdir
+
+#include $(top_srcdir)/config/conclude.am
+
+VERBOSE = debug
+
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =
+
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################

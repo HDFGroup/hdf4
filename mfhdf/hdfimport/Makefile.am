@@ -28,11 +28,8 @@ bin_PROGRAMS = hdfimport
 #############################################################################
 
 TESTS = hdfimporttest testutil.sh
-TEST_EXTENSIONS = .sh
-SH_LOG_COMPILER = $(SHELL)
-AM_SH_LOG_FLAGS =
 check_PROGRAMS = hdfimporttest gen_sds_floats
 check_SCRIPTS = testutil.sh
 
-#check: hdfimporttest$(EXEEXT)
-#	@$(SHELL) ./testutil.sh
+include $(top_srcdir)/config/conclude.am
+

@@ -98,13 +98,8 @@ vshow_DEPENDENCIES = ../src/libdf.la
 #############################################################################
 
 TESTS = testutil.sh
-TEST_EXTENSIONS = .sh
-SH_LOG_COMPILER = $(SHELL)
-AM_SH_LOG_FLAGS = $(target_canonical)
 check_SCRIPTS = testutil.sh
 check_PROGRAMS = $(bin_PROGRAMS)
-#check:  $(bin_PROGRAMS)
-#	@$(SHELL) ./testutil.sh $(target_canonical)
 
 #############################################################################
 ##                          And the cleanup                                ##
@@ -115,5 +110,8 @@ check_PROGRAMS = $(bin_PROGRAMS)
 distclean-local:
 	-rm -rf gif_hdf_temp
 
+include $(top_srcdir)/config/conclude.am
+
 DISTCLEANFILES = gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif    \
                  gif_hdf_temp/SunWheel.hdf
+                 
