@@ -51,6 +51,7 @@
 ./bin/yodconfigure
 ./bin/h4vers
 ./bin/release
+./bin/test-driver
 
 ./config/BlankForm
 ./config/aix
@@ -828,7 +829,6 @@
 ./mfhdf/hdfimport/testfiles/SDSfloat3.tst
 
 
-
 ./mfhdf/hdiff/Makefile.am
 ./mfhdf/hdiff/Makefile.in
 ./mfhdf/hdiff/hdiff.c
@@ -1122,6 +1122,12 @@
 ./mfhdf/xdr/xdrtest.opt
 ./mfhdf/xdr/xdrtest.out
 ./mfhdf/xdr/xdrtest.project.hqx
+
+./m4/ltsugar.m4                         _DO_NOT_DISTRIBUTE_
+./m4/libtool.m4                         _DO_NOT_DISTRIBUTE_
+./m4/ltversion.m4                       _DO_NOT_DISTRIBUTE_
+./m4/lt~obsolete.m4                     _DO_NOT_DISTRIBUTE_
+./m4/ltoptions.m4                       _DO_NOT_DISTRIBUTE_
 
 ./mfhdf/ncdump/CMakeLists.txt
 ./mfhdf/hdfimport/CMakeLists.txt
