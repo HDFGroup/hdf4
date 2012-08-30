@@ -68,7 +68,7 @@ check_SCRIPTS = testncgen.sh
 
 NCDUMP=../ncdump/ncdump
 
-check_PROGRAMS = ctest0 test1.cdl
+check_PROGRAMS = ctest0
 if HDF_BUILD_NETCDF
 if HDF_BUILD_FORTRAN
 check_PROGRAMS += ftest0

@@ -107,8 +107,8 @@ fcheck() {
 RUN() {
    # Run test.
 
-   if $HDF_BUILD_NETCDF; then
-      if $HDF_BUILD_FORTRAN; then
+   if [ $HDF_BUILD_NETCDF -ne 0 ]; then
+      if [ $HDF_BUILD_FORTRAN -ne 0 ]; then
          bcheck
          ccheck
          fcheck
