@@ -77,7 +77,7 @@ ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 else
-check_PROGRAMS = ctest0
+check_PROGRAMS = ctest0 test1.cdl
 endif
 
 endif
