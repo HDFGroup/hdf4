@@ -73,14 +73,14 @@ if HDF_BUILD_NETCDF
 if HDF_BUILD_FORTRAN
 check_PROGRAMS += ftest0
 
+netcdf.inc:
+	ln -s ../fortran/$@ .
+
 ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 endif
 endif
-
-netcdf.inc:
-	ln -s ../fortran/$@ .
 
 test1.cdl:	test0.nc
 	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 test0.nc > $@
