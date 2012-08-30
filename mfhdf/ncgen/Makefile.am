@@ -70,13 +70,13 @@ NCDUMP=../ncdump/ncdump
 
 check_PROGRAMS = ctest0 test1.cdl
 if HDF_BUILD_NETCDF
-
 if HDF_BUILD_FORTRAN
 check_PROGRAMS += ftest0
 
 ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
 	$(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
+endif
 endif
 
 netcdf.inc:
