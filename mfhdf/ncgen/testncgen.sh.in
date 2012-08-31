@@ -106,7 +106,7 @@ fcheck() {
 #
 RUN() {
    # create test files
-   ${TESTS_ENVIRONMENT{ ./ncgen -b -o test0.nc $srcdir/test0.cdl
+   ${TESTS_ENVIRONMENT} ./ncgen -b -o test0.nc $srcdir/test0.cdl
    ${TESTS_ENVIRONMENT} $NCDUMP -n test1 test0.nc > test1.cdl
 
    # Run test.
