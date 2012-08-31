@@ -105,10 +105,13 @@ fcheck() {
 # the `nerrors' global variable
 #
 RUN() {
-   # Run test.
+   # create test files
+   ${TESTS_ENVIRONMENT{ ./ncgen -b -o test0.nc $srcdir/test0.cdl
+   ${TESTS_ENVIRONMENT} $NCDUMP -n test1 test0.nc > test1.cdl
 
-   if [ $HDF_BUILD_NETCDF -ne 0 ]; then
-      if [ $HDF_BUILD_FORTRAN -ne 0 ]; then
+   # Run test.
+   if [ ${HDF_BUILD_NETCDF} -ne 0 ]; then
+      if [ ${HDF_BUILD_FORTRAN} -ne 0 ]; then
          bcheck
          ccheck
          fcheck

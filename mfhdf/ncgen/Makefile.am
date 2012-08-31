@@ -82,12 +82,6 @@ ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 endif
 endif
 
-test1.cdl:	test0.nc
-	$(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 test0.nc > $@
-
-test0.nc:	ncgen$(EXEEXT) $(srcdir)/test0.cdl
-	$(TESTS_ENVIRONMENT) ./ncgen -b -o test0.nc $(srcdir)/test0.cdl
-
 ctest0$(EXEEXT):		ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -c -o ctest0$(EXEEXT).o test0.c
