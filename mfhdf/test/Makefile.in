@@ -70,13 +70,11 @@ CONFIG_CLEAN_FILES = testmfhdf.sh
 CONFIG_CLEAN_VPATH_FILES =
 am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
-cdftest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+cdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tunlim.$(OBJEXT) \
 	tncunlim.$(OBJEXT)
 hdfnctest_OBJECTS = $(am_hdfnctest_OBJECTS)
-hdfnctest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+hdfnctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
 	tchunk.$(OBJEXT) tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) \
 	tdim.$(OBJEXT) temptySDSs.$(OBJEXT) tattributes.$(OBJEXT) \
@@ -85,8 +83,7 @@ am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
 	tszip.$(OBJEXT) tattdatainfo.$(OBJEXT) tdatainfo.$(OBJEXT) \
 	tdatasizes.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
-hdftest_DEPENDENCIES = $(top_builddir)/mfhdf/libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+hdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
@@ -477,7 +474,7 @@ ACLOCAL_AMFLAGS = "-I m4"
 CHECK_CLEANFILES = *.chkexe *.chklog
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc	\
-	 -I../libsrc
+	 -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
@@ -488,21 +485,15 @@ TEST_PROG = cdftest hdfnctest hdftest
 TEST_SCRIPT = testmfhdf.sh
 check_SCRIPTS = testmfhdf.sh
 cdftest_SOURCES = cdftest.c
-cdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
-	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
+cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
-hdfnctest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la              \
-	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
+hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tdim.c temptySDSs.c tattributes.c tfile.c		\
 		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 
-hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
-	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 #############################################################################
 #############################################################################

@@ -506,7 +506,7 @@ CHECK_CLEANFILES = *.chkexe *.chklog
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/hdf/test       \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I../libsrc
+         -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
@@ -520,20 +520,20 @@ TEST_SCRIPT = testfortran.sh
 check_SCRIPTS = testfortran.sh
 @HDF_BUILD_NETCDF_TRUE@ftest_SOURCES = ftest.f
 @HDF_BUILD_NETCDF_TRUE@ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-@HDF_BUILD_NETCDF_TRUE@              $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+@HDF_BUILD_NETCDF_TRUE@              $(LIBMFHDF) $(LIBHDF) @LIBS@
 
 @HDF_BUILD_NETCDF_TRUE@ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-@HDF_BUILD_NETCDF_TRUE@                     $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+@HDF_BUILD_NETCDF_TRUE@                     $(LIBMFHDF) $(LIBHDF)
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+hdftest1_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest1_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 tszip_SOURCES = tszip.f
-tszip_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+tszip_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 SUFFIXES = .inc .f90
 DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
 

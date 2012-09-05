@@ -80,8 +80,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_ctest0_OBJECTS =
 ctest0_OBJECTS = $(am_ctest0_OBJECTS)
-ctest0_DEPENDENCIES = ../libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+ctest0_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_ftest0_OBJECTS =
 ftest0_OBJECTS = $(am_ftest0_OBJECTS)
 ftest0_LDADD = $(LDADD)
@@ -477,21 +476,21 @@ ACLOCAL_AMFLAGS = "-I m4"
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
 CHECK_CLEANFILES = *.chkexe *.chklog
-@HDF_BUILD_SHARED_FALSE@SHLIBLOC = ../libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
-@HDF_BUILD_SHARED_TRUE@SHLIBLOC = ../libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
+@HDF_BUILD_SHARED_FALSE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
+@HDF_BUILD_SHARED_TRUE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I../libsrc
+         -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
 
-ncgen_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
-ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+ncgen_LDADD = $(LIBMFHDF) $(LIBHDF)
+ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 ctest0_SOURCES = 
-ctest0_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
 ftest0_SOURCES = 
 
 #############################################################################
@@ -500,7 +499,7 @@ man1_MANS = ncgen.1
 
 #############################################################################
 #############################################################################
-NCDUMP = ../ncdump/ncdump
+NCDUMP = $(top_builddir)/mfhdf/ncdump/ncdump
 TEST_SCRIPT = testncgen.sh
 check_SCRIPTS = testncgen.sh
 
@@ -1133,7 +1132,7 @@ ncgenyy.c: ncgen.l
 	mv lex.yy.c ncgenyy.c
 
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@netcdf.inc:
-@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	ln -s ../fortran/$@ .
+@HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	ln -s $(top_builddir)/mfhdf/fortran/$@ .
 
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f

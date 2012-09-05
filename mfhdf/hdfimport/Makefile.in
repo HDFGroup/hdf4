@@ -75,18 +75,15 @@ PROGRAMS = $(bin_PROGRAMS)
 gen_sds_floats_SOURCES = gen_sds_floats.c
 gen_sds_floats_OBJECTS = gen_sds_floats.$(OBJEXT)
 gen_sds_floats_LDADD = $(LDADD)
-gen_sds_floats_DEPENDENCIES = ../libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+gen_sds_floats_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 hdfimport_SOURCES = hdfimport.c
 hdfimport_OBJECTS = hdfimport.$(OBJEXT)
 hdfimport_LDADD = $(LDADD)
-hdfimport_DEPENDENCIES = ../libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+hdfimport_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 hdfimporttest_SOURCES = hdfimporttest.c
 hdfimporttest_OBJECTS = hdfimporttest.$(OBJEXT)
 hdfimporttest_LDADD = $(LDADD)
-hdfimporttest_DEPENDENCIES = ../libsrc/libmfhdf.la \
-	$(top_builddir)/hdf/src/libdf.la
+hdfimporttest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
@@ -476,14 +473,14 @@ ACLOCAL_AMFLAGS = "-I m4"
 CHECK_CLEANFILES = *.chkexe *.chklog
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I../libsrc
+         -I$(top_builddir)/mfhdf/libsrc
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 
 #############################################################################
 #############################################################################
-LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 
 #############################################################################
 #############################################################################

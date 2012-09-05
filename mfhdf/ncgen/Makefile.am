@@ -5,15 +5,15 @@
 include $(top_srcdir)/config/commence.am
 
 if HDF_BUILD_SHARED
-    SHLIBLOC = ../libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
+    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
 else
-    SHLIBLOC = ../libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
+    SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
 endif
 
 ## Setup the different includes and preprocessor #defines we need.
 INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I../libsrc
+         -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
@@ -36,11 +36,11 @@ endif
 ## Information for building the "ncgen" program
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
-ncgen_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
-ncgen_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+ncgen_LDADD = $(LIBMFHDF) $(LIBHDF)
+ncgen_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
 ctest0_SOURCES=
-ctest0_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
+ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
 
 ftest0_SOURCES=
 
@@ -63,7 +63,7 @@ man1_MANS = ncgen.1
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
-NCDUMP=../ncdump/ncdump
+NCDUMP=$(top_builddir)/mfhdf/ncdump/ncdump
 
 check_PROGRAMS = ctest0
 if HDF_BUILD_NETCDF
@@ -71,7 +71,7 @@ if HDF_BUILD_FORTRAN
 check_PROGRAMS += ftest0
 
 netcdf.inc:
-	ln -s ../fortran/$@ .
+	ln -s $(top_builddir)/mfhdf/fortran/$@ .
 
 ftest0$(EXEEXT):		ncgen$(EXEEXT) test0.cdl netcdf.inc
 	$(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
