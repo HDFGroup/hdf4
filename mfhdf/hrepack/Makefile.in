@@ -60,7 +60,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/conclude.am
 bin_PROGRAMS = hrepack$(EXEEXT)
 check_PROGRAMS = hrepack_check$(EXEEXT) test_hrepack$(EXEEXT)
-TESTS = test_hrepack$(EXEEXT)
+TESTS = $(am__EXEEXT_1)
 subdir = mfhdf/hrepack
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -302,6 +302,7 @@ am__set_TESTS_bases = \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
 AM_RECURSIVE_TARGETS = check recheck
+am__EXEEXT_1 = test_hrepack$(EXEEXT)
 TEST_SUITE_LOG = test-suite.log
 LOG_DRIVER = $(SHELL) $(top_srcdir)/bin/test-driver
 LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
@@ -469,11 +470,19 @@ top_srcdir = @top_srcdir@
 # Shell commands used in Makefiles
 RM = rm -f
 CP = cp
-H4CC = $(bindir)/h4cc
-H4FC = $(bindir)/h4fc
+
+# Libraries to link to while building
+LIBHDF = $(top_builddir)/hdf/src/libdf.la
+LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+H4CC = ${DESTDIR}$(bindir)/h4cc
+H4FC = ${DESTDIR}$(bindir)/h4fc
 @HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 ACLOCAL_AMFLAGS = "-I m4"
+
+# .chkexe files are used to mark tests that have run successfully.
+# .chklog files are output from those tests.
+CHECK_CLEANFILES = *.chkexe *.chklog
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/hdiff    \
          -I$(top_srcdir)/mfhdf/libsrc   \
@@ -489,6 +498,7 @@ hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
 
 hrepack_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 hrepack_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+TEST_PROG = test_hrepack
 test_hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                  \
                        hrepack_list.c hrepack_lsttable.c hrepack_opttable.c \
                        hrepack_parse.c hrepack_sds.c                        \
@@ -508,10 +518,14 @@ hrepack_check_SOURCES = hrepack_check.c
 hrepack_check_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 hrepack_check_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
+#############################################################################
+#############################################################################
+DISTCLEANFILES = *.hdf
+
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
-# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG, and
-# EXTRA_TEST variables are supplied to allow the user to force targets to
+# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG
+# variables are supplied to allow the user to force targets to
 # be built at certain times. 
 LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
       $(noinst_LTLIBRARIES) $(check_LIBRARIES) $(check_LTLIBRARIES) $(EXTRA_LIB)
@@ -519,17 +533,12 @@ LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
 PROGS = $(bin_PROGRAMS) $(bin_SCRIPTS) $(noinst_PROGRAMS) $(noinst_SCRIPTS)   \
         $(EXTRA_PROG)
 
-chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS) $(EXTRA_TEST) 
-VERBOSE = debug
+chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS)
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 AM_SH_LOG_FLAGS = 
 TEST_PROG_CHKEXE = $(TEST_PROG:=.chkexe_)
 TEST_SCRIPT_CHKSH = $(TEST_SCRIPT:=.chkexe_)
-
-#############################################################################
-#############################################################################
-DISTCLEANFILES = *.hdf
 all: all-am
 
 .SUFFIXES:
@@ -1364,6 +1373,15 @@ $(TEST_SCRIPT_CHKSH) dummysh.chkexe_:
 	         echo "$${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
 	      fi; \
 	      echo "============================" >> $${log}; \
+	      srcdir="$(srcdir)" \
+	         $(TIME) $(SHELL) $$cmd $(TEST_FLAGS) >> $${log} 2>&1 \
+	         && touch $${chkname} || \
+	         (cat $${log} && false) || exit 1; \
+	      echo "" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)" >> $${log}; \
+	      echo "============================" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)"; \
+	      cat $${log}; \
 	   fi; \
 	   echo "============================"; \
 	fi

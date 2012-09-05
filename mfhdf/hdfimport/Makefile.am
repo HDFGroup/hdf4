@@ -27,9 +27,9 @@ bin_PROGRAMS = hdfimport
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
-TESTS = hdfimporttest testutil.sh
+TEST_PROG = hdfimporttest
+TEST_SCRIPT = testutil.sh
 check_PROGRAMS = hdfimporttest gen_sds_floats
 check_SCRIPTS = testutil.sh
 
 include $(top_srcdir)/config/conclude.am
-

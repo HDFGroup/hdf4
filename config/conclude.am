@@ -20,16 +20,15 @@
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
-# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG, and
-# EXTRA_TEST variables are supplied to allow the user to force targets to
+# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG
+# variables are supplied to allow the user to force targets to
 # be built at certain times. 
 LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
       $(noinst_LTLIBRARIES) $(check_LIBRARIES) $(check_LTLIBRARIES) $(EXTRA_LIB)
 PROGS = $(bin_PROGRAMS) $(bin_SCRIPTS) $(noinst_PROGRAMS) $(noinst_SCRIPTS)   \
         $(EXTRA_PROG)
-chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS) $(EXTRA_TEST) 
-
-VERBOSE = debug
+chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS)
+TESTS = $(TEST_PROG) $(TEST_SCRIPT)
 
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
@@ -165,6 +164,15 @@ $(TEST_SCRIPT_CHKSH) dummysh.chkexe_:
 	         echo "$${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
 	      fi; \
 	      echo "============================" >> $${log}; \
+	      srcdir="$(srcdir)" \
+	         $(TIME) $(SHELL) $$cmd $(TEST_FLAGS) >> $${log} 2>&1 \
+	         && touch $${chkname} || \
+	         (cat $${log} && false) || exit 1; \
+	      echo "" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)" >> $${log}; \
+	      echo "============================" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)"; \
+	      cat $${log}; \
 	   fi; \
 	   echo "============================"; \
 	fi

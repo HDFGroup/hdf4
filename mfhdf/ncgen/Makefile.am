@@ -63,9 +63,6 @@ man1_MANS = ncgen.1
 #############################################################################
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
-TESTS = testncgen.sh
-check_SCRIPTS = testncgen.sh
-
 NCDUMP=../ncdump/ncdump
 
 check_PROGRAMS = ctest0
@@ -87,6 +84,9 @@ ctest0$(EXEEXT):		ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(COMPILE) -c -o ctest0$(EXEEXT).o test0.c
 	$(LINK) ctest0$(EXEEXT).o $(ctest0_LDADD) $(LDFLAGS) $(SHLIBLOC) $(LIBS)
 
+TEST_SCRIPT = testncgen.sh
+check_SCRIPTS = testncgen.sh
+
 #############################################################################
 ##                            Miscellaneous                                ##
 #############################################################################
@@ -97,14 +97,6 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 	cp $(srcdir)/ncgentab.c vmstab.c
 	cp $(srcdir)/ncgenyy.c vms_yy.c
 
-#include $(top_srcdir)/config/conclude.am
-
-VERBOSE = debug
-
-TEST_EXTENSIONS = .sh
-SH_LOG_COMPILER = $(SHELL)
-AM_SH_LOG_FLAGS =
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
@@ -112,3 +104,5 @@ AM_SH_LOG_FLAGS =
 DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ctest1.cdl ftest0$(EXEEXT) ftest0.nc ftest1.cdl    \
                  ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f \
                  test0.nc test1.cdl test1.nc test2.cdl
+
+include $(top_srcdir)/config/conclude.am

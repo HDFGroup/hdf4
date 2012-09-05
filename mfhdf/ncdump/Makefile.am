@@ -14,7 +14,7 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 #############################################################################
 ##                          Programs to build                              ##
 #############################################################################
-TESTS = testncdump.sh
+TEST_SCRIPT = testncdump.sh
 check_SCRIPTS = testncdump.sh
 
 bin_PROGRAMS = ncdump
@@ -25,10 +25,10 @@ ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la
 ncdump_DEPENDENCIES = $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
 
-include $(top_srcdir)/config/conclude.am
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
 
 DISTCLEANFILES=test0.nc
+
+include $(top_srcdir)/config/conclude.am

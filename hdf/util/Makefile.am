@@ -97,7 +97,7 @@ vshow_DEPENDENCIES = ../src/libdf.la
 ##                   Testing -- Here there be dragons.                     ##
 #############################################################################
 
-TESTS = testutil.sh
+TEST_SCRIPT = testutil.sh
 check_SCRIPTS = testutil.sh
 check_PROGRAMS = $(bin_PROGRAMS)
 
@@ -110,8 +110,8 @@ check_PROGRAMS = $(bin_PROGRAMS)
 distclean-local:
 	-rm -rf gif_hdf_temp
 
-include $(top_srcdir)/config/conclude.am
-
 DISTCLEANFILES = gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif    \
                  gif_hdf_temp/SunWheel.hdf
+
+include $(top_srcdir)/config/conclude.am
                  

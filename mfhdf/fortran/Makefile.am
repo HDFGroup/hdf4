@@ -19,34 +19,34 @@ DIST_SUBDIRS = examples
 
 if HDF_BUILD_NETCDF
 include_HEADERS = netcdf.inc netcdf.f90 mffunc.inc mffunc.f90
-TESTS = ftest hdftest tszip hdftest1 testfortran.sh
 check_PROGRAMS = ftest hdftest tszip hdftest1
 else
 include_HEADERS = mffunc.inc mffunc.f90
-TESTS =  hdftest tszip hdftest1 testfortran.sh
 check_PROGRAMS =  hdftest tszip hdftest1
 endif
+
+TEST_SCRIPT = testfortran.sh
 check_SCRIPTS = testfortran.sh
 
 if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-              ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+              $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
 ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-                     $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+                     $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
 endif
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
 
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+hdftest1_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
 
 tszip_SOURCES = tszip.f
-tszip_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+tszip_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la $(top_builddir)/mfhdf/libsrc/libmfhdf.la
 
 testdir:
 	-mkdir testdir
@@ -73,15 +73,6 @@ install-examples uninstall-examples:
 	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
 	done
 
-
-#include $(top_srcdir)/config/conclude.am
-
-VERBOSE = debug
-
-TEST_EXTENSIONS = .sh
-SH_LOG_COMPILER = $(SHELL)
-AM_SH_LOG_FLAGS =
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
@@ -92,3 +83,5 @@ distclean-local:
 	-rm -rf testdir
 
 DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+
+include $(top_srcdir)/config/conclude.am

@@ -11,10 +11,11 @@ DEFINES=-DNDEBUG -DHDF
 #############################################################################
 
 # These are the Fortran test programs to build.
-TEST_PROG=SD_create_sds SD_write_to_sds SD_write_slab SD_alter_sds_values SD_unlimited_sds \
+EXAMPLE_PROG=SD_create_sds SD_write_to_sds SD_write_slab SD_alter_sds_values SD_unlimited_sds \
 	SD_mv_sds_to_external SD_read_from_sds SD_read_subsets SD_get_info \
 	SD_find_sds_by_name SD_set_get_dim_info SD_dimscale_vs_sds SD_set_attr \
 	SD_get_attr SD_compress_sds SD_chunking_example
+TEST_PROG = $(EXAMPLE_PROG)
 
 # These are the Fortran example files to be installed
 INSTALL_FILES=SD_create_sds.f SD_write_to_sds.f SD_write_slab.f SD_alter_sds_values.f \
@@ -49,7 +50,7 @@ SD_get_attr: $(srcdir)/SD_get_attr.f
 SD_compress_sds: $(srcdir)/SD_compress_sds.f
 SD_chunking_example: $(srcdir)/SD_chunking_example.f
 
+DISTCLEANFILES = *.chkexe *.chklog ExternalSDS
+
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
-
-DISTCLEANFILES = *.chkexe *.chklog ExternalSDS

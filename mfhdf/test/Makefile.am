@@ -15,7 +15,8 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 ##                              Testing                                    ##
 #############################################################################
 
-TESTS = cdftest hdfnctest hdftest testmfhdf.sh
+TEST_PROG = cdftest hdfnctest hdftest
+TEST_SCRIPT = testmfhdf.sh
 check_PROGRAMS = cdftest hdfnctest hdftest
 check_SCRIPTS = testmfhdf.sh
 
@@ -34,12 +35,12 @@ hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
 	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
 
-include $(top_srcdir)/config/conclude.am
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
 
 DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
                onedimonevar.nc multidimvar.nc
+
+include $(top_srcdir)/config/conclude.am
                

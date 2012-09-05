@@ -1,6 +1,7 @@
 * text=auto !eol
 /CMakeLists.txt -text svneol=unset#text/plain
 /CTestConfig.cmake -text
+/INSTALL -text
 /Makefile.dist -text
 bin/h4vers -text
 bin/ltmain.sh -text

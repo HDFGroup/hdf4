@@ -54,15 +54,14 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/bin/depcomp $(top_srcdir)/bin/mkinstalldirs \
-	$(top_srcdir)/bin/test-driver $(top_srcdir)/config/commence.am
-@HDF_BUILD_FORTRAN_FALSE@TESTS = testhdf$(EXEEXT) buffer$(EXEEXT)
-@HDF_BUILD_FORTRAN_TRUE@TESTS = testhdf$(EXEEXT) buffer$(EXEEXT) \
-@HDF_BUILD_FORTRAN_TRUE@	fortest$(EXEEXT)
+	$(top_srcdir)/bin/test-driver $(top_srcdir)/config/commence.am \
+	$(top_srcdir)/config/conclude.am
 @HDF_BUILD_FORTRAN_FALSE@check_PROGRAMS = testhdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_FALSE@	buffer$(EXEEXT)
 @HDF_BUILD_FORTRAN_TRUE@check_PROGRAMS = testhdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	buffer$(EXEEXT) fortest$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	fortestF$(EXEEXT)
+TESTS = $(am__EXEEXT_1)
 subdir = hdf/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -320,6 +319,10 @@ am__set_TESTS_bases = \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
 AM_RECURSIVE_TARGETS = check recheck
+@HDF_BUILD_FORTRAN_FALSE@am__EXEEXT_1 = testhdf$(EXEEXT) \
+@HDF_BUILD_FORTRAN_FALSE@	buffer$(EXEEXT)
+@HDF_BUILD_FORTRAN_TRUE@am__EXEEXT_1 = testhdf$(EXEEXT) \
+@HDF_BUILD_FORTRAN_TRUE@	buffer$(EXEEXT) fortest$(EXEEXT)
 TEST_SUITE_LOG = test-suite.log
 LOG_DRIVER = $(SHELL) $(top_srcdir)/bin/test-driver
 LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
@@ -487,12 +490,25 @@ top_srcdir = @top_srcdir@
 # Shell commands used in Makefiles
 RM = rm -f
 CP = cp
-H4CC = $(bindir)/h4cc
-H4FC = $(bindir)/h4fc
+
+# Libraries to link to while building
+LIBHDF = $(top_builddir)/hdf/src/libdf.la
+LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+H4CC = ${DESTDIR}$(bindir)/h4cc
+H4FC = ${DESTDIR}$(bindir)/h4fc
 @HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 ACLOCAL_AMFLAGS = "-I m4"
+
+# .chkexe files are used to mark tests that have run successfully.
+# .chklog files are output from those tests.
+CHECK_CLEANFILES = *.chkexe *.chklog
 AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
+@HDF_BUILD_FORTRAN_FALSE@TEST_PROG = testhdf buffer
+
+#############################################################################
+#############################################################################
+@HDF_BUILD_FORTRAN_TRUE@TEST_PROG = testhdf buffer fortest
 testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   conv.c extelt.c file.c file1.c litend.c macros.c man.c    \
                   mgr.c nbit.c rig.c sdmms.c sdnmms.c sdstr.c slab.c tbv.c  \
@@ -500,32 +516,44 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
 		  tmgrattr.c tmgrcomp.c tree.c tszip.c tusejpegfuncs.c      \
 		  tutils.c tvattr.c tvnameclass.c tvset.c tvsfpack.c vers.c
 
-testhdf_LDADD = ../src/libdf.la
-testhdf_DEPENDENCIES = testdir ../src/libdf.la 
-buffer_LDADD = ../src/libdf.la
-buffer_DEPENDENCIES = ../src/libdf.la
+testhdf_LDADD = $(LIBHDF)
+testhdf_DEPENDENCIES = testdir $(LIBHDF) 
+buffer_LDADD = $(LIBHDF)
+buffer_DEPENDENCIES = $(LIBHDF)
 @HDF_BUILD_FORTRAN_TRUE@fortest_SOURCES = fortest.c
-@HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+@HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = $(LIBMFHDF) $(LIBHDF)
+@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) $(LIBMFHDF) $(LIBHDF)
 @HDF_BUILD_FORTRAN_TRUE@fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
 @HDF_BUILD_FORTRAN_TRUE@                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
 @HDF_BUILD_FORTRAN_TRUE@                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
 @HDF_BUILD_FORTRAN_TRUE@                   tvattrf.f tvsetf.f
 
-@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = $(LIBMFHDF) $(LIBHDF)
+@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
+DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
 
-#include $(top_srcdir)/config/conclude.am
-VERBOSE = debug
+# Automake needs to be taught how to build lib, progs, and tests targets.
+# These will be filled in automatically for the most part (e.g.,
+# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG
+# variables are supplied to allow the user to force targets to
+# be built at certain times. 
+LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
+      $(noinst_LTLIBRARIES) $(check_LIBRARIES) $(check_LTLIBRARIES) $(EXTRA_LIB)
+
+PROGS = $(bin_PROGRAMS) $(bin_SCRIPTS) $(noinst_PROGRAMS) $(noinst_SCRIPTS)   \
+        $(EXTRA_PROG)
+
+chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS)
 TEST_EXTENSIONS = .sh
 SH_LOG_COMPILER = $(SHELL)
 AM_SH_LOG_FLAGS = 
-DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
+TEST_PROG_CHKEXE = $(TEST_PROG:=.chkexe_)
+TEST_SCRIPT_CHKSH = $(TEST_SCRIPT:=.chkexe_)
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .f .lo .log .o .obj .sh .sh$(EXEEXT) .trs
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/config/commence.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/config/commence.am $(top_srcdir)/config/conclude.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -546,7 +574,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/config/commence.am:
+$(top_srcdir)/config/commence.am $(top_srcdir)/config/conclude.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -938,7 +966,7 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile
+all-am: Makefile all-local
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -1033,7 +1061,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+	mostlyclean-libtool mostlyclean-local
 
 pdf: pdf-am
 
@@ -1047,9 +1075,9 @@ uninstall-am:
 
 .MAKE: check-am install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
-	clean-checkPROGRAMS clean-generic clean-libtool cscopelist \
-	ctags distclean distclean-compile distclean-generic \
+.PHONY: CTAGS GTAGS all all-am all-local check check-TESTS check-am \
+	clean clean-checkPROGRAMS clean-generic clean-libtool \
+	cscopelist ctags distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-local distclean-tags distdir dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
@@ -1058,8 +1086,8 @@ uninstall-am:
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	recheck tags uninstall uninstall-am
+	mostlyclean-generic mostlyclean-libtool mostlyclean-local pdf \
+	pdf-am ps ps-am recheck tags uninstall uninstall-am
 
 
 testdir:
@@ -1072,6 +1100,146 @@ testdir:
 # hook target which will do so during 'make distclean'.
 distclean-local:
 	-rm -rf testdir
+
+# lib/progs/tests targets recurse into subdirectories. build-* targets
+# build files in this directory.
+build-lib: $(LIB)
+build-progs: $(LIB) $(PROGS)
+build-tests: $(LIB) $(PROGS) $(chk_TESTS)
+
+# General rule for recursive building targets.
+# BUILT_SOURCES contain targets that need to be built before anything else
+# in the directory (e.g., for Fortran type detection)
+lib progs tests check-s :: $(BUILT_SOURCES)
+	@$(MAKE) $(AM_MAKEFLAGS) build-$@ || exit 1;
+	@for d in X $(SUBDIRS); do                                             \
+	    if test $$d != X && test $$d != .; then                           \
+	        (set -x; cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;     \
+	    fi;                                                               \
+	done
+
+# General rule for recursive cleaning targets.  Like the rule above,
+# but doesn't require building BUILT_SOURCES.
+check-clean ::
+	@$(MAKE) $(AM_MAKEFLAGS) build-$@ || exit 1;
+	@for d in X $(SUBDIRS); do                                             \
+	    if test $$d != X && test $$d != .; then                           \
+	        (set -x; cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;     \
+	    fi;                                                               \
+	done
+
+# Tell Automake to build tests when the user types `make all' (this is
+# not its default behavior).  Also build EXTRA_LIB and EXTRA_PROG since
+# Automake won't build them automatically, either.
+all-local: $(EXTRA_LIB) $(EXTRA_PROG) $(chk_TESTS)
+
+# make install-doc doesn't do anything outside of doc directory, but
+# Makefiles should recognize it.
+# UPDATE: docs no longer reside in this build tree, so this target
+# is depreciated.
+install-doc uninstall-doc:
+	@echo "Nothing to be done."
+
+# clean up files generated by tests so they can be re-run.
+build-check-clean:
+	$(RM) -rf $(CHECK_CLEANFILES)
+
+# run check-clean whenever mostlyclean is run
+mostlyclean-local: build-check-clean
+
+# check-install is just a synonym for installcheck
+check-install: installcheck
+
+# Run each test in order, passing $(TEST_FLAGS) to the program.
+# Since tests are done in a shell loop, "make -i" does apply inside it.
+#
+# Note that targets in chk_TESTS (defined above) will be built when the user
+# types 'make tests' or 'make check', but only programs in TEST_PROG,
+# or TEST_SCRIPT will actually be executed.
+#check-TESTS: test
+
+test _test:
+	@$(MAKE) build-check-s
+
+# Actual execution of check-s.
+build-check-s: $(LIB) $(PROGS) $(chk_TESTS)
+	@if test -n "$(TEST_PROG)$(TEST_SCRIPT)"; then      \
+	   echo "===Serial tests in `echo ${PWD} | sed -e s:.*/::` begin `date`==="; \
+	fi
+	@$(MAKE) $(AM_MAKEFLAGS) _exec_check-s
+	@if test -n "$(TEST_PROG)$(TEST_SCRIPT)"; then      \
+	    echo "===Serial tests in `echo ${PWD} | sed -e s:.*/::` ended `date`===";\
+	fi
+
+_exec_check-s: $(TEST_PROG_CHKEXE) $(TEST_SCRIPT_CHKSH)
+
+# The dummy.chkexe here prevents the target from being
+# empty if there are no tests in the current directory.
+# $${log} is the log file.
+# $${tname} is the name of test.
+$(TEST_PROG_CHKEXE) dummy.chkexe_:
+	@if test "X$@" != "X.chkexe_" && test "X$@" != "Xdummy.chkexe_"; then \
+	   tname=$(@:.chkexe_=)$(EXEEXT);\
+	   log=$(@:.chkexe_=.chklog); \
+	   echo ""; \
+	   echo "============================"; \
+	   if $(top_srcdir)/bin/newer $(@:.chkexe_=.chkexe) $${tname}; then \
+	      echo "No need to test $${tname} again."; \
+	   else \
+	      echo "----------------------------" > $${log}; \
+	      if test "X$(FORTRAN_API)" = "Xyes"; then \
+	         echo "Fortran API: Testing $${tname} $(TEST_FLAGS)"; \
+	         echo "Fortran API: $${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
+	      else \
+	         echo "Testing $${tname} $(TEST_FLAGS)"; \
+	         echo "$${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
+	      fi; \
+	      echo "----------------------------" >> $${log}; \
+	      srcdir="$(srcdir)" \
+		 $(TIME) ./$${tname} $(TEST_FLAGS) >> $${log} 2>&1 \
+		 && touch $(@:.chkexe_=.chkexe) || \
+		 (cat $${log} && false) || exit 1; \
+	      echo "----------------------------" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)" >> $${log}; \
+	      cat $${log}; \
+	   fi; \
+	fi
+
+# The dummysh.chkexe here prevents the target from being
+# empty if there are no tests in the current directory.
+# $${log} is the log file.
+# $${tname} is the name of test.
+$(TEST_SCRIPT_CHKSH) dummysh.chkexe_:
+	@if test "X$@" != "X.chkexe_" && test "X$@" != "Xdummysh.chkexe_"; then \
+	   cmd=$(@:.chkexe_=);\
+	   tname=`basename $$cmd`;\
+	   chkname=`basename $(@:.chkexe_=.chkexe)`;\
+	   log=`basename $(@:.chkexe_=.chklog)`; \
+	   echo "============================"; \
+	   if $(top_srcdir)/bin/newer $${chkname} $$cmd $(SCRIPT_DEPEND); then \
+	      echo "No need to test $${tname} again."; \
+	   else \
+	      echo "============================" > $${log}; \
+	      if test "X$(FORTRAN_API)" = "Xyes"; then \
+	         echo "Fortran API: Testing $${tname} $(TEST_FLAGS)"; \
+	         echo "Fortran API: $${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
+	      else \
+	         echo "Testing $${tname} $(TEST_FLAGS)"; \
+	         echo "$${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
+	      fi; \
+	      echo "============================" >> $${log}; \
+	      srcdir="$(srcdir)" \
+	         $(TIME) $(SHELL) $$cmd $(TEST_FLAGS) >> $${log} 2>&1 \
+	         && touch $${chkname} || \
+	         (cat $${log} && false) || exit 1; \
+	      echo "" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)" >> $${log}; \
+	      echo "============================" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)"; \
+	      cat $${log}; \
+	   fi; \
+	   echo "============================"; \
+	fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
