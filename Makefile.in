@@ -59,7 +59,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(top_srcdir)/bin/install-sh $(top_srcdir)/bin/ltmain.sh \
 	$(top_srcdir)/bin/missing $(top_srcdir)/bin/mkinstalldirs \
 	$(top_srcdir)/config/commence.am $(top_srcdir)/configure \
-	COPYING INSTALL bin/compile bin/config.guess bin/config.sub \
+	COPYING bin/compile bin/config.guess bin/config.sub \
 	bin/depcomp bin/install-sh bin/ltmain.sh bin/missing \
 	bin/mkinstalldirs
 subdir = .
