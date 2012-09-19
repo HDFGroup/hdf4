@@ -6,13 +6,7 @@ else
 FORTRAN_DIR = 
 endif
 
-if HDF_BUILD_XDR
-XDR_DIR = xdr
-else
-XDR_DIR = 
-endif
-
-SUBDIRS = $(FORTRAN_DIR) $(XDR_DIR) libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest
+SUBDIRS = $(FORTRAN_DIR) test ncdump ncgen dumper hdfimport hdiff hrepack nctest
 
 DIST_SUBDIRS = fortran xdr libsrc test ncdump ncgen dumper hdfimport hdiff hrepack nctest examples
 

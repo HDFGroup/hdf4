@@ -6,7 +6,7 @@
 
 # A script to run the GNU autotools to regenerate files for HDF4.
 # If the paths of the autotools are not specified by the user, they
-# are hardcoded to point to their locations in AFS on HDF5 Linux machines.
+# are hardcoded to point to their locations on HDF5 Linux machines.
 # Users can specify the locations of the autotools with the following
 # variables:
 # AUTOCONF, AUTOMAKE, ACLOCAL, AUTOHEADER should be the path to the
@@ -18,18 +18,16 @@
 # of versions that can get confused (not even counting the m4 utility)!
 
 # HDF4 currently uses the following versions of the autotools:
-# Uses automake (and aclocal) version 1.9.5
-# Uses autoconf (and autoheader) version 2.59
-# Includes macros from libtool version 1.5.14
-#
-# When upgrading automake's version, don't forget to also update its
-# helper utilities, especially depcomp.
 AUTOCONF_VERSION="autoconf (GNU Autoconf) 2.69"
 AUTOMAKE_VERSION="automake (GNU automake) 1.12.3"
 AUTOHEADER_VERSION="autoheader (GNU Autoconf) 2.69"
 ACLOCAL_VERSION="aclocal (GNU automake) 1.12.3"
 LIBTOOL_VERSION="(GNU libtool) 2.4.2"
 M4_VERSION="m4 (GNU M4) 1.4.16"
+
+#
+# When upgrading automake's version, don't forget to also update its
+# helper utilities, especially depcomp.
 
 # If the user has defined environment variables pointing to the autotools,
 # use those (but check their versions first!).  Otherwise, assume that
@@ -86,13 +84,11 @@ if test -z "${M4_VERS}"; then
    exit 1
 fi
 
-# Use the latest version of M4
-PATH=/usr/local/bin:/usr/local/share:$PATH
-
 # Make sure that the tools are in the path.
 AUTOCONF_DIR=`dirname ${AUTOCONF}`
 LIBTOOL_DIR=`dirname ${LIBTOOL}`
-PATH=${AUTOCONF_DIR}:$PATH
+M4_DIR=`dirname ${M4}`
+PATH=${AUTOCONF_DIR}:${M4_DIR}:$PATH
 
 # Run autoconf/automake commands in order
   echo ${ACLOCAL} -I ${LIBTOOL_DIR}/../share/aclocal

@@ -4,17 +4,17 @@
 
 include $(top_srcdir)/config/commence.am
 
-AM_CPPFLAGS=-I$(top_srcdir)/hdf/src
+AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
 
 #############################################################################
 ##                              Testing                                    ##
 #############################################################################
 
 if HDF_BUILD_FORTRAN
-TESTS = testhdf buffer fortest
+TEST_PROG = testhdf buffer fortest
 check_PROGRAMS = testhdf buffer fortest fortestF
 else
-TESTS = testhdf buffer
+TEST_PROG = testhdf buffer
 check_PROGRAMS = testhdf buffer
 endif
 
@@ -24,27 +24,28 @@ testhdf_SOURCES = an.c anfile.c bitio.c blocks.c chunks.c comp.c   \
                   tattdatainfo.c tdatainfo.c tdfr8.c tdupimgs.c testhdf.c   \
 		  tmgrattr.c tmgrcomp.c tree.c tszip.c tusejpegfuncs.c      \
 		  tutils.c tvattr.c tvnameclass.c tvset.c tvsfpack.c vers.c
-testhdf_LDADD = ../src/libdf.la
-testhdf_DEPENDENCIES = testdir ../src/libdf.la 
+testhdf_LDADD = $(LIBHDF)
+testhdf_DEPENDENCIES = testdir $(LIBHDF) 
 
-buffer_LDADD = ../src/libdf.la
-buffer_DEPENDENCIES = ../src/libdf.la
+buffer_LDADD = $(LIBHDF)
+buffer_DEPENDENCIES = $(LIBHDF)
 
 if HDF_BUILD_FORTRAN
 fortest_SOURCES = fortest.c
-fortest_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+fortest_LDADD = $(LIBMFHDF) $(LIBHDF)
+fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) $(LIBMFHDF) $(LIBHDF)
 
 fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
                    tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
                    tvattrf.f tvsetf.f
-fortestF_LDADD = ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
-fortestF_DEPENDENCIES = testdir ../../mfhdf/libsrc/libmfhdf.la ../src/libdf.la
+fortestF_LDADD = $(LIBMFHDF) $(LIBHDF)
+fortestF_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 endif
 
 testdir:
 	-mkdir testdir
+
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
@@ -55,3 +56,5 @@ distclean-local:
 	-rm -rf testdir
 
 DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
+
+include $(top_srcdir)/config/conclude.am

@@ -59,7 +59,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(top_srcdir)/bin/install-sh $(top_srcdir)/bin/ltmain.sh \
 	$(top_srcdir)/bin/missing $(top_srcdir)/bin/mkinstalldirs \
 	$(top_srcdir)/config/commence.am $(top_srcdir)/configure \
-	COPYING bin/compile bin/config.guess bin/config.sub \
+	COPYING INSTALL bin/compile bin/config.guess bin/config.sub \
 	bin/depcomp bin/install-sh bin/ltmain.sh bin/missing \
 	bin/mkinstalldirs
 subdir = .
@@ -124,7 +124,7 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = hdf/src mfhdf/xdr mfhdf/libsrc hdf mfhdf man
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -315,12 +315,22 @@ top_srcdir = @top_srcdir@
 # Shell commands used in Makefiles
 RM = rm -f
 CP = cp
-H4CC = $(bindir)/h4cc
-H4FC = $(bindir)/h4fc
+
+# Libraries to link to while building
+LIBHDF = $(top_builddir)/hdf/src/libdf.la
+LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+H4CC = ${DESTDIR}$(bindir)/h4cc
+H4FC = ${DESTDIR}$(bindir)/h4fc
 @HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 ACLOCAL_AMFLAGS = "-I m4"
-SUBDIRS = hdf mfhdf man
+
+# .chkexe files are used to mark tests that have run successfully.
+# .chklog files are output from those tests.
+CHECK_CLEANFILES = *.chkexe *.chklog
+@HDF_BUILD_XDR_FALSE@XDR_DIR = 
+@HDF_BUILD_XDR_TRUE@XDR_DIR = mfhdf/xdr
+SUBDIRS = hdf/src $(XDR_DIR) mfhdf/libsrc hdf mfhdf man
 # install libhdf4.settings in lib directory
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings

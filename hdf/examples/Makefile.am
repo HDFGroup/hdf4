@@ -10,7 +10,7 @@ DEFINES=-DNDEBUG -DHDF
 ##                          Programs to build                              ##
 #############################################################################
 
-TEST_PROG = VD_create_vdatas VD_write_mixed_vdata		\
+EXAMPLE_PROG = VD_create_vdatas VD_write_mixed_vdata		\
 	VD_write_mixed_vdata_struct VD_write_to_vdata		\
 	VD_read_from_vdata VD_read_mixed_vdata			\
 	VD_set_get_vdata_attr VD_create_onefield_vdatas		\
@@ -21,6 +21,7 @@ TEST_PROG = VD_create_vdatas VD_write_mixed_vdata		\
 	GR_modify_image GR_set_attribute GR_get_attribute	\
 	GR_write_palette GR_image_info GR_read_image		\
 	AN_create_annotation AN_get_annotation_info AN_read_annotation
+TEST_PROG = $(EXAMPLE_PROG)
 
 # These are the C example files to be installed
 INSTALL_FILES= VD_read_from_vdata.c VD_read_mixed_vdata.c	\
@@ -77,7 +78,7 @@ AN_create_annotation: $(srcdir)/AN_create_annotation.c
 AN_get_annotation_info: $(srcdir)/AN_get_annotation_info.c
 AN_read_annotation: $(srcdir)/AN_read_annotation.c
 
+DISTCLEANFILES = *.chkexe *.chklog
+
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
-
-DISTCLEANFILES = *.chkexe *.chklog

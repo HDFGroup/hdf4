@@ -7,7 +7,7 @@ include $(top_srcdir)/config/commence.am
 INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/hdf/test       \
          -I$(top_srcdir)/mfhdf/libsrc   \
-         -I../libsrc
+         -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
@@ -25,25 +25,28 @@ include_HEADERS = mffunc.inc mffunc.f90
 check_PROGRAMS =  hdftest tszip hdftest1
 endif
 
+TEST_SCRIPT = testfortran.sh
+check_SCRIPTS = testfortran.sh
+
 if HDF_BUILD_NETCDF
 ftest_SOURCES = ftest.f
 ftest_LDADD = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-              ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
+              $(LIBMFHDF) $(LIBHDF) @LIBS@
 ftest_DEPENDENCIES = $(top_builddir)/hdf/test/forsupff.o $(top_builddir)/hdf/test/forsupf.o \
-                     $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+                     $(LIBMFHDF) $(LIBHDF)
 endif
 
 hdftest_SOURCES = hdftest.f
-hdftest_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-hdftest_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 hdftest1_SOURCES = hdftest1.f
-hdftest1_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-hdftest1_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+hdftest1_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+hdftest1_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 tszip_SOURCES = tszip.f
-tszip_LDADD = ../libsrc/libmfhdf.la $(top_builddir)/hdf/src/libdf.la @LIBS@
-tszip_DEPENDENCIES = testdir $(top_builddir)/hdf/src/libdf.la ../libsrc/libmfhdf.la
+tszip_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
+tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 
 testdir:
 	-mkdir testdir
@@ -51,28 +54,6 @@ testdir:
 SUFFIXES = .inc .f90
 .inc.f90:
 	sed -e 's/^[cC]/!/' -e 's/^     [^ ]/     \&/' < $< > $*.f90
-check:
-	@echo "==================================="
-	@echo "HDF-SD Fortran interfaces tests"
-	@echo "==================================="
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest1
-if HDF_BUILD_NETCDF
-	@echo "                                   "
-	@echo "==================================="
-	@echo "HDF-NetCDF Fortran interfaces tests"
-	@echo "==================================="
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./ftest
-endif
-	@echo "                                   "
-	@echo "==================================="
-	@echo "SZIP Fortran interfaces tests"
-	@echo "==================================="
-	@echo "                                   "
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./tszip
 
 # Recurse into examples directory for examples tests.
 installcheck-local:
@@ -92,7 +73,6 @@ install-examples uninstall-examples:
 	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
 	done
 
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
@@ -103,3 +83,5 @@ distclean-local:
 	-rm -rf testdir
 
 DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+
+include $(top_srcdir)/config/conclude.am

@@ -10,11 +10,12 @@ DEFINES=-DNDEBUG -DHDF
 ##                          Programs to build                              ##
 #############################################################################
 
-TEST_PROG = SD_create_sds SD_write_to_sds SD_write_slab             \
+EXAMPLE_PROG = SD_create_sds SD_write_to_sds SD_write_slab             \
 	SD_alter_sds_values SD_unlimited_sds SD_compress_sds        \
 	SD_mv_sds_to_external SD_read_from_sds SD_read_subsets      \
 	SD_get_info SD_find_sds_by_name SD_set_get_dim_info         \
 	SD_dimscale_vs_sds SD_set_attr SD_get_attr SD_chunking_example
+TEST_PROG = $(EXAMPLE_PROG)
 
 INSTALL_FILES = SD_create_sds.c SD_write_to_sds.c SD_write_slab.c        \
 	SD_alter_sds_values.c SD_unlimited_sds.c SD_compress_sds.c       \
@@ -49,7 +50,7 @@ set_attr: $(srcdir)/SD_set_attr.c
 get_attr: $(srcdir)/SD_get_attr.c
 chunking_example: $(srcdir)/SD_chunking_example.c
 
+DISTCLEANFILES = *.chklog *.chkexe ExternalSDS .deps
+
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
-
-DISTCLEANFILES = *.chklog *.chkexe ExternalSDS .deps

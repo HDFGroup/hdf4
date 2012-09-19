@@ -36,13 +36,12 @@
 
 # Assume that all tests in this directory are examples, and tell
 # conclude.am when to build them.
-#EXAMPLE_PROG = $(TEST_PROG)
-EXTRA_PROG = $(TEST_PROG)
+EXTRA_PROG = $(EXAMPLE_PROG)
 
 # We need to tell automake what to clean
-MOSTLYCLEANFILES=*.o $(TEST_PROG)
+MOSTLYCLEANFILES=*.o $(EXAMPLE_PROG)
 CHECK_CLEANFILES=*.hdf
-CLEANFILES=$(TEST_PROG)
+CLEANFILES=$(EXAMPLE_PROG)
 
 # How to create EXAMPLEDIR if it doesn't already exist
 $(EXAMPLEDIR):
@@ -59,6 +58,7 @@ install-examples: $(EXAMPLEDIR) $(INSTALL_FILES)
 	@for f in X $(INSTALL_FILES); do                                     \
 	  if test $$f != X; then                                             \
 	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);\
+            chmod a-x $(EXAMPLEDIR)/$$f;                                     \
 	  fi;                                                                \
 	done
 
@@ -68,5 +68,5 @@ uninstall-examples:
         fi
 
 installcheck-local:
-	$(MAKE) check;
+	$(MAKE) $(AM_MAKEFLAGS) check;
 

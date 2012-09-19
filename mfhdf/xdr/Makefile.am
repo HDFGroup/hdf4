@@ -16,5 +16,7 @@ include_HEADERS = xdr.h types.h
 
 # Test program. Link using libxdr.la
 check_PROGRAMS = xdrtest
-TESTS = xdrtest
+TEST_PROG = xdrtest
 xdrtest_SOURCES = xdrtest.c
+
+include $(top_srcdir)/config/conclude.am

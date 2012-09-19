@@ -7,7 +7,7 @@ include $(top_srcdir)/config/commence.am
 ## Setup the different includes and preprocessor #defines we need.
 INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc	\
-	 -I../libsrc
+	 -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
@@ -15,47 +15,22 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 ##                              Testing                                    ##
 #############################################################################
 
+TEST_PROG = cdftest hdfnctest hdftest
+TEST_SCRIPT = testmfhdf.sh
 check_PROGRAMS = cdftest hdfnctest hdftest
+check_SCRIPTS = testmfhdf.sh
 
 cdftest_SOURCES = cdftest.c
-cdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
-	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
+cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
-hdfnctest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la              \
-	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
+hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tdim.c temptySDSs.c tattributes.c tfile.c		\
 		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
-hdftest_LDADD = $(top_builddir)/mfhdf/libsrc/libmfhdf.la                \
-	$(top_builddir)/hdf/src/libdf.la @LIBS@ $(XDRLIB)
-
-check:
-	@echo "============================"
-	@echo "HDF-SD C interface tests"
-	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdftest
-	@echo
-	@echo "============================"
-	@echo "HDF-nc C interface tests"
-	@echo "============================"
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./hdfnctest
-	@echo
-	@echo "========================="
-	@echo "netCDF formatted tests"
-	@echo "========================="
-	srcdir="$(srcdir)" $(TESTS_ENVIRONMENT) ./cdftest > cdfout.new
-	@cmd="$(DIFF) cdfout.new $(srcdir)/testout.sav";                \
-	  echo $$cmd;                                                   \
-	  if $$cmd; then                                                \
-	    echo "*** netCDF passes formatted test ***";                \
-	  else                                                          \
-	    echo "*** netCDF fails formatted test ***";                 \
-	    echo "The above differences are OK if small";               \
-	    exit 0;                                                     \
-	  fi
+hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 #############################################################################
 ##                          And the cleanup                                ##
@@ -63,3 +38,6 @@ check:
 
 DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
                onedimonevar.nc multidimvar.nc
+
+include $(top_srcdir)/config/conclude.am
+               

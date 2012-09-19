@@ -702,6 +702,7 @@
 ./mfhdf/fortran/test_nc.cdl
 ./mfhdf/fortran/test_nc.nc
 ./mfhdf/fortran/tszip.f
+./mfhdf/fortran/testfortran.sh.in
 
 ./mfhdf/fortran/config/ftest-aix.f
 ./mfhdf/fortran/config/ftest-alpha.f
@@ -833,7 +834,6 @@
 ./mfhdf/hdfimport/testfiles/SDSfloat3.tst
 
 
-
 ./mfhdf/hdiff/Makefile.am
 ./mfhdf/hdiff/Makefile.in
 ./mfhdf/hdiff/hdiff.c
@@ -850,7 +850,7 @@
 ./mfhdf/hdiff/hdiff_table.h
 ./mfhdf/hdiff/hdiff_vs.c
 ./mfhdf/hdiff/hdifftst.c
-./mfhdf/hdiff/testhdiff.sh
+./mfhdf/hdiff/testhdiff.sh.in
 ./mfhdf/hdiff/hdiff_mattbl.c
 ./mfhdf/hdiff/hdiff_mattbl.h
 
@@ -888,7 +888,7 @@
 ./mfhdf/hrepack/Makefile.in
 ./mfhdf/hrepack/hrepack.c
 ./mfhdf/hrepack/hrepack.h
-./mfhdf/hrepack/hrepack_all.sh
+./mfhdf/hrepack/hrepack_all.sh.in
 ./mfhdf/hrepack/hrepack_an.c
 ./mfhdf/hrepack/hrepack_an.h
 ./mfhdf/hrepack/hrepack_check.c
@@ -989,6 +989,7 @@
 ./mfhdf/ncdump/ncdump.c
 ./mfhdf/ncdump/ncdump.h
 ./mfhdf/ncdump/test0.cdl
+./mfhdf/ncdump/testncdump.sh.in
 ./mfhdf/ncdump/vardata.c
 ./mfhdf/ncdump/vardata.h
 
@@ -1017,6 +1018,7 @@
 ./mfhdf/ncgen/ncgen.y
 ./mfhdf/ncgen/test0.cdl
 ./mfhdf/ncgen/test.com
+./mfhdf/ncgen/testncgen.sh.in
 ./mfhdf/ncgen/vmstab.c
 ./mfhdf/ncgen/vmstab.h
 ./mfhdf/ncgen/vms_yy.c
@@ -1081,6 +1083,7 @@
 ./mfhdf/test/temptySDSs.c
 ./mfhdf/test/test1.nc
 ./mfhdf/test/testout.sav
+./mfhdf/test/testmfhdf.sh.in
 ./mfhdf/test/tfile.c
 ./mfhdf/test/tmixed_apis.c
 ./mfhdf/test/tncunlim.c

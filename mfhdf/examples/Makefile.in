@@ -61,7 +61,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/commence.am \
 	$(top_srcdir)/config/conclude.am \
 	$(top_srcdir)/config/examples.am
-TESTS =
+TESTS = $(TEST_PROG)
 subdir = mfhdf/examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -231,21 +231,27 @@ top_srcdir = @top_srcdir@
 # Shell commands used in Makefiles
 RM = rm -f
 CP = cp
-H4CC = $(bindir)/h4cc
-H4FC = $(bindir)/h4fc
+
+# Libraries to link to while building
+LIBHDF = $(top_builddir)/hdf/src/libdf.la
+LIBMFHDF = $(top_builddir)/mfhdf/libsrc/libmfhdf.la
+H4CC = ${DESTDIR}$(bindir)/h4cc
+H4FC = ${DESTDIR}$(bindir)/h4fc
 @HDF_BUILD_XDR_TRUE@XDR_ADD = -R$(abs_top_builddir)/mfhdf/xdr/.libs
 @HDF_BUILD_SHARED_TRUE@AM_LDFLAGS = -R$(abs_top_builddir)/mfhdf/libsrc/.libs -R$(abs_top_builddir)/hdf/src/.libs $(XDR_ADD)
 ACLOCAL_AMFLAGS = "-I m4"
+CHECK_CLEANFILES = *.hdf
 DEFINES = -DNDEBUG -DHDF
 
 #############################################################################
 #############################################################################
-TEST_PROG = SD_create_sds SD_write_to_sds SD_write_slab             \
+EXAMPLE_PROG = SD_create_sds SD_write_to_sds SD_write_slab             \
 	SD_alter_sds_values SD_unlimited_sds SD_compress_sds        \
 	SD_mv_sds_to_external SD_read_from_sds SD_read_subsets      \
 	SD_get_info SD_find_sds_by_name SD_set_get_dim_info         \
 	SD_dimscale_vs_sds SD_set_attr SD_get_attr SD_chunking_example
 
+TEST_PROG = $(EXAMPLE_PROG)
 INSTALL_FILES = SD_create_sds.c SD_write_to_sds.c SD_write_slab.c        \
 	SD_alter_sds_values.c SD_unlimited_sds.c SD_compress_sds.c       \
 	SD_mv_sds_to_external.c SD_read_from_sds.c SD_read_subsets.c     \
@@ -253,21 +259,20 @@ INSTALL_FILES = SD_create_sds.c SD_write_to_sds.c SD_write_slab.c        \
 	SD_dimscale_vs_sds.c SD_set_attr.c SD_get_attr.c SD_chunking_example.c
 
 EXAMPLEDIR = $(prefix)/examples/c
+DISTCLEANFILES = *.chklog *.chkexe ExternalSDS .deps
 
 # Assume that all tests in this directory are examples, and tell
 # conclude.am when to build them.
-#EXAMPLE_PROG = $(TEST_PROG)
-EXTRA_PROG = $(TEST_PROG)
+EXTRA_PROG = $(EXAMPLE_PROG)
 
 # We need to tell automake what to clean
-MOSTLYCLEANFILES = *.o $(TEST_PROG)
-CHECK_CLEANFILES = *.hdf
-CLEANFILES = $(TEST_PROG)
+MOSTLYCLEANFILES = *.o $(EXAMPLE_PROG)
+CLEANFILES = $(EXAMPLE_PROG)
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
-# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG, and
-# EXTRA_TEST variables are supplied to allow the user to force targets to
+# lib_LIBRARIES are built for lib target), but EXTRA_LIB, EXTRA_PROG
+# variables are supplied to allow the user to force targets to
 # be built at certain times. 
 LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
       $(noinst_LTLIBRARIES) $(check_LIBRARIES) $(check_LTLIBRARIES) $(EXTRA_LIB)
@@ -275,9 +280,12 @@ LIB = $(lib_LIBRARIES) $(lib_LTLIBRARIES) $(noinst_LIBRARIES)                 \
 PROGS = $(bin_PROGRAMS) $(bin_SCRIPTS) $(noinst_PROGRAMS) $(noinst_SCRIPTS)   \
         $(EXTRA_PROG)
 
+chk_TESTS = $(check_PROGRAMS) $(check_SCRIPTS)
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS = 
 TEST_PROG_CHKEXE = $(TEST_PROG:=.chkexe_)
 TEST_SCRIPT_CHKSH = $(TEST_SCRIPT:=.chkexe_)
-DISTCLEANFILES = *.chklog *.chkexe ExternalSDS .deps
 all: all-am
 
 .SUFFIXES:
@@ -520,6 +528,7 @@ install-examples: $(EXAMPLEDIR) $(INSTALL_FILES)
 	@for f in X $(INSTALL_FILES); do                                     \
 	  if test $$f != X; then                                             \
 	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);\
+            chmod a-x $(EXAMPLEDIR)/$$f;                                     \
 	  fi;                                                                \
 	done
 
@@ -529,13 +538,13 @@ uninstall-examples:
         fi
 
 installcheck-local:
-	$(MAKE) check;
+	$(MAKE) $(AM_MAKEFLAGS) check;
 
 # lib/progs/tests targets recurse into subdirectories. build-* targets
 # build files in this directory.
 build-lib: $(LIB)
 build-progs: $(LIB) $(PROGS)
-build-tests: $(LIB) $(PROGS) $(TESTS)
+build-tests: $(LIB) $(PROGS) $(chk_TESTS)
 
 # General rule for recursive building targets.
 # BUILT_SOURCES contain targets that need to be built before anything else
@@ -561,7 +570,7 @@ check-clean ::
 # Tell Automake to build tests when the user types `make all' (this is
 # not its default behavior).  Also build EXTRA_LIB and EXTRA_PROG since
 # Automake won't build them automatically, either.
-all-local: $(EXTRA_LIB) $(EXTRA_PROG) $(TESTS)
+all-local: $(EXTRA_LIB) $(EXTRA_PROG) $(chk_TESTS)
 
 # make install-doc doesn't do anything outside of doc directory, but
 # Makefiles should recognize it.
@@ -583,7 +592,7 @@ check-install: installcheck
 # Run each test in order, passing $(TEST_FLAGS) to the program.
 # Since tests are done in a shell loop, "make -i" does apply inside it.
 #
-# Note that targets in TESTS (defined above) will be built when the user
+# Note that targets in chk_TESTS (defined above) will be built when the user
 # types 'make tests' or 'make check', but only programs in TEST_PROG,
 # or TEST_SCRIPT will actually be executed.
 check-TESTS: test
@@ -592,7 +601,7 @@ test _test:
 	@$(MAKE) build-check-s
 
 # Actual execution of check-s.
-build-check-s: $(LIB) $(PROGS) $(TESTS)
+build-check-s: $(LIB) $(PROGS) $(chk_TESTS)
 	@if test -n "$(TEST_PROG)$(TEST_SCRIPT)"; then      \
 	   echo "===Serial tests in `echo ${PWD} | sed -e s:.*/::` begin `date`==="; \
 	fi
@@ -658,6 +667,15 @@ $(TEST_SCRIPT_CHKSH) dummysh.chkexe_:
 	         echo "$${tname} $(TEST_FLAGS) Test Log" >> $${log}; \
 	      fi; \
 	      echo "============================" >> $${log}; \
+	      srcdir="$(srcdir)" \
+	         $(TIME) $(SHELL) $$cmd $(TEST_FLAGS) >> $${log} 2>&1 \
+	         && touch $${chkname} || \
+	         (cat $${log} && false) || exit 1; \
+	      echo "" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)" >> $${log}; \
+	      echo "============================" >> $${log}; \
+	      echo "Finished testing $${tname} $(TEST_FLAGS)"; \
+	      cat $${log}; \
 	   fi; \
 	   echo "============================"; \
 	fi

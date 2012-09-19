@@ -1,6 +1,8 @@
 #! /bin/sh
 # Tests for the hdiff tool
 
+srcdir=@srcdir@
+
 HDIFF=hdiff               # The tool name
 HDIFF_BIN=`pwd`/$HDIFF    # The path of the tool binary
 
@@ -9,11 +11,6 @@ DIFF='diff -c'
 
 nerrors=0
 verbose=yes
-
-# The build (current) directory might be different than the source directory.
-if test -z "$srcdir"; then
-   srcdir=.
-fi
 
 test -d testfiles || mkdir testfiles
 

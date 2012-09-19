@@ -6,7 +6,7 @@ else
 FORTRAN_DIR = 
 endif
 
-SUBDIRS = src test util $(FORTRAN_DIR)
+SUBDIRS = $(FORTRAN_DIR) test util
 
 DIST_SUBDIRS = src test util fortran examples
 

@@ -5,10 +5,10 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
-         -I$(top_srcdir)/mfhdf/libsrc   
-DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+INCLUDES = -I$(top_srcdir)/hdf/src        \
+           -I$(top_srcdir)/mfhdf/libsrc   
+DEFINES = -DNDEBUG -DHDF
+AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##
@@ -17,14 +17,14 @@ AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 lib_LTLIBRARIES = libmfhdf.la
 
 ## Information for building the "libmfhdf.la" library
-CSOURCES=array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
+CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
          globdef.c mfsd.c mfdatainfo.c nssdc.c putget.c putgetg.c	\
 	 sharray.c string.c var.c xdrposix.c
 
 if HDF_BUILD_NETCDF
-FSOURCES=../fortran/jackets.c ../fortran/mfsdf.c ../fortran/mfsdff.f
+FSOURCES = $(top_builddir)/mfhdf/fortran/jackets.c $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f
 else
-FSOURCES=../fortran/mfsdf.c ../fortran/mfsdff.f
+FSOURCES = $(top_srcdir)/mfhdf/fortran/mfsdf.c $(top_srcdir)/mfhdf/fortran/mfsdff.f
 endif
 
 if HDF_BUILD_FORTRAN
@@ -34,7 +34,7 @@ libmfhdf_la_SOURCES = $(CSOURCES)
 endif
 
 if HDF_BUILD_XDR
-XDRLIB = ../xdr/libxdr.la
+XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
 libmfhdf_la_LIBADD = $(XDRLIB)
 endif
 
@@ -60,4 +60,4 @@ endif
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This*
+DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h This*

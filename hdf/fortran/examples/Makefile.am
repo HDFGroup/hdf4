@@ -10,7 +10,7 @@ DEFINES=-DNDEBUG -DHDF
 ##                          Programs to build                              ##
 #############################################################################
 
-TEST_PROG = VD_create_vdatas VD_write_mixed_vdata       \
+EXAMPLE_PROG = VD_create_vdatas VD_write_mixed_vdata       \
 	VD_write_to_vdata VD_create_onefield_vdatas         \
 	VD_read_from_vdata VD_read_mixed_vdata              \
 	VD_get_vdata_info VD_locate_vdata VG_create_vgroup  \
@@ -21,6 +21,7 @@ TEST_PROG = VD_create_vdatas VD_write_mixed_vdata       \
 	GR_write_palette GR_image_info GR_read_image        \
 	AN_create_annotation AN_get_annotation_info AN_read_annotation
     # VD_set_get_vdata_attr
+TEST_PROG = $(EXAMPLE_PROG)
 
 # These are the Fortran example files to be installed
 INSTALL_FILES= VD_read_from_vdata.f VD_read_mixed_vdata.f \
@@ -76,7 +77,7 @@ AN_create_annotation: $(srcdir)/AN_create_annotation.f
 AN_get_annotation_info: $(srcdir)/AN_get_annotation_info.f
 AN_read_annotation: $(srcdir)/AN_read_annotation.f
 
+DISTCLEANFILES = *.chkexe *.chklog
+
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
-
-DISTCLEANFILES = *.chkexe *.chklog
