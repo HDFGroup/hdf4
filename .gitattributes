@@ -10,6 +10,7 @@ bin/timekeeper -text
 config/aix -text
 config/apple -text
 config/apple-darwin11.4.0 -text
+config/apple-darwin11.4.2 -text
 config/cmake/CPack.cmake -text
 config/cmake/CTestCustom.cmake -text
 config/cmake/CheckTypeSize.cmake -text
