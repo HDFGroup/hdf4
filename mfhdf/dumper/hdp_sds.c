@@ -998,7 +998,7 @@ intn printSDS_ASCII(
 		if (status == FAIL)
 		{
                     ERROR_GOTO_3( "in %s: %s failed for %d'th SDS",
-                       "printSDS_ASCII", "SDgetcompress", (int)sds_index );
+                       "printSDS_ASCII", "print_comp_info", (int)sds_index );
                 }
             }
             fprintf(fp, "\t Rank = %d\n\t Number of attributes = %d\n",
@@ -1405,7 +1405,7 @@ done:
           if (sd_id != FAIL)
               SDend(sd_id);
 
-          if (fp != stdout)
+          if (fp != NULL && fp != stdout)
               fclose(fp);                       
 
 	  SAFE_FREE(sds_chosen);
