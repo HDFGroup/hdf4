@@ -63,6 +63,7 @@
 ./config/aix
 ./config/apple
 ./config/apple-darwin11.4.0
+./config/apple-darwin11.4.2
 ./config/commence.am
 ./config/conclude.am
 ./config/examples.am
