@@ -1757,8 +1757,8 @@ HCPgetcomptype(int32 file_id,
 {
     CONSTR(FUNC, "HCPgetcomptype");	/* for HGOTO_ERROR */
     uint16      ctag, cref;	/* tag/ref for the special info header object */
-    int32       data_id=0;	/* temporary AID for header info */
-    int32	temp_aid=0;	/* temporary AID for header info */
+    int32       data_id=FAIL;	/* temporary AID for header info */
+    int32	temp_aid=FAIL;	/* temporary AID for header info */
     int32	data_len;	/* offset of the data we are checking */
     uint8      *p;		/* pointers to the temporary buffer */
     uint8      *local_ptbuf=NULL;	/* temporary buffer */
@@ -1840,13 +1840,6 @@ HCPgetcomptype(int32 file_id,
 	      *comp_type = COMP_CODE_INVALID;
 	      HGOTO_ERROR(DFE_ARGS, FAIL);
 	}
-
-	if(Hendaccess(temp_aid)==FAIL)
-	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
-
-	/* end access to the aid appropriately */
-	if (HTPendaccess(data_id)== FAIL)
-	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }
     else /* no special element */
     {
@@ -1856,15 +1849,15 @@ HCPgetcomptype(int32 file_id,
 done:
   if(ret_value == FAIL)
     { /* Error condition cleanup */
-       /* end access to the aid's if they've been accessed */
-        if (temp_aid != 0)
-            if (Hendaccess(temp_aid)== FAIL)
-                HERROR(DFE_CANTENDACCESS);
-        if (data_id != 0)
-            if (HTPendaccess(data_id)== FAIL)
-                HERROR(DFE_CANTENDACCESS);
-
     } /* end if */
+
+    /* end access to the aid's if they've been accessed */
+    if (temp_aid != FAIL)
+        if (Hendaccess(temp_aid)== FAIL)
+            HERROR(DFE_CANTENDACCESS);
+    if (data_id != FAIL)
+        if (HTPendaccess(data_id)== FAIL)
+            HERROR(DFE_CANTENDACCESS);
 
     /* release allocated memory */
     if (local_ptbuf != NULL)
