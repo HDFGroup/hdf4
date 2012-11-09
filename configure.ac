@@ -585,7 +585,7 @@ case "$host" in
     AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
     AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
     if test -z "$HAVE_RPC"; then
-      AC_MSG_ERROR([couldn't find rpc library])
+      AC_MSG_ERROR([couldn't find tirpc library])
     fi
     ;;
 esac

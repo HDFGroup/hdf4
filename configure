@@ -7414,7 +7414,7 @@ else
 fi
 
     if test -z "$HAVE_RPC"; then
-      as_fn_error $? "couldn't find rpc library" "$LINENO" 5
+      as_fn_error $? "couldn't find tirpc library" "$LINENO" 5
     fi
     ;;
 esac
