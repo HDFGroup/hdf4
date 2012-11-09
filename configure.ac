@@ -558,11 +558,13 @@ fi
 AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$build_xdr" = "Xyes"])
 
 ## For Solaris and Fuji systems, add the -nsl for XDR support
+##
+## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
 case "$host" in
   *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
     LIBS="$LIBS -lnsl"  ;;
   i686-pc-cygwin*)
-    LIBS="$LIBS -lrpc"  ;;
+    LIBS="$LIBS -ltirpc"  ;;
   *) ;;
 esac
 
@@ -576,11 +578,12 @@ CPPFLAGS="-I/usr/include/rpc $CPPFLAGS"
 ## ----------------------------------------------------------------------
 ## We're trying to link against the rpc library when building on Cygwin,
 ## but we need to make sure that it is present on the system. Do that here.
+## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
 case "$host" in
   i686-pc-cygwin*)
     HAVE_RPC="yes"
     AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
-    AC_CHECK_LIB([rpc], [xdr_opaque],[:], [unset HAVE_RPC])
+    AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
     if test -z "$HAVE_RPC"; then
       AC_MSG_ERROR([couldn't find rpc library])
     fi

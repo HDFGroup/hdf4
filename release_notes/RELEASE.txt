@@ -69,7 +69,9 @@ Bugs fixed since HDF 4.2.8
 =========================
    Configuration
    =============
-   - [None]
+   - Cygwin >= 1.7.7; The SunRPC of the glibc has been replaced by a TI-RPC 
+     (Transport Independent RPC) library to support IPv6. Configure has been 
+     updated to look for the tirpc library instead of rpc. (ADB 2012/11/09)
 
    Library
    ========= 

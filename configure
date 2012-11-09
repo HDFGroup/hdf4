@@ -7331,11 +7331,13 @@ fi
 
 
 ## For Solaris and Fuji systems, add the -nsl for XDR support
+##
+## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
 case "$host" in
   *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
     LIBS="$LIBS -lnsl"  ;;
   i686-pc-cygwin*)
-    LIBS="$LIBS -lrpc"  ;;
+    LIBS="$LIBS -ltirpc"  ;;
   *) ;;
 esac
 
@@ -7349,6 +7351,7 @@ CPPFLAGS="-I/usr/include/rpc $CPPFLAGS"
 ## ----------------------------------------------------------------------
 ## We're trying to link against the rpc library when building on Cygwin,
 ## but we need to make sure that it is present on the system. Do that here.
+## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
 case "$host" in
   i686-pc-cygwin*)
     HAVE_RPC="yes"
@@ -7360,13 +7363,13 @@ else
 fi
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -lrpc" >&5
-$as_echo_n "checking for xdr_opaque in -lrpc... " >&6; }
-if ${ac_cv_lib_rpc_xdr_opaque+:} false; then :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xdr_opaque in -ltirpc" >&5
+$as_echo_n "checking for xdr_opaque in -ltirpc... " >&6; }
+if ${ac_cv_lib_tirpc_xdr_opaque+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lrpc  $LIBS"
+LIBS="-ltirpc  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7394,17 +7397,17 @@ return xdr_opaque ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_rpc_xdr_opaque=yes
+  ac_cv_lib_tirpc_xdr_opaque=yes
 else
-  ac_cv_lib_rpc_xdr_opaque=no
+  ac_cv_lib_tirpc_xdr_opaque=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rpc_xdr_opaque" >&5
-$as_echo "$ac_cv_lib_rpc_xdr_opaque" >&6; }
-if test "x$ac_cv_lib_rpc_xdr_opaque" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_tirpc_xdr_opaque" >&5
+$as_echo "$ac_cv_lib_tirpc_xdr_opaque" >&6; }
+if test "x$ac_cv_lib_tirpc_xdr_opaque" = xyes; then :
   :
 else
   unset HAVE_RPC
