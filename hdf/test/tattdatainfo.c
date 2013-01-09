@@ -497,6 +497,7 @@ test_vgmixedattrs()
 	  offsets/lengths and verify the data
    BMR - Sep 2010
  ****************************************************************************/
+#define GRATTRFILE	"tgrattrdatainfo.hdf"
 #define	IMAGE_NAME	"Image Array 1"
 #define	F_ATT1_NAME	"File Attribute 1"
 #define	F_ATT2_NAME	"File Attribute 2"
@@ -535,7 +536,7 @@ test_grattrs()
     /********************** End of variable declaration **********************/
 
     /* Create and open the file. */
-    file_id = Hopen (ATTRFILE, DFACC_CREATE, 0);
+    file_id = Hopen (GRATTRFILE, DFACC_CREATE, 0);
     CHECK_VOID(file_id, FAIL, "Hopen");
 
     /* Initialize the GR interface. */
@@ -606,10 +607,10 @@ test_grattrs()
        data */
 
     /* Open the HDF file and initialize the GR interface. */
-    file_id = Hopen(ATTRFILE, DFACC_RDONLY, 0);
-    CHECK_VOID(file_id, FAIL, "Hopen ATTRFILE");
+    file_id = Hopen(GRATTRFILE, DFACC_RDONLY, 0);
+    CHECK_VOID(file_id, FAIL, "Hopen GRATTRFILE");
     gr_id = GRstart(file_id);
-    CHECK_VOID(gr_id, FAIL, "GRstart ATTRFILE");
+    CHECK_VOID(gr_id, FAIL, "GRstart GRATTRFILE");
 
     /* Get access to the image, first and only */
     ri_id = GRselect(gr_id, 0);
@@ -650,13 +651,14 @@ test_grattrs()
     CHECK_VOID(status, FAIL, "Hclose");
 
     /* Verify data of attributes without the use of HDF4 library */
-    status = readnoHDF_char(ATTRFILE, offsets[0], lengths[0], F_ATT1_VAL);
+    status = readnoHDF_char(GRATTRFILE, offsets[0], lengths[0], F_ATT1_VAL);
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
-    status = readnoHDF_char(ATTRFILE, offsets[1], lengths[1], F_ATT2_VAL);
+    status = readnoHDF_char(GRATTRFILE, offsets[1], lengths[1], F_ATT2_VAL);
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
-    status = readnoHDF_char(ATTRFILE, offsets[2], lengths[2], RI_ATT1_VAL);
+    status = readnoHDF_char(GRATTRFILE, offsets[2], lengths[2], RI_ATT1_VAL);
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
     /* Note: readnoHDF_char is defined in tdatainfo.c */
+system("cp tattdatainfo.hdf keepfile");
 } /* test_grattrs() */
 
 /* Test driver for testing the public functions VSgetattdatainfo, 

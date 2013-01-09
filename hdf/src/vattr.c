@@ -1057,7 +1057,9 @@ DESCRIPTION
    the new-style attributes are saved in a list of attribute tags/refs
    of the vgroup, and the vdatas of the old-style attributes are saved
    as elements of the vgroup.  Because of the different storages, the
-   new attribute functions would miss the old-style attributes.
+   new attribute functions would miss the old-style attributes.  Note
+   that the attribute in the SD API are created/stored using the old
+   approach.  Thus, V API would miss the SD attributes.
 
    Two new fields are added to the internal structure vgroup_desc,
    noldattrs and old_alist, for holding the number of old-style attributes
@@ -1090,7 +1092,7 @@ intn Vnoldattrs(int32 vgid)
        of the vgroup.  Hence, vg->nattrs = 1, but vg->nvelt = 0 -BMR Feb, 2011*/
 
     /* Store the ref numbers of old-style attributes into the list
-       vg->old_alist, for easy access later by Voldattrinfo and Vgetoldattr */ 
+       vg->old_alist, for easy access later by Vattrinfo2 and Vgetattr2 */ 
     if (n_old_attrs > 0)
     {
         /* Locate vg's index in vgtab */
@@ -1102,32 +1104,48 @@ intn Vnoldattrs(int32 vgid)
         if (vg->otag != DFTAG_VG)
             HGOTO_ERROR(DFE_ARGS,FAIL);
 
-	/* Establish the list of attribute refs if it is not done so already */
-	if (vg->old_alist == NULL)
+	/* Establish the list of attribute refs if it is not done so already 
+	   or if it is outdated. */
+
+	/* temporary list of attr refs to pass into VSofclass */
+        areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_old_attrs);
+	if (areflist == NULL)
+	    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+
+	/* Get ref numbers of old-style attributes belonging to this vg */
+	n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, (uintn)n_old_attrs, areflist);
+	if (n_old_attrs == FAIL)
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+	/* Do nothing when the list exists and is current */
+	if (vg->old_alist != NULL && vg->noldattrs == n_old_attrs)
 	{
-	    /* temporary list of attr refs to pass into VSofclass */
-            areflist = (uint16 *) HDmalloc(sizeof(uint16) * n_old_attrs);
-	    if (areflist == NULL)
-		HGOTO_ERROR(DFE_NOSPACE, FAIL);
+	    ret_value = vg->noldattrs;
+	    HGOTO_DONE(vg->noldattrs);
+	}
 
-	    /* Get ref numbers of old-style attributes belonging to this vg */
-            n_old_attrs = VSofclass(vgid, _HDF_ATTRIBUTE, 0, (uintn)n_old_attrs, areflist);
-	    if (n_old_attrs == FAIL)
-                HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	/* Either list doesn't exist or exists but is not current */
+	else if (vg->noldattrs != n_old_attrs)
+	{
+	    /* List is outdated, i.e., more old style attributes had been added
+	       since the list was established, release it */
+	    if (vg->old_alist != NULL)
+		HDfree(vg->old_alist);
 
+	    /* Allocate new list */
             vg->old_alist = (vg_attr_t *)HDmalloc(sizeof(vg_attr_t) * (n_old_attrs));
-
 	    if (vg->old_alist == NULL)
 		HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
-	    /* Transfer ref nums to the vg_attr_t list for future accesses */
-            for (ii = 0; ii < n_old_attrs; ii++)
-	    {
-	        vg->old_alist[ii].aref = areflist[ii];
-	        /* atag is not needed */
-	    }
-	    vg->noldattrs = n_old_attrs; /* record number of old-style attrs */
-	} /* vg->old_alist is not loaded yet */
+	} /* not current */
+
+	/* Transfer ref nums to the vg_attr_t list for future accesses */
+        for (ii = 0; ii < n_old_attrs; ii++)
+	{
+	    vg->old_alist[ii].aref = areflist[ii];
+	    /* atag is not needed */
+	}
+	vg->noldattrs = n_old_attrs; /* record number of old-style attrs */
 
 	ret_value = vg->noldattrs;
     } /* there are some old attributes */
@@ -1582,7 +1600,7 @@ DESCRIPTION
    created prior to Vsetattr by other method such as the
    combination of VHstoredatam and Vaddtagref/Vinsert.
    More detailed description is available in the function
-   header of Vnattr2 and Vnoldattrs.
+   header of Vnattrs2 and Vnoldattrs.
    -BMR 2011/2/16
 ------------------------------------------------- */
 intn Vgetattr2(int32 vgid, intn attrindex, void * values)

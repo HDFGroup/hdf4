@@ -545,10 +545,9 @@ dumpattr(int32 vid,
     if (isvs) 
         nattrs = VSfnattrs(vid, findex);
     else
-        nattrs = Vnattrs(vid);
-         /* nattrs = Vnattrs2(vid); using new function will cause test failure,
-		need to decide if we want dumper to use new functions then
-		fix all the tests. -BMR 2/5/2011 */ 
+         /* nattrs = Vnattrs(vid); <- replaced with Vnattrs2 to catch all attributes;
+				      previously, SD attributes were missed by V API */
+        nattrs = Vnattrs2(vid);
 
     if (FAIL == nattrs)
       {
@@ -566,7 +565,8 @@ dumpattr(int32 vid,
           if (isvs)
               status = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &e_size);
           else
-              status = Vattrinfo(vid, i, name, &i_type,&i_count, &e_size);
+	      /* Changed to use updated func of Vattrinfo - BMR, 1/7/2013 */
+              status = Vattrinfo2(vid, i, name, &i_type,&i_count, &e_size, NULL, NULL);
 
           if (status == FAIL) 
             {
@@ -607,7 +607,8 @@ dumpattr(int32 vid,
                 if (isvs) 
                     status = VSgetattr(vid, findex, i, (VOIDP)buf);
                 else
-                    status = Vgetattr(vid, i, (VOIDP)buf);
+		    /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
+                    status = Vgetattr2(vid, i, (VOIDP)buf);
 
                 if (status == FAIL) 
                   {
@@ -622,7 +623,8 @@ dumpattr(int32 vid,
                 if (isvs) 
                     status = VSgetattr(vid, findex, i, (VOIDP)attrbuf);
                 else
-                    status = Vgetattr(vid, i, (VOIDP)attrbuf);
+		    /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
+                    status = Vgetattr2(vid, i, (VOIDP)attrbuf);
 
                 if (status == FAIL) 
                   {

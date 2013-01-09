@@ -368,7 +368,7 @@ done:
 NAME
        Vattrhdfsize -- get hdfsize of a vgroup attribute
 USAGE
-        intn Vattrinfo(int32 vgid, intn attrindex, int32 *size)
+        intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
         int32 vgid;      IN: vgroup id
         intn attrindex;  IN: which attr's info we want
                              attrindex is 0-based
@@ -387,6 +387,8 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     DYN_VWRITELIST  *w;
     vginstance_t *v;
     vsinstance_t *vs_inst;
+    vg_attr_t *vg_alist=NULL;
+    intn adjusted_index;
     int32 fid, vsid;
     int32 ret_value = SUCCEED;
 
@@ -402,11 +404,36 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
        HGOTO_ERROR(DFE_BADPTR, FAIL);
     if (vg->otag != DFTAG_VG)
        HGOTO_ERROR(DFE_ARGS, FAIL);
-    if (vg->nattrs <= attrindex || vg->alist == NULL) 
-         /* not that many attrs or bad attr list */
-            HGOTO_ERROR(DFE_ARGS, FAIL);
-    
-    if ((vsid = VSattach(fid, (int32)vg->alist[attrindex].aref, "r")) == FAIL)
+
+    /* Validate arguments */
+
+    /* Check given index */
+    if (attrindex < 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL); /* invalid attribute index given */
+
+    /* Check attribute list; it's complicated here to work around the old/new-style
+       attribute issue, see headers of Vnattrs2, Vattrinfo2 in src for details */
+    adjusted_index = attrindex;
+    if (adjusted_index < vg->noldattrs) /* index of old-style attribute */
+        vg_alist = vg->old_alist;  /* use old-attr list */
+    else if (adjusted_index >= vg->noldattrs &&
+             adjusted_index < (vg->nattrs+vg->noldattrs))
+                 /* index of new-style attributes */
+    {
+        /* Adjust the index to accommodate for the old-style attributes
+           preceding the new-style attribute list */
+        adjusted_index = adjusted_index - vg->noldattrs;
+        vg_alist = vg->alist;        /* use new-attr list */
+    }
+    else /* not that many attrs */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    if (vg_alist == NULL)
+        /* Bad attr list */
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* Get access to the vdata storing the attr, and obtain requested info */
+    if ((vsid = VSattach(fid, (int32)vg_alist[attrindex].aref, "r")) == FAIL)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (HAatom_group(vsid) != VSIDGROUP)
         HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -415,6 +442,7 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
     if (NULL == (vs = vs_inst->vs) ||
           HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
+
     w = &(vs->wlist);
     /* this vdata has 1 field */
     if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME))  
