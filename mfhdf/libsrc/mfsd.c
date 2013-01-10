@@ -4811,6 +4811,8 @@ done:
     return ret_value;    
 } /* SDsetcompress */
 
+#ifdef H4_USED_DEPRECATED_SYMBOLS
+
 /******************************************************************************
  NAME
 	SDgetcompress -- Retrieves compression information of a dataset
@@ -4879,6 +4881,8 @@ done:
 
     return ret_value;    
 } /* SDgetcompress */
+
+#endif /* H4_USED_DEPRECATED_SYMBOLS */
 
 /******************************************************************************
  NAME
