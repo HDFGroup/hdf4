@@ -612,14 +612,11 @@ test_compressed_data()
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
 #ifdef H4_USED_DEPRECATED_SYMBOLS /* Jan 9, 2013 */
- fprintf(stderr, "H4_USED_DEPRECATED_SYMBOLS is defined\n");
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
-#else
- fprintf(stderr, "H4_USED_DEPRECATED_SYMBOLS is not defined\n");
 #endif /* H4_USED_DEPRECATED_SYMBOLS */
 
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
