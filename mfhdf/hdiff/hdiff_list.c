@@ -761,7 +761,7 @@ int insert_vg_attrs(int32 vg_in,
     int    i;
     
     /* Get the number of attributes attached to this vgroup.  */
-    if((n_attrs = Vnattrs (vg_in))==FAIL) 
+    if((n_attrs = Vnattrs2 (vg_in))==FAIL) 
     {
         printf( "Failed to get attributes for <%s>\n", path);
         return -1;
@@ -769,7 +769,7 @@ int insert_vg_attrs(int32 vg_in,
     
     for (i = 0; i < n_attrs; i++) 
     {
-        if((Vattrinfo (vg_in, i, attr_name, &data_type, &n_values, &size))==FAIL) 
+        if((Vattrinfo2 (vg_in, i, attr_name, &data_type, &n_values, &size, NULL, NULL))==FAIL) 
         {
             printf( "Failed to get attribute %d of <%s>\n", i, path);
             continue;
