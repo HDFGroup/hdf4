@@ -572,9 +572,6 @@ esac
 ## Checks for header files
 ## ======================================================================
 
-## Always put the /usr/include/rpc directory first in the search list.
-CPPFLAGS="-I/usr/include/rpc $CPPFLAGS"
-
 ## ----------------------------------------------------------------------
 ## We're trying to link against the rpc library when building on Cygwin,
 ## but we need to make sure that it is present on the system. Do that here.
