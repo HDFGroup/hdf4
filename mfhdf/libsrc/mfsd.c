@@ -4811,7 +4811,7 @@ done:
     return ret_value;    
 } /* SDsetcompress */
 
-#ifdef H4_USED_DEPRECATED_SYMBOLS
+#ifndef H4_NO_DEPRECATED_SYMBOLS
 
 /******************************************************************************
  NAME
@@ -4882,7 +4882,7 @@ done:
     return ret_value;    
 } /* SDgetcompress */
 
-#endif /* H4_USED_DEPRECATED_SYMBOLS */
+#endif /* H4_NO_DEPRECATED_SYMBOLS */
 
 /******************************************************************************
  NAME

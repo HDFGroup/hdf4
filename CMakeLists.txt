@@ -289,6 +289,16 @@ IF (HDF4_ENABLE_COVERAGE)
 ENDIF (HDF4_ENABLE_COVERAGE)
 
 #-----------------------------------------------------------------------------
+# Option to use deprecated public API symbols
+#-----------------------------------------------------------------------------
+OPTION (HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols" ON)
+IF (HDF4_ENABLE_DEPRECATED_SYMBOLS)
+  SET (H4_NO_DEPRECATED_SYMBOLS 0)   
+ELSE (HDF4_ENABLE_DEPRECATED_SYMBOLS)
+  SET (H4_NO_DEPRECATED_SYMBOLS 1)   
+ENDIF (HDF4_ENABLE_DEPRECATED_SYMBOLS)
+
+#-----------------------------------------------------------------------------
 # Include the main src and config directories
 #-----------------------------------------------------------------------------
 SET (HDF4_INCLUDE_DIRECTORIES
