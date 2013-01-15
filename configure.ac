@@ -254,7 +254,40 @@ AC_SUBST([SHARED_EXTENSION])
 AC_SUBST([enable_shared])
 AC_SUBST([enable_static])
 AC_SUBST([UNAME_INFO]) UNAME_INFO=`uname -a`
+AC_SUBST([STATIC_EXEC]) STATIC_EXEC=no
+AC_SUBST([LT_STATIC_EXEC])
 
+## ======================================================================
+## Libtool initialization
+## ======================================================================
+LT_INIT([dlopen disable-shared])
+LT_OUTPUT
+
+## ----------------------------------------------------------------------
+## Check if we should install only statically linked executables.
+##   This check needs to occur after libtool is initialized because
+##   we check a libtool cache value and may issue a warning based
+##   on its result.
+AC_MSG_CHECKING([if we should install only statically linked executables])
+AC_ARG_ENABLE([static_exec],
+              [AC_HELP_STRING([--enable-static-exec],
+                              [Install only statically linked executables
+                               [default=no]])],
+              [STATIC_EXEC=$enableval])
+
+if test "X$STATIC_EXEC" = "Xyes"; then
+  echo "yes"
+  dnl Issue a warning if -static flag is not supported.
+  if test "X$lt_cv_prog_compiler_static_works" = "Xno"; then
+    echo "    warning: -static flag not supported on this system; executable won't statically link shared system libraries."
+  fi
+  LT_STATIC_EXEC="-all-static"
+else
+  echo "no"
+  LT_STATIC_EXEC=""
+fi
+
+AC_SUBST([LT_STATIC_EXEC])
 
 ## ======================================================================
 ## Checks for libraries
@@ -628,7 +661,7 @@ fi
 ## Set some variables for general configuration information to be saved
 ## and installed with the libraries.
 ##
- 
+
 ## HDF4 version from the first line of the README.txt file.
 H4_VERSION="`cut -d' ' -f3 $srcdir/README.txt | head -1`"
 AC_SUBST([H4_VERSION])
@@ -715,11 +748,6 @@ AC_TRY_LINK([#include <math.h>], [sinh(37.927)],
 
 AC_CHECK_FUNCS([fork system vfork wait])
 
-## ======================================================================
-## Libtool initialization
-## ======================================================================
-LT_INIT(dlopen disable-shared) 
-LT_OUTPUT
 
 ## ======================================================================
 ## Checks for system services
@@ -767,7 +795,7 @@ for config_file in $src_files; do
   target_file="`echo $config_file | sed -e s/^[[^:]]*://g`"
 
   if test ! -r ${src_file}; then
-    echo '***' "${progname}: cannot copy file \"${target_file}\"," 1>&2                  
+    echo '***' "${progname}: cannot copy file \"${target_file}\"," 1>&2
     echo '***' "since the file \"${src_file}\" does not exist." 1>&2
     exit 1
   fi
@@ -784,14 +812,14 @@ for config_file in $src_files; do
   cp ${src_file} ${target_file}
 
   if test ! -r ${target_file}; then
-    echo '***' "${progname}: cannot copy file \"${target_file}\"," 1>&2                  
+    echo '***' "${progname}: cannot copy file \"${target_file}\"," 1>&2
     exit 1
   fi
 done
   if test "X$BUILD_NETCDF" != "Xyes"; then
   echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
     mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
-  fi 
+  fi
 
 ## ------------------------------------------------------------------------
 ## Check to see if libtool has enabled shared libraries. Set a conditional
@@ -840,6 +868,21 @@ else
     fi
   done
 fi
+
+
+## ----------------------------------------------------------------------
+## 
+## If --enable-static-exec and are specified together, there will be ld failures for
+## "attempted static link of dynamic object" when the tools are built.  This check
+## will prevent that error during configure instead.  It could go with the other
+## --enable-static-exec checks, but since enable_static is set by default later in
+## the configure process this check has to be delayed.
+if test "X$STATIC_EXEC" = "Xyes"; then
+  if test "X${enable_static}" != "Xyes"; then
+    AC_MSG_ERROR([--enable-static-exec flag to build static executables requires static libraries.  Please configure with --enable-static flag.])
+  fi
+fi
+
 ## This part doesn't work yet since HDF4 config files do not contain
 ## information for cc_vendor and cc_version as HDF5 similar files do.
 ## Needs to be fixed EIP 2010-01-21
@@ -871,7 +914,6 @@ fi
 if test -n "$fc_version_info"; then
   F77_VERSION="$F77_VERSION ( $fc_version_info)"
 fi
-
 
 ## This part doesn't work yet since HDF4 config files do not contain
 ## information for fortran_vendor and fortran_version. 

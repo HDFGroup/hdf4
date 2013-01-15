@@ -89,6 +89,9 @@ am_ncgen_OBJECTS = close.$(OBJEXT) escapes.$(OBJEXT) \
 	init.$(OBJEXT) load.$(OBJEXT) main.$(OBJEXT) \
 	ncgentab.$(OBJEXT)
 ncgen_OBJECTS = $(am_ncgen_OBJECTS)
+ncgen_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(ncgen_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
@@ -201,6 +204,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_STATIC_EXEC = @LT_STATIC_EXEC@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -226,6 +230,7 @@ SETX = @SETX@
 SET_MAKE = @SET_MAKE@
 SHARED_EXTENSION = @SHARED_EXTENSION@
 SHELL = @SHELL@
+STATIC_EXEC = @STATIC_EXEC@
 STATIC_SHARED = @STATIC_SHARED@
 STRIP = @STRIP@
 SZIP_INFO = @SZIP_INFO@
@@ -315,6 +320,7 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 ncgen_SOURCES = close.c escapes.c generate.c genlib.c getfill.c init.c      \
                 load.c main.c ncgentab.c
 
@@ -467,7 +473,7 @@ clean-noinstPROGRAMS:
 @HDF_BUILD_NETCDF_FALSE@	$(LINK) $(ftest0_OBJECTS) $(ftest0_LDADD) $(LIBS)
 ncgen$(EXEEXT): $(ncgen_OBJECTS) $(ncgen_DEPENDENCIES) $(EXTRA_ncgen_DEPENDENCIES) 
 	@rm -f ncgen$(EXEEXT)
-	$(LINK) $(ncgen_OBJECTS) $(ncgen_LDADD) $(LIBS)
+	$(ncgen_LINK) $(ncgen_OBJECTS) $(ncgen_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

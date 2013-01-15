@@ -10,6 +10,9 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
+## Add hdp specific linker flags here
+hdp_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
+
 #############################################################################
 ##                          Programs to build                              ##
 #############################################################################

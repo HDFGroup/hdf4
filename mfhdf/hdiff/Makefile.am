@@ -11,6 +11,9 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
+## Add hdiff specific linker flags here
+hdiff_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
+
 #############################################################################
 ##                          Programs to build                              ##
 #############################################################################

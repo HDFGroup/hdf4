@@ -74,6 +74,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am_ncdump_OBJECTS = dumplib.$(OBJEXT) ncdump.$(OBJEXT) \
 	vardata.$(OBJEXT)
 ncdump_OBJECTS = $(am_ncdump_OBJECTS)
+ncdump_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(ncdump_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
 depcomp = $(SHELL) $(top_srcdir)/bin/depcomp
 am__depfiles_maybe = depfiles
@@ -186,6 +189,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_STATIC_EXEC = @LT_STATIC_EXEC@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -211,6 +215,7 @@ SETX = @SETX@
 SET_MAKE = @SET_MAKE@
 SHARED_EXTENSION = @SHARED_EXTENSION@
 SHELL = @SHELL@
+STATIC_EXEC = @STATIC_EXEC@
 STATIC_SHARED = @STATIC_SHARED@
 STRIP = @STRIP@
 SZIP_INFO = @SZIP_INFO@
@@ -298,6 +303,7 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+ncdump_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 #############################################################################
@@ -414,7 +420,7 @@ clean-binPROGRAMS:
 	rm -f $$list
 ncdump$(EXEEXT): $(ncdump_OBJECTS) $(ncdump_DEPENDENCIES) $(EXTRA_ncdump_DEPENDENCIES) 
 	@rm -f ncdump$(EXEEXT)
-	$(LINK) $(ncdump_OBJECTS) $(ncdump_LDADD) $(LIBS)
+	$(ncdump_LINK) $(ncdump_OBJECTS) $(ncdump_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

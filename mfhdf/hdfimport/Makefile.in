@@ -80,6 +80,9 @@ hdfimport_SOURCES = hdfimport.c
 hdfimport_OBJECTS = hdfimport.$(OBJEXT)
 hdfimport_LDADD = $(LDADD)
 hdfimport_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+hdfimport_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(hdfimport_LDFLAGS) $(LDFLAGS) -o $@
 hdfimporttest_SOURCES = hdfimporttest.c
 hdfimporttest_OBJECTS = hdfimporttest.$(OBJEXT)
 hdfimporttest_LDADD = $(LDADD)
@@ -167,6 +170,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_STATIC_EXEC = @LT_STATIC_EXEC@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -192,6 +196,7 @@ SETX = @SETX@
 SET_MAKE = @SET_MAKE@
 SHARED_EXTENSION = @SHARED_EXTENSION@
 SHELL = @SHELL@
+STATIC_EXEC = @STATIC_EXEC@
 STATIC_SHARED = @STATIC_SHARED@
 STRIP = @STRIP@
 SZIP_INFO = @SZIP_INFO@
@@ -279,6 +284,7 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+hdfimport_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 #############################################################################
@@ -404,7 +410,7 @@ gen_sds_floats$(EXEEXT): $(gen_sds_floats_OBJECTS) $(gen_sds_floats_DEPENDENCIES
 	$(LINK) $(gen_sds_floats_OBJECTS) $(gen_sds_floats_LDADD) $(LIBS)
 hdfimport$(EXEEXT): $(hdfimport_OBJECTS) $(hdfimport_DEPENDENCIES) $(EXTRA_hdfimport_DEPENDENCIES) 
 	@rm -f hdfimport$(EXEEXT)
-	$(LINK) $(hdfimport_OBJECTS) $(hdfimport_LDADD) $(LIBS)
+	$(hdfimport_LINK) $(hdfimport_OBJECTS) $(hdfimport_LDADD) $(LIBS)
 hdfimporttest$(EXEEXT): $(hdfimporttest_OBJECTS) $(hdfimporttest_DEPENDENCIES) $(EXTRA_hdfimporttest_DEPENDENCIES) 
 	@rm -f hdfimporttest$(EXEEXT)
 	$(LINK) $(hdfimporttest_OBJECTS) $(hdfimporttest_LDADD) $(LIBS)

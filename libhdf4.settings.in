@@ -20,6 +20,7 @@ Compiling Options:
                        CPPFLAGS: @CPPFLAGS@
                Shared Libraries: @enable_shared@
                Static Libraries: @enable_static@
+  Statically Linked Executables: @STATIC_EXEC@
                         LDFLAGS: @LDFLAGS@
  	 	Extra libraries: @LIBS@
  		       Archiver: @AR@

@@ -11,6 +11,9 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
+## Add hdfimport specific linker flags here
+hdfimport_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
+
 #############################################################################
 ##                      Libraries to link against                          ##
 #############################################################################

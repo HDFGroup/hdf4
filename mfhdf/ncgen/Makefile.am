@@ -17,6 +17,9 @@ INCLUDES=-I$(top_srcdir)/hdf/src        \
 DEFINES=-DNDEBUG -DHDF
 AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
 
+## Add ncgen specific linker flags here
+ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
+
 #############################################################################
 ##                          Programs to build                              ##
 #############################################################################

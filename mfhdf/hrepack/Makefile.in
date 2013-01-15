@@ -80,6 +80,9 @@ am_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
 	hrepack_vg.$(OBJEXT) hrepack_vs.$(OBJEXT) \
 	hrepack_dim.$(OBJEXT)
 hrepack_OBJECTS = $(am_hrepack_OBJECTS)
+hrepack_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(hrepack_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_hrepack_check_OBJECTS = hrepack_check.$(OBJEXT)
 hrepack_check_OBJECTS = $(am_hrepack_check_OBJECTS)
 am_test_hrepack_OBJECTS = hrepack.$(OBJEXT) hrepack_an.$(OBJEXT) \
@@ -179,6 +182,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_STATIC_EXEC = @LT_STATIC_EXEC@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -204,6 +208,7 @@ SETX = @SETX@
 SET_MAKE = @SET_MAKE@
 SHARED_EXTENSION = @SHARED_EXTENSION@
 SHELL = @SHELL@
+STATIC_EXEC = @STATIC_EXEC@
 STATIC_SHARED = @STATIC_SHARED@
 STRIP = @STRIP@
 SZIP_INFO = @SZIP_INFO@
@@ -292,6 +297,7 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+hrepack_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 hrepack_SOURCES = hrepack.c hrepack_an.c hrepack_gr.c                       \
                   hrepack_list.c hrepack_lsttable.c hrepack_main.c          \
                   hrepack_opttable.c hrepack_parse.c                        \
@@ -435,7 +441,7 @@ clean-checkPROGRAMS:
 	rm -f $$list
 hrepack$(EXEEXT): $(hrepack_OBJECTS) $(hrepack_DEPENDENCIES) $(EXTRA_hrepack_DEPENDENCIES) 
 	@rm -f hrepack$(EXEEXT)
-	$(LINK) $(hrepack_OBJECTS) $(hrepack_LDADD) $(LIBS)
+	$(hrepack_LINK) $(hrepack_OBJECTS) $(hrepack_LDADD) $(LIBS)
 hrepack_check$(EXEEXT): $(hrepack_check_OBJECTS) $(hrepack_check_DEPENDENCIES) $(EXTRA_hrepack_check_DEPENDENCIES) 
 	@rm -f hrepack_check$(EXEEXT)
 	$(LINK) $(hrepack_check_OBJECTS) $(hrepack_check_LDADD) $(LIBS)

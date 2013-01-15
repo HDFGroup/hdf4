@@ -78,6 +78,9 @@ am_hdiff_OBJECTS = hdiff.$(OBJEXT) hdiff_array.$(OBJEXT) \
 	hdiff_misc.$(OBJEXT) hdiff_sds.$(OBJEXT) hdiff_table.$(OBJEXT) \
 	hdiff_vs.$(OBJEXT) hdiff_dim.$(OBJEXT)
 hdiff_OBJECTS = $(am_hdiff_OBJECTS)
+hdiff_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(hdiff_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_hdifftst_OBJECTS = hdifftst.$(OBJEXT)
 hdifftst_OBJECTS = $(am_hdifftst_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/hdf/src
@@ -163,6 +166,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LT_STATIC_EXEC = @LT_STATIC_EXEC@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
@@ -188,6 +192,7 @@ SETX = @SETX@
 SET_MAKE = @SET_MAKE@
 SHARED_EXTENSION = @SHARED_EXTENSION@
 SHELL = @SHELL@
+STATIC_EXEC = @STATIC_EXEC@
 STATIC_SHARED = @STATIC_SHARED@
 STRIP = @STRIP@
 SZIP_INFO = @SZIP_INFO@
@@ -275,6 +280,7 @@ INCLUDES = -I$(top_srcdir)/hdf/src        \
 
 DEFINES = -DNDEBUG -DHDF
 AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+hdiff_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 hdiff_SOURCES = hdiff.c hdiff_array.c hdiff_gr.c hdiff_list.c hdiff_main.c  \
                 hdiff_mattbl.c hdiff_gattr.c hdiff_misc.c hdiff_sds.c       \
                 hdiff_table.c hdiff_vs.c hdiff_dim.c
@@ -402,7 +408,7 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 hdiff$(EXEEXT): $(hdiff_OBJECTS) $(hdiff_DEPENDENCIES) $(EXTRA_hdiff_DEPENDENCIES) 
 	@rm -f hdiff$(EXEEXT)
-	$(LINK) $(hdiff_OBJECTS) $(hdiff_LDADD) $(LIBS)
+	$(hdiff_LINK) $(hdiff_OBJECTS) $(hdiff_LDADD) $(LIBS)
 hdifftst$(EXEEXT): $(hdifftst_OBJECTS) $(hdifftst_DEPENDENCIES) $(EXTRA_hdifftst_DEPENDENCIES) 
 	@rm -f hdifftst$(EXEEXT)
 	$(LINK) $(hdifftst_OBJECTS) $(hdifftst_LDADD) $(LIBS)
