@@ -183,21 +183,22 @@ This version has been tested in the following platforms:
 Known problems
 ==============
 
-o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounter 2 erros,
+o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounters 2 errors,
    when optimization is used, whether with the Apple GCC compiler or with the
    GNU GCC compiler.  CFLAGS must be set to use no optimization (-O0 or -g) to
    avoid these failures.  config/apple-darwin11.4.0 is added to direct configure
    to use -O0 for CFLAGS for Mac OS X 10.7 Lion. We hope to fix the bug in the
    next release.  (HDFFR-1327 and HDFFR-1328) AKC - 2012/07/03
 
-o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization level. 
+o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization 
+   level. 
 
 o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    will fail when checking for the jpeglib.h header due to the duplicated
    macro definition of HAVE_STDLIB_H.  This is because some newer builds
-   of jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
-   Without the -qlanglvl=ansi, some older xlc (e.g., V7.0) still fails but
-   newer xlc (e.g., V9.0) passes.  AKC - 2010/02/17
+   of the jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc versions (e.g., V7.0) still 
+   fail, but newer xlc versions (e.g., V9.0) pass.  AKC - 2010/02/17
 
 o  When building on Linux/UNIX platforms, the szip shared library files must
    be in the system library path. This can be done by adding a link to
