@@ -560,7 +560,11 @@ AC_SUBST([SZIP_INFO])
 ## mfhdf/libsrc/local_nc.c file.
 AC_MSG_CHECKING([for xdr library support])
 
-AC_ARG_ENABLE([hdf4-xdr],,,enableval="no")
+AC_ARG_ENABLE([hdf4-xdr],
+              [AC_HELP_STRING([--enable-hdf4-xdr],
+                              [Build xdr library from code in HDF4 source.
+                               Not supported for 64 bit mode. [default="no"]])],
+              [enableval="no"])
 
 case "$enableval" in
   yes)
@@ -607,18 +611,21 @@ esac
 
 ## ----------------------------------------------------------------------
 ## We're trying to link against the rpc library when building on Cygwin,
-## but we need to make sure that it is present on the system. Do that here.
+## but we need to make sure that it is present on the system. Do that here,
+## but not if the hdf4-xdr option was invoked;  then it isn't needed.
 ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-case "$host" in
-  i686-pc-cygwin*)
-    HAVE_RPC="yes"
-    AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
-    AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
-    if test -z "$HAVE_RPC"; then
-      AC_MSG_ERROR([couldn't find tirpc library])
-    fi
-    ;;
-esac
+if test "X$build_xdr" != "Xyes"; then
+  case "$host" in
+    i686-pc-cygwin*)
+      HAVE_RPC="yes"
+      AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
+      AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
+      if test -z "$HAVE_RPC"; then
+        AC_MSG_ERROR([couldn't find tirpc library])
+      fi
+      ;;
+  esac
+fi
 
 AC_HEADER_STDC
 
@@ -655,6 +662,11 @@ if test $ac_cv_sizeof_intp -ge 8; then
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
+  if test "X$build_xdr" = "Xyes"; then
+    AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
+    ##echo '***' "--enable-hdf4-xdr is not supported for 64 bit mode." 1>&2
+    ##exit 1 
+  fi
 fi
 
 ## ----------------------------------------------------------------------
