@@ -277,7 +277,7 @@ AC_ARG_ENABLE([static_exec],
 
 if test "X$STATIC_EXEC" = "Xyes"; then
   echo "yes"
-  dnl Issue a warning if -static flag is not supported.
+  ## Issue a warning if -static flag is not supported.
   if test "X$lt_cv_prog_compiler_static_works" = "Xno"; then
     echo "    warning: -static flag not supported on this system; executable won't statically link shared system libraries."
   fi
@@ -564,18 +564,19 @@ AC_ARG_ENABLE([hdf4-xdr],
               [AC_HELP_STRING([--enable-hdf4-xdr],
                               [Build xdr library from code in HDF4 source.
                                Not supported for 64 bit mode. [default="no"]])],
-              [enableval="no"])
+              [enableval="yes"],[enableval="no"])
 
 case "$enableval" in
   yes)
-    build_xdr="yes"
+    BUILD_XDR="yes"
     AC_MSG_RESULT([using HDF4 XDR]);
     ;;
   no)
+    BUILD_XDR="no"
     ;;
 esac
 
-if test "X$build_xdr" != "Xyes"; then
+if test "X$BUILD_XDR" != "Xyes"; then
     AC_TRY_LINK([
     #ifdef VMS
     #define STDC_INCLUDES
@@ -588,33 +589,34 @@ if test "X$build_xdr" != "Xyes"; then
     #undef GCC_FIX
     #endif
     #include <rpc/xdr.h>], [xdr_int],
-                [AC_MSG_RESULT([yes]); build_xdr="no"],
-                [AC_MSG_RESULT([no]); build_xdr="yes"])
+                [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
+                [AC_MSG_RESULT([no]); BUILD_XDR="yes"])
 fi
 
-AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$build_xdr" = "Xyes"])
+AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
-## For Solaris and Fuji systems, add the -nsl for XDR support
-##
-## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-case "$host" in
-  *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
-    LIBS="$LIBS -lnsl"  ;;
-  i686-pc-cygwin*)
-    LIBS="$LIBS -ltirpc"  ;;
-  *) ;;
-esac
 
-## ======================================================================
-## Checks for header files
-## ======================================================================
+## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
+if test "X$BUILD_XDR" != "Xyes"; then
+  ## For Solaris and Fuji systems, add the -nsl for XDR support
+  ##
+  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
+  case "$host" in
+    *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
+      LIBS="$LIBS -lnsl"  ;;
+    i686-pc-cygwin*)
+      LIBS="$LIBS -ltirpc"  ;;
+    *) ;;
+  esac
 
-## ----------------------------------------------------------------------
-## We're trying to link against the rpc library when building on Cygwin,
-## but we need to make sure that it is present on the system. Do that here,
-## but not if the hdf4-xdr option was invoked;  then it isn't needed.
-## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
-if test "X$build_xdr" != "Xyes"; then
+  ## ======================================================================
+  ## Checks for header files
+  ## ======================================================================
+
+  ## ----------------------------------------------------------------------
+  ## We're trying to link against the rpc library when building on Cygwin,
+  ## but we need to make sure that it is present on the system. Do that here,
+  ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
     i686-pc-cygwin*)
       HAVE_RPC="yes"
@@ -662,10 +664,8 @@ if test $ac_cv_sizeof_intp -ge 8; then
     *-ibm-aix*) CPPFLAGS="$CPPFLAGS -DAIX5L64" ;;
     *)          ;;
   esac
-  if test "X$build_xdr" = "Xyes"; then
+  if test "X$BUILD_XDR" = "Xyes"; then
     AC_MSG_ERROR([--enable-hdf4-xdr is not supported for 64 bit mode.])
-    ##echo '***' "--enable-hdf4-xdr is not supported for 64 bit mode." 1>&2
-    ##exit 1 
   fi
 fi
 
