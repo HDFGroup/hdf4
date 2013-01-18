@@ -35,7 +35,18 @@ case $CC_BASENAME in
     CFLAGS="$CFLAGS"
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
-    PROD_CFLAGS="-ansi  -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic -O2"
+    # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
+    # with any optimization in $CC in Lion or Mountain Lion systems.
+    # Use -O0 for now.
+    case "$host_os" in
+	darwin11.* | darwin12.* )	# Lion & Mountain Lion
+	    xOFLAG="-O0"
+	    ;;
+	*)		# Other OSX versions
+	    xOFLAG="-O2"
+	    ;;
+    esac
+    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic $xOFLAG"}
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
