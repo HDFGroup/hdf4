@@ -121,11 +121,12 @@ fi
 case "$host_os" in
   aix4.*)       host_os_novers="aix4.x"     ;;
   aix5.*)       host_os_novers="aix5.x"     ;;
+  darwin10.*)   host_os_novers="darwin10.x" ;;
+  darwin11.*)   host_os_novers="darwin11.x" ;;
+  darwin12.*)   host_os_novers="darwin12.x" ;;
   freebsd*)     host_os_novers="freebsd"    ;;
   irix5.*)      host_os_novers="irix5.x"    ;;
   irix6.*)      host_os_novers="irix6.x"    ;;
-  osf4.*)       host_os_novers="osf4.x"     ;;
-  osf5.*)       host_os_novers="osf5.x"     ;;
   solaris2.*)   host_os_novers="solaris2.x" ;;
   *)            host_os_novers="$host_os"   ;;
 esac

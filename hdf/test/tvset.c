@@ -284,7 +284,7 @@ int32 ref=-1;
 
     /* Test VSgetexternalinfo on a vdata without external element */
     status = VSgetexternalinfo(vs1, 0, NULL, NULL, NULL);
-    VERIFY_VOID(status, 0, "VSgetexternalinfo");
+    VERIFY(status, 0, "VSgetexternalinfo");
 
     status = VSdetach(vs1);
     CHECK(status,FAIL,"VSdetach:vs1");

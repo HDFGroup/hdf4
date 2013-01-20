@@ -1126,6 +1126,10 @@ test_dfr8_24()
     CHECK_VOID(status, FAIL, "Hclose");
 }  /* test_dfr8_24 */
 
+#if 0
+/* clang does not like CHECK_VOID which does not return any value. */
+/* So, coding is wrong but this function is not used at all.*/
+/* So, screen it out for now. -AKC 2013/01/18 */
  /* intn check_dds(char *fname, char *msg)
  */ 
 intn check_dds(int32 grid, char *msg)
@@ -1154,6 +1158,7 @@ intn check_dds(int32 grid, char *msg)
 
     return 0;
 }
+#endif
 
 
 /*************************************************************************
