@@ -25,8 +25,8 @@ static char RcsId[] = "@(#)$Revision$";
 *  set or change attributes for a vgroup, a vdata or a field of 
 *  a vdata; get info about an attribute; read values of an attr.
 *
-* wrtie_vset_stuff() creates 1 empty vgroup and 1 vgroup having 1 
-*  vdata. wirte_vattr() adds attributes to the vgroups, vdata and
+* create_vset_stuff() creates 1 empty vgroup and 1 vgroup having 1 
+*  vdata. write_vattr() adds attributes to the vgroups, vdata and
 *  the fields of the vdata. It then creates new vdata and vgroup,
 *  and adds attrs to them.  read_vattr reads the attributes back,
 *  and check their correctness.  
@@ -77,14 +77,14 @@ char   attr3[6] = {'m','N','p', 'S', 't', '\0'}, iattr3[6];
 float32 attr4[2] = {(float32)32.001, (float32)-34.002}, iattr4[2];
 float64 attr5[2] = {64.12345, -64.12345}, iattr5[2];
 
-static intn write_vset_stuff(void);
+static intn create_vset_stuff(void);
 static intn write_vattrs(void);
 static intn read_vattrs(void);
 static void test_readattrtwice(void);
 
 /* create vdatas and vgroups */
 
-static intn write_vset_stuff(void)
+static intn create_vset_stuff(void)
 {
    int32 fid, vgid, vsid;
 
@@ -164,7 +164,7 @@ static intn write_vset_stuff(void)
          return FAIL;
       }
    return SUCCEED;
-} /* write_vset_stuff */
+} /* create_vset_stuff */
 
 /* test attribute routines */
 static intn write_vattrs(void)
@@ -848,7 +848,7 @@ static void test_readattrtwice(void)
 void
 test_vset_attr(void)   
 {
-   write_vset_stuff();
+   create_vset_stuff();
    write_vattrs();
    read_vattrs(); 
    test_readattrtwice();
