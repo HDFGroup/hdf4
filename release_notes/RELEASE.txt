@@ -45,7 +45,10 @@ New features and changes
 
    Configuration
    ============= 
-   - [None]
+   - The macro H4_NO_DEPRECATED_SYMBOLS was added to handle deprecated
+     functions/features.  To use deprecated functions/features, the library
+     should be configured with option HDF4_ENABLE_DEPRECATED_SYMBOLS.
+     (ADB, BMR 2013/1/25)
      
    Library
    ========= 
@@ -75,11 +78,15 @@ Bugs fixed since HDF 4.2.8
 
    Library
    ========= 
-   - [None]
+   - SDgetcompress is now deprecated and not available by default. (BMR 2012/1/25)
+   - Some memory leaks were fixed. (BMR 2012/10/01)
 
    Utilities
    ========= 
-   - [None]
+   - Vnattrs/Vattrinfo/Vgetattr are replaced with Vnattrs2/Vattrinfo2/Vgetattr2
+     in various tools to ensure attributes that are not created by Vsetattr
+     can still be detected and accessed.  The Reference Manual and User's Guide
+     provide details about this issue. (BMR 2012/12/25)
 
 
 Documentation
