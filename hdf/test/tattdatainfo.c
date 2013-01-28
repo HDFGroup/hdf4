@@ -658,7 +658,6 @@ test_grattrs()
     status = readnoHDF_char(GRATTRFILE, offsets[2], lengths[2], RI_ATT1_VAL);
     CHECK_STATUS(status, FAIL, "Verifying data without HDF4 library failed");
     /* Note: readnoHDF_char is defined in tdatainfo.c */
-system("cp tattdatainfo.hdf keepfile");
 } /* test_grattrs() */
 
 /* Test driver for testing the public functions VSgetattdatainfo, 
