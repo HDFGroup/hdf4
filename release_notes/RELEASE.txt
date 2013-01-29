@@ -65,8 +65,8 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-   - [None]
-
+   - Ported to Mac OSX 10.8 (Mountain Lion) with Clang as the default C
+     compiler. (AKC 2013/1/19)
 
 Bugs fixed since HDF 4.2.8
 =========================
@@ -154,6 +154,10 @@ This version has been tested in the following platforms:
    (hdf-duck)                    gcc (GCC) 4.6.2
                                  GNU Fortran (GCC) 4.6.2
 
+   Mac OS X 10.8.1               clang Apple clang version 4.0 from Xcode 4.5.1
+   Darwin 12.2.1                 gcc i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 from Xcode 4.5.1
+   (owl)                         gfortran GNU Fortran (GCC) 4.6.2
+
     Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
                                   gcc (Debian 4.4.5-8) 4.4.5
                                   GNU Fortran (Debian 4.4.5-8) 4.4.5
@@ -189,6 +193,10 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+
+o  For Mac OS X 10.8 Mountain Lion, the test suites failures for Mac OS X 10.7
+   happen too.  We applied the same fix for now and hope to fix them in future
+   relase.  (HDFFR-1358) AKC - 2013/01/19
 
 o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounters 2 errors,
    when optimization is used, whether with the Apple GCC compiler or with the
