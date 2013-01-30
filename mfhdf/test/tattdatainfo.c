@@ -351,8 +351,8 @@ static intn test_attrs()
    There are several utility functions to help generating and verifying the
    data.  The actual test function is test_dfannots() that follows those.
 ***************************************************************************/
-#define DFAN_NDG_FILE "tdfanndg_hdf"
-#define DFAN_SDG_FILE "tdfansdg_hdf" /* only for SDG annotation tests */
+#define DFAN_NDG_FILE "tdfanndg.hdf"
+#define DFAN_SDG_FILE "tdfansdg.hdf" /* only for SDG annotation tests */
 #define MAXLEN_LAB     50
 #define MAXLEN_DESC   200
 #define ROWS           10
