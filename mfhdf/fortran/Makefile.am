@@ -77,11 +77,13 @@ install-examples uninstall-examples:
 ##                          And the cleanup                                ##
 #############################################################################
 
+CHECK_CLEANFILES += test.nc copy.nc *.hdf testdir/testext.hdf
+
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.
 distclean-local:
 	-rm -rf testdir
 
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90
 
 include $(top_srcdir)/config/conclude.am

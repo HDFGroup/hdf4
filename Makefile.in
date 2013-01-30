@@ -124,7 +124,7 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = hdf/src mfhdf/xdr mfhdf/libsrc hdf mfhdf man
+DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -330,9 +330,7 @@ ACLOCAL_AMFLAGS = "-I m4"
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
 CHECK_CLEANFILES = *.chkexe *.chklog
-@HDF_BUILD_XDR_FALSE@XDR_DIR = 
-@HDF_BUILD_XDR_TRUE@XDR_DIR = mfhdf/xdr
-SUBDIRS = hdf/src $(XDR_DIR) mfhdf/libsrc hdf mfhdf man
+SUBDIRS = hdf mfhdf man
 # install libhdf4.settings in lib directory
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings

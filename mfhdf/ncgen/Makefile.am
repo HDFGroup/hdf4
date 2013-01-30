@@ -104,8 +104,10 @@ vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ctest1.cdl ftest0$(EXEEXT) ftest0.nc ftest1.cdl    \
-                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f \
+CHECK_CLEANFILES += ctest1.cdl ftest1.cdl \
                  test0.nc test1.cdl test1.nc test2.cdl
+
+DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ftest0$(EXEEXT) ftest0.nc    \
+                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f
 
 include $(top_srcdir)/config/conclude.am

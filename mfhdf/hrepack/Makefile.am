@@ -59,6 +59,8 @@ hrepack_check_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = *.hdf
+CHECK_CLEANFILES += *.hdf
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am

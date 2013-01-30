@@ -273,8 +273,10 @@ ACLOCAL_AMFLAGS = "-I m4"
 CHECK_CLEANFILES = *.chkexe *.chklog
 @HDF_BUILD_FORTRAN_FALSE@FORTRAN_DIR = 
 @HDF_BUILD_FORTRAN_TRUE@FORTRAN_DIR = fortran
-SUBDIRS = $(FORTRAN_DIR) test util
-DIST_SUBDIRS = src test util fortran examples
+
+# src folder in root Makefile, build other folders now
+SUBDIRS = src $(FORTRAN_DIR) test util
+DIST_SUBDIRS = src fortran test util examples
 all: all-recursive
 
 .SUFFIXES:

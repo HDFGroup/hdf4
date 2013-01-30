@@ -333,7 +333,7 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
 
 #############################################################################
 #############################################################################
-DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h This*
+DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h hdf4_netcdf.h This*
 all: all-am
 
 .SUFFIXES:

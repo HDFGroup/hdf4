@@ -336,7 +336,11 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog test.nc copy.nc *.hdf \
+	testdir/testext.hdf
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/hdf/test       \
          -I$(top_srcdir)/mfhdf/libsrc   \
@@ -369,7 +373,7 @@ tszip_SOURCES = tszip.f
 tszip_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@
 tszip_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
 SUFFIXES = .inc .f90
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
@@ -824,9 +828,6 @@ install-examples uninstall-examples:
 	@@SETX@; for d in examples; do \
 	    (cd $$d && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; \
 	done
-
-#############################################################################
-#############################################################################
 
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.

@@ -32,15 +32,15 @@ buffer_DEPENDENCIES = $(LIBHDF)
 
 if HDF_BUILD_FORTRAN
 fortest_SOURCES = fortest.c
-fortest_LDADD = $(LIBMFHDF) $(LIBHDF)
-fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) $(LIBMFHDF) $(LIBHDF)
+fortest_LDADD = $(LIBHDF)
+fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) $(LIBHDF)
 
 fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
                    tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
                    tvattrf.f tvsetf.f
-fortestF_LDADD = $(LIBMFHDF) $(LIBHDF)
-fortestF_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
+fortestF_LDADD = $(LIBHDF)
+fortestF_DEPENDENCIES = testdir $(LIBHDF)
 endif
 
 testdir:
@@ -50,11 +50,13 @@ testdir:
 ##                          And the cleanup                                ##
 #############################################################################
 
+CHECK_CLEANFILES += fortest.arg Fortran_err.dat testdir/t5.hdf Tables_External_File
+
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.
 distclean-local:
 	-rm -rf testdir
 
-DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
+DISTCLEANFILES = 
 
 include $(top_srcdir)/config/conclude.am

@@ -50,7 +50,9 @@ SD_get_attr: $(srcdir)/SD_get_attr.f
 SD_compress_sds: $(srcdir)/SD_compress_sds.f
 SD_chunking_example: $(srcdir)/SD_chunking_example.f
 
-DISTCLEANFILES = *.chkexe *.chklog ExternalSDS
+CHECK_CLEANFILES += ExternalSDS
+
+DISTCLEANFILES = *.chkexe *.chklog
 
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am

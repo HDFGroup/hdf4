@@ -123,13 +123,15 @@ check_PROGRAMS = $(bin_PROGRAMS)
 ##                          And the cleanup                                ##
 #############################################################################
 
+CHECK_CLEANFILES += gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif    \
+                 gif_hdf_temp/SunWheel.hdf
+
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.
 distclean-local:
 	-rm -rf gif_hdf_temp
 
-DISTCLEANFILES = gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif    \
-                 gif_hdf_temp/SunWheel.hdf
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am
                  

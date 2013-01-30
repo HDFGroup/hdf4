@@ -289,7 +289,10 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog *.hdf
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/hdiff    \
          -I$(top_srcdir)/mfhdf/libsrc   \
@@ -325,10 +328,7 @@ test_hrepack_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 hrepack_check_SOURCES = hrepack_check.c
 hrepack_check_LDADD = $(LIBMFHDF) $(LIBHDF)
 hrepack_check_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
-
-#############################################################################
-#############################################################################
-DISTCLEANFILES = *.hdf
+DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,

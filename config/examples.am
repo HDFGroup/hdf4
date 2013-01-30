@@ -40,7 +40,7 @@ EXTRA_PROG = $(EXAMPLE_PROG)
 
 # We need to tell automake what to clean
 MOSTLYCLEANFILES=*.o $(EXAMPLE_PROG)
-CHECK_CLEANFILES=*.hdf
+CHECK_CLEANFILES+= *.hdf
 CLEANFILES=$(EXAMPLE_PROG)
 
 # How to create EXAMPLEDIR if it doesn't already exist

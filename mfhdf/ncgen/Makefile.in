@@ -311,7 +311,11 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog ctest1.cdl ftest1.cdl test0.nc \
+	test1.cdl test1.nc test2.cdl
 @HDF_BUILD_SHARED_FALSE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
 @HDF_BUILD_SHARED_TRUE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.$(SHARED_EXTENSION) $(top_builddir)/hdf/src/.libs/libdf.$(SHARED_EXTENSION)
 INCLUDES = -I$(top_srcdir)/hdf/src        \
@@ -339,12 +343,8 @@ man1_MANS = ncgen.1
 NCDUMP = $(top_builddir)/mfhdf/ncdump/ncdump
 TEST_SCRIPT = testncgen.sh
 check_SCRIPTS = testncgen.sh
-
-#############################################################################
-#############################################################################
-DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ctest1.cdl ftest0$(EXEEXT) ftest0.nc ftest1.cdl    \
-                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f \
-                 test0.nc test1.cdl test1.nc test2.cdl
+DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ftest0$(EXEEXT) ftest0.nc    \
+                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f
 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.

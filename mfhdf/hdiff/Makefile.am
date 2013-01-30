@@ -41,4 +41,12 @@ hdifftst_SOURCES = hdifftst.c
 hdifftst_LDADD = $(LIBMFHDF) $(LIBHDF)
 hdifftst_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+CHECK_CLEANFILES += hdifftst1.hdf hdifftst2.hdf hdifftst3.hdf hdifftst4.hdf hdifftst5.hdf hdifftst6.hdf hdifftst7.hdf
+
+DISTCLEANFILES =
+
 include $(top_srcdir)/config/conclude.am

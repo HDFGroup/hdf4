@@ -306,7 +306,11 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog fortest.arg Fortran_err.dat \
+	testdir/t5.hdf Tables_External_File
 AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
 @HDF_BUILD_FORTRAN_FALSE@TEST_PROG = testhdf buffer
 
@@ -325,16 +329,16 @@ testhdf_DEPENDENCIES = testdir $(LIBHDF)
 buffer_LDADD = $(LIBHDF)
 buffer_DEPENDENCIES = $(LIBHDF)
 @HDF_BUILD_FORTRAN_TRUE@fortest_SOURCES = fortest.c
-@HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = $(LIBMFHDF) $(LIBHDF)
-@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) $(LIBMFHDF) $(LIBHDF)
+@HDF_BUILD_FORTRAN_TRUE@fortest_LDADD = $(LIBHDF)
+@HDF_BUILD_FORTRAN_TRUE@fortest_DEPENDENCIES = testdir fortestF$(EXEEXT) $(LIBHDF)
 @HDF_BUILD_FORTRAN_TRUE@fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
 @HDF_BUILD_FORTRAN_TRUE@                   t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
 @HDF_BUILD_FORTRAN_TRUE@                   tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
 @HDF_BUILD_FORTRAN_TRUE@                   tvattrf.f tvsetf.f
 
-@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = $(LIBMFHDF) $(LIBHDF)
-@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir $(LIBMFHDF) $(LIBHDF)
-DISTCLEANFILES = fortest.arg Fortran_err.dat testdir/t5.hdf
+@HDF_BUILD_FORTRAN_TRUE@fortestF_LDADD = $(LIBHDF)
+@HDF_BUILD_FORTRAN_TRUE@fortestF_DEPENDENCIES = testdir $(LIBHDF)
+DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
@@ -716,9 +720,6 @@ uninstall-am:
 
 testdir:
 	-mkdir testdir
-
-#############################################################################
-#############################################################################
 
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.

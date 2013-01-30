@@ -151,6 +151,7 @@ ADD_TEST (
         SDS_16_sziped.hdf
         SDS_32_sziped.hdf
         sds_compressed.hdf
+        SD_externals
         SDS_fl32_sziped.hdf
         SDS_fl64_sziped.hdf
         sds_szipped.hdf
@@ -166,6 +167,8 @@ ADD_TEST (
         Unlim_dim.hdf
         Unlim_inloop.hdf
         vars_samename.hdf
+        tdfanndg.hdf
+        tdfansdg.hdf
 )
 
 ADD_TEST (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)

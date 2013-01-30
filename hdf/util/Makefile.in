@@ -398,7 +398,11 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog gif_hdf_temp/bttrfly.hdf \
+	gif_hdf_temp/skull.gif gif_hdf_temp/SunWheel.hdf
 AM_CPPFLAGS = -I$(top_srcdir)/hdf/src
 @HDF_BUILD_FORTRAN_FALSE@bin_SCRIPTS = h4redeploy h4cc
 @HDF_BUILD_FORTRAN_TRUE@bin_SCRIPTS = h4redeploy h4cc h4fc
@@ -480,9 +484,7 @@ vshow_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 TEST_SCRIPT = testutil.sh
 check_SCRIPTS = testutil.sh
 check_PROGRAMS = $(bin_PROGRAMS)
-DISTCLEANFILES = gif_hdf_temp/bttrfly.hdf gif_hdf_temp/skull.gif    \
-                 gif_hdf_temp/SunWheel.hdf
-
+DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
@@ -974,9 +976,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS
 	pdf-am ps ps-am tags uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-binSCRIPTS
 
-
-#############################################################################
-#############################################################################
 
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.

@@ -36,8 +36,10 @@ hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
-               onedimonevar.nc multidimvar.nc
+CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
+               onedimonevar.nc multidimvar.nc SD_externals
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am
                

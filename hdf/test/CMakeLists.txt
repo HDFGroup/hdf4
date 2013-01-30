@@ -169,6 +169,7 @@ ADD_TEST (
         tvset.hdf
         tvsetext.hdf
         tx.hdf
+        Tables_External_File
 )
 IF (NOT "${last_test}" STREQUAL "")
   SET_TESTS_PROPERTIES (testhdf-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})

@@ -60,4 +60,4 @@ endif
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h This*
+DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h hdf4_netcdf.h This*

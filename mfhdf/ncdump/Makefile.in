@@ -296,7 +296,10 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog test0.nc nctest0.cdl
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
@@ -313,10 +316,7 @@ man1_MANS = ncdump.1
 ncdump_SOURCES = dumplib.c ncdump.c vardata.c
 ncdump_LDADD = $(LIBMFHDF) $(LIBHDF)
 ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
-
-#############################################################################
-#############################################################################
-DISTCLEANFILES = test0.nc
+DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,

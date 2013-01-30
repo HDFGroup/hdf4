@@ -32,6 +32,8 @@ ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=test0.nc
+CHECK_CLEANFILES += test0.nc nctest0.cdl
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am

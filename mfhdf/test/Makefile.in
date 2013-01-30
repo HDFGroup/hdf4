@@ -275,7 +275,12 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog *.new *.hdf *.cdf *.cdl netcdf.h \
+	This* onedimmultivars.nc onedimonevar.nc multidimvar.nc \
+	SD_externals
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc	\
 	 -I$(top_builddir)/mfhdf/libsrc
@@ -298,12 +303,7 @@ hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 
 hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
-
-#############################################################################
-#############################################################################
-DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
-               onedimonevar.nc multidimvar.nc
-
+DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,

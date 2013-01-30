@@ -273,7 +273,12 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog
+
+#############################################################################
+#############################################################################
+CHECK_CLEANFILES = *.chkexe *.chklog hdifftst1.hdf hdifftst2.hdf \
+	hdifftst3.hdf hdifftst4.hdf hdifftst5.hdf hdifftst6.hdf \
+	hdifftst7.hdf
 INCLUDES = -I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
@@ -296,6 +301,7 @@ check_SCRIPTS = testhdiff.sh
 hdifftst_SOURCES = hdifftst.c
 hdifftst_LDADD = $(LIBMFHDF) $(LIBHDF)
 hdifftst_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+DISTCLEANFILES = 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
@@ -591,6 +597,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

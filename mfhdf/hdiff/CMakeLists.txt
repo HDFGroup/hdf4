@@ -46,21 +46,42 @@ TARGET_NAMING (hdiff ${LIB_TYPE})
 ##############################################################################
 
 IF (BUILD_TESTING)
-  #-- Adding test for hdifftst
-  SET (hdifftst_SRCS
-      ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdifftst.c
-  )
+  # --------------------------------------------------------------------
+  # This executable is used to generate test files for the hdiff tests.
+  # It should only be run during development when new test files are needed
+  # --------------------------------------------------------------------
+  IF (HDF4_BUILD_GENERATORS AND NOT BUILD_SHARED_LIBS)
+    SET (hdifftst_SRCS
+        ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdifftst.c
+    )
   
-  ADD_EXECUTABLE (hdifftst ${hdifftst_SRCS})
-  IF (HDF4_BUILD_XDR_LIB)
-    TARGET_LINK_LIBRARIES (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
-    TARGET_LINK_LIBRARIES (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (hdifftst ${LIB_TYPE})
+    ADD_EXECUTABLE (hdifftst ${hdifftst_SRCS})
+    IF (HDF4_BUILD_XDR_LIB)
+      TARGET_LINK_LIBRARIES (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
+    ELSE (HDF4_BUILD_XDR_LIB)
+      TARGET_LINK_LIBRARIES (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+    ENDIF (HDF4_BUILD_XDR_LIB)
+    TARGET_NAMING (hdifftst ${LIB_TYPE})
 
-  ADD_TEST (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
-  SET (last_test "hdifftst")
+    # Remove any output file left over from previous test run
+    ADD_TEST (
+        NAME HDIFF-GEN-clearall-objects
+        COMMAND    ${CMAKE_COMMAND}
+            -E remove 
+            hdifftst1.hdf
+            hdifftst2.hdf
+            hdifftst3.hdf
+            hdifftst4.hdf
+            hdifftst5.hdf
+            hdifftst6.hdf
+            hdifftst7.hdf
+    )
+    SET (last_test "HDIFF-GEN-clearall-objects")
+    
+    ADD_TEST (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
+    SET_TESTS_PROPERTIES (hdifftst PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    SET (last_test "hdifftst")
+  ENDIF (HDF4_BUILD_GENERATORS AND NOT BUILD_SHARED_LIBS)
 
   MACRO (ADD_H4_TEST resultfile resultcode)
     IF (HDF4_ENABLE_USING_MEMCHECKER)

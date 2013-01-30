@@ -50,7 +50,9 @@ set_attr: $(srcdir)/SD_set_attr.c
 get_attr: $(srcdir)/SD_get_attr.c
 chunking_example: $(srcdir)/SD_chunking_example.c
 
-DISTCLEANFILES = *.chklog *.chkexe ExternalSDS .deps
+CHECK_CLEANFILES += ExternalSDS
+
+DISTCLEANFILES = *.chklog *.chkexe .deps
 
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am
