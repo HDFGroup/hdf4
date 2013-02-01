@@ -196,7 +196,7 @@ Known problems
 
 o  For Mac OS X 10.8 Mountain Lion, the test suites failures for Mac OS X 10.7
    happen too.  We applied the same fix for now and hope to fix them in future
-   relase.  (HDFFR-1358) AKC - 2013/01/19
+   release.  (HDFFR-1358) AKC - 2013/01/19
 
 o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounters 2 errors,
    when optimization is used, whether with the Apple GCC compiler or with the
