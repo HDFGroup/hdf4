@@ -1,5 +1,5 @@
-HDF version 4.2.9-pre1 currently under development
-===================================================
+HDF version 4.2.9-pre1 released on 2013-02-01
+=============================================
 
 INTRODUCTION
 
@@ -99,12 +99,12 @@ Platforms tested
 
 This version has been tested in the following platforms:
 
-   Linux 2.6.32-279.2.1         gcc (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
-   .el6.ppc64 #1                GNU Fortran (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
-   SMP ppc64 GNU/Linux          IBM XL Fortran for Linux, V13.1 (64-bit mode)
+   Linux 2.6.32-279.19.1         gcc (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
+   .el6.ppc64 #1                 GNU Fortran (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
+   SMP ppc64 GNU/Linux           IBM XL Fortran for Linux, V13.1 (64-bit mode)
    (ostrich)
 
-   Linux 2.6.18-194.3.1.el5 #1   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+   Linux 2.6.18-308.13.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
       SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
    (jam)                             (Red Hat 4.1.2-52)
                                  pgcc and pgf90 11.9-0 32-bit target 
@@ -112,7 +112,7 @@ This version has been tested in the following platforms:
                                  Intel(R) C Compiler, Version 12.1.0 20110811
                                  Intel(R) Fortran Compiler, Version 12.1.0
 
-   Linux 2.6.18-274.17.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-51)
+   Linux 2.6.18-308.24.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-51)
       SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
    (koala)                           (Red Hat 4.1.2-51)
                                  icc (ICC) 12.1.0 20110811
