@@ -68,6 +68,9 @@ Support for new platforms and compilers
    - Ported to Mac OSX 10.8 (Mountain Lion) with Clang as the default C
      compiler. (AKC 2013/1/19)
 
+   - Ported to Mac OSX 10.8 (Mountain Lion) with Intel compilers.
+               (EIP 2013/02/05)
+
 Bugs fixed since HDF 4.2.8
 =========================
    Configuration
@@ -125,11 +128,9 @@ This version has been tested in the following platforms:
                                  Sun C 5.11 SunOS_sparc 2010/08/13
                                  Sun Fortran 95 8.5 SunOS_sparc 2010/08/13
 
-   Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
-      #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073 20100806
-      SGI Altix UV               Intel(R) Fortran Compiler Version 11.1.073
-   (ember)                       gcc (SUSE Linux) 4.3.4 [gcc-4_3-branch revision 152973
-                                 GNU Fortran (SUSE Linux) 4.3.4 [gcc-4_3-branch revision 152973]
+   SunOS 5.11 32- and 64-bit     Sun C 5.12 SunOS_sparc 2011/11/16 
+   (emu)                              (see "Known problem" section)
+                                 Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
 
    Windows 7                     Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  Visual Studio 2010 w/ Intel Fortran 12 (cmake)
@@ -139,26 +140,24 @@ This version has been tested in the following platforms:
                                  Visual Studio 2010 w/ Intel Fortran 12 (cmake)
                                  Cygwin(CYGWIN_NT-6.1 1.7.15(0.260/5/3) gcc(4.5.3) compiler and gfortran)
                                  
-   MAC OS X Intel 10.6.8         Darwin 10.8.0
-   (32 bit)                      i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-   (tejeda)                      GNU Fortran (GCC) 4.6.1
-                                 icc (ICC) 12.1.0 20110811
-                                 ifort (IFORT) 12.1.0 20110811
 
-   MAC OS X Intel 10.6.8         Darwin 10.8.0
-   (64 bit)                      icc (ICC) 12.1.0 20110811 
-   (fred)                        ifort (IFORT) 12.1.0 20110811 
-                                 i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-                                 GNU Fortran (GCC) 4.6.2
+   MAC OS X Intel 10.6.8         icc (ICC) 12.1 Build 20120928
+   (64-bit)                      ifort (IFORT) 12.1 Build 20120928
+   Darwin 10.8.0                 i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
+   (fred)                        GNU Fortran (GCC) 4.6.2
+                                 Apple clang version 1.7 (tags/Apple/clang-77)
+                                 (based on LLVM 2.9svn)
                              
-   MAC OS X Intel 10.7.4         Darwin 11.4.0
-   (64 bit)                      i686-apple-darwin11-llvm-gcc-4.2.1 (GCC) 4.2.1
-   (hdf-duck)                    gcc (GCC) 4.6.2
-                                 GNU Fortran (GCC) 4.6.2
+   MAC OS X Intel 10.7.5         i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1
+   (64 bit)                      GNU Fortran (GCC) 4.6.2 
+   Darwin 11.4.2                 icc and ifort Version 13.0 Build 20121010              
+   (duck)                        Apple clang version 3.0
+                                 (tags/Apple/clang-211.12) (based on LLVM 3.0svn)
 
-   Mac OS X 10.8.1               clang Apple clang version 4.0 from Xcode 4.5.1
-   Darwin 12.2.1                 gcc i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 from Xcode 4.5.1
-   (owl)                         gfortran GNU Fortran (GCC) 4.6.2
+   Mac OS X 10.8.2               Apple LLVM version 4.2 (clang-425.0.24) 
+   Darwin 12.2.0                 gcc i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 
+   (wren)                        gfortran GNU Fortran (GCC) 4.6.2
+                                 icc and ifort Version 13.0.1.119 Build 20121010
 
     Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
                                   gcc (Debian 4.4.5-8) 4.4.5
@@ -195,17 +194,14 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  On SunOS 5.11 -xc99 flag has to be used with the cc compiler to avoid
+   compilation errors. Future releases will automatically detect the system and
+   add the flag. (HDFFR-1361) EIP - 2013/02/05
 
-o  For Mac OS X 10.8 Mountain Lion, the test suites failures for Mac OS X 10.7
-   happen too.  We applied the same fix for now and hope to fix them in future
-   release.  (HDFFR-1358) AKC - 2013/01/19
-
-o  For Mac OS X 10.7 Lion, the test suite on the mfhdf side encounters 2 errors,
-   when optimization is used, whether with the Apple GCC compiler or with the
-   GNU GCC compiler.  CFLAGS must be set to use no optimization (-O0 or -g) to
-   avoid these failures.  config/apple-darwin11.4.0 is added to direct configure
-   to use -O0 for CFLAGS for Mac OS X 10.7 Lion. We hope to fix the bug in the
-   next release.  (HDFFR-1327 and HDFFR-1328) AKC - 2012/07/03
+o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
+   GCC, Intel and Clang compilers. Currently this situation is detected and
+   -O0 level optimization is used. We will work on the issue for the next
+   release. (HDFFR-1358,1327,1358) EIP - 2013/02/05
 
 o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization 
    level. 
