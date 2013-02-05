@@ -89,7 +89,7 @@ Bugs fixed since HDF 4.2.8
      provide details about this issue. (BMR 2012/12/25)
 
 
-Documentation
+Documentation:q
 ==============
    - [None]
 
@@ -122,6 +122,8 @@ This version has been tested in the following platforms:
 
    SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 2010/08/11 
    (linew)                       Sun Fortran 95 8.3 SunOS_sparc Patch 127000-13 2010/01/26
+                                 Sun C 5.11 SunOS_sparc 2010/08/13
+                                 Sun Fortran 95 8.5 SunOS_sparc 2010/08/13
 
    Xeon Linux 2.6.32.24-0.2.1.2230.2.PTF-default
       #1 SMP x86_64              Intel(R) C Compiler Version 11.1.073 20100806
