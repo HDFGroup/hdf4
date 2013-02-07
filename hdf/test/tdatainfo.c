@@ -1049,11 +1049,11 @@ test_dfr8_24()
 
     /* Initialize the 8-bit image array */
     static uint8 raster_data[WIDTH][LENGTH] =
-	{ 1, 2, 3, 4, 5,
-	  5, 4, 3, 2, 1,
-	  1, 2, 3, 4, 5,
-	  5, 4, 3, 2, 1,
-	  6, 4, 2, 0, 2 };
+	{{1, 2, 3, 4, 5},
+	 {5, 4, 3, 2, 1},
+	 {1, 2, 3, 4, 5},
+	 {5, 4, 3, 2, 1},
+	 {6, 4, 2, 0, 2}};
 
    /* Write the 8-bit raster image to file */
    status = DFR8putimage(IMAGE_DF_FILE, raster_data, WIDTH, LENGTH, COMP_RLE);
