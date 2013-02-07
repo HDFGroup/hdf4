@@ -1,4 +1,4 @@
-HDF version 4.2.9 currently under development
+HDF version 4.2.9 released on 2013-02-07
 =============================================
 
 INTRODUCTION
@@ -7,7 +7,11 @@ This document describes the differences between HDF 4.2.8 and HDF 4.2.9.
 It is written for people who are familiar with previous releases of HDF 
 and wish to migrate to HDF 4.2.9.
 
-The HDF 4.2.9 documentation can be found on the The HDF Group's FTP server:
+The HDF 4.2.9 documentation can be found on the The HDF Group's website
+at:
+    http://www.hdfgroup.org/doc.html
+
+Previous versions of the documentation are available from the FTP server:
 
     ftp://ftp.hdfgroup.org/HDF/Documentation/
 
