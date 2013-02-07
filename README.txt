@@ -4,7 +4,7 @@ HDF version 4.2.9 released on 2013-02-07
 Obtaining the latest version of HDF4
 ------------------------------------
  The most recent version of the distribution can be obtained from
- the THG FTP site:
+ the The HDF Group's FTP site:
 
      ftp://ftp.hdfgroup.org/HDF/HDF_Current/
 
