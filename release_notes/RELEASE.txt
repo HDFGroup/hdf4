@@ -1,4 +1,4 @@
-HDF version 4.2.9-pre1 released on 2013-02-01
+HDF version 4.2.9-pre1 released on 2013-02-06
 =============================================
 
 INTRODUCTION
@@ -107,7 +107,7 @@ This version has been tested in the following platforms:
    SMP ppc64 GNU/Linux           IBM XL Fortran for Linux, V13.1 (64-bit mode)
    (ostrich)
 
-   Linux 2.6.18-308.13.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-50)
+   Linux 2.6.18-308.13.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-52)
       SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
    (jam)                             (Red Hat 4.1.2-52)
                                  pgcc and pgf90 11.9-0 32-bit target 
@@ -115,9 +115,9 @@ This version has been tested in the following platforms:
                                  Intel(R) C Compiler, Version 12.1.0 20110811
                                  Intel(R) Fortran Compiler, Version 12.1.0
 
-   Linux 2.6.18-308.24.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-51)
+   Linux 2.6.18-308.24.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-52)
       SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
-   (koala)                           (Red Hat 4.1.2-51)
+   (koala)                           (Red Hat 4.1.2-52)
                                  icc (ICC) 12.1.0 20110811
                                  ifort (IFORT) 12.1.0 20110811
                                  pgcc and pgf90 11.9-0 64-bit target 
@@ -144,12 +144,12 @@ This version has been tested in the following platforms:
    MAC OS X Intel 10.6.8         icc (ICC) 12.1 Build 20120928
    (64-bit)                      ifort (IFORT) 12.1 Build 20120928
    Darwin 10.8.0                 i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-   (fred)                        GNU Fortran (GCC) 4.6.2
+   (fred)                        GNU Fortran (GCC) 4.6.2 20111019
                                  Apple clang version 1.7 (tags/Apple/clang-77)
                                  (based on LLVM 2.9svn)
                              
    MAC OS X Intel 10.7.5         i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1
-   (64 bit)                      GNU Fortran (GCC) 4.6.2 
+   (64 bit)                      GNU Fortran (GCC) 4.6.2 20111019
    Darwin 11.4.2                 icc and ifort Version 13.0 Build 20121010              
    (duck)                        Apple clang version 3.0
                                  (tags/Apple/clang-211.12) (based on LLVM 3.0svn)
