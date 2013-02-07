@@ -1,13 +1,13 @@
-HDF version 4.2.9-pre1 released on 2013-02-06
+HDF version 4.2.9 currently under development
 =============================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.8 and HDF 4.2.9-pre1.
+This document describes the differences between HDF 4.2.8 and HDF 4.2.9.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.9-pre1.
+and wish to migrate to HDF 4.2.9.
 
-The HDF 4.2.9-pre1 documentation can be found on the The HDF Group's FTP server:
+The HDF 4.2.9 documentation can be found on the The HDF Group's FTP server:
 
     ftp://ftp.hdfgroup.org/HDF/Documentation/
 
@@ -39,10 +39,6 @@ CONTENTS
 
 New features and changes
 ========================
-   Source distribution
-   ===================
-   - [None.  PPM - YYYY/MM/DD]
-
    Configuration
    ============= 
    - The macro H4_NO_DEPRECATED_SYMBOLS was added to handle deprecated
@@ -50,18 +46,6 @@ New features and changes
      should be configured with option HDF4_ENABLE_DEPRECATED_SYMBOLS.
      (ADB, BMR 2013/1/25)
      
-   Library
-   ========= 
-   - [None]
-
-   Test
-   ====
-   - [None]
-
-   Utilities
-   ========= 
-   - [None]
-
 
 Support for new platforms and compilers
 =======================================
@@ -92,9 +76,10 @@ Bugs fixed since HDF 4.2.8
      provide details about this issue. (BMR 2012/12/25)
 
 
-Documentation:q
-==============
-   - [None]
+Documentation
+=============
+   - Reference Manual and User's Guide are updated.
+   - An updated version of the Specification and Developer's Guide
 
 
 Platforms tested
@@ -194,16 +179,16 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
-o  On SunOS 5.11 -xc99 flag has to be used with the cc compiler to avoid
-   compilation errors. Future releases will automatically detect the system and
+o  On SunOS 5.11, the -xc99 flag has to be used with the cc compiler to avoid
+   compilation errors.  Future releases will automatically detect the system and
    add the flag. (HDFFR-1361) EIP - 2013/02/05
 
 o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
-   GCC, Intel and Clang compilers. Currently this situation is detected and
-   -O0 level optimization is used. We will work on the issue for the next
+   GCC, Intel and Clang compilers.  Currently, this situation is detected and
+   -O0 level optimization is used.  We will work on the issue for the next
    release. (HDFFR-1358,1327,1358) EIP - 2013/02/05
 
-o  On IBM PowerPC 64 hdftest fails when gcc 4.4.6 is used with -O3 optimization 
+o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization 
    level. 
 
 o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
@@ -214,7 +199,7 @@ o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
    fail, but newer xlc versions (e.g., V9.0) pass.  AKC - 2010/02/17
 
 o  When building on Linux/UNIX platforms, the szip shared library files must
-   be in the system library path. This can be done by adding a link to
+   be in the system library path.  This can be done by adding a link to
    the libsz.* files in the /usr/lib folder or by adding the library
    location to the LD_LIBRARY_PATH environment variable.
       Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
