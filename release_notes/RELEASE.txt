@@ -27,10 +27,7 @@ If you have any questions or comments, please see the HDF Support page:
 CONTENTS
 
 - New features and changes
-  -- Source distribution
   -- Configuration
-  -- Library
-  -- Utilities
 - Support for new platforms and compilers
 - Bugs fixed since HDF 4.2.8
   -- Configuration
@@ -47,7 +44,7 @@ New features and changes
    ============= 
    - The macro H4_NO_DEPRECATED_SYMBOLS was added to handle deprecated
      functions/features.  To use deprecated functions/features, the library
-     should be configured with option HDF4_ENABLE_DEPRECATED_SYMBOLS.
+     must be configured with option HDF4_ENABLE_DEPRECATED_SYMBOLS.
      (ADB, BMR 2013/1/25)
      
 
@@ -69,7 +66,9 @@ Bugs fixed since HDF 4.2.8
 
    Library
    ========= 
-   - SDgetcompress is now deprecated and not available by default. (BMR 2012/1/25)
+   - SDgetcompress is now deprecated and not available by default.  Its
+     availability can be activated using option HDF4_ENABLE_DEPRECATED_SYMBOLS.
+     (BMR 2012/1/25)
    - Some memory leaks were fixed. (BMR 2012/10/01)
 
    Utilities
@@ -82,8 +81,8 @@ Bugs fixed since HDF 4.2.8
 
 Documentation
 =============
-   - Reference Manual and User's Guide are updated.
-   - An updated version of the Specification and Developer's Guide
+   - The Reference Manual and User's Guide have minor updates.
+   - The Specification and Developer's Guide is extensively updated.
 
 
 Platforms tested
@@ -123,12 +122,13 @@ This version has been tested in the following platforms:
 
    Windows 7                     Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  Visual Studio 2010 w/ Intel Fortran 12 (cmake)
-                                 Cygwin(CYGWIN_NT-6.1 1.7.15(0.260/5/3) gcc(4.5.3) compiler and gfortran)
+                                 Cygwin(CYGWIN_NT-6.1 1.7.15(0.260/5/3) gcc(4.5.3)
+                                      compiler and gfortran)
 
    Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
                                  Visual Studio 2010 w/ Intel Fortran 12 (cmake)
-                                 Cygwin(CYGWIN_NT-6.1 1.7.15(0.260/5/3) gcc(4.5.3) compiler and gfortran)
-                                 
+                                 Cygwin(CYGWIN_NT-6.1 1.7.15(0.260/5/3) gcc(4.5.3)
+                                      compiler and gfortran)
 
    MAC OS X Intel 10.6.8         icc (ICC) 12.1 Build 20120928
    (64-bit)                      ifort (IFORT) 12.1 Build 20120928
@@ -148,37 +148,37 @@ This version has been tested in the following platforms:
    (wren)                        gfortran GNU Fortran (GCC) 4.6.2
                                  icc and ifort Version 13.0.1.119 Build 20121010
 
-    Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
-                                  gcc (Debian 4.4.5-8) 4.4.5
-                                  GNU Fortran (Debian 4.4.5-8) 4.4.5
+   Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
+                                 gcc (Debian 4.4.5-8) 4.4.5
+                                 GNU Fortran (Debian 4.4.5-8) 4.4.5
 
-    Debian6.0.3 2.6.32-5-amd64 #1 SMP x86_64 GNU/Linux
-                                  gcc (Debian 4.4.5-8) 4.4.5
-                                  GNU Fortran (Debian 4.4.5-8) 4.4.5
+   Debian6.0.3 2.6.32-5-amd64 #1 SMP x86_64 GNU/Linux
+                                 gcc (Debian 4.4.5-8) 4.4.5
+                                 GNU Fortran (Debian 4.4.5-8) 4.4.5
 
-    Fedora17 3.5.2-1.fc17.i6866 #1 SMP i686 i686 i386 GNU/Linux
-                                  gcc (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
-                                  GNU Fortran (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
+   Fedora17 3.5.2-1.fc17.i6866 #1 SMP i686 i686 i386 GNU/Linux
+                                 gcc (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
+                                 GNU Fortran (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
 
-    Fedora17 3.5.2-1.fc17.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
-                                  gcc (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
-                                  GNU Fortran (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
+   Fedora17 3.5.2-1.fc17.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
+                                 GNU Fortran (GCC) 4.7.0 20120507 (Red Hat 4.7.0-5)
 
-    SUSE 12.2 3.4.6-2.10-desktop #1 SMP PREEMPT i686 i686 i386 GNU/Linux
-                                  gcc (SUSE Linux) 4.7.1
-                                  GNU Fortran (SUSE Linux) 4.7.1
+   SUSE 12.2 3.4.6-2.10-desktop #1 SMP PREEMPT i686 i686 i386 GNU/Linux
+                                 gcc (SUSE Linux) 4.7.1
+                                 GNU Fortran (SUSE Linux) 4.7.1
 
-    SUSE 12.2 3.4.6-2.10-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
-                                  gcc (SUSE Linux) 4.7.1
-                                  GNU Fortran (SUSE Linux) 4.7.1 
+   SUSE 12.2 3.4.6-2.10-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (SUSE Linux) 4.7.1
+                                 GNU Fortran (SUSE Linux) 4.7.1 
 
-    Ubuntu 12.04 3.2.0-29-generic #46-Ubuntu SMP i686 GNU/Linux
-                                  gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
-                                  GNU Fortran (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+   Ubuntu 12.04 3.2.0-29-generic #46-Ubuntu SMP i686 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+                                 GNU Fortran (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
 
-    Ubuntu 12.04 3.2.0-29-generic #46-Ubuntu SMP x86_64 GNU/Linux
-                                  gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
-                                  GNU Fortran (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+   Ubuntu 12.04 3.2.0-29-generic #46-Ubuntu SMP x86_64 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+                                 GNU Fortran (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
 
 
 Known problems

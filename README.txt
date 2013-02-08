@@ -16,17 +16,16 @@ Source Distribution Layout
 
    bin    -- Scripts for maintenance.
 
-   config -- Configuration files to be used by conifgure script.
+   config -- Configuration files to be used by configure script.
 
    hdf    -- The source code for the HDF 'base library', the multi-file 
              annotation interface, the multi-file raster image interface, 
-             HDF command line utilities (hdp, the hdf dumper is in mfhdf/), 
-             and a test suite. 
+             HDF command line utilities, and a test suite. 
              Please see the README in each directory for further 
              information on each package. 
 
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
-             the HDF dumper utility (hdp).
+             additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
 
    man    -- An incomplete set of man page(s) for HDF.
 
@@ -67,7 +66,7 @@ Configuring/Testing/Installing
 
 DOCUMENTATION/FAQ/HELP
 ----------------------
- The HDF4 documentation can be found on the THG FTP server and on 
+ The HDF documentation can be found on the THG FTP server and on 
  the THG website:
 
       http://hdfgroup.org/doc.html
