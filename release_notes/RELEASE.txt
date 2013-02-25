@@ -1,11 +1,11 @@
-HDF version 4.2.9 released on 2013-02-07
+HDF version 4.2.9-post0 currently under development
 =============================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.8 and HDF 4.2.9.
+This document describes the differences between HDF 4.2.8 and HDF 4.2.9-post0.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.9.
+and wish to migrate to HDF 4.2.9-post0.
 
 The HDF 4.2.9 documentation can be found on the The HDF Group's website
 at:
@@ -42,47 +42,32 @@ New features and changes
 ========================
    Configuration
    ============= 
-   - The macro H4_NO_DEPRECATED_SYMBOLS was added to handle deprecated
-     functions/features.  To use deprecated functions/features, the library
-     must be configured with option HDF4_ENABLE_DEPRECATED_SYMBOLS.
-     (ADB, BMR 2013/1/25)
+   - None
      
 
 Support for new platforms and compilers
 =======================================
-   - Ported to Mac OSX 10.8 (Mountain Lion) with Clang as the default C
-     compiler. (AKC 2013/1/19)
+   - None
 
-   - Ported to Mac OSX 10.8 (Mountain Lion) with Intel compilers.
-               (EIP 2013/02/05)
 
 Bugs fixed since HDF 4.2.8
 =========================
    Configuration
    =============
-   - Cygwin >= 1.7.7; The SunRPC of the glibc has been replaced by a TI-RPC 
-     (Transport Independent RPC) library to support IPv6. Configure has been 
-     updated to look for the tirpc library instead of rpc. (ADB 2012/11/09)
+   None
 
    Library
    ========= 
-   - SDgetcompress is now deprecated and not available by default.  Its
-     availability can be activated using option HDF4_ENABLE_DEPRECATED_SYMBOLS.
-     (BMR 2012/1/25)
-   - Some memory leaks were fixed. (BMR 2012/10/01)
+   - None
 
    Utilities
    ========= 
-   - Vnattrs/Vattrinfo/Vgetattr are replaced with Vnattrs2/Vattrinfo2/Vgetattr2
-     in various tools to ensure attributes that are not created by Vsetattr
-     can still be detected and accessed.  The Reference Manual and User's Guide
-     provide details about this issue. (BMR 2012/12/25)
+   - None
 
 
 Documentation
 =============
-   - The Reference Manual and User's Guide have minor updates.
-   - The Specification and Developer's Guide is extensively updated.
+   - None
 
 
 Platforms tested

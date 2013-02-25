@@ -1,4 +1,4 @@
-HDF version 4.2.9 released on 2013-02-07
+HDF version 4.2.9-post0 currently under development
 ===================================================
 
 Obtaining the latest version of HDF4
