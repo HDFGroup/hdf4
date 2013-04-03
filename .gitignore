@@ -3,6 +3,7 @@
 /atbuild
 /autom4te.cache
 /build
+/buildat
 /buildstatic
 /cmake*.sh
 /config*.sh

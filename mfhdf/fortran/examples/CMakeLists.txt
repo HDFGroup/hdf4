@@ -59,6 +59,8 @@ IF (BUILD_TESTING)
           SDSUNLIMITED.hdf
           SLABS.hdf
   )
+  SET_TESTS_PROPERTIES (MFHDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  SET (last_test "MFHDF_FORTRAN_EXAMPLES-clearall-objects")
 ENDIF (BUILD_TESTING)
 
 FOREACH (example ${examples})
@@ -78,6 +80,7 @@ FOREACH (example ${examples})
     ELSE (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (f_exmftest_${example} PROPERTIES LABELS ${PROJECT_NAME})
     ENDIF (NOT "${last_test}" STREQUAL "")
+    SET (last_test "f_exmftest_${example}")
   ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})
 

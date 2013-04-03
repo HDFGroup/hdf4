@@ -163,7 +163,7 @@ fi
 ## ======================================================================
 
 AC_ARG_ENABLE([netcdf],
-              [AC_HELP_STRING([--enable-netcdf],
+              [AS_HELP_STRING([--enable-netcdf],
                               [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
               [enableval="yes"])
 
@@ -190,7 +190,7 @@ AC_PROG_CPP
 AC_PROG_CXX
 
 AC_ARG_ENABLE([fortran],
-              [AC_HELP_STRING([--enable-fortran],
+              [AS_HELP_STRING([--enable-fortran],
                               [Build Fortran into library [default=yes]])],,
               [enableval="yes"])
 
@@ -271,7 +271,7 @@ LT_OUTPUT
 ##   on its result.
 AC_MSG_CHECKING([if we should install only statically linked executables])
 AC_ARG_ENABLE([static_exec],
-              [AC_HELP_STRING([--enable-static-exec],
+              [AS_HELP_STRING([--enable-static-exec],
                               [Install only statically linked executables
                                [default=no]])],
               [STATIC_EXEC=$enableval])
@@ -280,7 +280,7 @@ if test "X$STATIC_EXEC" = "Xyes"; then
   echo "yes"
   ## Issue a warning if -static flag is not supported.
   if test "X$lt_cv_prog_compiler_static_works" = "Xno"; then
-    echo "    warning: -static flag not supported on this system; executable won't statically link shared system libraries."
+      echo "    warning: -static flag not supported on this system; executable won't statically link shared system libraries."
   fi
   LT_STATIC_EXEC="-all-static"
 else
@@ -298,7 +298,7 @@ AC_SUBST([LT_STATIC_EXEC])
 ## Fake --with-xxx option to allow us to create a help message for the
 ## following --with-xxx options which can take either a =DIR or =INC,LIB
 ## specifier.
-#
+##
 AC_ARG_WITH([fnord],
   [
  For the following --with-xxx options, you can specify where the header
@@ -316,21 +316,27 @@ AC_ARG_WITH([fnord],
 ## command-line switch. The value is an include path and/or a library path.
 ## If the library path is specified then it must be preceded by a comma.
 AC_ARG_WITH([zlib],
-            [AC_HELP_STRING([--with-zlib=DIR],
+            [AS_HELP_STRING([--with-zlib=DIR],
                             [Use zlib library [default=yes]])],,
             [withval=yes])
 
 case "$withval" in
   yes)
     HAVE_ZLIB="yes"
-    AC_CHECK_HEADERS([zlib.h],, [unset HAVE_ZLIB])
-    AC_CHECK_LIB([z], [compress2],, [unset HAVE_ZLIB])
-
+    AC_CHECK_HEADERS([zlib.h], [HAVE_ZLIB_H="yes"], [unset HAVE_ZLIB])
+    if test "x$HAVE_ZLIB" = "xyes" -a "x$HAVE_ZLIB_H" = "xyes"; then
+      AC_CHECK_LIB([z], [compress2],, [unset HAVE_ZLIB])
+    fi
     if test -z "$HAVE_ZLIB"; then
-      AC_MSG_ERROR([couldn't find zlib library])
+      if test -n "$HDF5_CONFIG_ABORT"; then
+        AC_MSG_ERROR([couldn't find zlib library])
+      fi
+    else
+      AC_CHECK_FUNC([compress2], [HAVE_COMPRESS2="yes"])
     fi
     ;;
   no)
+    HAVE_ZLIB="no"
     AC_MSG_ERROR([zlib library required to build HDF4])
     ;;
   *)
@@ -361,16 +367,20 @@ case "$withval" in
       CPPFLAGS="$CPPFLAGS -I$zlib_inc"
     fi
 
-    AC_CHECK_HEADERS([zlib.h],, [unset HAVE_ZLIB])
+    AC_CHECK_HEADERS([zlib.h], [HAVE_ZLIB_H="yes"], [unset HAVE_ZLIB])
 
     if test -n "$zlib_lib"; then
       LDFLAGS="$LDFLAGS -L$zlib_lib"
     fi
 
-    AC_CHECK_LIB([z], [compress2],, [unset HAVE_ZLIB])
+    if test "x$HAVE_ZLIB" = "xyes" -a "x$HAVE_ZLIB_H" = "xyes"; then
+      AC_CHECK_LIB([z], [compress2],, [unset HAVE_ZLIB])
+    fi
 
     if test -z "$HAVE_ZLIB"; then
       AC_MSG_ERROR([couldn't find zlib library])
+    else
+      AC_CHECK_FUNC([compress2], [HAVE_COMPRESS2="yes"])
     fi
     ;;
 esac
@@ -378,21 +388,24 @@ esac
 ## ----------------------------------------------------------------------
 ## Is the JPEG library present?
 AC_ARG_WITH([jpeg],
-            [AC_HELP_STRING([--with-jpeg=DIR],
+            [AS_HELP_STRING([--with-jpeg=DIR],
                             [Use jpeg library [default=yes]])],,
             [withval=yes])
 
 case "$withval" in
   yes)
     HAVE_JPEG="yes"
-    AC_CHECK_HEADERS([jpeglib.h],, [unset HAVE_JPEG])
-    AC_CHECK_LIB([jpeg], [jpeg_start_decompress],, [unset HAVE_JPEG])
+    AC_CHECK_HEADERS([jpeglib.h], [HAVE_JPEG_H="yes"], [unset HAVE_JPEG])
+    if test "x$HAVE_JPEG" = "xyes" -a "x$HAVE_JPEG_H" = "xyes"; then
+      AC_CHECK_LIB([jpeg], [jpeg_start_decompress],, [unset HAVE_JPEG])
+    fi
 
     if test -z "$HAVE_JPEG"; then
       AC_MSG_ERROR([couldn't find jpeg library])
     fi
     ;;
   no)
+    HAVE_JPEG="no"
     AC_MSG_ERROR([jpeg library required to build HDF4])
     ;;
   *)
@@ -423,13 +436,15 @@ case "$withval" in
       CPPFLAGS="$CPPFLAGS -I$jpeg_inc"
     fi
 
-    AC_CHECK_HEADERS([jpeglib.h],, [unset HAVE_JPEG])
+    AC_CHECK_HEADERS([jpeglib.h], [HAVE_JPEG_H="yes"], [unset HAVE_JPEG])
 
     if test -n "$jpeg_lib"; then
       LDFLAGS="$LDFLAGS -L$jpeg_lib"
     fi
 
-    AC_CHECK_LIB([jpeg], [jpeg_start_decompress],, [unset HAVE_JPEG])
+    if test "x$HAVE_JPEG" = "xyes" -a "x$HAVE_JPEG_H" = "xyes"; then
+      AC_CHECK_LIB([jpeg], [jpeg_start_decompress],, [unset HAVE_JPEG])
+    fi
 
     if test -z "$HAVE_JPEG"; then
       AC_MSG_ERROR([couldn't find jpeg library])
@@ -441,21 +456,24 @@ esac
 ## Is the szip library present?
 AC_SUBST(USE_COMP_SZIP) USE_COMP_SZIP="no"
 AC_ARG_WITH([szlib],
-            [AC_HELP_STRING([--with-szlib=DIR],
+            [AS_HELP_STRING([--with-szlib=DIR],
                             [Use szlib library [default=no]])],,
             [withval=no])
 
 case "$withval" in
   yes)
     HAVE_SZIP="yes"
-    AC_CHECK_HEADERS([szlib.h],, [unset HAVE_SZIP])
-    AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
+    AC_CHECK_HEADERS([szlib.h], [HAVE_SZLIB_H="yes"], [unset HAVE_SZIP])
+    if test "x$HAVE_SZLIB" = "xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
+      AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
+    fi
 
     if test -z "$HAVE_SZIP"; then
       AC_MSG_ERROR([couldn't find szlib library])
     fi
     ;;
   no)
+    HAVE_SZIP="no"
     AC_MSG_CHECKING([for szlib])
     AC_MSG_RESULT([suppressed])
     SZIP_INFO="${SZIP_INFO}disabled"
@@ -494,7 +512,9 @@ case "$withval" in
       LDFLAGS="$LDFLAGS -L$szip_lib"
     fi
 
-    AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
+    if test "x$HAVE_SZIP" = "xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
+      AC_CHECK_LIB([sz], [SZ_BufftoBuffCompress],, [unset HAVE_SZIP])
+    fi
 
     if test -z "$HAVE_SZIP"; then
       AC_MSG_ERROR([couldn't find szlib library])
@@ -505,7 +525,7 @@ case "$withval" in
 esac
 
 ## Check to see if SZIP has encoder 
-if test "X$HAVE_SZIP" = "Xyes"; then
+if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
     ## SZLIB library is available. Check if it can encode.
     AC_MSG_CHECKING([for szlib encoder])
     
@@ -562,7 +582,7 @@ AC_SUBST([SZIP_INFO])
 AC_MSG_CHECKING([for xdr library support])
 
 AC_ARG_ENABLE([hdf4-xdr],
-              [AC_HELP_STRING([--enable-hdf4-xdr],
+              [AS_HELP_STRING([--enable-hdf4-xdr],
                               [Build xdr library from code in HDF4 source.
                                Not supported for 64 bit mode. [default="no"]])],
               [enableval="yes"],[enableval="no"])
@@ -694,7 +714,7 @@ AC_C_BIGENDIAN([], [CPPFLAGS="$CPPFLAGS -DSWAP"])
 ## in production mode.)
 AC_MSG_CHECKING([for build mode])
 AC_ARG_ENABLE([production],
-              [AC_HELP_STRING([--enable-production],
+              [AS_HELP_STRING([--enable-production],
                               [Determines how to run the compiler.])])
 
 case "X-$enable_production" in
@@ -934,6 +954,30 @@ fi
 ## if test -n "$fortran_vendor" && test -n "$fortran_version"; then
 ##   F77_VERSION="$F77_VERSION ($fortran_vendor-$fortran_version)"
 ## fi
+
+## ----------------------------------------------------------------------
+## Enable deprecated public API symbols
+##
+AC_SUBST([DEPRECATED_SYMBOLS])
+AC_MSG_CHECKING([if deprecated public symbols are available]);
+AC_ARG_ENABLE([deprecated-symbols],
+              [AS_HELP_STRING([--enable-deprecated-symbols],
+                     [Enable deprecated public API symbols [default=yes]])],
+             [DEPREC_SYMBOLS=$enableval],
+             [DEPREC_SYMBOLS=yes])
+
+case "X-$DEPREC_SYMBOLS" in
+  X-yes)
+    AC_MSG_RESULT([yes])
+    DEPRECATED_SYMBOLS=yes
+    ;;
+  X-no|*)
+    AC_MSG_RESULT([no])
+    DEPRECATED_SYMBOLS=no
+    AC_DEFINE([NO_DEPRECATED_SYMBOLS], [1],
+              [Define if deprecated public API symbols are disabled])
+    ;;
+esac
 
 AC_CONFIG_FILES([Makefile
                  libhdf4.settings
