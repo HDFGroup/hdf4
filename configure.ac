@@ -506,7 +506,7 @@ case "$withval" in
       CPPFLAGS="$CPPFLAGS -I$szip_inc"
     fi
 
-    AC_CHECK_HEADERS([szlib.h],, [unset HAVE_SZIP])
+    AC_CHECK_HEADERS([szlib.h], [HAVE_SZLIB_H="yes"], [unset HAVE_SZIP])
 
     if test -n "$szip_lib"; then
       LDFLAGS="$LDFLAGS -L$szip_lib"
