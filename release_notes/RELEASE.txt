@@ -42,7 +42,9 @@ New features and changes
 ========================
    Configuration
    ============= 
-   - None
+   - The obsolete windows folder and files were removed. CMake is recommended
+     to build HDF4 on Windows platforms.
+     (ADB 2013/4/12)
      
 
 Support for new platforms and compilers
