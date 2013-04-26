@@ -1181,8 +1181,8 @@
 ./release_notes/INSTALL
 ./release_notes/INSTALL_CYGWIN.txt
 ./release_notes/INSTALL_WINDOWS.txt
-./release_notes/USING_WINDOWS.txt
+./release_notes/USING_HDF4_WINDOWS.txt
 ./release_notes/bugs_fixed.txt
 ./release_notes/misc_docs.txt
-./release_notes/CMake.txt
-./release_notes/Using_CMake.txt
+./release_notes/INSTALL_CMake.txt
+./release_notes/USING_HDF4_CMake.txt

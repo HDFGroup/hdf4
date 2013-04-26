@@ -1,8 +1,0 @@
-     Instructions for Using HDF4 on Windows
-========================================================================
-
-The preferred method of using the HDF4 libraries uses the binaries built using CMake.
-See the file USING_CMake.txt for further guidance.
-                                     
-*************************************************************
-Please send email to help@hdfgroup.org for further assistance.
