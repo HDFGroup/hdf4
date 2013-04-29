@@ -1,8 +1,16 @@
-     Installation Instructions for HDF4 on Windows
-========================================================================
 
-The preferred method of using the HDF4 libraries uses the binaries built using CMake.
-See the file USING_CMake.txt for further guidance.
-                                       
-*************************************************************
-Please send email to help@hdfgroup.org for further assistance.
+***********************************************************************
+*            HDF4 Build and Install Instructions for Windows          *
+*                         (Full Version)                              *
+***********************************************************************
+
+We now recommend that users build, test and install HDF4 using CMake.
+
+Instructions for building and testing HDF4 using CMake can be found in the
+INSTALL_CMake.txt file found in this folder.
+
+For instructions of building and testing an application with HDF4, see 
+USING_HDF4_CMake.txt file found in this folder.
+
+Users who want to build and run an application with HDF4 in Visual Studio
+without using CMake should consult the USING_HDF4_VS.txt file.

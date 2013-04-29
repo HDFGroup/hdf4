@@ -842,8 +842,8 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   IF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
     SET (release_files
-        ${HDF4_SOURCE_DIR}/release_notes/CMake.txt
-        ${HDF4_SOURCE_DIR}/release_notes/Using_CMake.txt
+        ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CMake.txt
+        ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
         ${HDF4_SOURCE_DIR}/release_notes/INSTALL
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt

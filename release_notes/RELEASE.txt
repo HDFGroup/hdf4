@@ -49,7 +49,7 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-   - None
+    - Visual Studio 2012 w/ Intel Fortran 13 on Windows 7 and Windows 8
 
 
 Bugs fixed since HDF 4.2.8
