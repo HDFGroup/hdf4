@@ -367,5 +367,3 @@ mfhdf/xdr/test_xdr.sav svneol=native#unset
 mfhdf/xdr/xdr.def -text
 mfhdf/xdr/xdrtest.cyg -text
 mfhdf/xdr/xdrtest.out -text
-release_notes/INSTALL -text
-release_notes/INSTALL_CYGWIN.txt -text
