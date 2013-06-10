@@ -2,6 +2,7 @@
 /CMakeLists.txt -text
 /CTestConfig.cmake -text
 /Makefile.dist -text
+/UserMacros.cmake -text
 bin/h4vers -text
 bin/ltmain.sh -text
 bin/newer -text

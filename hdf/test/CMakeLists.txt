@@ -62,6 +62,7 @@ ENDIF (WIN32 AND NOT CYGWIN)
 #-- Adding test for testhdf
 ADD_EXECUTABLE (testhdf ${testhdf_SRCS})
 TARGET_NAMING (testhdf ${LIB_TYPE})
+TARGET_C_PROPERTIES (testhdf " " " ")
 TARGET_LINK_LIBRARIES (testhdf ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 ##############################################################################
@@ -246,6 +247,7 @@ SET (last_test "testhdf")
 IF (NOT WIN32)
   ADD_EXECUTABLE (buffer ${HDF4_HDF_TEST_SOURCE_DIR}/buffer.c)
   TARGET_NAMING (buffer ${LIB_TYPE})
+  TARGET_C_PROPERTIES (buffer " " " ")
   TARGET_LINK_LIBRARIES (buffer ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ADD_TEST (NAME buffer COMMAND $<TARGET_FILE:buffer>)
   IF (NOT "${last_test}" STREQUAL "")

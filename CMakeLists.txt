@@ -437,6 +437,11 @@ IF (H4_HAVE_PARALLEL)
   ENDIF (MPI_C_LINK_FLAGS)
 ENDIF (H4_HAVE_PARALLEL)
 
+#-----------------------------------------------------------------------------
+# Include user macros
+#-----------------------------------------------------------------------------
+INCLUDE (UserMacros.cmake)
+
 INCLUDE (ExternalProject)
 OPTION (HDF4_ALLOW_EXTERNAL_SUPPORT "Allow External Library Building" "NO")
 OPTION (JPEG_USE_EXTERNAL "Use External Library Building for JPEG" 0)
