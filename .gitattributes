@@ -24,6 +24,7 @@ config/cmake/HDFMacros.cmake -text
 config/cmake/HDFTests.c -text
 config/cmake/NSIS.InstallOptions.ini.in -text
 config/cmake/NSIS.template.in -text
+config/cmake/UserMacros/Windows_MT.cmake -text
 config/cmake/cacheinit.cmake -text
 config/cmake/h4config.h.in -text
 config/cmake/hdf4-config-version.cmake.in -text
