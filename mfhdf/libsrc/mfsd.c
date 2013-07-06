@@ -6221,6 +6221,8 @@ SDsetchunk(int32         sdsid,     /* IN: sds access id */
     /* initialize datset/chunk sizes using CHUNK defintion structure */
     chunk[0].chunk_size = 1;
     chunk[0].num_dims = ndims;
+
+/* Developer's note: should move unlim check to the beginning and clean up this for loop */
     for (i = 0; i < ndims; i++)
       {   /* get dimension length from shape arrays */
           /* check if dimension in unlimited since we don't 

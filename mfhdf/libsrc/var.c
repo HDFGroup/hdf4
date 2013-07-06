@@ -59,14 +59,15 @@ const int *dims ;
         ret->data_tag = DATA_TAG;  /* Assume normal data unless set   */
         ret->data_offset = 0;      /* Assume data starts at beginning */
         ret->block_size = -1;      /* start off with no block size set */
-        ret->numrecs = 0;
+        ret->numrecs = 0;	   /* Only used in unlimited dimension case */
         ret->aid = FAIL;
         ret->ndg_ref = 0;
+        ret->var_type = UNKNOWN;   /* Unknown whether this var is an SDS or a coord var */
         ret->HDFtype = hdf_map_type(type);
         ret->HDFsize = DFKNTsize(ret->HDFtype);
         ret->is_ragged = FALSE;
-        ret->created = FALSE;       /* This is set in SDcreate() if its a new SDS */
-        ret->set_length = FALSE;    /* This is set in SDwritedata() if the data needs its length set */
+        ret->created = FALSE;      /* This is set in SDcreate() if it's a new SDS */
+        ret->set_length = FALSE;   /* This is set in SDwritedata() if the data needs its length set */
 #endif
 
 	return(ret) ;

@@ -2079,6 +2079,7 @@ Void *values ;
            with "vp->numrecs" to fix bug 525, ie. writing two unlimited
            1D datasets without closing the file in between the two writes
            caused the second dataset to contain garbage. */
+	/* After fixing HDFFR-1385, need to reassess this issue. -BMR */
 	newrecs = (*start + *edges) - vp->numrecs ;
 	if(handle->xdrs->x_op != XDR_ENCODE && newrecs > 0)
       {
@@ -2132,7 +2133,8 @@ Void *values ;
 	if(newrecs > 0)
       {
 	/* Update var's numrecs first and then handle->numrecs if the first
-	   exceeds the latter (part of bugzilla 1378) - BMR, 12/30/2008 */
+	   exceeds the latter (part of bugzilla 1378, i.e., JIRA HDFFR-167)
+	   - BMR, 12/30/2008 */
 	  vp->numrecs += newrecs;
 	  handle->numrecs = MAX(vp->numrecs, handle->numrecs);
           if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
@@ -2368,7 +2370,9 @@ void *values ;
     /* Albert and I agree that this check below makes perfect sense, but it
      * causes the ncdiminq test to fail for unlimited length dimensions.
      * Perhaps someone with more time can look into this later.  -QAK
+     * Perhaps it is only true for netCDF files. -BMR (2013-06-24)
      */
+/* HDFFR-1385: the fix for this bug may fix this problem too.-BMR */
 	if (handle->numrecs < vp->numrecs)
 	    handle->numrecs = vp->numrecs;
 #endif /* NOTNOW */
