@@ -3,6 +3,7 @@
 /CTestConfig.cmake -text
 /Makefile.dist -text
 /UserMacros.cmake -text
+bin/cmakehdf4 -text
 bin/h4vers -text
 bin/ltmain.sh -text
 bin/newer -text

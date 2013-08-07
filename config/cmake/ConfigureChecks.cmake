@@ -230,11 +230,8 @@ SET (LINUX_LFS 0)
 SET (HDF_EXTRA_FLAGS)
 IF (NOT WINDOWS)
   # Linux Specific flags
-  IF (CYGWIN)
+#  Removed _POSIX_SOURCE due to OS X build errors
     SET (HDF_EXTRA_FLAGS -D_BSD_SOURCE)
-  ELSE (CYGWIN)
-    SET (HDF_EXTRA_FLAGS -D_POSIX_SOURCE -D_BSD_SOURCE)
-  ENDIF (CYGWIN)
   OPTION (HDF_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
   IF (HDF_ENABLE_LARGE_FILE)
     SET (msg "Performing TEST_LFS_WORKS")

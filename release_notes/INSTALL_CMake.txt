@@ -308,7 +308,8 @@ These five steps are described in detail below.
            configuration option:
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
                
-           The options to control the SVN URL (config/cmake/cacheinit.cmake file) are:STRING="http://svn.hdfgroup.uiuc.edu/jpeg/branches/jpeg8b"
+           The options to control the SVN URL (config/cmake/cacheinit.cmake file) are:
+               JPEG_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/jpeg/branches/jpeg8b"
                ZLIB_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/zlib/trunk"
                SZIP_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/szip/trunk"
            These should be changed to your location.
@@ -320,7 +321,8 @@ These five steps are described in detail below.
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ"
                
            The options to control the SVN URL (config/cmake/cacheinit.cmake 
-           file) are:STRING="jpeg_src.ext"
+           file) are:
+               JPEG_TGZ_NAME:STRING="jpeg_src.ext"
                ZLIB_TGZ_NAME:STRING="zlib_src.ext"
                SZIP_TGZ_NAME:STRING="szip_src.ext"
                TGZ_PATH:STRING="some_location"

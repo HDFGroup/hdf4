@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.6)
+cmake_minimum_required (VERSION 2.8.10)
 PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
@@ -253,13 +253,6 @@ SET (EXTERNAL_LIBRARYDLL_LIST "")
 INCLUDE (${HDF4_RESOURCES_DIR}/ConfigureChecks.cmake)
 
 #-----------------------------------------------------------------------------
-# Option to use legacy naming for windows libs/programs, default is legacy
-#-----------------------------------------------------------------------------
-IF (WIN32 AND NOT CYGWIN)
-  OPTION (HDF_LEGACY_NAMING "Use Legacy Names for Libraries and Programs" ON)
-ENDIF (WIN32 AND NOT CYGWIN)
-
-#-----------------------------------------------------------------------------
 # Option to Build Shared/Static libs, default is static
 #-----------------------------------------------------------------------------
 OPTION (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
@@ -328,6 +321,8 @@ ENDIF (WIN32)
 
 IF (MSVC)
   SET (CMAKE_MFC_FLAG 0)
+  SET (WIN_COMPILE_FLAGS "")
+  SET (WIN_LINK_FLAGS "")
 ENDIF (MSVC)
 
 SET (MAKE_SYSTEM)
@@ -443,14 +438,11 @@ ENDIF (H4_HAVE_PARALLEL)
 INCLUDE (UserMacros.cmake)
 
 INCLUDE (ExternalProject)
-OPTION (HDF4_ALLOW_EXTERNAL_SUPPORT "Allow External Library Building" "NO")
-OPTION (JPEG_USE_EXTERNAL "Use External Library Building for JPEG" 0)
-OPTION (ZLIB_USE_EXTERNAL "Use External Library Building for ZLIB" 0)
-OPTION (SZIP_USE_EXTERNAL "Use External Library Building for SZIP" 0)
+OPTION (HDF4_ALLOW_EXTERNAL_SUPPORT "Allow External Library Building (NO SVN TGZ)" "NO")
 IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
-  SET (JPEG_USE_EXTERNAL 1)
-  SET (ZLIB_USE_EXTERNAL 1)
-  SET (SZIP_USE_EXTERNAL 1)
+  OPTION (JPEG_USE_EXTERNAL "Use External Library Building for JPEG" 1)
+  OPTION (ZLIB_USE_EXTERNAL "Use External Library Building for ZLIB" 1)
+  OPTION (SZIP_USE_EXTERNAL "Use External Library Building for SZIP" 1)
   IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN")
     SET (JPEG_URL ${JPEG_SVN_URL})
     SET (ZLIB_URL ${ZLIB_SVN_URL})
@@ -462,6 +454,10 @@ IF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
     SET (JPEG_URL ${TGZ_PATH}/${JPEG_TGZ_NAME})
     SET (ZLIB_URL ${TGZ_PATH}/${ZLIB_TGZ_NAME})
     SET (SZIP_URL ${TGZ_PATH}/${SZIP_TGZ_NAME})
+  ELSE (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN")
+    SET (JPEG_USE_EXTERNAL 0)
+    SET (ZLIB_USE_EXTERNAL 0)
+    SET (SZIP_USE_EXTERNAL 0)
   ENDIF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN")
 ENDIF (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
 
@@ -841,32 +837,44 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
   INSTALL (
       FILES
           ${HDF4_SOURCE_DIR}/COPYING
-          ${HDF4_SOURCE_DIR}/README.txt
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
   IF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
     SET (release_files
-        ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CMake.txt
         ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_CMake.txt
-        ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
-        ${HDF4_SOURCE_DIR}/release_notes/INSTALL
         ${HDF4_SOURCE_DIR}/release_notes/RELEASE.txt
     )
     IF (WIN32 AND NOT CYGWIN)
       SET (release_files
           ${release_files}
-          ${HDF4_SOURCE_DIR}/release_notes/INSTALL_WINDOWS.txt
-      )
-    ELSE (WIN32 AND NOT CYGWIN)
-      SET (release_files
-          ${release_files}
-          ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CYGWIN.txt
+          ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
       )
     ENDIF (WIN32 AND NOT CYGWIN)
+    IF (HDF5_PACK_INSTALL_DOCS)
+      SET (release_files
+          ${release_files}
+          ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CMake.txt
+          ${HDF4_SOURCE_DIR}/release_notes/HISTORY.txt
+          ${HDF4_SOURCE_DIR}/release_notes/INSTALL
+      )
+      IF (WIN32)
+        IF (NOT CYGWIN)
+          SET (release_files
+              ${release_files}
+              ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
+          )
+        ELSE (NOT CYGWIN)
+          SET (release_files
+              ${release_files}
+              ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Cygwin.txt
+          )
+        ENDIF (NOT CYGWIN)
+      ENDIF (WIN32)
+    ENDIF (HDF5_PACK_INSTALL_DOCS)
     INSTALL (
         FILES ${release_files}
-        DESTINATION ${HDF4_INSTALL_DATA_DIR}/release_notes
+        DESTINATION ${HDF4_INSTALL_DATA_DIR}
         COMPONENT hdfdocuments
     )
   ENDIF (EXISTS "${HDF4_SOURCE_DIR}/release_notes" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/release_notes")
@@ -879,8 +887,7 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   SET (CPACK_PACKAGE_VENDOR "HDF_Group")
   SET (CPACK_PACKAGE_NAME "${HDF4_PACKAGE_NAME}")
   SET (CPACK_PACKAGE_INSTALL_DIRECTORY "${HDF4_PACKAGE_NAME}")
-  SET (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${HDF4_PACKAGE_NAME}-${HDF4_PACKAGE_VERSION}-${LIB_TYPE}")
-  SET (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
+   SET (CPACK_PACKAGE_VERSION "${HDF4_PACKAGE_VERSION}")
   SET (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   SET (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
   SET (CPACK_PACKAGE_VERSION_PATCH "")
@@ -890,10 +897,16 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   SET (CPACK_PACKAGE_RELOCATABLE TRUE)
 
   IF (WIN32)
+    SET (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${HDF4_PACKAGE_NAME}-${HDF4_PACKAGE_VERSION}-${LIB_TYPE}")
     SET (CPACK_MONOLITHIC_INSTALL ON)
     SET (CPACK_NSIS_CONTACT "${HDF4_PACKAGE_BUGREPORT}")
     SET (CPACK_NSIS_MODIFY_PATH ON)
     SET (CPACK_NSIS_PACKAGE_NAME "HDF4 ${HDF4_PACKAGE_VERSION}")
+  ELSEIF (APPLE)
+    SET (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
+    SET (CPACK_PACKAGE_DEFAULT_LOCATION "/opt/${CPACK_PACKAGE_NAME}")
+    SET (CPACK_PACKAGING_INSTALL_PREFIX "/")
+    SET (CPACK_GENERATOR "DragNDrop") 
   ELSE (WIN32)
     SET (CPACK_PACKAGING_INSTALL_PREFIX "/usr")
     SET (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)

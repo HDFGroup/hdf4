@@ -39,6 +39,7 @@
 ./m4/ltoptions.m4
 
 ./bin/chkmanifest
+./bin/cmakehdf4
 ./bin/compile
 ./bin/config.guess
 ./bin/config.sub
