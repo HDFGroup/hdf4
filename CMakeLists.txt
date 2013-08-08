@@ -912,13 +912,20 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     SET (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}")
     SET (CPACK_PACKAGE_ICON "${HDF4_RESOURCES_DIR}/hdf.gif")
     SET (CPACK_SET_DESTDIR TRUE) # Required when packaging, and set CMAKE_INSTALL_PREFIX to "/".
-    
+
 #    LIST (APPEND CPACK_GENERATOR "Bundle")
+    #-----------------------------------------------------------------------------
+    # Configure the Info.plist file for the install bundle
+    #-----------------------------------------------------------------------------
+    CONFIGURE_FILE (
+        ${CMAKE_ROOT}/Modules/CPack.Info.plist.in
+        ${HDF4_BINARY_DIR}/CMakeFiles/Info.plist @ONLY
+    )
     SET (CMAKE_BUNDLE_NAME "${HDF4_PACKAGE_STRING}")
     SET (CMAKE_BUNDLE_LOCATION "/")    # make sure CMAKE_INSTALL_PREFIX ends in /
     SET (CMAKE_INSTALL_PREFIX "/${CMAKE_BUNDLE_NAME}.framework/Versions/${CPACK_PACKAGE_VERSION}/${CPACK_PACKAGE_NAME}")
     SET (CPACK_BUNDLE_ICON "${HDF4_RESOURCES_DIR}/hdf.gif")
-#    CPACK_BUNDLE_PLIST - path to a file that will become the bundle plist.
+    SET (CPACK_BUNDLE_PLIST "${HDF4_BINARY_DIR}/CMakeFiles/Info.plist")
 #    SET (CPACK_BUNDLE_STARTUP_COMMAND "${HDF5_BINARY_DIR}/CMakeFiles/${HDF5_PACKAGE}${HDF_PACKAGE_EXT}-startup.sh")
   ELSE (WIN32)
     SET (CPACK_PACKAGING_INSTALL_PREFIX "/usr")
