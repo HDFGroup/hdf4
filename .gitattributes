@@ -28,6 +28,7 @@ config/cmake/NSIS.template.in -text
 config/cmake/UserMacros/Windows_MT.cmake -text
 config/cmake/cacheinit.cmake -text
 config/cmake/h4config.h.in -text
+config/cmake/hdf.gif -text svneol=unset#image/gif
 config/cmake/hdf4-config-version.cmake.in -text
 config/cmake/hdf4-config.cmake.build.in -text
 config/cmake/hdf4-config.cmake.install.in -text
