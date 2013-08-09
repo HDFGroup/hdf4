@@ -11,6 +11,7 @@ bin/release -text
 bin/timekeeper -text
 config/aix -text
 config/apple -text
+config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/CPack.cmake -text
 config/cmake/CTestCustom.cmake -text
 config/cmake/CheckTypeSize.cmake -text
