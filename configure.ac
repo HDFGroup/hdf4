@@ -625,7 +625,7 @@ if test "X$BUILD_XDR" != "Xyes"; then
   case "$host" in
     *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
       LIBS="$LIBS -lnsl"  ;;
-    i686-pc-cygwin*)
+    *-pc-cygwin*)
       LIBS="$LIBS -ltirpc"  ;;
     *) ;;
   esac
@@ -639,7 +639,7 @@ if test "X$BUILD_XDR" != "Xyes"; then
   ## but we need to make sure that it is present on the system. Do that here,
   ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
-    i686-pc-cygwin*)
+    *-pc-cygwin*)
       HAVE_RPC="yes"
       AC_CHECK_HEADER([rpc.h],[:], [unset HAVE_RPC])
       AC_CHECK_LIB([tirpc], [xdr_opaque],[:], [unset HAVE_RPC])
@@ -814,7 +814,7 @@ case "$host" in
   S370-fujitsu-sysv*)   BAR="fujivp"      ;;
   *-mac-*)              BAR="mac"         ;;
   *-apple*)             BAR="apple"       ;;
-  i686-pc-cygwin*)      BAR="linux"       ;;
+  *-pc-cygwin*)      BAR="linux"       ;;
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h

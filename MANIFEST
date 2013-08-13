@@ -80,6 +80,7 @@
 ./config/sv1-cray
 ./config/unicos10.0.X
 ./config/unicosmk2.0.6.X
+./config/x86_64-pc-cygwin
 
 ./hdf/Makefile.am
 ./hdf/Makefile.in
