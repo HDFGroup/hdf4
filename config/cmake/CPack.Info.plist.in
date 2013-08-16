@@ -31,7 +31,25 @@
 <false/>
 <key>IFPkgFormatVersion</key>
 <real>0.10000000149011612</real>
-<key>CFBundleIdentifier</key>
-<string>org.@CPACK_PACKAGE_VENDOR@.@CPACK_PACKAGE_NAME@@CPACK_MODULE_VERSION_SUFFIX@</string>
+    <key>CFBundleIdentifier</key>
+    <string>org.@CPACK_PACKAGE_VENDOR@.@CPACK_PACKAGE_NAME@@CPACK_MODULE_VERSION_SUFFIX@</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleExecutable</key>
+    <string>@CPACK_PACKAGE_FILE_NAME@</string>
+    <key>CFBundleName</key>
+    <string>@CPACK_BUNDLE_NAME@</string>
+    <key>CFBundlePackageType</key>
+    <string>FMWK</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@CPACK_SHORT_VERSION_STRING@</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleIdentifier</key>
+    <string>org.@CPACK_PACKAGE_VENDOR@.@CPACK_PACKAGE_NAME@@CPACK_MODULE_VERSION_SUFFIX@</string>
+    <key>CFBundleGetInfoString</key>
+    <string>@CPACK_APPLE_GUI_INFO_STRING@</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>@CPACK_APPLE_GUI_COPYRIGHT@</string>
 </dict>
 </plist>
