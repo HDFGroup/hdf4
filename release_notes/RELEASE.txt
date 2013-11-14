@@ -52,11 +52,11 @@ Support for new platforms and compilers
     - Visual Studio 2012 w/ Intel Fortran 13 on Windows 7 and Windows 8
 
 
-Bugs fixed since HDF 4.2.8
+Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
-   None
+   CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac builds.
 
    Library
    ========= 
