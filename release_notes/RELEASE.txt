@@ -29,7 +29,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.8
+- Bugs fixed since HDF 4.2.9
   -- Configuration
   -- Library
   -- Utilities
@@ -42,9 +42,10 @@ New features and changes
 ========================
    Configuration
    ============= 
-   - The obsolete windows folder and files were removed. CMake is recommended
-     to build HDF4 on Windows platforms.
-     (ADB 2013/4/12)
+   CMake - Added support to create dmg bundles on Mac.
+     (ADB 2013/9/12)
+   CMake - Added support to use Windows /MT option.
+     (ADB 2013/6/10)
      
 
 Support for new platforms and compilers
@@ -56,7 +57,10 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   CMake - Changed name of TGZ_PATH to TGZPATH.
+           (ADB 2013/9/12)
    CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac builds.
+           (ADB 2013/8/7)
 
    Library
    ========= 
