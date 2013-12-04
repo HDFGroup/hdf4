@@ -913,23 +913,27 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     SET (CPACK_PACKAGE_ICON "${HDF4_RESOURCES_DIR}/hdf.gif")
     SET (CPACK_SET_DESTDIR TRUE) # Required when packaging, and set CMAKE_INSTALL_PREFIX to "/".
 
-#    LIST (APPEND CPACK_GENERATOR "Bundle")
-    SET (CPACK_BUNDLE_NAME "${HDF4_PACKAGE_STRING}")
-    SET (CPACK_BUNDLE_LOCATION "/")    # make sure CMAKE_INSTALL_PREFIX ends in /
-    SET (CMAKE_INSTALL_PREFIX "/${CPACK_BUNDLE_NAME}.framework/Versions/${CPACK_PACKAGE_VERSION}/")
-    SET (CPACK_BUNDLE_ICON "${HDF4_RESOURCES_DIR}/hdf.gif")
-    SET (CPACK_BUNDLE_PLIST "${HDF4_BINARY_DIR}/CMakeFiles/Info.plist")
-#    SET (CPACK_BUNDLE_STARTUP_COMMAND "${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-startup.sh")
-    SET (CPACK_APPLE_GUI_INFO_STRING "Hierarchical Data Format (HDF) Software Library and Utilities")
-    SET (CPACK_APPLE_GUI_COPYRIGHT "Copyright © 2006-2013 by The HDF Group. All rights reserved.")
-    SET (CPACK_SHORT_VERSION_STRING "${CPACK_PACKAGE_VERSION}")
-    #-----------------------------------------------------------------------------
-    # Configure the Info.plist file for the install bundle
-    #-----------------------------------------------------------------------------
-    CONFIGURE_FILE (
-        ${HDF4_RESOURCES_DIR}/CPack.Info.plist.in
-        ${HDF4_BINARY_DIR}/CMakeFiles/Info.plist @ONLY
-    )
+    IF (HDF4_PACK_MACOSX_BUNDLE)
+      LIST (APPEND CPACK_GENERATOR "Bundle")
+      SET (CPACK_BUNDLE_NAME "${HDF4_PACKAGE_STRING}")
+      SET (CPACK_BUNDLE_LOCATION "/")    # make sure CMAKE_INSTALL_PREFIX ends in /
+      IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
+        SET (CMAKE_INSTALL_PREFIX "/${CPACK_BUNDLE_NAME}.framework/Versions/${CPACK_PACKAGE_VERSION}/${CPACK_PACKAGE_NAME}/")
+      ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
+      SET (CPACK_BUNDLE_ICON "${HDF4_RESOURCES_DIR}/hdf.gif")
+      SET (CPACK_BUNDLE_PLIST "${HDF4_BINARY_DIR}/CMakeFiles/Info.plist")
+#      SET (CPACK_BUNDLE_STARTUP_COMMAND "${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-startup.sh")
+      SET (CPACK_APPLE_GUI_INFO_STRING "Hierarchical Data Format (HDF) Software Library and Utilities")
+      SET (CPACK_APPLE_GUI_COPYRIGHT "Copyright © 2006-2013 by The HDF Group. All rights reserved.")
+      SET (CPACK_SHORT_VERSION_STRING "${CPACK_PACKAGE_VERSION}")
+      #-----------------------------------------------------------------------------
+      # Configure the Info.plist file for the install bundle
+      #-----------------------------------------------------------------------------
+      CONFIGURE_FILE (
+          ${HDF4_RESOURCES_DIR}/CPack.Info.plist.in
+          ${HDF4_BINARY_DIR}/CMakeFiles/Info.plist @ONLY
+      )
+    ENDIF (HDF4_PACK_MACOSX_BUNDLE)
   ELSE (WIN32)
     LIST (APPEND CPACK_GENERATOR "STGZ") 
     SET (CPACK_PACKAGING_INSTALL_PREFIX "/usr")
