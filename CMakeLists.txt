@@ -831,6 +831,31 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED)
 ENDIF (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
+# Configure the HDF4_Examples.cmake file and the examples
+#-----------------------------------------------------------------------------
+OPTION (HDF4_PACK_EXAMPLES  "Package the HDF4 Library Examples Compressed File" OFF)
+IF (HDF4_PACK_EXAMPLES)
+  CONFIGURE_FILE (
+      ${HDF4_RESOURCES_DIR}/HDF4_Examples.cmake.in 
+      ${HDF4_BINARY_DIR}/HDF4_Examples.cmake @ONLY
+  )
+  INSTALL (
+      FILES ${HDF4_BINARY_DIR}/HDF4_Examples.cmake
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}
+      COMPONENT hdfdocuments
+  )
+  IF (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
+    INSTALL (
+        FILES
+            ${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}
+            ${HDF4_SOURCE_DIR}/release_docs/USING_CMake_Examples.txt
+        DESTINATION ${HDF4_INSTALL_DATA_DIR}
+        COMPONENT hdfdocuments
+    )
+  ENDIF (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
+ENDIF (HDF4_PACK_EXAMPLES)
+
+#-----------------------------------------------------------------------------
 # Add Document File(s) to CMake Install
 #-----------------------------------------------------------------------------
 IF (NOT HDF4_EXTERNALLY_CONFIGURED)
@@ -917,12 +942,9 @@ IF (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
       LIST (APPEND CPACK_GENERATOR "Bundle")
       SET (CPACK_BUNDLE_NAME "${HDF4_PACKAGE_STRING}")
       SET (CPACK_BUNDLE_LOCATION "/")    # make sure CMAKE_INSTALL_PREFIX ends in /
-      IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-        SET (CMAKE_INSTALL_PREFIX "/${CPACK_BUNDLE_NAME}.framework/Versions/${CPACK_PACKAGE_VERSION}/${CPACK_PACKAGE_NAME}/")
-      ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
+      SET (CMAKE_INSTALL_PREFIX "/${CPACK_BUNDLE_NAME}.framework/Versions/${CPACK_PACKAGE_VERSION}/${CPACK_PACKAGE_NAME}/")
       SET (CPACK_BUNDLE_ICON "${HDF4_RESOURCES_DIR}/hdf.gif")
       SET (CPACK_BUNDLE_PLIST "${HDF4_BINARY_DIR}/CMakeFiles/Info.plist")
-#      SET (CPACK_BUNDLE_STARTUP_COMMAND "${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-startup.sh")
       SET (CPACK_APPLE_GUI_INFO_STRING "Hierarchical Data Format (HDF) Software Library and Utilities")
       SET (CPACK_APPLE_GUI_COPYRIGHT "Copyright © 2006-2013 by The HDF Group. All rights reserved.")
       SET (CPACK_SHORT_VERSION_STRING "${CPACK_PACKAGE_VERSION}")
