@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.6)
+cmake_minimum_required (VERSION 2.8.10)
 PROJECT (HDF4_MFHDF_NCTEST)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
