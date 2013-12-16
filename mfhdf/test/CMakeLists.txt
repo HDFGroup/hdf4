@@ -97,6 +97,7 @@ SET (hdfnctest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/hdfnctest.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tunlim.c
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tncunlim.c
+    ${HDF4_MFHDF_TEST_SOURCE_DIR}/tncvargetfill.c
 )
 
 ADD_EXECUTABLE (hdfnctest ${hdfnctest_SRCS})
