@@ -23,7 +23,8 @@ check_SCRIPTS = testmfhdf.sh
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
-hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
+hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
+		    tncunlim.c
 hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
@@ -42,4 +43,3 @@ CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
 DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am
-               

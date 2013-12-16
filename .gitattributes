@@ -361,6 +361,7 @@ mfhdf/test/testout.sav -text
 mfhdf/test/tfile.c -text
 mfhdf/test/tmixed_apis.c -text
 mfhdf/test/tncunlim.c -text
+mfhdf/test/tncvargetfill.c -text
 mfhdf/test/tnetcdf.c -text
 mfhdf/test/trank0.c -text
 mfhdf/test/tsd.c -text

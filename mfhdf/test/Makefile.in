@@ -72,7 +72,7 @@ am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tunlim.$(OBJEXT) \
-	tncunlim.$(OBJEXT)
+	tncunlim.$(OBJEXT) tncvargetfill.$(OBJEXT)
 hdfnctest_OBJECTS = $(am_hdfnctest_OBJECTS)
 hdfnctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
@@ -296,7 +296,7 @@ TEST_SCRIPT = testmfhdf.sh
 check_SCRIPTS = testmfhdf.sh
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
-hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
+hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c tncvargetfill.c
 hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tdim.c temptySDSs.c tattributes.c tfile.c		\
@@ -400,6 +400,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmixed_apis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tncunlim.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tncvargetfill.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tnetcdf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trank0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tsd.Po@am__quote@

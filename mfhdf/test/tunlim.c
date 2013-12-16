@@ -11,8 +11,8 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /****************************************************************************
- * tncunlim.c - tests reading/writing variables with unlimited dimension using
- *		nc API.  The tests here are added to test the behavior of the
+ * tunlim.c - tests reading/writing variables with unlimited dimension using
+ *		SD API.  The tests here are added to test the behavior of the
  *		library when dealing with unlimited dimensions with nc API.  The
  *		tests show that the data is correctly written when:
  *		+ data added immediately after last record
@@ -56,8 +56,13 @@
 
    Return value:
         The number of errors occurred in this routine.
-
    BMR - Dec 30, 2008
+
+   Note: This function will be moved to tutils.c; must decide what
+	 to do about the data type and sizes, so that the approach
+	 will be consistent within the test suite.  Right now, test
+	 tncvargetfill.c is using it from here.
+   BMR - Sep 4, 2013
 *********************************************************************/
 
 int verify_info_data(

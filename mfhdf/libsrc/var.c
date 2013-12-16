@@ -149,10 +149,7 @@ NC_array *dims;
 	xszof = NC_xtypelen(var->type) ;
 #endif
 
-	/* var->shape and var->dsizes were simply set to NULL without 
-	   checking, which caused memory leaks reported in bug# 418.
-	   Added the check and free memory as needed right before assigning
-	   the new shape and dsizes below.  BMR - Apr 8, 01 */
+	/* Fixed memory leaks reported in bug# 418. BMR - Apr 8, 01 */
 
 	/*
 	 * Allocate the shape array
