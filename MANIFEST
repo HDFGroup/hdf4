@@ -1088,6 +1088,7 @@
 ./mfhdf/test/tfile.c
 ./mfhdf/test/tmixed_apis.c
 ./mfhdf/test/tncunlim.c
+./mfhdf/test/tncvargetfill.c
 ./mfhdf/test/tnetcdf.c
 ./mfhdf/test/trank0.c
 ./mfhdf/test/tsd.c
