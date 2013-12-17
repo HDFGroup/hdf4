@@ -1,4 +1,6 @@
 * text=auto !eol
+/CMakeFilters.cmake -text
+/CMakeInstallation.cmake -text
 /CMakeLists.txt -text
 /CTestConfig.cmake -text
 /Makefile.dist -text
@@ -21,6 +23,7 @@ config/cmake/FindMPI.cmake -text
 config/cmake/FindSZIP.cmake -text
 config/cmake/HDF4Macros.cmake -text
 config/cmake/HDF4UseFortran.cmake -text
+config/cmake/HDF4_Examples.cmake.in -text
 config/cmake/HDFLibMacros.cmake -text
 config/cmake/HDFMacros.cmake -text
 config/cmake/HDFTests.c -text
@@ -33,6 +36,7 @@ config/cmake/hdf.gif -text svneol=unset#image/gif
 config/cmake/hdf4-config-version.cmake.in -text
 config/cmake/hdf4-config.cmake.build.in -text
 config/cmake/hdf4-config.cmake.install.in -text
+config/cmake/libhdf4.settings.cmake.in -text
 config/cmake/mccacheinit.cmake -text
 config/cmake/runTest.cmake -text
 config/cmake/xlatefile.c -text
@@ -47,6 +51,7 @@ hdf/examples/AN_create_annotation.c -text
 hdf/examples/AN_get_annotation_info.c -text
 hdf/examples/AN_read_annotation.c -text
 hdf/examples/CMakeLists.txt -text
+hdf/examples/CMakeTests.cmake -text
 hdf/examples/GR_create_and_write_image.c -text
 hdf/examples/GR_get_attribute.c -text
 hdf/examples/GR_image_info.c -text
@@ -74,12 +79,14 @@ hdf/examples/VG_insert_vdatas_to_vgroup.c -text
 hdf/examples/VG_set_get_vgroup_attr.c -text
 hdf/examples/VG_vgroup_contents.c -text
 hdf/fortran/CMakeLists.txt -text
+hdf/fortran/CMakeTests.cmake -text
 hdf/fortran/Makefile.am -text
 hdf/fortran/Makefile.in -text
 hdf/fortran/examples/AN_create_annotation.f -text
 hdf/fortran/examples/AN_get_annotation_info.f -text
 hdf/fortran/examples/AN_read_annotation.f -text
 hdf/fortran/examples/CMakeLists.txt -text
+hdf/fortran/examples/CMakeTests.cmake -text
 hdf/fortran/examples/GR_create_and_write_image.f -text
 hdf/fortran/examples/GR_get_attribute.f -text
 hdf/fortran/examples/GR_image_info.f -text
@@ -114,6 +121,7 @@ hdf/src/hdatainfo.c -text
 hdf/src/hdatainfo.h -text
 hdf/src/hproto_fortran.h -text
 hdf/test/CMakeLists.txt -text
+hdf/test/CMakeTests.cmake -text
 hdf/test/tattdatainfo.c -text
 hdf/test/tdatainfo.c -text
 hdf/test/tdatainfo.h -text
@@ -135,6 +143,7 @@ hdf/test/tusejpegfuncs.c -text
 hdf/test/tutils.c -text
 hdf/test/tvnameclass.c -text
 hdf/util/CMakeLists.txt -text
+hdf/util/CMakeTests.cmake -text
 hdf/util/hdfcomp.out1.1 -text
 hdf/util/hdfcomp.out1.2 -text
 hdf/util/hdfed-w.out1 -text
@@ -174,6 +183,7 @@ m4/ltversion.m4 -text
 m4/lt~obsolete.m4 -text
 mfhdf/CMakeLists.txt -text
 mfhdf/dumper/CMakeLists.txt -text
+mfhdf/dumper/CMakeTests.cmake -text
 mfhdf/dumper/testfiles/Example6.hdf -text
 mfhdf/dumper/testfiles/IMCOMP.hdf -text
 mfhdf/dumper/testfiles/Image_with_Palette.hdf -text
@@ -226,6 +236,7 @@ mfhdf/dumper/testfiles/tvset.hdf -text
 mfhdf/dumper/testfiles/vslongname.c -text
 mfhdf/dumper/testfiles/vslongname.hdf -text
 mfhdf/examples/CMakeLists.txt -text
+mfhdf/examples/CMakeTests.cmake -text
 mfhdf/examples/Makefile.am -text
 mfhdf/examples/Makefile.in -text
 mfhdf/examples/SD_alter_sds_values.c -text
@@ -246,6 +257,7 @@ mfhdf/examples/SD_write_slab.c -text
 mfhdf/examples/SD_write_to_sds.c -text
 mfhdf/examples/testexamples.sh.in -text
 mfhdf/fortran/CMakeLists.txt -text
+mfhdf/fortran/CMakeTests.cmake -text
 mfhdf/fortran/config/ftest-cygwin.f -text
 mfhdf/fortran/config/ftest-windows.f -text
 mfhdf/fortran/config/jackets-cygwin.c -text
@@ -253,6 +265,7 @@ mfhdf/fortran/config/jackets-windows.c -text
 mfhdf/fortran/config/netcdf-cygwin.inc -text
 mfhdf/fortran/config/netcdf-windows.inc -text
 mfhdf/fortran/examples/CMakeLists.txt -text
+mfhdf/fortran/examples/CMakeTests.cmake -text
 mfhdf/fortran/examples/Makefile.am -text
 mfhdf/fortran/examples/Makefile.in -text
 mfhdf/fortran/examples/SD_alter_sds_values.f -text
@@ -278,6 +291,7 @@ mfhdf/fortran/mfsdf.h -text
 mfhdf/fortran/test_nc.nc -text
 mfhdf/fortran/testfortran.sh.in -text
 mfhdf/hdfimport/CMakeLists.txt -text
+mfhdf/hdfimport/CMakeTests.cmake -text
 mfhdf/hdfimport/SDSfloat2.hdf -text
 mfhdf/hdfimport/SDSfloat3.hdf -text
 mfhdf/hdfimport/crtSDSfloats.c -text
@@ -301,6 +315,7 @@ mfhdf/hdfimport/testfiles/ctxtr2.tst -text
 mfhdf/hdfimport/testfiles/ctxtr2_ris.tst -text
 mfhdf/hdfimport/testfiles/ctxtr3.tst -text
 mfhdf/hdiff/CMakeLists.txt -text
+mfhdf/hdiff/CMakeTests.cmake -text
 mfhdf/hdiff/hdiff_dim.c -text
 mfhdf/hdiff/hdiff_dim.h -text
 mfhdf/hdiff/testfiles/hdiff_06w.txt -text
@@ -316,6 +331,7 @@ mfhdf/hdiff/testfiles/hdifftst6.hdf -text
 mfhdf/hdiff/testfiles/hdifftst7.hdf -text
 mfhdf/hdiff/testhdiff.sh.in -text
 mfhdf/hrepack/CMakeLists.txt -text
+mfhdf/hrepack/CMakeTests.cmake -text
 mfhdf/hrepack/hrepack_all.sh.in -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/CMakeLists.txt -text
@@ -327,15 +343,19 @@ mfhdf/libsrc/mfdatainfo.h -text
 mfhdf/libsrc/mfhdfi.h -text
 mfhdf/libsrc/mfprivate.h -text
 mfhdf/ncdump/CMakeLists.txt -text
+mfhdf/ncdump/CMakeTests.cmake -text
 mfhdf/ncdump/testncdump.sh.in -text
 mfhdf/ncgen/CMakeLists.txt -text
+mfhdf/ncgen/CMakeTests.cmake -text
 mfhdf/ncgen/msofttab.c -text
 mfhdf/ncgen/msofttab.h -text
 mfhdf/ncgen/msoftyy.c -text
 mfhdf/ncgen/testncgen.sh.in -text
 mfhdf/nctest/CMakeLists.txt -text
+mfhdf/nctest/CMakeTests.cmake -text
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/test/CMakeLists.txt -text
+mfhdf/test/CMakeTests.cmake -text
 mfhdf/test/Makefile.am -text
 mfhdf/test/Makefile.in -text
 mfhdf/test/cdftest.c -text
@@ -374,3 +394,4 @@ mfhdf/xdr/test_xdr.sav svneol=native#unset
 mfhdf/xdr/xdr.def -text
 mfhdf/xdr/xdrtest.cyg -text
 mfhdf/xdr/xdrtest.out -text
+release_notes/USING_CMake_Examples.txt -text

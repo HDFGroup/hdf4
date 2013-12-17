@@ -67,44 +67,12 @@ SET (skip_examples
     VD_set_get_vdata_attr
 )
 
-IF (BUILD_TESTING)
-  # Remove any output file left over from previous test run
-  ADD_TEST (
-      NAME HDF_FORTRAN_EXAMPLES-clearall-objects
-      COMMAND    ${CMAKE_COMMAND}
-          -E remove 
-          General_HDFobjects.hdf
-          General_RImages.hdf
-          General_Vdatas.hdf
-          General_Vgroups.hdf
-          Image_with_Palette.hdf
-          Packed_Vdata.hdf
-          Two_Vdatas.hdf
-          Two_Vgroups.hdf
-  )
-  IF (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
-  ELSE (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES LABELS EXAMPLES)
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "HDF_FORTRAN_EXAMPLES-clearall-objects")
-ENDIF (BUILD_TESTING)
-
 FOREACH (example ${examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} " " " ")
   SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  IF (BUILD_TESTING)
-    ADD_TEST (NAME f_extest_${example} COMMAND $<TARGET_FILE:f_ex_${example}>)
-    IF (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (f_extest_${example} PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
-    ELSE (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (f_extest_${example} PROPERTIES LABELS EXAMPLES)
-    ENDIF (NOT "${last_test}" STREQUAL "")
-    SET (last_test "f_extest_${example}")
-  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})
 
 ADD_EXECUTABLE (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
@@ -112,15 +80,6 @@ TARGET_NAMING (f_ex_VG_add_sds_to_vgroup ${LIB_TYPE})
 TARGET_FORTRAN_PROPERTIES (f_ex_VG_add_sds_to_vgroup " " " ")
 SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 TARGET_LINK_LIBRARIES (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-IF (BUILD_TESTING)
-  ADD_TEST (NAME f_extest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:f_ex_VG_add_sds_to_vgroup>)
-  IF (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (f_extest_VG_add_sds_to_vgroup PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
-  ELSE (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (f_extest_VG_add_sds_to_vgroup PROPERTIES LABELS EXAMPLES)
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "f_extest_VG_add_sds_to_vgroup")
-ENDIF (BUILD_TESTING)
 
 FOREACH (example ${skip_examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
@@ -128,7 +87,8 @@ FOREACH (example ${skip_examples})
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} " " " ")
   SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  IF (BUILD_TESTING)
-    ADD_TEST (NAME f_extest_${example} COMMAND ${CMAKE_COMMAND} -E echo "SKIP f_extest_${example}")
-  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${skip_examples})
+
+IF (BUILD_TESTING)
+  INCLUDE (CMakeTests.cmake)
+ENDIF (BUILD_TESTING)

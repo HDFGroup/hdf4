@@ -23,23 +23,6 @@ SET (examples
     SD_chunking_example
 )
 
-IF (BUILD_TESTING)
-  # Remove any output file left over from previous test run
-  ADD_TEST (
-      NAME MFHDF_EXAMPLES-clearall-objects
-      COMMAND    ${CMAKE_COMMAND}
-          -E remove 
-          SDS.hdf
-          SDSchunked.hdf
-          SDScompressed.hdf
-          SDSUNLIMITED.hdf
-          SLABS.hdf
-          ExternalSDS
-  )
-  SET_TESTS_PROPERTIES (MFHDF_EXAMPLES-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-  SET (last_test "MFHDF_EXAMPLES-clearall-objects")
-ENDIF (BUILD_TESTING)
-
 FOREACH (example ${examples})
   ADD_EXECUTABLE (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (mf_${example} ${LIB_TYPE})
@@ -49,13 +32,8 @@ FOREACH (example ${examples})
   ELSE (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (mf_${example} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   ENDIF (HDF4_BUILD_XDR_LIB)
-  IF (BUILD_TESTING)
-    ADD_TEST (NAME mftest_${example} COMMAND $<TARGET_FILE:mf_${example}>)
-    IF (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (mftest_${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    ELSE (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (mftest_${example} PROPERTIES LABELS ${PROJECT_NAME})
-    ENDIF (NOT "${last_test}" STREQUAL "")
-    SET (last_test "mftest_${example}")
-  ENDIF (BUILD_TESTING)
 ENDFOREACH (example ${examples})
+
+IF (BUILD_TESTING)
+  INCLUDE (CMakeTests.cmake)
+ENDIF (BUILD_TESTING)

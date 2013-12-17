@@ -67,15 +67,4 @@ FOREACH (h4_file ${HDF4_NC_TEST_FILES})
       
 ENDFOREACH (h4_file ${HDF4_NC_TEST_FILES})
 
-# Remove any output file left over from previous test run
-ADD_TEST (
-    NAME NC_TEST-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove 
-        test.nc
-        test2.nc
-)
-
-#-- Adding test for nctest
-ADD_TEST (NAME NC_TEST-nctest COMMAND $<TARGET_FILE:nctest>)
-SET_TESTS_PROPERTIES (NC_TEST-nctest PROPERTIES DEPENDS NC_TEST-clearall-objects LABELS ${PROJECT_NAME})
+INCLUDE (CMakeTests.cmake)
