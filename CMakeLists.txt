@@ -272,6 +272,21 @@ ADD_DEFINITIONS (-DBIG_LONGS -DSWAP)
 ADD_DEFINITIONS (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
+# Temporary disable optimization flag
+#-----------------------------------------------------------------------------
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
+  FOREACH (flag_var
+      CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+      CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    IF (${flag_var} MATCHES "O3")
+      STRING (REGEX REPLACE "O3" "O0" ${flag_var} "${${flag_var}}")
+    ENDIF (${flag_var} MATCHES "O3")
+  ENDFOREACH (flag_var)
+ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
+
+#-----------------------------------------------------------------------------
 # Option to use code coverage
 #-----------------------------------------------------------------------------
 OPTION (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" OFF)
