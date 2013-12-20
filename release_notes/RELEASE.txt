@@ -57,6 +57,13 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris since
+   the latest Sun Compiler version 5.11 and 5.12 have a conflict with the system
+   header file. Since the current versions of C compiler should be at least
+   ANSI (aka C89) compliant, the removal of -Xc should be safe. This also
+   fixes a previous known problem of needing to use -xc99 to build HDF4.
+   (AKC 2013/12/20 HDFFR-1361)
+
    CMake - Changed name of TGZ_PATH to TGZPATH.
            (ADB 2013/9/12)
    CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac builds.
@@ -174,10 +181,6 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
-o  On SunOS 5.11, the -xc99 flag has to be used with the cc compiler to avoid
-   compilation errors.  Future releases will automatically detect the system and
-   add the flag. (HDFFR-1361) EIP - 2013/02/05
-
 o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
    GCC, Intel and Clang compilers.  Currently, this situation is detected and
    -O0 level optimization is used.  We will work on the issue for the next
