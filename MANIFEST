@@ -719,7 +719,6 @@
 ./mfhdf/fortran/config/jackets-cygwin.c
 ./mfhdf/fortran/config/jackets-fbsd.c
 ./mfhdf/fortran/config/jackets-linux.c
-./mfhdf/fortran/config/jackets-mac.c
 ./mfhdf/fortran/config/jackets-solaris64.c
 ./mfhdf/fortran/config/jackets-solaris.c
 ./mfhdf/fortran/config/jackets-windows.c
@@ -909,7 +908,6 @@
 ./mfhdf/libsrc/config/netcdf-cygwin.h
 ./mfhdf/libsrc/config/netcdf-fbsd.h
 ./mfhdf/libsrc/config/netcdf-linux.h
-./mfhdf/libsrc/config/netcdf-mac.h
 ./mfhdf/libsrc/config/netcdf-solaris64.h
 ./mfhdf/libsrc/config/netcdf-solaris.h
 ./mfhdf/libsrc/config/netcdf-vms.h
