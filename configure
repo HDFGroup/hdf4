@@ -720,6 +720,7 @@ CC
 BUILD_NETCDF
 HDF_BUILD_NETCDF_FALSE
 HDF_BUILD_NETCDF_TRUE
+TEST_FORTRAN_NETCDF
 host_os
 host_vendor
 host_cpu
@@ -3477,6 +3478,11 @@ fi
 ## Checks for NetCDF-2.3.2 support
 ## ======================================================================
 
+# We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
+# Let's define a proper variable to be used in mfhdf/testfortran.sh.in to run
+# the netCDF Fortran APIs test program "ftest".
+ TEST_FORTRAN_NETCDF="yes"
+
 # Check whether --enable-netcdf was given.
 if test "${enable_netcdf+set}" = set; then :
   enableval=$enable_netcdf;
@@ -3494,6 +3500,7 @@ $as_echo "#define HAVE_NETCDF 1" >>confdefs.h
     ;;
   no)
     BUILD_NETCDF="no"
+    TEST_FORTRAN_NETCDF="no"
     ;;
 esac
  if test "X$BUILD_NETCDF" = "Xyes"; then

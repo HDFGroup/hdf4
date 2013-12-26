@@ -162,6 +162,11 @@ fi
 ## Checks for NetCDF-2.3.2 support 
 ## ======================================================================
 
+# We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
+# Let's define a proper variable to be used in mfhdf/testfortran.sh.in to run 
+# the netCDF Fortran APIs test program "ftest". 
+AC_SUBST(TEST_FORTRAN_NETCDF) TEST_FORTRAN_NETCDF="yes"
+
 AC_ARG_ENABLE([netcdf],
               [AS_HELP_STRING([--enable-netcdf],
                               [Build HDF4 versions of NetCDF APIs (version 2.3.2) [default=yes]])],,
@@ -174,6 +179,7 @@ case "$enableval" in
     ;;
   no)
     BUILD_NETCDF="no"
+    TEST_FORTRAN_NETCDF="no"
     ;;
 esac
 AM_CONDITIONAL([HDF_BUILD_NETCDF], [test "X$BUILD_NETCDF" = "Xyes"])
