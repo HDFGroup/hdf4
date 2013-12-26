@@ -71,8 +71,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am_cdftest_OBJECTS = cdftest.$(OBJEXT)
 cdftest_OBJECTS = $(am_cdftest_OBJECTS)
 cdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
-am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tunlim.$(OBJEXT) \
-	tncunlim.$(OBJEXT) tncvargetfill.$(OBJEXT)
+am_hdfnctest_OBJECTS = hdfnctest.$(OBJEXT) tutils.$(OBJEXT) \
+	tncvargetfill.$(OBJEXT) tunlim.$(OBJEXT) tncunlim.$(OBJEXT)
 hdfnctest_OBJECTS = $(am_hdfnctest_OBJECTS)
 hdfnctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
@@ -296,7 +296,9 @@ TEST_SCRIPT = testmfhdf.sh
 check_SCRIPTS = testmfhdf.sh
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
-hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c tncvargetfill.c
+hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
+		    tncunlim.c
+
 hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
 		  tdim.c temptySDSs.c tattributes.c tfile.c		\
