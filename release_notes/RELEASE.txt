@@ -57,6 +57,9 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   Removed mfhdf/fortran/config/netcdf-*.inc and have them to be produced by
+   mfhdf/fortran/netcdf.inc.in. (AKC 2013/12/26 HDFFR-1320/476)
+
    Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris since
    the latest Sun Compiler version 5.11 and 5.12 have a conflict with the system
    header file. Since the current versions of C compiler should be at least
