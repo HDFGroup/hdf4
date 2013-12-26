@@ -57,6 +57,11 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   The following platforms are old and no longer available. Removed their
+   support code from the configure files:
+   alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
+   solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
+
    Removed mfhdf/fortran/config/netcdf-*.inc and have them to be produced by
    mfhdf/fortran/netcdf.inc.in. (AKC 2013/12/26 HDFFR-1320/476)
 
