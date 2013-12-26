@@ -700,6 +700,7 @@
 ./mfhdf/fortran/mfsdf.c
 ./mfhdf/fortran/mfsdf.h
 ./mfhdf/fortran/mfsdff.f
+./mfhdf/fortran/netcdf.inc.in
 ./mfhdf/fortran/test_nc.cdl
 ./mfhdf/fortran/test_nc.nc
 ./mfhdf/fortran/tszip.f
@@ -751,29 +752,6 @@
 ./mfhdf/fortran/config/jackets-t3e.c
 ./mfhdf/fortran/config/jackets-unicos.c
 ./mfhdf/fortran/config/jackets-windows.c
-./mfhdf/fortran/config/netcdf-aix.inc
-./mfhdf/fortran/config/netcdf-alpha.inc
-./mfhdf/fortran/config/netcdf-apple.inc
-./mfhdf/fortran/config/netcdf-convex.inc
-./mfhdf/fortran/config/netcdf-cygwin.inc
-./mfhdf/fortran/config/netcdf-dec.inc
-./mfhdf/fortran/config/netcdf-fbsd.inc
-./mfhdf/fortran/config/netcdf-fujivp.inc
-./mfhdf/fortran/config/netcdf-hpux.inc
-./mfhdf/fortran/config/netcdf-ia64.inc
-./mfhdf/fortran/config/netcdf-irix32.inc
-./mfhdf/fortran/config/netcdf-irix4.inc
-./mfhdf/fortran/config/netcdf-irix5.inc
-./mfhdf/fortran/config/netcdf-irix6.inc
-./mfhdf/fortran/config/netcdf-linux.inc
-./mfhdf/fortran/config/netcdf-mac.inc
-./mfhdf/fortran/config/netcdf-solaris64.inc
-./mfhdf/fortran/config/netcdf-solaris.inc
-./mfhdf/fortran/config/netcdf-solarisx86.inc
-./mfhdf/fortran/config/netcdf-sun.inc
-./mfhdf/fortran/config/netcdf-t3e.inc
-./mfhdf/fortran/config/netcdf-unicos.inc
-./mfhdf/fortran/config/netcdf-windows.inc
 
 ./mfhdf/fortran/examples/Makefile.am
 ./mfhdf/fortran/examples/Makefile.in

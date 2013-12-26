@@ -262,8 +262,6 @@ mfhdf/fortran/config/ftest-cygwin.f -text
 mfhdf/fortran/config/ftest-windows.f -text
 mfhdf/fortran/config/jackets-cygwin.c -text
 mfhdf/fortran/config/jackets-windows.c -text
-mfhdf/fortran/config/netcdf-cygwin.inc -text
-mfhdf/fortran/config/netcdf-windows.inc -text
 mfhdf/fortran/examples/CMakeLists.txt -text
 mfhdf/fortran/examples/CMakeTests.cmake -text
 mfhdf/fortran/examples/Makefile.am -text
@@ -288,6 +286,7 @@ mfhdf/fortran/hdftest1.f -text
 mfhdf/fortran/mffunc.inc -text
 mfhdf/fortran/mfhdf_fortrandll.def -text
 mfhdf/fortran/mfsdf.h -text
+mfhdf/fortran/netcdf.inc.in -text
 mfhdf/fortran/test_nc.nc -text
 mfhdf/fortran/testfortran.sh.in -text
 mfhdf/hdfimport/CMakeLists.txt -text

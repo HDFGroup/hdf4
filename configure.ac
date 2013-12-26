@@ -825,7 +825,6 @@ case "$host" in
 esac
 src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h
            mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
-           mfhdf/fortran/config/netcdf-FOO.inc:mfhdf/fortran/netcdf.inc
            mfhdf/fortran/config/ftest-FOO.f:mfhdf/fortran/ftest.f"
 src_files="`echo $src_files | sed -e s/FOO/${BAR}/g`"
 
@@ -999,6 +998,7 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
                  man/Makefile
+		 mfhdf/fortran/netcdf.inc
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
