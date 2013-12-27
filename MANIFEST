@@ -903,15 +903,6 @@
 ./mfhdf/libsrc/xdrposix.c
 ./mfhdf/libsrc/xdrstdio.c
 
-./mfhdf/libsrc/config/netcdf-aix.h
-./mfhdf/libsrc/config/netcdf-apple.h
-./mfhdf/libsrc/config/netcdf-cygwin.h
-./mfhdf/libsrc/config/netcdf-fbsd.h
-./mfhdf/libsrc/config/netcdf-linux.h
-./mfhdf/libsrc/config/netcdf-solaris64.h
-./mfhdf/libsrc/config/netcdf-solaris.h
-./mfhdf/libsrc/config/netcdf-vms.h
-
 ./mfhdf/ncdump/Makefile.am
 ./mfhdf/ncdump/Makefile.in
 ./mfhdf/ncdump/SETUPNCDUMP.COM
