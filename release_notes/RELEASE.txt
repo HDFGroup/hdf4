@@ -57,6 +57,9 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   Removed mfhdf/libsrc/config/netcdf-*.h and have them to be produced by
+   mfhdf/libsrc/netcdf.h.in. (AKC 2013/12/27 HDFFR-1320/476)
+
    The following platforms are old and no longer available. Removed their
    support code from the configure files:
    alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
