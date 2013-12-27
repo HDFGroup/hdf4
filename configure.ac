@@ -807,8 +807,7 @@ case "$host" in
   *-pc-cygwin*)         BAR="linux"       ;;
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
-src_files="mfhdf/libsrc/config/netcdf-FOO.h:mfhdf/libsrc/netcdf.h
-           mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
+src_files="mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
            mfhdf/fortran/config/ftest-FOO.f:mfhdf/fortran/ftest.f"
 src_files="`echo $src_files | sed -e s/FOO/${BAR}/g`"
 
@@ -838,10 +837,6 @@ for config_file in $src_files; do
     exit 1
   fi
 done
-  if test "X$BUILD_NETCDF" != "Xyes"; then
-  echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
-    mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
-  fi
 
 ## ------------------------------------------------------------------------
 ## Check to see if libtool has enabled shared libraries. Set a conditional
@@ -983,6 +978,7 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/testutil.sh
                  man/Makefile
 		 mfhdf/fortran/netcdf.inc
+		 mfhdf/libsrc/netcdf.h
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
@@ -1008,6 +1004,16 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/xdr/Makefile])
 
 AC_OUTPUT
+
+## A temporary patch. These code were after where it did
+## cp config/netcdf-XXX.h netcdf.h before.
+## Moved it here after AC_CONFIG_FILES(... mfhdf/libsrc/netcdf.h ).
+## Need a better and correct solution.
+##
+if test "X$BUILD_NETCDF" != "Xyes"; then
+    echo "Renaming \"mfhdf/libsrc/netcdf.h\" to \"mfhdf/libsrc/hdf4_netcdf.h\" ."
+    mv mfhdf/libsrc/netcdf.h mfhdf/libsrc/hdf4_netcdf.h
+fi
 
 chmod 755 hdf/util/h4cc hdf/util/h4redeploy
 

@@ -334,7 +334,6 @@ mfhdf/hrepack/CMakeTests.cmake -text
 mfhdf/hrepack/hrepack_all.sh.in -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/CMakeLists.txt -text
-mfhdf/libsrc/config/netcdf-cygwin.h -text
 mfhdf/libsrc/config/netcdf-windows.h -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfdatainfo.c -text
