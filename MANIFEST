@@ -697,7 +697,7 @@
 ./mfhdf/fortran/hdftest.f
 ./mfhdf/fortran/hdftest1.f
 ./mfhdf/fortran/hdftst.sav
-./mfhdf/fortran/jackets.src
+./mfhdf/fortran/jackets.c.in
 ./mfhdf/fortran/mffunc.inc
 ./mfhdf/fortran/mfsdf.c
 ./mfhdf/fortran/mfsdf.h
@@ -709,13 +709,6 @@
 ./mfhdf/fortran/testfortran.sh.in
 
 ./mfhdf/fortran/config/ftest-windows.f
-./mfhdf/fortran/config/jackets-aix.c
-./mfhdf/fortran/config/jackets-apple.c
-./mfhdf/fortran/config/jackets-cygwin.c
-./mfhdf/fortran/config/jackets-fbsd.c
-./mfhdf/fortran/config/jackets-linux.c
-./mfhdf/fortran/config/jackets-solaris64.c
-./mfhdf/fortran/config/jackets-solaris.c
 ./mfhdf/fortran/config/jackets-windows.c
 
 ./mfhdf/fortran/examples/Makefile.am
