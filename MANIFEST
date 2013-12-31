@@ -92,9 +92,11 @@
 ./hdf/examples/GR_get_attribute.c
 ./hdf/examples/GR_image_info.c
 ./hdf/examples/GR_modify_image.c
+./hdf/examples/GR_read_chunks.c
 ./hdf/examples/GR_read_image.c
 ./hdf/examples/GR_read_palette.c
 ./hdf/examples/GR_set_attribute.c
+./hdf/examples/GR_write_chunks.c
 ./hdf/examples/GR_write_palette.c
 ./hdf/examples/Makefile.am
 ./hdf/examples/Makefile.in
