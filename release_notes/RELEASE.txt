@@ -57,16 +57,19 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
-   Removed mfhdf/libsrc/config/netcdf-*.h and have them to be produced by
-   mfhdf/libsrc/netcdf.h.in. (AKC 2013/12/27 HDFFR-1320/476)
+
+   Removed the following individual platform specific files and have them to
+   be produced by configure using corresponding *.in files.
+   mfhdf/libsrc/config/netcdf-XXX.h    by mfhdf/libsrc/netcdf.h.in
+   mfhdf/fortran/config/ftest-XXX.f    by mfhdf/fortran/ftest.f.in
+   mfhdf/fortran/config/jackets-XXX.c  by mfhdf/fortran/jackets.c.in
+   mfhdf/fortran/config/netcdf-XXX.inc by mfhdf/fortran/netcdf.inc.in
+   (AKC 2013/12/31 HDFFR-1320/476)
 
    The following platforms are old and no longer available. Removed their
    support code from the configure files:
    alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
    solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
-
-   Removed mfhdf/fortran/config/netcdf-*.inc and have them to be produced by
-   mfhdf/fortran/netcdf.inc.in. (AKC 2013/12/26 HDFFR-1320/476)
 
    Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris since
    the latest Sun Compiler version 5.11 and 5.12 have a conflict with the system
