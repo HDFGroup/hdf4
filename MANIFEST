@@ -691,7 +691,7 @@
 ./mfhdf/fortran/mfhdf_fortrandll.def
 ./mfhdf/fortran/common.inc
 ./mfhdf/fortran/depend
-./mfhdf/fortran/ftest.src
+./mfhdf/fortran/ftest.f.in
 ./mfhdf/fortran/hdftest.f
 ./mfhdf/fortran/hdftest1.f
 ./mfhdf/fortran/hdftst.sav
@@ -706,13 +706,6 @@
 ./mfhdf/fortran/tszip.f
 ./mfhdf/fortran/testfortran.sh.in
 
-./mfhdf/fortran/config/ftest-aix.f
-./mfhdf/fortran/config/ftest-apple.f
-./mfhdf/fortran/config/ftest-cygwin.f
-./mfhdf/fortran/config/ftest-fbsd.f
-./mfhdf/fortran/config/ftest-linux.f
-./mfhdf/fortran/config/ftest-solaris64.f
-./mfhdf/fortran/config/ftest-solaris.f
 ./mfhdf/fortran/config/ftest-windows.f
 ./mfhdf/fortran/config/jackets-aix.c
 ./mfhdf/fortran/config/jackets-apple.c
