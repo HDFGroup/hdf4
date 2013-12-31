@@ -81,6 +81,5 @@ int main( )
    status = GRendaccess (ri_id);
    status = GRend (gr_id);
    status = Hclose (file_id);
- fprintf(stderr, "GR_create_and_write_image.c done\n");
    return 0;
 }

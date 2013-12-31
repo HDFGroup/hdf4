@@ -56,9 +56,11 @@ hdf/examples/GR_create_and_write_image.c -text
 hdf/examples/GR_get_attribute.c -text
 hdf/examples/GR_image_info.c -text
 hdf/examples/GR_modify_image.c -text
+hdf/examples/GR_read_chunks.c -text
 hdf/examples/GR_read_image.c -text
 hdf/examples/GR_read_palette.c -text
 hdf/examples/GR_set_attribute.c -text
+hdf/examples/GR_write_chunks.c -text
 hdf/examples/GR_write_palette.c -text
 hdf/examples/Makefile.am -text
 hdf/examples/Makefile.in -text

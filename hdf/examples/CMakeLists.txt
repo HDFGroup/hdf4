@@ -25,8 +25,10 @@ SET (examples
     GR_modify_image 
     GR_set_attribute 
     GR_get_attribute
+    GR_write_chunks 
     GR_write_palette 
     GR_image_info 
+    GR_read_chunks
     GR_read_image
     AN_create_annotation 
     AN_get_annotation_info 
