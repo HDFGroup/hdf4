@@ -54,8 +54,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/netcdf.inc.in \
-	$(srcdir)/testfortran.sh.in $(top_srcdir)/bin/mkinstalldirs \
+	$(srcdir)/Makefile.in $(srcdir)/ftest.f.in \
+	$(srcdir)/netcdf.inc.in $(srcdir)/testfortran.sh.in \
+	$(top_srcdir)/bin/mkinstalldirs \
 	$(top_srcdir)/config/commence.am \
 	$(top_srcdir)/config/conclude.am
 @HDF_BUILD_NETCDF_FALSE@check_PROGRAMS = hdftest$(EXEEXT) \
@@ -72,7 +73,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
-CONFIG_CLEAN_FILES = netcdf.inc testfortran.sh
+CONFIG_CLEAN_FILES = ftest.f netcdf.inc testfortran.sh
 CONFIG_CLEAN_VPATH_FILES =
 am__ftest_SOURCES_DIST = ftest.f
 @HDF_BUILD_NETCDF_TRUE@am_ftest_OBJECTS = ftest.$(OBJEXT)
@@ -429,6 +430,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+ftest.f: $(top_builddir)/config.status $(srcdir)/ftest.f.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 netcdf.inc: $(top_builddir)/config.status $(srcdir)/netcdf.inc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 testfortran.sh: $(top_builddir)/config.status $(srcdir)/testfortran.sh.in

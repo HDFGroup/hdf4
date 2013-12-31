@@ -258,7 +258,6 @@ mfhdf/examples/SD_write_to_sds.c -text
 mfhdf/examples/testexamples.sh.in -text
 mfhdf/fortran/CMakeLists.txt -text
 mfhdf/fortran/CMakeTests.cmake -text
-mfhdf/fortran/config/ftest-cygwin.f -text
 mfhdf/fortran/config/ftest-windows.f -text
 mfhdf/fortran/config/jackets-cygwin.c -text
 mfhdf/fortran/config/jackets-windows.c -text
@@ -282,6 +281,7 @@ mfhdf/fortran/examples/SD_set_get_dim_info.f -text
 mfhdf/fortran/examples/SD_unlimited_sds.f -text
 mfhdf/fortran/examples/SD_write_slab.f -text
 mfhdf/fortran/examples/SD_write_to_sds.f -text
+mfhdf/fortran/ftest.f.in -text
 mfhdf/fortran/hdftest1.f -text
 mfhdf/fortran/mffunc.inc -text
 mfhdf/fortran/mfhdf_fortrandll.def -text

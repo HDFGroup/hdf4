@@ -808,7 +808,7 @@ case "$host" in
   *)                    echo "*** unknown host $host!"; exit 1 ;;
 esac
 src_files="mfhdf/fortran/config/jackets-FOO.c:mfhdf/fortran/jackets.c
-           mfhdf/fortran/config/ftest-FOO.f:mfhdf/fortran/ftest.f"
+           "
 src_files="`echo $src_files | sed -e s/FOO/${BAR}/g`"
 
 for config_file in $src_files; do
@@ -977,6 +977,7 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
                  man/Makefile
+		 mfhdf/fortran/ftest.f
 		 mfhdf/fortran/netcdf.inc
 		 mfhdf/libsrc/netcdf.h
                  mfhdf/Makefile
