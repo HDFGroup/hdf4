@@ -32,7 +32,7 @@ int main()
    * Set an attribute that describes the file contents.
    */
    n_values = 16;
-   status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR8, n_values, 
+   status = SDsetattr (sd_id, FILE_ATTR_NAME, DFNT_CHAR, n_values, 
                        (VOIDP)file_values);
 
    /*
@@ -59,7 +59,7 @@ int main()
    * Set an attribute of the dimension that specifies the dimension metric.
    */
    n_values = 7;
-   status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR8, n_values, 
+   status = SDsetattr (dim_id, DIM_ATTR_NAME, DFNT_CHAR, n_values, 
                        (VOIDP)dim_values);
 
    /*
