@@ -11,46 +11,12 @@ INCLUDE_DIRECTORIES (
 )
 
 ADD_DEFINITIONS (-DHDF)
-   
-IF (APPLE)
-  STRING (TOLOWER APPLE mf_f90_sys)
-ELSE (APPLE)
-  IF (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
-    STRING (TOLOWER Sun mf_f90_sys)
-  ELSE (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")  
-    STRING (TOLOWER ${CMAKE_SYSTEM_NAME} mf_f90_sys)
-  ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
-ENDIF (APPLE)
 
 IF (HDF4_ENABLE_NETCDF)
-  ADD_CUSTOM_COMMAND (
-      OUTPUT ${HDF4_BINARY_DIR}/ftest.f
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/config/ftest-${mf_f90_sys}.f ${HDF4_BINARY_DIR}/ftest.f
-      COMMENT " Copying ftest Name ftest-${mf_f90_sys}.f to ftest.f"
-  )
-
-  ADD_CUSTOM_COMMAND (
-      OUTPUT ${HDF4_BINARY_DIR}/jackets.c
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/config/jackets-${mf_f90_sys}.c ${HDF4_BINARY_DIR}/jackets.c
-      COMMENT " Copying jackets Name jackets-${mf_f90_sys}.c to jackets.c"
-  )
-  ADD_CUSTOM_COMMAND (
-      OUTPUT ${HDF4_BINARY_DIR}/netcdf.h
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${mf_f90_sys}.h ${HDF4_BINARY_DIR}/netcdf.h
-      COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.h to netcdf.h"
-  )
-ELSE (HDF4_ENABLE_NETCDF)
-  ADD_CUSTOM_COMMAND (
-      OUTPUT ${HDF4_BINARY_DIR}/hdf4_netcdf.h
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${mf_f90_sys}.h ${HDF4_BINARY_DIR}/hdf4_netcdf.h
-      COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.h to hdf4_netcdf.h"
-  )
+  CONFIGURE_FILE (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/ftest.f.in ${HDF4_BINARY_DIR}/ftest.f)
+  CONFIGURE_FILE (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/jackets.c.in ${HDF4_BINARY_DIR}/jackets.c)
 ENDIF (HDF4_ENABLE_NETCDF)
-
-ADD_CUSTOM_COMMAND (
-   OUTPUT ${HDF4_BINARY_DIR}/netcdf.inc
-   COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/config/netcdf-${mf_f90_sys}.inc ${HDF4_BINARY_DIR}/netcdf.inc
-   COMMENT " Copying netcdf Name netcdf-${mf_f90_sys}.inc to netcdf.inc")
+CONFIGURE_FILE (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/netcdf.inc.in ${HDF4_BINARY_DIR}/netcdf.inc)
 
 IF (HDF4_ENABLE_NETCDF)
   SET (HDF4_MFHDF_LIBSRC_CSTUB_FSRCS ${HDF4_BINARY_DIR}/jackets.c ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
