@@ -8,7 +8,8 @@ Section I:   Quick Step Building HDF4 Libraries with CMake
 Section II:  Preconditions
 Section III: Building HDF4 C/C++ Libraries with CMake
 Section IV:  All Options for HDF4 C/C++ Libraries with CMake
-Section V:   APPENDIX
+Section V:   User Defined Options for HDF4 Libraries with CMake
+Section VI:  APPENDIX
 
 ************************************************************************
 
@@ -26,13 +27,13 @@ Notes: This short set of instructions is written for users who want to
       Go through these steps:
 
       1. Locate the source files in:
-         c:\MyHDFstuff\HDF4
+         c:\MyHDFstuff\hdf4
       
       2. Create a build folder at:
-         c:\MyHDFstuff\HDF4\build
+         c:\MyHDFstuff\hdf4\build
       
       3. Open a command prompt at:
-         c:\MyHDFstuff\HDF4\build
+         c:\MyHDFstuff\hdf4\build
       
       4. Configure the C library, tools and tests with this command:
          cmake -G "Visual Studio 10" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
@@ -47,20 +48,20 @@ Notes: This short set of instructions is written for users who want to
          cpack -C Release CPackConfig.cmake
       
       8. Install with this command:
-         HDF 4.2.x-win32.exe
+         HDF4.2.x-win32.exe
         
    B. Linux Quick Step Building HDF4 Libraries with CMake Using GCC
 
       Go through these steps:
 
       1. Locate the source files in:
-         ~\MyHDFstuff\HDF4
+         ~\MyHDFstuff\hdf4
       
       2. Create a build folder at:
-         ~\MyHDFstuff\HDF4\build
+         ~\MyHDFstuff\hdf4\build
       
       3. Open a command prompt at:
-         ~\MyHDFstuff\HDF4\build
+         ~\MyHDFstuff\hdf4\build
       
       4. Configure the C library, tools and tests with this command:
          cmake -G "Unix Makefiles" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
@@ -75,7 +76,7 @@ Notes: This short set of instructions is written for users who want to
          cpack -C Release CPackConfig.cmake
       
       8. Install with this command:
-         HDF 4.2.x-Linux.sh
+         HDF4.2.x-Linux.sh
       
 
 
@@ -191,8 +192,8 @@ These five steps are described in detail below.
       
       ***** Make the build and source directories different. ******
       
-      For example on Windows, if the source is at c:\MyHDFstuff\HDF4, 
-      then use c:\MyHDFstuff\HDF4\build or c:\MyHDFstuff\build\HDF4 as the 
+      For example on Windows, if the source is at c:\MyHDFstuff\hdf4, 
+      then use c:\MyHDFstuff\hdf4\build or c:\MyHDFstuff\build\hdf4 as the 
       build directory.
       
       PREFERRED:
@@ -282,7 +283,7 @@ These five steps are described in detail below.
            On linux, if you are using the Unix Makefiles generator, the Makefiles will
            be created in the build folder.
 
-      2.2  Preferred command line example on Windows in c:\MyHDFstuff\HDF4\build directory:
+      2.2  Preferred command line example on Windows in c:\MyHDFstuff\hdf4\build directory:
       
                cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
                -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_Z_LIB_SUPPORT:BOOL=OFF ..
@@ -402,6 +403,7 @@ HDF4_BUILD_TOOLS    "Build HDF4 Tools"                     OFF
 HDF4_BUILD_UTILS    "Build HDF4 Utilities"                 OFF
 HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library"               OFF
 HDF4_ENABLE_NETCDF  "Build HDF4 versions of NetCDF-3 APIS" ON
+
 ---------------- HDF4 Advanced Options ---------------------
 HDF4_DISABLE_COMPILER_WARNINGS "Disable compiler warnings"                                    OFF
 HDF4_ENABLE_COVERAGE           "Enable code coverage for Libraries and Programs"              OFF
@@ -430,7 +432,20 @@ IF (HDF4_ENABLE_SZIP_SUPPORT)
 
 
 ========================================================================
-V. APPENDIX
+V. User Defined Options for HDF4 Libraries with CMake
+========================================================================
+
+Support for User Defined macros and options has been added. The file
+UserMacros.cmake has an example of the technique. In the folder,
+config/cmake/UserMacros, is an implementation for Windows Visual Studio
+users for linking libraries to the static CRT - Windows_MT.cmake. 
+
+Copy the contents of the file, both macro and option, into the 
+UserMacros.cmake file. Then enable the option to the CMake configuration,
+build and test process.
+
+========================================================================
+VI. APPENDIX
 ========================================================================
 
 Below are examples of the ctest scripts used by The HDF Group.
@@ -448,8 +463,8 @@ NOTE: these files are available at the HDF web site:
     ZLib.tar.gz
     JPEG.tar.gz
     
-    HDF4210WindowsCMake.cmake
-    HDF4210LinuxCMake.cmake
+    HDF4WindowsCMake.cmake
+    HDF4LinuxCMake.cmake
 
 
 
@@ -740,11 +755,10 @@ and the build folder is created as a sub-folder.
 
 
 ############################################################################
-# Product specific script, HDF42xStatic.cmake, that uses the 
+# Product specific script, HDF4Static.cmake, that uses the 
 # CTestScript.cmake file (see above). Usage:
-# "ctest -S HDF42xStatic.cmake,HDF42x -C Release -O HDF42xstatic.log"
-# where HDF42x is the source folder relative to the location of these scripts
-# replace x with the current version numbering
+# "ctest -S HDF4Static.cmake,hdf4 -C Release -O hdf4static.log"
+# where hdf4 is the source folder relative to the location of these scripts
 ############################################################################
 
 cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
@@ -773,10 +787,10 @@ set(SITE_COMPILER_VERSION "compiler version")
 set(SITE_BUILDNAME_SUFFIX "STATIC")
 
 # needed for source updates, change as required
-set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/HDF4/branches/HDF4_2_x")
+set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/branches/hdf4_2_x")
 
 # options to add/change from the cacheinit.cmake in the config/cmake folder
-set(ADD_BUILD_OPTIONS "-DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/HDF4.2.x_static")
+set(ADD_BUILD_OPTIONS "-DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/hdf4.2.x_static")
 set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_ANSI_CFLAGS:STRING=-fPIC -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=\"SVN\"")
 

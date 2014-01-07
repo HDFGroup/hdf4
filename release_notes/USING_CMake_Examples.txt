@@ -29,10 +29,10 @@ I. Preconditions
       Windows or the *.sh on Linux). If you are using a Windows platform, 
       you can obtain a pre-built Windows binary from The HDF Group's website 
       at www.hdfgroup.org. See Section "III. Common changes to the 
-      HDF4210_Examples.cmake file", for the line to change the location.
+      HDF4_Examples.cmake file", for the line to change the location.
                                                                          
    3. On Windows, you have installed the 7Zip package. See Section "III. 
-      Common changes to the HDF4210_Examples.cmake file", for the line to 
+      Common changes to the HDF4_Examples.cmake file", for the line to 
       change the command.
 
 
@@ -43,17 +43,17 @@ II. Building HDF4 Examples with CMake
 
 Files in the HDF4 install directory:
        HDF4Examples-0.1.1-Source.zip (or HDF4Examples-0.1.1-Source.tar.gz)
-       HDF4210_Examples.cmake
+       HDF4_Examples.cmake
        
 Default installation process:
-       Create a directory to run the examples, i.e. \test_HDF4.
+       Create a directory to run the examples, i.e. \test_hdf4.
        Copy HDF4Examples-0.1.1-Source.zip(.tar.gz) to this directory, do NOT unzip.
-       Copy HDF4210_Examples.cmake to this directory.
-       Edit line 8 of the HDF4210_Examples.cmake file and change the INSTALLDIR 
+       Copy HDF4_Examples.cmake to this directory.
+       Edit line 8 of the HDF4_Examples.cmake file and change the INSTALLDIR 
            to the HDF4 install location.
        
        Execute from this directory:
-          ctest -S HDF4210_Examples.cmake,HDF4Examples-0.1.1-Source -C Release -O test.log
+          ctest -S HDF4_Examples.cmake,HDF4Examples-0.1.1-Source -C Release -O test.log
 
 The script will uncompress the examples file HDF4Examples-0.1.1-Source.zip(.tar.gz),
    and create a build directory inside the HDF4Examples-0.1.1-Source directory.
@@ -66,7 +66,7 @@ The amount of script information can be increased by adding -V to the ctest
 
 
 ========================================================================
-III. Common changes to the HDF4210_Examples.cmake file
+III. Common changes to the HDF4_Examples.cmake file
 ========================================================================
 
 Line 8: change the INSTALLDIR to a different HDF4 install location.
