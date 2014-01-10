@@ -708,9 +708,6 @@
 ./mfhdf/fortran/tszip.f
 ./mfhdf/fortran/testfortran.sh.in
 
-./mfhdf/fortran/config/ftest-windows.f
-./mfhdf/fortran/config/jackets-windows.c
-
 ./mfhdf/fortran/examples/Makefile.am
 ./mfhdf/fortran/examples/Makefile.in
 ./mfhdf/fortran/examples/SD_write_to_sds.f
@@ -1055,7 +1052,6 @@
 ./mfhdf/xdr/xdr.def
 ./mfhdf/xdr/CMakeLists.txt
 ./mfhdf/libsrc/CMakeLists.txt
-./mfhdf/libsrc/config/netcdf-windows.h
 ./mfhdf/CMakeLists.txt
 ./mfhdf/dumper/CMakeLists.txt
 ./mfhdf/dumper/CMakeTests.cmake

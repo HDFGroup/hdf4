@@ -260,8 +260,6 @@ mfhdf/examples/SD_write_to_sds.c -text
 mfhdf/examples/testexamples.sh.in -text
 mfhdf/fortran/CMakeLists.txt -text
 mfhdf/fortran/CMakeTests.cmake -text
-mfhdf/fortran/config/ftest-windows.f -text
-mfhdf/fortran/config/jackets-windows.c -text
 mfhdf/fortran/examples/CMakeLists.txt -text
 mfhdf/fortran/examples/CMakeTests.cmake -text
 mfhdf/fortran/examples/Makefile.am -text
@@ -336,7 +334,6 @@ mfhdf/hrepack/CMakeTests.cmake -text
 mfhdf/hrepack/hrepack_all.sh.in -text
 mfhdf/hrepack/hrepacktst.c -text
 mfhdf/libsrc/CMakeLists.txt -text
-mfhdf/libsrc/config/netcdf-windows.h -text
 mfhdf/libsrc/hdfnctest.c -text
 mfhdf/libsrc/mfdatainfo.c -text
 mfhdf/libsrc/mfdatainfo.h -text
