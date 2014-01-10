@@ -16,21 +16,12 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include <stdio.h>
 #include "hdf.h"
 
 int
 main(int argc, char *argv[])
 {
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
-
     if (argc != 2)
       {
           fprintf(stderr, "%s: converts HDF vset v1.0 files to v2.0\n", argv[0]);

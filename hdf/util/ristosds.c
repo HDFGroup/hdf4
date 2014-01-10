@@ -26,10 +26,6 @@ static char RcsId[] = "@(#)$Revision$";
 /* Sept. 23, 1991                                               */
 
 /*   USAGE: ristosds infile{ infile} -o outfile                 */
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 
 #define r_imgae 2;
@@ -54,10 +50,6 @@ main(int argc, char *argv[])
     char       *infile, *outfile, **argv_infile;
     uint8      *indata, *indata0, palette[768];
     uint8      *outdata, *outdata0;
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     if (argc < 4)
       {

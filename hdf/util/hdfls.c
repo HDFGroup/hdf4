@@ -17,10 +17,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 #include "hfile.h"
 
@@ -473,10 +469,6 @@ main(int argc, char *argv[])
 {
     int32       fid, aid;
     int         i = 1, j, n, status;
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     while ((i < argc) && (argv[i][0] == '-'))
       {

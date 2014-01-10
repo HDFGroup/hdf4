@@ -67,10 +67,6 @@ static char RcsId[] = "@(#)$Revision$";
  *****************************************************************************/
 /* ------ he.c ------- main() main HDF interfacing routines */
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "he.h"
 
 #include <stdio.h>
@@ -94,10 +90,6 @@ main(int argc, char *argv[])
     int         backup = YES;   /* Backup files when opening? */
     int i;
     char       *fileName = NULL;
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     for (i = 1; i < argc; i++)
       {

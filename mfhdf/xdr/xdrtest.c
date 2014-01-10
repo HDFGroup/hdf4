@@ -61,10 +61,6 @@
 #define EPSILON .0005
 #endif /* __FreeBSD__ */
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 int main(ac,av)
 int ac ;
 char *av[] ;
@@ -150,10 +146,6 @@ char *av[] ;
 	encount *ep , got_ep[5] ;
 
 
-#if defined __MWERKS__
-    ac = ccommand(&av);
-#endif
-	
 #ifdef MDEBUG
 	malloc_debug(2) ;
 #endif

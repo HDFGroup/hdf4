@@ -39,10 +39,6 @@ static char RcsId[] = "@(#)$Revision$";
    **   You must have enough additional disk space for the compacted file.
  */
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 #include "herr.h"
 #include "hfile.h"
@@ -101,10 +97,6 @@ main(int argc, char *argv[])
     intn        external = FALSE;
     char       *tmp, fname[2][80];
     CONSTR(FUNC, "main");
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
 /*
    **   Get invocation name of program

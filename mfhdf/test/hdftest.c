@@ -55,11 +55,6 @@ static char RcsId[] = "@(#)$Revision: 5218 $";
 
 #define NETCDF_READ_TEST 
 
-/* Macintosh console stuff */
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 /* all test functions to be called in main */
 extern int test_netcdf_reading();
 extern int test_szip_compression();
@@ -132,10 +127,6 @@ main(int argc, char *argv[])
      newApplLimit = currHeapEnd;  /* ... then don't. */
 
   SetApplLimit( newApplLimit );
-#endif
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
 #endif
 
     ncopts = NC_VERBOSE;

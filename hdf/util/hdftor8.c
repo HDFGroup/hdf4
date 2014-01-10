@@ -22,10 +22,6 @@ static char RcsId[] = "@(#)$Revision$";
  * Extract images from HDF file to raster files
  */
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 
 #define PALETTE_SIZE    768     /* size of palette array */
@@ -70,10 +66,6 @@ main(int argc, char *argv[])
     char       *hdfFile;
     uint8      *image, palette[PALETTE_SIZE];
     const char *rasterTemplate = NULL, *paletteTemplate = NULL;
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     if (argc < 2)
       {

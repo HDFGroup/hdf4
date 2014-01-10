@@ -516,10 +516,6 @@ main(int argc, char *argv[])
     (void) HDsetvbuf(stderr, (char *) NULL, _IOLBF, 0);
     (void) HDsetvbuf(stdout, (char *) NULL, _IOLBF, 0);
 
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
-
     /*
      * validate the number of command line arguments
      */

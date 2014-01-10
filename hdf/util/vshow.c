@@ -32,10 +32,6 @@ static char *RcsId[] = "@(#)$Revision$";
 *
 *
 ******************************************************************************/
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #define VSET_INTERFACE
 #include "hdf.h"
 
@@ -110,10 +106,6 @@ main(int ac, char **av)
       }
 #endif
 
-
-#if defined __MWERKS__
-    ac = ccommand(&av);
-#endif
 
     if (ac == 3)
         if (av[2][0] == '-' || av[2][0] == '+')

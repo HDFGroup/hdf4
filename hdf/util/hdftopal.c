@@ -31,11 +31,6 @@ static char RcsId[] = "@(#)$Revision$";
    *  This program is in the public domain
    *
  */
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
-
 #include "hdf.h"
 
 int         main(int argc, char *argv[]);
@@ -44,10 +39,6 @@ int         rawpalconv(char *hdffile, char *rawpalfile);
 int
 main(int argc, char *argv[])
 {
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
-
     if (argc != 3)
       {
           printf("Usage:\n");

@@ -44,7 +44,6 @@
  * Otherwise, delete this definition so that the nc_type is
  * an int and the valid values are #defined.
  */
-#ifndef __MWERKS__
 #ifndef __APPLE__
 /* xdr_enum does not work properly for Mac Lion using the Apple GCC compiler
 i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.1.00)
@@ -52,7 +51,6 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 /* Do not use it for all Macs for now. See ticket HDFFR-1318. */
 /* So define USE_ENUM only if this is not an APPLE. */
 #define USE_ENUM
-#endif
 #endif
 
 

@@ -778,10 +778,6 @@ Please check your Makefile.
 
 #include <memory.h>             /* malloc stuff for MPW */
 #include <fcntl.h>              /* unbuffered I/O stuff for MPW */
-#ifdef __MWERKS__				/* Metrowerks */
-#include <sioux.h>
-#include <console.h>
-#endif
 #ifdef SYMANTEC_C				/* for SYMANTEC C */
 #include <unix.h>
 #define isascii(c)  (isprint(c) || iscntrl(c))

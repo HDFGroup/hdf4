@@ -16,10 +16,6 @@ static char *RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 #ifndef I860
 #include <stdlib.h>
@@ -398,10 +394,6 @@ main(int argc, char *argv[])
     uint16      wref;           /* reference number to use for the image */
     uint16      ctag;           /* tag for the compression to do */
     int32       aid;            /* access ID for the JPEG image to stuff */
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     if (argc != 3)
         usage();

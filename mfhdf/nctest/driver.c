@@ -33,9 +33,6 @@ FILE *dbg_file;
 #ifdef macintosh
     #include <LowMem.h>
 #endif
-#if defined __MWERKS__
-#include <console.h>
-#endif
 
 #ifdef PROTOTYPE
 int main(int argc, char *argv[])
@@ -69,9 +66,6 @@ char *argv[];
 		 newApplLimit = currHeapEnd;	/* ... then don't.*/
 
 	SetApplLimit( newApplLimit );
-#endif
-#if defined __MWERKS__
-    argc = ccommand(&argv);
 #endif
 
 #if defined TEST_PC || defined TEST_WIN

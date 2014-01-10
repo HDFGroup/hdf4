@@ -23,15 +23,6 @@
  *	netcdf library 'private' data structures, objects and interfaces
  */
 
-#if (defined macintosh) || (defined MPW) || (defined __MWERKS__)
-#ifndef HDF
-#define HDF  /* For Mac we need to define this, to avoid putting on compile line */
-#endif
-#define NO_SYS_XDR_INC /* use stuff in "::xdr" */
-#define NO_ACCESS
-#define NO_GETPID
-#endif /* non command line compilers */
-
 #include	<stddef.h> /* size_t */
 #include	<stdio.h> /* FILENAME_MAX */
 #if (defined MPW)

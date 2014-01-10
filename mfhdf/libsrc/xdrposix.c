@@ -37,13 +37,9 @@ typedef NETLONG     netlong;
 #   if defined MSDOS || defined WINNT || defined _WIN32
 #       include <io.h>
 #   else
-#       if defined (__MWERKS__)
-#            include <unistd.h>
-#       else
 #           if !(defined(macintosh) || defined (SYMANTEC_C))
 #               include <unistd.h>
 #           endif
-#       endif
 #   endif
 #   include <fcntl.h>
 #endif
