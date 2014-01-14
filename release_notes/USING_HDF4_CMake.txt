@@ -2,32 +2,31 @@
 * Build and Install HDF4 Applications with CMake                       *
 ************************************************************************
 
-Notes: This short instruction is written for users who want to quickly 
-       build HDF4 applications using the CMake tools. Users can adapt 
-       these instructions for their own applications. For more information, 
-       see the "Minimum C Project Files for CMake" section.
+This short set of instructions is for users who want to quickly build HDF4 
+applications using the CMake tools. Users can adapt these instructions for 
+their own applications. For more information, see the "Minimum C Project 
+Files for CMake" section.
        
-       More information about using CMake can be found at the KitWare 
-       site, www.cmake.org.
+More information about using CMake can be found at the KitWare site at 
+www.cmake.org.
          
-       CMake uses the command line; however, the visual CMake tool is 
-       available for the configuration step. The steps are similar for
-       all of the operating systems supported by CMake.
+CMake uses the command line; however, the visual CMake tool is available 
+for the configuration step. The steps are similar for all of the operating 
+systems supported by CMake.
        
-       NOTES:
-         1. Using CMake for building and using HDF4 is under active 
-            development. While we have attempted to provide error-free 
-            files, please understand that development with CMake has not 
-            been extensively tested outside of HDF. The CMake specific 
-            files may change before the next release.
+Notes:
+
+1. Using CMake for building and using HDF4 is under active development. 
+   While we have attempted to provide error-free files, please understand 
+   that development with CMake has not been extensively tested outside 
+   of HDF. The CMake specific files may change before the next release.
             
-         2. CMake for HDF4 development should be usable on any system 
-            where CMake is supported. Please send us any comments on how 
-            CMake support can be improved on any system. 
+2. CMake for HDF4 development should be usable on any system where CMake 
+   is supported. Please send us any comments on how CMake support can be 
+   improved on any system. 
             
-         3. See the appendix at the bottom of this file for an example 
-            of using a ctest script for building and testing. See 
-            CMake.txt for more information.
+3. See the appendix at the bottom of this file for an example of using a 
+   ctest script for building and testing. See CMake.txt for more information.
 
 
 
@@ -35,11 +34,11 @@ Notes: This short instruction is written for users who want to quickly
 I. Preconditions                                                           
 ========================================================================
 
-   1. We suggest you obtain the latest CMake for windows from the Kitware
+   1. We suggest you obtain the latest CMake for Windows from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version 
-      of 2.8.10.                     
+      of 2.8.10.
                                                                          
-   2. You have installed the HDF4 library built with CMake, by executing 
+   2. You have installed the HDF4 Library built with CMake by executing 
       the HDF Install Utility (the *.exe file in the binary package for 
       Windows). If you are using a Windows platform, you can obtain a 
       pre-built Windows binary from The HDF Group's website at 
@@ -47,13 +46,14 @@ I. Preconditions
 
    3. Set the environment variable HDF4_DIR to the installed location of 
       the config files for HDF4. On Windows: 
+      
             HDF4_DIR=C:/Program Files/HDF_Group/HDF/4.2.x/cmake/hdf4
       
       (Note there are no quote characters used on Windows and all platforms
       use forward slashes)
 
-   4. Created separate source and build directories.
-      (CMake commands are executed in the build directory)
+   4. Created separate source and build directories (CMake commands are 
+      executed in the build directory).
 
    5. Created a CMakeLists.txt file(s) for your source. See Section III 
       below.
@@ -68,19 +68,28 @@ Go through these steps to build HDF4 applications with CMake.
 
    1. Run CMake
    2. Configure the cache settings
-   3. Build HDF4 Applications
-   4. Test HDF4 Applications.
+   3. Build HDF4 applications
+   4. Test HDF4 applications
 
 These steps are described in more detail below.
+
+The files that support building with CMake are all of the files in the 
+config/cmake folder, the CMakeLists.txt files in each source folder, and 
+CTestConfig.cmake. CTestConfig.cmake is specific to the internal testing 
+performed by The HDF Group. It should be altered for the user's 
+installation and needs. The cacheinit.cmake file settings are used by
+The HDF Group for daily testing. It should be altered/ignored for the user's 
+installation and needs. 
+
 
 
 
    1. Run CMake
 
-      The visual CMake executable is named "cmake-gui.exe" on Windows and should be
-      available in your Start menu. For Linux, UNIX, and Mac users the
-      executable is named "cmake-gui" and can be found where CMake was 
-      installed. 
+      The visual CMake executable is named "cmake-gui.exe" on Windows and 
+      should be available in your Start menu. For Linux, Unix, and Mac 
+      users the executable is named "cmake-gui" and can be found where 
+      CMake was installed. 
       
       Specify the source and build directories. Make the build and source 
       directories different. For example on Windows, if the source is at 
@@ -118,32 +127,35 @@ These steps are described in more detail below.
 
    2. Configure the cache settings
 
-      2.1  Visual CMake users, click the Configure button. If this is the first time you are 
-           running cmake-gui in this directory, you will be prompted for the 
-           generator you wish to use (for example on Windows, Visual Studio 10). 
-           CMake will read in the CMakeLists.txt files from the source directory and 
-           display options for the HDF4 project. After the first configure you 
-           can adjust the cache settings and/or specify locations of other programs.
+      2.1  Visual CMake users should click the Configure button. If this is 
+           the first time you are running cmake-gui in this directory, you 
+           will be prompted for the generator you wish to use (for example 
+           on Windows, Visual Studio 10). CMake will read in the CMakeLists.txt 
+           files from the source directory and display options for the HDF4 
+           project. After the first configure, you can adjust the cache 
+           settings and/or specify locations of other programs.
       
            Any conflicts or new values will be highlighted by the configure
-           process in red. Once you are happy with all the settings and there are no 
-           more values in red, click the Generate button to produce the appropriate 
-           build files. 
+           process in red. Once you are happy with all the settings and there 
+           are no more values in red, click the Generate button to produce 
+           the appropriate build files. 
       
-           On Windows, if you are using a Visual Studio generator, the solution and 
-           project files will be created in the build folder.
+           On Windows, if you are using a Visual Studio generator, the 
+           solution and project files will be created in the build folder.
       
-           On linux, if you are using the Unix Makefiles generator, the Makefiles will
-           be created in the build folder.
+           On Linux, if you are using the Unix Makefiles generator, the 
+           Makefiles will be created in the build folder.
 
-      2.2  Alternative command line example on Windows in c:\MyHDFstuff\hdf4\build directory:
+      2.2  A command-line example on Windows can be run from the 
+           c:\MyHDFstuff\hdf4\build directory:
       
            cmake -G "Visual Studio 10" -DBUILD_TESTING:BOOL=ON -DUSE_SHARED_LIBS:BOOL=ON ..
 
-   3. Build HDF4 Applications
+   3. Build HDF4 applications
    
-      On Windows, you can build HDF4 applications using either the Visual Studio Environment 
-      or the command line. The command line is normally used on linux, Unix, and Mac.
+      On Windows, you can build HDF4 applications using either the Visual 
+      Studio Environment or the command line. The command line is normally 
+      used on Linux, Unix, and Mac.
 
       To build from the command line, navigate to your build directory and
       execute the following:
@@ -158,7 +170,7 @@ These steps are described in more detail below.
            file in your build directory. Be sure to select either Debug or 
            Release and build the solution.
              
-   4. Test HDF4 Applications
+   4. Test HDF4 applications
 
       To test the build, navigate to your build directory and execute:
       
@@ -168,22 +180,14 @@ These steps are described in more detail below.
             recommend choosing either Debug or Release to match the build
             step on Windows.                                                                                      
 
-   5. The files that support building with CMake are all of the files in the 
-      config/cmake folder, the CMakeLists.txt files in each source folder, and 
-      CTestConfig.cmake. CTestConfig.cmake is specific to the internal testing 
-      performed by The HDF Group. It should be altered for the user's 
-      installation and needs. The cacheinit.cmake file settings are used by
-      The HDF Group for daily testing. It should be altered/ignored for the user's 
-      installation and needs. 
-
 
 
 ========================================================================
 III. Minimum C Project Files for CMake
 ========================================================================
 
-   6. Create a CMakeLists.txt file at the source root. Include the 
-      following text in the file:
+Create a CMakeLists.txt file at the source root. Include the following 
+text in the file:
 
 ##########################################################
 cmake_minimum_required (VERSION 2.8.10)
@@ -219,12 +223,12 @@ is entered on the command line and the build folder is created as a sub-folder.
 Windows should adjust the forward slash to double backslashes, except for
 the HDF_DIR environment variable.
 
-NOTE: these files are available at the HDF web site:
-    http://www.hdfgroup.org/HDF4/release/cmakebuild.html
+Note: these files are available at the HDF web site:
 
+    http://www.hdfgroup.org/HDF4/release/cmakebuild.html
     CTestScript.cmake
-    
     HDF4ExamplesWindowsbinaryCMake.cmake
+
 
 
 ========================================================================
@@ -251,7 +255,7 @@ set(MODEL "Experimental")
 # build generator name, see cmake generator list
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 
-# machine description, can be removed on linux
+# machine description, can be removed on Linux
 set(CTEST_SITE "machine.domain")
 set(SITE_OS_NAME "os name")
 set(SITE_OS_VERSION "os version")
