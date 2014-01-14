@@ -8,7 +8,7 @@ Section I:   Quick Step Building HDF4 Libraries with CMake
 Section II:  Preconditions
 Section III: Building HDF4 C/C++ Libraries with CMake
 Section IV:  All Options for HDF4 C/C++ Libraries with CMake
-Section V:   User Defined Options for HDF4 Libraries with CMake
+Section V:   User-defined Options for HDF4 Libraries with CMake
 Section VI:  APPENDIX
 
 ************************************************************************
@@ -460,10 +460,10 @@ IF (HDF4_ENABLE_SZIP_SUPPORT)
 
 
 ========================================================================
-V. User Defined Options for HDF4 Libraries with CMake
+V. User-defined Options for HDF4 Libraries with CMake
 ========================================================================
 
-Support for user defined macros and options has been added. The file
+Support for user-defined macros and options has been added. The file
 UserMacros.cmake has an example of the technique. In the folder 
 config/cmake/UserMacros is an implementation for Windows Visual Studio
 users for linking libraries to the static CRT - Windows_MT.cmake. 
