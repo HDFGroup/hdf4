@@ -1,5 +1,5 @@
 ************************************************************************
-* Build and Install HDF4 C/C++ Library with CMake                      *
+* Build and Install the HDF4 C/C++ Library with CMake                  *
 ************************************************************************
 
                      Table of Contents
@@ -18,9 +18,9 @@ Section VI:  APPENDIX
 ========================================================================
 I. Quick Step Building HDF4 Libraries with CMake
 ========================================================================
-Notes: This short set of instructions is written for users who want to 
-       quickly build the HDF4 Library and tools from the HDF4 source code 
-       package using the CMake tools.
+This short set of instructions is written for users who want to quickly 
+build the HDF4 Library and tools from the HDF4 source code package 
+using the CMake tools.
        
    A. Windows Quick Step Building HDF4 Libraries with CMake Using VS2010
 
@@ -35,10 +35,10 @@ Notes: This short set of instructions is written for users who want to
       3. Open a command prompt at:
          c:\MyHDFstuff\hdf4\build
       
-      4. Configure the C library, tools and tests with this command:
+      4. Configure the C library, tools, and tests with this command:
          cmake -G "Visual Studio 10" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
       
-      5. Build the C library, tools and tests with this command:
+      5. Build the C library, tools, and tests with this command:
          cmake --build . --config Release
       
       6. Test the C library and tools with this command:
@@ -49,11 +49,11 @@ Notes: This short set of instructions is written for users who want to
       
       8. Install with this command:
          HDF4.2.x-win32.exe
-        
+      
    B. Linux Quick Step Building HDF4 Libraries with CMake Using GCC
-
+      
       Go through these steps:
-
+      
       1. Locate the source files in:
          ~\MyHDFstuff\hdf4
       
@@ -63,10 +63,10 @@ Notes: This short set of instructions is written for users who want to
       3. Open a command prompt at:
          ~\MyHDFstuff\hdf4\build
       
-      4. Configure the C library, tools and tests with this command:
+      4. Configure the C library, tools, and tests with this command:
          cmake -G "Unix Makefiles" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
       
-      5. Build the C library, tools and tests with this command:
+      5. Build the C library, tools, and tests with this command:
          cmake --build . --config Release
       
       6. Test the C library and tools with this command:
@@ -77,7 +77,6 @@ Notes: This short set of instructions is written for users who want to
       
       8. Install with this command:
          HDF4.2.x-Linux.sh
-      
 
 
 
@@ -85,27 +84,34 @@ Notes: This short set of instructions is written for users who want to
 II. Preconditions                                                           
 ========================================================================
 
-   1. We suggest you obtain the latest CMake for windows from the Kitware
-      web site. The HDF 4.2.x product requires a minimum CMake version 2.8.10.                     
+   1. We suggest you obtain the latest CMake for Windows from the Kitware
+      web site. The HDF 4.2.x product requires a minimum CMake version of 
+      2.8.10.
                                                                          
    2. If you plan to use Zlib or Szip, or JPEG:
       A. Download the packages and install them in a central location. 
          For example on Windows, create a folder extlibs and install the 
          packages there.
+         
       B. Use source packages from an SVN server by adding the following CMake 
          options:
+         
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
             JPEG_SVN_URL:STRING="http://some_location/jpeg/trunk"
             ZLIB_SVN_URL:STRING="http://some_location/zlib/trunk"
             SZIP_SVN_URL:STRING="http://some_location/szip/trunk"
+            
          where "some_location" is the URL to the SVN repository.
-      C. (Preferred)Use source packages from a compressed file by adding the
+         
+      C. (Preferred) Use source packages from a compressed file by adding the
          following CMake options:
+         
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ"
             JPEG_TGZ_NAME:STRING="jpeg_src.ext"
             ZLIB_TGZ_NAME:STRING="zlib_src.ext"
             SZIP_TGZ_NAME:STRING="szip_src.ext"
             TGZPATH:STRING="some_location"
+            
          where "some_location" is the URL or full path to the compressed 
          file and ext is the type of compression file.
                                                                          
@@ -114,54 +120,62 @@ II. Preconditions
                                     
    4. If you are building on Apple Darwin platforms, you should add the 
       following options:
-         Compiler choice - use xcode by setting the ENV variables of CC and CXX
-         Shared fortran is not supported, build static:
+      
+      A. Compiler choice - use xcode by setting the ENV variables of CC and 
+         CXX.
+         
+      B. Shared Fortran is not supported, build static:
+      
             BUILD_SHARED_LIBS:BOOL=OFF
-         Additional options:
+            
+      C. Additional options:
+      
             CMAKE_ANSI_CFLAGS:STRING=-fPIC
             CTEST_USE_LAUNCHERS:BOOL=ON
             CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF         
    
-   5. Windows developers should install NSIS to create an install image with CPack.
-      Visual Studio Express users will not be able to package HDF4 into
-      an install image executable. Use the HDF4_NO_PACKAGES option.
+   5. Windows developers should install NSIS to create an install image 
+      with CPack. Visual Studio Express users will not be able to package 
+      HDF4 into an install image executable. Use the HDF4_NO_PACKAGES option.
    
-   6. Developers should copy the config/cmake/cacheinit.cmake file and alter the
-      the settings for the developers' environment. Then the only options needed
-      on the command line are those options that are different. Example using HDF
-      default cache file:
-               cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
-               -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_BUILD_EXAMPLES:BOOL=OFF ..
+   6. Developers should copy the config/cmake/cacheinit.cmake file and alter 
+      the settings for the developers' environment. Then the only options 
+      needed on the command line are those options that are different. An 
+      example using the HDF default cache file is:
+      
+        cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
+        -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_BUILD_EXAMPLES:BOOL=OFF ..
 
+Notes: CMake and HDF4
 
-Notes: More information about using CMake can be found at the KitWare site, 
-       www.cmake.org.
-         
-       CMake uses the command line; however, the visual CMake tool is 
-       available for the configuration step. The steps are similar for
-       all the operating systems supported by CMake.
-       
-       NOTES:
-         1. Using CMake for building and using HDF4 is under active development. 
-            While we have attempted to provide error-free files, please 
-            understand that development with CMake has not been extensively 
-            tested outside of HDF. The CMake specific files may change
-            before the next release.
+   1. Using CMake for building and using HDF4 is under active development. 
+      While we have attempted to provide error-free files, please 
+      understand that development with CMake has not been extensively 
+      tested outside of HDF. The CMake specific files may change
+      before the next release.
             
-         2. CMake support for HDF4 development should be usable on any 
-            system where CMake is supported. Please send us any comments on 
-            how CMake support can be improved on any system. Visit the 
-            KitWare site for more information about CMake.
+   2. CMake support for HDF4 development should be usable on any 
+      system where CMake is supported. Please send us any comments on 
+      how CMake support can be improved on any system. Visit the 
+      KitWare site for more information about CMake.
             
-         3. Build and test results can be submitted to our CDash server at:
+   3. Build and test results can be submitted to our CDash server at:
                  cdash.hdfgroup.uiuc.edu. 
-            Please read the HDF and CDash document at:
+      Please read the HDF and CDash document at:
                  www.hdfgroup.org/CDash/HowToSubmit. 
             
-         4. See the appendix at the bottom of this file for examples of using
-            a ctest script for building and testing. Using a ctest script is
-            preferred because of its flexibility.
+   4. See the appendix at the bottom of this file for examples of using
+      a ctest script for building and testing. Using a ctest script is
+      preferred because of its flexibility.
             
+Notes: CMake in General
+
+   1. More information about using CMake can be found at the KitWare site at 
+      www.cmake.org.
+         
+   2. CMake uses the command line; however, the visual CMake tool is 
+      available for the configuration step. The steps are similar for
+      all the operating systems supported by CMake.
 
 
 
@@ -183,9 +197,9 @@ These five steps are described in detail below.
 
    1. Run CMake
 
-      The visual CMake executable is named "cmake-gui.exe" on Windows and should be
-      available in your Start menu. For Linux, UNIX, and Mac users the
-      executable is named "cmake-gui" and can be found where CMake was 
+      The visual CMake executable is named "cmake-gui.exe" on Windows and 
+      should be available in your Start menu. For Linux, Unix, and Mac users 
+      the executable is named "cmake-gui" and can be found where CMake was 
       installed. 
       
       Specify the source and build directories. 
@@ -199,8 +213,8 @@ These five steps are described in detail below.
       PREFERRED:
         Users can perform the configuration step without using the visual 
         cmake-gui program. We use the file cacheinit.cmake in the 
-        config/cmake folder for our testing. This file enables all the 
-        basic options and we turn specific options on or off for testing 
+        config/cmake folder for our testing. This file enables all of the 
+        basic options, and we turn specific options on or off for testing 
         using the following command line within the build directory:
         
         cmake -C <sourcepath>/config/cmake/cacheinit.cmake -G "<generator>"  [-D<options>]  <sourcepath>
@@ -265,31 +279,34 @@ These five steps are described in detail below.
 
    2. Configure the cache settings
 
-      2.1  Visual CMake users, click the Configure button. If this is the first time you are 
-           running cmake-gui in this directory, you will be prompted for the 
-           generator you wish to use (for example on Windows, Visual Studio 9 2008). 
-           CMake will read in the CMakeLists.txt files from the source directory and 
-           display options for the HDF4 project. After the first configure you 
-           can adjust the cache settings and/or specify the locations of other programs.
+      2.1  Visual CMake users, click the Configure button. If this is the 
+           first time you are running cmake-gui in this directory, you will 
+           be prompted for the generator you wish to use (for example on 
+           Windows, Visual Studio 9 2008). CMake will read in the 
+           CMakeLists.txt files from the source directory and display options 
+           for the HDF4 project. After the first configure, you can adjust 
+           the cache settings and/or specify the locations of other programs.
       
            Any conflicts or new values will be highlighted by the configure
-           process in red. Once you are happy with all the settings and there are no 
-           more values in red, click the Generate button to produce the appropriate 
-           build files. 
+           process in red. Once you are happy with all the settings and 
+           there are no more values in red, click the Generate button to 
+           produce the appropriate build files. 
       
-           On Windows, if you are using a Visual Studio generator, the solution and 
-           project files will be created in the build folder.
+           On Windows, if you are using a Visual Studio generator, the 
+           solution and project files will be created in the build folder.
       
-           On linux, if you are using the Unix Makefiles generator, the Makefiles will
-           be created in the build folder.
+           On Linux, if you are using the Unix Makefiles generator, the 
+           Makefiles will be created in the build folder.
 
-      2.2  Preferred command line example on Windows in c:\MyHDFstuff\hdf4\build directory:
+      2.2  Preferred command line example on Windows in 
+           the c:\MyHDFstuff\hdf4\build directory:
       
-               cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
-               -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_Z_LIB_SUPPORT:BOOL=OFF ..
+            cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
+            -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_Z_LIB_SUPPORT:BOOL=OFF ..
 
-      2.3  On Windows, if you are using a Visual Studio Express version you must 
-           be sure that the following two options are correctly set/unset:
+      2.3  On Windows, if you are using a Visual Studio Express version, you 
+           must be sure that the following two options are correctly 
+           set/unset:
            
            HDF4_NO_PACKAGES:BOOL=ON
            HDF4_USE_FOLDERS:BOOL=OFF
@@ -297,50 +314,57 @@ These five steps are described in detail below.
    3. Build HDF4
    
       On Windows, you can build HDF4 using either the Visual Studio Environment 
-      or the command line. The command line can be used on all platforms;
-      Windows, linux, Unix, and Mac.
+      or the command line. The command line can be used on all platforms:
+      Windows, Linux, Unix, and Mac.
 
       To build from the command line, navigate to your build directory and
       execute the following:
           
-              cmake --build . --config {Debug | Release}     
+            cmake --build . --config {Debug | Release}     
               
       NOTE: "--config {Debug | Release}" may be optional on your platform. We
             recommend choosing either Debug or Release on Windows.                                                                                      
              
       3.1  If you wish to use the Visual Studio environment, open the solution 
            file in your build directory. Be sure to select either Debug or 
-           Release and build the solution.
+           Release, and then build the solution.
              
-      3.2.1  The external libraries (zlib, szip, and jpeg) can be configured
+      3.2.1  The external libraries (zlib, Szip, and jpeg) can be configured
            to allow building the libraries by downloading from an SVN repository.
            The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT'; by adding the following
            configuration option:
+           
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
                
-           The options to control the SVN URL (config/cmake/cacheinit.cmake file) are:
+           The options to control the SVN URL (config/cmake/cacheinit.cmake file) 
+           are:
+           
                JPEG_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/jpeg/branches/jpeg8b"
                ZLIB_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/zlib/trunk"
                SZIP_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/szip/trunk"
+               
            These should be changed to your location.
            
-      3.2.2  Or the external libraries (zlib, szip, and jpeg) can be configured
+      3.2.2  Or the external libraries (zlib, Szip, and jpeg) can be configured
            to allow building the libraries by using a compressed file.
            The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT' and is enabled by 
            adding the following configuration option:
+           
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="TGZ"
                
            The options to control the SVN URL (config/cmake/cacheinit.cmake 
            file) are:
+           
                JPEG_TGZ_NAME:STRING="jpeg_src.ext"
                ZLIB_TGZ_NAME:STRING="zlib_src.ext"
                SZIP_TGZ_NAME:STRING="szip_src.ext"
                TGZPATH:STRING="some_location"
+               
             where "some_location/xxxx_src.ext" is the URL or full path to 
             the compressed file and where ext is the type of the compression 
             file such as .bz2, .tar, .tar.gz, .tgz, or .zip.
 
-   4. Test HDF4.
+   4. Test HDF4
 
       To test the build, navigate to your build directory and execute:
       
@@ -352,36 +376,40 @@ These five steps are described in detail below.
 
    5. Packaging HDF4 (create an install image)
    
-      To package the build into a simple installer using the NullSoft installer NSIS
-      on Windows, or into compressed files (.tar.gz, .sh, .zip), use the CPack tool.
+      To package the build into a simple installer using the NullSoft 
+      installer NSIS on Windows, or into compressed files (.tar.gz, .sh, 
+      .zip), use the CPack tool.
 
-      To package the build, navigate to your build directory and execute;
+      To package the build, navigate to your build directory and execute:
       
               cpack -C {Debug | Release} CPackConfig.cmake
       
-      NOTE: See note 8 of this document for NSIS information.
-            Also, if you are using a Visual Studio Express version or do not 
-            want to enable the packaging components, set HDF4_NO_PACKAGES 
-            to ON (on the command line add -DHDF4_NO_PACKAGES:BOOL=ON)
+      NOTES: 
+      
+      See note 8 below for NSIS information. 
+      
+      Also, if you are using a Visual Studio Express version or do not 
+      want to enable the packaging components, set HDF4_NO_PACKAGES 
+      to ON (on the command line add -DHDF4_NO_PACKAGES:BOOL=ON)
            
-   6. The files that support building HDF4 with CMake are all the files in the 
-      config/cmake folder, the CMakeLists.txt files in each source folder, and 
-      CTestConfig.cmake. CTestConfig.cmake is specific to the internal testing 
-      performed by The HDF Group. It should be altered for the user's 
-      installation and needs. The cacheinit.cmake file settings are used by
-      The HDF Group for daily testing. It should be altered/ignored for the user's 
-      installation and needs.
+   6. The files that support building HDF4 with CMake are all of the files 
+      in the config/cmake folder, the CMakeLists.txt files in each source 
+      folder, and CTestConfig.cmake. CTestConfig.cmake is specific to the 
+      internal testing performed by The HDF Group. It should be altered 
+      for the user's installation and needs. The cacheinit.cmake file 
+      settings are used by The HDF Group for daily testing. It should be 
+      altered/ignored for the user's installation and needs.
 
-   7. More information about using CMake can be found at the KitWare site, 
+   7. More information about using CMake can be found at the KitWare site at 
       www.cmake.org.
 
-   8. Nullsoft Scriptable Install System
-      The Nullsoft Scriptable Install System (NSIS) is an open source installation 
-      system. It was created by the WinAmp authors to distribute that application, 
-      but it is now a general-purpose system which anyone might use. NSIS installers 
-      recognize /S for silent installation and /D=dir to specify the 
-      "output directory", which is where the program will be installed. These 
-      options are case-sensitive, so be sure to type them in upper case. 
+   8. The Nullsoft Scriptable Install System (NSIS) is an open source 
+      installation system. It was created by the WinAmp authors to distribute 
+      that application, but it is now a general-purpose system which anyone 
+      might use. NSIS installers recognize /S for silent installation and 
+      /D=dir to specify the "output directory", which is where the program 
+      will be installed. These options are case-sensitive, so be sure to 
+      type them in upper case. 
 
 
 
@@ -435,14 +463,14 @@ IF (HDF4_ENABLE_SZIP_SUPPORT)
 V. User Defined Options for HDF4 Libraries with CMake
 ========================================================================
 
-Support for User Defined macros and options has been added. The file
-UserMacros.cmake has an example of the technique. In the folder,
-config/cmake/UserMacros, is an implementation for Windows Visual Studio
+Support for user defined macros and options has been added. The file
+UserMacros.cmake has an example of the technique. In the folder 
+config/cmake/UserMacros is an implementation for Windows Visual Studio
 users for linking libraries to the static CRT - Windows_MT.cmake. 
 
 Copy the contents of the file, both macro and option, into the 
 UserMacros.cmake file. Then enable the option to the CMake configuration,
-build and test process.
+build, and test process.
 
 ========================================================================
 VI. APPENDIX
@@ -451,7 +479,7 @@ VI. APPENDIX
 Below are examples of the ctest scripts used by The HDF Group.
 See the script, cmakehdf4, in the bin folder for a smaller and limited 
 function shell script version of the following general scripts.
-The example is for a linux machine, but the same scripts can be used on 
+The examples are for a Linux machine, but the same scripts can be used on 
 a Windows machine by adjusting the CTEST_CMAKE_GENERATOR option in the
 product specific script.
 
@@ -472,7 +500,7 @@ NOTE: these files are available at the HDF web site:
 CTestScript.cmake                                                       
 ========================================================================
 
-The CTestScript.cmake script, shown below, is a common ctest script that 
+The CTestScript.cmake script shown below is a common ctest script that 
 is used to build, test, and package HDF4 Library files.
 
 
