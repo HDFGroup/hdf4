@@ -1,87 +1,91 @@
 
-    Installation Instructions for HDF4 on UNIX and MacOSX Platforms
+    Installation Instructions for HDF4 on Unix and Mac OSX Platforms
     ===================================================================
 
 CONTENTS
 
-0. Third party software requirements
-1. Optional SZIP compression Library
-2. HDF4 source code and precompiled binaries 
-3. UNIX and MacOSX configuration and build
-4. Using HDF/MFHDF libraries with the netCDF library (libnetcdf.a)
+1. Third-party Software Requirements
+2. Optional Szip Compression Library
+3. HDF4 Source Code and Precompiled Binaries 
+4. Unix and Mac OSX Configuration and Build
+5. Using HDF/MFHDF Libraries with the netCDF Library (libnetcdf.a)
 
 
-0. Third party software requirements
+
+1. Third-party Software Requirements
    =================================
 
-   x C and Fortran compilers
-     If Fortran compiler is not available, use --disable-fortran configure flag
-     to build HDF4 C library and utilties. For the list of the supported 
-     compilers see RELEASE.txt in the release_notes directory.
+C and Fortran compilers. If a Fortran compiler is not available, use 
+the --disable-fortran configure flag to build the HDF4 C library and 
+utilties. For the list of the supported compilers see RELEASE.txt in the 
+release_notes directory.
 
-   x JPEG distribution release 6b or later (libjpeg.a(so)). Source can be 
-     downloaded from http://www.ijg.org/ 
+JPEG Distribution Release 6b or Later (libjpeg.a(so)). The source code can 
+be downloaded from http://www.ijg.org/.
 
-   x ZLIB 1.1.4(libz.a) or later. Source code and binaries may be 
-     downloaded from this site:
-         http://www.gzip.org/ 
-     They are also available on The HDF Group's FTP server:
-         ftp://ftp.hdfgroup.org/lib-external/zlib/
+ZLIB 1.1.4(libz.a) or later. The source code and binaries may be 
+downloaded from http://www.gzip.org/. They are also available on 
+The HDF Group's FTP server at ftp://ftp.hdfgroup.org/lib-external/zlib/.
 
-1. Optional SZIP compression Library
+
+
+2. Optional Szip Compression Library
    =================================
 
-   x HDF4 may be configured to use the SZIP compression Library.
-     For more information about the SZIP library, see this site:
+HDF4 may be configured to use the Szip compression Library. For more 
+information about the Szip library, see http://hdfgroup.org/doc_resource/SZIP/.
 
-         http://hdfgroup.org/doc_resource/SZIP/ 
+The Szip compression library is free for non-commercial use; see 
+http://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html for information 
+regarding commercial use.
 
-     The SZIP compression library is free for non-commercial use; 
-     see http://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html
-     for information regarding commercial use.
-     
-2. HDF4 source code and precompiled binaries
+
+
+3. HDF4 Source Code and Precompiled Binaries
    =========================================
-   The HDF Group (THG) provides a "tar source ball" and precompiled 
-   binaries from the THG FTP server: 
 
-         ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
-         ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
+The HDF Group (THG) provides a "tar source ball" and precompiled binaries 
+from the company's FTP server at these locations: 
+
+    ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
+    ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
    
-   Starting with the HDF 4.2.6 release binaries are packed  with 
-   the ZLIB, JPEG and SZIP libraries used to build the binaries. 
+Starting with the HDF 4.2.6 release, binaries are packed  with the ZLIB, 
+JPEG, and Szip libraries used to build the binaries. 
 
-   IMPORTANT:
-   ==========
-   HDF4 prebuilt utilties come with SZIP compression. To use these binaries, 
-   you must install the SZIP Library on your system. 
+HDF4 prebuilt utilties come with Szip compression. To use these binaries, 
+you must install the Szip Library on your system. 
 
-   You may download precompiled SZIP binaries from the THG FTP site:
-         ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/
-   Source code for the SZIP library can be found on the same server:
-         ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
+Precompiled Szip binaries can be downloaded from:
 
-   To build the SZIP library, follow the instructions in the SZIP source code 
-   distribution.
+    ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/
 
-3. UNIX and MacOSX configuration and build
+Source code for the Szip library can be found on the same server:
+    ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
+
+To build the Szip library, follow the instructions in the Szip source code 
+distribution.
+
+
+
+4. Unix and Mac OSX Configuration and Build
    =======================================
 
-   0)  See RELEASE.txt in the release_docs/ subdirectory for platforms 
-       tested for this release.
+See RELEASE.txt in the release_docs/ subdirectory for the list of platforms 
+tested for this release.
 
-   Before you start:
+Before You Start:
 
-   1)  Make sure that the ZLIB and JPEG Libraries are installed on your
+   1)  Make sure that the ZLIB and JPEG libraries are installed on your
        system.
 
-   2)  Optional: Install the SZIP version 2.1 Library (you may use 
-       SZIP 2.0 binaries). 
+   2)  Optional: Install the Szip version 2.1 library (you may use 
+       Szip 2.0 binaries). 
 
    3)  Extract the source from the hdf-X.Y.Z.tar file and change
        directory to hdf-X.Y.Z.
 
-   To Configure:
+To Configure:
 
    4)  Use the configure command in the top level HDF4 directory hdf-X.Y.Z:
 
@@ -90,17 +94,17 @@ CONTENTS
                    <--with-szlib=/path_to_SZIP_install_directory>
                    --prefix=/path_to_HDF4_install_directory
 
-       * Please note that when the szlib option is not used, the SZIP 
-         Library will not be configured in and SZIP compression will not 
+       * Please note that when the szlib option is not used, the Szip 
+         library will not be configured in and Szip compression will not 
          be enabled.
-       * If your system has ZLIB and/or JPEG libraries installed under a
+       * If your system has the ZLIB and/or JPEG libraries installed under a
          system library directory (such as /usr/lib), configure will
          automatically find the library. In this case, the corresponding
-         configure flag may be ommitted.
+         configure flag may be omitted.
        * Note that --prefix defines where the installation path is.
          The default is set as <hdf4_build_directory>/hdf4.
 
-   To Build and Test:
+To Build and Test:
 
    5)  To build the library:
 
@@ -110,7 +114,7 @@ CONTENTS
 
        gmake check >& check.out
 
-   To Install:
+To Install:
 
    7)  To install the HDF4 library and tools:
 
@@ -120,7 +124,7 @@ CONTENTS
     
        gmake install-examples
 
-   9)  To test installation 
+   9)  To test the installation 
 
        gmake installcheck
 
@@ -140,7 +144,9 @@ CONTENTS
 
        where "..." are your configuration options.
 
-4. Using HDF/MFHDF libraries with the netCDF library (libnetcdf.a)
+
+
+5. Using HDF/MFHDF Libraries with the netCDF Library (libnetcdf.a)
    ===============================================================
 
    To use the HDF/MFHDF libraries (libdf.a, libmfhdf.a) with the 
@@ -149,8 +155,8 @@ CONTENTS
 
    When this flag is used, the HDF versions of the C netCDF functions 
    (as of netCDF version 2.3.2) are renamed from ncxxx to sd_ncxxx, 
-   and HDF Fortran netCDF wrappers are disabled to avoid name clashed with 
-   the netCDF C and Fortran functions from libnetcdf.a
+   and HDF Fortran netCDF wrappers are disabled to avoid name clashes with 
+   the netCDF C and Fortran functions from libnetcdf.a.
 
    Please report all problems to help@hdfgroup.org.
 
