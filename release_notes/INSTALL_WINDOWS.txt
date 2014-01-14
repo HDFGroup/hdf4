@@ -4,12 +4,12 @@
 *                         (Full Version)                              *
 ***********************************************************************
 
-We now recommend that users build, test and install HDF4 using CMake.
+We now recommend that users build, test, and install HDF4 using CMake.
 
 Instructions for building and testing HDF4 using CMake can be found in the
 INSTALL_CMake.txt file found in this folder.
 
-For instructions of building and testing an application with HDF4, see 
+For instructions on building and testing an application with HDF4, see the 
 USING_HDF4_CMake.txt file found in this folder.
 
 Users who want to build and run an application with HDF4 in Visual Studio
