@@ -57,6 +57,7 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+
    Changed Mac platforms to use the Apple supported clang compiler as the
    default C compiler. (AKC 2014/01/15 HDFFR-1318)
 
@@ -87,7 +88,10 @@ Bugs fixed since HDF 4.2.9
 
    Library
    ========= 
-   - None
+
+   mfhdf/libsrc/local_nc.h is not istalled anymore. The file contains
+   private information for the HDF4 netCDF internal functions and is not
+   needed for applications.  (EIP 2014/01/15 related to HDFFR-150)
 
    Utilities
    ========= 

@@ -139,8 +139,8 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__include_HEADERS_DIST = hdf2netcdf.h local_nc.h mfhdf.h \
-	hdf4_netcdf.h mfhdfi.h mfdatainfo.h netcdf.h
+am__include_HEADERS_DIST = hdf2netcdf.h mfhdf.h hdf4_netcdf.h mfhdfi.h \
+	mfdatainfo.h netcdf.h
 HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -329,8 +329,8 @@ CSOURCES = array.c attr.c cdf.c dim.c file.c hdfsds.c iarray.c error.c    \
 @HDF_BUILD_FORTRAN_TRUE@libmfhdf_la_SOURCES = $(CSOURCES) $(FSOURCES)
 @HDF_BUILD_XDR_TRUE@XDRLIB = $(top_builddir)/mfhdf/xdr/libxdr.la
 @HDF_BUILD_XDR_TRUE@libmfhdf_la_LIBADD = $(XDRLIB)
-@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h hdf4_netcdf.h mfhdfi.h mfdatainfo.h
-@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h local_nc.h mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h
+@HDF_BUILD_NETCDF_FALSE@include_HEADERS = hdf2netcdf.h  mfhdf.h hdf4_netcdf.h mfhdfi.h mfdatainfo.h
+@HDF_BUILD_NETCDF_TRUE@include_HEADERS = hdf2netcdf.h  mfhdf.h netcdf.h mfhdfi.h mfdatainfo.h
 @HDF_BUILD_FORTRAN_FALSE@F77LINK = $(LINK)
 
 #############################################################################
