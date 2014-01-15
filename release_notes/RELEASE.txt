@@ -57,6 +57,8 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   Changed Mac platforms to use the Apple supported clang compiler as the
+   default C compiler. (AKC 2014/01/15 HDFFR-1318)
 
    Removed the following individual platform specific files and have them to
    be produced by configure using corresponding *.in files.

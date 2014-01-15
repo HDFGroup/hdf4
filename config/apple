@@ -20,46 +20,19 @@
 #       variable is set based on the incoming value of $CC and is only
 #       used within this file.
 
-# Starting from Darwin 12 (Mountain Lion), use clang as the default.
+# Use clang as the default C compiler.
 if test "X-$CC" = "X-"; then
-  if [ "$host_os_novers" = darwin12.x ]; then
     CC=clang
     CC_BASENAME=clang
-  else
-    CC=gcc
-    CC_BASENAME=gcc
-  fi
 fi
 
-# Make  gfortran compiler a deafult
+# Use gfortran as the deafult F77 compiler.
 if test "X-$F77" = "X-"; then
   F77=gfortran
   F77_BASENAME=gfortran
 fi
 
 case $CC_BASENAME in
-  gcc)
-    CFLAGS="$CFLAGS"
-    DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
-    DEBUG_CPPFLAGS=
-    # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
-    # with any optimization in $CC in Lion or Mountain Lion systems.
-    # Use -O0 for now.
-    case "$host_os" in
-	darwin11.* | darwin12.* )	# Lion & Mountain Lion
-	    xOFLAG="-O0"
-	    ;;
-	*)		# Other OSX versions
-	    xOFLAG="-O2"
-	    ;;
-    esac
-    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic $xOFLAG"}
-    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -pedantic $xOFLAG"}
-    PROD_CPPFLAGS=
-    PROFILE_CFLAGS="-pg"
-    PROFILE_CPPFLAGS=
-    ;;
-
   clang)
     CFLAGS="$CFLAGS"
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
@@ -97,6 +70,28 @@ case $CC_BASENAME in
 	    ;;
     esac
     PROD_CFLAGS=${PROD_CFLAGS:-"$xOFLAG"}
+    PROD_CPPFLAGS=
+    PROFILE_CFLAGS="-pg"
+    PROFILE_CPPFLAGS=
+    ;;
+
+  gcc)
+    CFLAGS="$CFLAGS"
+    DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
+    DEBUG_CPPFLAGS=
+    # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
+    # with any optimization in $CC in Lion or Mountain Lion systems.
+    # Use -O0 for now.
+    case "$host_os" in
+	darwin11.* | darwin12.* )	# Lion & Mountain Lion
+	    xOFLAG="-O0"
+	    ;;
+	*)		# Other OSX versions
+	    xOFLAG="-O2"
+	    ;;
+    esac
+    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wmissing-prototypes -Wnested-externs -pedantic $xOFLAG"}
+    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -pedantic $xOFLAG"}
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
