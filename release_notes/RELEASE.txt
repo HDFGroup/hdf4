@@ -144,23 +144,21 @@ This version has been tested in the following platforms:
                                  Cygwin(CYGWIN_NT-6.1 1.7.15(0.260/5/3) gcc(4.5.3)
                                       compiler and gfortran)
 
-   MAC OS X Intel 10.6.8         icc (ICC) 12.1 Build 20120928
-   (64-bit)                      ifort (IFORT) 12.1 Build 20120928
-   Darwin 10.8.0                 i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
-   (fred)                        GNU Fortran (GCC) 4.6.2 20111019
-                                 Apple clang version 1.7 (tags/Apple/clang-77)
-                                 (based on LLVM 2.9svn)
+   Mac OS X Intel 10.6.8         Apple clang version 1.7 from Xcode 3.2.6
+   Darwin 10.8.0                 gfortran GNU Fortran (GCC) 4.6.2
+   (fred)                        icc and ifort Version 12.1.6 20120928
                              
-   MAC OS X Intel 10.7.5         i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1
-   (64 bit)                      GNU Fortran (GCC) 4.6.2 20111019
-   Darwin 11.4.2                 icc and ifort Version 13.0 Build 20121010              
-   (duck)                        Apple clang version 3.0
-                                 (tags/Apple/clang-211.12) (based on LLVM 3.0svn)
+   Mac OS X 10.7.5		 Apple clang version 3.0 from Xcode 4.6.1
+   Darwin 11.4.2                 gfortran GNU Fortran (GCC) 4.6.2
+   (duck)                        icc and ifort Version 13.0.3 20130606
 
-   Mac OS X 10.8.2               Apple LLVM version 4.2 (clang-425.0.24) 
-   Darwin 12.2.0                 gcc i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 
-   (wren)                        gfortran GNU Fortran (GCC) 4.6.2
-                                 icc and ifort Version 13.0.1.119 Build 20121010
+   Mac OS X 10.8.5               Apple clang version 4.2 from Xcode 4.6.1
+   Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
+   (wren)                        icc and ifort Version 13.0.3 20130606
+
+   Mac OS X 10.8.5               Apple clang version 5.0 from Xcode 5.0.2
+   Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
+   (swallow)                     icc and ifort Version 14.0.1 20131010
 
    Debian6.0.3 2.6.32-5-686 #1 SMP i686 GNU/Linux
                                  gcc (Debian 4.4.5-8) 4.4.5
