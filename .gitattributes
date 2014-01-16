@@ -39,7 +39,6 @@ config/cmake/hdf4-config.cmake.install.in -text
 config/cmake/libhdf4.settings.cmake.in -text
 config/cmake/mccacheinit.cmake -text
 config/cmake/runTest.cmake -text
-config/cmake/xlatefile.c -text
 config/commence.am -text
 config/conclude.am -text
 config/examples.am -text

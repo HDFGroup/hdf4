@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpsds -h sds_compressed.hdf
-#############################
 File name: sds_compressed.hdf 
 
 Variable Name = SDSgzip

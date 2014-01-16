@@ -1,6 +1,3 @@
-#############################
-Expected output for 'hdiff hdifftst3.hdf hdifftst4.hdf'
-#############################
 position        data1           data1           difference          
 ------------------------------------------------------------
 [ 30 0 ]          1               0               1              

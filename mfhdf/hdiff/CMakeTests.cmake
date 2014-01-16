@@ -117,8 +117,8 @@
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
-        COMMAND    ${XLATE_UTILITY}
-        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${out_file} ${outdest} -l3
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${out_file} ${outdest}
     )
   ENDFOREACH (out_file ${HDF4_REFERENCE_FILES})
 
@@ -126,15 +126,15 @@
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
-        COMMAND    ${XLATE_UTILITY}
-        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt -l3
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
     )
   ELSE (WIN32 AND NOT CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
-        COMMAND    ${XLATE_UTILITY}
-        ARGS       ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt -l3
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
     )
   ENDIF (WIN32 AND NOT CYGWIN)
 

@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpvd -c Test object,No class specified tvset.hdf'
-#############################
 File name: tvset.hdf 
 
 Vdata: 0

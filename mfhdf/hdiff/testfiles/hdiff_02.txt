@@ -1,6 +1,3 @@
-#############################
-Expected output for 'hdiff -g hdifftst1.hdf hdifftst2.hdf'
-#############################
 
 ---------------------------
 Attr Name: File_contents

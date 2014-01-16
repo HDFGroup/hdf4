@@ -111,7 +111,7 @@ STEP "Test the library and tools..." "ctest . -C Release" $testlog
 STEP "Create an install image..." "cpack -C Release CPackConfig.cmake" $packlog
       
 #      8. Install with this command:
-STEP "Install..." "./HDF ${version}-Linux.sh --skip-license" $installlog
+STEP "Install..." "./HDF-${version}-Linux.sh --skip-license" $installlog
 # save the last exit code
 exit_code=$?
 

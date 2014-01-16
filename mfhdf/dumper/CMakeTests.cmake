@@ -146,8 +146,8 @@
     ADD_CUSTOM_COMMAND (
         TARGET     hdp
         POST_BUILD
-        COMMAND    ${XLATE_UTILITY}
-        ARGS       ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${out_file} ${outdest} -l3
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${out_file} ${outdest}
     )
   ENDFOREACH (out_file ${HDF4_REFERENCE_FILES})
   

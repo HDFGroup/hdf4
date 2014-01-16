@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpvg -n "SD Vgroup - this vgroup has an sds as a member and it is actually meant to test long vgroup name" VGlongname.hdf'
-#############################
 File name: VGlongname.hdf 
 
 

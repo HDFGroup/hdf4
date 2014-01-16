@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpvg -n nsamp,tdata.hdf tdata.hdf'
-#############################
 File name: tdata.hdf 
 
 

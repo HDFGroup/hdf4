@@ -1,6 +1,3 @@
-#############################
-Expected output for 'hdiff -s hdifftst1.hdf hdifftst2.hdf'
-#############################
 
 ---------------------------
 dset1:Valid_range = 

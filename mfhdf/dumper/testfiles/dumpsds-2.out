@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpsds -i 2 swf32.hdf'
-#############################
 File name: swf32.hdf 
 
 Dimension Variable Name = fakeDim2

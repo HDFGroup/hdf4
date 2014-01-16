@@ -520,14 +520,6 @@ IF (HDF4_BUILD_XDR_LIB)
 ENDIF (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
-# Build utility to copy and strip X lines of file
-#-----------------------------------------------------------------------------
-IF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
-  SET (XLATE_UTILITY "xlatefile")
-  ADD_EXECUTABLE(${XLATE_UTILITY} ${HDF4_RESOURCES_DIR}/xlatefile.c)
-ENDIF (HDF4_BUILD_TOOLS AND BUILD_TESTING)
-
-#-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
 #-----------------------------------------------------------------------------
 OPTION (BUILD_TESTING "Build HDF4 Unit Testing" OFF)

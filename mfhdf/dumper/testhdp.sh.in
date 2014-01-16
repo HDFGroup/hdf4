@@ -75,14 +75,8 @@ TEST()
   expected="$srcdir/testfiles/$1"
   shift
 
-  # print a id banner
-  MESG 6 "$@"
-
   # run the test
   ( 
-    # The first three lines of the "correct output" file are used to
-    # identify the test.  Copy them to the output to make cmp happy.
-    sed 3q $expected
     cd $srcdir/testfiles
     $HDP_BIN "$@"
   ) > $output
