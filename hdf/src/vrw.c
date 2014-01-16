@@ -569,7 +569,7 @@ VSwrite(int32 vkey,         /* IN: vdata key */
 
     /*
      * promote to link-block if vdata exists and is not already one
-     *  AND we are incresing its size
+     *  AND we are increasing its size
      */
     HQueryposition(vs->aid, &position);
     new_size = (position / (intn)vs->wlist.ivsize) + nelt;

@@ -745,6 +745,10 @@ HLIstaccess(accrec_t *access_rec,
         UINT16DECODE(p, info->link_ref);
     }
 
+    /* get the block length and number of blocks */
+    access_rec->block_size = info->block_length;
+    access_rec->num_blocks = info->number_blocks;
+
     /* set up the block tables of the information */
     info->link = HLIgetlink(access_rec->file_id,
                             info->link_ref, info->number_blocks);
@@ -1892,7 +1896,7 @@ done:
 
 /*--------------------------------------------------------------------------
 NAME
-   HLsetblocksize -- set the block length of a linked-block element
+   HLsetblockinfo -- set the block length of a linked-block element
 
 USAGE
    intn HLsetblockinfo(
@@ -1904,7 +1908,7 @@ RETURNS
    SUCCEED / FAIL
 
 DESCRIPTION
-   HLsetblocksize sets (accrec_t).block_size and (accrec_t).num_blocks
+   HLsetblockinfo sets (accrec_t).block_size and (accrec_t).num_blocks
    to block_size and num_blocks, respectively.  An error will occur, if
    either of the parameters is a 0 or a negative number, that is not
    -1, which is used to indicate that the respective field is not to be
@@ -1945,18 +1949,22 @@ HLsetblockinfo(int32 aid,	/* access record id */
     if ((access_rec = HAatom_object(aid)) == NULL)        
         HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* change the linked-block size if requested */
-    if (block_size != -1)
-        access_rec->block_size = block_size;
+    /* If this element is already stored as linked-block, do not allow
+       to change the block info, ignore the request to change. */
+    if (access_rec->special != SPECIAL_LINKED)
+    {
+	/* Set the linked-block size, if requested */
+	if (block_size != -1)
+	    access_rec->block_size = block_size;
 
-    /* change the number of linked-blocks if requested */
-    if (num_blocks != -1)
-        access_rec->num_blocks = num_blocks;
+	/* Set the number of blocks in each block table, if requested */
+	if (num_blocks != -1)
+	    access_rec->num_blocks = num_blocks;
+    }
 
 done:
     if(ret_value == FAIL)
     { /* Error condition cleanup */
-
     } /* end if */
 
   /* Normal function cleanup */
@@ -1965,7 +1973,7 @@ done:
 
 /*--------------------------------------------------------------------------
 NAME
-   HLgetblocksize -- get the block size and the number of blocks of a 
+   HLgetblockinfo -- get the block size and the number of blocks of a 
 		    linked-block element
 
 USAGE
@@ -1978,7 +1986,7 @@ RETURNS
    SUCCEED / FAIL
 
 DESCRIPTION
-   HLgetblocksize retrieves the values of (accrec_t).block_size and 
+   HLgetblockinfo retrieves the values of (accrec_t).block_size and 
    (accrec_t).num_blocks to block_size and num_blocks, respectively.  
    A NULL can be passed in for an unwanted value.
 
