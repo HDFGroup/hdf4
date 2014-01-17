@@ -125,8 +125,6 @@ case "$host_os" in
   darwin11.*)   host_os_novers="darwin11.x" ;;
   darwin12.*)   host_os_novers="darwin12.x" ;;
   freebsd*)     host_os_novers="freebsd"    ;;
-  irix5.*)      host_os_novers="irix5.x"    ;;
-  irix6.*)      host_os_novers="irix6.x"    ;;
   solaris2.*)   host_os_novers="solaris2.x" ;;
   *)            host_os_novers="$host_os"   ;;
 esac
@@ -625,12 +623,8 @@ AM_CONDITIONAL([HDF_BUILD_XDR], [test "X$BUILD_XDR" = "Xyes"])
 
 ## Check headers and add libraries for XDR if the HDF4 XDR library is not used.
 if test "X$BUILD_XDR" != "Xyes"; then
-  ## For Solaris and Fuji systems, add the -nsl for XDR support
-  ##
   ## The SunRPC of the glibc has been replaced by a TI-RPC (Transport Independent RPC) library for IPv6 support
   case "$host" in
-    *-solaris*|*-hp-hpux*|S370-fujitsu-sysv*)
-      LIBS="$LIBS -lnsl"  ;;
     *-pc-cygwin*)
       LIBS="$LIBS -ltirpc"  ;;
     *) ;;

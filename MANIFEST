@@ -66,20 +66,12 @@
 ./config/conclude.am
 ./config/examples.am
 ./config/freebsd
-./config/hpux11.00
 ./config/i686-pc-cygwin
-./config/ia64-hp-hpux11.23
-./config/ia64-linux-gnu
-./config/irix6.x
 ./config/linux-gnu
-./config/osf5.x
 ./config/powerpc64-linux-gnu
 ./config/powerpc-apple
 ./config/powerpc-ibm-aix5.x
 ./config/solaris2.x
-./config/sv1-cray
-./config/unicos10.0.X
-./config/unicosmk2.0.6.X
 ./config/x86_64-pc-cygwin
 
 ./hdf/Makefile.am
@@ -191,12 +183,8 @@
 ./hdf/src/dfimcomp.c
 ./hdf/src/dfivms.h
 ./hdf/src/dfjpeg.c
-./hdf/src/dfkconv.c
-./hdf/src/dfkcray.c
-./hdf/src/dfkfuji.c
 ./hdf/src/dfknat.c
 ./hdf/src/dfkswap.c
-./hdf/src/dfkvms.c
 ./hdf/src/dfp.c
 ./hdf/src/dfpf.c
 ./hdf/src/dfpff.f
@@ -408,7 +396,6 @@
 ./hdf/util/fp2hdf.test
 ./hdf/util/fp2hdf.test.result
 ./hdf/util/fptest.c
-./hdf/util/fptestf.f
 ./hdf/util/getopt1.c
 ./hdf/util/getopt.c
 ./hdf/util/gif2hdf.c

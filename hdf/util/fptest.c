@@ -25,8 +25,7 @@
  *
  * Description:
  *      This program creates six floating point files that can be
- *      used to test the fp2hdf program.  [Note: the 32-bit floating
- *      point files are omitted for Cray (UNICOS) systems]
+ *      used to test the fp2hdf program.
  *
  *      June 1, 1990
  *      Bob Weaver, baw@inel.gov
@@ -191,7 +190,6 @@ main(int argc, char * argv[] )
 #ifdef _WIN32                                                                                       
    _fmode = _O_BINARY;
 #endif 
-#ifndef UNICOS
     sp = fopen("cb32r2", "w");
     (void) fwrite(fp32, sizeof(int), 1, sp);
     (void) fwrite((char *) &ione, sizeof(int), 1, sp);
@@ -228,7 +226,6 @@ main(int argc, char * argv[] )
                 (void) fwrite((char *) &b32r3[k][i][j],
                               sizeof(float32), 1, sp);
     (void) fclose(sp);
-#endif
 
     /*
      * binary 64-bit file - rank 2 & 3

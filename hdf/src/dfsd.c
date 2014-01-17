@@ -4453,9 +4453,6 @@ DFSDIgetslice(const char *filename, int32 winst[], int32 windims[],
           if (transposed)
             {
               /* scatter out the elements of one row */
-#ifdef UNICOS
-#pragma ivdep
-#endif
               for (dp = datap, sp = scatterbuf, i = 0; i < numelements; i++)
                 {
                   for (j = 0; j < localNTsize; j++)

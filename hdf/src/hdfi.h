@@ -72,7 +72,6 @@
 #define     DFMT_ALPHA          0x4441
 #define     DFMT_VP             0x6611
 #define     DFMT_I860           0x4441
-#define     DFMT_CRAYMPP        0x1171
 #define     DFMT_IA64           0x4441
 #define     DFMT_LINUX64        0x4441
 #define     DFMT_POWERPC64      0x1111
@@ -423,123 +422,6 @@ typedef long               hdf_pint_t;   /* an integer the same size as a pointe
 #define INCLUDES_ARE_ANSI
 
 #endif /* IRIX */
-
-#if (defined(UNICOS) || defined(_UNICOS)) && !defined(_CRAYMPP)
-
-#ifndef UNICOS
-#define UNICOS
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <memory.h>
-#include <fortran.h>
-#ifndef O_RDONLY
-#include <fcntl.h>              /* for unbuffered i/o stuff */
-#define L_INCR  1
-#include <sys/stat.h>
-#endif /*O_RDONLY*/
-
-#ifdef _CRAYIEEE
-#define DF_MT   DFMT_UNICOSIEEE
-#else
-#define DF_MT   DFMT_UNICOS
-#endif
-typedef void            VOID;
-typedef void            *VOIDP;
-#ifdef OLD_WAY /* May need to be included on other machines than the C-90 */
-typedef char            *_fcd;
-#endif /* OLD_WAY */
-typedef signed char     char8;
-typedef unsigned char   uchar8;
-typedef signed char     int8;
-typedef unsigned char   uint8;
-typedef int             int16;
-typedef unsigned int    uint16;
-typedef int             int32;
-typedef unsigned int    uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define RIGHT_SHIFT_IS_UNSIGNED
-#define CHAR_IS_UNSIGNED
-
-#endif /* UNICOS */
-
-#if defined(_CRAYMPP)
-
-#ifndef CRAYMPP
-#define CRAYMPP
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <string.h>
-#include <limits.h>
-#include <memory.h>
-#include <fortran.h>
-#ifndef O_RDONLY
-#include <fcntl.h>              /* for unbuffered i/o stuff */
-#define L_INCR  1
-#include <sys/stat.h>
-#endif /*O_RDONLY*/
-
-#define DF_MT   DFMT_CRAYMPP
-typedef void            VOID;
-typedef void            *VOIDP;
-#ifdef OLD_WAY /* May need to be included on other machines than the C-90 */
-typedef char            *_fcd;
-#endif /* OLD_WAY */
-typedef signed char     char8;
-typedef unsigned char   uchar8;
-typedef signed char     int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short  uint16;
-typedef short           int32;
-typedef unsigned short  uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-
-#define _HUGE              /* This should only be defined to a value on the PC */
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define RIGHT_SHIFT_IS_UNSIGNED
-#define CHAR_IS_UNSIGNED
-
-#endif /* CRAYMPP */
 
 /* CRAY XT3
  * Note from RedStorm helpdesk,

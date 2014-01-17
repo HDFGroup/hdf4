@@ -136,17 +136,6 @@ annotate(const char *editor, int ann)
           if (editor == NULL)
               editor = "/usr/bin/ex";
       }
-#ifdef CRAYMPP
-    {	char	cmd[256];
-	if (HDstrlen(editor) > 100) {
-	    fprintf(stderr, "Environment variable EDITOR too big\n");
-	}
-	else {
-	    sprintf(cmd, "%s %s", editor, file);
-	    system(cmd);
-	}
-    }
-#else
     /* Use the fork/wait or system methods if supported, else no support. */
 #ifdef __CRAY_XT3__
     fprintf(stderr, "annotate feature not supported.\n");
@@ -175,7 +164,6 @@ annotate(const char *editor, int ann)
             system(cmd);
         }
     }
-#endif
 #endif
 #endif
 #else  /* VMS  */

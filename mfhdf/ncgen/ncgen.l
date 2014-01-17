@@ -106,7 +106,7 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		return (SHORT_CONST);
 	        }
 [+-]?[1-9][0-9]*[lL]?|0[lL]? {
-#if defined cray && ! defined (_CRAYMPP)
+#if defined cray
 		/* machines where longs have more precision than doubles. */
     		char *ptr;
 		long_val = strtol((char*)yytext, &ptr, 0);
@@ -137,11 +137,7 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 #if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || __powerpc64__
 		if (dd < INT_MIN  ||  dd > INT_MAX) 
 #else
-#if defined (_CRAYMPP)
-		if (dd < -2147483648 || dd > 2147483647)
-#else
 		if (dd < LONG_MIN  ||  dd > LONG_MAX) 
-#endif
 #endif
                 {
 		    double_val = dd;

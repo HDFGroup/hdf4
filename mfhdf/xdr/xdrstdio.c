@@ -99,29 +99,8 @@ xdrstdio_getlong(xdrs, lp)
     XDR *xdrs;
     register long *lp;
 {
-#ifdef _CRAYMPP
-    caddr_t 	cp;
-    int		sizediff;
-
-    /* Some machines have sizeof(long) > 4 */
-    /* Read data into the least significant 4 bytes which assume to be */
-    /* at the higher address. */
-    sizediff = sizeof(long) - 4;
-    if (sizediff){
-	*lp = 0;
-	cp = (caddr_t)lp + sizediff;
-    }
-    else
-	cp = (caddr_t)lp;
-
-    if (fread(cp, 4, 1, (FILE *)xdrs->x_private) != 1)
-        return (FALSE);
-
-    /* need to deal with sign extension for those 64 bit signed longs */
-#else
     if (fread((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
 	return (FALSE);
-#endif
 
 #ifndef mc68000
     *lp = ntohl(*lp);
@@ -140,27 +119,8 @@ xdrstdio_putlong(xdrs, lp)
     lp = &mycopy;
 #endif
 
-#ifdef _CRAYMPP
-  {
-    caddr_t	cp;
-    int	sizediff;
-
-    /* Some machines have sizeof(long) > 4 */
-    /* Write only the least significant 4 bytes which assume to be */
-    /* at the higher address. */
-    sizediff = sizeof(long) - 4;
-    if (sizediff)
-	cp = (caddr_t)lp + sizediff;
-    else
-	cp = (caddr_t)lp;
-
-    if (fwrite(cp, 4, 1, (FILE *)xdrs->x_private) != 1)
-	return (FALSE);
-  }
-#else
     if (fwrite((caddr_t)lp, sizeof(long), 1, (FILE *)xdrs->x_private) != 1)
 	return (FALSE);
-#endif
 
     return (TRUE);
 }

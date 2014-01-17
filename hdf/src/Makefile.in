@@ -102,27 +102,27 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libdf_la_LIBADD =
 am__libdf_la_SOURCES_DIST = atom.c bitvect.c cdeflate.c cnbit.c \
 	cnone.c crle.c cskphuff.c cszip.c df24.c dfan.c dfcomp.c \
-	dfconv.c dfgr.c dfgroup.c dfimcomp.c dfjpeg.c dfkconv.c \
-	dfkcray.c dfkfuji.c dfknat.c dfkswap.c dfkvms.c dfp.c dfr8.c \
-	dfrle.c dfsd.c dfstubs.c dfufp2i.c dfunjpeg.c dfutil.c \
-	dynarray.c glist.c hbitio.c hblocks.c hbuffer.c hchunks.c \
-	hcomp.c hcompri.c hdatainfo.c hdfalloc.c herr.c hextelt.c \
-	hfile.c hfiledd.c hkit.c linklist.c mcache.c mfan.c mfgr.c \
-	mstdio.c tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c vio.c \
-	vparse.c vrw.c vsfld.c df24ff.f dfanf.c dfanff.f dff.c dfff.f \
-	dfpf.c dfpff.f dfr8f.c dfr8ff.f dfsdf.c dfsdff.f dfufp2iff.f \
-	dfutilf.c herrf.c hfilef.c df24f.c dfufp2if.c hfileff.f \
-	mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f vgf.c vgff.f
+	dfconv.c dfgr.c dfgroup.c dfimcomp.c dfjpeg.c dfknat.c \
+	dfkswap.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c dfufp2i.c \
+	dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c hblocks.c \
+	hbuffer.c hchunks.c hcomp.c hcompri.c hdatainfo.c hdfalloc.c \
+	herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c mcache.c \
+	mfan.c mfgr.c mstdio.c tbbt.c vattr.c vconv.c vg.c vgp.c vhi.c \
+	vio.c vparse.c vrw.c vsfld.c df24ff.f dfanf.c dfanff.f dff.c \
+	dfff.f dfpf.c dfpff.f dfr8f.c dfr8ff.f dfsdf.c dfsdff.f \
+	dfufp2iff.f dfutilf.c herrf.c hfilef.c df24f.c dfufp2if.c \
+	hfileff.f mfanf.c mfgrf.c mfgrff.f vattrf.c vattrff.f vgf.c \
+	vgff.f
 am__objects_1 = atom.lo bitvect.lo cdeflate.lo cnbit.lo cnone.lo \
 	crle.lo cskphuff.lo cszip.lo df24.lo dfan.lo dfcomp.lo \
-	dfconv.lo dfgr.lo dfgroup.lo dfimcomp.lo dfjpeg.lo dfkconv.lo \
-	dfkcray.lo dfkfuji.lo dfknat.lo dfkswap.lo dfkvms.lo dfp.lo \
-	dfr8.lo dfrle.lo dfsd.lo dfstubs.lo dfufp2i.lo dfunjpeg.lo \
-	dfutil.lo dynarray.lo glist.lo hbitio.lo hblocks.lo hbuffer.lo \
-	hchunks.lo hcomp.lo hcompri.lo hdatainfo.lo hdfalloc.lo \
-	herr.lo hextelt.lo hfile.lo hfiledd.lo hkit.lo linklist.lo \
-	mcache.lo mfan.lo mfgr.lo mstdio.lo tbbt.lo vattr.lo vconv.lo \
-	vg.lo vgp.lo vhi.lo vio.lo vparse.lo vrw.lo vsfld.lo
+	dfconv.lo dfgr.lo dfgroup.lo dfimcomp.lo dfjpeg.lo dfknat.lo \
+	dfkswap.lo dfp.lo dfr8.lo dfrle.lo dfsd.lo dfstubs.lo \
+	dfufp2i.lo dfunjpeg.lo dfutil.lo dynarray.lo glist.lo \
+	hbitio.lo hblocks.lo hbuffer.lo hchunks.lo hcomp.lo hcompri.lo \
+	hdatainfo.lo hdfalloc.lo herr.lo hextelt.lo hfile.lo \
+	hfiledd.lo hkit.lo linklist.lo mcache.lo mfan.lo mfgr.lo \
+	mstdio.lo tbbt.lo vattr.lo vconv.lo vg.lo vgp.lo vhi.lo vio.lo \
+	vparse.lo vrw.lo vsfld.lo
 am__objects_2 = df24ff.lo dfanf.lo dfanff.lo dff.lo dfff.lo dfpf.lo \
 	dfpff.lo dfr8f.lo dfr8ff.lo dfsdf.lo dfsdff.lo dfufp2iff.lo \
 	dfutilf.lo herrf.lo hfilef.lo df24f.lo dfufp2if.lo hfileff.lo \
@@ -341,8 +341,8 @@ FSOURCES = df24ff.f dfanf.c dfanff.f dff.c dfff.f dfpf.c dfpff.f dfr8f.c    \
 
 CSOURCES = atom.c bitvect.c cdeflate.c cnbit.c cnone.c crle.c cskphuff.c    \
            cszip.c df24.c dfan.c dfcomp.c dfconv.c dfgr.c dfgroup.c         \
-           dfimcomp.c dfjpeg.c dfkconv.c dfkcray.c dfkfuji.c dfknat.c       \
-           dfkswap.c dfkvms.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c         \
+           dfimcomp.c dfjpeg.c dfknat.c       \
+           dfkswap.c dfp.c dfr8.c dfrle.c dfsd.c dfstubs.c         \
            dfufp2i.c dfunjpeg.c dfutil.c dynarray.c glist.c hbitio.c        \
            hblocks.c hbuffer.c hchunks.c hcomp.c hcompri.c hdatainfo.c      \
 	   hdfalloc.c herr.c hextelt.c hfile.c hfiledd.c hkit.c linklist.c  \
@@ -480,12 +480,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfgroup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfimcomp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfjpeg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfkconv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfkcray.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfkfuji.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfknat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfkswap.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfkvms.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfpf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dfr8.Plo@am__quote@

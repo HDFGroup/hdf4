@@ -117,18 +117,7 @@ xdr_long(xdrs, lp)
 		return (XDR_PUTLONG(xdrs, lp));
 
 	if (xdrs->x_op == XDR_DECODE)
-#ifdef _CRAYMPP
-	    { /* need to support sign extension */
-		if (XDR_GETLONG(xdrs, lp)){
-		    if (*lp & 0x80000000)
-			*lp |= 0xffffffff00000000;;
-		    return(TRUE);
-		}
-		return (FALSE);
-	    }
-#else
 		return (XDR_GETLONG(xdrs, lp));
-#endif
 
 	if (xdrs->x_op == XDR_FREE)
 		return (TRUE);

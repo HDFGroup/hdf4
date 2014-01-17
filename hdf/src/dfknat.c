@@ -116,8 +116,6 @@ DFKnb1b(VOIDP s, VOIDP d, uint32 num_elm, uint32 source_stride,
     return 0;
 }
 
-#if !defined(UNICOS)    /* UNICOS does not need these routines */
-
 /************************************************************/
 /* DFKnb2b()                                                */
 /* -->Native mode for 2 byte data items                     */
@@ -259,8 +257,6 @@ DFKnb4b(VOIDP s, VOIDP d, uint32 num_elm,
 
     return 0;
 }
-
-#endif /* UNICOS */
 
 /************************************************************/
 /* DFKnb8b()                                                */

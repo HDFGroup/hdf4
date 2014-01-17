@@ -118,7 +118,6 @@
 #define        DFNTF_PC        4    /* PC floats - flipped IEEE */
 #define        DFNTF_CONVEX    5    /* CONVEX native format */
 #define        DFNTF_VP        6    /* Fujitsu VP native format */
-#define        DFNTF_CRAYMPP   7    /* Cray MPP format */
 
 /* class info codes for char */
 #define        DFNTC_BYTE      0    /* bitwise/numeric field */
@@ -160,21 +159,6 @@
 /* then the native sizes of number types */
 
 /* Unusual number sizes */
-/* Cray (UNICOS) native number sizes:
-	Char = 8 bits, unsigned
-	Short=64 int=64 long=64 float=64 double=64 bits
-	Long double=128 bits
-	Char pointers = 64 bits
-	Int pointers = 64 bits
-*/
-/* T3D/T3E (CRAYMPP) native number sizes:
-	Char = 8 bits, unsigned
-	Short=32 int=64 long=64 float=32 double=64 bits
-	Long double=64 bits
-	Char pointers = 64 bits
-	Int pointers = 64 bits
-	Big endian, IEEE floating point
-*/
 /* IA64 (IA64) native number sizes:
 	Char = 8 bits, signed
 	Short=16 int=32 long=64 float=32 double=64 bits
@@ -184,20 +168,14 @@
 	Little endian, IEEE floating point
 */
 
-#if !defined(UNICOS)
 #    define SIZE_NFLOAT32    4
 #    define SIZE_NFLOAT64    8
 #    define SIZE_NFLOAT128  16  /* No current plans for support */
 
 #    define SIZE_NINT8       1
 #    define SIZE_NUINT8      1
-#if defined(CRAYMPP)
-#    define SIZE_NINT16      4
-#    define SIZE_NUINT16     4
-#else
 #    define SIZE_NINT16      2
 #    define SIZE_NUINT16     2
-#endif
 #    define SIZE_NINT32      4
 #    define SIZE_NUINT32     4
 #    define SIZE_NINT64      8
@@ -209,36 +187,8 @@
 #    define SIZE_NCHAR       1  /* For backward compat char8 == char */
 #    define SIZE_NUCHAR8     1
 #    define SIZE_NUCHAR      1  /* For backward compat uchar8 == uchar */
-#if defined(CRAYMPP)
-#    define SIZE_NCHAR16     4  /* No current plans for support */
-#    define SIZE_NUCHAR16    4  /* No current plans for support */
-#else
 #    define SIZE_NCHAR16     2  /* No current plans for support */
 #    define SIZE_NUCHAR16    2  /* No current plans for support */
-#endif
-#else  /* !!!!!! SOMEBODY NEEDS TO CHECK THESE !!!!! */
-#    define SIZE_NFLOAT32    8
-#    define SIZE_NFLOAT64    8
-#    define SIZE_NFLOAT128  16  /* No current plans for support */
-
-#    define SIZE_NINT8       1
-#    define SIZE_NUINT8      1
-#    define SIZE_NINT16      8
-#    define SIZE_NUINT16     8
-#    define SIZE_NINT32      8
-#    define SIZE_NUINT32     8
-#    define SIZE_NINT64      8
-#    define SIZE_NUINT64     8
-#    define SIZE_NINT128    16  /* No current plans for support */
-#    define SIZE_NUINT128   16  /* No current plans for support */
-#    define SIZE_NCHAR8      1
-#    define SIZE_NCHAR       1
-#    define SIZE_NCHAR       1  /* For backward compat char8 == char */
-#    define SIZE_NUCHAR8     1
-#    define SIZE_NUCHAR      1  /* For backward compat uchar8 == uchar */
-#    define SIZE_NCHAR16     2  /* No current plans for support */
-#    define SIZE_NUCHAR16    2  /* No current plans for support */
-#endif /* UNICOS */
 
 /* then the sizes of little-endian number types */
 #    define SIZE_LFLOAT32    4

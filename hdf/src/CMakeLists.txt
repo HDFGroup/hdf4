@@ -30,12 +30,8 @@ SET (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfgroup.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfimcomp.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfjpeg.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkconv.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkcray.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkfuji.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfknat.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfkswap.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkvms.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfp.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfr8.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfrle.c
