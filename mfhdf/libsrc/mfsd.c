@@ -5747,9 +5747,85 @@ done:
       }
     /* Normal cleanup */
 
-
     return ret_value;    
 } /* SDsetblocksize */
+
+
+/******************************************************************************
+ NAME
+	SDgetblocksize -- get the size of the linked blocks.
+
+ DESCRIPTION
+    Get the size of the blocks to be used for storing data of unlimited
+	dimension datasets.
+
+ RETURNS
+    SUCCEED/FAIL
+
+******************************************************************************/
+intn
+SDgetblocksize(int32 sdsid,      /* IN: dataset ID */
+               int32 *block_size /* OUT: size of the block in bytes */)
+{
+    CONSTR(FUNC, "SDgetblocksize");    /* for HGOTO_ERROR */
+    NC      *handle = NULL;
+    NC_var  *var = NULL;
+    int32    block_length = -1;
+    int32    temp_aid = -1;
+    intn     ret_value = SUCCEED;
+
+#ifdef SDDEBUG
+    fprintf(stderr, "SDgetblocksize: I've been called\n");
+#endif
+
+    /* clear error stack */
+    HEclear();
+
+    /* get the handle */
+    handle = SDIhandle_from_id(sdsid, SDSTYPE);
+    if(handle == NULL) 
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* get the variable */
+    var = SDIget_var(handle, sdsid);
+    if(var == NULL)
+	HGOTO_ERROR(DFE_ARGS, FAIL);
+
+    /* Get access id using data tag/ref.  Fail if data ref has not been defined;
+       this happens when SDgetblocksize is called when no data has been written
+       or no special element has been created. -BMR, 2013/12/17 */
+    temp_aid = var->aid;	/* use temp to avoid messing up var->aid. -BMR */
+    if (temp_aid == FAIL)
+    {
+	if (var->data_ref == 0)		/* no data means no linked-block storage */
+            HGOTO_ERROR(DFE_GENAPP, FAIL);
+
+	/* Start read access on the element to acquire access id */
+        temp_aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+        if(temp_aid == FAIL) /* catch FAIL from Hstartread */
+            HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+
+    /* Use internal routine to do the actual retrieval */
+    if (HLgetblockinfo(temp_aid, &block_length, NULL) == FAIL)
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    if (block_length > 0)
+	*block_size = block_length;
+
+    /* End access to the temp_aid only when var->aid is -1, so we won't end
+       access var->aid if it was valid. */
+    if (var->aid == FAIL && temp_aid != FAIL)
+	Hendaccess(temp_aid);
+done:
+    if (ret_value == FAIL)
+      { /* Failure cleanup */
+	if (var->aid == FAIL && temp_aid != FAIL)
+	    Hendaccess(temp_aid);
+      }
+    /* Normal cleanup */
+    return ret_value;    
+} /* SDgetblocksize */
+
 
 /******************************************************************************
  NAME
@@ -7144,7 +7220,11 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
 
     /* Need to get access id for the following calls */
     if (var->aid == FAIL)
+    {
 	var->aid = Hstartread(handle->hdf_file, var->data_tag, var->data_ref);
+        if(var->aid == FAIL) /* catch FAIL from Hstartread */
+            HGOTO_ERROR(DFE_NOMATCH, FAIL);
+    }
 
     /* inquire about element */
     ret_value = Hinquire(var->aid, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &special);
@@ -7245,13 +7325,23 @@ SDreadchunk(int32  sdsid,  /* IN: access aid to SDS */
               ret_value = FAIL;
       } /* end if Hinquire */
 
+    /* End access to the access id */
+    if(Hendaccess(var->aid)==FAIL)
+        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+    var->aid = FAIL;
+
   done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-
+        /* End access to the aid if neccessary */
+        if (var->aid != FAIL)
+        {
+            Hendaccess(var->aid);
+            var->aid = FAIL;
+        }
       }
     /* Normal cleanup */
-    /* dont forget to free up info is special info block 
+    /* dont forget to free up info in special info block 
        This space was allocated by the library */
     if (info_block.cdims != NULL)
         HDfree(info_block.cdims);
