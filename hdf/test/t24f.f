@@ -238,7 +238,7 @@ C
 
       if (number_failed .eq. 0) then 
           call MESSAGE(VERBO_DEF + 1,
-     +		'****** ALL TESTS SUCCESSFUL ******')
+     +   '****** ALL TESTS SUCCESSFUL ******')
       else
           print *, '****** ', number_failed, ' TESTS FAILES  ******'
       endif

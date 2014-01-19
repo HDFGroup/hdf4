@@ -40,7 +40,7 @@ C
 c     integer mgwrlut, mgrdlut
       integer mgglinf, mgwclut, mgrclut
 c      integer mgsattr
-	integer mgatinf, mggattr, mgfndat
+      integer mgatinf, mggattr, mgfndat
       integer mgscatt, mgsnatt, mggcatt, mggnatt
       integer mgwcimg, mgrcimg
       integer mggnluts
@@ -48,40 +48,40 @@ c      integer mgsattr
       integer MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE,
      *      MFGR_INTERLACE_COMPONENT
 
-      parameter(MFGR_INTERLACE_PIXEL	= 0,
-     *		MFGR_INTERLACE_LINE	= 1,
-     * 		MFGR_INTERLACE_COMPONENT	= 2)
+      parameter(MFGR_INTERLACE_PIXEL = 0,
+     *          MFGR_INTERLACE_LINE = 1,
+     *          MFGR_INTERLACE_COMPONENT = 2)
 
-      integer 	DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL  
-      integer	DFACC_RDONLY, DFACC_RDWR, DFACC_CLOBBER
+      integer DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL  
+      integer DFACC_RDONLY, DFACC_RDWR, DFACC_CLOBBER
 
-      parameter(DFACC_READ       	 = 1,
-     *		DFACC_WRITE      	 = 2,
-     *		DFACC_CREATE     	 = 4,
-     *		DFACC_ALL        	 = 7,
-     *		DFACC_RDONLY		 = 1,
-     *		DFACC_RDWR		 = 3,
-     *		DFACC_CLOBBER		 = 4)
+      parameter(DFACC_READ        = 1,
+     *          DFACC_WRITE       = 2,
+     *          DFACC_CREATE      = 4,
+     *          DFACC_ALL         = 7,
+     *          DFACC_RDONLY      = 1,
+     *          DFACC_RDWR = 3,
+     *          DFACC_CLOBBER = 4)
 
-      integer 	DFNT_INT8,  DFNT_UINT8, 
-     *		DFNT_INT16, DFNT_UINT16,
-     *		DFNT_INT32, DFNT_UINT32, 
-     *          DFNT_INT64, DFNT_UINT64,
-     *          DFNT_INT128,DFNT_UINT128,
-     *          DFNT_CHAR8, DFNT_UCHAR8
+      integer DFNT_INT8,  DFNT_UINT8, 
+     *        DFNT_INT16, DFNT_UINT16,
+     *        DFNT_INT32, DFNT_UINT32, 
+     *        DFNT_INT64, DFNT_UINT64,
+     *        DFNT_INT128,DFNT_UINT128,
+     *        DFNT_CHAR8, DFNT_UCHAR8
  
-      parameter(DFNT_INT8	= 20,
-     *		DFNT_UINT8	= 21,
-     *		DFNT_INT16	= 22,
-     *		DFNT_UINT16	= 23,
-     *		DFNT_INT32	= 24,
-     *		DFNT_UINT32	= 25,
-     *		DFNT_INT64	= 26,
-     *		DFNT_UINT64	= 27,
-     *		DFNT_INT128	= 28,
-     *		DFNT_UINT128	= 29,
-     *          DFNT_CHAR8      =  4,
-     *          DFNT_UCHAR8     =  3)
+      parameter(DFNT_INT8       = 20,
+     *          DFNT_UINT8      = 21,
+     *          DFNT_INT16      = 22,
+     *          DFNT_UINT16     = 23,
+     *          DFNT_INT32      = 24,
+     *          DFNT_UINT32     = 25,
+     *          DFNT_INT64      = 26,
+     *          DFNT_UINT64     = 27,
+     *          DFNT_INT128     = 28,
+     *          DFNT_UINT128    = 29,
+     *          DFNT_CHAR8      = 4,
+     *          DFNT_UCHAR8     = 3)
       integer il
       character*80 TESTFILE
       character*80 IMAGE1, IMAGE2, IMAGEC, IMAGEC_2
@@ -1065,7 +1065,7 @@ C
 C  Find out type of compression used and compression parameters.
 C
        status = mggcompress(ri_id(i_comp), comp_type_out, comp_prm_out)
-	    if (status .eq. -1) then
+       if (status .eq. -1) then
             print *, 'mggcompress failed for', i, ' -th dataset'
                 err_grcompress = err_grcompress + 1
             endif

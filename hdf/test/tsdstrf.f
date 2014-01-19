@@ -124,9 +124,9 @@ C
           print *, '      HDF says= <', instring,'>'
           num= num+ 1
       else
-	  if (Verbosity .ge. VERBO_HI) then
-	      print *, 'Test passed for ', outstring
-	  endif
+         if (Verbosity .ge. VERBO_HI) then
+            print *, 'Test passed for ', outstring
+         endif
       endif
       return
       end

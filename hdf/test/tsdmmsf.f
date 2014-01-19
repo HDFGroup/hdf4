@@ -321,7 +321,7 @@ C  int32
          do 1300 j=1,10
            if (i32(i,j) .ne. ti32(i,j)) err1 = 1
  1300    continue
-      	 if (i32scale(i) .ne. ti32scale(i)) err2 = 1
+      if (i32scale(i) .ne. ti32scale(i)) err2 = 1
  1310 continue
 
       if ((i32max .ne. ti32max) .or. (i32min .ne. ti32min)) err3 = 1
@@ -334,8 +334,8 @@ C
           print *, '        >>> ', number_failed, ' TESTS FAILED <<<'
       else
           if (verbosity .ge. VERBO_HI) then
-	      print *, '        >>> ALL TESTS PASSED <<<'
-	  endif
+              print *, '        >>> ALL TESTS PASSED <<<'
+         endif
       endif
 
       return

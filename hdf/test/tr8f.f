@@ -18,9 +18,9 @@ C
       include 'fortest.inc'
 C
 C Test program:
-C     		Writes images together with pals to a file.
-C		Reads images from the file.
-C		Writes and reads images with speicfied ref's.
+C      Writes images together with pals to a file.
+C      Reads images from the file.
+C      Writes and reads images with speicfied ref's.
 C Input file: none
 C Output file: tdfr8f.hdf
 C
@@ -77,7 +77,7 @@ C Start here
       ret = d8spal(pal1)
       call VRFY(ret, 'd8spal',number_failed)
       call MESSAGE(VERBO_HI,
-     +		'Putting image 1 with pal 1, no compression')
+     +     'Putting image 1 with pal 1, no compression')
       ret=d8pimg(TESTFILE, im1, 100, 100, 0)
       call VRFY(ret, 'd8pimg',number_failed)
       num_images = num_images + 1
@@ -85,7 +85,7 @@ C Start here
       ref1 = d8lref()
       
       call MESSAGE(VERBO_HI,
-     +		'Putting image 2 with pal 1, REL compression')
+     +     'Putting image 2 with pal 1, REL compression')
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_RLE)
       call VRFY(ret, 'd8aimg',number_failed)
       num_images = num_images + 1
@@ -96,7 +96,7 @@ C Start here
       ret = d8spal(pal2)
       call VRFY(ret, 'd8spal',number_failed)
       call MESSAGE(VERBO_HI,
-     +		'Putting image 2 with pal 2, IMCOMP  compression')
+     +    'Putting image 2 with pal 2, IMCOMP  compression')
       ret=d8aimg(TESTFILE, im2, 321, 111, DFTAG_IMCOMP)
       call VRFY(ret, 'd8aimg',number_failed)
       num_images = num_images + 1
@@ -196,7 +196,7 @@ C********************************************************
       do 520 j=1, 100
           do 500 i=1,100
               if (oim(i,j) .ne. nim(i,j)) then
-	          print *, '     ERROR at ', i, j,' old image: ',
+                print *, '     ERROR at ', i, j,' old image: ',
      *                    oim(i,j), ' new image: ', nim(i,j)
                   prob = 1
               endif
@@ -249,7 +249,7 @@ C********************************************************
       do 520 j=1, 111
           do 500 i=1,321
               if (oim(i,j) .ne. nim(i,j)) then
-	          print *, '     ERROR at ', i, j,' old image: ',
+                  print *, '     ERROR at ', i, j,' old image: ',
      *                    oim(i,j), ' new image: ', nim(i,j)
                   prob = 1
               endif
@@ -273,14 +273,3 @@ C********************************************************
       endif
       return
       end
-
- 
-      
-      
-
-
-
-
-
-
-

@@ -117,7 +117,7 @@ C----------------------------------------------------------------------------*/
 
       integer function d2rref(name, ref)
       character*(*) name
-      integer ref
+      integer ref, d2irref
 
       d2rref = d2irref(name, ref, len(name))
       return
@@ -136,6 +136,7 @@ C----------------------------------------------------------------------------*/
 
       integer function d2nimg(name)
       character*(*) name
+      integer d2inimg
 
       d2nimg = d2inimg(name, len(name))
       return
@@ -230,7 +231,7 @@ C----------------------------------------------------------------------------*/
 
       integer function df24readref(name, ref)
       character*(*) name
-      integer ref
+      integer ref, d2irref
 
       df24readref = d2irref(name, ref, len(name))
       return

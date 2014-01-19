@@ -110,8 +110,8 @@ C  individual files
       err = 0
       do 210 i=1,10
           do 200 j=1,10
-  	    if (f32(i,j).ne.tf32(i,j)) err = 1
-  	    tf32(i,j) = 0.0
+            if (f32(i,j).ne.tf32(i,j)) err = 1
+            tf32(i,j) = 0.0
   200     continue
   210 continue
 
@@ -126,10 +126,10 @@ C  individual files
       err = 0
       do 310 i=1,10
           do 300 j=1,10
-  	    if (i8(i,j).ne.ti8(i,j)) err = 1
+            if (i8(i,j).ne.ti8(i,j)) err = 1
 C Use the following line for VMS
 C           ti8(i,j) = 0
-  	    ti8(i,j) = char(0)
+          ti8(i,j) = char(0)
   300     continue
   310 continue
 
@@ -144,8 +144,8 @@ C           ti8(i,j) = 0
       err = 0
       do 410 i=1,10
           do 400 j=1,10
-   	    if (i16(i,j).ne.ti16(i,j)) err = 1
-  	    ti16(i,j) = 0
+            if (i16(i,j).ne.ti16(i,j)) err = 1
+            ti16(i,j) = 0
   400     continue
   410 continue
 
@@ -160,8 +160,8 @@ C           ti8(i,j) = 0
       err = 0
       do 510 i=1,10
           do 500 j=1,10
-  	    if (i32(i,j).ne.ti32(i,j)) err = 1
-  	    ti32(i,j) = 0
+            if (i32(i,j).ne.ti32(i,j)) err = 1
+            ti32(i,j) = 0
   500     continue
   510 continue
 
@@ -255,9 +255,9 @@ C
       call err_check(err, number_failed, 'int32')
 C 
       if (number_failed .gt. 0 ) then
-  	print *,'        >>> ', number_failed, ' TESTS FAILED <<<'
+        print *,'        >>> ', number_failed, ' TESTS FAILED <<<'
       else
-  	call MESSAGE(VERBO_HI, '        >>> ALL TESTS PASSED <<<')
+        call MESSAGE(VERBO_HI, '        >>> ALL TESTS PASSED <<<')
       endif
 
       return

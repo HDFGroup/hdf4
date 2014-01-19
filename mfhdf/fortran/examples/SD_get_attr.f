@@ -46,7 +46,7 @@ C
 C     Get information about the file attribute. 
 C
       status = sfgainfo(sd_id, attr_index, attr_name, data_type, 
-     +			n_values)
+     +                  n_values)
 C
 C     Read the file attribute data. 
 C
@@ -68,7 +68,7 @@ C
 C     Get information about the data set attribute. 
 C
       status = sfgainfo(sds_id, attr_index, attr_name, data_type, 
-     +			n_values)
+     +                  n_values)
 C
 C     Read the SDS attribute data. 
 C
@@ -95,7 +95,7 @@ C
 C     Get information about dimension attribute. 
 C
       status = sfgainfo(dim_id, attr_index, attr_name, data_type, 
-     +			n_values)
+     +                  n_values)
 C
 C     Read the dimension attribute data. 
 C

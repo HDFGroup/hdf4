@@ -44,7 +44,7 @@ c     synchronise numrecs on change (X'10')
 c     synchronise whole header on change (X'20')
       parameter(NCHSYNC = 32)
 c     numrecs has changed (X'40')
-      parameter(NCNDIRTY = 64)	
+      parameter(NCNDIRTY = 64)
 c     header info has changed (X'80')
       parameter(NCHDIRTY = 128)
 c     prefill vars on endef and increase of record, the default behavior
@@ -98,7 +98,7 @@ c     No Error
 c     Not a netcdf id 
       parameter(NCEBADID = 1)
 c     Too many netcdfs open 
-      parameter(NCENFILE = 2)	
+      parameter(NCENFILE = 2)
 c     netcdf file exists && NCNOCLOB
       parameter(NCEEXIST = 3)
 c     Invalid Argument 
@@ -106,15 +106,15 @@ c     Invalid Argument
 c     Write to read only 
       parameter(NCEPERM = 5)
 c     Operation not allowed in data mode 
-      parameter(NCENOTIN = 6)	
+      parameter(NCENOTIN = 6)
 c     Operation not allowed in define mode 
-      parameter(NCEINDEF = 7)	
+      parameter(NCEINDEF = 7)
 c     Coordinates out of Domain 
       parameter(NCECOORD = 8)
 c     MAXNCDIMS exceeded 
       parameter(NCEMAXDS = 9)
 c     String match to name in use 
-      parameter(NCENAME = 10)	
+      parameter(NCENAME = 10)
 c     Attribute not found 
       parameter(NCENOATT = 11)
 c     MAXNCATTRS exceeded 
@@ -122,7 +122,7 @@ c     MAXNCATTRS exceeded
 c     Not a netcdf data type 
       parameter(NCEBADTY = 13)
 c     Invalid dimension id 
-      parameter(NCEBADD = 14)	
+      parameter(NCEBADD = 14)
 c     NCUNLIMITED in the wrong index 
       parameter(NCEUNLIM = 15)
 c     MAXNCVARS exceeded 
@@ -134,7 +134,7 @@ c     Action prohibited on NCGLOBAL varid
 c     Not a netcdf file 
       parameter(NCENOTNC = 19)
       parameter(NCESTS = 20)
-      parameter (NCENTOOL = 21)	
+      parameter (NCENTOOL = 21)
       parameter(NCFOOBAR = 32)
       parameter(NCSYSERR = -1)
       

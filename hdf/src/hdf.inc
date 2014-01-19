@@ -42,11 +42,11 @@ C	Error Return Codes
 
       parameter(DFE_NOERROR      =   0)
       parameter(DFE_NONE         =   0)
-      parameter(DFE_FNF        	 =  -1)
+      parameter(DFE_FNF          =  -1)
       parameter(DFE_DENIED       =  -2)
       parameter(DFE_ALROPEN      =  -3)
       parameter(DFE_TOOMANY      =  -4)
-      parameter(DFE_BADNAME   	 =  -5)
+      parameter(DFE_BADNAME      =  -5)
       parameter(DFE_BADACC       =  -6)
       parameter(DFE_BADOPEN      =  -7)
       parameter(DFE_NOTOPEN      =  -8)
@@ -61,7 +61,7 @@ C	Error Return Codes
       parameter(DFE_NOSUCHTAG    = -17)
       parameter(DFE_READERROR    = -18)
 
-      integer	DFE_WRITEERROR,  DFE_SEEKERROR,   DFE_NOFREEDD
+      integer DFE_WRITEERROR,  DFE_SEEKERROR,   DFE_NOFREEDD
       integer   DFE_BADTAG,      DFE_BADREF,      DFE_RDONLY
       integer   DFE_BADCALL,     DFE_BADPTR,      DFE_BADLEN
       integer   DFE_BADSEEK,     DFE_NOMATCH,     DFE_NOTINSET
@@ -90,7 +90,7 @@ C	Error Return Codes
       parameter(DFE_CORRUPT              = -37)
       parameter(DFE_BADFP                = -38)
 
-      integer	DFE_NOREF,       DFE_BADDATATYPE, DFE_BADMCTYPE
+      integer DFE_NOREF,       DFE_BADDATATYPE, DFE_BADMCTYPE
       integer   DFE_BADNUMTYPE,  DFE_BADORDER,    DFE_ARGS
       integer   DFE_INTERNAL,    DFE_DUPDD,       DFE_CANTMOD
       integer   DFE_RANGE,       DFE_BADTABLE,    DFE_BADSDG
@@ -134,8 +134,8 @@ C	Error Return Codes
 
 C internal file access codes
 
-      integer 	DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL  
-      integer	DFACC_RDONLY, DFACC_RDWR, DFACC_CLOBBER
+      integer DFACC_READ, DFACC_WRITE, DFACC_CREATE, DFACC_ALL  
+      integer DFACC_RDONLY, DFACC_RDWR, DFACC_CLOBBER
 
       parameter(DFACC_READ               = 1)
       parameter(DFACC_WRITE              = 2)
@@ -145,23 +145,23 @@ C internal file access codes
       parameter(DFACC_RDWR               = 3)
       parameter(DFACC_CLOBBER            = 4)
 
-C	Access types for SDsetaccesstype
+C Access types for SDsetaccesstype
 
-      integer	DFACC_DEFAULT, DFACC_SERIAL, DFACC_PARALLEL
+      integer DFACC_DEFAULT, DFACC_SERIAL, DFACC_PARALLEL
       parameter(DFACC_DEFAULT           = 0)
       parameter(DFACC_SERIAL            = 1)
-      parameter(DFACC_PARALLEL	        = 9)
+      parameter(DFACC_PARALLEL          = 9)
 
-C	Constants for DFSDsetorder
+C Constants for DFSDsetorder
 
-      integer 	DFO_FORTRAN, DFO_C
+      integer DFO_FORTRAN, DFO_C
  
       parameter(DFO_FORTRAN            = 1)
       parameter(DFO_C                  = 2)
 
-C	Definitions of storage convention
+C Definitions of storage convention
 
-      integer	DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC
+      integer DFNTF_IEEE, DFNTF_VAX, DFNTF_CRAY, DFNTF_PC
       integer   DFNTF_CONVEX, DFNTF_VP
  
       parameter(DFNTF_IEEE             = 1)
@@ -180,9 +180,9 @@ C       Masks for types
       parameter(DFNT_CUSTOM              = 8192)
       parameter(DFNT_LITEND              = 16384)
 
-C	Number type info codes 
+C Number type info codes 
 
-      integer	DFNT_NONE, DFNT_QUERY, DFNT_VERSION
+      integer DFNT_NONE, DFNT_QUERY, DFNT_VERSION
  
       parameter(DFNT_NONE       = 0)
       parameter(DFNT_QUERY      = 0)
@@ -214,8 +214,8 @@ C	Number type info codes
       parameter(DFNT_INT128     = 28)
       parameter(DFNT_UINT128    = 29)
 
-      integer 	DFNT_UCHAR8, DFNT_UCHAR, DFNT_CHAR8
-      integer   DFNT_CHAR,   DFNT_CHAR16, DFNT_UCHAR16
+      integer  DFNT_UCHAR8, DFNT_UCHAR, DFNT_CHAR8
+      integer  DFNT_CHAR,   DFNT_CHAR16, DFNT_UCHAR16
  
       parameter(DFNT_UCHAR8     = 3)
       parameter(DFNT_UCHAR      = 3)
@@ -224,8 +224,8 @@ C	Number type info codes
       parameter(DFNT_CHAR16     = 42)
       parameter(DFNT_UCHAR16    = 43)
 
-      integer	DFNT_NFLOAT32, DFNT_NFLOAT, DFNT_NFLOAT64
-      integer	DFNT_NDOUBLE,  DFNT_NFLOAT128
+      integer DFNT_NFLOAT32, DFNT_NFLOAT, DFNT_NFLOAT64
+      integer DFNT_NDOUBLE,  DFNT_NFLOAT128
 
       parameter(DFNT_NFLOAT32   = 4101)
       parameter(DFNT_NFLOAT     = 4101)
@@ -243,15 +243,15 @@ C	Number type info codes
       parameter(DFNT_NUINT8      = 4117)
       parameter(DFNT_NINT16      = 4118)
       parameter(DFNT_NUINT16     = 4119)
-      parameter(DFNT_NINT32	 = 4120)
+      parameter(DFNT_NINT32      = 4120)
       parameter(DFNT_NUINT32     = 4121)
       parameter(DFNT_NINT64      = 4122)
       parameter(DFNT_NUINT64     = 4123)
       parameter(DFNT_NINT128     = 4124)
       parameter(DFNT_NUINT128    = 4125)
 
-      integer 	DFNT_NUCHAR8, DFNT_NUCHAR, DFNT_NCHAR8
-      integer	DFNT_NCHAR,   DFNT_NCHAR16, DFNT_NUCHAR16
+      integer DFNT_NUCHAR8, DFNT_NUCHAR, DFNT_NCHAR8
+      integer DFNT_NCHAR,   DFNT_NCHAR16, DFNT_NUCHAR16
  
       parameter(DFNT_NUCHAR8  = 4099)
       parameter(DFNT_NUCHAR   = 4099)
@@ -260,8 +260,8 @@ C	Number type info codes
       parameter(DFNT_NCHAR16  = 4138)
       parameter(DFNT_NUCHAR16 = 4139)
 
-      integer	DFNT_LFLOAT32, DFNT_LFLOAT, DFNT_LFLOAT64
-      integer	DFNT_LDOUBLE,  DFNT_LFLOAT128
+      integer DFNT_LFLOAT32, DFNT_LFLOAT, DFNT_LFLOAT64
+      integer DFNT_LDOUBLE,  DFNT_LFLOAT128
 
       parameter(DFNT_LFLOAT32  = 16389)
       parameter(DFNT_LFLOAT    = 16389)
@@ -284,8 +284,8 @@ C	Number type info codes
       parameter(DFNT_LINT128    = 16412)
       parameter(DFNT_LUINT128   = 16413)
 
-      integer 	DFNT_LUCHAR8, DFNT_LUCHAR, DFNT_LCHAR8
-      integer	DFNT_LCHAR,   DFNT_LCHAR16, DFNT_LUCHAR16
+      integer DFNT_LUCHAR8, DFNT_LUCHAR, DFNT_LCHAR8
+      integer DFNT_LCHAR,   DFNT_LCHAR16, DFNT_LUCHAR16
  
       parameter(DFNT_LUCHAR8    = 16387)
       parameter(DFNT_LUCHAR     = 16387)
@@ -294,62 +294,62 @@ C	Number type info codes
       parameter(DFNT_LCHAR16    = 16426)
       parameter(DFNT_LUCHAR16   = 16427)
 
-C	tags and refs
+C tags and refs
 
-      integer 	DFREF_WILDCARD, DFTAG_WILDCARD, DFTAG_NULL
-      integer	DFTAG_LINKED, DFTAG_VERSION, DFTAG_COMPRESSED
+      integer DFREF_WILDCARD, DFTAG_WILDCARD, DFTAG_NULL
+      integer DFTAG_LINKED, DFTAG_VERSION, DFTAG_COMPRESSED
  
       parameter(DFREF_WILDCARD  = 0, DFTAG_WILDCARD  = 0)
       parameter(DFTAG_NULL      = 1, DFTAG_LINKED    = 20)
       parameter(DFTAG_VERSION   = 30,DFTAG_COMPRESSED = 40)
 
 
-C	utility set
+C utility set
 
-      integer	DFTAG_FID, DFTAG_FD,  DFTAG_TID, DFTAG_TD
-      integer	DFTAG_DIL, DFTAG_DIA, DFTAG_NT,  DFTAG_MT
+      integer DFTAG_FID, DFTAG_FD,  DFTAG_TID, DFTAG_TD
+      integer DFTAG_DIL, DFTAG_DIA, DFTAG_NT,  DFTAG_MT
  
       parameter(DFTAG_FID       = 100, DFTAG_FD        = 101)
       parameter(DFTAG_TID       = 102, DFTAG_TD        = 103)
       parameter(DFTAG_DIL       = 104, DFTAG_DIA       = 105)
       parameter(DFTAG_NT        = 106, DFTAG_MT        = 107)
 
-C 	raster-8 set 
+C  raster-8 set 
 
-      integer	DFTAG_ID8, DFTAG_IP8, DFTAG_RI8
-      integer	DFTAG_CI8, DFTAG_II8
+      integer DFTAG_ID8, DFTAG_IP8, DFTAG_RI8
+      integer DFTAG_CI8, DFTAG_II8
  
       parameter(DFTAG_ID8       = 200, DFTAG_IP8       = 201)
       parameter(DFTAG_RI8       = 202, DFTAG_CI8       = 203)
       parameter(DFTAG_II8       = 204)
 
-C	Raster Image set
+C Raster Image set
 
-      integer	DFTAG_ID, DFTAG_LUT, DFTAG_RI, DFTAG_CI
+      integer DFTAG_ID, DFTAG_LUT, DFTAG_RI, DFTAG_CI
  
       parameter(DFTAG_ID        = 300, DFTAG_LUT       = 301)
       parameter(DFTAG_RI        = 302, DFTAG_CI        = 303)
 
-      integer	DFTAG_RIG, DFTAG_LD,  DFTAG_MD, DFTAG_MA
-      integer	DFTAG_CCN, DFTAG_CFM, DFTAG_AR
+      integer DFTAG_RIG, DFTAG_LD,  DFTAG_MD, DFTAG_MA
+      integer DFTAG_CCN, DFTAG_CFM, DFTAG_AR
   
       parameter(DFTAG_RIG       = 306, DFTAG_LD        = 307)
       parameter(DFTAG_MD        = 308, DFTAG_MA        = 309)
       parameter(DFTAG_CCN       = 310, DFTAG_CFM       = 311)
       parameter(DFTAG_AR        = 312)
 
-      integer	DFTAG_DRAW, DFTAG_RUN, DFTAG_XYP, DFTAG_MTO
+      integer DFTAG_DRAW, DFTAG_RUN, DFTAG_XYP, DFTAG_MTO
  
       parameter(DFTAG_DRAW      = 400, DFTAG_RUN       = 401)
       parameter(DFTAG_XYP       = 500, DFTAG_MTO       = 501)
 
-C	Tektronix 
+C Tektronix 
 
-      integer	DFTAG_T14, DFTAG_T105
+      integer DFTAG_T14, DFTAG_T105
  
       parameter(DFTAG_T14       = 602, DFTAG_T105      = 603)
 
-C	Scientific Data set 
+C Scientific Data set 
 
       integer   DFTAG_SDG, DFTAG_SDD, DFTAG_SD, DFTAG_SDS, DFTAG_SDL
       integer   DFTAG_SDU, DFTAG_SDF, DFTAG_SDM, DFTAG_SDC
@@ -365,31 +365,31 @@ C	Scientific Data set
       parameter(DFTAG_CAL       = 731, DFTAG_FV        = 732)
       parameter(DFTAG_BREQ      = 799, DFTAG_EREQ      = 780)
 
-C	VSets 
+C VSets 
 
-      integer	DFTAG_VG, DFTAG_VH, DFTAG_VS
+      integer DFTAG_VG, DFTAG_VH, DFTAG_VS
  
       parameter(DFTAG_VG        = 1965, DFTAG_VH        = 1962)
       parameter(DFTAG_VS        = 1963)
 
-C	compression schemes 
+C compression schemes 
 
-      integer	DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP, DFTAG_JPEG
+      integer DFTAG_RLE, DFTAG_IMC, DFTAG_IMCOMP, DFTAG_JPEG
       integer   DFTAG_GREYJPEG
  
       parameter(DFTAG_RLE       =11, DFTAG_IMC       =12)
-      parameter(DFTAG_IMCOMP   	=12, DFTAG_JPEG      =13)
-      parameter(DFTAG_GREYJPEG 	=14)
+      parameter(DFTAG_IMCOMP   =12, DFTAG_JPEG      =13)
+      parameter(DFTAG_GREYJPEG =14)
 
-C	SPECIAL CODES 
+C SPECIAL CODES 
 
-      integer	SPECIAL_LINKED, SPECIAL_EXT
+      integer SPECIAL_LINKED, SPECIAL_EXT
  
-      parameter(SPECIAL_LINKED 	= 1, SPECIAL_EXT 	= 2)
+      parameter(SPECIAL_LINKED = 1, SPECIAL_EXT = 2)
 
-C	PARAMETERS 
+C PARAMETERS 
 
-      integer	DF_MAXFNLEN
+      integer DF_MAXFNLEN
       integer   SD_UNLIMITED
       integer   SD_DIMVAL_BW_COMP
       integer   SD_DIMVAL_BW_INCOMP 
@@ -405,14 +405,14 @@ C	PARAMETERS
       parameter(HDF_VDATA = -1)
 
 C       Standard return codes       
-      integer	SUCCEED, FAIL  
+      integer SUCCEED, FAIL  
  
-      parameter(SUCCEED         = 0, FAIL     	= -1)
+      parameter(SUCCEED         = 0, FAIL     = -1)
 
 
-C	Compression Types 
+C Compression Types 
 
-      integer	COMP_NONE, COMP_RLE, COMP_IMCOMP, COMP_JPEG
+      integer COMP_NONE, COMP_RLE, COMP_IMCOMP, COMP_JPEG
 
       parameter(COMP_NONE       = 0, COMP_RLE        = 11)
       parameter(COMP_IMCOMP     = 12, COMP_JPEG       = 2)
@@ -441,18 +441,18 @@ C
       parameter (COMP_DECODER_ENABLED = 1)
       parameter (COMP_ENCODER_ENABLED = 2)
 C
-C	Interlace Types 
+C Interlace Types 
 
-      integer	MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE
+      integer MFGR_INTERLACE_PIXEL, MFGR_INTERLACE_LINE
       integer   MFGR_INTERLACE_COMPONENT
 
       parameter(MFGR_INTERLACE_PIXEL    = 0)
       parameter(MFGR_INTERLACE_LINE     = 1)
       parameter(MFGR_INTERLACE_COMPONENT= 2)
 
-      integer	FULL_INTERLACE, NO_INTERLACE
+      integer FULL_INTERLACE, NO_INTERLACE
 
-      parameter(FULL_INTERLACE	= 0, NO_INTERLACE = 1)
+      parameter(FULL_INTERLACE = 0, NO_INTERLACE = 1)
 
 C       Vdata fields packing types
       integer   HDF_VSPACK, HDF_VSUNPACK

@@ -155,8 +155,8 @@ C Explicitly set to palette of ref2 for reading
 
       newref2 =  dplref()
       if (newref2 .ne. ref2) then
-	print *, 'Error: newref2 is ', newref2, ', should be ', ref2
-	number_failed = number_failed + 1
+         print *, 'Error: newref2 is ', newref2, ', should be ', ref2
+         number_failed = number_failed + 1
       endif
 
 C
@@ -180,8 +180,8 @@ C Explicitly set to palette of ref1 for reading
 
       newref1 =  dplref()
       if (newref1 .ne. ref1) then
-	print *, 'Error: newref1 is ', newref1, ', should be ', ref1
-	number_failed = number_failed + 1
+          print *, 'Error: newref1 is ', newref1, ', should be ', ref1
+          number_failed = number_failed + 1
       endif
       
 C
@@ -223,12 +223,10 @@ C     print *,'last ref is: ', ret
 
       if (number_failed .eq. 0) then 
           call MESSAGE(VERBO_DEF + 1,
-     +		'****** ALL TESTS SUCCESSFUL ******')
+     +                '****** ALL TESTS SUCCESSFUL ******')
       else
           print *, '****** ', number_failed, ' TESTS FAILES  ******'
       endif
 
       return
       end
-
-

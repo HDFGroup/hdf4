@@ -155,7 +155,7 @@ c     will be copied
       data dvalidrg/0D0,500D0/
       data gavalue/'NWS', '88/10/25 12:00:00'/
       data cavalue/'test string', 'a'/
-      data lenstr/80/	
+      data lenstr/80/
       data epsilon /.000001/
 
       incdf = ncopn(iname, NCNOWRIT, iret)
@@ -357,7 +357,7 @@ c     maximum length of an attribute
       data dvalidrg/0D0,500D0/
       data gavalue/'NWS', '88/10/25 12:00:00'/
       data cavalue/'test string', 'a'/
-      data lenstr/80/	
+      data lenstr/80/
       data epsilon /.000001/
       
       ncid = ncopn (cdfname, NCNOWRIT, iret)
@@ -915,7 +915,7 @@ c
             do 10 i = 1, times
                if (barray(i) .ne. byval(i)) then 
                   write(*,*) 'ncvgt of bytes, got ', barray(i), ' .ne. '
-     +			     , byval(i)
+     +                       , byval(i)
                end if
  10         continue
          else if (vartyp .eq. NCSHORT) then
@@ -927,7 +927,7 @@ c
             do 20 i = 1, times
                if (sarray(i) .ne. shval(i)) then 
                   write(*,*) 'ncvgt of short, got ', sarray(i), ' .ne. '
-     +			     , shval(i)
+     +                       , shval(i)
                end if
  20         continue
          else if (vartyp .eq. NCLONG) then
@@ -1161,7 +1161,7 @@ c
       start(2) = 1
       count(1) = 4
       count(2) = 4
-      lenstr = 31	
+      lenstr = 31
       string = 'testthiskind of '
       call ncvptc (ncid, chid,start, count, string, lenstr, iret)
       call ncclos(ncid, iret)
@@ -1255,7 +1255,6 @@ C        Arrays to read data to.
          double precision c_val(3), double_attr_val(3)
          real epsilon
          double precision depsilon
-         integer external fixname
 
 C        Arrays initialization
          DATA time_val /1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12/
@@ -1416,4 +1415,4 @@ C read global attributes
 
 1000     continue
          return
-         end
+        end
