@@ -137,6 +137,7 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
+LL_PATH = @LL_PATH@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 LT_STATIC_EXEC = @LT_STATIC_EXEC@
@@ -280,6 +281,7 @@ INSTALL_FILES = VD_read_from_vdata.f VD_read_mixed_vdata.f \
 	AN_get_annotation_info.f AN_read_annotation.f         \
 	#VD_set_get_vdata_attr.f
 
+INSTALL_SCRIPT_FILES = run-fortran-ex.sh
 
 # Where to install Fortran example files
 EXAMPLEDIR = $(prefix)/examples/fortran
@@ -547,6 +549,8 @@ AN_create_annotation: $(srcdir)/AN_create_annotation.f
 AN_get_annotation_info: $(srcdir)/AN_get_annotation_info.f
 AN_read_annotation: $(srcdir)/AN_read_annotation.f
 
+@BUILD_SHARED_SZIP_CONDITIONAL_TRUE@export LD_LIBRARY_PATH=$(LL_PATH)
+
 # How to create EXAMPLEDIR if it doesn't already exist
 $(EXAMPLEDIR):
 	mkdir -p $@
@@ -561,18 +565,51 @@ uninstall-local:
 install-examples: $(EXAMPLEDIR) $(INSTALL_FILES)
 	@for f in X $(INSTALL_FILES); do                                     \
 	  if test $$f != X; then                                             \
-	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);\
-            chmod a-x $(EXAMPLEDIR)/$$f;                                     \
+	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);    \
+	    chmod a-x $(EXAMPLEDIR)/$$f;                                     \
+	  fi;                                                                \
+	done
+	@for f in X $(INSTALL_SCRIPT_FILES); do                              \
+	  if test $$f != X; then                                             \
+	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);    \
+	  fi;                                                                \
+	done
+	@for f in X $(INSTALL_TOP_FILES); do                                 \
+	  if test $$f != X; then                                             \
+	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLETOPDIR)/. || exit 1); \
+	    chmod a-x $(EXAMPLETOPDIR)/$$f;                                  \
+	  fi;                                                                \
+	done
+	@for f in X $(INSTALL_TOP_SCRIPT_FILES); do                          \
+	  if test $$f != X; then                                             \
+	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLETOPDIR)/. || exit 1); \
 	  fi;                                                                \
 	done
 
 uninstall-examples:
-	@if test -n "$(INSTALL_FILES)" -a -d $(EXAMPLEDIR); then                                 \
+	@if test -n "$(INSTALL_FILES)" -a -d $(EXAMPLEDIR); then           \
 	  set -x; cd $(EXAMPLEDIR) && $(RM) $(INSTALL_FILES);              \
-        fi
+	fi
+	@if test -n "$(INSTALL_SCRIPT_FILES)" -a -d $(EXAMPLEDIR); then    \
+	  set -x; cd $(EXAMPLEDIR) && $(RM) $(INSTALL_SCRIPT_FILES);       \
+	fi
+	@if test -n "$(INSTALL_TOP_FILES)" -a -d $(EXAMPLETOPDIR); then    \
+	  set -x; cd $(EXAMPLETOPDIR) && $(RM) $(INSTALL_TOP_FILES);       \
+	fi
+	@if test -n "$(INSTALL_TOP_SCRIPT_FILES)" -a -d $(EXAMPLETOPDIR); then    \
+	  set -x; cd $(EXAMPLETOPDIR) && $(RM) $(INSTALL_TOP_SCRIPT_FILES);       \
+	fi
 
 installcheck-local:
-	$(MAKE) $(AM_MAKEFLAGS) check;
+	@if test "$(STATIC_SHARED)" = "static, shared"; then               \
+	  H5CCFLAGS="-shlib" $(MAKE) $(AM_MAKEFLAGS) check;                \
+	  $(MAKE) $(AM_MAKEFLAGS) clean;                                   \
+	  H5CCFLAGS="" $(MAKE) $(AM_MAKEFLAGS) check;                      \
+	elif test "$(STATIC_SHARED)" = "shared"; then                      \
+	  H5CCFLAGS="-shlib" $(MAKE) $(AM_MAKEFLAGS) check;                \
+	else                                                               \
+	  $(MAKE) $(AM_MAKEFLAGS) check;                                   \
+	fi
 
 # lib/progs/tests targets recurse into subdirectories. build-* targets
 # build files in this directory.

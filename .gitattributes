@@ -62,6 +62,7 @@ hdf/examples/GR_write_chunks.c -text
 hdf/examples/GR_write_palette.c -text
 hdf/examples/Makefile.am -text
 hdf/examples/Makefile.in -text
+hdf/examples/README -text
 hdf/examples/VD_create_onefield_vdatas.c -text
 hdf/examples/VD_create_vdatas.c -text
 hdf/examples/VD_get_vdata_info.c -text
@@ -78,6 +79,8 @@ hdf/examples/VG_get_vgroup_info.c -text
 hdf/examples/VG_insert_vdatas_to_vgroup.c -text
 hdf/examples/VG_set_get_vgroup_attr.c -text
 hdf/examples/VG_vgroup_contents.c -text
+hdf/examples/run-all-ex.sh -text
+hdf/examples/run-c-ex.sh -text
 hdf/fortran/CMakeLists.txt -text
 hdf/fortran/CMakeTests.cmake -text
 hdf/fortran/Makefile.am -text
@@ -112,6 +115,7 @@ hdf/fortran/examples/VG_get_vgroup_info.f -text
 hdf/fortran/examples/VG_insert_vdatas_to_vgroup.f -text
 hdf/fortran/examples/VG_set_get_vgroup_attr.f -text
 hdf/fortran/examples/VG_vgroup_contents.f -text
+hdf/fortran/examples/run-fortran-ex.sh -text
 hdf/fortran/hdf_fortrandll.def -text
 hdf/src/CMakeLists.txt -text
 hdf/src/H4api_adpt.h -text

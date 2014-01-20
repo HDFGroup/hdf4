@@ -54,5 +54,9 @@ CHECK_CLEANFILES += ExternalSDS
 
 DISTCLEANFILES = *.chkexe *.chklog
 
+if BUILD_SHARED_SZIP_CONDITIONAL
+export LD_LIBRARY_PATH=$(LL_PATH)
+endif
+
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am

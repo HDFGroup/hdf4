@@ -38,6 +38,8 @@ INSTALL_FILES= VD_read_from_vdata.f VD_read_mixed_vdata.f \
 	AN_get_annotation_info.f AN_read_annotation.f         \
 	#VD_set_get_vdata_attr.f
 
+INSTALL_SCRIPT_FILES = run-fortran-ex.sh
+
 # Where to install Fortran example files
 EXAMPLEDIR=$(prefix)/examples/fortran
 
@@ -78,6 +80,10 @@ AN_get_annotation_info: $(srcdir)/AN_get_annotation_info.f
 AN_read_annotation: $(srcdir)/AN_read_annotation.f
 
 DISTCLEANFILES = *.chkexe *.chklog
+
+if BUILD_SHARED_SZIP_CONDITIONAL
+export LD_LIBRARY_PATH=$(LL_PATH)
+endif
 
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am

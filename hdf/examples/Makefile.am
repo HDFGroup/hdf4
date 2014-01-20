@@ -40,8 +40,14 @@ INSTALL_FILES= VD_read_from_vdata.c VD_read_mixed_vdata.c	\
 	AN_create_annotation.c AN_get_annotation_info.c		\
 	AN_read_annotation.c
 
+INSTALL_SCRIPT_FILES = run-c-ex.sh
+
+INSTALL_TOP_SCRIPT_FILES = run-all-ex.sh
+INSTALL_TOP_FILES = README
+
 # Where to install example files
 EXAMPLEDIR=$(prefix)/examples/c
+EXAMPLETOPDIR=$(prefix)/examples
 
 # How to build C programs using h4cc
 $(EXTRA_PROG): $(H4CC)
@@ -84,5 +90,9 @@ AN_read_annotation: $(srcdir)/AN_read_annotation.c
 
 DISTCLEANFILES = *.chkexe *.chklog
 
+if BUILD_SHARED_SZIP_CONDITIONAL
+export LD_LIBRARY_PATH=$(LL_PATH)
+endif
+    
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am

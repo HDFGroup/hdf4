@@ -91,6 +91,9 @@
 ./hdf/examples/GR_write_palette.c
 ./hdf/examples/Makefile.am
 ./hdf/examples/Makefile.in
+./hdf/examples/README
+./hdf/examples/run-all-ex.sh
+./hdf/examples/run-c-ex.sh
 ./hdf/examples/VD_create_onefield_vdatas.c
 ./hdf/examples/VD_create_vdatas.c
 ./hdf/examples/VD_get_vdata_info.c
@@ -125,6 +128,7 @@
 ./hdf/fortran/examples/GR_write_palette.f
 ./hdf/fortran/examples/Makefile.am
 ./hdf/fortran/examples/Makefile.in
+./hdf/fortran/examples/run-fortran-ex.sh
 ./hdf/fortran/examples/VD_create_onefield_vdatas.f
 ./hdf/fortran/examples/VD_create_vdatas.f
 ./hdf/fortran/examples/VD_get_vdata_info.f
@@ -880,6 +884,8 @@
 ./mfhdf/ncgen/ncgen.y
 ./mfhdf/ncgen/test0.cdl
 ./mfhdf/ncgen/testncgen.sh.in
+./mfhdf/nctest/Makefile.am
+./mfhdf/nctest/Makefile.in
 ./mfhdf/nctest/README
 ./mfhdf/nctest/add.c
 ./mfhdf/nctest/add.h
