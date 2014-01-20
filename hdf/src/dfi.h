@@ -119,30 +119,6 @@
 #define DF_MT   DFMT_MAC
 #endif /*MAC */
 
-#ifdef VMS
-/*#undef DF_BUFFIO should be buff !!!! */
-   /* use only unbuff i/o - buff doesn't work! */
-#ifndef DFopen  /* avoid double includes */
-/* #include "dfivms.h" */
-#endif /*DFopen */
-#undef DF_STRUCTOK
-#define DF_CAPFNAMES    /* fortran names are in all caps */
-#include <file.h>   /* for unbuffered i/o stuff */
-#define DFmovmem(from, to, len) memcpy(to, from, len)
-#ifndef DF_STRUCTOK
-#define UINT16READ(p, x) { x = ((*p++) & 255)<<8; x |= (*p++) & 255; }
-#define INT16READ(p, x) { x = (*p++)<<8; x |= (*p++) & 255; }
-#define INT32READ(p, x) { x = (*p++)<<24; x|=((*p++) & 255)<<16;    \
-            x|=((*p++) & 255)<<8; x|=(*p++) & 255; }
-#define UINT16WRITE(p, x) { *p++ = (x>>8) & 255; *p++ = x & 255; }
-#define INT16WRITE(p, x) { *p++ = (x>>8) & 255; *p++ = x & 255; }
-#define INT32WRITE(p, x) { *p++ = (x>>24) & 255; *p++ = (x>>16) & 255;  \
-            *p++ = (x>>8) & 255; *p++ = x & 255; }
-#endif /*DF_STRUCTOK */
-#define DF_CREAT(name, prot) creat(name, prot)
-#define DF_MT   DFMT_VAX
-#endif /*VMS */
-
 #ifdef APOLLO
 #if ! defined mc68010 && ! defined mc68020 && ! defined mc68030
 #undef DF_STRUCTOK

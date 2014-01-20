@@ -15,7 +15,7 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 
 #include <stdio.h>
 #include "types.h"
-#if !(defined MSDOS || defined VMS || defined WINNT || defined _WIN32)
+#if !(defined MSDOS || defined WINNT || defined _WIN32)
 #     if !(defined macintosh || defined SYMANTEC_C || defined MAC)
 #        include <netinet/in.h>     /* for htonl() */
 #     else /* Macintosh equivalent */
@@ -25,18 +25,14 @@ static char sccsid[] = "@(#)xdr_stdio.c 1.16 87/08/11 Copyr 1984 Sun Micro";
 #        define htons(x) x
 #     endif /* Macintosh */
 #else
-#     ifdef VMS
-#        include <in.h>
-#     else
-#        if !(defined WINNT) & !defined _WIN32
-              extern long ntohl(long i_in);
-              extern long htonl(long i_in);
-              extern short ntohs(short i_in);
-              extern short htons(short i_in);
-#		  else
-#			include <winsock.h>
-#         endif /* WINNT */
-#     endif
+#     if !(defined WINNT) & !defined _WIN32
+           extern long ntohl(long i_in);
+           extern long htonl(long i_in);
+           extern short ntohs(short i_in);
+           extern short htons(short i_in);
+#      else
+#          include <winsock.h>
+#      endif /* WINNT */
 #endif
 #include "xdr.h"
 

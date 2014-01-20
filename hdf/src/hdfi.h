@@ -436,59 +436,6 @@ typedef long               hdf_pint_t;   /* an integer the same size as a pointe
 #define __CRAY_XT3__
 #endif
 
-#if defined(VMS) || defined(vms)
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-#include <file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT              DFMT_VAX
-typedef void               VOID;
-typedef void               *VOIDP;
-typedef char               *_fcd;
-typedef char               char8;
-typedef unsigned char      uchar8;
-typedef char               int8;
-typedef unsigned char      uint8;
-typedef short int          int16;
-typedef unsigned short int uint16;
-#ifdef __alpha
-typedef int                int32;
-typedef unsigned int       uint32;
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else
-typedef long int           int32;
-typedef unsigned long int  uint32;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif
-typedef int                intn;
-typedef unsigned int       uintn;
-typedef float              float32;
-typedef double             float64;
-typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-#define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
-
-/* 
-  Redef a couple of C routine names to avoid conflicts
-  since the VMS link command is case-insensitive
-*/
-#define FILELIB UNIXBUFIO
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#include "dfivms.h"
-
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* VMS */
-
 #if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convexc__)
 
 #ifndef CONVEX
@@ -1437,9 +1384,9 @@ correctly.
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* non-standard function, not defined on the following machines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX )
+#if !(defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX )
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
-#endif /* !(VMS | etc..) */
+#endif /* !(etc..) */
 
 
 /**************************************************************************

@@ -6,9 +6,6 @@
 
 #include "local_nc.h"
 #include "generic.h"		/* defines union generic */
-#ifdef VMS
-#include <stdlib.h>
-#endif
 
 #define H4_MAX_NC_ATTSIZE    2000	/* max size in bytes of an attribute */
 #define MAXTRST		   500	/* maximum size of a single string value */

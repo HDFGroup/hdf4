@@ -169,11 +169,7 @@ char *argv[];
 #if defined TEST_PC || defined TEST_WIN
     fclose(dbg_file);
 #endif
-#ifdef vms
-#define EXIT_SUCCESS 1
-#else
 #define EXIT_SUCCESS 0
-#endif
     return EXIT_SUCCESS;
 }
 

@@ -667,62 +667,12 @@ test_conv(void)
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t]););
-/* This amazing hack is because of the way the VMS converts numbers. */
-/*  The converted number are going to have to be checked by hand... */
-#if defined VP | defined VMS | defined CONVEXNATIVE
-#ifdef OLD_WAY
-        if(Verbocity>9) {
-            intn i;
-            uint8 *u8_s=(uint8 *)src_float64,
-	        *u8_d=(uint8 *)dst_float64,
-	        *u8_d2=(uint8 *)dst2_float64;
 
-            printf("src_float64:  ");
-            for(i=0; i<80; i++)
-              printf("%.2x ",u8_s[i]);
-            printf("\ndst_float64:  ");
-            for(i=0; i<80; i++)
-              printf("%.2x ",u8_d[i]);
-            printf("\ndst2_float64: ");
-            for(i=0; i<80; i++)
-              printf("%.2x ",u8_d2[i]);
-            printf("\n");
-        }
-#else /* OLD_WAY */
-	for(i=0; i<TEST_SIZE; i++) {
-	    if(abs(dst2_float64[i]-src_float64[i]) >
-		abs(src_float64[i]*EPS64)) {
-             printf("Error converting %s float64 values!\n",test_name[t]);
-printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64[i],i,dst2_float64[i]);
-{
-            intn j;
-            uint8 *u8_s=(uint8 *)&src_float64[i],
-	        *u8_d=(uint8 *)&dst_float64[i],
-	        *u8_d2=(uint8 *)&dst2_float64[i];
-
-            printf("src_float64:  ");
-            for(j=0; j<sizeof(float64); j++)
-              printf("%.2x ",u8_s[j]);
-            printf("\ndst_float64:  ");
-            for(j=0; j<sizeof(float64); j++)
-              printf("%.2x ",u8_d[j]);
-            printf("\ndst2_float64: ");
-            for(j=0; j<sizeof(float64); j++)
-              printf("%.2x ",u8_d2[j]);
-            printf("\n");
-}
-              HEprint(stdout,0);
-              num_errs++;
-            } /* end if */
-	  } /* end for */
-#endif /* OLD_WAY */
-#else
         if(HDmemcmp(src_float64,dst2_float64,TEST_SIZE*sizeof(float64))) {
             printf("Error converting %s float64 values!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
-#endif /* VMS */
 
         /* clear arrays for next test */
         HDmemset(src_float64,0xae,TEST_SIZE*sizeof(float64));
@@ -749,62 +699,11 @@ printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64
         c4=clock();
         RESULT("DFKconvert");
         MESSAGE(6,printf("%d/%d seconds to convert %d %s float64 values with %d/%d stride\n",(int)(c4-c3),(int)CLOCKS_PER_SEC,(int)TEST_SIZE,test_name[t],DEST_STRIDE,SOURCE_STRIDE););
-/* This amazing hack is because of the way the VMS converts numbers. */
-/*  The converted number are going to have to be checked by hand... */
-#if defined VP | defined VMS | defined CONVEXNATIVE
-#ifdef OLD_WAY
-        if(Verbocity>9) {
-            intn i;
-            uint8 *u8_s=(uint8 *)src_float64,
-	        *u8_d=(uint8 *)dst_float64,
-	        *u8_d2=(uint8 *)dst2_float64;
-
-            printf("src_float64:  ");
-            for(i=0; i<80; i++)
-              printf("%.2x ",u8_s[i]);
-            printf("\ndst_float64:  ");
-            for(i=0; i<80; i++)
-              printf("%.2x ",u8_d[i]);
-            printf("\ndst2_float64: ");
-            for(i=0; i<80; i++)
-              printf("%.2x ",u8_d2[i]);
-            printf("\n");
-        }
-#else /* OLD_WAY */
-	for(i=0; i<(TEST_SIZE/2); i++) {
-            if(abs(dst2_float64[i]-src_float64[i]) >
-		 abs(src_float64[i]*EPS64)) {
-              printf("Error converting %s float64 values!\n",test_name[t]);
-printf("src[%d]=%lf, dst[%d]=%lf, dst2[%d]=%lf\n",i,src_float64[i],i,dst_float64[i],i,dst2_float64[i]);
-{
-            intn j;
-            uint8 *u8_s=(uint8 *)&src_float64[i],
-	        *u8_d=(uint8 *)&dst_float64[i],
-	        *u8_d2=(uint8 *)&dst2_float64[i];
-
-            printf("src_float64:  ");
-            for(j=0; j<sizeof(float64); j++)
-              printf("%.2x ",u8_s[j]);
-            printf("\ndst_float64:  ");
-            for(j=0; j<sizeof(float64); j++)
-              printf("%.2x ",u8_d[j]);
-            printf("\ndst2_float64: ");
-            for(j=0; j<sizeof(float64); j++)
-              printf("%.2x ",u8_d2[j]);
-            printf("\n");
-}
-              HEprint(stdout,0);
-              num_errs++;
-            } /* end if */
-	  } /* end for */
-#endif /* OLD_WAY */
-#else
         if(HDmemcmp(src_float64,dst2_float64,(TEST_SIZE/2)*sizeof(float64))) {
             printf("Error converting %s float64 values with strides!\n",test_name[t]);
             HEprint(stdout,0);
             num_errs++;
           } /* end if */
-#endif
 
         HDfree((VOIDP)src_float64);
         HDfree((VOIDP)dst_float64);

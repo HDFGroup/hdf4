@@ -34,9 +34,6 @@ name_path(char *path)
 {
  char *cp, *newc;
  
-#ifdef vms
-#define FILE_DELIMITER ']'
-#endif    
 #ifdef MSDOS
 #define FILE_DELIMITER '\\'
 #endif    

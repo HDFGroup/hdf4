@@ -1993,28 +1993,6 @@ Hishdf(const char *filename)
   CONSTR(FUNC, "Hishdf");
 #endif /* LATER */
 
-#if defined(VMS) || defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-  int32       fid;
-  intn   ret_value = TRUE;
-
-  fid = Hopen(filename, DFACC_READ, 0);
-  if (fid == FAIL)
-    {
-      ret_value= FALSE;
-      goto done;
-    }
-
-  Hclose(fid);
-
-done:
-  if(ret_value == FALSE)   
-    { /* Error condition cleanup */
-
-    } /* end if */
-
-  /* Normal function cleanup */
-  return ret_value;
-#else
   intn        ret;
   hdf_file_t  fp;
   intn   ret_value = TRUE;
@@ -2043,7 +2021,6 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-#endif
 }	/* Hishdf */
 
 /*--------------------------------------------------------------------------

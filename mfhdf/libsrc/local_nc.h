@@ -35,9 +35,6 @@
 
 /* Do we have systeme XDR files */
 #ifndef  NO_SYS_XDR_INC 
-#ifdef VMS
-#    define  STDC_INCLUDES
-#endif   /* VMS */
 #ifdef __ultrix
 #define GCC_FIX
 #endif /* __ultrix */

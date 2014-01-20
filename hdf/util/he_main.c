@@ -255,11 +255,7 @@ writeToFile(char *file, char *data, int32 length)
 int
 removeFile(char *file)
 {
-#ifndef VMS
-    return unlink(file);
-#else
     return remove((const char *) file);
-#endif
 }
 
 /* is a file currently opened */

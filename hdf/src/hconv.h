@@ -26,13 +26,9 @@
 #ifndef _HCONV_H
 #define _HCONV_H
 
-#ifndef VMS
+/* This looks redundant because previously, VMS platform would undefine DUFF. */
+/* Don't know why. -AKC 2014/1/18 */
 #define DUFF
-#else
-#ifdef DUFF
-#undef DUFF
-#endif
-#endif
 #ifdef DUFF
 #define DUFF_sb4b
 
@@ -63,7 +59,7 @@
 /* CONSTANT DEFINITIONS                                                      */
 /*****************************************************************************/
 /* Generally Big-Endian machines */
-#if !defined(VMS) && !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !(defined(__ia64) && !(defined(hpux) || defined(__hpux))) && !defined(__x86_64__)
+#if !defined(INTEL86) && !defined(MIPSEL) && !defined(DEC_ALPHA) && !defined(I860) && !defined(SUN386) && !(defined(__ia64) && !(defined(hpux) || defined(__hpux))) && !defined(__x86_64__)
 #       define UI8_IN     DFKnb1b   /* Unsigned Integer, 8 bits */
 #       define UI8_OUT    DFKnb1b
 #       define SI16_IN    DFKnb2b   /* S = Signed */
@@ -94,7 +90,7 @@
 #       define LF64_IN    DFKsb8b
 #       define LF64_OUT   DFKsb8b
 
-#else  /* must be VMS || INTEL86 || MIPSEL || DEC_ALPHA || I860 || SUN386 || IA64 || Linux64 (Generally, little-endian machines */
+#else  /* must be INTEL86 || MIPSEL || DEC_ALPHA || I860 || SUN386 || IA64 || Linux64 (Generally, little-endian machines */
 #   define UI8_IN     DFKnb1b   /* Big-Endian IEEE support */
 #   define UI8_OUT    DFKnb1b   /* The s in DFKsb2b is for swap */
 #   define SI16_IN    DFKsb2b
@@ -125,7 +121,7 @@
 #   define LF64_IN    DFKnb8b
 #   define LF64_OUT   DFKnb8b
 
-#endif /* !VMS && !INTEL86 && !MIPS && !DEC_ALPHA && !I860 && !SUN386 && !IA64 && !Linux64*/
+#endif /* !INTEL86 && !MIPS && !DEC_ALPHA && !I860 && !SUN386 && !IA64 && !Linux64*/
 
 /* All Machines currently use the same routines */
 /* for Native mode "conversions" */

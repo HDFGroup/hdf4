@@ -24,7 +24,6 @@
 ./Makefile.am
 ./Makefile.in
 ./Makefile.dist
-./MAKEVMS.COM
 ./README.txt
 ./aclocal.m4
 ./configure
@@ -144,8 +143,6 @@
 
 ./hdf/src/Makefile.am
 ./hdf/src/Makefile.in
-./hdf/src/MAKEFS.COM
-./hdf/src/MAKENOF.COM
 ./hdf/src/atom.c
 ./hdf/src/atom.h
 ./hdf/src/bitvect.c
@@ -181,7 +178,6 @@
 ./hdf/src/df.h
 ./hdf/src/dfi.h
 ./hdf/src/dfimcomp.c
-./hdf/src/dfivms.h
 ./hdf/src/dfjpeg.c
 ./hdf/src/dfknat.c
 ./hdf/src/dfkswap.c
@@ -287,12 +283,9 @@
 ./hdf/src/vrw.c
 ./hdf/src/vsfld.c
 
-./hdf/test/MAKE.COM
 ./hdf/test/Makefile.am
 ./hdf/test/Makefile.in
-./hdf/test/MAKENOF.COM
 ./hdf/test/README
-./hdf/test/SETUPTEST.COM
 ./hdf/test/test_files/8bit.dat
 ./hdf/test/an.c
 ./hdf/test/anfile.c
@@ -379,12 +372,10 @@
 ./hdf/util/HELINK.OPT
 ./hdf/util/Makefile.am
 ./hdf/util/Makefile.in
-./hdf/util/MAKEUTIL.COM
 ./hdf/util/README
 ./hdf/util/README.fp2hdf
 ./hdf/util/README.fp2hdf.test
 ./hdf/util/README.TST
-./hdf/util/SETUPUTILS.COM
 ./hdf/util/decompress.c
 ./hdf/util/fp2hdf.c
 ./hdf/util/fp2hdf.input1
@@ -459,15 +450,6 @@
 ./hdf/util/MacProjects/hdftoR8.project.hqx
 ./hdf/util/MacProjects/vshow.project.hqx
 
-./hdf/util/fixatr/README
-./hdf/util/fixatr/command.for
-./hdf/util/fixatr/common.for
-./hdf/util/fixatr/fixatr.cld
-./hdf/util/fixatr/fixatr.hlp
-./hdf/util/fixatr/makefix.com
-./hdf/util/fixatr/parse.mar
-./hdf/util/fixatr/rformat.for
-
 ./hdf/util/testfiles/README
 ./hdf/util/testfiles/SunWheel.gif
 ./hdf/util/testfiles/bttrfly.gif
@@ -511,13 +493,11 @@
 ./mfhdf/README
 ./mfhdf/THANKS
 ./mfhdf/build.bat
-./mfhdf/make.com
 
 ./mfhdf/dumper/Makefile.am
 ./mfhdf/dumper/Makefile.in
 ./mfhdf/dumper/README
 ./mfhdf/dumper/TEST
-./mfhdf/dumper/TEST.COM
 ./mfhdf/dumper/hdp.c
 ./mfhdf/dumper/hdp_dump.c
 ./mfhdf/dumper/hdp_gr.c
@@ -530,7 +510,6 @@
 ./mfhdf/dumper/hdp_util.c
 ./mfhdf/dumper/hdp_vd.c
 ./mfhdf/dumper/hdp_vg.c
-./mfhdf/dumper/make.com
 ./mfhdf/dumper/show.c
 ./mfhdf/dumper/testhdp.sh.in
 
@@ -714,15 +693,6 @@
 ./mfhdf/fortran/examples/SD_unlimited_sds.f
 ./mfhdf/fortran/examples/SD_compress_sds.f
 
-./mfhdf/fortran/vms/ftest.for
-./mfhdf/fortran/vms/ftest.m4
-./mfhdf/fortran/vms/hdftest.for
-./mfhdf/fortran/vms/jackets.c
-./mfhdf/fortran/vms/make.com
-./mfhdf/fortran/vms/mfsdf.c
-./mfhdf/fortran/vms/mfsdff.for
-./mfhdf/fortran/vms/netcdf.inc
-
 ./mfhdf/hdfimport/Makefile.am
 ./mfhdf/hdfimport/Makefile.in
 ./mfhdf/hdfimport/SDSfloat2.hdf
@@ -858,7 +828,6 @@
 ./mfhdf/libsrc/hdfsds.c
 ./mfhdf/libsrc/iarray.c
 ./mfhdf/libsrc/local_nc.h
-./mfhdf/libsrc/make.com
 ./mfhdf/libsrc/mfdatainfo.c
 ./mfhdf/libsrc/mfdatainfo.h
 ./mfhdf/libsrc/mfhdf.h
@@ -877,11 +846,9 @@
 
 ./mfhdf/ncdump/Makefile.am
 ./mfhdf/ncdump/Makefile.in
-./mfhdf/ncdump/SETUPNCDUMP.COM
 ./mfhdf/ncdump/depend
 ./mfhdf/ncdump/dumplib.c
 ./mfhdf/ncdump/dumplib.h
-./mfhdf/ncdump/make.com
 ./mfhdf/ncdump/ncdump.1
 ./mfhdf/ncdump/ncdump.c
 ./mfhdf/ncdump/ncdump.h
@@ -902,10 +869,8 @@
 ./mfhdf/ncgen/genlib.h
 ./mfhdf/ncgen/getfill.c
 ./mfhdf/ncgen/init.c
-./mfhdf/ncgen/lexyacc.com
 ./mfhdf/ncgen/load.c
 ./mfhdf/ncgen/main.c
-./mfhdf/ncgen/make.com
 ./mfhdf/ncgen/msofttab.c
 ./mfhdf/ncgen/msofttab.h
 ./mfhdf/ncgen/msoftyy.c
@@ -914,14 +879,7 @@
 ./mfhdf/ncgen/ncgen.l
 ./mfhdf/ncgen/ncgen.y
 ./mfhdf/ncgen/test0.cdl
-./mfhdf/ncgen/test.com
 ./mfhdf/ncgen/testncgen.sh.in
-./mfhdf/ncgen/vmstab.c
-./mfhdf/ncgen/vmstab.h
-./mfhdf/ncgen/vms_yy.c
-
-./mfhdf/nctest/Makefile.am
-./mfhdf/nctest/Makefile.in
 ./mfhdf/nctest/README
 ./mfhdf/nctest/add.c
 ./mfhdf/nctest/add.h
@@ -934,7 +892,6 @@
 ./mfhdf/nctest/emalloc.h
 ./mfhdf/nctest/error.c
 ./mfhdf/nctest/error.h
-./mfhdf/nctest/make.com
 ./mfhdf/nctest/misctest.c
 ./mfhdf/nctest/msoft.mk
 ./mfhdf/nctest/nctest.def
@@ -994,7 +951,6 @@
 ./mfhdf/test/tutils.c
 
 ./mfhdf/util/getopt.c
-./mfhdf/util/make.com
 ./mfhdf/util/msoft.mk
 ./mfhdf/util/win32utl.mak
 
@@ -1004,9 +960,7 @@
 ./mfhdf/xdr/README
 ./mfhdf/xdr/byteordr.c
 ./mfhdf/xdr/depend
-./mfhdf/xdr/descrip.mms
 ./mfhdf/xdr/htonl.mar
-./mfhdf/xdr/make.com
 ./mfhdf/xdr/msoft.mk
 ./mfhdf/xdr/ntohl.mar
 ./mfhdf/xdr/testout.sav

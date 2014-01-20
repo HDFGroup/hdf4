@@ -13,11 +13,6 @@ char errstr[100];		/* for short error messages */
 extern long strtol();
 void expand_escapes();
 
-#ifdef VMS
-#include <unixio.h>
-#include "ncgen.h"
-extern void yyerror();
-#endif
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
@@ -106,16 +101,6 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		return (SHORT_CONST);
 	        }
 [+-]?[1-9][0-9]*[lL]?|0[lL]? {
-#if defined cray
-		/* machines where longs have more precision than doubles. */
-    		char *ptr;
-		long_val = strtol((char*)yytext, &ptr, 0);
-		if (ptr == (char*)yytext) {
-		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
-		    yyerror(errstr);
-		}
-		return (LONG_CONST);
-#else		
 		/* machines where doubles have more precision than longs. */
 		/*
 		 * Because strtol and sscanf with "%ld" may silently give
@@ -123,12 +108,6 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		 * "30000000000", we scan as double first.
 		 */
 		double dd;
-#ifdef VMS  /* work around bug in VMS strtol() */
-		if (STREQ((char*)yytext, "-2147483648")) {
-		    long_val = -2147483648;
-		    return (LONG_CONST);
-		}
-#endif /* VMS */
 		if (sscanf((char*)yytext, "%le", &dd) != 1) {
 		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);
@@ -146,16 +125,9 @@ FloatInf|Infinity|Inf	{    /* float missing values */
 		    long_val = dd;
 		    return LONG_CONST;
 		}
-#endif /* cray */
 	        }
 0[xX]?[0-9a-fA-F]+[lL]? {
 		long dd;
-#ifdef VMS  /* work around bug in VMS strtol() */
-		if (STREQ((char*)yytext, "-2147483648")) {
-		    long_val = -2147483648;
-		    return (LONG_CONST);
-		}
-#endif /* VMS */
 		if (sscanf((char*)yytext, "%li", &dd) != 1) {
 		    sprintf(errstr,"bad long constant: %s",(char*)yytext);
 		    yyerror(errstr);

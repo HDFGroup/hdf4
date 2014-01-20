@@ -316,6 +316,9 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 #############################################################################
 #############################################################################
+
+#############################################################################
+#############################################################################
 CHECK_CLEANFILES = *.chkexe *.chklog ctest1.cdl ftest1.cdl test0.nc \
 	test1.cdl test1.nc test2.cdl
 @HDF_BUILD_SHARED_FALSE@SHLIBLOC = $(top_builddir)/mfhdf/libsrc/.libs/libmfhdf.a $(top_builddir)/hdf/src/.libs/libdf.a
@@ -822,14 +825,6 @@ ctest0$(EXEEXT):		ncgen$(EXEEXT) $(srcdir)/test0.cdl
 	$(TESTS_ENVIRONMENT) ./ncgen -c -o ctest0.nc $(srcdir)/test0.cdl > test0.c
 	$(COMPILE) -c -o ctest0$(EXEEXT).o test0.c
 	$(LINK) ctest0$(EXEEXT).o $(ctest0_LDADD) $(LDFLAGS) $(SHLIBLOC) $(LIBS)
-
-#############################################################################
-#############################################################################
-
-vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
-	cp $(srcdir)/ncgentab.h vmstab.h
-	cp $(srcdir)/ncgentab.c vmstab.c
-	cp $(srcdir)/ncgenyy.c vms_yy.c
 
 # lib/progs/tests targets recurse into subdirectories. build-* targets
 # build files in this directory.

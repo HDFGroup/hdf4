@@ -603,16 +603,7 @@ esac
 
 if test "X$BUILD_XDR" != "Xyes"; then
     AC_TRY_LINK([
-    #ifdef VMS
-    #define STDC_INCLUDES
-    #endif
-    #ifdef __ultrix
-    #define GCC_FIX
-    #endif 
     #include <rpc/types.h>
-    #ifdef __ultrix
-    #undef GCC_FIX
-    #endif
     #include <rpc/xdr.h>], [xdr_int],
                 [AC_MSG_RESULT([yes]); BUILD_XDR="no"],
                 [AC_MSG_RESULT([no]); BUILD_XDR="yes"])

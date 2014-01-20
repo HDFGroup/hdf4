@@ -94,12 +94,6 @@ check_SCRIPTS = testncgen.sh
 ##                            Miscellaneous                                ##
 #############################################################################
 
-## This was in the original Makefile.
-vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
-	cp $(srcdir)/ncgentab.h vmstab.h
-	cp $(srcdir)/ncgentab.c vmstab.c
-	cp $(srcdir)/ncgenyy.c vms_yy.c
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################

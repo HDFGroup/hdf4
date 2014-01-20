@@ -35,15 +35,11 @@ ngetverb(void)
 {
     char *verb_str;
     intn verb_level=FAIL;
-#ifdef vms
-    return(4);
-#else
     verb_str=HDgetenv(FOR_VERB);
 
     if(verb_str!=NULL)
         verb_level=(intn)HDstrtol(verb_str,NULL,0); /* convert whole string using base 10 */
     return((intf)verb_level);
-#endif
 }   /* end getverb() */
 
 /*-----------------------------------------------------------------------------

@@ -303,16 +303,12 @@ main(int argc, char *argv[])
       {
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
-#ifdef VMS   
-       system("delete *.tmp;*");
-#else        /* VMS */
 #if !(defined DOS386 || defined WIN386)
           system("rm -f *.hdf *.tmp");
 #else   /* OLD_WAY */
           remove("*.hdf");
           remove("*.tmp");
 #endif  /* OLD_WAY */
-#endif  /* VMS */
       }     /* end if */
     exit(num_errs);
     return num_errs;

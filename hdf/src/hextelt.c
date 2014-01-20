@@ -87,26 +87,15 @@ EXPORTED ROUTINES
 /* Directory seperator definitions relating to a path. 
  * Note this does not provide a universal way to recognize
  * different path name conventions and translate between them */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) 
-#define DIR_SEPC  58  /* Integer value of ':' */
-#define DIR_SEPS  ":"
-#else /* not Macintosh */
 #if defined WIN386 | defined DOS386
 /* DOS-Windows seperator */
 #define DIR_SEPC  92  /* Integer value of '\' */
 #define DIR_SEPS  "\\"
 #else 
-#if defined VMS
-/* VMS -made it the same as POSIX for now eventhought it should be '.' */
-#define DIR_SEPC  47  /* Integer value of '/' */
-#define DIR_SEPS  "/"
-#else
 /* Unix - POSIX */
 #define DIR_SEPC  47  /* Integer value of '/' */
 #define DIR_SEPS  "/"
-#endif /* !VMS */
 #endif /* !WIN386 & !DOS386 */
-#endif /* !Macintosh */
 
 /* directory path seperator from other directory paths */
 #define DIR_PATH_SEPC 124

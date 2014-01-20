@@ -401,7 +401,7 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 #endif /* defined MALLOC_CHECK */
 
-#if defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined SUN || defined IRIX
+#if defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined SUN || defined IRIX
     HDFPUBLIC extern char *HDstrdup
                 (const char *s);
 

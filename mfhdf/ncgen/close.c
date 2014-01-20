@@ -28,11 +28,7 @@ static void
 cl_c()
 {
     cline("   ncclose (ncid);");
-#ifndef vms
     cline("   return 0;");
-#else
-    cline("   return 1;");
-#endif
     cline("}");
 }
 

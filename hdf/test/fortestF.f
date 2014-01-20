@@ -113,8 +113,6 @@ C
 
       retcode = 0
 
-C For VMS, un-comment the next line 
-C     read(5,11,END=100,err=100) inline
       read(cmdf,11,END=100,err=100) inline
 C     print *, 'inline=', inline
       linelen = len(inline)
@@ -139,12 +137,6 @@ C     print *, 'inline=', inline
       retcode = 0
       return
 
-C For VMS use the next three lines 
-C100  continue
-C              close(5)
-C              retcode =1
-C For VMS comment out next line
-C End of file or read error on cmdfile.  Close it either way.
 100           close(cmdf)
       retcode = 1
       return

@@ -42,9 +42,6 @@ LOCAL ROUTINES
  ******************************************************************************/
 
 #include "local_nc.h"
-#ifdef VMS
-#include <stat.h>
-#endif
 
 #ifdef HDF
 

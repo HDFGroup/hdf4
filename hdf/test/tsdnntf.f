@@ -22,15 +22,6 @@ C  Input file:  none
 C  Output files:  fo1.hdf, fo2.hdf, ...fo5.hdf, fo.hdf
 C
 
-C  **** VMS users ****
-C
-C  VMS has a special way of handling the passsing of character
-C   strings between C and FORTRAN.  For these tests to work 
-C   correctly, you must change the definition of i8 and ti8
-C   to be 'byte' not 'character'  You will also need to remove
-C   a couple of calls to char().  If you search on the string 
-C   VMS you should be able to find all of the necessary changes.
-C
       implicit none
       include 'fortest.inc'
 
@@ -45,8 +36,6 @@ C
       integer*2 i16(10,10), ti16(10,10)
       integer*4 i32(10,10), ti32(10,10)
       
-C  Change these to be of type 'byte' for VMS
-C      byte      i8(10,10), ti8(10,10)
       character i8(10,10), ti8(10,10)
       
       integer i, j, err
@@ -85,9 +74,7 @@ C However, OR() is not really that portable
           do 100 j=1,10
             f64(i,j) = (i * 10) + j
   	    f32(i,j) = (i * 10) + j
-C  Use the following line for VMS
-C            i8(i,j) =  (i * 10) + j
-  	     i8(i,j) = char( (i * 10) + j )
+  	    i8(i,j) = char( (i * 10) + j )
   	    i16(i,j) = (i * 10) + j
   	    i32(i,j) = (i * 10) + j
   100     continue
@@ -140,8 +127,6 @@ C  individual files
       do 310 i=1,10
          do 300 j=1,10
              if (i8(i,j).ne.ti8(i,j)) err = 1
-C     Use the following line for VMS
-C     ti8(i,j) = 0
              ti8(i,j) = char(0)
  300      continue
  310  continue

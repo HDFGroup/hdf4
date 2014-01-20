@@ -92,9 +92,6 @@ NOTE: This file needs to have the comments cleaned up for most of the
 ******************************************************************************/
 
 #include "local_nc.h"
-#ifdef VMS
-#include <stat.h>
-#endif
 
 #ifdef HDF
 #include "mfhdf.h"

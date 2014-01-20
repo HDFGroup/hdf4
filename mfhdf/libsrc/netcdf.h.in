@@ -123,16 +123,6 @@ i686-apple-darwin11-llvm-gcc-4.2 (GCC) 4.2.1 (Based on Apple Inc. build 5658) (L
 
     /* Direct assignment. All cases should be mutually exclusive */
 
-#ifdef vax
-#define	XDR_D_INFINITY	1.7014118346046923e+38
-#define	XDR_F_INFINITY	1.70141173e+38
-#endif /* vax */
-
-#ifdef cray
-#define	XDR_D_INFINITY	1.797693134862313000e+308
-#define	XDR_F_INFINITY	XDR_D_INFINITY
-#endif /* cray */
-
 #ifdef notdef /* you might want to try these, on an IEEE machine */
 #define XDR_D_INFINITY	1.797693134862315900e+308
 #define XDR_F_INFINITY	3.40282357e+38
@@ -358,10 +348,6 @@ HDFLIBAPI int ncerr ;
 
 HDFLIBAPI int ncopts ;	/* default is (NC_FATAL | NC_VERBOSE) */
 
-/*
- * NB: The following feature-test line is too long in order to accomodate a 
- * bug in the VMS 5.3 C compiler.
- */
 #ifndef HAVE_PROTOTYPES
 #   if defined(__STDC__) || defined(__GNUC__) || defined(__cplusplus) || defined(c_plusplus)
 #       define	HAVE_PROTOTYPES

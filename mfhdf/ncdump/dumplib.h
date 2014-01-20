@@ -7,13 +7,8 @@
 extern char *progname;		/* for error messages */
 
 #ifndef EXIT_FAILURE
-#ifndef vms
 #define EXIT_SUCCESS 0
 #define EXIT_FAILURE 1
-#else
-#define EXIT_SUCCESS 1
-#define EXIT_FAILURE 0
-#endif
 #endif
 
 #undef PROTO
