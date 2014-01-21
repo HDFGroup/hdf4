@@ -99,7 +99,7 @@ fi
 echo Running Cmake for HDF4-${version} ...
 
 #      4. Configure the C library, tools and tests with this command:
-STEP "Configure..." "cmake -C ../config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ../hdf4" $configlog
+STEP "Configure..." "cmake -C ../hdf4/config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ../hdf4" $configlog
       
 #      5. Build the C library, tools and tests with this command:
 STEP "Build the library, tools and tests, ..." "cmake --build . --config Release" $makelog
