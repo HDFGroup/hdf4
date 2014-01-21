@@ -365,13 +365,8 @@ swapkid(TBBT_NODE ** root, TBBT_NODE * ptr, intn side)
       }
     ptr->Parent = kid;
     kid->link[Other(side)] = ptr;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) /* Macro substitution limit on Mac */
-    kid->flags = SetFlags(kid, (1 + 2 - (side)),
-                        deep[2] - 1 - Max(deep[0], 0), HasChild(kid, side));
-#else  /* !macintosh */
     kid->flags = (TBBT_FLAG)SetFlags(kid, Other(side),
                         deep[2] - 1 - Max(deep[0], 0), HasChild(kid, side));
-#endif /* !macintosh */
 
     /* update leaf counts */
     if (side == LEFT)

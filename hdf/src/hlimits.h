@@ -46,11 +46,7 @@
    used.  tbuf lives in the hfile.c */
 
 #ifndef TBUF_SZ
-#if defined(macintosh) || defined(MAC) || defined(SYMANTEC_C)
-#   define TBUF_SZ      256
-#else  /* !macintosh */
 #   define TBUF_SZ     1024
-#endif /* !macintosh */
 #endif
 
 /*  File name max length (old annotations)  */

@@ -499,13 +499,7 @@ intn getFieldIndices(
    int32 i;
    intn  flds_match = 0;
    intn  ret_value = SUCCEED;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-	/* macintosh cannot handle >32K locals */
-   char *tempflds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-   CHECK_ALLOC( tempflds, "tempflds", "getFieldIndices" );
-#else /* !macintosh */
    char   tempflds[VSFIELDMAX*FIELDNAMELENMAX];
-#endif /* !macintosh */    
 
    /* make copy of the field name list retrieved by VSinquire to use 
       in processing the field names */
@@ -550,15 +544,6 @@ intn getFieldIndices(
       }		/* for (i...) */
    }	/* for (fld_name_idx...) */
 
-/* free dynamic space if on MAC */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-   if(tempflds != NULL)
-   {
-      HDfree(tempflds);
-      tempflds = NULL;
-   } 
-#endif /* macintosh */
-
    /* return the flag indicating whether any given fields exist */
    ret_value = flds_match;
 
@@ -592,14 +577,7 @@ dumpvd_ascii(dump_info_t * dumpvd_opts,
    int32       vd_id = FAIL;
    int32       an_handle   = FAIL;
    intn        status = SUCCEED, ret_value = SUCCEED;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-	/* macintosh cannot handle >32K locals */
-   char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-   CHECK_ALLOC( fields, "fields", "dumpvd_ascii" );
-
-#else /* !macintosh */
-   char   fields[VSFIELDMAX*FIELDNAMELENMAX];
-#endif /* !macintosh */    
+   char        fields[VSFIELDMAX*FIELDNAMELENMAX];
 
    if (dumpvd_opts->contents != DDATA)
    {
@@ -772,13 +750,6 @@ done:
               VSdetach(vd_id);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-   if(fields != NULL)
-   {
-      HDfree(fields);
-      fields = NULL;
-    } 
-#endif /* macintosh */
 
     return ret_value;
 } /* dumpvd_ascii() */
@@ -805,15 +776,7 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    int32       vd_id = FAIL;
    intn        status;
    intn        ret_value = SUCCEED;
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-	/* macintosh cannot handle >32K locals */
-   char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-
-   CHECK_ALLOC( fields, "fields", "dumpvd_binary" );
-
-#else /* !macintosh */
-    char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
-#endif /* !macintosh */    
+   char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
 
     vd_chosen_idx = 0;	/* "vd_chosen_idx" is used to index the array of "vd_chosen". */
 
@@ -902,13 +865,6 @@ dumpvd_binary(dump_info_t * dumpvd_opts,
    }	/* for each vdata */
 
    /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-   if(fields != NULL)
-   {
-      HDfree(fields);
-      fields = NULL;
-    } 
-#endif /* macintosh */
 
    return( ret_value );
 } /* dumpvd_binary */

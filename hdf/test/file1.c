@@ -26,13 +26,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define BIG 600
 #define TESTFILE_NAME "thf"
 #define TESTREF_NAME "tref.hdf"
-/* Change the define below for Maximum 'refs' tested on 
-   the Macintosh if the 'hfile1' tests starts to croak */
-#if defined macintosh || defined MAC || defined SYMANTEC_C
-#define     MAX_REF_TESTED 5000
-#else
 #define     MAX_REF_TESTED MAX_REF
-#endif
 static int32  files[BIG];
 static int32  accs[BIG];
 

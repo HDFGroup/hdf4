@@ -4,10 +4,6 @@
  *   $Id$
  *********************************************************************/
 
-#ifdef _MPW
-#define		__SEG__  toobig    /* under MPW on MacOS, makes it fit */
-#endif
-
 #include <stdio.h>
 #include <string.h>
 

@@ -13,10 +13,6 @@
 
 #include "mfhdf.h"
 
-#ifdef macintosh
-    #include <LowMem.h>
-#endif
-
 #ifdef HDF
 
 #include "hdftest.h"

@@ -29,17 +29,11 @@ typedef NETLONG     netlong;
 #   if defined MSDOS || defined WINNT || defined _WIN32
 #       include <io.h>
 #   else
-#           if !(defined(macintosh) || defined (SYMANTEC_C))
-#               include <unistd.h>
-#           endif
+#       include <unistd.h>
 #   endif
 #   include <fcntl.h>
 
-#if defined(macintosh) || defined (SYMANTEC_C)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 
 #include <string.h>
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
@@ -48,16 +42,10 @@ typedef NETLONG     netlong;
 /*EIP #include "netcdf.h" */ 
 #include "mfhdf.h"
 
-#if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C))
+#if !(defined DOS_FS) 
         typedef u_int ncpos_t ;  /* all unicies */
 #else
-#  if defined DOS_FS
       typedef off_t ncpos_t ;
-#  elif defined __APPLE__
-      typedef u_int ncpos_t;
-#  else /* macintosh */
-      typedef u_long ncpos_t ;
-#  endif /* macintosh */
 #endif
 
 typedef struct {
@@ -670,11 +658,7 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
     if(_fmode != O_BINARY)
         _fmode = O_BINARY ;
 #endif
-#if defined(macintosh) || defined (SYMANTEC_C)
-    fd = open(path, fmode);
-#else /* !macintosh  */
     fd = open(path, fmode, 0666) ;
-#endif /* !macintosh */
 #ifdef XDRDEBUG
 fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);
 #endif

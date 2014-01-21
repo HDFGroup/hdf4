@@ -1728,15 +1728,7 @@ test_emptyvdata(void)
     int32 fid;          /* File ID */
     int32 vs1;          /* Vdata ID */
     int32 ref;          /* Vdata ref */
-#ifndef macintosh
     char  vsname[VSNAMELENMAX], fields[FIELDNAMELENMAX*VSFIELDMAX];
-#else
-	// fields is too big - Mac has a 32K local data limit.
-    char  vsname[VSNAMELENMAX], *fields;
-    
-    fields = HDmalloc(FIELDNAMELENMAX*VSFIELDMAX*sizeof(char));
-    if (fields == NULL)		return;
-#endif
 
     /* Open the HDF file. */
     fid = Hopen(EMPTYNM, DFACC_CREATE, 0);
@@ -1892,10 +1884,6 @@ test_emptyvdata(void)
 
     status = Hclose(fid);
     CHECK_VOID(status,FAIL,"Hclose");
-
-#ifdef macintosh
-	HDfree(fields);
-#endif
 
 } /* test_emptyvdata() */
 

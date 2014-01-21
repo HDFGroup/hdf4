@@ -32,13 +32,8 @@ static char RcsId[] = "@(#)$Revision$";
 
 #define ISCOMMA(c) ( (c==',') ? 1:0 )
 
-#if defined(macintosh) || defined(MAC) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
-PRIVATE char **symptr = NULL;   /* array of ptrs to tokens  ? */
-PRIVATE char **sym = NULL;      /* array of tokens ? */
-#else  /* !macintosh */
 PRIVATE char *symptr[VSFIELDMAX];       /* array of ptrs to tokens  ? */
 PRIVATE char sym[VSFIELDMAX][FIELDNAMELENMAX + 1];  /* array of tokens ? */
-#endif /* !macintosh */
 PRIVATE intn nsym;              /* token index ? */
 
 /* Temporary buffer for I/O */
@@ -79,33 +74,6 @@ scanattrs(const char *attrs,
     char *s, *s0, *ss;
     intn len;
     size_t slen = HDstrlen(attrs)+1;
-
-#if defined(macintosh) || defined(MAC) || defined(SYMANTEC_C) || defined(DMEM)   /* Dynamic memory */
-    intn i;
-
-    /* Lets allocate space for ptrs to tokens and tokens */
-    if (symptr == NULL)
-      {
-          symptr = (char **) HDmalloc(VSFIELDMAX * sizeof(char *));
-          if (symptr == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-      }
-
-    if (sym == NULL)
-      {
-          sym = (char **) HDmalloc(VSFIELDMAX * sizeof(char *));
-          if (sym == NULL)
-              HRETURN_ERROR(DFE_NOSPACE, FAIL);
-
-          for (i = 0; i < VSFIELDMAX; i++)
-            {
-                sym[i] = (char *) HDmalloc(sizeof(char) * (FIELDNAMELENMAX + 1));
-                if (sym[i] == NULL)
-                    HRETURN_ERROR(DFE_NOSPACE, FAIL);
-            }
-      }
-
-#endif /* macintosh */
 
     if(slen>Vpbufsize)
       {

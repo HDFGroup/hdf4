@@ -626,25 +626,6 @@ extern      "C"
  */
 #include "hchunks.h"
 
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
-    HDFLIBAPI hdf_file_t mopen
-                (char *filename, intn access);
-
-    HDFLIBAPI int32 mclose
-                (hdf_file_t rn);
-
-    HDFLIBAPI int32 mlseek
-                (hdf_file_t rn, int32 n, intn m);
-
-    HDFLIBAPI int32 mread
-                (hdf_file_t rn, char *buf, int32 n);
-
-    HDFLIBAPI int32 mwrite
-                (hdf_file_t rn, char *buf, int32 n);
-    HDFLIBAPI intn mstat
-                (char *path);
-
-#endif  /* macintosh */
 
 /*
    ** from hbuffer.c

@@ -154,7 +154,6 @@ HDflush(int32 file_id)
 {
     CONSTR(FUNC, "HDflush");    /* for HERROR */
 
-#if !(defined (MAC) || defined (macintosh) || defined (SYMANTEC_C))
     filerec_t  *file_rec;
 
     file_rec = HAatom_object(file_id);
@@ -162,7 +161,6 @@ HDflush(int32 file_id)
         HRETURN_ERROR(DFE_ARGS, FAIL);
 
     HI_FLUSH(file_rec->file);
-#endif /* MAC */
 
     return SUCCEED;
 }	/* HDflush */

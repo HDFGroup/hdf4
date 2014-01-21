@@ -25,9 +25,6 @@
 
 #include	<stddef.h> /* size_t */
 #include	<stdio.h> /* FILENAME_MAX */
-#if (defined MPW)
-#include   <memory.h>
-#endif /* MPW */
 
 #ifndef FILENAME_MAX
 #define FILENAME_MAX  255
@@ -35,24 +32,11 @@
 
 /* Do we have systeme XDR files */
 #ifndef  NO_SYS_XDR_INC 
-#ifdef __ultrix
-#define GCC_FIX
-#endif /* __ultrix */
 #include	<rpc/types.h>
-#ifdef __ultrix
-#undef GCC_FIX
-#endif /* __ultrix */
 #include	<rpc/xdr.h>
 #else    /* NO_SYS_XDR_INC */
-#if defined(macintosh) || defined (SYMANTEC_C)
-     /* For the mac reference types.h specifically
-        because we don't want it to pick up the system one */
-#include      "::xdr:types.h"  /* "../xdr/types.h" */
-#include      "::xdr:xdr.h"    /* "../xdr/xdr.h" */
-#else /* !macintosh */
 #include      <types.h>  /* <types.h */
 #include      <xdr.h>    /* <xdr.h> */
-#endif /* !macintosh */
 #endif /* NO_SYSTEM_XDR_INCLUDES */
 
 #include "H4api_adpt.h"

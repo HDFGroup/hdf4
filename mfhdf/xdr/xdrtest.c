@@ -8,15 +8,10 @@
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 #include <stdio.h>
-#if (defined macintosh || defined SYMANTEC_C || defined MAC)
-#define NO_SYS_XDR_INC /* use local "xdr.h" */
-#	include "types.h"
-#else /* not macintosh */
-#   	  include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	  if !defined MSDOS & !defined _WIN32
-#            include <netinet/in.h>	/* for htonl() */
-#   	  endif
-#endif /* not macintosh */
+#include <sys/types.h>	/* for <netinet/in.h> on some systems */
+#if !defined MSDOS & !defined _WIN32
+#include <netinet/in.h>	/* for htonl() */
+#endif
 
 /*
  * The following is necessary because the assert() macro *must* be defined

@@ -80,8 +80,6 @@ int
 annotate(const char *editor, int ann)
 {
 
-#if !defined MAC && !defined WIN386 && !defined(macintosh)
-
     int32       len;            /* length of annotation */
     char       *buf;            /* annotation buffer */
     char       *file;           /* tmp file name */
@@ -182,16 +180,6 @@ annotate(const char *editor, int ann)
      */
     HDfree(buf);
     return ret;
-
-#else
-    /* shut compiler up */
-    ann = ann;
-    editor = editor;
-
-    return 1;
-
-#endif /* not def MAC & WIN386 & macintosh */
-
 }
 
 extern int  he_backup;
