@@ -9,6 +9,11 @@ SUBDIRS = hdf mfhdf man
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings
 
+# 'make install' will now install examples, the same as 'make install-all'.
+# 'make-install-all' will be redundant but will still work.
+install: install-recursive install-examples
+uninstall: uninstall-recursive uninstall-examples
+
 # 'make install-all' also installs examples
 install-all:
 	@$(MAKE) $(AM_MAKEFLAGS) install
