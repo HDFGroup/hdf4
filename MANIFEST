@@ -206,8 +206,6 @@
 ./hdf/src/dfunjpeg.c
 ./hdf/src/dfutil.c
 ./hdf/src/dfutilf.c
-./hdf/src/dir_mac.c
-./hdf/src/dir_mac.h
 ./hdf/src/dynarray.c
 ./hdf/src/dynarray.h
 ./hdf/src/glist.c
@@ -266,7 +264,6 @@
 ./hdf/src/mstdio.h
 ./hdf/src/patchlevel.h
 ./hdf/src/src.inc
-./hdf/src/sys_dir_mac.h
 ./hdf/src/tbbt.c
 ./hdf/src/tbbt.h
 ./hdf/src/trace.h
