@@ -21,15 +21,15 @@
 #   define NULL 0
 #endif
 
+#if defined __STDC__ || defined PC || defined _WINDOWS || defined _WIN32
+#define STDC_INCLUDES
+#endif
+
 #ifdef STDC_INCLUDES
 #include <stddef.h>
 #include <stdlib.h>
 #else
-#ifdef __vax
-extern void *malloc();
-#else
 extern char *malloc();
-#endif /* __vax */
 #endif
 
 #define mem_alloc(bsize)    malloc(bsize)
