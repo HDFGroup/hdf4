@@ -69,8 +69,7 @@ use strict;
 # modified so it looks something like: This is hdf4-1.2.3-pre1 currently 
 # under development. The AC_INIT macro in configure.in will also change 
 # in this case to be something like: AC_INIT([HDF4], [hdf4-1.2.3-pre1], 
-# [help@hdfgroup.org]).  Version changes are also reflected in the 
-# Windows-maintained h4config.h file.
+# [help@hdfgroup.org]).
 #
 #Following paragraph from h5vers does not apply for HDF4?
 # Whenever the version changes, this script will increment the revision
@@ -206,10 +205,6 @@ die "unable to read file: $MANHDF1\n" unless -r $file;
 my $CONFIGURE = $file;
 $CONFIGURE =~ s/[^\/]*$/..\/..\/configure.ac/;
 die "unable to read file: $CONFIGURE\n" unless -r $file;
-# windows/src/H5pubconf.h
-my $H4WIN_CONF = $file;
-$H4WIN_CONF =~ s/[^\/]*$/..\/..\/windows\/hdf\/src\/h4config.h/;
-die "unable to read file: $H4WIN_CONF\n" unless -r $file;
 
 # Get the current version number.
 open FILE, $file or die "unable to open $file: $!\n";
@@ -261,7 +256,6 @@ if ($set) {
   $README = "";
   $RELEASE = "";
   $CONFIGURE = "";
-  $H4WIN_CONF = "";
   $MANHDF1 = "";
   @newver = @curver;
 }
@@ -463,9 +457,6 @@ sub gen_h5pubconf {
     print FILE @contents;
     close FILE;
 }
-
-# Update the Windows-maintained h4config.h file
-gen_h5pubconf("HDF", $H4WIN_CONF, @newver) if $H4WIN_CONF;
 
 # Print the new version number
 if ($verbose) {
