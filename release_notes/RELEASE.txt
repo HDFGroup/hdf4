@@ -58,40 +58,57 @@ Bugs fixed since HDF 4.2.9
    Configuration
    =============
 
-   Changed Mac platforms to use the Apple supported clang compiler as the
-   default C compiler. (AKC 2014/01/15 HDFFR-1318)
+   - Changed Mac platforms to use the Apple supported clang compiler as the
+     default C compiler. (AKC 2014/01/15 HDFFR-1318)
 
-   Removed the following individual platform specific files and have them to
-   be produced by configure using corresponding *.in files.
-   mfhdf/libsrc/config/netcdf-XXX.h    by mfhdf/libsrc/netcdf.h.in
-   mfhdf/fortran/config/ftest-XXX.f    by mfhdf/fortran/ftest.f.in
-   mfhdf/fortran/config/jackets-XXX.c  by mfhdf/fortran/jackets.c.in
-   mfhdf/fortran/config/netcdf-XXX.inc by mfhdf/fortran/netcdf.inc.in
-   (AKC 2013/12/31 HDFFR-1320/476)
+   - Removed the following individual platform specific files and have them to
+     be produced by configure using corresponding *.in files.
+     mfhdf/libsrc/config/netcdf-XXX.h    by mfhdf/libsrc/netcdf.h.in
+     mfhdf/fortran/config/ftest-XXX.f    by mfhdf/fortran/ftest.f.in
+     mfhdf/fortran/config/jackets-XXX.c  by mfhdf/fortran/jackets.c.in
+     mfhdf/fortran/config/netcdf-XXX.inc by mfhdf/fortran/netcdf.inc.in
+     (AKC 2013/12/31 HDFFR-1320/476)
 
-   The following platforms are old and no longer available. Removed their
-   support code from the configure files:
-   alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
-   solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
+   - The following platforms are old and no longer available. Removed their
+     support code from the configure files:
+     alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
+     solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
 
-   Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris since
-   the latest Sun Compiler version 5.11 and 5.12 have a conflict with the system
-   header file. Since the current versions of C compiler should be at least
-   ANSI (aka C89) compliant, the removal of -Xc should be safe. This also
-   fixes a previous known problem of needing to use -xc99 to build HDF4.
-   (AKC 2013/12/20 HDFFR-1361)
+   - Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris since
+     the latest Sun Compiler version 5.11 and 5.12 have a conflict with the system
+     header file. Since the current versions of C compiler should be at least
+     ANSI (aka C89) compliant, the removal of -Xc should be safe. This also
+     fixes a previous known problem of needing to use -xc99 to build HDF4.
+     (AKC 2013/12/20 HDFFR-1361)
 
-   CMake - Changed name of TGZ_PATH to TGZPATH.
+   - CMake - Changed name of TGZ_PATH to TGZPATH.
            (ADB 2013/9/12)
-   CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac builds.
+   - CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac builds.
            (ADB 2013/8/7)
 
    Library
    ========= 
 
-   mfhdf/libsrc/local_nc.h is not istalled anymore. The file contains
-   private information for the HDF4 netCDF internal functions and is not
-   needed for applications.  (EIP 2014/01/15 related to HDFFR-150)
+   - mfhdf/libsrc/local_nc.h is not istalled anymore. The file contains
+     private information for the HDF4 netCDF internal functions and is not
+     needed for applications.  (EIP 2014/01/15 related to HDFFR-150)
+
+   - SDsetblocksize and VSsetblocksize would not change the block size if
+     the sds/vdata did not use linked-block before it was closed.  The
+     problem is now fixed.  (BMR 2013/1/15 - HDFFR-1357)
+
+   - Patches from user are applied to the C test to correct an overflown variable
+     and to the Fortran source for some missing declarations.
+     (BMR/EP 2014/1/15 - HDFFR-1367)
+
+   - Examples GR_write_chunks.c and GR_read_chunks.c were added. 
+     (BMR 2014/12/30 - HDFFR-1402)
+
+   - ncdump displayed garbage in place of fill-values when a variable had
+     unlimited dimension and had been written with less number of records
+     than the largest number of records in the file.  This is now fixed.
+     (BMR 2014/12/16 - HDFFR-1390)
+
 
    Utilities
    ========= 
