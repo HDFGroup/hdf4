@@ -1,11 +1,11 @@
-HDF version 4.2.9-post0 currently under development
+HDF version 4.2.10-pre1 currently under development
 =============================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.8 and HDF 4.2.9-post0.
+This document describes the differences between HDF 4.2.9 and HDF 4.2.10-pre1.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.9-post0.
+and wish to migrate to HDF 4.2.10-pre1.
 
 The HDF 4.2.9 documentation can be found on the The HDF Group's website
 at:
@@ -106,15 +106,13 @@ Bugs fixed since HDF 4.2.9
    - Examples GR_write_chunks.c and GR_read_chunks.c were added. 
      (BMR 2014/12/30 - HDFFR-1402)
 
+
+   Utilities
+   ========= 
    - ncdump displayed garbage in place of fill-values when a variable had
      unlimited dimension and had been written with less number of records
      than the largest number of records in the file.  This is now fixed.
      (BMR 2014/12/16 - HDFFR-1390)
-
-
-   Utilities
-   ========= 
-   - None
 
 
 Documentation
