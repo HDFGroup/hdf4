@@ -207,7 +207,7 @@ Known problems
 o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
    GCC, Intel and Clang compilers.  Currently, this situation is detected and
    -O0 level optimization is used.  We will work on the issue for the next
-   release. (HDFFR-1358,1327,1358) EIP - 2013/02/05
+   release. (HDFFR-1318,1358) EIP - 2013/02/05
 
 o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization 
    level. 
