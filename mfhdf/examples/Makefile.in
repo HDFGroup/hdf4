@@ -268,6 +268,7 @@ INSTALL_FILES = SD_create_sds.c SD_write_to_sds.c SD_write_slab.c        \
 
 EXAMPLEDIR = $(prefix)/examples/c
 DISTCLEANFILES = *.chklog *.chkexe .deps
+@BUILD_SHARED_SZIP_CONDITIONAL_TRUE@LD_LIBRARY_PATH = $(LL_PATH)
 
 # Assume that all tests in this directory are examples, and tell
 # conclude.am when to build them.
@@ -521,8 +522,6 @@ set_attr: $(srcdir)/SD_set_attr.c
 get_attr: $(srcdir)/SD_get_attr.c
 chunking_example: $(srcdir)/SD_chunking_example.c
 
-@BUILD_SHARED_SZIP_CONDITIONAL_TRUE@export LD_LIBRARY_PATH=$(LL_PATH)
-
 # How to create EXAMPLEDIR if it doesn't already exist
 $(EXAMPLEDIR):
 	mkdir -p $@
@@ -534,7 +533,7 @@ install-data-local:
 uninstall-local:
 	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
 
-install-examples: $(EXAMPLEDIR) $(INSTALL_FILES)
+install-examples: $(EXAMPLEDIR) 
 	@for f in X $(INSTALL_FILES); do                                     \
 	  if test $$f != X; then                                             \
 	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);    \
