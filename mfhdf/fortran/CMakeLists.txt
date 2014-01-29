@@ -17,6 +17,7 @@ IF (HDF4_ENABLE_NETCDF)
   CONFIGURE_FILE (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/jackets.c.in ${HDF4_BINARY_DIR}/jackets.c)
 ENDIF (HDF4_ENABLE_NETCDF)
 CONFIGURE_FILE (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/netcdf.inc.in ${HDF4_BINARY_DIR}/netcdf.inc)
+SET (HDF4_MFHDF_FORTRAN_XFHDRS ${HDF4_BINARY_DIR}/netcdf.inc ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mffunc.inc)
 
 IF (HDF4_ENABLE_NETCDF)
   SET (HDF4_MFHDF_LIBSRC_CSTUB_FSRCS ${HDF4_BINARY_DIR}/jackets.c ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
@@ -26,7 +27,6 @@ ENDIF (HDF4_ENABLE_NETCDF)
 
 SET (HDF4_MFHDF_LIBSRC_CSTUB_FHDRS 
     ${HDF4_MFHDFSOURCE_DIR}/hdf2netcdf.h 
-    ${HDF4_MFHDFSOURCE_DIR}/local_nc.h 
     ${HDF4_MFHDFSOURCE_DIR}/mfhdf.h 
     ${HDF4_MFHDFSOURCE_DIR}/mfhdfi.h
 )
@@ -81,6 +81,18 @@ H4_SET_LIB_OPTIONS (${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_MF_FORTRAN_LIB_NAME} ${
 IF (BUILD_TESTING)
   INCLUDE (CMakeTests.cmake)
 ENDIF (BUILD_TESTING)
+
+#-----------------------------------------------------------------------------
+# Add file(s) to CMake Install
+#-----------------------------------------------------------------------------
+INSTALL (
+    FILES
+        ${HDF4_MFHDF_FORTRAN_XFHDRS}
+    DESTINATION
+        ${HDF4_INSTALL_INCLUDE_DIR}
+    COMPONENT
+        headers
+)
 
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
