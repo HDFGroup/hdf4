@@ -42,51 +42,6 @@
   )
 
 #-- Adding test for ncgen
-#
-#if HDF_BUILD_NETCDF
-#
-#if HDF_BUILD_FORTRAN
-#check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check f-check
-#else
-#check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
-#endif
-#
-#else
-#check: ncgen$(EXEEXT) $(srcdir)/test0.cdl b-check c-check
-#endif
-#
-## Test the "-c" option of ncgen
-#c-check:    b-check ctest0
-#    $(TESTS_ENVIRONMENT) ./ctest0        # tests `-c' option, creates ctest0.nc
-#    $(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
-#    @if $(DIFF) test1.cdl ctest1.cdl; then                              \
-#      echo "*** ncgen -c test successful ***";                          \
-#    else                                                                \
-#      echo "*** ncgen -c test failed  ***";                             \
-#    fi
-#if HDF_BUILD_NETCDF
-#
-#if HDF_BUILD_FORTRAN
-## Test the "-f" option of ncgen
-#f-check:    b-check ftest0
-#    $(TESTS_ENVIRONMENT) ./ftest0
-#    $(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
-#    @if $(DIFF) test1.cdl ftest1.cdl; then                              \
-#      echo "*** ncgen -f test successful ***";                          \
-#    else                                                                \
-#      echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
-#    fi
-#
-#ftest0$(EXEEXT):        ncgen$(EXEEXT) test0.cdl netcdf.inc
-#    $(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
-#    $(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
-#endif
-#
-#endif
-#
-#netcdf.inc:
-#    ln -s ../fortran/$@ .
-#
 ADD_TEST (
     NAME NCGEN-test0.nc
     COMMAND $<TARGET_FILE:ncgen> -b -o test0.nc test0.cdl
@@ -148,8 +103,22 @@ ADD_TEST (
 )
 SET_TESTS_PROPERTIES (NCGEN-ctest0 PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 SET (last_test "NCGEN-ctest0")
+#
+## Test the "-c" option of ncgen
+#c-check:    b-check ctest0
+#    $(TESTS_ENVIRONMENT) ./ctest0        # tests `-c' option, creates ctest0.nc
+#    $(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ctest0.nc > ctest1.cdl
+#    @if $(DIFF) test1.cdl ctest1.cdl; then                              \
+#      echo "*** ncgen -c test successful ***";                          \
+#    else                                                                \
+#      echo "*** ncgen -c test failed  ***";                             \
+#    fi
 
 IF (HDF4_BUILD_FORTRAN)
+#
+#ftest0$(EXEEXT):        ncgen$(EXEEXT) test0.cdl netcdf.inc
+#    $(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
+#    $(F77) $(FFLAGS) -o $@ test0.f $(LDFLAGS) $(SHLIBLOC) $(LIBS)
   ADD_TEST (
       NAME NCGEN-ftest0
       COMMAND "${CMAKE_COMMAND}"
@@ -163,4 +132,13 @@ IF (HDF4_BUILD_FORTRAN)
   )
   SET_TESTS_PROPERTIES (NCGEN-ftest0 PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   SET (last_test "NCGEN-ftest0")
+# Test the "-f" option of ncgen
+#f-check:    b-check ftest0
+#    $(TESTS_ENVIRONMENT) ./ftest0
+#    $(TESTS_ENVIRONMENT) $(NCDUMP) -n test1 ftest0.nc > ftest1.cdl
+#    @if $(DIFF) test1.cdl ftest1.cdl; then                              \
+#      echo "*** ncgen -f test successful ***";                          \
+#    else                                                                \
+#      echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
+#    fi
 ENDIF (HDF4_BUILD_FORTRAN)
