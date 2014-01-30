@@ -160,3 +160,33 @@ To Install:
 
    Please report all problems to help@hdfgroup.org.
 
+
+6. Windows Configuration and Build
+   =======================================
+
+See RELEASE.txt in the release_docs/ subdirectory for the list of platforms 
+tested for this release.
+
+We now recommend that users build, test, and install HDF4 using CMake.
+
+Instructions for building and testing HDF4 using CMake can be found in the
+INSTALL_CMake.txt file found in this folder.
+
+For instructions on building and testing an application with HDF4, see the 
+USING_HDF4_CMake.txt file found in this folder.
+
+Users who want to build and run an application with HDF4 in Visual Studio
+without using CMake should consult the USING_HDF4_VS.txt file.
+
+Additional Third-party Software Requirements:
+
+   1)  Flex and Bison programs are required to build the ncgen utility.
+   
+   2)  Recommended is the Win flex-bison project, a port of Flex & Bison tools 
+       to the Windows platform. Download from:
+           http://sourceforge.net/projects/winflexbison
+
+   3)  CMake version 2.8.11.1 or higher is needed to use Win flex-bison. 
+       Using an earlier version of CMake will require renaming the executables
+       without the "win_" prefix.
+
