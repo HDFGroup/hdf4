@@ -246,8 +246,6 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    access, respectively; see the HDF Reference Manual entries for
    further details.
 
-o  This release does not support VMS systems.
-
 o  N-bit compression is not supported with Fortran APIs.
 
 o  Using both fill-value and compression on SD datasets does not work.
