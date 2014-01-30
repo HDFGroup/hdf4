@@ -52,9 +52,9 @@
 #define LIBVER_MAJOR    4
 #define LIBVER_MINOR    2 
 #define LIBVER_RELEASE  10 
-#define LIBVER_SUBRELEASE "pre1"   /* For pre-releases like snap0       */
+#define LIBVER_SUBRELEASE "pre2"   /* For pre-releases like snap0       */
                                 /* Empty string for real releases.           */
-#define LIBVER_STRING   "HDF Version 4.2 Release 10-pre1, January 22, 2014"
+#define LIBVER_STRING   "HDF Version 4.2 Release 10-pre2, January 30, 2014"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
