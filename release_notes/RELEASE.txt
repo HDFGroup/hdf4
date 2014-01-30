@@ -57,8 +57,8 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
-   Removed old Macintosh platform codes that are not used any more.
-   (AKC 2014/01/21 HDFFR-1340)
+   - Removed old Macintosh platform codes that are not used any more.
+     (AKC 2014/01/21 HDFFR-1340)
 
    - Changed Mac platforms to use the Apple supported clang compiler as the
      default C compiler. (AKC 2014/01/15 HDFFR-1318)
@@ -90,11 +90,6 @@ Bugs fixed since HDF 4.2.9
 
    Library
    ========= 
-
-   - mfhdf/libsrc/local_nc.h is not installed anymore. The file contains
-     private information for the HDF4 netCDF internal functions and is not
-     needed for applications.  (EIP 2014/01/15 related to HDFFR-150)
-
    - SDsetblocksize and VSsetblocksize would not change the block size if
      the sds/vdata did not use linked-block before it was closed.  The
      problem is now fixed.  (BMR 2013/1/15 - HDFFR-1357)
