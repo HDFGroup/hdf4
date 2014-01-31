@@ -4,23 +4,75 @@
 
                      Table of Contents
                      
-Section I:   Quick Step Building HDF4 Libraries with CMake 
-Section II:  Preconditions
-Section III: Building HDF4 C/C++ Libraries with CMake
-Section IV:  All Options for HDF4 C/C++ Libraries with CMake
-Section V:   User-defined Options for HDF4 Libraries with CMake
-Section VI:  APPENDIX
+Section I:   Quick Step Building HDF4 Libraries with CMake Script Mode 
+Section II:  Quick Step Building HDF4 Libraries with CMake Command Mode
+Section III: Preconditions
+Section IV:  Building HDF4 C/C++ Libraries with CMake
+Section V:   All Options for HDF4 C/C++ Libraries with CMake
+Section VI:  User-defined Options for HDF4 Libraries with CMake
+Section VII: APPENDIX
 
 ************************************************************************
 
 
 
 ========================================================================
-I. Quick Step Building HDF4 Libraries with CMake
+I. Quick Step Building HDF4 Libraries with CMake Script Mode
 ========================================================================
 This short set of instructions is written for users who want to quickly 
 build the HDF4 Library and tools from the HDF4 source code package 
-using the CMake tools.
+using the CMake tools. HDF Group recommends using a ctest script to build
+HDF4.
+
+To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
+
+    1. Create a directory for your development; myhdfstuff.
+    
+    2. Create a directory for the HDF4 source; hdf4.2.10 in myhdfstuff.
+
+    3. Download the SZip.tar.gz, ZLib.tar.gz, and JPEG.tar.gz to your 
+       development directory, (See Section VII: APPENDIX for instructions). 
+       All are needed if building with external libraries; do not uncompress them.
+       
+    4. Download or create the CTestScript.cmake file in your development 
+       directory, (See Section VII: APPENDIX for instructions and an example).   
+          
+    5. Download or create a platform configuration file in your development 
+       directory, (See Section VII: APPENDIX for instructions and an example). 
+       This file calls CTestScript.cmake; the platform configuration file can 
+       be modified. CTestScript.cmake file should not be modified.    
+
+    6. From your development directory execute the CTest Script with the 
+       following options:
+
+        ctest -S <configuration file>,<hdf4src> -C Release -VV -O hdf4.log
+
+    7. This will create an install package in the myhdfstuff/hdf4.2.10/build folder.
+
+    Where:
+        "configuration file" is the platform configuration file from step6;
+          HDF4WindowsCMake.cmake, HDF4LinuxCMake.cmake, or HDF4MacCMake.cmake
+          can be downloaded from the HDF Group website.
+        "hdf4src" is the uncompressed HDF4 source code directory. No path 
+          should be specified.
+        
+        The -S option uses the script version of ctest.
+        
+        The value for the -C option (as shown above, "-C Release") must 
+        match the setting for CTEST_BUILD_CONFIGURATION in the platform 
+        configuration file.
+        
+        The -VV option is for verbose; Use -V for less verbose.
+        
+        The "-O hdf4.log" option saves the output to a log file hdf4.log.
+
+
+========================================================================
+II. Quick Step Building HDF4 Libraries with CMake
+========================================================================
+This short set of instructions is written for users who want to quickly 
+build the HDF4 Library and tools from the HDF4 source code package 
+using the CMake command line tools.
        
    A. Windows Quick Step Building HDF4 Libraries with CMake Using VS2010
 
@@ -37,6 +89,7 @@ using the CMake tools.
       
       4. Configure the C library, tools, and tests with this command:
          cmake -G "Visual Studio 10" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
+         The two dots on the end of the command is the location of the source.
       
       5. Build the C library, tools, and tests with this command:
          cmake --build . --config Release
@@ -55,16 +108,17 @@ using the CMake tools.
       Go through these steps:
       
       1. Locate the source files in:
-         ~\MyHDFstuff\hdf4
+         ~/MyHDFstuff/hdf4
       
       2. Create a build folder at:
-         ~\MyHDFstuff\hdf4\build
+         ~/MyHDFstuff/hdf4/build
       
       3. Open a command prompt at:
-         ~\MyHDFstuff\hdf4\build
+         ~/MyHDFstuff/hdf4/build
       
       4. Configure the C library, tools, and tests with this command:
          cmake -G "Unix Makefiles" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
+         The two dots on the end of the command is the location of the source.
       
       5. Build the C library, tools, and tests with this command:
          cmake --build . --config Release
@@ -81,15 +135,15 @@ using the CMake tools.
 
 
 ========================================================================
-II. Preconditions                                                           
+III. Preconditions                                                           
 ========================================================================
 
    1. We suggest you obtain the latest CMake for Windows from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version of 
       2.8.10.
                                                                          
-   2. If you plan to use Zlib or Szip, or JPEG:
-      A. Download the packages and install them in a central location. 
+   2. HDF4 requires Zlib and JPEG, Szip is optional:
+      A. Download the binary packages and install them in a central location. 
          For example on Windows, create a folder extlibs and install the 
          packages there.
          
@@ -134,11 +188,11 @@ II. Preconditions
             CTEST_USE_LAUNCHERS:BOOL=ON
             CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF         
    
-   5. Windows developers should install NSIS to create an install image 
+   5. Windows developers should install NSIS to create an executable install image 
       with CPack. Visual Studio Express users will not be able to package 
-      HDF4 into an install image executable. Use the HDF4_NO_PACKAGES option.
+      HDF4 into an executable install image executable. Use the HDF4_NO_PACKAGES option.
    
-   6. Developers should copy the config/cmake/cacheinit.cmake file and alter 
+   6. Developers can copy the config/cmake/cacheinit.cmake file and alter 
       the settings for the developers' environment. Then the only options 
       needed on the command line are those options that are different. An 
       example using the HDF default cache file is:
@@ -180,10 +234,10 @@ Notes: CMake in General
 
 
 ========================================================================
-III. Building HDF4 C/C++ Libraries with CMake
+IV. Building HDF4 C/C++ Libraries with CMake
 ========================================================================
 
-To build the HDF4 C/C++ Libraries with CMake, go through these five steps:
+To build the HDF4 C/Fortran Libraries with CMake, go through these five steps:
 
    1. Run CMake
    2. Configure the cache settings
@@ -210,7 +264,7 @@ These five steps are described in detail below.
       then use c:\MyHDFstuff\hdf4\build or c:\MyHDFstuff\build\hdf4 as the 
       build directory.
       
-      PREFERRED:
+      RECOMMENDED:
         Users can perform the configuration step without using the visual 
         cmake-gui program. We use the file cacheinit.cmake in the 
         config/cmake folder for our testing. This file enables all of the 
@@ -414,7 +468,7 @@ These five steps are described in detail below.
 
 
 ========================================================================
-IV. All Options for HDF4 C/C++ Libraries with CMake
+V. All Options for HDF4 C/C++ Libraries with CMake
 ========================================================================
 
 In the options listed below, there are three columns of information: 
@@ -460,7 +514,7 @@ IF (HDF4_ENABLE_SZIP_SUPPORT)
 
 
 ========================================================================
-V. User-defined Options for HDF4 Libraries with CMake
+VI. User-defined Options for HDF4 Libraries with CMake
 ========================================================================
 
 Support for user-defined macros and options has been added. The file
@@ -473,18 +527,16 @@ UserMacros.cmake file. Then enable the option to the CMake configuration,
 build, and test process.
 
 ========================================================================
-VI. APPENDIX
+VII. APPENDIX
 ========================================================================
 
 Below are examples of the ctest scripts used by The HDF Group.
-See the script, cmakehdf4, in the bin folder for a smaller and limited 
-function shell script version of the following general scripts.
 The examples are for a Linux machine, but the same scripts can be used on 
 a Windows machine by adjusting the CTEST_CMAKE_GENERATOR option in the
 product specific script.
 
 NOTE: these files are available at the HDF web site:
-    http://www.hdfgroup.org/HDF5/release/cmakebuild.html
+    http://www.hdfgroup.org/release4/cmakebuild.html
 
     CTestScript.cmake
     SZip.tar.gz
@@ -549,7 +601,7 @@ else(NOT SITE_OS_NAME)
   endif(CMAKE_HOST_UNIX)
   if(SITE_BUILDNAME_SUFFIX)
     set(CTEST_BUILD_NAME ${CTEST_BUILD_NAME}-${SITE_BUILDNAME_SUFFIX})
-  endif()
+  endif(SITE_BUILDNAME_SUFFIX)
   set(BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDNAME:STRING=${CTEST_BUILD_NAME}")
 endif(NOT SITE_OS_NAME)
  
@@ -560,10 +612,16 @@ if(APPLE)
   # Compiler choice
   execute_process(COMMAND xcrun --find cc OUTPUT_VARIABLE XCODE_CC OUTPUT_STRIP_TRAILING_WHITESPACE)
   execute_process(COMMAND xcrun --find c++ OUTPUT_VARIABLE XCODE_CXX OUTPUT_STRIP_TRAILING_WHITESPACE)
-  SET(ENV{CC} "${XCODE_CC}")
-  SET(ENV{CXX} "${XCODE_CXX}")
-  # Shared fortran is not supported, build static 
-  set (BUILD_OPTIONS "${BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_ANSI_CFLAGS:STRING=-fPIC")
+  set(ENV{CC} "${XCODE_CC}")
+  set(ENV{CXX} "${XCODE_CXX}")
+
+  if(NOT NO_MAC_FORTRAN)
+    # Shared fortran is not supported, build static 
+    set(BUILD_OPTIONS "${BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_ANSI_CFLAGS:STRING=-fPIC")
+  else(NOT NO_MAC_FORTRAN)
+    set(BUILD_OPTIONS "${BUILD_OPTIONS} -DHDF5_BUILD_FORTRAN:BOOL=OFF")
+  endif(NOT NO_MAC_FORTRAN)
+
   set(BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=ON -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF")
 endif(APPLE)
 
@@ -580,7 +638,7 @@ endif(NOT SITE_CYGWIN})
 #-----------------------------------------------------------------------------
 set(NEED_REPOSITORY_CHECKOUT 0)
 set(CTEST_CMAKE_COMMAND "\"${CMAKE_COMMAND}\"")
-if (CTEST_USE_TAR_SOURCE)
+if(CTEST_USE_TAR_SOURCE)
   ## Uncompress source if tar file provided
   ## --------------------------
   if(WIN32)
@@ -600,20 +658,20 @@ if (CTEST_USE_TAR_SOURCE)
      
   file(RENAME ${CTEST_USE_TAR_SOURCE} ${CTEST_SOURCE_DIRECTORY})
   set(LOCAL_SKIP_UPDATE "TRUE")
-else (CTEST_USE_TAR_SOURCE)
+else(CTEST_USE_TAR_SOURCE)
   ## use subversion to get source
   ## --------------------------
-  if (NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-    set (NEED_REPOSITORY_CHECKOUT 1)
-  endif (NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
+  if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
+    set(NEED_REPOSITORY_CHECKOUT 1)
+  endif(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
  
-  if (${NEED_REPOSITORY_CHECKOUT})
-    set (CTEST_CHECKOUT_COMMAND
+  if(${NEED_REPOSITORY_CHECKOUT})
+    set(CTEST_CHECKOUT_COMMAND
       "${CTEST_UPDATE_COMMAND} co ${REPOSITORY_URL} \"${CTEST_SOURCE_DIRECTORY}\" -r HEAD")
-  else (${NEED_REPOSITORY_CHECKOUT})
-    set (CTEST_CHECKOUT_COMMAND "${CTEST_UPDATE_COMMAND} update")
-  endif (${NEED_REPOSITORY_CHECKOUT})
-endif (CTEST_USE_TAR_SOURCE)
+  else(${NEED_REPOSITORY_CHECKOUT})
+    set(CTEST_CHECKOUT_COMMAND "${CTEST_UPDATE_COMMAND} update")
+  endif(${NEED_REPOSITORY_CHECKOUT})
+endif(CTEST_USE_TAR_SOURCE)
  
 #-----------------------------------------------------------------------------
 ## Clear the build directory
@@ -715,60 +773,67 @@ endforeach(v)
 message("Dashboard script configuration:\n${vars}\n")
  
 #-----------------------------------------------------------------------------
-## NORMAL process
-## -- LOCAL_UPDATE updates the source folder from svn
-## -- LOCAL_SUBMIT reports to CDash server
-## -- LOCAL_SKIP_TEST skips the test process (only builds)
-## -- LOCAL_MEMCHECK_TEST executes the Valgrind testing
-## -- LOCAL_COVERAGE_TEST executes code coverage process
-## --------------------------
-CTEST_START (${MODEL} TRACK ${MODEL})
-if(LOCAL_UPDATE)
-  CTEST_UPDATE (SOURCE "${CTEST_SOURCE_DIRECTORY}")
-endif(LOCAL_UPDATE)
-CTEST_CONFIGURE (BUILD "${CTEST_BINARY_DIRECTORY}")
-CTEST_READ_CUSTOM_FILES ("${CTEST_BINARY_DIRECTORY}")
-if(LOCAL_SUBMIT)
-  CTEST_SUBMIT (PARTS Update Configure Notes)
-endif(LOCAL_SUBMIT)
-  CTEST_BUILD (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
-if(LOCAL_SUBMIT)
-  CTEST_SUBMIT (PARTS Build)
-endif(LOCAL_SUBMIT)
-if(NOT LOCAL_SKIP_TEST)
-  if(NOT LOCAL_MEMCHECK_TEST)
-    CTEST_TEST (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND ${ctest_test_args})
-    if(LOCAL_SUBMIT)
-      CTEST_SUBMIT (PARTS Test)
-    endif(LOCAL_SUBMIT)
-  else(NOT LOCAL_MEMCHECK_TEST)
-    CTEST_MEMCHECK (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND ${ctest_test_args})
-    if(LOCAL_SUBMIT)
-      CTEST_SUBMIT (PARTS MemCheck)
-    endif(LOCAL_SUBMIT)
-  endif(NOT LOCAL_MEMCHECK_TEST)
-  if(LOCAL_COVERAGE_TEST)
-    CTEST_COVERAGE (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
-    if(LOCAL_SUBMIT)
-      CTEST_SUBMIT (PARTS Coverage)
-    endif(LOCAL_SUBMIT)
-  endif(LOCAL_COVERAGE_TEST)
-endif(NOT LOCAL_SKIP_TEST)
-if(NOT LOCAL_MEMCHECK_TEST)
-  ##-----------------------------------------------
-  ## Package the product
-  ##-----------------------------------------------
-  execute_process(COMMAND cpack -C ${CTEST_BUILD_CONFIGURATION} -V
-    WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
-    RESULT_VARIABLE cpackResult
-    OUTPUT_VARIABLE cpackLog
-    ERROR_VARIABLE cpackLog.err
-  )
-  file(WRITE ${CTEST_BINARY_DIRECTORY}/cpack.log "${cpackLog.err}" "${cpackLog}")
-endif(NOT LOCAL_MEMCHECK_TEST)
 #-----------------------------------------------------------------------------
+  ## NORMAL process
+  ## -- LOCAL_UPDATE updates the source folder from svn
+  ## -- LOCAL_SUBMIT reports to CDash server
+  ## -- LOCAL_SKIP_TEST skips the test process (only builds)
+  ## -- LOCAL_MEMCHECK_TEST executes the Valgrind testing
+  ## -- LOCAL_COVERAGE_TEST executes code coverage process
+  ## --------------------------
+  CTEST_START (${MODEL} TRACK ${MODEL})
+  if(LOCAL_UPDATE)
+    CTEST_UPDATE (SOURCE "${CTEST_SOURCE_DIRECTORY}")
+  endif(LOCAL_UPDATE)
+  CTEST_CONFIGURE (BUILD "${CTEST_BINARY_DIRECTORY}")
+  CTEST_READ_CUSTOM_FILES ("${CTEST_BINARY_DIRECTORY}")
+  if(LOCAL_SUBMIT)
+    CTEST_SUBMIT (PARTS Update Configure Notes)
+  endif(LOCAL_SUBMIT)
+   CTEST_BUILD (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
+  if(LOCAL_SUBMIT)
+    CTEST_SUBMIT (PARTS Build)
+  endif(LOCAL_SUBMIT)
+  if(NOT LOCAL_SKIP_TEST)
+    if(NOT LOCAL_MEMCHECK_TEST)
+      CTEST_TEST (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND ${ctest_test_args} RETURN_VALUE res)
+      if(LOCAL_SUBMIT)
+        CTEST_SUBMIT (PARTS Test)
+      endif(LOCAL_SUBMIT)
+    if(res GREATER 0)
+      message(FATAL_ERROR "Failed tests: ${res}\n")
+    endif(res GREATER 0)
+    else(NOT LOCAL_MEMCHECK_TEST)
+      CTEST_MEMCHECK (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND ${ctest_test_args})
+      if(LOCAL_SUBMIT)
+        CTEST_SUBMIT (PARTS MemCheck)
+      endif(LOCAL_SUBMIT)
+    endif(NOT LOCAL_MEMCHECK_TEST)
+    if(LOCAL_COVERAGE_TEST)
+      CTEST_COVERAGE (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND)
+      if(LOCAL_SUBMIT)
+        CTEST_SUBMIT (PARTS Coverage)
+      endif(LOCAL_SUBMIT)
+    endif(LOCAL_COVERAGE_TEST)
+  endif(NOT LOCAL_SKIP_TEST)
+  if(NOT LOCAL_MEMCHECK_TEST AND NOT LOCAL_NO_PACKAGE)
+    ##-----------------------------------------------
+    ## Package the product
+    ##-----------------------------------------------
+    execute_process(COMMAND cpack -C ${CTEST_BUILD_CONFIGURATION} -V
+      WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
+      RESULT_VARIABLE cpackResult
+      OUTPUT_VARIABLE cpackLog
+      ERROR_VARIABLE cpackLog.err
+    )
+    file(WRITE ${CTEST_BINARY_DIRECTORY}/cpack.log "${cpackLog.err}" "${cpackLog}")
+    if(cpackResult GREATER 0)
+      message(FATAL_ERROR "Failed packaging: ${cpackResult}\n")
+    endif(cpackResult GREATER 0)
+  endif(NOT LOCAL_MEMCHECK_TEST AND NOT LOCAL_NO_PACKAGE)
+#-----------------------------------------------------------------------------
+ 
 message("DONE:CTestScript")
-
 
 
 ========================================================================
@@ -788,44 +853,60 @@ and the build folder is created as a sub-folder.
 # "ctest -S HDF4Static.cmake,hdf4 -C Release -O hdf4static.log"
 # where hdf4 is the source folder relative to the location of these scripts
 ############################################################################
-
 cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
-
-# CTEST_SCRIPT_ARG is the source folder passed on the command line
-set(CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
 set(CTEST_SOURCE_NAME ${CTEST_SCRIPT_ARG})
-set(CTEST_BINARY_NAME ${CTEST_SOURCE_NAME}/buildstatic)
+set(CTEST_BINARY_NAME ${CTEST_SOURCE_NAME}/build)
+set(CTEST_DASHBOARD_ROOT "${CTEST_SCRIPT_DIRECTORY}")
 set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}")
 set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_BINARY_NAME}")
-set(CTEST_BUILD_CONFIGURATION "Release")
 set(MODEL "Experimental")
 
-# build generator name, see cmake generator list
+####### Following Line is one of [Release, RelWithDebInfo, Debug] #############
+set(CTEST_BUILD_CONFIGURATION "RelWithDebInfo")
+######### Following describes computer ############
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 
-# machine description, can be removed on linux
-set(CTEST_SITE "machine.domain")
-set(SITE_OS_NAME "os name")
-set(SITE_OS_VERSION "os version")
-set(SITE_OS_BITS "os size")
-set(SITE_COMPILER_NAME "compiler name")
-set(SITE_COMPILER_VERSION "compiler version")
+##  Set the following to unique id your computer  ##
+set(CTEST_SITE "LINUX.XXXX")
+## following is optional to describe build ##
+set(SITE_BUILDNAME_SUFFIX "RWDI-SHARED")
+####################################################
 
-# extra CDash build name description
-set(SITE_BUILDNAME_SUFFIX "STATIC")
+##### Following controls CDash submission  #####
+#set(LOCAL_SUBMIT "TRUE")
+##### Following controls test process  #####
+#set(LOCAL_SKIP_TEST "TRUE")
+#set(LOCAL_MEMCHECK_TEST "TRUE")
+#set(LOCAL_COVERAGE_TEST "TRUE")
+##### Following controls cpack command  #####
+set(LOCAL_NO_PACKAGE "TRUE")
+##### Following controls source update  #####
+#set(LOCAL_UPDATE "TRUE")
+set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8")
+#uncomment to use a compressed source file *.zip
+#set(CTEST_USE_TAR_SOURCE "hdf5-1.8.12")
+############################################
 
-# needed for source updates, change as required
-set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/branches/hdf4_2_x")
+####  Change default configuration of options in config/cmake/cacheinit.cmake file ###
+### uncomment and change the following line for more configuration options
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DXXX:XXX=XXX")
+### uncomment the following line to build static libraries
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
+### ext libs from svn
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING=SVN")
+### ext libs from tgz for 1.8.12 and after
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZPATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
+### ext libs from tgz for 1.8.11 and before
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS}-DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZ_PATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
+### Create install package with external libraries (szip, zlib)
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_PACKAGE_EXTLIBS:BOOL=ON")
+### disable test program builds
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_TESTING:BOOL=OFF")
+### disable packaging
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_NO_PACKAGES:BOOL=ON")
+############################################
 
-# options to add/change from the cacheinit.cmake in the config/cmake folder
-set(ADD_BUILD_OPTIONS "-DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/hdf4.2.x_static")
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_ANSI_CFLAGS:STRING=-fPIC -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=\"SVN\"")
-
-# include common script file
 include(${CTEST_SCRIPT_DIRECTORY}/CTestScript.cmake)
-
-message("DONE")
 
 
 
