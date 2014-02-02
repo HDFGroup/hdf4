@@ -120,32 +120,33 @@ Platforms tested
 
 This version has been tested in the following platforms:
 
-   Linux 2.6.32-279.19.1         gcc (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
-   .el6.ppc64 #1                 GNU Fortran (GCC) 4.4.6 20120305 (Red Hat 4.4.6-4)
+   Linux 2.6.32-358.18.1         gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-3)
+   .el6.ppc64 #1                 GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-3)
    SMP ppc64 GNU/Linux           IBM XL Fortran for Linux, V13.1 (64-bit mode)
    (ostrich)
 
    Linux 2.6.18-308.13.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-52)
       SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
    (jam)                             (Red Hat 4.1.2-52)
-                                 pgcc and pgf90 11.9-0 32-bit target 
+                                 pgcc and pgf90 13.7-0 32-bit target 
                                  on x86 Linux -tp penryn
-                                 Intel(R) C Compiler, Version 12.1.0 20110811
-                                 Intel(R) Fortran Compiler, Version 12.1.0
+                                 Intel(R) C Compiler, Version 13.1.3 20130607
+                                 Intel(R) Fortran Compiler, Version 13.1.3
 
-   Linux 2.6.18-308.24.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-52)
+   Linux 2.6.18-308.24.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-54)
       SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
-   (koala)                           (Red Hat 4.1.2-52)
-                                 icc (ICC) 12.1.0 20110811
-                                 ifort (IFORT) 12.1.0 20110811
-                                 pgcc and pgf90 11.9-0 64-bit target 
+   (koala)                           (Red Hat 4.1.2-54)
+                                 icc (ICC) 13.1.3 20130607
+                                 ifort (IFORT) 13.1.3 20130607
+                                 pgcc and pgf90 13.7-0 64-bit target 
                                  on x86-64 Linux -tp nehalem
 
-   SunOS 5.10 32- and 64-bit     Sun C 5.9 SunOS_sparc Patch 124867-16 2010/08/11 
-   (linew)                       Sun Fortran 95 8.3 SunOS_sparc Patch 127000-13 2010/01/26
-                                 Sun C 5.11 SunOS_sparc 2010/08/13
-                                 Sun Fortran 95 8.5 SunOS_sparc 2010/08/13
-
+   Linux 2.6.32-431.el6.x86_64   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-4)
+      #1 SMP x86_64 GNU/Linux    GNU Fortran (GCC) 4.4.7 20120313 
+   (platypus)                        (Red Hat 4.4.7-4)
+                                 icc (ICC) 13.1.3 20130607
+                                 ifort (IFORT) 13.1.3 20130607
+   
    SunOS 5.11 32- and 64-bit     Sun C 5.12 SunOS_sparc 2011/11/16 
    (emu)                              (see "Known problem" section)
                                  Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
