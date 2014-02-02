@@ -872,9 +872,9 @@
 ./mfhdf/ncgen/init.c
 ./mfhdf/ncgen/load.c
 ./mfhdf/ncgen/main.c
-./mfhdf/ncgen/msofttab.c
-./mfhdf/ncgen/msofttab.h
-./mfhdf/ncgen/msoftyy.c
+./mfhdf/ncgen/ncgenyy.c
+./mfhdf/ncgen/ncgentab.c
+./mfhdf/ncgen/ncgentab.h
 ./mfhdf/ncgen/ncgen.1
 ./mfhdf/ncgen/ncgen.h
 ./mfhdf/ncgen/ncgen.l

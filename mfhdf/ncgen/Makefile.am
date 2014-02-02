@@ -48,14 +48,14 @@ ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
 ftest0_SOURCES=
 
 ## Recipe for building the ncgentab.c file
-ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
-	$(YACC) -d $(srcdir)/ncgen.y
-	mv y.tab.c ncgentab.c
-	mv y.tab.h ncgentab.h
+##ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
+##	$(YACC) -d $(srcdir)/ncgen.y
+##	mv y.tab.c ncgentab.c
+##	mv y.tab.h ncgentab.h
 
-ncgenyy.c: ncgen.l
-	$(LEX) $(srcdir)/ncgen.l
-	mv lex.yy.c ncgenyy.c
+##ncgenyy.c: ncgen.l
+##	$(LEX) $(srcdir)/ncgen.l
+##	mv lex.yy.c ncgenyy.c
 
 #############################################################################
 ##                            Documentation                                ##
@@ -102,6 +102,6 @@ CHECK_CLEANFILES += ctest1.cdl ftest1.cdl \
                  test0.nc test1.cdl test1.nc test2.cdl
 
 DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ftest0$(EXEEXT) ftest0.nc    \
-                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f
+                 netcdf.inc test0.c test0.f
 
 include $(top_srcdir)/config/conclude.am

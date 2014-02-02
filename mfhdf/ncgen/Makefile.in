@@ -350,7 +350,7 @@ NCDUMP = $(top_builddir)/mfhdf/ncdump/ncdump
 TEST_SCRIPT = testncgen.sh
 check_SCRIPTS = testncgen.sh
 DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ftest0$(EXEEXT) ftest0.nc    \
-                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f
+                 netcdf.inc test0.c test0.f
 
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
@@ -805,15 +805,6 @@ uninstall-man: uninstall-man1
 	pdf-am ps ps-am tags uninstall uninstall-am \
 	uninstall-binPROGRAMS uninstall-man uninstall-man1
 
-
-ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
-	$(YACC) -d $(srcdir)/ncgen.y
-	mv y.tab.c ncgentab.c
-	mv y.tab.h ncgentab.h
-
-ncgenyy.c: ncgen.l
-	$(LEX) $(srcdir)/ncgen.l
-	mv lex.yy.c ncgenyy.c
 
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@netcdf.inc:
 @HDF_BUILD_FORTRAN_TRUE@@HDF_BUILD_NETCDF_TRUE@	ln -s $(top_builddir)/mfhdf/fortran/$@ .
