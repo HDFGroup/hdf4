@@ -345,9 +345,6 @@ mfhdf/ncdump/CMakeTests.cmake -text
 mfhdf/ncdump/testncdump.sh.in -text
 mfhdf/ncgen/CMakeLists.txt -text
 mfhdf/ncgen/CMakeTests.cmake -text
-mfhdf/ncgen/msofttab.c -text
-mfhdf/ncgen/msofttab.h -text
-mfhdf/ncgen/msoftyy.c -text
 mfhdf/ncgen/ncgentab.c -text
 mfhdf/ncgen/ncgentab.h -text
 mfhdf/ncgen/ncgenyy.c -text
