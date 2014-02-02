@@ -1,5 +1,5 @@
-HDF version 4.2.10-pre2 currently under development
-=============================================
+HDF version 4.2.10-pre2 released on 2014-01-30
+==============================================
 
 INTRODUCTION
 
@@ -200,6 +200,10 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  Cmake does not install these man pages:
+	hdf.1, ncdump.1, ncgen.1
+   AKC/BMR - 2014/02/02
+
 o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
    GCC, Intel and Clang compilers.  Currently, this situation is detected and
    -O0 level optimization is used.  We will work on the issue for the next
@@ -229,7 +233,7 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    SDS might produce undesired results because the libraries could not
    distinguish between the two objects.  In the case of writing, data
    might even be corrupted.  For example, SDS data might be written to a
-   dimension variable or vice versa.
+   dimension variable or vice versa. (bugzilla #624)
 
    HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
    and a dimension variable.  However, as with older versions, these recent
@@ -241,6 +245,8 @@ o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
    to help detect such name conflicts and select the correct object to
    access, respectively; see the HDF Reference Manual entries for
    further details.
+   FB - 2009/01/26
+   BMR - revised 2011/06/24
 
 o  N-bit compression is not supported with Fortran APIs.
 
@@ -264,3 +270,4 @@ o  When using PGI compilers, make sure that the JPEG library is also compiled
 o  In order for the API SDgetdatasize to get the correct compressed size
    of the data, the dataset needs to be closed (SDendaccess) or read
    (SDreaddata) after being written and before SDgetdatasize is called.
+   BMR - 2008/11/22
