@@ -99,7 +99,7 @@ fi
 echo Running Cmake for HDF4-${version} ...
 
 #      4. Configure the C library, tools and tests with this command:
-STEP "Configure..." "cmake -C ../hdf4/config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF ../hdf4" $configlog
+STEP "Configure..." "cmake -C ../hdf4/config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX:PATH="." -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON -DHDF4_BUILD_UTILS:BOOL=ON -DBUILD_TESTING:BOOL=ON ../hdf4" $configlog
       
 #      5. Build the C library, tools and tests with this command:
 STEP "Build the library, tools and tests, ..." "cmake --build . --config Release" $makelog
@@ -111,7 +111,7 @@ STEP "Test the library and tools..." "ctest . -C Release" $testlog
 STEP "Create an install image..." "cpack -C Release CPackConfig.cmake" $packlog
       
 #      8. Install with this command:
-STEP "Install..." "./HDF-4.2.*-Linux.sh --skip-license" $installlog
+STEP "Install..." "./HDF-4.2.10-Linux.sh --skip-license" $installlog
 # save the last exit code
 exit_code=$?
 
@@ -199,7 +199,7 @@ set (SITE_BUILDNAME_SUFFIX "cmakehdf4")
 set (LOCAL_SKIP_UPDATE TRUE)
 set (REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/trunk")
 # -- Standard build options  
-set (ADD_BUILD_OPTIONS "-DCMAKE_INSTALL_PREFIX:PATH=/usr/local/hdf4.2.9 -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=\"SVN\" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
+set (ADD_BUILD_OPTIONS "-DCMAKE_INSTALL_PREFIX:PATH=${CTEST_BINARY_DIRECTORY} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=\"SVN\" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 
 # Use multiple CPU cores to build
 include(ProcessorCount)

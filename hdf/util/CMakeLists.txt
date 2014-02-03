@@ -153,7 +153,8 @@ ENDIF (BUILD_TESTING AND HDF4_BUILD_UTILS)
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
 IF (HDF4_BUILD_TOOLS)
-  INSTALL_PROGRAM_PDB (hdfls ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
+  INSTALL_PROGRAM_PDB (hdfls ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
+  INSTALL_PROGRAM_PDB (hdfed ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 
   INSTALL (
       TARGETS
@@ -173,7 +174,6 @@ IF (HDF4_BUILD_UTILS)
   INSTALL_PROGRAM_PDB (hdf24to8 ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdf8to24 ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdfcomp ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
-  INSTALL_PROGRAM_PDB (hdfed ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdfpack ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdftopal ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdftor8 ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
@@ -193,7 +193,6 @@ IF (HDF4_BUILD_UTILS)
           hdf24to8
           hdf8to24
           hdfcomp
-          hdfed
           hdfpack
           hdftopal
           hdftor8
