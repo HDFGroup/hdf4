@@ -7,8 +7,8 @@
 Section I:   Quick Step Building HDF4 Libraries with CMake Script Mode 
 Section II:  Quick Step Building HDF4 Libraries with CMake Command Mode
 Section III: Preconditions
-Section IV:  Building HDF4 C/C++ Libraries with CMake
-Section V:   All Options for HDF4 C/C++ Libraries with CMake
+Section IV:  Building HDF4 C/Fortran Libraries with CMake
+Section V:   All Options for HDF4 C/Fortran Libraries with CMake
 Section VI:  User-defined Options for HDF4 Libraries with CMake
 Section VII: APPENDIX
 
@@ -17,7 +17,7 @@ Section VII: APPENDIX
 
 
 ========================================================================
-I. Quick Step Building HDF4 Libraries with CMake Script Mode
+I. Quick Step Building HDF4 Libraries with CMake script mode
 ========================================================================
 This short set of instructions is written for users who want to quickly 
 build the HDF4 Library and tools from the HDF4 source code package 
@@ -50,7 +50,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
     7. This will create an install package in the myhdfstuff/hdf4.2.10/build folder.
 
     Where:
-        "configuration file" is the platform configuration file from step6;
+        "configuration file" is the platform configuration file from step 5;
           HDF4WindowsCMake.cmake, HDF4LinuxCMake.cmake, or HDF4MacCMake.cmake
           can be downloaded from the HDF Group website.
         "hdf4src" is the uncompressed HDF4 source code directory. No path 
@@ -68,7 +68,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
 
 ========================================================================
-II. Quick Step Building HDF4 Libraries with CMake
+II. Quick Step Building HDF4 Libraries with CMake command line mode
 ========================================================================
 This short set of instructions is written for users who want to quickly 
 build the HDF4 Library and tools from the HDF4 source code package 
@@ -88,7 +88,10 @@ using the CMake command line tools.
          c:\MyHDFstuff\hdf4\build
       
       4. Configure the C library, tools, and tests with this command:
-         cmake -G "Visual Studio 10" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
+         cmake -G "Visual Studio 10" -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
+            -DHDF4_PACKAGE_EXTLIBS:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON 
+            -DHDF4_BUILD_UTILS:BOOL=ON -DBUILD_TESTING:BOOL=ON 
+            -DCMAKE_INSTALL_PREFIX:PATH="." ..
          The two dots on the end of the command is the location of the source.
       
       5. Build the C library, tools, and tests with this command:
@@ -117,7 +120,10 @@ using the CMake command line tools.
          ~/MyHDFstuff/hdf4/build
       
       4. Configure the C library, tools, and tests with this command:
-         cmake -G "Unix Makefiles" -DBUILD_TESTING:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON ..
+         cmake -G "Unix Makefiles" -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
+            -DHDF4_PACKAGE_EXTLIBS:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON
+            -DHDF4_BUILD_UTILS:BOOL=ON -DBUILD_TESTING:BOOL=ON 
+            -DCMAKE_INSTALL_PREFIX:PATH="." ..
          The two dots on the end of the command is the location of the source.
       
       5. Build the C library, tools, and tests with this command:
@@ -142,10 +148,12 @@ III. Preconditions
       web site. The HDF 4.2.x product requires a minimum CMake version of 
       2.8.10.
                                                                          
-   2. HDF4 requires Zlib and JPEG, Szip is optional:
+   2. HDF4 requires Zlib and JPEG. Szip is optional. Use one of the choices
+      below:
       A. Download the binary packages and install them in a central location. 
          For example on Windows, create a folder extlibs and install the 
-         packages there.
+         packages there. This will require telling CMake where the include 
+         and binary files are located.
          
       B. Use source packages from an SVN server by adding the following CMake 
          options:
@@ -167,7 +175,8 @@ III. Preconditions
             TGZPATH:STRING="some_location"
             
          where "some_location" is the URL or full path to the compressed 
-         file and ext is the type of compression file.
+         file and ext is the type of compression file. See the appendix at 
+         the bottom of this file for downloading the files.
                                                                          
    3. If you are building under CYGWIN set the following option;
             HDF4_BUILD_XDR_LIB:BOOL=ON
@@ -198,7 +207,7 @@ III. Preconditions
       example using the HDF default cache file is:
       
         cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
-        -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_BUILD_EXAMPLES:BOOL=OFF ..
+          -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_BUILD_EXAMPLES:BOOL=OFF ..
 
 Notes: CMake and HDF4
 
@@ -234,10 +243,11 @@ Notes: CMake in General
 
 
 ========================================================================
-IV. Building HDF4 C/C++ Libraries with CMake
+IV. Building HDF4 C/Fortran Libraries with CMake command line mode
 ========================================================================
 
-To build the HDF4 C/Fortran Libraries with CMake, go through these five steps:
+This section provides more details on building the HDF4 C/Fortran Libraries
+with CMake using the CMake command line tools, go through these five steps:
 
    1. Run CMake
    2. Configure the cache settings
@@ -273,7 +283,10 @@ These five steps are described in detail below.
         
         cmake -C <sourcepath>/config/cmake/cacheinit.cmake -G "<generator>"  [-D<options>]  <sourcepath>
         
-        Where <generator> is    
+        Where <sourcepath> is:
+            the relative path to the source folder.
+        
+        <generator> is:    
             * Borland Makefiles
             * MSYS Makefiles
             * MinGW Makefiles
@@ -336,7 +349,7 @@ These five steps are described in detail below.
       2.1  Visual CMake users, click the Configure button. If this is the 
            first time you are running cmake-gui in this directory, you will 
            be prompted for the generator you wish to use (for example on 
-           Windows, Visual Studio 9 2008). CMake will read in the 
+           Windows, Visual Studio 11, to use Visual Studio 2012). CMake will read in the 
            CMakeLists.txt files from the source directory and display options 
            for the HDF4 project. After the first configure, you can adjust 
            the cache settings and/or specify the locations of other programs.
@@ -352,8 +365,8 @@ These five steps are described in detail below.
            On Linux, if you are using the Unix Makefiles generator, the 
            Makefiles will be created in the build folder.
 
-      2.2  Preferred command line example on Windows in 
-           the c:\MyHDFstuff\hdf4\build directory:
+      2.2  Recommended command line example on Windows in 
+           the C:\MyHDFstuff\hdf4\build directory:
       
             cmake -C ../config/cmake/cacheinit.cmake -G "Visual Studio 10" \
             -DHDF4_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF4_ENABLE_Z_LIB_SUPPORT:BOOL=OFF ..
@@ -447,12 +460,13 @@ These five steps are described in detail below.
       to ON (on the command line add -DHDF4_NO_PACKAGES:BOOL=ON)
            
    6. The files that support building HDF4 with CMake are all of the files 
-      in the config/cmake folder, the CMakeLists.txt files in each source 
-      folder, and CTestConfig.cmake. CTestConfig.cmake is specific to the 
-      internal testing performed by The HDF Group. It should be altered 
-      for the user's installation and needs. The cacheinit.cmake file 
-      settings are used by The HDF Group for daily testing. It should be 
-      altered/ignored for the user's installation and needs.
+      in the config/cmake folder, the CMakeLists.txt and CMakeTests.cmake 
+      files in each source folder, and CTestConfig.cmake. CTestConfig.cmake 
+      is specific to the internal testing performed by The HDF Group. It 
+      should be altered for the user's installation and needs. The 
+      cacheinit.cmake file settings are used by The HDF Group for daily 
+      testing. It should be altered/ignored for the user's installation and 
+      requirements.
 
    7. More information about using CMake can be found at the KitWare site at 
       www.cmake.org.
@@ -468,7 +482,7 @@ These five steps are described in detail below.
 
 
 ========================================================================
-V. All Options for HDF4 C/C++ Libraries with CMake
+V. All Options for HDF4 C/Fortran Libraries with CMake
 ========================================================================
 
 In the options listed below, there are three columns of information: 
@@ -545,6 +559,7 @@ NOTE: these files are available at the HDF web site:
     
     HDF4WindowsCMake.cmake
     HDF4LinuxCMake.cmake
+    HDF4MacCMake.cmake
 
 
 
@@ -882,9 +897,9 @@ set(SITE_BUILDNAME_SUFFIX "RWDI-SHARED")
 set(LOCAL_NO_PACKAGE "TRUE")
 ##### Following controls source update  #####
 #set(LOCAL_UPDATE "TRUE")
-set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8")
-#uncomment to use a compressed source file *.zip
-#set(CTEST_USE_TAR_SOURCE "hdf5-1.8.12")
+set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/branches/hdf4_2_10")
+#uncomment to use a compressed source file *.tgz
+#set(CTEST_USE_TAR_SOURCE "hdf-4.2.10")
 ############################################
 
 ####  Change default configuration of options in config/cmake/cacheinit.cmake file ###
@@ -893,17 +908,15 @@ set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf5/branches/hdf5_1_8")
 ### uncomment the following line to build static libraries
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
 ### ext libs from svn
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING=SVN")
-### ext libs from tgz for 1.8.12 and after
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZPATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
-### ext libs from tgz for 1.8.11 and before
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS}-DHDF5_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZ_PATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
-### Create install package with external libraries (szip, zlib)
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_PACKAGE_EXTLIBS:BOOL=ON")
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=SVN")
+### ext libs from tgz
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZPATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
+### Create install package with external libraries (szip, zlib, szip)
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 ### disable test program builds
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_TESTING:BOOL=OFF")
 ### disable packaging
-#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_NO_PACKAGES:BOOL=ON")
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_NO_PACKAGES:BOOL=ON")
 ############################################
 
 include(${CTEST_SCRIPT_DIRECTORY}/CTestScript.cmake)
@@ -915,6 +928,3 @@ For further assistance, send email to help@hdfgroup.org
 ========================================================================
 
 ========================================================================
-
-
-

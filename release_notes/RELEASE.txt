@@ -200,7 +200,11 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
-o  Cmake does not install these man pages:
+o  CMake "make install" fails installing the tools:
+    Use CPack to create an install package.
+   ADB - 2014/02/03
+
+o  CMake does not install these man pages:
 	hdf.1, ncdump.1, ncgen.1
    AKC/BMR - 2014/02/02
 
