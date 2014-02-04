@@ -93,8 +93,9 @@ INSTALL (
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
-
-INSTALL_TARGET_PDB (${HDF4_MF_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+IF (BUILD_SHARED_LIBS)
+  INSTALL_TARGET_PDB (${HDF4_MF_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+ENDIF (BUILD_SHARED_LIBS)
   
 INSTALL (
     TARGETS 

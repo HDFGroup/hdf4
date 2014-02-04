@@ -85,7 +85,7 @@ Line 8: change the INSTALLDIR to a different HDF4 install location.
 
 Line 14: uncomment to allow Mac machines to build shared examples.
 
-Line 15: uncomment to not build and test Fortran examples.
+Line 15: comment to build and test Fortran examples.
 
 Line 16: uncomment to build and test Fortran examples with the F2003 
 option.
