@@ -175,7 +175,7 @@ This version has been tested in the following platforms:
 
    Mac OS X 10.8.5               Apple clang version 5.0 from Xcode 5.0.2
    Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
-   (swallow)                     icc and ifort Version 14.0.1 20131010
+   (swallow,kite)                     icc and ifort Version 14.0.1 20131010
 
    Debian7.2.0 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
                                  gcc (Debian 4.7.2-5) 4.7.2
