@@ -51,6 +51,7 @@ New features and changes
 Support for new platforms and compilers
 =======================================
     - Visual Studio 2012 w/ Intel Fortran 13 on Windows 7 and Windows 8
+    - Mac OS X Mavericks with clang and gfortran
 
 
 Bugs fixed since HDF 4.2.9
@@ -175,7 +176,12 @@ This version has been tested in the following platforms:
 
    Mac OS X 10.8.5               Apple clang version 5.0 from Xcode 5.0.2
    Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
-   (swallow,kite)                     icc and ifort Version 14.0.1 20131010
+   (swallow,kite)                icc and ifort Version 14.0.1 20131010
+
+   Mac OS X 10.9.1               Apple LLVM version 5.0 (clang-500.2.79)
+   Darwin 13.0.0                 (based on LLVM 3.3svn)
+                                 gfortran GNU Fortran (GCC) 4.6.2 
+         
 
    Debian7.2.0 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
                                  gcc (Debian 4.7.2-5) 4.7.2
