@@ -58,6 +58,12 @@ Bugs fixed since HDF 4.2.9
 =========================
    Configuration
    =============
+   - Removed the requirement of yacc/lex like tools. The ncgenXXX.* files
+     generated files from yacc and lex input files are pre-created in the
+     source code to build the ncgen tool. The msoft*.[ch] files were for
+     Windows build but was out of dated. Cmake uses the pre-created files
+     instead. See known problem below. (AKC 2014/02/02 HDFFR-1419)
+
    - Removed old Macintosh platform codes that are not used any more.
      (AKC 2014/01/21 HDFFR-1340)
 
@@ -206,6 +212,11 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  CMake builds in Windows uses the same pre-generated ncgen*.[ch] files from
+   the yacc/lex input files. The generated file, ncgenyy.c, uses the <unistd.h>
+   header file that Windows does not support.  This must be blocked out in
+   order for Windows to use it. (AKC 2014-02-03 HDFFR-1424).
+
 o  CMake "make install" fails installing the tools:
     Use CPack to create an install package.
    ADB - 2014/02/03
