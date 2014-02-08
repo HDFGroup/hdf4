@@ -1,11 +1,11 @@
-HDF version 4.2.10-pre3 released on 2014-02-04
+HDF version 4.2.10 released on 2014-02-07
 ==============================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.9 and HDF 4.2.10-pre3.
+This document describes the differences between HDF 4.2.9 and HDF 4.2.10.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.10-pre3.
+and wish to migrate to HDF 4.2.10.
 
 The HDF 4.2.9 documentation can be found on the The HDF Group's website
 at:
@@ -83,17 +83,17 @@ Bugs fixed since HDF 4.2.9
      alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
      solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
 
-   - Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris since
-     the latest Sun Compiler version 5.11 and 5.12 have a conflict with the system
-     header file. Since the current versions of C compiler should be at least
-     ANSI (aka C89) compliant, the removal of -Xc should be safe. This also
-     fixes a previous known problem of needing to use -xc99 to build HDF4.
+   - Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris
+     since the latest Sun Compiler version 5.11 and 5.12 have a conflict with
+     the system header file. Since the current versions of C compiler should be
+     at least ANSI (aka C89) compliant, the removal of -Xc should be safe. This
+     also fixes a previous known problem of needing to use -xc99 to build HDF4.
      (AKC 2013/12/20 HDFFR-1361)
 
    - CMake - Changed name of TGZ_PATH to TGZPATH.
            (ADB 2013/9/12)
-   - CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac builds.
-           (ADB 2013/8/7)
+   - CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac
+     builds. (ADB 2013/8/7)
 
    Library
    ========= 
