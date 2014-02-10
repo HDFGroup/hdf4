@@ -168,6 +168,10 @@ This version has been tested in the following platforms:
                                  Visual Studio 2010 w/ Intel Fortran 12 (cmake)
                                  Visual Studio 2012 w/ Intel Fortran 13 (cmake)
 
+   Windows 8                     Visual Studio 2012 w/ Intel Fortran 13 (cmake)
+
+   Windows 8 x64                 Visual Studio 2012 w/ Intel Fortran 13 (cmake)
+
    Mac OS X Intel 10.6.8         Apple clang version 1.7 from Xcode 3.2.6
    Darwin 10.8.0                 gfortran GNU Fortran (GCC) 4.6.2
    (fred)                        icc and ifort Version 12.1.6 20120928
