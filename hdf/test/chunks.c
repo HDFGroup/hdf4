@@ -1388,7 +1388,6 @@ test_chunks(void)
     /* The following tests will work if Number type conversion
        is done on the ouput data, punt for now since 'hdftest'
        tests these same tests with number type conversion  */
-#if  !(defined(UNICOS) || defined(_UNICOS) || defined(_CRAYMPP))
 
     /* 
        7. Now create 3-D chunked element with no partial chunks.
@@ -1647,8 +1646,6 @@ test_chunks(void)
     MESSAGE(5, printf("Closing the file\n"););
     ret = Hclose(fid);
     CHECK_VOID(ret, FAIL, "Hclose");
-
-#endif /*  !(defined(UNICOS) || defined(_UNICOS) || defined(_CRAYMPP)) */
 
     /* 
        9. Create 4-D element with partial chunks.

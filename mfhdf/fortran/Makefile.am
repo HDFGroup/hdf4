@@ -4,12 +4,12 @@
 
 include $(top_srcdir)/config/commence.am
 
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/hdf/test       \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
 
 DIST_SUBDIRS = examples
 
@@ -77,11 +77,13 @@ install-examples uninstall-examples:
 ##                          And the cleanup                                ##
 #############################################################################
 
+CHECK_CLEANFILES += test.nc copy.nc *.hdf testdir/testext.hdf
+
 # Automake's distclean won't remove directories, so we can add an additional
 # hook target which will do so during 'make distclean'.
 distclean-local:
 	-rm -rf testdir
 
-DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90 test.nc copy.nc *.hdf testdir/testext.hdf
+DISTCLEANFILES = ftest.f jackets.c netcdf.inc mffunc.f90 netcdf.f90
 
 include $(top_srcdir)/config/conclude.am

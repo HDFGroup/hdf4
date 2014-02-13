@@ -5,10 +5,10 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES = -I$(top_srcdir)/hdf/src        \
+amINCLUDES = -I$(top_srcdir)/hdf/src        \
            -I$(top_srcdir)/mfhdf/libsrc   
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(amINCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##
@@ -60,4 +60,4 @@ endif
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h This*
+DISTCLEANFILES = *.new *.hdf *.cdf *.cdl netcdf.h hdf4_netcdf.h This*

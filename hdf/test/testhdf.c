@@ -42,10 +42,6 @@ static char RcsId[] = "@(#)$Revision$";
 
  */
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #define MAXNUMOFTESTS 35
 #define TESTMASTER
 
@@ -127,15 +123,9 @@ main(int argc, char *argv[])
     uint32      lmajor, lminor, lrelease;
     char        lstring[81];
 
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
-
-#if !(defined MAC || defined __MWERKS__ || defined SYMANTEC_C)
     /* Un-buffer the stdout and stderr */
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
-#endif
     /* Tests are generally arranged from least to most complexity... */
 #if !(defined _WIN32)
     InitTest("bitvect", test_bitvect, "Bit-Vector routines");
@@ -313,16 +303,12 @@ main(int argc, char *argv[])
       {
           MESSAGE(2, printf("\nCleaning Up...\n\n");
               );
-#ifdef VMS   
-       system("delete *.tmp;*");
-#else        /* VMS */
 #if !(defined DOS386 || defined WIN386)
           system("rm -f *.hdf *.tmp");
 #else   /* OLD_WAY */
           remove("*.hdf");
           remove("*.tmp");
 #endif  /* OLD_WAY */
-#endif  /* VMS */
       }     /* end if */
     exit(num_errs);
     return num_errs;

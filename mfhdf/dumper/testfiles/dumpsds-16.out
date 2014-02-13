@@ -1,6 +1,3 @@
-#############################
-Expected output for 'hdp dumpsds -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf'
-#############################
 File name: sds_empty_many.hdf 
 
 File attributes:

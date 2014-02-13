@@ -21,10 +21,6 @@ static char RcsId[] = "@(#)$Revision$";
 #include "hdf.h"
 #include "tutils.h"
 #include "fortest.h"
-#ifdef VMS
-#include <processes.h>
-#include <string.h>
-#endif
 #define NUMOFTESTS 20
 
 static int InitTest(const char *TheName, const char *TheCall, const char *TheDescr);
@@ -231,25 +227,9 @@ main(int argc, char *argv[])
     /* flush stdout to gurantee output preceed those of fortestF */
     fflush(stdout);
 
-#ifdef VMS
-    {
-        char *comprocfile="fortest.com";
-
-        if ((cmdfile = fopen(comprocfile, "w")) == NULL){
-           printf("***Can't write to cmdfile(%s)***\n", comprocfile);
-           return(-1);
-        }
-        fprintf(cmdfile, "%s %s\n",
-            "DEFINE/USER_MODE SYS$INPUT", cmdfilename);
-        fprintf(cmdfile, "%s\n", "run []fortestF.exe");
-        fclose(cmdfile);
-        return(system("@fortest.com"));
-    }
-#else
 #  ifndef CMAKE_INTDIR /* not built with cmake */
     return (system("./fortestF"));
 #  else
     return 0; /*(system("./fortestF"));*/
 #  endif
-#endif
 }

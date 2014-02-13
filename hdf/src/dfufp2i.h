@@ -58,26 +58,26 @@ extern      "C"
 /* prototypes for dfufp2im.c */
 
 #ifdef OLD_WAY
-    HDFFCLIBAPI int  duif2i_(int32 *hdim, int32 *vdim, float32 *max, float32 *min,
+    HDFLIBAPI int  duif2i_(int32 *hdim, int32 *vdim, float32 *max, float32 *min,
                         float32 hscale[], float32 vscale[], float32 data[],
                   _fcd palette, _fcd outfile, int *ct_method, int32 *hres,
                         int32 *vres, int *compress, int *lenfn);
-    HDFFCLIBAPI int  DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
+    HDFLIBAPI int  DFUfptoimage(int32 hdim, int32 vdim, float32 max, float32 min,
                              float32 *hscale, float32 *vscale, float32 *data,
                              uint8 *palette, char *outfile, int ct_method,
                              int32 hres, int32 vres, int compress);
 #endif
-    HDFFCLIBAPI int  process
+    HDFLIBAPI int  process
                 (Input * in, Output * out);
-    HDFFCLIBAPI int  generate_scale
+    HDFLIBAPI int  generate_scale
                 (int32 dim, float32 *scale);
-    HDFFCLIBAPI int  convert_interp
+    HDFLIBAPI int  convert_interp
                 (Input * in, Output * out);
-    HDFFCLIBAPI int  pixrep_scaled
+    HDFLIBAPI int  pixrep_scaled
                 (Input * in, Output * out);
-    HDFFCLIBAPI int  compute_offsets
+    HDFLIBAPI int  compute_offsets
                 (float32 *scale, int32 dim, int32 *offsets, int32 res);
-    HDFFCLIBAPI int  pixrep_simple
+    HDFLIBAPI int  pixrep_simple
                 (Input * in, Output * out);
 
 #if defined c_plusplus || defined __cplusplus

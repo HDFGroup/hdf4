@@ -63,10 +63,6 @@ static char RcsId[] = "@(#)$Revision$";
 
  **************************************************************************/
 
-#if (defined macintosh) || (defined MPW)
-#define HDF  /* Need this for the Macintosh, avoid putting on compile line */
-#endif
-
 #ifdef HDF
 #include        "local_nc.h"
 

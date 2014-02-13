@@ -130,14 +130,10 @@ void print_mismatched(const void *s1, const void *s2, int32 size2cmp);
 intn make_datafilename(char* basename, char* testfile, unsigned int size);
 
 /* System command to use for Cleanup */
-#ifdef VMS
-#define CLEAN_CMD	"delete *.hdf;*"
-#else
 #   ifdef _WIN32
 #   define CLEAN_CMD  "del *.hdf"   
 #   else
 /* default is Unix */
 #   define CLEAN_CMD	"rm -f *.hdf"
 #   endif  /* _WIN32  */
-#endif /*VMS */
 #endif /* _TUTILS_H */

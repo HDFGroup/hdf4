@@ -16,11 +16,6 @@ static char RcsId[] = "@(#)$Revision$";
 #endif
 
 /* $Id$ */
-
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 #ifndef I860
 #include <stdlib.h>
@@ -212,10 +207,6 @@ main(int argc, char *argv[])
     uint8      *pal_buf = NULL; /* buffer to store the palette in */
     intn        file = 1;       /* the arguement the files start at */
     intn        i;              /* local counting variable */
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     if (argc < 3)
         usage();

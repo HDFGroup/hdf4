@@ -5,12 +5,15 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/hdiff    \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
+
+## Add hrepack specific linker flags here
+hrepack_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -56,6 +59,8 @@ hrepack_check_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = *.hdf
+CHECK_CLEANFILES += *.hdf
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am

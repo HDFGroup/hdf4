@@ -72,7 +72,6 @@
 #define     DFMT_ALPHA          0x4441
 #define     DFMT_VP             0x6611
 #define     DFMT_I860           0x4441
-#define     DFMT_CRAYMPP        0x1171
 #define     DFMT_IA64           0x4441
 #define     DFMT_LINUX64        0x4441
 #define     DFMT_POWERPC64      0x1111
@@ -424,123 +423,6 @@ typedef long               hdf_pint_t;   /* an integer the same size as a pointe
 
 #endif /* IRIX */
 
-#if (defined(UNICOS) || defined(_UNICOS)) && !defined(_CRAYMPP)
-
-#ifndef UNICOS
-#define UNICOS
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <memory.h>
-#include <fortran.h>
-#ifndef O_RDONLY
-#include <fcntl.h>              /* for unbuffered i/o stuff */
-#define L_INCR  1
-#include <sys/stat.h>
-#endif /*O_RDONLY*/
-
-#ifdef _CRAYIEEE
-#define DF_MT   DFMT_UNICOSIEEE
-#else
-#define DF_MT   DFMT_UNICOS
-#endif
-typedef void            VOID;
-typedef void            *VOIDP;
-#ifdef OLD_WAY /* May need to be included on other machines than the C-90 */
-typedef char            *_fcd;
-#endif /* OLD_WAY */
-typedef signed char     char8;
-typedef unsigned char   uchar8;
-typedef signed char     int8;
-typedef unsigned char   uint8;
-typedef int             int16;
-typedef unsigned int    uint16;
-typedef int             int32;
-typedef unsigned int    uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define RIGHT_SHIFT_IS_UNSIGNED
-#define CHAR_IS_UNSIGNED
-
-#endif /* UNICOS */
-
-#if defined(_CRAYMPP)
-
-#ifndef CRAYMPP
-#define CRAYMPP
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <string.h>
-#include <limits.h>
-#include <memory.h>
-#include <fortran.h>
-#ifndef O_RDONLY
-#include <fcntl.h>              /* for unbuffered i/o stuff */
-#define L_INCR  1
-#include <sys/stat.h>
-#endif /*O_RDONLY*/
-
-#define DF_MT   DFMT_CRAYMPP
-typedef void            VOID;
-typedef void            *VOIDP;
-#ifdef OLD_WAY /* May need to be included on other machines than the C-90 */
-typedef char            *_fcd;
-#endif /* OLD_WAY */
-typedef signed char     char8;
-typedef unsigned char   uchar8;
-typedef signed char     int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short  uint16;
-typedef short           int32;
-typedef unsigned short  uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-
-#define _HUGE              /* This should only be defined to a value on the PC */
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-#define RIGHT_SHIFT_IS_UNSIGNED
-#define CHAR_IS_UNSIGNED
-
-#endif /* CRAYMPP */
-
 /* CRAY XT3
  * Note from RedStorm helpdesk,
  * When I compile a C code with the '-v' option, it indicates that the compile
@@ -553,59 +435,6 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 #if ((defined(__QK_USER__)) && (defined(__x86_64__)))
 #define __CRAY_XT3__
 #endif
-
-#if defined(VMS) || defined(vms)
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-#include <file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT              DFMT_VAX
-typedef void               VOID;
-typedef void               *VOIDP;
-typedef char               *_fcd;
-typedef char               char8;
-typedef unsigned char      uchar8;
-typedef char               int8;
-typedef unsigned char      uint8;
-typedef short int          int16;
-typedef unsigned short int uint16;
-#ifdef __alpha
-typedef int                int32;
-typedef unsigned int       uint32;
-typedef long              hdf_pint_t;   /* an integer the same size as a pointer */
-#else
-typedef long int           int32;
-typedef unsigned long int  uint32;
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#endif
-typedef int                intn;
-typedef unsigned int       uintn;
-typedef float              float32;
-typedef double             float64;
-typedef int                intf;     /* size of INTEGERs in Fortran compiler */
-#define _fcdtocp(desc)  ((char *) *((char **) &desc[4]))
-
-/* 
-  Redef a couple of C routine names to avoid conflicts
-  since the VMS link command is case-insensitive
-*/
-#define FILELIB UNIXBUFIO
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#include "dfivms.h"
-
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* VMS */
 
 #if defined(CONVEX) || defined(CONVEXNATIVE) || defined(__convexc__)
 
@@ -718,115 +547,10 @@ typedef long            hdf_pint_t;   /* an integer the same size as a pointer *
 
 #endif /* __APPLE__ */
 
-#if defined(MIPSEL) || ((defined(mips) || defined(__mips)) && (defined(ultrix) || defined(__ultrix)))
 
-#ifndef MIPSEL
-#define MIPSEL
-#endif
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#ifndef __GNUC__
-#define DUMBCC 	/* because it is.  for later use in macros */
-#endif /* __GNUC__ */
-
-#include <sys/types.h>
-#include <sys/file.h>               /* for unbuffered i/o stuff */
-#include <sys/stat.h>
-#define DF_MT   DFMT_MIPSEL
-typedef void            VOID;
-typedef void            *VOIDP;
-typedef char            *_fcd;
-typedef char            char8;
-typedef unsigned char   uchar8;
-typedef char            int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short  uint16;
-typedef int             int32;
-typedef unsigned int    uint32;
-typedef int             intn;
-typedef unsigned int    uintn;
-typedef float           float32;
-typedef double          float64;
-typedef int             intf;     /* size of INTEGERs in Fortran compiler */
-typedef int             hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
-#define FNAME_POST_UNDERSCORE
-#define FILELIB UNIXBUFIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /* MIPSEL */
-
-#if defined(MAC) || defined(macintosh) || defined (SYMANTEC_C)
-
-#ifdef GOT_MACHINE
-If you get an error on this line more than one machine type has been defined.
-Please check your Makefile.
-#endif
-#define GOT_MACHINE 1
-
-#include <memory.h>             /* malloc stuff for MPW */
-#include <fcntl.h>              /* unbuffered I/O stuff for MPW */
-#ifdef __MWERKS__				/* Metrowerks */
-#include <sioux.h>
-#include <console.h>
-#endif
-#ifdef SYMANTEC_C				/* for SYMANTEC C */
-#include <unix.h>
-#define isascii(c)  (isprint(c) || iscntrl(c))
-#else  /* MPW, possibly others */
-#include <Files.h>              /* for unbuffered I/O stuff */
-#endif /* SYMANTEC_C*/
-#ifndef ABSOFT 
-#define DF_CAPFNAMES            /* fortran names are in all caps */
-#endif /* ABSOFT */
-#define DF_DYNAMIC              /* use dynamic allocation */
-#define DF_MT   DFMT_MAC
-
-typedef void              VOID;
-typedef void              *VOIDP;
-typedef char              *_fcd;
-typedef char              char8;
-typedef unsigned char     uchar8;
-typedef char              int8;
-typedef unsigned char     uint8;
-typedef short int         int16;
-typedef unsigned short int uint16;
-typedef long int          int32;
-typedef unsigned long int uint32;
-typedef int               intn;
-typedef unsigned int      uintn;
-typedef float             float32;
-typedef double            float64;
-typedef int               intf;     /* size of INTEGERs in Fortran compiler */
-typedef int               hdf_pint_t;   /* an integer the same size as a pointer */
-#define _fcdtocp(desc) (desc)
-void exit(int status);
-
-#define FILELIB MACIO
-
-/* JPEG #define's - Look in the JPEG docs before changing - (Q) */
-
-/* Determine the memory manager we are going to use. Valid values are: */
-/*  MEM_DOS, MEM_ANSI, MEM_NAME, MEM_NOBS.  See the JPEG docs for details on */
-/*  what each does */
-#define JMEMSYS         MEM_ANSI
-
-#endif /*MAC*/
 
 /* Metrowerks Mac compiler defines some PC stuff so need to exclude this on the Mac */
-#if !(defined(macintosh) || defined(MAC) || defined (__APPLE__))
+#if !(defined (__APPLE__))
 
 #if defined _M_ALPHA || defined _M_X64 || defined _M_IA64 || defined _M_IX86 || defined INTEL86 || defined M_I86 || defined M_I386 || defined DOS386 || defined __i386 || defined UNIX386 || defined i386
 #ifndef INTEL86
@@ -939,7 +663,7 @@ typedef int               hdf_pint_t;   /* 4-byte pointer */
 #define INCLUDES_ARE_ANSI
 
 #endif /* INTEL86 */
-#endif /* !(defined(macintosh) || defined(MAC)) */
+#endif /* !(defined(__APPLE__)) */
 
 /*-----------------------------------------------------*/
 #if defined(NEXT) || defined(NeXT)
@@ -1455,8 +1179,6 @@ correctly.
 /*----------------------------------------------------------------
 ** MACRO FCALLKEYW for any special fortran-C stub keyword
 **
-** MacIntosh MPW LS-fortran needs pascal since it can interface
-**  best with pascal functions.
 ** Microsoft C and Fortran need __fortran for Fortran callable C
 **  routines.
 **
@@ -1465,13 +1187,6 @@ correctly.
 **---------------------------------------------------------------*/
 #ifdef FRETVAL
 #undef FRETVAL
-#endif
-
-#if defined(MAC)                /* with LS FORTRAN */
-#ifndef ABSOFT
-#   define FCALLKEYW    pascal
-#   define FRETVAL(x)   pascal x
-#endif /* ABSOFT */
 #endif
 
 #ifndef FRETVAL /* !MAC */
@@ -1559,9 +1274,9 @@ correctly.
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
 /* non-standard function, not defined on the following machines - */
-#if !(defined VMS || defined macintosh || defined MAC || defined SYMANTEC_C || defined MIPSEL || defined NEXT || defined CONVEX || defined IBM6000 || defined ANSISUN || defined IRIX )
+#if !(defined IBM6000 || defined ANSISUN )
 #  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
-#endif /* !(VMS | etc..) */
+#endif /* !(etc..) */
 
 
 /**************************************************************************
@@ -1576,11 +1291,7 @@ correctly.
 /**************************************************************************
 *  Misc. functions
 **************************************************************************/
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
-#define HDstat(path, result)	(mstat(path))
-#else /* !macintosh */
 #define HDstat(path, result)	(stat(path, result))
-#endif /* !macintosh */
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))

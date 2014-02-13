@@ -22,16 +22,6 @@ C
 C  Input file:  none
 C  Output files: o0, o1, ... o6
 C
-C
-C  **** VMS users ****
-C
-C  VMS has a special way of handling the passsing of character
-C   strings between C and FORTRAN.  For these tests to work 
-C   correctly, you must change the definition of i8 and ti8
-C   to be 'byte' not 'character'  You will also need to remove
-C   a couple of calls to char().  If you search on the string 
-C   VMS you should be able to find all of the necessary changes.
-C
       implicit none
       include 'fortest.inc'
    
@@ -54,10 +44,6 @@ C
       real*4 f32scale(10), tf32scale(10)
       real*4 f32max, f32min, tf32max, tf32min
 
-C Change these to be of type 'byte' for VMS      
-C      byte i8(10,10), ti8(10,10)
-C      byte i8scale(10), ti8scale(10), i8max, i8min
-C      byte ti8max, ti8min   
       character i8(10,10), ti8(10,10)
       character i8scale(10), ti8scale(10), i8max, i8min
       character ti8max, ti8min
@@ -98,9 +84,6 @@ C that of a numerial argument.
       f64min = 0.0
       f32max = 40.0
       f32min = 0.0
-C Use the following lines for VMS
-C      i8min = -128
-C      i8max = 127
       i8max = char(127)
 C NOTE: If you get a compile error on the "char(-128)" line, substitute
 C       the "char(0)" line.  Its not quite as thorough a test, but...
@@ -136,16 +119,12 @@ C
           do 100 j=1,10
             f64(i,j) = (i * 40) + j
             f32(i,j) = (i * 40) + j
-C  Use the following line for VMS
-C            i8(i,j) =  (i * 10) + j      
             i8(i,j) = char( (i * 10) + j )
             i16(i,j) = (i * 3000) + j
             i32(i,j) = (i * 20) + j
   100     continue
           f64scale(i) = (i * 40) + j
           f32scale(i) = (i * 40) + j
-C  Use the following line for VMS
-C          i8scale(i) = (i * 10) + j
           i8scale(i) = char((i * 10) + j)
       	  i16scale(i) = (i * 3000) + j
       	  i32scale(i) = (i * 20) + j
@@ -321,7 +300,7 @@ C  int32
          do 1300 j=1,10
            if (i32(i,j) .ne. ti32(i,j)) err1 = 1
  1300    continue
-      	 if (i32scale(i) .ne. ti32scale(i)) err2 = 1
+      if (i32scale(i) .ne. ti32scale(i)) err2 = 1
  1310 continue
 
       if ((i32max .ne. ti32max) .or. (i32min .ne. ti32min)) err3 = 1
@@ -334,8 +313,8 @@ C
           print *, '        >>> ', number_failed, ' TESTS FAILED <<<'
       else
           if (verbosity .ge. VERBO_HI) then
-	      print *, '        >>> ALL TESTS PASSED <<<'
-	  endif
+              print *, '        >>> ALL TESTS PASSED <<<'
+         endif
       endif
 
       return

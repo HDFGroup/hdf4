@@ -19,15 +19,6 @@ static char RcsId[] = "@(#)$Revision$";
 
 /* --- he-file.c  --- file and annotation manipulation routines */
 #include "he.h"
-#ifdef VMS
-#   include <descrip.h>
-#   include <processes.h>
-#   include <unixlib.h>
-/*
-#   include <tpudef.h>
-*/
-#   include <tpu$routines>
-#endif
 
 /* get the prototype for the wait() func. */
 #if defined SUN | defined HP9000 | defined IRIX | defined UNIX386
@@ -89,8 +80,6 @@ int
 annotate(const char *editor, int ann)
 {
 
-#if !defined MAC && !defined WIN386 && !defined(macintosh)
-
     int32       len;            /* length of annotation */
     char       *buf;            /* annotation buffer */
     char       *file;           /* tmp file name */
@@ -125,7 +114,6 @@ annotate(const char *editor, int ann)
           HDfree(buf);
       }
 
-#ifndef VMS
     /* make sure some editor will be used
        * defaults to /usr/bin/ex
        * but should be made a comple time option
@@ -136,21 +124,7 @@ annotate(const char *editor, int ann)
           if (editor == NULL)
               editor = "/usr/bin/ex";
       }
-#ifdef CRAYMPP
-    {	char	cmd[256];
-	if (HDstrlen(editor) > 100) {
-	    fprintf(stderr, "Environment variable EDITOR too big\n");
-	}
-	else {
-	    sprintf(cmd, "%s %s", editor, file);
-	    system(cmd);
-	}
-    }
-#else
     /* Use the fork/wait or system methods if supported, else no support. */
-#ifdef __CRAY_XT3__
-    fprintf(stderr, "annotate feature not supported.\n");
-#else
 #if defined(H4_HAVE_FORK) && defined(H4_HAVE_WAIT)
     if (fork() == 0)
       {
@@ -175,24 +149,6 @@ annotate(const char *editor, int ann)
             system(cmd);
         }
     }
-#endif
-#endif
-#endif
-#else  /* VMS  */
-    if (vfork() == 0)
-        /* this is the child */
-      {
-          intn        ret_status;
- 
-          $DESCRIPTOR(input_file, file);
-          $DESCRIPTOR(output_file, file);
-          ret_status = TPU$EDIT(&input_file, &output_file);
-          fprintf(stderr, "TPU$EDIT return status: %d. \n", ret_status);
-          exit(0);
-      }
-
-    /* the parent waits for the child to die */
-    wait(0);
 #endif
 
     /* read in edited annotation
@@ -224,16 +180,6 @@ annotate(const char *editor, int ann)
      */
     HDfree(buf);
     return ret;
-
-#else
-    /* shut compiler up */
-    ann = ann;
-    editor = editor;
-
-    return 1;
-
-#endif /* not def MAC & WIN386 & macintosh */
-
 }
 
 extern int  he_backup;

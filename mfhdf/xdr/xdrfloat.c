@@ -88,10 +88,6 @@ xdr_float(xdrs, fp)
 	switch (xdrs->x_op) {
 
 	case XDR_ENCODE:
-#ifdef _CRAYMPP
-		/* T3D longs are 64 bits but floats are 32 bits */
-		return (XDR_PUTBYTES(xdrs, (caddr_t)fp, 4));
-#else
 #ifndef vax
 		return (XDR_PUTLONG(xdrs, (long *)fp));
 #else
@@ -127,13 +123,8 @@ xdr_float(xdrs, fp)
 		is.sign = vs.sign;
 		return (XDR_PUTLONG(xdrs, (long *)&is));
 #endif
-#endif
 
 	case XDR_DECODE:
-#ifdef _CRAYMPP
-		/* T3D longs are 64 bits but floats are 32 bits */
-		return (XDR_GETBYTES(xdrs, (caddr_t)fp, 4));
-#else
 #ifndef vax
 		return (XDR_GETLONG(xdrs, (long *)fp));
 #else
@@ -174,7 +165,6 @@ xdr_float(xdrs, fp)
 
 		vsp->sign = is.sign;
 		return (TRUE);
-#endif
 #endif
 
 	case XDR_FREE:
@@ -264,28 +254,20 @@ xdr_double(xdrs, dp)
 		id.sign = vd.sign;
 		lp = (long *)&id;
 #endif
-#ifdef _CRAYMPP
-		return (XDR_PUTBYTES(xdrs, (caddr_t)dp, 8));
-#else
 #ifndef SWAP_DOUBLES
 		return (XDR_PUTLONG(xdrs, lp++) && XDR_PUTLONG(xdrs, lp));
 #else /* SWAP_DOUBLES */
 		return (XDR_PUTLONG(xdrs, lp+1) && XDR_PUTLONG(xdrs, lp));
 #endif /* SWAP_DOUBLES */
-#endif
 
 	case XDR_DECODE:
 #ifndef vax
 		lp = (long *)dp;
-#ifdef _CRAYMPP
-		return (XDR_GETBYTES(xdrs, (caddr_t)dp, 8));
-#else
 #ifndef SWAP_DOUBLES
 		return (XDR_GETLONG(xdrs, lp++) && XDR_GETLONG(xdrs, lp));
 #else /* SWAP_DOUBLES */
 		return (XDR_GETLONG(xdrs, lp+1) && XDR_GETLONG(xdrs, lp));
 #endif /* SWAP_DOUBLES */
-#endif
 #else
 		lp = (long *)&id;
 		if (!XDR_GETLONG(xdrs, lp++) || !XDR_GETLONG(xdrs, lp))

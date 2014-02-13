@@ -2,12 +2,6 @@
 #define NULL	0
 #define EOF	(-1)
 
-/*  
- #ifdef VMS
-#include <unixio.h>
-#endif        
- */
-
 #ifdef HDF
 #define ERR(s, c)	if(opterr){\
 	char errbuf[2];\

@@ -20,39 +20,20 @@
  * x_getlong() and x_putlong(), so, on that platform, it doesn't matter if
  * the following isn't 32-bits):
  */
-#ifdef CRAY
-#   undef  NETLONG
-#   define NETLONG  long
-#endif
 #ifndef NETLONG
 #   define NETLONG  long
 #endif
 typedef NETLONG     netlong;
 #undef  NETLONG
 
-#ifdef vms
-#   include <unixio.h>
-#   include <file.h>
-#else
 #   if defined MSDOS || defined WINNT || defined _WIN32
 #       include <io.h>
 #   else
-#       if defined (__MWERKS__)
-#            include <unistd.h>
-#       else
-#           if !(defined(macintosh) || defined (SYMANTEC_C))
-#               include <unistd.h>
-#           endif
-#       endif
+#       include <unistd.h>
 #   endif
 #   include <fcntl.h>
-#endif
 
-#if defined(macintosh) || defined (SYMANTEC_C)
-#include <types.h>
-#else
 #include <sys/types.h>
-#endif
 
 #include <string.h>
 #include "local_nc.h" /* prototypes for NCadvis, nc_error */
@@ -61,20 +42,10 @@ typedef NETLONG     netlong;
 /*EIP #include "netcdf.h" */ 
 #include "mfhdf.h"
 
-#if !(defined DOS_FS || defined(macintosh) || defined (SYMANTEC_C))
-#   if defined VMS
-        typedef u_long ncpos_t;  /* size of u_long is 32 for DECC AXP */
-#   else 
+#if !(defined DOS_FS) 
         typedef u_int ncpos_t ;  /* all unicies */
-#   endif
 #else
-#  if defined DOS_FS
       typedef off_t ncpos_t ;
-#  elif defined __APPLE__
-      typedef u_int ncpos_t;
-#  else /* macintosh */
-      typedef u_long ncpos_t ;
-#  endif /* macintosh */
 #endif
 
 typedef struct {
@@ -86,14 +57,10 @@ typedef struct {
     int nwrote ;    /* number of bytes last write */
     int cnt ;       /* number of valid bytes in buffer */
     unsigned char *ptr;         /* next byte */
-#ifndef CRAY
 #ifdef DOS_FS
 #define BIOBUFSIZ   512
 #else
 #define BIOBUFSIZ   8192
-#endif
-#else
-#define BIOBUFSIZ   196608 /* stat.st_oblksize */
 #endif
     unsigned char base[BIOBUFSIZ];      /* the data buffer */
 } biobuf;
@@ -291,9 +258,6 @@ static bool_t   xdrposix_getbytes();
 static bool_t   xdrposix_putbytes();
 static ncpos_t  xdrposix_getpos();
 static bool_t   xdrposix_setpos();
-#ifdef CRAY
-static inline_t *   xdrposix_inline();
-#else
 #if (_MIPS_SZLONG == 64)
 static long *    xdrposix_inline();
 #else
@@ -307,7 +271,6 @@ static int32_t *    xdrposix_inline();
 static int *    xdrposix_inline();
 #else
 static netlong *    xdrposix_inline(); 
-#endif
 #endif
 #endif
 #endif
@@ -468,7 +431,7 @@ xdrposix_getlong(xdrs, lp)
 #endif
 {
     unsigned char *up = (unsigned char *)lp ;
-#if (defined CRAY || defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))  
+#if (defined AIX5L64 || defined __powerpc64__ || (defined __hpux && __LP64__))  
     *lp = 0 ;
     up += (sizeof(long) - 4) ;
 #endif
@@ -495,7 +458,7 @@ xdrposix_putlong(xdrs, lp)
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
-#if (defined CRAY || defined AIX5L64  || defined __powerpc64__ || (defined __hpux && __LP64__))
+#if (defined AIX5L64  || defined __powerpc64__ || (defined __hpux && __LP64__))
     up += (sizeof(long) - 4) ;
 #endif
 
@@ -580,9 +543,6 @@ xdrposix_setpos(xdrs, pos)
 }
 
 /*ARGSUSED*/
-#ifdef CRAY
-static inline_t *
-#else
 #if (_MIPS_SZLONG == 64)
 static long *
 #else
@@ -596,7 +556,6 @@ static int*
 static int32_t * 
 #else
 static netlong * 
-#endif
 #endif
 #endif
 #endif
@@ -629,10 +588,6 @@ xdrposix_getint(xdrs, lp)
     int *lp;
 {
     unsigned char *up = (unsigned char *)lp ;
-#ifdef CRAY
-    *lp = 0 ;
-    up += (sizeof(long) - 4) ;
-#endif
     if(bioread((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
 #ifdef SWAP
@@ -652,10 +607,6 @@ xdrposix_putint(xdrs, lp)
     netlong mycopy = htonl(*lp);
     up = (unsigned char *)&mycopy;
 #endif
-#ifdef CRAY
-    up += (sizeof(long) - 4) ;
-#endif
-
     if (biowrite((biobuf *)xdrs->x_private, up, 4) < 4)
         return (FALSE);
     return (TRUE);
@@ -699,9 +650,6 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
         NCadvise(NC_EINVAL, "Bad flag %0x", ncmode & 0x0f) ;
         return(-1) ;
     }
-#ifdef CRAY
-    fmode |= O_RAW ;
-#endif
 #ifdef DOS_FS
     /*
      * set default mode to binary to suppress the expansion of
@@ -710,11 +658,7 @@ fprintf(stderr,"NCxdrfile_create(): XDR=%p, path=%s, ncmode=%d\n",xdrs,path,ncmo
     if(_fmode != O_BINARY)
         _fmode = O_BINARY ;
 #endif
-#if defined(macintosh) || defined (SYMANTEC_C)
-    fd = open(path, fmode);
-#else /* !macintosh  */
     fd = open(path, fmode, 0666) ;
-#endif /* !macintosh */
 #ifdef XDRDEBUG
 fprintf(stderr,"NCxdrfile_create(): fmode=%d, fd=%d\n",fmode,fd);
 #endif

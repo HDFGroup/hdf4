@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumprig -i 1,3 tdf24.hdf'
-#############################
 File name: tdf24.hdf 
 
 Data model: 24-bit raster image without palette.

@@ -1,6 +1,3 @@
-#############################
-Expected output for 'hdiff -d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf'
-#############################
 position        dset3           dset3           difference          
 ------------------------------------------------------------
 [ 0 0 ]          100             120             20%

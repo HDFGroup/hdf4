@@ -52,7 +52,7 @@ static int NC_free_xcdf(NC *);
 #define HDF_CLOSE */
 
 /*
- * free the stuff that xdr_cdf allocates
+ * Free the resources that xdr_cdf allocates
  *
  * NOTE: Modified to return SUCCEED / FAIL and to catch errors
  *       -GV 9/16/97
@@ -986,6 +986,9 @@ hdf_create_compat_dim_vdata(XDR *xdrs,
           goto done;
       }
 
+    /* Shouldn't a check for netCDF file be here before using handle->numrecs?
+       If the file is an HDF file, vp->numrecs should be used, right?
+       -BMR (2013-6/24) */
     if (dim->size == NC_UNLIMITED)  
       {
           *val = handle->numrecs;
@@ -2508,8 +2511,6 @@ hdf_read_vars(XDR *xdrs,
 
                                   break;
                               case DFTAG_VH :   /* ----- V D A T A ----- */
-  /* fprintf(stderr, "hdf_read_var: found tag DFTAG_VH\n");
- */ 
                                   sub = VSattach(handle->hdf_file, sub_id, "r");
                                   if (FAIL == sub)
                                     {
@@ -2523,8 +2524,6 @@ hdf_read_vars(XDR *xdrs,
                                         goto done;
                                     }
 
- /*  fprintf(stderr, "hdf_read_var: vsclass = %s, \n", vsclass);
- */ 
                                   if(!HDstrcmp(vsclass, _HDF_SDSVAR))
                                         var_type = IS_SDSVAR;
                                   else if(!HDstrcmp(vsclass, _HDF_CRDVAR))
@@ -3311,6 +3310,11 @@ done:
   unlimited dimensions.  
 
   BUG:  All unlimited dimensions will have the same size
+
+BMR: handle->numrecs is used to write out the dim value for all unlimited
+     dimensions without checking for netCDF file as in other places where
+     vp->numrecs is used for HDF file and handle->numrecs is used for netCDF
+     file.  I believe this is what the "BUG:" comment above means.  6/24/2013
 */
 intn 
 hdf_close(handle)
@@ -3658,9 +3662,7 @@ NC_var *vp ;
         break ;
     case NC_LONG :
         alen /= 4 ;
-#if defined _CRAYMPP
-        xdr_NC_fnct = xdr_short;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
         xdr_NC_fnct = xdr_int ;
 #else
         xdr_NC_fnct = xdr_long ;

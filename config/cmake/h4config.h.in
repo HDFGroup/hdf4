@@ -7,6 +7,12 @@
    libraries. */
 #cmakedefine H4_F77_DUMMY_MAIN @H4_F77_DUMMY_MAIN@
 
+/* Defined if HDF4 was built with CMake AND build as a shared library */
+#cmakedefine H4_BUILT_AS_DYNAMIC_LIB @H4_BUILT_AS_DYNAMIC_LIB@
+
+/* Defined if HDF4 was built with CMake AND build as a static library */
+#cmakedefine H4_BUILT_AS_STATIC_LIB @H4_BUILT_AS_STATIC_LIB@
+
 /* Define to a macro mangling the given C identifier (in lower and upper
    case), which must not contain underscores, for linking with Fortran. */
 #define @H4_F77_FUNC@
@@ -112,7 +118,7 @@
 #define H4_PACKAGE_URL "@HDF4_PACKAGE_URL@"
 
 /* Define to the version of this package. */
-#define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION@"
+#define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
 /* The size of `int*', as computed by sizeof. */
 #cmakedefine H4_SIZEOF_INTP @H4_SIZEOF_INTP@
@@ -121,7 +127,7 @@
 #cmakedefine H4_STDC_HEADERS @H4_STDC_HEADERS@
 
 /* Version number of package */
-#define H4_VERSION "@HDF4_PACKAGE_VERSION@"
+#define H4_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

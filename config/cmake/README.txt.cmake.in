@@ -1,0 +1,55 @@
+@HDF4_PACKAGE_NAME@ version @HDF4_PACKAGE_VERSION_STRING@
+------------------------------------------------------------------------------
+
+This directory contains the binary (release) distribution of 
+@HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION_MAJOR@ that was compiled on; 
+    @BINARY_PLATFORM@. 
+ 
+It was built with the following options: 
+	-- @LIB_TYPE@ C/Fortran libraries, shared
+	-- SZIP (encoder enabled), ZLIB, and JPEG
+	-- @LIB_TYPE@ HDF4 tools
+
+The contents of this directory are:
+
+    COPYING                 - Copyright notice
+    README.txt              - This file
+    @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@    - HDF4 Install Utility
+
+We provide the JPEG, ZLIB, SZIP libraries within the install for convenience.  
+  
+Installation
+===========================================================================
+1. Execute @HDF4_PACKAGE_NAME@-@HDF4_PACKAGE_VERSION@-@BINARY_SYSTEM_NAME@.@BINARY_INSTALL_ENDING@
+2. Follow prompts
+===========================================================================
+
+After Installation
+===========================================================================
+The compressed examples file HDF4Examples-0.1.1-Source.@BINARY_EXAMPLE_ENDING@, located in the 
+HDF4 install folder, can be built and tested with CMake and the supplied
+HDF4_Examples.cmake file. The HDF4_Examples.cmake expects HDF4 to have
+been installed in the default location with above compilers.
+
+To test the installation with the examples;
+    Create a directory to run the examples.
+    Copy HDF4Examples-0.1.1-Source.@BINARY_EXAMPLE_ENDING@ to this directory, do NOT unzip.
+    Copy HDF4_Examples.cmake to this directory.
+    Edit HDF4_Examples.cmake line 8 to set INSTALLDIR to where HDF4 is installed.
+    Execute from this directory: 
+        ctest -S HDF4_Examples.cmake,HDF4Examples-0.1.1-Source -C Release -O test.log -VV
+
+When executed, the ctest script will save the results to the log file, test.log, as
+indicated by the ctest command. If you wish the to see more build and test information, 
+add "-VV" to the ctest command.
+
+For more information see USING_CMake_Examples.txt in the install folder. 
+===========================================================================
+
+Documentation for this release can be found at the following URL:
+    http://www.hdfgroup.org/doc.html
+
+See the HDF4 home page for further details:
+    http://hdfgroup.org/products/hdf4/
+
+Bugs should be reported to help@hdfgroup.org.

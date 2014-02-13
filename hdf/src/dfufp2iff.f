@@ -49,7 +49,7 @@ C----------------------------------------------------------------------------
       real          max, min, hscale, vscale, data
       character*(*) palette
       character*(*) outfile
-      integer       ctmethod, hres, vres, compress
+      integer       ctmethod, hres, vres, compress, duif2i
 
       duf2im = duif2i(hdim,vdim,max,min,hscale,vscale,data,palette,
      *              outfile,ctmethod,hres,vres,compress, len(outfile))        
@@ -85,7 +85,7 @@ C----------------------------------------------------------------------------
       real          max, min, hscale, vscale, data
       character*(*) palette
       character*(*) outfile
-      integer       ctmethod, hres, vres, compress
+      integer       ctmethod, hres, vres, compress, duif2i
 
       dfufptoimage = 
      *             duif2i(hdim,vdim,max,min,hscale,vscale,data,palette,

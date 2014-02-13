@@ -57,19 +57,8 @@ dumpvd(int32       vd,
     int32       cnt1, cnt2;
     int32       cn = 0;
     int32       ret_value = SUCCEED;
-
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-	/* macintosh cannot handle >32K locals */
-    char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-    char *flds = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-
-    CHECK_ALLOC( fields, "fields", "dumpvd" );
-    CHECK_ALLOC( flds, "flds", "dumpvd" );
-
-#else /* !macintosh */
     char        fields[VSFIELDMAX*FIELDNAMELENMAX];
     char        flds[VSFIELDMAX*FIELDNAMELENMAX];
-#endif /* !macintosh */    
 
     /* inquire about vdata */
     if (FAIL == VSinquire(vd, &nv, &interlace, fields, &vsize, vdname))
@@ -486,18 +475,6 @@ done:
               HDfree((VOIDP)bb);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-   if(fields != NULL)
-   {
-      HDfree(fields);
-      fields = NULL;
-    } 
-   if(flds != NULL)
-   {
-      HDfree(flds);
-      fields = NULL;
-    } 
-#endif /* macintosh */
     
     return ret_value;
 }	/* dumpvd */
@@ -526,29 +503,16 @@ dumpattr(int32 vid,
     intn (*vfmtfn)(VOIDP, file_format_t ff, FILE *);
     intn          status;
     intn          ret_value = SUCCEED;
-
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-	/* macintosh cannot handle >32K locals */
-    char *name = (char *)HDmalloc((FIELDNAMELENMAX+1) * sizeof(char));
-    uint8 *attrbuf = (uint8 *)HDmalloc((BUFFER) * sizeof(uint8));
-
-    /* check if allocations fail, terminate hdp */
-    CHECK_ALLOC( name, "name", "dumpattr" );
-    CHECK_ALLOC( attrbuf, "attrbuf", "dumpattr" );
-
-#else /* !macintosh */
     char          name[FIELDNAMELENMAX+1];
     uint8         attrbuf[BUFFER];
-#endif /* !macintosh */    
 
     /* vdata or vgroup? */
     if (isvs) 
         nattrs = VSfnattrs(vid, findex);
     else
-        nattrs = Vnattrs(vid);
-         /* nattrs = Vnattrs2(vid); using new function will cause test failure,
-		need to decide if we want dumper to use new functions then
-		fix all the tests. -BMR 2/5/2011 */ 
+         /* nattrs = Vnattrs(vid); <- replaced with Vnattrs2 to catch all attributes;
+				      previously, SD attributes were missed by V API */
+        nattrs = Vnattrs2(vid);
 
     if (FAIL == nattrs)
       {
@@ -566,7 +530,8 @@ dumpattr(int32 vid,
           if (isvs)
               status = VSattrinfo(vid, findex, i, name, &i_type, &i_count, &e_size);
           else
-              status = Vattrinfo(vid, i, name, &i_type,&i_count, &e_size);
+	      /* Changed to use updated func of Vattrinfo - BMR, 1/7/2013 */
+              status = Vattrinfo2(vid, i, name, &i_type,&i_count, &e_size, NULL, NULL);
 
           if (status == FAIL) 
             {
@@ -607,7 +572,8 @@ dumpattr(int32 vid,
                 if (isvs) 
                     status = VSgetattr(vid, findex, i, (VOIDP)buf);
                 else
-                    status = Vgetattr(vid, i, (VOIDP)buf);
+		    /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
+                    status = Vgetattr2(vid, i, (VOIDP)buf);
 
                 if (status == FAIL) 
                   {
@@ -622,7 +588,8 @@ dumpattr(int32 vid,
                 if (isvs) 
                     status = VSgetattr(vid, findex, i, (VOIDP)attrbuf);
                 else
-                    status = Vgetattr(vid, i, (VOIDP)attrbuf);
+		    /* Changed to use updated func of Vgetattr - BMR, 1/7/2013 */
+                    status = Vgetattr2(vid, i, (VOIDP)attrbuf);
 
                 if (status == FAIL) 
                   {
@@ -712,18 +679,6 @@ done:
               HDfree(buf);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-   if(name != NULL)
-   {
-      HDfree(name);
-      name = NULL;
-    } 
-   if(attrbuf != NULL)
-   {
-      HDfree(attrbuf);
-      attrbuf = NULL;
-    } 
-#endif /* macintosh */    
 
     return ret_value;
 }

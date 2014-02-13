@@ -19,7 +19,8 @@ EXAMPLE_PROG = VD_create_vdatas VD_write_mixed_vdata		\
 	VG_set_get_vgroup_attr VG_vgroup_contents		\
 	VG_get_vgroup_info GR_create_and_write_image		\
 	GR_modify_image GR_set_attribute GR_get_attribute	\
-	GR_write_palette GR_image_info GR_read_image		\
+	GR_write_palette GR_read_palette GR_image_info          \
+	GR_read_image GR_write_chunks GR_read_chunks            \
 	AN_create_annotation AN_get_annotation_info AN_read_annotation
 TEST_PROG = $(EXAMPLE_PROG)
 
@@ -35,11 +36,18 @@ INSTALL_FILES= VD_read_from_vdata.c VD_read_mixed_vdata.c	\
 	GR_create_and_write_image.c GR_get_attribute.c		\
 	GR_image_info.c GR_modify_image.c GR_read_image.c	\
 	GR_read_palette.c GR_set_attribute.c			\
-	GR_write_palette.c AN_create_annotation.c		\
-	AN_get_annotation_info.c AN_read_annotation.c
+	GR_write_palette.c GR_write_chunks.c GR_read_chunks.c	\
+	AN_create_annotation.c AN_get_annotation_info.c		\
+	AN_read_annotation.c
+
+INSTALL_SCRIPT_FILES = run-c-ex.sh
+
+INSTALL_TOP_SCRIPT_FILES = run-all-ex.sh
+INSTALL_TOP_FILES = README
 
 # Where to install example files
 EXAMPLEDIR=$(prefix)/examples/c
+EXAMPLETOPDIR=$(prefix)/examples
 
 # How to build C programs using h4cc
 $(EXTRA_PROG): $(H4CC)
@@ -70,9 +78,11 @@ GR_create_and_write_image: $(srcdir)/GR_create_and_write_image.c
 GR_get_attribute: $(srcdir)/GR_get_attribute.c
 GR_image_info: $(srcdir)/GR_image_info.c
 GR_modify_image: $(srcdir)/GR_modify_image.c
+GR_read_chunks: $(srcdir)/GR_read_chunks.c
 GR_read_image: $(srcdir)/GR_read_image.c
 GR_read_palette: $(srcdir)/GR_read_palette.c
 GR_set_attribute: $(srcdir)/GR_set_attribute.c
+GR_write_chunks: $(srcdir)/GR_write_chunks.c
 GR_write_palette: $(srcdir)/GR_write_palette.c
 AN_create_annotation: $(srcdir)/AN_create_annotation.c
 AN_get_annotation_info: $(srcdir)/AN_get_annotation_info.c
@@ -80,5 +90,9 @@ AN_read_annotation: $(srcdir)/AN_read_annotation.c
 
 DISTCLEANFILES = *.chkexe *.chklog
 
+if BUILD_SHARED_SZIP_CONDITIONAL
+LD_LIBRARY_PATH=$(LL_PATH)
+endif
+    
 include $(top_srcdir)/config/examples.am
 include $(top_srcdir)/config/conclude.am

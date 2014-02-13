@@ -39,12 +39,6 @@
  * decode as a series of calls on the nested data types.
  */
 /*
-#if (defined vms) && !(defined __vax)   
-#include <in.h>
-typedef unsigned int    u_int;
-#endif
-*/
-/*
  * Xdr operations.  XDR_ENCODE causes the type to be encoded into the
  * stream.  XDR_DECODE causes the type to be extracted from the stream.
  * XDR_FREE can be used to release the space allocated by an XDR_DECODE

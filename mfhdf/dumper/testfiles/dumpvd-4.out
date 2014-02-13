@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpvd -n Multi-Order Vdata tvset.hdf'
-#############################
 File name: tvset.hdf 
 
 Vdata: 3

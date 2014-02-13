@@ -1108,6 +1108,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
             { /* end access to vdata */
               if (Hendaccess(vs->aid) == FAIL)
                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	      vs->aid = FAIL;
 
               /* remove from atom list */
               if(HAremove_atom(vkey)==NULL)
@@ -1186,6 +1187,7 @@ VSdetach(int32 vkey /* IN: vdata key? */)
           /* end access to vdata */
           if (Hendaccess(vs->aid) == FAIL)
               HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	  vs->aid = FAIL;
 
           /* remove vdata from atom list */
           if(HAremove_atom(vkey)==NULL)

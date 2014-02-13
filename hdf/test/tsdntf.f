@@ -21,15 +21,6 @@ C
 C  Input file:  none
 C  Output files:  o.hdf.1, o.hdf.2, ... o.hdf.5
 C
-C  **** VMS users ****
-C
-C  VMS has a special way of handling the passsing of character
-C   strings between C and FORTRAN.  For these tests to work 
-C   correctly, you must change the definition of i8 and ti8
-C   to be 'byte' not 'character'  You will also need to remove
-C   a couple of calls to char().  If you search on the string 
-C   VMS you should be able to find all of the necessary changes.
-C
       implicit none
       include 'fortest.inc'
 
@@ -44,8 +35,6 @@ C
       integer*2 i16(10,10), ti16(10,10)
       integer*4 i32(10,10), ti32(10,10)
 
-C  Change these to be of type 'byte' for VMS
-C      byte      i8(10,10), ti8(10,10)
       character i8(10,10), ti8(10,10)
 
       
@@ -72,9 +61,7 @@ C      byte      i8(10,10), ti8(10,10)
           do 100 j=1,10
             f64(i,j) = (i * 10) + j
   	    f32(i,j) = (i * 10) + j
-C  Use the following line for VMS
-C            i8(i,j) =  (i * 10) + j
-  	     i8(i,j) = char( (i * 10) + j )
+  	    i8(i,j) = char( (i * 10) + j )
   	    i16(i,j) = (i * 10) + j
   	    i32(i,j) = (i * 10) + j
   100     continue
@@ -110,8 +97,8 @@ C  individual files
       err = 0
       do 210 i=1,10
           do 200 j=1,10
-  	    if (f32(i,j).ne.tf32(i,j)) err = 1
-  	    tf32(i,j) = 0.0
+            if (f32(i,j).ne.tf32(i,j)) err = 1
+            tf32(i,j) = 0.0
   200     continue
   210 continue
 
@@ -126,10 +113,8 @@ C  individual files
       err = 0
       do 310 i=1,10
           do 300 j=1,10
-  	    if (i8(i,j).ne.ti8(i,j)) err = 1
-C Use the following line for VMS
-C           ti8(i,j) = 0
-  	    ti8(i,j) = char(0)
+            if (i8(i,j).ne.ti8(i,j)) err = 1
+          ti8(i,j) = char(0)
   300     continue
   310 continue
 
@@ -144,8 +129,8 @@ C           ti8(i,j) = 0
       err = 0
       do 410 i=1,10
           do 400 j=1,10
-   	    if (i16(i,j).ne.ti16(i,j)) err = 1
-  	    ti16(i,j) = 0
+            if (i16(i,j).ne.ti16(i,j)) err = 1
+            ti16(i,j) = 0
   400     continue
   410 continue
 
@@ -160,8 +145,8 @@ C           ti8(i,j) = 0
       err = 0
       do 510 i=1,10
           do 500 j=1,10
-  	    if (i32(i,j).ne.ti32(i,j)) err = 1
-  	    ti32(i,j) = 0
+            if (i32(i,j).ne.ti32(i,j)) err = 1
+            ti32(i,j) = 0
   500     continue
   510 continue
 
@@ -255,9 +240,9 @@ C
       call err_check(err, number_failed, 'int32')
 C 
       if (number_failed .gt. 0 ) then
-  	print *,'        >>> ', number_failed, ' TESTS FAILED <<<'
+        print *,'        >>> ', number_failed, ' TESTS FAILED <<<'
       else
-  	call MESSAGE(VERBO_HI, '        >>> ALL TESTS PASSED <<<')
+        call MESSAGE(VERBO_HI, '        >>> ALL TESTS PASSED <<<')
       endif
 
       return

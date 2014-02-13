@@ -32,10 +32,6 @@ static char *RcsId[] = "@(#)$Revision$";
 *
 *
 ******************************************************************************/
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #define VSET_INTERFACE
 #include "hdf.h"
 
@@ -90,30 +86,12 @@ main(int ac, char **av)
     int32       nlone;          /* total number of lone vdatas */
     uint16	name_len;	/* length of vgroup's name or classname */
 
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-    char        *fields = NULL;
-#else
     char        fields[VSFIELDMAX*FIELDNAMELENMAX];
-#endif
     char        *vgname, *vgclass;
     char        vsname[VSNAMELENMAX];
     char        vsclass[VSNAMELENMAX];
     char *name;
     int32       fulldump = 0, full;
-
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-	fields = HDmalloc(VSFIELDMAX*FIELDNAMELENMAX);
-	if (fields == NULL)
-	{
-          printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", VSFIELDMAX*FIELDNAMELENMAX);
-          exit(0);
-      }
-#endif
-
-
-#if defined __MWERKS__
-    ac = ccommand(&av);
-#endif
 
     if (ac == 3)
         if (av[2][0] == '-' || av[2][0] == '+')
@@ -333,11 +311,6 @@ main(int ac, char **av)
     Vend(f);
     Hclose(f);
 
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-	if (fields)
-		HDfree(fields);
-#endif
-
     return (0);
 
 }   /* main */
@@ -424,11 +397,7 @@ fmtdouble(char *x)
 static int32
 vsdumpfull(int32 vs)
 {
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-    char        *fields = NULL; 
-#else
     char        fields[VSFIELDMAX*FIELDNAMELENMAX]; 
-#endif
     char        vsname[100];
     int32       j, i, t, interlace, nv, vsize;
     uint8      *bb, *b;
@@ -443,15 +412,6 @@ vsdumpfull(int32 vs)
     int32       count;          /* number of rows to do this time through the loop */
 
     int32       nf;             /* number of fields in this Vdata */
-
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-	fields = HDmalloc(VSFIELDMAX*FIELDNAMELENMAX);
-	if (fields == NULL)
-	{
-          printf("Error: Out of memory. Cannot allocate %d bytes space. Quit.\n", VSFIELDMAX*FIELDNAMELENMAX);
-          return(0);
-      }
-#endif
 
     VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
 
@@ -471,9 +431,6 @@ vsdumpfull(int32 vs)
     if (bb == NULL)
       {
           printf("vsdumpfull malloc error\n");
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-	    if (fields)			HDfree(fields);
-#endif
           return (0);
       }
 
@@ -588,11 +545,6 @@ vsdumpfull(int32 vs)
     HDfree(bb);
     printf("\n");
 
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-	if (fields)
-		HDfree(fields);
-#endif
-
     return (1);
 
 }   /* vsdumpfull */
@@ -612,17 +564,7 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
    int32 (*fmtfn)(char *) =NULL;
    char name[FIELDNAMELENMAX+1];
    intn ret_val = SUCCEED;
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-   long bufsize = BUFFER;
-   uint8 *attrbuf = HDmalloc(bufsize);
-   if (attrbuf == NULL)
-   {
-	printf(">>>dumpattr: Out of memory. Cannot allocate %d byte attribute buffer.\n", bufsize);
-	return FAIL;
-   }
-#else
    uint8 attrbuf[BUFFER];
-#endif
 
    if (isvs)  {
       vs_inst = (vsinstance_t *)HAatom_object(vid);
@@ -863,10 +805,6 @@ static intn dumpattr(int32 vid, intn full, intn isvs)
    ret_val = SUCCEED;
 
 done:
-#if defined(MAC) || defined(macintosh) || defined(SYMANTEC_C)
-   if (attrbuf)			HDfree(attrbuf);
-#endif
-
    return ret_val;
 }                   
 /* ------------------------------------- */

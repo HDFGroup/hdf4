@@ -48,10 +48,6 @@
 static char RcsId[] = "@(#)$Revision$";
 #endif
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #define TESTMASTER
 
 #include <sys/time.h>
@@ -440,15 +436,9 @@ main(int argc, char *argv[])
     uint32      lmajor, lminor, lrelease;
     char	lstring[81];
 
-    #if defined __MWERKS__
-        argc = ccommand(&argv);
-    #endif
-
-    #if !(defined MAC || defined __MWERKS__ || defined SYMANTEC_C)
-        /* Un-buffer the stdout and stderr */
-        setbuf(stderr, NULL);
-        setbuf(stdout, NULL);
-    #endif
+    /* Un-buffer the stdout and stderr */
+    setbuf(stderr, NULL);
+    setbuf(stdout, NULL);
 
     if (argc>2) {
         usage();

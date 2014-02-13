@@ -90,6 +90,9 @@
    */
 #undef LT_OBJDIR
 
+/* Define if deprecated public API symbols are disabled */
+#undef NO_DEPRECATED_SYMBOLS
+
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 #undef NO_MINUS_C_MINUS_O
 

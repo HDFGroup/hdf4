@@ -4,16 +4,15 @@
 
 include $(top_srcdir)/config/commence.am
 
-if HDF_BUILD_XDR
-XDR_DIR = mfhdf/xdr
-else
-XDR_DIR = 
-endif
-
-SUBDIRS = hdf/src $(XDR_DIR) mfhdf/libsrc hdf mfhdf man
+SUBDIRS = hdf mfhdf man
 # install libhdf4.settings in lib directory
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings
+
+# 'make install' will now install examples, the same as 'make install-all'.
+# 'make-install-all' will be redundant but will still work.
+install: install-recursive install-examples
+uninstall: uninstall-recursive uninstall-examples
 
 # 'make install-all' also installs examples
 install-all:

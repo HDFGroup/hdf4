@@ -1894,7 +1894,7 @@ nscsnatt(id, name, nt, count, data, len)
  * Returns: 0 on success, -1 on failure with error set
  * Remarks: This routine and sfsattr should be phased out.
  *          sfsattr declairs data as char *, scscatt assumes
- *          data as VOIDP. This causes problems on VMS and T3D.
+ *          data as VOIDP.
  *--------------------------------------------------------------------*/
 
    FRETVAL(intf)

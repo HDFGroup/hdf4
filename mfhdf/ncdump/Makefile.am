@@ -5,11 +5,14 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
+
+## Add ncdump specific linker flags here
+ncdump_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -29,6 +32,8 @@ ncdump_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=test0.nc
+CHECK_CLEANFILES += test0.nc nctest0.cdl
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am

@@ -138,6 +138,7 @@ const long *coords ;
 	const long *boundary ;
 	long unfilled ;	/* number of records that need to be filled */
 
+	boundary = NULL;	/* assuming no boundary check is needed */
 	if( IS_RECVAR(vp) )
       {
       /* For the variable with unlimited dimension we need to check that 
@@ -146,28 +147,41 @@ const long *coords ;
          checked as for the regular fixed size variable (see the "for" loop 
          further down) 
                                                     EIP 01/13/09    */
-          boundary = coords + 1 ;
+
+	/* Check that first dimension is non-negative */
           if(*coords < 0)
               goto bad ;
+
+        /* Set up boundary to check the rest of the dims if there are more than one dim */
+        if (vp->assoc->count > 1)
+	    boundary = coords + 1 ;
+
       } else
-          boundary = coords ;
+          boundary = coords ;	/* no unlimited, boundary starts at first dim */
 	
-	up = vp->shape + vp->assoc->count - 1 ;
-	ip = coords + vp->assoc->count - 1 ;
+    if (boundary != NULL) /* no unlimited dim or unlimited dim and more than one dim */
+    {
+	up = vp->shape + vp->assoc->count - 1 ;	/* pointer for dimension sizes */
+	ip = coords + vp->assoc->count - 1 ;	/* pointer for start coords */
 
 #ifdef CDEBUG
 	fprintf(stderr,"	NCcoordck: coords %p, *coords %ld, count %ld, ip %p, boundary %p, *ip %ld\n",
             coords, *coords, vp->assoc->count, ip , boundary, *ip) ;
 #endif /* CDEBUG */
+	/* for each dimension, check if starting coord is within dim size */
 	for( ; ip >= boundary ; ip--, up--)
-      {
+	{
 #ifdef CDEBUG
           fprintf(stderr,"	NCcoordck: ip %p, *ip %ld, up %p, *up %lu\n",
                   ip, *ip, up, *up ) ;
 #endif /* CDEBUG */
           if( *ip < 0 || *ip >= (long)*up )
               goto bad ;
-      }
+	}
+    } /* more than one dim */
+
+    /* Reset ip to coords for subsequent use */
+    ip = coords;
 
     /********************************************************************/
     /* The following block (#ifdef HDF) is for hdf4 API and hdf4/nc API */
@@ -207,7 +221,7 @@ fprintf(stderr, "NCcoordck: check 3.6, unfilled=%d\n",unfilled);
           if(handle->xdrs->x_op != XDR_ENCODE)
 	  {
 	     if (!nc_API(cdf_routine_name)) /* from an SD API call */
-                  goto bad ; /* cannot read beyong the end of var */
+                  goto bad ; /* cannot read beyond the end of var */
 	     else	/* from an nc API call */
 		if (*ip >= handle->numrecs)
                   goto bad ; /* only fail if reading pass max numrecs in file */
@@ -650,9 +664,7 @@ Void *values ;
 	case NC_SHORT :
 		return( xdr_NCvshort(xdrs, (unsigned)rem/2, (short *)values) ) ;
 	case NC_LONG :
-#if defined _CRAYMPP
-		return( xdr_short(xdrs, (nclong *)values) ) ;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__ 
 		return( xdr_int(xdrs, (nclong *)values) ) ;
 #else
 		return( xdr_long(xdrs, (nclong *)values) ) ;
@@ -1868,7 +1880,6 @@ const ncvoid *value ;
 	return( NCvar1io(handle, varid, coords, value) ) ;
 }
 
-
 int ncvarget1(cdfid, varid, coords, value)
 int cdfid ;
 int varid ;
@@ -1964,9 +1975,7 @@ Void *values ;
 		} /* else */
 		return(TRUE) ;
 	case NC_LONG :
-#if defined _CRAYMPP
-                xdr_NC_fnct = xdr_short;
-#elif defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
+#if defined __alpha || (_MIPS_SZLONG == 64) || defined __ia64 || (defined __sun && defined _LP64) || defined AIX5L64 || defined __x86_64__ || defined __powerpc64__
 		xdr_NC_fnct = xdr_int ;
 #else
 		xdr_NC_fnct = xdr_long ;
@@ -2005,7 +2014,7 @@ const long *edges ;
 {
 	const long *edp, *orp ;
 	unsigned long *boundary, *shp ;
-    int partial=0;
+	int partial=0;
 
 	if( IS_RECVAR(vp) )
 	{
@@ -2020,22 +2029,32 @@ const long *edges ;
 		boundary = vp->shape ;
 
 	/* find max contiguous */
-	shp = vp->shape + vp->assoc->count - 1 ;
-	edp = edges + vp->assoc->count - 1 ;
+	shp = vp->shape + vp->assoc->count - 1 ; /* points to last dimension */
+	edp = edges + vp->assoc->count - 1 ;     /* points to last edge */
 	orp = origin + vp->assoc->count - 1 ;
+
+	/* Traverse shp back to the begining of boundary while checking that
+	   each edge is within limit between start coord and max of dimension */
 	for( ; shp >= boundary ; shp--,edp--,orp--)
 	{
-		if(*edp > *shp - *orp || *edp < 0 )
-		{
-			NCadvise(NC_EINVAL, "Invalid edge length %d", *edp) ;
-			return(NULL) ;
-		}
-		if(*edp < *shp )
-          {
-            partial=1;
-			break ;
-          }
+	    if(*edp > *shp - *orp || *edp < 0 )
+	    {
+		NCadvise(NC_EINVAL, "Invalid edge length %d", *edp) ;
+		return(NULL) ;
+	    }
+	    /* Mark that the writing is partial when any edge is smaller than the
+               matching dimension */
+	    if(*edp < *shp )
+	    {
+		partial=1;
+		break ;
+		/* Why do we want to break here?  What if the later edge is out
+		   of limit and we break out as soon as a smaller edge is reached? -BMR */
+	    }
 	}
+	/* When all dimensions have been checked and shp has passed the first element
+	   in boundary and into undefined location, so did edp in edges, move edp
+	   forward once to point to the first element in edges.  -BMR, 4/15/2013 */
 	if(shp < boundary) /* made it all the way */
 		edp++ ;
 
@@ -2079,6 +2098,7 @@ Void *values ;
            with "vp->numrecs" to fix bug 525, ie. writing two unlimited
            1D datasets without closing the file in between the two writes
            caused the second dataset to contain garbage. */
+	/* After fixing HDFFR-1385, need to reassess this issue. -BMR */
 	newrecs = (*start + *edges) - vp->numrecs ;
 	if(handle->xdrs->x_op != XDR_ENCODE && newrecs > 0)
       {
@@ -2132,7 +2152,8 @@ Void *values ;
 	if(newrecs > 0)
       {
 	/* Update var's numrecs first and then handle->numrecs if the first
-	   exceeds the latter (part of bugzilla 1378) - BMR, 12/30/2008 */
+	   exceeds the latter (part of bugzilla 1378, i.e., JIRA HDFFR-167)
+	   - BMR, 12/30/2008 */
 	  vp->numrecs += newrecs;
 	  handle->numrecs = MAX(vp->numrecs, handle->numrecs);
           if(handle->flags & NC_NSYNC) /* write out header->numrecs NOW */
@@ -2368,7 +2389,9 @@ void *values ;
     /* Albert and I agree that this check below makes perfect sense, but it
      * causes the ncdiminq test to fail for unlimited length dimensions.
      * Perhaps someone with more time can look into this later.  -QAK
+     * Perhaps it is only true for netCDF files. -BMR (2013-06-24)
      */
+/* HDFFR-1385: the fix for this bug may fix this problem too.-BMR */
 	if (handle->numrecs < vp->numrecs)
 	    handle->numrecs = vp->numrecs;
 #endif /* NOTNOW */
@@ -2406,6 +2429,92 @@ ncvoid *values ;
 }
 
 
+/* --------------------------- NC_fill_buffer ---------------------------- */
+/*
+ *  Fills the provided array with user-defined fill value _FillValue or
+ *  the default one.  The buffer size to be filled is computed using the
+ *  provided parameter 'edges'.
+ *  -BMR, 2013/8/29
+ */
+int NC_fill_buffer(handle, varid, edges, values)
+NC *handle;		/* file structure */
+int varid;		/* var number in handle->vars list */
+const long *edges;	/* size of the array's edges */
+void *values;		/* buffer to be filled */
+{
+    NC_var *vp ;
+    NC_attr **attr;
+    unsigned long buf_size;
+    int ii;
+
+    /* Find the variable structure */
+    if(handle->vars == NULL)
+	return(-1);
+    vp = NC_hlookupvar(handle, varid);
+    if(vp == NULL)
+	return(-1);
+
+    /* Compute the size of the buffer using the edges */
+    buf_size = 1;
+    for (ii = 0; ii < vp->assoc->count; ii++)
+	buf_size = buf_size * edges[ii];
+
+    /* Find user-defined fill-value and fill the buffer with it */
+    attr = NC_findattr(&vp->attrs, _FillValue);
+    if(attr != NULL)
+	if (HDmemfill(values,(*attr)->data->values,vp->szof,buf_size) == NULL)
+	    return(-1);
+    /* If no user-defined fill-value, fill the buffer with default fill-value */
+    else
+	NC_arrayfill(values, buf_size * vp->szof, vp->type);
+    return 0;
+}
+
+
+/* ---------------------------- ncvarget ----------------------------- */
+/*
+ *  Reads data from the variable 'varid'.  The starting position and size
+ *  of the data are specified by parameters 'start' and 'edges'.
+ *  
+ *  If the requested size exceeds the boundary of the actual data, ncvarget
+ *  will fill the provided buffer with user-defined fill values or the
+ *  default fill values (via NC_fill_buffer.)
+ *
+ *  If the requested size exceeds not only the boundary of the actual data,
+ *  but also the maximum number of records in the file, ncvarget will fail.
+ *
+ *  -BMR, 2013/8/29
+ */
+int ncvarget(cdfid, varid, start, edges, values)
+int cdfid ;
+int varid ;
+const long *start ;
+const long *edges ;
+ncvoid *values ;
+{
+	NC *handle;
+	NC_var *vp;
+	int  status = 0;
+
+	cdf_routine_name = "ncvarget";
+
+	/* Get the file handle */
+	handle = NC_check_id(cdfid);
+	if(handle == NULL)
+		return(-1);
+
+	/* Fill the buffer with fill-values before passing it into NCvario to
+	   read the requested data */
+	status = NC_fill_buffer(handle, varid, edges, values);
+	if (status == FAIL)
+            return(-1);
+
+	handle->xdrs->x_op = XDR_DECODE ;
+
+	return(NCvario(handle, varid, start, edges, (Void *)values));
+}
+
+/* This is the original ncvarget.  Keep for a while just in case. -BMR
 int ncvarget(cdfid, varid, start, edges, values)
 int cdfid ;
 int varid ;
@@ -2425,6 +2534,7 @@ ncvoid *values ;
 
 	return( NCvario(handle, varid, start, edges, (Void *)values) ) ;
 }
+ */ 
 
 /* Begin recio */
 

@@ -16,60 +16,60 @@ C     dffunc.inc
 C
 C     Declarations of return values for HDF SDS functions
 C
-      integer  DFSDadddata,		dsadata
-      external DFSDadddata,		dsadata
-      integer  DFSDclear,		dsclear
-      external DFSDclear,		dsclear
-      integer  DFSDsetdimscale,		dssdisc
-      external DFSDsetdimscale,		dssdisc
-      integer  DFSDendslice,		dseslc
-      external DFSDendslice,		dseslc
-      integer  DFSDgetNT,		dsgnt
-      external DFSDgetNT,		dsgnt
-      integer  DFSDgetdata,		dsgdata
-      external DFSDgetdata,		dsgdata
-      integer  DFSDgetdatalen,		dsgdaln
-      external DFSDgetdatalen,		dsgdaln
-      integer  DFSDgetdatastrs,		dsgdast
-      external DFSDgetdatastrs,		dsgdast
-      integer  DFSDgetdimlen,		dsgdiln
-      external DFSDgetdimlen,		dsgdiln
-      integer  DFSDgetdims,		dsgdims
-      external DFSDgetdims,		dsgdims
-      integer  DFSDgetdimscale,		dsgdisc
-      external DFSDgetdimscale,		dsgdisc
-      integer  DFSDgetdimstrs,		dsgdist
-      external DFSDgetdimstrs,		dsgdist
-      integer  DFSDgetrange,		dsgrang
-      external DFSDgetrange,		dsgrang
-      integer  DFSDgetslice,		dsgslc
-      external DFSDgetslice,		dsgslc
-      integer  DFSDlastref,		dslref
-      external DFSDlastref,		dslref
-      integer  DFSDnumber,		dsnum
-      external DFSDnumber,		dsnum
-      integer  DFSDputdata,		dspdata
-      external DFSDputdata,		dspdata
-      integer  DFSDputslice,		dspslc
-      external DFSDputslice,		dspslc
-      integer  DFSDreadref,		dsrref
-      external DFSDreadref,		dsrref
-      integer  DFSDrestart,		dsfirst
-      external DFSDrestart,		dsfirst
-      integer  DFSDsetNT,		dssnt
-      external DFSDsetNT,		dssnt
-      integer  DFSDsetdatastrs,		dssdast
-      external DFSDsetdatastrs,		dssdast
-      integer  DFSDsetdims,		dssdims
-      external DFSDsetdims,		dssdims
-      integer  DFSDsetdimstrs,		dssdist
-      external DFSDsetdimstrs,		dssdist
-      integer  DFSDsetlengths,		dsslens
-      external DFSDsetlengths,		dsslens
-      integer  DFSDsetrange,		dssrang
-      external DFSDsetrange,		dssrang
-      integer  DFSDstartslice,		dssslc
-      external DFSDstartslice,		dssslc
+      integer  DFSDadddata,         dsadata
+      external DFSDadddata,         dsadata
+      integer  DFSDclear,           dsclear
+      external DFSDclear,           dsclear
+      integer  DFSDsetdimscale,     dssdisc
+      external DFSDsetdimscale,     dssdisc
+      integer  DFSDendslice,        dseslc
+      external DFSDendslice,        dseslc
+      integer  DFSDgetNT,           dsgnt
+      external DFSDgetNT,           dsgnt
+      integer  DFSDgetdata,         dsgdata
+      external DFSDgetdata,         dsgdata
+      integer  DFSDgetdatalen,      dsgdaln
+      external DFSDgetdatalen,      dsgdaln
+      integer  DFSDgetdatastrs,     dsgdast
+      external DFSDgetdatastrs,     dsgdast
+      integer  DFSDgetdimlen,       dsgdiln
+      external DFSDgetdimlen,       dsgdiln
+      integer  DFSDgetdims,         dsgdims
+      external DFSDgetdims,         dsgdims
+      integer  DFSDgetdimscale,     dsgdisc
+      external DFSDgetdimscale,     dsgdisc
+      integer  DFSDgetdimstrs,      dsgdist
+      external DFSDgetdimstrs,      dsgdist
+      integer  DFSDgetrange,        dsgrang
+      external DFSDgetrange,        dsgrang
+      integer  DFSDgetslice,        dsgslc
+      external DFSDgetslice,        dsgslc
+      integer  DFSDlastref,         dslref
+      external DFSDlastref,         dslref
+      integer  DFSDnumber,          dsnum
+      external DFSDnumber,          dsnum
+      integer  DFSDputdata,         dspdata
+      external DFSDputdata,         dspdata
+      integer  DFSDputslice,        dspslc
+      external DFSDputslice,        dspslc
+      integer  DFSDreadref,         dsrref
+      external DFSDreadref,         dsrref
+      integer  DFSDrestart,         dsfirst
+      external DFSDrestart,         dsfirst
+      integer  DFSDsetNT,           dssnt
+      external DFSDsetNT,           dssnt
+      integer  DFSDsetdatastrs,     dssdast
+      external DFSDsetdatastrs,     dssdast
+      integer  DFSDsetdims,         dssdims
+      external DFSDsetdims,         dssdims
+      integer  DFSDsetdimstrs,      dssdist
+      external DFSDsetdimstrs,      dssdist
+      integer  DFSDsetlengths,      dsslens
+      external DFSDsetlengths,      dsslens
+      integer  DFSDsetrange,        dssrang
+      external DFSDsetrange,        dssrang
+      integer  DFSDstartslice,      dssslc
+      external DFSDstartslice,      dssslc
       integer  dsgcal
       external dsgcal
       integer  dsp32sd
@@ -93,55 +93,55 @@ C
 C
 C     Declarations of return values for HDF Annotation functions
 C
-      integer  DFANputlabel,		daplab
-      external DFANputlabel,		daplab
-      integer  DFANputdesc,		dapdesc
-      external DFANputdesc,		dapdesc
-      integer  DFANgetlablen,		dagllen
-      external DFANgetlablen,		dagllen
-      integer  DFANgetlabel,		daglab
-      external DFANgetlabel,		daglab
-      integer  DFANgetdesclen,		dagdlen
-      external DFANgetdesclen,		dagdlen
-      integer  DFANgetdesc,		dagdesc
-      external DFANgetdesc,		dagdesc
-      integer  DFANlablist,		dallist
-      external DFANlablist,		dallist
-      integer  DFANaddfid,		daafid
-      external DFANaddfid,		daafid
-      integer  DFANaddfds,		daafds
-      external DFANaddfds,		daafds
-      integer  DFANgetfidlen,		dagfidl
-      external DFANgetfidlen,		dagfidl
-      integer  DFANgetfid,		dagfid
-      external DFANgetfid,		dagfid
-      integer  DFANgetfdslen,		dagfdsl
-      external DFANgetfdslen,		dagfdsl
-      integer  DFANgetfds,		dagfds
-      external DFANgetfds,		dagfds
-      integer  DFANlastref,		dalref
-      external DFANlastref,		dalref
+      integer  DFANputlabel,     daplab
+      external DFANputlabel,     daplab
+      integer  DFANputdesc,      dapdesc
+      external DFANputdesc,      dapdesc
+      integer  DFANgetlablen,    dagllen
+      external DFANgetlablen,    dagllen
+      integer  DFANgetlabel,     daglab
+      external DFANgetlabel,     daglab
+      integer  DFANgetdesclen,   dagdlen
+      external DFANgetdesclen,   dagdlen
+      integer  DFANgetdesc,      dagdesc
+      external DFANgetdesc,      dagdesc
+      integer  DFANlablist,      dallist
+      external DFANlablist,      dallist
+      integer  DFANaddfid,       daafid
+      external DFANaddfid,       daafid
+      integer  DFANaddfds,       daafds
+      external DFANaddfds,       daafds
+      integer  DFANgetfidlen,    dagfidl
+      external DFANgetfidlen,    dagfidl
+      integer  DFANgetfid,       dagfid
+      external DFANgetfid,       dagfid
+      integer  DFANgetfdslen,    dagfdsl
+      external DFANgetfdslen,    dagfdsl
+      integer  DFANgetfds,       dagfds
+      external DFANgetfds,       dagfds
+      integer  DFANlastref,      dalref
+      external DFANlastref,      dalref
       integer  daclear
       external daclear
 C
 C     Declarations of return values for HDF Raster Image functions
 C
-      integer  DFR8setpalette,		d8spal
-      external DFR8setpalette,		d8spal
-      integer  DFR8putimage,		d8pimg
-      external DFR8putimage,		d8pimg
-      integer  DFR8addimage,		d8aimg
-      external DFR8addimage,		d8aimg
-      integer  DFR8getdims,		d8gdims
-      external DFR8getdims,		d8gdims
-      integer  DFR8getimage,		d8gimg
-      external DFR8getimage,		d8gimg
-      integer  DFR8readref,		d8rref
-      external DFR8readref,		d8rref
-      integer  DFR8writeref,		d8wref
-      external DFR8writeref,		d8wref
-      integer  DFR8restart,		d8first
-      external DFR8restart,		d8first
+      integer  DFR8setpalette,          d8spal
+      external DFR8setpalette,          d8spal
+      integer  DFR8putimage,            d8pimg
+      external DFR8putimage,            d8pimg
+      integer  DFR8addimage,            d8aimg
+      external DFR8addimage,            d8aimg
+      integer  DFR8getdims,             d8gdims
+      external DFR8getdims,             d8gdims
+      integer  DFR8getimage,            d8gimg
+      external DFR8getimage,            d8gimg
+      integer  DFR8readref,             d8rref
+      external DFR8readref,             d8rref
+      integer  DFR8writeref,            d8wref
+      external DFR8writeref,            d8wref
+      integer  DFR8restart,             d8first
+      external DFR8restart,             d8first
       integer  DFR8nimages,             d8nims
       external DFR8nimages,             d8nims
       integer  DFR8lastref,             d8lref
@@ -151,47 +151,47 @@ C
       integer  DFR8sjpeg,               d8sjpeg
       external DFR8sjpeg,               d8sjpeg
 
-      integer  DF24setil,		d2setil
-      external DF24setil,		d2setil
-      integer  DF24addimage,		d2aimg
-      external DF24addimage,		d2aimg
-      integer  DF24putimage,		d2pimg
-      external DF24putimage,		d2pimg
-      integer  DF24getimage,		d2gimg
-      external DF24getimage,		d2gimg
-      integer  DF24getdims,		d2gdims
-      external DF24getdims,		d2gdims
-      integer  DF24setdims,		d2sdims
-      external DF24setdims,		d2sdims
-      integer  DF24readref,		d2rref
-      external DF24readref,		d2rref
-      integer  DF24restart,		d2first
-      external DF24restart,		d2first
-      integer  DF24reqil,		d2reqil
-      external DF24reqil,		d2reqil
-      integer  			d2lref
-      external 			d2lref
+      integer  DF24setil,               d2setil
+      external DF24setil,               d2setil
+      integer  DF24addimage,            d2aimg
+      external DF24addimage,            d2aimg
+      integer  DF24putimage,            d2pimg
+      external DF24putimage,            d2pimg
+      integer  DF24getimage,            d2gimg
+      external DF24getimage,            d2gimg
+      integer  DF24getdims,             d2gdims
+      external DF24getdims,             d2gdims
+      integer  DF24setdims,             d2sdims
+      external DF24setdims,             d2sdims
+      integer  DF24readref,             d2rref
+      external DF24readref,             d2rref
+      integer  DF24restart,             d2first
+      external DF24restart,             d2first
+      integer  DF24reqil,               d2reqil
+      external DF24reqil,               d2reqil
+      integer  d2lref
+      external d2lref
       integer  DF24scompress,           d2scomp
       external DF24scompress,           d2scomp
       integer  DF24sjpeg,               d2sjpeg
       external DF24sjpeg,               d2sjpeg
 
-      integer  DFPaddpal,		dpapal
-      external DFPaddpal,		dpapal
-      integer  DFPgetpal,		dpgpal
-      external DFPgetpal,		dpgpal
-      integer  DFPputpal,		dpppal
-      external DFPputpal,		dpppal
-      integer  DFPnpals,		dpnpals
-      external DFPnpals,		dpnpals
-      integer  DFPwriteref,		dpwref
-      external DFPwriteref,		dpwref
-      integer  DFPreadref,		dprref
-      external DFPreadref,		dprref
-      integer  DFPrestart,		dprest
-      external DFPrestart,		dprest
-      integer  DFPlastref,		dplref
-      external DFPlastref,		dplref
+      integer  DFPaddpal,               dpapal
+      external DFPaddpal,               dpapal
+      integer  DFPgetpal,               dpgpal
+      external DFPgetpal,               dpgpal
+      integer  DFPputpal,               dpppal
+      external DFPputpal,               dpppal
+      integer  DFPnpals,                dpnpals
+      external DFPnpals,                dpnpals
+      integer  DFPwriteref,             dpwref
+      external DFPwriteref,             dpwref
+      integer  DFPreadref,              dprref
+      external DFPreadref,              dprref
+      integer  DFPrestart,              dprest
+      external DFPrestart,              dprest
+      integer  DFPlastref,              dplref
+      external DFPlastref,              dplref
 
 C
 C     Declarations of return values for HDF Raster Image functions

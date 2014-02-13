@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.6)
+cmake_minimum_required (VERSION 2.8.10)
 PROJECT (HDF4_HDF_SRC C CXX)
 
 #-----------------------------------------------------------------------------
@@ -30,12 +30,8 @@ SET (HDF4_HDF_SRC_CSRCS
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfgroup.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfimcomp.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfjpeg.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkconv.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkcray.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkfuji.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfknat.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfkswap.c
-    ${HDF4_HDF_SRC_SOURCE_DIR}/dfkvms.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfp.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfr8.c
     ${HDF4_HDF_SRC_SOURCE_DIR}/dfrle.c
@@ -128,6 +124,7 @@ ADD_LIBRARY (${HDF4_SRC_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF
 IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS (-DDOS_FS)
 ENDIF (WIN32 AND NOT CYGWIN)
+TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} " " " ")
 TARGET_LINK_LIBRARIES (${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} ${LIB_TYPE})
@@ -148,8 +145,9 @@ INSTALL (
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
 IF (HDF4_EXPORTED_TARGETS)
-
-  INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+  IF (BUILD_SHARED_LIBS)
+    INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+  ENDIF (BUILD_SHARED_LIBS)
   
   INSTALL (
       TARGETS 

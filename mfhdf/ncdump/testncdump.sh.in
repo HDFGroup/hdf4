@@ -16,7 +16,7 @@ CP='cp'
 nerrors=0
 verbose=yes
 
-$CP $srcdir/test0.cdl .
+$CP $srcdir/test0.cdl ./nctest0.cdl
 
 # Print message with formats according to message level ($1)
 MESG() {
@@ -69,7 +69,7 @@ TESTING() {
 RUN() {
    # Run test.
 
-   ${TESTS_ENVIRONMENT} ../ncgen/ncgen -o test0.nc -n test0.cdl
+   ${TESTS_ENVIRONMENT} ../ncgen/ncgen -o test0.nc -n nctest0.cdl
    RET=$?
    if [ $RET -eq 1 ]; then
       echo "*FAILED*"

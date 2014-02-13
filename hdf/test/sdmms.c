@@ -63,7 +63,8 @@ static int32 ical5;
 void
 test_sdmms(void)
 {
-    int         i, j, err, err1, err2, ret;
+    uint32      i, j;
+    int		err, err1, err2, ret;
     intn        rank;
     int32       dims[2];
 
@@ -87,7 +88,7 @@ test_sdmms(void)
                 ui16[i][j] = (uint16) ((i * 6000) + j);     /* range: 0 ~ 60000 */
 
                 i32[i][j] = (int32) ((i * 60000) - 300000 + j);     /* range: 0 ~ 2-billion */
-                ui32[i][j] = (uint32) ((i * 400000000) + j);    /* range: 0 ~ 4-billion */
+                ui32[i][j] = (uint32) ((i * 400000000U) + j);    /* range: 0 ~ 4-billion */
             }
 
           f32scale[i] = (float32) ((i * 40) + j);   /* range: 0 ~ 4-billion */
@@ -99,7 +100,7 @@ test_sdmms(void)
           ui16scale[i] = (uint16) ((i * 6000) + j);     /* range: 0 ~ 60000 */
 
           i32scale[i] = (int32) ((i * 60000) - 300000 + j);     /* range: 0 ~ 2-billion */
-          ui32scale[i] = (uint32) ((i * 400000000) + j);    /* range: 0 ~ 4-billion */
+          ui32scale[i] = (uint32) ((i * 400000000U) + j);    /* range: 0 ~ 4-billion */
       }
 
     cal1 = (float64) 10.0;

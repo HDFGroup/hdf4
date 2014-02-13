@@ -3,8 +3,8 @@
 #define  FILE_NAME         "Image_with_Palette.hdf"
 #define  NEW_IMAGE_NAME    "Image with Palette"
 #define  N_COMPS_IMG       2       /* number of image components */
-#define  X_LENGTH          5
-#define  Y_LENGTH          5
+#define  X_LENGTH          5       /* number of rows in the image */
+#define  Y_LENGTH          5       /* number of columns in the image */
 #define  N_ENTRIES         256     /* number of entries in the palette */
 #define  N_COMPS_PAL       3       /* number of palette's components */
 

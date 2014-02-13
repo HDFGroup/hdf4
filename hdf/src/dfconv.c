@@ -35,50 +35,6 @@ static char RcsId[] = "@(#)$Revision$";
     DFKsb2b -  Byte swapping for 16 bit integers
     DFKsb4b -  Byte swapping for 32 bit integers
     DFKsb8b -  Byte swapping for 64 bit floats
-    dfkcray.c
-    DFKui2i -  Unicos routine for importing 16 bit unsigned integers
-    DFKui2s -  Unicos routine for importing 16 bit signed integers
-    DFKuo2i -  Unicos routine for exporting 16 bit integers (both)
-    DFKui4i -  Unicos routine for importing unsigned 32bit integers
-    DFKui4s -  Unicos routine for importing signed 32bit integers
-    DFKuo4i -  Unicos routine for exporting 4 byte integers (both)
-    DFKui4f -  Unicos routine for importing 32 bit floats
-    DFKuo4f -  Unicos routine for exporting 32 bit floats
-    DFKui8f -  Unicos routine for importing 64 bit floats
-    DFKuo8f -  Unicos routine for exporting 64 bit floats
-    DFKlui2i-  Unicos routine for importing little-endian 16 bit unsigned ints
-    DFKlui2s-  Unicos routine for importing little-endian 16 bit signed ints
-    DFKluo2i-  Unicos routine for exporting little-endian 16 bit ints (both)
-    DFKlui4i-  Unicos routine for importing little-endian unsigned 32bit ints
-    DFKlui4s-  Unicos routine for importing little-endian signed 32bit ints
-    DFKluo4i-  Unicos routine for exporting little-endian 4 byte ints (both)
-    DFKlui4f-  Unicos routine for importing little-endian 32 bit floats
-    DFKluo4f-  Unicos routine for exporting little-endian 32 bit floats
-    DFKlui8f-  Unicos routine for importing little-endian 64 bit floats
-    DFKluo8f-  Unicos routine for exporting little-endian 64 bit floats
-    dfkvms.c
-    DFKvi4f -  VMS routine for importing 32 bit floats
-    DFKvo4f -  VMS routine for exporting 32 bit floats
-    DFKvi8f -  VMS routine for importing 64 bit floats
-    DFKvo8f -  VMS routine for exporting 64 bit floats
-    DFKlvi4f-  VMS routine for importing little-endian 32 bit floats
-    DFKlvo4f-  VMS routine for exporting little-endian 32 bit floats
-    DFKlvi8f-  VMS routine for importing little-endian 64 bit floats
-    DFKlvo8f-  VMS routine for exporting little-endian 64 bit floats
-    dfkconv.c
-    DFKci4f -  Convex routine for importing 32 bit floats
-    DFKco4f -  Convex routine for exporting 32 bit floats
-    DFKci8f -  Convex routine for importing 64 bit floats
-    DFKco8f -  Convex routine for exporting 64 bit floats
-    DFKlci4f-  Convex routine for importing little-endian 32 bit floats
-    DFKlco4f-  Convex routine for exporting little-endian 32 bit floats
-    DFKlci8f-  Convex routine for importing little-endian 64 bit floats
-    DFKlco8f-  Convex routine for exporting little-endian 64 bit floats
-    dfkfuji.c
-    DFKpi4f -  VP routine for importing 32 bit floats
-    DFKpo4f -  VP routine for exporting 32 bit floats
-    DFKpi8f -  VP routine for importing 64 bit floats
-    DFKpo8f -  VP routine for exporting 64 bit floats
 
  Other PUBLIC functions:
     DFKmachineNTsize - Determine size in machine, given number type

@@ -13,9 +13,6 @@ int main()
    intn    status;
    int32   attr_index, data_type, n_values; 
    char    attr_name[H4_MAX_NC_NAME];
-   int8    *file_data;
-   int8    *dim_data;
-   float32 *sds_data;
    int     i;
    
    /********************* End of variable declaration ***********************/
@@ -36,20 +33,27 @@ int main()
    */
    status = SDattrinfo (sd_id, attr_index, attr_name, &data_type, &n_values);
 
-   /*
-   * Allocate a buffer to hold the attribute data.
-   */
-   file_data = (int8 *)malloc (n_values * sizeof (data_type));
+   /* The data type should be DFNT_CHAR, from SD_set_attr.c */
+   if (data_type = DFNT_CHAR)
+   {
+      char *fileattr_data;
 
-   /*
-   * Read the file attribute data.
-   */
-   status = SDreadattr (sd_id, attr_index, file_data);
+      /*
+      * Allocate a buffer to hold the attribute data.
+      */
+      fileattr_data = (char *)HDmalloc (n_values * sizeof(char));
 
-   /*
-   * Print out file attribute value. 
-   */
-   printf ("File attribute value is : %s\n", file_data);
+      /*
+      * Read the file attribute data.
+      */
+      status = SDreadattr (sd_id, attr_index, fileattr_data);
+
+      /*
+      * Print out file attribute value and free buffer. 
+      */
+      printf ("File attribute value is : %s\n", fileattr_data);
+      free (fileattr_data);
+   }
 
    /*
    * Select the first data set.
@@ -68,23 +72,31 @@ int main()
    status = SDattrinfo (sds_id, attr_index, attr_name, &data_type, &n_values);
 
    /*
-   * Allocate a buffer to hold the data set attribute data.
+   * The data type should be DFNT_FLOAT32, from SD_set_attr.c.
    */
-   sds_data = (float32 *)malloc (n_values * sizeof (data_type));
+   if (data_type == DFNT_FLOAT32)
+   {
+      float32 *sds_data;
 
-   /*
-   * Read the SDS attribute data.
-   */
-   status = SDreadattr (sds_id, attr_index, sds_data);
+      /*
+      * Allocate a buffer to hold the data set attribute data.
+      */
+      sds_data = (float32 *)HDmalloc (n_values * sizeof (float32));
 
-   /*
-   * Print out SDS attribute data type and values. 
-   */
-   if (data_type == DFNT_FLOAT32) 
-                 printf ("SDS attribute data type is : float32\n");
-   printf ("SDS attribute values are :  ");
-   for (i=0; i<n_values; i++) printf (" %f", sds_data[i]);
-   printf ("\n"); 
+      /*
+      * Read the SDS attribute data.
+      */
+      status = SDreadattr (sds_id, attr_index, sds_data);
+
+      /*
+      * Print out SDS attribute data type and values and free buffer. 
+      */
+      printf ("SDS attribute data type is : float32\n");
+      printf ("SDS attribute values are :  ");
+      for (i=0; i<n_values; i++) printf (" %f", sds_data[i]);
+      printf ("\n"); 
+      free (sds_data);
+   }
 
    /*    
    * Get the identifier for the second dimension of the SDS.
@@ -102,19 +114,28 @@ int main()
    status = SDattrinfo (dim_id, attr_index, attr_name, &data_type, &n_values);
 
    /*
-   * Allocate a buffer to hold the dimension attribute data.
+   * The data type should be DFNT_CHAR, from SD_set_attr.c.
    */
-   dim_data = (int8 *)malloc (n_values * sizeof (data_type));
+   if (data_type == DFNT_CHAR)
+   {
+      char *dimattr_data;
 
-   /*
-   * Read the dimension attribute data.
-   */
-   status = SDreadattr (dim_id, attr_index, dim_data);
+      /*
+      * Allocate a buffer to hold the dimension attribute data.
+      */
+      dimattr_data = (char *)HDmalloc (n_values * sizeof (char));
 
-   /*
-   * Print out dimension attribute value. 
-   */
-   printf ("Dimensional attribute values is : %s\n", dim_data);
+      /*
+      * Read the dimension attribute data.
+      */
+      status = SDreadattr (dim_id, attr_index, dimattr_data);
+
+      /*
+      * Print out dimension attribute value and free buffer. 
+      */
+      printf ("Dimensional attribute values is : %s\n", dimattr_data);
+      free (dimattr_data);
+   }
 
    /*
    * Terminate access to the data set and to the SD interface and 
@@ -122,13 +143,6 @@ int main()
    */
    status = SDendaccess (sds_id);
    status = SDend (sd_id);
-
-   /*
-   * Free all buffers.
-   */
-   free (dim_data);
-   free (sds_data);
-   free (file_data);
 
    /*   Output of this program is :
    *

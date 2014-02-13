@@ -55,10 +55,6 @@ typedef unsigned int UINT;
 #include <sys/file.h>
 #endif
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 
 #define USAGE   fprintf (stderr, "usage: hdf24hdf8 hdf24_file hdf8_file\n")
@@ -76,10 +72,6 @@ main(int argc, char *argv[])
     int         interlace;
     uint8      *r24, *r8, *pal;
     uint8       hdfpal[PALSIZE], *p;
-
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
     if (argc != 3)
       {

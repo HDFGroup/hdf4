@@ -23,33 +23,19 @@
 
 #if defined __STDC__ || defined PC || defined _WINDOWS || defined _WIN32
 #define STDC_INCLUDES
-#if !(defined vms || defined UNIX386 || defined __FreeBSD__ || defined WINNT || defined _WIN32 || defined __ultrix || (defined __sun__ && defined __i386__) || defined _CRAYMPP || defined __linux__ )
-/* Unneeded in most (all?) supported machines, and causing problems on some platforms.
-long ntohl(long);
-long htonl(long);
-*/
-#endif /* !unix */
-#ifdef vms
-#define ntohl decc$ntohl
-#define htonl decc$htonl
-#endif
 #endif
 
 #ifdef STDC_INCLUDES
 #include <stddef.h>
 #include <stdlib.h>
 #else
-#ifdef __vax
-extern void *malloc();
-#else
 extern char *malloc();
-#endif /* __vax */
 #endif
 
 #define mem_alloc(bsize)    malloc(bsize)
 #define mem_free(ptr, bsize)    free(ptr)
 
-#if defined unix | defined __unix | defined vms
+#if defined unix | defined __unix
 #ifndef makedev /* ie, we haven't already included it */
 #include <sys/types.h>
 #endif

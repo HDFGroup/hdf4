@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpgr -i 0,1,3 grtdfui82.hdf'
-#############################
 File name: grtdfui82.hdf 
 
 	 Image  Name = Image_array_5

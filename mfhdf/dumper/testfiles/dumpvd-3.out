@@ -1,6 +1,3 @@
-#############################
-Expected output for './hdp dumpvd -r 1238,1239,1251,1252 tvset.hdf'
-#############################
 File name: tvset.hdf 
 
 Vdata: 3

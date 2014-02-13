@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.6)
+cmake_minimum_required (VERSION 2.8.10)
 PROJECT (HDF4_MFHDF_XDR C CXX)
 
 SET (HDF4_MFHDF_XDR_SRCS
@@ -28,14 +28,16 @@ IF (MSVC)
 ELSE (MSVC)
   ADD_LIBRARY (${HDF4_MF_XDR_LIB_TARGET} ${LIB_TYPE} ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS} )
 ENDIF (MSVC)
+TARGET_C_PROPERTIES (${HDF4_MF_XDR_LIB_TARGET} " " " ")
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_XDR_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_MF_XDR_LIB_NAME} ${LIB_TYPE})
 
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
-
-INSTALL_TARGET_PDB (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+IF (BUILD_SHARED_LIBS)
+  INSTALL_TARGET_PDB (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+ENDIF (BUILD_SHARED_LIBS)
   
 INSTALL (
     TARGETS 

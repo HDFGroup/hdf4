@@ -6,9 +6,10 @@ else
 FORTRAN_DIR = 
 endif
 
-SUBDIRS = $(FORTRAN_DIR) test util
+# src folder in root Makefile, build other folders now
+SUBDIRS = src $(FORTRAN_DIR) test util
 
-DIST_SUBDIRS = src test util fortran examples
+DIST_SUBDIRS = src fortran test util examples
 
 installcheck-local:
 	@(cd examples && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1;

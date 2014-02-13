@@ -36,10 +36,6 @@ static char *RcsId[] = "@(#)$Revision$";
 *
 ******************************************************************************/
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #include "hdf.h"
 
 /*
@@ -86,9 +82,6 @@ main(int ac, char **av)
 {
 
     char       *hfile, *vgname, *vsname, *fmt;
-#if defined __MWERKS__
-    ac = ccommand(&av);
-#endif
 
     if (ac < 3)
       {

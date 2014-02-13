@@ -42,10 +42,6 @@
 extern int errno;
 #endif
 
-#ifdef VMS
-#include <ssdef.h>
-#endif
-
 #ifndef NO_STRERROR
 #include <string.h> /* contains prototype for ansi libc function strerror() */
 #else
@@ -63,41 +59,6 @@ int errnum ;
 	return (char *)sys_errlist[errnum] ;
 }
 #endif /* NO_STRERROR */
-
-
-#ifdef vms
-/*
- * On the vms system, when a system error occurs which is not
- * mapped into the unix styled errno values, errno is set EVMSERR
- * and a VMS error code is set in vaxc$errno.
- * This routine prints the systems message associated with status return
- * from a system services call.
- */
-
-#include <descrip.h>
-#include <ssdef.h>
-
-static int
-vmserror1( int status )
-{
-	short msglen ;
-	char msgbuf[256] ;
-	$DESCRIPTOR(message, msgbuf) ;
-	register ret ;
-
-	ret = SYS$GETMSG(status, &msglen, &message, 15, 0) ;
-	
-	switch(ret) {
-	case SS$_BUFFEROVF :
-	case SS$_NORMAL :
-		(void) fprintf(stderr, "%.*s\n", msglen, msgbuf) ;
-		break ;
-	default :
-		break ;
-	}
-	return(ret) ;
-}
-#endif /* vms */
 
 
 #ifdef USE_doprnt_FOR_vfprintf
@@ -159,13 +120,6 @@ nc_serror(fmt, va_alist)
             ncerr = NC_NOERR ;
             (void) fputc('\n',stderr) ;
             break ;
-#ifdef vms
-	case EVMSERR :
-            ncerr = NC_SYSERR ;
-            (void) fputc(': ',stderr) ;
-            (void) vmserror1(vaxc$errno) ;
-            break ;
-#endif /* vms */
             default :
 		ncerr = NC_SYSERR ;
             (void) fprintf(stderr,": %s\n",

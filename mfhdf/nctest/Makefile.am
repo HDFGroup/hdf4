@@ -5,11 +5,11 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -30,6 +30,8 @@ nctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=test2.nc test.nc
+CHECK_CLEANFILES += test2.nc test.nc
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am

@@ -23,20 +23,8 @@
  *	netcdf library 'private' data structures, objects and interfaces
  */
 
-#if (defined macintosh) || (defined MPW) || (defined __MWERKS__)
-#ifndef HDF
-#define HDF  /* For Mac we need to define this, to avoid putting on compile line */
-#endif
-#define NO_SYS_XDR_INC /* use stuff in "::xdr" */
-#define NO_ACCESS
-#define NO_GETPID
-#endif /* non command line compilers */
-
 #include	<stddef.h> /* size_t */
 #include	<stdio.h> /* FILENAME_MAX */
-#if (defined MPW)
-#include   <memory.h>
-#endif /* MPW */
 
 #ifndef FILENAME_MAX
 #define FILENAME_MAX  255
@@ -44,27 +32,11 @@
 
 /* Do we have systeme XDR files */
 #ifndef  NO_SYS_XDR_INC 
-#ifdef VMS
-#    define  STDC_INCLUDES
-#endif   /* VMS */
-#ifdef __ultrix
-#define GCC_FIX
-#endif /* __ultrix */
 #include	<rpc/types.h>
-#ifdef __ultrix
-#undef GCC_FIX
-#endif /* __ultrix */
 #include	<rpc/xdr.h>
 #else    /* NO_SYS_XDR_INC */
-#if defined(macintosh) || defined (SYMANTEC_C)
-     /* For the mac reference types.h specifically
-        because we don't want it to pick up the system one */
-#include      "::xdr:types.h"  /* "../xdr/types.h" */
-#include      "::xdr:xdr.h"    /* "../xdr/xdr.h" */
-#else /* !macintosh */
 #include      <types.h>  /* <types.h */
 #include      <xdr.h>    /* <xdr.h> */
-#endif /* !macintosh */
 #endif /* NO_SYSTEM_XDR_INCLUDES */
 
 #include "H4api_adpt.h"
@@ -214,28 +186,32 @@ typedef struct {
 
 /* NC variable: description and data */
 typedef struct {
-	NC_string *name ;
-	NC_iarray *assoc ; /* user definition */
-	unsigned long *shape ; /* compiled info */
-	unsigned long *dsizes ; /* compiled info */
-	NC_array *attrs;
+	NC_string *name ;	/* name->values shows data set's name */
+	NC_iarray *assoc ;	/* user definition */
+	unsigned long *shape ;	/* compiled info (Each holds a dimension size. -BMR) */
+	unsigned long *dsizes ;	/* compiled info (Each element holds the amount of space
+			needed to hold values in that dimension, e.g., first dimension
+			size is 10, value type is int32=4, then dsizes[0]=4*10=40. -BMR) */
+	NC_array *attrs;	/* list of attribute structures */
 	nc_type type ;		/* the discriminant */
-	unsigned long len ;		/* the total length originally allocated */
+	unsigned long len ;	/* the total length originally allocated */
 	size_t szof ;		/* sizeof each value */
-	long begin ;  /* seek index, often an off_t */
+	long begin ;		/* seek index, often an off_t */
 #ifdef HDF
 	NC *cdf;	/* handle of the file where this var belongs to  */
 	int32 vgid;	/* id of the variable's Vgroup */
-	uint16 data_ref;    /* ref of the variable's data storage (if exists) */
-	uint16 data_tag;    /* tag of the variable's data storage (if exists) */
-	uint16 ndg_ref;     /* ref of ndg for this dataset */
-	hdf_vartype_t var_type; /* IS_SDSVAR == is an SDS variable 
-			       IS_CRDVAR == is a coordinate variable 
-			       UNKNOWN == because the var was created prior to
-					this distinction */
+	uint16 data_ref;/* ref of the variable's data storage (if exists), default 0 */
+	uint16 data_tag;/* tag of the variable's data storage (if exists), default DATA_TAG */
+	uint16 ndg_ref; /* ref of ndg for this dataset */
+	hdf_vartype_t var_type; /* type of this variable, default UNKNOWN
+			IS_SDSVAR == this var is an SDS variable 
+			IS_CRDVAR == this var is a coordinate variable 
+			UNKNOWN == because the var was created prior to this distinction.
+	This is to distinguish b/w a one-dim data set and a coord var of the same name.
+	It's less riskier than using a flag and change the file format, I think. -BMR */
 	intn   data_offset; /* non-traditional data may not begin at 0 */
-	int32  block_size;  /* size of the blocks for unlimited dim. datasets */
-	int numrecs;	/* number of records this has been filled to */
+	int32  block_size;  /* size of the blocks for unlimited dim. datasets, default -1 */
+	int numrecs;	/* number of records this has been filled up to, for unlimited dim */
 	int32 aid;	/* aid for DFTAG_SD data */
 	int32 HDFtype;	/* type of this variable as HDF thinks */
 	int32 HDFsize;	/* size of this variable as HDF thinks */

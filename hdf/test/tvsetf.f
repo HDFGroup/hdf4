@@ -947,9 +947,9 @@ C       Detach it
       call VRFY(status,'vfinsrt vdata2_id -> vgroup0_id',number_failed)
 
       status = vfdtch(vgroup0_id)
-      call VRFY(status,'vfdtch vgroup0_id')
+      call VRFY(status,'vfdtch vgroup0_id', number_failed)
       status = vfdtch(vgroup1_id)
-      call VRFY(status,'vfdtch vgroup1_id')
+      call VRFY(status,'vfdtch vgroup1_id', number_failed)
 
 C     Test getting all vdatas: fid, start_vd=0, n_vds=0
 
@@ -1018,16 +1018,16 @@ C     of user-created vgroups, should fail
 C     Terminate access
       
       status = vfdtch(vgroup0_id)
-      call VRFY(status,'vfdtch vgroup0_id')
+      call VRFY(status,'vfdtch vgroup0_id',number_failed)
       status = vsfdtch(vdata1_id)
-      call VRFY(status,'vsfdtch vdata1_id')
+      call VRFY(status,'vsfdtch vdata1_id',number_failed)
       status = vsfdtch(vdata2_id)
-      call VRFY(status,'vsfdtch vdata2_id')
+      call VRFY(status,'vsfdtch vdata2_id',number_failed)
 
 C     Terminate access to the V interface and close the HDF file.
       status = vfend(fid)
       call VRFY(status,'vfend',number_failed)
       status = hclose(fid)
-      call VRFY(status,'vclose',number_failed)
+      call VRFY(status,'hclose',number_failed)
 
       end

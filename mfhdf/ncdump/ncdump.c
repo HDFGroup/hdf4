@@ -55,9 +55,6 @@ name_path(path)
 {
     char *cp, *new;
 
-#ifdef vms
-#define FILE_DELIMITER ']'
-#endif    
 #ifdef MSDOS
 #define FILE_DELIMITER '\\'
 #endif    

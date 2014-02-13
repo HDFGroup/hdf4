@@ -151,7 +151,6 @@ test_ncopen(path)
 	ncclose(cdfid0); return;
     }
 
-#if !(defined(vms) || defined(macintosh) || defined (SYMANTEC_C))
     if ((cdfid1 = ncopen(path, NC_WRITE)) == -1) {
 	error("%s: second ncopen failed", pname);
 	nerrs++;
@@ -169,13 +168,6 @@ test_ncopen(path)
 		nerrs++;
 	    }
     }
-#else /* Macintosh or VMS */
-#if defined(macintosh) || defined (SYMANTEC_C)
-	fprintf(stderr,"This version of the library Doesn't support shared access to files on Macintosh\n") ;
-#else /* !macintosh */
-	fprintf(stderr,"Doesn't support shared access on vms\n") ;
-#endif /* !macintosh */
-#endif /* Macintosh or VMS */
 
     if (ncclose (cdfid0) == -1) {
 	error("%s: ncclose failed in NC_NOWRITE mode", pname);
@@ -674,12 +666,8 @@ test_ncsync(path)
 	}
 
 	if ((cdfid1 = ncopen(path, NC_NOWRITE)) == -1) {
-#ifndef vms
 	    error("%s: second ncopen failed", pname);
 	    nerrs++;
-#else
-	    fprintf(stderr,"Doesn't support shared access on vms\n") ;
-#endif
 	} else {
 		if (cdfid0 == cdfid1) {
 		    error("%s: second ncopen should return distinct handle",

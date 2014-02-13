@@ -1502,6 +1502,7 @@ static intn test_chkcmp_SDSs()
  * verify the number of data blocks.
  */
 #define EXTEND_FILE     "datainfo_extend.hdf"  /* data file */
+#define BLOCK_SIZE	400
 static intn test_extend_SDSs()
 {
     int32 sd_id, sds_id, sds_index;
@@ -1515,6 +1516,7 @@ static intn test_extend_SDSs()
     uintn info_count = 0;
     t_hdf_datainfo_t sds_info;
     int32 *offarray = NULL, *lenarray = NULL;
+    int32  block_size = 0;
     intn status;
     int i, j, kk;
     int num_errs = 0; /* number of errors so far */
@@ -1534,7 +1536,7 @@ static intn test_extend_SDSs()
     sds_id = SDcreate(sd_id, "Extend-Data 1", DFNT_INT32, RANK2, dimsizes);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDcreate");
 
-    status = SDsetblocksize(sds_id, 400); /* to force linked blocks */
+    status = SDsetblocksize(sds_id, BLOCK_SIZE); /* to force linked blocks */
     CHECK(status, FAIL, "test_extend_SDSs: SDsetblocksize");
 
     /* Write the first batch of data to the dataset */
@@ -1543,6 +1545,11 @@ static intn test_extend_SDSs()
     edges[1] = X_LENGTH;
     status = SDwritedata(sds_id, starts, NULL, edges, (VOIDP) data1);
     CHECK(status, FAIL, "test_extend_SDSs: SDwritedata");
+
+    /* Get the block size of "Extend-Data 1" right after writing data */
+    status = SDgetblocksize(sds_id, &block_size);
+    CHECK(status, FAIL, "test_extend_SDSs: SDgetblocksize");
+    VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Check data. */
     HDmemset(&output, 0, sizeof(output));
@@ -1582,6 +1589,11 @@ static intn test_extend_SDSs()
 
     sds_id = SDselect(sd_id, sds_index);
     CHECK(sds_id, FAIL, "test_extend_SDSs: SDselect");
+
+    /* Get the block size of "Extend-Data 1" */
+    status = SDgetblocksize(sds_id, &block_size);
+    CHECK(status, FAIL, "test_extend_SDSs: SDgetblocksize");
+    VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Initialize second batch of data for the extendable dataset */
     for (j = 0; j < Y_LENGTH; j++)
@@ -1701,6 +1713,33 @@ static intn test_extend_SDSs()
 
     /* Release memory */
     free_info(&sds_info);
+
+    /* Close this SDS and the SD interface */
+    status = SDendaccess(sds_id);
+    CHECK(status, FAIL, "test_extend_SDSs: SDendaccess");
+    status = SDend(sd_id);
+    CHECK(status, FAIL, "test_extend_SDSs: SDend");
+
+    /*
+     * Reopen the file and verify that "Extend-Data 1" has the correct
+     * block size that was set earlier.
+     */
+
+    /* Create the file and initialize the SD interface */
+    sd_id = SDstart(EXTEND_FILE, DFACC_RDONLY);
+    CHECK(sd_id, FAIL, "test_extend_SDSs: SDstart");
+
+    /* Select the dataset "Extend-Data 1" */
+    sds_index = SDnametoindex(sd_id, "Extend-Data 1");
+    CHECK(sds_index, FAIL, "test_extend_SDSs: SDnametoindex");
+
+    sds_id = SDselect(sd_id, sds_index);
+    CHECK(sds_id, FAIL, "test_extend_SDSs: SDselect");
+
+    /* Verify that the block size is still as set earlier */
+    status = SDgetblocksize(sds_id, &block_size);
+    CHECK(status, FAIL, "test_extend_SDSs: SDgetblocksize");
+    VERIFY(block_size, BLOCK_SIZE, "SDgetblocksize");
 
     /* Close this SDS and the SD interface */
     status = SDendaccess(sds_id);

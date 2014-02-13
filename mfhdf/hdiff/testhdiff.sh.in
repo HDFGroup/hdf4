@@ -79,9 +79,6 @@ TOOLTEST() {
    # case of missing file name).  Changed it to use $@ till Tflops fixes it.
    TESTING $HDIFF $@
    (
-      echo "#############################"
-      echo "Expected output for '$HDIFF $@'" 
-      echo "#############################"
       cd $srcdir/testfiles
       if [ "`uname -s`" = "TFLOPS O/S" ]; then
         ${TESTS_ENVIRONMENT} $HDIFF_BIN $@

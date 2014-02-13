@@ -5,16 +5,17 @@
 This document is a instruction on how to build, test and install HDF4 libary on 
 Cygwin.  See detailed information in hdf4/INSTALL. 
 
-NOTE: hdf4 can be built with CMake, see the CMake.txt file for more guidance.
+NOTE: hdf4 can be built with CMake, see the INSTALL_CMake.txt file for more guidance.
 
 Preconditions:
 --------------
 
-1. Installed Cygwin 1.7.1 or higher
+1. Installed Cygwin 1.7.25 or higher
 
    To install the Cygwin net release, go to http://www.cygwin.com and 
-   click on "Install or update now!" icon. This will download a GUI 
-   installer called setup.txt which can be run to download a complete 
+   click on "setup-x86.exe" (32-bit installation) under the heading
+    "Current Cygwin DLL version". This will download a GUI 
+   installer called setup-x86.exe which can be run to download a complete 
    Cygwin installation via the internet. Then follow the instructions 
    on each screen to install Cygwin.
 
@@ -33,7 +34,7 @@ Preconditions:
     
     The following compilers are supported by HDF4 and included in the Cygwin
     package system:
-       gcc (4.3.4), which includes:
+       gcc (4.7.3), which includes:
             gcc4-core    : C compiler
             gcc4-g++     : C++ compiler
             gcc4-fortran : fortran compiler
@@ -57,19 +58,15 @@ Preconditions:
     The following libraries are required to build HDF4:
     
         libjpeg-devel   : JPEG library
-        sunrpc          : RPC library
+        tirpc           : RPC library
         zlib            : Zlib compression library
 
-    Note that HDF4 configure expects to find the sunrpc library with the name
-    librpc.a, but in Cygwin 1.7.7 and 1.7.9 the file for this library is named 
-    libtirpc.a.  A symbolic link with the expected name will allow hdf4
-    configure to find the library.  For example when the file in /usr/lib is 
-    named libtirpc.a, running the command "ln -s libtirpc.a librpc.a" in
-    /usr/lib will create the symbolic link librpc.a -> libtirpc.a for HDF4 to
-    use.
+    Back in 2005, the SunRPC of the glibc has been replaced by a TI-RPC 
+    (Transport Independent RPC) library to support IPv6. Note that HDF4 configure 
+    expects to find the library with the name libtirpc.a, since Cygwin 1.7.7.
 
     HDF4 also requires xdr support which is not provided by the Cygwin
-    version of sunrpc.  HDF4 provides a library for xdr support when the 
+    version of tirpc.  HDF4 provides a library for xdr support when the 
     configure flag --enable-hdf4-xdr is specified (see note 3 in the section
     "Build, Test and Install HDF4 on Cygwin").
     
@@ -95,6 +92,11 @@ Preconditions:
         diffutils       : diff command
         flex            : flex utility
         make            : make utility
+    
+    2.4 Alternate Build Process
+    
+    Download the CMake package and follow the notes in the "INSTALL_CMake.txt" 
+    file to build HDF4 with the CMake utilities.
         
         
         
@@ -129,7 +131,7 @@ Notes: Use the configure command in the top level HDF4 directory.
        * If your system has ZLIB and/or JPEG libraries installed under a
          system library directory (such as /usr/lib), configure will
          automatically find the library. In this case, the corresponding
-         configure flag may be ommitted.
+         configure flag may be omitted.
        * Note that --prefix defines where the installation path is.
          The default is set as <hdf4_build_directory>/NewHDF 
 
@@ -147,18 +149,6 @@ Notes: Use the configure command in the top level HDF4 directory.
 
          make install
 
-6. The --enable-hdf4-xdr configure option causes an incorrect include
-      path that could not be fixed in this version, breaking the "srcdir"
-      option.  Therefore this version of hdf4 must be built on Cygwin in the 
-      hdf4 source code directory.   
-
-      Normally you may build HDF4 in a directory other than hdf-X.Y.Z by
-      using the "srcdir" option. Simply create a build directory and
-      type:
-
-        <path_to_hdf4>/configure ...
-
-        where "..." are your configuration options.
 
 Acknowledgements:
 -----------------

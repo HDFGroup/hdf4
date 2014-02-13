@@ -11,11 +11,14 @@ else
 endif
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
+
+## Add ncgen specific linker flags here
+ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -45,14 +48,14 @@ ctest0_LDADD = $(LIBMFHDF) $(LIBHDF)
 ftest0_SOURCES=
 
 ## Recipe for building the ncgentab.c file
-ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
-	$(YACC) -d $(srcdir)/ncgen.y
-	mv y.tab.c ncgentab.c
-	mv y.tab.h ncgentab.h
+##ncgentab.c ncgentab.h: ncgen.h ncgen.y ncgenyy.c
+##	$(YACC) -d $(srcdir)/ncgen.y
+##	mv y.tab.c ncgentab.c
+##	mv y.tab.h ncgentab.h
 
-ncgenyy.c: ncgen.l
-	$(LEX) $(srcdir)/ncgen.l
-	mv lex.yy.c ncgenyy.c
+##ncgenyy.c: ncgen.l
+##	$(LEX) $(srcdir)/ncgen.l
+##	mv lex.yy.c ncgenyy.c
 
 #############################################################################
 ##                            Documentation                                ##
@@ -91,18 +94,14 @@ check_SCRIPTS = testncgen.sh
 ##                            Miscellaneous                                ##
 #############################################################################
 
-## This was in the original Makefile.
-vms-stuff:	ncgentab.h ncgentab.c ncgenyy.c
-	cp $(srcdir)/ncgentab.h vmstab.h
-	cp $(srcdir)/ncgentab.c vmstab.c
-	cp $(srcdir)/ncgenyy.c vms_yy.c
-
 #############################################################################
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ctest1.cdl ftest0$(EXEEXT) ftest0.nc ftest1.cdl    \
-                 ncgentab.c ncgentab.h ncgenyy.c netcdf.inc test0.c test0.f \
+CHECK_CLEANFILES += ctest1.cdl ftest1.cdl \
                  test0.nc test1.cdl test1.nc test2.cdl
+
+DISTCLEANFILES = ctest0$(EXEEXT) ctest0.nc ftest0$(EXEEXT) ftest0.nc    \
+                 netcdf.inc test0.c test0.f
 
 include $(top_srcdir)/config/conclude.am

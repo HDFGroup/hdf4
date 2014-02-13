@@ -8,22 +8,10 @@
  *  'xdr_vector' is not used by the netCDF, it is used here for convenience.
  */
 #include <stdio.h>
-#if (defined macintosh || defined SYMANTEC_C || defined MAC)
-#define NO_SYS_XDR_INC /* use local "xdr.h" */
-#	include "types.h"
-#else /* not macintosh */
-#       ifdef vms
-#         include <in.h>
-#         include <libdef.h>
-#         include <lib$routines.h>
-#         include <string.h>
-#       else
-#   	  include <sys/types.h>	/* for <netinet/in.h> on some systems */
-#   	  if !defined MSDOS & !defined _WIN32
-#            include <netinet/in.h>	/* for htonl() */
-#   	  endif
-#	endif
-#endif /* not macintosh */
+#include <sys/types.h>	/* for <netinet/in.h> on some systems */
+#if !defined MSDOS & !defined _WIN32
+#include <netinet/in.h>	/* for htonl() */
+#endif
 
 /*
  * The following is necessary because the assert() macro *must* be defined
@@ -61,10 +49,6 @@
 #define EPSILON .0005
 #endif /* __FreeBSD__ */
 
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 int main(ac,av)
 int ac ;
 char *av[] ;
@@ -75,9 +59,6 @@ char *av[] ;
 	XDR xdrs[1] ;
 	u_int count ;
 	u_int szof ;
-#ifdef vms
-	static long timer_addr = 0 ;
-#endif
 
 	/* some random numbers, divisible by 4 and less than 32k */
 	static u_int seeks[] = 
@@ -150,10 +131,6 @@ char *av[] ;
 	encount *ep , got_ep[5] ;
 
 
-#if defined __MWERKS__
-    ac = ccommand(&av);
-#endif
-	
 #ifdef MDEBUG
 	malloc_debug(2) ;
 #endif
@@ -165,16 +142,10 @@ char *av[] ;
 #ifdef CREATE
 /* Create */
 
-#ifdef vms
-	lib$init_timer(&timer_addr) ;
-	F = fopen(fname,"wb",
-		"mbf=2","mbc=16") ;
-#else
 #ifdef __STDC__
 	F = fopen(fname,"wb") ;
 #else
 	F = fopen(fname,"w") ;
-#endif
 #endif
 	if( F == NULL)
 	{
@@ -258,15 +229,10 @@ char *av[] ;
 
 	assert(fclose(F) != EOF) ;
 #endif /* CREATE */
-#ifdef vms
-	F = fopen(fname,"rb",
-		"mbf=2","mbc=16" ) ;
-#else
 #ifdef __STDC__
 	F = fopen(fname,"rb") ;
 #else
 	F = fopen(fname,"r") ;
-#endif
 #endif
 	if( F == NULL)
 	{
@@ -404,9 +370,6 @@ char *av[] ;
 		assert( xdr_long(xdrs, got_al) ) ;
 		assert( *got_al == ii ) ;
 	}
-#endif
-#ifdef vms
-	lib$show_timer(&timer_addr) ;
 #endif
 	exit(0) ;
 }

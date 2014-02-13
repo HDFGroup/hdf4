@@ -25,11 +25,6 @@
 #include	"local_nc.h"
 #include	"alloc.h"
 #include	"herr.h"
-#ifdef vms
-#   include <unixio.h>
-#   include <unixlib.h>
-#   include <file.h>
-#endif
 
 /* obtain the maximum number of open files allowed, at the same time,
    on the current system */

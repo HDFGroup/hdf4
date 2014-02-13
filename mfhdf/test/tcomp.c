@@ -22,10 +22,6 @@
 
 #include "mfhdf.h"
 
-#ifdef macintosh
-    #include <LowMem.h>
-#endif
-
 #ifdef HDF
 
 #include "hdftest.h"
@@ -257,15 +253,18 @@ test_compressed_data()
         num_errs++;
     }
 
-    /* Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR */
+    /*
+     * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
+     */
+#ifndef H4_NO_DEPRECATED_SYMBOLS /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_SKPHUFF, "SDgetcompress");
     VERIFY(cinfo.skphuff.skp_size, 4, "SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+#endif /* H4_NO_DEPRECATED_SYMBOLS */
+
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
@@ -608,13 +607,14 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
+#ifndef H4_NO_DEPRECATED_SYMBOLS /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_RLE, "SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+#endif /* H4_NO_DEPRECATED_SYMBOLS */
+
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
@@ -692,13 +692,14 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
+#ifndef H4_NO_DEPRECATED_SYMBOLS /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_NONE, "SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+#endif /* H4_NO_DEPRECATED_SYMBOLS */
+
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);
@@ -777,14 +778,15 @@ test_compressed_data()
     /*
      * Retrieve and verify the compression info - bug# 307, 9/7/01 - BMR
      */
+#ifndef H4_NO_DEPRECATED_SYMBOLS /* Jan 9, 2013 */
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompress(newsds2, &comp_type, &cinfo);
     CHECK(status, FAIL, "SDgetcompress");
     VERIFY(comp_type, COMP_CODE_DEFLATE, "SDgetcompress");
     VERIFY(cinfo.deflate.level, 6, "SDgetcompress");
-    /* duplicate the above test for new API SDgetcompinfo - SDgetcompress will
-       be removed eventually - bugzilla #130, 4/17/05 - BMR */
+#endif /* H4_NO_DEPRECATED_SYMBOLS */
+
     comp_type = COMP_CODE_INVALID;  /* reset variables before retrieving info */
     HDmemset(&cinfo, 0, sizeof(cinfo)) ;
     status = SDgetcompinfo(newsds2, &comp_type, &cinfo);

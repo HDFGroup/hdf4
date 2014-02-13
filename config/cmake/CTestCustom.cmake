@@ -8,7 +8,6 @@ SET (CTEST_CUSTOM_WARNING_EXCEPTION
     "POSIX name for this item is deprecated"
     "disabling jobserver mode"
     "config.cmake.xlatefile.c"
-    "warning.*implicit declaration of function"
 )
  
  

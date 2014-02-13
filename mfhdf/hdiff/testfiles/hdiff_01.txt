@@ -1,6 +1,3 @@
-#############################
-Expected output for 'hdiff '
-#############################
 hdiff [-V] [-b] [-g] [-s] [-d] [-D] [-S] [-v var1[,...]] [-u var1[,...]] [-e count] [-t limit] [-p relative] file1 file2
   [-V]              Display version of the HDF4 library and exit
   [-b]              Verbose mode

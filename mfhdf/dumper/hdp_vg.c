@@ -649,15 +649,7 @@ void print_fields( char *fields,
           count = 0;
    char  *ptr=NULL, *tempPtr=NULL,
           fldname[MAXNAMELEN],
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__) 
-
-   /* Lets allocate space for tmpflds */
-   *tempflds = (char *)HDmalloc(VSFIELDMAX * FIELDNAMELENMAX * sizeof(char));
-   CHECK_ALLOC( tempflds, "*tempflds", "print_fields" );
-
-#else /* !macintosh */
-   tempflds[VSFIELDMAX*FIELDNAMELENMAX];
-#endif /* !macintosh */
+	  tempflds[VSFIELDMAX*FIELDNAMELENMAX];
 
    /* if fields are not defined by VSsetfields and VSfdefine */
    if( fields[0] == '\0' || fields == NULL )
@@ -697,10 +689,6 @@ void print_fields( char *fields,
       fprintf(fp, "];\n");
    }  /* there are fields to print */
    
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-    SAFE_FREE(tempflds);	/* free field list and set it to NULL */
-#endif /* macintosh */ 
-
 }  /* end of print_fields */
 
 /* compose the list of indices of the requested vgroups although some
@@ -1093,15 +1081,7 @@ intn vgdumpfull(int32        vg_id,
     char  *name = NULL;
     char  *file_name = dumpvg_opts->ifile_name;
     intn   status, ret_value = SUCCEED;
-
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-	/* macintosh cannot handle >32K locals */
-   char *fields = (char *)HDmalloc(VSFIELDMAX*FIELDNAMELENMAX* sizeof(char));
-   CHECK_ALLOC( fields, "*fields", "vgdumpfull" );
-
-#else /* !macintosh */
     char   fields[VSFIELDMAX*FIELDNAMELENMAX];
-#endif /* !macintosh */    
 
    aNode->n_entries = num_entries;
 if (num_entries != 0)
@@ -1280,9 +1260,6 @@ done:
 	  aNode = free_node_vg_info_t(aNode);
       }
     /* Normal cleanup */
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C) || defined(__APPLE__)
-    SAFE_FREE(fields);	/* free field list and set it to NULL */
-#endif /* macintosh */ 
     SAFE_FREE(vgname);	/* free vg name and set it to NULL */
     SAFE_FREE(vgclass);	/* free vg class name and set it to NULL */
 

@@ -212,6 +212,9 @@ HDFLIBAPI intn SDsetaccesstype
 HDFLIBAPI intn SDsetblocksize
     (int32 sdsid, int32 block_size);
 
+HDFLIBAPI intn SDgetblocksize
+    (int32 sdsid, int32 *block_size);
+
 HDFLIBAPI intn SDsetdimval_comp
     (int32 dimid, intn compt_mode);
 

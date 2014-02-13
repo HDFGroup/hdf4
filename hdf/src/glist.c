@@ -28,19 +28,6 @@ static char RcsId[] = "@(#)$Id$";
 #include <stdlib.h>
 #include "glist.h"
 
-/* Commmented out the following */
-#if 0
-/* Macintosh */
-#if defined SYMANTEC_C || defined macintosh
-#define malloc NewPtr
-#define free   DisposePtr
-#endif /* SYMANTEC_C || macintosh */
-
-#define NEW(x) ((x *) emalloc(sizeof(x)))
-static void *emalloc(unsigned int n);
-static char *module = "generic_list";
-#endif /* Commented out */
-
 /*+
 ****************************************************************************
 GENERAL

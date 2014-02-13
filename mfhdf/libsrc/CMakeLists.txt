@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.6)
+cmake_minimum_required (VERSION 2.8.10)
 PROJECT (HDF4_MFHDF_LIBSRC C CXX)
 
 #-----------------------------------------------------------------------------
@@ -12,27 +12,6 @@ ELSE (WIN32 AND NOT CYGWIN)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 SET (NC_OLD_FILLVALUES 0)
-
-IF (APPLE)
-  STRING (TOLOWER APPLE netcdf_sys)
-ELSE (APPLE)  
-  STRING (TOLOWER ${CMAKE_SYSTEM_NAME} netcdf_sys)
-ENDIF (APPLE)
-
-MESSAGE (STATUS "System Name ${CMAKE_SYSTEM_NAME}")
-IF (HDF4_ENABLE_NETCDF)
-  ADD_CUSTOM_COMMAND (
-      OUTPUT ${HDF4_BINARY_DIR}/netcdf.h
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${netcdf_sys}.h ${HDF4_BINARY_DIR}/netcdf.h
-      COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.h to netcdf.h"
-  )
-ELSE (HDF4_ENABLE_NETCDF)
-  ADD_CUSTOM_COMMAND (
-      OUTPUT ${HDF4_BINARY_DIR}/hdf4_netcdf.h
-      COMMAND ${CMAKE_COMMAND} -E copy ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/config/netcdf-${netcdf_sys}.h ${HDF4_BINARY_DIR}/hdf4_netcdf.h
-      COMMENT " Copying netcdf Name netcdf-${netcdf_sys}.h to hdf4_netcdf.h"
-  )
-ENDIF (HDF4_ENABLE_NETCDF)
 
 SET (HDF4_MFHDF_LIBSRC_CSRCS
     ${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/array.c
@@ -66,9 +45,11 @@ SET (HDF4_MFHDF_LIBSRC_CHDRS
 )
 
 IF (HDF4_ENABLE_NETCDF)
-  SET (HDF4_MFHDF_LIBSRC_CHDRS ${HDF4_MFHDF_LIBSRC_CHDRS} ${HDF4_BINARY_DIR}/netcdf.h)
+  CONFIGURE_FILE (${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/netcdf.h)
+  SET (HDF4_MFHDF_LIBSRC_XCHDRS ${HDF4_BINARY_DIR}/netcdf.h)
 ELSE(HDF4_ENABLE_NETCDF)
-  SET (HDF4_MFHDF_LIBSRC_CHDRS ${HDF4_MFHDF_LIBSRC_CHDRS} ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
+  CONFIGURE_FILE (${HDF4_MFHDF_LIBSRC_SOURCE_DIR}/netcdf.h.in ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
+  SET (HDF4_MFHDF_LIBSRC_XCHDRS ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
 ENDIF (HDF4_ENABLE_NETCDF)
 
 IF (NOT HDF4_BUILD_XDR_LIB)
@@ -92,6 +73,7 @@ IF (HDF4_BUILD_XDR_LIB)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
   TARGET_LINK_LIBRARIES (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
 ENDIF (HDF4_BUILD_XDR_LIB)
+TARGET_C_PROPERTIES (${HDF4_MF_LIB_TARGET} " " " ")
 TARGET_LINK_LIBRARIES (${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
 SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_MF_LIB_TARGET} ${HDF4_MF_LIB_NAME} ${LIB_TYPE})
@@ -101,7 +83,7 @@ H4_SET_LIB_OPTIONS (${HDF4_MF_LIB_TARGET} ${HDF4_MF_LIB_NAME} ${LIB_TYPE})
 #-----------------------------------------------------------------------------
 INSTALL (
     FILES
-        ${HDF4_MFHDF_LIBSRC_CHDRS}
+        ${HDF4_MFHDF_LIBSRC_CHDRS} ${HDF4_MFHDF_LIBSRC_XCHDRS}
     DESTINATION
         ${HDF4_INSTALL_INCLUDE_DIR}
     COMPONENT
@@ -111,8 +93,9 @@ INSTALL (
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
-
-INSTALL_TARGET_PDB (${HDF4_MF_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+IF (BUILD_SHARED_LIBS)
+  INSTALL_TARGET_PDB (${HDF4_MF_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+ENDIF (BUILD_SHARED_LIBS)
   
 INSTALL (
     TARGETS 

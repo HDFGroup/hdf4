@@ -57,20 +57,10 @@ static char RcsId[] = "@(#)$Revision$";
 #define CKSEEKEND(x,y,z, ret)   {  if (DF_SKEND( x,(long)y,z) <0) \
                 {DFerror = DFE_SEEKERROR; return(ret); } }
 
-#ifdef VMS
-#define CKREAD(x,y,z,f, ret)    { \
-                int32 currfileposn; \
-                currfileposn = DF_TELL(f); \
-                if (DF_READ( (char*)x, (int)(y), (int)(z), (f))<0) \
-                { DFerror = DFE_READERROR; return(ret); } \
-                DF_SEEK(f, (long) (currfileposn + y*z), 0); \
-                }
-#else  /*VMS */
 #define CKREAD(x,y,z,f, ret)    { \
                 if (DF_READ( (char*)x, (int)(y), (int)(z), (f))<0) \
                 { DFerror = DFE_READERROR; return(ret); } \
                 }
-#endif /*VMS */
 
 #define CKWRITE(x,y,z,f, ret)   { if (DF_WRITE( (char*)x, (int)y, (int)z,f)<0) \
                 {DFerror = DFE_WRITEERROR; return(ret); } }
@@ -1366,10 +1356,6 @@ char       *ptr;
 int32       len;
 {
     int32       maxlen;
-#ifdef VMS
-    int32       totalread;
-    int32       readsize;
-#endif /*VMS */
     maxlen = dfile->up_dd->length -
         ((int32) DF_TELL(dfile->file) - dfile->up_dd->offset);
     if (len > maxlen)
@@ -1380,23 +1366,10 @@ int32       len;
           return (-1);
       }
 
-#ifdef VMS
-    totalread = 0;
-    while (totalread < len)
-      {
-          readsize = len - totalread;
-          if (readsize > 512)
-              readsize = 512;
-          CKREAD(&ptr[totalread], (int) readsize, 1, dfile->file, -1);
-          totalread += readsize;
-      }
-
-#else  /*VMS */
     if (len)
       {     /* NOTE: cast to (int) will limit to 64K on 16 bit m/cs */
           CKREAD(ptr, (int) len, 1, dfile->file, -1);
       }
-#endif /*VMS */
 
     return (len);
 }

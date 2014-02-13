@@ -5,11 +5,11 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc	\
 	 -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
 
 #############################################################################
 ##                              Testing                                    ##
@@ -23,7 +23,8 @@ check_SCRIPTS = testmfhdf.sh
 cdftest_SOURCES = cdftest.c
 cdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
-hdfnctest_SOURCES = hdfnctest.c tunlim.c tncunlim.c
+hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
+		    tncunlim.c
 hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
@@ -36,8 +37,9 @@ hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 ##                          And the cleanup                                ##
 #############################################################################
 
-DISTCLEANFILES=*.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
-               onedimonevar.nc multidimvar.nc
+CHECK_CLEANFILES += *.new *.hdf *.cdf *.cdl netcdf.h This* onedimmultivars.nc \
+               onedimonevar.nc multidimvar.nc SD_externals
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am
-               

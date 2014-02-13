@@ -32,11 +32,6 @@
 #include <unistd.h>
 #endif
 
-#ifdef VMS
-#include <unixlib.h>
-#include <descrip.h>
-#endif
-
 #ifdef DEBUG
 #define ASSERT(e) {if(!(e)){fprintf(stderr,"Assertion failed: file %s, line %d\n",__FILE__,__LINE__);exit(1);}}
 #define NOT_REACHED() {fprintf(stderr,"Should not reach: file %s, line %d\n",__FILE__,__LINE__);exit(1);}

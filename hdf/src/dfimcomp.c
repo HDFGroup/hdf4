@@ -33,12 +33,7 @@ static char RcsId[] = "@(#)$Revision$";
 #define PALSIZE 256
 #define BIT8 0
 #define BIT24 1
-
-#if (!defined MAC && !defined macintosh && !defined SYMANTEC_C )
 #define MAXCOLOR 32768
-#else  /*MAC */
-#define MAXCOLOR 768
-#endif /*MAC */
 
 #ifndef NULL
 #   define NULL 0

@@ -35,8 +35,6 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine RESULT(errval, routine, num_failed)
       implicit none
-C For VMS uncomment next line and comment out the line after next
-C     include '[-.src]hdf.inc'
       include '../src/hdf.inc'
       include 'fortest.inc'
 
@@ -68,8 +66,6 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine VRFY(errval, routine, num_failed)
       implicit none
-C For VMS uncomment next line and comment out the line after next
-C     include '[-.src]hdf.inc'
       include '../src/hdf.inc'
       include 'fortest.inc'
 
@@ -182,8 +178,6 @@ C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine errchkio(err1, err2, err3, num_err, msg)
       implicit none
-C For VMS uncomment next line and comment out the line after next
-C     include '[-.src]hdf.inc'
       include '../src/hdf.inc'
       include 'fortest.inc'
 
@@ -197,8 +191,8 @@ C     include '[-.src]hdf.inc'
           print *, '  err1=',err1, '   err2=',err2, '   err3=',err3
       else
           if (verbosity .ge. VERBO_HI) then
-	      print *,'Test passed for ', msg
-	  endif
+            print *,'Test passed for ', msg
+          endif
       endif
 
       return
@@ -222,8 +216,8 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
         num_err = num_err + 1
       else
           if (verbosity .ge. VERBO_HI) then
-	    print *, 'Test passed for ', type, ' array'
-	  endif
+            print *, 'Test passed for ', type, ' array'
+          endif
       endif
 
       if (err2 .eq. 1) then
@@ -231,8 +225,8 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
         num_err = num_err + 1
       else
           if (verbosity .ge. VERBO_HI) then
-	    print *, 'Test passed for ', type, ' scales.'
-	  endif
+            print *, 'Test passed for ', type, ' scales.'
+          endif
       endif
 
       if (err3 .eq. 1) then
@@ -240,8 +234,8 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
         num_err = num_err + 1
       else
           if (verbosity .ge. VERBO_HI) then
-	    print *, 'Test passed for ', type, ' max/min.'
-	  endif
+            print *, 'Test passed for ', type, ' max/min.'
+          endif
       endif
 
       return
@@ -261,12 +255,12 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       character*(*) type
 
       if (err .eq. 1) then 
-  	print *,'>>> Test failed for ',type, ' array.'
+        print *,'>>> Test failed for ',type, ' array.'
         num_err = num_err+1
       else
           if (verbosity .ge. VERBO_HI) then
-	    print *,'Test passed for ', type, ' array.'
-	  endif
+            print *,'Test passed for ', type, ' array.'
+          endif
       endif
 
       return
@@ -286,10 +280,10 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       character*(*) action, name
 
       if (Verbosity .ge. VERBO_DEF) then
-	call MESSAGE(VERBO_LO,
+      call MESSAGE(VERBO_LO,
      +     '=====================================')
-	print *, action, ' -- ', name
-	call MESSAGE(VERBO_LO,
+      print *, action, ' -- ', name
+      call MESSAGE(VERBO_LO,
      +     '=====================================')
       endif
 

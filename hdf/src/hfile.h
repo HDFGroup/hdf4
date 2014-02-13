@@ -51,10 +51,10 @@
 
 #define LIBVER_MAJOR    4
 #define LIBVER_MINOR    2 
-#define LIBVER_RELEASE  8 
-#define LIBVER_SUBRELEASE "post0"   /* For pre-releases like snap0       */
+#define LIBVER_RELEASE  10 
+#define LIBVER_SUBRELEASE ""   /* For pre-releases like snap0       */
                                 /* Empty string for real releases.           */
-#define LIBVER_STRING   "HDF Version 4.2 Release 8-post0, August 19, 2012"
+#define LIBVER_STRING   "HDF Version 4.2 Release 10, February 7, 2014"
 #define LIBVSTR_LEN    80   /* length of version string  */
 #define LIBVER_LEN  92      /* 4+4+4+80 = 92 */
 /* end of version tags */
@@ -71,13 +71,6 @@
 /* using C buffered file I/O routines to access files */
 #include <stdio.h>
 typedef FILE *hdf_file_t;
-#ifdef VMS
-/* For VMS, use "mbc=64" to improve performance     */
-#   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
-                                fopen((p), "r+", "mbc=64") : \
-                                fopen((p), "r", "mbc=64"))
-#   define HI_CREATE(p)        (fopen((p), "w+", "mbc=64"))
-#else  /*  !VMS  */
 #if defined SUN && defined (__GNUC__)
 #   define HI_OPEN(p, a)       (((a) & DFACC_WRITE) ? \
                                 fopen((p), "r+") : fopen((p), "r"))
@@ -87,7 +80,6 @@ typedef FILE *hdf_file_t;
                                 fopen((p), "rb+") : fopen((p), "rb"))
 #   define HI_CREATE(p)        (fopen((p), "wb+"))
 #endif /* !SUN w/ GNU CC */
-#endif /* VMS */
 #   define HI_READ(f, b, n)    (((size_t)(n) == (size_t)fread((b), 1, (size_t)(n), (f))) ? \
                                 SUCCEED : FAIL)
 #   define HI_WRITE(f, b, n)   (((size_t)(n) == (size_t)fwrite((b), 1, (size_t)(n), (f))) ? \
@@ -499,9 +491,6 @@ extern      "C"
     HDFLIBAPI int32 HDget_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
-    HDFLIBAPI intn HDgetspecinfo
-                (intn file_id, uint16 tag, uint16 ref, sp_info_block_t *info);
-
     HDFLIBAPI int32 HDset_special_info
                 (int32 access_id, sp_info_block_t * info_block);
 
@@ -637,25 +626,6 @@ extern      "C"
  */
 #include "hchunks.h"
 
-#if defined (MAC) || defined (macintosh) || defined (SYMANTEC_C)
-    HDFLIBAPI hdf_file_t mopen
-                (char *filename, intn access);
-
-    HDFLIBAPI int32 mclose
-                (hdf_file_t rn);
-
-    HDFLIBAPI int32 mlseek
-                (hdf_file_t rn, int32 n, intn m);
-
-    HDFLIBAPI int32 mread
-                (hdf_file_t rn, char *buf, int32 n);
-
-    HDFLIBAPI int32 mwrite
-                (hdf_file_t rn, char *buf, int32 n);
-    HDFLIBAPI intn mstat
-                (char *path);
-
-#endif  /* macintosh */
 
 /*
    ** from hbuffer.c

@@ -1,0 +1,38 @@
+      SUMMARY OF THE HDF4 CONFIGURATION
+      =================================
+
+General Information:
+-------------------
+                   HDF4 Version: @HDF4_PACKAGE_VERSION_STRING@
+                  Configured on: @CONFIG_DATE@
+                  Configured by: @CMAKE_GENERATOR@
+                 Configure mode: CMAKE @CMAKE_VERSION@
+                    Host system: @CMAKE_HOST_SYSTEM@
+              Uname information: @CMAKE_SYSTEM_NAME@
+                      Libraries: @BUILD_NAME_EXT@
+             Installation point: @CMAKE_INSTALL_PREFIX@
+
+Compiling Options:
+------------------
+               Compilation Mode: @CMAKE_BUILD_TYPE@
+                     C Compiler: @CMAKE_C_COMPILER@
+                         CFLAGS: @CMAKE_C_FLAGS@
+                       CPPFLAGS: @CMAKE_CXX_FLAGS@
+               Shared Libraries: @H4_ENABLE_SHARED_LIB@
+               Static Libraries: @H4_ENABLE_STATIC_LIB@
+  Statically Linked Executables: @BUILD_STATIC_EXECS@
+                        LDFLAGS: @CMAKE_SHARED_LINKER_FLAGS@
+                Extra libraries: @LINK_LIBS@
+                       Archiver: @CMAKE_AR@
+                         Ranlib: @CMAKE_RANLIB@
+
+Languages:
+----------
+                        Fortran: @HDF4_BUILD_FORTRAN@
+@BUILD_FORTRAN_CONDITIONAL_TRUE@               Fortran Compiler: @CMAKE_Fortran_COMPILER@
+@BUILD_FORTRAN_CONDITIONAL_TRUE@                  Fortran Flags: @CMAKE_Fortran_FLAGS@
+
+Features:
+---------
+               SZIP compression: @SZIP_INFO@
+   Support for netCDF API 2.3.2: @HDF4_ENABLE_NETCDF@

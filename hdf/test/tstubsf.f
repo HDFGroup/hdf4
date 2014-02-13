@@ -1,5 +1,5 @@
 C****************************************************************************
-C* $Id$			    *
+C* $Id$                       *
 C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 C* Copyright by The HDF Group.                                               *
 C* Copyright by the Board of Trustees of the University of Illinois.         *
@@ -163,7 +163,7 @@ C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
       else
          err = 0
          do 10 i=1, a0size
-	    if (in(i:i) .ne. ar0(i:i)) err = 1
+         if (in(i:i) .ne. ar0(i:i)) err = 1
  10      continue
          if (err .eq. 1) then
             print *, '>>>Failure:  strings differ.'
@@ -172,7 +172,7 @@ C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
             nerrors = nerrors + 1
          else
             call MESSAGE(VERBO_HI,
-     +		'Success:  string read is the same as written.')
+     +     'Success:  string read is the same as written.')
          endif
       endif
 
@@ -241,18 +241,18 @@ C       print *, 'Success:  dfishdf failed with DFerror = ', dfenum
          print *, '   DFerror = ', dfenum
          nerrors = nerrors + 1
       else
-	err = 0
-	do 40 i=1, a1size
+         err = 0
+         do 40 i=1, a1size
            if (in(i:i) .ne. ar1(i:i)) err = 1
- 40	continue
-	if (err .eq. 1) then
+ 40      continue
+         if (err .eq. 1) then
            print *, '>>>Failure:  strings differ.'
            print *, '   String written:  ', ar1
            print *, '   String read:     ', in
            nerrors = nerrors + 1
-	else
+         else
            call MESSAGE(VERBO_HI,
-     +		'Success:  string read is the same as written.')
+     +    'Success:  string read is the same as written.')
         endif
       endif
       in(1:20) = '                    '
@@ -326,11 +326,11 @@ C
       else
          ret = dfnumber(dfile, t127)
          dfenum = dferrno()
-	if (ret .ne. 1) then
+      if (ret .ne. 1) then
            print *, '>>>Failure:  duplicated tag not found.'
            print *, '   DFerror = ', dfenum
            nerrors = nerrors + 1
-	else
+      else
            call MESSAGE(VERBO_HI, 'Success!')
         endif
       endif
@@ -350,7 +350,7 @@ C
             print *, '   DFerror = ', dfenum
             nerrors = nerrors + 1
          else
-	  call MESSAGE(VERBO_HI, 'Success!')
+            call MESSAGE(VERBO_HI, 'Success!')
        endif
       endif
 
@@ -413,11 +413,11 @@ C
       endif
 
       if (nerrors .ne. 0) then
-	  print *, '   ', nerrors, ' errors were encountered.'
+          print *, '   ', nerrors, ' errors were encountered.'
       else
-	  if (verbosity .ge. VERBO_HI) then
-	      print *, '        >>> ALL TESTS PASSED <<<'
-	  endif
+          if (verbosity .ge. VERBO_HI) then
+             print *, '        >>> ALL TESTS PASSED <<<'
+          endif
       endif
 
       return

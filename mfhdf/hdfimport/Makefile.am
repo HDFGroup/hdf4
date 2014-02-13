@@ -5,11 +5,14 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
+
+## Add hdfimport specific linker flags here
+hdfimport_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 ##                      Libraries to link against                          ##

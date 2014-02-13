@@ -30,13 +30,6 @@ FILE *dbg_file;
 
 #include <stdlib.h>
 
-#ifdef macintosh
-    #include <LowMem.h>
-#endif
-#if defined __MWERKS__
-#include <console.h>
-#endif
-
 #ifdef PROTOTYPE
 int main(int argc, char *argv[])
 #else
@@ -51,28 +44,6 @@ char *argv[];
 
     int name_size;
     char *srcdir;
-
-#ifdef macintosh
-	Ptr	currStackBase, newApplLimit, currApplLimit, currHeapEnd;
-
-
-	/*	Expand the stack.  hdf_write_var( ) causes the stack to collide with
-		the 68K application heap when only the default stack size is used.   */
-	currStackBase = LMGetCurStackBase( );
-	newApplLimit = (Ptr) ( (long) currStackBase - 65536L );
-	currApplLimit = GetApplLimit( );
-	if ( newApplLimit > currApplLimit )	/* If we're about to shrink the stack, ...*/
-		 newApplLimit = currApplLimit;	/* ... then don't. */
-
-	currHeapEnd = LMGetHeapEnd( );
-	if ( newApplLimit < currHeapEnd )	/* If we're about overlap the stack and heap,...*/
-		 newApplLimit = currHeapEnd;	/* ... then don't.*/
-
-	SetApplLimit( newApplLimit );
-#endif
-#if defined __MWERKS__
-    argc = ccommand(&argv);
-#endif
 
 #if defined TEST_PC || defined TEST_WIN
     dbg_file=fopen("test.dbg","w+");
@@ -175,11 +146,7 @@ char *argv[];
 #if defined TEST_PC || defined TEST_WIN
     fclose(dbg_file);
 #endif
-#ifdef vms
-#define EXIT_SUCCESS 1
-#else
 #define EXIT_SUCCESS 0
-#endif
     return EXIT_SUCCESS;
 }
 

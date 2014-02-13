@@ -21,8 +21,8 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
 
       implicit none
       include 'fortest.inc'
-	include '../src/hdf.inc'
-	include '../src/dffunc.inc'
+      include '../src/hdf.inc'
+      include '../src/dffunc.inc'
 
       integer num_err
       character*20 myname
@@ -235,7 +235,7 @@ C
              if ( da(k,j,i) .ne. sa(k,j,i)) then
                  num_err = num_err + 1
                  if (Verbosity .ge. VERBO_DEF) then
-		     call MESSAGE(VERBO_DEF, '  *** data error *** ')
+                call MESSAGE(VERBO_DEF, '  *** data error *** ')
                      print *, '(k,j,i) = (', k,',', j,',', i,')',
      +                     ' da=',da(k,j,i), ', sa=',sa(k,j,i)
                  endif

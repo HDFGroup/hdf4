@@ -170,7 +170,7 @@ C=============================================================
       
       include 'mffunc.inc'
       
-      integer      fid, dset1, dset2, dim_id
+      integer      dset1, dset2, dim_id
       integer      err,status
       integer      sd_id, id_type
       character*12 file
@@ -188,8 +188,8 @@ C=============================================================
       integer      var_list(3), type_list(3)
       character*21   ATTR1_NAME
       character*15   ATTR2_NAME
-      character*18   ATTR1_VAL
-      character*22   ATTR2_VAL
+      character*19   ATTR1_VAL
+      character*23   ATTR2_VAL
       integer ATTR1_LEN
       integer ATTR2_LEN
       real sds1_data(X_LENGTH,Y_LENGTH)

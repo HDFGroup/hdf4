@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.6)
+cmake_minimum_required (VERSION 2.8.10)
 PROJECT (HDF4_MFHDF_NCTEST)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
@@ -41,6 +41,7 @@ SET (nctest_SRCS
 )
   
 ADD_EXECUTABLE (nctest ${nctest_SRCS})
+TARGET_C_PROPERTIES (nctest " " " ")
 IF (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
 ELSE (HDF4_BUILD_XDR_LIB)
@@ -66,15 +67,4 @@ FOREACH (h4_file ${HDF4_NC_TEST_FILES})
       
 ENDFOREACH (h4_file ${HDF4_NC_TEST_FILES})
 
-# Remove any output file left over from previous test run
-ADD_TEST (
-    NAME NC_TEST-clearall-objects
-    COMMAND    ${CMAKE_COMMAND}
-        -E remove 
-        test.nc
-        test2.nc
-)
-
-#-- Adding test for nctest
-ADD_TEST (NAME NC_TEST-nctest COMMAND $<TARGET_FILE:nctest>)
-SET_TESTS_PROPERTIES (NC_TEST-nctest PROPERTIES DEPENDS NC_TEST-clearall-objects LABELS ${PROJECT_NAME})
+INCLUDE (CMakeTests.cmake)

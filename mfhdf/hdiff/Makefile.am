@@ -5,11 +5,14 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+amINCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(amINCLUDES) $(DEFINES)
+
+## Add hdiff specific linker flags here
+hdiff_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)
 
 #############################################################################
 ##                          Programs to build                              ##
@@ -37,5 +40,13 @@ noinst_PROGRAMS = hdifftst
 hdifftst_SOURCES = hdifftst.c
 hdifftst_LDADD = $(LIBMFHDF) $(LIBHDF)
 hdifftst_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
+
+#############################################################################
+##                          And the cleanup                                ##
+#############################################################################
+
+CHECK_CLEANFILES += hdifftst1.hdf hdifftst2.hdf hdifftst3.hdf hdifftst4.hdf hdifftst5.hdf hdifftst6.hdf hdifftst7.hdf
+
+DISTCLEANFILES =
 
 include $(top_srcdir)/config/conclude.am
