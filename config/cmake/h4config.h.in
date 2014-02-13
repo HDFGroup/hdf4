@@ -118,7 +118,7 @@
 #define H4_PACKAGE_URL "@HDF4_PACKAGE_URL@"
 
 /* Define to the version of this package. */
-#define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION@"
+#define H4_PACKAGE_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
 /* The size of `int*', as computed by sizeof. */
 #cmakedefine H4_SIZEOF_INTP @H4_SIZEOF_INTP@
@@ -127,7 +127,7 @@
 #cmakedefine H4_STDC_HEADERS @H4_STDC_HEADERS@
 
 /* Version number of package */
-#define H4_VERSION "@HDF4_PACKAGE_VERSION@"
+#define H4_VERSION "@HDF4_PACKAGE_VERSION_STRING@"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

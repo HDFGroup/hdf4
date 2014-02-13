@@ -1,4 +1,5 @@
 * text=auto !eol
+config/cmake/README.txt.cmake.in -text
 config/cmake/hdf.gif -text svneol=unset#image/gif
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text

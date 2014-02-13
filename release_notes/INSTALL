@@ -180,7 +180,7 @@ without using CMake should consult the USING_HDF4_VS.txt file.
 
 Additional Third-party Software Requirements:
 
-   1)  Flex and Bison programs are required to build the ncgen utility.
+   1)  Flex and Bison programs are required to regenerate the ncgen utility input files.
    
    2)  Recommended is the Win flex-bison project, a port of Flex & Bison tools 
        to the Windows platform. Download from:

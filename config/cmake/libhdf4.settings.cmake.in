@@ -3,7 +3,7 @@
 
 General Information:
 -------------------
-                   HDF4 Version: @HDF4_PACKAGE_VERSION@
+                   HDF4 Version: @HDF4_PACKAGE_VERSION_STRING@
                   Configured on: @CONFIG_DATE@
                   Configured by: @CMAKE_GENERATOR@
                  Configure mode: CMAKE @CMAKE_VERSION@

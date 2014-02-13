@@ -266,7 +266,7 @@ set(SITE_COMPILER_VERSION "compiler version")
 # needed for source updates, change as required
 set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4-examples/trunk")
 
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/hdfExamples-4.2.x")
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_INSTALL_PREFIX:PATH=${CTEST_BINARY_NAME}")
 
 # location of the installed hdf4 (cmake configuration folder)
 set(ENV{HDF4_DIR} "/usr/share/cmake/hdf4")
