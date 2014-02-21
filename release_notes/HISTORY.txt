@@ -16,6 +16,7 @@
 
 List of the HDF4 releases
 
+4.2.10         February	 2014
 4.2.9          February	 2013
 4.2.8          August	 2012
 4.2.7          February	 2012
@@ -41,6 +42,307 @@ List of the HDF4 releases
 
 
 ==========================================================================    
+
+%%%4.2.10%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HDF version 4.2.10 released on 2014-02-09
+==============================================
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2.9 and HDF 4.2.10.
+It is written for people who are familiar with previous releases of HDF 
+and wish to migrate to HDF 4.2.10.
+
+The HDF 4.2.10 documentation can be found on the The HDF Group's website
+at:
+    http://www.hdfgroup.org/doc.html
+
+Previous versions of the documentation are available from the FTP server:
+
+    ftp://ftp.hdfgroup.org/HDF/Documentation/
+
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+  
+    http://hdfgroup.org/products/hdf4/
+
+If you have any questions or comments, please see the HDF Support page:
+
+    http://hdfgroup.org/services/support.html
+
+CONTENTS
+
+- New features and changes
+  -- Configuration
+- Support for new platforms and compilers
+- Bugs fixed since HDF 4.2.9
+  -- Configuration
+  -- Library
+  -- Utilities
+- Documentation
+- Platforms tested
+- Known problems
+
+
+New features and changes
+========================
+   Configuration
+   ============= 
+   CMake - Added support to create dmg bundles on Mac.
+     (ADB 2013/9/12)
+   CMake - Added support to use Windows /MT option.
+     (ADB 2013/6/10)
+     
+
+Support for new platforms and compilers
+=======================================
+    - Visual Studio 2012 w/ Intel Fortran 13 on Windows 7 and Windows 8
+    - Mac OS X Mavericks with clang and gfortran
+
+
+Bugs fixed since HDF 4.2.9
+=========================
+   Configuration
+   =============
+   - Removed the requirement of yacc/lex like tools. The ncgenXXX.* files
+     generated files from yacc and lex input files are pre-created in the
+     source code to build the ncgen tool. The msoft*.[ch] files were for
+     Windows build but was out of dated. Cmake uses the pre-created files
+     instead. See known problem below. (AKC 2014/02/02 HDFFR-1419)
+
+   - Removed old Macintosh platform codes that are not used any more.
+     (AKC 2014/01/21 HDFFR-1340)
+
+   - Changed Mac platforms to use the Apple supported clang compiler as the
+     default C compiler. (AKC 2014/01/15 HDFFR-1318)
+
+   - Removed the following individual platform specific files and have them to
+     be produced by configure using corresponding *.in files.
+     mfhdf/libsrc/config/netcdf-XXX.h    by mfhdf/libsrc/netcdf.h.in
+     mfhdf/fortran/config/ftest-XXX.f    by mfhdf/fortran/ftest.f.in
+     mfhdf/fortran/config/jackets-XXX.c  by mfhdf/fortran/jackets.c.in
+     mfhdf/fortran/config/netcdf-XXX.inc by mfhdf/fortran/netcdf.inc.in
+     (AKC 2013/12/31 HDFFR-1320/476)
+
+   - The following platforms are old and no longer available. Removed their
+     support code from the configure files:
+     alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
+     solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
+
+   - Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris
+     since the latest Sun Compiler version 5.11 and 5.12 have a conflict with
+     the system header file. Since the current versions of C compiler should be
+     at least ANSI (aka C89) compliant, the removal of -Xc should be safe. This
+     also fixes a previous known problem of needing to use -xc99 to build HDF4.
+     (AKC 2013/12/20 HDFFR-1361)
+
+   - CMake - Changed name of TGZ_PATH to TGZPATH.
+           (ADB 2013/9/12)
+   - CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac
+     builds. (ADB 2013/8/7)
+
+   Library
+   ========= 
+   - SDsetblocksize and VSsetblocksize would not change the block size if
+     the sds/vdata did not use linked-block before it was closed.  The
+     problem is now fixed.  (BMR 2013/1/15 - HDFFR-1357)
+
+   - Patches from user are applied to the C test to correct an overflow variable
+     and to the Fortran source for some missing declarations.
+     (BMR/EP 2014/1/15 - HDFFR-1367)
+
+   - Examples GR_write_chunks.c and GR_read_chunks.c were added. 
+     (BMR 2014/12/30 - HDFFR-1402)
+
+
+   Utilities
+   ========= 
+   - ncdump displayed garbage in place of fill-values when a variable had
+     unlimited dimension and had been written with less number of records
+     than the largest number of records in the file.  This is now fixed.
+     (BMR 2014/12/16 - HDFFR-1390)
+
+
+Documentation
+=============
+   - None
+
+
+Platforms tested
+================
+
+This version has been tested in the following platforms:
+
+   Linux 2.6.32-358.18.1         gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-3)
+   .el6.ppc64 #1                 GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-3)
+   SMP ppc64 GNU/Linux           IBM XL Fortran for Linux, V13.1 (64-bit mode)
+   (ostrich)
+
+   Linux 2.6.18-308.13.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-52)
+      SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
+   (jam)                             (Red Hat 4.1.2-52)
+                                 pgcc and pgf90 13.7-0 32-bit target 
+                                 on x86 Linux -tp penryn
+                                 Intel(R) C Compiler, Version 13.1.3 20130607
+                                 Intel(R) Fortran Compiler, Version 13.1.3
+
+   Linux 2.6.18-308.24.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-54)
+      SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
+   (koala)                           (Red Hat 4.1.2-54)
+                                 icc (ICC) 13.1.3 20130607
+                                 ifort (IFORT) 13.1.3 20130607
+                                 pgcc and pgf90 13.7-0 64-bit target 
+                                 on x86-64 Linux -tp nehalem
+
+   Linux 2.6.32-431.el6.x86_64   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-4)
+      #1 SMP x86_64 GNU/Linux    GNU Fortran (GCC) 4.4.7 20120313 
+   (platypus)                        (Red Hat 4.4.7-4)
+                                 icc (ICC) 13.1.3 20130607
+                                 ifort (IFORT) 13.1.3 20130607
+   
+   SunOS 5.11 32- and 64-bit     Sun C 5.12 SunOS_sparc 2011/11/16 
+   (emu)                              (see "Known problem" section)
+                                 Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
+
+   Windows 7                     Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 w/ Intel Fortran 12 (cmake)
+                                 Visual Studio 2012 w/ Intel Fortran 13 (cmake)
+                                 Cygwin(CYGWIN_NT-6.1 1.7.25(0.270/5/3) gcc(4.7.3) compiler and gfortran)
+                                 (cmake and autotools)
+
+   Windows 7 x64                 Visual Studio 2008 w/ Intel Fortran 11.1 (cmake)
+                                 Visual Studio 2010 w/ Intel Fortran 12 (cmake)
+                                 Visual Studio 2012 w/ Intel Fortran 13 (cmake)
+
+   Windows 8                     Visual Studio 2012 w/ Intel Fortran 13 (cmake)
+
+   Windows 8 x64                 Visual Studio 2012 w/ Intel Fortran 13 (cmake)
+
+   Mac OS X Intel 10.6.8         Apple clang version 1.7 from Xcode 3.2.6
+   Darwin 10.8.0                 gfortran GNU Fortran (GCC) 4.6.2
+   (fred)                        icc and ifort Version 12.1.6 20120928
+                             
+   Mac OS X 10.7.5		 Apple clang version 3.0 from Xcode 4.6.1
+   Darwin 11.4.2                 gfortran GNU Fortran (GCC) 4.6.2
+   (duck)                        icc and ifort Version 13.0.3 20130606
+
+   Mac OS X 10.8.5               Apple clang version 4.2 from Xcode 4.6.1
+   Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
+   (wren)                        icc and ifort Version 13.0.3 20130606
+
+   Mac OS X 10.8.5               Apple clang version 5.0 from Xcode 5.0.2
+   Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
+   (swallow,kite)                icc and ifort Version 14.0.1 20131010
+
+   Mac OS X 10.9.1               Apple LLVM version 5.0 (clang-500.2.79)
+   Darwin 13.0.0                 (based on LLVM 3.3svn)
+                                 gfortran GNU Fortran (GCC) 4.6.2 
+         
+
+   Debian7.2.0 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+                                 gcc (Debian 4.7.2-5) 4.7.2
+                                 GNU Fortran (Debian 4.7.2-5) 4.7.2
+                                 (cmake and autotools)
+
+   Fedora20 3.11.10-301.fc20.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (GCC) 4.8.2 20131212 (Red Hat 4.8.2-7)
+                                 GNU Fortran (GCC) 4.8.2 20130603 (Red Hat 4.8.2-7)
+                                 (cmake and autotools)
+
+   SUSE 13.1 3.11.6-4-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
+                                 gcc (SUSE Linux) 4.8.1
+                                 GNU Fortran (SUSE Linux) 4.8.1
+                                 (cmake and autotools)
+
+   Ubuntu 13.10 3.11.0-13-generic #20-Ubuntu SMP x86_64 GNU/Linux
+                                 gcc (Ubuntu/Linaro 4.8.1-10ubuntu8) 4.8.1
+                                 GNU Fortran (Ubuntu/Linaro 4.8.1-10ubuntu8) 4.8.1
+                                 (cmake and autotools)
+
+
+Known problems
+==============
+o  CMake builds in Windows uses the same pre-generated ncgen*.[ch] files from
+   the yacc/lex input files. The generated file, ncgenyy.c, uses the <unistd.h>
+   header file that Windows does not support.  This must be blocked out in
+   order for Windows to use it. (AKC 2014-02-03 HDFFR-1424).
+
+o  CMake "make install" fails installing the tools:
+    Use CPack to create an install package.
+   ADB - 2014/02/03
+
+o  CMake does not install these man pages:
+	hdf.1, ncdump.1, ncgen.1
+   AKC/BMR - 2014/02/02
+
+o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
+   GCC, Intel and Clang compilers.  Currently, this situation is detected and
+   -O0 level optimization is used.  We will work on the issue for the next
+   release. (HDFFR-1318,1358) EIP - 2013/02/05
+
+o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization 
+   level. 
+
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+   will fail when checking for the jpeglib.h header due to the duplicated
+   macro definition of HAVE_STDLIB_H.  This is because some newer builds
+   of the jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc versions (e.g., V7.0) still 
+   fail, but newer xlc versions (e.g., V9.0) pass.  AKC - 2010/02/17
+
+o  When building on Linux/UNIX platforms, the szip shared library files must
+   be in the system library path.  This can be done by adding a link to
+   the libsz.* files in the /usr/lib folder or by adding the library
+   location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+   
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale have
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might produce undesired results because the libraries could not
+   distinguish between the two objects.  In the case of writing, data
+   might even be corrupted.  For example, SDS data might be written to a
+   dimension variable or vice versa. (bugzilla #624)
+
+   HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
+   and a dimension variable.  However, as with older versions, these recent
+   versions are unable to detect such conflicts in files created by earlier 
+   releases.  It is therefore STRONGLY recommended to check for such name 
+   duplication before working with data created with a pre-4.2r2 library.
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for
+   further details.
+   FB - 2009/01/26
+   BMR - revised 2011/06/24
+
+o  N-bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled 
+   with a PGI C compiler; linking with a JPEG library built with gcc causes 
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to 
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
+
+o  In order for the API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata) after being written and before SDgetdatasize is called.
+   BMR - 2008/11/22
+
 
 %%%4.2.9%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HDF version 4.2.9 released on 2013-02-07

@@ -1,11 +1,11 @@
-HDF version 4.2.10 released on 2014-02-09
-==============================================
+HDF version 4.2.10-post0 currently under development
+====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.9 and HDF 4.2.10.
+This document describes the differences between HDF 4.2.10 and HDF 4.2.10-post0.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.10.
+and wish to migrate to HDF 4.2.10-post0.
 
 The HDF 4.2.10 documentation can be found on the The HDF Group's website
 at:
@@ -29,7 +29,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.9
+- Bugs fixed since HDF 4.2.10
   -- Configuration
   -- Library
   -- Utilities
@@ -42,79 +42,29 @@ New features and changes
 ========================
    Configuration
    ============= 
-   CMake - Added support to create dmg bundles on Mac.
-     (ADB 2013/9/12)
-   CMake - Added support to use Windows /MT option.
-     (ADB 2013/6/10)
+    - None
+     (INI YYYY/MM/DD)
      
 
 Support for new platforms and compilers
 =======================================
-    - Visual Studio 2012 w/ Intel Fortran 13 on Windows 7 and Windows 8
-    - Mac OS X Mavericks with clang and gfortran
+    - None
 
 
-Bugs fixed since HDF 4.2.9
+Bugs fixed since HDF 4.2.10
 =========================
    Configuration
    =============
-   - Removed the requirement of yacc/lex like tools. The ncgenXXX.* files
-     generated files from yacc and lex input files are pre-created in the
-     source code to build the ncgen tool. The msoft*.[ch] files were for
-     Windows build but was out of dated. Cmake uses the pre-created files
-     instead. See known problem below. (AKC 2014/02/02 HDFFR-1419)
-
-   - Removed old Macintosh platform codes that are not used any more.
-     (AKC 2014/01/21 HDFFR-1340)
-
-   - Changed Mac platforms to use the Apple supported clang compiler as the
-     default C compiler. (AKC 2014/01/15 HDFFR-1318)
-
-   - Removed the following individual platform specific files and have them to
-     be produced by configure using corresponding *.in files.
-     mfhdf/libsrc/config/netcdf-XXX.h    by mfhdf/libsrc/netcdf.h.in
-     mfhdf/fortran/config/ftest-XXX.f    by mfhdf/fortran/ftest.f.in
-     mfhdf/fortran/config/jackets-XXX.c  by mfhdf/fortran/jackets.c.in
-     mfhdf/fortran/config/netcdf-XXX.inc by mfhdf/fortran/netcdf.inc.in
-     (AKC 2013/12/31 HDFFR-1320/476)
-
-   - The following platforms are old and no longer available. Removed their
-     support code from the configure files:
-     alpha, convex, dec, fujivp, hpux, ia64, irix32, irix4, irix5, irix6, mac,
-     solarisx86, sun, t3e, unicos. (AKC 2013/12/26 HDFFR-1320)
-
-   - Removed -Xc (strict ansi standard) from the default CFLAGS of Solaris
-     since the latest Sun Compiler version 5.11 and 5.12 have a conflict with
-     the system header file. Since the current versions of C compiler should be
-     at least ANSI (aka C89) compliant, the removal of -Xc should be safe. This
-     also fixes a previous known problem of needing to use -xc99 to build HDF4.
-     (AKC 2013/12/20 HDFFR-1361)
-
-   - CMake - Changed name of TGZ_PATH to TGZPATH.
-           (ADB 2013/9/12)
-   - CMake - Removed extra flag POSIX_SOURCE as it caused failures on Apple Mac
-     builds. (ADB 2013/8/7)
+   - None
+     (INI YYYY/MM/DD)
 
    Library
    ========= 
-   - SDsetblocksize and VSsetblocksize would not change the block size if
-     the sds/vdata did not use linked-block before it was closed.  The
-     problem is now fixed.  (BMR 2013/1/15 - HDFFR-1357)
-
-   - Patches from user are applied to the C test to correct an overflow variable
-     and to the Fortran source for some missing declarations.
-     (BMR/EP 2014/1/15 - HDFFR-1367)
-
-   - Examples GR_write_chunks.c and GR_read_chunks.c were added. 
-     (BMR 2014/12/30 - HDFFR-1402)
-
+   - None
 
    Utilities
    ========= 
-   - ncdump displayed garbage in place of fill-values when a variable had
-     unlimited dimension and had been written with less number of records
-     than the largest number of records in the file.  This is now fixed.
-     (BMR 2014/12/16 - HDFFR-1390)
+   - None
 
 
 Documentation
