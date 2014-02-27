@@ -31,17 +31,21 @@ config/cmake/HDFMacros.cmake -text
 config/cmake/HDFTests.c -text
 config/cmake/NSIS.InstallOptions.ini.in -text
 config/cmake/NSIS.template.in -text
+config/cmake/PkgInfo.in -text
 config/cmake/README.txt.cmake.in -text
 config/cmake/UserMacros/Windows_MT.cmake -text
 config/cmake/cacheinit.cmake -text
 config/cmake/h4config.h.in -text
-config/cmake/hdf.gif -text svneol=unset#image/gif
+config/cmake/hdf.bmp -text svneol=unset#image/x-ms-bmp
+config/cmake/hdf.icns -text
+config/cmake/hdf.ico -text svneol=unset#image/x-icon
 config/cmake/hdf4-config-version.cmake.in -text
 config/cmake/hdf4-config.cmake.build.in -text
 config/cmake/hdf4-config.cmake.install.in -text
 config/cmake/libhdf4.settings.cmake.in -text
 config/cmake/mccacheinit.cmake -text
 config/cmake/runTest.cmake -text
+config/cmake/version.plist.in -text svneol=unset#application/xml
 config/commence.am -text
 config/conclude.am -text
 config/examples.am -text
