@@ -1047,7 +1047,11 @@
 ./config/cmake/hdf4-config.cmake.install.in
 ./config/cmake/hdf4-config-version.cmake.in
 ./config/cmake/CPack.Info.plist.in
-./config/cmake/hdf.gif
+./config/cmake/hdf.bmp
+./config/cmake/hdf.icns
+./config/cmake/hdf.ico
+./config/cmake/PkgInfo.in
+./config/cmake/version.plist.in
 ./config/cmake/libhdf4.settings.cmake.in
 ./config/cmake/NSIS.template.in
 ./config/cmake/NSIS.InstallOptions.ini.in
