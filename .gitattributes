@@ -1,10 +1,7 @@
 * text=auto !eol
-config/cmake/PkgInfo.in -text
-config/cmake/README.txt.cmake.in -text
 config/cmake/hdf.bmp -text svneol=unset#image/x-ms-bmp
 config/cmake/hdf.icns -text
 config/cmake/hdf.ico -text svneol=unset#image/x-icon
-config/cmake/version.plist.in -text svneol=unset#application/xml
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text
