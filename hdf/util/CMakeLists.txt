@@ -3,11 +3,11 @@ PROJECT (HDF4_HDF_UTIL C CXX)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 
-IF (WIN32 AND NOT CYGWIN)
+if (WIN32)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32 AND NOT CYGWIN)
+endif (WIN32)
 
-IF (HDF4_BUILD_TOOLS)
+if (HDF4_BUILD_TOOLS)
   #-- Adding tool hdfls
   ADD_EXECUTABLE (hdfls ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfls.c)
   TARGET_NAMING (hdfls ${LIB_TYPE})
@@ -15,7 +15,7 @@ IF (HDF4_BUILD_TOOLS)
   TARGET_LINK_LIBRARIES (hdfls ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
   #-- Adding utility hdfed
-  SET (hdfed_SRCS
+  set (hdfed_SRCS
       ${HDF4_HDF_UTIL_SOURCE_DIR}/he_cntrl.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/he_disp.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/he_file.c
@@ -26,11 +26,11 @@ IF (HDF4_BUILD_TOOLS)
   TARGET_NAMING (hdfed ${LIB_TYPE})
   TARGET_C_PROPERTIES (hdfed " " " ")
   TARGET_LINK_LIBRARIES (hdfed ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDIF (HDF4_BUILD_TOOLS)
+endif (HDF4_BUILD_TOOLS)
 
-IF (HDF4_BUILD_UTILS)
+if (HDF4_BUILD_UTILS)
   #-- Adding utility hdf2gif
-  SET (hdf2gif_SRCS
+  set (hdf2gif_SRCS
       ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf2gif.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfgifwr.c
   )
@@ -41,7 +41,7 @@ IF (HDF4_BUILD_UTILS)
   TARGET_LINK_LIBRARIES (hdf2gif ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
   #-- Adding utility gif2hdf
-  SET (gif2hdf_SRCS
+  set (gif2hdf_SRCS
       ${HDF4_HDF_UTIL_SOURCE_DIR}/gif2hdf.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/gif2mem.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/gifread.c
@@ -137,11 +137,11 @@ IF (HDF4_BUILD_UTILS)
   TARGET_NAMING (vshow ${LIB_TYPE})
   TARGET_C_PROPERTIES (vshow " " " ")
   TARGET_LINK_LIBRARIES (vshow ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDIF (HDF4_BUILD_UTILS)
+endif (HDF4_BUILD_UTILS)
 
-IF (BUILD_TESTING AND HDF4_BUILD_UTILS)
-  INCLUDE (CMakeTests.cmake)
-ENDIF (BUILD_TESTING AND HDF4_BUILD_UTILS)
+if (BUILD_TESTING AND HDF4_BUILD_UTILS)
+  include (CMakeTests.cmake)
+endif (BUILD_TESTING AND HDF4_BUILD_UTILS)
 
 ##############################################################################
 ##############################################################################
@@ -152,7 +152,7 @@ ENDIF (BUILD_TESTING AND HDF4_BUILD_UTILS)
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
-IF (HDF4_BUILD_TOOLS)
+if (HDF4_BUILD_TOOLS)
   INSTALL_PROGRAM_PDB (hdfls ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
   INSTALL_PROGRAM_PDB (hdfed ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 
@@ -165,9 +165,9 @@ IF (HDF4_BUILD_TOOLS)
       COMPONENT
           toolsapplications
   )
-ENDIF (HDF4_BUILD_TOOLS)
+endif (HDF4_BUILD_TOOLS)
 
-IF (HDF4_BUILD_UTILS)
+if (HDF4_BUILD_UTILS)
   INSTALL_PROGRAM_PDB (gif2hdf ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdf2gif ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (hdf2jpeg ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
@@ -208,4 +208,4 @@ IF (HDF4_BUILD_UTILS)
       COMPONENT
           utilsapplications
   )
-ENDIF (HDF4_BUILD_UTILS)
+endif (HDF4_BUILD_UTILS)

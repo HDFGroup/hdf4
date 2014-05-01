@@ -72,7 +72,7 @@ ADD_TEST (
 )
 
 ADD_TEST (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)
-SET (passRegex "HDF-SD test passes")
+set (passRegex "HDF-SD test passes")
 SET_PROPERTY (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
 SET_TESTS_PROPERTIES (hdftest PROPERTIES DEPENDS MFHDF_TEST-clearall-objects LABELS ${PROJECT_NAME})
 
@@ -88,36 +88,36 @@ ADD_TEST (NAME cdftest COMMAND "${CMAKE_COMMAND}"
 SET_TESTS_PROPERTIES (cdftest PROPERTIES DEPENDS hdftest LABELS ${PROJECT_NAME})
 
 ADD_TEST (NAME hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
-SET (NCpassRegex "HDF-nc test passes")
+set (NCpassRegex "HDF-nc test passes")
 SET_PROPERTY (TEST hdfnctest PROPERTY PASS_REGULAR_EXPRESSION "${NCpassRegex}")
 SET_TESTS_PROPERTIES (hdfnctest PROPERTIES DEPENDS cdftest LABELS ${PROJECT_NAME})
 
 #-- Adding test for xdrtest
-IF (HDF4_BUILD_XDR_LIB)
+if (HDF4_BUILD_XDR_LIB)
   ADD_EXECUTABLE (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
   TARGET_NAMING (xdrtest ${LIB_TYPE})
   TARGET_C_PROPERTIES (xdrtest " " " ")
   TARGET_LINK_LIBRARIES (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 
-  IF (CYGWIN)
+  if (CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     xdrtest 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/xdrtest.out
     )
-  ELSE (CYGWIN)
+  else (CYGWIN)
     ADD_CUSTOM_COMMAND (
         TARGET     xdrtest 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/xdrtest.out
     )
-  ENDIF (CYGWIN)
+  endif (CYGWIN)
 
-  IF (HDF4_ENABLE_USING_MEMCHECKER)
+  if (HDF4_ENABLE_USING_MEMCHECKER)
     ADD_TEST (NAME xdrtest COMMAND $<TARGET_FILE:xdrtest>)
-  ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+  else (HDF4_ENABLE_USING_MEMCHECKER)
     ADD_TEST (
         NAME xdrtest
         COMMAND "${CMAKE_COMMAND}"
@@ -129,6 +129,6 @@ IF (HDF4_BUILD_XDR_LIB)
             -D "TEST_REFERENCE=xdrtest.out"
             -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
     )
-  ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
+  endif (HDF4_ENABLE_USING_MEMCHECKER)
   SET_TESTS_PROPERTIES (xdrtest PROPERTIES DEPENDS hdfnctest LABELS ${PROJECT_NAME})
-ENDIF (HDF4_BUILD_XDR_LIB)
+endif (HDF4_BUILD_XDR_LIB)

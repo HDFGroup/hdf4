@@ -15,7 +15,7 @@ LINK_DIRECTORIES (
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )
 
-SET (testhdf_SRCS
+set (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/testhdf.c 
     ${HDF4_HDF_TEST_SOURCE_DIR}/an.c 
     ${HDF4_HDF_TEST_SOURCE_DIR}/anfile.c
@@ -55,9 +55,9 @@ SET (testhdf_SRCS
     ${HDF4_HDF_TEST_SOURCE_DIR}/vers.c
   )
 
-IF (WIN32 AND NOT CYGWIN)
+if (WIN32)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32 AND NOT CYGWIN)
+endif (WIN32)
 
 #-- Adding test for testhdf
 ADD_EXECUTABLE (testhdf ${testhdf_SRCS})
@@ -66,12 +66,12 @@ TARGET_C_PROPERTIES (testhdf " " " ")
 TARGET_LINK_LIBRARIES (testhdf ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 #-- Adding test for buffer
-IF (NOT WIN32)
+if (NOT WIN32)
   ADD_EXECUTABLE (buffer ${HDF4_HDF_TEST_SOURCE_DIR}/buffer.c)
   TARGET_NAMING (buffer ${LIB_TYPE})
   TARGET_C_PROPERTIES (buffer " " " ")
   TARGET_LINK_LIBRARIES (buffer ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDIF (NOT WIN32)
+endif (NOT WIN32)
 
 ##############################################################################
 ##############################################################################
@@ -79,5 +79,5 @@ ENDIF (NOT WIN32)
 ##############################################################################
 ##############################################################################
 
-INCLUDE (CMakeTests.cmake)
+include (CMakeTests.cmake)
 

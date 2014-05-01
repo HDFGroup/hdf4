@@ -4,7 +4,7 @@ PROJECT (HDF4_HDF_EXAMPLES C CXX)
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
-SET (examples
+set (examples
     VD_create_vdatas 
     VD_write_mixed_vdata
     VD_write_mixed_vdata_struct 
@@ -35,18 +35,18 @@ SET (examples
     AN_read_annotation
 )
 
-FOREACH (example ${examples})
+foreach (example ${examples})
   ADD_EXECUTABLE (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (hdf_${example} ${LIB_TYPE})
   TARGET_C_PROPERTIES (hdf_${example} " " " ")
   TARGET_LINK_LIBRARIES (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDFOREACH (example ${examples})
+endforeach (example ${examples})
 
 ADD_EXECUTABLE (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
 TARGET_NAMING (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
 TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup " " " ")
 TARGET_LINK_LIBRARIES (hdf_VG_add_sds_to_vgroup ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
-IF (BUILD_TESTING)
-  INCLUDE (CMakeTests.cmake)
-ENDIF (BUILD_TESTING)
+if (BUILD_TESTING)
+  include (CMakeTests.cmake)
+endif (BUILD_TESTING)

@@ -6,7 +6,7 @@
 ##############################################################################
   
   #-- Copy all the data files from the test directory into the source directory
-  SET (HDF4_REFERENCE_TEST_FILES
+  set (HDF4_REFERENCE_TEST_FILES
       ctxtr2r.hdf
       Example6.hdf
       grtdfi322.hdf
@@ -40,7 +40,7 @@
       Roy.nc
   )
   
-  SET (HDF4_REFERENCE_FILES
+  set (HDF4_REFERENCE_FILES
       dumpgr-1.out
       dumpgr-10.out
       dumpgr-11.out
@@ -129,27 +129,27 @@
       list-9.out
   )
  
-  FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #MESSAGE (STATUS " Copying ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
+  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #message (STATUS " Copying ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
     ADD_CUSTOM_COMMAND (
         TARGET     hdp 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
-  FOREACH (out_file ${HDF4_REFERENCE_FILES})
-    SET (outdest "${PROJECT_BINARY_DIR}/${out_file}")
-    #MESSAGE (STATUS " Translating ${out_file}")
+  foreach (out_file ${HDF4_REFERENCE_FILES})
+    set (outdest "${PROJECT_BINARY_DIR}/${out_file}")
+    #message (STATUS " Translating ${out_file}")
     ADD_CUSTOM_COMMAND (
         TARGET     hdp
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${out_file} ${outdest}
     )
-  ENDFOREACH (out_file ${HDF4_REFERENCE_FILES})
+  endforeach (out_file ${HDF4_REFERENCE_FILES})
   
 ##############################################################################
 ##############################################################################
@@ -164,15 +164,15 @@
         COMMAND ${CMAKE_COMMAND}
             -E remove ${resultfile}.tst ${resultfile}.tst.err
     )
-    IF (NOT "${last_test}" STREQUAL "")
+    if (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HDP-${resultfile}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    ELSE (NOT "${last_test}" STREQUAL "")
+    else (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HDP-${resultfile}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-    ENDIF (NOT "${last_test}" STREQUAL "")
+    endif (NOT "${last_test}" STREQUAL "")
 
-    IF (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (NAME HDP-${resultfile} COMMAND $<TARGET_FILE:hdp> ${ARGN})
-    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+    else (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (
           NAME HDP-${resultfile}
           COMMAND "${CMAKE_COMMAND}"
@@ -184,9 +184,9 @@
               -D "TEST_REFERENCE=${resultfile}.out"
               -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
       )
-    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
+    endif (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HDP-${resultfile} PROPERTIES DEPENDS HDP-${resultfile}-clearall-objects LABELS ${PROJECT_NAME})
-    SET (last_test "HDP-${resultfile}")
+    set (last_test "HDP-${resultfile}")
   ENDMACRO (ADD_H4_TEST file)
 
 ##############################################################################
@@ -250,11 +250,11 @@
   # Test 15 prints headers of all data sets with various compression method to
   # test displaying compression information
 
-  IF (HDF4_ENABLE_SZIP_SUPPORT)
+  if (HDF4_ENABLE_SZIP_SUPPORT)
     ADD_H4_TEST (dumpsds-15szip 0 dumpsds sds_compressed.hdf)
-  ELSE (HDF4_ENABLE_SZIP_SUPPORT)
+  else (HDF4_ENABLE_SZIP_SUPPORT)
     ADD_H4_TEST (dumpsds-15 0 dumpsds sds_compressed.hdf)
-  ENDIF (HDF4_ENABLE_SZIP_SUPPORT)
+  endif (HDF4_ENABLE_SZIP_SUPPORT)
 
   # Test 16 prints SDSs in index order, by default
   ADD_H4_TEST (dumpsds-16 0 dumpsds -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf)
@@ -352,12 +352,12 @@
       -E remove 
       my.dat
   )
-  IF (NOT "${last_test}" STREQUAL "")
+  if (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (HDP-clear-my.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  ELSE (NOT "${last_test}" STREQUAL "")
+  else (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (HDP-clear-my.dat PROPERTIES LABELS ${PROJECT_NAME})
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "HDP-clear-my.dat")
+  endif (NOT "${last_test}" STREQUAL "")
+  set (last_test "HDP-clear-my.dat")
   ADD_H4_TEST (dumpgr-8 0 dumpgr -o mybin.dat  -b grtdfui82.hdf)
   ADD_TEST (
       NAME HDP-clear-mybin.dat
@@ -365,12 +365,12 @@
       -E remove 
       mybin.dat
   )
-  IF (NOT "${last_test}" STREQUAL "")
+  if (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (HDP-clear-mybin.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  ELSE (NOT "${last_test}" STREQUAL "")
+  else (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (HDP-clear-mybin.dat PROPERTIES LABELS ${PROJECT_NAME})
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "HDP-clear-mybin.dat")
+  endif (NOT "${last_test}" STREQUAL "")
+  set (last_test "HDP-clear-mybin.dat")
   ADD_H4_TEST (dumpgr-9 0 dumpgr grtdfui83.hdf)
   ADD_H4_TEST (dumpgr-10 0 dumpgr grtdfui84.hdf)
   ADD_H4_TEST (dumpgr-11 0 dumpgr grtdfui162.hdf)

@@ -6,18 +6,18 @@ INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 ADD_DEFINITIONS (-DHDF)
 
-IF (WIN32 AND NOT CYGWIN)
+if (WIN32)
   ADD_DEFINITIONS (-DDOS_FS)
-ENDIF (WIN32 AND NOT CYGWIN)
+endif (WIN32)
 
-IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32 AND NOT CYGWIN)
+if (HDF4_BUILD_XDR_LIB)
+  if (WIN32)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32 AND NOT CYGWIN)
+  endif (WIN32)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-ENDIF (HDF4_BUILD_XDR_LIB)
+endif (HDF4_BUILD_XDR_LIB)
 
-SET (nctest_SRCS
+set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/add.c
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/atttests.c
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/cdftests.c
@@ -42,22 +42,21 @@ SET (nctest_SRCS
   
 ADD_EXECUTABLE (nctest ${nctest_SRCS})
 TARGET_C_PROPERTIES (nctest " " " ")
-IF (HDF4_BUILD_XDR_LIB)
+if (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
-ELSE (HDF4_BUILD_XDR_LIB)
+else (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDIF (HDF4_BUILD_XDR_LIB)
+endif (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (nctest ${LIB_TYPE})
  
-#-- Copy all the dat files from the test directory into the source directory
-SET (HDF4_NC_TEST_FILES
+set (HDF4_NC_TEST_FILES
     test_unlim.cdl
     test_unlim.nc
 )
  
-FOREACH (h4_file ${HDF4_NC_TEST_FILES})
-  SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-  #MESSAGE (STATUS " Copying ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
+foreach (h4_file ${HDF4_NC_TEST_FILES})
+  set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+  #message (STATUS " Copying ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
   ADD_CUSTOM_COMMAND (
       TARGET     nctest 
       POST_BUILD
@@ -65,6 +64,6 @@ FOREACH (h4_file ${HDF4_NC_TEST_FILES})
       ARGS       -E copy_if_different ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} ${dest}
   )
       
-ENDFOREACH (h4_file ${HDF4_NC_TEST_FILES})
+endforeach (h4_file ${HDF4_NC_TEST_FILES})
 
-INCLUDE (CMakeTests.cmake)
+include (CMakeTests.cmake)

@@ -25,15 +25,14 @@
           test1.nc
           test2.cdl
   )
-  IF (NOT "${last_test}" STREQUAL "")
+  if (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (NCGEN-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  ELSE (NOT "${last_test}" STREQUAL "")
+  else (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (NCGEN-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "NCGEN-clearall-objects")
+  endif (NOT "${last_test}" STREQUAL "")
+  set (last_test "NCGEN-clearall-objects")
 
-  #-- Copy all the data files from the test directory into the source directory
-  #MESSAGE (STATUS " Copying ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
+  #message (STATUS " Copying ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
   ADD_CUSTOM_COMMAND (
       TARGET     ncgen
       POST_BUILD
@@ -47,7 +46,7 @@ ADD_TEST (
     COMMAND $<TARGET_FILE:ncgen> -b -o test0.nc test0.cdl
 )
 SET_TESTS_PROPERTIES (NCGEN-test0.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-SET (last_test "NCGEN-test0.nc")
+set (last_test "NCGEN-test0.nc")
 
 ADD_TEST (
     NAME NCGEN-test1.cdl
@@ -61,14 +60,14 @@ ADD_TEST (
         -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (NCGEN-test1.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-SET (last_test "NCGEN-test1.cdl")
+set (last_test "NCGEN-test1.cdl")
 
 ADD_TEST (
     NAME NCGEN-test1.nc
     COMMAND $<TARGET_FILE:ncgen> -b test1.cdl
 )
 SET_TESTS_PROPERTIES (NCGEN-test1.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-SET (last_test "NCGEN-test1.nc")
+set (last_test "NCGEN-test1.nc")
 
 ADD_TEST (
     NAME NCGEN-test2.cdl
@@ -82,7 +81,7 @@ ADD_TEST (
         -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (NCGEN-test2.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-SET (last_test "NCGEN-test2.cdl")
+set (last_test "NCGEN-test2.cdl")
 
 #
 #ctest0$(EXEEXT):        ncgen$(EXEEXT) $(srcdir)/test0.cdl
@@ -102,7 +101,7 @@ ADD_TEST (
         -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (NCGEN-ctest0 PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-SET (last_test "NCGEN-ctest0")
+set (last_test "NCGEN-ctest0")
 #
 ## Test the "-c" option of ncgen
 #c-check:    b-check ctest0
@@ -114,7 +113,7 @@ SET (last_test "NCGEN-ctest0")
 #      echo "*** ncgen -c test failed  ***";                             \
 #    fi
 
-IF (HDF4_BUILD_FORTRAN)
+if (HDF4_BUILD_FORTRAN)
 #
 #ftest0$(EXEEXT):        ncgen$(EXEEXT) test0.cdl netcdf.inc
 #    $(TESTS_ENVIRONMENT) ./ncgen -f -o ftest0.nc $(srcdir)/test0.cdl > test0.f
@@ -131,7 +130,7 @@ IF (HDF4_BUILD_FORTRAN)
           -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
   )
   SET_TESTS_PROPERTIES (NCGEN-ftest0 PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  SET (last_test "NCGEN-ftest0")
+  set (last_test "NCGEN-ftest0")
 # Test the "-f" option of ncgen
 #f-check:    b-check ftest0
 #    $(TESTS_ENVIRONMENT) ./ftest0
@@ -141,4 +140,4 @@ IF (HDF4_BUILD_FORTRAN)
 #    else                                                                \
 #      echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
 #    fi
-ENDIF (HDF4_BUILD_FORTRAN)
+endif (HDF4_BUILD_FORTRAN)

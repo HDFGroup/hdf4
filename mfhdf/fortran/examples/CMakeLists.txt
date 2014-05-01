@@ -23,7 +23,7 @@ LINK_DIRECTORIES (
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
-SET (examples
+set (examples
     SD_create_sds 
     SD_write_to_sds 
     SD_write_slab 
@@ -41,36 +41,36 @@ SET (examples
     SD_compress_sds 
     SD_chunking_example
 )
-SET (skip_examples
+set (skip_examples
     SD_get_info
     SD_dimscale_vs_sds 
     SD_get_attr 
 )
 
-FOREACH (example ${examples})
+foreach (example ${examples})
   ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} " " " ")
   SET_TARGET_PROPERTIES (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
-  IF (HDF4_BUILD_XDR_LIB)
+  if (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
+  else (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
-ENDFOREACH (example ${examples})
+  endif (HDF4_BUILD_XDR_LIB)
+endforeach (example ${examples})
 
-FOREACH (example ${skip_examples})
+foreach (example ${skip_examples})
   ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} " " " ")
   SET_TARGET_PROPERTIES (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
-  IF (HDF4_BUILD_XDR_LIB)
+  if (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
+  else (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
-ENDFOREACH (example ${skip_examples})
+  endif (HDF4_BUILD_XDR_LIB)
+endforeach (example ${skip_examples})
 
-IF (BUILD_TESTING)
-  INCLUDE (CMakeTests.cmake)
-ENDIF (BUILD_TESTING)
+if (BUILD_TESTING)
+  include (CMakeTests.cmake)
+endif (BUILD_TESTING)

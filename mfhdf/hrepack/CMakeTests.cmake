@@ -7,22 +7,22 @@
 
 #-- Adding test for hrepack_check
 
-  SET (hrepack_check_SRCS
+  set (hrepack_check_SRCS
       ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c
   )
   
   ADD_EXECUTABLE (hrepack_check ${hrepack_check_SRCS})
   TARGET_C_PROPERTIES (hrepack_check " " " ")
-  IF (HDF4_BUILD_XDR_LIB)
+  if (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
+  else (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
+  endif (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hrepack_check ${LIB_TYPE})
 
 #-- Adding test for test_hrepack
 
-  SET (test_hrepack_SRCS
+  set (test_hrepack_SRCS
       ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack.c
       ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_an.c
       ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_gr.c
@@ -51,31 +51,31 @@
   
   ADD_EXECUTABLE (test_hrepack ${test_hrepack_SRCS})
   TARGET_C_PROPERTIES (test_hrepack " " " ")
-  IF (HDF4_BUILD_XDR_LIB)
+  if (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
+  else (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
+  endif (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (test_hrepack ${LIB_TYPE})
  
 #-- Copy all the dat files from the test directory into the source directory
-  SET (HDF4_REPACK_TEST_FILES
+  set (HDF4_REPACK_TEST_FILES
       image24pixel.txt
       image24plane.txt
       image8.txt
       info.txt
   )
  
-  FOREACH (h4_file ${HDF4_REPACK_TEST_FILES})
-    SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-    #MESSAGE (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
+  foreach (h4_file ${HDF4_REPACK_TEST_FILES})
+    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+    #message (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
     ADD_CUSTOM_COMMAND (
         TARGET     test_hrepack 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
     )
-  ENDFOREACH (h4_file ${HDF4_REPACK_TEST_FILES})
+  endforeach (h4_file ${HDF4_REPACK_TEST_FILES})
 
 ##############################################################################
 ##############################################################################

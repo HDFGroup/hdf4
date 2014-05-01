@@ -6,7 +6,7 @@
 ##############################################################################
  
   #-- Copy all the dat files from the test directory into the source directory
-  SET (HDF4_REFERENCE_TEST_FILES
+  set (HDF4_REFERENCE_TEST_FILES
       hdfimport.input1
       hdfimport.out1
 #      hdfimport.out2
@@ -15,35 +15,35 @@
       SDSfloat3.hdf
   )
    
-  FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
-      SET (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-      #MESSAGE (STATUS " Copying ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
+  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+      set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
+      #message (STATUS " Copying ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
       ADD_CUSTOM_COMMAND (
           TARGET     hdfimport 
           POST_BUILD
           COMMAND    ${CMAKE_COMMAND}
           ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${h4_file} ${dest}
      )      
-  ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
   
-  IF (WIN32 AND NOT CYGWIN)
+  if (WIN32)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfimport
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport-w.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
     )
-  ELSE (WIN32 AND NOT CYGWIN)
+  else (WIN32)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfimport
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.out2 ${PROJECT_BINARY_DIR}/hdfimport.out2
     )
-  ENDIF (WIN32 AND NOT CYGWIN)
+  endif (WIN32)
  
   #-- Copy all the hdfls tst files from the test directory into the source directory
-  SET (HDF4_LS_TEST_FILES
+  set (HDF4_LS_TEST_FILES
       ctxtr2.tst 
       ctxtr3.tst 
       cb32i2.tst 
@@ -62,43 +62,43 @@
       SDSfloat3.tst
   )
    
-  FOREACH (ls_file ${HDF4_LS_TEST_FILES})
-      SET (dest "${PROJECT_BINARY_DIR}/${ls_file}")
-      #MESSAGE (STATUS " Copying ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${ls_file} to ${PROJECT_BINARY_DIR}/")
+  foreach (ls_file ${HDF4_LS_TEST_FILES})
+      set (dest "${PROJECT_BINARY_DIR}/${ls_file}")
+      #message (STATUS " Copying ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/${ls_file} to ${PROJECT_BINARY_DIR}/")
       ADD_CUSTOM_COMMAND (
           TARGET     hdfimport 
           POST_BUILD
           COMMAND    ${CMAKE_COMMAND}
           ARGS       -E copy_if_different ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/testfiles/${ls_file} ${dest}
      )      
-  ENDFOREACH (ls_file ${HDF4_LS_TEST_FILES})
+  endforeach (ls_file ${HDF4_LS_TEST_FILES})
 
   #-- hdfimporttest
-  SET (hdfimporttest_SRCS
+  set (hdfimporttest_SRCS
       ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimporttest.c
   )
   
   ADD_EXECUTABLE (hdfimporttest ${hdfimporttest_SRCS})
   TARGET_C_PROPERTIES (hdfimporttest " " " ")
-  IF (HDF4_BUILD_XDR_LIB)
+  if (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (hdfimporttest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
+  else (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (hdfimporttest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
+  endif (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (hdfimporttest ${LIB_TYPE})
 
   #-- gen_sds_floats
-  SET (gen_sds_floats_SRCS
+  set (gen_sds_floats_SRCS
       ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/gen_sds_floats.c
   )
   
   ADD_EXECUTABLE (gen_sds_floats ${gen_sds_floats_SRCS})
   TARGET_C_PROPERTIES (gen_sds_floats " " " ")
-  IF (HDF4_BUILD_XDR_LIB)
+  if (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (gen_sds_floats ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  ELSE (HDF4_BUILD_XDR_LIB)
+  else (HDF4_BUILD_XDR_LIB)
     TARGET_LINK_LIBRARIES (gen_sds_floats ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  ENDIF (HDF4_BUILD_XDR_LIB)
+  endif (HDF4_BUILD_XDR_LIB)
   TARGET_NAMING (gen_sds_floats ${LIB_TYPE})
   
 ##############################################################################
@@ -108,25 +108,25 @@
 ##############################################################################
 
   MACRO (ADD_H4_TEST resultfile resultcode testtfile testtype)
-    IF ( NOT ${testtype} STREQUAL "")
-      IF (${testtype} STREQUAL "N")
+    if ( NOT ${testtype} STREQUAL "")
+      if (${testtype} STREQUAL "N")
         ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -n -o ${testtfile}.hdf)
-      ENDIF (${testtype} STREQUAL "N")
-      IF (${testtype} STREQUAL "R")
+      endif (${testtype} STREQUAL "N")
+      if (${testtype} STREQUAL "R")
         ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf -raster ${ARGN})
-      ENDIF (${testtype} STREQUAL "R")
-    ELSE ( NOT ${testtype} STREQUAL "")
+      endif (${testtype} STREQUAL "R")
+    else ( NOT ${testtype} STREQUAL "")
       ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf)
-    ENDIF ( NOT ${testtype} STREQUAL "")
-    IF (NOT "${last_test}" STREQUAL "")
+    endif ( NOT ${testtype} STREQUAL "")
+    if (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-${testtfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    ELSE (NOT "${last_test}" STREQUAL "")
+    else (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-${testtfile} PROPERTIES LABELS ${PROJECT_NAME})
-    ENDIF (NOT "${last_test}" STREQUAL "")
+    endif (NOT "${last_test}" STREQUAL "")
 
-    IF (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (NAME HIMPORTLS-${testtfile} COMMAND $<TARGET_FILE:hdfls> -l ${testtfile}.hdf)
-    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+    else (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (
           NAME HIMPORTLS-${testtfile}
           COMMAND "${CMAKE_COMMAND}"
@@ -139,22 +139,22 @@
               -D "TEST_REFERENCE=${testtfile}.tst"
               -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
       )
-    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
+    endif (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HIMPORTLS-${testtfile} PROPERTIES DEPENDS HIMPORT-${testtfile} LABELS ${PROJECT_NAME})
-    SET (last_test "HIMPORTLS-${testtfile}")
+    set (last_test "HIMPORTLS-${testtfile}")
   ENDMACRO (ADD_H4_TEST)
 
   MACRO (ADD_H4_TEST_OUT resultfile resultcode)
     ADD_TEST (NAME HIMPORT-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile}.hdf -o ${resultfile}.out)
-    IF (NOT "${last_test}" STREQUAL "")
+    if (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-OUT-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    ELSE (NOT "${last_test}" STREQUAL "")
+    else (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-OUT-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
-    ENDIF (NOT "${last_test}" STREQUAL "")
+    endif (NOT "${last_test}" STREQUAL "")
 
-    IF (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (NAME HIMPORTLS-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfls> ${resultfile}.out)
-    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+    else (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (
           NAME HIMPORTLS-OUT-${resultfile}
           COMMAND "${CMAKE_COMMAND}"
@@ -167,15 +167,15 @@
               -D "TEST_REFERENCE=${resultfile}.tst"
               -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
       )
-    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
+    endif (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HIMPORTLS-OUT-${resultfile} PROPERTIES DEPENDS HIMPORT-OUT-${resultfile} LABELS ${PROJECT_NAME})
-    SET (last_test "HIMPORTLS-OUT-${resultfile}")
+    set (last_test "HIMPORTLS-OUT-${resultfile}")
   ENDMACRO (ADD_H4_TEST_OUT)
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
-    IF (HDF4_ENABLE_USING_MEMCHECKER)
+    if (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (NAME HIMPORT-EDIT COMMAND $<TARGET_FILE:hdfed> -batch)
-    ELSE (HDF4_ENABLE_USING_MEMCHECKER)
+    else (HDF4_ENABLE_USING_MEMCHECKER)
       ADD_TEST (
           NAME HIMPORT-EDIT
           COMMAND "${CMAKE_COMMAND}"
@@ -188,13 +188,13 @@
               -D "TEST_REFERENCE=${resultfile}"
               -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
       )
-    ENDIF (HDF4_ENABLE_USING_MEMCHECKER)
-    IF (NOT "${last_test}" STREQUAL "")
+    endif (HDF4_ENABLE_USING_MEMCHECKER)
+    if (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    ELSE (NOT "${last_test}" STREQUAL "")
+    else (NOT "${last_test}" STREQUAL "")
       SET_TESTS_PROPERTIES (HIMPORT-EDIT PROPERTIES LABELS ${PROJECT_NAME})
-    ENDIF (NOT "${last_test}" STREQUAL "")
-    SET (last_test "HIMPORT-EDIT")
+    endif (NOT "${last_test}" STREQUAL "")
+    set (last_test "HIMPORT-EDIT")
   ENDMACRO (ADD_H4_TEST_ED)
 
 ##############################################################################
@@ -269,20 +269,20 @@
           SDSfloat2.tmp.err
           SDSfloat3.tmp.err
   )
-  IF (NOT "${last_test}" STREQUAL "")
+  if (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (hdfimport-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  ELSE (NOT "${last_test}" STREQUAL "")
+  else (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (hdfimport-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "hdfimport-clear-refs")
+  endif (NOT "${last_test}" STREQUAL "")
+  set (last_test "hdfimport-clear-refs")
 
   ADD_TEST (NAME HIMPORTtest COMMAND $<TARGET_FILE:hdfimporttest>)
-  IF (NOT "${last_test}" STREQUAL "")
+  if (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (HIMPORTtest PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  ELSE (NOT "${last_test}" STREQUAL "")
+  else (NOT "${last_test}" STREQUAL "")
     SET_TESTS_PROPERTIES (HIMPORTtest PROPERTIES LABELS ${PROJECT_NAME})
-  ENDIF (NOT "${last_test}" STREQUAL "")
-  SET (last_test "HIMPORTtest")
+  endif (NOT "${last_test}" STREQUAL "")
+  set (last_test "HIMPORTtest")
 
   # "Testing for 32-bit floating point ASCII (2D data)" 
   ADD_H4_TEST (ctxtr2 0 ctxtr2 "")

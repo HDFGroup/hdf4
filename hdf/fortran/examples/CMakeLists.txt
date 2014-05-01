@@ -8,12 +8,12 @@ PROJECT (HDF4_HDF_FORTRAN_EXAMPLES C CXX Fortran)
 #-----------------------------------------------------------------------------
 # Add debug information (intel Fortran : JB)
 #-----------------------------------------------------------------------------
-IF (CMAKE_Fortran_COMPILER MATCHES ifort)
-  IF (WIN32)
-    SET (CMAKE_Fortran_FLAGS_DEBUG "/debug:full /dbglibs " CACHE "flags" STRING FORCE)
-    SET (CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG" CACHE "flags" STRING FORCE)
-  ENDIF (WIN32)
-ENDIF (CMAKE_Fortran_COMPILER MATCHES ifort)
+if (CMAKE_Fortran_COMPILER MATCHES ifort)
+  if (WIN32)
+    set (CMAKE_Fortran_FLAGS_DEBUG "/debug:full /dbglibs " CACHE "flags" STRING FORCE)
+    set (CMAKE_EXE_LINKER_FLAGS_DEBUG "/DEBUG" CACHE "flags" STRING FORCE)
+  endif (WIN32)
+endif (CMAKE_Fortran_COMPILER MATCHES ifort)
 
 #-----------------------------------------------------------------------------
 # Setup include Directories
@@ -33,7 +33,7 @@ LINK_DIRECTORIES (
 #-----------------------------------------------------------------------------
 # Define Sources
 #-----------------------------------------------------------------------------
-SET (examples
+set (examples
     VD_create_vdatas 
     VD_write_mixed_vdata
     VD_write_to_vdata 
@@ -60,20 +60,20 @@ SET (examples
     AN_read_annotation
     #VD_set_get_vdata_attr
 )
-SET (mf_examples
+set (mf_examples
     VG_add_sds_to_vgroup
 )
-SET (skip_examples
+set (skip_examples
     VD_set_get_vdata_attr
 )
 
-FOREACH (example ${examples})
+foreach (example ${examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} " " " ")
   SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDFOREACH (example ${examples})
+endforeach (example ${examples})
 
 ADD_EXECUTABLE (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
 TARGET_NAMING (f_ex_VG_add_sds_to_vgroup ${LIB_TYPE})
@@ -81,14 +81,14 @@ TARGET_FORTRAN_PROPERTIES (f_ex_VG_add_sds_to_vgroup " " " ")
 SET_TARGET_PROPERTIES (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 TARGET_LINK_LIBRARIES (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
-FOREACH (example ${skip_examples})
+foreach (example ${skip_examples})
   ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} " " " ")
   SET_TARGET_PROPERTIES (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   TARGET_LINK_LIBRARIES (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDFOREACH (example ${skip_examples})
+endforeach (example ${skip_examples})
 
-IF (BUILD_TESTING)
-  INCLUDE (CMakeTests.cmake)
-ENDIF (BUILD_TESTING)
+if (BUILD_TESTING)
+  include (CMakeTests.cmake)
+endif (BUILD_TESTING)

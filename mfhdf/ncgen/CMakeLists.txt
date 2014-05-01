@@ -11,18 +11,18 @@ INCLUDE_DIRECTORIES (
 
 ADD_DEFINITIONS (-DHDF)
 
-IF (WIN32 AND NOT CYGWIN)
+if (WIN32)
   ADD_DEFINITIONS(-DDOS_FS)
-ENDIF (WIN32 AND NOT CYGWIN)
+endif (WIN32)
 
-IF (HDF4_BUILD_XDR_LIB)
-  IF (WIN32 AND NOT CYGWIN)
+if (HDF4_BUILD_XDR_LIB)
+  if (WIN32)
     ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
-  ENDIF (WIN32 AND NOT CYGWIN)
+  endif (WIN32)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-ENDIF (HDF4_BUILD_XDR_LIB)
+endif (HDF4_BUILD_XDR_LIB)
 
-SET (ncgen_SRCS
+set (ncgen_SRCS
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/close.c
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/escapes.c
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/generate.c
@@ -33,22 +33,22 @@ SET (ncgen_SRCS
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/main.c
     ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/ncgentab.c
 )
-IF (WIN32 AND NOT CYGWIN)
-  SET (ncgen_SRCS ${ncgen_SRCS} ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c)
-ENDIF (WIN32 AND NOT CYGWIN)
+if (WIN32)
+  set (ncgen_SRCS ${ncgen_SRCS} ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c)
+endif (WIN32)
  
 ADD_EXECUTABLE (ncgen ${ncgen_SRCS})
 TARGET_C_PROPERTIES (ncgen " " " ")
-IF (HDF4_BUILD_XDR_LIB)
+if (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
-ELSE (HDF4_BUILD_XDR_LIB)
+else (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-ENDIF (HDF4_BUILD_XDR_LIB)
+endif (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (ncgen ${LIB_TYPE})
 
-IF (BUILD_TESTING)
-  INCLUDE (CMakeTests.cmake)
-ENDIF (BUILD_TESTING)
+if (BUILD_TESTING)
+  include (CMakeTests.cmake)
+endif (BUILD_TESTING)
 
 ##############################################################################
 ##############################################################################

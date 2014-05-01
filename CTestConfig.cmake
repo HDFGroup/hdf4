@@ -4,27 +4,27 @@
 ## # The following are required to uses Dart and the Cdash dashboard
 ##   ENABLE_TESTING()
 ##   INCLUDE(CTest)
-SET (CTEST_PROJECT_NAME "HDF4")
-SET (CTEST_NIGHTLY_START_TIME "18:00:00 CST")
+set (CTEST_PROJECT_NAME "HDF4")
+set (CTEST_NIGHTLY_START_TIME "18:00:00 CST")
 
-SET (CTEST_DROP_METHOD "http")
-IF (CDASH_LOCAL)
-  SET (CTEST_DROP_SITE "72.36.68.252")
-  SET (CTEST_DROP_LOCATION "/submit.php?project=HDF4")
-ELSE (CDASH_LOCAL)
-  SET (CTEST_DROP_SITE "cdash.hdfgroup.uiuc.edu")
-  SET (CTEST_DROP_LOCATION "/submit.php?project=HDF4")
-ENDIF (CDASH_LOCAL)
-SET (CTEST_DROP_SITE_CDASH TRUE)
+set (CTEST_DROP_METHOD "http")
+if (CDASH_LOCAL)
+  set (CTEST_DROP_SITE "72.36.68.252")
+  set (CTEST_DROP_LOCATION "/submit.php?project=HDF4")
+else (CDASH_LOCAL)
+  set (CTEST_DROP_SITE "cdash.hdfgroup.uiuc.edu")
+  set (CTEST_DROP_LOCATION "/submit.php?project=HDF4")
+endif (CDASH_LOCAL)
+set (CTEST_DROP_SITE_CDASH TRUE)
 
-SET (UPDATE_TYPE svn)
+set (UPDATE_TYPE svn)
 
-SET (VALGRIND_COMMAND "/usr/bin/valgrind")
-SET (VALGRIND_COMMAND_OPTIONS "-v --tool=memcheck --leak-check=full --track-fds=yes --num-callers=50 --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xfe")
+set (VALGRIND_COMMAND "/usr/bin/valgrind")
+set (VALGRIND_COMMAND_OPTIONS "-v --tool=memcheck --leak-check=full --track-fds=yes --num-callers=50 --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xfe")
 
-SET (CTEST_TEST_TIMEOUT 3600 CACHE STRING 
+set (CTEST_TEST_TIMEOUT 3600 CACHE STRING 
     "Maximum time allowed before CTest will kill the test.") 
-SET (DART_TESTING_TIMEOUT 3600 CACHE STRING 
+set (DART_TESTING_TIMEOUT 3600 CACHE STRING 
     "Maximum time allowed before CTest will kill the test." FORCE)
 
 SET(CTEST_SUBMIT_RETRY_DELAY 20 CACHE STRING

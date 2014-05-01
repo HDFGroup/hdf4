@@ -37,7 +37,7 @@
 #include <unistd.h>
 #endif
 
-#if WIN32
+#ifdef _WIN32
 #define snprintf sprintf_s
 #define ssize_t int32
 #endif 

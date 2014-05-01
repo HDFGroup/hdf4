@@ -5,16 +5,16 @@
 ##############################################################################
 ##############################################################################
   
-  SET (FORTRAN_SRC_DIR ${HDF4_HDF_TEST_SOURCE_DIR})
+  set (FORTRAN_SRC_DIR ${HDF4_HDF_TEST_SOURCE_DIR})
 
   #-----------------------------------------------------------------------------
   # Add test fortran stub library
   #-----------------------------------------------------------------------------
   ADD_LIBRARY (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
   SET_TARGET_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
-  IF (WIN32 AND NOT CYGWIN)
+  if (WIN32)
     ADD_DEFINITIONS (-DDOS_FS)
-  ENDIF (WIN32 AND NOT CYGWIN)
+  endif (WIN32)
   TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} " " " ")
   TARGET_LINK_LIBRARIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}  ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} ${LIB_TYPE})
@@ -24,14 +24,14 @@
   TARGET_NAMING (fortest ${LIB_TYPE})
   TARGET_C_PROPERTIES (fortest " " " ")
   TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
-  IF (WIN32 AND MSVC)
+  if (WIN32 AND MSVC)
     TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
-  ENDIF (WIN32 AND MSVC)
+  endif (WIN32 AND MSVC)
   SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
 
   #-----------------------------------------------------------------------------
   #-- Adding test for fortestF
-  SET (FORTEST_FSRCS 
+  set (FORTEST_FSRCS 
       ${HDF4_HDF_TESTSOURCE_DIR}/fortestF.f
       ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f
       ${HDF4_HDF_TESTSOURCE_DIR}/manf.f
@@ -59,7 +59,7 @@
   SET_TARGET_PROPERTIES (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
   #-- Copy all the dat files from the test directory into the source directory
-  SET (HDF4_REFERENCE_TEST_FILES
+  set (HDF4_REFERENCE_TEST_FILES
     8bit.dat
     bitio.dat
     gr_r24.dat
@@ -70,16 +70,16 @@
     tmgr.dat
     tvattr.dat
   )
-  FOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
-    SET (dest "${PROJECT_BINARY_DIR}/test_files/${h4_file}")
-    #MESSAGE (STATUS " Copying ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} to ${PROJECT_BINARY_DIR}/test_files/")
+  foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+    set (dest "${PROJECT_BINARY_DIR}/test_files/${h4_file}")
+    #message (STATUS " Copying ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} to ${PROJECT_BINARY_DIR}/test_files/")
     ADD_CUSTOM_COMMAND (
         TARGET     fortestF 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_TESTSOURCE_DIR}/test_files/${h4_file} ${dest}
     )
-  ENDFOREACH (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
 ##############################################################################
 ##############################################################################
@@ -110,6 +110,6 @@
   ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
 
   ADD_TEST (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
-  SET (passRegex "All Fortran Interface Tests Passed")
+  set (passRegex "All Fortran Interface Tests Passed")
   SET_PROPERTY (TEST fortestF PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
     
