@@ -83,7 +83,7 @@ ADD_TEST (NAME cdftest COMMAND "${CMAKE_COMMAND}"
             -D "TEST_OUTPUT=cdfout.new"
             -D "TEST_EXPECT=0"
             -D "TEST_REFERENCE=testout.sav"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (cdftest PROPERTIES DEPENDS hdftest LABELS ${PROJECT_NAME})
 
@@ -127,7 +127,7 @@ if (HDF4_BUILD_XDR_LIB)
             -D "TEST_OUTPUT=xdrtest.tst"
             -D "TEST_EXPECT=0"
             -D "TEST_REFERENCE=xdrtest.out"
-            -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
     )
   endif (HDF4_ENABLE_USING_MEMCHECKER)
   SET_TESTS_PROPERTIES (xdrtest PROPERTIES DEPENDS hdfnctest LABELS ${PROJECT_NAME})

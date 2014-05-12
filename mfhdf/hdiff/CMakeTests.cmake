@@ -61,7 +61,7 @@
               -D "TEST_OUTPUT=${resultfile}.out"
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_REFERENCE=${resultfile}.txt"
-              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")

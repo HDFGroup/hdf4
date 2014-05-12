@@ -47,7 +47,7 @@ if (NCGEN_UTILITY)
           -D "TEST_OUTPUT=test1.cdl"
           -D "TEST_EXPECT=0"
           -D "TEST_SKIP_COMPARE=TRUE"
-          -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
   )
   SET_TESTS_PROPERTIES (NCDUMP-test1.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test1.cdl")
@@ -68,7 +68,7 @@ if (NCGEN_UTILITY)
           -D "TEST_OUTPUT=test2.cdl"
           -D "TEST_EXPECT=0"
           -D "TEST_REFERENCE=test1.cdl"
-          -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
   )
   SET_TESTS_PROPERTIES (NCDUMP-test2.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test2.cdl")

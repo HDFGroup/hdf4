@@ -3,7 +3,7 @@
 # Add file(s) to CMake Install
 #-----------------------------------------------------------------------------
 if (NOT HDF4_INSTALL_NO_DEVELOPMENT)
-  INSTALL (
+  install (
       FILES ${PROJECT_BINARY_DIR}/h4config.h
       DESTINATION ${HDF4_INSTALL_INCLUDE_DIR}
       COMPONENT headers
@@ -14,7 +14,7 @@ endif (NOT HDF4_INSTALL_NO_DEVELOPMENT)
 # Add Target(s) to CMake Install for import into other projects
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  INSTALL (
+  install (
       EXPORT ${HDF4_EXPORTED_TARGETS}
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
@@ -26,7 +26,7 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 # Export all exported targets to the build tree for use by parent project
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  EXPORT (
+  export (
       TARGETS ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
   )
@@ -45,8 +45,8 @@ set (HDF4_VERSION_STRING @HDF4_PACKAGE_VERSION@)
 set (HDF4_VERSION_MAJOR  @HDF4_PACKAGE_VERSION_MAJOR@)
 set (HDF4_VERSION_MINOR  @HDF4_PACKAGE_VERSION_MINOR@)
 
-CONFIGURE_FILE (
-    ${HDF4_RESOURCES_DIR}/hdf4-config.cmake.build.in 
+configure_file (
+    ${HDF_RESOURCES_DIR}/hdf4-config.cmake.build.in 
     ${HDF4_BINARY_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake @ONLY
 )
 
@@ -54,11 +54,11 @@ CONFIGURE_FILE (
 # Configure the FindHDF4.cmake file for the install directory
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  CONFIGURE_FILE (
-      ${HDF4_RESOURCES_DIR}/FindHDF4.cmake.in 
+  configure_file (
+      ${HDF_RESOURCES_DIR}/FindHDF4.cmake.in 
       ${HDF4_BINARY_DIR}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake @ONLY
   )
-  INSTALL (
+  install (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       COMPONENT configinstall
@@ -67,14 +67,14 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 
 #-----------------------------------------------------------------------------
-# Configure the HDF4-config.cmake file for the install directory
+# Configure the hdf4-config.cmake file for the install directory
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  CONFIGURE_FILE (
-      ${HDF4_RESOURCES_DIR}/hdf4-config.cmake.install.in
+  configure_file (
+      ${HDF_RESOURCES_DIR}/hdf4-config.cmake.install.in
       ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake @ONLY
   )
-  INSTALL (
+  install (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       COMPONENT configinstall
@@ -85,11 +85,11 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 # Configure the hdf4-config-version .cmake file for the install directory
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  CONFIGURE_FILE (
-      ${HDF4_RESOURCES_DIR}/hdf4-config-version.cmake.in
+  configure_file (
+      ${HDF_RESOURCES_DIR}/hdf4-config-version.cmake.in
       ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake @ONLY
   )
-  INSTALL (
+  install (
       FILES ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       COMPONENT configinstall
@@ -104,11 +104,11 @@ if (H4_WORDS_BIGENDIAN)
 else (H4_WORDS_BIGENDIAN)
   set (BYTESEX little-endian)
 endif (H4_WORDS_BIGENDIAN)
-CONFIGURE_FILE (
-    ${HDF4_RESOURCES_DIR}/libhdf4.settings.cmake.in 
+configure_file (
+    ${HDF_RESOURCES_DIR}/libhdf4.settings.cmake.in 
     ${HDF4_BINARY_DIR}/libhdf4.settings @ONLY
 )
-INSTALL (
+install (
     FILES ${HDF4_BINARY_DIR}/libhdf4.settings
     DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
     COMPONENT libraries
@@ -119,17 +119,17 @@ INSTALL (
 #-----------------------------------------------------------------------------
 option (HDF4_PACK_EXAMPLES  "Package the HDF4 Library Examples Compressed File" OFF)
 if (HDF4_PACK_EXAMPLES)
-  CONFIGURE_FILE (
-      ${HDF4_RESOURCES_DIR}/HDF4_Examples.cmake.in 
+  configure_file (
+      ${HDF_RESOURCES_DIR}/HDF4_Examples.cmake.in 
       ${HDF4_BINARY_DIR}/HDF4_Examples.cmake @ONLY
   )
-  INSTALL (
+  install (
       FILES ${HDF4_BINARY_DIR}/HDF4_Examples.cmake
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
       COMPONENT hdfdocuments
   )
   if (EXISTS "${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}")
-    INSTALL (
+    install (
         FILES
             ${HDF4_EXAMPLES_COMPRESSED_DIR}/${HDF4_EXAMPLES_COMPRESSED}
             ${HDF4_SOURCE_DIR}/release_notes/USING_CMake_Examples.txt
@@ -182,8 +182,8 @@ if (HDF4_BUILD_FORTRAN)
   set (BINARY_PLATFORM "${BINARY_PLATFORM} / ${CMAKE_Fortran_COMPILER_ID} Fortran")
 endif (HDF4_BUILD_FORTRAN)
 
-CONFIGURE_FILE (
-    ${HDF4_RESOURCES_DIR}/README.txt.cmake.in 
+configure_file (
+    ${HDF_RESOURCES_DIR}/README.txt.cmake.in 
     ${HDF4_BINARY_DIR}/README.txt @ONLY
 )
 
@@ -191,7 +191,7 @@ CONFIGURE_FILE (
 # Add Document File(s) to CMake Install
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  INSTALL (
+  install (
       FILES
           ${HDF4_SOURCE_DIR}/COPYING
       DESTINATION ${HDF4_INSTALL_DATA_DIR}
@@ -216,20 +216,19 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL
       )
       if (WIN32)
-        if (NOT CYGWIN)
-          set (release_files
-              ${release_files}
-              ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
-          )
-        else (NOT CYGWIN)
-          set (release_files
-              ${release_files}
-              ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Cygwin.txt
-          )
-        endif (NOT CYGWIN)
+        set (release_files
+            ${release_files}
+            ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
+        )
       endif (WIN32)
+      if (CYGWIN)
+        set (release_files
+            ${release_files}
+            ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Cygwin.txt
+        )
+      endif (CYGWIN)
     endif (HDF5_PACK_INSTALL_DOCS)
-    INSTALL (
+    install (
         FILES ${release_files}
         DESTINATION ${HDF4_INSTALL_DATA_DIR}
         COMPONENT hdfdocuments
@@ -251,16 +250,18 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_VERSION_MAJOR "${HDF4_PACKAGE_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
-  set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
   set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-  set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
+  if (EXISTS "${HDF5_SOURCE_DIR}/release_notes")
+    set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
+    set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
+  endif (EXISTS "${HDF5_SOURCE_DIR}/release_notes")
   set (CPACK_PACKAGE_RELOCATABLE TRUE)
   set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${CPACK_PACKAGE_VERSION}")
-  set (CPACK_PACKAGE_ICON "${HDF4_RESOURCES_DIR}/hdf.bmp")
+  set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.bmp")
 
   set (CPACK_GENERATOR "TGZ") 
   if (WIN32)
-    LIST (APPEND CPACK_GENERATOR "NSIS") 
+    list (APPEND CPACK_GENERATOR "NSIS") 
     # Installers for 32- vs. 64-bit CMake:
     #  - Root install directory (displayed to end user at installer-run time)
     #  - "NSIS package/display name" (text used in the installer GUI)
@@ -275,27 +276,27 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     endif (CMAKE_CL_64)
     # set the install/unistall icon used for the installer itself
     # There is a bug in NSI that does not handle full unix paths properly.
-    set (CPACK_NSIS_MUI_ICON "${HDF4_RESOURCES_DIR}\\\\hdf.ico")
-    set (CPACK_NSIS_MUI_UNIICON "${HDF4_RESOURCES_DIR}\\\\hdf.ico")
+    set (CPACK_NSIS_MUI_ICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.ico")
+    set (CPACK_NSIS_MUI_UNIICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.ico")
     # set the package header icon for MUI
-    set (CPACK_PACKAGE_ICON "${HDF4_RESOURCES_DIR}\\\\hdf.bmp")
-    set (CPACK_NSIS_DISPLAY_NAME "@CPACK_NSIS_PACKAGE_NAME@, is a library and multi-object file format for storing and managing data between machines")
+    set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.bmp")
+    set (CPACK_NSIS_DISPLAY_NAME "@CPACK_NSIS_PACKAGE_NAME@")
     set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
     set (CPACK_MONOLITHIC_INSTALL ON)
     set (CPACK_NSIS_CONTACT "${HDF4_PACKAGE_BUGREPORT}")
     set (CPACK_NSIS_MODIFY_PATH ON)
   elseif (APPLE)
-    LIST (APPEND CPACK_GENERATOR "DragNDrop") 
+    list (APPEND CPACK_GENERATOR "DragNDrop") 
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-    set (CPACK_PACKAGE_ICON "${HDF4_RESOURCES_DIR}/hdf.icns")
+    set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.icns")
 
     if (HDF4_PACK_MACOSX_BUNDLE)
-      LIST (APPEND CPACK_GENERATOR "Bundle")
+      list (APPEND CPACK_GENERATOR "Bundle")
       set (CPACK_BUNDLE_NAME "${HDF4_PACKAGE_STRING}")
       set (CPACK_BUNDLE_LOCATION "/")    # make sure CMAKE_INSTALL_PREFIX ends in /
       set (CMAKE_INSTALL_PREFIX "/${CPACK_BUNDLE_NAME}.framework/Versions/${CPACK_PACKAGE_VERSION}/${CPACK_PACKAGE_NAME}/")
-      set (CPACK_BUNDLE_ICON "${HDF4_RESOURCES_DIR}/hdf.icns")
+      set (CPACK_BUNDLE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.icns")
       set (CPACK_BUNDLE_PLIST "${HDF4_BINARY_DIR}/CMakeFiles/Info.plist")
       set (CPACK_APPLE_GUI_INFO_STRING "Hierarchical Data Format (HDF) Software Library and Utilities")
       set (CPACK_APPLE_GUI_COPYRIGHT "Copyright © 2006-2014 by The HDF Group. All rights reserved.")
@@ -306,26 +307,26 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
       #-----------------------------------------------------------------------------
       # Configure the Info.plist file for the install bundle
       #-----------------------------------------------------------------------------
-      CONFIGURE_FILE (
-          ${HDF4_RESOURCES_DIR}/CPack.Info.plist.in
+      configure_file (
+          ${HDF_RESOURCES_EXT_DIR}/CPack.Info.plist.in
           ${HDF4_BINARY_DIR}/CMakeFiles/Info.plist @ONLY
       )
-      CONFIGURE_FILE (
-          ${HDF4_RESOURCES_DIR}/PkgInfo.in
+      configure_file (
+          ${HDF_RESOURCES_DIR}/PkgInfo.in
           ${HDF4_BINARY_DIR}/CMakeFiles/PkgInfo @ONLY
       )
-      CONFIGURE_FILE (
-          ${HDF4_RESOURCES_DIR}/version.plist.in
+      configure_file (
+          ${HDF_RESOURCES_EXT_DIR}/version.plist.in
           ${HDF4_BINARY_DIR}/CMakeFiles/version.plist @ONLY
       )
-      INSTALL (
+      install (
           FILES ${HDF4_BINARY_DIR}/CMakeFiles/PkgInfo
                 ${HDF4_BINARY_DIR}/CMakeFiles/version.plist
           DESTINATION ..
       )
     endif (HDF4_PACK_MACOSX_BUNDLE)
   else (WIN32)
-    LIST (APPEND CPACK_GENERATOR "STGZ") 
+    list (APPEND CPACK_GENERATOR "STGZ") 
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
 
@@ -342,8 +343,8 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   # By default, do not warn when built on machines using only VS Express:
   if (NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
     set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
-  ENDIF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
-  INCLUDE(InstallRequiredSystemLibraries)
+  endif (NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
+  include (InstallRequiredSystemLibraries)
 
   set (CPACK_INSTALL_CMAKE_PROJECTS "${HDF4_BINARY_DIR};HDF4;ALL;/")
   

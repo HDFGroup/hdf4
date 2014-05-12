@@ -137,7 +137,7 @@
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
               -D "TEST_REFERENCE=${testtfile}.tst"
-              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HIMPORTLS-${testtfile} PROPERTIES DEPENDS HIMPORT-${testtfile} LABELS ${PROJECT_NAME})
@@ -165,7 +165,7 @@
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_FILTER:STRING=(File library|String)[^\n]+\n"
               -D "TEST_REFERENCE=${resultfile}.tst"
-              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     SET_TESTS_PROPERTIES (HIMPORTLS-OUT-${resultfile} PROPERTIES DEPENDS HIMPORT-OUT-${resultfile} LABELS ${PROJECT_NAME})
@@ -186,7 +186,7 @@
               -D "TEST_OUTPUT=${testfile}.tmp"
               -D "TEST_EXPECT=${resultcode}"
               -D "TEST_REFERENCE=${resultfile}"
-              -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+              -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")

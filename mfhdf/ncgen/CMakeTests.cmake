@@ -57,7 +57,7 @@ ADD_TEST (
         -D "TEST_OUTPUT=test1.cdl"
         -D "TEST_EXPECT=0"
         -D "TEST_SKIP_COMPARE=TRUE"
-        -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+        -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (NCGEN-test1.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 set (last_test "NCGEN-test1.cdl")
@@ -78,7 +78,7 @@ ADD_TEST (
         -D "TEST_OUTPUT=test2.cdl"
         -D "TEST_EXPECT=0"
         -D "TEST_REFERENCE=test1.cdl"
-        -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+        -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (NCGEN-test2.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 set (last_test "NCGEN-test2.cdl")
@@ -98,7 +98,7 @@ ADD_TEST (
         -D "TEST_OUTPUT=test0.c"
         -D "TEST_EXPECT=0"
         -D "TEST_SKIP_COMPARE=TRUE"
-        -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+        -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
 )
 SET_TESTS_PROPERTIES (NCGEN-ctest0 PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 set (last_test "NCGEN-ctest0")
@@ -127,7 +127,7 @@ if (HDF4_BUILD_FORTRAN)
           -D "TEST_OUTPUT=test0.f"
           -D "TEST_EXPECT=0"
           -D "TEST_SKIP_COMPARE=TRUE"
-          -P "${HDF4_RESOURCES_DIR}/runTest.cmake"
+          -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
   )
   SET_TESTS_PROPERTIES (NCGEN-ftest0 PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCGEN-ftest0")

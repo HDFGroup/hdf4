@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 2.8.11)
 PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
@@ -19,8 +19,8 @@ PROJECT (HDF4 C CXX)
 #
 # HDF4_EXPORTED_TARGETS :
 #   Set this to the name of the targets variable which controls exports
-#   If unset (because parent project does not support/use the 
-#   INSTALL (EXPORT target...) syntax), then targets are not configured 
+#   If unset (because parent project does not support/use the
+#   install (EXPORT target...) syntax), then targets are not configured
 #   for export during install.
 #
 # HDF4_LIB_DEPENDENCIES :
@@ -84,12 +84,12 @@ PROJECT (HDF4 C CXX)
 # explicitly turn off this option to build HDF5 in the Express IDE...
 #
 option (HDF4_USE_FOLDERS "Enable folder grouping of projects in IDEs." ON)
-MARK_AS_ADVANCED (HDF4_USE_FOLDERS)
+mark_as_advanced (HDF4_USE_FOLDERS)
 if (HDF4_USE_FOLDERS)
   set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 endif (HDF4_USE_FOLDERS)
 option (HDF4_NO_PACKAGES "CPACK - Disable packaging" OFF)
-MARK_AS_ADVANCED (HDF4_NO_PACKAGES)
+mark_as_advanced (HDF4_NO_PACKAGES)
 
 #-----------------------------------------------------------------------------
 # Set the core names of all the libraries
@@ -142,7 +142,8 @@ set (HDF4_TOOLS_LIB_TARGET        ${HDF4_TOOLS_LIB_CORENAME})
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
 #-----------------------------------------------------------------------------
-set (HDF4_RESOURCES_DIR       ${HDF4_SOURCE_DIR}/config/cmake)
+set (HDF_RESOURCES_DIR        ${HDF4_SOURCE_DIR}/config/cmake)
+set (HDF_RESOURCES_EXT_DIR    ${HDF4_SOURCE_DIR}/config/cmake_ext_mod)
 set (HDF4_HDFSOURCE_DIR       ${HDF4_SOURCE_DIR}/hdf/src)
 set (HDF4_HDF_TESTSOURCE_DIR  ${HDF4_SOURCE_DIR}/hdf/test)
 set (HDF4_MFHDFSOURCE_DIR     ${HDF4_SOURCE_DIR}/mfhdf/libsrc)
@@ -205,9 +206,9 @@ set (HDF4_PACKAGE_BUGREPORT "help@hdfgroup.org")
 #-----------------------------------------------------------------------------
 # Include some macros for reusable code
 #-----------------------------------------------------------------------------
-include (${HDF4_RESOURCES_DIR}/HDFMacros.cmake)
-include (${HDF4_RESOURCES_DIR}/HDFLibMacros.cmake)
-include (${HDF4_RESOURCES_DIR}/HDF4Macros.cmake)
+include (${HDF_RESOURCES_EXT_DIR}/HDFMacros.cmake)
+include (${HDF_RESOURCES_EXT_DIR}/HDFLibMacros.cmake)
+include (${HDF_RESOURCES_DIR}/HDF4Macros.cmake)
 
 #-----------------------------------------------------------------------------
 # Setup output Directories
@@ -246,7 +247,7 @@ endif (NOT HDF4_EXPORTED_TARGETS)
 # add it to this variable. This is NOT used by Make Install, but for projects
 # which include hdf4 as a sub-project within their build tree
 #-----------------------------------------------------------------------------
-SET_GLOBAL_VARIABLE (HDF4_LIBRARIES_TO_EXPORT "")
+set_global_variable (HDF4_LIBRARIES_TO_EXPORT "")
 set (EXTERNAL_HEADER_LIST "")
 set (EXTERNAL_LIBRARY_LIST "")
 set (EXTERNAL_LIBRARYDLL_LIST "")
@@ -254,7 +255,9 @@ set (EXTERNAL_LIBRARYDLL_LIST "")
 #-----------------------------------------------------------------------------
 # Run all the CMake configuration tests for our build environment
 #-----------------------------------------------------------------------------
-include (${HDF4_RESOURCES_DIR}/ConfigureChecks.cmake)
+include (${HDF_RESOURCES_DIR}/ConfigureChecks.cmake)
+
+set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 #-----------------------------------------------------------------------------
 # Option to Build Shared/Static libs, default is static
@@ -270,13 +273,7 @@ if (BUILD_SHARED_LIBS)
 else (BUILD_SHARED_LIBS)
   set (H4_BUILT_AS_STATIC_LIB 1)
   set (H4_ENABLE_STATIC_LIB YES)
-  if (NOT WIN32)
-    # should this be a user setting : Everyone uses it anyway ?
-    ADD_DEFINITIONS (-DPIC)
-    if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
-      ADD_DEFINITIONS (-KPIC)
-    endif (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
-  endif (NOT WIN32)
+  set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif (BUILD_SHARED_LIBS)
 
 ADD_DEFINITIONS (-DBIG_LONGS -DSWAP)
@@ -339,9 +336,9 @@ set (EXE_EXT "")
 if (WIN32)
   set (EXE_EXT ".exe")
   if (NOT CYGWIN)
-    ADD_DEFINITIONS (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
-    ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
-    ADD_DEFINITIONS (-D_CONSOLE)
+    add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
+    add_definitions (-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions (-D_CONSOLE)
   endif (NOT CYGWIN)
 endif (WIN32)
 
@@ -367,7 +364,7 @@ endif (MAKE_SYSTEM)
 if (CMAKE_BUILD_TYPE MATCHES Debug)
   #-- NMake Makefiles will overwhelm the console with warnings if -Wall is used.
   if (NOT WIN32)
-    ADD_DEFINITIONS (-Wall)
+    add_definitions (-Wall)
   endif (NOT WIN32)
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
@@ -404,7 +401,7 @@ if (HDF4_DISABLE_COMPILER_WARNINGS)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
   endif (MSVC)
   if (WIN32)
-    ADD_DEFINITIONS (-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions (-D_CRT_SECURE_NO_WARNINGS)
   endif (WIN32)
   # Borland uses -w- to suppress warnings.
   if (BORLAND)
@@ -433,7 +430,7 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 #-----------------------------------------------------------------------------
 # Option to Enable MPI Parallel
 #-----------------------------------------------------------------------------
-set (CMAKE_MODULE_PATH ${HDF4_RESOURCES_DIR} ${CMAKE_MODULE_PATH})
+set (CMAKE_MODULE_PATH ${HDF_RESOURCES_DIR} ${HDF_RESOURCES_EXT_DIR} ${CMAKE_MODULE_PATH})
 option (HDF4_ENABLE_PARALLEL "Enable parallel build (requires MPI)" OFF)
 if (HDF4_ENABLE_PARALLEL)
   include (FindMPI)
@@ -456,7 +453,7 @@ endif (HDF4_ENABLE_PARALLEL)
 if (H4_HAVE_PARALLEL)
   set (LINK_LIBS ${LINK_LIBS} ${MPI_C_LIBRARIES})
   if (MPI_C_LINK_FLAGS)
-    set (CMAKE_EXE_LINKER_FLAGS ${MPI_C_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS})
+    set (CMAKE_EXE_LINKER_FLAGS "${MPI_C_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
   endif (MPI_C_LINK_FLAGS)
 endif (H4_HAVE_PARALLEL)
 
@@ -542,7 +539,7 @@ if (BUILD_TESTING)
     endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
   endif (NOT HDF4_EXTERNALLY_CONFIGURED)
   include (${HDF4_SOURCE_DIR}/CTestConfig.cmake)
-  configure_file (${HDF4_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
+  configure_file (${HDF_RESOURCES_DIR}/CTestCustom.cmake ${HDF4_BINARY_DIR}/CTestCustom.ctest @ONLY)
 endif (BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
@@ -560,7 +557,7 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
     endif (WIN32)
-    include (${HDF4_RESOURCES_DIR}/HDF4UseFortran.cmake)
+    include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
     add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
     add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
   endif (HDF4_BUILD_FORTRAN)
@@ -601,6 +598,6 @@ endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURC
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation
 #-----------------------------------------------------------------------------
-configure_file (${HDF4_RESOURCES_DIR}/h4config.h.in      ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
+configure_file (${HDF_RESOURCES_DIR}/h4config.h.in      ${PROJECT_BINARY_DIR}/h4config.h @ONLY)
 
 include (CMakeInstallation.cmake)
