@@ -41,9 +41,9 @@ set (HDF4_INCLUDES_BUILD_TIME
     ${HDF4_MFHDF_XDR_DIR}
     ${HDF4_BINARY_DIR}
 )
-set (HDF4_VERSION_STRING @HDF4_PACKAGE_VERSION@)
-set (HDF4_VERSION_MAJOR  @HDF4_PACKAGE_VERSION_MAJOR@)
-set (HDF4_VERSION_MINOR  @HDF4_PACKAGE_VERSION_MINOR@)
+set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
+set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
+set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
 
 configure_file (
     ${HDF_RESOURCES_DIR}/hdf4-config.cmake.build.in 
@@ -142,50 +142,7 @@ endif (HDF4_PACK_EXAMPLES)
 #-----------------------------------------------------------------------------
 # Configure the README.txt file for the binary package
 #-----------------------------------------------------------------------------
-set (BINARY_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
-set (BINARY_PLATFORM "${CMAKE_SYSTEM_NAME}")
-if (WIN32)
-  set (BINARY_EXAMPLE_ENDING "zip")
-  set (BINARY_INSTALL_ENDING "exe")
-  if (CMAKE_CL_64)
-    set (BINARY_SYSTEM_NAME "win64")
-  else (CMAKE_CL_64)
-    set (BINARY_SYSTEM_NAME "win32")
-  endif (CMAKE_CL_64)
-  if (${CMAKE_SYSTEM_VERSION} MATCHES "6.1")
-    set (BINARY_PLATFORM "${BINARY_PLATFORM} 7")
-  elseif (${CMAKE_SYSTEM_VERSION} MATCHES "6.2")
-    set (BINARY_PLATFORM "${BINARY_PLATFORM} 8")
-  endif (${CMAKE_SYSTEM_VERSION} MATCHES "6.1")
-  set (BINARY_PLATFORM "${BINARY_PLATFORM} ${MSVC_C_ARCHITECTURE_ID}")
-  if (${CMAKE_C_COMPILER_VERSION} MATCHES "16.*")
-    set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2010")
-  elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "15.*")
-    set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2008")
-  elseif (${CMAKE_C_COMPILER_VERSION} MATCHES "17.*")
-    set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO 2012")
-  else (${CMAKE_C_COMPILER_VERSION} MATCHES "16.*")
-    set (BINARY_PLATFORM "${BINARY_PLATFORM}, using VISUAL STUDIO ${CMAKE_C_COMPILER_VERSION}")
-  endif (${CMAKE_C_COMPILER_VERSION} MATCHES "16.*")
-elseif (APPLE)
-  set (BINARY_EXAMPLE_ENDING "tar.gz")
-  set (BINARY_INSTALL_ENDING "dmg")
-  set (BINARY_PLATFORM "${BINARY_PLATFORM} ${CMAKE_SYSTEM_VERSION} ${CMAKE_SYSTEM_PROCESSOR}")
-  set (BINARY_PLATFORM "${BINARY_PLATFORM}, using ${CMAKE_C_COMPILER_ID} C ${CMAKE_C_COMPILER_VERSION}")
-else (WIN32)
-  set (BINARY_EXAMPLE_ENDING "tar.gz")
-  set (BINARY_INSTALL_ENDING "sh")
-  set (BINARY_PLATFORM "${BINARY_PLATFORM} ${CMAKE_SYSTEM_VERSION} ${CMAKE_SYSTEM_PROCESSOR}")
-  set (BINARY_PLATFORM "${BINARY_PLATFORM}, using ${CMAKE_C_COMPILER_ID} C ${CMAKE_C_COMPILER_VERSION}")
-endif (WIN32)
-if (HDF4_BUILD_FORTRAN)
-  set (BINARY_PLATFORM "${BINARY_PLATFORM} / ${CMAKE_Fortran_COMPILER_ID} Fortran")
-endif (HDF4_BUILD_FORTRAN)
-
-configure_file (
-    ${HDF_RESOURCES_DIR}/README.txt.cmake.in 
-    ${HDF4_BINARY_DIR}/README.txt @ONLY
-)
+HDF_README_PROPERTIES(HDF4_BUILD_FORTRAN)
 
 #-----------------------------------------------------------------------------
 # Add Document File(s) to CMake Install
@@ -208,7 +165,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
           ${HDF4_SOURCE_DIR}/release_notes/USING_HDF4_VS.txt
       )
     endif (WIN32)
-    if (HDF5_PACK_INSTALL_DOCS)
+    if (HDF4_PACK_INSTALL_DOCS)
       set (release_files
           ${release_files}
           ${HDF4_SOURCE_DIR}/release_notes/INSTALL_CMake.txt
@@ -218,16 +175,16 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       if (WIN32)
         set (release_files
             ${release_files}
-            ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
+            ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Windows.txt
         )
       endif (WIN32)
       if (CYGWIN)
         set (release_files
             ${release_files}
-            ${HDF5_SOURCE_DIR}/release_notes/INSTALL_Cygwin.txt
+            ${HDF4_SOURCE_DIR}/release_notes/INSTALL_Cygwin.txt
         )
       endif (CYGWIN)
-    endif (HDF5_PACK_INSTALL_DOCS)
+    endif (HDF4_PACK_INSTALL_DOCS)
     install (
         FILES ${release_files}
         DESTINATION ${HDF4_INSTALL_DATA_DIR}
@@ -251,10 +208,10 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_PACKAGE_VERSION_MINOR "${HDF4_PACKAGE_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "")
   set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-  if (EXISTS "${HDF5_SOURCE_DIR}/release_notes")
+  if (EXISTS "${HDF4_SOURCE_DIR}/release_notes")
     set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
     set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
-  endif (EXISTS "${HDF5_SOURCE_DIR}/release_notes")
+  endif (EXISTS "${HDF4_SOURCE_DIR}/release_notes")
   set (CPACK_PACKAGE_RELOCATABLE TRUE)
   set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${CPACK_PACKAGE_VERSION}")
   set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.bmp")
@@ -280,7 +237,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_NSIS_MUI_UNIICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.ico")
     # set the package header icon for MUI
     set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.bmp")
-    set (CPACK_NSIS_DISPLAY_NAME "@CPACK_NSIS_PACKAGE_NAME@")
+    set (CPACK_NSIS_DISPLAY_NAME "${CPACK_NSIS_PACKAGE_NAME}")
     set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
     set (CPACK_MONOLITHIC_INSTALL ON)
     set (CPACK_NSIS_CONTACT "${HDF4_PACKAGE_BUGREPORT}")
