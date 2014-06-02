@@ -253,6 +253,9 @@ extern      "C"
 
     void VSIrelease_vdata_node(VDATA *v);
 
+    intn VSIgetvdatas(int32 id, const char *vsclass, const uintn start_vd,
+	const uintn n_vds, uint16 *refarray);
+
     HDFLIBAPI vsinstance_t *VSIget_vsinstance_node(void);
 
     HDFLIBAPI void VSIrelease_vsinstance_node(vsinstance_t *vs);

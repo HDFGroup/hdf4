@@ -454,12 +454,15 @@ int32 bv_find(bv_ptr b,int32 last_find,bv_bool value)
           if(last_find>=0)
             {   /* if the last bit found option is used, look for more bits in that same byte */
               intn bit_off;
+int unused;
 
               first_byte=(uint32)last_find/BV_BASE_BITS;
               bit_off=(intn)(((uint32)last_find-(first_byte*BV_BASE_BITS))+1);
               slush_bits=(bv_base)(b->buffer[first_byte]&(~bv_bit_mask[bit_off]));
               if(slush_bits!=0)
-                  return((int32)(first_byte*BV_BASE_BITS)+bv_first_zero[~slush_bits]);
+                  return((int32)(first_byte*BV_BASE_BITS)+bv_first_zero[(~slush_bits)]);
+                   /* return((int32)(first_byte*BV_BASE_BITS)+bv_first_zero[(bv_base)(~slush_bits)]);
+ */ 
               first_byte++;
             } /* end if */
 
@@ -474,7 +477,7 @@ int32 bv_find(bv_ptr b,int32 last_find,bv_bool value)
             {
                 slush_bits=(bv_base)(b->buffer[u]&bv_bit_mask[b->bits_used-(bytes_used*BV_BASE_BITS)]);
                 if(slush_bits!=0)
-                    return((int32)(u*BV_BASE_BITS)+bv_first_zero[~slush_bits]);
+                    return((int32)(u*BV_BASE_BITS)+bv_first_zero[(bv_base)(~slush_bits)]);
             } /* end if */
       } /* end if */
     else
