@@ -1,5 +1,4 @@
 * text=auto !eol
-bin/test-driver -text
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text
@@ -78,9 +77,6 @@ mfhdf/hdiff/testfiles/hdifftst4.hdf -text
 mfhdf/hdiff/testfiles/hdifftst5.hdf -text
 mfhdf/hdiff/testfiles/hdifftst6.hdf -text
 mfhdf/hdiff/testfiles/hdifftst7.hdf -text
-mfhdf/hrepack/hrepack.sh.in -text
-mfhdf/hrepack/hrepack_check_help.txt -text
-mfhdf/hrepack/hrepack_help.txt -text
 mfhdf/nctest/test_unlim.nc -text
 mfhdf/test/sds_szipped.dat -text
 mfhdf/test/smallslice.0000.nc -text
