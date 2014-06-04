@@ -5,10 +5,10 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES = -I$(top_srcdir)/hdf/src        \
+lib_INCLUDES = -I$(top_srcdir)/hdf/src        \
            -I$(top_srcdir)/mfhdf/libsrc   
 DEFINES = -DNDEBUG -DHDF
-AM_CPPFLAGS = $(INCLUDES) $(DEFINES)
+AM_CPPFLAGS = $(lib_INCLUDES) $(DEFINES)
 
 #############################################################################
 ##                          Library to build                               ##

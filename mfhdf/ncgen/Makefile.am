@@ -11,11 +11,11 @@ else
 endif
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+ncgen_INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(ncgen_INCLUDES) $(DEFINES)
 
 ## Add ncgen specific linker flags here
 ncgen_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)

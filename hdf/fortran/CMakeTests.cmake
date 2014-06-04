@@ -24,9 +24,9 @@
   TARGET_NAMING (fortest ${LIB_TYPE})
   TARGET_C_PROPERTIES (fortest " " " ")
   TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
-  if (WIN32 AND MSVC)
+  if (WIN32)
     TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
-  endif (WIN32 AND MSVC)
+  endif (WIN32)
   SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
 
   #-----------------------------------------------------------------------------
@@ -88,7 +88,7 @@
 ##############################################################################
 
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME HDF_FORTRAN-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -107,9 +107,9 @@
           tmgrf.hdf
   )
 
-  ADD_TEST (NAME fortest COMMAND $<TARGET_FILE:fortest>)
+  add_test (NAME fortest COMMAND $<TARGET_FILE:fortest>)
 
-  ADD_TEST (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
+  add_test (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
   set (passRegex "All Fortran Interface Tests Passed")
   SET_PROPERTY (TEST fortestF PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
     

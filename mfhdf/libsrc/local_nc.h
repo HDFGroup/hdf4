@@ -30,7 +30,7 @@
 #define FILENAME_MAX  255
 #endif
 
-/* Do we have systeme XDR files */
+/* Do we have system XDR files */
 #ifndef  NO_SYS_XDR_INC 
 #include	<rpc/types.h>
 #include	<rpc/xdr.h>

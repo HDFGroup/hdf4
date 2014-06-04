@@ -6,7 +6,7 @@
 ##############################################################################
 
 # Remove any output file left over from previous test run
-ADD_TEST (
+add_test (
     NAME HDF_EXAMPLES-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
@@ -20,26 +20,26 @@ ADD_TEST (
         Two_Vgroups.hdf
 )
 if (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (HDF_EXAMPLES-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
+  set_tests_properties (HDF_EXAMPLES-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
 else (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (HDF_EXAMPLES-clearall-objects PROPERTIES LABELS EXAMPLES)
+  set_tests_properties (HDF_EXAMPLES-clearall-objects PROPERTIES LABELS EXAMPLES)
 endif (NOT "${last_test}" STREQUAL "")
 set (last_test "HDF_EXAMPLES-clearall-objects")
 
 foreach (example ${examples})
-  ADD_TEST (NAME hdftest_${example} COMMAND $<TARGET_FILE:hdf_${example}>)
+  add_test (NAME hdftest_${example} COMMAND $<TARGET_FILE:hdf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdftest_${example} PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
+    set_tests_properties (hdftest_${example} PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdftest_${example} PROPERTIES LABELS EXAMPLES)
+    set_tests_properties (hdftest_${example} PROPERTIES LABELS EXAMPLES)
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "hdftest_${example}")
 endforeach (example ${examples})
 
-ADD_TEST (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
+add_test (NAME hdftest_VG_add_sds_to_vgroup COMMAND $<TARGET_FILE:hdf_VG_add_sds_to_vgroup>)
 if (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (hdftest_VG_add_sds_to_vgroup PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
+  set_tests_properties (hdftest_VG_add_sds_to_vgroup PROPERTIES DEPENDS ${last_test} LABELS EXAMPLES)
 else (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (hdftest_VG_add_sds_to_vgroup PROPERTIES LABELS EXAMPLES)
+  set_tests_properties (hdftest_VG_add_sds_to_vgroup PROPERTIES LABELS EXAMPLES)
 endif (NOT "${last_test}" STREQUAL "")
 set (last_test "hdftest_VG_add_sds_to_vgroup")

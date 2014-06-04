@@ -76,14 +76,15 @@ typedef struct {
 extern "C" {
 #endif
 
-int  hrepack         (const char* infname, const char* outfname, options_t *options);
-int  hrepack_addcomp (const char* str, options_t *options);
-int  hrepack_addchunk(const char* str, options_t *options);
-void hrepack_init    (options_t *options, int verbose);
-void hrepack_end     (options_t *options);
+HDFTOOLSAPI int  hrepack         (const char* infname, const char* outfname, options_t *options);
+HDFTOOLSAPI int  hrepack_addcomp (const char* str, options_t *options);
+HDFTOOLSAPI int  hrepack_addchunk(const char* str, options_t *options);
+HDFTOOLSAPI void hrepack_init    (options_t *options, int verbose);
+HDFTOOLSAPI void hrepack_end     (options_t *options);
+HDFTOOLSAPI int  hrepack_main    (const char* infile, const char* outfile, options_t *options);
 
-int  list(const char* infname,const char* outfname,options_t *options);
-int  read_info(const char *filename,options_t *options); 
+HDFTOOLSAPI int  list(const char* infname,const char* outfname,options_t *options);
+HDFTOOLSAPI int  read_info(const char *filename,options_t *options);
 
 #ifdef __cplusplus
 }

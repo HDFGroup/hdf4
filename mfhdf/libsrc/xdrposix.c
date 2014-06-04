@@ -26,7 +26,11 @@
 typedef NETLONG     netlong;
 #undef  NETLONG
 
-#   if defined MSDOS || defined WINNT || defined _WIN32
+#   if defined __MINGW32__
+#       include <stdint.h>
+#   endif
+
+#   if defined MSDOS || defined WINNT || defined _WIN32 || defined __MINGW32__
 #       include <io.h>
 #   else
 #       include <unistd.h>

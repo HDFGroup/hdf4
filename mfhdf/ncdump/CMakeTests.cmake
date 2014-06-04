@@ -6,7 +6,7 @@
 ##############################################################################
 
 # Remove any output file left over from previous test run
-ADD_TEST (
+add_test (
     NAME NCDUMP-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
@@ -16,9 +16,9 @@ ADD_TEST (
         test2.cdl
 )
 if (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (NCDUMP-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (NCDUMP-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 else (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (NCDUMP-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (NCDUMP-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
 endif (NOT "${last_test}" STREQUAL "")
 set (last_test "NCDUMP-clearall-objects")
 
@@ -31,14 +31,14 @@ ADD_CUSTOM_COMMAND (
 )
 
 if (NCGEN_UTILITY)
-  ADD_TEST (
+  add_test (
       NAME NCDUMP-test0.nc
       COMMAND $<TARGET_FILE:ncgen> -o test0.nc -n test0.cdl
   )
-  SET_TESTS_PROPERTIES (NCDUMP-test0.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (NCDUMP-test0.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test0.nc")
 
-  ADD_TEST (
+  add_test (
       NAME NCDUMP-test1.cdl
       COMMAND "${CMAKE_COMMAND}"
           -D "TEST_PROGRAM=$<TARGET_FILE:ncdump>"
@@ -49,17 +49,17 @@ if (NCGEN_UTILITY)
           -D "TEST_SKIP_COMPARE=TRUE"
           -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
   )
-  SET_TESTS_PROPERTIES (NCDUMP-test1.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (NCDUMP-test1.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test1.cdl")
 
-  ADD_TEST (
+  add_test (
       NAME NCDUMP-test1.nc
       COMMAND $<TARGET_FILE:ncgen> -o test1.nc -n test1.cdl
   )
-  SET_TESTS_PROPERTIES (NCDUMP-test1.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (NCDUMP-test1.nc PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test1.nc")
 
-  ADD_TEST (
+  add_test (
       NAME NCDUMP-test2.cdl
       COMMAND "${CMAKE_COMMAND}"
           -D "TEST_PROGRAM=$<TARGET_FILE:ncdump>"
@@ -70,6 +70,6 @@ if (NCGEN_UTILITY)
           -D "TEST_REFERENCE=test1.cdl"
           -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
   )
-  SET_TESTS_PROPERTIES (NCDUMP-test2.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (NCDUMP-test2.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test2.cdl")
 endif (NCGEN_UTILITY)

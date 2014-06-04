@@ -24,7 +24,7 @@
     TARGET_NAMING (hdifftst ${LIB_TYPE})
 
     # Remove any output file left over from previous test run
-    ADD_TEST (
+    add_test (
         NAME HDIFF-GEN-clearall-objects
         COMMAND    ${CMAKE_COMMAND}
             -E remove 
@@ -38,21 +38,21 @@
     )
     set (last_test "HDIFF-GEN-clearall-objects")
     
-    ADD_TEST (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
-    SET_TESTS_PROPERTIES (hdifftst PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    add_test (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
+    set_tests_properties (hdifftst PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     set (last_test "hdifftst")
   endif (HDF4_BUILD_GENERATORS AND NOT BUILD_SHARED_LIBS)
 
   MACRO (ADD_H4_TEST resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HDIFF-${resultfile} COMMAND $<TARGET_FILE:hdiff> ${ARGN})
+      add_test (NAME HDIFF-${resultfile} COMMAND $<TARGET_FILE:hdiff> ${ARGN})
       if (NOT ${resultcode} STREQUAL "0")
-        SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME} WILL_FAIL "true")
+        set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME} WILL_FAIL "true")
       else (NOT ${resultcode} STREQUAL "0")
-        SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
+        set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
       endif (NOT ${resultcode} STREQUAL "0")
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HDIFF-${resultfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdiff>"
@@ -65,9 +65,9 @@
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HDIFF-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "HDIFF-${resultfile}")
   ENDMACRO (ADD_H4_TEST file)
@@ -144,7 +144,7 @@
 ##############################################################################
 ##############################################################################
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME HDIFF-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -180,9 +180,9 @@
           hdiff_15.out.err
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDIFF-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (HDIFF-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDIFF-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (HDIFF-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "HDIFF-clearall-objects")
 

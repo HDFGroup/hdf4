@@ -5,61 +5,10 @@
 ##############################################################################
 ##############################################################################
 
-#-- Adding test for hrepack_check
-
-  set (hrepack_check_SRCS
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c
-  )
-  
-  ADD_EXECUTABLE (hrepack_check ${hrepack_check_SRCS})
-  TARGET_C_PROPERTIES (hrepack_check " " " ")
-  if (HDF4_BUILD_XDR_LIB)
-    TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else (HDF4_BUILD_XDR_LIB)
-    TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (hrepack_check ${LIB_TYPE})
-
-#-- Adding test for test_hrepack
-
-  set (test_hrepack_SRCS
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_an.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_gr.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_list.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_lsttable.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_opttable.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_parse.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_sds.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_utils.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vg.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_dim.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vs.c
-      ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_array.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_gattr.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_gr.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_list.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_mattbl.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_misc.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_sds.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_table.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_vs.c
-      ${HDF4_SOURCE_DIR}/mfhdf/hdiff/hdiff_dim.c
-  )
-  
-  ADD_EXECUTABLE (test_hrepack ${test_hrepack_SRCS})
-  TARGET_C_PROPERTIES (test_hrepack " " " ")
-  if (HDF4_BUILD_XDR_LIB)
-    TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else (HDF4_BUILD_XDR_LIB)
-    TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (test_hrepack ${LIB_TYPE})
- 
 #-- Copy all the dat files from the test directory into the source directory
   set (HDF4_REPACK_TEST_FILES
+      hrepack_help.txt
+      hrepack_check_help.txt
       image24pixel.txt
       image24plane.txt
       image8.txt
@@ -70,12 +19,51 @@
     set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
     #message (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
     ADD_CUSTOM_COMMAND (
-        TARGET     test_hrepack 
+        TARGET     hrepack_check 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
     )
   endforeach (h4_file ${HDF4_REPACK_TEST_FILES})
+
+#-- Adding test for test_hrepack for generating testfiles
+  ADD_EXECUTABLE (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
+  TARGET_C_PROPERTIES (test_hrepack " " " ")
+  if (HDF4_BUILD_XDR_LIB)
+    TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
+  else (HDF4_BUILD_XDR_LIB)
+    TARGET_LINK_LIBRARIES (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  endif (HDF4_BUILD_XDR_LIB)
+  TARGET_NAMING (test_hrepack ${LIB_TYPE})
+
+  MACRO (ADD_H4_TEST testname testtype testfile)
+    if (${testtype} STREQUAL "SKIP")
+      if (NOT HDF4_ENABLE_USING_MEMCHECKER)
+        add_test (
+            NAME HREPACK-${testname}-SKIPPED
+            COMMAND ${CMAKE_COMMAND} -E echo "SKIP  -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}"
+        )
+      endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
+    else (${testtype} STREQUAL "SKIP")
+      add_test (
+          NAME HREPACK-${testname}-clearall-objects
+          COMMAND    ${CMAKE_COMMAND}
+              -E remove 
+              out-${testname}.${testfile}
+      )
+      set_tests_properties (HREPACK-${testname}-clearall-objects PROPERTIES DEPENDS HREPACK-test_hrepack LABELS ${PROJECT_NAME})
+      add_test (
+          NAME HREPACK-${testname}
+          COMMAND $<TARGET_FILE:hrepack> -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}
+      )
+      set_tests_properties (HREPACK-${testname} PROPERTIES DEPENDS HREPACK-${testname}-clearall-objects LABELS ${PROJECT_NAME})
+      add_test (
+          NAME HREPACK-${testname}_DFF
+          COMMAND $<TARGET_FILE:hdiff> ${PROJECT_BINARY_DIR}/${testfile} ${PROJECT_BINARY_DIR}/out-${testname}.${testfile}
+      )
+      set_tests_properties (HREPACK-${testname}_DFF PROPERTIES DEPENDS HREPACK-${testname} LABELS ${PROJECT_NAME})
+    endif (${testtype} STREQUAL "SKIP")
+  ENDMACRO (ADD_H4_TEST)
 
 ##############################################################################
 ##############################################################################
@@ -83,19 +71,233 @@
 ##############################################################################
 ##############################################################################
   # Remove any output file left over from previous test run
-  ADD_TEST (
-      NAME hrepack-clearall-objects
+  add_test (
+      NAME HREPACK-hrepack-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
+          hrepack_help.out
+          hrepack_check_help.out
           hrepacktst1.hdf
-          hrepacktst1_out.hdf
           hrepacktst2.hdf
-          hrepacktst2_out.hdf
           hrepacktst3.hdf
-          hrepacktst3_out.hdf
   )
 
-#  ADD_TEST (NAME hrepack_check COMMAND $<TARGET_FILE:hrepack_check>)
+  if (NOT HDF4_ENABLE_USING_MEMCHECKER)
+    add_test (
+        NAME HREPACK-hrepack_check
+        COMMAND "${CMAKE_COMMAND}"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hrepack_check>"
+            -D "TEST_ARGS:STRING=${ARGN}"
+            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_OUTPUT=hrepack_check_help.out"
+            -D "TEST_EXPECT=1"
+            -D "TEST_REFERENCE=hrepack_check_help.txt"
+            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+    )
+  endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
+  set_tests_properties (HREPACK-hrepack_check PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
+
+  if (NOT HDF4_ENABLE_USING_MEMCHECKER)
+    add_test (
+        NAME HREPACK-hrepack_help
+        COMMAND "${CMAKE_COMMAND}"
+            -D "TEST_PROGRAM=$<TARGET_FILE:hrepack>"
+            -D "TEST_ARGS:STRING=${ARGN}"
+            -D "TEST_FOLDER=${PROJECT_BINARY_DIR}"
+            -D "TEST_OUTPUT=hrepack_help.out"
+            -D "TEST_EXPECT=0"
+            -D "TEST_REFERENCE=hrepack_help.txt"
+            -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
+    )
+  endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
+  set_tests_properties (HREPACK-hrepack_help PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
+
+  add_test (NAME HREPACK-test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
+  set_tests_properties (HREPACK-test_hrepack PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
+      
+  set (HREPACK_FILE1 hrepacktst1.hdf)
+  set (HREPACK_FILE2 hrepacktst2.hdf)
+  set (HREPACK_FILE3 hrepacktst3.hdf)
+   #-------------------------------------------------------------------------
+   # test1:  
+   # HUFF
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST (HUFF "TEST" ${HREPACK_FILE1} -t "dset7:HUFF 1" -c dset7:10x8x6)
+    
+#    if ( sds_verifiy_comp("dset7",COMP_CODE_SKPHUFF, 1) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset7",HDF_CHUNK|HDF_COMP,3,in_chunk_lengths) == -1) 
+#        goto out;
+    
+    
+   #-------------------------------------------------------------------------
+   # test2: 
+   # RLE
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(RLE "TEST" ${HREPACK_FILE1} -t dset4:RLE -c dset4:10x8)
+    
+#    if ( sds_verifiy_comp("dset4",COMP_CODE_RLE, 0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+#        goto out;
+    
+   #-------------------------------------------------------------------------
+   # test3:  
+   # SDS SELECTED with GZIP, chunking SELECTED
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(SDSGZIP_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 6" -c dset4:10x8)
+    
+#    if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 6) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+#        goto out;
+    
+    
+   #-------------------------------------------------------------------------
+   # test4:  
+   # SDS SELECTED with SZIP, chunking SELECTED
+   #-------------------------------------------------------------------------
+   #
+   if (H4_HAVE_SZIP_ENCODER)
+     ADD_H4_TEST(SDSSZIP_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:SZIP 8,EC" -c dset4:10x8)
+   else (H4_HAVE_SZIP_ENCODER)
+     ADD_H4_TEST(SDSSZIP_CHUNK "SKIP" ${HREPACK_FILE1} -c dset4:10x8)
+   endif (H4_HAVE_SZIP_ENCODER)
+#if defined (H4_HAVE_LIBSZ)
+#    if (SZ_encoder_enabled()) 
+#    {
+#        
+#        if ( sds_verifiy_comp("dset4",COMP_CODE_SZIP, 0) == -1) 
+#            goto out;
+#        if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+#            goto out;
+    
+   #-------------------------------------------------------------------------
+   # test4:  
+   # SDS SELECTED with NONE, chunking SELECTED NONE
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(SDSNONE_CHUNKNONE "TEST" ${HREPACK_FILE1} -t dset_chunk_comp:NONE -t dset_chunk:NONE -c dset_chunk_comp:NONE -c dset_chunk:NONE)
+    
+#    if ( sds_verifiy_comp("dset_chunk_comp",COMP_CODE_NONE, 0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_comp("dset_chunk",COMP_CODE_NONE, 0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset_chunk_comp",HDF_NONE,0,0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset_chunk",HDF_NONE,0,0) == -1) 
+#        goto out;
+    
+    
+   #-------------------------------------------------------------------------
+   # test5:
+   # SDS SELECTED with all types, chunking SELECTED
+   #-------------------------------------------------------------------------
+   #
+   if (H4_HAVE_SZIP_ENCODER)
+     ADD_H4_TEST(SDS_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -t "dset7:SZIP 8,EC" -c dset4:10x8 -c dset5:10x8 -c dset6:10x8)
+   else (H4_HAVE_SZIP_ENCODER)
+     ADD_H4_TEST(SDS_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -c dset4:10x8 -c dset5:10x8 -c dset6:10x8)
+   endif (H4_HAVE_SZIP_ENCODER)
+    
+#    if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
+#        goto out;
+#    if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+#        goto out;
+#if defined (H4_HAVE_LIBSZ)
+#    if (SZ_encoder_enabled()) {
+#        if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
+#            goto out;
+#    }
+#endif
+#    if ( sds_verifiy_chunk("dset4",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset5",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset6",HDF_CHUNK|HDF_COMP,2,in_chunk_lengths) == -1) 
+#        goto out;
+    
+    
+   #-------------------------------------------------------------------------
+   # test6: 
+   # SDS SELECTED with all types, no chunking
+   #-------------------------------------------------------------------------
+   #
+   if (H4_HAVE_SZIP_ENCODER)
+     ADD_H4_TEST(SEL_NOCHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -t "dset7:SZIP 4,EC")
+   else (H4_HAVE_SZIP_ENCODER)
+     ADD_H4_TEST(SEL_NOCHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2")
+   endif (H4_HAVE_SZIP_ENCODER)
+    
+#    if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1) 
+#        goto out;
+#    if ( sds_verifiy_comp("dset5",COMP_CODE_RLE, 0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_comp("dset6",COMP_CODE_SKPHUFF, 2) == -1) 
+#        goto out;
+#if defined (H4_HAVE_LIBSZ)
+#    if (SZ_encoder_enabled()) {
+#        if ( sds_verifiy_comp("dset7",COMP_CODE_SZIP, 0) == -1) 
+#            goto out;
+#    }
+#endif
+    
+    
+   #-------------------------------------------------------------------------
+   # test7:  
+   # compressing SDS ALL, chunking SELECTED NONE
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(COMPALL_CHUNKNONE "TEST" ${HREPACK_FILE1} -t "*:GZIP 1" -c dset_chunk_comp:NONE -c dset_chunk:NONE)
+    
+#    if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset_chunk_comp",HDF_NONE,0,0) == -1) 
+#        goto out;
+#    if ( sds_verifiy_chunk("dset_chunk",HDF_NONE,0,0) == -1) 
+#        goto out;
+    
+   #-------------------------------------------------------------------------
+   # test8:
+   # no compressing, chunking ALL
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(NOCOMP_CHUNKALL "TEST" ${HREPACK_FILE1} -c *:10x8)
+    
+#    if ( sds_verifiy_chunk_all(HDF_CHUNK,2,in_chunk_lengths,"dset7") == -1) 
+#        goto out;
+    
+    
+   #-------------------------------------------------------------------------
+   # test9: 
+   # compressing SDS ALL with GZIP
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(GZIP "TEST" ${HREPACK_FILE1} -t "*:GZIP 1")
+    
+#    if ( sds_verifiy_comp_all(COMP_CODE_DEFLATE, 1) == -1) 
+#        goto out;
+    
+    
+   #-------------------------------------------------------------------------
+   # test10: 
+   # repack a big file using hyperslab reading/writing
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(HYPERSLAB "TEST" ${HREPACK_FILE2})
+    
+   #-------------------------------------------------------------------------
+   # test11: 
+   # repack a file with vgroups
+   #-------------------------------------------------------------------------
+   #
+    ADD_H4_TEST(VGROUP "TEST" ${HREPACK_FILE3})
+    
+#    if (vg_verifygrpdep(HREPACK_FILE3,HREPACK_FILE3_OUT) != 0 )
+#        goto out;
   
-  ADD_TEST (NAME test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
-  SET_TESTS_PROPERTIES (test_hrepack PROPERTIES DEPENDS hrepack-clearall-objects LABELS ${PROJECT_NAME})

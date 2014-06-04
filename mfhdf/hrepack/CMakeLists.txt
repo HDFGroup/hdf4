@@ -42,6 +42,15 @@ else (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hrepack ${LIB_TYPE})
+  
+ADD_EXECUTABLE (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
+TARGET_C_PROPERTIES (hrepack_check " " " ")
+if (HDF4_BUILD_XDR_LIB)
+  TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
+else (HDF4_BUILD_XDR_LIB)
+  TARGET_LINK_LIBRARIES (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+endif (HDF4_BUILD_XDR_LIB)
+TARGET_NAMING (hrepack_check ${LIB_TYPE})
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
@@ -61,7 +70,7 @@ INSTALL_PROGRAM_PDB (hrepack ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 
 INSTALL (
     TARGETS
-        hrepack
+        hrepack hrepack_check
     RUNTIME DESTINATION
         ${HDF4_INSTALL_TOOLS_BIN_DIR}
     COMPONENT

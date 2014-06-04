@@ -33,7 +33,7 @@ foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
 # Remove any output file left over from previous test run
-ADD_TEST (
+add_test (
     NAME testhdf-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
@@ -109,13 +109,13 @@ ADD_TEST (
         Tables_External_File
 )
 if (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (testhdf-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (testhdf-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 else (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (testhdf-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (testhdf-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
 endif (NOT "${last_test}" STREQUAL "")
 set (last_test "testhdf-clearall-objects")
 
-ADD_TEST (
+add_test (
     NAME testhdf_thf0-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
@@ -131,9 +131,9 @@ ADD_TEST (
         thf9.hdf
 )
 if (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (testhdf_thf0-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (testhdf_thf0-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 else (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (testhdf_thf0-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (testhdf_thf0-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
 endif (NOT "${last_test}" STREQUAL "")
 set (last_test "testhdf_thf0-clearall-objects")
 
@@ -146,7 +146,7 @@ set (thf_decade
     51 52 53 54 55 56 57 58 59 60
 )
 foreach (decade ${thf_decade}) 
-  ADD_TEST (
+  add_test (
       NAME testhdf_thf${decade}-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -162,30 +162,30 @@ foreach (decade ${thf_decade})
           thf${decade}9.hdf
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (testhdf_thf${decade}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (testhdf_thf${decade}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (testhdf_thf${decade}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (testhdf_thf${decade}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "testhdf_thf${decade}-clearall-objects")
 endforeach (decade ${thf_decade}) 
 
-ADD_TEST (NAME testhdf COMMAND $<TARGET_FILE:testhdf>)
+add_test (NAME testhdf COMMAND $<TARGET_FILE:testhdf>)
 set (passRegex "All tests were successful")
 SET_PROPERTY (TEST testhdf PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
 if (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (testhdf PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+  set_tests_properties (testhdf PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
 else (NOT "${last_test}" STREQUAL "")
-  SET_TESTS_PROPERTIES (testhdf PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (testhdf PROPERTIES LABELS ${PROJECT_NAME})
 endif (NOT "${last_test}" STREQUAL "")
 set (last_test "testhdf")
 
 #-- Adding test for buffer
 if (NOT WIN32)
-  ADD_TEST (NAME buffer COMMAND $<TARGET_FILE:buffer>)
+  add_test (NAME buffer COMMAND $<TARGET_FILE:buffer>)
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (buffer PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (buffer PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (buffer PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (buffer PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "buffer")
 endif (NOT WIN32)

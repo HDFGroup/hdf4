@@ -4,12 +4,12 @@
 
 include $(top_srcdir)/config/commence.am
 
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+fort_INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/hdf/test       \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(fort_INCLUDES) $(DEFINES)
 
 DIST_SUBDIRS = examples
 

@@ -29,7 +29,7 @@
 #if defined(H4_BUILT_AS_DYNAMIC_LIB)
 
 #if defined(xdr_EXPORTS)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
     #define XDRLIBAPI extern __declspec(dllexport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define XDRLIBAPI extern __attribute__ ((visibility("default")))
@@ -37,7 +37,7 @@
 #endif /* xdr_EXPORTS */
 
 #if defined(hdf_EXPORTS)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFERRPUBLIC __declspec(dllimport)
     #define HDFPUBLIC __declspec(dllexport)
     #define HDFLIBAPI extern __declspec(dllexport)
@@ -51,7 +51,7 @@
 #endif /* hdf_EXPORTS */
 
 #if defined(hdf_fcstub_EXPORTS)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllexport)
     #define HDFLIBAPI extern __declspec(dllimport)
     #define HDFFCLIBAPI extern __declspec(dllexport)
@@ -63,7 +63,7 @@
 #endif /* hdf_fcstub_EXPORTS */
 
 #if defined(mfhdf_EXPORTS)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFERRPUBLIC extern __declspec(dllimport)
     #define HDFPUBLIC __declspec(dllimport)
     #define HDFLIBAPI extern __declspec(dllexport)
@@ -77,7 +77,7 @@
 #endif /* mfhdf_EXPORTS */
 
 #if defined(mfhdf_fcstub_EXPORTS)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllimport)
     #define HDFLIBAPI extern __declspec(dllimport)
     #define HDFFCLIBAPI extern __declspec(dllexport)
@@ -89,15 +89,39 @@
 #endif /* mfhdf_fcstub_EXPORTS */
 
 #if defined(hdf_test_fcstub_EXPORTS)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFFCLIBAPI extern __declspec(dllexport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
   #endif
 #endif/* hdf_test_fcstub_EXPORTS */
 
+#if defined(mfhdf_hdiff_EXPORTS)
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
+    #define HDFPUBLIC __declspec(dllimport)
+    #define HDFLIBAPI extern __declspec(dllimport)
+    #define HDFTOOLSAPI extern __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFPUBLIC __attribute__ ((visibility("default")))
+    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
+    #define HDFTOOLSAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif /* mfhdf_hdiff_EXPORTS */
+
+#if defined(mfhdf_hrepack_EXPORTS)
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
+    #define HDFPUBLIC __declspec(dllimport)
+    #define HDFLIBAPI extern __declspec(dllimport)
+    #define HDFTOOLSAPI extern __declspec(dllexport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFPUBLIC __attribute__ ((visibility("default")))
+    #define HDFLIBAPI extern __attribute__ ((visibility("default")))
+    #define HDFTOOLSAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif /* mfhdf_hrepack_EXPORTS */
+
 #if !defined(XDRLIBAPI)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define XDRLIBAPI extern __declspec(dllimport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define XDRLIBAPI extern __attribute__ ((visibility("default")))
@@ -111,24 +135,31 @@
   #endif
 #endif
 #if !defined(HDFPUBLIC)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllimport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFPUBLIC __attribute__ ((visibility("default")))
   #endif
 #endif
 #if !defined(HDFLIBAPI)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFLIBAPI extern __declspec(dllimport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFLIBAPI extern __attribute__ ((visibility("default")))
   #endif
 #endif
 #if !defined(HDFFCLIBAPI)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFFCLIBAPI extern __declspec(dllimport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFFCLIBAPI extern __attribute__ ((visibility("default")))
+  #endif
+#endif
+#if !defined(HDFTOOLSAPI)
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
+    #define HDFTOOLSAPI extern __declspec(dllimport)
+  #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
+    #define HDFTOOLSAPI extern __attribute__ ((visibility("default")))
   #endif
 #endif
 
@@ -138,6 +169,7 @@
   #define HDFPUBLIC
   #define HDFLIBAPI extern
   #define HDFFCLIBAPI extern
+  #define HDFTOOLSAPI extern
 
 #else
 /* This is the original HDFGroup defined preprocessor code which should still work
@@ -198,6 +230,9 @@
 #    if !defined(HDFFCLIBAPI)
 #      define HDFFCLIBAPI extern __declspec(dllimport)
 #    endif
+#    if !defined(HDFTOOLSAPI)
+#      define HDFTOOLSAPI extern __declspec(dllimport)
+#    endif
 
 #  else
 #    define XDRLIBAPI extern
@@ -205,6 +240,7 @@
 #    define HDFPUBLIC
 #    define HDFLIBAPI extern
 #    define HDFFCLIBAPI extern
+#    define HDFTOOLSAPI extern
 #  endif
 #else  /* !defined( _WIN32 ) */
 #  define XDRLIBAPI extern
@@ -212,6 +248,7 @@
 #  define HDFPUBLIC
 #  define HDFLIBAPI extern
 #  define HDFFCLIBAPI extern
+#  define HDFTOOLSAPI extern
 #endif
 
 #endif /*H4_BUILT_AS_DYNAMIC_LIB  */

@@ -4,7 +4,9 @@
 #-----------------------------------------------------------------------------
 
 include (ExternalProject)
-option (HDF4_ALLOW_EXTERNAL_SUPPORT "Allow External Library Building (NO SVN TGZ)" "NO")
+#option (HDF4_ALLOW_EXTERNAL_SUPPORT "Allow External Library Building (NO SVN TGZ)" "NO")
+set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO SVN TGZ)")
+set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO SVN TGZ)
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   option (JPEG_USE_EXTERNAL "Use External Library Building for JPEG" 1)
   option (ZLIB_USE_EXTERNAL "Use External Library Building for ZLIB" 1)

@@ -6,7 +6,7 @@
 ##############################################################################
 
 # Remove any output file left over from previous test run
-ADD_TEST (
+add_test (
     NAME MFHDF_FORTRAN_EXAMPLES-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
@@ -16,19 +16,19 @@ ADD_TEST (
         SDSUNLIMITED.hdf
         SLABS.hdf
 )
-SET_TESTS_PROPERTIES (MFHDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+set_tests_properties (MFHDF_FORTRAN_EXAMPLES-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
 set (last_test "MFHDF_FORTRAN_EXAMPLES-clearall-objects")
 
 foreach (example ${examples})
-  ADD_TEST (NAME f_exmftest_${example} COMMAND $<TARGET_FILE:f_exmf_${example}>)
+  add_test (NAME f_exmftest_${example} COMMAND $<TARGET_FILE:f_exmf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (f_exmftest_${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (f_exmftest_${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (f_exmftest_${example} PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (f_exmftest_${example} PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "f_exmftest_${example}")
 endforeach (example ${examples})
 
 foreach (example ${skip_examples})
-  ADD_TEST (NAME f_exmftest_${example} COMMAND ${CMAKE_COMMAND} -E echo "SKIP f_exmftest_${example}")
+  add_test (NAME f_exmftest_${example} COMMAND ${CMAKE_COMMAND} -E echo "SKIP f_exmftest_${example}")
 endforeach (example ${skip_examples})

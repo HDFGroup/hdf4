@@ -38,7 +38,7 @@
       )
     endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
-    ADD_TEST (NAME ftest COMMAND $<TARGET_FILE:ftest>)
+    add_test (NAME ftest COMMAND $<TARGET_FILE:ftest>)
   endif (HDF4_ENABLE_NETCDF)
 
   #-- Adding test for f_hdftest
@@ -80,7 +80,7 @@
 ##############################################################################
 ##############################################################################
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME MFHDF_FORTRAN-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -143,20 +143,20 @@
           test_file35.hdf
   )
   if (HDF4_ENABLE_NETCDF)
-    SET_TESTS_PROPERTIES (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest LABELS ${PROJECT_NAME})
+    set_tests_properties (MFHDF_FORTRAN-clearall-objects PROPERTIES DEPENDS ftest LABELS ${PROJECT_NAME})
   endif (HDF4_ENABLE_NETCDF)
 
-  ADD_TEST (NAME f_hdftest COMMAND $<TARGET_FILE:f_hdftest>)
+  add_test (NAME f_hdftest COMMAND $<TARGET_FILE:f_hdftest>)
   set (passRegex "Total errors : [ ]+0")
   SET_PROPERTY (TEST f_hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
-  SET_TESTS_PROPERTIES (f_hdftest PROPERTIES DEPENDS MFHDF_FORTRAN-clearall-objects LABELS ${PROJECT_NAME})
+  set_tests_properties (f_hdftest PROPERTIES DEPENDS MFHDF_FORTRAN-clearall-objects LABELS ${PROJECT_NAME})
 
-  ADD_TEST (NAME f_hdftest1 COMMAND $<TARGET_FILE:f_hdftest1>)
+  add_test (NAME f_hdftest1 COMMAND $<TARGET_FILE:f_hdftest1>)
   set (failRegex "failed" "errors")
   SET_PROPERTY (TEST f_hdftest1 PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
-  SET_TESTS_PROPERTIES (f_hdftest1 PROPERTIES DEPENDS f_hdftest LABELS ${PROJECT_NAME})
+  set_tests_properties (f_hdftest1 PROPERTIES DEPENDS f_hdftest LABELS ${PROJECT_NAME})
 
-  ADD_TEST (NAME f_tszip COMMAND $<TARGET_FILE:f_tszip>)
+  add_test (NAME f_tszip COMMAND $<TARGET_FILE:f_tszip>)
   set (failRegex "failed" "errors")
   SET_PROPERTY (TEST f_tszip PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
-  SET_TESTS_PROPERTIES (f_tszip PROPERTIES DEPENDS f_hdftest1 LABELS ${PROJECT_NAME})
+  set_tests_properties (f_tszip PROPERTIES DEPENDS f_hdftest1 LABELS ${PROJECT_NAME})

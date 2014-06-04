@@ -48,7 +48,8 @@ set (HDF4_PACKAGE_EXTLIBS OFF CACHE BOOL "(WINDOWS)CPACK - include external libr
 
 set (HDF4_NO_PACKAGES ON CACHE BOOL "CPACK - Disable packaging" FORCE)
 
-set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building" FORCE)
+set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO SVN TGZ)" FORCE)
+set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO SVN TGZ)
 
 set (ZLIB_SVN_URL "http://svn.hdfgroup.uiuc.edu/zlib/trunk" CACHE STRING "Use ZLib from HDF repository" FORCE)
 

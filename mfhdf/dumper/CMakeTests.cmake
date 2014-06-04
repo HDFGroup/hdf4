@@ -159,21 +159,21 @@
 
   MACRO (ADD_H4_TEST resultfile resultcode)
     # Remove any output file left over from previous test run
-    ADD_TEST (
+    add_test (
         NAME HDP-${resultfile}-clearall-objects
         COMMAND ${CMAKE_COMMAND}
             -E remove ${resultfile}.tst ${resultfile}.tst.err
     )
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDP-${resultfile}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HDP-${resultfile}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDP-${resultfile}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HDP-${resultfile}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
 
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HDP-${resultfile} COMMAND $<TARGET_FILE:hdp> ${ARGN})
+      add_test (NAME HDP-${resultfile} COMMAND $<TARGET_FILE:hdp> ${ARGN})
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HDP-${resultfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdp>"
@@ -185,7 +185,7 @@
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
-    SET_TESTS_PROPERTIES (HDP-${resultfile} PROPERTIES DEPENDS HDP-${resultfile}-clearall-objects LABELS ${PROJECT_NAME})
+    set_tests_properties (HDP-${resultfile} PROPERTIES DEPENDS HDP-${resultfile}-clearall-objects LABELS ${PROJECT_NAME})
     set (last_test "HDP-${resultfile}")
   ENDMACRO (ADD_H4_TEST file)
 
@@ -346,29 +346,29 @@
   ADD_H4_TEST (dumpgr-5 0 dumpgr -r 6,2,3 grtdfui82.hdf)
   ADD_H4_TEST (dumpgr-6 0 dumpgr -r 6 -d  grtdfui82.hdf)
   ADD_H4_TEST (dumpgr-7 0 dumpgr -o my.dat grtdfui82.hdf)
-  ADD_TEST (
+  add_test (
       NAME HDP-clear-my.dat
       COMMAND    ${CMAKE_COMMAND}
       -E remove 
       my.dat
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDP-clear-my.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (HDP-clear-my.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDP-clear-my.dat PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (HDP-clear-my.dat PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "HDP-clear-my.dat")
   ADD_H4_TEST (dumpgr-8 0 dumpgr -o mybin.dat  -b grtdfui82.hdf)
-  ADD_TEST (
+  add_test (
       NAME HDP-clear-mybin.dat
       COMMAND    ${CMAKE_COMMAND}
       -E remove 
       mybin.dat
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDP-clear-mybin.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (HDP-clear-mybin.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HDP-clear-mybin.dat PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (HDP-clear-mybin.dat PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "HDP-clear-mybin.dat")
   ADD_H4_TEST (dumpgr-9 0 dumpgr grtdfui83.hdf)

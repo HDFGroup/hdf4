@@ -780,6 +780,7 @@
 ./mfhdf/hrepack/Makefile.in
 ./mfhdf/hrepack/hrepack.c
 ./mfhdf/hrepack/hrepack.h
+./mfhdf/hrepack/hrepack.sh.in
 ./mfhdf/hrepack/hrepack_all.sh.in
 ./mfhdf/hrepack/hrepack_an.c
 ./mfhdf/hrepack/hrepack_an.h
@@ -804,6 +805,8 @@
 ./mfhdf/hrepack/hrepack_vs.h
 ./mfhdf/hrepack/hrepack_dim.c
 ./mfhdf/hrepack/hrepack_dim.h
+./mfhdf/hrepack/hrepack_help.txt
+./mfhdf/hrepack/hrepack_check_help.txt
 ./mfhdf/hrepack/image24pixel.txt
 ./mfhdf/hrepack/image24plane.txt
 ./mfhdf/hrepack/image8.txt

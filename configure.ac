@@ -996,6 +996,7 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/hdiff/Makefile
                  mfhdf/hdiff/testhdiff.sh
                  mfhdf/hrepack/Makefile
+                 mfhdf/hrepack/hrepack.sh
                  mfhdf/hrepack/hrepack_all.sh
                  mfhdf/libsrc/Makefile
                  mfhdf/ncdump/Makefile

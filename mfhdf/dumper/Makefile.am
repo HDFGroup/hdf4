@@ -4,11 +4,11 @@
 
 include $(top_srcdir)/config/commence.am
 
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+hdp_INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(hdp_INCLUDES) $(DEFINES)
 
 ## Add hdp specific linker flags here
 hdp_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)

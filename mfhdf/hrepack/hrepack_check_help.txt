@@ -1,0 +1,3 @@
+hrepack_check file_name <sds_name>
+    file_name   HDF File
+    sds_name    SDS name (if no name, a list of all names is printed)

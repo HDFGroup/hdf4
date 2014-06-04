@@ -1,0 +1,55 @@
+usage: hrepack -i input -o output [-V] [-h] [-v] [-t 'comp_info'] [-c 'chunk_info'] [-f cfile] [-m size]
+  -i input          input HDF File
+  -o output         output HDF File
+  [-V]              prints version of the HDF4 library and exits
+  [-h]              prints this usage
+  [-v]              verbose mode
+  [-t 'comp_info']  compression type: 'comp_info' is a string with the format
+		     <object list>:<type of compression><parameters>
+		     <object list> is a comma separated list of object names
+		        meaning apply compression only to those objects
+		        '*' means all objects
+		     <type of compression> can be:
+		       RLE, for RLE compression
+		       HUFF, for Huffman
+		       GZIP, for gzip
+		       JPEG, for JPEG (for images only)
+		       SZIP, for szip
+		       NONE, to uncompress
+		     <parameters> is optional compression info
+		       RLE, no parameter
+		       HUFF, the skip-size
+		       GZIP, the deflation level
+		       JPEG, the quality factor
+		       SZIP, pixels per block, compression mode (NN or EC)
+  [-c 'chunk_info'] apply chunking. 'chunk_info' is a string with the format
+		     <object list>:<chunk information>
+		       <object list> is a comma separated list of object names
+		         meaning apply chunking only to those objects
+		         '*' means all objects
+		       <chunk information> is the chunk size of each dimension:
+		        <dim_1 x dim_2 x ... dim_n> or
+		        NONE, to unchunk a previous chunked object
+  [-f cfile]      file with compression information -t and -c
+  [-m size]       do not compress objects smaller than size (bytes)
+
+Examples:
+
+1) hrepack -v -i file1.hdf -o file2.hdf -t '*:RLE'
+   compresses all objects in the file file1.hdf, using RLE compression
+
+2) hrepack -v -i file1.hdf -o file2.hdf -t '/group1/A,/group2/B,C:HUFF 1'
+   applies Skipping Huffman compression with skip factor of 1,
+   for objects /group1/A, /group2/B and C
+
+2) hrepack -v -i file1.hdf -o file2.hdf -t '/group1/D:RLE' -c 'D,E:10x10'
+   applies RLE compression for object /group1/D
+   applies chunking to objects D and E using a chunk size of 10 for the 2 dimensions
+
+3) hrepack -v -i file1.hdf -o file2.hdf -t 'A:NONE'
+   uncompresses object A
+
+4) hrepack -v -i file1.hdf -o file2.hdf -t 'A:SZIP 8,NN'
+   applies SZIP compression to object A, with parameters 8 and NN
+
+Note: the use of the verbose option -v is recommended

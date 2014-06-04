@@ -110,24 +110,24 @@
   MACRO (ADD_H4_TEST resultfile resultcode testtfile testtype)
     if ( NOT ${testtype} STREQUAL "")
       if (${testtype} STREQUAL "N")
-        ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -n -o ${testtfile}.hdf)
+        add_test (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -n -o ${testtfile}.hdf)
       endif (${testtype} STREQUAL "N")
       if (${testtype} STREQUAL "R")
-        ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf -raster ${ARGN})
+        add_test (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf -raster ${ARGN})
       endif (${testtype} STREQUAL "R")
     else ( NOT ${testtype} STREQUAL "")
-      ADD_TEST (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf)
+      add_test (NAME HIMPORT-${testtfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile} -o ${testtfile}.hdf)
     endif ( NOT ${testtype} STREQUAL "")
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HIMPORT-${testtfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HIMPORT-${testtfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HIMPORT-${testtfile} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HIMPORT-${testtfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
 
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HIMPORTLS-${testtfile} COMMAND $<TARGET_FILE:hdfls> -l ${testtfile}.hdf)
+      add_test (NAME HIMPORTLS-${testtfile} COMMAND $<TARGET_FILE:hdfls> -l ${testtfile}.hdf)
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HIMPORTLS-${testtfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
@@ -140,22 +140,22 @@
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
-    SET_TESTS_PROPERTIES (HIMPORTLS-${testtfile} PROPERTIES DEPENDS HIMPORT-${testtfile} LABELS ${PROJECT_NAME})
+    set_tests_properties (HIMPORTLS-${testtfile} PROPERTIES DEPENDS HIMPORT-${testtfile} LABELS ${PROJECT_NAME})
     set (last_test "HIMPORTLS-${testtfile}")
   ENDMACRO (ADD_H4_TEST)
 
   MACRO (ADD_H4_TEST_OUT resultfile resultcode)
-    ADD_TEST (NAME HIMPORT-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile}.hdf -o ${resultfile}.out)
+    add_test (NAME HIMPORT-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfimport> ${resultfile}.hdf -o ${resultfile}.out)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HIMPORT-OUT-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HIMPORT-OUT-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HIMPORT-OUT-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HIMPORT-OUT-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
 
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HIMPORTLS-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfls> ${resultfile}.out)
+      add_test (NAME HIMPORTLS-OUT-${resultfile} COMMAND $<TARGET_FILE:hdfls> ${resultfile}.out)
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HIMPORTLS-OUT-${resultfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
@@ -168,15 +168,15 @@
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
-    SET_TESTS_PROPERTIES (HIMPORTLS-OUT-${resultfile} PROPERTIES DEPENDS HIMPORT-OUT-${resultfile} LABELS ${PROJECT_NAME})
+    set_tests_properties (HIMPORTLS-OUT-${resultfile} PROPERTIES DEPENDS HIMPORT-OUT-${resultfile} LABELS ${PROJECT_NAME})
     set (last_test "HIMPORTLS-OUT-${resultfile}")
   ENDMACRO (ADD_H4_TEST_OUT)
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HIMPORT-EDIT COMMAND $<TARGET_FILE:hdfed> -batch)
+      add_test (NAME HIMPORT-EDIT COMMAND $<TARGET_FILE:hdfed> -batch)
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HIMPORT-EDIT
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
@@ -190,9 +190,9 @@
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HIMPORT-EDIT PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HIMPORT-EDIT PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HIMPORT-EDIT PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "HIMPORT-EDIT")
   ENDMACRO (ADD_H4_TEST_ED)
@@ -204,7 +204,7 @@
 ##############################################################################
 
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME hdfimport-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -270,17 +270,17 @@
           SDSfloat3.tmp.err
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfimport-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfimport-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfimport-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfimport-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "hdfimport-clear-refs")
 
-  ADD_TEST (NAME HIMPORTtest COMMAND $<TARGET_FILE:hdfimporttest>)
+  add_test (NAME HIMPORTtest COMMAND $<TARGET_FILE:hdfimporttest>)
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HIMPORTtest PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (HIMPORTtest PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (HIMPORTtest PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (HIMPORTtest PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "HIMPORTtest")
 

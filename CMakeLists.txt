@@ -563,11 +563,11 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
   endif (HDF4_BUILD_FORTRAN)
 endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
 
-if (MSVC)
+if (MSVC OR MINGW)
   set (H4_HDSETVBUF "HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))")
-else (MSVC)
+else (MSVC OR MINGW)
   set (H4_HDSETVBUF "NOP")
-endif (MSVC)
+endif (MSVC OR MINGW)
 
 #-----------------------------------------------------------------------------
 # Library utilities

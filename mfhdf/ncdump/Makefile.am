@@ -5,11 +5,11 @@
 include $(top_srcdir)/config/commence.am
 
 ## Setup the different includes and preprocessor #defines we need.
-INCLUDES=-I$(top_srcdir)/hdf/src        \
+ncdump_INCLUDES=-I$(top_srcdir)/hdf/src        \
          -I$(top_srcdir)/mfhdf/libsrc   \
          -I$(top_builddir)/mfhdf/libsrc
 DEFINES=-DNDEBUG -DHDF
-AM_CPPFLAGS=$(INCLUDES) $(DEFINES)
+AM_CPPFLAGS=$(ncdump_INCLUDES) $(DEFINES)
 
 ## Add ncdump specific linker flags here
 ncdump_LDFLAGS = $(LT_STATIC_EXEC) $(AM_LDFLAGS)

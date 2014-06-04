@@ -223,9 +223,9 @@ endif (HDF4_BUILD_TOOLS)
 if (HDF4_BUILD_TOOLS)
   MACRO (ADD_LS_TEST_NOL testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HDFLS_NOL-${testfile} COMMAND $<TARGET_FILE:hdfls> ${testfile})
+      add_test (NAME HDFLS_NOL-${testfile} COMMAND $<TARGET_FILE:hdfls> ${testfile})
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HDFLS_NOL-${testfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
@@ -239,18 +239,18 @@ if (HDF4_BUILD_TOOLS)
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDFLS_NOL-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HDFLS_NOL-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDFLS_NOL-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HDFLS_NOL-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "HDFLS_NOL-${testfile}")
   ENDMACRO (ADD_LS_TEST_NOL)
 
   MACRO (ADD_LS_TEST testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HDFLS-${testfile} COMMAND $<TARGET_FILE:hdfls> -l ${testfile})
+      add_test (NAME HDFLS-${testfile} COMMAND $<TARGET_FILE:hdfls> -l ${testfile})
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HDFLS-${testfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdfls>"
@@ -264,18 +264,18 @@ if (HDF4_BUILD_TOOLS)
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDFLS-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HDFLS-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HDFLS-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HDFLS-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "HDFLS-${testfile}")
   ENDMACRO (ADD_LS_TEST)
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (NAME HEDIT-${testfile} COMMAND $<TARGET_FILE:hdfed> -batch)
+      add_test (NAME HEDIT-${testfile} COMMAND $<TARGET_FILE:hdfed> -batch)
     else (HDF4_ENABLE_USING_MEMCHECKER)
-      ADD_TEST (
+      add_test (
           NAME HEDIT-${testfile}
           COMMAND "${CMAKE_COMMAND}"
               -D "TEST_PROGRAM=$<TARGET_FILE:hdfed>"
@@ -289,40 +289,40 @@ if (HDF4_BUILD_TOOLS)
       )
     endif (HDF4_ENABLE_USING_MEMCHECKER)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HEDIT-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (HEDIT-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (HEDIT-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (HEDIT-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "HEDIT-${testfile}")
   ENDMACRO (ADD_H4_TEST_ED)
 endif (HDF4_BUILD_TOOLS)
 
   MACRO (ADD_H4_TEST testname testfile)
-    ADD_TEST (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN})
+    add_test (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN})
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (${testname} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (${testname} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "${testname}")
   ENDMACRO (ADD_H4_TEST)
 
   MACRO (ADD_CMP_TEST testname reffile testfile)
-    ADD_TEST (NAME ${testname} COMMAND ${CMAKE_COMMAND} -E compare_files ${reffile} ${testfile})
+    add_test (NAME ${testname} COMMAND ${CMAKE_COMMAND} -E compare_files ${reffile} ${testfile})
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (${testname} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (${testname} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "${testname}")
   ENDMACRO (ADD_CMP_TEST)
 
   MACRO (ADD_H4Q_TEST testname testfile)
-    ADD_TEST (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN} > /dev/null 2>&1)
+    add_test (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN} > /dev/null 2>&1)
     if (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+      set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     else (NOT "${last_test}" STREQUAL "")
-      SET_TESTS_PROPERTIES (${testname} PROPERTIES LABELS ${PROJECT_NAME})
+      set_tests_properties (${testname} PROPERTIES LABELS ${PROJECT_NAME})
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "${testname}")
   ENDMACRO (ADD_H4Q_TEST)
@@ -334,7 +334,7 @@ endif (HDF4_BUILD_TOOLS)
 ##############################################################################
 
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME hdfgif-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -350,9 +350,9 @@ endif (HDF4_BUILD_TOOLS)
           ristosds.input1.tmp.err
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfgif-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfgif-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfgif-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfgif-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "hdfgif-clear-refs")
 
@@ -374,7 +374,7 @@ endif (HDF4_BUILD_TOOLS)
   endif (HDF4_BUILD_TOOLS)
 
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME hdfpack-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -386,9 +386,9 @@ endif (HDF4_BUILD_TOOLS)
           test.pck.tmp.err
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfpack-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfpack-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfpack-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfpack-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "hdfpack-clear-refs")
 
@@ -400,7 +400,7 @@ endif (HDF4_BUILD_TOOLS)
   endif (HDF4_BUILD_TOOLS)
 
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME hdfpalette-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -424,9 +424,9 @@ endif (HDF4_BUILD_TOOLS)
           allcomp.hdf.tmp.err
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfpalette-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfpalette-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfpalette-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfpalette-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "hdfpalette-clear-refs")
 
@@ -454,7 +454,7 @@ endif (HDF4_BUILD_TOOLS)
   endif (HDF4_BUILD_TOOLS)
 
   # Remove any output file left over from previous test run
-  ADD_TEST (
+  add_test (
       NAME hdfjpeg-clear-refs
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
@@ -464,9 +464,9 @@ endif (HDF4_BUILD_TOOLS)
           jpeg2.jpg
   )
   if (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfjpeg-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfjpeg-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   else (NOT "${last_test}" STREQUAL "")
-    SET_TESTS_PROPERTIES (hdfjpeg-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (hdfjpeg-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
   endif (NOT "${last_test}" STREQUAL "")
   set (last_test "hdfjpeg-clear-refs")
 
