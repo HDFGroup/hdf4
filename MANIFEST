@@ -53,6 +53,7 @@
 ./bin/reconfigure
 ./bin/runtest
 ./bin/snapshot
+./bin/testdriver
 ./bin/timekeeper      _DO_NOT_DISTRIBUTE_
 ./bin/yodconfigure
 ./bin/h4vers
