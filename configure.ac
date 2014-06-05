@@ -591,6 +591,7 @@ if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
     fi
 fi
 AC_SUBST([SZIP_INFO])
+AC_SUBST([SZIP_HAS_ENCODER])
 
 AM_CONDITIONAL([BUILD_SHARED_SZIP_CONDITIONAL], [test "X$USE_COMP_SZIP" = "Xyes" && test "X$LL_PATH" != "X"])
 

@@ -208,7 +208,7 @@ STDOUT_FILTER() {
    # SDS SELECTED with SZIP, chunking SELECTED
    #-------------------------------------------------------------------------
    #
-    if test $USE_COMP_SZIP != "yes"; then
+    if test $SZIP_HAS_ENCODER != "yes"; then
         SKIP SDSSZIP_CHUNK hrepacktst1.hdf -c dset4:10x8
     else
         TOOLTEST SDSSZIP_CHUNK hrepacktst1.hdf -t "dset4:SZIP 8,EC" -c dset4:10x8
@@ -244,7 +244,7 @@ STDOUT_FILTER() {
    # SDS SELECTED with all types, chunking SELECTED
    #-------------------------------------------------------------------------
    #
-    if test $USE_COMP_SZIP != "yes"; then
+    if test $SZIP_HAS_ENCODER != "yes"; then
         TOOLTEST SDS_CHUNK hrepacktst1.hdf -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -c dset4:10x8 -c dset5:10x8 -c dset6:10x8
     else
         TOOLTEST SDS_CHUNK hrepacktst1.hdf -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -t "dset7:SZIP 8,EC" -c dset4:10x8 -c dset5:10x8 -c dset6:10x8
@@ -275,7 +275,7 @@ STDOUT_FILTER() {
    # SDS SELECTED with all types, no chunking
    #-------------------------------------------------------------------------
    #
-    if test $USE_COMP_SZIP != "yes"; then
+    if test $SZIP_HAS_ENCODER != "yes"; then
         TOOLTEST SEL_NOCHUNK hrepacktst1.hdf -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2"
     else
         TOOLTEST SEL_NOCHUNK hrepacktst1.hdf -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -t "dset7:SZIP 4,EC"
