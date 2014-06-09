@@ -128,7 +128,7 @@
   #endif
 #endif
 #if !defined(HDFERRPUBLIC)
-  #if defined (_MSC_VER)  /* MSVC Compiler Case */
+  #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFERRPUBLIC extern __declspec(dllimport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
     #define HDFERRPUBLIC extern __attribute__ ((visibility("default")))
