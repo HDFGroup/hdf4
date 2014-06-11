@@ -81,7 +81,7 @@ Preconditions:
 
     The szip library is not distributed with the Cygwin packaging system.
     However, a recent Cygwin binary can be found at:
-        ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/cygwin/
+        ftp://ftp.hdfgroup.org/lib-external/szip/2.1/bin/cygwin/
 
     
     2.3 Additional Utilities
