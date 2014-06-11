@@ -49,7 +49,7 @@ CMake build script:
     CTestScript.cmake
 
 External compression szip and zlib libraries:
-    JPEG.tar.gz
+    JPEG8b.tar.gz
     SZip.tar.gz
     ZLib.tar.gz
     
