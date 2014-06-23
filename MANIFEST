@@ -415,7 +415,6 @@
 ./hdf/util/hdfpack.out1
 ./hdf/util/hdfpack.out1.1
 ./hdf/util/hdfpack.out1.2
-./hdf/util/hdfrseq.c
 ./hdf/util/hdftopal.c
 ./hdf/util/hdftor8.c
 ./hdf/util/hdftor8.out1
@@ -434,7 +433,6 @@
 ./hdf/util/ristosds.input1
 ./hdf/util/ristosds.out1
 ./hdf/util/testutil.sh.in
-./hdf/util/vcompat.c
 ./hdf/util/vmake.c
 ./hdf/util/vshow.c
 ./hdf/util/writehdf.c
