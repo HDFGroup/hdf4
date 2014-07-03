@@ -182,8 +182,8 @@ following text in the file:
 cmake_minimum_required (VERSION 2.8.12)
 PROJECT (HDF4MyApp C CXX)
 
-FIND_PACKAGE (HDF4 NAMES hdf4)
-# FIND_PACKAGE (HDF4) # Find non-cmake built HDF4
+find_package (HDF4 NAMES hdf4)
+# find_package (HDF4) # Find non-cmake built HDF4
 INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${HDF4_LIBRARIES})
 
