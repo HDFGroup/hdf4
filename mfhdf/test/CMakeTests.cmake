@@ -73,7 +73,7 @@ add_test (
 
 add_test (NAME hdftest COMMAND $<TARGET_FILE:hdftest>)
 set (passRegex "HDF-SD test passes")
-SET_PROPERTY (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+set_property (TEST hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
 set_tests_properties (hdftest PROPERTIES DEPENDS MFHDF_TEST-clearall-objects LABELS ${PROJECT_NAME})
 
 add_test (NAME cdftest COMMAND "${CMAKE_COMMAND}"
@@ -89,25 +89,25 @@ set_tests_properties (cdftest PROPERTIES DEPENDS hdftest LABELS ${PROJECT_NAME})
 
 add_test (NAME hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
 set (NCpassRegex "HDF-nc test passes")
-SET_PROPERTY (TEST hdfnctest PROPERTY PASS_REGULAR_EXPRESSION "${NCpassRegex}")
+set_property (TEST hdfnctest PROPERTY PASS_REGULAR_EXPRESSION "${NCpassRegex}")
 set_tests_properties (hdfnctest PROPERTIES DEPENDS cdftest LABELS ${PROJECT_NAME})
 
 #-- Adding test for xdrtest
 if (HDF4_BUILD_XDR_LIB)
-  ADD_EXECUTABLE (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
+  add_executable (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
   TARGET_NAMING (xdrtest ${LIB_TYPE})
   TARGET_C_PROPERTIES (xdrtest " " " ")
   target_link_libraries (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 
   if (CYGWIN)
-    ADD_CUSTOM_COMMAND (
+    add_custom_command (
         TARGET     xdrtest 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/xdrtest.out
     )
   else (CYGWIN)
-    ADD_CUSTOM_COMMAND (
+    add_custom_command (
         TARGET     xdrtest 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
