@@ -10,24 +10,24 @@
   #-----------------------------------------------------------------------------
   # Add test fortran stub library
   #-----------------------------------------------------------------------------
-  ADD_LIBRARY (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
-  SET_TARGET_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
+  add_library (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_TESTSOURCE_DIR}/forsupf.c)
+  set_target_properties (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} PROPERTIES LINKER_LANGUAGE C)
   if (WIN32)
-    ADD_DEFINITIONS (-DDOS_FS)
+    add_definitions (-DDOS_FS)
   endif (WIN32)
   TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} " " " ")
-  TARGET_LINK_LIBRARIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
+  target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}  ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} ${LIB_TYPE})
   
   #-- Adding test for fortest
   ADD_EXECUTABLE (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
   TARGET_NAMING (fortest ${LIB_TYPE})
   TARGET_C_PROPERTIES (fortest " " " ")
-  TARGET_LINK_LIBRARIES (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
+  target_link_libraries (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
   if (WIN32)
-    TARGET_LINK_LIBRARIES (fortest "ws2_32.lib")
+    target_link_libraries (fortest "ws2_32.lib")
   endif (WIN32)
-  SET_TARGET_PROPERTIES (fortest PROPERTIES LINKER_LANGUAGE C)
+  set_target_properties (fortest PROPERTIES LINKER_LANGUAGE C)
 
   #-----------------------------------------------------------------------------
   #-- Adding test for fortestF
@@ -55,8 +55,8 @@
   ADD_EXECUTABLE (fortestF ${FORTEST_FSRCS} )
   TARGET_NAMING (fortestF ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (fortestF " " " ")
-  TARGET_LINK_LIBRARIES (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
-  SET_TARGET_PROPERTIES (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
+  target_link_libraries (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
+  set_target_properties (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
   #-- Copy all the dat files from the test directory into the source directory
   set (HDF4_REFERENCE_TEST_FILES

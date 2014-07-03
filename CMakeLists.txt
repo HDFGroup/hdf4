@@ -276,8 +276,8 @@ else (BUILD_SHARED_LIBS)
   set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif (BUILD_SHARED_LIBS)
 
-ADD_DEFINITIONS (-DBIG_LONGS -DSWAP)
-ADD_DEFINITIONS (-DHAVE_CONFIG_H)
+add_definitions (-DBIG_LONGS -DSWAP)
+add_definitions (-DHAVE_CONFIG_H)
 
 #-----------------------------------------------------------------------------
 # Temporary disable optimization flag

@@ -10,7 +10,7 @@ endif (WIN32)
 
 if (HDF4_BUILD_XDR_LIB)
   if (WIN32)
-    ADD_DEFINITIONS (-DNO_SYS_XDR_INC)
+    add_definitions (-DNO_SYS_XDR_INC)
   endif (WIN32)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 endif (HDF4_BUILD_XDR_LIB)
