@@ -330,32 +330,32 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   #-----------------------------------------------------------------------------
   # Now list the cpack commands
   #-----------------------------------------------------------------------------
-  CPACK_ADD_COMPONENT (applications 
+  cpack_add_component (applications 
       DISPLAY_NAME "HDF4 Applications" 
       DEPENDS libraries
       GROUP Applications
   )
-  CPACK_ADD_COMPONENT (libraries 
+  cpack_add_component (libraries 
       DISPLAY_NAME "HDF4 Libraries"
       GROUP Runtime
   )
-  CPACK_ADD_COMPONENT (headers 
+  cpack_add_component (headers 
       DISPLAY_NAME "HDF4 Headers" 
       DEPENDS libraries
       GROUP Development
   )
-  CPACK_ADD_COMPONENT (hdfdocuments 
+  cpack_add_component (hdfdocuments 
       DISPLAY_NAME "HDF4 Documents"
       GROUP Documents
   )
-  CPACK_ADD_COMPONENT (configinstall 
+  cpack_add_component (configinstall 
       DISPLAY_NAME "HDF4 CMake files" 
       DEPENDS libraries
       GROUP Development
   )
 
   if (HDF4_BUILD_FORTRAN)
-    CPACK_ADD_COMPONENT (fortlibraries 
+    cpack_add_component (fortlibraries 
         DISPLAY_NAME "HDF4 Fortran Libraries" 
         DEPENDS libraries
         GROUP Runtime
@@ -363,12 +363,12 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   endif (HDF4_BUILD_FORTRAN)
 
   if (HDF4_BUILD_TOOLS)
-    CPACK_ADD_COMPONENT (toolsapplications 
+    cpack_add_component (toolsapplications 
         DISPLAY_NAME "HDF4 Tools Applications" 
         DEPENDS libraries
         GROUP Applications
     )
-    CPACK_ADD_COMPONENT (toolsheaders 
+    cpack_add_component (toolsheaders 
         DISPLAY_NAME "HDF4 Tools Headers" 
         DEPENDS libraries
         GROUP Development
@@ -376,12 +376,12 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   endif (HDF4_BUILD_TOOLS)
 
   if (HDF4_BUILD_UTILS)
-    CPACK_ADD_COMPONENT (utilsapplications 
+    cpack_add_component (utilsapplications 
         DISPLAY_NAME "HDF4 Utility Applications" 
         DEPENDS libraries
         GROUP Applications
     )
-    CPACK_ADD_COMPONENT (utilsheaders 
+    cpack_add_component (utilsheaders 
         DISPLAY_NAME "HDF4 Utility Headers" 
         DEPENDS libraries
         GROUP Development
