@@ -39,7 +39,7 @@ set (hdftest_SRCS
 )
 
 #-- Adding test for hdftest
-ADD_EXECUTABLE (hdftest ${hdftest_SRCS})
+add_executable (hdftest ${hdftest_SRCS})
 TARGET_NAMING (hdftest ${LIB_TYPE})
 TARGET_C_PROPERTIES (hdftest " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -58,16 +58,16 @@ set (HDF4_REFERENCE_TEST_FILES
 foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
    #MESSAGE(STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
+   add_custom_command (
      TARGET     hdftest
      POST_BUILD
      COMMAND    ${CMAKE_COMMAND}
      ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-     )
+   )
 endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
 #-- Adding test for cdftest
-ADD_EXECUTABLE (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
+add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
 TARGET_NAMING (cdftest ${LIB_TYPE})
 TARGET_C_PROPERTIES (cdftest " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -84,12 +84,12 @@ set (HDF4_REFERENCE2_TEST_FILES
 foreach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
    set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
    #MESSAGE(STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   ADD_CUSTOM_COMMAND (
+   add_custom_command (
      TARGET     cdftest
      POST_BUILD
      COMMAND    ${CMAKE_COMMAND}
      ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-     )
+   )
 endforeach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
 
 #-- Adding test for hdfnctest
@@ -100,7 +100,7 @@ set (hdfnctest_SRCS
     ${HDF4_MFHDF_TEST_SOURCE_DIR}/tncvargetfill.c
 )
 
-ADD_EXECUTABLE (hdfnctest ${hdfnctest_SRCS})
+add_executable (hdfnctest ${hdfnctest_SRCS})
 TARGET_NAMING (hdfnctest ${LIB_TYPE})
 TARGET_C_PROPERTIES (hdfnctest " " " ")
 if (HDF4_BUILD_XDR_LIB)
