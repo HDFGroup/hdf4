@@ -10,6 +10,12 @@ INCLUDE_DIRECTORIES (
     ${HDF4_HDF_TESTSOURCE_DIR}
 )
 
+if (CYGWIN)
+  INCLUDE_DIRECTORIES (/usr/include/tirpc)
+else (CYGWIN)
+  INCLUDE_DIRECTORIES (/usr/include/rpc)
+endif (CYGWIN)
+
 add_definitions (-DHDF)
 
 if (HDF4_ENABLE_NETCDF)
