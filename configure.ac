@@ -637,7 +637,8 @@ if test "X$BUILD_XDR" != "Xyes"; then
     *-solaris*)
       LIBS="$LIBS -lnsl"  ;;
     *-pc-cygwin*)
-      LIBS="$LIBS -ltirpc"  ;;
+      LIBS="$LIBS -ltirpc"
+      CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
     *) ;;
   esac
 
