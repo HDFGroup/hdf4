@@ -560,12 +560,15 @@ static atom_info_t *HAIfind_atom(atom_t atm   /* IN: Atom to retrieve atom for *
               break;
           atm_ptr=atm_ptr->next;
       } /* end while */
-    ret_value=atm_ptr;
 
 #ifdef ATOMS_ARE_CACHED
-    atom_id_cache[ATOM_CACHE_SIZE-1]=atm;
-    atom_obj_cache[ATOM_CACHE_SIZE-1]=atm_ptr->obj_ptr;
+    if (atm_ptr){
+	atom_id_cache[ATOM_CACHE_SIZE-1]=atm;
+	atom_obj_cache[ATOM_CACHE_SIZE-1]=atm_ptr->obj_ptr;
+    }
 #endif /* ATOMS_ARE_CACHED */
+
+    ret_value=atm_ptr;
 
 done:
   if(ret_value == NULL)   
