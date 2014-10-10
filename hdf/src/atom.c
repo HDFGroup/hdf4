@@ -563,6 +563,7 @@ static atom_info_t *HAIfind_atom(atom_t atm   /* IN: Atom to retrieve atom for *
 
 #ifdef ATOMS_ARE_CACHED
     if (atm_ptr){
+	/* if found, add it to the end of the cached list */
 	atom_id_cache[ATOM_CACHE_SIZE-1]=atm;
 	atom_obj_cache[ATOM_CACHE_SIZE-1]=atm_ptr->obj_ptr;
     }
