@@ -80,7 +80,7 @@ val_fill_zero(type, len, vals)
     union {
 	char *cp;
 	short *sp;
-	long *lp;
+	nclong *lp;
 	float *fp;
 	double *dp;
     } gp;
@@ -98,9 +98,9 @@ val_fill_zero(type, len, vals)
 	  *gp.sp++ = (short) 0;
 	break;
       case NC_LONG:
-	gp.lp = (long *) vals;
+	gp.lp = (nclong *) vals;
 	for (iel = 0; iel < len; iel++)
-	  *gp.lp++ = (long) 0;
+	  *gp.lp++ = (nclong) 0;
 	break;
       case NC_FLOAT:
 	gp.fp = (float *) vals;
