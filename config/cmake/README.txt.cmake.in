@@ -29,7 +29,7 @@ After Installation
 The compressed examples file HDF4Examples-0.1.1-Source.@BINARY_EXAMPLE_ENDING@, located in the 
 HDF4 install folder, can be built and tested with CMake and the supplied
 HDF4_Examples.cmake file. The HDF4_Examples.cmake expects HDF4 to have
-been installed in the default location with above compilers. Also, CMake 2.8.12 
+been installed in the default location with above compilers. Also, CMake 
 and 7Zip utilities should be installed.
 
 To test the installation with the examples;
