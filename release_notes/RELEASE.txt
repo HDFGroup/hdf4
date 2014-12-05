@@ -140,21 +140,16 @@ This version has been tested in the following platforms:
    Windows 8 x64                 Visual Studio 2012 w/ Intel Fortran 13 (cmake)
 
    Mac OS X 10.7.5		 Apple clang version 3.0 from Xcode 4.6.1
-   Darwin 11.4.2                 gfortran GNU Fortran (GCC) 4.6.2
+   Darwin 11.4.2                 gfortran GNU Fortran (GCC) 4.8.2
    (duck)                        icc and ifort Version 13.0.3 20130606
 
-   Mac OS X 10.8.5               Apple clang version 4.2 from Xcode 4.6.1
-   Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
-   (wren)                        icc and ifort Version 13.0.3 20130606
+   Mac OS X 10.8.5               Apple clang version 5.1 from Xcode 5.1
+   Darwin 12.5.0                 gfortran GNU Fortran (GCC) 4.8.2
+   (swallow,kite)                icc and ifort Version 14.0.2 20140121
 
-   Mac OS X 10.8.5               Apple clang version 5.0 from Xcode 5.0.2
-   Darwin 12.2.0                 gfortran GNU Fortran (GCC) 4.6.2
-   (swallow,kite)                icc and ifort Version 14.0.1 20131010
-
-   Mac OS X 10.9.1               Apple LLVM version 5.0 (clang-500.2.79)
-   Darwin 13.0.0                 (based on LLVM 3.3svn)
-                                 gfortran GNU Fortran (GCC) 4.6.2 
-         
+   Mac OS X 10.9.5               Apple clang version 6.0 from Xcode 6.0.1
+   Darwin 13.4.0                 gfortran GNU Fortran (GCC) 4.8.2 
+   (wren,quail)                  icc and ifort Version 14.0.2 20140121
 
    Debian7.2.0 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
                                  gcc (Debian 4.7.2-5) 4.7.2
