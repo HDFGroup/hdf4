@@ -114,7 +114,7 @@ fi
 echo Running Cmake for HDF4-${version} ...
 
 #      4. Configure the C library, tools and tests with this command:
-STEP "Configure..." "cmake -C ../hdf4/config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX:PATH="." -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON -DHDF4_BUILD_UTILS:BOOL=ON -DBUILD_TESTING:BOOL=ON $srcdir" $configlog
+STEP "Configure..." "cmake -C $srcdir/config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX:PATH="." -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON -DHDF4_BUILD_TOOLS:BOOL=ON -DHDF4_BUILD_UTILS:BOOL=ON -DBUILD_TESTING:BOOL=ON $srcdir" $configlog
       
 #      5. Build the C library, tools and tests with this command:
 STEP "Build the library, tools and tests, ..." "cmake --build . --config Release" $makelog
@@ -198,7 +198,7 @@ cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
 ########################################################
 
 set (CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
-set (CTEST_SOURCE_DIRECTORY "../hdf4")
+set (CTEST_SOURCE_DIRECTORY $srcdir)
 set (CTEST_BINARY_DIRECTORY ".")
 set (CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set (CTEST_BUILD_CONFIGURATION "Release")
