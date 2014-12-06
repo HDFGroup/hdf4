@@ -198,7 +198,7 @@ cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
 ########################################################
 
 set (CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
-set (CTEST_SOURCE_DIRECTORY $srcdir)
+set (CTEST_SOURCE_DIRECTORY "../hdf4")
 set (CTEST_BINARY_DIRECTORY ".")
 set (CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set (CTEST_BUILD_CONFIGURATION "Release")
