@@ -77,13 +77,13 @@ char     *GIFFileName;
 	if(file_id == -1) {
 		printf("Unable to create HDF file");
 		status = HEvalue(1);
-		printf(HEstring(status));
+		puts(HEstring(status));
 		exit(0);
 	}
 
 	if ((status = Vstart(file_id)) == -1) {
 		printf("Could not start VGroup interface\n");
-		printf(HEstring(HEvalue(1)));
+		puts(HEstring(HEvalue(1)));
 		exit(-1);
 	}
 
@@ -99,7 +99,7 @@ char     *GIFFileName;
 		status = Vsetattr (vgroup_id, "Global Palette" , DFNT_UINT8, 3 * gifHead.TableSize , (VOIDP)gifHead.HDFPalette);
 		if (status) {
 			printf("Could not add global palette.\n");
-			printf(HEstring(HEvalue(1)));
+			puts(HEstring(HEvalue(1)));
 		}
 	}
 	for (i = 0 ; i < CommentCount ; i++) {
@@ -144,14 +144,14 @@ char     *GIFFileName;
 		/* GRSetCompress */
 		if ((status = GRsetcompress(ri_id, comp_type, &c_info)) == -1) {
 			printf("Error occured while setting compression\n");
-			printf(HEstring(HEvalue(1)));
+			puts(HEstring(HEvalue(1)));
 			exit(-1);
 		}
 
 		/* Write the GR Image */
 		if ((status = GRwriteimage(ri_id, start, NULL, edges, (VOIDP)gifImageDesc.Image)) == -1) {
 			printf("Error occured while trying to write GR image\n");
-			printf(HEstring(HEvalue(1)));
+			puts(HEstring(HEvalue(1)));
 			exit(-1);
 		}
 
@@ -160,7 +160,7 @@ char     *GIFFileName;
 
 		if ((status = GRwritelut (pal_id , 3, DFNT_UINT8, interlace_mode, 256, (VOIDP)gifImageDesc.HDFPalette)) == -1) {
 			printf("Could not write palette\n");
-			printf(HEstring(HEvalue(1)));
+			puts(HEstring(HEvalue(1)));
 			exit(-1);
 		}
 		
@@ -169,7 +169,7 @@ char     *GIFFileName;
 		
 		if ((status = GRendaccess(ri_id)) == -1) {
 			printf("Could not terminate GR access\n");
-			printf(HEstring(HEvalue(1)));
+			puts(HEstring(HEvalue(1)));
 			exit(-1);
 		}
 
@@ -178,7 +178,7 @@ char     *GIFFileName;
 		/* Adding GR to vgroup */
 		if((status = Vaddtagref(vgroup_id,(int32)1965,gr_ref))==-1) {
 			printf("Could not add tag to Vgroup");
-			printf(HEstring(HEvalue(1)));
+			puts(HEstring(HEvalue(1)));
 		}
 
 		
@@ -187,28 +187,28 @@ char     *GIFFileName;
 	/* Terminate GR access */
 	if ((status = GRend (gr_id))==-1) {
 		printf("Could not end GR access\n");
-		printf(HEstring(HEvalue(1)));
+		puts(HEstring(HEvalue(1)));
 		printf("Trying to continue (file may be corrupt)...\n");
 	}
 	
 	/* Terminate access to the VGroup */
 	if ((status = Vdetach(vgroup_id))==-1) {
 		printf("Could not detach Vgroup\n");
-		printf(HEstring(HEvalue(1)));
+		puts(HEstring(HEvalue(1)));
 		printf("Trying to continure (file may be corrupt)...\n");
 	}
 
 	/* Terminate access to the V interface */
 	if ((status = Vend(file_id))==-1) {
 		printf("Could not end VGroup access\n");
-		printf(HEstring(HEvalue(1)));
+		puts(HEstring(HEvalue(1)));
 		printf("Trying to continure (file may be corrupt)... \n");
 	}
 
 	/* Close the HDF file */
 	if ((status = Hclose (file_id))==-1) {
 		printf("Could not close HDF file. Fatal Error");
-		printf(HEstring(HEvalue(1)));
+		puts(HEstring(HEvalue(1)));
 		return(-1);
 	}
 	return(0);
