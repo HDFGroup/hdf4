@@ -118,10 +118,8 @@ vg_info_t* free_node_vg_info_t(
          HDfree(aNode->vg_name);
 	 aNode->vg_name = NULL;
       }
-      HDfree(aNode);
-      aNode = NULL;
    }
-   return(NULL);
+   return(aNode);
 }  /* end of free_node_vg_info_t */
 
 /* free_struct_list use HDfree to free the list of vgroup info structs */
@@ -136,7 +134,11 @@ vg_info_t ** free_vginfo_list(
    {
       for (i = 0; i < num_items; i++)
          if (nodelist[i] != NULL)
+	 {
             nodelist[i] = free_node_vg_info_t(nodelist[i]);
+	    HDfree(nodelist[i]);
+	    nodelist[i] = NULL;
+	 }
       HDfree(nodelist);
    }
    return( NULL );
@@ -160,7 +162,7 @@ obj_chosen_t ** free_node_obj_chosen_t(
       HDfree(aNode);
    }
    return(NULL);
-}  /* end of free_vginfo_list */
+}  /* end of free_node_obj_chosen_t */
 
 /* free_struct_list use HDfree to free the list of vgroup info structs */
 void free_obj_chosen_t_list( 
@@ -186,7 +188,7 @@ void free_obj_chosen_t_list(
       HDfree((*nodelist));
       (*nodelist) = NULL;
    }
-}  /* end of free_vginfo_list */
+}  /* end of free_obj_chosen_t_list */
 
 /* free_str_list use HDfree to free the list of strings of characters */
 char** free_str_list( char **str_list,

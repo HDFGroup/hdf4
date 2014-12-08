@@ -1047,11 +1047,11 @@ if (num_entries != 0)
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-	aNode = free_node_vg_info_t(aNode);
       }
     /* Normal cleanup */
     SAFE_FREE(vgname);	/* free vg name and set it to NULL */
     SAFE_FREE(vgclass);	/* free vg class name and set it to NULL */
+
     return ret_value;
 }	/* vgBuildGraph */
 
@@ -1086,15 +1086,15 @@ intn vgdumpfull(int32        vg_id,
    aNode->n_entries = num_entries;
 if (num_entries != 0)
 {
-   /* allocate and init memory for storing children's and type's info */
-   aNode->children = alloc_list_of_strings( num_entries );
-   aNode->type = alloc_list_of_strings( num_entries );
-
    /* get the current vgroup's ref# for error message */
    vg_ref = VQueryref( vg_id );
    if( vg_ref == FAIL )
       ERROR_GOTO_2( "in %s: VQueryref failed for vgroup with id=%d",
 		"vgdumpfull", (int) vg_id );
+
+   /* allocate and init memory for storing children's and type's info */
+   aNode->children = alloc_list_of_strings( num_entries );
+   aNode->type = alloc_list_of_strings( num_entries );
 
    for (entry_num = 0; entry_num < num_entries; entry_num++)
    {
@@ -1155,13 +1155,13 @@ if (num_entries != 0)
          /* dump attributes for vgroup */
          status = dumpattr(vgt, 0, 0, dumpvg_opts->file_format, fp);
          if( FAIL == status )
-            ERROR_CONT_3( "in %s: %s failed to dump attributes for vgroup with ref#=%d",
+            ERROR_NOTIFY_3( "in %s: %s failed to dump attributes for vgroup with ref#=%d",
 		"vgdumpfull", "dumpattr", (int) elem_ref );
 
          /* dump all of the annotations for this vgroup */
          status = print_data_annots( file_id, file_name, elem_tag, elem_ref );
          if( FAIL == status )
-            ERROR_CONT_3( "in %s: %s failed to dump annotations for vgroup with ref#=%d",
+            ERROR_NOTIFY_3( "in %s: %s failed to dump annotations for vgroup with ref#=%d",
 		"vgdumpfull", "print_data_annots", (int) elem_ref );
 
          resetVG( &vgt, file_name );
@@ -1172,18 +1172,18 @@ if (num_entries != 0)
 
          vs = VSattach(file_id, elem_ref, "r");
          if (vs == FAIL)
-            ERROR_CONT_2( "in %s: VSattach failed for vdata with ref#=%d", 
+            ERROR_NOTIFY_2( "in %s: VSattach failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
          /* get and print vdata's information */
          status = VSinquire(vs, &nv, &interlace, fields, &vsize, vsname);
          if( FAIL == status )
-            ERROR_CONT_2( "in %s: VSinquire failed for vdata with ref#=%d", 
+            ERROR_NOTIFY_2( "in %s: VSinquire failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
    
          vsize = VShdfsize(vs, fields);
          if (vsize == FAIL)
-            ERROR_CONT_2( "in %s: VShdfsize failed for vdata with ref#=%d", 
+            ERROR_NOTIFY_2( "in %s: VShdfsize failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
 	 /* vdata has no name */
@@ -1191,7 +1191,7 @@ if (num_entries != 0)
                HDstrcat(vsname, "<Undefined>");
    
          if (FAIL == VSgetclass(vs, vsclass))
-               ERROR_CONT_2( "in %s: VSgetclass failed for vdata with ref#=%d", 
+               ERROR_NOTIFY_2( "in %s: VSgetclass failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
          /* vdata has no class */
@@ -1218,7 +1218,7 @@ if (num_entries != 0)
 				VSnattrs(vs));
 
          if (FAIL == VSdetach(vs))
-               ERROR_CONT_2( "in %s: VSdetach failed for vdata with ref#=%d", 
+               ERROR_NOTIFY_2( "in %s: VSdetach failed for vdata with ref#=%d", 
                                  "vgdumpfull", (int) elem_ref );
 
          /* vdata has no name */
@@ -1257,7 +1257,6 @@ if (num_entries != 0)
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-	  aNode = free_node_vg_info_t(aNode);
       }
     /* Normal cleanup */
     SAFE_FREE(vgname);	/* free vg name and set it to NULL */
@@ -1499,6 +1498,9 @@ intn dvg(dump_info_t *dumpvg_opts,
                                   fp, list[curr_vg], &skipfile );
             if( FAIL == status )
             {
+	  /*       HDfree(list[curr_vg]);
+	       list[curr_vg] = NULL;
+ */ 
                ERROR_NOTIFY_3( "in dvg: %s failed for vgroup with ref#=%d in file %s", 
 			      "vgdumpfull", (int) vg_ref, file_name);
 

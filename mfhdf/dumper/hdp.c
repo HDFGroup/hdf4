@@ -334,12 +334,20 @@ intn VSattrhdfsize(int32 vsid, int32 findex, intn attrindex, int32 *size)
         HGOTO_ERROR(DFE_CANTATTACH, FAIL);
     if (NULL == (attr_inst = (vsinstance_t *)HAatom_object(attr_vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (attr_vs = attr_inst->vs) ||
-          HDstrcmp(attr_vs->vsclass,  _HDF_ATTRIBUTE) != 0)
+    if (NULL == (attr_vs = attr_inst->vs))
         HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* If this vdata is not storing an attribute, it shouldn't have been passed
+       to this function */
+    if (HDstrcmp(attr_vs->vsclass, _HDF_ATTRIBUTE) != 0)
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
     w = &(attr_vs->wlist);
-    /* this vdata has 1 field */
-    if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME))
+    /* This vdata should have only 1 field */
+     /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+	Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
+	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */ 
+    if (w->n != 1)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (size)
         *size = w->order[0] * (DFKNTsize(w->type[0]));
@@ -352,7 +360,6 @@ done:
     } /* end if */
 
   /* Normal function cleanup */
-
   return ret_value;
 }  /* VSattrhdfsize */
 
@@ -431,14 +438,20 @@ intn Vattrhdfsize(int32 vgid, intn attrindex, int32 *size)
         HGOTO_ERROR(DFE_ARGS, FAIL);
     if (NULL == (vs_inst = (vsinstance_t *)HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
-    if (NULL == (vs = vs_inst->vs) ||
-          HDstrcmp(vs->vsclass,  _HDF_ATTRIBUTE) != 0)
+    if (NULL == (vs = vs_inst->vs))
+        HGOTO_ERROR(DFE_BADATTR, FAIL);
+
+    /* If this vdata is not storing an attribute, it shouldn't have been passed
+       to this function */
+    if (HDstrcmp(vs->vsclass, _HDF_ATTRIBUTE) != 0)
         HGOTO_ERROR(DFE_BADATTR, FAIL);
 
     w = &(vs->wlist);
-    /* this vdata has 1 field */
-    if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME))  
-/*    if (w->n != 1 )   */
+    /* This vdata should have only 1 field */
+     /* if (w->n != 1 || HDstrcmp(w->name[0], ATTR_FIELD_NAME)) <- commented out
+	Note: ATTR_FIELD_NAME cannot be used here because hdfeos sets fieldname
+	to "AttrValues", not ATTR_FIELD_NAME. -BMR, 2014/12/01 */ 
+    if (w->n != 1 )
         HGOTO_ERROR(DFE_BADATTR, FAIL);
     if (size)
        *size = w->order[0] * (DFKNTsize(w->type[0]));
