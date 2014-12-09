@@ -48,6 +48,7 @@ Usage: $0 [--nocheck] [-d <dir>] [-h] <methods> ...
          
    --private	Make a private release with today's date in version information.
          
+This must be run at the top level of the source directory.
 The other command-line options are the names of the programs to use
 for compressing the resulting tar archive (if none are given then
 "tar md5" is assumed):
@@ -56,29 +57,98 @@ for compressing the resulting tar archive (if none are given then
     compress	-- use compress and append ".Z" to the output name.
     gzip	-- use gzip with "-9" and append ".gz" to the output name.
     bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
+    zip		-- convert all text files to DOS style and form a zip file for Windows use.
     md5         -- produce a md5 checksum in addition to the archive.
 
 Examples:
 
     $ release
-    releases/hdf-4.2.4.tar
-    releases/hdf-4.2.4.tar.md5
+    releases/hdf-4.2.11.tar
+    releases/hdf-4.2.11.tar.md5
 
     $ release gzip
-    releases/hdf-4.2.4.tar.gz
+    releases/hdf-4.2.11.tar.gz
 
-    $ release -d /tmp tar compress gzip bzip2 md5
-    /tmp/hdf-4.2.4.tar
-    /tmp/hdf-4.2.4.tar.Z
-    /tmp/hdf-4.2.4.tar.gz
-    /tmp/hdf-4.2.4.tar.bz2
-    /tmp/hdf-4.2.4.tar.md5
+    $ release -d /tmp tar compress gzip bzip2 zip md5
+    /tmp/hdf-4.2.11.tar
+    /tmp/hdf-4.2.11.tar.Z
+    /tmp/hdf-4.2.11.tar.gz
+    /tmp/hdf-4.2.11.tar.bz2
+    /tmp/hdf-4.2.11.tar.md5
+    /tmp/hdf-4.2.11.zip
 
 EOF
 
 }
 
-# This command must be run at the top level of the hdf4 source directory.
+# Function name: tar2zip
+# Convert the release tarball to a Windows zipball.
+#
+# Programmer: Albert Cheng
+# Creation date: 2014-04-23
+#
+# Modifications
+#
+# Steps:
+# 1. untar the tarball in a temporay directory;
+#    Note: do this in a temporary directory to avoid changing
+#    the original source directory which maybe around.
+# 2. convert all its text files to DOS (LF-CR) style;
+# 3. form a zip file which is usable by Windows users.
+#
+# Parameters:
+# $1 version
+# $2 release tarball
+# $3 output zipball file name
+#
+# Returns 0 if successful; 1 otherwise
+#
+tar2zip()
+{
+    if [ $# -ne 3 ]; then
+	echo "usage: tar2zip <tarfilename> <zipfilename>"
+	return 1
+    fi
+    ztmpdir=/tmp/tmpdir$$
+    mkdir -p $ztmpdir
+    version=$1
+    tarfile=$2
+    zipfile=$3
+
+    # step 1: untar tarball in ztmpdir
+    (cd $ztmpdir; tar xf -) < $tarfile
+    # sanity check
+    if [ ! -d $ztmpdir/$version ]; then
+	echo "untar did not create $ztmpdir/$version source dir"
+	# cleanup
+	rm -rf $ztmpdir
+	return 1
+    fi
+    # step 2: convert text files
+    # There maybe a simpler way to do this.
+    # options used in unix2dos:
+    # -k   Keep the date stamp 
+    # -q   quiet mode
+    # grep redirect output to /dev/null because -q or -s are not portable.
+    find $ztmpdir/$version | \
+	while read inf; do \
+	    if file $inf | grep "$inf\: .*text" > /dev/null 2>&1 ; then \
+		unix2dos -q -k $inf; \
+	    fi\
+	done
+    # step 3: make zipball
+    # -9 maximum compression
+    # -y Store symbolic links as such in the zip archive
+    # -r recursive
+    # -q quiet
+    (cd $ztmpdir; zip -9 -y -r -q $version.zip $version)
+    mv $ztmpdir/$version.zip $zipfile
+
+    # cleanup
+    rm -rf $ztmpdir
+}
+
+# This command must be run at the top level of the hdf5 source directory.
 # Verify this requirement.
 if [ ! \( -f configure -a -f bin/release \) ]; then
     echo "$0 must be run at the top level of the hdf4 source directory"
@@ -175,7 +245,7 @@ if [ X$pmode = Xyes ]; then
     bin/h4vers -s $VERS
 fi
 
-# Store hdf4-$VERS ("hdf-4.2.4", e.g.) to a variable to avoid typos
+# Store hdf4-$VERS ("hdf-4.2.11", e.g.) to a variable to avoid typos
 HDF4_VERS=hdf-$VERS
 
 test "$verbose" && echo "Releasing $HDF4_VERS to $DEST" 1>&2
@@ -241,6 +311,10 @@ for comp in $methods; do
 	    test "$verbose" && echo "   Running bzip2..." 1>&2
 	    bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
 	    ;;
+	zip)
+	    test "$verbose" && echo "   Creating zip ball..." 1>&2
+	    tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+	    ;;
 	md5)
 	    test "$verbose" && echo "   Creating checksum..." 1>&2
 	    (cd $tmpdir; md5sum $HDF4_VERS.tar ) > $DEST/$HDF4_VERS.tar.md5
@@ -266,7 +340,7 @@ done
 # Copy the RELEASE.txt to the release area.
 cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
 
-# Restore previous Makefile if existed.
+# Remove distributed Makefile and restore previous Makefile if existed.
 rm -f Makefile
 test -f $tmpdir/Makefile.x && mv $tmpdir/Makefile.x Makefile
 
