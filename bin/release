@@ -40,9 +40,9 @@
 USAGE()
 {
 cat << EOF
-Usage: $0 [--nocheck] [-d <dir>] [-h] <methods> ...
+Usage: $0 [--nocheck] -d <dir> [-h] <methods> ...
    -d DIR	The name of the directory where the releas(es) should be
-                placed.  By default, the directory is ./releases
+                placed.
 
    --nocheck	Ignore errors in MANIFEST file.
          
@@ -54,7 +54,6 @@ for compressing the resulting tar archive (if none are given then
 "tar md5" is assumed):
 
     tar		-- use tar and don't do any compressing.
-    compress	-- use compress and append ".Z" to the output name.
     gzip	-- use gzip with "-9" and append ".gz" to the output name.
     bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
     zip		-- convert all text files to DOS style and form a zip file for Windows use.
@@ -62,18 +61,19 @@ for compressing the resulting tar archive (if none are given then
 
 Examples:
 
-    $ release
-    releases/hdf-4.2.11.tar
-    releases/hdf-4.2.11.tar.md5
-
-    $ release gzip
-    releases/hdf-4.2.11.tar.gz
-
-    $ release -d /tmp tar compress gzip bzip2 zip md5
+    $ bin/release -d /tmp
+    /tmp/hdf-4.2.11-RELEASE.txt
     /tmp/hdf-4.2.11.tar
-    /tmp/hdf-4.2.11.tar.Z
+    /tmp/hdf-4.2.11.tar.md5
+
+    $ bin/release -d /tmp gzip
+    /tmp/hdf-4.2.11-RELEASE.txt
     /tmp/hdf-4.2.11.tar.gz
-    /tmp/hdf-4.2.11.tar.bz2
+
+    $ bin/release -d /tmp tar gzip zip md5
+    /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.tar
+    /tmp/hdf-4.2.11.tar.gz
     /tmp/hdf-4.2.11.tar.md5
     /tmp/hdf-4.2.11.zip
 
@@ -167,18 +167,11 @@ today=`date +%Y%m%d`
 pmode='no'
 tmpdir="../#release_tmp.$$"	# tmp work directory
 
-# artifacts from hdf5, not currently used for hdf4
-#DOC_URL=http://svn.hdfgroup.uiuc.edu/hdf4doc/trunk
-#CPPLUS_RM_NAME=cpplus_RM
-
 # Restore previous Version information
 RESTORE_VERSION()
 {
     if [ X-${VERS_OLD} != X- ]; then
 	echo restoring version information back to $VERS_OLD
-# configure/libtool to be considered after initial release script works
-#	rm -f config/lt_vers.am
-#	cp $tmpdir/lt_vers.am config/lt_vers.am
 	bin/h4vers -s $VERS_OLD
 	VERS_OLD=
     fi
@@ -234,10 +227,6 @@ trap RESTORE_VERSION 0
 
 if [ X$pmode = Xyes ]; then
     VERS_OLD=$VERS
-    # Copy old version of config/lt_vers.am, since it's hard to
-    # "undo" changes to it.
-# configure - later
-#    cp config/lt_vers.am $tmpdir
     # Set version information to m.n.r-of$today.
     # (h4vers does not correctly handle just m.n.r-$today.)
     VERS=`echo $VERS | sed -e s/-.*//`-of$today
@@ -270,7 +259,6 @@ grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
 
 # Prepare the source tree for a release.
 ln -s `pwd` $tmpdir/$HDF4_VERS || exit 1
-mv Makefile $tmpdir/Makefile.x 2>/dev/null #might fail
 # Save a backup copy of Makefile if exists.
 test -f Makefile && mv Makefile $tmpdir/Makefile.x
 cp -p Makefile.dist Makefile
@@ -299,10 +287,6 @@ for comp in $methods; do
 	tar)
 	    cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
 	    ;;
-	compress)
-	    test "$verbose" && echo "   Running compress..." 1>&2
-	    compress -c <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.Z
-	    ;;
 	gzip)
 	    test "$verbose" && echo "   Running gzip..." 1>&2
 	    gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
@@ -319,21 +303,10 @@ for comp in $methods; do
 	    test "$verbose" && echo "   Creating checksum..." 1>&2
 	    (cd $tmpdir; md5sum $HDF4_VERS.tar ) > $DEST/$HDF4_VERS.tar.md5
 	    ;;
-# doc option from hdf5 - not supported for hdf4
-#	doc)
-#	    test "$verbose" && echo "   Creating docs..." 1>&2
-#	    # Check out docs from svn repo
-#	    (cd $tmpdir; svn co $DOC_URL > /dev/null) || exit 1
-#	    # Create doxygen C++ RM
-#	    (cd c++/src && doxygen cpp_doc_config > /dev/null ) || exit 1
-#	    # Replace version of C++ RM with just-created version
-#	    rm -rf $tmpdir/trunk/html/$CPPLUS_RM_NAME
-#	    mv c++/src/$CPPLUS_RM_NAME $tmpdir/trunk/html/$CPPLUS_RM_NAME
-#	    # Compress the docs and move them to the release area
-#	    mv $tmpdir/trunk $tmpdir/${HDF4_VERS}_docs
-#	    (cd $tmpdir && tar cf ${HDF4_VERS}_docs.tar ${HDF4_VERS}_docs)
-#	    mv $tmpdir/${HDF4_VERS}_docs.tar $DEST
-#	    ;;
+	*)
+	    echo "***Error*** Unknown method $comp"
+	    exit 1
+	    ;;
     esac
 done
 
