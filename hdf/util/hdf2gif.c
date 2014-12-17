@@ -143,7 +143,7 @@ int main(int argc , char **argv) {
 	if(file_id == -1) {
 		printf("Unable to open HDF file");
 		status = HEvalue(1);
-		puts(HEstring(status));
+		printf("%s\n", HEstring(status));
 		exit(0);
 	}
 	
@@ -162,7 +162,7 @@ int main(int argc , char **argv) {
 	
 	if ((status = GRfileinfo(gr_id , &n_images , &n_fileattributes)) == -1) {
 		status = HEvalue(1);
-		puts(HEstring(status));
+		printf("%s\n", HEstring(status));
 		exit(0);
 	}
 	

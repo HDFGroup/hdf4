@@ -472,7 +472,7 @@ main(int argc, char *argv[])
                     break;
                 case ERR:   /* command syntax error */
                 default:
-                    (void) fprintf(stderr, err2);
+                    (void) fprintf(stderr, "%s", err2);
                     usage(argv[0]);
                     goto err;
             }
@@ -483,7 +483,7 @@ main(int argc, char *argv[])
      */
     if (!outfile_named)
       {
-          (void) fprintf(stderr, err3);
+          (void) fprintf(stderr, "%s", err3);
           usage(argv[0]);
           goto err;
       }
@@ -501,7 +501,7 @@ main(int argc, char *argv[])
     return(0);
 
   err:
-    (void) fprintf(stderr, err4);
+    (void) fprintf(stderr, "%s", err4);
     return(1);
 }
 
@@ -1361,7 +1361,7 @@ indexes(float32 *scale, int dim, int *idx, int res)
      */
     if ((midpt = (float32 *) HDmalloc((size_t) dim * sizeof(float32))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
     for (i = 0; i < dim - 1; i++)
@@ -1463,13 +1463,13 @@ interp(struct Input *in, struct Raster *im)
      */
     if ((hratio = (float32 *) HDmalloc((size_t) im->hres * sizeof(float32))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
     if ((vratio = (float32 *) HDmalloc((unsigned int) im->vres *
                                          sizeof(float32))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
     if (in->rank == 3)
@@ -1477,7 +1477,7 @@ interp(struct Input *in, struct Raster *im)
           if ((dratio = (float32 *) HDmalloc((unsigned int) im->dres *
                                                sizeof(float32))) == NULL)
             {
-                (void) fprintf(stderr, err1);
+                (void) fprintf(stderr, "%s", err1);
                 goto err;
             }
       }
@@ -1489,13 +1489,13 @@ interp(struct Input *in, struct Raster *im)
     if ((hinc = (int *) HDmalloc((unsigned int) im->hres *
                                    sizeof(int))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
     if ((voff = (int *) HDmalloc((unsigned int) (im->vres + 1) *
                                    sizeof(int))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
     if (in->rank == 3)
@@ -1503,7 +1503,7 @@ interp(struct Input *in, struct Raster *im)
           if ((doff = (int *) HDmalloc((unsigned int) (im->dres + 1) *
                                          sizeof(int))) == NULL)
             {
-                (void) fprintf(stderr, err1);
+                (void) fprintf(stderr, "%s", err1);
                 goto err;
             }
       }
@@ -1774,7 +1774,7 @@ palette(char *palfile)
      */
     if (DFR8setpalette(pal))
       {
-          (void) fprintf(stderr, err3);
+          (void) fprintf(stderr, "%s", err3);
           goto err;
       }
 
@@ -1816,7 +1816,7 @@ pixrep(struct Input *in, struct Raster *im)
      */
     if ((hidx = (int *) HDmalloc((unsigned int) (im->hres + 1) * sizeof(int))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
 
@@ -1829,7 +1829,7 @@ pixrep(struct Input *in, struct Raster *im)
     if ((vidx = (int *) HDmalloc((unsigned int) (im->vres + 1) *
                                    sizeof(int))) == NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
 
@@ -1846,7 +1846,7 @@ pixrep(struct Input *in, struct Raster *im)
           if ((didx = (int *) HDmalloc((unsigned int) (im->dres + 1) *
                                          sizeof(int))) == NULL)
             {
-                (void) fprintf(stderr, err1);
+                (void) fprintf(stderr, "%s", err1);
                 goto err;
             }
 
@@ -1860,7 +1860,7 @@ pixrep(struct Input *in, struct Raster *im)
     if ((pix = (unsigned char *) HDmalloc((unsigned int) (in->dims[0] + 1))) ==
         NULL)
       {
-          (void) fprintf(stderr, err1);
+          (void) fprintf(stderr, "%s", err1);
           goto err;
       }
     for (k = 0, odidx = didx[0] - 1; k < im->dres; k++)
@@ -2004,13 +2004,13 @@ process(struct Options *opt)
           if ((in.hscale = (float32 *) HDmalloc((size_t)
                              (in.dims[0] + 1) * sizeof(float32))) == NULL)
             {
-                (void) fprintf(stderr, err2);
+                (void) fprintf(stderr, "%s", err2);
                 goto err;
             }
           if ((in.vscale = (float32 *) HDmalloc((size_t)
                              (in.dims[1] + 1) * sizeof(float32))) == NULL)
             {
-                (void) fprintf(stderr, err2);
+                (void) fprintf(stderr, "%s", err2);
                 goto err;
             }
           if (in.rank == 3)
@@ -2018,7 +2018,7 @@ process(struct Options *opt)
                 if ((in.dscale = (float32 *) HDmalloc((size_t)
                              (in.dims[2] + 1) * sizeof(float32))) == NULL)
                   {
-                      (void) fprintf(stderr, err2);
+                      (void) fprintf(stderr, "%s", err2);
                       goto err;
                   }
             }
@@ -2032,7 +2032,7 @@ process(struct Options *opt)
           if ((in.data = (VOIDP) HDmalloc((size_t) len *
                                                  sizeof(float32))) == NULL)
             {
-                (void) fprintf(stderr, err2);
+                (void) fprintf(stderr, "%s", err2);
                 goto err;
             }
           if (gdata(opt->infiles[i], &in, strm, &is_maxmin))
@@ -2061,19 +2061,19 @@ process(struct Options *opt)
 
                 if (DFSDsetNT(DFNT_FLOAT32))
                   {
-                      (void) fprintf(stderr, err5);
+                      (void) fprintf(stderr, "%s", err5);
                       goto err;
                   }
                 if (is_scale == TRUE)
                   {
                       if (DFSDsetdims(in.rank, hdfdims))
                         {
-                            (void) fprintf(stderr, err5);
+                            (void) fprintf(stderr, "%s", err5);
                             goto err;
                         }
                       if (DFSDsetrange(&in.max, &in.min))
                         {
-                            (void) fprintf(stderr, err5);
+                            (void) fprintf(stderr, "%s", err5);
                             goto err;
                         }
                       if (in.rank == 2)
@@ -2081,13 +2081,13 @@ process(struct Options *opt)
                             if (DFSDsetdimscale(1, hdfdims[0],
                                                 in.vscale))
                               {
-                                  (void) fprintf(stderr, err5);
+                                  (void) fprintf(stderr, "%s", err5);
                                   goto err;
                               }
                             if (DFSDsetdimscale(2, hdfdims[1],
                                                 in.hscale))
                               {
-                                  (void) fprintf(stderr, err5);
+                                  (void) fprintf(stderr, "%s", err5);
                                   goto err;
                               }
                         }
@@ -2096,26 +2096,26 @@ process(struct Options *opt)
                             if (DFSDsetdimscale(1, hdfdims[0],
                                                 in.dscale))
                               {
-                                  (void) fprintf(stderr, err5);
+                                  (void) fprintf(stderr, "%s", err5);
                                   goto err;
                               }
                             if (DFSDsetdimscale(2, hdfdims[1],
                                                 in.vscale))
                               {
-                                  (void) fprintf(stderr, err5);
+                                  (void) fprintf(stderr, "%s", err5);
                                   goto err;
                               }
                             if (DFSDsetdimscale(3, hdfdims[2],
                                                 in.hscale))
                               {
-                                  (void) fprintf(stderr, err5);
+                                  (void) fprintf(stderr, "%s", err5);
                                   goto err;
                               }
                         }
                   }
                 if (DFSDadddata(opt->outfile, in.rank, hdfdims, in.data))
                   {
-                      (void) fprintf(stderr, err5);
+                      (void) fprintf(stderr, "%s", err5);
                       goto err;
                   }
             }
@@ -2131,7 +2131,7 @@ process(struct Options *opt)
                 im.hres = (opt->hres == 0) ? in.dims[0] : opt->hres;
                 if ((im.hres < in.dims[0]) && (opt->ctm == EXPAND))
                   {
-                      (void) fprintf(stderr, err3a);
+                      (void) fprintf(stderr, "%s", err3a);
                       (void) fprintf(stderr, err3b, "Horiz.");
                       (void) fprintf(stderr, err3c, "horiz.");
                       (void) fprintf(stderr, err3d, in.dims[0]);
@@ -2141,7 +2141,7 @@ process(struct Options *opt)
                 im.vres = (opt->vres == 0) ? in.dims[1] : opt->vres;
                 if ((im.vres < in.dims[1]) && (opt->ctm == EXPAND))
                   {
-                      (void) fprintf(stderr, err3a);
+                      (void) fprintf(stderr, "%s", err3a);
                       (void) fprintf(stderr, err3b, "Vert.");
                       (void) fprintf(stderr, err3c, "vert.");
                       (void) fprintf(stderr, err3d, in.dims[1]);
@@ -2156,7 +2156,7 @@ process(struct Options *opt)
                       if ((im.dres < in.dims[2]) &&
                           (opt->ctm == EXPAND))
                         {
-                            (void) fprintf(stderr, err3a);
+                            (void) fprintf(stderr, "%s", err3a);
                             (void) fprintf(stderr, err3b, "Depth");
                             (void) fprintf(stderr, err3c, "depth");
                             (void) fprintf(stderr, err3d,
@@ -2169,7 +2169,7 @@ process(struct Options *opt)
                 if ((im.image = (unsigned char *) HDmalloc((unsigned
                                                          int) len)) == NULL)
                   {
-                      (void) fprintf(stderr, err2);
+                      (void) fprintf(stderr, "%s", err2);
                       goto err;
                   }
 
@@ -2199,7 +2199,7 @@ process(struct Options *opt)
                       if (DFR8addimage(opt->outfile, ip, im.hres,
                                        im.vres, DFTAG_RLE))
                         {
-                            (void) fprintf(stderr, err4);
+                            (void) fprintf(stderr, "%s", err4);
                             goto err;
                         }
                   }
