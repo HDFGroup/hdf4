@@ -6,7 +6,7 @@ This directory contains the binary (release) distribution of
     @BINARY_PLATFORM@. 
  
 It was built with the following options: 
-	-- @LIB_TYPE@ C/Fortran libraries, shared
+	-- @LIB_TYPE@ C/Fortran libraries
 	-- SZIP (encoder enabled), ZLIB, and JPEG
 	-- @LIB_TYPE@ HDF4 tools
 
