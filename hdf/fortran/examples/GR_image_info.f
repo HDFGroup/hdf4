@@ -45,6 +45,7 @@ C     For each image in the file, get and display image information.
 C
       do 100 ri_index = 0, n_rimages-1
          ri_id = mgselct(gr_id, ri_index)
+         name = ' '
          status = mggiinf(ri_id, name, n_comps, data_type,
      +                    interlace_mode, dim_sizes, n_attrs)
 C

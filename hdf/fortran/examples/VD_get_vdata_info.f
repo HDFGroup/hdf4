@@ -59,18 +59,25 @@ C
 C     Test whether the current vdata is not a storage for an attribute,
 C     then obtain and display its information.
       if (vsfisat(vdata_id) .ne. 1) then
+C     Initialize buffers before getting values back.
+          vdata_name = ' ' 
+          fieldname_list = ' '
+          n_records = -1 
+          vdata_size = -1 
           status = vsfinq(vdata_id, n_records, interlace_mode,
      +                    fieldname_list, vdata_size, vdata_name)
-          write(*,*) 'Vdata: ', vdata_name
-          write(*,*) 'contains ', n_records, ' records'
-          if (interlace_mode .eq. 0) then
-              write(*,*) 'Interlace mode: FULL'
-          else	 
-              write(*,*) 'Interlace mode: NONE'
+          if (status .eq. 0) then
+             write(*,*) 'Vdata: ', vdata_name
+             write(*,*) 'contains ', n_records, ' records'
+             if (interlace_mode .eq. 0) then
+                 write(*,*) 'Interlace mode: FULL'
+             else	 
+                 write(*,*) 'Interlace mode: NONE'
+             endif
+             write(*,*) 'Fields: ', fieldname_list(1:30)
+             write(*,*) 'Vdata record size in bytes :', vdata_size
+             write(*,*)
           endif
-          write(*,*) 'Fields: ', fieldname_list(1:30)
-          write(*,*) 'Vdata record size in bytes :', vdata_size
-          write(*,*)
       endif
 C
 C     Detach from the current vdata.

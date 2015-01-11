@@ -84,6 +84,7 @@ C
 C     Get and display the name and the number of values of each attribute.
 C
       do 10 attr_index=1, n_attrs
+         attr_name = ' '
          status = vfainfo(vgroup_id, attr_index-1, attr_name, data_type,
      +                    n_values, size)
       write(*,*) 'Attribute #', attr_index-1, ' is named ', attr_name

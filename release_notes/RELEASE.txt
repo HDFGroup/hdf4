@@ -43,7 +43,6 @@ New features and changes
    Configuration
    ============= 
     - None
-     (INI YYYY/MM/DD)
      
 
 Support for new platforms and compilers
@@ -178,10 +177,16 @@ This version has been tested in the following platforms:
 
 Known problems
 ==============
+o  Several Fortran examples print "^@" when displaying strings (for example,
+   names of the attributes). This happens because Fortran application 
+   doesn't know the length of the strings passed from the C library.  
+   EIP - 2015-01-11, HDFFR-1477
+
 o  CMake builds in Windows uses the same pre-generated ncgen*.[ch] files from
    the yacc/lex input files. The generated file, ncgenyy.c, uses the <unistd.h>
    header file that Windows does not support.  This must be blocked out in
-   order for Windows to use it. (AKC 2014-02-03 HDFFR-1424).
+   order for Windows to use it. 
+   AKC 2014-02-03, HDFFR-1424
 
 o  CMake "make install" fails installing the tools:
     Use CPack to create an install package.
@@ -193,8 +198,8 @@ o  CMake does not install these man pages:
 
 o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
    GCC, Intel and Clang compilers.  Currently, this situation is detected and
-   -O0 level optimization is used.  We will work on the issue for the next
-   release. (HDFFR-1318,1358) EIP - 2013/02/05
+   -O0 level optimization is used.  
+   (HDFFR-1318,1358) EIP - 2013/02/05
 
 o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization 
    level. 

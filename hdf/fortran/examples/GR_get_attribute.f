@@ -51,6 +51,7 @@ C
 C
 C        Get information about the current file attribute.
 C 
+         attr_name = ' '
          status = mgatinf(gr_id, f_att_index, attr_name, data_type,
      +                    n_values)
 C
