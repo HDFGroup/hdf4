@@ -20,6 +20,7 @@
 
 
 int print_options(options_t *options);
+int list_main(const char* infname, const char* outfname, options_t *options);
 
 /*-------------------------------------------------------------------------
  * Function: hrepack

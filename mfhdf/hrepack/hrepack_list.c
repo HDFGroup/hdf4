@@ -72,6 +72,17 @@ int list_an (int32 infile_id,int32 outfile_id,options_t *options);
  *    and should not be added).  These objects belong to a root group. 
  * 4) Read all global attributes and annotations. 
  *
+ * Modification: January 15, 2015 - JIRA issue HDFFR-1428
+ *	The output file contains a vgroup of class RIG0.0 eventhough the input
+ *	file does not contain any GR elements, such as raster images or GR file
+ *	attribute.  That is because GRstart is called on the output file
+ *	regardless of whether there are any GR items in the input file.  Hrepack
+ *	will be reviewed and revised for correctness and efficiency (JIRA issue
+ *	HDFFR-1395.)  However, in this release, 4.2.11, an immediate solution is
+ *	applied to eliminate the unnecessary RIG0.0 vgroup.  The input file is
+ *	checked for GR elements, before any GR activity is invoked on the
+ *	output file. -BMR
+ *	
  *-------------------------------------------------------------------------
  */
 
@@ -88,7 +99,11 @@ int list_main(const char* infname,
                  gr_id=FAIL,      /* GR interface identifier */
                  gr_out=FAIL,     /* GR interface identifier */
                  infile_id=FAIL,
-                 outfile_id=FAIL;
+                 outfile_id=FAIL,
+		 n_rimages,       /* number of raster images in the file */
+		 n_file_attrs;    /* number of file attributes */
+    intn         has_GRelems = 0;  /* set to 1 when there are GR images or */
+                                  /* attributes in the file (HDFFR-1428) */
     int          i;
     const char*  err;
 
@@ -121,6 +136,17 @@ int list_main(const char* infname,
         printf( "Could not start GR for <%s>\n",infname);
         goto out;
     }
+
+   /*-------------------------------------------------------------------------
+    * set flag to indicate whether the input file contains any GR elements
+    *-------------------------------------------------------------------------
+    */
+    if (GRfileinfo (gr_id, &n_rimages, &n_file_attrs)==FAIL){
+        printf( "Could not get info for GR\n");
+        goto out;
+    }
+    if (n_rimages > 0 || n_file_attrs > 0)
+        has_GRelems = 1;
    
    /*-------------------------------------------------------------------------
     * create the output file and initialize interfaces
@@ -140,11 +166,12 @@ int list_main(const char* infname,
             goto out;
         }
         
-        if ((gr_out = GRstart (outfile_id))==FAIL)
-        {
-            printf( "Could not start GR for <%s>\n",outfname);
-            goto out;
-        }
+	if (has_GRelems)
+            if ((gr_out = GRstart (outfile_id))==FAIL)
+            {
+                printf( "Could not start GR for <%s>\n",outfname);
+                goto out;
+            }
     } /* options->trip==1 */
 
     
@@ -153,7 +180,7 @@ int list_main(const char* infname,
 
 
    /*-------------------------------------------------------------------------
-    * iterate tru HDF interfaces 
+    * iterate thru HDF interfaces 
     *-------------------------------------------------------------------------
     */
 
@@ -166,8 +193,13 @@ int list_main(const char* infname,
     
     if (list_vg (infile_id,outfile_id,sd_id,sd_out,gr_id,gr_out,list_tbl,td1,td2,options)<0) 
         goto out;
-    if (list_gr (infile_id,outfile_id,gr_id,gr_out,list_tbl,options)<0) 
-        goto out;
+
+    /* Only process GR interface if there is any GR elements in the file */
+    /* Design note: consider using the same approach for the SD API during the
+       improvement of hrepack, HDFFR-1395 */
+    if (has_GRelems)
+        if (list_gr (infile_id,outfile_id,gr_id,gr_out,list_tbl,options)<0) 
+            goto out;
     if (list_sds(infile_id,outfile_id,sd_id,sd_out,list_tbl,td1,td2,options)<0) 
         goto out;
     if (list_vs (infile_id,outfile_id,list_tbl,options)<0) 
@@ -223,7 +255,7 @@ int list_main(const char* infname,
     *-------------------------------------------------------------------------
     */
     if (GRend (gr_id)==FAIL)
-        printf( "Failed to close GR interface <%s>\n", infname);
+	printf( "Failed to close GR interface <%s>\n", infname);
     if (SDend (sd_id)==FAIL)
         printf( "Failed to close file <%s>\n", infname);
     if (Hclose (infile_id)==FAIL)
@@ -231,8 +263,9 @@ int list_main(const char* infname,
 
     if ( options->trip==1 ) 
     {
-        if (GRend (gr_out)==FAIL)
-            printf( "Failed to close GR interface <%s>\n", outfname);
+	if (has_GRelems)
+	    if (GRend (gr_out)==FAIL)
+		printf( "Failed to close GR interface <%s>\n", outfname);
         if (SDend (sd_out)==FAIL)
             printf( "Failed to close file <%s>\n", outfname);
         if (Hclose (outfile_id)==FAIL)
