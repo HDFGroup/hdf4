@@ -1,5 +1,7 @@
                                HDF4 Examples
 
+Code Examples
+=============
 This directory contains example programs for the installed APIs and scripts to 
 compile and run them.  Examples in the c subdirectory are always 
 installed, and those in the fortan subdirectory will be installed 
@@ -21,4 +23,7 @@ result in an error message "...error while loading shared libraries: ...".
 Setting LD_LIBRARY_PATH to include the directory containing the missing library
 should allow the examples to run.
 
+
+HDF4 Data File Examples
+=======================
 Examples of HDF4 data files (with extension .hdf) may be found in the source directory mfhdf/dumper/testfiles.  Also, running the run-all-ex.sh script produces HDF4 data files that are automatically deleted by the scripts.  The scripts in the c and fortran subdirectories can be modified to not delete those data files by commenting with "#" the line "rm *.hdf" in the last 5 lines of the scripts in those subdirectories.   
