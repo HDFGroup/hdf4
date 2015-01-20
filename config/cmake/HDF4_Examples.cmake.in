@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
 ###############################################################################################################
 # This script will build and run the examples from a compressed file
 # Execute from a command line:
-#     ctest -S HDF4_Examples.cmake,HDF4Examples-0.1.1-Source -C Release -O test.log
+#     ctest -S HDF4_Examples.cmake,HDF4Examples-0.1.1-Source -C Release -V -O test.log
 ###############################################################################################################
 
 set(INSTALLDIR "@CMAKE_INSTALL_PREFIX@")
@@ -13,7 +13,7 @@ set(CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
 set(CTEST_BUILD_CONFIGURATION "Release")
 #set(NO_MAC_FORTRAN "true")
 #set(BUILD_OPTIONS "${BUILD_OPTIONS} -DHDF_BUILD_FORTRAN:BOOL=ON")
-set(CTEST_USE_TAR_SOURCE "true")
+set(CTEST_USE_TAR_SOURCE "${CTEST_SCRIPT_DIRECTORY}")
 
 ###############################################################################################################
 #     Adjust the following SET Commands as needed
