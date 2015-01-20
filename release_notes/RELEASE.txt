@@ -80,7 +80,32 @@ Bugs fixed since HDF 4.2.10
 
    Utilities
    ========= 
-   - None
+   - Improvement of the ncgen's usage statement.
+
+     Previously, ncgen's usage looked like this:
+     ncgen: -: Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file... ]
+
+     More details are added to the usage to improve clarity.  Now, it is more
+     clear, and consistent with ncdump, like this:
+     Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]
+       [-V]             Display version of the HDF4 library and exit
+       [-b]             For binary netCDF output, '.nc' extension
+       [-c]             For C output
+       [-f]             For Fortran output
+       [-o <outfile>]   Explicitly specify output file name
+
+     (BMR 2015/01/19, HDFFR-1459)
+
+   - Output of hrepack containing an unnecessary vgroup of class RIG0.0
+
+     When the input file did not have any GR elements, hrepack still opened and
+     closed the output file using the GR API, which caused the RIG0.0 vgroup to
+     be written to the output file.
+
+     Hrepack now skips accessing the output file using GR API, when the input
+     file doesn't have any images and any GR attributes.
+
+     (BMR 2015/01/18, HDFFR-1428)
 
 
 Documentation
