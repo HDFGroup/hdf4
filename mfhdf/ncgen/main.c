@@ -27,8 +27,17 @@ extern FILE *yyin, *yyout;
 
 void usage()
 {
-    derror("Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
-	   progname);
+    /* derror("Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file ... ]",
+	   progname); */
+
+    /* Replaced the above line with the more detailed lines below.
+       -BMR, HDFFR-1459, 2015/01/19 */
+    fprintf(stderr, "Usage: %s [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]\n", progname);
+    fprintf(stderr, "  [-V]\t\t   Display version of the HDF4 library and exit\n");
+    fprintf(stderr, "  [-b]\t\t   For binary netCDF output, '.nc' extension\n");
+    fprintf(stderr, "  [-c]\t\t   For C output\n");
+    fprintf(stderr, "  [-f]\t\t   For Fortran output\n");
+    fprintf(stderr, "  [-o <outfile>]   Explicitly specify output file name\n");
     exit(8);
 }
 
