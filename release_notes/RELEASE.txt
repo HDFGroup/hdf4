@@ -76,36 +76,76 @@ Bugs fixed since HDF 4.2.10
 
    Library
    ========= 
-   - None
+    - None
 
    Utilities
    ========= 
-   - Improvement of the ncgen's usage statement.
+    - Improvement of the ncgen's usage statement.
 
-     Previously, ncgen's usage looked like this:
-     ncgen: -: Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file... ]
+      Previously, ncgen's usage looked like this:
+      ncgen: -: Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file... ]
 
-     More details are added to the usage to improve clarity.  Now, it is more
-     clear, and consistent with ncdump, like this:
-     Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]
-       [-V]             Display version of the HDF4 library and exit
-       [-b]             For binary netCDF output, '.nc' extension
-       [-c]             For C output
-       [-f]             For Fortran output
-       [-o <outfile>]   Explicitly specify output file name
+      More details are added to the usage to improve clarity.  Now, it is more
+      clear, and consistent with ncdump, like this:
+      Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]
+        [-V]             Display version of the HDF4 library and exit
+        [-b]             For binary netCDF output, '.nc' extension
+        [-c]             For C output
+        [-f]             For Fortran output
+        [-o <outfile>]   Explicitly specify output file name
 
-     (BMR 2015/01/19, HDFFR-1459)
+      (BMR 2015/01/19, HDFFR-1459)
 
-   - Output of hrepack containing an unnecessary vgroup of class RIG0.0
+    - Output of hrepack containing an unnecessary vgroup of class RIG0.0
 
-     When the input file did not have any GR elements, hrepack still opened and
-     closed the output file using the GR API, which caused the RIG0.0 vgroup to
-     be written to the output file.
+      When the input file did not have any GR elements, hrepack still opened and
+      closed the output file using the GR API, which caused the RIG0.0 vgroup to
+      be written to the output file.
 
-     Hrepack now skips accessing the output file using GR API, when the input
-     file doesn't have any images and any GR attributes.
+      Hrepack now skips accessing the output file using GR API, when the input
+      file doesn't have any images and any GR attributes.
 
-     (BMR 2015/01/18, HDFFR-1428)
+      (BMR 2015/01/18, HDFFR-1428)
+
+    - Compliance with Fedora standard regarding printf/fprintf statements
+
+      Users sent patches for the problem where the format string is missing from
+      the printf/fprintf statements.  This is in compliance with Fedora standard.
+      For more information, see
+		https://fedoraproject.org/wiki/Format-Security-FAQ.
+
+      In the context where this problem occurred, the benefit of using puts/fputs
+      over printf/fprintf is insignificant.  Thus, the fix was adding "%s" to
+      those printf/fprintf statements that don't have the format string instead
+      of switching to puts/fputs.
+
+      (BMR 2014/12/16, HDFFR-1423 and HDFFR-1475)
+
+    - Failure of hdp on some hdfeos generated files
+
+      Attribute vdatas created by hdfeos API have the field named "AttrValues".
+      The utility functions Vattrhdfsize and VSattrhdfsize, in hdp.c, used
+      ATTR_FIELD_NAME ("VALUES") to verify that a vdata is storing an attribute,
+      causing failure on some hdfeos generated files.  In addition, when this
+      failure occurred, the calling function tried to free allocated resources
+      prematurely.
+
+      The check against ATTR_FIELD_NAME and the premature resource deallocation
+      are removed.
+
+      (BMR 2014/12/08, HDFFR-1471)
+
+    - nclong versus long in tests
+
+      Applied the user's patch to remove a test failure.
+
+      (BMR 2014/10/21, HDFFR-1378)
+
+    - Warning "array subscript is below array bounds"
+
+      Applied user's patch to remove the warning.
+
+      (BMR 2014/06/02, HDFFR-1379)
 
 
 Documentation
