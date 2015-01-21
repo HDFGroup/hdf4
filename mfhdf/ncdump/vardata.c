@@ -495,6 +495,7 @@ vardata(vp, vdims, ncid, varid, fsp)
     long nrows;
     int vrank = vp->ndims;
     char *fixed_var;
+    int ret = 0, err_code = 0;
 
     /* printf format used to print each value */
     const char *fmt = get_fmt(ncid, varid, vp->type);
@@ -574,7 +575,20 @@ vardata(vp, vdims, ncid, varid, fsp)
 	    long toget = left < gulp ? left : gulp;
 	    if (vrank > 0)
 	      edg[vrank-1] = toget;
-	    (void) ncvarget (ncid, varid, cor, edg, (void *) vals);
+
+	    /* ncvarget was casted to (void), thus ncdump misinformed users
+               that the reading succeeded even though the data was corrupted and
+               reading in fact failed (HDFFR-1468.)  Now when ncvarget fails,
+               break out of the while loop and set error code to indicate this
+               failure. -BMR, 2015/01/19 */
+	    ret = ncvarget (ncid, varid, cor, edg, (void *) vals);
+	    if (ret == -1)
+	    {
+		err_code = ERR_READFAIL;  /* to be returned to caller to
+					     indicate that ncvarget fails */
+		break;
+	    }
+
 	    if (fsp->full_data_cmnts)
 	      pr_cvals(vp, toget, fmt, left > toget, lastrow, (void *) vals,
 		       fsp, cor);
@@ -584,14 +598,20 @@ vardata(vp, vdims, ncid, varid, fsp)
 	    if (vrank > 0)
 	      cor[vrank-1] += toget;
 	}
-	if (vrank > 0)
-	  cor[vrank-1] = corsav;
-	if (ir < nrows-1)
-	  if (!upcorner(vdims,vp->ndims,cor,add))
-	    error("vardata: odometer overflowed!");
-	set_indent(2);
+	/* No failure occurs */
+	if (ret >= 0)
+	{
+	    if (vrank > 0)
+	      cor[vrank-1] = corsav;
+	    if (ir < nrows-1)
+	      if (!upcorner(vdims,vp->ndims,cor,add))
+	        error("vardata: odometer overflowed!");
+	    set_indent(2);
+	}
     }
 
     free(fixed_var);
-    return 0;
+    return(err_code);
+    /* Previously, it was "return 0;"  If this function is revised, this
+       return statement may be changed appropriately. (HDFFR-1468) */
 }

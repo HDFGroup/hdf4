@@ -534,12 +534,26 @@ do_ncdump(char *path, struct fspec* specp)
 				continue;
 
 			if (var.ndims == 0 || var.dims[0] != xdimid || dims[xdimid].size != 0) {
+				int ret = 0;
+
 				/* Collect variable's dim sizes */
 				for (id = 0; id < var.ndims; id++)
 					vdims[id] = dims[var.dims[id]].size;
 
-				if (vardata(&var, vdims, ncid, varid, specp) == -1) {
+				 /* if (vardata(&var, vdims, ncid, varid, specp) == -1) 
+ */ 
+				ret = vardata(&var, vdims, ncid, varid, specp);
+				/* Keep the original failure detection until further improvement */
+				if (ret == -1) {
 					error("can't output data for variable %s", var.name);
+					(void) ncclose(ncid);
+					return;
+				}
+				/* This failure indicates that vardata failed
+				   because ncvarget fails.  (HDFFR-1468)
+				   -BMR, 2015/01/20) */
+				if (ret == ERR_READFAIL) {
+					error("Reading failed for variable %s, possibly the data is corrupted.", var.name);
 					(void) ncclose(ncid);
 					return;
 				}

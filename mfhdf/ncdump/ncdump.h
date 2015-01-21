@@ -5,6 +5,8 @@
  *********************************************************************/
 
 #define  Printf  (void) printf
+#define  ERR_READFAIL	-2	/* Used to return by vardata() to indicate that
+				   ncvarget() fails to read the data */
 
 typedef enum {false=0, true=1} bool;
 
