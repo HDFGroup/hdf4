@@ -76,10 +76,28 @@ Bugs fixed since HDF 4.2.10
 
    Library
    ========= 
-    - None
+    - Warning "array subscript is below array bounds"
+
+      Applied user's patch to remove the warning.
+
+      (BMR 2014/06/02, HDFFR-1379)
+
 
    Utilities
    ========= 
+    - Detection of read failure in ncdump
+
+      Previously, ncdump did not detect failure from ncvarget because the
+      returned value from ncvarget was not checked, and the calling function
+      simply returned 0.
+
+      The error code ERR_READFAIL (-2) is added to ncdump only to indicate this
+      failure within ncdump, which will display this message:
+
+      "Reading failed for variable <Variable name>, the data is possibly corrupted."
+
+      (BMR 2015/01/21, HDFFR-1468)
+
     - Improvement of the ncgen's usage statement.
 
       Previously, ncgen's usage looked like this:
@@ -140,12 +158,6 @@ Bugs fixed since HDF 4.2.10
       Applied the user's patch to remove a test failure.
 
       (BMR 2014/10/21, HDFFR-1378)
-
-    - Warning "array subscript is below array bounds"
-
-      Applied user's patch to remove the warning.
-
-      (BMR 2014/06/02, HDFFR-1379)
 
 
 Documentation
