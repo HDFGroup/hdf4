@@ -29,7 +29,7 @@ FILE *dbg_file;
 #endif
 
 #include <stdlib.h>
-//#include <string.h> /* to remove warnings, HDFFR-1434 */
+#include <string.h> /* to remove warnings, HDFFR-1434 */
 
 #ifdef PROTOTYPE
 int main(int argc, char *argv[])
