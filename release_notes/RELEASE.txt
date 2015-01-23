@@ -1,19 +1,19 @@
-HDF version 4.2.10-post0 currently under development
+HDF version 4.2.11-pre1 currently under development
 ====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.10 and HDF 4.2.10-post0.
+This document describes the differences between HDF 4.2.10 and HDF 4.2.11-pre1.
 It is written for people who are familiar with previous releases of HDF 
-and wish to migrate to HDF 4.2.10-post0.
+and wish to migrate to HDF 4.2.11-pre1.
 
 The HDF 4.2.10 documentation can be found on the The HDF Group's website
 at:
-    http://www.hdfgroup.org/doc.html
+    http://www.hdfgroup.org/release4/doc/
 
 Previous versions of the documentation are available from the FTP server:
 
-    ftp://ftp.hdfgroup.org/HDF/Documentation/
+    ftp://ftp.hdfgroup.org/HDF/prev-Documentation/
 
 First-time HDF users are encouraged to read the HDF FAQ, which can be
 reached from the HDF product home page:
