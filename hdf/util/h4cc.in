@@ -52,7 +52,16 @@ LIBS="@LIBS@"
 CC="${HDF4_CC:-$CCBASE}"
 CLINKER="${HDF4_CLINKER:-$CLINKERBASE}"
 
-USE_SHARED_LIB="${HDF4_USE_SHLIB:-no}"
+# If a static library is available, the default will be to use it.  If the only
+# available library is shared, it will be used by default.  The user can
+# override either default, although choosing an unavailable library will result
+# in link errors.
+STATIC_AVAILABLE="@enable_static@"
+if test "${STATIC_AVAILABLE}" = "yes"; then
+  USE_SHARED_LIB="${HDF4_USE_SHLIB:-no}"
+else
+  USE_SHARED_LIB="${HDF4_USE_SHLIB:-yes}"
+fi
 
 usage() {
   # A wonderfully informative "usage" message.
@@ -63,8 +72,10 @@ usage() {
   echo "    -prefix=DIR  Prefix directory to find HDF4 lib/ and include/"
   echo "                   subdirectories [default: $prefix]"
   echo "    -show        Show the commands without executing them"
-  echo "    -shlib       Compile with shared HDF4 libraries."
-  echo "    -noshlib     Compile with static HDF4 libraries [default]"
+  echo "    -shlib       Compile with shared HDF4 libraries [default for hdf4 built"
+  echo "                                                     without static libraries]"
+  echo "    -noshlib     Compile with static HDF4 libraries [default for hdf4 built]"
+  echo "                                                     with static libraries]"
   echo " "
   echo "  <compile line>  - the normal compile line options for your compiler."
   echo "                    $prog_name uses the same compiler you used to compile"
