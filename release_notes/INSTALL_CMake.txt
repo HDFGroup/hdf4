@@ -509,7 +509,7 @@ These five steps are described in detail below.
       
       NOTE: See note 8 of this document for NSIS information.
             Also, if you are using a Visual Studio Express version or do not 
-            want to enable the packaging components, set HDF5_NO_PACKAGES 
+            want to enable the packaging components, set HDF4_NO_PACKAGES 
             to ON (on the command line add -DHDF4_NO_PACKAGES:BOOL=ON)
            
    6. The files that support building HDF4 with CMake are all the files in the 
@@ -610,8 +610,8 @@ platform configuration script.
 ############################################################################
 cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
 
-# this is the location of the source hardcoded to hdf-4.2.10
-set(CTEST_SOURCE_NAME hdf-4.2.10)
+# this is the location of the source hardcoded to hdf-4.2.11
+set(CTEST_SOURCE_NAME hdf-4.2.11)
 # this is the location of the source with ctest parameter hdf4src
 # "ctest -S HDF4LinuxCmake.cmake,hdf4src -C Release -O hdf4static.log"
 #set(CTEST_SOURCE_NAME ${CTEST_SCRIPT_ARG})
@@ -668,7 +668,7 @@ set(SITE_BUILDNAME_SUFFIX "SHARED")
 #########   Following controls source repository         ##########
 #set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/trunk")
 #comment to use a uncompressed source folder
-set(CTEST_USE_TAR_SOURCE "hdf-4.2.10")
+set(CTEST_USE_TAR_SOURCE "hdf-4.2.11")
 ###################################################################
 
 ###################################################################
