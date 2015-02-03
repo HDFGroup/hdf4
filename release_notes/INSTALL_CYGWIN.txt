@@ -10,7 +10,7 @@ NOTE: hdf4 can be built with CMake, see the INSTALL_CMake.txt file for more guid
 Preconditions:
 --------------
 
-1. Installed Cygwin 1.7.25 or higher
+1. Installed Cygwin 1.7.32 or higher
 
    To install the Cygwin net release, go to http://www.cygwin.com and 
    click on "setup-x86.exe" (32-bit installation) under the heading
@@ -34,7 +34,7 @@ Preconditions:
     
     The following compilers are supported by HDF4 and included in the Cygwin
     package system:
-       gcc (4.7.3), which includes:
+       gcc (4.8.3), which includes:
             gcc4-core    : C compiler
             gcc4-g++     : C++ compiler
             gcc4-fortran : fortran compiler
