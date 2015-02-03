@@ -23,7 +23,7 @@ Obtaining HDF4 source code
    1. Create a directory for your development; for example, "myhdfstuff".
 
    2. Obtain compressed (*.tar or *.zip) HDF4 source from
-        http://www.hdfgroup.org/ftp/products/hdf4/current/src/
+        http://www.hdfgroup.org/ftp/HDF/HDF_Current/src/
       and put it in "myhdfstuff".
       Do not uncompress.
 
@@ -43,7 +43,7 @@ will use the default settings in the config/cmake/cacheinit.cmake file.
 HDF Group recommends using the ctest script mode to build HDF4.
 
 The following files referenced below are available at the HDF web site:
-    http://www.hdfgroup.org/products/hdf4/release/cmakebuild.html
+    http://www.hdfgroup.org/release4/cmakebuild.html
 
 CMake build script:
     CTestScript.cmake
