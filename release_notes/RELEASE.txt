@@ -162,7 +162,13 @@ Bugs fixed since HDF 4.2.10
 
 Documentation
 =============
-   - None
+    - Updated Reference Manual and User's Guide
+
+      The documents were updated to contain information of the changes to
+      the tools.  In addition, various improvements were applied.
+
+      (BMR 2015/2/04)
+
 
 
 Platforms tested
