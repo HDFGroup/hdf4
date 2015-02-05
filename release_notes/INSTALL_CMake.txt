@@ -240,6 +240,7 @@ IV. Further considerations
             -DSZIP_LIBRARY:FILEPATH=some_location/lib/szlib.lib
             -DSZIP_INCLUDE_DIR:PATH=some_location/include
          where "some_location" is the full path to the extlibs folder. 
+         Note that you can use either JPEG 6b or 8b.
 
       B. Use source packages from an SVN server by adding the following CMake 
          options:
