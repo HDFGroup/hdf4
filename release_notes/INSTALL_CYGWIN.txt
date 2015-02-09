@@ -129,7 +129,7 @@ Notes: Use the configure command in the top level HDF4 directory.
          automatically find the library. In this case, the corresponding
          configure flag may be omitted.
        * Note that --prefix defines where the installation path is.
-         The default is set as <hdf4_build_directory>/NewHDF 
+         The default is set as <hdf4_build_directory>/hdf4 
 
 4. To Build and Test:
 
@@ -143,8 +143,11 @@ Notes: Use the configure command in the top level HDF4 directory.
 
 5. To Install:
 
-         make install
+        make install
 
+6. To test the installation:
+
+	make installcheck
 
 Acknowledgements:
 -----------------
