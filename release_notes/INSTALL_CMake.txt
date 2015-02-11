@@ -609,7 +609,7 @@ platform configuration script.
 # CTestScript.cmake file. Usage:
 # "ctest -S HDF4LinuxCmake.cmake -C Release -O hdf4shared.log"
 ############################################################################
-cmake_minimum_required(VERSION 2.8.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 # this is the location of the source hardcoded to hdf-4.2.11
 set(CTEST_SOURCE_NAME hdf-4.2.11)

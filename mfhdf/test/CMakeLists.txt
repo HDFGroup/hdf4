@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8.10)
-PROJECT (HDF4_MFHDF_TEST)
+cmake_minimum_required (VERSION 3.1.0)
+project (HDF4_MFHDF_TEST)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
@@ -40,8 +40,8 @@ set (hdftest_SRCS
 
 #-- Adding test for hdftest
 add_executable (hdftest ${hdftest_SRCS})
-TARGET_NAMING (hdftest ${LIB_TYPE})
-TARGET_C_PROPERTIES (hdftest " " " ")
+TARGET_NAMING (hdftest STATIC)
+TARGET_C_PROPERTIES (hdftest STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
 else (HDF4_BUILD_XDR_LIB)
@@ -68,8 +68,8 @@ endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
-TARGET_NAMING (cdftest ${LIB_TYPE})
-TARGET_C_PROPERTIES (cdftest " " " ")
+TARGET_NAMING (cdftest STATIC)
+TARGET_C_PROPERTIES (cdftest STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)
@@ -101,8 +101,8 @@ set (hdfnctest_SRCS
 )
 
 add_executable (hdfnctest ${hdfnctest_SRCS})
-TARGET_NAMING (hdfnctest ${LIB_TYPE})
-TARGET_C_PROPERTIES (hdfnctest " " " ")
+TARGET_NAMING (hdfnctest STATIC)
+TARGET_C_PROPERTIES (hdfnctest STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdfnctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)

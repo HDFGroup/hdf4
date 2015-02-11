@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4_HDF_SRC C CXX)
 
 #-----------------------------------------------------------------------------
@@ -6,7 +6,7 @@ PROJECT (HDF4_HDF_SRC C CXX)
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}
-    ${HDF4_HDFSOURCE_DIR}
+    ${HDF4_HDF_SOURCE_DIR}
 )
 LINK_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}
@@ -120,14 +120,37 @@ set (HDF4_HDF_SRC_CHDRS
     ${HDF4_HDF_SRC_SOURCE_DIR}/vgint.h
 )
 
-add_library (${HDF4_SRC_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif (WIN32)
-TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} " " " ")
+add_library (${HDF4_SRC_LIB_TARGET} STATIC ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
+TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} STATIC " " " ")
 target_link_libraries (${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIB_TARGET}")
-H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} ${LIB_TYPE})
+H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} STATIC)
+set_target_properties (${HDF4_SRC_LIB_TARGET} PROPERTIES
+    FOLDER libraries
+    INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+)
+if (WIN32)
+  set_property (TARGET ${HDF4_SRC_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
+endif (WIN32)
+set (install_targets ${HDF4_SRC_LIB_TARGET})
+
+if (BUILD_SHARED_LIBS)
+  add_library (${HDF4_SRC_LIBSH_TARGET} SHARED ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
+  TARGET_C_PROPERTIES (${HDF4_SRC_LIBSH_TARGET} SHARED " " " ")
+  target_link_libraries (${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIBSH_TARGET}")
+  H4_SET_LIB_OPTIONS (${HDF4_SRC_LIBSH_TARGET} ${HDF4_SRC_LIB_NAME} SHARED)
+  set_target_properties (${HDF4_SRC_LIBSH_TARGET} PROPERTIES
+      FOLDER libraries
+      COMPILE_DEFINITIONS "H4_BUILT_AS_DYNAMIC_LIB"
+      INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+      INTERFACE_COMPILE_DEFINITIONS H4_BUILT_AS_DYNAMIC_LIB=1
+  )
+  if (WIN32)
+    set_property (TARGET ${HDF4_SRC_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
+  endif (WIN32)
+  set (install_targets ${install_targets} ${HDF4_SRC_LIBSH_TARGET})
+endif (BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
@@ -146,12 +169,12 @@ INSTALL (
 #-----------------------------------------------------------------------------
 if (HDF4_EXPORTED_TARGETS)
   if (BUILD_SHARED_LIBS)
-    INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+    INSTALL_TARGET_PDB (${HDF4_SRC_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
   endif (BUILD_SHARED_LIBS)
   
   INSTALL (
       TARGETS 
-          ${HDF4_SRC_LIB_TARGET}
+          ${install_targets}
       EXPORT
           ${HDF4_EXPORTED_TARGETS}
       LIBRARY DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT libraries 

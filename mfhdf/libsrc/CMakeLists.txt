@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4_MFHDF_LIBSRC C CXX)
 
 #-----------------------------------------------------------------------------
@@ -61,24 +61,52 @@ endif (CYGWIN)
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
-add_definitions (-DHDF)
-
-if (WIN32)
-  add_definitions (-DDOS_FS -DSWAP)
-endif (WIN32)
-
-add_library (${HDF4_MF_LIB_TARGET} ${LIB_TYPE} ${HDF4_MFHDF_LIBSRC_CSRCS} ${HDF4_MFHDF_LIBSRC_CHDRS})
+add_library (${HDF4_MF_LIB_TARGET} STATIC ${HDF4_MFHDF_LIBSRC_CSRCS} ${HDF4_MFHDF_LIBSRC_CHDRS})
 if (HDF4_BUILD_XDR_LIB)
-  if (WIN32)
-    add_definitions (-DNO_SYS_XDR_INC)
-  endif (WIN32)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
   target_link_libraries (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_C_PROPERTIES (${HDF4_MF_LIB_TARGET} " " " ")
+TARGET_C_PROPERTIES (${HDF4_MF_LIB_TARGET} STATIC " " " ")
 target_link_libraries (${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_LIB_TARGET}")
-H4_SET_LIB_OPTIONS (${HDF4_MF_LIB_TARGET} ${HDF4_MF_LIB_NAME} ${LIB_TYPE})
+H4_SET_LIB_OPTIONS (${HDF4_MF_LIB_TARGET} ${HDF4_MF_LIB_NAME} STATIC)
+set_target_properties (${HDF4_MF_LIB_TARGET} PROPERTIES
+    FOLDER libraries
+    COMPILE_DEFINITIONS "HDF"
+    INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+)
+if (WIN32)
+  set_property (TARGET ${HDF4_MF_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;SWAP")
+  if (HDF4_BUILD_XDR_LIB)
+    set_property (TARGET ${HDF4_MF_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+  endif (HDF4_BUILD_XDR_LIB)
+endif (WIN32)
+set (install_targets ${HDF4_MF_LIB_TARGET})
+
+if (BUILD_SHARED_LIBS)
+  add_library (${HDF4_MF_LIBSH_TARGET} SHARED ${HDF4_MFHDF_LIBSRC_CSRCS} ${HDF4_MFHDF_LIBSRC_CHDRS})
+  if (HDF4_BUILD_XDR_LIB)
+    INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
+    target_link_libraries (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  endif (HDF4_BUILD_XDR_LIB)
+  TARGET_C_PROPERTIES (${HDF4_MF_LIBSH_TARGET} SHARED " " " ")
+  target_link_libraries (${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET})
+  set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_LIBSH_TARGET}")
+  H4_SET_LIB_OPTIONS (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_LIB_NAME} SHARED)
+  set_target_properties (${HDF4_MF_LIBSH_TARGET} PROPERTIES
+      FOLDER libraries
+      COMPILE_DEFINITIONS "HDF;H4_BUILT_AS_DYNAMIC_LIB"
+      INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+      INTERFACE_COMPILE_DEFINITIONS H4_BUILT_AS_DYNAMIC_LIB=1
+  )
+  if (WIN32)
+    set_property (TARGET ${HDF4_MF_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;SWAP")
+    if (HDF4_BUILD_XDR_LIB)
+      set_property (TARGET ${HDF4_MF_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "NO_SYS_XDR_INC")
+    endif (HDF4_BUILD_XDR_LIB)
+  endif (WIN32)
+  set (install_targets ${install_targets} ${HDF4_MF_LIBSH_TARGET})
+endif (BUILD_SHARED_LIBS)
 
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
@@ -96,12 +124,12 @@ install (
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
 if (BUILD_SHARED_LIBS)
-  INSTALL_TARGET_PDB (${HDF4_MF_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} libraries)
+  INSTALL_TARGET_PDB (${HDF4_MF_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
 endif (BUILD_SHARED_LIBS)
   
 install (
     TARGETS 
-        ${HDF4_MF_LIB_TARGET}
+        ${install_targets}
     EXPORT 
         ${HDF4_EXPORTED_TARGETS}
     LIBRARY DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT libraries 

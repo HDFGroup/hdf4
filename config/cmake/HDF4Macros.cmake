@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-MACRO (H4_SET_LIB_OPTIONS libtarget libname libtype)
+macro (H4_SET_LIB_OPTIONS libtarget libname libtype)
   set (LIB_OUT_NAME "${libname}")
   if (${libtype} MATCHES "SHARED")
     if (WIN32)
@@ -24,4 +24,4 @@ MACRO (H4_SET_LIB_OPTIONS libtarget libname libtype)
     endif (HDF4_BUILD_WITH_INSTALL_NAME)
   endif (APPLE)
 
-ENDMACRO (H4_SET_LIB_OPTIONS)
+endmacro (H4_SET_LIB_OPTIONS)

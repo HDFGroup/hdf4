@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8.10)
-PROJECT (HDF4_MFHDF_DUMPER)
+cmake_minimum_required (VERSION 3.1.0)
+project (HDF4_MFHDF_DUMPER)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
@@ -19,7 +19,7 @@ set (hdp_SRCS
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/show.c
 )
   
-ADD_EXECUTABLE (hdp ${hdp_SRCS})
+add_executable (hdp ${hdp_SRCS})
 if (WIN32)
   add_definitions (-DDOS_FS)
 endif (WIN32)
@@ -30,9 +30,9 @@ if (HDF4_BUILD_XDR_LIB)
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
   target_link_libraries (hdp ${HDF4_MF_XDR_LIB_TARGET})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_C_PROPERTIES (hdp " " " ")
+TARGET_C_PROPERTIES (hdp STATIC " " " ")
 target_link_libraries (hdp ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-TARGET_NAMING (hdp ${LIB_TYPE})
+TARGET_NAMING (hdp STATIC)
 if (WIN32)
   set_target_properties (hdp PROPERTIES LINK_FLAGS "/STACK:10000000")
 endif (WIN32)

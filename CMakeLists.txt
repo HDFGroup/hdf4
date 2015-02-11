@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
@@ -126,18 +126,30 @@ set (HDF4_TOOLS_LIB_NAME        "${HDF4_EXTERNAL_LIB_PREFIX}${HDF4_TOOLS_LIB_COR
 #-----------------------------------------------------------------------------
 # Set the target names of all the libraries
 #-----------------------------------------------------------------------------
-set (HDF4_LIB_TARGET              ${HDF4_LIB_CORENAME})
-set (HDF4_SRC_LIB_TARGET          ${HDF4_SRC_LIB_CORENAME})
-set (HDF4_SRC_FCSTUB_LIB_TARGET   ${HDF4_SRC_FCSTUB_LIB_CORENAME})
-set (HDF4_SRC_FORTRAN_LIB_TARGET  ${HDF4_SRC_FORTRAN_LIB_CORENAME})
-set (HDF4_MF_LIB_TARGET           ${HDF4_MF_LIB_CORENAME})
-set (HDF4_MF_XDR_LIB_TARGET       ${HDF4_MF_XDR_LIB_CORENAME})
-set (HDF4_HDF_TEST_LIB_TARGET     ${HDF4_HDF_TEST_LIB_CORENAME})
-set (HDF4_HDF_TEST_FCSTUB_LIB_TARGET     ${HDF4_HDF_TEST_FCSTUB_LIB_CORENAME})
-set (HDF4_MF_FCSTUB_LIB_TARGET    ${HDF4_MF_FCSTUB_LIB_CORENAME})
-set (HDF4_MF_FORTRAN_LIB_TARGET   ${HDF4_MF_FORTRAN_LIB_CORENAME})
-set (HDF4_MF_TEST_LIB_TARGET      ${HDF4_MF_TEST_LIB_CORENAME})
-set (HDF4_TOOLS_LIB_TARGET        ${HDF4_TOOLS_LIB_CORENAME})
+set (HDF4_LIB_TARGET              ${HDF4_LIB_CORENAME}-static)
+set (HDF4_SRC_LIB_TARGET          ${HDF4_SRC_LIB_CORENAME}-static)
+set (HDF4_SRC_FCSTUB_LIB_TARGET   ${HDF4_SRC_FCSTUB_LIB_CORENAME}-static)
+set (HDF4_SRC_FORTRAN_LIB_TARGET  ${HDF4_SRC_FORTRAN_LIB_CORENAME}-static)
+set (HDF4_MF_LIB_TARGET           ${HDF4_MF_LIB_CORENAME}-static)
+set (HDF4_MF_XDR_LIB_TARGET       ${HDF4_MF_XDR_LIB_CORENAME}-static)
+set (HDF4_HDF_TEST_LIB_TARGET     ${HDF4_HDF_TEST_LIB_CORENAME}-static)
+set (HDF4_HDF_TEST_FCSTUB_LIB_TARGET     ${HDF4_HDF_TEST_FCSTUB_LIB_CORENAME}-static)
+set (HDF4_MF_FCSTUB_LIB_TARGET    ${HDF4_MF_FCSTUB_LIB_CORENAME}-static)
+set (HDF4_MF_FORTRAN_LIB_TARGET   ${HDF4_MF_FORTRAN_LIB_CORENAME}-static)
+set (HDF4_MF_TEST_LIB_TARGET      ${HDF4_MF_TEST_LIB_CORENAME}-static)
+set (HDF4_TOOLS_LIB_TARGET        ${HDF4_TOOLS_LIB_CORENAME}-static)
+set (HDF4_LIBSH_TARGET              ${HDF4_LIB_CORENAME}-shared)
+set (HDF4_SRC_LIBSH_TARGET          ${HDF4_SRC_LIB_CORENAME}-shared)
+set (HDF4_SRC_FCSTUB_LIBSH_TARGET   ${HDF4_SRC_FCSTUB_LIB_CORENAME}-shared)
+set (HDF4_SRC_FORTRAN_LIBSH_TARGET  ${HDF4_SRC_FORTRAN_LIB_CORENAME}-shared)
+set (HDF4_MF_LIBSH_TARGET           ${HDF4_MF_LIB_CORENAME}-shared)
+set (HDF4_MF_XDR_LIBSH_TARGET       ${HDF4_MF_XDR_LIB_CORENAME}-shared)
+set (HDF4_HDF_TEST_LIBSH_TARGET     ${HDF4_HDF_TEST_LIB_CORENAME}-shared)
+set (HDF4_HDF_TEST_FCSTUB_LIBSH_TARGET     ${HDF4_HDF_TEST_FCSTUB_LIB_CORENAME}-shared)
+set (HDF4_MF_FCSTUB_LIBSH_TARGET    ${HDF4_MF_FCSTUB_LIB_CORENAME}-shared)
+set (HDF4_MF_FORTRAN_LIBSH_TARGET   ${HDF4_MF_FORTRAN_LIB_CORENAME}-shared)
+set (HDF4_MF_TEST_LIBSH_TARGET      ${HDF4_MF_TEST_LIB_CORENAME}-shared)
+set (HDF4_TOOLS_LIBSH_TARGET        ${HDF4_TOOLS_LIB_CORENAME}-shared)
 
 #-----------------------------------------------------------------------------
 # Define some CMake variables for use later in the project
@@ -153,8 +165,8 @@ set (HDF4_MFHDF_XDR_DIR       ${HDF4_SOURCE_DIR}/mfhdf/xdr)
 
 if (NOT HDF4_INSTALL_BIN_DIR)
   set (HDF4_INSTALL_BIN_DIR bin)
-  set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR}) #${HDF4_INSTALL_BIN_DIR}/utils
-  set (HDF4_INSTALL_TOOLS_BIN_DIR ${HDF4_INSTALL_BIN_DIR}) #${HDF4_INSTALL_BIN_DIR}/tools
+  set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
+  set (HDF4_INSTALL_TOOLS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
 endif (NOT HDF4_INSTALL_BIN_DIR)
 if (NOT HDF4_INSTALL_LIB_DIR)
   set (HDF4_INSTALL_LIB_DIR lib)
@@ -260,21 +272,14 @@ include (${HDF_RESOURCES_DIR}/ConfigureChecks.cmake)
 set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
 #-----------------------------------------------------------------------------
-# Option to Build Shared/Static libs, default is static
+# Option to Build Shared and Static libs, default is static
 #-----------------------------------------------------------------------------
 option (BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
-set (LIB_TYPE STATIC)
 set (H4_ENABLE_SHARED_LIB NO)
-set (H4_ENABLE_STATIC_LIB NO)
 if (BUILD_SHARED_LIBS)
-  set (LIB_TYPE SHARED)
-  set (H4_BUILT_AS_DYNAMIC_LIB 1)
   set (H4_ENABLE_SHARED_LIB YES)
-else (BUILD_SHARED_LIBS)
-  set (H4_BUILT_AS_STATIC_LIB 1)
-  set (H4_ENABLE_STATIC_LIB YES)
-  set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif (BUILD_SHARED_LIBS)
+set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_definitions (-DBIG_LONGS -DSWAP)
 add_definitions (-DHAVE_CONFIG_H)
@@ -506,17 +511,21 @@ add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
+    add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
   endif (JPEG_FOUND AND JPEG_USE_EXTERNAL)
   if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
+    add_dependencies (${HDF4_SRC_LIBSH_TARGET} ZLIB)
   endif (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
   if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
+    add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
   endif (SZIP_FOUND AND SZIP_USE_EXTERNAL)
 endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
 
 if (HDF4_BUILD_XDR_LIB)
   add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
+  add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
 endif (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------

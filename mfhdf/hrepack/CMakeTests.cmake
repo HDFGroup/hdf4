@@ -18,7 +18,7 @@
   foreach (h4_file ${HDF4_REPACK_TEST_FILES})
     set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
     #message (STATUS " Copying ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-    ADD_CUSTOM_COMMAND (
+    add_custom_command (
         TARGET     hrepack_check 
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
@@ -27,16 +27,16 @@
   endforeach (h4_file ${HDF4_REPACK_TEST_FILES})
 
 #-- Adding test for test_hrepack for generating testfiles
-  ADD_EXECUTABLE (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
-  TARGET_C_PROPERTIES (test_hrepack " " " ")
+  add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
+  TARGET_C_PROPERTIES (test_hrepack STATIC " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)
     target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   endif (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (test_hrepack ${LIB_TYPE})
+  TARGET_NAMING (test_hrepack STATIC)
 
-  MACRO (ADD_H4_TEST testname testtype testfile)
+  macro (ADD_H4_TEST testname testtype testfile)
     if (${testtype} STREQUAL "SKIP")
       if (NOT HDF4_ENABLE_USING_MEMCHECKER)
         add_test (
@@ -63,7 +63,7 @@
       )
       set_tests_properties (HREPACK-${testname}_DFF PROPERTIES DEPENDS HREPACK-${testname} LABELS ${PROJECT_NAME})
     endif (${testtype} STREQUAL "SKIP")
-  ENDMACRO (ADD_H4_TEST)
+  endmacro (ADD_H4_TEST)
 
 ##############################################################################
 ##############################################################################

@@ -1,9 +1,9 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1.0)
 # --------------------------------------------------------------------
 # Notes: When creating examples they should be prefixed
 # with "f_ex_". This allows for easier filtering of the examples.
 # --------------------------------------------------------------------
-PROJECT (HDF4_MFHDF_FORTRAN_EXAMPLES C CXX Fortran)
+project (HDF4_MFHDF_FORTRAN_EXAMPLES C CXX Fortran)
 
 #-----------------------------------------------------------------------------
 # Setup include Directories
@@ -48,9 +48,9 @@ set (skip_examples
 )
 
 foreach (example ${examples})
-  ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_exmf_${example} " " " ")
+  add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
+  TARGET_NAMING (f_exmf_${example} STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
   set_target_properties (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
@@ -60,9 +60,9 @@ foreach (example ${examples})
 endforeach (example ${examples})
 
 foreach (example ${skip_examples})
-  ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_exmf_${example} " " " ")
+  add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
+  TARGET_NAMING (f_exmf_${example} STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
   set_target_properties (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})

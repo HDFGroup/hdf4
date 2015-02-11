@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1.0)
 PROJECT (HDF4_HDF_EXAMPLES C CXX)
 
 #-----------------------------------------------------------------------------
@@ -36,15 +36,15 @@ set (examples
 )
 
 foreach (example ${examples})
-  ADD_EXECUTABLE (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
-  TARGET_NAMING (hdf_${example} ${LIB_TYPE})
-  TARGET_C_PROPERTIES (hdf_${example} " " " ")
+  add_executable (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
+  TARGET_NAMING (hdf_${example} STATIC)
+  TARGET_C_PROPERTIES (hdf_${example} STATIC " " " ")
   target_link_libraries (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${examples})
 
-ADD_EXECUTABLE (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
-TARGET_NAMING (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
-TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup " " " ")
+add_executable (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
+TARGET_NAMING (hdf_VG_add_sds_to_vgroup STATIC)
+TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup STATIC " " " ")
 target_link_libraries (hdf_VG_add_sds_to_vgroup ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 if (BUILD_TESTING)

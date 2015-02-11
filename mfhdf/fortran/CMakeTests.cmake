@@ -5,16 +5,16 @@
 ##############################################################################
 ##############################################################################
 
-  FILE (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/testdir)
+  file (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/testdir)
 
   #-----------------------------------------------------------------------------
   # test programs
   #-----------------------------------------------------------------------------
   if (HDF4_ENABLE_NETCDF)
     #-- Adding test for ftest
-    ADD_EXECUTABLE (ftest ${HDF4_BINARY_DIR}/ftest.f ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f ${HDF4_BINARY_DIR}/netcdf.inc)
-    TARGET_NAMING (ftest ${LIB_TYPE})
-    TARGET_FORTRAN_PROPERTIES (ftest " " " ")
+    add_executable (ftest ${HDF4_BINARY_DIR}/ftest.f ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f ${HDF4_BINARY_DIR}/netcdf.inc)
+    TARGET_NAMING (ftest STATIC)
+    TARGET_FORTRAN_PROPERTIES (ftest STATIC " " " ")
     set_target_properties (ftest PROPERTIES LINKER_LANGUAGE Fortran)
     if (HDF4_BUILD_XDR_LIB)
       target_link_libraries (ftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -42,9 +42,9 @@
   endif (HDF4_ENABLE_NETCDF)
 
   #-- Adding test for f_hdftest
-  ADD_EXECUTABLE (f_hdftest hdftest.f)
-  TARGET_NAMING (f_hdftest ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_hdftest " " " ")
+  add_executable (f_hdftest hdftest.f)
+  TARGET_NAMING (f_hdftest STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_hdftest STATIC " " " ")
   set_target_properties (f_hdftest PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_hdftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -53,9 +53,9 @@
   endif (HDF4_BUILD_XDR_LIB)
 
   #-- Adding test for f_hdftest1
-  ADD_EXECUTABLE (f_hdftest1 hdftest1.f)
-  TARGET_NAMING (f_hdftest1 ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_hdftest1 " " " ")
+  add_executable (f_hdftest1 hdftest1.f)
+  TARGET_NAMING (f_hdftest1 STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_hdftest1 STATIC " " " ")
   set_target_properties (f_hdftest1 PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_hdftest1 ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -64,9 +64,9 @@
   endif (HDF4_BUILD_XDR_LIB)
 
   #-- Adding test for f_tszip
-  ADD_EXECUTABLE (f_tszip tszip.f)
-  TARGET_NAMING (f_tszip ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_tszip " " " ")
+  add_executable (f_tszip tszip.f)
+  TARGET_NAMING (f_tszip STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_tszip STATIC " " " ")
   set_target_properties (f_tszip PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_tszip ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -148,15 +148,15 @@
 
   add_test (NAME f_hdftest COMMAND $<TARGET_FILE:f_hdftest>)
   set (passRegex "Total errors : [ ]+0")
-  SET_PROPERTY (TEST f_hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+  set_property (TEST f_hdftest PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
   set_tests_properties (f_hdftest PROPERTIES DEPENDS MFHDF_FORTRAN-clearall-objects LABELS ${PROJECT_NAME})
 
   add_test (NAME f_hdftest1 COMMAND $<TARGET_FILE:f_hdftest1>)
   set (failRegex "failed" "errors")
-  SET_PROPERTY (TEST f_hdftest1 PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
+  set_property (TEST f_hdftest1 PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
   set_tests_properties (f_hdftest1 PROPERTIES DEPENDS f_hdftest LABELS ${PROJECT_NAME})
 
   add_test (NAME f_tszip COMMAND $<TARGET_FILE:f_tszip>)
   set (failRegex "failed" "errors")
-  SET_PROPERTY (TEST f_tszip PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
+  set_property (TEST f_tszip PROPERTY FAIL_REGULAR_EXPRESSION "${failRegex}")
   set_tests_properties (f_tszip PROPERTIES DEPENDS f_hdftest1 LABELS ${PROJECT_NAME})

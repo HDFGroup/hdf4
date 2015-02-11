@@ -1036,8 +1036,7 @@
 ./config/cmake/h4config.h.in
 ./config/cmake/HDF4_Examples.cmake.in
 ./config/cmake/hdf4-config-version.cmake.in
-./config/cmake/hdf4-config.cmake.build.in
-./config/cmake/hdf4-config.cmake.install.in
+./config/cmake/hdf4-config.cmake.in
 ./config/cmake/HDF4Macros.cmake
 ./config/cmake/HDF4UseFortran.cmake
 ./config/cmake/libhdf4.settings.cmake.in

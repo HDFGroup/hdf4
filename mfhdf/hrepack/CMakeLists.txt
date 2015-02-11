@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8.10)
-PROJECT (HDF4_MFHDF_HREPACK)
+cmake_minimum_required (VERSION 3.1.0)
+project (HDF4_MFHDF_HREPACK)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
@@ -34,23 +34,23 @@ set (hrepack_SRCS
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_dim.c
 )
   
-ADD_EXECUTABLE (hrepack ${hrepack_SRCS})
-TARGET_C_PROPERTIES (hrepack " " " ")
+add_executable (hrepack ${hrepack_SRCS})
+TARGET_C_PROPERTIES (hrepack STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (hrepack ${LIB_TYPE})
+TARGET_NAMING (hrepack STATIC)
   
-ADD_EXECUTABLE (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
-TARGET_C_PROPERTIES (hrepack_check " " " ")
+add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
+TARGET_C_PROPERTIES (hrepack_check STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (hrepack_check ${LIB_TYPE})
+TARGET_NAMING (hrepack_check STATIC)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

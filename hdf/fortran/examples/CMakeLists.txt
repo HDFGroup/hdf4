@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1.0)
 PROJECT (HDF4_HDF_FORTRAN_EXAMPLES C CXX Fortran)
 # --------------------------------------------------------------------
 # Notes: When creating examples they should be prefixed
@@ -68,23 +68,23 @@ set (skip_examples
 )
 
 foreach (example ${examples})
-  ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_ex_${example} " " " ")
+  add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
+  TARGET_NAMING (f_ex_${example} STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_ex_${example} STATIC " " " ")
   set_target_properties (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${examples})
 
-ADD_EXECUTABLE (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
-TARGET_NAMING (f_ex_VG_add_sds_to_vgroup ${LIB_TYPE})
-TARGET_FORTRAN_PROPERTIES (f_ex_VG_add_sds_to_vgroup " " " ")
+add_executable (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
+TARGET_NAMING (f_ex_VG_add_sds_to_vgroup STATIC)
+TARGET_FORTRAN_PROPERTIES (f_ex_VG_add_sds_to_vgroup STATIC " " " ")
 set_target_properties (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
 target_link_libraries (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 foreach (example ${skip_examples})
-  ADD_EXECUTABLE (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_ex_${example} " " " ")
+  add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
+  TARGET_NAMING (f_ex_${example} STATIC)
+  TARGET_FORTRAN_PROPERTIES (f_ex_${example} STATIC " " " ")
   set_target_properties (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
   target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${skip_examples})
