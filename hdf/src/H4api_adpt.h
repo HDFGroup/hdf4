@@ -170,8 +170,6 @@
 #  define HDFLIBAPI extern
 #  define HDFFCLIBAPI extern
 #  define HDFTOOLSAPI extern
-#endif
-
 #endif /*H4_BUILT_AS_DYNAMIC_LIB  */
 
 
