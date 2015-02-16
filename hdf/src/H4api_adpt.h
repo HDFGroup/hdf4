@@ -28,7 +28,7 @@
 /* This will only be defined if HDF4 was built with CMake */
 #if defined(H4_BUILT_AS_DYNAMIC_LIB)
 
-#if defined(xdr_EXPORTS)
+#if defined(xdr_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__) /* MSVC Compiler Case */
     #define XDRLIBAPI extern __declspec(dllexport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
@@ -36,7 +36,7 @@
   #endif
 #endif /* xdr_EXPORTS */
 
-#if defined(hdf_EXPORTS)
+#if defined(hdf_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFERRPUBLIC __declspec(dllimport)
     #define HDFPUBLIC __declspec(dllexport)
@@ -50,7 +50,7 @@
   #endif
 #endif /* hdf_EXPORTS */
 
-#if defined(hdf_fcstub_EXPORTS)
+#if defined(hdf_fcstub_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllexport)
     #define HDFLIBAPI extern __declspec(dllimport)
@@ -62,7 +62,7 @@
   #endif
 #endif /* hdf_fcstub_EXPORTS */
 
-#if defined(mfhdf_EXPORTS)
+#if defined(mfhdf_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFERRPUBLIC extern __declspec(dllimport)
     #define HDFPUBLIC __declspec(dllimport)
@@ -76,7 +76,7 @@
   #endif
 #endif /* mfhdf_EXPORTS */
 
-#if defined(mfhdf_fcstub_EXPORTS)
+#if defined(mfhdf_fcstub_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllimport)
     #define HDFLIBAPI extern __declspec(dllimport)
@@ -88,7 +88,7 @@
   #endif
 #endif /* mfhdf_fcstub_EXPORTS */
 
-#if defined(hdf_test_fcstub_EXPORTS)
+#if defined(hdf_test_fcstub_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFFCLIBAPI extern __declspec(dllexport)
   #elif (__GNUC__ >= 4)  /* GCC 4.x has support for visibility options */
@@ -96,7 +96,7 @@
   #endif
 #endif/* hdf_test_fcstub_EXPORTS */
 
-#if defined(mfhdf_hdiff_EXPORTS)
+#if defined(mfhdf_hdiff_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllimport)
     #define HDFLIBAPI extern __declspec(dllimport)
@@ -108,7 +108,7 @@
   #endif
 #endif /* mfhdf_hdiff_EXPORTS */
 
-#if defined(mfhdf_hrepack_EXPORTS)
+#if defined(mfhdf_hrepack_shared_EXPORTS)
   #if defined (_MSC_VER) || defined(__MINGW32__)  /* MSVC Compiler Case */
     #define HDFPUBLIC __declspec(dllimport)
     #define HDFLIBAPI extern __declspec(dllimport)
