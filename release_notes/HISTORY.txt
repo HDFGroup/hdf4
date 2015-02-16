@@ -16,6 +16,7 @@
 
 List of the HDF4 releases
 
+4.2.11         February	 2015
 4.2.10         February	 2014
 4.2.9          February	 2013
 4.2.8          August	 2012
@@ -42,6 +43,357 @@ List of the HDF4 releases
 
 
 ==========================================================================    
+
+%%%4.2.11%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HDF version 4.2.11 released on 2015-02-09
+==============================================
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2.10 and HDF 4.2.11.
+It is written for people who are familiar with previous releases of HDF 
+and wish to migrate to HDF 4.2.11.
+
+The HDF 4.2.11 documentation can be found on the The HDF Group's website
+at:
+    http://www.hdfgroup.org/release4/doc/
+
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+  
+    http://hdfgroup.org/products/hdf4/
+
+If you have any questions or comments, please see the HDF Support page:
+
+    http://hdfgroup.org/services/support.html
+
+CONTENTS
+
+- New features and changes
+  -- Configuration
+- Support for new platforms and compilers
+- Bugs fixed since HDF 4.2.10
+  -- Configuration
+  -- Library
+  -- Utilities
+- Documentation
+- Platforms tested
+- Known problems
+
+
+New features and changes
+========================
+   Configuration
+   ============= 
+    - None
+     
+
+Support for new platforms and compilers
+=======================================
+    - None
+
+
+Bugs fixed since HDF 4.2.10
+=========================
+   Configuration
+   =============
+    - Windows installer incorrect display of PATH environment variable.
+    
+      In the Windows installer, the dialog box where the user can elect to
+      add the product's bin path to the %PATH% environment variable displayed
+      an incorrect path. This path was missing the C:\Program Files part
+      and used the POSIX file separator '/' before the bin (<path>/bin,
+      instead of <path>\bin).
+      
+      The dialog box text was changed to simply say that the product's bin
+      path would be added instead of explicitly displaying the path.
+      This is in line with most installers. The reason for not fixing the 
+      displayed path instead is that it is difficult to pass the correct
+      path from CPack to the NSIS installer for display.
+
+      Note that this was never a code issue - it was just a display
+      problem. The installer always did the right thing when updating the
+      environment variable.
+
+      (DER - 2014/11/14, HDFFV-9016)
+
+   Library
+   ========= 
+    - Warning "array subscript is below array bounds"
+
+      Applied user's patch to remove the warning.
+
+      (BMR 2014/06/02, HDFFR-1379)
+
+
+   Utilities
+   ========= 
+    - Detection of read failure in ncdump
+
+      Previously, ncdump did not detect failure from ncvarget because the
+      returned value from ncvarget was not checked, and the calling function
+      simply returned 0.
+
+      The error code ERR_READFAIL (-2) is added to ncdump only to indicate this
+      failure within ncdump, which will display this message:
+
+      "Reading failed for variable <Variable name>, the data is possibly corrupted."
+
+      (BMR 2015/01/21, HDFFR-1468)
+
+    - Improvement of the ncgen's usage statement.
+
+      Previously, ncgen's usage looked like this:
+      ncgen: -: Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile]  [ file... ]
+
+      More details are added to the usage to improve clarity.  Now, it is more
+      clear, and consistent with ncdump, like this:
+      Usage: ncgen [-V] [ -b ] [ -c ] [ -f ] [ -o outfile] [ file ... ]
+        [-V]             Display version of the HDF4 library and exit
+        [-b]             For binary netCDF output, '.nc' extension
+        [-c]             For C output
+        [-f]             For Fortran output
+        [-o <outfile>]   Explicitly specify output file name
+
+      (BMR 2015/01/19, HDFFR-1459)
+
+    - Output of hrepack containing an unnecessary vgroup of class RIG0.0
+
+      When the input file did not have any GR elements, hrepack still opened and
+      closed the output file using the GR API, which caused the RIG0.0 vgroup to
+      be written to the output file.
+
+      Hrepack now skips accessing the output file using GR API, when the input
+      file doesn't have any images and any GR attributes.
+
+      (BMR 2015/01/18, HDFFR-1428)
+
+    - Compliance with Fedora standard regarding printf/fprintf statements
+
+      Users sent patches for the problem where the format string is missing from
+      the printf/fprintf statements.  This is in compliance with Fedora standard.
+      For more information, see
+		https://fedoraproject.org/wiki/Format-Security-FAQ.
+
+      In the context where this problem occurred, the benefit of using puts/fputs
+      over printf/fprintf is insignificant.  Thus, the fix was adding "%s" to
+      those printf/fprintf statements that don't have the format string instead
+      of switching to puts/fputs.
+
+      (BMR 2014/12/16, HDFFR-1423 and HDFFR-1475)
+
+    - Failure of hdp on some hdfeos generated files
+
+      Attribute vdatas created by hdfeos API have the field named "AttrValues".
+      The utility functions Vattrhdfsize and VSattrhdfsize, in hdp.c, used
+      ATTR_FIELD_NAME ("VALUES") to verify that a vdata is storing an attribute,
+      causing failure on some hdfeos generated files.  In addition, when this
+      failure occurred, the calling function tried to free allocated resources
+      prematurely.
+
+      The check against ATTR_FIELD_NAME and the premature resource deallocation
+      are removed.
+
+      (BMR 2014/12/08, HDFFR-1471)
+
+    - nclong versus long in tests
+
+      Applied the user's patch to remove a test failure.
+
+      (BMR 2014/10/21, HDFFR-1378)
+
+
+Documentation
+=============
+    - Updated Reference Manual and User's Guide
+
+      The documents were updated to contain information of the changes to
+      the tools.  In addition, various improvements were applied.
+
+      (BMR 2015/2/04)
+
+
+
+Platforms tested
+================
+
+This version has been tested in the following platforms:
+
+   Linux 2.6.32-358.18.1         gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
+   .el6.ppc64 #1                 GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
+      SMP ppc64 GNU/Linux        IBM XL Fortran for Linux, V15.1 (64-bit mode)
+   (ostrich)
+
+   Linux 2.6.18-308.13.1.el5 #1  gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+      SMP i686 i386              GNU Fortran (GCC) 4.1.2 20080704
+   (jam)                             (Red Hat 4.1.2-55)
+                                 pgcc and pgf90 14.10-0 32-bit target 
+                                 on x86 Linux -tp penryn
+                                 Intel(R) C Compiler, Version 15.0.1 20141022
+                                 Intel(R) Fortran Compiler, Version 15.0.1
+
+   Linux 2.6.18-398.el5 #1       gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+      SMP x86_64 GNU/Linux       GNU Fortran (GCC) 4.1.2 20080704 
+   (koala)                           (Red Hat 4.1.2-55)
+                                 icc (ICC) 15.0.1 20141022
+                                 ifort (IFORT) 15.0.1 20141022
+
+   Linux 2.6.32-504.1.3.el6      gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
+      #1 SMP x86_64 GNU/Linux    GNU Fortran (GCC) 4.4.7 20120313 
+   (platypus)                        (Red Hat 4.4.7-11)
+                                 icc (ICC) 15.0.1 20141022
+                                 ifort (IFORT) 15.0.1 20141022
+                                 pgcc and pgf90 14.10-0 64-bit target 
+                                 on x86-64 Linux -tp nehalem
+
+   Linux 3.10.0-123.8.1.el7      gcc (GCC) 4.8.2 20140120 (Red Hat 4.8.2-16)
+      #1 SMP x86_64 GNU/Linux    GNU Fortran (GCC) 4.8.2 20140120 
+   (aws ec2 CentOS 7 image)          (Red Hat 4.8.2-16)
+
+   SunOS 5.11 32- and 64-bit     Sun C 5.12 SunOS_sparc 2011/11/16 
+   (emu)                              (see "Known problem" section)
+                                 Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
+
+    Windows 7                     Visual Studio 2008  (cmake)
+                                  Visual Studio 2010 w/ Intel Fortran 14 (cmake)
+                                  Visual Studio 2012 w/ Intel Fortran 14 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 14 (cmake)
+                                  Cygwin(CYGWIN_NT-6.1 1.7.32(0.274/5/3) gcc(4.8.3) compiler and gfortran)
+                                  (cmake and autotools)
+
+    Windows 7 x64                 Visual Studio 2008  (cmake)
+                                  Visual Studio 2010 w/ Intel Fortran 14 (cmake)
+                                  Visual Studio 2012 w/ Intel Fortran 14 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 14 (cmake)
+                                  
+    Windows 8.1                   Visual Studio 2012 w/ Intel Fortran 14 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 14 (cmake)
+
+    Windows 8.1 x64               Visual Studio 2012 w/ Intel Fortran 14 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 14 (cmake)
+
+   Mac OS X 10.7.5		 Apple clang version 3.0 from Xcode 4.6.1
+   Darwin 11.4.2                 gfortran GNU Fortran (GCC) 4.8.2
+   (duck)                        icc and ifort Version 13.0.3 20130606
+
+   Mac OS X 10.8.5               Apple clang version 5.1 from Xcode 5.1
+   Darwin 12.5.0                 gfortran GNU Fortran (GCC) 4.8.2
+   (swallow,kite)                icc and ifort Version 14.0.4 20140805
+
+   Mac OS X 10.9.5               Apple clang version 6.0 from Xcode 6.0.1
+   Darwin 13.4.0                 gfortran GNU Fortran (GCC) 4.8.2 
+   (wren,quail)                  icc and ifort Version 15.0.1 20141022
+
+    Debian7.5.0 3.2.0-4-amd64 #1 SMP Debian 3.2.51-1 x86_64 GNU/Linux
+                                  gcc (Debian 4.7.2-5) 4.7.2
+                                  GNU Fortran (Debian 4.7.2-5) 4.7.2
+                                  (cmake and autotools)
+
+    Fedora20 3.15.3-200.fc20.x86_64 #1 SMP x86_64 x86_64 x86_64 GNU/Linux
+                                  gcc (GCC) 4.8.3 20140624 (Red Hat 4.8.3-1)
+                                  GNU Fortran (GCC) 4.8.3 20140624 (Red Hat 4.8.3-1)
+                                  (cmake and autotools)
+
+    SUSE 13.1 3.11.10-17-desktop #1 SMP PREEMPT x86_64 x86_64 x86_64 GNU/Linux
+                                  gcc (SUSE Linux) 4.8.1
+                                  GNU Fortran (SUSE Linux) 4.8.1
+                                  (cmake and autotools)
+
+    Ubuntu 14.04 3.13.0-35-generic #62-Ubuntu SMP x86_64 GNU/Linux
+                                  gcc (Ubuntu/Linaro 4.9.1-0ubuntu1) 4.9.1
+                                  GNU Fortran (Ubuntu/Linaro 4.9.1-0ubuntu1) 4.9.1
+                                  (cmake and autotools)
+
+
+Known problems
+==============
+o  Several Fortran examples print "^@" when displaying strings (for example,
+   names of the attributes). This happens because Fortran application 
+   doesn't know the length of the strings passed from the C library.  
+   EIP - 2015-01-11, HDFFR-1477
+
+o  CMake builds in Windows uses the same pre-generated ncgen*.[ch] files from
+   the yacc/lex input files. The generated file, ncgenyy.c, uses the <unistd.h>
+   header file that Windows does not support.  This must be blocked out in
+   order for Windows to use it. 
+   AKC 2014-02-03, HDFFR-1424
+
+o  CMake "make install" fails installing the tools:
+    Use CPack to create an install package.
+   ADB - 2014/02/03
+
+o  CMake does not install these man pages:
+	hdf.1, ncdump.1, ncgen.1
+   AKC/BMR - 2014/02/02
+
+o  For Mac OS X 10.7 Lion and on 10.8 Mountain Lion, several tests fail with
+   GCC, Intel and Clang compilers.  Currently, this situation is detected and
+   -O0 level optimization is used.  
+   (HDFFR-1318,1358) EIP - 2013/02/05
+
+o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization 
+   level. 
+
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+   will fail when checking for the jpeglib.h header due to the duplicated
+   macro definition of HAVE_STDLIB_H.  This is because some newer builds
+   of the jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc versions (e.g., V7.0) still 
+   fail, but newer xlc versions (e.g., V9.0) pass.  AKC - 2010/02/17
+
+o  When building on Linux/UNIX platforms, the szip shared library files must
+   be in the system library path.  This can be done by adding a link to
+   the libsz.* files in the /usr/lib folder or by adding the library
+   location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+   
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale have
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might produce undesired results because the libraries could not
+   distinguish between the two objects.  In the case of writing, data
+   might even be corrupted.  For example, SDS data might be written to a
+   dimension variable or vice versa. (bugzilla #624)
+
+   HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
+   and a dimension variable.  However, as with older versions, these recent
+   versions are unable to detect such conflicts in files created by earlier 
+   releases.  It is therefore STRONGLY recommended to check for such name 
+   duplication before working with data created with a pre-4.2r2 library.
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for
+   further details.
+   FB - 2009/01/26
+   BMR - revised 2011/06/24
+
+o  N-bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled 
+   with a PGI C compiler; linking with a JPEG library built with gcc causes 
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to 
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
+
+o  In order for the API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata) after being written and before SDgetdatasize is called.
+   BMR - 2008/11/22
+
 
 %%%4.2.10%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HDF version 4.2.10 released on 2014-02-09
