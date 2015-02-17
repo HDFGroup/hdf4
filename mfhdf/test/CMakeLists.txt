@@ -47,50 +47,40 @@ if (HDF4_BUILD_XDR_LIB)
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-
-#-- Copy all the dat files from the test directory into the source directory
-set (HDF4_REFERENCE_TEST_FILES
-    sds_szipped.dat
-    smallslice.0000.nc
-    test1.nc
-)
-
-foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE(STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   add_custom_command (
-     TARGET     hdftest
-     POST_BUILD
-     COMMAND    ${CMAKE_COMMAND}
-     ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
-endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+set_target_properties (hdftest PROPERTIES FOLDER test)
+if (BUILD_SHARED_LIBS)
+  add_executable (hdftest-shared ${hdftest_SRCS})
+  TARGET_NAMING (hdftest-shared SHARED)
+  TARGET_C_PROPERTIES (hdftest-shared SHARED " " " ")
+  if (HDF4_BUILD_XDR_LIB)
+    target_link_libraries (hdftest-shared ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  else (HDF4_BUILD_XDR_LIB)
+    target_link_libraries (hdftest-shared ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  endif (HDF4_BUILD_XDR_LIB)
+  set_target_properties (hdftest-shared PROPERTIES FOLDER test)
+endif (BUILD_SHARED_LIBS)
 
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
 TARGET_NAMING (cdftest STATIC)
 TARGET_C_PROPERTIES (cdftest STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
-  target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
+  target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-
-#-- Copy all the dat files from the test directory into the source directory
-set (HDF4_REFERENCE2_TEST_FILES
-    testout.sav
-)
-
-foreach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE(STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   add_custom_command (
-     TARGET     cdftest
-     POST_BUILD
-     COMMAND    ${CMAKE_COMMAND}
-     ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
-endforeach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
+set_target_properties (cdftest PROPERTIES FOLDER test)
+if (BUILD_SHARED_LIBS)
+  add_executable (cdftest-shared ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
+  TARGET_NAMING (cdftest-shared SHARED)
+  TARGET_C_PROPERTIES (cdftest-shared SHARED " " " ")
+  if (HDF4_BUILD_XDR_LIB)
+    target_link_libraries (cdftest-shared ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  else (HDF4_BUILD_XDR_LIB)
+    target_link_libraries (cdftest-shared ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  endif (HDF4_BUILD_XDR_LIB)
+  set_target_properties (cdftest-shared PROPERTIES FOLDER test)
+endif (BUILD_SHARED_LIBS)
 
 #-- Adding test for hdfnctest
 set (hdfnctest_SRCS
@@ -104,9 +94,21 @@ add_executable (hdfnctest ${hdfnctest_SRCS})
 TARGET_NAMING (hdfnctest STATIC)
 TARGET_C_PROPERTIES (hdfnctest STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
-  target_link_libraries (hdfnctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
+  target_link_libraries (hdfnctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdfnctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
+set_target_properties (hdfnctest PROPERTIES FOLDER test)
+if (BUILD_SHARED_LIBS)
+  add_executable (hdfnctest-shared ${hdfnctest_SRCS})
+  TARGET_NAMING (hdfnctest-shared SHARED)
+  TARGET_C_PROPERTIES (hdfnctest-shared SHARED " " " ")
+  if (HDF4_BUILD_XDR_LIB)
+    target_link_libraries (hdfnctest-shared ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  else (HDF4_BUILD_XDR_LIB)
+    target_link_libraries (hdfnctest-shared ${HDF4_MF_LIBSH_TARGET} ${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  endif (HDF4_BUILD_XDR_LIB)
+  set_target_properties (hdfnctest-shared PROPERTIES FOLDER test)
+endif (BUILD_SHARED_LIBS)
 
 include (CMakeTests.cmake)
