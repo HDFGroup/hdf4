@@ -79,6 +79,10 @@ extern      "C"
                 (float32 *scale, int32 dim, int32 *offsets, int32 res);
     HDFLIBAPI int  pixrep_simple
                 (Input * in, Output * out);
+    HDFLIBAPI int DFUfptoimage
+                (int32 hdim, int32 vdim, float32 max, float32 min,
+                 float32 *hscale, float32 *vscale, float32 *data, uint8 *palette,
+                 char *outfile, int ct_method, int32 hres, int32 vres, int compress);
 
 #if defined c_plusplus || defined __cplusplus
 }
