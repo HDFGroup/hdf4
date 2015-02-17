@@ -15,7 +15,6 @@ set (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDFSOURCE_DIR}/dfpf.c
     ${HDF4_HDFSOURCE_DIR}/dfr8f.c
     ${HDF4_HDFSOURCE_DIR}/dfsdf.c
-    ${HDF4_HDFSOURCE_DIR}/dfufp2i.c
     ${HDF4_HDFSOURCE_DIR}/dfutilf.c
     ${HDF4_HDFSOURCE_DIR}/df24f.c
     ${HDF4_HDFSOURCE_DIR}/dfufp2if.c
