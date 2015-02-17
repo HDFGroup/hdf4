@@ -92,34 +92,26 @@
 
 /* always points to the next available slot; the last error record is in slot (top-1) */
 #if defined(H4_BUILT_AS_DYNAMIC_LIB)
-#ifdef _H_ERR_MASTER_
-#if defined _WIN32 && defined hdf_EXPORTS
+# ifdef _H_ERR_MASTER_
+#  if defined _WIN32 && defined hdf_shared_EXPORTS
 __declspec(dllexport)
-#endif
-#else
+#  endif
+# else
 HDFERRPUBLIC
-#endif /* _H_ERR_MASTER_ */
+# endif /* _H_ERR_MASTER_ */
 int32       error_top
-#ifdef _H_ERR_MASTER_
+# ifdef _H_ERR_MASTER_
 = 0
-#endif /* _H_ERR_MASTER_ */
+# endif /* _H_ERR_MASTER_ */
 ;
 #else /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
-#ifndef _H_ERR_MASTER_
-#if defined _WIN32 && defined HDFAPDLL
-__declspec(dllimport)
-#else
+# ifndef _H_ERR_MASTER_
 HDFERRPUBLIC
-#endif
-#else
-#if defined _WIN32 && defined HDFLIBDLL
-__declspec(dllexport)
-#endif
-#endif /* _H_ERR_MASTER_ */
+# endif /* _H_ERR_MASTER_ */
 int32       error_top
-#ifdef _H_ERR_MASTER_
+# ifdef _H_ERR_MASTER_
 = 0
-#endif /* _H_ERR_MASTER_ */
+# endif /* _H_ERR_MASTER_ */
 ;
 #endif /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
 
