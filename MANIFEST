@@ -1043,6 +1043,7 @@
 ./config/cmake/libhdf4.settings.cmake.in
 ./config/cmake/mccacheinit.cmake
 ./config/cmake/NSIS.InstallOptions.ini.in
+./config/cmake/patch.xml
 ./config/cmake/PkgInfo.in
 ./config/cmake/README.txt.cmake.in
 
