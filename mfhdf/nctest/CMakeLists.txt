@@ -40,7 +40,7 @@ set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vputgetg.c
 )
   
-ADD_EXECUTABLE (nctest ${nctest_SRCS})
+add_executable (nctest ${nctest_SRCS})
 TARGET_C_PROPERTIES (nctest " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
@@ -57,7 +57,7 @@ set (HDF4_NC_TEST_FILES
 foreach (h4_file ${HDF4_NC_TEST_FILES})
   set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
   #message (STATUS " Copying ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-  ADD_CUSTOM_COMMAND (
+  add_custom_command (
       TARGET     nctest 
       POST_BUILD
       COMMAND    ${CMAKE_COMMAND}

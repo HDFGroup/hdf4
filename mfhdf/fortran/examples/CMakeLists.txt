@@ -48,7 +48,7 @@ set (skip_examples
 )
 
 foreach (example ${examples})
-  ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
+  add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} " " " ")
   set_target_properties (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
@@ -60,7 +60,7 @@ foreach (example ${examples})
 endforeach (example ${examples})
 
 foreach (example ${skip_examples})
-  ADD_EXECUTABLE (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
+  add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} " " " ")
   set_target_properties (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)

@@ -37,7 +37,7 @@ if (WIN32)
   set (ncgen_SRCS ${ncgen_SRCS} ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c)
 endif (WIN32)
  
-ADD_EXECUTABLE (ncgen ${ncgen_SRCS})
+add_executable (ncgen ${ncgen_SRCS})
 TARGET_C_PROPERTIES (ncgen " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )

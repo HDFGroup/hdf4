@@ -60,17 +60,19 @@ if (WIN32)
 endif (WIN32)
 
 #-- Adding test for testhdf
-ADD_EXECUTABLE (testhdf ${testhdf_SRCS})
+add_executable (testhdf ${testhdf_SRCS})
 TARGET_NAMING (testhdf ${LIB_TYPE})
 TARGET_C_PROPERTIES (testhdf " " " ")
 target_link_libraries (testhdf ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+set_target_properties (testhdf PROPERTIES FOLDER test)
 
 #-- Adding test for buffer
 if (NOT WIN32)
-  ADD_EXECUTABLE (buffer ${HDF4_HDF_TEST_SOURCE_DIR}/buffer.c)
+  add_executable (buffer ${HDF4_HDF_TEST_SOURCE_DIR}/buffer.c)
   TARGET_NAMING (buffer ${LIB_TYPE})
   TARGET_C_PROPERTIES (buffer " " " ")
   target_link_libraries (buffer ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+  set_target_properties (buffer PROPERTIES FOLDER test)
 endif (NOT WIN32)
 
 ##############################################################################

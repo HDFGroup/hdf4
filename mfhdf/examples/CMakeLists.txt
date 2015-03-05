@@ -24,7 +24,7 @@ set (examples
 )
 
 foreach (example ${examples})
-  ADD_EXECUTABLE (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
+  add_executable (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (mf_${example} ${LIB_TYPE})
   TARGET_C_PROPERTIES (mf_${example} " " " ")
   if (HDF4_BUILD_XDR_LIB)

@@ -121,13 +121,23 @@ set (HDF4_HDF_SRC_CHDRS
 )
 
 add_library (${HDF4_SRC_LIB_TARGET} ${LIB_TYPE} ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
-if (WIN32)
-  add_definitions (-DDOS_FS)
-endif (WIN32)
 TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} " " " ")
 target_link_libraries (${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} ${LIB_TYPE})
+set_target_properties (${HDF4_SRC_LIB_TARGET} PROPERTIES
+    FOLDER libraries
+    INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+)
+if (BUILD_SHARED_LIBS)
+  set_target_properties (${HDF4_SRC_LIB_TARGET} PROPERTIES
+      COMPILE_DEFINITIONS "H4_BUILT_AS_DYNAMIC_LIB"
+      INTERFACE_COMPILE_DEFINITIONS H4_BUILT_AS_DYNAMIC_LIB=1
+  )
+endif (BUILD_SHARED_LIBS)
+if (WIN32)
+  set_property (TARGET ${HDF4_SRC_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
+endif (WIN32)
 
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
