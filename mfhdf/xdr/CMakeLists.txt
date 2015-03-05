@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8.10)
-PROJECT (HDF4_MFHDF_XDR C CXX)
+cmake_minimum_required (VERSION 3.1)
+project (HDF4_MFHDF_XDR C CXX)
 
 set (HDF4_MFHDF_XDR_SRCS
     ${HDF4_MFHDF_XDR_SOURCE_DIR}/xdr.c

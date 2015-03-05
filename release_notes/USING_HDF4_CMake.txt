@@ -179,7 +179,7 @@ Create a CMakeLists.txt file at the source root. Include the
 following text in the file:
 
 ##########################################################
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4MyApp C CXX)
 
 find_package (HDF4 NAMES hdf4)
@@ -232,7 +232,7 @@ ctest
 # where hdf4Examples is the source folder relative to the location of these scripts
 ############################################################################
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 set(CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
 set(CTEST_SOURCE_NAME ${CTEST_SCRIPT_ARG})

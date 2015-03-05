@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1.0)
 PROJECT (HDF4_MFHDF_FORTRAN C CXX Fortran)
 
 INCLUDE_DIRECTORIES (
@@ -42,6 +42,7 @@ if (HDF4_ENABLE_NETCDF)
 else (HDF4_ENABLE_NETCDF)
   set (HDF4_MFHDF_LIBSRC_CSTUB_FHDRS ${HDF4_MFHDF_LIBSRC_CSTUB_FHDRS} ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
 endif (HDF4_ENABLE_NETCDF)
+set_source_files_properties (${HDF4_MFHDF_LIBSRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C) 
 
 set (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -68,6 +69,7 @@ H4_SET_LIB_OPTIONS (${HDF4_MF_FCSTUB_LIB_TARGET} ${HDF4_MF_FCSTUB_LIB_NAME} ${LI
 set (HDF4_MF_FORTRAN_SRCS 
     ${HDF4_MFHDF_FORTRAN_DIR}/mfsdff.f
 )
+set_source_files_properties (${HDF4_MF_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran) 
 #-----------------------------------------------------------------------------
 add_library (${HDF4_MF_FORTRAN_LIB_TARGET} ${LIB_TYPE} ${HDF4_MF_FORTRAN_SRCS})
 set (SHARED_LINK_FLAGS " ")

@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.8.10)
-PROJECT (HDF4_MFHDF_DUMPER)
+cmake_minimum_required (VERSION 3.1.0)
+project (HDF4_MFHDF_DUMPER)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
@@ -19,7 +19,7 @@ set (hdp_SRCS
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/show.c
 )
   
-ADD_EXECUTABLE (hdp ${hdp_SRCS})
+add_executable (hdp ${hdp_SRCS})
 if (WIN32)
   add_definitions (-DDOS_FS)
 endif (WIN32)

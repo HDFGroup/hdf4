@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4_HDF_SRC C CXX)
 
 #-----------------------------------------------------------------------------
@@ -6,7 +6,7 @@ PROJECT (HDF4_HDF_SRC C CXX)
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}
-    ${HDF4_HDFSOURCE_DIR}
+    ${HDF4_HDF_SOURCE_DIR}
 )
 LINK_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4_HDF_FORTRAN C CXX Fortran)
 
 #-----------------------------------------------------------------------------
@@ -15,7 +15,6 @@ set (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDFSOURCE_DIR}/dfpf.c
     ${HDF4_HDFSOURCE_DIR}/dfr8f.c
     ${HDF4_HDFSOURCE_DIR}/dfsdf.c
-    ${HDF4_HDFSOURCE_DIR}/dfufp2i.c
     ${HDF4_HDFSOURCE_DIR}/dfutilf.c
     ${HDF4_HDFSOURCE_DIR}/df24f.c
     ${HDF4_HDFSOURCE_DIR}/dfufp2if.c
@@ -26,13 +25,12 @@ set (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDFSOURCE_DIR}/vattrf.c
     ${HDF4_HDFSOURCE_DIR}/vgf.c
 )
+set_source_files_properties (${HDF4_HDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C) 
 
 set (HDF4_HDF_SRC_FHDRS
     ${HDF4_HDFSOURCE_DIR}/dffunc.inc
     ${HDF4_HDFSOURCE_DIR}/hdf.inc
 )
-
-SET_SOURCE_FILES_PROPERTIES (${HDF4_HDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C) 
 
 set (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -62,6 +60,8 @@ set (HDF4_F_FORTRAN_SRCS
     ${HDF4_HDFSOURCE_DIR}/vattrff.f 
     ${HDF4_HDFSOURCE_DIR}/vgff.f 
 )
+set_source_files_properties (${HDF4_F_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran) 
+
 #-----------------------------------------------------------------------------
 add_library (${HDF4_SRC_FORTRAN_LIB_TARGET} ${LIB_TYPE} ${HDF4_F_FORTRAN_SRCS})
 set (SHARED_LINK_FLAGS " ")

@@ -53,6 +53,10 @@ set (HDF4_INCLUDES_BUILD_TIME
     ${HDF4_MFHDF_XDR_DIR}
     ${HDF4_BINARY_DIR}
 )
+
+#-----------------------------------------------------------------------------
+# Set variables needed for installation
+#-----------------------------------------------------------------------------
 set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
 set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
 set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
@@ -68,15 +72,14 @@ configure_file (
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   configure_file (
       ${HDF_RESOURCES_DIR}/FindHDF4.cmake.in 
-      ${HDF4_BINARY_DIR}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake @ONLY
+      ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/FindHDF4${HDF_PACKAGE_EXT}.cmake @ONLY
   )
   install (
-      FILES ${HDF4_BINARY_DIR}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake
+      FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeFiles/FindHDF4${HDF_PACKAGE_EXT}.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       COMPONENT configinstall
   )
 endif (NOT HDF4_EXTERNALLY_CONFIGURED)
-
 
 #-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the install directory
@@ -87,7 +90,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake @ONLY
   )
   install (
-      FILES ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake
+      FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       COMPONENT configinstall
   )
@@ -99,10 +102,10 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   configure_file (
       ${HDF_RESOURCES_DIR}/hdf4-config-version.cmake.in
-      ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake @ONLY
+      ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake @ONLY
   )
   install (
-      FILES ${HDF4_BINARY_DIR}/CMakeFiles/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake
+      FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config-version.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}/${HDF4_PACKAGE}
       COMPONENT configinstall
   )
@@ -275,7 +278,6 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.bmp")
     set (CPACK_NSIS_DISPLAY_NAME "${CPACK_NSIS_PACKAGE_NAME}")
     set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
-    set (CPACK_MONOLITHIC_INSTALL ON)
     set (CPACK_NSIS_CONTACT "${HDF4_PACKAGE_BUGREPORT}")
     set (CPACK_NSIS_MODIFY_PATH ON)
     
@@ -319,12 +321,18 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
 #
 #  This image must be 493 by 312 pixels.
 #
+    set(CPACK_WIX_PROPERTY_ARPCOMMENTS "Hierarchical Data Format (HDF) Software Library and Utilities")
+    set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "${HDF4_PACKAGE_URL}")
+    set(CPACK_WIX_PROPERTY_ARPHELPLINK "${HDF4_PACKAGE_BUGREPORT}")
+
+    set(CPACK_WIX_PATCH_FILE "${HDF_RESOURCES_DIR}/patch.xml")
   elseif (APPLE)
     list (APPEND CPACK_GENERATOR "DragNDrop") 
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
     set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.icns")
 
+    option (HDF54_PACK_MACOSX_BUNDLE  "Package the HDF Library in a Bundle" OFF)
     if (HDF4_PACK_MACOSX_BUNDLE)
       list (APPEND CPACK_GENERATOR "Bundle")
       set (CPACK_BUNDLE_NAME "${HDF4_PACKAGE_STRING}")
@@ -385,24 +393,35 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   if (HDF4_PACKAGE_EXTLIBS)
     if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
       if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;libraries;/")
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;headers;/")
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;configinstall;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;ALL;/")
       endif (JPEG_FOUND AND JPEG_USE_EXTERNAL)
       if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;libraries;/")
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;headers;/")
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;configinstall;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;ALL;/")
       endif (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
       if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;libraries;/")
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;headers;/")
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;configinstall;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;ALL;/")
       endif (SZIP_FOUND AND SZIP_USE_EXTERNAL)
     endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   endif (HDF4_PACKAGE_EXTLIBS)
 
   include (CPack)
+
+  cpack_add_install_type(Full DISPLAY_NAME "Everything")
+  cpack_add_install_type(Developer)
+
+  cpack_add_component_group(Runtime)
+
+  cpack_add_component_group(Documents)
+
+  cpack_add_component_group(Development
+      EXPANDED
+      DESCRIPTION "All of the tools you'll need to develop HDF applications"
+  )
+
+  cpack_add_component_group(Applications
+      EXPANDED
+      DESCRIPTION "Tools for HDF4 files"
+  )
 
   #-----------------------------------------------------------------------------
   # Now list the cpack commands

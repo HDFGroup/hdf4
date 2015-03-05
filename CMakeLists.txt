@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.1)
 PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
@@ -522,7 +522,7 @@ endif (HDF4_BUILD_XDR_LIB)
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
 #-----------------------------------------------------------------------------
-option (BUILD_TESTING "Build HDF4 Unit Testing" OFF)
+option (BUILD_TESTING "Build HDF4 Unit Testing" ON)
 if (BUILD_TESTING)
   set (DART_TESTING_TIMEOUT 1200
       CACHE INTEGER
