@@ -38,17 +38,17 @@ case $CC_BASENAME in
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
-    # with any optimization in $CC in Lion, Mountain Lion and Mavericks systems.
+    # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
     # Use -O0 for now.
     case "$host_os" in
-	darwin11.* | darwin12.* | darwin13.*)	# Lion & Mountain Lion & Mavericks
+	darwin1[1-4].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
 	    xOFLAG="-O0"
 	    ;;
 	*)		# Other OSX versions
 	    xOFLAG="-O2"
 	    ;;
     esac
-    PROD_CFLAGS=${PROD_CFLAGS:-"-ansi  -Wall -pedantic $xOFLAG"}
+    PROD_CFLAGS=${PROD_CFLAGS:-"$xOFLAG"}
     PROD_CPPFLAGS=
     PROFILE_CFLAGS="-pg"
     PROFILE_CPPFLAGS=
