@@ -161,7 +161,7 @@ install (
 #-----------------------------------------------------------------------------
 if (BUILD_SHARED_LIBS)
   INSTALL_TARGET_PDB (${HDF4_MF_FCSTUB_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} fortlibraries)
-  INSTALL_TARGET_PDB (${HDF4_MF_FORTRAN_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} fortlibraries)
+  #INSTALL_TARGET_PDB (${HDF4_MF_FORTRAN_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} fortlibraries)
 endif (BUILD_SHARED_LIBS)
   
 install (
