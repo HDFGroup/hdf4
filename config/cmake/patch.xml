@@ -1,8 +1,8 @@
 <CPackWiXPatch>
-	<CPackWiXFragment Id="CM_CP_libraries.bin.hdf.dll">
+	<CPackWiXFragment Id="CM_CP.bin.hdf.dll">
         <Environment Id="PATH" 
              Name="PATH" 
-             Value="[CM_DP_libraries.bin]" 
+             Value="[CM_DP_bin]" 
              Permanent="no" 
              Part="last" 
              Action="set" 
