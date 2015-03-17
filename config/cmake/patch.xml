@@ -1,5 +1,5 @@
 <CPackWiXPatch>
-	<CPackWiXFragment Id="CM_CP.bin.hdf.dll">
+	<CPackWiXFragment Id="CM_CP_bin.hdf.dll">
         <Environment Id="PATH" 
              Name="PATH" 
              Value="[CM_DP_bin]" 
