@@ -1,5 +1,6 @@
 * text=auto !eol
 config/cmake/hdf4-config.cmake.in -text
+config/cmake/patch.xml -text
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text
