@@ -442,10 +442,10 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} fortlibraries)
   endif (HDF4_BUILD_FORTRAN)
   if (HDF4_BUILD_TOOLS)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} toolsapplications toolsheaders)
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} toolsapplications)
   endif (HDF4_BUILD_TOOLS)
   if (HDF4_BUILD_UTILS)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} utilsapplications utilsheaders)
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} utilsapplications)
   endif (HDF4_BUILD_UTILS)
 
 include (CPack)
@@ -511,12 +511,6 @@ include (CPack)
         GROUP Applications
         INSTALL_TYPES Full Developer User
     )
-    cpack_add_component (toolsheaders 
-        DISPLAY_NAME "HDF4 Tools Headers" 
-        DEPENDS libraries
-        GROUP Development
-        INSTALL_TYPES Full Developer
-    )
   endif (HDF4_BUILD_TOOLS)
 
   if (HDF4_BUILD_UTILS)
@@ -525,12 +519,6 @@ include (CPack)
         DEPENDS libraries
         GROUP Applications
         INSTALL_TYPES Full Developer User
-    )
-    cpack_add_component (utilsheaders 
-        DISPLAY_NAME "HDF4 Utility Headers" 
-        DEPENDS libraries
-        GROUP Development
-        INSTALL_TYPES Full Developer
     )
   endif (HDF4_BUILD_UTILS)
 endif (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
