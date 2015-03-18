@@ -417,25 +417,45 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   if (HDF4_PACKAGE_EXTLIBS)
     if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
       if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;ALL;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;libraries;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;headers;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;configinstall;/")
       endif (JPEG_FOUND AND JPEG_USE_EXTERNAL)
       if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;ALL;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;libraries;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;headers;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ZLIB_INCLUDE_DIR_GEN};ZLIB;configinstall;/")
       endif (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
       if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;ALL;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;libraries;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;headers;/")
+        set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;configinstall;/")
       endif (SZIP_FOUND AND SZIP_USE_EXTERNAL)
     endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   endif (HDF4_PACKAGE_EXTLIBS)
 
-  include (CPack)
+  set (CPACK_ALL_INSTALL_TYPES Full Developer User)
+  set (CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Everything")
+  
+  set(CPACK_COMPONENTS_ALL applications libraries headers hdfdocuments configinstall Unspecified)
+  if (HDF4_BUILD_FORTRAN)
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} fortlibraries)
+  endif (HDF4_BUILD_FORTRAN)
+  if (HDF4_BUILD_TOOLS)
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} toolsapplications toolsheaders)
+  endif (HDF4_BUILD_TOOLS)
+  if (HDF4_BUILD_UTILS)
+    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} utilsapplications utilsheaders)
+  endif (HDF4_BUILD_UTILS)
 
-  cpack_add_install_type(Full DISPLAY_NAME "Everything")
-  cpack_add_install_type(Developer)
+include (CPack)
 
   cpack_add_component_group(Runtime)
 
-  cpack_add_component_group(Documents)
+  cpack_add_component_group(Documents
+      EXPANDED
+      DESCRIPTION "Release notes for developing HDF applications"
+  )
 
   cpack_add_component_group(Development
       EXPANDED
@@ -454,24 +474,31 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
       DISPLAY_NAME "HDF4 Applications" 
       DEPENDS libraries
       GROUP Applications
+      INSTALL_TYPES Full Developer User
   )
   cpack_add_component (libraries 
       DISPLAY_NAME "HDF4 Libraries"
+      REQUIRED
       GROUP Runtime
+      INSTALL_TYPES Full Developer User
   )
   cpack_add_component (headers 
       DISPLAY_NAME "HDF4 Headers" 
       DEPENDS libraries
       GROUP Development
+      INSTALL_TYPES Full Developer
   )
   cpack_add_component (hdfdocuments 
       DISPLAY_NAME "HDF4 Documents"
       GROUP Documents
+      INSTALL_TYPES Full Developer
   )
   cpack_add_component (configinstall 
-      DISPLAY_NAME "HDF4 CMake files" 
+      DISPLAY_NAME "HDF4 CMake files"
+      HIDDEN
       DEPENDS libraries
       GROUP Development
+      INSTALL_TYPES Full Developer User
   )
 
   if (HDF4_BUILD_FORTRAN)
@@ -479,6 +506,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
         DISPLAY_NAME "HDF4 Fortran Libraries" 
         DEPENDS libraries
         GROUP Runtime
+        INSTALL_TYPES Full Developer User
     )
   endif (HDF4_BUILD_FORTRAN)
 
@@ -487,11 +515,13 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
         DISPLAY_NAME "HDF4 Tools Applications" 
         DEPENDS libraries
         GROUP Applications
+        INSTALL_TYPES Full Developer User
     )
     cpack_add_component (toolsheaders 
         DISPLAY_NAME "HDF4 Tools Headers" 
         DEPENDS libraries
         GROUP Development
+        INSTALL_TYPES Full Developer
     )
   endif (HDF4_BUILD_TOOLS)
 
@@ -500,11 +530,13 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
         DISPLAY_NAME "HDF4 Utility Applications" 
         DEPENDS libraries
         GROUP Applications
+        INSTALL_TYPES Full Developer User
     )
     cpack_add_component (utilsheaders 
         DISPLAY_NAME "HDF4 Utility Headers" 
         DEPENDS libraries
         GROUP Development
+        INSTALL_TYPES Full Developer
     )
   endif (HDF4_BUILD_UTILS)
 endif (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
