@@ -1,3 +1,4 @@
+include (CMakePackageConfigHelpers)
 
 #-----------------------------------------------------------------------------
 # Check for Installation Utilities
@@ -45,7 +46,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
 endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 #-----------------------------------------------------------------------------
-# Configure the hdf4-config.cmake file for the build directory
+# Set includes needed for build
 #-----------------------------------------------------------------------------
 set (HDF4_INCLUDES_BUILD_TIME
     ${HDF4_HDF_SOURCE_DIR}
@@ -61,9 +62,18 @@ set (HDF4_VERSION_STRING ${HDF4_PACKAGE_VERSION})
 set (HDF4_VERSION_MAJOR  ${HDF4_PACKAGE_VERSION_MAJOR})
 set (HDF4_VERSION_MINOR  ${HDF4_PACKAGE_VERSION_MINOR})
 
-configure_file (
-    ${HDF_RESOURCES_DIR}/hdf4-config.cmake.build.in 
-    ${HDF4_BINARY_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake @ONLY
+#-----------------------------------------------------------------------------
+# Configure the hdf4-config.cmake file for the build directory
+#-----------------------------------------------------------------------------
+set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
+set (SHARE_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_INSTALL_CMAKE_DIR}" )
+set (CURRENT_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
+configure_package_config_file (
+    ${HDF_RESOURCES_DIR}/hdf4-config.cmake.in
+    "${HDF4_BINARY_DIR}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake"
+    INSTALL_DESTINATION "${HDF4_INSTALL_CMAKE_DIR}"
+    PATH_VARS INCLUDE_INSTALL_DIR SHARE_INSTALL_DIR CURRENT_BUILD_DIR
+    INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 #-----------------------------------------------------------------------------
@@ -84,11 +94,16 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 #-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the install directory
 #-----------------------------------------------------------------------------
+set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
+set (SHARE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${HDF4_INSTALL_CMAKE_DIR}" )
+set (CURRENT_BUILD_DIR "${CMAKE_INSTALL_PREFIX}" )
+configure_package_config_file (
+    ${HDF_RESOURCES_DIR}/hdf4-config.cmake.in
+    "${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake"
+    INSTALL_DESTINATION "${HDF4_INSTALL_CMAKE_DIR}"
+    PATH_VARS INCLUDE_INSTALL_DIR SHARE_INSTALL_DIR CURRENT_BUILD_DIR
+)
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  configure_file (
-      ${HDF_RESOURCES_DIR}/hdf4-config.cmake.install.in
-      ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake @ONLY
-  )
   install (
       FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-config.cmake
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
