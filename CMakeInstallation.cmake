@@ -437,7 +437,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
   set (CPACK_ALL_INSTALL_TYPES Full Developer User)
   set (CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Everything")
   
-  set(CPACK_COMPONENTS_ALL applications libraries headers hdfdocuments configinstall Unspecified)
+  set(CPACK_COMPONENTS_ALL libraries headers hdfdocuments configinstall Unspecified)
   if (HDF4_BUILD_FORTRAN)
     set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} fortlibraries)
   endif (HDF4_BUILD_FORTRAN)
@@ -470,12 +470,6 @@ include (CPack)
   #-----------------------------------------------------------------------------
   # Now list the cpack commands
   #-----------------------------------------------------------------------------
-  cpack_add_component (applications 
-      DISPLAY_NAME "HDF4 Applications" 
-      DEPENDS libraries
-      GROUP Applications
-      INSTALL_TYPES Full Developer User
-  )
   cpack_add_component (libraries 
       DISPLAY_NAME "HDF4 Libraries"
       REQUIRED
