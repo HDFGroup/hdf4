@@ -37,7 +37,7 @@ I. Preconditions
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version 
-      of 2.8.12.
+      of 3.1.0.
                                                                          
    2. You have installed the HDF4 library built with CMake, by executing 
       the HDF Install Utility (the *.exe file in the binary package for 
@@ -186,11 +186,13 @@ find_package (HDF4 NAMES hdf4)
 # find_package (HDF4) # Find non-cmake built HDF4
 INCLUDE_DIRECTORIES (${HDF4_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${HDF4_LIBRARIES})
+set (LIB_TYPE STATIC) # or SHARED
 
 set (example hdf_example)
 
 add_executable (${example} ${PROJECT_SOURCE_DIR}/${example}.c)
-TARGET_C_PROPERTIES (${example} " " " ")
+TARGET_NAMING (${example} ${LIB_TYPE})
+TARGET_C_PROPERTIES (${example} ${LIB_TYPE} " " " ")
 target_link_libraries (${example} ${LINK_LIBS})
 
 ENABLE_TESTING ()
