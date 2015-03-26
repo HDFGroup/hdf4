@@ -5,12 +5,10 @@ project (HDF4_HDF_TEST C CXX)
 # Setup include Directories
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES (
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
     ${HDF4_HDFSOURCE_DIR}
 )
 LINK_DIRECTORIES (
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )

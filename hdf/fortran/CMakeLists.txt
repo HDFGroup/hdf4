@@ -5,7 +5,6 @@ PROJECT (HDF4_HDF_FORTRAN C CXX Fortran)
 # Make sure generated files and modules are picked up correctly
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES ( 
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
 )
   
@@ -90,6 +89,7 @@ set_target_properties (${HDF4_SRC_FORTRAN_LIB_TARGET} PROPERTIES
     FOLDER libraries/fortran
     LINKER_LANGUAGE Fortran
     INTERFACE_INCLUDE_DIRECTORIES "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>"
+    Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
 )
 if (${LIB_TYPE} MATCHES "SHARED")
   set_target_properties (${HDF4_SRC_FORTRAN_LIB_TARGET} PROPERTIES

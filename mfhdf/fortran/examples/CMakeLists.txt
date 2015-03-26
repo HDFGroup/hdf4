@@ -9,12 +9,10 @@ project (HDF4_MFHDF_FORTRAN_EXAMPLES C CXX Fortran)
 # Setup include Directories
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES (
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
     ${HDF4_HDFSOURCE_DIR}
 )
 LINK_DIRECTORIES (
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_MFHDF_BINARY_DIR}
     ${HDF4_HDF_BINARY_DIR}
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
@@ -51,7 +49,11 @@ foreach (example ${examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} ${LIB_TYPE} " " " ")
-  set_target_properties (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
+  target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+  set_target_properties (f_exmf_${example} PROPERTIES
+      LINKER_LANGUAGE Fortran
+      Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
+  )
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)
@@ -63,7 +65,11 @@ foreach (example ${skip_examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_exmf_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} ${LIB_TYPE} " " " ")
-  set_target_properties (f_exmf_${example} PROPERTIES LINKER_LANGUAGE Fortran)
+  target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+  set_target_properties (f_exmf_${example} PROPERTIES
+      LINKER_LANGUAGE Fortran
+      Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
+  )
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)

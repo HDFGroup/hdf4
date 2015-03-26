@@ -19,12 +19,10 @@ endif (CMAKE_Fortran_COMPILER MATCHES ifort)
 # Setup include Directories
 #-----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES (
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
     ${HDF4_HDFSOURCE_DIR}
 )
 LINK_DIRECTORIES (
-    ${CMAKE_Fortran_MODULE_DIRECTORY}
     ${HDF4_HDF_BINARY_DIR}
     ${HDF4_MFHDF_BINARY_DIR}
     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
@@ -71,21 +69,33 @@ foreach (example ${examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} ${LIB_TYPE} " " " ")
-  set_target_properties (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
+  target_include_directories (f_ex_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+  set_target_properties (f_ex_${example} PROPERTIES
+      LINKER_LANGUAGE Fortran
+      Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
+  )
   target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${examples})
 
 add_executable (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
 TARGET_NAMING (f_ex_VG_add_sds_to_vgroup ${LIB_TYPE})
 TARGET_FORTRAN_PROPERTIES (f_ex_VG_add_sds_to_vgroup ${LIB_TYPE} " " " ")
-set_target_properties (f_ex_VG_add_sds_to_vgroup PROPERTIES LINKER_LANGUAGE Fortran)
+target_include_directories (f_ex_VG_add_sds_to_vgroup PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+set_target_properties (f_ex_VG_add_sds_to_vgroup PROPERTIES
+    LINKER_LANGUAGE Fortran
+    Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
+)
 target_link_libraries (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 foreach (example ${skip_examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
   TARGET_NAMING (f_ex_${example} ${LIB_TYPE})
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} ${LIB_TYPE} " " " ")
-  set_target_properties (f_ex_${example} PROPERTIES LINKER_LANGUAGE Fortran)
+  target_include_directories (f_ex_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
+  set_target_properties (f_ex_${example} PROPERTIES
+      LINKER_LANGUAGE Fortran
+      Fortran_MODULE_DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}
+  )
   target_link_libraries (f_ex_${example} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${skip_examples})
 
