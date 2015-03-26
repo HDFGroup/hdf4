@@ -5,7 +5,9 @@
 ##############################################################################
 ##############################################################################
   
-FILE (MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/testdir)
+file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST")
+file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST/testdir")
+file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST/testfiles")
 
 #-- Copy all the dat files from the test directory into the source directory
 set (HDF4_REFERENCE_TEST_FILES
@@ -22,120 +24,127 @@ set (HDF4_REFERENCE_TEST_FILES
 )
 
 foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/test_files/${h4_file}")
-   #MESSAGE(STATUS " Copying ${h4_file}")
-   ADD_CUSTOM_COMMAND (
-       TARGET     testhdf 
-       POST_BUILD
-       COMMAND    ${CMAKE_COMMAND}
-       ARGS       -E copy_if_different ${HDF4_HDF_TEST_SOURCE_DIR}/test_files/${h4_file} ${dest}
-   )
+  set (dest "${PROJECT_BINARY_DIR}/TEST/test_files/${h4_file}")
+  add_custom_command (
+      TARGET     testhdf 
+      POST_BUILD
+      COMMAND    ${CMAKE_COMMAND}
+      ARGS       -E copy_if_different ${HDF4_HDF_TEST_SOURCE_DIR}/test_files/${h4_file} ${dest}
+  )
 endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 
 # Remove any output file left over from previous test run
+set (HDF4_TESTHDF_FILES
+    Block_info.hdf
+    ChunkedGR.hdf
+    ChunkedGR_DF.hdf
+    ChunkedGR_NO.hdf
+    ChunkedGR_RL.hdf
+    ChunkedGR_SK.hdf
+    datainfo_annot.hdf
+    datainfo_dfri.hdf
+    datainfo_images.hdf
+    datainfo_linkblock.hdf
+    datainfo_simple.hdf
+    gr2.hdf
+    gr_chunkcomp.hdf
+    gr_comp.hdf
+    gr_double_test.hdf
+    gr_gzip.hdf
+    gr_jpeg.hdf
+    gr_r8.hdf
+    nntcheck.hdf
+    ntcheck.hdf
+    RI_8.hdf
+    RI_16.hdf
+    RI_32.hdf
+    RI_fl32.hdf
+    RI_fl64.hdf
+    RIchunkedziped.hdf
+    s1w.hdf
+    s3w.hdf
+    s4w.hdf
+    sdstrings.hdf
+    swf32.hdf
+    swf64.hdf
+    swi8.hdf
+    swi16.hdf
+    swi32.hdf
+    swin.hdf
+    swui8.hdf
+    swui16.hdf
+    swui32.hdf
+    swuin.hdf
+    t.hdf
+    t1.hdf
+    t2.hdf
+    t3.hdf
+    t4.hdf
+    tbitio.hdf
+    tblocks.hdf
+    tchunks.hdf
+    tcomp.hdf
+    tdf24.hdf
+    tdfan.hdf
+    temp.hdf
+    thf.hdf
+    tjpeg.hdf
+    tlongnames.hdf
+    tman.hdf
+    tmgr.hdf
+    tmgratt.hdf
+    tmgrchk.hdf
+    tnbit.hdf
+    tref.hdf
+    tuservds.hdf
+    tuservgs.hdf
+    tvattr.hdf
+    tvpack.hdf
+    tvsempty.hdf
+    tvset.hdf
+    tvsetext.hdf
+    tx.hdf
+    Tables_External_File
+)
 add_test (
-    NAME testhdf-clearall-objects
+    NAME HDF_TEST-testhdf-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
-        Block_info.hdf
-        ChunkedGR.hdf
-        ChunkedGR_DF.hdf
-        ChunkedGR_NO.hdf
-        ChunkedGR_RL.hdf
-        ChunkedGR_SK.hdf
-        datainfo_annot.hdf
-        datainfo_dfri.hdf
-        datainfo_images.hdf
-        datainfo_linkblock.hdf
-        datainfo_simple.hdf
-        gr2.hdf
-        gr_chunkcomp.hdf
-        gr_comp.hdf
-        gr_double_test.hdf
-        gr_gzip.hdf
-        gr_jpeg.hdf
-        gr_r8.hdf
-        nntcheck.hdf
-        ntcheck.hdf
-        RI_8.hdf
-        RI_16.hdf
-        RI_32.hdf
-        RI_fl32.hdf
-        RI_fl64.hdf
-        RIchunkedziped.hdf
-        s1w.hdf
-        s3w.hdf
-        s4w.hdf
-        sdstrings.hdf
-        swf32.hdf
-        swf64.hdf
-        swi8.hdf
-        swi16.hdf
-        swi32.hdf
-        swin.hdf
-        swui8.hdf
-        swui16.hdf
-        swui32.hdf
-        swuin.hdf
-        t.hdf
-        t1.hdf
-        t2.hdf
-        t3.hdf
-        t4.hdf
-        tbitio.hdf
-        tblocks.hdf
-        tchunks.hdf
-        tcomp.hdf
-        tdf24.hdf
-        tdfan.hdf
-        temp.hdf
-        thf.hdf
-        tjpeg.hdf
-        tlongnames.hdf
-        tman.hdf
-        tmgr.hdf
-        tmgratt.hdf
-        tmgrchk.hdf
-        tnbit.hdf
-        tref.hdf
-        tuservds.hdf
-        tuservgs.hdf
-        tvattr.hdf
-        tvpack.hdf
-        tvsempty.hdf
-        tvset.hdf
-        tvsetext.hdf
-        tx.hdf
-        Tables_External_File
+        ${HDF4_TESTHDF_FILES}
+    WORKING_DIRECTORY
+        ${PROJECT_BINARY_DIR}/TEST
 )
+set_tests_properties (HDF_TEST-testhdf-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
 if (NOT "${last_test}" STREQUAL "")
-  set_tests_properties (testhdf-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-else (NOT "${last_test}" STREQUAL "")
-  set_tests_properties (testhdf-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (HDF_TEST-testhdf-clearall-objects PROPERTIES DEPENDS ${last_test})
 endif (NOT "${last_test}" STREQUAL "")
-set (last_test "testhdf-clearall-objects")
+set (last_test "HDF_TEST-testhdf-clearall-objects")
 
+set (HDF4_TESTHDF_THF0_FILES
+    thf0.hdf
+    thf1.hdf
+    thf2.hdf
+    thf3.hdf
+    thf4.hdf
+    thf5.hdf
+    thf6.hdf
+    thf7.hdf
+    thf8.hdf
+    thf9.hdf
+)
 add_test (
-    NAME testhdf_thf0-clearall-objects
+    NAME HDF_TEST-testhdf_thf0-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
         -E remove 
-        thf0.hdf
-        thf1.hdf
-        thf2.hdf
-        thf3.hdf
-        thf4.hdf
-        thf5.hdf
-        thf6.hdf
-        thf7.hdf
-        thf8.hdf
-        thf9.hdf
+        ${HDF4_TESTHDF_THF0_FILES}
+    WORKING_DIRECTORY
+        ${PROJECT_BINARY_DIR}/TEST
 )
+set_tests_properties (HDF_TEST-testhdf_thf0-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
 if (NOT "${last_test}" STREQUAL "")
-  set_tests_properties (testhdf_thf0-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-else (NOT "${last_test}" STREQUAL "")
-  set_tests_properties (testhdf_thf0-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (HDF_TEST-testhdf_thf0-clearall-objects PROPERTIES DEPENDS ${last_test})
 endif (NOT "${last_test}" STREQUAL "")
-set (last_test "testhdf_thf0-clearall-objects")
+set (last_test "HDF_TEST-testhdf_thf0-clearall-objects")
 
 set (thf_decade
     1 2 3 4 5 6 7 8 9 10
@@ -147,7 +156,7 @@ set (thf_decade
 )
 foreach (decade ${thf_decade}) 
   add_test (
-      NAME testhdf_thf${decade}-clearall-objects
+      NAME HDF_TEST-testhdf_thf${decade}-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
           -E remove 
           thf${decade}0.hdf
@@ -160,34 +169,39 @@ foreach (decade ${thf_decade})
           thf${decade}7.hdf
           thf${decade}8.hdf
           thf${decade}9.hdf
+    WORKING_DIRECTORY
+        ${PROJECT_BINARY_DIR}/TEST
   )
+  set_tests_properties (HDF_TEST-testhdf_thf${decade}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
   if (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (testhdf_thf${decade}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (testhdf_thf${decade}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (HDF_TEST-testhdf_thf${decade}-clearall-objects PROPERTIES DEPENDS ${last_test})
   endif (NOT "${last_test}" STREQUAL "")
-  set (last_test "testhdf_thf${decade}-clearall-objects")
+  set (last_test "HDF_TEST-testhdf_thf${decade}-clearall-objects")
 endforeach (decade ${thf_decade}) 
 
-add_test (NAME testhdf COMMAND $<TARGET_FILE:testhdf>)
+add_test (NAME HDF_TEST-testhdf COMMAND $<TARGET_FILE:testhdf>)
 set (passRegex "All tests were successful")
-SET_PROPERTY (TEST testhdf PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+set_tests_properties (HDF_TEST-testhdf PROPERTIES
+    PASS_REGULAR_EXPRESSION "${passRegex}" 
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
+    LABELS ${PROJECT_NAME}
+)
 if (NOT "${last_test}" STREQUAL "")
-  set_tests_properties (testhdf PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-else (NOT "${last_test}" STREQUAL "")
-  set_tests_properties (testhdf PROPERTIES LABELS ${PROJECT_NAME})
+  set_tests_properties (HDF_TEST-testhdf PROPERTIES DEPENDS ${last_test})
 endif (NOT "${last_test}" STREQUAL "")
-set (last_test "testhdf")
+set (last_test "HDF_TEST-testhdf")
 
 #-- Adding test for buffer
 if (NOT WIN32)
-  add_test (NAME buffer COMMAND $<TARGET_FILE:buffer>)
+  add_test (NAME HDF_TEST-buffer COMMAND $<TARGET_FILE:buffer>)
+  set_tests_properties (HDF_TEST-buffer PROPERTIES
+      WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
+      LABELS ${PROJECT_NAME}
+  )
   if (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (buffer PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
-    set_tests_properties (buffer PROPERTIES LABELS ${PROJECT_NAME})
+    set_tests_properties (HDF_TEST-buffer PROPERTIES DEPENDS ${last_test})
   endif (NOT "${last_test}" STREQUAL "")
-  set (last_test "buffer")
+  set (last_test "HDF_TEST-buffer")
 endif (NOT WIN32)
 
 

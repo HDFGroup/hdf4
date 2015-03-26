@@ -48,24 +48,6 @@ else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
 
-#-- Copy all the dat files from the test directory into the source directory
-set (HDF4_REFERENCE_TEST_FILES
-    sds_szipped.dat
-    smallslice.0000.nc
-    test1.nc
-)
-
-foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE(STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   add_custom_command (
-     TARGET     hdftest
-     POST_BUILD
-     COMMAND    ${CMAKE_COMMAND}
-     ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
-endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
-
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
 TARGET_NAMING (cdftest ${LIB_TYPE})
@@ -75,22 +57,6 @@ if (HDF4_BUILD_XDR_LIB)
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-
-#-- Copy all the dat files from the test directory into the source directory
-set (HDF4_REFERENCE2_TEST_FILES
-    testout.sav
-)
-
-foreach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
-   set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
-   #MESSAGE(STATUS " Copying ${HDF4_MFHDF_TEST_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
-   add_custom_command (
-     TARGET     cdftest
-     POST_BUILD
-     COMMAND    ${CMAKE_COMMAND}
-     ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
-   )
-endforeach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
 
 #-- Adding test for hdfnctest
 set (hdfnctest_SRCS

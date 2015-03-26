@@ -38,7 +38,7 @@ set (examples
 foreach (example ${examples})
   add_executable (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (hdf_${example} ${LIB_TYPE})
-  TARGET_C_PROPERTIES (hdf_${example} ${LIB_TYPE} ${LIB_TYPE} " " " ")
+  TARGET_C_PROPERTIES (hdf_${example} ${LIB_TYPE} " " " ")
   target_link_libraries (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${examples})
 
