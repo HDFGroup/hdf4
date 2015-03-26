@@ -5,6 +5,11 @@
 
 string(TOUPPER @HDF4_PACKAGE@ HDF4_PACKAGE_NAME)
 
+set (${HDF4_PACKAGE_NAME}_VALID_COMPONENTS
+    C
+    Fortran
+)
+
 #-----------------------------------------------------------------------------
 # User Options
 #-----------------------------------------------------------------------------
@@ -19,7 +24,7 @@ set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_SUPPORT  @HDF4_ENABLE_SZIP_SUPPORT@)
 set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_ENCODING @HDF4_ENABLE_SZIP_ENCODING@)
 set (${HDF4_PACKAGE_NAME}_BUILD_SHARED_LIBS    @BUILD_SHARED_LIBS@)
 set (${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS      @HDF4_PACKAGE_EXTLIBS@)
-set (${HDF4_PACKAGE_NAME}_LIBRARIES @HDF4_LIBRARIES_TO_EXPORT@)
+set (${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES @HDF4_LIBRARIES_TO_EXPORT@)
 
 #-----------------------------------------------------------------------------
 # Directories
@@ -67,3 +72,46 @@ if (NOT TARGET "@HDF4_PACKAGE@")
   endif ()
   include (@PACKAGE_SHARE_INSTALL_DIR@/@HDF4_PACKAGE@@HDF_PACKAGE_EXT@-targets.cmake)
 endif ()
+
+# Handle default component :
+if (NOT ${HDF4_PACKAGE_NAME}_FIND_COMPONENTS)
+    set (${HDF4_PACKAGE_NAME}_FIND_COMPONENTS C)
+    set (${HDF4_PACKAGE_NAME}_FIND_REQUIRED_C true)
+endif ()
+
+# Handle requested components:
+list (REMOVE_DUPLICATES ${HDF4_PACKAGE_NAME}_FIND_COMPONENTS)
+  foreach (comp IN LISTS ${HDF4_PACKAGE_NAME}_FIND_COMPONENTS)
+    set (hdf4_comp2)
+    if (${comp} MATCHES "C")
+      set (hdf4_comp "hdf")
+    elseif (${comp} MATCHES "Fortran")
+      set (hdf4_comp2 "hdf_fcstub")
+      set (hdf4_comp "hdf_fortran")
+    endif ()
+    list (FIND ${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES "${hdf4_comp}" HAVE_COMP) 
+    list (FIND ${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES "mf${hdf4_comp}" HAVE_MFCOMP) 
+    if (${HAVE_COMP} LESS 0 OR ${HAVE_MFCOMP} LESS 0) 
+      set (${HDF4_PACKAGE_NAME}_${comp}_FOUND 0)
+    else ()
+      if (hdf4_comp2)
+        list (FIND ${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES "${hdf4_comp2}" HAVE_COMP2) 
+        list (FIND ${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES "mf${hdf4_comp2}" HAVE_MFCOMP2) 
+        if (${HAVE_COMP2} LESS 0 OR ${HAVE_MFCOMP2} LESS 0)
+          set (${HDF4_PACKAGE_NAME}_${comp}_FOUND 0)
+        else ()
+          set (${HDF4_PACKAGE_NAME}_${comp}_FOUND 1)
+          string(TOUPPER ${HDF4_PACKAGE_NAME}_${comp}_LIBRARY COMP_LIBRARY)
+          set (${COMP_LIBRARY} ${${COMP_LIBRARY}} ${hdf4_comp2} ${hdf4_comp} mf${hdf4_comp2} mf${hdf4_comp})
+        endif ()
+      else ()
+        set (${HDF4_PACKAGE_NAME}_${comp}_FOUND 1)
+        string(TOUPPER ${HDF4_PACKAGE_NAME}_${comp}_LIBRARY COMP_LIBRARY)
+        set (${COMP_LIBRARY} ${${COMP_LIBRARY}} ${hdf4_comp} mf${hdf4_comp})
+      endif ()
+    endif ()
+  endforeach ()
+
+  check_required_components(${HDF4_PACKAGE_NAME}_FIND_COMPONENTS)
+
+set (${HDF4_PACKAGE_NAME}_LIBRARIES ${${COMP_LIBRARY}}) 
