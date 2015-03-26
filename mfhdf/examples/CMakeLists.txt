@@ -26,7 +26,7 @@ set (examples
 foreach (example ${examples})
   add_executable (mf_${example} ${HDF4_MFHDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (mf_${example} ${LIB_TYPE})
-  TARGET_C_PROPERTIES (mf_${example} " " " ")
+  TARGET_C_PROPERTIES (mf_${example} ${LIB_TYPE} " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (mf_${example} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)

@@ -14,7 +14,7 @@
     #-- Adding test for ftest
     add_executable (ftest ${HDF4_BINARY_DIR}/ftest.f ${HDF4_HDF_TESTSOURCE_DIR}/forsupff.f ${HDF4_BINARY_DIR}/netcdf.inc)
     TARGET_NAMING (ftest ${LIB_TYPE})
-    TARGET_FORTRAN_PROPERTIES (ftest " " " ")
+    TARGET_FORTRAN_PROPERTIES (ftest ${LIB_TYPE} " " " ")
     set_target_properties (ftest PROPERTIES LINKER_LANGUAGE Fortran)
     if (HDF4_BUILD_XDR_LIB)
       target_link_libraries (ftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -44,7 +44,7 @@
   #-- Adding test for f_hdftest
   add_executable (f_hdftest hdftest.f)
   TARGET_NAMING (f_hdftest ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_hdftest " " " ")
+  TARGET_FORTRAN_PROPERTIES (f_hdftest ${LIB_TYPE} " " " ")
   set_target_properties (f_hdftest PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_hdftest ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -55,7 +55,7 @@
   #-- Adding test for f_hdftest1
   add_executable (f_hdftest1 hdftest1.f)
   TARGET_NAMING (f_hdftest1 ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_hdftest1 " " " ")
+  TARGET_FORTRAN_PROPERTIES (f_hdftest1 ${LIB_TYPE} " " " ")
   set_target_properties (f_hdftest1 PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_hdftest1 ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
@@ -66,7 +66,7 @@
   #-- Adding test for f_tszip
   add_executable (f_tszip tszip.f)
   TARGET_NAMING (f_tszip ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (f_tszip " " " ")
+  TARGET_FORTRAN_PROPERTIES (f_tszip ${LIB_TYPE} " " " ")
   set_target_properties (f_tszip PROPERTIES LINKER_LANGUAGE Fortran)
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_tszip ${HDF4_MF_FORTRAN_LIB_TARGET} ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})

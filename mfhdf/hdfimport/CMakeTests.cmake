@@ -79,7 +79,7 @@
   )
   
   add_executable (hdfimporttest ${hdfimporttest_SRCS})
-  TARGET_C_PROPERTIES (hdfimporttest " " " ")
+  TARGET_C_PROPERTIES (hdfimporttest ${LIB_TYPE} " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (hdfimporttest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)
@@ -93,7 +93,7 @@
   )
   
   add_executable (gen_sds_floats ${gen_sds_floats_SRCS})
-  TARGET_C_PROPERTIES (gen_sds_floats " " " ")
+  TARGET_C_PROPERTIES (gen_sds_floats ${LIB_TYPE} " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (gen_sds_floats ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)

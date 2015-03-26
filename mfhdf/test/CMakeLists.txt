@@ -41,7 +41,7 @@ set (hdftest_SRCS
 #-- Adding test for hdftest
 add_executable (hdftest ${hdftest_SRCS})
 TARGET_NAMING (hdftest ${LIB_TYPE})
-TARGET_C_PROPERTIES (hdftest " " " ")
+TARGET_C_PROPERTIES (hdftest ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET} ${LINK_LIBS})
 else (HDF4_BUILD_XDR_LIB)
@@ -69,7 +69,7 @@ endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
 #-- Adding test for cdftest
 add_executable (cdftest ${HDF4_MFHDF_TEST_SOURCE_DIR}/cdftest.c)
 TARGET_NAMING (cdftest ${LIB_TYPE})
-TARGET_C_PROPERTIES (cdftest " " " ")
+TARGET_C_PROPERTIES (cdftest ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (cdftest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)
@@ -102,7 +102,7 @@ set (hdfnctest_SRCS
 
 add_executable (hdfnctest ${hdfnctest_SRCS})
 TARGET_NAMING (hdfnctest ${LIB_TYPE})
-TARGET_C_PROPERTIES (hdfnctest " " " ")
+TARGET_C_PROPERTIES (hdfnctest ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdfnctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)

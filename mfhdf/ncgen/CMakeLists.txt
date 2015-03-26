@@ -38,7 +38,7 @@ if (WIN32)
 endif (WIN32)
  
 add_executable (ncgen ${ncgen_SRCS})
-TARGET_C_PROPERTIES (ncgen " " " ")
+TARGET_C_PROPERTIES (ncgen ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
 else (HDF4_BUILD_XDR_LIB)

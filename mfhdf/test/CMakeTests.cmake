@@ -96,7 +96,7 @@ set_tests_properties (hdfnctest PROPERTIES DEPENDS cdftest LABELS ${PROJECT_NAME
 if (HDF4_BUILD_XDR_LIB)
   add_executable (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
   TARGET_NAMING (xdrtest ${LIB_TYPE})
-  TARGET_C_PROPERTIES (xdrtest " " " ")
+  TARGET_C_PROPERTIES (xdrtest ${LIB_TYPE} " " " ")
   target_link_libraries (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 
   if (CYGWIN)

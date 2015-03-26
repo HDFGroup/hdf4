@@ -38,13 +38,13 @@ set (examples
 foreach (example ${examples})
   add_executable (hdf_${example} ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/${example}.c)
   TARGET_NAMING (hdf_${example} ${LIB_TYPE})
-  TARGET_C_PROPERTIES (hdf_${example} " " " ")
+  TARGET_C_PROPERTIES (hdf_${example} ${LIB_TYPE} ${LIB_TYPE} " " " ")
   target_link_libraries (hdf_${example} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endforeach (example ${examples})
 
 add_executable (hdf_VG_add_sds_to_vgroup ${HDF4_HDF_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.c)
 TARGET_NAMING (hdf_VG_add_sds_to_vgroup ${LIB_TYPE})
-TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup " " " ")
+TARGET_C_PROPERTIES (hdf_VG_add_sds_to_vgroup ${LIB_TYPE} " " " ")
 target_link_libraries (hdf_VG_add_sds_to_vgroup ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 
 if (BUILD_TESTING)

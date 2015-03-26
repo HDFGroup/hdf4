@@ -35,7 +35,7 @@ set (hrepack_SRCS
 )
   
 add_executable (hrepack ${hrepack_SRCS})
-TARGET_C_PROPERTIES (hrepack " " " ")
+TARGET_C_PROPERTIES (hrepack ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)
@@ -44,7 +44,7 @@ endif (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hrepack ${LIB_TYPE})
   
 add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
-TARGET_C_PROPERTIES (hrepack_check " " " ")
+TARGET_C_PROPERTIES (hrepack_check ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)

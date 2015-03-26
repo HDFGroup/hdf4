@@ -15,14 +15,14 @@
   if (WIN32)
     add_definitions (-DDOS_FS)
   endif (WIN32)
-  TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} " " " ")
+  TARGET_C_PROPERTIES (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${LIB_TYPE} " " " ")
   target_link_libraries (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_SRC_LIB_TARGET})
   H4_SET_LIB_OPTIONS (${HDF4_HDF_TEST_FCSTUB_LIB_TARGET}  ${HDF4_HDF_TEST_FCSTUB_LIB_NAME} ${LIB_TYPE})
   
   #-- Adding test for fortest
   add_executable (fortest ${HDF4_HDF_TESTSOURCE_DIR}/fortest.c)
   TARGET_NAMING (fortest ${LIB_TYPE})
-  TARGET_C_PROPERTIES (fortest " " " ")
+  TARGET_C_PROPERTIES (fortest ${LIB_TYPE} " " " ")
   target_link_libraries (fortest ${HDF4_SRC_LIB_TARGET} ${HDF4_MF_LIB_TARGET})
   if (WIN32)
     target_link_libraries (fortest "ws2_32.lib")
@@ -54,7 +54,7 @@
 
   add_executable (fortestF ${FORTEST_FSRCS} )
   TARGET_NAMING (fortestF ${LIB_TYPE})
-  TARGET_FORTRAN_PROPERTIES (fortestF " " " ")
+  TARGET_FORTRAN_PROPERTIES (fortestF ${LIB_TYPE} " " " ")
   target_link_libraries (fortestF ${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_HDF_TEST_FCSTUB_LIB_TARGET} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} )
   set_target_properties (fortestF PROPERTIES LINKER_LANGUAGE Fortran)
 
