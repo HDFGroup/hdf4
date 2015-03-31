@@ -106,15 +106,7 @@ int32       error_top
 ;
 #else /* defined(H4_BUILT_AS_DYNAMIC_LIB) */
 # ifndef _H_ERR_MASTER_
-#if defined _WIN32 && defined HDFAPDLL
-__declspec(dllimport)
-# else
 HDFERRPUBLIC
-# endif
-#else
-#if defined _WIN32 && defined HDFLIBDLL
-__declspec(dllexport)
-#endif
 # endif /* _H_ERR_MASTER_ */
 int32       error_top
 # ifdef _H_ERR_MASTER_

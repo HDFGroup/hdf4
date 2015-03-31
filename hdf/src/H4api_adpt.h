@@ -163,14 +163,13 @@
   #endif
 #endif
 
-#else defined(H4_BUILT_AS_STATIC_LIB)
-  #define XDRLIBAPI extern
-  #define HDFERRPUBLIC extern
-  #define HDFPUBLIC
-  #define HDFLIBAPI extern
-  #define HDFFCLIBAPI extern
-  #define HDFTOOLSAPI extern
-
+#else
+#  define XDRLIBAPI extern
+#  define HDFERRPUBLIC extern
+#  define HDFPUBLIC
+#  define HDFLIBAPI extern
+#  define HDFFCLIBAPI extern
+#  define HDFTOOLSAPI extern
 #endif /*H4_BUILT_AS_DYNAMIC_LIB  */
 
 
