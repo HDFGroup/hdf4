@@ -140,7 +140,7 @@ configure_file (
 )
 install (
     FILES ${HDF4_BINARY_DIR}/libhdf4.settings
-    DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
+    DESTINATION ${HDF4_INSTALL_LIB_DIR}
     COMPONENT libraries
 )
 
