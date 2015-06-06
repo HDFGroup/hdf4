@@ -522,120 +522,127 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     /* search through the GR group for raster images & global attributes */
     curr_image = 0;
     if((gr_ref=(uint16)Vfind(file_id,GR_NAME))!=0)
-      {
-          int32       gr_key;         /* Vgroup key of the GR Vgroup */
+    {
+        int32       gr_key;         /* Vgroup key of the GR Vgroup */
 
-          gr_ptr->gr_ref=gr_ref; /* squirrel this away for later use */
-          if((gr_key=Vattach(file_id,(int32)gr_ref,"r"))!=FAIL)
-            {
-                int32 nobjs=Vntagrefs(gr_key); /* The number of objects in the Vgroup */
-                int32 img_key;  /* Vgroup key of an image */
-                int32 grp_tag,grp_ref;  /* a tag/ref in the Vgroup */
-                int32 img_tag,img_ref;  /* image tag/ref in the Vgroup */
-                char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
+        gr_ptr->gr_ref=gr_ref; /* squirrel this away for later use */
+        if((gr_key=Vattach(file_id,(int32)gr_ref,"r"))!=FAIL)
+        {
+            int32 nobjs=Vntagrefs(gr_key); /* The number of objects in the Vgroup */
+            int32 img_key;  /* Vgroup key of an image */
+            int32 grp_tag,grp_ref;  /* a tag/ref in the Vgroup */
+            int32 img_tag,img_ref;  /* image tag/ref in the Vgroup */
+            char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
                 
-                for(i=0; i<nobjs; i++)
-                  {
-                      if(Vgettagref(gr_key,i,&grp_tag,&grp_ref)==FAIL)
-                          continue;
+            for(i=0; i<nobjs; i++)
+            {
+                if(Vgettagref(gr_key,i,&grp_tag,&grp_ref)==FAIL)
+                    continue;
                       
-                      switch(grp_tag)
+                switch(grp_tag)
+                {
+                    case DFTAG_VG:  /* should be an image */
+                        if((img_key=Vattach(file_id,grp_ref,"r"))!=FAIL)
                         {
-                            case DFTAG_VG:  /* should be an image */
-                                if((img_key=Vattach(file_id,grp_ref,"r"))!=FAIL)
-                                  {
-                                    if(Vgetclass(img_key,textbuf)!=FAIL)
-                                      {
-                                        if(!HDstrcmp(textbuf,RI_NAME))
-                                          { /* found an image, whew! */
-                                            for(j=0; j<Vntagrefs(img_key); j++)
-                                              {
-                                                  if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
-                                                      continue;
-                                                  if(img_tag==DFTAG_RI || img_tag==DFTAG_CI)
-                                                    {
-                                                        img_info[curr_image].grp_tag=(uint16)grp_tag;
-                                                        img_info[curr_image].grp_ref=(uint16)grp_ref;
-                                                        img_info[curr_image].img_tag=(uint16)img_tag;
-                                                        img_info[curr_image].img_ref=(uint16)img_ref;
-                                                        img_info[curr_image].offset = Hoffset(file_id, (uint16)img_tag, (uint16)img_ref);     /* store offset */
-                                                        curr_image++;
-                                                        break;
-                                                    } /* end if */
-                                              } /* end for */
-                                          } /* end if */
-                                      } /* end if */
-                                    Vdetach(img_key);
-                                  } /* end if */
-                                break;
-
-                            case DFTAG_VH:  /* must be a "global" attaribute */
-                                  {
-                                      at_info_t *new_attr;  /* attribute to add to the set of local attributes */
-                                      int32 at_key;         /* VData key for the attribute */
-
-                                      if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
-                                          HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                      new_attr->ref=(uint16)grp_ref;
-                                      new_attr->index=gr_ptr->gattr_count;
-                                      new_attr->data_modified=FALSE;
-                                      new_attr->new_at=FALSE;
-                                      new_attr->data=NULL;
-                                      if((at_key=VSattach(file_id,(int32)grp_ref,"r"))!=FAIL)
+                            if(Vgetclass(img_key,textbuf)!=FAIL)
+                            {
+                                if(!HDstrcmp(textbuf,RI_NAME))
+                                { /* it is an image, get the image's tag/ref */
+                                    for(j=0; j<Vntagrefs(img_key); j++)
+                                    {
+                                        if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
+                                            continue;
+                                        /* Make sure the tag is correct, then store the
+                                           image's info and the tag/ref of the vgroup that
+                                           represents the image into the local struct */
+                                        if(img_tag==DFTAG_RI || img_tag==DFTAG_CI)
                                         {
-                                            char *fname;
-
-                                            /* Make certain the attribute only has one field */
-                                            if(VFnfields(at_key)!=1)
-                                              {
-                                                VSdetach(at_key);
-                                                HDfree(new_attr);
-                                                break;
-                                              } /* end if */
-                                            new_attr->nt=VFfieldtype(at_key,0);
-                                            new_attr->len=VFfieldorder(at_key,0);
-                                            if(new_attr->len==1)
-                                                new_attr->len=VSelts(at_key);
-
-                                            /* Get the name of the attribute */
-                                            if((fname=VFfieldname(at_key,0))==NULL)
-                                              {
-                                                sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
-                                                if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                                                  {
-                                                    VSdetach(at_key);
-                                                    HDfree(new_attr);
-                                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                                  } /* end if */
-                                                HDstrcpy(new_attr->name,textbuf);
-                                              } /* end if */
-                                            else
-                                              {
-                                                if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
-                                                  {
-                                                    VSdetach(at_key);
-                                                    HDfree(new_attr);
-                                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                                  } /* end if */
-                                                HDstrcpy(new_attr->name,fname);
-                                              } /* end else */
-                                                
-                                            tbbtdins(gr_ptr->gattree, new_attr, NULL);    /* insert the attr instance in B-tree */ 
-
-                                            VSdetach(at_key);
+                                            img_info[curr_image].grp_tag=(uint16)grp_tag;
+                                            img_info[curr_image].grp_ref=(uint16)grp_ref;
+                                            img_info[curr_image].img_tag=(uint16)img_tag;
+                                            img_info[curr_image].img_ref=(uint16)img_ref;
+                                            img_info[curr_image].offset = Hoffset(file_id, (uint16)img_tag, (uint16)img_ref);     /* store offset */
+                                            curr_image++;
+                                            break;
                                         } /* end if */
+                                    } /* end for */
+                                } /* end if */
+                            } /* end if */
+                            Vdetach(img_key);
+                        } /* end if */
+                        break; /* case DFTAG_VG, an image */
 
-                                      gr_ptr->gattr_count++;
-                                  } /* end case */
-                                break;
+                    case DFTAG_VH:  /* must be a "global" attribute */
+                    {
+                        at_info_t *new_attr;  /* attr to add to the set of global attrs */
+                        int32 at_key;         /* VData key for the attribute */
 
-                            default:
+                        if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
+                            HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                        new_attr->ref=(uint16)grp_ref;
+                        new_attr->index=gr_ptr->gattr_count;
+                        new_attr->data_modified=FALSE;
+                        new_attr->new_at=FALSE;
+                        new_attr->data=NULL;
+
+                        /* Open the vdata to read the attr's info */
+                        if((at_key=VSattach(file_id,(int32)grp_ref,"r"))!=FAIL)
+                        {
+                            char *fname;
+
+                            /* Make certain the attribute only has one field */
+                            if(VFnfields(at_key)!=1)
+                            {
+                                VSdetach(at_key);
+                                HDfree(new_attr);
                                 break;
-                        } /* end switch */
-                  } /* end for */
-              Vdetach(gr_key);
-            } /* end if */
-      } /* end if */
+                            } /* end if */
+                            new_attr->nt=VFfieldtype(at_key,0);
+                            new_attr->len=VFfieldorder(at_key,0);
+                            if(new_attr->len==1)
+                                new_attr->len=VSelts(at_key);
+
+                            /* Get the name of the attribute */
+                            if((fname=VFfieldname(at_key,0))==NULL)
+                            {
+                                sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
+                                if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+                                {
+                                    VSdetach(at_key);
+                                    HDfree(new_attr);
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                } /* end if */
+                                HDstrcpy(new_attr->name,textbuf);
+                            } /* end if */
+                            else
+                            {
+                                if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
+                                {
+                                    VSdetach(at_key);
+                                    HDfree(new_attr);
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                } /* end if */
+                                HDstrcpy(new_attr->name,fname);
+                            } /* end else */
+                                                
+                            /* insert the attr instance in B-tree */ 
+                            tbbtdins(gr_ptr->gattree, new_attr, NULL);
+
+                            VSdetach(at_key);
+                        } /* end if */
+
+                        /* increment the number of GR global attributes */
+                        gr_ptr->gattr_count++;
+                    } /* end case DFTAG_VH, a global attribute */
+                    break;
+
+                    default:
+                        break;
+                } /* end switch */
+            } /* end for */
+            Vdetach(gr_key);
+        } /* end if */
+    } /* end if */
 
     /* Get information about the RIGs in the file */
     find_tag = find_ref = 0;
@@ -717,578 +724,395 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                +-----------------+-----------------+--------+
     */
 
-    nimages = curr_image;   /* reset the number of images we really have */
     for (i = 0; i < curr_image; i++)
-      {     /* go through the images looking for duplicates */
-          if(img_info[i].img_tag!=DFTAG_NULL)
-              for (j = i+1; j < curr_image; j++)
-                {
-      /* if their refs are different, they're not duplicate, skip */
-      if(img_info[i].img_ref == img_info[j].img_ref)
+    {     /* go through the images looking for duplicates */
+        if(img_info[i].img_tag!=DFTAG_NULL)
+            for (j = i+1; j < curr_image; j++)
+            {
+                /* if their refs are different, they're not duplicate, skip */
+                if(img_info[i].img_ref == img_info[j].img_ref)
                     if(img_info[j].img_tag!=DFTAG_NULL)
-          {
+                    {
                         /* If the element is special, get its type, to allow
                            linked block or chunked images to go into the if
                            statement below in order for the duplicate image be
                            eliminated - bug #814, BMR Feb, 2005 */
                         intn special_type = GRIisspecial_type(file_id,img_info[i].img_tag,img_info[i].img_ref);
 
-                        if (((img_info[i].offset!= INVALID_OFFSET && img_info[i]
-.offset!=0)
+                        if (((img_info[i].offset!= INVALID_OFFSET && img_info[i].offset!=0)
                                 && img_info[i].offset == img_info[j].offset) ||
                              (img_info[i].offset==0
                                 && (special_type == SPECIAL_LINKED ||
                                     special_type == SPECIAL_CHUNKED)))
-                          {
-                              /* eliminate the oldest tag from the match */
-                              switch(img_info[i].img_tag) {
-                                  case DFTAG_RI:
-                                  case DFTAG_CI: /* Newer style raster image, found in RIG & Vgroup */
-                                      if(img_info[j].grp_tag==DFTAG_RIG)
-                                        {
+                        {
+                            /* eliminate the oldest tag from the match */
+                            switch(img_info[i].img_tag)
+                            {
+                              case DFTAG_RI:
+                              case DFTAG_CI: /* Newer style raster image, found in RIG & Vgroup */
+                                  if(img_info[j].grp_tag==DFTAG_RIG)
+                                  {
+                                      img_info[j].img_tag=DFTAG_NULL;
+                                      if(img_info[i].grp_tag==DFTAG_VG)
+                                          img_info[i].aux_ref=img_info[j].grp_ref;
+                                  } /* end if */
+                                  else
+                                  {
+                                      if(img_info[i].grp_tag==DFTAG_VG)
                                           img_info[j].img_tag=DFTAG_NULL;
-                                          if(img_info[i].grp_tag==DFTAG_VG)
-                                              img_info[i].aux_ref=img_info[j].grp_ref;
-                                        } /* end if */
                                       else
-                                          if(img_info[i].grp_tag==DFTAG_VG)
-                                              img_info[j].img_tag=DFTAG_NULL;
-                                          else
-                                            {
-                                              img_info[j].img_tag=DFTAG_NULL;
-                                              if(img_info[i].grp_tag==DFTAG_RIG)
-                                                  img_info[j].aux_ref=img_info[i].grp_ref;
-                                            } /* end else */
-                                      break;
-
-                                  case DFTAG_RI8:
-                                  case DFTAG_CI8:
-                                  case DFTAG_II8: /* Eldest style raster image, no grouping */
-                                      if(img_info[j].img_tag!=DFTAG_RI8 && img_info[j].img_tag!=DFTAG_CI8 && img_info[j].img_tag!=DFTAG_II8)
-                                          img_info[i].img_tag=DFTAG_NULL;
-                                      else
+                                      {
                                           img_info[j].img_tag=DFTAG_NULL;
-                                      break;
+                                          if(img_info[i].grp_tag==DFTAG_RIG)
+                                              img_info[j].aux_ref=img_info[i].grp_ref;
+                                      } /* end else */
+                                  } /* end else */
+                                  break;
 
-                                  default: /* an image which was eliminated from the list of images */
-                                    break;
-                                } /* end switch */
-                              nimages--;  /* if duplicate found, decrement the number of images */
-                          } /* end if */
-                     } /* end if */
-                } /* end for */
-      } /* end for */
+                              case DFTAG_RI8:
+                              case DFTAG_CI8:
+                              case DFTAG_II8: /* Eldest style raster image, no grouping */
+                                  if(img_info[j].img_tag!=DFTAG_RI8 && img_info[j].img_tag!=DFTAG_CI8 && img_info[j].img_tag!=DFTAG_II8)
+                                      img_info[i].img_tag=DFTAG_NULL;
+                                  else
+                                      img_info[j].img_tag=DFTAG_NULL;
+                                  break;
+
+                              default:
+                                  /* an image which was eliminated from the list of images */
+                                  break;
+                            } /* end switch */
+                        } /* end if */
+                    } /* end if */
+            } /* end for */
+    } /* end for go through the images looking for duplicates */
 
     /* Ok, now sort through the file for information about each image found */
     for(i=0; i<curr_image; i++)
-      {
-          if(img_info[i].img_tag!=DFTAG_NULL)
+    {
+        if(img_info[i].img_tag!=DFTAG_NULL)
+        {
+            switch(img_info[i].grp_tag)
             {
-              switch(img_info[i].grp_tag) {
-                  case DFTAG_VG: /* New style raster image, found in a Vgroup */
+              case DFTAG_VG: /* New style raster image, found in a Vgroup */
+              {
+                  ri_info_t *new_image; /* ptr to the image to read in */
+                  int32 img_key;            /* Vgroup key of an image */
+                  int32 img_tag,img_ref;    /* image tag/ref in the Vgroup */
+                  char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
+                  uint8 ntstring[4];        /* buffer to store NT info */
+                  uint8 GRtbuf[64];         /* local buffer for reading RIG info */
+
+                  if((img_key=Vattach(file_id,(int32)img_info[i].grp_ref,"r"))!=FAIL)
+                  {
+                      uint16 name_len;
+                      if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
                       {
-                          ri_info_t *new_image; /* ptr to the image to read in */
-                          int32 img_key;            /* Vgroup key of an image */
-                          int32 img_tag,img_ref;    /* image tag/ref in the Vgroup */
-                          char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
-                          uint8 ntstring[4];        /* buffer to store NT info */
-                          uint8 GRtbuf[64];         /* local buffer for reading RIG info */
+                          HDfree(img_info);   /* free offsets */
+                          Hclose(file_id);
+                          HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                      } /* end if */
 
-                          if((img_key=Vattach(file_id,(int32)img_info[i].grp_ref,"r"))!=FAIL)
-                            {
-        uint16 name_len;
-                                if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
-                                  {
-                                    HDfree(img_info);   /* free offsets */
-                                    Hclose(file_id);
-                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                  } /* end if */
+                      /* Initialize all the fields in the image structure to zeros */
+                      HDmemset(new_image,0,sizeof(ri_info_t));
 
-                                /* Initialize all the fields in the image structure to zeros */
-                                HDmemset(new_image,0,sizeof(ri_info_t));
+                      /* Get the name of the image */
+                      if(Vgetnamelen(img_key,&name_len)==FAIL)
+                          name_len = 20; /* for "Raster Image #%d" */
+                      if((new_image->name=(char *)HDmalloc(name_len+1))==NULL)
+                          HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                      if(Vgetname(img_key,new_image->name)==FAIL)
+                          sprintf(new_image->name,"Raster Image #%d",(int)i);
 
-                                /* Get the name of the image */
-        if(Vgetnamelen(img_key,&name_len)==FAIL)
-            name_len = 20; /* for "Raster Image #%d" */
-                                if((new_image->name=(char *)HDmalloc(name_len+1))==NULL)
-                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                if(Vgetname(img_key,new_image->name)==FAIL)
-                                    sprintf(new_image->name,"Raster Image #%d",(int)i);
-
-                                /* Initialize the local attribute tree */
-                                new_image->lattr_count = 0;
-                                new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
-                                if (new_image->lattree == NULL)
-                                    HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                                new_image->ri_ref=img_info[i].grp_ref;
-                                if(img_info[i].aux_ref!=0)
-                                    new_image->rig_ref=img_info[i].aux_ref;
-                                else
-                                    new_image->rig_ref=DFREF_WILDCARD;
-
-                                for(j=0; j<Vntagrefs(img_key); j++)
-                                  {
-                                      if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
-                                          continue;
-
-                                      /* parse this tag/ref pair */
-                                      switch(img_tag) {
-                                          case DFTAG_RI:    /* Regular image data */
-                                              new_image->img_tag=(uint16)img_tag;
-                                              new_image->img_ref=(uint16)img_ref;
-                                              if(SPECIALTAG(new_image->img_tag)==TRUE) {
-                                                  new_image->use_buf_drvr=1;
-                                              } /* end if */
-                                              break;
-
-                                          case DFTAG_CI:    /* Compressed image data */
-                                              new_image->img_tag=(uint16)img_tag;
-                                              new_image->img_ref=(uint16)img_ref;
-                                              new_image->use_buf_drvr=1;
-                                              new_image->use_cr_drvr=1;
-                                              break;
-
-                                          case DFTAG_LUT:   /* Palette */
-                                              new_image->lut_tag=(uint16)img_tag;
-                                              new_image->lut_ref=(uint16)img_ref;
-
-                                              /* Fill in some default palette dimension info, in case there isn't a DFTAG_LD for this palette */
-                                              if(new_image->lut_dim.dim_ref==0)
-                                                {
-                                                  new_image->lut_dim.dim_ref = DFREF_WILDCARD;
-                                                  new_image->lut_dim.xdim=256;
-                                                  new_image->lut_dim.ydim=1;
-                                                  new_image->lut_dim.ncomps=3;
-                                                  new_image->lut_dim.nt=DFNT_UINT8;
-                                                  new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                                                  new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
-                                                  new_image->lut_dim.nt_tag=DFTAG_NULL;
-                                                  new_image->lut_dim.nt_ref=DFREF_WILDCARD;
-                                                  new_image->lut_dim.comp_tag=DFTAG_NULL;
-                                                  new_image->lut_dim.comp_ref=DFREF_WILDCARD;
-                                                } /* end if */
-                                              break;
-
-                                          case DFTAG_LD:    /* Palette dimensions */
-                                              if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
-                                                {
-                                                    int16       int16var;
-                                                    uint8      *p;
-
-                                                    p = GRtbuf;
-                                                    INT32DECODE(p, new_image->lut_dim.xdim);
-                                                    INT32DECODE(p, new_image->lut_dim.ydim);
-                                                    UINT16DECODE(p, new_image->lut_dim.nt_tag);
-                                                    UINT16DECODE(p, new_image->lut_dim.nt_ref);
-                                                    INT16DECODE(p, int16var);
-                                                    new_image->lut_dim.ncomps=(int32)int16var;
-                                                    INT16DECODE(p, new_image->lut_dim.il);
-                                                    UINT16DECODE(p, new_image->lut_dim.comp_tag);
-                                                    UINT16DECODE(p, new_image->lut_dim.comp_ref);
-                                                }
-                                              else
-                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-                                               
-                                               /* read NT */
-                                              if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
-                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-
-                                              /* check for any valid NT */
-                                              if (ntstring[1] == DFNT_NONE)
-                                                  break;
-                                              
-                                              /* set NT info */
-                                              new_image->lut_dim.dim_ref = (uint16)img_ref;
-                                              new_image->lut_dim.nt = (int32)ntstring[1];
-                                              new_image->lut_dim.file_nt_subclass = (int32)ntstring[3];
-                                              if ((new_image->lut_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
-                                                    && (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)
-                                                    && (new_image->lut_dim.file_nt_subclass!= DFKgetPNSC(new_image->lut_dim.nt, DF_MT)))
-                                                  break; /* unknown subclass */
-                                              if (new_image->lut_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
-                                                {     /* if native or little endian */
-                                                    if (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                        new_image->lut_dim.nt |= DFNT_NATIVE;
-                                                    else  /* little endian */
-                                                        new_image->lut_dim.nt |= DFNT_LITEND;
-                                                }     /* end if */
-                                              break;
-
-                                          case DFTAG_ID:    /* Image description info */
-                                              if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
-                                                {
-                                                    int16       int16var;
-                                                    uint8      *p;
-
-                                                    p = GRtbuf;
-                                                    INT32DECODE(p, new_image->img_dim.xdim);
-                                                    INT32DECODE(p, new_image->img_dim.ydim);
-                                                    UINT16DECODE(p, new_image->img_dim.nt_tag);
-                                                    UINT16DECODE(p, new_image->img_dim.nt_ref);
-                                                    INT16DECODE(p, int16var);
-                                                    new_image->img_dim.ncomps=(int32)int16var;
-                                                    INT16DECODE(p, new_image->img_dim.il);
-                                                    UINT16DECODE(p, new_image->img_dim.comp_tag);
-                                                    UINT16DECODE(p, new_image->img_dim.comp_ref);
-                                                }
-                                              else
-                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-                                               
-                                               /* read NT */
-                                              if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
-                                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-
-                                              /* check for any valid NT */
-                                              if (ntstring[1] == DFNT_NONE)
-                                                  break;
-                                              
-                                              /* set NT info */
-                                              new_image->img_dim.dim_ref=(uint16)img_ref;
-                                              new_image->img_dim.nt = (int32)ntstring[1];
-                                              new_image->img_dim.file_nt_subclass = (int32)ntstring[3];
-                                              if ((new_image->img_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
-                                                    && (new_image->img_dim.file_nt_subclass!= DFNTF_PC)
-                                                    && (new_image->img_dim.file_nt_subclass!= DFKgetPNSC(new_image->img_dim.nt, DF_MT)))
-                                                  break; /* unknown subclass */
-                                              if (new_image->img_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
-                                                {     /* if native or little endian */
-                                                    if (new_image->img_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                        new_image->img_dim.nt |= DFNT_NATIVE;
-                                                    else  /* little endian */
-                                                        new_image->img_dim.nt |= DFNT_LITEND;
-                                                }     /* end if */
-                                              break;
-
-                                          case DFTAG_VH:    /* Attribute information */
-                                              {
-                                                  at_info_t *new_attr;  /* attribute to add to the set of local attributes */
-                                                  int32 at_key;         /* VData key for the attribute */
-
-                                                  if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
-                                                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                                  new_attr->ref=(uint16)img_ref;
-                                                  new_attr->index=new_image->lattr_count;
-                                                  new_attr->data_modified=FALSE;
-                                                  new_attr->new_at=FALSE;
-                                                  new_attr->data=NULL;
-                                                  if((at_key=VSattach(file_id,(int32)img_ref,"r"))!=FAIL)
-                                                    {
-                                                        char *fname;
-
-                                                        /* Make certain the attribute only has one field */
-                                                        if(VFnfields(at_key)!=1)
-                                                          {
-                                                            VSdetach(at_key);
-                                                            HDfree(new_attr);
-                                                            break;
-                                                          } /* end if */
-                                                        new_attr->nt=VFfieldtype(at_key,0);
-                                                        new_attr->len=VFfieldorder(at_key,0);
-                                                        if(new_attr->len==1)
-                                                            new_attr->len=VSelts(at_key);
-
-                                                        /* Get the name of the attribute */
-                                                        if((fname=VFfieldname(at_key,0))==NULL)
-                                                          {
-                                                            sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
-                                                            if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                                                              {
-                                                                VSdetach(at_key);
-                                                                HDfree(new_attr);
-                                                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                                              } /* end if */
-                                                            HDstrcpy(new_attr->name,textbuf);
-                                                          } /* end if */
-                                                        else
-                                                          {
-                                                            if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
-                                                              {
-                                                                VSdetach(at_key);
-                                                                HDfree(new_attr);
-                                                                HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                                                              } /* end if */
-                                                            HDstrcpy(new_attr->name,fname);
-                                                          } /* end else */
-                                                
-                                                        tbbtdins(new_image->lattree, new_attr, NULL);    /* insert the attr instance in B-tree */ 
-
-                                                        VSdetach(at_key);
-                                                    } /* end if */
-
-                                                  new_image->lattr_count++;
-                                              } /* end case */
-                                              break;
-
-                                          default:          /* Unknown tag */
-                                              break;
-                                        } /* end switch */
-                                  } /* end for */
-                              new_image->index=gr_ptr->gr_count;
-                              new_image->gr_ptr=gr_ptr; /* point up the tree */
-                              tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
-                              gr_ptr->gr_count++;
-                              Vdetach(img_key);
-                            } /* end if */
-                      } /* end case */
-                      break;
-
-                  case DFTAG_RIG:   /* Older style raster image, found in RIG */
-                      {
-                          int32       GroupID;
-                          uint16      elt_tag, elt_ref;
-                          ri_info_t *new_image; /* ptr to the image to read in */
-                          char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
-                          uint8 ntstring[4];        /* buffer to store NT info */
-                          uint8 GRtbuf[64];         /* local buffer for reading RIG info */
-
-                          /* read RIG into memory */
-                          if ((GroupID = DFdiread(file_id, DFTAG_RIG, img_info[i].grp_ref)) == FAIL)
-                              HGOTO_ERROR(DFE_READERROR, FAIL);
-
-                          if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
-                            {
-                              HDfree(img_info);   /* free offsets */
-                              Hclose(file_id);
-                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                            } /* end if */
-
-                          /* Initialize all the fields in the image structure to zeros */
-                          HDmemset(new_image,0,sizeof(ri_info_t));
-
-                          /* Get the name of the image */
-                          sprintf(textbuf,"Raster Image #%d",(int)i);
-                          if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                          HDstrcpy(new_image->name,textbuf);
-        new_image->name_generated = TRUE;
-
-                          /* Initialize the local attribute tree */
-                          new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
-                          if (new_image->lattree == NULL)
-                              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                          new_image->ri_ref=DFREF_WILDCARD;
-                          new_image->rig_ref=img_info[i].grp_ref;
-
-                          while (DFdiget(GroupID, &elt_tag, &elt_ref)!=FAIL)
-                            {     /* get next tag/ref */
-                                switch (elt_tag)
-                                  {   /* process tag/ref */
-                                      case DFTAG_RI:    /* regular image data */
-                                          new_image->img_tag=elt_tag;
-                                          new_image->img_ref=elt_ref;
-                                          if(SPECIALTAG(new_image->img_tag)==TRUE) {
-                                              new_image->use_buf_drvr=1;
-                                          } /* end if */
-                                          break;
-
-                                      case DFTAG_CI:    /* compressed image data */
-                                          new_image->img_tag=elt_tag;
-                                          new_image->img_ref=elt_ref;
-                                          new_image->use_buf_drvr=1;
-                                          new_image->use_cr_drvr=1;
-                                          break;
-
-                                      case DFTAG_LUT:   /* Palette */
-                                          new_image->lut_tag=elt_tag;
-                                          new_image->lut_ref=elt_ref;
-
-                                          /* Fill in some default palette dimension info, in case there isn't a DFTAG_LD for this palette */
-                                          if(new_image->lut_dim.dim_ref==0)
-                                            {
-                                              new_image->lut_dim.dim_ref = DFREF_WILDCARD;
-                                              new_image->lut_dim.xdim=256;
-                                              new_image->lut_dim.ydim=1;
-                                              new_image->lut_dim.ncomps=3;
-                                              new_image->lut_dim.nt=DFNT_UINT8;
-                                              new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                                              new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
-                                              new_image->lut_dim.nt_tag=DFTAG_NULL;
-                                              new_image->lut_dim.nt_ref=DFREF_WILDCARD;
-                                              new_image->lut_dim.comp_tag=DFTAG_NULL;
-                                              new_image->lut_dim.comp_ref=DFREF_WILDCARD;
-                                            } /* end if */
-                                          break;
-
-                                      case DFTAG_LD:    /* Palette dimensions */
-                                          if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
-                                            {
-                                                int16       int16var;
-                                                uint8      *p;
-
-                                                p = GRtbuf;
-                                                INT32DECODE(p, new_image->lut_dim.xdim);
-                                                INT32DECODE(p, new_image->lut_dim.ydim);
-                                                UINT16DECODE(p, new_image->lut_dim.nt_tag);
-                                                UINT16DECODE(p, new_image->lut_dim.nt_ref);
-                                                INT16DECODE(p, int16var);
-                                                new_image->lut_dim.ncomps=(int32)int16var;
-                                                INT16DECODE(p, new_image->lut_dim.il);
-                                                UINT16DECODE(p, new_image->lut_dim.comp_tag);
-                                                UINT16DECODE(p, new_image->lut_dim.comp_ref);
-                                            }
-                                          else
-                                            {
-                        DFdifree( GroupID );
-                                              HGOTO_ERROR(DFE_READERROR, FAIL);
-                                            }
-                                               
-                                           /* read NT */
-                                          if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
-                                            {
-                        DFdifree( GroupID );
-                                              HGOTO_ERROR(DFE_READERROR, FAIL);
-                                            }
-
-                                          /* check for any valid NT */
-                                          if (ntstring[1] == DFNT_NONE)
-                                              break;
-                                              
-                                          /* set NT info */
-                                          new_image->lut_dim.dim_ref = elt_ref;
-                                          new_image->lut_dim.nt = (int32)ntstring[1];
-                                          new_image->lut_dim.file_nt_subclass = (int32)ntstring[3];
-                                          if ((new_image->lut_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
-                                                && (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)
-                                                && (new_image->lut_dim.file_nt_subclass!= DFKgetPNSC(new_image->lut_dim.nt, DF_MT)))
-                                              break; /* unknown subclass */
-                                          if (new_image->lut_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
-                                            {     /* if native or little endian */
-                                                if (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                    new_image->lut_dim.nt |= DFNT_NATIVE;
-                                                else  /* little endian */
-                                                    new_image->lut_dim.nt |= DFNT_LITEND;
-                                            }     /* end if */
-                                          break;
-
-                                        case DFTAG_ID:    /* Image description info */
-                                            if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
-                                              {
-                                                  int16       int16var;
-                                                  uint8      *p;
-
-                                                  p = GRtbuf;
-                                                  INT32DECODE(p, new_image->img_dim.xdim);
-                                                  INT32DECODE(p, new_image->img_dim.ydim);
-                                                  UINT16DECODE(p, new_image->img_dim.nt_tag);
-                                                  UINT16DECODE(p, new_image->img_dim.nt_ref);
-                                                  INT16DECODE(p, int16var);
-                                                  new_image->img_dim.ncomps=(int32)int16var;
-                                                  INT16DECODE(p, new_image->img_dim.il);
-                                                  UINT16DECODE(p, new_image->img_dim.comp_tag);
-                                                  UINT16DECODE(p, new_image->img_dim.comp_ref);
-                                              }
-                                            else
-                                              {
-                          DFdifree( GroupID );
-                                                HGOTO_ERROR(DFE_GETELEM, FAIL);
-                                              }
-                                               
-                                             /* read NT */
-                                            if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
-                                              {
-                          DFdifree( GroupID );
-                                                HGOTO_ERROR(DFE_GETELEM, FAIL);
-                                              }
-
-                                            /* check for any valid NT */
-                                            if (ntstring[1] == DFNT_NONE)
-                                                break;
-                                              
-                                            /* set NT info */
-                                            new_image->img_dim.dim_ref=elt_ref;
-                                            new_image->img_dim.nt = (int32)ntstring[1];
-                                            new_image->img_dim.file_nt_subclass = (int32)ntstring[3];
-                                            if ((new_image->img_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
-                                                  && (new_image->img_dim.file_nt_subclass!= DFNTF_PC)
-                                                  && (new_image->img_dim.file_nt_subclass!= DFKgetPNSC(new_image->img_dim.nt, DF_MT)))
-                                                break; /* unknown subclass */
-                                            if (new_image->img_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
-                                              {     /* if native or little endian */
-                                                  if (new_image->img_dim.file_nt_subclass!= DFNTF_PC)   /* native */
-                                                      new_image->img_dim.nt |= DFNT_NATIVE;
-                                                  else  /* little endian */
-                                                      new_image->img_dim.nt |= DFNT_LITEND;
-                                              }     /* end if */
-                                            break;
-
-                                      default:    /* ignore unknown tags */
-                                          break;
-                                  } /* end switch */
-                            } /* end while */
-                        new_image->index=gr_ptr->gr_count;
-                        new_image->gr_ptr=gr_ptr; /* point up the tree */
-                        tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
-                        gr_ptr->gr_count++;
-                      } /* end case */
-                      break;
-
-                  case DFTAG_NULL:  /* Eldest style raster image, no grouping */
-                      {
-                          ri_info_t *new_image; /* ptr to the image to read in */
-                          char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
-                          uint8 GRtbuf[64];         /* local buffer for reading RIG info */
-
-                          if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
-                            {
-                              HDfree(img_info);   /* free offsets */
-                              Hclose(file_id);
-                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                            } /* end if */
-
-                          /* Initialize all the fields in the image structure to zeros */
-                          HDmemset(new_image,0,sizeof(ri_info_t));
-
-                          /* Get the name of the image */
-                          sprintf(textbuf,"Raster Image #%d",(int)i);
-                          if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
-                              HGOTO_ERROR(DFE_NOSPACE,FAIL);
-                          HDstrcpy(new_image->name,textbuf);
-        new_image->name_generated = TRUE;
-
-                          /* Initialize the local attribute tree */
-                          new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
-                          if (new_image->lattree == NULL)
-                              HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                          new_image->ri_ref=DFREF_WILDCARD;
+                      /* Initialize the local attribute tree */
+                      new_image->lattr_count = 0;
+                      new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
+                      if (new_image->lattree == NULL)
+                          HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                      new_image->ri_ref=img_info[i].grp_ref;
+                      if(img_info[i].aux_ref!=0)
+                          new_image->rig_ref=img_info[i].aux_ref;
+                      else
                           new_image->rig_ref=DFREF_WILDCARD;
 
-                          /* Get tag/ref for image */
-                          new_image->img_tag=img_info[i].img_tag;
-                          new_image->img_ref=img_info[i].img_ref;
+                      for(j=0; j<Vntagrefs(img_key); j++)
+                      {
+                          if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
+                              continue;
 
-                          /* Get dimension information */
-                          if (Hgetelement(file_id, DFTAG_ID8, new_image->img_ref, GRtbuf) != FAIL)
+                          /* parse this tag/ref pair */
+                          switch(img_tag)
+                          {
+                            case DFTAG_RI:    /* Regular image data */
+                                new_image->img_tag=(uint16)img_tag;
+                                new_image->img_ref=(uint16)img_ref;
+                                if(SPECIALTAG(new_image->img_tag)==TRUE)
+                                {
+                                    new_image->use_buf_drvr=1;
+                                }
+                                break;
+
+                            case DFTAG_CI:    /* Compressed image data */
+                                new_image->img_tag=(uint16)img_tag;
+                                new_image->img_ref=(uint16)img_ref;
+                                new_image->use_buf_drvr=1;
+                                new_image->use_cr_drvr=1;
+                                break;
+
+                            case DFTAG_LUT:   /* Palette */
+                                new_image->lut_tag=(uint16)img_tag;
+                                new_image->lut_ref=(uint16)img_ref;
+                                /* Fill in some default palette dimension info, in case there isn't a DFTAG_LD for this palette */
+                                if(new_image->lut_dim.dim_ref==0)
+                                {
+                                    new_image->lut_dim.dim_ref = DFREF_WILDCARD;
+                                    new_image->lut_dim.xdim=256;
+                                    new_image->lut_dim.ydim=1;
+                                    new_image->lut_dim.ncomps=3;
+                                    new_image->lut_dim.nt=DFNT_UINT8;
+                                    new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                                    new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
+                                    new_image->lut_dim.nt_tag=DFTAG_NULL;
+                                    new_image->lut_dim.nt_ref=DFREF_WILDCARD;
+                                    new_image->lut_dim.comp_tag=DFTAG_NULL;
+                                    new_image->lut_dim.comp_ref=DFREF_WILDCARD;
+                                } /* end if */
+                                break;
+
+                            case DFTAG_LD:    /* Palette dimensions */
+{
+                                if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
+                                {
+                                    int16       int16var;
+                                    uint8      *p;
+
+                                    p = GRtbuf;
+                                    INT32DECODE(p, new_image->lut_dim.xdim);
+                                    INT32DECODE(p, new_image->lut_dim.ydim);
+                                    UINT16DECODE(p, new_image->lut_dim.nt_tag);
+                                    UINT16DECODE(p, new_image->lut_dim.nt_ref);
+                                    INT16DECODE(p, int16var);
+                                    new_image->lut_dim.ncomps=(int32)int16var;
+                                    INT16DECODE(p, new_image->lut_dim.il);
+                                    UINT16DECODE(p, new_image->lut_dim.comp_tag);
+                                    UINT16DECODE(p, new_image->lut_dim.comp_ref);
+                                }
+                                else
+                                    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+                                /* read NT */
+                                if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
+                                    HGOTO_ERROR(DFE_READERROR, FAIL);
+
+                                /* check for any valid NT */
+                                if (ntstring[1] == DFNT_NONE)
+                                    break;
+
+                                /* set NT info */
+                                new_image->lut_dim.dim_ref = (uint16)img_ref;
+                                new_image->lut_dim.nt = (int32)ntstring[1];
+                                new_image->lut_dim.file_nt_subclass = (int32)ntstring[3];
+                                if ((new_image->lut_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
+                                    && (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)
+                                    && (new_image->lut_dim.file_nt_subclass!= DFKgetPNSC(new_image->lut_dim.nt, DF_MT)))
+                                    break; /* unknown subclass */
+                                if (new_image->lut_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
+                                {     /* if native or little endian */
+                                    if (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)   /* native */
+                                        new_image->lut_dim.nt |= DFNT_NATIVE;
+                                    else  /* little endian */
+                                        new_image->lut_dim.nt |= DFNT_LITEND;
+                                }     /* end if */
+}
+                                break;
+
+                            case DFTAG_ID:    /* Image description info */
                             {
-                                uint8      *p;
-                                uint16      u;
+                                at_info_t *new_attr;  /* attr to add to the local attr set */
+                                if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
+                                {
+                                    int16       int16var;
+                                    uint8      *p;
 
-                                p = GRtbuf;
-                                UINT16DECODE(p, u);
-                                new_image->img_dim.xdim=(int32)u;
-                                UINT16DECODE(p, u);
-                                new_image->img_dim.ydim=(int32)u;
-                            }   /* end if */
-                          else
-                              HGOTO_ERROR(DFE_GETELEM, FAIL);
+                                    p = GRtbuf;
+                                    INT32DECODE(p, new_image->img_dim.xdim);
+                                    INT32DECODE(p, new_image->img_dim.ydim);
+                                    UINT16DECODE(p, new_image->img_dim.nt_tag);
+                                    UINT16DECODE(p, new_image->img_dim.nt_ref);
+                                    INT16DECODE(p, int16var);
+                                    new_image->img_dim.ncomps=(int32)int16var;
+                                    INT16DECODE(p, new_image->img_dim.il);
+                                    UINT16DECODE(p, new_image->img_dim.comp_tag);
+                                    UINT16DECODE(p, new_image->img_dim.comp_ref);
+                                }
+                                else
+                                    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-                          /* only 8-bit images, so fill in rest of dim info */
-                          new_image->img_dim.dim_ref=DFREF_WILDCARD;
-                          new_image->img_dim.ncomps=1;
-                          new_image->img_dim.nt=DFNT_UINT8;
-                          new_image->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                          new_image->img_dim.il=MFGR_INTERLACE_PIXEL;
-                          new_image->img_dim.nt_tag=DFTAG_NULL;
-                          new_image->img_dim.nt_ref=DFREF_WILDCARD;
-                          new_image->img_dim.comp_tag=DFTAG_NULL;
-                          new_image->img_dim.comp_ref=DFREF_WILDCARD;
+                                /* read NT */
+                                if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
+                                    HGOTO_ERROR(DFE_READERROR, FAIL);
 
-                          /* Get palette information */
-                          if(Hexist(file_id, DFTAG_IP8, new_image->img_ref)==SUCCEED)
+                                /* check for any valid NT */
+                                if (ntstring[1] == DFNT_NONE)
+                                    break;
+
+                                /* set NT info */
+                                new_image->img_dim.dim_ref=(uint16)img_ref;
+                                new_image->img_dim.nt = (int32)ntstring[1];
+                                new_image->img_dim.file_nt_subclass = (int32)ntstring[3];
+                                if ((new_image->img_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
+                                    && (new_image->img_dim.file_nt_subclass!= DFNTF_PC)
+                                    && (new_image->img_dim.file_nt_subclass!= DFKgetPNSC(new_image->img_dim.nt, DF_MT)))
+                                    break; /* unknown subclass */
+                                if (new_image->img_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
+                                {     /* if native or little endian */
+                                    if (new_image->img_dim.file_nt_subclass!= DFNTF_PC)   /* native */
+                                        new_image->img_dim.nt |= DFNT_NATIVE;
+                                    else  /* little endian */
+                                        new_image->img_dim.nt |= DFNT_LITEND;
+                                }     /* end if */
+                            } /* end case DFTAG_ID */
+
+                            case DFTAG_VH:    /* Attribute information */
                             {
-                                new_image->lut_tag=DFTAG_IP8;
-                                new_image->lut_ref=new_image->img_ref;
+                                at_info_t *new_attr;  /* attr to add to the local attr set */
+                                int32 at_key;         /* VData key for the attribute */
 
-                                /* set palette dimensions too */
+                                if((new_attr=(at_info_t *)HDmalloc(sizeof(at_info_t)))==NULL)
+                                    HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                new_attr->ref=(uint16)img_ref;
+                                new_attr->index=new_image->lattr_count;
+                                new_attr->data_modified=FALSE;
+                                new_attr->new_at=FALSE;
+                                new_attr->data=NULL;
+                                if((at_key=VSattach(file_id,(int32)img_ref,"r"))!=FAIL)
+                                {
+                                    char *fname;
+
+                                    /* Make certain the attribute only has one field */
+                                    if(VFnfields(at_key)!=1)
+                                    {
+                                        VSdetach(at_key);
+                                        HDfree(new_attr);
+                                        break;
+                                    } /* end if */
+                                    new_attr->nt=VFfieldtype(at_key,0);
+                                    new_attr->len=VFfieldorder(at_key,0);
+                                    if(new_attr->len==1)
+                                        new_attr->len=VSelts(at_key);
+
+                                    /* Get the name of the attribute */
+                                    if((fname=VFfieldname(at_key,0))==NULL)
+                                    {
+                                        sprintf(textbuf,"Attribute #%d",(int)new_attr->index);
+                                        if((new_attr->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+                                        {
+                                            VSdetach(at_key);
+                                            HDfree(new_attr);
+                                            HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                        } /* end if */
+                                        HDstrcpy(new_attr->name,textbuf);
+                                    } /* end if */
+                                    else
+                                    {
+                                        if((new_attr->name=(char *)HDmalloc(HDstrlen(fname)+1))==NULL)
+                                        {
+                                            VSdetach(at_key);
+                                            HDfree(new_attr);
+                                            HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                                        } /* end if */
+                                        HDstrcpy(new_attr->name,fname);
+                                    } /* end else */
+                                                
+                                    tbbtdins(new_image->lattree, new_attr, NULL);    /* insert the attr instance in B-tree */ 
+
+                                    VSdetach(at_key);
+                                } /* end if */
+
+                                new_image->lattr_count++;
+
+                                break;
+                            } /* end case DFTAG_VH */
+
+                            default:          /* Unknown tag */
+                                break;
+                          } /* end switch */
+                      } /* end for */
+
+                      new_image->index=gr_ptr->gr_count;
+                      new_image->gr_ptr=gr_ptr; /* point up the tree */
+                      tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
+                      gr_ptr->gr_count++;
+                      Vdetach(img_key);
+                  } /* end if */
+              } /* end case DFTAG_VG */
+              break;
+
+              case DFTAG_RIG:   /* Older style raster image, found in RIG */
+              {
+                  int32       GroupID;
+                  uint16      elt_tag, elt_ref;
+                  ri_info_t *new_image; /* ptr to the image to read in */
+                  char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
+                  uint8 ntstring[4];        /* buffer to store NT info */
+                  uint8 GRtbuf[64];         /* local buffer for reading RIG info */
+
+                  /* read RIG into memory */
+                  if ((GroupID = DFdiread(file_id, DFTAG_RIG, img_info[i].grp_ref)) == FAIL)
+                      HGOTO_ERROR(DFE_READERROR, FAIL);
+
+                  if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
+                  {
+                      HDfree(img_info);   /* free offsets */
+                      Hclose(file_id);
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                  } /* end if */
+
+                  /* Initialize all the fields in the image structure to zeros */
+                  HDmemset(new_image,0,sizeof(ri_info_t));
+
+                  /* Get the name of the image */
+                  sprintf(textbuf,"Raster Image #%d",(int)i);
+                  if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                  HDstrcpy(new_image->name,textbuf);
+                  new_image->name_generated = TRUE;
+
+                  /* Initialize the local attribute tree */
+                  new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
+                  if (new_image->lattree == NULL)
+                      HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                  new_image->ri_ref=DFREF_WILDCARD;
+                  new_image->rig_ref=img_info[i].grp_ref;
+
+                  while (DFdiget(GroupID, &elt_tag, &elt_ref)!=FAIL)
+                  {     /* get next tag/ref */
+                      switch (elt_tag)
+                      {   /* process tag/ref */
+                        case DFTAG_RI:    /* regular image data */
+                            new_image->img_tag=elt_tag;
+                            new_image->img_ref=elt_ref;
+                            if(SPECIALTAG(new_image->img_tag)==TRUE)
+                            {
+                                new_image->use_buf_drvr=1;
+                            } /* end if */
+                            break;
+
+                        case DFTAG_CI:    /* compressed image data */
+                            new_image->img_tag=elt_tag;
+                            new_image->img_ref=elt_ref;
+                            new_image->use_buf_drvr=1;
+                            new_image->use_cr_drvr=1;
+                            break;
+
+                        case DFTAG_LUT:   /* Palette */
+                            new_image->lut_tag=elt_tag;
+                            new_image->lut_ref=elt_ref;
+
+                            /* Fill in some default palette dimension info, in case
+                               there isn't a DFTAG_LD for this palette */
+                            if(new_image->lut_dim.dim_ref==0)
+                            {
                                 new_image->lut_dim.dim_ref = DFREF_WILDCARD;
                                 new_image->lut_dim.xdim=256;
                                 new_image->lut_dim.ydim=1;
@@ -1301,21 +1125,214 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                 new_image->lut_dim.comp_tag=DFTAG_NULL;
                                 new_image->lut_dim.comp_ref=DFREF_WILDCARD;
                             } /* end if */
-                          else
-                                new_image->lut_tag=new_image->lut_ref=DFREF_WILDCARD;
+                            break;
 
-                        new_image->index=gr_ptr->gr_count;
-                        new_image->gr_ptr=gr_ptr; /* point up the tree */
-                        tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
-                        gr_ptr->gr_count++;
-                      } /* end case */
-                      break;
+                        case DFTAG_LD:    /* Palette dimensions */
+                            if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
+                            {
+                                int16       int16var;
+                                uint8      *p;
+                                p = GRtbuf;
+                                INT32DECODE(p, new_image->lut_dim.xdim);
+                                INT32DECODE(p, new_image->lut_dim.ydim);
+                                UINT16DECODE(p, new_image->lut_dim.nt_tag);
+                                UINT16DECODE(p, new_image->lut_dim.nt_ref);
+                                INT16DECODE(p, int16var);
+                                new_image->lut_dim.ncomps=(int32)int16var;
+                                INT16DECODE(p, new_image->lut_dim.il);
+                                UINT16DECODE(p, new_image->lut_dim.comp_tag);
+                                UINT16DECODE(p, new_image->lut_dim.comp_ref);
+                            }
+                            else
+                            {
+                                DFdifree(GroupID);
+                                HGOTO_ERROR(DFE_READERROR, FAIL);
+                            }
 
-                  default: /* an image which was eliminated from the list of images */
-                    break;
-                } /* end switch */
-            } /* end if */
-      } /* end for */
+                            /* read NT */
+                            if (Hgetelement(file_id, new_image->lut_dim.nt_tag, new_image->lut_dim.nt_ref, ntstring) == FAIL)
+                            {
+                                DFdifree( GroupID );
+                                HGOTO_ERROR(DFE_READERROR, FAIL);
+                            }
+
+                            /* check for any valid NT */
+                            if (ntstring[1] == DFNT_NONE)
+                                break;
+                                              
+                            /* set NT info */
+                            new_image->lut_dim.dim_ref = elt_ref;
+                            new_image->lut_dim.nt = (int32)ntstring[1];
+                            new_image->lut_dim.file_nt_subclass = (int32)ntstring[3];
+                            if ((new_image->lut_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
+                                && (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)
+                                && (new_image->lut_dim.file_nt_subclass!= DFKgetPNSC(new_image->lut_dim.nt, DF_MT)))
+                                break; /* unknown subclass */
+                            if (new_image->lut_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
+                            {     /* if native or little endian */
+                                if (new_image->lut_dim.file_nt_subclass!= DFNTF_PC)   /* native */
+                                    new_image->lut_dim.nt |= DFNT_NATIVE;
+                                else  /* little endian */
+                                    new_image->lut_dim.nt |= DFNT_LITEND;
+                            }     /* end if */
+                            break;
+
+                        case DFTAG_ID:    /* Image description info */
+                            if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
+                            {
+                                int16       int16var;
+                                uint8      *p;
+
+                                p = GRtbuf;
+                                INT32DECODE(p, new_image->img_dim.xdim);
+                                INT32DECODE(p, new_image->img_dim.ydim);
+                                UINT16DECODE(p, new_image->img_dim.nt_tag);
+                                UINT16DECODE(p, new_image->img_dim.nt_ref);
+                                INT16DECODE(p, int16var);
+                                new_image->img_dim.ncomps=(int32)int16var;
+                                INT16DECODE(p, new_image->img_dim.il);
+                                UINT16DECODE(p, new_image->img_dim.comp_tag);
+                                UINT16DECODE(p, new_image->img_dim.comp_ref);
+                            }
+                            else
+                            {
+                                DFdifree( GroupID );
+                                HGOTO_ERROR(DFE_GETELEM, FAIL);
+                            }
+
+                            /* read NT */
+                            if (Hgetelement(file_id, new_image->img_dim.nt_tag, new_image->img_dim.nt_ref, ntstring) == FAIL)
+                            {
+                                DFdifree( GroupID );
+                                HGOTO_ERROR(DFE_GETELEM, FAIL);
+                            }
+
+                            /* check for any valid NT */
+                            if (ntstring[1] == DFNT_NONE)
+                                break;
+
+                            /* set NT info */
+                            new_image->img_dim.dim_ref=elt_ref;
+                            new_image->img_dim.nt = (int32)ntstring[1];
+                            new_image->img_dim.file_nt_subclass = (int32)ntstring[3];
+                            if ((new_image->img_dim.file_nt_subclass != DFNTF_HDFDEFAULT)
+                                && (new_image->img_dim.file_nt_subclass!= DFNTF_PC)
+                                && (new_image->img_dim.file_nt_subclass!= DFKgetPNSC(new_image->img_dim.nt, DF_MT)))
+                                break; /* unknown subclass */
+                            if (new_image->img_dim.file_nt_subclass!= DFNTF_HDFDEFAULT)
+                            {     /* if native or little endian */
+                                if (new_image->img_dim.file_nt_subclass!= DFNTF_PC)   /* native */
+                                    new_image->img_dim.nt |= DFNT_NATIVE;
+                                else  /* little endian */
+                                    new_image->img_dim.nt |= DFNT_LITEND;
+                            }     /* end if */
+                            break;
+
+                        default:    /* ignore unknown tags */
+                            break;
+                      } /* end switch */
+                  } /* end while */
+                  new_image->index=gr_ptr->gr_count;
+                  new_image->gr_ptr=gr_ptr; /* point up the tree */
+                  tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
+                  gr_ptr->gr_count++;
+              } /* end case DFTAG_RIG */
+              break;
+
+              case DFTAG_NULL:  /* Eldest style raster image, no grouping */
+              {
+                  ri_info_t *new_image; /* ptr to the image to read in */
+                  char textbuf[VGNAMELENMAX + 1];    /* buffer to store the name in */
+                  uint8 GRtbuf[64];         /* local buffer for reading RIG info */
+
+                  if((new_image=(ri_info_t *)HDmalloc(sizeof(ri_info_t)))==NULL)
+                  {
+                      HDfree(img_info);   /* free offsets */
+                      Hclose(file_id);
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                  } /* end if */
+
+                  /* Initialize all the fields in the image structure to zeros */
+                  HDmemset(new_image,0,sizeof(ri_info_t));
+
+                  /* Get the name of the image */
+                  sprintf(textbuf,"Raster Image #%d",(int)i);
+                  if((new_image->name=(char *)HDmalloc(HDstrlen(textbuf)+1))==NULL)
+                      HGOTO_ERROR(DFE_NOSPACE,FAIL);
+                  HDstrcpy(new_image->name,textbuf);
+                  new_image->name_generated = TRUE;
+
+                  /* Initialize the local attribute tree */
+                  new_image->lattree = tbbtdmake(rigcompare, sizeof(int32), TBBT_FAST_INT32_COMPARE);
+                  if (new_image->lattree == NULL)
+                      HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                  new_image->ri_ref=DFREF_WILDCARD;
+                  new_image->rig_ref=DFREF_WILDCARD;
+
+                  /* Get tag/ref for image */
+                  new_image->img_tag=img_info[i].img_tag;
+                  new_image->img_ref=img_info[i].img_ref;
+
+                  /* Get dimension information */
+                  if (Hgetelement(file_id, DFTAG_ID8, new_image->img_ref, GRtbuf) != FAIL)
+                  {
+                      uint8      *p;
+                      uint16      u;
+
+                      p = GRtbuf;
+                      UINT16DECODE(p, u);
+                      new_image->img_dim.xdim=(int32)u;
+                      UINT16DECODE(p, u);
+                      new_image->img_dim.ydim=(int32)u;
+                  }   /* end if */
+                  else
+                      HGOTO_ERROR(DFE_GETELEM, FAIL);
+
+                  /* only 8-bit images, so fill in rest of dim info */
+                  new_image->img_dim.dim_ref=DFREF_WILDCARD;
+                  new_image->img_dim.ncomps=1;
+                  new_image->img_dim.nt=DFNT_UINT8;
+                  new_image->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                  new_image->img_dim.il=MFGR_INTERLACE_PIXEL;
+                  new_image->img_dim.nt_tag=DFTAG_NULL;
+                  new_image->img_dim.nt_ref=DFREF_WILDCARD;
+                  new_image->img_dim.comp_tag=DFTAG_NULL;
+                  new_image->img_dim.comp_ref=DFREF_WILDCARD;
+
+                  /* Get palette information */
+                  if(Hexist(file_id, DFTAG_IP8, new_image->img_ref)==SUCCEED)
+                  {
+                      new_image->lut_tag=DFTAG_IP8;
+                      new_image->lut_ref=new_image->img_ref;
+
+                      /* set palette dimensions too */
+                      new_image->lut_dim.dim_ref = DFREF_WILDCARD;
+                      new_image->lut_dim.xdim=256;
+                      new_image->lut_dim.ydim=1;
+                      new_image->lut_dim.ncomps=3;
+                      new_image->lut_dim.nt=DFNT_UINT8;
+                      new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
+                      new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
+                      new_image->lut_dim.nt_tag=DFTAG_NULL;
+                      new_image->lut_dim.nt_ref=DFREF_WILDCARD;
+                      new_image->lut_dim.comp_tag=DFTAG_NULL;
+                      new_image->lut_dim.comp_ref=DFREF_WILDCARD;
+                  } /* end if */
+                  else
+                      new_image->lut_tag=new_image->lut_ref=DFREF_WILDCARD;
+
+                  new_image->index=gr_ptr->gr_count;
+                  new_image->gr_ptr=gr_ptr; /* point up the tree */
+                  tbbtdins(gr_ptr->grtree, new_image, NULL);    /* insert the new image into B-tree */ 
+                  gr_ptr->gr_count++;
+              } /* end case DFTAG_NULL */
+              break;
+
+              default: /* an image which was eliminated from the list of images */
+                  break;
+            } /* end switch */
+        } /* end if */
+    } /* end for */
 
     HDfree(img_info);   /* free offsets */
 
