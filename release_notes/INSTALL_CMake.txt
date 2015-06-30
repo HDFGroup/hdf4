@@ -299,7 +299,7 @@ Notes: CMake and HDF4
       KitWare site for more information about CMake.
             
    3. Build and test results can be submitted to our CDash server at:
-                 cdash.hdfgroup.uiuc.edu. 
+                 cdash.hdfgroup.org. 
       Please read the HDF and CDash document at:
                  www.hdfgroup.org/CDash/HowToSubmit. 
             
