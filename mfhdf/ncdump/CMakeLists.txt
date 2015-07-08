@@ -23,7 +23,7 @@ set (ncdump_SRCS
     ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/vardata.c
     ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
 )
-  
+
 add_executable (ncdump ${ncdump_SRCS})
 TARGET_C_PROPERTIES (ncdump STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -52,10 +52,7 @@ INSTALL_PROGRAM_PDB (ncdump ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         ncdump
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )
 
 

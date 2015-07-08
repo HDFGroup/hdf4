@@ -33,7 +33,7 @@ set (hrepack_SRCS
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vs.c
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_dim.c
 )
-  
+
 add_executable (hrepack ${hrepack_SRCS})
 TARGET_C_PROPERTIES (hrepack STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -71,8 +71,5 @@ INSTALL_PROGRAM_PDB (hrepack ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         hrepack hrepack_check
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

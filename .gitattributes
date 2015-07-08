@@ -1,4 +1,5 @@
 * text=auto !eol
+config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/hdf4-config.cmake.in -text
 config/cmake/patch.xml -text
 hdf/test/test_files/8bit.dat -text
