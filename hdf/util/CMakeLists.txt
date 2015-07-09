@@ -160,10 +160,7 @@ if (HDF4_BUILD_TOOLS)
       TARGETS
           hdfls
           hdfed
-      RUNTIME DESTINATION
-          ${HDF4_INSTALL_TOOLS_BIN_DIR}
-      COMPONENT
-          toolsapplications
+      RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
   )
 endif (HDF4_BUILD_TOOLS)
 
