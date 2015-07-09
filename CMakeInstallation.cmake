@@ -381,7 +381,6 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
       )
       install (
           FILES ${HDF4_BINARY_DIR}/CMakeFiles/PkgInfo
-                ${HDF4_BINARY_DIR}/CMakeFiles/version.plist
           DESTINATION ..
       )
     endif (HDF4_PACK_MACOSX_FRAMEWORK AND HDF4_BUILD_FRAMEWORKS)
