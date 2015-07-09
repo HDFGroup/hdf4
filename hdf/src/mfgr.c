@@ -189,6 +189,13 @@ static TBBT_TREE *gr_tree=NULL;
 /* Whether we've installed the library termination function yet for this interface */
 PRIVATE intn library_terminate = FALSE;
 
+typedef struct image_info_struct {
+    uint16 grp_tag,grp_ref;         /* tag/ref of the group the image is in */
+    uint16 img_tag,img_ref;         /* tag/ref of the image itself */
+    uint16 aux_ref;                 /* ref of aux. info about an image */
+    int32 offset;                   /* offset of the image data */
+} imginfo_t;
+
 PRIVATE intn GRIupdatemeta(int32 hdf_file_id,ri_info_t *img_ptr);
 
 PRIVATE intn GRIupdateRIG(int32 hdf_file_id,ri_info_t *img_ptr);
@@ -437,6 +444,26 @@ New_grfile(HFILEID f)
     return(g);
 } /* end New_grfile() */
 
+/* -------------------------- Store_imginfo ------------------------ */
+/*
+   Stores information into the image_info_struct.
+
+   Added to refactor repeated code. -BMR, Jun 7, 2015
+ */
+PRIVATE void
+Store_imginfo(
+        imginfo_t *imginfo,
+        uint16 grp_tag,
+        uint16 grp_ref,
+        uint16 img_tag,
+        uint16 img_ref)
+{
+    imginfo->grp_tag=(uint16)grp_tag;
+    imginfo->grp_ref=(uint16)grp_ref;
+    imginfo->img_tag=(uint16)img_tag;
+    imginfo->img_ref=(uint16)img_ref;
+} /* end Store_imginfo() */
+
 /*--------------------------------------------------------------------------
  NAME
     GRIget_image_list
@@ -471,14 +498,9 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     intn        curr_image;     /* current image gathering information about */
     intn        nimages;        /* total number of potential images */
     int32       nri, nci, nri8, nci8, nii8, nvg;   /* number of RIs, CIs, RI8s, CI8s & II8s & Vgroups */
-    struct image_info {
-        uint16 grp_tag,grp_ref;         /* tag/ref of the group the image is in */
-        uint16 img_tag,img_ref;         /* tag/ref of the image itself */
-        uint16 aux_ref;                 /* ref of aux. info about an image */
-        int32 offset;                   /* offset of the image data */
-    } *img_info;
     uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
     int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
+    imginfo_t *img_info;        /* image info list */
     intn        i, j;           /* local counting variable */
     intn        ret_value = SUCCEED;
 
@@ -515,9 +537,9 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
       }
 
     /* Get space to store the image offsets */
-    if ((img_info = (struct image_info *) HDmalloc(nimages * sizeof(struct image_info))) == NULL)
+    if ((img_info = (imginfo_t *) HDmalloc(nimages * sizeof(imginfo_t))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    HDmemset(img_info,0,(size_t)nimages*sizeof(struct image_info));    
+    HDmemset(img_info, 0, (size_t)nimages * sizeof(imginfo_t));
 
     /* search through the GR group for raster images & global attributes */
     curr_image = 0;
@@ -552,15 +574,14 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                     {
                                         if(Vgettagref(img_key,j,&img_tag,&img_ref)==FAIL)
                                             continue;
-                                        /* Make sure the tag is correct, then store the
-                                           image's info and the tag/ref of the vgroup that
-                                           represents the image into the local struct */
+                                        /* Make sure the tag is correct, then
+                                           store the image's info and the
+                                           tag/ref of the vgroup that represents
+                                           the image into image_info_struct and
+                                           increment image count */
                                         if(img_tag==DFTAG_RI || img_tag==DFTAG_CI)
                                         {
-                                            img_info[curr_image].grp_tag=(uint16)grp_tag;
-                                            img_info[curr_image].grp_ref=(uint16)grp_ref;
-                                            img_info[curr_image].img_tag=(uint16)img_tag;
-                                            img_info[curr_image].img_ref=(uint16)img_ref;
+                                            Store_imginfo(&img_info[curr_image], grp_tag, grp_ref, img_tag, img_ref);
                                             img_info[curr_image].offset = Hoffset(file_id, (uint16)img_tag, (uint16)img_ref);     /* store offset */
                                             curr_image++;
                                             break;
@@ -661,10 +682,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                   {   
                       if (elt_tag != DFTAG_NULL && elt_ref != DFREF_NONE) /* make certain we found an image */
                         {     /* store the information about the image */
-                            img_info[curr_image].grp_tag=DFTAG_RIG;
-                            img_info[curr_image].grp_ref=find_ref;
-                            img_info[curr_image].img_tag=elt_tag;
-                            img_info[curr_image].img_ref=elt_ref;
+                            Store_imginfo(&img_info[curr_image], DFTAG_RIG, find_ref, elt_tag, elt_ref);
                             img_info[curr_image].offset = Hoffset(file_id, elt_tag, elt_ref);     /* store offset */
                             curr_image++;
                         }     /* end if */
@@ -676,10 +694,8 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     find_tag = find_ref = 0;
     while (Hfind(file_id, DFTAG_RI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
       {
-          img_info[curr_image].grp_tag=DFTAG_NULL;
-          img_info[curr_image].grp_ref=DFREF_WILDCARD;
-          img_info[curr_image].img_tag=find_tag;
-          img_info[curr_image].img_ref=find_ref;
+          /* Note: need to document why DFTAG_NULL instead of DFTAG_RI8 */
+          Store_imginfo(&img_info[curr_image], DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
           img_info[curr_image].offset = find_off;   /* store offset */
           curr_image++;
       }     /* end while */
@@ -688,10 +704,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     find_tag = find_ref = 0;
     while (Hfind(file_id, DFTAG_CI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
       {
-          img_info[curr_image].grp_tag=DFTAG_NULL;
-          img_info[curr_image].grp_ref=DFREF_WILDCARD;
-          img_info[curr_image].img_tag=find_tag;
-          img_info[curr_image].img_ref=find_ref;
+          Store_imginfo(&img_info[curr_image], DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
           img_info[curr_image].offset = find_off;   /* store offset */
           curr_image++;
       } /* end while */
@@ -700,10 +713,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     find_tag = find_ref = 0;
     while (Hfind(file_id, DFTAG_II8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
       {
-          img_info[curr_image].grp_tag=DFTAG_NULL;
-          img_info[curr_image].grp_ref=DFREF_WILDCARD;
-          img_info[curr_image].img_tag=find_tag;
-          img_info[curr_image].img_ref=find_ref;
+          Store_imginfo(&img_info[curr_image], DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
           img_info[curr_image].offset = find_off;   /* store offset */
           curr_image++;
       } /* end while */
