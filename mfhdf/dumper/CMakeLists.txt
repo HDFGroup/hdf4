@@ -18,7 +18,7 @@ set (hdp_SRCS
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/hdp_vg.c
     ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/show.c
 )
-  
+
 add_executable (hdp ${hdp_SRCS})
 if (WIN32)
   add_definitions (-DDOS_FS)
@@ -56,8 +56,5 @@ INSTALL_PROGRAM_PDB (hdp ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         hdp
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

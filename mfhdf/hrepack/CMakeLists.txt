@@ -33,7 +33,7 @@ set (hrepack_SRCS
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_vs.c
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_dim.c
 )
-  
+
 add_executable (hrepack ${hrepack_SRCS})
 TARGET_C_PROPERTIES (hrepack ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -42,7 +42,7 @@ else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
 TARGET_NAMING (hrepack ${LIB_TYPE})
-  
+
 add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
 TARGET_C_PROPERTIES (hrepack_check ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -71,8 +71,5 @@ INSTALL_PROGRAM_PDB (hrepack ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         hrepack hrepack_check
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

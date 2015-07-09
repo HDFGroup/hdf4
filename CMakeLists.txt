@@ -1,10 +1,10 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.1.0)
 PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
 # Instructions for use : Normal Build
 #
-# For standard build of HDF4 libraries,tests and tools. 
+# For standard build of HDF4 libraries,tests and tools.
 # Run cmake using the HDF4 source tree to generate a build tree.
 # Enable/Disable options according to requirements and
 # set CMAKE_INSTALL_PREFIX to the required install path.
@@ -13,7 +13,7 @@ PROJECT (HDF4 C CXX)
 #-----------------------------------------------------------------------------
 # Instructions for use : Sub-Project Build
 #
-# To include HDF4 as a sub-project within another project. 
+# To include HDF4 as a sub-project within another project.
 # Set HDF4_EXTERNALLY_CONFIGURED to 1 in the parent project and
 # supply values for the following variables...
 #
@@ -29,7 +29,7 @@ PROJECT (HDF4 C CXX)
 #   dependencies to this variable so that external projects pick them up
 #
 # HDF4_EXTERNAL_LIB_PREFIX :
-#   If the parent project needs to install hdf libraries, but avoid 
+#   If the parent project needs to install hdf libraries, but avoid
 #   name conflicts with system versions, then a prefix may be added
 #   to ensure that the correct versions configured are used.
 #
@@ -52,8 +52,8 @@ PROJECT (HDF4 C CXX)
 #   # Setup all necessary overrides for zlib so that HDF4 uses our
 #   # internally compiled zlib rather than any other version
 #   if (HDF4_ENABLE_Z_LIB_SUPPORT)
-#    # We must tell the main HDF4 library that it depends on our zlib 
-#     set (HDF4_LIB_DEPENDENCIES prjzlib)    
+#    # We must tell the main HDF4 library that it depends on our zlib
+#     set (HDF4_LIB_DEPENDENCIES prjzlib)
 #     # Override the zlib header file
 #     if (PRJ_USE_SYSTEM_ZLIB)
 #       set (H4_ZLIB_HEADER "zlib.h")
@@ -64,11 +64,11 @@ PROJECT (HDF4 C CXX)
 #       set (ZLIB_LIBRARIES prjzlib)
 #     endif (PRJ_USE_SYSTEM_ZLIB)
 #  endif (HDF4_ENABLE_Z_LIB_SUPPORT)
-#   
+#
 #   # Add the sub project
 #   add_subdirectory (Utilities/hdf4.2.5)
 #   # Add the HDF4 dirs to our include path
-#   set (HDF4_INCLUDE_DIR 
+#   set (HDF4_INCLUDE_DIR
 #       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/hdf/src
 #       ${PROJECT_BINARY_DIR}/Utilities/hdf4.2.5
 #       ${PROJECT_SOURCE_DIR}/Utilities/hdf4.2.5/mfhdf/libsrc
@@ -164,6 +164,15 @@ if (NOT HDF4_INSTALL_INCLUDE_DIR)
 endif (NOT HDF4_INSTALL_INCLUDE_DIR)
 if (NOT HDF4_INSTALL_DATA_DIR)
   if (NOT WIN32)
+    if (APPLE)
+      option (HDF4_BUILD_FRAMEWORKS "Create a Mac OSX Framework" OFF)
+      if (HDF4_BUILD_FRAMEWORKS)
+        set (HDF4_INSTALL_EXTRA_DIR ../SharedSupport)
+      else (HDF4_BUILD_FRAMEWORKS)
+        set (HDF4_INSTALL_EXTRA_DIR share)
+      endif (HDF4_BUILD_FRAMEWORKS)
+      set (HDF4_INSTALL_FWRK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
+    endif (APPLE)
     set (HDF4_INSTALL_DATA_DIR share)
     set (HDF4_INSTALL_CMAKE_DIR share/cmake)
   else (NOT WIN32)
@@ -301,7 +310,7 @@ option (HDF4_ENABLE_COVERAGE "Enable code coverage for Libraries and Programs" O
 if (HDF4_ENABLE_COVERAGE)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
-    set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")   
+    set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
 endif (HDF4_ENABLE_COVERAGE)
 
 #-----------------------------------------------------------------------------
@@ -309,18 +318,18 @@ endif (HDF4_ENABLE_COVERAGE)
 #-----------------------------------------------------------------------------
 option (HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols" ON)
 if (HDF4_ENABLE_DEPRECATED_SYMBOLS)
-  set (H4_NO_DEPRECATED_SYMBOLS 0)   
+  set (H4_NO_DEPRECATED_SYMBOLS 0)
 else (HDF4_ENABLE_DEPRECATED_SYMBOLS)
-  set (H4_NO_DEPRECATED_SYMBOLS 1)   
+  set (H4_NO_DEPRECATED_SYMBOLS 1)
 endif (HDF4_ENABLE_DEPRECATED_SYMBOLS)
 
 #-----------------------------------------------------------------------------
 # Include the main src and config directories
 #-----------------------------------------------------------------------------
 set (HDF4_INCLUDE_DIRECTORIES
-    ${HDF4_HDFSOURCE_DIR} 
-    ${HDF4_MFHDFSOURCE_DIR} 
-    ${HDF4_SOURCE_DIR} 
+    ${HDF4_HDFSOURCE_DIR}
+    ${HDF4_MFHDFSOURCE_DIR}
+    ${HDF4_SOURCE_DIR}
     ${HDF4_BINARY_DIR}
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
@@ -440,7 +449,7 @@ if (HDF4_ENABLE_PARALLEL)
     # MPI checks, only do these if MPI_C_FOUND is true, otherwise they always fail
     # and once set, they are cached as false and not regenerated
     set (CMAKE_REQUIRED_LIBRARIES "${MPI_C_LIBRARIES}" )
-    CHECK_FUNCTION_EXISTS (MPI_File_get_size H4_HAVE_MPI_GET_SIZE) 
+    CHECK_FUNCTION_EXISTS (MPI_File_get_size H4_HAVE_MPI_GET_SIZE)
     # Used by Fortran + MPI
     CHECK_SYMBOL_EXISTS (MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Comm)
     CHECK_SYMBOL_EXISTS (MPI_Info_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Info)
@@ -478,7 +487,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
     if (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
       PACKAGE_ZLIB_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
     endif (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
-    
+
     if (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
       PACKAGE_SZIP_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
     endif (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)

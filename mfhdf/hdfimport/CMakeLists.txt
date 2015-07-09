@@ -24,7 +24,7 @@ endif (HDF4_BUILD_XDR_LIB)
 set (hdfimport_SRCS
     ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.c
 )
-  
+
 add_executable (hdfimport ${hdfimport_SRCS})
 TARGET_C_PROPERTIES (hdfimport ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -53,8 +53,5 @@ INSTALL_PROGRAM_PDB (hdfimport ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         hdfimport
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

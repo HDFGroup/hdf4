@@ -30,7 +30,7 @@ set (hdiff_SRCS
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff_dim.c
     ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
 )
-  
+
 add_executable(hdiff ${hdiff_SRCS})
 TARGET_C_PROPERTIES (hdiff ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -59,8 +59,5 @@ INSTALL_PROGRAM_PDB (hdiff ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         hdiff
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

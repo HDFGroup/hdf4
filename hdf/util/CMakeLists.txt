@@ -21,7 +21,7 @@ if (HDF4_BUILD_TOOLS)
       ${HDF4_HDF_UTIL_SOURCE_DIR}/he_file.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/he_main.c
   )
-  
+
   add_executable (hdfed ${hdfed_SRCS})
   TARGET_NAMING (hdfed ${LIB_TYPE})
   TARGET_C_PROPERTIES (hdfed ${LIB_TYPE} " " " ")
@@ -34,7 +34,7 @@ if (HDF4_BUILD_UTILS)
       ${HDF4_HDF_UTIL_SOURCE_DIR}/hdf2gif.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfgifwr.c
   )
-  
+
   add_executable (hdf2gif ${hdf2gif_SRCS})
   TARGET_NAMING (hdf2gif ${LIB_TYPE})
   TARGET_C_PROPERTIES (hdf2gif ${LIB_TYPE} " " " ")
@@ -48,7 +48,7 @@ if (HDF4_BUILD_UTILS)
       ${HDF4_HDF_UTIL_SOURCE_DIR}/decompress.c
       ${HDF4_HDF_UTIL_SOURCE_DIR}/writehdf.c
  )
-  
+
   add_executable (gif2hdf ${gif2hdf_SRCS})
   TARGET_NAMING (gif2hdf ${LIB_TYPE})
   TARGET_C_PROPERTIES (gif2hdf ${LIB_TYPE} " " " ")
@@ -160,10 +160,7 @@ if (HDF4_BUILD_TOOLS)
       TARGETS
           hdfls
           hdfed
-      RUNTIME DESTINATION
-          ${HDF4_INSTALL_TOOLS_BIN_DIR}
-      COMPONENT
-          toolsapplications
+      RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
   )
 endif (HDF4_BUILD_TOOLS)
 
@@ -184,7 +181,7 @@ if (HDF4_BUILD_UTILS)
   INSTALL_PROGRAM_PDB (ristosds ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (vmake ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
   INSTALL_PROGRAM_PDB (vshow ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
-  
+
   INSTALL (
       TARGETS
           gif2hdf
@@ -203,9 +200,6 @@ if (HDF4_BUILD_UTILS)
           ristosds
           vmake
           vshow
-      RUNTIME DESTINATION
-          ${HDF4_INSTALL_UTILS_BIN_DIR}
-      COMPONENT
-          utilsapplications
+      RUNTIME DESTINATION ${HDF4_INSTALL_UTILS_BIN_DIR} COMPONENT utilsapplications
   )
 endif (HDF4_BUILD_UTILS)

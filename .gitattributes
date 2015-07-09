@@ -1,5 +1,6 @@
 * text=auto !eol
 bin/bbrelease -text
+config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/patch.xml -text
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text

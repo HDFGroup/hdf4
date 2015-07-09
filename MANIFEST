@@ -1032,6 +1032,7 @@
 
 ./config/cmake/cacheinit.cmake
 ./config/cmake/ConfigureChecks.cmake
+./config/cmake/CPack.Info.plist.in
 ./config/cmake/CTestCustom.cmake
 ./config/cmake/FindHDF4.cmake.in
 ./config/cmake/h4config.h.in

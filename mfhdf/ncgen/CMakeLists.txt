@@ -36,7 +36,7 @@ set (ncgen_SRCS
 if (WIN32)
   set (ncgen_SRCS ${ncgen_SRCS} ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c)
 endif (WIN32)
- 
+
 add_executable (ncgen ${ncgen_SRCS})
 TARGET_C_PROPERTIES (ncgen ${LIB_TYPE} " " " ")
 if (HDF4_BUILD_XDR_LIB)
@@ -64,8 +64,5 @@ INSTALL_PROGRAM_PDB (ncgen ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         ncgen
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

@@ -4,10 +4,10 @@ PROJECT (HDF4_HDF_FORTRAN C CXX Fortran)
 #-----------------------------------------------------------------------------
 # Make sure generated files and modules are picked up correctly
 #-----------------------------------------------------------------------------
-INCLUDE_DIRECTORIES ( 
+INCLUDE_DIRECTORIES (
     ${HDF4_HDF_BINARY_DIR}
 )
-  
+
 set (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDFSOURCE_DIR}/dfanf.c
     ${HDF4_HDFSOURCE_DIR}/dff.c
@@ -24,7 +24,7 @@ set (HDF4_HDF_SRC_CSTUB_FSRCS
     ${HDF4_HDFSOURCE_DIR}/vattrf.c
     ${HDF4_HDFSOURCE_DIR}/vgf.c
 )
-set_source_files_properties (${HDF4_HDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C) 
+set_source_files_properties (${HDF4_HDF_SRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C)
 
 set (HDF4_HDF_SRC_FHDRS
     ${HDF4_HDFSOURCE_DIR}/dffunc.inc
@@ -56,20 +56,20 @@ if (WIN32)
   set_property (TARGET ${HDF4_SRC_FCSTUB_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
 endif (WIN32)
 
-set (HDF4_F_FORTRAN_SRCS 
-    ${HDF4_HDFSOURCE_DIR}/df24ff.f  
-    ${HDF4_HDFSOURCE_DIR}/dfanff.f 
-    ${HDF4_HDFSOURCE_DIR}/dfpff.f 
+set (HDF4_F_FORTRAN_SRCS
+    ${HDF4_HDFSOURCE_DIR}/df24ff.f
+    ${HDF4_HDFSOURCE_DIR}/dfanff.f
+    ${HDF4_HDFSOURCE_DIR}/dfpff.f
     ${HDF4_HDFSOURCE_DIR}/dfr8ff.f
-    ${HDF4_HDFSOURCE_DIR}/dfsdff.f 
+    ${HDF4_HDFSOURCE_DIR}/dfsdff.f
     ${HDF4_HDFSOURCE_DIR}/dfufp2iff.f
-    ${HDF4_HDFSOURCE_DIR}/dfff.f 
-    ${HDF4_HDFSOURCE_DIR}/hfileff.f 
+    ${HDF4_HDFSOURCE_DIR}/dfff.f
+    ${HDF4_HDFSOURCE_DIR}/hfileff.f
     ${HDF4_HDFSOURCE_DIR}/mfgrff.f
-    ${HDF4_HDFSOURCE_DIR}/vattrff.f 
-    ${HDF4_HDFSOURCE_DIR}/vgff.f 
+    ${HDF4_HDFSOURCE_DIR}/vattrff.f
+    ${HDF4_HDFSOURCE_DIR}/vgff.f
 )
-set_source_files_properties (${HDF4_F_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran) 
+set_source_files_properties (${HDF4_F_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran)
 
 #-----------------------------------------------------------------------------
 add_library (${HDF4_SRC_FORTRAN_LIB_TARGET} ${LIB_TYPE} ${HDF4_F_FORTRAN_SRCS})
@@ -101,7 +101,7 @@ endif (${LIB_TYPE} MATCHES "SHARED")
 if (WIN32)
   set_property (TARGET ${HDF4_SRC_FORTRAN_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
 endif (WIN32)
-  
+
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
 endif (BUILD_TESTING)
@@ -132,16 +132,16 @@ if (HDF4_EXPORTED_TARGETS)
     INSTALL_TARGET_PDB (${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} fortlibraries)
     #INSTALL_TARGET_PDB (${HDF4_SRC_FORTRAN_LIB_TARGET} ${HDF4_INSTALL_LIB_DIR} fortlibraries)
   endif (BUILD_SHARED_LIBS)
-  
+
   INSTALL (
-      TARGETS 
+      TARGETS
           ${HDF4_SRC_FCSTUB_LIB_TARGET}
           ${HDF4_SRC_FORTRAN_LIB_TARGET}
       EXPORT
           ${HDF4_EXPORTED_TARGETS}
-      LIBRARY DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT fortlibraries 
+      LIBRARY DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT fortlibraries
       ARCHIVE DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT fortlibraries
       RUNTIME DESTINATION ${HDF4_INSTALL_BIN_DIR} COMPONENT fortlibraries
+      FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT fortlibraries
   )
 endif (HDF4_EXPORTED_TARGETS)
-    

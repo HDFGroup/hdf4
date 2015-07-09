@@ -22,6 +22,18 @@ macro (H4_SET_LIB_OPTIONS libtarget libname libtype)
           BUILD_WITH_INSTALL_RPATH ${HDF4_BUILD_WITH_INSTALL_NAME}
       )
     endif (HDF4_BUILD_WITH_INSTALL_NAME)
+    if (HDF4_BUILD_FRAMEWORKS)
+      if (${libtype} MATCHES "SHARED")
+        # adapt target to build frameworks instead of dylibs
+        set_target_properties(${libtarget} PROPERTIES
+            XCODE_ATTRIBUTE_INSTALL_PATH "@rpath"
+            FRAMEWORK TRUE
+            FRAMEWORK_VERSION ${HDF4_PACKAGE_VERSION_MAJOR}
+            MACOSX_FRAMEWORK_IDENTIFIER org.hdfgroup.${libtarget}
+            MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${HDF4_PACKAGE_VERSION_MAJOR}
+            MACOSX_FRAMEWORK_BUNDLE_VERSION ${HDF4_PACKAGE_VERSION_MAJOR})
+      endif (${libtype} MATCHES "SHARED")
+    endif (HDF4_BUILD_FRAMEWORKS)
   endif (APPLE)
 
 endmacro (H4_SET_LIB_OPTIONS)
