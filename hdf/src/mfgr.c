@@ -464,6 +464,40 @@ Store_imginfo(
     imginfo->img_ref=(uint16)img_ref;
 } /* end Store_imginfo() */
 
+/* -------------------------- Get_oldimgs ------------------------ */
+/*
+   Find all images of tag searched_tag in the file and store their
+   information in the list of image_info_structs.  The stored information
+   include the image's tag/ref, DFTAG_NULL/DFREF_WILDCARD for the group's
+   tag/ref, and the image's offset in the file.
+
+   Added to refactor repeated code. -BMR, Jul 13, 2015
+ */
+PRIVATE intn
+Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
+{
+    uint16 find_tag, find_ref;
+    int32 find_off, find_len;
+    intn num_imgs = 0;
+
+    find_tag = find_ref = 0;
+    find_off = find_len = 0;
+
+    imginfo_t *ptr = img_info;
+
+    while (Hfind(file_id, searched_tag, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
+    {
+        // DFTAG_NULL is passed in for parent group because old images don't
+        // have group structure.
+        Store_imginfo(ptr, DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
+        ptr->offset = find_off;   /* store offset */
+        num_imgs++;
+        ptr++;
+    }   /* end while */
+    return num_imgs;
+} /* end Get_oldimgs() */
+
+
 /*--------------------------------------------------------------------------
  NAME
     GRIget_image_list
@@ -497,6 +531,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
     uint16      gr_ref;         /* ref # of the Vgroup containing new-style RIs */
     intn        curr_image;     /* current image gathering information about */
     intn        nimages;        /* total number of potential images */
+    intn        noldimages;     /* count of old imgs returned by Get_oldimgs */
     int32       nri, nci, nri8, nci8, nii8, nvg;   /* number of RIs, CIs, RI8s, CI8s & II8s & Vgroups */
     uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
     int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
@@ -691,32 +726,16 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
       } /* end while */
 
     /* go through the RI8s */
-    find_tag = find_ref = 0;
-    while (Hfind(file_id, DFTAG_RI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
-      {
-          /* Note: need to document why DFTAG_NULL instead of DFTAG_RI8 */
-          Store_imginfo(&img_info[curr_image], DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
-          img_info[curr_image].offset = find_off;   /* store offset */
-          curr_image++;
-      }     /* end while */
+    noldimages = Get_oldimgs(file_id, &img_info[curr_image], DFTAG_RI8);
+    curr_image = curr_image + noldimages;
 
     /* go through the CI8s */
-    find_tag = find_ref = 0;
-    while (Hfind(file_id, DFTAG_CI8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
-      {
-          Store_imginfo(&img_info[curr_image], DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
-          img_info[curr_image].offset = find_off;   /* store offset */
-          curr_image++;
-      } /* end while */
+    noldimages = Get_oldimgs(file_id, &img_info[curr_image], DFTAG_CI8);
+    curr_image = curr_image + noldimages;
 
     /* go through the II8s */
-    find_tag = find_ref = 0;
-    while (Hfind(file_id, DFTAG_II8, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
-      {
-          Store_imginfo(&img_info[curr_image], DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
-          img_info[curr_image].offset = find_off;   /* store offset */
-          curr_image++;
-      } /* end while */
+    noldimages = Get_oldimgs(file_id, &img_info[curr_image], DFTAG_II8);
+    curr_image = curr_image + noldimages;
 
     /* Eliminate duplicate images by using the offset of the image data */
     /* Here's a table for how the images will be eliminated: */
