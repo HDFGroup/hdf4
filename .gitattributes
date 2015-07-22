@@ -1,4 +1,5 @@
 * text=auto !eol
+bin/bbrelease -text
 config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/hdf4-config.cmake.in -text
 config/cmake/patch.xml -text

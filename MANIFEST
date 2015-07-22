@@ -37,6 +37,7 @@
 ./m4/lt~obsolete.m4
 ./m4/ltoptions.m4
 
+./bin/bbrelease       _DO_NOT_DISTRIBUTE_
 ./bin/chkmanifest
 ./bin/cmakehdf4
 ./bin/compile
@@ -1031,6 +1032,7 @@
 
 ./config/cmake/cacheinit.cmake
 ./config/cmake/ConfigureChecks.cmake
+./config/cmake/CPack.Info.plist.in
 ./config/cmake/CTestCustom.cmake
 ./config/cmake/FindHDF4.cmake.in
 ./config/cmake/h4config.h.in
