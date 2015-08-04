@@ -541,7 +541,9 @@ endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT 
 
 if (HDF4_BUILD_XDR_LIB)
   add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
-  add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  if (BUILD_SHARED_LIBS)
+    add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  endif (BUILD_SHARED_LIBS)
 endif (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
