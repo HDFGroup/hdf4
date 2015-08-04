@@ -2,6 +2,8 @@
 /HDF4-C-Trunk.cmake
 /atbuild
 /autom4te.cache
+bin/reconfigure.local
+bin/reconfigure.system
 /build
 /build*
 /buildat
