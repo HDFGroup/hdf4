@@ -79,13 +79,13 @@
   )
   
   add_executable (hdfimporttest ${hdfimporttest_SRCS})
-  TARGET_C_PROPERTIES (hdfimporttest ${LIB_TYPE} " " " ")
+  TARGET_C_PROPERTIES (hdfimporttest STATIC " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (hdfimporttest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)
     target_link_libraries (hdfimporttest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   endif (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (hdfimporttest ${LIB_TYPE})
+  TARGET_NAMING (hdfimporttest STATIC)
 
   #-- gen_sds_floats
   set (gen_sds_floats_SRCS
@@ -93,13 +93,13 @@
   )
   
   add_executable (gen_sds_floats ${gen_sds_floats_SRCS})
-  TARGET_C_PROPERTIES (gen_sds_floats ${LIB_TYPE} " " " ")
+  TARGET_C_PROPERTIES (gen_sds_floats STATIC " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (gen_sds_floats ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
   else (HDF4_BUILD_XDR_LIB)
     target_link_libraries (gen_sds_floats ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   endif (HDF4_BUILD_XDR_LIB)
-  TARGET_NAMING (gen_sds_floats ${LIB_TYPE})
+  TARGET_NAMING (gen_sds_floats STATIC)
   
 ##############################################################################
 ##############################################################################

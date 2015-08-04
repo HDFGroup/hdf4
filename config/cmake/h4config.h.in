@@ -7,12 +7,6 @@
    libraries. */
 #cmakedefine H4_F77_DUMMY_MAIN @H4_F77_DUMMY_MAIN@
 
-/* Defined if HDF4 was built with CMake AND build as a shared library */
-#cmakedefine H4_BUILT_AS_DYNAMIC_LIB @H4_BUILT_AS_DYNAMIC_LIB@
-
-/* Defined if HDF4 was built with CMake AND build as a static library */
-#cmakedefine H4_BUILT_AS_STATIC_LIB @H4_BUILT_AS_STATIC_LIB@
-
 /* Define to a macro mangling the given C identifier (in lower and upper
    case), which must not contain underscores, for linking with Fortran. */
 #define @H4_F77_FUNC@
