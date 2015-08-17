@@ -3,6 +3,26 @@ bin/bbrelease -text
 config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/hdf4-config.cmake.in -text
 config/cmake/patch.xml -text
+config/cmake_ext_mod/CTestCustom.cmake -text
+config/cmake_ext_mod/CheckTypeSize.cmake -text
+config/cmake_ext_mod/ConfigureChecks.cmake -text
+config/cmake_ext_mod/FindMPI.cmake -text
+config/cmake_ext_mod/FindSZIP.cmake -text
+config/cmake_ext_mod/GetTimeOfDayTest.cpp -text
+config/cmake_ext_mod/HDFCXXTests.cpp -text
+config/cmake_ext_mod/HDFLibMacros.cmake -text
+config/cmake_ext_mod/HDFMacros.cmake -text
+config/cmake_ext_mod/HDFTests.c -text
+config/cmake_ext_mod/HDFUseFortran.cmake -text
+config/cmake_ext_mod/NSIS.InstallOptions.ini.in -text
+config/cmake_ext_mod/NSIS.template.in -text
+config/cmake_ext_mod/grepTest.cmake -text
+config/cmake_ext_mod/hdf.bmp -text svneol=unset#image/x-ms-bmp
+config/cmake_ext_mod/hdf.icns -text svneol=unset#image/tiff
+config/cmake_ext_mod/hdf.ico -text svneol=unset#image/x-icon
+config/cmake_ext_mod/prunTest.cmake -text
+config/cmake_ext_mod/runTest.cmake -text
+config/cmake_ext_mod/version.plist.in -text svneol=unset#application/xml
 hdf/test/test_files/8bit.dat -text
 hdf/test/test_files/bitio.dat -text
 hdf/test/test_files/gr_r24.dat -text
