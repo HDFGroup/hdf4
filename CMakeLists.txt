@@ -75,6 +75,7 @@ PROJECT (HDF4 C CXX)
 #   )
 #
 #-----------------------------------------------------------------------------
+string(TIMESTAMP CONFIG_DATE "%Y-%m-%d")
 
 #-----------------------------------------------------------------------------
 # Allow Visual Studio solution directories
@@ -521,27 +522,35 @@ add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/libsrc   ${PROJECT_BINARY_DIR}/mfhdf/
 if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
-    add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
+    if (BUILD_SHARED_LIBS)
+      add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
+    endif (BUILD_SHARED_LIBS)
   endif (JPEG_FOUND AND JPEG_USE_EXTERNAL)
   if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
-    add_dependencies (${HDF4_SRC_LIBSH_TARGET} ZLIB)
+    if (BUILD_SHARED_LIBS)
+      add_dependencies (${HDF4_SRC_LIBSH_TARGET} ZLIB)
+    endif (BUILD_SHARED_LIBS)
   endif (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
   if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
-    add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
+    if (BUILD_SHARED_LIBS)
+      add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
+    endif (BUILD_SHARED_LIBS)
   endif (SZIP_FOUND AND SZIP_USE_EXTERNAL)
 endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
 
 if (HDF4_BUILD_XDR_LIB)
   add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
-  add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  if (BUILD_SHARED_LIBS)
+    add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
+  endif (BUILD_SHARED_LIBS)
 endif (HDF4_BUILD_XDR_LIB)
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
 #-----------------------------------------------------------------------------
-option (BUILD_TESTING "Build HDF4 Unit Testing" OFF)
+option (BUILD_TESTING "Build HDF4 Unit Testing" ON)
 if (BUILD_TESTING)
   set (DART_TESTING_TIMEOUT 1200
       CACHE INTEGER

@@ -28,9 +28,9 @@ else (HDF4_ENABLE_NETCDF)
   set (HDF4_MFHDF_LIBSRC_CSTUB_FSRCS ${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/mfsdf.c)
 endif (HDF4_ENABLE_NETCDF)
 
-set (HDF4_MFHDF_LIBSRC_CSTUB_FHDRS 
-    ${HDF4_MFHDFSOURCE_DIR}/hdf2netcdf.h 
-    ${HDF4_MFHDFSOURCE_DIR}/mfhdf.h 
+set (HDF4_MFHDF_LIBSRC_CSTUB_FHDRS
+    ${HDF4_MFHDFSOURCE_DIR}/hdf2netcdf.h
+    ${HDF4_MFHDFSOURCE_DIR}/mfhdf.h
     ${HDF4_MFHDFSOURCE_DIR}/mfhdfi.h
 )
 if (HDF4_ENABLE_NETCDF)
@@ -39,7 +39,7 @@ if (HDF4_ENABLE_NETCDF)
 else (HDF4_ENABLE_NETCDF)
   set (HDF4_MFHDF_LIBSRC_CSTUB_FHDRS ${HDF4_MFHDF_LIBSRC_CSTUB_FHDRS} ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
 endif (HDF4_ENABLE_NETCDF)
-set_source_files_properties (${HDF4_MFHDF_LIBSRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C) 
+set_source_files_properties (${HDF4_MFHDF_LIBSRC_CSTUB_FSRCS} PROPERTIES LANGUAGE C)
 
 set (FORTRAN_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -95,10 +95,10 @@ if (BUILD_SHARED_LIBS)
   set (install_targets ${install_targets} ${HDF4_MF_FCSTUB_LIBSH_TARGET})
 endif (BUILD_SHARED_LIBS)
 
-set (HDF4_MF_FORTRAN_SRCS 
+set (HDF4_MF_FORTRAN_SRCS
     ${HDF4_MFHDF_FORTRAN_DIR}/mfsdff.f
 )
-set_source_files_properties (${HDF4_MF_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran) 
+set_source_files_properties (${HDF4_MF_FORTRAN_SRCS} PROPERTIES LANGUAGE Fortran)
 #-----------------------------------------------------------------------------
 add_library (${HDF4_MF_FORTRAN_LIB_TARGET} STATIC ${HDF4_MF_FORTRAN_SRCS})
 set (SHARED_LINK_FLAGS " ")
