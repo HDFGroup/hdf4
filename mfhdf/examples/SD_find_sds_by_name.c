@@ -14,7 +14,7 @@ int main()
    intn  status;
    int32 start[2], edges[2];
    int32 data[Y_LENGTH][X_LENGTH];
-   int   i, j;
+   int   j;
 
    /********************* End of variable declaration ***********************/
 
