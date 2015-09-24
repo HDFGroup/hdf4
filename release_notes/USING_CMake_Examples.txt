@@ -37,7 +37,7 @@ II. Building HDF4 Examples with CMake
 ========================================================================
 
 Files in the HDF4 install directory:
-       HDF4Examples-0.1.1-Source.zip (or HDF4Examples-0.1.1-Source.tar.gz)
+       HDF4Examples folder
        HDF4_Examples.cmake
 
 Default installation process:
