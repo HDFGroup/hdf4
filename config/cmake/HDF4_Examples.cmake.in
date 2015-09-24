@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 ###############################################################################################################
-# This script will build and run the examples from a compressed file
+# This script will build and run the examples from a folder
 # Execute from a command line:
-#     ctest -S HDF4_Examples.cmake,CTEST_SOURCE_NAME=HDF4Examples -C Release -V -O test.log
+#     ctest -S HDF4_Examples.cmake,OPTION=VALUE -C Release -V -O test.log
 ###############################################################################################################
 
 set(CTEST_CMAKE_GENERATOR "@CMAKE_GENERATOR@")
