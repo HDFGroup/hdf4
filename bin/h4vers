@@ -366,7 +366,7 @@ if ($MANHDF1) {
       # the current month and year and the updated version.
       print FILE $newverline, "\n";
       $man_hdf1_updates += 1;
-    } elsif ($line =~ m/^$verstr\s*$/ || $line =~ m/^$verstr-[a-z]{2,5}\d{1,8}\s*$/ || $line =~ m/^$verstr\scurrently under development\s*$/  || $line =~ m/^$verstr-[a-z]{2,5}\d{1,8}\scurrently under development$\s*/) {
+    } elsif ($line =~ m/^$verstr\s*$/ || $line =~ m/^$verstr-[a-z]{1,5}\d{1,8}\s*$/ || $line =~ m/^$verstr\scurrently under development\s*$/  || $line =~ m/^$verstr-[a-z]{1,5}\d{1,8}\scurrently under development$\s*/) {
       # match the line further down that has just the version string, and replace it with the updated version string.
       # this will match "major.minor.release" or "major.minor.release-subrelease" or  "major.minor.release currently 
       # under development" or "major.minor.release-subrelease currently under development" (all followed by 
