@@ -12,6 +12,7 @@
 verbose=yes
 MANIFEST=/tmp/HD_MANIFEST.$$
 SVNENTRY=/tmp/HD_SVNENTRY.$$
+USE_SVN_LS=""
 
 # function definitions
 
@@ -129,28 +130,49 @@ done
 # I don't know what the official svn format is if such a specification exists.
 # Algorithm:
 # If the first line of the file has 'xml version="1.0"' in it, it is created
-# by svn 1.3 or older; else if it has '^file$' in it, it is created by svn 1.4.
+# by svn 1.3 or older; else if it has '^file$' in it, it is created by 
+# svn 1.4 - 1.6.  Otherwise it is assumed to be newer, and 'svn ls -R'
+# will give a list of checked in files.
 svn_entry_file=.svn/entries
 if head -1 $svn_entry_file | grep 'xml version="1.0"' > /dev/null 2>&1;then
     getsvnentries=GETSVNENTRIES_13
 elif grep '^file$' $svn_entry_file > /dev/null 2>&1; then
     getsvnentries=GETSVNENTRIES_14
 else
-    echo "Unknown svn entries format. Aborted"
-    exit 1
+    USE_SVN_LS="yes"
+#    echo "Unknown svn entries format. Aborted"
+#    exit 1
 fi
 
-for svn in `find . -type d -name .svn -print`; do
-    path=`echo $svn |sed 's/\/.svn//'`
-    for file in `$getsvnentries $svn`; do
-	if (grep ^$path/$file$ $MANIFEST >/dev/null); then
-	    :
-	else
-	    echo "+ $path/$file"
-	    fail=yes
-	fi
+if [ -z "${USE_SVN_LS}" ]; then
+    for svn in `find . -type d -name .svn -print`; do
+        path=`echo $svn |sed 's/\/.svn//'`
+        for file in `$getsvnentries $svn`; do
+       	    if (grep ^$path/$file$ $MANIFEST >/dev/null); then
+    	        :
+       	    else
+       	        echo "+ $path/$file"
+                fail=yes
+            fi
+        done
     done
-done
+else
+    # Next check svn ls, which gets a list of all files that are
+    # checked in.
+    svn_ls=`svn ls -R`
+    for file in $svn_ls; do
+        path="./${file}"
+        # Ignore directories
+        if [ ! -d $path ]; then
+            if (grep ^$path$ $MANIFEST >/dev/null); then
+                :
+            else
+                echo "+ $path"
+                fail=yes
+            fi
+        fi
+    done
+fi
 
 if [ "X$fail" = "Xyes" ]; then
     cat 1>&2 <<EOF
