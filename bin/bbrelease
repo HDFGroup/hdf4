@@ -239,7 +239,7 @@ fi
 
 if [ X$revmode = Xyes ]; then
     VERS_OLD=$VERS
-    branch=`svn info | grep URL: | awk -F/ '{print $NF}'`
+    branch=`svn info | grep ^URL: | awk -F/ '{print $NF}'`
     revision=`svn info | grep "Revision:" | awk '{print $2}'`
     # Set version information to m.n.r-of$today.
     # (h4vers does not correctly handle just m.n.r-$today.)
