@@ -124,7 +124,7 @@ set (HDF4_TESTMFHDF_FILES
 add_test (
     NAME MFHDF_TEST-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
-        -E remove 
+        -E remove
         ${HDF4_TESTMFHDF_FILES}
     WORKING_DIRECTORY
         ${PROJECT_BINARY_DIR}/TEST
@@ -149,23 +149,23 @@ add_test (NAME MFHDF_TEST-cdftest COMMAND "${CMAKE_COMMAND}"
             -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
 )
 set_tests_properties (MFHDF_TEST-cdftest PROPERTIES
-    DEPENDS MFHDF_TEST-hdftest 
+    DEPENDS MFHDF_TEST-hdftest
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST
     LABELS ${PROJECT_NAME}
 )
 
 add_test (NAME MFHDF_TEST-hdfnctest COMMAND $<TARGET_FILE:hdfnctest>)
 set (NCpassRegex "HDF-nc test passes")
-set_tests_properties (MFHDF_TEST-hdfnctest PROPERTIES 
+set_tests_properties (MFHDF_TEST-hdfnctest PROPERTIES
     PASS_REGULAR_EXPRESSION "${NCpassRegex}"
-    DEPENDS MFHDF_TEST-cdftest 
+    DEPENDS MFHDF_TEST-cdftest
     LABELS ${PROJECT_NAME}
 )
 if (BUILD_SHARED_LIBS)
   add_test (
       NAME MFHDF_TEST-shared-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           ${HDF4_TESTMFHDF_FILES}
       WORKING_DIRECTORY
           ${PROJECT_BINARY_DIR}/TEST-shared
@@ -197,7 +197,7 @@ if (BUILD_SHARED_LIBS)
 
   add_test (NAME MFHDF_TEST-hdfnctest-shared COMMAND $<TARGET_FILE:hdfnctest-shared>)
   set (NCpassRegex "HDF-nc test passes")
-  set_tests_properties (MFHDF_TEST-hdfnctest-shared PROPERTIES 
+  set_tests_properties (MFHDF_TEST-hdfnctest-shared PROPERTIES
       PASS_REGULAR_EXPRESSION "${NCpassRegex}"
       DEPENDS MFHDF_TEST-cdftest-shared
       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
@@ -212,21 +212,21 @@ if (HDF4_BUILD_XDR_LIB)
   TARGET_C_PROPERTIES (xdrtest STATIC " " " ")
   target_link_libraries (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 
-  if (CYGWIN)
+  if (MSVC_VERSION LESS 1900)
     add_custom_command (
-        TARGET     xdrtest 
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
-    )
-  else (CYGWIN)
-    add_custom_command (
-        TARGET     xdrtest 
+        TARGET     xdrtest
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
     )
-  endif (CYGWIN)
+  else (MSVC_VERSION LESS 1900)
+    add_custom_command (
+        TARGET     xdrtest
+        POST_BUILD
+        COMMAND    ${CMAKE_COMMAND}
+        ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
+    )
+  endif (MSVC_VERSION LESS 1900)
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
     add_test (NAME MFHDF_TEST-xdrtest COMMAND $<TARGET_FILE:xdrtest>)

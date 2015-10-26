@@ -4,7 +4,7 @@
 ###           T E S T I N G                                                ###
 ##############################################################################
 ##############################################################################
-  
+
 ##############################################################################
 # --------------------------------------------------------------------
 # Copy all the files from the test directory into the source directory
@@ -25,7 +25,7 @@ if (HDF4_BUILD_TOOLS)
       ristosds.input1
       ristosds.out1
   )
-  
+
   foreach (h4_file ${HDF4_LS_TEST_FILES})
     set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
     #message (STATUS " Copying ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
@@ -36,22 +36,22 @@ if (HDF4_BUILD_TOOLS)
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} ${dest}
     )
   endforeach (h4_file ${HDF4_LS_TEST_FILES})
-  
-  if (WIN32)
+
+  if (WIN32 AND MSVC_VERSION LESS 1900)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfls
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed-w.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
     )
-  else (WIN32)
+  else (WIN32 AND MSVC_VERSION LESS 1900)
     ADD_CUSTOM_COMMAND (
         TARGET     hdfls
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
     )
-  endif (WIN32)
+  endif (WIN32 AND MSVC_VERSION LESS 1900)
 
   #-- Copy all the hdfed data files from the source directory into the test directory
   set (HDF4_HDFED_TEST_FILES
@@ -213,7 +213,7 @@ endif (HDF4_BUILD_TOOLS)
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
   endforeach (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
-  
+
 ##############################################################################
 ##############################################################################
 ###           T H E   T E S T S  M A C R O S                               ###
@@ -337,7 +337,7 @@ endif (HDF4_BUILD_TOOLS)
   add_test (
       NAME hdfgif-clear-refs
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           skull.gif
           SunWheel.hdf
           bttrfly.hdf
@@ -377,7 +377,7 @@ endif (HDF4_BUILD_TOOLS)
   add_test (
       NAME hdfpack-clear-refs
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           test.pck
           test.blk
           test.hdf.tmp
@@ -403,7 +403,7 @@ endif (HDF4_BUILD_TOOLS)
   add_test (
       NAME hdfpalette-clear-refs
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           pal001
           pal005
           palette.hdf
@@ -457,7 +457,7 @@ endif (HDF4_BUILD_TOOLS)
   add_test (
       NAME hdfjpeg-clear-refs
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           jpeg.hdf
           jpeg.hdf.tmp
           jpeg.hdf.tmp.err

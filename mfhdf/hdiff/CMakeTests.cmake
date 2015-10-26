@@ -13,7 +13,7 @@
     set (hdifftst_SRCS
         ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdifftst.c
     )
-  
+
     ADD_EXECUTABLE (hdifftst ${hdifftst_SRCS})
     TARGET_C_PROPERTIES (hdifftst STATIC " " " ")
     if (HDF4_BUILD_XDR_LIB)
@@ -27,7 +27,7 @@
     add_test (
         NAME HDIFF-GEN-clearall-objects
         COMMAND    ${CMAKE_COMMAND}
-            -E remove 
+            -E remove
             hdifftst1.hdf
             hdifftst2.hdf
             hdifftst3.hdf
@@ -37,7 +37,7 @@
             hdifftst7.hdf
     )
     set (last_test "HDIFF-GEN-clearall-objects")
-    
+
     add_test (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
     set_tests_properties (hdifftst PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     set (last_test "hdifftst")
@@ -71,7 +71,7 @@
     endif (NOT "${last_test}" STREQUAL "")
     set (last_test "HDIFF-${resultfile}")
   ENDMACRO (ADD_H4_TEST file)
- 
+
   #-- Copy all the data files from the test directory into the source directory
   set (HDF4_REFERENCE_TEST_FILES
       hdifftst1.hdf
@@ -99,12 +99,12 @@
       hdiff_14.txt
       hdiff_15.txt
   )
- 
+
   foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
     set (dest "${PROJECT_BINARY_DIR}/testfiles/${h4_file}")
     #MESSAGE(STATUS " Copying ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/testfiles/")
     ADD_CUSTOM_COMMAND (
-        TARGET     hdiff 
+        TARGET     hdiff
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} ${dest}
@@ -122,7 +122,7 @@
     )
   endforeach (out_file ${HDF4_REFERENCE_FILES})
 
-  if (WIN32)
+  if (WIN32 AND MSVC_VERSION LESS 1900)
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
@@ -136,7 +136,7 @@
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
     )
-  endif (WIN32)
+  endif (WIN32 AND MSVC_VERSION LESS 1900)
 
 ##############################################################################
 ##############################################################################
@@ -147,7 +147,7 @@
   add_test (
       NAME HDIFF-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           hdiff_01.out
           hdiff_02.out
           hdiff_03.out
@@ -187,7 +187,7 @@
   set (last_test "HDIFF-clearall-objects")
 
   # help message
-  ADD_H4_TEST (hdiff_01 1) 
+  ADD_H4_TEST (hdiff_01 1)
 
   # Compare global attributes only
   ADD_H4_TEST (hdiff_02 1 -g hdifftst1.hdf hdifftst2.hdf)
@@ -207,7 +207,7 @@
   # Compare SD data on variable(s)
   ADD_H4_TEST (hdiff_07 1 -d -v dset1 hdifftst1.hdf hdifftst2.hdf)
 
-  # Compare vdata on variable(s) 
+  # Compare vdata on variable(s)
   ADD_H4_TEST (hdiff_08 1 -D -u vdata1 hdifftst1.hdf hdifftst2.hdf)
 
   # Print difference up to count number
@@ -222,7 +222,7 @@
   # percent (relative)
   ADD_H4_TEST (hdiff_12 1 -d -p 0.05 -v dset3 hdifftst1.hdf hdifftst2.hdf)
 
-  # hyperslab reading 
+  # hyperslab reading
   ADD_H4_TEST (hdiff_13 0 hdifftst3.hdf hdifftst4.hdf)
 
   # lone dim
