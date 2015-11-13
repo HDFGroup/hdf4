@@ -38,10 +38,10 @@ case $CC_BASENAME in
     DEBUG_CFLAGS="-g -ansi -Wall -pedantic "
     DEBUG_CPPFLAGS=
     # There is a bug somewhere in mfhdf/libsrc that is exposed by compiling
-    # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
+    # with any optimization in $CC in Lion (Darwin 11) & up
     # Use -O0 for now.
     case "$host_os" in
-	darwin1[1-4].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
+	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
 	    xOFLAG="-O0"
 	    ;;
 	*)		# Other OSX versions
