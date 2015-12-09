@@ -141,10 +141,6 @@ MACRO (HDF_FUNCTION_TEST OTHER_TEST)
       set (OTHER_TEST_ADD_LIBRARIES "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
     endif (CMAKE_REQUIRED_LIBRARIES)
 
-    foreach (def ${HDF_EXTRA_TEST_DEFINITIONS})
-      set (MACRO_CHECK_FUNCTION_DEFINITIONS "${MACRO_CHECK_FUNCTION_DEFINITIONS} -D${def}=${${def}}")
-    endforeach (def)
-
     foreach (def
         HAVE_SYS_TIME_H
         HAVE_UNISTD_H
@@ -266,27 +262,23 @@ set (LINUX_LFS 0)
 set (HDF_EXTRA_C_FLAGS)
 set (HDF_EXTRA_FLAGS)
 if (NOT WINDOWS)
-  if (NOT ${HDF_PREFIX}_HAVE_SOLARIS)
+  # Might want to check explicitly for Linux and possibly Cygwin
+  # instead of checking for not Solaris or Darwin.
+  if (NOT ${HDF_PREFIX}_HAVE_SOLARIS AND NOT ${HDF_PREFIX}_HAVE_DARWIN)
   # Linux Specific flags
   # This was originally defined as _POSIX_SOURCE which was updated to
   # _POSIX_C_SOURCE=199506L to expose a greater amount of POSIX
   # functionality so clock_gettime and CLOCK_MONOTONIC are defined
-  # correctly.
+  # correctly. This was later updated to 200112L so that
+  # posix_memalign() is visible for the direct VFD code on Linux
+  # systems.
   # POSIX feature information can be found in the gcc manual at:
   # http://www.gnu.org/s/libc/manual/html_node/Feature-Test-Macros.html
-  set (HDF_EXTRA_C_FLAGS -D_POSIX_C_SOURCE=199506L)
-  # _BSD_SOURCE deprecated in GLIBC >= 2.20
-  TRY_RUN (HAVE_DEFAULT_SOURCE_RUN HAVE_DEFAULT_SOURCE_COMPILE
-        ${CMAKE_BINARY_DIR}
-        ${HDF_RESOURCES_EXT_DIR}/HDFTests.c
-        CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=-DHAVE_DEFAULT_SOURCE
-        OUTPUT_VARIABLE OUTPUT
-    )
-  if (HAVE_DEFAULT_SOURCE_COMPILE AND HAVE_DEFAULT_SOURCE_RUN)
-    set (HDF_EXTRA_FLAGS -D_DEFAULT_SOURCE)
-  else (HAVE_DEFAULT_SOURCE_COMPILE AND HAVE_DEFAULT_SOURCE_RUN)
-    set (HDF_EXTRA_FLAGS -D_BSD_SOURCE)
-  endif (HAVE_DEFAULT_SOURCE_COMPILE AND HAVE_DEFAULT_SOURCE_RUN)
+  set (HDF_EXTRA_C_FLAGS -D_POSIX_C_SOURCE=200112L)
+
+  # Need to add this so that O_DIRECT is visible for the direct
+  # VFD on Linux systems.
+  set (HDF_EXTRA_C_FLAGS -D_GNU_SOURCE)
 
   option (HDF_ENABLE_LARGE_FILE "Enable support for large (64-bit) files on Linux." ON)
   if (HDF_ENABLE_LARGE_FILE)
@@ -297,6 +289,11 @@ if (NOT WINDOWS)
         CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=-DTEST_LFS_WORKS
         OUTPUT_VARIABLE OUTPUT
     )
+
+    # The LARGEFILE definitions were from the transition period
+    # and are probably no longer needed. The FILE_OFFSET_BITS
+    # check should be generalized for all POSIX systems as it
+    # is in the Autotools.
     if (TEST_LFS_WORKS_COMPILE)
       if (TEST_LFS_WORKS_RUN  MATCHES 0)
         set (TEST_LFS_WORKS 1 CACHE INTERNAL ${msg})
@@ -319,7 +316,7 @@ if (NOT WINDOWS)
     endif (TEST_LFS_WORKS_COMPILE)
   endif (HDF_ENABLE_LARGE_FILE)
   set (CMAKE_REQUIRED_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS} ${HDF_EXTRA_FLAGS})
-  endif (NOT ${HDF_PREFIX}_HAVE_SOLARIS)
+  endif (NOT ${HDF_PREFIX}_HAVE_SOLARIS AND NOT ${HDF_PREFIX}_HAVE_DARWIN)
 endif (NOT WINDOWS)
 
 add_definitions (${HDF_EXTRA_FLAGS})
@@ -570,10 +567,6 @@ MACRO (HDF_CXX_FUNCTION_TEST OTHER_TEST)
       set (OTHER_TEST_ADD_LIBRARIES "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
     endif (CMAKE_REQUIRED_LIBRARIES)
 
-    foreach (def ${HDF_EXTRA_TEST_DEFINITIONS})
-      set (MACRO_CHECK_FUNCTION_DEFINITIONS "${MACRO_CHECK_FUNCTION_DEFINITIONS} -D${def}=${${def}}")
-    endforeach (def)
-
     foreach (def
         HAVE_SYS_TIME_H
         HAVE_UNISTD_H
@@ -696,24 +689,10 @@ endif (WINDOWS)
 #-----------------------------------------------------------------------------
 # Determine how 'inline' is used
 #-----------------------------------------------------------------------------
-set (HDF_EXTRA_TEST_DEFINITIONS INLINE_TEST_INLINE)
 foreach (inline_test inline __inline__ __inline)
-  set (INLINE_TEST_INLINE ${inline_test})
-  HDF_FUNCTION_TEST (INLINE_TEST_${inline_test})
+  string (TOUPPER ${inline_test} INLINE_TEST_MACRO)
+  HDF_FUNCTION_TEST (HAVE_${INLINE_TEST_MACRO})
 endforeach (inline_test)
-
-set (HDF_EXTRA_TEST_DEFINITIONS)
-if (INLINE_TEST___inline__)
-  set (${HDF_PREFIX}_inline __inline__)
-else (INLINE_TEST___inline__)
-  if (INLINE_TEST___inline)
-    set (${HDF_PREFIX}_inline __inline)
-  else (INLINE_TEST___inline)
-    if (INLINE_TEST_inline)
-      set (${HDF_PREFIX}_inline inline)
-    endif (INLINE_TEST_inline)
-  endif (INLINE_TEST___inline)
-endif (INLINE_TEST___inline__)
 
 #-----------------------------------------------------------------------------
 # Check how to print a Long Long integer
