@@ -941,6 +941,7 @@
 ./mfhdf/test/tdatasizes.c
 ./mfhdf/test/tdim.c
 ./mfhdf/test/temptySDSs.c
+./mfhdf/test/texternal.c
 ./mfhdf/test/test1.nc
 ./mfhdf/test/testout.sav
 ./mfhdf/test/testmfhdf.sh.in
