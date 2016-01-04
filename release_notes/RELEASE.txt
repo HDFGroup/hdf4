@@ -54,7 +54,14 @@ Bugs fixed since HDF 4.2.11
 
    Library
    ========= 
-    - None
+    - Undefined behavior when calling SDsetexternalfile repeatedly
+
+      When the data element is already special, incorrect data length was used
+      for the element in subsequent calls to SDsetexternalfile, causing
+      failures sometimes.  This is now fixed.
+
+      (BMR, 2016/01/04, HDFFR-1516)
+
 
    Utilities
    ========= 
