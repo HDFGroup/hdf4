@@ -95,7 +95,7 @@ int verify_info_data(
     /* Verify read data by comparing the output buffer against expected data */
     status = HDmemcmp(outdata, result, edges[0] * SIZE_INT16);
     if (status != 0)
-	fprintf(stderr,"%s: Read data doesn't match input\n");
+	fprintf(stderr,"For SDS %s: Read data doesn't match input\n", ds_name);
 
     /* Return the number of errors occurred here */
     return(num_errs);

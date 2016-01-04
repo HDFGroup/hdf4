@@ -583,7 +583,7 @@ test_valid_args()
 #define D3_Z 2
 
 /* Helper function to test_valid_args2 creates and writes to a dataset */
-intn makeSDS(int32 sd_id, char* name, int32 dtype, int32 rank, 
+static intn makeSDS(int32 sd_id, char* name, int32 dtype, int32 rank, 
 	     int32* dimsizes, int32* start, int32* strides, 
 	     int32* count, void* data)
 {

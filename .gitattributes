@@ -104,4 +104,5 @@ mfhdf/nctest/test_unlim.nc -text
 mfhdf/test/sds_szipped.dat -text
 mfhdf/test/smallslice.0000.nc -text
 mfhdf/test/test1.nc -text
+mfhdf/test/texternal.c -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset

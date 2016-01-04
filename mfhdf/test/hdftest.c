@@ -67,6 +67,7 @@ extern int test_dimension();
 extern int test_attributes();
 extern int test_datasizes();
 extern int test_datainfo();
+extern int test_external();
 extern int test_att_ann_datainfo();
 
 int 
@@ -1256,227 +1257,10 @@ main(int argc, char *argv[])
     status = SDend(f1);
     CHECK(status, FAIL, "SDend");
 
-    /*
-     * Test the External File storage stuff
-     */
-
-    /* Create file 'exttst.hdf' */
-    fext = SDstart(EXTTST, DFACC_CREATE);
-    CHECK(fext, FAIL, "SDstart");
-
-    /* Create data set 'ExteneralDataSet' in file 'exttst.hdf' */
-    nt = DFNT_INT32 | DFNT_NATIVE;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    newsds = SDcreate(fext, "ExternalDataSet", nt, 2, dimsize);
-    CHECK(newsds, FAIL, "SDcreate: Failed to create a new data set 'ExternalDataSet' for external promotion");
-
-    /* initialize data to write out */
-    for(i = 0; i < 25; i++)
-        idata[i] = i;
-
-    /* Write data to all of data set 'ExternalDataSet' in file 'exttst.hdf' */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* Now promote data set 'ExternalDataSet' to an external data set
-       in the file 'extfile.hdf' */
-    status = SDsetexternalfile(newsds, EXTFILE, 0);
-    CHECK(status, FAIL, "SDsetexternalfile");
-
-    for(i = 0; i < 10; i++)
-        idata[i] = i * 10;
-
-    /* Now write data to part of newly promoted data set 'ExternalDataSet'
-       which is now an external data set */
-    start[0] = start[1] = 0;
-    end[0]   = 2;
-    end[1]   = 5;
-    status = SDwritedata(newsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    /* end access to data set 'ExternalDataSet' */
-    status = SDendaccess(newsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* need to close to flush external info to file 'exttst.hdf' */
-    status = SDend(fext);
-    CHECK(status, FAIL, "SDend");
-
-    /* Open file 'exttst.hdf' again */
-    fext = SDstart(EXTTST, DFACC_RDWR);
-    CHECK(fext, FAIL, "SDstart (again)");
-
-    /* Create a "wrapper" data set in file 'exttst.hdf'. i.e. a data set 
-       that will point to data in an already existing external file */
-    dimsize[0] = 3;
-    dimsize[1] = 3;
-    newsds2 = SDcreate(fext, "WrapperDataSet", nt, 2, dimsize);
-    CHECK(newsds2, FAIL, "SDcreate:Failed to create a new data set('WrapperDataSet') for external wrapping");
-
-    /* Promote the regular data set to a "wrapper" one by making
-       it point to where the real data is in the external file 'extfile.hdf'.
-       Note that only a subset of the real data('ExternalDataSet') is pointed to
-       by the "wrapper" data set. */
-    offset = DFKNTsize(nt) * 2;
-    status = SDsetexternalfile(newsds2, EXTFILE, offset);
-    CHECK(status, FAIL, "SDsetexternalfile");
-
-    /* now read data back from this "wrapper" data set */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 3;
-    status = SDreaddata(newsds2, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDreaddata");
-
-    /* verify data read back in */
-    for(i = 0; i < 8; i++)
-      {
-        if(idata[i] != (i + 2) * 10) 
-          {
-            fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n", 
-        i, (i + 2) * 10, (long)idata[i]);
-            num_errs++;
-          }
-      }
-
-    if(idata[8] != 10) 
-      {
-        fprintf(stderr, "Bogus val in last loc in wrapper dset want 10  got %ld\n",
-    (long)idata[8]);
-        num_errs++;
-      }
-
-    /* End access to data set "WrapperDataSet" */
-    status = SDendaccess(newsds2);
-    CHECK(status, FAIL, "SDendaccess");
- 
-    /* Create data set 'NoExteneralDataSet' in file 'exttst.hdf' */
-    nt = DFNT_INT32 | DFNT_NATIVE;
-    dimsize[0] = 5;
-    dimsize[1] = 5;
-    noextsds = SDcreate(fext, "NoExternalDataSet", nt, 2, dimsize);
-    CHECK(noextsds, FAIL, "SDcreate: Failed to create a new data set 'NoExternalDataSet' for testing SDSgetexternalfile on a non-external element");
-
-    /* initialize data to write out */
-    for(i = 0; i < 25; i++)
-        idata[i] = i;
-
-    /* Write data to all of data set 'NoExternalDataSet' in file 'exttst.hdf' */
-    start[0] = start[1] = 0;
-    end[0]   = end[1]   = 5;
-    status = SDwritedata(noextsds, start, NULL, end, (VOIDP) idata);
-    CHECK(status, FAIL, "SDwritedata");
-
-    status = SDendaccess(noextsds);
-    CHECK(status, FAIL, "SDendaccess");
-
-    /* Close file 'exttst.hdf' */
-    status = SDend(fext);
-    CHECK(status, FAIL, "SDend");
-
-    /* Test getting external file info on data set "ExternalDataSet" and test
-       not able to get external file info on data set "NoExternalDataSet" */
-    {
-  intn name_len=0;
-  char *extfile_name;
-  int32 offset=0, length=0;
-  int32 sds_id, sds_index;
-
-  /* Open file 'exttst.hdf' again */
-  fext = SDstart(EXTTST, DFACC_RDWR);
-  CHECK(fext, FAIL, "SDstart (again)");
-
-  /* Get index of "ExternalDataSet" and get access to it */
-  sds_index = SDnametoindex(fext, "ExternalDataSet");
-  CHECK(sds_index, FAIL, "SDnametoindex");
-  sds_id = SDselect(fext, sds_index);
-  CHECK(sds_id, FAIL, "SDselect");
-
-  /* Call SDgetexternalfile the first time passing in 0 for external
-     file name length to get the actual length - SDgetexternalfile is
-     deprecated as of 4.2.7 */
-  name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
-  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
-
-  extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
-  CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalfile");
-  HDmemset(extfile_name, '\0', name_len+1);
-
-  /* Call SDgetexternalfile again and get the external file info */
-  name_len = SDgetexternalfile(sds_id, name_len+1, extfile_name, &offset);
-  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalfile");
-  VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalfile");
-
-  /* Call SDgetexternalinfo the first time passing in 0 for external
-     file name length to get the actual length */
-  name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
-
-  /* Test passing in NULL pointer for external file name buffer, should
-     fail gracefully */
-  {
-      char *null_buffer=NULL;
-      intn ret_code=0;
-      ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
-      VERIFY(ret_code, FAIL, "SDgetexternalinfo");
-  }
-
-  extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
-  CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalinfo");
-  HDmemset(extfile_name, '\0', name_len+1);
-
-  /* Call SDgetexternalinfo again and get the external file info */
-  name_len = SDgetexternalinfo(sds_id, name_len+1, extfile_name, &offset, &length);
-  VERIFY(name_len, (intn)HDstrlen(EXTFILE), "SDgetexternalinfo");
-  VERIFY_CHAR(EXTFILE, extfile_name, "SDgetexternalinfo");
-
-  /* Test passing in smaller buffer for external file name than actual;
-     name should be truncated */
-  {
-      char *short_name = (char *) HDmalloc(sizeof(char *) * (name_len));
-      HDmemset(short_name, '\0', name_len);
-      HDstrncpy(short_name, EXTFILE, name_len-2);
-      HDmemset(extfile_name, '\0', name_len);
-
-      /* Call SDgetexternalinfo again with smaller buffer size and verify
-         that SDgetexternalinfo reads the name truncated to the given
-         buffer size*/
-      name_len = SDgetexternalinfo(sds_id, name_len-2, extfile_name, &offset, &length);
-      VERIFY(name_len, (intn)HDstrlen(extfile_name), "SDgetexternalinfo");
-      VERIFY_CHAR(short_name, extfile_name, "SDgetexternalinfo");
-      HDfree(short_name);
-  }
-
-  status = SDendaccess(sds_id);
-  CHECK(status, FAIL, "SDendaccess");
-
-  /* Get index of "NoExternalDataSet" and get access to it */
-  sds_index = SDnametoindex(fext, "NoExternalDataSet");
-  CHECK(sds_index, FAIL, "SDnametoindex");
-  sds_id = SDselect(fext, sds_index);
-  CHECK(sds_id, FAIL, "SDselect");
-
-  /* Call SDgetexternalfile on the SDS that doesn't have external
-     element, should fail - SDgetexternalfile is deprecated as of
-     4.2.7 */
-  name_len = SDgetexternalfile(sds_id, 0, NULL, NULL);
-  VERIFY(name_len, FAIL, "SDgetexternalfile");
-
-  /* Call SDgetexternalinfo on the SDS that doesn't have external
-     element, should return 0 for length of external file name */
-  name_len = SDgetexternalinfo(sds_id, 0, NULL, NULL, NULL);
-  VERIFY(name_len, 0, "SDgetexternalinfo");
-
-  status = SDendaccess(sds_id);
-  CHECK(status, FAIL, "SDendaccess");
-
-  /* Close file 'exttst.hdf' */
-  status = SDend(fext);
-  CHECK(status, FAIL, "SDend");
-    }
-
+/****************************************************************
+ * Moved testing of external storage stuff into texternal.c     *
+ * -BMR, Nov 16, 2015                                           *
+ ****************************************************************/
 
 #ifdef NBIT_TEST
 
@@ -1636,6 +1420,11 @@ main(int argc, char *argv[])
     /* BMR: Added a test routine dedicated for testing functionality 
        related to coordinate variables (in tcoordvar.c) - 05/21/07 */
     status = test_coordvar();
+    num_errs = num_errs + status;
+
+    /* BMR: Added a test routine dedicated for testing functionality 
+       related to external data (in textdata.c) - 10/29/15 */
+    status = test_external();
     num_errs = num_errs + status;
 
     /* BMR: Verifies that some functions will not fail even though SZIP 
