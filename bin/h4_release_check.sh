@@ -12,7 +12,7 @@ fail=1
 
 if [ ! -f ./lib/libhdf4.settings ]; then
    echo " $red FAILED$reset: ./lib/libhdf4.settings  DOES NOT EXIST"
-   exit
+   exit 1
 fi
 
 # CHECKING FOR SHARED LIBRARIES
@@ -158,3 +158,60 @@ if [ "$status" -eq "$fail" ]; then
 else
   echo "Testing for bin files     ... $green PASSED $reset"
 fi
+
+# Check settings in libhdf5.settings match what is in RELEASE.txt
+
+# Check the OS type
+
+UnameInfo=`grep -i 'Uname information:' lib/libhdf4.settings`
+OStype=`echo $UnameInfo | cut -d ":" -f 2 | cut -d " " -f 4`
+
+libCC=`grep -i 'C compiler' lib/libhdf4.settings`
+libFC=`grep -i 'Fortran Compiler' lib/libhdf4.settings`
+
+IFS='%'
+if grep -i -q "$OStype" RELEASE.txt; then
+  echo "Testing for OS type       ... $green PASSED $reset"
+# Check the processor  
+    line_start=`grep -in "$OStype" RELEASE.txt | cut -d : -f 1`
+# print to screen to have the user check compiler versions
+ echo ""
+ echo "$yellow      __      ________ _____  _____ ________     __ $reset"
+ echo "$yellow      \ \    / /  ____|  __ \|_   _|  ____\ \   / / $reset"
+ echo "$yellow       \ \  / /| |__  | |__) | | | | |__   \ \_/ /  $reset"
+ echo "$yellow        \ \/ / |  __| |  _  /  | | |  __|   \   /   $reset"
+ echo "$yellow         \  /  | |____| | \ \ _| |_| |       | |    $reset"
+ echo "$yellow          \/   |______|_|  \_\_____|_|       |_|    $reset"
+ echo ""
+                                              
+
+    echo "$yellow  (1) VERIFY: C Compiler in libhdf5.settings: $reset"
+    echo "  $libCC"
+    echo "$yellow          should match a compiler listed in RELEASE.txt $reset"
+    line_end=$line_start-2
+    sed -n "$line_start,/^$/p" RELEASE.txt |
+    {
+    while read line; do
+      ((line_end++))
+      ## counter=$[$line_endcounter +1]
+    done
+    sed -n $line_start,${line_end}p RELEASE.txt
+    }
+else
+  echo "Testing for OS type       ... $red FAILED $reset"
+  echo "  Operating system $OStype not found in RELEASE.txt"
+fi
+
+echo ""
+echo "$yellow  (2) VERIFY: Binary executables do not requre any external $reset"
+echo "$yellow      libraries (except system libraries on some machines): $reset"
+
+echo `echo "    Result from ldd bin/hdp:  "; ldd bin/hdp`
+echo ""
+
+
+echo ""
+echo "$yellow  (3) VERIFY: Binary executables match libhdf5.settings $reset"
+
+echo `echo "    Result from file bin/hdp:  "; file bin/hdp`
+echo ""
