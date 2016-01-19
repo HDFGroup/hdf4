@@ -1,5 +1,6 @@
 * text=auto !eol
 bin/bbrelease -text
+bin/h4_release_check.sh -text
 config/cmake/CPack.Info.plist.in -text svneol=unset#application/xml
 config/cmake/patch.xml -text
 config/cmake_ext_mod/CTestCustom.cmake -text
