@@ -45,6 +45,7 @@
 ./bin/config.sub
 ./bin/depcomp
 ./bin/deploy
+./bin/h4_release_check.sh
 ./bin/install-sh
 ./bin/locate_sw
 ./bin/ltmain.sh
