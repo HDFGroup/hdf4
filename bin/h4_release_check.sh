@@ -2,6 +2,8 @@
 red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
+magenta=$(tput setaf 5)
+un
 reset=$(tput sgr0)
 pass=0
 fail=1
@@ -170,12 +172,13 @@ libCC=`grep -i 'C compiler' lib/libhdf4.settings`
 libFC=`grep -i 'Fortran Compiler' lib/libhdf4.settings`
 
 IFS='%'
+
 if grep -i -q "$OStype" RELEASE.txt; then
   echo "Testing for OS type       ... $green PASSED $reset"
 # Check the processor  
     line_start=`grep -in "$OStype" RELEASE.txt | cut -d : -f 1`
+
 # print to screen to have the user check compiler versions
- echo ""
  echo "$yellow      __      ________ _____  _____ ________     __ $reset"
  echo "$yellow      \ \    / /  ____|  __ \|_   _|  ____\ \   / / $reset"
  echo "$yellow       \ \  / /| |__  | |__) | | | | |__   \ \_/ /  $reset"
@@ -187,7 +190,7 @@ if grep -i -q "$OStype" RELEASE.txt; then
 
     echo "$yellow  (1) VERIFY: C Compiler in libhdf5.settings: $reset"
     echo "  $libCC"
-    echo "$yellow          should match a compiler listed in RELEASE.txt $reset"
+    echo "$yellow              should match a compiler listed in RELEASE.txt $reset"
     line_end=$line_start-2
     sed -n "$line_start,/^$/p" RELEASE.txt |
     {
@@ -206,12 +209,13 @@ echo ""
 echo "$yellow  (2) VERIFY: Binary executables do not requre any external $reset"
 echo "$yellow      libraries (except system libraries on some machines): $reset"
 
-echo `echo "    Result from ldd bin/hdp:  "; ldd bin/hdp`
+echo `echo "      Result from ${magenta}ldd bin/hdp${reset}:  "; ldd bin/hdp`
 echo ""
 
 
 echo ""
 echo "$yellow  (3) VERIFY: Binary executables match libhdf5.settings $reset"
 
-echo `echo "    Result from file bin/hdp:  "; file bin/hdp`
+echo `echo "    Result from ${magenta}file bin/hdp${reset}:  "; file bin/hdp`
+echo `echo "    Result from lib/libhdf4.settings:  "; echo ${UnameInfo}`
 echo ""
