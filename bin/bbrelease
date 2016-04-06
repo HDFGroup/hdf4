@@ -1,0 +1,348 @@
+#!/bin/sh
+#
+# Copyright by The HDF Group.
+# Copyright by the Board of Trustees of the University of Illinois.
+# All rights reserved.
+#
+# This file is part of HDF4.  The full HDF4 copyright notice, including
+# terms governing use, modification, and redistribution, is contained in
+# the files COPYING and Copyright.html.  COPYING can be found at the root
+# of the source code distribution tree; Copyright.html can be found at the
+# root level of an installed copy of the electronic HDF4 document set and
+# is linked from the top-level documents page.  It can also be found at
+# http://hdfgroup.org/HDF4/doc/Copyright.html.  If you do not have
+# access to either file, you may request a copy from help@hdfgroup.org.
+#
+
+# Make a release of hdf4.
+#
+# Programmer: Robb Matzke
+# Creation date: on or before 1998-01-29.
+#
+# Modifications
+#   Robb Matzke, 1999-07-16
+#   The SunOS 5.6 sed *must* have slashes as delimiters. I changed things like
+#   `sed s+/CVS++' to `sed 's/\/CVS//'
+#
+#   Albert Cheng, 1999-10-26
+#   Moved the MANIFEST checking to a separate command file so that
+#   it can be invoked individually.
+#
+#   Albert Cheng, 2004-08-14
+#   Added the --private option.
+#
+#   James Laird, 2005-09-07
+#   Added the md5 method.
+
+# Function definitions
+#
+# Print Usage page
+USAGE()
+{
+cat << EOF
+Usage: $0 -d <dir> [-h] [--nocheck] [--private] <methods> ...
+   -d <dir>	The name of the directory where the releas(es) should be
+                placed.
+   -h           print the help page.
+   --nocheck	Ignore errors in MANIFEST file.
+   --private	Make a private release with today's date in version information.
+   --revision   Make a private release with the code revision number in version information.
+
+This must be run at the top level of the source directory.
+The other command-line options are the names of the programs to use
+for compressing the resulting tar archive (if none are given then
+"tar md5" is assumed):
+    tar		-- use tar and don't do any compressing.
+    gzip	-- use gzip with "-9" and append ".gz" to the output name.
+    bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
+    zip		-- convert all text files to DOS style and form a zip file for Windows use.
+    md5         -- produce a md5 checksum in addition to the archive.
+
+Examples:
+
+    $ bin/release -d /tmp
+    /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.tar
+    /tmp/hdf-4.2.11.tar.md5
+
+    $ bin/release -d /tmp gzip
+    /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.tar.gz
+
+    $ bin/release -d /tmp tar gzip zip md5
+    /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.tar
+    /tmp/hdf-4.2.11.tar.gz
+    /tmp/hdf-4.2.11.tar.md5
+    /tmp/hdf-4.2.11.zip
+
+EOF
+
+}
+
+# Function name: tar2zip
+# Convert the release tarball to a Windows zipball.
+#
+# Programmer: Albert Cheng
+# Creation date: 2014-04-23
+#
+# Modifications
+#
+# Steps:
+# 1. untar the tarball in a temporay directory;
+#    Note: do this in a temporary directory to avoid changing
+#    the original source directory which maybe around.
+# 2. convert all its text files to DOS (LF-CR) style;
+# 3. form a zip file which is usable by Windows users.
+#
+# Parameters:
+# $1 version
+# $2 release tarball
+# $3 output zipball file name
+#
+# Returns 0 if successful; 1 otherwise
+#
+tar2zip()
+{
+    if [ $# -ne 3 ]; then
+	echo "usage: tar2zip <tarfilename> <zipfilename>"
+	return 1
+    fi
+    ztmpdir=/tmp/tmpdir$$
+    mkdir -p $ztmpdir
+    version=$1
+    tarfile=$2
+    zipfile=$3
+
+    # step 1: untar tarball in ztmpdir
+    (cd $ztmpdir; tar xf -) < $tarfile
+    # sanity check
+    if [ ! -d $ztmpdir/$version ]; then
+	echo "untar did not create $ztmpdir/$version source dir"
+	# cleanup
+	rm -rf $ztmpdir
+	return 1
+    fi
+    # step 2: convert text files
+    # There maybe a simpler way to do this.
+    # options used in unix2dos:
+    # -k   Keep the date stamp 
+    # -q   quiet mode
+    # grep redirect output to /dev/null because -q or -s are not portable.
+    find $ztmpdir/$version | \
+	while read inf; do \
+	    if file $inf | grep "$inf\: .*text" > /dev/null 2>&1 ; then \
+		unix2dos -q -k $inf; \
+	    fi\
+	done
+    # step 3: make zipball
+    # -9 maximum compression
+    # -y Store symbolic links as such in the zip archive
+    # -r recursive
+    # -q quiet
+    (cd $ztmpdir; zip -9 -y -r -q $version.zip $version)
+    mv $ztmpdir/$version.zip $zipfile
+
+    # cleanup
+    rm -rf $ztmpdir
+}
+
+# This command must be run at the top level of the hdf5 source directory.
+# Verify this requirement.
+if [ ! \( -f configure -a -f bin/release \) ]; then
+    echo "$0 must be run at the top level of the hdf4 source directory"
+    exit 1
+fi
+
+# Defaults
+DEST=releases
+VERS=`perl bin/h4vers`
+VERS_OLD=
+test "$VERS" || exit 1
+verbose=yes
+check=yes
+release_date=`date +%F`
+today=`date +%Y%m%d`
+pmode='no'
+revmode='no'
+tmpdir="../#release_tmp.$$"	# tmp work directory
+
+# Restore previous Version information
+RESTORE_VERSION()
+{
+    if [ X-${VERS_OLD} != X- ]; then
+	echo restoring version information back to $VERS_OLD
+	bin/h4vers -s $VERS_OLD
+	VERS_OLD=
+    fi
+}
+
+
+# Command-line arguments
+while [ -n "$1" ]; do
+    arg=$1
+    shift
+    case "$arg" in
+	-d)
+	    DEST=$1
+	    shift
+	    ;;
+	--nocheck)
+	    check=no
+	    ;;
+	-h)
+	    USAGE
+	    exit 0
+	    ;;
+	--private)
+	    pmode=yes
+	    ;;
+        --revision)
+            revmode=yes
+            ;;
+        -*)
+	    echo "Unknown switch: $arg" 1>&2
+	    USAGE
+	    exit 1
+	    ;;
+	*)
+	    methods="$methods $arg"
+	    ;;
+    esac
+done
+
+# Default methods are tar and md5
+if [ "X$methods" = "X" ]; then
+    methods="tar md5"
+fi
+
+# Create the temporay work directory.
+if mkdir $tmpdir; then
+    echo "temporary work directory for release.  "\
+         "Can be deleted after release completes." > $tmpdir/README
+else
+    echo "Failed to mkdir tmpdir($tmpdir)"
+    exit 1
+fi
+
+# setup restoration in case of abort.
+trap RESTORE_VERSION 0
+
+if [ X$pmode = Xyes ]; then
+    VERS_OLD=$VERS
+    # Set version information to m.n.r-of$today.
+    # (h4vers does not correctly handle just m.n.r-$today.)
+    VERS=`echo $VERS | sed -e s/-.*//`-of$today
+    echo Private release of $VERS
+    bin/h4vers -s $VERS
+fi
+
+if [ X$revmode = Xyes ]; then
+    VERS_OLD=$VERS
+    branch=`svn info | grep ^URL: | awk -F/ '{print $NF}'`
+    revision=`svn info | grep "Revision:" | awk '{print $2}'`
+    # Set version information to m.n.r-of$today.
+    # (h4vers does not correctly handle just m.n.r-$today.)
+    VERS=`echo $VERS | sed -e s/-.*//`-r$revision
+    echo Private release of $VERS
+    bin/h4vers -s $VERS
+    HDF4_VERS=hdf4-$branch-r$revision
+    # use a generic directory name for revision releases 
+    HDF4_IN_VERS=hdfsrc    
+else
+    # Store hdf4-$VERS ("hdf-4.2.11", e.g.) to a variable to avoid typos
+    HDF4_VERS=hdf-$VERS
+    # directory name matches tar file name for non-revision releases  
+    HDF4_IN_VERS=$HDF4_VERS
+fi
+
+test "$verbose" && echo "Releasing $HDF4_VERS to $DEST" 1>&2
+if [ ! -d $DEST ]; then
+    echo "   Destination directory $DEST does not exist" 1>&2
+    exit 1
+fi
+
+# Check the validity of the MANIFEST file.
+bin/chkmanifest || fail=yes
+if [ "X$fail" = "Xyes" ]; then
+    if [ $check = yes ]; then
+        exit 1
+    else
+	echo "Continuing anyway..."
+    fi
+fi
+
+# Create a manifest that contains only files for distribution.
+MANIFEST=$tmpdir/H4_MANIFEST
+grep '^\.' MANIFEST | grep -v _DO_NOT_DISTRIBUTE_ >$MANIFEST
+
+# Prepare the source tree for a release.
+ln -s `pwd` $tmpdir/$HDF4_IN_VERS || exit 1
+# Save a backup copy of Makefile if exists.
+test -f Makefile && mv Makefile $tmpdir/Makefile.x
+cp -p Makefile.dist Makefile
+
+# Update README.txt and release_notes/RELEASE.txt with release information in
+# line 1.
+for f in README.txt release_notes/RELEASE.txt; do
+    echo "HDF version $VERS released on $release_date" >$f.x
+    sed -e 1d $f >>$f.x
+    mv $f.x $f
+    # Make sure new files are of the right access mode
+    chmod 644 $f
+done
+
+# Create the tar file
+test "$verbose" && echo "   Running tar..." 1>&2
+( \
+    cd $tmpdir; \
+    tar cf $HDF4_VERS.tar $HDF4_IN_VERS/Makefile \
+	`sed 's/^\.\//'$HDF4_IN_VERS'\//' $MANIFEST` || exit 1 \
+)
+
+# Compress
+for comp in $methods; do
+    case $comp in
+	tar)
+	    cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
+	    ;;
+	gzip)
+	    test "$verbose" && echo "   Running gzip..." 1>&2
+	    gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
+	    ;;
+	bzip2)
+	    test "$verbose" && echo "   Running bzip2..." 1>&2
+	    bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
+	    ;;
+	zip)
+	    test "$verbose" && echo "   Creating zip ball..." 1>&2
+	    tar2zip $HDF4_IN_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+	    ;;
+	md5)
+	    test "$verbose" && echo "   Creating checksum..." 1>&2
+	    (cd $tmpdir; md5sum $HDF4_VERS.tar ) > $DEST/$HDF4_VERS.tar.md5
+	    ;;
+	*)
+	    echo "***Error*** Unknown method $comp"
+	    exit 1
+	    ;;
+    esac
+done
+
+# Copy the RELEASE.txt to the release area.
+cp release_notes/RELEASE.txt $DEST/$HDF4_VERS-RELEASE.txt
+
+# Remove distributed Makefile and restore previous Makefile if existed.
+rm -f Makefile
+test -f $tmpdir/Makefile.x && mv $tmpdir/Makefile.x Makefile
+
+# Restore OLD version information, then no need for trap.
+if [ X$pmode = Xyes ] || [ X$revmode = Xyes ]; then
+    RESTORE_VERSION
+    trap 0
+fi
+
+# Remove temporary things
+rm -rf $tmpdir
+
+exit 0
