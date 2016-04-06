@@ -26,35 +26,12 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
+#include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-extern jboolean h4NotImplemented( JNIEnv *env, char *functName);
-
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_DFUfptoimage
-( JNIEnv *env,
-jclass clss,
-jint hdim,
-jint vdim,
-jfloat max,
-jfloat min,
-jfloatArray hscale, /* IN: float [] */
-jfloatArray vscale, /* IN: float [] */
-jfloatArray data,  /* IN:  float[][] -- > bytes? */
-jbyteArray palette,  /* IN: byte[] */
-jstring outfile,   /* IN */
-jint ct_method,  /* IN */
-jint hres, /* IN */
-jint vres,  /* IN */
-jint compress) /* IN */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_DFUfptoimage(JNIEnv *env, jclass clss, jint hdim, jint vdim,
+        jfloat max, jfloat min, jfloatArray hscale, jfloatArray vscale, jfloatArray data,
+        jbyteArray palette, jstring outfile, jint ct_method, jint hres, jint vres, jint compress)
 {
     h4NotImplemented(env, "DFUfptoimage (windows)");
     return JNI_TRUE;

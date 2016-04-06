@@ -25,19 +25,7 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-extern jboolean h4outOfMemory( JNIEnv *env, char *functName);
-/* exceptions??... */
+#include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Vstart(JNIEnv *env, jclass clss, jlong fid)
@@ -107,7 +95,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
         return;
     }
 
-    className = (char *)malloc(H4_MAX_NC_CLASS+1);
+    className = (char *)HDmalloc(H4_MAX_NC_CLASS+1);
     if (className == NULL) {
         h4outOfMemory(env,  "Vgetclass");
         return;
@@ -127,24 +115,24 @@ Java_hdf_hdflib_HDFLibrary_Vgetclass(JNIEnv *env, jclass clss, jlong vgroup_id, 
     /*  create a Java String object in the calling environment... */
     jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
     if (jc == NULL) {
-        free(className);
+        HDfree(className);
         return ; /* exception is raised */
     }
 
     o = ENVPTR->GetObjectArrayElement(ENVPAR hdfclassname,0);
     if (o == NULL) {
-        free(className);
+        HDfree(className);
         return ;
     }
     bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
     if (bb == JNI_FALSE) {
-        free(className);
+        HDfree(className);
         return ;
     }
     ENVPTR->SetObjectArrayElement(ENVPAR hdfclassname,0,(jobject)rstring);
     ENVPTR->DeleteLocalRef(ENVPAR o);
 
-    free(className);
+    HDfree(className);
     return;
 }
 
@@ -157,7 +145,7 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
     jobject o;
     jboolean bb;
 
-    name = (char *) malloc(H4_MAX_NC_NAME+1);
+    name = (char *)HDmalloc(H4_MAX_NC_NAME+1);
     if (name == NULL) {
         h4outOfMemory(env,  "Vgetname");
         return;
@@ -170,23 +158,23 @@ Java_hdf_hdflib_HDFLibrary_Vgetname(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
     if (jc == NULL) {
-        free(name);
+        HDfree(name);
         return ; /* exception is raised */
     }
     o = ENVPTR->GetObjectArrayElement(ENVPAR hdfname,0);
     if (o == NULL) {
-        free(name);
+        HDfree(name);
         return ;
     }
     bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
     if (bb == JNI_FALSE) {
-        free(name);
+        HDfree(name);
         return ;
     }
     ENVPTR->SetObjectArrayElement(ENVPAR hdfname,0,(jobject)rstring);
     ENVPTR->DeleteLocalRef(ENVPAR o);
 
-    free(name);
+    HDfree(name);
     return;
 }
 
@@ -222,7 +210,8 @@ Java_hdf_hdflib_HDFLibrary_Visvs(JNIEnv *env, jclass clss, jlong vgroup_id, jint
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Vgettagrefs(JNIEnv *env, jclass clss, jlong vgroup_id, jintArray tags, jintArray refs, jint size)
+Java_hdf_hdflib_HDFLibrary_Vgettagrefs(JNIEnv *env, jclass clss, jlong vgroup_id,
+        jintArray tags, jintArray refs, jint size)
 {
 
     jint *tagVal;
@@ -402,7 +391,7 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
     jobject o;
     jboolean bb;
 
-    name = (char *)malloc(H4_MAX_NC_NAME+1);
+    name = (char *)HDmalloc(H4_MAX_NC_NAME+1);
     if (name == NULL) {
         h4outOfMemory(env,  "Vinquire");
         return JNI_FALSE;
@@ -415,31 +404,31 @@ Java_hdf_hdflib_HDFLibrary_Vinquire(JNIEnv *env, jclass clss, jlong vgroup_id, j
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR n_entries,theArg, JNI_ABORT);
-        free(name);
+        HDfree(name);
         return JNI_FALSE;
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR n_entries,theArg, 0);
         jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (jc == NULL) {
-            free(name);
+            HDfree(name);
             return JNI_FALSE;
         }
         o = ENVPTR->GetObjectArrayElement(ENVPAR vgroup_name,0);
         if (o == NULL) {
-            free(name);
+            HDfree(name);
             return JNI_FALSE;
         }
         bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
         if (bb == JNI_FALSE) {
-            free(name);
+            HDfree(name);
             return JNI_FALSE;
         }
         rstring = ENVPTR->NewStringUTF(ENVPAR name);
         ENVPTR->SetObjectArrayElement(ENVPAR vgroup_name,0,(jobject)rstring);
         ENVPTR->DeleteLocalRef(ENVPAR o);
 
-        free(name);
+        HDfree(name);
         return JNI_TRUE;
     }
 }

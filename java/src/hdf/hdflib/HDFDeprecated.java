@@ -547,10 +547,5 @@ public class HDFDeprecated extends HDFLibrary {
 //VOID VSfpack(int32 vdata_id, intn action, char
 //*fields_in_buf, VOIDP buf, intn buf_size, intn
 //n_records, char *fields, VOIDP bufptrs[])
-
-    public static native void HEprint(OutputStream stream, int level) throws HDFException;
-        /* not implemented */
-
-
 }
 

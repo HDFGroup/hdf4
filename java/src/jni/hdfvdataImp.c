@@ -26,19 +26,7 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-extern jboolean h4outOfMemory( JNIEnv *env, char *functName);
-extern jboolean h4NotImplemented( JNIEnv *env, char *functName);
+#include "h4jni.h"
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VSattach(JNIEnv *env, jclass clss, jlong fid, jint vdata_ref, jstring accessmode)
@@ -89,7 +77,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass(JNIEnv *env, jclass clss, jlong vdata_id, 
         return;
     }
 
-    className = (char *)malloc(VSNAMELENMAX+1);
+    className = (char *)HDmalloc(VSNAMELENMAX+1);
     if (className == NULL) {
         h4outOfMemory(env,  "VSgetclass");
         return;
@@ -104,23 +92,23 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass(JNIEnv *env, jclass clss, jlong vdata_id, 
 
     o = ENVPTR->GetObjectArrayElement(ENVPAR hdfclass,0);
     if (o == NULL) {
-        free(className);
+        HDfree(className);
         return;
     }
     jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
     if (jc == NULL) {
-        free(className);
+        HDfree(className);
         return;
     }
     bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
     if (bb == JNI_FALSE) {
-        free(className);
+        HDfree(className);
         return;
     }
     ENVPTR->SetObjectArrayElement(ENVPAR hdfclass,0,(jobject)rstring);
     ENVPTR->DeleteLocalRef(ENVPAR o);
 
-    free(className);
+    HDfree(className);
 }
 
 JNIEXPORT void JNICALL
@@ -164,7 +152,8 @@ Java_hdf_hdflib_HDFLibrary_VSelts(JNIEnv *env, jclass clss, jlong vdata_id)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSfdefine(JNIEnv *env, jclass clss, jlong vdata_id, jstring fieldname, jint numbertype, jint order)
+Java_hdf_hdflib_HDFLibrary_VSfdefine(JNIEnv *env, jclass clss, jlong vdata_id,
+        jstring fieldname, jint numbertype, jint order)
 {
     int32 retVal;
     char  *fldName;
@@ -251,7 +240,7 @@ Java_hdf_hdflib_HDFLibrary_VSgetfields(JNIEnv *env, jclass clss, jlong vdata_id,
     jobject o;
     jboolean bb;
 
-    flds = (char *)malloc(25600);
+    flds = (char *)HDmalloc(25600);
     if (flds == NULL) {
         h4outOfMemory(env,  "VSgetfields");
         return FAIL;
@@ -266,23 +255,23 @@ Java_hdf_hdflib_HDFLibrary_VSgetfields(JNIEnv *env, jclass clss, jlong vdata_id,
         rstring = ENVPTR->NewStringUTF(ENVPAR  flds);
         o = ENVPTR->GetObjectArrayElement(ENVPAR fields,0);
         if (o == NULL) {
-            free(flds);
+            HDfree(flds);
             return FAIL;
         }
         jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (jc == NULL) {
-            free(flds);
+            HDfree(flds);
             return FAIL;
         }
         bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
         if (bb == JNI_FALSE) {
-            free(flds);
+            HDfree(flds);
             return FAIL;
         }
         ENVPTR->SetObjectArrayElement(ENVPAR fields,0,(jobject)rstring);
         ENVPTR->DeleteLocalRef(ENVPAR o);
     }
-    free(flds);
+    HDfree(flds);
     return retVal;
 }
 
@@ -307,7 +296,7 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
     jobject o;
 
 
-    flds = (char *)malloc(MAX_FIELD_SIZE+1);
+    flds = (char *)HDmalloc(MAX_FIELD_SIZE+1);
     if (flds == NULL) {
         h4outOfMemory(env,  "VSinquire");
         return FAIL;
@@ -315,15 +304,15 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
 
     name = (char *)malloc(MAX_NC_NAME+1);
     if (name == NULL) {
-        free(flds);
+        HDfree(flds);
         return FAIL;
     }
 
     theIargs = ENVPTR->GetIntArrayElements(ENVPAR iargs,&bb);
 
     if (theIargs == NULL) {
-        free(flds);
-        free(name);
+        HDfree(flds);
+        HDfree(name);
         return FAIL;
     }
 
@@ -335,8 +324,8 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR iargs,theIargs,JNI_ABORT);
-        free(flds);
-        free(name);
+        HDfree(flds);
+        HDfree(name);
         return JNI_FALSE;
     }
     else {
@@ -344,19 +333,19 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
 
         jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (jc == NULL) {
-            free(flds);
-            free(name);
+            HDfree(flds);
+            HDfree(name);
             return JNI_FALSE;
         }
         o = ENVPTR->GetObjectArrayElement(ENVPAR sargs,0);
         if (o == NULL) {
-            free(flds);
-            free(name);
+            HDfree(flds);
+            HDfree(name);
             return JNI_FALSE;
         }
         bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
         if (bb == JNI_FALSE) {
-            /*GB*/ free(flds);
+            HDfree(flds);
             return JNI_FALSE;
         }
         rstring = ENVPTR->NewStringUTF(ENVPAR flds);
@@ -365,22 +354,22 @@ Java_hdf_hdflib_HDFLibrary_VSinquire(JNIEnv *env, jclass clss, jlong vdata_id, j
 
         o = ENVPTR->GetObjectArrayElement(ENVPAR sargs,1);
         if (o == NULL) {
-            free(flds);
-            free(name);
+            HDfree(flds);
+            HDfree(name);
             return JNI_FALSE;
         }
         bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
         if (bb == JNI_FALSE) {
-            free(flds);
-            free(name);
+            HDfree(flds);
+            HDfree(name);
             return JNI_FALSE;
         }
         rstring = ENVPTR->NewStringUTF(ENVPAR name);
         ENVPTR->SetObjectArrayElement(ENVPAR sargs,1,(jobject)rstring);
         ENVPTR->DeleteLocalRef(ENVPAR o);
 
-        free(flds);
-        free(name);
+        HDfree(flds);
+        HDfree(name);
         return JNI_TRUE;
     }
 }
@@ -448,7 +437,8 @@ Java_hdf_hdflib_HDFLibrary_VSlone(JNIEnv *env, jclass clss, jlong fid, jintArray
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VSread(JNIEnv *env, jclass clss, jlong vdata_id, jbyteArray databuf, jint nrecords, jint interlace)
+Java_hdf_hdflib_HDFLibrary_VSread(JNIEnv *env, jclass clss, jlong vdata_id, jbyteArray databuf,
+        jint nrecords, jint interlace)
 {
     int32   retVal;
     jbyte  * data;
@@ -567,8 +557,8 @@ Java_hdf_hdflib_HDFLibrary_VSfindclass(JNIEnv *env, jclass clss, jlong vdata_id,
 
 /* no idea at all how to deal with 2-D arrays.... */
 JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_VSfpack(JNIEnv *env, jclass clss, jlong vdata_id, jint action, jstring fields_in_buf, jarray buf,
-        jint bufsize, jstring fields, jarray bufptrs)
+Java_hdf_hdflib_HDFLibrary_VSfpack(JNIEnv *env, jclass clss, jlong vdata_id, jint action,
+        jstring fields_in_buf, jarray buf, jint bufsize, jstring fields, jarray bufptrs)
 {
 
     /*
@@ -628,7 +618,8 @@ Java_hdf_hdflib_HDFLibrary_VSsetname(JNIEnv *env, jclass clss, jlong vdata_id, j
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VSwrite(JNIEnv *env, jclass clss, jlong vdata_id, jbyteArray databuf, jint n_records, jint interlace)
+Java_hdf_hdflib_HDFLibrary_VSwrite(JNIEnv *env, jclass clss, jlong vdata_id, jbyteArray databuf,
+        jint n_records, jint interlace)
 {
     int32 rval;
     jbyte *b;
@@ -648,7 +639,8 @@ Java_hdf_hdflib_HDFLibrary_VSwrite(JNIEnv *env, jclass clss, jlong vdata_id, jby
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSattrinfo(JNIEnv *env, jclass clss, jlong id, jint index, jint attr_index, jobjectArray name, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_VSattrinfo(JNIEnv *env, jclass clss, jlong id, jint index,
+        jint attr_index, jobjectArray name, jintArray argv)
 {
     int32 retVal;
     jint *theArgs;
@@ -740,7 +732,8 @@ Java_hdf_hdflib_HDFLibrary_VSfnattrs(JNIEnv *env, jclass clss, jlong id, jint at
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSgetattr(JNIEnv *env, jclass clss, jlong id, jint field_index, jint attr_index, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_VSgetattr(JNIEnv *env, jclass clss, jlong id, jint field_index,
+        jint attr_index, jbyteArray values)
 {
     intn rval;
     jbyte *arr;
@@ -780,8 +773,8 @@ Java_hdf_hdflib_HDFLibrary_VSnattrs(JNIEnv *env, jclass clss, jlong id)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSsetattr__IILjava_lang_String_2IILjava_lang_String_2(JNIEnv *env, jclass clss, jlong id, jint index,
-        jstring attr_name, jlong data_type, jint count, jstring values)
+Java_hdf_hdflib_HDFLibrary_VSsetattr__IILjava_lang_String_2IILjava_lang_String_2(JNIEnv *env, jclass clss,
+        jlong id, jint index, jstring attr_name, jlong data_type, jint count, jstring values)
 {
     intn rval;
     char *str;
@@ -805,8 +798,8 @@ Java_hdf_hdflib_HDFLibrary_VSsetattr__IILjava_lang_String_2IILjava_lang_String_2
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSsetattr__IILjava_lang_String_2II_3B(JNIEnv *env, jclass clss, jlong id, jint index, jstring attr_name,
-        jlong data_type, jint count, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_VSsetattr__IILjava_lang_String_2II_3B(JNIEnv *env, jclass clss, jlong id,
+        jint index, jstring attr_name, jlong data_type, jint count, jbyteArray values)
 {
     intn rval;
     jbyte *arr;

@@ -23,18 +23,7 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-extern jboolean h4outOfMemory( JNIEnv *env, char *functName);
+#include "h4jni.h"
 
 /*
  *  Get information from a Java HDFNewCompInfo object in to a C comp_info
@@ -43,7 +32,8 @@ extern jboolean h4outOfMemory( JNIEnv *env, char *functName);
  *  Extract information for the different types of compression.
  */
 
-jboolean getNewCompInfo( JNIEnv *env, jobject ciobj, comp_info *cinf)
+jboolean
+getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -176,8 +166,8 @@ jint ctype;
  *
  *   Put in the fields for each compression method.
  */
-jboolean setNewCompInfo( JNIEnv *env, jobject ciobj, comp_coder_t coder,
-comp_info *cinf)
+jboolean
+setNewCompInfo(JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -186,7 +176,8 @@ jclass jc;
 
     if (jc == NULL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         jf = ENVPTR->GetFieldID(ENVPAR  jc, "ctype", "I");
         if (jf == NULL) {
             return JNI_FALSE;
@@ -332,7 +323,8 @@ jclass jc;
 /*
  *     Get info from old style C comp_info struct, put in HDFCompInfo object.
  */
-jboolean getOldCompInfo( JNIEnv *env, jobject ciobj, comp_info *cinf)
+jboolean
+getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -381,7 +373,8 @@ jint ctype;
  *  Get the Chunk info from C HDF_CHUNK_DEF struct, put in
  *  Java HDFChunkInfo object.
  */
-jboolean getChunkInfo( JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
+jboolean
+getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -438,7 +431,8 @@ jboolean bb;
         /* set compression information */
         bval = getNewCompInfo(env, (jobject)larr, &(cinf->comp.cinfo));
 
-     } else if (ctype == (HDF_CHUNK | HDF_NBIT)) {
+    }
+    else if (ctype == (HDF_CHUNK | HDF_NBIT)) {
         jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFNBITChunkInfo");
         if (jc == NULL) {
             return JNI_FALSE;
@@ -494,7 +488,8 @@ jboolean bb;
  *  Determine the compression method, and create an appropriate subclass
  *  of HDFCompInfo.  Then call the constructor for HDFChunkInfo.
  */
-jboolean makeChunkInfo( JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf)
+jboolean
+makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf)
 {
 jclass jc;
 jclass jci;
@@ -616,10 +611,8 @@ jobject compinfo;
     return JNI_TRUE;
 }
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_HCget_1config_1info
-( JNIEnv *env,
-jclass clss,
-jint coder_type) /* out: CompInfo */
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_HCget_1config_1info(JNIEnv *env, jclass clss, jint coder_type)
 {
   intn rval;
   uint32 compression_config_info=0;

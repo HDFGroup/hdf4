@@ -194,7 +194,12 @@ public class HDFConstants
     public static final int  DFNT_UINT64   =  27;
     public static final int  DFNT_INT128   =  28;
     public static final int  DFNT_UINT128  =  30;
+
+    public static final int  DFNT_HDF    =  0x00000000;
+    public static final int  DFNT_NATIVE =  0x00001000;
+    public static final int  DFNT_CUSTOM =  0x00002000;
     public static final int  DFNT_LITEND =  0x00004000;
+    public static final int  DFNT_MASK   =  0x00000fff;
 
     public static final int DF_FORWARD  = 1;
     public static final int  DFS_MAXLEN = 255;

@@ -20,18 +20,9 @@
 extern "C" {
 #endif
 
+#include "hdf.h"
 #include "h4jni.h"
 #include <stdlib.h>
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
 
 /********************/
 /* Local Macros     */
@@ -57,7 +48,8 @@ extern "C" {
     return JNI_TRUE;                                                        \
 }
 
-jboolean h4buildException( JNIEnv *env, jint HDFerr)
+jboolean
+h4buildException(JNIEnv *env, jint HDFerr)
 {
     jmethodID jm;
     jclass jc;
@@ -99,12 +91,14 @@ H4JNIErrorClass(JNIEnv *env, const char *message, const char *className)
     THROWEXCEPTION(className, args);
 } /* end H5JNIErrorClass() */
 
-jboolean h4NotImplemented( JNIEnv *env, const char *functName)
+jboolean
+h4NotImplemented(JNIEnv *env, const char *functName)
 {
     return H4JNIErrorClass(env, functName, "hdf/hdflib/HDFNotImplementedException");
 }
 
-jboolean h4outOfMemory( JNIEnv *env, const char *functName)
+jboolean
+h4outOfMemory(JNIEnv *env, const char *functName)
 {
     return H4JNIErrorClass(env, functName, "java/lang/OutOfMemoryError");
 }
@@ -112,15 +106,44 @@ jboolean h4outOfMemory( JNIEnv *env, const char *functName)
 /*
  *  A fatal error in a JNI call
  */
-jboolean h4JNIFatalError( JNIEnv *env, const char *functName)
+jboolean
+h4JNIFatalError(JNIEnv *env, const char *functName)
 {
     return H4JNIErrorClass(env, functName, "java/lang/InternalError");
 }
 
-jboolean h4raiseException( JNIEnv *env, const char *message)
+jboolean
+h4raiseException(JNIEnv *env, const char *message)
 {
     return H4JNIErrorClass(env, message, "hdf/hdflib/HDFLibraryException");
 }
+/*
+ * Class:     hdf_hdflib_HDFLibraryException
+ * Method:    printStackTrace0
+ * Signature: (Ljava/lang/Object;)V
+ *
+ *  Call the HDF library to print the HDF error stack to 'file_name'.
+ */
+JNIEXPORT void JNICALL
+JJava_hdf_hdflib_HDFLibraryException_printStackTrace0(
+    JNIEnv *env, jobject obj, jstring file_name)
+{
+    FILE       *stream = NULL;
+    const char *file = NULL;
+
+    if(file_name == NULL) {
+        HEprint(stderr, 0);
+    } /* end if */
+    else {
+        file = ENVPTR->GetStringUTFChars(ENVPAR file_name, 0);
+        stream = fopen(file, "a+");
+        if(stream) {
+            HEprint(stream, 0);
+            fclose(stream);
+        } /* end if */
+        ENVPTR->ReleaseStringUTFChars(ENVPAR file_name, file);
+    } /* end else */
+} /* end  Java_hdf_hdflib_HDFLibraryException_printStackTrace0() */
 
 #ifdef __cplusplus
 }

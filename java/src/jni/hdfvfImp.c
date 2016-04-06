@@ -26,16 +26,7 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
+#include "h4jni.h"
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldesize(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
@@ -69,14 +60,12 @@ Java_hdf_hdflib_HDFLibrary_VFfieldname(JNIEnv *env, jclass clss, jlong vdata_id,
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldorder(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-
         return (VFfieldorder((int32) vdata_id,  (int32) field_index));
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldtype(JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-
         return (jlong)VFfieldtype((int32) vdata_id,  (int32) field_index);
 }
 

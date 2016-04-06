@@ -26,19 +26,10 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
+#include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)  /* IN:  byte[] */
+Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)
 {
     intn rval;
     char * f;
@@ -54,13 +45,14 @@ Java_hdf_hdflib_HDFLibrary_DFPaddpal(JNIEnv *env, jclass clss, jstring filename,
     ENVPTR->ReleaseByteArrayElements(ENVPAR palette,dat,JNI_ABORT);
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPgetpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)  /* OUT:  byte[] */
+Java_hdf_hdflib_HDFLibrary_DFPgetpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette)
 {
     intn rval;
     char * f;
@@ -102,7 +94,8 @@ Java_hdf_hdflib_HDFLibrary_DFPnpals(JNIEnv *env, jclass clss, jstring filename)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette, jint overwrite, jstring filemode)
+Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename, jbyteArray palette,
+        jint overwrite, jstring filemode)
 {
     intn rval;
     char * f;
@@ -121,7 +114,8 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal(JNIEnv *env, jclass clss, jstring filename,
     ENVPTR->ReleaseByteArrayElements(ENVPAR palette,dat,JNI_ABORT);
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
@@ -137,7 +131,8 @@ Java_hdf_hdflib_HDFLibrary_DFPreadref(JNIEnv *env, jclass clss, jstring filename
     ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
@@ -161,7 +156,8 @@ Java_hdf_hdflib_HDFLibrary_DFPwriteref(JNIEnv *env, jclass clss, jstring filenam
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }

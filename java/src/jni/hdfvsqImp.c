@@ -27,21 +27,10 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-extern jboolean h4outOfMemory( JNIEnv *env, char *functName);
+#include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records) /* OUT: int */
+Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records)
 {
     intn rval;
     jint * theArg;
@@ -62,7 +51,7 @@ Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)  /* OUT: String */
+Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)
 {
     intn rval;
     char flds[4096];
@@ -102,7 +91,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace) /* OUT: int */
+Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace)
 {
     intn rval;
     jint * theArg;
@@ -125,7 +114,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdat
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name)  /* OUT: String */
+Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name)
 {
     intn rval;
     char *nm;
@@ -134,7 +123,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
     jobject o;
     jboolean bb;
 
-    nm = (char *)malloc(VSNAMELENMAX+1);
+    nm = (char *)HDmalloc(VSNAMELENMAX+1);
     if (nm == NULL) {
         h4outOfMemory(env,  "VSQueryname");
         return JNI_FALSE;
@@ -143,7 +132,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
     nm[VSNAMELENMAX] = '\0';
 
     if (rval == FAIL) {
-        free(nm);
+        HDfree(nm);
         return JNI_FALSE;
     }
     else {
@@ -153,12 +142,12 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
         /*  create a Java String object in the calling environment... */
         jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (jc == NULL) {
-            free(nm);
+            HDfree(nm);
             return JNI_FALSE; /* exception is raised */
         }
         o = ENVPTR->GetObjectArrayElement(ENVPAR vdata_name,0);
         if (o == NULL) {
-            free(nm);
+            HDfree(nm);
             return JNI_FALSE;
         }
         bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
@@ -169,7 +158,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
         ENVPTR->SetObjectArrayElement(ENVPAR vdata_name,0,(jobject)rstring);
         ENVPTR->DeleteLocalRef(ENVPAR o);
 
-        free(nm);
+        HDfree(nm);
         return JNI_TRUE;
     }
 }
@@ -187,7 +176,7 @@ Java_hdf_hdflib_HDFLibrary_VSQuerytag(JNIEnv *env, jclass clss, jlong vdata_id)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size) /* OUT: int */
+Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size)
 {
     intn rval;
     jint * theArg;

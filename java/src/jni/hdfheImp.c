@@ -17,44 +17,22 @@ extern "C" {
 #include "hdf.h"
 #include "hfile.h"
 #include "jni.h"
+#include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-extern jboolean h4NotImplemented( JNIEnv *env, char *functName);
-
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_HEvalue
-( JNIEnv *env,
-jclass clss,
-jint level)
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_HEvalue(JNIEnv *env, jclass clss, jint level)
 {
     return HEvalue((int32) level);
 }
 
-JNIEXPORT void JNICALL Java_hdf_hdflib_HDFDeprecated_HEprint
-( JNIEnv *env,
-jclass clss,
-jobject stream,  /* FILE * to output to? */
-jint level)
+JNIEXPORT void JNICALL
+Java_hdf_hdflib_HDFLibrary_HEprint(JNIEnv *env, jclass clss, jobject stream, jint level)
 {
-printf("HEprint called:\n");fflush(stdout);
-    /* HEprint is not implemented
-        because I don't know HOW to implement it !*/
-    /* Exception....*/
-    h4NotImplemented( env, "HEprint");
+    HEprint((FILE *) stream, (int32) level);
 }
 
-JNIEXPORT jstring JNICALL Java_hdf_hdflib_HDFLibrary_HEstring
-( JNIEnv *env,
-jclass clss,
-jshort error_code)
+JNIEXPORT jstring JNICALL
+Java_hdf_hdflib_HDFLibrary_HEstring(JNIEnv *env, jclass clss, jshort error_code)
 {
     char * str;
     jstring rstring;

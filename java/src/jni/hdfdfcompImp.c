@@ -25,29 +25,13 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
+#include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
+extern jboolean getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
-extern jboolean getOldCompInfo( JNIEnv *env, jobject ciobj, comp_info *cinf);
-
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFgetcomp
-( JNIEnv *env,
-jclass clss,
-jlong file_id,
-jshort tag,
-jshort ref,
-jbyteArray image, /* OUT: byte[] (really) byte[3][][] or byte[][][3] ? */
-jint xdim,
-jint ydim,
-jint method)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFgetcomp(JNIEnv *env, jclass clss, jlong file_id, jshort tag,
+        jshort ref, jbyteArray image, jint xdim, jint ydim, jint method)
 {
     int rval;
     jbyte *im;
@@ -68,19 +52,10 @@ jint method)
 }
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFputcomp
-( JNIEnv *env,
-jclass clss,
-jlong file_id,
-jshort tag,
-jshort ref,
-jbyteArray image, /* IN: byte[] (actually byte[3][][] or byte[][][3] ? */
-jint xdim,
-jint ydim,
-jbyteArray palette, /* IN: byte[3*256] */
-jbyteArray newpal, /* IN?: byte[3*256] */
-jint scheme,
-jobject c_info)  /* IN: HDFCompInfo c_info */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFputcomp(JNIEnv *env, jclass clss, jlong file_id, jshort tag,
+        jshort ref, jbyteArray image, jint xdim, jint ydim, jbyteArray palette, jbyteArray newpal,
+        jint scheme, jobject c_info)
 {
     intn rval;
     jboolean bval;

@@ -28,27 +28,16 @@ extern "C" {
 #include "jni.h"
 #include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
 /*
  * Class:     hdf_hdflib_HDFLibrary
  * Method:    Hopen
- * Signature: (Ljava/lang/String;I)J
+ * Signature: (Ljava/lang/String;II)J
  */
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint access)
+Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint access, jint ndds)
 {
     const char *file;
     int32  retVal;
-    int16 errval;
     jclass jc;
 
     PIN_JAVA_STRING(hdfFile, file, -1);
@@ -63,24 +52,12 @@ Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint
     }
 
     /* open HDF file specified by hdf_HDF_file */
-    retVal = Hopen(file, (intn)access, (int16)0);
+    retVal = Hopen(file, (intn)access, (int16)ndds);
 
     UNPIN_JAVA_STRING(hdfFile, file);
 
     if (retVal == FAIL) {
-        /* check for error */
-        /* for now:  use top of exception stack:  fix this
-                   to do whole stack */
-        errval = HEvalue((int32)1);
-        if (errval != DFE_NONE) {
-            h4buildException( env, errval );
-            jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFLibraryException");
-            if (jc == NULL) {
-                return -1; /* exception is raised */
-            }
-            ENVPTR->ThrowNew(ENVPAR jc,HEstring((hdf_err_code_t)errval));
-        }
-        return -1;
+        CALL_ERROR_CHECK(-1);
     }
     else {
         return (jlong)retVal;
@@ -95,7 +72,7 @@ Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hclose(JNIEnv *env, jclass clss, jlong fid)
 {
-    int status = 0;
+    intn status = 0;
 
     if (fid < 0) {
         /* maybe not an exception -- the file is already closed? */
@@ -105,15 +82,11 @@ Java_hdf_hdflib_HDFLibrary_Hclose(JNIEnv *env, jclass clss, jlong fid)
         /* close the HDF file */
         status = Hclose((int32)fid);
         if (status == FAIL) {
-            /* ideally, return an exception explaining the
-                       reason, especially for DFE_OPENAID error
-                    */
-            return JNI_FALSE;
+            CALL_ERROR_CHECK(JNI_FALSE);
         }
         else {
             return JNI_TRUE;
         }
-
     }
 }
 
@@ -139,32 +112,40 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hishdf(JNIEnv *env, jclass clss, jstring hdfFile)
 {
 
-    char * hfile;
-    int  retVal;
+    const char *hfile;
+    intn  retVal;
 
-    hfile = (char *)ENVPTR->GetStringUTFChars(ENVPAR hdfFile,0);
+    PIN_JAVA_STRING(hdfFile, hfile, JNI_FALSE);
 
     /* open HDF file specified by hdf_HDF_file */
-    retVal = Hishdf((char *)hfile);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR hdfFile,hfile);
+    retVal = Hishdf(hfile);
+
+    UNPIN_JAVA_STRING(hdfFile, hfile);
+
     if (retVal == FALSE) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         return JNI_TRUE;
     }
-
 }
 
 /*
  * Class:     hdf_hdflib_HDFLibrary
  * Method:    Hnumber
- * Signature: (J)I
+ * Signature: (JI)I
  */
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Hnumber(JNIEnv *env, jclass clss, jlong fid)
+Java_hdf_hdflib_HDFLibrary_Hnumber(JNIEnv *env, jclass clss, jlong fid, jint tagtype)
 {
-    return (Hnumber(fid, DFTAG_WILDCARD));
+    int32  retVal;
+
+    retVal = Hnumber((int32)fid, (uint16)tagtype);
+
+    if (retVal == FAIL) {
+        CALL_ERROR_CHECK(-1);
+    }
+    return (jint)retVal;
 }
 
 /*
@@ -175,7 +156,14 @@ Java_hdf_hdflib_HDFLibrary_Hnumber(JNIEnv *env, jclass clss, jlong fid)
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_DFKNTsize(JNIEnv *env, jclass clss, jlong numbertype)
 {
-    return (DFKNTsize(numbertype));
+    int  retVal;
+
+    retVal = DFKNTsize((int32)numbertype);
+
+    if (retVal == FAIL) {
+        CALL_ERROR_CHECK(-1);
+    }
+    return (jint)retVal;
 }
 
 /*
@@ -188,10 +176,10 @@ Java_hdf_hdflib_HDFLibrary_Hcache(JNIEnv *env, jclass clss, jlong file_id, jint 
 {
 
     intn rval;
-    rval =  Hcache((int32) file_id, (intn) cache_switch);
+    rval =  Hcache((int32)file_id, (intn)cache_switch);
 
     if (rval == FAIL) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         return JNI_TRUE;
@@ -222,7 +210,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR vers,theArgs,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR vers,theArgs,0);
@@ -272,7 +260,7 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR vers,theArgs,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR vers,theArgs,0);
@@ -307,11 +295,11 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Hsetaccesstype(JNIEnv *env, jclass clss, jlong h_id, jint  access_type)
 {
-    int32 rval;
+    intn rval;
 
-    rval = Hsetaccesstype((int32) h_id, (uintn)  access_type);
+    rval = Hsetaccesstype((int32)h_id, (uintn)access_type);
     if (rval == FAIL) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         return JNI_TRUE;
@@ -328,9 +316,9 @@ Java_hdf_hdflib_HDFLibrary_Hsync(JNIEnv *env, jclass clss, jlong file_id)
 {
     intn rval;
 
-    rval = Hsync((int32) file_id);
+    rval = Hsync((int32)file_id);
     if (rval == FAIL) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         return JNI_TRUE;
@@ -347,10 +335,10 @@ Java_hdf_hdflib_HDFLibrary_HDFclose(JNIEnv *env, jclass clss, jlong file_id)
 {
     intn rval;
 
-    rval = Hclose((int32) file_id);
+    rval = Hclose((int32)file_id);
 
     if (rval == FAIL)  {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         return JNI_TRUE;
@@ -367,13 +355,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_HDFopen(JNIEnv *env, jclass clss, jstring filename, jint access, jshort n_dds)
 {
     int32 rval;
-    char * str;
+    const char * str;
 
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
+    PIN_JAVA_STRING(filename, str, -1);
 
-    rval = HDFopen((char *)str, (intn) access, (int16) n_dds);
+    rval = HDFopen((char *)str, (intn)access, (int16)n_dds);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,str);
+    UNPIN_JAVA_STRING(filename, str);
 
     return rval;
 }
@@ -388,12 +376,12 @@ Java_hdf_hdflib_HDFLibrary_HDFopen(JNIEnv *env, jclass clss, jstring filename, j
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_HDFflusdd(JNIEnv *env, jclass clss, jlong file_id)
 {
-intn rval;
+    intn rval;
 
     rval = Hflushdd((int32)file_id);
 
     if (rval == FAIL)  {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         return JNI_TRUE;
@@ -409,13 +397,14 @@ intn rval;
 JNIEXPORT jstring JNICALL
 Java_hdf_hdflib_HDFLibrary_HDgetNTdesc(JNIEnv *env, jclass clss, jint nt)
 {
-char *rval;
-jstring rstring;
+    char *rval;
+    jstring rstring;
 
-      rval = HDgetNTdesc((int32) nt);
+      rval = HDgetNTdesc((int32)nt);
 
       if (rval != NULL) {
               rstring = ENVPTR->NewStringUTF(ENVPAR  rval);
+              HDfree(rval);
       }
       else {
               rstring = NULL;

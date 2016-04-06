@@ -25,28 +25,18 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
+#include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_HXsetcreatedir
-( JNIEnv *env,
-jclass clss,
-jstring dir)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_HXsetcreatedir(JNIEnv *env, jclass clss, jstring dir)
 {
     intn rval;
     char *str;
 
     if (dir != NULL) {
         str =(char *) ENVPTR->GetStringUTFChars(ENVPAR dir,0);
-    } else {
+    }
+    else {
         str = NULL;
     }
 
@@ -58,22 +48,22 @@ jstring dir)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_HXsetdir
-( JNIEnv *env,
-jclass clss,
-jstring dir)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_HXsetdir(JNIEnv *env, jclass clss, jstring dir)
 {
     intn rval;
     char *str;
 
     if (dir != NULL) {
         str =(char *) ENVPTR->GetStringUTFChars(ENVPAR dir,0);
-    } else {
+    }
+    else {
         str = NULL;
     }
 
@@ -85,7 +75,8 @@ jstring dir)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }

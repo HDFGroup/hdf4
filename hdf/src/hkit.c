@@ -51,7 +51,7 @@ DESCRIPTION
    and the string is padded with spaces
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDc2fstr(char *str, intn len)
 {
     int         i;
@@ -91,7 +91,7 @@ HDf2cstring(_fcd fdesc, intn len)
         /*EMPTY*/;
     cstr = (char *) HDmalloc((uint32) (i + 2));
     if (!cstr)
-	HRETURN_ERROR(DFE_NOSPACE, NULL);
+    HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
     HDmemcpy(cstr,str,i+1);
     return cstr;
@@ -116,7 +116,7 @@ DESCRIPTION
    support one of these.
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDpackFstring(char *src, char *dest, intn len)
 {
     intn        sofar;
@@ -128,7 +128,7 @@ HDpackFstring(char *src, char *dest, intn len)
         *dest++ = ' ';
 
     return SUCCEED;
-}	/* HDpackFstring */
+}    /* HDpackFstring */
 
 /* ------------------------------- HDflush -------------------------------- */
 /*
@@ -149,7 +149,7 @@ DESCRIPTION
    really doing anything.
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDflush(int32 file_id)
 {
     CONSTR(FUNC, "HDflush");    /* for HERROR */
@@ -163,7 +163,7 @@ HDflush(int32 file_id)
     HI_FLUSH(file_rec->file);
 
     return SUCCEED;
-}	/* HDflush */
+}    /* HDflush */
 
 /* ----------------------------- HDgettagdesc ----------------------------- */
 /*
@@ -210,31 +210,32 @@ HDgettagsname(uint16 tag)
     char       *ret = NULL;
     intn        i;
 
-    if (SPECIALTAG(tag))
-        ret = (char *) HDstrdup("Special ");
+    if (SPECIALTAG(tag)) {
+        ret = (char *) HDmalloc(HDstrlen("Special ") + 1);
+        HDstrcpy(ret, "Special ");
+    }
     tag = BASETAG(tag);
     for (i = 0; i < (intn)(sizeof(tag_descriptions) / sizeof(tag_descript_t)); i++)
-        if (tag_descriptions[i].tag == tag)
-          {
-              if (ret == NULL)
-                  ret = (char *) HDstrdup(tag_descriptions[i].name);
-              else
-                {
+        if (tag_descriptions[i].tag == tag) {
+              if (ret == NULL) {
+                  ret = (char *) HDmalloc(HDstrlen(tag_descriptions[i].name) + 1);
+                  HDstrcpy(ret, tag_descriptions[i].name);
+              }
+              else {
                     char       *t;
 
                     t = (char *) HDmalloc(HDstrlen(ret) +
                                     HDstrlen(tag_descriptions[i].name) + 2);
-                    if (t == NULL)
-                      {
+                    if (t == NULL) {
                           HDfree(ret);
                           HRETURN_ERROR(DFE_NOSPACE, NULL)
-                      }     /* end if */
+                    }     /* end if */
                     HDstrcpy(t, ret);
                     HDstrcat(t, tag_descriptions[i].name);
                     HDfree(ret);
                     ret = t;
-                }   /* end else */
-          }     /* end if */
+              }   /* end else */
+        }     /* end if */
     return (ret);
 }  /* HDgettagsname */
 
@@ -251,7 +252,7 @@ DESCRIPTION
    Map a tag name to a statically allocated tag number for it.
 
 ---------------------------------------------------------------------------*/
-intn 
+intn
 HDgettagnum(const char *tag_name)
 {
     intn        i;
@@ -283,38 +284,43 @@ HDgetNTdesc(int32 nt)
     char       *ret_desc = NULL;
 
     /* evil hard-coded values */
-    if (nt & DFNT_NATIVE)
-        ret_desc = (char *) HDstrdup(nt_descriptions[0].desc);
-    else if (nt & DFNT_CUSTOM)
-        ret_desc = (char *) HDstrdup(nt_descriptions[1].desc);
-    else if (nt & DFNT_LITEND)
-        ret_desc = (char *) HDstrdup(nt_descriptions[2].desc);
+    if (nt & DFNT_NATIVE) {
+        ret_desc = (char *) HDmalloc(HDstrlen(nt_descriptions[0].desc) + 1);
+        HDstrcpy(ret_desc, nt_descriptions[0].desc);
+    }
+    else if (nt & DFNT_CUSTOM) {
+        ret_desc = (char *) HDmalloc(HDstrlen(nt_descriptions[1].desc) + 1);
+        HDstrcpy(ret_desc, nt_descriptions[1].desc);
+    }
+    else if (nt & DFNT_LITEND) {
+        ret_desc = (char *) HDmalloc(HDstrlen(nt_descriptions[2].desc) + 1);
+        HDstrcpy(ret_desc, nt_descriptions[2].desc);
+    }
 
     nt &= DFNT_MASK;    /* mask off unusual format types */
     for (i = 3; i < (intn)(sizeof(nt_descriptions) / sizeof(nt_descript_t)); i++)
-        if (nt_descriptions[i].nt == nt)
-          {
-              if (ret_desc == NULL)
-                  ret_desc = (char *) HDstrdup(nt_descriptions[i].desc);
-              else
-                {
+        if (nt_descriptions[i].nt == nt) {
+              if (ret_desc == NULL) {
+                  ret_desc = (char *) HDmalloc(HDstrlen(nt_descriptions[i].desc) + 1);
+                  HDstrcpy(ret_desc, nt_descriptions[i].desc);
+              }
+              else {
                     char       *t;
 
-                    t = (char *) HDmalloc(HDstrlen(ret_desc) +
+                    t = (char *)HDmalloc(HDstrlen(ret_desc) +
                                      HDstrlen(nt_descriptions[i].desc) + 2);
-                    if (t == NULL)
-                      {
+                    if (t == NULL) {
                           HDfree(ret_desc);
                           HRETURN_ERROR(DFE_NOSPACE, NULL)
-                      }     /* end if */
+                    }     /* end if */
                     HDstrcpy(t, ret_desc);
                     HDstrcat(t, " ");
                     HDstrcat(t, nt_descriptions[i].desc);
                     HDfree(ret_desc);
                     ret_desc = t;
-                }   /* end else */
+              }   /* end else */
               return (ret_desc);
-          }     /* end if */
+        }     /* end if */
     return (NULL);
 }   /* end HDgetNTdesc() */
 
@@ -328,7 +334,7 @@ USAGE
 RETURNS
    SUCCEED - pointer to filename / FAIL - NULL
 DESCRIPTION
-   Map a file ID to the filename used to get it.  This is useful for 
+   Map a file ID to the filename used to get it.  This is useful for
    mixing old style single-file interfaces (which take filenames) and
    newer interfaces which use file IDs.
 

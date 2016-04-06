@@ -26,32 +26,16 @@ extern "C" {
 
 #include "hdf.h"
 #include "jni.h"
+#include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHmakegroup
-( JNIEnv *env,
-jclass oclass,
-jlong file_id,
-jintArray tag_array, /* IN: int[] */
-jintArray ref_array, /* IN: int[] */
-jint n_objects,
-jstring vgroup_name,
-jstring vgroup_class)
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass oclass, jlong file_id,
+        jintArray tag_array, jintArray ref_array, jint n_objects, jstring vgroup_name, jstring vgroup_class)
 {
-int32 rval;
-jint *tags;
-jint *refs;
-char *name;
-char *cls;
+    int32 rval;
+    jint *tags;
+    jint *refs;
+    char *name;
+    char *cls;
     jboolean bb;
 
     tags = ENVPTR->GetIntArrayElements(ENVPAR tag_array,&bb);
@@ -73,22 +57,14 @@ char *cls;
     return rval;
 }
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredata
-( JNIEnv *env,
-jclass oclass,
-jlong file_id,
-jstring fieldname,
-jbyteArray buf, /* IN: byte[] */
-jint n_records,
-jint data_type,
-jstring vdata_name,
-jstring vdata_class)
+JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass oclass, jlong file_id,
+        jstring fieldname, jbyteArray buf, jint n_records, jint data_type, jstring vdata_name, jstring vdata_class)
 {
-int32 rval;
-jbyte *buffer;
-char *fldname;
-char *name;
-char *cls;
+    int32 rval;
+    jbyte *buffer;
+    char *fldname;
+    char *name;
+    char *cls;
     jboolean bb;
 
     buffer = ENVPTR->GetByteArrayElements(ENVPAR buf,&bb);
@@ -112,24 +88,16 @@ char *cls;
     return rval;
 }
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredatam
-( JNIEnv *env,
-jclass oclass,
-jlong file_id,
-jstring fieldname,
-jbyteArray buf, /* IN: byte[] */
-jint n_records,
-jint data_type,
-jstring vdata_name,
-jstring vdata_class,
-jint order)
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass oclass, jlong file_id, jstring fieldname,
+        jbyteArray buf, jint n_records, jint data_type, jstring vdata_name, jstring vdata_class, jint order)
 {
-int32 rval;
-jbyte *buffer;
-char *fldname;
-char *name;
-char *cls;
-jboolean bb;
+    int32 rval;
+    jbyte *buffer;
+    char *fldname;
+    char *name;
+    char *cls;
+    jboolean bb;
 
     buffer = ENVPTR->GetByteArrayElements(ENVPAR buf,&bb);
 

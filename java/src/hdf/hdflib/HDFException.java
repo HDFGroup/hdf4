@@ -40,19 +40,24 @@ public class HDFException extends Exception
     static public final String HDFExceptionMessage="ERROR: HDF Library Error";
     static public final String HDFMessage="ERROR: Unknown HDF Error";
 
-    int HDFerror;
-    String msg;
+    protected int HDFerror;
+    protected String msg;
 
     public HDFException() {
+        super();
         HDFerror = 0;
+        msg = null;
     }
 
     public HDFException(String s) {
+        super();
         msg = s;
     }
 
     public HDFException(int err) {
+        super();
         HDFerror = err;
+        msg = null;
     }
 
     @Override

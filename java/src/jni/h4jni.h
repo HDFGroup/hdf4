@@ -50,12 +50,29 @@
     ret_obj = ENVPTR->NewObjectA(ENVPAR cls, constructor, (args));               \
 }
 
+/* Macros for error check */
+/* for now:  use top of exception stack:  fix this to do whole stack */
+#define CALL_ERROR_CHECK(retdefault) {                                           \
+    int16 errval;                                                                \
+    jclass jc;                                                                   \
+    errval = HEvalue((int32)1);                                                  \
+    if (errval != DFE_NONE) {                                                    \
+        h4buildException(env, errval);                                           \
+        jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFLibraryException");        \
+        if (jc == NULL) {                                                        \
+            return retdefault;                                                   \
+        }                                                                        \
+        ENVPTR->ThrowNew(ENVPAR jc,HEstring((hdf_err_code_t)errval));            \
+    }                                                                            \
+    return retdefault;                                                           \
+}
+
 
 /* Macros for string access */
 #define PIN_JAVA_STRING(javastr,localstr,retdefault) {                           \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4buildException(env, "java string is NULL");                              \
+        h4raiseException(env, "java string is NULL");                            \
         return (retdefault);                                                     \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -68,7 +85,7 @@
 #define PIN_JAVA_STRING0(javastr,localstr) {                                     \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4buildException(env, "java string is NULL");                              \
+        h4raiseException(env, "java string is NULL");                              \
         return;                                                                  \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -85,11 +102,11 @@
 #define PIN_JAVA_STRING_TWO(javastr,localstr,java2str,local2str,retdefault) {    \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4buildException(env, "java string is NULL");                              \
+        h4raiseException(env, "java string is NULL");                              \
         return (retdefault);                                                     \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4buildException(env, "second java string is NULL");                       \
+        h4raiseException(env, "second java string is NULL");                       \
         return (retdefault);                                                     \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -108,11 +125,11 @@
 #define PIN_JAVA_STRING_TWO0(javastr,localstr,java2str,local2str) {              \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4buildException(env, "java string is NULL");                              \
+        h4raiseException(env, "java string is NULL");                              \
         return;                                                                  \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4buildException(env, "second java string is NULL");                       \
+        h4raiseException(env, "second java string is NULL");                       \
         return;                                                                  \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -136,15 +153,15 @@
 #define PIN_JAVA_STRING_THREE(javastr,localstr,java2str,local2str,java3str,local3str,retdefault) {       \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4buildException(env, "java string is NULL");                              \
+        h4raiseException(env, "java string is NULL");                              \
         return (retdefault);                                                     \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4buildException(env, "second java string is NULL");                       \
+        h4raiseException(env, "second java string is NULL");                       \
         return (retdefault);                                                     \
     }                                                                            \
     if ((java3str) == NULL) {                                                    \
-        h4buildException(env, "third java string is NULL");                        \
+        h4raiseException(env, "third java string is NULL");                        \
         return (retdefault);                                                     \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -170,15 +187,15 @@
 #define PIN_JAVA_STRING_THREE0(javastr,localstr,java2str,local2str,java3str,local3str) {       \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4buildException(env, "java string is NULL");                              \
+        h4raiseException(env, "java string is NULL");                              \
         return;                                                                  \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4buildException(env, "second java string is NULL");                       \
+        h4raiseException(env, "second java string is NULL");                       \
         return;                                                                  \
     }                                                                            \
     if ((java3str) == NULL) {                                                    \
-        h4buildException(env, "third java string is NULL");                        \
+        h4raiseException(env, "third java string is NULL");                        \
         return;                                                                  \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \

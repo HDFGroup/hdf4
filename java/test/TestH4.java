@@ -125,17 +125,145 @@ public class TestH4 {
         catch (Throwable err) {
             fail("HDFLibrary.Hopen create failed: " + err);
         }
+        assertTrue(Hfid > 0);
         try {
             HDFLibrary.Hclose(Hfid);
         }
         catch (Throwable err) {
-            fail("HDFLibrary.Hopen close failed: " + err);
+            fail("HDFLibrary.Hclose close failed: " + err);
         }
         try {
-            Hfid = HDFLibrary.Hopen("t.hdf", HDFConstants.DFACC_RDWR);
+            Hfid = HDFLibrary.Hopen(H4_FILE, HDFConstants.DFACC_RDWR);
         }
         catch (Throwable err) {
             fail("HDFLibrary.Hopen open failed: " + err);
         }
+        assertTrue(Hfid > 0);
+    }
+
+    /**
+     * Test method for {@link hdf.hdflib.HDFLibrary#Hishdf()}.
+     */
+    @Test
+    public void testHishdf() {
+        boolean fileIsHDF4 = false;
+
+        try {
+            Hfid = HDFLibrary.Hopen(H4_FILE, HDFConstants.DFACC_CREATE);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.Hopen create failed: " + err);
+        }
+        assertTrue(Hfid > 0);
+        try {
+            HDFLibrary.Hclose(Hfid);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.Hclose close failed: " + err);
+        }
+        try {
+            fileIsHDF4 = HDFLibrary.Hishdf(H4_FILE);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.Hishdf failed: " + err);
+        }
+        assertTrue(fileIsHDF4);
+    }
+
+    /**
+     * Test method for {@link hdf.hdflib.HDFLibrary#HDgetNTdesc()}.
+     */
+    @Test
+    public void testHDgetNTdesc() {
+        String teststr = null;
+
+        try {
+            teststr = HDFLibrary.HDgetNTdesc(HDFConstants.DFNT_NATIVE);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.HDgetNTdesc DFNT_NATIVE failed: " + err);
+        }
+        assertEquals("native format number-type not set", teststr);
+        try {
+            teststr = HDFLibrary.HDgetNTdesc(HDFConstants.DFNT_CUSTOM);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.HDgetNTdesc DFNT_CUSTOM failed: " + err);
+        }
+        assertEquals("custom format number-type not set", teststr);
+        try {
+            teststr = HDFLibrary.HDgetNTdesc(HDFConstants.DFNT_FLOAT32);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.HDgetNTdesc DFNT_FLOAT32 failed: " + err);
+        }
+        assertEquals("32-bit floating point", teststr);
+        try {
+            teststr = HDFLibrary.HDgetNTdesc(HDFConstants.DFNT_INT8);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.HDgetNTdesc DFNT_INT8 failed: " + err);
+        }
+        assertEquals("8-bit signed integer", teststr);
+        try {
+            teststr = HDFLibrary.HDgetNTdesc(HDFConstants.DFNT_CHAR8);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.HDgetNTdesc DFNT_CHAR8 failed: " + err);
+        }
+        assertEquals("8-bit signed char", teststr);
+    }
+
+    /**
+     * Test method for {@link hdf.hdflib.HDFLibrary#Hnumber()}.
+     */
+    @Test
+    public void testHnumber() {
+        int numberobjs = -1;
+
+        try {
+            Hfid = HDFLibrary.Hopen(H4_FILE, HDFConstants.DFACC_CREATE);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.Hopen create failed: " + err);
+        }
+        assertTrue(Hfid > 0);
+        try {
+            numberobjs = HDFLibrary.Hnumber(Hfid);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.Hnumber failed: " + err);
+        }
+        assertTrue(numberobjs > 0);
+    }
+
+    /**
+     * Test method for {@link hdf.hdflib.HDFLibrary#DFKNTsize()}.
+     */
+    @Test
+    public void testDFKNTsize() {
+        int testsize = -1;
+
+        try {
+            testsize = HDFLibrary.DFKNTsize(HDFConstants.DFNT_FLOAT64);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.DFKNTsize DFNT_FLOAT64 failed: " + err);
+        }
+        assertEquals(8, testsize);
+        try {
+            testsize = HDFLibrary.DFKNTsize(HDFConstants.DFNT_INT16);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.DFKNTsize DFNT_INT16 failed: " + err);
+        }
+        assertEquals(2, testsize);
+        try {
+            testsize = HDFLibrary.DFKNTsize(HDFConstants.DFNT_CHAR);
+        }
+        catch (Throwable err) {
+            fail("HDFLibrary.DFKNTsize DFNT_CHAR failed: " + err);
+        }
+        assertEquals(1, testsize);
     }
 }

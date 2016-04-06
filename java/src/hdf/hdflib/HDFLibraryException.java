@@ -29,27 +29,23 @@ package hdf.hdflib;
  */
 
 
-public class HDFLibraryException extends HDFException 
+public class HDFLibraryException extends HDFException
 {
 
-    int HDFerror;
-    String msg;
-
     public HDFLibraryException() {
-        HDFerror = 0;
-        msg = null;
+        super();
     }
 
     public HDFLibraryException(String s) {
-        msg = "HDFLibraryException: "+s;
+        super("HDFLibraryException: "+s);
     }
 
     public HDFLibraryException(int err) {
-        HDFerror = err;
+        super(err);
     }
 
     @Override
-	public String getMessage() {
+    public String getMessage() {
         if (msg != null) {
             return msg;
         }
@@ -57,10 +53,56 @@ public class HDFLibraryException extends HDFException
         String s;
         try {
             s = HDFLibrary.HEstring(HDFerror);
-        } catch (HDFException e) {
+        }
+        catch (HDFException e) {
             s = new String("HDF error number: "+HDFerror+", HEstring failed");
         }
         msg = "HDFLibraryException: "+s;
         return msg;
     }
+
+    /**
+     * Prints this <code>HDFLibraryException</code>, the HDF Library error
+     * stack, and and the Java stack trace to the standard error stream.
+     */
+    @Override
+    public void printStackTrace() {
+        System.err.println(this);
+        printStackTrace0(null); // the HDF Library error stack
+        super.printStackTrace(); // the Java stack trace
+    }
+
+    /**
+     * Prints this <code>HDFLibraryException</code> the HDF Library error
+     * stack, and and the Java stack trace to the specified print stream.
+     *
+     * @param f
+     *            the file print stream.
+     */
+    public void printStackTrace(java.io.File f) {
+        if ((f == null) || !f.exists() || f.isDirectory() || !f.canWrite()) {
+            printStackTrace();
+        }
+        else {
+            try {
+                java.io.FileOutputStream o = new java.io.FileOutputStream(f);
+                java.io.PrintWriter p = new java.io.PrintWriter(o);
+                p.println(this);
+                p.close();
+            }
+            catch (Exception ex) {
+                System.err.println(this);
+            }
+            ;
+            // the HDF Library error stack
+            printStackTrace0(f.getPath());
+            super.printStackTrace(); // the Java stack trace
+        }
+    }
+
+    /*
+     * This private method calls the HDF library to extract the error codes
+     * and error stack.
+     */
+    private native void printStackTrace0(String s);
 }

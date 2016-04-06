@@ -286,10 +286,14 @@ public class HDFLibrary implements java.io.Serializable
     public static final String getJHIVersion() { return JHI_VERSION; }
 
     public  static long Hopen(String filename) throws HDFException {
-        return Hopen(filename, HDFConstants.DFACC_RDONLY);
+        return Hopen(filename, HDFConstants.DFACC_RDONLY, 0);
     }
 
-    public static native long Hopen(String filename, int access) throws HDFException;
+    public  static long Hopen(String filename, int access) throws HDFException {
+        return Hopen(filename, access, 0);
+    }
+
+    public static native long Hopen(String filename, int access, int ndds) throws HDFException;
 
     public static native  boolean Hclose(long fid) throws HDFException;
 
@@ -297,7 +301,11 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native boolean Hishdf(String fileName)  throws HDFException;
 
-    public static native int Hnumber(long fid)  throws HDFException;
+    public  static int Hnumber(long fid) throws HDFException {
+        return Hnumber(fid, HDFConstants.DFTAG_WILDCARD);
+    }
+
+    public static native int Hnumber(long fid, int tagtype)  throws HDFException;
 
     public static native int DFKNTsize(long numbertype)  throws HDFException;
 
@@ -1020,6 +1028,8 @@ public class HDFLibrary implements java.io.Serializable
     public static native short HEvalue(int level) throws HDFException;
 
     public static native String HEstring(int error_code) throws HDFException;
+
+    public static native void HEprint(Object stream, int level) throws HDFException;
 
     public static native boolean HXsetcreatedir(String dir) throws HDFException;
 

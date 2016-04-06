@@ -27,27 +27,11 @@ extern "C" {
 #include "hdf.h"
 #include "hfile.h"
 #include "jni.h"
+#include "h4jni.h"
 
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
-
-
-extern jboolean h4outOfMemory(JNIEnv *env, char *functName);
-
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDadddata
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jint rank,
-jintArray dimsizes, /* IN: int[] */
-jbyteArray data)  /* IN: byte[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDadddata(JNIEnv *env, jclass clss, jstring filename, jint rank,
+        jintArray dimsizes, jbyteArray data)
 {
     intn rval;
     jchar * name;
@@ -66,50 +50,48 @@ jbyteArray data)  /* IN: byte[] */
     ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,dims,JNI_ABORT); /* no write back */
     if (rval==FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDclear
-( JNIEnv *env,
-jobject obj)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDclear(JNIEnv *env, jclass clss)
 {
     if (DFSDclear( ) == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDendslab
-( JNIEnv *env,
-jobject obj)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDendslab(JNIEnv *env, jclass clss)
 {
     if (DFSDendslab( ) == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDendslice
-( JNIEnv *env,
-jobject obj)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDendslice(JNIEnv *env, jclass clss)
 {
     if (DFSDendslice( ) == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetcal
-( JNIEnv *env,
-jclass clss,
-jdoubleArray calInfo, /* OUT: double cal, cal_err, offset, offset_err */
-jintArray data_type)  /* OUT: */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetcal(JNIEnv *env, jclass clss, jdoubleArray calInfo, jintArray data_type)
 {
     int32 rval;
     jdouble *theCal;
@@ -135,13 +117,9 @@ jintArray data_type)  /* OUT: */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdata
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jint rank,
-jintArray dimsizes, /* IN: int[] */
-jbyteArray data)    /* OUT: byte[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdata(JNIEnv *env, jclass clss, jstring filename,
+        jint rank, jintArray dimsizes, jbyteArray data)
 {
     intn rval;
     jchar * name;
@@ -170,10 +148,8 @@ jbyteArray data)    /* OUT: byte[] */
 }
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdatalen
-( JNIEnv *env,
-jclass clss,
-jintArray info) /* label_len, unit_len, format_len coords_len */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdatalen(JNIEnv *env, jclass clss, jintArray info)
 {
     intn rval;
     jint *theInfo;
@@ -194,10 +170,8 @@ jintArray info) /* label_len, unit_len, format_len coords_len */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdatastrs
-( JNIEnv *env,
-jclass clss,
-jobjectArray datastrs) /* OUT: label, unit, format, coordsys */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdatastrs(JNIEnv *env, jclass clss, jobjectArray datastrs)
 {
     intn rval;
     int ll;
@@ -262,7 +236,8 @@ jobjectArray datastrs) /* OUT: label, unit, format, coordsys */
         if (c != NULL)
             HDfree((char *)c);
         return JNI_FALSE;
-    } else {
+    }
+    else {
 
         Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (Sjc == NULL) {
@@ -406,11 +381,8 @@ jobjectArray datastrs) /* OUT: label, unit, format, coordsys */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdimlen
-( JNIEnv *env,
-jclass clss,
-jint dim,
-jintArray dimInfo) /* OUT: int label_len, unit_len, format_len */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdimlen(JNIEnv *env, jclass clss, jint dim, jintArray dimInfo)
 {
     intn rval;
     jint *theArgs;
@@ -431,13 +403,9 @@ jintArray dimInfo) /* OUT: int label_len, unit_len, format_len */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdims
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jintArray rank,   /* OUT: int */
-jintArray dimsizes, /* OUT: int[]  should be at least 'maxrank' long */
-jint maxrank)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdims(JNIEnv *env, jclass clss, jstring filename,
+        jintArray rank, jintArray dimsizes, jint maxrank)
 {
     intn rval;
     jchar * name;
@@ -466,12 +434,8 @@ jint maxrank)
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdimscale
-( JNIEnv *env,
-jclass clss,
-jint dim,
-jint size,
-jbyteArray scale) /* OUT: byte[] assumed to be long enough */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdimscale(JNIEnv *env, jclass clss, jint dim, jint size, jbyteArray scale)
 {
     intn rval;
     jbyte *s;
@@ -491,11 +455,8 @@ jbyteArray scale) /* OUT: byte[] assumed to be long enough */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetdimstrs
-( JNIEnv *env,
-jclass clss,
-jint dim,
-jobjectArray dimstrs) /* OUT: jstring label, jstring unit, jstring format */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetdimstrs(JNIEnv *env, jclass clss, jint dim, jobjectArray dimstrs)
 {
     intn rval;
     int ll;
@@ -548,7 +509,8 @@ jobjectArray dimstrs) /* OUT: jstring label, jstring unit, jstring format */
         if (f != NULL)
             HDfree((char *)f);
         return JNI_FALSE;
-    } else {
+    }
+    else {
 
         Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (Sjc == NULL) {
@@ -647,10 +609,8 @@ jobjectArray dimstrs) /* OUT: jstring label, jstring unit, jstring format */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetfillvalue
-( JNIEnv *env,
-jclass clss,
-jbyteArray fill_value)  /* OUT: some kind of number? */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetfillvalue(JNIEnv *env, jclass clss, jbyteArray fill_value)
 {
     intn rval;
     jbyte *dat;
@@ -673,10 +633,8 @@ jbyteArray fill_value)  /* OUT: some kind of number? */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetNT
-( JNIEnv *env,
-jclass clss,
-jintArray data_type) /* OUT: Integer */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetNT(JNIEnv *env, jclass clss, jintArray data_type)
 {
     intn rval;
     jint *dt;
@@ -700,11 +658,8 @@ jintArray data_type) /* OUT: Integer */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetrange
-( JNIEnv *env,
-jclass clss,
-jbyteArray max,  /* OUT:  byte[]? */
-jbyteArray min)  /* OUT:  byte[] ? */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetrange(JNIEnv *env, jclass clss, jbyteArray max, jbyteArray min)
 {
     int32 retVal;
     jbyte *minp, *maxp;
@@ -727,14 +682,9 @@ jbyteArray min)  /* OUT:  byte[] ? */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDgetslice
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jintArray winst, /* IN: int[] */
-jintArray windims, /* IN: int[] */
-jbyteArray data, /* OUT: byte[] */
-jintArray dims) /* OUT: int [] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDgetslice(JNIEnv *env, jclass clss, jstring filename,
+        jintArray winst, jintArray windims, jbyteArray data, jintArray dims)
 {
     intn rval;
     jchar * name;
@@ -768,17 +718,14 @@ jintArray dims) /* OUT: int [] */
 }
 
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDlastref
-( JNIEnv *env,
-jobject obj)
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDlastref(JNIEnv *env, jclass clss)
 {
-    return DFSDlastref( );
+    return DFSDlastref();
 }
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDndatasets
-( JNIEnv *env,
-jclass clss,
-jstring filename)
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDndatasets(JNIEnv *env, jclass clss, jstring filename)
 {
     intn rval;
     jchar * name;
@@ -792,12 +739,8 @@ jstring filename)
     return rval;
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDpre32sdg
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jshort ref,
-jintArray ispre32) /* OUT: int[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDpre32sdg(JNIEnv *env, jclass clss, jstring filename, jshort ref, jintArray ispre32)
 {
     intn rval;
     jchar * name;
@@ -821,13 +764,9 @@ jintArray ispre32) /* OUT: int[] */
 
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDputdata
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jint rank,
-jintArray dimsizes, /* IN: int[] */
-jbyteArray data)  /* IN: byte[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDputdata(JNIEnv *env, jclass clss, jstring filename,
+        jint rank, jintArray dimsizes, jbyteArray data)
 {
     intn rval;
     jchar * name;
@@ -852,12 +791,9 @@ jbyteArray data)  /* IN: byte[] */
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDputslice
-( JNIEnv *env,
-jclass clss,
-jintArray windims,  /* IN: int[] */
-jbyteArray source,  /* IN: byte[] */
-jintArray  dims) /* IN: int[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDputslice(JNIEnv *env, jclass clss, jintArray windims,
+        jbyteArray source, jintArray  dims)
 {
     intn rval;
     jbyte * dat;
@@ -878,16 +814,14 @@ jintArray  dims) /* IN: int[] */
 
     if (rval==FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDreadref
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jshort ref)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDreadref(JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     intn rval;
     jchar * name;
@@ -898,22 +832,17 @@ jshort ref)
     ENVPTR->ReleaseStringUTFChars(ENVPAR filename,(char *)name);
     if (rval==FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 
 }
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDreadslab
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jintArray start,   /* IN: int[] */
-jintArray slab_size,   /* IN: int[] */
-jintArray stride,   /* IN: int[] */
-jbyteArray buffer,  /* OUT: byte[] */
-jintArray buffer_size)  /* OUT: int[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDreadslab(JNIEnv *env, jclass clss, jstring filename,
+        jintArray start, jintArray slab_size, jintArray stride, jbyteArray buffer, jintArray buffer_size)
 {
     intn rval;
     jbyte * dat;
@@ -943,48 +872,41 @@ jintArray buffer_size)  /* OUT: int[] */
         ENVPTR->ReleaseByteArrayElements(ENVPAR buffer,dat,JNI_ABORT); /* no write back */
         ENVPTR->ReleaseIntArrayElements(ENVPAR buffer_size,bsize,JNI_ABORT); /* no write back */
         return JNI_FALSE;
-    } else {
+    }
+    else {
         ENVPTR->ReleaseByteArrayElements(ENVPAR buffer,dat,0); /* write back */
         ENVPTR->ReleaseIntArrayElements(ENVPAR buffer_size,bsize,0); /* write back */
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDrestart
-( JNIEnv *env,
-jobject obj)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDrestart(JNIEnv *env, jclass clss)
 {
     if (DFSDrestart( ) == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetcal
-( JNIEnv *env,
-jclass clss,
-jdouble cal,
-jdouble cal_err,
-jdouble offset,
-jdouble offset_err,
-jint data_type)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetcal(JNIEnv *env, jclass clss, jdouble cal, jdouble cal_err,
+        jdouble offset, jdouble offset_err, jint data_type)
 {
     if (DFSDsetcal((float64) cal, (float64) cal_err, (float64) offset,
         (float64) offset_err, (int32) data_type) == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetdatastrs
-( JNIEnv *env,
-jclass clss,
-jstring label,
-jstring unit,
-jstring format,
-jstring coordsys)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetdatastrs(JNIEnv *env, jclass clss, jstring label, jstring unit,
+        jstring format, jstring coordsys)
 {
     intn rval;
     jchar * l;
@@ -1006,16 +928,14 @@ jstring coordsys)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetdims
-( JNIEnv *env,
-jclass clss,
-jint rank,
-jintArray dimsizes)  /* IN:  int[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetdims(JNIEnv *env, jclass clss, jint rank, jintArray dimsizes)
 {
     intn rval;
     jint *d;
@@ -1028,19 +948,16 @@ jintArray dimsizes)  /* IN:  int[] */
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,d,JNI_ABORT); /* no write back */
         return JNI_FALSE;
-    } else {
+    }
+    else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,d,0); /* write back */
         return JNI_TRUE;
     }
 }
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetdimscale
-( JNIEnv *env,
-jclass clss,
-jint dim,
-jint dimsize,
-jintArray scale) /* IN: byte[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetdimscale(JNIEnv *env, jclass clss, jint dim, jint dimsize, jintArray scale)
 {
     intn rval;
     jint *d;
@@ -1052,19 +969,16 @@ jintArray scale) /* IN: byte[] */
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR scale,d,JNI_ABORT); /* no write back */
         return JNI_FALSE;
-    } else {
+    }
+    else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR scale,d,0); /* write back */
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetdimstrs
-( JNIEnv *env,
-jclass clss,
-jint dim,
-jstring label,
-jstring unit,
-jstring format)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetdimstrs(JNIEnv *env, jclass clss, jint dim,
+        jstring label, jstring unit, jstring format)
 {
     intn rval;
     jchar * l;
@@ -1083,15 +997,14 @@ jstring format)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetfillvalue
-( JNIEnv *env,
-jclass clss,
-jbyteArray fill_value)  /* IN: ?? */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetfillvalue(JNIEnv *env, jclass clss, jbyteArray fill_value)
 {
     intn rval;
     jbyte * fv;
@@ -1103,44 +1016,38 @@ jbyteArray fill_value)  /* IN: ?? */
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetlengths
-( JNIEnv *env,
-jclass clss,
-jint label_len,
-jint unit_len,
-jint format_len,
-jint coords_len)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetlengths(JNIEnv *env, jclass clss, jint label_len,
+        jint unit_len, jint format_len, jint coords_len)
 {
     if (DFSDsetlengths((intn) label_len, (intn) unit_len, (intn) format_len,
         (intn) coords_len) == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetNT
-( JNIEnv *env,
-jclass clss,
-jint data_type)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetNT(JNIEnv *env, jclass clss, jint data_type)
 {
     if (DFSDsetNT((int32) data_type) == FAIL ) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDsetrange
-( JNIEnv *env,
-jclass clss,
-jbyteArray max, /* IN: byte[] */
-jbyteArray min)/* IN: byte[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDsetrange(JNIEnv *env, jclass clss, jbyteArray max, jbyteArray min)
 {
     intn rval;
     jbyte * mx;
@@ -1155,15 +1062,14 @@ jbyteArray min)/* IN: byte[] */
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDstartslab
-( JNIEnv *env,
-jclass clss,
-jstring filename)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDstartslab(JNIEnv *env, jclass clss, jstring filename)
 {
     intn rval;
     jchar * f;
@@ -1176,16 +1082,15 @@ jstring filename)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDstartslice
-( JNIEnv *env,
-jclass clss,
-jstring filename)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDstartslice(JNIEnv *env, jclass clss, jstring filename)
 {
     intn rval;
     jchar * f;
@@ -1198,17 +1103,15 @@ jstring filename)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDwriteref
-( JNIEnv *env,
-jclass clss,
-jstring filename,
-jshort ref)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDwriteref(JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     intn rval;
     jchar * f;
@@ -1221,18 +1124,15 @@ jshort ref)
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFDeprecated_DFSDwriteslab
-( JNIEnv *env,
-jclass clss,
-jintArray  start,  /* IN: int[] */
-jintArray stride,  /* IN: int[] */
-jintArray count, /* IN: int[] */
-jbyteArray data) /* IN: byte[] */
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFDeprecated_DFSDwriteslab(JNIEnv *env, jclass clss,
+        jintArray  start, jintArray stride, jintArray count, jbyteArray data)
 {
     intn rval;
     jint *strt;
@@ -1256,7 +1156,8 @@ jbyteArray data) /* IN: byte[] */
 
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }

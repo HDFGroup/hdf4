@@ -27,25 +27,15 @@ extern "C" {
 #include "hdf.h"
 #include "mfhdf.h"
 #include "jni.h"
-
-#ifdef __cplusplus
-#define ENVPTR (env)
-#define ENVPAR
-#define ENVONLY
-#else
-#define ENVPTR (*env)
-#define ENVPAR env,
-#define ENVONLY env
-#endif
+#include "h4jni.h"
 
 /* Name changed from MAX_GR_NAME to H4_MAX_GR_NAME in hdf4.2r2 */
 #define MAX_GR_NAME H4_MAX_GR_NAME
 
-extern jboolean h4outOfMemory( JNIEnv *env, char *functName);
-extern jboolean makeChunkInfo( JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf);
-extern jboolean getNewCompInfo( JNIEnv *env, jobject ciobj, comp_info *cinf);
-extern jboolean setNewCompInfo( JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf);
-extern jboolean getChunkInfo( JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf);
+extern jboolean makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf);
+extern jboolean getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
+extern jboolean setNewCompInfo(JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf);
+extern jboolean getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf);
 
 
 
@@ -155,7 +145,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo(JNIEnv *env, jclass cls, jlong grsid, 
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass cls, jlong ri_id, jobjectArray gr_name, jintArray argv, jintArray dim_sizes)
+Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass cls, jlong ri_id,
+        jobjectArray gr_name, jintArray argv, jintArray dim_sizes)
 {
     intn rval;
     jint * dims;
@@ -359,7 +350,8 @@ Java_hdf_hdflib_HDFLibrary_GRreadlut(JNIEnv *env, jclass cls, jlong pal_id, jbyt
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass cls, jlong gr_id, jint attr_index, jobjectArray name, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass cls, jlong gr_id, jint attr_index,
+        jobjectArray name, jintArray argv)
 {
     int32 rval;
     char *str;
@@ -449,8 +441,8 @@ Java_hdf_hdflib_HDFLibrary_GRfindattr(JNIEnv *env, jclass cls, jlong gr_id, jstr
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass cls, jlong gr_id, jstring name, jint ncomp, jlong data_type,
-        jint interlace_mode, jintArray dim_sizes)
+Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass cls, jlong gr_id, jstring name, jint ncomp,
+        jlong data_type, jint interlace_mode, jintArray dim_sizes)
 {
     int32 rval;
     jint *dims;
@@ -478,7 +470,8 @@ Java_hdf_hdflib_HDFLibrary_GRluttoref(JNIEnv *env, jclass cls, jlong pal_id)
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2(JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name,
+Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2(JNIEnv *env, jclass cls,
+        jlong gr_id, jstring attr_name,
         jlong data_type, jint count, jstring values)
 {
     intn rval;
@@ -503,8 +496,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2(
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2II_3B(JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name,
-        jlong data_type, jint count, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2II_3B(JNIEnv *env, jclass cls, jlong gr_id,
+        jstring attr_name, jlong data_type, jint count, jbyteArray values)
 {
     intn rval;
     jbyte *arr;
@@ -625,8 +618,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetexternalfile(JNIEnv *env, jclass cls, jlong ri_i
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id, jintArray start, jintArray stride, jintArray edge,
-        jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id,
+        jintArray start, jintArray stride, jintArray edge, jbyteArray data)
 {
     intn rval;
     jbyte *arr;
@@ -670,7 +663,8 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id, ji
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass cls, jlong pal_id, jint ncomp, jint data_type,
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass cls, jlong pal_id, jint ncomp, jint data_type,
         jint interlace, jint num_entries, jbyteArray pal_data)
 {
     intn rval;
@@ -692,7 +686,8 @@ JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jc
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
     int32 retVal;
     jbyte * s;
@@ -715,7 +710,8 @@ JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, j
     }
 }
 
-JNIEXPORT jboolean JNICALL Java_hdf_hdflib_HDFLibrary_GRwritechunk(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_GRwritechunk(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
     int32 retVal;
     jbyte * s;
