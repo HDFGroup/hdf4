@@ -234,7 +234,7 @@ static intn test_dim1_SDS1(void)
     for (idx1 = 0; idx1 < dimsize[0]; idx1++)
         if (out_data[idx1] != sds1_data[idx1])
 	{
-	    fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", out_data[idx1], idx1);
+	    fprintf(stderr, "Read value (%f) differs from written (%f) at [%d]\n", out_data[idx1], sds1_data[idx1], idx1);
 		num_errs++;
 	}
 

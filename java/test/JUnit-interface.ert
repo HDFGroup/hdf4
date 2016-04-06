@@ -1,0 +1,2 @@
+[main] INFO hdf.hdflib.HDFLibrary - HDF4 library: hdf_java
+[main] INFO hdf.hdflib.HDFLibrary -  successfully loaded from java.library.path

@@ -476,7 +476,6 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
         uint16 img_tag,img_ref;         /* tag/ref of the image itself */
         uint16 aux_ref;                 /* ref of aux. info about an image */
         int32 offset;                   /* offset of the image data */
-  uint16 orig_tag;    /* original tag before the elimination of duplicates */
     } *img_info;
     uint16      find_tag, find_ref;     /* storage for tag/ref pairs found */
     int32       find_off, find_len;     /* storage for offset/lengths of tag/refs found */
@@ -747,20 +746,15 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                   case DFTAG_CI: /* Newer style raster image, found in RIG & Vgroup */
                                       if(img_info[j].grp_tag==DFTAG_RIG)
                                         {
-            img_info[j].orig_tag = img_info[j].img_tag;
                                           img_info[j].img_tag=DFTAG_NULL;
                                           if(img_info[i].grp_tag==DFTAG_VG)
                                               img_info[i].aux_ref=img_info[j].grp_ref;
                                         } /* end if */
                                       else
                                           if(img_info[i].grp_tag==DFTAG_VG)
-            {
-                img_info[j].orig_tag = img_info[j].img_tag;
                                               img_info[j].img_tag=DFTAG_NULL;
-            }
                                           else
                                             {
-                img_info[j].orig_tag = img_info[j].img_tag;
                                               img_info[j].img_tag=DFTAG_NULL;
                                               if(img_info[i].grp_tag==DFTAG_RIG)
                                                   img_info[j].aux_ref=img_info[i].grp_ref;
@@ -842,8 +836,6 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                           case DFTAG_RI:    /* Regular image data */
                                               new_image->img_tag=(uint16)img_tag;
                                               new_image->img_ref=(uint16)img_ref;
- /*  fprintf(stderr, "SPECIALTAG(%d/%d) = %d\n", new_image->img_tag, new_image->img_ref, SPECIALTAG(new_image->img_tag));
- */ 
                                               if(SPECIALTAG(new_image->img_tag)==TRUE) {
                                                   new_image->use_buf_drvr=1;
                                               } /* end if */

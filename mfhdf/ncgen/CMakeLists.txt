@@ -36,15 +36,15 @@ set (ncgen_SRCS
 if (WIN32)
   set (ncgen_SRCS ${ncgen_SRCS} ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c)
 endif (WIN32)
- 
+
 add_executable (ncgen ${ncgen_SRCS})
-TARGET_C_PROPERTIES (ncgen ${LIB_TYPE} " " " ")
+TARGET_C_PROPERTIES (ncgen STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (ncgen ${LIB_TYPE})
+TARGET_NAMING (ncgen STATIC)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
@@ -64,8 +64,5 @@ INSTALL_PROGRAM_PDB (ncgen ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         ncgen
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

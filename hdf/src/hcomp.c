@@ -1980,8 +1980,8 @@ HCPgetdatasize(int32 file_id,
 		  HGOTO_ERROR(DFE_INTERNAL, FAIL);
 	    }
 
-	    /* unlimited dimension falls in here */
-	    else if (sp_tag == SPECIAL_LINKED)
+	    /* unlimited dimension and external data fall in here */
+	    else if (sp_tag == SPECIAL_LINKED || sp_tag == SPECIAL_EXT)
 	    {
 		INT32DECODE(p, len);	/* get total data length */
 		*orig_size = *comp_size = len;	/* set data sizes */

@@ -9,7 +9,7 @@ int main()
 
    /************************* Variable declaration **************************/
 
-   int32 sd_id, sds_id, sds_index, offset;
+   int32 sd_id, sds_id, sds_index;
    intn  status;
 
    /********************* End of variable declaration ***********************/

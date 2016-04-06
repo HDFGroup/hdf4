@@ -34,7 +34,7 @@ int main()
    status = SDattrinfo (sd_id, attr_index, attr_name, &data_type, &n_values);
 
    /* The data type should be DFNT_CHAR, from SD_set_attr.c */
-   if (data_type = DFNT_CHAR)
+   if (data_type == DFNT_CHAR)
    {
       char *fileattr_data;
 
@@ -129,6 +129,7 @@ int main()
       * Read the dimension attribute data.
       */
       status = SDreadattr (dim_id, attr_index, dimattr_data);
+      dimattr_data[n_values-1] = '\0';
 
       /*
       * Print out dimension attribute value and free buffer. 

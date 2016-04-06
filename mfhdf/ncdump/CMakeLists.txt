@@ -23,15 +23,15 @@ set (ncdump_SRCS
     ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/vardata.c
     ${HDF4_SOURCE_DIR}/mfhdf/util/getopt.c
 )
-  
+
 add_executable (ncdump ${ncdump_SRCS})
-TARGET_C_PROPERTIES (ncdump ${LIB_TYPE} " " " ")
+TARGET_C_PROPERTIES (ncdump STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (ncdump ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (ncdump ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (ncdump ${LIB_TYPE})
+TARGET_NAMING (ncdump STATIC)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
@@ -52,10 +52,7 @@ INSTALL_PROGRAM_PDB (ncdump ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         ncdump
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )
 
 

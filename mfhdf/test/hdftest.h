@@ -49,3 +49,32 @@
                 func_name, buf_name ); \
         exit(1); }  \
 }
+
+/*************************** Utility Functions ***************************/
+
+/* Calls SDcreate, SDwritedata, and SDendaccess */
+int32 make_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
+			  int32* dim_sizes, int32 unlim_dim, VOIDP written_data);
+
+/* Calls SDcreate, SDsetcompress, SDwritedata, and SDendaccess */
+int32 make_CompSDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
+			  int32* dim_sizes, VOIDP written_data);
+
+/* Calls SDcreate, SDsetexternalfile, SDwritedata, and SDendaccess */
+int32 make_Ext3D_SDS(int32 sd_id, char* sds_name, int32 type, int32 rank,
+		     int32* dim_sizes, VOIDP written_data,
+		     int32 offset, char* ext_file_name);
+
+/* Calls SDnametoindex and SDselect */
+int32 get_SDSbyName(int32 sd_id, char* sds_name);
+
+/* Calls get_SDSbyName, SDwritedata, and SDendaccess */
+int32 append_Data2SDS(int32 sd_id, char* sds_name, int32* start, int32* edges, void* ap_data);
+
+/* Calls SDgetdatasize then verify the size against data_size */
+void verify_datasize(int32 sds_id, int32 data_size, char* sds_name);
+
+/* Find and open an SDS by name */
+int32 get_SDSbyName(int32 sd_id, char* sds_name);
+
+

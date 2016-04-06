@@ -19,7 +19,7 @@ Compiling Options:
                          CFLAGS: @CMAKE_C_FLAGS@
                        CPPFLAGS: @CMAKE_CXX_FLAGS@
                Shared Libraries: @H4_ENABLE_SHARED_LIB@
-               Static Libraries: @H4_ENABLE_STATIC_LIB@
+               Static Libraries: YES
   Statically Linked Executables: @BUILD_STATIC_EXECS@
                         LDFLAGS: @CMAKE_SHARED_LINKER_FLAGS@
                 Extra libraries: @LINK_LIBS@

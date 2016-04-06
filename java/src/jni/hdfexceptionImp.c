@@ -1,0 +1,127 @@
+/****************************************************************************
+ * Copyright by The HDF Group.                                               *
+ * Copyright by the Board of Trustees of the University of Illinois.         *
+ * All rights reserved.                                                      *
+ *                                                                           *
+ * This file is part of HDF Java Products. The full HDF Java copyright       *
+ * notice, including terms governing use, modification, and redistribution,  *
+ * is contained in the file, COPYING.  COPYING can be found at the root of   *
+ * the source code distribution tree. You can also access it online  at      *
+ * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
+ * access to the file, you may request a copy from help@hdfgroup.org.        *
+ ****************************************************************************/
+/*
+ *  This is a utility program used by the HDF Java-C wrapper layer to
+ *  generate exceptions.  This may be called from any part of the
+ *  Java-C interface.
+ *
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "h4jni.h"
+#include <stdlib.h>
+
+#ifdef __cplusplus
+#define ENVPTR (env)
+#define ENVPAR
+#define ENVONLY
+#else
+#define ENVPTR (*env)
+#define ENVPAR env,
+#define ENVONLY env
+#endif
+
+/********************/
+/* Local Macros     */
+/********************/
+
+#define THROWEXCEPTION(className,args) {                                    \
+    jclass     jc;                                                          \
+    jmethodID  jm;                                                          \
+    jobject    ex;                                                          \
+    jc = ENVPTR->FindClass(ENVPAR (className));                             \
+    if (jc == NULL) {                                                       \
+        return JNI_FALSE;                                                   \
+    }                                                                       \
+    jm = ENVPTR->GetMethodID(ENVPAR jc, "<init>", "(Ljava/lang/String;)V"); \
+    if (jm == NULL) {                                                       \
+        return JNI_FALSE;                                                   \
+    }                                                                       \
+    ex = ENVPTR->NewObjectA (ENVPAR jc, jm, (jvalue*)(args));               \
+    if (ENVPTR->Throw(ENVPAR (jthrowable)ex) < 0) {                         \
+        printf("FATAL ERROR:  %s: Throw failed\n", (className));            \
+        return JNI_FALSE;                                                   \
+    }                                                                       \
+    return JNI_TRUE;                                                        \
+}
+
+jboolean h4buildException( JNIEnv *env, jint HDFerr)
+{
+    jmethodID jm;
+    jclass jc;
+    int args[2];
+    jobject ex;
+    int rval;
+
+
+    jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFLibraryException");
+    if (jc == NULL) {
+        return JNI_FALSE;
+    }
+    jm = ENVPTR->GetMethodID(ENVPAR  jc, "<init>", "(I)V");
+    if (jm == NULL) {
+        return JNI_FALSE;
+    }
+    args[0] = HDFerr;
+    args[1] = 0;
+
+    ex = ENVPTR->NewObjectA (ENVPAR jc, jm, (jvalue *)args );
+
+    rval = ENVPTR->Throw(ENVPAR  (jthrowable)ex );
+
+    return JNI_TRUE;
+}
+
+/*
+ *  Routine to raise particular Java exceptions from C
+ */
+static
+jboolean
+H4JNIErrorClass(JNIEnv *env, const char *message, const char *className)
+{
+    char *args[2];
+    jstring str = ENVPTR->NewStringUTF(ENVPAR message);
+    args[0] = (char *)str;
+    args[1] = 0;
+
+    THROWEXCEPTION(className, args);
+} /* end H5JNIErrorClass() */
+
+jboolean h4NotImplemented( JNIEnv *env, const char *functName)
+{
+    return H4JNIErrorClass(env, functName, "hdf/hdflib/HDFNotImplementedException");
+}
+
+jboolean h4outOfMemory( JNIEnv *env, const char *functName)
+{
+    return H4JNIErrorClass(env, functName, "java/lang/OutOfMemoryError");
+}
+
+/*
+ *  A fatal error in a JNI call
+ */
+jboolean h4JNIFatalError( JNIEnv *env, const char *functName)
+{
+    return H4JNIErrorClass(env, functName, "java/lang/InternalError");
+}
+
+jboolean h4raiseException( JNIEnv *env, const char *message)
+{
+    return H4JNIErrorClass(env, message, "hdf/hdflib/HDFLibraryException");
+}
+
+#ifdef __cplusplus
+}
+#endif

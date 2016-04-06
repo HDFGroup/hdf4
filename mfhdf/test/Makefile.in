@@ -110,10 +110,10 @@ hdfnctest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 am_hdftest_OBJECTS = hdftest.$(OBJEXT) tutils.$(OBJEXT) \
 	tchunk.$(OBJEXT) tcomp.$(OBJEXT) tcoordvar.$(OBJEXT) \
 	tdim.$(OBJEXT) temptySDSs.$(OBJEXT) tattributes.$(OBJEXT) \
-	tfile.$(OBJEXT) tmixed_apis.$(OBJEXT) tnetcdf.$(OBJEXT) \
-	trank0.$(OBJEXT) tsd.$(OBJEXT) tsdsprops.$(OBJEXT) \
-	tszip.$(OBJEXT) tattdatainfo.$(OBJEXT) tdatainfo.$(OBJEXT) \
-	tdatasizes.$(OBJEXT)
+	texternal.$(OBJEXT) tfile.$(OBJEXT) tmixed_apis.$(OBJEXT) \
+	tnetcdf.$(OBJEXT) trank0.$(OBJEXT) tsd.$(OBJEXT) \
+	tsdsprops.$(OBJEXT) tszip.$(OBJEXT) tattdatainfo.$(OBJEXT) \
+	tdatainfo.$(OBJEXT) tdatasizes.$(OBJEXT)
 hdftest_OBJECTS = $(am_hdftest_OBJECTS)
 hdftest_DEPENDENCIES = $(LIBMFHDF) $(LIBHDF)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -573,7 +573,7 @@ hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
 
 hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
-		  tdim.c temptySDSs.c tattributes.c tfile.c		\
+		  tdim.c temptySDSs.c tattributes.c texternal.c tfile.c	\
 		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 
@@ -674,6 +674,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdatasizes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tdim.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/temptySDSs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/texternal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmixed_apis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tncunlim.Po@am__quote@

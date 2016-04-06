@@ -24,21 +24,21 @@ int main()
    /*
    * Declare chunks data type and initialize some of them. 
    */
-          int16 chunk1[3][2] = { 1, 1,
-                                 1, 1,
-                                 1, 1 }; 
+          int16 chunk1[3][2] = { {1, 1},
+                                 {1, 1},
+                                 {1, 1} }; 
 
-          int16 chunk2[3][2] = { 2, 2,
-                                 2, 2,
-                                 2, 2 }; 
+          int16 chunk2[3][2] = { {2, 2},
+                                 {2, 2},
+                                 {2, 2} }; 
 
-          int16 chunk3[3][2] = { 3, 3,
-                                 3, 3,
-                                 3, 3 }; 
+          int16 chunk3[3][2] = { {3, 3},
+                                 {3, 3},
+                                 {3, 3} }; 
 
-          int16 chunk6[3][2] = { 6, 6,
-                                 6, 6,
-                                 6, 6 };
+          int16 chunk6[3][2] = { {6, 6},
+                                 {6, 6},
+                                 {6, 6} };
 
     /********************* End of variable declaration ***********************/
     /*

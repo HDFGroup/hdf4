@@ -34,12 +34,23 @@ utility should be installed.
 
 To test the installation with the examples;
     Create a directory to run the examples.
-    Copy HDF4Examples-0.1.1-Source folder to this directory.
+    Copy HDF4Examples folder to this directory.
     Copy HDF4_Examples.cmake to this directory.
-    Edit HDF4_Examples.cmake line 8 to set INSTALLDIR to where HDF4 is installed.
-       (The default should be correct unless you installed into a different folder.)
-    Execute from this directory: 
-        ctest -S HDF4_Examples.cmake,HDF4Examples-0.1.1-Source -C Release -O test.log -VV
+    The default source folder is defined as "HDF4Examples". It can be changed
+        with the CTEST_SOURCE_NAME script option.
+    The default installation folder is defined as "@CMAKE_INSTALL_PREFIX@".
+        It can be changed with the INSTALLDIR script option.
+    The default ctest configuration is defined as "Release". It can be changed
+        with the CTEST_BUILD_CONFIGURATION script option. Note that this must
+        be the same as the value used with the -C command line option.
+    The default build configuration is defined to build and use static libraries.
+        Shared libraries can be used with the STATICLIBRARIES script option set to "NO".
+    Other options can be changed by editing the HDF4_Examples.cmake file.
+
+    If the defaults are okay, execute from this directory:
+        ctest -S HDF4_Examples.cmake -C Release -V -O test.log
+    If the defaults need change, execute from this directory:
+        ctest -S HDF4_Examples.cmake,CTEST_SOURCE_NAME=MyExamples,INSTALLDIR=MyLocation -C Release -V -O test.log
 
 When executed, the ctest script will save the results to the log file, test.log, as
 indicated by the ctest command. If you wish the to see more build and test information, 

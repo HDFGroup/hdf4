@@ -24,15 +24,15 @@ endif (HDF4_BUILD_XDR_LIB)
 set (hdfimport_SRCS
     ${HDF4_MFHDF_HDFIMPORT_SOURCE_DIR}/hdfimport.c
 )
-  
+
 add_executable (hdfimport ${hdfimport_SRCS})
-TARGET_C_PROPERTIES (hdfimport ${LIB_TYPE} " " " ")
+TARGET_C_PROPERTIES (hdfimport STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 else (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif (HDF4_BUILD_XDR_LIB)
-TARGET_NAMING (hdfimport ${LIB_TYPE})
+TARGET_NAMING (hdfimport STATIC)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
@@ -53,8 +53,5 @@ INSTALL_PROGRAM_PDB (hdfimport ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 INSTALL (
     TARGETS
         hdfimport
-    RUNTIME DESTINATION
-        ${HDF4_INSTALL_TOOLS_BIN_DIR}
-    COMPONENT
-        toolsapplications
+    RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

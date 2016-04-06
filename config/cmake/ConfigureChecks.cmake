@@ -3,7 +3,6 @@
 #-----------------------------------------------------------------------------
 set (HDF_PREFIX "H4")
 include (${HDF_RESOURCES_EXT_DIR}/ConfigureChecks.cmake)
-include (${CMAKE_ROOT}/Modules/TestForSTDNamespace.cmake)
 
 #-----------------------------------------------------------------------------
 # Option to Build HDF4 versions of NetCDF-3 APIS

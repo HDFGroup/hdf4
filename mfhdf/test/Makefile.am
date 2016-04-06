@@ -28,7 +28,7 @@ hdfnctest_SOURCES = hdfnctest.c tutils.c tncvargetfill.c tunlim.c	\
 hdfnctest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
 
 hdftest_SOURCES = hdftest.c tutils.c tchunk.c tcomp.c tcoordvar.c	\
-		  tdim.c temptySDSs.c tattributes.c tfile.c		\
+		  tdim.c temptySDSs.c tattributes.c texternal.c tfile.c	\
 		  tmixed_apis.c tnetcdf.c trank0.c tsd.c tsdsprops.c	\
 		  tszip.c tattdatainfo.c tdatainfo.c tdatasizes.c
 hdftest_LDADD = $(LIBMFHDF) $(LIBHDF) @LIBS@ $(XDRLIB)
