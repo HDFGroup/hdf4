@@ -487,8 +487,8 @@ Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
 
     while (Hfind(file_id, searched_tag, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
     {
-        // DFTAG_NULL is passed in for parent group because old images don't
-        // have group structure.
+        /* DFTAG_NULL is passed in for parent group because old images don't
+           have group structure. */
         Store_imginfo(ptr, DFTAG_NULL, DFREF_WILDCARD, find_tag, find_ref);
         ptr->offset = find_off;   /* store offset */
         num_imgs++;
