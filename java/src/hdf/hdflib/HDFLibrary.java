@@ -351,7 +351,7 @@ public class HDFLibrary implements java.io.Serializable
      */
     public static native boolean Hgetlibversion(int[] vers, String[] string) throws HDFException;
 
-    public static native boolean Hsetaccesstype(long h_id, int  access_type) throws HDFException;
+    public static native boolean Hsetaccesstype(long h_id, int access_type) throws HDFException;
 
     public static native boolean Hsync(long file_id) throws HDFException;
 
@@ -359,7 +359,7 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native boolean ANend(long an_id) throws HDFException;
 
-    public static native boolean ANendaccess( long an_id) throws HDFException;
+    public static native boolean ANendaccess(long an_id) throws HDFException;
 
     /**
      *  @param an_id <b>IN</b>: the AN interface id, returned by ANstart
@@ -375,7 +375,7 @@ public class HDFLibrary implements java.io.Serializable
      *             HDF library call, but is not yet implemented.
      *
      */
-    public static native boolean ANfileinfo(long an_id, int [] info) throws HDFException;
+    public static native boolean ANfileinfo(long an_id, int[] info) throws HDFException;
 
     public static native int ANselect(long an_id, int index, int anntype) throws HDFException;
 
@@ -402,7 +402,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return an array of integers, which are the identifiers of
      *  the annotations
      */
-    public static native int ANannlist(long an_id,  int anntype, int tag, int ref,
+    public static native int ANannlist(long an_id, int anntype, int tag, int ref,
                 int[] ann_list) throws HDFException;
 
     public static native int ANannlen(long ann_id) throws HDFException;
@@ -438,7 +438,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return the tag and ref:  tagref[0] = tag, tagref[1] = ref
      */
-    public static native int ANget_tagref(long an_id, int index,  int type, short[] tagref) throws HDFException;
+    public static native int ANget_tagref(long an_id, int index, int type, short[] tagref) throws HDFException;
 
     /**
      *  @param an_id <b>IN</b>: the AN interface id, returned by ANstart
@@ -451,7 +451,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return the tag and ref:  tagref[0] = tag, tagref[1] = ref
      */
-    public static native boolean ANid2tagref(long an_id, short [] tagref) throws HDFException;
+    public static native boolean ANid2tagref(long an_id, short[] tagref) throws HDFException;
 
     public static native long ANtagref2id(long an_id, short tag, short ref) throws HDFException;
 
