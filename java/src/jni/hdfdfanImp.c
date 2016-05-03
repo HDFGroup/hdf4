@@ -30,8 +30,7 @@ extern "C" {
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFDeprecated_DFANaddfds
-(JNIEnv *env, jclass clss, jlong file_id,
-        jstring description, jint desc_len)
+(JNIEnv *env, jclass clss, jlong file_id, jstring description, jint desc_len)
 {
     intn rval;
     char * str;

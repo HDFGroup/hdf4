@@ -53,7 +53,8 @@ Java_hdf_hdflib_HDFLibrary_ANend
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANfileinfo(JNIEnv *env, jclass clss, jlong anid, jintArray info)
+Java_hdf_hdflib_HDFLibrary_ANfileinfo
+(JNIEnv *env, jclass clss, jlong anid, jintArray info)
 {
     int32 retVal;
     jint *theArgs;
@@ -77,14 +78,16 @@ Java_hdf_hdflib_HDFLibrary_ANfileinfo(JNIEnv *env, jclass clss, jlong anid, jint
 
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANselect(JNIEnv *env, jclass clss, jlong anid, jint index, jint anntype)
+Java_hdf_hdflib_HDFLibrary_ANselect
+(JNIEnv *env, jclass clss, jlong anid, jint index, jint anntype)
 {
     return (jlong)ANselect((int32)anid, (int32)index, (ann_type)anntype);
 }
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANendaccess(JNIEnv *env, jclass clss, jlong ann_id)
+Java_hdf_hdflib_HDFLibrary_ANendaccess
+(JNIEnv *env, jclass clss, jlong ann_id)
 {
     int32 retVal;
 
@@ -99,26 +102,30 @@ Java_hdf_hdflib_HDFLibrary_ANendaccess(JNIEnv *env, jclass clss, jlong ann_id)
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANnumann(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref)
+Java_hdf_hdflib_HDFLibrary_ANnumann
+(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref)
 {
     return( (jint) ANnumann((int32)an_id, (ann_type)anntype, (uint16)tag, (uint16)ref) );
 }
 
 JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_ANatype2tag(JNIEnv *env, jclass clss, jint antype)
+Java_hdf_hdflib_HDFLibrary_ANatype2tag
+(JNIEnv *env, jclass clss, jint antype)
 {
     return (jshort)ANatype2tag((ann_type)antype);
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANtag2atype(JNIEnv *env, jclass clss, jint antag)
+Java_hdf_hdflib_HDFLibrary_ANtag2atype
+(JNIEnv *env, jclass clss, jint antag)
 {
     return (jint)ANtag2atype((uint16)antag);
 }
 
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANannlist(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref, jintArray annlist)
+Java_hdf_hdflib_HDFLibrary_ANannlist
+(JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref, jintArray annlist)
 {
     intn retVal;
     jint *iarr;
@@ -139,13 +146,15 @@ Java_hdf_hdflib_HDFLibrary_ANannlist(JNIEnv *env, jclass clss, jlong an_id, jint
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANannlen(JNIEnv *env, jclass clss, jlong ann_id)
+Java_hdf_hdflib_HDFLibrary_ANannlen
+(JNIEnv *env, jclass clss, jlong ann_id)
 {
     return ANannlen((int32)ann_id);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANreadann(JNIEnv *env, jclass clss, jlong ann_id, jobjectArray annbuf, jint maxlen)
+Java_hdf_hdflib_HDFLibrary_ANreadann
+(JNIEnv *env, jclass clss, jlong ann_id, jobjectArray annbuf, jint maxlen)
 {
     int32 retVal;
     char  *data;
@@ -200,20 +209,23 @@ Java_hdf_hdflib_HDFLibrary_ANreadann(JNIEnv *env, jclass clss, jlong ann_id, job
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANcreate(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref, jint type)
+Java_hdf_hdflib_HDFLibrary_ANcreate
+(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref, jint type)
 {
     return (jlong)ANcreate((int32) an_id, (uint16) tag, (uint16) ref, (ann_type) type);
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANcreatef(JNIEnv *env, jclass clss, jlong an_id, jint type)
+Java_hdf_hdflib_HDFLibrary_ANcreatef
+(JNIEnv *env, jclass clss, jlong an_id, jint type)
 {
     return (jlong)ANcreatef((int32) an_id, (ann_type) type);
 }
 
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_ANget_1tagref(JNIEnv *env, jclass clss, jlong an_id, jint index, jint type, jshortArray tagref)
+Java_hdf_hdflib_HDFLibrary_ANget_1tagref
+(JNIEnv *env, jclass clss, jlong an_id, jint index, jint type, jshortArray tagref)
 {
     int32 rval;
     short *theArgs;
@@ -233,7 +245,8 @@ Java_hdf_hdflib_HDFLibrary_ANget_1tagref(JNIEnv *env, jclass clss, jlong an_id, 
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANid2tagref(JNIEnv *env, jclass clss, jlong an_id, jshortArray tagref)
+Java_hdf_hdflib_HDFLibrary_ANid2tagref
+(JNIEnv *env, jclass clss, jlong an_id, jshortArray tagref)
 {
     int32 rval;
     short *theArgs;
@@ -255,13 +268,15 @@ Java_hdf_hdflib_HDFLibrary_ANid2tagref(JNIEnv *env, jclass clss, jlong an_id, js
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANtagref2id(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref)
+Java_hdf_hdflib_HDFLibrary_ANtagref2id
+(JNIEnv *env, jclass clss, jlong an_id, jshort tag, jshort ref)
 {
     return (jlong) ANtagref2id((int32) an_id, (uint16) tag, (uint16) ref);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANwriteann(JNIEnv *env, jclass clss, jlong ann_id, jstring label, jint ann_length)
+Java_hdf_hdflib_HDFLibrary_ANwriteann
+(JNIEnv *env, jclass clss, jlong ann_id, jstring label, jint ann_length)
 {
 
     intn rval;
