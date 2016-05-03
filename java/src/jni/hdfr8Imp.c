@@ -28,10 +28,13 @@ extern "C" {
 #include "jni.h"
 #include "h4jni.h"
 
-extern jboolean getOldCompInfo( JNIEnv *env, jobject ciobj, comp_info *cinf);
+extern jboolean
+getOldCompInfo
+(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv, jbooleanArray isp)
+Java_hdf_hdflib_HDFLibrary_DFR8getdims
+(JNIEnv *env, jclass clss, jstring filename, jintArray argv, jbooleanArray isp)
 {
     intn rval;
     char  *hdf_file;
@@ -69,8 +72,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8getdims(JNIEnv *env, jclass clss, jstring filenam
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filename,
-        jbyteArray image, jint width, jint height, jbyteArray pallete)
+Java_hdf_hdflib_HDFLibrary_DFR8getimage
+(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height, jbyteArray pallete)
 {
     char  *hdf_file;
     intn   rval;
@@ -109,13 +112,15 @@ Java_hdf_hdflib_HDFLibrary_DFR8getimage(JNIEnv *env, jclass clss, jstring filena
 }
 
 JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8lastref(JNIEnv *env, jclass clss)
+Java_hdf_hdflib_HDFLibrary_DFR8lastref
+(JNIEnv *env, jclass clss)
 {
     return ((short)DFR8lastref());
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8readref(JNIEnv *env, jclass clss, jstring filename, jshort ref)
+Java_hdf_hdflib_HDFLibrary_DFR8readref
+(JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     int  retVal;
     char *filePtr;
@@ -133,7 +138,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8readref(JNIEnv *env, jclass clss, jstring filenam
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8restart(JNIEnv *env, jclass clss)
+Java_hdf_hdflib_HDFLibrary_DFR8restart
+(JNIEnv *env, jclass clss)
 {
     int retVal;
     retVal = DFR8restart();
@@ -147,7 +153,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8restart(JNIEnv *env, jclass clss)
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8nimages(JNIEnv *env, jclass clss, jstring hdfFile)
+Java_hdf_hdflib_HDFLibrary_DFR8nimages
+(JNIEnv *env, jclass clss, jstring hdfFile)
 {
     char  *hdf_file;
 
@@ -156,8 +163,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8nimages(JNIEnv *env, jclass clss, jstring hdfFile
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filename,
-        jbyteArray image, jint width, jint height, jshort compress)
+Java_hdf_hdflib_HDFLibrary_DFR8addimage
+(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height, jshort compress)
 {
     intn rval;
     char  *f;
@@ -181,8 +188,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8addimage(JNIEnv *env, jclass clss, jstring filena
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filename,
-        jbyteArray image, jint width, jint height, jint compress)
+Java_hdf_hdflib_HDFLibrary_DFR8putimage
+(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height, jint compress)
 {
     intn rval;
     char  *f;
@@ -206,7 +213,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8putimage(JNIEnv *env, jclass clss, jstring filena
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8setcompress(JNIEnv *env, jclass clss, jint type, jobject cinfo)
+Java_hdf_hdflib_HDFLibrary_DFR8setcompress
+(JNIEnv *env, jclass clss, jint type, jobject cinfo)
 {
     intn rval;
     comp_info cinf;
@@ -229,7 +237,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8setcompress(JNIEnv *env, jclass clss, jint type, 
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8getpalref(JNIEnv *env, jclass clss, jshortArray palref)
+Java_hdf_hdflib_HDFLibrary_DFR8getpalref
+(JNIEnv *env, jclass clss, jshortArray palref)
 {
     int rval;
     short *theArgs;
@@ -252,7 +261,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8getpalref(JNIEnv *env, jclass clss, jshortArray p
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8setpalette(JNIEnv *env, jclass clss, jbyteArray palette)
+Java_hdf_hdflib_HDFLibrary_DFR8setpalette
+(JNIEnv *env, jclass clss, jbyteArray palette)
 {
     int  rval;
     jbyte *p;
@@ -272,7 +282,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8setpalette(JNIEnv *env, jclass clss, jbyteArray p
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DFR8writeref(JNIEnv *env, jclass clss, jstring filename, jshort ref)
+Java_hdf_hdflib_HDFLibrary_DFR8writeref
+(JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     int  retVal;
     char *filePtr;

@@ -30,7 +30,8 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records)
+Java_hdf_hdflib_HDFLibrary_VSQuerycount
+(JNIEnv *env, jclass clss, jlong vdata_id, jintArray n_records)
 {
     intn rval;
     jint * theArg;
@@ -51,7 +52,8 @@ Java_hdf_hdflib_HDFLibrary_VSQuerycount(JNIEnv *env, jclass clss, jlong vdata_id
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)
+Java_hdf_hdflib_HDFLibrary_VSQueryfields
+(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)
 {
     intn rval;
     char flds[4096];
@@ -91,7 +93,8 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields(JNIEnv *env, jclass clss, jlong vdata_i
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace)
+Java_hdf_hdflib_HDFLibrary_VSQueryinterlace
+(JNIEnv *env, jclass clss, jlong vdata_id, jintArray interlace)
 {
     intn rval;
     jint * theArg;
@@ -114,7 +117,8 @@ Java_hdf_hdflib_HDFLibrary_VSQueryinterlace(JNIEnv *env, jclass clss, jlong vdat
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name)
+Java_hdf_hdflib_HDFLibrary_VSQueryname
+(JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray vdata_name)
 {
     intn rval;
     char *nm;
@@ -164,19 +168,22 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname(JNIEnv *env, jclass clss, jlong vdata_id,
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryref(JNIEnv *env, jclass clss, jlong vdata_id)
+Java_hdf_hdflib_HDFLibrary_VSQueryref
+(JNIEnv *env, jclass clss, jlong vdata_id)
 {
     return (VSQueryref((int32)vdata_id));
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQuerytag(JNIEnv *env, jclass clss, jlong vdata_id)
+Java_hdf_hdflib_HDFLibrary_VSQuerytag
+(JNIEnv *env, jclass clss, jlong vdata_id)
 {
     return (VSQuerytag((int32)vdata_id));
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_VSQueryvsize(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size)
+Java_hdf_hdflib_HDFLibrary_VSQueryvsize
+(JNIEnv *env, jclass clss, jlong vdata_id, jintArray vdata_size)
 {
     intn rval;
     jint * theArg;

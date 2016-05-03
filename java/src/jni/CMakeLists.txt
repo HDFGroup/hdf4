@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.1.0)
-PROJECT (HDF4_JAVA_JNI C CXX)
+PROJECT (HDF4_JAVA_JNI C)
 
 set (HDF4_JAVA_JNI_CSRCS
     ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfanImp.c

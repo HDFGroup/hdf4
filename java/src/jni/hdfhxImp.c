@@ -28,7 +28,8 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_HXsetcreatedir(JNIEnv *env, jclass clss, jstring dir)
+Java_hdf_hdflib_HDFLibrary_HXsetcreatedir
+(JNIEnv *env, jclass clss, jstring dir)
 {
     intn rval;
     char *str;
@@ -55,7 +56,8 @@ Java_hdf_hdflib_HDFLibrary_HXsetcreatedir(JNIEnv *env, jclass clss, jstring dir)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_HXsetdir(JNIEnv *env, jclass clss, jstring dir)
+Java_hdf_hdflib_HDFLibrary_HXsetdir
+(JNIEnv *env, jclass clss, jstring dir)
 {
     intn rval;
     char *str;

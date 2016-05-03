@@ -27,11 +27,13 @@ extern "C" {
 #include "jni.h"
 #include "h4jni.h"
 
-extern jboolean getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf);
+extern jboolean
+getOldCompInfo
+(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFDeprecated_DFgetcomp(JNIEnv *env, jclass clss, jlong file_id, jshort tag,
-        jshort ref, jbyteArray image, jint xdim, jint ydim, jint method)
+Java_hdf_hdflib_HDFDeprecated_DFgetcomp
+(JNIEnv *env, jclass clss, jlong file_id, jshort tag, jshort ref, jbyteArray image, jint xdim, jint ydim, jint method)
 {
     int rval;
     jbyte *im;
@@ -53,9 +55,9 @@ Java_hdf_hdflib_HDFDeprecated_DFgetcomp(JNIEnv *env, jclass clss, jlong file_id,
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFDeprecated_DFputcomp(JNIEnv *env, jclass clss, jlong file_id, jshort tag,
-        jshort ref, jbyteArray image, jint xdim, jint ydim, jbyteArray palette, jbyteArray newpal,
-        jint scheme, jobject c_info)
+Java_hdf_hdflib_HDFDeprecated_DFputcomp
+(JNIEnv *env, jclass clss, jlong file_id, jshort tag, jshort ref, jbyteArray image, jint xdim, jint ydim,
+        jbyteArray palette, jbyteArray newpal, jint scheme, jobject c_info)
 {
     intn rval;
     jboolean bval;

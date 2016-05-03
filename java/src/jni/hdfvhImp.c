@@ -28,8 +28,9 @@ extern "C" {
 #include "jni.h"
 #include "h4jni.h"
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclass oclass, jlong file_id,
-        jintArray tag_array, jintArray ref_array, jint n_objects, jstring vgroup_name, jstring vgroup_class)
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_VHmakegroup
+(JNIEnv *env, jclass oclass, jlong file_id, jintArray tag_array, jintArray ref_array, jint n_objects, jstring vgroup_name, jstring vgroup_class)
 {
     int32 rval;
     jint *tags;
@@ -57,8 +58,10 @@ JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHmakegroup(JNIEnv *env, jclas
     return rval;
 }
 
-JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclass oclass, jlong file_id,
-        jstring fieldname, jbyteArray buf, jint n_records, jint data_type, jstring vdata_name, jstring vdata_class)
+JNIEXPORT jint JNICALL
+Java_hdf_hdflib_HDFLibrary_VHstoredata
+(JNIEnv *env, jclass oclass, jlong file_id, jstring fieldname, jbyteArray buf, jint n_records,
+        jint data_type, jstring vdata_name, jstring vdata_class)
 {
     int32 rval;
     jbyte *buffer;
@@ -89,8 +92,9 @@ JNIEXPORT jint JNICALL Java_hdf_hdflib_HDFLibrary_VHstoredata(JNIEnv *env, jclas
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VHstoredatam(JNIEnv *env, jclass oclass, jlong file_id, jstring fieldname,
-        jbyteArray buf, jint n_records, jint data_type, jstring vdata_name, jstring vdata_class, jint order)
+Java_hdf_hdflib_HDFLibrary_VHstoredatam
+(JNIEnv *env, jclass oclass, jlong file_id, jstring fieldname, jbyteArray buf, jint n_records,
+        jint data_type, jstring vdata_name, jstring vdata_class, jint order)
 {
     int32 rval;
     jbyte *buffer;

@@ -29,13 +29,15 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_ANstart(JNIEnv *env, jclass clss, jlong file_id)
+Java_hdf_hdflib_HDFLibrary_ANstart
+(JNIEnv *env, jclass clss, jlong file_id)
 {
     return (jlong)ANstart((int32)file_id);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_ANend(JNIEnv *env, jclass clss, jlong anid)
+Java_hdf_hdflib_HDFLibrary_ANend
+(JNIEnv *env, jclass clss, jlong anid)
 {
     int32 retVal;
 

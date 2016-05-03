@@ -28,13 +28,15 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VQueryref(JNIEnv *env, jclass clss, jlong vkey)
+Java_hdf_hdflib_HDFLibrary_VQueryref
+(JNIEnv *env, jclass clss, jlong vkey)
 {
     return VQueryref((int32) vkey);
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_VQuerytag(JNIEnv *env, jclass clss, jlong vkey)
+Java_hdf_hdflib_HDFLibrary_VQuerytag
+(JNIEnv *env, jclass clss, jlong vkey)
 {
     return VQuerytag((int32) vkey);
 }

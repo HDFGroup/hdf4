@@ -27,11 +27,14 @@ extern "C" {
 #include "jni.h"
 #include "h4jni.h"
 
-extern jboolean getOldCompInfo( JNIEnv *env, jobject ciobj, comp_info *cinf);
+extern jboolean
+getOldCompInfo
+(JNIEnv *env, jobject ciobj, comp_info *cinf);
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24getdims(JNIEnv *env, jclass clss, jstring filename, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_1DF24getdims
+(JNIEnv *env, jclass clss, jstring filename, jintArray argv)
 {
     intn rval;
 
@@ -58,8 +61,8 @@ Java_hdf_hdflib_HDFLibrary_1DF24getdims(JNIEnv *env, jclass clss, jstring filena
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24getimage(JNIEnv *env, jclass clss, jstring filename,
-        jbyteArray image, jint width, jint height)
+Java_hdf_hdflib_HDFLibrary_1DF24getimage
+(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     char  *hdf_file;
     intn   rval;
@@ -84,13 +87,15 @@ Java_hdf_hdflib_HDFLibrary_1DF24getimage(JNIEnv *env, jclass clss, jstring filen
 }
 
 JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24lastref(JNIEnv *env, jclass clss)
+Java_hdf_hdflib_HDFLibrary_DF24lastref
+(JNIEnv *env, jclass clss)
 {
     return ((short)DF24lastref());
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24readref(JNIEnv *env, jclass clss, jstring filename, jshort ref)
+Java_hdf_hdflib_HDFLibrary_1DF24readref
+(JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     int  retVal;
     char *filePtr;
@@ -108,7 +113,8 @@ Java_hdf_hdflib_HDFLibrary_1DF24readref(JNIEnv *env, jclass clss, jstring filena
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24restart(JNIEnv *env, jclass clss)
+Java_hdf_hdflib_HDFLibrary_DF24restart
+(JNIEnv *env, jclass clss)
 {
     int retVal;
     retVal = DF24restart();
@@ -122,7 +128,8 @@ Java_hdf_hdflib_HDFLibrary_DF24restart(JNIEnv *env, jclass clss)
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24nimages(JNIEnv *env, jclass clss, jstring hdfFile)
+Java_hdf_hdflib_HDFLibrary_1DF24nimages
+(JNIEnv *env, jclass clss, jstring hdfFile)
 {
     char  *hdf_file;
 
@@ -131,13 +138,15 @@ Java_hdf_hdflib_HDFLibrary_1DF24nimages(JNIEnv *env, jclass clss, jstring hdfFil
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24reqil(JNIEnv *env, jclass clss, jint interlace)
+Java_hdf_hdflib_HDFLibrary_DF24reqil
+(JNIEnv *env, jclass clss, jint interlace)
 {
     return(DF24reqil((intn)interlace));
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24addimage(JNIEnv *env, jclass clss, jstring filename,
+Java_hdf_hdflib_HDFLibrary_1DF24addimage
+(JNIEnv *env, jclass clss, jstring filename,
         jbyteArray image, jint width, jint height)
 {
     intn rval;
@@ -162,7 +171,8 @@ Java_hdf_hdflib_HDFLibrary_1DF24addimage(JNIEnv *env, jclass clss, jstring filen
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24putimage(JNIEnv *env, jclass clss, jstring filename,
+Java_hdf_hdflib_HDFLibrary_1DF24putimage
+(JNIEnv *env, jclass clss, jstring filename,
         jbyteArray image, jint width, jint height)
 {
     intn rval;
@@ -187,7 +197,8 @@ Java_hdf_hdflib_HDFLibrary_1DF24putimage(JNIEnv *env, jclass clss, jstring filen
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24setcompress(JNIEnv *env, jclass clss, jint type, jobject cinfo)
+Java_hdf_hdflib_HDFLibrary_DF24setcompress
+(JNIEnv *env, jclass clss, jint type, jobject cinfo)
 {
     intn rval;
     comp_info cinf;
@@ -209,7 +220,8 @@ Java_hdf_hdflib_HDFLibrary_DF24setcompress(JNIEnv *env, jclass clss, jint type, 
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24setdims(JNIEnv *env, jclass clss, jint width, jint height)
+Java_hdf_hdflib_HDFLibrary_DF24setdims
+(JNIEnv *env, jclass clss, jint width, jint height)
 {
     intn rval;
 
@@ -224,7 +236,8 @@ Java_hdf_hdflib_HDFLibrary_DF24setdims(JNIEnv *env, jclass clss, jint width, jin
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_DF24setil(JNIEnv *env, jclass clss, jint il)
+Java_hdf_hdflib_HDFLibrary_DF24setil
+(JNIEnv *env, jclass clss, jint il)
 {
     intn rval;
     rval = DF24setil((intn) il);

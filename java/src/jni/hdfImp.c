@@ -34,7 +34,8 @@ extern "C" {
  * Signature: (Ljava/lang/String;II)J
  */
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint access, jint ndds)
+Java_hdf_hdflib_HDFLibrary_Hopen
+(JNIEnv *env, jclass clss, jstring hdfFile, jint access, jint ndds)
 {
     const char *file;
     int32  retVal;
@@ -70,7 +71,8 @@ Java_hdf_hdflib_HDFLibrary_Hopen(JNIEnv *env, jclass clss, jstring hdfFile, jint
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hclose(JNIEnv *env, jclass clss, jlong fid)
+Java_hdf_hdflib_HDFLibrary_Hclose
+(JNIEnv *env, jclass clss, jlong fid)
 {
     intn status = 0;
 
@@ -96,7 +98,8 @@ Java_hdf_hdflib_HDFLibrary_Hclose(JNIEnv *env, jclass clss, jlong fid)
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_HDdont_1atexit(JNIEnv *env, jclass clss)
+Java_hdf_hdflib_HDFLibrary_HDdont_1atexit
+(JNIEnv *env, jclass clss)
 {
     intn ret_value = SUCCEED;
     ret_value = HDdont_atexit();
@@ -109,7 +112,8 @@ Java_hdf_hdflib_HDFLibrary_HDdont_1atexit(JNIEnv *env, jclass clss)
  * Signature: (Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hishdf(JNIEnv *env, jclass clss, jstring hdfFile)
+Java_hdf_hdflib_HDFLibrary_Hishdf
+(JNIEnv *env, jclass clss, jstring hdfFile)
 {
 
     const char *hfile;
@@ -136,7 +140,8 @@ Java_hdf_hdflib_HDFLibrary_Hishdf(JNIEnv *env, jclass clss, jstring hdfFile)
  * Signature: (JI)I
  */
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_Hnumber(JNIEnv *env, jclass clss, jlong fid, jint tagtype)
+Java_hdf_hdflib_HDFLibrary_Hnumber
+(JNIEnv *env, jclass clss, jlong fid, jint tagtype)
 {
     int32  retVal;
 
@@ -154,7 +159,8 @@ Java_hdf_hdflib_HDFLibrary_Hnumber(JNIEnv *env, jclass clss, jlong fid, jint tag
  * Signature: (J)I
  */
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_DFKNTsize(JNIEnv *env, jclass clss, jlong numbertype)
+Java_hdf_hdflib_HDFLibrary_DFKNTsize
+(JNIEnv *env, jclass clss, jlong numbertype)
 {
     int  retVal;
 
@@ -172,7 +178,8 @@ Java_hdf_hdflib_HDFLibrary_DFKNTsize(JNIEnv *env, jclass clss, jlong numbertype)
  * Signature: (JI)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hcache(JNIEnv *env, jclass clss, jlong file_id, jint cache_switch)
+Java_hdf_hdflib_HDFLibrary_Hcache
+(JNIEnv *env, jclass clss, jlong file_id, jint cache_switch)
 {
 
     intn rval;
@@ -192,7 +199,8 @@ Java_hdf_hdflib_HDFLibrary_Hcache(JNIEnv *env, jclass clss, jlong file_id, jint 
  * Signature: (J[I[Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_id, jintArray vers, jobjectArray string)
+Java_hdf_hdflib_HDFLibrary_Hgetfileversion
+(JNIEnv *env, jclass clss, jlong file_id, jintArray vers, jobjectArray string)
 {
     intn rval;
     jclass Sjc;
@@ -242,7 +250,8 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion(JNIEnv *env, jclass clss, jlong file_
  * Signature: ([I[Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray vers, jobjectArray string)
+Java_hdf_hdflib_HDFLibrary_Hgetlibversion
+(JNIEnv *env, jclass clss, jintArray vers, jobjectArray string)
 {
     intn rval;
     jclass Sjc;
@@ -293,7 +302,8 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion(JNIEnv *env, jclass clss, jintArray ve
  * Signature: (JI)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hsetaccesstype(JNIEnv *env, jclass clss, jlong h_id, jint  access_type)
+Java_hdf_hdflib_HDFLibrary_Hsetaccesstype
+(JNIEnv *env, jclass clss, jlong h_id, jint  access_type)
 {
     intn rval;
 
@@ -312,7 +322,8 @@ Java_hdf_hdflib_HDFLibrary_Hsetaccesstype(JNIEnv *env, jclass clss, jlong h_id, 
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Hsync(JNIEnv *env, jclass clss, jlong file_id)
+Java_hdf_hdflib_HDFLibrary_Hsync
+(JNIEnv *env, jclass clss, jlong file_id)
 {
     intn rval;
 
@@ -331,7 +342,8 @@ Java_hdf_hdflib_HDFLibrary_Hsync(JNIEnv *env, jclass clss, jlong file_id)
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_HDFclose(JNIEnv *env, jclass clss, jlong file_id)
+Java_hdf_hdflib_HDFLibrary_HDFclose
+(JNIEnv *env, jclass clss, jlong file_id)
 {
     intn rval;
 
@@ -352,7 +364,8 @@ Java_hdf_hdflib_HDFLibrary_HDFclose(JNIEnv *env, jclass clss, jlong file_id)
  * Signature: (Ljava/lang/String;IS)I
  */
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_HDFopen(JNIEnv *env, jclass clss, jstring filename, jint access, jshort n_dds)
+Java_hdf_hdflib_HDFLibrary_HDFopen
+(JNIEnv *env, jclass clss, jstring filename, jint access, jshort n_dds)
 {
     int32 rval;
     const char * str;
@@ -374,7 +387,8 @@ Java_hdf_hdflib_HDFLibrary_HDFopen(JNIEnv *env, jclass clss, jstring filename, j
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_HDFflusdd(JNIEnv *env, jclass clss, jlong file_id)
+Java_hdf_hdflib_HDFLibrary_HDFflusdd
+(JNIEnv *env, jclass clss, jlong file_id)
 {
     intn rval;
 
@@ -395,7 +409,8 @@ Java_hdf_hdflib_HDFLibrary_HDFflusdd(JNIEnv *env, jclass clss, jlong file_id)
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL
-Java_hdf_hdflib_HDFLibrary_HDgetNTdesc(JNIEnv *env, jclass clss, jint nt)
+Java_hdf_hdflib_HDFLibrary_HDgetNTdesc
+(JNIEnv *env, jclass clss, jint nt)
 {
     char *rval;
     jstring rstring;

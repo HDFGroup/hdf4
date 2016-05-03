@@ -81,7 +81,8 @@ h4buildException(JNIEnv *env, jint HDFerr)
  */
 static
 jboolean
-H4JNIErrorClass(JNIEnv *env, const char *message, const char *className)
+H4JNIErrorClass
+(JNIEnv *env, const char *message, const char *className)
 {
     char *args[2];
     jstring str = ENVPTR->NewStringUTF(ENVPAR message);
@@ -92,13 +93,15 @@ H4JNIErrorClass(JNIEnv *env, const char *message, const char *className)
 } /* end H5JNIErrorClass() */
 
 jboolean
-h4NotImplemented(JNIEnv *env, const char *functName)
+h4NotImplemented
+(JNIEnv *env, const char *functName)
 {
     return H4JNIErrorClass(env, functName, "hdf/hdflib/HDFNotImplementedException");
 }
 
 jboolean
-h4outOfMemory(JNIEnv *env, const char *functName)
+h4outOfMemory
+(JNIEnv *env, const char *functName)
 {
     return H4JNIErrorClass(env, functName, "java/lang/OutOfMemoryError");
 }
@@ -107,13 +110,15 @@ h4outOfMemory(JNIEnv *env, const char *functName)
  *  A fatal error in a JNI call
  */
 jboolean
-h4JNIFatalError(JNIEnv *env, const char *functName)
+h4JNIFatalError
+(JNIEnv *env, const char *functName)
 {
     return H4JNIErrorClass(env, functName, "java/lang/InternalError");
 }
 
 jboolean
-h4raiseException(JNIEnv *env, const char *message)
+h4raiseException
+(JNIEnv *env, const char *message)
 {
     return H4JNIErrorClass(env, message, "hdf/hdflib/HDFLibraryException");
 }
@@ -125,8 +130,8 @@ h4raiseException(JNIEnv *env, const char *message)
  *  Call the HDF library to print the HDF error stack to 'file_name'.
  */
 JNIEXPORT void JNICALL
-JJava_hdf_hdflib_HDFLibraryException_printStackTrace0(
-    JNIEnv *env, jobject obj, jstring file_name)
+JJava_hdf_hdflib_HDFLibraryException_printStackTrace0
+(JNIEnv *env, jobject obj, jstring file_name)
 {
     FILE       *stream = NULL;
     const char *file = NULL;

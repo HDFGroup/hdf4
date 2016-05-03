@@ -40,13 +40,15 @@ extern jboolean getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
 
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_GRstart(JNIEnv *env, jclass cls, jlong file_id)
+Java_hdf_hdflib_HDFLibrary_GRstart
+(JNIEnv *env, jclass cls, jlong file_id)
 {
     return (jlong)GRstart((int32) file_id);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRend(JNIEnv *env, jclass cls, jlong gr_id)
+Java_hdf_hdflib_HDFLibrary_GRend
+(JNIEnv *env, jclass cls, jlong gr_id)
 {
     intn rval;
 
@@ -59,7 +61,8 @@ Java_hdf_hdflib_HDFLibrary_GRend(JNIEnv *env, jclass cls, jlong gr_id)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRendaccess(JNIEnv *env, jclass cls, jlong gr_id)
+Java_hdf_hdflib_HDFLibrary_GRendaccess
+(JNIEnv *env, jclass cls, jlong gr_id)
 {
     intn rval;
     rval =  GRendaccess((int32) gr_id);
@@ -71,7 +74,8 @@ Java_hdf_hdflib_HDFLibrary_GRendaccess(JNIEnv *env, jclass cls, jlong gr_id)
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRfileinfo(JNIEnv *env, jclass cls, jlong gr_id, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_GRfileinfo
+(JNIEnv *env, jclass cls, jlong gr_id, jintArray argv)
 {
     intn rval;
     jint *theArgs;
@@ -93,13 +97,15 @@ Java_hdf_hdflib_HDFLibrary_GRfileinfo(JNIEnv *env, jclass cls, jlong gr_id, jint
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_GRselect(JNIEnv *env, jclass cls, jlong gr_id, jint index)
+Java_hdf_hdflib_HDFLibrary_GRselect
+(JNIEnv *env, jclass cls, jlong gr_id, jint index)
 {
     return (jlong)GRselect((int32) gr_id, (int32) index);
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_GRnametoindex(JNIEnv *env, jclass cls, jlong gr_id, jstring gr_name)
+Java_hdf_hdflib_HDFLibrary_GRnametoindex
+(JNIEnv *env, jclass cls, jlong gr_id, jstring gr_name)
 {
     int32 rval;
     char *str;
@@ -114,7 +120,8 @@ Java_hdf_hdflib_HDFLibrary_GRnametoindex(JNIEnv *env, jclass cls, jlong gr_id, j
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo(JNIEnv *env, jclass cls, jlong grsid, jobject chunk_def, jintArray cflags)
+Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo
+(JNIEnv *env, jclass cls, jlong grsid, jobject chunk_def, jintArray cflags)
 {
     int32 rval;
     HDF_CHUNK_DEF cdef;
@@ -145,8 +152,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo(JNIEnv *env, jclass cls, jlong grsid, 
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass cls, jlong ri_id,
-        jobjectArray gr_name, jintArray argv, jintArray dim_sizes)
+Java_hdf_hdflib_HDFLibrary_GRgetiminfo
+(JNIEnv *env, jclass cls, jlong ri_id, jobjectArray gr_name, jintArray argv, jintArray dim_sizes)
 {
     intn rval;
     jint * dims;
@@ -206,8 +213,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo(JNIEnv *env, jclass cls, jlong ri_id,
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreadimage(JNIEnv *env, jclass cls, jlong ri_id, jintArray start, jintArray stride,
-        jintArray edge, jbyteArray data)
+Java_hdf_hdflib_HDFLibrary_GRreadimage
+(JNIEnv *env, jclass cls, jlong ri_id, jintArray start, jintArray stride, jintArray edge, jbyteArray data)
 {
     intn rval;
     jbyte *arr;
@@ -253,19 +260,22 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage(JNIEnv *env, jclass cls, jlong ri_id, jin
 }
 
 JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_GRidtoref(JNIEnv *env, jclass cls, jlong gr_id)
+Java_hdf_hdflib_HDFLibrary_GRidtoref
+(JNIEnv *env, jclass cls, jlong gr_id)
 {
     return (GRidtoref((int32) gr_id));
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreftoindex(JNIEnv *env, jclass cls, jlong gr_id, jshort ref)
+Java_hdf_hdflib_HDFLibrary_GRreftoindex
+(JNIEnv *env, jclass cls, jlong gr_id, jshort ref)
 {
     return (GRreftoindex((int32) gr_id, (uint16)ref));
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreqlutil(JNIEnv *env, jclass cls, jlong gr_id, jint interlace_mode)
+Java_hdf_hdflib_HDFLibrary_GRreqlutil
+(JNIEnv *env, jclass cls, jlong gr_id, jint interlace_mode)
 {
     intn rval;
     rval =  GRreqlutil((int32) gr_id, (intn)interlace_mode);
@@ -278,7 +288,8 @@ Java_hdf_hdflib_HDFLibrary_GRreqlutil(JNIEnv *env, jclass cls, jlong gr_id, jint
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreqimageil(JNIEnv *env, jclass cls, jlong gr_id, jint interlace_mode)
+Java_hdf_hdflib_HDFLibrary_GRreqimageil
+(JNIEnv *env, jclass cls, jlong gr_id, jint interlace_mode)
 {
     intn rval;
     rval =  GRreqimageil((int32) gr_id, (intn)interlace_mode);
@@ -291,19 +302,22 @@ Java_hdf_hdflib_HDFLibrary_GRreqimageil(JNIEnv *env, jclass cls, jlong gr_id, ji
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetlutid(JNIEnv *env, jclass cls, jlong gr_id, jint index)
+Java_hdf_hdflib_HDFLibrary_GRgetlutid
+(JNIEnv *env, jclass cls, jlong gr_id, jint index)
 {
     return (jlong)GRgetlutid((int32) gr_id, (int32)index);
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetnluts(JNIEnv *env, jclass cls, jlong gr_id)
+Java_hdf_hdflib_HDFLibrary_GRgetnluts
+(JNIEnv *env, jclass cls, jlong gr_id)
 {
     return (GRgetnluts((int32) gr_id));
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetlutinfo(JNIEnv *env, jclass cls, jlong ri_id, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_GRgetlutinfo
+(JNIEnv *env, jclass cls, jlong ri_id, jintArray argv)
 {
     intn rval;
     jint * theArgs;
@@ -329,7 +343,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetlutinfo(JNIEnv *env, jclass cls, jlong ri_id, ji
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreadlut(JNIEnv *env, jclass cls, jlong pal_id, jbyteArray pal_data)
+Java_hdf_hdflib_HDFLibrary_GRreadlut
+(JNIEnv *env, jclass cls, jlong pal_id, jbyteArray pal_data)
 {
     intn rval;
     jbyte *arr;
@@ -350,8 +365,8 @@ Java_hdf_hdflib_HDFLibrary_GRreadlut(JNIEnv *env, jclass cls, jlong pal_id, jbyt
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass cls, jlong gr_id, jint attr_index,
-        jobjectArray name, jintArray argv)
+Java_hdf_hdflib_HDFLibrary_GRattrinfo
+(JNIEnv *env, jclass cls, jlong gr_id, jint attr_index, jobjectArray name, jintArray argv)
 {
     int32 rval;
     char *str;
@@ -407,7 +422,8 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo(JNIEnv *env, jclass cls, jlong gr_id, jint
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetattr(JNIEnv *env, jclass cls, jlong gr_id, jint attr_index, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_GRgetattr
+(JNIEnv *env, jclass cls, jlong gr_id, jint attr_index, jbyteArray values)
 {
     intn rval;
     jbyte *arr;
@@ -426,7 +442,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetattr(JNIEnv *env, jclass cls, jlong gr_id, jint 
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_GRfindattr(JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name)
+Java_hdf_hdflib_HDFLibrary_GRfindattr
+(JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name)
 {
     int32 rval;
     char *str;
@@ -441,8 +458,8 @@ Java_hdf_hdflib_HDFLibrary_GRfindattr(JNIEnv *env, jclass cls, jlong gr_id, jstr
 }
 
 JNIEXPORT jlong JNICALL
-Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass cls, jlong gr_id, jstring name, jint ncomp,
-        jlong data_type, jint interlace_mode, jintArray dim_sizes)
+Java_hdf_hdflib_HDFLibrary_GRcreate
+(JNIEnv *env, jclass cls, jlong gr_id, jstring name, jint ncomp, jlong data_type, jint interlace_mode, jintArray dim_sizes)
 {
     int32 rval;
     jint *dims;
@@ -463,16 +480,16 @@ Java_hdf_hdflib_HDFLibrary_GRcreate(JNIEnv *env, jclass cls, jlong gr_id, jstrin
 
 
 JNIEXPORT jshort JNICALL
-Java_hdf_hdflib_HDFLibrary_GRluttoref(JNIEnv *env, jclass cls, jlong pal_id)
+Java_hdf_hdflib_HDFLibrary_GRluttoref
+(JNIEnv *env, jclass cls, jlong pal_id)
 {
     return (GRluttoref((int32) pal_id));
 }
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2(JNIEnv *env, jclass cls,
-        jlong gr_id, jstring attr_name,
-        jlong data_type, jint count, jstring values)
+Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2
+(JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
 {
     intn rval;
     char *str;
@@ -496,8 +513,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2(
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2II_3B(JNIEnv *env, jclass cls, jlong gr_id,
-        jstring attr_name, jlong data_type, jint count, jbyteArray values)
+Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2II_3B
+(JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name, jlong data_type, jint count, jbyteArray values)
 {
     intn rval;
     jbyte *arr;
@@ -523,7 +540,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2II_3B(JNIEnv *env, jcl
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetcompress(JNIEnv *env, jclass cls, jlong ri_id, jint comp_type, jobject c_info)
+Java_hdf_hdflib_HDFLibrary_GRsetcompress
+(JNIEnv *env, jclass cls, jlong ri_id, jint comp_type, jobject c_info)
 {
     intn rval;
     comp_info cinf;
@@ -544,7 +562,8 @@ Java_hdf_hdflib_HDFLibrary_GRsetcompress(JNIEnv *env, jclass cls, jlong ri_id, j
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRgetcompress(JNIEnv *env, jclass cls, jlong ri_id, jobject c_info)
+Java_hdf_hdflib_HDFLibrary_GRgetcompress
+(JNIEnv *env, jclass cls, jlong ri_id, jobject c_info)
 {
     intn rval;
     comp_coder_t coder;
@@ -567,7 +586,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetcompress(JNIEnv *env, jclass cls, jlong ri_id, j
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetchunk(JNIEnv *env, jclass cls, jlong sdsid, jobject chunk_def, jint flags)
+Java_hdf_hdflib_HDFLibrary_GRsetchunk
+(JNIEnv *env, jclass cls, jlong sdsid, jobject chunk_def, jint flags)
 {
     intn rval;
     HDF_CHUNK_DEF c_def;
@@ -592,13 +612,15 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunk(JNIEnv *env, jclass cls, jlong sdsid, jobj
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetchunkcache(JNIEnv *env, jclass cls, jlong sdsid, jint maxcache, jint flags)
+Java_hdf_hdflib_HDFLibrary_GRsetchunkcache
+(JNIEnv *env, jclass cls, jlong sdsid, jint maxcache, jint flags)
 {
     return SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetexternalfile(JNIEnv *env, jclass cls, jlong ri_id, jstring filename, jint offset)
+Java_hdf_hdflib_HDFLibrary_GRsetexternalfile
+(JNIEnv *env, jclass cls, jlong ri_id, jstring filename, jint offset)
 {
     int32 rval;
     char *str;
@@ -664,8 +686,8 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id,
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass cls, jlong pal_id, jint ncomp, jint data_type,
-        jint interlace, jint num_entries, jbyteArray pal_data)
+Java_hdf_hdflib_HDFLibrary_GRwritelut
+(JNIEnv *env, jclass cls, jlong pal_id, jint ncomp, jint data_type, jint interlace, jint num_entries, jbyteArray pal_data)
 {
     intn rval;
     jbyte *arr;
@@ -687,7 +709,8 @@ Java_hdf_hdflib_HDFLibrary_GRwritelut(JNIEnv *env, jclass cls, jlong pal_id, jin
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
+Java_hdf_hdflib_HDFLibrary_GRreadchunk
+(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
     int32 retVal;
     jbyte * s;
@@ -711,7 +734,8 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk(JNIEnv *env, jclass cls, jlong grid, jint
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRwritechunk(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
+Java_hdf_hdflib_HDFLibrary_GRwritechunk
+(JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
     int32 retVal;
     jbyte * s;

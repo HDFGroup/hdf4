@@ -39,7 +39,8 @@ extern "C" {
 
 
 JNIEXPORT jintArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToInt___3B(JNIEnv *env, jclass clss, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToInt___3B
+(JNIEnv *env, jclass clss, jbyteArray bdata)
 {
     jbyte *barr;
     jintArray rarray;
@@ -95,7 +96,8 @@ Java_hdf_hdflib_HDFNativeData_byteToInt___3B(JNIEnv *env, jclass clss, jbyteArra
 
 
 JNIEXPORT jfloatArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToFloat___3B(JNIEnv *env, jclass clss, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToFloat___3B
+(JNIEnv *env, jclass clss, jbyteArray bdata)
 {
     jbyte *barr;
     jfloatArray rarray;
@@ -148,7 +150,8 @@ Java_hdf_hdflib_HDFNativeData_byteToFloat___3B(JNIEnv *env, jclass clss, jbyteAr
 }
 
 JNIEXPORT jshortArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToShort___3B(JNIEnv *env, jclass clss, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToShort___3B
+(JNIEnv *env, jclass clss, jbyteArray bdata)
 {
     jbyte *barr;
     jshortArray rarray;
@@ -204,7 +207,8 @@ Java_hdf_hdflib_HDFNativeData_byteToShort___3B(JNIEnv *env, jclass clss, jbyteAr
 
 
 JNIEXPORT jlongArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToLong___3B(JNIEnv *env, jclass clss, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToLong___3B
+(JNIEnv *env, jclass clss, jbyteArray bdata)
 {
     jbyte *barr;
     jlongArray rarray;
@@ -258,7 +262,8 @@ Java_hdf_hdflib_HDFNativeData_byteToLong___3B(JNIEnv *env, jclass clss, jbyteArr
 
 
 JNIEXPORT jdoubleArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToDouble___3B(JNIEnv *env, jclass clss, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToDouble___3B
+(JNIEnv *env, jclass clss, jbyteArray bdata)
 {
     jbyte *barr;
     jdoubleArray rarray;
@@ -312,7 +317,8 @@ Java_hdf_hdflib_HDFNativeData_byteToDouble___3B(JNIEnv *env, jclass clss, jbyteA
 
 
 JNIEXPORT jintArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToInt__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToInt__II_3B
+(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
 {
     char *bp;
     jbyte *barr;
@@ -371,7 +377,8 @@ Java_hdf_hdflib_HDFNativeData_byteToInt__II_3B(JNIEnv *env, jclass clss, jint st
 }
 
 JNIEXPORT jshortArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToShort__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToShort__II_3B
+(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
 {
     char *bp;
     jbyte *barr;
@@ -430,7 +437,8 @@ Java_hdf_hdflib_HDFNativeData_byteToShort__II_3B(JNIEnv *env, jclass clss, jint 
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToFloat__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToFloat__II_3B
+(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
 {
     char *bp;
     jbyte *barr;
@@ -489,7 +497,8 @@ Java_hdf_hdflib_HDFNativeData_byteToFloat__II_3B(JNIEnv *env, jclass clss, jint 
 }
 
 JNIEXPORT jlongArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToLong__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToLong__II_3B
+(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
 {
     char *bp;
     jbyte *barr;
@@ -549,7 +558,8 @@ Java_hdf_hdflib_HDFNativeData_byteToLong__II_3B(JNIEnv *env, jclass clss, jint s
 }
 
 JNIEXPORT jdoubleArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToDouble__II_3B(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
+Java_hdf_hdflib_HDFNativeData_byteToDouble__II_3B
+(JNIEnv *env, jclass clss, jint start, jint len, jbyteArray bdata)
 {
     char *bp;
     jbyte *barr;
@@ -607,7 +617,8 @@ Java_hdf_hdflib_HDFNativeData_byteToDouble__II_3B(JNIEnv *env, jclass clss, jint
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_intToByte__II_3I(JNIEnv *env, jclass clss, jint start, jint len, jintArray idata)
+Java_hdf_hdflib_HDFNativeData_intToByte__II_3I
+(JNIEnv *env, jclass clss, jint start, jint len, jintArray idata)
 {
     jint *ip;
     jint *iarr;
@@ -675,7 +686,8 @@ Java_hdf_hdflib_HDFNativeData_intToByte__II_3I(JNIEnv *env, jclass clss, jint st
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_shortToByte__II_3S(JNIEnv *env, jclass clss, jint start, jint len, jshortArray idata)
+Java_hdf_hdflib_HDFNativeData_shortToByte__II_3S
+(JNIEnv *env, jclass clss, jint start, jint len, jshortArray idata)
 {
     jshort *ip;
     jshort *iarr;
@@ -743,7 +755,8 @@ Java_hdf_hdflib_HDFNativeData_shortToByte__II_3S(JNIEnv *env, jclass clss, jint 
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_floatToByte__II_3F(JNIEnv *env, jclass clss, jint start, jint len, jfloatArray idata)
+Java_hdf_hdflib_HDFNativeData_floatToByte__II_3F
+(JNIEnv *env, jclass clss, jint start, jint len, jfloatArray idata)
 {
     jfloat *ip;
     jfloat *iarr;
@@ -811,7 +824,8 @@ Java_hdf_hdflib_HDFNativeData_floatToByte__II_3F(JNIEnv *env, jclass clss, jint 
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_doubleToByte__II_3D(JNIEnv *env, jclass clss, jint start, jint len, jdoubleArray idata)
+Java_hdf_hdflib_HDFNativeData_doubleToByte__II_3D
+(JNIEnv *env, jclass clss, jint start, jint len, jdoubleArray idata)
 {
     jdouble *ip;
     jdouble *iarr;
@@ -880,7 +894,8 @@ Java_hdf_hdflib_HDFNativeData_doubleToByte__II_3D(JNIEnv *env, jclass clss, jint
 
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_longToByte__II_3J(JNIEnv *env, jclass clss, jint start, jint len, jlongArray idata)
+Java_hdf_hdflib_HDFNativeData_longToByte__II_3J
+(JNIEnv *env, jclass clss, jint start, jint len, jlongArray idata)
 {
     jlong *ip;
     jlong *iarr;
@@ -949,7 +964,8 @@ Java_hdf_hdflib_HDFNativeData_longToByte__II_3J(JNIEnv *env, jclass clss, jint s
 
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_intToByte__I(JNIEnv *env, jclass clss, jint idata)
+Java_hdf_hdflib_HDFNativeData_intToByte__I
+(JNIEnv *env, jclass clss, jint idata)
 {
     jbyteArray rarray;
     jbyte *barray;
@@ -986,7 +1002,8 @@ Java_hdf_hdflib_HDFNativeData_intToByte__I(JNIEnv *env, jclass clss, jint idata)
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_floatToByte__F(JNIEnv *env, jclass clss, jfloat idata)
+Java_hdf_hdflib_HDFNativeData_floatToByte__F
+(JNIEnv *env, jclass clss, jfloat idata)
 {
     jbyteArray rarray;
     jbyte *barray;
@@ -1023,7 +1040,8 @@ Java_hdf_hdflib_HDFNativeData_floatToByte__F(JNIEnv *env, jclass clss, jfloat id
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_shortToByte__S(JNIEnv *env, jclass clss, jshort idata)
+Java_hdf_hdflib_HDFNativeData_shortToByte__S
+(JNIEnv *env, jclass clss, jshort idata)
 {
     jbyteArray rarray;
     jbyte *barray;
@@ -1062,7 +1080,8 @@ Java_hdf_hdflib_HDFNativeData_shortToByte__S(JNIEnv *env, jclass clss, jshort id
 
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_doubleToByte__D(JNIEnv *env, jclass clss, jdouble idata)
+Java_hdf_hdflib_HDFNativeData_doubleToByte__D
+(JNIEnv *env, jclass clss, jdouble idata)
 {
     jbyteArray rarray;
     jbyte *barray;
@@ -1100,7 +1119,8 @@ Java_hdf_hdflib_HDFNativeData_doubleToByte__D(JNIEnv *env, jclass clss, jdouble 
 
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_longToByte__J(JNIEnv *env, jclass clss, jlong idata)
+Java_hdf_hdflib_HDFNativeData_longToByte__J
+(JNIEnv *env, jclass clss, jlong idata)
 {
     jbyteArray rarray;
     jbyte *barray;
@@ -1138,7 +1158,8 @@ Java_hdf_hdflib_HDFNativeData_longToByte__J(JNIEnv *env, jclass clss, jlong idat
 }
 
 JNIEXPORT jbyteArray JNICALL
-Java_hdf_hdflib_HDFNativeData_byteToByte__B(JNIEnv *env, jclass clss, jbyte idata)
+Java_hdf_hdflib_HDFNativeData_byteToByte__B
+(JNIEnv *env, jclass clss, jbyte idata)
 {
     jbyteArray rarray;
     jbyte *barray;

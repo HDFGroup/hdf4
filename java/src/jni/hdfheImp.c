@@ -20,19 +20,22 @@ extern "C" {
 #include "h4jni.h"
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_HEvalue(JNIEnv *env, jclass clss, jint level)
+Java_hdf_hdflib_HDFLibrary_HEvalue
+(JNIEnv *env, jclass clss, jint level)
 {
     return HEvalue((int32) level);
 }
 
 JNIEXPORT void JNICALL
-Java_hdf_hdflib_HDFLibrary_HEprint(JNIEnv *env, jclass clss, jobject stream, jint level)
+Java_hdf_hdflib_HDFLibrary_HEprint
+(JNIEnv *env, jclass clss, jobject stream, jint level)
 {
     HEprint((FILE *) stream, (int32) level);
 }
 
 JNIEXPORT jstring JNICALL
-Java_hdf_hdflib_HDFLibrary_HEstring(JNIEnv *env, jclass clss, jshort error_code)
+Java_hdf_hdflib_HDFLibrary_HEstring
+(JNIEnv *env, jclass clss, jshort error_code)
 {
     char * str;
     jstring rstring;

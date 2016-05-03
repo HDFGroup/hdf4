@@ -33,7 +33,8 @@ extern "C" {
  */
 
 jboolean
-getNewCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf)
+getNewCompInfo
+(JNIEnv *env, jobject ciobj, comp_info *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -167,7 +168,8 @@ jint ctype;
  *   Put in the fields for each compression method.
  */
 jboolean
-setNewCompInfo(JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf)
+setNewCompInfo
+(JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -324,7 +326,8 @@ jclass jc;
  *     Get info from old style C comp_info struct, put in HDFCompInfo object.
  */
 jboolean
-getOldCompInfo(JNIEnv *env, jobject ciobj, comp_info *cinf)
+getOldCompInfo
+(JNIEnv *env, jobject ciobj, comp_info *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -374,7 +377,8 @@ jint ctype;
  *  Java HDFChunkInfo object.
  */
 jboolean
-getChunkInfo(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
+getChunkInfo
+(JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
 {
 jfieldID jf;
 jclass jc;
@@ -489,7 +493,8 @@ jboolean bb;
  *  of HDFCompInfo.  Then call the constructor for HDFChunkInfo.
  */
 jboolean
-makeChunkInfo(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf)
+makeChunkInfo
+(JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf)
 {
 jclass jc;
 jclass jci;
@@ -612,7 +617,8 @@ jobject compinfo;
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_HCget_1config_1info(JNIEnv *env, jclass clss, jint coder_type)
+Java_hdf_hdflib_HDFLibrary_HCget_1config_1info
+(JNIEnv *env, jclass clss, jint coder_type)
 {
   intn rval;
   uint32 compression_config_info=0;
