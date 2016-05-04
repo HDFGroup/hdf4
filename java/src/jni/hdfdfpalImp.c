@@ -146,7 +146,7 @@ JNIEXPORT jshort JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPrestart
 (JNIEnv *env, jclass clss)
 {
-    return (DFPrestart( ));
+    return (DFPrestart());
 }
 
 JNIEXPORT jboolean JNICALL

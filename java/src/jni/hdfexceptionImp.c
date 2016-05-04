@@ -49,13 +49,14 @@ extern "C" {
 }
 
 jboolean
-h4buildException(JNIEnv *env, jint HDFerr)
+h4buildException
+(JNIEnv *env, jint HDFerr)
 {
-    jmethodID jm;
-    jclass jc;
-    int args[2];
-    jobject ex;
-    int rval;
+jmethodID jm;
+jclass jc;
+int args[2];
+jobject ex;
+int rval;
 
 
     jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFLibraryException");

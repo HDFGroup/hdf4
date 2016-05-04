@@ -146,8 +146,7 @@ Java_hdf_hdflib_HDFLibrary_DF24reqil
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_1DF24addimage
-(JNIEnv *env, jclass clss, jstring filename,
-        jbyteArray image, jint width, jint height)
+(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     intn rval;
     char  *f;
@@ -172,8 +171,7 @@ Java_hdf_hdflib_HDFLibrary_1DF24addimage
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_1DF24putimage
-(JNIEnv *env, jclass clss, jstring filename,
-        jbyteArray image, jint width, jint height)
+(JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     intn rval;
     char  *f;

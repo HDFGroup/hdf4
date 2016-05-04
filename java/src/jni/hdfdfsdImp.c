@@ -61,7 +61,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFDeprecated_DFSDclear
 (JNIEnv *env, jclass clss)
 {
-    if (DFSDclear( ) == FAIL) {
+    if (DFSDclear() == FAIL) {
         return JNI_FALSE;
     }
     else {
@@ -73,7 +73,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFDeprecated_DFSDendslab
 (JNIEnv *env, jclass clss)
 {
-    if (DFSDendslab( ) == FAIL) {
+    if (DFSDendslab() == FAIL) {
         return JNI_FALSE;
     }
     else {
@@ -85,7 +85,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFDeprecated_DFSDendslice
 (JNIEnv *env, jclass clss)
 {
-    if (DFSDendslice( ) == FAIL) {
+    if (DFSDendslice() == FAIL) {
         return JNI_FALSE;
     }
     else {
@@ -901,7 +901,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFDeprecated_DFSDrestart
 (JNIEnv *env, jclass clss)
 {
-    if (DFSDrestart( ) == FAIL) {
+    if (DFSDrestart() == FAIL) {
         return JNI_FALSE;
     }
     else {
@@ -1069,8 +1069,8 @@ Java_hdf_hdflib_HDFDeprecated_DFSDsetNT
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFDeprecated_DFSDsetrange(
-        JNIEnv *env, jclass clss, jbyteArray max, jbyteArray min)
+Java_hdf_hdflib_HDFDeprecated_DFSDsetrange
+(JNIEnv *env, jclass clss, jbyteArray max, jbyteArray min)
 {
     intn rval;
     jbyte * mx;

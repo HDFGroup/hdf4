@@ -1072,7 +1072,8 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata
     strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
     if (stride != NULL ) {
         strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    } else {
+    }
+    else {
         strd = (int32 *)NULL;
     }
     e = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR edge,&bb);

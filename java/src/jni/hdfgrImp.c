@@ -55,7 +55,8 @@ Java_hdf_hdflib_HDFLibrary_GRend
     rval = GRend((int32) gr_id);
     if (rval == FAIL) {
         return JNI_FALSE;
-    } else {
+    }
+    else {
         return JNI_TRUE;
     }
 }
