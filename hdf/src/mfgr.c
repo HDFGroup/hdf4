@@ -479,11 +479,10 @@ Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
     uint16 find_tag, find_ref;
     int32 find_off, find_len;
     intn num_imgs = 0;
+    imginfo_t *ptr = img_info;
 
     find_tag = find_ref = 0;
     find_off = find_len = 0;
-
-    imginfo_t *ptr = img_info;
 
     while (Hfind(file_id, searched_tag, DFREF_WILDCARD, &find_tag, &find_ref, &find_off, &find_len, DF_FORWARD) == SUCCEED)
     {
