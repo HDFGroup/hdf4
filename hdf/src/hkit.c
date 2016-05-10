@@ -51,7 +51,7 @@ DESCRIPTION
    and the string is padded with spaces
 
 ---------------------------------------------------------------------------*/
-intn
+intn 
 HDc2fstr(char *str, intn len)
 {
     int         i;
@@ -91,7 +91,7 @@ HDf2cstring(_fcd fdesc, intn len)
         /*EMPTY*/;
     cstr = (char *) HDmalloc((uint32) (i + 2));
     if (!cstr)
-    HRETURN_ERROR(DFE_NOSPACE, NULL);
+	HRETURN_ERROR(DFE_NOSPACE, NULL);
     cstr[i + 1] = '\0';
     HDmemcpy(cstr,str,i+1);
     return cstr;
@@ -116,7 +116,7 @@ DESCRIPTION
    support one of these.
 
 ---------------------------------------------------------------------------*/
-intn
+intn 
 HDpackFstring(char *src, char *dest, intn len)
 {
     intn        sofar;
@@ -128,7 +128,7 @@ HDpackFstring(char *src, char *dest, intn len)
         *dest++ = ' ';
 
     return SUCCEED;
-}    /* HDpackFstring */
+}	/* HDpackFstring */
 
 /* ------------------------------- HDflush -------------------------------- */
 /*
@@ -149,7 +149,7 @@ DESCRIPTION
    really doing anything.
 
 ---------------------------------------------------------------------------*/
-intn
+intn 
 HDflush(int32 file_id)
 {
     CONSTR(FUNC, "HDflush");    /* for HERROR */
@@ -163,7 +163,7 @@ HDflush(int32 file_id)
     HI_FLUSH(file_rec->file);
 
     return SUCCEED;
-}    /* HDflush */
+}	/* HDflush */
 
 /* ----------------------------- HDgettagdesc ----------------------------- */
 /*
@@ -252,7 +252,7 @@ DESCRIPTION
    Map a tag name to a statically allocated tag number for it.
 
 ---------------------------------------------------------------------------*/
-intn
+intn 
 HDgettagnum(const char *tag_name)
 {
     intn        i;
@@ -334,7 +334,7 @@ USAGE
 RETURNS
    SUCCEED - pointer to filename / FAIL - NULL
 DESCRIPTION
-   Map a file ID to the filename used to get it.  This is useful for
+   Map a file ID to the filename used to get it.  This is useful for 
    mixing old style single-file interfaces (which take filenames) and
    newer interfaces which use file IDs.
 

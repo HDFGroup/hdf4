@@ -48,7 +48,7 @@
 /*      8 - Cray IEEE                                                       */
 /*          (i.e. Big-Endian, all 64-bit architecture w/IEEE Floats)        */
 /*--------------------------------------------------------------------------*/
-#define     DFMT_SUN            0x1111
+#define     DFMT_SUN            0x1111 
 #define     DFMT_SUN_INTEL      0x4441
 #define     DFMT_ALLIANT        0x1111
 #define     DFMT_IRIX           0x1111
@@ -128,7 +128,7 @@ Please check your Makefile.
 #include <sys/file.h>               /* for unbuffered i/o stuff */
 #include <sys/stat.h>
 #if (defined __sun) && (defined __amd64 || defined __i386) /* SunOS on Intel; 32 and 64-bit modes */
-#define DF_MT   DFMT_SUN_INTEL
+#define DF_MT   DFMT_SUN_INTEL 
 #else
 #define DF_MT   DFMT_SUN
 #endif /* __sun */
@@ -186,7 +186,7 @@ Please check your Makefile.
 #define GOT_MACHINE
 
 #   define BSD
-#define DUMBCC     /* because it is.  for later use in macros */
+#define DUMBCC 	/* because it is.  for later use in macros */
 #ifndef __GNUC__
 #include <memory.h>
 #endif /* __GNUC__ */
@@ -253,11 +253,11 @@ Please check your Makefile.
 typedef void              VOID;
 typedef void              *VOIDP;
 typedef char              *_fcd;
-#ifndef _ALL_SOURCE
+#ifndef _ALL_SOURCE       
 typedef char              int8;
-typedef short int         int16;
+typedef short int         int16; 
 typedef int               int32;
-#endif
+#endif  
 typedef char              char8;
 typedef unsigned char     uchar8;
 typedef unsigned char     uint8;
@@ -488,7 +488,7 @@ typedef int               hdf_pint_t;   /* an integer the same size as a pointer
 
 #endif /* CONVEX */
 
-
+ 
 #if defined (__APPLE__)
 
 #ifndef __APPLE__
@@ -506,7 +506,7 @@ Please check your Makefile.
 #define GOT_MACHINE 1
 
 #ifndef __GNUC__
-#define DUMBCC     /* because it is.  for later use in macros */
+#define DUMBCC 	/* because it is.  for later use in macros */
 #endif /* __GNUC__ */
 
 #include <sys/types.h>
@@ -1249,7 +1249,7 @@ correctly.
 #define HDfreespace HDfree
 
 /**************************************************************************
-*  Allocation functions defined differently
+*  Allocation functions defined differently 
 **************************************************************************/
 #if !defined(MALLOC_CHECK)
 #  define HDmalloc(s)      (malloc((size_t)s))
@@ -1261,7 +1261,7 @@ correctly.
 #define HDfreenclear(p) { if((p)!=NULL) HDfree(p); p=NULL; }
 
 /**************************************************************************
-*  String functions defined differently
+*  String functions defined differently 
 **************************************************************************/
 
 #  define HDstrcat(s1,s2)   (strcat((s1),(s2)))
@@ -1287,7 +1287,7 @@ correctly.
 /**************************************************************************
 *  Misc. functions
 **************************************************************************/
-#define HDstat(path, result)    (stat(path, result))
+#define HDstat(path, result)	(stat(path, result))
 #define HDgetenv(s1)            (getenv(s1))
 #define HDputenv(s1)            (putenv(s1))
 #define HDltoa(v)               (ltoa(v))

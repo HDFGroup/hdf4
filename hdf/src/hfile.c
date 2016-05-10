@@ -25,9 +25,9 @@ static char RcsId[] = "@(#)$Revision$";
 
    H-Level Limits
    ==============
-   o MAX_ACC access records open at a single time (#define in hfile.h)
-   o int16 total tags (fixed)
-   o int32 max length and offset of an element in an HDF file (fixed)
+   o MAX_ACC access records open at a single time (#define in hfile.h) 
+   o int16 total tags (fixed) 
+   o int32 max length and offset of an element in an HDF file (fixed) 
 
    Routine prefix conventions
    ==========================
@@ -72,7 +72,7 @@ static char RcsId[] = "@(#)$Revision$";
    Hsync       -- sync file with memory
    Hcache      -- set low-level caching for a file
    HDvalidfid  -- check if a file ID is valid
-   HDerr       --  Closes a file and return FAIL.
+   HDerr       --  Closes a file and return FAIL.  
    Hsetacceesstype -- set the I/O access type (serial, parallel, ...)
                        of a data element
    Hgetlibversion  -- return version info on current HDF library
@@ -87,7 +87,7 @@ static char RcsId[] = "@(#)$Revision$";
 
    File Memory Pool routines
    -------------------------
-   Hmpset  -- set pagesize and maximum number of pages to cache on next open/create
+   Hmpset  -- set pagesize and maximum number of pages to cache on next open/create       
    Hmpget  -- get last pagesize and max number of pages cached for open/create
 
    Special Tag routines
@@ -98,7 +98,7 @@ static char RcsId[] = "@(#)$Revision$";
 
    Macintosh specific Routines(unbuffered C I/O stubs on top of Mac toolbox)
    --------------------------
-   mopen  --
+   mopen  -- 
    mclose --
    mread  --
    mwrite --
@@ -174,17 +174,17 @@ extern funclist_t cr_funcs;
    member of each record is the speical code for that type of data element. */
 functab_t   functab[] =
 {
-    {SPECIAL_LINKED, &linked_funcs},
-    {SPECIAL_EXT, &ext_funcs},
-    {SPECIAL_COMP, &comp_funcs},
-    {SPECIAL_CHUNKED, &chunked_funcs},
+	{SPECIAL_LINKED, &linked_funcs},
+	{SPECIAL_EXT, &ext_funcs},
+	{SPECIAL_COMP, &comp_funcs},
+	{SPECIAL_CHUNKED, &chunked_funcs},
 #ifdef LATER
-    {SPECIAL_VLINKED, &vlnk_funcs},
+	{SPECIAL_VLINKED, &vlnk_funcs},
 #endif /* LATER */
-    {SPECIAL_BUFFERED, &buf_funcs},
-    {SPECIAL_COMPRAS, &cr_funcs},
-    {0, NULL}                    /* terminating record; add new record */
-            /* before this line */
+	{SPECIAL_BUFFERED, &buf_funcs},
+	{SPECIAL_COMPRAS, &cr_funcs},
+	{0, NULL}					/* terminating record; add new record */
+			   /* before this line */
 };
 
 /*
@@ -231,9 +231,9 @@ USAGE
    int32 Hopen(path, access, ndds)
    char *path;             IN: Name of file to be opened.
    int access;             IN: DFACC_READ, DFACC_WRITE, DFACC_CREATE
-                or any bitwise-or of the above.
+				or any bitwise-or of the above.
    int16 ndds;             IN: Number of dds in a block if this
-                file needs to be created.
+				file needs to be created.
 RETURNS
    On success returns file id, on failure returns -1.
 DESCRIPTION
@@ -262,12 +262,12 @@ DESCRIPTION
    * the file headers and initial information are set up properly.
 
 --------------------------------------------------------------------------*/
-int32
+int32 
 Hopen(const char *path, intn acc_mode, int16 ndds)
 {
-  CONSTR(FUNC, "Hopen");    /* For HERROR */
+  CONSTR(FUNC, "Hopen");	/* For HERROR */
   filerec_t  *file_rec=NULL;/* File record */
-  int         vtag = 0;        /* write version tag? */
+  int         vtag = 0;		/* write version tag? */
   int32       fid=FAIL;     /* File ID */
   int32       ret_value = SUCCEED;
 
@@ -284,10 +284,10 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
   /* Get a space to put the file information.
    * HIget_filerec_node() also copies path into the record. */
   if ((file_rec = HIget_filerec_node(path))== NULL)
-    HGOTO_ERROR(DFE_TOOMANY, FAIL);    /* The slots are full. */
+    HGOTO_ERROR(DFE_TOOMANY, FAIL);	/* The slots are full. */
 
   if (file_rec->refcount)
-    {    /* File is already opened, check that permission is okay. */
+    {	/* File is already opened, check that permission is okay. */
       /* If this request is to create a new file and file is still
        * in use, return error. */
       if (acc_mode == DFACC_CREATE)
@@ -295,10 +295,10 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
       if ((acc_mode & DFACC_WRITE) && !(file_rec->access & DFACC_WRITE))
         {
-    /* If the request includes writing, and if original open does not
-    provide for write, then try to reopen file for writing.
-    This cannot be done on OS (such as the SXOS) where only one
-    open is allowed per file at any time. */
+	/* If the request includes writing, and if original open does not
+	   provide for write, then try to reopen file for writing.
+	   This cannot be done on OS (such as the SXOS) where only one
+	   open is allowed per file at any time. */
 #ifndef NO_MULTI_OPEN
           hdf_file_t  f;
 
@@ -310,8 +310,8 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           if (OPENERR(f))
             HGOTO_ERROR(DFE_DENIED, FAIL);
 
-                /* Replace file_rec->file with new file pointer and
-                close old one. */
+				/* Replace file_rec->file with new file pointer and
+				   close old one. */
           if (HI_CLOSE(file_rec->file) == FAIL)
             {
               HI_CLOSE(f);
@@ -335,7 +335,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
       /* Open the file, fill in the blanks and all the good stuff. */
       if (acc_mode != DFACC_CREATE)
-        {    /* try to open existing file */
+        {	/* try to open existing file */
           file_rec->file =  (hdf_file_t)HI_OPEN(file_rec->path, acc_mode);
           if (OPENERR(file_rec->file))
             {
@@ -377,13 +377,13 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
       /* do *not* use else here */
       if (acc_mode == DFACC_CREATE || new_file)
         { /* create the file */
-    /* make user we get a version tag */
+	/* make user we get a version tag */
           vtag = 1;
 
           file_rec->file =  (hdf_file_t)HI_CREATE(file_rec->path);
           if (OPENERR(file_rec->file))
           {
-        /* check if the failure was due to "too many open files" */
+	      /* check if the failure was due to "too many open files" */
               if(errno == EMFILE)
                 {
                   HGOTO_ERROR(DFE_TOOMANY, FAIL);
@@ -395,16 +395,16 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
           file_rec->f_cur_off=0;
           file_rec->last_op=H4_OP_UNKNOWN;
 #ifdef STDIO_BUF
-    /* Testing stdio buffered i/o */
+	/* Testing stdio buffered i/o */
           if (HDsetvbuf(file_rec->file, my_stdio_buf, _IOFBF, MY_STDIO_BUF_SIZE) != 0)
             HGOTO_ERROR(DFE_BADOPEN, FAIL);
 #endif /* STDIO_BUF */
-    /* set up the newly created (and empty) file with
-    the magic cookie and initial data descriptor records */
+	/* set up the newly created (and empty) file with
+	   the magic cookie and initial data descriptor records */
           if (HP_write(file_rec, HDFMAGIC, MAGICLEN) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
-          if (HI_FLUSH(file_rec->file) == FAIL)    /* flush the cookie */
+          if (HI_FLUSH(file_rec->file) == FAIL)	/* flush the cookie */
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
           if (HTPinit(file_rec, ndds) == FAIL)
@@ -418,8 +418,8 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
 
       /* currently, default is caching OFF */
       file_rec->cache = default_cache;
-      file_rec->dirty = 0;    /* mark all dirty flags off to start */
-    }    /* end else */
+      file_rec->dirty = 0;	/* mark all dirty flags off to start */
+    }	/* end else */
 
   file_rec->version_set = FALSE;
 
@@ -440,7 +440,7 @@ Hopen(const char *path, intn acc_mode, int16 ndds)
     ret_value=fid;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if(fid!=FAIL)
           HAremove_atom(fid);
@@ -452,7 +452,7 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hopen */
+}	/* Hopen */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -471,8 +471,8 @@ DESCRIPTION
 intn
 Hclose(int32 file_id)
 {
-  CONSTR(FUNC, "Hclose");    /* for HERROR */
-  filerec_t  *file_rec;        /* file record pointer */
+  CONSTR(FUNC, "Hclose");	/* for HERROR */
+  filerec_t  *file_rec;		/* file record pointer */
   intn  ret_value = SUCCEED;
 
   /* Clear errors and check args and all the boring stuff. */
@@ -518,14 +518,14 @@ Hclose(int32 file_id)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hclose */
+}	/* Hclose */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -534,9 +534,9 @@ USAGE
    intn Hexist(file_id ,search_tag, search_ref)
    int32 file_id;           IN: file ID to search in
    uint16 search_tag;       IN: the tag to search for
-                                (can be DFTAG_WILDCARD)
+								(can be DFTAG_WILDCARD)
    uint16 search_ref;       IN: ref to search for
-                                (can be DFREF_WILDCARD)
+								(can be DFREF_WILDCARD)
 RETURNS
    returns SUCCEED (0) if successful and FAIL (-1) otherwise
 DESCRIPTION
@@ -544,8 +544,8 @@ DESCRIPTION
    tag/ref pair exists in a file.  Wildcards apply.
 GLOBAL VARIABLES
 COMMENTS, BUGS, ASSUMPTIONS
-    Hfind() does all validity checking, this is just a _very_
-    simple wrapper around it.
+	Hfind() does all validity checking, this is just a _very_
+	simple wrapper around it.
 EXAMPLES
 REVISION LOG
 --------------------------------------------------------------------------*/
@@ -553,7 +553,7 @@ intn
 Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
 {
 #ifdef LATER
-  CONSTR(FUNC, "Hexist");        /* for HERROR */
+  CONSTR(FUNC, "Hexist");		/* for HERROR */
 #endif
   uint16      find_tag = 0, find_ref = 0;
   int32       find_offset, find_length;
@@ -562,14 +562,14 @@ Hexist(int32 file_id, uint16 search_tag, uint16 search_ref)
   ret_value = (Hfind(file_id, search_tag, search_ref, &find_tag, &find_ref,
                 &find_offset, &find_length, DF_FORWARD));
   return ret_value;
-}    /* end Hexist() */
+}	/* end Hexist() */
 
 /*--------------------------------------------------------------------------
 NAME
    Hinquire -- inquire stats of an access elt
 USAGE
    intn Hinquire(access_id, pfile_id, ptag, pref, plength,
-                poffset, pposn, paccess, pspecial)
+				   poffset, pposn, paccess, pspecial)
    int access_id;          IN: id of an access elt
    int32 *pfile_id;        OUT: file id
    uint16 *ptag;           OUT: tag of the element pointed to
@@ -592,11 +592,11 @@ DESCRIPTION
 --------------------------------------------------------------------------*/
 intn
 Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref,
-        int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
-        int16 *pspecial)
+		 int32 *plength, int32 *poffset, int32 *pposn, int16 *paccess,
+		 int16 *pspecial)
 {
-  CONSTR(FUNC, "Hinquire");    /* for HERROR */
-  accrec_t   *access_rec;    /* access record */
+  CONSTR(FUNC, "Hinquire");	/* for HERROR */
+  accrec_t   *access_rec;	/* access record */
   intn   ret_value = SUCCEED;
 
   /* clear error stack and check validity of access id */
@@ -625,14 +625,14 @@ Hinquire(int32 access_id, int32 *pfile_id, uint16 *ptag, uint16 *pref,
     *pspecial = 0;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hinquire */
+}	/* end Hinquire */
 
 
 /* ----------------------------- Hfidinquire ----------------------------- */
@@ -650,7 +650,7 @@ done:
 ** GLOBAL VARIABLES
 ** COMMENTS, BUGS, ASSUMPTIONS
 --------------------------------------------------------------------------*/
-intn
+intn 
 Hfidinquire(int32 file_id, char **fname, intn *faccess, intn *attach)
 {
     CONSTR(FUNC, "Hfidinquire");               /* for HERROR */
@@ -700,8 +700,8 @@ DESCRIPTION
 int32
 Hstartread(int32 file_id, uint16 tag, uint16 ref)
 {
-  CONSTR(FUNC, "Hstartread");        /* for HERROR */
-  int32       ret;            /* AID to return */
+  CONSTR(FUNC, "Hstartread");		/* for HERROR */
+  int32       ret;			/* AID to return */
   int32  ret_value = SUCCEED;
 
   /* clear error stack */
@@ -714,14 +714,14 @@ Hstartread(int32 file_id, uint16 tag, uint16 ref)
   ret_value = ret;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hstartread() */
+}	/* Hstartread() */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -749,9 +749,9 @@ DF_END _not_ supported yet!
 intn
 Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
 {
-  CONSTR(FUNC, "Hnextread");    /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
-  accrec_t   *access_rec;        /* access record */
+  CONSTR(FUNC, "Hnextread");	/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
+  accrec_t   *access_rec;		/* access record */
   uint16 new_tag=0, new_ref=0;  /* new tag & ref to access */
   int32  new_off, new_len;      /* offset & length of new tag & ref */
   intn        ret_value = SUCCEED;
@@ -762,7 +762,7 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     if (access_rec == (accrec_t *) NULL || !(access_rec->access & DFACC_READ)
             || (origin != DF_START && origin != DF_CURRENT)) /* DF_END is NOT supported yet !!!! */
         HGOTO_ERROR(DFE_ARGS, FAIL);
-
+  
     file_rec = HAatom_object(access_rec->file_id);
     if (BADFREC(file_rec))
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -784,7 +784,7 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
             if (HXPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
             break;
-
+  
           case SPECIAL_COMP:
             if (HCPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
@@ -794,24 +794,24 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
             if (HMCPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
             break;
-
+  
           case SPECIAL_BUFFERED:
             if (HBPcloseAID(access_rec) == FAIL)
               HGOTO_ERROR(DFE_CANTCLOSE, FAIL);
             break;
-
+  
           default:    /* do nothing for other cases currently */
             break;
           } /* end switch */
       }
 
     if (origin == DF_START)
-      {        /* set up variables to start searching from beginning of file */
+      {		/* set up variables to start searching from beginning of file */
         new_tag=0;
         new_ref=0;
       }
     else
-      {    /* origin == CURRENT */
+      {	/* origin == CURRENT */
           /* set up variables to start searching from the current position */
         /* Get the old tag & ref */
         if(HTPinquire(access_rec->ddid,&new_tag,&new_ref,NULL,NULL)==FAIL)
@@ -829,7 +829,7 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
     /* found, so update the access record */
     if((access_rec->ddid=HTPselect(file_rec,new_tag,new_ref))==FAIL)
         HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    access_rec->appendable = FALSE;        /* start data as non-appendable */
+    access_rec->appendable = FALSE;		/* start data as non-appendable */
     if (new_len == INVALID_OFFSET && new_off == INVALID_LENGTH)
         access_rec->new_elem = TRUE;
     else
@@ -856,19 +856,19 @@ Hnextread(int32 access_id, uint16 tag, uint16 ref, intn origin)
             HGOTO_DONE(FAIL);
           } /* end if */
       }
-
+  
     access_rec->special = 0;
     access_rec->posn = 0;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hnextread() */
+}	/* end Hnextread() */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -885,15 +885,15 @@ DESCRIPTION
    Set up a WRITE access elt to write out a data element.  The DD list
    of the file is searched first.  If the tag/ref is found, it is
    NOT replaced - the seek position is presumably at 0.
-            If it does not exist, it is created.
+			If it does not exist, it is created.
 
 --------------------------------------------------------------------------*/
 int32
 Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
 {
-  CONSTR(FUNC, "Hstartwrite");    /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
-  int32       ret;            /* AID to return */
+  CONSTR(FUNC, "Hstartwrite");	/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
+  int32       ret;			/* AID to return */
   int32       ret_value = SUCCEED;
 
   /* clear error stack */
@@ -906,24 +906,24 @@ Hstartwrite(int32 file_id, uint16 tag, uint16 ref, int32 length)
   access_rec = HAatom_object(ret);
 
   /* if new element set the length */
-  if (access_rec->new_elem
+  if (access_rec->new_elem       
       && (Hsetlength(ret, length) == FAIL))
     {
       Hendaccess(ret);
       HGOTO_ERROR(DFE_BADLEN, FAIL);
-    }        /* end if */
+    }		/* end if */
 
     ret_value = ret;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hstartwrite */
+}	/* end Hstartwrite */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -940,16 +940,16 @@ DESCRIPTION
    Start access to data element for read or write access.  The DD list
    of the file is searched first.  If the tag/ref is found, it is
    NOT replaced - the seek position is presumably at 0.
-            If it does not exist, it is created.
+			If it does not exist, it is created.
 
 --------------------------------------------------------------------------*/
 int32
 Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
 {
-  CONSTR(FUNC, "Hstartaccess");    /* for HERROR */
-  intn        ddnew = FALSE;    /* is the dd a new one? */
-  filerec_t  *file_rec=NULL;        /* file record */
-  accrec_t   *access_rec=NULL;        /* access record */
+  CONSTR(FUNC, "Hstartaccess");	/* for HERROR */
+  intn        ddnew = FALSE;	/* is the dd a new one? */
+  filerec_t  *file_rec=NULL;		/* file record */
+  accrec_t   *access_rec=NULL;		/* access record */
   uint16 new_tag=0, new_ref=0;      /* new tag & ref to access */
   int32  new_off, new_len;      /* offset & length of new tag & ref */
   int32      ret_value = SUCCEED;
@@ -973,9 +973,9 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
   /* set up access record to look for the dd */
   access_rec->file_id = file_id;
   if (flags & DFACC_APPENDABLE)
-    access_rec->appendable = TRUE;    /* start data as appendable */
+    access_rec->appendable = TRUE;	/* start data as appendable */
   else
-    access_rec->appendable = FALSE;    /* start data as non-appendable */
+    access_rec->appendable = FALSE;	/* start data as non-appendable */
 
   /* set the default values for block size and number of blocks for use in */
   /* linked-block creation/conversion; they can be changed by the user via */
@@ -987,7 +987,7 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
 
   /* if the DFACC_CURRENT flag is set, start searching for the tag/ref from */
   /* the current location in the DD list */
-  if (flags & DFACC_CURRENT
+  if (flags & DFACC_CURRENT 
       || Hfind(access_rec->file_id,tag,ref,&new_tag,&new_ref,
                &new_off,&new_len,DF_FORWARD)==FAIL)
     { /* not in DD list */
@@ -1009,7 +1009,7 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
           HGOTO_ERROR(DFE_NOFREEDD, FAIL);
 
       ddnew = TRUE; /* mark as new element */
-    }
+    }		
   else     /* tag/ref already exists in DD list. */
     {   /* need to update the access_rec block and idx */
 
@@ -1033,8 +1033,8 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
           goto done; /* we are done since the special fcn should take
                         of everthing. */
 
-        }    /* end if special */
-    }        /* end else tag/ref exists */
+        }	/* end if special */
+    }		/* end else tag/ref exists */
 
   /* Need to check if the "new" element was written to the file without */
   /* it's length being set.  If that was the case, the offset and length */
@@ -1045,10 +1045,10 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
 
   /* update the access record, and the file record */
   access_rec->posn     = 0;
-  access_rec->access   = flags;        /* keep the access flags around */
+  access_rec->access   = flags;		/* keep the access flags around */
   access_rec->file_id  = file_id;
   access_rec->special  = 0;     /* not special */
-  access_rec->new_elem = ddnew;    /* set the flag indicating whether
+  access_rec->new_elem = ddnew;	/* set the flag indicating whether 
                                    this elt is new */
   file_rec->attach++; /* increment number of elts attached to file */
 
@@ -1063,9 +1063,9 @@ Hstartaccess(int32 file_id, uint16 tag, uint16 ref, uint32 flags)
     HIcheckfileversion(file_id);
 
   ret_value = HAregister_atom(AIDGROUP,access_rec);
-
+ 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_rec!=NULL)
             HIrelease_accrec_node(access_rec);
@@ -1074,7 +1074,7 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hstartaccess */
+}	/* end Hstartaccess */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1094,16 +1094,16 @@ DESCRIPTION
 intn
 Hsetlength(int32 aid, int32 length)
 {
-  CONSTR(FUNC, "Hsetlength");        /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
-  filerec_t  *file_rec;        /* file record */
-  int32       offset;            /* offset of this data element in file */
+  CONSTR(FUNC, "Hsetlength");		/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
+  filerec_t  *file_rec;		/* file record */
+  int32       offset;			/* offset of this data element in file */
   intn       ret_value = SUCCEED;
 
   /* clear error stack and check validity of file id */
   HEclear();
 
-  if ((access_rec = HAatom_object(aid)) == NULL)    /* get the access_rec pointer */
+  if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
   /* Check whether we are allowed to change the length */
@@ -1126,19 +1126,19 @@ Hsetlength(int32 aid, int32 length)
   access_rec->new_elem = FALSE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hsetlength */
+}	/* end Hsetlength */
 
 /*--------------------------------------------------------------------------
 NAME
    Happendable -- Allow a data set to be appended to without the
-    use of linked blocks
+	use of linked blocks
 USAGE
    intn Happendable(aid)
    int32 aid;              IN: aid of the dataset to make appendable
@@ -1153,13 +1153,13 @@ DESCRIPTION
 intn
 Happendable(int32 aid)
 {
-  CONSTR(FUNC, "Happendable");    /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
+  CONSTR(FUNC, "Happendable");	/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
   intn   ret_value = SUCCEED;
 
   /* clear error stack and check validity of file id */
   HEclear();
-  if ((access_rec = HAatom_object(aid)) == NULL)    /* get the access_rec pointer */
+  if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
   /* just indicate that the data should be appendable, and only convert */
@@ -1167,19 +1167,19 @@ Happendable(int32 aid)
   access_rec->appendable = TRUE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Happendable */
+}	/* end Happendable */
 
 /*--------------------------------------------------------------------------
 NAME
    HPisappendable -- Check whether a data set can be appended to without the
-    use of linked blocks
+	use of linked blocks
 USAGE
    intn HPisappendable(aid)
    int32 aid;              IN: aid of the dataset to check appendable
@@ -1194,16 +1194,16 @@ DESCRIPTION
 intn
 HPisappendable(int32 aid)
 {
-  CONSTR(FUNC, "HPisappendable");        /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
-  filerec_t  *file_rec;        /* file record */
-  int32       data_len;        /* length of the data we are checking */
-  int32       data_off;        /* offset of the data we are checking */
+  CONSTR(FUNC, "HPisappendable");		/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
+  filerec_t  *file_rec;		/* file record */
+  int32       data_len;		/* length of the data we are checking */
+  int32       data_off;		/* offset of the data we are checking */
   intn        ret_value = SUCCEED;
 
   /* clear error stack and check validity of file id */
   HEclear();
-  if ((access_rec = HAatom_object(aid)) == NULL)    /* get the access_rec pointer */
+  if ((access_rec = HAatom_object(aid)) == NULL)	/* get the access_rec pointer */
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
   file_rec = HAatom_object(access_rec->file_id);
@@ -1215,20 +1215,20 @@ HPisappendable(int32 aid)
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
   /* dataset at end? */
-  if (data_len + data_off == file_rec->f_end_off)
+  if (data_len + data_off == file_rec->f_end_off)	
     ret_value = SUCCEED;
   else
     ret_value = FAIL;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end HPisappendable */
+}	/* end HPisappendable */
 
 /*--------------------------------------------------------------------------
 
@@ -1239,8 +1239,8 @@ USAGE
    int32 access_id;        IN: id of access element
    long offset;            IN: offset to seek to
    int origin;             IN: position to seek from by offset, 0: from
-                        beginning; 1: current position; 2: end of
-                        data element
+						   beginning; 1: current position; 2: end of
+						   data element
 RETURNS
    returns FAIL (-1) if fail, SUCCEED (0) otherwise.
 DESCRIPTION
@@ -1254,12 +1254,12 @@ DESCRIPTION
 intn
 Hseek(int32 access_id, int32 offset, intn origin)
 {
-  CONSTR(FUNC, "Hseek");    /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
-  intn        old_offset = offset;    /* save for later potential use */
-  filerec_t  *file_rec;        /* file record */
-  int32       data_len;        /* length of the data we are checking */
-  int32       data_off;        /* offset of the data we are checking */
+  CONSTR(FUNC, "Hseek");	/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
+  intn        old_offset = offset;	/* save for later potential use */
+  filerec_t  *file_rec;		/* file record */
+  int32       data_len;		/* length of the data we are checking */
+  int32       data_off;		/* offset of the data we are checking */
   intn        ret_value = SUCCEED;
 
   /* clear error stack and check validity of this access id */
@@ -1280,7 +1280,7 @@ Hseek(int32 access_id, int32 offset, intn origin)
   /* Get the data's offset & length */
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
+      
   /* calculate real offset based on the origin */
   if (origin == DF_CURRENT)
     offset += access_rec->posn;
@@ -1306,35 +1306,35 @@ Hseek(int32 access_id, int32 offset, intn origin)
 
       /* check if we are at end of file */
       if (data_len + data_off != file_rec->f_end_off)
-          {    /* nope, so try to convert element into linked-block element */
+          {	/* nope, so try to convert element into linked-block element */
             if (HLconvert(access_id, access_rec->block_size, access_rec->num_blocks) == FAIL)
               {
                 access_rec->appendable = FALSE;
                 HEreport("Tried to seek to %d (object length:  %d)", offset, data_len);
                 HGOTO_ERROR(DFE_BADSEEK, FAIL);
-              }        /* end if */
+              }		/* end if */
             else
                /* successfully converted the element into a linked block */
                /* now loop back and actually seek to the correct position */
               {
                 if (Hseek(access_id, old_offset, origin) == FAIL)
                   HGOTO_ERROR(DFE_BADSEEK, FAIL);
-              }        /* end else */
-          }    /* end if */
+              }		/* end else */
+          }	/* end if */
     } /* end if */
 
   /* set the new position */
   access_rec->posn = offset;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hseek() */
+}	/* Hseek() */
 
 /*--------------------------------------------------------------------------
 
@@ -1353,8 +1353,8 @@ DESCRIPTION
 int32
 Htell(int32 access_id)
 {
-  CONSTR(FUNC, "Htell");    /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
+  CONSTR(FUNC, "Htell");	/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
   int32     ret_value = SUCCEED;
 
   /* clear error stack and check validity of this access id */
@@ -1368,14 +1368,14 @@ Htell(int32 access_id)
   ret_value = (int32)access_rec->posn;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Htell() */
+}	/* Htell() */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1397,11 +1397,11 @@ DESCRIPTION
 int32
 Hread(int32 access_id, int32 length, void * data)
 {
-  CONSTR(FUNC, "Hread");    /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
-  accrec_t   *access_rec;        /* access record */
-  int32       data_len;        /* length of the data we are checking */
-  int32       data_off;        /* offset of the data we are checking */
+  CONSTR(FUNC, "Hread");	/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
+  accrec_t   *access_rec;		/* access record */
+  int32       data_len;		/* length of the data we are checking */
+  int32       data_off;		/* offset of the data we are checking */
   int32      ret_value = SUCCEED;
 
   /* clear error stack and check validity of access id */
@@ -1433,7 +1433,7 @@ Hread(int32 access_id, int32 length, void * data)
   /* Get the data's offset & length */
   if(HTPinquire(access_rec->ddid,NULL,NULL,&data_off,&data_len)==FAIL)
       HGOTO_ERROR(DFE_INTERNAL, FAIL);
-
+      
   /* seek to position to start reading and read in data */
   if (HPseek(file_rec, access_rec->posn + data_off) == FAIL)
     HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -1453,14 +1453,14 @@ Hread(int32 access_id, int32 length, void * data)
   ret_value = length;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hread */
+}	/* Hread */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1485,17 +1485,17 @@ DESCRIPTION
 int32
 Hwrite(int32 access_id, int32 length, const void * data)
 {
-  CONSTR(FUNC, "Hwrite");        /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
-  accrec_t   *access_rec;        /* access record */
-  int32       data_len;        /* length of the data we are checking */
-  int32       data_off;        /* offset of the data we are checking */
+  CONSTR(FUNC, "Hwrite");		/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
+  accrec_t   *access_rec;		/* access record */
+  int32       data_len;		/* length of the data we are checking */
+  int32       data_off;		/* offset of the data we are checking */
   int32       ret_value = SUCCEED;
 
   /* clear error stack and check validity of access id */
   HEclear();
   access_rec = HAatom_object(access_id);
-  if (access_rec == (accrec_t *) NULL
+  if (access_rec == (accrec_t *) NULL 
       || !(access_rec->access & DFACC_WRITE)
       || data == NULL)
     HGOTO_ERROR(DFE_ARGS, FAIL);
@@ -1517,9 +1517,9 @@ Hwrite(int32 access_id, int32 length, const void * data)
      Does this mean every element is by default appendable? */
   if (access_rec->new_elem == TRUE)
     {
-      Hsetlength(access_id, length);    /* make the initial chunk of data */
-      access_rec->appendable = TRUE;    /* make it appendable */
-    }        /* end if */
+      Hsetlength(access_id, length);	/* make the initial chunk of data */
+      access_rec->appendable = TRUE;	/* make it appendable */
+    }		/* end if */
 
 
   /* get the offset and length of the element. This should have
@@ -1529,37 +1529,37 @@ Hwrite(int32 access_id, int32 length, const void * data)
 
   /* check validity of length and write data.
    NOTE: it is an error to attempt write past the end of the elt */
-  if (length <= 0
+  if (length <= 0 
       || (!access_rec->appendable && length + access_rec->posn > data_len))
     HGOTO_ERROR(DFE_BADSEEK, FAIL);
 
-  /* check if element is appendable and write length exceeds current
+  /* check if element is appendable and write length exceeds current 
      data element length */
   if (access_rec->appendable && length + access_rec->posn > data_len)
     { /* yes */
 
-        /* is data element at end of file?
+        /* is data element at end of file? 
            hmm. not sure about this condition. */
       if (data_len + data_off != file_rec->f_end_off)
-        {    /* nope, not at end of file. Try to promote to
+        {	/* nope, not at end of file. Try to promote to
                linked-block element. */
           if (HLconvert(access_id, access_rec->block_size, access_rec->num_blocks) == FAIL)
             {
               access_rec->appendable = FALSE;
               HGOTO_ERROR(DFE_BADSEEK, FAIL);
-            }        /* end if */
+            }		/* end if */
             /* successfully converted the element into a linked block */
             /* now loop back and actually write the data out */
           if ((ret_value = Hwrite(access_id, length, data)) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
           goto done;    /* we're finished, wrap things up */
-        }    /* end if */
+        }	/* end if */
 
       /* Update the DD with the new length. Note argument of '-2' for
          the offset parameter means not to change the offset in the DD. */
       if(HTPupdate(access_rec->ddid,-2,access_rec->posn+length)==FAIL)
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
-    }        /* end if */
+    }		/* end if */
 
   /* seek and write data */
   if (HPseek(file_rec, access_rec->posn + data_off) == FAIL)
@@ -1578,14 +1578,14 @@ Hwrite(int32 access_id, int32 length, const void * data)
   ret_value = length;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hwrite */
+}	/* end Hwrite */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1599,14 +1599,14 @@ RETURNS
    (-1) otherwise
 
 DESCRIPTION
-    Calls Hread() to read a single byte and reports errors.
+	Calls Hread() to read a single byte and reports errors.
 
 --------------------------------------------------------------------------*/
 intn
 HDgetc(int32 access_id)
 {
-  CONSTR(FUNC, "HDgetc");         /* for HERROR */
-  uint8       c=(uint8)FAIL;             /* character read in */
+  CONSTR(FUNC, "HDgetc");		 /* for HERROR */
+  uint8       c=(uint8)FAIL;		     /* character read in */
   intn    ret_value = SUCCEED;
 
   if (Hread(access_id, 1, &c) == FAIL)
@@ -1615,7 +1615,7 @@ HDgetc(int32 access_id)
   ret_value = (intn)c;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1623,7 +1623,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HDgetc */
+}	/* HDgetc */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1644,7 +1644,7 @@ DESCRIPTION
 intn
 HDputc(uint8 c, int32 access_id)
 {
-  CONSTR(FUNC, "HDputc");        /* for HERROR */
+  CONSTR(FUNC, "HDputc");		/* for HERROR */
   intn ret_value = SUCCEED;
 
   if (Hwrite(access_id, 1, &c) == FAIL)
@@ -1653,7 +1653,7 @@ HDputc(uint8 c, int32 access_id)
   ret_value = (intn)c;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1661,7 +1661,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HDputc */
+}	/* HDputc */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1683,8 +1683,8 @@ DESCRIPTION
 intn
 Hendaccess(int32 access_id)
 {
-    CONSTR(FUNC, "Hendaccess");        /* for HERROR */
-    filerec_t  *file_rec;        /* file record */
+    CONSTR(FUNC, "Hendaccess");		/* for HERROR */
+    filerec_t  *file_rec;		/* file record */
     accrec_t   *access_rec=NULL;/* access record */
     intn        ret_value = SUCCEED;
 
@@ -1692,7 +1692,7 @@ Hendaccess(int32 access_id)
     HEclear();
     if ((access_rec = HAremove_atom(access_id))==NULL)
       HGOTO_ERROR(DFE_ARGS, FAIL);
-
+  
     /* if special elt, call special function */
     if (access_rec->special)
       {
@@ -1717,7 +1717,7 @@ Hendaccess(int32 access_id)
     HIrelease_accrec_node(access_rec);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
       if(access_rec!=NULL)
         HIrelease_accrec_node(access_rec);
@@ -1725,7 +1725,7 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hendaccess */
+}	/* Hendaccess */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1748,9 +1748,9 @@ DESCRIPTION
 int32
 Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
 {
-  CONSTR(FUNC, "Hgetelement");    /* for HERROR */
+  CONSTR(FUNC, "Hgetelement");	/* for HERROR */
   int32       access_id=FAIL;   /* access record id */
-  int32       length;            /* length of this elt */
+  int32       length;			/* length of this elt */
   int32       ret_value = SUCCEED;
 
   /* clear error stack */
@@ -1770,7 +1770,7 @@ Hgetelement(int32 file_id, uint16 tag, uint16 ref, uint8 *data)
   ret_value = length;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_id!=FAIL)
           Hendaccess(access_id);
@@ -1778,7 +1778,7 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hgetelement() */
+}	/* Hgetelement() */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1800,9 +1800,9 @@ DESCRIPTION
 --------------------------------------------------------------------------*/
 int32
 Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
-            int32 length)
+			int32 length)
 {
-  CONSTR(FUNC, "Hputelement");    /* for HERROR */
+  CONSTR(FUNC, "Hputelement");	/* for HERROR */
   int32       access_id=FAIL;   /* access record id */
   int32       ret_value = SUCCEED;
 
@@ -1820,7 +1820,7 @@ Hputelement(int32 file_id, uint16 tag, uint16 ref, const uint8 *data,
       HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
         if(access_id!=FAIL)
           Hendaccess(access_id);
@@ -1828,7 +1828,7 @@ done:
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Hputelement() */
+}	/* end Hputelement() */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1853,10 +1853,10 @@ int32
 Hlength(int32 file_id, uint16 tag, uint16 ref)
 {
 #ifdef FASTER_BUT_DOESNT_WORK
-  CONSTR(FUNC, "Hlength");    /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
-  ddblock_t  *block;            /* DDB containing DD of  element */
-  int32       idx;            /* index into DDB i.e. DD of element */
+  CONSTR(FUNC, "Hlength");	/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
+  ddblock_t  *block;			/* DDB containing DD of  element */
+  int32       idx;			/* index into DDB i.e. DD of element */
   int32       ret_value = SUCCEED;
 
   /* clear error stack */
@@ -1872,9 +1872,9 @@ Hlength(int32 file_id, uint16 tag, uint16 ref)
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
   ret_value = block->ddlist[idx].length;
-
+  
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1898,14 +1898,14 @@ done:
 
   if ((ret_value = HQuerylength(access_id, &length)) == FAIL)
     HERROR(DFE_INTERNAL);
-
+  
   if(Hendaccess(access_id)==FAIL)
       HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
   ret_value = length;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -1913,7 +1913,7 @@ done:
   /* Normal function cleanup */
   return ret_value;
 #endif /* FASTER_BUT_DOESNT_WORK */
-}    /* end Hlength */
+}	/* end Hlength */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -1940,9 +1940,9 @@ DESCRIPTION
 int32
 Hoffset(int32 file_id, uint16 tag, uint16 ref)
 {
-  CONSTR(FUNC, "Hoffset");    /* for HERROR */
-  int32       access_id;    /* access record id */
-  int32       offset=FAIL;    /* offset of elt inquired */
+  CONSTR(FUNC, "Hoffset");	/* for HERROR */
+  int32       access_id;	/* access record id */
+  int32       offset=FAIL;	/* offset of elt inquired */
   int32       ret_value = SUCCEED;
 
   /* clear error stack */
@@ -1962,14 +1962,14 @@ Hoffset(int32 file_id, uint16 tag, uint16 ref)
   ret_value = offset;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hoffset */
+}	/* Hoffset */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2014,14 +2014,14 @@ Hishdf(const char *filename)
     }
 
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hishdf */
+}	/* Hishdf */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2040,10 +2040,10 @@ DESCRIPTION
 int32
 Htrunc(int32 aid, int32 trunc_len)
 {
-  CONSTR(FUNC, "Htrunc");        /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
-  int32       data_len;        /* length of the data we are checking */
-  int32       data_off;        /* offset of the data we are checking */
+  CONSTR(FUNC, "Htrunc");		/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
+  int32       data_len;		/* length of the data we are checking */
+  int32       data_off;		/* offset of the data we are checking */
   int32      ret_value = SUCCEED;
 
   /* clear error stack and check validity of access id */
@@ -2074,22 +2074,22 @@ Htrunc(int32 aid, int32 trunc_len)
          the offset in the DD.*/
       if(HTPupdate(access_rec->ddid,-2,trunc_len)==FAIL)
           HGOTO_ERROR(DFE_INTERNAL, FAIL);
-      if (access_rec->posn > trunc_len)        /* move the seek position back */
+      if (access_rec->posn > trunc_len)		/* move the seek position back */
         access_rec->posn = trunc_len;
       ret_value =  trunc_len;
-    }        /* end if */
+    }		/* end if */
   else
     HGOTO_ERROR(DFE_BADLEN, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* end Htrunc() */
+}	/* end Htrunc() */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2107,7 +2107,7 @@ NOTE
 PRIVATE intn
 HIsync(filerec_t *file_rec)
 {
-  CONSTR(FUNC, "HIsync");    /* for HERROR */
+  CONSTR(FUNC, "HIsync");	/* for HERROR */
   intn    ret_value = SUCCEED;
 
   /* check whether to flush the file info */
@@ -2118,15 +2118,15 @@ HIsync(filerec_t *file_rec)
         if (HTPsync(file_rec) == FAIL)
           HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
 
-        /* extend the end of the file if necessary */
+		  /* extend the end of the file if necessary */
       if (file_rec->dirty & FILE_END_DIRTY)
         if (HIextend_file(file_rec) == FAIL)
           HGOTO_ERROR(DFE_CANTFLUSH, FAIL);
-      file_rec->dirty = 0;    /* file doesn't need to be flushed now */
-    }        /* end if */
+      file_rec->dirty = 0;	/* file doesn't need to be flushed now */
+    }		/* end if */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2134,7 +2134,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIsync */
+}	/* HIsync */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2156,8 +2156,8 @@ NOTE
 intn
 Hsync(int32 file_id)
 {
-  CONSTR(FUNC, "Hsync");    /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
+  CONSTR(FUNC, "Hsync");	/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
   intn        ret_value = SUCCEED;
 
   /* check validity of file record and get dd ptr */
@@ -2170,22 +2170,22 @@ Hsync(int32 file_id)
     HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hsync */
+}	/* Hsync */
 
 /*--------------------------------------------------------------------------
 NAME
    Hcache -- set low-level caching for a file
 USAGE
    intn Hcache(file_id,cache_on)
-    int32 file_id;            IN: id of file
-    intn cache_on;            IN: whether to cache or not
+	   int32 file_id;            IN: id of file
+	   intn cache_on;            IN: whether to cache or not
 RETURNS
    returns SUCCEED (0) if sucessful, FAIL (-1) otherwise
 DESCRIPTION
@@ -2196,14 +2196,14 @@ DESCRIPTION
 intn
 Hcache(int32 file_id, intn cache_on)
 {
-  CONSTR(FUNC, "Hcache");        /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
+  CONSTR(FUNC, "Hcache");		/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
   intn        ret_value = SUCCEED;
 
   if (file_id == CACHE_ALL_FILES)/* check whether to modify the default cache */
-    {    /* set the default caching for all further files Hopen'ed */
+    {	/* set the default caching for all further files Hopen'ed */
       default_cache = (cache_on != 0 ? TRUE : FALSE);
-    }    /* end if */
+    }	/* end if */
   else
     {
       /* check validity of file record and get dd ptr */
@@ -2218,17 +2218,17 @@ Hcache(int32 file_id, intn cache_on)
             HGOTO_ERROR(DFE_INTERNAL, FAIL);
         } /* end if */
       file_rec->cache = (cache_on != 0 ? TRUE : FALSE);
-    }        /* end else */
+    }		/* end else */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hcache */
+}	/* Hcache */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2254,11 +2254,11 @@ HDvalidfid(int32 file_id)
     ret_value = FALSE;
 
   return ret_value;
-}    /* HDvalidfid */
+}	/* HDvalidfid */
 
 /*--------------------------------------------------------------------------
-HDerr --  Closes a file and return FAIL.
-    Replacement for DFIerr in HDF3.1 and before
+HDerr --  Closes a file and return FAIL.  
+	   Replacement for DFIerr in HDF3.1 and before
 --------------------------------------------------------------------------*/
 int
 HDerr(int32 file_id)
@@ -2270,7 +2270,7 @@ HDerr(int32 file_id)
 /*--------------------------------------------------------------------------
 NAME
    Hsetacceesstype -- set the I/O access type (serial, parallel, ...)
-                    of a data element
+					  of a data element
 USAGE
    intn Hsetacceesstype(access_id, accesstype)
    int32 access_id;        IN: id of access element
@@ -2285,8 +2285,8 @@ DESCRIPTION
 intn
 Hsetaccesstype(int32 access_id, uintn accesstype)
 {
-  CONSTR(FUNC, "Hsetaccesstype");        /* for HERROR */
-  accrec_t   *access_rec;        /* access record */
+  CONSTR(FUNC, "Hsetaccesstype");		/* for HERROR */
+  accrec_t   *access_rec;		/* access record */
   intn       ret_value = SUCCEED;
 
   /* clear error stack and check validity of this access id */
@@ -2303,7 +2303,7 @@ Hsetaccesstype(int32 access_id, uintn accesstype)
     goto done;
 
   /* kludge mode on */
-  if (accesstype != DFACC_PARALLEL)    /* go to PARALLEL only */
+  if (accesstype != DFACC_PARALLEL)	/* go to PARALLEL only */
     {
       ret_value = FAIL;
       goto done;
@@ -2313,14 +2313,14 @@ Hsetaccesstype(int32 access_id, uintn accesstype)
     ret_value = HXPsetaccesstype(access_rec);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hsetacceesstype() */
+}	/* Hsetacceesstype() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -2340,7 +2340,7 @@ done:
     which was no longer in memory, causing errors.
         In order to be effective, this routine _must_ be called before any other
     HDF function calls, and must be called each time the library is loaded/
-    linked into the application. (the first time and after it's been un-loaded)
+    linked into the application. (the first time and after it's been un-loaded) 
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
     If this routine is used, certain memory buffers will not be de-allocated,
@@ -2360,7 +2360,7 @@ intn HDdont_atexit(void)
 
 #ifdef LATER
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2428,7 +2428,7 @@ PRIVATE intn HIstart(void)
 #endif
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2474,7 +2474,7 @@ intn HPregister_term_func(hdf_termfunc_t term_func)
 #endif
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2493,7 +2493,7 @@ done:
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
-    Walk through the shutdown routines for the various interfaces and
+    Walk through the shutdown routines for the various interfaces and 
     terminate them all.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
@@ -2545,7 +2545,7 @@ NAME
    HIextend_file -- extend file to current length
 USAGE
    int HIextend_file(file_rec)
-    filerec_t  * file_rec        IN: pointer to file structure to extend
+	   filerec_t  * file_rec        IN: pointer to file structure to extend
 RETURNS
    SUCCEED / FAIL
 DESCRIPTION
@@ -2556,7 +2556,7 @@ DESCRIPTION
 PRIVATE intn
 HIextend_file(filerec_t * file_rec)
 {
-  CONSTR(FUNC, "HIextend_file");    /* for HERROR */
+  CONSTR(FUNC, "HIextend_file");	/* for HERROR */
   uint8       temp = 0;
   intn        ret_value = SUCCEED;
 
@@ -2566,7 +2566,7 @@ HIextend_file(filerec_t * file_rec)
     HGOTO_ERROR(DFE_WRITEERROR, FAIL);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2574,7 +2574,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIextend_file */
+}	/* HIextend_file */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2592,13 +2592,13 @@ DESCRIPTION
 PRIVATE funclist_t *
 HIget_function_table(accrec_t * access_rec)
 {
-  CONSTR(FUNC, "HIget_function_table");    /* for HERROR */
-  filerec_t  *file_rec;        /* file record */
+  CONSTR(FUNC, "HIget_function_table");	/* for HERROR */
+  filerec_t  *file_rec;		/* file record */
   int16       spec_code;
   uint8       lbuf[4];      /* temporary buffer */
-  uint8      *p;        /* tmp buf ptr */
-  int32       data_off;        /* offset of the data we are checking */
-  int         i;        /* loop index */
+  uint8      *p;		/* tmp buf ptr */
+  int32       data_off;		/* offset of the data we are checking */
+  int         i;		/* loop index */
   funclist_t  *ret_value = NULL; /* FAIL */
 
   /* read in the special code in the special elt */
@@ -2627,7 +2627,7 @@ HIget_function_table(accrec_t * access_rec)
     }
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2635,7 +2635,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIget_function_table */
+}	/* HIget_function_table */
 
 /*--------------------------------------------------------------------------
 NAME
@@ -2664,15 +2664,15 @@ void *
 HIgetspinfo(accrec_t * access_rec)
 {
 #ifdef LATER
-    CONSTR(FUNC, "HIgetspinfo");    /* for HERROR */
+    CONSTR(FUNC, "HIgetspinfo");	/* for HERROR */
 #endif /* LATER */
     void *    ret_value = NULL; /* FAIL */
-
+  
     if((ret_value=HAsearch_atom(AIDGROUP,HPcompare_accrec_tagref,access_rec))!=NULL)
         HGOTO_DONE(((accrec_t *)ret_value)->special_info);
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2680,7 +2680,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIgetspinfo */
+}	/* HIgetspinfo */
 
 /*--------------------------------------------------------------------------
 HIunlock -- unlock a previously locked file record
@@ -2689,7 +2689,7 @@ PRIVATE int
 HIunlock(filerec_t *file_rec)
 {
 #ifdef LATER
-  CONSTR(FUNC, "HIunlock");    /* for HERROR */
+  CONSTR(FUNC, "HIunlock");	/* for HERROR */
   int  ret_value = SUCCEED;
 #endif /* LATER */
 
@@ -2698,7 +2698,7 @@ HIunlock(filerec_t *file_rec)
 
 #ifdef LATER
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2738,14 +2738,14 @@ done:
 
 typedef struct special_table_t
 {
-    uint16      tag;
-    uint16      special_tag;
+	uint16      tag;
+	uint16      special_tag;
 }
 special_table_t;
 
 PRIVATE special_table_t special_table[] =
 {
-    {0x8010, 0x4000 | 0x8010},    /* dummy */
+	{0x8010, 0x4000 | 0x8010},	/* dummy */
 };
 
 #define SP_TAB_SZ (sizeof(special_table) / sizeof(special_table[0]))
@@ -2773,7 +2773,7 @@ HDmake_special_tag(uint16 tag)
 
 
 done:
-  if(ret_value == DFTAG_NULL)
+  if(ret_value == DFTAG_NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2805,7 +2805,7 @@ HDis_special_tag(uint16 tag)
       }
 
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2836,7 +2836,7 @@ HDbase_tag(uint16 tag)
         break;
       }
 done:
-  if(ret_value == tag)
+  if(ret_value == tag)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2879,7 +2879,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
   HIstrncpy(string, LIBVER_STRING, LIBVSTR_LEN + 1);
 
   return (SUCCEED);
-}    /* HDgetlibversion */
+}	/* HDgetlibversion */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -2902,7 +2902,7 @@ Hgetlibversion(uint32 *majorv, uint32 *minorv, uint32 *releasev, char *string)
 --------------------------------------------------------------------------*/
 intn
 Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
-                uint32 *release, char *string)
+				uint32 *release, char *string)
 {
   CONSTR(FUNC, "Hgetfileversion");
   filerec_t  *file_rec;
@@ -2924,14 +2924,14 @@ Hgetfileversion(int32 file_id, uint32 *majorv, uint32 *minorv,
       HIstrncpy(string, file_rec->version.string, LIBVSTR_LEN + 1);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}    /* Hgetfileversion */
+}	/* Hgetfileversion */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -2952,7 +2952,7 @@ HIcheckfileversion(int32 file_id)
   filerec_t  *file_rec;
   uint32      lmajorv, lminorv, lrelease;
   uint32      fmajorv, fminorv, frelease;
-  char        string[LIBVSTR_LEN + 1];    /* len 80+1  */
+  char        string[LIBVSTR_LEN + 1];	/* len 80+1  */
   intn        newver = 0;
   intn        ret_value = SUCCEED;
 
@@ -2962,12 +2962,12 @@ HIcheckfileversion(int32 file_id)
   if (BADFREC(file_rec))
     HGOTO_ERROR(DFE_ARGS, FAIL);
 
-    /* get file version and set newver condition */
+	/* get file version and set newver condition */
   if (Hgetfileversion(file_id, &fmajorv, &fminorv, &frelease, string) != SUCCEED)
     {
       newver = 1;
       HEclear();
-    }        /* end if */
+    }		/* end if */
 
   /* get library version */
   Hgetlibversion(&lmajorv, &lminorv, &lrelease, string);
@@ -2983,12 +2983,12 @@ HIcheckfileversion(int32 file_id)
       file_rec->version.release = lrelease;
       HIstrncpy(file_rec->version.string, string, LIBVSTR_LEN + 1);
       file_rec->version.modified = 1;
-    }        /* end if */
+    }		/* end if */
 
   file_rec->version_set = TRUE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -2996,7 +2996,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIcheckfileversion */
+}	/* HIcheckfileversion */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3034,14 +3034,14 @@ HIget_filerec_node(const char *path)
         ret_value->an_tree[AN_DATA_DESC]  = NULL;
         ret_value->an_tree[AN_FILE_LABEL] = NULL;
         ret_value->an_tree[AN_FILE_DESC]  = NULL;
-        ret_value->an_num[AN_DATA_LABEL] = -1;
-        ret_value->an_num[AN_DATA_DESC]  = -1;
-        ret_value->an_num[AN_FILE_LABEL] = -1;
-        ret_value->an_num[AN_FILE_DESC]  = -1;
+        ret_value->an_num[AN_DATA_LABEL] = -1;   
+        ret_value->an_num[AN_DATA_DESC]  = -1;   
+        ret_value->an_num[AN_FILE_LABEL] = -1;   
+        ret_value->an_num[AN_FILE_DESC]  = -1;   
       } /* end if */
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3049,7 +3049,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIget_filerec_node */
+}	/* HIget_filerec_node */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3072,7 +3072,7 @@ HIrelease_filerec_node(filerec_t *file_rec)
 
     /* Close file if it's opened */
     if(file_rec->file!=NULL)
-    HI_CLOSE(file_rec->file);
+	HI_CLOSE(file_rec->file);
 
     /* Free all the components of the file record */
     if(file_rec->path!=NULL)
@@ -3081,7 +3081,7 @@ HIrelease_filerec_node(filerec_t *file_rec)
 
 #ifdef LATER
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3090,7 +3090,7 @@ done:
   /* Normal function cleanup */
 
   return SUCCEED;
-}    /* HIrelease_filerec_node */
+}	/* HIrelease_filerec_node */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3112,21 +3112,21 @@ intn HPisfile_in_use(const char *path)
 #endif /* LATER */
 
     filerec_t  *file_rec=NULL;
-    intn    ret_value=FALSE;
+    intn	ret_value=FALSE;
 
     /* Search for the record of a file named "path". */
     file_rec = (filerec_t *)HAsearch_atom(FIDGROUP,HPcompare_filerec_path,path);
 
     /* If the file is not found, it can't be in use, return FALSE */
     if (file_rec == NULL)
-    ret_value = FALSE;
+	ret_value = FALSE;
     else
-    if (file_rec->refcount) /* file is in use if ref count is not 0 */
-        ret_value = TRUE;
+	if (file_rec->refcount) /* file is in use if ref count is not 0 */
+	    ret_value = TRUE;
 
 #ifdef LATER
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3135,7 +3135,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HPisfile_in_use */
+}	/* HPisfile_in_use */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3176,7 +3176,7 @@ intn HPcompare_filerec_path(const void * obj, const void * key)
 
 #ifdef LATER
 done:
-    if(ret_value == FALSE)
+    if(ret_value == FALSE)   
       { /* Error condition cleanup */
 
       } /* end if */
@@ -3185,7 +3185,7 @@ done:
     /* Normal function cleanup */
 
     return ret_value;
-}    /* HPcompare_filerec_path */
+}	/* HPcompare_filerec_path */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3221,7 +3221,7 @@ intn HPcompare_accrec_tagref(const void * rec1, const void * rec2)
       } /* end if */
 
 done:
-    if(ret_value == FALSE)
+    if(ret_value == FALSE)   
       { /* Error condition cleanup */
 
       } /* end if */
@@ -3229,7 +3229,7 @@ done:
     /* Normal function cleanup */
 
     return(ret_value);
-}    /* HPcompare_accrec_tagref */
+}	/* HPcompare_accrec_tagref */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3248,7 +3248,7 @@ PRIVATE intn
 HIvalid_magic(hdf_file_t file)
 {
   CONSTR(FUNC, "HIvalid_magic");
-  char        b[MAGICLEN];    /* Temporary buffer */
+  char        b[MAGICLEN];	/* Temporary buffer */
   intn    ret_value = FALSE; /* FAIL */
 
   /* Seek to beginning of the file. */
@@ -3263,7 +3263,7 @@ HIvalid_magic(hdf_file_t file)
     ret_value = TRUE;
 
 done:
-  if(ret_value == FALSE)
+  if(ret_value == FALSE)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3288,7 +3288,7 @@ accrec_t *HIget_access_rec(void)
 {
     CONSTR(FUNC, "HIget_access_rec");
     accrec_t   *ret_value = NULL;
-
+  
     HEclear();
 
     /* Grab from free list if possible */
@@ -3307,7 +3307,7 @@ accrec_t *HIget_access_rec(void)
     HDmemset(ret_value,0,sizeof(accrec_t));
 
 done:
-  if(ret_value == NULL)
+  if(ret_value == NULL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3315,7 +3315,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIget_access_rec */
+}	/* HIget_access_rec */
 
 /******************************************************************************
  NAME
@@ -3331,7 +3331,7 @@ done:
 void HIrelease_accrec_node(accrec_t *acc)
 {
 #ifdef LATER
-    CONSTR(FUNC, "HIrelease_atom_node");    /* for HERROR */
+    CONSTR(FUNC, "HIrelease_atom_node");	/* for HERROR */
 #endif /* LATER */
 
     /* Insert the atom at the beginning of the free list */
@@ -3395,7 +3395,7 @@ HIupdate_version(int32 file_id)
   file_rec->version.modified = 0;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3403,7 +3403,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIupdate_version */
+}	/* HIupdate_version */
 
 /*--------------------------------------------------------------------------
  PRIVATE    PRIVATE     PRIVATE     PRIVATE     PRIVATE
@@ -3458,7 +3458,7 @@ HIread_version(int32 file_id)
   file_rec->version.modified = 0;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3466,7 +3466,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HIread_version */
+}	/* HIread_version */
 
 /*-----------------------------------------------------------------------
 NAME
@@ -3525,7 +3525,7 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (HP_write(file_rec, diskblock_tail, DISKBLOCK_TSIZE) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-        }    /* end else */
+        }	/* end else */
 #else /* DISKBLOCK_DEBUG */
       if (file_rec->cache)
         file_rec->dirty |= FILE_END_DIRTY;
@@ -3535,10 +3535,10 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
             HGOTO_ERROR(DFE_SEEKERROR, FAIL);
           if (HP_write(file_rec, &temp, 1) == FAIL)
             HGOTO_ERROR(DFE_WRITEERROR, FAIL);
-        }    /* end else */
+        }	/* end else */
 #endif /* DISKBLOCK_DEBUG */
-    }        /* end if */
-  if (moveto == TRUE)        /* move back to the beginning of the element */
+    }		/* end if */
+  if (moveto == TRUE)		/* move back to the beginning of the element */
     {
       if (HPseek(file_rec, ret_value) == FAIL)
         HGOTO_ERROR(DFE_SEEKERROR, FAIL);
@@ -3548,7 +3548,7 @@ HPgetdiskblock(filerec_t * file_rec, int32 block_size, intn moveto)
   file_rec->f_end_off +=block_size;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3556,7 +3556,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HPgetdiskblock() */
+}	/* HPgetdiskblock() */
 
 /*-----------------------------------------------------------------------
 NAME
@@ -3588,7 +3588,7 @@ HPfreediskblock(filerec_t * file_rec, int32 block_off, int32 block_size)
   block_size = block_size;
 
   return ret_value;
-}    /* HPfreediskblock() */
+}	/* HPfreediskblock() */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3610,7 +3610,7 @@ int32
 HDget_special_info(int32 access_id, sp_info_block_t * info_block)
 {
     CONSTR(FUNC, "HDget_special_info");
-  accrec_t   *access_rec;        /* access record */
+  accrec_t   *access_rec;		/* access record */
   int32       ret_value = FAIL;
 
   /* clear error stack and check validity of access id */
@@ -3626,7 +3626,7 @@ HDget_special_info(int32 access_id, sp_info_block_t * info_block)
     info_block->key = FAIL;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3634,7 +3634,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HDget_special_info */
+}	/* HDget_special_info */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3658,7 +3658,7 @@ int32
 HDset_special_info(int32 access_id, sp_info_block_t * info_block)
 {
     CONSTR(FUNC, "HDset_special_info");
-  accrec_t   *access_rec;        /* access record */
+  accrec_t   *access_rec;		/* access record */
   int32      ret_value = FAIL;
 
   /* clear error stack and check validity of access id */
@@ -3673,7 +3673,7 @@ HDset_special_info(int32 access_id, sp_info_block_t * info_block)
 
   /* else is not special so fail */
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3681,7 +3681,7 @@ done:
   /* Normal function cleanup */
 
   return ret_value;
-}    /* HDset_special_info */
+}	/* HDset_special_info */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -3700,7 +3700,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+intn 
 Hshutdown(void)
 {
     accrec_t *curr;
@@ -3708,7 +3708,7 @@ Hshutdown(void)
     /* Release the free-list if it exists */
     if(accrec_free_list != NULL)
       {
-        while(accrec_free_list != NULL
+        while(accrec_free_list != NULL 
               && accrec_free_list != accrec_free_list->next)
           {
             curr = accrec_free_list;
@@ -3719,7 +3719,7 @@ Hshutdown(void)
       } /* end if */
 
     return (SUCCEED);
-}    /* end Hshutdown() */
+}	/* end Hshutdown() */
 
 /* #define HFILE_SEEKINFO */
 #ifdef HFILE_SEEKINFO
@@ -3758,7 +3758,7 @@ Hdumpseek(void)
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+intn 
 HP_read(filerec_t *file_rec,void * buf,int32 bytes)
 {
   CONSTR(FUNC, "HP_read");
@@ -3780,7 +3780,7 @@ HP_read(filerec_t *file_rec,void * buf,int32 bytes)
   file_rec->f_cur_off+=bytes;
   file_rec->last_op=H4_OP_READ;
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3809,7 +3809,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+intn 
 HPseek(filerec_t *file_rec,int32 offset)
 {
   CONSTR(FUNC, "HPseek");
@@ -3838,7 +3838,7 @@ printf(" avoided: %d\n",(int)seek_avoided);
 #endif /* HFILE_SEEKINFO */
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3868,7 +3868,7 @@ done:
  EXAMPLES
  REVISION LOG
 --------------------------------------------------------------------------*/
-intn
+intn 
 HP_write(filerec_t *file_rec,const void * buf,int32 bytes)
 {
   CONSTR(FUNC, "HP_write");
@@ -3891,7 +3891,7 @@ HP_write(filerec_t *file_rec,const void * buf,int32 bytes)
   file_rec->last_op=H4_OP_WRITE;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -3907,9 +3907,9 @@ done:
     HDread_drec -- reads a description record
  USAGE
     int32 HDread_drec(file_id, data_id, drec_buf)
-    int32 file_id;        IN: id of file
-    atom_t data_id;        IN: id of an element
-    uint8** drec_buf        OUT: buffer containing special info header
+    int32 file_id;		IN: id of file
+    atom_t data_id;		IN: id of an element
+    uint8** drec_buf		OUT: buffer containing special info header
  RETURNS
     Returns the length of the info read
  DESCRIPTION
@@ -3925,27 +3925,27 @@ done:
 int32
 HPread_drec(int32 file_id, atom_t data_id, uint8** drec_buf)
 {
-    CONSTR(FUNC, "HDread_drec");    /* for HERROR */
-    int32       drec_len=0;        /* length of the description record */
-    int32    drec_aid=-1;        /* description record access id */
-    uint16    drec_tag, drec_ref;    /* description record tag/ref */
+    CONSTR(FUNC, "HDread_drec");	/* for HERROR */
+    int32       drec_len=0;		/* length of the description record */
+    int32	drec_aid=-1;		/* description record access id */
+    uint16	drec_tag, drec_ref;	/* description record tag/ref */
     int32       ret_value=0;
 
     /* get the info for the dataset (description record) */
     if (HTPinquire(data_id,&drec_tag,&drec_ref,NULL,&drec_len) == FAIL)
-    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
     if ((*drec_buf = (uint8 *)HDmalloc(drec_len)) == NULL)
-    HGOTO_ERROR(DFE_NOSPACE, FAIL);
+	HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
     /* get the special info header */
     drec_aid = Hstartaccess(file_id,MKSPECIALTAG(drec_tag),drec_ref,DFACC_READ);
     if (drec_aid == FAIL)
-    HGOTO_ERROR(DFE_BADAID, FAIL);
+	HGOTO_ERROR(DFE_BADAID, FAIL);
     if (Hread(drec_aid,0,*drec_buf) == FAIL)
-    HGOTO_ERROR(DFE_READERROR, FAIL);
+	HGOTO_ERROR(DFE_READERROR, FAIL);
     if(Hendaccess(drec_aid)==FAIL)
-    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
     ret_value = drec_len;
 
@@ -3967,37 +3967,37 @@ done:
     int32 file_id;             IN: id of file
     uint16 tag;                IN: tag of data element
     uint16 ref;                IN: ref of data element
-    intn *emptySDS;          OUT: TRUE if data element is empty
+    intn *emptySDS;	      OUT: TRUE if data element is empty 
  RETURNS
     Returns SUCCEED/FAIL
  DESCRIPTION
     If the data element is special, gets the compressed or chunked description
     record and retrieves the special tag.  If the special tag indicates that
-    the data element is compressed, then this function will retrieve the data
-    length.  If the special tag indicates the data element is chunked, then
+    the data element is compressed, then this function will retrieve the data 
+    length.  If the special tag indicates the data element is chunked, then 
     retrieve the vdata chunk table to get its number of records.
 
-    Uses the data length or number of records to determine the value for
+    Uses the data length or number of records to determine the value for 
     'emptySDS'.
  GLOBAL VARIABLES
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
     10-30-2004 BMR: This function was added for SDcheckempty
-    08-28-2007 BMR: The old code of this function failed when szip library
-        didn't present (bugzilla 842.)  Modified to read info directly
-        from file.
+    08-28-2007 BMR: The old code of this function failed when szip library 
+		didn't present (bugzilla 842.)  Modified to read info directly 
+		from file.
 --------------------------------------------------------------------------*/
 int32
 HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
-        intn  *emptySDS /* TRUE if data element is empty */)
+	      intn  *emptySDS /* TRUE if data element is empty */)
 {
-    CONSTR(FUNC, "HDcheck_empty");    /* for HERROR */
-    int32       length;            /* length of the element's data */
-    atom_t      data_id = FAIL;    /* dd ID of existing regular element */
-    filerec_t  *file_rec;    /* file record pointer */
+    CONSTR(FUNC, "HDcheck_empty");	/* for HERROR */
+    int32       length;			/* length of the element's data */
+    atom_t      data_id = FAIL;	/* dd ID of existing regular element */
+    filerec_t  *file_rec;	/* file record pointer */
     uint8      *local_ptbuf=NULL, *p;
-    int16    sptag = -1;    /* special tag read from desc record */
+    int16	sptag = -1;	/* special tag read from desc record */
     int32       ret_value = SUCCEED;
 
     /* clear error stack */
@@ -4006,12 +4006,12 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
     /* convert file id to file rec and check for validity */
     file_rec = HAatom_object(file_id);
     if (BADFREC(file_rec))
-    HGOTO_ERROR(DFE_ARGS, FAIL);
+	HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* get access element from dataset's tag/ref */
     if ((data_id=HTPselect(file_rec,tag,ref))!=FAIL)
     {
-    int32  dlen=0, doff=0; /* offset/length of the description record */
+	int32  dlen=0, doff=0; /* offset/length of the description record */
 
         /* Get the info pointed to by this dd, which could point to data or
            description record, or neither */
@@ -4021,94 +4021,94 @@ HDcheck_empty(int32 file_id, uint16 tag, uint16 ref,
         /* doff/dlen = -1 means no data had been written */
         if (doff == INVALID_OFFSET && dlen == INVALID_LENGTH)
         {
-        *emptySDS = TRUE;
+	    *emptySDS = TRUE;
         }
 
-    /* if the element is not special, that means dataset's tag/ref
-    specifies the actual data that was written to the dataset, so
-    we don't need to check further */
-    else if (HTPis_special(data_id)==FALSE)
+	/* if the element is not special, that means dataset's tag/ref 
+	   specifies the actual data that was written to the dataset, so
+	   we don't need to check further */
+	else if (HTPis_special(data_id)==FALSE)
         {
-        *emptySDS = FALSE;
+	    *emptySDS = FALSE;
         }
-    else
-    {
-        int32 rec_len=0;
+	else
+	{
+	    int32 rec_len=0;
 
-        /* Get the compression header (description record) */
-        rec_len = HPread_drec(file_id, data_id, &local_ptbuf);
-        if (rec_len <= 0)
-        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    /* Get the compression header (description record) */
+	    rec_len = HPread_drec(file_id, data_id, &local_ptbuf);
+	    if (rec_len <= 0)
+		HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
-        /* get special tag */
-        p = local_ptbuf;
-        INT16DECODE(p, sptag);
+	    /* get special tag */
+	    p = local_ptbuf;
+	    INT16DECODE(p, sptag);
 
-        /* if it is a compressed element, get the data length and set
-        flag emptySDS appropriately */
-        if (sptag == SPECIAL_COMP)
-        {
-        /* skip 2byte header_version */
-        p = p + 2;
-        INT32DECODE(p, length);   /* get _uncompressed_ data length */
+	    /* if it is a compressed element, get the data length and set
+		flag emptySDS appropriately */
+	    if (sptag == SPECIAL_COMP)
+	    {
+		/* skip 2byte header_version */
+		p = p + 2;
+		INT32DECODE(p, length);   /* get _uncompressed_ data length */
 
-        /* set flag specifying whether the dataset is empty */
-        *emptySDS = length == 0 ? TRUE : FALSE;
-        }
+		/* set flag specifying whether the dataset is empty */
+		*emptySDS = length == 0 ? TRUE : FALSE;
+	    }
 
-        /* if it is a chunked element, get the number of records in
-        the chunk table (vdata) to determine emptySDS value */
-        else if (sptag == SPECIAL_CHUNKED)
-        {
-        uint16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
-        int32 vdata_id = -1;    /* chunk table id */
-        int32 n_records = 0;    /* number of records in chunk table */
+	    /* if it is a chunked element, get the number of records in
+	       the chunk table (vdata) to determine emptySDS value */
+	    else if (sptag == SPECIAL_CHUNKED)
+	    {
+		uint16 chk_tbl_tag, chk_tbl_ref; /* chunk table tag/ref */
+		int32 vdata_id = -1;	/* chunk table id */
+		int32 n_records = 0;	/* number of records in chunk table */
 
-        /* skip 4byte header len, 1byte chunking version, 4byte flag, */
-        /* 4byte elm_tot_length, 4byte chunk_size and 4byte nt_size */
-        p = p + 4 + 1 + 4 + 4 + 4 + 4;
-        UINT16DECODE(p, chk_tbl_tag);
-        UINT16DECODE(p, chk_tbl_ref);
+		/* skip 4byte header len, 1byte chunking version, 4byte flag, */
+		/* 4byte elm_tot_length, 4byte chunk_size and 4byte nt_size */
+		p = p + 4 + 1 + 4 + 4 + 4 + 4;
+		UINT16DECODE(p, chk_tbl_tag);
+		UINT16DECODE(p, chk_tbl_ref);
 
-        /* make sure it is really the vdata */
-        if (chk_tbl_tag == DFTAG_VH)
-        {
-            /* attach to the chunk table vdata and get its num of records */
-            if ((vdata_id = VSattach(file_id,chk_tbl_ref,"r")) == FAIL)
-            HGOTO_ERROR(DFE_CANTATTACH, FAIL);
+		/* make sure it is really the vdata */
+		if (chk_tbl_tag == DFTAG_VH)
+		{
+		    /* attach to the chunk table vdata and get its num of records */
+		    if ((vdata_id = VSattach(file_id,chk_tbl_ref,"r")) == FAIL)
+			HGOTO_ERROR(DFE_CANTATTACH, FAIL);
 
-            if (VSinquire(vdata_id, &n_records,NULL,NULL,NULL,NULL) == FAIL)
-                HGOTO_ERROR(DFE_INTERNAL, FAIL);
-            if (VSdetach(vdata_id) == FAIL)
-                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+		    if (VSinquire(vdata_id, &n_records,NULL,NULL,NULL,NULL) == FAIL)
+		        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+		    if (VSdetach(vdata_id) == FAIL)
+		        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
 
-            /* set flag specifying whether the dataset is empty */
-            *emptySDS = n_records == 0 ? TRUE : FALSE;
-        } /* it is a vdata */
-        else
-            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-        }
-        /* need to check about other special cases - BMR 08/28/2007 */
-    } /* else, data_id is special */
+		    /* set flag specifying whether the dataset is empty */
+		    *emptySDS = n_records == 0 ? TRUE : FALSE;
+		} /* it is a vdata */
+		else
+		    HGOTO_ERROR(DFE_INTERNAL, FAIL);
+	    }
+	    /* need to check about other special cases - BMR 08/28/2007 */
+	} /* else, data_id is special */
 
-    /* end access to the aid */
-    if (HTPendaccess(data_id) == FAIL)
-        HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
+	/* end access to the aid */
+	if (HTPendaccess(data_id) == FAIL)
+	    HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
     }  /* end if data_id != FAIL */
     else
     {
         HGOTO_ERROR(DFE_CANTACCESS, FAIL);
     }
-
+ 
 done:
-    if(ret_value == FAIL)
+    if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
 
     /* Normal function cleanup */
-    if (local_ptbuf != NULL)
-    HDfree(local_ptbuf);
+    if (local_ptbuf != NULL) 
+	HDfree(local_ptbuf);
 
     return ret_value;
 } /* end HDcheck_empty() */
@@ -4174,11 +4174,11 @@ Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
         case SPECIAL_CHUNKED:
         case SPECIAL_BUFFERED:
         case SPECIAL_COMPRAS:
-        /* special elt, call special function */
-        status = (*access_rec->special_func->info) (access_rec, info);
-        /* return FAIL if special function fails eventhough special type
-        was OK */
-        if (status == FAIL) ret_value = FAIL;
+	    /* special elt, call special function */
+	    status = (*access_rec->special_func->info) (access_rec, info);
+	    /* return FAIL if special function fails eventhough special type
+		was OK */
+	    if (status == FAIL) ret_value = FAIL;
             break;
 #ifdef LATER
         case SPECIAL_VLINKED:
@@ -4194,10 +4194,10 @@ Hgetspecinfo(int32 file_id, uint16 tag, uint16 ref, sp_info_block_t *info)
 done:
   if(ret_value == FAIL)
     { /* Error condition cleanup */
-    /* End access to the aid if it's been accessed */
-    if (aid != 0)
-        if (Hendaccess(aid)== FAIL)
-        HERROR(DFE_CANTENDACCESS);
+	/* End access to the aid if it's been accessed */
+	if (aid != 0)
+	    if (Hendaccess(aid)== FAIL)
+		HERROR(DFE_CANTENDACCESS);
     } /* end if */
 
   /* Normal function cleanup */
@@ -4299,7 +4299,7 @@ Hgetntinfo(const int32 numbertype, hdf_ntinfo_t *nt_info)
         HDstrcpy(nt_info->type_name, "uchar16");
         break;
       default:
-    return FAIL;
+	return FAIL;
     } /* end switch */
     return SUCCEED;
 } /* Hgetntinfo */
@@ -4311,14 +4311,14 @@ NAME
      Hmpset - set pagesize and maximum number of pages to cache on next open/create
 
 DESCRIPTION
-     Set the pagesize and maximum number of pages to cache on the next
+     Set the pagesize and maximum number of pages to cache on the next 
      open/create of a file. A pagesize that is a power of 2 is recommended.
 
      The values set here only affect the next open/creation of a file and
      do not change a particular file's paging behaviour after it has been
      opened or created. This maybe changed in a later release.
 
-     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached
+     Use flags arguement of 'MP_PAGEALL' if the whole file is to be cached 
      in memory otherwise passs in zero.
 
 RETURNS
@@ -4326,9 +4326,9 @@ RETURNS
 
 NOTE
      This calls the real routine MPset().
-     Currently 'maxcache' has to be greater than 1. Maybe use special
+     Currently 'maxcache' has to be greater than 1. Maybe use special 
      case of 0 to specify you want to turn page buffering off or use
-     the flags arguement.
+     the flags arguement. 
 
 ******************************************************************************/
 int
@@ -4343,7 +4343,7 @@ Hmpset(int pagesize, /* IN: pagesize to use for next open/create */
     ret_value =  MPset(pagesize,maxcache,flags);
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
@@ -4358,7 +4358,7 @@ NAME
      Hmpget - get last pagesize and max number of pages cached for open/create
 
 DESCRIPTION
-     This gets the last pagesize and maximum number of pages cached for
+     This gets the last pagesize and maximum number of pages cached for 
      the last open/create of a file.
 
 RETURNS
@@ -4383,7 +4383,7 @@ Hmpget(int *pagesize, /* OUT: pagesize to used in last open/create */
     *maxcache = mcache;
 
 done:
-  if(ret_value == FAIL)
+  if(ret_value == FAIL)   
     { /* Error condition cleanup */
 
     } /* end if */
