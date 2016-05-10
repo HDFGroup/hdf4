@@ -30,11 +30,11 @@ EXPORTED ROUTINES
                  Truncates each field to max length of FIELDNAMELENMAX.
  VSfdefine    -- Defines a (one) new field within the vdata.
  VFnfields    -- Return the number of fields in this Vdata.
- VFfieldname  -- Return the name of the given field in this Vdata. 
+ VFfieldname  -- Return the name of the given field in this Vdata.
  VFfieldtype  -- Return the type of the given field in this Vdata.
- VFfieldisize -- Return the internal (HDF) size of the given 
-                  field in this Vdata. 
- VFfieldesize -- Return the external (local machine) size of the given 
+ VFfieldisize -- Return the internal (HDF) size of the given
+                  field in this Vdata.
+ VFfieldesize -- Return the external (local machine) size of the given
                   field in this Vdata.
  VFfieldorder -- Return the order of the given field in this Vdata.
  VSfpack      -- pack into or unpack from a buf the values of fully
@@ -76,7 +76,7 @@ static const SYMDEF rstab[] =
    ** RETURNS FAIL if error, and SUCCEED if ok.
    ** truncates each field to max length of  FIELDNAMELENMAX.
  */
-intn 
+intn
 VSsetfields(int32 vkey, const char *fields)
 {
     char      **av;
@@ -155,13 +155,14 @@ VSsetfields(int32 vkey, const char *fields)
                             if (!HDstrcmp(av[i], vs->usym[j].name))
                               {
                                   found = TRUE;
-                                
-                                  if((wlist->name[wlist->n]=HDstrdup(vs->usym[j].name))==NULL)
+
+                                  if((wlist->name[wlist->n]=HDmalloc(HDstrlen(vs->usym[j].name) + 1))==NULL)
                                    {
                                       HDfree(wlist->name);
                                       HDfree(wlist->bptr);
                                       HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                     } /* end if */
+                                  HDstrcpy(wlist->name[wlist->n], vs->usym[j].name);
                                   order = vs->usym[j].order;
                                   wlist->type[wlist->n] = vs->usym[j].type;
                                   wlist->order[wlist->n] = order;
@@ -193,12 +194,13 @@ VSsetfields(int32 vkey, const char *fields)
                                     {
                                         found = TRUE;
 
-                                        if((wlist->name[wlist->n]=HDstrdup(rstab[j].name))==NULL)
+                                        if((wlist->name[wlist->n]=HDmalloc(HDstrlen(rstab[j].name) + 1))==NULL)
                                           {
                                             HDfree(wlist->name);
                                             HDfree(wlist->bptr);
                                             HGOTO_ERROR(DFE_NOSPACE,FAIL);
                                           } /* end if */
+                                        HDstrcpy(wlist->name[wlist->n], rstab[j].name);
                                         order = rstab[j].order;
                                         wlist->type[wlist->n] = rstab[j].type;
                                         wlist->order[wlist->n] = order;
@@ -266,7 +268,7 @@ VSsetfields(int32 vkey, const char *fields)
       }     /* setting read list */
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -281,7 +283,7 @@ done:
    ** return FAIL if error
    ** return SUCCEED if success
  */
-intn 
+intn
 VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
 {
     char      **av;
@@ -363,8 +365,9 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
           type sizes are smaller than max(int16) */
 
     /* Copy the symbol [field] information */
-    if ((vs->usym[usymid].name = (char *) HDstrdup(av[0]) ) == NULL)
+    if ((vs->usym[usymid].name = (char *)HDmalloc(HDstrlen(HDstrlen(av[0]) + 1))) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
+    HDstrcpy(vs->usym[usymid].name, av[0]);
     vs->usym[usymid].type = (int16) localtype;
     vs->usym[usymid].order = (uint16) order;
 
@@ -373,14 +376,14 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
         vs->nusym++;
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}	/* VSfdefine */
+}    /* VSfdefine */
 
 /* ------------------------------ VFnfields ------------------------------- */
 /*
@@ -409,14 +412,14 @@ VFnfields(int32 vkey)
     ret_value = ((int32) vs->wlist.n);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}	/* VFnfields */
+}    /* VFnfields */
 
 /* ----------------------------- VFfieldname ------------------------------ */
 /*
@@ -451,7 +454,7 @@ VFfieldname(int32 vkey, int32 index)
     ret_value = ((char *) vs->wlist.name[index]);
 
 done:
-  if(ret_value == NULL)   
+  if(ret_value == NULL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -491,7 +494,7 @@ VFfieldtype(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.type[index]);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -503,7 +506,7 @@ done:
 /* ----------------------------- VFfieldisize ------------------------------ */
 /*
    Return the internal size of the given field in this Vdata.
-   (internal to HDF file, see VWRITELIST in vg.h. 4/3/96) 
+   (internal to HDF file, see VWRITELIST in vg.h. 4/3/96)
 
    Return FAIL on failure
  */
@@ -532,7 +535,7 @@ VFfieldisize(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.isize[index]);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -544,7 +547,7 @@ done:
 /* ----------------------------- VFfieldesize ------------------------------ */
 /*
    Return the external size of the given field in this Vdata.
-   (external to HDF file, see VWRITELIST in vg.h. 4/3/96) 
+   (external to HDF file, see VWRITELIST in vg.h. 4/3/96)
 
    Return FAIL on failure
  */
@@ -573,7 +576,7 @@ VFfieldesize(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.esize[index]);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
@@ -614,22 +617,22 @@ VFfieldorder(int32 vkey, int32 index)
     ret_value = ((int32) vs->wlist.order[index]);
 
 done:
-  if(ret_value == FAIL)   
+  if(ret_value == FAIL)
     { /* Error condition cleanup */
 
     } /* end if */
 
   /* Normal function cleanup */
   return ret_value;
-}	/* VFfieldorder */
+}    /* VFfieldorder */
 
 /* -------------------------- VSsetexternalfile --------------------------- */
 /*
 
  NAME
-	VSsetexternalfile -- store Vdat info in a separate file
+    VSsetexternalfile -- store Vdat info in a separate file
  USAGE
-	int32 VSsetexternalfile(id, filename, offset)
+    int32 VSsetexternalfile(id, filename, offset)
         int32   id;                  IN: vdata ID
         char  * filename;            IN: name of external file
         int32   offset;              IN: offset in external file
@@ -637,16 +640,16 @@ done:
         Return SUCCEED or FAIL
 
  DESCRIPTION
-        Specify that the actual data for this Vdata be stored in a 
+        Specify that the actual data for this Vdata be stored in a
         separate file (an "external file" in HDF terms).
 
-        Only the data (as in VSwrite()) will be stored externally.  
+        Only the data (as in VSwrite()) will be stored externally.
         Attributes and such will still be in the main file
 
-        IMPORTANT:  It is the user's responsibility to see that the 
+        IMPORTANT:  It is the user's responsibility to see that the
         separate files are transported with the main file.
 FORTRAN
-	vsfsextf
+    vsfsextf
 
 --------------------------------------------------------------------------- */
 
@@ -660,10 +663,10 @@ intn VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
     intn       status;
 
     if(!filename || offset < 0)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     if (HAatom_group(vkey)!=VSIDGROUP)
-	    HGOTO_ERROR(DFE_ARGS, FAIL);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
@@ -683,7 +686,7 @@ intn VSsetexternalfile(int32 vkey, const char *filename, int32 offset)
     /* The Data portion of a Vdata is always stored in linked blocks. */
     /* So, use the special tag */
     status = (intn)HXcreate(vs->f, (uint16)VSDATATAG, (uint16) w->ref,
-		      filename, offset, (int32)0);
+            filename, offset, (int32)0);
     if(status != FAIL)
       {
         if((vs->aid != 0) && (vs->aid != FAIL))
@@ -708,22 +711,22 @@ done:
 /*
 
  NAME
-	VSgetexternalfile -- gets external file name and offset
+    VSgetexternalfile -- gets external file name and offset
  USAGE
-	int32 VSgetexternalfile(id, name_len, filename, offset)
+    int32 VSgetexternalfile(id, name_len, filename, offset)
         int32  vkey;            IN: vdata ID
-	size_t name_len;        IN: length of buffer for external file name
+    size_t name_len;        IN: length of buffer for external file name
         char  *extfilename;     IN: external file name
         int32 *offset;          IN: offset in external file
  RETURNS
         Returns length of the external file name or FAIL.  If the vdata
-	does not have external element, the length will be 0.
+    does not have external element, the length will be 0.
 
  DESCRIPTION
-        IMPORTANT:  It is the user's responsibility to see that the 
+        IMPORTANT:  It is the user's responsibility to see that the
         separate files are transported with the main file.
  FORTRAN
-	N/A
+    N/A
 
 --------------------------------------------------------------------------- */
 
@@ -737,7 +740,7 @@ intn VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
     intn  ret_value = SUCCEED;
 
     if (HAatom_group(vkey) != VSIDGROUP)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
@@ -751,47 +754,47 @@ intn VSgetexternalfile(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
         HGOTO_ERROR(DFE_ARGS, FAIL)
     else
     {
-	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+    HDmemset(&info_block, 0, sizeof(sp_info_block_t));
 
-	/* HDget_special_info gets the special type and the special info */
+    /* HDget_special_info gets the special type and the special info */
         if (HDget_special_info(vs->aid, &info_block) == FAIL)
             HGOTO_ERROR(DFE_INTERNAL, FAIL)
 
-	/* If the vdata has external element, return the external file info */
-	if (info_block.key == SPECIAL_EXT)
-	{
-	    /* If the file name is not available, the file is probably
-		corrupted, so we need to report it. */
-	    if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
-		ret_value = FAIL;
-	    else
-	    {
-		size_t ext_file_len = HDstrlen(info_block.path);
+    /* If the vdata has external element, return the external file info */
+    if (info_block.key == SPECIAL_EXT)
+    {
+        /* If the file name is not available, the file is probably
+        corrupted, so we need to report it. */
+        if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+        ret_value = FAIL;
+        else
+        {
+        size_t ext_file_len = HDstrlen(info_block.path);
 
-		/* If caller requests the length of the external file name
-		   only, return the length */
-		if (buf_size == 0)
-		    actual_len = (intn)ext_file_len;
-		else
-		{
-		    /* Caller requests file name, so buffer must not be NULL */
-		    if (ext_filename == NULL)
-			HGOTO_ERROR(DFE_ARGS, FAIL);
+        /* If caller requests the length of the external file name
+        only, return the length */
+        if (buf_size == 0)
+            actual_len = (intn)ext_file_len;
+        else
+        {
+            /* Caller requests file name, so buffer must not be NULL */
+            if (ext_filename == NULL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
 
-		    /* Get the name and its length */
-		    HDstrncpy(ext_filename, info_block.path, buf_size);
-		    actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
+            /* Get the name and its length */
+            HDstrncpy(ext_filename, info_block.path, buf_size);
+            actual_len = buf_size < ext_file_len ? buf_size : ext_file_len;
 
-		    /* Get the offset in the external file if it's requested */
-		    if (offset != NULL)
-			*offset = info_block.offset;
-		} /* buf_size != 0 */
-		ret_value = actual_len;
-	    }
-	}
-	/* Not external */
-	else
-	    ret_value = FAIL;
+            /* Get the offset in the external file if it's requested */
+            if (offset != NULL)
+            *offset = info_block.offset;
+        } /* buf_size != 0 */
+        ret_value = actual_len;
+        }
+    }
+    /* Not external */
+    else
+        ret_value = FAIL;
     }
 done:
     if(ret_value == FAIL)
@@ -806,35 +809,35 @@ done:
 /*
 
  NAME
-	VSgetexternalinfo -- gets external file name and offset
+    VSgetexternalinfo -- gets external file name and offset
  USAGE
-	int32 VSgetexternalinfo(id, name_len, filename, offset)
+    int32 VSgetexternalinfo(id, name_len, filename, offset)
         int32  vkey;            IN: vdata ID
-	uintn  buf_size;        IN: length of buffer for external file name
+    uintn  buf_size;        IN: length of buffer for external file name
         char  *extfilename;     IN: external file name
         int32 *offset;          IN: offset in external file, where data starts
         int32 *length;          IN: length of data in external file
  RETURNS
         Returns length of the external file name or FAIL.  If the vdata
-	does not have external element, the length will be 0.
+    does not have external element, the length will be 0.
 
  DESCRIPTION
-	VSgetexternalinfo gets the external file's name and the external data's
-	offset and length, which specify the location and size of the data in
-	the external file.
+    VSgetexternalinfo gets the external file's name and the external data's
+    offset and length, which specify the location and size of the data in
+    the external file.
 
-	buf_size specifies the size of the buffer ext_filename.  When buf_size
-	is 0, VSgetexternalinfo will simply return the length of the external
-	file name, and not the file name itself.
+    buf_size specifies the size of the buffer ext_filename.  When buf_size
+    is 0, VSgetexternalinfo will simply return the length of the external
+    file name, and not the file name itself.
 
-	When the element is not special, VSgetexternalinfo will return 0.  If
-	the element is SPECIAL_EXT, but the external file name doesn't exist,
-	VSgetexternalinfo will return FAIL.
+    When the element is not special, VSgetexternalinfo will return 0.  If
+    the element is SPECIAL_EXT, but the external file name doesn't exist,
+    VSgetexternalinfo will return FAIL.
 
-        IMPORTANT:  It is the user's responsibility to see that the 
+        IMPORTANT:  It is the user's responsibility to see that the
         separate files are transported with the main file.
  FORTRAN
-	N/A
+    N/A
 
 --------------------------------------------------------------------------- */
 
@@ -847,7 +850,7 @@ intn VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
     intn   ret_value = SUCCEED;
 
     if (HAatom_group(vkey) != VSIDGROUP)
-	HGOTO_ERROR(DFE_ARGS, FAIL);
+    HGOTO_ERROR(DFE_ARGS, FAIL);
 
     /* Locate vs's index in vstab */
     if (NULL == (w = (vsinstance_t *) HAatom_object(vkey)))
@@ -861,68 +864,68 @@ intn VSgetexternalinfo(int32 vkey, uintn buf_size, char *ext_filename, int32 *of
         HGOTO_ERROR(DFE_ARGS, FAIL)
     else
     {
-	intn retcode = 0;
-	sp_info_block_t info_block;
-	HDmemset(&info_block, 0, sizeof(sp_info_block_t));
+    intn retcode = 0;
+    sp_info_block_t info_block;
+    HDmemset(&info_block, 0, sizeof(sp_info_block_t));
 
-	/* Get the special info */
-	retcode = HDget_special_info(vs->aid, &info_block);
+    /* Get the special info */
+    retcode = HDget_special_info(vs->aid, &info_block);
 
-	/* When HDget_special_info returns FAIL, it could be the element is not
-	   special or some failure occur internally, info_block.key will be
-	   FAIL in the former case */
-	if (retcode == FAIL)
-	{
-	    if (info_block.key == FAIL)
-		ret_value = 0;	/* not a special elem, no external file name */
+    /* When HDget_special_info returns FAIL, it could be the element is not
+    special or some failure occur internally, info_block.key will be
+    FAIL in the former case */
+    if (retcode == FAIL)
+    {
+        if (info_block.key == FAIL)
+        ret_value = 0;    /* not a special elem, no external file name */
 
-	    /* Some failure occurred in HDget_special_info */
-	    else
-		HGOTO_ERROR(DFE_ARGS, FAIL)
-	}
+        /* Some failure occurred in HDget_special_info */
+        else
+        HGOTO_ERROR(DFE_ARGS, FAIL)
+    }
 
-	/* If the vdata has external element, get the external info */
-	else if (info_block.key == SPECIAL_EXT)
-	{
-	    /* If the file name is not available, the file is probably
-		corrupted, so we need to report it. */
-	    if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
-		ret_value = FAIL;
-	    else
-	    {
-		intn tmp_len = (intn)info_block.length_file_name;
+    /* If the vdata has external element, get the external info */
+    else if (info_block.key == SPECIAL_EXT)
+    {
+        /* If the file name is not available, the file is probably
+        corrupted, so we need to report it. */
+        if (info_block.path == NULL || HDstrlen(info_block.path) <= 0)
+        ret_value = FAIL;
+        else
+        {
+        intn tmp_len = (intn)info_block.length_file_name;
 
-		/* If caller requests the length of the external file name
-		   only, return the length */
-		if (buf_size == 0)
-		    actual_fname_len = tmp_len;
-		else
-		{
-		    /* Caller requests file name, so buffer must not be NULL */
-		    if (ext_filename == NULL)
-			HGOTO_ERROR(DFE_ARGS, FAIL);
+        /* If caller requests the length of the external file name
+        only, return the length */
+        if (buf_size == 0)
+            actual_fname_len = tmp_len;
+        else
+        {
+            /* Caller requests file name, so buffer must not be NULL */
+            if (ext_filename == NULL)
+            HGOTO_ERROR(DFE_ARGS, FAIL);
 
-		    /* Compute the length of the name to be returned: if
-		       requested buffer size is smaller, use that value for
-		       name's length, but that means file name could be
-		       truncated! */
-		    actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
+            /* Compute the length of the name to be returned: if
+            requested buffer size is smaller, use that value for
+            name's length, but that means file name could be
+            truncated! */
+            actual_fname_len = (intn)buf_size < tmp_len ? (intn)buf_size : tmp_len;
 
-		    /* Get the name */
-		    HDstrncpy(ext_filename, info_block.path, buf_size);
+            /* Get the name */
+            HDstrncpy(ext_filename, info_block.path, buf_size);
 
-		    /* Get offset/length of the external data if requested */
-		    if (offset != NULL)
-			*offset = info_block.offset;
+            /* Get offset/length of the external data if requested */
+            if (offset != NULL)
+            *offset = info_block.offset;
                     if (length != NULL)
                         *length = info_block.length;
-		} /* buf_size != 0 */
-		ret_value = actual_fname_len;
-	    }
-	}
-	/* Special, but not external */
-	else
-	    ret_value = 0;	/* no external file name */
+        } /* buf_size != 0 */
+        ret_value = actual_fname_len;
+        }
+    }
+    /* Special, but not external */
+    else
+        ret_value = 0;    /* no external file name */
     }
 done:
     if(ret_value == FAIL)
@@ -933,7 +936,7 @@ done:
     return ret_value;
 } /* VSgetexternalinfo */
 
-/*----------------------------------------------------------------- 
+/*-----------------------------------------------------------------
 NAME
     VSfpack -- pack into or unpack from a buf the values of fully
               interlaced fields.
@@ -941,29 +944,29 @@ USAGE
     intn VSfpack(int32 vsid, intn packtype, char *fields_in_buf,
          void * buf, intn bufsz, intn n_records, char *fields, void * fldbufpt[])
     int32 vsid; IN: vdata id.
-    intn packtype; IN: 
+    intn packtype; IN:
          _HDF_VSPACK(0) -- pack field values into vdata buf;
          _HDF_VSUNPACK(1) -- unpack vdata value into filed bufs.
-    char *fields_in_buf; IN: 
-         fields in buf to write to or read from vdata. NULL 
+    char *fields_in_buf; IN:
+         fields in buf to write to or read from vdata. NULL
          stands for all fields in the vdata.
     void * buf; IN: buffer for vdata values.
     intn bufsz; IN: buf size in byte.
     intn n_records; IN: number of records to pack or unpack.
-    char *fields; IN: 
-         names of the fields to be pack/unpack. It may be a 
-         subset of the fields_in_buf. NULL stands for all 
-         fields in buf. 
+    char *fields; IN:
+         names of the fields to be pack/unpack. It may be a
+         subset of the fields_in_buf. NULL stands for all
+         fields in buf.
     void * fldbufpt[]; IN: array of pointers to field buffers.
 RETURNS
     SUCCEED(0) on success; FIAL(-1) otherwise.
 DESCRIPTION
-    1. This pack/unpack routine is convenient for users. It also 
-       serves for FORTRAN programs to pack/unpack numeric and 
+    1. This pack/unpack routine is convenient for users. It also
+       serves for FORTRAN programs to pack/unpack numeric and
        non-numeric fields.
-    2. The caller should supply correct number of field buffers, 
-       which should agree with the number of fields to be 
-       packed/unpacked. 
+    2. The caller should supply correct number of field buffers,
+       which should agree with the number of fields to be
+       packed/unpacked.
     3. For packtype = _HDF_VSPACK, the calling sequence should be:
           VSsetfields,  VSfpack, and VSwrite;
        For packtype = _HDF_VSUNPACK, the calling sequence should be:
@@ -981,7 +984,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
     char **av, *s;
     uint8 *bufp = (uint8 *)buf;
     uint8 **fbufps=NULL;
-    int32 b_rec_size, *fmsizes=NULL, *foffs=NULL; 
+    int32 b_rec_size, *fmsizes=NULL, *foffs=NULL;
     intn i, j, found, ret_value = SUCCEED;
     vsinstance_t *wi;
     VDATA *vs;
@@ -998,18 +1001,18 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
     if (NULL == (wi = (vsinstance_t *) HAatom_object(vsid)))
         HGOTO_ERROR(DFE_NOVS, FAIL);
     vs = wi->vs;
-    if (vs == NULL) 
-        HGOTO_ERROR(DFE_NOVS, FAIL); 
+    if (vs == NULL)
+        HGOTO_ERROR(DFE_NOVS, FAIL);
     w = &vs->wlist;
          /* build blist based on info in w */
-    if (fields_in_buf == NULL)   
+    if (fields_in_buf == NULL)
          ac = w->n;
     else    {           /* build our own blist */
        if (scanattrs(fields_in_buf, &ac, &av) == FAIL)
            HGOTO_ERROR(DFE_BADFIELDS, FAIL);
        if ((av == NULL) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
-    } 
+    }
     blist.n = ac;
     blist.idx = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
     blist.offs = (int32 *)HDmalloc((size_t)ac * sizeof(int32));
@@ -1018,7 +1021,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
       /* fill arrays blist.msizes and blist.offs; calculate
            buf record size */
     b_rec_size = 0;
-    if (fields_in_buf != NULL) 
+    if (fields_in_buf != NULL)
         /* a subset of vdata fields are contained in buf */
         for (i=0; i<ac; i++) {
            /* look for the field in vdata fields */
@@ -1054,7 +1057,7 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
                 (i==0? 0 : blist.offs[i-1] + w->esize[i-1]);
            b_rec_size += w->esize[i];
        }
- 
+
        /* check bufsz */
     if (bufsz < b_rec_size * n_records)
         HGOTO_ERROR(DFE_NOTENOUGH, FAIL);
@@ -1064,14 +1067,14 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
         if ((av == NULL) || (ac < 1))
             HGOTO_ERROR(DFE_ARGS, FAIL);
     }
-    else 
+    else
         ac = blist.n;
        /* fill array of fmsizes, foffs, fbufps */
-    if ((fmsizes=(int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL) 
+    if ((fmsizes=(int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL)
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((foffs = (int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL) 
+    if ((foffs = (int32 *)HDmalloc((size_t)ac*sizeof(int32))) == NULL)
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
-    if ((fbufps=(uint8 **)HDmalloc((size_t)ac*sizeof(uint8 *))) == NULL) 
+    if ((fbufps=(uint8 **)HDmalloc((size_t)ac*sizeof(uint8 *))) == NULL)
          HGOTO_ERROR(DFE_NOSPACE, FAIL);
     if (fields != NULL)  { /* a subset of buf fields */
         for (i=0; i<ac; i++) {
@@ -1094,12 +1097,12 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
 #endif /* VDATA_FIELDS_ALL_UPPER */
             }     /* for */
             if (!found)
-                HGOTO_ERROR(DFE_BADFIELDS, FAIL); 
+                HGOTO_ERROR(DFE_BADFIELDS, FAIL);
             fmsizes[i] = (int32)w->esize[blist.idx[j]];
             foffs[i] = blist.offs[j];
-	    fbufps[i] = fldbufpt[i];
-            if (fbufps[i] == NULL)  
-                HGOTO_ERROR(DFE_BADPTR,FAIL);  
+        fbufps[i] = fldbufpt[i];
+            if (fbufps[i] == NULL)
+                HGOTO_ERROR(DFE_BADPTR,FAIL);
         }
     }
     else
@@ -1107,13 +1110,13 @@ intn VSfpack(int32 vsid, intn packtype, const char *fields_in_buf,
         for (i=0; i < ac; i++)   {
             fmsizes[i] = (int32)w->esize[blist.idx[i]];
             foffs[i] = blist.offs[i];
-	    fbufps[i] = fldbufpt[i];
-            if (fbufps[i] == NULL)  
-                HGOTO_ERROR(DFE_BADPTR,FAIL); 
+        fbufps[i] = fldbufpt[i];
+            if (fbufps[i] == NULL)
+                HGOTO_ERROR(DFE_BADPTR,FAIL);
         }
      }
     if (packtype == _HDF_VSPACK ) {
-        /* memory copy fields data to vdata buf */    
+        /* memory copy fields data to vdata buf */
         for (i=0; i<n_records; i++)   {
             for (j=0; j<ac; j++)       {
                 HDmemcpy(bufp + foffs[j], fbufps[j], fmsizes[j]);
