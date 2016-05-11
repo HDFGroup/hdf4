@@ -365,7 +365,7 @@ VSfdefine(int32 vkey, const char *field, int32 localtype, int32 order)
           type sizes are smaller than max(int16) */
 
     /* Copy the symbol [field] information */
-    if ((vs->usym[usymid].name = (char *)HDmalloc(HDstrlen(HDstrlen(av[0]) + 1))) == NULL)
+    if ((vs->usym[usymid].name = (char *)HDmalloc(HDstrlen(av[0]) + 1)) == NULL)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
     HDstrcpy(vs->usym[usymid].name, av[0]);
     vs->usym[usymid].type = (int16) localtype;
