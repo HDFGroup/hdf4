@@ -13,10 +13,6 @@
 
 /* $Id$ */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /*
    FILE
    gentest.c

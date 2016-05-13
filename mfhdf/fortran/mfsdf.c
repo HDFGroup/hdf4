@@ -10,9 +10,6 @@
 *  http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
 *  access to either file, you may request a copy from help@hdfgroup.org.     *
 * * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
 
 /* $Id$ */
 

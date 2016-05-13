@@ -44,10 +44,6 @@
 
 /* $Id$ */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 #define TESTMASTER
 
 #include <sys/time.h>

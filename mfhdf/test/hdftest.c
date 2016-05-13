@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision: 5218 $";
-#endif
-
 /* $Id: hdftest.c 5218 2009-08-29 04:21:49Z bmribler $ */
 
 #include "mfhdf.h"

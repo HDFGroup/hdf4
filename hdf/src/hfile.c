@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /* $Id$ */
 
 /*LINTLIBRARY */
@@ -3025,9 +3021,8 @@ HIget_filerec_node(const char *path)
         if((ret_value=(filerec_t *)HDcalloc(1,sizeof(filerec_t)))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,NULL);
 
-        if((ret_value->path=HDmalloc(HDstrlen(path) + 1))==NULL)
+        if((ret_value->path=(char *)HDstrdup(path))==NULL)
             HGOTO_ERROR(DFE_NOSPACE,NULL);
-        HDstrcpy(ret_value->path, path);
 
         /* Initialize annotation stuff */
         ret_value->an_tree[AN_DATA_LABEL] = NULL;

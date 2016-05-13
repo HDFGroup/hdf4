@@ -35,10 +35,6 @@
 
 /* $Id$ */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 #include "tproto.h"
 #define TESTFILE_NAME "tnbit.hdf"
 #define DATAFILE_NAME "test_files/nbit.dat"

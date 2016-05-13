@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /* $Id$ */
 
 #ifdef MALDEBUG
@@ -118,7 +114,7 @@ HDmemfill(void * dest, const void * src, uint32 item_size, uint32 num_items)
  EXAMPLES
  REVISION LOG
     Sep 19, 11 - Changed last argument's type from int32 to intn.  It didn't
-	make sense to have to cast in most places. -BMR
+    make sense to have to cast in most places. -BMR
 --------------------------------------------------------------------------*/
 char *
 HIstrncpy(char *dest, const char *source, intn len)
@@ -258,7 +254,6 @@ HDcalloc(uint32 n, uint32 size)
 }   /* end HDcalloc() */
 #endif /* MALLOC_CHECK */
 
-#if defined IBM6000 || defined ANSISUN || defined IRIX
 /*--------------------------------------------------------------------------
  NAME
     HDstrdup -- in-library replacement for non-ANSI strdup()
@@ -278,13 +273,18 @@ HDcalloc(uint32 n, uint32 size)
 char       *
 HDstrdup(const char *s)
 {
-    char       *ret;
+    char *ret;
 
+    /* Make sure original string is not NULL */
+    if (s == NULL)
+        return(NULL);
+
+    /* Allocate space */
     ret = (char *) HDmalloc((uint32) HDstrlen(s) + 1);
     if (ret == NULL)
         return (NULL);
+
+    /* Copy the original string and return it */
     HDstrcpy(ret, s);
     return (ret);
 }   /* end HDstrdup() */
-
-#endif /* macinosh */
