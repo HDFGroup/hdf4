@@ -274,11 +274,18 @@ HDcalloc(uint32 n, uint32 size)
 char       *
 HDstrdup(const char *s)
 {
-    char       *ret;
+    char *ret;
 
+    /* Make sure original string is not NULL */
+    if (s == NULL)
+        return(NULL);
+
+    /* Allocate space */
     ret = (char *) HDmalloc((uint32) HDstrlen(s) + 1);
     if (ret == NULL)
         return (NULL);
+
+    /* Copy the original string and return it */
     HDstrcpy(ret, s);
     return (ret);
 }   /* end HDstrdup() */

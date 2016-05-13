@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$ "
-#endif
-
 /***********************************************************
  * vattr.h - vdata/vgroup attribute interface
  *
