@@ -13,10 +13,6 @@
 
 /* Modified from vshow.c by Eric Tsui, 12/25/1994. */
 
-#ifdef RCSID
-static char *RcsId[] = "@(#)$Revision$";
-#endif
-
 #define VSET_INTERFACE
 #include "hdp.h"
 

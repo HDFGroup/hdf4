@@ -20,10 +20,6 @@
   1996/06/04 - George V. 
  ************************************************************************/
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Id$";
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "glist.h"

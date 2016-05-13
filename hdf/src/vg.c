@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-/* vg.c,v 1.15.4.1 1993/10/26 19:25:07 georgev Exp */
 
 /*
 FILE  

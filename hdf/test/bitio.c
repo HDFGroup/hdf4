@@ -33,10 +33,6 @@
 
 /* $Id$ */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 #include "tproto.h"
 #include <time.h>
 

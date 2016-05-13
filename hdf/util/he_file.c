@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /* $Id$ */
 
 /* --- he-file.c  --- file and annotation manipulation routines */

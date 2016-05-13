@@ -12,10 +12,6 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-#ifdef RCSID
-static char RcsId[] = "@(#)$Revision$";
-#endif
-
 /* $Id$ */
 #include "hdf.h"
 #include "hfile.h"

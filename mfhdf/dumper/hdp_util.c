@@ -11,10 +11,6 @@
  * access to either file, you may request a copy from help@hdfgroup.org.     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef RCSID
-static char RcsId[] = "@(#)1.1";
-#endif
-
 /* hdp_util.c,v 1.1 1994/04/18 15:49:18 georgev Exp */
 
 #include "hdp.h"
