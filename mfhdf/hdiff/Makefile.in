@@ -91,7 +91,20 @@ noinst_PROGRAMS = hdifftst$(EXEEXT)
 TESTS = $(am__EXEEXT_1) $(TEST_SCRIPT)
 subdir = mfhdf/hdiff
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_class.m4 \
+	$(top_srcdir)/m4/ax_check_classpath.m4 \
+	$(top_srcdir)/m4/ax_check_java_home.m4 \
+	$(top_srcdir)/m4/ax_check_junit.m4 \
+	$(top_srcdir)/m4/ax_java_options.m4 \
+	$(top_srcdir)/m4/ax_jni_include_dir.m4 \
+	$(top_srcdir)/m4/ax_prog_jar.m4 \
+	$(top_srcdir)/m4/ax_prog_java.m4 \
+	$(top_srcdir)/m4/ax_prog_java_works.m4 \
+	$(top_srcdir)/m4/ax_prog_javac.m4 \
+	$(top_srcdir)/m4/ax_prog_javac_works.m4 \
+	$(top_srcdir)/m4/ax_prog_javadoc.m4 \
+	$(top_srcdir)/m4/ax_try_compile_java.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
@@ -421,12 +434,27 @@ FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLIBS = @FLIBS@
 GREP = @GREP@
+H4_CLASSPATH = @H4_CLASSPATH@
+H4_JAVACFLAGS = @H4_JAVACFLAGS@
+H4_JAVAFLAGS = @H4_JAVAFLAGS@
 H4_VERSION = @H4_VERSION@
+HDF_JAVA = @HDF_JAVA@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+JAR = @JAR@
+JAVA = @JAVA@
+JAVAC = @JAVAC@
+JAVACFLAGS = @JAVACFLAGS@
+JAVADOC = @JAVADOC@
+JAVAFLAGS = @JAVAFLAGS@
+JAVAPREFIX = @JAVAPREFIX@
+JAVA_JUNIT = @JAVA_JUNIT@
+JAVA_PATH_NAME = @JAVA_PATH_NAME@
+JNIFLAGS = @JNIFLAGS@
+JUNIT = @JUNIT@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
@@ -469,11 +497,14 @@ STRIP = @STRIP@
 SZIP_HAS_ENCODER = @SZIP_HAS_ENCODER@
 SZIP_INFO = @SZIP_INFO@
 TBL = @TBL@
+TESTS_JUNIT = @TESTS_JUNIT@
 TEST_FORTRAN_NETCDF = @TEST_FORTRAN_NETCDF@
 UNAME_INFO = @UNAME_INFO@
 USE_COMP_SZIP = @USE_COMP_SZIP@
+UUDECODE = @UUDECODE@
 VERSION = @VERSION@
 YACC = @YACC@
+_ACJNI_JAVAC = @_ACJNI_JAVAC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@

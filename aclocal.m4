@@ -1183,6 +1183,19 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
+m4_include([m4/ax_check_class.m4])
+m4_include([m4/ax_check_classpath.m4])
+m4_include([m4/ax_check_java_home.m4])
+m4_include([m4/ax_check_junit.m4])
+m4_include([m4/ax_java_options.m4])
+m4_include([m4/ax_jni_include_dir.m4])
+m4_include([m4/ax_prog_jar.m4])
+m4_include([m4/ax_prog_java.m4])
+m4_include([m4/ax_prog_java_works.m4])
+m4_include([m4/ax_prog_javac.m4])
+m4_include([m4/ax_prog_javac_works.m4])
+m4_include([m4/ax_prog_javadoc.m4])
+m4_include([m4/ax_try_compile_java.m4])
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 #
 #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,

@@ -67,6 +67,7 @@ hdf/util/testfiles/test.hdf -text
 hdf/util/testfiles/tvattr.hdf -text
 java/CMakeLists.txt -text
 java/Makefile.am -text
+java/Makefile.in -text
 java/lib/ext/slf4j-nop-1.7.5.jar -text svneol=unset#application/zip
 java/lib/ext/slf4j-simple-1.7.5.jar -text svneol=unset#application/zip
 java/lib/hamcrest-core.jar -text svneol=unset#application/java-archive
@@ -75,6 +76,7 @@ java/lib/simplelogger.properties -text
 java/lib/slf4j-api-1.7.5.jar -text svneol=unset#application/zip
 java/src/CMakeLists.txt -text
 java/src/Makefile.am -text
+java/src/Makefile.in -text
 java/src/hdf/CMakeLists.txt -text
 java/src/hdf/hdflib/CMakeLists.txt -text
 java/src/hdf/hdflib/HDFArray.java -text
@@ -103,6 +105,7 @@ java/src/hdf/hdflib/HDFTable.java -text
 java/src/hdf/overview.html -text
 java/src/jni/CMakeLists.txt -text
 java/src/jni/Makefile.am -text
+java/src/jni/Makefile.in -text
 java/src/jni/h4jni.h -text
 java/src/jni/hdfImp.c -text
 java/src/jni/hdfanImp.c -text
@@ -130,6 +133,7 @@ java/test/CMakeLists.txt -text
 java/test/JUnit-interface.ert -text
 java/test/JUnit-interface.txt -text
 java/test/Makefile.am -text
+java/test/Makefile.in -text
 java/test/TestAll.java -text
 java/test/TestH4.java -text
 java/test/junit.sh.in -text

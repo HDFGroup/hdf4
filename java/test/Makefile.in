@@ -14,12 +14,9 @@
 
 @SET_MAKE@
 
-#############################################################################
-#############################################################################
+#
+# HDF Java native interface (JNI) Library Test Makefile(.in)
 
-# We can't tell automake about example programs, because they need to be
-# built using h4cc (or h4fc, etc.) instead of the standard compilers.
-# This creates some extra work for us.
 VPATH = @srcdir@
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
@@ -85,12 +82,11 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(top_srcdir)/config/commence.am \
-	$(top_srcdir)/config/examples.am \
 	$(top_srcdir)/config/conclude.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/bin/mkinstalldirs \
-	$(top_srcdir)/bin/test-driver
-TESTS = $(TEST_PROG)
-subdir = hdf/fortran/examples
+	$(srcdir)/junit.sh.in $(top_srcdir)/bin/test-driver
+TESTS = $(TEST_SCRIPT)
+subdir = java/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_class.m4 \
 	$(top_srcdir)/m4/ax_check_classpath.m4 \
@@ -110,7 +106,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/bin/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/hdf/src/h4config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = junit.sh
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -131,6 +127,8 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__java_sources = $(noinst_JAVA)
+DATA = $(noinst_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__tty_colors_dummy = \
   mgn= red= grn= lgn= blu= brg= std=; \
@@ -317,8 +315,11 @@ am__set_TESTS_bases = \
 RECHECK_LOGS = $(TEST_LOGS)
 AM_RECURSIVE_TARGETS = check recheck
 TEST_SUITE_LOG = test-suite.log
-LOG_DRIVER = $(SHELL) $(top_srcdir)/bin/test-driver
-LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
+am__test_logs1 = $(TESTS:=.log)
+am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
+TEST_LOGS = $(am__test_logs2:.sh.log=.log)
+SH_LOG_DRIVER = $(SHELL) $(top_srcdir)/bin/test-driver
+SH_LOG_COMPILE = $(SH_LOG_COMPILER) $(AM_SH_LOG_FLAGS) $(SH_LOG_FLAGS)
 am__set_b = \
   case '$@' in \
     */*) \
@@ -329,11 +330,6 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-am__test_logs1 = $(TESTS:=.log)
-am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
-TEST_LOGS = $(am__test_logs2:.sh.log=.log)
-SH_LOG_DRIVER = $(SHELL) $(top_srcdir)/bin/test-driver
-SH_LOG_COMPILE = $(SH_LOG_COMPILER) $(AM_SH_LOG_FLAGS) $(SH_LOG_FLAGS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -440,7 +436,11 @@ STRIP = @STRIP@
 SZIP_HAS_ENCODER = @SZIP_HAS_ENCODER@
 SZIP_INFO = @SZIP_INFO@
 TBL = @TBL@
-TESTS_JUNIT = @TESTS_JUNIT@
+
+#JAVA_JUNIT  = $(JAVA_SRCS)
+#noinst_JAVA = @JAVA_JUNIT@
+#EXTRA_JAVA  = $(JAVA_JUNIT)
+TESTS_JUNIT = AllJunitTests
 TEST_FORTRAN_NETCDF = @TEST_FORTRAN_NETCDF@
 UNAME_INFO = @UNAME_INFO@
 USE_COMP_SZIP = @USE_COMP_SZIP@
@@ -520,53 +520,24 @@ ACLOCAL_AMFLAGS = "-I m4"
 
 # .chkexe files are used to mark tests that have run successfully.
 # .chklog files are output from those tests.
-CHECK_CLEANFILES = *.chkexe *.chklog *.hdf
-DEFINES = -DNDEBUG -DHDF
+CHECK_CLEANFILES = *.chkexe *.chklog
 
-#############################################################################
-#############################################################################
-EXAMPLE_PROG = VD_create_vdatas VD_write_mixed_vdata       \
-	VD_write_to_vdata VD_create_onefield_vdatas         \
-	VD_read_from_vdata VD_read_mixed_vdata              \
-	VD_get_vdata_info VD_locate_vdata VG_create_vgroup  \
-	VG_add_sds_to_vgroup VG_insert_vdatas_to_vgroup     \
-	VG_set_get_vgroup_attr VG_vgroup_contents           \
-	VG_get_vgroup_info GR_create_and_write_image        \
-	GR_modify_image GR_set_attribute GR_get_attribute   \
-	GR_write_palette GR_image_info GR_read_image        \
-	AN_create_annotation AN_get_annotation_info AN_read_annotation
+# Mark this directory as part of the JNI API
+JAVA_API = yes
+JAVAROOT = .classes
+pkgpath = test
+hdfjarfile = jar$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).jar
+jarfile = jar$(PACKAGE_TARNAME)test.jar
+CLASSPATH_ENV = CLASSPATH=.:$(JAVAROOT):$(top_builddir)/java/src/$(hdfjarfile):$(top_srcdir)/java/lib/junit.jar:$(top_srcdir)/java/lib/hamcrest-core.jar:$(top_srcdir)/java/lib/slf4j-api-1.7.5.jar:$(top_srcdir)/java/lib/ext/slf4j-simple-1.7.5.jar:$$CLASSPATH
+AM_JAVACFLAGS = $(H4_JAVACFLAGS) -deprecation
+noinst_JAVA = \
+	TestH4.java \
+    TestAll.java
 
-TEST_PROG = $(EXAMPLE_PROG)
-
-# These are the Fortran example files to be installed
-INSTALL_FILES = VD_read_from_vdata.f VD_read_mixed_vdata.f \
-	VD_write_mixed_vdata.f VD_write_to_vdata.f            \
-	VD_create_onefield_vdatas.f VD_create_vdatas.f        \
-	VD_get_vdata_info.f VD_locate_vdata.f                 \
-	VG_insert_vdatas_to_vgroup.f VG_set_get_vgroup_attr.f \
-	VG_vgroup_contents.f VG_add_sds_to_vgroup.f           \
-	VG_create_vgroup.f VG_get_vgroup_info.f               \
-	GR_create_and_write_image.f GR_get_attribute.f        \
-	GR_image_info.f GR_modify_image.f GR_read_image.f     \
-	GR_read_palette.f GR_set_attribute.f                  \
-	GR_write_palette.f AN_create_annotation.f             \
-	AN_get_annotation_info.f AN_read_annotation.f         \
-	#VD_set_get_vdata_attr.f
-
-INSTALL_SCRIPT_FILES = run-fortran-ex.sh
-
-# Where to install Fortran example files
-EXAMPLEDIR = $(prefix)/examples/fortran
-DISTCLEANFILES = *.chkexe *.chklog
-@BUILD_SHARED_SZIP_CONDITIONAL_TRUE@LD_LIBRARY_PATH = $(LL_PATH)
-
-# Assume that all tests in this directory are examples, and tell
-# conclude.am when to build them.
-EXTRA_PROG = $(EXAMPLE_PROG)
-
-# We need to tell automake what to clean
-MOSTLYCLEANFILES = *.o $(EXAMPLE_PROG)
-CLEANFILES = $(EXAMPLE_PROG)
+noinst_DATA = $(jarfile)
+check_SCRIPTS = junit.sh
+TEST_SCRIPT = $(check_SCRIPTS)
+CLEANFILES = classnoinst.stamp $(jarfile) $(JAVAROOT)/$(pkgpath)/*.class junit.sh
 
 # Automake needs to be taught how to build lib, progs, and tests targets.
 # These will be filled in automatically for the most part (e.g.,
@@ -589,7 +560,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .log .sh .sh$(EXEEXT) .trs
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/config/commence.am $(top_srcdir)/config/examples.am $(top_srcdir)/config/conclude.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/config/commence.am $(top_srcdir)/config/conclude.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -598,9 +569,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign hdf/fortran/examples/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign java/test/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign hdf/fortran/examples/Makefile
+	  $(AUTOMAKE) --foreign java/test/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -610,7 +581,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/config/commence.am $(top_srcdir)/config/examples.am $(top_srcdir)/config/conclude.am:
+$(top_srcdir)/config/commence.am $(top_srcdir)/config/conclude.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -620,12 +591,28 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+junit.sh: $(top_builddir)/config.status $(srcdir)/junit.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
+
+classnoinst.stamp: $(am__java_sources)
+	@list1='$?'; list2=; if test -n "$$list1"; then \
+	  for p in $$list1; do \
+	    if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	    list2="$$list2 $$d$$p"; \
+	  done; \
+	  echo '$(CLASSPATH_ENV) $(JAVAC) -d $(JAVAROOT) $(AM_JAVACFLAGS) $(JAVACFLAGS) '"$$list2"; \
+	  $(CLASSPATH_ENV) $(JAVAC) -d $(JAVAROOT) $(AM_JAVACFLAGS) $(JAVACFLAGS) $$list2; \
+	else :; fi
+	echo timestamp > $@
+
+clean-noinstJAVA:
+	-rm -f *.class classnoinst.stamp
 tags TAGS:
 
 ctags CTAGS:
@@ -752,7 +739,7 @@ $(TEST_SUITE_LOG): $(TEST_LOGS)
 	  echo "$$col$$br$$std";					\
 	fi;								\
 	$$success || exit 1
-recheck: all 
+recheck: all $(check_SCRIPTS)
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@set +e; $(am__set_TESTS_bases); \
 	bases=`for i in $$bases; do echo $$i; done \
@@ -763,174 +750,6 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-VD_create_vdatas.log: VD_create_vdatas
-	@p='VD_create_vdatas'; \
-	b='VD_create_vdatas'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_write_mixed_vdata.log: VD_write_mixed_vdata
-	@p='VD_write_mixed_vdata'; \
-	b='VD_write_mixed_vdata'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_write_to_vdata.log: VD_write_to_vdata
-	@p='VD_write_to_vdata'; \
-	b='VD_write_to_vdata'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_create_onefield_vdatas.log: VD_create_onefield_vdatas
-	@p='VD_create_onefield_vdatas'; \
-	b='VD_create_onefield_vdatas'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_read_from_vdata.log: VD_read_from_vdata
-	@p='VD_read_from_vdata'; \
-	b='VD_read_from_vdata'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_read_mixed_vdata.log: VD_read_mixed_vdata
-	@p='VD_read_mixed_vdata'; \
-	b='VD_read_mixed_vdata'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_get_vdata_info.log: VD_get_vdata_info
-	@p='VD_get_vdata_info'; \
-	b='VD_get_vdata_info'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VD_locate_vdata.log: VD_locate_vdata
-	@p='VD_locate_vdata'; \
-	b='VD_locate_vdata'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VG_create_vgroup.log: VG_create_vgroup
-	@p='VG_create_vgroup'; \
-	b='VG_create_vgroup'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VG_add_sds_to_vgroup.log: VG_add_sds_to_vgroup
-	@p='VG_add_sds_to_vgroup'; \
-	b='VG_add_sds_to_vgroup'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VG_insert_vdatas_to_vgroup.log: VG_insert_vdatas_to_vgroup
-	@p='VG_insert_vdatas_to_vgroup'; \
-	b='VG_insert_vdatas_to_vgroup'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VG_set_get_vgroup_attr.log: VG_set_get_vgroup_attr
-	@p='VG_set_get_vgroup_attr'; \
-	b='VG_set_get_vgroup_attr'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VG_vgroup_contents.log: VG_vgroup_contents
-	@p='VG_vgroup_contents'; \
-	b='VG_vgroup_contents'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VG_get_vgroup_info.log: VG_get_vgroup_info
-	@p='VG_get_vgroup_info'; \
-	b='VG_get_vgroup_info'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_create_and_write_image.log: GR_create_and_write_image
-	@p='GR_create_and_write_image'; \
-	b='GR_create_and_write_image'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_modify_image.log: GR_modify_image
-	@p='GR_modify_image'; \
-	b='GR_modify_image'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_set_attribute.log: GR_set_attribute
-	@p='GR_set_attribute'; \
-	b='GR_set_attribute'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_get_attribute.log: GR_get_attribute
-	@p='GR_get_attribute'; \
-	b='GR_get_attribute'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_write_palette.log: GR_write_palette
-	@p='GR_write_palette'; \
-	b='GR_write_palette'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_image_info.log: GR_image_info
-	@p='GR_image_info'; \
-	b='GR_image_info'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-GR_read_image.log: GR_read_image
-	@p='GR_read_image'; \
-	b='GR_read_image'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-AN_create_annotation.log: AN_create_annotation
-	@p='AN_create_annotation'; \
-	b='AN_create_annotation'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-AN_get_annotation_info.log: AN_get_annotation_info
-	@p='AN_get_annotation_info'; \
-	b='AN_get_annotation_info'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-AN_read_annotation.log: AN_read_annotation
-	@p='AN_read_annotation'; \
-	b='AN_read_annotation'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .sh.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -977,9 +796,10 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile all-local
+all-am: Makefile classnoinst.stamp $(DATA) all-local
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -1001,7 +821,6 @@ install-strip:
 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
 	fi
 mostlyclean-generic:
-	-test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
 	-test -z "$(TEST_LOGS)" || rm -f $(TEST_LOGS)
 	-test -z "$(TEST_LOGS:.log=.trs)" || rm -f $(TEST_LOGS:.log=.trs)
 	-test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
@@ -1012,14 +831,11 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
-
-clean-am: clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstJAVA mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -1037,7 +853,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-data-local
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -1063,7 +879,7 @@ install-ps: install-ps-am
 
 install-ps-am:
 
-installcheck-am: installcheck-local
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 	-rm -f Makefile
@@ -1082,121 +898,42 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-local
+uninstall-am:
 
 .MAKE: check-am install-am install-strip
 
 .PHONY: all all-am all-local check check-TESTS check-am clean \
-	clean-generic clean-libtool cscopelist-am ctags-am distclean \
-	distclean-generic distclean-libtool distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-data-local install-dvi install-dvi-am \
+	clean-generic clean-libtool clean-noinstJAVA cscopelist-am \
+	ctags-am distclean distclean-generic distclean-libtool distdir \
+	dvi dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
 	install-info install-info-am install-man install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installcheck-local installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool mostlyclean-local pdf \
-	pdf-am ps ps-am recheck tags-am uninstall uninstall-am \
-	uninstall-local
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool mostlyclean-local pdf pdf-am ps ps-am \
+	recheck tags-am uninstall uninstall-am
 
-    # VD_set_get_vdata_attr
 
-# How to build Fortran programs using h4fc
-$(EXTRA_PROG): $(H4FC)
-	$(H4FC) $(H4FCFLAGS) $(FFLAGS) -o $@ $(srcdir)/$@.f;
+classes:
+	test -d $(@D)/$(JAVAROOT) || $(MKDIR_P) $(@D)/$(JAVAROOT)
 
-# List dependencies for each program.  Normally, automake would take
-# care of this for us, but if we tell automake about the programs it
-# will try to build them with the normal Fortran compiler, not h4fc.
+$(jarfile): classnoinst.stamp classes
+	$(JAR) cvf $@ -C $(JAVAROOT)/ $(pkgpath)
 
-# Fortran Programs
-VD_read_from_vdata: $(srcdir)/VD_read_from_vdata.f
-VD_read_mixed_vdata: $(srcdir)/VD_read_mixed_vdata.f
-#VD_set_get_vdata_attr: $(srcdir)/VD_set_get_vdata_attr.f
-VD_write_mixed_vdata: $(srcdir)/VD_write_mixed_vdata.f
-VD_write_to_vdata: $(srcdir)/VD_write_to_vdata.f
-VD_create_onefield_vdatas: $(srcdir)/VD_create_onefield_vdatas.f
-VD_create_vdatas: $(srcdir)/VD_create_vdatas.f
-VD_get_vdata_info: $(srcdir)/VD_get_vdata_info.f
-VD_locate_vdata: $(srcdir)/VD_locate_vdata.f
-VG_insert_vdatas_to_vgroup: $(srcdir)/VG_insert_vdatas_to_vgroup.f
-VG_set_get_vgroup_attr: $(srcdir)/VG_set_get_vgroup_attr.f
-VG_vgroup_contents: $(srcdir)/VG_vgroup_contents.f
-VG_add_sds_to_vgroup: $(srcdir)/VG_add_sds_to_vgroup.f
-VG_create_vgroup: $(srcdir)/VG_create_vgroup.f
-VG_get_vgroup_info: $(srcdir)/VG_get_vgroup_info.f
-GR_create_and_write_image: $(srcdir)/GR_create_and_write_image.f
-GR_get_attribute: $(srcdir)/GR_get_attribute.f
-GR_image_info: $(srcdir)/GR_image_info.f
-GR_modify_image: $(srcdir)/GR_modify_image.f
-GR_read_image: $(srcdir)/GR_read_image.f
-GR_read_palette: $(srcdir)/GR_read_palette.f
-GR_set_attribute: $(srcdir)/GR_set_attribute.f
-GR_write_palette: $(srcdir)/GR_write_palette.f
-AN_create_annotation: $(srcdir)/AN_create_annotation.f
-AN_get_annotation_info: $(srcdir)/AN_get_annotation_info.f
-AN_read_annotation: $(srcdir)/AN_read_annotation.f
+.PHONY: classes
+#EXTRA_TEST  = $(TESTS_JUNIT)
 
-# How to create EXAMPLEDIR if it doesn't already exist
-$(EXAMPLEDIR):
-	mkdir -p $@
+AllJunitTests :
+	echo "#! /bin/sh" > $@
+	echo "exec @JUNIT@ test.TestAll" >> $@
+	chmod +x $@
 
-# Install and uninstall rules.  We install the source files, not the
-# example programs themselves.
-install-data-local:
-	@$(MAKE) $(AM_MAKEFLAGS) install-examples
-uninstall-local:
-	@$(MAKE) $(AM_MAKEFLAGS) uninstall-examples
-
-install-examples: $(EXAMPLEDIR) 
-	@for f in X $(INSTALL_FILES); do                                     \
-	  if test $$f != X; then                                             \
-	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);    \
-	    chmod a-x $(EXAMPLEDIR)/$$f;                                     \
-	  fi;                                                                \
-	done
-	@for f in X $(INSTALL_SCRIPT_FILES); do                              \
-	  if test $$f != X; then                                             \
-	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLEDIR)/. || exit 1);    \
-	  fi;                                                                \
-	done
-	@for f in X $(INSTALL_TOP_FILES); do                                 \
-	  if test $$f != X; then                                             \
-	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLETOPDIR)/. || exit 1); \
-	    chmod a-x $(EXAMPLETOPDIR)/$$f;                                  \
-	  fi;                                                                \
-	done
-	@for f in X $(INSTALL_TOP_SCRIPT_FILES); do                          \
-	  if test $$f != X; then                                             \
-	    (set -x; $(INSTALL) $(srcdir)/$$f $(EXAMPLETOPDIR)/. || exit 1); \
-	  fi;                                                                \
-	done
-
-uninstall-examples:
-	@if test -n "$(INSTALL_FILES)" -a -d $(EXAMPLEDIR); then           \
-	  set -x; cd $(EXAMPLEDIR) && $(RM) $(INSTALL_FILES);              \
-	fi
-	@if test -n "$(INSTALL_SCRIPT_FILES)" -a -d $(EXAMPLEDIR); then    \
-	  set -x; cd $(EXAMPLEDIR) && $(RM) $(INSTALL_SCRIPT_FILES);       \
-	fi
-	@if test -n "$(INSTALL_TOP_FILES)" -a -d $(EXAMPLETOPDIR); then    \
-	  set -x; cd $(EXAMPLETOPDIR) && $(RM) $(INSTALL_TOP_FILES);       \
-	fi
-	@if test -n "$(INSTALL_TOP_SCRIPT_FILES)" -a -d $(EXAMPLETOPDIR); then    \
-	  set -x; cd $(EXAMPLETOPDIR) && $(RM) $(INSTALL_TOP_SCRIPT_FILES);       \
-	fi
-
-installcheck-local:
-	@if test "$(STATIC_SHARED)" = "static, shared"; then               \
-	  H5CCFLAGS="-shlib" $(MAKE) $(AM_MAKEFLAGS) check;                \
-	  $(MAKE) $(AM_MAKEFLAGS) clean;                                   \
-	  H5CCFLAGS="" $(MAKE) $(AM_MAKEFLAGS) check;                      \
-	elif test "$(STATIC_SHARED)" = "shared"; then                      \
-	  H5CCFLAGS="-shlib" $(MAKE) $(AM_MAKEFLAGS) check;                \
-	else                                                               \
-	  $(MAKE) $(AM_MAKEFLAGS) check;                                   \
-	fi
+clean:
+	rm -rf $(JAVAROOT)/*
+	rm -f $(jarfile)
+	rm -f classnoinst.stamp
 
 # lib/progs/tests targets recurse into subdirectories. build-* targets
 # build files in this directory.
