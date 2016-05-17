@@ -57,7 +57,8 @@ $HDFLIB_HOME/hamcrest-core.jar
 $HDFLIB_HOME/junit.jar
 $HDFLIB_HOME/slf4j-api-1.7.5.jar
 $HDFLIB_HOME/ext/slf4j-simple-1.7.5.jar
-$top_builddir/src/.libs/libhdf.*
+$top_builddir/hdf/src/.libs/libdf.*
+$top_builddir/mfhdf/libsrc/.libs/libmfhdf.*
 $top_builddir/java/src/jni/.libs/libhdf_java.*
 $top_builddir/java/src/$JARFILE
 "
@@ -145,7 +146,6 @@ COPY_DATAFILES_TO_BLDDIR()
             fi
         fi
     done
-    $CP -f $HDFTEST_HOME/h5ex_g_iterate.orig $BLDDIR/h5ex_g_iterate.hdf
 }
 
 CLEAN_DATAFILES_AND_BLDDIR()

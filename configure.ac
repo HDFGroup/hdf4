@@ -11,7 +11,7 @@
 ## of the source code distribution tree; Copyright.html can be found at
 ## http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have
 ## access to either file, you may request a copy from help@hdfgroup.org.
-## 
+##
 ##
 AC_REVISION($Id$)
 
@@ -161,12 +161,12 @@ if test "X$host_config" != "Xnone"; then
 fi
 
 ## ======================================================================
-## Checks for NetCDF-2.3.2 support 
+## Checks for NetCDF-2.3.2 support
 ## ======================================================================
 
 # We disable Fortran netCDF APIs and their testing when --disable-netcdf is used.
-# Let's define a proper variable to be used in mfhdf/testfortran.sh.in to run 
-# the netCDF Fortran APIs test program "ftest". 
+# Let's define a proper variable to be used in mfhdf/testfortran.sh.in to run
+# the netCDF Fortran APIs test program "ftest".
 AC_SUBST(TEST_FORTRAN_NETCDF) TEST_FORTRAN_NETCDF="yes"
 
 AC_ARG_ENABLE([netcdf],
@@ -219,6 +219,66 @@ case "$enableval" in
 esac
 AM_CONDITIONAL([HDF_BUILD_FORTRAN], [test "X$BUILD_FORTRAN" = "Xyes"])
 AC_SUBST([BUILD_FORTRAN])
+
+## ----------------------------------------------------------------------
+## Check if they would like the Java native interface (JNI) compiled
+##
+AC_SUBST([JNIFLAGS])
+AC_SUBST([H4_JAVACFLAGS])
+AC_SUBST([H4_JAVAFLAGS])
+
+## This needs to be exposed for the library info file even if Java is disabled.
+AC_SUBST([HDF_JAVA])
+
+## Default is no Java
+HDF_JAVA=no
+
+AC_SUBST([H4_CLASSPATH]) H4_CLASSPATH=""
+AC_MSG_CHECKING([if Java JNI interface enabled])
+
+AC_ARG_ENABLE([java],
+              [AS_HELP_STRING([--enable-java],
+                              [Compile the Java JNI interface [default=no]])],
+              [HDF_JAVA=$enableval])
+
+if test "X$HDF_JAVA" = "Xyes"; then
+  if test "X${enable_shared}" != "Xno"; then
+    echo "yes"
+    if test "X$CLASSPATH" = "X"; then
+      H4_CLASSPATH=".:$srcdir/java/lib"
+    else
+      H4_CLASSPATH=".:$CLASSPATH:$srcdir/java/lib"
+    fi
+    ## Checks for programs.
+    AX_JAVA_OPTIONS
+    H4_JAVACFLAGS=$JAVACFLAGS
+    H4_JAVAFLAGS=$JAVAFLAGS
+    AX_PROG_JAVAC
+    AX_PROG_JAVA
+    AX_PROG_JAR
+    AX_PROG_JAVADOC
+    ## Find the include directories needed for building JNI code
+    AX_JNI_INCLUDE_DIR()
+    for JNI_INCLUDE_DIR in $JNI_INCLUDE_DIRS
+    do
+      JNIFLAGS="$JNIFLAGS -I$JNI_INCLUDE_DIR"
+    done
+    ## Find junit for testing the JNI code
+    AX_CHECK_CLASSPATH()
+    CLASSPATH_ENV=$H4_CLASSPATH
+    AX_CHECK_JUNIT()
+    AX_CHECK_JAVA_HOME
+
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_ERROR([Java requires shared libraries to be built])
+    HDF_JAVA="no"
+    AC_MSG_RESULT([no])
+  fi
+else
+  AC_MSG_RESULT([no])
+fi
+AM_CONDITIONAL([BUILD_JAVA_CONDITIONAL], [test "X$HDF_JAVA" = "Xyes"])
 
 ## -------------------------------------------------------------------------
 ## Build static libraries by default. Furthermore, fortran shared libraries
@@ -533,7 +593,7 @@ case "$withval" in
     ;;
 esac
 
-## Check to see if SZIP has encoder 
+## Check to see if SZIP has encoder
 if test "X$HAVE_SZIP" = "Xyes" -a "x$HAVE_SZLIB_H" = "xyes"; then
     ## SZLIB library is available. Check if it can encode.
     AC_MSG_CHECKING([for szlib encoder])
@@ -894,7 +954,7 @@ fi
 
 
 ## ----------------------------------------------------------------------
-## 
+##
 ## If --enable-static-exec and are specified together, there will be ld failures for
 ## "attempted static link of dynamic object" when the tools are built.  This check
 ## will prevent that error during configure instead.  It could go with the other
@@ -939,7 +999,7 @@ if test -n "$fc_version_info"; then
 fi
 
 ## This part doesn't work yet since HDF4 config files do not contain
-## information for fortran_vendor and fortran_version. 
+## information for fortran_vendor and fortran_version.
 ## Needs to be fixed EIP 2010-01-21
 ## if test -n "$fortran_vendor" && test -n "$fortran_version"; then
 ##   F77_VERSION="$F77_VERSION ($fortran_vendor-$fortran_version)"
@@ -983,10 +1043,10 @@ AC_CONFIG_FILES([Makefile
                  hdf/util/h4redeploy
                  hdf/util/testutil.sh
                  man/Makefile
-		 mfhdf/fortran/ftest.f
-		 mfhdf/fortran/jackets.c
-		 mfhdf/fortran/netcdf.inc
-		 mfhdf/libsrc/netcdf.h
+        mfhdf/fortran/ftest.f
+        mfhdf/fortran/jackets.c
+        mfhdf/fortran/netcdf.inc
+        mfhdf/libsrc/netcdf.h
                  mfhdf/Makefile
                  mfhdf/dumper/Makefile
                  mfhdf/dumper/testhdp.sh
@@ -1010,7 +1070,15 @@ AC_CONFIG_FILES([Makefile
                  mfhdf/nctest/Makefile
                  mfhdf/test/Makefile
                  mfhdf/test/testmfhdf.sh
-                 mfhdf/xdr/Makefile])
+                 mfhdf/xdr/Makefile
+                 java/Makefile
+                 java/src/Makefile
+                 java/src/jni/Makefile
+                 java/test/Makefile
+                 java/test/junit.sh])
+
+AC_CONFIG_COMMANDS([.classes], [], [$MKDIR_P java/src/.classes;
+                $MKDIR_P java/test/.classes])
 
 AC_OUTPUT
 

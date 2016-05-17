@@ -4,7 +4,13 @@
 
 include $(top_srcdir)/config/commence.am
 
-SUBDIRS = hdf mfhdf man
+if BUILD_JAVA_CONDITIONAL
+   JAVA_DIR=java
+else
+   JAVA_DIR=
+endif
+
+SUBDIRS = hdf mfhdf $(JAVA_DIR) man
 # install libhdf4.settings in lib directory
 settingsdir = $(libdir)
 settings_DATA = libhdf4.settings
