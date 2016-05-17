@@ -31,7 +31,24 @@
 ./libhdf4.settings.in
 ./move-if-change
 
-./m4/ltsugar.m4
+./m4/ax_check_class.m4
+./m4/ax_check_classpath.m4
+./m4/ax_check_java_home.m4
+./m4/ax_check_junit.m4
+./m4/ax_check_rqrd_class.m4
+./m4/ax_java_check_class.m4
+./m4/ax_java_options.m4
+./m4/ax_jni_include_dir.m4
+./m4/ax_prog_jar.m4
+./m4/ax_prog_java_cc.m4
+./m4/ax_prog_java_works.m4
+./m4/ax_prog_java.m4
+./m4/ax_prog_javac_works.m4
+./m4/ax_prog_javac.m4
+./m4/ax_prog_javadoc.m4
+./m4/ax_prog_javah.m4
+./m4/ax_try_compile_java.m4
+./m4/ax_try_run_java.m4./m4/ltsugar.m4
 ./m4/libtool.m4
 ./m4/ltversion.m4
 ./m4/lt~obsolete.m4
@@ -483,6 +500,8 @@
 ./hdf/util/testfiles/fp2hdf/t100x100
 
 ./java/CMakeLists.txt
+./java/Makefile.am
+./java/Makefile.in
 ./java/lib/hamcrest-core.jar
 ./java/lib/junit.jar
 ./java/lib/simpolelogger.properties
@@ -490,6 +509,8 @@
 ./java/lib/ext/slf4j-nop-1.7.5.jar
 ./java/lib/ext/slf4j-simple-1.7.5.jar
 ./java/src/CMakeLists.txt
+./java/src/Makefile.am
+./java/src/Makefile.in
 ./java/src/hdf/CMakeLists.txt
 ./java/src/hdf/overview.html
 ./java/src/hdf/hdflib/CMakeLists.txt
@@ -517,6 +538,8 @@
 ./java/src/hdf/hdflib/HDFSZIPCompInfo.java
 ./java/src/hdf/hdflib/HDFTable.java
 ./java/src/jni/CMakeLists.txt
+./java/src/jni/Makefile.am
+./java/src/jni/Makefile.in
 ./java/src/jni/h4jni.h
 ./java/src/jni/hdfanImp.c
 ./java/src/jni/hdfdfanImp.c
@@ -541,6 +564,8 @@
 ./java/src/jni/hdfvqmp.c
 ./java/src/jni/hdfvsqIImp.c
 ./java/test/CMakeLists.txt
+./java/test/Makefile.am
+./java/test/Makefile.in
 ./java/test/junit.sh.in
 ./java/test/JUnit-interface.ert
 ./java/test/JUnit-interface.txt
