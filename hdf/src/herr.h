@@ -216,6 +216,7 @@ typedef enum
       DFE_RANGE,                /* improper range for attempted acess */
       DFE_BADCONV,              /* Don't know how to convert data type */
       DFE_BADTYPE,              /* Incompatible types specified */
+      DFE_BADDIMNAME,           /* Dimension name not valid or already taken */
       DFE_NOVGREP,              /* No Vgroup representation for SDS and dim */
 
 /* Compression errors */
@@ -283,6 +284,9 @@ typedef enum
 /* Generic Vdata/Vset errors */
       DFE_CANTATTACH,           /* Cannot attach to a VData/Vset */
       DFE_CANTDETACH,           /* Cannot detach a VData/Vset with access 'w' */
+
+/* XDR level errors */
+      DFE_XDRERROR,             /* Error occur in XDR level */
 
 /* bit I/O errors */
       DFE_BITREAD,              /* There was a bit-read error */
@@ -402,6 +406,8 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_RANGE,         "Improper range for attempted access"},
     {DFE_BADCONV,       "Don't know how to convert data type"},
     {DFE_BADTYPE,       "Incompatible type specified"},
+    {DFE_BADDIMNAME,    "Dimension name not valid or already taken"},
+    {DFE_NOVGREP,       "No Vgroup representation for SDS and dim"},
 
 /* Compression errors */
     {DFE_BADSCHEME,     "Unknown compression scheme specified"},
@@ -419,6 +425,9 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_CANTCOMP,      "Can't compress an object"},
     {DFE_CANTDECOMP,    "Can't de-compress an object"},
     {DFE_NOENCODER,     "Encoder not available"},
+    {DFE_NOSZLIB,       "SZIP library not available"},
+    {DFE_COMPVERSION,   "Z_VERSION_ERROR (-6) returned from zlib"},
+    {DFE_READCOMP,      "Error in reading compressed data"},
 
 /* Raster errors */
     {DFE_NODIM,         "No dimension record associated with image"},
@@ -457,6 +466,9 @@ PRIVATE const struct error_messages_t error_messages[] =
 /* Generic Vdata/Vset errors */
     {DFE_CANTATTACH,    "Cannot attach to a VData"},
     {DFE_CANTDETACH,    "Cannot detach a VData with access 'w'"},
+
+/* XDR level errors */
+    {DFE_XDRERROR,      "Error from XDR level"},
 
 /* bit I/O errors */
     {DFE_BITREAD,       "There was a bit-read error"},
