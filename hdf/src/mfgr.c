@@ -467,6 +467,8 @@ Store_imginfo(
    include the image's tag/ref, DFTAG_NULL/DFREF_WILDCARD for the group's
    tag/ref, and the image's offset in the file.
 
+   Returns the number of images on success, or NULL, otherwise.
+
    Added to refactor repeated code. -BMR, Jul 13, 2015
  */
 PRIVATE intn
@@ -492,6 +494,52 @@ Get_oldimgs(int32 file_id, imginfo_t *img_info, uint16 searched_tag)
     return num_imgs;
 } /* end Get_oldimgs() */
 
+/* -------------------------- Init_diminfo ------------------------ */
+/*
+   Initializes the dimension information.
+
+   Added to refactor repeated code. -BMR, Apr 23, 2015
+ */
+PRIVATE void
+Init_diminfo(dim_info_t *dim_info)
+{ /* Init_diminfo */
+    dim_info->dim_ref = DFREF_WILDCARD;
+    dim_info->xdim = 256;
+    dim_info->ydim = 1;
+    dim_info->ncomps = 3;
+    dim_info->nt = DFNT_UINT8;
+    dim_info->file_nt_subclass = DFNTF_HDFDEFAULT;
+    dim_info->il = MFGR_INTERLACE_PIXEL;
+    dim_info->nt_tag = DFTAG_NULL;
+    dim_info->nt_ref = DFREF_WILDCARD;
+    dim_info->comp_tag = DFTAG_NULL;
+    dim_info->comp_ref = DFREF_WILDCARD;
+} /* end Init_diminfo */
+
+/* -------------------------- Decode_diminfo ------------------------ */
+/*
+   Decodes dimension information.
+
+   The parameter *p points to a buffer containing the data read from the
+   file.  The data is the previously encoded dimension information.
+
+   Added to refactor repeated code. -BMR, Apr 23, 2015
+ */
+PRIVATE void
+Decode_diminfo(uint8 *p, dim_info_t *dim_info)
+{
+    int16 int16var;  /* temp var */
+
+    INT32DECODE(p, dim_info->xdim);
+    INT32DECODE(p, dim_info->ydim);
+    UINT16DECODE(p, dim_info->nt_tag);
+    UINT16DECODE(p, dim_info->nt_ref);
+    INT16DECODE(p, int16var);
+    dim_info->ncomps = (int32)int16var;
+    INT16DECODE(p, dim_info->il);
+    UINT16DECODE(p, dim_info->comp_tag);
+    UINT16DECODE(p, dim_info->comp_ref);
+} /* Decode_diminfo */
 
 /*--------------------------------------------------------------------------
  NAME
@@ -886,41 +934,17 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                             case DFTAG_LUT:   /* Palette */
                                 new_image->lut_tag=(uint16)img_tag;
                                 new_image->lut_ref=(uint16)img_ref;
+
                                 /* Fill in some default palette dimension info, in case there isn't a DFTAG_LD for this palette */
                                 if(new_image->lut_dim.dim_ref==0)
-                                {
-                                    new_image->lut_dim.dim_ref = DFREF_WILDCARD;
-                                    new_image->lut_dim.xdim=256;
-                                    new_image->lut_dim.ydim=1;
-                                    new_image->lut_dim.ncomps=3;
-                                    new_image->lut_dim.nt=DFNT_UINT8;
-                                    new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                                    new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
-                                    new_image->lut_dim.nt_tag=DFTAG_NULL;
-                                    new_image->lut_dim.nt_ref=DFREF_WILDCARD;
-                                    new_image->lut_dim.comp_tag=DFTAG_NULL;
-                                    new_image->lut_dim.comp_ref=DFREF_WILDCARD;
-                                } /* end if */
+				    Init_diminfo(&(new_image->lut_dim));
                                 break;
 
                             case DFTAG_LD:    /* Palette dimensions */
 {
+                                uint8 *p = GRtbuf;
                                 if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
-                                {
-                                    int16       int16var;
-                                    uint8      *p;
-
-                                    p = GRtbuf;
-                                    INT32DECODE(p, new_image->lut_dim.xdim);
-                                    INT32DECODE(p, new_image->lut_dim.ydim);
-                                    UINT16DECODE(p, new_image->lut_dim.nt_tag);
-                                    UINT16DECODE(p, new_image->lut_dim.nt_ref);
-                                    INT16DECODE(p, int16var);
-                                    new_image->lut_dim.ncomps=(int32)int16var;
-                                    INT16DECODE(p, new_image->lut_dim.il);
-                                    UINT16DECODE(p, new_image->lut_dim.comp_tag);
-                                    UINT16DECODE(p, new_image->lut_dim.comp_ref);
-                                }
+				    Decode_diminfo(p, &(new_image->lut_dim));
                                 else
                                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
@@ -952,23 +976,10 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
 
                             case DFTAG_ID:    /* Image description info */
                             {
+                                uint8 *p = GRtbuf;
                                 at_info_t *new_attr;  /* attr to add to the local attr set */
                                 if (Hgetelement(file_id, (uint16)img_tag, (uint16)img_ref, GRtbuf) != FAIL)
-                                {
-                                    int16       int16var;
-                                    uint8      *p;
-
-                                    p = GRtbuf;
-                                    INT32DECODE(p, new_image->img_dim.xdim);
-                                    INT32DECODE(p, new_image->img_dim.ydim);
-                                    UINT16DECODE(p, new_image->img_dim.nt_tag);
-                                    UINT16DECODE(p, new_image->img_dim.nt_ref);
-                                    INT16DECODE(p, int16var);
-                                    new_image->img_dim.ncomps=(int32)int16var;
-                                    INT16DECODE(p, new_image->img_dim.il);
-                                    UINT16DECODE(p, new_image->img_dim.comp_tag);
-                                    UINT16DECODE(p, new_image->img_dim.comp_ref);
-                                }
+				    Decode_diminfo(p, &(new_image->img_dim));
                                 else
                                     HGOTO_ERROR(DFE_READERROR, FAIL);
 
@@ -1133,40 +1144,19 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                             new_image->lut_tag=elt_tag;
                             new_image->lut_ref=elt_ref;
 
-                            /* Fill in some default palette dimension info, in case
-                               there isn't a DFTAG_LD for this palette */
+                            /* Fill in some default palette dimension info, in
+			       case there isn't a DFTAG_LD for this palette */
                             if(new_image->lut_dim.dim_ref==0)
                             {
-                                new_image->lut_dim.dim_ref = DFREF_WILDCARD;
-                                new_image->lut_dim.xdim=256;
-                                new_image->lut_dim.ydim=1;
-                                new_image->lut_dim.ncomps=3;
-                                new_image->lut_dim.nt=DFNT_UINT8;
-                                new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                                new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
-                                new_image->lut_dim.nt_tag=DFTAG_NULL;
-                                new_image->lut_dim.nt_ref=DFREF_WILDCARD;
-                                new_image->lut_dim.comp_tag=DFTAG_NULL;
-                                new_image->lut_dim.comp_ref=DFREF_WILDCARD;
+				    Init_diminfo(&(new_image->lut_dim));
                             } /* end if */
                             break;
 
                         case DFTAG_LD:    /* Palette dimensions */
+{
+                            uint8 *p = GRtbuf;
                             if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
-                            {
-                                int16       int16var;
-                                uint8      *p;
-                                p = GRtbuf;
-                                INT32DECODE(p, new_image->lut_dim.xdim);
-                                INT32DECODE(p, new_image->lut_dim.ydim);
-                                UINT16DECODE(p, new_image->lut_dim.nt_tag);
-                                UINT16DECODE(p, new_image->lut_dim.nt_ref);
-                                INT16DECODE(p, int16var);
-                                new_image->lut_dim.ncomps=(int32)int16var;
-                                INT16DECODE(p, new_image->lut_dim.il);
-                                UINT16DECODE(p, new_image->lut_dim.comp_tag);
-                                UINT16DECODE(p, new_image->lut_dim.comp_ref);
-                            }
+				Decode_diminfo(p, &(new_image->lut_dim));
                             else
                             {
                                 DFdifree(GroupID);
@@ -1200,24 +1190,12 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                     new_image->lut_dim.nt |= DFNT_LITEND;
                             }     /* end if */
                             break;
-
+}
                         case DFTAG_ID:    /* Image description info */
+                          {
+                            uint8 *p = GRtbuf;
                             if (Hgetelement(file_id, elt_tag, elt_ref, GRtbuf) != FAIL)
-                            {
-                                int16       int16var;
-                                uint8      *p;
-
-                                p = GRtbuf;
-                                INT32DECODE(p, new_image->img_dim.xdim);
-                                INT32DECODE(p, new_image->img_dim.ydim);
-                                UINT16DECODE(p, new_image->img_dim.nt_tag);
-                                UINT16DECODE(p, new_image->img_dim.nt_ref);
-                                INT16DECODE(p, int16var);
-                                new_image->img_dim.ncomps=(int32)int16var;
-                                INT16DECODE(p, new_image->img_dim.il);
-                                UINT16DECODE(p, new_image->img_dim.comp_tag);
-                                UINT16DECODE(p, new_image->img_dim.comp_ref);
-                            }
+				Decode_diminfo(p, &(new_image->img_dim));
                             else
                             {
                                 DFdifree( GroupID );
@@ -1251,7 +1229,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                                     new_image->img_dim.nt |= DFNT_LITEND;
                             }     /* end if */
                             break;
-
+                          }
                         default:    /* ignore unknown tags */
                             break;
                       } /* end switch */
@@ -1297,7 +1275,12 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                   new_image->img_tag=img_info[i].img_tag;
                   new_image->img_ref=img_info[i].img_ref;
 
-                  /* Get dimension information */
+                  /* Get dimension information for this 8-bit image */
+
+		  /* Initialize dim info to default */
+		  Init_diminfo(&(new_image->img_dim));
+
+		  /* Reassign valid values */
                   if (Hgetelement(file_id, DFTAG_ID8, new_image->img_ref, GRtbuf) != FAIL)
                   {
                       uint8      *p;
@@ -1308,20 +1291,10 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                       new_image->img_dim.xdim=(int32)u;
                       UINT16DECODE(p, u);
                       new_image->img_dim.ydim=(int32)u;
+                      new_image->img_dim.ncomps=1;
                   }   /* end if */
                   else
                       HGOTO_ERROR(DFE_GETELEM, FAIL);
-
-                  /* only 8-bit images, so fill in rest of dim info */
-                  new_image->img_dim.dim_ref=DFREF_WILDCARD;
-                  new_image->img_dim.ncomps=1;
-                  new_image->img_dim.nt=DFNT_UINT8;
-                  new_image->img_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                  new_image->img_dim.il=MFGR_INTERLACE_PIXEL;
-                  new_image->img_dim.nt_tag=DFTAG_NULL;
-                  new_image->img_dim.nt_ref=DFREF_WILDCARD;
-                  new_image->img_dim.comp_tag=DFTAG_NULL;
-                  new_image->img_dim.comp_ref=DFREF_WILDCARD;
 
                   /* Get palette information */
                   if(Hexist(file_id, DFTAG_IP8, new_image->img_ref)==SUCCEED)
@@ -1330,17 +1303,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
                       new_image->lut_ref=new_image->img_ref;
 
                       /* set palette dimensions too */
-                      new_image->lut_dim.dim_ref = DFREF_WILDCARD;
-                      new_image->lut_dim.xdim=256;
-                      new_image->lut_dim.ydim=1;
-                      new_image->lut_dim.ncomps=3;
-                      new_image->lut_dim.nt=DFNT_UINT8;
-                      new_image->lut_dim.file_nt_subclass=DFNTF_HDFDEFAULT;
-                      new_image->lut_dim.il=MFGR_INTERLACE_PIXEL;
-                      new_image->lut_dim.nt_tag=DFTAG_NULL;
-                      new_image->lut_dim.nt_ref=DFREF_WILDCARD;
-                      new_image->lut_dim.comp_tag=DFTAG_NULL;
-                      new_image->lut_dim.comp_ref=DFREF_WILDCARD;
+		      Init_diminfo(&(new_image->lut_dim));
                   } /* end if */
                   else
                       new_image->lut_tag=new_image->lut_ref=DFREF_WILDCARD;
@@ -1358,7 +1321,7 @@ static intn GRIget_image_list(int32 file_id,gr_info_t *gr_ptr)
         } /* end if */
     } /* end for */
 
-    HDfree(img_info);   /* free offsets */
+    HDfree(img_info);   /* free image info structures */
 
 done:
   if(ret_value == FAIL)   
