@@ -3,10 +3,7 @@ PROJECT (HDF4_JAVA_JNI C)
 
 set (HDF4_JAVA_JNI_CSRCS
     ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfanImp.c
-    ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfdfanImp.c
-    ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfdfcompImp.c
     ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfdfpalImp.c
-    ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfdfsdImp.c
     ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfdfuImp.c
     ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfexceptionImp.c
     ${HDF4_JAVA_JNI_SOURCE_DIR}/hdfgrImp.c

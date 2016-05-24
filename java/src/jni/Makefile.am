@@ -17,7 +17,7 @@ AM_CPPFLAGS=-I$(top_srcdir)/hdf/src        \
 lib_LTLIBRARIES=libhdf_java.la
 
 # Source files for the library
-libhdf_java_la_SOURCES=hdfanImp.c hdfdfanImp.c hdfdfcompImp.c hdfdfpalImp.c hdfdfsdImp.c \
+libhdf_java_la_SOURCES=hdfanImp.c hdfdfpalImp.c \
    hdfdfuImp.c hdfexceptionImp.c hdfgrImp.c hdfheImp.c hdfhxImp.c hdfImp.c hdfnativeImp.c \
    hdfr24Imp.c hdfr8Imp.c hdfsdsImp.c hdfstructsutil.c hdfvdataImp.c hdfvfImp.c hdfvgroupImp.c \
    hdfvhImp.c hdfvqImp.c hdfvsqImp.c

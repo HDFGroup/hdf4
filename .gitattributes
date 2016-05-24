@@ -84,7 +84,6 @@ java/src/hdf/hdflib/HDFChunkInfo.java -text
 java/src/hdf/hdflib/HDFCompInfo.java -text
 java/src/hdf/hdflib/HDFConstants.java -text
 java/src/hdf/hdflib/HDFDeflateCompInfo.java -text
-java/src/hdf/hdflib/HDFDeprecated.java -text
 java/src/hdf/hdflib/HDFException.java -text
 java/src/hdf/hdflib/HDFIMCOMPCompInfo.java -text
 java/src/hdf/hdflib/HDFJPEGCompInfo.java -text
@@ -101,7 +100,6 @@ java/src/hdf/hdflib/HDFOldRLECompInfo.java -text
 java/src/hdf/hdflib/HDFRLECompInfo.java -text
 java/src/hdf/hdflib/HDFSKPHUFFCompInfo.java -text
 java/src/hdf/hdflib/HDFSZIPCompInfo.java -text
-java/src/hdf/hdflib/HDFTable.java -text
 java/src/hdf/overview.html -text
 java/src/jni/CMakeLists.txt -text
 java/src/jni/Makefile.am -text
@@ -109,10 +107,7 @@ java/src/jni/Makefile.in -text
 java/src/jni/h4jni.h -text
 java/src/jni/hdfImp.c -text
 java/src/jni/hdfanImp.c -text
-java/src/jni/hdfdfanImp.c -text
-java/src/jni/hdfdfcompImp.c -text
 java/src/jni/hdfdfpalImp.c -text
-java/src/jni/hdfdfsdImp.c -text
 java/src/jni/hdfdfuImp.c -text
 java/src/jni/hdfexceptionImp.c -text
 java/src/jni/hdfgrImp.c -text

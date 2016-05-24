@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  This is the Java interface for the HDF 4.1 library.
+ *  This is the Java interface for the HDF 4.2 library.
  *  <p>
  *  This code is the called by Java programs to access the
  *  entry points of the HDF 4.2 library.

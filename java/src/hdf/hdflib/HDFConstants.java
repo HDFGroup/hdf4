@@ -16,7 +16,7 @@ package hdf.hdflib;
 /**
  *  <p>
  *  This interface defines the values of constants defined
- *  by the HDF 4.1 API.
+ *  by the HDF 4.2 API.
  */
 public class HDFConstants
 {

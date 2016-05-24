@@ -22,7 +22,6 @@ set (HDF4_JAVA_HDF_HDF4_SRCS
     HDFCompInfo.java
     HDFConstants.java
     HDFDeflateCompInfo.java
-    HDFDeprecated.java
     HDFIMCOMPCompInfo.java
     HDFJPEGCompInfo.java
     HDFLibrary.java
@@ -37,7 +36,6 @@ set (HDF4_JAVA_HDF_HDF4_SRCS
     HDFRLECompInfo.java
     HDFSKPHUFFCompInfo.java
     HDFSZIPCompInfo.java
-    HDFTable.java
 )
 
 set (CMAKE_JNI_TARGET TRUE)

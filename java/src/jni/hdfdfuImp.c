@@ -13,7 +13,7 @@
  ****************************************************************************/
 /*
  *  This code is the C-interface called by Java programs to access the
- *  HDF 4.1 library.
+ *  HDF 4.2 library.
  *
  *  Each routine wraps a single HDF entry point, generally with the
  *  analogous arguments and return codes.

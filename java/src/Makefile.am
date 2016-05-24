@@ -29,7 +29,6 @@ hdf_java_JAVA =  \
     ${pkgpath}/HDFCompInfo.java \
     ${pkgpath}/HDFConstants.java \
     ${pkgpath}/HDFDeflateCompInfo.java \
-    ${pkgpath}/HDFDeprecated.java \
     ${pkgpath}/HDFIMCOMPCompInfo.java \
     ${pkgpath}/HDFJPEGCompInfo.java \
     ${pkgpath}/HDFLibrary.java \
@@ -43,8 +42,7 @@ hdf_java_JAVA =  \
     ${pkgpath}/HDFOldRLECompInfo.java \
     ${pkgpath}/HDFRLECompInfo.java \
     ${pkgpath}/HDFSKPHUFFCompInfo.java \
-    ${pkgpath}/HDFSZIPCompInfo.java \
-    ${pkgpath}/HDFTable.java
+    ${pkgpath}/HDFSZIPCompInfo.java
 
 
 $(jarfile): classhdf_java.stamp classes docs
