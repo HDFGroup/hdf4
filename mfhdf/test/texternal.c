@@ -26,7 +26,8 @@
 					   with external data */
 #define WRAPSDS   "WrapperDataSet"	/* data set pointing to external data */
 #define NOEXTSDS  "NoExternalDataSet"	/* data set with data in main file */
-#define EXTFILE2 "ExternalSDSexisting"
+#define EXTFILE2  "ExternalSDSexisting"	/* data set having data */
+#define EXTFILE3  "ShouldNotHappen"	/* data set already is external */
 #define OFFSET    24
 #define NUM_SDS   4
 #define SDS1      "Dataset 1"
@@ -442,6 +443,8 @@ int test_mult_setexternal()
     int32 sd_id, sds1_id, sds2_id, sds3_id, sds4_id;
     int32 ap_start[3], ap_edges[3], dim_sizes[3];
     int32 sds1_size=0, sds2_size=0, sds3_size=0;
+    char *extfile_name;
+    intn  name_len = 0;
     intn  status = SUCCEED;
     intn  num_errs = 0;    /* number of errors in compression test so far */
  
@@ -467,18 +470,35 @@ int test_mult_setexternal()
 
     /* Move data from an external data set, SDS1, into the external file again.
        This simulates the situation of the example being run more than once,
-       causing failure in daily test. (HDFFR-1516)-BMR */
+       causing failure in daily test.  This action should have no effect now.
+       (HDFFR-1521)-BMR */
 
     /* Select the named data set, id is checked by callee */
     sds1_id = get_SDSbyName(sd_id, SDS1);
 
-    /* Try to move it to the external file again; should not fail */
-    status = SDsetexternalfile (sds1_id, EXTFILE2, OFFSET);
+    /* Try to move it to the external file again; should neither fail, nor have
+       any effect.  External file name should still be EXTFILE2 */
+    status = SDsetexternalfile (sds1_id, EXTFILE3, OFFSET);
     if (status < 0)
         fprintf(stderr, "SDsetexternalfile still fail when called more than once on an SDS\n");
 
-    /* Verify that SDS1 still has the correct size of its data */
-    verify_datasize(sds1_id, sds1_size, SDS1);
+    /* Verify that external file still is EXTFILE2, and not EXTFILE3 */
+
+    /* Call SDgetexternalinfo the first time passing in 0 for external
+    file name length to get the actual length */
+    name_len = SDgetexternalinfo(sds1_id, 0, NULL, NULL, NULL);
+    if (name_len <= 0)
+        fprintf(stderr, "SDsetexternalfile should return length greater than 0\n");
+
+    /* Prepare buffer for external file name */
+    extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
+    CHECK_ALLOC(extfile_name, "extfile_name", "SDgetexternalinfo");
+    HDmemset(extfile_name, '\0', name_len+1);
+
+    /* Call SDgetexternalinfo again and get the external file info */
+    name_len = SDgetexternalinfo(sds1_id, name_len+1, extfile_name, NULL, NULL);
+    VERIFY(name_len, (intn)HDstrlen(EXTFILE2), "SDgetexternalinfo");
+    VERIFY_CHAR(EXTFILE2, extfile_name, "SDgetexternalinfo");
 
     /* Close the data set and the file */
     status = SDendaccess(sds1_id);
@@ -580,7 +600,12 @@ int test_special_combos()
 
     /* Now, move SDS2's data to the external file, then check its size
        This tests the combo: SPECIAL_LINKED and SPECIAL_EXT.  1600 is just a
-       random number that is more than enough to go pass the existing data */
+       random number that is more than enough to go pass the existing data.
+       This action verifies the fix in HDFFR-1516.  SDsetexternalfile does not
+       fail.  Note that there is no test for the case where calling
+       SDsetexternalfile on an external SDS failed, because SDsetexternalfile is
+       modified to have no effect if it is called more than once on an SDS, see
+       HDFFR-1521. */
     status = SDsetexternalfile (sds2_id, EXTFILE2, 1600);
     CHECK(status, FAIL, "SDsetexternalfile");
 
@@ -592,7 +617,7 @@ int test_special_combos()
     /* Select the named data set, id is checked by callee */
     sds3_id = get_SDSbyName(sd_id, SDS3);
 
-    /* Now, move SDS3's data to the external file, then check its size.  This */
+    /* Move SDS3's data to the external file, then check its size.  This also */
     /* tests moving an existing unlimited-dimension data set to external file */
     status = SDsetexternalfile(sds3_id, EXTFILE2, 2500);  /* random spot */
     CHECK(status, FAIL, "SDsetexternalfile");

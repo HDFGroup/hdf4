@@ -3621,6 +3621,13 @@ SDdiminfo(int32  id,    /* IN:  dimension ID */
 
     if(name != NULL) 
       {
+/* GeorgeV switched to use HDmemcpy in r2739.  Trying back to HDstrncpy because
+   it should be used to copy a string (emailed with QK 5/27/2016), but tests
+   failed.  Some strings are stored with NC_string, more time is needed to
+   figure out the whole scheme.  Switch back to using HDmemcpy for now.
+   -BMR, 5/30/2016
+*/
+
 #if 0
         HDstrncpy(name, dim->name->values, dim->name->len);
 #endif
@@ -3683,8 +3690,6 @@ done:
 
       }
     /* Normal cleanup */
-
-
     return ret_value;    
 } /* SDdiminfo */
 
@@ -3841,8 +3846,6 @@ done:
 
       }
     /* Normal cleanup */
-
-
     return ret_value;    
 } /* SDgetdimstrs */
 
@@ -3883,10 +3886,11 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
                   int32 offset    /* IN: offset in external file */)
 {
     CONSTR(FUNC, "SDsetexternalfile");    /* for HGOTO_ERROR */
-    NC       *handle = NULL;
-    NC_var   *var = NULL;
-    intn      status;
-    int       ret_value = SUCCEED;
+    NC     *handle = NULL;
+    NC_var *var = NULL;
+    intn    extfname_len = 0; /* Length of external file's name */
+    intn    status;
+    int     ret_value = SUCCEED;
 
 #ifdef SDDEBUG
     fprintf(stderr, "SDsetexternalfile: I've been called\n");
@@ -3894,6 +3898,13 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
 
     /* clear error stack */
     HEclear();
+
+    /* Call SDgetexternalinfo passing in 0 and NULLs to get only the length of
+       the external filename if it exists.  A positive value indicates an
+       external file exists and SDsetexternalfile should not have any effect */
+    extfname_len = SDgetexternalinfo(id, 0, NULL, NULL, NULL);
+    if (extfname_len > 0)
+	HGOTO_DONE(DFE_NONE);
 
     if(NULL == filename || offset < 0)
       {
@@ -3922,8 +3933,7 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
       {
           /* no need to give a length since the element already exists */
           status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG, 
-                                  (uint16) var->data_ref,
-                                  filename, offset, (int32)0);
+                         (uint16) var->data_ref, filename, offset, (int32)0);
       } 
     else 
       {
@@ -3940,16 +3950,13 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
 #endif /* NOT_YET */
           if(var->data_ref == 0)
             {
-                HGOTO_ERROR(DFE_ARGS, FAIL);
+                HGOTO_ERROR(DFE_NOREF, FAIL);
             }
 
           /* need to give a length since the element does not exist yet */
           status = (intn)HXcreate(handle->hdf_file, (uint16)DATA_TAG, 
-                                  (uint16) var->data_ref,
-                                  filename, offset, length);
-
+                         (uint16) var->data_ref, filename, offset, length);
       }
-
     if(status != FAIL) 
       {
           if((var->aid != 0) && (var->aid != FAIL))
@@ -3958,9 +3965,7 @@ SDsetexternalfile(int32 id,       /* IN: dataset ID */
                   {
                       HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                   }
-
             }
-
           var->aid = status;
           ret_value = SUCCEED;
       }
@@ -3973,8 +3978,6 @@ done:
 
       }
     /* Normal cleanup */
-
-
     return ret_value;    
 } /* SDsetexternalfile */
 
@@ -3999,9 +4002,10 @@ done:
     is 0, SDgetexternalinfo will simply return the length of the external file
     name, and not the file name itself.
 
-    When the element is not special, SDgetexternalinfo will return
-    0.  If the element is SPECIAL_EXT, but the external file name
-    doesn't exist, SDgetexternalinfo will return FAIL.
+    When the element is not special or special but not external,
+    SDgetexternalinfo will return 0.  If the element is SPECIAL_EXT,
+    but the external file name doesn't exist, SDgetexternalinfo will
+    return FAIL.
 
     IMPORTANT:  It is the user's responsibility to see that the 
     external files are located in the same directory with the main
@@ -4132,7 +4136,7 @@ done:
 } /* SDgetexternalinfo */
 
 
-/******************************************************************************
+/************************** Deprecated ******************************
  NAME
 	SDgetexternalfile -- retrieves external file information
 	(Deprecated)
@@ -4254,7 +4258,7 @@ done:
       }
     /* Normal cleanup */
     return ret_value;    
-} /* SDgetexternalfile */
+} /* SDgetexternalfile (Deprecated) */
 
 
 /******************************************************************************
