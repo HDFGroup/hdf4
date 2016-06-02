@@ -306,7 +306,10 @@ typedef enum
 
 /* General to all interfaces */
       DFE_CANTSETATTR,          /* Failed to add an attribute */
-      DFE_CANTGETATTR           /* Failed to find or get an attribute */
+      DFE_CANTGETATTR,          /* Failed to find or get an attribute */
+
+/* Annotation interface errors */
+      DFE_ANAPIERROR		/* Failed in annotation interface */
   }
 hdf_err_code_t;
 
@@ -495,7 +498,10 @@ PRIVATE const struct error_messages_t error_messages[] =
 
 /* General to all interfaces */
     {DFE_CANTSETATTR,   "Cannot set an attribute"},
-    {DFE_CANTGETATTR,   "Cannot find or get an attribute"}
+    {DFE_CANTGETATTR,   "Cannot find or get an attribute"},
+
+/* Annotation interface errors */
+    {DFE_ANAPIERROR,	"Failed in annotation interface"}
 
 };
 #endif /* _H_ERR_MASTER_ */
