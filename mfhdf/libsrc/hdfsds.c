@@ -264,18 +264,6 @@ hdf_read_ndgs(NC *handle)
           goto done;
       }
 
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-            {
-                HERROR(DFE_NOSPACE);
-                ret_value = FAIL;
-                goto done;
-            }
-      }
-
     /* no dimensions or variables yet */
     current_dim = 0;
     current_var = 0;
@@ -355,6 +343,18 @@ hdf_read_ndgs(NC *handle)
                  *        ref number and read the element once this while loop
                  *        is finished.
                  */
+
+		/* Check if temproray buffer has been allocated */
+		if (ptbuf == NULL)
+		{
+		    ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+		    if (ptbuf == NULL)
+		    {
+			HERROR(DFE_NOSPACE);
+			ret_value = FAIL;
+			goto done;
+		    }
+		}
 
                 while (!DFdiget(GroupID, &tmpTag, &tmpRef)) 
                   {
@@ -860,6 +860,13 @@ hdf_read_ndgs(NC *handle)
                             break;
                         } /* end switch 'tmpTag */
                   }     /* end while 'DFdiget()'*/
+
+		/* Free local buffer */
+		if (ptbuf != NULL)
+		{
+		    HDfree(ptbuf);
+		    ptbuf = NULL;
+		}
             
                 if(lRef) 
                   {
