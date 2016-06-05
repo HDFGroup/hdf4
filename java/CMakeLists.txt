@@ -13,6 +13,12 @@ find_package (JNI)
 
 INCLUDE_DIRECTORIES ( ${JNI_INCLUDE_DIRS} )
 
+if (WIN32)
+  set (HDF_JRE_DIRECTORY "C:/Program Files/Java/jre8")
+else (WIN32)
+  set (HDF_JRE_DIRECTORY "/usr/lib/jvm/jre")
+endif (WIN32)
+
 #-----------------------------------------------------------------------------
 # Include the main src and config directories
 #-----------------------------------------------------------------------------
@@ -61,17 +67,9 @@ install (
 #-----------------------------------------------------------------------------
 option (HDF4_JAVA_PACK_JRE  "Package a JRE installer directory" OFF)
 if (HDF4_JAVA_PACK_JRE)
-  if (WIN32)
-    install (
-        DIRECTORY "C:/Program Files/Java/jre8"
-        DESTINATION ${HDF4_INSTALL_BIN_DIR}
-        USE_SOURCE_PERMISSIONS
-    )
-  else (WIN32)
-    install (
-        DIRECTORY "/usr/lib/jvm/jre"
-        DESTINATION ${HDF4_INSTALL_BIN_DIR}
-        USE_SOURCE_PERMISSIONS
-    )
-  endif (WIN32)
+  install (
+      DIRECTORY ${HDF_JRE_DIRECTORY}
+      DESTINATION ${HDF4_INSTALL_BIN_DIR}
+      USE_SOURCE_PERMISSIONS
+  )
 endif (HDF4_JAVA_PACK_JRE)
