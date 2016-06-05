@@ -64,6 +64,12 @@
 
 #define SDG_MAX_INITIAL 100
 
+/* local macros */
+/* A variation of HGOTO_ERROR macro, but instead of label "done:",
+   it is for label "done_adesc:", which is only in this file. */
+#define HGOTO_ADESC_ERROR(err, ret_val) {HERROR(err); ret_value = ret_val; \
+                                   goto done_adesc;}
+
 /* local variables */
 PRIVATE intn       sdgCurrent;
 PRIVATE intn       sdgMax;
@@ -128,6 +134,7 @@ hdf_query_seen_sdg(uint16 ndgRef)
 PRIVATE intn 
 hdf_register_seen_sdg(uint16 sdgRef)
 {
+    CONSTR(FUNC, "hdf_register_seen_sdg");        /* for HERROR */
     intn ret_value = SUCCEED;
 
     /* check if table is allocated */
@@ -137,8 +144,7 @@ hdf_register_seen_sdg(uint16 sdgRef)
           sdgTable = (uint16 *) HDmalloc(sdgMax * sizeof(uint16));
           if (sdgTable == NULL)
             {
-                ret_value = FAIL;
-                goto done;
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
           sdgCurrent = 0;
       }
@@ -153,8 +159,7 @@ hdf_register_seen_sdg(uint16 sdgRef)
           sdgTable = (uint16 *) HDrealloc((VOIDP) sdgTable, sdgMax * sizeof(uint16));
           if (sdgTable == NULL)
             {
-                ret_value = FAIL;
-                goto done;
+                HGOTO_ERROR(DFE_NOSPACE, FAIL);
             }
       }
 
@@ -167,7 +172,6 @@ done:
 
     return ret_value;
 } /* hdf_register_seen_sdg */
-
 
 /******************************************************************************
  NAME
@@ -184,7 +188,7 @@ done:
 PRIVATE intn 
 hdf_read_ndgs(NC *handle)
 {
-    static const char *FUNC = "hdf_read_ndg_dims";
+    CONSTR(FUNC, "hdf_read_ndgs");        /* for HERROR */
     char     tmpname[80] = "";
     uint8    ntstring[4] = "";
     intn     dimcount;
@@ -243,37 +247,19 @@ hdf_read_ndgs(NC *handle)
     dims = (NC_dim **) HDmalloc(sizeof(NC_dim *) * max_thangs);
     if(NULL == dims) 
       {
-          HERROR(DFE_NOSPACE);
-          ret_value = FAIL;
-          goto done;
+          HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
     
     vars = (NC_var **) HDmalloc(sizeof(NC_var *) * max_thangs);
     if(NULL == vars) 
       {
-          HERROR(DFE_NOSPACE);
-          ret_value = FAIL;
-          goto done;
+          HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
 
     attrs = (NC_attr **) HDmalloc(sizeof(NC_attr *) * max_thangs);
     if(NULL == attrs) 
       {
-          HERROR(DFE_NOSPACE);
-          ret_value = FAIL;
-          goto done;
-      }
-
-    /* Check if temproray buffer has been allocated */
-    if (ptbuf == NULL)
-      {
-          ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
-          if (ptbuf == NULL)
-            {
-                HERROR(DFE_NOSPACE);
-                ret_value = FAIL;
-                goto done;
-            }
+          HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
 
     /* no dimensions or variables yet */
@@ -307,11 +293,7 @@ hdf_read_ndgs(NC *handle)
             
                 if(HQuerytagref(aid, &ndgTag, &ndgRef) == FAIL) 
                   {
-#ifdef DEBUG
-                      fprintf(stderr, "Call to Hinquire failed\n");
-#endif
-                      ret_value = FAIL;
-                      goto done;
+                      HGOTO_ERROR(DFE_INTERNAL, FAIL);
                   }
 
                 /* Test if its an SDG-NDG which we've processed already */
@@ -329,8 +311,7 @@ hdf_read_ndgs(NC *handle)
                 /* read the group into memory */
                 if ((GroupID = DFdiread(handle->hdf_file, ndgTag, ndgRef)) < 0) 
                   {
-                      ret_value = FAIL;
-                      goto done;
+                      HGOTO_ERROR(DFE_INTERNAL, FAIL);
                   }
             
                 sddRef = lRef = uRef = fRef = sRef = sdRef = 0;
@@ -356,6 +337,18 @@ hdf_read_ndgs(NC *handle)
                  *        is finished.
                  */
 
+		/* Check if temproray buffer has been allocated */
+		if (ptbuf == NULL)
+		{
+		    ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+		    if (ptbuf == NULL)
+		    {
+			HERROR(DFE_NOSPACE);
+			ret_value = FAIL;
+			goto done;
+		    }
+		}
+
                 while (!DFdiget(GroupID, &tmpTag, &tmpRef)) 
                   {
                       switch(tmpTag) 
@@ -364,15 +357,13 @@ hdf_read_ndgs(NC *handle)
                             aid1 = Hstartread(handle->hdf_file, tmpTag, tmpRef);
                             if (aid1 == FAIL)
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_CANTACCESS, FAIL);
                               }
 
                             /* read rank */
                             if (Hread(aid1, (int32) 2, ptbuf) == FAIL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_READERROR, FAIL);
                               }
 
                             p = ptbuf;
@@ -382,29 +373,25 @@ hdf_read_ndgs(NC *handle)
                             dimsizes = (int32 *) HDmalloc((uint32) rank * sizeof(int32));
                             if (dimsizes == NULL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
 
                             vardims = (intn *) HDmalloc((uint32) rank * sizeof(intn));
                             if (vardims == NULL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
 
                             scaletypes = (int32 *) HDmalloc((uint32) rank * sizeof(int32));
                             if (scaletypes == NULL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
                     
                             /* read dimension record */
                             if (Hread(aid1, (int32) 4 * rank, ptbuf) == FAIL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_READERROR, FAIL);
                               }
 
                             p = ptbuf;
@@ -414,8 +401,7 @@ hdf_read_ndgs(NC *handle)
                           /* read tag/ref of NT */
                             if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_READERROR, FAIL);
                               }
                             p = ptbuf;
                             UINT16DECODE(p, ntTag);
@@ -424,8 +410,7 @@ hdf_read_ndgs(NC *handle)
                             /* read actual NT */
                             if (Hgetelement(handle->hdf_file, ntTag, ntRef, ntstring) == FAIL)
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
                     
                             HDFtype = ntstring[1];
@@ -435,8 +420,7 @@ hdf_read_ndgs(NC *handle)
                                   /* replace it with NCAdvice or HERROR? */
                                   fprintf(stderr "hdf_read_ndgs: hdf_unmap_type failed for %d\n", HDFtype);
 #endif
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
                             /* test if data was stored in native format of different 
@@ -454,8 +438,7 @@ hdf_read_ndgs(NC *handle)
                                             HDFtype |= DFNT_NATIVE;
                                         else  /* different machine */
                                           {
-                                              ret_value = FAIL;
-                                              goto done;
+                                              HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                           }
                                     }  /* machine type */
                               }   /* Little Endian */
@@ -465,8 +448,7 @@ hdf_read_ndgs(NC *handle)
                               {
                                   if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) 
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_READERROR, FAIL);
                                     }
 
                                   p = ptbuf;
@@ -476,8 +458,7 @@ hdf_read_ndgs(NC *handle)
                                   /* read NT of this scale (dimension) */
                                   if (Hgetelement(handle->hdf_file, ntTag, ntRef, ntstring) == FAIL)
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_GETELEM, FAIL);
                                     }
                         
                                   scaletypes[i] = ntstring[1];
@@ -494,8 +475,7 @@ hdf_read_ndgs(NC *handle)
                                                   scaletypes[i] |= DFNT_NATIVE;
                                               else  /* different machine */
                                                 {
-                                                    ret_value = FAIL;
-                                                    goto done;
+                                                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                                 }
                                           }  /* scale machine type */
                                     }    /* Little Endian */
@@ -504,8 +484,7 @@ hdf_read_ndgs(NC *handle)
                             sddRef = tmpRef;    /* prepare for a new dim var */
                             if (Hendaccess(aid1) == FAIL)
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
                               }
                     
                             break;
@@ -532,23 +511,19 @@ hdf_read_ndgs(NC *handle)
                             len = Hlength(handle->hdf_file, DFTAG_SDC, tmpRef);
                             if (len == FAIL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
                             coordbuf = (uint8 *) HDmalloc((uint32) len + 1);
                             if (NULL == coordbuf) 
                               {
-                                  HERROR(DFE_NOSPACE);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
 
                             if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL)
                               {
                                   HDfreespace((VOIDP)coordbuf);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
 
                             coordbuf[len] = '\0';
@@ -559,8 +534,7 @@ hdf_read_ndgs(NC *handle)
                                                               NC_CHAR, HDstrlen(coordbuf), coordbuf);
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_CHAR;
@@ -585,8 +559,7 @@ hdf_read_ndgs(NC *handle)
                            */
                             if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
                     
                             if (Hlength(handle->hdf_file, tmpTag, tmpRef) == 36) 
@@ -597,8 +570,7 @@ hdf_read_ndgs(NC *handle)
                                              (VOIDP) tBuf, 
                                              DFNT_FLOAT64, 4, DFACC_READ, 0, 0))
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
                                     }
                         
                                   attrs[current_attr] = 
@@ -609,8 +581,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT64; 
@@ -623,8 +594,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
@@ -637,8 +607,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
@@ -651,8 +620,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
@@ -662,8 +630,7 @@ hdf_read_ndgs(NC *handle)
                                              (VOIDP) tBuf,
                                              DFNT_INT32, 1, DFACC_READ, 0,0))
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
                                     }
 
 
@@ -675,8 +642,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_INT32;
@@ -690,8 +656,7 @@ hdf_read_ndgs(NC *handle)
                                              (VOIDP)tBuf, 
                                              DFNT_FLOAT32, 4, DFACC_READ, 0, 0))
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
                                     }
 
                         
@@ -703,8 +668,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
@@ -717,8 +681,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
@@ -731,8 +694,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
@@ -745,8 +707,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
@@ -756,8 +717,7 @@ hdf_read_ndgs(NC *handle)
                                              (VOIDP) tBuf,
                                              DFNT_INT16, 1, DFACC_READ, 0,0))
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
                                     }
 
 
@@ -769,8 +729,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == attrs[current_attr])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       attrs[current_attr++]->HDFtype = DFNT_INT16;
@@ -782,16 +741,14 @@ hdf_read_ndgs(NC *handle)
                     
                             if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
                     
                             if (FAIL == DFKconvert((VOIDP)ptbuf, 
                                        (VOIDP)tBuf, 
                                        HDFtype, 2, DFACC_READ, 0, 0))
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_BADCONV, FAIL);
                               }
 
                     
@@ -803,8 +760,7 @@ hdf_read_ndgs(NC *handle)
 
                             if (NULL == attrs[current_attr])
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
                             else
                                 attrs[current_attr++]->HDFtype = HDFtype;
@@ -817,8 +773,7 @@ hdf_read_ndgs(NC *handle)
 
                             if (NULL == attrs[current_attr])
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
                             else
                                 attrs[current_attr++]->HDFtype = HDFtype;
@@ -830,8 +785,7 @@ hdf_read_ndgs(NC *handle)
 
                             if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL) 
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
                             else 
                               {
@@ -849,8 +803,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (hdf_register_seen_sdg(sdgRef) == FAIL)
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                               }
 
@@ -860,6 +813,13 @@ hdf_read_ndgs(NC *handle)
                             break;
                         } /* end switch 'tmpTag */
                   }     /* end while 'DFdiget()'*/
+
+		/* Free local buffer */
+		if (ptbuf != NULL)
+		{
+		    HDfree(ptbuf);
+		    ptbuf = NULL;
+		}
             
                 if(lRef) 
                   {
@@ -872,22 +832,18 @@ hdf_read_ndgs(NC *handle)
                       len = Hlength(handle->hdf_file, DFTAG_SDL, lRef);
                       if(len == FAIL) 
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                 
                       labelbuf = (uint8 *) HDmalloc((uint32) len + 3);
                       if(NULL == labelbuf) 
                         {
-                            HERROR(DFE_NOSPACE);
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
                       if(Hgetelement(handle->hdf_file, DFTAG_SDL, lRef, labelbuf) == FAIL)
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_GETELEM, FAIL);
                         }
                 
                       labelbuf[len + 2] = '\0';
@@ -905,22 +861,18 @@ hdf_read_ndgs(NC *handle)
                       len = Hlength(handle->hdf_file, DFTAG_SDU, uRef);
                       if(len == FAIL) 
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
 
                       unitbuf = (uint8 *) HDmalloc((uint32) len+3);
                       if(NULL == unitbuf) 
                         {
-                            HERROR(DFE_NOSPACE);
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
                 
                       if(Hgetelement(handle->hdf_file, DFTAG_SDU, uRef, unitbuf) == FAIL)
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_GETELEM, FAIL);
                         }
 
                       unitbuf[len + 2] = '\0';
@@ -937,22 +889,18 @@ hdf_read_ndgs(NC *handle)
                       len = Hlength(handle->hdf_file, DFTAG_SDF, fRef);
                       if(len == FAIL) 
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
 
                       formatbuf = (uint8 *) HDmalloc((uint32) len+3);
                       if(NULL == formatbuf) 
                         {
-                            HERROR(DFE_NOSPACE);
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
 
                       if(Hgetelement(handle->hdf_file, DFTAG_SDF, fRef, formatbuf) == FAIL)
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_GETELEM, FAIL);
                         }
 
                       formatbuf[len + 2] = '\0';
@@ -969,22 +917,18 @@ hdf_read_ndgs(NC *handle)
                       len = Hlength(handle->hdf_file, DFTAG_SDS, sRef);
                       if(len == FAIL) 
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                 
                       scalebuf = (uint8 *) HDmalloc((uint32) len);
                       if(NULL == scalebuf) 
                         {
-                            HERROR(DFE_NOSPACE);
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
                 
                       if(Hgetelement(handle->hdf_file, DFTAG_SDS, sRef, scalebuf) == FAIL)
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_GETELEM, FAIL);
                         }
                 
                   } 
@@ -1054,17 +998,13 @@ hdf_read_ndgs(NC *handle)
                             dims = (NC_dim **) HDrealloc((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
                             if(NULL == dims) 
                               {
-                                  HERROR(DFE_NOSPACE);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
 
                             vars = (NC_var **) HDrealloc((VOIDP) vars, sizeof(NC_var *) * max_thangs);
                             if(NULL == vars) 
                               {
-                                  HERROR(DFE_NOSPACE);
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
                         }
 
@@ -1075,8 +1015,7 @@ hdf_read_ndgs(NC *handle)
                       dims[this_dim] = NC_new_dim(tmpname, dimsizes[dim]);
                       if (NULL == dims[this_dim])
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                 
                       /* 
@@ -1104,8 +1043,7 @@ hdf_read_ndgs(NC *handle)
                                   /* replace it with NCAdvice or HERROR? */
                                   fprintf(stderr "hdf_read_ndgs: hdf_unmap_type failed for %d\n", scaletypes[dim]);
 #endif
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
                             vars[current_var] = NC_new_var(tmpname, 
@@ -1114,8 +1052,7 @@ hdf_read_ndgs(NC *handle)
                                                            &this_dim);
                             if (NULL == vars[current_var])
                               {
-                                  ret_value = FAIL;
-                                  goto done;
+                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
                             vars[current_var]->data_tag = DFTAG_SDS;  /* not normal data */
@@ -1165,8 +1102,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == dimattrs[dimattrcnt])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
@@ -1182,8 +1118,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == dimattrs[dimattrcnt])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
@@ -1199,8 +1134,7 @@ hdf_read_ndgs(NC *handle)
 
                                   if (NULL == dimattrs[dimattrcnt])
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                                   else
                                       dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
@@ -1216,8 +1150,7 @@ hdf_read_ndgs(NC *handle)
                                                                         (Void *) dimattrs);
                                   if (NULL == vars[current_var]->attrs)
                                     {
-                                        ret_value = FAIL;
-                                        goto done;
+                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
                                     }
                               }
                             else
@@ -1232,19 +1165,11 @@ hdf_read_ndgs(NC *handle)
 
                                   dims = (NC_dim **) HDrealloc((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
                                   if(NULL == dims) 
-                                    {
-                                        HERROR(DFE_NOSPACE);
-                                        ret_value = FAIL;
-                                        goto done;
-                                    }
+                                        HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         
                                   vars = (NC_var **) HDrealloc((VOIDP)vars, sizeof(NC_var *) * max_thangs);
                                   if(NULL == vars) 
-                                    {
-                                        HERROR(DFE_NOSPACE);
-                                        ret_value = FAIL;
-                                        goto done;
-                                    }
+                                        HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
                         } /* end if 'new_dim' */
                   } /* end for 'dim' */
@@ -1279,8 +1204,7 @@ hdf_read_ndgs(NC *handle)
                 vars[current_var] = NC_new_var(tmpname, type, (int) rank, vardims);
                 if (NULL == vars[current_var])
                   {
-                      ret_value = FAIL;
-                      goto done;
+                      HGOTO_ERROR(DFE_INTERNAL, FAIL);
                   }
 
 #if 0
@@ -1296,7 +1220,8 @@ hdf_read_ndgs(NC *handle)
 
 		/* Indicate that it is unknown whether the current variable 
 		   is an SDS or a coordinate variable.  bugzilla 624 - BMR - 
-		   05/16/2007 */
+		   05/16/2007.  This looks like a IS_CRDVAR because it's from
+		   vardim! -BMR - 6/1/16 */
                 vars[current_var]->var_type  = UNKNOWN;
 
 
@@ -1331,8 +1256,7 @@ hdf_read_ndgs(NC *handle)
                     /* start Annotation inteface */
                     if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
                       {
-                          ret_value = FAIL;
-                          goto done_adesc; 
+                          HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
                       }
 
                     /* Get number of data descs with this tag/ref */
@@ -1348,8 +1272,7 @@ hdf_read_ndgs(NC *handle)
 #ifdef AN_DEBUG
                                 fprintf(stderr,"failed to allocate space for %d descs \n", num_ddescs);
 #endif
-                                ret_value = FAIL;
-                                goto done_adesc;
+                                HGOTO_ADESC_ERROR(DFE_NOSPACE, FAIL);
                             }
 
                           /* get list of desc annotations id's with this tag/ref */
@@ -1358,8 +1281,7 @@ hdf_read_ndgs(NC *handle)
 #ifdef AN_DEBUG
                                 fprintf(stderr,"failed to get %d descs list \n", num_ddescs);
 #endif
-                                ret_value = FAIL;
-                                goto done_adesc;
+                                HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
                             }
 
                           /* loop through desc list. */
@@ -1370,8 +1292,7 @@ hdf_read_ndgs(NC *handle)
 #ifdef AN_DEBUG
                                       fprintf(stderr,"failed to get %d desc  length \n", i);
 #endif
-                                      ret_value = FAIL;
-                                      goto done_adesc;
+                                      HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
                                   }
         
                                 /* allocate space for desc */
@@ -1382,8 +1303,7 @@ hdf_read_ndgs(NC *handle)
 #ifdef AN_DEBUG
                                             fprintf(stderr,"failed to allocate space for desc %d \n", i);
 #endif
-                                            ret_value = FAIL;
-                                            goto done_adesc;
+                                            HGOTO_ADESC_ERROR(DFE_NOSPACE, FAIL);
                                         }
                                       HDmemset(ann_desc,'\0', ann_len+1);
                                   }
@@ -1394,8 +1314,7 @@ hdf_read_ndgs(NC *handle)
 #ifdef AN_DEBUG
                                       fprintf(stderr,"failed to read %d desc \n", i);
 #endif
-                                      ret_value = FAIL;
-                                      goto done_adesc;
+                                      HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
                                   }
 
                                 /* make unique attribute */
@@ -1410,8 +1329,7 @@ hdf_read_ndgs(NC *handle)
 
                                 if (NULL == attrs[current_attr])
                                   {
-                                      ret_value = FAIL;
-                                      goto done_adesc;
+                                      HGOTO_ADESC_ERROR(DFE_INTERNAL, FAIL);
                                   }
                                 else
                                     attrs[current_attr++]->HDFtype = DFNT_CHAR;
@@ -1584,8 +1502,7 @@ hdf_read_ndgs(NC *handle)
 
                       if (NULL == attrs[current_attr])
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                       else
                           attrs[current_attr++]->HDFtype = DFNT_CHAR;
@@ -1604,8 +1521,7 @@ hdf_read_ndgs(NC *handle)
 
                       if (NULL == attrs[current_attr])
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                       else
                           attrs[current_attr++]->HDFtype = DFNT_CHAR;
@@ -1627,8 +1543,7 @@ hdf_read_ndgs(NC *handle)
 
                       if (NULL == attrs[current_attr])
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                       else
                           attrs[current_attr++]->HDFtype = DFNT_CHAR;
@@ -1646,8 +1561,7 @@ hdf_read_ndgs(NC *handle)
 
                       if (NULL == vars[current_var]->attrs)
                         {
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }
                   }
                 else
@@ -1665,17 +1579,13 @@ hdf_read_ndgs(NC *handle)
                       dims = (NC_dim **) HDrealloc((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
                       if(NULL == dims) 
                         {
-                            HERROR(DFE_NOSPACE);
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
                 
                       vars = (NC_var **) HDrealloc((VOIDP) vars, sizeof(NC_var *) * max_thangs);
                       if(NULL == vars) 
                         {
-                            HERROR(DFE_NOSPACE);
-                            ret_value = FAIL;
-                            goto done;
+                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
                 
                   }
@@ -1707,8 +1617,7 @@ hdf_read_ndgs(NC *handle)
         
           if (Hendaccess(aid) == FAIL)
             {
-                ret_value = FAIL;
-                goto done;
+                HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
         
           /*
@@ -1719,8 +1628,7 @@ hdf_read_ndgs(NC *handle)
               handle->dims = NC_new_array(NC_DIMENSION, current_dim, (Void *) dims);
               if (NULL == handle->dims)
                 {
-                    ret_value = FAIL;
-                    goto done;
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
                 }
             }
           else
@@ -1731,8 +1639,7 @@ hdf_read_ndgs(NC *handle)
               handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *) vars);
               if (NULL == handle->vars)
                 {
-                    ret_value = FAIL;
-                    goto done;
+                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
                 }
             }
           else
@@ -1757,6 +1664,8 @@ done:
               HDfree((VOIDP)vardims);
           if (scaletypes != NULL)
               HDfree((VOIDP)scaletypes);
+	  if (ptbuf != NULL)
+	      HDfree(ptbuf);
 
       }
     /* Normal cleanup */
@@ -1769,7 +1678,6 @@ done:
 
     return ret_value;
 } /* hdf_read_ndgs */
-
 
 /******************************************************************************
  NAME
@@ -1788,6 +1696,7 @@ int
 hdf_read_sds_cdf(XDR *xdrs, 
                  NC **handlep)
 {
+    CONSTR(FUNC, "hdf_read_sds_cdf");        /* for HERROR */
     int32  status;
     NC     *handle = NULL;
     intn  ret_value = SUCCEED;
@@ -1806,15 +1715,13 @@ hdf_read_sds_cdf(XDR *xdrs,
     handle = (*handlep);
     if(NULL == handle) 
       {
-        ret_value = FAIL;
-        goto done;
+        HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     status = hdf_read_ndgs(handle);
     if(status == FAIL) 
       {
-        ret_value = FAIL;
-        goto done;
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
       }
 
     /* deallocate SDG-NDG space */
