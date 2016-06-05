@@ -138,8 +138,8 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-am_libhdf_java_la_OBJECTS = hdfanImp.lo hdfdfanImp.lo hdfdfcompImp.lo \
-	hdfdfpalImp.lo hdfdfsdImp.lo hdfdfuImp.lo hdfexceptionImp.lo \
+am_libhdf_java_la_OBJECTS = hdfanImp.lo \
+	hdfdfpalImp.lo hdfdfuImp.lo hdfexceptionImp.lo \
 	hdfgrImp.lo hdfheImp.lo hdfhxImp.lo hdfImp.lo hdfnativeImp.lo \
 	hdfr24Imp.lo hdfr8Imp.lo hdfsdsImp.lo hdfstructsutil.lo \
 	hdfvdataImp.lo hdfvfImp.lo hdfvgroupImp.lo hdfvhImp.lo \
