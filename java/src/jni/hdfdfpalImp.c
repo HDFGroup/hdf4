@@ -40,7 +40,7 @@ Java_hdf_hdflib_HDFLibrary_DFPaddpal
     f = (char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
     dat = ENVPTR->GetByteArrayElements(ENVPAR palette,&bb);
 
-    rval = DFPaddpal((char *)f, (VOIDP) dat);
+    rval = DFPaddpal((const char *)f, (VOIDP) dat);
 
     ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
     ENVPTR->ReleaseByteArrayElements(ENVPAR palette,dat,JNI_ABORT);
@@ -64,7 +64,7 @@ Java_hdf_hdflib_HDFLibrary_DFPgetpal
     f = (char *) ENVPTR->GetStringUTFChars(ENVPAR filename, 0);
     dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
 
-    rval = DFPgetpal((char *)f, (VOIDP) dat);
+    rval = DFPgetpal((const char *)f, (VOIDP) dat);
 
     ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
     if (rval == FAIL) {
@@ -91,7 +91,7 @@ Java_hdf_hdflib_HDFLibrary_DFPnpals
     intn rval;
     char * f;
     f = (char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
-    rval = DFPnpals((char *)f);
+    rval = DFPnpals((const char *)f);
 
     ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
     return rval;
@@ -111,7 +111,7 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal
     m = (char *) ENVPTR->GetStringUTFChars(ENVPAR filemode,0);
     dat = ENVPTR->GetByteArrayElements(ENVPAR palette,&bb);
 
-    rval = DFPputpal ((char *)f, (VOIDP) dat, (intn) overwrite, (char *)m);
+    rval = DFPputpal ((const char *)f, (VOIDP) dat, (intn) overwrite, (const char *)m);
 
     ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
     ENVPTR->ReleaseStringUTFChars(ENVPAR filemode,m);
