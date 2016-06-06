@@ -34,7 +34,7 @@ Java_hdf_hdflib_HDFLibrary_ANstart
 {
     int32       retVal = -1;
 
-    retVal = (jlong)ANstart((int32)file_id);
+    retVal = ANstart((int32)file_id);
     if (retVal < 0)
         CALL_ERROR_CHECK(-1);
 
