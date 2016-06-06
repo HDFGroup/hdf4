@@ -36,9 +36,9 @@ jboolean
 getNewCompInfo
 (JNIEnv *env, jobject ciobj, comp_info *cinf)
 {
-jfieldID jf;
-jclass jc;
-jint ctype;
+    jfieldID jf;
+    jclass jc;
+    jint ctype;
 
     jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFNewCompInfo");
     if (jc == NULL) {
@@ -171,8 +171,8 @@ jboolean
 setNewCompInfo
 (JNIEnv *env, jobject ciobj, comp_coder_t coder, comp_info *cinf)
 {
-jfieldID jf;
-jclass jc;
+    jfieldID jf;
+    jclass jc;
 
     jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFCompInfo");
 
@@ -329,9 +329,9 @@ jboolean
 getOldCompInfo
 (JNIEnv *env, jobject ciobj, comp_info *cinf)
 {
-jfieldID jf;
-jclass jc;
-jint ctype;
+    jfieldID jf;
+    jclass jc;
+    jint ctype;
 
     jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFOldCompInfo");
     if (jc == NULL) {
@@ -380,14 +380,14 @@ jboolean
 getChunkInfo
 (JNIEnv *env, jobject chunkobj, HDF_CHUNK_DEF *cinf)
 {
-jfieldID jf;
-jclass jc;
-jint ctype;
-jobject larr;
-jint * lens;
-int i;
-jboolean bval;
-jboolean bb;
+    jfieldID jf;
+    jclass jc;
+    jint ctype;
+    jobject larr;
+    jint * lens;
+    int i;
+    jboolean bval;
+    jboolean bb;
 
     jc = ENVPTR->FindClass(ENVPAR  "hdf/hdflib/HDFChunkInfo");
     if (jc == NULL) {
@@ -496,11 +496,11 @@ jboolean
 makeChunkInfo
 (JNIEnv *env, jobject chunkobj, int32 flgs, HDF_CHUNK_DEF *cinf)
 {
-jclass jc;
-jclass jci;
-jmethodID jmi;
-jintArray rarray;
-jobject compinfo;
+    jclass jc;
+    jclass jci;
+    jmethodID jmi;
+    jintArray rarray;
+    jobject compinfo;
 
     rarray = ENVPTR->NewIntArray(ENVPAR MAX_VAR_DIMS);
     if (rarray == NULL) {
