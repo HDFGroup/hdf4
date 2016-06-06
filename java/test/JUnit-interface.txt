@@ -17,6 +17,7 @@ JUnit version 4.11
 .testANendaccessIllegalId
 .testANget_tagrefIllegalId
 .testANtag2atypeIllegalId
+.testANwriteannNull
 .testANatype2tagIllegalId
 .testANcreatefIllegalId
 .testANcreateIllegalId
@@ -30,8 +31,15 @@ JUnit version 4.11
 .testANselectIllegalId
 .testANid2tagrefArgument
 .testANannlenIllegalId
+.testDFPputpalNull
+.testDFPwriterefNull
+.testDFPgetpalNull
+.testDFPaddpalNull
+.testDFPnpalsNull
+.testDFPreadrefNull
+.testDFPputpalArgNull
 
 Time:  XXXX
 
-OK (31 tests)
+OK (39 tests)
 

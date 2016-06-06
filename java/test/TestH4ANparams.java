@@ -185,6 +185,12 @@ public class TestH4ANparams {
 
     @Test(expected = HDFException.class)
     public void testANwriteannIllegalId() throws Throwable {
-        HDFLibrary.ANwriteann(-1, null, 0);
+        String str = "";
+        HDFLibrary.ANwriteann(-1, str, 0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testANwriteannNull() throws Throwable {
+        HDFLibrary.ANwriteann(0, null, 0);
     }
 }

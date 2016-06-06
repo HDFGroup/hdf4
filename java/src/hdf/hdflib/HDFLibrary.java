@@ -371,9 +371,7 @@ public class HDFLibrary implements java.io.Serializable
      *  info[2] = n_data_label, info[3] = n_data_desc
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      */
     public static native boolean ANfileinfo(long an_id, int[] info) throws HDFException;
 
@@ -395,9 +393,7 @@ public class HDFLibrary implements java.io.Serializable
      *  returned by ANnumann
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return an array of integers, which are the identifiers of
      *  the annotations
@@ -413,9 +409,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param maxlen <b>IN</b>: int, the maximum length of the string.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return an annotation string: annbuf[0] = the annotation
      */
@@ -432,9 +426,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param tagref <b>OUT</b>: short[2], the tag and ref of the annotation
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the tag and ref:  tagref[0] = tag, tagref[1] = ref
      */
@@ -445,9 +437,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param tagref <b>OUT</b>: short[2], the tag and ref of the annotation
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the tag and ref:  tagref[0] = tag, tagref[1] = ref
      */
@@ -475,8 +465,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param filemode <b>IN</b>: if "a" append palette to file, "w" create new file
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
      *  @return true on success
      */
@@ -484,7 +473,8 @@ public class HDFLibrary implements java.io.Serializable
      throws HDFException{
         if (overwrite) {
             return DFPputpal (filename, palette, 1, filemode);
-        } else {
+        }
+        else {
             return DFPputpal (filename, palette, 0, filemode);
         }
     }

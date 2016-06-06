@@ -21,6 +21,7 @@ AM_JAVACFLAGS = $(H4_JAVACFLAGS) -deprecation
 noinst_JAVA = \
 	TestH4.java \
 	TestH4ANparams.java \
+	TestH4DFPparams.java \
     TestAll.java
 
 $(jarfile): classnoinst.stamp classes

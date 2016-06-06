@@ -72,7 +72,7 @@
 #define PIN_JAVA_STRING(javastr,localstr,retdefault) {                           \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4raiseException(env, "java string is NULL");                            \
+        h4nullArgument(env, "java string is NULL");                            \
         return (retdefault);                                                     \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -85,7 +85,7 @@
 #define PIN_JAVA_STRING0(javastr,localstr) {                                     \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4raiseException(env, "java string is NULL");                              \
+        h4nullArgument(env, "java string is NULL");                              \
         return;                                                                  \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -102,11 +102,11 @@
 #define PIN_JAVA_STRING_TWO(javastr,localstr,java2str,local2str,retdefault) {    \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4raiseException(env, "java string is NULL");                              \
+        h4nullArgument(env, "java string is NULL");                              \
         return (retdefault);                                                     \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4raiseException(env, "second java string is NULL");                       \
+        h4nullArgument(env, "second java string is NULL");                       \
         return (retdefault);                                                     \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -125,11 +125,11 @@
 #define PIN_JAVA_STRING_TWO0(javastr,localstr,java2str,local2str) {              \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4raiseException(env, "java string is NULL");                              \
+        h4nullArgument(env, "java string is NULL");                              \
         return;                                                                  \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4raiseException(env, "second java string is NULL");                       \
+        h4nullArgument(env, "second java string is NULL");                       \
         return;                                                                  \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -153,15 +153,15 @@
 #define PIN_JAVA_STRING_THREE(javastr,localstr,java2str,local2str,java3str,local3str,retdefault) {       \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4raiseException(env, "java string is NULL");                              \
+        h4nullArgument(env, "java string is NULL");                              \
         return (retdefault);                                                     \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4raiseException(env, "second java string is NULL");                       \
+        h4nullArgument(env, "second java string is NULL");                       \
         return (retdefault);                                                     \
     }                                                                            \
     if ((java3str) == NULL) {                                                    \
-        h4raiseException(env, "third java string is NULL");                        \
+        h4nullArgument(env, "third java string is NULL");                        \
         return (retdefault);                                                     \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \
@@ -187,15 +187,15 @@
 #define PIN_JAVA_STRING_THREE0(javastr,localstr,java2str,local2str,java3str,local3str) {       \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4raiseException(env, "java string is NULL");                              \
+        h4nullArgument(env, "java string is NULL");                              \
         return;                                                                  \
     }                                                                            \
     if ((java2str) == NULL) {                                                    \
-        h4raiseException(env, "second java string is NULL");                       \
+        h4nullArgument(env, "second java string is NULL");                       \
         return;                                                                  \
     }                                                                            \
     if ((java3str) == NULL) {                                                    \
-        h4raiseException(env, "third java string is NULL");                        \
+        h4nullArgument(env, "third java string is NULL");                        \
         return;                                                                  \
     }                                                                            \
     (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);           \

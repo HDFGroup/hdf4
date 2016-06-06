@@ -18,7 +18,8 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { TestH4.class,
-    TestH4ANparams.class
+    TestH4ANparams.class,
+    TestH4DFPparams.class
 })
 
 public class TestAll {
