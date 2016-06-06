@@ -22,6 +22,7 @@ noinst_JAVA = \
 	TestH4.java \
 	TestH4ANparams.java \
 	TestH4DFPparams.java \
+	TestH4GRparams.java \
     TestAll.java
 
 $(jarfile): classnoinst.stamp classes

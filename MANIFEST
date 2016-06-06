@@ -568,6 +568,7 @@
 ./java/test/TestH4.java
 ./java/test/TestH4ANparams.java
 ./java/test/TestH4DFPparams.java
+./java/test/TestH4GRparams.java
 
 ./man/Makefile.am
 ./man/Makefile.in

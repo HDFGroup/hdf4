@@ -496,9 +496,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param args <b>OUT</b>: int[2], n_datasets and n_file_attrs
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the file info:  args[0] = n_datasets, args[1] = n_file_attrs
      */
@@ -510,9 +508,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param flag <b>OUT</b>: int[1], the type of chunking
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return c_info contains information about the chunking method,
      *  flags[0] == the chunking flags
@@ -520,8 +516,7 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b>The chunking algorithm-specific information is
      *  passed in an appropriate sub-class of HDFChunkInfo.
      */
-    public static native boolean GRgetchunkinfo(long sdsid, HDFChunkInfo chunk_def,
-        int[] flag) throws HDFException;
+    public static native boolean GRgetchunkinfo(long sdsid, HDFChunkInfo chunk_def, int[] flag) throws HDFException;
 
     public static native int GRselect(long grid, int index) throws HDFException;
 

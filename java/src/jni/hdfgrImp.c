@@ -43,7 +43,13 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_GRstart
 (JNIEnv *env, jclass cls, jlong file_id)
 {
-    return (jlong)GRstart((int32) file_id);
+    intn rval;
+
+    rval = GRstart((int32)file_id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(-1);
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -53,12 +59,10 @@ Java_hdf_hdflib_HDFLibrary_GRend
     intn rval;
 
     rval = GRend((int32) gr_id);
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -66,12 +70,12 @@ Java_hdf_hdflib_HDFLibrary_GRendaccess
 (JNIEnv *env, jclass cls, jlong gr_id)
 {
     intn rval;
+
     rval =  GRendaccess((int32) gr_id);
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    } else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -80,28 +84,46 @@ Java_hdf_hdflib_HDFLibrary_GRfileinfo
 {
     intn rval;
     jint *theArgs;
-    jboolean bb; /*  dummy */
+    jboolean isCopy; /*  dummy */
 
-    theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-
-    rval = GRfileinfo((int32) gr_id, (int32 *)&(theArgs[0]),
-        (int32 *)&(theArgs[1]));
-
-    if (rval == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (argv == NULL) {
+        h4nullArgument(env, "GRfileinfo:  argv is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 2) {
+        h4badArgument(env, "GRfileinfo:  argv input array < order 2");
+    } /* end else if */
     else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
-        return JNI_TRUE;
-    }
+        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &isCopy);
+        if (theArgs == NULL) {
+            h4JNIFatalError(env, "GRfileinfo:  argv not pinned");
+        } /* end if */
+        else {
+            rval = GRfileinfo((int32)gr_id, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
+
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
+            }
+        } /* end else */
+    } /* end else */
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_GRselect
 (JNIEnv *env, jclass cls, jlong gr_id, jint index)
 {
-    return (jlong)GRselect((int32) gr_id, (int32) index);
+    int32 rval;
+
+    rval = (jlong)GRselect((int32) gr_id, (int32) index);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
@@ -109,15 +131,17 @@ Java_hdf_hdflib_HDFLibrary_GRnametoindex
 (JNIEnv *env, jclass cls, jlong gr_id, jstring gr_name)
 {
     int32 rval;
-    char *str;
+    const char *str;
 
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR gr_name,0);
+    PIN_JAVA_STRING(gr_name, str, -1);
 
-    rval = GRnametoindex((int32) gr_id, (char *)str);
+    rval = GRnametoindex((int32)gr_id, str);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR gr_name,str);
+    UNPIN_JAVA_STRING(gr_name, str);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
 
-    return rval;
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -128,28 +152,38 @@ Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo
     HDF_CHUNK_DEF cdef;
     jboolean stat;
     jint *flgs;
-    jboolean bb;
+    jboolean isCopy;
 
-/*
-    bzero((char *)&cdef, sizeof(cdef));
-*/
-    flgs = ENVPTR->GetIntArrayElements(ENVPAR cflags,&bb);
-    rval = GRgetchunkinfo( (int32)grsid, &cdef, (int32 *)&(flgs[0]));
-
-    if (rval == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR cflags,(jint *)flgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (cflags == NULL) {
+        h4nullArgument(env, "GRgetchunkinfo:  cflags is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR cflags) < 1) {
+        h4badArgument(env, "GRgetchunkinfo:  cflags input array < order 1");
+    } /* end else if */
     else {
-        stat = JNI_TRUE;
-        if (*flgs != 0) {
-        /* convert cdef to HDFchunkinfo */
-            stat = makeChunkInfo( env, chunk_def, *flgs, &cdef);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR cflags,(jint *)flgs,0);
-        return stat/*JNI_TRUE*/;
-    }
+        flgs = ENVPTR->GetShortArrayElements(ENVPAR cflags, &isCopy);
+        if (flgs == NULL) {
+            h4JNIFatalError(env, "GRgetchunkinfo:  cflags not pinned");
+        } /* end if */
+        else {
+            rval = GRgetchunkinfo( (int32)grsid, &cdef, (int32 *)&(flgs[0]));
 
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR cflags,(jint *)flgs,JNI_ABORT);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+            else {
+                stat = JNI_TRUE;
+                if (*flgs != 0) {
+                /* convert cdef to HDFchunkinfo */
+                    stat = makeChunkInfo(env, chunk_def, *flgs, &cdef);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR cflags,(jint *)flgs,0);
+            }
+        } /* end else */
+    } /* end else */
+
+    return stat/*JNI_TRUE*/;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -183,7 +217,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
         ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes,dims,JNI_ABORT);
         ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
         if (str != NULL) HDfree(str);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes,dims,0);
@@ -252,7 +286,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage
 
     if (rval == FAIL) {
         ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,arr,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,arr,0);
@@ -264,14 +298,26 @@ JNIEXPORT jshort JNICALL
 Java_hdf_hdflib_HDFLibrary_GRidtoref
 (JNIEnv *env, jclass cls, jlong gr_id)
 {
-    return (GRidtoref((int32) gr_id));
+    uint16 rval;
+
+    rval = GRidtoref((int32) gr_id);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jshort)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRreftoindex
 (JNIEnv *env, jclass cls, jlong gr_id, jshort ref)
 {
-    return (GRreftoindex((int32) gr_id, (uint16)ref));
+    int32 rval;
+
+    rval = GRreftoindex((int32) gr_id, (uint16)ref);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -279,13 +325,12 @@ Java_hdf_hdflib_HDFLibrary_GRreqlutil
 (JNIEnv *env, jclass cls, jlong gr_id, jint interlace_mode)
 {
     intn rval;
-    rval =  GRreqlutil((int32) gr_id, (intn)interlace_mode);
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+
+    rval = GRreqlutil((int32) gr_id, (intn)interlace_mode);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -293,27 +338,38 @@ Java_hdf_hdflib_HDFLibrary_GRreqimageil
 (JNIEnv *env, jclass cls, jlong gr_id, jint interlace_mode)
 {
     intn rval;
-    rval =  GRreqimageil((int32) gr_id, (intn)interlace_mode);
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+
+    rval = GRreqimageil((int32) gr_id, (intn)interlace_mode);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_GRgetlutid
 (JNIEnv *env, jclass cls, jlong gr_id, jint index)
 {
-    return (jlong)GRgetlutid((int32) gr_id, (int32)index);
+    int32 rval;
+
+    rval = GRgetlutid((int32) gr_id, (int32)index);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRgetnluts
 (JNIEnv *env, jclass cls, jlong gr_id)
 {
-    return (GRgetnluts((int32) gr_id));
+    intn rval;
+
+    rval = GRgetnluts((int32) gr_id);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -333,7 +389,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetlutinfo
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
@@ -357,7 +413,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadlut
 
     if (rval == FAIL) {
         ENVPTR->ReleaseByteArrayElements(ENVPAR pal_data,arr,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseByteArrayElements(ENVPAR pal_data,arr,0);
@@ -394,7 +450,7 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
@@ -434,7 +490,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetattr
     rval = GRgetattr((int32) gr_id, (int32) attr_index,  (VOIDP) arr);
     if (rval == FAIL) {
         ENVPTR->ReleaseByteArrayElements(ENVPAR values,arr,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseByteArrayElements(ENVPAR values,arr,0);
@@ -447,15 +503,17 @@ Java_hdf_hdflib_HDFLibrary_GRfindattr
 (JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name)
 {
     int32 rval;
-    char *str;
+    const char *str;
 
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR attr_name,0);
+    PIN_JAVA_STRING(attr_name, str, -1);
 
     rval = GRfindattr((int32) gr_id, (char *)str);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR attr_name,str);
+    UNPIN_JAVA_STRING(attr_name, str);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
 
-    return rval;
+    return (jint)rval;
 }
 
 JNIEXPORT jlong JNICALL
@@ -464,17 +522,21 @@ Java_hdf_hdflib_HDFLibrary_GRcreate
 {
     int32 rval;
     jint *dims;
-    char *str;
+    const char *str;
     jboolean bb;
 
     dims = ENVPTR->GetIntArrayElements(ENVPAR dim_sizes,&bb);
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR name,0);
 
-    rval = GRcreate( (int32) gr_id, (char *) str, (int32) ncomp,
-        (int32) data_type, (int32) interlace_mode, (int32 *)dims);
+    PIN_JAVA_STRING(name, str, JNI_FALSE);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR name,str);
+    rval = GRcreate( (int32)gr_id, str, (int32)ncomp,
+        (int32)data_type, (int32)interlace_mode, (int32 *)dims);
+
+    UNPIN_JAVA_STRING(name, str);
+
     ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes,dims,JNI_ABORT);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
 
     return (jlong)rval;
 }
@@ -484,59 +546,59 @@ JNIEXPORT jshort JNICALL
 Java_hdf_hdflib_HDFLibrary_GRluttoref
 (JNIEnv *env, jclass cls, jlong pal_id)
 {
-    return (GRluttoref((int32) pal_id));
+    uint16 rval;
+
+    rval = GRluttoref((int32) pal_id);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jshort)rval;
 }
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2IILjava_lang_String_2
+Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2
 (JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
 {
     intn rval;
-    char *str;
-    char *val;
+    const char *str;
+    const char *val;
 
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR attr_name,0);
-    val =(char *) ENVPTR->GetStringUTFChars(ENVPAR values,0);
+    PIN_JAVA_STRING_TWO(attr_name, str, values, val, JNI_FALSE);
 
-    rval = GRsetattr((int32) gr_id, (char *)str, (int32) data_type,
-        (int32) count, (VOIDP) val);
+    rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)val);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR attr_name,str);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR values,val);
+    UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_GRsetattr__ILjava_lang_String_2II_3B
+Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B
 (JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name, jlong data_type, jint count, jbyteArray values)
 {
     intn rval;
     jbyte *arr;
-    char *str;
+    const char *str;
     jboolean bb;
 
-    arr = ENVPTR->GetByteArrayElements(ENVPAR values,&bb);
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR attr_name,0);
+    arr = ENVPTR->GetByteArrayElements(ENVPAR values, &bb);
 
-    rval = GRsetattr((int32) gr_id, (char *)str, (int32) data_type,
-        (int32) count, (VOIDP) arr);
+    PIN_JAVA_STRING(attr_name, str, JNI_FALSE);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR attr_name,str);
-    ENVPTR->ReleaseByteArrayElements(ENVPAR values,arr,JNI_ABORT);
+    rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)arr);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    UNPIN_JAVA_STRING(attr_name, str);
+
+    ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
+
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 
@@ -554,12 +616,10 @@ Java_hdf_hdflib_HDFLibrary_GRsetcompress
 
     rval = GRsetcompress((int32) ri_id, (comp_coder_t) comp_type, (comp_info *)&cinf);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -578,12 +638,10 @@ Java_hdf_hdflib_HDFLibrary_GRgetcompress
 
     bval = setNewCompInfo(env, c_info,coder,&cinf);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -604,40 +662,42 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunk
 
     rval = SDsetchunk ((int32) sdsid, c_def, (int32) flags);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRsetchunkcache
 (JNIEnv *env, jclass cls, jlong sdsid, jint maxcache, jint flags)
 {
-    return SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
+    intn rval;
+
+    rval = SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
+    if (rval < 0)
+        CALL_ERROR_CHECK(-1);
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRsetexternalfile
 (JNIEnv *env, jclass cls, jlong ri_id, jstring filename, jint offset)
 {
-    int32 rval;
-    char *str;
+    intn rval;
+    const char *str;
 
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
+    PIN_JAVA_STRING(filename, str, JNI_FALSE);
 
-    rval = GRsetexternalfile((int32) ri_id, (char *)str, (int32) offset);
+    rval = GRsetexternalfile((int32)ri_id, str, (int32)offset);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,str);
+    UNPIN_JAVA_STRING(filename, str);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -677,13 +737,10 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id,
     ENVPTR->ReleaseIntArrayElements(ENVPAR edge,edg,JNI_ABORT);
     ENVPTR->ReleaseByteArrayElements(ENVPAR data,arr,JNI_ABORT);
 
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -701,19 +758,17 @@ Java_hdf_hdflib_HDFLibrary_GRwritelut
 
     ENVPTR->ReleaseByteArrayElements(ENVPAR pal_data,arr,JNI_ABORT);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRreadchunk
 (JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
-    int32 retVal;
+    int32 rval;
     jbyte * s;
     jint *arr;
     jboolean bb;
@@ -721,12 +776,12 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk
     arr = ENVPTR->GetIntArrayElements(ENVPAR origin,&bb);
     s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
 
-    retVal = GRreadchunk((int32)grid,(int32 *)arr,s);
+    rval = GRreadchunk((int32)grid,(int32 *)arr,s);
 
     ENVPTR->ReleaseIntArrayElements(ENVPAR origin,arr,JNI_ABORT);
-    if (retVal == FAIL) {
+    if (rval == FAIL) {
         ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
     else {
         ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,0);
@@ -738,7 +793,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRwritechunk
 (JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
-    int32 retVal;
+    int32 rval;
     jbyte * s;
     jint * arr;
     jboolean bb;
@@ -746,17 +801,15 @@ Java_hdf_hdflib_HDFLibrary_GRwritechunk
     s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
     arr = ENVPTR->GetIntArrayElements(ENVPAR origin,&bb);
 
-    retVal = GRwritechunk((int32)grid,(int32 *)arr,(char *)s);
+    rval = GRwritechunk((int32)grid,(int32 *)arr,(char *)s);
 
     ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
     ENVPTR->ReleaseIntArrayElements(ENVPAR origin,arr,JNI_ABORT);
 
-    if (retVal == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK(JNI_FALSE);
+
+    return JNI_TRUE;
 }
 
 #ifdef __cplusplus
