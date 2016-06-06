@@ -10,6 +10,7 @@ INCLUDE_DIRECTORIES (
 
 set (HDF4_JAVA_TEST_SRCS
     TestH4.java
+    TestH4ANparams.java
     TestAll.java
 )
 

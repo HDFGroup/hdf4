@@ -402,7 +402,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return an array of integers, which are the identifiers of
      *  the annotations
      */
-    public static native int ANannlist(long an_id, int anntype, int tag, int ref,
+    public static native int ANannlist(long an_id, int anntype, short tag, short ref,
                 int[] ann_list) throws HDFException;
 
     public static native int ANannlen(long ann_id) throws HDFException;

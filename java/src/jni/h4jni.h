@@ -230,6 +230,8 @@ extern "C" {
 
 extern jboolean h4JNIFatalError(JNIEnv *, const char *);
 extern jboolean h4buildException(JNIEnv *, jint);
+extern jboolean h4badArgument (JNIEnv *, const char *);
+extern jboolean h4nullArgument(JNIEnv *, const char *);
 extern jboolean h4NotImplemented (JNIEnv *, const char *);
 extern jboolean h4outOfMemory (JNIEnv *, const char *);
 extern jboolean h4raiseException(JNIEnv *, const char *);

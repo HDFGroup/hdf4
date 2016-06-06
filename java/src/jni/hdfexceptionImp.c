@@ -93,6 +93,36 @@ H4JNIErrorClass
     THROWEXCEPTION(className, args);
 } /* end H5JNIErrorClass() */
 
+/*
+ *  A bad argument in an HDF call
+ *  Create and throw an 'IllegalArgumentException'
+ *
+ *  Note:  This routine never returns from the 'throw',
+ *  and the Java native method immediately raises the
+ *  exception.
+ */
+jboolean
+h4badArgument
+    (JNIEnv *env, const char *functName)
+{
+    return H4JNIErrorClass(env, functName, "java/lang/IllegalArgumentException");
+} /* end h4badArgument() */
+
+/*
+ *  A NULL argument in an HDF call
+ *  Create and throw an 'NullPointerException'
+ *
+ *  Note:  This routine never returns from the 'throw',
+ *  and the Java native method immediately raises the
+ *  exception.
+ */
+jboolean
+h4nullArgument
+    (JNIEnv *env, const char *functName)
+{
+    return H4JNIErrorClass(env, functName, "java/lang/NullPointerException");
+} /* end h4nullArgument() */
+
 jboolean
 h4NotImplemented
 (JNIEnv *env, const char *functName)

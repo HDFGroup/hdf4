@@ -17,7 +17,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { TestH4.class
+@Suite.SuiteClasses( { TestH4.class,
+    TestH4ANparams.class
 })
 
 public class TestAll {
