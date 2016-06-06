@@ -54,9 +54,21 @@ public class TestH4DFPparams {
     }
 
     @Test(expected = NullPointerException.class)
+    public void testDFPaddpalNullPalette() throws Throwable {
+        String str = "";
+        HDFLibrary.DFPaddpal(str, null);
+    }
+
+    @Test(expected = NullPointerException.class)
     public void testDFPgetpalNull() throws Throwable {
         byte[] palette = {0};
         HDFLibrary.DFPgetpal(null, palette);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testDFPgetpalNullPalette() throws Throwable {
+        String str = "";
+        HDFLibrary.DFPgetpal(str, null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -76,6 +88,13 @@ public class TestH4DFPparams {
         byte[] palette = {0};
         String arg = "a";
         HDFLibrary.DFPputpal(arg, palette, 0, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testDFPputpalNullPalette() throws Throwable {
+        String arg = "a";
+        String mode = "a";
+        HDFLibrary.DFPputpal(arg, null, 0, mode);
     }
 
     @Test(expected = NullPointerException.class)

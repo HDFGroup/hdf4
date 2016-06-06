@@ -31,9 +31,12 @@ JUnit version 4.11
 .testANselectIllegalId
 .testANid2tagrefArgument
 .testANannlenIllegalId
+.testDFPaddpalNullPalette
 .testDFPputpalNull
 .testDFPwriterefNull
 .testDFPgetpalNull
+.testDFPputpalNullPalette
+.testDFPgetpalNullPalette
 .testDFPaddpalNull
 .testDFPnpalsNull
 .testDFPreadrefNull
@@ -41,5 +44,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (39 tests)
+OK (42 tests)
 

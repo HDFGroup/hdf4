@@ -36,15 +36,24 @@ Java_hdf_hdflib_HDFLibrary_DFPaddpal
     jbyte       *dat;
     jboolean     bb;
 
-    PIN_JAVA_STRING(filename, f, JNI_FALSE);
+    if (palette == NULL) {
+        h4nullArgument(env, "DFPaddpal:  palette is NULL");
+    } /* end if */
+    else {
+        dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+        if (dat == NULL) {
+            h4JNIFatalError(env, "DFPaddpal:  palette not pinned");
+        } /* end if */
+        else {
+            PIN_JAVA_STRING(filename, f, JNI_FALSE);
 
-    dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+            rval = DFPaddpal(f, (VOIDP)dat);
 
-    rval = DFPaddpal(f, (VOIDP)dat);
+            UNPIN_JAVA_STRING(filename, f);
 
-    UNPIN_JAVA_STRING(filename, f);
-
-    ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
+            ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
+        } /* end else */
+    } /* end else */
 
     if (rval == FAIL)
         CALL_ERROR_CHECK(JNI_FALSE);
@@ -61,19 +70,28 @@ Java_hdf_hdflib_HDFLibrary_DFPgetpal
     jbyte       *dat;
     jboolean     bb;
 
-    PIN_JAVA_STRING(filename, f, JNI_FALSE);
+    if (palette == NULL) {
+        h4nullArgument(env, "DFPgetpal:  palette is NULL");
+    } /* end if */
+    else {
+        dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+        if (dat == NULL) {
+            h4JNIFatalError(env, "DFPgetpal:  palette not pinned");
+        } /* end if */
+        else {
+            PIN_JAVA_STRING(filename, f, JNI_FALSE);
 
-    dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+            rval = DFPgetpal(f, (VOIDP)dat);
 
-    rval = DFPgetpal(f, (VOIDP) dat);
+            UNPIN_JAVA_STRING(filename, f);
 
-    UNPIN_JAVA_STRING(filename, f);
-
-    if (rval == FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
-        CALL_ERROR_CHECK(JNI_FALSE);
-    }
-    ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, 0);
+            if (rval == FAIL) {
+                ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+            ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, 0);
+        } /* end else */
+    } /* end else */
 
     return JNI_TRUE;
 }
@@ -114,15 +132,26 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal
     jbyte       *dat;
     jboolean     bb;
 
-    PIN_JAVA_STRING_TWO(filename, f, filemode, m, JNI_FALSE);
+    if (palette == NULL) {
+        h4nullArgument(env, "DFPputpal:  palette is NULL");
+    } /* end if */
+    else {
+        dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+        if (dat == NULL) {
+            h4JNIFatalError(env, "DFPputpal:  palette not pinned");
+        } /* end if */
+        else {
+            PIN_JAVA_STRING_TWO(filename, f, filemode, m, JNI_FALSE);
 
-    dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
+            dat = ENVPTR->GetByteArrayElements(ENVPAR palette, &bb);
 
-    rval = DFPputpal (f, (VOIDP)dat, (intn)overwrite, m);
+            rval = DFPputpal (f, (VOIDP)dat, (intn)overwrite, m);
 
-    UNPIN_JAVA_STRING_TWO(filename, f, filemode, m);
+            UNPIN_JAVA_STRING_TWO(filename, f, filemode, m);
 
-    ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
+            ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
+        } /* end else */
+    } /* end else */
 
     if (rval == FAIL)
         CALL_ERROR_CHECK(JNI_FALSE);
