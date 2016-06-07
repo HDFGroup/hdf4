@@ -552,7 +552,7 @@
 ./java/src/jni/hdfr24Imp.c
 ./java/src/jni/hdfr8Imp.c
 ./java/src/jni/hdfsdsImp.c
-./java/src/jni/hdfstructsutilImp.c
+./java/src/jni/hdfstructsutil.c
 ./java/src/jni/hdfvdataImp.c
 ./java/src/jni/hdfvfImp.c
 ./java/src/jni/hdfvgroupImp.c
