@@ -525,17 +525,15 @@ public class HDFLibrary implements java.io.Serializable
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
      *  @param gr_name <b>OUT</b>: name of raster image
-     *  @param args <b>OUT</b>: int[5], image info:
+     *  @param args <b>OUT</b>: int[4], image info:
      *          number of components in the image,
      *          data type of the image data,
      *          interlace mode of the stored image data,
-     *          sizes of each image dimension ,
      *          number of attributes assigned to the image
      *  @param dim_sizes <b>OUT</b>: int[2], dim_sizes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
      *
      *  @return the file info:  String[0] = gr_name, args[0] = ncomp,
@@ -544,20 +542,19 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b> the parameters for the Java interface are not in
      *  the same order as the C interface.
      */
-    public static native boolean GRgetiminfo(long grid, String[] gr_name, int[] args,
-    int[] dim_sizes) throws HDFException;
+    public static native boolean GRgetiminfo(long grid, String[] gr_name, int[] args, int[] dim_sizes) throws HDFException;
 
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
-     *  @param start <b>IN</b>: int[], start
-     *  @param stride <b>IN</b>: int[], stride
-     *  @param count <b>IN</b>: int[], count
+     *  @param start <b>IN</b>: int[2], start
+     *  @param stride <b>IN</b>: int[2], stride. If the stride parameter is set to NULL,
+     *                                           a stride of 1 will be assumed.
+     *                                           strides of 0 are illegal.
+     *  @param count <b>IN</b>: int[2], count
      *  @param data <b>OUT</b>: byte[], data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the form of a continous array of
      *  bytes.
@@ -570,16 +567,16 @@ public class HDFLibrary implements java.io.Serializable
 
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
-     *  @param start <b>IN</b>: int[], start
-     *  @param stride <b>IN</b>: int[], stride
-     *  @param count <b>IN</b>: int[], count
+     *  @param start <b>IN</b>: int[2], start
+     *  @param stride <b>IN</b>: int[2], stride. If the stride parameter is set to NULL,
+     *                                           a stride of 1 will be assumed.
+     *                                           strides of 0 are illegal.
+     *  @param count <b>IN</b>: int[2], count
      *  @param theData <b>OUT</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the Java array.
      *
@@ -594,8 +591,8 @@ public class HDFLibrary implements java.io.Serializable
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-        rval = GRreadimage( grid, start, stride, count, data);
-        theData = theArray.arrayify( data );
+        rval = GRreadimage(grid, start, stride, count, data);
+        theData = theArray.arrayify(data);
         return rval;
     }
 
@@ -632,9 +629,7 @@ public class HDFLibrary implements java.io.Serializable
      *            Number of color lookup table entries in the palette.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the palette info:  args[0] = ncomp, args[1] = data_type,
      *  args[2] = interlace, args[3] = num_entries
@@ -647,9 +642,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param data <b>OUT</b>: byte[], palette data, in bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the palette data:  as bytes
      *
@@ -663,9 +656,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param theData <b>OUT</b>: Object, palette data, an Java array
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the palette data:  as a Java array
      *
@@ -692,9 +683,7 @@ public class HDFLibrary implements java.io.Serializable
      *  attribute
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the name, type, and lenght of the attribute:
      *  name[0] = name, argv[0] = data_type, argv[1] = length
@@ -708,9 +697,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param data <b>OUT</b>: byte[], attribute data, in bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the attribute data:  as bytes
      *
@@ -725,9 +712,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param theData <b>OUT</b>: Object, attribute data, an Java array
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the attribute data:  as a Java array
      *
@@ -746,12 +731,12 @@ public class HDFLibrary implements java.io.Serializable
         return rval;
     }
 
-    public static native int  GRfindattr(long id,  String name) throws HDFException;
+    public static native int GRfindattr(long id, String name) throws HDFException;
 
     public static native int GRcreate(long gr_id, String name, int ncomp,
             long data_type, int interlace_mode, int[] dim_sizes) throws HDFException;
 
-    public static native short  GRluttoref(long pal_id) throws HDFException;
+    public static native short GRluttoref(long pal_id) throws HDFException;
 
     /**
      *  @param gr_id <b>IN</b>: the GR identifier returned by GRstart
@@ -762,9 +747,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param values <b>IN</b>: the the attribute to write -- A String
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>This routine writes a attribute that is
      *  a String.  Alternative methods write data of other types.
@@ -783,9 +766,7 @@ public class HDFLibrary implements java.io.Serializable
      *  array of bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>This routine writes the attribute as an array
      *  of bytes.  <b>DO NOT USE THIS TO WRITE A STRING.</b>  This
@@ -806,9 +787,7 @@ public class HDFLibrary implements java.io.Serializable
      *  a Java array of numbers.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>This routine converts the Java array to bytes
      *  then writes it.
@@ -829,9 +808,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param flags <b>IN</b>: the type of chunking
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>The chunking algorithm-specific information is
      *  passed in an appropriate sub-class of HDFChunkInfo.
@@ -848,9 +825,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param c_info <b>IN</b>: HDFCompInfo, the compression info
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>The compression algorithm specific information is
      *  passed in an appropriate sub-class of HDFCompInfo.
@@ -865,15 +840,15 @@ public class HDFLibrary implements java.io.Serializable
 
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
-     *  @param start <b>IN</b>: int[], start
-     *  @param stride <b>IN</b>: int[], stride
-     *  @param edge <b>IN</b>: int[], count
+     *  @param start <b>IN</b>: int[2], start
+     *  @param stride <b>IN</b>: int[2], stride. If the stride parameter is set to NULL,
+     *                                           a stride of 1 will be assumed.
+     *                                           strides of 0 are illegal.
+     *  @param edge <b>IN</b>: int[2], count
      *  @param data <b>IN</b>: byte[], data to be written
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to write from a Java 2D array use the alternative
      *  routine below.
@@ -881,29 +856,29 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
 
-    public static native boolean GRwriteimage(long grid, int [] start, int[] stride,
-        int[] edge, byte[] data) throws HDFException;
+    public static native boolean GRwriteimage(long grid, int[] start, int[] stride,
+            int[] edge, byte[] data) throws HDFException;
 
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
-     *  @param start <b>IN</b>: int[], start
-     *  @param stride <b>IN</b>: int[], stride
-     *  @param edge <b>IN</b>: int[], count
+     *  @param start <b>IN</b>: int[2], start
+     *  @param stride <b>IN</b>: int[2], stride. If the stride parameter is set to NULL,
+     *                                           a stride of 1 will be assumed.
+     *                                           strides of 0 are illegal.
+     *  @param edge <b>IN</b>: int[2], count
      *  @param theData <b>IN</b>: Object, a Java array of appropriate
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts the Java array to a contiguous
      *  block of bytes appropriate for C, and then writes the bytes.
      *
      *  @return true on success
      */
-    public static boolean GRwriteimage(long grid, int [] start, int[] stride,
-        int[] edge, Object theData) throws HDFException
+    public static boolean GRwriteimage(long grid, int[] start, int[] stride,
+            int[] edge, Object theData) throws HDFException
     {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
@@ -920,8 +895,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param pal_data <b>IN</b>: byte[], palette data to be written--as bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
      *
      *  <p><b>NOTE:</b> to write from a Java array of numbers use
@@ -943,8 +917,7 @@ public class HDFLibrary implements java.io.Serializable
      *  number type.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
      *
      *  <p><b>Note:</b> converts the Java array to a contiguous
@@ -968,9 +941,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param theData <b>OUT</b>: byte[], the data in an array of bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
@@ -986,9 +957,7 @@ public class HDFLibrary implements java.io.Serializable
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
