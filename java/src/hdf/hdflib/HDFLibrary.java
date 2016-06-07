@@ -3042,14 +3042,14 @@ public class HDFLibrary implements java.io.Serializable
 
      public static native boolean DF24setil(int il) throws HDFException;
 
-    /*
-     *  @param filename <b>IN</b>: String, the file
+    /**
+     *  @param fileName <b>IN</b>: String, the file
      *  @param argv <b>OUT</b>: int[2], the width and height
      *  @param haspalette <b>OUT</b>: boolean[1], has a palette
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return argv[0] = width, argv[1] = height, haspalette[0] = palette
@@ -3066,7 +3066,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
@@ -3088,7 +3088,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
@@ -3129,7 +3129,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
@@ -3150,7 +3150,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
@@ -3176,7 +3176,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
@@ -3197,7 +3197,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
@@ -3221,7 +3221,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *  @return true on success
      */
@@ -3232,7 +3232,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *  @return palref[0] = the ref of the palette
      */
@@ -3245,7 +3245,7 @@ public class HDFLibrary implements java.io.Serializable
     ////////////////////////////////////////////////////////////////////
     //                                                                //
     //         New APIs for read data from library                    //
-    //  Using SDreaddata(..., Object buf) requires function calls        //
+    //  Using SDreaddata(..., Object buf) requires function calls     //
     //  theArray.emptyBytes() and theArray.arrayify( buf), which      //
     //  triples the actual memory needed by the data set.             //
     //  Using the following APIs solves the problem.                  //

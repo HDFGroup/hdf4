@@ -570,6 +570,8 @@
 ./java/test/TestH4ANparams.java
 ./java/test/TestH4DFPparams.java
 ./java/test/TestH4GRparams.java
+./java/test/TestH4DFRparams.java
+./java/test/TestH4HCparams.java
 
 ./man/Makefile.am
 ./man/Makefile.in

@@ -23,7 +23,9 @@ noinst_JAVA = \
 	TestH4ANparams.java \
 	TestH4DFPparams.java \
 	TestH4GRparams.java \
-    TestAll.java
+	TestH4DFRparams.java \
+	TestH4HCparams.java \
+	TestAll.java
 
 $(jarfile): classnoinst.stamp classes
 	$(JAR) cvf $@ -C $(JAVAROOT)/ $(pkgpath)
