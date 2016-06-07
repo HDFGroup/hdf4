@@ -983,8 +983,8 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk
                     }
                 } /* end else */
             } /* end else */
+            ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, cbb);
         } /* end else */
-        ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, cbb);
     } /* end else */
     return JNI_TRUE;
 }
@@ -994,21 +994,44 @@ Java_hdf_hdflib_HDFLibrary_GRwritechunk
 (JNIEnv *env, jclass cls, jlong grid, jintArray origin, jbyteArray dat)
 {
     int32 rval;
-    jbyte * s;
-    jint * arr;
+    jbyte * arr;
+    jint * org;
     jboolean bb;
 
-    s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
-    arr = ENVPTR->GetIntArrayElements(ENVPAR origin,&bb);
+    arr = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
+    org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
+    if (dat == NULL) {
+        h4nullArgument(env, "GRwritechunk:  dat is NULL");
+    } /* end if */
+    else {
+        arr = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
+        if (arr == NULL) {
+            h4JNIFatalError(env, "GRwritechunk:  dat not pinned");
+        } /* end if */
+        else {
+            if (origin == NULL) {
+                h4nullArgument(env, "GRwritechunk:  origin is NULL");
+            } /* end if */
+            else if (ENVPTR->GetArrayLength(ENVPAR origin) < 2) {
+                h4badArgument(env, "GRwritechunk:  origin input array < order 2");
+            } /* end else if */
+            else {
+                org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
+                if (org == NULL) {
+                    h4JNIFatalError(env, "GRwritechunk:  origin not pinned");
+                } /* end if */
+                else {
+                    rval = GRwritechunk((int32)grid, (int32 *)org, (char *)arr);
 
-    rval = GRwritechunk((int32)grid,(int32 *)arr,(char *)s);
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
 
-    ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
-    ENVPTR->ReleaseIntArrayElements(ENVPAR origin,arr,JNI_ABORT);
-
-    if (rval == FAIL)
-        CALL_ERROR_CHECK(JNI_FALSE);
-
+                    if (rval == FAIL)
+                        CALL_ERROR_CHECK(JNI_FALSE);
+                } /* end else */
+            } /* end else */
+            ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
+        } /* end else */
+    } /* end else */
     return JNI_TRUE;
 }
 
