@@ -48,7 +48,8 @@
 ./m4/ax_prog_javadoc.m4
 ./m4/ax_prog_javah.m4
 ./m4/ax_try_compile_java.m4
-./m4/ax_try_run_java.m4./m4/ltsugar.m4
+./m4/ax_try_run_java.m4
+./m4/ltsugar.m4
 ./m4/libtool.m4
 ./m4/ltversion.m4
 ./m4/lt~obsolete.m4
