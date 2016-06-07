@@ -505,7 +505,7 @@
 ./java/Makefile.in
 ./java/lib/hamcrest-core.jar
 ./java/lib/junit.jar
-./java/lib/simpolelogger.properties
+./java/lib/simplelogger.properties
 ./java/lib/slf4j-api-1.7.5.jar
 ./java/lib/ext/slf4j-nop-1.7.5.jar
 ./java/lib/ext/slf4j-simple-1.7.5.jar
@@ -557,8 +557,8 @@
 ./java/src/jni/hdfvfImp.c
 ./java/src/jni/hdfvgroupImp.c
 ./java/src/jni/hdfvhImp.c
-./java/src/jni/hdfvqmp.c
-./java/src/jni/hdfvsqIImp.c
+./java/src/jni/hdfvqImp.c
+./java/src/jni/hdfvsqImp.c
 ./java/test/CMakeLists.txt
 ./java/test/Makefile.am
 ./java/test/Makefile.in
