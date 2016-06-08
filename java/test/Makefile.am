@@ -21,9 +21,10 @@ AM_JAVACFLAGS = $(H4_JAVACFLAGS) -deprecation
 noinst_JAVA = \
 	TestH4.java \
 	TestH4ANparams.java \
+	TestH4DFparams.java \
 	TestH4DFPparams.java \
-	TestH4GRparams.java \
 	TestH4DFRparams.java \
+	TestH4GRparams.java \
 	TestH4HCparams.java \
 	TestAll.java
 

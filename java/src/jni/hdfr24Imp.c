@@ -38,52 +38,81 @@ Java_hdf_hdflib_HDFLibrary_1DF24getdims
 {
     intn rval;
 
-    char  *hdf_file;
+    const char  *hdf_file;
     jint *theArgs;
     jboolean bb;
 
-    theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-    hdf_file =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
+    PIN_JAVA_STRING(filename, hdf_file, -1);
 
-    /* get image dimension information */
-    rval = DF24getdims(hdf_file, (int32 *)&(theArgs[0]),
-        (int32 *)&(theArgs[1]), (intn *)&(theArgs[2]));
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,hdf_file);
-    if (rval == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (argv == NULL) {
+        h4nullArgument(env, "DF24getdims: output array argv is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 3) {
+        h4badArgument(env, "DF24getdims: output array argv < order 3");
+    } /* end else if */
     else {
+        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
+
+        if (theArgs == NULL) {
+            h4JNIFatalError(env, "DF24getdims: argv not pinned");
+        } /* end if */
+        else {
+            /* get image dimension information */
+            rval = DF24getdims(hdf_file, (int32 *)&(theArgs[0]),
+                    (int32 *)&(theArgs[1]), (intn *)&(theArgs[2]));
+
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
+                UNPIN_JAVA_STRING(filename, hdf_file);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+        }/* end else */
+
         ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
-        return JNI_TRUE;
-    }
+    } /* end else */
+
+    UNPIN_JAVA_STRING(filename, hdf_file);
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_1DF24getimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
-    char  *hdf_file;
+    const char  *hdf_file;
     intn   rval;
     jbyte *dat;
     jboolean bb;
 
-    hdf_file =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
-    dat = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR image,&bb);
+    PIN_JAVA_STRING(filename, hdf_file, -1);
 
-    rval =  DF24getimage((char *)hdf_file, (VOIDP) dat, (int32) width, (int32) height);
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,hdf_file);
-    if (rval == FAIL) {
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (image == NULL) {
+        h4nullArgument(env, "DF24getimage: output array image is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR image) < 1) {
+        h4badArgument(env, "DF24getimage: output array image invalid size");
+    } /* end else if */
     else {
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,0);
-        return JNI_TRUE;
-    }
+        dat = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR image,&bb);
 
+        if (dat == NULL) {
+            h4JNIFatalError(env, "DF24getimage: image not pinned");
+        } /* end if */
+        else {
+            rval =  DF24getimage((char *)hdf_file, (VOIDP) dat, (int32) width, (int32) height);
+
+            if (rval == FAIL) {
+                ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,JNI_ABORT);
+                UNPIN_JAVA_STRING(filename, hdf_file);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+        } /* end else */
+
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,0);
+    } /* end else */
+
+    UNPIN_JAVA_STRING(filename, hdf_file);
+    return JNI_TRUE;
 }
 
 JNIEXPORT jshort JNICALL
@@ -98,18 +127,19 @@ Java_hdf_hdflib_HDFLibrary_1DF24readref
 (JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     int  retVal;
-    char *filePtr;
-    filePtr =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
+    const char *filePtr;
+
+    PIN_JAVA_STRING(filename, filePtr, -1);
 
     retVal = DF24readref(filePtr, (short)ref);
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,filePtr);
+    UNPIN_JAVA_STRING(filename, filePtr);
+
     if (retVal == FAIL) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
-    else {
-        return JNI_TRUE;
-    }
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -120,21 +150,30 @@ Java_hdf_hdflib_HDFLibrary_DF24restart
     retVal = DF24restart();
 
     if (retVal) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
-    else {
-        return JNI_TRUE;
-    }
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_1DF24nimages
 (JNIEnv *env, jclass clss, jstring hdfFile)
 {
-    char  *hdf_file;
+    const char  *hdf_file;
+    int retVal;
 
-    hdf_file =(char *) ENVPTR->GetStringUTFChars(ENVPAR hdfFile,0);
-    return(DF24nimages(hdf_file));
+    PIN_JAVA_STRING(hdfFile, hdf_file, -1);
+
+    retVal = DF24nimages(hdf_file);
+
+    UNPIN_JAVA_STRING(hdfFile, hdf_file);
+
+    if (retVal == FAIL) {
+        CALL_ERROR_CHECK(JNI_FALSE);
+    }
+
+    return(retVal);
 }
 
 JNIEXPORT jboolean JNICALL
@@ -149,24 +188,39 @@ Java_hdf_hdflib_HDFLibrary_1DF24addimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     intn rval;
-    char  *f;
+    const char  *f;
     jbyte *dat;
     jboolean bb;
 
-    f =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
-    dat = ENVPTR->GetByteArrayElements(ENVPAR image,&bb);
+    PIN_JAVA_STRING(filename, f, -1);
 
-    rval = DF24addimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
-    ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,JNI_ABORT);
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
+    if (image == NULL) {
+        h4nullArgument(env, "DF24addimage: image is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR image) < 1) {
+        h4badArgument(env, "DF24addimage: no image data");
+    } /* end else if */
     else {
-        return JNI_TRUE;
-    }
+        dat = ENVPTR->GetByteArrayElements(ENVPAR image,&bb);
 
+        if (dat == NULL) {
+            h4JNIFatalError(env, "DF24addimage: image not pinned");
+        } /* end if */
+        else {
+            rval = DF24addimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+
+            if (rval == FAIL) {
+                ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,JNI_ABORT);
+                UNPIN_JAVA_STRING(filename, f);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+        } /* end else */
+
+        ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,0);
+    } /* end else */
+
+    UNPIN_JAVA_STRING(filename, f);
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -174,24 +228,39 @@ Java_hdf_hdflib_HDFLibrary_1DF24putimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     intn rval;
-    char  *f;
+    const char  *f;
     jbyte *dat;
     jboolean bb;
 
-    f =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
-    dat = ENVPTR->GetByteArrayElements(ENVPAR image,&bb);
+    PIN_JAVA_STRING(filename, f, -1);
 
-    rval = DF24putimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
-    ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,JNI_ABORT);
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
+    if (image == NULL) {
+        h4nullArgument(env, "DF24putimage: image is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR image) < 1) {
+        h4badArgument(env, "DF24putimage: no image data");
+    } /* end else if */
     else {
-        return JNI_TRUE;
-    }
+        dat = ENVPTR->GetByteArrayElements(ENVPAR image,&bb);
 
+        if (dat == NULL) {
+            h4JNIFatalError(env, "DF24putimage: image not pinned");
+        } /* end if */
+        else {
+            rval = DF24putimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+
+            if (rval == FAIL) {
+                ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,JNI_ABORT);
+                UNPIN_JAVA_STRING(filename, f);
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+        }
+
+        ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,0);
+    } /* end else */
+
+    UNPIN_JAVA_STRING(filename, f);
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -202,19 +271,26 @@ Java_hdf_hdflib_HDFLibrary_DF24setcompress
     comp_info cinf;
     jboolean bval;
 
-    bval = getOldCompInfo(env, cinfo,&cinf);
-
-    /* check fo rsuccess... */
-
-    /* fill in cinf depending on the value of 'type' */
-    rval = DF24setcompress((int32) type, (comp_info *)&cinf);
-
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
+    if (cinfo == NULL) {
+        h4nullArgument(env, "DF24setcompress: cinfo is NULL");
+    } /* end if */
     else {
-        return JNI_TRUE;
-    }
+        bval = getOldCompInfo(env, cinfo,&cinf);
+
+        if (bval == NULL) {
+            h4JNIFatalError(env, "DF24setcompress: cinfo not pinned");
+        } /* end if */
+        else {
+            /* fill in cinf depending on the value of 'type' */
+            rval = DF24setcompress((int32) type, (comp_info *)&cinf);
+
+            if (rval == FAIL) {
+                CALL_ERROR_CHECK(JNI_FALSE);
+            }
+        }
+    } /* end else */
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -226,11 +302,10 @@ Java_hdf_hdflib_HDFLibrary_DF24setdims
     rval = DF24setdims((int32) width, (int32) height);
 
     if (rval == FAIL) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
-    else {
-        return JNI_TRUE;
-    }
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -240,11 +315,10 @@ Java_hdf_hdflib_HDFLibrary_DF24setil
     intn rval;
     rval = DF24setil((intn) il);
     if (rval == FAIL) {
-        return JNI_FALSE;
+        CALL_ERROR_CHECK(JNI_FALSE);
     }
-    else {
-        return JNI_TRUE;
-    }
+
+    return JNI_TRUE;
 }
 
 #ifdef __cplusplus

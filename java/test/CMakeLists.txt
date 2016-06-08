@@ -11,9 +11,10 @@ INCLUDE_DIRECTORIES (
 set (HDF4_JAVA_TEST_SRCS
     TestH4.java
     TestH4ANparams.java
+    TestH4DFparams.java
     TestH4DFPparams.java
-    TestH4GRparams.java
     TestH4DFRparams.java
+    TestH4GRparams.java
     TestH4HCparams.java
     TestAll.java
 )

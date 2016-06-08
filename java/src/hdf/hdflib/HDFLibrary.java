@@ -2120,301 +2120,7 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native int VQueryref(long vkey) throws HDFException;
     public static native int VQuerytag(long vkey) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param n_records <b>OUT</b>, int[1], the number of records in the vdata
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return  n_records[0] == the number of records
-    */
-    public static native boolean VSQuerycount(long vdata_id, int[] n_records) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param fields <b>OUT</b>, String[1], the names of the fields
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return  fields[0] == a comma delimited string with the names
-    *  of the fields.
-    */
-    public static native boolean VSQueryfields(long vdata_id, String[] fields) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param interlace <b>OUT</b>, int[1], the interlace mode,
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return  interlace[0] == the number of records,
-    *  HDFConstants.FULL_INTERLACE or HDFConstants.NO_INTERLACE
-    */
-    public static native boolean VSQueryinterlace(long vdata_id, int[] interlace) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param vdata_name <b>OUT</b>, String[1], the name of the vdata
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return  vdata_name[0] == the name
-    */
-    public static native boolean VSQueryname(long vdata_id, String[] vdata_name) throws HDFException;
-
-    public static native int VSQueryref(long vdata_id) throws HDFException;
-
-    public static native int VSQuerytag(long vdata_id) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param vdata_size <b>OUT</b>, int[1], the size of the vdata
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return  vdata_size[0] == Native size, in bytes, of a record in the vdata
-    */
-    public static native boolean VSQueryvsize(long vdata_id, int[] vdata_size) throws HDFException;
-
-    public static  native int VSattach(long fid, int vdata_ref, String access) throws HDFException;
-
-    public static  native void VSdetach(long vdata_id) throws HDFException;
-
-    public  static native  long VSgetid(long file_id, int vdata_ref) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param hdfclassname <b>OUT</b>, String[1], the class name of the vdata
-    *
-    *  @exception hdf.hdflib.HDFException
-    *             should be thrown for errors in the
-    *             HDF library call, but is not yet implemented.
-    */
-    public  static native  void VSgetclass(long vdata_id, String[] hdfclassname) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param hdfname <b>OUT</b>, String[1], the name of the vdata
-    *
-    *  @exception hdf.hdflib.HDFException
-    *             should be thrown for errors in the
-    *             HDF library call, but is not yet implemented.
-    */
-    public  static native  void VSgetname(long vdata_id, String[] hdfname) throws HDFException;
-
-    public static native int VSelts(long vdata_id) throws HDFException;
-
-    public static native boolean VSfdefine(long vdata_id, String fieldname,
-                    int numbertype, int order) throws HDFException;
-
-    public static native boolean VSfexist(long vdata_id, String fields) throws HDFException;
-
-    public static native int VSfind(long file_id, String vdataname) throws HDFException;
-
-    public static native int VSsetblocksize(long vdata_id, int blocksize) throws HDFException;
-
-    public static native int VSsetnumblocks(long vdata_id, int numblocks) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param fieldname <b>OUT</b>, String[1], the names of the fields
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return  fieldname[0] == a comma delimited string with the names
-    *  of the fields.
-    */
-    public static native int VSgetfields(long vdata_id, String[] fieldname) throws HDFException;
-
-    public static native int VSgetinterlace(long vdata_id) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param iargs <b>OUT</b>, int[3], n_records, interlace, vdata_size
-    *  @param sargs <b>OUT</b>, String[2], names the dataset, fields
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return iargs[0] = n_records, iargs[1] = interlace, iargs[2] = vdata_size,
-    *  sargs[0] = vdata_name, sargs[1] = comma delimited list of fields
-    *
-    *  <p><b>NOTE:</b> the parameters for the Java interface are not in
-    *  the same order as the C interface.
-    */
-    public static native boolean VSinquire(long vdata_id, int[] iargs, String[] sargs) throws HDFException;
-
-   /**
-    *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
-    *  @param iargs <b>OUT</b>, int[2], block_size, num_blocks
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return iargs[0] = blocksize, iargs[1] = num_blocks
-    *
-    *  <p><b>NOTE:</b> the parameters for the Java interface are not in
-    *  the same order as the C interface.
-    */
-    public static native boolean VSinquire(long vdata_id, int[] iargs ) throws HDFException;
-
-   /**
-    *  @param fid <b>IN</b>, File identifier returned by Hopen
-    *  @param ref_array <b>OUT</b>, int[?], the refs
-    *  @param buffersize <b>IN</b>, int, the max number of refs to
-    *  return.
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-    *
-    *  @return ref_array contains refs.  The Java API ignores the buffersize
-    *  argument, returns as many as possible.
-    */
-    public  static native  int VSlone(long fid, int[] ref_array, int buffersize) throws HDFException;
-
-    /**
-     *  @param vdata_id <b>IN</b>: the Vdata id
-     *  @param databuf <b>OUT</b>: byte[], the data in an array of bytes
-     *  @param nrecord <b>IN</b>: int, number of records
-     *  @param interlace <b>IN</b>: int, interlace
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-     *
-     *  <p><b>NOTE:</b> to read into a Java array use the alternative
-     *  routine below.
-     *
-     *  @return the number of elements read (0 or a +ve integer)
-     */
-    public  static native int VSread(long vdata_id, byte[] databuf, int nrecord, int interlace) throws HDFException;
-
-    /**
-     *  @param vdata_id <b>IN</b>: the Vdata id
-     *  @param theData <b>OUT</b>: Object, a Java array of appropriate
-     *  type, dimensions, and size.
-     *  @param nrecord <b>IN</b>: int, number of records
-     *  @param interlace <b>IN</b>: int, interlace
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-     *
-     *  <p><b>Note:</b> reads the data as a contiguous
-     *  array of bytes and then converts it to an appropriate Java object.
-     *
-     *  @return the number of elements read (0 or a +ve integer)
-     */
-    public  static int VSread(long vdata_id, Object theData, int nrecord, int interlace) throws HDFException
-    {
-        byte[] data;
-        int rval;
-
-        HDFArray theArray = new HDFArray(theData);
-        data = theArray.emptyBytes();
-                rval = VSread(vdata_id, data, nrecord, interlace);
-        theData = theArray.arrayify( data );
-        return rval;
-    }
-
-    public static native int VSseek(long vdata_id, int record) throws HDFException;
-
-    public static native boolean VSsetfields(long vdata_id, String fields) throws HDFException;
-
-    public static native boolean  VSsetinterlace(long vdata_id, int interlace) throws HDFException;
-
-    public static native int VSsizeof(long vdata_id, String fields) throws HDFException;
-
-    public static native boolean VSappendable(int vkey, int block_size) throws HDFException;
-
-    public static native int VSfindclass(long file_id, String vgclass) throws HDFException;
-
-    public static native int VSgetversion(int vkey) throws HDFException;
-
-    public static native void VSsetclass(long vdata_id, String vdata_class) throws HDFException;
-
-    public static native boolean VSsetexternalfile(int vkey, String filename, int offset) throws HDFException;
-
-    public static native void VSsetname(long vdata_id, String vdata_name) throws HDFException;
-
-    /**
-     *  @param vdata_id <b>IN</b>: the Vdata id
-     *  @param databuf <b>IN</b>: byte[], the data in an array of bytes
-     *  @param n_records <b>IN</b>: int, number of records
-     *  @param interlace <b>IN</b>: int, interlace
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-     *
-     *  <p><b>NOTE:</b> to write a Java array use the alternative
-     *  routine below.
-     *
-     *  @return the number of elements written (0 or a +ve integer)
-     */
-    public static native int VSwrite(long vdata_id, byte [] databuf, int n_records, int interlace) throws HDFException;
-
-    /**
-     *  @param vdata_id <b>IN</b>: the Vdata id
-     *  @param databuf <b>IN</b>: Object, a Java array of appropriate
-     *  type, dimensions, and size.
-     *  @param n_records <b>IN</b>: int, number of records
-     *  @param interlace <b>IN</b>: int, interlace
-     *
-     *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
-     *
-     *  <p><b>Important Note:</b> This interface only supports
-     *  records which are all of the same numeric type, with
-     *  no character fields.  Heterogeneous fields can be
-     *  written as bytes (see above), but the calling program
-     *  must make sure the data is in proper order to
-     *  write to the HDF library.
-     *
-     *  <p><b>Note:</b> converts the data into a contiguous
-     *  array of bytes and then writes it
-     *
-     *  @return the number of elements written (0 or a +ve integer)
-     */
-    public static int VSwrite(long vdata_id, Object databuf, int n_records, int interlace) throws HDFException
-    {
-        byte[] data;
-
-        HDFArray theArray = new HDFArray(databuf);
-        data = theArray.byteify();
-            return VSwrite( vdata_id, data, n_records, interlace);
-    }
-
+    
     public static native boolean Vstart(long fid)  throws HDFException;
 
     public  static native int Vattach(long fid, int vgroup_ref, String access) throws HDFException;
@@ -2467,7 +2173,7 @@ public class HDFLibrary implements java.io.Serializable
      *  objects 0 - n
      */
     public  static native  int Vgettagrefs(long vgroup_id, int[] tags, int[] refs,
-                    int arraysize) throws HDFException;
+            int arraysize) throws HDFException;
 
     /**
      *  @param vgroup_id - IN: the Vgroup id
@@ -2609,23 +2315,23 @@ public class HDFLibrary implements java.io.Serializable
      *  objects
      */
     public static boolean  Vgetattr(long id, int index, Object theData)
-    throws HDFException {
+            throws HDFException {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-            rval = Vgetattr( id, index,  data);
+        rval = Vgetattr( id, index,  data);
         theData = theArray.arrayify( data );
         return rval;
     }
 
-   public static native int Vgetversion(long id) throws HDFException;
+    public static native int Vgetversion(long id) throws HDFException;
 
-   public static native int Vnattrs(long id) throws HDFException;
+    public static native int Vnattrs(long id) throws HDFException;
 
-   public static native boolean Vsetattr(long id, String attr_name,
-        long data_type, int count, String values) throws HDFException;
+    public static native boolean Vsetattr(long id, String attr_name,
+            long data_type, int count, String values) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the Vdata id
@@ -2644,8 +2350,8 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-   public static native boolean Vsetattr(long id, String attr_name,
-        long data_type, int count, byte[] data) throws HDFException;
+    public static native boolean Vsetattr(long id, String attr_name,
+            long data_type, int count, byte[] data) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the Vdata id
@@ -2665,12 +2371,306 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-   public static boolean Vsetattr(long id, String attr_name,
-        long data_type, int count, Object theData) throws HDFException {
+    public static boolean Vsetattr(long id, String attr_name,
+            long data_type, int count, Object theData) throws HDFException {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
         return Vsetattr(id, attr_name, data_type, count, data);
+    }
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param n_records <b>OUT</b>, int[1], the number of records in the vdata
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return  n_records[0] == the number of records
+     */
+    public static native boolean VSQuerycount(long vdata_id, int[] n_records) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param fields <b>OUT</b>, String[1], the names of the fields
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return  fields[0] == a comma delimited string with the names
+     *  of the fields.
+     */
+    public static native boolean VSQueryfields(long vdata_id, String[] fields) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param interlace <b>OUT</b>, int[1], the interlace mode,
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return  interlace[0] == the number of records,
+     *  HDFConstants.FULL_INTERLACE or HDFConstants.NO_INTERLACE
+     */
+    public static native boolean VSQueryinterlace(long vdata_id, int[] interlace) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param vdata_name <b>OUT</b>, String[1], the name of the vdata
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return  vdata_name[0] == the name
+     */
+    public static native boolean VSQueryname(long vdata_id, String[] vdata_name) throws HDFException;
+
+    public static native int VSQueryref(long vdata_id) throws HDFException;
+
+    public static native int VSQuerytag(long vdata_id) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param vdata_size <b>OUT</b>, int[1], the size of the vdata
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return  vdata_size[0] == Native size, in bytes, of a record in the vdata
+     */
+    public static native boolean VSQueryvsize(long vdata_id, int[] vdata_size) throws HDFException;
+
+    public static  native int VSattach(long fid, int vdata_ref, String access) throws HDFException;
+
+    public static  native void VSdetach(long vdata_id) throws HDFException;
+
+    public  static native  long VSgetid(long file_id, int vdata_ref) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param hdfclassname <b>OUT</b>, String[1], the class name of the vdata
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     */
+    public  static native  void VSgetclass(long vdata_id, String[] hdfclassname) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param hdfname <b>OUT</b>, String[1], the name of the vdata
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     */
+    public  static native  void VSgetname(long vdata_id, String[] hdfname) throws HDFException;
+
+    public static native int VSelts(long vdata_id) throws HDFException;
+
+    public static native boolean VSfdefine(long vdata_id, String fieldname,
+                    int numbertype, int order) throws HDFException;
+
+    public static native boolean VSfexist(long vdata_id, String fields) throws HDFException;
+
+    public static native int VSfind(long file_id, String vdataname) throws HDFException;
+
+    public static native int VSsetblocksize(long vdata_id, int blocksize) throws HDFException;
+
+    public static native int VSsetnumblocks(long vdata_id, int numblocks) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param fieldname <b>OUT</b>, String[1], the names of the fields
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return  fieldname[0] == a comma delimited string with the names
+     *  of the fields.
+     */
+    public static native int VSgetfields(long vdata_id, String[] fieldname) throws HDFException;
+
+    public static native int VSgetinterlace(long vdata_id) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param iargs <b>OUT</b>, int[3], n_records, interlace, vdata_size
+     *  @param sargs <b>OUT</b>, String[2], names the dataset, fields
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return iargs[0] = n_records, iargs[1] = interlace, iargs[2] = vdata_size,
+     *  sargs[0] = vdata_name, sargs[1] = comma delimited list of fields
+     *
+     *  <p><b>NOTE:</b> the parameters for the Java interface are not in
+     *  the same order as the C interface.
+     */
+    public static native boolean VSinquire(long vdata_id, int[] iargs, String[] sargs) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
+     *  @param iargs <b>OUT</b>, int[2], block_size, num_blocks
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return iargs[0] = blocksize, iargs[1] = num_blocks
+     *
+     *  <p><b>NOTE:</b> the parameters for the Java interface are not in
+     *  the same order as the C interface.
+     */
+    public static native boolean VSinquire(long vdata_id, int[] iargs ) throws HDFException;
+
+    /**
+     *  @param fid <b>IN</b>, File identifier returned by Hopen
+     *  @param ref_array <b>OUT</b>, int[?], the refs
+     *  @param buffersize <b>IN</b>, int, the max number of refs to
+     *  return.
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  @return ref_array contains refs.  The Java API ignores the buffersize
+     *  argument, returns as many as possible.
+     */
+    public  static native  int VSlone(long fid, int[] ref_array, int buffersize) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>: the Vdata id
+     *  @param databuf <b>OUT</b>: byte[], the data in an array of bytes
+     *  @param nrecord <b>IN</b>: int, number of records
+     *  @param interlace <b>IN</b>: int, interlace
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  <p><b>NOTE:</b> to read into a Java array use the alternative
+     *  routine below.
+     *
+     *  @return the number of elements read (0 or a +ve integer)
+     */
+    public  static native int VSread(long vdata_id, byte[] databuf, int nrecord, int interlace) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>: the Vdata id
+     *  @param theData <b>OUT</b>: Object, a Java array of appropriate
+     *  type, dimensions, and size.
+     *  @param nrecord <b>IN</b>: int, number of records
+     *  @param interlace <b>IN</b>: int, interlace
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  <p><b>Note:</b> reads the data as a contiguous
+     *  array of bytes and then converts it to an appropriate Java object.
+     *
+     *  @return the number of elements read (0 or a +ve integer)
+     */
+    public  static int VSread(long vdata_id, Object theData, int nrecord, int interlace) throws HDFException
+    {
+        byte[] data;
+        int rval;
+
+        HDFArray theArray = new HDFArray(theData);
+        data = theArray.emptyBytes();
+                rval = VSread(vdata_id, data, nrecord, interlace);
+        theData = theArray.arrayify( data );
+        return rval;
+    }
+
+    public static native int VSseek(long vdata_id, int record) throws HDFException;
+
+    public static native boolean VSsetfields(long vdata_id, String fields) throws HDFException;
+
+    public static native boolean  VSsetinterlace(long vdata_id, int interlace) throws HDFException;
+
+    public static native int VSsizeof(long vdata_id, String fields) throws HDFException;
+
+    public static native boolean VSappendable(int vkey, int block_size) throws HDFException;
+
+    public static native int VSfindclass(long file_id, String vgclass) throws HDFException;
+
+    public static native int VSgetversion(int vkey) throws HDFException;
+
+    public static native void VSsetclass(long vdata_id, String vdata_class) throws HDFException;
+
+    public static native boolean VSsetexternalfile(int vkey, String filename, int offset) throws HDFException;
+
+    public static native void VSsetname(long vdata_id, String vdata_name) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>: the Vdata id
+     *  @param databuf <b>IN</b>: byte[], the data in an array of bytes
+     *  @param n_records <b>IN</b>: int, number of records
+     *  @param interlace <b>IN</b>: int, interlace
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  <p><b>NOTE:</b> to write a Java array use the alternative
+     *  routine below.
+     *
+     *  @return the number of elements written (0 or a +ve integer)
+     */
+    public static native int VSwrite(long vdata_id, byte [] databuf, int n_records, int interlace) throws HDFException;
+
+    /**
+     *  @param vdata_id <b>IN</b>: the Vdata id
+     *  @param databuf <b>IN</b>: Object, a Java array of appropriate
+     *  type, dimensions, and size.
+     *  @param n_records <b>IN</b>: int, number of records
+     *  @param interlace <b>IN</b>: int, interlace
+     *
+     *  @exception hdf.hdflib.HDFException
+     *             should be thrown for errors in the
+     *             HDF library call.
+     *
+     *
+     *  <p><b>Important Note:</b> This interface only supports
+     *  records which are all of the same numeric type, with
+     *  no character fields.  Heterogeneous fields can be
+     *  written as bytes (see above), but the calling program
+     *  must make sure the data is in proper order to
+     *  write to the HDF library.
+     *
+     *  <p><b>Note:</b> converts the data into a contiguous
+     *  array of bytes and then writes it
+     *
+     *  @return the number of elements written (0 or a +ve integer)
+     */
+    public static int VSwrite(long vdata_id, Object databuf, int n_records, int interlace) throws HDFException
+    {
+        byte[] data;
+
+        HDFArray theArray = new HDFArray(databuf);
+        data = theArray.byteify();
+            return VSwrite( vdata_id, data, n_records, interlace);
     }
 
     /**
@@ -2685,7 +2685,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return name[0] = name, argv[0] = data_type, argv[1] = count,
@@ -2700,7 +2700,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return findex[0] = the index
@@ -2719,7 +2719,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
@@ -2738,7 +2738,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
@@ -2768,11 +2768,11 @@ public class HDFLibrary implements java.io.Serializable
      *  @param attr_name <b>IN</b>: String, the name of the attribute
      *  @param data_type <b>IN</b>: int, the number_type of the attribute
      *  @param count <b>IN</b>: the number of values
-     *  @param values <b>IN</b>: Strin, the data in an String
+     *  @param values <b>IN</b>: String, the data in an String
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
@@ -2793,7 +2793,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write into a Java array use the alternative
@@ -2815,7 +2815,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> converts the data to a contiguous
@@ -2831,13 +2831,13 @@ public class HDFLibrary implements java.io.Serializable
         return VSsetattr(id, index, attr_name, data_type, count, data);
     }
 
-    /*
-     *  @param filename <b>IN</b>: String, the file
+    /**
+     *  @param fileName <b>IN</b>: String, the file
      *  @param argv <b>OUT</b>: int[3], the width, height, and interlace mode
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return argv[0] = width, argv[1] = height, argv[2] = interlace
@@ -2855,7 +2855,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
@@ -2875,7 +2875,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
@@ -2914,7 +2914,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
@@ -2934,7 +2934,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
@@ -2959,7 +2959,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
@@ -2979,7 +2979,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> converts the data into a contiguous
@@ -3001,7 +3001,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *  @return true on success
      */

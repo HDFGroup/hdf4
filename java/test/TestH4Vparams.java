@@ -13,18 +13,35 @@
 
 package test;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { TestH4.class,
-    TestH4ANparams.class,
-    TestH4DFparams.class,
-    TestH4DFPparams.class,
-    TestH4DFRparams.class,
-    TestH4GRparams.class,
-    TestH4HCparams.class
-})
+import java.io.File;
 
-public class TestAll {
+import hdf.hdflib.HDFLibrary;
+import hdf.hdflib.HDFException;
+import hdf.hdflib.HDFChunkInfo;
+import hdf.hdflib.HDFConstants;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
+
+public class TestH4Vparams {
+    @Rule public TestName testname = new TestName();
+
+    @Before
+    public void showTestName() {
+        System.out.print(testname.getMethodName());
+    }
+
+    @After
+    public void nextTestName() {
+        System.out.println();
+    }
 }
