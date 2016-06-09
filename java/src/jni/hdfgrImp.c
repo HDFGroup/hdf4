@@ -135,11 +135,14 @@ Java_hdf_hdflib_HDFLibrary_GRnametoindex
 
     PIN_JAVA_STRING(gr_name, str);
 
-    rval = GRnametoindex((int32)gr_id, str);
+    if (str != NULL) {
+        rval = GRnametoindex((int32)gr_id, str);
 
-    UNPIN_JAVA_STRING(gr_name, str);
-    if (rval < 0)
-        CALL_ERROR_CHECK();
+        UNPIN_JAVA_STRING(gr_name, str);
+
+        if (rval < 0)
+            CALL_ERROR_CHECK();
+    }
 
     return (jint)rval;
 }
@@ -613,11 +616,14 @@ Java_hdf_hdflib_HDFLibrary_GRfindattr
 
     PIN_JAVA_STRING(attr_name, str);
 
-    rval = GRfindattr((int32)gr_id, str);
+    if (str != NULL) {
+        rval = GRfindattr((int32)gr_id, str);
 
-    UNPIN_JAVA_STRING(attr_name, str);
-    if (rval < 0)
-        CALL_ERROR_CHECK();
+        UNPIN_JAVA_STRING(attr_name, str);
+
+        if (rval < 0)
+            CALL_ERROR_CHECK();
+    }
 
     return (jint)rval;
 }
@@ -645,14 +651,17 @@ Java_hdf_hdflib_HDFLibrary_GRcreate
         else {
             PIN_JAVA_STRING(name, str);
 
-            rval = GRcreate( (int32)gr_id, str, (int32)ncomp,
-                (int32)data_type, (int32)interlace_mode, (int32 *)dims);
+            if (str != NULL) {
+                rval = GRcreate( (int32)gr_id, str, (int32)ncomp,
+                        (int32)data_type, (int32)interlace_mode, (int32 *)dims);
 
-            UNPIN_JAVA_STRING(name, str);
+                UNPIN_JAVA_STRING(name, str);
+
+                if (rval < 0)
+                    CALL_ERROR_CHECK();
+            }
 
             ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
-            if (rval < 0)
-                CALL_ERROR_CHECK();
         } /* end else */
     } /* end else */
     return (jlong)rval;
@@ -683,12 +692,14 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2
 
     PIN_JAVA_STRING_TWO(attr_name, str, values, val);
 
-    rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)val);
+    if (str != NULL && val != NULL) {
+        rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)val);
 
-    UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
+        UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
 
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
+    }
 
     return JNI_TRUE;
 }
@@ -713,14 +724,16 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B
         else {
             PIN_JAVA_STRING(attr_name, str);
 
-            rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)arr);
+            if (str != NULL) {
+                rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)arr);
 
-            UNPIN_JAVA_STRING(attr_name, str);
+                UNPIN_JAVA_STRING(attr_name, str);
+
+                if (rval == FAIL)
+                    CALL_ERROR_CHECK();
+            }
 
             ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
-
-            if (rval == FAIL)
-                CALL_ERROR_CHECK();
         } /* end else */
     } /* end else */
     return JNI_TRUE;
@@ -823,12 +836,14 @@ Java_hdf_hdflib_HDFLibrary_GRsetexternalfile
 
     PIN_JAVA_STRING(filename, str);
 
-    rval = GRsetexternalfile((int32)ri_id, str, (int32)offset);
+    if (str != NULL) {
+        rval = GRsetexternalfile((int32)ri_id, str, (int32)offset);
 
-    UNPIN_JAVA_STRING(filename, str);
+        UNPIN_JAVA_STRING(filename, str);
 
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
+    }
 
     return JNI_TRUE;
 }
