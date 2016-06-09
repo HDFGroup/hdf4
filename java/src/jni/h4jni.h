@@ -69,8 +69,8 @@
 #define PIN_JAVA_STRING(javastr,localstr) {                                      \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
-        h4nullArgument(env, "java string is NULL");                              \
         (localstr) == NULL;                                                      \
+        h4nullArgument(env, "java string is NULL");                              \
     }                                                                            \
     else {                                                                       \
         (localstr) = ENVPTR->GetStringUTFChars(ENVPAR (javastr), &isCopy);       \
@@ -87,9 +87,11 @@
 #define PIN_JAVA_STRING_TWO(javastr,localstr,java2str,local2str) {               \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
+        (localstr) == NULL;                                                      \
         h4nullArgument(env, "java string is NULL");                              \
     }                                                                            \
     else if ((java2str) == NULL) {                                               \
+        (local2str) == NULL;                                                      \
         h4nullArgument(env, "second java string is NULL");                       \
     }                                                                            \
     else {                                                                       \
@@ -115,12 +117,15 @@
 #define PIN_JAVA_STRING_THREE(javastr,localstr,java2str,local2str,java3str,local3str) {       \
     jboolean isCopy;                                                             \
     if ((javastr) == NULL) {                                                     \
+        (localstr) == NULL;                                                      \
         h4nullArgument(env, "java string is NULL");                              \
     }                                                                            \
     else if ((java2str) == NULL) {                                               \
+        (local2str) == NULL;                                                      \
         h4nullArgument(env, "second java string is NULL");                       \
     }                                                                            \
     else if ((java3str) == NULL) {                                               \
+        (local3str) == NULL;                                                      \
         h4nullArgument(env, "third java string is NULL");                        \
     }                                                                            \
     else {                                                                       \
