@@ -1,9 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
- * Copyright by the Board of Trustees of the University of Illinois.         *
  * All rights reserved.                                                      *
  *                                                                           *
- * This file is part of HDF Java Products. The full HDF Java copyright       *
+ * This file is part of HDF Products. The full HDF copyright                 *
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
@@ -625,6 +624,32 @@ public class TestH4SDparams {
         int sign_ext = 0;
         int fill_one = 0;
         HDFLibrary.SDsetnbitdataset(-1, start_bit, bit_len, sign_ext, fill_one);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDsetcompressIllegalId() throws Throwable {
+        int type = 0;
+        HDFCompInfo comp_info = new HDFCompInfo();
+        HDFLibrary.SDsetcompress(-1, type, comp_info);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDsetcompressNull() throws Throwable {
+        int type = 0;
+        HDFCompInfo comp_info = null;
+        HDFLibrary.SDsetcompress(0, type, null);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDgetcompinfoIllegalId() throws Throwable {
+        HDFCompInfo comp_info = new HDFCompInfo();
+        HDFLibrary.SDgetcompinfo(-1, comp_info);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDgetcompinfoNull() throws Throwable {
+        HDFCompInfo comp_info = null;
+        HDFLibrary.SDgetcompinfo(0, null);
     }
 
 //    @Test(expected = HDFException.class)

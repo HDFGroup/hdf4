@@ -145,6 +145,7 @@ JUnit version 4.11
 .testGRreadchunkArgument
 .testHCget_config_infoIllegalCoderType
 .testSSDgetcalArgument
+.testSDsetcompressNull
 .testSDgetcalIllegalId
 .testSDsetrangeNullMax
 .testSDsetrangeNullMin
@@ -164,6 +165,7 @@ JUnit version 4.11
 .testSDcreateNullDims
 .testSDcreateNullName
 .testSDsetcalIllegalId
+.testSDgetcompinfoIllegalId
 .testSDgetfillvalueNull
 .testSDattrinfoIllegalId
 .testSDgetinfoArgumentArgs
@@ -189,6 +191,7 @@ JUnit version 4.11
 .testSDgetcalNullArgument
 .testSDendaccessIllegalId
 .testSDendIllegalId
+.testSDsetcompressIllegalId
 .testSDsetdatastrsIllegalId
 .testSDstartNull
 .testSDsetdimnameIllegalId
@@ -221,14 +224,73 @@ JUnit version 4.11
 .testSDgetdimscaleIllegalId
 .testSDattrinfoNullArgs
 .testSDattrinfoNullName
+.testSDgetcompinfoNull
 .testSDnametoindexIllegalId
 .testSDattrinfoArgumentArgs
 .testSDiscoordvarIllegalId
 .testSDgetfillvalueIllegalId
 .testSDreaddata_shortIllegalId
 .testSDreaddata_intIllegalId
+.testVSsizeofIllegalId
+.testVSattachNullAccess
+.testVSreadNullDataBuffer
+.testVSsetnumblocksIllegalId
+.testVSfindexNullName
+.testVSsetfieldsNullFields
+.testVSQueryfieldsNullFields
+.testVSQuerycountIllegalId
+.testVSQueryfieldsIllegalArgument
+.testVSsetclassIllegalId
+.testVSsetattrIllegalId
+.testVSfindclassNullClass
+.testVSsizeofNullFields
+.testVSsetnameIllegalId
+.testVSgetattrNullData
+.testVSreadIllegalId
+.testVSsetattrNullAttributeName
+.testVSQueryvsizeIllegalArgument
+.testVSQueryinterlaceIllegalId
+.testVSfindattrIllegalId
+.testVSQuerycountNullNRecords
+.testVSsetexternalfileNullFilename
+.testVSgetnameNullName
+.testVSfindNullVDataName
+.testVSsetexternalfileIllegalVKey
+.testVSfindattrNullName
+.testVSgetfieldsIllegalId
+.testVSsetblocksizeIllegalId
+.testVSsetattrNullAttributeName2
+.testVSQueryinterlaceNullInterlace
+.testVSfindexIllegalId
+.testVSQuerycountIllegalArgument
+.testVSfdefineIllegalId
+.testVSattachIllegalId
+.testVSfexistNullFields
+.testVSsetattrIllegalId2
+.testVSgetattrIllegalId
+.testVSsetnameNullVDataName
+.testVSgetfieldsNullFieldName
+.testVSQuerynameNullVDataName
+.testVSwriteIllegalId
+.testVSsetinterlaceIllegalId
+.testVSQuerynameIllegalId
+.testVSQueryinterlaceIllegalArgument
+.testVSsetfieldsIllegalId
+.testVSQueryfieldsIllegalId
+.testVSsetclassNullClass
+.testVSQueryvsizeNullVDataSize
+.testVSgetclassNullClassName
+.testVSattachIllegalReg
+.testVSfindexNullIndexArray
+.testVSfexistIllegalId
+.testVSwriteNullDataBuffer
+.testVSappendableIllegalVKey
+.testVSQueryvsizeIllegalId
+.testVSQuerynameIllegalArgument
+.testVSfdefineNullFieldName
+.testVSloneNullRefArray
 
 Time:  XXXX
 
-OK (228 tests)
+OK (290 tests)
 

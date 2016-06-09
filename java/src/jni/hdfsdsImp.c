@@ -1603,64 +1603,73 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetcompress
 (JNIEnv *env, jclass clss, jlong id, jint type, jobject cinfo)
 {
-        intn rval;
-        comp_info cinf;
-        jboolean bval;
+    intn rval;
+    comp_info cinf;
 
-        bval = getNewCompInfo(env, cinfo, &cinf); /* or is it New ? */
-
-        /* check for success... */
-
+    if (cinfo == NULL) {
+        h4nullArgument(env, "SDsetcompress:  cinfo is NULL");
+    } /* end if */
+    else if (getNewCompInfo(env, cinfo, &cinf) == JNI_FALSE) {
+        h4raiseException(env, "SDsetcompress: error creating comp_info struct");
+    }
+    else {
         rval = SDsetcompress((int32)id, (comp_coder_t)type, (comp_info *)&cinf);
 
         if (rval == FAIL)
             CALL_ERROR_CHECK();
-
-        return JNI_TRUE;
+    }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcompinfo
 (JNIEnv *env, jclass clss, jlong id, jobject cinfo)
 {
-        intn rval;
-        comp_coder_t coder;
-        comp_info cinf;
+    intn rval;
+    comp_coder_t coder;
+    comp_info cinf;
 
-        /* check for success... */
-
-        rval = SDgetcompinfo((int32) id, (comp_coder_t *) &coder,
-        (comp_info *)&cinf);
-
+    if (cinfo == NULL) {
+        h4nullArgument(env, "SDgetcompinfo:  cinfo is NULL");
+    } /* end if */
+    else {
+        rval = SDgetcompinfo((int32)id, (comp_coder_t *)&coder, (comp_info *)&cinf);
 
         if (rval == FAIL) {
-                return JNI_FALSE;
+            CALL_ERROR_CHECK();
         }
         else {
-            return setNewCompInfo(env, cinfo, coder, &cinf);
+            if (setNewCompInfo(env, cinfo, coder, &cinf) == JNI_FALSE)
+                h4raiseException(env, "SDgetcompinfo: error creating comp_info struct");
         }
+    }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcompress
 (JNIEnv *env, jclass clss, jlong id, jobject cinfo)
 {
-        intn rval;
-        comp_coder_t coder;
-        comp_info cinf;
+    intn rval;
+    comp_coder_t coder;
+    comp_info cinf;
 
-        /* check for success... */
-
+    if (cinfo == NULL) {
+        h4nullArgument(env, "SDgetcompress:  cinfo is NULL");
+    } /* end if */
+    else {
         rval = SDgetcompress((int32) id, (comp_coder_t *) &coder,
-        (comp_info *)&cinf);
-
+                (comp_info *)&cinf);
 
         if (rval == FAIL) {
-                return JNI_FALSE;
+            CALL_ERROR_CHECK();
         }
         else {
-            return setNewCompInfo(env, cinfo, coder, &cinf);
+            if (setNewCompInfo(env, cinfo, coder, &cinf) == JNI_FALSE)
+                h4raiseException(env, "SDgetcompress: error creating comp_info struct");
         }
+    }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL

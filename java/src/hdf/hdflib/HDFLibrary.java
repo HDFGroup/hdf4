@@ -1781,9 +1781,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param cinfo <b>IN</b>: HDFCompInfo, the compression info
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>The compression algorithm specific information is
      *  passed in an appropriate sub-class of HDFCompInfo.
@@ -1798,17 +1796,13 @@ public class HDFLibrary implements java.io.Serializable
      *  @param cinfo <b>IN</b>: HDFCompInfo, the compression info
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>The compression algorithm specific information is
      *  passed in an appropriate sub-class of HDFCompInfo.
      *
      *  @return true on success
      */
-    @Deprecated
-    public static native boolean SDgetcompress(long id, HDFCompInfo cinfo) throws HDFException;
 
     public static native boolean SDgetcompinfo(long id, HDFCompInfo cinfo) throws HDFException;
 
