@@ -146,6 +146,9 @@ JUnit version 4.11
 .testHCget_config_infoIllegalCoderType
 .testSSDgetcalArgument
 .testSDgetcalIllegalId
+.testSDsetrangeNullMax
+.testSDsetrangeNullMin
+.testSDsetnbitdatasetIllegalId
 .testSDcheckemptyNull
 .testSDnametoindexNull
 .testSDgetdimscaleNull
@@ -164,6 +167,9 @@ JUnit version 4.11
 .testSDgetfillvalueNull
 .testSDattrinfoIllegalId
 .testSDgetinfoArgumentArgs
+.testSDwritedataNullCount
+.testSDwritedataNullStart
+.testSDsetrangeIllegalId
 .testSDsetdimscaleNull
 .testSDreaddata_floatIllegalId
 .testSDreaddataNullData
@@ -188,6 +194,7 @@ JUnit version 4.11
 .testSDsetdimnameIllegalId
 .testSDselectIllegalId
 .testSDreftoindexIllegalId
+.testSDwritedataIllegalId
 .testSDreaddataNullCount
 .testSDreaddataNullStart
 .testSDgetcalNull
@@ -203,6 +210,7 @@ JUnit version 4.11
 .testSDcheckemptyIllegalId
 .testSDreadattrNull
 .testSDgetdimidIllegalId
+.testSDwritedataNullData
 .testSDgetdimstrsNull
 .testSDidtorefIllegalId
 .testSDgetrangeNullMax
@@ -222,5 +230,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (220 tests)
+OK (228 tests)
 

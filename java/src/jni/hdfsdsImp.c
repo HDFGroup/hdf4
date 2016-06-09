@@ -1492,20 +1492,34 @@ Java_hdf_hdflib_HDFLibrary_SDsetrange
     jboolean bb;
     jbyte *minp, *maxp;
 
-    maxp = ENVPTR->GetByteArrayElements(ENVPAR max,&bb);
-    minp = ENVPTR->GetByteArrayElements(ENVPAR min,&bb);
-
-    rval = SDsetrange((int32)sdsid, maxp, minp);
-    if (rval==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR max,maxp,JNI_ABORT);
-        ENVPTR->ReleaseByteArrayElements(ENVPAR min,minp,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (max == NULL) {
+        h4nullArgument(env, "SDsetrange:  max is NULL");
+    } /* end if */
+    else if (min == NULL) {
+        h4nullArgument(env, "SDsetrange:  min is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR max,maxp,0);
-        ENVPTR->ReleaseByteArrayElements(ENVPAR min,minp,0);
-        return JNI_TRUE;
-    }
+        maxp = ENVPTR->GetByteArrayElements(ENVPAR max, &bb);
+        if (maxp == NULL) {
+            h4JNIFatalError(env, "SDgetrange:  max not pinned");
+        } /* end if */
+        else {
+            minp = ENVPTR->GetByteArrayElements(ENVPAR min, &bb);
+            if (minp == NULL) {
+                h4JNIFatalError(env, "SDgetrange:  min not pinned");
+            } /* end if */
+            else {
+                rval = SDsetrange((int32)sdsid, maxp, minp);
+                if (rval == FAIL) {
+                    CALL_ERROR_CHECK();
+                }
+                ENVPTR->ReleaseByteArrayElements(ENVPAR min, minp, JNI_ABORT);
+            } /* end else */
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR max, maxp, JNI_ABORT);
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 
@@ -1519,40 +1533,53 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata
     int32 *e;
     jbyte *d;
     jboolean bb;
+    jboolean cbb = 0;
 
-
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL ) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
+    if (data == NULL) {
+        h4nullArgument(env, "SDwritedata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDwritedata:  start is NULL");
+    } /* end if */
+    else if (edge == NULL) {
+        h4nullArgument(env, "SDwritedata:  count is NULL");
+    } /* end if */
     else {
-        strd = (int32 *)NULL;
-    }
-    e = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR edge,&bb);
+        d = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
 
-    /* assume that 'data' is big enough */
-    d = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDwritedata:  start not pinned");
+        } /* end if */
+        else {
+            e = ENVPTR->GetIntArrayElements(ENVPAR edge, &bb);
+            if (e == NULL) {
+                h4JNIFatalError(env, "SDwritedata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDwritedata((int32)sdsid, strt, strd, e, d);
 
-    rval = SDwritedata((int32)sdsid, strt, strd, e, d);
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR edge, e, JNI_ABORT);
 
-    if (rval == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL ) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
         }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR edge,(jint *)e,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
-    else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-        if (stride != NULL ) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR edge,(jint *)e,0);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
-        return JNI_TRUE;
-    }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
 }
 
 /* new stuff for chunking */
@@ -1580,11 +1607,11 @@ Java_hdf_hdflib_HDFLibrary_SDsetcompress
         comp_info cinf;
         jboolean bval;
 
-        bval = getNewCompInfo(env, cinfo,&cinf); /* or is it New ? */
+        bval = getNewCompInfo(env, cinfo, &cinf); /* or is it New ? */
 
         /* check for success... */
 
-        rval = SDsetcompress((int32) id, (comp_coder_t) type, (comp_info *)&cinf);
+        rval = SDsetcompress((int32)id, (comp_coder_t)type, (comp_info *)&cinf);
 
         if (rval == FAIL)
             CALL_ERROR_CHECK();

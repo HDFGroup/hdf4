@@ -1693,9 +1693,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param min <b>IN</b>: byte[], the min value in an array of bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> the calling program must assure that the
      *  data is correctly formatted for C.  To set the max and min value
@@ -1711,9 +1709,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param min <b>IN</b>: Object, a Java object of appropriate type
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts the Java array to an array of
      *  bytes, and writes the bytes.
@@ -1740,9 +1736,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param data <b>IN</b>: byte[], data in an array of bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
@@ -1761,9 +1755,7 @@ public class HDFLibrary implements java.io.Serializable
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.
@@ -2106,7 +2098,7 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native int VQueryref(long vkey) throws HDFException;
     public static native int VQuerytag(long vkey) throws HDFException;
-    
+
     public static native boolean Vstart(long fid)  throws HDFException;
 
     public static native int Vattach(long fid, int vgroup_ref, String access) throws HDFException;

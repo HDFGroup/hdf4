@@ -564,6 +564,69 @@ public class TestH4SDparams {
         HDFLibrary.SDsetfillvalue(0, data);
     }
 
+    @Test(expected = HDFException.class)
+    public void testSDsetrangeIllegalId() throws Throwable {
+        byte[] min = {0};
+        byte[] max = {0};
+        HDFLibrary.SDsetrange(-1, max, min);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDsetrangeNullMin() throws Throwable {
+        byte[] min = null;
+        byte[] max = {0};
+        HDFLibrary.SDsetrange(0, max, min);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDsetrangeNullMax() throws Throwable {
+        byte[] min = {0};
+        byte[] max = null;
+        HDFLibrary.SDsetrange(0, max, min);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDwritedataIllegalId() throws Throwable {
+        int[] start = {0, 0};
+        int[] stride = {0, 0};
+        int[] count = {0, 0};
+        byte[] data = {0};
+        HDFLibrary.SDwritedata(-1, start, stride, count, data);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDwritedataNullData() throws Throwable {
+        int[] start = {0, 0};
+        int[] stride = {0, 0};
+        int[] count = {0, 0};
+        HDFLibrary.SDwritedata(0, start, stride, count, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDwritedataNullStart() throws Throwable {
+        int[] stride = {0, 0};
+        int[] count = {0, 0};
+        byte[] data = {0};
+        HDFLibrary.SDwritedata(0, null, stride, count, data);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDwritedataNullCount() throws Throwable {
+        int[] start = {0, 0};
+        int[] stride = {0, 0};
+        byte[] data = {0};
+        HDFLibrary.SDwritedata(0, start, stride, null, data);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDsetnbitdatasetIllegalId() throws Throwable {
+        int start_bit = 0;
+        int bit_len = 0;
+        int sign_ext = 0;
+        int fill_one = 0;
+        HDFLibrary.SDsetnbitdataset(-1, start_bit, bit_len, sign_ext, fill_one);
+    }
+
 //    @Test(expected = HDFException.class)
 //    public void testSDgetlutidIllegalId() throws Throwable {
 //        int index = 0;
