@@ -134,8 +134,11 @@ java/test/TestH4.java -text
 java/test/TestH4ANparams.java -text
 java/test/TestH4DFPparams.java -text
 java/test/TestH4DFRparams.java -text svneol=unset#text/plain
+java/test/TestH4DFparams.java -text svneol=unset#text/plain
 java/test/TestH4GRparams.java -text
 java/test/TestH4HCparams.java -text svneol=unset#text/plain
+java/test/TestH4VSparams.java -text svneol=unset#text/plain
+java/test/TestH4Vparams.java -text svneol=unset#text/plain
 java/test/junit.sh.in -text
 m4/ax_check_class.m4 -text
 m4/ax_check_classpath.m4 -text
