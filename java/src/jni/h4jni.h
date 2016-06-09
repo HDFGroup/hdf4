@@ -52,7 +52,7 @@
 
 /* Macros for error check */
 /* for now:  use top of exception stack:  fix this to do whole stack */
-#define CALL_ERROR_CHECK(retdefault) {                                           \
+#define CALL_ERROR_CHECK() {                                                     \
     int16 errval;                                                                \
     jclass jc;                                                                   \
     errval = HEvalue((int32)1);                                                  \
