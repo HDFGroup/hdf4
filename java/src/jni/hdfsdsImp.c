@@ -1658,8 +1658,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetcompress
         h4nullArgument(env, "SDgetcompress:  cinfo is NULL");
     } /* end if */
     else {
-        rval = SDgetcompress((int32) id, (comp_coder_t *) &coder,
-                (comp_info *)&cinf);
+        rval = SDgetcompress((int32)id, (comp_coder_t *)&coder, (comp_info *)&cinf);
 
         if (rval == FAIL) {
             CALL_ERROR_CHECK();
@@ -1678,7 +1677,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetaccesstype
 {
     intn rval;
 
-    rval = SDsetaccesstype( (int32) id, (uintn) accesstype );
+    rval = SDsetaccesstype((int32)id, (uintn)accesstype);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1692,7 +1691,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetblocksize
 {
     intn rval;
 
-    rval = SDsetblocksize( (int32) sdsid, (int32) block_size );
+    rval = SDsetblocksize((int32)sdsid, (int32)block_size);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1706,7 +1705,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillmode
 {
     intn rval;
 
-    rval = SDsetfillmode( (int32) sdsid, (intn) fillmode );
+    rval = SDsetfillmode((int32)sdsid, (intn)fillmode);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1715,12 +1714,12 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillmode
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDsetdimval_comp
+Java_hdf_hdflib_HDFLibrary_SDsetdimval_1comp
 (JNIEnv *env, jclass clss, jlong sdsid, jint comp_mode)
 {
     intn rval;
 
-    rval = SDsetdimval_comp( (int32) sdsid, (intn) comp_mode );
+    rval = SDsetdimval_comp((int32)sdsid, (intn)comp_mode);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1729,22 +1728,21 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimval_comp
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDisdimval_bwcomp
+Java_hdf_hdflib_HDFLibrary_SDisdimval_1bwcomp
 (JNIEnv *env, jclass clss, jlong dimid)
 {
     intn rval;
 
-    rval = SDisdimval_bwcomp( (int32) dimid );
+    rval = SDisdimval_bwcomp((int32)dimid);
     if (rval == SD_DIMVAL_BW_COMP) {
         return JNI_TRUE;
     }
     else if (rval == SD_DIMVAL_BW_INCOMP) {
         return JNI_FALSE;
     }
-    else {
-        /* exception? */
-        return JNI_FALSE;
-    }
+    else
+        CALL_ERROR_CHECK();
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1753,15 +1751,19 @@ Java_hdf_hdflib_HDFLibrary_SDsetchunk
 {
     intn rval;
     HDF_CHUNK_DEF c_def;
-    jboolean bval;
 
-    bval = getChunkInfo(env, chunk_def,&c_def);
+    if (chunk_def == NULL) {
+        h4nullArgument(env, "SDsetchunk:  chunk_def is NULL");
+    } /* end if */
+    else if (getChunkInfo(env, chunk_def, &c_def) == JNI_FALSE) {
+        h4raiseException(env, "SDsetchunk: error creating chunk_def struct");
+    }
+    else {
+        rval = SDsetchunk((int32)sdsid, c_def, (int32)flags);
 
-    rval = SDsetchunk ((int32) sdsid, c_def, (int32) flags);
-
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
+    }
     return JNI_TRUE;
 }
 
@@ -1772,25 +1774,38 @@ Java_hdf_hdflib_HDFLibrary_SDgetchunkinfo
 {
     int32 rval;
     HDF_CHUNK_DEF cdef;
-    jboolean stat;
     jint *flgs;
     jboolean bb;
+    jboolean cbb = 0;
 
-    flgs = ENVPTR->GetIntArrayElements(ENVPAR cflags,&bb);
-    rval = SDgetchunkinfo( (int32)sdsid, &cdef, (int32 *)&(flgs[0]));
-
-    /* convert cdef to HDFchunkinfo */
-    if (rval == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR cflags,(jint *)flgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (chunk_def == NULL) {
+        h4nullArgument(env, "SDgetchunkinfo:  chunk_def is NULL");
+    } /* end if */
+    else if (cflags == NULL) {
+        h4nullArgument(env, "SDgetchunkinfo:  cflags is NULL");
+    } /* end else if */
     else {
-        stat = makeChunkInfo( env, chunk_def, (int32)*flgs, &cdef);
-        ENVPTR->ReleaseIntArrayElements(ENVPAR cflags,(jint *)flgs,0);
+        flgs = ENVPTR->GetIntArrayElements(ENVPAR cflags, &bb);
+        if (flgs == NULL) {
+            h4JNIFatalError(env, "SDgetchunkinfo:  cflags not pinned");
+        } /* end if */
+        else {
+            rval = SDgetchunkinfo( (int32)sdsid, &cdef, (int32 *)&(flgs[0]));
 
-        return stat/*JNI_TRUE*/;
+            if (rval == FAIL) {
+                cbb = JNI_ABORT;
+                CALL_ERROR_CHECK();
+            }
+            else {
+            /* convert cdef to HDFchunkinfo */
+                if (makeChunkInfo(env, chunk_def, (int32)*flgs, &cdef) == JNI_FALSE)
+                    h4raiseException(env, "SDgetchunkinfo: error creating chunk_def struct");
+            }
+            ENVPTR->ReleaseIntArrayElements(ENVPAR cflags, (jint *)flgs, cbb);
+        }
     }
 
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1801,50 +1816,88 @@ Java_hdf_hdflib_HDFLibrary_SDreadchunk
     jbyte * s;
     jint *arr;
     jboolean bb;
+    jboolean cbb = 0;
 
-    arr = ENVPTR->GetIntArrayElements(ENVPAR origin,&bb);
-    s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
-
-    rval = SDreadchunk((int32)sdid,(int32 *)arr,s);
-
-    ENVPTR->ReleaseIntArrayElements(ENVPAR origin,arr,JNI_ABORT);
-    if (rval == FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (dat == NULL) {
+        h4nullArgument(env, "SDreadchunk:  data is NULL");
+    } /* end if */
+    else if (origin == NULL) {
+        h4nullArgument(env, "SDreadchunk:  origin is NULL");
+    } /* end else if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,0);
-        return JNI_TRUE;
+        arr = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
+        if (arr == NULL) {
+            h4JNIFatalError(env, "SDreadchunk:  origin not pinned");
+        } /* end if */
+        else {
+            s = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
+            if (s == NULL) {
+                h4JNIFatalError(env, "SDreadchunk:  data not pinned");
+            } /* end if */
+            else {
+                rval = SDreadchunk((int32)sdid, (int32 *)arr, s);
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+                ENVPTR->ReleaseByteArrayElements(ENVPAR dat, s, cbb);
+            }
+            ENVPTR->ReleaseIntArrayElements(ENVPAR origin, arr, JNI_ABORT);
+        }
     }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetchunkcache
 (JNIEnv *env, jclass clss, jlong sdsid, jint maxcache, jint flags)
 {
-    return ( SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags) );
+    intn rval;
+
+    rval = SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDwritechunk
-(JNIEnv *env, jclass clss, jlong sdid, jintArray index, jbyteArray dat)
+(JNIEnv *env, jclass clss, jlong sdid, jintArray origin, jbyteArray dat)
 {
     int32 rval;
-    jbyte * s;
-    jint * arr;
+    jbyte *s;
+    jint  *arr;
     jboolean bb;
 
-    s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
-    arr = ENVPTR->GetIntArrayElements(ENVPAR index,&bb);
+    if (dat == NULL) {
+        h4nullArgument(env, "SDwritechunk:  data is NULL");
+    } /* end if */
+    else if (origin == NULL) {
+        h4nullArgument(env, "SDwritechunk:  origin is NULL");
+    } /* end else if */
+    else {
+        arr = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
+        if (arr == NULL) {
+            h4JNIFatalError(env, "SDwritechunk:  origin not pinned");
+        } /* end if */
+        else {
+            s = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
+            if (s == NULL) {
+                h4JNIFatalError(env, "SDwritechunk:  data not pinned");
+            } /* end if */
+            else {
+                rval = SDwritechunk((int32)sdid, (int32 *)arr, s);
 
-    rval = SDwritechunk((int32)sdid,(int32 *)arr,(char *)s);
-
-    ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
-    ENVPTR->ReleaseIntArrayElements(ENVPAR index,arr,JNI_ABORT);
-
-    if (rval == FAIL)
-        CALL_ERROR_CHECK();
-
+                if (rval == FAIL) {
+                    CALL_ERROR_CHECK();
+                }
+                ENVPTR->ReleaseByteArrayElements(ENVPAR dat, s, JNI_ABORT);
+            }
+            ENVPTR->ReleaseIntArrayElements(ENVPAR origin, arr, JNI_ABORT);
+        }
+    }
     return JNI_TRUE;
 }
 

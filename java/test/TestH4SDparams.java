@@ -652,196 +652,95 @@ public class TestH4SDparams {
         HDFLibrary.SDgetcompinfo(0, null);
     }
 
-//    @Test(expected = HDFException.class)
-//    public void testSDgetlutidIllegalId() throws Throwable {
-//        int index = 0;
-//        HDFLibrary.SDgetlutid(-1, index);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDgetnlutsIllegalId() throws Throwable {
-//        HDFLibrary.SDgetnluts(-1);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDgetlutinfoIllegalId() throws Throwable {
-//        int[] args = {0, 0, 0, 0};
-//        HDFLibrary.SDgetlutinfo(-1, args);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDgetlutinfoNull() throws Throwable {
-//        HDFLibrary.SDgetlutinfo(0, null);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testSDgetlutinfoArgument() throws Throwable {
-//        int[] args = {0};
-//        HDFLibrary.SDgetlutinfo(0, args);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDreadlutIllegalId() throws Throwable {
-//        byte[] data = {0};
-//        HDFLibrary.SDreadlut(-1, data);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDreadlutNull() throws Throwable {
-//        HDFLibrary.SDreadlut(0, null);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDluttorefIllegalId() throws Throwable {
-//        HDFLibrary.SDluttoref(-1);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDsetchunkIllegalId() throws Throwable {
-//        int flags = 0;
-//        HDFChunkInfo chunk_def = new HDFChunkInfo();
-//        HDFLibrary.SDsetchunk(-1, chunk_def, flags);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDsetchunkNull() throws Throwable {
-//        int flags = 0;
-//        HDFChunkInfo chunk_def = null;
-//        HDFLibrary.SDsetchunk(0, null, flags);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDsetchunkcacheIllegalId() throws Throwable {
-//        int maxcache = 0;
-//        int flags = 0;
-//        HDFLibrary.SDsetchunkcache(-1, maxcache, flags);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDsetcompressIllegalId() throws Throwable {
-//        int comp_type = 0;
-//        HDFCompInfo comp_info = new HDFCompInfo();
-//        HDFLibrary.SDsetcompress(-1, comp_type, comp_info);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDsetcompressNull() throws Throwable {
-//        int comp_type = 0;
-//        HDFLibrary.SDsetcompress(0, comp_type, null);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDgetcompressIllegalId() throws Throwable {
-//        HDFCompInfo comp_info = new HDFCompInfo();
-//        HDFLibrary.SDgetcompress(-1, comp_info);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDgetcompressNull() throws Throwable {
-//        HDFLibrary.SDgetcompress(0, null);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDsetexternalfileIllegalId() throws Throwable {
-//        String str = "";
-//        int offset = 0;
-//        HDFLibrary.SDsetexternalfile(-1, str, offset);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDsetexternalfileNull() throws Throwable {
-//        int offset = 0;
-//        HDFLibrary.SDsetexternalfile(0, null, offset);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDwriteimageIllegalId() throws Throwable {
-//        int[] start = {0, 0};
-//        int[] stride = {0, 0};
-//        int[] count = {0, 0};
-//        byte[] data = {0};
-//        HDFLibrary.SDwriteimage(-1, start, stride, count, data);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDwriteimageNullData() throws Throwable {
-//        int[] start = {0, 0};
-//        int[] stride = {0, 0};
-//        int[] count = {0, 0};
-//        HDFLibrary.SDwriteimage(0, start, stride, count, null);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDwriteimageNullStart() throws Throwable {
-//        int[] stride = {0, 0};
-//        int[] count = {0, 0};
-//        byte[] data = {0};
-//        HDFLibrary.SDwriteimage(0, null, stride, count, data);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDwriteimageNullCount() throws Throwable {
-//        int[] start = {0, 0};
-//        int[] stride = {0, 0};
-//        byte[] data = {0};
-//        HDFLibrary.SDwriteimage(0, start, stride, null, data);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDwritelutIllegalId() throws Throwable {
-//        int ncomp = 0;
-//        int data_type = 0;
-//        int interlace_mode = 0;
-//        int num_entries = 0;
-//        byte[] data = {0};
-//        HDFLibrary.SDwritelut(-1, ncomp, data_type, interlace_mode, num_entries, data);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDwritelutNull() throws Throwable {
-//        int ncomp = 0;
-//        int data_type = 0;
-//        int interlace_mode = 0;
-//        int num_entries = 0;
-//        HDFLibrary.SDwritelut(0, ncomp, data_type, interlace_mode, num_entries, null);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testSDreadchunkIllegalId() throws Throwable {
-//        int[] args = {0, 0};
-//        byte[] data = {0};
-//        HDFLibrary.SDreadchunk(-1, args, data);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDreadchunkNull() throws Throwable {
-//        int[] args = {0, 0};
-//        HDFLibrary.SDreadchunk(0, args, null);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testSDreadchunkArgument() throws Throwable {
-//        int[] args = {0};
-//        byte[] data = {0};
-//        HDFLibrary.SDreadchunk(0, args, data);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testSDreadchunkNullArgument() throws Throwable {
-//        byte[] data = {0};
-//        HDFLibrary.SDreadchunk(0, null, data);
-//    }
+    @Test(expected = HDFException.class)
+    public void testSDsetaccesstypeIllegalId() throws Throwable {
+        int index = 0;
+        HDFLibrary.SDsetaccesstype(-1, index);
+    }
 
-//  @Test(expected = HDFException.class)
-//  public void testSDgetchunkinfoIllegalId() throws Throwable {
-//      int[] args = {0};
-//      HDFChunkInfo chunk_def = new HDFChunkInfo();
-//      HDFLibrary.SDgetchunkinfo(-1, chunk_def, args);
-//  }
-//
-//  @Test(expected = NullPointerException.class)
-//  public void testSDgetchunkinfoNull() throws Throwable {
-//      HDFChunkInfo chunk_def = new HDFChunkInfo();
-//      HDFLibrary.SDgetchunkinfo(0, chunk_def, null);
-//  }
+    @Test(expected = HDFException.class)
+    public void testSDsetblocksizeIllegalId() throws Throwable {
+        int block_size = 0;
+        HDFLibrary.SDsetblocksize(-1, block_size);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDsetfillmodeIllegalId() throws Throwable {
+        boolean fill_enable = false;
+        HDFLibrary.SDsetfillmode(-1, fill_enable);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDsetdimval_compIllegalId() throws Throwable {
+        int comp_mode = 0;
+        HDFLibrary.SDsetdimval_comp(-1, comp_mode);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDisdimval_bwcompIllegalId() throws Throwable {
+        HDFLibrary.SDisdimval_bwcomp(-1);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDsetchunkIllegalId() throws Throwable {
+        int flags = 0;
+        HDFChunkInfo chunk_def = new HDFChunkInfo();
+        HDFLibrary.SDsetchunk(-1, chunk_def, flags);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDsetchunkNull() throws Throwable {
+        int flags = 0;
+        HDFChunkInfo chunk_def = null;
+        HDFLibrary.SDsetchunk(0, null, flags);
+    }
+
+    //Library routine check of ID will not fail - it will just crash
+    @Ignore//(expected = HDFException.class)
+    public void testSDreadchunkIllegalId() throws Throwable {
+        int[] args = {0, 0};
+        byte[] data = {0};
+        HDFLibrary.SDreadchunk(-1, args, data);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDreadchunkNull() throws Throwable {
+        int[] args = {0, 0};
+        byte[] data = null;
+        HDFLibrary.SDreadchunk(0, args, data);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDreadchunkNullArgument() throws Throwable {
+        byte[] data = {0};
+        HDFLibrary.SDreadchunk(0, null, data);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testSDsetchunkcacheIllegalId() throws Throwable {
+        int maxcache = 0;
+        int flags = 0;
+        HDFLibrary.SDsetchunkcache(-1, maxcache, flags);
+    }
+
+    //Library routine check of ID will not fail - it will just crash
+    @Ignore//(expected = HDFException.class)
+    public void testSDwritechunkIllegalId() throws Throwable {
+        int[] args = {0, 0};
+        byte[] data = {0};
+        HDFLibrary.SDwritechunk(-1, args, data);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDwritechunkNull() throws Throwable {
+        int[] args = {0, 0};
+        byte[] data = null;
+        HDFLibrary.SDwritechunk(0, args, data);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSDwritechunkNullArgument() throws Throwable {
+        byte[] data = {0};
+        HDFLibrary.SDwritechunk(0, null, data);
+    }
 }

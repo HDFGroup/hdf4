@@ -1816,8 +1816,7 @@ public class HDFLibrary implements java.io.Serializable
      *  SD_FILL, false calls library with SD_NOFILL
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
      *  @return true on success
      */
@@ -1846,9 +1845,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param flags <b>IN</b>: the type of chunking
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b>The chunking algorithm-specific information is
      *  passed in an appropriate sub-class of HDFChunkInfo.
@@ -1863,9 +1860,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param clflags <b>OUT</b>: int[1], the type of chunking
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return c_info contains information about the chunking method,
      *  clflags[0] == the chunking flags
@@ -1882,9 +1877,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param theData <b>OUT</b>: byte[], the data in an array of bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
@@ -1900,9 +1893,7 @@ public class HDFLibrary implements java.io.Serializable
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> reads the data as a contiguous
      *  array of bytes and then converts it to an appropriate Java object.
@@ -1929,9 +1920,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param data <b>IN</b>: byte[], data to be written, in an array of bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
@@ -1947,9 +1936,7 @@ public class HDFLibrary implements java.io.Serializable
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.

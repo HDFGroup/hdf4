@@ -147,6 +147,7 @@ JUnit version 4.11
 .testSSDgetcalArgument
 .testSDsetcompressNull
 .testSDgetcalIllegalId
+.testSDsetaccesstypeIllegalId
 .testSDsetrangeNullMax
 .testSDsetrangeNullMin
 .testSDsetnbitdatasetIllegalId
@@ -157,7 +158,9 @@ JUnit version 4.11
 .testSDreaddata_longIllegalId
 .testSDreadattrIllegalId
 .testSDreaddataIllegalId
+.testSDwritechunkNull
 .testSDsetdimstrsIllegalId
+.testSDsetchunkcacheIllegalId
 .testSDfindattrNull
 .testSDgetdatastrsNull
 .testSDsetattrIllegalId
@@ -178,7 +181,10 @@ JUnit version 4.11
 .testSDfileinfoArgument
 .testSDsetattrNullName
 .testSDsetattrNullVals
+.testSDisdimval_bwcompIllegalId
 .testSDsetexternalfileIllegalId
+.testSDreadchunkNull
+.testSDsetchunkNull
 .testSDreaddata_doubleIllegalId
 .testSDgetdatastrsArgument
 .testSDsetdimnameNull
@@ -189,9 +195,13 @@ JUnit version 4.11
 .testSDgetrangeIllegalId
 .testSDsetfillvalueIllegalId
 .testSDgetcalNullArgument
+.testSDwritechunkNullArgument
+.testSDreadchunkNullArgument
 .testSDendaccessIllegalId
 .testSDendIllegalId
+.testSDsetdimval_compIllegalId
 .testSDsetcompressIllegalId
+.testSDsetchunkIllegalId
 .testSDsetdatastrsIllegalId
 .testSDstartNull
 .testSDsetdimnameIllegalId
@@ -210,6 +220,7 @@ JUnit version 4.11
 .testSDgetinfoNullArgs
 .testSDgetinfoNullDims
 .testSDgetinfoNullName
+.testSDsetblocksizeIllegalId
 .testSDcheckemptyIllegalId
 .testSDreadattrNull
 .testSDgetdimidIllegalId
@@ -227,6 +238,7 @@ JUnit version 4.11
 .testSDgetcompinfoNull
 .testSDnametoindexIllegalId
 .testSDattrinfoArgumentArgs
+.testSDsetfillmodeIllegalId
 .testSDiscoordvarIllegalId
 .testSDgetfillvalueIllegalId
 .testSDreaddata_shortIllegalId
@@ -292,5 +304,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (290 tests)
+OK (302 tests)
 
