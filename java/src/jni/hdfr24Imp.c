@@ -33,7 +33,7 @@ getOldCompInfo
 
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24getdims
+Java_hdf_hdflib_HDFLibrary_DF24getdims
 (JNIEnv *env, jclass clss, jstring filename, jintArray argv)
 {
     intn rval;
@@ -82,7 +82,7 @@ Java_hdf_hdflib_HDFLibrary_1DF24getdims
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24getimage
+Java_hdf_hdflib_HDFLibrary_DF24getimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     const char  *hdf_file;
@@ -135,7 +135,7 @@ Java_hdf_hdflib_HDFLibrary_DF24lastref
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24readref
+Java_hdf_hdflib_HDFLibrary_DF24readref
 (JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     int  retVal;
@@ -171,11 +171,11 @@ Java_hdf_hdflib_HDFLibrary_DF24restart
 }
 
 JNIEXPORT jint JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24nimages
+Java_hdf_hdflib_HDFLibrary_DF24nimages
 (JNIEnv *env, jclass clss, jstring hdfFile)
 {
     const char  *hdf_file;
-    int retVal;
+    intn retVal;
 
     PIN_JAVA_STRING(hdfFile, hdf_file);
 
@@ -184,23 +184,29 @@ Java_hdf_hdflib_HDFLibrary_1DF24nimages
 
         UNPIN_JAVA_STRING(hdfFile, hdf_file);
 
-        if (retVal == FAIL) {
+        if (retVal == FAIL)
             CALL_ERROR_CHECK();
-        }
     }
 
-    return(retVal);
+    return (jint)retVal;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_DF24reqil
 (JNIEnv *env, jclass clss, jint interlace)
 {
-    return(DF24reqil((intn)interlace));
+    intn retVal;
+
+    retVal = DF24reqil((intn)interlace);
+
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24addimage
+Java_hdf_hdflib_HDFLibrary_DF24addimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     intn rval;
@@ -246,7 +252,7 @@ Java_hdf_hdflib_HDFLibrary_1DF24addimage
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_1DF24putimage
+Java_hdf_hdflib_HDFLibrary_DF24putimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     intn rval;
@@ -273,7 +279,7 @@ Java_hdf_hdflib_HDFLibrary_1DF24putimage
             PIN_JAVA_STRING(filename, f);
 
             if (f != NULL) {
-                rval = DF24putimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+                rval = DF24putimage(f, (VOIDP) dat, (int32) width, (int32) height);
 
                 UNPIN_JAVA_STRING(filename, f);
 

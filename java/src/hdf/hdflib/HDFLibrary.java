@@ -299,15 +299,15 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native int HDdont_atexit() throws HDFException;
 
-    public static native boolean Hishdf(String fileName)  throws HDFException;
+    public static native boolean Hishdf(String fileName) throws HDFException;
 
-    public  static int Hnumber(long fid) throws HDFException {
+    public static int Hnumber(long fid) throws HDFException {
         return Hnumber(fid, HDFConstants.DFTAG_WILDCARD);
     }
 
-    public static native int Hnumber(long fid, int tagtype)  throws HDFException;
+    public static native int Hnumber(long fid, int tagtype) throws HDFException;
 
-    public static native int DFKNTsize(long numbertype)  throws HDFException;
+    public static native int DFKNTsize(long numbertype) throws HDFException;
 
     public static native String HDgetNTdesc(int nt) throws HDFException;
 
@@ -335,7 +335,7 @@ public class HDFLibrary implements java.io.Serializable
      * in the array of ints, and a string is returned in the string.
      */
     public static native boolean Hgetfileversion(long file_id, int[] vers,
-        String []string) throws HDFException;
+            String []string) throws HDFException;
 
     /**
      *  @param vers <b>OUT</b>: int[3], the major version, minor version,
@@ -453,7 +453,7 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native short DFPlastref() throws HDFException;
 
-    public static native int DFPnpals(String filename)  throws HDFException;
+    public static native int DFPnpals(String filename) throws HDFException;
 
     public static native boolean DFPputpal(String filename, byte[] palette, int overwrite, String filemode) throws HDFException;
 
@@ -469,13 +469,13 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean DFPputpal(String filename, byte[] palette, boolean overwrite, String filemode)
-     throws HDFException{
+    public static boolean DFPputpal(String filename, byte[] palette, boolean overwrite, String filemode) throws HDFException
+    {
         if (overwrite) {
-            return DFPputpal (filename, palette, 1, filemode);
+            return DFPputpal(filename, palette, 1, filemode);
         }
         else {
-            return DFPputpal (filename, palette, 0, filemode);
+            return DFPputpal(filename, palette, 0, filemode);
         }
     }
 
@@ -584,8 +584,8 @@ public class HDFLibrary implements java.io.Serializable
      *  the Java array.
      */
     public static boolean GRreadimage(long grid, int[] start, int[] stride,
-                       int[] count, Object theData)
-     throws HDFException{
+                       int[] count, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
@@ -608,17 +608,17 @@ public class HDFLibrary implements java.io.Serializable
     public static native boolean  GRdiminfo(long dimid, char[] name, int[] diminfo[]) throws HDFException;
 */
 
-    public static native short  GRidtoref(long riid) throws HDFException;
+    public static native short GRidtoref(long riid) throws HDFException;
 
-    public static native int  GRreftoindex(long grid, short ref) throws HDFException;
+    public static native int GRreftoindex(long grid, short ref) throws HDFException;
 
-    public static native boolean  GRreqlutil(long riid, int interlace) throws HDFException;
+    public static native boolean GRreqlutil(long riid, int interlace) throws HDFException;
 
-    public static native boolean  GRreqimageil(long rrid, int interlace) throws HDFException;
+    public static native boolean GRreqimageil(long rrid, int interlace) throws HDFException;
 
-    public static native int  GRgetlutid(long rrid, int index) throws HDFException;
+    public static native int GRgetlutid(long rrid, int index) throws HDFException;
 
-    public static native int  GRgetnluts(long rrid) throws HDFException;
+    public static native int GRgetnluts(long rrid) throws HDFException;
 
     /**
      *  @param lutid <b>IN</b>: the palette identifier returned by GRgetlutid
@@ -635,7 +635,7 @@ public class HDFLibrary implements java.io.Serializable
      *  args[2] = interlace, args[3] = num_entries
      *
      */
-    public static native boolean  GRgetlutinfo(long lutid, int[] args) throws HDFException;
+    public static native boolean GRgetlutinfo(long lutid, int[] args) throws HDFException;
 
     /**
      *  @param lutid <b>IN</b>: the palette identifier returned by GRgetlutid
@@ -649,7 +649,7 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b> to read into a Java 1D array use the alternative
      *  routine below.
      */
-    public static native boolean  GRreadlut(long lutid, byte[] data) throws HDFException;
+    public static native boolean GRreadlut(long lutid, byte[] data) throws HDFException;
 
     /**
      *  @param lutid <b>IN</b>: the palette identifier returned by GRgetlutid
@@ -663,15 +663,15 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>Note:</b> reads the data as bytes and converts to
      *  the Java array.
      */
-    public static boolean  GRreadlut(long lutid, Object theData)
-    throws HDFException {
+    public static boolean GRreadlut(long lutid, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-            rval = GRreadlut(lutid, data);
-        theData = theArray.arrayify( data );
+        rval = GRreadlut(lutid, data);
+        theData = theArray.arrayify(data);
         return rval;
     }
 
@@ -688,8 +688,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return the name, type, and lenght of the attribute:
      *  name[0] = name, argv[0] = data_type, argv[1] = length
      */
-    public static native boolean  GRattrinfo(long id, int index, String []name,
-        int[] argv) throws HDFException;
+    public static native boolean GRattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the GR identifier returned by GRstart
@@ -704,7 +703,7 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b> to read into a Java 1D array use the alternative
      *  routine below.
      */
-    public static native boolean  GRgetattr(long id, int index, byte[] data) throws HDFException;
+    public static native boolean GRgetattr(long id, int index, byte[] data) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the GR identifier returned by GRstart
@@ -719,14 +718,14 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>Note:</b> reads the data as bytes and converts to
      *  the Java array.
      */
-    public static boolean  GRgetattr(long id, int index, Object theData)
-    throws HDFException {
+    public static boolean GRgetattr(long id, int index, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-            rval = GRgetattr(id, index, data);
+        rval = GRgetattr(id, index, data);
         theData = theArray.arrayify(data);
         return rval;
     }
@@ -734,7 +733,7 @@ public class HDFLibrary implements java.io.Serializable
     public static native int GRfindattr(long id, String name) throws HDFException;
 
     public static native int GRcreate(long gr_id, String name, int ncomp,
-            long data_type, int interlace_mode, int[] dim_sizes) throws HDFException;
+                long data_type, int interlace_mode, int[] dim_sizes) throws HDFException;
 
     public static native short GRluttoref(long pal_id) throws HDFException;
 
@@ -755,7 +754,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static native boolean GRsetattr(long gr_id, String attr_name,
-            long data_type, int count, String values) throws HDFException;
+                long data_type, int count, String values) throws HDFException;
 
     /**
      *  @param gr_id <b>IN</b>: the GR identifier returned by GRstart
@@ -776,7 +775,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static native boolean GRsetattr(long gr_id, String attr_name,
-        long data_type, int count, byte[] values) throws HDFException;
+            long data_type, int count, byte[] values) throws HDFException;
 
     /**
      *  @param gr_id <b>IN</b>: the GR identifier returned by GRstart
@@ -796,7 +795,8 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static boolean GRsetattr(long gr_id, String attr_name,
-            long data_type, int count, Object theData) throws HDFException {
+                long data_type, int count, Object theData) throws HDFException
+    {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
@@ -815,8 +815,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static native boolean GRsetchunk(long sdsid, HDFChunkInfo chunk_def,
-        int flags) throws HDFException;
+    public static native boolean GRsetchunk(long sdsid, HDFChunkInfo chunk_def, int flags) throws HDFException;
 
     public static native int GRsetchunkcache(long sdsid, int maxcache, int flags) throws HDFException;
     /**
@@ -857,7 +856,7 @@ public class HDFLibrary implements java.io.Serializable
      */
 
     public static native boolean GRwriteimage(long grid, int[] start, int[] stride,
-            int[] edge, byte[] data) throws HDFException;
+                int[] edge, byte[] data) throws HDFException;
 
     /**
      *  @param grid <b>IN</b>: the GR interface id, returned by GRstart
@@ -878,7 +877,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static boolean GRwriteimage(long grid, int[] start, int[] stride,
-            int[] edge, Object theData) throws HDFException
+                int[] edge, Object theData) throws HDFException
     {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
@@ -905,7 +904,7 @@ public class HDFLibrary implements java.io.Serializable
      */
 
     public static native boolean GRwritelut(long pal_id, int ncomp, int data_type,
-        int interlace, int num_entries, byte[] pal_data) throws HDFException;
+            int interlace, int num_entries, byte[] pal_data) throws HDFException;
 
     /**
      *  @param pal_id <b>IN</b>: the palette identifier returned by GRgetlutid
@@ -926,13 +925,12 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static boolean GRwritelut(long pal_id, int ncomp, int data_type,
-        int interlace, int num_entries, Object theData) throws HDFException
-        {
+            int interlace, int num_entries, Object theData) throws HDFException
+    {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
-        return GRwritelut(pal_id, ncomp, data_type, interlace, num_entries,
-            data);
+        return GRwritelut(pal_id, ncomp, data_type, interlace, num_entries, data);
     }
 
     /**
@@ -964,14 +962,15 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean GRreadchunk(long grid, int[] origin, Object theData) throws HDFException {
+    public static boolean GRreadchunk(long grid, int[] origin, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-            rval = GRreadchunk( grid, origin,  data);
-        theData = theArray.arrayify( data );
+        rval = GRreadchunk(grid, origin, data);
+        theData = theArray.arrayify(data);
         return rval;
     }
 
@@ -1000,9 +999,7 @@ public class HDFLibrary implements java.io.Serializable
      *          Number of global attributes in the file
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the file info:  argv[0] = n_datasets, argv[1] = n_file_attrs
      */
@@ -1022,9 +1019,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param dimsizes <b>OUT</b>: int[(rank)], sizes of dimensions
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the file info:  name[0] = gr_name, args[0] = rank,
      *  args[1] = data_type, args[2] = nattrs, dim_sizes[] = dimensions
@@ -1032,8 +1027,8 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b> the parameters for the Java interface are not in
      *  the same order as the C interface.
      */
-    public static native boolean SDgetinfo(long sdsid, String []name,
-            int [] dimsizes, int[] args) throws HDFException;
+    public static native boolean SDgetinfo(long sdsid, String[ ]name,
+            int[] dimsizes, int[] args) throws HDFException;
 
 
     /**
@@ -1041,8 +1036,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param emptySDS <b>OUT</b>: int[1], 1 if the SDS is empty, 0 if has data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
      *  @return true on success
      */
@@ -1056,9 +1050,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param data <b>OUT</b>: byte[], data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the form of a continous array of
      *  bytes.
@@ -1078,9 +1070,7 @@ public class HDFLibrary implements java.io.Serializable
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the Java array.
      *
@@ -1088,12 +1078,13 @@ public class HDFLibrary implements java.io.Serializable
      *  the Java array.
      */
     public static boolean SDreaddata(long sdsid, int[] start, int[] stride,
-                       int[] count, Object theData ) throws HDFException {
+                       int[] count, Object theData) throws HDFException
+    {
         boolean status = false;
         boolean is1D = false;
 
         Class dataClass = theData.getClass();
-         if (!dataClass.isArray()) {
+        if (!dataClass.isArray()) {
             throw (new HDFJavaException("SDreaddata: data is not an array"));
         }
 
@@ -1118,16 +1109,42 @@ public class HDFLibrary implements java.io.Serializable
         }
         else if (is1D && (dname == 'D')) {
             status = SDreaddata_double(sdsid, start, stride, count, (double[])theData);
-        } else {
+        }
+        else {
             byte[] data;
             HDFArray theArray = new HDFArray(theData);
             data = theArray.emptyBytes();
-            status = SDreaddata(  sdsid, start, stride, count, data);
-            theData = theArray.arrayify( data );
+            status = SDreaddata(sdsid, start, stride, count, data);
+            theData = theArray.arrayify(data);
         }
 
         return status;
     }
+
+    ////////////////////////////////////////////////////////////////////
+    //                                                                //
+    //         New APIs for read data from library                    //
+    //  Using SDreaddata(..., Object buf) requires function calls     //
+    //  theArray.emptyBytes() and theArray.arrayify( buf), which      //
+    //  triples the actual memory needed by the data set.             //
+    //  Using the following APIs solves the problem.                  //
+    //                                                                //
+    ////////////////////////////////////////////////////////////////////
+
+    public static native boolean SDreaddata_short(long sdsid, int[] start, int[] stride,
+                       int[] count, short[] theData) throws HDFException;
+
+    public static native boolean SDreaddata_int(long sdsid, int[] start, int[] stride,
+                       int[] count, int[] theData) throws HDFException;
+
+    public static native boolean SDreaddata_long(long sdsid, int[] start, int[] stride,
+                       int[] count, long[] theData) throws HDFException;
+
+    public static native boolean SDreaddata_float(long sdsid, int[] start, int[] stride,
+                       int[] count, float[] theData) throws HDFException;
+
+    public static native boolean SDreaddata_double(long sdsid, int[] start, int[] stride,
+                       int[] count, double[] theData) throws HDFException;
 
     public static native boolean SDendaccess(long sdsid) throws HDFException;
 
@@ -1140,19 +1157,15 @@ public class HDFLibrary implements java.io.Serializable
      *  number type of data in the array, # attributes for the dimension
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
-     *
-     *  @return name[0] = name, argv[0] = count, argv[1] = data_type,
-     *  argv[2] = nattr
+     *  @return name[0] = name, argv[0] = count, argv[1] = data_type, argv[2] = nattr
      */
-    public static native boolean  SDdiminfo(long dimid, String [] name, int[] argv)
-    throws HDFException;
+    public static native boolean SDdiminfo(long dimid, String[] name, int[] argv) throws HDFException;
 
-    public static native int  SDidtoref(long sdsid) throws HDFException;
+    public static native int SDidtoref(long sdsid) throws HDFException;
 
-    public static native int  SDreftoindex(long sdid, int ref) throws HDFException;
+    public static native int SDreftoindex(long sdid, int ref) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: id of a file, SDS, or dimension
@@ -1162,14 +1175,11 @@ public class HDFLibrary implements java.io.Serializable
      *  number of values in the attribute
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
-     *
-     *  @return name[0] = attr_name, argv[0] = data_type,
-     *  argv[1] = count
+     *  @return name[0] = attr_name, argv[0] = data_type, argv[1] = count
      */
-    public static native boolean  SDattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
+    public static native boolean SDattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: id of a file, SDS, or dimension
@@ -1177,9 +1187,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param data <b>OUT</b>: byte[], data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the form of a continous array of
      *  bytes.
@@ -1187,7 +1195,7 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
      */
-    public static native boolean  SDreadattr(long id, int index, byte[] data) throws HDFException;
+    public static native boolean SDreadattr(long id, int index, byte[] data) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: id of a file, SDS, or dimension
@@ -1196,36 +1204,37 @@ public class HDFLibrary implements java.io.Serializable
      *  type, dimensions, and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the Java array.
      *
      *  <p><b>Note:</b> reads the data as bytes and converts to
      *  the Java array.
      */
-    public static boolean  SDreadattr(long id, int index, Object theData) throws HDFException {
+    public static boolean SDreadattr(long id, int index, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
+
         Class theClass = theData.getClass();
         String name = theClass.getName();
         if (name.equals("java.lang.String")) {
-        data = ((String)theData).getBytes();
-            rval = SDreadattr( id, index,  data);
-        theData = new String(data);
-        } else {
-        HDFArray theArray = new HDFArray(theData);
-        data = theArray.emptyBytes();
-            rval = SDreadattr( id, index,  data);
-        theData = theArray.arrayify( data );
+            data = ((String)theData).getBytes();
+            rval = SDreadattr(id, index, data);
+            theData = new String(data);
+        }
+        else {
+            HDFArray theArray = new HDFArray(theData);
+            data = theArray.emptyBytes();
+            rval = SDreadattr(id, index, data);
+            theData = theArray.arrayify(data);
         }
         return rval;
     }
 
-    public static native long  SDfindattr(long id,  String name) throws HDFException;
+    public static native long SDfindattr(long id, String name) throws HDFException;
 
-    public static native boolean  SDiscoordvar(long sdsid) throws HDFException;
+    public static native boolean SDiscoordvar(long sdsid) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
@@ -1237,15 +1246,13 @@ public class HDFLibrary implements java.io.Serializable
      *  @param NT <b>OUT</b>: int[1],  number type of uncalibrated data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return argv[0] = cal, argv[1] = cal_err,
      *  argv[2] = offset, argv[3] = offset_err,
      *  NT[0] = data_type
      */
-    public static native boolean  SDgetcal(long sdsid, double[] argv, int[] NT) throws HDFException;
+    public static native boolean SDgetcal(long sdsid, double[] argv, int[] NT) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
@@ -1258,19 +1265,16 @@ public class HDFLibrary implements java.io.Serializable
      *  Java -- the HDFLibrary interface will handle this)
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return strings[0] = label, strings[1] = unit,
      *  strings[2] = format, strings[3] = coordsys,
      */
-    public static native boolean  SDgetdatastrs(long sdsid, String []strings,
-    int len) throws HDFException;
+    public static native boolean SDgetdatastrs(long sdsid, String[] strings, int len) throws HDFException;
 
     /**
      *  @param dimid <b>IN</b>: id of the SDS as returned by SDselect
-     *  @param args <b>OUT</b>: String[4], data information strings:
+     *  @param args <b>OUT</b>: String[3], data information strings:
      *            label
      *            unit
      *            print format
@@ -1278,32 +1282,25 @@ public class HDFLibrary implements java.io.Serializable
      *  Java -- the HDFLibrary interface will handle this)
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
-     *
-     *  @return strings[0] = label, strings[1] = unit,
-     *  strings[2] = format
+     *  @return strings[0] = label, strings[1] = unit, strings[2] = format
      */
-    public static native boolean  SDgetdimstrs(long dimid, String[] args,
-                      int len) throws HDFException;
+    public static native boolean SDgetdimstrs(long dimid, String[] args, int len) throws HDFException;
 
     /**
      *  @param dimid <b>IN</b>: id of a dimension as returned by SDgetdimid
      *  @param data <b>OUT</b>: byte[], data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
-     *
-     *  @return the the data in the form of a continous array of
-     *  bytes.
+     *  @return the the data in the form of a continous array of bytes.
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
      *  routine below.
      */
-    public static native boolean  SDgetdimscale(long dimid, byte[] data) throws HDFException;
+    public static native boolean SDgetdimscale(long dimid, byte[] data) throws HDFException;
 
     /**
      *  @param dimid <b>IN</b>: id of a dimension as returned by SDgetdimid
@@ -1311,23 +1308,22 @@ public class HDFLibrary implements java.io.Serializable
      *  type and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the Java array.
      *
      *  <p><b>Note:</b> reads the data as bytes and converts to
      *  the Java array.
      */
-    public static boolean  SDgetdimscale(long dimid, Object theData) throws HDFException {
+    public static boolean SDgetdimscale(long dimid, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-        rval = SDgetdimscale( dimid, data);
-        theData = theArray.arrayify( data );
+        rval = SDgetdimscale(dimid, data);
+        theData = theArray.arrayify(data);
         return rval;
     }
 
@@ -1336,17 +1332,14 @@ public class HDFLibrary implements java.io.Serializable
      *  @param fillValue <b>OUT</b>: byte[], data
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             should be thrown for errors.
      *
-     *
-     *  @return the the fill value in the form of a continous array of
-     *  bytes.
+     *  @return the the fill value in the form of a continous array of bytes.
      *
      *  <p><b>NOTE:</b> to read into a Java variable use the alternative
      *  routine below.
      */
-    public static native boolean  SDgetfillvalue(long sdsid, byte[] fillValue) throws HDFException;
+    public static native boolean SDgetfillvalue(long sdsid, byte[] fillValue) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
@@ -1354,9 +1347,7 @@ public class HDFLibrary implements java.io.Serializable
      *  appropriate type
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the Java array: theFillValue[0] = fillValue
      *
@@ -1364,18 +1355,19 @@ public class HDFLibrary implements java.io.Serializable
      *  correct type, reads the data as bytes, and converts to the
      *  appropriate Java object.
      */
-    public static boolean  SDgetfillvalue(long sdsid, Object [] theFillValue) throws HDFException {
-    int [] SDInfo = new int[3];
-    int NT;
+    public static boolean SDgetfillvalue(long sdsid, Object[] theFillValue) throws HDFException
+    {
+        int[] SDInfo = new int[3];
+        int NT;
         String datasetname = new String(" ");
-    String ss[] = new String[1];
-    ss[0] = datasetname;
-        int  dimsize[]     = new int[16];
-        SDgetinfo(sdsid, ss, dimsize, SDInfo );
+        String ss[] = new String[1];
+        ss[0] = datasetname;
+        int dimsize[] = new int[16];
+        SDgetinfo(sdsid, ss, dimsize, SDInfo);
         datasetname = ss[0];
         byte[] d1 = new byte[8];
         boolean rval;
-        rval = SDgetfillvalue( sdsid, d1 );
+        rval = SDgetfillvalue(sdsid, d1);
         if (rval == false) {
             return(rval);
         }
@@ -1383,56 +1375,55 @@ public class HDFLibrary implements java.io.Serializable
         if ((NT & HDFConstants.DFNT_LITEND) != 0) {
             NT -= HDFConstants.DFNT_LITEND;
         }
-        if ((NT == HDFConstants.DFNT_INT8 )
-         || (NT == HDFConstants.DFNT_CHAR8 )
-         || (NT == HDFConstants.DFNT_CHAR )
-            ) {
+        if ((NT == HDFConstants.DFNT_INT8) || (NT == HDFConstants.DFNT_CHAR8) || (NT == HDFConstants.DFNT_CHAR)) {
             theFillValue[0] = new Byte(d1[0]);
-        } else if ((NT == HDFConstants.DFNT_UINT8 )
-                 || (NT == HDFConstants.DFNT_UCHAR8 )
-                 || (NT == HDFConstants.DFNT_UCHAR8 )
-                        ) {
-                        Byte f = new Byte(d1[0]);
-                        if (f.shortValue() < 0) {
-                                theFillValue[0] = new Short((short)(f.intValue() + 256));
-                        } else {
-                               theFillValue[0] = new Short(f.shortValue());
-                        }
-        } else if ((NT == HDFConstants.DFNT_INT16 )
-         || (NT == HDFConstants.DFNT_CHAR16 )
-            ) {
+        }
+        else if ((NT == HDFConstants.DFNT_UINT8) || (NT == HDFConstants.DFNT_UCHAR8) || (NT == HDFConstants.DFNT_UCHAR8)) {
+             Byte f = new Byte(d1[0]);
+             if (f.shortValue() < 0) {
+                theFillValue[0] = new Short((short)(f.intValue() + 256));
+             }
+             else {
+                 theFillValue[0] = new Short(f.shortValue());
+             }
+        }
+        else if ((NT == HDFConstants.DFNT_INT16) || (NT == HDFConstants.DFNT_CHAR16)) {
             short [] fx = HDFNativeData.byteToShort(0,1,d1);
             theFillValue[0] = new Short(fx[0]);
-         } else if ( (NT == HDFConstants.DFNT_UINT16 )
-         || (NT == HDFConstants.DFNT_UCHAR16 )
-            ) {
+        }
+        else if ((NT == HDFConstants.DFNT_UINT16) || (NT == HDFConstants.DFNT_UCHAR16)) {
             short[] fmx = HDFNativeData.byteToShort(0,1,d1);
             Short f = new Short(fmx[0]);
             if (f.intValue() < 0) {
                 theFillValue[0] = new Integer(f.intValue() + 65536);
-            } else {
+            }
+            else {
                 theFillValue[0] = new Integer(f.intValue());
             }
-        } else if ((NT == HDFConstants.DFNT_INT32 )
-            ) {
+        }
+        else if ((NT == HDFConstants.DFNT_INT32)) {
             int [] fx = HDFNativeData.byteToInt(0,1,d1);
             theFillValue[0] = new Integer(fx[0]);
-        } else if ((NT == HDFConstants.DFNT_UINT32 )
-            ) {
+        }
+        else if ((NT == HDFConstants.DFNT_UINT32)) {
             int[] fmx = HDFNativeData.byteToInt(0,1,d1);
             Integer i = new Integer(fmx[0]);
             if (i.floatValue() < 0) {
                 theFillValue[0] = new Float((float)(i.floatValue() + 4294967296.0));
-            } else {
+            }
+            else {
                 theFillValue[0] = new Float(i.floatValue());
             }
-        } else if (NT == HDFConstants.DFNT_FLOAT32 ) {
+        }
+        else if (NT == HDFConstants.DFNT_FLOAT32) {
             float [] fx = HDFNativeData.byteToFloat(0,1,d1);
             theFillValue[0] = new Float(fx[0]);
-        } else if (NT == HDFConstants.DFNT_FLOAT64 ) {
+        }
+        else if (NT == HDFConstants.DFNT_FLOAT64) {
             double [] fx = HDFNativeData.byteToDouble(0,1,d1);
             theFillValue[0] = new Double(fx[0]);
-        } else {
+        }
+        else {
             System.out.println("Error: SDgetfillvalue not converting, type "+NT);
         }
         return rval;
@@ -1444,9 +1435,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param min <b>OUT</b>: byte[], min value, as bytes
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the max and min values in the form of a continous array of
      *  bytes.
@@ -1454,7 +1443,7 @@ public class HDFLibrary implements java.io.Serializable
      *  <p><b>NOTE:</b> to read into Java doubles, use the alternative
      *  routine below.
      */
-    public static native boolean  SDgetrange(long sdsid, byte[] max, byte[] min) throws HDFException;
+    public static native boolean SDgetrange(long sdsid, byte[] max, byte[] min) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: id of the SDS as returned by SDselect
@@ -1462,9 +1451,7 @@ public class HDFLibrary implements java.io.Serializable
      *  converted to doubles
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  @return the the data in the Java array: maxmin[0] = max,
      *  maxmin[1] = min
@@ -1473,122 +1460,126 @@ public class HDFLibrary implements java.io.Serializable
      *  correct type, reads the data as bytes, and converts to the
      *  double.
      */
-    public static boolean  SDgetrange(long sdsid, double maxmin[]) throws HDFException {
-    int [] SDInfo = new int[3];
-    int NT;
+    public static boolean SDgetrange(long sdsid, double maxmin[]) throws HDFException
+    {
+        int[] SDInfo = new int[3];
+        int NT;
         String datasetname = new String(" ");
-    String ss[] = new String[1];
-    ss[0] = datasetname;
-        int  dimsize[]     = new int[16];
+        String ss[] = new String[1];
+        ss[0] = datasetname;
+        int dimsize[] = new int[16];
         SDgetinfo(sdsid, ss, dimsize, SDInfo);
         datasetname = ss[0];
         byte[] max = new byte[8];
         byte[] min = new byte[8];
         boolean rval;
-        rval = SDgetrange( sdsid, max, min);
+        rval = SDgetrange(sdsid, max, min);
         if (rval == false) {
-            return(rval);
+            return (rval);
         }
         NT = SDInfo[1];
         if ((NT & HDFConstants.DFNT_LITEND) != 0) {
             NT -= HDFConstants.DFNT_LITEND;
         }
-        if ((NT == HDFConstants.DFNT_INT8 )
-         || (NT == HDFConstants.DFNT_CHAR8 )
-         || (NT == HDFConstants.DFNT_CHAR )
-            ) {
+        if ((NT == HDFConstants.DFNT_INT8) || (NT == HDFConstants.DFNT_CHAR8) || (NT == HDFConstants.DFNT_CHAR)) {
             Byte f = new Byte(max[0]);
             maxmin[0] = (f.doubleValue());
             f = new Byte(min[0]);
             maxmin[1] = (f.doubleValue());
-        } else if ((NT == HDFConstants.DFNT_UINT8 )
-         || (NT == HDFConstants.DFNT_UCHAR8 )
-         || (NT == HDFConstants.DFNT_UCHAR8 )
-            ) {
+        }
+        else if ((NT == HDFConstants.DFNT_UINT8) || (NT == HDFConstants.DFNT_UCHAR8) || (NT == HDFConstants.DFNT_UCHAR8)) {
             Byte f = new Byte(max[0]);
             Short fmx;
             if (f.shortValue() < 0) {
-                fmx = new Short((short)(f.intValue() + 256));
-            } else {
+                fmx = new Short((short) (f.intValue() + 256));
+            }
+            else {
                 fmx = new Short(f.shortValue());
             }
             maxmin[0] = (fmx.doubleValue());
             f = new Byte(min[0]);
             fmx = new Short(f.shortValue());
             maxmin[1] = (fmx.doubleValue());
-        } else if ((NT == HDFConstants.DFNT_INT16 )
-         || (NT == HDFConstants.DFNT_CHAR16 )
-            ) {
-            short [] fmx = HDFNativeData.byteToShort(0,1,max);
-            short [] fmn = HDFNativeData.byteToShort(0,1,min);
+        }
+        else if ((NT == HDFConstants.DFNT_INT16) || (NT == HDFConstants.DFNT_CHAR16)) {
+            short[] fmx = HDFNativeData.byteToShort(0, 1, max);
+            short[] fmn = HDFNativeData.byteToShort(0, 1, min);
             Short f = new Short(fmx[0]);
             maxmin[0] = (f.doubleValue());
             f = new Short(fmn[0]);
             maxmin[1] = (f.doubleValue());
-        } else if ((NT == HDFConstants.DFNT_UINT16 )
-         || (NT == HDFConstants.DFNT_UINT16 )
-            ) {
-            short[] fmx = HDFNativeData.byteToShort(0,1,max);
+        }
+        else if ((NT == HDFConstants.DFNT_UINT16) || (NT == HDFConstants.DFNT_UINT16)) {
+            short[] fmx = HDFNativeData.byteToShort(0, 1, max);
             Short f = new Short(fmx[0]);
             Integer i;
             if (f.intValue() < 0) {
                 i = new Integer(f.intValue() + 65536);
-            } else {
+            }
+            else {
                 i = new Integer(f.intValue());
             }
             maxmin[0] = (i.doubleValue());
-            fmx = HDFNativeData.byteToShort(0,1,min);
+            fmx = HDFNativeData.byteToShort(0, 1, min);
             f = new Short(fmx[0]);
             if (f.intValue() < 0) {
                 i = new Integer(f.intValue() + 65536);
-            } else {
+            }
+            else {
                 i = new Integer(f.intValue());
             }
             maxmin[1] = (i.doubleValue());
-        } else if ((NT == HDFConstants.DFNT_INT32 ) ) {
-            int [] fmx = HDFNativeData.byteToInt(0,1,max);
-            int [] fmn = HDFNativeData.byteToInt(0,1,min);
+        }
+        else if ((NT == HDFConstants.DFNT_INT32)) {
+            int[] fmx = HDFNativeData.byteToInt(0, 1, max);
+            int[] fmn = HDFNativeData.byteToInt(0, 1, min);
             Integer f = new Integer(fmx[0]);
             maxmin[0] = (f.doubleValue());
             f = new Integer(fmn[0]);
             maxmin[1] = (f.doubleValue());
-        } else if ( (NT == HDFConstants.DFNT_UINT32 )) {
-            int[] fmx = HDFNativeData.byteToInt(0,1,max);
+        }
+        else if ((NT == HDFConstants.DFNT_UINT32)) {
+            int[] fmx = HDFNativeData.byteToInt(0, 1, max);
             Integer i = new Integer(fmx[0]);
             Float f;
             if (i.floatValue() < 0) {
-                f = new Float((float)(i.floatValue() + 4294967296.0));
-            } else {
+                f = new Float((float) (i.floatValue() + 4294967296.0));
+            }
+            else {
                 f = new Float(i.floatValue());
             }
             maxmin[0] = (f.doubleValue());
-            fmx = HDFNativeData.byteToInt(0,1,max);
+            fmx = HDFNativeData.byteToInt(0, 1, max);
             i = new Integer(fmx[0]);
             if (i.floatValue() < 0) {
-                f = new Float((float)(i.floatValue() + 4294967296.0));
-            } else {
+                f = new Float((float) (i.floatValue() + 4294967296.0));
+            }
+            else {
                 f = new Float(i.floatValue());
             }
             maxmin[1] = (f.doubleValue());
-        } else if (NT == HDFConstants.DFNT_FLOAT32 ) {
-            float [] fmx = HDFNativeData.byteToFloat(0,1,max);
-            float [] fmn = HDFNativeData.byteToFloat(0,1,min);
+        }
+        else if (NT == HDFConstants.DFNT_FLOAT32) {
+            float[] fmx = HDFNativeData.byteToFloat(0, 1, max);
+            float[] fmn = HDFNativeData.byteToFloat(0, 1, min);
             Float f = new Float(fmx[0]);
             maxmin[0] = (f.doubleValue());
             f = new Float(fmn[0]);
             maxmin[1] = (f.doubleValue());
-        } else if (NT == HDFConstants.DFNT_FLOAT64 ) {
-            double [] fmx = HDFNativeData.byteToDouble(0,1,max);
-            double [] fmn = HDFNativeData.byteToDouble(0,1,min);
+        }
+        else if (NT == HDFConstants.DFNT_FLOAT64) {
+            double[] fmx = HDFNativeData.byteToDouble(0, 1, max);
+            double[] fmn = HDFNativeData.byteToDouble(0, 1, min);
             Double f = new Double(fmx[0]);
             maxmin[0] = (f.doubleValue());
             f = new Double(fmn[0]);
             maxmin[1] = (f.doubleValue());
 
-        } else {
-            System.out.println("Error: SDgetrange not converting, type "+NT);
         }
-            return rval;
+        else {
+            System.out.println("Error: SDgetrange not converting, type " + NT);
+        }
+        return rval;
     }
 
     public static native long SDcreate(long sd_id, String name, long number_type, int rank, int[] dimsizes) throws HDFException;
@@ -1596,18 +1587,18 @@ public class HDFLibrary implements java.io.Serializable
     public static native boolean SDisrecord(long sdsid) throws HDFException;
 
     public static native boolean SDsetattr(long s_id, String attr_name, long num_type, int count,
-    byte[] values) throws HDFException;
+            byte[] values) throws HDFException;
 
-    public static boolean SDsetattr(long s_id, String attr_name, long num_type, int count,
-    Object theValues) throws HDFException {
+    public static boolean SDsetattr(long s_id, String attr_name, long num_type, int count, Object theValues) throws HDFException
+    {
         byte[] data;
         HDFArray theArray = new HDFArray(theValues);
         data = theArray.byteify();
-            return SDsetattr(s_id, attr_name, num_type, count, data);
+        return SDsetattr(s_id, attr_name, num_type, count, data);
     }
 
    public static native boolean SDsetcal(long sds_id, double cal, double cal_err,
-    double offset, double offset_err, int number_type) throws HDFException;
+        double offset, double offset_err, int number_type) throws HDFException;
 
    public static native boolean SDsetdatastrs(long sds_id, String label, String unit, String format,
         String coordsys) throws HDFException;
@@ -1622,9 +1613,7 @@ public class HDFLibrary implements java.io.Serializable
      *  bytes.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> the calling program must assure that the
      *  data is correctly formatted for C.  To write an array
@@ -1642,9 +1631,7 @@ public class HDFLibrary implements java.io.Serializable
      *  type and size.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts the Java array to an array of
      *  bytes, and writes the bytes.
@@ -1652,12 +1639,12 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
    public static boolean SDsetdimscale(long dim_id, int count, int number_type, Object theData) throws HDFException
-    {
+   {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
-            return  SDsetdimscale(dim_id, count, number_type, data) ;
-    }
+        return SDsetdimscale(dim_id, count, number_type, data);
+   }
 
    public static native boolean SDsetdimstrs(long dim_id, String label, String unit, String format) throws HDFException;
 
@@ -1669,9 +1656,7 @@ public class HDFLibrary implements java.io.Serializable
      *  bytes.
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> the calling program must assure that the
      *  data is correctly formatted for C.  To set the fill value
@@ -1687,20 +1672,19 @@ public class HDFLibrary implements java.io.Serializable
      *  type
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts the Java array to an array of
      *  bytes, and writes the bytes.
      *
      *  @return true on success
      */
-    public static boolean SDsetfillvalue(long sds_id, Object the_fill_val) throws HDFException {
+    public static boolean SDsetfillvalue(long sds_id, Object the_fill_val) throws HDFException
+    {
         byte[] data;
         HDFArray theArray = new HDFArray(the_fill_val);
         data = theArray.byteify();
-        return  SDsetfillvalue(sds_id, data) ;
+        return SDsetfillvalue(sds_id, data);
     }
 
     /**
@@ -1719,7 +1703,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static native boolean  SDsetrange(long sdsid, byte[] max, byte[] min) throws HDFException;
+    public static native boolean SDsetrange(long sdsid, byte[] max, byte[] min) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: id of a dataset
@@ -1736,14 +1720,15 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean  SDsetrange(long sdsid, Object max, Object min) throws HDFException {
+    public static boolean SDsetrange(long sdsid, Object max, Object min) throws HDFException
+    {
         byte[] d1;
         byte[] d2;
         HDFArray theArray1 = new HDFArray(max);
         d1 = theArray1.byteify();
         HDFArray theArray2 = new HDFArray(min);
         d2 = theArray2.byteify();
-        return  SDgetrange( sdsid, d1, d2);
+        return  SDgetrange(sdsid, d1, d2);
     }
 
 
@@ -1786,16 +1771,17 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static boolean SDwritedata(long sdsid, int[] start, int[] stride,
-                       int[] count, Object theData ) throws HDFException {
+                       int[] count, Object theData ) throws HDFException
+    {
         byte[] data;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
-        return SDwritedata( sdsid, start, stride, count, data);
+        return SDwritedata(sdsid, start, stride, count, data);
     }
 
     public static native boolean SDsetnbitdataset(long id, int start_bit, int bit_len,
-    int sign_ext, int fill_one) throws HDFException;
+            int sign_ext, int fill_one) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the SD identifier returned by SDselect
@@ -1834,9 +1820,9 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native boolean SDgetcompinfo(long id, HDFCompInfo cinfo) throws HDFException;
 
-    public static native boolean SDsetaccesstype(long id, int accesstype ) throws HDFException;
+    public static native boolean SDsetaccesstype(long id, int accesstype) throws HDFException;
 
-    public static native boolean SDsetblocksize(long sdsid, int block_size ) throws HDFException;
+    public static native boolean SDsetblocksize(long sdsid, int block_size) throws HDFException;
 
     /**
      *  @param sdsid  <b>IN</b>: the SD id
@@ -1849,23 +1835,24 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean SDsetfillmode(long sdsid, boolean fill_enable ) throws HDFException
+    public static boolean SDsetfillmode(long sdsid, boolean fill_enable) throws HDFException
     {
         int fm;
 
         if (fill_enable) {
             fm = HDFConstants.SD_FILL;
-        } else {
+        }
+        else {
             fm = HDFConstants.SD_NOFILL;
         }
-        return SDsetfillmode( sdsid, fm );
+        return SDsetfillmode(sdsid, fm);
     }
 
-    public static native boolean SDsetfillmode(long sdsid, int fillmode ) throws HDFException;
+    public static native boolean SDsetfillmode(long sdsid, int fillmode) throws HDFException;
 
-    public static native boolean SDsetdimval_comp(long dimid, int comp_mode ) throws HDFException;
+    public static native boolean SDsetdimval_comp(long dimid, int comp_mode) throws HDFException;
 
-    public static native boolean SDisdimval_bwcomp(long dimid )  throws HDFException;
+    public static native boolean SDisdimval_bwcomp(long dimid)  throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: the SD identifier returned by SDselect
@@ -1882,8 +1869,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static native boolean SDsetchunk(long sdsid, HDFChunkInfo chunk_def,
-        int flags) throws HDFException;
+    public static native boolean SDsetchunk(long sdsid, HDFChunkInfo chunk_def, int flags) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: the SD identifier returned by SDselect
@@ -1902,7 +1888,7 @@ public class HDFLibrary implements java.io.Serializable
      *  passed in an appropriate sub-class of HDFChunkInfo.
      */
     public static native boolean SDgetchunkinfo(long sdsid, HDFChunkInfo chunk_def,
-        int[] clflags) throws HDFException;
+            int[] clflags) throws HDFException;
 
     /**
      *  @param sdsid <b>IN</b>: the SD interface id, returned by SDselect
@@ -1937,14 +1923,15 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean SDreadchunk(long sdsid, int[] origin, Object theData) throws HDFException {
+    public static boolean SDreadchunk(long sdsid, int[] origin, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-            rval = SDreadchunk( sdsid, origin,  data);
-        theData = theArray.arrayify( data );
+        rval = SDreadchunk(sdsid, origin,  data);
+        theData = theArray.arrayify(data);
         return rval;
     }
 
@@ -1983,12 +1970,13 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean SDwritechunk(long sdsid, int[] origin, Object theData) throws HDFException {
+    public static boolean SDwritechunk(long sdsid, int[] origin, Object theData) throws HDFException
+    {
         byte[] data;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
-            return SDwritechunk( sdsid, origin, data);
+        return SDwritechunk(sdsid, origin, data);
     }
 
     public static native int VFfieldesize(long vdata_id,  int field_index) throws HDFException;
@@ -2004,8 +1992,8 @@ public class HDFLibrary implements java.io.Serializable
     public static native int VFnfields(long vkey) throws HDFException;
 
     public static native int VHmakegroup(long file_id, int[] tag_array,
-        int[] ref_array, int n_objects, String vgroup_name,
-        String vgroup_class) throws HDFException;
+            int[] ref_array, int n_objects, String vgroup_name,
+            String vgroup_class) throws HDFException;
 
     /**
      *  @param file_id <b>IN</b>: the SD interface id, returned by SDselect
@@ -2027,8 +2015,8 @@ public class HDFLibrary implements java.io.Serializable
      *  @return negative on failure
      */
     public static native int VHstoredata(long file_id, String fieldname,
-        byte[] buf, int n_records, int data_type, String vdata_name,
-        String vdata_class) throws HDFException;
+            byte[] buf, int n_records, int data_type, String vdata_name,
+            String vdata_class) throws HDFException;
     /**
      *  @param file_id <b>IN</b>: the SD interface id, returned by SDselect
      *  @param fieldname <b>IN</b>: String, the name of the field to be filled
@@ -2050,16 +2038,15 @@ public class HDFLibrary implements java.io.Serializable
      *  @return negative on failure
     */
     public static int VHstoredata(long file_id, String fieldname,
-        Object thebuf, int n_records, int data_type, String vdata_name,
-        String vdata_class) throws HDFException
-        {
+            Object thebuf, int n_records, int data_type, String vdata_name,
+            String vdata_class) throws HDFException
+    {
         byte[] data;
 
         HDFArray theArray = new HDFArray(thebuf);
         data = theArray.byteify();
-            return VHstoredata(file_id, fieldname, data, n_records,
-            data_type, vdata_name, vdata_class);
-        }
+        return VHstoredata(file_id, fieldname, data, n_records, data_type, vdata_name, vdata_class);
+    }
 
     /**
      *  @param file_id <b>IN</b>: the SD interface id, returned by SDselect
@@ -2082,8 +2069,8 @@ public class HDFLibrary implements java.io.Serializable
      *  @return negative on failure
      */
     public static native int VHstoredatam(long file_id, String fieldname, byte[] buf,
-        int n_records, int data_type, String vdata_name, String vdata_class,
-        int order) throws HDFException;
+            int n_records, int data_type, String vdata_name, String vdata_class,
+            int order) throws HDFException;
 
     /**
      *  @param file_id <b>IN</b>: the SD interface id, returned by SDselect
@@ -2107,29 +2094,28 @@ public class HDFLibrary implements java.io.Serializable
      *  @return negative on failure
      */
     public static int VHstoredatam(long file_id, String fieldname, Object buf,
-        int n_records, int data_type, String vdata_name,
-        String vdata_class, int order) throws HDFException
-        {
+            int n_records, int data_type, String vdata_name,
+            String vdata_class, int order) throws HDFException
+    {
         byte[] data;
 
         HDFArray theArray = new HDFArray(buf);
         data = theArray.byteify();
-            return VHstoredatam(file_id, fieldname, data, n_records,
-            data_type, vdata_name, vdata_class, order);
-        }
+        return VHstoredatam(file_id, fieldname, data, n_records, data_type, vdata_name, vdata_class, order);
+    }
 
     public static native int VQueryref(long vkey) throws HDFException;
     public static native int VQuerytag(long vkey) throws HDFException;
     
     public static native boolean Vstart(long fid)  throws HDFException;
 
-    public  static native int Vattach(long fid, int vgroup_ref, String access) throws HDFException;
+    public static native int Vattach(long fid, int vgroup_ref, String access) throws HDFException;
 
-    public  static native void Vdetach(long vgroup_id) throws HDFException;
+    public static native void Vdetach(long vgroup_id) throws HDFException;
 
-    public  static native  void Vend(long file_id) throws HDFException;
+    public static native void Vend(long file_id) throws HDFException;
 
-    public  static native  int Vgetid(long file_id, int vgroup_ref) throws HDFException;
+    public static native int Vgetid(long file_id, int vgroup_ref) throws HDFException;
 
     /**
      *  @param vgroup_id <b>IN</b>: the Vgroup id
@@ -2140,7 +2126,7 @@ public class HDFLibrary implements java.io.Serializable
      *             should be thrown for errors in the
      *             HDF library call, but is not yet implemented.
      */
-    public  static native  void Vgetclass(long vgroup_id, String[] hdfclassname) throws HDFException;
+    public static native void Vgetclass(long vgroup_id, String[] hdfclassname) throws HDFException;
 
     /**
      *  @param vgroup_id <b>IN</b>: the Vgroup id
@@ -2151,11 +2137,11 @@ public class HDFLibrary implements java.io.Serializable
      *             should be thrown for errors in the
      *             HDF library call, but is not yet implemented.
      */
-    public  static native  void Vgetname(long vgroup_id, String[] hdfname) throws HDFException;
+    public static native void Vgetname(long vgroup_id, String[] hdfname) throws HDFException;
 
-    public  static native  boolean Visvg(long vgroup_id, int vgroup_ref) throws HDFException;
+    public static native boolean Visvg(long vgroup_id, int vgroup_ref) throws HDFException;
 
-    public  static native  boolean Visvs(long vgroup_id, int vdata_ref) throws HDFException;
+    public static native boolean Visvs(long vgroup_id, int vdata_ref) throws HDFException;
 
     /**
      *  @param vgroup_id <b>IN</b>: the Vgroup id
@@ -2172,7 +2158,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return  tags[] = tags for objects 0 - n, refs[] = refs for
      *  objects 0 - n
      */
-    public  static native  int Vgettagrefs(long vgroup_id, int[] tags, int[] refs,
+    public static native int Vgettagrefs(long vgroup_id, int[] tags, int[] refs,
             int arraysize) throws HDFException;
 
     /**
@@ -2188,11 +2174,11 @@ public class HDFLibrary implements java.io.Serializable
      *  @return  tags[0] = tag for object #index, refs[0] = ref for
      *  objects #index
      */
-    public  static native  boolean Vgettagref(long vgroup_id, int index, int[] tagref) throws HDFException;
+    public static native boolean Vgettagref(long vgroup_id, int index, int[] tagref) throws HDFException;
 
-    public  static native  int Vntagrefs(long vgroup_id) throws HDFException;
+    public static native int Vntagrefs(long vgroup_id) throws HDFException;
 
-    public  static native  boolean  Vinqtagref(long vgroup_id, int tag, int ref) throws HDFException;
+    public static native boolean Vinqtagref(long vgroup_id, int tag, int ref) throws HDFException;
 
     /**
      *  @param fid <b>IN</b>: the file identifier returned by Hopen
@@ -2207,7 +2193,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return  ref_array[] = refs 0 - ...
      */
-    public  static native  int Vlone(long fid, int[] ref_array, int buffersize) throws HDFException;
+    public static native int Vlone(long fid, int[] ref_array, int buffersize) throws HDFException;
 
     public static native int Vaddtagref(long vgroup_id, int tag, int ref) throws HDFException;
 
@@ -2260,7 +2246,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return name[0] = name, argv[0] = data_type, argv[1] = count,
      *  argv[2] = size, argv[3] = nfields, argv[4] = refnum
      */
-    public static boolean  Vattrinfo(long id, int index, String[] name, int[] argv) throws HDFException
+    public static boolean Vattrinfo(long id, int index, String[] name, int[] argv) throws HDFException
     {
         boolean retval;
 
@@ -2278,7 +2264,7 @@ public class HDFLibrary implements java.io.Serializable
     private static native boolean _Vattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
 
 
-    public static native long  Vfindattr(long id,  String name) throws HDFException;
+    public static native long Vfindattr(long id,  String name) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the Vdata id
@@ -2314,15 +2300,15 @@ public class HDFLibrary implements java.io.Serializable
      *  @return data = the value of the attribute, in an array of Java
      *  objects
      */
-    public static boolean  Vgetattr(long id, int index, Object theData)
-            throws HDFException {
+    public static boolean  Vgetattr(long id, int index, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-        rval = Vgetattr( id, index,  data);
-        theData = theArray.arrayify( data );
+        rval = Vgetattr(id, index, data);
+        theData = theArray.arrayify(data);
         return rval;
     }
 
@@ -2371,13 +2357,14 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-    public static boolean Vsetattr(long id, String attr_name,
-            long data_type, int count, Object theData) throws HDFException {
+   public static boolean Vsetattr(long id, String attr_name,
+        long data_type, int count, Object theData) throws HDFException
+   {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
         return Vsetattr(id, attr_name, data_type, count, data);
-    }
+   }
 
     /**
      *  @param vdata_id <b>IN</b>, vdata id  as returned by VSattach
@@ -2705,11 +2692,11 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return findex[0] = the index
      */
-    public static native int  VSfindex(long id,  String name, int[] findex) throws HDFException;
+    public static native int VSfindex(long id, String name, int[] findex) throws HDFException;
 
-    public static native int  VSfindattr(long id, int index, String name) throws HDFException;
+    public static native int VSfindattr(long id, int index, String name) throws HDFException;
 
-    public static native int  VSfnattrs(long id, int fnattrs) throws HDFException;
+    public static native int VSfnattrs(long id, int fnattrs) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the Vdata id
@@ -2727,7 +2714,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return data = the value of the attribute, in an array of bytes
      */
-    public static native boolean  VSgetattr(long id, int index, int attr_index, byte[] data) throws HDFException;
+    public static native boolean VSgetattr(long id, int index, int attr_index, byte[] data) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the Vdata id
@@ -2747,20 +2734,20 @@ public class HDFLibrary implements java.io.Serializable
      *  @return data = the value of the attribute, in an array of Java
      *  objects
      */
-    public static boolean  VSgetattr(long id, int index, int attr_index, Object theData)
-    throws HDFException {
+    public static boolean VSgetattr(long id, int index, int attr_index, Object theData) throws HDFException
+    {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theData);
         data = theArray.emptyBytes();
-            rval = VSgetattr( id, index, attr_index,  data);
-        theData = theArray.arrayify( data );
+        rval = VSgetattr(id, index, attr_index, data);
+        theData = theArray.arrayify(data);
         return rval;
     }
-    public static native boolean  VSisattr(long id ) throws HDFException;
+    public static native boolean VSisattr(long id) throws HDFException;
 
-    public static native int  VSnattrs(long id ) throws HDFException;
+    public static native int VSnattrs(long id) throws HDFException;
 
     /**
      *  @param id <b>IN</b>: the Vdata id
@@ -2824,7 +2811,8 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
     public static boolean VSsetattr(long id, int index, String attr_name,
-            long data_type, int count, Object theData) throws HDFException {
+            long data_type, int count, Object theData) throws HDFException
+    {
         byte[] data;
         HDFArray theArray = new HDFArray(theData);
         data = theArray.byteify();
@@ -2844,7 +2832,7 @@ public class HDFLibrary implements java.io.Serializable
      */
     public static native boolean DF24getdims(String fileName, int[] argv) throws HDFException;
 
-    public static native boolean  DF24reqil(int il)  throws HDFException;
+    public static native boolean DF24reqil(int il) throws HDFException;
 
     /**
      *  @param fileName <b>IN</b>: String, the file
@@ -2884,22 +2872,21 @@ public class HDFLibrary implements java.io.Serializable
      *  @return data = the value of the attribute, in an array of Java
      *  objects
      */
-     public static boolean DF24getimage(String fileName, Object theImagedata,int width,
-                int height) throws HDFException
+     public static boolean DF24getimage(String fileName, Object theImagedata, int width, int height) throws HDFException
     {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theImagedata);
         data = theArray.emptyBytes();
-            rval = DF24getimage(fileName, data, width, height);
-        theImagedata = theArray.arrayify( data );
+        rval = DF24getimage(fileName, data, width, height);
+        theImagedata = theArray.arrayify(data);
         return rval;
     }
 
-     public  static native short DF24lastref() throws HDFException;
+     public static native short DF24lastref() throws HDFException;
 
-     public  static native boolean DF24restart() throws HDFException;
+     public static native boolean DF24restart() throws HDFException;
 
      public static native boolean DF24readref(String filename, int ref) throws HDFException;
 
@@ -2923,7 +2910,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static native boolean DF24addimage(String filename, byte[] image,
-        int width, int height) throws HDFException;
+            int width, int height) throws HDFException;
 
     /**
      *  @param filename <b>IN</b>: String, the file
@@ -2943,12 +2930,13 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static boolean DF24addimage(String filename, Object theImage, int width,
-        int height) throws HDFException {
-                 byte[] data;
-                 HDFArray theArray = new HDFArray(theImage);
-                 data = theArray.byteify();
-                 return DF24addimage(filename, data, width, height);
-         }
+            int height) throws HDFException
+    {
+        byte[] data;
+        HDFArray theArray = new HDFArray(theImage);
+        data = theArray.byteify();
+        return DF24addimage(filename, data, width, height);
+    }
 
     /**
      *  @param filename <b>IN</b>: String, the file
@@ -2968,7 +2956,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static native boolean DF24putimage(String filename, byte[] image,
-        int width, int height) throws HDFException;
+            int width, int height) throws HDFException;
 
     /**
      *  @param filename <b>IN</b>: String, the file
@@ -2987,13 +2975,13 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @return true on success
      */
-     public static boolean DF24putimage(String filename, Object theImage, int width,
-         int height) throws HDFException {
-                 byte[] data;
-                 HDFArray theArray = new HDFArray(theImage);
-                 data = theArray.byteify();
-                 return DF24putimage(filename, data, width, height);
-         }
+     public static boolean DF24putimage(String filename, Object theImage, int width, int height) throws HDFException
+    {
+        byte[] data;
+        HDFArray theArray = new HDFArray(theImage);
+        data = theArray.byteify();
+        return DF24putimage(filename, data, width, height);
+    }
 
     /**
      *  @param type <b>IN</b>: int, the type of compression
@@ -3045,7 +3033,7 @@ public class HDFLibrary implements java.io.Serializable
      *  palette:  the look up table, in an array of bytes
      */
     public static native boolean DFR8getimage(String fileName, byte[] imagedata,
-            int width, int height, byte[] palette) throws HDFException;
+                int width, int height, byte[] palette) throws HDFException;
 
     /**
      *  @param fileName <b>IN</b>: String, the file
@@ -3068,21 +3056,21 @@ public class HDFLibrary implements java.io.Serializable
      *  palette:  the look up table, in an array of bytes
      */
      public static boolean DFR8getimage(String fileName, Object theImagedata,int width,
-        int height, byte[] palette) throws HDFException
+            int height, byte[] palette) throws HDFException
     {
         byte[] data;
         boolean rval;
 
         HDFArray theArray = new HDFArray(theImagedata);
         data = theArray.emptyBytes();
-            rval = DFR8getimage(fileName, data, width, height, palette);
-        theImagedata = theArray.arrayify( data );
+        rval = DFR8getimage(fileName, data, width, height, palette);
+        theImagedata = theArray.arrayify(data);
         return rval;
     }
 
-     public  static native short DFR8lastref() throws HDFException;
+     public static native short DFR8lastref() throws HDFException;
 
-     public  static native boolean DFR8restart() throws HDFException;
+     public static native boolean DFR8restart() throws HDFException;
 
      public static native boolean DFR8readref(String filename, int ref) throws HDFException;
 
@@ -3107,7 +3095,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static native boolean DFR8addimage(String filename, byte[] image,
-        int width, int height, short compress) throws HDFException;
+            int width, int height, short compress) throws HDFException;
 
     /**
      *  @param filename <b>IN</b>: String, the file
@@ -3128,12 +3116,13 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static boolean DFR8addimage(String filename, Object theImage, int width, int height,
-        short compress) throws HDFException {
-                 byte[] data;
-                 HDFArray theArray = new HDFArray(theImage);
-                 data = theArray.byteify();
-                 return DFR8addimage(filename, data, width, height, compress);
-         }
+            short compress) throws HDFException
+    {
+        byte[] data;
+        HDFArray theArray = new HDFArray(theImage);
+        data = theArray.byteify();
+        return DFR8addimage(filename, data, width, height, compress);
+    }
 
     /**
      *  @param filename <b>IN</b>: String, the file
@@ -3154,7 +3143,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static native boolean DFR8putimage(String filename, byte[] image,
-        int width, int height, short compress) throws HDFException;
+            int width, int height, short compress) throws HDFException;
 
     /**
      *  @param filename <b>IN</b>: String, the file
@@ -3175,12 +3164,13 @@ public class HDFLibrary implements java.io.Serializable
      *  @return true on success
      */
      public static boolean DFR8putimage(String filename, Object theImage, int width, int height,
-        short compress) throws HDFException {
-                 byte[] data;
-                 HDFArray theArray = new HDFArray(theImage);
-                 data = theArray.byteify();
-                 return DFR8putimage(filename, data, width, height, compress);
-     }
+            short compress) throws HDFException
+    {
+        byte[] data;
+        HDFArray theArray = new HDFArray(theImage);
+        data = theArray.byteify();
+        return DFR8putimage(filename, data, width, height, compress);
+    }
 
     /**
      * DFR8setcompress sets compression scheme for 8-bit image
@@ -3210,31 +3200,6 @@ public class HDFLibrary implements java.io.Serializable
      public static native boolean DFR8setpalette(byte[] palette) throws HDFException;
 
      public static native boolean DFR8writeref(String filename, short ref) throws HDFException;
-
-    ////////////////////////////////////////////////////////////////////
-    //                                                                //
-    //         New APIs for read data from library                    //
-    //  Using SDreaddata(..., Object buf) requires function calls     //
-    //  theArray.emptyBytes() and theArray.arrayify( buf), which      //
-    //  triples the actual memory needed by the data set.             //
-    //  Using the following APIs solves the problem.                  //
-    //                                                                //
-    ////////////////////////////////////////////////////////////////////
-
-    public static native boolean SDreaddata_short(long sdsid, int[] start, int[] stride,
-                       int[] count, short[] theData ) throws HDFException;
-
-    public static native boolean SDreaddata_int(long sdsid, int[] start, int[] stride,
-                       int[] count, int[] theData ) throws HDFException;
-
-    public static native boolean SDreaddata_long(long sdsid, int[] start, int[] stride,
-                       int[] count, long[] theData ) throws HDFException;
-
-    public static native boolean SDreaddata_float(long sdsid, int[] start, int[] stride,
-                       int[] count, float[] theData ) throws HDFException;
-
-    public static native boolean SDreaddata_double(long sdsid, int[] start, int[] stride,
-                       int[] count, double[] theData ) throws HDFException;
 
     /**
      *  New API for hdf-42r1

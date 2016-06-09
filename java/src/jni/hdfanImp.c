@@ -51,6 +51,7 @@ Java_hdf_hdflib_HDFLibrary_ANend
 
     if (retVal == FAIL)
         CALL_ERROR_CHECK();
+
     return JNI_TRUE;
 }
 
@@ -222,7 +223,6 @@ Java_hdf_hdflib_HDFLibrary_ANreadann
     else {
         /* read annotation from HDF */
         retVal = ANreadann((int32)ann_id, data, (int32)maxlen);
-        data[maxlen] = '\0';
 
         if (retVal == FAIL) {
             CALL_ERROR_CHECK();
@@ -237,18 +237,16 @@ Java_hdf_hdflib_HDFLibrary_ANreadann
                 if (Sjc == NULL) {
                     CALL_ERROR_CHECK();
                 }
-                else {
-                    bb = ENVPTR->IsInstanceOf(ENVPAR o, Sjc);
-                    if (bb == JNI_FALSE) {
+                else if (ENVPTR->IsInstanceOf(ENVPAR o, Sjc) == JNI_FALSE) {
                         CALL_ERROR_CHECK();
-                    }
-                    else {
-                        rstring = ENVPTR->NewStringUTF(ENVPAR data);
-
-                        ENVPTR->SetObjectArrayElement(ENVPAR annbuf, 0, (jobject)rstring);
-                        ENVPTR->DeleteLocalRef(ENVPAR o);
-                    }
                 }
+                else {
+                    data[maxlen] = '\0';
+                    rstring = ENVPTR->NewStringUTF(ENVPAR data);
+                    if (rstring != NULL)
+                        ENVPTR->SetObjectArrayElement(ENVPAR annbuf, 0, (jobject)rstring);
+                }
+                ENVPTR->DeleteLocalRef(ENVPAR o);
             }
         }
         HDfree((char *)data);

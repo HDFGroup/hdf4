@@ -44,89 +44,86 @@ public class TestH4DFparams {
     public void nextTestName() {
         System.out.println();
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24getdimsNullFilename() throws Throwable {
         HDFLibrary.DF24getdims(null, new int[] { 0, 0, 0 });
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24getdimsNullArguments() throws Throwable {
         String str = "";
         HDFLibrary.DF24getdims(str, null);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testDF24getdimsIllegalArgument() throws Throwable {
         String str = "";
         HDFLibrary.DF24getdims(str, new int[] { 0, 0 });
     }
-    
-    @Test(expected = NullPointerException.class)
-    public void testDF24reqilIllegalIl() throws Throwable {
-        HDFLibrary.DF24reqil(-1);
-    }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24getimageNullFilename() throws Throwable {
         HDFLibrary.DF24getimage(null, new byte[] { (byte) 0x0 }, 0, 0);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24getimageNullImageData() throws Throwable {
         String str = "";
         HDFLibrary.DF24getimage(str, null, 0, 0);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24readrefNullFilename() throws Throwable {
         HDFLibrary.DF24readref(null, 0);
     }
-    
-    @Test(expected = NullPointerException.class)
+
+    @Test(expected = HDFException.class)
     public void testDF24readrefIllegalRef() throws Throwable {
         String str = "";
         HDFLibrary.DF24readref(str, -1);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24nimagesNullFilename() throws Throwable {
         HDFLibrary.DF24nimages(null);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24addimageNullFilename() throws Throwable {
         HDFLibrary.DF24addimage(null, new byte[] { (byte) 0x0 }, 0, 0);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24addimageNullImage() throws Throwable {
         String str = "";
         HDFLibrary.DF24addimage(str, null, 0, 0);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24putimageNullFilename() throws Throwable {
-        HDFLibrary.DF24putimage(null, new byte[] { }, 0, 0);
+        byte[] img = {0};
+        HDFLibrary.DF24putimage(null, img, 0, 0);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24putimageNullImage() throws Throwable {
         String str = "";
-        HDFLibrary.DF24putimage(str, null, 0, 0);
+        byte[] img = null;
+        HDFLibrary.DF24putimage(str, img, 0, 0);
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testDF24putimageIllegalArgument() throws Throwable {
         String str = "";
         HDFLibrary.DF24putimage(str, new byte[] { }, 0, 0);
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testDF24setcompressNullCompInfo() throws Throwable {
         HDFLibrary.DF24setcompress(0, null);
     }
-    
+
     @Test(expected = HDFException.class)
     public void testDF24setilIllegalIl() throws Throwable {
         HDFLibrary.DF24setil(-1);

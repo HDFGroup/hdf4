@@ -38,14 +38,21 @@ Java_hdf_hdflib_HDFLibrary_SDstart
 (JNIEnv *env, jclass clss, jstring filename, jint access)
 {
     int32 sdid;
-    char  *fname;
+    const char  *fname;
 
-    fname =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
+    if (filename == NULL) {
+        h4nullArgument(env, "SDstart:  filename is NULL");
+    } /* end if */
+    else {
+        PIN_JAVA_STRING(filename, fname);
+        if (fname != NULL) {
+            sdid = SDstart(fname, (int32)access);
 
-    sdid = SDstart(fname, (int32)access);
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,fname);
-
+            UNPIN_JAVA_STRING(filename, fname);
+            if (sdid < 0)
+                CALL_ERROR_CHECK();
+        }
+    }
     return (jlong)sdid;
 }
 
@@ -53,392 +60,835 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDend
 (JNIEnv *env, jclass clss, jlong sdid)
 {
-    int32 retVal;
+    intn rval;
 
-    retVal = SDend((int32)sdid);
+    rval = SDend((int32)sdid);
 
-    if (retVal == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDfileinfo
 (JNIEnv *env, jclass clss, jlong sdid, jintArray argv)
 {
-    int32 retVal;
-    int32 * theArray;
-    jboolean bb;
+    intn rval;
+    jint *theArgs;
+    jboolean isCopy; /*  dummy */
 
-    theArray = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-
-    retVal = SDfileinfo((int32)sdid, &(theArray[0]), &(theArray[1]));
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,(jint *)theArray,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (argv == NULL) {
+        h4nullArgument(env, "GRfileinfo:  argv is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 2) {
+        h4badArgument(env, "GRfileinfo:  argv input array < order 2");
+    } /* end else if */
     else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,(jint *)theArray,0);
-        return JNI_TRUE;
-    }
-}
+        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &isCopy);
+        if (theArgs == NULL) {
+            h4JNIFatalError(env, "GRfileinfo:  argv not pinned");
+        } /* end if */
+        else {
+            rval = SDfileinfo((int32)sdid, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
 
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                CALL_ERROR_CHECK();
+            }
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
+            }
+        } /* end else */
+    } /* end else */
+
+    return JNI_TRUE;
+}
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDselect
 (JNIEnv *env, jclass clss, jlong sdid, jint index)
 {
-    return (jlong)SDselect((int32)sdid, (int32)index);
+    int32 rval;
+
+    rval = (jlong)SDselect((int32)sdid, (int32) index);
+    if (rval < 0)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDnametoindex
 (JNIEnv *env, jclass clss, jlong sdid, jstring name)
 {
-    int32 retVal;
-    char  *cname;
+    intn rval;
+    const char *str;
 
-    cname =(char *) ENVPTR->GetStringUTFChars(ENVPAR name,0);
+    PIN_JAVA_STRING(name, str);
+    if (str != NULL) {
+        rval = SDnametoindex((int32)sdid, str);
 
-    /* select the dataset */
-    retVal = SDnametoindex((int32)sdid, cname);
+        UNPIN_JAVA_STRING(name, str);
+        if (rval < 0)
+            CALL_ERROR_CHECK();
+    }
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR name,cname);
-
-    return retVal;
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetinfo
 (JNIEnv *env, jclass clss, jlong sdsid, jobjectArray name, jintArray dimsizes, jintArray argv)
 {
-    int32 retVal;
+    intn   rval;
+    int32 *dims;
+    int32 *theArgs;
     jclass jc;
     jstring str;
-    jboolean bb;
+    jboolean isCopy;
+    jboolean bb = 0;
+    jboolean abb = 0;
     jobject o;
     char  *cname;
 
     /* variables of  infomation */
-    int32 *dims;
-    int32 *theArgs;
 
     cname = (char *)HDmalloc(MAX_NC_NAME+1);
     if (cname == NULL) {
         h4outOfMemory(env, "SDgetinfo");
-        return FAIL;
-    }
-
-    dims = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR dimsizes,&bb);
-    theArgs = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-
-    retVal = SDgetinfo((int32)sdsid, cname, &(theArgs[0]), dims,
-            &(theArgs[1]), &(theArgs[2]));
-    cname[MAX_NC_NAME] = '\0';
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,(jint *)dims,JNI_ABORT);
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,(jint *)theArgs,JNI_ABORT);
-        HDfree(cname);
-        return JNI_FALSE;
     }
     else {
+        if (name == NULL) {
+            h4nullArgument(env, "SDgetinfo:  name is NULL");
+        } /* end if */
+        else if (dimsizes == NULL) {
+            h4nullArgument(env, "SDgetinfo:  dimsizes is NULL");
+        } /* end if */
+        else if (argv == NULL) {
+            h4nullArgument(env, "SDgetinfo:  argv is NULL");
+        } /* end if */
+        else if (ENVPTR->GetArrayLength(ENVPAR argv) < 3) {
+            h4badArgument(env, "SDgetinfo:  argv input array < order 3");
+        } /* end else if */
+        else {
+            dims = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR dimsizes, &isCopy);
+            if (dims == NULL) {
+                h4JNIFatalError(env, "SDgetinfo:  dimsizes not pinned");
+            } /* end if */
+            else {
+                theArgs = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR argv, &isCopy);
+                if (theArgs == NULL) {
+                    h4JNIFatalError(env, "SDgetinfo:  argv not pinned");
+                } /* end if */
+                else {
+                    rval = SDgetinfo((int32)sdsid, cname, &(theArgs[0]), dims,
+                            &(theArgs[1]), &(theArgs[2]));
 
-        ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,(jint *)dims,0);
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,(jint *)theArgs,0);
+                    if (rval == FAIL) {
+                        abb = JNI_ABORT;
+                        bb = JNI_ABORT;
+                        CALL_ERROR_CHECK();
+                    }
+                    else {
+                        cname[MAX_NC_NAME] = '\0';
+                        str = ENVPTR->NewStringUTF(ENVPAR  cname);
+                        if (str != NULL) {
+                            o = ENVPTR->GetObjectArrayElement(ENVPAR name, 0);
+                            if (o == NULL) {
+                                bb = JNI_ABORT;
+                                CALL_ERROR_CHECK();
+                            }
+                            else {
+                                jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                                if (jc == NULL) {
+                                    bb = JNI_ABORT;
+                                    CALL_ERROR_CHECK();
+                                }
+                                else {
+                                    if (ENVPTR->IsInstanceOf(ENVPAR o, jc) == JNI_FALSE) {
+                                        bb = JNI_ABORT;
+                                        CALL_ERROR_CHECK();
+                                    }
+                                    ENVPTR->SetObjectArrayElement(ENVPAR name, 0, (jobject)str);
+                                }
+                                ENVPTR->DeleteLocalRef(ENVPAR o);
+                            }
+                        }
+                    }
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, abb);
 
-        str = ENVPTR->NewStringUTF(ENVPAR cname);
-        o = ENVPTR->GetObjectArrayElement(ENVPAR name,0);
-        if (o == NULL) {
-            HDfree(cname);
-            return JNI_FALSE;
-        }
-        jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (jc == NULL) {
-            HDfree(cname);
-            return JNI_FALSE;
-        }
-        bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
-        if (bb == JNI_FALSE) {
-            HDfree(cname);
-            return JNI_FALSE;
-        }
-        ENVPTR->SetObjectArrayElement(ENVPAR name,0,(jobject)str);
-        ENVPTR->DeleteLocalRef(ENVPAR o);
+                } /* end else */
+                ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes, dims, bb);
+
+            } /* end else */
+        } /* end else */
 
         HDfree(cname);
-        return JNI_TRUE;
     }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreaddata
 (JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jbyteArray data)
 {
-    int32 retVal;
+    intn rval;
     int32 *strt;
     int32 *strd;
     int32 *cnt;
     jbyte *d;
     jboolean bb;
+    jboolean cbb = 0;
 
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
+    if (data == NULL) {
+        h4nullArgument(env, "SDreaddata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDreaddata:  start is NULL");
+    } /* end if */
+    else if (count == NULL) {
+        h4nullArgument(env, "SDreaddata:  count is NULL");
+    } /* end if */
     else {
-        strd = (int32 *)NULL;
-    }
-    cnt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR count,&bb);
+        d = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
 
-    /* assume that 'data' is big enough */
-    d = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDreaddata:  start not pinned");
+        } /* end if */
+        else {
+            cnt = ENVPTR->GetIntArrayElements(ENVPAR count, &bb);
+            if (cnt == NULL) {
+                h4JNIFatalError(env, "SDreaddata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
 
-    retVal = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR count, cnt, JNI_ABORT);
 
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
         }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
+}
+
+/*
+    ////////////////////////////////////////////////////////////////////
+    //                                                                //
+    //         New APIs for read data from library                    //
+    //  Using SDreaddata(..., Object buf) requires function calls     //
+    //  theArray.emptyBytes() and theArray.arrayify(buf), which       //
+    //  triples the actual memory needed by the data set.             //
+    //  Using the following APIs solves the problem.                  //
+    //                                                                //
+    ////////////////////////////////////////////////////////////////////
+*/
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1short
+(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jshortArray data)
+{
+    intn rval;
+    int32 *strt;
+    int32 *strd;
+    int32 *cnt;
+    jshort *d;
+    jboolean bb;
+    jboolean cbb = 0;
+
+    if (data == NULL) {
+        h4nullArgument(env, "SDreaddata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDreaddata:  start is NULL");
+    } /* end if */
+    else if (count == NULL) {
+        h4nullArgument(env, "SDreaddata:  count is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
+        d = (jshort *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
+
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDreaddata:  start not pinned");
+        } /* end if */
+        else {
+            cnt = ENVPTR->GetIntArrayElements(ENVPAR count, &bb);
+            if (cnt == NULL) {
+                h4JNIFatalError(env, "SDreaddata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR count, cnt, JNI_ABORT);
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
         }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,0);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
-        return JNI_TRUE;
-    }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1int
+(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jintArray data)
+{
+    intn rval;
+    int32 *strt;
+    int32 *strd;
+    int32 *cnt;
+    jint *d;
+    jboolean bb;
+    jboolean cbb = 0;
+
+    if (data == NULL) {
+        h4nullArgument(env, "SDreaddata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDreaddata:  start is NULL");
+    } /* end if */
+    else if (count == NULL) {
+        h4nullArgument(env, "SDreaddata:  count is NULL");
+    } /* end if */
+    else {
+        d = (jint *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
+
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDreaddata:  start not pinned");
+        } /* end if */
+        else {
+            cnt = ENVPTR->GetIntArrayElements(ENVPAR count, &bb);
+            if (cnt == NULL) {
+                h4JNIFatalError(env, "SDreaddata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR count, cnt, JNI_ABORT);
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+        }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1long
+(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jlongArray data)
+{
+    intn rval;
+    int32 *strt;
+    int32 *strd;
+    int32 *cnt;
+    jlong *d;
+    jboolean bb;
+    jboolean cbb = 0;
+
+    if (data == NULL) {
+        h4nullArgument(env, "SDreaddata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDreaddata:  start is NULL");
+    } /* end if */
+    else if (count == NULL) {
+        h4nullArgument(env, "SDreaddata:  count is NULL");
+    } /* end if */
+    else {
+        d = (jlong *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
+
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDreaddata:  start not pinned");
+        } /* end if */
+        else {
+            cnt = ENVPTR->GetIntArrayElements(ENVPAR count, &bb);
+            if (cnt == NULL) {
+                h4JNIFatalError(env, "SDreaddata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR count, cnt, JNI_ABORT);
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+        }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1float
+(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jfloatArray data)
+{
+    intn rval;
+    int32 *strt;
+    int32 *strd;
+    int32 *cnt;
+    jfloat *d;
+    jboolean bb;
+    jboolean cbb = 0;
+
+    if (data == NULL) {
+        h4nullArgument(env, "SDreaddata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDreaddata:  start is NULL");
+    } /* end if */
+    else if (count == NULL) {
+        h4nullArgument(env, "SDreaddata:  count is NULL");
+    } /* end if */
+    else {
+        d = (jfloat *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
+
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDreaddata:  start not pinned");
+        } /* end if */
+        else {
+            cnt = ENVPTR->GetIntArrayElements(ENVPAR count, &bb);
+            if (cnt == NULL) {
+                h4JNIFatalError(env, "SDreaddata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR count, cnt, JNI_ABORT);
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+        }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_SDreaddata_1double
+(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jdoubleArray data)
+{
+    intn rval;
+    int32 *strt;
+    int32 *strd;
+    int32 *cnt;
+    jdouble *d;
+    jboolean bb;
+    jboolean cbb = 0;
+
+    if (data == NULL) {
+        h4nullArgument(env, "SDreaddata:  data is NULL");
+    } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "SDreaddata:  start is NULL");
+    } /* end if */
+    else if (count == NULL) {
+        h4nullArgument(env, "SDreaddata:  count is NULL");
+    } /* end if */
+    else {
+        d = (jdouble *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
+
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "SDreaddata:  start not pinned");
+        } /* end if */
+        else {
+            cnt = ENVPTR->GetIntArrayElements(ENVPAR count, &bb);
+            if (cnt == NULL) {
+                h4JNIFatalError(env, "SDreaddata:  count not pinned");
+            } /* end if */
+            else {
+                if (stride == NULL) {
+                    strd = NULL;
+                }
+                else {
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR count, cnt, JNI_ABORT);
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+        }
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, d, cbb);
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDendaccess
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
-    int32 retVal;
+    intn rval;
 
-    retVal = SDendaccess((int32)sdsid);
+    rval = SDendaccess((int32)sdsid);
+    if (rval < 0)
+        CALL_ERROR_CHECK();
 
-    if (retVal == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdimid
 (JNIEnv *env, jclass clss, jlong sdsid, jint index)
 {
-    return (jlong)SDgetdimid((int32)sdsid, (int32)index);
+    int32 rval;
+
+    rval = SDgetdimid((int32)sdsid, (intn)index);
+    if (rval < 0)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDdiminfo
 (JNIEnv *env, jclass clss, jlong dimid, jobjectArray dimname, jintArray argv)
 {
-    int32 retVal;
+    intn rval;
+    jclass jc;
+    jstring rstring;
     jint *theArgs;
-    jclass Sjc;
-    jstring str;
-    char  name[256];  /* what is the correct constant??? */
     jboolean bb;
     jobject o;
+    char  str[256];  /* what is the correct constant??? */
 
-
-    theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-
-    retVal = SDdiminfo((int32)dimid, name, (int32 *)&(theArgs[0]),
-        (int32 *)&(theArgs[1]),(int32 *)&(theArgs[2]));
-
-    name[255] = '\0';
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (dimname == NULL) {
+        h4nullArgument(env, "SDdiminfo:  dimname is NULL");
+    } /* end if */
+    else if (argv == NULL) {
+        h4nullArgument(env, "SDdiminfo:  argv is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 3) {
+        h4badArgument(env, "SDdiminfo:  argv input array < order 3");
+    } /* end else if */
     else {
+        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &bb);
+        if (theArgs == NULL) {
+            h4JNIFatalError(env, "SDdiminfo:  argv not pinned");
+        } /* end if */
+        else {
+            rval = SDdiminfo((int32)dimid, (char *)str, (int32 *)&(theArgs[0]),
+                    (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]));
 
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
-
-        str = ENVPTR->NewStringUTF(ENVPAR name);
-        o = ENVPTR->GetObjectArrayElement(ENVPAR dimname,0);
-        if (o == NULL) {
-            return JNI_FALSE;
-        }
-        Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (Sjc == NULL) {
-            return JNI_FALSE;
-        }
-        bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-        if (bb == JNI_FALSE) {
-            return JNI_FALSE;
-        }
-        ENVPTR->SetObjectArrayElement(ENVPAR dimname,0,(jobject)str);
-        ENVPTR->DeleteLocalRef(ENVPAR o);
-
-        return JNI_TRUE;
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                CALL_ERROR_CHECK();
+            }
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
+                if (str != NULL) {
+                    str[255] = '\0';
+                    rstring = ENVPTR->NewStringUTF(ENVPAR  str);
+                    if (rstring != NULL) {
+                        o = ENVPTR->GetObjectArrayElement(ENVPAR dimname, 0);
+                        if (o == NULL) {
+                            CALL_ERROR_CHECK();
+                        }
+                        else {
+                            jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                            if (jc == NULL) {
+                                CALL_ERROR_CHECK();
+                            }
+                            else {
+                                bb = ENVPTR->IsInstanceOf(ENVPAR o, jc);
+                                if (bb == JNI_FALSE) {
+                                    CALL_ERROR_CHECK();
+                                }
+                                else
+                                    ENVPTR->SetObjectArrayElement(ENVPAR dimname, 0, (jobject)rstring);
+                            }
+                        }
+                        ENVPTR->DeleteLocalRef(ENVPAR o);
+                    }
+                    else
+                        h4JNIFatalError(env, "SDdiminfo: can not create string");
+                }
+            }
+        } /* end else */
     }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDidtoref
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
-    return(SDidtoref((int32)sdsid));
+    int32 rval;
+
+    rval = SDidtoref((int32)sdsid);
+    if (rval < 0)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreftoindex
 (JNIEnv *env, jclass clss, jlong sdid, jint ref)
 {
-    return(SDreftoindex((int32)sdid, (int32)ref));
+    int32 rval;
+
+    rval = SDreftoindex((int32)sdid, (int32)ref);
+    if (rval < 0)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDattrinfo
 (JNIEnv *env, jclass clss, jlong id, jint index, jobjectArray name, jintArray argv)
 {
-    int32 retVal;
+    intn rval;
+    jclass jc;
+    jstring rstring;
     jint *theArgs;
     jboolean bb;
-    jclass Sjc;
-    jstring str;
     jobject o;
-    char  nam[256];  /* what is the correct constant??? */
+    char  str[256];  /* what is the correct constant??? */
 
-    theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-
-    retVal = SDattrinfo((int32)id, (int32)index, nam,
-        (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
-
-    nam[255] = '\0';
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (name == NULL) {
+        h4nullArgument(env, "SDattrinfo:  name is NULL");
+    } /* end if */
+    else if (argv == NULL) {
+        h4nullArgument(env, "SDattrinfo:  argv is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 2) {
+        h4badArgument(env, "SDattrinfo:  argv input array < order 2");
+    } /* end else if */
     else {
+        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &bb);
+        if (theArgs == NULL) {
+            h4JNIFatalError(env, "SDattrinfo:  argv not pinned");
+        } /* end if */
+        else {
+            rval = SDattrinfo((int32)id, (int32)index,
+                (char *)str, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
 
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
-
-        str = ENVPTR->NewStringUTF(ENVPAR nam);
-        o = ENVPTR->GetObjectArrayElement(ENVPAR name,0);
-        if (o == NULL) {
-            return JNI_FALSE;
-        }
-        Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (Sjc == NULL) {
-            return JNI_FALSE;
-        }
-        bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-        if (bb == JNI_FALSE) {
-            return JNI_FALSE;
-        }
-        ENVPTR->SetObjectArrayElement(ENVPAR name,0,(jobject)str);
-        ENVPTR->DeleteLocalRef(ENVPAR o);
-
-        return JNI_TRUE;
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                CALL_ERROR_CHECK();
+            }
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
+                if (str != NULL) {
+                    str[255] = '\0';
+                    rstring = ENVPTR->NewStringUTF(ENVPAR  str);
+                    o = ENVPTR->GetObjectArrayElement(ENVPAR name, 0);
+                    if (o == NULL) {
+                        CALL_ERROR_CHECK();
+                    }
+                    jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                    if (jc == NULL) {
+                        CALL_ERROR_CHECK();
+                    }
+                    bb = ENVPTR->IsInstanceOf(ENVPAR o, jc);
+                    if (bb == JNI_FALSE) {
+                        CALL_ERROR_CHECK();
+                    }
+                    ENVPTR->SetObjectArrayElement(ENVPAR name, 0, (jobject)rstring);
+                    ENVPTR->DeleteLocalRef(ENVPAR o);
+                }
+            }
+        } /* end else */
     }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreadattr
 (JNIEnv *env, jclass clss, jlong id, jint index, jbyteArray dat)
 {
-    int32 retVal;
-    jbyte * s;
+    intn rval;
+    jbyte *arr;
     jboolean bb;
 
-    s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
-
-    retVal = SDreadattr((int32)id,(int32)index,s);
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (dat == NULL) {
+        h4nullArgument(env, "SDreadattr:  dat is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,0);
-        return JNI_TRUE;
-    }
+        arr = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
+        if (arr == NULL) {
+            h4JNIFatalError(env, "SDreadattr:  dat not pinned");
+        } /* end if */
+        else {
+            rval = SDreadattr((int32)id, (int32)index,  (VOIDP)arr);
+            if (rval == FAIL) {
+                ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
+                CALL_ERROR_CHECK();
+            }
+            else {
+                ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, 0);
+            }
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDfindattr
 (JNIEnv *env, jclass clss, jlong id, jstring name)
 {
-    int32 retVal;
-    char  *cname;
+    int32 rval;
+    const char *str;
 
-    cname =(char *) ENVPTR->GetStringUTFChars(ENVPAR name,0);
+    PIN_JAVA_STRING(name, str);
+    if (str != NULL) {
+        rval = GRfindattr((int32)id, str);
 
-    retVal = SDfindattr((int32)id, cname);
+        UNPIN_JAVA_STRING(name, str);
+        if (rval < 0)
+            CALL_ERROR_CHECK();
+    }
 
-    ENVPTR->ReleaseStringUTFChars(ENVPAR name,cname);
-
-    return retVal;
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDiscoordvar
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
-    int32 retVal;
+    intn rval;
 
-    retVal = SDiscoordvar((int32)sdsid);
+    rval = SDiscoordvar((int32)sdsid);
+    if (rval <= 0)
+        CALL_ERROR_CHECK();
 
-    if (retVal == FALSE) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcal
 (JNIEnv *env, jclass clss, jlong sdsid, jdoubleArray argv, jintArray nt)
 {
-    int32 retVal;
+    intn rval;
     jdouble *theArgs;
     jint *theNT;
     jboolean bb;
+    jboolean cbb = 0;
 
-    theArgs = ENVPTR->GetDoubleArrayElements(ENVPAR argv,&bb);
-    theNT = ENVPTR->GetIntArrayElements(ENVPAR nt,&bb);
-
-    retVal = SDgetcal((int32)sdsid, (float64 *)&(theArgs[0]),
-        (float64 *)&(theArgs[1]), (float64 *)&(theArgs[2]),
-        (float64 *)&(theArgs[3]), (int32 *)&(theNT[0]));
-
-    if (retVal==FAIL) {
-        ENVPTR->ReleaseDoubleArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        ENVPTR->ReleaseIntArrayElements(ENVPAR nt,theNT,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (nt == NULL) {
+        h4nullArgument(env, "SDgetcal:  nt is NULL");
+    } /* end if */
+    else if (argv == NULL) {
+        h4nullArgument(env, "SDgetcal:  argv is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 4) {
+        h4badArgument(env, "SDgetcal:  argv input array < order 4");
+    } /* end else if */
     else {
-        ENVPTR->ReleaseDoubleArrayElements(ENVPAR argv,theArgs,0);
-        ENVPTR->ReleaseIntArrayElements(ENVPAR nt,theNT,0);
-        return JNI_TRUE;
-    }
+        theNT = ENVPTR->GetIntArrayElements(ENVPAR nt, &bb);
+        if (theNT == NULL) {
+            h4JNIFatalError(env, "SDgetcal:  nt not pinned");
+        } /* end if */
+        else {
+            theArgs = ENVPTR->GetDoubleArrayElements(ENVPAR argv, &bb);
+            if (theArgs == NULL) {
+                h4JNIFatalError(env, "SDgetcal:  argv not pinned");
+            } /* end if */
+            else {
+                rval = SDgetcal((int32)sdsid, (float64 *)&(theArgs[0]),
+                        (float64 *)&(theArgs[1]), (float64 *)&(theArgs[2]),
+                        (float64 *)&(theArgs[3]), (int32 *)&(theNT[0]));
+
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+                ENVPTR->ReleaseDoubleArrayElements(ENVPAR argv, theArgs, cbb);
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR nt, theNT, cbb);
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdatastrs
 (JNIEnv *env, jclass clss, jlong sdsid, jobjectArray strings, jint len)
 {
-    int32 retVal;
+    intn rval;
     jclass Sjc;
     jstring str;
     jobject o;
@@ -450,275 +900,199 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs
     char *coordsysVal;
     int i;
 
-    Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-    if (Sjc == NULL) {
-        return JNI_FALSE;
-    }
-    for (i = 0; i < 4; i++) {
-        o = ENVPTR->GetObjectArrayElement(ENVPAR strings,i);
-        if (o == NULL) {
-            continue;
-        }
-        bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-        if (bb == JNI_FALSE) {
-            /* exception */
-            return JNI_FALSE;
-        }
-        ENVPTR->DeleteLocalRef(ENVPAR o);
-    }
-
-    label = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings,0);
-    /* allocate space */
-    if (label == NULL) {
-        labVal = NULL; /* don't read label */
-    }
+    if (strings == NULL) {
+        h4nullArgument(env, "SDgetdatastrs:  strings is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR strings) < 4) {
+        h4badArgument(env, "SDgetdatastrs:  strings input array < order 4");
+    } /* end else if */
     else {
-        labVal =  (char *)HDmalloc(len+1);
-        if (labVal == NULL) {
-            h4outOfMemory(env,  "SDgetdatastrs");
-            return JNI_FALSE;
+        label = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 0);
+        /* allocate space */
+        if (label == NULL) {
+            labVal = NULL; /* don't read label */
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR label);
-    unit = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings,1);
-    if (unit == NULL) {
-        unitVal = NULL;
-    }
-    else {
-        unitVal =  (char *)HDmalloc(len+1);
-        if (unitVal == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            h4outOfMemory(env,  "SDgetdatastrs");
-            return JNI_FALSE;
+        else {
+            labVal = (char *)HDmalloc(len+1);
+            if (labVal == NULL) {
+                h4outOfMemory(env, "SDgetdatastrs");
+            }
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR unit);
+        ENVPTR->DeleteLocalRef(ENVPAR label);
 
-    format = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings,2);
-    if (format == NULL) {
-        fmtVal = NULL;
-    }
-    else {
-        fmtVal =  (char *)HDmalloc(len+1);
-        if (fmtVal == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            if (unitVal != NULL) HDfree(unitVal);
-            h4outOfMemory(env,  "SDgetdatastrs");
-            return JNI_FALSE;
+        unit = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 1);
+        if (unit == NULL) {
+            unitVal = NULL;
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR format);
-
-    coordsys = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings,3);
-    if (coordsys == NULL) {
-        coordsysVal = NULL;
-    }
-    else {
-        coordsysVal =  (char *)HDmalloc(len+1);
-        if ( coordsysVal == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            if (unitVal != NULL) HDfree(unitVal);
-            if (fmtVal != NULL) HDfree(fmtVal);
-            h4outOfMemory(env,  "SDgetdatastrs");
-            return JNI_FALSE;
+        else {
+            unitVal = (char *)HDmalloc(len+1);
+            if (unitVal == NULL) {
+                h4outOfMemory(env, "SDgetdatastrs");
+            }
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR coordsys);
+        ENVPTR->DeleteLocalRef(ENVPAR unit);
 
-    retVal = SDgetdatastrs((int32)sdsid, labVal, unitVal, fmtVal, coordsysVal,(int32)len);
+        format = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 2);
+        if (format == NULL) {
+            fmtVal = NULL;
+        }
+        else {
+            fmtVal = (char *)HDmalloc(len+1);
+            if (fmtVal == NULL) {
+                h4outOfMemory(env, "SDgetdatastrs");
+            }
+        }
+        ENVPTR->DeleteLocalRef(ENVPAR format);
 
-    if (retVal==FAIL) {
+        coordsys = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 3);
+        if (coordsys == NULL) {
+            coordsysVal = NULL;
+        }
+        else {
+            coordsysVal = (char *)HDmalloc(len+1);
+            if (coordsysVal == NULL) {
+                h4outOfMemory(env, "SDgetdatastrs");
+            }
+        }
+        ENVPTR->DeleteLocalRef(ENVPAR coordsys);
+
+        rval = SDgetdatastrs((int32)sdsid, labVal, unitVal, fmtVal, coordsysVal, (int32)len);
+
+        if (rval == FAIL) {
+            CALL_ERROR_CHECK();
+        }
+        else {
+            if (labVal != NULL) {
+                labVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR labVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 0, (jobject)str);
+                }
+            }
+            if (unitVal != NULL) {
+                unitVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR unitVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 1, (jobject)str);
+                }
+            }
+            if (fmtVal != NULL) {
+                fmtVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR fmtVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 2, (jobject)str);
+                }
+            }
+            if (coordsysVal != NULL) {
+                coordsysVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR coordsysVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 3, (jobject)str);
+                }
+            }
+        }
+
         if (labVal != NULL) HDfree(labVal);
         if (unitVal != NULL) HDfree(unitVal);
         if (fmtVal != NULL) HDfree(fmtVal);
         if (coordsysVal != NULL) HDfree(coordsysVal);
-        return JNI_FALSE;
-    }
-    else {
-        Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (Sjc == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            if (unitVal != NULL) HDfree(unitVal);
-            if (fmtVal != NULL) HDfree(fmtVal);
-            if (coordsysVal != NULL) HDfree(coordsysVal);
-            h4outOfMemory(env,  "SDgetdatastrs");
-            return JNI_FALSE;
-        }
-        if (labVal != NULL) {
-            labVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR labVal);
-            if (str != NULL) {
-                ENVPTR->SetObjectArrayElement(ENVPAR strings,0,(jobject)str);
-            }
-            HDfree(labVal);
-        }
-        if (unitVal != NULL) {
-            unitVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR unitVal);
-            if (str != NULL) {
-            ENVPTR->SetObjectArrayElement(ENVPAR strings,1,(jobject)str);
-            }
-            HDfree(unitVal);
-        }
-        if (fmtVal != NULL) {
-            fmtVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR fmtVal);
-            if (str != NULL) {
-            ENVPTR->SetObjectArrayElement(ENVPAR strings,2,(jobject)str);
-            }
-            HDfree(fmtVal);
-        }
-        if (coordsysVal != NULL) {
-            coordsysVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR coordsysVal);
-            if (str != NULL) {
-            ENVPTR->SetObjectArrayElement(ENVPAR strings,3,(jobject)str);
-            }
-            HDfree(coordsysVal);
-        }
-
-        return JNI_TRUE;
-    }
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdimstrs
-(JNIEnv *env, jclass clss, jlong dimid, jobjectArray argv, jint len)
+(JNIEnv *env, jclass clss, jlong dimid, jobjectArray strings, jint len)
 {
-    int32 retVal;
-    char *labVal, *unitVal, *fmtVal;
+    intn rval;
     jclass Sjc;
     jstring str;
     jobject o;
     jboolean bb;
+    jstring label,unit,format,coordsys;
+    char *labVal;
+    char *unitVal;
+    char *fmtVal;
+    int i;
 
-    o = ENVPTR->GetObjectArrayElement(ENVPAR argv,0);
-    if (o == NULL) {
-        labVal = NULL; /* don't read label */
-    }
+    if (strings == NULL) {
+        h4nullArgument(env, "SDgetdimstrs:  strings is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR strings) < 3) {
+        h4badArgument(env, "SDgetdimstrs:  strings input array < order 3");
+    } /* end else if */
     else {
-        labVal =  (char *)HDmalloc(len+1);
-        if (labVal == NULL) {
-            h4outOfMemory(env,  "SDgetdimstrs");
-            return JNI_FALSE;
+        label = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 0);
+        /* allocate space */
+        if (label == NULL) {
+            labVal = NULL; /* don't read label */
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR o);
-
-    o = ENVPTR->GetObjectArrayElement(ENVPAR argv,1);
-    if (o == NULL) {
-        unitVal = NULL;
-    }
-    else {
-        unitVal =  (char *)HDmalloc(len+1);
-        if (unitVal == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            h4outOfMemory(env,  "SDgetdimstrs");
-            return JNI_FALSE;
+        else {
+            labVal = (char *)HDmalloc(len+1);
+            if (labVal == NULL) {
+                h4outOfMemory(env, "SDgetdimstrs");
+            }
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR o);
+        ENVPTR->DeleteLocalRef(ENVPAR label);
 
-    o = ENVPTR->GetObjectArrayElement(ENVPAR argv,2);
-    if (o == NULL) {
-        fmtVal = NULL;
-    }
-    else {
-        fmtVal =  (char *)HDmalloc(len+1);
-        if (fmtVal == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            if (unitVal != NULL) HDfree(unitVal);
-            h4outOfMemory(env,  "SDgetdimstrs");
-            return JNI_FALSE;
+        unit = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 1);
+        if (unit == NULL) {
+            unitVal = NULL;
         }
-    }
-    ENVPTR->DeleteLocalRef(ENVPAR o);
-
-    retVal = SDgetdimstrs((int32)dimid, labVal, unitVal, fmtVal, (int32)len);
-
-    if (retVal==FAIL) {
-        if (labVal != NULL) HDfree(labVal);
-        if (unitVal != NULL) HDfree(unitVal);
-        if (fmtVal != NULL) HDfree(fmtVal);
-        return JNI_FALSE;
-    }
-    else {
-        Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (Sjc == NULL) {
-            if (labVal != NULL) HDfree(labVal);
-            if (unitVal != NULL) HDfree(unitVal);
-            if (fmtVal != NULL) HDfree(fmtVal);
-            return JNI_FALSE;
+        else {
+            unitVal = (char *)HDmalloc(len+1);
+            if (unitVal == NULL) {
+                h4outOfMemory(env, "SDgetdimstrs");
+            }
         }
+        ENVPTR->DeleteLocalRef(ENVPAR unit);
 
-        if (labVal != NULL) {
-            o = ENVPTR->GetObjectArrayElement(ENVPAR argv,0);
-            if (o == NULL) {
-                if (labVal != NULL) HDfree(labVal);
-                if (unitVal != NULL) HDfree(unitVal);
-                if (fmtVal != NULL) HDfree(fmtVal);
-                return JNI_FALSE;
-            }
-            bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-            if (bb == JNI_FALSE) {
-                if (labVal != NULL) HDfree(labVal);
-                if (unitVal != NULL) HDfree(unitVal);
-                if (fmtVal != NULL) HDfree(fmtVal);
-                return JNI_FALSE;
-            }
-            labVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR labVal);
-            ENVPTR->SetObjectArrayElement(ENVPAR argv,0,(jobject)str);
-            ENVPTR->DeleteLocalRef(ENVPAR o);
+        format = (jstring)ENVPTR->GetObjectArrayElement(ENVPAR strings, 2);
+        if (format == NULL) {
+            fmtVal = NULL;
         }
-
-        if (unitVal != NULL) {
-            o = ENVPTR->GetObjectArrayElement(ENVPAR argv,1);
-            if (o == NULL) {
-                if (labVal != NULL) HDfree(labVal);
-                if (unitVal != NULL) HDfree(unitVal);
-                if (fmtVal != NULL) HDfree(fmtVal);
-                return JNI_FALSE;
+        else {
+            fmtVal = (char *)HDmalloc(len+1);
+            if (fmtVal == NULL) {
+                h4outOfMemory(env, "SDgetdimstrs");
             }
-            bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-            if (bb == JNI_FALSE) {
-                if (labVal != NULL) HDfree(labVal);
-                if (unitVal != NULL) HDfree(unitVal);
-                if (fmtVal != NULL) HDfree(fmtVal);
-                return JNI_FALSE;
-            }
-            unitVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR unitVal);
-            ENVPTR->SetObjectArrayElement(ENVPAR argv,1,(jobject)str);
-            ENVPTR->DeleteLocalRef(ENVPAR o);
         }
+        ENVPTR->DeleteLocalRef(ENVPAR format);
 
-        if (fmtVal != NULL) {
-            o = ENVPTR->GetObjectArrayElement(ENVPAR argv,2);
-            if (o == NULL) {
-                if (labVal != NULL) HDfree(labVal);
-                if (unitVal != NULL) HDfree(unitVal);
-                if (fmtVal != NULL) HDfree(fmtVal);
-                return JNI_FALSE;
+        rval = SDgetdimstrs((int32)dimid, labVal, unitVal, fmtVal, (int32)len);
+
+        if (rval == FAIL) {
+            CALL_ERROR_CHECK();
+        }
+        else {
+            if (labVal != NULL) {
+                labVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR labVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 0, (jobject)str);
+                }
             }
-            bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-            if (bb == JNI_FALSE) {
-                if (labVal != NULL) HDfree(labVal);
-                if (unitVal != NULL) HDfree(unitVal);
-                if (fmtVal != NULL) HDfree(fmtVal);
-                return JNI_FALSE;
+            if (unitVal != NULL) {
+                unitVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR unitVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 1, (jobject)str);
+                }
             }
-            fmtVal[len] = '\0';
-            str = ENVPTR->NewStringUTF(ENVPAR fmtVal);
-            ENVPTR->SetObjectArrayElement(ENVPAR argv,2,(jobject)str);
-            ENVPTR->DeleteLocalRef(ENVPAR o);
+            if (fmtVal != NULL) {
+                fmtVal[len] = '\0';
+                str = ENVPTR->NewStringUTF(ENVPAR fmtVal);
+                if (str != NULL) {
+                    ENVPTR->SetObjectArrayElement(ENVPAR strings, 2, (jobject)str);
+                }
+            }
         }
 
         if (labVal != NULL) HDfree(labVal);
         if (unitVal != NULL) HDfree(unitVal);
         if (fmtVal != NULL) HDfree(fmtVal);
-        return JNI_TRUE;
-    }
+    } /* end else */
+    return JNI_TRUE;
 }
 
 /*** note this is returning data of many types in an array of bytes.... */
@@ -728,67 +1102,100 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetdimscale
 (JNIEnv *env, jclass clss, jlong dimid, jbyteArray data)
 {
-    int32 retVal;
+    intn rval;
     jbyte *datVal;
     jboolean bb;
+    jboolean cbb = 0;
 
-    datVal = ENVPTR->GetByteArrayElements(ENVPAR data,&bb);
-
-    retVal = SDgetdimscale((int32)dimid, (char *)datVal);
-    if (retVal==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR data,datVal,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (data == NULL) {
+        h4nullArgument(env, "SDgetdimscale:  data is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR data,datVal,0);
-        return JNI_TRUE;
-    }
+        datVal = ENVPTR->GetByteArrayElements(ENVPAR data, &bb);
+        if (datVal == NULL) {
+            h4JNIFatalError(env, "SDgetdimscale:  data not pinned");
+        } /* end if */
+        else {
+            rval = SDgetdimscale((int32)dimid, (char *)datVal);
+            if (rval == FAIL) {
+                cbb = JNI_ABORT;
+                CALL_ERROR_CHECK();
+            }
 
+            ENVPTR->ReleaseByteArrayElements(ENVPAR data, datVal, cbb);
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetfillvalue
 (JNIEnv *env, jclass clss, jlong sdsid, jbyteArray data)
 {
-    int32 retVal;
+    intn rval;
     jbyte *datVal;
     jboolean bb;
+    jboolean cbb = 0;
 
-    datVal = ENVPTR->GetByteArrayElements(ENVPAR data,&bb);
-
-    retVal = SDgetfillvalue((int32)sdsid, (char *)datVal);
-    if (retVal==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR data,datVal,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (data == NULL) {
+        h4nullArgument(env, "SDgetfillvalue:  data is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR data,datVal,0);
-        return JNI_TRUE;
-    }
+        datVal = ENVPTR->GetByteArrayElements(ENVPAR data, &bb);
+        if (datVal == NULL) {
+            h4JNIFatalError(env, "SDgetfillvalue:  data not pinned");
+        } /* end if */
+        else {
+            rval = SDgetfillvalue((int32)sdsid, (char *)datVal);
+            if (rval == FAIL) {
+                cbb = JNI_ABORT;
+                CALL_ERROR_CHECK();
+            }
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR data, datVal, cbb);
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetrange
 (JNIEnv *env, jclass clss, jlong sdsid, jbyteArray max, jbyteArray min)
 {
-    int32 retVal;
+    intn rval;
     jbyte *minp, *maxp;
     jboolean bb;
+    jboolean cbb = 0;
 
-    maxp = ENVPTR->GetByteArrayElements(ENVPAR max,&bb);
-    minp = ENVPTR->GetByteArrayElements(ENVPAR min,&bb);
-
-    retVal = SDgetrange((int32)sdsid, maxp, minp);
-    if (retVal==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR max,maxp,JNI_ABORT);
-        ENVPTR->ReleaseByteArrayElements(ENVPAR min,minp,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (max == NULL) {
+        h4nullArgument(env, "SDgetrange:  max is NULL");
+    } /* end if */
+    else if (min == NULL) {
+        h4nullArgument(env, "SDgetrange:  min is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR max,maxp,0);
-        ENVPTR->ReleaseByteArrayElements(ENVPAR min,minp,0);
-        return JNI_TRUE;
-    }
+        maxp = ENVPTR->GetByteArrayElements(ENVPAR max, &bb);
+        if (maxp == NULL) {
+            h4JNIFatalError(env, "SDgetrange:  max not pinned");
+        } /* end if */
+        else {
+            minp = ENVPTR->GetByteArrayElements(ENVPAR min, &bb);
+            if (minp == NULL) {
+                h4JNIFatalError(env, "SDgetrange:  min not pinned");
+            } /* end if */
+            else {
+                rval = SDgetrange((int32)sdsid, (void *)maxp, (void *)minp);
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+                ENVPTR->ReleaseByteArrayElements(ENVPAR min, minp, cbb);
+            } /* end else */
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR max, maxp, cbb);
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jint JNICALL
@@ -796,26 +1203,37 @@ Java_hdf_hdflib_HDFLibrary_SDcreate
 (JNIEnv *env, jclass clss, jlong sd_id, jstring name, jint number_type, jint rank, jintArray dimsizes)
 {
     int32 rval;
-    char * s;
-    jint * dims;
-    jboolean bb;
+    const char *str;
+    jint *dims;
+    jboolean isCopy;
 
-    s =(char *) ENVPTR->GetStringUTFChars(ENVPAR name,0);
-    dims = ENVPTR->GetIntArrayElements(ENVPAR dimsizes,&bb);
-
-
-    rval = SDcreate((int32) sd_id, (char *)s, (int32) number_type, (int32) rank, (int32 *)dims);
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR name,s);
-    if (rval==FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,dims,JNI_ABORT); /* no write back */
-    }
+    if (dimsizes == NULL) {
+        h4nullArgument(env, "SDcreate:  dimsizes is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes,dims,0); /* do write back */
-    }
+        PIN_JAVA_STRING(name, str);
+        if (str != NULL) {
+            dims = ENVPTR->GetIntArrayElements(ENVPAR dimsizes, &isCopy);
+            if (dims == NULL) {
+                h4JNIFatalError(env, "SDcreate:  dimsizes not pinned");
+            } /* end if */
+            else {
+                rval = SDcreate((int32)sd_id, str, (int32)number_type, (int32)rank, (int32 *)dims);
+
+                ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes, dims, JNI_ABORT);
+
+                if (rval < 0)
+                    CALL_ERROR_CHECK();
+            } /* end else */
+            UNPIN_JAVA_STRING(name, str);
+        }
+    } /* end else */
+
     return rval;
 }
 
+// this API call returns false for not record and for failures
+// maybe failures should return a negative?
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDisrecord
 (JNIEnv *env, jclass clss, jlong sdsid)
@@ -837,26 +1255,32 @@ Java_hdf_hdflib_HDFLibrary_SDsetattr
 (JNIEnv *env, jclass clss, jlong s_id, jstring attr_name, jlong num_type, jint count, jbyteArray values)
 {
     intn rval;
+    jbyte *arr;
+    const char *str;
     jboolean bb;
 
-    char * s;
-    jbyte * v;
-
-    s =(char *) ENVPTR->GetStringUTFChars(ENVPAR attr_name,0);
-    v = ENVPTR->GetByteArrayElements(ENVPAR values,&bb);
-
-    rval = SDsetattr((int32) s_id, (char *)s, (int32) num_type,
-        (int32) count, (VOIDP) v);
-
-    ENVPTR->ReleaseStringUTFChars(ENVPAR attr_name,s);
-    if (rval==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR values,v,JNI_ABORT); /* no write back */
-        return JNI_FALSE;
-    }
+    if (values == NULL) {
+        h4nullArgument(env, "SDsetattr:  values is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR values,v,0); /* do write back */
-        return JNI_TRUE;
-    }
+        PIN_JAVA_STRING(attr_name, str);
+        if (str != NULL) {
+            arr = ENVPTR->GetByteArrayElements(ENVPAR values, &bb);
+            if (arr == NULL) {
+                h4JNIFatalError(env, "SDsetattr:  values not pinned");
+            } /* end if */
+            else {
+                rval = SDsetattr((int32)s_id, str, (int32)num_type, (int32)count, (VOIDP)arr);
+
+                ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
+
+                if (rval == FAIL)
+                    CALL_ERROR_CHECK();
+            } /* end else */
+            UNPIN_JAVA_STRING(attr_name, str);
+        }
+    } /* end else */
+    return JNI_TRUE;
 }
 
 
@@ -866,15 +1290,13 @@ Java_hdf_hdflib_HDFLibrary_SDsetcal
 {
     intn rval;
 
-    rval = SDsetcal((int32) sds_id, (float64) cal, (float64) cal_err,
-        (float64) offset, (float64) offset_err, (int32) number_type) ;
+    rval = SDsetcal((int32)sds_id, (float64)cal, (float64)cal_err,
+        (float64)offset, (float64)offset_err, (int32)number_type);
 
-    if (rval==FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -882,48 +1304,47 @@ Java_hdf_hdflib_HDFLibrary_SDsetdatastrs
 (JNIEnv *env, jclass clss, jlong sds_id, jstring label, jstring unit, jstring format, jstring coordsys)
 {
     intn rval;
-    char * labstr;
-    char * unstr;
-    char * formstr;
-    char * csstr;
+    const char *labstr;
+    const char *unstr;
+    const char *formstr;
+    const char *csstr;
 
     if (label == NULL) {
         labstr = NULL;
     }
     else {
-        labstr =(char *) ENVPTR->GetStringUTFChars(ENVPAR label,0);
+        labstr = ENVPTR->GetStringUTFChars(ENVPAR label, 0);
     }
     if (unit == NULL) {
         unstr = NULL;
     }
     else {
-        unstr =(char *) ENVPTR->GetStringUTFChars(ENVPAR unit,0);
+        unstr = ENVPTR->GetStringUTFChars(ENVPAR unit, 0);
     }
     if (format == NULL) {
         formstr = NULL;
     }
     else {
-        formstr =(char *) ENVPTR->GetStringUTFChars(ENVPAR format,0);
+        formstr = ENVPTR->GetStringUTFChars(ENVPAR format, 0);
     }
     if (coordsys == NULL) {
         csstr = NULL;
     }
     else {
-        csstr =(char *) ENVPTR->GetStringUTFChars(ENVPAR coordsys,0);
+        csstr = ENVPTR->GetStringUTFChars(ENVPAR coordsys, 0);
     }
 
-    rval = SDsetdatastrs((int32) sds_id, labstr, unstr, formstr, csstr);
+    rval = SDsetdatastrs((int32)sds_id, labstr, unstr, formstr, csstr);
 
-    if (labstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR label,labstr);
-    if (unstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR unit,unstr);
-    if (formstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR format,formstr);
-    if (csstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR coordsys,csstr);
-    if (rval==FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (labstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR label, labstr);
+    if (unstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR unit, unstr);
+    if (formstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR format, formstr);
+    if (csstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR coordsys, csstr);
+
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -931,17 +1352,18 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimname
 (JNIEnv *env, jclass clss, jlong dim_id, jstring dim_name)
 {
     intn rval;
-    char * str;
+    const char *str;
 
-    str =(char *) ENVPTR->GetStringUTFChars(ENVPAR dim_name,0);
-    rval = SDsetdimname((int32) dim_id, str) ;
-    ENVPTR->ReleaseStringUTFChars(ENVPAR dim_name,str);
-    if (rval==FAIL) {
-        return JNI_FALSE;
+    PIN_JAVA_STRING(dim_name, str);
+    if (str != NULL) {
+        rval = SDsetdimname((int32)dim_id, str);
+
+        UNPIN_JAVA_STRING(dim_name, str);
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
     }
-    else {
-        return JNI_TRUE;
-    }
+
+    return JNI_TRUE;
 }
 
 
@@ -953,17 +1375,24 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimscale
     jbyte *d;
     jboolean bb;
 
-    d = ENVPTR->GetByteArrayElements(ENVPAR data,&bb);
-
-    rval = SDsetdimscale((int32) dim_id, (int32) count, (int32) number_type, d) ;
-    if (rval==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR data,d,JNI_ABORT); /* no write back */
-        return JNI_FALSE;
-    }
+    if (data == NULL) {
+        h4nullArgument(env, "SDsetdimscale:  data is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR data,d,0); /* do write back */
-        return JNI_TRUE;
-    }
+        d = ENVPTR->GetByteArrayElements(ENVPAR data, &bb);
+        if (d == NULL) {
+            h4JNIFatalError(env, "SDsetdimscale:  data not pinned");
+        } /* end if */
+        else {
+            rval = SDsetdimscale((int32)dim_id, (int32)count, (int32)number_type, (VOIDP)d);
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR data, d, JNI_ABORT);
+
+            if (rval == FAIL)
+                CALL_ERROR_CHECK();
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -971,24 +1400,39 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimstrs
 (JNIEnv *env, jclass clss, jlong dim_id, jstring label, jstring unit, jstring format)
 {
     intn rval;
-    char * l;
-    char * u;
-    char * f;
+    const char *labstr;
+    const char *unstr;
+    const char *formstr;
 
-
-    l =(char *) ENVPTR->GetStringUTFChars(ENVPAR label,0);
-    u =(char *) ENVPTR->GetStringUTFChars(ENVPAR unit,0);
-    f =(char *) ENVPTR->GetStringUTFChars(ENVPAR format,0);
-    rval = SDsetdimstrs((int32) dim_id, l, u, f);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR label,l);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR unit,u);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR format,f);
-    if (rval==FAIL) {
-        return JNI_FALSE;
+    if (label == NULL) {
+        labstr = NULL;
     }
     else {
-        return JNI_TRUE;
+        labstr = ENVPTR->GetStringUTFChars(ENVPAR label, 0);
     }
+    if (unit == NULL) {
+        unstr = NULL;
+    }
+    else {
+        unstr = ENVPTR->GetStringUTFChars(ENVPAR unit, 0);
+    }
+    if (format == NULL) {
+        formstr = NULL;
+    }
+    else {
+        formstr = ENVPTR->GetStringUTFChars(ENVPAR format, 0);
+    }
+
+    rval = SDsetdimstrs((int32) dim_id, labstr, unstr, formstr);
+
+    if (labstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR label, labstr);
+    if (unstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR unit, unstr);
+    if (formstr != NULL) ENVPTR->ReleaseStringUTFChars(ENVPAR format, formstr);
+
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 
@@ -997,18 +1441,18 @@ Java_hdf_hdflib_HDFLibrary_SDsetexternalfile
 (JNIEnv *env, jclass clss, jlong sds_id, jstring filename, jint offset)
 {
     intn rval;
-    char * f;
+    const char *f;
 
-    f =(char *) ENVPTR->GetStringUTFChars(ENVPAR filename,0);
+    PIN_JAVA_STRING(filename, f);
+    if (f != NULL) {
+        rval = SDsetexternalfile((int32)sds_id, f, (int32)offset);
 
-    rval =  SDsetexternalfile((int32) sds_id, f, (int32) offset);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR filename,f);
-    if (rval==FAIL) {
-        return JNI_FALSE;
+        UNPIN_JAVA_STRING(filename, f);
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
     }
-    else {
-        return JNI_TRUE;
-    }
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1017,18 +1461,26 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillvalue
 {
     intn rval;
     jboolean bb;
-    jbyte * d;
+    jbyte *d;
 
-    d = ENVPTR->GetByteArrayElements(ENVPAR fill_val,&bb);
-    rval = SDsetfillvalue((int32) sds_id, (VOIDP) d) ;
-    if (rval==FAIL) {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR fill_val,d,JNI_ABORT); /* no write back */
-        return JNI_FALSE;
-    }
+    if (fill_val == NULL) {
+        h4nullArgument(env, "SDsetfillvalue:  fill_val is NULL");
+    } /* end if */
     else {
-        ENVPTR->ReleaseByteArrayElements(ENVPAR fill_val,d,0); /* do write back */
-        return JNI_TRUE;
-    }
+        d = ENVPTR->GetByteArrayElements(ENVPAR fill_val, &bb);
+        if (d == NULL) {
+            h4JNIFatalError(env, "SDsetfillvalue:  fill_val not pinned");
+        } /* end if */
+        else {
+            rval = SDsetfillvalue((int32)sds_id, (VOIDP)d);
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR fill_val, d, JNI_ABORT);
+
+            if (rval == FAIL)
+                CALL_ERROR_CHECK();
+        } /* end else */
+    } /* end else */
+    return JNI_TRUE;
 }
 
 
@@ -1036,15 +1488,15 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetrange
 (JNIEnv *env, jclass clss, jlong sdsid, jbyteArray max, jbyteArray min)
 {
-    int32 retVal;
+    int32 rval;
     jboolean bb;
     jbyte *minp, *maxp;
 
     maxp = ENVPTR->GetByteArrayElements(ENVPAR max,&bb);
     minp = ENVPTR->GetByteArrayElements(ENVPAR min,&bb);
 
-    retVal = SDsetrange((int32)sdsid, maxp, minp);
-    if (retVal==FAIL) {
+    rval = SDsetrange((int32)sdsid, maxp, minp);
+    if (rval==FAIL) {
         ENVPTR->ReleaseByteArrayElements(ENVPAR max,maxp,JNI_ABORT);
         ENVPTR->ReleaseByteArrayElements(ENVPAR min,minp,JNI_ABORT);
         return JNI_FALSE;
@@ -1061,7 +1513,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDwritedata
 (JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray edge, jbyteArray data)
 {
-    int32 retVal;
+    int32 rval;
     int32 *strt;
     int32 *strd;
     int32 *e;
@@ -1081,9 +1533,9 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata
     /* assume that 'data' is big enough */
     d = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
 
-    retVal = SDwritedata((int32)sdsid, strt, strd, e, d);
+    rval = SDwritedata((int32)sdsid, strt, strd, e, d);
 
-    if (retVal == FAIL) {
+    if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
         if (stride != NULL ) {
             ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
@@ -1109,17 +1561,15 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetnbitdataset
 (JNIEnv *env, jclass clss, jlong id, jint start_bit, jint bit_len, jint sign_ext, jint fill_one)
 {
-intn rval;
+    intn rval;
 
     rval = SDsetnbitdataset((int32)id, (intn) start_bit, (intn) bit_len,
             (intn) sign_ext, (intn) fill_one);
 
-    if (rval == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1130,22 +1580,16 @@ Java_hdf_hdflib_HDFLibrary_SDsetcompress
         comp_info cinf;
         jboolean bval;
 
-/*
-    bzero((char *)&cinf, sizeof(cinf));
-*/
-
         bval = getNewCompInfo(env, cinfo,&cinf); /* or is it New ? */
 
         /* check for success... */
 
         rval = SDsetcompress((int32) id, (comp_coder_t) type, (comp_info *)&cinf);
 
-        if (rval == FAIL) {
-                return JNI_FALSE;
-        }
-        else {
-                return JNI_TRUE;
-        }
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
+
+        return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1200,12 +1644,10 @@ Java_hdf_hdflib_HDFLibrary_SDsetaccesstype
 
     rval = SDsetaccesstype( (int32) id, (uintn) accesstype );
 
-        if (rval == FAIL) {
-                return JNI_FALSE;
-        }
-        else {
-                return JNI_TRUE;
-        }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1216,12 +1658,10 @@ Java_hdf_hdflib_HDFLibrary_SDsetblocksize
 
     rval = SDsetblocksize( (int32) sdsid, (int32) block_size );
 
-        if (rval == FAIL) {
-                return JNI_FALSE;
-        }
-        else {
-                return JNI_TRUE;
-        }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1232,12 +1672,10 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillmode
 
     rval = SDsetfillmode( (int32) sdsid, (intn) fillmode );
 
-        if (rval == FAIL) {
-                return JNI_FALSE;
-        }
-        else {
-                return JNI_TRUE;
-        }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1248,12 +1686,10 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimval_comp
 
     rval = SDsetdimval_comp( (int32) sdsid, (intn) comp_mode );
 
-        if (rval == FAIL) {
-                return JNI_FALSE;
-        }
-        else {
-                return JNI_TRUE;
-        }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -1283,22 +1719,14 @@ Java_hdf_hdflib_HDFLibrary_SDsetchunk
     HDF_CHUNK_DEF c_def;
     jboolean bval;
 
-/*
-    bzero((char *)&c_def, sizeof(c_def));
-*/
-
     bval = getChunkInfo(env, chunk_def,&c_def);
-
-    /* check results */
 
     rval = SDsetchunk ((int32) sdsid, c_def, (int32) flags);
 
-        if (rval == FAIL) {
-                return JNI_FALSE;
-        }
-        else {
-                return JNI_TRUE;
-        }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 
@@ -1312,9 +1740,6 @@ Java_hdf_hdflib_HDFLibrary_SDgetchunkinfo
     jint *flgs;
     jboolean bb;
 
-/*
-    bzero((char *)&cdef, sizeof(cdef));
-*/
     flgs = ENVPTR->GetIntArrayElements(ENVPAR cflags,&bb);
     rval = SDgetchunkinfo( (int32)sdsid, &cdef, (int32 *)&(flgs[0]));
 
@@ -1336,7 +1761,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreadchunk
 (JNIEnv *env, jclass clss, jlong sdid, jintArray origin, jbyteArray dat)
 {
-    int32 retVal;
+    int32 rval;
     jbyte * s;
     jint *arr;
     jboolean bb;
@@ -1344,10 +1769,10 @@ Java_hdf_hdflib_HDFLibrary_SDreadchunk
     arr = ENVPTR->GetIntArrayElements(ENVPAR origin,&bb);
     s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
 
-    retVal = SDreadchunk((int32)sdid,(int32 *)arr,s);
+    rval = SDreadchunk((int32)sdid,(int32 *)arr,s);
 
     ENVPTR->ReleaseIntArrayElements(ENVPAR origin,arr,JNI_ABORT);
-    if (retVal == FAIL) {
+    if (rval == FAIL) {
         ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
         return JNI_FALSE;
     }
@@ -1368,7 +1793,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDwritechunk
 (JNIEnv *env, jclass clss, jlong sdid, jintArray index, jbyteArray dat)
 {
-    int32 retVal;
+    int32 rval;
     jbyte * s;
     jint * arr;
     jboolean bb;
@@ -1376,17 +1801,15 @@ Java_hdf_hdflib_HDFLibrary_SDwritechunk
     s = ENVPTR->GetByteArrayElements(ENVPAR dat,&bb);
     arr = ENVPTR->GetIntArrayElements(ENVPAR index,&bb);
 
-    retVal = SDwritechunk((int32)sdid,(int32 *)arr,(char *)s);
+    rval = SDwritechunk((int32)sdid,(int32 *)arr,(char *)s);
 
     ENVPTR->ReleaseByteArrayElements(ENVPAR dat,s,JNI_ABORT);
     ENVPTR->ReleaseIntArrayElements(ENVPAR index,arr,JNI_ABORT);
 
-    if (retVal == FAIL) {
-        return JNI_FALSE;
-    }
-    else {
-        return JNI_TRUE;
-    }
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return JNI_TRUE;
 }
 
 
@@ -1394,260 +1817,32 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDcheckempty
 (JNIEnv *env, jclass clss, jlong sdsid, jintArray emptySDS)
 {
-    int32 retVal;
-    jboolean bb;
-
-    /* variables of  infomation */
+    int32 rval;
+    jboolean isCopy;
     intn *isempty;
 
-    isempty = (intn *)ENVPTR->GetIntArrayElements(ENVPAR emptySDS,&bb);
-
-    retVal = SDcheckempty((int32)sdsid, (intn *)isempty );
-
-    ENVPTR->ReleaseIntArrayElements(ENVPAR emptySDS,(jint *)isempty,0);
-    if (retVal == FAIL) {
-        return JNI_FALSE;
-    }
+    if (emptySDS == NULL) {
+        h4nullArgument(env, "SDcheckempty:  emptySDS is NULL");
+    } /* end if */
     else {
-        return JNI_TRUE;
-    }
-}
+        isempty = (intn *)ENVPTR->GetIntArrayElements(ENVPAR emptySDS, &isCopy);
+        if (isempty == NULL) {
+            h4JNIFatalError(env, "SDcheckempty:  emptySDS not pinned");
+        } /* end if */
+        else {
+            rval = SDcheckempty((int32)sdsid, isempty);
 
+            if (rval == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR emptySDS, isempty, JNI_ABORT);
+                CALL_ERROR_CHECK();
+            }
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR emptySDS, isempty, 0);
+            }
+        } /* end else */
+    } /* end else */
 
-/*
-    ////////////////////////////////////////////////////////////////////
-    //                                                                //
-    //         New APIs for read data from library                    //
-    //  Using SDreaddata(..., Object buf) requires function calls        //
-    //  theArray.emptyBytes() and theArray.arrayify( buf), which      //
-    //  triples the actual memory needed by the data set.             //
-    //  Using the following APIs solves the problem.                  //
-    //                                                                //
-    ////////////////////////////////////////////////////////////////////
-*/
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1short
-(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jshortArray data)
-{
-    int32 retVal;
-    int32 *strt;
-    int32 *strd;
-    int32 *cnt;
-    jshort *d;
-    jboolean bb;
-
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
-    else {
-        strd = (int32 *)NULL;
-    }
-    cnt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR count,&bb);
-
-    /* assume that 'data' is big enough */
-    d = (jshort *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
-
-    retVal = SDreaddata((int32)sdsid, strt, strd, cnt, d);
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
-    else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,0);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
-        return JNI_TRUE;
-    }
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1int
-(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jintArray data)
-{
-    int32 retVal;
-    int32 *strt;
-    int32 *strd;
-    int32 *cnt;
-    jint *d;
-    jboolean bb;
-
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
-    else {
-        strd = (int32 *)NULL;
-    }
-    cnt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR count,&bb);
-
-    /* assume that 'data' is big enough */
-    d = (jint *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
-
-    retVal = SDreaddata((int32)sdsid, strt, strd, cnt, d);
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
-    else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,0);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
-        return JNI_TRUE;
-    }
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1long
-(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jlongArray data)
-{
-    int32 retVal;
-    int32 *strt;
-    int32 *strd;
-    int32 *cnt;
-    jlong *d;
-    jboolean bb;
-
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
-    else {
-        strd = (int32 *)NULL;
-    }
-    cnt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR count,&bb);
-
-    /* assume that 'data' is big enough */
-    d = (jlong *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
-
-    retVal = SDreaddata((int32)sdsid, strt, strd, cnt, d);
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
-    else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,0);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
-        return JNI_TRUE;
-    }
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1float
-(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jfloatArray data)
-{
-    int32 retVal;
-    int32 *strt;
-    int32 *strd;
-    int32 *cnt;
-    jfloat *d;
-    jboolean bb;
-
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
-    else {
-        strd = (int32 *)NULL;
-    }
-    cnt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR count,&bb);
-
-    /* assume that 'data' is big enough */
-    d = (jfloat *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
-
-    retVal = SDreaddata((int32)sdsid, strt, strd, cnt, d);
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
-
-    ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-    if (stride != NULL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
-    }
-    ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,0);
-    ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
     return JNI_TRUE;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_SDreaddata_1double
-(JNIEnv *env, jclass clss, jlong sdsid, jintArray start, jintArray stride, jintArray count, jdoubleArray data)
-{
-    int32 retVal;
-    int32 *strt;
-    int32 *strd;
-    int32 *cnt;
-    jdouble *d;
-    jboolean bb;
-
-    strt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR start,&bb);
-    if (stride != NULL) {
-        strd = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-    }
-    else {
-        strd = (int32 *)NULL;
-    }
-    cnt = (int32 *)ENVPTR->GetIntArrayElements(ENVPAR count,&bb);
-
-    /* assume that 'data' is big enough */
-    d = (jdouble *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data,&bb);
-
-    retVal = SDreaddata((int32)sdsid, strt, strd, cnt, d);
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,JNI_ABORT);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,JNI_ABORT);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,JNI_ABORT);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,JNI_ABORT);
-        return JNI_FALSE;
-    }
-    else {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR start,(jint *)strt,0);
-        if (stride != NULL) {
-            ENVPTR->ReleaseIntArrayElements(ENVPAR stride,(jint *)strd,0);
-        }
-        ENVPTR->ReleaseIntArrayElements(ENVPAR count,(jint *)cnt,0);
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data,d,0);
-        return JNI_TRUE;
-    }
 }
 
 #ifdef __cplusplus

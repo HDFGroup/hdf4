@@ -242,7 +242,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8addimage
     if (image == NULL) {
         h4nullArgument(env, "DFR8addimage: image is NULL");
     } /* end if */
-    else {       
+    else {
         dat = ENVPTR->GetByteArrayElements(ENVPAR image,&bb);
 
         if (dat == NULL) {
@@ -314,24 +314,20 @@ Java_hdf_hdflib_HDFLibrary_DFR8setcompress
 {
     intn rval;
     comp_info cinf;
-    jboolean bval;
 
     if (cinfo == NULL) {
         h4nullArgument(env, "DFR8setcompress: cinfo is NULL");
     } /* end if */
     else {
-        bval = getOldCompInfo(env, cinfo,&cinf);
-
-        if (bval == NULL) {
+        if (getOldCompInfo(env, cinfo,&cinf) == JNI_FALSE) {
             h4JNIFatalError(env, "DFR8setcompress: cinfo not pinned");
         } /* end if */
         else {
             /* fill in cinf depending on the value of 'type' */
             rval = DFR8setcompress((int32) type, (comp_info *)&cinf);
 
-            if (rval == FAIL) {
+            if (rval == FAIL)
                 CALL_ERROR_CHECK();
-            }
         } /* end else */
     } /* end else */
 
@@ -398,9 +394,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8setpalette
         ENVPTR->ReleaseByteArrayElements(ENVPAR palette,p,JNI_ABORT);
     }
 
-    if (rval == FAIL) {
+    if (rval == FAIL)
         CALL_ERROR_CHECK();
-    }
 
     return JNI_TRUE;
 }
@@ -410,7 +405,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8writeref
 (JNIEnv *env, jclass clss, jstring filename, jshort ref)
 {
     int  retVal;
-    char *filePtr;
+    const char *filePtr;
 
     PIN_JAVA_STRING(filename, filePtr);
 
@@ -419,9 +414,8 @@ Java_hdf_hdflib_HDFLibrary_DFR8writeref
 
         UNPIN_JAVA_STRING(filename, filePtr);
 
-        if (retVal == FAIL) {
+        if (retVal == FAIL)
             CALL_ERROR_CHECK();
-        }
     }
 
     return JNI_TRUE;

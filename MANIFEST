@@ -568,11 +568,12 @@
 ./java/test/TestAll.java
 ./java/test/TestH4.java
 ./java/test/TestH4ANparams.java
-./java/test/TestH4DFPparams.java
-./java/test/TestH4GRparams.java
 ./java/test/TestH4DFparams.java
+./java/test/TestH4DFPparams.java
 ./java/test/TestH4DFRparams.java
+./java/test/TestH4GRparams.java
 ./java/test/TestH4HCparams.java
+./java/test/TestH4SDparams.java
 ./java/test/TestH4Vparams.java
 ./java/test/TestH4VSparams.java
 

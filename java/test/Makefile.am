@@ -26,6 +26,7 @@ noinst_JAVA = \
 	TestH4DFRparams.java \
 	TestH4GRparams.java \
 	TestH4HCparams.java \
+	TestH4SDparams.java \
 #	TestH4VSparams.java \
 	TestAll.java
 

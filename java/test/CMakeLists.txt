@@ -16,6 +16,7 @@ set (HDF4_JAVA_TEST_SRCS
     TestH4DFRparams.java
     TestH4GRparams.java
     TestH4HCparams.java
+    TestH4SDparams.java
 #    TestH4VSparams.java
     TestAll.java
 )

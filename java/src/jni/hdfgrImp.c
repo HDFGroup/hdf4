@@ -119,11 +119,11 @@ Java_hdf_hdflib_HDFLibrary_GRselect
 {
     int32 rval;
 
-    rval = (jlong)GRselect((int32) gr_id, (int32) index);
+    rval = GRselect((int32)gr_id, (int32) index);
     if (rval < 0)
         CALL_ERROR_CHECK();
 
-    return (jint)rval;
+    return (jlong)rval;
 }
 
 JNIEXPORT jint JNICALL
@@ -134,7 +134,6 @@ Java_hdf_hdflib_HDFLibrary_GRnametoindex
     const char *str;
 
     PIN_JAVA_STRING(gr_name, str);
-
     if (str != NULL) {
         rval = GRnametoindex((int32)gr_id, str);
 
@@ -207,7 +206,6 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
     str = (char *)HDmalloc(MAX_GR_NAME+1);
     if (str == NULL) {
         h4outOfMemory(env, "GRgetiminfo");
-        CALL_ERROR_CHECK();
     }
     else {
         if (gr_name == NULL) {
@@ -219,58 +217,59 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
         else if (ENVPTR->GetArrayLength(ENVPAR dim_sizes) < 2) {
             h4badArgument(env, "GRgetiminfo:  dim_sizes input array < order 2");
         } /* end else if */
+        else if (argv == NULL) {
+            h4nullArgument(env, "GRgetiminfo:  argv is NULL");
+        } /* end if */
+        else if (ENVPTR->GetArrayLength(ENVPAR argv) < 4) {
+            h4badArgument(env, "GRgetiminfo:  argv input array < order 4");
+        } /* end else if */
         else {
             dims = ENVPTR->GetIntArrayElements(ENVPAR dim_sizes, &isCopy);
             if (dims == NULL) {
                 h4JNIFatalError(env, "GRgetiminfo:  dim_sizes not pinned");
             } /* end if */
             else {
-                if (argv == NULL) {
-                    h4nullArgument(env, "GRgetiminfo:  argv is NULL");
+                theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &isCopy);
+                if (theArgs == NULL) {
+                    h4JNIFatalError(env, "GRgetiminfo:  argv not pinned");
                 } /* end if */
-                else if (ENVPTR->GetArrayLength(ENVPAR argv) < 4) {
-                    h4badArgument(env, "GRgetiminfo:  argv input array < order 4");
-                } /* end else if */
                 else {
-                    theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv, &isCopy);
-                    if (theArgs == NULL) {
-                        h4JNIFatalError(env, "GRgetiminfo:  argv not pinned");
-                    } /* end if */
-                    else {
-                        rval = GRgetiminfo((int32) ri_id, (char *)str, (int32 *)&(theArgs[0]),
-                                (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]), (int32 *)dims,
-                                (int32 *)&(theArgs[3]));
+                    rval = GRgetiminfo((int32) ri_id, (char *)str, (int32 *)&(theArgs[0]),
+                            (int32 *)&(theArgs[1]), (int32 *)&(theArgs[2]), (int32 *)dims,
+                            (int32 *)&(theArgs[3]));
 
-                        if (rval == FAIL) {
-                            abb = JNI_ABORT;
+                    if (rval == FAIL) {
+                        abb = JNI_ABORT;
+                        bb = JNI_ABORT;
+                        CALL_ERROR_CHECK();
+                    }
+                    else {
+                        o = ENVPTR->GetObjectArrayElement(ENVPAR gr_name, 0);
+                        if (o == NULL) {
                             bb = JNI_ABORT;
                             CALL_ERROR_CHECK();
                         }
                         else {
-                            if (str != NULL) {
+                            Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                            if (Sjc == NULL) {
+                                bb = JNI_ABORT;
+                                CALL_ERROR_CHECK();
+                            }
+                            else if (ENVPTR->IsInstanceOf(ENVPAR o, Sjc) == JNI_FALSE) {
+                                bb = JNI_ABORT;
+                                CALL_ERROR_CHECK();
+                            }
+                            else {
                                 str[MAX_GR_NAME] = '\0';
                                 rstring = ENVPTR->NewStringUTF(ENVPAR  str);
-                                o = ENVPTR->GetObjectArrayElement(ENVPAR gr_name, 0);
-                                if (o == NULL) {
-                                    bb = JNI_ABORT;
-                                    CALL_ERROR_CHECK();
-                                }
-                                Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                                if (Sjc == NULL) {
-                                    bb = JNI_ABORT;
-                                    CALL_ERROR_CHECK();
-                                }
-                                if (ENVPTR->IsInstanceOf(ENVPAR o, Sjc) == JNI_FALSE) {
-                                    bb = JNI_ABORT;
-                                    CALL_ERROR_CHECK();
-                                }
-                                ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);
-                                ENVPTR->DeleteLocalRef(ENVPAR o);
+                                if (rstring != NULL)
+                                    ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);
                             }
+                            ENVPTR->DeleteLocalRef(ENVPAR o);
                         }
-                        ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, abb);
+                    }
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, abb);
 
-                    } /* end else */
                 } /* end else */
                 ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, bb);
 
@@ -298,62 +297,52 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage
     if (data == NULL) {
         h4nullArgument(env, "GRreadimage:  data is NULL");
     } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "GRreadimage:  start is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR start) < 2) {
+        h4badArgument(env, "GRreadimage:  start input array < order 2");
+    } /* end else if */
+    else if (edge == NULL) {
+        h4nullArgument(env, "GRreadimage:  edge is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR edge) < 2) {
+        h4badArgument(env, "GRreadimage:  edge input array < order 2");
+    } /* end else if */
     else {
         arr = (jbyte *)ENVPTR->GetPrimitiveArrayCritical(ENVPAR data, &bb);
 
-        if (start == NULL) {
-            h4nullArgument(env, "GRreadimage:  start is NULL");
+        strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+        if (strt == NULL) {
+            h4JNIFatalError(env, "GRreadimage:  start not pinned");
         } /* end if */
-        else if (ENVPTR->GetArrayLength(ENVPAR start) < 2) {
-            h4badArgument(env, "GRreadimage:  start input array < order 2");
-        } /* end else if */
         else {
-            strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
-            if (strt == NULL) {
-                h4JNIFatalError(env, "GRreadimage:  start not pinned");
+            edg = ENVPTR->GetIntArrayElements(ENVPAR edge, &bb);
+            if (edg == NULL) {
+                h4JNIFatalError(env, "GRreadimage:  edge not pinned");
             } /* end if */
             else {
-                if (edge == NULL) {
-                    h4nullArgument(env, "GRreadimage:  edge is NULL");
-                } /* end if */
-                else if (ENVPTR->GetArrayLength(ENVPAR edge) < 2) {
-                    h4badArgument(env, "GRreadimage:  edge input array < order 2");
-                } /* end else if */
+                if (stride == NULL) {
+                    strd = NULL;
+                }
                 else {
-                    edg = ENVPTR->GetIntArrayElements(ENVPAR edge, &bb);
-                    if (edg == NULL) {
-                        h4JNIFatalError(env, "ANget_tagref:  edge not pinned");
-                    } /* end if */
-                    else {
-                        if (stride == NULL) {
-                            strd = NULL;
-                        }
-                        else {
-                            strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
-                        }
-                        if (strd == NULL) {
-                            rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)NULL,
-                                (int32 *)edg, (VOIDP)arr);
-                        }
-                        else {
-                            rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)strd,
-                                (int32 *)edg, (VOIDP)arr);
-                        }
+                    strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
+                }
+                rval = GRreadimage((int32)ri_id, (int32 *)strt, (int32 *)strd,
+                        (int32 *)edg, (VOIDP)arr);
 
-                        if (stride != NULL) {
-                            ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
-                        }
-                        ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
+                if (stride != NULL) {
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
 
-                        if (rval == FAIL) {
-                            cbb = JNI_ABORT;
-                            CALL_ERROR_CHECK();
-                        }
-                    } /* end else */
-                } /* end else */
-                ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
-            }
-        } /* end else */
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
+            } /* end else */
+            ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+        }
         ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, arr, cbb);
     } /* end else */
     return JNI_TRUE;
@@ -523,7 +512,6 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo
     /* check for out of memory error ... */
     str = (char *)HDmalloc(MAX_GR_NAME+1);
     if (str == NULL) {
-        /* exception */
         h4outOfMemory(env, "GRattrinfo");
     }
     else {
@@ -615,7 +603,6 @@ Java_hdf_hdflib_HDFLibrary_GRfindattr
     const char *str;
 
     PIN_JAVA_STRING(attr_name, str);
-
     if (str != NULL) {
         rval = GRfindattr((int32)gr_id, str);
 
@@ -644,25 +631,22 @@ Java_hdf_hdflib_HDFLibrary_GRcreate
         h4badArgument(env, "GRcreate:  dim_sizes input array < order 2");
     } /* end else if */
     else {
-        dims = ENVPTR->GetIntArrayElements(ENVPAR dim_sizes, &bb);
-        if (dims == NULL) {
-            h4JNIFatalError(env, "GRcreate:  dim_sizes not pinned");
-        } /* end if */
-        else {
-            PIN_JAVA_STRING(name, str);
-
-            if (str != NULL) {
+        PIN_JAVA_STRING(name, str);
+        if (str != NULL) {
+            dims = ENVPTR->GetIntArrayElements(ENVPAR dim_sizes, &bb);
+            if (dims == NULL) {
+                h4JNIFatalError(env, "GRcreate:  dim_sizes not pinned");
+            } /* end if */
+            else {
                 rval = GRcreate( (int32)gr_id, str, (int32)ncomp,
-                        (int32)data_type, (int32)interlace_mode, (int32 *)dims);
+                    (int32)data_type, (int32)interlace_mode, (int32 *)dims);
 
-                UNPIN_JAVA_STRING(name, str);
-
+                ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
                 if (rval < 0)
                     CALL_ERROR_CHECK();
-            }
-
-            ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
-        } /* end else */
+            } /* end else */
+            UNPIN_JAVA_STRING(name, str);
+        }
     } /* end else */
     return (jlong)rval;
 }
@@ -691,7 +675,6 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2
     const char *val;
 
     PIN_JAVA_STRING_TWO(attr_name, str, values, val);
-
     if (str != NULL && val != NULL) {
         rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)val);
 
@@ -717,24 +700,22 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B
         h4nullArgument(env, "GRsetattr:  values is NULL");
     } /* end if */
     else {
-        arr = ENVPTR->GetByteArrayElements(ENVPAR values, &bb);
-        if (arr == NULL) {
-            h4JNIFatalError(env, "GRsetattr:  values not pinned");
-        } /* end if */
-        else {
-            PIN_JAVA_STRING(attr_name, str);
-
-            if (str != NULL) {
+        PIN_JAVA_STRING(attr_name, str);
+        if (str != NULL) {
+            arr = ENVPTR->GetByteArrayElements(ENVPAR values, &bb);
+            if (arr == NULL) {
+                h4JNIFatalError(env, "GRsetattr:  values not pinned");
+            } /* end if */
+            else {
                 rval = GRsetattr((int32)gr_id, str, (int32)data_type, (int32)count, (VOIDP)arr);
 
-                UNPIN_JAVA_STRING(attr_name, str);
+                ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
 
                 if (rval == FAIL)
                     CALL_ERROR_CHECK();
-            }
-
-            ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
-        } /* end else */
+            } /* end else */
+            UNPIN_JAVA_STRING(attr_name, str);
+        }
     } /* end else */
     return JNI_TRUE;
 }
@@ -835,7 +816,6 @@ Java_hdf_hdflib_HDFLibrary_GRsetexternalfile
     const char *str;
 
     PIN_JAVA_STRING(filename, str);
-
     if (str != NULL) {
         rval = GRsetexternalfile((int32)ri_id, str, (int32)offset);
 
@@ -863,64 +843,53 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id,
     if (data == NULL) {
         h4nullArgument(env, "GRwriteimage:  data is NULL");
     } /* end if */
+    else if (start == NULL) {
+        h4nullArgument(env, "GRreadimage:  start is NULL");
+    } /* end else if */
+    else if (ENVPTR->GetArrayLength(ENVPAR start) < 2) {
+        h4badArgument(env, "GRreadimage:  start input array < order 2");
+    } /* end else if */
+    else if (edge == NULL) {
+        h4nullArgument(env, "GRreadimage:  edge is NULL");
+    } /* end else if */
+    else if (ENVPTR->GetArrayLength(ENVPAR edge) < 2) {
+        h4badArgument(env, "GRreadimage:  edge input array < order 2");
+    } /* end else if */
     else {
         arr = ENVPTR->GetByteArrayElements(ENVPAR data, &bb);
         if (arr == NULL) {
             h4JNIFatalError(env, "GRwriteimage:  data not pinned");
         } /* end if */
         else {
-            if (start == NULL) {
-                h4nullArgument(env, "GRreadimage:  start is NULL");
+            strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
+            if (strt == NULL) {
+                h4JNIFatalError(env, "GRreadimage:  start not pinned");
             } /* end if */
-            else if (ENVPTR->GetArrayLength(ENVPAR start) < 2) {
-                h4badArgument(env, "GRreadimage:  start input array < order 2");
-            } /* end else if */
             else {
-                strt = ENVPTR->GetIntArrayElements(ENVPAR start, &bb);
-                if (strt == NULL) {
-                    h4JNIFatalError(env, "GRreadimage:  start not pinned");
+                edg = ENVPTR->GetIntArrayElements(ENVPAR edge, &bb);
+                if (edg == NULL) {
+                    h4JNIFatalError(env, "ANget_tagref:  edge not pinned");
                 } /* end if */
                 else {
-                    if (edge == NULL) {
-                        h4nullArgument(env, "GRreadimage:  edge is NULL");
-                    } /* end if */
-                    else if (ENVPTR->GetArrayLength(ENVPAR edge) < 2) {
-                        h4badArgument(env, "GRreadimage:  edge input array < order 2");
-                    } /* end else if */
+                    if (stride == NULL) {
+                        strd = NULL;
+                    }
                     else {
-                        edg = ENVPTR->GetIntArrayElements(ENVPAR edge, &bb);
-                        if (edg == NULL) {
-                            h4JNIFatalError(env, "ANget_tagref:  edge not pinned");
-                        } /* end if */
-                        else {
-                            if (stride == NULL) {
-                                strd = NULL;
-                            }
-                            else {
-                                strd = ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
-                            }
+                        strd = ENVPTR->GetIntArrayElements(ENVPAR stride,&bb);
+                    }
+                    rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)strd,
+                            (int32 *)edg, (VOIDP)arr);
 
-                            if (strd == NULL) {
-                                rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)NULL,
-                                    (int32 *)edg, (VOIDP)arr);
-                            }
-                            else {
-                                rval = GRwriteimage((int32)ri_id, (int32 *)strt, (int32 *)strd,
-                                    (int32 *)edg, (VOIDP)arr);
-                            }
+                    if (stride != NULL) {
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
+                    }
 
-                            if (stride != NULL) {
-                                ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
-                            }
+                    if (rval == FAIL)
+                        CALL_ERROR_CHECK();
 
-                            if (rval == FAIL)
-                                CALL_ERROR_CHECK();
-
-                            ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
-                        } /* end else */
-                    } /* end else */
-                    ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
                 } /* end else */
+                ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
             } /* end else */
             ENVPTR->ReleaseByteArrayElements(ENVPAR data, arr, JNI_ABORT);
         } /* end else */
@@ -971,32 +940,30 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk
     if (dat == NULL) {
         h4nullArgument(env, "GRreadchunk:  dat is NULL");
     } /* end if */
+    else if (origin == NULL) {
+        h4nullArgument(env, "GRreadchunk:  origin is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR origin) < 2) {
+        h4badArgument(env, "GRreadchunk:  origin input array < order 2");
+    } /* end else if */
     else {
         arr = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
         if (arr == NULL) {
             h4JNIFatalError(env, "GRreadchunk:  dat not pinned");
         } /* end if */
         else {
-            if (origin == NULL) {
-                h4nullArgument(env, "GRreadchunk:  origin is NULL");
+            org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
+            if (org == NULL) {
+                h4JNIFatalError(env, "GRreadchunk:  origin not pinned");
             } /* end if */
-            else if (ENVPTR->GetArrayLength(ENVPAR origin) < 2) {
-                h4badArgument(env, "GRreadchunk:  origin input array < order 2");
-            } /* end else if */
             else {
-                org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
-                if (org == NULL) {
-                    h4JNIFatalError(env, "GRreadchunk:  origin not pinned");
-                } /* end if */
-                else {
-                    rval = GRreadchunk((int32)grid, (int32 *)org, arr);
+                rval = GRreadchunk((int32)grid, (int32 *)org, arr);
 
-                    ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
-                    if (rval == FAIL) {
-                        cbb = JNI_ABORT;
-                        CALL_ERROR_CHECK();
-                    }
-                } /* end else */
+                ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
+                if (rval == FAIL) {
+                    cbb = JNI_ABORT;
+                    CALL_ERROR_CHECK();
+                }
             } /* end else */
             ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, cbb);
         } /* end else */
@@ -1013,36 +980,32 @@ Java_hdf_hdflib_HDFLibrary_GRwritechunk
     jint * org;
     jboolean bb;
 
-    arr = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
-    org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
     if (dat == NULL) {
         h4nullArgument(env, "GRwritechunk:  dat is NULL");
     } /* end if */
+    else if (origin == NULL) {
+        h4nullArgument(env, "GRwritechunk:  origin is NULL");
+    } /* end if */
+    else if (ENVPTR->GetArrayLength(ENVPAR origin) < 2) {
+        h4badArgument(env, "GRwritechunk:  origin input array < order 2");
+    } /* end else if */
     else {
         arr = ENVPTR->GetByteArrayElements(ENVPAR dat, &bb);
         if (arr == NULL) {
             h4JNIFatalError(env, "GRwritechunk:  dat not pinned");
         } /* end if */
         else {
-            if (origin == NULL) {
-                h4nullArgument(env, "GRwritechunk:  origin is NULL");
+            org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
+            if (org == NULL) {
+                h4JNIFatalError(env, "GRwritechunk:  origin not pinned");
             } /* end if */
-            else if (ENVPTR->GetArrayLength(ENVPAR origin) < 2) {
-                h4badArgument(env, "GRwritechunk:  origin input array < order 2");
-            } /* end else if */
             else {
-                org = ENVPTR->GetIntArrayElements(ENVPAR origin, &bb);
-                if (org == NULL) {
-                    h4JNIFatalError(env, "GRwritechunk:  origin not pinned");
-                } /* end if */
-                else {
-                    rval = GRwritechunk((int32)grid, (int32 *)org, (char *)arr);
+                rval = GRwritechunk((int32)grid, (int32 *)org, (char *)arr);
 
-                    ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
+                ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
 
-                    if (rval == FAIL)
-                        CALL_ERROR_CHECK();
-                } /* end else */
+                if (rval == FAIL)
+                    CALL_ERROR_CHECK();
             } /* end else */
             ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
         } /* end else */

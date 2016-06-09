@@ -137,6 +137,7 @@ java/test/TestH4DFRparams.java -text svneol=unset#text/plain
 java/test/TestH4DFparams.java -text svneol=unset#text/plain
 java/test/TestH4GRparams.java -text
 java/test/TestH4HCparams.java -text svneol=unset#text/plain
+java/test/TestH4SDparams.java -text
 java/test/TestH4VSparams.java -text svneol=unset#text/plain
 java/test/TestH4Vparams.java -text svneol=unset#text/plain
 java/test/junit.sh.in -text
