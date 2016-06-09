@@ -78,12 +78,6 @@ public class TestH4DFparams {
         HDFLibrary.DF24getimage(str, null, 0, 0);
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void testDF24getimageIllegalArgument() throws Throwable {
-        String str = "";
-        HDFLibrary.DF24getimage(str, new byte[] { }, 0, 0);
-    }
-    
     @Test(expected = NullPointerException.class)
     public void testDF24readrefNullFilename() throws Throwable {
         HDFLibrary.DF24readref(null, 0);
@@ -109,12 +103,6 @@ public class TestH4DFparams {
     public void testDF24addimageNullImage() throws Throwable {
         String str = "";
         HDFLibrary.DF24addimage(str, null, 0, 0);
-    }
-    
-    @Test(expected = IllegalArgumentException.class)
-    public void testDF24addimageIllegalArgument() throws Throwable {
-        String str = "";
-        HDFLibrary.DF24addimage(str, new byte[] { }, 0, 0);
     }
     
     @Test(expected = NullPointerException.class)

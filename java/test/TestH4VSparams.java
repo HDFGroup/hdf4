@@ -460,10 +460,10 @@ public class TestH4VSparams {
         HDFLibrary.VSsetattr(0, 0, null, 0, 0, "");
     }
     
-    @Test(expected = NullPointerException.class)
-    public void testVSsetattrNullValues() throws Throwable {
-        HDFLibrary.VSsetattr(0, 0, "", 0, 0, null);
-    }
+//    @Test(expected = NullPointerException.class)
+//    public void testVSsetattrNullValues() throws Throwable {
+//        HDFLibrary.VSsetattr(0, 0, "", 0, 0, null);
+//    }
     
     @Test(expected = HDFException.class)
     public void testVSsetattrIllegalId() throws Throwable {

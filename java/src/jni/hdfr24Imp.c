@@ -99,7 +99,7 @@ Java_hdf_hdflib_HDFLibrary_1DF24getimage
             h4JNIFatalError(env, "DF24getimage: image not pinned");
         } /* end if */
         else {
-            rval =  DF24getimage((char *)hdf_file, (VOIDP) dat, (int32) width, (int32) height);
+            rval =  DF24getimage(hdf_file, (VOIDP) dat, (int32) width, (int32) height);
 
             if (rval == FAIL) {
                 ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,JNI_ABORT);
