@@ -41,7 +41,7 @@ Java_hdf_hdflib_HDFLibrary_Hopen
     int32  retVal;
     jclass jc;
 
-    PIN_JAVA_STRING(hdfFile, file, -1);
+    PIN_JAVA_STRING(hdfFile, file);
 
     /* open HDF file specified by hdf_HDF_file */
     retVal = Hopen(file, (intn)access, (int16)ndds);
@@ -49,7 +49,7 @@ Java_hdf_hdflib_HDFLibrary_Hopen
     UNPIN_JAVA_STRING(hdfFile, file);
 
     if (retVal == FAIL) {
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
     }
 
     return (jlong)retVal;
@@ -73,7 +73,7 @@ Java_hdf_hdflib_HDFLibrary_Hclose
     /* close the HDF file */
     status = Hclose((int32)fid);
     if (status == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -106,7 +106,7 @@ Java_hdf_hdflib_HDFLibrary_Hishdf
     const char *hfile;
     intn  retVal;
 
-    PIN_JAVA_STRING(hdfFile, hfile, JNI_FALSE);
+    PIN_JAVA_STRING(hdfFile, hfile);
 
     /* open HDF file specified by hdf_HDF_file */
     retVal = Hishdf(hfile);
@@ -114,7 +114,7 @@ Java_hdf_hdflib_HDFLibrary_Hishdf
     UNPIN_JAVA_STRING(hdfFile, hfile);
 
     if (retVal == FALSE) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -134,7 +134,7 @@ Java_hdf_hdflib_HDFLibrary_Hnumber
     retVal = Hnumber((int32)fid, (uint16)tagtype);
 
     if (retVal == FAIL) {
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
     }
     return (jint)retVal;
 }
@@ -153,7 +153,7 @@ Java_hdf_hdflib_HDFLibrary_DFKNTsize
     retVal = DFKNTsize((int32)numbertype);
 
     if (retVal == FAIL) {
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
     }
     return (jint)retVal;
 }
@@ -172,7 +172,7 @@ Java_hdf_hdflib_HDFLibrary_Hcache
     rval =  Hcache((int32)file_id, (intn)cache_switch);
 
     if (rval == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -203,24 +203,24 @@ Java_hdf_hdflib_HDFLibrary_Hgetfileversion
 
     if (rval == FAIL) {
         ENVPTR->ReleaseIntArrayElements(ENVPAR vers, theArgs, JNI_ABORT);
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
     else {
         ENVPTR->ReleaseIntArrayElements(ENVPAR vers, theArgs, 0);
         Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
         if (Sjc == NULL) {
-            CALL_ERROR_CHECK(JNI_FALSE);
+            CALL_ERROR_CHECK();
         }
         else {
             o = ENVPTR->GetObjectArrayElement(ENVPAR string, 0);
             if (o == NULL) {
-                CALL_ERROR_CHECK(JNI_FALSE);
+                CALL_ERROR_CHECK();
             }
             else {
                 bb = ENVPTR->IsInstanceOf(ENVPAR o, Sjc);
                 if (bb == JNI_FALSE) {
                     /* exception */
-                    CALL_ERROR_CHECK(JNI_FALSE);
+                    CALL_ERROR_CHECK();
                 }
                 else {
                     ENVPTR->DeleteLocalRef(ENVPAR o);
@@ -273,23 +273,23 @@ Java_hdf_hdflib_HDFLibrary_Hgetlibversion
 
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR vers, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK(JNI_FALSE);
+                CALL_ERROR_CHECK();
             }
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR vers, theArgs, 0);
                 Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
                 if (Sjc == NULL) {
-                    CALL_ERROR_CHECK(JNI_FALSE);
+                    CALL_ERROR_CHECK();
                 }
                 else {
                     o = ENVPTR->GetObjectArrayElement(ENVPAR string, 0);
                     if (o == NULL) {
-                        CALL_ERROR_CHECK(JNI_FALSE);
+                        CALL_ERROR_CHECK();
                     }
                     else {
                         bb = ENVPTR->IsInstanceOf(ENVPAR o, Sjc);
                         if (bb == JNI_FALSE) {
-                            CALL_ERROR_CHECK(JNI_FALSE);
+                            CALL_ERROR_CHECK();
                         }
                         else {
                             ENVPTR->DeleteLocalRef(ENVPAR o);
@@ -320,7 +320,7 @@ Java_hdf_hdflib_HDFLibrary_Hsetaccesstype
 
     rval = Hsetaccesstype((int32)h_id, (uintn)access_type);
     if (rval == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -339,7 +339,7 @@ Java_hdf_hdflib_HDFLibrary_Hsync
 
     rval = Hsync((int32)file_id);
     if (rval == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -359,7 +359,7 @@ Java_hdf_hdflib_HDFLibrary_HDFclose
     rval = Hclose((int32)file_id);
 
     if (rval == FAIL)  {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -378,7 +378,7 @@ Java_hdf_hdflib_HDFLibrary_HDFopen
     int32 rval;
     const char *str;
 
-    PIN_JAVA_STRING(filename, str, -1);
+    PIN_JAVA_STRING(filename, str);
 
     rval = HDFopen((char *)str, (intn)access, (int16)n_dds);
 
@@ -403,7 +403,7 @@ Java_hdf_hdflib_HDFLibrary_HDFflusdd
     rval = Hflushdd((int32)file_id);
 
     if (rval == FAIL)  {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;

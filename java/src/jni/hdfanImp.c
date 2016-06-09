@@ -36,7 +36,7 @@ Java_hdf_hdflib_HDFLibrary_ANstart
 
     retVal = ANstart((int32)file_id);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jlong)retVal;
 }
@@ -50,7 +50,7 @@ Java_hdf_hdflib_HDFLibrary_ANend
     retVal = ANend((int32)anid);
 
     if (retVal == FAIL)
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     return JNI_TRUE;
 }
 
@@ -81,9 +81,11 @@ Java_hdf_hdflib_HDFLibrary_ANfileinfo
 
             if (retVal == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK(JNI_FALSE);
-            }
-            ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, 0);
+                CALL_ERROR_CHECK();
+            } /* end if */
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, 0);
+            } /* end else */
         } /* end else */
     } /* end else */
     return JNI_TRUE;
@@ -98,7 +100,7 @@ Java_hdf_hdflib_HDFLibrary_ANselect
 
     retVal = ANselect((int32)anid, (int32)index, (ann_type)anntype);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jlong)retVal;
 }
@@ -112,7 +114,7 @@ Java_hdf_hdflib_HDFLibrary_ANendaccess
 
     retVal = ANendaccess((int32)ann_id);
     if (retVal == FAIL)
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
 
     return JNI_TRUE;
 }
@@ -125,7 +127,7 @@ Java_hdf_hdflib_HDFLibrary_ANnumann
 
     retVal = ANnumann((int32)an_id, (ann_type)anntype, (uint16)tag, (uint16)ref);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jint)retVal;
 }
@@ -138,7 +140,7 @@ Java_hdf_hdflib_HDFLibrary_ANatype2tag
 
     retVal = ANatype2tag((ann_type)antype);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jshort)retVal;
 }
@@ -151,7 +153,7 @@ Java_hdf_hdflib_HDFLibrary_ANtag2atype
 
     retVal = ANtag2atype((uint16)antag);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jint)retVal;
 }
@@ -178,11 +180,11 @@ Java_hdf_hdflib_HDFLibrary_ANannlist
 
             if (retVal == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR annlist, iarr, JNI_ABORT);
-                CALL_ERROR_CHECK(-1);
-            }
+                CALL_ERROR_CHECK();
+            } /* end if */
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR annlist, iarr, 0);
-            }
+            } /* end else */
         } /* end else */
     } /* end else */
     return (jint)retVal;
@@ -196,7 +198,7 @@ Java_hdf_hdflib_HDFLibrary_ANannlen
 
     retVal = ANannlen((int32)ann_id);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jint)retVal;
 }
@@ -223,22 +225,22 @@ Java_hdf_hdflib_HDFLibrary_ANreadann
         data[maxlen] = '\0';
 
         if (retVal == FAIL) {
-            CALL_ERROR_CHECK(JNI_FALSE);
+            CALL_ERROR_CHECK();
         }
         else {
             o = ENVPTR->GetObjectArrayElement(ENVPAR annbuf, 0);
             if (o == NULL) {
-                CALL_ERROR_CHECK(JNI_FALSE);
+                CALL_ERROR_CHECK();
             }
             else {
                 Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
                 if (Sjc == NULL) {
-                    CALL_ERROR_CHECK(JNI_FALSE);
+                    CALL_ERROR_CHECK();
                 }
                 else {
                     bb = ENVPTR->IsInstanceOf(ENVPAR o, Sjc);
                     if (bb == JNI_FALSE) {
-                        CALL_ERROR_CHECK(JNI_FALSE);
+                        CALL_ERROR_CHECK();
                     }
                     else {
                         rstring = ENVPTR->NewStringUTF(ENVPAR data);
@@ -262,7 +264,7 @@ Java_hdf_hdflib_HDFLibrary_ANcreate
 
     retVal = ANcreate((int32) an_id, (uint16) tag, (uint16) ref, (ann_type) type);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jint)retVal;
 }
@@ -275,7 +277,7 @@ Java_hdf_hdflib_HDFLibrary_ANcreatef
 
     retVal = ANcreatef((int32) an_id, (ann_type) type);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jlong)retVal;
 }
@@ -305,9 +307,11 @@ Java_hdf_hdflib_HDFLibrary_ANget_1tagref
 
             if (rval == FAIL) {
                 ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK(-1);
-            }
-            ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
+                CALL_ERROR_CHECK();
+            } /* end if */
+            else {
+                ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
+            } /* end else */
         } /* end else */
     } /* end else */
 
@@ -338,9 +342,11 @@ Java_hdf_hdflib_HDFLibrary_ANid2tagref
 
             if (rval == FAIL) {
                 ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, JNI_ABORT);
-                CALL_ERROR_CHECK(JNI_FALSE);
+                CALL_ERROR_CHECK();
             }
-            ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
+            else {
+                ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
+            } /* end else */
         } /* end else */
     } /* end else */
     return JNI_TRUE;
@@ -354,7 +360,7 @@ Java_hdf_hdflib_HDFLibrary_ANtagref2id
 
     retVal = ANtagref2id((int32)an_id, (uint16)tag, (uint16)ref);
     if (retVal < 0)
-        CALL_ERROR_CHECK(-1);
+        CALL_ERROR_CHECK();
 
     return (jlong)retVal;
 }
@@ -367,16 +373,18 @@ Java_hdf_hdflib_HDFLibrary_ANwriteann
     intn         rval;
     const char *str;
 
-    PIN_JAVA_STRING(label, str, -1);
+    PIN_JAVA_STRING(label, str);
 
-    /* should check that str is as long as ann_length.... */
+    if (str != NULL) {
+        /* should check that str is as long as ann_length.... */
 
-    rval = ANwriteann((int32)ann_id, str, (int32)ann_length);
+        rval = ANwriteann((int32)ann_id, str, (int32)ann_length);
 
-    UNPIN_JAVA_STRING(label, str);
+        UNPIN_JAVA_STRING(label, str);
 
-    if (rval == FAIL)
-        CALL_ERROR_CHECK(JNI_FALSE);
+        if (rval == FAIL)
+            CALL_ERROR_CHECK();
+    }
 
     return JNI_TRUE;
 }

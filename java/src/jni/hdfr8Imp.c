@@ -153,11 +153,11 @@ Java_hdf_hdflib_HDFLibrary_DFR8getimage
                 else {
                     copyMode = 0;
                 } /* end else */
-            }
 
-            ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,copyMode);
-            if (pallete != NULL) {
-                ENVPTR->ReleaseByteArrayElements(ENVPAR pallete,p,copyMode);
+                ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,copyMode);
+                if (pallete != NULL) {
+                    ENVPTR->ReleaseByteArrayElements(ENVPAR pallete,p,copyMode);
+                }
             }
         } /* end else */
     } /* end else */
