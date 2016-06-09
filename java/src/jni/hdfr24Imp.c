@@ -39,10 +39,11 @@ Java_hdf_hdflib_HDFLibrary_1DF24getdims
     intn rval;
 
     const char  *hdf_file;
+    int copyMode;
     jint *theArgs;
     jboolean bb;
 
-    PIN_JAVA_STRING(filename, hdf_file, -1);
+    copyMode = JNI_ABORT;
 
     if (argv == NULL) {
         h4nullArgument(env, "DF24getdims: output array argv is NULL");
@@ -57,21 +58,26 @@ Java_hdf_hdflib_HDFLibrary_1DF24getdims
             h4JNIFatalError(env, "DF24getdims: argv not pinned");
         } /* end if */
         else {
-            /* get image dimension information */
-            rval = DF24getdims(hdf_file, (int32 *)&(theArgs[0]),
-                    (int32 *)&(theArgs[1]), (intn *)&(theArgs[2]));
+            PIN_JAVA_STRING(filename, hdf_file);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
+            if (hdf_file != NULL) {
+                /* get image dimension information */
+                rval = DF24getdims(hdf_file, (int32 *)&(theArgs[0]),
+                        (int32 *)&(theArgs[1]), (intn *)&(theArgs[2]));
+
                 UNPIN_JAVA_STRING(filename, hdf_file);
-                CALL_ERROR_CHECK(JNI_FALSE);
-            }
-        }/* end else */
 
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
+                if (rval == FAIL) {
+                    CALL_ERROR_CHECK();
+                } else {
+                    copyMode = 0;
+                }
+            }
+
+            ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,copyMode);
+        }/* end else */
     } /* end else */
 
-    UNPIN_JAVA_STRING(filename, hdf_file);
     return JNI_TRUE;
 }
 
@@ -80,11 +86,12 @@ Java_hdf_hdflib_HDFLibrary_1DF24getimage
 (JNIEnv *env, jclass clss, jstring filename, jbyteArray image, jint width, jint height)
 {
     const char  *hdf_file;
+    int copyMode;
     intn   rval;
     jbyte *dat;
     jboolean bb;
 
-    PIN_JAVA_STRING(filename, hdf_file, -1);
+    copyMode = JNI_ABORT;
 
     if (image == NULL) {
         h4nullArgument(env, "DF24getimage: output array image is NULL");
@@ -99,19 +106,24 @@ Java_hdf_hdflib_HDFLibrary_1DF24getimage
             h4JNIFatalError(env, "DF24getimage: image not pinned");
         } /* end if */
         else {
-            rval =  DF24getimage(hdf_file, (VOIDP) dat, (int32) width, (int32) height);
+            PIN_JAVA_STRING(filename, hdf_file);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,JNI_ABORT);
+            if (hdf_file != NULL) {
+                rval =  DF24getimage(hdf_file, (VOIDP) dat, (int32) width, (int32) height);
+
                 UNPIN_JAVA_STRING(filename, hdf_file);
-                CALL_ERROR_CHECK(JNI_FALSE);
-            }
-        } /* end else */
 
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,0);
+                if (rval == FAIL) {
+                    CALL_ERROR_CHECK();
+                } else {
+                    copyMode = 0;
+                }
+            }
+
+            ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR image,dat,copyMode);
+        } /* end else */
     } /* end else */
 
-    UNPIN_JAVA_STRING(filename, hdf_file);
     return JNI_TRUE;
 }
 
@@ -129,14 +141,16 @@ Java_hdf_hdflib_HDFLibrary_1DF24readref
     int  retVal;
     const char *filePtr;
 
-    PIN_JAVA_STRING(filename, filePtr, -1);
+    PIN_JAVA_STRING(filename, filePtr);
 
-    retVal = DF24readref(filePtr, (short)ref);
+    if (filePtr != NULL) {
+        retVal = DF24readref(filePtr, (short)ref);
 
-    UNPIN_JAVA_STRING(filename, filePtr);
+        UNPIN_JAVA_STRING(filename, filePtr);
 
-    if (retVal == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        if (retVal == FAIL) {
+            CALL_ERROR_CHECK();
+        }
     }
 
     return JNI_TRUE;
@@ -150,7 +164,7 @@ Java_hdf_hdflib_HDFLibrary_DF24restart
     retVal = DF24restart();
 
     if (retVal) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -163,14 +177,16 @@ Java_hdf_hdflib_HDFLibrary_1DF24nimages
     const char  *hdf_file;
     int retVal;
 
-    PIN_JAVA_STRING(hdfFile, hdf_file, -1);
+    PIN_JAVA_STRING(hdfFile, hdf_file);
 
-    retVal = DF24nimages(hdf_file);
+    if (hdf_file != NULL) {
+        retVal = DF24nimages(hdf_file);
 
-    UNPIN_JAVA_STRING(hdfFile, hdf_file);
+        UNPIN_JAVA_STRING(hdfFile, hdf_file);
 
-    if (retVal == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        if (retVal == FAIL) {
+            CALL_ERROR_CHECK();
+        }
     }
 
     return(retVal);
@@ -189,10 +205,11 @@ Java_hdf_hdflib_HDFLibrary_1DF24addimage
 {
     intn rval;
     const char  *f;
+    int copyMode;
     jbyte *dat;
     jboolean bb;
 
-    PIN_JAVA_STRING(filename, f, -1);
+    copyMode = JNI_ABORT;
 
     if (image == NULL) {
         h4nullArgument(env, "DF24addimage: image is NULL");
@@ -207,19 +224,24 @@ Java_hdf_hdflib_HDFLibrary_1DF24addimage
             h4JNIFatalError(env, "DF24addimage: image not pinned");
         } /* end if */
         else {
-            rval = DF24addimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+            PIN_JAVA_STRING(filename, f);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,JNI_ABORT);
+            if (f != NULL) {
+                rval = DF24addimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+
                 UNPIN_JAVA_STRING(filename, f);
-                CALL_ERROR_CHECK(JNI_FALSE);
-            }
-        } /* end else */
 
-        ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,0);
+                if (rval == FAIL) {
+                    CALL_ERROR_CHECK();
+                } else {
+                    copyMode = 0;
+                }
+            }
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,copyMode);
+        } /* end else */
     } /* end else */
 
-    UNPIN_JAVA_STRING(filename, f);
     return JNI_TRUE;
 }
 
@@ -229,10 +251,11 @@ Java_hdf_hdflib_HDFLibrary_1DF24putimage
 {
     intn rval;
     const char  *f;
+    int copyMode;
     jbyte *dat;
     jboolean bb;
 
-    PIN_JAVA_STRING(filename, f, -1);
+    copyMode = JNI_ABORT;
 
     if (image == NULL) {
         h4nullArgument(env, "DF24putimage: image is NULL");
@@ -247,19 +270,24 @@ Java_hdf_hdflib_HDFLibrary_1DF24putimage
             h4JNIFatalError(env, "DF24putimage: image not pinned");
         } /* end if */
         else {
-            rval = DF24putimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+            PIN_JAVA_STRING(filename, f);
 
-            if (rval == FAIL) {
-                ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,JNI_ABORT);
+            if (f != NULL) {
+                rval = DF24putimage((char *)f, (VOIDP) dat, (int32) width, (int32) height);
+
                 UNPIN_JAVA_STRING(filename, f);
-                CALL_ERROR_CHECK(JNI_FALSE);
-            }
-        }
 
-        ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,0);
+                if (rval == FAIL) {
+                    CALL_ERROR_CHECK();
+                } else {
+                    copyMode = 0;
+                }
+            }
+
+            ENVPTR->ReleaseByteArrayElements(ENVPAR image,dat,copyMode);
+        }
     } /* end else */
 
-    UNPIN_JAVA_STRING(filename, f);
     return JNI_TRUE;
 }
 
@@ -285,7 +313,7 @@ Java_hdf_hdflib_HDFLibrary_DF24setcompress
             rval = DF24setcompress((int32) type, (comp_info *)&cinf);
 
             if (rval == FAIL) {
-                CALL_ERROR_CHECK(JNI_FALSE);
+                CALL_ERROR_CHECK();
             }
         }
     } /* end else */
@@ -302,7 +330,7 @@ Java_hdf_hdflib_HDFLibrary_DF24setdims
     rval = DF24setdims((int32) width, (int32) height);
 
     if (rval == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
@@ -315,7 +343,7 @@ Java_hdf_hdflib_HDFLibrary_DF24setil
     intn rval;
     rval = DF24setil((intn) il);
     if (rval == FAIL) {
-        CALL_ERROR_CHECK(JNI_FALSE);
+        CALL_ERROR_CHECK();
     }
 
     return JNI_TRUE;
