@@ -24,8 +24,8 @@ import org.junit.runners.Suite;
     TestH4DFRparams.class,
     TestH4GRparams.class,
     TestH4HCparams.class,
-    TestH4SDparams.class//,
-//    TestH4VSparams.class
+    TestH4SDparams.class,
+    TestH4VSparams.class
 })
 
 public class TestAll {
