@@ -22,7 +22,7 @@ if (NOT TEST_CLASSPATH)
   message (STATUS "Require TEST_CLASSPATH to be defined")
 endif (NOT TEST_CLASSPATH)
 if (NOT TEST_REFERENCE)
-  message (FATAL_ERROR "Require TEST_REFERENCE to be defined")
+  message (STATUS "Require TEST_REFERENCE to be defined")
 endif (NOT TEST_REFERENCE)
 
 if (NOT TEST_ERRREF)
