@@ -311,7 +311,7 @@ Java_hdf_hdflib_HDFLibrary_DF24setcompress
     else {
         bval = getOldCompInfo(env, cinfo,&cinf);
 
-        if (bval == NULL) {
+        if (bval == JNI_FALSE) {
             h4JNIFatalError(env, "DF24setcompress: cinfo not pinned");
         } /* end if */
         else {
