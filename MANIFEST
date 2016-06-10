@@ -503,6 +503,10 @@
 ./java/CMakeLists.txt
 ./java/Makefile.am
 ./java/Makefile.in
+./java/examples/CMakeLists.txt
+./java/examples/HDF4DatasetCreate.java
+./java/examples/HDF4FileCreate.java
+./java/examples/HDF4GroupCreate.java
 ./java/lib/hamcrest-core.jar
 ./java/lib/junit.jar
 ./java/lib/simplelogger.properties
