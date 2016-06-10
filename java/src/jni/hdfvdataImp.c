@@ -87,29 +87,33 @@ Java_hdf_hdflib_HDFLibrary_VSgetclass
         } /* end if */
         else {
             /* get the class class of the vgroup */
-            VSgetclass((int32)vdata_id, className);
-            className[VSNAMELENMAX] = '\0';
+            if(VSgetclass((int32)vdata_id, className) < 0) {
+                CALL_ERROR_CHECK();
+            } /* end if */
+            else {
+                className[VSNAMELENMAX] = '\0';
 
-            /* convert it to java string */
-            rstring = ENVPTR->NewStringUTF(ENVPAR className);
+                /* convert it to java string */
+                rstring = ENVPTR->NewStringUTF(ENVPAR className);
 
-            o = ENVPTR->GetObjectArrayElement(ENVPAR hdfclass,0);
-            if (o == NULL) {
-                HDfree(className);
-                return;
-            }
-            jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-            if (jc == NULL) {
-                HDfree(className);
-                return;
-            }
-            bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
-            if (bb == JNI_FALSE) {
-                HDfree(className);
-                return;
-            }
-            ENVPTR->SetObjectArrayElement(ENVPAR hdfclass,0,(jobject)rstring);
-            ENVPTR->DeleteLocalRef(ENVPAR o);
+                o = ENVPTR->GetObjectArrayElement(ENVPAR hdfclass,0);
+                if (o == NULL) {
+                    HDfree(className);
+                    return;
+                }
+                jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                if (jc == NULL) {
+                    HDfree(className);
+                    return;
+                }
+                bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
+                if (bb == JNI_FALSE) {
+                    HDfree(className);
+                    return;
+                }
+                ENVPTR->SetObjectArrayElement(ENVPAR hdfclass,0,(jobject)rstring);
+                ENVPTR->DeleteLocalRef(ENVPAR o);
+            } /* end else */
 
             HDfree(className);
         } /* end else */
@@ -131,27 +135,30 @@ Java_hdf_hdflib_HDFLibrary_VSgetname
     } /* end if */
     else {
         /* get the name name of the vgroup */
-        VSgetname((int32)vdata_id, nameName);
+        if(VSgetname((int32)vdata_id, nameName) < 0) {
+            CALL_ERROR_CHECK();
+        } /* end if */
+        else {
+            nameName[VSNAMELENMAX]='\0';
 
-        nameName[VSNAMELENMAX]='\0';
+            /* convert it to java string */
+            rstring = ENVPTR->NewStringUTF(ENVPAR nameName);
 
-        /* convert it to java string */
-        rstring = ENVPTR->NewStringUTF(ENVPAR nameName);
-
-        o = ENVPTR->GetObjectArrayElement(ENVPAR hdfname,0);
-        if (o == NULL) {
-            return;
-        }
-        jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (jc == NULL) {
-            return;
-        }
-        bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
-        if (bb == JNI_FALSE) {
-            return;
-        }
-        ENVPTR->SetObjectArrayElement(ENVPAR hdfname,0,(jobject)rstring);
-        ENVPTR->DeleteLocalRef(ENVPAR o);
+            o = ENVPTR->GetObjectArrayElement(ENVPAR hdfname,0);
+            if (o == NULL) {
+                return;
+            }
+            jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+            if (jc == NULL) {
+                return;
+            }
+            bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
+            if (bb == JNI_FALSE) {
+                return;
+            }
+            ENVPTR->SetObjectArrayElement(ENVPAR hdfname,0,(jobject)rstring);
+            ENVPTR->DeleteLocalRef(ENVPAR o);
+        } /* end else */
     } /* end else */
 }
 
@@ -160,7 +167,6 @@ Java_hdf_hdflib_HDFLibrary_VSelts
 (JNIEnv *env, jclass clss, jlong vdata_id)
 {
     return(VSelts((int32)vdata_id));
-
 }
 
 JNIEXPORT jboolean JNICALL
@@ -344,6 +350,12 @@ Java_hdf_hdflib_HDFLibrary_VSinquire
     else if (sargs == NULL) {
         h4nullArgument(env, "VSinquire: sargs is NULL");
     } /* end else if */
+    else if (ENVPTR->GetArrayLength(ENVPAR iargs) < 3) {
+        h4badArgument(env, "VSinquire: output array iargs < order 3");
+    } /* end else if */
+    else if (ENVPTR->GetArrayLength(ENVPAR sargs) < 2) {
+        h4badArgument(env, "VSinquire: output array sargs < order 2");
+    } /* end else if */
     else {
         flds = (char *)HDmalloc(MAX_FIELD_SIZE+1);
 
@@ -415,9 +427,10 @@ Java_hdf_hdflib_HDFLibrary_VSinquire
                     }
                 } /* end else */
 
-                HDfree(flds);
                 HDfree(name);
             } /* end else */
+
+            HDfree(flds);
         } /* end else */
     } /* end else */
 
@@ -770,40 +783,59 @@ Java_hdf_hdflib_HDFLibrary_VSattrinfo
     jobject o;
     char  nam[256];  /* what is the correct constant??? */
 
-    theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
-
-    retVal = VSattrinfo((int32)id, (int32)index, (int32)attr_index,
-        nam,
-        (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
-        (int32 *)&(theArgs[2]));
-
-    nam[255] = '\0';
-
-    if (retVal == FAIL) {
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
-        return JNI_FALSE;
-    }
+    if (name == NULL) {
+        h4nullArgument(env, "VSattrinfo: name is NULL");
+    } /* end if */
+    else if (argv == NULL) {
+        h4nullArgument(env, "VSattrinfo: argv is NULL");
+    } /* end else if */
+    else if (ENVPTR->GetArrayLength(ENVPAR name) < 1) {
+        h4badArgument(env, "VSattrinfo: output array name < order 1");
+    } /* end else if */
+    else if (ENVPTR->GetArrayLength(ENVPAR argv) < 3) {
+        h4badArgument(env, "VSattrinfo: output array argv < order 3");
+    } /* end else if */
     else {
+        theArgs = ENVPTR->GetIntArrayElements(ENVPAR argv,&bb);
 
-        ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
+        if (theArgs == NULL) {
+            h4JNIFatalError(env, "VSattrinfo: argv not pinned");
+        } /* end if */
+        else {
+            retVal = VSattrinfo((int32)id, (int32)index, (int32)attr_index,
+                    nam,
+                    (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]),
+                    (int32 *)&(theArgs[2]));
 
-        str = ENVPTR->NewStringUTF(ENVPAR nam);
-        o = ENVPTR->GetObjectArrayElement(ENVPAR name,0);
-        if (o == NULL) {
-            return JNI_FALSE;
-        }
-        Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-        if (Sjc == NULL) {
-            return JNI_FALSE;
-        }
-        bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
-        if (bb == JNI_FALSE) {
-            return JNI_FALSE;
-        }
-        ENVPTR->SetObjectArrayElement(ENVPAR name,0,(jobject)str);
-        ENVPTR->DeleteLocalRef(ENVPAR o);
-        return JNI_TRUE;
-    }
+            nam[255] = '\0';
+
+            if (retVal == FAIL) {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,JNI_ABORT);
+                CALL_ERROR_CHECK();
+            }
+            else {
+                ENVPTR->ReleaseIntArrayElements(ENVPAR argv,theArgs,0);
+
+                str = ENVPTR->NewStringUTF(ENVPAR nam);
+                o = ENVPTR->GetObjectArrayElement(ENVPAR name,0);
+                if (o == NULL) {
+                    return JNI_FALSE;
+                }
+                Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                if (Sjc == NULL) {
+                    return JNI_FALSE;
+                }
+                bb = ENVPTR->IsInstanceOf(ENVPAR o,Sjc);
+                if (bb == JNI_FALSE) {
+                    return JNI_FALSE;
+                }
+                ENVPTR->SetObjectArrayElement(ENVPAR name,0,(jobject)str);
+                ENVPTR->DeleteLocalRef(ENVPAR o);
+            }
+        } /* end else */
+    } /* end else */
+
+    return JNI_TRUE;
 }
 
 JNIEXPORT jboolean JNICALL

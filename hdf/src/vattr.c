@@ -1385,6 +1385,8 @@ USAGE
    int32 *datatype; OUT: datatype of the attribute
    int32 *count;    OUT: number of values
    int32 *size;     OUT: size of the attr values on local machine.
+   int32 *nfields;  OUT:
+   uint16 *refnum;  OUT:
 
 RETURNS
    Returns SUCCEED when successful, FAIL otherwise.

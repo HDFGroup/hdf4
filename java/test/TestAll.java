@@ -24,6 +24,7 @@ import org.junit.runners.Suite;
     TestH4GRparams.class,
     TestH4HCparams.class,
     TestH4SDparams.class,
+    TestH4Vparams.class,
     TestH4VSparams.class
 })
 

@@ -2097,7 +2097,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      */
     public static native void Vgetclass(long vgroup_id, String[] hdfclassname) throws HDFException;
 
@@ -2108,7 +2108,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      */
     public static native void Vgetname(long vgroup_id, String[] hdfname) throws HDFException;
 
@@ -2125,7 +2125,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return  tags[] = tags for objects 0 - n, refs[] = refs for
@@ -2141,7 +2141,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return  tags[0] = tag for object #index, refs[0] = ref for
@@ -2161,7 +2161,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return  ref_array[] = refs 0 - ...
@@ -2187,7 +2187,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  @return n_entries[0] = number of entries, vgroup_name[0] = the name
@@ -2206,10 +2206,12 @@ public class HDFLibrary implements java.io.Serializable
      *  @param id <b>IN</b>: Vgroup identifier returned by Vattach
      *  @param index <b>IN</b>: the index of the attribute
      *  @param name <b>OUT</b>: String[1], the name of the attribute
-     *  @param argv <b>OUT</b>: int[3],
+     *  @param argv <b>OUT</b>: int[5],
      *         Data type of the target attribute,
      *         Number of values in the target attribute,
      *         Size, in bytes, of the values of the target attribute,
+     *         ,
+     *         
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
@@ -2219,22 +2221,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @return name[0] = name, argv[0] = data_type, argv[1] = count,
      *  argv[2] = size, argv[3] = nfields, argv[4] = refnum
      */
-    public static boolean Vattrinfo(long id, int index, String[] name, int[] argv) throws HDFException
-    {
-        boolean retval;
-
-        int[] _argv = new int[5];
-
-        retval = _Vattrinfo(id, index, name, _argv);
-
-        int n = Math.min(argv.length, 5);
-        for (int i=0; i<n; i++)
-            argv[i] = _argv[i];
-
-        return retval;
-
-    }
-    private static native boolean _Vattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
+    public static native boolean Vattrinfo(long id, int index, String[] name, int[] argv) throws HDFException;
 
 
     public static native long Vfindattr(long id,  String name) throws HDFException;
@@ -2246,7 +2233,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to read into a Java array use the alternative
@@ -2264,7 +2251,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> reads the data as a contiguous
@@ -2301,7 +2288,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>NOTE:</b> to write into a Java array use the alternative
@@ -2322,7 +2309,7 @@ public class HDFLibrary implements java.io.Serializable
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
+     *             HDF library call.
      *
      *
      *  <p><b>Note:</b> converts the data to a contiguous

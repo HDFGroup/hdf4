@@ -164,20 +164,20 @@ public class TestH4VSparams {
         HDFLibrary.VSgetclass(0, null);
     }
 
-//    @Test(expected = HDFException.class)
-//    public void testVSgetclassIllegalId() throws Throwable {
-//        HDFLibrary.VSgetclass(-1, new String[1]);
-//    }
+    @Test(expected = HDFException.class)
+    public void testVSgetclassIllegalId() throws Throwable {
+        HDFLibrary.VSgetclass(-1, new String[1]);
+    }
 
     @Test(expected = NullPointerException.class)
     public void testVSgetnameNullName() throws Throwable {
         HDFLibrary.VSgetname(0, null);
     }
 
-//    @Test(expected = HDFException.class)
-//    public void testVSgetnameIllegalId() throws Throwable {
-//        HDFLibrary.VSgetname(-1, new String[1]);
-//    }
+    @Test(expected = HDFException.class)
+    public void testVSgetnameIllegalId() throws Throwable {
+        HDFLibrary.VSgetname(-1, new String[1]);
+    }
 
 //    @Test(expected = HDFException.class)
 //    public void testVSeltsIllegalId() throws Throwable {
@@ -239,30 +239,30 @@ public class TestH4VSparams {
 //        HDFLibrary.VSgetinterlace(-1);
 //    }
 
-//    @Test(expected = NullPointerException.class)
-//    public void testVSinquireNullIArgs() throws Throwable {
-//        HDFLibrary.VSinquire(0, null, new String[2]);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testVSinquireNullSArgs() throws Throwable {
-//        HDFLibrary.VSinquire(0, new int[3], null);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testVSinquireIllegalId() throws Throwable {
-//        HDFLibrary.VSinquire(-1, new int[3], new String[2]);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testVSinquireIllegalIArgs() throws Throwable {
-//        HDFLibrary.VSinquire(0, new int[1], new String[2]);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testVSinquireIllegalSArgs() throws Throwable {
-//        HDFLibrary.VSinquire(0, new int[3], new String[1]);
-//    }
+    @Test(expected = NullPointerException.class)
+    public void testVSinquireNullIArgs() throws Throwable {
+        HDFLibrary.VSinquire(0, null, new String[2]);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testVSinquireNullSArgs() throws Throwable {
+        HDFLibrary.VSinquire(0, new int[3], null);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testVSinquireIllegalId() throws Throwable {
+        HDFLibrary.VSinquire(-1, new int[3], new String[2]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testVSinquireIllegalIArgs() throws Throwable {
+        HDFLibrary.VSinquire(0, new int[1], new String[2]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testVSinquireIllegalSArgs() throws Throwable {
+        HDFLibrary.VSinquire(0, new int[3], new String[1]);
+    }
 
     @Test(expected = NullPointerException.class)
     public void testVSloneNullRefArray() throws Throwable {
@@ -374,30 +374,30 @@ public class TestH4VSparams {
         HDFLibrary.VSwrite(-1, new byte[] { }, 0, 0);
     }
 
-//    @Test(expected = NullPointerException.class)
-//    public void testVSattrinfoNullName() throws Throwable {
-//        HDFLibrary.VSattrinfo(0, 0, 0, null, new int[3]);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testVSattrinfoNullArgs() throws Throwable {
-//        HDFLibrary.VSattrinfo(0, 0, 0, new String[1], null);
-//    }
-//
-//    @Test(expected = HDFException.class)
-//    public void testVSattrinfoIllegalId() throws Throwable {
-//        HDFLibrary.VSattrinfo(-1, 0, 0, new String[1], new int[3]);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testVSattrinfoIllegalNameArgument() throws Throwable {
-//        HDFLibrary.VSattrinfo(0, 0, 0, new String[0], new int[3]);
-//    }
-//
-//    @Test(expected = IllegalArgumentException.class)
-//    public void testVSattrinfoIllegalAttributeArgs() throws Throwable {
-//        HDFLibrary.VSattrinfo(0, 0, 0, new String[1], new int[1]);
-//    }
+    @Test(expected = NullPointerException.class)
+    public void testVSattrinfoNullName() throws Throwable {
+        HDFLibrary.VSattrinfo(0, 0, 0, null, new int[3]);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testVSattrinfoNullArgs() throws Throwable {
+        HDFLibrary.VSattrinfo(0, 0, 0, new String[1], null);
+    }
+
+    @Test(expected = HDFException.class)
+    public void testVSattrinfoIllegalId() throws Throwable {
+        HDFLibrary.VSattrinfo(-1, 0, 0, new String[1], new int[3]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testVSattrinfoIllegalNameArgument() throws Throwable {
+        HDFLibrary.VSattrinfo(0, 0, 0, new String[0], new int[3]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testVSattrinfoIllegalAttributeArgs() throws Throwable {
+        HDFLibrary.VSattrinfo(0, 0, 0, new String[1], new int[1]);
+    }
 
     @Test(expected = NullPointerException.class)
     public void testVSfindexNullName() throws Throwable {
