@@ -162,7 +162,7 @@ h4raiseException
  */
 JNIEXPORT void JNICALL
 JJava_hdf_hdflib_HDFLibraryException_printStackTrace0
-(JNIEnv *env, jobject obj, jstring file_name)
+(JNIEnv *env, jclass clss, jstring file_name)
 {
     FILE       *stream = NULL;
     const char *file = NULL;
