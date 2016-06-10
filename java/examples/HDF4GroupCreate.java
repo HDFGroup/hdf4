@@ -61,41 +61,15 @@ public class HDF4GroupCreate {
             // Create the vgroup.  Note that the vgroup reference number is set
             // to -1 for creating and the access mode is "w" for writing.
             if (file_id >= 0) {
-                vgroup_id1 = HDFLibrary.Vattach (file_id, -1, "w");
+                vgroup_id1 = HDFLibrary.VSattach (file_id, -1, "w");
                 if (vgroup_id1 >= 0) {
-                    HDFLibrary.Vsetname(vgroup_id1, "g1");
-                    subvgroup_id = HDFLibrary.Vattach (vgroup_id1, -1, "w");
-                    if (subvgroup_id >= 0) {
-                        HDFLibrary.Vsetname(subvgroup_id, "g11");
-                        HDFLibrary.Vinsert(vgroup_id1, subvgroup_id);
-                        if (subvgroup_id >= 0)
-                            HDFLibrary.Vdetach(subvgroup_id);
-                    }
-                    subvgroup_id = HDFLibrary.Vattach (vgroup_id1, -1, "w");
-                    if (subvgroup_id >= 0) {
-                        HDFLibrary.Vsetname(subvgroup_id, "g12");
-                        HDFLibrary.Vinsert(vgroup_id1, subvgroup_id);
-                        if (subvgroup_id >= 0)
-                            HDFLibrary.Vdetach(subvgroup_id);
-                    }
+                    HDFLibrary.VSsetname(vgroup_id1, "g1");
+                    HDFLibrary.VSsetclass (vgroup_id1, "Empty Vdatas");
                 }
-                vgroup_id2 = HDFLibrary.Vattach (file_id, -1, "w");
+                vgroup_id2 = HDFLibrary.VSattach (file_id, -1, "w");
                 if (vgroup_id2 >= 0) {
-                    HDFLibrary.Vsetname(vgroup_id2, "g2");
-                    subvgroup_id = HDFLibrary.Vattach (vgroup_id2, -1, "w");
-                    if (subvgroup_id >= 0) {
-                        HDFLibrary.Vsetname(subvgroup_id, "g21");
-                        HDFLibrary.Vinsert(vgroup_id2, subvgroup_id);
-                        if (subvgroup_id >= 0)
-                            HDFLibrary.Vdetach(subvgroup_id);
-                    }
-                    subvgroup_id = HDFLibrary.Vattach (vgroup_id2, -1, "w");
-                    if (subvgroup_id >= 0) {
-                        HDFLibrary.Vsetname(subvgroup_id, "g22");
-                        HDFLibrary.Vinsert(vgroup_id2, subvgroup_id);
-                        if (subvgroup_id >= 0)
-                            HDFLibrary.Vdetach(subvgroup_id);
-                    }
+                    HDFLibrary.VSsetname(vgroup_id2, "g2");
+                    HDFLibrary.VSsetclass (vgroup_id2, "Empty Vdatas");
                 }
             }
 
@@ -107,14 +81,14 @@ public class HDF4GroupCreate {
         // Close the groups.
         try {
             if (vgroup_id2 >= 0)
-                HDFLibrary.Vdetach(vgroup_id2);
+                HDFLibrary.VSdetach(vgroup_id2);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
         try {
             if (vgroup_id1 >= 0)
-                HDFLibrary.Vdetach(vgroup_id1);
+                HDFLibrary.VSdetach(vgroup_id1);
         }
         catch (Exception e) {
             e.printStackTrace();
