@@ -80,12 +80,17 @@ public class HDF4DatasetCreate {
             e.printStackTrace();
         }
 
-        // Create the file and initialize the SD interface.
-        sd_id = HDFLibrary.SDstart (fname, HDFConstants.DFACC_CREATE);
+        try {
+            // Create the file and initialize the SD interface.
+            sd_id = HDFLibrary.SDstart (fname, HDFConstants.DFACC_CREATE);
 
-        // create 2D 32-bit (4 bytes) integer dataset of 20 by 10
-        if (vgroup_id1 >= 0)
-            sds_id = HDFLibrary.SDcreate (sd_id, "2D 32-bit integer 20x10", (long)HDFConstants.DFNT_INT32, 2, dims2D);
+            // create 2D 32-bit (4 bytes) integer dataset of 20 by 10
+            if (sd_id >= 0)
+                sds_id = HDFLibrary.SDcreate (sd_id, "2D 32-bit integer 20x10", (long)HDFConstants.DFNT_INT32, 2, dims2D);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Terminate access to the data set.
         try {
@@ -96,9 +101,14 @@ public class HDF4DatasetCreate {
             e.printStackTrace();
         }
 
-        // create 3D 8-bit (1 byte) unsigned integer dataset of 20 by 10 by 5
-        if (vgroup_id1 >= 0)
-            sds_id = HDFLibrary.SDcreate (sd_id, "3D 8-bit unsigned integer 20x10x5", (long)HDFConstants.DFNT_INT8, 3, dims3D);
+        try {
+            // create 3D 8-bit (1 byte) unsigned integer dataset of 20 by 10 by 5
+            if (sd_id >= 0)
+                sds_id = HDFLibrary.SDcreate (sd_id, "3D 8-bit unsigned integer 20x10x5", (long)HDFConstants.DFNT_INT8, 3, dims3D);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Terminate access to the data set.
         try {
@@ -109,9 +119,14 @@ public class HDF4DatasetCreate {
             e.printStackTrace();
         }
 
-        // create 2D 64-bit (8 bytes) double dataset of 20 by 10
-        if (vgroup_id2 >= 0)
-            sds_id = HDFLibrary.SDcreate (sd_id, "2D 64-bit double 20x10", HDFConstants.DFNT_FLOAT64, 2, dims2D);
+        try {
+            // create 2D 64-bit (8 bytes) double dataset of 20 by 10
+            if (sd_id >= 0)
+                sds_id = HDFLibrary.SDcreate (sd_id, "2D 64-bit double 20x10", HDFConstants.DFNT_FLOAT64, 2, dims2D);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Terminate access to the data set.
         try {
@@ -122,9 +137,14 @@ public class HDF4DatasetCreate {
             e.printStackTrace();
         }
 
-        // create 3D 32-bit (4 bytes) float dataset of 20 by 10 by 5
-        if (vgroup_id2 >= 0)
-            sds_id = HDFLibrary.SDcreate (sd_id, "3D 32-bit float  20x10x5", HDFConstants.DFNT_FLOAT32, 3, dims3D);
+        try {
+            // create 3D 32-bit (4 bytes) float dataset of 20 by 10 by 5
+            if (sd_id >= 0)
+                sds_id = HDFLibrary.SDcreate (sd_id, "3D 32-bit float  20x10x5", HDFConstants.DFNT_FLOAT32, 3, dims3D);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Terminate access to the data set.
         try {
