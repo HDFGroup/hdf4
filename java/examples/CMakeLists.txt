@@ -33,12 +33,12 @@ foreach (HCP_JAR ${CMAKE_JAVA_INCLUDE_PATH})
 endforeach (HCP_JAR ${CMAKE_JAVA_INCLUDE_PATH})
 
 foreach (example ${HDFJNI_EXAMPLES})
-  file (WRITE Manifest.txt
+  file (WRITE ${HDF4_JAVA_Examples_BINARY_DIR}/Manifest.txt
   "Main-Class: examples.${example}
 Class-Path: ${HDFJNI_CLASSJARS}
 "
   )
-  add_jar (${example} MANIFEST Manifest.txt ${example}.java)
+  add_jar (${example} MANIFEST ${HDF4_JAVA_Examples_BINARY_DIR}/Manifest.txt ${example}.java)
   get_target_property (${example}_JAR_FILE ${example} JAR_FILE)
   add_dependencies (${example} ${HDF4_JAVA_HDF_LIB_TARGET})
   set_target_properties (${example} PROPERTIES FOLDER examples/java)
