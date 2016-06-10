@@ -351,8 +351,8 @@ Java_hdf_hdflib_HDFLibrary_Vlone
     if (ref_array == NULL) {
         h4nullArgument(env, "Vlone: ref_array is NULL");
     } /* end if */
-    else if (ENVPTR->GetArrayLength(ENVPAR ref_array) > arraysize) {
-        h4badArgument(env, "Vlone: output array ref_array > order 'arraysize'");
+    else if (ENVPTR->GetArrayLength(ENVPAR ref_array) < arraysize) {
+        h4badArgument(env, "Vlone: output array ref_array < order 'arraysize'");
     } /* end else if */
     else {
         arr = ENVPTR->GetIntArrayElements(ENVPAR ref_array,&bb);

@@ -188,7 +188,7 @@ public class TestH4Vparams {
     @Test(expected = IllegalArgumentException.class)
     public void testVloneIllegalSizeRefArray() throws Throwable {
         int arraySize = 10;
-        HDFLibrary.Vlone(0, new int[arraySize + 1], arraySize);
+        HDFLibrary.Vlone(0, new int[arraySize - 1], arraySize);
     }
 
 //    @Test(expected = HDFException.class)
