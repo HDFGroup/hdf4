@@ -766,7 +766,7 @@ Java_hdf_hdflib_HDFLibrary_Vnattrs
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vsetattr__ILjava_lang_String_2IILjava_lang_String_2
+Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JILjava_lang_String_2
 (JNIEnv *env, jclass clss, jlong gr_id, jstring attr_name, jlong data_type, jint count, jstring values)
 {
     intn rval;
@@ -789,7 +789,7 @@ Java_hdf_hdflib_HDFLibrary_Vsetattr__ILjava_lang_String_2IILjava_lang_String_2
 }
 
 JNIEXPORT jboolean JNICALL
-Java_hdf_hdflib_HDFLibrary_Vsetattr__ILjava_lang_String_2II_3B
+Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JI_3B
 (JNIEnv *env, jclass clss, jlong id, jstring attr_name, jlong data_type, jint count, jbyteArray values)
 {
     intn rval;

@@ -243,18 +243,70 @@ JUnit version 4.11
 .testSDgetfillvalueIllegalId
 .testSDreaddata_shortIllegalId
 .testSDreaddata_intIllegalId
+.testVgetclassNullClassName
+.testVisvsIllegalId
+.testVsetattrNullName2
+.testVinquireIllegalNEntriesArgument
+.testVgetnameIllegalArgument
+.testVfindclassNullClassName
+.testVattrinfoNullArgv
+.testVattrinfoNullName
+.testVattrinfoIllegalArgvArgument
+.testVgetattrNullData
+.testVsetattrNullDataByteArray
+.testVgettagrefsIllegalTagsArgument
+.testVloneNullRefArray
+.testVattrinfoIllegalId
+.testVsetclassIllegalId
+.testVattachNullAccess
+.testVloneIllegalSizeRefArray
+.testVgettagrefsIllegalId
+.testVgetnameNullName
+.testVgettagrefNullTagRef
+.testVfindNullVGroupName
+.testVfindattrIllegalId
+.testVsetattrNullName
+.testVgetclassIllegalId
+.testVsetattrIllegalId
+.testVflocateIllegalKey
+.testVsetattrNullValuesString
+.testVattachIllegalId
+.testVsetnameIllegalId
+.testVgettagrefsIllegalRefsArgument
+.testVsetnameNullName
+.testVsetclassNullClassName
+.testVattrinfoIllegalNameArgument
+.testVisvgIllegalId
+.testVinquireNullNEntries
+.testVflocateNullClassName
+.testVsetattrIllegalId2
+.testVfindattrNullName
+.testVinquireIllegalVGroupNameArgument
+.testVgetclassIllegalArgument
+.testVinquireNullVGroupName
+.testVgettagrefIllegalId
+.testVgetattrIllegalId
+.testVinquireIllegalId
+.testVgettagrefIllegalTagRefArgument
+.testVgettagrefsNullRefs
+.testVgettagrefsNullTags
+.testVgetnameIllegalId
 .testVSsizeofIllegalId
 .testVSattachNullAccess
 .testVSreadNullDataBuffer
 .testVSsetnumblocksIllegalId
 .testVSfindexNullName
 .testVSsetfieldsNullFields
+.testVSattrinfoIllegalNameArgument
 .testVSQueryfieldsNullFields
 .testVSQuerycountIllegalId
 .testVSQueryfieldsIllegalArgument
+.testVSattrinfoIllegalId
 .testVSsetclassIllegalId
 .testVSsetattrIllegalId
 .testVSfindclassNullClass
+.testVSinquireNullIArgs
+.testVSinquireNullSArgs
 .testVSsizeofNullFields
 .testVSsetnameIllegalId
 .testVSgetattrNullData
@@ -265,6 +317,7 @@ JUnit version 4.11
 .testVSfindattrIllegalId
 .testVSQuerycountNullNRecords
 .testVSsetexternalfileNullFilename
+.testVSgetclassIllegalId
 .testVSgetnameNullName
 .testVSfindNullVDataName
 .testVSsetexternalfileIllegalVKey
@@ -277,14 +330,18 @@ JUnit version 4.11
 .testVSQuerycountIllegalArgument
 .testVSfdefineIllegalId
 .testVSattachIllegalId
+.testVSinquireIllegalIArgs
+.testVSinquireIllegalSArgs
 .testVSfexistNullFields
 .testVSsetattrIllegalId2
 .testVSgetattrIllegalId
+.testVSinquireIllegalId
 .testVSsetnameNullVDataName
 .testVSgetfieldsNullFieldName
 .testVSQuerynameNullVDataName
 .testVSwriteIllegalId
 .testVSsetinterlaceIllegalId
+.testVSgetnameIllegalId
 .testVSQuerynameIllegalId
 .testVSQueryinterlaceIllegalArgument
 .testVSsetfieldsIllegalId
@@ -295,8 +352,11 @@ JUnit version 4.11
 .testVSattachIllegalReg
 .testVSfindexNullIndexArray
 .testVSfexistIllegalId
+.testVSattrinfoIllegalAttributeArgs
 .testVSwriteNullDataBuffer
 .testVSappendableIllegalVKey
+.testVSattrinfoNullArgs
+.testVSattrinfoNullName
 .testVSQueryvsizeIllegalId
 .testVSQuerynameIllegalArgument
 .testVSfdefineNullFieldName
@@ -304,5 +364,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (302 tests)
+OK (362 tests)
 

@@ -1198,9 +1198,9 @@ Java_hdf_hdflib_HDFLibrary_SDgetrange
     return JNI_TRUE;
 }
 
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDcreate
-(JNIEnv *env, jclass clss, jlong sd_id, jstring name, jint number_type, jint rank, jintArray dimsizes)
+(JNIEnv *env, jclass clss, jlong sd_id, jstring name, jlong number_type, jint rank, jintArray dimsizes)
 {
     int32 rval;
     const char *str;
@@ -1229,7 +1229,7 @@ Java_hdf_hdflib_HDFLibrary_SDcreate
         }
     } /* end else */
 
-    return rval;
+    return (jlong)rval;
 }
 
 // this API call returns false for not record and for failures
