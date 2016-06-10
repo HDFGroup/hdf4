@@ -42,7 +42,7 @@ Java_hdf_hdflib_HDFLibrary_Vstart
 }
 
 
-JNIEXPORT jint JNICALL
+JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_Vattach
 (JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref, jstring accessmode)
 {
@@ -61,7 +61,7 @@ Java_hdf_hdflib_HDFLibrary_Vattach
             CALL_ERROR_CHECK();
     }
 
-    return retVal;
+    return (jlong)retVal;
 }
 
 JNIEXPORT void JNICALL

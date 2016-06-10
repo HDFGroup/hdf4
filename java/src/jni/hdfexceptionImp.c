@@ -161,7 +161,7 @@ h4raiseException
  *  Call the HDF library to print the HDF error stack to 'file_name'.
  */
 JNIEXPORT void JNICALL
-JJava_hdf_hdflib_HDFLibraryException_printStackTrace0
+Java_hdf_hdflib_HDFLibraryException_printStackTrace0
 (JNIEnv *env, jclass clss, jstring file_name)
 {
     FILE       *stream = NULL;
