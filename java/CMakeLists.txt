@@ -39,9 +39,9 @@ add_subdirectory (${HDF4_JAVA_SOURCE_DIR}/src ${HDF4_JAVA_BINARY_DIR}/src)
 #-----------------------------------------------------------------------------
 # Build the Java Examples
 #-----------------------------------------------------------------------------
-#if (HDF4_BUILD_EXAMPLES)
-#  add_subdirectory (${HDF4_JAVA_SOURCE_DIR}/examples ${HDF4_JAVA_BINARY_DIR}/examples)
-#endif (HDF4_BUILD_EXAMPLES)
+if (HDF4_BUILD_EXAMPLES)
+  add_subdirectory (${HDF4_JAVA_SOURCE_DIR}/examples ${HDF4_JAVA_BINARY_DIR}/examples)
+endif (HDF4_BUILD_EXAMPLES)
 
 #-----------------------------------------------------------------------------
 # Testing

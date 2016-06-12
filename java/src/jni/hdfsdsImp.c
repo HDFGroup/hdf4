@@ -61,8 +61,9 @@ Java_hdf_hdflib_HDFLibrary_SDend
 (JNIEnv *env, jclass clss, jlong sdid)
 {
     intn rval;
+    int32 id = (int32)sdid;
 
-    rval = SDend((int32)sdid);
+    rval = SDend(id);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -77,6 +78,7 @@ Java_hdf_hdflib_HDFLibrary_SDfileinfo
     intn rval;
     jint *theArgs;
     jboolean isCopy; /*  dummy */
+    int32 id = (int32)sdid;
 
     if (argv == NULL) {
         h4nullArgument(env, "GRfileinfo:  argv is NULL");
@@ -90,7 +92,7 @@ Java_hdf_hdflib_HDFLibrary_SDfileinfo
             h4JNIFatalError(env, "GRfileinfo:  argv not pinned");
         } /* end if */
         else {
-            rval = SDfileinfo((int32)sdid, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
+            rval = SDfileinfo(id, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
 
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
@@ -110,8 +112,9 @@ Java_hdf_hdflib_HDFLibrary_SDselect
 (JNIEnv *env, jclass clss, jlong sdid, jint index)
 {
     int32 rval;
+    int32 id = (int32)sdid;
 
-    rval = (jlong)SDselect((int32)sdid, (int32) index);
+    rval = (jlong)SDselect(id, (int32) index);
     if (rval < 0)
         CALL_ERROR_CHECK();
 
@@ -124,10 +127,11 @@ Java_hdf_hdflib_HDFLibrary_SDnametoindex
 {
     intn rval;
     const char *str;
+    int32 id = (int32)sdid;
 
     PIN_JAVA_STRING(name, str);
     if (str != NULL) {
-        rval = SDnametoindex((int32)sdid, str);
+        rval = SDnametoindex(id, str);
 
         UNPIN_JAVA_STRING(name, str);
         if (rval < 0)
@@ -151,6 +155,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo
     jboolean abb = 0;
     jobject o;
     char  *cname;
+    int32 id = (int32)sdsid;
 
     /* variables of  infomation */
 
@@ -182,7 +187,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetinfo
                     h4JNIFatalError(env, "SDgetinfo:  argv not pinned");
                 } /* end if */
                 else {
-                    rval = SDgetinfo((int32)sdsid, cname, &(theArgs[0]), dims,
+                    rval = SDgetinfo(id, cname, &(theArgs[0]), dims,
                             &(theArgs[1]), &(theArgs[2]));
 
                     if (rval == FAIL) {
@@ -240,6 +245,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata
     jbyte *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDreaddata:  data is NULL");
@@ -269,7 +275,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                rval = SDreaddata(id, strt, strd, cnt, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -311,6 +317,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1short
     jshort *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDreaddata:  data is NULL");
@@ -340,7 +347,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1short
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                rval = SDreaddata(id, strt, strd, cnt, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -370,6 +377,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1int
     jint *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDreaddata:  data is NULL");
@@ -399,7 +407,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1int
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                rval = SDreaddata(id, strt, strd, cnt, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -429,6 +437,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1long
     jlong *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDreaddata:  data is NULL");
@@ -458,7 +467,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1long
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                rval = SDreaddata(id, strt, strd, cnt, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -488,6 +497,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1float
     jfloat *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDreaddata:  data is NULL");
@@ -517,7 +527,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1float
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                rval = SDreaddata(id, strt, strd, cnt, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -547,6 +557,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1double
     jdouble *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDreaddata:  data is NULL");
@@ -576,7 +587,7 @@ Java_hdf_hdflib_HDFLibrary_SDreaddata_1double
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDreaddata((int32)sdsid, strt, strd, cnt, d);
+                rval = SDreaddata(id, strt, strd, cnt, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -600,8 +611,9 @@ Java_hdf_hdflib_HDFLibrary_SDendaccess
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDendaccess((int32)sdsid);
+    rval = SDendaccess(id);
     if (rval < 0)
         CALL_ERROR_CHECK();
 
@@ -613,8 +625,9 @@ Java_hdf_hdflib_HDFLibrary_SDgetdimid
 (JNIEnv *env, jclass clss, jlong sdsid, jint index)
 {
     int32 rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDgetdimid((int32)sdsid, (intn)index);
+    rval = SDgetdimid(id, (intn)index);
     if (rval < 0)
         CALL_ERROR_CHECK();
 
@@ -695,8 +708,9 @@ Java_hdf_hdflib_HDFLibrary_SDidtoref
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
     int32 rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDidtoref((int32)sdsid);
+    rval = SDidtoref(id);
     if (rval < 0)
         CALL_ERROR_CHECK();
 
@@ -708,8 +722,9 @@ Java_hdf_hdflib_HDFLibrary_SDreftoindex
 (JNIEnv *env, jclass clss, jlong sdid, jint ref)
 {
     int32 rval;
+    int32 id = (int32)sdid;
 
-    rval = SDreftoindex((int32)sdid, (int32)ref);
+    rval = SDreftoindex(id, (int32)ref);
     if (rval < 0)
         CALL_ERROR_CHECK();
 
@@ -718,7 +733,7 @@ Java_hdf_hdflib_HDFLibrary_SDreftoindex
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDattrinfo
-(JNIEnv *env, jclass clss, jlong id, jint index, jobjectArray name, jintArray argv)
+(JNIEnv *env, jclass clss, jlong sdsid, jint index, jobjectArray name, jintArray argv)
 {
     intn rval;
     jclass jc;
@@ -727,6 +742,7 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo
     jboolean bb;
     jobject o;
     char  str[256];  /* what is the correct constant??? */
+    int32 id = (int32)sdsid;
 
     if (name == NULL) {
         h4nullArgument(env, "SDattrinfo:  name is NULL");
@@ -743,7 +759,7 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo
             h4JNIFatalError(env, "SDattrinfo:  argv not pinned");
         } /* end if */
         else {
-            rval = SDattrinfo((int32)id, (int32)index,
+            rval = SDattrinfo(id, (int32)index,
                 (char *)str, (int32 *)&(theArgs[0]), (int32 *)&(theArgs[1]));
 
             if (rval == FAIL) {
@@ -778,11 +794,12 @@ Java_hdf_hdflib_HDFLibrary_SDattrinfo
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDreadattr
-(JNIEnv *env, jclass clss, jlong id, jint index, jbyteArray dat)
+(JNIEnv *env, jclass clss, jlong sdsid, jint index, jbyteArray dat)
 {
     intn rval;
     jbyte *arr;
     jboolean bb;
+    int32 id = (int32)sdsid;
 
     if (dat == NULL) {
         h4nullArgument(env, "SDreadattr:  dat is NULL");
@@ -793,7 +810,7 @@ Java_hdf_hdflib_HDFLibrary_SDreadattr
             h4JNIFatalError(env, "SDreadattr:  dat not pinned");
         } /* end if */
         else {
-            rval = SDreadattr((int32)id, (int32)index,  (VOIDP)arr);
+            rval = SDreadattr(id, (int32)index,  (VOIDP)arr);
             if (rval == FAIL) {
                 ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
                 CALL_ERROR_CHECK();
@@ -808,14 +825,15 @@ Java_hdf_hdflib_HDFLibrary_SDreadattr
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDfindattr
-(JNIEnv *env, jclass clss, jlong id, jstring name)
+(JNIEnv *env, jclass clss, jlong sdsid, jstring name)
 {
     int32 rval;
     const char *str;
+    int32 id = (int32)sdsid;
 
     PIN_JAVA_STRING(name, str);
     if (str != NULL) {
-        rval = GRfindattr((int32)id, str);
+        rval = GRfindattr(id, str);
 
         UNPIN_JAVA_STRING(name, str);
         if (rval < 0)
@@ -830,8 +848,9 @@ Java_hdf_hdflib_HDFLibrary_SDiscoordvar
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDiscoordvar((int32)sdsid);
+    rval = SDiscoordvar(id);
     if (rval <= 0)
         CALL_ERROR_CHECK();
 
@@ -847,6 +866,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetcal
     jint *theNT;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (nt == NULL) {
         h4nullArgument(env, "SDgetcal:  nt is NULL");
@@ -868,7 +888,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetcal
                 h4JNIFatalError(env, "SDgetcal:  argv not pinned");
             } /* end if */
             else {
-                rval = SDgetcal((int32)sdsid, (float64 *)&(theArgs[0]),
+                rval = SDgetcal(id, (float64 *)&(theArgs[0]),
                         (float64 *)&(theArgs[1]), (float64 *)&(theArgs[2]),
                         (float64 *)&(theArgs[3]), (int32 *)&(theNT[0]));
 
@@ -899,6 +919,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs
     char *fmtVal;
     char *coordsysVal;
     int i;
+    int32 id = (int32)sdsid;
 
     if (strings == NULL) {
         h4nullArgument(env, "SDgetdatastrs:  strings is NULL");
@@ -956,7 +977,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetdatastrs
         }
         ENVPTR->DeleteLocalRef(ENVPAR coordsys);
 
-        rval = SDgetdatastrs((int32)sdsid, labVal, unitVal, fmtVal, coordsysVal, (int32)len);
+        rval = SDgetdatastrs(id, labVal, unitVal, fmtVal, coordsysVal, (int32)len);
 
         if (rval == FAIL) {
             CALL_ERROR_CHECK();
@@ -1136,6 +1157,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetfillvalue
     jbyte *datVal;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDgetfillvalue:  data is NULL");
@@ -1146,7 +1168,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetfillvalue
             h4JNIFatalError(env, "SDgetfillvalue:  data not pinned");
         } /* end if */
         else {
-            rval = SDgetfillvalue((int32)sdsid, (char *)datVal);
+            rval = SDgetfillvalue(id, (char *)datVal);
             if (rval == FAIL) {
                 cbb = JNI_ABORT;
                 CALL_ERROR_CHECK();
@@ -1166,6 +1188,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetrange
     jbyte *minp, *maxp;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (max == NULL) {
         h4nullArgument(env, "SDgetrange:  max is NULL");
@@ -1184,7 +1207,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetrange
                 h4JNIFatalError(env, "SDgetrange:  min not pinned");
             } /* end if */
             else {
-                rval = SDgetrange((int32)sdsid, (void *)maxp, (void *)minp);
+                rval = SDgetrange(id, (void *)maxp, (void *)minp);
                 if (rval == FAIL) {
                     cbb = JNI_ABORT;
                     CALL_ERROR_CHECK();
@@ -1206,6 +1229,7 @@ Java_hdf_hdflib_HDFLibrary_SDcreate
     const char *str;
     jint *dims;
     jboolean isCopy;
+    int32 id = (int32)sd_id;
 
     if (dimsizes == NULL) {
         h4nullArgument(env, "SDcreate:  dimsizes is NULL");
@@ -1218,7 +1242,7 @@ Java_hdf_hdflib_HDFLibrary_SDcreate
                 h4JNIFatalError(env, "SDcreate:  dimsizes not pinned");
             } /* end if */
             else {
-                rval = SDcreate((int32)sd_id, str, (int32)number_type, (int32)rank, (int32 *)dims);
+                rval = SDcreate(id, str, (int32)number_type, (int32)rank, (int32 *)dims);
 
                 ENVPTR->ReleaseIntArrayElements(ENVPAR dimsizes, dims, JNI_ABORT);
 
@@ -1239,8 +1263,9 @@ Java_hdf_hdflib_HDFLibrary_SDisrecord
 (JNIEnv *env, jclass clss, jlong sdsid)
 {
     int32 rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDisrecord((int32)sdsid);
+    rval = SDisrecord(id);
 
     if (rval == TRUE) {
         return JNI_TRUE;
@@ -1258,6 +1283,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetattr
     jbyte *arr;
     const char *str;
     jboolean bb;
+    int32 id = (int32)s_id;
 
     if (values == NULL) {
         h4nullArgument(env, "SDsetattr:  values is NULL");
@@ -1270,7 +1296,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetattr
                 h4JNIFatalError(env, "SDsetattr:  values not pinned");
             } /* end if */
             else {
-                rval = SDsetattr((int32)s_id, str, (int32)num_type, (int32)count, (VOIDP)arr);
+                rval = SDsetattr(id, str, (int32)num_type, (int32)count, (VOIDP)arr);
 
                 ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
 
@@ -1289,8 +1315,9 @@ Java_hdf_hdflib_HDFLibrary_SDsetcal
 (JNIEnv *env, jclass clss, jlong sds_id, jdouble cal, jdouble cal_err, jdouble offset, jdouble offset_err, jint number_type)
 {
     intn rval;
+    int32 id = (int32)sds_id;
 
-    rval = SDsetcal((int32)sds_id, (float64)cal, (float64)cal_err,
+    rval = SDsetcal(id, (float64)cal, (float64)cal_err,
         (float64)offset, (float64)offset_err, (int32)number_type);
 
     if (rval == FAIL)
@@ -1442,10 +1469,11 @@ Java_hdf_hdflib_HDFLibrary_SDsetexternalfile
 {
     intn rval;
     const char *f;
+    int32 id = (int32)sds_id;
 
     PIN_JAVA_STRING(filename, f);
     if (f != NULL) {
-        rval = SDsetexternalfile((int32)sds_id, f, (int32)offset);
+        rval = SDsetexternalfile(id, f, (int32)offset);
 
         UNPIN_JAVA_STRING(filename, f);
         if (rval == FAIL)
@@ -1462,6 +1490,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillvalue
     intn rval;
     jboolean bb;
     jbyte *d;
+    int32 id = (int32)sds_id;
 
     if (fill_val == NULL) {
         h4nullArgument(env, "SDsetfillvalue:  fill_val is NULL");
@@ -1472,7 +1501,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillvalue
             h4JNIFatalError(env, "SDsetfillvalue:  fill_val not pinned");
         } /* end if */
         else {
-            rval = SDsetfillvalue((int32)sds_id, (VOIDP)d);
+            rval = SDsetfillvalue(id, (VOIDP)d);
 
             ENVPTR->ReleaseByteArrayElements(ENVPAR fill_val, d, JNI_ABORT);
 
@@ -1491,6 +1520,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetrange
     int32 rval;
     jboolean bb;
     jbyte *minp, *maxp;
+    int32 id = (int32)sdsid;
 
     if (max == NULL) {
         h4nullArgument(env, "SDsetrange:  max is NULL");
@@ -1509,7 +1539,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetrange
                 h4JNIFatalError(env, "SDgetrange:  min not pinned");
             } /* end if */
             else {
-                rval = SDsetrange((int32)sdsid, maxp, minp);
+                rval = SDsetrange(id, maxp, minp);
                 if (rval == FAIL) {
                     CALL_ERROR_CHECK();
                 }
@@ -1534,6 +1564,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata
     jbyte *d;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (data == NULL) {
         h4nullArgument(env, "SDwritedata:  data is NULL");
@@ -1563,7 +1594,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata
                 else {
                     strd = ENVPTR->GetIntArrayElements(ENVPAR stride, &bb);
                 }
-                rval = SDwritedata((int32)sdsid, strt, strd, e, d);
+                rval = SDwritedata(id, strt, strd, e, d);
 
                 if (stride != NULL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
@@ -1586,11 +1617,12 @@ Java_hdf_hdflib_HDFLibrary_SDwritedata
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetnbitdataset
-(JNIEnv *env, jclass clss, jlong id, jint start_bit, jint bit_len, jint sign_ext, jint fill_one)
+(JNIEnv *env, jclass clss, jlong sdsid, jint start_bit, jint bit_len, jint sign_ext, jint fill_one)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDsetnbitdataset((int32)id, (intn) start_bit, (intn) bit_len,
+    rval = SDsetnbitdataset(id, (intn) start_bit, (intn) bit_len,
             (intn) sign_ext, (intn) fill_one);
 
     if (rval == FAIL)
@@ -1601,10 +1633,11 @@ Java_hdf_hdflib_HDFLibrary_SDsetnbitdataset
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetcompress
-(JNIEnv *env, jclass clss, jlong id, jint type, jobject cinfo)
+(JNIEnv *env, jclass clss, jlong sdsid, jint type, jobject cinfo)
 {
     intn rval;
     comp_info cinf;
+    int32 id = (int32)sdsid;
 
     if (cinfo == NULL) {
         h4nullArgument(env, "SDsetcompress:  cinfo is NULL");
@@ -1613,7 +1646,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetcompress
         h4raiseException(env, "SDsetcompress: error creating comp_info struct");
     }
     else {
-        rval = SDsetcompress((int32)id, (comp_coder_t)type, (comp_info *)&cinf);
+        rval = SDsetcompress(id, (comp_coder_t)type, (comp_info *)&cinf);
 
         if (rval == FAIL)
             CALL_ERROR_CHECK();
@@ -1623,17 +1656,18 @@ Java_hdf_hdflib_HDFLibrary_SDsetcompress
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcompinfo
-(JNIEnv *env, jclass clss, jlong id, jobject cinfo)
+(JNIEnv *env, jclass clss, jlong sdsid, jobject cinfo)
 {
     intn rval;
     comp_coder_t coder;
     comp_info cinf;
+    int32 id = (int32)sdsid;
 
     if (cinfo == NULL) {
         h4nullArgument(env, "SDgetcompinfo:  cinfo is NULL");
     } /* end if */
     else {
-        rval = SDgetcompinfo((int32)id, (comp_coder_t *)&coder, (comp_info *)&cinf);
+        rval = SDgetcompinfo(id, (comp_coder_t *)&coder, (comp_info *)&cinf);
 
         if (rval == FAIL) {
             CALL_ERROR_CHECK();
@@ -1648,17 +1682,18 @@ Java_hdf_hdflib_HDFLibrary_SDgetcompinfo
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDgetcompress
-(JNIEnv *env, jclass clss, jlong id, jobject cinfo)
+(JNIEnv *env, jclass clss, jlong sdsid, jobject cinfo)
 {
     intn rval;
     comp_coder_t coder;
     comp_info cinf;
+    int32 id = (int32)sdsid;
 
     if (cinfo == NULL) {
         h4nullArgument(env, "SDgetcompress:  cinfo is NULL");
     } /* end if */
     else {
-        rval = SDgetcompress((int32)id, (comp_coder_t *)&coder, (comp_info *)&cinf);
+        rval = SDgetcompress(id, (comp_coder_t *)&coder, (comp_info *)&cinf);
 
         if (rval == FAIL) {
             CALL_ERROR_CHECK();
@@ -1673,11 +1708,12 @@ Java_hdf_hdflib_HDFLibrary_SDgetcompress
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_SDsetaccesstype
-(JNIEnv *env, jclass clss, jlong id, jint accesstype)
+(JNIEnv *env, jclass clss, jlong sdsid, jint accesstype)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDsetaccesstype((int32)id, (uintn)accesstype);
+    rval = SDsetaccesstype(id, (uintn)accesstype);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1690,8 +1726,9 @@ Java_hdf_hdflib_HDFLibrary_SDsetblocksize
 (JNIEnv *env, jclass clss, jlong sdsid, jint block_size)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDsetblocksize((int32)sdsid, (int32)block_size);
+    rval = SDsetblocksize(id, (int32)block_size);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1704,8 +1741,9 @@ Java_hdf_hdflib_HDFLibrary_SDsetfillmode
 (JNIEnv *env, jclass clss, jlong sdsid, jint fillmode)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDsetfillmode((int32)sdsid, (intn)fillmode);
+    rval = SDsetfillmode(id, (intn)fillmode);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1718,8 +1756,9 @@ Java_hdf_hdflib_HDFLibrary_SDsetdimval_1comp
 (JNIEnv *env, jclass clss, jlong sdsid, jint comp_mode)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDsetdimval_comp((int32)sdsid, (intn)comp_mode);
+    rval = SDsetdimval_comp(id, (intn)comp_mode);
 
     if (rval == FAIL)
         CALL_ERROR_CHECK();
@@ -1751,6 +1790,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetchunk
 {
     intn rval;
     HDF_CHUNK_DEF c_def;
+    int32 id = (int32)sdsid;
 
     if (chunk_def == NULL) {
         h4nullArgument(env, "SDsetchunk:  chunk_def is NULL");
@@ -1759,7 +1799,7 @@ Java_hdf_hdflib_HDFLibrary_SDsetchunk
         h4raiseException(env, "SDsetchunk: error creating chunk_def struct");
     }
     else {
-        rval = SDsetchunk((int32)sdsid, c_def, (int32)flags);
+        rval = SDsetchunk(id, c_def, (int32)flags);
 
         if (rval == FAIL)
             CALL_ERROR_CHECK();
@@ -1777,6 +1817,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetchunkinfo
     jint *flgs;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdsid;
 
     if (chunk_def == NULL) {
         h4nullArgument(env, "SDgetchunkinfo:  chunk_def is NULL");
@@ -1790,7 +1831,7 @@ Java_hdf_hdflib_HDFLibrary_SDgetchunkinfo
             h4JNIFatalError(env, "SDgetchunkinfo:  cflags not pinned");
         } /* end if */
         else {
-            rval = SDgetchunkinfo( (int32)sdsid, &cdef, (int32 *)&(flgs[0]));
+            rval = SDgetchunkinfo(id, &cdef, (int32 *)&(flgs[0]));
 
             if (rval == FAIL) {
                 cbb = JNI_ABORT;
@@ -1817,6 +1858,7 @@ Java_hdf_hdflib_HDFLibrary_SDreadchunk
     jint *arr;
     jboolean bb;
     jboolean cbb = 0;
+    int32 id = (int32)sdid;
 
     if (dat == NULL) {
         h4nullArgument(env, "SDreadchunk:  data is NULL");
@@ -1835,7 +1877,7 @@ Java_hdf_hdflib_HDFLibrary_SDreadchunk
                 h4JNIFatalError(env, "SDreadchunk:  data not pinned");
             } /* end if */
             else {
-                rval = SDreadchunk((int32)sdid, (int32 *)arr, s);
+                rval = SDreadchunk(id, (int32 *)arr, s);
 
                 if (rval == FAIL) {
                     cbb = JNI_ABORT;
@@ -1854,8 +1896,9 @@ Java_hdf_hdflib_HDFLibrary_SDsetchunkcache
 (JNIEnv *env, jclass clss, jlong sdsid, jint maxcache, jint flags)
 {
     intn rval;
+    int32 id = (int32)sdsid;
 
-    rval = SDsetchunkcache((int32)sdsid, (int32)maxcache, (int32)flags);
+    rval = SDsetchunkcache(id, (int32)maxcache, (int32)flags);
     if (rval == FAIL)
         CALL_ERROR_CHECK();
 
@@ -1870,6 +1913,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritechunk
     jbyte *s;
     jint  *arr;
     jboolean bb;
+    int32 id = (int32)sdid;
 
     if (dat == NULL) {
         h4nullArgument(env, "SDwritechunk:  data is NULL");
@@ -1888,7 +1932,7 @@ Java_hdf_hdflib_HDFLibrary_SDwritechunk
                 h4JNIFatalError(env, "SDwritechunk:  data not pinned");
             } /* end if */
             else {
-                rval = SDwritechunk((int32)sdid, (int32 *)arr, s);
+                rval = SDwritechunk(id, (int32 *)arr, s);
 
                 if (rval == FAIL) {
                     CALL_ERROR_CHECK();
@@ -1909,6 +1953,7 @@ Java_hdf_hdflib_HDFLibrary_SDcheckempty
     int32 rval;
     jboolean isCopy;
     intn *isempty;
+    int32 id = (int32)sdsid;
 
     if (emptySDS == NULL) {
         h4nullArgument(env, "SDcheckempty:  emptySDS is NULL");
@@ -1919,7 +1964,7 @@ Java_hdf_hdflib_HDFLibrary_SDcheckempty
             h4JNIFatalError(env, "SDcheckempty:  emptySDS not pinned");
         } /* end if */
         else {
-            rval = SDcheckempty((int32)sdsid, isempty);
+            rval = SDcheckempty(id, isempty);
 
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR emptySDS, isempty, JNI_ABORT);

@@ -1005,7 +1005,7 @@ public class HDFLibrary implements java.io.Serializable
      */
     public static native boolean SDfileinfo(long sdid, int[] argv) throws HDFException;
 
-    public static native int SDselect(long sdid, int index) throws HDFException;
+    public static native long SDselect(long sdid, int index) throws HDFException;
 
     public static native int SDnametoindex(long sdid, String name) throws HDFException;
 
@@ -2211,7 +2211,7 @@ public class HDFLibrary implements java.io.Serializable
      *         Number of values in the target attribute,
      *         Size, in bytes, of the values of the target attribute,
      *         ,
-     *         
+     *
      *
      *  @exception hdf.hdflib.HDFException
      *             should be thrown for errors in the
