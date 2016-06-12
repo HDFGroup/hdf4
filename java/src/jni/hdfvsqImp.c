@@ -219,14 +219,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQueryref
 (JNIEnv *env, jclass clss, jlong vdata_id)
 {
-    return (VSQueryref((int32)vdata_id));
+    int32 rval;
+
+    rval = VSQueryref((int32)vdata_id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSQuerytag
 (JNIEnv *env, jclass clss, jlong vdata_id)
 {
-    return (VSQuerytag((int32)vdata_id));
+    int32 rval;
+
+    rval = VSQuerytag((int32)vdata_id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jboolean JNICALL

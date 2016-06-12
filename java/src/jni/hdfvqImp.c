@@ -31,14 +31,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VQueryref
 (JNIEnv *env, jclass clss, jlong vkey)
 {
-    return VQueryref((int32) vkey);
+    int32 rval;
+
+    rval = VQueryref((int32) vkey);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VQuerytag
 (JNIEnv *env, jclass clss, jlong vkey)
 {
-    return VQuerytag((int32) vkey);
+    int32 rval;
+
+    rval = VQuerytag((int32) vkey);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 #ifdef __cplusplus
