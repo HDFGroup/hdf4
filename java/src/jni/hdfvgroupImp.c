@@ -68,7 +68,11 @@ JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_Vdetach
 (JNIEnv *env, jclass clss, jlong vgroup_id)
 {
-    Vdetach((int32)vgroup_id);
+    int32 rval;
+
+    rval = Vdetach((int32)vgroup_id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
 }
 
 JNIEXPORT void JNICALL
@@ -83,7 +87,13 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetid
 (JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref)
 {
-    return(jlong)Vgetid((int32)fid, (int32)vgroup_ref);
+    int32 rval;
+
+    rval = Vgetid((int32)fid, (int32)vgroup_ref);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)rval;
 }
 
 JNIEXPORT void JNICALL
@@ -208,7 +218,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Visvg
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint vgroup_ref)
 {
-    int rval;
+    intn rval;
 
     rval = Visvg((int32)vgroup_id, vgroup_ref);
 
@@ -222,7 +232,7 @@ JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Visvs
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint vdata_ref)
 {
-    int rval;
+    intn rval;
 
     rval = Visvs((int32)vgroup_id, vdata_ref);
 
@@ -238,7 +248,7 @@ Java_hdf_hdflib_HDFLibrary_Vgettagrefs
 {
     jint *tagVal;
     jint *refVal;
-    int retVal;
+    int32 retVal;
     int copyMode = JNI_ABORT;
 
     jboolean iscopy;
@@ -285,14 +295,14 @@ Java_hdf_hdflib_HDFLibrary_Vgettagrefs
         } /* end else */
     } /* end else */
 
-    return retVal;
+    return (jint)retVal;
 }
 
 JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgettagref
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint index, jintArray tagref)
 {
-    int retVal;
+    intn retVal;
     jint * theArgs;
     jboolean bb;
 
@@ -330,14 +340,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vntagrefs
 (JNIEnv *env, jclass clss, jlong vgroup_id)
 {
-    return (Vntagrefs((int32)vgroup_id));
+    int32 rval;
+
+    rval = Vntagrefs((int32)vgroup_id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vinqtagref
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
 {
-    return(Vinqtagref((int32)vgroup_id, (int32)tag, (int32)ref));
+    int32 rval;
+
+    rval = Vinqtagref((int32)vgroup_id, (int32)tag, (int32)ref);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
@@ -378,14 +400,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vaddtagref
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
 {
-    return (Vaddtagref((int32) vgroup_id, (int32) tag, (int32) ref));
+    intn rval;
+
+    rval = Vaddtagref((int32) vgroup_id, (int32) tag, (int32) ref);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vdeletetagref
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint tag, jint ref)
 {
-    return (Vdeletetagref((int32) vgroup_id, (int32) tag, (int32) ref));
+    intn rval;
+
+    rval = Vdeletetagref((int32) vgroup_id, (int32) tag, (int32) ref);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -395,7 +429,6 @@ Java_hdf_hdflib_HDFLibrary_Vclose_I
     intn rval;
 
     rval =  Vclose((int32) file_id);
-
     if (rval == FAIL)
         CALL_ERROR_CHECK();
 
@@ -421,7 +454,6 @@ Java_hdf_hdflib_HDFLibrary_Vfind
     }
 
     return rval;
-
 }
 
 
@@ -444,7 +476,6 @@ Java_hdf_hdflib_HDFLibrary_Vfindclass
     }
 
     return rval;
-
 }
 
 JNIEXPORT jint JNICALL
@@ -466,14 +497,19 @@ Java_hdf_hdflib_HDFLibrary_Vflocate
     }
 
     return rval;
-
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetnext
 (JNIEnv *env, jclass clss, jint vkey, jint elem_ref)
 {
-    return(Vgetnext((int32) vkey, (int32) elem_ref));
+    int32 rval;
+
+    rval = Vgetnext((int32) vkey, (int32) elem_ref);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -556,14 +592,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vinsert
 (JNIEnv *env, jclass clss, jlong vgroup_id, jint v_id)
 {
-    return (Vinsert((int32) vgroup_id, (int32) v_id));
+    int32 rval;
+
+    rval = Vinsert((int32) vgroup_id, (int32) v_id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vnrefs
 (JNIEnv *env, jclass clss, jint vkey, jint tag)
 {
-    return(Vnrefs((int32) vkey, (int32) tag));
+    int32 rval;
+
+    rval = Vnrefs((int32) vkey, (int32) tag);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 
@@ -755,14 +803,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vgetversion
 (JNIEnv *env, jclass clss, jlong id)
 {
-    return (Vgetversion((int32) id));
+    int32 rval;
+
+    rval = Vgetversion((int32) id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vnattrs
 (JNIEnv *env, jclass clss, jlong id)
 {
-    return (Vnattrs2((int32) id));
+    int32 rval;
+
+    rval = Vnattrs2((int32) id);
+    if (rval == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)rval;
 }
 
 JNIEXPORT jboolean JNICALL

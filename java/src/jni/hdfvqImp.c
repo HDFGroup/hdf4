@@ -37,7 +37,7 @@ Java_hdf_hdflib_HDFLibrary_VQueryref
     if (rval == FAIL)
         CALL_ERROR_CHECK();
 
-    return (jlong)rval;
+    return (jint)rval;
 }
 
 JNIEXPORT jint JNICALL
@@ -50,7 +50,7 @@ Java_hdf_hdflib_HDFLibrary_VQuerytag
     if (rval == FAIL)
         CALL_ERROR_CHECK();
 
-    return (jlong)rval;
+    return (jint)rval;
 }
 
 #ifdef __cplusplus
