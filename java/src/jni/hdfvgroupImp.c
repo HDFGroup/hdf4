@@ -781,9 +781,9 @@ Java_hdf_hdflib_HDFLibrary_Vsetattr__JLjava_lang_String_2JILjava_lang_String_2
 
         if (rval == FAIL)
             CALL_ERROR_CHECK();
-    }
 
-    UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
+        UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
+    }
 
     return JNI_TRUE;
 }
