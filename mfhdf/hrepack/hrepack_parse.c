@@ -88,8 +88,8 @@ obj_list_t* parse_comp(const char *str,
         if ( c==',' || j==end_obj-1) 
         {
             if ( c==',') obj[k]='\0'; else obj[k+1]='\0';
-            strcpy(obj_list[n].obj,obj);
-            memset(obj,0,sizeof(obj));
+            HDstrcpy(obj_list[n].obj,obj);
+            HDmemset(obj,0,sizeof(obj));
             n++;
             k=-1;
         }
@@ -124,7 +124,7 @@ obj_list_t* parse_comp(const char *str,
                 SZIP=8,NN 
                 */
                 
-                if (strcmp(scomp,"SZIP")==0)
+                if (HDstrcmp(scomp,"SZIP")==0)
                 {
                     l=-1; /* mask index check */
                     for ( m=0,u=i+1; u<len; u++,m++) 
@@ -151,9 +151,9 @@ obj_list_t* parse_comp(const char *str,
                                 smask[l]='\0';
                                 i=len-1; /* end */
                                 (*n_objs)--; /* we counted an extra ',' */
-                                if (strcmp(smask,"NN")==0) 
+                                if (HDstrcmp(smask,"NN")==0)
                                     comp->szip_mode=NN_MODE;
-                                else if (strcmp(smask,"EC")==0)
+                                else if (HDstrcmp(smask,"EC")==0)
                                     comp->szip_mode=EC_MODE;
                                 else
                                 {
@@ -384,8 +384,8 @@ obj_list_t* parse_chunk(const char *str,
         if ( c==',' || j==end_obj-1) 
         {
             if ( c==',') obj[k]='\0'; else obj[k+1]='\0';
-            strcpy(obj_list[n].obj,obj);
-            memset(obj,0,sizeof(obj));
+            HDstrcpy(obj_list[n].obj,obj);
+            HDmemset(obj,0,sizeof(obj));
             n++;
             k=-1;
         }
@@ -426,7 +426,7 @@ obj_list_t* parse_chunk(const char *str,
             else if (i==len-1) { /*no more parameters */
                 sdim[k]='\0';  
                 k=0;
-                if (strcmp(sdim,"NONE")==0)
+                if (HDstrcmp(sdim,"NONE")==0)
                 {
                     *chunk_rank=-2;
                 }

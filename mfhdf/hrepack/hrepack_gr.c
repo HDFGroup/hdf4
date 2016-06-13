@@ -366,7 +366,7 @@ int  copy_gr(int32 infile_id,
     
     /* check inspection mode */
     if ( options->trip==0 ) {
-        if (path) free(path);
+        if (path) HDfree(path);
         if (GRendaccess(ri_id)==FAIL){
             printf( "Could not close GR <%s>\n",path);
             return-1;
@@ -382,7 +382,7 @@ int  copy_gr(int32 infile_id,
     if ((buf = (VOIDP) HDmalloc(data_size)) == NULL) {
         printf( "Failed to allocate %ld elements of size %ld\n", nelms, eltsz);
         GRendaccess(ri_id);
-        if (path) free(path);
+        if (path) HDfree(path);
         return-1;
     }
     
@@ -391,7 +391,7 @@ int  copy_gr(int32 infile_id,
     if ( GRreqimageil(ri_id, interlace_mode) == FAIL ){
         printf( "Could not set interlace for GR <%s>\n", path);
         GRendaccess(ri_id);
-        if (path) free(path);
+        if (path) HDfree(path);
         return-1;
     }
     
@@ -399,7 +399,7 @@ int  copy_gr(int32 infile_id,
     if (GRreadimage (ri_id, start, NULL, edges, buf) == FAIL) {
         printf( "Could not read GR <%s>\n", path);
         GRendaccess(ri_id);
-        if (path) free(path);
+        if (path) HDfree(path);
         return-1;
     }
     
@@ -592,9 +592,9 @@ out:
         printf( "Failed to close SDS <%s>\n", path);
     
     if (path)
-        free(path);
+        HDfree(path);
     if (buf)
-        free(buf);
+        HDfree(buf);
     
     return ret;
     
@@ -655,7 +655,7 @@ int copy_gr_attrs(int32 ri_id,
         }
         
         if (attr_buf)
-            free(attr_buf);
+            HDfree(attr_buf);
     }
     
     return 1;

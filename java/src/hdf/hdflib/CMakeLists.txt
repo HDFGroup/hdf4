@@ -1,0 +1,74 @@
+cmake_minimum_required (VERSION 3.1.0)
+PROJECT (HDF4_JAVA_HDF_HDF4 Java)
+
+set (CMAKE_VERBOSE_MAKEFILE 1)
+
+INCLUDE_DIRECTORIES (
+    ${HDF4_JAVA_HDF_HDF4_SOURCE_DIR}
+    ${HDF4_JAVA_HDF_HDF4_BINARY_DIR}
+    ${HDF4_JAVA_LIB_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${HDF4_JAVA_HDF_LIB_CORENAME}.dir/hdf/hdflib
+)
+
+SET_GLOBAL_VARIABLE (HDF4_JAVA_SOURCE_PACKAGES
+    "${HDF4_JAVA_SOURCE_PACKAGES};hdf.hdflib"
+)
+
+set (HDF4_JAVA_HDF_HDF4_SRCS
+    HDFException.java
+    HDFJavaException.java
+    HDFArray.java
+    HDFChunkInfo.java
+    HDFCompInfo.java
+    HDFConstants.java
+    HDFDeflateCompInfo.java
+    HDFIMCOMPCompInfo.java
+    HDFJPEGCompInfo.java
+    HDFLibrary.java
+    HDFLibraryException.java
+    HDFNativeData.java
+    HDFNewCompInfo.java
+    HDFNBITChunkInfo.java
+    HDFNBITCompInfo.java
+    HDFNotImplementedException.java
+    HDFOldCompInfo.java
+    HDFOldRLECompInfo.java
+    HDFRLECompInfo.java
+    HDFSKPHUFFCompInfo.java
+    HDFSZIPCompInfo.java
+)
+
+set (CMAKE_JNI_TARGET TRUE)
+
+file (WRITE ${PROJECT_BINARY_DIR}/Manifest.txt
+"
+"
+)
+
+set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_LOGGING_JAR}")
+
+add_jar (${HDF4_JAVA_HDF_LIB_TARGET} OUTPUT_NAME "${HDF4_JAVA_HDF_LIB_TARGET}-${HDF4_PACKAGE_VERSION}" OUTPUT_DIR ${CMAKE_JAVA_TARGET_OUTPUT_DIR} MANIFEST ${PROJECT_BINARY_DIR}/Manifest.txt ${HDF4_JAVA_HDF_HDF4_SRCS})
+install_jar (${HDF4_JAVA_HDF_LIB_TARGET} LIBRARY DESTINATION ${HDF4_INSTALL_JAR_DIR} COMPONENT libraries)
+#if (NOT WIN32)
+#  install_jni_symlink (${HDF4_JAVA_HDF_LIB_TARGET} ${HDF4_INSTALL_JAR_DIR} libraries)
+#endif (NOT WIN32)
+
+get_target_property (${HDF4_JAVA_HDF_LIB_TARGET}_JAR_FILE ${HDF4_JAVA_HDF_LIB_TARGET} JAR_FILE)
+SET_GLOBAL_VARIABLE (HDF4_JAVA_JARS_TO_EXPORT "${HDF4_JAVA_JARS_TO_EXPORT};${${HDF4_JAVA_HDF_LIB_TARGET}_JAR_FILE}")
+SET_GLOBAL_VARIABLE (HDF4_JAVA_JARS ${${HDF4_JAVA_HDF_LIB_TARGET}_JAR_FILE})
+
+add_dependencies (${HDF4_JAVA_HDF_LIB_TARGET} ${HDF4_JAVA_JNI_LIB_TARGET})
+set_target_properties (${HDF4_JAVA_HDF_LIB_TARGET} PROPERTIES FOLDER libraries/java)
+
+create_javadoc(hdf4_java_doc
+    FILES ${HDF4_JAVA_HDF_HDF4_SRCS}
+    OVERVIEW ${HDF4_JAVA_HDF_SRC_DIR}/overview.html
+    CLASSPATH ${CMAKE_JAVA_INCLUDE_PATH}
+    WINDOWTITLE "HDF Java"
+    DOCTITLE "<h1>HDF Java Wrapper</h1>"
+    INSTALLPATH ${HDF4_INSTALL_DATA_DIR}
+    AUTHOR TRUE
+    USE TRUE
+    VERSION TRUE
+)
+

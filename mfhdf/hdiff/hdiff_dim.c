@@ -373,8 +373,8 @@ void diff_match_dim_table_add (diff_match_dim_table_t *table,
     if (table->nobjs == table->size) 
     {
         table->size *= 2;
-        table->objs = (diff_match_dim_name_t*)realloc(table->objs, table->size * sizeof(diff_match_dim_name_t));
-        
+        table->objs = (diff_match_dim_name_t*)HDrealloc(table->objs, table->size * sizeof(diff_match_dim_name_t));
+
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].ref = -1;
             table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
@@ -383,7 +383,7 @@ void diff_match_dim_table_add (diff_match_dim_table_t *table,
     
     i = table->nobjs++;
     table->objs[i].ref = ref;
-    strcpy(table->objs[i].dim_name,dim_name);
+    HDstrcpy(table->objs[i].dim_name,dim_name);
     table->objs[i].flags[0] = flags[0];
     table->objs[i].flags[1] = flags[1];
 }
@@ -407,12 +407,12 @@ static
 void diff_match_dim_table_init( diff_match_dim_table_t **tbl )
 {
     int i;
-    diff_match_dim_table_t *table = (diff_match_dim_table_t*) malloc(sizeof(diff_match_dim_table_t));
-    
+    diff_match_dim_table_t *table = (diff_match_dim_table_t*)HDmalloc(sizeof(diff_match_dim_table_t));
+
     table->size = 20;
     table->nobjs = 0;
-    table->objs = (diff_match_dim_name_t*) malloc(table->size * sizeof(diff_match_dim_name_t));
-    
+    table->objs = (diff_match_dim_name_t*)HDmalloc(table->size * sizeof(diff_match_dim_name_t));
+
     for (i = 0; i < table->size; i++) {
         table->objs[i].ref = -1;
         table->objs[i].flags[0] = table->objs[i].flags[1] = -1;
@@ -440,8 +440,8 @@ void diff_match_dim_table_init( diff_match_dim_table_t **tbl )
 static 
 void diff_match_dim_table_free( diff_match_dim_table_t *table )
 {
-    free(table->objs);
-    free(table);
+    HDfree(table->objs);
+    HDfree(table);
 }
 
 
@@ -471,8 +471,8 @@ void diff_dim_table_add(diff_dim_table_t *table,
     if (table->nobjs == table->size) 
     {
         table->size *= 2;
-        table->objs = (diff_dim_name_t*)realloc(table->objs, table->size * sizeof(diff_dim_name_t));
-        
+        table->objs = (diff_dim_name_t*)HDrealloc(table->objs, table->size * sizeof(diff_dim_name_t));
+
         for (i = table->nobjs; i < table->size; i++) {
             table->objs[i].ref = -1;
         }
@@ -480,7 +480,7 @@ void diff_dim_table_add(diff_dim_table_t *table,
     
     i = table->nobjs++;
     table->objs[i].ref = ref;
-    strcpy(table->objs[i].dim_name,name);
+    HDstrcpy(table->objs[i].dim_name,name);
 }
 
 
@@ -502,12 +502,12 @@ void diff_dim_table_add(diff_dim_table_t *table,
 void diff_dim_table_init( diff_dim_table_t **tbl )
 {
     int i;
-    diff_dim_table_t* table = (diff_dim_table_t*) malloc(sizeof(diff_dim_table_t));
-    
+    diff_dim_table_t* table = (diff_dim_table_t*)HDmalloc(sizeof(diff_dim_table_t));
+
     table->size = 20;
     table->nobjs = 0;
-    table->objs = (diff_dim_name_t*) malloc(table->size * sizeof(diff_dim_name_t));
-    
+    table->objs = (diff_dim_name_t*)HDmalloc(table->size * sizeof(diff_dim_name_t));
+
     for (i = 0; i < table->size; i++) {
         table->objs[i].ref = -1;
     }
@@ -531,7 +531,7 @@ void diff_dim_table_init( diff_dim_table_t **tbl )
 
 void diff_dim_table_free( diff_dim_table_t *table )
 {
-    free(table->objs);
-    free(table);
+    HDfree(table->objs);
+    HDfree(table);
 }
 

@@ -98,7 +98,7 @@ int hrepack_addcomp(const char* str,
     }
     
     /* initialize parse struct to FAIL */
-    memset(&comp,FAIL,sizeof(comp_info_t));
+    HDmemset(&comp,FAIL,sizeof(comp_info_t));
     
     /* parse the -t option */
     if ((obj_list = parse_comp(str,&n_objs,&comp)) == NULL)
@@ -107,7 +107,7 @@ int hrepack_addcomp(const char* str,
     /* searh for the "*" all objects character */
     for (i = 0; i < n_objs; i++) 
     {
-        if (strcmp("*",obj_list[i].obj)==0)
+        if (HDstrcmp("*",obj_list[i].obj)==0)
         {
             /* if we are compressing all set the global comp type */
             options->all_comp=1;
@@ -179,7 +179,7 @@ int hrepack_addchunk(const char* str,
     /* searh for the "*" all objects character */
     for (i = 0; i < n_objs; i++) 
     {
-        if (strcmp("*",obj_list[i].obj)==0)
+        if (HDstrcmp("*",obj_list[i].obj)==0)
         {
             /* if we are chunking all set the global chunking type */
             options->all_chunk=1;
@@ -225,7 +225,7 @@ out:
 void hrepack_init (options_t *options, 
                   int verbose)
 {
-    memset(options,0,sizeof(options_t));
+    HDmemset(options,0,sizeof(options_t));
     options->threshold = 1024;
     options->verbose   = verbose;
     options_table_init(&(options->op_tbl));
@@ -397,7 +397,7 @@ int read_info(const char *filename,
         * comp
         *-------------------------------------------------------------------------
         */
-        if (strcmp(stype,"-t") == 0) { 
+        if (HDstrcmp(stype,"-t") == 0) {
             
             /* find begining of info */
             i=0; c='0';
@@ -422,7 +422,7 @@ int read_info(const char *filename,
         * chunk
         *-------------------------------------------------------------------------
         */
-        else if (strcmp(stype,"-c") == 0) { 
+        else if (HDstrcmp(stype,"-c") == 0) {
             
             /* find begining of info */
             i=0; c='0';

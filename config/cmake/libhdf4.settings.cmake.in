@@ -32,6 +32,9 @@ Languages:
 @BUILD_FORTRAN_CONDITIONAL_TRUE@               Fortran Compiler: @CMAKE_Fortran_COMPILER@
 @BUILD_FORTRAN_CONDITIONAL_TRUE@                  Fortran Flags: @CMAKE_Fortran_FLAGS@
 
+                            JAVA: @HDF4_BUILD_JAVA@
+@BUILD_JAVA_CONDITIONAL_TRUE@                     JAVA Compiler: @CMAKE_Java_COMPILER@ @Java_VERSION@
+
 Features:
 ---------
                SZIP compression: @SZIP_INFO@

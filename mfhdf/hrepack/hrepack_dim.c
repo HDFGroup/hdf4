@@ -724,8 +724,8 @@ out:
      }
      
      if (buf)
-         free(buf);
-     
+        HDfree(buf);
+
      return ret;
      
 }
@@ -769,8 +769,8 @@ static void match_dim_table_add (match_dim_table_t *mdim_tbl,
     
     if (mdim_tbl->nobjs == mdim_tbl->size) {
         mdim_tbl->size *= 2;
-        mdim_tbl->objs = (match_dim_name_t*)realloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
-        
+        mdim_tbl->objs = (match_dim_name_t*)HDrealloc(mdim_tbl->objs, mdim_tbl->size * sizeof(match_dim_name_t));
+
         for (i = mdim_tbl->nobjs; i < mdim_tbl->size; i++) {
             mdim_tbl->objs[i].ref = -1;
             mdim_tbl->objs[i].flags[0] = mdim_tbl->objs[i].flags[1] = -1;
@@ -779,7 +779,7 @@ static void match_dim_table_add (match_dim_table_t *mdim_tbl,
     
     i = mdim_tbl->nobjs++;
     mdim_tbl->objs[i].ref = ref;
-    strcpy(mdim_tbl->objs[i].dim_name,dim_name);
+    HDstrcpy(mdim_tbl->objs[i].dim_name,dim_name);
     mdim_tbl->objs[i].flags[0] = flags[0];
     mdim_tbl->objs[i].flags[1] = flags[1];
 }
@@ -802,12 +802,12 @@ static void match_dim_table_add (match_dim_table_t *mdim_tbl,
 static void match_dim_table_init( match_dim_table_t **tbl )
 {
     int i;
-    match_dim_table_t *mdim_tbl = (match_dim_table_t*) malloc(sizeof(match_dim_table_t));
-    
+    match_dim_table_t *mdim_tbl = (match_dim_table_t*)HDmalloc(sizeof(match_dim_table_t));
+
     mdim_tbl->size = 20;
     mdim_tbl->nobjs = 0;
-    mdim_tbl->objs = (match_dim_name_t*) malloc(mdim_tbl->size * sizeof(match_dim_name_t));
-    
+    mdim_tbl->objs = (match_dim_name_t*)HDmalloc(mdim_tbl->size * sizeof(match_dim_name_t));
+
     for (i = 0; i < mdim_tbl->size; i++) {
         mdim_tbl->objs[i].ref = -1;
         mdim_tbl->objs[i].flags[0] = mdim_tbl->objs[i].flags[1] = -1;
@@ -834,8 +834,8 @@ static void match_dim_table_init( match_dim_table_t **tbl )
 
 static void match_dim_table_free( match_dim_table_t *mdim_tbl )
 {
-    free(mdim_tbl->objs);
-    free(mdim_tbl);
+    HDfree(mdim_tbl->objs);
+    HDfree(mdim_tbl);
 }
 
 
@@ -860,8 +860,8 @@ void dim_table_add(dim_table_t *dim_tbl, int ref, char* name)
     
     if (dim_tbl->nobjs == dim_tbl->size) {
         dim_tbl->size *= 2;
-        dim_tbl->objs = (dim_name_t*)realloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
-        
+        dim_tbl->objs = (dim_name_t*)HDrealloc(dim_tbl->objs, dim_tbl->size * sizeof(dim_name_t));
+
         for (i = dim_tbl->nobjs; i < dim_tbl->size; i++) {
             dim_tbl->objs[i].ref = -1;
         }
@@ -869,7 +869,7 @@ void dim_table_add(dim_table_t *dim_tbl, int ref, char* name)
     
     i = dim_tbl->nobjs++;
     dim_tbl->objs[i].ref = ref;
-    strcpy(dim_tbl->objs[i].dim_name,name);
+    HDstrcpy(dim_tbl->objs[i].dim_name,name);
 }
 
 
@@ -891,12 +891,12 @@ void dim_table_add(dim_table_t *dim_tbl, int ref, char* name)
 void dim_table_init( dim_table_t **tbl )
 {
     int i;
-    dim_table_t* dim_tbl = (dim_table_t*) malloc(sizeof(dim_table_t));
-    
+    dim_table_t* dim_tbl = (dim_table_t*)HDmalloc(sizeof(dim_table_t));
+
     dim_tbl->size = 20;
     dim_tbl->nobjs = 0;
-    dim_tbl->objs = (dim_name_t*) malloc(dim_tbl->size * sizeof(dim_name_t));
-    
+    dim_tbl->objs = (dim_name_t*)HDmalloc(dim_tbl->size * sizeof(dim_name_t));
+
     for (i = 0; i < dim_tbl->size; i++) {
         dim_tbl->objs[i].ref = -1;
     }
@@ -920,7 +920,7 @@ void dim_table_init( dim_table_t **tbl )
 
 void dim_table_free( dim_table_t *dim_tbl )
 {
-    free(dim_tbl->objs);
-    free(dim_tbl);
+    HDfree(dim_tbl->objs);
+    HDfree(dim_tbl);
 }
 

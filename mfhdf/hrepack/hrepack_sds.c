@@ -429,7 +429,7 @@ int copy_sds(int32 sd_in,
 
 
 
-       if (path) free(path);
+       if (path) HDfree(path);
        return SUCCEED;
    }
    
@@ -650,7 +650,7 @@ int copy_sds(int32 sd_in,
            sm_nelmts = sm_nbytes / p_type_nbytes;
            
            /* the stripmine loop */
-           memset(hs_offset, 0, sizeof hs_offset);
+           HDmemset(hs_offset, 0, sizeof hs_offset);
            
            for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) 
            {
@@ -702,7 +702,7 @@ int copy_sds(int32 sd_in,
            /* free */
            if (sm_buf!=NULL)
            {
-               free(sm_buf);
+            HDfree(sm_buf);
                sm_buf=NULL;
            }
            
@@ -786,7 +786,7 @@ int copy_sds(int32 sd_in,
                    goto out;
                }
            }
-           free(dim_buf);
+           HDfree(dim_buf);
        }
    }
    
@@ -857,9 +857,9 @@ int copy_sds(int32 sd_in,
 
 
    if (path)
-       free(path);
+    HDfree(path);
    if (buf)
-       free(buf);
+    HDfree(buf);
 
    
    return SUCCEED;
@@ -873,9 +873,9 @@ out:
            printf( "Failed to close SDS <%s>\n", path);
    }
    if (path)
-       free(path);
+    HDfree(path);
    if (buf)
-       free(buf);
+    HDfree(buf);
    
    return FAIL;
    
@@ -937,7 +937,7 @@ int copy_sds_attrs(int32 id_in,
         }
         
         if (attr_buf)
-            free(attr_buf);
+            HDfree(attr_buf);
     }
     
     return SUCCEED;
@@ -946,7 +946,7 @@ int copy_sds_attrs(int32 id_in,
 out:
 
     if (attr_buf)
-            free(attr_buf);
+        HDfree(attr_buf);
 
     return FAIL;
 

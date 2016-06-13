@@ -50,8 +50,8 @@ char *argc[];
 	
 	
 
-	strncpy(GIFFileName , argc[1] , VSNAMELENMAX - 1);
-	strncpy(HDFFileName , argc[2] , VSNAMELENMAX - 1);
+    HDstrncpy(GIFFileName , argc[1] , VSNAMELENMAX - 1);
+    HDstrncpy(HDFFileName , argc[2] , VSNAMELENMAX - 1);
 	GIFFileName[VSNAMELENMAX - 1] = '\0';
 	HDFFileName[VSNAMELENMAX - 1] = '\0';
 
@@ -102,18 +102,18 @@ char *argc[];
 	{
 		gifImageDesc = *(GifMemoryStruct.GifImageDesc[i]);
 		if (gifImageDesc.Image != NULL)
-			free(gifImageDesc.Image);
+            HDfree(gifImageDesc.Image);
 	
 		if (GifMemoryStruct.GifGraphicControlExtension[i] != NULL)
-			free(GifMemoryStruct.GifGraphicControlExtension[i]);
+            HDfree(GifMemoryStruct.GifGraphicControlExtension[i]);
 		
 	}
-	free(StartPos);
+    HDfree(StartPos);
 
-	free (GifMemoryStruct.GifHeader);
+    HDfree (GifMemoryStruct.GifHeader);
 	
 	if (GifMemoryStruct.GifApplicationExtension != NULL)
-		free (GifMemoryStruct.GifApplicationExtension);
+        HDfree (GifMemoryStruct.GifApplicationExtension);
 
 	return (0);
 }

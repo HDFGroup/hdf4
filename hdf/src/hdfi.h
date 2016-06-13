@@ -1273,10 +1273,6 @@ correctly.
 #  define HDstrchr(s,c)         (strchr((s),(c)))
 #  define HDstrrchr(s,c)        (strrchr((s),(c)))
 #  define HDstrtol(s,e,b)       (strtol((s),(e),(b)))
-/* non-standard function, not defined on the following machines - */
-#if !(defined IBM6000 || defined ANSISUN )
-#  define HDstrdup(s)      ((char *)strdup((const char *)(s)))
-#endif /* !(etc..) */
 
 
 /**************************************************************************

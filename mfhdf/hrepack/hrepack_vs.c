@@ -103,7 +103,7 @@ int copy_vs( int32 infile_id,
     if ( options->trip==0 ) {
         if (VSdetach (vdata_id)==FAIL)
             printf( "Failed to detach vdata <%s>\n", path_name);
-        if (path) free(path);
+        if (path) HDfree(path);
         return 0;
     }
     
@@ -116,7 +116,7 @@ int copy_vs( int32 infile_id,
     if (VSinquire(vdata_id, &n_records, &interlace_mode, fieldname_list, 
         &vdata_size, vdata_name) == FAIL) {
         printf( "Failed to get info for vdata ref %ld\n", ref);
-        if (path) free(path);
+        if (path) HDfree(path);
         return-1;
     }
     
@@ -130,7 +130,7 @@ int copy_vs( int32 infile_id,
     if ((vdata_out  = VSattach (outfile_id, -1, "w")) == FAIL) {
         printf( "Failed to create new VS <%s>\n", path);
         VSdetach (vdata_id);
-        if (path) free(path);
+        if (path) HDfree(path);
         return -1;
     }
     if (VSsetname (vdata_out, vdata_name)== FAIL) {
@@ -193,7 +193,7 @@ int copy_vs( int32 infile_id,
     }
     if (n_records>0)
     {
-        if ((buf = (uint8 *)malloc( (size_t)(n_records * vdata_size))) == NULL ){
+        if ((buf = (uint8 *)HDmalloc( (size_t)(n_records * vdata_size))) == NULL ){
             printf( "Failed to get memory for new VS <%s>\n", path);
             ret=-1;
             goto out;
@@ -276,10 +276,10 @@ out:
     }
     
     if (path)
-        free(path);
+        HDfree(path);
     if (buf)
-        free(buf);
-    
+        HDfree(buf);
+
     return ret;
 }
 
@@ -308,7 +308,7 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
     VSattrinfo(in, findex, attrindex, attr_name, &attr_type, &n_values, &attr_size);
     
     /* Allocate space for attribute values */
-    if ((values = (VOIDP)malloc((size_t)(attr_size * n_values))) == NULL) {
+    if ((values = (VOIDP)HDmalloc((size_t)(attr_size * n_values))) == NULL) {
         printf( "Cannot allocate %ld values of size %ld for attribute %s",
             n_values, attr_size, attr_name);
         return-1;
@@ -317,19 +317,19 @@ int copy_vdata_attribute(int32 in, int32 out, int32 findex, intn attrindex)
     /* Read attribute from input object */
     if (VSgetattr(in, findex, attrindex, values) == FAIL) {
         printf( "Cannot read attribute %s\n", attr_name);
-        if (values) free(values);
+        if (values) HDfree(values);
         return-1;
     }
     
     /* Write attribute to output object */
     if (VSsetattr(out, findex, attr_name, attr_type, n_values, values) == FAIL) {
         printf( "Cannot write attribute %s\n", attr_name);
-        if (values) free(values);
+        if (values) HDfree(values);
         return-1;
     }
-    
-    if (values) free(values);
-    
+
+    if (values) HDfree(values);
+
     return 1;
 }
 

@@ -363,7 +363,7 @@ uint32 diff_sds(int32 sd1_id,
      sm_nelmts = sm_nbytes / p_type_nbytes;
      
      /* the stripmine loop */
-     memset(hs_offset, 0, sizeof hs_offset);
+            HDmemset(hs_offset, 0, sizeof hs_offset);
      
      for (elmtno = 0; elmtno < p_nelmts; elmtno += hs_nelmts) 
      {
@@ -440,12 +440,12 @@ uint32 diff_sds(int32 sd1_id,
      /* free */
      if (sm_buf1!=NULL)
      {
-         free(sm_buf1);
+                HDfree(sm_buf1);
          sm_buf1=NULL;
      }
      if (sm_buf2!=NULL)
      {
-         free(sm_buf2);
+                HDfree(sm_buf2);
          sm_buf2=NULL;
      }
      
@@ -552,12 +552,12 @@ uint32 diff_sds_attrs(int32 sds1_id,
    continue;
   }
   
-  attr1_buf = (void *) malloc((unsigned)nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
+        attr1_buf = (void *)HDmalloc((unsigned)nelms1*DFKNTsize(dtype1 | DFNT_NATIVE));
   if (!attr1_buf) {
    printf("Out of memory!");
    goto out;;
   }
-  attr2_buf = (void *) malloc((unsigned)nelms2*DFKNTsize(dtype2 | DFNT_NATIVE));
+        attr2_buf = (void *)HDmalloc((unsigned)nelms2*DFKNTsize(dtype2 | DFNT_NATIVE));
   if (!attr2_buf) {
    printf("Out of memory!");
    goto out;
@@ -588,8 +588,8 @@ uint32 diff_sds_attrs(int32 sds1_id,
    nfound++;
   }
 
-  if (attr1_buf) free(attr1_buf);
-  if (attr2_buf) free(attr2_buf);
+  if (attr1_buf) HDfree(attr1_buf);
+  if (attr2_buf) HDfree(attr2_buf);
  
  }
 
@@ -598,10 +598,10 @@ uint32 diff_sds_attrs(int32 sds1_id,
 
 out:
 
- if (attr1_buf) free(attr1_buf);
- if (attr2_buf) free(attr2_buf);
- opt->err_stat = 1;
- return 0;
+    if (attr1_buf) HDfree(attr1_buf);
+    if (attr2_buf) HDfree(attr2_buf);
+    opt->err_stat = 1;
+    return 0;
 }
 
 

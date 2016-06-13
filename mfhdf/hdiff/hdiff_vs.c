@@ -246,8 +246,8 @@ static uint32 vdata_cmp(int32  vs1,
  
  /* compare the data */
  
- buf1 = (uint8 *) malloc((unsigned) (nv1 * vsize1));
- buf2 = (uint8 *) malloc((unsigned) (nv2 * vsize2));
+    buf1 = (uint8 *)HDmalloc((unsigned) (nv1 * vsize1));
+    buf2 = (uint8 *)HDmalloc((unsigned) (nv2 * vsize2));
  if (!buf1 || !buf2) 
  {
   printf("Out of memory!");
@@ -280,7 +280,7 @@ static uint32 vdata_cmp(int32  vs1,
  {
   for (i=0; i<nv1; i++)
   {
-   if (memcmp(b1, b2, (size_t)vsize1) == 0)
+            if (HDmemcmp(b1, b2, (size_t)vsize1) == 0)
    {
     b1 += vsize1;   
     b2 += vsize2;
@@ -376,8 +376,8 @@ static uint32 vdata_cmp(int32  vs1,
   
  }
  
- if (buf1)free((char *) buf1);
- if (buf2)free((char *) buf2);
+    if (buf1) HDfree((char *) buf1);
+    if (buf2) HDfree((char *) buf2);
 
  return nfound;
 }

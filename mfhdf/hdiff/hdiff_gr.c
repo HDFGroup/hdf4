@@ -281,8 +281,8 @@ uint32 diff_gr( int32 gr1_id,
 
  GRendaccess(ri1_id);
  GRendaccess(ri2_id);
- if (buf1) free(buf1);
- if (buf2) free(buf2);
+ if (buf1) HDfree(buf1);
+ if (buf2) HDfree(buf2);
 
 
  return nfound;
@@ -297,8 +297,8 @@ out:
     GRendaccess(ri1_id);
  if (ri2_id!=-1)
     GRendaccess(ri2_id);
- if (buf1) free(buf1);
- if (buf2) free(buf2);
+ if (buf1) HDfree(buf1);
+ if (buf2) HDfree(buf2);
 
  return 0;
 }

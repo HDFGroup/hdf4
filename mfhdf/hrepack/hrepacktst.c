@@ -127,11 +127,11 @@ int read_data(const char* fname)
     
     if ( g_image_data != NULL )
     {
-        free( g_image_data );
+        HDfree( g_image_data );
         g_image_data=NULL;
     }
     
-    g_image_data = (unsigned char*)malloc(w*h*color_planes*sizeof(unsigned char));
+    g_image_data = (unsigned char*)HDmalloc(w*h*color_planes*sizeof(unsigned char));
     
     for (i = 0; i < h*w*color_planes ; i++)
     {
@@ -476,9 +476,9 @@ out:
     GRendaccess(ri1_id);
     GRendaccess(ri2_id);
     if (buf1)
-        free(buf1);
+        HDfree(buf1);
     if (buf2)
-        free(buf2);
+        HDfree(buf2);
     return cmp;
     
 }
@@ -982,10 +982,10 @@ int add_gr_ffile(const char* name_file,
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if ( srcdir )
     {
-        strcpy(data_file, srcdir);
-        strcat(data_file, "/");
+        HDstrcpy(data_file, srcdir);
+        HDstrcat(data_file, "/");
     }
-    strcat( data_file, name_file);
+    HDstrcat( data_file, name_file);
 
     if ( read_data(data_file) > 0 )
     {
@@ -1049,7 +1049,7 @@ int add_gr_ffile(const char* name_file,
     
     if ( g_image_data != NULL )
     {
-        free( g_image_data );
+        HDfree( g_image_data );
         g_image_data=NULL;
     }
     
@@ -1336,10 +1336,10 @@ int add_r8(const char* image_file,
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if ( srcdir )
     {
-        strcpy(data_file, srcdir);
-        strcat(data_file, "/");
+        HDstrcpy(data_file, srcdir);
+        HDstrcat(data_file, "/");
     }
-    strcat( data_file, image_file);
+    HDstrcat( data_file, image_file);
 
     if ( read_data(data_file) > 0 )
     {
@@ -1374,7 +1374,7 @@ int add_r8(const char* image_file,
     
     if ( g_image_data != NULL )
     {
-        free( g_image_data );
+        HDfree( g_image_data );
         g_image_data=NULL;
     }
     
@@ -1411,10 +1411,10 @@ int add_r24(const char* image_file,
     /* compose the name of the file to open, using the srcdir, if appropriate */
     if ( srcdir )
     {
-        strcpy(data_file, srcdir);
-        strcat(data_file, "/");
+        HDstrcpy(data_file, srcdir);
+        HDstrcat(data_file, "/");
     }
-    strcat( data_file, image_file);
+    HDstrcat( data_file, image_file);
 
     if ( read_data(data_file) > 0 )
     {
@@ -1451,7 +1451,7 @@ int add_r24(const char* image_file,
     
     if ( g_image_data != NULL )
     {
-        free( g_image_data );
+        HDfree( g_image_data );
         g_image_data=NULL;
     }
     

@@ -105,9 +105,9 @@ char     *GIFFileName;
 	for (i = 0 ; i < CommentCount ; i++) {
 		sprintf(CommentName , "Comment Extension Data %d" , (int)i);
 		status = Vsetattr (vgroup_id , CommentName , DFNT_CHAR8 , (int32)(GifMemoryStruct.GifCommentExtension[i])->DataSize , (VOIDP)(GifMemoryStruct.GifCommentExtension[i])->CommentData);
-		free(GifMemoryStruct.GifCommentExtension[i]);
+        HDfree(GifMemoryStruct.GifCommentExtension[i]);
 	}
-	free(GifMemoryStruct.GifCommentExtension);
+    HDfree(GifMemoryStruct.GifCommentExtension);
 	
 	for (i = 0 ; i < ApplicationCount ; i++) {
 		sprintf(ApplicationName , "Application Extension Data %d", (int)i);

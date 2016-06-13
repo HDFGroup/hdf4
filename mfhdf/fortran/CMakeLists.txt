@@ -166,9 +166,9 @@ if (BUILD_SHARED_LIBS)
 endif (BUILD_SHARED_LIBS)
 
 install (
-    TARGETS 
+    TARGETS
         ${install_targets}
-    EXPORT 
+    EXPORT
         ${HDF4_EXPORTED_TARGETS}
     LIBRARY DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT fortlibraries
     ARCHIVE DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT fortlibraries

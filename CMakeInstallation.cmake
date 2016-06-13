@@ -271,7 +271,11 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/release_notes/RELEASE.txt")
   endif (EXISTS "${HDF4_SOURCE_DIR}/release_notes")
   set (CPACK_PACKAGE_RELOCATABLE TRUE)
-  set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${CPACK_PACKAGE_VERSION}")
+  if (OVERRIDE_INSTALL_VERSION)
+    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${OVERRIDE_INSTALL_VERSION}")
+  else (OVERRIDE_INSTALL_VERSION)
+    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}/${CPACK_PACKAGE_NAME}/${CPACK_PACKAGE_VERSION}")
+  endif (OVERRIDE_INSTALL_VERSION)
   set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}/hdf.bmp")
 
   set (CPACK_GENERATOR "TGZ")
@@ -300,7 +304,11 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     # set the package header icon for MUI
     set (CPACK_PACKAGE_ICON "${HDF_RESOURCES_EXT_DIR}\\\\hdf.bmp")
     set (CPACK_NSIS_DISPLAY_NAME "${CPACK_NSIS_PACKAGE_NAME}")
-    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
+    if (OVERRIDE_INSTALL_VERSION)
+      set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_NAME}\\\\${OVERRIDE_INSTALL_VERSION}")
+    else (OVERRIDE_INSTALL_VERSION)
+      set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_VENDOR}\\\\${CPACK_PACKAGE_NAME}\\\\${CPACK_PACKAGE_VERSION}")
+    endif (OVERRIDE_INSTALL_VERSION)
     set (CPACK_NSIS_CONTACT "${HDF4_PACKAGE_BUGREPORT}")
     set (CPACK_NSIS_MODIFY_PATH ON)
 
@@ -392,11 +400,36 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     set (CPACK_DEBIAN_PACKAGE_SECTION "Libraries")
     set (CPACK_DEBIAN_PACKAGE_MAINTAINER "${HDF4_PACKAGE_BUGREPORT}")
 
+#    list (APPEND CPACK_GENERATOR "RPM")
+    set (CPACK_RPM_PACKAGE_RELEASE "1")
     set (CPACK_RPM_COMPONENT_INSTALL ON)
     set (CPACK_RPM_PACKAGE_RELOCATABLE ON)
     set (CPACK_RPM_PACKAGE_LICENSE "BSD-style")
     set (CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
     set (CPACK_RPM_PACKAGE_URL "${HDF4_PACKAGE_URL}")
+    set (CPACK_RPM_PACKAGE_SUMMARY "HDF is a unique technology suite that makes possible the management of extremely large and complex data collections.")
+    set (CPACK_RPM_PACKAGE_DESCRIPTION
+        "The HDF technology suite includes:
+
+    * A versatile data model that can represent very complex data objects and a wide variety of metadata.
+
+    * A completely portable file format with no limit on the number or size of data objects in the collection.
+
+    * A software library that runs on a range of computational platforms, from laptops to massively parallel systems, and implements a high-level API with C, C++, Fortran 90, and Java interfaces.
+
+    * A rich set of integrated performance features that allow for access time and storage space optimizations.
+
+    * Tools and applications for managing, manipulating, viewing, and analyzing the data in the collection.
+
+The HDF data model, file format, API, library, and tools are open and distributed without charge.
+"
+    )
+
+    #-----------------------------------------------------------------------------
+    # Configure the spec file for the install RPM
+    #-----------------------------------------------------------------------------
+#    configure_file ("${HDF5_RESOURCES_DIR}/hdf5.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF5_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
+#    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF5_PACKAGE_NAME}.spec")
   endif (WIN32)
 
   # By default, do not warn when built on machines using only VS Express:
@@ -439,21 +472,10 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
     endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   endif (HDF4_PACKAGE_EXTLIBS)
 
-  set (CPACK_ALL_INSTALL_TYPES Full Developer User)
-  set (CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Everything")
+  include (CPack)
 
-  set(CPACK_COMPONENTS_ALL libraries headers hdfdocuments configinstall Unspecified)
-  if (HDF4_BUILD_FORTRAN)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} fortlibraries)
-  endif (HDF4_BUILD_FORTRAN)
-  if (HDF4_BUILD_TOOLS)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} toolsapplications)
-  endif (HDF4_BUILD_TOOLS)
-  if (HDF4_BUILD_UTILS)
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} utilsapplications)
-  endif (HDF4_BUILD_UTILS)
-
-include (CPack)
+  cpack_add_install_type(Full DISPLAY_NAME "Everything")
+  cpack_add_install_type(Developer)
 
   cpack_add_component_group(Runtime)
 

@@ -195,8 +195,8 @@ int hdiff_list_vg(const char* fname,
     * use the nlones returned to allocate sufficient space for the
     * buffer ref_array to hold the reference numbers of all lone vgroups,
     */
-        ref_array = (int32 *) malloc(sizeof(int32) * nlones);
-        
+        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+
        /*
         * and call Vlone again to retrieve the reference numbers into 
         * the buffer ref_array.
@@ -297,8 +297,8 @@ int hdiff_list_vg(const char* fname,
             ntagrefs = Vntagrefs(vg_id);
             if ( ntagrefs > 0 )
             {
-                tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
                 Vgettagrefs(vg_id, tags, refs, ntagrefs);
                 
                 insert_vg(fname,
@@ -312,11 +312,11 @@ int hdiff_list_vg(const char* fname,
                     table,
                     td1,
                     td2);
-                
-                if (tags ) 
-                    free (tags);
-                if (refs) 
-                    free (refs);
+
+                if (tags )
+                    HDfree(tags);
+                if (refs)
+                    HDfree(refs);
             }
             
             if(Vdetach (vg_id)==FAIL)
@@ -325,14 +325,14 @@ int hdiff_list_vg(const char* fname,
                 goto out;
             }
 
-            free (vg_name);
-            
+            HDfree(vg_name);
+
         } /* for */
         
         
         /* free the space allocated */
-        if (ref_array) 
-            free (ref_array);
+        if (ref_array)
+            HDfree(ref_array);
     } /* if */
  
  
@@ -348,8 +348,8 @@ int hdiff_list_vg(const char* fname,
 out:
  
  Vend (file_id);
- if (ref_array) 
-     free (ref_array);
+ if (ref_array)
+    HDfree(ref_array);
  return FAIL;
  
  
@@ -456,8 +456,8 @@ int insert_vg(const char* fname,
             ntagrefs  = Vntagrefs(vg_id);
             if ( ntagrefs > 0 )
             {
-                tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
                 Vgettagrefs(vg_id, tags, refs, ntagrefs);
                 
                 /* recurse */
@@ -472,17 +472,17 @@ int insert_vg(const char* fname,
                     table,
                     td1,
                     td2);
-                
-                free (tags);
-                free (refs);
+
+                HDfree(tags);
+                HDfree(refs);
             }
             if(Vdetach (vg_id)==FAIL)
             {
                 printf("Error: Could not detach group <%s>\n", vg_name);
             }
             if (path)
-                free(path);
-            
+                HDfree(path);
+
             break;
             
             
@@ -702,8 +702,8 @@ int hdiff_list_vs(int32 file_id,
     * use the nlones returned to allocate sufficient space for the
     * buffer ref_array to hold the reference numbers of all lone vgroups,
     */
-        ref_array = (int32 *) malloc(sizeof(int32) * nlones);
-        
+        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
+
        /*
         * and call VSlone again to retrieve the reference numbers into 
         * the buffer ref_array.
@@ -735,7 +735,7 @@ int hdiff_list_vs(int32 file_id,
         
         
         /* free the space allocated */
-        if (ref_array) free (ref_array);
+        if (ref_array) HDfree (ref_array);
     } /* if */
     
     /* terminate access to the VS interface */
@@ -1134,8 +1134,8 @@ int  insert_sds(int32 file_id,
     SDendaccess(sds_id);
     
     if (path)
-        free(path);
-    
+        HDfree(path);
+
     return 0;
     
 }
@@ -1304,8 +1304,8 @@ int  insert_gr(int32 file_id,
     GRendaccess(ri_id);
     
     if (path)
-        free(path);
-    
+        HDfree(path);
+
     return 0;
     
 }
@@ -1450,8 +1450,8 @@ out:
     VSdetach (vdata_id);
     
     if (path)
-        free(path);
-    
+        HDfree(path);
+
     return ret;
 }
 
@@ -1488,7 +1488,7 @@ int is_reserved(char*vg_class)
         }
         
         /* class and name(partial) for chunk table i.e. Vdata */
-        if( (strncmp(vg_class,"_HDF_CHK_TBL_",13)==0))
+        if( (HDstrncmp(vg_class,"_HDF_CHK_TBL_",13)==0))
         {
             ret=1;
         }
@@ -1518,15 +1518,15 @@ char *get_path(char*path_name,
     /* initialize path */
     if (path_name!=NULL) 
     {
-        path = (char*) malloc(strlen(path_name) + strlen(obj_name) + 2);
-        strcpy( path, path_name );
-        strcat( path, "/" );
-        strcat( path, obj_name ); 
+        path = (char*)HDmalloc(strlen(path_name) + strlen(obj_name) + 2);
+        HDstrcpy( path, path_name );
+        HDstrcat( path, "/" );
+        HDstrcat( path, obj_name );
     }
     else
     {
-        path = (char*) malloc(strlen(obj_name) + 1);
-        strcpy( path, obj_name ); 
+        path = (char*)HDmalloc(strlen(obj_name) + 1);
+        HDstrcpy( path, obj_name );
     }
     return path;
 }

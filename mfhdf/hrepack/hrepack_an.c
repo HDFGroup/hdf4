@@ -204,19 +204,19 @@ int copy_an_data(int32 infile_id,
         */
         if (is_label)
             ann_length++;
-        
-        if ((buf = (char *)malloc((ann_length)*sizeof(int8)))==NULL ) {
+
+        if ((buf = (char *)HDmalloc((ann_length)*sizeof(int8)))==NULL ) {
             printf( "Failed to get memory for AN %d of <%s>\n", i, path);
             continue;
         }
         if(ANreadann(ann_id,buf,ann_length)==FAIL){
             printf( "Failed to read AN %d of <%s>\n", i, path);
-            if (buf) free(buf);
+            if (buf) HDfree(buf);
             continue;
         }
         if(ANendaccess(ann_id)==FAIL){
             printf( "Failed to end AN %d of <%s>\n", i, path);
-            if (buf) free(buf);
+            if (buf) HDfree(buf);
             continue;
         }
         /*-------------------------------------------------------------------------
@@ -234,10 +234,10 @@ int copy_an_data(int32 infile_id,
         }
         if(ANendaccess(ann_out)==FAIL){
             printf( "Failed to end AN %d of <%s>\n", i, path);
-            if (buf) free(buf);
+            if (buf) HDfree(buf);
             continue;
         }
-        if (buf) free(buf);
+        if (buf) HDfree(buf);
     }
     
     /* Terminate access to the AN interface */

@@ -401,7 +401,7 @@ int list_vg(int32 infile_id,
         * use the nlones returned to allocate sufficient space for the
         * buffer ref_array to hold the reference numbers of all lone vgroups,
         */
-        ref_array = (int32 *) malloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
         
        /*
         * and call Vlone again to retrieve the reference numbers into 
@@ -470,7 +470,7 @@ int list_vg(int32 infile_id,
                 }
                 continue;
             }
-            if(strcmp(vg_name,GR_NAME)==0) 
+            if(HDstrcmp(vg_name,GR_NAME)==0)
             {
                 if (Vdetach (vg_id)==FAIL)
                 {
@@ -532,8 +532,8 @@ int list_vg(int32 infile_id,
             ntagrefs = Vntagrefs(vg_id);
             if ( ntagrefs > 0 )
             {
-                tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
                 if (Vgettagrefs(vg_id, tags, refs, ntagrefs)<0)
                     goto out;
                 
@@ -555,9 +555,9 @@ int list_vg(int32 infile_id,
                     goto out;
                 }
                 
-                free (tags);
+                HDfree(tags);
                 tags=NULL;
-                free (refs);
+                HDfree(refs);
                 refs=NULL;
             }
             
@@ -575,14 +575,14 @@ int list_vg(int32 infile_id,
                 }
             }
 
-            free (vg_name);
+            HDfree(vg_name);
             
   } /* for nlones */
   
   
   /* free the space allocated */
   if (ref_array!=NULL) 
-      free (ref_array);
+    HDfree(ref_array);
 
  } /* if  nlones */
  
@@ -616,11 +616,11 @@ out:
  
  /* free the space allocated */
  if (ref_array!=NULL) 
-     free (ref_array);
+    HDfree(ref_array);
  if (tags!=NULL) 
-     free (tags);
+    HDfree(tags);
  if (refs!=NULL) 
-     free (refs);
+    HDfree(refs);
  
  return FAIL;
  
@@ -727,7 +727,7 @@ int vgroup_insert(int32 infile_id,
                 }
                 continue;
             }
-            if(strcmp(vg_name,GR_NAME)==0) 
+            if(HDstrcmp(vg_name,GR_NAME)==0)
             {
                 if (Vdetach (vg_id)==FAIL)
                 {
@@ -824,8 +824,8 @@ int vgroup_insert(int32 infile_id,
                 ntagrefs  = Vntagrefs(vg_id);
                 if ( ntagrefs > 0 )
                 {
-                    tags = (int32 *) malloc(sizeof(int32) * ntagrefs);
-                    refs = (int32 *) malloc(sizeof(int32) * ntagrefs);
+                    tags = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
+                    refs = (int32 *)HDmalloc(sizeof(int32) * ntagrefs);
                     if (Vgettagrefs(vg_id, tags, refs, ntagrefs)<0)
                         goto out;
                     /* recurse */
@@ -847,15 +847,15 @@ int vgroup_insert(int32 infile_id,
                         options)<0) {
                         goto out;
                     }
-                    free (tags);
+                    HDfree(tags);
                     tags=NULL;
-                    free (refs);
+                    HDfree(refs);
                     refs=NULL;
                 } /* ntagrefs > 0 */
                 
                 
                 if (path)
-                    free(path);
+                    HDfree(path);
                 
             } /* check if already visited */
             
@@ -952,9 +952,9 @@ int vgroup_insert(int32 infile_id,
 out:
  
  if (tags!=NULL)
-     free (tags);
+    HDfree(tags);
  if (refs!=NULL)
-     free (refs);
+    HDfree(refs);
  
  return FAIL;
 }
@@ -1160,7 +1160,7 @@ int list_vs(int32 infile_id,
         * use the nlones returned to allocate sufficient space for the
         * buffer ref_array to hold the reference numbers of all lone vgroups,
         */
-        ref_array = (int32 *) malloc(sizeof(int32) * nlones);
+        ref_array = (int32 *)HDmalloc(sizeof(int32) * nlones);
         
        /*
         * and call VSlone again to retrieve the reference numbers into 
@@ -1198,7 +1198,7 @@ int list_vs(int32 infile_id,
         /* free the space allocated */
         if (ref_array) 
         {
-            free (ref_array);
+            HDfree(ref_array);
             ref_array = NULL;
         }
     } /* if */
@@ -1232,7 +1232,7 @@ out:
  
  /* free the space allocated */
  if (ref_array!=NULL) 
-     free (ref_array);
+    HDfree(ref_array);
   
  return FAIL;
 }
@@ -1358,7 +1358,7 @@ int list_an(int32 infile_id,
         ann_length = ANannlen (ann_id);
         
         /* Allocate space for the buffer to hold the data label text */
-        ann_buf = malloc ((ann_length+1) * sizeof (char));
+        ann_buf = HDmalloc((ann_length+1) * sizeof (char));
         
        /*
         * Read and display the file label.  Note that the size of the buffer,
@@ -1394,7 +1394,7 @@ int list_an(int32 infile_id,
         
         /* Free the space allocated for the annotation buffer */
         if (ann_buf)
-            free (ann_buf);
+            HDfree(ann_buf);
     }
     
     /*-------------------------------------------------------------------------
@@ -1411,7 +1411,7 @@ int list_an(int32 infile_id,
         ann_length = ANannlen (ann_id);
         
         /* Allocate space for the buffer to hold the data label text */
-        ann_buf = malloc ((ann_length+1) * sizeof (char));
+        ann_buf = HDmalloc((ann_length+1) * sizeof (char));
         
         if (ANreadann (ann_id, ann_buf, ann_length+1)==FAIL)
         {
@@ -1439,7 +1439,7 @@ int list_an(int32 infile_id,
         /* Free the space allocated for the annotation buffer */
         if (ann_buf)
         {
-            free (ann_buf);
+            HDfree(ann_buf);
             ann_buf = NULL;
         }
     }
@@ -1460,7 +1460,7 @@ out:
         printf( "Could not end AN\n");
     }
     if (ann_buf!=NULL)
-        free (ann_buf);
+        HDfree(ann_buf);
     
     return FAIL;
     

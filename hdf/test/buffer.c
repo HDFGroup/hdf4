@@ -448,9 +448,9 @@ main(int argc, char *argv[])
         exit(1);
     }
 
-    out_buf = malloc(elemsize * sizeof(uint8));
-    in_buf = malloc(elemsize * sizeof(uint8));    
-        
+    out_buf = HDmalloc(elemsize * sizeof(uint8));
+    in_buf = HDmalloc(elemsize * sizeof(uint8));
+
     Verbosity = 4;  /* Default Verbosity is Low */
 
     Hgetlibversion(&lmajor, &lminor, &lrelease, lstring);
@@ -553,8 +553,8 @@ main(int argc, char *argv[])
         remove(hfilename);
     }
 
-    free(out_buf);
-    free(in_buf);
+    HDfree(out_buf);
+    HDfree(in_buf);
 
     MESSAGE(6, printf("Finished buffered element test\n");
         )

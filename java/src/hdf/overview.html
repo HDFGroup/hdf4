@@ -1,0 +1,94 @@
+<body>
+
+<h1>Java HDF Interface (JHI4)</h1>
+
+<h2><u>What it is</u></h2>
+The <b>Java HDF Interface (JHI4)</b> is a Java package
+(<a href="../../hdf-java-html/javadocs/hdf/hdflib/package-summary.html">hdf.hdflib</a>)
+that ``wraps around'' the HDF library.
+<p />There are a large number of functions in the HDF
+library (version 4.2). Some of the functions are not supported in JHI4.
+
+<center><table BORDER=1 COLS=1 WIDTH="71%" BGCOLOR="#dbeaf5" >
+<tr>
+<td>
+<center>Note: The JHI4 only supports HDF4.</center>
+</td>
+</tr>
+</table></center>
+
+<p>The JHI4 may be used by any Java application that needs to access HDF
+files. It is extremely important to emphasize that <i>this package is not
+a pure Java implementation of the HDF library.</i> The JHI4 calls the
+same HDF library that is used by C or FORTRAN programs. (Note that this
+product cannot be used in most network browsers because it accesses the
+local disk using native code.)
+<p>The Java HDF Interface consists of Java classes and a dynamically
+linked native library. The Java classes declare native methods, and the
+library contains C functions which implement the native methods. The C
+functions call the standard HDF library, which is linked as part of the
+same library on most platforms.
+<p>The central part of the JHI4 is the Java class <i>
+<a href="../../hdf-java-html/javadocs/hdf/hdflib/HDFLibrary.html">hdf.hdflib.HDFLibrary</a></i>.
+The <i>HDFLibrary</i> class calls the standard (<i>i.e.</i>, `native' code) HDF
+library, with native methods for most of the HDF5functions.
+
+<h3>
+<u>How to use it</u></h3>
+The JHI4 is used by Java classes to call the HDF library, in order to
+create HDF files, and read and write data in existing HDF files.
+<p>For example, the HDF library has the function <b>Hopen</b> to open
+an HDF file. The Java interface is the class <i>
+<a href="../../hdf-java-html/javadocs/hdf/hdflib/HDFLibrary.html">hdf.hdflib.HDFLibrary</a></i>,
+which has a method:
+<pre><b>static native int Hopen(String filename, int flags, int access );</b></pre>
+The native method is implemented in C using the
+<a href="http://java.sun.com/javase/6/docs/technotes/guides/jni/index.html">Java
+Native Method Interface </a>(JNI). This is written something like the following:
+<pre><b>JNIEXPORT jint
+JNICALL Java_hdf_hdflib_HDFLibrary_Hopen
+(
+&nbsp;JNIEnv *env,
+&nbsp;jclass class,
+&nbsp;jstring hdfFile,
+&nbsp;jint flags,
+&nbsp;jint access)
+&nbsp;{
+
+&nbsp;/* ...convert Java String to (char *) */
+
+&nbsp;/* call the HDF library */
+&nbsp;retVal = Hopen((char *)file, (unsigned)flags, (hid_t)access );
+
+&nbsp;/* ... */
+}</b></pre>
+This C function calls the HDF library and returns the result appropriately.
+<p>There is one native method for each HDF entry point (several hundred
+in all), which are compiled with the HDF library into a dynamically loaded
+library (<i>libhdf_java</i>). Note that this library must be built for each
+platform.
+<p>To call the HDF `<b><i>Hopen</i></b>' function, a Java program would
+import the package '<i><b>hdf.hdflib.*</b>'</i>, and invoke the method
+on the class '<b><i>HDFLibrary</i></b>'. The Java program would look something
+like this:
+<pre><b>import hdf.hdflib.*;
+
+{
+&nbsp;/* ... */
+
+&nbsp;try {
+&nbsp;file = HDFLibrary.Hopen("myFile.hdf", flags, access );
+&nbsp;} catch (HDFException ex) {
+&nbsp;//...
+&nbsp;}
+
+&nbsp;/* ... */
+}</b></pre>
+The <i><b>HDFLibrary</b> </i>class automatically loads the native method implementations
+and the HDF library.
+
+<h3>
+<a NAME="DOWNLOAD"></a>To Obtain</h3>
+The JHI4 is included with the <a href="http://www.hdfgroup.org/HDF/index.html">HDF</a> library.
+
+</body>

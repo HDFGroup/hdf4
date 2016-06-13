@@ -401,11 +401,8 @@ HDFLIBAPI intn Hdeldd(int32 file_id,      /* IN: File ID the tag/refs are in */
 
 #endif /* defined MALLOC_CHECK */
 
-#if defined IBM6000 || defined SUN
     HDFPUBLIC extern char *HDstrdup
                 (const char *s);
-
-#endif
 
     HDFLIBAPI intn HDc2fstr
                 (char * str, intn len);

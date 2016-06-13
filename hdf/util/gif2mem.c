@@ -200,7 +200,7 @@ BYTE *MemGif;
 			** Decompress the Image
 			*/
 			gifImageDesc[ImageCount-1]->Image = Decompress(gifImageDesc[ImageCount-1] , gifHead);
-			free(gifImageDesc[ImageCount-1]->GIFImage);
+            HDfree(gifImageDesc[ImageCount-1]->GIFImage);
 
 			/* 
 			** Convert the local palette into an HDF compatible palette

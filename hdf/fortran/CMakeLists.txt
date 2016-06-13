@@ -127,7 +127,7 @@ if (BUILD_SHARED_LIBS)
   set (install_targets ${install_targets} ${HDF4_SRC_FORTRAN_LIBSH_TARGET})
 endif (BUILD_SHARED_LIBS)
 
-  
+
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
 endif (BUILD_TESTING)
@@ -160,7 +160,7 @@ if (HDF4_EXPORTED_TARGETS)
   endif (BUILD_SHARED_LIBS)
 
   INSTALL (
-      TARGETS 
+      TARGETS
           ${install_targets}
       EXPORT
           ${HDF4_EXPORTED_TARGETS}
