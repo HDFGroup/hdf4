@@ -310,7 +310,6 @@ JUnit version 4.11
 .testVSsizeofNullFields
 .testVSsetnameIllegalId
 .testVSgetattrNullData
-.testVSreadIllegalId
 .testVSsetattrNullAttributeName
 .testVSQueryvsizeIllegalArgument
 .testVSQueryinterlaceIllegalId

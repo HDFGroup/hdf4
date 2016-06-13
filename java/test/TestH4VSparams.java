@@ -279,10 +279,10 @@ public class TestH4VSparams {
         HDFLibrary.VSread(0, null, 0, 0);
     }
 
-    @Test(expected = HDFException.class)
-    public void testVSreadIllegalId() throws Throwable {
-        HDFLibrary.VSread(-1, new byte[] { }, 0, 0);
-    }
+//    @Test(expected = HDFException.class)
+//    public void testVSreadIllegalId() throws Throwable {
+//        HDFLibrary.VSread(-1, new byte[] { }, 0, 0);
+//    }
 
 //    @Test(expected = HDFException.class)
 //    public void testVSseekIllegalId() throws Throwable {
