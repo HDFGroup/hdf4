@@ -32,15 +32,26 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldesize
 (JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-    return (VFfieldesize((int32) vdata_id,  (int32) field_index));
+    int32   retVal;
+
+    retVal = VFfieldesize((int32)vdata_id, (int32)field_index);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldisize
 (JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
+    int32   retVal;
 
-    return (VFfieldisize((int32) vdata_id,  (int32) field_index));
+    retVal = VFfieldisize((int32)vdata_id, (int32)field_index);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jstring JNICALL
@@ -64,21 +75,39 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldorder
 (JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-        return (VFfieldorder((int32) vdata_id,  (int32) field_index));
+    int32   retVal;
+
+    retVal = VFfieldorder((int32)vdata_id, (int32)field_index);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VFfieldtype
 (JNIEnv *env, jclass clss, jlong vdata_id, int field_index)
 {
-        return (jlong)VFfieldtype((int32) vdata_id,  (int32) field_index);
+    int32   retVal;
+
+    retVal = VFfieldtype((int32)vdata_id, (int32)field_index);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)retVal;
 }
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VFnfields
 (JNIEnv *env, jclass clss, jlong key)
 {
-    return (VFnfields((int32) key));
+    int32   retVal;
+
+    retVal = VFnfields((int32)key);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 #ifdef __cplusplus

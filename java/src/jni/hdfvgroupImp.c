@@ -48,12 +48,13 @@ Java_hdf_hdflib_HDFLibrary_Vattach
 {
     int   retVal;
     const char  *access;
+    HFILEID        id = (HFILEID)fid;
 
     PIN_JAVA_STRING(accessmode, access);
 
     if (access != NULL) {
         /* open HDF file specified by hdf_HDF_file */
-        retVal = Vattach(fid, vgroup_ref, (char *)access);
+        retVal = Vattach(id, (int32)vgroup_ref, access);
 
         UNPIN_JAVA_STRING(accessmode, access);
 
@@ -79,7 +80,8 @@ JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_Vend
 (JNIEnv *env, jclass clss, jlong fid)
 {
-    Vend(fid);
+    HFILEID        id = (HFILEID)fid;
+    Vend(id);
 }
 
 

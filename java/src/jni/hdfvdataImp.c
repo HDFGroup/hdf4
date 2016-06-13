@@ -32,14 +32,15 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VSattach
 (JNIEnv *env, jclass clss, jlong fid, jint vdata_ref, jstring accessmode)
 {
-    int   retVal;
-    const char  *access;
+    int32          retVal;
+    const char    *access;
+    HFILEID        id = (HFILEID)fid;
 
     PIN_JAVA_STRING(accessmode, access);
 
     if (access != NULL) {
         /* open HDF file specified by hdf_HDF_file */
-        retVal = VSattach(fid, vdata_ref, (char *)access);
+        retVal = VSattach(id, (int32)vdata_ref, access);
 
         UNPIN_JAVA_STRING(accessmode, access);
 
@@ -54,14 +55,25 @@ JNIEXPORT void JNICALL
 Java_hdf_hdflib_HDFLibrary_VSdetach
 (JNIEnv *env, jclass clss, jlong vdata_id)
 {
-    VSdetach((int32)vdata_id);
+    int32   retVal;
+
+    retVal = VSdetach((int32)vdata_id);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
 }
 
 JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VSgetid
 (JNIEnv *env, jclass clss, jlong fid, jint vdata_ref)
 {
-    return (jlong)VSgetid((int32)fid, (int32)vdata_ref);
+    int32   retVal;
+    HFILEID id = (HFILEID)fid;
+
+    retVal = VSgetid(id, (int32)vdata_ref);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jlong)retVal;
 }
 
 JNIEXPORT void JNICALL
@@ -166,7 +178,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSelts
 (JNIEnv *env, jclass clss, jlong vdata_id)
 {
-    return(VSelts((int32)vdata_id));
+    int32        retVal;
+
+    retVal = VSelts((int32)vdata_id);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -326,7 +344,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSgetinterlace
 (JNIEnv *env, jclass clss, jlong vdata_id)
 {
-    return(VSgetinterlace((int32)vdata_id));
+    int32        retVal;
+
+    retVal = VSgetinterlace((int32)vdata_id);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 
@@ -544,7 +568,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSseek
 (JNIEnv *env, jclass clss, jlong vdata_id, jint nrecord)
 {
-    return(VSseek((int32)vdata_id, (int32)nrecord));
+    int32        retVal;
+
+    retVal = VSseek((int32)vdata_id, (int32)nrecord);
+    if (retVal == FAIL)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -577,7 +607,6 @@ Java_hdf_hdflib_HDFLibrary_VSsetinterlace
 
     /* set the interlace for Vdata */
     retVal = VSsetinterlace((int32)vdata_id, (int32)interlace);
-
     if (retVal == FAIL)
         CALL_ERROR_CHECK();
 
@@ -613,7 +642,6 @@ Java_hdf_hdflib_HDFLibrary_VSappendable
     int32 rval;
 
     rval = VSappendable((int32) vkey, (int32) block_size);
-
     if (rval == FAIL)
         CALL_ERROR_CHECK();
 
@@ -670,7 +698,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSgetversion
 (JNIEnv *env, jclass clss, jint key)
 {
-    return (VSgetversion((int32) key));
+    int32        retVal;
+
+    retVal = VSgetversion((int32) key);
+    if (retVal <= 0)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT void JNICALL
@@ -907,8 +941,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSfnattrs
 (JNIEnv *env, jclass clss, jlong id, jint attr)
 {
+    intn        retVal;
 
-    return (VSfnattrs((int32)id, (int32)attr));
+    retVal = VSfnattrs((int32)id, (int32)attr);
+    if (retVal <= 0)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jboolean JNICALL
@@ -963,7 +1002,13 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSnattrs
 (JNIEnv *env, jclass clss, jlong id)
 {
-    return (VSnattrs((int32) id));
+    intn        retVal;
+
+    retVal = VSnattrs((int32)id);
+    if (retVal <= 0)
+        CALL_ERROR_CHECK();
+
+    return (jint)retVal;
 }
 
 JNIEXPORT jboolean JNICALL
