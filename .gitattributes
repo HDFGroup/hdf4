@@ -107,6 +107,8 @@ java/src/hdf/hdflib/HDFSKPHUFFCompInfo.java -text
 java/src/hdf/hdflib/HDFSZIPCompInfo.java -text
 java/src/hdf/overview.html -text
 java/src/jni/CMakeLists.txt -text
+java/src/jni/Makefile.am -text
+java/src/jni/Makefile.in -text
 java/src/jni/h4jni.h -text
 java/src/jni/hdfImp.c -text
 java/src/jni/hdfanImp.c -text
