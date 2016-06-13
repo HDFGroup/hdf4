@@ -363,5 +363,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (362 tests)
+OK (361 tests)
 
