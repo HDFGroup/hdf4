@@ -1079,7 +1079,8 @@ AC_CONFIG_FILES([Makefile
                  java/examples/Makefile])
 
 AC_CONFIG_COMMANDS([.classes], [], [$MKDIR_P java/src/.classes;
-                $MKDIR_P java/test/.classes])
+                $MKDIR_P java/test/.classes;
+                $MKDIR_P java/examples/.classes])
 
 AC_OUTPUT
 
