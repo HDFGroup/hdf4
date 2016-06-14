@@ -169,12 +169,14 @@ mfhdf/dumper/testfiles/Example6.hdf -text
 mfhdf/dumper/testfiles/IMCOMP.hdf -text
 mfhdf/dumper/testfiles/Image_with_Palette.hdf -text
 mfhdf/dumper/testfiles/LongDataset.hdf -text
+mfhdf/dumper/testfiles/Roy-64.nc -text
 mfhdf/dumper/testfiles/Roy.nc -text
 mfhdf/dumper/testfiles/SDSlongname.hdf -text
 mfhdf/dumper/testfiles/Tables.hdf -text
 mfhdf/dumper/testfiles/Tables_External_File -text
 mfhdf/dumper/testfiles/VGlongname.hdf -text
 mfhdf/dumper/testfiles/ctxtr2r.hdf -text
+mfhdf/dumper/testfiles/dumpsds-19.out -text
 mfhdf/dumper/testfiles/grtdfi322.hdf -text
 mfhdf/dumper/testfiles/grtdfui162.hdf -text
 mfhdf/dumper/testfiles/grtdfui82.hdf -text

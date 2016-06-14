@@ -621,6 +621,7 @@
 ./mfhdf/dumper/testfiles/IMCOMP.hdf
 ./mfhdf/dumper/testfiles/LongDataset.hdf
 ./mfhdf/dumper/testfiles/Roy.nc
+./mfhdf/dumper/testfiles/Roy-64.nc
 ./mfhdf/dumper/testfiles/SDSlongname.hdf
 ./mfhdf/dumper/testfiles/Tables.hdf
 ./mfhdf/dumper/testfiles/Tables_External_File
@@ -671,6 +672,7 @@
 ./mfhdf/dumper/testfiles/dumpsds-16.out
 ./mfhdf/dumper/testfiles/dumpsds-17.out
 ./mfhdf/dumper/testfiles/dumpsds-18.out
+./mfhdf/dumper/testfiles/dumpsds-19.out
 ./mfhdf/dumper/testfiles/dumpvd-10.out
 ./mfhdf/dumper/testfiles/dumpvd-11.out
 ./mfhdf/dumper/testfiles/dumpvd-12.out
