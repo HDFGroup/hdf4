@@ -5254,30 +5254,30 @@ SDiscoordvar(int32 id /* IN: dataset ID */)
     handle = SDIhandle_from_id(id, SDSTYPE);
     if(handle == NULL)
       {
-        HGOTO_ERROR(DFE_ARGS, FALSE);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     if(handle->vars == NULL)
       {
-        HGOTO_ERROR(DFE_ARGS, FALSE);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     var = SDIget_var(handle, id);
     if(var == NULL)
       {
-        HGOTO_ERROR(DFE_ARGS, FALSE);
+        HGOTO_ERROR(DFE_ARGS, FAIL);
       }
 
     /* check whether this var is an SDS or a coordinate variable, then 
        return the appropriate value (if and else if) */
     if (var->var_type == IS_SDSVAR)
       {
-        HGOTO_ERROR(DFE_ARGS, FALSE);
+        HGOTO_DONE(FALSE);
       }
 
     else if(var->var_type == IS_CRDVAR)
       {
-        HGOTO_ERROR(DFE_ARGS, TRUE);
+        HGOTO_DONE(TRUE);
       }
 
     /* whether or not this var is a coord var is unknown because the data was

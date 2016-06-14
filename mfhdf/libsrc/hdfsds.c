@@ -175,6 +175,41 @@ done:
 
 /******************************************************************************
  NAME
+   hdf_check_nt - internal utility function
+
+ DESCRIPTION
+   Test if data was stored in native format of different machine or in the
+   LITEND format, and make sure the numbertype version numbers are the same
+   so we don't read it twice
+   (Refactored from hdf_read_ndgs)
+
+ RETURNS
+   SUCCEED / FAIL
+
+******************************************************************************/
+intn hdf_check_nt(uint8 *ntstring, int32 *type)
+{
+    intn ret_value = SUCCEED;
+    if ((ntstring[0] != DFNT_VERSION)
+         || ((ntstring[3] != DFNTF_NONE) && (ntstring[3] != DFNTF_IEEE)))
+    {
+        if (ntstring[3] == DFNTF_PC)  /* Little Endian */
+            *type |= DFNT_LITEND;
+        else
+        {   /* same machine type?  */
+            if (ntstring[3] == DFKgetPNSC(*type, DF_MT))
+                *type |= DFNT_NATIVE;
+            else  /* different machine */
+            {
+                ret_value = FAIL;
+            }
+        }  /* machine type */
+    }   /* Little Endian */
+    return(ret_value);
+} /* hdf_check_nt */
+
+/******************************************************************************
+ NAME
    hdf_read_ndgs
  
  DESCRIPTION
@@ -212,6 +247,7 @@ hdf_read_ndgs(NC *handle)
     int32   *dimsizes = NULL;
     int32   *scaletypes = NULL;
     int32    HDFtype;
+int32    temptype;
     intn     dim;
     intn     max_thangs;
     intn     current_dim;
@@ -423,25 +459,9 @@ hdf_read_ndgs(NC *handle)
                                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
-                            /* test if data was stored in native format of different 
-                             machine or in the LITEND format, and make sure the
-                             numbertype version numbers are the same */
-                            if ((ntstring[0] != DFNT_VERSION) 
-                                || ((ntstring[3] != DFNTF_NONE) 
-                                    && (ntstring[3] != DFNTF_IEEE)))  
-                              {
-                                  if (ntstring[3] == DFNTF_PC)  /* Little Endian */
-                                      HDFtype |= DFNT_LITEND;
-                                  else  
-                                    {   /* same machine type?  */
-                                        if (ntstring[3] == DFKgetPNSC(HDFtype, DF_MT))  
-                                            HDFtype |= DFNT_NATIVE;
-                                        else  /* different machine */
-                                          {
-                                              HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                          }
-                                    }  /* machine type */
-                              }   /* Little Endian */
+                            /* Validate number type regarding platform/format */
+                            if (hdf_check_nt(ntstring, &HDFtype) == FAIL)
+                                 HGOTO_ERROR(DFE_INTERNAL, FAIL);
 
                             /* read in scale NTs */
                             for(i = 0; i < rank; i++) 
@@ -460,25 +480,18 @@ hdf_read_ndgs(NC *handle)
                                     {
                                         HGOTO_ERROR(DFE_GETELEM, FAIL);
                                     }
-                        
+
                                   scaletypes[i] = ntstring[1];
+
+				  /* temp preserve scaletype in case of error */
+				  temptype = scaletypes[i];
+
                                   /* check native format and LITEND */
-                                  if ((ntstring[0] != DFNT_VERSION) 
-                                      || ((ntstring[3] != DFNTF_NONE) 
-                                          && (ntstring[3] != DFNTF_IEEE)))  
-                                    {
-                                        if (ntstring[3] == DFNTF_PC)  /* Little Endian */
-                                            scaletypes[i] |= DFNT_LITEND;
-                                        else  
-                                          {   /* same machine type?  */
-                                              if (ntstring[3] == DFKgetPNSC(HDFtype, DF_MT))
-                                                  scaletypes[i] |= DFNT_NATIVE;
-                                              else  /* different machine */
-                                                {
-                                                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                                }
-                                          }  /* scale machine type */
-                                    }    /* Little Endian */
+                                  if (hdf_check_nt(ntstring, &temptype) == FAIL)
+                                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
+
+                                  /* restore scaletype */
+                                  scaletypes[i] = temptype;
                               }
                     
                             sddRef = tmpRef;    /* prepare for a new dim var */

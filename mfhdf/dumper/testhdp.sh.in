@@ -254,6 +254,9 @@ TEST dumpsds-17.out dumpsds -k -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n d
 # Test 18 reads a few small datasets in a netCDF file
 TEST dumpsds-18.out dumpsds -i 0,1,2 Roy.nc
 
+# Test 19 displays a message when the file is a netCDF 64-bit file
+TEST dumpsds-19.out dumpsds Roy-64.nc
+
 else
 MESG 3 "$TestName <<<SKIPPED>>>"
 fi

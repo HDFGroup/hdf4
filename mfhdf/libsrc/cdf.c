@@ -147,131 +147,162 @@ done:
 
 
 #ifdef HDF 
-/******************************************************************************/
 
+/* --------------------------- hdf_get_magicnum ---------------------------- */
 /*
-  From NASA CDF Source
+  Return the file's format version number, i.e., magic number.  This number
+  can be used to determine the format type of a file, such as HDF, CDF, or
+  netCDF/64-bit.
+
+  Refactored out from existing functions. -BMR, Jun 7, 2016
 */
-#define V2_MAGIC_NUMBER  0x0000FFFF   /* Written twice at the beginning of file */
-#define V2_MAGIC_OFFSET  0
+int32 hdf_get_magicnum(filename)
+const char *filename;
+{
+    CONSTR(FUNC, "hdf_get_magicnum");        /* for HERROR */
+    hdf_file_t fp;
+    uint8      buf[4];
+    uint8     *pbuf = NULL;
+    int32      magic_num;
+    int32      ret_value = 0;
+  
+    fp = (hdf_file_t)HI_OPEN(filename, DFACC_READ);
+    if (OPENERR(fp)) 
+    {
+        HGOTO_ERROR(DFE_BADNAME, FAIL);
+    } 
+
+    /* Make sure it is at the beginning of the file */
+    if(HI_SEEK(fp, MAGICOFFSET) == FAIL) 
+    {
+        HGOTO_ERROR(DFE_SEEKERROR, FAIL);
+    }
+        
+    /* Read the first 4 bytes in the file, where the format version number
+       is stored. */
+    if(HI_READ(fp, buf, MAGICLEN) == FAIL) 
+    {
+        HI_CLOSE(fp);
+        HGOTO_ERROR(DFE_READERROR, FAIL);
+    }
+
+    /* Obtain the file format version number then close the file*/
+    pbuf = &buf[0];
+    INT32DECODE(pbuf, magic_num); 
+    HI_CLOSE(fp);
+
+    /* If magic_num is a valid file format version number, then return it */
+    switch (magic_num)
+    {
+      case HDFMAGIC:
+      case NCMAGIC:
+      case NCMAGIC64:
+      case CDFMAGIC:
+          ret_value = magic_num;
+          break;
+      default:
+          HGOTO_ERROR(DFE_INVFILE, FAIL);
+          break;
+    }
+done:
+    if (ret_value == FALSE)
+      { /* Failure cleanup */
+      }
+     /* Normal cleanup */
+
+    return ret_value;
+} /* hdf_get_magicnum */
 
 /* -------------------------------- HDiscdf -------------------------------- */
 /*
   Return TRUE/FALSE depending on if the given file is a NASA CDF file
 */
-intn
-HDiscdf(filename)
-const char * filename;
+intn HDiscdf(filename)
+const char *filename;
 {
-    
-    static const char *FUNC = "HDiscdf";
-    hdf_file_t fp;
-    uint8      b[4];
-    uint8    * bb = NULL;
-    int32      magic_num;
-    intn       ret_value = TRUE;
+    CONSTR(FUNC, "HDiscdf");    /* for HGOTO_ERROR */
+    int32 magic_num = 0;
+    intn  ret_value = FALSE;
   
-    fp = (hdf_file_t)HI_OPEN(filename, DFACC_READ);
-    if (OPENERR(fp)) 
-      {
-          ret_value = FALSE;
-          goto done;
-      } 
+    /* Use internal function to open the file and get a magic number if the
+       file has one */
+    magic_num = hdf_get_magicnum(filename);
+
+    /* A CDF file would have CDFMAGIC at the beginning */ 
+    if (magic_num == CDFMAGIC) 
+        ret_value = TRUE;
     else 
-      {
-        if(HI_SEEK(fp, V2_MAGIC_OFFSET) == FAIL) 
-          {
-            HERROR(DFE_SEEKERROR);
-            ret_value = FALSE;
-            goto done;
-          }
-        
-        if(HI_READ(fp, b, 4) == FAIL) 
-          {
-            HERROR(DFE_READERROR);
-            ret_value = FALSE;
-            goto done;
-          }
-
-        bb = &b[0];
-
-        INT32DECODE(bb, magic_num); 
-
-        if(magic_num == V2_MAGIC_NUMBER) 
-            ret_value = TRUE;
-        else 
-            ret_value = FALSE;
-
-        HI_CLOSE(fp);
-      }
+        ret_value = FALSE;
 
 done:
     if (ret_value == FALSE)
-      { /* FALSE cleanup ?*/
-
+      { /* Failure cleanup */
       }
      /* Normal cleanup */
 
     return ret_value;
 }
 
+/* -------------------------------- HDisnetcdf --------------------------------
 
-/*
-  Model after HDiscdf
-*/
-/* -------------------------------- HDisnetcdf -------------------------------- */
-/*
   Return TRUE if the given file is a netCDF file, FALSE otherwise.
 */
-intn
-HDisnetcdf(filename)
-const char * filename;
+intn HDisnetcdf(filename)
+const char *filename;
 {
-    
-    static const char *FUNC = "HDisnetcdf";
-    hdf_file_t fp;
-    uint8      b[4];
-    uint8    * bb = NULL;
-    int32      magic_num;
-    intn       ret_value = TRUE;
+    CONSTR(FUNC, "HDisnetcdf");    /* for HGOTO_ERROR */
+    int32 magic_num = 0;
+    intn  ret_value = FALSE;
   
-    fp = (hdf_file_t)HI_OPEN(filename, DFACC_READ);
-    if (OPENERR(fp)) 
-      {
-        ret_value = FALSE;
-        goto done;
-      } 
+    /* Use internal function to open the file and get a magic number if the
+       file has one */
+    magic_num = hdf_get_magicnum(filename);
+
+    /* A classic netCDF file would have NCMAGIC at the beginning */ 
+    if (magic_num == NCMAGIC) 
+        ret_value = TRUE;
     else 
-      {
-        if(HI_READ(fp, b, 4) == FAIL) 
-          {
-              HERROR(DFE_READERROR);
-              HI_CLOSE(fp);
-              ret_value = FALSE;
-              goto done;
-          }
-
-        bb = &b[0];
-
-        INT32DECODE(bb, magic_num); 
-
-        if(magic_num == NCMAGIC) 
-            ret_value = TRUE;
-        else 
-            ret_value = FALSE;
-
-        HI_CLOSE(fp);
-    }
+        ret_value = FALSE;
 
 done:
     if (ret_value == FALSE)
-      { /* FALSE cleanup? */
-
+      { /* FALSE cleanup */
       }
      /* Normal cleanup */
 
     return ret_value;
-}
+} /* HDisnetcdf */
+
+/* ------------------------------ HDisnetcdf64 --------------------------------
+
+  Return TRUE if the given file is a netCDF 64-bit file, FALSE otherwise.
+*/
+intn HDisnetcdf64(filename)
+const char *filename;
+{
+    CONSTR(FUNC, "HDisnetcdf64");    /* for HGOTO_ERROR */
+    int32 magic_num = 0;
+    intn  ret_value = FALSE;
+
+    /* Use internal function to open the file and get a magic number if the
+       file has one */
+    magic_num = hdf_get_magicnum(filename);
+
+    /* A 64-bit netCDF file would have NCMAGIC64 at the beginning */ 
+    if (magic_num == NCMAGIC64) 
+        ret_value = TRUE;
+    else 
+        ret_value = FALSE;
+
+done:
+    if (ret_value == FALSE)
+      { /* FALSE cleanup */
+      }
+     /* Normal cleanup */
+
+    return ret_value;
+} /* HDisnetcdf64 */
+
 /******************************************************************************/
 #endif /* HDF */
 
@@ -754,7 +785,7 @@ NC_xdr_cdf(xdrs, handlep)
 * 
 ******************************************************************************
 *
-* Please report all bugs / comments to hdfhelp@ncsa.uiuc.edu
+* Please report all bugs / comments to help@hdfgroup.org
 *
 *****************************************************************************/
 

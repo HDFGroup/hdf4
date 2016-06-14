@@ -360,6 +360,78 @@ test_longfilename()
 }
 
 
+/********************************************************************
+   Name: test_fileformat() - tests that a file format can be
+                             determined (HDFFR-1519)
+
+   Description: 
+	The main contents include:
+	- call Hishdf() on an hdf file and a non-hdf file
+	- call HDiscdf() on a cdf file and a non-cdf file
+	- call HDisnetcdf() on a netCDF file and a non-netCDF file
+	- call HDisnetcdf64() on a 64-bit netCDF file and a classic netCDF file
+
+   Return value:
+	The number of errors occurred in this routine.
+
+   BMR - Jun 06, 2016
+*********************************************************************/
+
+static int
+test_fileformat()
+{
+    int32 fid;                  /* file id */
+    int32 dset1;                /* dataset ids */
+    int32 dims[2];              /* variable shapes */
+    int   ii;
+    char dsname[10];
+    char filename[256];
+    intn  ishdf = 0;      /* true if file has HDF format */
+    intn  isnetcdf = 0;      /* true if file has classic netCDF format */
+    intn  isnetcdf64 = 0;      /* true if file has 64-bit netCDF format */
+    intn  num_errs = 0;         /* number of errors so far */
+    char  testfile[512] = "";
+    char *hdf_basename = "../dumper/testfiles/swf32.hdf";
+    char *netcdf1_basename = "../dumper/testfiles/Roy.nc";
+    char *netcdf2_basename = "../dumper/testfiles/Roy-64.nc";
+
+    /* Make the name of the HDF test file */
+    make_datafilename(hdf_basename, testfile, sizeof(testfile));
+
+    /* Verify that this is an HDF file */
+    ishdf = Hishdf(testfile);
+    VERIFY(ishdf, TRUE, "test_fileformat: Hishdf");
+
+    /* Verify that this is not a netCDF 64-bit file */
+    isnetcdf64 = HDisnetcdf64(testfile);
+    VERIFY(isnetcdf64, FALSE, "test_fileformat: HDisnetcdf64");
+
+    /* Make the name of the classic netCDF file */
+    make_datafilename(netcdf1_basename, testfile, sizeof(testfile));
+
+    /* Verify that this is not an HDF file */
+    ishdf = Hishdf(testfile);
+    VERIFY(ishdf, FALSE, "test_fileformat: Hishdf");
+
+    /* Verify that this is a classic netCDF file */
+    isnetcdf = HDisnetcdf(testfile);
+    VERIFY(isnetcdf, TRUE, "test_fileformat: HDisnetcdf");
+
+    /* Make the name of the netCDF 64-bit file */
+    make_datafilename(netcdf2_basename, testfile, sizeof(testfile));
+
+    /* Verify that this is a netCDF 64-bit file */
+    isnetcdf64 = HDisnetcdf64(testfile);
+    VERIFY(isnetcdf64, TRUE, "test_fileformat: HDisnetcdf64");
+
+    /* Verify that this is not a classic netCDF file */
+    isnetcdf = HDisnetcdf(testfile);
+    VERIFY(isnetcdf, FALSE, "test_fileformat: HDisnetcdf");
+
+    return num_errs;
+}
+
+
 /* Test driver for testing miscellaneous file related APIs. */
 extern int
 test_files()
@@ -379,6 +451,9 @@ test_files()
 
     /* test the fix of bugzzila 1331. 01/16/09 - BMR */
     num_errs = num_errs + test_longfilename();
+
+    /* test the fix of JIRA HDFFR-1519. 06/06/16 - BMR */
+    num_errs = num_errs + test_fileformat();
 
     if (num_errs == 0) PASSED();
     return num_errs;
