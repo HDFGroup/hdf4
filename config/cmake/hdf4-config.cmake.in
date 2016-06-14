@@ -10,6 +10,7 @@ set (${HDF4_PACKAGE_NAME}_VALID_COMPONENTS
     shared
     C
     Fortran
+    Java
 )
 
 #-----------------------------------------------------------------------------
@@ -17,6 +18,7 @@ set (${HDF4_PACKAGE_NAME}_VALID_COMPONENTS
 #-----------------------------------------------------------------------------
 set (${HDF4_PACKAGE_NAME}_ENABLE_PARALLEL @HDF4_ENABLE_PARALLEL@)
 set (${HDF4_PACKAGE_NAME}_BUILD_FORTRAN   @HDF4_BUILD_FORTRAN@)
+set (${HDF4_PACKAGE_NAME}_BUILD_JAVA      @HDF4_BUILD_JAVA@)
 set (${HDF4_PACKAGE_NAME}_BUILD_XDR_LIB   @HDF4_BUILD_XDR_LIB@)
 set (${HDF4_PACKAGE_NAME}_BUILD_TOOLS     @HDF4_BUILD_TOOLS@)
 set (${HDF4_PACKAGE_NAME}_BUILD_UTILS     @HDF4_BUILD_UTILS@)
@@ -27,6 +29,19 @@ set (${HDF4_PACKAGE_NAME}_ENABLE_SZIP_ENCODING @HDF4_ENABLE_SZIP_ENCODING@)
 set (${HDF4_PACKAGE_NAME}_BUILD_SHARED_LIBS    @BUILD_SHARED_LIBS@)
 set (${HDF4_PACKAGE_NAME}_PACKAGE_EXTLIBS      @HDF4_PACKAGE_EXTLIBS@)
 set (${HDF4_PACKAGE_NAME}_EXPORT_LIBRARIES @HDF4_LIBRARIES_TO_EXPORT@)
+
+#-----------------------------------------------------------------------------
+# Dependencies
+#-----------------------------------------------------------------------------
+if (${HDF4_PACKAGE_NAME}_BUILD_JAVA)
+  set (${HDF4_PACKAGE_NAME}_JAVA_INCLUDE_DIRS
+      @PACKAGE_CURRENT_BUILD_DIR@/lib/jarhdf-@HDF4_VERSION_STRING@.jar
+      @PACKAGE_CURRENT_BUILD_DIR@/lib/slf4j-api-1.7.5.jar
+      @PACKAGE_CURRENT_BUILD_DIR@/lib/slf4j-nop-1.7.5.jar
+  )
+  set (${HDF4_PACKAGE_NAME}_JAVA_LIBRARY "@PACKAGE_CURRENT_BUILD_DIR@/lib")
+  set (${HDF4_PACKAGE_NAME}_JAVA_LIBRARIES "${${HDF4_PACKAGE_NAME}_JAVA_LIBRARY}")
+endif()
 
 #-----------------------------------------------------------------------------
 # Directories
@@ -98,6 +113,8 @@ foreach (libtype IN LISTS ${HDF4_PACKAGE_NAME}_LIB_TYPE)
     set (hdf4_comp2)
     if (${comp} STREQUAL "C")
       set (hdf4_comp "hdf")
+    elseif (${comp} STREQUAL "Java")
+      set (hdf4_comp "hdf4_java")
     elseif (${comp} STREQUAL "Fortran")
       set (hdf4_comp2 "hdf_fcstub")
       set (hdf4_comp "hdf_fortran")
