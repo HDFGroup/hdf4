@@ -239,7 +239,6 @@ JUnit version 4.11
 .testSDnametoindexIllegalId
 .testSDattrinfoArgumentArgs
 .testSDsetfillmodeIllegalId
-.testSDiscoordvarIllegalId
 .testSDgetfillvalueIllegalId
 .testSDreaddata_shortIllegalId
 .testSDreaddata_intIllegalId
@@ -363,5 +362,5 @@ JUnit version 4.11
 
 Time:  XXXX
 
-OK (361 tests)
+OK (360 tests)
 
