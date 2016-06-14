@@ -24865,9 +24865,8 @@ $as_echo "#define NO_DEPRECATED_SYMBOLS 1" >>confdefs.h
     ;;
 esac
 
-ac_config_files="$ac_config_files Makefile libhdf4.settings hdf/Makefile hdf/examples/Makefile hdf/fortran/Makefile hdf/fortran/examples/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/fortran/ftest.f mfhdf/fortran/jackets.c mfhdf/fortran/netcdf.inc mfhdf/libsrc/netcdf.h mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/examples/Makefile mfhdf/examples/testexamples.sh mfhdf/fortran/Makefile mfhdf/fortran/examples/Makefile mfhdf/fortran/testfortran.sh mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hdiff/testhdiff.sh mfhdf/hrepack/Makefile mfhdf/hrepack/hrepack.sh mfhdf/hrepack/hrepack_all.sh mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncdump/testncdump.sh mfhdf/ncgen/Makefile mfhdf/ncgen/testncgen.sh mfhdf/nctest/Makefile mfhdf/test/Makefile mfhdf/test/testmfhdf.sh mfhdf/xdr/Makefile java/Makefile java/src/Makefile java/src/jni/Makefile java/test/Makefile java/test/junit.sh"
+ac_config_files="$ac_config_files Makefile libhdf4.settings hdf/Makefile hdf/examples/Makefile hdf/fortran/Makefile hdf/fortran/examples/Makefile hdf/src/Makefile hdf/test/Makefile hdf/util/Makefile hdf/util/h4cc hdf/util/h4fc hdf/util/h4redeploy hdf/util/testutil.sh man/Makefile mfhdf/fortran/ftest.f mfhdf/fortran/jackets.c mfhdf/fortran/netcdf.inc mfhdf/libsrc/netcdf.h mfhdf/Makefile mfhdf/dumper/Makefile mfhdf/dumper/testhdp.sh mfhdf/examples/Makefile mfhdf/examples/testexamples.sh mfhdf/fortran/Makefile mfhdf/fortran/examples/Makefile mfhdf/fortran/testfortran.sh mfhdf/hdfimport/Makefile mfhdf/hdfimport/testutil.sh mfhdf/hdiff/Makefile mfhdf/hdiff/testhdiff.sh mfhdf/hrepack/Makefile mfhdf/hrepack/hrepack.sh mfhdf/hrepack/hrepack_all.sh mfhdf/libsrc/Makefile mfhdf/ncdump/Makefile mfhdf/ncdump/testncdump.sh mfhdf/ncgen/Makefile mfhdf/ncgen/testncgen.sh mfhdf/nctest/Makefile mfhdf/test/Makefile mfhdf/test/testmfhdf.sh mfhdf/xdr/Makefile java/Makefile java/src/Makefile java/src/jni/Makefile java/test/Makefile java/test/junit.sh java/examples/Makefile"
 
-                 java/examples/Makefile
 
 ac_config_commands="$ac_config_commands .classes"
 
@@ -26145,6 +26144,7 @@ do
     "java/src/jni/Makefile") CONFIG_FILES="$CONFIG_FILES java/src/jni/Makefile" ;;
     "java/test/Makefile") CONFIG_FILES="$CONFIG_FILES java/test/Makefile" ;;
     "java/test/junit.sh") CONFIG_FILES="$CONFIG_FILES java/test/junit.sh" ;;
+    "java/examples/Makefile") CONFIG_FILES="$CONFIG_FILES java/examples/Makefile" ;;
     ".classes") CONFIG_COMMANDS="$CONFIG_COMMANDS .classes" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

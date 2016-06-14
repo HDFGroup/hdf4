@@ -1075,8 +1075,8 @@ AC_CONFIG_FILES([Makefile
                  java/src/Makefile
                  java/src/jni/Makefile
                  java/test/Makefile
-                 java/test/junit.sh])
-                 java/examples/Makefile
+                 java/test/junit.sh
+                 java/examples/Makefile])
 
 AC_CONFIG_COMMANDS([.classes], [], [$MKDIR_P java/src/.classes;
                 $MKDIR_P java/test/.classes])

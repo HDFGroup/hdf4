@@ -505,6 +505,7 @@
 ./java/Makefile.in
 ./java/examples/CMakeLists.txt
 ./java/examples/Makefile.am
+./java/examples/Makefile.in
 ./java/examples/HDF4DatasetCreate.java
 ./java/examples/HDF4FileCreate.java
 ./java/examples/HDF4GroupCreate.java
