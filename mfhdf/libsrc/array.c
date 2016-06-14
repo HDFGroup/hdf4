@@ -249,19 +249,19 @@ const void *values ;
 
 	ret->type = type ;
 	ret->szof = NC_typelen(type) ;
-#ifdef DEBUG
+#ifdef SDDEBUG
   fprintf(stderr, "NC_new_array(): type=%u, NC_typelen(type)=%u\n",(unsigned)type,(unsigned)ret->szof);
 #endif
     ret->count = count ;
 	memlen = count * ret->szof ;
 	ret->len = count * NC_xtypelen(type) ;
-#ifdef DEBUG
+#ifdef SDDEBUG
   fprintf(stderr, "NC_new_array(): count=%u, memlen=%u\n",count,memlen);
 #endif
     if( count != 0 )
 	{
 		ret->values = (Void*)HDmalloc(memlen) ;
-#ifdef DEBUG
+#ifdef SDDEBUG
   fprintf(stderr, "NC_new_array(): ret->values=%p, values=%p\n",ret->values,values);
 #endif
         if(ret->values == NULL)
@@ -277,7 +277,7 @@ const void *values ;
 		ret->values = NULL ;
 	}
 		
-#ifdef DEBUG
+#ifdef SDDEBUG
   fprintf(stderr, "NC_new_array(): ret=%p\n",ret);
 #endif
     return(ret) ;
@@ -549,10 +549,10 @@ xdr_NC_array(xdrs, app)
 	NC_array **app;
 {
 	bool_t (*xdr_NC_fnct)() ;
-	u_long count , *countp=NULL ;
-	nc_type type , *typep=NULL ;
+	u_long count = 0, *countp=NULL ;
+	nc_type type = NC_UNSPECIFIED, *typep=NULL ;
 	bool_t stat ;
-	Void *vp ;
+	Void *vp = NULL;
 
 	switch (xdrs->x_op) {
 	case XDR_FREE:
@@ -577,13 +577,18 @@ xdr_NC_array(xdrs, app)
 		typep = &type ;
 		break ;
 	}
+
+	/* This USE_ENUM may not be necessary after xdr and code cleanup.
+	   See HDFFR-1318, HDFFR-1327, and other Mac/XDR issues for details.
+	   I had tried and xdr_enum worked consistently even though there were
+	   failures in other places. -BMR, 6/14/2016 */
 #ifdef USE_ENUM
-	if (! xdr_enum(xdrs, (enum_t *)typep)) {				
+	if (! xdr_enum(xdrs, (enum_t *)typep)) {
 		NCadvise(NC_EXDR, "xdr_NC_array:xdr_enum") ;
 		return (FALSE);
 	}
 #else
-	if (! xdr_int(xdrs, typep)) {				
+	if (! xdr_int(xdrs, typep)) {
 		NCadvise(NC_EXDR, "xdr_NC_array:xdr_int (enum)") ;
 		return (FALSE);
 	}

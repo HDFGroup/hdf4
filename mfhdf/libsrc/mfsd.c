@@ -3103,7 +3103,7 @@ SDIgetcoordvar(NC     *handle, /* IN: file handle */
                         {
 #ifdef SDDEBUG
                             /* replace it with NCAdvice or HERROR? */
-                            fprintf(stderr "SDIgetcoordvar: hdf_unmap_type failed for %d\n", nt);
+                            fprintf(stderr, "SDIgetcoordvar: hdf_unmap_type failed for %d\n", nt);
 #endif
                             HGOTO_ERROR(DFE_INTERNAL, FAIL);
                         }

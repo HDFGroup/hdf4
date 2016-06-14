@@ -838,7 +838,7 @@ xdr_NC_var(xdrs, vpp)
 	XDR *xdrs;
 	NC_var **vpp;
 {
-	u_long begin ;
+	u_long begin = 0;
 
 	if( xdrs->x_op == XDR_FREE)
 	{
@@ -863,6 +863,10 @@ xdr_NC_var(xdrs, vpp)
 	if( !xdr_NC_array(xdrs, &((*vpp)->attrs)))
 		return(FALSE) ;
 
+	/* This USE_ENUM may not be necessary after xdr and code cleanup.
+	   See HDFFR-1318, HDFFR-1327, and other Mac/XDR issues for details.
+	   I had tried and xdr_enum worked consistently even though there were
+	   failures in other places. -BMR, 6/14/2016 */
 #ifdef USE_ENUM
 	if (! xdr_enum(xdrs, (enum_t *)&((*vpp)->type)) ) {
 		return (FALSE);

@@ -169,7 +169,7 @@ xdr_NC_string(xdrs, spp)
 	XDR *xdrs;
 	NC_string **spp;
 {
-	u_long count ;
+        u_long count = 0;
         int status ;
 
 	switch (xdrs->x_op) {

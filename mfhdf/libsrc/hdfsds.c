@@ -418,7 +418,7 @@ hdf_read_ndgs(NC *handle)
                               {
 #ifdef DEBUG
                                   /* replace it with NCAdvice or HERROR? */
-                                  fprintf(stderr "hdf_read_ndgs: hdf_unmap_type failed for %d\n", HDFtype);
+                                  fprintf(stderr, "hdf_read_ndgs: hdf_unmap_type failed for %d\n", HDFtype);
 #endif
                                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
@@ -1041,7 +1041,7 @@ hdf_read_ndgs(NC *handle)
                               {
 #ifdef DEBUG
                                   /* replace it with NCAdvice or HERROR? */
-                                  fprintf(stderr "hdf_read_ndgs: hdf_unmap_type failed for %d\n", scaletypes[dim]);
+                                  fprintf(stderr, "hdf_read_ndgs: hdf_unmap_type failed for %d\n", scaletypes[dim]);
 #endif
                                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
