@@ -317,10 +317,10 @@ public class TestH4SDparams {
         HDFLibrary.SDfindattr(0, null);
     }
 
-//    @Test(expected = HDFException.class)
-//    public void testSDiscoordvarIllegalId() throws Throwable {
-//        HDFLibrary.SDiscoordvar(-1);
-//    }
+    @Test(expected = HDFException.class)
+    public void testSDiscoordvarIllegalId() throws Throwable {
+        HDFLibrary.SDiscoordvar(-1);
+    }
 
     @Test(expected = HDFException.class)
     public void testSDgetcalIllegalId() throws Throwable {

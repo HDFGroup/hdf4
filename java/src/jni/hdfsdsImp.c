@@ -852,8 +852,7 @@ Java_hdf_hdflib_HDFLibrary_SDiscoordvar
 
     rval = SDiscoordvar(id);
     if (rval <= 0)
-/*        CALL_ERROR_CHECK(); */
-        return JNI_FALSE;
+        CALL_ERROR_CHECK();
 
     return JNI_TRUE;
 }
