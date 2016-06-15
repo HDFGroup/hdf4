@@ -192,18 +192,11 @@ const char *filename;
     HI_CLOSE(fp);
 
     /* If magic_num is a valid file format version number, then return it */
-    switch (magic_num)
-    {
-      case HDFMAGIC:
-      case NCMAGIC:
-      case NCMAGIC64:
-      case CDFMAGIC:
-          ret_value = magic_num;
-          break;
-      default:
-          HGOTO_ERROR(DFE_INVFILE, FAIL);
-          break;
-    }
+    if (magic_num == HDFMAGIC || magic_num == CDFMAGIC ||
+	magic_num == NCMAGIC  || magic_num == NCMAGIC64)
+	ret_value = magic_num;
+    else
+	HGOTO_ERROR(DFE_INVFILE, FAIL);
 done:
     if (ret_value == FALSE)
       { /* Failure cleanup */

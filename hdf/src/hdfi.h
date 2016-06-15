@@ -1298,7 +1298,9 @@ correctly.
 #endif /* !SUN & GCC */
 
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
-#define DFSDnumber DFSDndatasets
+/* Commented out only, just in case any legacy code is still using it out there.
+   Will be removed in a few maintenance releases.  -BMR, Jun 5, 2016
+#define DFSDnumber DFSDndatasets */ 
 
 #endif /* HDFI_H */
 

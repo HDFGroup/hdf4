@@ -244,7 +244,6 @@ HDFLIBAPI const char *cdf_routine_name ; /* defined in lerror.c */
 /* Format version number for CDF file */
 /* Written twice at the beginning of pre-2.6 CDF file */
 #define CDFMAGIC  0x0000FFFF
-#define HDFMAGIC  0x0e031301	/* N C S A */
 
 /* Format version number for netCDF classic file */
 #define	NCMAGIC		0x43444601   /*  C D F 1 */

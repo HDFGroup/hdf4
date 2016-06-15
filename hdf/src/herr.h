@@ -145,6 +145,7 @@ typedef enum
       DFE_SEEKERROR,            /* There was a seek error */
       DFE_RDONLY,               /* The DF is read only */
       DFE_BADSEEK,              /* Attempt to seek past end of element */
+      DFE_INVFILE,              /* File is neither hdf, cdf, netcdf */
 
 /* Low-level HDF I/O errors */
       DFE_PUTELEM,              /* Hputelement failed in some way */
@@ -344,6 +345,7 @@ PRIVATE const struct error_messages_t error_messages[] =
     {DFE_SEEKERROR,     "Error performing seek operation"},
     {DFE_RDONLY,        "Attempt to write to read-only HDF file"},
     {DFE_BADSEEK,       "Attempt to seek past end of element"},
+    {DFE_INVFILE,       "File is supported, must be either hdf, cdf, netcdf"},
 
 /* Low-level HDF I/O errors */
     {DFE_PUTELEM,       "Hputelement failed in some way"},
