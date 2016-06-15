@@ -62,7 +62,7 @@ case $CC_BASENAME in
     # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
     # Use -O0 for now.
     case "$host_os" in
-	darwin1[1-4].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
+	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemite & 5 more
 	    xOFLAG="-O0"
 	    ;;
 	*)		# Other OSX versions
@@ -83,7 +83,7 @@ case $CC_BASENAME in
     # with any optimization in $CC in Lion, Mountain Lion, Mavericks and Yosemeti systems.
     # Use -O0 for now.
     case "$host_os" in
-	darwin1[1-4].*)	# Lion & Mountain Lion & Mavericks & Yosemeti
+	darwin1[1-9].*)	# Lion & Mountain Lion & Mavericks & Yosemeti & 5 more
 	    xOFLAG="-O0"
 	    ;;
 	*)		# Other OSX versions
