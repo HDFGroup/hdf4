@@ -1300,7 +1300,7 @@ correctly.
 /* Compatibility #define for V3.3, should be taken out by v4.0 - QAK */
 /* Commented out only, just in case any legacy code is still using it out there.
    Will be removed in a few maintenance releases.  -BMR, Jun 5, 2016
-#define DFSDnumber DFSDndatasets */ 
+#define DFSDnumber DFSDndatasets */
 
 #endif /* HDFI_H */
 
