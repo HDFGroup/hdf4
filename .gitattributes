@@ -209,8 +209,11 @@ mfhdf/hdiff/testfiles/hdifftst5.hdf -text
 mfhdf/hdiff/testfiles/hdifftst6.hdf -text
 mfhdf/hdiff/testfiles/hdifftst7.hdf -text
 mfhdf/nctest/test_unlim.nc -text
+mfhdf/test/Roy-64.nc -text
+mfhdf/test/Roy.nc -text
 mfhdf/test/sds_szipped.dat -text
 mfhdf/test/smallslice.0000.nc -text
+mfhdf/test/swf32.hdf -text svneol=unset#application/x-hdf
 mfhdf/test/test1.nc -text
 mfhdf/test/texternal.c -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset
