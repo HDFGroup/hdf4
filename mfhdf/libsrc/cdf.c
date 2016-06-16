@@ -192,7 +192,7 @@ const char *filename;
     HI_CLOSE(fp);
 
     /* If magic_num is a valid file format version number, then return it */
-    if (magic_num == HDFMAGIC || magic_num == CDFMAGIC ||
+    if (magic_num == HDFXMAGIC || magic_num == CDFMAGIC ||
 	magic_num == NCMAGIC  || magic_num == NCMAGIC64)
 	ret_value = magic_num;
     else

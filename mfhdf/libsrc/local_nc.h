@@ -243,16 +243,19 @@ HDFLIBAPI const char *cdf_routine_name ; /* defined in lerror.c */
 
 /* Format version number for CDF file */
 /* Written twice at the beginning of pre-2.6 CDF file */
-#define CDFMAGIC  0x0000FFFF
+#define CDFMAGIC    0x0000FFFF
+
+/* Format version number for HDF file */
+#define HDFXMAGIC   0x0e031301   /* ^N^C^S^A */
 
 /* Format version number for netCDF classic file */
-#define    NCMAGIC        0x43444601   /*  C D F 1 */
+#define NCMAGIC     0x43444601   /*  C D F 1 */
 
 /* Format version number for 64-bit offset file */
-#define    NCMAGIC64    0x43444602   /*  C D F 2 */
+#define NCMAGIC64   0x43444602   /*  C D F 2 */
 
 /* Format version number for link file */
-#define    NCLINKMAGIC    0x43444c01   /*  C D L 1 */
+#define NCLINKMAGIC 0x43444c01   /*  C D L 1 */
 
 /* #ifndef HDF *//* HDF has already worked out if we have prototypes */
 #ifdef HDF
