@@ -772,6 +772,32 @@ Java_hdf_hdflib_HDFLibrary_GRgetcompress
 }
 
 JNIEXPORT jboolean JNICALL
+Java_hdf_hdflib_HDFLibrary_GRgetcompinfo
+(JNIEnv *env, jclass cls, jlong ri_id, jobject c_info)
+{
+    intn rval;
+    comp_coder_t coder;
+    comp_info cinf;
+
+    if (c_info == NULL) {
+        h4nullArgument(env, "GRgetcompinfo:  c_info is NULL");
+    } /* end if */
+    else {
+        rval = GRgetcompinfo((int32)ri_id, (comp_coder_t *)&coder, (comp_info *)&cinf);
+
+        if (setNewCompInfo(env, c_info, coder, &cinf)) {
+            if (rval == FAIL)
+                CALL_ERROR_CHECK();
+        } /* end if */
+        else {
+            h4JNIFatalError(env, "GRgetcompinfo:  c_info not created");
+        } /* end else */
+    } /* end else */
+
+    return JNI_TRUE;
+}
+
+JNIEXPORT jboolean JNICALL
 Java_hdf_hdflib_HDFLibrary_GRsetchunk
 (JNIEnv *env, jclass cls, jlong sdsid, jobject chunk_def, jint flags)
 {

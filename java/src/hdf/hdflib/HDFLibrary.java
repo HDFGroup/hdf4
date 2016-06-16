@@ -835,6 +835,8 @@ public class HDFLibrary implements java.io.Serializable
 
     public static native boolean GRgetcompress(long ri_id, HDFCompInfo c_info) throws HDFException;
 
+    public static native boolean GRgetcompinfo(long ri_id, HDFCompInfo c_info) throws HDFException;
+
     public static native boolean GRsetexternalfile(long ri_id, String filename, int offset) throws HDFException;
 
     /**
