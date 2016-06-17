@@ -280,11 +280,11 @@ int32 get_SDSbyName(int32 sd_id, char* sds_name)
     intn  num_errs = 0;    /* number of errors in compression test so far */
 
     sds_index = SDnametoindex(sd_id, sds_name);
-    CHECK(status, FAIL, "SDnametoindex");
+    CHECK(sds_index, FAIL, "SDnametoindex");
 
     /* Select the data set */
     sds_id = SDselect (sd_id, sds_index);
-    CHECK(status, FAIL, "SDselect");
+    CHECK(sds_id, FAIL, "SDselect");
 
     /* Return the data set id */
     return(sds_id);
