@@ -84,7 +84,6 @@ Documentation
 
 Platforms tested
 ================
-
 This version has been tested in the following platforms:
 
 (Format:
@@ -92,30 +91,21 @@ This version has been tested in the following platforms:
    uname -v, uname -p, uname -m)
 
 
+
+   Linux, 2.6.32-573.3.1.el6.x86_64   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+   #1 SMP, x86_64, x86_64             GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+   (mayll/platypus                    icc (ICC) 15.0.3.187 Build 20150407
+                                      ifort (IFORT) 15.0.3.187 Build 20150407
+                                      pgcc and pgf90 15.7-0 64-bit target on x86-64 Linux -tp nehalem
+
+   Linux, 3.10.0-327.10.1.el7         gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+   #1 SMP x86_64, GNU/Linux           GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+   (kituo/moohan)                     icc (ICC) 15.0.3.187 Build 20150407
+                                      ifort (IFORT) 15.0.3.187 Build 20150407
+
    Linux, 2.6.32-504.8.1.el6.ppc64    (1) GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
    #1 SMP, ppc64, ppc64              (2) IBM XL Fortran for Linux, V15.1 (64-bit mode)
    (ostrich)
-
-   Linux, 2.6.18-308.13.1.el5PAE      gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-   #1 SMP, i686, i386                 GNU Fortran (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-   (jam)                              pgcc and pgf90 14.10-0 32-bit target on x86 Linux -tp penryn
-                                      Intel(R) C Compiler, Version 15.0.1 20141022
-                                      Intel(R) Fortran Compiler, Version 15.0.1
-
-   Linux, 2.6.18-398.el5 #1           gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-   #1 SMP, x86_64, x86_64             GNU Fortran (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
-   (koala)                            icc (ICC) 15.0.1 20141022
-                                      ifort (IFORT) 15.0.1 20141022
-
-   Linux, 2.6.32-573.3.1.el6.x86_64   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
-   #1 SMP, x86_64, x86_64             GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
-   (platypus)                         icc (ICC) 15.0.1 20141022
-                                      ifort (IFORT) 15.0.1 20141022
-                                      pgcc and pgf90 14.10-0 64-bit target on x86-64 Linux -tp nehalem
-
-   Linux, 3.10.0-123.8.1.el7          gcc (GCC) 4.8.2 20140120 (Red Hat 4.8.2-16)
-   #1 SMP, x86_64, x86_64             GNU Fortran (GCC) 4.8.2 20140120 (Red Hat 4.8.2-16)
-   (aws ec2 CentOS 7 image)
 
    SunOS 5.11 (32- and 64-bit)        Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v                             (see "Known problem" section)
@@ -124,7 +114,8 @@ This version has been tested in the following platforms:
     Windows 7                     Visual Studio 2012 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2013 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2015 w/ Intel Fortran 16 (cmake)
-                                  Cygwin(CYGWIN_NT-6.1 2.2.1(0.289/5/3) gcc(4.9.3) compiler and gfortran)
+                                  Cygwin(CYGWIN_NT-6.1 2.2.1(0.289/5/3) 
+                                      gcc(4.9.3) compiler and gfortran)
                                   (cmake and autotools)
 
     Windows 7 x64                 Visual Studio 2012 w/ Intel Fortran 15 (cmake)
@@ -138,16 +129,20 @@ This version has been tested in the following platforms:
                                   Visual Studio 2013 w/ Intel Fortran 15 (cmake)
 
    Mac OS X 10.8.5, Darwin, 12.6.0    Apple clang version 5.1 from Xcode 5.1
-   12.6.0, i386, x86_64               gfortran GNU Fortran (GCC) 4.8.2
-   (swallow,kite)                     icc and ifort Version 14.0.4 20140805
+   12.6.0, x86_64                     gfortran GNU Fortran (GCC) 4.8.2
+   (swallow,kite)                     Intel icc and ifort Version 15.0.3 
 
-   Mac OS X 10.9.5, Darwin, 13.4.0    Apple clang version 6.0 from Xcode 6.0.1
-   13.4.0, x86_64, i386               gfortran GNU Fortran (GCC) 4.8.2
-   (wren,quail)                       icc and ifort Version 15.0.1 20141022
+   Mac OS X 10.9.5, Darwin, 13.4.0    Apple clang version 6.0 from Xcode 6.2
+   13.4.0, x86_64                     gfortran GNU Fortran (GCC) 4.9.2
+   (wren,quail)                       Intel icc and ifort Version 15.0.3 
 
-   Mac OS X 10.10.2, Darwin, 14.5.0   Apple clang version 6.0 from Xcode 6.1.1
-   14.5.0, x86_64, i386               gfortran GNU Fortran (GCC) 4.9.2
-   (osx1010dev)                       Intel icc and ifort version 15.0.1
+   Mac OS X 10.10.5, Darwin, 14.5.0   Apple clang version 6.0 from Xcode 7.0
+   14.5.0, x86_64 666666              gfortran GNU Fortran (GCC) 4.9.2
+   (osx1010dev)                       Intel icc and ifort version 15.0.3
+
+   Mac OS X 10.11.5, Darwin, 15.4.0   Apple clang version 7.3 from Xcode 7.3
+   14.5.0, x86_64 666666              gfortran GNU Fortran (GCC) 5.2.0
+   (osx1010dev)                       Intel icc and ifort version 15.0.3
 
     Debian7.5.0 3.2.0-4-amd64
     #1 SMP Debian 3.2.51-1, x86_64 GNU/Linux  gcc (Debian 4.7.2-5) 4.7.2
