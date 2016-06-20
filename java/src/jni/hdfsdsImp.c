@@ -40,19 +40,15 @@ Java_hdf_hdflib_HDFLibrary_SDstart
     int32 sdid;
     const char  *fname;
 
-    if (filename == NULL) {
-        h4nullArgument(env, "SDstart:  filename is NULL");
-    } /* end if */
-    else {
-        PIN_JAVA_STRING(filename, fname);
-        if (fname != NULL) {
-            sdid = SDstart(fname, (int32)access);
+    PIN_JAVA_STRING(filename, fname);
+    if (fname != NULL) {
+        sdid = SDstart(fname, (int32)access);
 
-            UNPIN_JAVA_STRING(filename, fname);
-            if (sdid < 0)
-                CALL_ERROR_CHECK();
-        }
+        UNPIN_JAVA_STRING(filename, fname);
+        if (sdid < 0)
+            CALL_ERROR_CHECK();
     }
+
     return (jlong)sdid;
 }
 

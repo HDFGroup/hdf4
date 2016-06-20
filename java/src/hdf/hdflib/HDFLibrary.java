@@ -1980,9 +1980,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param vdata_class <b>IN</b>: String, the class of the Vdata
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
@@ -2003,9 +2001,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param vdata_class <b>IN</b>: String, the class of the Vdata
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.
@@ -2034,9 +2030,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param order <b>IN</b>: int, the number of components per field
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>NOTE:</b> to write from a Java array use the alternative
      *  routine below.
@@ -2059,9 +2053,7 @@ public class HDFLibrary implements java.io.Serializable
      *  @param order <b>IN</b>: int, the number of components per field
      *
      *  @exception hdf.hdflib.HDFException
-     *             should be thrown for errors in the
-     *             HDF library call, but is not yet implemented.
-     *
+     *             should be thrown for errors.
      *
      *  <p><b>Note:</b> converts to the Java array to a contiguous
      *  array of bytes and then writes to the file.

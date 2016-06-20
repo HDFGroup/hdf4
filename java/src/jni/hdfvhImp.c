@@ -25,36 +25,51 @@ extern "C" {
 
 
 #include "hdf.h"
-#include "jni.h"
 #include "h4jni.h"
 
 JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VHmakegroup
-(JNIEnv *env, jclass oclass, jlong file_id, jintArray tag_array, jintArray ref_array, jint n_objects, jstring vgroup_name, jstring vgroup_class)
+(JNIEnv *env, jclass oclass, jlong file_id, jintArray tag_array, jintArray ref_array,
+        jint n_objects, jstring vgroup_name, jstring vgroup_class)
 {
     int32 rval;
     jint *tags;
     jint *refs;
-    char *name;
-    char *cls;
+    const char *vname;
+    const char *vcls;
     jboolean bb;
 
-    tags = ENVPTR->GetIntArrayElements(ENVPAR tag_array,&bb);
+    PIN_JAVA_STRING_TWO(vgroup_name, vname, vgroup_class, vcls);
+    if (vname != NULL && vcls != NULL) {
+        if (tag_array == NULL) {
+            h4nullArgument(env, "VHmakegroup:  tag_array is NULL");
+        } /* end if */
+        else if (ref_array == NULL) {
+            h4nullArgument(env, "VHmakegroup:  ref_array is NULL");
+        } /* end if */
+        else {
+            tags = ENVPTR->GetIntArrayElements(ENVPAR tag_array, &bb);
+            if (tags == NULL) {
+                h4JNIFatalError(env, "VHmakegroup:  tag_array not pinned");
+            } /* end if */
+            else {
+                refs = ENVPTR->GetIntArrayElements(ENVPAR ref_array, &bb);
+                if (refs == NULL) {
+                    h4JNIFatalError(env, "VHmakegroup:  ref_array not pinned");
+                } /* end if */
+                else {
+                    rval = VHmakegroup((int32)file_id, (int32 *)tags, (int32 *)refs,
+                        (int32)n_objects, (char *)vname, (char *)vcls);
+                    if (rval < 0)
+                        CALL_ERROR_CHECK();
 
-    refs = ENVPTR->GetIntArrayElements(ENVPAR ref_array,&bb);
-
-    name = (char *)ENVPTR->GetStringUTFChars(ENVPAR vgroup_name,0);
-
-    cls = (char *)ENVPTR->GetStringUTFChars(ENVPAR vgroup_class,0);
-
-    rval = VHmakegroup((int32) file_id, (int32 *) tags, (int32 *)refs,
-        (int32) n_objects, (char *)name, (char *)cls);
-
-    ENVPTR->ReleaseIntArrayElements(ENVPAR tag_array,tags,JNI_ABORT);
-    ENVPTR->ReleaseIntArrayElements(ENVPAR ref_array,refs,JNI_ABORT);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR vgroup_name,name);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR vgroup_class,cls);
-
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR ref_array, refs, JNI_ABORT);
+                }
+                ENVPTR->ReleaseIntArrayElements(ENVPAR tag_array, tags, JNI_ABORT);
+            }
+        }
+        UNPIN_JAVA_STRING_TWO(vgroup_name, vname, vgroup_class, vcls);
+    }
     return rval;
 }
 
@@ -65,29 +80,32 @@ Java_hdf_hdflib_HDFLibrary_VHstoredata
 {
     int32 rval;
     jbyte *buffer;
-    char *fldname;
-    char *name;
-    char *cls;
+    const char *fldname;
+    const char *vname;
+    const char *vcls;
     jboolean bb;
 
-    buffer = ENVPTR->GetByteArrayElements(ENVPAR buf,&bb);
-
-    fldname = (char *)ENVPTR->GetStringUTFChars(ENVPAR fieldname,0);
-
-    name = (char *)ENVPTR->GetStringUTFChars(ENVPAR vdata_name,0);
-
-    cls = (char *)ENVPTR->GetStringUTFChars(ENVPAR vdata_class,0);
-
-
-    rval = VHstoredata((int32) file_id, (char *)fldname,
-        (uint8 *) buffer, (int32) n_records, (int32) data_type,
-        (char *)name, (char *)cls);
-
-    ENVPTR->ReleaseByteArrayElements(ENVPAR buf,buffer,JNI_ABORT);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR vdata_name,name);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR vdata_class,cls);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR fieldname,fldname);
-
+    PIN_JAVA_STRING_THREE(fieldname, fldname, vdata_name, vname, vdata_class, vcls);
+    if (fldname != NULL && vname != NULL && vcls != NULL) {
+        if (buf == NULL) {
+            h4nullArgument(env, "VHstoredata:  buf is NULL");
+        } /* end if */
+        else {
+            buffer = ENVPTR->GetByteArrayElements(ENVPAR buf, &bb);
+            if (buffer == NULL) {
+                h4JNIFatalError(env, "VHstoredatam:  buf not pinned");
+            } /* end if */
+            else {
+                rval = VHstoredata((int32) file_id, (char *)fldname,
+                    (uint8 *)buffer, (int32)n_records, (int32)data_type,
+                    (char *)vname, (char *)vcls);
+                if (rval < 0)
+                    CALL_ERROR_CHECK();
+            }
+            ENVPTR->ReleaseByteArrayElements(ENVPAR buf, buffer, JNI_ABORT);
+        }
+        UNPIN_JAVA_STRING_THREE(fieldname, fldname, vdata_name, vname, vdata_class, vcls);
+    }
     return rval;
 }
 
@@ -98,29 +116,34 @@ Java_hdf_hdflib_HDFLibrary_VHstoredatam
 {
     int32 rval;
     jbyte *buffer;
-    char *fldname;
-    char *name;
-    char *cls;
+    const char *fldname;
+    const char *vname;
+    const char *vcls;
     jboolean bb;
 
-    buffer = ENVPTR->GetByteArrayElements(ENVPAR buf,&bb);
+    PIN_JAVA_STRING_THREE(fieldname, fldname, vdata_name, vname, vdata_class, vcls);
+    if (fldname != NULL && vname != NULL && vcls != NULL) {
+        if (buf == NULL) {
+            h4nullArgument(env, "VHstoredatam:  buf is NULL");
+        } /* end if */
+        else {
+            buffer = ENVPTR->GetByteArrayElements(ENVPAR buf, &bb);
+            if (buffer == NULL) {
+                h4JNIFatalError(env, "VHstoredatam:  buf not pinned");
+            } /* end if */
+            else {
+                rval = VHstoredatam((int32)file_id, (char *)fldname,
+                    (uint8 *)buffer, (int32)n_records, (int32)data_type,
+                    (char *)vname, (char *)vcls, (int32)order);
+                if (rval < 0)
+                    CALL_ERROR_CHECK();
 
-    fldname = (char *)ENVPTR->GetStringUTFChars(ENVPAR fieldname,0);
-
-    name = (char *)ENVPTR->GetStringUTFChars(ENVPAR vdata_name,0);
-
-    cls = (char *)ENVPTR->GetStringUTFChars(ENVPAR vdata_class,0);
-
-    rval = VHstoredatam((int32) file_id, (char *)fldname,
-        (uint8 *) buffer, (int32) n_records, (int32) data_type,
-        (char *)name, (char *)cls, (int32) order);
-
-    ENVPTR->ReleaseByteArrayElements(ENVPAR buf,buffer,JNI_ABORT);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR vdata_name,name);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR vdata_class,cls);
-    ENVPTR->ReleaseStringUTFChars(ENVPAR fieldname,fldname);
-
-    return rval;
+                ENVPTR->ReleaseByteArrayElements(ENVPAR buf, buffer, JNI_ABORT);
+            }
+        }
+        UNPIN_JAVA_STRING_THREE(fieldname, fldname, vdata_name, vname, vdata_class, vcls);
+    }
+    return (jint)rval;
 }
 
 #ifdef __cplusplus
