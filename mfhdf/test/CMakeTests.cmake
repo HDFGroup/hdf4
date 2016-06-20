@@ -14,7 +14,6 @@ set (HDF4_REFERENCE_TEST_FILES
     sds_szipped.dat
     smallslice.0000.nc
     test1.nc
-    swf32.hdf
     Roy.nc
     Roy-64.nc
 )

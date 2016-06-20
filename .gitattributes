@@ -213,7 +213,6 @@ mfhdf/test/Roy-64.nc -text
 mfhdf/test/Roy.nc -text
 mfhdf/test/sds_szipped.dat -text
 mfhdf/test/smallslice.0000.nc -text
-mfhdf/test/swf32.hdf -text svneol=unset#application/x-hdf
 mfhdf/test/test1.nc -text
 mfhdf/test/texternal.c -text
 mfhdf/xdr/test_xdr.sav svneol=native#unset

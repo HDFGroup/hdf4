@@ -1036,7 +1036,6 @@
 ./mfhdf/test/hdftest.h
 ./mfhdf/test/sds_szipped.dat
 ./mfhdf/test/smallslice.0000.nc
-./mfhdf/test/swf32.hdf
 ./mfhdf/test/Roy.nc
 ./mfhdf/test/Roy-64.nc
 ./mfhdf/test/tattdatainfo.c
