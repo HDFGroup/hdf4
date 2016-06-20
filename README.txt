@@ -37,8 +37,6 @@ Source Distribution Layout
              These files are also available on the THG FTP server: 
              ftp://ftp.hdfgroup.org/HDF/HDF_Current/src/unpacked/release_notes
 
-   windows-- Removed 4/2013.
-
 
 Third Party Software Requirements
 ---------------------------------
