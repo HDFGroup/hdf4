@@ -190,7 +190,6 @@ static int test_max_open_files()
 
     /* Reset current max to an arbitrary number and check */
     curr_max = SDreset_maxopenfiles(33);
-    CHECK(status, FAIL, "test_maxopenfiles: SDreset_maxopenfiles");
     VERIFY(curr_max, 33, "test_maxopenfiles: SDreset_maxopenfiles");
 
     /* Try to create more files than the default max (currently, 32) and
@@ -354,7 +353,7 @@ test_longfilename()
     CHECK(status, FAIL, "test_longfilename: SDendaccess");
 
     status = SDend(fid);
-    CHECK(fid, FAIL, "test_longfilename: SDend");
+    CHECK(status, FAIL, "test_longfilename: SDend");
 
     return num_errs;
 }
@@ -381,29 +380,28 @@ static int
 test_fileformat()
 {
     int32 fid;                  /* file id */
-    int32 dset1;                /* dataset ids */
-    int32 dims[2];              /* variable shapes */
-    int   ii;
-    char dsname[10];
-    char filename[256];
-    intn  ishdf = 0;      /* true if file has HDF format */
-    intn  isnetcdf = 0;      /* true if file has classic netCDF format */
-    intn  isnetcdf64 = 0;      /* true if file has 64-bit netCDF format */
+    intn  ishdf = 0;            /* true if file has HDF format */
+    intn  isnetcdf = 0;         /* true if file has classic netCDF format */
+    intn  isnetcdf64 = 0;       /* true if file has 64-bit netCDF format */
     intn  num_errs = 0;         /* number of errors so far */
     char  testfile[512] = "";
-    char *hdf_basename = "swf32.hdf";
-    char *netcdf1_basename = "Roy.nc";
-    char *netcdf2_basename = "Roy-64.nc";
+    char *hdf_basename = "hdffile.hdf";    /* hdf file to test */
+    char *netcdf1_basename = "Roy.nc";     /* classic netCDF file to test */
+    char *netcdf2_basename = "Roy-64.nc";  /* netCDF 64-bit file to test */
+    intn  status = 0;           /* status returned by called functions */
 
-    /* Make the name of the HDF test file */
-    make_datafilename(hdf_basename, testfile, sizeof(testfile));
+    /* Create an empty HDF file to test Hishdf. */
+    fid = SDstart(hdf_basename, DFACC_CREATE);
+    CHECK(fid, FAIL, "SDstart");
+    status = SDend(fid);
+    CHECK(status, FAIL, "test_longfilename: SDend");
 
     /* Verify that this is an HDF file */
-    ishdf = Hishdf(testfile);
+    ishdf = Hishdf(hdf_basename);
     VERIFY(ishdf, TRUE, "test_fileformat: Hishdf");
 
     /* Verify that this is not a netCDF 64-bit file */
-    isnetcdf64 = HDisnetcdf64(testfile);
+    isnetcdf64 = HDisnetcdf64(hdf_basename);
     VERIFY(isnetcdf64, FALSE, "test_fileformat: HDisnetcdf64");
 
     /* Make the name of the classic netCDF file */
