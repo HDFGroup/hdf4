@@ -51,7 +51,7 @@ New features and changes
       the main file, at different offsets.  SDsetexternalfile is now fixed to
       cause no effect when the data set is already external.  (BMR, 2016/05/30)
 
-    - Added new function HDisnetcdf64
+    - Added new utility function HDisnetcdf64 for use in tools
       HDisnetcdf64 returns TRUE(1) or FALSE(0) if a file is a netCDF 64-bit
       file or not.
 	intn HDisnetcdf64(const char *filename)
