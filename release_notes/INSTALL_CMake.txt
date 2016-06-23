@@ -23,7 +23,7 @@ Obtaining HDF4 source code
    1. Create a directory for your development; for example, "myhdfstuff".
 
    2. Obtain compressed (*.tar or *.zip) HDF4 source from
-        http://www.hdfgroup.org/ftp/HDF/HDF_Current/src/
+        https://www.hdfgroup.org/ftp/HDF/HDF_Current/src/
       and put it in "myhdfstuff".
       Do not uncompress.
 
@@ -47,7 +47,7 @@ will use the default settings in the config/cmake/cacheinit.cmake file.
 HDF Group recommends using the ctest script mode to build HDF4.
 
 The following files referenced below are available at the HDF web site:
-    http://www.hdfgroup.org/release4/cmakebuild.html
+    https://www.hdfgroup.org/release4/cmakebuild.html
 
 CMake build script:
     CTestScript.cmake
@@ -250,9 +250,9 @@ IV. Further considerations
          options:
 
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
-            JPEG_SVN_URL:STRING="http://some_location/jpeg/trunk"
-            ZLIB_SVN_URL:STRING="http://some_location/zlib/trunk"
-            SZIP_SVN_URL:STRING="http://some_location/szip/trunk"
+            JPEG_SVN_URL:STRING="https://some_location/jpeg/trunk"
+            ZLIB_SVN_URL:STRING="https://some_location/zlib/trunk"
+            SZIP_SVN_URL:STRING="https://some_location/szip/trunk"
          where "some_location" is the URL to the SVN repository. Also set
          CMAKE_BUILD_TYPE to the configuration type.
 
@@ -406,9 +406,9 @@ These five steps are described in detail below.
             set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
             set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO SVN TGZ)" FORCE)
             set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO SVN TGZ)
-            set (ZLIB_SVN_URL "http://svn.hdfgroup.uiuc.edu/zlib/trunk" CACHE STRING "Use ZLib from HDF repository" FORCE)
-            set (SZIP_SVN_URL "http://svn.hdfgroup.uiuc.edu/szip/trunk" CACHE STRING "Use SZip from HDF repository" FORCE)
-            set (JPEG_SVN_URL "http://svn.hdfgroup.uiuc.edu/jpeg/branches/jpeg8b" CACHE STRING "Use JPEG from HDF repository" FORCE)
+            set (ZLIB_SVN_URL "https://svn.hdfgroup.org/zlib/trunk" CACHE STRING "Use ZLib from HDF repository" FORCE)
+            set (SZIP_SVN_URL "https://svn.hdfgroup.org/szip/trunk" CACHE STRING "Use SZip from HDF repository" FORCE)
+            set (JPEG_SVN_URL "https://svn.hdfgroup.org/jpeg/branches/jpeg8b" CACHE STRING "Use JPEG from HDF repository" FORCE)
             set (ZLIB_TGZ_NAME "ZLib.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
             set (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
             set (JPEG_TGZ_NAME "JPEG8b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
@@ -470,9 +470,9 @@ These five steps are described in detail below.
                -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
 
            The options to control the SVN URL (config/cmake/cacheinit.cmake file) are:
-               JPEG_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/jpeg8b/trunk"
-               ZLIB_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/zlib/trunk"
-               SZIP_SVN_URL:STRING="http://svn.hdfgroup.uiuc.edu/szip/trunk"
+               JPEG_SVN_URL:STRING="https://svn.hdfgroup.org/jpeg8b/trunk"
+               ZLIB_SVN_URL:STRING="https://svn.hdfgroup.org/zlib/trunk"
+               SZIP_SVN_URL:STRING="https://svn.hdfgroup.org/szip/trunk"
            These should be changed to your location. Also define CMAKE_BUILD_TYPE
            to be the configuration type.
 
@@ -671,7 +671,7 @@ set(SITE_BUILDNAME_SUFFIX "SHARED")
 #########   Following controls source update             ##########
 #set(LOCAL_UPDATE "TRUE")
 #########   Following controls source repository         ##########
-#set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/trunk")
+#set(REPOSITORY_URL "https://svn.hdfgroup.org/hdf4/trunk")
 #comment to use a uncompressed source folder
 set(CTEST_USE_TAR_SOURCE "hdf-4.2.11")
 ###################################################################

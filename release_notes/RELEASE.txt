@@ -9,16 +9,16 @@ and wish to migrate to HDF 4.2.12-pre1.
 
 The HDF 4.2.11 documentation can be found on the The HDF Group's website
 at:
-    http://www.hdfgroup.org/release4/doc/
+    https://www.hdfgroup.org/release4/doc/
 
 First-time HDF users are encouraged to read the HDF FAQ, which can be
 reached from the HDF product home page:
 
-    http://hdfgroup.org/products/hdf4/
+    https://hdfgroup.org/products/hdf4/
 
 If you have any questions or comments, please see the HDF Support page:
 
-    http://hdfgroup.org/services/support.html
+    https://hdfgroup.org/services/support.html
 
 CONTENTS
 

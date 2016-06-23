@@ -33,10 +33,10 @@ The HDF Group's FTP server at ftp://ftp.hdfgroup.org/lib-external/zlib/.
    =================================
 
 HDF4 may be configured to use the Szip compression Library. For more 
-information about the Szip library, see http://hdfgroup.org/doc_resource/SZIP/.
+information about the Szip library, see https://hdfgroup.org/doc_resource/SZIP/.
 
 The Szip compression library is free for non-commercial use; see 
-http://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html for information 
+https://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html for information 
 regarding commercial use.
 
 

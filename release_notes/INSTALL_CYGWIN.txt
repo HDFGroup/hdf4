@@ -73,10 +73,10 @@ Preconditions:
     HDF4 may be configured to use the SZIP compression Library.
     For more information about the SZIP library, see
 
-               http://hdfgroup.org/doc_resource/SZIP/ 
+               https://hdfgroup.org/doc_resource/SZIP/ 
 
     The SZIP compression library is free for non-commercial use; 
-    see http://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html
+    see https://hdfgroup.org/doc_resource/SZIP/Commercial_szip.html
     for information regarding commercial use.   
 
     

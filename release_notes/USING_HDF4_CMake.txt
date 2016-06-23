@@ -215,7 +215,7 @@ Windows should adjust the forward slash to double backslashes, except for
 the HDF_DIR environment variable.
 
 NOTE: these files are available at the HDF web site:
-    http://www.hdfgroup.org/release4/cmakebuild.html
+    https://www.hdfgroup.org/release4/cmakebuild.html
 
     CTestScript.cmake
 
@@ -256,7 +256,7 @@ set(SITE_COMPILER_NAME "compiler name")
 set(SITE_COMPILER_VERSION "compiler version")
 
 # needed for source updates, change as required
-set(REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4-examples/trunk")
+set(REPOSITORY_URL "https://svn.hdfgroup.org/hdf4-examples/trunk")
 
 set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/hdf4Examples-4.2")
 

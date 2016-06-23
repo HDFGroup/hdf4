@@ -333,7 +333,7 @@ datasets are.  The "rules" for writing to a compressed dataset are as follows:
 compressed data which is not stored in "chunked" form.  This is due to 
 compression algorithms not being suitable for "local" modifications in a
 compressed datastream.  Please send questions about compression to the
-general HDF support e-mail address:  hdfhelp@ncsa.uiuc.edu
+general HDF support e-mail address:  help@hdfgroup.org
 
 Compression for HDF SDS
 The SDsetcompress and SDsetnbitdataset functions are used as
@@ -870,7 +870,7 @@ policy:
 8. A new utility will be written to convert "DimVal0.1" to "DimVal0.0"
    for special cases.
 
-Please send bug reports, comments and suggestions to hdfhelp@ncsa.uiuc.edu.
+Please send bug reports, comments and suggestions to help@hdfgroup.org.
 
 
 ============================================================================
@@ -1476,12 +1476,12 @@ First-time HDF users are encouraged to read the FAQ in this release for
 more information about HDF.  Users can also look at the home page for HDF
 at:
 
-    http://hdf.ncsa.uiuc.edu/
+    https://www.hdfgroup.org/
 
 Please send questions, comments, and recommendations regarding the
 Macintosh version of the HDF library to:
 
-    hdfhelp@ncsa.uiuc.edu
+    help@hdfgroup.org
  
 
 ============================================================================
@@ -3515,11 +3515,11 @@ First-time HDF users are encouraged to read the FAQ in this release for
 more information about HDF.  Users can also look at the home page for HDF
 at:
 
-    http://hdf.ncsa.uiuc.edu/
+    https://www.hdfgroup.org/
 
 Please send questions, comments, and recommendations regarding the Windows
 version of the HDF library to:
 
-    hdfhelp@ncsa.uiuc.edu
+    help@hdfgroup.org
  
 ============================================================================
