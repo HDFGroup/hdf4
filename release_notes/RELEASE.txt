@@ -120,7 +120,7 @@ This version has been tested in the following platforms:
                                      ifort (IFORT) 15.0.3.187 Build 20150407
                                      pgcc and pgf90 15.7-0 64-bit target on x86-64 Linux -tp nehalem
 
-   Linux, 3.10.0-327.10.1.el7        gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+   Linux, 3.10.0-327.10.1.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
    #1 SMP x86_64, GNU/Linux          GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
    (kituo/moohan)                    icc (ICC) 15.0.3.187 Build 20150407
                                      ifort (IFORT) 15.0.3.187 Build 20150407
