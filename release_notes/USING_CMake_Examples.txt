@@ -70,8 +70,6 @@ add "-VV" to the ctest command. The output should show near the end;
 III. Other changes to the HDF4_Examples.cmake file
 ========================================================================
 
-Line 10: uncomment to build and test Fortran examples.
-
-Line 43-45: uncomment to use a source tarball or zipfile;
+Line 56-58: uncomment to use a source tarball or zipfile;
      Add script option "TAR_SOURCE=MySource.tar".
 
