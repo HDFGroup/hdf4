@@ -33,6 +33,8 @@ Source Distribution Layout
              Please see the README in each directory for further 
              information on each package. 
 
+   java   -- The Java HDF JNI library
+
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
 
