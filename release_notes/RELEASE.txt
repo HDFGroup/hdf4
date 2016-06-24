@@ -1,11 +1,11 @@
-HDF version 4.2.12-pre1 released on 2016-06-20
+HDF version 4.2.12 released on 2016-06-24
 ====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.11 and HDF 4.2.12-pre1.
+This document describes the differences between HDF 4.2.11 and HDF 4.2.12.
 It is written for people who are familiar with previous releases of HDF
-and wish to migrate to HDF 4.2.12-pre1.
+and wish to migrate to HDF 4.2.12.
 
 The HDF 4.2.11 documentation can be found on the The HDF Group's website
 at:
