@@ -167,6 +167,17 @@ fi
 UnameInfo=`grep -i 'Uname information:' lib/libhdf4.settings`
 OStype=`echo $UnameInfo | cut -d ":" -f 2 | cut -d " " -f 4`
 
+# This code will change the OStype to remove all the code between 
+# the "- first number" and ".el". For example 2.6.32-573.22.1.el6.x86_64 
+# will become 2.6.32-573.el6.x86_64
+#
+#OSsize=`echo ${OStype} | cut -d "e" -f 2`
+#OSsize=`echo .e${OSsize}`
+#
+#kernel=`echo ${OStype} | cut -d "-" -f 1`
+#vendor_kernel=`echo ${OStype} | cut -d "-" -f 2 | cut -d "." -f 1`
+#OStype=`echo ${kernel}-${vendor_kernel}${OSsize}`
+
 libCC=`grep -i 'C compiler' lib/libhdf4.settings`
 libFC=`grep -i 'Fortran Compiler' lib/libhdf4.settings`
 
