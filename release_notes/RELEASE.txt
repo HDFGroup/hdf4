@@ -88,7 +88,8 @@ Bugs fixed since HDF 4.2.11
 =========================
    Configuration
    =============
-    - None
+    - Examples from mfhdf and hdf will now be installed according to $DESTDIR when
+      it is supplied.  (LRK, 2016/06/29, HDFFR-1491)
 
    Library
    =========

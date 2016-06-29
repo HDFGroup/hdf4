@@ -23,7 +23,7 @@ INSTALL_FILES = SD_create_sds.c SD_write_to_sds.c SD_write_slab.c        \
 	SD_get_info.c SD_find_sds_by_name.c SD_set_get_dim_info.c        \
 	SD_dimscale_vs_sds.c SD_set_attr.c SD_get_attr.c SD_chunking_example.c
 
-EXAMPLEDIR=$(prefix)/examples/c
+EXAMPLEDIR=${DESTDIR}$(prefix)/examples/c
 
 # How to build programs using h4cc
 $(EXTRA_PROG): $(H4CC)
