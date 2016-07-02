@@ -1,13 +1,13 @@
-HDF version 4.2.12 released on 2016-06-29
+HDF version 4.2.12-post0 currently under development
 ====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.11 and HDF 4.2.12.
+This document describes the differences between HDF 4.2.12 and HDF 4.2.12-post0.
 It is written for people who are familiar with previous releases of HDF
 and wish to migrate to HDF 4.2.12.
 
-The HDF 4.2.11 documentation can be found on the The HDF Group's website
+The HDF 4.2.12 documentation can be found on the The HDF Group's website
 at:
     https://www.hdfgroup.org/release4/doc/
 
@@ -25,7 +25,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.11
+- Bugs fixed since HDF 4.2.12
   -- Configuration
   -- Library
   -- Utilities
@@ -42,62 +42,27 @@ New features and changes
 
    Library
    =========
-    - Behavior of HDstrdup changed
-      HDstrdup now checks the input string for NULL.  (BMR, 2016/05/12)
-
-    - Behavior of SDsetexternalfile changed
-      Previously, when SDsetexternalfile was called more than once on a data
-      set, the library would repeatedly store the external file information in
-      the main file, at different offsets.  SDsetexternalfile is now fixed to
-      cause no effect when the data set is already external.  (BMR, 2016/05/30)
-
-    - Added new utility function HDisnetcdf64 for use in tools
-      HDisnetcdf64 returns TRUE(1) or FALSE(0) if a file is a netCDF 64-bit
-      file or not.
-	intn HDisnetcdf64(const char *filename)
-      (BMR, 2016/06/14)
-
+    - None
 
    Utilities
    =========
-    - hdp: detection of netCDF 64-bit file
-      The utility hdp simply failed when the input file was a netCDF 64-bit
-      file.  It now reports that it cannot read a netCDF 64-bit file then
-      exits or continue to the next input file.
-      (BMR, 2016/06/14)
+    - None
 
 
 Support for new platforms and compilers
 =======================================
-    - Support for Mac OS X Yosemeti 10.10 added (AKC - 2015/03/04, HDFFR-1500)
-
-    - Support for Mac OS X El Capitan 10.11 added (AKC - 2015/11/18, HDFFR-1425)
-      (BMR, added for AKC, 2016/06/24)
-
-    Java Wrapper Library
-    --------------------
-
-    The Java HDF JNI library has been integrated into the HDF repository.
-    The configure option is "--enable-java", and the CMake option is
-    HDF4_BUILD_JAVA:BOOL=ON. The package hierarchy has changed from the
-    HDF 4 JNI, which was "ncsa.hdf.hdflib", to HDF 4.2.12,
-    "hdf.hdflib".
+    - None
 
 
-Bugs fixed since HDF 4.2.11
+Bugs fixed since HDF 4.2.12
 =========================
    Configuration
    =============
-    - Examples from mfhdf and hdf will now be installed according to $DESTDIR when
-      it is supplied.  (LRK, 2016/06/29, HDFFR-1491)
+    - None
 
    Library
    =========
-    - SDsetexternalfile on special elements
-      When the data element is already special, incorrect data length was used
-      for the element in subsequent calls to SDsetexternalfile, causing
-      failures sometimes.  This is now fixed.  (BMR, 2016/01/04, HDFFR-1516)
-
+    - None
 
    Utilities
    =========
@@ -106,9 +71,7 @@ Bugs fixed since HDF 4.2.11
 
 Documentation
 =============
-    - In addition to minor improvements in the contents, user documentation
-      have a new format to improve usability.
-      (BMR, 2016/06/24)
+    - None
 
 
 Platforms tested

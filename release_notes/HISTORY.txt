@@ -16,6 +16,7 @@
 
 List of the HDF4 releases
 
+4.2.12         June	 2016  /* delayed dues to 1.10 and 1.8.17 releases */
 4.2.11         February	 2015
 4.2.10         February	 2014
 4.2.9          February	 2013
@@ -43,6 +44,293 @@ List of the HDF4 releases
 
 
 ==========================================================================    
+
+%%%4.2.12%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HDF version 4.2.12 released on 2016-06-29
+====================================================
+
+INTRODUCTION
+
+This document describes the differences between HDF 4.2.11 and HDF 4.2.12.
+It is written for people who are familiar with previous releases of HDF
+and wish to migrate to HDF 4.2.12.
+
+The HDF 4.2.11 documentation can be found on the The HDF Group's website
+at:
+    https://www.hdfgroup.org/release4/doc/
+
+First-time HDF users are encouraged to read the HDF FAQ, which can be
+reached from the HDF product home page:
+
+    https://hdfgroup.org/products/hdf4/
+
+If you have any questions or comments, please see the HDF Support page:
+
+    https://hdfgroup.org/services/support.html
+
+CONTENTS
+
+- New features and changes
+  -- Configuration
+- Support for new platforms and compilers
+- Bugs fixed since HDF 4.2.11
+  -- Configuration
+  -- Library
+  -- Utilities
+- Documentation
+- Platforms tested
+- Known problems
+
+
+New features and changes
+========================
+   Configuration
+   =============
+    - None
+
+   Library
+   =========
+    - Behavior of HDstrdup changed
+      HDstrdup now checks the input string for NULL.  (BMR, 2016/05/12)
+
+    - Behavior of SDsetexternalfile changed
+      Previously, when SDsetexternalfile was called more than once on a data
+      set, the library would repeatedly store the external file information in
+      the main file, at different offsets.  SDsetexternalfile is now fixed to
+      cause no effect when the data set is already external.  (BMR, 2016/05/30)
+
+    - Added new utility function HDisnetcdf64 for use in tools
+      HDisnetcdf64 returns TRUE(1) or FALSE(0) if a file is a netCDF 64-bit
+      file or not.
+	intn HDisnetcdf64(const char *filename)
+      (BMR, 2016/06/14)
+
+
+   Utilities
+   =========
+    - hdp: detection of netCDF 64-bit file
+      The utility hdp simply failed when the input file was a netCDF 64-bit
+      file.  It now reports that it cannot read a netCDF 64-bit file then
+      exits or continue to the next input file.
+      (BMR, 2016/06/14)
+
+
+Support for new platforms and compilers
+=======================================
+    - Support for Mac OS X Yosemeti 10.10 added (AKC - 2015/03/04, HDFFR-1500)
+
+    - Support for Mac OS X El Capitan 10.11 added (AKC - 2015/11/18, HDFFR-1425)
+      (BMR, added for AKC, 2016/06/24)
+
+    Java Wrapper Library
+    --------------------
+
+    The Java HDF JNI library has been integrated into the HDF repository.
+    The configure option is "--enable-java", and the CMake option is
+    HDF4_BUILD_JAVA:BOOL=ON. The package hierarchy has changed from the
+    HDF 4 JNI, which was "ncsa.hdf.hdflib", to HDF 4.2.12,
+    "hdf.hdflib".
+
+
+Bugs fixed since HDF 4.2.11
+=========================
+   Configuration
+   =============
+    - Examples from mfhdf and hdf will now be installed according to $DESTDIR when
+      it is supplied.  (LRK, 2016/06/29, HDFFR-1491)
+
+   Library
+   =========
+    - SDsetexternalfile on special elements
+      When the data element is already special, incorrect data length was used
+      for the element in subsequent calls to SDsetexternalfile, causing
+      failures sometimes.  This is now fixed.  (BMR, 2016/01/04, HDFFR-1516)
+
+
+   Utilities
+   =========
+    - None
+
+
+Documentation
+=============
+    - In addition to minor improvements in the contents, user documentation
+      have a new format to improve usability.
+      (BMR, 2016/06/24)
+
+
+Platforms tested
+================
+This version has been tested in the following platforms:
+
+(Format:
+   uname -s, uname -r
+   uname -v, uname -p, uname -m)
+
+
+
+   Linux 2.6.32-573.22.1.el6.x86_64  gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+   #1 SMP, x86_64                    GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-16)
+   (mayll/platypus)                  icc (ICC) 15.0.3.187 Build 20150407
+                                     ifort (IFORT) 15.0.3.187 Build 20150407
+                                     pgcc and pgf90 15.7-0 64-bit target on x86-64 Linux -tp nehalem
+
+   Linux, 3.10.0-327.10.1.el7.x86_64 gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+   #1 SMP x86_64, GNU/Linux          GNU Fortran (GCC) 4.8.5 20150623 (Red Hat 4.8.5-4)
+   (kituo/moohan)                    icc (ICC) 15.0.3.187 Build 20150407
+                                     ifort (IFORT) 15.0.3.187 Build 20150407
+
+   Linux, 2.6.32-573.18.1.el6.ppc64  (1) GNU Fortran (GCC) 4.4.7 20120313 (Red Hat 4.4.7-11)
+   #1 SMP, ppc64 (ostrich)           (2) IBM XL Fortran for Linux, V15.1 (64-bit mode)
+
+   SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
+   11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
+
+   Windows 7                      Visual Studio 2012 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2015 w/ Intel Fortran 16 (cmake)
+                                  Cygwin(CYGWIN_NT-6.1 2.2.1(0.289/5/3) 
+                                  gcc(4.9.3) compiler and gfortran)
+                                  (cmake and autotools)
+
+   Windows 7 x64                  Visual Studio 2012 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2015 w/ Intel Fortran 16 (cmake)
+
+   Windows 8.1                    Visual Studio 2012 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
+
+   Windows 8.1 x64                Visual Studio 2012 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
+
+   Mac OS X 10.8.5, Darwin, 12.6.0   Apple clang version 5.1 from Xcode 5.1
+   12.6.0, x86_64                    gfortran GNU Fortran (GCC) 4.8.2
+   (swallow,kite)                    Intel icc and ifort Version 15.0.3 
+
+   Mac OS X 10.9.5, Darwin, 13.4.0   Apple clang version 6.0 from Xcode 6.2
+   13.4.0, x86_64                    gfortran GNU Fortran (GCC) 4.9.2
+   (wren,quail)                      Intel icc and ifort Version 15.0.3 
+
+   Mac OS X 10.10.5, Darwin, 14.5.0  Apple clang version 6.0 from Xcode 7.0
+   14.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 4.9.2
+   (osx1010dev)                      Intel icc and ifort version 15.0.3
+
+   Mac OS X 10.11.5, Darwin, 15.4.0  Apple clang version 7.3 from Xcode 7.3
+   15.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 5.2.0
+   (osx1010dev)                      Intel icc and ifort version 15.0.3
+
+   Debian7.5.0 3.2.0-4-amd64
+   #1 SMP Debian 3.2.51-1, x86_64 GNU/Linux
+                                     gcc (Debian 4.7.2-5) 4.7.2
+                                     GNU Fortran (Debian 4.7.2-5) 4.7.2
+                                     (cmake and autotools)
+
+   Fedora20 3.15.3-200.fc20.x86_64
+   #1 SMP x86_64  GNU/Linux          gcc (GCC) 4.8.3 20140624 (Red Hat 4.8.3-1)
+                                     GNU Fortran (GCC) 4.8.3 20140624 (Red Hat 4.8.3-1)
+                                     (cmake and autotools)
+
+   SUSE 13.1 3.11.10-17-desktop
+   #1 SMP PREEMPT x86_64 GNU/Linux   gcc (SUSE Linux) 4.8.1
+                                     GNU Fortran (SUSE Linux) 4.8.1
+                                     (cmake and autotools)
+
+   Ubuntu 14.04 3.13.0-35-generic
+   #62-Ubuntu SMP x86_64 GNU/Linux   gcc (Ubuntu/Linaro 4.9.1-0ubuntu1) 4.9.1
+                                     GNU Fortran (Ubuntu/Linaro 4.9.1-0ubuntu1) 4.9.1
+                                     (cmake and autotools)
+
+
+Known problems
+==============
+o  Several Fortran examples print "^@" when displaying strings (for example,
+   names of the attributes). This happens because Fortran application
+   doesn't know the length of the strings passed from the C library.
+   EIP - 2015-01-11, HDFFR-1477
+
+o  CMake builds in Windows uses the same pre-generated ncgen*.[ch] files from
+   the yacc/lex input files. The generated file, ncgenyy.c, uses the <unistd.h>
+   header file that Windows does not support.  This must be blocked out in
+   order for Windows to use it.
+   AKC 2014-02-03, HDFFR-1424
+
+o  CMake "make install" fails installing the tools:
+    Use CPack to create an install package.
+   ADB - 2014/02/03
+
+o  CMake does not install these man pages:
+    hdf.1, ncdump.1, ncgen.1
+   AKC/BMR - 2014/02/02
+
+o  For Mac OS X 10.7 Lion, 10.8 Mountain Lion, 10.9 Mavericks, 10.10 Yosemite,
+   and 10.11 El Capitan, when compiling with -O2, some xdr functions might cause
+   memory corruption.  This happened for GCC, Intel and Clang compilers.
+   Currently, -O0 level optimization is used to avoid this problem.
+   (HDFFR-1318,1327,1358,1425) EIP - 2013/02/05, BMR - 2016/06/24
+
+o  On IBM PowerPC 64, hdftest fails when gcc 4.4.6 is used with -O3 optimization
+   level.
+
+o  When building in AIX systems, if CC is xlc with -qlanglvl=ansi, configure
+   will fail when checking for the jpeglib.h header due to the duplicated
+   macro definition of HAVE_STDLIB_H.  This is because some newer builds
+   of the jpeg library have HAVE_STDLIB_H defined in the jconfig.h header file.
+   Without the -qlanglvl=ansi, some older xlc versions (e.g., V7.0) still
+   fail, but newer xlc versions (e.g., V9.0) pass.  AKC - 2010/02/17
+
+o  When building on Linux/UNIX platforms, the szip shared library files must
+   be in the system library path.  This can be done by adding a link to
+   the libsz.* files in the /usr/lib folder or by adding the library
+   location to the LD_LIBRARY_PATH environment variable.
+      Ex. export LD_LIBRARY_PATH=path_to_szip_lib:$LD_LIBRARY_PATH
+   Optionally, one can use the static szip library files by adding '-static'
+   to the CFLAGS environment variable.
+
+o  Existing data written by an HDF4 Library prior to HDF 4.2r2:
+   When a one-dimensional SDS and a dimension scale have
+   the same name, subsequent accesses to the dimension scale or to the
+   SDS might produce undesired results because the libraries could not
+   distinguish between the two objects.  In the case of writing, data
+   might even be corrupted.  For example, SDS data might be written to a
+   dimension variable or vice versa. (bugzilla #624)
+
+   HDF4 Library Releases 4.2r2 and later make a distinction between an SDS
+   and a dimension variable.  However, as with older versions, these recent
+   versions are unable to detect such conflicts in files created by earlier
+   releases.  It is therefore STRONGLY recommended to check for such name
+   duplication before working with data created with a pre-4.2r2 library.
+
+   The functions SDgetnumvars_byname and SDnametoindices are provided
+   to help detect such name conflicts and select the correct object to
+   access, respectively; see the HDF Reference Manual entries for
+   further details.
+   FB - 2009/01/26
+   BMR - revised 2011/06/24
+
+o  N-bit compression is not supported with Fortran APIs.
+
+o  Using both fill-value and compression on SD datasets does not work.
+
+o  When using PGI compilers, make sure that the JPEG library is also compiled
+   with a PGI C compiler; linking with a JPEG library built with gcc causes
+   JPEG library tests to fail.  To bypass the problem:
+
+       x Set LIBS flag to $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+         where $PGI_JPEG_INSTALL_DIR points to the installation directory
+         for the PGI-compiled JPEG library:
+
+         setenv LIBS $PGI_JPEG_INSTALL_DIR/lib/libjpeg.a
+
+       x Use the --with-jpeg=$PGI_JPEG_INSTALL_DIR configure flag to
+         configure with the PGI-compiled JPEG library:
+
+         ./configure --with-jpeg=$PGI_JPEG_INSTALL_DIR --with-zlib....
+
+o  In order for the API SDgetdatasize to get the correct compressed size
+   of the data, the dataset needs to be closed (SDendaccess) or read
+   (SDreaddata) after being written and before SDgetdatasize is called.
+   BMR - 2008/11/22
+
 
 %%%4.2.11%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HDF version 4.2.11 released on 2015-02-09
