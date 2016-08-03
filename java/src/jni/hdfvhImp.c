@@ -59,7 +59,7 @@ Java_hdf_hdflib_HDFLibrary_VHmakegroup
                 } /* end if */
                 else {
                     rval = VHmakegroup((int32)file_id, (int32 *)tags, (int32 *)refs,
-                        (int32)n_objects, (char *)vname, (char *)vcls);
+                        (int32)n_objects, vname, vcls);
                     if (rval < 0)
                         CALL_ERROR_CHECK();
 
@@ -96,9 +96,9 @@ Java_hdf_hdflib_HDFLibrary_VHstoredata
                 h4JNIFatalError(env, "VHstoredatam:  buf not pinned");
             } /* end if */
             else {
-                rval = VHstoredata((int32) file_id, (char *)fldname,
+                rval = VHstoredata((int32) file_id, fldname,
                     (uint8 *)buffer, (int32)n_records, (int32)data_type,
-                    (char *)vname, (char *)vcls);
+                    vname, vcls);
                 if (rval < 0)
                     CALL_ERROR_CHECK();
             }
@@ -114,12 +114,14 @@ Java_hdf_hdflib_HDFLibrary_VHstoredatam
 (JNIEnv *env, jclass oclass, jlong file_id, jstring fieldname, jbyteArray buf, jint n_records,
         jint data_type, jstring vdata_name, jstring vdata_class, jint order)
 {
+    int len;
     int32 rval;
     jbyte *buffer;
     const char *fldname;
     const char *vname;
     const char *vcls;
     jboolean bb;
+    HFILEID fid = (int32)file_id;
 
     PIN_JAVA_STRING_THREE(fieldname, fldname, vdata_name, vname, vdata_class, vcls);
     if (fldname != NULL && vname != NULL && vcls != NULL) {
@@ -132,9 +134,9 @@ Java_hdf_hdflib_HDFLibrary_VHstoredatam
                 h4JNIFatalError(env, "VHstoredatam:  buf not pinned");
             } /* end if */
             else {
-                rval = VHstoredatam((int32)file_id, (char *)fldname,
-                    (uint8 *)buffer, (int32)n_records, (int32)data_type,
-                    (char *)vname, (char *)vcls, (int32)order);
+                rval = VHstoredatam(fid, fldname,
+                    (const uint8 *)buffer, (int32)n_records, (int32)data_type,
+                    vname, vcls, (int32)order);
                 if (rval < 0)
                     CALL_ERROR_CHECK();
 
