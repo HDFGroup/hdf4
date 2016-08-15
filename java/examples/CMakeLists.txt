@@ -44,12 +44,11 @@ Class-Path: ${HDFJNI_CLASSJARS}
   set_target_properties (${example} PROPERTIES FOLDER examples/java)
 endforeach (example ${HDFJNI_EXAMPLES})
 
-if (CMAKE_BUILD_TYPE MATCHES Debug)
-  set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
-endif(CMAKE_BUILD_TYPE MATCHES Debug)
-
 if (BUILD_TESTING)
   macro (ADD_H4_TEST resultfile resultcode)
+    if (CMAKE_BUILD_TYPE MATCHES Debug)
+      set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
+    endif(CMAKE_BUILD_TYPE MATCHES Debug)
     add_test (
         NAME JAVAEX-${resultfile}
         COMMAND "${CMAKE_COMMAND}"

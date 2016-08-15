@@ -213,11 +213,16 @@ public class HDFLibrary implements java.io.Serializable
      */
     private static final long serialVersionUID = -1695429510319126910L;
 
-    public final static String HDFPATH_PROPERTY_KEY = "hdf.hdflib.HDFLibrary.hdflib";
-
     private final static Logger log = LoggerFactory.getLogger(HDFLibrary.class);
 
     private final static String JHI_VERSION= "3.99";
+
+    public final static String HDFPATH_PROPERTY_KEY = "hdf.hdflib.HDFLibrary.hdflib";
+
+    // add system property to load library by name from library path, via
+    // System.loadLibrary()
+    public final static String H4_LIBRARY_NAME_PROPERTY_KEY = "hdf.hdflib.HDFLibrary.loadLibraryName";
+    private static String s_libraryName;
     private static boolean isLibraryLoaded = false;
 
     static { loadH4Lib(); }
@@ -227,35 +232,57 @@ public class HDFLibrary implements java.io.Serializable
         if (isLibraryLoaded) // load only once
             return;
 
-        // first try loading library via full path
-        String filename = System.getProperty(HDFPATH_PROPERTY_KEY, null);
-        if ((filename != null) && (filename.length() > 0)) {
-            File h4dll = new File(filename);
-            if (h4dll.exists() && h4dll.canRead() && h4dll.isFile()) {
-                try {
-                    System.load(filename);
-                    isLibraryLoaded = true;
-                    }
-                catch (Throwable err) {
-                    isLibraryLoaded = false;
-                }
-                finally {
-                    log.info("HDF4 library: ");
-                    log.debug(filename);
-                    log.info((isLibraryLoaded ? "" : " NOT")
-                            + " successfully loaded.");
-                }
+
+        // first try loading library by name from user supplied library path
+        s_libraryName = System.getProperty(H4_LIBRARY_NAME_PROPERTY_KEY, null);
+        String mappedName = null;
+        if ((s_libraryName != null) && (s_libraryName.length() > 0)) {
+            try {
+                mappedName = System.mapLibraryName(s_libraryName);
+                System.loadLibrary(s_libraryName);
+                isLibraryLoaded = true;
             }
-            else {
+            catch (Throwable err) {
+                err.printStackTrace();
                 isLibraryLoaded = false;
-                throw (new UnsatisfiedLinkError("Invalid HDF4 library, "+filename));
+            }
+            finally {
+                log.info("HDF4 library: " + s_libraryName);
+                log.debug(" resolved to: " + mappedName + "; ");
+                log.info((isLibraryLoaded ? "" : " NOT") + " successfully loaded from system property");
+            }
+        }
+
+        if (!isLibraryLoaded) {
+            // else try loading library via full path
+            String filename = System.getProperty(HDFPATH_PROPERTY_KEY, null);
+            if ((filename != null) && (filename.length() > 0)) {
+                File h4dll = new File(filename);
+                if (h4dll.exists() && h4dll.canRead() && h4dll.isFile()) {
+                    try {
+                        System.load(filename);
+                        isLibraryLoaded = true;
+                        }
+                    catch (Throwable err) {
+                        isLibraryLoaded = false;
+                    }
+                    finally {
+                        log.info("HDF4 library: ");
+                        log.debug(filename);
+                        log.info((isLibraryLoaded ? "" : " NOT") + " successfully loaded.");
+                    }
+                }
+                else {
+                    isLibraryLoaded = false;
+                    throw (new UnsatisfiedLinkError("Invalid HDF4 library, "+filename));
+                }
             }
         }
 
         // else load standard library
         if (!isLibraryLoaded) {
-            String mappedName = null;
-            String s_libraryName = "hdf_java";
+            mappedName = null;
+            s_libraryName = "hdf_java";
             try {
                 mappedName = System.mapLibraryName(s_libraryName);
                 System.loadLibrary("hdf_java");
@@ -267,8 +294,7 @@ public class HDFLibrary implements java.io.Serializable
             finally {
                 log.info("HDF4 library: " + s_libraryName);
                 log.debug(" resolved to: " + mappedName + "; ");
-                log.info((isLibraryLoaded ? "" : " NOT")
-                        + " successfully loaded from java.library.path");
+                log.info((isLibraryLoaded ? "" : " NOT") + " successfully loaded from java.library.path");
             }
         }
 
