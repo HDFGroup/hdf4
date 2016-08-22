@@ -201,7 +201,7 @@ set (CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
 set (CTEST_SOURCE_DIRECTORY "../hdf4")
 set (CTEST_BINARY_DIRECTORY ".")
 set (CTEST_CMAKE_GENERATOR "Unix Makefiles")
-set (CTEST_BUILD_CONFIGURATION "Release")
+set (CTEST_CONFIGURATION_TYPE "Release")
 set (CTEST_MAX_N 8)
 
 # -- CDash variables
@@ -303,7 +303,7 @@ set($ENV{LC_MESSAGES}  "en_EN")
 #------------------------------
 set (CTEST_CMAKE_COMMAND "\"${CMAKE_COMMAND}\"")
 set (CTEST_CONFIGURE_COMMAND
-    "${CTEST_CMAKE_COMMAND} -C \"${CTEST_SOURCE_DIRECTORY}/config/cmake/cacheinit.cmake\" -DCMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION} ${BUILD_OPTIONS} \"-G${CTEST_CMAKE_GENERATOR}\" \"${CTEST_SOURCE_DIRECTORY}\"")
+    "${CTEST_CMAKE_COMMAND} -C \"${CTEST_SOURCE_DIRECTORY}/config/cmake/cacheinit.cmake\" -DCMAKE_BUILD_TYPE:STRING=${CTEST_CONFIGURATION_TYPE} ${BUILD_OPTIONS} \"-G${CTEST_CMAKE_GENERATOR}\" \"${CTEST_SOURCE_DIRECTORY}\"")
 
 # Print summary information.
 foreach (v
@@ -312,7 +312,7 @@ foreach (v
     CTEST_SOURCE_DIRECTORY
     CTEST_BINARY_DIRECTORY
     CTEST_CMAKE_GENERATOR
-    CTEST_BUILD_CONFIGURATION
+    CTEST_CONFIGURATION_TYPE
     CTEST_CONFIGURE_COMMAND
     CTEST_SCRIPT_DIRECTORY
     )
@@ -355,7 +355,7 @@ if(NOT LOCAL_MEMCHECK_TEST)
   ##-----------------------------------------------
   ## Package the product
   ##-----------------------------------------------
-  execute_process(COMMAND cpack -C ${CTEST_BUILD_CONFIGURATION} -V
+  execute_process(COMMAND cpack -C ${CTEST_CONFIGURATION_TYPE} -V
     WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY}
     RESULT_VARIABLE cpackResult
     OUTPUT_VARIABLE cpackLog
