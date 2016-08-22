@@ -88,7 +88,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
       The -S option uses the script version of ctest.
 
       The value for the -C option (as shown above, "-C Release") must
-      match the setting for CTEST_BUILD_CONFIGURATION in the platform
+      match the setting for CTEST_CONFIGURATION_TYPE in the platform
       configuration file.
 
       The -VV option is for verbose; use -V for less verbose.
@@ -636,7 +636,7 @@ set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_BINARY_NAME}")
 
 ###################################################################
 ### Following Line is one of [Release, RelWithDebInfo, Debug] #####
-set(CTEST_BUILD_CONFIGURATION "Release")
+set(CTEST_CONFIGURATION_TYPE "Release")
 ###################################################################
 
 ###################################################################
