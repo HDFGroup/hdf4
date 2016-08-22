@@ -47,7 +47,11 @@ endforeach (example ${HDFJNI_EXAMPLES})
 if (BUILD_TESTING)
   macro (ADD_H4_TEST resultfile resultcode)
     if (CMAKE_BUILD_TYPE MATCHES Debug)
-      set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
+      if (WIN32)
+        set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_D;")
+      else()
+        set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
+      endif()
     endif(CMAKE_BUILD_TYPE MATCHES Debug)
     add_test (
         NAME JAVAEX-${resultfile}
