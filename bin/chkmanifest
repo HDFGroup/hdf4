@@ -81,37 +81,6 @@ for file in $git_ls; do
     fi
 done
 
-
-#if [ -z "${USE_SVN_LS}" ]; then
-#    for svn in `find . -type d -name .svn -print`; do
-#        path=`echo $svn |sed 's/\/.svn//'`
-#        for file in `$getsvnentries $svn`; do
-#       	    if (grep ^$path/$file$ $MANIFEST >/dev/null); then
-#    	        :
-#       	    else
-#       	        echo "+ $path/$file"
-#                fail=yes
-#            fi
-#        done
-#    done
-#else
-#    # Next check svn ls, which gets a list of all files that are
-#    # checked in.
-#    svn_ls=`svn ls -R`
-#    for file in $svn_ls; do
-#        path="./${file}"
-#        # Ignore directories
-#        if [ ! -d $path ]; then
-#            if (grep ^$path$ $MANIFEST >/dev/null); then
-#                :
-#          else
-#                echo "+ $path"
-#                fail=yes
-#            fi
-#        fi
-#    done
-#fi
-
 if [ "X$fail" = "Xyes" ]; then
     cat 1>&2 <<EOF
 The MANIFEST is out of date. Files marked with a minus sign (-) no
