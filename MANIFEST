@@ -19,6 +19,8 @@
 #------------------------------------------------------------------------------
 
 
+./.gitattributes       _DO_NOT_DISTRIBUTE_
+./.gitignore           _DO_NOT_DISTRIBUTE_
 ./MANIFEST
 ./COPYING
 ./Makefile.am
