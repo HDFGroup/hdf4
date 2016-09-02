@@ -80,10 +80,10 @@
 ./bin/yodconfigure
 ./bin/h4vers
 ./bin/release
-./bin/pkgscrpts/h4rmflags
-./bin/pkgscrpts/makeHDF4BinaryTarfiles.pl
-./bin/pkgscrpts/makeInternalhdf4README.pl
-./bin/pkgscrpts/makeOuterhdf4README.pl
+./bin/pkgscrpts/h4rmflags                  _DO_NOT_DISTRIBUTE_
+./bin/pkgscrpts/makeHDF4BinaryTarfiles.pl  _DO_NOT_DISTRIBUTE_
+./bin/pkgscrpts/makeInternalhdf4README.pl  _DO_NOT_DISTRIBUTE_
+./bin/pkgscrpts/makeOuterhdf4README.pl     _DO_NOT_DISTRIBUTE_
 
 ./config/BlankForm
 ./config/aix
