@@ -113,7 +113,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_DFPnpals
 (JNIEnv *env, jclass clss, jstring filename)
 {
-    intn         rval;
+    intn         rval = -1;
     const char  *f;
 
     PIN_JAVA_STRING(filename, f);
