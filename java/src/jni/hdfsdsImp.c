@@ -37,7 +37,7 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDstart
 (JNIEnv *env, jclass clss, jstring filename, jint access)
 {
-    int32 sdid;
+    int32 sdid = -1;
     const char  *fname;
 
     PIN_JAVA_STRING(filename, fname);
@@ -121,7 +121,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDnametoindex
 (JNIEnv *env, jclass clss, jlong sdid, jstring name)
 {
-    intn rval;
+    intn rval = -1;
     const char *str;
     int32 id = (int32)sdid;
 
@@ -823,7 +823,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_SDfindattr
 (JNIEnv *env, jclass clss, jlong sdsid, jstring name)
 {
-    int32 rval;
+    int32 rval = -1;
     const char *str;
     int32 id = (int32)sdsid;
 
@@ -1221,7 +1221,7 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_SDcreate
 (JNIEnv *env, jclass clss, jlong sd_id, jstring name, jlong number_type, jint rank, jintArray dimsizes)
 {
-    int32 rval;
+    int32 rval = -1;
     const char *str;
     jint *dims;
     jboolean isCopy;

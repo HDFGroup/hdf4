@@ -130,7 +130,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRnametoindex
 (JNIEnv *env, jclass cls, jlong gr_id, jstring gr_name)
 {
-    int32 rval;
+    int32 rval = -1;
     const char *str;
 
     PIN_JAVA_STRING(gr_name, str);
@@ -152,7 +152,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetchunkinfo
 {
     int32 rval;
     HDF_CHUNK_DEF cdef;
-    jboolean stat;
+    jboolean stat = JNI_FALSE;
     jint *flgs;
     jboolean isCopy;
 
@@ -599,7 +599,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_GRfindattr
 (JNIEnv *env, jclass cls, jlong gr_id, jstring attr_name)
 {
-    int32 rval;
+    int32 rval = -1;
     const char *str;
 
     PIN_JAVA_STRING(attr_name, str);
@@ -619,7 +619,7 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_GRcreate
 (JNIEnv *env, jclass cls, jlong gr_id, jstring name, jint ncomp, jlong data_type, jint interlace_mode, jintArray dim_sizes)
 {
-    int32 rval;
+    int32 rval = -1;
     jint *dims;
     const char *str;
     jboolean bb;

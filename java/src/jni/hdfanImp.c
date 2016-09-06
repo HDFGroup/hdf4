@@ -164,7 +164,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_ANannlist
 (JNIEnv *env, jclass clss, jlong an_id, jint anntype, jshort tag, jshort ref, jintArray annlist)
 {
-    intn retVal;
+    intn retVal = -1;
     jint *iarr;
     jboolean isCopy;
 
@@ -285,7 +285,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_ANget_1tagref
 (JNIEnv *env, jclass clss, jlong an_id, jint index, jint type, jshortArray tagref)
 {
-    int32 rval;
+    int32 rval = -1;
     short *theArgs;
     jboolean isCopy;
 
