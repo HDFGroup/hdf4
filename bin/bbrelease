@@ -243,7 +243,7 @@ if [ X$revmode = Xyes ]; then
     revision=`git rev-parse --short HEAD`
     # Set version information to m.n.r-of$today.
     # (h4vers does not correctly handle just m.n.r-$today.)
-    VERS=`echo $VERS | sed -e s/-.*//`-r$revision
+    VERS=`echo $VERS | sed -e s/-.*//`-$revision
     echo Private release of $VERS
     bin/h4vers -s $VERS
     HDF4_VERS=hdf4-$branch-$revision
