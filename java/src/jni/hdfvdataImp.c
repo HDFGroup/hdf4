@@ -32,7 +32,7 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_VSattach
 (JNIEnv *env, jclass clss, jlong fid, jint vdata_ref, jstring accessmode)
 {
-    int32          retVal;
+    int32          retVal = -1;
     const char    *access;
     HFILEID        id = (HFILEID)fid;
 
@@ -234,7 +234,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSfind
 (JNIEnv *env, jclass clss, jlong vdata_id, jstring fieldname)
 {
-    int32 retVal;
+    int32 retVal = -1;
     const char  *fldName;
 
     PIN_JAVA_STRING(fieldname, fldName);
@@ -286,7 +286,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSgetfields
 (JNIEnv *env, jclass clss, jlong vdata_id, jobjectArray fields)
 {
-    int retVal;
+    int retVal = -1;
     jclass jc;
     char *flds;
     jstring rstring;
@@ -500,7 +500,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSlone
 (JNIEnv *env, jclass clss, jlong fid, jintArray ref_array, jint arraysize)
 {
-    int retVal;
+    int retVal = -1;
     jint * arr;
     jboolean bb;
 
@@ -534,7 +534,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSread
 (JNIEnv *env, jclass clss, jlong vdata_id, jbyteArray databuf, jint nrecords, jint interlace)
 {
-    int32   retVal;
+    int32   retVal = -1;
     jbyte  * data;
     jboolean bb;
 
@@ -617,7 +617,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSsizeof
 (JNIEnv *env, jclass clss, jlong vdata_id, jstring fields)
 {
-    int32 retVal;
+    int32 retVal = -1;
     const char *fldPtr;
 
     PIN_JAVA_STRING(fields, fldPtr);
@@ -659,7 +659,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSfindclass
 (JNIEnv *env, jclass clss, jlong vdata_id, jstring hdfclassname)
 {
-    int32 rval;
+    int32 rval = -1;
     const char *string;
 
     PIN_JAVA_STRING(hdfclassname, string);
@@ -776,7 +776,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSwrite
 (JNIEnv *env, jclass clss, jlong vdata_id, jbyteArray databuf, jint n_records, jint interlace)
 {
-    int32 rval;
+    int32 rval = -1;
     jbyte *b;
     jboolean bb;
 
@@ -920,7 +920,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_VSfindattr
 (JNIEnv *env, jclass clss, jlong id, jint index, jstring name)
 {
-    int32 retVal;
+    int32 retVal = -1;
     const char  *cname;
 
     PIN_JAVA_STRING(name, cname);

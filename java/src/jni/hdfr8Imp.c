@@ -213,7 +213,7 @@ Java_hdf_hdflib_HDFLibrary_DFR8nimages
 (JNIEnv *env, jclass clss, jstring hdfFile)
 {
     const char  *hdf_file;
-    int retVal;
+    int retVal = -1;
 
     PIN_JAVA_STRING(hdfFile, hdf_file);
 

@@ -17,17 +17,17 @@
 
 #include "hdftest.h"
 
-#define EXTTST    "exttst.hdf"		/* main file for external file test */
-#define EXTFILE   "SD_external_file"	/* file to contain external data */
-#define EXTFILE1  "SD_external_file 2"	/* file to contain external data */
-#define EXTSDS    "ExternalDataSet"	/* data set written with external data
-					   right after creation */
-#define EXTSDS2   "ExternalDataSet 2"	/* data set first empty then written
-					   with external data */
-#define WRAPSDS   "WrapperDataSet"	/* data set pointing to external data */
-#define NOEXTSDS  "NoExternalDataSet"	/* data set with data in main file */
-#define EXTFILE2  "ExternalSDSexisting"	/* data set having data */
-#define EXTFILE3  "ShouldNotHappen"	/* data set already is external */
+#define EXTTST    "exttst.hdf"        /* main file for external file test */
+#define EXTFILE   "SD_external_file"    /* file to contain external data */
+#define EXTFILE1  "SD_external_file 2"    /* file to contain external data */
+#define EXTSDS    "ExternalDataSet"    /* data set written with external data
+                    right after creation */
+#define EXTSDS2   "ExternalDataSet 2"    /* data set first empty then written
+                    with external data */
+#define WRAPSDS   "WrapperDataSet"    /* data set pointing to external data */
+#define NOEXTSDS  "NoExternalDataSet"    /* data set with data in main file */
+#define EXTFILE2  "ExternalSDSexisting"    /* data set having data */
+#define EXTFILE3  "ShouldNotHappen"    /* data set already is external */
 #define OFFSET    24
 #define NUM_SDS   4
 #define SDS1      "Dataset 1"
@@ -39,8 +39,8 @@
 #define Y_LENGTH  5
 #define Z_LENGTH  6
 #define RANK2     2
-#define DIM1	  5
-#define DIM2	  5
+#define DIM1      5
+#define DIM2      5
 
 void verify_data(int32 sd_id, int32 sds_ind);
 
@@ -52,32 +52,32 @@ int32 ap_data[1][Y_LENGTH][X_LENGTH];
 
 /********************************************************************
    Name: test_setexternal() - tests basic funtionalities in storing
-			data in an external file
+            data in an external file
 
-   Description: 
-	This function tests three scenarios:
-	- Data written in main file then moved to external file and modified
-	- Data in external file is pointed to by a "wrapper" data set
-	- Empty data set is written with data in the external file
+   Description:
+    This function tests three scenarios:
+    - Data written in main file then moved to external file and modified
+    - Data in external file is pointed to by a "wrapper" data set
+    - Empty data set is written with data in the external file
 
-	The main contents include:
-	- Data written in main file then moved and modified
-	  + create and write the entire data set in the main file
-	  + move the data to the external file with SDsetexternalfile
-	  + modify this external data
-	- Data in external file pointed to by a "wrapper" data set
-	  + create a data set in the main file, i.e., the wrapper data set
-	  + have the wrapper pointed to part of the external data that
-	    belongs to the external data set above
-	  + read the wrapper's data and verify
-	- Empty data set is written with data in the external file
-	  + create a data set in the main file and close it
-	  + re-open the data set
-	  + promote it to external data set, i.e., SDsetexternalfile
-	  + write data to the data set
+    The main contents include:
+    - Data written in main file then moved and modified
+    + create and write the entire data set in the main file
+    + move the data to the external file with SDsetexternalfile
+    + modify this external data
+    - Data in external file pointed to by a "wrapper" data set
+    + create a data set in the main file, i.e., the wrapper data set
+    + have the wrapper pointed to part of the external data that
+        belongs to the external data set above
+    + read the wrapper's data and verify
+    - Empty data set is written with data in the external file
+    + create a data set in the main file and close it
+    + re-open the data set
+    + promote it to external data set, i.e., SDsetexternalfile
+    + write data to the data set
 
    Return value:
-	The number of errors occurred in this routine.
+    The number of errors occurred in this routine.
 
    BMR - Jan 16, 2009
 *********************************************************************/
@@ -172,25 +172,25 @@ static int test_setexternal()
 
     /* Read and verify data via the "wrapper" data set */
     {
-	int32 odata[9];
+    int32 odata[9];
 
-	/* Read data back from this "wrapper" data set */
-	start[0] = start[1] = 0;
-	edges[0]  = 3;
-	edges[1]  = 3;
-	status = SDreaddata(sds_id, start, NULL, edges, (VOIDP) odata);
-	CHECK(status, FAIL, "SDreaddata");
+    /* Read data back from this "wrapper" data set */
+    start[0] = start[1] = 0;
+    edges[0]  = 3;
+    edges[1]  = 3;
+    status = SDreaddata(sds_id, start, NULL, edges, (VOIDP) odata);
+    CHECK(status, FAIL, "SDreaddata");
 
-	/* Verify data read back in */
-	for(ii = 0; ii < edges[0]*edges[1]; ii++)
-	{
-	    if(odata[ii] != (ii + 2) * 10) 
-	    {
-		fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n",
-		ii, (ii + 2) * 10, (long)odata[ii]);
-		num_errs++;
-	    }
-	}
+    /* Verify data read back in */
+    for(ii = 0; ii < edges[0]*edges[1]; ii++)
+    {
+        if(odata[ii] != (ii + 2) * 10)
+        {
+        fprintf(stderr, "Bogus val in loc %d in wrapper dset want %d  got %ld\n",
+        ii, (ii + 2) * 10, (long)odata[ii]);
+        num_errs++;
+        }
+    }
     }
 
     /* End access to the wrapper data set */
@@ -198,7 +198,7 @@ static int test_setexternal()
     CHECK(status, FAIL, "SDendaccess");
 
     /* Create an empty data set then write external data to it */
- 
+
     /* Create data set EXTSDS2 */
     nt = DFNT_INT32 | DFNT_NATIVE;
     dimsizes[0] = X_LENGTH;
@@ -240,19 +240,19 @@ static int test_setexternal()
 
 /********************************************************************
    Name: test_getexternal() - tests getting external file info on
-	various data sets
+    various data sets
 
-   Description: 
-	The main contents include:
-	- Create and write a data set in the main file only, i.e., non-external
-	  data set
-	- Get and verify external file info for external data set and
-	  wrapper data set
-	- Verifying that there is no external file info from the non-external
-	  data set
+   Description:
+    The main contents include:
+    - Create and write a data set in the main file only, i.e., non-external
+    data set
+    - Get and verify external file info for external data set and
+    wrapper data set
+    - Verifying that there is no external file info from the non-external
+    data set
 
    Return value:
-	The number of errors occurred in this routine.
+    The number of errors occurred in this routine.
 
    BMR - Jan 16, 2009
 *********************************************************************/
@@ -273,7 +273,7 @@ static int test_getexternal()
     CHECK(sd_id, FAIL, "SDstart (again)");
 
     /* Create and write a data set in the main file */
- 
+
     /* Create data set NOEXTSDS */
     nt = DFNT_INT32 | DFNT_NATIVE;
     dimsizes[0] = DIM1;
@@ -329,10 +329,10 @@ static int test_getexternal()
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
     {
-	char *null_buffer=NULL;
-	intn ret_code=0;
-	ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
-	VERIFY(ret_code, FAIL, "SDgetexternalinfo");
+    char *null_buffer=NULL;
+    intn ret_code=0;
+    ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
+    VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
     /* Prepare buffer for external file name */
@@ -382,10 +382,10 @@ static int test_getexternal()
     /* Test passing in NULL pointer for external file name buffer, should
     fail gracefully */
     {
-	char *null_buffer=NULL;
-	intn ret_code=0;
-	ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
-	VERIFY(ret_code, FAIL, "SDgetexternalinfo");
+    char *null_buffer=NULL;
+    intn ret_code=0;
+    ret_code = SDgetexternalinfo(sds_id, name_len+1, null_buffer, &offset, &length);
+    VERIFY(ret_code, FAIL, "SDgetexternalinfo");
     }
 
     extfile_name = (char *) HDmalloc(sizeof(char *) * (name_len+1));
@@ -424,17 +424,17 @@ static int test_getexternal()
 /********************************************************************
    Name: test_mult_setexternal() - tests setting external multiple times
 
-   Description: 
-	The main contents include:
-	- Create and write an external data set to FILE_NAME, then close
-	  it and the file.
-	- Re-open the file
-	- Call SDsetexternal on the data set, which is already an external SDS.
-	  This is to make sure HDFFR-1516 is fixed.
-	- Re-open the file and verify data of each data set.
+   Description:
+    The main contents include:
+    - Create and write an external data set to FILE_NAME, then close
+    it and the file.
+    - Re-open the file
+    - Call SDsetexternal on the data set, which is already an external SDS.
+    This is to make sure HDFFR-1516 is fixed.
+    - Re-open the file and verify data of each data set.
 
    Return value:
-	The number of errors occurred in this routine.
+    The number of errors occurred in this routine.
 
    BMR - Jan 16, 2009
 *********************************************************************/
@@ -447,7 +447,7 @@ int test_mult_setexternal()
     intn  name_len = 0;
     intn  status = SUCCEED;
     intn  num_errs = 0;    /* number of errors in compression test so far */
- 
+
     /* Create the file and initialize the SD interface */
     sd_id = SDstart (EXTTST, DFACC_CREATE);
     CHECK(status, FAIL, "SDstart");
@@ -523,25 +523,25 @@ int test_mult_setexternal()
 
 /********************************************************************
    Name: test_special_combos() - tests combining other specialness with
-				 external data feature.
-   Description: 
-	The main contents include:
-	- Open the file from test_mult_setexternal
-	- Create and write two unlimited-dimension data sets, SDS2 and SDS3
-	- Append data to the first unlimited-dimension data set, SDS2, to
-	  create linked-block element.
-	- Move data of the first unlimited-dim data set, SDS2, to the external
-	  file to test the combination of SPECIAL_LINKED and SPECIAL_EXT.
-	- Move data of SDS3 to the external file to test unlimited and
-	  SPECIAL_EXT without linked-block element.
-	- Make a compressed data set, SDS4, in the main file.
-	- Attempt to move data of SDS4 to the external file should fail, because
-	  SPECIAL_COMP and SPECIAL_EXT combo is not supported.
-	- Close everything.
-	- Re-open the file and verify data of each data set in the file.
+                external data feature.
+   Description:
+    The main contents include:
+    - Open the file from test_mult_setexternal
+    - Create and write two unlimited-dimension data sets, SDS2 and SDS3
+    - Append data to the first unlimited-dimension data set, SDS2, to
+    create linked-block element.
+    - Move data of the first unlimited-dim data set, SDS2, to the external
+    file to test the combination of SPECIAL_LINKED and SPECIAL_EXT.
+    - Move data of SDS3 to the external file to test unlimited and
+    SPECIAL_EXT without linked-block element.
+    - Make a compressed data set, SDS4, in the main file.
+    - Attempt to move data of SDS4 to the external file should fail, because
+    SPECIAL_COMP and SPECIAL_EXT combo is not supported.
+    - Close everything.
+    - Re-open the file and verify data of each data set in the file.
 
    Return value:
-	The number of errors occurred in this routine.
+    The number of errors occurred in this routine.
 
    BMR - Jan 16, 2009
 *********************************************************************/
@@ -555,7 +555,7 @@ int test_special_combos()
     intn  status = 0;
     int   ii, jj, kk;
     intn  num_errs = 0;    /* number of errors in compression test so far */
- 
+
     /* Create the file and initialize the SD interface */
     sd_id = SDstart (EXTTST, DFACC_CREATE);
     CHECK(status, FAIL, "SDstart");
@@ -662,7 +662,7 @@ int test_special_combos()
     /* Read data of each data sets and verify against the original */
     for (ii = 0; ii < num_sds; ii++)
     {
-	verify_data(sd_id, ii);
+    verify_data(sd_id, ii);
     }
 
     /* Close the file */
@@ -675,7 +675,7 @@ int test_special_combos()
 
 /* Test driver for testing external file functions */
  /* extern int test_external()
- */ 
+ */
 int test_external()
 {
     int ii, jj, kk;
@@ -712,8 +712,8 @@ int test_external()
 /********************************************************************
    Name: verify_data() - Verifies the written data, given the SDS' index.
    Description:
-	Calls SDselect, SDgetinfo, and SDreaddata to verify the sds_ind'th
-	data against the original buffer.
+    Calls SDselect, SDgetinfo, and SDreaddata to verify the sds_ind'th
+    data against the original buffer.
    Return value:
         None.
    BMR - Dec 1, 2015
@@ -732,7 +732,7 @@ void verify_data(int32 sd_id, int32 sds_ind)
 
     /* Select the data set. */
     sds_id = SDselect (sd_id, sds_ind);
-    CHECK(status, FAIL, "SDselect");
+    CHECK(sds_id, FAIL, "SDselect");
 
     /* Set the parameters start and edges to read */
     edges[1] = Y_LENGTH;
@@ -747,42 +747,42 @@ void verify_data(int32 sd_id, int32 sds_ind)
     from the rest of the data sets in the file */
     if (!HDstrncmp(name, SDS2, HDstrlen(SDS2)))
     {
-	/* Buffer for first written data + appended data */
-	int32 data_wappended[Z_LENGTH+1][Y_LENGTH][X_LENGTH];
+    /* Buffer for first written data + appended data */
+    int32 data_wappended[Z_LENGTH+1][Y_LENGTH][X_LENGTH];
 
-	/* Number of elements in first written data + appended data */
-	num_elems = Z_LENGTH*Y_LENGTH*X_LENGTH + 1*Y_LENGTH*X_LENGTH;
+    /* Number of elements in first written data + appended data */
+    num_elems = Z_LENGTH*Y_LENGTH*X_LENGTH + 1*Y_LENGTH*X_LENGTH;
 
-	/* Copy buffer of first written data to data_wappended */
-	HDmemcpy(data_wappended, written_data, (Z_LENGTH*Y_LENGTH*X_LENGTH)*sizeof(int));
+    /* Copy buffer of first written data to data_wappended */
+    HDmemcpy(data_wappended, written_data, (Z_LENGTH*Y_LENGTH*X_LENGTH)*sizeof(int));
 
-	/* Forward to the end of first written data */
-	ptr = &data_wappended[Z_LENGTH][0][0];
+    /* Forward to the end of first written data */
+    ptr = &data_wappended[Z_LENGTH][0][0];
 
-	/* Copy appended data to data_wappended */
-	HDmemcpy(ptr, ap_data, (1*Y_LENGTH*X_LENGTH)*sizeof(int));
+    /* Copy appended data to data_wappended */
+    HDmemcpy(ptr, ap_data, (1*Y_LENGTH*X_LENGTH)*sizeof(int));
 
-	/* Back to the beginning of data_wappended */
-	ptr = &data_wappended[0][0][0];
+    /* Back to the beginning of data_wappended */
+    ptr = &data_wappended[0][0][0];
 
-	/* Size of data written including appended data */
-	data_size = ((Z_LENGTH+1) * Y_LENGTH*X_LENGTH)*sizeof(int);
-	edges[0] = Z_LENGTH + 1;
+    /* Size of data written including appended data */
+    data_size = ((Z_LENGTH+1) * Y_LENGTH*X_LENGTH)*sizeof(int);
+    edges[0] = Z_LENGTH + 1;
 
     } /* with appended data */
 
     /* Everyone else */
     else
     {
-	/* Point to written data buffer */
+    /* Point to written data buffer */
         ptr = &written_data[0][0][0];
 
-	/* Number of elements */
-	num_elems = Z_LENGTH*Y_LENGTH*X_LENGTH;
+    /* Number of elements */
+    num_elems = Z_LENGTH*Y_LENGTH*X_LENGTH;
 
-	/* Size of data written */
-	data_size = num_elems * sizeof(int);
-	edges[0] = Z_LENGTH;
+    /* Size of data written */
+    data_size = num_elems * sizeof(int);
+    edges[0] = Z_LENGTH;
     }
 
     /* Allocate buffer for reading, after establishing the data size */
@@ -794,15 +794,15 @@ void verify_data(int32 sd_id, int32 sds_ind)
 
     /* Verify that data is correct comparing against the written data */
     {
-	int ii;
-	int32* out;
-	out = &outdata[0];
+    int ii;
+    int32* out;
+    out = &outdata[0];
 
-	for (ii = 0; ii < num_elems; ii++, ptr++, out++)
-	if (*ptr != *out)
-	{
-	     fprintf(stderr, "Data read (%d) is different than written (%d) for SDS #%d, name = %s\n", *out, *ptr, sds_ind, name);
-	}
+    for (ii = 0; ii < num_elems; ii++, ptr++, out++)
+    if (*ptr != *out)
+    {
+        fprintf(stderr, "Data read (%d) is different than written (%d) for SDS #%d, name = %s\n", *out, *ptr, sds_ind, name);
+    }
     }
 
     /* Terminate access to the data set, SD interface, and file. */

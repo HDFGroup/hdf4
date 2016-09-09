@@ -46,7 +46,7 @@ JNIEXPORT jlong JNICALL
 Java_hdf_hdflib_HDFLibrary_Vattach
 (JNIEnv *env, jclass clss, jlong fid, jint vgroup_ref, jstring accessmode)
 {
-    int   retVal;
+    int   retVal = -1;
     const char  *access;
     HFILEID        id = (HFILEID)fid;
 
@@ -250,7 +250,7 @@ Java_hdf_hdflib_HDFLibrary_Vgettagrefs
 {
     jint *tagVal;
     jint *refVal;
-    int32 retVal;
+    int32 retVal = -1;
     int copyMode = JNI_ABORT;
 
     jboolean iscopy;
@@ -368,7 +368,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vlone
 (JNIEnv *env, jclass clss, jlong fid, jintArray ref_array, jint arraysize)
 {
-    int retVal;
+    int retVal = -1;
     jint * arr;
     jboolean bb;
 
@@ -441,7 +441,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vfind
 (JNIEnv *env, jclass clss, jlong file_id, jstring vgname)
 {
-    int32 rval;
+    int32 rval = -1;
     const char * vgn;
 
     PIN_JAVA_STRING(vgname, vgn);
@@ -463,7 +463,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vfindclass
 (JNIEnv *env, jclass clss, jlong file_id, jstring vgclassname)
 {
-    int32 rval;
+    int32 rval = -1;
     const char * vgcn;
 
     PIN_JAVA_STRING(vgclassname, vgcn);
@@ -484,7 +484,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vflocate
 (JNIEnv *env, jclass clss, jint key, jstring field)
 {
-    int32 rval;
+    int32 rval = -1;
     const char * fld;
 
     PIN_JAVA_STRING(field, fld);
@@ -621,7 +621,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vopen
 (JNIEnv *env, jclass clss, jstring filename, jint access, jshort ndds)
 {
-    intn rval;
+    intn rval = -1;
     const char * str;
 
     PIN_JAVA_STRING(filename, str);
@@ -751,7 +751,7 @@ JNIEXPORT jint JNICALL
 Java_hdf_hdflib_HDFLibrary_Vfindattr
 (JNIEnv *env, jclass clss, jlong id, jstring name)
 {
-    int32 retVal;
+    int32 retVal = -1;
     const char  *cname;
 
     PIN_JAVA_STRING(name, cname);
