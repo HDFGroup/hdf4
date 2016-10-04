@@ -248,7 +248,6 @@ IV. Further considerations
 
       B. Use source packages from an SVN server by adding the following CMake
          options:
-
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
             JPEG_SVN_URL:STRING="https://some_location/jpeg/trunk"
             ZLIB_SVN_URL:STRING="https://some_location/zlib/trunk"

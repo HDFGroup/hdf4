@@ -83,9 +83,9 @@ macro (PACKAGE_JPEG_LIBRARY compress_type)
       COMMENT "Copying ${JPEG_INCLUDE_DIR_GEN}/jconfig.h to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
   )
   set (EXTERNAL_HEADER_LIST ${EXTERNAL_HEADER_LIST} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/jconfig.h)
-  if (${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
+  if (${compress_type} MATCHES "GIT" OR ${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
     add_dependencies (JPEG-GenHeader-Copy JPEG)
-  endif (${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
+  endif (${compress_type} MATCHES "GIT" OR ${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
 endmacro (PACKAGE_JPEG_LIBRARY)
 
 #-------------------------------------------------------------------------------
@@ -173,9 +173,9 @@ macro (PACKAGE_SZIP_LIBRARY compress_type)
       COMMENT "Copying ${SZIP_INCLUDE_DIR_GEN}/SZconfig.h to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
   )
   set (EXTERNAL_HEADER_LIST ${EXTERNAL_HEADER_LIST} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SZconfig.h)
-  if (${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
+  if (${compress_type} MATCHES "GIT" OR ${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
     add_dependencies (SZIP-GenHeader-Copy SZIP)
-  endif (${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
+  endif (${compress_type} MATCHES "GIT" OR ${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
 endmacro (PACKAGE_SZIP_LIBRARY)
 
 #-------------------------------------------------------------------------------
@@ -265,7 +265,7 @@ macro (PACKAGE_ZLIB_LIBRARY compress_type)
       COMMENT "Copying ${ZLIB_INCLUDE_DIR_GEN}/zconf.h to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
   )
   set (EXTERNAL_HEADER_LIST ${EXTERNAL_HEADER_LIST} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/zconf.h)
-  if (${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
+  if (${compress_type} MATCHES "GIT" OR ${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
     add_dependencies (ZLIB-GenHeader-Copy ZLIB)
-  endif (${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
+  endif (${compress_type} MATCHES "GIT" OR ${compress_type} MATCHES "SVN" OR ${compress_type} MATCHES "TGZ")
 endmacro (PACKAGE_ZLIB_LIBRARY)
