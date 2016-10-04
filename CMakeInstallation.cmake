@@ -77,21 +77,6 @@ configure_package_config_file (
 )
 
 #-----------------------------------------------------------------------------
-# Configure the FindHDF4.cmake file for the install directory
-#-----------------------------------------------------------------------------
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  configure_file (
-      ${HDF_RESOURCES_DIR}/FindHDF4.cmake.in
-      ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/FindHDF4${HDF_PACKAGE_EXT}.cmake @ONLY
-  )
-  install (
-      FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/FindHDF4${HDF_PACKAGE_EXT}.cmake
-      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
-      COMPONENT configinstall
-  )
-endif (NOT HDF4_EXTERNALLY_CONFIGURED)
-
-#-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the install directory
 #-----------------------------------------------------------------------------
 set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
