@@ -77,21 +77,6 @@ configure_package_config_file (
 )
 
 #-----------------------------------------------------------------------------
-# Configure the FindHDF4.cmake file for the install directory
-#-----------------------------------------------------------------------------
-if (NOT HDF4_EXTERNALLY_CONFIGURED)
-  configure_file (
-      ${HDF_RESOURCES_DIR}/FindHDF4.cmake.in
-      ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/FindHDF4${HDF_PACKAGE_EXT}.cmake @ONLY
-  )
-  install (
-      FILES ${HDF4_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/FindHDF4${HDF_PACKAGE_EXT}.cmake
-      DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
-      COMPONENT configinstall
-  )
-endif (NOT HDF4_EXTERNALLY_CONFIGURED)
-
-#-----------------------------------------------------------------------------
 # Configure the hdf4-config.cmake file for the install directory
 #-----------------------------------------------------------------------------
 set (INCLUDE_INSTALL_DIR ${HDF4_INSTALL_INCLUDE_DIR})
@@ -441,7 +426,7 @@ The HDF data model, file format, API, library, and tools are open and distribute
   set (CPACK_INSTALL_CMAKE_PROJECTS "${HDF4_BINARY_DIR};HDF4;ALL;/")
 
   if (HDF4_PACKAGE_EXTLIBS)
-    if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+    if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
       if (JPEG_FOUND AND JPEG_USE_EXTERNAL)
         if (WIN32)
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${JPEG_INCLUDE_DIR_GEN};JPEG;ALL;/")
@@ -469,7 +454,7 @@ The HDF data model, file format, API, library, and tools are open and distribute
           set (CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SZIP_INCLUDE_DIR_GEN};SZIP;configinstall;/")
         endif (WIN32)
       endif (SZIP_FOUND AND SZIP_USE_EXTERNAL)
-    endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+    endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
   endif (HDF4_PACKAGE_EXTLIBS)
 
   include (CPack)

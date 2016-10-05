@@ -248,7 +248,6 @@ IV. Further considerations
 
       B. Use source packages from an SVN server by adding the following CMake
          options:
-
             HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="SVN"
             JPEG_SVN_URL:STRING="https://some_location/jpeg/trunk"
             ZLIB_SVN_URL:STRING="https://some_location/zlib/trunk"
@@ -266,6 +265,15 @@ IV. Further considerations
          where "some_location" is the URL or full path to the compressed
          file and ext is the type of compression file. Also set CMAKE_BUILD_TYPE
          to the configuration type during configuration
+
+      D. Use source packages from a compressed file by adding the following
+         CMake options:
+            HDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
+            JPEG_GIT_URL:STRING="https://some_location/jpeg/master"
+            ZLIB_GIT_URL:STRING="https://some_location/zlib/master"
+            SZIP_GIT_URL:STRING="https://some_location/szip/master"
+         where "some_location" is the URL to the GIT repository. Also set
+         CMAKE_BUILD_TYPE to the configuration type.
 
    3. If you are building on Apple Darwin platforms, you should add the
       following options:
@@ -404,8 +412,8 @@ These five steps are described in detail below.
             set (HDF4_DISABLE_COMPILER_WARNINGS OFF CACHE BOOL "Disable compiler warnings" FORCE)
             set (HDF4_PACKAGE_EXTLIBS OFF CACHE BOOL "(WINDOWS)CPACK - include external libraries" FORCE)
             set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
-            set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO SVN TGZ)" FORCE)
-            set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO SVN TGZ)
+            set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO GIT SVN TGZ)" FORCE)
+            set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT SVN TGZ)
             set (ZLIB_SVN_URL "https://svn.hdfgroup.org/zlib/trunk" CACHE STRING "Use ZLib from HDF repository" FORCE)
             set (SZIP_SVN_URL "https://svn.hdfgroup.org/szip/trunk" CACHE STRING "Use SZip from HDF repository" FORCE)
             set (JPEG_SVN_URL "https://svn.hdfgroup.org/jpeg/branches/jpeg8b" CACHE STRING "Use JPEG from HDF repository" FORCE)
@@ -492,6 +500,19 @@ These five steps are described in detail below.
             the compressed file and where ext is the type of the compression
             file such as .bz2, .tar, .tar.gz, .tgz, or .zip. Also define
             CMAKE_BUILD_TYPE to be the configuration type.
+
+      3.2.3  The external libraries (zlib, Szip, and jpeg) can be configured
+           to allow building the libraries by downloading from an GIT repository.
+           The option is 'HDF4_ALLOW_EXTERNAL_SUPPORT'; by adding the following
+           configuration option:
+               -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="GIT"
+
+           The options to control the GIT URL are:
+               JPEG_GIT_URL:STRING="https://git.hdfgroup.org/jpeg8b/master"
+               ZLIB_GIT_URL:STRING="https://git.hdfgroup.org/zlib/master"
+               SZIP_GIT_URL:STRING="https://git.hdfgroup.org/szip/master"
+           These should be changed to your location. Also define CMAKE_BUILD_TYPE
+           to be the configuration type.
 
    4. Test HDF4
 
@@ -690,6 +711,8 @@ set(CTEST_USE_TAR_SOURCE "hdf-4.2.11")
 set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=TGZ -DTGZPATH:PATH=${CTEST_SCRIPT_DIRECTORY}")
 ### ext libs from svn
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=SVN")
+### ext libs from git
+#set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=GIT")
 ### ext libs on system
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DJPEG_LIBRARY:FILEPATH=some_location/lib/jpeg.lib -DJPEG_INCLUDE_DIR:PATH=some_location/include")
 #set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DZLIB_LIBRARY:FILEPATH=some_location/lib/zlib.lib -DZLIB_INCLUDE_DIR:PATH=some_location/include")
