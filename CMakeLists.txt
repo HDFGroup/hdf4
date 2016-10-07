@@ -106,7 +106,7 @@ string(TIMESTAMP CONFIG_DATE "%Y-%m-%d")
 #-----------------------------------------------------------------------------
 # Provide a way for Visual Studio Express users to turn OFF the new FOLDER
 # organization feature. Default to ON for non-Express users. Express users must
-# explicitly turn off this option to build HDF5 in the Express IDE...
+# explicitly turn off this option to build HDF4 in the Express IDE...
 #
 option (HDF4_USE_FOLDERS "Enable folder grouping of projects in IDEs." ON)
 mark_as_advanced (HDF4_USE_FOLDERS)

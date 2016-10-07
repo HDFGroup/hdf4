@@ -1,5 +1,5 @@
 *************************************************************************
-* Build and Install HDF5 C, C++, Fortran Libraries and tools with CMake *
+* Build and Install HDF4 C, C++, Fortran Libraries and tools with CMake *
 *************************************************************************
 
                      Table of Contents
@@ -116,7 +116,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
       After accepting the license, the script will prompt:
         By default the HDF4 will be installed in:
         "<current directory>/HDF-4.2."X"-Linux"
-        Do you want to include the subdirectory HDF5-1.8."X"-Linux?
+        Do you want to include the subdirectory HDF-4.2."X"-Linux?
         Saying no will install in: "<current directory>" [Yn]:
       Note that the script will create the following directory structure
       relative to the install point:
@@ -286,7 +286,7 @@ IV. Further considerations
             CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
 
    4. Windows developers should install NSIS to create an install image with CPack.
-      Visual Studio Express users will not be able to package HDF5 into
+      Visual Studio Express users will not be able to package HDF4 into
       an install image executable.
 
    5. Developers can copy the config/cmake/cacheinit.cmake file and alter the

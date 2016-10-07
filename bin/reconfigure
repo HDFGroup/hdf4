@@ -6,7 +6,7 @@
 
 # A script to run the GNU autotools to regenerate files for HDF4.
 # If the paths of the autotools are not specified by the user, they
-# are hardcoded to point to their locations on HDF5 Linux machines.
+# are hardcoded to point to their locations on HDF4 Linux machines.
 # Users can specify the locations of the autotools with the following
 # variables:
 # AUTOCONF, AUTOMAKE, ACLOCAL, AUTOHEADER should be the path to the

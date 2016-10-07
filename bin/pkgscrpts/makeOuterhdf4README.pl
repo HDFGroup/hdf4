@@ -190,11 +190,11 @@ print OUTFILE "  gzip -cd <gz file from above> | tar xvf -\n";
 #print OUTFILE $line3;
 #print OUTFILE $compilerstring."\n";
 #
-#print OUTFILE "  utilities/ - Directory containing the compiled HDF5 utilities.\n";
+#print OUTFILE "  utilities/ - Directory containing the compiled HDF4 utilities.\n";
 #print OUTFILE "             These utilities are STATICALLY linked and will run as is.\n\n";
 #print OUTFILE "             The tools can be downloaded separately, or ALL in one\n";
 #print OUTFILE "             compressed file (5-$version-$outsubdir-static-util.tar.gz).\n\n";
-#print OUTFILE "To obtain the HDF5 distribution, 'unzip' and 'untar' the distribution\n";
+#print OUTFILE "To obtain the HDF4 distribution, 'unzip' and 'untar' the distribution\n";
 #print OUTFILE "file:\n\n";
 #print OUTFILE "  gzip -cd <gz file from above> | tar xvf -";
 

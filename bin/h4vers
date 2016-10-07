@@ -73,7 +73,7 @@ use strict;
 #
 #Following paragraph from h5vers does not apply for HDF4?
 # Whenever the version changes, this script will increment the revision
-# field in HDF5's libtool shared library version in config/lt_vers.am,
+# field in HDF4's libtool shared library version in config/lt_vers.am,
 # which is included in src/Makefile.am.  Incrementing the revision field
 # indicates that the source code has changed since the last version
 # (which it probably has).

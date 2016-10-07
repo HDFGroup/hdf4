@@ -65,7 +65,7 @@ TESTING() {
 # difference between the actual output and the expected output. The
 # expected output is given as the first argument to this function and
 # the actual output file is calculated by replacing the `.ddl' with
-# `.out'.  The actual output is not removed if $HDF5_NOCLEANUP has a
+# `.out'.  The actual output is not removed if $HDF4_NOCLEANUP has a
 # non-zero value.
 #
 TOOLTEST() {

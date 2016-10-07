@@ -225,7 +225,7 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   if (CMAKE_HOST_UNIX)
-    set (CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF5_PACKAGE_VERSION}"
+    set (CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF4_PACKAGE_VERSION}"
       CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
   else (CMAKE_HOST_UNIX)
     GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
@@ -414,8 +414,8 @@ The HDF data model, file format, API, library, and tools are open and distribute
     #-----------------------------------------------------------------------------
     # Configure the spec file for the install RPM
     #-----------------------------------------------------------------------------
-#    configure_file ("${HDF5_RESOURCES_DIR}/hdf5.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF5_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
-#    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF5_PACKAGE_NAME}.spec")
+#    configure_file ("${HDF4_RESOURCES_DIR}/hdf5.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
+#    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec")
   endif (WIN32)
 
   # By default, do not warn when built on machines using only VS Express:

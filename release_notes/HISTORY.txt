@@ -3979,7 +3979,7 @@ o HDF4 has an optional SZIP compression; please refer to the INSTALL-4.2r0-Beta
   for information regarding commercial use. 
 
   For more information about SZIP compression
-  see http://hdf.ncsa.uiuc.edu/HDF5/doc_resource/SZIP/ and the "HDF4 Reference Manual"
+  see http://hdf.ncsa.uiuc.edu/HDF4/doc_resource/SZIP/ and the "HDF4 Reference Manual"
   entries for the GRsetcompress and SDsetcompress functions. 
 
 o The following new tools have been added
