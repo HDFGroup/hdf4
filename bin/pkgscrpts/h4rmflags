@@ -70,7 +70,7 @@ ERROR()
 # Main
 #
 # Initialization
-h4tools="h4cc h4fc "	# possible hdf5 tools
+h4tools="h4cc h4fc "	# possible hdf4 tools
 foundtools=		# tools found and will be modified
 fmode=			# force mode, default is off
 prefix=`(cd ..;pwd)`

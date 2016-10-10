@@ -414,7 +414,7 @@ The HDF data model, file format, API, library, and tools are open and distribute
     #-----------------------------------------------------------------------------
     # Configure the spec file for the install RPM
     #-----------------------------------------------------------------------------
-#    configure_file ("${HDF4_RESOURCES_DIR}/hdf5.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
+#    configure_file ("${HDF4_RESOURCES_DIR}/hdf4.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
 #    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec")
   endif (WIN32)
 

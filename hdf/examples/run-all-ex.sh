@@ -19,7 +19,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                                                                               #
-# This script will run the scripts to compile and run the installed hdf5        #
+# This script will run the scripts to compile and run the installed hdf4        #
 # examples.                                                                     #
 #                                                                               #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

@@ -93,7 +93,7 @@ To build HDF4 with the SZIP, ZLIB and JPEG external libraries you will need to:
 
       The -VV option is for verbose; use -V for less verbose.
 
-      The "-O hdf4.log" option saves the output to a log file hdf5.log.
+      The "-O hdf4.log" option saves the output to a log file hdf4.log.
 
    6. To install, "X" is the current release version
 

@@ -118,7 +118,7 @@ print OUTFILE "file:\n\n";
 print OUTFILE "  gzip -cd <gz file from above> | tar xvf -\n";
 
 
-#$cmd = "grep \"Configured by:\" $indirectory/$key-static/lib/libhdf5.settings";
+#$cmd = "grep \"Configured by:\" $indirectory/$key-static/lib/libhdf4.settings";
 #$_ = `$cmd`;
 #s/Configured by://;
 #s/^\s+//;
