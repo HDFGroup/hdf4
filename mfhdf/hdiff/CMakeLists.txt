@@ -6,14 +6,14 @@ INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
 if (WIN32)
   set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:LIBCMT")
-endif (WIN32)
+endif ()
 
 if (HDF4_BUILD_XDR_LIB)
   if (WIN32)
     add_definitions (-DNO_SYS_XDR_INC)
-  endif (WIN32)
+  endif ()
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 
 set (hdiff_SRCS
     ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/hdiff.c
@@ -35,14 +35,15 @@ add_executable(hdiff ${hdiff_SRCS})
 TARGET_C_PROPERTIES (hdiff STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   TARGET_LINK_LIBRARIES(hdiff ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-else (HDF4_BUILD_XDR_LIB)
+else ()
   TARGET_LINK_LIBRARIES(hdiff ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 TARGET_NAMING (hdiff STATIC)
+set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdiff")
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
-endif (BUILD_TESTING)
+endif ()
 
 ##############################################################################
 ##############################################################################
@@ -56,8 +57,10 @@ endif (BUILD_TESTING)
 
 INSTALL_PROGRAM_PDB (hdiff ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 
-INSTALL (
+install (
     TARGETS
         hdiff
+    EXPORT
+        ${HDF4_EXPORTED_TARGETS}
     RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )
