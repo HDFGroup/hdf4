@@ -31,7 +31,7 @@ usage() {
   echo "    -help|help   This help message"
   echo "    -echo        Show all the shell commands executed"
   echo "    -force       No prompt, just do it"
-  echo "    -prefix=DIR  New directory to find HDF5 lib/ and include/"
+  echo "    -prefix=DIR  New directory to find HDF4 lib/ and include/"
   echo "                   subdirectories [default: current directory]"
   echo "    -tool=TOOL   Tool to update. TOOL must be in the current"
   echo "                   directory and writable. [default: $h4tools]"
@@ -70,7 +70,7 @@ ERROR()
 # Main
 #
 # Initialization
-h4tools="h4cc h4fc "	# possible hdf5 tools
+h4tools="h4cc h4fc "	# possible hdf4 tools
 foundtools=		# tools found and will be modified
 fmode=			# force mode, default is off
 prefix=`(cd ..;pwd)`

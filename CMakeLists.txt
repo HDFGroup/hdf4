@@ -106,13 +106,13 @@ string(TIMESTAMP CONFIG_DATE "%Y-%m-%d")
 #-----------------------------------------------------------------------------
 # Provide a way for Visual Studio Express users to turn OFF the new FOLDER
 # organization feature. Default to ON for non-Express users. Express users must
-# explicitly turn off this option to build HDF5 in the Express IDE...
+# explicitly turn off this option to build HDF4 in the Express IDE...
 #
 option (HDF4_USE_FOLDERS "Enable folder grouping of projects in IDEs." ON)
 mark_as_advanced (HDF4_USE_FOLDERS)
 if (HDF4_USE_FOLDERS)
   set_property (GLOBAL PROPERTY USE_FOLDERS ON)
-endif (HDF4_USE_FOLDERS)
+endif ()
 option (HDF4_NO_PACKAGES "CPACK - Disable packaging" OFF)
 mark_as_advanced (HDF4_NO_PACKAGES)
 
@@ -202,50 +202,50 @@ set (HDF4_JAVA_LOGGING_SIMPLE_JAR  ${HDF4_SOURCE_DIR}/java/lib/ext/slf4j-simple-
 
 if (APPLE)
   option (HDF4_BUILD_FRAMEWORKS "TRUE to build as frameworks libraries, FALSE to build according to BUILD_SHARED_LIBS" FALSE)
-endif (APPLE)
+endif ()
 
 if (NOT HDF4_INSTALL_BIN_DIR)
   set (HDF4_INSTALL_BIN_DIR bin)
   set (HDF4_INSTALL_UTILS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
   set (HDF4_INSTALL_TOOLS_BIN_DIR ${HDF4_INSTALL_BIN_DIR})
-endif (NOT HDF4_INSTALL_BIN_DIR)
+endif ()
 if (NOT HDF4_INSTALL_LIB_DIR)
   if (APPLE)
     if (HDF4_BUILD_FRAMEWORKS)
       set (HDF4_INSTALL_JAR_DIR ../Java)
-    else (HDF4_BUILD_FRAMEWORKS)
+    else ()
       set (HDF4_INSTALL_JAR_DIR lib)
-    endif (HDF4_BUILD_FRAMEWORKS)
+    endif ()
     set (HDF4_INSTALL_FMWK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-  else (APPLE)
+  else ()
     set (HDF4_INSTALL_JAR_DIR lib)
-  endif (APPLE)
+  endif ()
   set (HDF4_INSTALL_LIB_DIR lib)
-endif (NOT HDF4_INSTALL_LIB_DIR)
+endif ()
 if (NOT HDF4_INSTALL_INCLUDE_DIR)
   set (HDF4_INSTALL_INCLUDE_DIR include)
-endif (NOT HDF4_INSTALL_INCLUDE_DIR)
+endif ()
 if (NOT HDF4_INSTALL_DATA_DIR)
   if (NOT WIN32)
     if (APPLE)
       if (HDF4_BUILD_FRAMEWORKS)
         set (HDF4_INSTALL_EXTRA_DIR ../SharedSupport)
-      else (HDF4_BUILD_FRAMEWORKS)
+      else ()
         set (HDF4_INSTALL_EXTRA_DIR share)
-      endif (HDF4_BUILD_FRAMEWORKS)
+      endif ()
       set (HDF4_INSTALL_FWRK_DIR ${CMAKE_INSTALL_FRAMEWORK_PREFIX})
-    endif (APPLE)
+    endif ()
     set (HDF4_INSTALL_DATA_DIR share)
     set (HDF4_INSTALL_CMAKE_DIR share/cmake)
-  else (NOT WIN32)
+  else ()
     set (HDF4_INSTALL_DATA_DIR ".")
     set (HDF4_INSTALL_CMAKE_DIR cmake)
-  endif (NOT WIN32)
-endif (NOT HDF4_INSTALL_DATA_DIR)
+  endif ()
+endif ()
 
 if(DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
   set (CMAKE_PREFIX_PATH ${ADDITIONAL_CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH})
-endif(DEFINED ADDITIONAL_CMAKE_PREFIX_PATH AND EXISTS "${ADDITIONAL_CMAKE_PREFIX_PATH}")
+endif()
 
 #-----------------------------------------------------------------------------
 # parse the full version number from hfile.h and include in H4_VERS_INFO
@@ -272,7 +272,7 @@ set (HDF4_PACKAGE_VERSION_MINOR "${H4_VERS_RELEASE}")
 set (HDF4_PACKAGE_VERSION_STRING "${HDF4_PACKAGE_VERSION}")
 if (NOT "${H4_VERS_SUBRELEASE}" STREQUAL "")
   set (HDF4_PACKAGE_VERSION_STRING "${HDF4_PACKAGE_VERSION_STRING}-${H4_VERS_SUBRELEASE}")
-endif (NOT "${H4_VERS_SUBRELEASE}" STREQUAL "")
+endif ()
 set (HDF4_PACKAGE_STRING "${HDF4_PACKAGE_NAME} ${HDF4_PACKAGE_VERSION_STRING}")
 set (HDF4_PACKAGE_TARNAME "${HDF4_PACKAGE}${HDF_PACKAGE_EXT}")
 set (HDF4_PACKAGE_URL "http://www.hdfgroup.org")
@@ -303,16 +303,16 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   if (WIN32)
     set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
-  else (WIN32)
+  else ()
     set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-  endif (WIN32)
-else (NOT HDF4_EXTERNALLY_CONFIGURED)
+  endif ()
+else ()
   # if we are externally configured, but the project uses old cmake scripts
   # this may not be set and utilities like Hdetect will fail
   if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${EXECUTABLE_OUTPUT_PATH})
-  endif (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-endif (NOT HDF4_EXTERNALLY_CONFIGURED)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Targets built within this project are exported at Install time for use
@@ -320,7 +320,7 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXPORTED_TARGETS)
   set (HDF4_EXPORTED_TARGETS "hdf4-targets")
-endif (NOT HDF4_EXPORTED_TARGETS)
+endif ()
 
 #-----------------------------------------------------------------------------
 # To include a library in the list exported by the project AT BUILD TIME,
@@ -328,6 +328,7 @@ endif (NOT HDF4_EXPORTED_TARGETS)
 # which include hdf4 as a sub-project within their build tree
 #-----------------------------------------------------------------------------
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "")
+set_global_variable (HDF4_UTILS_TO_EXPORT "")
 set (EXTERNAL_HEADER_LIST "")
 set (EXTERNAL_LIBRARY_LIST "")
 set (EXTERNAL_LIBRARYDLL_LIST "")
@@ -344,7 +345,7 @@ set (CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 #-----------------------------------------------------------------------------
 if (HDF4_BUILD_FRAMEWORKS AND NOT BUILD_SHARED_LIBS)
   set (BUILD_SHARED_LIBS ON CACHE BOOL "Build Shared Libraries")
-endif (HDF4_BUILD_FRAMEWORKS AND NOT BUILD_SHARED_LIBS)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to Build Shared and Static libs, default is static
@@ -354,7 +355,7 @@ set (H4_ENABLE_SHARED_LIB NO)
 if (BUILD_SHARED_LIBS)
   set (H4_ENABLE_SHARED_LIB YES)
   set (LINK_SHARED_LIBS ${LINK_LIBS})
-endif (BUILD_SHARED_LIBS)
+endif ()
 set (H4_ENABLE_STATIC_LIB YES)
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -384,7 +385,7 @@ if (HDF4_ENABLE_COVERAGE)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
     set (LDFLAGS "${LDFLAGS} -fprofile-arcs -ftest-coverage")
-endif (HDF4_ENABLE_COVERAGE)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to use deprecated public API symbols
@@ -392,9 +393,9 @@ endif (HDF4_ENABLE_COVERAGE)
 option (HDF4_ENABLE_DEPRECATED_SYMBOLS "Enable deprecated public API symbols" ON)
 if (HDF4_ENABLE_DEPRECATED_SYMBOLS)
   set (H4_NO_DEPRECATED_SYMBOLS 0)
-else (HDF4_ENABLE_DEPRECATED_SYMBOLS)
+else ()
   set (H4_NO_DEPRECATED_SYMBOLS 1)
-endif (HDF4_ENABLE_DEPRECATED_SYMBOLS)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Include the main src and config directories
@@ -421,24 +422,24 @@ if (WIN32)
     add_definitions (-D_BIND_TO_CURRENT_VCLIBS_VERSION=1)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)
     add_definitions (-D_CONSOLE)
-  endif (NOT CYGWIN)
-endif (WIN32)
+  endif ()
+endif ()
 
 if (MSVC)
   set (CMAKE_MFC_FLAG 0)
   set (WIN_COMPILE_FLAGS "")
   set (WIN_LINK_FLAGS "")
-endif (MSVC)
+endif ()
 
 set (MAKE_SYSTEM)
 if (CMAKE_BUILD_TOOL MATCHES "make")
   set (MAKE_SYSTEM 1)
-endif (CMAKE_BUILD_TOOL MATCHES "make")
+endif ()
 
 set (CFG_INIT "/${CMAKE_CFG_INTDIR}")
 if (MAKE_SYSTEM)
   set (CFG_INIT "")
-endif (MAKE_SYSTEM)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Add some definitions for Debug Builds
@@ -447,8 +448,8 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
   #-- NMake Makefiles will overwhelm the console with warnings if -Wall is used.
   if (NOT WIN32)
     add_definitions (-Wall)
-  endif (NOT WIN32)
-endif (CMAKE_BUILD_TYPE MATCHES Debug)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Compiler specific flags : Shouldn't there be compiler tests for these
@@ -456,17 +457,17 @@ endif (CMAKE_BUILD_TYPE MATCHES Debug)
 if (CMAKE_COMPILER_IS_GNUCC)
   if (CMAKE_BUILD_TYPE MATCHES Debug)
     set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -finline-functions -fno-common")
-  else (CMAKE_BUILD_TYPE MATCHES Debug)
+  else ()
     set (CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS} -std=c99 -fomit-frame-pointer -finline-functions -fno-common")
-  endif (CMAKE_BUILD_TYPE MATCHES Debug)
-endif (CMAKE_COMPILER_IS_GNUCC)
+  endif ()
+endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
   if (CMAKE_BUILD_TYPE MATCHES Debug)
     set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -finline-functions -fno-common")
-  else (CMAKE_BUILD_TYPE MATCHES Debug)
+  else ()
     set (CMAKE_CXX_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_CXX_FLAGS} -fomit-frame-pointer -finline-functions -fno-common")
-  endif (CMAKE_BUILD_TYPE MATCHES Debug)
-endif (CMAKE_COMPILER_IS_GNUCXX)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to allow the user to disable compiler warnings
@@ -481,22 +482,22 @@ if (HDF4_DISABLE_COMPILER_WARNINGS)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
     string (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
-  endif (MSVC)
+  endif ()
   if (WIN32)
     add_definitions (-D_CRT_SECURE_NO_WARNINGS)
-  endif (WIN32)
+  endif ()
   # Borland uses -w- to suppress warnings.
   if (BORLAND)
     set (HDF4_WARNINGS_BLOCKED 1)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w-")
-  endif (BORLAND)
+  endif ()
 
   # Most compilers use -w to suppress warnings.
   if (NOT HDF4_WARNINGS_BLOCKED)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-  endif (NOT HDF4_WARNINGS_BLOCKED)
-endif (HDF4_DISABLE_COMPILER_WARNINGS)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # This is in here to help some of the GCC based IDES like Eclipse
@@ -504,10 +505,10 @@ endif (HDF4_DISABLE_COMPILER_WARNINGS)
 #-----------------------------------------------------------------------------
 if (CMAKE_COMPILER_IS_GNUCC)
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
-endif (CMAKE_COMPILER_IS_GNUCC)
+endif ()
 if (CMAKE_COMPILER_IS_GNUCXX)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
-endif (CMAKE_COMPILER_IS_GNUCXX)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to Enable MPI Parallel
@@ -526,18 +527,18 @@ if (HDF4_ENABLE_PARALLEL)
     # Used by Fortran + MPI
     CHECK_SYMBOL_EXISTS (MPI_Comm_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Comm)
     CHECK_SYMBOL_EXISTS (MPI_Info_c2f "${MPI_C_INCLUDE_PATH}/mpi.h"  H4_HAVE_MPI_MULTI_LANG_Info)
-  else (MPI_C_FOUND)
+  else ()
     message (STATUS "Parallel libraries not found")
-  endif (MPI_C_FOUND)
-endif (HDF4_ENABLE_PARALLEL)
+  endif ()
+endif ()
 
 # Parallel IO usage requires MPI to be Linked and Included
 if (H4_HAVE_PARALLEL)
   set (LINK_LIBS ${LINK_LIBS} ${MPI_C_LIBRARIES})
   if (MPI_C_LINK_FLAGS)
     set (CMAKE_EXE_LINKER_FLAGS "${MPI_C_LINK_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
-  endif (MPI_C_LINK_FLAGS)
-endif (H4_HAVE_PARALLEL)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Include user macros
@@ -558,17 +559,17 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
     set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
     if (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
       PACKAGE_JPEG_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif (HDF4_ENABLE_JPEG_LIB_SUPPORT AND JPEG_FOUND)
+    endif ()
 
     if (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
       PACKAGE_ZLIB_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif (HDF4_ENABLE_Z_LIB_SUPPORT AND ZLIB_FOUND)
+    endif ()
 
     if (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
       PACKAGE_SZIP_LIBRARY (${HDF4_ALLOW_EXTERNAL_SUPPORT})
-    endif (HDF4_ENABLE_SZIP_SUPPORT AND SZIP_FOUND)
-  endif (HDF4_PACKAGE_EXTLIBS)
-endif (NOT HDF4_EXTERNALLY_CONFIGURED)
+    endif ()
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 xdr Library
@@ -576,11 +577,11 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 option (HDF4_BUILD_XDR_LIB  "Build HDF4 XDR Library" OFF)
 if (WIN32 AND NOT MINGW)
   set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
-endif (WIN32 AND NOT MINGW)
+endif ()
 
 if (HDF4_BUILD_XDR_LIB)
   add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/xdr ${PROJECT_BINARY_DIR}/xdr)
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Add the HDF4 Library Target to the build
@@ -593,28 +594,28 @@ if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
     add_dependencies (${HDF4_SRC_LIB_TARGET} JPEG)
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
-    endif (BUILD_SHARED_LIBS)
-  endif (JPEG_FOUND AND JPEG_USE_EXTERNAL)
+    endif ()
+  endif ()
   if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} ZLIB)
-    endif (BUILD_SHARED_LIBS)
-  endif (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
+    endif ()
+  endif ()
   if (SZIP_FOUND AND SZIP_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} SZIP)
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
-    endif (BUILD_SHARED_LIBS)
-  endif (SZIP_FOUND AND SZIP_USE_EXTERNAL)
+    endif ()
+  endif ()
 endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
 
 if (HDF4_BUILD_XDR_LIB)
   add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
   if (BUILD_SHARED_LIBS)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
-  endif (BUILD_SHARED_LIBS)
-endif (HDF4_BUILD_XDR_LIB)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Dashboard and Testing Settings
@@ -634,10 +635,10 @@ if (BUILD_TESTING)
   if (NOT HDF4_EXTERNALLY_CONFIGURED)
     if (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
       add_subdirectory (${HDF4_SOURCE_DIR}/hdf/test   ${PROJECT_BINARY_DIR}/hdf/test)
-    endif (EXISTS "${HDF4_SOURCE_DIR}/hdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/test")
+    endif ()
     if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
       add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
-    endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
+    endif ()
   endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 endif (BUILD_TESTING)
 
@@ -655,7 +656,7 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
     if (WIN32)
       set (H4_F77_FUNC "H4_F77_FUNC(name,NAME) NAME")
       set (H4_F77_FUNC_ "H4_F77_FUNC_(name,NAME) NAME")
-    endif (WIN32)
+    endif ()
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
     add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
     add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
@@ -664,9 +665,9 @@ endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE
 
 if (MSVC OR MINGW)
   set (H4_HDSETVBUF "HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))")
-else (MSVC OR MINGW)
+else ()
   set (H4_HDSETVBUF "NOP")
-endif (MSVC OR MINGW)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Library utilities
@@ -683,10 +684,10 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_D
     if (HDF4_BUILD_FORTRAN)
       if (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
         add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran/examples     ${PROJECT_BINARY_DIR}/hdf/fortran/examples)
-      endif (EXISTS "${HDF4_SOURCE_DIR}/hdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/hdf/fortran/examples")
+      endif ()
       if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
         add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran/examples     ${PROJECT_BINARY_DIR}/mfhdf/fortran/examples)
-      endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
+      endif ()
     endif (HDF4_BUILD_FORTRAN)
 
     add_subdirectory (${HDF4_SOURCE_DIR}/hdf/examples    ${PROJECT_BINARY_DIR}/hdf/examples)
@@ -701,8 +702,8 @@ if (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
   option (HDF4_BUILD_JAVA  "Build Java HDF Library" OFF)
   if (HDF4_BUILD_JAVA)
     add_subdirectory (${HDF4_SOURCE_DIR}/java ${PROJECT_BINARY_DIR}/java)
-  endif (HDF4_BUILD_JAVA)
-endif (EXISTS "${HDF4_SOURCE_DIR}/java" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/java")
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Generate the H4config.h file containing user settings needed by compilation

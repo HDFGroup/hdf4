@@ -31,6 +31,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
       EXPORT ${HDF4_EXPORTED_TARGETS}
       DESTINATION ${HDF4_INSTALL_CMAKE_DIR}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
+      NAMESPACE ${HDF4_PACKAGE}::
       COMPONENT configinstall
   )
 endif (NOT HDF4_EXTERNALLY_CONFIGURED)
@@ -40,8 +41,9 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 #-----------------------------------------------------------------------------
 if (NOT HDF4_EXTERNALLY_CONFIGURED)
   export (
-      TARGETS ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES}
+      TARGETS ${HDF4_LIBRARIES_TO_EXPORT} ${HDF4_LIB_DEPENDENCIES} ${HDF4_UTILS_TO_EXPORT}
       FILE ${HDF4_PACKAGE}${HDF_PACKAGE_EXT}-targets.cmake
+      NAMESPACE ${HDF4_PACKAGE}::
   )
 endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 
@@ -225,7 +227,7 @@ endif (NOT HDF4_EXTERNALLY_CONFIGURED)
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   if (CMAKE_HOST_UNIX)
-    set (CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF5_PACKAGE_VERSION}"
+    set (CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/HDF_Group/${HDF4_PACKAGE_NAME}/${HDF4_PACKAGE_VERSION}"
       CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
   else (CMAKE_HOST_UNIX)
     GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)
@@ -344,6 +346,7 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED AND NOT HDF4_NO_PACKAGES)
       set(CPACK_WIX_PATCH_FILE "${HDF_RESOURCES_DIR}/patch.xml")
     endif (BUILD_SHARED_LIBS)
   elseif (APPLE)
+    list (APPEND CPACK_GENERATOR "STGZ")
     list (APPEND CPACK_GENERATOR "DragNDrop")
     set (CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE ON)
     set (CPACK_PACKAGING_INSTALL_PREFIX "/${CPACK_PACKAGE_INSTALL_DIRECTORY}")
@@ -413,8 +416,8 @@ The HDF data model, file format, API, library, and tools are open and distribute
     #-----------------------------------------------------------------------------
     # Configure the spec file for the install RPM
     #-----------------------------------------------------------------------------
-#    configure_file ("${HDF5_RESOURCES_DIR}/hdf5.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF5_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
-#    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF5_PACKAGE_NAME}.spec")
+#    configure_file ("${HDF4_RESOURCES_DIR}/hdf4.spec.in" "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec" @ONLY IMMEDIATE)
+#    set (CPACK_RPM_USER_BINARY_SPECFILE "${CMAKE_CURRENT_BINARY_DIR}/${HDF4_PACKAGE_NAME}.spec")
   endif (WIN32)
 
   # By default, do not warn when built on machines using only VS Express:

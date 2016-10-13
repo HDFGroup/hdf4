@@ -9,14 +9,14 @@ add_definitions (-DHDF)
 
 if (WIN32)
   add_definitions (-DDOS_FS)
-endif (WIN32)
+endif ()
 
 if (HDF4_BUILD_XDR_LIB)
   if (WIN32)
     add_definitions (-DNO_SYS_XDR_INC)
-  endif (WIN32)
+  endif ()
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 
 set (hrepack_SRCS
     ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack.c
@@ -38,23 +38,24 @@ add_executable (hrepack ${hrepack_SRCS})
 TARGET_C_PROPERTIES (hrepack STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-else (HDF4_BUILD_XDR_LIB)
+else ()
   target_link_libraries (hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 TARGET_NAMING (hrepack STATIC)
-  
+
 add_executable (hrepack_check ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepack_check.c)
 TARGET_C_PROPERTIES (hrepack_check STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-else (HDF4_BUILD_XDR_LIB)
+else ()
   target_link_libraries (hrepack_check ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 TARGET_NAMING (hrepack_check STATIC)
+set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hrepack")
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
-endif (BUILD_TESTING)
+endif ()
 
 ##############################################################################
 ##############################################################################
@@ -68,8 +69,10 @@ endif (BUILD_TESTING)
 
 INSTALL_PROGRAM_PDB (hrepack ${HDF4_INSTALL_TOOLS_BIN_DIR} toolsapplications)
 
-INSTALL (
+install (
     TARGETS
         hrepack hrepack_check
+    EXPORT
+        ${HDF4_EXPORTED_TARGETS}
     RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
 )

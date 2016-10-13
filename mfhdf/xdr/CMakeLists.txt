@@ -19,7 +19,7 @@ INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
 add_library (${HDF4_MF_XDR_LIB_TARGET} STATIC ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS})
 if (MSVC OR MINGW)
   target_link_libraries (${HDF4_MF_XDR_LIB_TARGET} "ws2_32.lib")
-endif (MSVC OR MINGW)
+endif ()
 TARGET_C_PROPERTIES (${HDF4_MF_XDR_LIB_TARGET} STATIC " " " ")
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_XDR_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_MF_XDR_LIB_TARGET} ${HDF4_MF_XDR_LIB_NAME} STATIC)
@@ -30,14 +30,14 @@ set_target_properties (${HDF4_MF_XDR_LIB_TARGET} PROPERTIES
 )
 if (WIN32)
   set_property (TARGET ${HDF4_MF_XDR_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;NO_SYS_XDR_INC")
-endif (WIN32)
+endif ()
 set (install_targets ${HDF4_MF_XDR_LIB_TARGET})
 
 if (BUILD_SHARED_LIBS)
   add_library (${HDF4_MF_XDR_LIBSH_TARGET} SHARED ${HDF4_MFHDF_XDR_SRCS} ${HDF4_MFHDF_XDR_HDRS})
   if (MSVC OR MINGW)
     target_link_libraries (${HDF4_MF_XDR_LIBSH_TARGET} "ws2_32.lib")
-  endif (MSVC OR MINGW)
+  endif ()
   TARGET_C_PROPERTIES (${HDF4_MF_XDR_LIBSH_TARGET} SHARED " " " ")
   set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_MF_XDR_LIBSH_TARGET}")
   H4_SET_LIB_OPTIONS (${HDF4_MF_XDR_LIBSH_TARGET} ${HDF4_MF_XDR_LIB_NAME} SHARED)
@@ -49,18 +49,18 @@ if (BUILD_SHARED_LIBS)
   )
   if (WIN32)
     set_property (TARGET ${HDF4_MF_XDR_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS;NO_SYS_XDR_INC")
-  endif (WIN32)
+  endif ()
   set (install_targets ${install_targets} ${HDF4_MF_XDR_LIBSH_TARGET})
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Add library to CMake Install : Installs lib and cmake config info
 #-----------------------------------------------------------------------------
 if (BUILD_SHARED_LIBS)
   INSTALL_TARGET_PDB (${HDF4_MF_XDR_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
-endif (BUILD_SHARED_LIBS)
+endif ()
 
-INSTALL (
+install (
     TARGETS
         ${install_targets}
     EXPORT
@@ -69,4 +69,5 @@ INSTALL (
     ARCHIVE DESTINATION ${HDF4_INSTALL_LIB_DIR} COMPONENT libraries
     RUNTIME DESTINATION ${HDF4_INSTALL_BIN_DIR} COMPONENT libraries
     FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT libraries
+    INCLUDES DESTINATION include
 )

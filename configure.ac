@@ -396,7 +396,7 @@ case "$withval" in
       AC_CHECK_LIB([z], [compress2],, [unset HAVE_ZLIB])
     fi
     if test -z "$HAVE_ZLIB"; then
-      if test -n "$HDF5_CONFIG_ABORT"; then
+      if test -n "$HDF4_CONFIG_ABORT"; then
         AC_MSG_ERROR([couldn't find zlib library])
       fi
     else
@@ -967,7 +967,7 @@ if test "X$STATIC_EXEC" = "Xyes"; then
 fi
 
 ## This part doesn't work yet since HDF4 config files do not contain
-## information for cc_vendor and cc_version as HDF5 similar files do.
+## information for cc_vendor and cc_version as HDF4 similar files do.
 ## Needs to be fixed EIP 2010-01-21
 ## if test -n "$cc_vendor" && test -n "$cc_version"; then
 ##  CC_VERSION="$CC_VERSION ($cc_vendor-$cc_version)"

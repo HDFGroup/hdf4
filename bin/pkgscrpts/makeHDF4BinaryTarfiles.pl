@@ -266,8 +266,8 @@ sub makeTarFile {
    $cmd = "mv $indirectory/$origdirname $indirectory/$tardirname";
    $output = `$cmd`;
    #print $output;
-   #if (-d $indirectory."/".$tardirname."/doc/hdf5/examples") {
-   #   $cmd = "mv $indirectory/$tardirname/doc/hdf5/examples $indirectory/$tardirname/examples";
+   #if (-d $indirectory."/".$tardirname."/doc/hdf4/examples") {
+   #   $cmd = "mv $indirectory/$tardirname/doc/hdf4/examples $indirectory/$tardirname/examples";
    #   $output = `$cmd`;
    #   print $output;
    #   $cmd = "rm -rf $indirectory/$tardirname/doc";

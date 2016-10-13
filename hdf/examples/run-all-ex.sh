@@ -7,9 +7,9 @@
 # terms governing use, modification, and redistribution, is contained in
 # the files COPYING and Copyright.html.  COPYING can be found at the root
 # of the source code distribution tree; Copyright.html can be found at the
-# root level of an installed copy of the electronic HDF5 document set and
+# root level of an installed copy of the electronic HDF4 document set and
 # is linked from the top-level documents page.  It can also be found at
-# http://hdfgroup.org/HDF5/doc/Copyright.html.  If you do not have
+# http://hdfgroup.org/HDF4/doc/Copyright.html.  If you do not have
 # access to either file, you may request a copy from help@hdfgroup.org.
 
 #
@@ -19,7 +19,7 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #                                                                               #
-# This script will run the scripts to compile and run the installed hdf5        #
+# This script will run the scripts to compile and run the installed hdf4        #
 # examples.                                                                     #
 #                                                                               #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

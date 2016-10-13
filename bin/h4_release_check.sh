@@ -160,7 +160,7 @@ else
   echo "Testing for bin files     ... $green PASSED $reset"
 fi
 
-# Check settings in libhdf5.settings match what is in RELEASE.txt
+# Check settings in libhdf4.settings match what is in RELEASE.txt
 
 # Check the OS type
 
@@ -198,7 +198,7 @@ if grep -i -q "$OStype" RELEASE.txt; then
  echo ""
                                               
 
-    echo "$yellow  (1) VERIFY: C Compiler in libhdf5.settings: $reset"
+    echo "$yellow  (1) VERIFY: C Compiler in libhdf4.settings: $reset"
     echo "  $libCC"
     echo "$yellow              should match a compiler listed in RELEASE.txt $reset"
     line_end=$line_start-2
@@ -224,7 +224,7 @@ echo ""
 
 
 echo ""
-echo "$yellow  (3) VERIFY: Binary executables match libhdf5.settings $reset"
+echo "$yellow  (3) VERIFY: Binary executables match libhdf4.settings $reset"
 
 echo `echo "    Result from ${magenta}file bin/hdp${reset}:  "; file bin/hdp`
 echo `echo "    Result from lib/libhdf4.settings:  "; echo ${UnameInfo}`
