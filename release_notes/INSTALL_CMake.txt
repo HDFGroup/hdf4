@@ -414,9 +414,6 @@ These five steps are described in detail below.
             set (HDF4_NO_PACKAGES OFF CACHE BOOL "CPACK - Disable packaging" FORCE)
             set (HDF4_ALLOW_EXTERNAL_SUPPORT "NO" CACHE STRING "Allow External Library Building (NO GIT SVN TGZ)" FORCE)
             set_property (CACHE HDF4_ALLOW_EXTERNAL_SUPPORT PROPERTY STRINGS NO GIT SVN TGZ)
-            set (ZLIB_SVN_URL "https://svn.hdfgroup.org/zlib/trunk" CACHE STRING "Use ZLib from HDF repository" FORCE)
-            set (SZIP_SVN_URL "https://svn.hdfgroup.org/szip/trunk" CACHE STRING "Use SZip from HDF repository" FORCE)
-            set (JPEG_SVN_URL "https://svn.hdfgroup.org/jpeg/branches/jpeg8b" CACHE STRING "Use JPEG from HDF repository" FORCE)
             set (ZLIB_TGZ_NAME "ZLib.tar.gz" CACHE STRING "Use ZLib from compressed file" FORCE)
             set (SZIP_TGZ_NAME "SZip.tar.gz" CACHE STRING "Use SZip from compressed file" FORCE)
             set (JPEG_TGZ_NAME "JPEG8b.tar.gz" CACHE STRING "Use JPEG from compressed file" FORCE)
@@ -694,7 +691,7 @@ set(SITE_BUILDNAME_SUFFIX "SHARED")
 #########   Following controls source repository         ##########
 #set(REPOSITORY_URL "https://svn.hdfgroup.org/hdf4/trunk")
 #comment to use a uncompressed source folder
-set(CTEST_USE_TAR_SOURCE "hdf-4.2.11")
+set(CTEST_USE_TAR_SOURCE "hdf-4.2.12")
 ###################################################################
 
 ###################################################################

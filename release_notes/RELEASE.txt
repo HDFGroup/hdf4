@@ -38,7 +38,8 @@ New features and changes
 ========================
    Configuration
    =============
-    - None
+    - CMake
+      Added NAMESPACE hdf4:: to package configuration files
 
    Library
    =========
@@ -104,7 +105,7 @@ This version has been tested in the following platforms:
    Windows 7                      Visual Studio 2012 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2013 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2015 w/ Intel Fortran 16 (cmake)
-                                  Cygwin(CYGWIN_NT-6.1 2.2.1(0.289/5/3) 
+                                  Cygwin(CYGWIN_NT-6.1 2.2.1(0.289/5/3)
                                   gcc(4.9.3) compiler and gfortran)
                                   (cmake and autotools)
 
@@ -120,11 +121,11 @@ This version has been tested in the following platforms:
 
    Mac OS X 10.8.5, Darwin, 12.6.0   Apple clang version 5.1 from Xcode 5.1
    12.6.0, x86_64                    gfortran GNU Fortran (GCC) 4.8.2
-   (swallow,kite)                    Intel icc and ifort Version 15.0.3 
+   (swallow,kite)                    Intel icc and ifort Version 15.0.3
 
    Mac OS X 10.9.5, Darwin, 13.4.0   Apple clang version 6.0 from Xcode 6.2
    13.4.0, x86_64                    gfortran GNU Fortran (GCC) 4.9.2
-   (wren,quail)                      Intel icc and ifort Version 15.0.3 
+   (wren,quail)                      Intel icc and ifort Version 15.0.3
 
    Mac OS X 10.10.5, Darwin, 14.5.0  Apple clang version 6.0 from Xcode 7.0
    14.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 4.9.2
