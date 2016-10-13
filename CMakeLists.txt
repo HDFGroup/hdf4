@@ -595,7 +595,7 @@ if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
     if (BUILD_SHARED_LIBS)
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} JPEG)
     endif ()
-  endif (L)
+  endif ()
   if (ZLIB_FOUND AND ZLIB_USE_EXTERNAL)
     add_dependencies (${HDF4_SRC_LIB_TARGET} ZLIB)
     if (BUILD_SHARED_LIBS)
