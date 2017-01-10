@@ -18,9 +18,9 @@
     TARGET_C_PROPERTIES (hdifftst STATIC " " " ")
     if (HDF4_BUILD_XDR_LIB)
       target_link_libraries (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-    else (HDF4_BUILD_XDR_LIB)
+    else ()
       target_link_libraries (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-    endif (HDF4_BUILD_XDR_LIB)
+    endif ()
     TARGET_NAMING (hdifftst ${LIB_TYPE})
 
     # Remove any output file left over from previous test run
@@ -41,16 +41,16 @@
     add_test (NAME hdifftst COMMAND $<TARGET_FILE:hdifftst>)
     set_tests_properties (hdifftst PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
     set (last_test "hdifftst")
-  endif (HDF4_BUILD_GENERATORS AND NOT BUILD_SHARED_LIBS)
+  endif ()
 
   MACRO (ADD_H4_TEST resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (NAME HDIFF-${resultfile} COMMAND $<TARGET_FILE:hdiff> ${ARGN})
       if (NOT ${resultcode} STREQUAL "0")
         set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME} WILL_FAIL "true")
-      else (NOT ${resultcode} STREQUAL "0")
+      else ()
         set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
-      endif (NOT ${resultcode} STREQUAL "0")
+      endif ()
     else (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (
           NAME HDIFF-${resultfile}
@@ -63,14 +63,14 @@
               -D "TEST_REFERENCE=${resultfile}.txt"
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
-    endif (HDF4_ENABLE_USING_MEMCHECKER)
+    endif ()
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (HDIFF-${resultfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "HDIFF-${resultfile}")
-  ENDMACRO (ADD_H4_TEST file)
+  ENDMACRO ()
 
   #-- Copy all the data files from the test directory into the source directory
   set (HDF4_REFERENCE_TEST_FILES
@@ -109,7 +109,7 @@
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  endforeach ()
 
   foreach (out_file ${HDF4_REFERENCE_FILES})
     set (outdest "${PROJECT_BINARY_DIR}/testfiles/${out_file}")
@@ -120,7 +120,7 @@
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/${out_file} ${outdest}
     )
-  endforeach (out_file ${HDF4_REFERENCE_FILES})
+  endforeach ()
 
   if (WIN32 AND MSVC_VERSION LESS 1900)
     ADD_CUSTOM_COMMAND (
@@ -129,14 +129,14 @@
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06w.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
     )
-  else (WIN32)
+  else ()
     ADD_CUSTOM_COMMAND (
         TARGET     hdiff
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HDIFF_SOURCE_DIR}/testfiles/hdiff_06.txt ${PROJECT_BINARY_DIR}/testfiles/hdiff_06.txt
     )
-  endif (WIN32 AND MSVC_VERSION LESS 1900)
+  endif ()
 
 ##############################################################################
 ##############################################################################
@@ -181,9 +181,9 @@
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HDIFF-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (HDIFF-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "HDIFF-clearall-objects")
 
   # help message

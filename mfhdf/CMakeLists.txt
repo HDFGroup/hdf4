@@ -1,11 +1,11 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 PROJECT (HDF4_MFHDF)
 
 if (CYGWIN)
   INCLUDE_DIRECTORIES (/usr/include/tirpc)
-else (CYGWIN)
+else ()
   INCLUDE_DIRECTORIES (/usr/include/rpc)
-endif (CYGWIN)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Tools
@@ -22,6 +22,6 @@ if (EXISTS "${HDF4_MFHDF_SOURCE_DIR}/dumper" AND IS_DIRECTORY "${HDF4_MFHDF_SOUR
     add_subdirectory (${HDF4_MFHDF_SOURCE_DIR}/ncdump      ${HDF4_MFHDF_BINARY_DIR}/ncdump)
     if (BUILD_TESTING)
       add_subdirectory (${HDF4_MFHDF_SOURCE_DIR}/nctest    ${HDF4_MFHDF_BINARY_DIR}/nctest)
-    endif (BUILD_TESTING )
-  endif (HDF4_BUILD_TOOLS)
-endif (EXISTS "${HDF4_MFHDF_SOURCE_DIR}/dumper" AND IS_DIRECTORY "${HDF4_MFHDF_SOURCE_DIR}/dumper")
+    endif ( )
+  endif ()
+endif ()

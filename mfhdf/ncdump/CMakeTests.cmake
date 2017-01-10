@@ -9,7 +9,7 @@
 add_test (
     NAME NCDUMP-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
-        -E remove 
+        -E remove
         test0.nc
         test1.nc
         test1.cdl
@@ -17,9 +17,9 @@ add_test (
 )
 if (NOT "${last_test}" STREQUAL "")
   set_tests_properties (NCDUMP-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-else (NOT "${last_test}" STREQUAL "")
+else ()
   set_tests_properties (NCDUMP-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-endif (NOT "${last_test}" STREQUAL "")
+endif ()
 set (last_test "NCDUMP-clearall-objects")
 
 #message (STATUS " Copying ${HDF4_MFHDF_NCDUMP_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
@@ -72,4 +72,4 @@ if (NCGEN_UTILITY)
   )
   set_tests_properties (NCDUMP-test2.cdl PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
   set (last_test "NCDUMP-test2.cdl")
-endif (NCGEN_UTILITY)
+endif ()

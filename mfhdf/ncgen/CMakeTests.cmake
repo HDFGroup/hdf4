@@ -9,7 +9,7 @@
   add_test (
       NAME NCGEN-clearall-objects
       COMMAND    ${CMAKE_COMMAND}
-          -E remove 
+          -E remove
           ctest0.nc
           ctest1.cdl
           ftest0.nc
@@ -27,9 +27,9 @@
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (NCGEN-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (NCGEN-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "NCGEN-clearall-objects")
 
   #message (STATUS " Copying ${HDF4_MFHDF_NCGEN_SOURCE_DIR}/test0.cdl to ${PROJECT_BINARY_DIR}/")
@@ -140,4 +140,4 @@ if (HDF4_BUILD_FORTRAN)
 #    else                                                                \
 #      echo "*** ncgen -f test failed (but roundoff differences are OK) ***"; \
 #    fi
-endif (HDF4_BUILD_FORTRAN)
+endif ()

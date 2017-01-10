@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.2.2)
 PROJECT ( HDF4_JAVA C Java )
 
 set (CMAKE_MODULE_PATH "${HDF_RESOURCES_DIR};${HDF_RESOURCES_EXT_DIR}")
@@ -15,9 +15,9 @@ INCLUDE_DIRECTORIES ( ${JNI_INCLUDE_DIRS} )
 
 if (WIN32)
   set (HDF_JRE_DIRECTORY "C:/Program Files/Java/jre8")
-else (WIN32)
+else ()
   set (HDF_JRE_DIRECTORY "/usr/lib/jvm/jre")
-endif (WIN32)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Include the main src and config directories
@@ -41,14 +41,14 @@ add_subdirectory (${HDF4_JAVA_SOURCE_DIR}/src ${HDF4_JAVA_BINARY_DIR}/src)
 #-----------------------------------------------------------------------------
 if (HDF4_BUILD_EXAMPLES)
   add_subdirectory (${HDF4_JAVA_SOURCE_DIR}/examples ${HDF4_JAVA_BINARY_DIR}/examples)
-endif (HDF4_BUILD_EXAMPLES)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
 if (BUILD_TESTING)
   add_subdirectory (${HDF4_JAVA_SOURCE_DIR}/test ${HDF4_JAVA_BINARY_DIR}/test)
-endif (BUILD_TESTING)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Add Required Jar(s)
@@ -72,4 +72,4 @@ if (HDF4_JAVA_PACK_JRE)
       DESTINATION ${HDF4_INSTALL_BIN_DIR}
       USE_SOURCE_PERMISSIONS
   )
-endif (HDF4_JAVA_PACK_JRE)
+endif ()

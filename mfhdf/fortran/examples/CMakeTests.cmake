@@ -9,7 +9,7 @@
 add_test (
     NAME MFHDF_FORTRAN_EXAMPLES-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
-        -E remove 
+        -E remove
         SDS.hdf
         SDSchunked.hdf
         SDScompressed.hdf
@@ -23,12 +23,12 @@ foreach (example ${examples})
   add_test (NAME f_exmftest_${example} COMMAND $<TARGET_FILE:f_exmf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (f_exmftest_${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (f_exmftest_${example} PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "f_exmftest_${example}")
-endforeach (example ${examples})
+endforeach ()
 
 foreach (example ${skip_examples})
   add_test (NAME f_exmftest_${example} COMMAND ${CMAKE_COMMAND} -E echo "SKIP f_exmftest_${example}")
-endforeach (example ${skip_examples})
+endforeach ()

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 project (HDF4_MFHDF_NCTEST)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
@@ -8,14 +8,14 @@ add_definitions (-DHDF)
 
 if (WIN32)
   add_definitions (-DDOS_FS)
-endif (WIN32)
+endif ()
 
 if (HDF4_BUILD_XDR_LIB)
   if (WIN32)
     add_definitions (-DNO_SYS_XDR_INC)
-  endif (WIN32)
+  endif ()
   INCLUDE_DIRECTORIES (${HDF4_MFHDF_XDR_DIR})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 
 set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/add.c
@@ -39,31 +39,31 @@ set (nctest_SRCS
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vputget.c
     ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/vputgetg.c
 )
-  
+
 add_executable (nctest ${nctest_SRCS})
 TARGET_C_PROPERTIES (nctest STATIC " " " ")
 if (HDF4_BUILD_XDR_LIB)
   target_link_libraries (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET} )
-else (HDF4_BUILD_XDR_LIB)
+else ()
   target_link_libraries (nctest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()
 TARGET_NAMING (nctest STATIC)
- 
+
 set (HDF4_NC_TEST_FILES
     test_unlim.cdl
     test_unlim.nc
 )
- 
+
 foreach (h4_file ${HDF4_NC_TEST_FILES})
   set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
   #message (STATUS " Copying ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} to ${PROJECT_BINARY_DIR}/")
   add_custom_command (
-      TARGET     nctest 
+      TARGET     nctest
       POST_BUILD
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy_if_different ${HDF4_MFHDF_NCTEST_SOURCE_DIR}/${h4_file} ${dest}
   )
-      
-endforeach (h4_file ${HDF4_NC_TEST_FILES})
+
+endforeach ()
 
 include (CMakeTests.cmake)

@@ -35,7 +35,7 @@ if (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_LS_TEST_FILES})
+  endforeach ()
 
   if (WIN32 AND MSVC_VERSION LESS 1900)
     ADD_CUSTOM_COMMAND (
@@ -44,14 +44,14 @@ if (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed-w.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
     )
-  else (WIN32 AND MSVC_VERSION LESS 1900)
+  else ()
     ADD_CUSTOM_COMMAND (
         TARGET     hdfls
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/hdfed.out1 ${PROJECT_BINARY_DIR}/hdfed.out1
     )
-  endif (WIN32 AND MSVC_VERSION LESS 1900)
+  endif ()
 
   #-- Copy all the hdfed data files from the source directory into the test directory
   set (HDF4_HDFED_TEST_FILES
@@ -67,8 +67,8 @@ if (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_HDFED_TEST_FILES})
-endif (HDF4_BUILD_TOOLS)
+  endforeach ()
+endif ()
 
   #-- Copy all the hdf2gif data files from the source directory into the test directory
   set (HDF4_HDF2GIF_TEST_FILES
@@ -83,7 +83,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_HDF2GIF_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the gif2hdf data files from the source directory into the test directory
   set (HDF4_GIF2HDF_TEST_FILES
@@ -99,7 +99,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_GIF2HDF_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the hdftor8 data files from the source directory into the test directory
   set (HDF4_HDFTOR8_TEST_FILES
@@ -115,7 +115,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_HDFTOR8_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the ristosds data files from the source directory into the test directory
   set (HDF4_RISTOSDS_TEST_FILES
@@ -132,7 +132,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_RISTOSDS_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the hdfpack data files from the source directory into the test directory
   set (HDF4_HDFPACK_TEST_FILES
@@ -147,7 +147,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_HDFPACK_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the paltohdf data files from the source directory into the test directory
   set (HDF4_PALTOHDF_TEST_FILES
@@ -162,7 +162,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_PALTOHDF_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the r8tohdf data files from the source directory into the test directory
   set (HDF4_R8TOHDF_TEST_FILES
@@ -180,7 +180,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_R8TOHDF_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the hdfcomp data files from the source directory into the test directory
   set (HDF4_HDFCOMP_TEST_FILES
@@ -197,7 +197,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_HDFCOMP_TEST_FILES})
+  endforeach ()
 
   #-- Copy all the jpeg2hdf data files from the source directory into the test directory
   set (HDF4_JPEG2HDF_TEST_FILES
@@ -212,7 +212,7 @@ endif (HDF4_BUILD_TOOLS)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_HDF_UTIL_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_JPEG2HDF_TEST_FILES})
+  endforeach ()
 
 ##############################################################################
 ##############################################################################
@@ -224,7 +224,7 @@ if (HDF4_BUILD_TOOLS)
   MACRO (ADD_LS_TEST_NOL testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (NAME HDFLS_NOL-${testfile} COMMAND $<TARGET_FILE:hdfls> ${testfile})
-    else (HDF4_ENABLE_USING_MEMCHECKER)
+    else ()
       add_test (
           NAME HDFLS_NOL-${testfile}
           COMMAND "${CMAKE_COMMAND}"
@@ -237,19 +237,19 @@ if (HDF4_BUILD_TOOLS)
               -D "TEST_REFERENCE=${resultfile}"
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
-    endif (HDF4_ENABLE_USING_MEMCHECKER)
+    endif ()
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (HDFLS_NOL-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (HDFLS_NOL-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "HDFLS_NOL-${testfile}")
-  ENDMACRO (ADD_LS_TEST_NOL)
+  ENDMACRO ()
 
   MACRO (ADD_LS_TEST testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (NAME HDFLS-${testfile} COMMAND $<TARGET_FILE:hdfls> -l ${testfile})
-    else (HDF4_ENABLE_USING_MEMCHECKER)
+    else ()
       add_test (
           NAME HDFLS-${testfile}
           COMMAND "${CMAKE_COMMAND}"
@@ -262,19 +262,19 @@ if (HDF4_BUILD_TOOLS)
               -D "TEST_REFERENCE=${resultfile}"
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
-    endif (HDF4_ENABLE_USING_MEMCHECKER)
+    endif ()
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (HDFLS-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (HDFLS-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "HDFLS-${testfile}")
-  ENDMACRO (ADD_LS_TEST)
+  ENDMACRO ()
 
   MACRO (ADD_H4_TEST_ED testfile resultfile resultcode)
     if (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (NAME HEDIT-${testfile} COMMAND $<TARGET_FILE:hdfed> -batch)
-    else (HDF4_ENABLE_USING_MEMCHECKER)
+    else ()
       add_test (
           NAME HEDIT-${testfile}
           COMMAND "${CMAKE_COMMAND}"
@@ -287,45 +287,45 @@ if (HDF4_BUILD_TOOLS)
               -D "TEST_REFERENCE=${resultfile}"
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
-    endif (HDF4_ENABLE_USING_MEMCHECKER)
+    endif ()
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (HEDIT-${testfile} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (HEDIT-${testfile} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "HEDIT-${testfile}")
-  ENDMACRO (ADD_H4_TEST_ED)
-endif (HDF4_BUILD_TOOLS)
+  ENDMACRO ()
+endif ()
 
   MACRO (ADD_H4_TEST testname testfile)
     add_test (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN})
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (${testname} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "${testname}")
-  ENDMACRO (ADD_H4_TEST)
+  ENDMACRO ()
 
   MACRO (ADD_CMP_TEST testname reffile testfile)
     add_test (NAME ${testname} COMMAND ${CMAKE_COMMAND} -E compare_files ${reffile} ${testfile})
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (${testname} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "${testname}")
-  ENDMACRO (ADD_CMP_TEST)
+  ENDMACRO ()
 
   MACRO (ADD_H4Q_TEST testname testfile)
     add_test (NAME ${testname} COMMAND $<TARGET_FILE:${testfile}> ${ARGN} > /dev/null 2>&1)
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (${testname} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (${testname} PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "${testname}")
-  ENDMACRO (ADD_H4Q_TEST)
+  ENDMACRO ()
 
 ##############################################################################
 ##############################################################################
@@ -351,9 +351,9 @@ endif (HDF4_BUILD_TOOLS)
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (hdfgif-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (hdfgif-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "hdfgif-clear-refs")
 
   ADD_H4_TEST (testhdf2gif hdf2gif skull.hdf skull.gif)
@@ -366,12 +366,12 @@ endif (HDF4_BUILD_TOOLS)
 
   if (HDF4_BUILD_TOOLS)
     ADD_H4_TEST_ED (hdfed.input1 hdfed.out1 0)
-  endif (HDF4_BUILD_TOOLS)
+  endif ()
 
   ADD_H4Q_TEST (testristosds ristosds storm110.hdf storm120.hdf storm130.hdf -o storm.hdf)
   if (HDF4_BUILD_TOOLS)
     ADD_H4_TEST_ED (ristosds.input1 ristosds.out1 0)
-  endif (HDF4_BUILD_TOOLS)
+  endif ()
 
   # Remove any output file left over from previous test run
   add_test (
@@ -387,9 +387,9 @@ endif (HDF4_BUILD_TOOLS)
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (hdfpack-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (hdfpack-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "hdfpack-clear-refs")
 
   ADD_H4_TEST (testhdfpack hdfpack test.hdf test.pck)
@@ -397,7 +397,7 @@ endif (HDF4_BUILD_TOOLS)
   if (HDF4_BUILD_TOOLS)
     ADD_LS_TEST_NOL (test.hdf hdfpack.out1.1 0)
     ADD_LS_TEST_NOL (test.pck hdfpack.out1.2 0)
-  endif (HDF4_BUILD_TOOLS)
+  endif ()
 
   # Remove any output file left over from previous test run
   add_test (
@@ -425,9 +425,9 @@ endif (HDF4_BUILD_TOOLS)
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (hdfpalette-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (hdfpalette-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "hdfpalette-clear-refs")
 
   ADD_H4_TEST (testpaltohdf paltohdf palette.raw palette.hdf)
@@ -439,7 +439,7 @@ endif (HDF4_BUILD_TOOLS)
   ADD_H4_TEST (testhdftor8-storm hdftor8 storm.hdf)
   if (HDF4_BUILD_TOOLS)
     ADD_LS_TEST (storm.hdf hdftor8.out1 0)
-  endif (HDF4_BUILD_TOOLS)
+  endif ()
 
   ADD_CMP_TEST (storm110comp img001-057.057  storm110.raw)
   ADD_CMP_TEST (storm120comp img002-057.057  storm120.raw)
@@ -451,7 +451,7 @@ endif (HDF4_BUILD_TOOLS)
   if (HDF4_BUILD_TOOLS)
     ADD_LS_TEST (allstorms.hdf hdfcomp.out1.1 0)
     ADD_LS_TEST (allcomp.hdf hdfcomp.out1.2 0)
-  endif (HDF4_BUILD_TOOLS)
+  endif ()
 
   # Remove any output file left over from previous test run
   add_test (
@@ -465,16 +465,16 @@ endif (HDF4_BUILD_TOOLS)
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (hdfjpeg-clear-refs PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (hdfjpeg-clear-refs PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "hdfjpeg-clear-refs")
 
   ADD_H4_TEST (testjpeg2hdf jpeg2hdf jpeg_img.jpg jpeg.hdf)
   ADD_H4_TEST (testhdf2jpeg hdf2jpeg jpeg.hdf jpeg2.jpg)
   if (HDF4_BUILD_TOOLS)
     ADD_LS_TEST (jpeg.hdf jpeg2hdf.out1 0)
-  endif (HDF4_BUILD_TOOLS)
+  endif ()
   ADD_CMP_TEST (jpeg2comp jpeg_img.jpg jpeg2.jpg)
 
 #  ADD_H4_TEST (hdf8to24 hdf8to24)

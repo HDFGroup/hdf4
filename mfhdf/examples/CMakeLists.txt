@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 project (HDF4_MFHDF_EXAMPLES)
 
 #-----------------------------------------------------------------------------
@@ -29,11 +29,11 @@ foreach (example ${examples})
   TARGET_C_PROPERTIES (mf_${example} STATIC " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (mf_${example} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else (HDF4_BUILD_XDR_LIB)
+  else ()
     target_link_libraries (mf_${example} ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif (HDF4_BUILD_XDR_LIB)
+  endif ()
 endforeach (example ${examples})
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
-endif (BUILD_TESTING)
+endif ()
