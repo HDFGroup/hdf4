@@ -30,7 +30,7 @@ else()
       endif ()
     else ()
       set (PACKAGE_VERSION_COMPATIBLE FALSE)
-    endif (")
+    endif ()
   endif ()
 endif()
 
