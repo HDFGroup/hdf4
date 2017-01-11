@@ -123,7 +123,6 @@ if (SZIP_INCLUDE_DIR AND SZIP_LIBRARY)
     get_filename_component (SZIP_LIBRARY_PATH ${SZIP_LIBRARY_RELEASE} PATH)
     set (SZIP_LIB_DIR  ${SZIP_LIBRARY_PATH})
   endif ()
-
 else ()
   set (SZIP_FOUND 0)
   set (SZIP_LIBRARIES)
