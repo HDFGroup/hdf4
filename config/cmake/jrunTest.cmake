@@ -29,7 +29,7 @@ if (NOT TEST_ERRREF)
   if (NOT SKIP_APPEND)
     # append error file since skip was not defined
     set (ERROR_APPEND 1)
-  endif()
+  endif ()
 endif ()
 
 if (NOT TEST_LOG_LEVEL)

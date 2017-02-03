@@ -169,7 +169,7 @@ MACRO (HDF_FUNCTION_TEST OTHER_TEST)
     if (${OTHER_TEST})
       set (${HDF_PREFIX}_${OTHER_TEST} 1 CACHE INTERNAL "Other test ${FUNCTION}")
       message (STATUS "Performing Other Test ${OTHER_TEST} - Success")
-    else (${OTHER_TEST})
+    else ()
       message (STATUS "Performing Other Test ${OTHER_TEST} - Failed")
       set (${HDF_PREFIX}_${OTHER_TEST} "" CACHE INTERNAL "Other test ${FUNCTION}")
       file (APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
