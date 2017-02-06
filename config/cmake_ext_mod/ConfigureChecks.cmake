@@ -88,10 +88,6 @@ if (WINDOWS)
   if (NOT UNIX AND NOT CYGWIN AND NOT MINGW)
     set (${HDF_PREFIX}_HAVE_GETCONSOLESCREENBUFFERINFO 1)
   endif ()
-  set (${HDF_PREFIX}_HAVE_FUNCTION 1)
-  set (${HDF_PREFIX}_GETTIMEOFDAY_GIVES_TZ 1)
-  set (${HDF_PREFIX}_HAVE_TIMEZONE 1)
-  set (${HDF_PREFIX}_HAVE_GETTIMEOFDAY 1)
   if (MINGW)
     set (${HDF_PREFIX}_HAVE_WINSOCK2_H 1)
   endif ()
@@ -322,28 +318,6 @@ endif ()
 add_definitions (${HDF_EXTRA_FLAGS})
 
 #-----------------------------------------------------------------------------
-# Check for HAVE_OFF64_T functionality
-#-----------------------------------------------------------------------------
-if (NOT WINDOWS OR MINGW)
-  HDF_FUNCTION_TEST (HAVE_OFF64_T)
-  if (${HDF_PREFIX}_HAVE_OFF64_T)
-    CHECK_FUNCTION_EXISTS (lseek64            ${HDF_PREFIX}_HAVE_LSEEK64)
-    CHECK_FUNCTION_EXISTS (fseeko64           ${HDF_PREFIX}_HAVE_FSEEKO64)
-    CHECK_FUNCTION_EXISTS (ftello64           ${HDF_PREFIX}_HAVE_FTELLO64)
-    CHECK_FUNCTION_EXISTS (ftruncate64        ${HDF_PREFIX}_HAVE_FTRUNCATE64)
-  endif ()
-
-  CHECK_FUNCTION_EXISTS (fseeko               ${HDF_PREFIX}_HAVE_FSEEKO)
-  CHECK_FUNCTION_EXISTS (ftello               ${HDF_PREFIX}_HAVE_FTELLO)
-
-  HDF_FUNCTION_TEST (HAVE_STAT64_STRUCT)
-  if (HAVE_STAT64_STRUCT)
-    CHECK_FUNCTION_EXISTS (fstat64            ${HDF_PREFIX}_HAVE_FSTAT64)
-    CHECK_FUNCTION_EXISTS (stat64             ${HDF_PREFIX}_HAVE_STAT64)
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
 #  Check the size in bytes of all the int and float types
 #-----------------------------------------------------------------------------
 MACRO (HDF_CHECK_TYPE_SIZE type var)
@@ -433,58 +407,6 @@ else ()
 endif ()
 
 if (NOT WINDOWS)
-  #-----------------------------------------------------------------------------
-  # Check if the dev_t type is a scalar type
-  #-----------------------------------------------------------------------------
-  HDF_FUNCTION_TEST (DEV_T_IS_SCALAR)
-
-  # ----------------------------------------------------------------------
-  # Check for MONOTONIC_TIMER support (used in clock_gettime).  This has
-  # to be done after any POSIX/BSD defines to ensure that the test gets
-  # the correct POSIX level on linux.
-  CHECK_VARIABLE_EXISTS (CLOCK_MONOTONIC HAVE_CLOCK_MONOTONIC)
-
-  #-----------------------------------------------------------------------------
-  # Check a bunch of time functions
-  #-----------------------------------------------------------------------------
-  CHECK_FUNCTION_EXISTS (gettimeofday      ${HDF_PREFIX}_HAVE_GETTIMEOFDAY)
-  foreach (test
-      HAVE_TM_GMTOFF
-      HAVE___TM_GMTOFF
-#      HAVE_TIMEZONE
-      HAVE_STRUCT_TIMEZONE
-      GETTIMEOFDAY_GIVES_TZ
-      TIME_WITH_SYS_TIME
-      HAVE_TM_ZONE
-      HAVE_STRUCT_TM_TM_ZONE
-  )
-    HDF_FUNCTION_TEST (${test})
-  endforeach ()
-  if (NOT CYGWIN AND NOT MINGW)
-      HDF_FUNCTION_TEST (HAVE_TIMEZONE)
-#      HDF_FUNCTION_TEST (HAVE_STAT_ST_BLOCKS)
-  endif ()
-
-  # ----------------------------------------------------------------------
-  # Does the struct stat have the st_blocks field?  This field is not Posix.
-  #
-  HDF_FUNCTION_TEST (HAVE_STAT_ST_BLOCKS)
-
-  # ----------------------------------------------------------------------
-  # How do we figure out the width of a tty in characters?
-  #
-  CHECK_FUNCTION_EXISTS (ioctl             ${HDF_PREFIX}_HAVE_IOCTL)
-  HDF_FUNCTION_TEST (HAVE_STRUCT_VIDEOCONFIG)
-  HDF_FUNCTION_TEST (HAVE_STRUCT_TEXT_INFO)
-  CHECK_FUNCTION_EXISTS (_getvideoconfig   ${HDF_PREFIX}_HAVE__GETVIDEOCONFIG)
-  CHECK_FUNCTION_EXISTS (gettextinfo       ${HDF_PREFIX}_HAVE_GETTEXTINFO)
-  CHECK_FUNCTION_EXISTS (_scrsize          ${HDF_PREFIX}_HAVE__SCRSIZE)
-  if (NOT CYGWIN AND NOT MINGW)
-    CHECK_FUNCTION_EXISTS (GetConsoleScreenBufferInfo    ${HDF_PREFIX}_HAVE_GETCONSOLESCREENBUFFERINFO)
-  endif ()
-  CHECK_SYMBOL_EXISTS (TIOCGWINSZ "sys/ioctl.h" ${HDF_PREFIX}_HAVE_TIOCGWINSZ)
-  CHECK_SYMBOL_EXISTS (TIOCGETD   "sys/ioctl.h" ${HDF_PREFIX}_HAVE_TIOCGETD)
-
   # ----------------------------------------------------------------------
   # cygwin user credentials are different then on linux
   #
@@ -521,7 +443,6 @@ CHECK_FUNCTION_EXISTS (signal            ${HDF_PREFIX}_HAVE_SIGNAL)
 CHECK_FUNCTION_EXISTS (longjmp           ${HDF_PREFIX}_HAVE_LONGJMP)
 CHECK_FUNCTION_EXISTS (setjmp            ${HDF_PREFIX}_HAVE_SETJMP)
 CHECK_FUNCTION_EXISTS (siglongjmp        ${HDF_PREFIX}_HAVE_SIGLONGJMP)
-CHECK_FUNCTION_EXISTS (sigsetjmp         ${HDF_PREFIX}_HAVE_SIGSETJMP)
 CHECK_FUNCTION_EXISTS (sigprocmask       ${HDF_PREFIX}_HAVE_SIGPROCMASK)
 
 CHECK_FUNCTION_EXISTS (snprintf          ${HDF_PREFIX}_HAVE_SNPRINTF)
@@ -534,179 +455,6 @@ CHECK_FUNCTION_EXISTS (tmpfile           ${HDF_PREFIX}_HAVE_TMPFILE)
 CHECK_FUNCTION_EXISTS (asprintf          ${HDF_PREFIX}_HAVE_ASPRINTF)
 CHECK_FUNCTION_EXISTS (vasprintf         ${HDF_PREFIX}_HAVE_VASPRINTF)
 CHECK_FUNCTION_EXISTS (waitpid           ${HDF_PREFIX}_HAVE_WAITPID)
-
-CHECK_FUNCTION_EXISTS (vsnprintf         ${HDF_PREFIX}_HAVE_VSNPRINTF)
-if (NOT WINDOWS)
-  if (${HDF_PREFIX}_HAVE_VSNPRINTF)
-    HDF_FUNCTION_TEST (VSNPRINTF_WORKS)
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# sigsetjmp is special; may actually be a macro
-#-----------------------------------------------------------------------------
-if (NOT ${HDF_PREFIX}_HAVE_SIGSETJMP)
-  if (${HDF_PREFIX}_HAVE_SETJMP_H)
-    CHECK_SYMBOL_EXISTS (sigsetjmp "setjmp.h" ${HDF_PREFIX}_HAVE_MACRO_SIGSETJMP)
-    if (${HDF_PREFIX}_HAVE_MACRO_SIGSETJMP)
-      set (${HDF_PREFIX}_HAVE_SIGSETJMP 1)
-    endif ()
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# Check a bunch of other functions
-#-----------------------------------------------------------------------------
-if (NOT WINDOWS)
-  foreach (test
-      HAVE_ATTRIBUTE
-      HAVE_C99_FUNC
-#      STDC_HEADERS
-      HAVE_FUNCTION
-      HAVE_C99_DESIGNATED_INITIALIZER
-      SYSTEM_SCOPE_THREADS
-      HAVE_SOCKLEN_T
-  )
-    HDF_FUNCTION_TEST (${test})
-  endforeach ()
-endif ()
-
-# For other CXX specific tests, use this MACRO.
-MACRO (HDF_CXX_FUNCTION_TEST OTHER_TEST)
-  if ("${OTHER_TEST}" MATCHES "^${OTHER_TEST}$")
-    set (MACRO_CHECK_FUNCTION_DEFINITIONS "-D${OTHER_TEST} ${CMAKE_REQUIRED_FLAGS}")
-    set (OTHER_TEST_ADD_LIBRARIES)
-    if (CMAKE_REQUIRED_LIBRARIES)
-      set (OTHER_TEST_ADD_LIBRARIES "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-    endif ()
-
-    foreach (def
-        HAVE_SYS_TIME_H
-        HAVE_UNISTD_H
-        HAVE_SYS_TYPES_H
-        HAVE_SYS_SOCKET_H
-    )
-      if ("${${HDF_PREFIX}_${def}}")
-        set (MACRO_CHECK_FUNCTION_DEFINITIONS "${MACRO_CHECK_FUNCTION_DEFINITIONS} -D${def}")
-      endif ()
-    endforeach ()
-
-    if (LARGEFILE)
-      set (MACRO_CHECK_FUNCTION_DEFINITIONS
-          "${MACRO_CHECK_FUNCTION_DEFINITIONS} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE"
-      )
-    endif ()
-
-    #message (STATUS "Performing ${OTHER_TEST}")
-    TRY_COMPILE (${OTHER_TEST}
-        ${CMAKE_BINARY_DIR}
-        ${HDF_RESOURCES_EXT_DIR}/HDFCXXTests.cpp
-        CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
-        "${OTHER_TEST_ADD_LIBRARIES}"
-        OUTPUT_VARIABLE OUTPUT
-    )
-    if (${OTHER_TEST} EQUAL 0)
-      set (${OTHER_TEST} 1 CACHE INTERNAL "CXX test ${FUNCTION}")
-      message (STATUS "Performing CXX Test ${OTHER_TEST} - Success")
-    else ()
-      message (STATUS "Performing CXX Test ${OTHER_TEST} - Failed")
-      set (${OTHER_TEST} "" CACHE INTERNAL "CXX test ${FUNCTION}")
-      file (APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-          "Performing CXX Test ${OTHER_TEST} failed with the following output:\n"
-          "${OUTPUT}\n"
-      )
-    endif ()
-  endif ()
-ENDMACRO ()
-
-#-----------------------------------------------------------------------------
-# Check a bunch of cxx functions
-#-----------------------------------------------------------------------------
-if (CMAKE_CXX_COMPILER_LOADED)
-  foreach (test
-      OLD_HEADER_FILENAME
-      ${HDF_PREFIX}_NO_NAMESPACE
-      ${HDF_PREFIX}_NO_STD
-      BOOL_NOTDEFINED
-      NO_STATIC_CAST
-      CXX_HAVE_OFFSETOF
-  )
-    HDF_CXX_FUNCTION_TEST (${test})
-  endforeach ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# Check if InitOnceExecuteOnce is available
-#-----------------------------------------------------------------------------
-if (WINDOWS)
-  if (NOT HDF_NO_IOEO_TEST)
-  message (STATUS "Checking for InitOnceExecuteOnce:")
-  if ("${${HDF_PREFIX}_HAVE_IOEO}" MATCHES "^${${HDF_PREFIX}_HAVE_IOEO}$")
-    if (LARGEFILE)
-      set (CMAKE_REQUIRED_DEFINITIONS
-          "${CURRENT_TEST_DEFINITIONS} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE"
-      )
-    endif ()
-    set (MACRO_CHECK_FUNCTION_DEFINITIONS
-      "-DHAVE_IOEO ${CMAKE_REQUIRED_FLAGS}")
-    if (CMAKE_REQUIRED_LIBRARIES)
-      set (CHECK_C_SOURCE_COMPILES_ADD_LIBRARIES
-        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-    else ()
-      set (CHECK_C_SOURCE_COMPILES_ADD_LIBRARIES)
-    endif ()
-    if (CMAKE_REQUIRED_INCLUDES)
-      set (CHECK_C_SOURCE_COMPILES_ADD_INCLUDES
-        "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_REQUIRED_INCLUDES}")
-    else ()
-      set (CHECK_C_SOURCE_COMPILES_ADD_INCLUDES)
-    endif ()
-
-    TRY_RUN(HAVE_IOEO_EXITCODE HAVE_IOEO_COMPILED
-      ${CMAKE_BINARY_DIR}
-      ${HDF_RESOURCES_EXT_DIR}/HDFTests.c
-      COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
-      CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
-      -DCMAKE_SKIP_RPATH:BOOL=${CMAKE_SKIP_RPATH}
-      "${CHECK_C_SOURCE_COMPILES_ADD_LIBRARIES}"
-      "${CHECK_C_SOURCE_COMPILES_ADD_INCLUDES}"
-      COMPILE_OUTPUT_VARIABLE OUTPUT)
-    # if it did not compile make the return value fail code of 1
-    if (NOT HAVE_IOEO_COMPILED)
-      set (HAVE_IOEO_EXITCODE 1)
-    endif ()
-    # if the return value was 0 then it worked
-    if ("${HAVE_IOEO_EXITCODE}" EQUAL 0)
-      set (${HDF_PREFIX}_HAVE_IOEO 1 CACHE INTERNAL "Test InitOnceExecuteOnce")
-      message (STATUS "Performing Test InitOnceExecuteOnce - Success")
-      file (APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
-        "Performing C SOURCE FILE Test InitOnceExecuteOnce succeded with the following output:\n"
-        "${OUTPUT}\n"
-        "Return value: ${HAVE_IOEO}\n")
-    else ()
-      if (CMAKE_CROSSCOMPILING AND "${HAVE_IOEO_EXITCODE}" MATCHES  "FAILED_TO_RUN")
-        set (${HDF_PREFIX}_HAVE_IOEO "${HAVE_IOEO_EXITCODE}")
-      else ()
-        set (${HDF_PREFIX}_HAVE_IOEO "" CACHE INTERNAL "Test InitOnceExecuteOnce")
-      endif ()
-
-      message (STATUS "Performing Test InitOnceExecuteOnce - Failed")
-      file (APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
-        "Performing InitOnceExecuteOnce Test  failed with the following output:\n"
-        "${OUTPUT}\n"
-        "Return value: ${HAVE_IOEO_EXITCODE}\n")
-    endif ()
-  endif ()
-  endif ()
-endif ()
-
-#-----------------------------------------------------------------------------
-# Determine how 'inline' is used
-#-----------------------------------------------------------------------------
-foreach (inline_test inline __inline__ __inline)
-  string (TOUPPER ${inline_test} INLINE_TEST_MACRO)
-  HDF_FUNCTION_TEST (HAVE_${INLINE_TEST_MACRO})
-endforeach ()
 
 #-----------------------------------------------------------------------------
 # Check how to print a Long Long integer
@@ -747,11 +495,3 @@ if (NOT ${HDF_PREFIX}_PRINTF_LL_WIDTH OR ${HDF_PREFIX}_PRINTF_LL_WIDTH MATCHES "
     )
   endif ()
 endif ()
-
-# ----------------------------------------------------------------------
-# Set the flag to indicate that the machine can handle converting
-# denormalized floating-point values.
-# (This flag should be set for all machines, except for the Crays, where
-# the cache value is set in it's config file)
-#
-set (${HDF_PREFIX}_CONVERT_DENORMAL_FLOAT 1)
