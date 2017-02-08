@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 # --------------------------------------------------------------------
 # Notes: When creating examples they should be prefixed
 # with "f_ex_". This allows for easier filtering of the examples.
@@ -22,27 +22,27 @@ LINK_DIRECTORIES (
 # Define Sources
 #-----------------------------------------------------------------------------
 set (examples
-    SD_create_sds 
-    SD_write_to_sds 
-    SD_write_slab 
-    SD_alter_sds_values 
+    SD_create_sds
+    SD_write_to_sds
+    SD_write_slab
+    SD_alter_sds_values
     SD_unlimited_sds
-    SD_mv_sds_to_external 
-    SD_read_from_sds 
-    SD_read_subsets 
+    SD_mv_sds_to_external
+    SD_read_from_sds
+    SD_read_subsets
     #SD_get_info
-    SD_find_sds_by_name 
-    SD_set_get_dim_info 
-    #SD_dimscale_vs_sds 
+    SD_find_sds_by_name
+    SD_set_get_dim_info
+    #SD_dimscale_vs_sds
     SD_set_attr
-    #SD_get_attr 
-    SD_compress_sds 
+    #SD_get_attr
+    SD_compress_sds
     SD_chunking_example
 )
 set (skip_examples
     SD_get_info
-    SD_dimscale_vs_sds 
-    SD_get_attr 
+    SD_dimscale_vs_sds
+    SD_get_attr
 )
 
 foreach (example ${examples})
@@ -56,10 +56,10 @@ foreach (example ${examples})
   )
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else (HDF4_BUILD_XDR_LIB)
+  else ()
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif (HDF4_BUILD_XDR_LIB)
-endforeach (example ${examples})
+  endif ()
+endforeach ()
 
 foreach (example ${skip_examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
@@ -72,11 +72,11 @@ foreach (example ${skip_examples})
   )
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else (HDF4_BUILD_XDR_LIB)
+  else ()
     target_link_libraries (f_exmf_${example} ${HDF4_MF_FORTRAN_LIB_TARGET}  ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif (HDF4_BUILD_XDR_LIB)
-endforeach (example ${skip_examples})
+  endif ()
+endforeach ()
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
-endif (BUILD_TESTING)
+endif ()

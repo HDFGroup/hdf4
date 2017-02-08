@@ -48,7 +48,7 @@ set_target_properties (${HDF4_SRC_FCSTUB_LIB_TARGET} PROPERTIES
 )
 if (WIN32)
   set_property (TARGET ${HDF4_SRC_FCSTUB_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
-endif (WIN32)
+endif ()
 set (install_targets ${HDF4_SRC_FCSTUB_LIB_TARGET})
 
 if (BUILD_SHARED_LIBS)
@@ -66,9 +66,9 @@ if (BUILD_SHARED_LIBS)
   )
   if (WIN32)
     set_property (TARGET ${HDF4_SRC_FCSTUB_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
-  endif (WIN32)
+  endif ()
   set (install_targets ${install_targets} ${HDF4_SRC_FCSTUB_LIBSH_TARGET})
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 set (HDF4_F_FORTRAN_SRCS
     ${HDF4_HDFSOURCE_DIR}/df24ff.f
@@ -100,7 +100,7 @@ set_target_properties (${HDF4_SRC_FORTRAN_LIB_TARGET} PROPERTIES
 )
 if (WIN32)
   set_property (TARGET ${HDF4_SRC_FORTRAN_LIB_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
-endif (WIN32)
+endif ()
 set (install_targets ${install_targets} ${HDF4_SRC_FORTRAN_LIB_TARGET})
 
 if (BUILD_SHARED_LIBS)
@@ -108,7 +108,7 @@ if (BUILD_SHARED_LIBS)
   set (SHARED_LINK_FLAGS " ")
   if (WIN32 AND MSVC)
     set (SHARED_LINK_FLAGS "/DLL /DEF:${HDF4_HDF_FORTRAN_SOURCE_DIR}/hdf_fortrandll.def")
-  endif (WIN32 AND MSVC)
+  endif ()
   TARGET_FORTRAN_PROPERTIES (${HDF4_SRC_FORTRAN_LIBSH_TARGET} SHARED " " ${SHARED_LINK_FLAGS})
   target_link_libraries (${HDF4_SRC_FORTRAN_LIBSH_TARGET} ${HDF4_SRC_FCSTUB_LIBSH_TARGET} ${LINK_SHARED_LIBS})
   set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_FORTRAN_LIBSH_TARGET}")
@@ -123,14 +123,14 @@ if (BUILD_SHARED_LIBS)
   )
   if (WIN32)
     set_property (TARGET ${HDF4_SRC_FORTRAN_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
-  endif (WIN32)
+  endif ()
   set (install_targets ${install_targets} ${HDF4_SRC_FORTRAN_LIBSH_TARGET})
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)
-endif (BUILD_TESTING)
+endif ()
 
 ##############################################################################
 ##############################################################################
@@ -157,7 +157,8 @@ if (HDF4_EXPORTED_TARGETS)
   if (BUILD_SHARED_LIBS)
     INSTALL_TARGET_PDB (${HDF4_SRC_FCSTUB_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} fortlibraries)
     #INSTALL_TARGET_PDB (${HDF4_SRC_FORTRAN_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} fortlibraries)
-  endif (BUILD_SHARED_LIBS)
+  endif ()
+  INSTALL_TARGET_PDB (${HDF4_SRC_FCSTUB_LIB_TARGET} ${HDF4_INSTALL_BIN_DIR} fortlibraries)
 
   INSTALL (
       TARGETS
@@ -170,4 +171,4 @@ if (HDF4_EXPORTED_TARGETS)
       FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT fortlibraries
       INCLUDES DESTINATION include
   )
-endif (HDF4_EXPORTED_TARGETS)
+endif ()

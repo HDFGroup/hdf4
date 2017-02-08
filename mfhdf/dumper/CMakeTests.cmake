@@ -4,7 +4,7 @@
 ###           T E S T I N G                                                ###
 ##############################################################################
 ##############################################################################
-  
+
   #-- Copy all the data files from the test directory into the source directory
   set (HDF4_REFERENCE_TEST_FILES
       ctxtr2r.hdf
@@ -39,7 +39,7 @@
       vslongname.hdf
       Roy.nc
   )
-  
+
   set (HDF4_REFERENCE_FILES
       dumpgr-1.out
       dumpgr-10.out
@@ -128,17 +128,17 @@
       list-8.out
       list-9.out
   )
- 
+
   foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
     set (dest "${PROJECT_BINARY_DIR}/${h4_file}")
     #message (STATUS " Copying ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} to ${PROJECT_BINARY_DIR}/")
     ADD_CUSTOM_COMMAND (
-        TARGET     hdp 
+        TARGET     hdp
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+  endforeach ()
 
   foreach (out_file ${HDF4_REFERENCE_FILES})
     set (outdest "${PROJECT_BINARY_DIR}/${out_file}")
@@ -149,8 +149,8 @@
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_DUMPER_SOURCE_DIR}/testfiles/${out_file} ${outdest}
     )
-  endforeach (out_file ${HDF4_REFERENCE_FILES})
-  
+  endforeach ()
+
 ##############################################################################
 ##############################################################################
 ###           T H E   T E S T S  M A C R O S                               ###
@@ -166,9 +166,9 @@
     )
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (HDP-${resultfile}-clearall-objects PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-    else (NOT "${last_test}" STREQUAL "")
+    else ()
       set_tests_properties (HDP-${resultfile}-clearall-objects PROPERTIES LABELS ${PROJECT_NAME})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
 
     if (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (NAME HDP-${resultfile} COMMAND $<TARGET_FILE:hdp> ${ARGN})
@@ -184,17 +184,17 @@
               -D "TEST_REFERENCE=${resultfile}.out"
               -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
       )
-    endif (HDF4_ENABLE_USING_MEMCHECKER)
+    endif ()
     set_tests_properties (HDP-${resultfile} PROPERTIES DEPENDS HDP-${resultfile}-clearall-objects LABELS ${PROJECT_NAME})
     set (last_test "HDP-${resultfile}")
-  ENDMACRO (ADD_H4_TEST file)
+  ENDMACRO ()
 
 ##############################################################################
 ##############################################################################
 ###           T H E   T E S T S                                            ###
 ##############################################################################
 ##############################################################################
-  
+
   ADD_H4_TEST (list-1 0 list tdata.hdf)
   ADD_H4_TEST (list-2 0 list -l tdata.hdf)
   ADD_H4_TEST (list-3 0 list -d tdata.hdf)
@@ -216,7 +216,7 @@
   # Test 4 should fail with error message: "SD with name Time: not found"
   ADD_H4_TEST (dumpsds-4 0 dumpsds -n Time swf32.hdf)
 
-  # Test 5 prints datasets given their names 
+  # Test 5 prints datasets given their names
   ADD_H4_TEST (dumpsds-5 0 dumpsds -n fakeDim0,Data-Set-2 swf32.hdf)
 
   # Test 6 prints datasets given their ref numbers
@@ -243,7 +243,7 @@
   # Test 13 prints contents of file when a dimension has the same name as its SDS
   ADD_H4_TEST (dumpsds-13 0 dumpsds sds1_dim1_samename.hdf)
 
-  # Test 14 prints contents of file when a dimension has the same name as 
+  # Test 14 prints contents of file when a dimension has the same name as
   # that of another SDS
   ADD_H4_TEST (dumpsds-14 0 dumpsds sds2_dim1_samename.hdf)
 
@@ -252,9 +252,9 @@
 
   if (HDF4_ENABLE_SZIP_SUPPORT)
     ADD_H4_TEST (dumpsds-15szip 0 dumpsds sds_compressed.hdf)
-  else (HDF4_ENABLE_SZIP_SUPPORT)
+  else ()
     ADD_H4_TEST (dumpsds-15 0 dumpsds sds_compressed.hdf)
-  endif (HDF4_ENABLE_SZIP_SUPPORT)
+  endif ()
 
   # Test 16 prints SDSs in index order, by default
   ADD_H4_TEST (dumpsds-16 0 dumpsds -h -i 39,36 -n data34,data27 -r 36,37 -i 0,1 -n data6,data9,data4,data3 -r 16,17,15 -i 23,22,21 sds_empty_many.hdf)
@@ -311,7 +311,7 @@
   ADD_H4_TEST (dumpvg-8 0 dumpvg -n nsamp,tdata.hdf tdata.hdf)
   ADD_H4_TEST (dumpvg-9 0 dumpvg -c CDF0.0 tdata.hdf)
 
-  # Added option -h to the following test; this option has always 
+  # Added option -h to the following test; this option has always
   # failed; just fixed it - BMR 8/1/00
   ADD_H4_TEST (dumpvg-10 0 dumpvg -h -c Dim0.0,Var0.0 tdata.hdf)
 
@@ -321,23 +321,23 @@
   # moved test #12 up to #11, consequently - BMR 7/25/00
   ADD_H4_TEST (dumpvg-11 0 dumpvg tvattr.hdf)
 
-  # Added these two tests for the new feature: vgroup has variable length 
+  # Added these two tests for the new feature: vgroup has variable length
   # name - BMR 10/27/06
   # Note that the dumpvg-13 test searches for an SDS also
   ADD_H4_TEST (dumpvg-12 0 dumpvg VGlongname.hdf)
   ADD_H4_TEST (dumpvg-13 0 dumpvg -n "SD Vgroup - this vgroup has an sds as a member and it is actually meant to test long vgroup name" VGlongname.hdf)
 
-  # Prints contents of file when a dimension has the same name as its SDS 
+  # Prints contents of file when a dimension has the same name as its SDS
   ADD_H4_TEST (dumpvg-14 0 dumpvg sds1_dim1_samename.hdf)
 
-  # Prints contents of file when a dimension has the same name as that 
+  # Prints contents of file when a dimension has the same name as that
   # of another SDS
   ADD_H4_TEST (dumpvg-15 0 dumpvg sds2_dim1_samename.hdf)
 
 # Verify the fix for bug HDFFR-197 and a vgroup with ref=0 (some old RI stuff)
   ADD_H4_TEST (dumpvg-16 0 dumpvg -h grtdfi322.hdf)
   ADD_H4_TEST (dumpvg-17 0 dumpvg grtdfi322.hdf)
-  
+
   # Test command dumpgr
   ADD_H4_TEST (dumpgr-1 0 dumpgr grtdfui82.hdf)
   ADD_H4_TEST (dumpgr-2 0 dumpgr -i 0,1,3 grtdfui82.hdf)
@@ -349,27 +349,27 @@
   add_test (
       NAME HDP-clear-my.dat
       COMMAND    ${CMAKE_COMMAND}
-      -E remove 
+      -E remove
       my.dat
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HDP-clear-my.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (HDP-clear-my.dat PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "HDP-clear-my.dat")
   ADD_H4_TEST (dumpgr-8 0 dumpgr -o mybin.dat  -b grtdfui82.hdf)
   add_test (
       NAME HDP-clear-mybin.dat
       COMMAND    ${CMAKE_COMMAND}
-      -E remove 
+      -E remove
       mybin.dat
   )
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (HDP-clear-mybin.dat PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (HDP-clear-mybin.dat PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "HDP-clear-mybin.dat")
   ADD_H4_TEST (dumpgr-9 0 dumpgr grtdfui83.hdf)
   ADD_H4_TEST (dumpgr-10 0 dumpgr grtdfui84.hdf)
@@ -380,7 +380,7 @@
 
   # Tests 13, 14, and 15 test option -h, which was not included in any
   # of the previous tests, and the new options -p and -pd, printing palette
-  # with or without palette information 
+  # with or without palette information
   ADD_H4_TEST (dumpgr-13 0 dumpgr -p Image_with_Palette.hdf)
   ADD_H4_TEST (dumpgr-14 0 dumpgr -h Image_with_Palette.hdf)
   ADD_H4_TEST (dumpgr-15 0 dumpgr -r 2,4 -pd Image_with_Palette.hdf)

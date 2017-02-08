@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 PROJECT (HDF4_JAVA_TEST Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
@@ -52,18 +52,18 @@ foreach (h4_file ${HDF_JAVA_TEST_FILES})
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy_if_different ${PROJECT_SOURCE_DIR}/${h4_file} ${dest}
   )
-endforeach (h4_file ${HDF_JAVA_TEST_FILES})
+endforeach ()
 
 if (WIN32)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
-else (WIN32)
+else ()
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ":")
-endif (WIN32)
+endif ()
 
 set (CMAKE_JAVA_CLASSPATH ".")
 foreach (CMAKE_INCLUDE_PATH ${CMAKE_JAVA_INCLUDE_PATH})
   set (CMAKE_JAVA_CLASSPATH "${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${CMAKE_INCLUDE_PATH}")
-endforeach (CMAKE_INCLUDE_PATH)
+endforeach ()
 set (CMAKE_JAVA_CLASSPATH "${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${${HDF4_JAVA_TEST_LIB_TARGET}_JAR_FILE}")
 set (testfilter "OK (598 tests)")
 
@@ -73,7 +73,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
   else()
     set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
   endif()
-endif(CMAKE_BUILD_TYPE MATCHES Debug)
+endif()
 
 add_test (
   NAME JUnit-interface-clearall-objects

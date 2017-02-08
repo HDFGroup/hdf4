@@ -1,11 +1,11 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 project (HDF4_HDF_UTIL C CXX)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 
 if (WIN32)
   add_definitions (-DDOS_FS)
-endif (WIN32)
+endif ()
 
 if (HDF4_BUILD_TOOLS)
   #-- Adding tool hdfls
@@ -26,7 +26,7 @@ if (HDF4_BUILD_TOOLS)
   TARGET_NAMING (hdfed STATIC)
   TARGET_C_PROPERTIES (hdfed STATIC " " " ")
   target_link_libraries (hdfed ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif (HDF4_BUILD_TOOLS)
+endif ()
 
 if (HDF4_BUILD_UTILS)
   #-- Adding utility hdf2gif
@@ -137,11 +137,11 @@ if (HDF4_BUILD_UTILS)
   TARGET_NAMING (vshow STATIC)
   TARGET_C_PROPERTIES (vshow STATIC " " " ")
   target_link_libraries (vshow ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-endif (HDF4_BUILD_UTILS)
+endif ()
 
 if (BUILD_TESTING AND HDF4_BUILD_UTILS)
   include (CMakeTests.cmake)
-endif (BUILD_TESTING AND HDF4_BUILD_UTILS)
+endif ()
 
 ##############################################################################
 ##############################################################################
@@ -162,7 +162,7 @@ if (HDF4_BUILD_TOOLS)
           hdfed
       RUNTIME DESTINATION ${HDF4_INSTALL_TOOLS_BIN_DIR} COMPONENT toolsapplications
   )
-endif (HDF4_BUILD_TOOLS)
+endif ()
 
 if (HDF4_BUILD_UTILS)
   INSTALL_PROGRAM_PDB (gif2hdf ${HDF4_INSTALL_UTILS_BIN_DIR} utilsapplications)
@@ -202,4 +202,4 @@ if (HDF4_BUILD_UTILS)
           vshow
       RUNTIME DESTINATION ${HDF4_INSTALL_UTILS_BIN_DIR} COMPONENT utilsapplications
   )
-endif (HDF4_BUILD_UTILS)
+endif ()

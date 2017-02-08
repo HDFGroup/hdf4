@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 project (HDF4_JAVA_Examples Java)
 
 set (CMAKE_VERBOSE_MAKEFILE 1)
@@ -18,19 +18,19 @@ set (CMAKE_JAVA_INCLUDE_PATH "${HDF4_JAVA_JARS};${HDF4_JAVA_LOGGING_JAR};${HDF4_
 
 if (WIN32 AND NOT CYGWIN)
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
-else (WIN32 AND NOT CYGWIN)
+else ()
   set (CMAKE_JAVA_INCLUDE_FLAG_SEP ":")
-endif (WIN32 AND NOT CYGWIN)
+endif ()
 
 set (CMAKE_JAVA_CLASSPATH ".")
 foreach (CMAKE_INCLUDE_PATH ${CMAKE_JAVA_INCLUDE_PATH})
   set (CMAKE_JAVA_CLASSPATH "${CMAKE_JAVA_CLASSPATH}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${CMAKE_INCLUDE_PATH}")
-endforeach (CMAKE_INCLUDE_PATH)
+endforeach ()
 
 foreach (HCP_JAR ${CMAKE_JAVA_INCLUDE_PATH})
   get_filename_component (_HCP_FILE ${HCP_JAR} NAME)
   set (HDFJNI_CLASSJARS "${_HCP_FILE} ${HDFJNI_CLASSJARS}")
-endforeach (HCP_JAR ${CMAKE_JAVA_INCLUDE_PATH})
+endforeach ()
 
 foreach (example ${HDFJNI_EXAMPLES})
   file (WRITE ${HDF4_JAVA_Examples_BINARY_DIR}/Manifest.txt
@@ -42,7 +42,7 @@ Class-Path: ${HDFJNI_CLASSJARS}
   get_target_property (${example}_JAR_FILE ${example} JAR_FILE)
   add_dependencies (${example} ${HDF4_JAVA_HDF_LIB_TARGET})
   set_target_properties (${example} PROPERTIES FOLDER examples/java)
-endforeach (example ${HDFJNI_EXAMPLES})
+endforeach ()
 
 if (BUILD_TESTING)
   macro (ADD_H4_TEST resultfile resultcode)
@@ -52,7 +52,7 @@ if (BUILD_TESTING)
       else()
         set (CMD_ARGS "-Dhdf.hdflib.HDFLibrary.loadLibraryName=hdf_java_debug;")
       endif()
-    endif(CMAKE_BUILD_TYPE MATCHES Debug)
+    endif()
     add_test (
         NAME JAVAEX-${resultfile}
         COMMAND "${CMAKE_COMMAND}"
@@ -69,9 +69,9 @@ if (BUILD_TESTING)
     )
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (JAVAEX-${resultfile} PROPERTIES DEPENDS ${last_test})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "JAVAEX-${resultfile}")
-  endmacro (ADD_H4_TEST file)
+  endmacro ()
 
   foreach (example ${HDFJNI_EXAMPLES})
     add_test (
@@ -84,9 +84,9 @@ if (BUILD_TESTING)
     )
     if (NOT "${last_test}" STREQUAL "")
       set_tests_properties (JAVAEX-${example}-clearall-objects PROPERTIES DEPENDS ${last_test})
-    endif (NOT "${last_test}" STREQUAL "")
+    endif ()
     set (last_test "JAVAEX-${example}-clearall-objects")
     ADD_H4_TEST (${example} 0)
-  endforeach (example ${HDFJNI_EXAMPLES})
+  endforeach ()
 
-endif (BUILD_TESTING)
+endif ()

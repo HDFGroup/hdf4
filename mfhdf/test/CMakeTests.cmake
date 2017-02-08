@@ -7,7 +7,7 @@
 file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST")
 if (BUILD_SHARED_LIBS)
   file (MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/TEST-shared")
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 #-- Copy all the dat files from the test directory into the source directory
 set (HDF4_REFERENCE_TEST_FILES
@@ -34,8 +34,8 @@ foreach (h4_file ${HDF4_REFERENCE_TEST_FILES})
          COMMAND    ${CMAKE_COMMAND}
          ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
    )
-   endif (BUILD_SHARED_LIBS)
-endforeach (h4_file ${HDF4_REFERENCE_TEST_FILES})
+   endif ()
+endforeach ()
 
 #-- Copy all the dat files from the test directory into the source directory
 set (HDF4_REFERENCE2_TEST_FILES
@@ -58,8 +58,8 @@ foreach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
          COMMAND    ${CMAKE_COMMAND}
          ARGS       -E copy_if_different ${HDF4_MFHDF_TEST_DIR}/${h4_file} ${dest}
      )
-   endif (BUILD_SHARED_LIBS)
-endforeach (h4_file ${HDF4_REFERENCE2_TEST_FILES})
+   endif ()
+endforeach ()
 
 ##############################################################################
 ##############################################################################
@@ -205,7 +205,7 @@ if (BUILD_SHARED_LIBS)
       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/TEST-shared
       LABELS ${PROJECT_NAME}
   )
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 #-- Adding test for xdrtest
 if (HDF4_BUILD_XDR_LIB)
@@ -221,18 +221,18 @@ if (HDF4_BUILD_XDR_LIB)
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.out ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
     )
-  else (MSVC_VERSION LESS 1900)
+  else ()
     add_custom_command (
         TARGET     xdrtest
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_XDR_DIR}/xdrtest.cyg ${PROJECT_BINARY_DIR}/TEST/xdrtest.out
     )
-  endif (MSVC_VERSION LESS 1900)
+  endif ()
 
   if (HDF4_ENABLE_USING_MEMCHECKER)
     add_test (NAME MFHDF_TEST-xdrtest COMMAND $<TARGET_FILE:xdrtest>)
-  else (HDF4_ENABLE_USING_MEMCHECKER)
+  else ()
     add_test (
         NAME MFHDF_TEST-xdrtest
         COMMAND "${CMAKE_COMMAND}"
@@ -244,6 +244,6 @@ if (HDF4_BUILD_XDR_LIB)
             -D "TEST_REFERENCE=xdrtest.out"
             -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
     )
-  endif (HDF4_ENABLE_USING_MEMCHECKER)
+  endif ()
   set_tests_properties (MFHDF_TEST-xdrtest PROPERTIES DEPENDS hdfnctest LABELS ${PROJECT_NAME})
-endif (HDF4_BUILD_XDR_LIB)
+endif ()

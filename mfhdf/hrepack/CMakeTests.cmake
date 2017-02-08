@@ -24,16 +24,16 @@
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy_if_different ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/${h4_file} ${dest}
     )
-  endforeach (h4_file ${HDF4_REPACK_TEST_FILES})
+  endforeach ()
 
 #-- Adding test for test_hrepack for generating testfiles
   add_executable (test_hrepack ${HDF4_MFHDF_HREPACK_SOURCE_DIR}/hrepacktst.c)
   TARGET_C_PROPERTIES (test_hrepack STATIC " " " ")
   if (HDF4_BUILD_XDR_LIB)
     target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
-  else (HDF4_BUILD_XDR_LIB)
+  else ()
     target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
-  endif (HDF4_BUILD_XDR_LIB)
+  endif ()
   TARGET_NAMING (test_hrepack STATIC)
 
   macro (ADD_H4_TEST testname testtype testfile)
@@ -44,7 +44,7 @@
             COMMAND ${CMAKE_COMMAND} -E echo "SKIP  -v -i ${PROJECT_BINARY_DIR}/${testfile} -o ${PROJECT_BINARY_DIR}/out-${testname}.${testfile} ${ARGN}"
         )
       endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
-    else ("${testtype}" STREQUAL "SKIP")
+    else ()
       add_test (
           NAME HREPACK-${testname}-clearall-objects
           COMMAND    ${CMAKE_COMMAND}
@@ -62,8 +62,8 @@
           COMMAND $<TARGET_FILE:hdiff> ${PROJECT_BINARY_DIR}/${testfile} ${PROJECT_BINARY_DIR}/out-${testname}.${testfile}
       )
       set_tests_properties (HREPACK-${testname}_DFF PROPERTIES DEPENDS HREPACK-${testname} LABELS ${PROJECT_NAME})
-    endif ("${testtype}" STREQUAL "SKIP")
-  endmacro (ADD_H4_TEST)
+    endif ()
+  endmacro ()
 
 ##############################################################################
 ##############################################################################
@@ -95,7 +95,7 @@
             -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
     )
     set_tests_properties (HREPACK-hrepack_check PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
-  endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
+  endif ()
 
   if (NOT HDF4_ENABLE_USING_MEMCHECKER)
     add_test (
@@ -110,7 +110,7 @@
             -P "${HDF_RESOURCES_EXT_DIR}/runTest.cmake"
     )
     set_tests_properties (HREPACK-hrepack_help PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
-  endif (NOT HDF4_ENABLE_USING_MEMCHECKER)
+  endif ()
 
   add_test (NAME HREPACK-test_hrepack COMMAND $<TARGET_FILE:test_hrepack>)
   set_tests_properties (HREPACK-test_hrepack PROPERTIES DEPENDS HREPACK-hrepack-clearall-objects LABELS ${PROJECT_NAME})
@@ -163,9 +163,9 @@
    #
    if (H4_HAVE_SZIP_ENCODER)
      ADD_H4_TEST(SDSSZIP_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:SZIP 8,EC" -c dset4:10x8)
-   else (H4_HAVE_SZIP_ENCODER)
+   else ()
      ADD_H4_TEST(SDSSZIP_CHUNK "SKIP" ${HREPACK_FILE1} -c dset4:10x8)
-   endif (H4_HAVE_SZIP_ENCODER)
+   endif ()
 #if defined (H4_HAVE_LIBSZ)
 #    if (SZ_encoder_enabled())
 #    {
@@ -199,9 +199,9 @@
    #
    if (H4_HAVE_SZIP_ENCODER)
      ADD_H4_TEST(SDS_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -t "dset7:SZIP 8,EC" -c dset4:10x8 -c dset5:10x8 -c dset6:10x8)
-   else (H4_HAVE_SZIP_ENCODER)
+   else ()
      ADD_H4_TEST(SDS_CHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -c dset4:10x8 -c dset5:10x8 -c dset6:10x8)
-   endif (H4_HAVE_SZIP_ENCODER)
+   endif ()
 
 #    if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1)
 #        goto out;
@@ -230,9 +230,9 @@
    #
    if (H4_HAVE_SZIP_ENCODER)
      ADD_H4_TEST(SEL_NOCHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2" -t "dset7:SZIP 4,EC")
-   else (H4_HAVE_SZIP_ENCODER)
+   else ()
      ADD_H4_TEST(SEL_NOCHUNK "TEST" ${HREPACK_FILE1} -t "dset4:GZIP 9" -t dset5:RLE -t "dset6:HUFF 2")
-   endif (H4_HAVE_SZIP_ENCODER)
+   endif ()
 
 #    if ( sds_verifiy_comp("dset4",COMP_CODE_DEFLATE, 9) == -1)
 #        goto out;

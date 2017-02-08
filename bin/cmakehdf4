@@ -4,7 +4,7 @@
 #         Albert Cheng
 # Creation Date: Nov 2012
 # Modified:
-#	Changed to use the quick steps described in INSTALL_CMake.txt. (AKC 2014/1/7)
+#    Changed to use the quick steps described in INSTALL_CMake.txt. (AKC 2014/1/7)
 
 # Copyright: The HDF Group, 2012-14
 
@@ -17,7 +17,7 @@ if [ "$1" != "--script" ]; then
 # variable names
 # The "extra" number is the step number and easier to see all logfiles in
 # the sorted order of steps
-progname=`basename $0`	# program name
+progname=`basename $0`    # program name
 configlog="#${progname}_1config.log"
 makelog="#${progname}_2build.log"
 testlog="#${progname}_3test.log"
@@ -30,7 +30,7 @@ exit_code=0
 # "bin/$progname". So, by striping bin/$program from $0,
 # we can find $srcdir.
 if [ $0 == bin/$progname ]; then
-    srcdir="."		# current directory
+    srcdir="."        # current directory
 else
     # $0 is $srdir/bin/$progname
     srcdir=`echo $0 | sed -e s%/bin/$progname\$%%`
@@ -74,12 +74,12 @@ STEP()
 
     echo "$banner" with output saved in $logfile
     (TIMESTAMP; nerror=0 ;
-	echo "eval $command"
-	eval $command || nerror=1 ;
-	TIMESTAMP; exit $nerror) < /dev/null >> "$logfile" 2>&1
+    echo "eval $command"
+    eval $command || nerror=1 ;
+    TIMESTAMP; exit $nerror) < /dev/null >> "$logfile" 2>&1
     if [ $? -ne 0 ]; then
-	echo "error in '$banner'.  $progname aborted."
-	exit 1
+    echo "error in '$banner'.  $progname aborted."
+    exit 1
     fi
 }
 
@@ -115,16 +115,16 @@ echo Running Cmake for HDF4-${version} ...
 
 #      4. Configure the C library, tools and tests with this command:
 STEP "Configure..." "cmake -C $srcdir/config/cmake/cacheinit.cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX:PATH="$PWD" -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING="" -DHDF4_PACKAGE_EXTLIBS:BOOL=OFF -DHDF4_BUILD_TOOLS:BOOL=ON -DHDF4_BUILD_UTILS:BOOL=ON -DBUILD_TESTING:BOOL=ON $srcdir" $configlog
-      
+
 #      5. Build the C library, tools and tests with this command:
 STEP "Build the library, tools and tests, ..." "cmake --build . --config Release" $makelog
-      
+
 #      6. Test the C library and tools with this command:
 STEP "Test the library and tools..." "ctest . -C Release" $testlog
-      
+
 #      7. Create an install image with this command:
 STEP "Create an install image..." "cpack -C Release CPackConfig.cmake" $packlog
-      
+
 #      8. Install with this command:
 STEP "Install..." "./HDF-${version}-Linux.sh --skip-license" $installlog
 # save the last exit code
@@ -140,9 +140,9 @@ else
 # ---------------
 
 # variable names
-progname=`basename $0`	# program name
+progname=`basename $0`    # program name
 cminfile="cmakemin.$$" # Cmake minimum file
-cfgfile=$progname.$$	# configure file
+cfgfile=$progname.$$    # configure file
 ctest_log=ctest.log    # output of ctest script
 install_log=install.log  # output of installation
 $DPRINT $cfgfile
@@ -190,7 +190,7 @@ EOF
 #==========
 #==========
 cat > $cfgfile <<'EOF'
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.2.2 FATAL_ERROR)
 ########################################################
 # This dashboard is maintained by The HDF Group
 # For any comments please contact cdashhelp@hdfgroup.org
@@ -205,7 +205,7 @@ set (CTEST_CONFIGURATION_TYPE "Release")
 set (CTEST_MAX_N 8)
 
 # -- CDash variables
-set (LOCAL_NO_SUBMIT TRUE)	# No CDash submit.
+set (LOCAL_NO_SUBMIT TRUE)    # No CDash submit.
 set (MODEL "Experimental")
 set (CDASH_LOCAL TRUE)
 set (SITE_BUILDNAME_SUFFIX "cmakehdf4")
@@ -213,7 +213,7 @@ set (SITE_BUILDNAME_SUFFIX "cmakehdf4")
 # -- URL set for internal check, default is to not update
 set (LOCAL_SKIP_UPDATE TRUE)
 set (REPOSITORY_URL "http://svn.hdfgroup.uiuc.edu/hdf4/trunk")
-# -- Standard build options  
+# -- Standard build options
 set (ADD_BUILD_OPTIONS "-DCMAKE_INSTALL_PREFIX:PATH=${CTEST_BINARY_DIRECTORY} -DHDF4_ALLOW_EXTERNAL_SUPPORT:STRING=\"SVN\" -DHDF4_PACKAGE_EXTLIBS:BOOL=ON")
 
 # Use multiple CPU cores to build
@@ -222,14 +222,14 @@ ProcessorCount(N)
 if(NOT N EQUAL 0)
   if(N GREATER ${CTEST_MAX_N})
     set(N ${CTEST_MAX_N})
-  endif(N GREATER ${CTEST_MAX_N})
+  endif()
   set(CTEST_BUILD_FLAGS -j${N})
   set(ctest_test_args ${ctest_test_args} PARALLEL_LEVEL ${N})
 endif()
 
-# -----------------------------------------------------------  
+# -----------------------------------------------------------
 # -- Get environment
-# -----------------------------------------------------------  
+# -----------------------------------------------------------
   ## -- set hostname
   ## --------------------------
   find_program (HOSTNAME_CMD NAMES hostname)
@@ -246,13 +246,13 @@ endif()
 
   if (SITE_BUILDNAME_SUFFIX)
     set (CTEST_BUILD_NAME  "${osname}-${osrel}-${cpu}-${SITE_BUILDNAME_SUFFIX}")
-  else (SITE_BUILDNAME_SUFFIX)
+  else ()
     set (CTEST_BUILD_NAME  "${osname}-${osrel}-${cpu}")
-  endif (SITE_BUILDNAME_SUFFIX)
-# -----------------------------------------------------------  
-  
+  endif ()
+# -----------------------------------------------------------
+
 set (BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDNAME:STRING=${CTEST_BUILD_NAME}")
- 
+
 #-----------------------------------------------------------------------------
 # MAC machines need special option
 #-----------------------------------------------------------------------------
@@ -262,20 +262,20 @@ if (APPLE)
   execute_process(COMMAND xcrun --find c++ OUTPUT_VARIABLE XCODE_CXX OUTPUT_STRIP_TRAILING_WHITESPACE)
   SET(ENV{CC} "${XCODE_CC}")
   SET(ENV{CXX} "${XCODE_CXX}")
-  # Shared fortran is not supported, build static 
+  # Shared fortran is not supported, build static
   set (BUILD_OPTIONS "${BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_JPEG_WITH_PIC:BOOL=ON -DCMAKE_ANSI_CFLAGS:STRING=-fPIC")
   set (BUILD_OPTIONS "${BUILD_OPTIONS} -DCTEST_USE_LAUNCHERS:BOOL=ON -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF")
-endif (APPLE)
+endif ()
 
 
-# -----------------------------------------------------------  
+# -----------------------------------------------------------
 find_package (Subversion)
 set (CTEST_UPDATE_COMMAND "${Subversion_SVN_EXECUTABLE}")
-# -- Only clean build folder if LOCAL_CLEAR_BUILD is set  
+# -- Only clean build folder if LOCAL_CLEAR_BUILD is set
 if (LOCAL_CLEAR_BUILD)
   set (CTEST_START_WITH_EMPTY_BINARY_DIRECTORY TRUE)
   ctest_empty_binary_directory (${CTEST_BINARY_DIRECTORY})
-endif (LOCAL_CLEAR_BUILD)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Send the main script as a note.
@@ -292,12 +292,12 @@ foreach (req
     )
   if (NOT DEFINED ${req})
     message(FATAL_ERROR "The containing script must set ${req}")
-  endif (NOT DEFINED ${req})
-endforeach (req)
+  endif (})
+endforeach ()
 
 ## -- set output to english
 set($ENV{LC_MESSAGES}  "en_EN")
- 
+
 #-----------------------------------------------------------------------------
 # Initialize the CTEST commands
 #------------------------------
@@ -317,13 +317,13 @@ foreach (v
     CTEST_SCRIPT_DIRECTORY
     )
   set (vars "${vars}  ${v}=[${${v}}]\n")
-endforeach (v)
+endforeach ()
 message ("Dashboard script configuration:\n${vars}\n")
 
 CTEST_START (${MODEL} TRACK ${MODEL})
 if (NOT LOCAL_SKIP_UPDATE)
   CTEST_UPDATE (SOURCE "${CTEST_SOURCE_DIRECTORY}")
-endif (NOT LOCAL_SKIP_UPDATE)
+endif ()
 CTEST_CONFIGURE (BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE res)
 if(NOT res STREQUAL "0")
   message (FATAL_ERROR "Configure FAILED")
@@ -332,11 +332,11 @@ message ("Configure DONE")
 CTEST_READ_CUSTOM_FILES ("${CTEST_BINARY_DIRECTORY}")
 if (NOT LOCAL_NO_SUBMIT)
   CTEST_SUBMIT (PARTS Update Configure Notes)
-endif (NOT LOCAL_NO_SUBMIT)
+endif ()
 CTEST_BUILD (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND RETURN_VALUE res)
 if (NOT LOCAL_NO_SUBMIT)
   CTEST_SUBMIT (PARTS Build)
-endif (NOT LOCAL_NO_SUBMIT)
+endif ()
 if(NOT res STREQUAL "0")
   message (FATAL_ERROR "Build FAILED")
 endif()
@@ -345,12 +345,12 @@ if (NOT LOCAL_SKIP_TEST)
   CTEST_TEST (BUILD "${CTEST_BINARY_DIRECTORY}" APPEND ${ctest_test_args} RETURN_VALUE res)
   if (NOT LOCAL_NO_SUBMIT)
     CTEST_SUBMIT (PARTS Test)
-  endif (NOT LOCAL_NO_SUBMIT)
+  endif ()
   if(NOT res STREQUAL "0")
     message (FATAL_ERROR "Test FAILED")
   endif()
   message ("test DONE")
-endif (NOT LOCAL_SKIP_TEST)
+endif ()
 if(NOT LOCAL_MEMCHECK_TEST)
   ##-----------------------------------------------
   ## Package the product
@@ -362,7 +362,7 @@ if(NOT LOCAL_MEMCHECK_TEST)
     ERROR_VARIABLE cpackLog.err
   )
   file(WRITE ${CTEST_BINARY_DIRECTORY}/cpack.log "${cpackLog.err}" "${cpackLog}")
-endif(NOT LOCAL_MEMCHECK_TEST)
+endif()
 #-----------------------------------------------------------------------------
 
 message ("DONE")

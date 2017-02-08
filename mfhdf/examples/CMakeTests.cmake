@@ -9,7 +9,7 @@
 add_test (
     NAME MFHDF_EXAMPLES-clearall-objects
     COMMAND    ${CMAKE_COMMAND}
-        -E remove 
+        -E remove
         SDS.hdf
         SDSchunked.hdf
         SDScompressed.hdf
@@ -24,8 +24,8 @@ foreach (example ${examples})
   add_test (NAME MFHDF_EXAMPLES-${example} COMMAND $<TARGET_FILE:mf_${example}>)
   if (NOT "${last_test}" STREQUAL "")
     set_tests_properties (MFHDF_EXAMPLES-${example} PROPERTIES DEPENDS ${last_test} LABELS ${PROJECT_NAME})
-  else (NOT "${last_test}" STREQUAL "")
+  else ()
     set_tests_properties (MFHDF_EXAMPLES-${example} PROPERTIES LABELS ${PROJECT_NAME})
-  endif (NOT "${last_test}" STREQUAL "")
+  endif ()
   set (last_test "MFHDF_EXAMPLES-${example}")
-endforeach (example ${examples})
+endforeach ()

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 project (HDF4_MFHDF_DUMPER)
 
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})

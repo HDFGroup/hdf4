@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 PROJECT (HDF4 C CXX)
 
 #-----------------------------------------------------------------------------
@@ -81,13 +81,13 @@ endif ()
 #     # Override the zlib header file
 #     if (PRJ_USE_SYSTEM_ZLIB)
 #       set (H4_ZLIB_HEADER "zlib.h")
-#     else (PRJ_USE_SYSTEM_ZLIB)
+#     else ()
 #      set (H4_ZLIB_HEADER "prj_zlib.h")
 #       # Set vars that FindZlib would have set if used in sub project
 #       set (ZLIB_INCLUDE_DIRS "${PRJ_ZLIB_INCLUDE_DIRS}")
 #       set (ZLIB_LIBRARIES prjzlib)
-#     endif (PRJ_USE_SYSTEM_ZLIB)
-#  endif (HDF4_ENABLE_Z_LIB_SUPPORT)
+#     endif ()
+#  endif ()
 #
 #   # Add the sub project
 #   add_subdirectory (Utilities/hdf4.2.5)
@@ -303,6 +303,9 @@ if (NOT HDF4_EXTERNALLY_CONFIGURED)
   )
   if (WIN32)
     set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+    set (CMAKE_PDB_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all pdb files."
+    )
   else ()
     set (CMAKE_TEST_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
   endif ()
@@ -373,9 +376,9 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
       CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
     if (${flag_var} MATCHES "O3")
       string (REGEX REPLACE "O3" "O0" ${flag_var} "${${flag_var}}")
-    endif (${flag_var} MATCHES "O3")
-  endforeach (flag_var)
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" OR CYGWIN)
+    endif ()
+  endforeach ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to use code coverage
@@ -608,7 +611,7 @@ if (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MAT
       add_dependencies (${HDF4_SRC_LIBSH_TARGET} SZIP)
     endif ()
   endif ()
-endif (HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "GIT" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "SVN" OR HDF4_ALLOW_EXTERNAL_SUPPORT MATCHES "TGZ")
+endif ()
 
 if (HDF4_BUILD_XDR_LIB)
   add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
@@ -639,8 +642,8 @@ if (BUILD_TESTING)
     if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/test" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/test")
       add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/test ${PROJECT_BINARY_DIR}/mfhdf/test)
     endif ()
-  endif (NOT HDF4_EXTERNALLY_CONFIGURED)
-endif (BUILD_TESTING)
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to build Fortran bindings/tests/examples
@@ -660,8 +663,8 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DI
     include (${HDF_RESOURCES_DIR}/HDF4UseFortran.cmake)
     add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran ${PROJECT_BINARY_DIR}/mfhdf/fortran)
     add_subdirectory (${HDF4_SOURCE_DIR}/hdf/fortran ${PROJECT_BINARY_DIR}/hdf/fortran)
-  endif (HDF4_BUILD_FORTRAN)
-endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran")
+  endif ()
+endif ()
 
 if (MSVC OR MINGW)
   set (H4_HDSETVBUF "HDsetvbuf(F,S,M,Z) (((Z)>1)?setvbuf(F,S,M,Z):setvbuf(F,S,M,2))")
@@ -688,12 +691,12 @@ if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_D
       if (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/fortran/examples")
         add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/fortran/examples     ${PROJECT_BINARY_DIR}/mfhdf/fortran/examples)
       endif ()
-    endif (HDF4_BUILD_FORTRAN)
+    endif ()
 
     add_subdirectory (${HDF4_SOURCE_DIR}/hdf/examples    ${PROJECT_BINARY_DIR}/hdf/examples)
     add_subdirectory (${HDF4_SOURCE_DIR}/mfhdf/examples    ${PROJECT_BINARY_DIR}/mfhdf/examples)
-  endif (HDF4_BUILD_EXAMPLES)
-endif (EXISTS "${HDF4_SOURCE_DIR}/mfhdf/examples" AND IS_DIRECTORY "${HDF4_SOURCE_DIR}/mfhdf/examples")
+  endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Java Library

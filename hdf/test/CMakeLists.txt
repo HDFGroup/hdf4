@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1.0)
+cmake_minimum_required (VERSION 3.2.2)
 project (HDF4_HDF_TEST C CXX)
 
 #-----------------------------------------------------------------------------
@@ -14,25 +14,25 @@ LINK_DIRECTORIES (
 )
 
 set (testhdf_SRCS
-    ${HDF4_HDF_TEST_SOURCE_DIR}/testhdf.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/an.c 
+    ${HDF4_HDF_TEST_SOURCE_DIR}/testhdf.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/an.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/anfile.c
-    ${HDF4_HDF_TEST_SOURCE_DIR}/bitio.c  
+    ${HDF4_HDF_TEST_SOURCE_DIR}/bitio.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/blocks.c
-    ${HDF4_HDF_TEST_SOURCE_DIR}/chunks.c  
-    ${HDF4_HDF_TEST_SOURCE_DIR}/comp.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/conv.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/extelt.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/file.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/file1.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/litend.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/macros.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/man.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/mgr.c 
-    ${HDF4_HDF_TEST_SOURCE_DIR}/nbit.c 
+    ${HDF4_HDF_TEST_SOURCE_DIR}/chunks.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/comp.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/conv.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/extelt.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/file.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/file1.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/litend.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/macros.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/man.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/mgr.c
+    ${HDF4_HDF_TEST_SOURCE_DIR}/nbit.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/rig.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/sdmms.c
-    ${HDF4_HDF_TEST_SOURCE_DIR}/sdnmms.c 
+    ${HDF4_HDF_TEST_SOURCE_DIR}/sdnmms.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/sdstr.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/slab.c
     ${HDF4_HDF_TEST_SOURCE_DIR}/tattdatainfo.c
@@ -55,7 +55,7 @@ set (testhdf_SRCS
 
 if (WIN32)
   add_definitions (-DDOS_FS)
-endif (WIN32)
+endif ()
 
 #-- Adding test for testhdf
 add_executable (testhdf ${testhdf_SRCS})
@@ -69,7 +69,7 @@ if (BUILD_SHARED_LIBS)
   TARGET_C_PROPERTIES (testhdf-shared SHARED " " " ")
   target_link_libraries (testhdf-shared ${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
   set_target_properties (testhdf-shared PROPERTIES FOLDER test)
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 #-- Adding test for buffer
 if (NOT WIN32)
@@ -84,8 +84,8 @@ if (NOT WIN32)
     TARGET_C_PROPERTIES (buffer-shared SHARED " " " ")
     target_link_libraries (buffer-shared ${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
     set_target_properties (buffer-shared PROPERTIES FOLDER test)
-  endif (BUILD_SHARED_LIBS)
-endif (NOT WIN32)
+  endif ()
+endif ()
 
 ##############################################################################
 ##############################################################################
