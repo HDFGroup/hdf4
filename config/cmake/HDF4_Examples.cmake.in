@@ -12,7 +12,7 @@ set(CTEST_DASHBOARD_ROOT ${CTEST_SCRIPT_DIRECTORY})
 #INSTALLDIR - HDF4 root folder
 #CTEST_CONFIGURATION_TYPE - Release, Debug, RelWithDebInfo
 #CTEST_SOURCE_NAME - name of source folder; HDF4Examples
-#STATIC_LIBRARIES - Default is YES
+#STATIC_ONLY - Default is YES
 #FORTRAN_LIBRARIES - Default is NO
 #JAVA_LIBRARIES - Default is NO
 ##NO_MAC_FORTRAN - set to TRUE to allow shared libs on a Mac)
@@ -36,7 +36,7 @@ endif()
 if(NOT DEFINED CTEST_SOURCE_NAME)
     set(CTEST_SOURCE_NAME "HDF4Examples")
 endif()
-if(NOT DEFINED STATIC_LIBRARIES)
+if(NOT DEFINED STATIC_ONLY)
     set(STATICLIBRARIES "YES")
 else()
     set(STATICLIBRARIES "NO")
