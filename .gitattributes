@@ -25,7 +25,6 @@ config/cmake_ext_mod/grepTest.cmake -text
 config/cmake_ext_mod/hdf.bmp -text svneol=unset#image/x-ms-bmp
 config/cmake_ext_mod/hdf.icns -text svneol=unset#image/tiff
 config/cmake_ext_mod/hdf.ico -text svneol=unset#image/x-icon
-config/cmake_ext_mod/prunTest.cmake -text
 config/cmake_ext_mod/runTest.cmake -text
 config/cmake_ext_mod/version.plist.in -text svneol=unset#application/xml
 hdf/test/test_files/8bit.dat -text

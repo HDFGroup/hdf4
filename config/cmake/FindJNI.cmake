@@ -1,3 +1,5 @@
+# Distributed under the OSI-approved BSD 3-Clause License.  See https://cmake.org/licensing for details.
+
 #.rst:
 # FindJNI
 # -------
@@ -22,19 +24,6 @@
 #   JAVA_INCLUDE_PATH2    = the include path to jni_md.h
 #   JAVA_AWT_INCLUDE_PATH = the include path to jawt.h
 
-#=============================================================================
-# Copyright 2001-2009 Kitware, Inc.
-#
-# Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
-#
-# This software is distributed WITHOUT ANY WARRANTY; without even the
-# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
-#=============================================================================
-# (To distribute this file outside of CMake, substitute the full
-#  License text for the above reference.)
-
 # Expand {libarch} occurences to java_libarch subdirectory(-ies) and set ${_var}
 macro(java_append_library_directories _var)
     # Determine java arch-specific library subdir
@@ -53,7 +42,7 @@ macro(java_append_library_directories _var)
         set(_java_libarch "alpha")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
         # Subdir is "arm" for both big-endian (arm) and little-endian (armel).
-        set(_java_libarch "arm")
+        set(_java_libarch "arm" "aarch32")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^mips")
         # mips* machines are bi-endian mostly so processor does not tell
         # endianess of the underlying system.
@@ -63,7 +52,7 @@ macro(java_append_library_directories _var)
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
         set(_java_libarch "ppc64" "ppc")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
-        set(_java_libarch "ppc")
+        set(_java_libarch "ppc" "ppc64")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^sparc")
         # Both flavours can run on the same processor
         set(_java_libarch "${CMAKE_SYSTEM_PROCESSOR}" "sparc" "sparcv9")
@@ -92,10 +81,14 @@ macro(java_append_library_directories _var)
         if(_path MATCHES "{libarch}")
             foreach(_libarch ${_java_libarch})
                 string(REPLACE "{libarch}" "${_libarch}" _newpath "${_path}")
-                list(APPEND ${_var} "${_newpath}")
+                if(EXISTS ${_newpath})
+                    list(APPEND ${_var} "${_newpath}")
+                endif()
             endforeach()
         else()
-            list(APPEND ${_var} "${_path}")
+            if(EXISTS ${_path})
+                list(APPEND ${_var} "${_path}")
+            endif()
         endif()
     endforeach()
 endmacro()
@@ -154,13 +147,15 @@ JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_LIBRARY_DIRECTORIES
   /usr/lib/jvm/java-1.5.0-sun/jre/lib/{libarch}
   /usr/lib/jvm/java-6-sun-1.6.0.00/jre/lib/{libarch}       # can this one be removed according to #8821 ? Alex
   /usr/lib/jvm/java-6-openjdk/jre/lib/{libarch}
-  /usr/lib/jvm/java-7-openjdk/jre/lib/{libarch}
-  /usr/lib/jvm/java-7-openjdk-{libarch}/jre/lib/{libarch}
   /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0/jre/lib/{libarch}        # fedora
   # Debian specific paths for default JVM
   /usr/lib/jvm/default-java/jre/lib/{libarch}
   /usr/lib/jvm/default-java/jre/lib
   /usr/lib/jvm/default-java/lib
+  # Ubuntu specific paths for default JVM
+  /usr/lib/jvm/java-8-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
+  /usr/lib/jvm/java-7-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
+  /usr/lib/jvm/java-6-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
   # OpenBSD specific paths for default JVM
   /usr/local/jdk-1.7.0/jre/lib/{libarch}
   /usr/local/jre-1.7.0/lib/{libarch}
@@ -191,6 +186,9 @@ list(APPEND JAVA_AWT_INCLUDE_DIRECTORIES
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/include"
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/include"
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\${java_install_version};JavaHome]/include"
+)
+
+JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_INCLUDE_DIRECTORIES
   ${_JAVA_HOME}/include
   /usr/include
   /usr/java/include
@@ -209,6 +207,9 @@ list(APPEND JAVA_AWT_INCLUDE_DIRECTORIES
   /usr/lib/jvm/java-7-openjdk-amd64/include
   /usr/lib64/jvm/java-7-openjdk/include
   /usr/lib64/jvm/java-7-openjdk-amd64/include
+  /usr/lib/jvm/java-8-openjdk-{libarch}/include  # ubuntu 15.10
+  /usr/lib/jvm/java-7-openjdk-{libarch}/include  # ubuntu 15.10
+  /usr/lib/jvm/java-6-openjdk-{libarch}/include  # ubuntu 15.10
   /usr/local/share/java/include
   /usr/lib/j2sdk1.4-sun/include
   /usr/lib/j2sdk1.5-sun/include
@@ -290,7 +291,8 @@ find_path(JAVA_INCLUDE_PATH jni.h
   ${JAVA_AWT_INCLUDE_DIRECTORIES}
 )
 
-find_path(JAVA_INCLUDE_PATH2 jni_md.h
+find_path(JAVA_INCLUDE_PATH2 NAMES jni_md.h jniport.h
+  PATHS
   ${JAVA_INCLUDE_PATH}
   ${JAVA_INCLUDE_PATH}/darwin
   ${JAVA_INCLUDE_PATH}/win32
@@ -300,6 +302,7 @@ find_path(JAVA_INCLUDE_PATH2 jni_md.h
   ${JAVA_INCLUDE_PATH}/solaris
   ${JAVA_INCLUDE_PATH}/hp-ux
   ${JAVA_INCLUDE_PATH}/alpha
+  ${JAVA_INCLUDE_PATH}/aix
 )
 
 find_path(JAVA_AWT_INCLUDE_PATH jawt.h
@@ -316,8 +319,11 @@ endif()
 
 #include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
 INCLUDE (FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(JNI  DEFAULT_MSG  JAVA_AWT_LIBRARY JAVA_JVM_LIBRARY
-                                                    JAVA_INCLUDE_PATH  JAVA_INCLUDE_PATH2 JAVA_AWT_INCLUDE_PATH)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(JNI  DEFAULT_MSG  JAVA_AWT_LIBRARY
+                                                    JAVA_JVM_LIBRARY
+                                                    JAVA_INCLUDE_PATH
+                                                    JAVA_INCLUDE_PATH2
+                                                    JAVA_AWT_INCLUDE_PATH)
 
 mark_as_advanced(
   JAVA_AWT_LIBRARY

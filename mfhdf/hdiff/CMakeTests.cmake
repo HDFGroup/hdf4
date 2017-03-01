@@ -51,7 +51,7 @@
       else ()
         set_tests_properties (HDIFF-${resultfile} PROPERTIES LABELS ${PROJECT_NAME})
       endif ()
-    else (HDF4_ENABLE_USING_MEMCHECKER)
+    else ()
       add_test (
           NAME HDIFF-${resultfile}
           COMMAND "${CMAKE_COMMAND}"

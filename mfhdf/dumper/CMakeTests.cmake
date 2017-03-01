@@ -172,7 +172,7 @@
 
     if (HDF4_ENABLE_USING_MEMCHECKER)
       add_test (NAME HDP-${resultfile} COMMAND $<TARGET_FILE:hdp> ${ARGN})
-    else (HDF4_ENABLE_USING_MEMCHECKER)
+    else ()
       add_test (
           NAME HDP-${resultfile}
           COMMAND "${CMAKE_COMMAND}"

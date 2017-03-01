@@ -45,12 +45,12 @@ endif ()
 # does, it appends library to the list.
 #-----------------------------------------------------------------------------
 set (LINK_LIBS "")
-MACRO (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
+macro (CHECK_LIBRARY_EXISTS_CONCAT LIBRARY SYMBOL VARIABLE)
   CHECK_LIBRARY_EXISTS ("${LIBRARY};${LINK_LIBS}" ${SYMBOL} "" ${VARIABLE})
   if (${VARIABLE})
     set (LINK_LIBS ${LINK_LIBS} ${LIBRARY})
   endif ()
-ENDMACRO ()
+endmacro ()
 
 # ----------------------------------------------------------------------
 # WINDOWS Hard code Values
@@ -129,7 +129,7 @@ if (NOT WINDOWS)
 endif ()
 
 # For other specific tests, use this MACRO.
-MACRO (HDF_FUNCTION_TEST OTHER_TEST)
+macro (HDF_FUNCTION_TEST OTHER_TEST)
   if ("${HDF_PREFIX}_${OTHER_TEST}" MATCHES "^${HDF_PREFIX}_${OTHER_TEST}$")
     set (MACRO_CHECK_FUNCTION_DEFINITIONS "-D${OTHER_TEST} ${CMAKE_REQUIRED_FLAGS}")
     set (OTHER_TEST_ADD_LIBRARIES)
@@ -174,7 +174,7 @@ MACRO (HDF_FUNCTION_TEST OTHER_TEST)
       )
     endif ()
   endif ()
-ENDMACRO ()
+endmacro ()
 
 #-----------------------------------------------------------------------------
 # Check for these functions before the time headers are checked
@@ -184,12 +184,12 @@ HDF_FUNCTION_TEST (STDC_HEADERS)
 #-----------------------------------------------------------------------------
 # Check IF header file exists and add it to the list.
 #-----------------------------------------------------------------------------
-MACRO (CHECK_INCLUDE_FILE_CONCAT FILE VARIABLE)
+macro (CHECK_INCLUDE_FILE_CONCAT FILE VARIABLE)
   CHECK_INCLUDE_FILES ("${USE_INCLUDES};${FILE}" ${VARIABLE})
   if (${VARIABLE})
     set (USE_INCLUDES ${USE_INCLUDES} ${FILE})
   endif ()
-ENDMACRO ()
+endmacro ()
 
 #-----------------------------------------------------------------------------
 #  Check for the existence of certain header files
@@ -320,7 +320,7 @@ add_definitions (${HDF_EXTRA_FLAGS})
 #-----------------------------------------------------------------------------
 #  Check the size in bytes of all the int and float types
 #-----------------------------------------------------------------------------
-MACRO (HDF_CHECK_TYPE_SIZE type var)
+macro (HDF_CHECK_TYPE_SIZE type var)
   set (aType ${type})
   set (aVar  ${var})
 #  message (STATUS "Checking size of ${aType} and storing into ${aVar}")
@@ -329,7 +329,7 @@ MACRO (HDF_CHECK_TYPE_SIZE type var)
     set (${aVar} 0 CACHE INTERNAL "SizeOf for ${aType}")
 #    message (STATUS "Size of ${aType} was NOT Found")
   endif ()
-ENDMACRO ()
+endmacro ()
 
 HDF_CHECK_TYPE_SIZE (char           ${HDF_PREFIX}_SIZEOF_CHAR)
 HDF_CHECK_TYPE_SIZE (short          ${HDF_PREFIX}_SIZEOF_SHORT)
