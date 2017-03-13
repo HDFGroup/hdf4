@@ -155,13 +155,25 @@ if (HDF4_PACK_EXAMPLES)
       USE_SOURCE_PERMISSIONS
       COMPONENT hdfdocuments
     )
-    install (
-        FILES
-            ${HDF4_SOURCE_DIR}/release_notes/USING_CMake_Examples.txt
-        DESTINATION ${HDF4_INSTALL_DATA_DIR}
-        COMPONENT hdfdocuments
-    )
   endif ()
+  install (
+      FILES
+          ${HDF4_SOURCE_DIR}/release_notes/USING_CMake_Examples.txt
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}
+      COMPONENT hdfdocuments
+  )
+  install (
+      FILES
+          ${HDF_RESOURCES_DIR}/CTestScript.cmake
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}
+      COMPONENT hdfdocuments
+  )
+  install (
+      FILES
+          ${HDF_RESOURCES_DIR}/HDF4_Examples_options.cmake
+      DESTINATION ${HDF4_INSTALL_DATA_DIR}
+      COMPONENT hdfdocuments
+  )
 endif ()
 
 #-----------------------------------------------------------------------------

@@ -1189,6 +1189,13 @@
 # CMake-specific User Files
 ./config/cmake/UserMacros/Windows_MT.cmake
 
+# CMake-specific User Scripts
+./config/cmake/CTestScript.cmake
+./config/cmake/HDF4_Examples_options.cmake
+./config/cmake/scripts/CTestScript.cmake
+./config/cmake/scripts/HDF4config.cmake
+./config/cmake/scripts/HDF4options.cmake
+
 ./release_notes/HISTORY.txt
 ./release_notes/RELEASE.txt
 ./release_notes/INSTALL
