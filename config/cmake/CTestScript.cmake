@@ -81,6 +81,7 @@ if (CTEST_USE_TAR_SOURCE)
     file (REMOVE_RECURSE "${CTEST_SOURCE_DIRECTORY}")
     message (FATAL_ERROR "error: extract of ${CTEST_USE_TAR_SOURCE} failed")
   endif ()
+endif ()
 
 #-----------------------------------------------------------------------------
 ## Clear the build directory

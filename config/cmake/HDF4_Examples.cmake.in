@@ -61,6 +61,7 @@ set (BUILD_OPTIONS "${BUILD_OPTIONS} -DSITE:STRING=${CTEST_SITE} -DBUILDNAME:STR
 
 ###############################################################################################################
 if (WIN32)
+  set (SITE_OS_NAME "Windows")
   set (ENV{HDF4_DIR} "${INSTALLDIR}/cmake")
   set (CTEST_BINARY_NAME ${CTEST_SOURCE_NAME}\\build)
   set (CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_SOURCE_NAME}")
