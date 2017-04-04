@@ -311,6 +311,7 @@ intn HEshutdown(void)
       {
           HDfree(error_stack);
           error_stack=NULL;
+          error_top=0;
       } /* end if */
     return(SUCCEED);
 } /* end HEshutdown() */
