@@ -293,6 +293,9 @@ HXcreate(int32 file_id, uint16 tag, uint16 ref, const char *extern_file_name, in
     if (!info)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
 
+    /* Initialize char pointer for use in resource cleanup */
+    info->extern_file_name = NULL;
+
     /* If there is data, either regular or special, read the data then write
        it to the external file, otherwise, do nothing */
     if (data_id!=FAIL && data_len>0)
@@ -366,7 +369,11 @@ done:
         if(access_rec!=NULL)
             HIrelease_accrec_node(access_rec);
         if(info!=NULL)
+        {
+            if(info->extern_file_name != NULL)
+                HDfree(info->extern_file_name);
             HDfree(info);
+        }
         if(fname!=NULL)
             HDfree(fname);
         if(data_id!=FAIL)
@@ -1101,6 +1108,8 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 
     /* update our internal pointers */
     info->extern_offset = info_block->offset;
+    if (info->extern_file_name != NULL) /* could be a problem if garbage! */
+        HDfree(info->extern_file_name);
     info->extern_file_name = (char *) HDstrdup(info_block->path);
     if (!info->extern_file_name)
         HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -1136,12 +1145,19 @@ HXPreset(accrec_t * access_rec, sp_info_block_t * info_block)
 done:
   if(ret_value == FAIL)   
     { /* Error condition cleanup */
+        if(info!=NULL)
+        {
+            if(info->extern_file_name != NULL)
+                HDfree(info->extern_file_name);
+            HDfree(info);
+        }
 
     } /* end if */
 
   /* Normal function cleanup */
 
   return ret_value; 
+
 }	/* HXPreset */
 
 static	char*	extcreatedir = NULL;
