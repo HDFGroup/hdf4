@@ -28,8 +28,6 @@ C
       character*20 myname
       parameter (myname = 'sdnt')
 
-      integer dspdata, dsgdata, dsadata, dssdims, dssnt
-
       real*8 f64(10,10), tf64(10,10)
       real*4 f32(10,10), tf32(10,10)
       integer*2 i16(10,10), ti16(10,10)
@@ -37,20 +35,12 @@ C
 
       character i8(10,10), ti8(10,10)
 
-      
       integer i, j, err
       integer rank
       integer dims(2)
-      integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8
-      integer DFNT_INT16, DFNT_INT32
   
       call ptestban('Testing', myname)
       number_failed = 0
-      DFNT_FLOAT64 = 6
-      DFNT_FLOAT32 = 5
-      DFNT_INT8 = 20
-      DFNT_INT16 = 22
-      DFNT_INT32 = 24
       rank = 2
       dims(1) = 10
       dims(2) = 10

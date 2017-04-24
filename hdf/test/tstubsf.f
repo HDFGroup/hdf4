@@ -40,10 +40,6 @@ C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
       integer r3
       integer r7
 
-      integer dfaccess, dfopen, dfclose, dfdesc, dfdup, dfdel, dfread,
-     +     dfwrite, dfupdate, dfget, dfput, dfsfind, dffind,
-     +     dferrno, dfishdf, dfnewref, dfnumber, dfstat
-
       data t255 /255/
       data t127 /127/
       data r1   /1/

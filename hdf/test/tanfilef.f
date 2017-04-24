@@ -35,11 +35,9 @@ C
       character*20 myname
       parameter (myname = 'anfile')
 
-      integer daafid, daafds,dagfidl,dagfid
-      integer dagfdsl, dagfds, hopen, hclose
       integer ret
       integer ISFIRST, NOFIRST, MAXLEN_LAB, MAXLEN_DESC
-      integer fid, DFACC_CREATE, DFACC_READ
+      integer fid
 
       character*35 lab1, lab2
       character*35 templab
@@ -55,8 +53,6 @@ C
       CR = char(10)
       MAXLEN_LAB = 35
       MAXLEN_DESC = 100
-      DFACC_CREATE = 4
-      DFACC_READ = 1
 
       lab1 = 'File label #1: aaa'
       lab2 = 'File label #2: bbbbbb'

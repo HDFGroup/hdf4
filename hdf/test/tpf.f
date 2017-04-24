@@ -34,10 +34,6 @@ C
       character*20 myname
       parameter (myname = 'p')
 
-      integer dpppal, dpapal, dprest, dpgpal, dpnpals
-      integer dprref, dpwref
-      integer dplref
-
       character*64 TESTFILE
       character*1 CR
       character pal1(768), pal2(768), ipal(768)
