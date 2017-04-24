@@ -24,8 +24,6 @@ C Output file: tvsetf1.hdf
 
       implicit none
       include 'fortest.inc'
-      include '../src/hdf.inc'
-      include '../src/dffunc.inc'
 
       integer number_failed
       character*20 myname

@@ -21,8 +21,6 @@ C Output files: slabwf.hdf, slab1wf, slab4wf
 
       implicit none
       include 'fortest.inc'
-      include '../src/hdf.inc'
-      include '../src/dffunc.inc'
 
       integer num_err
       character*20 myname

@@ -42,20 +42,13 @@ C
       character*20 myname
       parameter (myname = 'an')
 
-      integer daplab, dapdesc  
-      integer dssdims, dsadata, dslref, dsgdims
-      integer d8aimg, DFR8lastref, d8gimg
-
       integer ISFIRST, NOTFIRST, MAXLEN_LAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
-      integer DFTAG_SDG, DFTAG_RIG
 
       parameter ( ISFIRST =        1, 
      *            NOTFIRST =       0, 
      *            MAXLEN_LAB =    30,
-     *            MAXLEN_DESC =  500, 
-     *            DFTAG_SDG   =  700,
-     *            DFTAG_RIG   =  306,
+     *            MAXLEN_DESC =  500,
      *            ROWS =          10, 
      *            COLS =          10,
      *            REPS =           2 )
@@ -187,7 +180,6 @@ C**************************************************************
       parameter ( MAXLEN_LAB =    30,
      *            MAXLEN_DESC =  500 )
 
-      integer daglab, dagllen, dagdlen, dagdesc
       integer  inlablen, indesclen, ret
       character*30   inlabel
       character*500 indesc

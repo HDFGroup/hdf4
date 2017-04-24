@@ -89,6 +89,7 @@ DIST_COMMON = $(top_srcdir)/config/commence.am \
 @HDF_BUILD_FORTRAN_TRUE@check_PROGRAMS = testhdf$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	buffer$(EXEEXT) fortest$(EXEEXT) \
 @HDF_BUILD_FORTRAN_TRUE@	fortestF$(EXEEXT)
+@HDF_BUILD_FORTRAN_TRUE@am__append_1 = $(AM_CPPFLAGS)
 TESTS = $(am__EXEEXT_1)
 subdir = hdf/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -471,7 +472,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 F77_VERSION = @F77_VERSION@
-FFLAGS = @FFLAGS@
+FFLAGS = @FFLAGS@ $(am__append_1)
 FGREP = @FGREP@
 FLIBS = @FLIBS@
 GREP = @GREP@
