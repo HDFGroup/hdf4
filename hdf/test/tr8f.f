@@ -28,10 +28,6 @@ C
       character*20 myname
       parameter (myname = 'r8')
 
-      integer d8spal, d8pimg, d8aimg, d8gdims, d8nims
-      integer d8gimg, d8rref, d8wref, d8first, d8lref
-      integer DFTAG_RLE, DFTAG_IMCOMP
-
       character im1(100,100), im2(321, 111)
       character ii1(100, 100), ii2(321, 111)
       character pal1(768), pal2(768), ipal(768)
@@ -43,8 +39,6 @@ C
       integer ref1, ref2, ref3
 
       call ptestban('Testing', myname)
-      DFTAG_RLE = 11
-      DFTAG_IMCOMP = 12
       TESTFILE = 'tdfr8f.hdf' 
       number_failed = 0
       num_images = 0
