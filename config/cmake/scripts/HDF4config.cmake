@@ -23,21 +23,17 @@ cmake_minimum_required (VERSION 3.2.2 FATAL_ERROR)
 #                 -  linux default:  ./HDF_Group/HDF/4.2.12
 #     CTEST_CONFIGURATION_TYPE  - Release, Debug, etc - default: Release
 #     CTEST_SOURCE_NAME  -  source folder - default: hdf4
-#                        -  app are for single file applications
-#                        -  mfapp is for an application with multiple source files
 ##############################################################################
 
-##############################################################################
-
-set (CTEST_HDF_VERSION 4.2.12)
-set (CTEST_HDF_VERSEXT "")
+set (CTEST_SOURCE_VERSION 4.2.12)
+set (CTEST_SOURCE_VERSEXT "")
 
 ##############################################################################
 # handle input parameters to script.
 #BUILD_GENERATOR - which CMake generator to use, required
 #INSTALLDIR - HDF-4.2.12 root folder
 #CTEST_CONFIGURATION_TYPE - Release, Debug, RelWithDebInfo
-#CTEST_SOURCE_NAME - name of source folder; app_cmake
+#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.12
 if (DEFINED CTEST_SCRIPT_ARG)
   # transform ctest script arguments of the form
   # script.ctest,var1=value1,var2=value2
