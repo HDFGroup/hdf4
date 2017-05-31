@@ -22,8 +22,6 @@ C Interface to invoke tests for HDF Fortran interfaces.
       character cmd*15, test*30
       integer majorv, minorv, releaseno
       character*80 relstr
-      integer hglibver
-      external hglibver
 
 C Default to cleanup *.hdf files and set verbosity to default value
       CleanUp = .TRUE.

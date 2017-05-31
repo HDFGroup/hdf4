@@ -202,6 +202,8 @@ C
       external DFclose
       integer  DFsfind
       external DFsfind
+      integer  DFdesc
+      external DFdesc
       integer  DFfind
       external DFfind
       integer  DFget
@@ -411,6 +413,8 @@ C
       integer  vsfgetblinfo
       integer  vsfgvdatas
       external vsfgvdatas
+      integer  vsgver
+      external vsgver
 C
 C     Declarations of return values for HDF Vdata Field Functions
 C

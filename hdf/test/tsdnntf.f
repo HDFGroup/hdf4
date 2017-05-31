@@ -28,8 +28,6 @@ C
       integer number_failed
       character*20  myname
       parameter (myname = 'sdnnt')
-
-      integer dspdata, dsgdata, dsadata, dssdims, dssnt
       
       real*8 f64(10,10), tf64(10,10)
       real*4 f32(10,10), tf32(10,10)
@@ -41,28 +39,9 @@ C
       integer i, j, err
       integer rank
       integer dims(2)
-      integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
-      integer DFNT_INT32
-      integer DFNT_NFLOAT64, DFNT_NFLOAT32, DFNT_NINT8
-      integer DFNT_NINT16, DFNT_NINT32, DFNT_NATIVE
       
       call ptestban('Testing', myname)
-      DFNT_FLOAT64 = 6
-      DFNT_FLOAT32 = 5
-      DFNT_INT8 = 20
-      DFNT_INT16 = 22
-      DFNT_INT32 = 24
-      DFNT_NATIVE = 4096
       
-C These should really use a logical OR to compute these values
-C However, OR() is not really that portable
-
-      DFNT_NFLOAT64 = DFNT_NATIVE + DFNT_FLOAT64
-      DFNT_NFLOAT32 = DFNT_NATIVE + DFNT_FLOAT32
-      DFNT_NINT8 =    DFNT_NATIVE + DFNT_INT8
-      DFNT_NINT16 =   DFNT_NATIVE + DFNT_INT16
-      DFNT_NINT32 =   DFNT_NATIVE + DFNT_INT32
-
       rank = 2
       dims(1) = 10
       dims(2) = 10

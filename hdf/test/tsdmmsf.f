@@ -28,9 +28,6 @@ C
       integer number_failed
       character*20 myname
       parameter (myname = 'sdmms')
-      
-      integer dsgdata, dsadata, dssdims, dssrang, dsgrang, dssnt
-      integer dssdisc, dsgdisc, dsscal, dsgcal
 
       real*8 f64(10,10), tf64(10,10)
       real*8 f64scale(10), tf64scale(10)
@@ -76,8 +73,6 @@ C that of a numerial argument.
 
       integer i, j, err, err1, err2, err3, err4
       integer rank, dims(2)
-      integer DFNT_FLOAT64, DFNT_FLOAT32, DFNT_INT8, DFNT_INT16
-      integer DFNT_INT32
 
       call ptestban('Testing', myname)
       f64max = 40.0
@@ -98,11 +93,6 @@ C      i8min = char(-128)
       dims(1) = 10
       dims(2) = 10
       number_failed = 0
-      DFNT_FLOAT64 = 6
-      DFNT_FLOAT32 = 5
-      DFNT_INT8 = 20
-      DFNT_INT16 = 22
-      DFNT_INT32 = 24
       
 C
 C Set up some calibration info

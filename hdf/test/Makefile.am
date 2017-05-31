@@ -39,6 +39,7 @@ fortestF_SOURCES = forsupff.f forsupf.c fortestF.f manf.f mgrf.f slabwf.f   \
                    t24f.f tanf.f tanfilef.f tpf.f tr8f.f tsdmmsf.f          \
                    tsdnmmsf.f tsdnntf.f tsdntf.f tsdstrf.f tstubsf.f        \
                    tvattrf.f tvsetf.f
+FFLAGS += $(AM_CPPFLAGS)
 fortestF_LDADD = $(LIBHDF)
 fortestF_DEPENDENCIES = testdir $(LIBHDF)
 endif

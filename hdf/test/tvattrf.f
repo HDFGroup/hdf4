@@ -38,16 +38,7 @@ C Output file: tvattrf.hdf
       parameter (myname = 'vattrf',
      +           ifn = 'test_files/tvattr.dat' ,
      +           ofn = 'tvattrf.hdf'
-     +          )  
-      integer vsffidx, vsfsnat, vsfscat, vsfnats
-      integer vsffnas, vsffdat, vsfainf, vsfgnat
-      integer vsfgcat, vsfisat, vfnflds
-      integer vfsnatt, vfscatt, vfnatts
-      integer vffdatt, vfainfo, vfgnatt, vfgcatt
-      integer vfgver
-      integer hopen, hclose, vfatch, vfdtch, vfstart
-      integer vfend, vsfatch, vsfdtch, vfgid, vsgver
-      integer vsffnd, vhfsd
+     +          )
 
       integer nattrs, itype, icount, imsize, vsver
       integer fid1, vsid, vgid, vsref, vgref
@@ -66,20 +57,10 @@ C iattrg, GATTR1 are for float64 values
       character*10  iattrc
       character*20 iattrnm
      
-      integer DFACC_CREATE, DFACC_RDWR, DFACC_READ, DFNT_CHAR
-      integer DFNT_INT32, DFNT_FLOAT32 
       integer VSET_VERSION, VSET_NEW_VERSION
-      integer HDF_VDATA
 
-      parameter (DFACC_CREATE = 4,
-     +           DFACC_RDWR = 3,
-     +           DFACC_READ = 1,
-     +           DFNT_CHAR = 4,
-     +           DFNT_INT32 = 24,
-     +           DFNT_FLOAT32 = 5,
-     +           VSET_VERSION = 3,
+      parameter (VSET_VERSION = 3,
      +           VSET_NEW_VERSION = 4,
-     +           HDF_VDATA = -1,
      +           GATTR1 = -64.123450D0,
      +           RATTR1 = 32.0099,
      +           feps = 1.0E-5,

@@ -16,8 +16,6 @@ C
       subroutine t24f (number_failed)
       implicit none
       include 'fortest.inc'
-      include '../src/dffunc.inc'
-C
 C Test Program: 
 C     		Writes 24-bit raster images with specified interlace 
 C		   code to a file.

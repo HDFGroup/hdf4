@@ -32,22 +32,13 @@ C
       character*20 myname
       parameter (myname = 'manf')
 
-      integer afstart, afend, afcreate, affcreate
-      integer afwriteann, afendaccess, hopen, hclose
-
-      integer dssdims, dsadata, dslref, dsgdims
-      integer d8aimg, DFR8lastref, d8gimg
-
       integer numberfailed, ISFIRST, NOTFIRST, MAXLENLAB
       integer MAXLEN_DESC, ROWS, COLS, REPS
-      integer DFTAG_SDG, DFTAG_RIG
 
       parameter ( ISFIRST =        1, 
      *            NOTFIRST =       0, 
      *            MAXLENLAB =    30,
-     *            MAXLEN_DESC =  500, 
-     *            DFTAG_SDG   =  700,
-     *            DFTAG_RIG   =  306,
+     *            MAXLEN_DESC =  500,
      *            ROWS =          10, 
      *            COLS =          10,
      *            REPS =           2 )
@@ -57,8 +48,6 @@ C
       integer rank
       integer j, dimsizes(2)
       integer fhandle, anhandle, ahandle
-      integer  DFACC_CREATE, DFACC_READ
-      integer AN_DATA_LABEL, AN_DATA_DESC, AN_FILE_LABEL, AN_FILE_DESC
 
       character*30 labsds, labsds2 
       character*30 labris, labris2
@@ -78,12 +67,6 @@ C
       number_failed = 0
       numberfailed =  0
       CR = char(10)
-      DFACC_CREATE = 4
-      DFACC_READ   = 1
-      AN_DATA_LABEL = 0
-      AN_DATA_DESC  = 1
-      AN_FILE_LABEL = 2
-      AN_FILE_DESC  = 3
       TESTFILE = 'manf.hdf'
 
 C *** set up file labels and descriptions ***
@@ -328,10 +311,6 @@ C**************************************************************
       parameter (ERR_FILE = 'Fortran_err.dat')
 
       integer  inlablen, indesclen, ret
-
-      integer affileinfo, afnumann, afannlist, afannlen
-      integer afreadann, afstart, afend, afendaccess, hopen, hclose
-      integer hishdff, hestringf, heprntf
       character*80 error_message
 
       integer fileh, anh
@@ -341,14 +320,7 @@ C**************************************************************
       integer dlabels(2), ddescs(2)
       character*30   inlabel, fannlabel
       character*500 indesc, fanndesc
-      integer AN_DATA_LABEL, AN_DATA_DESC, AN_FILE_LABEL, AN_FILE_DESC
-      integer DFACC_READ
       integer error_code
-      DFACC_READ = 1
-      AN_DATA_LABEL = 0
-      AN_DATA_DESC  = 1
-      AN_FILE_LABEL = 2
-      AN_FILE_DESC  = 3
       error_code = 0
 
 C ***** Test if the file fname is an HDF file
@@ -507,22 +479,12 @@ C************************************************************
       parameter ( MAXLENFLAB =    35,
      *            MAXLEN_FDESC =  100 )
 
-      integer affileinfo, afselect, afannlen, afreadann
-      integer afstart, afend, afendaccess, hopen, hclose
-
       integer ret
       integer fileh, annh, anh
       integer nflabs, nfdescs, nolabs, nodescs
       integer fannlen
       character*35 flabel
       character*100 fdesc
-      integer AN_DATA_LABEL, AN_DATA_DESC, AN_FILE_LABEL, AN_FILE_DESC
-      integer DFACC_READ
-      DFACC_READ = 1
-      AN_DATA_LABEL = 0
-      AN_DATA_DESC  = 1
-      AN_FILE_LABEL = 2
-      AN_FILE_DESC  = 3
 
 C **** We check both file label/description
       fileh = hopen(fname, DFACC_READ,0)

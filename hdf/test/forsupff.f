@@ -35,7 +35,6 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine RESULT(errval, routine, num_failed)
       implicit none
-      include '../src/hdf.inc'
       include 'fortest.inc'
 
       integer errval
@@ -66,7 +65,6 @@ C Invokes: none
 C------------------------------------------------------------------------------
       subroutine VRFY(errval, routine, num_failed)
       implicit none
-      include '../src/hdf.inc'
       include 'fortest.inc'
 
       integer errval
@@ -178,7 +176,6 @@ C
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       subroutine errchkio(err1, err2, err3, num_err, msg)
       implicit none
-      include '../src/hdf.inc'
       include 'fortest.inc'
 
       integer err1, err2, err3, num_err
