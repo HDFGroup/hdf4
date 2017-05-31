@@ -137,7 +137,6 @@ JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_LIBRARY_DIRECTORIES
   /usr/lib/java/jre/lib/{libarch}
   /usr/lib64/java/jre/lib/{libarch}
   /usr/lib/jvm/jre/lib/{libarch}
-  /usr/lib64/jvm/jre/lib/{libarch}
   /usr/local/lib/java/jre/lib/{libarch}
   /usr/local/share/java/jre/lib/{libarch}
   /usr/lib/j2sdk1.4-sun/jre/lib/{libarch}
@@ -152,6 +151,9 @@ JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_LIBRARY_DIRECTORIES
   /usr/lib/jvm/default-java/jre/lib/{libarch}
   /usr/lib/jvm/default-java/jre/lib
   /usr/lib/jvm/default-java/lib
+  # Arch Linux specific paths for default JVM
+  /usr/lib/jvm/default/jre/lib/{libarch}
+  /usr/lib/jvm/default/lib/{libarch}
   # Ubuntu specific paths for default JVM
   /usr/lib/jvm/java-8-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
   /usr/lib/jvm/java-7-openjdk-{libarch}/jre/lib/{libarch}     # Ubuntu 15.10
@@ -216,6 +218,8 @@ JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_INCLUDE_DIRECTORIES
   /opt/sun-jdk-1.5.0.04/include
   # Debian specific path for default JVM
   /usr/lib/jvm/default-java/include
+  # Arch specific path for default JVM
+  /usr/lib/jvm/default/include
   # OpenBSD specific path for default JVM
   /usr/local/jdk-1.7.0/include
   /usr/local/jdk-1.6.0/include
