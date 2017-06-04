@@ -387,14 +387,10 @@ done:
       { /* Failure cleanup */
       }
     /* Normal cleanup */
-    if (edge != NULL)
-        HDfree((VOIDP) edge);
-    if (start != NULL)
-        HDfree((VOIDP) start);
-    if (left != NULL)
-        HDfree((VOIDP) left);
-    if (buf != NULL)
-        HDfree((VOIDP) buf);    
+      SAFE_FREE(edge)
+      SAFE_FREE(start)
+      SAFE_FREE(left)
+      SAFE_FREE(buf)
 
     return ret_value;
 }	/* sdsdumpfull */
@@ -647,37 +643,47 @@ intn print_SDSattrs( int32 sds_id,
             have to break the current loop and continue to the next item */
          resetBuff( &attr_buf );
 
-	 /* allocate space for attribute's values */
-	 attr_buf = (VOIDP) HDmalloc(attr_buf_size);
-	 CHECK_ALLOC( attr_buf, "attr_buf", "print_SDSattrs" );
+        /* allocate space for attribute's values */
+        attr_buf = (VOIDP) HDmalloc(attr_buf_size);
+        CHECK_ALLOC( attr_buf, "attr_buf", "print_SDSattrs" );
 
-	 /* read the values of the attribute into buffer attr_buf */
-	 status = SDreadattr(sds_id, attr_index, attr_buf);
-	 if (status == FAIL)
+        /* read the values of the attribute into buffer attr_buf */
+        status = SDreadattr(sds_id, attr_index, attr_buf);
+        if (status == FAIL)
+        {
+            HDfree(attr_buf);
             ERROR_CONT_2( "in %s: SDreadattr failed for %d'th attribute", 
-			"print_SDSattrs", (int)attr_index );
+			              "print_SDSattrs", (int)attr_index );
+        }
 
-	 fprintf(fp, "\t\t Value = ");
+        fprintf(fp, "\t\t Value = ");
 
-	 /* if the user wishes to have clean output, i.e. option -c is 
-	    selected - Note that this option is only applicable to DFNT_CHAR 
-	    type, the option will be ignored for other types */
-	 if( dumpsds_opts->clean_output && attr_nt == DFNT_CHAR )
-	 {
+        /* if the user wishes to have clean output, i.e. option -c is 
+        selected - Note that this option is only applicable to DFNT_CHAR 
+        type, the option will be ignored for other types */
+        if( dumpsds_opts->clean_output && attr_nt == DFNT_CHAR )
+        {
             status = dumpclean(attr_nt, dumpsds_opts, attr_count, attr_buf, fp);
             if( status == FAIL )
+            {
+                HDfree(attr_buf);
                 ERROR_CONT_2( "in %s: dumpclean failed for %d'th attribute", 
-			"print_SDSattrs", (int)attr_index );
-	 }
-	 else  /* show tab, lf, null char... in octal as \011, \012, \000... */
-	 {
+			                  "print_SDSattrs", (int)attr_index );
+            }
+        }
+        else  /* show tab, lf, null char... in octal as \011, \012, \000... */
+        {
             status = dumpfull(attr_nt, dumpsds_opts, attr_count, attr_buf, fp,
 				ATTR_INDENT, ATTR_CONT_INDENT );
             if( status == FAIL )
+            {
+                HDfree(attr_buf);
                 ERROR_CONT_2( "in %s: dumpfull failed for %d'th attribute", 
-			"print_SDSattrs", (int)attr_index );
-	 }
+			                  "print_SDSattrs", (int)attr_index );
+            }
+        }
       }  /* end of if no local attributes */
+      SAFE_FREE(attr_buf);
    } /* for each attribute */
 
    return( ret_value );
@@ -1231,11 +1237,7 @@ intn dsd(dump_info_t *dumpsds_opts,
          next file */
       if (index_error && num_sds_chosen == 0)
       {
-         if(sds_chosen!=NULL)
-         {
-            HDfree(sds_chosen);
-            sds_chosen=NULL;
-         } /* end if */
+         SAFE_FREE(sds_chosen)
          if( FAIL == SDend(sd_id))
             fprintf( stderr, "in dsd: SDend failed in closing file %s\n",
 			file_name );
@@ -1390,11 +1392,7 @@ intn dsd(dump_info_t *dumpsds_opts,
             printf("Output file type must be either ascii or binary only\n");
       } /* switch for output file */
 
-      if (sds_chosen != NULL)
-      {
-         HDfree(sds_chosen);
-         sds_chosen = NULL;
-      } /* end if */
+      SAFE_FREE(sds_chosen)
 
       if (FAIL == SDend(sd_id))
          ERROR_CONT_1( "in dsd: SDend failed for file %s", file_name );
