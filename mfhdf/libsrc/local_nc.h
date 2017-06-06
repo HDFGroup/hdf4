@@ -33,7 +33,6 @@
 /* Do we have system XDR files */
 #ifndef  NO_SYS_XDR_INC
 
-#if 0
 #ifdef __CYGWIN__
 #ifndef __u_char_defined
 typedef    unsigned char    u_char;
@@ -52,7 +51,6 @@ typedef    unsigned long    u_long;
 #define __u_long_defined
 #endif
 #endif /* __CYGWIN__ */
-#endif
 
 #include    <rpc/types.h>
 #include    <rpc/xdr.h>
