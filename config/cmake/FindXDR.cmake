@@ -19,17 +19,9 @@ INCLUDE(CheckLibraryExists)
 CHECK_INCLUDE_FILE(rpc/types.h XDR_HAS_RPC_TYPES_H)
 IF(NOT XDR_HAS_RPC_TYPES_H)
     MESSAGE(STATUS "Cannot find RPC headers (rpc/types.h).")
-ELSE()
-    CHECK_C_SOURCE_COMPILES("#include <rpc/types.h>
-        #include <rpc/xdr.h>
-
-        int main(int /*argc*/, char** /*argv*/)
-        {
-            return 0;
-        }" XDR_HAS_RPC_XDR_H)
-    IF(NOT XDR_HAS_RPC_XDR_H)
-    MESSAGE(SEND_ERROR "Cannot find RPC headers (rpc/xdr.h).")
-    ENDIF()
+ENDIF()
+IF(NOT XDR_HAS_RPC_XDR_H)
+    MESSAGE(STATUS "Cannot find RPC headers (rpc/xdr.h).")
 ENDIF()
 
 IF (XDR_HAS_RPC_TYPES_H AND XDR_HAS_RPC_XDR_H)
@@ -99,7 +91,7 @@ IF (XDR_HAS_RPC_TYPES_H AND XDR_HAS_RPC_XDR_H)
 
                 IF (NOT XDR_64Bit_Type)
                         SET(BALL_XDR_UINT64_TYPE OFF)
-                        MESSAGE(SEND_ERROR "Could not identify an appropriate type for XDR_64Bit_Type.")
+                        MESSAGE(STATUS "Could not identify an appropriate type for XDR_64Bit_Type.")
                 ENDIF()
 
             ELSE(BALL_HAS_XDR_U_HYPER)
@@ -107,7 +99,7 @@ IF (XDR_HAS_RPC_TYPES_H AND XDR_HAS_RPC_XDR_H)
                     IF(SUPPORTS_64_BIT)
                             SET(BALL_U_QUAD_TYPE "unsigned long long int")
                     ELSE(SUPPORTS_64_BIT)
-                            MESSAGE(SEND_ERROR "Could not identify an 64 bit unsigned type (long long).")
+                            MESSAGE(STATUS "Could not identify an 64 bit unsigned type (long long).")
                     ENDIF(SUPPORTS_64_BIT)
             ENDIF(BALL_HAS_XDR_U_HYPER)
     ENDIF()
