@@ -30,7 +30,7 @@ IF (XDR_HAS_RPC_TYPES_H AND XDR_HAS_RPC_XDR_H)
     SET(XDR_INT_FOUND)
     CHECK_FUNCTION_EXISTS(xdr_int XDR_INT_FOUND)
     IF (NOT XDR_INT_FOUND)
-        FOREACH(lib nsl rpc)
+        FOREACH(lib nsl rpc tirpc)
             ## Try to find the corresponding lib
             SET(XDR_INT_LIBRARY)
             FIND_LIBRARY(XDR_INT_LIBRARY ${lib})
