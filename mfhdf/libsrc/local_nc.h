@@ -32,6 +32,22 @@
 
 /* Do we have system XDR files */
 #ifndef  NO_SYS_XDR_INC
+#ifndef __u_char_defined
+typedef    unsigned char    u_char;
+#define __u_char_defined
+#endif
+#ifndef __u_short_defined
+typedef    unsigned short    u_short;
+#define __u_short_defined
+#endif
+#ifndef __u_int_defined
+typedef    unsigned int    u_int;
+#define __u_int_defined
+#endif
+#ifndef __u_long_defined
+typedef    unsigned long    u_long;
+#define __u_long_defined
+#endif
 #include    <rpc/types.h>
 #include    <rpc/xdr.h>
 #else    /* NO_SYS_XDR_INC */
