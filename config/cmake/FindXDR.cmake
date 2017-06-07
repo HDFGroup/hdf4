@@ -14,19 +14,9 @@ include(CheckTypeSize)
 include(CheckLibraryExists)
 
 ## First try to find the required header files (rpc/types.h, rpc/xdr.h)
-if(CYGWIN)
-    include_directories("/usr/include/tirpc")
-endif()
-
-CHECK_INCLUDE_FILE(rpc/types.h HAVE_RPC_TYPES_H)
-CHECK_INCLUDE_FILE(rpc/xdr.h HAVE_RPC_XDR_H)
-
-if(NOT HAVE_RPC_TYPES_H)
-    message(STATUS "Cannot find RPC headers (rpc/types.h).")
-endif()
+find_path(XDR_INCLUDE_DIR NAMES rpc/types.h PATHS "/usr/include" "/usr/include/tirpc")
 
 #check for the XDR functions: their interface and the libraries they're hidden in.
-if (HAVE_RPC_TYPES_H)
     ## Now let's see if we need an extra lib to compile it
     set(XDR_INT_FOUND)
     CHECK_FUNCTION_EXISTS(xdr_int XDR_INT_FOUND)
@@ -41,6 +31,7 @@ if (HAVE_RPC_TYPES_H)
             endif()
             if (XDR_INT_SYMBOL_FOUND)
                 set(XDR_LIBRARIES ${XDR_INT_LIBRARY})
+                set(XDR_INCLUDE_DIRS ${XDR_INCLUDE_DIR})
                 set(XDR_INT_FOUND TRUE)
                 break()
             endif()
@@ -52,4 +43,3 @@ if (HAVE_RPC_TYPES_H)
     else()
         set(XDR_FOUND TRUE)
     endif()
-endif()
