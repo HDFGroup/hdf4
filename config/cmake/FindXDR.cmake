@@ -14,13 +14,16 @@ INCLUDE(CheckTypeSize)
 INCLUDE(CheckLibraryExists)
 
 ## First try to find the required header files (rpc/types.h, rpc/xdr.h)
-
-#check for the XDR functions: their interface and the libraries they're hidden in.
+find_path (RPC_INCLUDE_DIR rpc/xdr.h)
+if(RPC_INCLUDE_DIR)
+ include_directories("${RPC_INCLUDE_DIR}")
+endif()
 CHECK_INCLUDE_FILE(rpc/types.h XDR_HAS_RPC_TYPES_H)
+CHECK_INCLUDE_FILE(rpc/xdr.h XDR_HAS_RPC_XDR_H)
+#check for the XDR functions: their interface and the libraries they're hidden in.
 IF(NOT XDR_HAS_RPC_TYPES_H)
     MESSAGE(STATUS "Cannot find RPC headers (rpc/types.h).")
 ENDIF()
-CHECK_INCLUDE_FILE(rpc/xdr.h XDR_HAS_RPC_XDR_H)
 IF(NOT XDR_HAS_RPC_XDR_H)
     MESSAGE(STATUS "Cannot find RPC headers (rpc/xdr.h).")
 ENDIF()

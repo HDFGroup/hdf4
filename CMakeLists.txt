@@ -629,13 +629,6 @@ if (HDF4_BUILD_XDR_LIB)
   if (BUILD_SHARED_LIBS)
     add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
   endif ()
-else ()
-  if (XDR_FOUND)
-    add_dependencies (${HDF4_MF_LIB_TARGET} ${HDF4_MF_XDR_LIB_TARGET})
-    if (BUILD_SHARED_LIBS)
-      add_dependencies (${HDF4_MF_LIBSH_TARGET} ${HDF4_MF_XDR_LIBSH_TARGET})
-    endif ()
-  endif ()
 endif ()
 
 #-----------------------------------------------------------------------------
