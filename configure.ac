@@ -685,7 +685,7 @@ case "$host" in
     LIBS="$LIBS -lnsl"  ;;
   *-pc-cygwin*)
     LIBS="$LIBS -ltirpc"
-    CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc/rpc"  ;;
+    CPPFLAGS="$CPPFLAGS -I/usr/include/tirpc"  ;;
   *) ;;
 esac
 
