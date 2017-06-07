@@ -1,12 +1,6 @@
 cmake_minimum_required (VERSION 3.2.2)
 PROJECT (HDF4_MFHDF)
 
-if (CYGWIN)
-  INCLUDE_DIRECTORIES (/usr/include/tirpc/rpc)
-else ()
-  INCLUDE_DIRECTORIES (/usr/include/rpc)
-endif ()
-
 #-----------------------------------------------------------------------------
 # Option to build HDF4 Tools
 #-----------------------------------------------------------------------------
