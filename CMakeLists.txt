@@ -586,6 +586,7 @@ else ()
     set (CMAKE_REQUIRED_LIBRARIES "${XDR_LIBRARIES}" )
   else ()
     set (HDF4_BUILD_XDR_LIB ON CACHE BOOL "Build HDF4 XDR Library" FORCE)
+    message (STATUS "HDF4 XDR Library will be built")
   endif ()
 endif ()
 
