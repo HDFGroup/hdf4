@@ -1149,6 +1149,7 @@
 ./config/cmake/CPack.Info.plist.in
 ./config/cmake/CTestCustom.cmake
 ./config/cmake/FindJNI.cmake
+./config/cmake/FindXDR.cmake
 ./config/cmake/h4config.h.in
 ./config/cmake/HDF4_Examples.cmake.in
 ./config/cmake/hdf4-config-version.cmake.in

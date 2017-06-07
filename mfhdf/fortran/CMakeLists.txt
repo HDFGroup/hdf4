@@ -10,7 +10,7 @@ INCLUDE_DIRECTORIES (
 )
 
 if (CYGWIN)
-  INCLUDE_DIRECTORIES (/usr/include/tirpc)
+  INCLUDE_DIRECTORIES (/usr/include/tirpc/rpc)
 else ()
   INCLUDE_DIRECTORIES (/usr/include/rpc)
 endif ()
