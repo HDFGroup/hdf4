@@ -33,7 +33,7 @@ Languages:
 @HDF_BUILD_FORTRAN_TRUE@                         FFLAGS: @FFLAGS@
 
                            Java: @HDF_JAVA@
-@BUILD_JAVA_CONDITIONAL_TRUE@             Java Compiler: @JAVA_VERSION@
+@BUILD_JAVA_CONDITIONAL_TRUE@                  Java Compiler: @JAVA_VERSION@
 
 Features:
 ---------
