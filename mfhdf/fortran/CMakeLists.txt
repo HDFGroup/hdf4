@@ -9,12 +9,6 @@ INCLUDE_DIRECTORIES (
     ${HDF4_HDF_TESTSOURCE_DIR}
 )
 
-if (CYGWIN)
-  INCLUDE_DIRECTORIES (/usr/include/tirpc)
-else ()
-  INCLUDE_DIRECTORIES (/usr/include/rpc)
-endif ()
-
 if (HDF4_ENABLE_NETCDF)
   configure_file (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/ftest.f.in ${HDF4_BINARY_DIR}/ftest.f)
   configure_file (${HDF4_MFHDF_FORTRAN_SOURCE_DIR}/jackets.c.in ${HDF4_BINARY_DIR}/jackets.c)
