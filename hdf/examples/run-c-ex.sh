@@ -33,7 +33,7 @@ EXIT_FAILURE=1
  
 # Where the tool is installed.
 # default is relative path to installed location of the tools 
-prefix="${prefix:-../../}"
+prefix="${prefix:-../../../}"
 AR="@AR@"
 RANLIB="@RANLIB@"
 H4TOOL="h4cc"               # The tool name
@@ -166,6 +166,7 @@ fi
 # Cleanup
 rm *.o
 rm *.hdf
+rm ExternalSDS
 echo
 
 exit $EXIT_VALUE 

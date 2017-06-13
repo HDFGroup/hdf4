@@ -41,7 +41,7 @@ INSTALL_FILES= VD_read_from_vdata.f VD_read_mixed_vdata.f \
 INSTALL_SCRIPT_FILES = run-fortran-ex.sh
 
 # Where to install Fortran example files
-EXAMPLEDIR=${DESTDIR}$(prefix)/examples/fortran
+EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf4_examples/fortran
 
 # How to build Fortran programs using h4fc
 $(EXTRA_PROG): $(H4FC)
