@@ -102,22 +102,21 @@ This version has been tested in the following platforms:
    SunOS 5.11 (32- and 64-bit)       Sun C 5.12 SunOS_sparc 2011/11/16
    11.1, sparc, sun4v (emu)          Sun Fortran 95 8.6 SunOS_sparc 2011/11/16
 
-   Windows 7                      Visual Studio 2012 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2015 w/ Intel Fortran 16 (cmake)
-                                  Cygwin(CYGWIN_NT-6.1 2.2.1(0.289/5/3)
-                                  gcc(4.9.3) compiler and gfortran)
-                                  (cmake and autotools)
-
-   Windows 7 x64                  Visual Studio 2012 w/ Intel Fortran 15 (cmake)
+    Windows 7                     Visual Studio 2012 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2013 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2015 w/ Intel Fortran 16 (cmake)
 
-   Windows 8.1                    Visual Studio 2012 w/ Intel Fortran 15 (cmake)
+    Windows 7 x64                 Visual Studio 2012 w/ Intel Fortran 15 (cmake)
                                   Visual Studio 2013 w/ Intel Fortran 15 (cmake)
+                                  Visual Studio 2015 w/ Intel Fortran 16 (cmake)
+                                  Visual Studio 2015 w/ Intel C, Fortran 2017 (cmake)
 
-   Windows 8.1 x64                Visual Studio 2012 w/ Intel Fortran 15 (cmake)
-                                  Visual Studio 2013 w/ Intel Fortran 15 (cmake)
+    Windows 10                    Visual Studio 2015 w/ Intel Fortran 16 (cmake)
+                                  Cygwin(CYGWIN_NT-6.1 2.8.0(0.309/5/3)
+                                      gcc and gfortran compilers (GCC 5.4.0)
+                                      (cmake and autotools)
+
+    Windows 10 x64                Visual Studio 2015 w/ Intel Fortran 16 (cmake)
 
    Mac OS X 10.8.5, Darwin, 12.6.0   Apple clang version 5.1 from Xcode 5.1
    12.6.0, x86_64                    gfortran GNU Fortran (GCC) 4.8.2

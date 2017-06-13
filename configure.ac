@@ -278,7 +278,6 @@ if test "X$HDF_JAVA" = "Xyes"; then
 else
   AC_MSG_RESULT([no])
 fi
-AM_CONDITIONAL([BUILD_JAVA_CONDITIONAL], [test "X$HDF_JAVA" = "Xyes"])
 
 ## -------------------------------------------------------------------------
 ## Build static libraries by default. Furthermore, fortran shared libraries
@@ -1004,6 +1003,28 @@ fi
 ## if test -n "$fortran_vendor" && test -n "$fortran_version"; then
 ##   F77_VERSION="$F77_VERSION ($fortran_vendor-$fortran_version)"
 ## fi
+
+AC_SUBST([JAVA_VERSION])
+## Strip anything that looks like a flag off of $JAVA
+JAVA_NOFLAGS=`echo $JAVA | sed 's/ -.*//'`
+
+if `echo $JAVA_NOFLAGS | grep ^/ >/dev/null 2>&1`; then
+  JAVA_VERSION="$JAVA"
+else
+  JAVA_VERSION="$JAVA";
+  for x in `echo $PATH | sed -e 's/:/ /g'`; do
+    if test -x $x/$JAVA_NOFLAGS; then
+      JAVA_VERSION="$x/$JAVA"
+      break
+    fi
+  done
+fi
+java_version_info=`$JAVA -version 2>&1 |\
+  grep 'version' | sed -e 's/version "//' | sed -e 's/"//'`
+if test -n "$java_version_info"; then
+  JAVA_VERSION="$JAVA_VERSION ($java_version_info)"
+fi
+AM_CONDITIONAL([BUILD_JAVA_CONDITIONAL], [test "X$HDF_JAVA" = "Xyes"])
 
 ## ----------------------------------------------------------------------
 ## Enable deprecated public API symbols

@@ -52,12 +52,6 @@ else ()
   set (HDF4_MFHDF_LIBSRC_XCHDRS ${HDF4_BINARY_DIR}/hdf4_netcdf.h)
 endif ()
 
-if (CYGWIN)
-  INCLUDE_DIRECTORIES (/usr/include/tirpc)
-else ()
-  INCLUDE_DIRECTORIES (/usr/include/rpc)
-endif ()
-
 INCLUDE_DIRECTORIES (${HDF4_HDFSOURCE_DIR})
 INCLUDE_DIRECTORIES (${HDF4_MFHDFSOURCE_DIR})
 
