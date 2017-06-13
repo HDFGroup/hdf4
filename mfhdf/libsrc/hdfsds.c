@@ -64,12 +64,6 @@
 
 #define SDG_MAX_INITIAL 100
 
-/* local macros */
-/* A variation of HGOTO_ERROR macro, but instead of label "done:",
-   it is for label "done_adesc:", which is only in this file. */
-#define HGOTO_ADESC_ERROR(err, ret_val) {HERROR(err); ret_value = ret_val; \
-                                   goto done_adesc;}
-
 /* local variables */
 PRIVATE intn       sdgCurrent;
 PRIVATE intn       sdgMax;
@@ -166,7 +160,6 @@ hdf_register_seen_sdg(uint16 sdgRef)
 done:
     if (ret_value == FAIL)
       { /* Failure cleanup */
-
       }
     /* Normal cleanup */
 
@@ -175,7 +168,7 @@ done:
 
 /******************************************************************************
  NAME
-   hdf_check_nt - internal utility function
+   hdf_check_nt - Checks format of number type
 
  DESCRIPTION
    Test if data was stored in native format of different machine or in the
@@ -205,8 +198,797 @@ intn hdf_check_nt(uint8 *ntstring, int32 *type)
             }
         }  /* machine type */
     }   /* Little Endian */
+
     return(ret_value);
 } /* hdf_check_nt */
+
+/******************************************************************************
+ NAME
+   hdf_read_rank - Reads the rank from file
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   rank / FAIL
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_read_rank(int32 acc_id, int16 *rank)
+{
+    CONSTR(FUNC, "hdf_read_rank");        /* for HERROR */
+    uint8 *p, *local_buf = NULL;
+    hdf_err_code_t  ret_value = DFE_NONE;
+
+    local_buf = (uint8 *)HDmalloc(2 * sizeof(uint8));
+    if (local_buf == NULL)
+    {
+        HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
+    }
+
+    /* read and extract the rank */
+    if (Hread(acc_id, (int32) 2, local_buf) == FAIL) 
+    {
+        HGOTO_ERROR(DFE_READERROR, DFE_READERROR);
+    }
+    else
+    {
+        int16 temp_rank = 0;
+        p = local_buf;
+        INT16DECODE(p, temp_rank);
+        if (temp_rank > 0)  /* what about the case of rank=0? -BMR */
+        {
+            *rank = temp_rank;
+            HDfree(local_buf);
+        }
+        else
+            HGOTO_ERROR(DFE_RANGE, DFE_RANGE);
+    }
+
+done:
+    if (ret_value != DFE_NONE)
+      { /* Failure cleanup */
+        if (local_buf != NULL)
+            HDfree(local_buf);
+      }
+
+    /* return DFE_NONE or error code */
+    return(ret_value);
+} /* hdf_read_rank */
+
+/******************************************************************************
+ NAME
+   hdf_read_dimsizes - Reads the dimensions' size from file
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_read_dimsizes(int32 acc_id, int16 rank, int32* dimsizes)
+{
+    CONSTR(FUNC, "hdf_read_dimsizes");        /* for HERROR */
+    uint8 *p, *local_buf = NULL;
+    intn i;
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    local_buf = (uint8 *)HDmalloc(4 * (size_t)rank * sizeof(uint8));
+    if (local_buf == NULL)
+    {
+        HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
+    }
+
+    /* read dimension record */
+    if (Hread(acc_id, (int32) 4 * rank, local_buf) == FAIL) 
+    {
+        HGOTO_ERROR(DFE_READERROR, DFE_READERROR);
+    }
+
+    p = local_buf;
+    for (i = 0; i < rank; i++)
+    {
+        int32 dim_size = 0;
+        INT32DECODE(p, dim_size);
+        if (dim_size < 0)
+        {
+            HGOTO_ERROR(DFE_RANGE, DFE_RANGE);
+        }
+        else
+            dimsizes[i] = dim_size;
+    }
+    HDfree(local_buf);
+
+done:
+    if (ret_value != DFE_NONE)
+      { /* Failure cleanup */
+        if (local_buf != NULL)
+            HDfree(local_buf);
+      }
+
+    /* return DFE_NONE or error code */
+    return(ret_value);
+} /* hdf_read_dimsizes */
+
+/******************************************************************************
+ NAME
+   hdf_read_NT - Reads NT from file and stores in provided buffer
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_read_NT(int32 acc_id, NC *handle, uint8 *ntstring_buf)
+{
+    CONSTR(FUNC, "hdf_read_NT");        /* for HERROR */
+    uint16 ntTag;
+    uint16 ntRef;
+    uint8 *p, *local_buf = NULL;
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    local_buf = (uint8 *)HDmalloc(4 * sizeof(uint8));
+    if (local_buf == NULL)
+    {
+        HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
+    }
+
+    if (Hread(acc_id,(int32) 4, local_buf) == FAIL) 
+    {
+        HGOTO_ERROR(DFE_READERROR, DFE_READERROR);
+    }
+
+    p = local_buf;
+    UINT16DECODE(p, ntTag);
+    UINT16DECODE(p, ntRef);
+
+    /* read NT of this scale (dimension) */
+    if (Hgetelement(handle->hdf_file, ntTag, ntRef, ntstring_buf) == FAIL)
+    {
+        HGOTO_ERROR(DFE_GETELEM, DFE_GETELEM);
+    }
+    HDfree(local_buf);
+
+done:
+    if (ret_value != DFE_NONE)
+      { /* Failure cleanup */
+        if (local_buf != NULL)
+            HDfree(local_buf);
+      }
+
+    /* return DFE_NONE or error code */
+    return(ret_value);
+} /* hdf_read_NT */
+
+/******************************************************************************
+ NAME
+   hdf_get_sdc - Reads coordsys and stores in an attribute.
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_get_sdc(NC *handle, uint16 tmpRef, NC_attr **tmp_attr, intn *curr_attr)
+{
+    CONSTR(FUNC, "hdf_get_sdc");        /* for HERROR */
+    uint8 *coordbuf = NULL; /* buffer to store coord system info */
+    int len;
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    len = Hlength(handle->hdf_file, DFTAG_SDC, tmpRef);
+    if (len == FAIL)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
+    }
+
+    coordbuf = (uint8 *) HDmalloc((uint32) len + 1);
+    if (NULL == coordbuf)
+    {
+        HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
+    }
+
+    if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL)
+    {
+        HDfreespace((VOIDP)coordbuf);
+        HGOTO_ERROR(DFE_GETELEM, DFE_GETELEM);
+    }
+
+    coordbuf[len] = '\0';
+    if (coordbuf[0] != '\0')
+    {
+        *tmp_attr = (NC_attr *) NC_new_attr(_HDF_CoordSys, NC_CHAR, HDstrlen(coordbuf), coordbuf);
+        if (*tmp_attr == NULL)
+        {
+            HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
+        }
+        else
+        {
+            (*tmp_attr)->HDFtype = DFNT_CHAR;
+            tmp_attr++;
+            (*curr_attr)++;
+        }
+    }
+    HDfreespace((VOIDP)coordbuf);
+done:
+    if (ret_value != DFE_NONE)
+      { /* Failure cleanup */
+        if (coordbuf != NULL)
+            HDfreespace((VOIDP)coordbuf);
+      }
+    /* Normal cleanup */
+
+    return ret_value;
+} /* hdf_get_sdc */
+
+/******************************************************************************
+ NAME
+   hdf_get_pred_str_attr - Reads predefined string.
+
+ DESCRIPTION
+   Reads predefined strings and returns the buffer containing the values.
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   Buffer of predefined string or NULL
+
+******************************************************************************/
+uint8 *hdf_get_pred_str_attr(NC *handle, uint16 stratt_tag, uint16 satt_ref, int null_count)
+{
+    CONSTR(FUNC, "hdf_get_pred_str_attr");        /* for HERROR */
+    uint8 *tmpbuf = NULL; /* buffer to store predefined string attribute info */
+    intn i;
+    uint8 *ret_value = NULL;
+
+    if(satt_ref) 
+    {
+        int len;
+
+        /*
+         *  Add three NULLS to the end to account for a bug in HDF 3.2r1-3
+         */
+
+        len = Hlength(handle->hdf_file, stratt_tag, satt_ref);
+        if(len == FAIL) 
+        {
+            HGOTO_ERROR(DFE_INTERNAL, NULL);
+        }
+                
+        tmpbuf = (uint8 *) HDmalloc((uint32) len + 3);
+        if(NULL == tmpbuf) 
+        {
+            HGOTO_ERROR(DFE_NOSPACE, NULL);
+        }
+
+        if(Hgetelement(handle->hdf_file, stratt_tag, satt_ref, tmpbuf) == FAIL)
+        {
+            HGOTO_ERROR(DFE_GETELEM, NULL);
+        }
+                
+        for (i = null_count-1; i >= 0; i--)
+            tmpbuf[len + i] = '\0';
+    }
+    ret_value = tmpbuf;
+
+done:
+    if (ret_value == NULL)
+      { /* Failure cleanup */
+        if (tmpbuf != NULL)
+            HDfree(tmpbuf);
+      }
+
+    /* return the string attribute */
+    return(ret_value);
+
+} /* hdf_get_pred_str_attr */
+            
+/******************************************************************************
+ NAME
+   hdf_get_desc_annot - Reads description annotation and stores in an attribute
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_get_desc_annot(NC* handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
+{
+    CONSTR(FUNC, "hdf_get_desc_annot");        /* for HERROR */
+    intn i;
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    /* Re-vamped desc annotation handling to use new ANxxx interface 
+     *  -georgev 6/11/97 */
+    int32  an_handle   = FAIL;
+    int32  *ddescs    = NULL;
+    char   *ann_desc  = NULL;
+    int32  ann_len;
+    intn   num_ddescs;
+    char   hremark[30] = ""; /* should be big enough for new attribute */
+
+    /* start Annotation inteface */
+    if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
+    {
+        HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+    }
+
+    /* Get number of data descs with this tag/ref */
+    num_ddescs = ANnumann(an_handle, AN_DATA_DESC, ndgTag, ndgRef);
+    if (num_ddescs != 0)
+    {
+        /* allocate space for list of desc annotation id's with this tag/ref */
+        if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL)
+        {
+            HGOTO_ERROR(DFE_NOSPACE, DFE_ANAPIERROR);
+        }
+
+        /* get list of desc annotations id's with this tag/ref */
+        if (ANannlist(an_handle, AN_DATA_DESC, ndgTag, ndgRef, ddescs) != num_ddescs)
+        {
+            HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+        }
+
+        /* loop through desc list. */
+        for (i = 0; i < num_ddescs; i++)
+        {
+            if ((ann_len = ANannlen(ddescs[i])) == FAIL)
+            {
+                HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+            }
+        
+            /* allocate space for desc */
+            if (ann_desc == NULL)
+            {
+                if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
+                {
+                    HGOTO_ERROR(DFE_NOSPACE, DFE_NOSPACE);
+                }
+                HDmemset(ann_desc,'\0', ann_len+1);
+            }
+      
+            /* read desc */
+            if (ANreadann(ddescs[i], ann_desc, ann_len+1) == FAIL)
+            {
+                HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+            }
+
+            /* make unique attribute */
+            sprintf(hremark,"%s-%d",_HDF_Remarks,i+1);
+                            
+            /* add it as an attribute */
+            *tmp_attr = (NC_attr *) NC_new_attr(hremark, NC_CHAR, 
+                                               HDstrlen(ann_desc), ann_desc);
+
+            if (NULL == *tmp_attr)
+            {
+                HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
+            }
+            else
+            {
+                (*tmp_attr)->HDFtype = DFNT_CHAR;
+                tmp_attr++;
+                (*curr_attr)++;
+            }
+
+            /* end access */
+            ANendaccess(ddescs[i]);
+
+            /* free buffer */
+            if(ann_desc != NULL)
+            {
+                HDfree(ann_desc);
+                ann_desc = NULL;
+            }
+        }
+
+    } /* end if descs */
+
+done:
+    if (ret_value == DFE_NONE)
+      { /* Failure cleanup */
+        if(ddescs != NULL)
+            HDfree(ddescs);
+        if(an_handle != FAIL)
+            ANend(an_handle);
+      }
+    /* cleanup */
+
+    /* return the status */
+    return(ret_value);
+/* end annotation description conversion */
+} /* hdf_get_desc_annot */
+
+/******************************************************************************
+ NAME
+   hdf_get_pred_str_attr - Reads label annotation and stores in an attribute
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_get_label_annot(NC *handle, uint16 ndgTag, uint16 ndgRef, NC_attr **tmp_attr, intn *curr_attr)
+{
+    CONSTR(FUNC, "hdf_get_label_annot");        /* for HERROR */
+    intn i;
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    /* Re-vamped label annotation handling to use new ANxxx interface 
+     *  -georgev 6/11/97 */
+    int32  an_handle   = FAIL;
+    int32  *dlabels    = NULL;
+    char   *ann_label  = NULL;
+    int32  ann_len;
+    intn   num_dlabels;
+    char   hlabel[30] = ""; /* should be big enough for new attribute */
+
+    /* start Annotation inteface */
+    if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
+    {
+        HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+    }
+
+    /* Get number of data labels with this tag/ref */
+    num_dlabels = ANnumann(an_handle, AN_DATA_LABEL, ndgTag, ndgRef);
+
+    if (num_dlabels != 0)
+    {
+        /* allocate space for list of label annotation id's with this tag/ref */
+        if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL)
+        {
+            HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+        }
+
+        /* get list of label annotations id's with this tag/ref */
+        if (ANannlist(an_handle, AN_DATA_LABEL, ndgTag, ndgRef, dlabels) != num_dlabels)
+        {
+            HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+        }
+
+        /* loop through label list */
+        for (i = 0; i < num_dlabels; i++)
+        {
+            if ((ann_len = ANannlen(dlabels[i])) == FAIL)
+            {
+                HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+            }
+        
+            /* allocate space for label */
+            if (ann_label == NULL)
+            {
+                if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
+                {
+                    HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+                }
+                HDmemset(ann_label,'\0', ann_len+1);
+            }
+      
+            /* read label */
+            if (ANreadann(dlabels[i], ann_label, ann_len+1) == FAIL)
+            {
+                HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+            }
+
+            /* make unique attribute */
+            sprintf(hlabel,"%s-%d",_HDF_AnnoLabel,i+1);
+
+            /* add as attribute */
+            *tmp_attr = (NC_attr *) NC_new_attr(hlabel, NC_CHAR,
+                                               HDstrlen(ann_label), ann_label);
+
+            if (NULL == tmp_attr)
+            {
+                HGOTO_ERROR(DFE_ANAPIERROR, DFE_ANAPIERROR);
+            }
+            else
+            {
+                (*tmp_attr)->HDFtype = DFNT_CHAR;
+                tmp_attr++;
+                (*curr_attr)++;
+            }
+
+            /* end access */
+            ANendaccess(dlabels[i]);
+
+            /* free buffer */
+            if(ann_label != NULL)
+            {
+                HDfree(ann_label);
+                ann_label = NULL;
+            }
+        }
+    } /* end if labels */
+
+done:
+    if (ret_value == DFE_NONE)
+      { /* Failure cleanup */
+        if(dlabels != NULL)
+            HDfree(dlabels);
+        if(an_handle != FAIL)
+            ANend(an_handle);
+      }
+    /* cleanup */
+    /* return the status */
+    return(ret_value);
+
+/* end annotation label processing */
+} /* hdf_get_label_annot */
+
+/******************************************************************************
+ NAME
+   hdf_luf_to_attrs - Reads label, unit, and format strings and converts them
+                      into attributes.
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_luf_to_attrs(char *labelstr, char *unitstr, char *formatstr, NC_attr **tmp_attr, intn *curr_attr)
+{
+    CONSTR(FUNC, "hdf_luf_to_attrs");        /* for HERROR */
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    /* label => "long_name"  */
+    if (labelstr && (labelstr[0] != '\0') > 0) 
+    {
+        *tmp_attr = (NC_attr *) NC_new_attr(_HDF_LongName, NC_CHAR,
+                           HDstrlen((char *)labelstr), (Void *) labelstr);
+
+        if (NULL == *tmp_attr)
+        {
+            HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
+        }
+        else
+        {
+            (*tmp_attr)->HDFtype = DFNT_CHAR;
+            tmp_attr++;
+            (*curr_attr)++;
+        }
+    }
+
+    /* Units => 'units' */
+    if(unitstr && (unitstr[0] != '\0') > 0) 
+    {
+        *tmp_attr = (NC_attr *) NC_new_attr(_HDF_Units, NC_CHAR,
+                           HDstrlen((char *)unitstr), (Void *) unitstr);
+
+        if (NULL == *tmp_attr)
+        {
+            HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
+        }
+        else
+        {
+            (*tmp_attr)->HDFtype = DFNT_CHAR;
+            tmp_attr++;
+            (*curr_attr)++;
+        }
+    }
+
+    /* Fomrat => 'format' */
+    if (formatstr && (formatstr[0] != '\0') > 0) 
+    {
+        *tmp_attr = (NC_attr *) NC_new_attr(_HDF_Format, NC_CHAR,
+                           HDstrlen((char *)formatstr), (Void *) formatstr);
+
+        if (NULL == *tmp_attr)
+        {
+            HGOTO_ERROR(DFE_INTERNAL, DFE_INTERNAL);
+        }
+        else
+        {
+            (*tmp_attr)->HDFtype = DFNT_CHAR;
+            tmp_attr++;
+            (*curr_attr)++;
+        }
+    }
+
+done:
+    if (ret_value == DFE_NONE)
+      { /* Failure cleanup */
+      }
+    /* cleanup */
+    /* return the status */
+    return(ret_value);
+
+} /* hdf_luf_to_attrs */
+
+/******************************************************************************
+ NAME
+   hdf_get_rangeinfo - Reads range information and converts them into attributes
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_get_rangeinfo(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
+{
+    CONSTR(FUNC, "hdf_get_rangeinfo");        /* for HERROR */
+    uint8     tBuf[128] = "";
+    intn idx = 0; /* index for tBuf */
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP) tBuf, hdftype, 2, DFACC_READ, 0, 0))
+    {
+        HGOTO_ERROR(DFE_BADCONV, FAIL);
+    }
+
+    /* _HDF_ValidMax */
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_ValidMax, nctype, 1, (Void *) tBuf);
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+
+    /* _HDF_ValidMin */
+    idx = DFKNTsize(hdftype|DFNT_NATIVE);
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_ValidMin, nctype, 1, (Void *) &(tBuf[idx]));
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+
+done:
+    if (ret_value == DFE_NONE)
+      { /* Failure cleanup */
+      }
+    /* cleanup */
+    /* return the status */
+    return(ret_value);
+
+} /* hdf_get_rangeinfo */
+
+/******************************************************************************
+ NAME
+   hdf_get_cal - Reads calibration and stores them attributes
+
+ DESCRIPTION
+   (Refactored from hdf_read_ndgs - Jun, 2017)
+
+ RETURNS
+   DFE_NONE / <error code>
+
+******************************************************************************/
+PRIVATE hdf_err_code_t hdf_get_cal(nc_type nctype, int32 hdftype, NC_attr **tmp_attr, intn *curr_attr)
+{
+    CONSTR(FUNC, "hdf_get_cal");        /* for HERROR */
+    uint8 tBuf[128] = "";
+    intn idx = 0; /* index for tBuf */
+    hdf_err_code_t ret_value = DFE_NONE;
+
+    /* for DFNT_FLOAT32 based calibration */
+    intn incr = 4;  /* increment 4 bytes */
+    int32 nt_hdftype = DFNT_INT16;
+    nc_type nt_nctype = NC_SHORT;
+
+    /* for DFNT_FLOAT64 based calibration */
+    if (hdftype == DFNT_FLOAT64)
+    {
+        incr = 8;   /* increment 8 bytes */
+        nt_hdftype = DFNT_INT32;
+        nt_nctype = NC_LONG;
+    }
+
+    if (FAIL == DFKconvert((VOIDP)ptbuf, (VOIDP) tBuf, hdftype, 4, DFACC_READ, 0, 0))
+    {
+        HGOTO_ERROR(DFE_BADCONV, FAIL);
+    }
+
+    /* _HDF_ScaleFactor */
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_ScaleFactor, nctype, 1, (Void *) &(tBuf[idx]));
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+
+    /* _HDF_ScaleFactorErr */
+    idx = idx + incr;
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_ScaleFactorErr, nctype, 1, (Void *) &(tBuf[idx]));
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+
+    /* _HDF_AddOffset */
+    idx = idx + incr;
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_AddOffset, nctype, 1, (Void *) &(tBuf[idx]));
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+
+    /* _HDF_AddOffsetErr */
+    idx = idx + incr;
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_AddOffsetErr, nctype, 1, (Void *) &(tBuf[idx]));
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+
+    /* don't forget number_type  */
+    if (FAIL == DFKconvert((VOIDP)(ptbuf + idx + incr), (VOIDP) tBuf, nt_hdftype, 1, DFACC_READ, 0,0))
+    {
+        HGOTO_ERROR(DFE_BADCONV, FAIL);
+    }
+
+    *tmp_attr = (NC_attr *) NC_new_attr(_HDF_CalibratedNt, nt_nctype, 1, (Void *) &(tBuf[0]));
+
+    if (NULL == *tmp_attr)
+    {
+        HGOTO_ERROR(DFE_INTERNAL, FAIL);
+    }
+    else
+    {
+        (*tmp_attr)->HDFtype = nt_hdftype;
+        tmp_attr++;
+        (*curr_attr)++;
+    }
+done:
+    if (ret_value == DFE_NONE)
+      { /* Failure cleanup */
+      }
+    /* cleanup */
+    /* return the status */
+    return(ret_value);
+
+} /* hdf_get_cal */
+
 
 /******************************************************************************
  NAME
@@ -247,7 +1029,8 @@ hdf_read_ndgs(NC *handle)
     int32   *dimsizes = NULL;
     int32   *scaletypes = NULL;
     int32    HDFtype;
-int32    temptype;
+    int32    temptype;
+    hdf_err_code_t err_code;
     intn     dim;
     intn     max_thangs;
     intn     current_dim;
@@ -278,7 +1061,7 @@ int32    temptype;
     /*
      *  Allocate the array to store the dimensions
      */
-    max_thangs  = 100; /* what is this limit ? */
+    max_thangs  = 1; /* what is this limit ? */
 
     dims = (NC_dim **) HDmalloc(sizeof(NC_dim *) * max_thangs);
     if(NULL == dims) 
@@ -292,7 +1075,7 @@ int32    temptype;
           HGOTO_ERROR(DFE_NOSPACE, FAIL);
       }
 
-    attrs = (NC_attr **) HDmalloc(sizeof(NC_attr *) * max_thangs);
+    attrs = (NC_attr **) HDmalloc(sizeof(NC_attr *) * 100);
     if(NULL == attrs) 
       {
           HGOTO_ERROR(DFE_NOSPACE, FAIL);
@@ -326,7 +1109,7 @@ int32    temptype;
             {
                 uint16 ntTag;
                 uint16 ntRef;
-            
+
                 if(HQuerytagref(aid, &ndgTag, &ndgRef) == FAIL) 
                   {
                       HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -368,28 +1151,28 @@ int32    temptype;
                  * NOTE:  Only generate attributes for meta-data which does
                  *        not depend on the rank of the data since we can not
                  *        be sure that we get the rank first.  
-                 *        If the meta-data depends on the rank, just remember the
-                 *        ref number and read the element once this while loop
-                 *        is finished.
+                 *        If the meta-data depends on the rank, just remember
+                 *        the ref number and read the element once this while
+                 *        loop is finished.
                  */
 
-		/* Check if temproray buffer has been allocated */
-		if (ptbuf == NULL)
-		{
-		    ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
-		    if (ptbuf == NULL)
-		    {
-			HERROR(DFE_NOSPACE);
-			ret_value = FAIL;
-			goto done;
-		    }
-		}
+                /* Check if temporary buffer has been allocated */
+                if (ptbuf == NULL)
+                {
+                    ptbuf = (uint8 *)HDmalloc(TBUF_SZ * sizeof(uint8));
+                    if (ptbuf == NULL)
+                    {
+                        HGOTO_ERROR(DFE_NOSPACE, FAIL);
+                    }
+                }
 
                 while (!DFdiget(GroupID, &tmpTag, &tmpRef)) 
                   {
                       switch(tmpTag) 
                         {
                         case DFTAG_SDD:
+ /* hdf_get_sdd(handle, tmpTag, tmpRef);
+ */ 
                             aid1 = Hstartread(handle->hdf_file, tmpTag, tmpRef);
                             if (aid1 == FAIL)
                               {
@@ -397,14 +1180,10 @@ int32    temptype;
                               }
 
                             /* read rank */
-                            if (Hread(aid1, (int32) 2, ptbuf) == FAIL) 
-                              {
-                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-                              }
+                            err_code = hdf_read_rank(aid1, &rank);
+                            if (err_code != DFE_NONE)
+                                HGOTO_ERROR(err_code, FAIL);
 
-                            p = ptbuf;
-                            INT16DECODE(p, rank);
-                    
                             /* get space for dimensions */
                             dimsizes = (int32 *) HDmalloc((uint32) rank * sizeof(int32));
                             if (dimsizes == NULL) 
@@ -423,39 +1202,20 @@ int32    temptype;
                               {
                                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
-                    
-                            /* read dimension record */
-                            if (Hread(aid1, (int32) 4 * rank, ptbuf) == FAIL) 
-                              {
-                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-                              }
 
-                            p = ptbuf;
-                            for (i = 0; i < rank; i++)
-                                INT32DECODE(p, dimsizes[i]);
-                    
-                          /* read tag/ref of NT */
-                            if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) 
-                              {
-                                  HGOTO_ERROR(DFE_READERROR, FAIL);
-                              }
-                            p = ptbuf;
-                            UINT16DECODE(p, ntTag);
-                            UINT16DECODE(p, ntRef);
-                    
-                            /* read actual NT */
-                            if (Hgetelement(handle->hdf_file, ntTag, ntRef, ntstring) == FAIL)
-                              {
-                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
-                              }
-                    
+                            /* read dimension record */
+                            err_code = hdf_read_dimsizes(aid1, rank, dimsizes);
+                            if (err_code != DFE_NONE)
+                                HGOTO_ERROR(err_code, FAIL);
+
+                            /* read in number type string */
+                            err_code = hdf_read_NT(aid1, handle, ntstring);
+                            if (err_code == FAIL)
+                                  HGOTO_ERROR(err_code, FAIL);
+
                             HDFtype = ntstring[1];
                             if ((type = hdf_unmap_type(HDFtype)) == FAIL)
                               {
-#ifdef DEBUG
-                                  /* replace it with NCAdvice or HERROR? */
-                                  fprintf(stderr, "hdf_read_ndgs: hdf_unmap_type failed for %d\n", HDFtype);
-#endif
                                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
@@ -466,25 +1226,14 @@ int32    temptype;
                             /* read in scale NTs */
                             for(i = 0; i < rank; i++) 
                               {
-                                  if (Hread(aid1,(int32) 4,  ptbuf) == FAIL) 
-                                    {
-                                        HGOTO_ERROR(DFE_READERROR, FAIL);
-                                    }
+                                err_code = hdf_read_NT(aid1, handle, ntstring);
+                                if (err_code != DFE_NONE)
+                                    HGOTO_ERROR(err_code, FAIL);
 
-                                  p = ptbuf;
-                                  UINT16DECODE(p, ntTag);
-                                  UINT16DECODE(p, ntRef);
-                        
-                                  /* read NT of this scale (dimension) */
-                                  if (Hgetelement(handle->hdf_file, ntTag, ntRef, ntstring) == FAIL)
-                                    {
-                                        HGOTO_ERROR(DFE_GETELEM, FAIL);
-                                    }
+                                scaletypes[i] = ntstring[1];
 
-                                  scaletypes[i] = ntstring[1];
-
-				  /* temp preserve scaletype in case of error */
-				  temptype = scaletypes[i];
+                                /* temp preserve scaletype in case of error */
+                                temptype = scaletypes[i];
 
                                   /* check native format and LITEND */
                                   if (hdf_check_nt(ntstring, &temptype) == FAIL)
@@ -519,41 +1268,11 @@ int32    temptype;
                              * DFTAG_SDC => 'cordsys'
                              */
                         { 
-                            int len;
-
-                            len = Hlength(handle->hdf_file, DFTAG_SDC, tmpRef);
-                            if (len == FAIL) 
-                              {
-                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                              }
-
-                            coordbuf = (uint8 *) HDmalloc((uint32) len + 1);
-                            if (NULL == coordbuf) 
-                              {
-                                  HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                              }
-
-                            if (Hgetelement(handle->hdf_file, DFTAG_SDC, tmpRef, coordbuf) == FAIL)
-                              {
-                                  HDfreespace((VOIDP)coordbuf);
-                                  HGOTO_ERROR(DFE_GETELEM, FAIL);
-                              }
-
-                            coordbuf[len] = '\0';
-                            if (coordbuf[0] != '\0')  
-                              {
-                                  attrs[current_attr] =
-                                      (NC_attr *) NC_new_attr(_HDF_CoordSys,
-                                                              NC_CHAR, HDstrlen(coordbuf), coordbuf);
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_CHAR;
-                              }
-
-                            HDfreespace((VOIDP)coordbuf);
+                            err_code = hdf_get_sdc(handle, tmpRef, &attrs[current_attr], &current_attr);
+                            if (err_code != DFE_NONE)
+                            {
+                                HGOTO_ERROR(err_code, FAIL);
+                            }
                         }
                         break;
 
@@ -570,186 +1289,36 @@ int32    temptype;
                            * DFTAG_CAL => 'scale_factor', 'add_offset', 'scale_factor_err', 
                            *              'add_offset_err'
                            */
+                        {
                             if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
                               {
                                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
-                    
-                            if (Hlength(handle->hdf_file, tmpTag, tmpRef) == 36) 
-                              {
+
+                            if (Hlength(handle->hdf_file, tmpTag, tmpRef) == 36)
+                            {
                                   /* DFNT_FLOAT64 based calibration */
-                        
-                                  if (FAIL == DFKconvert((VOIDP)ptbuf, 
-                                             (VOIDP) tBuf, 
-                                             DFNT_FLOAT64, 4, DFACC_READ, 0, 0))
-                                    {
-                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
-                                    }
-                        
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_ScaleFactor, 
-                                                              NC_DOUBLE, 
-                                                              1, 
-                                                              (Void *) &(tBuf[0]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT64; 
-
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_ScaleFactorErr, 
-                                                              NC_DOUBLE, 
-                                                              1, 
-                                                              (Void *) &(tBuf[8]));    
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
- 
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_AddOffset, 
-                                                              NC_DOUBLE, 
-                                                              1, 
-                                                              (Void *) &(tBuf[16]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
-
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_AddOffsetErr, 
-                                                              NC_DOUBLE, 
-                                                              1, 
-                                                              (Void *) &(tBuf[24]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT64;
-
-                                /* don't forget number_type  */
-                                  if (FAIL == DFKconvert((VOIDP)(ptbuf + 32),
-                                             (VOIDP) tBuf,
-                                             DFNT_INT32, 1, DFACC_READ, 0,0))
-                                    {
-                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
-                                    }
-
-
-                                  attrs[current_attr] =
-                                      (NC_attr *) NC_new_attr(_HDF_CalibratedNt,
-                                                              NC_LONG,
-                                                              1,
-                                                              (Void *) &(tBuf[0]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_INT32;
-
-                              } 
+                                err_code = hdf_get_cal(NC_DOUBLE, DFNT_FLOAT64,
+                                        &attrs[current_attr], &current_attr);
+                                if (err_code != DFE_NONE)
+                                {
+                                    HGOTO_ERROR(err_code, FAIL);
+                                }
+                            } 
                             else 
-                              {
+                            {
                                   /* DFNT_FLOAT32 based calibration */
+                                err_code = hdf_get_cal(NC_FLOAT, DFNT_FLOAT32,
+                                        &attrs[current_attr], &current_attr);
 
-                                  if (FAIL == DFKconvert((VOIDP)ptbuf, 
-                                             (VOIDP)tBuf, 
-                                             DFNT_FLOAT32, 4, DFACC_READ, 0, 0))
-                                    {
-                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
-                                    }
-
-                        
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_ScaleFactor, 
-                                                              NC_FLOAT, 
-                                                              1, 
-                                                              (Void *) &(tBuf[0]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
- 
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_ScaleFactorErr, 
-                                                              NC_FLOAT, 
-                                                              1, 
-                                                              (Void *) &(tBuf[4]));    
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
-
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_AddOffset, 
-                                                              NC_FLOAT, 
-                                                              1, 
-                                                              (Void *) &(tBuf[8]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
-
-                                  attrs[current_attr] = 
-                                      (NC_attr *) NC_new_attr(_HDF_AddOffsetErr, 
-                                                              NC_FLOAT, 
-                                                              1, 
-                                                              (Void *) &(tBuf[12]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_FLOAT32;
-
-                                  /* don't forget number_type  */
-                                  if (FAIL == DFKconvert((VOIDP)(ptbuf + 16),
-                                             (VOIDP) tBuf,
-                                             DFNT_INT16, 1, DFACC_READ, 0,0))
-                                    {
-                                        HGOTO_ERROR(DFE_BADCONV, FAIL);
-                                    }
-
-
-                                  attrs[current_attr] =
-                                      (NC_attr *) NC_new_attr(_HDF_CalibratedNt,
-                                                              NC_SHORT,
-                                                              1,
-                                                              (Void *) &(tBuf[0]));
-
-                                  if (NULL == attrs[current_attr])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      attrs[current_attr++]->HDFtype = DFNT_INT16;
-                              }
-                    
+                                if (err_code != DFE_NONE)
+                                {
+                                    HGOTO_ERROR(err_code, FAIL);
+                                }
+                            } 
                             break;
-                    
+                        }
+
                         case DFTAG_SDM:        /* valid range info */
                     
                             if (Hgetelement(handle->hdf_file, tmpTag, tmpRef, ptbuf) == FAIL)
@@ -757,39 +1326,12 @@ int32    temptype;
                                   HGOTO_ERROR(DFE_GETELEM, FAIL);
                               }
                     
-                            if (FAIL == DFKconvert((VOIDP)ptbuf, 
-                                       (VOIDP)tBuf, 
-                                       HDFtype, 2, DFACC_READ, 0, 0))
-                              {
-                                  HGOTO_ERROR(DFE_BADCONV, FAIL);
-                              }
+                            err_code = hdf_get_rangeinfo(type, HDFtype, &attrs[current_attr], &current_attr);
+                                if (err_code != DFE_NONE)
+                                {
+                                    HGOTO_ERROR(err_code, FAIL);
+                                }
 
-                    
-                            attrs[current_attr] = 
-                                (NC_attr *) NC_new_attr(_HDF_ValidMax, 
-                                                        type, 
-                                                        1, 
-                                                        (Void *) tBuf);
-
-                            if (NULL == attrs[current_attr])
-                              {
-                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                              }
-                            else
-                                attrs[current_attr++]->HDFtype = HDFtype;
-                    
-                            attrs[current_attr] = 
-                                (NC_attr *) NC_new_attr(_HDF_ValidMin, 
-                                                        type, 
-                                                        1, 
-                                                        (Void *) &(tBuf[DFKNTsize(HDFtype|DFNT_NATIVE)]));
-
-                            if (NULL == attrs[current_attr])
-                              {
-                                  HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                              }
-                            else
-                                attrs[current_attr++]->HDFtype = HDFtype;
                             break;
 
                         case DFTAG_SDLNK:
@@ -827,127 +1369,25 @@ int32    temptype;
                         } /* end switch 'tmpTag */
                   }     /* end while 'DFdiget()'*/
 
-		/* Free local buffer */
-		if (ptbuf != NULL)
-		{
-		    HDfree(ptbuf);
-		    ptbuf = NULL;
-		}
+                /* Free local buffer */
+                if (ptbuf != NULL)
+                {
+                    HDfree(ptbuf);
+                    ptbuf = NULL;
+                }
             
-                if(lRef) 
-                  {
-                      int len;
-                
-                      /*
-                       *  Add three NULLS to the end to account for a bug in HDF 3.2r1-3
-                       */
-
-                      len = Hlength(handle->hdf_file, DFTAG_SDL, lRef);
-                      if(len == FAIL) 
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-                
-                      labelbuf = (uint8 *) HDmalloc((uint32) len + 3);
-                      if(NULL == labelbuf) 
-                        {
-                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        }
-
-                      if(Hgetelement(handle->hdf_file, DFTAG_SDL, lRef, labelbuf) == FAIL)
-                        {
-                            HGOTO_ERROR(DFE_GETELEM, FAIL);
-                        }
-                
-                      labelbuf[len + 2] = '\0';
-                      labelbuf[len + 1] = '\0';
-                      labelbuf[len + 0] = '\0';
-                
-                  } 
-                else 
-                    labelbuf = NULL;
-            
-                if(uRef) 
-                  {
-                      int len;
-                
-                      len = Hlength(handle->hdf_file, DFTAG_SDU, uRef);
-                      if(len == FAIL) 
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-
-                      unitbuf = (uint8 *) HDmalloc((uint32) len+3);
-                      if(NULL == unitbuf) 
-                        {
-                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        }
-                
-                      if(Hgetelement(handle->hdf_file, DFTAG_SDU, uRef, unitbuf) == FAIL)
-                        {
-                            HGOTO_ERROR(DFE_GETELEM, FAIL);
-                        }
-
-                      unitbuf[len + 2] = '\0';
-                      unitbuf[len + 1] = '\0';
-                      unitbuf[len + 0] = '\0';
-                  } 
-                else 
-                    unitbuf = NULL;
+                /*
+                 * Get the predefined string attributes of the dataset.  Note
+                 * that, in the first three attributes, we need to add three
+                 * NULLs to the end of the buffer to account for a bug in
+                 * HDF 3.2r1-3, hence, the last argument is 3.  The last
+                 * attribute doesn't need the NULL characters.
+                 */
+                labelbuf = hdf_get_pred_str_attr(handle, DFTAG_SDL, lRef, 3);
+                unitbuf = hdf_get_pred_str_attr(handle, DFTAG_SDU, uRef, 3);
+                formatbuf = hdf_get_pred_str_attr(handle, DFTAG_SDF, fRef, 3);
+                scalebuf = hdf_get_pred_str_attr(handle, DFTAG_SDS, sRef, 0);
            
-                if(fRef) 
-                  {
-                      int len;
-
-                      len = Hlength(handle->hdf_file, DFTAG_SDF, fRef);
-                      if(len == FAIL) 
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-
-                      formatbuf = (uint8 *) HDmalloc((uint32) len+3);
-                      if(NULL == formatbuf) 
-                        {
-                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        }
-
-                      if(Hgetelement(handle->hdf_file, DFTAG_SDF, fRef, formatbuf) == FAIL)
-                        {
-                            HGOTO_ERROR(DFE_GETELEM, FAIL);
-                        }
-
-                      formatbuf[len + 2] = '\0';
-                      formatbuf[len + 1] = '\0';
-                      formatbuf[len + 0] = '\0';
-                  } 
-                else
-                    formatbuf = NULL;
- 
-                if(sRef) 
-                  {
-                      int len;
-                
-                      len = Hlength(handle->hdf_file, DFTAG_SDS, sRef);
-                      if(len == FAIL) 
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-                
-                      scalebuf = (uint8 *) HDmalloc((uint32) len);
-                      if(NULL == scalebuf) 
-                        {
-                            HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        }
-                
-                      if(Hgetelement(handle->hdf_file, DFTAG_SDS, sRef, scalebuf) == FAIL)
-                        {
-                            HGOTO_ERROR(DFE_GETELEM, FAIL);
-                        }
-                
-                  } 
-                else 
-                    scalebuf = NULL;
-            
                 /* skip over the garbage at the beginning */
                 scale_offset = rank * sizeof(uint8);
             
@@ -1004,18 +1444,18 @@ int32    temptype;
                       sprintf(tmpname, "fakeDim%d", dimcount++);
                 
                       this_dim = current_dim++;
-                      if(current_dim == max_thangs) 
+                      if(current_dim == max_thangs)
                         {
-                            /* need to allocate more space */    
+                            /* need to allocate more space */
                             max_thangs *= 2;
                             dims = (NC_dim **) HDrealloc((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
-                            if(NULL == dims) 
+                            if(NULL == dims)
                               {
                                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
 
                             vars = (NC_var **) HDrealloc((VOIDP) vars, sizeof(NC_var *) * max_thangs);
-                            if(NULL == vars) 
+                            if(NULL == vars)
                               {
                                   HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
@@ -1033,18 +1473,17 @@ int32    temptype;
                 
                       /* 
                        * It looks like were gonna have to do the variable define
-                       *    here too cuz we need to remember the indicies of where
-                       *    we put the dimensions
+                       * here too cuz we need to remember the indices of where
+                       * we put the dimensions
                        */
-                
                       vardims[dim] = (intn) this_dim;
                 
                 
                       /*
-                       * Look at the scale NTs since the scales may have different number 
-                       *   types
-                       * Promote the dimension to a variable, but only if it has meta-data
-                       *   stored with it.  
+                       * Look at the scale NTs since the scales may have
+                       * different number types.
+                       * Promote the dimension to a variable, but only if it
+                       * has meta-data stored with it.  
                        */
                       if(new_dim || (scalebuf && scalebuf[dim])) 
                         {
@@ -1052,16 +1491,10 @@ int32    temptype;
 
                             if ((stype = hdf_unmap_type(scaletypes[dim])) == FAIL)
                               {
-#ifdef DEBUG
-                                  /* replace it with NCAdvice or HERROR? */
-                                  fprintf(stderr, "hdf_read_ndgs: hdf_unmap_type failed for %d\n", scaletypes[dim]);
-#endif
                                   HGOTO_ERROR(DFE_INTERNAL, FAIL);
                               }
 
-                            vars[current_var] = NC_new_var(tmpname, 
-                                                           stype,
-                                                           1, 
+                            vars[current_var] = NC_new_var(tmpname, stype, 1, 
                                                            &this_dim);
                             if (NULL == vars[current_var])
                               {
@@ -1076,12 +1509,13 @@ int32    temptype;
 #else /* NOT_YET */
                             vars[current_var]->ndg_ref  = Hnewref(handle->hdf_file);
 #endif /* NOT_YET */
-			    /* Indicate that it is unknown whether the current
-			       variable is an SDS or a coordinate variable.
-			       bugzilla 624 - BMR - 05/16/2007 */
-			    /* vars[current_var]->var_type  = UNKNOWN; */ 
-			    /* It looks like this is a dimension variable for sure! -BMR 10/26/2010 */
-			    vars[current_var]->var_type  = IS_CRDVAR;
+			                /* Indicate that it is unknown whether the current
+			                   variable is an SDS or a coordinate variable.
+			                   bugzilla 624 - BMR - 05/16/2007 */
+			                /* vars[current_var]->var_type  = UNKNOWN; */ 
+			                /* It looks like this is a dimension variable for
+                               sure! -BMR 10/26/2010 */
+			                vars[current_var]->var_type  = IS_CRDVAR;
 
                             /*
                              * See if a scales record has been stored and if there have
@@ -1099,68 +1533,24 @@ int32    temptype;
                               }
                             /*
                              * Convert dimstrs into attributes  
-                             * label -- "long_name" (cuz SDsetdimstrs() assigns "long_name" to label)
+                             * label -- "long_name" (cuz SDsetdimstrs() assigns
+                             * "long_name" to label)
                              * unit  -- "units"
                              * format -- "format"
                              */
-
-                            /* label => "long_name"  */
                             dimattrcnt = 0;
-                            if (labelvalue && HDstrlen((char *)labelvalue) > 0) 
-                              {
-                                  dimattrs[dimattrcnt] =
-                                      (NC_attr *) NC_new_attr(_HDF_LongName, NC_CHAR,
-                                                              HDstrlen((char *)labelvalue),
-                                                              (Void *) labelvalue);
-
-                                  if (NULL == dimattrs[dimattrcnt])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
-                              }
-
-                            /* Units => 'units' */
-                            if(unitvalue && HDstrlen((char *)unitvalue) > 0) 
-                              {
-                                  dimattrs[dimattrcnt] =
-                                      (NC_attr *) NC_new_attr(_HDF_Units, NC_CHAR,
-                                                              HDstrlen((char *)unitvalue),
-                                                              (Void *) unitvalue);
-
-                                  if (NULL == dimattrs[dimattrcnt])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
-                              }
-
-                            /* Fomrat => 'format' */
-                            if(formatvalue && HDstrlen((char *)formatvalue) > 0) 
-                              {
-                                  dimattrs[dimattrcnt] =
-                                      (NC_attr *) NC_new_attr(_HDF_Format, NC_CHAR,
-                                                              HDstrlen((char *)formatvalue),
-                                                              (Void *) formatvalue);
-
-                                  if (NULL == dimattrs[dimattrcnt])
-                                    {
-                                        HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                                    }
-                                  else
-                                      dimattrs[dimattrcnt++]->HDFtype = DFNT_CHAR;
-                              }
+                            err_code = hdf_luf_to_attrs(
+                                            labelvalue, unitvalue, formatvalue,
+                                            &dimattrs[dimattrcnt], &dimattrcnt);
 
                             /*
                              * Add the attributes to the variable
                              */
                             if(dimattrcnt)
                               {
-                                vars[current_var]->attrs = NC_new_array(NC_ATTRIBUTE,
-                                                                        dimattrcnt,
-                                                                        (Void *) dimattrs);
+                                vars[current_var]->attrs = NC_new_array(
+                                                    NC_ATTRIBUTE, dimattrcnt,
+                                                    (Void *) dimattrs);
                                   if (NULL == vars[current_var]->attrs)
                                     {
                                         HGOTO_ERROR(DFE_INTERNAL, FAIL);
@@ -1171,31 +1561,32 @@ int32    temptype;
 
                             current_var++;  
 
-                            if(current_var == max_thangs) 
+                            if(current_var == max_thangs)
                               {
-                                  /* need to allocate more space */    
+                                  /* need to allocate more space */
                                   max_thangs *= 2;
 
                                   dims = (NC_dim **) HDrealloc((VOIDP)dims, sizeof(NC_dim *) * max_thangs);
-                                  if(NULL == dims) 
+                                  if(NULL == dims)
                                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
-                        
+
                                   vars = (NC_var **) HDrealloc((VOIDP)vars, sizeof(NC_var *) * max_thangs);
-                                  if(NULL == vars) 
+                                  if(NULL == vars)
                                         HGOTO_ERROR(DFE_NOSPACE, FAIL);
                               }
                         } /* end if 'new_dim' */
                   } /* end for 'dim' */
             
                 /*
-                 * Should the LUF-label be mapped as attr of "longname", to be consistent
-                 *   with the dim vars? 8/18/94
-                 * Should the annotation-label mapped to attr "anno-label", if "longname"
-                 *   has been taken by LUF-label?  8/18/94.
+                 * Should the LUF-label be mapped as attr of "longname", to be
+                 * consistent with the dim vars? 8/18/94
+                 * Should the annotation-label mapped to attr "anno-label",
+                 * if "longname" has been taken by LUF-label?  8/18/94.
                  *   
-                 * (If there is a data label use that as the variable name else) 
+                 * (If there is a data label, use that as the variable name
+                 *  else) 
                  * Use the reference number of the NDG as part of
-                 *    a made up name (Label is mapped as attr "longname" 9/2/94).
+                 * a made up name (Label is mapped as attr "longname" 9/2/94).
                  *
                  * Convert spaces in the name to underscores (yuck) otherwise
                  *    ncgen will barf on ncdumped files)
@@ -1231,12 +1622,11 @@ int32    temptype;
                 vars[current_var]->data_ref = sdRef;
                 vars[current_var]->HDFtype  = HDFtype;
 
-		/* Indicate that it is unknown whether the current variable 
-		   is an SDS or a coordinate variable.  bugzilla 624 - BMR - 
-		   05/16/2007.  This looks like a IS_CRDVAR because it's from
-		   vardim! -BMR - 6/1/16 */
+		        /* Indicate that it is unknown whether the current variable 
+		           is an SDS or a coordinate variable.  bugzilla 624 - BMR - 
+		           05/16/2007.  This looks like a IS_CRDVAR because it's from
+		           vardim! -BMR - 6/1/16 */
                 vars[current_var]->var_type  = UNKNOWN;
-
 
                 /*
                  * NOTE:  If the user changes the file and saves setting this
@@ -1255,314 +1645,45 @@ int32    temptype;
                 /*
                  * If there is an annotation put in 'remarks'
                  */
-            
                 {
-                    /* Re-vamped desc annotation handling to use new ANxxx interface 
-                     *  -georgev 6/11/97 */
-                    int32  an_handle   = FAIL;
-                    int32  *ddescs    = NULL;
-                    char   *ann_desc  = NULL;
-                    int32  ann_len;
-                    intn   num_ddescs;
-                    char   hremark[30] = ""; /* should be big enough for new attribute */
+                    NC_attr *tmp_attr = NULL;
+                    err_code = DFE_NONE;
 
-                    /* start Annotation inteface */
-                    if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
-                      {
-                          HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
-                      }
-
-                    /* Get number of data descs with this tag/ref */
-                    num_ddescs = ANnumann(an_handle, AN_DATA_DESC, ndgTag, ndgRef);
-#ifdef AN_DEBUG
-                    fprintf(stderr,"SDS has %d descs \n", num_ddescs);
-#endif
-                    if (num_ddescs != 0)
-                      {
-                          /* allocate space for list of desc annotation id's with this tag/ref */
-                          if ((ddescs = (int32 *)HDmalloc(num_ddescs * sizeof(int32))) == NULL)
-                            {
-#ifdef AN_DEBUG
-                                fprintf(stderr,"failed to allocate space for %d descs \n", num_ddescs);
-#endif
-                                HGOTO_ADESC_ERROR(DFE_NOSPACE, FAIL);
-                            }
-
-                          /* get list of desc annotations id's with this tag/ref */
-                          if (ANannlist(an_handle, AN_DATA_DESC, ndgTag, ndgRef, ddescs) != num_ddescs)
-                            {
-#ifdef AN_DEBUG
-                                fprintf(stderr,"failed to get %d descs list \n", num_ddescs);
-#endif
-                                HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
-                            }
-
-                          /* loop through desc list. */
-                          for (i = 0; i < num_ddescs; i++)
-                            {
-                                if ((ann_len = ANannlen(ddescs[i])) == FAIL)
-                                  {
-#ifdef AN_DEBUG
-                                      fprintf(stderr,"failed to get %d desc  length \n", i);
-#endif
-                                      HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
-                                  }
-        
-                                /* allocate space for desc */
-                                if (ann_desc == NULL)
-                                  {
-                                      if ((ann_desc = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
-                                        {
-#ifdef AN_DEBUG
-                                            fprintf(stderr,"failed to allocate space for desc %d \n", i);
-#endif
-                                            HGOTO_ADESC_ERROR(DFE_NOSPACE, FAIL);
-                                        }
-                                      HDmemset(ann_desc,'\0', ann_len+1);
-                                  }
-      
-                                /* read desc */
-                                if (ANreadann(ddescs[i], ann_desc, ann_len+1) == FAIL)
-                                  {
-#ifdef AN_DEBUG
-                                      fprintf(stderr,"failed to read %d desc \n", i);
-#endif
-                                      HGOTO_ADESC_ERROR(DFE_ANAPIERROR, FAIL);
-                                  }
-
-                                /* make unique attribute */
-                                sprintf(hremark,"%s-%d",_HDF_Remarks,i+1);
-                            
-                                /* add it as a attribute */
-                                attrs[current_attr] = 
-                                    (NC_attr *) NC_new_attr(hremark, 
-                                                            NC_CHAR, 
-                                                            HDstrlen(ann_desc), 
-                                                            ann_desc);
-
-                                if (NULL == attrs[current_attr])
-                                  {
-                                      HGOTO_ADESC_ERROR(DFE_INTERNAL, FAIL);
-                                  }
-                                else
-                                    attrs[current_attr++]->HDFtype = DFNT_CHAR;
-
-                                /* end access */
-                                ANendaccess(ddescs[i]);
-
-                                /* free buffer */
-                                if(ann_desc != NULL)
-                                  {
-                                      HDfree(ann_desc);
-                                      ann_desc = NULL;
-                                  }
-                            }
-
-                      } /* end if descs */
-
-                  done_adesc: /* GOTO Label */
-                    /* cleanup */
-                    if(ddescs != NULL)
-                        HDfree(ddescs);
-
-                    if(an_handle != FAIL)
-                        ANend(an_handle);
-
-                    /* check for error during ANxxx processing */
-                    if (ret_value == FAIL)
-                        goto done; /* error so return */
+                    err_code = hdf_get_desc_annot(handle, ndgTag, ndgRef,
+                                    &attrs[current_attr], &current_attr);
+                    if (err_code != DFE_NONE)
+                    {
+                        HGOTO_ERROR(err_code, FAIL);
+                    }
 
                 } /* end annotation description conversion */
             
                 /*
-                 * If there is a label put in attr 'anno_label' (note: NOT 'long_name' 9/2/94)
+                 * If there is a label, put it in attr 'anno_label' (note:
+                 * NOT 'long_name' 9/2/94)
                  */
                 {
-                    /* Re-vamped label annotation handling to use new ANxxx interface 
-                     *  -georgev 6/11/97 */
-                    int32  an_handle   = FAIL;
-                    int32  *dlabels    = NULL;
-                    char   *ann_label  = NULL;
-                    int32  ann_len;
-                    intn   num_dlabels;
-                    char   hlabel[30] = ""; /* should be big enough for new attribute */
+                    NC_attr *tmp_attr = NULL;
+                    err_code = DFE_NONE;
 
-                    /* start Annotation inteface */
-                    if ((an_handle = ANstart(handle->hdf_file)) == FAIL)
-                      {
-                          ret_value = FAIL;
-                          goto done_alabel;
-                      }
+                    err_code = hdf_get_label_annot(handle, ndgTag, ndgRef,
+                                    &attrs[current_attr], &current_attr);
+                    if (err_code != DFE_NONE)
+                    {
+                        HGOTO_ERROR(err_code, FAIL);
+                    }
 
-                    /* Get number of data labels with this tag/ref */
-                    num_dlabels = ANnumann(an_handle, AN_DATA_LABEL, ndgTag, ndgRef);
-#ifdef AN_DEBUG
-                    fprintf(stderr,"SDS has %d labels \n", num_dlabels);
-#endif
-
-                    if (num_dlabels != 0)
-                      {
-                          /* allocate space for list of label annotation id's with this tag/ref */
-                          if ((dlabels = (int32 *)HDmalloc(num_dlabels * sizeof(int32))) == NULL)
-                            {
-#ifdef AN_DEBUG
-                                fprintf(stderr,"failed to allocate space for %d labels \n", num_dlabels);
-#endif
-                                ret_value = FAIL;
-                                goto done_alabel;
-                            }
-
-                          /* get list of label annotations id's with this tag/ref */
-                          if (ANannlist(an_handle, AN_DATA_LABEL, ndgTag, ndgRef, dlabels) != num_dlabels)
-                            {
-#ifdef AN_DEBUG
-                                fprintf(stderr,"failed to get %d label list \n", num_dlabels);
-#endif
-                                ret_value = FAIL;
-                                goto done_alabel;
-                            }
-
-                          /* loop through label list */
-                          for (i = 0; i < num_dlabels; i++)
-                            {
-                                if ((ann_len = ANannlen(dlabels[i])) == FAIL)
-                                  {
-#ifdef AN_DEBUG
-                                      fprintf(stderr,"failed to get %d label  length \n", i);
-#endif
-                                      ret_value = FAIL;
-                                      goto done_alabel;
-                                  }
-        
-                                /* allocate space for label */
-                                if (ann_label == NULL)
-                                  {
-                                      if ((ann_label = (char *)HDmalloc((ann_len+1)*sizeof(char))) == NULL)
-                                        {
-#ifdef AN_DEBUG
-                                            fprintf(stderr,"failed to allocate space for label %d \n", i);
-#endif
-                                            ret_value = FAIL;
-                                            goto done_alabel;
-                                        }
-                                      HDmemset(ann_label,'\0', ann_len+1);
-                                  }
-      
-                                /* read label */
-                                if (ANreadann(dlabels[i], ann_label, ann_len+1) == FAIL)
-                                  {
-#ifdef AN_DEBUG
-                                      fprintf(stderr,"failed to read %d label \n", i);
-#endif
-                                      ret_value = FAIL;
-                                      goto done_alabel;
-                                  }
-
-                                /* make unique attribute */
-                                sprintf(hlabel,"%s-%d",_HDF_AnnoLabel,i+1);
-
-                                /* add as atriburte */
-                                attrs[current_attr] = 
-                                    (NC_attr *) NC_new_attr(hlabel, 
-                                                            NC_CHAR, 
-                                                            HDstrlen(ann_label), 
-                                                            ann_label);
-
-                                if (NULL == attrs[current_attr])
-                                  {
-                                      ret_value = FAIL;
-                                      goto done_alabel;
-                                  }
-                                else
-                                    attrs[current_attr++]->HDFtype = DFNT_CHAR;
-
-                                /* end access */
-                                ANendaccess(dlabels[i]);
-
-                                /* free buffer */
-                                if(ann_label != NULL)
-                                  {
-                                      HDfree(ann_label);
-                                      ann_label = NULL;
-                                  }
-                            }
-
-                      } /* end if labels */
-
-                  done_alabel: /* GOTO Label */
-                    /* cleanup */
-                    if(dlabels != NULL)
-                        HDfree(dlabels);
-
-                    if(an_handle != FAIL)
-                        ANend(an_handle);
-
-                    /* check for error during ANxxx processing */
-                    if (ret_value == FAIL)
-                        goto done; /* error so return */
                 } /* end annotation label processing */
-            
-                /* 
-                 * Label => 'long_name'
-                 */
-                if(labelbuf && (labelbuf[0] != '\0')) 
-                  {
-                      attrs[current_attr] =
-                          (NC_attr *) NC_new_attr(_HDF_LongName,
-                                                  NC_CHAR,
-                                                  HDstrlen((char *)labelbuf),
-                                                  (Void *) labelbuf);
 
-                      if (NULL == attrs[current_attr])
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-                      else
-                          attrs[current_attr++]->HDFtype = DFNT_CHAR;
-                  }
- 
-                /*
-                 * Units => 'units'
-                 */
-                if(unitbuf && (unitbuf[0] != '\0')) 
-                  {
-                      attrs[current_attr] = 
-                          (NC_attr *) NC_new_attr(_HDF_Units, 
-                                                  NC_CHAR, 
-                                                  HDstrlen((char *)unitbuf), 
-                                                  (Void *) unitbuf);
+                /* Convert label, units, format strings to attributes */
+                err_code = hdf_luf_to_attrs(
+                             (char*)labelbuf, (char*)unitbuf, (char *)formatbuf,
+                             &attrs[current_attr], &current_attr);
+                if (err_code != DFE_NONE)
+                {
+                    HGOTO_ERROR(err_code, FAIL);
+                }
 
-                      if (NULL == attrs[current_attr])
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-                      else
-                          attrs[current_attr++]->HDFtype = DFNT_CHAR;
-                  }
-            
-                /*
-                 * (Don't do format cuz HDF doesn't distinguish between C and Fortran
-                 * Actually, it seems HDF Format == netCDF Fortran Format)
-                 * Don't use 'C_format' or 'FORTRAN_format'
-                 * Format => 'format'
-                 */
-                if(formatbuf && (formatbuf[0] != '\0')) 
-                  {
-                      attrs[current_attr] =
-                          (NC_attr *) NC_new_attr(_HDF_Format,
-                                                  NC_CHAR,
-                                                  HDstrlen((char *)formatbuf),
-                                                  (Void *) formatbuf);
-
-                      if (NULL == attrs[current_attr])
-                        {
-                            HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                        }
-                      else
-                          attrs[current_attr++]->HDFtype = DFNT_CHAR;
-                  }
-
-            
                 /*
                  * Add the attributes to the variable
                  */ 
@@ -1580,29 +1701,27 @@ int32    temptype;
                 else
                     vars[current_var]->attrs = NULL;
             
-
-            
                 current_var++;
 
-                if(current_var == max_thangs) 
+                if(current_var == max_thangs)
                   {
-                      /* need to allocate more space */    
+                      /* need to allocate more space */
                       max_thangs *= 2;
-                
+
                       dims = (NC_dim **) HDrealloc((VOIDP) dims, sizeof(NC_dim *) * max_thangs);
-                      if(NULL == dims) 
+                      if(NULL == dims)
                         {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
-                
+
                       vars = (NC_var **) HDrealloc((VOIDP) vars, sizeof(NC_var *) * max_thangs);
-                      if(NULL == vars) 
+                      if(NULL == vars)
                         {
                             HGOTO_ERROR(DFE_NOSPACE, FAIL);
                         }
-                
+
                   }
-            
+
                 /*
                  * De-allocate temporary storage
                  */
@@ -1633,33 +1752,33 @@ int32    temptype;
                 HGOTO_ERROR(DFE_CANTENDACCESS, FAIL);
             }
         
-          /*
-           * Set up the structures in the proper form
-           */
-          if(current_dim)
-            {
-              handle->dims = NC_new_array(NC_DIMENSION, current_dim, (Void *) dims);
-              if (NULL == handle->dims)
-                {
-                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                }
-            }
-          else
-              handle->dims = NULL;
-        
-          if(current_var)
-            {
-              handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *) vars);
-              if (NULL == handle->vars)
-                {
-                    HGOTO_ERROR(DFE_INTERNAL, FAIL);
-                }
-            }
-          else
-              handle->vars = NULL;
-        
       } /* outermost for loop to loop between NDGs and SDGs */
 
+      /*
+       * Set up the structures in the proper form
+       */
+      if(current_dim)
+      {
+          handle->dims = NC_new_array(NC_DIMENSION, current_dim, (Void *) dims);
+          if (NULL == handle->dims)
+          {
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+          }
+      }
+      else
+          handle->dims = NULL;
+        
+      if(current_var)
+      {
+          handle->vars = NC_new_array(NC_VARIABLE, current_var, (Void *) vars);
+          if (NULL == handle->vars)
+          {
+              HGOTO_ERROR(DFE_INTERNAL, FAIL);
+          }
+      }
+      else
+          handle->vars = NULL;
+        
 done:
     if (ret_value == FAIL)
       { /* FAIL cleanup? */
@@ -1705,17 +1824,15 @@ done:
    SUCCEED / FAIL
  
 ******************************************************************************/
-int
-hdf_read_sds_cdf(XDR *xdrs, 
-                 NC **handlep)
+intn hdf_read_sds_cdf(XDR *xdrs, NC **handlep)
 {
     CONSTR(FUNC, "hdf_read_sds_cdf");        /* for HERROR */
-    int32  status;
-    NC     *handle = NULL;
+    intn  status;
+    NC    *handle = NULL;
     intn  ret_value = SUCCEED;
     
     /* 
-     * go through and treat each SDS as a separate varibiable 
+     * go through and treat each SDS as a separate variable 
      */
 
     /* 
