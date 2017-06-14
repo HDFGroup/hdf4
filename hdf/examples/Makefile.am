@@ -46,8 +46,8 @@ INSTALL_TOP_SCRIPT_FILES = run-all-ex.sh
 INSTALL_TOP_FILES = README
 
 # Where to install example files
-EXAMPLEDIR=${DESTDIR}$(prefix)/examples/c
-EXAMPLETOPDIR=${DESTDIR}$(prefix)/examples
+EXAMPLEDIR=${DESTDIR}$(exec_prefix)/share/hdf4_examples/c
+EXAMPLETOPDIR=${DESTDIR}$(exec_prefix)/share/hdf4_examples
 
 # How to build C programs using h4cc
 $(EXTRA_PROG): $(H4CC)
