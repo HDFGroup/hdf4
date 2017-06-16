@@ -98,7 +98,7 @@ else ()
 endif ()
 
 if (NOT DEFINED CTEST_SOURCE_NAME)
-  set (CTEST_SOURCE_NAME "app")
+  set (CTEST_SOURCE_NAME "hdf-4.2.13-pre1")
 endif ()
 
 set (CTEST_BINARY_NAME "build")
