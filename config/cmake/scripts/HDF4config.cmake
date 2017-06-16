@@ -170,9 +170,9 @@ endif ()
 ###################################################################
 
 if (WIN32)
-  include (${CTEST_SCRIPT_DIRECTORY}\\HDFoptions.cmake)
+  include (${CTEST_SCRIPT_DIRECTORY}\\HDF4options.cmake)
   include (${CTEST_SCRIPT_DIRECTORY}\\CTestScript.cmake)
 else ()
-  include (${CTEST_SCRIPT_DIRECTORY}/HDFoptions.cmake)
+  include (${CTEST_SCRIPT_DIRECTORY}/HDF4options.cmake)
   include (${CTEST_SCRIPT_DIRECTORY}/CTestScript.cmake)
 endif ()

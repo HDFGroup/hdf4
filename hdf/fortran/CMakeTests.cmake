@@ -111,4 +111,5 @@
 
   add_test (NAME fortestF COMMAND $<TARGET_FILE:fortestF>)
   set (passRegex "All Fortran Interface Tests Passed")
-  set_property (TEST fortestF PROPERTY PASS_REGULAR_EXPRESSION "${passRegex}")
+  set_tests_properties (fortestF PROPERTIES DEPENDS fortest PASS_REGULAR_EXPRESSION "${passRegex}")
+
