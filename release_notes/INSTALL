@@ -17,7 +17,7 @@ CONTENTS
 
 C and Fortran compilers. If a Fortran compiler is not available, use 
 the --disable-fortran configure flag to build the HDF4 C library and 
-utilties. For the list of the supported compilers see RELEASE.txt in the 
+utilities. For the list of the supported compilers see RELEASE.txt in the 
 release_notes directory.
 
 JPEG Distribution Release 6b or Later (libjpeg.a(so)). The source code can 
@@ -71,7 +71,7 @@ distribution.
 4. Unix and Mac OSX Configuration and Build
    =======================================
 
-See RELEASE.txt in the release_docs/ subdirectory for the list of platforms 
+See RELEASE.txt in the release_docs/ directory for the list of platforms 
 tested for this release.
 
 Before You Start:
@@ -164,7 +164,7 @@ To Install:
 6. Windows Configuration and Build
    =======================================
 
-See RELEASE.txt in the release_docs/ subdirectory for the list of platforms 
+See RELEASE.txt in the release_docs/ directory for the list of platforms 
 tested for this release.
 
 We now recommend that users build, test, and install HDF4 using CMake.
