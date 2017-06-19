@@ -182,6 +182,7 @@ tar2zip()
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -191,9 +192,7 @@ tar2zip()
 #
 # Returns 0 if successful; 1 otherwise
 #
-            # need function to create another temporary directory, extract the
-            # CTestScript.cmake, HDF4config.cmake, SZIP.tar.gz and ZLib.tar.gz,
-            # and then zip it.
+
 tar2cmakezip()
 {
     if [ $# -ne 3 ]; then
@@ -279,6 +278,7 @@ tar2cmakezip()
 #        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
 #        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
 #        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
 
 
 # Parameters:
@@ -288,10 +288,7 @@ tar2cmakezip()
 #
 # Returns 0 if successful; 1 otherwise
 #
-            # need function to create another temporary directory, extract the
-            # $tmpdir/$HDF4_VERS.tar into it, add (create) build-unix.sh,
-            # CTestScript.cmake, HDF4config.cmake, SZIP.tar.gz and ZLib.tar.gz,
-            # and then tar.gz it.
+
 tar2cmaketgz()
 {
     if [ $# -ne 3 ]; then
