@@ -56,11 +56,9 @@ JPEG, and Szip libraries used to build the binaries.
 HDF4 prebuilt utilties come with Szip compression. To use these binaries, 
 you must install the Szip Library on your system. 
 
-Precompiled Szip binaries can be downloaded from:
+To build the Szip library, follow the instructions in the Szip source code
+distribution, which can be obtain from:
 
-    ftp://ftp.hdfgroup.org/lib-external/szip/2.0/bin/
-
-Source code for the Szip library can be found on the same server:
     ftp://ftp.hdfgroup.org/lib-external/szip/2.1/src
 
 To build the Szip library, follow the instructions in the Szip source code 
