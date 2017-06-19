@@ -199,14 +199,11 @@ JAVA_APPEND_LIBRARY_DIRECTORIES(JAVA_AWT_INCLUDE_DIRECTORIES
   /usr/lib64/java/include
   /usr/local/lib/java/include
   /usr/lib/jvm/java/include
-  /usr/lib64/jvm/java/include
   /usr/lib/jvm/java-6-sun/include
   /usr/lib/jvm/java-1.5.0-sun/include
   /usr/lib/jvm/java-6-sun-1.6.0.00/include       # can this one be removed according to #8821 ? Alex
   /usr/lib/jvm/java-6-openjdk/include
   /usr/lib/jvm/java-7-openjdk/include
-  /usr/lib/jvm/java-7-openjdk-i386/include
-  /usr/lib/jvm/java-7-openjdk-amd64/include
   /usr/lib64/jvm/java-7-openjdk/include
   /usr/lib64/jvm/java-7-openjdk-amd64/include
   /usr/lib/jvm/java-8-openjdk-{libarch}/include  # ubuntu 15.10
@@ -348,5 +345,3 @@ set(JNI_INCLUDE_DIRS
   ${JAVA_AWT_INCLUDE_PATH}
 )
 
-message ("JNI_LIBRARIES=${JNI_LIBRARIES}")
-message ("JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
