@@ -33,6 +33,11 @@
 #
 #   James Laird, 2005-09-07
 #   Added the md5 method.
+#
+#   Larry Knox, 2017-06-16
+#   Added cmake-tgz and cmake-zip methods
+#   Replaced optional md5 method with automatic md5 checksum generation for
+#   all archives (from hdf5 release script)
 
 # Function definitions
 #
@@ -53,26 +58,35 @@ for compressing the resulting tar archive (if none are given then
 "tar md5" is assumed):
     tar		-- use tar and don't do any compressing.
     gzip	-- use gzip with "-9" and append ".gz" to the output name.
+    cmake-tgz   -- create a tar file using the gzip default level with a 
+                   build-unix.sh command file and all other CMake files needed 
+                   to build HDF4 source using CMake on unix machines.
     bzip2       -- use bzip2 with "-9" and append ".bz2" to the output name.
-    zip		-- convert all text files to DOS style and form a zip file for Windows use.
-    md5         -- produce a md5 checksum in addition to the archive.
+    zip		-- convert all text files to DOS style and form a zip file for 
+                   Windows use.
+    cmake-zip   -- convert all text files to DOS style and create a zip file 
+                   including cmake scripts and .bat files to build HDF4 source 
+                   using CMake on Windows.
+
+An md5 checksum is produced for each archive created and stored in the md5 file.
 
 Examples:
 
     $ bin/release -d /tmp
     /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.md5
     /tmp/hdf-4.2.11.tar
-    /tmp/hdf-4.2.11.tar.md5
 
     $ bin/release -d /tmp gzip
     /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.md5
     /tmp/hdf-4.2.11.tar.gz
 
-    $ bin/release -d /tmp tar gzip zip md5
+    $ bin/release -d /tmp tar gzip zip
     /tmp/hdf-4.2.11-RELEASE.txt
+    /tmp/hdf-4.2.11.md5
     /tmp/hdf-4.2.11.tar
     /tmp/hdf-4.2.11.tar.gz
-    /tmp/hdf-4.2.11.tar.md5
     /tmp/hdf-4.2.11.zip
 
 EOF
@@ -145,6 +159,176 @@ tar2zip()
     # cleanup
     rm -rf $ztmpdir
 }
+
+# Function name: tar2cmakezip
+# Convert the release tarball to a Windows zipball with files to run CMake build.
+#
+# Programmer: Larry Knox
+# Creation date: 2017-02-20
+#
+# Modifications
+#
+# Steps:
+# 1. untar the tarball in a temporary directory;
+#    Note: do this in a temporary directory to avoid changing
+#    the original source directory which may be around.
+# 2. add build-unix.sh script.
+# 3. add SZIP.tar.gz, ZLib.tar.gz and cmake files to top level directory.
+# 4. create gzipped tar file with these contents:
+#        build-unix.sh          script
+#        hdf4-<version>         source code directory extracted from tar file
+#        CTestScript.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
+#        HDF4config.cmake       cmake file copied from <hdf4 source code>/config/cmake/scripts
+#        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
+#        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+
+
+# Parameters:
+# $1 version
+# $2 release tarball
+# $3 output zipball file name
+#
+# Returns 0 if successful; 1 otherwise
+#
+
+tar2cmakezip()
+{
+    if [ $# -ne 3 ]; then
+        echo "usage: tar2cmakezip <tarfilename> <zipfilename>"
+        return 1
+    fi
+    cmziptmpdir=/tmp/cmziptmpdir
+    cmziptmpsubdir=$cmziptmpdir/CMake-$HDF4_VERS
+    mkdir -p $cmziptmpsubdir
+    version=$1
+    tarfile=$2
+    zipfile=$3
+
+    # step 1: untar tarball in cmgztmpdir
+    (cd $cmziptmpsubdir; tar xf -) < $tarfile
+    # sanity check
+    if [ ! -d $cmziptmpsubdir/$version ]; then
+        echo "untar did not create $cmziptmpsubdir/$version source dir"
+        # cleanup
+        rm -rf $cmziptmpdir
+        return 1
+    fi
+
+    # step 2: add batch file for building CMake on window
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2012 -C Release -V -O hdf4.log" > build-VS2012-32.bat; chmod 755 build-VS2012-32.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201264 -C Release -V -O hdf4.log" > build-VS2012-64.bat; chmod 755 build-VS2012-64.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2013 -C Release -V -O hdf4.log" > build-VS2013-32.bat; chmod 755 build-VS2013-32.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201364 -C Release -V -O hdf4.log" > build-VS2013-64.bat; chmod 755 build-VS2013-64.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS2015 -C Release -V -O hdf4.log" > build-VS2015-32.bat; chmod 755 build-VS2015-32.bat)
+    (cd $cmziptmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=VS201564 -C Release -V -O hdf4.log" > build-VS2015-64.bat; chmod 755 build-VS2015-32.bat)
+
+    # step 3: add SZIP.tar.gz, ZLib.tar.gz and cmake files
+    cp /mnt/scr1/pre-release/hdf4/CMake/SZip.tar.gz $cmziptmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/ZLib.tar.gz $cmziptmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG8d.tar.gz $cmziptmpsubdir
+    cp $cmziptmpsubdir/$version/config/cmake/scripts/CTestScript.cmake $cmziptmpsubdir
+    cp $cmziptmpsubdir/$version/config/cmake/scripts/HDF4config.cmake $cmziptmpsubdir
+    cp $cmziptmpsubdir/$version/config/cmake/scripts/HDF4options.cmake $cmziptmpsubdir
+
+    # step 4: convert text files
+    # There maybe a simpler way to do this.
+    # options used in unix2dos:
+    # -k   Keep the date stamp
+    # -q   quiet mode
+    # grep redirect output to /dev/null because -q or -s are not portable.
+    find $cmziptmpsubdir/$version | \
+        while read inf; do \
+            if file $inf | grep "$inf\: .*text" > /dev/null 2>&1 ; then \
+                unix2dos -q -k $inf; \
+            fi\
+        done
+    # step 3: make zipball
+    # -9 maximum compression
+    # -y Store symbolic links as such in the zip archive
+    # -r recursive
+    # -q quiet
+    (cd $cmziptmpdir; zip -9 -y -r -q CMake-$version.zip *)
+    mv $cmziptmpdir/CMake-$version.zip $zipfile
+
+    # cleanup
+    rm -rf $cmziptmpdir
+}
+
+# Function name: tar2cmaketgz
+# Convert the release tarball to a Windows zipball with files to run CMake build.
+#
+# Programmer: Larry Knox
+# Creation date: 2017-02-20
+#
+# Modifications
+#
+# Steps:
+# 1. untar the tarball in a temporary directory;
+#    Note: do this in a temporary directory to avoid changing
+#    the original source directory which may be around.
+# 2. add build-unix.sh script.
+# 3. add SZIP.tar.gz, ZLib.tar.gz and cmake files to top level directory.
+# 4. create gzipped tar file with these contents:
+#        build-unix.sh          script
+#        hdf4-<version>         source code directory extracted from tar file
+#        CTestScript.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
+#        HDF4config.cmake       cmake file copied from <hdf4 source code>/config/cmake/scripts
+#        HDF4options.cmake      cmake file copied from <hdf4 source code>/config/cmake/scripts
+#        SZip.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        ZLib.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+#        JPEG8d.tar.gz            copied from /mnt/scr1/pre-release/hdf4/CMake
+
+
+# Parameters:
+# $1 version
+# $2 release tarball
+# $3 output zipball file name
+#
+# Returns 0 if successful; 1 otherwise
+#
+
+tar2cmaketgz()
+{
+    if [ $# -ne 3 ]; then
+        echo "usage: tar2cmaketgz <tarfilename> <tgzfilename>"
+        return 1
+    fi
+    cmgztmpdir=/tmp/cmgztmpdir$$
+    cmgztmpsubdir=$cmgztmpdir/CMake-$HDF4_VERS
+    mkdir -p $cmgztmpsubdir
+    version=$1
+    tarfile=$2
+    tgzfile=$3
+
+    # step 1: untar tarball in cmgztmpdir
+    (cd $cmgztmpsubdir; tar xf -) < $tarfile
+    # sanity check
+    if [ ! -d $cmgztmpsubdir/$version ]; then
+        echo "untar did not create $cmgztmpdir/$version source dir"
+        # cleanup
+        rm -rf $cmgztmpdir
+        return 1
+    fi
+
+
+    # step 2: add build-unix.sh script
+    (cd $cmgztmpsubdir; echo "ctest -S HDF4config.cmake,BUILD_GENERATOR=Unix -C Release -V -O hdf4.log" > build-unix.sh; chmod 755 build-unix.sh)
+
+    # step 3: add SZIP.tar.gz, ZLib.tar.gz and cmake files
+    cp /mnt/scr1/pre-release/hdf4/CMake/SZip.tar.gz $cmgztmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/ZLib.tar.gz $cmgztmpsubdir
+    cp /mnt/scr1/pre-release/hdf4/CMake/JPEG8d.tar.gz $cmgztmpsubdir
+    cp $cmgztmpsubdir/$version/config/cmake/scripts/CTestScript.cmake $cmgztmpsubdir
+    cp $cmgztmpsubdir/$version/config/cmake/scripts/HDF4config.cmake $cmgztmpsubdir
+    cp $cmgztmpsubdir/$version/config/cmake/scripts/HDF4options.cmake $cmgztmpsubdir
+    tar czf $DEST/CMake-$HDF4_VERS.tar.gz -C $cmgztmpdir . || exit 1
+
+    # cleanup
+    rm -rf $cmgztmpdir
+}
+
 
 # This command must be run at the top level of the hdf4 source directory.
 # Verify this requirement.
@@ -280,27 +464,39 @@ test "$verbose" && echo "   Running tar..." 1>&2
 )
 
 # Compress
+MD5file=$HDF4_VERS.md5
+cp /dev/null $DEST/$MD5file
 for comp in $methods; do
     case $comp in
 	tar)
 	    cp -p $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.tar
+            (cd $DEST; md5sum $HDF4_VERS.tar >> $MD5file)
 	    ;;
 	gzip)
 	    test "$verbose" && echo "   Running gzip..." 1>&2
 	    gzip -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.gz
+            (cd $DEST; md5sum $HDF4_VERS.tar.gz >> $MD5file)
 	    ;;
+        cmake-tgz)
+            test "$verbose" && echo "   Creating CMake tar.gz file..." 1>&2
+            tar2cmaketgz $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.tar.gz 1>&2
+            (cd $DEST; md5sum CMake-$HDF4_VERS.tar.gz >> $MD5file)
+            ;;
 	bzip2)
 	    test "$verbose" && echo "   Running bzip2..." 1>&2
 	    bzip2 -9 <$tmpdir/$HDF4_VERS.tar >$DEST/$HDF4_VERS.tar.bz2
+            (cd $DEST; md5sum $HDF4_VERS.tar.bz2 >> $MD5file)
 	    ;;
 	zip)
 	    test "$verbose" && echo "   Creating zip ball..." 1>&2
 	    tar2zip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/$HDF4_VERS.zip 1>&2
+            (cd $DEST; md5sum $HDF4_VERS.zip >> $MD5file)
 	    ;;
-	md5)
-	    test "$verbose" && echo "   Creating checksum..." 1>&2
-	    (cd $tmpdir; md5sum $HDF4_VERS.tar ) > $DEST/$HDF4_VERS.tar.md5
-	    ;;
+        cmake-zip)
+            test "$verbose" && echo "   Creating CMake-zip ball..." 1>&2
+            tar2cmakezip $HDF4_VERS $tmpdir/$HDF4_VERS.tar $DEST/CMake-$HDF4_VERS.zip 1>&2
+            (cd $DEST; md5sum CMake-$HDF4_VERS.zip >> $MD5file)
+            ;;
 	*)
 	    echo "***Error*** Unknown method $comp"
 	    exit 1

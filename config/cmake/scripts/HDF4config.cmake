@@ -19,21 +19,27 @@ cmake_minimum_required (VERSION 3.2.2 FATAL_ERROR)
 #            VS201264 * Visual Studio 11 2012 Win64
 #
 #     INSTALLDIR  -  root folder where hdf is installed
-#                 -  windowsdefault: C:/Program Files/HDF_Group/HDF/4.2.12
-#                 -  linux default:  ./HDF_Group/HDF/4.2.12
+#                 -  windowsdefault: C:/Program Files/HDF_Group/HDF/4.2.13
+#                 -  linux default:  ./HDF_Group/HDF/4.2.13
 #     CTEST_CONFIGURATION_TYPE  - Release, Debug, etc - default: Release
 #     CTEST_SOURCE_NAME  -  source folder - default: hdf4
+#     STATIC_ONLY  -  Build/use static libraries
+#     FORTRAN_LIBRARIES -  Build/use fortran libraries
+#     NO_MAC_FORTRAN  - Yes to be SHARED on a Mac
 ##############################################################################
 
-set (CTEST_SOURCE_VERSION 4.2.12)
-set (CTEST_SOURCE_VERSEXT "")
+set (CTEST_SOURCE_VERSION 4.2.13)
+set (CTEST_SOURCE_VERSEXT "-pre1")
 
 ##############################################################################
 # handle input parameters to script.
 #BUILD_GENERATOR - which CMake generator to use, required
-#INSTALLDIR - HDF-4.2.12 root folder
+#INSTALLDIR - HDF-4.2.13 root folder
 #CTEST_CONFIGURATION_TYPE - Release, Debug, RelWithDebInfo
-#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.12
+#CTEST_SOURCE_NAME - name of source folder; HDF-4.2.13
+#STATIC_ONLY - Default is YES
+#FORTRAN_LIBRARIES - Default is NO
+#NO_MAC_FORTRAN - set to TRUE to allow shared libs on a Mac
 if (DEFINED CTEST_SCRIPT_ARG)
   # transform ctest script arguments of the form
   # script.ctest,var1=value1,var2=value2
@@ -86,19 +92,18 @@ if (NOT DEFINED INSTALLDIR)
   endif ()
 endif ()
 
-if (WIN32)
-  set (ENV{HDF4_DIR} "${INSTALLDIR}/cmake")
-  set (CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_SOURCE_NAME}")
-  set (CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}\\${CTEST_BINARY_NAME}")
-else ()
-  set (ENV{HDF4_DIR} "${INSTALLDIR}/share/cmake")
-  set (ENV{LD_LIBRARY_PATH} "${INSTALLDIR}/lib")
-  set (CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}")
-  set (CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/${CTEST_BINARY_NAME}")
-endif ()
-
 if (NOT DEFINED CTEST_SOURCE_NAME)
-  set (CTEST_SOURCE_NAME "app")
+  set (CTEST_SOURCE_NAME "hdf-${CTEST_SOURCE_VERSION}${CTEST_SOURCE_VERSEXT}")
+endif ()
+if (NOT DEFINED STATIC_ONLY)
+  set (STATICONLYLIBRARIES "YES")
+else ()
+  set (STATICONLYLIBRARIES "NO")
+endif ()
+if (NOT DEFINED FORTRAN_LIBRARIES)
+  set (FORTRANLIBRARIES "NO")
+else ()
+  set(FORTRANLIBRARIES "YES")
 endif ()
 
 set (CTEST_BINARY_NAME "build")
@@ -166,6 +171,22 @@ else ()
     set (ENV{CFLAGS} "${RR_WARNINGS_C} ${RR_FLAGS_C}")
     set (ENV{CXXFLAGS} "${RR_WARNINGS_CXX} ${RR_FLAGS_CXX}")
   endif ()
+endif ()
+###################################################################
+
+###################################################################
+if (${STATICONLYLIBRARIES})
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DBUILD_SHARED_LIBS:BOOL=OFF")
+  #########       Following describes computer           ############
+  ## following is optional to describe build                       ##
+  set (SITE_BUILDNAME_SUFFIX "STATIC")
+endif ()
+###################################################################
+####      fortran       ####
+if (${FORTRANLIBRARIES})
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=ON")
+else ()
+  set (ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_BUILD_FORTRAN:BOOL=OFF")
 endif ()
 ###################################################################
 
