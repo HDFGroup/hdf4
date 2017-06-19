@@ -163,11 +163,10 @@ o  Several Fortran examples print "^@" when displaying strings (for example,
    doesn't know the length of the strings passed from the C library.
    EIP - 2015-01-11, HDFFR-1477
 
-o  CMake builds in Windows uses the same pre-generated ncgen*.[ch] files from
-   the yacc/lex input files. The generated file, ncgenyy.c, uses the <unistd.h>
-   header file that Windows does not support.  This must be blocked out in
-   order for Windows to use it.
-   AKC 2014-02-03, HDFFR-1424
+o  CMake fails to set the full path to the install location on Windows:
+    The configuration file for examples, HDF4_Examples.cmake, must be updated
+    with the correct value by editing the file or using the INSTALLDIR option..
+   ADB - 2014/02/03
 
 o  CMake "make install" fails installing the tools:
     Use CPack to create an install package.

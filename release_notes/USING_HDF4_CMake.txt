@@ -37,7 +37,7 @@ I. Preconditions
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version
-      of 3.1.0.
+      of 3.2.2.
 
    2. You have installed the HDF4 library built with CMake, by executing
       the HDF Install Utility (the *.exe file in the binary package for
