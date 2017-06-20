@@ -101,14 +101,14 @@ Build, Test and Install HDF4 on Cygwin
 
 Notes: Use the configure command in the top level HDF4 directory.
 
-1. HDF4 Source code and precompiled binaries
+1. HDF4 Source code
      
-   HDF provides "tar source ball" and precompiled binaries from 
-   the HDF ftp server (ftp.hdfgroup.org) in the directories:
+   HDF provides "tar source ball" from the HDF ftp server in the directory:
 
          ftp://ftp.hdfgroup.org/HDF/HDF_Current/src
-         ftp://ftp.hdfgroup.org/HDF/HDF_Current/bin 
-  
+
+   Please note that HDF no longer provides precompiled binaries for Cygwin.
+
 2. Unpacking the distribution
 
    gzip -cd <HDF-X.Y.Z.tar.gz>| tar xvf -
