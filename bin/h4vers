@@ -190,10 +190,10 @@ die "unable to read file: $file\n" unless -r $file;
 #die "unable to read file: $LT_VERS\n" unless -r $file;
 # config/cmake/scripts/HDF5config.cmake
 my $HDF4CONFIGCMAKE = $file;
-$HDF4CONFIGCMAKE =~ s/[^\/]*$/..\/config\/cmake\/scripts\/HDF4config.cmake/;
+$HDF4CONFIGCMAKE =~ s/[^\/]*$/..\/..\/config\/cmake\/scripts\/HDF4config.cmake/;
 die "unable to read file: $HDF4CONFIGCMAKE\n" unless -r $file;
 my $H4_JAVA = $file;
-$H4_JAVA =~ s/[^\/]*$/..\/java\/src\/hdf\/hdflib\/HDFLibrary.java/;
+$H4_JAVA =~ s/[^\/]*$/..\/..\/java\/src\/hdf\/hdflib\/HDFLibrary.java/;
 die "unable to read file: $H4_JAVA\n" unless -r $file;
 # README.txt
 my $README = $file;
@@ -266,6 +266,7 @@ if ($set) {
   $CONFIGURE = "";
   $MANHDF1 = "";
   $HDF4CONFIGCMAKE = "";
+  $H4_JAVA = "";
   @newver = @curver;
 }
 
@@ -383,6 +384,7 @@ if ($MANHDF1) {
   open FILE, $MANHDF1 or die "$MANHDF1: $!\n";
   my @contents = <FILE>;
   close FILE;
+
   my @months = ('January', 'February', 'March', 'April', 'May', 'June', 'July',
                 'August', 'September', 'October', 'November', 'December');
   my @date = (localtime(time));
@@ -420,6 +422,35 @@ if ($MANHDF1) {
     exit 1;
   }
 }
+
+# helper function to read the file for updating
+# config/cmake/scripts/HDF4Config.cmake and HDFLibrary.java files.
+# The version string in that file is not at the top, so the string replacement
+# is not for the first line, and reading/writing the entire file as one string
+# facilitates the substring replacement.
+sub read_file {
+   my ($filename) = @_;
+
+    open my $in, $filename or die "Could not open '$filename' for reading $!";
+    local $/ = undef;
+    my $all = <$in>;
+    close $in;
+
+    return $all;
+}
+
+# helper function to write the file for updating 
+# config/cmake/scripts/HDF4config.cmake and HDFLibrary.java files.
+sub write_file {
+    my ($filename, $content) = @_;
+
+    open my $out, ">$filename" or die "Could not open '$filename' for writing $!";;
+    print $out $content;
+    close $out;
+
+    return;
+}
+
 
 sub gen_configure {
   my ($name, $conf) = @_;
