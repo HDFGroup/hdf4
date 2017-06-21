@@ -215,7 +215,7 @@ public class HDFLibrary implements java.io.Serializable
 
     private final static Logger log = LoggerFactory.getLogger(HDFLibrary.class);
 
-    private final static String JHI_VERSION= "4.2.13";
+    private final static String JHI_VERSION = "4.2.13";
 
     public final static String HDFPATH_PROPERTY_KEY = "hdf.hdflib.HDFLibrary.hdflib";
 
