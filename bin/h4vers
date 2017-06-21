@@ -170,10 +170,11 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "File array is ", @files;
 
 # Determine file to use as hfile.h, README.txt,
-# release_notes/RELEASE.txt, configure.in, windows/hdf/src/hfile.h.
+# release_notes/RELEASE.txt, configure.in, windows/hdf/src/hfile.h,
+# and config/cmake/scripts/HDF4config.cmake.
 # The README.txt, release_notes/RELEASE.txt, configure.ac, 
-# and windows/hdf/src/hfile.h files are always in the directory 
-# two levels above hfile.h.
+# windows/hdf/src/hfile.h and config/cmake/scripts/HDF4config.cmake
+# files are always in the directory two levels above hfile.h.
 unless ($file) {
   for (@files) {
     ($file=$_,last) if -f $_;
@@ -187,6 +188,13 @@ die "unable to read file: $file\n" unless -r $file;
 #my $LT_VERS = $file;
 #$LT_VERS =~ s/[^\/]*$/..\/config\/lt_vers.am/;
 #die "unable to read file: $LT_VERS\n" unless -r $file;
+# config/cmake/scripts/HDF5config.cmake
+my $HDF4CONFIGCMAKE = $file;
+$HDF4CONFIGCMAKE =~ s/[^\/]*$/..\/config\/cmake\/scripts\/HDF4config.cmake/;
+die "unable to read file: $HDF4CONFIGCMAKE\n" unless -r $file;
+my $H4_JAVA = $file;
+$H4_JAVA =~ s/[^\/]*$/..\/java\/src\/hdf\/hdflib\/HDFLibrary.java/;
+die "unable to read file: $H4_JAVA\n" unless -r $file;
 # README.txt
 my $README = $file;
 $README =~ s/[^\/]*$/..\/..\/README.txt/;
@@ -257,6 +265,7 @@ if ($set) {
   $RELEASE = "";
   $CONFIGURE = "";
   $MANHDF1 = "";
+  $HDF4CONFIGCMAKE = "";
   @newver = @curver;
 }
 
@@ -302,6 +311,33 @@ if ($newver[0]!=$curver[0] ||
 #  print FILE $contentsy;
 #  close FILE;
 #}
+
+# Update the config/cmake/scripts/HDF4config.cmake file
+if ($HDF4CONFIGCMAKE) {
+  my $data = read_file($HDF4CONFIGCMAKE);
+#  my $sub_rel_ver_str = "";
+  my $sub_rel_ver_str = (
+     $newver[3] eq ""
+     ? sprintf("\"%s\"", "")
+     : sprintf("\"%s\"", "-".$newver[3].", currently under development")
+     );
+  my $version_string = sprintf("\"%d.%d.%d\"", @newver[0,1,2]);
+
+  $data =~ s/set \(CTEST_SOURCE_VERSION .*\)/set \(CTEST_SOURCE_VERSION $version_string\)/;
+  $data =~ s/set \(CTEST_SOURCE_VERSEXT .*\)/set \(CTEST_SOURCE_VERSEXT $sub_rel_ver_str\)/;
+
+  write_file($HDF4CONFIGCMAKE, $data);
+}
+
+# Update the java/src/hdf/hdf5lib/HDFLibrary.java file
+if ($H4_JAVA) {
+  my $data = read_file($H4_JAVA);
+  my $version_string = sprintf("%d.%d.%d", @newver[0,1,2]);
+
+  $data =~ s/    public final static String JHI_VERSION = "\d*.\d*.\d*";/    public final static String JHI_VERSION = "$version_string";/;
+
+  write_file($H4_JAVA, $data);
+}
 
 # Update the README file
 if ($README) {
