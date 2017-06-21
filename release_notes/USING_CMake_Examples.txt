@@ -22,7 +22,7 @@ I. Preconditions
 
    1. We suggest you obtain the latest CMake for windows from the Kitware
       web site. The HDF 4.2.x product requires a minimum CMake version
-      of 3.1.0.
+      of 3.2.2.
 
    2. You have installed the HDF4 library built with CMake by executing
       the HDF Install Utility (the *.exe or *.msi file in the binary package for
@@ -39,21 +39,27 @@ II. Building HDF4 Examples with CMake
 Files in the HDF4 install directory:
        HDF4Examples folder
        HDF4_Examples.cmake
+       HDF4_Examples_options.cmake
+       CTestScript.cmake
 
 Default installation process:
        Create a directory to run the examples, i.e. \test_hdf4.
        Copy HDF4Examples folder to this directory.
        Copy HDF4_Examples.cmake to this directory.
+       Copy HDF4_Examples_options.cmake to this directory.
+       Copy CTestScript.cmake to this directory.
        The default source folder is defined as "HDF4Examples". It can be changed
            with the CTEST_SOURCE_NAME script option.
        The default installation folder is defined for the platform.
            It can be changed with the INSTALLDIR script option.
+           (Note: Windows has issues with spaces and paths -The path will need to
+            be set correctly.)
        The default ctest configuration is defined as "Release". It can be changed
            with the CTEST_CONFIGURATION_TYPE script option. Note that this must
            be the same as the value used with the -C command line option.
        The default build configuration is defined to build and use static libraries.
            Shared libraries can be used with the STATICLIBRARIES script option set to "NO".
-       Other options can be changed by editing the HDF4_Examples.cmake file.
+       Other options can be changed by editing the HDF4_Examples_options.cmake file.
 
        If the defaults are okay, execute from this directory:
            ctest -S HDF4_Examples.cmake -C Release -V -O test.log
