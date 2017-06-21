@@ -11,12 +11,6 @@
  * help@hdfgroup.org.                                                        *
  ****************************************************************************/
 
-/*
- *  For details of the HDF libraries, see the HDF Documentation at:
- *    http://hdfgroup.org/HDF/doc/
- *
- */
-
 #include <jni.h>
 
 #ifndef _Included_h4jni
