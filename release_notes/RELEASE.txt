@@ -1,24 +1,20 @@
-HDF version 4.2.13-pre1 released on 2017-06-14
+HDF version 4.2.13-pre2 released on 2017-06-20
 ====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.12 and HDF 4.2.13-pre1.
+This document describes the differences between HDF 4.2.12 and HDF 4.2.13-pre2.
 It is written for people who are familiar with previous releases of HDF
-and wish to migrate to HDF 4.2.13-pre1.
+and wish to migrate to HDF 4.2.13-pre2.
 
-The HDF 4.2.12 documentation can be found on the The HDF Group's website
+The HDF 4.2.13 documentation can be found on the The HDF Group's website
 at:
     https://www.hdfgroup.org/release4/doc/
 
 First-time HDF users are encouraged to read the HDF FAQ, which can be
 reached from the HDF product home page:
 
-    https://hdfgroup.org/products/hdf4/
-
-If you have any questions or comments, please see the HDF Support page:
-
-    https://hdfgroup.org/services/support.html
+    https://support.hdfgroup.org/products/hdf4/
 
 CONTENTS
 

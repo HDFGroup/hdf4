@@ -1,4 +1,4 @@
-HDF version 4.2.13-pre1 released on 2017-06-14
+HDF version 4.2.13-pre2 released on 2017-06-20
 ===================================================
 
 Information about HDF
@@ -34,6 +34,8 @@ Source Distribution Layout
              information on each package. 
 
    java   -- The Java HDF JNI library
+
+   m4     -- Autotools macros and libtool files for building with autotools.
 
    mfhdf  -- The netCDF(mfhdf) part of the HDF/mfhdf distribution and
              additional HDF utilities, such as hdp, hrepack, hdfimport, etc.
