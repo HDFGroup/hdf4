@@ -6,17 +6,17 @@ Information about HDF
 
  The HDF (or HDF4) home page is located here:
 
-    https://www.hdfgroup.org/products/hdf4/index.html  
+    https://support.hdfgroup.org/products/hdf4/
 
  The most recent version of the software can be obtained from:
 
-    https://www.hdfgroup.org/release4/obtain.html
+    https://support.hdfgroup.org/release4/obtain.html
 
  The HDF documentation can be found in:
 
-    https://www.hdfgroup.org/release4/doc.html 
+    https://support.hdfgroup.org/release4/doc/index.html
 
-     
+
 Source Distribution Layout
 --------------------------
 
@@ -66,6 +66,6 @@ System Requirements
 
 Configuring/Testing/Installing 
 ------------------------------
- See the INSTALL file for instructions on configuring, testing, 
+ See the file release_notes/INSTALL for instructions on configuring, testing,
  and installing this software on Unix and non-UNIX systems.
 
