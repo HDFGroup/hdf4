@@ -48,7 +48,7 @@ New features and changes
 
 Support for new platforms and compilers
 =======================================
-    - None
+    - Support for macOS Sierra 10.12 was added (LK - 2017/06/23, HDFFR-1558)
 
 
 Bugs fixed since HDF 4.2.12
@@ -59,7 +59,12 @@ Bugs fixed since HDF 4.2.12
 
    Library
    =========
-    - None
+    - Several memory leaks occurred in an SD API internal function.  These leaks
+      are now removed.
+      (BMR - 2017/06/23, HDFFR-1534)
+    - Memory leaks occurred because memory returned by HDstrdup were not freed.
+      This is now fixed.
+      (BMR - 2017/06/23, HDFFR-1536)
 
    Utilities
    =========
@@ -68,7 +73,9 @@ Bugs fixed since HDF 4.2.12
 
 Documentation
 =============
-    - None
+    - Minor improvements were made to the User's Guide, Reference Manual, and
+      Specification and Developer’s Guide.
+      (BMR - 2017/06/23)
 
 
 Platforms tested
