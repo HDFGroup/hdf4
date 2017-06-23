@@ -121,9 +121,6 @@ This version has been tested in the following platforms:
 
     Windows 10 x64                Visual Studio 2015 w/ Intel Fortran 16 (cmake)
 
-   Mac OS X 10.8.5, Darwin, 12.6.0   Apple clang version 5.1 from Xcode 5.1
-   12.6.0, x86_64                    gfortran GNU Fortran (GCC) 4.8.2
-   (swallow,kite)                    Intel icc and ifort Version 15.0.3
 
    Mac OS X 10.9.5, Darwin, 13.4.0   Apple clang version 6.0 from Xcode 6.2
    13.4.0, x86_64                    gfortran GNU Fortran (GCC) 4.9.2
@@ -133,10 +130,14 @@ This version has been tested in the following platforms:
    14.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 4.9.2
    (osx1010dev)                      Intel icc and ifort version 15.0.3
 
-   Mac OS X 10.11.5, Darwin, 15.4.0  Apple clang version 7.3 from Xcode 7.3
+   Mac OS X 10.11.5, Darwin, 15.6.0  Apple clang version 7.3 from Xcode 7.3
    15.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 5.2.0
    (osx1010dev)                      Intel icc and ifort version 15.0.3
 
+   Mac OS X 10.12.5, Darwin, 16.6.0  Apple clang version 8.1.0 from Xcode 8.3
+   (kite)                            gfortran GNU Fortran (GCC) 7.1.0
+                                     Intel icc and ifort version 17.0.2
+                                  
    Debian7.5.0 3.2.0-4-amd64
    #1 SMP Debian 3.2.51-1, x86_64 GNU/Linux
                                      gcc (Debian 4.7.2-5) 4.7.2
