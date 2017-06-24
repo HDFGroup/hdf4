@@ -108,20 +108,20 @@ This version has been tested in the following platforms:
 
 
    Mac OS X 10.9.5, Darwin, 13.4.0   Apple clang version 6.0 from Xcode 6.2
-   13.4.0, x86_64                    gfortran GNU Fortran (GCC) 4.9.2
+   x86_64                            gfortran GNU Fortran (GCC) 4.9.2
    (wren,quail)                      Intel icc and ifort Version 15.0.3
 
    Mac OS X 10.10.5, Darwin, 14.5.0  Apple clang version 6.1 from Xcode 7.0
-   14.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 4.9.2
+   x86_64                            gfortran GNU Fortran (GCC) 4.9.2
    (osx1010dev)                      Intel icc and ifort version 15.0.3
 
    Mac OS X 10.11.5, Darwin, 15.6.0  Apple clang version 7.3 from Xcode 7.3
-   15.5.0, x86_64 666666             gfortran GNU Fortran (GCC) 5.2.0
+   x86_64                            gfortran GNU Fortran (GCC) 5.2.0
    (osx1010dev)                      Intel icc and ifort version 15.0.3
 
-   Mac OS X 10.12.5, Darwin, 16.6.0  Apple clang version 8.1.0 from Xcode 8.3
-   (kite)                            gfortran GNU Fortran (GCC) 7.1.0
-                                     Intel icc and ifort version 17.0.2
+   macOS Sierra 10.12.5, Darwin,     Apple clang version 8.1.0 from Xcode 8.3
+   16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.1.0
+   (kite)                            Intel icc and ifort version 17.0.2
                                   
    Debian 8.6.0 3.16.0-4-amd64
    #1 SMP Debian 3.16.43-2, x86_64 GNU/Linux
