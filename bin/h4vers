@@ -170,10 +170,11 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "File array is ", @files;
 
 # Determine file to use as hfile.h, README.txt,
-# release_notes/RELEASE.txt, configure.in, windows/hdf/src/hfile.h.
-# The README.txt, release_notes/RELEASE.txt, configure.ac, 
-# and windows/hdf/src/hfile.h files are always in the directory 
-# two levels above hfile.h.
+# release_notes/RELEASE.txt, configure.in,
+# and config/cmake/scripts/HDF4config.cmake.
+# The paths to README.txt, release_notes/RELEASE.txt, configure.ac, 
+# and config/cmake/scripts/HDF4config.cmake
+# files are always from the directory two levels above hfile.h.
 unless ($file) {
   for (@files) {
     ($file=$_,last) if -f $_;
@@ -187,6 +188,13 @@ die "unable to read file: $file\n" unless -r $file;
 #my $LT_VERS = $file;
 #$LT_VERS =~ s/[^\/]*$/..\/config\/lt_vers.am/;
 #die "unable to read file: $LT_VERS\n" unless -r $file;
+# config/cmake/scripts/HDF5config.cmake
+my $HDF4CONFIGCMAKE = $file;
+$HDF4CONFIGCMAKE =~ s/[^\/]*$/..\/..\/config\/cmake\/scripts\/HDF4config.cmake/;
+die "unable to read file: $HDF4CONFIGCMAKE\n" unless -r $file;
+my $H4_JAVA = $file;
+$H4_JAVA =~ s/[^\/]*$/..\/..\/java\/src\/hdf\/hdflib\/HDFLibrary.java/;
+die "unable to read file: $H4_JAVA\n" unless -r $file;
 # README.txt
 my $README = $file;
 $README =~ s/[^\/]*$/..\/..\/README.txt/;
@@ -257,6 +265,8 @@ if ($set) {
   $RELEASE = "";
   $CONFIGURE = "";
   $MANHDF1 = "";
+  $HDF4CONFIGCMAKE = "";
+  $H4_JAVA = "";
   @newver = @curver;
 }
 
@@ -303,6 +313,33 @@ if ($newver[0]!=$curver[0] ||
 #  close FILE;
 #}
 
+# Update the config/cmake/scripts/HDF4config.cmake file
+if ($HDF4CONFIGCMAKE) {
+  my $data = read_file($HDF4CONFIGCMAKE);
+#  my $sub_rel_ver_str = "";
+  my $sub_rel_ver_str = (
+     $newver[3] eq ""
+     ? sprintf("\"%s\"", "")
+     : sprintf("\"%s\"", "-".$newver[3].", currently under development")
+     );
+  my $version_string = sprintf("\"%d.%d.%d\"", @newver[0,1,2]);
+
+  $data =~ s/set \(CTEST_SOURCE_VERSION .*\)/set \(CTEST_SOURCE_VERSION $version_string\)/;
+  $data =~ s/set \(CTEST_SOURCE_VERSEXT .*\)/set \(CTEST_SOURCE_VERSEXT $sub_rel_ver_str\)/;
+
+  write_file($HDF4CONFIGCMAKE, $data);
+}
+
+# Update the java/src/hdf/hdf5lib/HDFLibrary.java file
+if ($H4_JAVA) {
+  my $data = read_file($H4_JAVA);
+  my $version_string = sprintf("%d.%d.%d", @newver[0,1,2]);
+
+  $data =~ s/    public final static String JHI_VERSION = "\d*.\d*.\d*";/    public final static String JHI_VERSION = "$version_string";/;
+
+  write_file($H4_JAVA, $data);
+}
+
 # Update the README file
 if ($README) {
   open FILE, $README or die "$README: $!\n";
@@ -347,6 +384,7 @@ if ($MANHDF1) {
   open FILE, $MANHDF1 or die "$MANHDF1: $!\n";
   my @contents = <FILE>;
   close FILE;
+
   my @months = ('January', 'February', 'March', 'April', 'May', 'June', 'July',
                 'August', 'September', 'October', 'November', 'December');
   my @date = (localtime(time));
@@ -384,6 +422,37 @@ if ($MANHDF1) {
     exit 1;
   }
 }
+
+# helper function to read the file for updating
+# config/cmake/scripts/HDF4Config.cmake and 
+# java/src/hdf/hdf5lib/HDFLibrary.java files.
+# The version string in those files is not at the top, so the string replacement
+# is not for the first line, and reading/writing the entire file as one string
+# facilitates the substring replacement.
+sub read_file {
+   my ($filename) = @_;
+
+    open my $in, $filename or die "Could not open '$filename' for reading $!";
+    local $/ = undef;
+    my $all = <$in>;
+    close $in;
+
+    return $all;
+}
+
+# helper function to write the file for updating 
+# config/cmake/scripts/HDF4config.cmake and 
+# java/src/hdf/hdf5lib/HDFLibrary.java files.
+sub write_file {
+    my ($filename, $content) = @_;
+
+    open my $out, ">$filename" or die "Could not open '$filename' for writing $!";;
+    print $out $content;
+    close $out;
+
+    return;
+}
+
 
 sub gen_configure {
   my ($name, $conf) = @_;
