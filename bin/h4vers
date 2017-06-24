@@ -170,11 +170,11 @@ die "mutually exclusive options given\n" if $set && $inc;
 #print "File array is ", @files;
 
 # Determine file to use as hfile.h, README.txt,
-# release_notes/RELEASE.txt, configure.in, windows/hdf/src/hfile.h,
+# release_notes/RELEASE.txt, configure.in,
 # and config/cmake/scripts/HDF4config.cmake.
-# The README.txt, release_notes/RELEASE.txt, configure.ac, 
-# windows/hdf/src/hfile.h and config/cmake/scripts/HDF4config.cmake
-# files are always in the directory two levels above hfile.h.
+# The paths to README.txt, release_notes/RELEASE.txt, configure.ac, 
+# and config/cmake/scripts/HDF4config.cmake
+# files are always from the directory two levels above hfile.h.
 unless ($file) {
   for (@files) {
     ($file=$_,last) if -f $_;
