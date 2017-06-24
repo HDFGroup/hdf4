@@ -37,26 +37,14 @@ New features and changes
     - CMake
       CMake minimum version is 3.2.2
 
-   Library
-   =========
-    - None
-
-   Utilities
-   =========
-    - None
-
 
 Support for new platforms and compilers
 =======================================
-    - Support for macOS Sierra 10.12 was added (LK - 2017/06/23, HDFFR-1558)
+    - Support for macOS Sierra 10.12.5 was added (LK - 2017/06/23, HDFFR-1558)
 
 
 Bugs fixed since HDF 4.2.12
 =========================
-   Configuration
-   =============
-    - None
-
    Library
    =========
     - Several memory leaks occurred in an SD API internal function.  These leaks
@@ -66,9 +54,6 @@ Bugs fixed since HDF 4.2.12
       This is now fixed.
       (BMR - 2017/06/23, HDFFR-1536)
 
-   Utilities
-   =========
-    - None
 
 
 Documentation
