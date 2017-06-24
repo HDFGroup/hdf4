@@ -1,17 +1,18 @@
 C****************************************************************************
 C* $Id$                       *
 C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-C* Copyright by The HDF Group.                                               *
-C* Copyright by the Board of Trustees of the University of Illinois.         *
-C* All rights reserved.                                                      *
-C*                                                                           *
-C* This file is part of HDF.  The full HDF copyright notice, including       *
-C* terms governing use, modification, and redistribution, is contained in    *
-C* the files COPYING and Copyright.html.  COPYING can be found at the root   *
-C* of the source code distribution tree; Copyright.html can be found at      *
-C* http://hdfgroup.org/products/hdf4/doc/Copyright.html.  If you do not have *
-C* access to either file, you may request a copy from help@hdfgroup.org.     *
-C* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+C * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+C  Copyright by The HDF Group.                                               *
+C  Copyright by the Board of Trustees of the University of Illinois.         *
+C  All rights reserved.                                                      *
+C                                                                            *
+C  This file is part of HDF.  The full HDF copyright notice, including       *
+C  terms governing use, modification, and redistribution, is contained in    *
+C  the COPYING file, which can be found at the root of the source code       *
+C  distribution tree, or in https://support.hdfgroup.org/ftp/HDF/releases/.  *
+C  If you do not have access to either file, you may request a copy from     *
+C  help@hdfgroup.org.                                                        *
+C * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
       subroutine tstubsf (nerrors)
       implicit none
