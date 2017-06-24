@@ -691,7 +691,7 @@ set(SITE_BUILDNAME_SUFFIX "SHARED")
 #########   Following controls source repository         ##########
 #set(REPOSITORY_URL "https://svn.hdfgroup.org/hdf4/trunk")
 #comment to use a uncompressed source folder
-set(CTEST_USE_TAR_SOURCE "hdf-4.2.12")
+set(CTEST_USE_TAR_SOURCE "hdf-4.2.13")
 ###################################################################
 
 ###################################################################
