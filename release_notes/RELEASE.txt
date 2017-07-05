@@ -122,7 +122,7 @@ This version has been tested in the following platforms:
    macOS Sierra 10.12.5, Darwin,     Apple clang version 8.1.0 from Xcode 8.3
    16.6.0, x86_64                    gfortran GNU Fortran (GCC) 7.1.0
    (kite)                            Intel icc and ifort version 17.0.2
-                                  
+
    Debian 8.6.0 3.16.0-4-amd64
    #1 SMP Debian 3.16.43-2, x86_64 GNU/Linux
                                      gcc (Debian 4.9.2-10) 4.9.2
@@ -154,7 +154,8 @@ o  Several Fortran examples print "^@" when displaying strings (for example,
 
 o  CMake fails to set the full path to the install location on Windows:
     The configuration file for examples, HDF4_Examples.cmake, must be updated
-    with the correct value by editing the file or using the INSTALLDIR option..
+    with the correct value by editing the file or using the INSTALLDIR option.
+    This issue is because of spaces in the path.
    ADB - 2014/02/03
 
 o  CMake "make install" fails installing the tools:
