@@ -8,7 +8,7 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
+ * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
  * access to the file, you may request a copy from help@hdfgroup.org.        *
  ****************************************************************************/
 /*
@@ -54,8 +54,10 @@ Java_hdf_hdflib_HDFLibrary_DFPaddpal
             } /* end else */
             UNPIN_JAVA_STRING(filename, f);
 
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         }
     } /* end else */
     return JNI_TRUE;
@@ -69,7 +71,6 @@ Java_hdf_hdflib_HDFLibrary_DFPgetpal
     const char  *f;
     jbyte       *dat;
     jboolean     bb;
-    int copyMode = JNI_ABORT;
 
     if (palette == NULL) {
         h4nullArgument(env, "DFPgetpal:  palette is NULL");
@@ -88,14 +89,13 @@ Java_hdf_hdflib_HDFLibrary_DFPgetpal
                 UNPIN_JAVA_STRING(filename, f);
 
                 if (rval == FAIL) {
+                    ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, JNI_ABORT);
                     CALL_ERROR_CHECK();
+                    return JNI_FALSE;
                 } /* end if */
-                else {
-                    copyMode = 0;
-                } /* end else */
             } /* end if */
 
-            ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, copyMode);
+            ENVPTR->ReleaseByteArrayElements(ENVPAR palette, dat, 0);
         } /* end else */
     } /* end else */
 
@@ -160,8 +160,10 @@ Java_hdf_hdflib_HDFLibrary_DFPputpal
 
             UNPIN_JAVA_STRING_TWO(filename, f, filemode, m);
 
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         }
     } /* end else */
 
@@ -181,8 +183,10 @@ Java_hdf_hdflib_HDFLibrary_DFPreadref
 
         UNPIN_JAVA_STRING(filename, f);
 
-        if (rval == FAIL)
+        if (rval == FAIL) {
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
+        }
     }
 
     return JNI_TRUE;
@@ -208,8 +212,10 @@ Java_hdf_hdflib_HDFLibrary_DFPwriteref
 
         UNPIN_JAVA_STRING(filename, f);
 
-        if (rval == FAIL)
+        if (rval == FAIL) {
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
+        }
     }
 
     return JNI_TRUE;

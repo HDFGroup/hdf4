@@ -8,7 +8,7 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
+ * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
  * access to the file, you may request a copy from help@hdfgroup.org.        *
  ****************************************************************************/
 /*
@@ -59,8 +59,10 @@ Java_hdf_hdflib_HDFLibrary_GRend
     intn rval;
 
     rval = GRend((int32) gr_id);
-    if (rval == FAIL)
+    if (rval == FAIL) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return JNI_TRUE;
 }
@@ -72,8 +74,10 @@ Java_hdf_hdflib_HDFLibrary_GRendaccess
     intn rval;
 
     rval =  GRendaccess((int32) gr_id);
-    if (rval == FAIL)
+    if (rval == FAIL) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return JNI_TRUE;
 }
@@ -103,6 +107,7 @@ Java_hdf_hdflib_HDFLibrary_GRfileinfo
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
@@ -120,8 +125,10 @@ Java_hdf_hdflib_HDFLibrary_GRselect
     int32 rval;
 
     rval = GRselect((int32)gr_id, (int32) index);
-    if (rval < 0)
+    if (rval < 0) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return (jlong)rval;
 }
@@ -195,13 +202,8 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
     intn     rval;
     jint    *dims;
     jint    *theArgs;
-    jclass   Sjc;
     char    *str;
-    jstring  rstring;
     jboolean isCopy;
-    jboolean bb = 0;
-    jboolean abb = 0;
-    jobject  o;
 
     str = (char *)HDmalloc(MAX_GR_NAME+1);
     if (str == NULL) {
@@ -239,40 +241,47 @@ Java_hdf_hdflib_HDFLibrary_GRgetiminfo
                             (int32 *)&(theArgs[3]));
 
                     if (rval == FAIL) {
-                        abb = JNI_ABORT;
-                        bb = JNI_ABORT;
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
+                        HDfree(str);
                         CALL_ERROR_CHECK();
+                        return JNI_FALSE;
                     }
                     else {
+                        jstring rstring;
+                        jclass sjc;
+                        jobject o;
+                        jboolean bb;
+
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+
+                        str[MAX_GR_NAME] = '\0';
+                        /* convert it to java string */
+                        rstring = ENVPTR->NewStringUTF(ENVPAR str);
+
+                        sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                        if (sjc == NULL) {
+                            ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
+                            HDfree(str);
+                            return JNI_FALSE;
+                        }
                         o = ENVPTR->GetObjectArrayElement(ENVPAR gr_name, 0);
                         if (o == NULL) {
-                            bb = JNI_ABORT;
-                            CALL_ERROR_CHECK();
+                            ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
+                            HDfree(str);
+                            return JNI_FALSE;
                         }
-                        else {
-                            Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                            if (Sjc == NULL) {
-                                bb = JNI_ABORT;
-                                CALL_ERROR_CHECK();
-                            }
-                            else if (ENVPTR->IsInstanceOf(ENVPAR o, Sjc) == JNI_FALSE) {
-                                bb = JNI_ABORT;
-                                CALL_ERROR_CHECK();
-                            }
-                            else {
-                                str[MAX_GR_NAME] = '\0';
-                                rstring = ENVPTR->NewStringUTF(ENVPAR  str);
-                                if (rstring != NULL)
-                                    ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);
-                            }
-                            ENVPTR->DeleteLocalRef(ENVPAR o);
-                        }
-                    }
-                    ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, abb);
-
+                        bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
+                        if (bb == JNI_TRUE)
+                            ENVPTR->SetObjectArrayElement(ENVPAR gr_name, 0, (jobject)rstring);
+                        ENVPTR->DeleteLocalRef(ENVPAR o);
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, 0);
+                        HDfree(str);
+                        return bb;
+                   }
+                   ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                 } /* end else */
-                ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, bb);
-
+                ENVPTR->ReleaseIntArrayElements(ENVPAR dim_sizes, dims, JNI_ABORT);
             } /* end else */
         } /* end else */
 
@@ -292,7 +301,6 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage
     jint *strd;
     jint *edg;
     jboolean bb;
-    jboolean cbb = 0;
 
     if (data == NULL) {
         h4nullArgument(env, "GRreadimage:  data is NULL");
@@ -337,13 +345,15 @@ Java_hdf_hdflib_HDFLibrary_GRreadimage
                 ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
 
                 if (rval == FAIL) {
-                    cbb = JNI_ABORT;
+                    ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+                    ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, arr, JNI_ABORT);
                     CALL_ERROR_CHECK();
+                    return JNI_FALSE;
                 }
             } /* end else */
             ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
         }
-        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, arr, cbb);
+        ENVPTR->ReleasePrimitiveArrayCritical(ENVPAR data, arr, 0);
     } /* end else */
     return JNI_TRUE;
 }
@@ -381,8 +391,10 @@ Java_hdf_hdflib_HDFLibrary_GRreqlutil
     intn rval;
 
     rval = GRreqlutil((int32) gr_id, (intn)interlace_mode);
-    if (rval == FAIL)
+    if (rval == FAIL) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return JNI_TRUE;
 }
@@ -394,8 +406,10 @@ Java_hdf_hdflib_HDFLibrary_GRreqimageil
     intn rval;
 
     rval = GRreqimageil((int32) gr_id, (intn)interlace_mode);
-    if (rval == FAIL)
+    if (rval == FAIL) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return JNI_TRUE;
 }
@@ -454,6 +468,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetlutinfo
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
@@ -487,6 +502,7 @@ Java_hdf_hdflib_HDFLibrary_GRreadlut
             if (rval == FAIL) {
                 ENVPTR->ReleaseByteArrayElements(ENVPAR pal_data, arr, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseByteArrayElements(ENVPAR pal_data, arr, 0);
@@ -502,12 +518,8 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo
 {
     int32 rval;
     char *str;
-    jclass jc;
-    jstring rstring;
     jint *theArgs;
     jboolean bb;
-    jobject o;
-
 
     /* check for out of memory error ... */
     str = (char *)HDmalloc(MAX_GR_NAME+1);
@@ -535,28 +547,38 @@ Java_hdf_hdflib_HDFLibrary_GRattrinfo
 
                 if (rval == FAIL) {
                     ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, JNI_ABORT);
+                    HDfree(str);
                     CALL_ERROR_CHECK();
+                    return JNI_FALSE;
                 }
                 else {
+                    jstring rstring;
+                    jclass sjc;
+                    jobject o;
+
                     ENVPTR->ReleaseIntArrayElements(ENVPAR argv, theArgs, 0);
-                    if (str != NULL) {
-                        str[MAX_GR_NAME] = '\0';
-                        rstring = ENVPTR->NewStringUTF(ENVPAR  str);
-                        o = ENVPTR->GetObjectArrayElement(ENVPAR name, 0);
-                        if (o == NULL) {
-                            CALL_ERROR_CHECK();
-                        }
-                        jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                        if (jc == NULL) {
-                            CALL_ERROR_CHECK();
-                        }
-                        bb = ENVPTR->IsInstanceOf(ENVPAR o, jc);
-                        if (bb == JNI_FALSE) {
-                            CALL_ERROR_CHECK();
-                        }
-                        ENVPTR->SetObjectArrayElement(ENVPAR name, 0, (jobject)rstring);
-                        ENVPTR->DeleteLocalRef(ENVPAR o);
+
+                    str[MAX_GR_NAME] = '\0';
+                    /* convert it to java string */
+                    rstring = ENVPTR->NewStringUTF(ENVPAR str);
+
+                    sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                    if (sjc == NULL) {
+                        HDfree(str);
+                        return JNI_FALSE;
                     }
+                    o = ENVPTR->GetObjectArrayElement(ENVPAR name, 0);
+                    if (o == NULL) {
+                        HDfree(str);
+                        return JNI_FALSE;
+                    }
+                    bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
+                    if (bb == JNI_TRUE)
+                        ENVPTR->SetObjectArrayElement(ENVPAR name, 0, (jobject)rstring);
+                    ENVPTR->DeleteLocalRef(ENVPAR o);
+
+                    HDfree(str);
+                    return bb;
                 }
             } /* end else */
         } /* end else */
@@ -586,6 +608,7 @@ Java_hdf_hdflib_HDFLibrary_GRgetattr
             if (rval == FAIL) {
                 ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, 0);
@@ -680,8 +703,10 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JILjava_lang_String_2
 
         UNPIN_JAVA_STRING_TWO(attr_name, str, values, val);
 
-        if (rval == FAIL)
+        if (rval == FAIL) {
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
+        }
     }
 
     return JNI_TRUE;
@@ -711,8 +736,11 @@ Java_hdf_hdflib_HDFLibrary_GRsetattr__JLjava_lang_String_2JI_3B
 
                 ENVPTR->ReleaseByteArrayElements(ENVPAR values, arr, JNI_ABORT);
 
-                if (rval == FAIL)
+                if (rval == FAIL) {
                     CALL_ERROR_CHECK();
+                    UNPIN_JAVA_STRING(attr_name, str);
+                    return JNI_FALSE;
+                }
             } /* end else */
             UNPIN_JAVA_STRING(attr_name, str);
         }
@@ -735,8 +763,10 @@ Java_hdf_hdflib_HDFLibrary_GRsetcompress
         if (getNewCompInfo(env, c_info, &cinf)) {
             rval = GRsetcompress((int32)ri_id, (comp_coder_t)comp_type, (comp_info *)&cinf);
 
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         } /* end if */
         else {
             h4JNIFatalError(env, "GRsetcompress:  c_info not initialized");
@@ -760,8 +790,10 @@ Java_hdf_hdflib_HDFLibrary_GRgetcompress
         rval = GRgetcompress((int32)ri_id, (comp_coder_t *)&coder, (comp_info *)&cinf);
 
         if (setNewCompInfo(env, c_info, coder, &cinf)) {
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         } /* end if */
         else {
             h4JNIFatalError(env, "GRgetcompress:  c_info not created");
@@ -786,8 +818,10 @@ Java_hdf_hdflib_HDFLibrary_GRgetcompinfo
         rval = GRgetcompinfo((int32)ri_id, (comp_coder_t *)&coder, (comp_info *)&cinf);
 
         if (setNewCompInfo(env, c_info, coder, &cinf)) {
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         } /* end if */
         else {
             h4JNIFatalError(env, "GRgetcompinfo:  c_info not created");
@@ -811,8 +845,10 @@ Java_hdf_hdflib_HDFLibrary_GRsetchunk
         if (getChunkInfo(env, chunk_def, &c_def)) {
             rval = SDsetchunk ((int32)sdsid, c_def, (int32)flags);
 
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         } /* end if */
         else {
             h4JNIFatalError(env, "GRsetchunk:  chunk_def not initialized");
@@ -847,8 +883,10 @@ Java_hdf_hdflib_HDFLibrary_GRsetexternalfile
 
         UNPIN_JAVA_STRING(filename, str);
 
-        if (rval == FAIL)
+        if (rval == FAIL) {
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
+        }
     }
 
     return JNI_TRUE;
@@ -910,8 +948,13 @@ Java_hdf_hdflib_HDFLibrary_GRwriteimage(JNIEnv *env, jclass cls, jlong ri_id,
                         ENVPTR->ReleaseIntArrayElements(ENVPAR stride, strd, JNI_ABORT);
                     }
 
-                    if (rval == FAIL)
+                    if (rval == FAIL) {
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
+                        ENVPTR->ReleaseIntArrayElements(ENVPAR start, strt, JNI_ABORT);
+                        ENVPTR->ReleaseByteArrayElements(ENVPAR data, arr, JNI_ABORT);
                         CALL_ERROR_CHECK();
+                        return JNI_FALSE;
+                    }
 
                     ENVPTR->ReleaseIntArrayElements(ENVPAR edge, edg, JNI_ABORT);
                 } /* end else */
@@ -945,8 +988,10 @@ Java_hdf_hdflib_HDFLibrary_GRwritelut
 
             ENVPTR->ReleaseByteArrayElements(ENVPAR pal_data, arr, JNI_ABORT);
 
-            if (rval == FAIL)
+            if (rval == FAIL) {
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
+            }
         } /* end else */
     } /* end else */
 
@@ -961,7 +1006,6 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk
     jbyte *arr;
     jint *org;
     jboolean bb;
-    jboolean cbb = 0;
 
     if (dat == NULL) {
         h4nullArgument(env, "GRreadchunk:  dat is NULL");
@@ -987,11 +1031,12 @@ Java_hdf_hdflib_HDFLibrary_GRreadchunk
 
                 ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
                 if (rval == FAIL) {
-                    cbb = JNI_ABORT;
+                    ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
                     CALL_ERROR_CHECK();
+                    return JNI_FALSE;
                 }
             } /* end else */
-            ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, cbb);
+            ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, 0);
         } /* end else */
     } /* end else */
     return JNI_TRUE;
@@ -1030,8 +1075,11 @@ Java_hdf_hdflib_HDFLibrary_GRwritechunk
 
                 ENVPTR->ReleaseIntArrayElements(ENVPAR origin, org, JNI_ABORT);
 
-                if (rval == FAIL)
+                if (rval == FAIL) {
+                    ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
                     CALL_ERROR_CHECK();
+                    return JNI_FALSE;
+                }
             } /* end else */
             ENVPTR->ReleaseByteArrayElements(ENVPAR dat, arr, JNI_ABORT);
         } /* end else */

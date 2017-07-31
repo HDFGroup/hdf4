@@ -8,7 +8,7 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
+ * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
  * access to the file, you may request a copy from help@hdfgroup.org.        *
  ****************************************************************************/
 /*
@@ -49,8 +49,10 @@ Java_hdf_hdflib_HDFLibrary_ANend
 
     retVal = ANend((int32)anid);
 
-    if (retVal == FAIL)
+    if (retVal == FAIL) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return JNI_TRUE;
 }
@@ -83,6 +85,7 @@ Java_hdf_hdflib_HDFLibrary_ANfileinfo
             if (retVal == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             } /* end if */
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR info, theArgs, 0);
@@ -114,8 +117,10 @@ Java_hdf_hdflib_HDFLibrary_ANendaccess
     intn retVal;
 
     retVal = ANendaccess((int32)ann_id);
-    if (retVal == FAIL)
+    if (retVal == FAIL) {
         CALL_ERROR_CHECK();
+        return JNI_FALSE;
+    }
 
     return JNI_TRUE;
 }
@@ -210,10 +215,6 @@ Java_hdf_hdflib_HDFLibrary_ANreadann
 {
     int32 retVal;
     char  *data;
-    jclass Sjc;
-    jstring rstring;
-    jobject o;
-    jboolean bb;
 
     data = (char *)HDmalloc((maxlen+1)*sizeof(char));
     if (data == NULL) {
@@ -225,29 +226,36 @@ Java_hdf_hdflib_HDFLibrary_ANreadann
         retVal = ANreadann((int32)ann_id, data, (int32)maxlen);
 
         if (retVal == FAIL) {
+            HDfree((char *)data);
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
         }
         else {
+            jstring rstring;
+            jclass sjc;
+            jobject o;
+            jboolean bb;
+
+            data[maxlen] = '\0';
+            /* convert it to java string */
+            rstring = ENVPTR->NewStringUTF(ENVPAR data);
+
+            sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+            if (sjc == NULL) {
+                HDfree((char *)data);
+                return JNI_FALSE;
+            }
             o = ENVPTR->GetObjectArrayElement(ENVPAR annbuf, 0);
             if (o == NULL) {
-                CALL_ERROR_CHECK();
+                HDfree((char *)data);
+                return JNI_FALSE;
             }
-            else {
-                Sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                if (Sjc == NULL) {
-                    CALL_ERROR_CHECK();
-                }
-                else if (ENVPTR->IsInstanceOf(ENVPAR o, Sjc) == JNI_FALSE) {
-                        CALL_ERROR_CHECK();
-                }
-                else {
-                    data[maxlen] = '\0';
-                    rstring = ENVPTR->NewStringUTF(ENVPAR data);
-                    if (rstring != NULL)
-                        ENVPTR->SetObjectArrayElement(ENVPAR annbuf, 0, (jobject)rstring);
-                }
-                ENVPTR->DeleteLocalRef(ENVPAR o);
-            }
+            bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
+            if (bb == JNI_TRUE)
+                ENVPTR->SetObjectArrayElement(ENVPAR annbuf, 0, (jobject)rstring);
+            ENVPTR->DeleteLocalRef(ENVPAR o);
+            HDfree((char *)data);
+            return bb;
         }
         HDfree((char *)data);
     } /* end else */
@@ -341,6 +349,7 @@ Java_hdf_hdflib_HDFLibrary_ANid2tagref
             if (rval == FAIL) {
                 ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseShortArrayElements(ENVPAR tagref, theArgs, 0);
@@ -380,8 +389,10 @@ Java_hdf_hdflib_HDFLibrary_ANwriteann
 
         UNPIN_JAVA_STRING(label, str);
 
-        if (rval == FAIL)
+        if (rval == FAIL) {
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
+        }
     }
 
     return JNI_TRUE;

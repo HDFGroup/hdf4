@@ -8,7 +8,7 @@
  * notice, including terms governing use, modification, and redistribution,  *
  * is contained in the file, COPYING.  COPYING can be found at the root of   *
  * the source code distribution tree. You can also access it online  at      *
- * http://www.hdfgroup.org/products/licenses.html.  If you do not have       *
+ * http://support.hdfgroup.org/products/licenses.html.  If you do not have   *
  * access to the file, you may request a copy from help@hdfgroup.org.        *
  ****************************************************************************/
 
@@ -55,6 +55,7 @@ Java_hdf_hdflib_HDFLibrary_VSQuerycount
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR n_records,theArg,JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR n_records,theArg,0);
@@ -71,10 +72,6 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields
 {
     intn rval;
     char flds[4096];
-    jstring rstring;
-    jclass jc;
-    jobject o;
-    jboolean bb;
 
     if (fields == NULL) {
         h4nullArgument(env, "VSQueryfields: fields is NULL");
@@ -88,28 +85,32 @@ Java_hdf_hdflib_HDFLibrary_VSQueryfields
 
         if (rval == FAIL) {
             CALL_ERROR_CHECK();
+            return JNI_FALSE;
         }
         else {
+            jstring rstring;
+            jclass sjc;
+            jobject o;
+            jboolean bb;
+
             /* convert it to java string */
             rstring = ENVPTR->NewStringUTF(ENVPAR flds);
 
             /*  create a Java String object in the calling environment... */
-            jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-            if (jc == NULL) {
+            sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+            if (sjc == NULL) {
                 return JNI_FALSE; /* exception is raised */
             }
-            o = ENVPTR->GetObjectArrayElement(ENVPAR fields,0);
+            o = ENVPTR->GetObjectArrayElement(ENVPAR fields, 0);
             if (o == NULL) {
                 return JNI_FALSE;
             }
-            bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
-            if (bb == JNI_FALSE) {
-                return JNI_FALSE;
-            }
-            ENVPTR->SetObjectArrayElement(ENVPAR fields,0,(jobject)rstring);
+            bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
+            if (bb == JNI_TRUE)
+                ENVPTR->SetObjectArrayElement(ENVPAR fields, 0, (jobject)rstring);
             ENVPTR->DeleteLocalRef(ENVPAR o);
 
-            return JNI_TRUE;
+            return bb;
         } /* end else */
     } /* end else */
 
@@ -142,6 +143,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryinterlace
             if (rval == FAIL) {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR interlace,theArg,JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
                 ENVPTR->ReleaseIntArrayElements(ENVPAR interlace,theArg,0);
@@ -160,10 +162,6 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname
 {
     intn rval;
     char *nm;
-    jstring rstring;
-    jclass jc;
-    jobject o;
-    jboolean bb;
 
     if (vdata_name == NULL) {
         h4nullArgument(env, "VSQueryname: vdata_name is NULL");
@@ -183,32 +181,38 @@ Java_hdf_hdflib_HDFLibrary_VSQueryname
 
             if (rval == FAIL) {
                 CALL_ERROR_CHECK();
-            } /* end if */
+                HDfree(nm);
+                return JNI_FALSE;
+            }
             else {
+                jstring rstring;
+                jclass sjc;
+                jobject o;
+                jboolean bb;
+
                 /* convert it to java string */
                 rstring = ENVPTR->NewStringUTF(ENVPAR nm);
 
                 /*  create a Java String object in the calling environment... */
-                jc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
-                if (jc == NULL) {
+                sjc = ENVPTR->FindClass(ENVPAR  "java/lang/String");
+                if (sjc == NULL) {
                     HDfree(nm);
                     return JNI_FALSE; /* exception is raised */
                 }
-                o = ENVPTR->GetObjectArrayElement(ENVPAR vdata_name,0);
+                o = ENVPTR->GetObjectArrayElement(ENVPAR vdata_name, 0);
                 if (o == NULL) {
                     HDfree(nm);
                     return JNI_FALSE;
                 }
-                bb = ENVPTR->IsInstanceOf(ENVPAR o,jc);
-                if (bb == JNI_FALSE) {
-                    free(nm);
-                    return JNI_FALSE;
-                }
-                ENVPTR->SetObjectArrayElement(ENVPAR vdata_name,0,(jobject)rstring);
+                bb = ENVPTR->IsInstanceOf(ENVPAR o, sjc);
+                if (bb == JNI_TRUE)
+                    ENVPTR->SetObjectArrayElement(ENVPAR vdata_name, 0, (jobject)rstring);
                 ENVPTR->DeleteLocalRef(ENVPAR o);
+
+                HDfree(nm);
+                return bb;
             } /* end else */
 
-            HDfree(nm);
         } /* end else */
     } /* end else */
 
@@ -256,7 +260,7 @@ Java_hdf_hdflib_HDFLibrary_VSQueryvsize
         h4badArgument(env, "VSQueryvsize: output array vdata_size < order 1");
     } /* end else if */
     else {
-        theArg = ENVPTR->GetIntArrayElements(ENVPAR vdata_size,&bb);
+        theArg = ENVPTR->GetIntArrayElements(ENVPAR vdata_size, &bb);
 
         if (theArg == NULL) {
             h4JNIFatalError(env, "VSQuerysize: vdata_size not pinned");
@@ -265,11 +269,12 @@ Java_hdf_hdflib_HDFLibrary_VSQueryvsize
             rval = VSQueryvsize((int32) vdata_id, (int32 *)&(theArg[0]));
 
             if (rval == FAIL) {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR vdata_size,theArg,JNI_ABORT);
+                ENVPTR->ReleaseIntArrayElements(ENVPAR vdata_size, theArg, JNI_ABORT);
                 CALL_ERROR_CHECK();
+                return JNI_FALSE;
             }
             else {
-                ENVPTR->ReleaseIntArrayElements(ENVPAR vdata_size,theArg,0);
+                ENVPTR->ReleaseIntArrayElements(ENVPAR vdata_size, theArg, 0);
             }
         } /* end else */
     } /* end else */
