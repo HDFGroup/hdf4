@@ -1,11 +1,11 @@
-HDF version 4.2.13 released on 2017-06-24
+HDF version 4.2.13-post0 currently under development
 ====================================================
 
 INTRODUCTION
 
-This document describes the differences between HDF 4.2.12 and HDF 4.2.13.
+This document describes the differences between HDF 4.2.13 and HDF 4.2.13-post0.
 It is written for people who are familiar with previous releases of HDF
-and wish to migrate to HDF 4.2.13.
+and wish to migrate to HDF 4.2.13-post0.
 
 The HDF 4.2.13 documentation can be found on the The HDF Group's website
 at:
@@ -21,7 +21,7 @@ CONTENTS
 - New features and changes
   -- Configuration
 - Support for new platforms and compilers
-- Bugs fixed since HDF 4.2.12
+- Bugs fixed since HDF 4.2.13
   -- Configuration
   -- Library
   -- Utilities
@@ -32,35 +32,18 @@ CONTENTS
 
 New features and changes
 ========================
-   Configuration
-   =============
-    - CMake
-      CMake minimum version is 3.2.2
 
 
 Support for new platforms and compilers
 =======================================
-    - Support for macOS Sierra 10.12.5 was added (LK - 2017/06/23, HDFFR-1558)
 
 
-Bugs fixed since HDF 4.2.12
-=========================
-   Library
-   =========
-    - Several memory leaks occurred in an SD API internal function.  These leaks
-      are now removed.
-      (BMR - 2017/06/23, HDFFR-1534)
-    - Memory leaks occurred because memory returned by HDstrdup were not freed.
-      This is now fixed.
-      (BMR - 2017/06/23, HDFFR-1536)
-
+Bugs fixed since HDF 4.2.13
+===========================
 
 
 Documentation
 =============
-    - Minor improvements were made to the User's Guide, Reference Manual, and
-      Specification and Developer’s Guide.
-      (BMR - 2017/06/23)
 
 
 Platforms tested
