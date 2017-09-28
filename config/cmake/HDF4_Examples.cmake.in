@@ -79,7 +79,7 @@ endif()
 if(${CDASH_LOCAL})
   set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DCDASH_LOCAL:BOOL=ON")
 endif()
-set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF5_PACKAGE_NAME:STRING=@HDF4_PACKAGE@@HDF_PACKAGE_EXT@")
+set(ADD_BUILD_OPTIONS "${ADD_BUILD_OPTIONS} -DHDF4_PACKAGE_NAME:STRING=@HDF4_PACKAGE@@HDF_PACKAGE_EXT@")
 
 ###############################################################################################################
 # For any comments please contact cdashhelp@hdfgroup.org
