@@ -32,7 +32,6 @@ if (HDF4_BUILD_XDR_LIB)
 else ()
   target_link_libraries (hdfimport ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif ()
-TARGET_NAMING (hdfimport STATIC)
 set_global_variable (HDF4_UTILS_TO_EXPORT "${HDF4_UTILS_TO_EXPORT};hdfimport")
 
 if (BUILD_TESTING)

@@ -47,7 +47,6 @@ set (skip_examples
 
 foreach (example ${examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example} STATIC)
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
   target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
   set_target_properties (f_exmf_${example} PROPERTIES
@@ -63,7 +62,6 @@ endforeach ()
 
 foreach (example ${skip_examples})
   add_executable (f_exmf_${example} ${HDF4_MFHDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_exmf_${example} STATIC)
   TARGET_FORTRAN_PROPERTIES (f_exmf_${example} STATIC " " " ")
   target_include_directories (f_exmf_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
   set_target_properties (f_exmf_${example} PROPERTIES

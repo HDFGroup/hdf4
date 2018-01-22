@@ -34,7 +34,6 @@
   else ()
     target_link_libraries (test_hrepack ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
   endif ()
-  TARGET_NAMING (test_hrepack STATIC)
 
   macro (ADD_H4_TEST testname testtype testfile)
     if ("${testtype}" STREQUAL "SKIP")

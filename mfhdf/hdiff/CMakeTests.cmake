@@ -21,7 +21,6 @@
     else ()
       target_link_libraries (hdifftst ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
     endif ()
-    TARGET_NAMING (hdifftst ${LIB_TYPE})
 
     # Remove any output file left over from previous test run
     add_test (

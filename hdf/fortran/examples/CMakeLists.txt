@@ -67,7 +67,6 @@ set (skip_examples
 
 foreach (example ${examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_ex_${example} STATIC)
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} STATIC " " " ")
   target_include_directories (f_ex_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
   set_target_properties (f_ex_${example} PROPERTIES
@@ -78,7 +77,6 @@ foreach (example ${examples})
 endforeach ()
 
 add_executable (f_ex_VG_add_sds_to_vgroup ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/VG_add_sds_to_vgroup.f)
-TARGET_NAMING (f_ex_VG_add_sds_to_vgroup STATIC)
 TARGET_FORTRAN_PROPERTIES (f_ex_VG_add_sds_to_vgroup STATIC " " " ")
 target_include_directories (f_ex_VG_add_sds_to_vgroup PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
 set_target_properties (f_ex_VG_add_sds_to_vgroup PROPERTIES
@@ -89,7 +87,6 @@ target_link_libraries (f_ex_VG_add_sds_to_vgroup ${HDF4_MF_FORTRAN_LIB_TARGET} $
 
 foreach (example ${skip_examples})
   add_executable (f_ex_${example} ${HDF4_HDF_FORTRAN_EXAMPLES_SOURCE_DIR}/${example}.f)
-  TARGET_NAMING (f_ex_${example} STATIC)
   TARGET_FORTRAN_PROPERTIES (f_ex_${example} STATIC " " " ")
   target_include_directories (f_ex_${example} PRIVATE ${CMAKE_Fortran_MODULE_DIRECTORY})
   set_target_properties (f_ex_${example} PROPERTIES

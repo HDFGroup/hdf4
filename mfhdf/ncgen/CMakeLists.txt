@@ -44,7 +44,6 @@ if (HDF4_BUILD_XDR_LIB)
 else ()
   target_link_libraries (ncgen ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
 endif ()
-TARGET_NAMING (ncgen STATIC)
 
 if (BUILD_TESTING)
   include (CMakeTests.cmake)

@@ -210,7 +210,6 @@ endif ()
 #-- Adding test for xdrtest
 if (HDF4_BUILD_XDR_LIB)
   add_executable (xdrtest ${HDF4_MFHDF_XDR_DIR}/xdrtest.c)
-  TARGET_NAMING (xdrtest STATIC)
   TARGET_C_PROPERTIES (xdrtest STATIC " " " ")
   target_link_libraries (xdrtest ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS} ${HDF4_MF_XDR_LIB_TARGET})
 

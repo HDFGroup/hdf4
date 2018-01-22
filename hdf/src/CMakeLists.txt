@@ -122,7 +122,7 @@ set (HDF4_HDF_SRC_CHDRS
 
 add_library (${HDF4_SRC_LIB_TARGET} STATIC ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
 TARGET_C_PROPERTIES (${HDF4_SRC_LIB_TARGET} STATIC " " " ")
-target_link_libraries (${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+target_link_libraries (${HDF4_SRC_LIB_TARGET} PRIVATE ${LINK_LIBS} ${LINK_COMP_LIBS})
 set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIB_TARGET}")
 H4_SET_LIB_OPTIONS (${HDF4_SRC_LIB_TARGET} ${HDF4_SRC_LIB_NAME} STATIC)
 set_target_properties (${HDF4_SRC_LIB_TARGET} PROPERTIES
@@ -137,7 +137,7 @@ set (install_targets ${HDF4_SRC_LIB_TARGET})
 if (BUILD_SHARED_LIBS)
   add_library (${HDF4_SRC_LIBSH_TARGET} SHARED ${HDF4_HDF_SRC_CSRCS} ${HDF4_HDF_SRC_CHDRS} ${HDF4_BINARY_DIR}/h4config.h)
   TARGET_C_PROPERTIES (${HDF4_SRC_LIBSH_TARGET} SHARED " " " ")
-  target_link_libraries (${HDF4_SRC_LIBSH_TARGET} ${LINK_SHARED_LIBS})
+  target_link_libraries (${HDF4_SRC_LIBSH_TARGET} PRIVATE ${LINK_LIBS} ${LINK_COMP_LIBS})
   set_global_variable (HDF4_LIBRARIES_TO_EXPORT "${HDF4_LIBRARIES_TO_EXPORT};${HDF4_SRC_LIBSH_TARGET}")
   H4_SET_LIB_OPTIONS (${HDF4_SRC_LIBSH_TARGET} ${HDF4_SRC_LIB_NAME} SHARED)
   set_target_properties (${HDF4_SRC_LIBSH_TARGET} PROPERTIES
@@ -148,9 +148,9 @@ if (BUILD_SHARED_LIBS)
   )
   if (WIN32)
     set_property (TARGET ${HDF4_SRC_LIBSH_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS "DOS_FS")
-  endif (WIN32)
+  endif ()
   set (install_targets ${install_targets} ${HDF4_SRC_LIBSH_TARGET})
-endif (BUILD_SHARED_LIBS)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Add file(s) to CMake Install
@@ -170,10 +170,10 @@ INSTALL (
 if (HDF4_EXPORTED_TARGETS)
   if (BUILD_SHARED_LIBS)
     INSTALL_TARGET_PDB (${HDF4_SRC_LIBSH_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
-  endif (BUILD_SHARED_LIBS)
+  endif ()
   INSTALL_TARGET_PDB (${HDF4_SRC_LIB_TARGET} ${HDF4_INSTALL_BIN_DIR} libraries)
 
-  INSTALL (
+  install (
       TARGETS
           ${install_targets}
       EXPORT
@@ -184,5 +184,4 @@ if (HDF4_EXPORTED_TARGETS)
       FRAMEWORK DESTINATION ${HDF4_INSTALL_FWRK_DIR} COMPONENT libraries
       INCLUDES DESTINATION include
   )
-endif (HDF4_EXPORTED_TARGETS)
-
+endif ()
